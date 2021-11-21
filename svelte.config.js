@@ -1,4 +1,5 @@
-import vercel from '@sveltejs/adapter-vercel';
+// import vercel from '@sveltejs/adapter-vercel';
+import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
 /** @type {import('@sveltejs/kit').Config} */
@@ -11,7 +12,9 @@ const config = {
 		// hydrate the <div id="svelte"> element in src/app.html
 		target: '#svelte',
 		// ... adding vercel support ...
-		adapter: vercel()
+		// adapter: vercel()
+		// ... NODE-JS deployment Environment ...
+		adapter: node()
 	}
 };
 

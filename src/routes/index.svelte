@@ -71,12 +71,12 @@
 
 <style>
 	#background-image {
-		background-image: url('$lib/header-background.svg');
-		background-repeat: no-repeat;
-		background-size: auto;
-		background-origin: border-box;
-		background-position: inherit;
-		height: 495px;
+        background-image: url(/src/lib/header-background.svg);
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-origin: border-box;
+        background-position: bottom;
+        height: 495px;
 	}
 	
 	section {
