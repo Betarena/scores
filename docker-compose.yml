@@ -1,0 +1,7 @@
+version: '3.9'
+
+services:
+    web:
+        build: ./app
+        ports: 
+            - "80:3000"
