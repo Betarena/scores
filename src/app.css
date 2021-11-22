@@ -343,7 +343,9 @@ section {
     flex-wrap: nowrap;
 }
 
-/* GRID DISPLAY */
+/*
+============
+GRID / COLUMN DISPLAY */
 .column-space-center {
     display: flex;
     align-items: center;
@@ -360,6 +362,10 @@ section {
     flex-direction: column;
     flex-wrap: nowrap;
     align-items: stretch;
+    justify-content: center;
+}
+.column-start-grid {
+    display: grid;
     justify-content: center;
 }
 

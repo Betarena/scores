@@ -14,8 +14,8 @@
 =================== -->
 
 <script lang="ts">
+    // ...
 	import { amp, browser, dev, mode, prerendering } from '$app/env';
-
 	// ...
 	import header_bg from '$lib/header-background.svg'
 </script>
