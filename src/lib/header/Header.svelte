@@ -111,7 +111,7 @@
 	header {
         background-color: #292929;
 		height: 72px;
-		padding: 21px 34px;
+		padding: 14px 16px;
 	} 
 	
 	/* ... critical + essential */
@@ -126,6 +126,10 @@
 	/* 
     RESPONSIVE FOR TABLET (&+) [768px] */
     @media screen and (min-width: 768px) {
+		header {
+			padding: 14px 34px;
+		} 
+		
         #burger-menu {
 			margin-right: 24px;
 		}
