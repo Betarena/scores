@@ -7,7 +7,7 @@
 	import { onMount } from "svelte"
 	import { page } from '$app/stores';
     
-	import logo_full from './assets/betarena-full-logo-x512.webp';
+	import logo_full from './assets/betarena-logo-full.svg';
 
     /**
      * Description:
