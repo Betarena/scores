@@ -4,11 +4,15 @@
 =================== -->
 
 <script lang="ts">
+	import { amp, browser, dev, mode, prerendering } from '$app/env';
+
 	import { onMount } from "svelte"
 	import { page } from '$app/stores'
 
-	import logo from './betarena-logo-x512.png'
-	import menu_burger_bar from './menu-burger.svg'
+	import logo_full from './assets/betarena-full-logo.webp'
+	import logo_mini from './assets/betarena-minimal-logo.webp'
+
+	import menu_burger_bar from './assets/menu-burger.svg'
 
     /**
      * Description:
@@ -20,23 +24,38 @@
      * appropiate components to display the correct
      * component, tailored to a specifc device.
     */
-	let mobileNavShow: boolean = true
+	let mobileExclusive: boolean = true
+	let tabletExclusive: boolean = true
     let mobileNavToggleMenu: boolean = false
 
     onMount(async() => {
         var wInit = document.documentElement.clientWidth
-        if (wInit > 767) {
-            mobileNavShow = false
+		// TABLET - VIEW
+        if (wInit > 768) {
+            tabletExclusive = false
         } else {
-            mobileNavShow = true
+            tabletExclusive = true
         }
+		// MOBILE - VIEW
+		if (wInit < 376) {
+			mobileExclusive = true
+		} else {
+			mobileExclusive = false
+		}
         window.addEventListener("resize", function() {
             var w = document.documentElement.clientWidth
-            if (w > 767) {
-                mobileNavShow = false
+			// TABLET - VIEW
+            if (w > 768) {
+                tabletExclusive = false
             } else {
-                mobileNavShow = true
+                tabletExclusive = true
             }
+			// MOBILE - VIEW
+			if (w < 376) {
+				mobileExclusive = true
+			} else {
+				mobileExclusive = false
+			}
         })
     })
 </script>
@@ -45,33 +64,42 @@
 	COMPONENT HTML
 =================== -->
 
-<header class='row-space-start'>
+<header class='column-space-center'>
 	<!-- ... menu-burger-bar ... [CONDITIONAL] -->
-	{#if mobileNavShow}
-		<img
-			src={menu_burger_bar} 
-			alt='betarena-logo'
-			width="24px" height="24px"
-			class='m-r-24'
-		/>
-	{/if}
-	
-	<!-- ... brand-logo-betarena ... -->
-	<div id='brand'>
-		<a href='https://kit.svelte.dev'>
-			<img 
-				src={logo} 
+	<div id='header-inner'
+		class='row-space-start'>
+		{#if tabletExclusive}
+			<img
+				id='burger-menu'
+				src={menu_burger_bar} 
 				alt='betarena-logo'
+				width="24px" height="24px"
 			/>
-		</a>
+		{/if}
+		
+		{#if mobileExclusive}
+			<!-- ... brand-logo-betarena-for-mobile-ONLY ... -->
+			<div id='brand'>
+				<a sveltekit:prefetch href='/'>
+					<img 
+						src={logo_mini} 
+						alt='betarena-logo'
+						width="103px" height="30px"
+					/>
+				</a>
+			</div>
+		{:else}
+			<!-- ... brand-logo-betarena-for-desktop-ONLY ... -->
+			<div id='brand'>
+				<a sveltekit:prefetch href='/'>
+					<img 
+						src={logo_full} 
+						alt='betarena-logo'
+					/>
+				</a>
+			</div>
+		{/if}
 	</div>
-	<!-- <nav>
-		<ul>
-			<li class:active={$page.path === '/'}><a sveltekit:prefetch href="/">Home</a></li>
-			<li class:active={$page.path === '/about'}><a sveltekit:prefetch href="/about">About</a></li>
-			<li class:active={$page.path === '/todos'}><a sveltekit:prefetch href="/todos">Todos</a></li>
-		</ul>
-	</nav> -->
 </header>
 
 <!-- ===================
@@ -83,17 +111,27 @@
         background-color: #292929;
 		height: 72px;
 		padding: 21px 34px;
+	} 
+	
+	/* ... critical + essential */
+	header #header-inner {
+		max-width: 1378px;
 	}
 
-	#brand {
-
-	} #brand img {
-		height: 30px;
+	#burger-menu {
+		margin-right: 16.15px;
 	}
 
-	/* nav {
-		display: flex;
-		justify-content: center;
-		--background: rgba(255, 255, 255, 0.7);
-	} */
+	#brand img {
+		height: 45px;
+		width: 213px;	
+	}
+
+	/* 
+    RESPONSIVE FOR TABLET (&+) [768px] */
+    @media screen and (min-width: 768px) {
+        #burger-menu {
+			margin-right: 24px;
+		}
+    }
 </style>
