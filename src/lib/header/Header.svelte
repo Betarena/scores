@@ -123,8 +123,8 @@
 	}
 
 	#brand img {
-		height: 45px;
-		width: 213px;	
+		height: 30px;
+		width: 142px;	
 	}
 
 	/* 
