@@ -95,6 +95,7 @@
 					<img 
 						src={logo_full} 
 						alt='betarena-logo'
+						width='142px' height='30px'
 					/>
 				</a>
 			</div>
@@ -120,11 +121,6 @@
 
 	#burger-menu {
 		margin-right: 16.15px;
-	}
-
-	#brand img {
-		height: 30px;
-		width: 142px;	
 	}
 
 	/* 
