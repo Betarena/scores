@@ -9,8 +9,8 @@
 	import { onMount } from "svelte"
 	import { page } from '$app/stores'
 
-	import logo_full from './assets/betarena-full-logo.webp'
-	import logo_mini from './assets/betarena-minimal-logo.webp'
+	import logo_full from './assets/betarena-logo-full.svg'
+	import logo_mini from './assets/betarena-logo-mobile.svg'
 
 	import menu_burger_bar from './assets/menu-burger.svg'
 
@@ -37,7 +37,7 @@
             tabletExclusive = true
         }
 		// MOBILE - VIEW
-		if (wInit < 376) {
+		if (wInit < 475) {
 			mobileExclusive = true
 		} else {
 			mobileExclusive = false
@@ -51,7 +51,7 @@
                 tabletExclusive = true
             }
 			// MOBILE - VIEW
-			if (w < 376) {
+			if (w < 475) {
 				mobileExclusive = true
 			} else {
 				mobileExclusive = false
@@ -95,6 +95,7 @@
 					<img 
 						src={logo_full} 
 						alt='betarena-logo'
+						width='142px' height='30px'
 					/>
 				</a>
 			</div>
@@ -110,7 +111,7 @@
 	header {
         background-color: #292929;
 		height: 72px;
-		padding: 21px 34px;
+		padding: 14px 16px;
 	} 
 	
 	/* ... critical + essential */
@@ -122,14 +123,13 @@
 		margin-right: 16.15px;
 	}
 
-	#brand img {
-		height: 30px;
-		width: 142px;	
-	}
-
 	/* 
     RESPONSIVE FOR TABLET (&+) [768px] */
     @media screen and (min-width: 768px) {
+		header {
+			padding: 14px 34px;
+		} 
+		
         #burger-menu {
 			margin-right: 24px;
 		}
