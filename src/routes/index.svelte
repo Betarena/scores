@@ -32,8 +32,8 @@
     description='Betarena'
     keywords='Betarena, 
         scores platform'
-    noindex={false}
-    nofollow={false}
+    noindex={true}
+    nofollow={true}
     canonical='https://www.betarena.com/'
     twitter={{
         site: "@username",
