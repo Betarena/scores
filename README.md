@@ -31,3 +31,27 @@ npm run build
 ### SEO Optimization
 
 https://github.com/artiebits/svelte-seo#svelte-seo-options
+
+### Svelte Appollo
+
+For the ability to use `GraphQL` for the Widget in Svelte, `svelte-appollo` was used: ![svelte-apollo](https://github.com/timhall/svelte-apollo), paired with the docuemntation from ![`Hasura`](https://hasura.io/learn/graphql/svelte-apollo/queries/2-create-query/) to have the widget working correctly.
+
+![npm-package](https://www.npmjs.com/package/svelte-apollo)
+
+Future expansion: https://dev.to/lucis/update-apollo-cache-after-a-mutation-and-get-instant-benefits-on-your-ui-1c3b
+
+❌ - `@apollo-client` sveltekit issues - ![1](https://github.com/timhall/svelte-apollo/issues/97)
+✔ - solution ![hasura-db-example](https://rodneylab.com/use-apollo-client-sveltekit/)
+
+### localStorage()
+
+The widget stores the users `one-off` voting using the `.localStorage()` for the ability to give the user a history of past votings.
+
+### using .env with sveltekit-vite:
+
+https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3
+
+### Getting started with `sveltekit`:
+
+https://www.sitepoint.com/a-beginners-guide-to-sveltekit/
+https://www.reddit.com/r/sveltejs/comments/p28oht/how_to_redirect_to_a_url_in_svelte_kit/
