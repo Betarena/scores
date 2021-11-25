@@ -18,6 +18,7 @@
 	// ... sub-header-component;
 	import close from './assets/close.svg'
 	import arrow_down from './assets/arrow-down.svg'
+	import arrow_up from './assets/arrow-up.svg'
 	import { fly } from 'svelte/transition';
 	import { GET_WEBSITE_ALL_LANG_TRANSLATIONS } from '$lib/graphql/query'
 	import { query } from "svelte-apollo";
@@ -99,6 +100,9 @@
 		}
 	}
 
+	let dropdown_visible: boolean = false
+	$: if (dev) console.debug('dropdown_visible', dropdown_visible)
+
 	/**
 	 * Description
 	 * ~~~~~~~~~~~~~~~~~~~
@@ -114,6 +118,8 @@
 		// ...
 		if (dev) console.debug('updating user translation to ->', lang)
 		langSelect.setLang(lang)
+		// ...
+		dropdown_visible = false
 		// ... update page URL
 		goto(`/${lang}`)
 	}
@@ -167,7 +173,7 @@
 {#if (tabletExclusive || mobileExclusive)}
 	{#if mobileNavToggleMenu}
 		<nav
-			class='column-start-grid'
+			class='column-space-start'
 			class:tablet-exclusive={mobileExclusive == false}
 			in:fly={{ x: -200, duration: 500 }}
 			out:fly={{ x: -200, duration: 500 }}
@@ -179,25 +185,50 @@
 					width='24px' height='24px'
 					on:click={() => mobileNavToggleMenu = false}
 				/>
-				<!-- ... language-change ... -->
-				<div class='row-space-start'>
+				<!-- ... language-change-dropdown-select ... -->
+				<div id='lang-container'>
 					{#if TRANSLATIONS_DATA != undefined}
-						<select class='color-white m-r-10' 
-							name="cars" 
-							id="cars"
-							bind:value={$langSelect}
-							on:change={() => selectLanguage($langSelect)}
+						<!-- ... INIT-selected-lang ... -->
+						<div id='selected-language-btn' 
+							class:active-lang-select={dropdown_visible == true}
+							class='row-space-out'
+							on:click={() => dropdown_visible = !dropdown_visible}
 							>
-							<!-- <option value="volvo">Volvo</option> -->
-							{#each TRANSLATIONS_DATA.scores_header_translations as lang}
-								<option value={ lang.lang }>{ lang.lang.toUpperCase() }</option>
-							{/each}
-						</select>
-						<img 
-							src={arrow_down} 
-							alt='close-icon'
-							width='24px' height='24px'
-						/>
+							<p class='color-white s-14 mr-5'>
+								{ $langSelect.toUpperCase() }
+							</p>
+							<!-- ... arrow down [hidden-menu] ... -->
+							{#if !dropdown_visible}
+								<img 
+									src={arrow_down} 
+									alt='arrow_down'
+									width="16px" height="16px"
+								/>
+							{:else}
+								<img 
+									src={arrow_up} 
+									alt='arrow_up'
+									width="16px" height="16px"
+								/>
+							{/if}
+							
+						</div>
+						<!-- ... INIT-HIDDEN drop-down menu ... -->
+						{#if dropdown_visible}
+							<div id='dropdown-menu'
+								transition:fly
+								>
+								{#each TRANSLATIONS_DATA.scores_header_translations as lang}
+									<div id='lang-select'
+										on:click={() => selectLanguage(lang.lang)}
+										>
+										<p class='color-white s-14'>
+											{ lang.lang.toUpperCase() }
+										</p>
+									</div>
+								{/each}
+							</div>
+						{/if}
 					{/if}
 				</div>
 			</div>
@@ -211,25 +242,50 @@
 			<div>
 				
 			</div>
-			<!-- ... language-change ... -->
-			<div class='row-space-start'>
+			<!-- ... language-change-dropdown-select ... -->
+			<div id='lang-container'>
 				{#if TRANSLATIONS_DATA != undefined}
-					<select class='color-white m-r-10' 
-						name="cars" 
-						id="cars"
-						bind:value={$langSelect}
-						on:change={() => selectLanguage($langSelect)}
+					<!-- ... INIT-selected-lang ... -->
+					<div id='selected-language-btn' 
+						class:active-lang-select={dropdown_visible == true}
+						class='row-space-out'
+						on:click={() => dropdown_visible = !dropdown_visible}
 						>
-						<!-- <option value="volvo">Volvo</option> -->
-						{#each TRANSLATIONS_DATA.scores_header_translations as lang}
-							<option value={ lang.lang }>{ lang.lang.toUpperCase() }</option>
-						{/each}
-					</select>
-					<img 
-						src={arrow_down} 
-						alt='close-icon'
-						width='24px' height='24px'
-					/>
+						<p class='color-white s-14 mr-10'>
+							{ $langSelect.toUpperCase() }
+						</p>
+						<!-- ... arrow down [hidden-menu] ... -->
+						{#if !dropdown_visible}
+							<img 
+								src={arrow_down} 
+								alt='arrow_down'
+								width="16px" height="16px"
+							/>
+						{:else}
+							<img 
+								src={arrow_up} 
+								alt='arrow_up'
+								width="16px" height="16px"
+							/>
+						{/if}
+						
+					</div>
+					<!-- ... INIT-HIDDEN drop-down menu ... -->
+					{#if dropdown_visible}
+						<div id='dropdown-menu'
+							transition:fly
+							>
+							{#each TRANSLATIONS_DATA.scores_header_translations as lang}
+								<div id='lang-select'
+									on:click={() => selectLanguage(lang.lang)}
+									>
+									<p class='color-white s-14'>
+										{ lang.lang.toUpperCase() }
+									</p>
+								</div>
+							{/each}
+						</div>
+					{/if}
 				{/if}
 			</div>
 		</div>
@@ -262,7 +318,7 @@
 		background-color: #292929;
 		height: 100vh;
 		width: 100%;
-		padding: 14px 16px;
+		padding: 24px 34px;
 		position: fixed;
 		z-index: 1000;
 		top: 0;
@@ -273,16 +329,41 @@
 	nav.tablet-exclusive {
 		width: 374px !important;
 	}
-	select {
-		box-shadow: 0 1px 4px rgb(0 0 0 / 25%);
-		color: #000000;
+	
+	#lang-container {
+		position: relative;
+	}
+	#selected-language-btn {
+		color: #ffffff;
 		outline: none;
-		width: fit-content;
-		border-radius: 5px;
+		width: 62px;
 		border: none;
-		padding: 5px 20px;
 		cursor: pointer;
-		transition: all ease 0.2s;
+		padding: 5px 12px;
+		background-color: transparent;
+	} #selected-language-btn:hover, 
+	  #selected-language-btn.active-lang-select {
+		background-color: rgba(255, 255, 255, 0.1);
+		border-radius: 4px;
+	} #dropdown-menu {
+		position: absolute;
+		top: 100%;
+		width: 88px;
+		left: -20%;
+		margin-top: 5px;
+		border-radius: 4px;
+		background: #292929;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		overflow: hidden;
+	} #lang-select {
+		padding: 10px 0;
+		text-align: center;
+		background: #4B4B4B;
+		cursor: pointer;
+		box-shadow: inset 0px -1px 0px #3C3C3C;
+	} #lang-select:hover {
+		background: #292929;
+		box-shadow: inset 0px -1px 0px #3C3C3C;
 	}
 
 	/* 
