@@ -1,3 +1,16 @@
+/*  ==========================
+    set website FONTS
+    ... issues - @import needs to be at the top:
+    https://stackoverflow.com/questions/38723246/google-font-not-working-with-css
+========================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+/* @font-face {
+    font-family: 'Roboto Slab', serif;
+    src: url("/fonts/RobotoSlab-VariableFont_wght.ttf") format("truetype");
+} */
+
 /* ==========================
 	setting the default 
     website layout
@@ -82,17 +95,6 @@ p {
     margin: 0;
     color: var(--dark);
 }
-
-/*  ==========================
-    set website FONTS
-========================== */
-
-/* @import url('https://fonts.googleapis.com/css2?family=Roboto+Slab:wght@100;200;300;400;500;600;700;800;900&display=swap');
-
-@font-face {
-    font-family: 'Roboto Slab', serif;
-    src: url("/fonts/RobotoSlab-VariableFont_wght.ttf") format("truetype");
-} */
 
 /* ==========================
     VARIABLE FONT SIZES 
@@ -351,6 +353,15 @@ GRID / COLUMN DISPLAY */
     align-items: center;
     align-content: center;
     justify-content: center;
+    width: 100%;
+    flex-direction: column;
+    flex-wrap: nowrap;
+}
+.column-space-start {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    justify-content: flex-start;
     width: 100%;
     flex-direction: column;
     flex-wrap: nowrap;
