@@ -101,7 +101,6 @@
 	// ... TRIGGER Query-Req-Res
 	let translation_promise = getTranslations()
 
-
 	/**
 	 * Description
 	 * ~~~~~~~~~~~~~~~~~~~
@@ -462,7 +461,6 @@
 
 	{/await}
 </header>
-
 
 <!-- ===================
 	COMPONENT STYLE
