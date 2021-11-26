@@ -55,3 +55,5 @@ https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3
 
 https://www.sitepoint.com/a-beginners-guide-to-sveltekit/
 https://www.reddit.com/r/sveltejs/comments/p28oht/how_to_redirect_to_a_url_in_svelte_kit/
+https://stackoverflow.com/questions/67135169/how-to-initialize-apolloclient-in-sveltekit-to-work-on-both-ssr-and-client-side
+https://www.npmjs.com/package/graphql-request
