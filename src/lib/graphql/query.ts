@@ -1,5 +1,5 @@
 // ... import necessary libraries;
-import { gql } from "@apollo/client/core/core.cjs"
+import { gql } from 'graphql-request'
 
 /**
  * Description:

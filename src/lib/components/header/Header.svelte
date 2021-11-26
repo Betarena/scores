@@ -21,7 +21,7 @@
 	import arrow_up from './assets/arrow-up.svg'
 	import { fly } from 'svelte/transition';
 	import { GET_WEBSITE_ALL_LANG_TRANSLATIONS } from '$lib/graphql/query'
-	import { query } from "svelte-apollo";
+	import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 	import type { 
 		Header_Translation_Response, 
 		Header_Translation } from '$lib/model/scores_header_translations'
@@ -80,28 +80,21 @@
 	 * ~~~~~~~~~~~~~~~~~~~
 	 * ... obtain THIS Platforms Language Translations;
 	*/
-	let translations_response: any
-	let TRANSLATIONS_DATA: Header_Translation_Response = undefined
-	// ... trigger Query-Req-Res
-	getTranslations()
-	// ...
-	async function getTranslations() {
+	async function getTranslations(): Promise < Header_Translation_Response > {
 		if (dev) console.debug('-- obtaining translations! --')
-		translations_response = query(GET_WEBSITE_ALL_LANG_TRANSLATIONS)
+		const response = await initGrapQLClient().request(GET_WEBSITE_ALL_LANG_TRANSLATIONS)
+		// ...
+		if (dev) console.debug('-- translations_response --', response)
+		return response
 	}
-	// ... response listen - data;
-	$: if ($translations_response != undefined) {
-		if ($translations_response.data) {
-			if (dev) console.debug('TRANSLATIONS_DATA', $translations_response.data)
-			// ... assign the TRANSLATION DATA;
-			TRANSLATIONS_DATA = $translations_response.data
-			// ... check for the user-localStorage() data for TRANSLATION SELECTION;
-			if (dev) console.debug('user-translation', $langSelect)
-		}
-	}
+	// ... TRIGGER Query-Req-Res
+	let translation_promise = getTranslations()
 
+
+	// ... drop-down menu-operators;
 	let dropdown_visible: boolean = false
 	$: if (dev) console.debug('dropdown_visible', dropdown_visible)
+
 
 	/**
 	 * Description
@@ -187,7 +180,10 @@
 				/>
 				<!-- ... language-change-dropdown-select ... -->
 				<div id='lang-container'>
-					{#if TRANSLATIONS_DATA != undefined}
+					{#await translation_promise}
+						<!-- promise is pending -->
+					{:then TRANSLATIONS_DATA}
+						<!-- ... promise was fulfilled ... -->
 						<!-- ... INIT-selected-lang ... -->
 						<div id='selected-language-btn' 
 							class:active-lang-select={dropdown_visible == true}
@@ -229,7 +225,9 @@
 								{/each}
 							</div>
 						{/if}
-					{/if}
+					{:catch error}
+					<!-- promise was rejected -->
+					{/await}
 				</div>
 			</div>
 		</nav>
@@ -244,7 +242,9 @@
 			</div>
 			<!-- ... language-change-dropdown-select ... -->
 			<div id='lang-container'>
-				{#if TRANSLATIONS_DATA != undefined}
+				{#await translation_promise}
+					<!-- promise is pending -->
+				{:then TRANSLATIONS_DATA}
 					<!-- ... INIT-selected-lang ... -->
 					<div id='selected-language-btn' 
 						class:active-lang-select={dropdown_visible == true}
@@ -286,7 +286,9 @@
 							{/each}
 						</div>
 					{/if}
-				{/if}
+				{:catch error}
+					<!-- promise was rejected -->
+				{/await}
 			</div>
 		</div>
 	</nav>

@@ -24,6 +24,18 @@ const config = {
         //         }
         //     }
         // }
+		// ... @apollo-client - issue FIX;
+		// ... https://github.com/apollographql/apollo-client/issues/8218
+		// ... https://discord.com/channels/457912077277855764/819723698415599626/821391561429745675
+		// ... https://github.com/FormidableLabs/urql/discussions/1664
+		// vite: {
+		// 	optimizeDeps: {
+		// 		exclude: [
+		// 			'@apollo/client/core',
+		// 			'@apollo/client',
+		// 		]
+		// 	}
+		// }
 	},
 };
 
