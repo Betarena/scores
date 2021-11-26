@@ -6,17 +6,17 @@
 <script lang="ts">
 	import { amp, browser, dev, mode, prerendering } from '$app/env';
 
-    import { langSelect } from '$lib/store/lang-select'
+  import { langSelect } from '$lib/store/lang-select'
 
 	import Footer from '$lib/components/footer/Footer.svelte'
 	import Header from '$lib/components/header/Header.svelte'
 
 	import '../app.css'
     
-    // ... kickstart the .localStorage();
-    if (browser) {
+  // ... kickstart the .localStorage();
+  if (browser) {
 		langSelect.useLocalStorage()
-    }
+  }
 </script>
 
 <!-- ===================
