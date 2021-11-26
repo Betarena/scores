@@ -104,7 +104,7 @@
 	// ... get the URL lang-value;
 	$: if (dev) console.debug('page', $page.params)
 	let url_Lang = $page.params.lang
-	if (url_Lang != undefined) selectLanguage(url_Lang)
+	if (browser && url_Lang != undefined) selectLanguage(url_Lang)
 	// .. update the user selected `.localStorage()`
 	function selectLanguage(lang: string) {
 		// ...
