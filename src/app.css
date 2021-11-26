@@ -383,6 +383,12 @@ GRID / COLUMN DISPLAY */
     display: grid;
     justify-content: center;
 }
+.column-start-grid-start {
+    display: grid;
+    justify-content: start;
+    width: 100%;
+    justify-items: start;
+}
 
 /* page dividers */
 
