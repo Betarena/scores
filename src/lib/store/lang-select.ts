@@ -16,7 +16,7 @@ function createLocalStore(key) {
         subscribe,
         set,
         update
-    } = writable("");
+    } = writable("")
 
     return {
         subscribe,
@@ -32,11 +32,14 @@ function createLocalStore(key) {
         */
         useLocalStorage: () => {
             // ...reset the writable to the localStorage if localStorage already exists,
-            const existing: string = localStorage.getItem(key);
+            const existing: string = localStorage.getItem(key)
             // ...
-            const data = existing ? existing : 'en';
+            const data = existing ? existing : 'en'
+            if (dev) console.info("data", data)
             // ...
-            set(data);
+            localStorage.setItem(key, data)
+            // ...
+            set(data)
         },
 
         /**
