@@ -3,8 +3,8 @@
  * ------------------
  * & methods; 
 */
-import type { NormalizedCacheObject } from '@apollo/client'
-import { ApolloClient, InMemoryCache } from '@apollo/client/core'
+import type { NormalizedCacheObject } from '@apollo/client/core/core.cjs'
+import { ApolloClient, InMemoryCache } from '@apollo/client/core/core.cjs'
 import { setClient } from 'svelte-apollo'
 
 /**
