@@ -77,7 +77,6 @@
         })
     })
 
-
 	// ... OTHER - drop-down menu-operators;
 	let dropdown_lang_visible: boolean = false
 	let dropdown_theme_visible: boolean = false
@@ -86,7 +85,7 @@
 	let dropdown_more_sports_menu: boolean = false
 
 	// ... DECLARATIONS of STATE;
-	let selected_sports: string = undefined;
+	let selected_sports: string = undefined
 
 	/**
 	 * Description: & [REACTIVITY]
@@ -822,7 +821,6 @@
 <style>
 	header {
         background-color: #292929;
-		padding: 0 16px;
 		height: 128px;
 		position: relative;
 	}
@@ -1061,8 +1059,7 @@
     @media screen and (min-width: 768px) {
 		
 		header #top-header {
-			padding: 14px 34
-			px;
+			padding: 14px 34px;
 		} 
 		header #bottom-header {
 			padding: 6px 34px;
