@@ -77,7 +77,6 @@
         })
     })
 
-
 	// ... OTHER - drop-down menu-operators;
 	let dropdown_lang_visible: boolean = false
 	let dropdown_theme_visible: boolean = false
@@ -86,7 +85,7 @@
 	let dropdown_more_sports_menu: boolean = false
 
 	// ... DECLARATIONS of STATE;
-	let selected_sports: string = undefined;
+	let selected_sports: string = undefined
 
 	/**
 	 * Description: & [REACTIVITY]
