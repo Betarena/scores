@@ -1059,16 +1059,15 @@
 	/* 
     RESPONSIVE FOR TABLET (&+) [768px] */
     @media screen and (min-width: 768px) {
-		header {
-			padding: 0 34px;
+		
+		header #top-header {
+			padding: 14px 34
+			px;
 		} 
-
-		header #header-inner #top-header {
-			padding: 14px 0;
-		} header #header-inner #bottom-header {
-			padding: 6px 0;
+		header #bottom-header {
+			padding: 6px 34px;
 		}
-			
+
         #burger-menu {
 			margin-right: 24px;
 		}
@@ -1077,14 +1076,6 @@
 	/* 
     RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
     @media screen and (min-width: 1024px) {
-
-		header #top-header {
-			padding: 14px 34px;
-		} 
-
-		header #bottom-header {
-			padding: 6px 34px;
-		}
 
 		/* 
 		desktop hover effects */
