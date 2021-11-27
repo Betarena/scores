@@ -821,7 +821,6 @@
 <style>
 	header {
         background-color: #292929;
-		padding: 0 16px;
 		height: 128px;
 		position: relative;
 	}
@@ -1060,8 +1059,7 @@
     @media screen and (min-width: 768px) {
 		
 		header #top-header {
-			padding: 14px 34
-			px;
+			padding: 14px 34px;
 		} 
 		header #bottom-header {
 			padding: 6px 34px;
