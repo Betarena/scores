@@ -10,17 +10,19 @@ import { gql } from 'graphql-request'
 export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
     query GET_WEBSITE_ALL_LANG_TRANSLATIONS {
         scores_header_translations {
+            theme_options
+            theme
+            sports
+            sign_in
+            odds_type
+            odds
+            more_sports
+            lang
+            homepage
             betting_tips_link
             bookmakers
             bookmakers_countries
             content_platform_link
-            lang
-            odds
-            odds_type
-            sign_in
-            sports
-            theme
-            theme_options
         }
     }
 `;

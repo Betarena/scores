@@ -6,7 +6,6 @@
 <script lang="ts">
 	import { amp, browser, dev, mode, prerendering } from '$app/env';
 	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation';
-
 	import { onMount } from "svelte"
 	import { page } from '$app/stores'
 
@@ -18,7 +17,12 @@
 	// ... sub-header-component;
 	import close from './assets/close.svg'
 	import arrow_down from './assets/arrow-down.svg'
+	import arrow_down_fade from './assets/arrow-down-fade.svg'
 	import arrow_up from './assets/arrow-up.svg'
+	import arrow_up_fade from './assets/arrow-up-fade.svg'
+	import light_icon_theme from './assets/theme-light-icon.svg'
+	import menu_sports_icon from './assets/menu_sports_icon.svg'
+
 	import { fade, fly } from 'svelte/transition';
 	import { GET_WEBSITE_ALL_LANG_TRANSLATIONS } from '$lib/graphql/query'
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL'
@@ -78,8 +82,10 @@
 	let dropdown_theme_visible: boolean = false
 	let dropdown_odds_type_visible: boolean = false
 	let dropdown_bookmakers_visible: boolean = false
-	$: if (dev) console.debug('dropdown_lang_visible', dropdown_lang_visible)
+	let dropdown_more_sports_menu: boolean = false
 
+	// ... DECLARATIONS of STATE;
+	let selected_sports: string = undefined
 
 	/**
 	 * Description: & [REACTIVITY]
@@ -101,16 +107,19 @@
 	// ... TRIGGER Query-Req-Res
 	let translation_promise = getTranslations()
 
+
 	/**
 	 * Description
 	 * ~~~~~~~~~~~~~~~~~~~
 	 * ... update the navigation page URL dynamically;
 	*/
 	// ...
-	$: if (dev) console.debug('page', $page.params)
+	$: if (dev) console.debug('-- page --', $page.params)
 	// ... get the URL lang-value;
 	let url_Lang = $page.params.lang
-	if (browser && url_Lang != undefined) selectLanguage(url_Lang)
+	if (browser && url_Lang != undefined) {
+		selectLanguage(url_Lang)
+	}
 	// .. update the user selected `.localStorage()`
 	function selectLanguage(lang: string) {
 		// ...
@@ -135,10 +144,14 @@
 		<!-- ... identify the correct translation via IF -->
 		{#each TRANSLATIONS_DATA.scores_header_translations as lang_obj}
 			{#if lang_obj.lang == $langSelect}
-				<!-- ... inner header - cross platform ... -->
-				<div in:fade={{ duration: 500 }} out:fade id='header-inner'class='row-space-out'>
+				<!-- ... header TOP NAVBAR section ... -->
+				<div id='top-header'
+					class='row-space-out'
+					in:fade={{ duration: 500 }} out:fade 
+				>
 					<!-- ... 1st half of the header nav ... -->
 					<div class='row-space-start' style='width: fit-content;'>
+
 						<!-- ... menu-burger-bar ... [CONDITIONAL - ONLY TABLET & MOBILE] -->
 						{#if tabletExclusive}
 							<img
@@ -241,27 +254,38 @@
 						{/if}
 						
 					</div>
-					
+
 					<!-- ... 2nd half of the header nav ... -->
 					<div class='row-space-start' style='width: fit-content;'>
 						{#if !tabletExclusive}
+
 							<!-- ... theme-options ... -->
-							<div class="dropdown-opt-box row-space-start"
+							<div id='theme-opt-container'
+								class="dropdown-opt-box row-space-start"
 								on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 								>
+								<!-- ... name of the container-opt ... -->
 								<div class='m-r-10'>
-									<p class='color-grey s-12'>
+									<p class='color-grey s-12 m-b-5'>
 										{ lang_obj.theme }
 									</p>
-									<p class='color-white s-14'>
-										{ lang_obj.theme_options[0] }
-									</p>
+									<div class='row-space-start'>
+										<img 
+											class="m-r-5"
+											src={light_icon_theme}
+											alt="${lang_obj.bookmakers_countries[0][1]}"
+											width="16px" height="16px"
+										/>
+										<p class='color-white s-14'>
+											{ lang_obj.theme_options[0] }
+										</p>
+									</div>
 								</div>
 								<!-- ... arrow down [hidden-menu] ... -->
 								{#if !dropdown_theme_visible}
 									<img 
-										src={arrow_down} 
-										alt='arrow_down'
+										src={arrow_down_fade} 
+										alt='arrow_down_fade'
 										width="16px" height="16px"
 									/>
 								{:else}
@@ -271,14 +295,32 @@
 										width="16px" height="16px"
 									/>
 								{/if}
+								<!-- ... INIT-HIDDEN-dropdown-theme-select ... -->
+								{#if dropdown_theme_visible}
+									<div id='theme-dropdown-menu'
+										transition:fly
+										>
+										{#each lang_obj.theme_options as theme}
+											<div class='theme-opt-box'
+												on:click={() => dropdown_theme_visible = false}
+												>
+												<p class='color-white s-14'>
+													{ theme }
+												</p>
+											</div>
+										{/each}
+									</div>
+								{/if}
 							</div>
 
 							<!-- ... odds-type ... -->
-							<div class="dropdown-opt-box row-space-start"
+							<div id='odds-type-container'
+								class="dropdown-opt-box row-space-start"
 								on:click={() => dropdown_odds_type_visible = !dropdown_odds_type_visible}
 								>
+								<!-- ... name of the container-opt ... -->
 								<div class='m-r-10'>
-									<p class='color-grey s-12'>
+									<p class='color-grey s-12 m-b-5'>
 										{ lang_obj.odds }
 									</p>
 									<p class='color-white s-14'>
@@ -288,8 +330,8 @@
 								<!-- ... arrow down [hidden-menu] ... -->
 								{#if !dropdown_odds_type_visible}
 									<img 
-										src={arrow_down} 
-										alt='arrow_down'
+										src={arrow_down_fade} 
+										alt='arrow_down_fade'
 										width="16px" height="16px"
 									/>
 								{:else}
@@ -299,25 +341,51 @@
 										width="16px" height="16px"
 									/>
 								{/if}
+								<!-- ... INIT-HIDDEN-dropdown-odds-type ... -->
+								{#if dropdown_odds_type_visible}
+									<div id='odds-type-dropdown-menu'
+										transition:fly
+										>
+										{#each lang_obj.odds_type as odd}
+											<div class='theme-opt-box'
+												on:click={() => dropdown_odds_type_visible = false}
+												>
+												<p class='color-white s-14'>
+													{ odd }
+												</p>
+											</div>
+										{/each}
+									</div>
+								{/if}
 							</div>
 
 							<!-- ... bookmakers-type ... -->
-							<div class="dropdown-opt-box row-space-start m-r-30"
+							<div id='bookmakers-type-container' 
+								class="dropdown-opt-box row-space-start m-r-30"
 								on:click={() => dropdown_bookmakers_visible = !dropdown_bookmakers_visible}
 								>
+								<!-- ... name of the container-opt ... -->
 								<div class='m-r-10'>
-									<p class='color-grey s-12'>
+									<p class='color-grey s-12 m-b-5'>
 										{ lang_obj.bookmakers }
 									</p>
-									<p class='color-white s-14'>
-										{ lang_obj.bookmakers_countries[0] }
-									</p>
+									<div class='row-space-start'>
+										<img 
+											class='country-flag m-r-5'
+											src="https://betarena.com/images/flags/${lang_obj.bookmakers_countries[0][0]}.svg"
+											alt="${lang_obj.bookmakers_countries[0][1]}"
+											width="20px" height="14px"
+										/>
+										<p class='color-white s-14'>
+											{ lang_obj.bookmakers_countries[0][1] }
+										</p>
+									</div>
 								</div>
 								<!-- ... arrow down [hidden-menu] ... -->
 								{#if !dropdown_bookmakers_visible}
 									<img 
-										src={arrow_down} 
-										alt='arrow_down'
+										src={arrow_down_fade} 
+										alt='arrow_down_fade'
 										width="16px" height="16px"
 									/>
 								{:else}
@@ -326,6 +394,28 @@
 										alt='arrow_up'
 										width="16px" height="16px"
 									/>
+								{/if}
+								<!-- ... INIT-HIDDEN-dropdown-bookmakers-type ... -->
+								{#if dropdown_bookmakers_visible}
+									<div id='bookmakers-type-dropdown-menu'
+										transition:fly
+										>
+										{#each lang_obj.bookmakers_countries as country}
+											<div class='theme-opt-box row-space-start' 
+												on:click={() => dropdown_bookmakers_visible = false}
+												>
+												<img 
+													class='country-flag m-r-10'
+													src="https://betarena.com/images/flags/${country[0]}.svg"
+													alt="${country[1]}"
+													width="20px" height="14px"
+												/>
+												<p class='color-white s-14'>
+													{ country[1] }
+												</p>
+											</div>
+										{/each}
+									</div>
 								{/if}
 							</div>
 						{/if}
@@ -347,6 +437,98 @@
 								</p>
 							</button>
 						{/if}
+
+					</div>
+				</div>
+
+				<!-- ... bottom-SPORTS-navbar-values ... -->
+				<div id='bottom-header'
+					class='row-space-out'
+					in:fade={{ duration: 500 }} out:fade 
+				>
+					<div id='bottom-header-inner' 
+						class='row-space-out' 
+						style="width: fit-content;"
+						>
+						<!-- ... sports-btn values ... -->
+						<div class='row-space-out' style="width: fit-content;">
+							{#each {length: 7} as _, i}
+								<button class='sports-btn m-r-10'
+									on:click={() => selected_sports = lang_obj.sports[i]}
+									class:selected-sports={selected_sports == lang_obj.sports[i]}>
+									<img 
+										class="m-r-10"
+										src="" 
+										alt=""
+										width="20px" height="20px"
+									>
+									<p class='color-white s-14 m-r-10'> 
+										{ lang_obj.sports[i] }
+									</p>
+									<p class='color-white s-14 sport-counter'> 
+										123
+									</p>
+								</button>
+							{/each}
+						</div>
+						
+						<!-- ... more sports button container -->
+						<div id='more-sports-menu-container'>
+							<!-- ... menu-sports-btn ... -->
+							<button id='more-sports-menu'
+								on:click={() => dropdown_more_sports_menu = !dropdown_more_sports_menu}>
+								<img 
+									class="m-r-10"
+									src={ menu_sports_icon }
+									alt='menu_btn'
+									width="20px" height="20px"
+								>
+								<p class='color-white s-14 m-r-10'> 
+									{ lang_obj.more_sports }
+								</p>
+								<!-- ... arrow down [hidden-menu] ... -->
+								{#if !dropdown_more_sports_menu}
+									<img 
+										src={arrow_down_fade} 
+										alt='arrow_down_fade'
+										width="20px" height="20px"
+									>
+								{:else}
+									<img 
+										src={arrow_up} 
+										alt='arrow_up'
+										width="20px" height="20px"
+									/>
+								{/if}
+							</button>
+							<!-- ... INIT-HIDDEN-dropdown-more-sports-menu ... -->
+							{#if dropdown_more_sports_menu}
+								<div id='more-sports-dropdown-menu'
+									transition:fly
+									>
+									{#each lang_obj.sports as sport}
+										<button class='sports-btn row-space-out'
+											on:click={() => dropdown_more_sports_menu = false}
+											>
+											<div class='row-space-out' style='width: fit-content;'>
+												<img 
+													class="m-r-5"
+													src="" 
+													alt=""
+													width="20px" height="20px"
+												>
+												<p class='color-white s-14 m-r-10'> 
+													{ sport }
+												</p>
+											</div>
+											<p class='color-white s-14 sport-counter-dark'> 
+												123
+											</p>
+										</button>
+									{/each}
+								</div>
+							{/if}
+						</div>
 
 					</div>
 				</div>
@@ -428,27 +610,195 @@
 								</div>
 								
 								<!-- ... menu-nav-action-row-START -->
-								<div class='column-start-grid'
+								<div class='column-start-grid-start'
 									class:m-t-25={tabletExclusive}
 									class:m-t-15={mobileExclusive}
 									>
+									<!-- ... homepage ... -->
 									<div class='side-nav-row'>
 										<p class="color-white s-14">
-											Homepage
+											{ lang_obj.homepage }
 										</p>
 									</div>
+
+									<!-- ... latest-news ... -->
 									<div class='side-nav-row'>
 										<p class="color-white s-14">
 											{ lang_obj.content_platform_link }
 										</p>
 									</div>
+
+									<!-- ... betting-tips ... -->
 									<div class='side-nav-row'>
 										<p class="color-white s-14">
 											{ lang_obj.betting_tips_link }
 										</p>
 									</div>
-								</div>
 
+									<!-- ... theme-options ... -->
+									<div class='side-nav-dropdown m-t-30 m-b-25'
+										on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
+										>
+										<!-- ... name of the container-opt ... -->
+										<div class="m-b-15">
+											<p class='color-grey s-12 m-b-5'>
+												{ lang_obj.theme }
+											</p>
+											<div class='row-space-out'>
+												<div class='row-space-start'>
+													<img 
+														class="m-r-5"
+														src={light_icon_theme}
+														alt="${lang_obj.bookmakers_countries[0][1]}"
+														width="16px" height="16px"
+													/>
+													<p class='color-white s-14'>
+														{ lang_obj.theme_options[0] }
+													</p>
+												</div>
+												<!-- ... arrow down [hidden-menu] ... -->
+												{#if !dropdown_theme_visible}
+													<img 
+														src={arrow_down_fade} 
+														alt='arrow_down_fade'
+														width="16px" height="16px"
+													/>
+												{:else}
+													<img 
+														src={arrow_up_fade} 
+														alt='arrow_up_fade'
+														width="16px" height="16px"
+													/>
+												{/if}
+											</div>
+
+										</div>
+										<!-- ... INIT-HIDDEN-dropdown-theme-select ... -->
+										{#if dropdown_theme_visible}
+											<div transition:fly
+												>
+												{#each lang_obj.theme_options as theme}
+													<div class='side-nav-dropdown-opt'
+														on:click={() => dropdown_theme_visible = false}
+														>
+														<p class='color-white s-14'>
+															{ theme }
+														</p>
+													</div>
+												{/each}
+											</div>
+										{/if}
+									</div>
+
+									<!-- ... odds-type ... -->
+									<div class='side-nav-dropdown m-b-25'
+										on:click={() => dropdown_odds_type_visible = !dropdown_odds_type_visible}
+										>
+										<!-- ... name of the container-opt ... -->
+										<div class="m-b-15">
+											<p class='color-grey s-12 m-b-5'>
+												{ lang_obj.odds }
+											</p>
+											<div class='row-space-out'>
+												<p class='color-white s-14'>
+													{ lang_obj.odds_type[0] }
+												</p>
+												<!-- ... arrow down [hidden-menu] ... -->
+												{#if !dropdown_odds_type_visible}
+													<img 
+														src={arrow_down_fade} 
+														alt='arrow_down_fade'
+														width="16px" height="16px"
+													/>
+												{:else}
+													<img 
+														src={arrow_up_fade} 
+														alt='arrow_up_fade'
+														width="16px" height="16px"
+													/>
+												{/if}
+											</div>
+
+										</div>
+										<!-- ... INIT-HIDDEN-dropdown-theme-select ... -->
+										{#if dropdown_odds_type_visible}
+											<div transition:fly
+												>
+												{#each lang_obj.odds_type as odd}
+													<div class='side-nav-dropdown-opt'
+														on:click={() => dropdown_odds_type_visible = false}
+														>
+														<p class='color-white s-14'>
+															{ odd }
+														</p>
+													</div>
+												{/each}
+											</div>
+										{/if}
+									</div>
+
+									<!-- ... bookmakers-type ... -->
+									<div class='side-nav-dropdown m-b-25'
+										on:click={() => dropdown_bookmakers_visible = !dropdown_bookmakers_visible}
+										>
+										<!-- ... name of the container-opt ... -->
+										<div class="m-b-15">
+											<p class='color-grey s-12 m-b-5'>
+												{ lang_obj.bookmakers }
+											</p>
+											<div class='row-space-out'>
+												<div class='row-space-start'>
+													<img 
+														class='country-flag m-r-5'
+														src="https://betarena.com/images/flags/${lang_obj.bookmakers_countries[0][0]}.svg"
+														alt="${lang_obj.bookmakers_countries[0][1]}"
+														width="20px" height="14px"
+													/>
+													<p class='color-white s-14'>
+														{ lang_obj.bookmakers_countries[0][1] }
+													</p>
+												</div>
+												<!-- ... arrow down [hidden-menu] ... -->
+												{#if !dropdown_bookmakers_visible}
+													<img 
+														src={arrow_down_fade} 
+														alt='arrow_down_fade'
+														width="16px" height="16px"
+													/>
+												{:else}
+													<img 
+														src={arrow_up_fade} 
+														alt='arrow_up_fade'
+														width="16px" height="16px"
+													/>
+												{/if}
+											</div>
+
+										</div>
+										<!-- ... INIT-HIDDEN-dropdown-theme-select ... -->
+										{#if dropdown_bookmakers_visible}
+											<div transition:fly
+												>
+												{#each lang_obj.bookmakers_countries as country}
+													<div class='side-nav-dropdown-opt row-space-start' 
+														on:click={() => dropdown_bookmakers_visible = false}
+														>
+														<img 
+															class='country-flag m-r-10'
+															src="https://betarena.com/images/flags/${country[0]}.svg"
+															alt="${country[1]}"
+															width="20px" height="14px"
+														/>
+														<p class='color-white s-14'>
+															{ country[1] }
+														</p>
+													</div>
+												{/each}
+											</div>
+										{/if}
+									</div>
+									<!-- ... END OF SIDE-NAV-MENU ... -->
+								</div>
 							</div>
 						</nav>
 					{/if}
@@ -458,33 +808,69 @@
 	
 	{:catch error}
 		<!-- promise was rejected -->
+		<p>{error}</p>
 
 	{/await}
 </header>
 
 <!-- ===================
 	COMPONENT STYLE
+	[MOBILE FIRST]
 =================== -->
 
 <style>
 	header {
         background-color: #292929;
-		height: 72px;
-		padding: 14px 16px;
+		padding: 0 16px;
+		height: 128px;
+		position: relative;
 	}
 
-	/* ... critical + essential */
-	header #header-inner {
+	/* 
+	top-header-betarena-brand & bottom-header */
+	header #top-header,
+	header #bottom-header {
 		max-width: 1378px;
 		position: absolute;
-    	padding: inherit;
+		width: inherit;
 	}
 
+	/* 
+	 */
+	header #top-header {
+		padding: 24px 16px;
+		height: 72px !important;
+		top: 0;
+	} 
+
+	/* 
+	bottom-header-sports-nav */
+	header #bottom-header {
+		padding: 6px 16px;
+		height: 56px !important;
+		bottom: 0;
+		overflow: hidden;
+	} header #bottom-header-inner::-webkit-scrollbar {
+		/* Hide scrollbar for Chrome, Safari and Opera */
+		display: none;
+	} header #bottom-header-inner {
+		/* width: 100%; */
+		overflow-x: scroll;
+		overflow-y: hidden;
+		/* Hide scrollbar for IE, Edge and Firefox */
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+
+	/* 
+	[MOBILE-ONLY] */
 	#burger-menu {
 		margin-right: 16.15px;
 	}
 
-	/* ... nav-bar-navigational-link ... */
+	/* ... 
+	[MOBILE + TABLET] @ < 768px
+	SIDE-NAV-BAR-navigational-link ... */
 	nav {
 		background-color: #292929;
 		height: 100vh;
@@ -496,16 +882,37 @@
 		bottom: 0;
 		right: 0;
 		left: 0;
+		overflow-y: scroll;
+		/* Hide scrollbar for IE, Edge and Firefox */
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+	nav::-webkit-scrollbar {
+		/* Hide scrollbar for Chrome, Safari and Opera */
+		display: none;
 	}
 	nav.tablet-exclusive {
 		padding: 24px 34px;
 		max-width: 374px !important;
 	}
 	nav .side-nav-row {
+		width: 100%;
 		padding: 12px 0;
+	} nav .side-nav-row:hover p {
+		color: #F5620F;
+	}
+	nav .side-nav-dropdown {
+		width: 100%;
+		box-shadow: inset 0px -1px 0px #616161;
+	}
+	nav .side-nav-dropdown-opt {
+		width: 100%;
+		padding: 9.5px 0;
+	} nav .side-nav-dropdown-opt p {
+		font-weight: 400;
 	}
 
-	/* 
+		/* 
 	LANG SELECT CONTAINER */
 	#lang-container {
 		position: relative;
@@ -543,6 +950,45 @@
 		box-shadow: inset 0px -1px 0px #3C3C3C;
 	}
 
+	/* 
+	more-sports-container-menu */
+	#more-sports-menu-container {
+		position: relative;
+	} #more-sports-dropdown-menu {
+		position: absolute;
+		top: 100%;
+		right: 0%;
+		margin-top: 5px;
+		background: #4B4B4B;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 8px;
+		overflow: hidden;
+		z-index: 2000;
+		/* height: 244px; */
+		width: 656px;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 12px;
+		padding: 16px;
+		justify-items: start;
+	} #more-sports-dropdown-menu .sports-btn {
+		background: #4B4B4B;
+		border: 1px solid #8C8C8C !important;
+		box-sizing: border-box;
+		border-radius: 29px;
+		width: 200px;
+		height: 44px;
+		padding: 8.5px 10px 8.5px 12.5px;
+	} #more-sports-dropdown-menu .sport-counter-dark {
+		background-color: #292929;
+		padding: 3px 8px;
+		border-radius: 20px;
+	} #more-sports-dropdown-menu .sports-btn:hover {
+		background: #292929;
+	} #more-sports-dropdown-menu .sports-btn:hover .sport-counter-dark {
+		background: #4B4B4B;
+	}
+
 	/*
 	=============
 	BUTTONS 
@@ -568,6 +1014,31 @@
 		color: #F5620F;
 	}
 
+	button.sports-btn {
+		padding: 10.5px 10px 9.5px 16px;
+		background: #292929;
+		border: 1px solid #4B4B4B !important;
+		box-sizing: border-box;
+		border-radius: 29px;
+		height: 44px;
+	} button.sports-btn.selected-sports {
+		border: 1px solid #F5620F !important;
+	} button.sports-btn .sport-counter {
+		padding: 3px 8px;
+		background: #4B4B4B;
+		border-radius: 20px;
+	}
+
+	button#more-sports-menu {
+		padding: 12.5px 16px;
+		background: transparent;
+		border: 1px solid #4B4B4B !important;
+		box-sizing: border-box;
+		border-radius: 29px;
+	} button#more-sports-menu:hover {
+		border: 1px solid #FFFFFF !important;
+	}
+
 	/* 
 	OPT-BOX */
 	.dropdown-opt-box {
@@ -578,20 +1049,100 @@
 		cursor: pointer;
 	}
 
+	img.country-flag {
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+		background-blend-mode: overlay;
+		border-radius: 2px;
+	}
+
 	/* 
     RESPONSIVE FOR TABLET (&+) [768px] */
     @media screen and (min-width: 768px) {
-		header {
-			padding: 14px 34px;
-		} 
-
-		header #header-inner {
-		position: absolute;
-    	padding: inherit;
-	}
 		
+		header #top-header {
+			padding: 14px 34
+			px;
+		} 
+		header #bottom-header {
+			padding: 6px 34px;
+		}
+
         #burger-menu {
 			margin-right: 24px;
 		}
     }
+
+	/* 
+    RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+    @media screen and (min-width: 1024px) {
+
+		/* 
+		desktop hover effects */
+		button.sports-btn:hover {
+			border: 1px solid #FFFFFF !important;
+		}
+
+		/*
+		theme-options-container */
+		#theme-opt-container,
+		#odds-type-container {
+			position: relative;
+		} #theme-dropdown-menu,
+		  #odds-type-dropdown-menu {
+			position: absolute;
+			top: 100%;
+			left: 0%;
+			margin-top: 5px;
+			background: #292929;
+			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+			border-radius: 4px;
+			overflow: hidden;
+			z-index: 2000;
+			/* height: 80px; */
+			width: 168px;
+		} #theme-dropdown-menu .theme-opt-box,
+		  #odds-type-dropdown-menu .theme-opt-box {
+			padding: 9.5px 16px;
+			box-shadow: inset 0px -1px 0px #3C3C3C;
+			background: #4B4B4B;
+			height: 40px;
+		} #theme-dropdown-menu .theme-opt-box:hover p,
+		  #odds-type-dropdown-menu .theme-opt-box:hover p {
+			color: #F5620F;
+		}
+
+		/* 
+		bookmakers-options-container */
+		#bookmakers-type-container {
+			position: relative;
+		} #bookmakers-type-dropdown-menu {
+			position: absolute;
+			top: 100%;
+			right: 0%;
+			margin-top: 5px;
+			background: #4B4B4B;
+			box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+			border-radius: 8px;
+			overflow: hidden;
+			z-index: 2000;
+			height: 320px;
+			width: 620px;
+			display: grid;
+			grid-template-columns: 1fr 1fr 1fr;
+			gap: 5px 20px;
+			padding: 8px 12px;
+		} #bookmakers-type-dropdown-menu .theme-opt-box {
+			height: 40px;
+			padding: 13px 8px;
+			box-shadow: inset 0px -1px 0px #3C3C3C;
+			background: #4B4B4B;
+			position: relative;
+		} #bookmakers-type-dropdown-menu .theme-opt-box:hover {
+			background: #292929;
+			border-radius: 4px;
+		}
+
+	}
+
+
 </style>

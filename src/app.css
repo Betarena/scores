@@ -245,6 +245,9 @@ right-margins
 .m-r-10 {
     margin-right: 10px;
 }
+.m-r-15 {
+    margin-right: 15px;
+}
 .m-r-20 {
     margin-right: 20px;
 }
@@ -382,6 +385,12 @@ GRID / COLUMN DISPLAY */
 .column-start-grid {
     display: grid;
     justify-content: center;
+}
+.column-start-grid-start {
+    display: grid;
+    width: 100%;
+    /* justify-content: start; */
+    justify-items: start;
 }
 
 /* page dividers */

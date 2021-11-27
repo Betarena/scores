@@ -4,7 +4,7 @@
 export interface Header_Translation {
     betting_tips_link: string
     bookmakers: string
-    bookmakers_countries: Array < string >
+    bookmakers_countries: Array < Array < string >>
     content_platform_link: string
     lang: string
     odds: string
@@ -13,6 +13,8 @@ export interface Header_Translation {
     sports: Array < string >
     theme: string
     theme_options: Array < string >
+    homepage: string
+    more_sports: string
 }
 
 /**
