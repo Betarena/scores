@@ -10,7 +10,7 @@ export interface Header_Translation {
     odds: string
     odds_type: Array < string >
     sign_in: string
-    sports: Array < string >
+    sports: Array < Array < string >>
     theme: string
     theme_options: Array < string >
     homepage: string
