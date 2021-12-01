@@ -45,6 +45,7 @@
 	let mobileExclusive: boolean = true
 	let tabletExclusive: boolean = true
     let mobileNavToggleMenu: boolean = false
+	let mobileExclusiveMoreSports: boolean = false
 
     onMount(async() => {
         var wInit = document.documentElement.clientWidth
@@ -83,6 +84,15 @@
 	let dropdown_odds_type_visible: boolean = false
 	let dropdown_bookmakers_visible: boolean = false
 	let dropdown_more_sports_menu: boolean = false
+
+	let top_nav_dropdown_is_selected: boolean = false
+
+	// ... CLOSE ALL DROPDOWNS METHOD;
+	function closeAllDropdowns() {	
+		dropdown_theme_visible = false
+		dropdown_odds_type_visible= false
+		dropdown_bookmakers_visible= false
+	}
 
 	// ... DECLARATIONS of STATE;
 	let selected_sports: string = undefined
@@ -136,7 +146,15 @@
 	COMPONENT HTML
 =================== -->
 
-<header in:fade class='column-space-center'>
+<!-- ... area-outside-for-close-click-DESKTOP-menu -->
+{#if dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible}
+	<div id='background-area-close' 
+		on:click={() => closeAllDropdowns()}
+	/> 
+{/if}
+
+
+<header class='column-space-center'>
 	{#await translation_promise}
 		<!-- ... promise is pending ... -->
 
@@ -147,7 +165,6 @@
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id='top-header'
 					class='row-space-out'
-					in:fade={{ duration: 500 }} out:fade 
 				>
 					<!-- ... 1st half of the header nav ... -->
 					<div class='row-space-start' style='width: fit-content;'>
@@ -343,6 +360,7 @@
 								{/if}
 								<!-- ... INIT-HIDDEN-dropdown-odds-type ... -->
 								{#if dropdown_odds_type_visible}
+									<!-- ... dropdown-menu ... -->
 									<div id='odds-type-dropdown-menu'
 										transition:fly
 										>
@@ -431,11 +449,9 @@
 
 						{#if mobileExclusive}
 							<!-- ... betting-tips ... -->
-							<button class='btn-main'>
-								<p class='color-white s-14'> 
-									{ lang_obj.betting_tips_link } 
-								</p>
-							</button>
+							<p class='color-white s-14'> 
+								{ lang_obj.betting_tips_link } 
+							</p>
 						{/if}
 
 					</div>
@@ -444,26 +460,27 @@
 				<!-- ... bottom-SPORTS-navbar-values ... -->
 				<div id='bottom-header'
 					class='row-space-out'
-					in:fade={{ duration: 500 }} out:fade 
-				>
+					>
+
+					<!-- ... sliding-container ... -->
 					<div id='bottom-header-inner' 
-						class='row-space-out' 
+						class='row-space-out m-r-10' 
 						style="width: fit-content;"
 						>
 						<!-- ... sports-btn values ... -->
 						<div class='row-space-out' style="width: fit-content;">
 							{#each {length: 7} as _, i}
 								<button class='sports-btn m-r-10'
-									on:click={() => selected_sports = lang_obj.sports[i]}
-									class:selected-sports={selected_sports == lang_obj.sports[i]}>
+									on:click={() => selected_sports = lang_obj.sports[i][0]}
+									class:selected-sports={selected_sports == lang_obj.sports[i][0]}>
 									<img 
 										class="m-r-10"
-										src="" 
-										alt=""
+										src={`/assets/svg/sport-icon/${lang_obj.sports[i][0].toLocaleLowerCase()}.svg`}
+										alt="${lang_obj.sports[i][0]}-img"
 										width="20px" height="20px"
 									>
 									<p class='color-white s-14 m-r-10'> 
-										{ lang_obj.sports[i] }
+										{ lang_obj.sports[i][1] }
 									</p>
 									<p class='color-white s-14 sport-counter'> 
 										123
@@ -471,9 +488,12 @@
 								</button>
 							{/each}
 						</div>
-						
-						<!-- ... more sports button container -->
-						<div id='more-sports-menu-container'>
+					</div>
+					
+					<!-- ... more sports button container menu ... -->
+					<div id='more-sports-menu-container'>
+						<!-- ... menu-more-sports-btn-DESKTOP + TABLET -->
+						{#if !mobileExclusive}
 							<!-- ... menu-sports-btn ... -->
 							<button id='more-sports-menu'
 								on:click={() => dropdown_more_sports_menu = !dropdown_more_sports_menu}>
@@ -501,39 +521,47 @@
 									/>
 								{/if}
 							</button>
-							<!-- ... INIT-HIDDEN-dropdown-more-sports-menu ... -->
-							{#if dropdown_more_sports_menu}
-								<div id='more-sports-dropdown-menu'
-									transition:fly
-									>
-									{#each lang_obj.sports as sport}
-										<button class='sports-btn row-space-out'
-											on:click={() => dropdown_more_sports_menu = false}
+						<!-- ... menu-more-sports-btn-mobile -->
+						{:else}
+							<!-- ... menu-sports-btn ... -->
+							<button id='more-sports-menu'
+								on:click={() => mobileExclusiveMoreSports = !mobileExclusiveMoreSports}>
+								<p class='color-white s-14'> 
+									{ lang_obj.more_sports }
+								</p>
+							</button>
+						{/if}
+						<!-- ... INIT-HIDDEN-dropdown-more-sports-menu ... -->
+						{#if dropdown_more_sports_menu && !mobileExclusive}
+							<div id='more-sports-dropdown-menu'
+								transition:fly
+								>
+								{#each lang_obj.sports as sport}
+									<button class='sports-btn row-space-out'
+										on:click={() => dropdown_more_sports_menu = false}
+										>
+										<div class='row-space-out' style='width: fit-content;'>
+											<img 
+												class="m-r-5"
+												src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+												alt="${sport[0]}-img"
+												width="20px" height="20px"
 											>
-											<div class='row-space-out' style='width: fit-content;'>
-												<img 
-													class="m-r-5"
-													src="" 
-													alt=""
-													width="20px" height="20px"
-												>
-												<p class='color-white s-14 m-r-10'> 
-													{ sport }
-												</p>
-											</div>
-											<p class='color-white s-14 sport-counter-dark'> 
-												123
+											<p class='color-white s-14 m-r-10'> 
+												{ sport[1] }
 											</p>
-										</button>
-									{/each}
-								</div>
-							{/if}
-						</div>
-
+										</div>
+										<p class='color-white s-14 sport-counter-dark'> 
+											123
+										</p>
+									</button>
+								{/each}
+							</div>
+						{/if}
 					</div>
 				</div>
 
-				<!-- ... side-bar [MOBILE + TABLET] -->
+				<!-- ... side-bar-[TOP-NAV-BAR] [MOBILE + TABLET] -->
 				{#if (tabletExclusive || mobileExclusive)}
 					{#if mobileNavToggleMenu}
 						<nav
@@ -803,13 +831,65 @@
 						</nav>
 					{/if}
 				{/if}
+
+				<!-- ... side-bar-[BOTTOM-SPORT-BAR] [MOBILE] -->
+				{#if mobileExclusive}
+					{#if mobileExclusiveMoreSports}
+						<nav
+							id='mobile-exclusive-sports-menu'
+							in:fly={{ x: 200, duration: 500 }}
+							out:fly={{ x: 200, duration: 500 }}
+							>
+							<div>
+								<!-- ... top-action-row -->
+								<div class='row-space-out'>
+									<!-- .. title ... -->
+									<p class='s-20 color-white'>
+										Sports
+									</p>
+
+									<!-- ... close-side-nav ... -->
+									<img 
+										src={close} 
+										alt='close-icon'
+										width='24px' height='24px'
+										on:click={() => mobileExclusiveMoreSports = false}
+									/>
+								</div>
+
+								<!-- ... sports-list-grid ... -->
+								<div id='mobile-sports-grid' 
+									class='column-start-grid-start m-t-25'
+									>
+									{#each lang_obj.sports as sport}
+										<button class='sports-btn row-space-out'>
+											<div class='row-space-out' style='width: fit-content;'>
+												<img 
+													class="m-r-10"
+													src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+													alt="${sport[0]}-img"
+													width="20px" height="20px"
+												>
+												<p class='color-white s-14 m-r-10'> 
+													{ sport[1] }
+												</p>
+											</div>
+											<p class='color-white s-14 sport-counter'> 
+												123
+											</p>
+										</button>
+									{/each}
+								</div>
+							</div>
+						</nav>
+					{/if}
+				{/if}
 			{/if}
 		{/each}
 	
 	{:catch error}
 		<!-- promise was rejected -->
 		<p>{error}</p>
-
 	{/await}
 </header>
 
@@ -829,15 +909,13 @@
 	top-header-betarena-brand & bottom-header */
 	header #top-header,
 	header #bottom-header {
-		max-width: 1378px;
+		max-width: 1430px;
 		position: absolute;
 		width: inherit;
 	}
 
-	/* 
-	 */
 	header #top-header {
-		padding: 24px 16px;
+		padding: 23px 16px;
 		height: 72px !important;
 		top: 0;
 	} 
@@ -848,7 +926,6 @@
 		padding: 6px 16px;
 		height: 56px !important;
 		bottom: 0;
-		overflow: hidden;
 	} header #bottom-header-inner::-webkit-scrollbar {
 		/* Hide scrollbar for Chrome, Safari and Opera */
 		display: none;
@@ -911,7 +988,18 @@
 		font-weight: 400;
 	}
 
-		/* 
+	/* ...
+	[MOBILE ONLY] @ < 425px
+	SIDE-NAV-BAR-more-menu-sports-navigational-container ... */
+	nav#mobile-exclusive-sports-menu {
+		padding: 21px 16px;
+	} nav#mobile-exclusive-sports-menu #mobile-sports-grid {
+		gap: 12px;
+	} nav#mobile-exclusive-sports-menu #mobile-sports-grid .sports-btn:hover {
+		border: 1px solid #F5620F !important;
+	}
+
+	/*
 	LANG SELECT CONTAINER */
 	#lang-container {
 		position: relative;
@@ -947,6 +1035,123 @@
 	} #lang-select:hover {
 		background: #292929;
 		box-shadow: inset 0px -1px 0px #3C3C3C;
+	}
+
+	/*
+	more-sports-container-menu */
+	#more-sports-menu-container {
+		position: relative;
+	} #more-sports-dropdown-menu {
+		position: absolute;
+		top: 100%;
+		right: 0%;
+		margin-top: 5px;
+		background: #4B4B4B;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 8px;
+		overflow: hidden;
+		z-index: 2000;
+		/* height: 244px; */
+		width: 656px;
+		display: grid;
+		grid-template-columns: 1fr 1fr 1fr;
+		gap: 12px;
+		padding: 16px;
+		justify-items: start;
+	} #more-sports-dropdown-menu .sports-btn {
+		background: #4B4B4B;
+		border: 1px solid #8C8C8C !important;
+		box-sizing: border-box;
+		border-radius: 29px;
+		width: 200px;
+		height: 44px;
+		padding: 8.5px 10px 8.5px 12.5px;
+	} #more-sports-dropdown-menu .sport-counter-dark {
+		background-color: #292929;
+		padding: 3px 8px;
+		border-radius: 20px;
+	} #more-sports-dropdown-menu .sports-btn:hover {
+		background: #292929;
+	} #more-sports-dropdown-menu .sports-btn:hover .sport-counter-dark {
+		background: #4B4B4B;
+	}
+
+	/*
+	=============
+	BUTTONS 
+	*/
+	button.btn-main {
+		padding: 11px 20px;
+		background: transparent;
+		border-radius: 29px;
+	} button.btn-main:hover {
+		background: #4B4B4B;
+		border-radius: 29px;
+	}
+
+	button#sign-in-btn {
+		width: 95px;
+		height: 44px;
+		padding: 12px 26px;
+		background: transparent;
+		border: 1px solid #FFFFFF !important;
+		box-sizing: border-box;
+		border-radius: 8px;
+	} button#sign-in-btn:hover {
+		border: 1px solid #F5620F !important;
+	} button#sign-in-btn:hover p {
+		color: #F5620F;
+	}
+
+	button.sports-btn {
+		padding: 10.5px 10px 9.5px 16px;
+		background: #292929;
+		border: 1px solid #4B4B4B !important;
+		box-sizing: border-box;
+		border-radius: 29px;
+		height: 44px;
+	} button.sports-btn.selected-sports {
+		border: 1px solid #F5620F !important;
+	} button.sports-btn .sport-counter {
+		padding: 3px 8px;
+		background: #4B4B4B;
+		border-radius: 20px;
+	}
+
+	button#more-sports-menu {
+		padding: 12.5px 16px;
+		background: transparent;
+		border: 1px solid #4B4B4B !important;
+		box-sizing: border-box;
+		border-radius: 29px;
+		height: 44px;
+		position: relative;
+	} button#more-sports-menu:hover {
+		border: 1px solid #FFFFFF !important;
+	} button#more-sports-menu::after {
+		content: '';
+		position: absolute;
+		right: 108%;
+		height: 44px;
+		width: 120px;
+		background: linear-gradient(90deg, rgba(41, 41, 41, 0) 0%, #292929 100%);
+		pointer-events: none;
+	}
+
+	/* 
+	OPT-BOX */
+	.dropdown-opt-box {
+		border-left: 1px solid #4B4B4B;
+		height: 44px;
+		padding: 0 16px;
+		width: fit-content;
+		cursor: pointer;
+	}
+
+	img.country-flag {
+		background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
+		background-blend-mode: overlay;
+		border-radius: 2px;
 	}
 
 	/* 
@@ -1059,7 +1264,7 @@
     @media screen and (min-width: 768px) {
 		
 		header #top-header {
-			padding: 14px 34px;
+			padding: 23px 34px;
 		} 
 		header #bottom-header {
 			padding: 6px 34px;
@@ -1140,7 +1345,16 @@
 			border-radius: 4px;
 		}
 
+		#background-area-close {
+			position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			height: 100vh;
+			width: 100vw;
+			z-index: 1000;
+		}
 	}
-
 
 </style>
