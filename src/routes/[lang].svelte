@@ -6,10 +6,10 @@
 <script context="module">
     // ... pre-loading function from svelte-kit
     export async function load({ page }) {
-        console.debug('page.params', page.params)
+        if (dev) console.debug('page.params', page.params)
         const { lang } = page.params
         // ...
-        console.debug('lang', lang)
+        if (dev) console.debug('lang', lang)
         return lang
     }
 </script>

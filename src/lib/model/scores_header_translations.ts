@@ -15,6 +15,16 @@ export interface Header_Translation {
     theme_options: Array < string >
     homepage: string
     more_sports: string
+    sports_list: string
+}
+
+/**
+ * PLATFORM LANGUAGE BASED HEADER LINKS; 
+*/
+export interface Header_Links {
+    betting_tips: string
+    lang: string
+    latest_news: string
 }
 
 /**
@@ -22,4 +32,5 @@ export interface Header_Translation {
 */
 export interface Header_Translation_Response {
     scores_header_translations: Array < Header_Translation >
+    scores_header_links: Array < Header_Links >
 }

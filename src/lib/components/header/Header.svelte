@@ -31,7 +31,6 @@
 		Header_Translation } from '$lib/model/scores_header_translations'
 	import { langSelect } from '$lib/store/lang-select'
 
-
     /**
      * Description:
      * ~~~~~~~~~~~~~~~~~
@@ -89,9 +88,11 @@
 
 	// ... CLOSE ALL DROPDOWNS METHOD;
 	function closeAllDropdowns() {	
+		dropdown_lang_visible = false
 		dropdown_theme_visible = false
-		dropdown_odds_type_visible= false
-		dropdown_bookmakers_visible= false
+		dropdown_odds_type_visible = false
+		dropdown_bookmakers_visible = false
+		dropdown_more_sports_menu = false
 	}
 
 	// ... DECLARATIONS of STATE;
@@ -147,7 +148,7 @@
 =================== -->
 
 <!-- ... area-outside-for-close-click-DESKTOP-menu -->
-{#if dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible}
+{#if dropdown_lang_visible || dropdown_more_sports_menu || dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible}
 	<div id='background-area-close' 
 		on:click={() => closeAllDropdowns()}
 	/> 
@@ -162,6 +163,7 @@
 		<!-- ... identify the correct translation via IF -->
 		{#each TRANSLATIONS_DATA.scores_header_translations as lang_obj}
 			{#if lang_obj.lang == $langSelect}
+
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id='top-header'
 					class='row-space-out'
@@ -255,20 +257,33 @@
 						{/if}
 
 						{#if !mobileExclusive}
-							<!-- ... latest news ... -->
-							<button class='btn-main'>
-								<p class='color-white s-14'> 
-									{ lang_obj.content_platform_link } 
-								</p>
-							</button>
+							{#each TRANSLATIONS_DATA.scores_header_links as lang_link}
+								{#if lang_link.lang == $langSelect}
 
-							<!-- ... betting-tips ... -->
-							<button class='btn-main'>
-								<p class='color-white s-14'> 
-									{ lang_obj.betting_tips_link } 
-								</p>
-							</button>
-						{/if}
+									<!-- ... latest news ... -->
+									<a rel="external"
+										href={lang_link.latest_news}
+										>
+										<button class='btn-main'>
+											<p class='color-white s-14'> 
+												{ lang_obj.content_platform_link } 
+											</p>
+										</button>
+									</a>
+
+									<!-- ... betting-tips ... -->
+									<a rel="external"
+										href={lang_link.betting_tips}
+										>
+										<button class='btn-main'>
+											<p class='color-white s-14'> 
+												{ lang_obj.betting_tips_link } 
+											</p>
+										</button>
+									</a>
+								{/if}
+							{/each}
+						{/if}	
 						
 					</div>
 
@@ -448,10 +463,18 @@
 						{/if}
 
 						{#if mobileExclusive}
-							<!-- ... betting-tips ... -->
-							<p class='color-white s-14'> 
-								{ lang_obj.betting_tips_link } 
-							</p>
+							{#each TRANSLATIONS_DATA.scores_header_links as lang_link}
+								{#if lang_link.lang == $langSelect}
+									<a rel="external"
+										href={lang_link.betting_tips}
+										>
+										<!-- ... betting-tips ... -->
+										<p class='color-white s-14'> 
+											{ lang_obj.betting_tips_link } 
+										</p>
+									</a>
+								{/if}
+							{/each}
 						{/if}
 
 					</div>
@@ -845,7 +868,7 @@
 								<div class='row-space-out'>
 									<!-- .. title ... -->
 									<p class='s-20 color-white'>
-										Sports
+										{ lang_obj.sports_list }
 									</p>
 
 									<!-- ... close-side-nav ... -->
