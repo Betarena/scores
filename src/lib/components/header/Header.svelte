@@ -31,7 +31,6 @@
 		Header_Translation } from '$lib/model/scores_header_translations'
 	import { langSelect } from '$lib/store/lang-select'
 
-
     /**
      * Description:
      * ~~~~~~~~~~~~~~~~~
@@ -89,9 +88,11 @@
 
 	// ... CLOSE ALL DROPDOWNS METHOD;
 	function closeAllDropdowns() {	
+		dropdown_lang_visible = false
 		dropdown_theme_visible = false
-		dropdown_odds_type_visible= false
-		dropdown_bookmakers_visible= false
+		dropdown_odds_type_visible = false
+		dropdown_bookmakers_visible = false
+		dropdown_more_sports_menu = false
 	}
 
 	// ... DECLARATIONS of STATE;
@@ -147,7 +148,7 @@
 =================== -->
 
 <!-- ... area-outside-for-close-click-DESKTOP-menu -->
-{#if dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible}
+{#if dropdown_lang_visible || dropdown_more_sports_menu || dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible}
 	<div id='background-area-close' 
 		on:click={() => closeAllDropdowns()}
 	/> 
@@ -162,6 +163,7 @@
 		<!-- ... identify the correct translation via IF -->
 		{#each TRANSLATIONS_DATA.scores_header_translations as lang_obj}
 			{#if lang_obj.lang == $langSelect}
+
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id='top-header'
 					class='row-space-out'
@@ -255,20 +257,33 @@
 						{/if}
 
 						{#if !mobileExclusive}
-							<!-- ... latest news ... -->
-							<button class='btn-main'>
-								<p class='color-white s-14'> 
-									{ lang_obj.content_platform_link } 
-								</p>
-							</button>
+							{#each TRANSLATIONS_DATA.scores_header_links as lang_link}
+								{#if lang_link.lang == $langSelect}
 
-							<!-- ... betting-tips ... -->
-							<button class='btn-main'>
-								<p class='color-white s-14'> 
-									{ lang_obj.betting_tips_link } 
-								</p>
-							</button>
-						{/if}
+									<!-- ... latest news ... -->
+									<a rel="external"
+										href={lang_link.latest_news}
+										>
+										<button class='btn-main'>
+											<p class='color-white s-14'> 
+												{ lang_obj.content_platform_link } 
+											</p>
+										</button>
+									</a>
+
+									<!-- ... betting-tips ... -->
+									<a rel="external"
+										href={lang_link.betting_tips}
+										>
+										<button class='btn-main'>
+											<p class='color-white s-14'> 
+												{ lang_obj.betting_tips_link } 
+											</p>
+										</button>
+									</a>
+								{/if}
+							{/each}
+						{/if}	
 						
 					</div>
 
@@ -448,10 +463,18 @@
 						{/if}
 
 						{#if mobileExclusive}
-							<!-- ... betting-tips ... -->
-							<p class='color-white s-14'> 
-								{ lang_obj.betting_tips_link } 
-							</p>
+							{#each TRANSLATIONS_DATA.scores_header_links as lang_link}
+								{#if lang_link.lang == $langSelect}
+									<a rel="external"
+										href={lang_link.betting_tips}
+										>
+										<!-- ... betting-tips ... -->
+										<p class='color-white s-14'> 
+											{ lang_obj.betting_tips_link } 
+										</p>
+									</a>
+								{/if}
+							{/each}
 						{/if}
 
 					</div>
@@ -845,7 +868,7 @@
 								<div class='row-space-out'>
 									<!-- .. title ... -->
 									<p class='s-20 color-white'>
-										Sports
+										{ lang_obj.sports_list }
 									</p>
 
 									<!-- ... close-side-nav ... -->
@@ -884,12 +907,14 @@
 						</nav>
 					{/if}
 				{/if}
+
 			{/if}
 		{/each}
 	
 	{:catch error}
 		<!-- promise was rejected -->
 		<p>{error}</p>
+
 	{/await}
 </header>
 
@@ -1136,111 +1161,6 @@
 		width: 120px;
 		background: linear-gradient(90deg, rgba(41, 41, 41, 0) 0%, #292929 100%);
 		pointer-events: none;
-	}
-
-	/* 
-	OPT-BOX */
-	.dropdown-opt-box {
-		border-left: 1px solid #4B4B4B;
-		height: 44px;
-		padding: 0 16px;
-		width: fit-content;
-		cursor: pointer;
-	}
-
-	img.country-flag {
-		background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(0, 0, 0, 0.3) 100%);
-		background-blend-mode: overlay;
-		border-radius: 2px;
-	}
-
-	/* 
-	more-sports-container-menu */
-	#more-sports-menu-container {
-		position: relative;
-	} #more-sports-dropdown-menu {
-		position: absolute;
-		top: 100%;
-		right: 0%;
-		margin-top: 5px;
-		background: #4B4B4B;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 8px;
-		overflow: hidden;
-		z-index: 2000;
-		/* height: 244px; */
-		width: 656px;
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		gap: 12px;
-		padding: 16px;
-		justify-items: start;
-	} #more-sports-dropdown-menu .sports-btn {
-		background: #4B4B4B;
-		border: 1px solid #8C8C8C !important;
-		box-sizing: border-box;
-		border-radius: 29px;
-		width: 200px;
-		height: 44px;
-		padding: 8.5px 10px 8.5px 12.5px;
-	} #more-sports-dropdown-menu .sport-counter-dark {
-		background-color: #292929;
-		padding: 3px 8px;
-		border-radius: 20px;
-	} #more-sports-dropdown-menu .sports-btn:hover {
-		background: #292929;
-	} #more-sports-dropdown-menu .sports-btn:hover .sport-counter-dark {
-		background: #4B4B4B;
-	}
-
-	/*
-	=============
-	BUTTONS 
-	*/
-	button.btn-main {
-		padding: 11px 20px;
-		background: transparent;
-		border-radius: 29px;
-	} button.btn-main:hover {
-		background: #4B4B4B;
-		border-radius: 29px;
-	}
-
-	button#sign-in-btn {
-		padding: 12px 26px;
-		background: transparent;
-		border: 1px solid #FFFFFF !important;
-		box-sizing: border-box;
-		border-radius: 8px;
-	} button#sign-in-btn:hover {
-		border: 1px solid #F5620F !important;
-	} button#sign-in-btn:hover p {
-		color: #F5620F;
-	}
-
-	button.sports-btn {
-		padding: 10.5px 10px 9.5px 16px;
-		background: #292929;
-		border: 1px solid #4B4B4B !important;
-		box-sizing: border-box;
-		border-radius: 29px;
-		height: 44px;
-	} button.sports-btn.selected-sports {
-		border: 1px solid #F5620F !important;
-	} button.sports-btn .sport-counter {
-		padding: 3px 8px;
-		background: #4B4B4B;
-		border-radius: 20px;
-	}
-
-	button#more-sports-menu {
-		padding: 12.5px 16px;
-		background: transparent;
-		border: 1px solid #4B4B4B !important;
-		box-sizing: border-box;
-		border-radius: 29px;
-	} button#more-sports-menu:hover {
-		border: 1px solid #FFFFFF !important;
 	}
 
 	/* 

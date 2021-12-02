@@ -23,6 +23,12 @@ export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
             bookmakers
             bookmakers_countries
             content_platform_link
+            sports_list
+        }
+        scores_header_links {
+            betting_tips
+            lang
+            latest_news
         }
     }
 `;
