@@ -31,6 +31,6 @@ export interface Header_Links {
  * RESPONSE - HASURA_DB for Translations
 */
 export interface Header_Translation_Response {
-    scores_header_translations: Array < Header_Translation >
-    scores_header_links: Array < Header_Links >
+    scores_header_translations_dev: Array < Header_Translation >
+    scores_header_links_dev: Array < Header_Links >
 }

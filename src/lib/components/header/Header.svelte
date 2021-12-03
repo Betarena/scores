@@ -161,7 +161,7 @@
 
 	{:then TRANSLATIONS_DATA}
 		<!-- ... identify the correct translation via IF -->
-		{#each TRANSLATIONS_DATA.scores_header_translations as lang_obj}
+		{#each TRANSLATIONS_DATA.scores_header_translations_dev as lang_obj}
 			{#if lang_obj.lang == $langSelect}
 
 				<!-- ... header TOP NAVBAR section ... -->
@@ -242,7 +242,7 @@
 									<div id='dropdown-menu'
 										transition:fly
 										>
-										{#each TRANSLATIONS_DATA.scores_header_translations as lang}
+										{#each TRANSLATIONS_DATA.scores_header_translations_dev as lang}
 											<div id='lang-select'
 												on:click={() => selectLanguage(lang.lang)}
 												>
@@ -257,7 +257,7 @@
 						{/if}
 
 						{#if !mobileExclusive}
-							{#each TRANSLATIONS_DATA.scores_header_links as lang_link}
+							{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
 								{#if lang_link.lang == $langSelect}
 
 									<!-- ... latest news ... -->
@@ -463,7 +463,7 @@
 						{/if}
 
 						{#if mobileExclusive}
-							{#each TRANSLATIONS_DATA.scores_header_links as lang_link}
+							{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
 								{#if lang_link.lang == $langSelect}
 									<a rel="external"
 										href={lang_link.betting_tips}
@@ -636,7 +636,7 @@
 												<div id='dropdown-menu'
 													transition:fly
 													>
-													{#each TRANSLATIONS_DATA.scores_header_translations as lang}
+													{#each TRANSLATIONS_DATA.scores_header_translations_dev as lang}
 														<div id='lang-select'
 															on:click={() => selectLanguage(lang.lang)}
 															>
