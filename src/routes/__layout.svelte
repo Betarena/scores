@@ -10,18 +10,34 @@
 
 	import Footer from '$lib/components/footer/Footer.svelte'
 	import Header from '$lib/components/header/Header.svelte'
+  import OfflineAlert from '$lib/components/Offline_alert.svelte';
 
 	import '../app.css'
     
   // ... kickstart the .localStorage();
+  // ... kickstart offline-badge on info;
   if (browser) {
 		langSelect.useLocalStorage()
+    window.addEventListener('offline', toggleOfflineAlert)
+    window.addEventListener('online', toggleOfflineAlert)
+  }
+
+  // ... HIDE/SHOW offline ALERT BADGE;
+  let offlineMode: boolean = false
+
+  function toggleOfflineAlert() { 
+    if (dev) console.debug('-- your connection has changed! --')
+    offlineMode = !offlineMode
   }
 </script>
 
 <!-- ===================
 	COMPONENT HTML
 =================== -->
+
+{#if offlineMode}
+   <OfflineAlert />
+{/if}
 
 <Header />
 
