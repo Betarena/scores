@@ -10,7 +10,8 @@
 
 	import Footer from '$lib/components/footer/Footer.svelte'
 	import Header from '$lib/components/header/Header.svelte'
-  import OfflineAlert from '$lib/components/Offline_alert.svelte';
+  import OfflineAlert from '$lib/components/Offline_alert.svelte'
+  import SplashScreen from '$lib/components/Splash_screen.svelte';
 
 	import '../app.css'
     
@@ -38,6 +39,8 @@
 {#if offlineMode}
    <OfflineAlert />
 {/if}
+
+<SplashScreen />
 
 <Header />
 
