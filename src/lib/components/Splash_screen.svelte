@@ -78,9 +78,9 @@
     <div>
         <img 
             id='brand-svg'
-            src='/assets/img/192x192.png' 
+            src='/assets/svg/logo-main.svg' 
             alt='betarena-logo'
-            style="zoom: 0.4;"
+            style="zoom: 0.5;"
         />
     </div>
 {/if}
