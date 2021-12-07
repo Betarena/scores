@@ -9,7 +9,7 @@ import { gql } from 'graphql-request'
 */
 export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
     query GET_WEBSITE_ALL_LANG_TRANSLATIONS {
-        scores_header_translations {
+        scores_header_translations_dev {
             theme_options
             theme
             sports
@@ -25,7 +25,7 @@ export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
             content_platform_link
             sports_list
         }
-        scores_header_links {
+        scores_header_links_dev {
             betting_tips
             lang
             latest_news
