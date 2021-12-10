@@ -297,20 +297,20 @@ bottom-margins
 */
 
 section {
-    min-height: 100vh;
-    margin: calc(100vw / (var(--mobile) / 55)) calc(100vw / (var(--mobile) / 19));
+    min-height: calc(100vh - 128px);
+    padding: 22px 16px;
+    margin: auto;
 }
 @media only screen and (min-width: 768px) {
     section {
-        min-height: calc(100vh - 29vh);
-        margin: calc(100vw / (var(--tablet) / 92)) calc(100vw / (var(--tablet) / 60));
+        padding: 26px 34px;
+        margin: auto;
     }
 }
-/* 1025px is used to allow for IPad Pro to use the Tabler Version */
 @media only screen and (min-width: 1025px) {
     section {
-        min-height: calc(100vh - 29vh);
-        margin: calc(100vw / (var(--desktop) / 92)) calc(100vw / (var(--desktop) / 240));
+        padding: 26px 34px;
+        margin: auto;
     }
 }
 

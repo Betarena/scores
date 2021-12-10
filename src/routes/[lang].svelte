@@ -20,12 +20,13 @@
 =================== -->
 
 <script lang="ts">
-    // ...
 	import { amp, browser, dev, mode, prerendering } from '$app/env'
-    // ...
+
+    import header_bg from '$lib/header-background.svg'
+
     import SvelteSeo from "svelte-seo"
-	// ...
-	import header_bg from '$lib/header-background.svg'
+    import FeaturedMatchWidget from '$lib/components/featured_match/FeaturedMatch_Widget.svelte'
+
     // ...
     // export let lang: string
 </script>
@@ -97,9 +98,13 @@
 	COMPONENT HTML
 =================== -->
 
-<div id='background-image' />
+<section id='home-page'>
 
-<section>
+    <div />
+
+    <div />
+
+    <FeaturedMatchWidget />
 	
 </section>
 
@@ -108,16 +113,10 @@
 =================== -->
 
 <style>
-	#background-image {
-        background-image: url(/src/lib/header-background.svg);
-        background-repeat: no-repeat;
-        background-size: cover;
-        background-origin: border-box;
-        background-position: bottom;
-        height: 495px;
-	}
-	
-	section {
-		
+	section#home-page {
+        display: grid;
+        /* grid-template-columns: 1fr 1fr 1fr; */
+        grid-template-columns: minmax(328px, auto) minmax(502px, 1fr) minmax(502px, 1fr);
+        max-width: 1430px;
 	}
 </style>
