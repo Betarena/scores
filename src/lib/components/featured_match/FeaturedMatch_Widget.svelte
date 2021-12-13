@@ -1,6 +1,7 @@
 <!-- ===============
 	COMPONENT JS (w/ TS)
 ==================== -->
+
 <script lang="ts">
 
   // ... svelte-imports;
@@ -22,7 +23,7 @@
   import { GET_ALL_FIXTURE_DATA, GET_LANG_SELECTED_FIXTURE } from "$lib/graphql/query"
 	import { userBetarenaSettings } from '$lib/store/user-settings'
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-  import { getDatabase, ref, set, onValue } from "firebase/database";
+  import { getDatabase, ref, set, onValue } from "firebase/database"
 
   // ... DECLARING TYPESCRIPT-TYPES imports;
   import type { fixture } from "$lib/store/vote_fixture"
@@ -444,24 +445,30 @@
   let hexColor: string
   // ...
   function getImageBgColor(imgURL: string) {
-    // instantiate the image Type;
-    const img = new Image();
-    // listen, event to wait for the image to load
-    img.addEventListener("load", function () {
-      // get the array of RGB values,
-      let colorValues = colorThief.getColor(img);
-      // convert the RGB values to HEX value,
-      hexColor = rgbToHex(colorValues[0], colorValues[1], colorValues[2]);
-      // pass this values as a `CSS :root` variable, accessible to all the website,
-      const doc = document.documentElement;
-      doc.style.setProperty(imageVar, `${hexColor}`);
-    });
-    // ... declaring the image paramaters & CORS by-pass
-    let imageURL = imgURL;
-    let googleProxyURL =
-      "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=";
-    img.crossOrigin = "Anonymous";
-    img.src = googleProxyURL + encodeURIComponent(imageURL);
+    try {
+      // instantiate the image Type;
+      const img = new Image();
+      // listen, event to wait for the image to load
+      img.addEventListener("load", function () {
+        // get the array of RGB values,
+        let colorValues = colorThief.getColor(img);
+        // convert the RGB values to HEX value,
+        hexColor = rgbToHex(colorValues[0], colorValues[1], colorValues[2]);
+        // pass this values as a `CSS :root` variable, accessible to all the website,
+        const doc = document.documentElement;
+        doc.style.setProperty(imageVar, `${hexColor}`);
+      });
+      // ... declaring the image paramaters & CORS by-pass
+      let imageURL = imgURL;
+      let googleProxyURL =
+        "https://images1-focus-opensocial.googleusercontent.com/gadgets/proxy?container=focus&refresh=2592000&url=";
+      img.crossOrigin = "Anonymous";
+      img.src = googleProxyURL + encodeURIComponent(imageURL);
+    }
+    // ... CATCH;
+    catch (e) {
+      if (dev) console.error('-- getImageBgColor() ERR --', e)
+    }
   }
 
   /**
@@ -496,25 +503,20 @@
     Featured Match
   </p>
 
-  <!-- <div id="live-score-container"> -->
-    <!-- <ContentLoader {...contentLoaderProps} /> -->
-    <!-- <FeaturedMatchContentLoading /> -->
-  <!-- </div> -->
-
   {#await promise}
   <!-- promise is pending -->
-    <!-- <div id="live-score-container"> -->
-      <!-- <ContentLoader {...contentLoaderProps} /> -->
-      <!-- <FeaturedMatchContentLoading /> -->
-    <!-- </div> -->
+      <FeaturedMatchContentLoading />
   {:then data}
   <!-- ... promise was fulfilled ... -->
+      <!-- <FeaturedMatchContentLoading /> -->
 
     <!-- ... identify the correct translation via IF -->
 		{#each WIDGET_TRANSLATION_DATA as WIDGET_TRANSLATION}
       {#if WIDGET_TRANSLATION.lang == $userBetarenaSettings.lang}
 
-        <div id="live-score-container">
+        <div id="live-score-container"
+          class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+          >
 
           <!-- ... league-game-title ... -->
           <div id="fixture-league-title" class="row-space-start">
@@ -633,16 +635,16 @@
                       parseInt(data.probabilities.home)
                     ).toFixed(2)}%
                   </p>
-                {:else if match_fixture_votes != undefined}
+                {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
                   <p class="large">
                     <span class="color-dark">
                       {(
-                        (match_fixture_votes.vote_win_local / totalVotes) *
+                        (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local / totalVotes) *
                         100
                       ).toFixed(0)}%
                     </span>
                     <span class="color-grey">
-                      ({match_fixture_votes.vote_win_local})
+                      ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local})
                     </span>
                   </p>
                 {/if}
@@ -692,16 +694,16 @@
                       parseInt(data.probabilities.draw)
                     ).toFixed(2)}%
                   </p>
-                {:else if match_fixture_votes != undefined}
+                {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
                   <p class="large">
                     <span class="color-dark">
                       {(
-                        (match_fixture_votes.vote_draw_x / totalVotes) *
+                        (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x / totalVotes) *
                         100
                       ).toFixed(0)}%
                     </span>
                     <span class="color-grey">
-                      ({match_fixture_votes.vote_draw_x})
+                      ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x})
                     </span>
                   </p>
                 {/if}
@@ -748,16 +750,16 @@
                       parseInt(data.probabilities.away)
                     ).toFixed(2)}%
                   </p>
-                {:else if match_fixture_votes != undefined}
+                {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
                   <p class="large">
                     <span class="color-dark">
                       {(
-                        (match_fixture_votes.vote_win_visitor / totalVotes) *
+                        (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor / totalVotes) *
                         100
                       ).toFixed(0)}%
                     </span>
                     <span class="color-grey">
-                      ({match_fixture_votes.vote_win_visitor})
+                      ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor})
                     </span>
                   </p>
                 {/if}
@@ -829,20 +831,19 @@
                             />
                           {/if}
                         {/if}
-                        <input
+                        <input id='win-type'
                           class="medium text-center desktop-view-winnings"
                           type="number"
                           bind:value={fixtureDataVote.fixture_vote_val}
                           disabled
-                          style="background: #FFFFFF; color: black !important; opacity: 1 !important;"
                         />
                       </div>
                     </div>
 
                     <!-- MULTIPLY SIGN -->
                     <img
-                      src="../../widgets/featured_match/static/icon/icon-close.svg"
-                      alt=""
+                      src="/assets/svg/icon/icon-close.svg"
+                      alt="multiply-icon"
                       width="16px"
                       height="16px"
                       style="margin-top: 25px;"
@@ -857,14 +858,13 @@
                         class="input-value medium text-center"
                         type="text"
                         bind:value={user_Stake_amount}
-                        style='color: black !important; opacity: 1 !important;'
                       />
                     </div>
 
                     <!-- EQUALS SIGN -->
                     <img
-                      src="../../widgets/featured_match/static/icon/icon-equally.svg"
-                      alt=""
+                      src="/assets/svg/icon/icon-equally.svg"
+                      alt="icon-equlaity"
                       width="16px"
                       height="16px"
                       style="margin-top: 25px;"
@@ -884,7 +884,6 @@
                           parseFloat(fixtureDataVote.fixture_vote_val) * user_Stake_amount
                         ).toFixed(2)}
                         disabled
-                        style='color: black !important; opacity: 1 !important;'
                       />
                     </div>
                   </div>
@@ -892,7 +891,7 @@
                   <!-- 
                   PLACE BET BUTTON -->
                   <a href={WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.register_link}>
-                    <button style="width: 100%;" class="btn-primary m-b-12">
+                    <button class="place-bet-btn btn-primary m-b-12">
                       <p class="small">
                         {WIDGET_TRANSLATION.place_bet}
                       </p>
@@ -1521,8 +1520,8 @@
     height: 48px;
   }
   .cast-vote-btn.active {
-    background: #ffffff;
-    border: 1px solid #f5620f;
+    background: #ffffff !important;
+    border: 1px solid #f5620f !important;
     box-sizing: border-box;
     border-radius: 8px;
     opacity: 1 !important;
@@ -1556,8 +1555,12 @@
     background: #f2f2f2;
     border-radius: 8px;
   }
-  #inner-site-container button {
+  #inner-site-container button.place-bet-btn {
     height: 46px;
+    width: 100%;
+    background-color: #F5620F;
+    box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
+    border-radius: 8px;
   }
   .input-value {
     -moz-appearance: textfield;
@@ -1566,6 +1569,17 @@
     height: 48px;
     width: 76px;
     border: none;
+  }
+  #inner-site-container input {
+    background: rgb(255, 255, 255);
+    color: black !important;
+    opacity: 1 !important;
+  }
+  input#win-type {
+    width: 100%;
+    border-radius: 5px;
+    border: 0;
+    outline: none;
   }
 
   .img-flag {
@@ -1607,7 +1621,7 @@
     scrollbar-width: none; /* Firefox */
   }
   .live-stream-btn {
-    border: 1px solid #cccccc;
+    border: 1px solid #cccccc !important;
     box-sizing: border-box;
     border-radius: 4px;
     padding: 7px 12px;
@@ -1729,7 +1743,8 @@
     responsivness
   ==================== */
 
-  /* MOBILE RESPONSIVNESS */
+  /* 
+  MOBILE RESPONSIVNESS */
   @media only screen and (min-width: 700px) {
     #inner-site-container button {
       height: 44px;
@@ -1843,7 +1858,8 @@
     }
   }
 
-  /* DESKTOP RESPONSIVNESS */
+  /* 
+  DESKTOP RESPONSIVNESS */
   @media only screen and (min-width: 1024px) {
     #live-score-container {
       width: 100%;
@@ -1851,7 +1867,7 @@
     }
     .input-value {
       width: 100%;
-      max-width: 133px;
+      max-width: 110px;
     }
 
     .tooltip .tooltiptext {
@@ -1883,7 +1899,7 @@
       visibility: visible !important;
     }
     .cast-vote-btn {
-      min-width: 160px;
+      min-width: 140px;
       width: 100%;
       height: 48px;
     }
@@ -1918,6 +1934,83 @@
     }
     .player-img {
       margin-right: 16px;
+    }
+  }
+
+  /* .............. 
+  WIDGET DARK THEME 
+  ................. */
+  .dark-background-1 #fixture-league-title,
+  .dark-background-1 #fixture-visual-box,
+  .dark-background-1 .best-players-box,
+  .dark-background-1 #live-stream-box {
+    box-shadow: inset 0px -1px 0px #616161 !important;
+  }
+
+  .dark-background-1 .cast-vote-btn {
+    background-color: #616161 !important;
+    border: 1px solid #999999 !important;
+  }
+  .dark-background-1 .cast-vote-btn.active {
+    border: 1px solid #f5620f !important;
+  }
+
+  .dark-background-1 table.table-best-player .row-head,
+  .dark-background-1 table.value_bets .row-head {
+    background-color: #616161 !important;
+  }
+
+  .dark-background-1 p {
+    color: #FFFFFF;
+  }
+
+  .dark-background-1 .live-stream-btn {
+    background-color: #FFFFFF !important;
+    border: 1px solid #616161 !important;
+  }
+
+  .dark-background-1 table.table-best-player .row-head th p,
+  .dark-background-1 table.value_bets .row-head th p,
+  .dark-background-1 .probablitiy-text {
+    color: #A8A8A8 !important;
+  }
+
+  .dark-background-1 #site-bet-box,
+  .dark-background-1 #inner-site-container {
+    background-color: #616161 !important;
+  }
+  .dark-background-1 #inner-site-container .input-value {
+    background-color: #4B4B4B !important;
+    color: #FFFFFF !important;
+  }
+
+  .dark-background-1 #inner-site-container input {
+    color: #FFFFFF !important;
+  }
+  .dark-background-1 input#win-type {
+    background-color: #4B4B4B !important;
+  }
+
+  @media only screen and (min-width: 700px) { 
+
+    .dark-background-1 .boxed-rating-matches {
+      background-color: #4B4B4B !important;
+      border: 1px solid #616161 !important;
+    }
+    .dark-background-1 .boxed-rating-assits,
+    .dark-background-1 .boxed-rating-value-bets {
+      background-color: #616161 !important;
+    }
+    .dark-background-1 .boxed-rating-goals {
+      background-color: #737373 !important;
+    }
+
+  }
+
+  @media only screen and (min-width: 1024px) {
+    .dark-background-1 .tooltip .tooltiptext {
+      background: #616161;
+      box-shadow: inset 0px -1px 0px #3C3C3C;
     }
   }
 </style>

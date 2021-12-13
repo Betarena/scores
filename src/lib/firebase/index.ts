@@ -42,7 +42,7 @@ export async function getTargetFixtureOdds(fixture_data: SelectedFixutre): Promi
         // ... check if the data exists (should exist at all times anyway);
         if (snapshot.exists()) {
             // ... DEBUGGING;
-            if (dev) console.debug('data from Real DB', [snapshot.val()])
+            // if (dev) console.debug('data from Real DB', [snapshot.val()]) // ... TOO LONG
             // ...
             let fixture_odds = snapshot.val()
             let fixture_odds_keys = Object.keys(snapshot.val())
@@ -54,10 +54,10 @@ export async function getTargetFixtureOdds(fixture_data: SelectedFixutre): Promi
                 // ... iterate over the data of the fixture avaiable ODDS;
                 for (let avaiableOdd in fixture_odds_keys) {
                     // ... check for a match of the odds names;
-                    if (dev) console.debug('sportbook_details', sportbook_details[rankedOdd]['title'].toString().toLowerCase());
+                    // if (dev) console.debug('sportbook_details', sportbook_details[rankedOdd]['title'].toString().toLowerCase());
                     if (fixture_odds_keys[avaiableOdd].toString().toLowerCase() == sportbook_details[rankedOdd]['title'].toString().toLowerCase()
                         && count != 1) {
-                            if (dev) console.log('Match Found!')
+                            // if (dev) console.log('Match Found!')
                         let targetFixture = fixture_odds_keys[avaiableOdd]
                         let fixtureOdd = fixture_odds[targetFixture]
                         map.set('fixture_odds', fixtureOdd)

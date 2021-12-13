@@ -19,6 +19,7 @@
 	import logo_full from './assets/betarena-logo-full.svg'
 	import logo_mini from './assets/betarena-logo-mobile.svg'
 	import menu_burger_bar from './assets/menu-burger.svg'
+	import icon_check from './assets/icon-check.svg'
 
 	// ... sub-header-component
 	import close from './assets/close.svg'
@@ -83,6 +84,8 @@
 	let dropdown_odds_type_visible: boolean = false
 	let dropdown_bookmakers_visible: boolean = false
 	let dropdown_more_sports_menu: boolean = false
+
+	$: console.debug('dropdown_theme_visible', dropdown_theme_visible)
 
 	let top_nav_dropdown_is_selected: boolean = false
 
@@ -154,8 +157,8 @@
 
 	// ... udpate the user selected THEME `.localStorage()`
 	function selectedTheme(theme: string) {
-		// ... hide the theme dropdown;
-		dropdown_theme_visible = false
+		// ... hide the theme dropdown [OPTIONAL];
+		// dropdown_theme_visible = false
 		// ... update the THEME selection user settings
 		userBetarenaSettings.setTheme(theme)
 	}
@@ -172,7 +175,6 @@
 	/> 
 {/if}
 
-
 <header class='column-space-center'>
 	{#await translation_promise}
 		<!-- ... promise is pending ... -->
@@ -185,7 +187,7 @@
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id='top-header'
 					class='row-space-out'
-				>
+					>
 					<!-- ... 1st half of the header nav ... -->
 					<div class='row-space-start' style='width: fit-content;'>
 
@@ -314,10 +316,11 @@
 							<!-- ... theme-options ... -->
 							<div id='theme-opt-container'
 								class="dropdown-opt-box row-space-start"
-								on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 								>
 								<!-- ... name of the container-opt ... -->
-								<div class='m-r-10'>
+								<div class='m-r-10'
+									on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
+									>
 									<p class='color-grey s-12 m-b-5'>
 										{ lang_obj.theme }
 									</p>
@@ -343,12 +346,14 @@
 										src={arrow_down_fade} 
 										alt='arrow_down_fade'
 										width="16px" height="16px"
+										on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 									/>
 								{:else}
 									<img 
 										src={arrow_up} 
 										alt='arrow_up'
 										width="16px" height="16px"
+										on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 									/>
 								{/if}
 								<!-- ... INIT-HIDDEN-dropdown-theme-select ... -->
@@ -357,12 +362,19 @@
 										transition:fly
 										>
 										{#each lang_obj.theme_options as theme}
-											<div class='theme-opt-box'
+											<div class='theme-opt-box row-space-out'
 												on:click={() => selectedTheme(theme[0])}
 												>
 												<p class='color-white s-14'>
 													{ theme[1] }
 												</p>
+												{#if theme.includes($userBetarenaSettings.theme)}
+													<img 
+														src={icon_check}
+														alt="{theme[0]}"
+														width="16px" height="16px"
+													/>
+												{/if}
 											</div>
 										{/each}
 									</div>
@@ -712,10 +724,11 @@
 
 									<!-- ... theme-options ... -->
 									<div class='side-nav-dropdown m-t-30 m-b-25'
-										on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 										>
 										<!-- ... name of the container-opt ... -->
-										<div class="m-b-15">
+										<div class="m-b-15"
+											on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
+											>
 											<p class='color-grey s-12 m-b-5'>
 												{ lang_obj.theme }
 											</p>
@@ -757,12 +770,19 @@
 											<div transition:fly
 												>
 												{#each lang_obj.theme_options as theme}
-													<div class='side-nav-dropdown-opt'
+													<div class='side-nav-dropdown-opt row-space-out'
 														on:click={() => selectedTheme(theme[0])}
 														>
 														<p class='color-white s-14'>
 															{ theme[1] }
 														</p>
+														{#if theme.includes($userBetarenaSettings.theme)}
+															<img 
+																src={icon_check}
+																alt="{theme[0]}"
+																width="16px" height="16px"
+															/>
+														{/if}
 													</div>
 												{/each}
 											</div>
@@ -1299,8 +1319,8 @@
 			bottom: 0;
 			right: 0;
 			left: 0;
-			height: 100vh;
-			width: 100vw;
+			height: 100%;
+			width: 100%;
 			z-index: 1000;
 		}
 	}

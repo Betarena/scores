@@ -48,7 +48,7 @@
 
 <Header />
 
-<main>
+<main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
 	<slot />
 </main>
 

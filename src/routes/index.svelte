@@ -110,8 +110,24 @@
 <style>
 	section#home-page {
         display: grid;
-        /* grid-template-columns: 1fr 1fr 1fr; */
-        grid-template-columns: minmax(328px, auto) minmax(502px, 1fr) minmax(502px, 1fr);
         max-width: 1430px;
+        grid-template-columns: 1fr;
 	}
+
+    /* 
+    RESPONSIVE FOR TABLET (&+) [768px] */
+    @media only screen and (min-width: 768px) {
+        section#home-page {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* 
+    RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+    @media only screen and (min-width: 1024px) {
+        section#home-page {
+            gap: 20px;
+            grid-template-columns: minmax(auto, 328px) minmax(auto, 502px) minmax(auto, 502px);
+        }
+    }
 </style>
