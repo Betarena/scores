@@ -208,11 +208,13 @@
       WIDGET_SELECTED_FIXTURE_VALUE_BETS = null
       return
     }
-    // ... otherwise, append the image & the registration link to the data;
-    WIDGET_SELECTED_FIXTURE_VALUE_BETS = {
-      ...WIDGET_SELECTED_FIXTURE_VALUE_BETS,
-      image: sportbook_details.betting_site_info.image,
-      link: sportbook_details.betting_site_info.register_link,
+    else {
+      // ... otherwise, append the image & the registration link to the data;
+      WIDGET_SELECTED_FIXTURE_VALUE_BETS = {
+        ...WIDGET_SELECTED_FIXTURE_VALUE_BETS,
+        image: sportbook_details.betting_site_info.image,
+        link: sportbook_details.betting_site_info.register_link,
+      }
     }
   }
 
