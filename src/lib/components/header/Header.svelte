@@ -4,17 +4,24 @@
 =================== -->
 
 <script lang="ts">
-	import { amp, browser, dev, mode, prerendering } from '$app/env';
-	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation';
+	import { amp, browser, dev, mode, prerendering } from '$app/env'
+	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation'
 	import { onMount } from "svelte"
 	import { page } from '$app/stores'
+	import { fade, fly } from 'svelte/transition'
 
-	// ... header-component;
+	import { GET_WEBSITE_ALL_LANG_TRANSLATIONS } from '$lib/graphql/query'
+	import { initGrapQLClient } from '$lib/graphql/init_graphQL'
+
+	import { userBetarenaSettings } from '$lib/store/user-settings'
+
+	// ... header-component
 	import logo_full from './assets/betarena-logo-full.svg'
 	import logo_mini from './assets/betarena-logo-mobile.svg'
 	import menu_burger_bar from './assets/menu-burger.svg'
+	import icon_check from './assets/icon-check.svg'
 
-	// ... sub-header-component;
+	// ... sub-header-component
 	import close from './assets/close.svg'
 	import arrow_down from './assets/arrow-down.svg'
 	import arrow_down_fade from './assets/arrow-down-fade.svg'
@@ -23,13 +30,7 @@
 	import light_icon_theme from './assets/theme-light-icon.svg'
 	import menu_sports_icon from './assets/menu_sports_icon.svg'
 
-	import { fade, fly } from 'svelte/transition';
-	import { GET_WEBSITE_ALL_LANG_TRANSLATIONS } from '$lib/graphql/query'
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-	import type { 
-		Header_Translation_Response, 
-		Header_Translation } from '$lib/model/scores_header_translations'
-	import { langSelect } from '$lib/store/lang-select'
+	import type { Header_Translation_Response, Header_Translation } from '$lib/model/scores_header_translations'
 
     /**
      * Description:
@@ -84,6 +85,8 @@
 	let dropdown_bookmakers_visible: boolean = false
 	let dropdown_more_sports_menu: boolean = false
 
+	$: console.debug('dropdown_theme_visible', dropdown_theme_visible)
+
 	let top_nav_dropdown_is_selected: boolean = false
 
 	// ... CLOSE ALL DROPDOWNS METHOD;
@@ -118,28 +121,46 @@
 	// ... TRIGGER Query-Req-Res
 	let translation_promise = getTranslations()
 
-
 	/**
 	 * Description
 	 * ~~~~~~~~~~~~~~~~~~~
 	 * ... update the navigation page URL dynamically;
 	*/
-	// ...
-	$: if (dev) console.debug('-- page --', $page.params)
-	// ... get the URL lang-value;
+	// ... DEBUGGING;
+	$: if (dev) console.debug('-- $page.params --', $page.params)
+	$: if (dev) console.debug('-- $page.params.lang --', $page.params.lang)
+	// ... get the URL lang-value QUERY;
 	let url_Lang = $page.params.lang
-	if (browser && url_Lang != undefined) {
-		selectLanguage(url_Lang)
+	if (browser) {
+		if (url_Lang != undefined) {
+			selectLanguage(url_Lang)
+		} else {
+			selectLanguage('en')
+		}
 	}
-	// .. update the user selected `.localStorage()`
+	// .. update the user selected language `.localStorage()`
 	function selectLanguage(lang: string) {
-		// ...
+		// ... DEV-DEBUGGING;
 		if (dev) console.debug('updating user translation to ->', lang)
-		langSelect.setLang(lang)
-		// ...
+		// ... set the user-lang to corresponding value;
+		userBetarenaSettings.setLang(lang)
+		// ... hide the LANG DROPDOWN;
 		dropdown_lang_visible = false
-		// ... update page URL
-		goto(`/${lang}`)
+		// ... check for EN TRANSLATION;
+		if (lang == 'en') {
+			goto(`/`)
+		// ... otherwise, update page URL with CORRECT TRANSLATION;
+		} else {
+			goto(`/${lang}`)
+		}
+	}
+
+	// ... udpate the user selected THEME `.localStorage()`
+	function selectedTheme(theme: string) {
+		// ... hide the theme dropdown [OPTIONAL];
+		// dropdown_theme_visible = false
+		// ... update the THEME selection user settings
+		userBetarenaSettings.setTheme(theme)
 	}
 </script>
 
@@ -154,7 +175,6 @@
 	/> 
 {/if}
 
-
 <header class='column-space-center'>
 	{#await translation_promise}
 		<!-- ... promise is pending ... -->
@@ -162,12 +182,12 @@
 	{:then TRANSLATIONS_DATA}
 		<!-- ... identify the correct translation via IF -->
 		{#each TRANSLATIONS_DATA.scores_header_translations_dev as lang_obj}
-			{#if lang_obj.lang == $langSelect}
+			{#if lang_obj.lang == $userBetarenaSettings.lang}
 
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id='top-header'
 					class='row-space-out'
-				>
+					>
 					<!-- ... 1st half of the header nav ... -->
 					<div class='row-space-start' style='width: fit-content;'>
 
@@ -209,6 +229,7 @@
 							</div>
 						{/if}
 
+						<!-- ... LANGUAGE SELECTION ... -->
 						{#if !tabletExclusive}
 							<!-- ... language-change-dropdown-select ... -->
 							<div id='lang-container' class='m-r-30'>
@@ -219,7 +240,7 @@
 									on:click={() => dropdown_lang_visible = !dropdown_lang_visible}
 									>
 									<p class='color-white s-14 mr-5'>
-										{ $langSelect.toUpperCase() }
+										{ $userBetarenaSettings.lang.toUpperCase() }
 									</p>
 									<!-- ... arrow down [hidden-menu] ... -->
 									{#if !dropdown_lang_visible}
@@ -256,9 +277,10 @@
 							</div>
 						{/if}
 
+						<!-- ... NAV BUTTONS ... -->
 						{#if !mobileExclusive}
 							{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
-								{#if lang_link.lang == $langSelect}
+								{#if lang_link.lang == $userBetarenaSettings.lang}
 
 									<!-- ... latest news ... -->
 									<a rel="external"
@@ -294,10 +316,11 @@
 							<!-- ... theme-options ... -->
 							<div id='theme-opt-container'
 								class="dropdown-opt-box row-space-start"
-								on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 								>
 								<!-- ... name of the container-opt ... -->
-								<div class='m-r-10'>
+								<div class='m-r-10'
+									on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
+									>
 									<p class='color-grey s-12 m-b-5'>
 										{ lang_obj.theme }
 									</p>
@@ -308,9 +331,13 @@
 											alt="${lang_obj.bookmakers_countries[0][1]}"
 											width="16px" height="16px"
 										/>
-										<p class='color-white s-14'>
-											{ lang_obj.theme_options[0] }
-										</p>
+										{#each lang_obj.theme_options as theme}
+											{#if theme.includes($userBetarenaSettings.theme)}
+												<p class='color-white s-14'>
+													{ theme[1] }
+												</p>
+											{/if}
+										{/each}
 									</div>
 								</div>
 								<!-- ... arrow down [hidden-menu] ... -->
@@ -319,12 +346,14 @@
 										src={arrow_down_fade} 
 										alt='arrow_down_fade'
 										width="16px" height="16px"
+										on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 									/>
 								{:else}
 									<img 
 										src={arrow_up} 
 										alt='arrow_up'
 										width="16px" height="16px"
+										on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 									/>
 								{/if}
 								<!-- ... INIT-HIDDEN-dropdown-theme-select ... -->
@@ -333,12 +362,19 @@
 										transition:fly
 										>
 										{#each lang_obj.theme_options as theme}
-											<div class='theme-opt-box'
-												on:click={() => dropdown_theme_visible = false}
+											<div class='theme-opt-box row-space-out'
+												on:click={() => selectedTheme(theme[0])}
 												>
 												<p class='color-white s-14'>
-													{ theme }
+													{ theme[1] }
 												</p>
+												{#if theme.includes($userBetarenaSettings.theme)}
+													<img 
+														src={icon_check}
+														alt="{theme[0]}"
+														width="16px" height="16px"
+													/>
+												{/if}
 											</div>
 										{/each}
 									</div>
@@ -464,7 +500,7 @@
 
 						{#if mobileExclusive}
 							{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
-								{#if lang_link.lang == $langSelect}
+								{#if lang_link.lang == $userBetarenaSettings.lang}
 									<a rel="external"
 										href={lang_link.betting_tips}
 										>
@@ -613,7 +649,7 @@
 												on:click={() => dropdown_lang_visible = !dropdown_lang_visible}
 												>
 												<p class='color-white s-14 mr-5'>
-													{ $langSelect.toUpperCase() }
+													{ $userBetarenaSettings.lang.toUpperCase() }
 												</p>
 												<!-- ... arrow down [hidden-menu] ... -->
 												{#if !dropdown_lang_visible}
@@ -688,10 +724,11 @@
 
 									<!-- ... theme-options ... -->
 									<div class='side-nav-dropdown m-t-30 m-b-25'
-										on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
 										>
 										<!-- ... name of the container-opt ... -->
-										<div class="m-b-15">
+										<div class="m-b-15"
+											on:click={() => dropdown_theme_visible = !dropdown_theme_visible}
+											>
 											<p class='color-grey s-12 m-b-5'>
 												{ lang_obj.theme }
 											</p>
@@ -700,12 +737,16 @@
 													<img 
 														class="m-r-5"
 														src={light_icon_theme}
-														alt="${lang_obj.bookmakers_countries[0][1]}"
+														alt="{lang_obj.bookmakers_countries[0][1]}"
 														width="16px" height="16px"
 													/>
-													<p class='color-white s-14'>
-														{ lang_obj.theme_options[0] }
-													</p>
+													{#each lang_obj.theme_options as theme}
+														{#if theme.includes($userBetarenaSettings.theme)}
+															<p class='color-white s-14'>
+																{ theme[1] }
+															</p>
+														{/if}
+													{/each}
 												</div>
 												<!-- ... arrow down [hidden-menu] ... -->
 												{#if !dropdown_theme_visible}
@@ -729,12 +770,19 @@
 											<div transition:fly
 												>
 												{#each lang_obj.theme_options as theme}
-													<div class='side-nav-dropdown-opt'
-														on:click={() => dropdown_theme_visible = false}
+													<div class='side-nav-dropdown-opt row-space-out'
+														on:click={() => selectedTheme(theme[0])}
 														>
 														<p class='color-white s-14'>
-															{ theme }
+															{ theme[1] }
 														</p>
+														{#if theme.includes($userBetarenaSettings.theme)}
+															<img 
+																src={icon_check}
+																alt="{theme[0]}"
+																width="16px" height="16px"
+															/>
+														{/if}
 													</div>
 												{/each}
 											</div>
@@ -1271,8 +1319,8 @@
 			bottom: 0;
 			right: 0;
 			left: 0;
-			height: 100vh;
-			width: 100vw;
+			height: 100%;
+			width: 100%;
 			z-index: 1000;
 		}
 	}

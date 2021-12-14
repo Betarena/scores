@@ -6,7 +6,8 @@
 <script lang="ts">
 	import { amp, browser, dev, mode, prerendering } from '$app/env';
 
-  import { langSelect } from '$lib/store/lang-select'
+  import { userBetarenaSettings } from '$lib/store/user-settings'
+  import { fixtureVote } from '$lib/store/vote_fixture'
 
 	import Footer from '$lib/components/footer/Footer.svelte'
 	import Header from '$lib/components/header/Header.svelte'
@@ -16,16 +17,19 @@
 	import '../app.css'
     
   // ... kickstart the .localStorage();
+  // ... kickstart the .localStorage();
   // ... kickstart offline-badge on info;
   if (browser) {
-		langSelect.useLocalStorage()
+    fixtureVote.useLocalStorage()
+		userBetarenaSettings.useLocalStorage()
+    
     window.addEventListener('offline', toggleOfflineAlert)
     window.addEventListener('online', toggleOfflineAlert)
   }
 
   // ... HIDE/SHOW offline ALERT BADGE;
   let offlineMode: boolean = false
-
+  
   function toggleOfflineAlert() { 
     if (dev) console.debug('-- your connection has changed! --')
     offlineMode = !offlineMode
@@ -44,7 +48,7 @@
 
 <Header />
 
-<main>
+<main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
 	<slot />
 </main>
 
@@ -66,5 +70,10 @@
         /* 
         make sure the initial page height is always full-device-height as a minumim */
         /* min-height: 100vh; */
+        background-image: url(/src/lib/header-background.svg);
+        background-repeat: no-repeat;
+        background-size: contain;
+        background-origin: border-box;
+        background-position: top;
     }
 </style>

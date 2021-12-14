@@ -12,7 +12,7 @@ export interface Header_Translation {
     sign_in: string
     sports: Array < Array < string >>
     theme: string
-    theme_options: Array < string >
+    theme_options: Array < Array < string >>
     homepage: string
     more_sports: string
     sports_list: string
