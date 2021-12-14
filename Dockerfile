@@ -2,7 +2,9 @@ FROM node:14.17-alpine
 
 WORKDIR /app
 COPY package.json package-lock.json ./
+
 RUN apk add --no-cache git
+
 RUN npm i --no-optional
 
 COPY . .
