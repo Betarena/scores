@@ -85,6 +85,8 @@
 	let dropdown_bookmakers_visible: boolean = false
 	let dropdown_more_sports_menu: boolean = false
 
+	$: console.debug('dropdown_theme_visible', dropdown_theme_visible)
+
 	let top_nav_dropdown_is_selected: boolean = false
 
 	// ... CLOSE ALL DROPDOWNS METHOD;
