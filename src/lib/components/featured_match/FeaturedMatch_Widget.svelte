@@ -605,7 +605,7 @@
                     on:click={() =>
                       castVote(
                         "1",
-                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2)
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value.toString()).toFixed(2)
                       )}
                   >
                     <p class="medium row-space-out">
@@ -620,7 +620,7 @@
                         />
                       {/if}
                       <span class:active_p={fixtureDataVote.fixture_vote == "1"}>
-                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2) }
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value.toString()).toFixed(2) }
                       </span>
                     </p>
                   </button>
@@ -661,7 +661,7 @@
                     on:click={() =>
                       castVote(
                         "X",
-                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2)
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value.toString()).toFixed(2)
                       )}
                   >
                     <p class="medium row-space-out">
@@ -679,7 +679,7 @@
                         />
                       {/if}
                       <span class:active_p={fixtureDataVote.fixture_vote == "X"}>
-                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2) }
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value.toString()).toFixed(2) }
                       </span>
                     </p>
                   </button>
@@ -720,7 +720,7 @@
                     on:click={() =>
                       castVote(
                         "2",
-                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2)
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value.toString()).toFixed(2)
                       )}
                   >
                     <p class="medium row-space-out">
@@ -735,7 +735,7 @@
                         />
                       {/if}
                       <span class:active_p={fixtureDataVote.fixture_vote == "2"}>
-                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2) }
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value.toString()).toFixed(2) }
                       </span>
                     </p>
                   </button>

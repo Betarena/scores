@@ -17,8 +17,8 @@
     <rect class='animation-target' x="164" y="71" width="134" height="20" rx="2" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
     <rect class='animation-target' x="350" y="104" width="88" height="20" rx="2" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
     <!-- ... non-animating-containers ... -->
-    <circle cx="350" cy="204" r="14" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #4B4B4B;' : 'fill: #F2F2F2;'} />
-    <circle cx="30" cy="204" r="14" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #4B4B4B;' : 'fill: #F2F2F2;'} />
+    <circle cx="350" cy="204" r="14" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #4B4B4B;' : 'fill: white;'} />
+    <circle cx="30" cy="204" r="14" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #4B4B4B;' : 'fill: white;'} />
     <path d="M197 197L183 211" stroke="#8C8C8C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
     <path d="M183 197L197 211" stroke="#8C8C8C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
