@@ -508,7 +508,6 @@
       <FeaturedMatchContentLoading />
   {:then data}
   <!-- ... promise was fulfilled ... -->
-      <!-- <FeaturedMatchContentLoading /> -->
 
     <!-- ... identify the correct translation via IF -->
 		{#each WIDGET_TRANSLATION_DATA as WIDGET_TRANSLATION}
@@ -534,379 +533,381 @@
               </span>
             </p>
           </div>
-          
+
           <!-- ... fixture-visual-voting ... -->
-          <div id="fixture-visual-box">
-            <!-- ... fixture-visual-info ... -->
-            <div id="fixture-data" class="row-space-out m-b-20">
-              <!-- ... first-team ... -->
-              <div class="fixture-team">
-                <img
-                  class="m-b-12"
-                  src={ data.home_team_logo }
-                  alt=""
-                  width="72px"
-                  height="72px"
-                />
-                <p class="medium desktop-medium">
-                  { data.home_team_name }
-                </p>
-              </div>
-              <!-- 
-              fixture-timer-clock -->
-              <div style="align-self: center;">
-                <p class="x-large desktop-x-large">
-                  {countD_h}:{countD_min}:{countD_sec}
-                </p>
-                <p
-                  class="small color-grey desktop-medium"
-                  style="white-space: nowrap;"
-                >
-                  {getOrdinalNum(WIDGET_SELECTED_FIXTURE_START_TIME.getDate())}
-                  {monthNames[WIDGET_SELECTED_FIXTURE_START_TIME.getMonth().toString()]}
-                  {WIDGET_SELECTED_FIXTURE_START_TIME.getFullYear().toString().substr(-2)},
-                  {WIDGET_SELECTED_FIXTURE_START_TIME.getHours().toString()}:{(
-                    "0" + WIDGET_SELECTED_FIXTURE_START_TIME.getMinutes().toString()
-                  ).slice(-2)}h
-                </p>
-              </div>
-              <!-- 
-              second-team -->
-              <div class="fixture-team">
-                <img
-                  class="m-b-12"
-                  src={data.away_team_logo}
-                  alt=""
-                  width="72px"
-                  height="72px"
-                />
-                <p class="medium desktop-medium">
-                  {data.away_team_name}
-                </p>
-              </div>
-            </div>
-            {#if !voteCasted}
-              <p class="large color-primary m-b-12 text-center">
-                {WIDGET_TRANSLATION.vote}
-              </p>
-            {/if}
-
-            <!-- ... voting-results-btn ... -->
-            <div id="btn-vote-container" class="row-space-out">
-
-              <!-- 
-              ODDS #1 
-              -->
-              <div class="odds-vote-box text-center column">
-                <button
-                  class="row-space-out cast-vote-btn m-b-12"
-                  class:active={fixtureDataVote.fixture_vote == "1"}
-                  disabled={voteCasted}
-                  on:click={() =>
-                    castVote(
-                      "1",
-                      parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2)
-                    )}
-                >
-                  <p class="medium row-space-out">
-                    {#if !viewportDesktop}
-                      <span class="color-grey"> 1 </span>
-                    {:else}
-                      <img
-                        src={data.home_team_logo}
-                        alt=""
-                        width="28px"
-                        height="28px"
-                      />
-                    {/if}
-                    <span class:active_p={fixtureDataVote.fixture_vote == "1"}>
-                      { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2) }
-                    </span>
-                  </p>
-                </button>
-                <!-- fixture-probability -->
-                {#if !showBettingSite}
-                  <p class="probablitiy-text medium">
-                    {WIDGET_TRANSLATION.probability}
-                    {#if !viewportDesktop}
-                      <br />
-                    {/if}
-                    {Math.round(
-                      parseInt(data.probabilities.home)
-                    ).toFixed(2)}%
-                  </p>
-                {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
-                  <p class="large">
-                    <span class="color-dark">
-                      {(
-                        (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local / totalVotes) *
-                        100
-                      ).toFixed(0)}%
-                    </span>
-                    <span class="color-grey">
-                      ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local})
-                    </span>
-                  </p>
-                {/if}
-              </div>
-
-              <!-- 
-              ODDS #X 
-              -->
-              <div class="odds-vote-box text-center column">
-                <button
-                  class="row-space-out cast-vote-btn m-b-12"
-                  class:active={fixtureDataVote.fixture_vote == "X"}
-                  disabled={voteCasted}
-                  on:click={() =>
-                    castVote(
-                      "X",
-                      parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2)
-                    )}
-                >
-                  <p class="medium row-space-out">
-                    {#if !viewportDesktop}
-                      <span class="color-grey"> X </span>
-                    {:else}
-                      <!-- 
-                        src="./static/icon/icon-close.svg"
-                      -->
-                      <img
-                        src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
-                        alt=""
-                        width="28px"
-                        height="28px"
-                      />
-                    {/if}
-                    <span class:active_p={fixtureDataVote.fixture_vote == "X"}>
-                      { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2) }
-                    </span>
-                  </p>
-                </button>
-                <!-- fixture-probability -->
-                {#if !showBettingSite}
-                  <p class="probablitiy-text medium">
-                    {WIDGET_TRANSLATION.probability}
-                    {#if !viewportDesktop}
-                      <br />
-                    {/if}
-                    {Math.round(
-                      parseInt(data.probabilities.draw)
-                    ).toFixed(2)}%
-                  </p>
-                {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
-                  <p class="large">
-                    <span class="color-dark">
-                      {(
-                        (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x / totalVotes) *
-                        100
-                      ).toFixed(0)}%
-                    </span>
-                    <span class="color-grey">
-                      ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x})
-                    </span>
-                  </p>
-                {/if}
-              </div>
-
-              <!-- 
-              ODDS #2 
-              -->
-              <div class="odds-vote-box column text-center">
-                <button
-                  class="row-space-out cast-vote-btn m-b-12"
-                  class:active={fixtureDataVote.fixture_vote == "2"}
-                  disabled={voteCasted}
-                  on:click={() =>
-                    castVote(
-                      "2",
-                      parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2)
-                    )}
-                >
-                  <p class="medium row-space-out">
-                    {#if !viewportDesktop}
-                      <span class="color-grey"> 2 </span>
-                    {:else}
-                      <img
-                        src={data.away_team_logo}
-                        alt=""
-                        width="28px"
-                        height="28px"
-                      />
-                    {/if}
-                    <span class:active_p={fixtureDataVote.fixture_vote == "2"}>
-                      { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2) }
-                    </span>
-                  </p>
-                </button>
-                <!-- fixture-probability -->
-                {#if !showBettingSite}
-                  <p class="probablitiy-text medium">
-                    {WIDGET_TRANSLATION.probability}
-                    {#if !viewportDesktop}
-                      <br />
-                    {/if}
-                    {Math.round(
-                      parseInt(data.probabilities.away)
-                    ).toFixed(2)}%
-                  </p>
-                {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
-                  <p class="large">
-                    <span class="color-dark">
-                      {(
-                        (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor / totalVotes) *
-                        100
-                      ).toFixed(0)}%
-                    </span>
-                    <span class="color-grey">
-                      ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor})
-                    </span>
-                  </p>
-                {/if}
-              </div>
-
-            </div>
-
-            <!-- 
-            ~~~~~~~~~~~~~~
-            stakes-site-info-pop-up
-            -->
-            {#if showBettingSite}
-              <div id="site-bet-box" in:fade>
-                <!-- 
-                close-btn 
-                src="./static/icon/white-close.svg"
-                -->
-                <img
-                  src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
-                  alt=""
-                  width="16px"
-                  height="16px"
-                  style="position: absolute; top: 12px; right: 20px;"
-                  on:click={() => (showBettingSite = false)}
-                />
-                <a href={WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.register_link}>
+          {#if WIDGET_SELECTED_FIXTURE_LIVE_ODDS}
+            <div id="fixture-visual-box">
+              <!-- ... fixture-visual-info ... -->
+              <div id="fixture-data" class="row-space-out m-b-20">
+                <!-- ... first-team ... -->
+                <div class="fixture-team">
                   <img
-                    id="stakesSiteImg"
-                    src={WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.image}
+                    class="m-b-12"
+                    src={ data.home_team_logo }
                     alt=""
-                    width="100%"
-                    height="40px"
+                    width="72px"
+                    height="72px"
                   />
-                </a>
-                <div id="inner-site-container">
-                  <!-- 
-                  STAKES DATA -->
-                  <div class="m-b-20 row-space-out">
-                    <!-- 
-                    Win Type
-                    -->
-                    <div class="text-center">
-                      {#if fixtureDataVote.fixture_vote == "1"}
-                        <p class="medium m-b-8 color-grey">Home win</p>
-                      {:else if fixtureDataVote.fixture_vote == "X"}
-                        <p class="medium m-b-8 color-grey">Draw</p>
+                  <p class="medium desktop-medium">
+                    { data.home_team_name }
+                  </p>
+                </div>
+                <!-- 
+                fixture-timer-clock -->
+                <div style="align-self: center;">
+                  <p class="x-large desktop-x-large">
+                    {countD_h}:{countD_min}:{countD_sec}
+                  </p>
+                  <p
+                    class="small color-grey desktop-medium"
+                    style="white-space: nowrap;"
+                  >
+                    {getOrdinalNum(WIDGET_SELECTED_FIXTURE_START_TIME.getDate())}
+                    {monthNames[WIDGET_SELECTED_FIXTURE_START_TIME.getMonth().toString()]}
+                    {WIDGET_SELECTED_FIXTURE_START_TIME.getFullYear().toString().substr(-2)},
+                    {WIDGET_SELECTED_FIXTURE_START_TIME.getHours().toString()}:{(
+                      "0" + WIDGET_SELECTED_FIXTURE_START_TIME.getMinutes().toString()
+                    ).slice(-2)}h
+                  </p>
+                </div>
+                <!-- 
+                second-team -->
+                <div class="fixture-team">
+                  <img
+                    class="m-b-12"
+                    src={data.away_team_logo}
+                    alt=""
+                    width="72px"
+                    height="72px"
+                  />
+                  <p class="medium desktop-medium">
+                    {data.away_team_name}
+                  </p>
+                </div>
+              </div>
+              {#if !voteCasted}
+                <p class="large color-primary m-b-12 text-center">
+                  {WIDGET_TRANSLATION.vote}
+                </p>
+              {/if}
+
+              <!-- ... voting-results-btn ... -->
+              <div id="btn-vote-container" class="row-space-out">
+
+                <!-- 
+                ODDS #1 
+                -->
+                <div class="odds-vote-box text-center column">
+                  <button
+                    class="row-space-out cast-vote-btn m-b-12"
+                    class:active={fixtureDataVote.fixture_vote == "1"}
+                    disabled={voteCasted}
+                    on:click={() =>
+                      castVote(
+                        "1",
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2)
+                      )}
+                  >
+                    <p class="medium row-space-out">
+                      {#if !viewportDesktop}
+                        <span class="color-grey"> 1 </span>
                       {:else}
-                        <p class="medium m-b-8 color-grey">Away win</p>
+                        <img
+                          src={data.home_team_logo}
+                          alt=""
+                          width="28px"
+                          height="28px"
+                        />
                       {/if}
-                      <div class="input-value row-space-out medium text-center">
-                        {#if viewportDesktop}
-                          {#if fixtureDataVote.fixture_vote == "1"}
-                            <img
-                              src={data.home_team_logo}
-                              alt=""
-                              width="28px"
-                              height="28px"
-                            />
-                          {:else if fixtureDataVote.fixture_vote == "X"}
-                            <p class="medium row-space-out">
-                              <span class="color-grey"> X </span>
-                            </p>
-                          {:else}
-                            <img
-                              src={data.away_team_logo}
-                              alt=""
-                              width="28px"
-                              height="28px"
-                            />
-                          {/if}
+                      <span class:active_p={fixtureDataVote.fixture_vote == "1"}>
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2) }
+                      </span>
+                    </p>
+                  </button>
+                  <!-- fixture-probability -->
+                  {#if !showBettingSite}
+                    <p class="probablitiy-text medium">
+                      {WIDGET_TRANSLATION.probability}
+                      {#if !viewportDesktop}
+                        <br />
+                      {/if}
+                      {Math.round(
+                        parseInt(data.probabilities.home)
+                      ).toFixed(2)}%
+                    </p>
+                  {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
+                    <p class="large">
+                      <span class="color-dark">
+                        {(
+                          (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local / totalVotes) *
+                          100
+                        ).toFixed(0)}%
+                      </span>
+                      <span class="color-grey">
+                        ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local})
+                      </span>
+                    </p>
+                  {/if}
+                </div>
+
+                <!-- 
+                ODDS #X 
+                -->
+                <div class="odds-vote-box text-center column">
+                  <button
+                    class="row-space-out cast-vote-btn m-b-12"
+                    class:active={fixtureDataVote.fixture_vote == "X"}
+                    disabled={voteCasted}
+                    on:click={() =>
+                      castVote(
+                        "X",
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2)
+                      )}
+                  >
+                    <p class="medium row-space-out">
+                      {#if !viewportDesktop}
+                        <span class="color-grey"> X </span>
+                      {:else}
+                        <!-- 
+                          src="./static/icon/icon-close.svg"
+                        -->
+                        <img
+                          src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
+                          alt=""
+                          width="28px"
+                          height="28px"
+                        />
+                      {/if}
+                      <span class:active_p={fixtureDataVote.fixture_vote == "X"}>
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2) }
+                      </span>
+                    </p>
+                  </button>
+                  <!-- fixture-probability -->
+                  {#if !showBettingSite}
+                    <p class="probablitiy-text medium">
+                      {WIDGET_TRANSLATION.probability}
+                      {#if !viewportDesktop}
+                        <br />
+                      {/if}
+                      {Math.round(
+                        parseInt(data.probabilities.draw)
+                      ).toFixed(2)}%
+                    </p>
+                  {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
+                    <p class="large">
+                      <span class="color-dark">
+                        {(
+                          (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x / totalVotes) *
+                          100
+                        ).toFixed(0)}%
+                      </span>
+                      <span class="color-grey">
+                        ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x})
+                      </span>
+                    </p>
+                  {/if}
+                </div>
+
+                <!-- 
+                ODDS #2 
+                -->
+                <div class="odds-vote-box column text-center">
+                  <button
+                    class="row-space-out cast-vote-btn m-b-12"
+                    class:active={fixtureDataVote.fixture_vote == "2"}
+                    disabled={voteCasted}
+                    on:click={() =>
+                      castVote(
+                        "2",
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2)
+                      )}
+                  >
+                    <p class="medium row-space-out">
+                      {#if !viewportDesktop}
+                        <span class="color-grey"> 2 </span>
+                      {:else}
+                        <img
+                          src={data.away_team_logo}
+                          alt=""
+                          width="28px"
+                          height="28px"
+                        />
+                      {/if}
+                      <span class:active_p={fixtureDataVote.fixture_vote == "2"}>
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2) }
+                      </span>
+                    </p>
+                  </button>
+                  <!-- fixture-probability -->
+                  {#if !showBettingSite}
+                    <p class="probablitiy-text medium">
+                      {WIDGET_TRANSLATION.probability}
+                      {#if !viewportDesktop}
+                        <br />
+                      {/if}
+                      {Math.round(
+                        parseInt(data.probabilities.away)
+                      ).toFixed(2)}%
+                    </p>
+                  {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
+                    <p class="large">
+                      <span class="color-dark">
+                        {(
+                          (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor / totalVotes) *
+                          100
+                        ).toFixed(0)}%
+                      </span>
+                      <span class="color-grey">
+                        ({WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor})
+                      </span>
+                    </p>
+                  {/if}
+                </div>
+
+              </div>
+
+              <!-- 
+              ~~~~~~~~~~~~~~
+              stakes-site-info-pop-up
+              -->
+              {#if showBettingSite}
+                <div id="site-bet-box" in:fade>
+                  <!-- 
+                  close-btn 
+                  src="./static/icon/white-close.svg"
+                  -->
+                  <img
+                    src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
+                    alt=""
+                    width="16px"
+                    height="16px"
+                    style="position: absolute; top: 12px; right: 20px;"
+                    on:click={() => (showBettingSite = false)}
+                  />
+                  <a href={WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.register_link}>
+                    <img
+                      id="stakesSiteImg"
+                      src={WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.image}
+                      alt=""
+                      width="100%"
+                      height="40px"
+                    />
+                  </a>
+                  <div id="inner-site-container">
+                    <!-- 
+                    STAKES DATA -->
+                    <div class="m-b-20 row-space-out">
+                      <!-- 
+                      Win Type
+                      -->
+                      <div class="text-center">
+                        {#if fixtureDataVote.fixture_vote == "1"}
+                          <p class="medium m-b-8 color-grey">Home win</p>
+                        {:else if fixtureDataVote.fixture_vote == "X"}
+                          <p class="medium m-b-8 color-grey">Draw</p>
+                        {:else}
+                          <p class="medium m-b-8 color-grey">Away win</p>
                         {/if}
-                        <input id='win-type'
-                          class="medium text-center desktop-view-winnings"
+                        <div class="input-value row-space-out medium text-center">
+                          {#if viewportDesktop}
+                            {#if fixtureDataVote.fixture_vote == "1"}
+                              <img
+                                src={data.home_team_logo}
+                                alt=""
+                                width="28px"
+                                height="28px"
+                              />
+                            {:else if fixtureDataVote.fixture_vote == "X"}
+                              <p class="medium row-space-out">
+                                <span class="color-grey"> X </span>
+                              </p>
+                            {:else}
+                              <img
+                                src={data.away_team_logo}
+                                alt=""
+                                width="28px"
+                                height="28px"
+                              />
+                            {/if}
+                          {/if}
+                          <input id='win-type'
+                            class="medium text-center desktop-view-winnings"
+                            type="number"
+                            bind:value={fixtureDataVote.fixture_vote_val}
+                            disabled
+                          />
+                        </div>
+                      </div>
+
+                      <!-- MULTIPLY SIGN -->
+                      <img
+                        src="/assets/svg/icon/icon-close.svg"
+                        alt="multiply-icon"
+                        width="16px"
+                        height="16px"
+                        style="margin-top: 25px;"
+                      />
+
+                      <!-- 
+                      Stake 
+                      -->
+                      <div class="text-center">
+                        <p class="medium m-b-8 color-grey">{WIDGET_TRANSLATION.stake}</p>
+                        <input
+                          class="input-value medium text-center"
+                          type="text"
+                          bind:value={user_Stake_amount}
+                        />
+                      </div>
+
+                      <!-- EQUALS SIGN -->
+                      <img
+                        src="/assets/svg/icon/icon-equally.svg"
+                        alt="icon-equlaity"
+                        width="16px"
+                        height="16px"
+                        style="margin-top: 25px;"
+                      />
+
+                      <!-- 
+                      Winnings 
+                      -->
+                      <div class="text-center">
+                        <p class="medium m-b-8 color-grey">
+                          {WIDGET_TRANSLATION.winnings}
+                        </p>
+                        <input
+                          class="input-value medium text-center"
                           type="number"
-                          bind:value={fixtureDataVote.fixture_vote_val}
+                          value={(
+                            parseFloat(fixtureDataVote.fixture_vote_val) * user_Stake_amount
+                          ).toFixed(2)}
                           disabled
                         />
                       </div>
                     </div>
 
-                    <!-- MULTIPLY SIGN -->
-                    <img
-                      src="/assets/svg/icon/icon-close.svg"
-                      alt="multiply-icon"
-                      width="16px"
-                      height="16px"
-                      style="margin-top: 25px;"
-                    />
+                    <!-- 
+                    PLACE BET BUTTON -->
+                    <a href={WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.register_link}>
+                      <button class="place-bet-btn btn-primary m-b-12">
+                        <p class="small">
+                          {WIDGET_TRANSLATION.place_bet}
+                        </p>
+                      </button>
+                    </a>
 
                     <!-- 
-                    Stake 
-                    -->
-                    <div class="text-center">
-                      <p class="medium m-b-8 color-grey">{WIDGET_TRANSLATION.stake}</p>
-                      <input
-                        class="input-value medium text-center"
-                        type="text"
-                        bind:value={user_Stake_amount}
-                      />
-                    </div>
-
-                    <!-- EQUALS SIGN -->
-                    <img
-                      src="/assets/svg/icon/icon-equally.svg"
-                      alt="icon-equlaity"
-                      width="16px"
-                      height="16px"
-                      style="margin-top: 25px;"
-                    />
-
-                    <!-- 
-                    Winnings 
-                    -->
-                    <div class="text-center">
-                      <p class="medium m-b-8 color-grey">
-                        {WIDGET_TRANSLATION.winnings}
-                      </p>
-                      <input
-                        class="input-value medium text-center"
-                        type="number"
-                        value={(
-                          parseFloat(fixtureDataVote.fixture_vote_val) * user_Stake_amount
-                        ).toFixed(2)}
-                        disabled
-                      />
-                    </div>
+                    BETTING SITE INFO -->
+                    <p class="small text-center color-grey">
+                      {WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.information}
+                    </p>
                   </div>
-
-                  <!-- 
-                  PLACE BET BUTTON -->
-                  <a href={WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.register_link}>
-                    <button class="place-bet-btn btn-primary m-b-12">
-                      <p class="small">
-                        {WIDGET_TRANSLATION.place_bet}
-                      </p>
-                    </button>
-                  </a>
-
-                  <!-- 
-                  BETTING SITE INFO -->
-                  <p class="small text-center color-grey">
-                    {WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.information}
-                  </p>
                 </div>
-              </div>
-            {/if}
-          </div>
+              {/if}
+            </div>
+          {/if}
 
           <!-- ... live-streams-frame-box ... -->
           {#if WIDGET_SELECTED_FIXTURE_TV_STATIONS_DATA.length != 0}
