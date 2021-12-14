@@ -7,7 +7,7 @@
   // ... svelte-imports;
   import { onMount } from "svelte"
   import { fade } from "svelte/transition"
-	import { amp, browser, dev, mode, prerendering } from '$app/env'
+	import { browser, dev } from '$app/env'
 
   // ... external modules imports;
   import ColorThief from 'colorthief/dist/color-thief.mjs'
@@ -23,7 +23,7 @@
   import { GET_ALL_FIXTURE_DATA, GET_LANG_SELECTED_FIXTURE } from "$lib/graphql/query"
 	import { userBetarenaSettings } from '$lib/store/user-settings'
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-  import { getDatabase, ref, set, onValue } from "firebase/database"
+  import { ref, onValue } from "firebase/database"
 
   // ... DECLARING TYPESCRIPT-TYPES imports;
   import type { fixture } from "$lib/store/vote_fixture"
@@ -33,6 +33,7 @@
   import type { SelectedFixture_LiveOdds_Response } from "$lib/model/firebase-real-db-interface"
 
   let totalVotes: number  // ???
+  let imageURL: string
 
   // ... declaring component INSTANCED & VARIABLES;
   let WIDGET_SELECTED_FIXTURE_MATCH_VOTES: MatchVotes
@@ -187,9 +188,7 @@
     // ... get the list of the odds for the;
     WIDGET_SELECTED_FIXTURE_LIVE_ODDS = await getTargetFixtureOdds(selectedFixutreData)
     // ... intercept the image of the matchbetting site logo, and declare it in TOP-LEVEL;
-    let imageURL: string = WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.image
-    // ... apply the correct background-color to the image;
-    getImageBgColor(imageURL)
+    imageURL = WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.image
   }
 
   // ... [WORKING]
@@ -428,6 +427,11 @@
   // ~~~~~~~~~~~~~~~~~~~~~
   // COLOR-THIEF INSTANCE;
   // ~~~~~~~~~~~~~~~~~~~~~
+
+  $: if (browser && imageURL) {
+    // ... apply the correct background-color to the image;
+    getImageBgColor(imageURL)
+  }
 
   // ... declaring a new instance of `ColorThief`;
   const colorThief = new ColorThief();
