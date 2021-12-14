@@ -7,7 +7,7 @@
   // ... svelte-imports;
   import { onMount } from "svelte"
   import { fade } from "svelte/transition"
-	import { amp, browser, dev, mode, prerendering } from '$app/env'
+	import { browser, dev } from '$app/env'
 
   // ... external modules imports;
   import ColorThief from 'colorthief/dist/color-thief.mjs'
@@ -23,7 +23,7 @@
   import { GET_ALL_FIXTURE_DATA, GET_LANG_SELECTED_FIXTURE } from "$lib/graphql/query"
 	import { userBetarenaSettings } from '$lib/store/user-settings'
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-  import { getDatabase, ref, set, onValue } from "firebase/database"
+  import { ref, onValue } from "firebase/database"
 
   // ... DECLARING TYPESCRIPT-TYPES imports;
   import type { fixture } from "$lib/store/vote_fixture"
@@ -33,6 +33,7 @@
   import type { SelectedFixture_LiveOdds_Response } from "$lib/model/firebase-real-db-interface"
 
   let totalVotes: number  // ???
+  let imageURL: string
 
   // ... declaring component INSTANCED & VARIABLES;
   let WIDGET_SELECTED_FIXTURE_MATCH_VOTES: MatchVotes
@@ -187,9 +188,7 @@
     // ... get the list of the odds for the;
     WIDGET_SELECTED_FIXTURE_LIVE_ODDS = await getTargetFixtureOdds(selectedFixutreData)
     // ... intercept the image of the matchbetting site logo, and declare it in TOP-LEVEL;
-    let imageURL: string = WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.image
-    // ... apply the correct background-color to the image;
-    getImageBgColor(imageURL)
+    imageURL = WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds_info.image
   }
 
   // ... [WORKING]
@@ -209,11 +208,13 @@
       WIDGET_SELECTED_FIXTURE_VALUE_BETS = null
       return
     }
-    // ... otherwise, append the image & the registration link to the data;
-    WIDGET_SELECTED_FIXTURE_VALUE_BETS = {
-      ...WIDGET_SELECTED_FIXTURE_VALUE_BETS,
-      image: sportbook_details.betting_site_info.image,
-      link: sportbook_details.betting_site_info.register_link,
+    else {
+      // ... otherwise, append the image & the registration link to the data;
+      WIDGET_SELECTED_FIXTURE_VALUE_BETS = {
+        ...WIDGET_SELECTED_FIXTURE_VALUE_BETS,
+        image: sportbook_details.betting_site_info.image,
+        link: sportbook_details.betting_site_info.register_link,
+      }
     }
   }
 
@@ -429,6 +430,11 @@
   // COLOR-THIEF INSTANCE;
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  $: if (browser && imageURL) {
+    // ... apply the correct background-color to the image;
+    getImageBgColor(imageURL)
+  }
+
   // ... declaring a new instance of `ColorThief`;
   const colorThief = new ColorThief();
 
@@ -605,7 +611,7 @@
                     on:click={() =>
                       castVote(
                         "1",
-                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2)
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value.toString()).toFixed(2)
                       )}
                   >
                     <p class="medium row-space-out">
@@ -620,7 +626,7 @@
                         />
                       {/if}
                       <span class:active_p={fixtureDataVote.fixture_vote == "1"}>
-                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value).toFixed(2) }
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value.toString()).toFixed(2) }
                       </span>
                     </p>
                   </button>
@@ -661,7 +667,7 @@
                     on:click={() =>
                       castVote(
                         "X",
-                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2)
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value.toString()).toFixed(2)
                       )}
                   >
                     <p class="medium row-space-out">
@@ -679,7 +685,7 @@
                         />
                       {/if}
                       <span class:active_p={fixtureDataVote.fixture_vote == "X"}>
-                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value).toFixed(2) }
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value.toString()).toFixed(2) }
                       </span>
                     </p>
                   </button>
@@ -720,7 +726,7 @@
                     on:click={() =>
                       castVote(
                         "2",
-                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2)
+                        parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value.toString()).toFixed(2)
                       )}
                   >
                     <p class="medium row-space-out">
@@ -735,7 +741,7 @@
                         />
                       {/if}
                       <span class:active_p={fixtureDataVote.fixture_vote == "2"}>
-                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value).toFixed(2) }
+                        { parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value.toString()).toFixed(2) }
                       </span>
                     </p>
                   </button>

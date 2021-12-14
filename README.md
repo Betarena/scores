@@ -59,3 +59,7 @@ https://stackoverflow.com/questions/67135169/how-to-initialize-apolloclient-in-s
 https://www.npmjs.com/package/graphql-request
 
 https://www.sitepoint.com/a-beginners-guide-to-sveltekit/
+
+https://coderoad.ru/62950447/NPM-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-%D1%87%D1%82%D0%BE-%D1%82%D0%BE-%D0%B8%D0%B7-github-%D0%B2-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80-docker-%D0%BD%D0%B5-%D1%83%D0%B4%D0%B0%D0%B5%D1%82%D1%81%D1%8F
+
+Fixing DOCKER /ENONT issue...

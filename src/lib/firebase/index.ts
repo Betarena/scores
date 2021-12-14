@@ -3,8 +3,8 @@
  * ------------------
  * & methods; 
 */
-import { amp, browser, dev, mode, prerendering } from '$app/env'
-import { getDatabase, ref, set, onValue, get, child } from "firebase/database";
+import { dev } from '$app/env'
+import { ref, get, child } from "firebase/database";
 
 import { db_real } from './init'
 
@@ -44,22 +44,22 @@ export async function getTargetFixtureOdds(fixture_data: SelectedFixutre): Promi
             // ... DEBUGGING;
             // if (dev) console.debug('data from Real DB', [snapshot.val()]) // ... TOO LONG
             // ...
-            let fixture_odds = snapshot.val()
-            let fixture_odds_keys = Object.keys(snapshot.val())
+            const fixture_odds = snapshot.val()
+            const fixture_odds_keys = Object.keys(snapshot.val())
             // ... get the `sportbook-details` data;
-            let map = new Map()
+            const map = new Map()
             let count = 0;
             // ... iterate over the data of the `lang` in sportbook details;
-            for (let rankedOdd in sportbook_details) {
+            for (const rankedOdd in sportbook_details) {
                 // ... iterate over the data of the fixture avaiable ODDS;
-                for (let avaiableOdd in fixture_odds_keys) {
+                for (const avaiableOdd in fixture_odds_keys) {
                     // ... check for a match of the odds names;
                     // if (dev) console.debug('sportbook_details', sportbook_details[rankedOdd]['title'].toString().toLowerCase());
                     if (fixture_odds_keys[avaiableOdd].toString().toLowerCase() == sportbook_details[rankedOdd]['title'].toString().toLowerCase()
                         && count != 1) {
                             // if (dev) console.log('Match Found!')
-                        let targetFixture = fixture_odds_keys[avaiableOdd]
-                        let fixtureOdd = fixture_odds[targetFixture]
+                        const targetFixture = fixture_odds_keys[avaiableOdd]
+                        const fixtureOdd = fixture_odds[targetFixture]
                         map.set('fixture_odds', fixtureOdd)
                         map.set('fixture_odds_info', sportbook_details[rankedOdd])
                         count = 1;
@@ -84,7 +84,7 @@ export async function getTargetFixtureOdds(fixture_data: SelectedFixutre): Promi
  * 
  * @param userGeoLocation
 */
-export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise< any > {
+export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise < any > {
     // ... return the odds-site info & the odds values;
     if (siteName != undefined) {
         // console.log('siteName', siteName);
@@ -93,10 +93,10 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
             if (snapshot.exists()) {
                 // console.info('data from Real DB', [snapshot.val()])
                 
-                let map = new Map();
-                let sportbook_details_ = snapshot.val()
+                const map = new Map();
+                const sportbook_details_ = snapshot.val()
 
-                for (let rankedOdd in sportbook_details_) {
+                for (const rankedOdd in sportbook_details_) {
                     // ... check for a match of the odds names;
                     if (siteName.toLowerCase().toString() == sportbook_details_[rankedOdd]['title'].toLowerCase().toString()) {
                         // console.log('Match Found!')
