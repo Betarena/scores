@@ -1,3 +1,4 @@
+# https://hub.docker.com/_/node
 # FROM node:14.17-alpine
 FROM node:14.17.4
 
@@ -12,6 +13,8 @@ COPY . .
 
 RUN npm run build
 
+# https://hub.docker.com/_/node
+# FROM node:14.17-slim
 FROM node:14.17.4
 
 WORKDIR /app

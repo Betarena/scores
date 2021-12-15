@@ -367,7 +367,7 @@
    * time and the current time, once the fixture time
    * has been loaded in,
    */
-  $: if (WIDGET_SELECTED_FIXTURE_START_TIME) {
+  $: if (WIDGET_SELECTED_FIXTURE_START_TIME != undefined || WIDGET_SELECTED_FIXTURE_START_TIME != null) {
     dateObjDif =
       Date.parse(WIDGET_SELECTED_FIXTURE_START_TIME.toString()) - Date.parse(new Date().toString());
     // ... calculate the difference in the time;
@@ -541,7 +541,7 @@
           </div>
 
           <!-- ... fixture-visual-voting ... -->
-          {#if WIDGET_SELECTED_FIXTURE_LIVE_ODDS}
+          {#if WIDGET_SELECTED_FIXTURE_LIVE_ODDS != undefined || WIDGET_SELECTED_FIXTURE_LIVE_ODDS != null}
             <div id="fixture-visual-box">
               <!-- ... fixture-visual-info ... -->
               <div id="fixture-data" class="row-space-out m-b-20">
