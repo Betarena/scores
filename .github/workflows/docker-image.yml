@@ -6,6 +6,14 @@ on:
   pull_request:
     branches: [ main, dev ]
 
+env:
+  VITE_HASURA_DB_URL: ${{secrets.VITE_HASURA_DB_URL}}
+  VITE_HASURA_DB_TOKEN: ${{secrets.VITE_HASURA_DB_TOKEN}}
+  VITE_FIREBASE_DB_API_KEY: ${{secrets.VITE_FIREBASE_DB_API_KEY }}
+  VITE_FIREBASE_DB_AUTH_DOMAIN: ${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}
+  VITE_FIREBASE_DB_PROJECT_ID: ${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}
+  VITE_FIREBASE_DB_DATABASE_URL: ${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}
+
 jobs:
 
   build:
@@ -13,8 +21,21 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Build the Docker image
 
-      # run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
-      run: docker build --no-cache --progress=plain --tag scores-platform:$(date +%s) .
+    - uses: actions/checkout@v2
+    
+    - name: create env file
+      run: |
+        touch .env
+        echo VITE_HASURA_DB_URL="${{secrets.VITE_HASURA_DB_URL}}" >> .env
+        echo VITE_HASURA_DB_TOKEN="${{secrets.VITE_HASURA_DB_TOKEN}}" >> .env
+        echo VITE_FIREBASE_DB_API_KEY="${{secrets.VITE_FIREBASE_DB_API_KEY}}" >> .env
+        echo VITE_FIREBASE_DB_AUTH_DOMAIN="${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}" >> .env
+        echo VITE_FIREBASE_DB_PROJECT_ID="${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}" >> .env
+        echo VITE_FIREBASE_DB_DATABASE_URL="${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}" >> .env
+        
+    - name: Build the Docker image
+      
+      run: |
+        docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      # run: docker build --no-cache --progress=plain --tag scores-platform:$(date +%s) .
