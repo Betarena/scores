@@ -12,7 +12,7 @@
   // ... external modules imports;
   import ColorThief from 'colorthief/dist/color-thief.mjs'
 
-  import FeaturedMatchContentLoading from "./FeaturedMatch_ContentLoading.svelte";
+  import FeaturedMatchContentLoading from "./FeaturedMatch_ContentLoading.svelte"
 
   // ... external `exports` imports;
   import { db_real } from '$lib/firebase/init'
@@ -239,7 +239,7 @@
       WIDGET_SELECTED_FIXTURE_MATCH_VOTES = update_fixture_data.update_widget_featured_match_votes_by_pk
       totalVotes = WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x + WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local + WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor
     } catch (error) {
-      console.error(JSON.stringify(error, undefined, 2))
+      console.error('error', error)
     }
   }
 
@@ -367,7 +367,7 @@
    * time and the current time, once the fixture time
    * has been loaded in,
    */
-  $: if (WIDGET_SELECTED_FIXTURE_START_TIME) {
+  $: if (WIDGET_SELECTED_FIXTURE_START_TIME != undefined && WIDGET_SELECTED_FIXTURE_START_TIME != null) {
     dateObjDif =
       Date.parse(WIDGET_SELECTED_FIXTURE_START_TIME.toString()) - Date.parse(new Date().toString());
     // ... calculate the difference in the time;
@@ -541,7 +541,7 @@
           </div>
 
           <!-- ... fixture-visual-voting ... -->
-          {#if WIDGET_SELECTED_FIXTURE_LIVE_ODDS}
+          {#if WIDGET_SELECTED_FIXTURE_LIVE_ODDS != undefined && WIDGET_SELECTED_FIXTURE_LIVE_ODDS != null}
             <div id="fixture-visual-box">
               <!-- ... fixture-visual-info ... -->
               <div id="fixture-data" class="row-space-out m-b-20">
