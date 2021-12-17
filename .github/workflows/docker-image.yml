@@ -1,19 +1,39 @@
+# ....................................
+# ... GITHUB ACIONS CI/CD WORKFLOW ...
+# ....................................
 name: Docker Image CI
-
+# ... when to trigger this project
 on:
   push:
     branches: [ main, dev ]
   pull_request:
     branches: [ main, dev ]
-
+# ... declaring ENV variables to be used in the project-CI/CD
+env:
+  VITE_HASURA_DB_URL: ${{secrets.VITE_HASURA_DB_URL}}
+  VITE_HASURA_DB_TOKEN: ${{secrets.VITE_HASURA_DB_TOKEN}}
+  VITE_FIREBASE_DB_API_KEY: ${{secrets.VITE_FIREBASE_DB_API_KEY }}
+  VITE_FIREBASE_DB_AUTH_DOMAIN: ${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}
+  VITE_FIREBASE_DB_PROJECT_ID: ${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}
+  VITE_FIREBASE_DB_DATABASE_URL: ${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}
+# ... JOBS TO DO WITH GITHUB WORFLOWS;
 jobs:
-
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v2
+    # ... instantiate a `.env` file for the JOB to access;
+    - name: create env file
+      run: |
+        touch .env
+        echo VITE_HASURA_DB_URL="${{secrets.VITE_HASURA_DB_URL}}" >> .env
+        echo VITE_HASURA_DB_TOKEN="${{secrets.VITE_HASURA_DB_TOKEN}}" >> .env
+        echo VITE_FIREBASE_DB_API_KEY="${{secrets.VITE_FIREBASE_DB_API_KEY}}" >> .env
+        echo VITE_FIREBASE_DB_AUTH_DOMAIN="${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}" >> .env
+        echo VITE_FIREBASE_DB_PROJECT_ID="${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}" >> .env
+        echo VITE_FIREBASE_DB_DATABASE_URL="${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}" >> .env
+    # ... build the DOCKER IMAGE CONTAINER;
     - name: Build the Docker image
-
-      run: docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      run: |
+        docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+      # run: docker build --no-cache --progress=plain --tag scores-platform:$(date +%s) .

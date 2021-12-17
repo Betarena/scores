@@ -2,6 +2,8 @@
  * INSTANTIATE GRAPH-QL REQUEST-CLIENT
  * ~~~~~~~~~~~~~~~~~
  * & methods; 
+ * - adapted to GitHub Actions SECRETS
+ * - adpated to Heroku ENV-VARIABLES
 */
 import { GraphQLClient } from 'graphql-request'
 

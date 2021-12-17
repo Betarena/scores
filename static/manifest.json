@@ -7,14 +7,12 @@
       {
         "src": "/assets/img/192x192.png",
         "type": "image/png",
-        "sizes": "192x192",
-        "purpose": "any maskable"
+        "sizes": "192x192"
       },
       {
         "src": "/assets/img/512x512.png",
         "type": "image/png",
-        "sizes": "512x512",
-        "purpose": "any maskable"
+        "sizes": "512x512"
       }
     ],
     "background_color": "#292929",
