@@ -74,14 +74,32 @@
     content: "";
     display: inline-block;
     width: 100%;
-    height: 100%;
+    height: 435px;
     background-image: url(/src/lib/header-background.svg);
     background-repeat: no-repeat;
-    background-size: contain;
+    background-size: cover;
     background-origin: border-box;
     background-position: top;
     position: absolute;
-    top: calc(100vw / -5.5);
+    top: -5px;
     z-index: -1;
+  }
+
+  /* 
+  RESPONSIVE FOR TABLET (&+) [768px] */
+  @media screen and (min-width: 768px) {
+    main::before {
+      height: 495px;
+    }
+  }
+
+  /* 
+  RESPONSIVE FOR TABLET (&+) [768px] */
+  @media screen and (min-width: 1024px) {
+    main::before {
+      height: 100%;
+      background-size: contain !important;
+      top: calc(100vw / -5.5) !important;
+    }
   }
 </style>
