@@ -69,6 +69,7 @@ export interface TranslationsResponse {
     value_bet: string
     vote: string
     winnings: string
+    widget_title: string
 }
 
 /**

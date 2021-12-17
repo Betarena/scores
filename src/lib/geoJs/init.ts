@@ -3,7 +3,7 @@
  * ------------------
  * & methods; 
 */
-import { dev} from '$app/env'
+import { dev } from '$app/env'
 
 import { get } from '$lib/api/utils'
 

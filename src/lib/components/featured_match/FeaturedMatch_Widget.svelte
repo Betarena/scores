@@ -503,7 +503,13 @@
 <div>
   
   <p class='s-20 m-b-10 color-white'>
-    Featured Match
+    {#if WIDGET_TRANSLATION_DATA != undefined}
+      {#each WIDGET_TRANSLATION_DATA as WIDGET_TRANSLATION}
+        {#if WIDGET_TRANSLATION.lang == $userBetarenaSettings.lang}
+          {WIDGET_TRANSLATION.widget_title}
+        {/if}
+      {/each}
+    {/if}
   </p>
 
   {#await promise}
@@ -529,9 +535,9 @@
               alt="" 
             />
             <!-- ... league-name-title ... -->
-            <p class="large color-dark m-r-8">
+            <p class="w-500 large color-dark m-r-8">
               { data.league_name }
-              <span class="color-grey">
+              <span class="w-400 color-grey">
                 (Round { data.round_name })
               </span>
             </p>
@@ -551,20 +557,20 @@
                     width="72px"
                     height="72px"
                   />
-                  <p class="medium desktop-medium">
+                  <p class="w-500 medium desktop-medium">
                     { data.home_team_name }
                   </p>
                 </div>
                 <!-- 
                 fixture-timer-clock -->
                 <div style="align-self: center;">
-                  <p class="x-large desktop-x-large">
+                  <p class="w-500 x-large desktop-x-large">
                     {countD_h}:{countD_min}:{countD_sec}
                   </p>
                   <p
-                    class="small color-grey desktop-medium"
+                    class="w-400 small color-grey desktop-medium"
                     style="white-space: nowrap;"
-                  >
+                    >
                     {getOrdinalNum(WIDGET_SELECTED_FIXTURE_START_TIME.getDate())}
                     {monthNames[WIDGET_SELECTED_FIXTURE_START_TIME.getMonth().toString()]}
                     {WIDGET_SELECTED_FIXTURE_START_TIME.getFullYear().toString().substr(-2)},
@@ -583,13 +589,13 @@
                     width="72px"
                     height="72px"
                   />
-                  <p class="medium desktop-medium">
+                  <p class="w-500 medium desktop-medium">
                     {data.away_team_name}
                   </p>
                 </div>
               </div>
               {#if !voteCasted}
-                <p class="large color-primary m-b-12 text-center">
+                <p class="w-500 large color-primary m-b-12 text-center">
                   {WIDGET_TRANSLATION.vote}
                 </p>
               {/if}
@@ -610,8 +616,8 @@
                         "1",
                         parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[0].value.toString()).toFixed(2)
                       )}
-                  >
-                    <p class="medium row-space-out">
+                    >
+                    <p class="w-500 medium row-space-out">
                       {#if !viewportDesktop}
                         <span class="color-grey"> 1 </span>
                       {:else}
@@ -629,7 +635,7 @@
                   </button>
                   <!-- fixture-probability -->
                   {#if !showBettingSite}
-                    <p class="probablitiy-text medium">
+                    <p class="w-400 probablitiy-text medium">
                       {WIDGET_TRANSLATION.probability}
                       {#if !viewportDesktop}
                         <br />
@@ -639,7 +645,7 @@
                       ).toFixed(2)}%
                     </p>
                   {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
-                    <p class="large">
+                    <p class="w-500 large">
                       <span class="color-dark">
                         {(
                           (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_local / totalVotes) *
@@ -666,8 +672,8 @@
                         "X",
                         parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[1].value.toString()).toFixed(2)
                       )}
-                  >
-                    <p class="medium row-space-out">
+                    >
+                    <p class="w-500 medium row-space-out">
                       {#if !viewportDesktop}
                         <span class="color-grey"> X </span>
                       {:else}
@@ -688,7 +694,7 @@
                   </button>
                   <!-- fixture-probability -->
                   {#if !showBettingSite}
-                    <p class="probablitiy-text medium">
+                    <p class="w-400 probablitiy-text medium">
                       {WIDGET_TRANSLATION.probability}
                       {#if !viewportDesktop}
                         <br />
@@ -698,7 +704,7 @@
                       ).toFixed(2)}%
                     </p>
                   {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
-                    <p class="large">
+                    <p class="w-500 large">
                       <span class="color-dark">
                         {(
                           (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_draw_x / totalVotes) *
@@ -725,8 +731,8 @@
                         "2",
                         parseFloat(WIDGET_SELECTED_FIXTURE_LIVE_ODDS.fixture_odds.markets["1X2FT"].data[2].value.toString()).toFixed(2)
                       )}
-                  >
-                    <p class="medium row-space-out">
+                    >
+                    <p class="w-500 medium row-space-out">
                       {#if !viewportDesktop}
                         <span class="color-grey"> 2 </span>
                       {:else}
@@ -744,7 +750,7 @@
                   </button>
                   <!-- fixture-probability -->
                   {#if !showBettingSite}
-                    <p class="probablitiy-text medium">
+                    <p class="w-400 probablitiy-text medium">
                       {WIDGET_TRANSLATION.probability}
                       {#if !viewportDesktop}
                         <br />
@@ -754,7 +760,7 @@
                       ).toFixed(2)}%
                     </p>
                   {:else if WIDGET_SELECTED_FIXTURE_MATCH_VOTES != undefined}
-                    <p class="large">
+                    <p class="w-500 large">
                       <span class="color-dark">
                         {(
                           (WIDGET_SELECTED_FIXTURE_MATCH_VOTES.vote_win_visitor / totalVotes) *
@@ -806,11 +812,11 @@
                       -->
                       <div class="text-center">
                         {#if fixtureDataVote.fixture_vote == "1"}
-                          <p class="medium m-b-8 color-grey">Home win</p>
+                          <p class="w-400 medium m-b-8 color-grey">Home win</p>
                         {:else if fixtureDataVote.fixture_vote == "X"}
-                          <p class="medium m-b-8 color-grey">Draw</p>
+                          <p class="w-400 medium m-b-8 color-grey">Draw</p>
                         {:else}
-                          <p class="medium m-b-8 color-grey">Away win</p>
+                          <p class="w-400 medium m-b-8 color-grey">Away win</p>
                         {/if}
                         <div class="input-value row-space-out medium text-center">
                           {#if viewportDesktop}
@@ -822,7 +828,7 @@
                                 height="28px"
                               />
                             {:else if fixtureDataVote.fixture_vote == "X"}
-                              <p class="medium row-space-out">
+                              <p class="w-500 medium row-space-out">
                                 <span class="color-grey"> X </span>
                               </p>
                             {:else}
@@ -835,7 +841,7 @@
                             {/if}
                           {/if}
                           <input id='win-type'
-                            class="medium text-center desktop-view-winnings"
+                            class="w-500 medium text-center desktop-view-winnings"
                             type="number"
                             bind:value={fixtureDataVote.fixture_vote_val}
                             disabled
@@ -856,9 +862,9 @@
                       Stake 
                       -->
                       <div class="text-center">
-                        <p class="medium m-b-8 color-grey">{WIDGET_TRANSLATION.stake}</p>
+                        <p class="w-400 medium m-b-8 color-grey">{WIDGET_TRANSLATION.stake}</p>
                         <input
-                          class="input-value medium text-center"
+                          class="w-500 input-value medium text-center"
                           type="text"
                           bind:value={user_Stake_amount}
                         />
@@ -877,11 +883,11 @@
                       Winnings 
                       -->
                       <div class="text-center">
-                        <p class="medium m-b-8 color-grey">
+                        <p class="w-400 medium m-b-8 color-grey">
                           {WIDGET_TRANSLATION.winnings}
                         </p>
                         <input
-                          class="input-value medium text-center"
+                          class="w-500 input-value medium text-center"
                           type="number"
                           value={(
                             parseFloat(fixtureDataVote.fixture_vote_val) * user_Stake_amount
@@ -917,7 +923,7 @@
             <div id="live-stream-box">
               <!-- 
               live-streams-title-section -->
-              <p class="large m-b-8" style="padding-left: 20px;">
+              <p class="w-500 large m-b-8" style="padding-left: 20px;">
                 {WIDGET_TRANSLATION.streams}
               </p>
               <!-- 
@@ -958,7 +964,7 @@
                   width="32px"
                   height="32px"
                 />
-                <p class="large">
+                <p class="w-500 large">
                   {data.home_team_name}
                   {WIDGET_TRANSLATION.players}
                 </p>
@@ -966,28 +972,28 @@
               <table class="table-best-player">
                 <tr class="row-head m-b-16">
                   <th class="rating-head">
-                    <p class="small color-grey">
+                    <p class="w-400 small color-grey">
                       {WIDGET_TRANSLATION.rating}
                     </p>
                   </th>
                   <th class="player-col">
-                    <p class="small color-grey">
+                    <p class="w-400 small color-grey">
                       {WIDGET_TRANSLATION.player}
                     </p>
                   </th>
                   {#if viewportDesktop}
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.matches}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.assists}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.goals}
                       </p>
                     </th>
@@ -1008,8 +1014,8 @@
                           9}
                       class:golden={WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_rating_player_1 >=
                         9}
-                    >
-                      <p class="medium">
+                      >
+                      <p class="w-500 medium">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_rating_player_1}
                       </p>
                     </div>
@@ -1022,23 +1028,23 @@
                       height="32px"
                       class="player-img"
                     />
-                    <p class="small desktop-small">
+                    <p class="w-500 small desktop-small">
                       {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_1}
                     </p>
                   </td>
                   {#if viewportDesktop}
                     <td>
-                      <p class="medium boxed-rating-matches">
+                      <p class="w-500 medium boxed-rating-matches">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_1_appearances}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-assits">
+                      <p class="w-500 medium boxed-rating-assits">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_1_assists}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-goals">
+                      <p class="w-500 medium boxed-rating-goals">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_1_goals}
                       </p>
                     </td>
@@ -1060,7 +1066,7 @@
                       class:golden={WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_rating_player_2 >=
                         9}
                     >
-                      <p class="medium">
+                      <p class="w-500 medium">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_rating_player_2}
                       </p>
                     </div>
@@ -1073,23 +1079,23 @@
                       height="32px"
                       class="player-img"
                     />
-                    <p class="small desktop-small">
+                    <p class="w-500 small desktop-small">
                       {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_2}
                     </p>
                   </td>
                   {#if viewportDesktop}
                     <td>
-                      <p class="medium boxed-rating-matches">
+                      <p class="w-500 medium boxed-rating-matches">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_2_appearances}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-assits">
+                      <p class="w-500 medium boxed-rating-assits">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_2_assists}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-goals">
+                      <p class="w-500 medium boxed-rating-goals">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.local_team_player_2_goals}
                       </p>
                     </td>
@@ -1111,7 +1117,7 @@
                   width="32px"
                   height="32px"
                 />
-                <p class="large">
+                <p class="w-500 large">
                   {data.away_team_name}
                   {WIDGET_TRANSLATION.players}
                 </p>
@@ -1120,28 +1126,28 @@
               <table class="table-best-player">
                 <tr class="row-head m-b-16">
                   <th class="rating-head">
-                    <p class="small color-grey">
+                    <p class="w-400 small color-grey">
                       {WIDGET_TRANSLATION.rating}
                     </p>
                   </th>
                   <th class="player-col">
-                    <p class="small color-grey">
+                    <p class="w-400 small color-grey">
                       {WIDGET_TRANSLATION.player}
                     </p>
                   </th>
                   {#if viewportDesktop}
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.matches}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.assists}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.goals}
                       </p>
                     </th>
@@ -1163,7 +1169,7 @@
                       class:golden={WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_rating_player_1 >=
                         9}
                     >
-                      <p class="medium">
+                      <p class="w-500 medium">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_rating_player_1}
                       </p>
                     </div>
@@ -1176,23 +1182,23 @@
                       height="32px"
                       class="player-img"
                     />
-                    <p class="small desktop-small">
+                    <p class="w-500 small desktop-small">
                       {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_1}
                     </p>
                   </td>
                   {#if viewportDesktop}
                     <td>
-                      <p class="medium boxed-rating-matches">
+                      <p class="w-500 medium boxed-rating-matches">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_1_appearances}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-assits">
+                      <p class="w-500 medium boxed-rating-assits">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_1_assists}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-goals">
+                      <p class="w-500 medium boxed-rating-goals">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_1_goals}
                       </p>
                     </td>
@@ -1214,7 +1220,7 @@
                       class:golden={WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_rating_player_2 >=
                         9}
                     >
-                      <p class="medium">
+                      <p class="w-500 medium">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_rating_player_2}
                       </p>
                     </div>
@@ -1227,23 +1233,23 @@
                       height="32px"
                       class="player-img"
                     />
-                    <p class="small desktop-small">
+                    <p class="w-500 small desktop-small">
                       {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_2}
                     </p>
                   </td>
                   {#if viewportDesktop}
                     <td>
-                      <p class="medium boxed-rating-matches">
+                      <p class="w-500 medium boxed-rating-matches">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_2_appearances}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-assits">
+                      <p class="w-500 medium boxed-rating-assits">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_2_assists}
                       </p>
                     </td>
                     <td>
-                      <p class="medium boxed-rating-goals">
+                      <p class="w-500 medium boxed-rating-goals">
                         {WIDGET_SELECTED_FIXTURE_BEST_PLAYERS.visitor_team_player_2_goals}
                       </p>
                     </td>
@@ -1256,7 +1262,7 @@
           <!-- ... value-bets section ... -->
           {#if WIDGET_SELECTED_FIXTURE_VALUE_BETS != null}
             <div id="value-bets">
-              <p class="large m-b-16">
+              <p class="w-500 large m-b-16">
                 {WIDGET_TRANSLATION.value_bet}
               </p>
               {#if !viewportDesktop}
@@ -1265,7 +1271,7 @@
                     <!-- 
                     VALUE-BET INFO -->
                     <div class="row-space-out">
-                      <p class="medium color-grey">
+                      <p class="w-400 medium color-grey">
                         {WIDGET_TRANSLATION.bookmaker}
                       </p>
                       <a rel="external" href={WIDGET_SELECTED_FIXTURE_VALUE_BETS.link}>
@@ -1280,30 +1286,30 @@
                     </div>
 
                     <div class="row-space-out">
-                      <p class="medium color-grey">
+                      <p class="w-400 medium color-grey">
                         {WIDGET_TRANSLATION.type}
                       </p>
-                      <p class="medium color-dark">
+                      <p class="w-500 medium color-dark">
                         {WIDGET_TRANSLATION.market_name}
                       </p>
                     </div>
 
                     <div class="row-space-out">
-                      <p class="medium color-grey">
+                      <p class="w-400 medium color-grey">
                         {WIDGET_TRANSLATION.market}
                       </p>
-                      <p class="medium color-dark">
+                      <p class="w-500 medium color-dark">
                         {WIDGET_SELECTED_FIXTURE_VALUE_BETS.bet.toString()}
                       </p>
                     </div>
 
                     <div class="row-space-out">
-                      <p class="medium color-grey">
+                      <p class="w-400 medium color-grey">
                         {WIDGET_TRANSLATION.odds}
                       </p>
                       <a rel="external" href={WIDGET_SELECTED_FIXTURE_VALUE_BETS.link}>
                         <p
-                          class="medium color-dark"
+                          class="w-500 medium color-dark"
                           style="background: #FFFFFF;
                           border-radius: 4px;
                           padding: 4px 6px;"
@@ -1314,12 +1320,12 @@
                     </div>
 
                     <div class="row-space-out">
-                      <p class="medium color-grey">
+                      <p class="w-400 medium color-grey">
                         {WIDGET_TRANSLATION.fair_odds}
                       </p>
                       <a rel="external" href={WIDGET_SELECTED_FIXTURE_VALUE_BETS.link}>
                         <p
-                          class="medium color-dark"
+                          class="w-500 medium color-dark"
                           style="background: #FFFFFF;
                           border-radius: 4px;
                           padding: 4px 6px;"
@@ -1336,7 +1342,7 @@
                       style="width: 100%; padding: 6px 0; border-radius: 4px;"
                       class="btn-primary"
                     >
-                      <p class="medium">
+                      <p class="w-500 medium">
                         {WIDGET_TRANSLATION.bet}
                       </p>
                     </button>
@@ -1346,27 +1352,27 @@
                 <table class="value_bets">
                   <tr class="row-head m-b-16">
                     <th class="text-center" style="text-align: start;">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.bookmaker}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.type}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.market}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.odds}
                       </p>
                     </th>
                     <th class="text-center">
-                      <p class="small color-grey">
+                      <p class="w-400 small color-grey">
                         {WIDGET_TRANSLATION.fair_odds}
                       </p>
                     </th>
@@ -1391,19 +1397,19 @@
                       </a>
                     </td>
                     <td>
-                      <p class="medium text-center">
+                      <p class="w-500 medium text-center">
                         {WIDGET_TRANSLATION.market_name}
                       </p>
                     </td>
                     <td>
-                      <p class="medium text-center">
+                      <p class="w-500 medium text-center">
                         {WIDGET_SELECTED_FIXTURE_VALUE_BETS.bet.toString()}
                       </p>
                     </td>
                     <td>
                       <a rel="external" href={WIDGET_SELECTED_FIXTURE_VALUE_BETS.link}>
                         <p
-                          class="medium max-height: 30px; boxed-rating-value-bets active_p_btn"
+                          class="w-500 medium max-height: 30px; boxed-rating-value-bets active_p_btn"
                         >
                           {parseFloat(WIDGET_SELECTED_FIXTURE_VALUE_BETS.odd.toString()).toFixed(2)}
                         </p>
@@ -1412,7 +1418,7 @@
                     <td>
                       <a rel="external" href={WIDGET_SELECTED_FIXTURE_VALUE_BETS.link}>
                         <p
-                          class="medium max-height: 30px; boxed-rating-value-bets active_p_btn"
+                          class="w-500 medium max-height: 30px; boxed-rating-value-bets active_p_btn"
                         >
                           {parseFloat(WIDGET_SELECTED_FIXTURE_VALUE_BETS.fair_odd.toString()).toFixed(2)}
                         </p>
@@ -1424,7 +1430,7 @@
                           style="width: 100%; padding: 6px 0; max-height: 30px; border-radius: 4px;"
                           class="btn-primary"
                         >
-                          <p class="medium">
+                          <p class="w-500 medium">
                             {WIDGET_TRANSLATION.bet}
                           </p>
                         </button>
@@ -1480,7 +1486,7 @@
     display: grid;
     grid-auto-flow: column;
     justify-items: center;
-    align-items: end;
+    align-items: start;
     justify-content: center;
     grid-template-columns: 1fr 1fr 1fr;
     text-align: center;
@@ -1515,7 +1521,7 @@
   }
   .cast-vote-btn {
     background: #f2f2f2;
-    border: 1px solid #cccccc;
+    border: 1px solid #cccccc !important;
     box-sizing: border-box;
     border-radius: 8px;
     padding: 14px 16px;
@@ -1611,7 +1617,7 @@
   #livestream-grid {
     display: grid;
     grid-auto-flow: column;
-    gap: 8px;
+    gap: 8px 13px;
     overflow-y: scroll;
     padding: 0 20px;
     grid-template-columns: repeat(auto-fill, 71px);
@@ -1807,7 +1813,7 @@
     #livestream-grid {
       grid-auto-flow: unset;
       overflow-y: visible;
-      grid-template-columns: repeat(auto-fill, 71px);
+      grid-template-columns: repeat(auto-fill, 65px);
     }
     .input-value {
       width: 100%;

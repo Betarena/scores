@@ -73,6 +73,7 @@ export const GET_LANG_SELECTED_FIXTURE = gql`
             value_bet
             vote
             winnings
+            widget_title
         }
     }
 `;
