@@ -95,3 +95,16 @@ https://coderoad.ru/62950447/NPM-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B
 Fixing DOCKER /ENONT issue...
 
 https://scores-testing-app.herokuapp.com/
+
+https://firebase.google.com/docs/database/web/read-and-write#web-version-9
+
+TESTING -> https://live.browserstack.com/
+https://accounts.lambdatest.com/billing/plans
+
+SEO-CHECK -> https://www.seobility.net/en/seocheck/
+
+https://search.google.com/test/mobile-friendly/result?id=ubORB42h3SuKWcAlkAQssw
+
+SEO-CHECK -> https://totheweb.com/learning_center/tools-search-engine-simulator/
+https://gist.github.com/0bie/5c43e1e53d9f47a7ba6f65732dc027e9
+https://betarena-scores-platform.herokuapp.com/
