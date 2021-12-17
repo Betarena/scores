@@ -53,7 +53,7 @@ function createLocalStore(key) {
          *
          * @param {*} item
         */
-        addToVotes: (fixture_Vote) => {
+        addToVotes: (fixture_Vote: any) => {
             console.log("fixture_Vote", fixture_Vote);
 
             // get the existing data, stored in the .localStorage();

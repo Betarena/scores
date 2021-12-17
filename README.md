@@ -63,5 +63,3 @@ https://www.sitepoint.com/a-beginners-guide-to-sveltekit/
 https://coderoad.ru/62950447/NPM-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-%D1%87%D1%82%D0%BE-%D1%82%D0%BE-%D0%B8%D0%B7-github-%D0%B2-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80-docker-%D0%BD%D0%B5-%D1%83%D0%B4%D0%B0%D0%B5%D1%82%D1%81%D1%8F
 
 Fixing DOCKER /ENONT issue...
-
-Using `GitHub Actions` | [link-solution](https://stackoverflow.com/questions/66247264/github-actions-how-can-i-make-my-env-variablestored-in-env-file-available-i) | [link-solution-2](https://stackoverflow.com/questions/61117865/how-to-set-environment-variable-in-node-js-process-when-deploying-with-github-ac)

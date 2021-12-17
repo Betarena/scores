@@ -32,19 +32,20 @@
   import type { SelectedFixutre, BestPlayers_Data, Tv_Station, TranslationsResponse, CompleteFixtureData_Response, SelectedFixture_VoteUpdate_Response } from "$lib/model/response_models"
   import type { SelectedFixture_LiveOdds_Response } from "$lib/model/firebase-real-db-interface"
 
-  let totalVotes: number  // ???
-  let imageURL: string
+  let totalVotes: number = undefined // ???
+  let userGeo: string
+  let imageURL: string = undefined
 
   // ... declaring component INSTANCED & VARIABLES;
-  let WIDGET_SELECTED_FIXTURE_MATCH_VOTES: MatchVotes
-  let WIDGET_SELECTED_FIXTURE_START_TIME: Date                              // ... contains the final widget fixture start time;
-  let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse                         // ... contains the final-fixture-response-data;
-  let WIDGET_SELECTED_FIXTURE_ID: number                                    // ... global-widget-component-selected-fixutre-id-value;
-  let WIDGET_SELECTED_FIXTURE_VALUE_BETS: ValueBet                          // ... contains the widget-selected-fixture-value-bets-data;
-  let WIDGET_SELECTED_FIXTURE_BEST_PLAYERS: BestPlayers_Data                // ... contains the widget-best-players-data;
-  let WIDGET_SELECTED_FIXTURE_TV_STATIONS_DATA: Array<Tv_Station>           // ... contains the widget-tv-stations-data;
-  let WIDGET_SELECTED_FIXTURE_LIVE_ODDS: SelectedFixture_LiveOdds_Response  // ... contains the widget-live-odds-data;
-  let WIDGET_TRANSLATION_DATA: Array < TranslationsResponse >               // ... contains the widget-WIDGET_TRANSLATION_DATA-data;
+  let WIDGET_SELECTED_FIXTURE_MATCH_VOTES: MatchVotes = undefined
+  let WIDGET_SELECTED_FIXTURE_START_TIME: Date = undefined                              // ... contains the final widget fixture start time;
+  let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = undefined                         // ... contains the final-fixture-response-data;
+  let WIDGET_SELECTED_FIXTURE_ID: number = undefined                                    // ... global-widget-component-selected-fixutre-id-value;
+  let WIDGET_SELECTED_FIXTURE_VALUE_BETS: ValueBet = undefined                          // ... contains the widget-selected-fixture-value-bets-data;
+  let WIDGET_SELECTED_FIXTURE_BEST_PLAYERS: BestPlayers_Data = undefined                // ... contains the widget-best-players-data;
+  let WIDGET_SELECTED_FIXTURE_TV_STATIONS_DATA: Array<Tv_Station> = undefined           // ... contains the widget-tv-stations-data;
+  let WIDGET_SELECTED_FIXTURE_LIVE_ODDS: SelectedFixture_LiveOdds_Response = undefined  // ... contains the widget-live-odds-data;
+  let WIDGET_TRANSLATION_DATA: Array < TranslationsResponse > = undefined             // ... contains the widget-WIDGET_TRANSLATION_DATA-data;
 
   // ... DEBUGGING;
   $: if (dev) console.info('WIDGET_SELECTED_FIXTURE_LIVE_ODDS', WIDGET_SELECTED_FIXTURE_LIVE_ODDS)
@@ -54,17 +55,6 @@
   $: if (dev) console.info('WIDGET_SELECTED_FIXTURE_VALUE_BETS', WIDGET_SELECTED_FIXTURE_VALUE_BETS)
   $: if (dev) console.info('WIDGET_SELECTED_FIXTURE_TV_STATIONS_DATA', WIDGET_SELECTED_FIXTURE_TV_STATIONS_DATA)
 
-  // ... initiate the MAIN PROMISE();
-  let promise = mainData()
-
-  /**
-   * Description: & [REACTIVITY]
-   * ~~~~~~~~~~~~~~~~~~~
-   * ... get user Geo-Location [WORKING]
-   * and continue with the rest of the methods;
-  */
-  let userGeo: string
-
   // ... contains the main METHOD for DATA AGGREGATION & ASSIGNING;
   async function mainData() {
     // ... get the USER-GEO-LOCATION
@@ -72,6 +62,7 @@
     userGeo = userGeoResponse.country_code.toLowerCase()
     // ... DEBUGGING;
     if (dev) console.info('-- user location --', userGeo)
+    // if (dev) userGeo = "us"
 
     // ... obtain the target-selected-fixture [HASURA-DB] [FEATURED-MATCH + TRANSLATION DATA]
     const selectedFixture = await getSelectedFixture(userGeo)
@@ -116,22 +107,26 @@
   // ... [WORKING]
   async function getSelectedFixture(lang: string) {
     // ... DEBUGGING;
-    // if (dev) platformCountry = "en"
+    if (dev) console.info('lang', lang)
     // ... declare variables for GRAPH-QL-REQUEST;
-    const variables = { 
+    let variables = { 
       lang: lang
     }
     // ... push-GRAPH-QL-request;
-		const response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
-    // ... DEBUGGING;
-    if (dev) console.info('-- response getSelectedFixture() --', response)
+		let response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
     // ... if `widget_featured_match_selection` is EMPTY;
     if (response.widget_featured_match_selection.length == 0) {
       // ... rerun the method;
       if (dev) console.info('-- uh-oh! re-running getSelectedFixture() --')
-      // ... DEFAULT EN VALUE
-      getSelectedFixture('en')
+      // ... DEFAULT EN VALUE;
+      userGeo = 'en'
+      variables = { 
+        lang: 'en'
+      }
+      response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
     }
+    // ... DEBUGGING;
+    if (dev) console.info('-- response getSelectedFixture() --', response)
     // ... reutrn response;
     return response
   }
@@ -247,7 +242,6 @@
   // USER ACTTIONS METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let selected_bet; // contains the data for the `selected_bets`;
   let user_Stake_amount: number = 50.0; // user stake amount (input)
 
   /**
@@ -496,6 +490,9 @@
       })
       .join("");
 
+  
+  // ... initiate the MAIN PROMISE();
+  let promise = mainData()
 </script>
 
 
@@ -1446,6 +1443,7 @@
 
   {:catch error}
   <!-- promise was rejected -->
+    <p>Uh-oh! There has been an error! {error}</p>
   {/await}
 
 </div>

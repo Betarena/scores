@@ -18,12 +18,12 @@ const config = {
 		// ... vite-FS-issue:
 		// ... https://discord.com/channels/457912077277855764/457912077277855766/908213758277607475
 		// vite: {
-    //     server: {
-    //         fs: {
-    //             allow: ['..']
-    //         }
-    //     }
-    // }
+		//     server: {
+		//         fs: {
+		//             allow: ['..']
+		//         }
+		//     }
+		// }
 		// ... @apollo-client - issue FIX;
 		// ... https://github.com/apollographql/apollo-client/issues/8218
 		// ... https://discord.com/channels/457912077277855764/819723698415599626/821391561429745675

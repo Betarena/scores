@@ -3,7 +3,7 @@
  * ------------------
  * & methods; 
 */
-import { amp, browser, dev, mode, prerendering } from '$app/env'
+import { dev} from '$app/env'
 
 import { get } from '$lib/api/utils'
 
@@ -16,6 +16,8 @@ import type { GeoJsResponse } from "$lib/model/geo-js-interface"
  * ... and stores it for future use;
 */
 export async function getUserLocation(): Promise < GeoJsResponse > {
+    // ... DEBUGGING;
+    if (dev) console.info('-- getUserLocation() checkpoint --')
     // ... push-request;
     const response = await get(`https://get.geojs.io/v1/ip/geo.json`)
     // ... DEBUGGING;

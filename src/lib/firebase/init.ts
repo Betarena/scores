@@ -1,5 +1,7 @@
 // ~~~~~~~~~~~~~~~~~~
 // firebase/index.ts
+// - adapted to GitHub Actions SECRETS
+// - adpated to Heroku ENV-VARIABLES
 // ~~~~~~~~~~~~~~~~~~
 
 import { initializeApp } from 'firebase/app'

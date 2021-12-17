@@ -21,7 +21,7 @@ const user_settings: User_Setting = {
  * @param {*} key
  * @returns
 */
-function createLocalStore(key) {
+function createLocalStore(key: any): any {
     const {
         subscribe,
         set,
