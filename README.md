@@ -1,6 +1,7 @@
 ![example workflow](https://github.com/Betarena/scores/actions/workflows/docker-image.yml/badge.svg)
 
 # scores
+
 ### Betarena Scores Platform
 
 ### About
@@ -30,18 +31,14 @@ npm run build
 
 ### SEO Optimization
 
-https://github.com/artiebits/svelte-seo#svelte-seo-options
+This porject is optimized using the `svelte-seo` plugin library [here](https://github.com/artiebits/svelte-seo#svelte-seo-options)
 
-### Svelte Appollo
+### GraphQL Support
 
-For the ability to use `GraphQL` for the Widget in Svelte, `svelte-appollo` was used: ![svelte-apollo](https://github.com/timhall/svelte-apollo), paired with the docuemntation from ![`Hasura`](https://hasura.io/learn/graphql/svelte-apollo/queries/2-create-query/) to have the widget working correctly.
+For the ability to use `GraphQL` for the Widget in Svelte, `graphql-request` was utilized - [package](https://www.npmjs.com/package/graphql-request)
 
-![npm-package](https://www.npmjs.com/package/svelte-apollo)
-
-Future expansion: https://dev.to/lucis/update-apollo-cache-after-a-mutation-and-get-instant-benefits-on-your-ui-1c3b
-
-❌ - `@apollo-client` sveltekit issues - ![1](https://github.com/timhall/svelte-apollo/issues/97)
-✔ - solution ![hasura-db-example](https://rodneylab.com/use-apollo-client-sveltekit/)
+`@apollo-client` does not work correctly with `sveltekit` [1](https://github.com/timhall/svelte-apollo/issues/97)
+**solution**: using `graphql-request` instead.
 
 ### localStorage()
 
@@ -49,17 +46,10 @@ The widget stores the users `one-off` voting using the `.localStorage()` for the
 
 ### using .env with sveltekit-vite:
 
-https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3
+[exmaple](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
 
 ### Getting started with `sveltekit`:
 
-https://www.sitepoint.com/a-beginners-guide-to-sveltekit/
-https://www.reddit.com/r/sveltejs/comments/p28oht/how_to_redirect_to_a_url_in_svelte_kit/
-https://stackoverflow.com/questions/67135169/how-to-initialize-apolloclient-in-sveltekit-to-work-on-both-ssr-and-client-side
-https://www.npmjs.com/package/graphql-request
+Some useful links used to get familiar with `sveltekit` and the correct knownledge required for the `development`:
 
-https://www.sitepoint.com/a-beginners-guide-to-sveltekit/
-
-https://coderoad.ru/62950447/NPM-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-%D1%87%D1%82%D0%BE-%D1%82%D0%BE-%D0%B8%D0%B7-github-%D0%B2-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80-docker-%D0%BD%D0%B5-%D1%83%D0%B4%D0%B0%D0%B5%D1%82%D1%81%D1%8F
-
-Fixing DOCKER /ENONT issue...
+- [a-beginners-guide-to-sveltekit](https://www.sitepoint.com/a-beginners-guide-to-sveltekit/)

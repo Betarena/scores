@@ -93,7 +93,7 @@ a {
 
 p {
 	font-style: normal;
-	font-weight: normal;
+	font-weight: 400; /* 400 / 500 */
 	line-height: 150%;
     margin: 0;
     color: var(--dark);
@@ -160,6 +160,16 @@ FONT EXTRA STYLES
 .text-center {
     text-align: center;
     text-align: -webkit-center;
+}
+/* 
+~~~~~~~~~~~~
+FONT WEIGHT 
+*/
+.w-400 {
+    font-weight: 400;
+}
+.w-500 {
+    font-weight: 500;
 }
 /* 
 ~~~~~~~~~~~~

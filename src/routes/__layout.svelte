@@ -60,20 +60,28 @@
 
 <style>
 	main {
-        /* 
-        so nothing exceeds the main-page-boundries */
-        position: relative;
-        z-index: 0;
-        margin: 0 auto;
-        width: 100%;
-        overflow: hidden;
-        /* 
-        make sure the initial page height is always full-device-height as a minumim */
-        /* min-height: 100vh; */
-        background-image: url(/src/lib/header-background.svg);
-        background-repeat: no-repeat;
-        background-size: contain;
-        background-origin: border-box;
-        background-position: top;
-    }
+    /* 
+    so nothing exceeds the main-page-boundries */
+    position: relative;
+    z-index: 0;
+    margin: 0 auto;
+    width: 100%;
+    /* overflow: hidden; */
+    /* 
+    make sure the initial page height is always full-device-height as a minumim */
+    /* min-height: 100vh; */
+  } main::before {
+    content: "";
+    display: inline-block;
+    width: 100%;
+    height: 100%;
+    background-image: url(/src/lib/header-background.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-origin: border-box;
+    background-position: top;
+    position: absolute;
+    top: calc(100vw / -5.5);
+    z-index: -1;
+  }
 </style>

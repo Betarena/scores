@@ -974,6 +974,7 @@
         background-color: #292929;
 		height: 128px;
 		position: relative;
+		z-index: 1000;
 	}
 
 	/* 
