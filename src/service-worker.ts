@@ -68,7 +68,7 @@ worker.addEventListener('fetch', (event) => {
 	// ... more info -> https://stackoverflow.com/questions/48463483/what-causes-a-failed-to-execute-fetch-on-serviceworkerglobalscope-only-if
 	const skipBecauseNotSameOrigin = event.request.mode !== 'same-origin';
 
-	if (isHttp && !isDevServerRequest && !skipBecauseUncached && skipBecauseNotSameOrigin) {
+	if (isHttp && !isDevServerRequest && !skipBecauseUncached && !skipBecauseNotSameOrigin) {
 		event.respondWith(
 			(async () => {
 				// always serve static files and bundler-generated assets from cache.
