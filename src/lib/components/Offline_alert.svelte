@@ -28,5 +28,6 @@
         padding: 8px 27px;
         background: #FF3C3C;
         text-align: center;
+        z-index: 20000;
     }
 </style>
