@@ -65,7 +65,7 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
     /* 
 	main app colors */
     --white: #ffffff;
-    --primary: #FF5555;
+    --primary: #F5620F;
     --secondary: #37474F;
     --blue: #0085FF;
     --red: #C62828;
@@ -76,6 +76,8 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
     --dark: #121212;
     --grey: #8C8C8C;
     --background-surface: #121212;
+    --dark-theme: #292929;
+    --dark-theme-1: #4B4B4B;
     /* 
     breakpoints */
     --mobile: 375;
@@ -91,7 +93,7 @@ a {
 
 p {
 	font-style: normal;
-	font-weight: normal;
+	font-weight: 400; /* 400 / 500 */
 	line-height: 150%;
     margin: 0;
     color: var(--dark);
@@ -107,7 +109,7 @@ p {
 FONT COLOURS 
 */
 .color-primary {
-    color: #FF5555;
+    color: #F5620F !important;
 }
 .color-secondary {
     color: var(--secondary);
@@ -155,6 +157,20 @@ FONT EXTRA STYLES
 .uppercase {
     text-transform: uppercase;
 }
+.text-center {
+    text-align: center;
+    text-align: -webkit-center;
+}
+/* 
+~~~~~~~~~~~~
+FONT WEIGHT 
+*/
+.w-400 {
+    font-weight: 400;
+}
+.w-500 {
+    font-weight: 500;
+}
 /* 
 ~~~~~~~~~~~~
 FONT SIZES
@@ -184,6 +200,31 @@ FONT SIZES
 .s-32 {
 	font-size: 32px;
 }
+
+.x-large,
+p.x-large,
+span.x-large {
+    font-size: 18px;
+}
+.large, 
+p.large,
+span.large {
+    font-size: 16px;
+} 
+.medium,
+p.medium,
+span.medium {
+    font-size: 14px;
+} 
+.small,
+p.small { 
+    font-size: 12px;
+}
+.s_small,
+p.s_small { 
+    font-size: 12px;
+}
+
 /* 
 page titles */
 .s-42 {
@@ -242,11 +283,17 @@ right-margins
 .m-r-5 {
     margin-right: 5px;
 }
+.m-r-8 {
+    margin-right: 8px;
+}
 .m-r-10 {
     margin-right: 10px;
 }
 .m-r-15 {
     margin-right: 15px;
+}
+.m-r-16 {
+    margin-right: 16px;
 }
 .m-r-20 {
     margin-right: 20px;
@@ -265,11 +312,20 @@ bottom-margins
 .m-b-5 {
     margin-bottom: 5px;
 }
+.m-b-8 {
+    margin-bottom: 8px;
+}
 .m-b-10 {
     margin-bottom: 10px;
 }
+.m-b-12 {
+    margin-bottom: 12px;
+}
 .m-b-15 {
     margin-bottom: 15px;
+}
+.m-b-16 {
+    margin-bottom: 16px;
 }
 .m-b-20 {
     margin-bottom: 20px;
@@ -290,6 +346,16 @@ bottom-margins
     margin-bottom: 55px;
 }
 
+/* 
+~~~~~~~~~~
+left-margins 
+*/
+
+.m-l-8 {
+    margin-left: 8px;
+}
+
+
 /*
 ##########################
     CONTAINER STYLE
@@ -297,20 +363,20 @@ bottom-margins
 */
 
 section {
-    min-height: 100vh;
-    margin: calc(100vw / (var(--mobile) / 55)) calc(100vw / (var(--mobile) / 19));
+    min-height: calc(100vh - 128px);
+    padding: 22px 16px;
+    margin: auto;
 }
 @media only screen and (min-width: 768px) {
     section {
-        min-height: calc(100vh - 29vh);
-        margin: calc(100vw / (var(--tablet) / 92)) calc(100vw / (var(--tablet) / 60));
+        padding: 26px 34px;
+        margin: auto;
     }
 }
-/* 1025px is used to allow for IPad Pro to use the Tabler Version */
 @media only screen and (min-width: 1025px) {
     section {
-        min-height: calc(100vh - 29vh);
-        margin: calc(100vw / (var(--desktop) / 92)) calc(100vw / (var(--desktop) / 240));
+        padding: 26px 34px;
+        margin: auto;
     }
 }
 
@@ -510,4 +576,54 @@ form select {
 input:focus {
     padding: 5px;
     border: 2.5px solid #FF5555;
+}
+
+/* 
+=========================
+ANIMATIONS FORM CSS STYLE 
+=========================
+*/
+
+@keyframes flickerAnimation {
+    0%   { opacity: 1; }
+    50%  { opacity: 0.25; }
+    100% { opacity: 1; }
+}
+@-o-keyframes flickerAnimation{
+    0%   { opacity: 1; }
+    50%  { opacity: 0.25; }
+    100% { opacity: 1; }
+}
+@-moz-keyframes flickerAnimation{
+    0%   { opacity: 1; }
+    50%  { opacity: 0.25; }
+    100% { opacity: 1; }
+}
+@-webkit-keyframes flickerAnimation{
+    0%   { opacity: 1; }
+    50%  { opacity: 0.25; }
+    100% { opacity: 1; }
+}
+.animation-target {
+    -webkit-animation: flickerAnimation 1.5s infinite;
+    -moz-animation: flickerAnimation 1.5s infinite;
+    -o-animation: flickerAnimation 1.5s infinite;
+        animation: flickerAnimation 1.5s infinite;
+}
+
+/* 
+=========================
+DARK-MODE FORM CSS STYLE 
+=========================
+*/
+
+.dark-background {
+    background-color: var(--dark-theme) !important;
+}
+.dark-background-1 {
+    background-color: var(--dark-theme-1) !important;
+}
+
+.dark-background-1 .color-grey {
+    color: #A8A8A8 !important;
 }

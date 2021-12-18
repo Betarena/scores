@@ -64,8 +64,11 @@ worker.addEventListener('fetch', (event) => {
 		url.hostname === self.location.hostname && url.port !== self.location.port;
 	const isStaticAsset = url.host === self.location.host && staticAssets.has(url.pathname);
 	const skipBecauseUncached = event.request.cache === 'only-if-cached' && !isStaticAsset;
+	// ... adding a `not-same-origin` check for `requests`
+	// ... more info -> https://stackoverflow.com/questions/48463483/what-causes-a-failed-to-execute-fetch-on-serviceworkerglobalscope-only-if
+	const skipBecauseNotSameOrigin = event.request.mode !== 'same-origin';
 
-	if (isHttp && !isDevServerRequest && !skipBecauseUncached) {
+	if (isHttp && !isDevServerRequest && !skipBecauseUncached && !skipBecauseNotSameOrigin) {
 		event.respondWith(
 			(async () => {
 				// always serve static files and bundler-generated assets from cache.
