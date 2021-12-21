@@ -3,9 +3,16 @@
 ==================== -->
 <script lang="ts">
 	// ... svelte-imports;
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import { browser, dev } from '$app/env';
+	import {
+		onMount
+	} from 'svelte';
+	import {
+		fade
+	} from 'svelte/transition';
+	import {
+		browser,
+		dev
+	} from '$app/env';
 
 	// ... external modules imports;
 	import ColorThief from 'colorthief/dist/color-thief.mjs';
@@ -13,26 +20,47 @@
 	import FeaturedMatchContentLoading from './_FeaturedMatch_ContentLoading.svelte';
 
 	// ... external `exports` imports;
-	import { db_real } from '$lib/firebase/init';
-	import { UPDATE_MATCH_FIXTURE_VOTES } from '$lib/graphql/mutation';
-	import { fixtureVote } from '$lib/store/vote_fixture';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { getTargetFixtureOdds } from '$lib/firebase/index';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-	import { ref, onValue } from 'firebase/database';
+	import {
+		db_real
+	} from '$lib/firebase/init';
+	import {
+		UPDATE_MATCH_FIXTURE_VOTES
+	} from '$lib/graphql/mutation';
+	import {
+		fixtureVote
+	} from '$lib/store/vote_fixture';
+	import {
+		userBetarenaSettings
+	} from '$lib/store/user-settings';
+	import {
+		getTargetFixtureOdds
+	} from '$lib/firebase/index';
+	import {
+		initGrapQLClient
+	} from '$lib/graphql/init_graphQL';
+	import {
+		ref,
+		onValue
+	} from 'firebase/database';
 
 	// ... DECLARING TYPESCRIPT-TYPES imports;
-	import type { fixture } from '$lib/store/vote_fixture';
-	import type { FixtureResponse } from '$lib/model/interface-fixture';
+	import type {
+		fixture
+	} from '$lib/store/vote_fixture';
+	import type {
+		FixtureResponse
+	} from '$lib/model/interface-fixture';
 	import type {
 		SelectedFixutre,
 		SelectedFixture_VoteUpdate_Response,
 		Featured_Match_Translation_Response
 	} from '$lib/model/response_models';
-	import { page } from '$app/stores';
+	import {
+		page
+	} from '$app/stores';
 
 	// ... route-declaration;
-	let base_url = 'https://scores-testing-app.herokuapp.com/';
+	let base_url = 'https://betarena-scores-platform.herokuapp.com/';
 	if (dev) base_url = 'http://192.168.0.10:3000/';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Featured_Match_Translation_Response;
@@ -61,7 +89,7 @@
 	// - get_FeaturedMatchData()
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	async function get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre): Promise<void> {
+	async function get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre): Promise < void > {
 		// ... get the list of the odds for the;
 		const response = await getTargetFixtureOdds(selectedFixutreData);
 		// ... assign real-time-odds,
@@ -69,7 +97,7 @@
 	}
 
 	// ... Listen To Real-Time Firebase ODDS Updates [WORKING]
-	async function listenRealTimeOddsChange(fixture_data: SelectedFixutre): Promise<void> {
+	async function listenRealTimeOddsChange(fixture_data: SelectedFixutre): Promise < void > {
 		// ... DEBUGGING;
 		// if (dev) console.info('-- fixture_data --', fixture_data)
 		// ... convert the datetime to the correct variables to search for the fixture;
@@ -102,7 +130,7 @@
 	}
 
 	// ... main-component-promise; [WORKING]
-	async function get_FeaturedMatchData(): Promise<FixtureResponse> {
+	async function get_FeaturedMatchData(): Promise < FixtureResponse > {
 		// ... GET RESPONSE;
 		const response: FixtureResponse = await fetch(base_url + 'api/featured-match.json', {
 			method: 'GET'
@@ -112,9 +140,9 @@
 		FEATURED_MATCH_WIDGET_DATA = response;
 		// ...
 		totalVotes =
-			FEATURED_MATCH_WIDGET_DATA.match_votes.vote_draw_x +
-			FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_local +
-			FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_visitor;
+		FEATURED_MATCH_WIDGET_DATA.match_votes.vote_draw_x +
+		FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_local +
+		FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_visitor;
 		// ...
 		imageURL = FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.image;
 		// ...
@@ -134,7 +162,7 @@
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	// ... handles user voting submit [WORKING]
-	async function handleSubmit(fixtureData: fixture): Promise<void> {
+	async function handleSubmit(fixtureData: fixture): Promise < void > {
 		// ... declare variables for GRAPH-QL-REQUEST;
 		const variables = {
 			match_id: fixtureData.fixture_id,
@@ -401,13 +429,12 @@
 	 * @returns (# a singel #HEX-Color Value)
 	 */
 	const rgbToHex = (r, g, b) =>
-		'#' +
-		[r, g, b]
-			.map((x) => {
-				const hex = x.toString(16);
-				return hex.length === 1 ? '0' + hex : hex;
-			})
-			.join('');
+		'#' + [r, g, b]
+		.map((x) => {
+			const hex = x.toString(16);
+			return hex.length === 1 ? '0' + hex : hex;
+		})
+		.join('');
 </script>
 
 <!-- ===============
