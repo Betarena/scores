@@ -14,7 +14,7 @@ const config = {
 		// ... adding vercel support ...
 		// adapter: vercel()
 		// ... NODE-JS deployment Environment ...
-		adapter: node(),
+		adapter: node()
 		// ... vite-FS-issue:
 		// ... https://discord.com/channels/457912077277855764/457912077277855766/908213758277607475
 		// vite: {
@@ -36,7 +36,7 @@ const config = {
 		// 		]
 		// 	}
 		// }
-	},
+	}
 };
 
 export default config;
