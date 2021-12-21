@@ -1,18 +1,18 @@
 // ... contains the TRANSLATION LANG SELECTED by the USER;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import { dev } from '$app/env'
-import { writable } from "svelte/store"
+import { dev } from '$app/env';
+import { writable } from 'svelte/store';
 
 interface User_Setting {
-    lang: string
-    theme: string
+	lang: string;
+	theme: string;
 }
 
 const user_settings: User_Setting = {
-    lang: undefined,
-    theme: undefined
-}
+	lang: undefined,
+	theme: undefined
+};
 
 /**
  * Description:
@@ -20,95 +20,90 @@ const user_settings: User_Setting = {
  * ... initialize the .localStorage();
  * @param {*} key
  * @returns
-*/
+ */
 function createLocalStore(key: any): any {
-    const {
-        subscribe,
-        set,
-        update
-    } = writable(user_settings)
+	const { subscribe, set, update } = writable(user_settings);
 
-    return {
-        subscribe,
-        set,
-        update,
+	return {
+		subscribe,
+		set,
+		update,
 
-        /**
-         * Description:
-         * ~~~~~~~~~~~~~~~~~
-         * [START]
-         * Method for rendering the .localStorage() form
-         * the start of the page,
-        */
-        useLocalStorage: () => {
-            // ... reset the writable to the localStorage if localStorage already exists,
-            const existing: string = localStorage.getItem(key)
-            // ... validation of the data existing;
-            const exisitng_data: User_Setting = existing 
-                // ... if data exists, then use the existing data;
-                ? 
-                JSON.parse(existing) 
-                // ... otherwise, instantiate default config;
-                : {
-                    lang: 'en',
-                    theme: 'Light'
-                }
-            // ... DEBUGGING;
-            if (dev) console.debug("-- exisitng_data --", exisitng_data)
-            // ... SET ITEM DATA TO LOCALSTORAGE();
-            localStorage.setItem(key, JSON.stringify(exisitng_data))
-            // ... SET DATA TO SUBSCRIBED METHOD;
-            set(exisitng_data)
-        },
+		/**
+		 * Description:
+		 * ~~~~~~~~~~~~~~~~~
+		 * [START]
+		 * Method for rendering the .localStorage() form
+		 * the start of the page,
+		 */
+		useLocalStorage: () => {
+			// ... reset the writable to the localStorage if localStorage already exists,
+			const existing: string = localStorage.getItem(key);
+			// ... validation of the data existing;
+			const exisitng_data: User_Setting = existing
+				? // ... if data exists, then use the existing data;
+				  JSON.parse(existing)
+				: // ... otherwise, instantiate default config;
+				  {
+						lang: 'en',
+						theme: 'Light'
+				  };
+			// ... DEBUGGING;
+			if (dev) console.debug('-- exisitng_data --', exisitng_data);
+			// ... SET ITEM DATA TO LOCALSTORAGE();
+			localStorage.setItem(key, JSON.stringify(exisitng_data));
+			// ... SET DATA TO SUBSCRIBED METHOD;
+			set(exisitng_data);
+		},
 
-        /**
-         * Description:
-         * ~~~~~~~~~~~~~~~~~
-         * ... method to add the user seleted language
-         * to the localStoage & application store
-         * [WORKING]
-         *
-         * @param {*} item
-        */
-        setLang: (lang: string) => {
-            // ... DEBUGGING;
-            if (dev) console.info("-- select-lang --", lang)
-            // ... GET DATA FROM LOCALSTORAGE();
-            const existing: string = localStorage.getItem(key)
-            // ... CONVERT TO JSON;
-            const existing_data: User_Setting = JSON.parse(existing)
-            // ... UPDATE THE DATA FOR LANG;
-            existing_data.lang = lang
-            // ... UPDATE THE LOCALSTORAGE();
-            localStorage.setItem(key, JSON.stringify(existing_data))
-            // ... update the `set()` data;
-            set(existing_data)
-        },
+		/**
+		 * Description:
+		 * ~~~~~~~~~~~~~~~~~
+		 * ... method to add the user seleted language
+		 * to the localStoage & application store
+		 * [WORKING]
+		 *
+		 * @param {*} item
+		 */
+		setLang: (lang: string) => {
+			// ... DEBUGGING;
+			if (dev) console.info('-- select-lang --', lang);
+			// ... GET DATA FROM LOCALSTORAGE();
+			const existing: string = localStorage.getItem(key);
+			// ... CONVERT TO JSON;
+			const existing_data: User_Setting = JSON.parse(existing);
+			// ... UPDATE THE DATA FOR LANG;
+			existing_data.lang = lang;
+			// ... UPDATE THE LOCALSTORAGE();
+			localStorage.setItem(key, JSON.stringify(existing_data));
+			// ... update the `set()` data;
+			set(existing_data);
+		},
 
-        /**
-         * Description:
-         * ~~~~~~~~~~~~~~~~~
-         * ... method to add the user seleted theme
-         * to the localStoage & application store
-         * [WORKING]
-         *
-         * @param {*} item
-        */
-        setTheme: (theme: string) => {
-            // ... DEBUGGING;
-            if (dev) console.debug("-- theme-select --", theme)
-            // ... GET DATA FROM LOCALSTORAGE();
-            const existing: string = localStorage.getItem(key)
-            // ... CONVERT TO JSON;
-            const existing_data: User_Setting = JSON.parse(existing)
-            // ... UPDATE THE DATA FOR LANG;
-            existing_data.theme = theme
-            // ... UPDATE THE LOCALSTORAGE();
-            localStorage.setItem(key, JSON.stringify(existing_data))
-            // ... update the `set()` data;
-            set(existing_data)        
-        },
-    };
+		/**
+		 * Description:
+		 * ~~~~~~~~~~~~~~~~~
+		 * ... method to add the user seleted theme
+		 * to the localStoage & application store
+		 * [WORKING]
+		 *
+		 * @param {*} item
+		 */
+		setTheme: (theme: string) => {
+			// ... DEBUGGING;
+			if (dev) console.debug('-- theme-select --', theme);
+			// ... GET DATA FROM LOCALSTORAGE();
+			const existing: string = localStorage.getItem(key);
+			// ... CONVERT TO JSON;
+			const existing_data: User_Setting = JSON.parse(existing);
+			// ... UPDATE THE DATA FOR LANG;
+			existing_data.theme = theme;
+			// ... UPDATE THE LOCALSTORAGE();
+			localStorage.setItem(key, JSON.stringify(existing_data));
+			// ... update the `set()` data;
+			set(existing_data);
+		}
+	};
 }
 
 // ... if .localStorage() has the key then it will be used,
