@@ -7,6 +7,7 @@
 =================
 -->
 <script lang="ts" context="module">
+	
 	let base_url = 'https://betarena-scores-platform.herokuapp.com/';
 	if (dev) base_url = 'http://192.168.0.10:3000/';
 
