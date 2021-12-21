@@ -6,6 +6,7 @@
     - pre-loading `featured_match` data;
 =================
 -->
+
 <script lang="ts" context="module">
 
 	let base_url = 'https://betarena-scores-platform.herokuapp.com/';
@@ -41,6 +42,7 @@
 	COMPONENT JS - BASIC 
     [TypeScript Written]
 =================== -->
+
 <script lang="ts">
 	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation';
 	import { amp, browser, dev, mode, prerendering } from '$app/env';
@@ -148,6 +150,7 @@
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
+
 <style>
 	section#home-page {
 		display: grid;
