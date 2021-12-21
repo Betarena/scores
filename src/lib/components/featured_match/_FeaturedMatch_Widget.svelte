@@ -42,6 +42,7 @@
 		ref,
 		onValue
 	} from 'firebase/database';
+	import { getUserLocation } from "$lib/geoJs/init"
 
 	// ... DECLARING TYPESCRIPT-TYPES imports;
 	import type {
@@ -57,11 +58,9 @@
 	} from '$lib/model/response_models';
 	import {
 		page
-	} from '$app/stores';
-
-	// ... route-declaration;
-	let base_url = 'https://betarena-scores-platform.herokuapp.com/';
-	if (dev) base_url = 'http://192.168.0.10:3000/';
+	} from '$app/stores'
+	import { post } from '$lib/api/utils'
+	import type { GeoJsResponse } from "$lib/model/geo-js-interface"
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Featured_Match_Translation_Response;
 	let FEATURED_MATCH_WIDGET_DATA: FixtureResponse;
@@ -131,10 +130,13 @@
 
 	// ... main-component-promise; [WORKING]
 	async function get_FeaturedMatchData(): Promise < FixtureResponse > {
+		// ... get the USER-GEO-LOCATION
+		const userGeoResponse: GeoJsResponse = await getUserLocation()
+		let userGeo = userGeoResponse.country_code.toLowerCase()
+		// ... DEBUGGING;
+		if (dev) console.info('-- user location --', userGeo)
 		// ... GET RESPONSE;
-		const response: FixtureResponse = await fetch(base_url + 'api/featured-match.json', {
-			method: 'GET'
-		}).then((r) => r.json());
+		const response: FixtureResponse  = await post(`api/featured-match.json`, userGeo)
 		// ... intercept data, and decalre further;
 		// ...
 		FEATURED_MATCH_WIDGET_DATA = response;
