@@ -13,7 +13,7 @@ import type { Featured_Match_Translation_Response } from '$lib/model/response_mo
  */
 
 // ...
-export async function get({ req, res }): Promise<any> {
+export async function get(req, res): Promise<any> {
 	// ... get the USER-GEO-LOCATION;
 	const response = await get_FeaturedMatchTranslation();
 	// ... DEBUGGING;
