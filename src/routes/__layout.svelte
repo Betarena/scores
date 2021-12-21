@@ -8,15 +8,14 @@
 
 <script lang="ts" context="module">
 
-  let base_url = 'https://betarena-scores-platform.herokuapp.com/'
-  if (dev) base_url = 'http://192.168.0.10:3000/'
+  import { get } from '$lib/api/utils'
 
   /** @type {import('@sveltejs/kit').Load} */
-  export async function load() {
+  export async function load({page, fetch}) {
       // ... DEBUGGING;
       if (dev) console.debug('-- obtaining translations! --');
       // ... GET RESPONSE;
-      const response = await fetch(base_url + 'api/header-translation.json', {
+      const response = await fetch('/api/header-translation.json', {
           method: 'GET',
       }).then(r => r.json());
       // ... DEBUGGING;

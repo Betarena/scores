@@ -8,11 +8,11 @@
  * @param endpoint
  * @returns
  */
- export async function get(endpoint: string): Promise<any> {
+ export async function get(endpoint: string): Promise< any > {
     // curcanavigate CORS issues
     // endpoint = 'https://cors-anywhere.herokuapp.com/' + endpoint // comment this out before subemission,
-
-    return fetch(endpoint, {
+    // ...
+    return await fetch(endpoint, {
         method: 'GET'
     }).then((response) => {
         // ... verify if the response is error-free
@@ -38,7 +38,7 @@
  * @param {*} data 
  * @returns 
 */
-export async function post(path, data) {
+export async function post(path, data): Promise < any > {
     // ...
     return await fetch(path, {
         method: 'POST',

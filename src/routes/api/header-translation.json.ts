@@ -6,7 +6,7 @@ import { GET_WEBSITE_ALL_LANG_TRANSLATIONS } from '$lib/graphql/query';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
-export async function get({ req, res }): Promise<any> {
+export async function get(req, res): Promise<any> {
 	// ... GRAQPH-QL response;
 	const response = await initGrapQLClient().request(GET_WEBSITE_ALL_LANG_TRANSLATIONS);
 	// ... DEBUGGING;
