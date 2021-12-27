@@ -1,28 +1,27 @@
 /**
  * INSTANTIATE GRAPH-QL REQUEST-CLIENT
  * ~~~~~~~~~~~~~~~~~
- * & methods; 
+ * & methods;
  * - adapted to GitHub Actions SECRETS
  * - adpated to Heroku ENV-VARIABLES
-*/
-import { GraphQLClient } from 'graphql-request'
-
+ */
+import { GraphQLClient } from 'graphql-request';
 
 /**
  * Description:
  * ~~~~~~~~~~~~~~~~~
  * Create the GRAPH-QL Client;
- * @returns 
-*/
+ * @returns
+ */
 export function initGrapQLClient(): GraphQLClient {
-    // ...
-    const endpoint = import.meta.env.VITE_HASURA_DB_URL.toString()
-    // ...
-    const graphQLClient = new GraphQLClient(endpoint, {
-        headers: {
-            'x-hasura-admin-secret': `${import.meta.env.VITE_HASURA_DB_TOKEN.toString()}`,
-        },
-    })
-    // ...
-    return graphQLClient;
+	// ...
+	const endpoint = import.meta.env.VITE_HASURA_DB_URL.toString();
+	// ...
+	const graphQLClient = new GraphQLClient(endpoint, {
+		headers: {
+			'x-hasura-admin-secret': `${import.meta.env.VITE_HASURA_DB_TOKEN.toString()}`
+		}
+	});
+	// ...
+	return graphQLClient;
 }
