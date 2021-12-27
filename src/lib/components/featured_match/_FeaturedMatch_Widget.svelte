@@ -3,66 +3,39 @@
 ==================== -->
 <script lang="ts">
 	// ... svelte-imports;
-	import {
-		onMount
-	} from 'svelte';
-	import {
-		fade
-	} from 'svelte/transition';
-	import {
-		browser,
-		dev
-	} from '$app/env';
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+	import { browser, dev } from '$app/env';
 
 	// ... external modules imports;
 	import ColorThief from 'colorthief/dist/color-thief.mjs';
 
+	// ... external components import;
 	import FeaturedMatchContentLoading from './_FeaturedMatch_ContentLoading.svelte';
 
 	// ... external `exports` imports;
-	import {
-		db_real
-	} from '$lib/firebase/init';
-	import {
-		UPDATE_MATCH_FIXTURE_VOTES
-	} from '$lib/graphql/mutation';
-	import {
-		fixtureVote
-	} from '$lib/store/vote_fixture';
-	import {
-		userBetarenaSettings
-	} from '$lib/store/user-settings';
-	import {
-		getTargetFixtureOdds
-	} from '$lib/firebase/index';
-	import {
-		initGrapQLClient
-	} from '$lib/graphql/init_graphQL';
-	import {
-		ref,
-		onValue
-	} from 'firebase/database';
+	import { db_real } from '$lib/firebase/init';
+	import { UPDATE_MATCH_FIXTURE_VOTES } from '$lib/graphql/mutation';
+	import { fixtureVote } from '$lib/store/vote_fixture';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { getTargetFixtureOdds } from '$lib/firebase/index';
+	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { ref, onValue } from 'firebase/database';
 	import { getUserLocation } from "$lib/geoJs/init"
 
 	// ... DECLARING TYPESCRIPT-TYPES imports;
-	import type {
-		fixture
-	} from '$lib/store/vote_fixture';
-	import type {
-		FixtureResponse
-	} from '$lib/model/interface-fixture';
-	import type {
-		SelectedFixutre,
-		SelectedFixture_VoteUpdate_Response,
-		Featured_Match_Translation_Response
-	} from '$lib/model/response_models';
-	import {
-		page
-	} from '$app/stores'
+	import type { fixture } from '$lib/store/vote_fixture';
+	import type { FixtureResponse } from '$lib/model/interface-fixture';
+	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response, TranslationsResponse } from '$lib/model/response_models';
+	import { page } from '$app/stores'
 	import { post } from '$lib/api/utils'
 	import type { GeoJsResponse } from "$lib/model/geo-js-interface"
 
-	export let FEATURED_MATCH_WIDGET_DATA_SEO: Featured_Match_Translation_Response;
+	// ... key component assets;
+	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
+
+	// ... main component variables;
+	export let FEATURED_MATCH_WIDGET_DATA_SEO: Array < TranslationsResponse >;
 	let FEATURED_MATCH_WIDGET_DATA: FixtureResponse;
 
 	// ... intercept-key data;
@@ -70,6 +43,7 @@
 	let imageURL: string = undefined;
 	let selected_fixture_data: SelectedFixutre = undefined;
 	let loaded: boolean = false;
+	let nomatches: boolean = false;
 
 	// ... widget-language-declaration;
 	let server_side_language: string = 'en';
@@ -134,9 +108,20 @@
 		const userGeoResponse: GeoJsResponse = await getUserLocation()
 		let userGeo = userGeoResponse.country_code.toLowerCase()
 		// ... DEBUGGING;
-		if (dev) console.info('-- user location --', userGeo)
+		if (dev) console.info('-- user target location --', userGeo)
 		// ... GET RESPONSE;
-		const response: FixtureResponse  = await post(`api/featured-match.json`, userGeo)
+		const response: FixtureResponse  = await post(`api/featured_match/cache-data.json`, userGeo)
+		// ... DEBUGGING;
+		if (dev) console.debug('-- get_FeaturedMatchData() response --', response)
+		// ... if response is null;
+		if (response == null || response == undefined) {
+			// ... decalre state;
+			nomatches = true;
+			// ...
+			if (dev) console.debug('NO MATCHES!')
+			// ... return null;
+			return;
+		}
 		// ... intercept data, and decalre further;
 		// ...
 		FEATURED_MATCH_WIDGET_DATA = response;
@@ -157,6 +142,7 @@
 		loaded = true;
 		// ... return, DATA,
 		return FEATURED_MATCH_WIDGET_DATA;
+		
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -445,9 +431,9 @@
 
 <div>
 	<!-- ... SEO-DATA-LOADED ... -->
-	{#if !loaded}
+	{#if !loaded && !nomatches}
 		<!-- ... iterate over the data to find the correc language ... -->
-		{#each FEATURED_MATCH_WIDGET_DATA_SEO.widget_featured_match_translations as WIDGET_SEO_TRANSLATION}
+		{#each FEATURED_MATCH_WIDGET_DATA_SEO as WIDGET_SEO_TRANSLATION}
 			<!-- ... obtain the correct widget translation ... -->
 			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<div id="seo-featured-match-box">
@@ -463,966 +449,1009 @@
 		{/each}
 	{/if}
 
-	{#await get_FeaturedMatchData()}
-		<!-- promise is pending -->
-		<FeaturedMatchContentLoading />
-	{:then data}
-		<!-- ... promise was fulfilled ... -->
-
-		<!-- ... identify the correct translation via IF -->
-		{#each FEATURED_MATCH_WIDGET_DATA.translation as WIDGET_TRANSLATION}
-			{#if WIDGET_TRANSLATION.lang == server_side_language}
+	<!-- ... NO FEATURED MATCHES AVAILABLE PLACEHOLDER ...-->
+	{#if nomatches && !loaded}
+		<!-- ... title of the widget ... -->
+		<!-- ... iterate over the data to find the correct language ... -->
+		{#each FEATURED_MATCH_WIDGET_DATA_SEO as WIDGET_SEO_TRANSLATION}
+			<!-- ... obtain the correct widget translation ... -->
+			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<!-- ... wiget-title ... -->
 				<p class="s-20 m-b-10 color-white">
-					{WIDGET_TRANSLATION.widget_title}
+					{WIDGET_SEO_TRANSLATION.widget_title}
 				</p>
+			{/if}
+		{/each}
 
-				<div
-					id="live-score-container"
-					class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-				>
-					<!-- ... league-game-title ... -->
-					<div id="fixture-league-title" class="row-space-start">
-						<!-- ... league-icon ... -->
-						<img class="img-flag" src={FEATURED_MATCH_WIDGET_DATA.country_flag} alt="" />
-						<!-- ... league-name-title ... -->
-						<p class="w-500 large color-dark m-r-8">
-							{data.league_name}
-							<span class="w-400 color-grey">
-								(Round {FEATURED_MATCH_WIDGET_DATA.round_name})
-							</span>
-						</p>
-					</div>
+		<!-- ... no-matches-avaiable-placeholder container ...  -->
+		<div id='featured-no-match-box'
+			class='row-space-start'>
+			<img src={no_featured_match_visual} 
+				alt="no-featured-match-visual"
+				width="80px" height="80px"
+				class='m-r-20'
+			/>
+			<!-- ... container w/ text ... -->
+			<div>
+				<p class='s-16 m-b-8 w-500'> No Matches Available </p>
+				<p class='s-16 color-grey w-400'> Sorry, at this time there is no featured match available! </p>
+			</div>
+		</div>
+	{/if}
 
-					<!-- ... fixture-visual-voting ... -->
-					{#if FEATURED_MATCH_WIDGET_DATA.live_odds != undefined}
-						<div id="fixture-visual-box">
-							<!-- ... fixture-visual-info ... -->
-							<div id="fixture-data" class="row-space-out m-b-20">
-								<!-- ... first-team ... -->
-								<div class="fixture-team">
-									<img
-										class="m-b-12"
-										src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-										alt=""
-										width="72px"
-										height="72px"
-									/>
-									<p class="w-500 medium desktop-medium">
-										{FEATURED_MATCH_WIDGET_DATA.home_team_name}
-									</p>
-								</div>
-								<!-- 
-                fixture-timer-clock -->
-								<div style="align-self: center;">
-									<p class="w-500 x-large desktop-x-large">
-										{countD_h}:{countD_min}:{countD_sec}
-									</p>
-									<p class="w-400 small color-grey desktop-medium" style="white-space: nowrap;">
-										{getOrdinalNum(FEATURED_MATCH_WIDGET_DATA.time.getDate())}
-										{monthNames[FEATURED_MATCH_WIDGET_DATA.time.getMonth().toString()]}
-										{FEATURED_MATCH_WIDGET_DATA.time.getFullYear().toString().substr(-2)},
-										{FEATURED_MATCH_WIDGET_DATA.time.getHours().toString()}:{(
-											'0' + FEATURED_MATCH_WIDGET_DATA.time.getMinutes().toString()
-										).slice(-2)}h
-									</p>
-								</div>
-								<!-- 
-                second-team -->
-								<div class="fixture-team">
-									<img
-										class="m-b-12"
-										src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-										alt=""
-										width="72px"
-										height="72px"
-									/>
-									<p class="w-500 medium desktop-medium">
-										{FEATURED_MATCH_WIDGET_DATA.away_team_name}
-									</p>
-								</div>
-							</div>
-							{#if !voteCasted}
-								<p class="w-500 large color-primary m-b-12 text-center">
-									{WIDGET_TRANSLATION.vote}
-								</p>
-							{/if}
+	{#if !nomatches}
+		<!-- ... widget loading ... -->
+		{#await get_FeaturedMatchData()}
+			<!-- promise is pending -->
+			<FeaturedMatchContentLoading />
+		{:then data}
+			<!-- ... promise was fulfilled ... -->
 
-							<!-- ... voting-results-btn ... -->
-							<div id="btn-vote-container" class="row-space-out">
-								<!-- 
-                ODDS #1 
-                -->
-								<div class="odds-vote-box text-center column">
-									<button
-										class="row-space-out cast-vote-btn m-b-12"
-										class:active={fixtureDataVote.fixture_vote == '1'}
-										disabled={voteCasted}
-										on:click={() =>
-											castVote(
-												'1',
-												parseFloat(
-													FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
-														'1X2FT'
-													].data[0].value.toString()
-												).toFixed(2)
-											)}
-									>
-										<p class="w-500 medium row-space-out">
-											{#if !viewportDesktop}
-												<span class="color-grey"> 1 </span>
-											{:else}
-												<img
-													src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-													alt=""
-													width="28px"
-													height="28px"
-												/>
-											{/if}
-											<span class:active_p={fixtureDataVote.fixture_vote == '1'}>
-												{parseFloat(
-													FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
-														'1X2FT'
-													].data[0].value.toString()
-												).toFixed(2)}
-											</span>
-										</p>
-									</button>
-									<!-- fixture-probability -->
-									{#if !showBettingSite}
-										<p class="w-400 probablitiy-text medium">
-											{WIDGET_TRANSLATION.probability}
-											{#if !viewportDesktop}
-												<br />
-											{/if}
-											{Math.round(parseInt(FEATURED_MATCH_WIDGET_DATA.probabilities.home)).toFixed(
-												2
-											)}%
-										</p>
-									{:else if FEATURED_MATCH_WIDGET_DATA.match_votes != undefined}
-										<p class="w-500 large">
-											<span class="color-dark">
-												{(
-													(FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_local / totalVotes) *
-													100
-												).toFixed(0)}%
-											</span>
-											<span class="color-grey">
-												({FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_local})
-											</span>
-										</p>
-									{/if}
-								</div>
+			<!-- ... identify the correct translation via IF -->
+			{#each FEATURED_MATCH_WIDGET_DATA.translation as WIDGET_TRANSLATION}
+				{#if WIDGET_TRANSLATION.lang == server_side_language}
+					<!-- ... wiget-title ... -->
+					<p class="s-20 m-b-10 color-white">
+						{WIDGET_TRANSLATION.widget_title}
+					</p>
 
-								<!-- 
-                ODDS #X 
-                -->
-								<div class="odds-vote-box text-center column">
-									<button
-										class="row-space-out cast-vote-btn m-b-12"
-										class:active={fixtureDataVote.fixture_vote == 'X'}
-										disabled={voteCasted}
-										on:click={() =>
-											castVote(
-												'X',
-												parseFloat(
-													FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
-														'1X2FT'
-													].data[1].value.toString()
-												).toFixed(2)
-											)}
-									>
-										<p class="w-500 medium row-space-out">
-											{#if !viewportDesktop}
-												<span class="color-grey"> X </span>
-											{:else}
-												<!-- 
-                          src="./static/icon/icon-close.svg"
-                        -->
-												<img
-													src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
-													alt=""
-													width="28px"
-													height="28px"
-												/>
-											{/if}
-											<span class:active_p={fixtureDataVote.fixture_vote == 'X'}>
-												{parseFloat(
-													FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
-														'1X2FT'
-													].data[1].value.toString()
-												).toFixed(2)}
-											</span>
-										</p>
-									</button>
-									<!-- fixture-probability -->
-									{#if !showBettingSite}
-										<p class="w-400 probablitiy-text medium">
-											{WIDGET_TRANSLATION.probability}
-											{#if !viewportDesktop}
-												<br />
-											{/if}
-											{Math.round(parseInt(FEATURED_MATCH_WIDGET_DATA.probabilities.draw)).toFixed(
-												2
-											)}%
-										</p>
-									{:else if FEATURED_MATCH_WIDGET_DATA.match_votes != undefined}
-										<p class="w-500 large">
-											<span class="color-dark">
-												{(
-													(FEATURED_MATCH_WIDGET_DATA.match_votes.vote_draw_x / totalVotes) *
-													100
-												).toFixed(0)}%
-											</span>
-											<span class="color-grey">
-												({FEATURED_MATCH_WIDGET_DATA.match_votes.vote_draw_x})
-											</span>
-										</p>
-									{/if}
-								</div>
+					<div
+						id="live-score-container"
+						class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+					>
+						<!-- ... league-game-title ... -->
+						<div id="fixture-league-title" class="row-space-start">
+							<!-- ... league-icon ... -->
+							<img class="img-flag" src={FEATURED_MATCH_WIDGET_DATA.country_flag} alt="" />
+							<!-- ... league-name-title ... -->
+							<p class="w-500 large color-dark m-r-8">
+								{data.league_name}
+								<span class="w-400 color-grey">
+									(Round {FEATURED_MATCH_WIDGET_DATA.round_name})
+								</span>
+							</p>
+						</div>
 
-								<!-- 
-                ODDS #2 
-                -->
-								<div class="odds-vote-box column text-center">
-									<button
-										class="row-space-out cast-vote-btn m-b-12"
-										class:active={fixtureDataVote.fixture_vote == '2'}
-										disabled={voteCasted}
-										on:click={() =>
-											castVote(
-												'2',
-												parseFloat(
-													FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
-														'1X2FT'
-													].data[2].value.toString()
-												).toFixed(2)
-											)}
-									>
-										<p class="w-500 medium row-space-out">
-											{#if !viewportDesktop}
-												<span class="color-grey"> 2 </span>
-											{:else}
-												<img
-													src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-													alt=""
-													width="28px"
-													height="28px"
-												/>
-											{/if}
-											<span class:active_p={fixtureDataVote.fixture_vote == '2'}>
-												{parseFloat(
-													FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
-														'1X2FT'
-													].data[2].value.toString()
-												).toFixed(2)}
-											</span>
-										</p>
-									</button>
-									<!-- fixture-probability -->
-									{#if !showBettingSite}
-										<p class="w-400 probablitiy-text medium">
-											{WIDGET_TRANSLATION.probability}
-											{#if !viewportDesktop}
-												<br />
-											{/if}
-											{Math.round(parseInt(data.probabilities.away)).toFixed(2)}%
-										</p>
-									{:else if FEATURED_MATCH_WIDGET_DATA.match_votes != undefined}
-										<p class="w-500 large">
-											<span class="color-dark">
-												{(
-													(FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_visitor / totalVotes) *
-													100
-												).toFixed(0)}%
-											</span>
-											<span class="color-grey">
-												({FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_visitor})
-											</span>
-										</p>
-									{/if}
-								</div>
-							</div>
-
-							<!-- 
-              ~~~~~~~~~~~~~~
-              stakes-site-info-pop-up
-              -->
-							{#if showBettingSite}
-								<div id="site-bet-box" in:fade>
-									<!-- 
-                  close-btn 
-                  src="./static/icon/white-close.svg"
-                  -->
-									<img
-										src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
-										alt=""
-										width="16px"
-										height="16px"
-										style="position: absolute; top: 12px; right: 20px;"
-										on:click={() => (showBettingSite = false)}
-									/>
-									<a href={FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.register_link}>
+						<!-- ... fixture-visual-voting ... -->
+						{#if FEATURED_MATCH_WIDGET_DATA.live_odds != undefined}
+							<div id="fixture-visual-box">
+								<!-- ... fixture-visual-info ... -->
+								<div id="fixture-data" class="row-space-out m-b-20">
+									<!-- ... first-team ... -->
+									<div class="fixture-team">
 										<img
-											id="stakesSiteImg"
-											src={FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.image}
+											class="m-b-12"
+											src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 											alt=""
-											width="100%"
-											height="40px"
+											width="72px"
+											height="72px"
 										/>
-									</a>
-									<div id="inner-site-container">
-										<!-- 
-                    STAKES DATA -->
-										<div class="m-b-20 row-space-out">
-											<!-- 
-                      Win Type
-                      -->
-											<div class="text-center">
-												{#if fixtureDataVote.fixture_vote == '1'}
-													<p class="w-400 medium m-b-8 color-grey">Home win</p>
-												{:else if fixtureDataVote.fixture_vote == 'X'}
-													<p class="w-400 medium m-b-8 color-grey">Draw</p>
+										<p class="w-500 medium desktop-medium">
+											{FEATURED_MATCH_WIDGET_DATA.home_team_name}
+										</p>
+									</div>
+									<!-- 
+					fixture-timer-clock -->
+									<div style="align-self: center;">
+										<p class="w-500 x-large desktop-x-large">
+											{countD_h}:{countD_min}:{countD_sec}
+										</p>
+										<p class="w-400 small color-grey desktop-medium" style="white-space: nowrap;">
+											{getOrdinalNum(FEATURED_MATCH_WIDGET_DATA.time.getDate())}
+											{monthNames[FEATURED_MATCH_WIDGET_DATA.time.getMonth().toString()]}
+											{FEATURED_MATCH_WIDGET_DATA.time.getFullYear().toString().substr(-2)},
+											{FEATURED_MATCH_WIDGET_DATA.time.getHours().toString()}:{(
+												'0' + FEATURED_MATCH_WIDGET_DATA.time.getMinutes().toString()
+											).slice(-2)}h
+										</p>
+									</div>
+									<!-- 
+					second-team -->
+									<div class="fixture-team">
+										<img
+											class="m-b-12"
+											src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
+											alt=""
+											width="72px"
+											height="72px"
+										/>
+										<p class="w-500 medium desktop-medium">
+											{FEATURED_MATCH_WIDGET_DATA.away_team_name}
+										</p>
+									</div>
+								</div>
+								{#if !voteCasted}
+									<p class="w-500 large color-primary m-b-12 text-center">
+										{WIDGET_TRANSLATION.vote}
+									</p>
+								{/if}
+
+								<!-- ... voting-results-btn ... -->
+								<div id="btn-vote-container" class="row-space-out">
+									<!-- 
+					ODDS #1 
+					-->
+									<div class="odds-vote-box text-center column">
+										<button
+											class="row-space-out cast-vote-btn m-b-12"
+											class:active={fixtureDataVote.fixture_vote == '1'}
+											disabled={voteCasted}
+											on:click={() =>
+												castVote(
+													'1',
+													parseFloat(
+														FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
+															'1X2FT'
+														].data[0].value.toString()
+													).toFixed(2)
+												)}
+										>
+											<p class="w-500 medium row-space-out">
+												{#if !viewportDesktop}
+													<span class="color-grey"> 1 </span>
 												{:else}
-													<p class="w-400 medium m-b-8 color-grey">Away win</p>
+													<img
+														src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
+														alt=""
+														width="28px"
+														height="28px"
+													/>
 												{/if}
-												<div class="input-value row-space-out medium text-center">
-													{#if viewportDesktop}
-														{#if fixtureDataVote.fixture_vote == '1'}
-															<img
-																src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-																alt=""
-																width="28px"
-																height="28px"
-															/>
-														{:else if fixtureDataVote.fixture_vote == 'X'}
-															<p class="w-500 medium row-space-out">
-																<span class="color-grey"> X </span>
-															</p>
-														{:else}
-															<img
-																src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-																alt=""
-																width="28px"
-																height="28px"
-															/>
-														{/if}
+												<span class:active_p={fixtureDataVote.fixture_vote == '1'}>
+													{parseFloat(
+														FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
+															'1X2FT'
+														].data[0].value.toString()
+													).toFixed(2)}
+												</span>
+											</p>
+										</button>
+										<!-- fixture-probability -->
+										{#if !showBettingSite}
+											<p class="w-400 probablitiy-text medium">
+												{WIDGET_TRANSLATION.probability}
+												{#if !viewportDesktop}
+													<br />
+												{/if}
+												{Math.round(parseInt(FEATURED_MATCH_WIDGET_DATA.probabilities.home)).toFixed(
+													2
+												)}%
+											</p>
+										{:else if FEATURED_MATCH_WIDGET_DATA.match_votes != undefined}
+											<p class="w-500 large">
+												<span class="color-dark">
+													{(
+														(FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_local / totalVotes) *
+														100
+													).toFixed(0)}%
+												</span>
+												<span class="color-grey">
+													({FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_local})
+												</span>
+											</p>
+										{/if}
+									</div>
+
+									<!-- 
+					ODDS #X 
+					-->
+									<div class="odds-vote-box text-center column">
+										<button
+											class="row-space-out cast-vote-btn m-b-12"
+											class:active={fixtureDataVote.fixture_vote == 'X'}
+											disabled={voteCasted}
+											on:click={() =>
+												castVote(
+													'X',
+													parseFloat(
+														FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
+															'1X2FT'
+														].data[1].value.toString()
+													).toFixed(2)
+												)}
+										>
+											<p class="w-500 medium row-space-out">
+												{#if !viewportDesktop}
+													<span class="color-grey"> X </span>
+												{:else}
+													<!-- 
+							src="./static/icon/icon-close.svg"
+							-->
+													<img
+														src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
+														alt=""
+														width="28px"
+														height="28px"
+													/>
+												{/if}
+												<span class:active_p={fixtureDataVote.fixture_vote == 'X'}>
+													{parseFloat(
+														FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
+															'1X2FT'
+														].data[1].value.toString()
+													).toFixed(2)}
+												</span>
+											</p>
+										</button>
+										<!-- fixture-probability -->
+										{#if !showBettingSite}
+											<p class="w-400 probablitiy-text medium">
+												{WIDGET_TRANSLATION.probability}
+												{#if !viewportDesktop}
+													<br />
+												{/if}
+												{Math.round(parseInt(FEATURED_MATCH_WIDGET_DATA.probabilities.draw)).toFixed(
+													2
+												)}%
+											</p>
+										{:else if FEATURED_MATCH_WIDGET_DATA.match_votes != undefined}
+											<p class="w-500 large">
+												<span class="color-dark">
+													{(
+														(FEATURED_MATCH_WIDGET_DATA.match_votes.vote_draw_x / totalVotes) *
+														100
+													).toFixed(0)}%
+												</span>
+												<span class="color-grey">
+													({FEATURED_MATCH_WIDGET_DATA.match_votes.vote_draw_x})
+												</span>
+											</p>
+										{/if}
+									</div>
+
+									<!-- 
+					ODDS #2 
+					-->
+									<div class="odds-vote-box column text-center">
+										<button
+											class="row-space-out cast-vote-btn m-b-12"
+											class:active={fixtureDataVote.fixture_vote == '2'}
+											disabled={voteCasted}
+											on:click={() =>
+												castVote(
+													'2',
+													parseFloat(
+														FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
+															'1X2FT'
+														].data[2].value.toString()
+													).toFixed(2)
+												)}
+										>
+											<p class="w-500 medium row-space-out">
+												{#if !viewportDesktop}
+													<span class="color-grey"> 2 </span>
+												{:else}
+													<img
+														src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
+														alt=""
+														width="28px"
+														height="28px"
+													/>
+												{/if}
+												<span class:active_p={fixtureDataVote.fixture_vote == '2'}>
+													{parseFloat(
+														FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds.markets[
+															'1X2FT'
+														].data[2].value.toString()
+													).toFixed(2)}
+												</span>
+											</p>
+										</button>
+										<!-- fixture-probability -->
+										{#if !showBettingSite}
+											<p class="w-400 probablitiy-text medium">
+												{WIDGET_TRANSLATION.probability}
+												{#if !viewportDesktop}
+													<br />
+												{/if}
+												{Math.round(parseInt(data.probabilities.away)).toFixed(2)}%
+											</p>
+										{:else if FEATURED_MATCH_WIDGET_DATA.match_votes != undefined}
+											<p class="w-500 large">
+												<span class="color-dark">
+													{(
+														(FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_visitor / totalVotes) *
+														100
+													).toFixed(0)}%
+												</span>
+												<span class="color-grey">
+													({FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_visitor})
+												</span>
+											</p>
+										{/if}
+									</div>
+								</div>
+
+								<!-- 
+				~~~~~~~~~~~~~~
+				stakes-site-info-pop-up
+				-->
+								{#if showBettingSite}
+									<div id="site-bet-box" in:fade>
+										<!-- 
+					close-btn 
+					src="./static/icon/white-close.svg"
+					-->
+										<img
+											src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
+											alt=""
+											width="16px"
+											height="16px"
+											style="position: absolute; top: 12px; right: 20px;"
+											on:click={() => (showBettingSite = false)}
+										/>
+										<a href={FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.register_link}>
+											<img
+												id="stakesSiteImg"
+												src={FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.image}
+												alt=""
+												width="100%"
+												height="40px"
+											/>
+										</a>
+										<div id="inner-site-container">
+											<!-- 
+						STAKES DATA -->
+											<div class="m-b-20 row-space-out">
+												<!-- 
+						Win Type
+						-->
+												<div class="text-center">
+													{#if fixtureDataVote.fixture_vote == '1'}
+														<p class="w-400 medium m-b-8 color-grey">Home win</p>
+													{:else if fixtureDataVote.fixture_vote == 'X'}
+														<p class="w-400 medium m-b-8 color-grey">Draw</p>
+													{:else}
+														<p class="w-400 medium m-b-8 color-grey">Away win</p>
 													{/if}
+													<div class="input-value row-space-out medium text-center">
+														{#if viewportDesktop}
+															{#if fixtureDataVote.fixture_vote == '1'}
+																<img
+																	src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
+																	alt=""
+																	width="28px"
+																	height="28px"
+																/>
+															{:else if fixtureDataVote.fixture_vote == 'X'}
+																<p class="w-500 medium row-space-out">
+																	<span class="color-grey"> X </span>
+																</p>
+															{:else}
+																<img
+																	src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
+																	alt=""
+																	width="28px"
+																	height="28px"
+																/>
+															{/if}
+														{/if}
+														<input
+															id="win-type"
+															class="w-500 medium text-center desktop-view-winnings"
+															type="number"
+															bind:value={fixtureDataVote.fixture_vote_val}
+															disabled
+														/>
+													</div>
+												</div>
+
+												<!-- MULTIPLY SIGN -->
+												<img
+													src="/assets/svg/icon/icon-close.svg"
+													alt="multiply-icon"
+													width="16px"
+													height="16px"
+													style="margin-top: 25px;"
+												/>
+
+												<!-- 
+						Stake 
+						-->
+												<div class="text-center">
+													<p class="w-400 medium m-b-8 color-grey">{WIDGET_TRANSLATION.stake}</p>
 													<input
-														id="win-type"
-														class="w-500 medium text-center desktop-view-winnings"
+														class="w-500 input-value medium text-center"
+														type="text"
+														bind:value={user_Stake_amount}
+													/>
+												</div>
+
+												<!-- EQUALS SIGN -->
+												<img
+													src="/assets/svg/icon/icon-equally.svg"
+													alt="icon-equlaity"
+													width="16px"
+													height="16px"
+													style="margin-top: 25px;"
+												/>
+
+												<!-- 
+						Winnings 
+						-->
+												<div class="text-center">
+													<p class="w-400 medium m-b-8 color-grey">
+														{WIDGET_TRANSLATION.winnings}
+													</p>
+													<input
+														class="w-500 input-value medium text-center"
 														type="number"
-														bind:value={fixtureDataVote.fixture_vote_val}
+														value={(
+															parseFloat(fixtureDataVote.fixture_vote_val) * user_Stake_amount
+														).toFixed(2)}
 														disabled
 													/>
 												</div>
 											</div>
 
-											<!-- MULTIPLY SIGN -->
-											<img
-												src="/assets/svg/icon/icon-close.svg"
-												alt="multiply-icon"
-												width="16px"
-												height="16px"
-												style="margin-top: 25px;"
-											/>
-
 											<!-- 
-                      Stake 
-                      -->
-											<div class="text-center">
-												<p class="w-400 medium m-b-8 color-grey">{WIDGET_TRANSLATION.stake}</p>
-												<input
-													class="w-500 input-value medium text-center"
-													type="text"
-													bind:value={user_Stake_amount}
-												/>
-											</div>
-
-											<!-- EQUALS SIGN -->
-											<img
-												src="/assets/svg/icon/icon-equally.svg"
-												alt="icon-equlaity"
-												width="16px"
-												height="16px"
-												style="margin-top: 25px;"
-											/>
-
-											<!-- 
-                      Winnings 
-                      -->
-											<div class="text-center">
-												<p class="w-400 medium m-b-8 color-grey">
-													{WIDGET_TRANSLATION.winnings}
-												</p>
-												<input
-													class="w-500 input-value medium text-center"
-													type="number"
-													value={(
-														parseFloat(fixtureDataVote.fixture_vote_val) * user_Stake_amount
-													).toFixed(2)}
-													disabled
-												/>
-											</div>
-										</div>
-
-										<!-- 
-                    PLACE BET BUTTON -->
-										<a href={FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.register_link}>
-											<button class="place-bet-btn btn-primary m-b-12">
-												<p class="small">
-													{WIDGET_TRANSLATION.place_bet}
-												</p>
-											</button>
-										</a>
-
-										<!-- 
-                    BETTING SITE INFO -->
-										<p class="small text-center color-grey">
-											{FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.information}
-										</p>
-									</div>
-								</div>
-							{/if}
-						</div>
-					{/if}
-
-					<!-- ... live-streams-frame-box ... -->
-					{#if FEATURED_MATCH_WIDGET_DATA.tvstations.length != 0}
-						<div id="live-stream-box">
-							<!-- 
-              live-streams-title-section -->
-							<p class="w-500 large m-b-8" style="padding-left: 20px;">
-								{WIDGET_TRANSLATION.streams}
-							</p>
-							<!-- 
-              live-streams-grid -->
-							<div id="livestream-grid">
-								{#each FEATURED_MATCH_WIDGET_DATA.tvstations as tv_item}
-									<a rel="external" href={tv_item.link}>
-										<div class="tooltip">
-											<button class="live-stream-btn">
-												<img
-													src={tv_item.img}
-													alt={tv_item.alt}
-													title={tv_item.Name}
-													width="45px"
-													height="26px"
-												/>
-											</button>
-											<p class="s_small tooltiptext">{tv_item.Name}</p>
-										</div>
-									</a>
-								{/each}
-							</div>
-						</div>
-					{/if}
-
-					<!-- ... best-players (Both-Teams) -->
-					<div id="best-players-box-out">
-						<!--
-            ~~~~~~~~~~~~~
-            TEAM - HOME 
-            -->
-						<div class="best-players-box">
-							<div class="row-space-start m-b-16">
-								<img
-									class="m-r-16"
-									src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-									alt=""
-									width="32px"
-									height="32px"
-								/>
-								<p class="w-500 large">
-									{FEATURED_MATCH_WIDGET_DATA.home_team_name}
-									{WIDGET_TRANSLATION.players}
-								</p>
-							</div>
-							<table class="table-best-player">
-								<tr class="row-head m-b-16">
-									<th class="rating-head">
-										<p class="w-400 small color-grey">
-											{WIDGET_TRANSLATION.rating}
-										</p>
-									</th>
-									<th class="player-col">
-										<p class="w-400 small color-grey">
-											{WIDGET_TRANSLATION.player}
-										</p>
-									</th>
-									{#if viewportDesktop}
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.matches}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.assists}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.goals}
-											</p>
-										</th>
-									{/if}
-								</tr>
-								<!-- PLAYER 1 -->
-								<tr>
-									<td>
-										<div
-											class="rating-box"
-											class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-												.local_team_rating_player_1 >= 0 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 7}
-											class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-												.local_team_rating_player_1 >= 7 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 9}
-											class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-												.local_team_rating_player_1 >= 9}
-										>
-											<p class="w-500 medium">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1}
-											</p>
-										</div>
-									</td>
-									<td class="row-space-start">
-										<img
-											src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_image_path}
-											alt=""
-											width="32px"
-											height="32px"
-											class="player-img"
-										/>
-										<p class="w-500 small desktop-small">
-											{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1}
-										</p>
-									</td>
-									{#if viewportDesktop}
-										<td>
-											<p class="w-500 medium boxed-rating-matches">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_appearances}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-assits">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_assists}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-goals">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_goals}
-											</p>
-										</td>
-									{/if}
-								</tr>
-								<!-- PLAYER 2 -->
-								<tr>
-									<td>
-										<div
-											class="rating-box"
-											class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-												.local_team_rating_player_2 >= 0 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 7}
-											class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-												.local_team_rating_player_2 >= 7 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 9}
-											class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-												.local_team_rating_player_2 >= 9}
-										>
-											<p class="w-500 medium">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2}
-											</p>
-										</div>
-									</td>
-									<td class="row-space-start">
-										<img
-											src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_image_path}
-											alt=""
-											width="32px"
-											height="32px"
-											class="player-img"
-										/>
-										<p class="w-500 small desktop-small">
-											{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2}
-										</p>
-									</td>
-									{#if viewportDesktop}
-										<td>
-											<p class="w-500 medium boxed-rating-matches">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_appearances}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-assits">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_assists}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-goals">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_goals}
-											</p>
-										</td>
-									{/if}
-								</tr>
-							</table>
-						</div>
-
-						<!--
-            ~~~~~~~~~~~~~
-            TEAM - AWAY 
-            -->
-						<div class="best-players-box">
-							<div class="row-space-start m-b-16">
-								<img
-									class="m-r-16"
-									src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-									alt=""
-									width="32px"
-									height="32px"
-								/>
-								<p class="w-500 large">
-									{FEATURED_MATCH_WIDGET_DATA.away_team_name}
-									{WIDGET_TRANSLATION.players}
-								</p>
-							</div>
-							<!--  -->
-							<table class="table-best-player">
-								<tr class="row-head m-b-16">
-									<th class="rating-head">
-										<p class="w-400 small color-grey">
-											{WIDGET_TRANSLATION.rating}
-										</p>
-									</th>
-									<th class="player-col">
-										<p class="w-400 small color-grey">
-											{WIDGET_TRANSLATION.player}
-										</p>
-									</th>
-									{#if viewportDesktop}
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.matches}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.assists}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.goals}
-											</p>
-										</th>
-									{/if}
-								</tr>
-								<!-- PLAYER 1 -->
-								<tr>
-									<td>
-										<div
-											class="rating-box"
-											class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-												.visitor_team_rating_player_1 >= 0 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 7}
-											class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-												.visitor_team_rating_player_1 >= 7 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 9}
-											class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-												.visitor_team_rating_player_1 >= 9}
-										>
-											<p class="w-500 medium">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1}
-											</p>
-										</div>
-									</td>
-									<td class="row-space-start">
-										<img
-											src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_image_path}
-											alt=""
-											width="32px"
-											height="32px"
-											class="player-img"
-										/>
-										<p class="w-500 small desktop-small">
-											{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1}
-										</p>
-									</td>
-									{#if viewportDesktop}
-										<td>
-											<p class="w-500 medium boxed-rating-matches">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_appearances}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-assits">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_assists}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-goals">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_goals}
-											</p>
-										</td>
-									{/if}
-								</tr>
-								<!-- PLAYER 2 -->
-								<tr>
-									<td>
-										<div
-											class="rating-box"
-											class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-												.visitor_team_rating_player_2 >= 0 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 7}
-											class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-												.visitor_team_rating_player_2 >= 7 &&
-												FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 9}
-											class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-												.visitor_team_rating_player_2 >= 9}
-										>
-											<p class="w-500 medium">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2}
-											</p>
-										</div>
-									</td>
-									<td class="row-space-start">
-										<img
-											src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_image_path}
-											alt=""
-											width="32px"
-											height="32px"
-											class="player-img"
-										/>
-										<p class="w-500 small desktop-small">
-											{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2}
-										</p>
-									</td>
-									{#if viewportDesktop}
-										<td>
-											<p class="w-500 medium boxed-rating-matches">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_appearances}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-assits">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_assists}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium boxed-rating-goals">
-												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_goals}
-											</p>
-										</td>
-									{/if}
-								</tr>
-							</table>
-						</div>
-					</div>
-
-					<!-- ... value-bets section ... -->
-					{#if FEATURED_MATCH_WIDGET_DATA.valuebets != null}
-						<div id="value-bets">
-							<p class="w-500 large m-b-16">
-								{WIDGET_TRANSLATION.value_bet}
-							</p>
-							{#if !viewportDesktop}
-								<div id="value-bets-container">
-									<div id="value-bets-inner-info">
-										<!-- 
-                    VALUE-BET INFO -->
-										<div class="row-space-out">
-											<p class="w-400 medium color-grey">
-												{WIDGET_TRANSLATION.bookmaker}
-											</p>
-											<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
-												<img
-													src={FEATURED_MATCH_WIDGET_DATA.valuebets.image}
-													alt={FEATURED_MATCH_WIDGET_DATA.valuebets.bookmaker}
-													height="30px"
-													width="56px"
-													style="height: 30px !important;"
-												/>
-											</a>
-										</div>
-
-										<div class="row-space-out">
-											<p class="w-400 medium color-grey">
-												{WIDGET_TRANSLATION.type}
-											</p>
-											<p class="w-500 medium color-dark">
-												{WIDGET_TRANSLATION.market_name}
-											</p>
-										</div>
-
-										<div class="row-space-out">
-											<p class="w-400 medium color-grey">
-												{WIDGET_TRANSLATION.market}
-											</p>
-											<p class="w-500 medium color-dark">
-												{FEATURED_MATCH_WIDGET_DATA.valuebets.bet.toString()}
-											</p>
-										</div>
-
-										<div class="row-space-out">
-											<p class="w-400 medium color-grey">
-												{WIDGET_TRANSLATION.odds}
-											</p>
-											<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
-												<p
-													class="w-500 medium color-dark"
-													style="background: #FFFFFF;
-                          border-radius: 4px;
-                          padding: 4px 6px;"
-												>
-													{parseFloat(FEATURED_MATCH_WIDGET_DATA.valuebets.odd.toString()).toFixed(
-														2
-													)}
-												</p>
-											</a>
-										</div>
-
-										<div class="row-space-out">
-											<p class="w-400 medium color-grey">
-												{WIDGET_TRANSLATION.fair_odds}
-											</p>
-											<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
-												<p
-													class="w-500 medium color-dark"
-													style="background: #FFFFFF;
-                          border-radius: 4px;
-                          padding: 4px 6px;"
-												>
-													{parseFloat(
-														FEATURED_MATCH_WIDGET_DATA.valuebets.fair_odd.toString()
-													).toFixed(2)}
-												</p>
-											</a>
-										</div>
-									</div>
-									<!-- 
-                  VALUE-BET BUTTON -->
-									<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
-										<button
-											style="width: 100%; padding: 6px 0; border-radius: 4px;"
-											class="btn-primary"
-										>
-											<p class="w-500 medium">
-												{WIDGET_TRANSLATION.bet}
-											</p>
-										</button>
-									</a>
-								</div>
-							{:else}
-								<table class="value_bets">
-									<tr class="row-head m-b-16">
-										<th class="text-center" style="text-align: start;">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.bookmaker}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.type}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.market}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.odds}
-											</p>
-										</th>
-										<th class="text-center">
-											<p class="w-400 small color-grey">
-												{WIDGET_TRANSLATION.fair_odds}
-											</p>
-										</th>
-										<th class="text-center" />
-									</tr>
-									<!-- 
-                  VALUE-BET - ROW SINGLE -->
-									<tr>
-										<td class="text-center" style="text-align: start;">
-											<a
-												rel="external"
-												href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}
-												style="height: 30px;"
-											>
-												<img
-													src={FEATURED_MATCH_WIDGET_DATA.valuebets.image}
-													alt={FEATURED_MATCH_WIDGET_DATA.valuebets.bookmaker}
-													height="30px"
-													width="56px"
-													style="object-fit: cover; border-radius: 4px; height: 30px !important;"
-												/>
-											</a>
-										</td>
-										<td>
-											<p class="w-500 medium text-center">
-												{WIDGET_TRANSLATION.market_name}
-											</p>
-										</td>
-										<td>
-											<p class="w-500 medium text-center">
-												{FEATURED_MATCH_WIDGET_DATA.valuebets.bet.toString()}
-											</p>
-										</td>
-										<td>
-											<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
-												<p
-													class="w-500 medium max-height: 30px; boxed-rating-value-bets active_p_btn"
-												>
-													{parseFloat(FEATURED_MATCH_WIDGET_DATA.valuebets.odd.toString()).toFixed(
-														2
-													)}
-												</p>
-											</a>
-										</td>
-										<td>
-											<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
-												<p
-													class="w-500 medium max-height: 30px; boxed-rating-value-bets active_p_btn"
-												>
-													{parseFloat(
-														FEATURED_MATCH_WIDGET_DATA.valuebets.fair_odd.toString()
-													).toFixed(2)}
-												</p>
-											</a>
-										</td>
-										<td>
-											<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
-												<button
-													style="width: 100%; padding: 6px 0; max-height: 30px; border-radius: 4px;"
-													class="btn-primary"
-												>
-													<p class="w-500 medium">
-														{WIDGET_TRANSLATION.bet}
+						PLACE BET BUTTON -->
+											<a href={FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.register_link}>
+												<button class="place-bet-btn btn-primary m-b-12">
+													<p class="small">
+														{WIDGET_TRANSLATION.place_bet}
 													</p>
 												</button>
 											</a>
+
+											<!-- 
+						BETTING SITE INFO -->
+											<p class="small text-center color-grey">
+												{FEATURED_MATCH_WIDGET_DATA.live_odds.fixture_odds_info.information}
+											</p>
+										</div>
+									</div>
+								{/if}
+							</div>
+						{/if}
+
+						<!-- ... live-streams-frame-box ... -->
+						{#if FEATURED_MATCH_WIDGET_DATA.tvstations.length != 0}
+							<div id="live-stream-box">
+								<!-- 
+				live-streams-title-section -->
+								<p class="w-500 large m-b-8" style="padding-left: 20px;">
+									{WIDGET_TRANSLATION.streams}
+								</p>
+								<!-- 
+				live-streams-grid -->
+								<div id="livestream-grid">
+									{#each FEATURED_MATCH_WIDGET_DATA.tvstations as tv_item}
+										<a rel="external" href={tv_item.link}>
+											<div class="tooltip">
+												<button class="live-stream-btn">
+													<img
+														src={tv_item.img}
+														alt={tv_item.alt}
+														title={tv_item.Name}
+														width="45px"
+														height="26px"
+													/>
+												</button>
+												<p class="s_small tooltiptext">{tv_item.Name}</p>
+											</div>
+										</a>
+									{/each}
+								</div>
+							</div>
+						{/if}
+
+						<!-- ... best-players (Both-Teams) -->
+						<div id="best-players-box-out">
+							<!--
+				~~~~~~~~~~~~~
+				TEAM - HOME 
+				-->
+							<div class="best-players-box">
+								<div class="row-space-start m-b-16">
+									<img
+										class="m-r-16"
+										src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
+										alt=""
+										width="32px"
+										height="32px"
+									/>
+									<p class="w-500 large">
+										{FEATURED_MATCH_WIDGET_DATA.home_team_name}
+										{WIDGET_TRANSLATION.players}
+									</p>
+								</div>
+								<table class="table-best-player">
+									<tr class="row-head m-b-16">
+										<th class="rating-head">
+											<p class="w-400 small color-grey">
+												{WIDGET_TRANSLATION.rating}
+											</p>
+										</th>
+										<th class="player-col">
+											<p class="w-400 small color-grey">
+												{WIDGET_TRANSLATION.player}
+											</p>
+										</th>
+										{#if viewportDesktop}
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.matches}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.assists}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.goals}
+												</p>
+											</th>
+										{/if}
+									</tr>
+									<!-- PLAYER 1 -->
+									<tr>
+										<td>
+											<div
+												class="rating-box"
+												class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+													.local_team_rating_player_1 >= 0 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 7}
+												class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+													.local_team_rating_player_1 >= 7 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 9}
+												class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+													.local_team_rating_player_1 >= 9}
+											>
+												<p class="w-500 medium">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1}
+												</p>
+											</div>
 										</td>
+										<td class="row-space-start">
+											<img
+												src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_image_path}
+												alt=""
+												width="32px"
+												height="32px"
+												class="player-img"
+											/>
+											<p class="w-500 small desktop-small">
+												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1}
+											</p>
+										</td>
+										{#if viewportDesktop}
+											<td>
+												<p class="w-500 medium boxed-rating-matches">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_appearances}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-assits">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_assists}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-goals">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_goals}
+												</p>
+											</td>
+										{/if}
+									</tr>
+									<!-- PLAYER 2 -->
+									<tr>
+										<td>
+											<div
+												class="rating-box"
+												class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+													.local_team_rating_player_2 >= 0 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 7}
+												class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+													.local_team_rating_player_2 >= 7 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 9}
+												class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+													.local_team_rating_player_2 >= 9}
+											>
+												<p class="w-500 medium">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2}
+												</p>
+											</div>
+										</td>
+										<td class="row-space-start">
+											<img
+												src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_image_path}
+												alt=""
+												width="32px"
+												height="32px"
+												class="player-img"
+											/>
+											<p class="w-500 small desktop-small">
+												{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2}
+											</p>
+										</td>
+										{#if viewportDesktop}
+											<td>
+												<p class="w-500 medium boxed-rating-matches">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_appearances}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-assits">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_assists}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-goals">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_goals}
+												</p>
+											</td>
+										{/if}
 									</tr>
 								</table>
-							{/if}
+							</div>
+
+							<!--
+				~~~~~~~~~~~~~
+				TEAM - AWAY 
+				-->
+							<div class="best-players-box">
+								<div class="row-space-start m-b-16">
+									<img
+										class="m-r-16"
+										src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
+										alt=""
+										width="32px"
+										height="32px"
+									/>
+									<p class="w-500 large">
+										{FEATURED_MATCH_WIDGET_DATA.away_team_name}
+										{WIDGET_TRANSLATION.players}
+									</p>
+								</div>
+								<!--  -->
+								<table class="table-best-player">
+									<tr class="row-head m-b-16">
+										<th class="rating-head">
+											<p class="w-400 small color-grey">
+												{WIDGET_TRANSLATION.rating}
+											</p>
+										</th>
+										<th class="player-col">
+											<p class="w-400 small color-grey">
+												{WIDGET_TRANSLATION.player}
+											</p>
+										</th>
+										{#if viewportDesktop}
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.matches}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.assists}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.goals}
+												</p>
+											</th>
+										{/if}
+									</tr>
+									<!-- PLAYER 1 -->
+									<tr>
+										<td>
+											<div
+												class="rating-box"
+												class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+													.visitor_team_rating_player_1 >= 0 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 7}
+												class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+													.visitor_team_rating_player_1 >= 7 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 9}
+												class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+													.visitor_team_rating_player_1 >= 9}
+											>
+												<p class="w-500 medium">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1}
+												</p>
+											</div>
+										</td>
+										<td class="row-space-start">
+											<img
+												src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_image_path}
+												alt=""
+												width="32px"
+												height="32px"
+												class="player-img"
+											/>
+											<p class="w-500 small desktop-small">
+												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1}
+											</p>
+										</td>
+										{#if viewportDesktop}
+											<td>
+												<p class="w-500 medium boxed-rating-matches">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_appearances}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-assits">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_assists}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-goals">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_goals}
+												</p>
+											</td>
+										{/if}
+									</tr>
+									<!-- PLAYER 2 -->
+									<tr>
+										<td>
+											<div
+												class="rating-box"
+												class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+													.visitor_team_rating_player_2 >= 0 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 7}
+												class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+													.visitor_team_rating_player_2 >= 7 &&
+													FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 9}
+												class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+													.visitor_team_rating_player_2 >= 9}
+											>
+												<p class="w-500 medium">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2}
+												</p>
+											</div>
+										</td>
+										<td class="row-space-start">
+											<img
+												src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_image_path}
+												alt=""
+												width="32px"
+												height="32px"
+												class="player-img"
+											/>
+											<p class="w-500 small desktop-small">
+												{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2}
+											</p>
+										</td>
+										{#if viewportDesktop}
+											<td>
+												<p class="w-500 medium boxed-rating-matches">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_appearances}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-assits">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_assists}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium boxed-rating-goals">
+													{FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_goals}
+												</p>
+											</td>
+										{/if}
+									</tr>
+								</table>
+							</div>
 						</div>
-					{/if}
-				</div>
-			{/if}
-		{/each}
-	{:catch error}
-		<!-- promise was rejected -->
-		<p>Uh-oh! There has been an error! {error}</p>
-	{/await}
+
+						<!-- ... value-bets section ... -->
+						{#if FEATURED_MATCH_WIDGET_DATA.valuebets != null}
+							<div id="value-bets">
+								<p class="w-500 large m-b-16">
+									{WIDGET_TRANSLATION.value_bet}
+								</p>
+								{#if !viewportDesktop}
+									<div id="value-bets-container">
+										<div id="value-bets-inner-info">
+											<!-- 
+						VALUE-BET INFO -->
+											<div class="row-space-out">
+												<p class="w-400 medium color-grey">
+													{WIDGET_TRANSLATION.bookmaker}
+												</p>
+												<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
+													<img
+														src={FEATURED_MATCH_WIDGET_DATA.valuebets.image}
+														alt={FEATURED_MATCH_WIDGET_DATA.valuebets.bookmaker}
+														height="30px"
+														width="56px"
+														style="height: 30px !important;"
+													/>
+												</a>
+											</div>
+
+											<div class="row-space-out">
+												<p class="w-400 medium color-grey">
+													{WIDGET_TRANSLATION.type}
+												</p>
+												<p class="w-500 medium color-dark">
+													{WIDGET_TRANSLATION.market_name}
+												</p>
+											</div>
+
+											<div class="row-space-out">
+												<p class="w-400 medium color-grey">
+													{WIDGET_TRANSLATION.market}
+												</p>
+												<p class="w-500 medium color-dark">
+													{FEATURED_MATCH_WIDGET_DATA.valuebets.bet.toString()}
+												</p>
+											</div>
+
+											<div class="row-space-out">
+												<p class="w-400 medium color-grey">
+													{WIDGET_TRANSLATION.odds}
+												</p>
+												<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
+													<p
+														class="w-500 medium color-dark"
+														style="background: #FFFFFF;
+							border-radius: 4px;
+							padding: 4px 6px;"
+													>
+														{parseFloat(FEATURED_MATCH_WIDGET_DATA.valuebets.odd.toString()).toFixed(
+															2
+														)}
+													</p>
+												</a>
+											</div>
+
+											<div class="row-space-out">
+												<p class="w-400 medium color-grey">
+													{WIDGET_TRANSLATION.fair_odds}
+												</p>
+												<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
+													<p
+														class="w-500 medium color-dark"
+														style="background: #FFFFFF;
+							border-radius: 4px;
+							padding: 4px 6px;"
+													>
+														{parseFloat(
+															FEATURED_MATCH_WIDGET_DATA.valuebets.fair_odd.toString()
+														).toFixed(2)}
+													</p>
+												</a>
+											</div>
+										</div>
+										<!-- 
+					VALUE-BET BUTTON -->
+										<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
+											<button
+												style="width: 100%; padding: 6px 0; border-radius: 4px;"
+												class="btn-primary"
+											>
+												<p class="w-500 medium">
+													{WIDGET_TRANSLATION.bet}
+												</p>
+											</button>
+										</a>
+									</div>
+								{:else}
+									<table class="value_bets">
+										<tr class="row-head m-b-16">
+											<th class="text-center" style="text-align: start;">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.bookmaker}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.type}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.market}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.odds}
+												</p>
+											</th>
+											<th class="text-center">
+												<p class="w-400 small color-grey">
+													{WIDGET_TRANSLATION.fair_odds}
+												</p>
+											</th>
+											<th class="text-center" />
+										</tr>
+										<!-- 
+					VALUE-BET - ROW SINGLE -->
+										<tr>
+											<td class="text-center" style="text-align: start;">
+												<a
+													rel="external"
+													href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}
+													style="height: 30px;"
+												>
+													<img
+														src={FEATURED_MATCH_WIDGET_DATA.valuebets.image}
+														alt={FEATURED_MATCH_WIDGET_DATA.valuebets.bookmaker}
+														height="30px"
+														width="56px"
+														style="object-fit: cover; border-radius: 4px; height: 30px !important;"
+													/>
+												</a>
+											</td>
+											<td>
+												<p class="w-500 medium text-center">
+													{WIDGET_TRANSLATION.market_name}
+												</p>
+											</td>
+											<td>
+												<p class="w-500 medium text-center">
+													{FEATURED_MATCH_WIDGET_DATA.valuebets.bet.toString()}
+												</p>
+											</td>
+											<td>
+												<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
+													<p
+														class="w-500 medium max-height: 30px; boxed-rating-value-bets active_p_btn"
+													>
+														{parseFloat(FEATURED_MATCH_WIDGET_DATA.valuebets.odd.toString()).toFixed(
+															2
+														)}
+													</p>
+												</a>
+											</td>
+											<td>
+												<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
+													<p
+														class="w-500 medium max-height: 30px; boxed-rating-value-bets active_p_btn"
+													>
+														{parseFloat(
+															FEATURED_MATCH_WIDGET_DATA.valuebets.fair_odd.toString()
+														).toFixed(2)}
+													</p>
+												</a>
+											</td>
+											<td>
+												<a rel="external" href={FEATURED_MATCH_WIDGET_DATA.valuebets.link}>
+													<button
+														style="width: 100%; padding: 6px 0; max-height: 30px; border-radius: 4px;"
+														class="btn-primary"
+													>
+														<p class="w-500 medium">
+															{WIDGET_TRANSLATION.bet}
+														</p>
+													</button>
+												</a>
+											</td>
+										</tr>
+									</table>
+								{/if}
+							</div>
+						{/if}
+					</div>
+				{/if}
+			{/each}
+
+		{:catch error}
+			<!-- promise was rejected -->
+			<p>Uh-oh! There has been an error! {error}</p>
+		{/await}
+	{/if}
+
 </div>
 
 <!-- ===============
   COMPONENT STYLE
 ==================== -->
 <style>
+
+	#featured-no-match-box {
+		padding: 20px;
+		background: #FFFFFF;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 12px;
+	}
+	
 	#seo-featured-match-box {
 		position: absolute;
 		z-index: -100;

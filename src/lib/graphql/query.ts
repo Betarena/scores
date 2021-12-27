@@ -76,6 +76,23 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
  * ... get the selected GEO-lang based
  * selected fixture from the DB
  */
+ export const GET_ALL_SELECTED_MATCH_FIXTURES = gql`
+	query GET_ALL_SELECTED_MATCH_FIXTURES @cached(ttl: 300) {
+		widget_featured_match_selection {
+			date
+			fixture_id	
+			game_start
+			lang
+		}
+	}
+`;
+
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... get the selected GEO-lang based
+ * selected fixture from the DB
+ */
 export const GET_LANG_SELECTED_FIXTURE = gql`
 	query GET_LANG_SELECTED_FIXTURE($lang: String!) @cached(ttl: 300) {
 		widget_featured_match_selection(where: { lang: { _eq: $lang } }) {

@@ -1,22 +1,22 @@
 
 // ... import $app `modules`;
-import { amp, browser, dev, mode, prerendering } from '$app/env'
+import { dev } from '$app/env'
 
 // ... import necessary LIBRARIES & MODULES;
+import redis from "$lib/redis/init"
 import { getTargetFixtureOdds, getTargetGeoSportBookDetails } from "$lib/firebase/index"
-import { GET_ALL_FIXTURE_DATA, GET_LANG_SELECTED_FIXTURE } from "$lib/graphql/query"
+import { GET_ALL_FIXTURE_DATA, GET_LANG_SELECTED_FIXTURE, GET_ALL_SELECTED_MATCH_FIXTURES } from "$lib/graphql/query"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
 import type { FixtureResponse } from "$lib/model/interface-fixture"
-import type { SelectedFixutre, CompleteFixtureData_Response } from "$lib/model/response_models"
+import type { SelectedFixutre, SelectedFixture_AllData, CompleteFixtureData_Response } from "$lib/model/response_models"
 import type { SelectedFixture_LiveOdds_Response } from "$lib/model/firebase-real-db-interface"
 
 // ... server-variables;
 let userGeo: string
 
 // ... declaring component INSTANCED & VARIABLES;
-
 let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
     // ... contains the final-fixture-response-data;
     away_team_logo: undefined,             
@@ -50,22 +50,77 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
 */
 
 export async function post(req, res): Promise < any > {
-    // ... extract the 'geo_js';
-    if (dev) console.debug('-- req --', req)
-    // ...
-    userGeo = req.body
-    // ... get the USER-GEO-LOCATION
-    const response = await getFeaturedMatchData()
+    // ... DEBUGGING;
+    if (dev) console.debug('-- updating featured_match_widget_cache --')
+    // ... clear the cache data for `featured_match_data`
+    await deleteCacheFeaturedMatch()
+    // ... get all of the SELECTED FIXTURES from HASURA;
+    const response = await getAllMatchSelectedFixtures()
+    // ... iterate over EACH SELECTED FIXTURE, lang, by lang;
+    for await (const selected_fixture of response.widget_featured_match_selection) {
+        userGeo = selected_fixture.lang
+        const response_cache = await getFeaturedMatchData()
+        // ... cache-response;
+        await cacheFeaturedMatchGeoPos(userGeo, response_cache);
+    }
     // ... DEBUGGING;
     // if (dev) console.info('-- featured-match.json --', response)
     // ... return, RESPONSE;
     return {
-        body: response
+        status: 200,
+        body: 'Success! Featured Match Data Updated!'
     }
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//     CACHING w/ REDIS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// - cacheFeaturedMatchGeoPos(geoPos, json_cache)
+// - deleteCacheFeaturedMatch()
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function cacheFeaturedMatchGeoPos(geoPos: string, json_cache: FixtureResponse) {
+    // ... TRY;
+    try {
+      //... store (cache) featured_match response,
+      await redis.hset('featured_match', geoPos, JSON.stringify(json_cache));
+    } 
+    // ... CATCH, ERROR;
+    catch (e) {
+      console.log("Unable to cache", geoPos, e);
+    }
+}
+
+async function deleteCacheFeaturedMatch() {
+    await redis.del('featured_match')
+    return
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  STANDARD API FALLBACK
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// - getAllMatchSelectedFixtures()
+// - getFeaturedMatchData()
+// - getSelectedFixture(userGeoLang: string)
+// - get_CompleteFixtureData(fixture_id: number)
+// - get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre)
+// - assignValueBetsData()
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+// ... contains all of the `match-selected-fixtures` data;
+async function getAllMatchSelectedFixtures(): Promise < SelectedFixture_AllData > {
+    // ... DEBUGGING;
+    if (dev) console.info('-- getting all of the selected-match-fixtures --')
+    // ... push-GRAPH-QL-request;
+    const response = await initGrapQLClient().request(GET_ALL_SELECTED_MATCH_FIXTURES)
+    // ... DEBUGGING;
+    if (dev) console.info('-- response getAllMatchSelectedFixtures() --', response)
+    // ... reutrn response;
+    return response
+}
+
 // ... contains the main METHOD for DATA AGGREGATION & ASSIGNING;
-async function getFeaturedMatchData() {
+async function getFeaturedMatchData(): Promise < FixtureResponse > {
     // ... obtain the target-selected-fixture [HASURA-DB] [FEATURED-MATCH + TRANSLATION DATA]
     const selectedFixture = await getSelectedFixture(userGeo)
     // ... [selectedFixture] break-down response;
@@ -106,26 +161,15 @@ async function getFeaturedMatchData() {
 // ... [WORKING]
 async function getSelectedFixture(lang: string) {
     // ... DEBUGGING;
-    console.info('lang', lang)
+    if (dev) console.info('lang', lang)
     // ... declare variables for GRAPH-QL-REQUEST;
-    let variables = { 
+    const variables = { 
         lang: lang
     }
     // ... push-GRAPH-QL-request;
-    let response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
-    // ... if `widget_featured_match_selection` is EMPTY;
-    if (response.widget_featured_match_selection.length == 0) {
-        // ... rerun the method;
-        if (dev) console.info('-- uh-oh! re-running getSelectedFixture() --')
-        // ... DEFAULT EN VALUE;
-        userGeo = 'en'
-        variables = { 
-        lang: 'en'
-    }
-    response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
-    }
+    const response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
     // ... DEBUGGING;
-    console.info('-- response getSelectedFixture() --', response)
+    if (dev) console.info('-- response getSelectedFixture() --', response)
     // ... reutrn response;
     return response
 }

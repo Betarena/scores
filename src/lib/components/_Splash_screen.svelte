@@ -11,18 +11,15 @@
 	 * Set a Timer To Show/Hide the
 	 * Elements of the HTML Page
 	 */
-	let show: boolean = true;
-	onMount(() => {
-		// website hide scroll-bar visibility while transition is happening,
-		document.documentElement.classList.add('no-scrollbar');
-		document.body.classList.add('no-scrollbar');
-		// itialiazing timer,
-		// reset all of the values to its initial state;
-		setTimeout(() => {
-			show = false;
-			document.documentElement.classList.remove('no-scrollbar');
-			document.body.classList.remove('no-scrollbar');
-		}, 1250);
+	let show: boolean = true
+	onMount(async() => {
+		// ... itialiazing timer,
+		// ... reset all of the values to its initial state;
+		setTimeout(async() => {
+			show = false
+			document.documentElement.classList.remove('no-scrollbar')
+			document.body.classList.remove('no-scrollbar')
+		}, 500);
 	});
 </script>
 
@@ -42,12 +39,12 @@
 <style>
 	/* 
     Hide scrollbar for Chrome, Safari and Opera */
-	:global(.no-scrollbar::-webkit-scrollbar) {
+	:global(body.no-scrollbar::-webkit-scrollbar) {
 		display: none !important;
 	}
 	/* 
     Hide scrollbar for IE, Edge and Firefox */
-	:global(.no-scrollbar) {
+	:global(body.no-scrollbar) {
 		-ms-overflow-style: none !important; /* IE and Edge */
 		scrollbar-width: none !important; /* Firefox */
 	}

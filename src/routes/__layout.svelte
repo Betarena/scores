@@ -8,22 +8,20 @@
 
 <script lang="ts" context="module">
 
-  import { get } from '$lib/api/utils'
-
   /** @type {import('@sveltejs/kit').Load} */
   export async function load({page, fetch}) {
       // ... DEBUGGING;
       if (dev) console.debug('-- obtaining translations! --');
       // ... GET RESPONSE;
-      const response = await fetch('/api/header-translation.json', {
+      const response = await fetch('/api/navbar/data.json', {
           method: 'GET',
       }).then(r => r.json());
       // ... DEBUGGING;
-      if (dev)
-          console.debug(
-              '-- preloaded_translations_response_qty --',
-              response
-          );
+      // if (dev)
+      //     console.debug(
+      //         '-- preloaded_translations_response_qty --',
+      //         response
+      //     );
       // ... return, RESPONSE DATA;
       if (response) {
           return {
@@ -122,7 +120,7 @@ COMPONENT HTML
     display: inline-block;
     width: 100%;
     height: 435px;
-    background-image: url(/src/lib/header-background.svg);
+    background-image: url('/assets/svg/header-background.svg');
     background-repeat: no-repeat;
     background-size: cover;
     background-origin: border-box;

@@ -102,5 +102,12 @@ export interface SelectedFixture_VoteUpdate_Response {
  * RETURN - RESPONSE DAT for FEATURED_MATCH_TRANSLATION;
  */
 export interface Featured_Match_Translation_Response {
-	widget_featured_match_translations: Array<TranslationsResponse>;
+	widget_featured_match_translations: Array< TranslationsResponse >;
+}
+
+/**
+ * RETURN - RESPONSE DATA for SELECTED FIXTURE ALL DATA;
+ */
+export interface SelectedFixture_AllData {
+	widget_featured_match_selection: Array < SelectedFixutre >
 }

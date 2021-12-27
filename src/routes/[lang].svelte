@@ -7,17 +7,19 @@
 =================
 -->
 <script lang="ts" context="module">
-	
-	/** @type {import('@sveltejs/kit').Load} */
+
+	/** 
+	 * @type {import('@sveltejs/kit').Load} 
+	*/
 	export async function load({ page, fetch }) {
 		// ... DEBUGGING;
 		if (dev) console.debug('-- obtaining translations! --');
 		// ... GET RESPONSE;
-		const response = await fetch('/api/featured-match-seo.json', {
+		const response = await fetch('/api/featured_match/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 		// ... DEBUGGING;
-		if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 		// ... return, RESPONSE DATA;
 		if (response) {
 			return {
@@ -39,15 +41,46 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
-	import { amp, browser, dev, mode, prerendering } from '$app/env';
+	import { dev } from '$app/env';
+
+	import { onMount } from 'svelte';
 
 	import SvelteSeo from 'svelte-seo';
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 
-	// ...
-	// export let lang: string
+
+	/**
+	 * Description:
+	 * ~~~~~~~~~~~~~~~~~
+	 * This function loads when all of the
+	 * rest of the components have loaded
+	 * and rendered, checking via JS the viewport
+	 * of the client device and changing between
+	 * appropiate components to display the correct
+	 * component, tailored to a specifc device.
+	 */
+	 let mobileExclusive: boolean = false;
+
+	onMount(async () => {
+		var wInit = document.documentElement.clientWidth;
+		// MOBILE - VIEW
+		if (wInit < 475) {
+			mobileExclusive = true;
+		} else {
+			mobileExclusive = false;
+		}
+		window.addEventListener('resize', function () {
+			var w = document.documentElement.clientWidth;
+			// MOBILE - VIEW
+			if (w < 475) {
+				mobileExclusive = true;
+			} else {
+				mobileExclusive = false;
+			}
+		});
+	});
 </script>
 
 <!-- ===================
@@ -118,11 +151,14 @@
 =================== -->
 
 <section id="home-page">
-	<!-- ... 1st ROW ... -->
-	<div />
+	
+	{#if !mobileExclusive}
+		 <!-- ... 1st ROW ... -->
+		<div />
 
-	<!-- ... 2nd ROW ... -->
-	<div />
+		<!-- ... 2nd ROW ... -->
+		<div />
+	{/if}
 
 	<!-- ... 3rd ROW ... -->
 	<FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />

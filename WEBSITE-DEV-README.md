@@ -37,10 +37,33 @@ The platform uses the [`Firebase v9`](https://firebase.google.com/docs/database/
 
 *if the `deployment` to `Heroku` is necessary, use the following [`guide`](https://hasura.io/docs/latest/graphql/core/deployment/deployment-guides/heroku.html)
 
+## Data Caching
+
+The `scores-platform` uses [`redis`](https://redis.io/download) for `caching` of the API DATA for the correct implementation of faster responses and waiting times for the user.
+Currently deployed on [upstash](https://docs.upstash.com/redis) - `Free-tier` model of the application.
+
+*example-upstash-redis-sveltekit [blog-upstash](https://blog.upstash.com/svelte-with-serverless-redis)
+
+*[npm-package-ioredis](https://github.com/luin/ioredis)
+
+The app `chaching` works using the `Hasura Events` Trigger, which sends out a `POST` request to a designated `endpoint` to update the `redis` cache accordingly, using the latest changed & updated data.
+For more information on `this` can be read [here](https://hasura.io/docs/latest/graphql/core/event-triggers/create-trigger.html)
+
+---
+
+*[example-using-node-js](https://medium.com/dsckiit/how-to-cache-json-data-in-redis-75016e4a2100)
+
+*future-correction: deployment on a `docker-image` instance with the application as one sinlge image.
+
+*alternative-solution-include the use of `service-workers` and `node-cache`, as per solution example [reddit-thread](https://www.reddit.com/r/sveltejs/comments/p3v280/caching_for_load_function_in_sveltekit/h8vw2l3/)
+
 ## Further Validation Metrics
 
 - [Google-Mobile-Friendliness-Check](https://search.google.com/test/mobile-friendly/result?id=ubORB42h3SuKWcAlkAQssw)
 - [Website-Speed-PingDom](https://tools.pingdom.com/)
+- [GT-Metrix](https://gtmetrix.com/)
+- [Dot-com-tools](https://www.dotcom-tools.com/)
+- [web-measure-google](https://web.dev/measure/)
 
 ## SEO-CHECK
 
@@ -80,6 +103,7 @@ The platform uses the [`Firebase v9`](https://firebase.google.com/docs/database/
 - [optimizing-Hasura-DB-INDEXING-JSON-2](https://hasura.io/docs/latest/graphql/core/databases/postgres/queries/performance.html)
 - [optimizing-Hasura-DB-INDEXING-JSON-3](https://stackoverflow.com/questions/48372397/what-is-the-purpose-of-defining-an-operator-class-when-defining-index-in-postgre)
 - [optimizing-Hasura-DB-INDEXING-JSON-4](https://www.postgresql.org/docs/9.4/datatype-json.html)
+- [localstorage vs. cookies](https://stackoverflow.com/questions/7799728/localstorage-vs-cookies-performance)
 
 ### Code Snippets
 
