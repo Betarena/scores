@@ -17,11 +17,11 @@ import type { GeoJsResponse } from '$lib/model/geo-js-interface';
  */
 export async function getUserLocation(): Promise<GeoJsResponse> {
 	// ... DEBUGGING;
-	console.info('-- getUserLocation() checkpoint --');
+	if (dev) console.info('-- getUserLocation() checkpoint --');
 	// ... push-request;
 	const response = await get(`https://get.geojs.io/v1/ip/geo.json`);
 	// ... DEBUGGING;
-	console.info('GoeJS Response', response);
+	if (dev) console.info('GoeJS Response', response);
 	// ... return;
 	return response;
 }
