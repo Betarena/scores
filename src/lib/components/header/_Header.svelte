@@ -30,6 +30,7 @@
 		Header_Translation_Response,
 		Header_Translation
 	} from '$lib/model/scores_header_translations';
+import { each } from 'svelte/internal';
 
 	export let TRANSLATIONS_DATA: Header_Translation_Response;
 
@@ -627,24 +628,35 @@
 								>
 									<!-- ... homepage ... -->
 									<div class="side-nav-row">
-										<p class="color-white s-14">
-											{lang_obj.homepage}
-										</p>
+										<a sveltekit:prefetch href='/'>
+											<p class="color-white s-14">
+												{lang_obj.homepage}
+											</p>
+										</a>
 									</div>
 
-									<!-- ... latest-news ... -->
-									<div class="side-nav-row">
-										<p class="color-white s-14">
-											{lang_obj.content_platform_link}
-										</p>
-									</div>
+									<!-- ... link-based-redirects ... -->
+									{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
+										{#if lang_link.lang == server_side_language}
+											<!-- ... latest-news ... -->
+											<div class="side-nav-row">
+												<a rel="external" href={lang_link.latest_news}>
+													<p class="color-white s-14">
+														{lang_obj.content_platform_link}
+													</p>
+												</a>
+											</div>
 
-									<!-- ... betting-tips ... -->
-									<div class="side-nav-row">
-										<p class="color-white s-14">
-											{lang_obj.betting_tips_link}
-										</p>
-									</div>
+											<!-- ... betting-tips ... -->
+											<div class="side-nav-row">
+												<a rel="external" href={lang_link.betting_tips}>
+													<p class="color-white s-14">
+														{lang_obj.betting_tips_link}
+													</p>
+												</a>
+											</div>
+										{/if}
+									{/each}
 
 									<!-- ... theme-options ... -->
 									<div class="side-nav-dropdown m-t-30 m-b-25">

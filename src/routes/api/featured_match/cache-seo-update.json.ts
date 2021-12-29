@@ -14,7 +14,7 @@ import type { Featured_Match_Translation_Response, TranslationsResponse } from '
  */
 
 // ... ALWAYS POST - HASURA TRIGGER PAYLOAD;
-export async function post(req, res): Promise< any > {
+export async function get(): Promise< any > {
 	// ... get the USER-GEO-LOCATION;
 	const response = await get_FeaturedMatchTranslation();
 	// ... DEBUGGING;
