@@ -49,7 +49,7 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function post(req, res): Promise < any > {
+export async function get(): Promise < any > {
     // ... DEBUGGING;
     if (dev) console.debug('-- updating featured_match_widget_cache --')
     // ... clear the cache data for `featured_match_data`
