@@ -6,7 +6,7 @@
 		"node": "14.17.4"
 	},
 	"scripts": {
-		"dev": "svelte-kit dev --host --port 3000",
+		"dev": "svelte-kit dev --host --port 3050",
 		"build": "svelte-kit build",
 		"start": "node build",
 		"preview": "svelte-kit preview --host --port 5000",

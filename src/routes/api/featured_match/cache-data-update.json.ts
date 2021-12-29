@@ -151,7 +151,7 @@ async function getFeaturedMatchData(): Promise < FixtureResponse > {
     // ... get the fixture value-bets;
     // ... handles `WIDGET_SELECTED_FIXTURE_DATA.valuebets`
     if (WIDGET_SELECTED_FIXTURE_DATA.valuebets != null) {
-        assignValueBetsData();
+        await assignValueBetsData();
     }
 
     // ... RETURN COMPLETE FEATRUED_MATCH_DATA;
