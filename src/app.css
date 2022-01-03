@@ -162,6 +162,13 @@ FONT EXTRA STYLES
 	text-align: center;
 	text-align: -webkit-center;
 }
+.text-left {
+	text-align: left;
+	text-align: -webkit-left;
+}
+.place-center {
+	place-self: center;
+}
 /* 
 ~~~~~~~~~~~~
 FONT WEIGHT 
@@ -342,6 +349,9 @@ bottom-margins
 }
 .m-b-40 {
 	margin-bottom: 40px;
+}
+.m-b-50 {
+	margin-bottom: 50px;
 }
 .m-b-55 {
 	margin-bottom: 55px;
@@ -575,15 +585,15 @@ form select {
 	text-align: start;
 	display: flex;
 	transition: all 0.15s ease;
-	background: #ffffff;
-	border: 0.5px solid #37474f;
+	/* background: #ffffff; */
+	/* border: 0.5px solid #37474f; */
 	box-sizing: border-box;
 	border-radius: 7.34914px;
 	padding: 7px;
 }
 input:focus {
-	padding: 5px;
-	border: 2.5px solid #ff5555;
+	/* padding: 5px; */
+	/* border: 2.5px solid #ff5555; */
 }
 
 /* 

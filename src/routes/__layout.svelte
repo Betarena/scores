@@ -9,32 +9,36 @@
 <script lang="ts" context="module">
 
   /** @type {import('@sveltejs/kit').Load} */
-  export async function load({page, fetch}) {
+  export async function load({url, params, fetch}) {
       // ... DEBUGGING;
       if (dev) console.debug('-- obtaining translations! --');
-      // ... GET RESPONSE;
-      const response = await fetch('/api/navbar/data.json', {
-          method: 'GET',
+
+      // ... get-response for header data;
+      const response_header = await fetch('/api/navbar/data.json', {
+        method: 'GET',
       }).then(r => r.json());
-      // ... DEBUGGING;
-      // if (dev)
-      //     console.debug(
-      //         '-- preloaded_translations_response_qty --',
-      //         response
-      //     );
-      // ... return, RESPONSE DATA;
-      if (response) {
+
+      // ... get-response for footer data;
+      const response_footer = await fetch('/api/footer/data.json', {
+        method: 'GET',
+      }).then(r => r.json());
+
+      // ... return, RESPONSE DATA for THIS PAGE;
+      if (response_header) {
           return {
+              status: 200,
               props: {
-                  TRANSLATIONS_DATA: response
+                  HEADER_TRANSLATION_DATA: response_header,
+                  FOOTER_TRANSLATION_DATA: response_footer
               }
-          };
+          }
       }
+
       // ... otherwise, ERROR;
       return {
-          status: response.status,
+          status: 400,
           error: new Error(`/ page-preloading-error`)
-      };
+      }
   }
 </script>
 
@@ -44,11 +48,12 @@ COMPONENT JS - BASIC
 =================== -->
 
 <script lang="ts">
-  import { amp, browser, dev, mode, prerendering } from '$app/env';
+  import { browser, dev } from '$app/env';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
 
+  // ... page-components
   import Footer from '$lib/components/footer/_Footer.svelte';
   import Header from '$lib/components/header/_Header.svelte';
   import OfflineAlert from '$lib/components/_Offline_alert.svelte';
@@ -56,19 +61,20 @@ COMPONENT JS - BASIC
 
   import '../app.css';
 
-  import type {
-      Header_Translation_Response,
-      Header_Translation
-  } from '$lib/model/scores_header_translations';
+  import type { Header_Translation_Response, Header_Translation } from '$lib/model/scores_header_translations';
+  import type { Footer_Data } from '$lib/model/footer'
 
-  export let TRANSLATIONS_DATA: Header_Translation_Response;
+  export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
+  export let FOOTER_TRANSLATION_DATA: Footer_Data;
 
-  // ... kickstart the .localStorage();
-  // ... kickstart offline-badge on info;
+  // ... on client-side-rendering;
   if (browser) {
+
+      // ... kickstart the .localStorage();
       fixtureVote.useLocalStorage();
       userBetarenaSettings.useLocalStorage();
 
+      // ... kickstart offline-badge on info;
       window.addEventListener('offline', toggleOfflineAlert);
       window.addEventListener('online', toggleOfflineAlert);
   }
@@ -83,7 +89,7 @@ COMPONENT JS - BASIC
 </script>
 
 <!-- ===================
-COMPONENT HTML
+  COMPONENT HTML
 =================== -->
 
 {#if offlineMode}
@@ -92,11 +98,11 @@ COMPONENT HTML
 
 <SplashScreen />
 
-<Header {TRANSLATIONS_DATA} />
+<Header {HEADER_TRANSLATION_DATA} />
 
 <main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
   <slot />
-  <Footer />
+  <Footer {FOOTER_TRANSLATION_DATA} />
 </main>
 
 <!-- ===================
