@@ -21,7 +21,7 @@
 	import twitter from './assets/icon/twitter.svg'
 	import begambleawareorg from './assets/begambleawareorg_black.svg'
 	import legal18icon from './assets/legal-18-action-bet.svg'
-
+ 
 	// ... END OF required IMPORTS;
 
 	export let FOOTER_TRANSLATION_DATA: Footer_Data
@@ -122,7 +122,7 @@
 						<!-- ... follow-us-and-social-media ... -->
 						<div 
 							class='m-b-40'>
-							<p class='color-white s-14 w-500 m-b-20'>
+							<p class='color-white s-14 w-normal m-b-20'>
 								{footer_traslation_obj.follow}
 							</p>
 							<!-- ... social media follows ... -->
@@ -130,31 +130,59 @@
 								class='column-start-grid'>
 								<!-- ... linkedin ... -->
 								<a rel='external' href="/">
-									<img src={linkedin} alt='linkedin-icon' title='linkedin-icon'>
+									<img 
+										src={linkedin} 
+										alt='linkedin-icon' 
+										title='linkedin-icon'
+										width="32px" height="32px">
 								</a>
 								<!-- ... twitter ... -->
-								<a rel='external' href="/">
-									<img src={twitter} alt='twitter-icon' title='twitter-icon'>
-								</a>
+								<!-- <a rel='external' href="/">
+									<img 
+										src={twitter} 
+										alt='twitter-icon' 
+										title='twitter-icon'
+										width="32px" height="32px">
+								</a> -->
 								<!-- ... facebook ... -->
-								<a rel='external' href="/">
-									<img src={facebook} alt='facebook-icon' title='facebook-icon'>
-								</a>
+								<!-- <a rel='external' href="/">
+									<img 
+										src={facebook} 
+										alt='facebook-icon' 
+										title='facebook-icon'
+										width="32px" height="32px">
+								</a> -->
 								<!-- ... instagram ... -->
-								<a rel='external' href="/">
-									<img src={instagram} alt='instagram-icon' title='instagram-icon'>
-								</a>
+								<!-- <a rel='external' href="/">
+									<img 
+										src={instagram} 
+										alt='instagram-icon' 
+										title='instagram-icon'
+										width="32px" height="32px">
+								</a> -->
 								<!-- ... telegram ... -->
 								<a rel='external' href="/">
-									<img src={telegram} alt='telegram-icon' title='telegram-icon'>
+									<img 
+										src={telegram} 
+										alt='telegram-icon' 
+										title='telegram-icon'
+										width="32px" height="32px">
 								</a>
 								<!-- ... discrod ... -->
 								<a rel='external' href="/">
-									<img src={discord} alt='discord-icon' title='discord-icon'>
+									<img 
+										src={discord} 
+										alt='discord-icon' 
+										title='discord-icon'
+										width="32px" height="32px">
 								</a>
 								<!-- ... medium ... -->
 								<a rel='external' href="/">
-									<img src={medium} alt='medium-icon' title='medium-icon'>
+									<img 
+										src={medium} 
+										alt='medium-icon' 
+										title='medium-icon'
+										width="32px" height="32px">
 								</a>
 							</div>
 						</div>
@@ -164,7 +192,7 @@
 							id='newsletter-container' 
 							class='m-b-30'>
 							<!-- ... title-section ... -->
-							<p class='color-white s-14 w-500 m-b-8 text-left'>
+							<p class='color-white s-14 w-normal m-b-8 text-left'>
 								{footer_traslation_obj.subscribe_newsletter}
 							</p>
 							<!-- ... form-start ... -->
@@ -197,67 +225,67 @@
 									class='m-b-40'>
 									<ul>
 										<!-- ... latest-news ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.latest_news}
-											class='m-b-16'>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.latest_news}
+												class='m-b-16'>
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.latest_news}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 										<!-- ... sep .. -->
 										<div class='menu-separator m-r-10 m-b-16' />
 										<!-- ... betting-tips ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.betting_tips}
-											class='m-b-16'>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.betting_tips}
+												class='m-b-16'>
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.betting_tips}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 										<!-- ... sep .. -->
 										<div class='menu-separator m-r-10 m-b-16' />
 										<!-- ... about us link ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.about_us}
-											class='m-b-16'>
-											<!-- ... about us ... -->
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.about_us}
+												class='m-b-16'>
+												<!-- ... about us ... -->
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.about_us}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 									</ul>
 									<ul>
 										<!-- ... terms and conditions ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.terms}>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.terms}>
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.terms}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 										<!-- ... sep .. -->
 										<div class='menu-separator m-r-10' />
 										<!-- ... privacy and conditions ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.privacy}>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
-													{footer_traslation_obj.privacy}
-												</p>
-											</li>
-										</a>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.privacy}>
+													<p class='color-white s-14 w-normal'>
+														{footer_traslation_obj.privacy}
+													</p>
+											</a>
+										</li>
 									</ul>
 								</div>
 							{/if}
@@ -322,7 +350,7 @@
 
 								<!-- ... follow-us-and-social-media ... -->
 								<div>
-									<p class='color-white s-14 w-500 m-b-12'>
+									<p class='color-white s-14 w-normal m-b-12'>
 										{footer_traslation_obj.follow}
 									</p>
 									<!-- ... social media follows ... -->
@@ -330,31 +358,59 @@
 										class='column-start-grid'>
 										<!-- ... linkedin ... -->
 										<a rel='external' href="/">
-											<img src={linkedin} alt='linkedin-icon' title='linkedin-icon'>
+											<img 
+												src={linkedin} 
+												alt='linkedin-icon' 
+												title='linkedin-icon'
+												width="32px" height="32px">
 										</a>
 										<!-- ... twitter ... -->
-										<a rel='external' href="/">
-											<img src={twitter} alt='twitter-icon' title='twitter-icon'>
-										</a>
+										<!-- <a rel='external' href="/">
+											<img 
+												src={twitter} 
+												alt='twitter-icon' 
+												title='twitter-icon'
+												width="32px" height="32px">
+										</a> -->
 										<!-- ... facebook ... -->
-										<a rel='external' href="/">
-											<img src={facebook} alt='facebook-icon' title='facebook-icon'>
-										</a>
+										<!-- <a rel='external' href="/">
+											<img 
+												src={facebook} 
+												alt='facebook-icon' 
+												title='facebook-icon'
+												width="32px" height="32px">
+										</a> -->
 										<!-- ... instagram ... -->
-										<a rel='external' href="/">
-											<img src={instagram} alt='instagram-icon' title='instagram-icon'>
-										</a>
+										<!-- <a rel='external' href="/">
+											<img 
+												src={instagram} 
+												alt='instagram-icon' 
+												title='instagram-icon'
+												width="32px" height="32px">
+										</a> -->
 										<!-- ... telegram ... -->
 										<a rel='external' href="/">
-											<img src={telegram} alt='telegram-icon' title='telegram-icon'>
+											<img 
+												src={telegram} 
+												alt='telegram-icon' 
+												title='telegram-icon'
+												width="32px" height="32px">
 										</a>
 										<!-- ... discrod ... -->
 										<a rel='external' href="/">
-											<img src={discord} alt='discord-icon' title='discord-icon'>
+											<img 
+												src={discord} 
+												alt='discord-icon' 
+												title='discord-icon'
+												width="32px" height="32px">
 										</a>
 										<!-- ... medium ... -->
 										<a rel='external' href="/">
-											<img src={medium} alt='medium-icon' title='medium-icon'>
+											<img 
+												src={medium} 
+												alt='medium-icon' 
+												title='medium-icon'
+												width="32px" height="32px">
 										</a>
 									</div>
 								</div>
@@ -364,7 +420,7 @@
 							<div 
 								id='newsletter-container'>
 								<!-- ... title-section ... -->
-								<p class='color-white s-14 w-500 m-b-8 text-left'>
+								<p class='color-white s-14 w-normal m-b-8 text-left'>
 									{footer_traslation_obj.subscribe_newsletter}
 								</p>
 								<!-- ... form-start ... -->
@@ -398,63 +454,63 @@
 									class='m-b-40'>
 									<ul class='m-b-16'>
 										<!-- ... latest-news ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.latest_news}>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.latest_news}>
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.latest_news}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 										<!-- ... sep .. -->
 										<div class='menu-separator m-r-10' />
 										<!-- ... betting-tips ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.betting_tips}>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.betting_tips}>
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.betting_tips}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 										<!-- ... sep .. -->
 										<div class='menu-separator m-r-10' />
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.about_us}>
-											<!-- ... about us ... -->
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.about_us}>
+												<!-- ... about us ... -->
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.about_us}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 										<!-- ... sep .. -->
 										<div class='menu-separator m-r-10' />
 										<!-- ... terms and conditions ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.terms}>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.terms}>
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.terms}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 										<!-- ... sep .. -->
 										<div class='menu-separator m-r-10' />
 										<!-- ... privacy and conditions ... -->
-										<a 
-											rel='external'
-											href={footer_nav_links_translations.privacy}>
-											<li class='m-r-10'>
-												<p class='color-white s-14 w-500'>
+										<li class='m-r-10'>
+											<a 
+												rel='external'
+												href={footer_nav_links_translations.privacy}>
+												<p class='color-white s-14 w-normal'>
 													{footer_traslation_obj.privacy}
 												</p>
-											</li>
-										</a>
+											</a>
+										</li>
 									</ul>
 								</div>
 							{/if}
@@ -545,7 +601,7 @@
 								id='newsletter-container'
 								class='m-b-40'>
 								<!-- ... title-section ... -->
-								<p class='color-white s-14 w-500 m-b-8 text-left'>
+								<p class='color-white s-14 w-normal m-b-8 text-left'>
 									{footer_traslation_obj.subscribe_newsletter}
 								</p>
 								<!-- ... form-start ... -->
@@ -579,63 +635,63 @@
 										id='menu-list'>
 										<ul>
 											<!-- ... latest-news ... -->
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.latest_news}>
-												<li class='m-r-10'>
-													<p class='color-white s-14 w-500'>
-														{footer_traslation_obj.latest_news}
-													</p>
-												</li>
-											</a>
+											<li class='m-r-10'>
+												<a 
+													rel='external'
+													href={footer_nav_links_translations.latest_news}>
+														<p class='color-white s-14 w-normal'>
+															{footer_traslation_obj.latest_news}
+														</p>
+												</a>
+											</li>
 											<!-- ... sep .. -->
 											<div class='menu-separator m-r-10' />
 											<!-- ... betting-tips ... -->
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.betting_tips}>
-												<li class='m-r-10'>
-													<p class='color-white s-14 w-500'>
+											<li class='m-r-10'>
+												<a 
+													rel='external'
+													href={footer_nav_links_translations.betting_tips}>
+													<p class='color-white s-14 w-normal'>
 														{footer_traslation_obj.betting_tips}
 													</p>
-												</li>
-											</a>
+												</a>
+											</li>
 											<!-- ... sep .. -->
 											<div class='menu-separator m-r-10' />
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.about_us}>
-												<!-- ... about us ... -->
 												<li class='m-r-10'>
-													<p class='color-white s-14 w-500'>
+												<a 
+													rel='external'
+													href={footer_nav_links_translations.about_us}>
+													<!-- ... about us ... -->
+													<p class='color-white s-14 w-normal'>
 														{footer_traslation_obj.about_us}
 													</p>
-												</li>
-											</a>
+												</a>
+											</li>
 											<!-- ... sep .. -->
 											<div class='menu-separator m-r-10' />
 											<!-- ... terms and conditions ... -->
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.terms}>
-												<li class='m-r-10'>
-													<p class='color-white s-14 w-500'>
+											<li class='m-r-10'>
+												<a 
+													rel='external'
+													href={footer_nav_links_translations.terms}>
+													<p class='color-white s-14 w-normal'>
 														{footer_traslation_obj.terms}
 													</p>
-												</li>
-											</a>
+												</a>
+											</li>
 											<!-- ... sep .. -->
 											<div class='menu-separator m-r-10' />
 											<!-- ... privacy and conditions ... -->
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.privacy}>
-												<li class='m-r-10'>
-													<p class='color-white s-14 w-500'>
-														{footer_traslation_obj.privacy}
-													</p>
-												</li>
-											</a>
+											<li class='m-r-10'>
+												<a 
+													rel='external'
+													href={footer_nav_links_translations.privacy}>
+														<p class='color-white s-14 w-normal'>
+															{footer_traslation_obj.privacy}
+														</p>
+												</a>
+											</li>
 										</ul>
 									</div>
 								{/if}
@@ -649,7 +705,7 @@
 
 							<!-- ... follow-us-and-social-media ... -->
 							<div class='m-b-40'>
-								<p class='color-white s-14 w-500 m-b-20'>
+								<p class='color-white s-14 w-normal m-b-20'>
 									{footer_traslation_obj.follow}
 								</p>
 								<!-- ... social media follows ... -->
@@ -657,31 +713,59 @@
 									class='column-start-grid'>
 									<!-- ... linkedin ... -->
 									<a rel='external' href="/">
-										<img src={linkedin} alt='linkedin-icon' title='linkedin-icon'>
+										<img 
+											src={linkedin} 
+											alt='linkedin-icon' 
+											title='linkedin-icon'
+											width="32px" height="32px">
 									</a>
 									<!-- ... twitter ... -->
-									<a rel='external' href="/">
-										<img src={twitter} alt='twitter-icon' title='twitter-icon'>
-									</a>
+									<!-- <a rel='external' href="/">
+										<img 
+											src={twitter} 
+											alt='twitter-icon' 
+											title='twitter-icon'
+											width="32px" height="32px">
+									</a> -->
 									<!-- ... facebook ... -->
-									<a rel='external' href="/">
-										<img src={facebook} alt='facebook-icon' title='facebook-icon'>
-									</a>
+									<!-- <a rel='external' href="/">
+										<img 
+											src={facebook} 
+											alt='facebook-icon' 
+											title='facebook-icon'
+											width="32px" height="32px">
+									</a> -->
 									<!-- ... instagram ... -->
-									<a rel='external' href="/">
-										<img src={instagram} alt='instagram-icon' title='instagram-icon'>
-									</a>
+									<!-- <a rel='external' href="/">
+										<img 
+											src={instagram} 
+											alt='instagram-icon' 
+											title='instagram-icon'
+											width="32px" height="32px">
+									</a> -->
 									<!-- ... telegram ... -->
 									<a rel='external' href="/">
-										<img src={telegram} alt='telegram-icon' title='telegram-icon'>
+										<img 
+											src={telegram} 
+											alt='telegram-icon' 
+											title='telegram-icon'
+											width="32px" height="32px">
 									</a>
 									<!-- ... discrod ... -->
 									<a rel='external' href="/">
-										<img src={discord} alt='discord-icon' title='discord-icon'>
+										<img 
+											src={discord} 
+											alt='discord-icon' 
+											title='discord-icon'
+											width="32px" height="32px">
 									</a>
 									<!-- ... medium ... -->
 									<a rel='external' href="/">
-										<img src={medium} alt='medium-icon' title='medium-icon'>
+										<img 
+											src={medium} 
+											alt='medium-icon' 
+											title='medium-icon'
+											width="32px" height="32px">
 									</a>
 								</div>
 							</div>
@@ -818,13 +902,21 @@
 			align-items: center;
 		}
 
+		div#newsletter-container {
+			width: 100%;
+		}
 		div#newsletter-container input {
-			min-width: 430px;
+			width: 100%;
 			max-width: 430px;
 		}
 
 		div#newsletter-container button#newsletter-subscribe-btn {
 			padding: 11.5px 23.5px;
+			width: fit-content;
+		}
+
+		footer #social-media-box {
+			justify-content: left;
 		}
 	}
 </style>

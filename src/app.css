@@ -179,6 +179,9 @@ FONT WEIGHT
 .w-500 {
 	font-weight: 500;
 }
+.w-normal {
+	font-weight: normal;
+}
 /* 
 ~~~~~~~~~~~~
 FONT SIZES
