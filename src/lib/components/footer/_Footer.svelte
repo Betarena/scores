@@ -21,7 +21,7 @@
 	import twitter from './assets/icon/twitter.svg'
 	import begambleawareorg from './assets/begambleawareorg_black.svg'
 	import legal18icon from './assets/legal-18-action-bet.svg'
-
+ 
 	// ... END OF required IMPORTS;
 
 	export let FOOTER_TRANSLATION_DATA: Footer_Data
