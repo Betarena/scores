@@ -756,6 +756,7 @@
 	} footer div#menu-list div.menu-separator {
 		width: 1px;
 		background-color: #4B4B4B;
+		height: 16px;
 	}
 
 	div#newsletter-container input {
