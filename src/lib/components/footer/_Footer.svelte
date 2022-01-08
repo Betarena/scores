@@ -200,7 +200,9 @@
 											</a>
 										</li>
 										<!-- ... sep .. -->
-										<div class='menu-separator m-r-10 m-b-16' />
+										<li class='place-center m-r-10 m-b-16'>
+											<div class='menu-separator' />
+										</li>
 										<!-- ... betting-tips ... -->
 										<li class='m-r-10'>
 											<a 
@@ -213,7 +215,9 @@
 											</a>
 										</li>
 										<!-- ... sep .. -->
-										<div class='menu-separator m-r-10 m-b-16' />
+										<li class='place-center m-r-10 m-b-16'>
+											<div class='menu-separator' />
+										</li>
 										<!-- ... about us link ... -->
 										<li class='m-r-10'>
 											<a 
@@ -239,7 +243,9 @@
 											</a>
 										</li>
 										<!-- ... sep .. -->
-										<div class='menu-separator m-r-10' />
+										<li class='place-center m-r-10'>
+											<div class='menu-separator' />
+										</li>
 										<!-- ... privacy and conditions ... -->
 										<li class='m-r-10'>
 											<a 
@@ -390,7 +396,9 @@
 											</a>
 										</li>
 										<!-- ... sep .. -->
-										<div class='menu-separator m-r-10' />
+										<li class='place-center m-r-10'>
+											<div class='menu-separator' />
+										</li>
 										<!-- ... betting-tips ... -->
 										<li class='m-r-10'>
 											<a 
@@ -402,7 +410,10 @@
 											</a>
 										</li>
 										<!-- ... sep .. -->
-										<div class='menu-separator m-r-10' />
+										<li class='place-center m-r-10'>
+											<div class='menu-separator' />
+										</li>
+
 										<li class='m-r-10'>
 											<a 
 												rel='external'
@@ -414,7 +425,9 @@
 											</a>
 										</li>
 										<!-- ... sep .. -->
-										<div class='menu-separator m-r-10' />
+										<li class='place-center m-r-10'>
+											<div class='menu-separator' />
+										</li>
 										<!-- ... terms and conditions ... -->
 										<li class='m-r-10'>
 											<a 
@@ -426,7 +439,9 @@
 											</a>
 										</li>
 										<!-- ... sep .. -->
-										<div class='menu-separator m-r-10' />
+										<li class='place-center m-r-10'>
+											<div class='menu-separator' />
+										</li>
 										<!-- ... privacy and conditions ... -->
 										<li class='m-r-10'>
 											<a 
@@ -565,13 +580,15 @@
 												<a 
 													rel='external'
 													href={footer_nav_links_translations.latest_news}>
-														<p class='color-white s-14 w-normal'>
-															{footer_traslation_obj.latest_news}
-														</p>
+													<p class='color-white s-14 w-normal'>
+														{footer_traslation_obj.latest_news}
+													</p>
 												</a>
 											</li>
 											<!-- ... sep .. -->
-											<div class='menu-separator m-r-10' />
+											<li class='place-center m-r-10'>
+												<div class='menu-separator' />
+											</li>
 											<!-- ... betting-tips ... -->
 											<li class='m-r-10'>
 												<a 
@@ -583,8 +600,11 @@
 												</a>
 											</li>
 											<!-- ... sep .. -->
-											<div class='menu-separator m-r-10' />
-												<li class='m-r-10'>
+											<li class='place-center m-r-10'>
+												<div class='menu-separator' />
+											</li>
+											<!-- ... about_us ... -->
+											<li class='m-r-10'>
 												<a 
 													rel='external'
 													href={footer_nav_links_translations.about_us}>
@@ -595,7 +615,9 @@
 												</a>
 											</li>
 											<!-- ... sep .. -->
-											<div class='menu-separator m-r-10' />
+											<li class='place-center m-r-10'>
+												<div class='menu-separator' />
+											</li>
 											<!-- ... terms and conditions ... -->
 											<li class='m-r-10'>
 												<a 
@@ -607,15 +629,17 @@
 												</a>
 											</li>
 											<!-- ... sep .. -->
-											<div class='menu-separator m-r-10' />
+											<li class='place-center m-r-10'>
+												<div class='menu-separator' />
+											</li>
 											<!-- ... privacy and conditions ... -->
 											<li class='m-r-10'>
 												<a 
 													rel='external'
 													href={footer_nav_links_translations.privacy}>
-														<p class='color-white s-14 w-normal'>
-															{footer_traslation_obj.privacy}
-														</p>
+													<p class='color-white s-14 w-normal'>
+														{footer_traslation_obj.privacy}
+													</p>
 												</a>
 											</li>
 										</ul>
@@ -630,12 +654,15 @@
 							class='column-start-grid'>
 
 							<!-- ... follow-us-and-social-media ... -->
-							<div class='m-b-40'>
-								<p class='color-white s-14 w-normal m-b-20'>
+							<div 
+								class='m-b-40'>
+								<p 
+									class='color-white s-14 w-normal m-b-20'>
 									{footer_traslation_obj.follow}
 								</p>
 								<!-- ... social media follows ... -->
-								<div id='social-media-box'
+								<div 
+									id='social-media-box'
 									class='column-start-grid'>
 									<!-- ... identify the list of social media icons ... -->
 									{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
