@@ -61,6 +61,7 @@ export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
 			privacy
 			lang
 			terms
+			social_networks
 		}
 	}
 `;

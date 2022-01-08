@@ -52,7 +52,7 @@
 		// ... debugging;
 		// if (dev) console.debug('resizing', wInit)
 		// TABLET - VIEW
-		if (wInit > 1339) {
+		if (wInit >= 1440) {
 			tabletExclusive = false;
 		} else {
 			tabletExclusive = true;
@@ -68,7 +68,7 @@
 			// ... debugging;
 			// if (dev) console.debug('resizing', w)
 			// TABLET - VIEW
-			if (w > 1339) {
+			if (w >= 1440) {
 				tabletExclusive = false;
 			} else {
 				tabletExclusive = true;
@@ -126,64 +126,27 @@
 								{footer_traslation_obj.follow}
 							</p>
 							<!-- ... social media follows ... -->
-							<div id='social-media-box'
+							<div 
+								id='social-media-box'
 								class='column-start-grid'>
-								<!-- ... linkedin ... -->
-								<a rel='external' href="/">
-									<img 
-										src={linkedin} 
-										alt='linkedin-icon' 
-										title='linkedin-icon'
-										width="32px" height="32px">
-								</a>
-								<!-- ... twitter ... -->
-								<!-- <a rel='external' href="/">
-									<img 
-										src={twitter} 
-										alt='twitter-icon' 
-										title='twitter-icon'
-										width="32px" height="32px">
-								</a> -->
-								<!-- ... facebook ... -->
-								<!-- <a rel='external' href="/">
-									<img 
-										src={facebook} 
-										alt='facebook-icon' 
-										title='facebook-icon'
-										width="32px" height="32px">
-								</a> -->
-								<!-- ... instagram ... -->
-								<!-- <a rel='external' href="/">
-									<img 
-										src={instagram} 
-										alt='instagram-icon' 
-										title='instagram-icon'
-										width="32px" height="32px">
-								</a> -->
-								<!-- ... telegram ... -->
-								<a rel='external' href="/">
-									<img 
-										src={telegram} 
-										alt='telegram-icon' 
-										title='telegram-icon'
-										width="32px" height="32px">
-								</a>
-								<!-- ... discrod ... -->
-								<a rel='external' href="/">
-									<img 
-										src={discord} 
-										alt='discord-icon' 
-										title='discord-icon'
-										width="32px" height="32px">
-								</a>
-								<!-- ... medium ... -->
-								<a rel='external' href="/">
-									<img 
-										src={medium} 
-										alt='medium-icon' 
-										title='medium-icon'
-										width="32px" height="32px">
-								</a>
+								<!-- ... identify the list of social media icons ... -->
+								{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+									{#if social_network_obj.lang == server_side_language}
+										<!-- ... render the correct items ... -->
+										{#each social_network_obj.social_networks as social_network}
+											<!-- ... social-network-component ... -->
+											<a 
+												rel='external'
+												href={social_network[1].toString().toLocaleLowerCase()}>
+												<img 
+													src='./assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+													alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
+													title='{social_network[0].toString().toLocaleLowerCase()}-icon'
+													width="32px" height="32px" />
+											</a>
+										{/each}
+									{/if}
+								{/each}
 							</div>
 						</div>
 
@@ -192,7 +155,8 @@
 							id='newsletter-container' 
 							class='m-b-30'>
 							<!-- ... title-section ... -->
-							<p class='color-white s-14 w-normal m-b-8 text-left'>
+							<p 
+								class='color-white s-14 w-normal m-b-8 text-left'>
 								{footer_traslation_obj.subscribe_newsletter}
 							</p>
 							<!-- ... form-start ... -->
@@ -356,62 +320,24 @@
 									<!-- ... social media follows ... -->
 									<div id='social-media-box'
 										class='column-start-grid'>
-										<!-- ... linkedin ... -->
-										<a rel='external' href="/">
-											<img 
-												src={linkedin} 
-												alt='linkedin-icon' 
-												title='linkedin-icon'
-												width="32px" height="32px">
-										</a>
-										<!-- ... twitter ... -->
-										<!-- <a rel='external' href="/">
-											<img 
-												src={twitter} 
-												alt='twitter-icon' 
-												title='twitter-icon'
-												width="32px" height="32px">
-										</a> -->
-										<!-- ... facebook ... -->
-										<!-- <a rel='external' href="/">
-											<img 
-												src={facebook} 
-												alt='facebook-icon' 
-												title='facebook-icon'
-												width="32px" height="32px">
-										</a> -->
-										<!-- ... instagram ... -->
-										<!-- <a rel='external' href="/">
-											<img 
-												src={instagram} 
-												alt='instagram-icon' 
-												title='instagram-icon'
-												width="32px" height="32px">
-										</a> -->
-										<!-- ... telegram ... -->
-										<a rel='external' href="/">
-											<img 
-												src={telegram} 
-												alt='telegram-icon' 
-												title='telegram-icon'
-												width="32px" height="32px">
-										</a>
-										<!-- ... discrod ... -->
-										<a rel='external' href="/">
-											<img 
-												src={discord} 
-												alt='discord-icon' 
-												title='discord-icon'
-												width="32px" height="32px">
-										</a>
-										<!-- ... medium ... -->
-										<a rel='external' href="/">
-											<img 
-												src={medium} 
-												alt='medium-icon' 
-												title='medium-icon'
-												width="32px" height="32px">
-										</a>
+										<!-- ... identify the list of social media icons ... -->
+										{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+											{#if social_network_obj.lang == server_side_language}
+												<!-- ... render the correct items ... -->
+												{#each social_network_obj.social_networks as social_network}
+													<!-- ... social-network-component ... -->
+													<a 
+														rel='external'
+														href={social_network[1].toString().toLocaleLowerCase()}>
+														<img 
+															src='./assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+															alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
+															title='{social_network[0].toString().toLocaleLowerCase()}-icon'
+															width="32px" height="32px" />
+													</a>
+												{/each}
+											{/if}
+										{/each}
 									</div>
 								</div>
 							</div>
@@ -711,62 +637,24 @@
 								<!-- ... social media follows ... -->
 								<div id='social-media-box'
 									class='column-start-grid'>
-									<!-- ... linkedin ... -->
-									<a rel='external' href="/">
-										<img 
-											src={linkedin} 
-											alt='linkedin-icon' 
-											title='linkedin-icon'
-											width="32px" height="32px">
-									</a>
-									<!-- ... twitter ... -->
-									<!-- <a rel='external' href="/">
-										<img 
-											src={twitter} 
-											alt='twitter-icon' 
-											title='twitter-icon'
-											width="32px" height="32px">
-									</a> -->
-									<!-- ... facebook ... -->
-									<!-- <a rel='external' href="/">
-										<img 
-											src={facebook} 
-											alt='facebook-icon' 
-											title='facebook-icon'
-											width="32px" height="32px">
-									</a> -->
-									<!-- ... instagram ... -->
-									<!-- <a rel='external' href="/">
-										<img 
-											src={instagram} 
-											alt='instagram-icon' 
-											title='instagram-icon'
-											width="32px" height="32px">
-									</a> -->
-									<!-- ... telegram ... -->
-									<a rel='external' href="/">
-										<img 
-											src={telegram} 
-											alt='telegram-icon' 
-											title='telegram-icon'
-											width="32px" height="32px">
-									</a>
-									<!-- ... discrod ... -->
-									<a rel='external' href="/">
-										<img 
-											src={discord} 
-											alt='discord-icon' 
-											title='discord-icon'
-											width="32px" height="32px">
-									</a>
-									<!-- ... medium ... -->
-									<a rel='external' href="/">
-										<img 
-											src={medium} 
-											alt='medium-icon' 
-											title='medium-icon'
-											width="32px" height="32px">
-									</a>
+									<!-- ... identify the list of social media icons ... -->
+									{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+										{#if social_network_obj.lang == server_side_language}
+											<!-- ... render the correct items ... -->
+											{#each social_network_obj.social_networks as social_network}
+												<!-- ... social-network-component ... -->
+												<a 
+													rel='external'
+													href={social_network[1].toString().toLocaleLowerCase()}>
+													<img 
+														src='./assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+														alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
+														title='{social_network[0].toString().toLocaleLowerCase()}-icon'
+														width="32px" height="32px" />
+												</a>
+											{/each}
+										{/if}
+									{/each}
 								</div>
 							</div>
 
@@ -907,7 +795,7 @@
 		}
 		div#newsletter-container input {
 			width: 100%;
-			max-width: 430px;
+			min-width: 430px;
 		}
 
 		div#newsletter-container button#newsletter-subscribe-btn {
