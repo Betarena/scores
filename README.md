@@ -102,6 +102,7 @@ Please visit the [discussions-contributing-guide](https://github.com/Betarena/sc
 Reach out to the maintainer at one of the following places:
 
 [GitHub discussions](https://github.com/Betarena/scores/discussions)
+
 The email which is located in GitHub profile - [add-email]
 
 ## 📌 License
