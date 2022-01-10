@@ -10,7 +10,6 @@
 <summary>Table of Contents</summary>
 
 - [About](#about)
-  - [Built With](#built-with)
 - [Development](#development)
   - [Built With](#built-with)
   - [Dev Environment](#dev-environment)
@@ -73,7 +72,7 @@ View our guide to `sveltekit` project and how to get started with a few links an
 - [a-beginners-guide-to-sveltekit](https://www.sitepoint.com/a-beginners-guide-to-sveltekit/)
 - [using .env with sveltekit-vite](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
 
-## Roadmap
+## 🚦 Roadmap
 
 See the open issues for a list of proposed features (and known issues).
 
