@@ -72,6 +72,12 @@ View our guide to `sveltekit` project and how to get started with a few links an
 - [a-beginners-guide-to-sveltekit](https://www.sitepoint.com/a-beginners-guide-to-sveltekit/)
 - [using .env with sveltekit-vite](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
 
+## Project Overview
+
+![image](https://user-images.githubusercontent.com/20924663/148798416-adb51cf8-6f91-472b-9225-73b43999d320.png)
+
+https://whimsical.com/betarena-scores-platform-BBTYhFnk4Fxk3JcoZyjAHw
+
 ## 🚦 Roadmap
 
 See the open issues for a list of proposed features (and known issues).
