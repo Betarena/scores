@@ -22,5 +22,6 @@ export interface Footer_Data {
         privacy: string
         lang: string
         terms: string
+        social_networks: Array < Array< string >>
     }[]
 }

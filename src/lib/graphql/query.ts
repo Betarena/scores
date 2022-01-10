@@ -33,6 +33,40 @@ export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
 	}
 `;
 
+
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... get ALL of the TRANSLATIONS from the DB
+ * for the website-platform
+ */
+ export const GET_FOOTER_DATA = gql`
+ query GET_FOOTER_DATA @cached(ttl: 300) {
+		scores_footer_translations_dev {
+			about_us
+			betting_tips
+			follow
+			lang
+			latest_news
+			privacy
+			subscribe_cta
+			subscribe_newsletter
+			terms
+			type_email
+		}
+		scores_footer_links_dev {
+			about_us
+			betting_tips
+			latest_news
+			privacy
+			lang
+			terms
+			social_networks
+		}
+	}
+`;
+
+
 /**
  * Description
  * ~~~~~~~~~~~~~
