@@ -30,9 +30,8 @@
 		Header_Translation_Response,
 		Header_Translation
 	} from '$lib/model/scores_header_translations';
-import { each } from 'svelte/internal';
 
-	export let TRANSLATIONS_DATA: Header_Translation_Response;
+	export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
 
 	/**
 	 * Description:
@@ -168,9 +167,9 @@ import { each } from 'svelte/internal';
 
 <!-- ... header-for-the-page ... -->
 <header class="column-space-center">
-	{#if TRANSLATIONS_DATA != undefined}
+	{#if HEADER_TRANSLATION_DATA != undefined}
 		<!-- ... identify the correct translation via IF -->
-		{#each TRANSLATIONS_DATA.scores_header_translations_dev as lang_obj}
+		{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang_obj}
 			{#if lang_obj.lang == server_side_language}
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id="top-header" class="row-space-out">
@@ -236,7 +235,7 @@ import { each } from 'svelte/internal';
 								<!-- ... INIT-HIDDEN drop-down menu ... -->
 								{#if dropdown_lang_visible}
 									<div id="dropdown-menu" transition:fly>
-										{#each TRANSLATIONS_DATA.scores_header_translations_dev as lang}
+										{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang}
 											<div id="lang-select" on:click={() => selectLanguage(lang.lang)}>
 												<p class="color-white s-14">
 													{lang.lang.toUpperCase()}
@@ -250,7 +249,7 @@ import { each } from 'svelte/internal';
 
 						<!-- ... NAV BUTTONS ... -->
 						{#if !mobileExclusive}
-							{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
+							{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
 								{#if lang_link.lang == server_side_language}
 									<!-- ... latest news ... -->
 									<a rel="external" href={lang_link.latest_news}>
@@ -447,7 +446,7 @@ import { each } from 'svelte/internal';
 						{/if}
 
 						{#if mobileExclusive}
-							{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
+							{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
 								{#if lang_link.lang == server_side_language}
 									<a rel="external" href={lang_link.betting_tips}>
 										<!-- ... betting-tips ... -->
@@ -598,7 +597,7 @@ import { each } from 'svelte/internal';
 											<!-- ... INIT-HIDDEN drop-down menu ... -->
 											{#if dropdown_lang_visible}
 												<div id="dropdown-menu" transition:fly>
-													{#each TRANSLATIONS_DATA.scores_header_translations_dev as lang}
+													{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang}
 														<div id="lang-select" on:click={() => selectLanguage(lang.lang)}>
 															<p class="color-white s-14">
 																{lang.lang.toUpperCase()}
@@ -636,7 +635,7 @@ import { each } from 'svelte/internal';
 									</div>
 
 									<!-- ... link-based-redirects ... -->
-									{#each TRANSLATIONS_DATA.scores_header_links_dev as lang_link}
+									{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
 										{#if lang_link.lang == server_side_language}
 											<!-- ... latest-news ... -->
 											<div class="side-nav-row">

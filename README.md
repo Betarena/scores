@@ -1,14 +1,48 @@
+<h1 align="center">
+  <a href="https://github.com/dec0dOS/amazing-github-template">
+    <img src="https://user-images.githubusercontent.com/20924663/148760091-dea6a851-1aa9-4dbb-ac29-59f2ce2ad493.png" alt="Logo">
+  </a>
+</h1>
+
 ![example workflow](https://github.com/Betarena/scores/actions/workflows/docker-image.yml/badge.svg)
 
-# scores
+<details open="open">
+<summary>Table of Contents</summary>
 
-### Betarena Scores Platform
+- [About](#about)
+- [Development](#development)
+  - [Built With](#built-with)
+  - [Dev Environment](#dev-environment)
+  - [Dev Environment](#production-environment)
+- [Roadmap](#roadmap)
+- [Contributing](#contributing)
+- [Support](#support)
+- [License](#license)
+
+</details>
+
+## Betarena Scores Platform
 
 ### About
 
 We are building the first open-source live results and statistics platform with community involvement features for data insertion. The project includes a blockchain component that will allow participants to receive rewards based on their participation and also to stake the future Token of the platform.
 
-### Developing
+## ⚙ Development
+
+### Built With
+
+This project is dependent on the following libraries and technologies:
+
+- [`svelte`]()
+- [`sveltekit`]()
+- [`color-thief`]()
+- [`svelte-seo`](https://github.com/artiebits/svelte-seo#svelte-seo-options)
+- [`graphql-request`](https://www.npmjs.com/package/graphql-request)
+
+`@apollo-client` does not work correctly with `sveltekit` [1](https://github.com/timhall/svelte-apollo/issues/97)
+**solution**: using `graphql-request` instead.
+
+### Dev Environment
 
 Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
@@ -19,7 +53,7 @@ npm run dev
 npm run dev -- --open
 ```
 
-### Building
+### Production Environment
 
 Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
 
@@ -29,27 +63,56 @@ npm run build
 
 > You can preview the built app with `npm run preview`, regardless of whether you installed an adapter. This should _not_ be used to serve your app in production.
 
-### SEO Optimization
+---
 
-This porject is optimized using the `svelte-seo` plugin library [here](https://github.com/artiebits/svelte-seo#svelte-seo-options)
+**First time working on a `SvelteKit` Project ?**
 
-### GraphQL Support
-
-For the ability to use `GraphQL` for the Widget in Svelte, `graphql-request` was utilized - [package](https://www.npmjs.com/package/graphql-request)
-
-`@apollo-client` does not work correctly with `sveltekit` [1](https://github.com/timhall/svelte-apollo/issues/97)
-**solution**: using `graphql-request` instead.
-
-### localStorage()
-
-The widget stores the users `one-off` voting using the `.localStorage()` for the ability to give the user a history of past votings.
-
-### using .env with sveltekit-vite:
-
-[exmaple](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
-
-### Getting started with `sveltekit`:
-
-Some useful links used to get familiar with `sveltekit` and the correct knownledge required for the `development`:
+View our guide to `sveltekit` project and how to get started with a few links and recommendadions:
 
 - [a-beginners-guide-to-sveltekit](https://www.sitepoint.com/a-beginners-guide-to-sveltekit/)
+- [using .env with sveltekit-vite](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
+
+## Project Overview
+
+![image](https://user-images.githubusercontent.com/20924663/148798416-adb51cf8-6f91-472b-9225-73b43999d320.png)
+
+https://whimsical.com/betarena-scores-platform-BBTYhFnk4Fxk3JcoZyjAHw
+
+## 🚦 Roadmap
+
+See the open issues for a list of proposed features (and known issues).
+
+- Top Feature Requests (Add your votes using the 👍 reaction)
+- Top Bugs (Add your votes using the 👍 reaction)
+- Newest Bugs
+
+## 🛠 Contributing
+
+**Do you wish to contribute to the project ? 🚀🥳**
+
+First off, thanks for taking the time to contribute! Contributions are what makes the open-source community such an amazing place to learn, inspire, and create. Any contributions you make will benefit everybody else and are greatly appreciated.
+
+Please try to create bug reports that are:
+
+- __Reproducible__. Include steps to reproduce the problem.
+- __Specific__. Include as much detail as possible: which version, what environment, etc.
+- __Unique__. Do not duplicate existing opened issues.
+- __Scoped__ to a Single Bug. One bug per report.
+
+Please adhere to this project's code of conduct.
+
+Please visit the [discussions-contributing-guide](https://github.com/Betarena/scores/discussions/122) for more information on how to get started on contributing to the project and repository.
+
+## 💗 Support
+
+Reach out to the maintainer at one of the following places:
+
+[GitHub discussions](https://github.com/Betarena/scores/discussions)
+
+The email which is located in GitHub profile - [add-email]
+
+## 📌 License
+
+This project is licensed under the MIT license. Feel free to edit and distribute this template as you like.
+
+See [LICENSE](LICENSE) for more information.
