@@ -723,6 +723,7 @@
 		height: 645px;
 		width: -webkit-fill-available;
 		padding: 48px 18px;
+		box-shadow: inset 0px 1px 0px #616161;
 	}
 	footer #inner-footer {
 		max-width: 1378px;
