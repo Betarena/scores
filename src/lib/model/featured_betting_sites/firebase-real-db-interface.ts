@@ -36,6 +36,7 @@ export interface Scores_Featured_Betting_Sites_Hasura {
     scores_featured_betting_sites_translations_dev: {
         lang: string
         translations: {
+            register_cta: string
             show_more_less: Array < string >
             title: string
             widget_title: string
@@ -47,6 +48,7 @@ export interface Scores_Featured_Betting_Sites_Data {
     scores_featured_betting_sites_translations_dev: {
         lang: string
         translations: {
+            register_cta: string
             show_more_less: Array < string >
             title: string
             widget_title: string
@@ -55,11 +57,22 @@ export interface Scores_Featured_Betting_Sites_Data {
     }[]
 }
 
+export interface All_SportBook_Details_Data_Translation {
+    lang: string
+    translations: {
+        register_cta: string
+        show_more_less: Array < string >
+        title: string
+        widget_title: string
+    }
+}
+
 export interface All_SportBook_Details_Data {
     lang: string
     translations: {
         lang: string
         translations: {
+            register_cta: string
             show_more_less: Array < string >
             title: string
             widget_title: string

@@ -11,19 +11,20 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  import type { FeaturedSite } from "$lib/model/featured_betting_sites/firebase-real-db-interface";
+  import type { FeaturedSite, All_SportBook_Details_Data_Translation } from "$lib/model/featured_betting_sites/firebase-real-db-interface";
 
   export let data: FeaturedSite;
+  export let WIDGET_TRANSLATION: All_SportBook_Details_Data_Translation;
 
   let showExtraInfo: boolean;
 
   /**
    * Description:
    * ~~~~~~~~~~~~~~~~~~~
-   * onMount() function that verifies that
-   * the `viewport` width is of tablet size
-   * or greater;
-   */
+   * ... onMount() function that verifies that
+   * ... the `viewport` width is of tablet size
+   * ... or greater;
+  */
   let viewportDesktop: boolean;
   // ...
   onMount(async () => {
@@ -53,13 +54,13 @@
   /**
    * Description:
    * ~~~~~~~~~~~~~~~~~~
-   * A function-method to obtain the main
-   * `primary` color of the image
-   * and place it on the background
-   * container to keep the image the same size
+   * ... A function-method to obtain the main
+   * ... `primary` color of the image
+   * ... and place it on the background
+   * ... container to keep the image the same size
    *
    * @param imgURL
-   */
+  */
   let imageVar: string = "--logo-bookmaker-bg-" + data.position;
   let hexColor: string;
 
@@ -87,14 +88,14 @@
   /**
    * Description:
    * ~~~~~~~~~~~~~~~~~~
-   * A function-method to convert the
-   * [x,a,c] of RBG values to `#HEX` values
+   * ... A function-method to convert the
+   * ... [x,a,c] of RBG values to `#HEX` values
    *
    * @param r
    * @param g
    * @param b
    * @returns (# a singel #HEX-Color Value)
-   */
+  */
   const rgbToHex = (r, g, b) =>
     "#" +
     [r, g, b]
@@ -218,7 +219,9 @@
         class="btn-primary"
         on:click={() => (showExtraInfo = !showExtraInfo)}
         >
-        <p>{data.bonus}</p>
+        <p class='w-500 w-normal'>
+          {data.bonus}
+        </p>
       </button>
 
       <!-- ... extra-info pop-up container ... -->
@@ -226,30 +229,39 @@
         <div 
           class="extra-info" 
           in:fade>
+          <!-- ... site-image ... -->
           <img
             style="background-color: var({imageVar});"
             class="extra-info-img"
             src={data.image}
             alt=""
             />
+          <!-- ... extra-site info ... -->
           <div 
             class="extra-info-container">
+            <!-- ... text ... -->
             <p 
               class="large">
               {data.bonus_description}
             </p>
-            <!-- <p class="medium">
-              {data.conditions}
-            </p> -->
-            <a rel="external" href={data.register_link}>
+            <!-- ... button_cta ... -->
+            <a 
+              rel="external" 
+              href={data.register_link}>
               <button
                 class="btn-primary btn-cta"
                 style="width: 100% !important;"
               >
-                <p>Register</p>
+                <p 
+                  class="w-500 w-normal">
+                  {WIDGET_TRANSLATION.translations.register_cta}
+                </p>
               </button>
             </a>
-            <p class="small" style="color: #CCCCCC;">
+            <!-- ... extra-site info text ... -->
+            <p 
+              class="small" 
+              style="color: #CCCCCC;">
               {data.information}
             </p>
           </div>
