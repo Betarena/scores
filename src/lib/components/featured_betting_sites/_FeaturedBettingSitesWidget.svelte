@@ -70,10 +70,14 @@
     // ...
     loaded = true;
 
+    // ... intercept the length of array;
+    trueLengthOfArray = response.data.length
+
     // ... return the FINAL Promise Value;
     return response;
   }
 
+  // ... show-more / show-less;
   $: if (viewportDesktop) {
     if (trueLengthOfArray > 10) {
       displayShowMore = true;
@@ -260,13 +264,16 @@
 
           <!-- ... title-box of the `Feature Site` list ... -->
           <p 
-            id="title-box">
+            id="title-box"
+            class="w-500 w-normal">
             {WIDGET_TRANSLATION.translations.title}
           </p>
 
           <!-- ... display the first 5 rows on Mobile; ... -->
           {#each data.data.slice(0, limitViewRow) as item}
-              <FeaturedSiteRow data={item} />
+              <FeaturedSiteRow 
+                data={item} 
+                {WIDGET_TRANSLATION} />
           {/each}
 
           <!-- ... show-more / show-less ... -->
@@ -347,22 +354,23 @@
   MOBILE RESPONSIVNESS */
   @media only screen and (min-width: 767px) {
     #featured-rank {
-      display: grid;
-      gap: 10px;
-      padding: 23px 43px 16px 43px;
-      background: #f2f2f2;
-      border-radius: 12px;
-      justify-items: center;
-    }
+			height: 257px;
+			padding: 16px 39px;
+			background: #F2F2F2;
+			border-radius: 12px;
+			justify-items: center;
+			position: relative;
+      text-align: center;
+		}
 
-    #feature-rank-display {
-      display: grid;
-      gap: 20px;
-      grid-auto-flow: column;
-      grid-template-columns: repeat(3, 1fr);
-      justify-content: space-between;
-      padding: 20px 20px 0 20px;
-    }
+		#feature-rank-display {
+			display: grid;
+			gap: 20px;
+			grid-auto-flow: column;
+			grid-template-columns: repeat(3, 1fr);
+			justify-content: space-between;
+			padding: 20px 20px 0 20px;
+		}
 
     #featured-list-container {
       min-width: 100%;
@@ -373,23 +381,13 @@
   /* 
   DESKTOP RESPONSIVNESS */
   @media only screen and (min-width: 1024px) {
-    #feature-rank-display {
-      display: grid;
-      gap: 20px;
-      grid-auto-flow: column;
-      grid-template-columns: repeat(3, 1fr);
-      justify-content: space-between;
-      padding: 20px 20px 0 20px;
-    }
-
     #featured-rank {
-      display: grid;
-      gap: 10px;
-      padding: 23px 16px 16px 16px;
-      background: #f2f2f2;
-      border-radius: 12px;
-      justify-items: center;
-    }
+			padding: 16px 8px;
+		}
+
+		#feature-rank-display {
+			gap: 15px;
+		}
 
     #featured-list-container {
       min-width: 100%;

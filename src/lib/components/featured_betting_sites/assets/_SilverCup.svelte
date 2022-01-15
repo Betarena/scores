@@ -2,7 +2,7 @@
     export let imageURL: string;
 </script>
 
-<svg width="100%" height="173" viewBox="0 0 128 173" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg width="100%" height="168" viewBox="0 0 128 168" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <circle cx="64" cy="74" r="64" fill="url(#silvercup_svg__paint0_linear)"/>
     <path d="M21.241 134.272v-38.61h22.5v51.681l-21.743-11.801a1.445 1.445 0 0 1-.757-1.27z" fill="url(#silvercup_svg__paint1_linear)"/>
     <path fill-rule="evenodd" clip-rule="evenodd" d="M21 95.422h22.983v52.327l-22.1-11.995a1.686 1.686 0 0 1-.883-1.482v-38.85zm.483.482v38.368c0 .441.242.848.63 1.059L43.5 146.938V95.904H21.483z" fill="url(#silvercup_svg__paint2_linear)"/>
@@ -208,3 +208,5 @@
         <image id="silvercup_svg__image0" width="140" height="140" xlink:href={imageURL}/>
       </defs>
   </svg>
+
+  
