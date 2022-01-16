@@ -265,7 +265,7 @@
           <!-- ... title-box of the `Feature Site` list ... -->
           <p 
             id="title-box"
-            class="w-500 w-normal">
+            class="w-500 w-normal large">
             {WIDGET_TRANSLATION.translations.title}
           </p>
 
