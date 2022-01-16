@@ -219,7 +219,7 @@
         class="btn-primary"
         on:click={() => (showExtraInfo = !showExtraInfo)}
         >
-        <p class='w-500 w-normal'>
+        <p class='w-500 s-14 w-normal'>
           {data.bonus}
         </p>
       </button>
@@ -253,7 +253,7 @@
                 style="width: 100% !important;"
               >
                 <p 
-                  class="w-500 w-normal">
+                  class="w-500 s-14 w-normal">
                   {WIDGET_TRANSLATION.translations.register_cta}
                 </p>
               </button>
