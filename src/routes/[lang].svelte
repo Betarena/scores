@@ -15,22 +15,31 @@
 		// ... DEBUGGING;
 		if (dev) console.debug('-- obtaining translations! --');
 		// ... GET RESPONSE;
-		const response = await fetch('/api/featured_match/cache-seo.json', {
+		const response_featured_match = await fetch('/api/featured_match/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 		// ... DEBUGGING;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+
+		// ... GET RESPONSE;
+		const response_featured_betting_sites = await fetch('/api/featured_betting_sites/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+		// ... DEBUGGING;
+		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+
 		// ... return, RESPONSE DATA;
-		if (response) {
+		if (response_featured_match && response_featured_betting_sites) {
 			return {
 				props: {
-					FEATURED_MATCH_WIDGET_DATA_SEO: response
+					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
+					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites
 				}
 			};
 		}
 		// ... otherwise, ERROR;
 		return {
-			status: response.status,
+			status: 500,
 			error: new Error(`/ page-preloading-error`)
 		};
 	}
@@ -47,9 +56,10 @@
 
 	import SvelteSeo from 'svelte-seo';
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
+	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
-
+	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 
 	/**
 	 * Description:
@@ -161,7 +171,14 @@
 	{/if}
 
 	<!-- ... 3rd ROW ... -->
-	<FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+	<div 
+		class='grid-display-column'>
+		<!-- ... widget #1 ... -->
+		<FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+		<!-- ... widget #2 ... -->
+		<FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+	</div>
+
 </section>
 
 <!-- ===================
@@ -172,6 +189,12 @@
 		display: grid;
 		max-width: 1430px;
 		grid-template-columns: 1fr;
+	}
+
+	div.grid-display-column {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
 	}
 
 	/* 

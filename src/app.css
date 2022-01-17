@@ -4,7 +4,7 @@
     https://stackoverflow.com/questions/38723246/google-font-not-working-with-css
 ========================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+/* @import url('https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap'); */
 
 /* @font-face {
     font-family: 'Roboto Slab', serif;
@@ -247,6 +247,12 @@ page titles */
 	.s-t-16 {
 		font-size: 16px;
 	}
+
+	.large,
+	p.large,
+	span.large {
+		font-size: 18px;
+	}
 }
 
 /* ##########################
@@ -378,6 +384,7 @@ left-margins
 section {
 	min-height: calc(100vh - 128px);
 	padding: 22px 16px;
+	padding-bottom: 100px !important;
 	margin: auto;
 }
 @media only screen and (min-width: 768px) {
@@ -509,7 +516,7 @@ button {
 	justify-content: center;
 }
 button p {
-	font-weight: 400;
+	/* font-weight: 400; */
 }
 button:disabled {
 	cursor: default;
