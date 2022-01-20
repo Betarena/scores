@@ -26,10 +26,9 @@
 	import light_icon_theme from './assets/theme-light-icon.svg';
 	import menu_sports_icon from './assets/menu_sports_icon.svg';
 
-	import type {
-		Header_Translation_Response,
-		Header_Translation
-	} from '$lib/model/scores_header_translations';
+	import type { Header_Translation_Response, Header_Translation } from '$lib/model/scores_header_translations';
+	import type { GeoJsResponse } from '$lib/model/geo-js-interface';
+	import { getUserLocation } from '$lib/geoJs/init';
 
 	export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
 
@@ -123,13 +122,26 @@
 	$: if (dev) console.debug('-- server_side_language --', server_side_language);
 
 	// ... wait for the `browser` client for the `localstroage`
-	if (browser) {
+	$: if (browser) {
 		if (url_Lang != undefined) {
 			selectLanguage(url_Lang);
 		} else {
 			selectLanguage('en');
 		}
 	}
+
+	// ... immediately update the data with the countryBookemaker;
+	$: if (browser) {
+		if ($userBetarenaSettings.country_bookmaker == undefined) { 
+			// ...
+			setUserCountryBookmakerLocation();
+		}
+	}
+
+	// ~~~~~~~~~~~~~~
+	// COMPONENT METHODS
+	// ~~~~~~~~~~~~~~
+	
 	// .. update the user selected language `.localStorage()`
 	function selectLanguage(lang: string) {
 		// ... DEV-DEBUGGING;
@@ -153,6 +165,36 @@
 		// dropdown_theme_visible = false
 		// ... update the THEME selection user settings
 		userBetarenaSettings.setTheme(theme);
+	}
+
+	// ... update the user selected CountryBookmaker `.localStorage()`
+	function selectedCountryBookmakers(countryBookemaker: string) {
+		// ... hide the countryBookmakers selection [OPTIONAL];
+		// dropdown_bookmakers_visible = false
+		// ... update the userCountryBookmakerSelection settings;
+		userBetarenaSettings.setCountryBookmaker(countryBookemaker.toLocaleLowerCase())
+	}
+
+	// ... get user location method;
+	async function setUserCountryBookmakerLocation() {
+		// ... get user GEO-LOCATION;
+		const userGeoResponse: GeoJsResponse = await getUserLocation()
+		let userGeo = userGeoResponse.country_code.toLowerCase()
+		// ... VALIDATION;
+		// ... check that the `country-GEO` is available on the list;
+		const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.find(function(item) { 
+			return item.bookmakers_countries.find(function(item_2) { 
+				return item_2[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
+			});
+		});
+		// ... DEBUGGING;
+		if (dev) console.debug('result', result)
+		// ... declare;
+		if (result) {
+			selectedCountryBookmakers(userGeo)
+		} else {
+			selectedCountryBookmakers('en')
+		}
 	}
 </script>
 
@@ -392,17 +434,22 @@
 										{lang_obj.bookmakers}
 									</p>
 									<div class="row-space-start">
-										<img
-											class="country-flag m-r-5"
-											src="https://betarena.com/images/flags/${lang_obj
-												.bookmakers_countries[0][0]}.svg"
-											alt="${lang_obj.bookmakers_countries[0][1]}"
-											width="20px"
-											height="14px"
-										/>
-										<p class="color-white s-14">
-											{lang_obj.bookmakers_countries[0][1]}
-										</p>
+										{#if $userBetarenaSettings.country_bookmaker != undefined}
+											{#each lang_obj.bookmakers_countries as country}
+												{#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
+													<img
+														class="country-flag m-r-5"
+														src="https://betarena.com/images/flags/{country[0]}.svg"
+														alt="{country[1]}"
+														width="20px"
+														height="14px"
+													/>
+													<p class="color-white s-14">
+														{country[1]}
+													</p>
+												{/if}
+											{/each}
+										{/if}
 									</div>
 								</div>
 								<!-- ... arrow down [hidden-menu] ... -->
@@ -414,23 +461,26 @@
 								<!-- ... INIT-HIDDEN-dropdown-bookmakers-type ... -->
 								{#if dropdown_bookmakers_visible}
 									<div id="bookmakers-type-dropdown-menu" transition:fly>
-										{#each lang_obj.bookmakers_countries as country}
-											<div
-												class="theme-opt-box row-space-start"
-												on:click={() => (dropdown_bookmakers_visible = false)}
-											>
-												<img
-													class="country-flag m-r-10"
-													src="https://betarena.com/images/flags/${country[0]}.svg"
-													alt="${country[1]}"
-													width="20px"
-													height="14px"
-												/>
-												<p class="color-white s-14">
-													{country[1]}
-												</p>
-											</div>
-										{/each}
+										{#if $userBetarenaSettings.country_bookmaker != undefined}
+											{#each lang_obj.bookmakers_countries as country}
+												<div
+													class="theme-opt-box row-space-start"
+													class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toString().toUpperCase()}
+													on:click={() => selectedCountryBookmakers(country[0])}
+												>
+													<img
+														class="country-flag m-r-10"
+														src="https://betarena.com/images/flags/{country[0]}.svg"
+														alt="{country[1]}"
+														width="20px"
+														height="14px"
+													/>
+													<p class="color-white s-14">
+														{country[1]}
+													</p>
+												</div>
+											{/each}
+										{/if}
 									</div>
 								{/if}
 							</div>
@@ -773,17 +823,22 @@
 											</p>
 											<div class="row-space-out">
 												<div class="row-space-start">
-													<img
-														class="country-flag m-r-5"
-														src="https://betarena.com/images/flags/${lang_obj
-															.bookmakers_countries[0][0]}.svg"
-														alt="${lang_obj.bookmakers_countries[0][1]}"
-														width="20px"
-														height="14px"
-													/>
-													<p class="color-white s-14">
-														{lang_obj.bookmakers_countries[0][1]}
-													</p>
+													{#if $userBetarenaSettings.country_bookmaker != undefined}
+														{#each lang_obj.bookmakers_countries as country}
+															{#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
+																<img
+																	class="country-flag m-r-5"
+																	src="https://betarena.com/images/flags/{country[0]}.svg"
+																	alt="{country[1]}"
+																	width="20px"
+																	height="14px"
+																/>
+																<p class="color-white s-14">
+																	{country[1]}
+																</p>
+															{/if}
+														{/each}
+													{/if}
 												</div>
 												<!-- ... arrow down [hidden-menu] ... -->
 												{#if !dropdown_bookmakers_visible}
@@ -801,23 +856,31 @@
 										<!-- ... INIT-HIDDEN-dropdown-theme-select ... -->
 										{#if dropdown_bookmakers_visible}
 											<div transition:fly>
-												{#each lang_obj.bookmakers_countries as country}
-													<div
-														class="side-nav-dropdown-opt row-space-start"
-														on:click={() => (dropdown_bookmakers_visible = false)}
-													>
-														<img
-															class="country-flag m-r-10"
-															src="https://betarena.com/images/flags/${country[0]}.svg"
-															alt="${country[1]}"
-															width="20px"
-															height="14px"
-														/>
-														<p class="color-white s-14">
-															{country[1]}
-														</p>
-													</div>
-												{/each}
+												{#if $userBetarenaSettings.country_bookmaker != undefined}
+													{#each lang_obj.bookmakers_countries as country}
+														<div
+															class="side-nav-dropdown-opt row-space-start"
+															on:click={() => selectedCountryBookmakers(country[0])}
+														>
+															<div
+																class='row-space-start'>
+																<img
+																	class="country-flag m-r-10"
+																	src="https://betarena.com/images/flags/${country[0]}.svg"
+																	alt="${country[1]}"
+																	width="20px"
+																	height="14px"
+																/>
+																<p class="color-white s-14">
+																	{country[1]}
+																</p>
+															</div>
+															{#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
+																<img src={icon_check} alt={country[0]} width="16px" height="16px" />
+															{/if}
+														</div>
+													{/each}
+												{/if}
 											</div>
 										{/if}
 									</div>
@@ -1252,7 +1315,8 @@
 			background: #4b4b4b;
 			position: relative;
 		}
-		#bookmakers-type-dropdown-menu .theme-opt-box:hover {
+		#bookmakers-type-dropdown-menu .theme-opt-box:hover,
+		#bookmakers-type-dropdown-menu .country-selected {
 			background: #292929;
 			border-radius: 4px;
 		}
