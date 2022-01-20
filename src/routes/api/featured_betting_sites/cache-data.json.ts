@@ -14,9 +14,9 @@ let userGeo: string
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function post(req, res): Promise < any > {
+export async function post({ params, request }, res): Promise < any > {
     // ... extract the 'geo_js';
-    userGeo = req.body
+    userGeo = await request.json(); // or request.json(), etc
     // ... DEBUGGING;
     if (dev) console.info('-- cache-data.json userGeo --', userGeo)
 
