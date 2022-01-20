@@ -30,6 +30,8 @@
   let showMore: boolean = false;          // ... signals to other widget values that the lsit has expanded
   let displayShowMore: boolean = false;   // ... signal as to whether to display or not the `showMore` / `showLess` data container;
 	let loaded: boolean = false;            // ... holds boolean for data loaded;
+  let refresh: boolean = false;
+	let refresh_data: any = undefined;
 
   // ... widget-language-declaration;
 	let server_side_language: string = 'en';
@@ -50,9 +52,10 @@
   // ...
   async function widgetInit(): Promise < All_SportBook_Details_Data > {
 
-    // ... get the USER-GEO-LOCATION;
-		const userGeoResponse: GeoJsResponse = await getUserLocation()
-		let userGeo = userGeoResponse.country_code.toLowerCase()
+    // ... get the USER-GEO-LOCATION
+		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+    // ... DEBUGGING;
+    if (dev) console.debug('userGeo', userGeo)
 
     // ... GET RESPONSE;
 		const response: All_SportBook_Details_Data  = await post(`api/featured_betting_sites/cache-data.json`, userGeo)
@@ -76,6 +79,17 @@
     // ... return the FINAL Promise Value;
     return response;
   }
+
+  // ... change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
+	$: refresh_data = $userBetarenaSettings.country_bookmaker;
+	// ...
+	$: if (refresh_data) {
+		// ... reset necessary variables;
+		refresh = true
+    setTimeout(async() => {
+			refresh = false
+		}, 50)
+	}
 
   // ... show-more / show-less;
   $: if (viewportDesktop) {
@@ -161,149 +175,152 @@
   {/if}
 
   <!-- ... promise is pending ... -->
-  {#await widgetInit()}
-    <FeaturedBettingSitesWidgetContentLoading />
-  <!-- ... promise was fulfilled ... -->
-  {:then data}
+  {#if !refresh}
 
-    <!-- ... identify the correct translation via IF -->
+    {#await widgetInit()}
+      <FeaturedBettingSitesWidgetContentLoading />
+    <!-- ... promise was fulfilled ... -->
+    {:then data}
 
-    {#each data.translations as WIDGET_TRANSLATION}
-      {#if WIDGET_TRANSLATION.lang == server_side_language}
+      <!-- ... identify the correct translation via IF -->
+        {#each data.translations as WIDGET_TRANSLATION}
+          {#if WIDGET_TRANSLATION.lang == server_side_language}
 
-        <!-- ... wiget-title ... -->
-        <p
-          id='widget-title'
-          class="s-20 m-b-10 color-black w-500 w-normal"
-          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          {WIDGET_TRANSLATION.translations.widget_title}
-        </p>
+            <!-- ... wiget-title ... -->
+            <p
+              id='widget-title'
+              class="s-20 m-b-10 color-black w-500 w-normal"
+              class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+              {WIDGET_TRANSLATION.translations.widget_title}
+            </p>
 
-        <!-- ... widget-component ... -->
-        <div 
-          id="featured-list-container"
-          class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+            <!-- ... widget-component ... -->
+            <div 
+              id="featured-list-container"
+              class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-          <!-- ... top 3 featured sites | TABLET / DEKTOP VIEW ONLY ... -->
-          {#if viewportDesktop}
-            <div id="feature-rank-display" in:fade>
+              <!-- ... top 3 featured sites | TABLET / DEKTOP VIEW ONLY ... -->
+              {#if viewportDesktop}
+                <div id="feature-rank-display" in:fade>
 
-              <!-- ... RANK 2 LOGO ... -->
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href={data.data[1].register_link}
-                >
-                <div 
-                  id="featured-rank" 
-                  style="margin-top: 20px;">
+                  <!-- ... RANK 2 LOGO ... -->
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={data.data[1].register_link}
+                    >
+                    <div 
+                      id="featured-rank" 
+                      style="margin-top: 20px;">
 
-                  <SilverCup imageURL={data.data[1].image} />
+                      <SilverCup imageURL={data.data[1].image} />
 
-                  <!-- ... Featured Image Details ... -->
-                  <p 
-                    class="x-large color-black"
-                    class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-                    {data.data[1].title}
-                  </p>
-                  <p class="large color-grey">Rank {data.data[1].position}</p>
+                      <!-- ... Featured Image Details ... -->
+                      <p 
+                        class="x-large color-black"
+                        class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+                        {data.data[1].title}
+                      </p>
+                      <p class="large color-grey">Rank {data.data[1].position}</p>
+                    </div>
+                  </a>
+
+                  <!-- ... RANK 1 LOGO ... -->
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={data.data[0].register_link}
+                    >
+                    <div 
+                      id="featured-rank"
+                      style="margin-bottom: 20px;">
+
+                      <GoldCup imageURL={data.data[0].image} />
+
+                      <!-- ... Featured Image Details ... -->
+                      <p 
+                        class="x-large color-black"
+                        class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+                        {data.data[0].title}
+                      </p>
+                      <p class="large color-grey">Rank {data.data[0].position}</p>
+                    </div>
+                  </a>
+
+                  <!-- ... RANK 3 ... -->
+                  <a
+                    target="_blank"
+                    rel="noreferrer"
+                    href={data.data[2].register_link}
+                    >
+
+                    <div 
+                      id="featured-rank" 
+                      style="margin-top: 20px;">
+
+                      <BronzeCup imageURL={data.data[2].image} />
+
+                      <!-- ... Featured Image Details ... -->
+                      <p 
+                        class="x-large color-black"
+                        class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+                        {data.data[2].title}
+                      </p>
+                      <p 
+                        class="large color-grey">
+                        Rank {data.data[2].position}
+                      </p>
+
+                    </div>
+                  </a>
+
                 </div>
-              </a>
+              {/if}
 
-              <!-- ... RANK 1 LOGO ... -->
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href={data.data[0].register_link}
-                >
-                <div 
-                  id="featured-rank"
-                  style="margin-bottom: 20px;">
-
-                  <GoldCup imageURL={data.data[0].image} />
-
-                  <!-- ... Featured Image Details ... -->
-                  <p 
-                    class="x-large color-black"
-                    class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-                    {data.data[0].title}
-                  </p>
-                  <p class="large color-grey">Rank {data.data[0].position}</p>
-                </div>
-              </a>
-
-              <!-- ... RANK 3 ... -->
-              <a
-                target="_blank"
-                rel="noreferrer"
-                href={data.data[2].register_link}
-                >
-
-                <div 
-                  id="featured-rank" 
-                  style="margin-top: 20px;">
-
-                  <BronzeCup imageURL={data.data[2].image} />
-
-                  <!-- ... Featured Image Details ... -->
-                  <p 
-                    class="x-large color-black"
-                    class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-                    {data.data[2].title}
-                  </p>
-                  <p 
-                    class="large color-grey">
-                    Rank {data.data[2].position}
-                  </p>
-
-                </div>
-              </a>
-
-            </div>
-          {/if}
-
-          <!-- ... title-box of the `Feature Site` list ... -->
-          <p 
-            id="title-box"
-            class="w-500 w-normal large">
-            {WIDGET_TRANSLATION.translations.title}
-          </p>
-
-          <!-- ... display the first 5 rows on Mobile; ... -->
-          {#each data.data.slice(0, limitViewRow) as item}
-              <FeaturedSiteRow 
-                data={item} 
-                {WIDGET_TRANSLATION} />
-          {/each}
-
-          <!-- ... show-more / show-less ... -->
-          {#if displayShowMore}
-            <div>
+              <!-- ... title-box of the `Feature Site` list ... -->
               <p 
-                id="show-more-box" 
-                on:click={() => toggleFullList()}>
-                {#if !showMore}
-                  {WIDGET_TRANSLATION.translations.show_more_less[0]}
-                {:else}
-                  {WIDGET_TRANSLATION.translations.show_more_less[1]}
-                {/if}
+                id="title-box"
+                class="w-500 w-normal large">
+                {WIDGET_TRANSLATION.translations.title}
               </p>
+
+              <!-- ... display the first 5 rows on Mobile; ... -->
+              {#each data.data.slice(0, limitViewRow) as item}
+                  <FeaturedSiteRow 
+                    data={item} 
+                    {WIDGET_TRANSLATION} />
+              {/each}
+
+              <!-- ... show-more / show-less ... -->
+              {#if displayShowMore}
+                <div>
+                  <p 
+                    id="show-more-box" 
+                    on:click={() => toggleFullList()}>
+                    {#if !showMore}
+                      {WIDGET_TRANSLATION.translations.show_more_less[1]}
+                    {:else}
+                      {WIDGET_TRANSLATION.translations.show_more_less[0]}
+                    {/if}
+                  </p>
+                </div>
+              {:else}
+                <p 
+                  id="show-more-box" 
+                  style="padding: 5px; box-shadow: none;" 
+                />
+              {/if}
             </div>
-          {:else}
-            <p 
-              id="show-more-box" 
-              style="padding: 5px; box-shadow: none;" 
-            />
+
           {/if}
-        </div>
+        {/each}
 
-      {/if}
-    {/each}
+    <!-- ... promise was rejected ... -->
+    {:catch error}
+      {error}
+    {/await}
 
-  <!-- ... promise was rejected ... -->
-  {:catch error}
-    {error}
-  {/await}
+  {/if}
 
 </div>
 
