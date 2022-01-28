@@ -29,6 +29,9 @@ We are building the first open-source live results and statistics platform with 
 
 ## ⚙ Development
 
+Check for the `origin/dev` environmnet version live on `Heroku` -> [betarena-scores-platform.herokuapp.com](https://betarena-scores-platform.herokuapp.com/).
+A more rigorous development link and `application` is being utilized for the development of the platform on a separate `Heroku` instance -> [scores-testing-app.herokuapp.com](https://scores-testing-app.herokuapp.com/).
+
 ### Built With
 
 This project is dependent on the following libraries and technologies:
