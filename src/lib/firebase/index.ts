@@ -14,11 +14,11 @@ import type { SelectedFixutre } from '$lib/model/response_models';
 /**
  * Description:
  * ~~~~~~~~~~~~~~~~~
- * Obtain the data from the `real_db` firebase DB
- * according to the users current geo-location
+ * ... obtain the data from the `real_db` firebase DB
+ * ... according to the users current geo-location
  *
  * @param userGeoLocation
- */
+*/
 export async function getTargetFixtureOdds(
 	fixture_data: SelectedFixutre
 ): Promise<SelectedFixture_LiveOdds_Response> {
@@ -56,16 +56,15 @@ export async function getTargetFixtureOdds(
 				for (const rankedOdd in sportbook_details) {
 					// ... iterate over the data of the fixture avaiable ODDS;
 					for (const avaiableOdd in fixture_odds_keys) {
+						// ...
+						const targetFixture = fixture_odds_keys[avaiableOdd];
+						const fixtureOdd = fixture_odds[targetFixture];
 						// ... check for a match of the odds names;
-						// if (dev) console.debug('sportbook_details', sportbook_details[rankedOdd]['title'].toString().toLowerCase());
-						if (
-							fixture_odds_keys[avaiableOdd].toString().toLowerCase() ==
-								sportbook_details[rankedOdd]['title'].toString().toLowerCase() &&
-							count != 1
-						) {
-							// if (dev) console.log('Match Found!')
-							const targetFixture = fixture_odds_keys[avaiableOdd];
-							const fixtureOdd = fixture_odds[targetFixture];
+						if (fixture_odds_keys[avaiableOdd].toString().toLowerCase() == sportbook_details[rankedOdd]['title'].toString().toLowerCase() &&
+							fixtureOdd['markets']['1X2FT'] != null &&
+							fixtureOdd['markets'] != null &&
+							count != 1) {
+							// ...
 							map.set('fixture_odds', fixtureOdd);
 							map.set('fixture_odds_info', sportbook_details[rankedOdd]);
 							count = 1;
@@ -83,14 +82,15 @@ export async function getTargetFixtureOdds(
 	);
 }
 
+
 /**
  * Description:
  * ~~~~~~~~~~~~~~~~~
- * Obtain the data from the `real_db` firebase DB
- * according to the users current geo-location
+ * ... obtain the data from the `real_db` firebase DB
+ * ... according to the users current geo-location
  *
  * @param userGeoLocation
- */
+*/
 export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise<any> {
 	// ... return the odds-site info & the odds values;
 	if (siteName != undefined) {
