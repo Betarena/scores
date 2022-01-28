@@ -57,6 +57,7 @@
 	import SvelteSeo from 'svelte-seo';
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
@@ -163,8 +164,10 @@
 <section id="home-page">
 	
 	{#if !mobileExclusive}
-		 <!-- ... 1st ROW ... -->
-		<div />
+		<!-- ... 1st ROW ... -->
+		<div> 
+			<LeagueListWidget />
+		</div>
 
 		<!-- ... 2nd ROW ... -->
 		<div />
@@ -189,6 +192,7 @@
 		display: grid;
 		max-width: 1430px;
 		grid-template-columns: 1fr;
+		align-items: start;
 	}
 
 	div.grid-display-column {
