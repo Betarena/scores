@@ -66,3 +66,33 @@ export interface League_List_Cache_Ready {
         }
     }[]
 }
+
+
+// ... 
+export interface League_List_Cache_SEO_Ready {
+    all_leagues_list: {
+        country_id: number
+        country_name: string
+        image_path: string
+        league_id: number
+        league_name: string
+        logo_path: string
+        type: string
+    }[]
+    unique_county_list: {
+        country_id: number
+        country_name: string
+        image_path: string
+    }[]
+    translations: {
+        lang: string
+        translations: {
+            search_form: string
+            top_leagues: string
+            leagues_by_country: string
+            widget_title: string
+            competitions_results: string
+            countries_results: string
+        }
+    }[]
+}

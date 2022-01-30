@@ -14,9 +14,12 @@
     import NoResults from "./_NoResults.svelte";
 
     import { post } from "$lib/api/utils";
-    import type { League_List_Cache_Ready } from "$lib/model/league_list/types";
+    import type { League_List_Cache_Ready, League_List_Cache_SEO_Ready } from "$lib/model/league_list/types";
 
     import { userBetarenaSettings } from "$lib/store/user-settings";
+
+    // ... main component variables;
+	export let LEAGUE_LIST_WIDGET_DATA_SEO: League_List_Cache_SEO_Ready;
 
     // ... widget-language-declaration;
     let server_side_language: string = 'en';
@@ -34,6 +37,7 @@
      * ... Returns PROMISE - [INTERFACE - `FinalFeaturedSiteResponseDB`]
     */
     let refresh: boolean = false;
+    let loaded: boolean = false;
 	let refresh_data: any = undefined;
     let league_list_data: League_List_Cache_Ready
     // ...
@@ -60,6 +64,9 @@
         // ... intercept the league_list data;
         league_list_data = response
 
+        // ...
+		loaded = true;
+
         // ... return the FINAL Promise Value;
         return response;
     }
@@ -70,6 +77,7 @@
     $: if (refresh_data) {
         // ... reset necessary variables;
         refresh = true
+        loaded = false
         setTimeout(async() => {
             refresh = false
         }, 50)
@@ -172,13 +180,42 @@
         });
     });
 
+    $: console.log('leagueSearch', leagueSearch)
+
 </script>
 
 <!-- ===============
   COMPONENT HTML 
 ==================== -->
 
-<!-- ... desktop ONLY ... -->
+<!-- ... SEO-DATA-LOADED ... -->
+{#if !loaded}
+    <div 
+        id="seo-league-list-box">
+        <!-- ... iterate over the data to find the correc language ... -->
+        {#each LEAGUE_LIST_WIDGET_DATA_SEO.translations as WIDGET_SEO}
+            <!-- ... obtain the correct widget translation ... -->
+            {#if WIDGET_SEO.lang == server_side_language}
+                <!-- ... translation-expressions ... -->
+                <p>{WIDGET_SEO.translations.widget_title}</p>
+                <p>{WIDGET_SEO.translations.top_leagues}</p>
+                <p>{WIDGET_SEO.translations.leagues_by_country}</p>
+            {/if}
+        {/each}
+        <!-- ... all-leagues-expressions ... -->
+        {#each LEAGUE_LIST_WIDGET_DATA_SEO.all_leagues_list as league}
+            <!-- content here -->
+            <p>{league.league_name}</p>
+        {/each}
+        <!-- ... all-unique-country-expressions ... -->
+        {#each LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list as country}
+            <!-- content here -->
+            <p>{country.country_name}</p>
+        {/each}
+    </div>
+{/if}
+
+<!-- ... desktop-ONLY ... -->
 {#if viewportDesktop}
 
     <!-- ... refresh status ... -->
@@ -219,7 +256,7 @@
                                     autocomplete="off" />
 
                                 <!-- ... erase-search-input ... -->
-                                {#if leagueSearch != ''}
+                                {#if leagueSearch != '' && leagueSearch != undefined}
                                     {#if $userBetarenaSettings.theme == 'Dark'}
                                         <!-- content here -->
                                         <img
@@ -468,6 +505,13 @@
 ==================== -->
 
 <style>
+
+    #seo-league-list-box {
+        position: absolute;
+        z-index: -100;
+        top: -9999px;
+        left: -9999px;
+    }
 
     #league-list {
         display: grid;
