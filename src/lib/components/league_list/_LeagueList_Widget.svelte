@@ -482,11 +482,11 @@
         padding: 20px 0;
     }
 
-    #league-list-search {
+    input#league-list-search {
         /* white theme/white */
         background: #FFFFFF;
         /* white theme/gray */
-        border: 1px solid #8C8C8C;
+        border: 1px solid #CCCCCC;;
         box-sizing: border-box;
         border-radius: 8px;
         padding: 12px 52px 12px 52px;
@@ -495,7 +495,11 @@
         background-position: 20px 50%;
         background-size: 20px 20px;
         width: -webkit-fill-available;
+        height: 44px;
         outline: none;
+        font-size: 14px;
+    } input#league-list-search:hover {
+        border: 1px solid #8C8C8C;
     } input#league-list-search:focus {
         border: 1px solid #4B4B4B;
     }
@@ -504,7 +508,7 @@
         position: absolute;
         z-index: 100;
         right: 40px;
-        top: 9.5px;
+        top: 12px;
     }
 
     #search-container {
@@ -529,7 +533,10 @@
 
     div#popular-list-container .top-league-container img,
     div#countires-list-container .country-league-container img {
-        object-fit: contain;
+        object-fit: cover;
+    }
+    div#countires-list-container .country-league-container img {
+        border-radius: 50%;
     }
 
     div.selectedCountry {
@@ -543,11 +550,11 @@
     div#countires-list-container .main-country-container {
         margin: 0 10px;
     } div#countires-list-container .country-league-container {
-        padding: 12.5px 10px;
+        padding: 12px 10px;
     } div#countires-list-container .selectedCountry .country-league-container {
-        padding: 11.5px 9px;
+        padding: 11px 9px;
     } div#countires-list-container .country-league-sub-container {
-        padding: 7px 9px;
+        padding: 9px 10px 10px 10px;
         background-color: white;
     } div#countires-list-container .country-league-sub-container:last-child {
         border-radius: 0 0 8px 8px;
@@ -572,8 +579,10 @@
         /* dark theme/bg */
         background-color: #4B4B4B !important;
         /* dark theme/light-gray */
-        border: 1px solid #737373;
+        border: 1px solid #616161;
         color: white;
+    } .dark-background-1 input#league-list-search:hover {
+        border: 1px solid #737373;
     } .dark-background-1 input#league-list-search:focus {
         border: 1px solid #CCCCCC;
         background-image: url('/assets/svg/league_list/search-white.svg');
