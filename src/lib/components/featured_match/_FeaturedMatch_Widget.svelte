@@ -33,7 +33,7 @@
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 
 	// ... main component variables;
-	export let FEATURED_MATCH_WIDGET_DATA_SEO: Array < TranslationsResponse >;
+	export let FEATURED_MATCH_WIDGET_DATA_SEO: TranslationsResponse;
 	let FEATURED_MATCH_WIDGET_DATA: FixtureResponse;
 
 	// ... intercept-key data;
@@ -465,7 +465,7 @@
 	<!-- ... SEO-DATA-LOADED ... -->
 	{#if !loaded && !nomatches}
 		<!-- ... iterate over the data to find the correc language ... -->
-		{#each FEATURED_MATCH_WIDGET_DATA_SEO as WIDGET_SEO_TRANSLATION}
+		{#each FEATURED_MATCH_WIDGET_DATA_SEO.widget_featured_match_translations as WIDGET_SEO_TRANSLATION}
 			<!-- ... obtain the correct widget translation ... -->
 			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<div id="seo-featured-match-box">
@@ -485,7 +485,7 @@
 	{#if nomatches && !loaded}
 		<!-- ... title of the widget ... -->
 		<!-- ... iterate over the data to find the correct language ... -->
-		{#each FEATURED_MATCH_WIDGET_DATA_SEO as WIDGET_SEO_TRANSLATION}
+		{#each FEATURED_MATCH_WIDGET_DATA_SEO.widget_featured_match_translations as WIDGET_SEO_TRANSLATION}
 			<!-- ... obtain the correct widget translation ... -->
 			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<!-- ... wiget-title ... -->

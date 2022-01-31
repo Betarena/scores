@@ -180,8 +180,6 @@
         });
     });
 
-    $: console.log('leagueSearch', leagueSearch)
-
 </script>
 
 <!-- ===============
