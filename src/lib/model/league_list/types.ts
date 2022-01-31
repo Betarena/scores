@@ -24,6 +24,9 @@ export interface Hasura_Complete_League_List_Type {
             widget_title: string
             competitions_results: string
             countries_results: string
+            full_list: string
+            no_results: string
+            hide: string
         }
     }[]
 }
@@ -63,6 +66,9 @@ export interface League_List_Cache_Ready {
             widget_title: string
             competitions_results: string
             countries_results: string
+            full_list: string
+            no_results: string
+            hide: string
         }
     }[]
 }
@@ -93,6 +99,9 @@ export interface League_List_Cache_SEO_Ready {
             widget_title: string
             competitions_results: string
             countries_results: string
+            full_list: string
+            no_results: string
+            hide: string
         }
     }[]
 }

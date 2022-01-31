@@ -10,6 +10,11 @@
 
     import close from './assets/close.svg'
     import close_white from './assets/close-white.svg'
+    import Africa from "./assets/_Africa.svelte";
+    import Asia from "./assets/_Asia.svelte";
+    import NorthCentralAmerica from "./assets/_North_Central_America.svelte";
+    import SouthAmerica from "./assets/_South_America.svelte";
+    import World from "./assets/_World.svelte";
 
     import NoResults from "./_NoResults.svelte";
 
@@ -328,12 +333,50 @@
                                             <div
                                                 class='country-league-container row-space-start'
                                                 on:click={() => selectCountryLeague(item.country_name)}>
-                                                <img 
-                                                    src={item.image_path} 
-                                                    alt=""
-                                                    title={item.country_name + '-image'} 
-                                                    width="20px" height="20px" 
-                                                    class='m-r-15' />
+                                                <!-- ... check-if-continent-selected ... -->
+                                                {#if item.country_id.toString() === '147'}
+                                                    <!-- content here -->
+                                                    <div
+                                                        style='width: auto;'
+                                                        class='row-space-start m-r-15'>
+                                                        <Africa />
+                                                    </div>
+                                                {:else if item.country_id.toString() === '11240938'}
+                                                    <!-- content here -->
+                                                    <div
+                                                        style='width: auto;'
+                                                        class='row-space-start m-r-15'>
+                                                        <Asia />
+                                                    </div>
+                                                {:else if item.country_id.toString() === '24143344'}
+                                                    <!-- content here -->
+                                                    <div
+                                                        style='width: auto;'
+                                                        class='row-space-start m-r-15'>
+                                                        <NorthCentralAmerica />
+                                                    </div>
+                                                {:else if item.country_id.toString() === '11555657'}
+                                                    <!-- content here -->
+                                                    <div
+                                                        style='width: auto;'
+                                                        class='row-space-start m-r-15'>
+                                                        <SouthAmerica />
+                                                    </div>
+                                                {:else if item.country_id.toString() === '99474'}
+                                                    <!-- content here -->
+                                                    <div
+                                                        style='width: auto;'
+                                                        class='row-space-start m-r-15'>
+                                                        <World />
+                                                    </div>
+                                                {:else}
+                                                    <img 
+                                                        src={item.image_path} 
+                                                        alt=""
+                                                        title={item.country_name + '-image'} 
+                                                        width="20px" height="20px" 
+                                                        class='m-r-15' />
+                                                {/if}
                                                 <p class='s-14 w-500 color-black'>
                                                     {item.country_name}
                                                 </p>
@@ -366,7 +409,7 @@
                                     <NoResults />
                                     <p 
                                         class='s-16 m-t-15 color-grey'>
-                                        No Results Found
+                                        {WIDGET_TRANSLATION.translations.no_results}
                                     </p>
                                 </div>
                             
@@ -413,9 +456,9 @@
                                         style='padding: 0 20px;'>
                                             {#if !showFullLeagueList}
                                                 <!-- content here -->
-                                                Show full list
+                                                {WIDGET_TRANSLATION.translations.full_list}
                                             {:else}
-                                                Hide full list
+                                                {WIDGET_TRANSLATION.translations.hide}
                                             {/if}
                                     </p>
                                 {/if}
@@ -474,9 +517,9 @@
                                         <!-- content here -->
                                         {#if !showFullCountryList}
                                             <!-- content here -->
-                                            Show full list
+                                            {WIDGET_TRANSLATION.translations.full_list}
                                         {:else}
-                                            Hide full list
+                                            {WIDGET_TRANSLATION.translations.hide}
                                         {/if}
                                     </p>
                                 {/if}
