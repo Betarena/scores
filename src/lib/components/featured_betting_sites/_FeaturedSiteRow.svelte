@@ -141,7 +141,8 @@
     <a 
       target="_blank" 
       rel="noreferrer" 
-      href={data.register_link}>
+      href={data.register_link}
+      aria-label={data.title}>
       <img
         style="background-color: var({imageVar}); border-radius: 4px;"
         src={data.image}

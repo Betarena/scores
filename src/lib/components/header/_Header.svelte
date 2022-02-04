@@ -196,6 +196,16 @@
 			selectedCountryBookmakers('en')
 		}
 	}
+
+	// ... reload-PAGE-check;
+	function reloadPage() {
+		// ... DEBUGGING;
+		if (dev) console.debug('reloading-page-method!')
+		// ...
+		if (server_side_language === 'en' ) { 
+			window.location.reload(); 
+		}
+	}
 </script>
 
 <!-- ===================
@@ -240,7 +250,7 @@
 							<!-- ... BETARENA LOGO [DESKTOP ONLY] ... -->
 						{:else}
 							<!-- ... brand-logo-betarena-for-desktop-ONLY ... -->
-							<div id="brand">
+							<div id="brand" on:click={() => reloadPage() }>
 								<a sveltekit:prefetch href="/">
 									<img
 										class="m-r-30"
