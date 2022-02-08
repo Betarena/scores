@@ -242,7 +242,7 @@
 						<!-- ... BETARENA LOGO ... -->
 						{#if mobileExclusive}
 							<!-- ... brand-logo-betarena-for-mobile-ONLY ... -->
-							<div id="brand">
+							<div id="brand" on:click={() => reloadPage() }>
 								<a sveltekit:prefetch href="/">
 									<img src={logo_mini} alt="betarena-logo" width="103px" height="30px" />
 								</a>
