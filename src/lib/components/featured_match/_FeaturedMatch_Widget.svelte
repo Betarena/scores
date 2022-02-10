@@ -31,6 +31,7 @@
 
 	// ... key component assets;
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
+	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
 
 	// ... main component variables;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: TranslationsResponse;
@@ -496,13 +497,29 @@
 		{/each}
 
 		<!-- ... no-matches-avaiable-placeholder container ...  -->
-		<div id='featured-no-match-box'
-			class='row-space-start'>
-			<img src={no_featured_match_visual} 
-				alt="no-featured-match-visual"
-				width="80px" height="80px"
-				class='m-r-20'
-			/>
+		<div 
+			id='featured-no-match-box'
+			class='row-space-start'
+			class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+			<!-- ... no-matches-visual ... -->
+			{#if $userBetarenaSettings.theme == 'Dark'}
+				<!-- content here -->
+				<img 
+					src={no_featured_match_visual_dark} 
+					alt="no-featured-match-visual_dark"
+					width="80px" height="80px"
+					class='m-r-20'
+				/>
+			{:else}
+				<!-- else content here -->
+				<img 
+					src={no_featured_match_visual} 
+					alt="no-featured-match-visual"
+					width="80px" height="80px"
+					class='m-r-20'
+				/>
+			{/if}
+			
 			<!-- ... container w/ text ... -->
 			<div>
 				<p class='s-16 m-b-8 w-500'> No Matches Available </p>

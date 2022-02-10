@@ -48,7 +48,9 @@ COMPONENT JS - BASIC
 =================== -->
 
 <script lang="ts">
+	import { getStores, navigating, page, session, updated } from '$app/stores';
   import { browser, dev } from '$app/env';
+  const { session } = getStores();
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
@@ -78,6 +80,10 @@ COMPONENT JS - BASIC
       window.addEventListener('offline', toggleOfflineAlert);
       window.addEventListener('online', toggleOfflineAlert);
   }
+
+  // ... DEBUGGING;
+  // $: if ($session) console.log('session', $session)
+  // $: if ($userBetarenaSettings) console.log('$userBetarenaSettings', $userBetarenaSettings)
 
   // ... HIDE/SHOW offline ALERT BADGE;
   let offlineMode: boolean = false;
