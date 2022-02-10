@@ -3,11 +3,12 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
+	import { getStores, navigating, page, session, updated } from '$app/stores';
 	import { amp, browser, dev, mode, prerendering } from '$app/env';
 	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 	import { fade, fly } from 'svelte/transition';
+	const { session } = getStores();
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
@@ -132,10 +133,10 @@
 
 	// ... immediately update the data with the countryBookemaker;
 	$: if (browser) {
-		if ($userBetarenaSettings.country_bookmaker == undefined) { 
+		// if ($userBetarenaSettings.country_bookmaker == undefined) { 
 			// ...
 			setUserCountryBookmakerLocation();
-		}
+		// }
 	}
 
 	// ~~~~~~~~~~~~~~
@@ -180,6 +181,9 @@
 		// ... get user GEO-LOCATION;
 		const userGeoResponse: GeoJsResponse = await getUserLocation()
 		let userGeo = userGeoResponse.country_code.toLowerCase()
+		// ... store as session;
+		// $session.geojs = userGeoResponse 
+		userBetarenaSettings.setGeoJs(userGeoResponse)
 		// ... VALIDATION;
 		// ... check that the `country-GEO` is available on the list;
 		const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.find(function(item) { 
@@ -202,9 +206,7 @@
 		// ... DEBUGGING;
 		if (dev) console.debug('reloading-page-method!')
 		// ...
-		if (server_side_language === 'en' ) { 
-			window.location.reload(); 
-		}
+		window.location.reload(); 
 	}
 </script>
 
@@ -1200,6 +1202,12 @@
 		padding: 3px 8px;
 		background: #4b4b4b;
 		border-radius: 20px;
+	}
+	button.sports-btn > div > p {
+		overflow: hidden;
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		max-width: 101px;
 	}
 
 	button#more-sports-menu {

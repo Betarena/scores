@@ -4,17 +4,20 @@
 
 import { dev } from '$app/env';
 import { writable } from 'svelte/store';
+import type { GeoJsResponse } from '$lib/model/geo-js-interface';
 
 interface User_Setting {
 	lang: string;
 	theme: string;
 	country_bookmaker: string;
+	geoJs: GeoJsResponse
 }
 
 const user_settings: User_Setting = {
 	lang: undefined,
 	theme: undefined,
-	country_bookmaker: undefined
+	country_bookmaker: undefined,
+	geoJs: undefined
 }
 
 /**
@@ -51,7 +54,8 @@ function createLocalStore(key: any): any {
 				  {
 						lang: 'en',
 						theme: 'Light',
-						country_bookmaker: undefined
+						country_bookmaker: undefined,
+						geoJs: undefined
 				  };
 			// ... DEBUGGING;
 			if (dev) console.debug('-- exisitng_data --', exisitng_data);
@@ -131,7 +135,33 @@ function createLocalStore(key: any): any {
 			localStorage.setItem(key, JSON.stringify(existing_data));
 			// ... update the `set()` data;
 			set(existing_data);
+		},
+
+		/**
+		 * Description:
+		 * ~~~~~~~~~~~~~~~~~
+		 * ... method to add the user seleted theme
+		 * ... to the localStoage & application store
+		 * ... [WORKING]
+		 *
+		 * ... @param {*} country_bookmaker
+		*/
+		setGeoJs: (geojs_res: GeoJsResponse) => {
+			// ... DEBUGGING;
+			// if (dev) console.debug('-- country_bookmaker-select --', geojs_res);
+			// ... GET DATA FROM LOCALSTORAGE();
+			const existing: string = localStorage.getItem(key);
+			// ... CONVERT TO JSON;
+			const existing_data: User_Setting = JSON.parse(existing);
+			// ... UPDATE THE DATA FOR LANG;
+			existing_data.geoJs = geojs_res;
+			// ... UPDATE THE LOCALSTORAGE();
+			localStorage.setItem(key, JSON.stringify(existing_data));
+			// ... update the `set()` data;
+			set(existing_data);
 		}
+
+
 	};
 }
 
