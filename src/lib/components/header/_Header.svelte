@@ -1203,12 +1203,7 @@
 		background: #4b4b4b;
 		border-radius: 20px;
 	}
-	button.sports-btn > div > p {
-		overflow: hidden;
-		white-space: nowrap;
-		text-overflow: ellipsis;
-		max-width: 101px;
-	}
+
 
 	button#more-sports-menu {
 		padding: 12.5px 16px;
@@ -1260,6 +1255,13 @@
 
 		#burger-menu {
 			margin-right: 24px;
+		}
+
+		button.sports-btn > div > p {
+			overflow: hidden;
+			white-space: nowrap;
+			text-overflow: ellipsis;
+			max-width: 101px;
 		}
 	}
 
