@@ -138,8 +138,8 @@ import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.sve
 			title={item.main_data.title}
 			description={item.main_data.description}
 			keywords={item.main_data.keywords}
-			noindex={item.main_data.noindex}
-			nofollow={item.main_data.nofollow}
+			noindex={JSON.parse(item.main_data.noindex.toString())}
+			nofollow={JSON.parse(item.main_data.nofollow.toString())}
 			canonical={item.main_data.canonical}
 
 			twitter={item.twitter_card}
