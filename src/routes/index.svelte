@@ -83,12 +83,14 @@
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
+import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
 
 	// ... PAGE PRE-LOADED DATA;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
 	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
+	export let LIVE_SCORES_DATA_DATA_SEO;
 
 	// ... redirecting the users to the correct translation page [THAT IS NOT EN]
 	$: if (dev) console.debug('$userBetarenaSettings', $userBetarenaSettings);
@@ -179,9 +181,13 @@
 			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
 		</div>
 
-		<!-- ... 2nd ROW ... -->
-		<div />
 	{/if}
+
+
+		<!-- ... 2nd ROW ... -->
+		<div >
+			<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
+		</div>
 	
   {#if !mobileExclusive}
     <!-- ... 3rd ROW ... -->
