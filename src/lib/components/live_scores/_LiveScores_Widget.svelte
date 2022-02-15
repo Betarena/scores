@@ -2,28 +2,15 @@
 	COMPONENT JS (w/ TS)
 ==================== -->
 <script lang="ts">
-	// ... svelte-imports;
-	import { onMount } from 'svelte';
-	import { fade } from 'svelte/transition';
-	import { browser, dev } from '$app/env';
-
-	// ... external modules imports;
-	import ColorThief from 'colorthief/dist/color-thief.mjs';
 
 	// ... external components import;
 	// ... external `exports` imports;
 	import { db_real } from '$lib/firebase/init';
 	import { ref, onValue, orderByValue } from 'firebase/database';
-	import { getUserLocation } from "$lib/geoJs/init"
 
 	// ... DECLARING TYPESCRIPT-TYPES imports;
-	import type { fixture } from '$lib/store/vote_fixture';
-	import type { FixtureResponse } from '$lib/model/interface-fixture';
-	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response, TranslationsResponse, LiveScoreGame, LiveScoreLeagueGame, LiveScoreLeague, DayName, LiveScoreIcon, LiveScoreBookIcon } from '$lib/model/response_models';
+	import type {  TranslationsResponse, LiveScoreGame, LiveScoreLeagueGame, LiveScoreLeague, DayName, LiveScoreIcon, LiveScoreBookIcon } from '$lib/model/response_models';
 	import { page } from '$app/stores'
-	import { post } from '$lib/api/utils'
-	import type { GeoJsResponse } from "$lib/model/geo-js-interface"
-	import { xlink_attr } from 'svelte/internal';
 	import { GET_LIVESCORES_LEAGUES, GET_LIVESCORES_TRANSLATIONS } from '$lib/graphql/query';
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
@@ -31,12 +18,10 @@
 	import play from './assets/play.svg'
 	import play_dark from './assets/play_dark.svg'
 	import redcard from './assets/card.svg'
-	import live from './assets/live.svg'
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import PlaceholderLivescores from './loaders/_Placeholder_Livescores.svelte';
 	export let LIVE_SCORES_DATA_DATA_SEO: TranslationsResponse;
 
-	var leagueSortCountry = 'en';
 	var leagueSort = {};
 
 	let TABLE_GAMES: { [key: string]: LiveScoreLeague[] } = {};
@@ -45,7 +30,7 @@
 	let currentSelection = 0;
 	let currentTable = 'livescores_today';
 	let lastTable = 'livescores_today';
-	let totalGames = 0;
+	
 	let isMoreGames: boolean = false;
 	let loaded: boolean = false;
 	let nomatches: boolean = false;
@@ -101,7 +86,7 @@
 
 	// ... Listen To Real-Time Firebase ODDS Updates [WORKING]
 	async function listenRealTimeOddsChange(table:string,all:boolean): Promise < LiveScoreLeague[] > {
-		totalGames = 0;
+		
 		let data: LiveScoreLeague[] = [];
 		console.log("SHier " + table);
 		console.log(LIVE_SCORES_DATA_DATA_SEO);
@@ -118,9 +103,9 @@
 
 		listens[table] = true;
 		onValue(ref(db_real,fullTable), (snapshot) => {
-			// ... DEBUGGING; 
+			
 			data =[]; 
-			totalGames = 0;
+			
 			let games: LiveScoreGame[] = snapshot.val();
 	
 			for(var g in games){  			
@@ -155,7 +140,6 @@
 					l = league;
 				} 
 
-				totalGames++;
 				l.games.push(newGame);
 			}
 
