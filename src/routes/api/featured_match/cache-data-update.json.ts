@@ -9,9 +9,9 @@ import { GET_ALL_FIXTURE_DATA, GET_LANG_SELECTED_FIXTURE, GET_ALL_SELECTED_MATCH
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { FixtureResponse } from "$lib/model/interface-fixture"
-import type { SelectedFixutre, SelectedFixture_AllData, CompleteFixtureData_Response } from "$lib/model/response_models"
-import type { SelectedFixture_LiveOdds_Response } from "$lib/model/firebase-real-db-interface"
+import type { FixtureResponse } from "$lib/models/featured_match/interface-fixture"
+import type { SelectedFixutre, SelectedFixture_AllData, CompleteFixtureData_Response } from "$lib/models/featured_match/response_models"
+import type { SelectedFixture_LiveOdds_Response } from "$lib/models/featured_match/firebase-real-db-interface"
 
 // ... server-variables;
 let userGeo: string

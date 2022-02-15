@@ -5,7 +5,7 @@ import { dev } from '$app/env';
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
+import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}

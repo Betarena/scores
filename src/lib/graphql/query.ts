@@ -6,40 +6,7 @@ import { gql } from 'graphql-request';
  * ~~~~~~~~~~~~~
  * ... get ALL of the TRANSLATIONS from the DB
  * for the website-platform
- */
-export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
-	query GET_WEBSITE_ALL_LANG_TRANSLATIONS @cached(ttl: 300) {
-		scores_header_translations_dev {
-			theme_options
-			theme
-			sports
-			sign_in
-			odds_type
-			odds
-			more_sports
-			lang
-			homepage
-			betting_tips_link
-			bookmakers
-			bookmakers_countries
-			content_platform_link
-			sports_list
-		}
-		scores_header_links_dev {
-			betting_tips
-			lang
-			latest_news
-		}
-	}
-`;
-
-
-/**
- * Description
- * ~~~~~~~~~~~~~
- * ... get ALL of the TRANSLATIONS from the DB
- * for the website-platform
- */
+*/
  export const GET_FOOTER_DATA = gql`
  query GET_FOOTER_DATA @cached(ttl: 300) {
 		scores_footer_translations_dev {
@@ -72,7 +39,7 @@ export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
- */
+*/
 export const GET_FEATURED_MATCH_TRANSLATION = gql`
 	query GET_FEATURED_MATCH_TRANSLATION @cached(ttl: 300) {
 		widget_featured_match_translations {
@@ -109,7 +76,7 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
- */
+*/
  export const GET_ALL_SELECTED_MATCH_FIXTURES = gql`
 	query GET_ALL_SELECTED_MATCH_FIXTURES @cached(ttl: 300) {
 		widget_featured_match_selection {

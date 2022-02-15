@@ -8,7 +8,7 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
 import { GET_COMPLETE_PAGES_SEO_DATA } from '$lib/graphql/page_seo/query'
-import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types'
+import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types'
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
