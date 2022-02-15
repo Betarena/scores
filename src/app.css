@@ -173,6 +173,9 @@ FONT EXTRA STYLES
 .cursor-pointer {
 	cursor: pointer;
 }
+.cursor-not-allowed {
+	cursor: not-allowed !important;
+}
 /* 
 ~~~~~~~~~~~~
 FONT WEIGHT 

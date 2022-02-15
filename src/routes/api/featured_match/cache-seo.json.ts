@@ -5,7 +5,7 @@ import { dev } from '$app/env';
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { Featured_Match_Translation_Response, TranslationsResponse } from '$lib/model/response_models';
+import type { Featured_Match_Translation_Response, TranslationsResponse } from '$lib/models/featured_match/response_models';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}

@@ -8,8 +8,8 @@ import { ref, get, child } from 'firebase/database';
 
 import { db_real } from './init';
 
-import type { SelectedFixture_LiveOdds_Response } from '$lib/model/firebase-real-db-interface';
-import type { SelectedFixutre } from '$lib/model/response_models';
+import type { SelectedFixture_LiveOdds_Response } from '$lib/models/featured_match/firebase-real-db-interface';
+import type { SelectedFixutre } from '$lib/models/featured_match/response_models';
 
 /**
  * Description:

@@ -5,7 +5,7 @@ import { dev } from '$app/env';
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { Scores_Featured_Betting_Sites_Hasura } from '$lib/model/featured_betting_sites/firebase-real-db-interface';
+import type { Scores_Featured_Betting_Sites_Hasura } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}

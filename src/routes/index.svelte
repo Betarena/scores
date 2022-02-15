@@ -73,7 +73,7 @@
 
 	import { onMount } from 'svelte';
 
-	import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
+	import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
 
 	// ... import `variables` and values;
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -183,14 +183,25 @@
 		<div />
 	{/if}
 	
-	<!-- ... 3rd ROW ... -->
-	<div 
-		class='grid-display-column'>
-		<!-- ... widget #1 ... -->
-		<FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
-		<!-- ... widget #2 ... -->
-		<FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
-	</div>
+  {#if !mobileExclusive}
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <!-- ... widget #1 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+    </div>
+  {:else}
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <!-- ... widget #1 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+    </div>
+  {/if}
 	
 </section>
 

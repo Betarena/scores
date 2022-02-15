@@ -24,8 +24,8 @@
 
 	// ... DECLARING TYPESCRIPT-TYPES imports;
 	import type { fixture } from '$lib/store/vote_fixture';
-	import type { FixtureResponse } from '$lib/model/interface-fixture';
-	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response, TranslationsResponse } from '$lib/model/response_models';
+	import type { FixtureResponse } from '$lib/models/featured_match/interface-fixture';
+	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response, TranslationsResponse } from '$lib/models/featured_match/response_models';
 	import { page } from '$app/stores'
 	import { post } from '$lib/api/utils'
 
