@@ -42,6 +42,13 @@
 		// ... DEBUGGING;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
+				// ... GET RESPONSE;
+		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+		// ... DEBUGGING;
+		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+
 		// ... return, RESPONSE DATA;
 		if (response_featured_match && response_featured_betting_sites) {
 			return {
@@ -49,7 +56,8 @@
 					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
 					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
 					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
-					PAGE_DATA_SEO: response_seo_page
+					PAGE_DATA_SEO: response_seo_page,
+					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football
 				}
 			};
 		}
