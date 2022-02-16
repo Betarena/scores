@@ -1062,7 +1062,9 @@
                                 {sport[1]}
                               </p>
                             </div>
-                            <p class="color-white s-14 sport-counter">123</p>
+                            <p class="color-white s-14 sport-counter">
+                              {sports_info[sport[0].toString().toLowerCase()]}
+                            </p>
                           </button>
                         {:else}
                           <!-- else content here -->
@@ -1169,8 +1171,8 @@
 		height: 100vh;
 		width: 100%;
 		padding: 14px 16px;
-		position: fixed;
-		z-index: 1000;
+    position: absolute;
+    z-index: 1000000000;
 		top: 0;
 		bottom: 0;
 		right: 0;

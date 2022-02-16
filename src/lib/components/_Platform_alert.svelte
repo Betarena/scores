@@ -64,8 +64,9 @@
 		z-index: 20000;
 	}
   img#close-platform-alert-img {
-      position: absolute;
-      top: 9px;
-      right: 16px;
+    position: absolute;
+    right: 16px;
+    top: 50%;
+    transform: translate(-50%, -50%);
   }
 </style>
