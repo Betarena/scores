@@ -34,8 +34,6 @@
 	let lastTable = 'livescores_today';
 	
 	let isMoreGames: boolean = false;
-	let loaded: boolean = false;
-	let nomatches: boolean = false;
 	let refresh: boolean = false;
 	let refresh_data: any = undefined;
 	let LIVESCORES_TRANSLATIONS: any = {};
@@ -179,7 +177,6 @@
 	$: if (refresh_data) {
 		// ... reset necessary variables;
 		refresh = true
-		loaded = false
 		// ... give X seconds for re-render component;
 		setTimeout(async() => {
 			refresh = false
@@ -242,15 +239,12 @@ function getLeagueOrder(league_id: number,country:string):  number {
 
 async function widgetInit(): Promise < void > {
 	listenBettingIcon();
-	console.log(userBetarenaSettings);
+	
 	if($userBetarenaSettings.country_bookmaker)
 		userBook = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 	if($userBetarenaSettings.geoJs)
 		userGeo = $userBetarenaSettings.geoJs.country_code.toLowerCase()
-
-		console.log($userBetarenaSettings.geoJs.country_code);
-	console.log("User Geo:"+ userBook);
-	loaded = true;
+		
 	bookIcons = bookIcons;
 	return response;
 }
@@ -304,6 +298,7 @@ $: if (refresh_data) {
 			 	{/each}
 		</div>
 		</div>
+	<!-- svelte-ignore empty-block -->
 	{#await listenRealTimeOddsChange(currentTable,false)}
 	{:then data} 
 	<div class="betarena-menu" style=""><span class="lnkAll {currentSelection == 0?'lnkSelected':''}" on:click="{
@@ -461,11 +456,7 @@ $: if (refresh_data) {
 			background: transparent !important;
 		}
 
-		.game-table-container .day.selected {
-			background: #F5620F !important;
-			box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32) !important;
-			border-radius: 6px !important;
-		}
+	
 
 		.game-table-container .day.current div:nth-child(1), .game-table-container .day.current div:nth-child(2) {
 			color: #F5620F !important;
@@ -497,20 +488,12 @@ $: if (refresh_data) {
 		color: white !important;
 	}
 
-	.theme-dark.game-table-container .day.selected:hover {
-		background: #F5620F !important;
-		color: white !important;
-	}
+
 
 	.theme-dark.game-table-container .day:hover div:nth-child(1), .theme-dark.game-table-container .day:hover div:nth-child(2) {
 		color: white !important;
 	}
 
-	.game-table-container .day.selected:hover {
-		background: #F5620F !important;
-		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32) !important;
-		border-radius: 6px !important;
-	}
 
 
 
@@ -589,11 +572,6 @@ $: if (refresh_data) {
 	display: flex;
 }
 
-.full-time .game-time {
-	color: #8C8C8C;
-	font-size: 14px;
-	
-}
 
 
 
@@ -606,24 +584,8 @@ $: if (refresh_data) {
 		flex-grow: 1;
 	}
 
-	.league-body .game-tip {
-		color: #292929 !important;
-		font-size: 12px !important;
-		font-weight: 500 !important;
-		padding: 6px 12px !important;
-		height: auto !important;
-		width: auto !important;
-		border: 1px solid #CCCCCC !important;
-		box-sizing: border-box !important;
-		backdrop-filter: blur(20px) !important;
-		border-radius: 4px !important;
-		background: transparent !important;
-	}
 
-		.league-body .game-tip:hover {
-			color: #F5620F !important;
-			border: 1px solid #F5620F !important;
-		}
+	
 
 	.league-body .lnk-book {
 		display: flex;
@@ -650,8 +612,12 @@ $: if (refresh_data) {
 	font-family: "Roboto", Sans-serif !important;
 }
 
-.theme-dark .game-result .result:not(.loser){
-	color: white !important;;
+.theme-dark .league-body:not(.in-progress) .game-result .result:not(.loser){
+	color: white !important;
+}
+
+.theme-dark .game-result .result .in-progress{
+	color: #FF0A0A !important;
 }
 
 .in-progress .game-result .game-time, .in-progress .game-result .result {
@@ -675,7 +641,7 @@ $: if (refresh_data) {
 	color: #F5620F !important;
 }
 
-.mainFrame *, .game-table-container {
+ .game-table-container {
 	font-family: 'Roboto'
 }
 
@@ -957,10 +923,7 @@ a.table-game-tip {
 .team.loser {
 	color: #8C8C8C!important;
 }
-/*
-.full-time .result:not(.loser) {
-	color: #292929;
-}*/
+
 
 .in-progress .game-time,.in-progress .result{
 	color:red!important;
