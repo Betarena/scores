@@ -31,10 +31,9 @@ export async function get(): Promise < any > {
     for(var l in langs){
       let lang:string = langs[l];
       let langDate: LiveScore_SEO_Game_Scoped_Lang[] = [];
-        for(var p in response){
-          let day = response[p];
-          for(var g in day){
-            var game = day[g];
+      
+          for(var g in response){
+            var game = response[g];
             const newGame:  LiveScore_SEO_Game_Scoped_Lang={             
               visitorteam: game.visitorteam,
               localteam: game.localteam,
@@ -43,7 +42,7 @@ export async function get(): Promise < any > {
             }
             langDate.push(newGame);            
           }
-        }
+        
         cacheFeaturedBettingSiteGeoPos(lang,langDate);
     }
 

@@ -264,6 +264,9 @@ $: if (refresh_data) {
 			<a href="{d.link}">{d.link}</a>
 		{/each}
 	{/if}
+	{#if LIVESCORES_TRANSLATIONS[server_side_language] }
+		<p>{LIVESCORES_TRANSLATIONS[server_side_language].terms['Game Table']}</p>
+	{/if}
  </div>
 {#if !refresh}
 
