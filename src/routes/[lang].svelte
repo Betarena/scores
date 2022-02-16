@@ -44,7 +44,14 @@
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
 			method: 'GET'
 		}).then((r) => r.json());
+		
+		const response_livescores_football_leagues = await fetch('/api/live_scores/cache-data.json', {
+			method: 'GET'
+		}).then((r) => r.json());
 
+		const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
+			method: 'GET'
+		}).then((r) => r.json());
 		// ... return, RESPONSE DATA;
 		if (response_featured_match && response_featured_betting_sites) {
 			return {
@@ -53,7 +60,10 @@
 					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
 					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
 					PAGE_DATA_SEO: response_seo_page,
-					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football
+					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
+					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
+					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations
+
 
 				}
 			};
@@ -82,13 +92,14 @@
 
 	import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
   import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
+import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
 	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
 	export let LIVE_SCORES_DATA_DATA_SEO;
-
+	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 	// ... page-language-declaration;
 	let server_side_language: string = 'en';
 	// ... language-translation-declaration;
@@ -171,7 +182,7 @@
   {#if !mobileExclusive}
     <!-- ... 2nd ROW ... -->
     <div >
-      <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
+		<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
     </div>
     <!-- ... 3rd ROW ... -->
     <div 

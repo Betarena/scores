@@ -82,7 +82,6 @@ export interface All_SportBook_Details_Data {
 }
 //	let TABLE_GAMES: { [key: string]: LiveScoreLeague[] } = {};
 
-export interface All_Livescores_Football{[key: string]:LiveScore_SEO_Game[]};
 
 
 export interface LiveScore_SEO_Game{

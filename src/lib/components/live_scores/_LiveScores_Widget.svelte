@@ -11,7 +11,7 @@
 	// ... DECLARING TYPESCRIPT-TYPES imports;
 	import type {  TranslationsResponse, LiveScoreGame, LiveScoreLeagueGame, LiveScoreLeague, DayName, LiveScoreIcon, LiveScoreBookIcon } from '$lib/model/response_models';
 	import { page } from '$app/stores'
-	import { GET_LIVESCORES_LEAGUES, GET_LIVESCORES_TRANSLATIONS } from '$lib/graphql/query';
+	import { GET_LIVESCORES_TRANSLATIONS } from '$lib/graphql/query';
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
 	// ... key component assets;
@@ -21,8 +21,11 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import PlaceholderLivescores from './loaders/_Placeholder_Livescores.svelte';
 	import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/model/featured_betting_sites/firebase-real-db-interface';
+	import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';	
 
 	export let LIVE_SCORES_DATA_DATA_SEO: LiveScore_SEO_Game_Scoped_Lang[];
+	export let LIVE_SCORES_DATA_LEAGUES: any;
+	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 
 	var leagueSort = {};
 
@@ -56,7 +59,7 @@
 	}
 	let userBook = '';
 	let userGeo = '';
-	
+
 	async function listenBettingIcon(): Promise<{ [key: string]: LiveScoreBookIcon }> {
 
 		if(requestedIcons) {
@@ -182,41 +185,11 @@
 			refresh = false
 		}, 50)
 	}
-
-	const response = initGrapQLClient().request(GET_LIVESCORES_TRANSLATIONS).then(x=>{
-		let translations = x.scores_livescore_football_translations_dev;
-		for(var k  = 0;  k < translations.length;k++){
-			LIVESCORES_TRANSLATIONS[translations[k].lang] = {};
-			LIVESCORES_TRANSLATIONS[translations[k].lang].status = {};
-			LIVESCORES_TRANSLATIONS[translations[k].lang].status_abv = {};
-			LIVESCORES_TRANSLATIONS[translations[k].lang].terms = {};
-
-			for(var i in translations[k].terms){
-				let a = translations[k].terms[i];
-				LIVESCORES_TRANSLATIONS[translations[k].lang].terms[a[0]] = a.slice(1);
-			}
-		}
-
-		LIVESCORES_TRANSLATIONS = LIVESCORES_TRANSLATIONS;
-		LIST_DAYS= LIST_DAYS;
-		renderDays();
-	});
 	
-	const responseLeagues = initGrapQLClient().request(GET_LIVESCORES_LEAGUES).then(x=>{
-		let leagues = x.leagues_filtered_country_dev;
-		for(var k  = 0;  k < leagues.length;k++){
-			if(leagues[k].lang == null) continue;
-			for(var i = 0; i < leagues[k].leagues.length;i++)
-			{
-				leagues[k].leagues[i].index = i;
-			}
-			leagueSort[leagues[k].lang] = leagues[k].leagues;
-		}
-		leagueSort = leagueSort;
-	});
-
+	leagueSort = LIVE_SCORES_DATA_LEAGUES;
 
 	listenRealTimeOddsChange('livescores_now',false);
+
 
 function getLeagueOrders(league_id: number): { [key: string]: number; } {
 	let retVal: { [key: string]: number; } = {};
@@ -239,6 +212,26 @@ function getLeagueOrder(league_id: number,country:string):  number {
 
 async function widgetInit(): Promise < void > {
 	listenBettingIcon();
+
+	let translations:LiveScores_Football_Translation[] = LIVE_SCORES_FOOTBALL_TRANSLATIONS;
+	
+
+		for(var k in translations){
+			LIVESCORES_TRANSLATIONS[translations[k].lang] = {};
+			LIVESCORES_TRANSLATIONS[translations[k].lang].status = {};
+			LIVESCORES_TRANSLATIONS[translations[k].lang].status_abv = {};
+			LIVESCORES_TRANSLATIONS[translations[k].lang].terms = {};
+
+			for(var i in translations[k].terms){
+				let a = translations[k].terms[i];
+				LIVESCORES_TRANSLATIONS[translations[k].lang].terms[a[0]] = a.slice(1);
+			}
+		}
+
+		LIVESCORES_TRANSLATIONS = LIVESCORES_TRANSLATIONS;
+		LIST_DAYS= LIST_DAYS;
+		renderDays();
+	
 	
 	if($userBetarenaSettings.country_bookmaker)
 		userBook = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
@@ -246,7 +239,7 @@ async function widgetInit(): Promise < void > {
 		userGeo = $userBetarenaSettings.geoJs.country_code.toLowerCase()
 		
 	bookIcons = bookIcons;
-	return response;
+	return null;
 }
 
 
@@ -267,8 +260,8 @@ $: if (refresh_data) {
 		{#each LIVE_SCORES_DATA_DATA_SEO as d}
 			<p>{d.visitorteam}</p>
 			<p>{d.localteam}</p>
-			<p>{d.tip}</p>
-			<p>{d.link}</p>
+			<a href="{d.tip}">{d.tip}</a>
+			<a href="{d.link}">{d.link}</a>
 		{/each}
 	{/if}
  </div>

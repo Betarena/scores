@@ -43,7 +43,15 @@
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
 				// ... GET RESPONSE;
-		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json', {
+		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang=en', {
+			method: 'GET'
+		}).then((r) => r.json());
+
+		const response_livescores_football_leagues = await fetch('/api/live_scores/cache-data.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+
+		const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 		// ... DEBUGGING;
@@ -57,7 +65,9 @@
 					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
 					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
 					PAGE_DATA_SEO: response_seo_page,
-					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football
+					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
+					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
+					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations
 				}
 			};
 		}
@@ -91,7 +101,8 @@
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
+	import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
+import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	// ... PAGE PRE-LOADED DATA;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
@@ -99,6 +110,8 @@ import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.sve
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
 	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
 	export let LIVE_SCORES_DATA_DATA_SEO;
+	export let LIVE_SCORES_DATA_LEAGUES;
+	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 
 	// ... redirecting the users to the correct translation page [THAT IS NOT EN]
 	$: if (dev) console.debug('$userBetarenaSettings', $userBetarenaSettings);
@@ -194,7 +207,7 @@ import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.sve
 
 		<!-- ... 2nd ROW ... -->
 		<div >
-			<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
+			<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
 		</div>
 	
   {#if !mobileExclusive}

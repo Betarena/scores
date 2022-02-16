@@ -6,7 +6,7 @@ import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
 import type { League_List_Cache_SEO_Ready } from '$lib/models/league_list/types'
-import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
+import { GET_LIVESCORES_LEAGUES, GET_LIVESCORES_TRANSLATIONS } from '$lib/graphql/query';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
@@ -15,9 +15,8 @@ import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_bettin
 // ...
 export async function get(req, res): Promise<any> {
 
-   let lang = req.url['searchParams'].get('lang');
-    // ... check for cache-existance [IN THE USER-GEO-POS];
-    const response_usergeo = await getLiveScoresFootball(lang)
+ 
+    const response_usergeo = await getLiveScoresFootballLeagues()
     // ... DEBUGGING;
     // if (dev) console.debug('-- response_cache --', response_usergeo)
     // ... return RESPONSE;
@@ -39,24 +38,24 @@ export async function get(req, res): Promise<any> {
 // - getFeaturedMatchForGeoPosFromCache(geoPos)
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getLiveScoresFootball(lang:string): Promise < LiveScore_SEO_Game_Scoped_Lang[] | Record < string, never > > {
+async function getLiveScoresFootballLeagues(): Promise < any | Record < string, never > > {
     // ... TRY;
     try {
         // ... cached data retrival;
-        const cached: string = await redis.hget('live_scores',lang);
+        const cached: string = await redis.get('live_scores_leagues');
         // ... check for `cached` data
         if (cached) {
             // ... convert the data from `string` to `JSON`
-            const parsed: LiveScore_SEO_Game_Scoped_Lang[] = JSON.parse(cached);
+            const parsed: any = JSON.parse(cached);
             // ... DEBUGGING;
-            if (dev) console.info(`Found seo - live_scores - in cache`);
+            if (dev) console.info(`Found seo - live_scores_leagues - in cache`);
             // ... return, cached data;
             return parsed;
         }
     } 
     // ... CATCH, ERROR;
     catch (e) {
-      console.debug("Unable to retrieve from cache", 'live_scores', lang, e);
+      console.debug("Unable to retrieve from cache", 'live_scores_leagues',  e);
     }
     return
 }

@@ -8,7 +8,7 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
 import { getAllLiveScoresFootball } from '$lib/firebase/livescores_football'
-import type { All_Livescores_Football, All_SportBook_Details_Data, LiveScore_SEO_Game_Scoped_Lang, Scores_Featured_Betting_Sites_Hasura } from '$lib/model/featured_betting_sites/firebase-real-db-interface'
+import type { LiveScore_SEO_Game, All_SportBook_Details_Data, LiveScore_SEO_Game_Scoped_Lang, Scores_Featured_Betting_Sites_Hasura } from '$lib/model/featured_betting_sites/firebase-real-db-interface'
 
 // ... server-variables;
 let userGeo: string
@@ -25,7 +25,7 @@ export async function get(): Promise < any > {
     // ... clear the cache data for `livescores_data`
     await deleteLiveScores()
     // ... get all of the SELECTED FIXTURES from HASURA;
-    const response:All_Livescores_Football = await getLiveScores()
+    const response:LiveScore_SEO_Game[] = await getLiveScores()
 
     //Aggregate games by language
     for(var l in langs){
@@ -87,9 +87,9 @@ async function deleteLiveScores() {
 // - getLiveScores()
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getLiveScores(): Promise <All_Livescores_Football > {
+async function getLiveScores(): Promise <LiveScore_SEO_Game[] > {
     // ...
-    const liveScores: All_Livescores_Football = await getAllLiveScoresFootball();
+    const liveScores: LiveScore_SEO_Game[] = await getAllLiveScoresFootball();
     // ... DEBUGGING;
     if (dev) console.info('live_scores',Object.keys(liveScores));
 
