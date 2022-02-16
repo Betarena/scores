@@ -80,3 +80,24 @@ export interface All_SportBook_Details_Data {
     }[]
     data: Array < FeaturedSite >
 }
+//	let TABLE_GAMES: { [key: string]: LiveScoreLeague[] } = {};
+
+export interface All_Livescores_Football{[key: string]:LiveScore_SEO_Game[]};
+
+
+export interface LiveScore_SEO_Game{
+    tips: { [key: string]: {
+            link: string
+    }};
+    localteam:string;
+    visitorteam:string;
+    links: { [key: string]: string;}
+}
+
+
+export interface LiveScore_SEO_Game_Scoped_Lang{
+    tip: string;
+    localteam:string;
+    visitorteam:string;
+    link: string;
+}

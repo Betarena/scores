@@ -20,7 +20,9 @@
 	import redcard from './assets/card.svg'
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import PlaceholderLivescores from './loaders/_Placeholder_Livescores.svelte';
-	export let LIVE_SCORES_DATA_DATA_SEO: TranslationsResponse;
+	import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/model/featured_betting_sites/firebase-real-db-interface';
+
+	export let LIVE_SCORES_DATA_DATA_SEO: LiveScore_SEO_Game_Scoped_Lang[];
 
 	var leagueSort = {};
 
@@ -88,8 +90,6 @@
 	async function listenRealTimeOddsChange(table:string,all:boolean): Promise < LiveScoreLeague[] > {
 		
 		let data: LiveScoreLeague[] = [];
-		console.log("SHier " + table);
-		console.log(LIVE_SCORES_DATA_DATA_SEO);
 		let base = "livescores_table";
 		if(all) base = base+"_all";
 		
@@ -99,7 +99,6 @@
 		if(listens[fullTable]) {				
 			return;
 		}
-	
 
 		listens[table] = true;
 		onValue(ref(db_real,fullTable), (snapshot) => {
@@ -269,11 +268,18 @@ $: if (refresh_data) {
 <!-- ===============
   COMPONENT HTML 
 ==================== -->
-
-{#if !refresh}
 <div id="seo-live-scores-box">
+	{#if LIVE_SCORES_DATA_DATA_SEO}
+		{#each LIVE_SCORES_DATA_DATA_SEO as d}
+			<p>{d.visitorteam}</p>
+			<p>{d.localteam}</p>
+			<p>{d.tip}</p>
+			<p>{d.link}</p>
+		{/each}
+	{/if}
+ </div>
+{#if !refresh}
 
-</div>
 {#await widgetInit()}
 {:then initdata} 
 {#if LIVESCORES_TRANSLATIONS[server_side_language]}
@@ -310,7 +316,7 @@ $: if (refresh_data) {
 
 		CURRENT_TABLE = TABLE_GAMES[lastTable];
 	}
-	}">{LIVESCORES_TRANSLATIONS[server_side_language] ? LIVESCORES_TRANSLATIONS[server_side_language].terms['all']:''} ({CURRENT_TABLE.reduce((a, b) => a + b.games.length, 0)})</span>
+	}">{LIVESCORES_TRANSLATIONS[server_side_language] ? LIVESCORES_TRANSLATIONS[server_side_language].terms['all']:''} ({currentTable != "livescores_now" ? CURRENT_TABLE.reduce((a, b) => a + b.games.length, 0) : TABLE_GAMES['livescores_table'+lastTable].reduce((a, b) => a + b.games.length, 0) })</span>
 		<span class="lnkLive {currentSelection == 1?'lnkSelected':''}" on:click="{()=>{
 			currentSelection =1;
 			lastTable=currentTable;
@@ -681,34 +687,6 @@ $: if (refresh_data) {
 	vertical-align: middle;
 }
 
-.three {
-    height: 24px;
-}
-
-.nogames {
-	text-align: center;
-	margin-top: 10px;
-}
-
-.game-list {
-    padding-bottom: 3px;
-}
-
-.nogames1 {
-	font-size: 13px;
-}
-
-.nogames2,.nogames3{
-	text-align: center;
-	font-size:12px;
-	color:#A1A1A1;
-	margin-top: 10px;
-}
-
-.nogames span{
-	color:black;
-	cursor: pointer;
-}
 
 
 /*
@@ -1115,25 +1093,11 @@ a.table-game-tip {
 	100% { transform: translatex( 60px); }
 }
 
-/*
-.two {
-	height: 50px;
-	width:  50px;
-	border-width: 5px;
-	border-style: solid;
-	border-color: hsla(0, 0%, 78%, 0.75)
-	hsla(0, 0%, 78%, 0.75) hsla(0, 0%, 78%, 0.25) hsla(0, 0%, 78%, 0.25);
-	border-radius: 100%;
-	animation: clockwise .5s linear infinite;
-	margin:0 auto;
-}
-*/
 .game-teams{
 	text-decoration: none;
 }
 
 .leaguesList{
-	/*width:357px;*/
 	width:100%;
 	margin:0 auto;
 }
