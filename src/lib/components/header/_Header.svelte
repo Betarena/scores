@@ -1019,6 +1019,7 @@
 							out:fly={{ x: 200, duration: 500 }}
 						>
 							<div>
+
 								<!-- ... top-action-row -->
 								<div class="row-space-out">
 									<!-- .. title ... -->
@@ -1037,25 +1038,67 @@
 								</div>
 
 								<!-- ... sports-list-grid ... -->
-								<div id="mobile-sports-grid" class="column-start-grid-start m-t-25">
+								<div 
+                  id="mobile-sports-grid" 
+                  class="column-start-grid-start m-t-25">
 									{#each lang_obj.sports as sport}
-										<button class="sports-btn row-space-out">
-											<div class="row-space-out" style="width: fit-content;">
-												<img
-													class="m-r-10"
-													src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-													alt="${sport[0]}-img"
-													width="20px"
-													height="20px"
-												/>
-												<p class="color-white s-14 m-r-10">
-													{sport[1]}
-												</p>
-											</div>
-											<p class="color-white s-14 sport-counter">123</p>
-										</button>
+                    {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information as sports_info}
+                      {#if sports_info.lang === server_side_language}
+                        <!-- ... check - if sport is column ... -->
+                        {#if sports_info[sport[0].toString().toLowerCase()] != null}
+                          <button 
+                            class="sports-btn row-space-out">
+                            <div 
+                              class="row-space-out" 
+                              style="width: fit-content;">
+                              <img
+                                class="m-r-10"
+                                src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                                alt="${sport[0]}-img"
+                                width="20px"
+                                height="20px"
+                              />
+                              <p class="color-white s-14 m-r-10">
+                                {sport[1]}
+                              </p>
+                            </div>
+                            <p class="color-white s-14 sport-counter">123</p>
+                          </button>
+                        {:else}
+                          <!-- else content here -->
+                          {#each sports_info.other_sports as _sport}
+                            <!-- ... -->
+                            {#if sport[0].toString().toLowerCase() === _sport[0].toString().toLowerCase()}
+                              <button 
+                                class="sports-btn row-space-out">
+                                <div 
+                                  class="row-space-out" 
+                                  style="width: fit-content;">
+                                  <img
+                                    class="m-r-10 soon-opacitiy"
+                                    src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                                    alt="${sport[0]}-img"
+                                    width="20px"
+                                    height="20px"
+                                  />
+                                  <p 
+                                    class="color-white s-14 m-r-10 soon-opacitiy">
+                                    {sport[1]}
+                                  </p>
+                                </div>
+                                <p 
+                                  class="color-white s-14 sport-counter">
+                                  {_sport[1].toString().toLowerCase()}
+                                </p>
+                              </button>
+                            {/if}
+                          {/each}
+                        {/if}
+                      {/if}
+									  {/each}
 									{/each}
 								</div>
+
 							</div>
 						</nav>
 					{/if}
