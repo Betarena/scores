@@ -6,8 +6,8 @@ import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { FixtureResponse } from "$lib/model/interface-fixture"
-import type { League_List_Cache_Ready } from '$lib/model/league_list/types';
+import type { FixtureResponse } from "$lib/model/featured_match/interface-fixtureterface-fixture"
+import type { League_List_Cache_Ready } from '$lib/models/league_list/types';
 
 // ... server-variables;
 let userGeo: string

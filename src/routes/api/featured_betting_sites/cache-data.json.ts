@@ -6,7 +6,7 @@ import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { FixtureResponse } from "$lib/model/interface-fixture"
+import type { FixtureResponse } from "$lib/models/featured_match/interface-fixture"
 
 // ... server-variables;
 let userGeo: string

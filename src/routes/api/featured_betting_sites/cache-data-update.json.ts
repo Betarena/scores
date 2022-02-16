@@ -8,7 +8,7 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
 import { getAllSportbookDetails } from '$lib/firebase/featured_betting_sites'
-import type { All_SportBook_Details_Data, Scores_Featured_Betting_Sites_Hasura } from '$lib/model/featured_betting_sites/firebase-real-db-interface'
+import type { All_SportBook_Details_Data, Scores_Featured_Betting_Sites_Hasura } from '$lib/models/featured_betting_sites/firebase-real-db-interface'
 import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/featured_betting_sites/query'
 
 // ... server-variables;

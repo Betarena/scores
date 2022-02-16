@@ -19,7 +19,7 @@
     import NoResults from "./_NoResults.svelte";
 
     import { post } from "$lib/api/utils";
-    import type { League_List_Cache_Ready, League_List_Cache_SEO_Ready } from "$lib/model/league_list/types";
+    import type { League_List_Cache_Ready, League_List_Cache_SEO_Ready } from "$lib/models/league_list/types";
 
     import { userBetarenaSettings } from "$lib/store/user-settings";
 
@@ -301,7 +301,7 @@
                                     {#each data.top_geo_leagues as item}
                                         <!-- content here -->
                                         <div
-                                            class='top-league-container row-space-start'>
+                                            class='top-league-container row-space-start cursor-not-allowed'>
                                             <img 
                                                 src={item.logo_path} 
                                                 alt={item.league_name.toString() + '-image'} 
@@ -387,7 +387,7 @@
                                                     && selectedCountryLeague === item.country_name}
                                                     <!-- content here -->
                                                     <div
-                                                        class='country-league-sub-container row-space-start'>
+                                                        class='country-league-sub-container row-space-start cursor-not-allowed'>
                                                         <p class='s-14 w-500 color-black'>
                                                             {league.league_name}
                                                         </p>
@@ -431,7 +431,7 @@
                                     {#each leagueSearchData.slice(0, fullLeagueListDisplayNum) as item}
                                         <!-- content here -->
                                         <div
-                                            class='top-league-container-search row-space-start'>
+                                            class='top-league-container-search row-space-start cursor-not-allowed'>
                                             <img 
                                                 src={item.logo_path} 
                                                 alt={item.league_name.toString() + '-image'} 
@@ -498,7 +498,7 @@
                                                     && selectedCountryLeague === item.country_name}
                                                     <!-- content here -->
                                                     <div
-                                                        class='country-league-sub-container row-space-start'>
+                                                        class='country-league-sub-container row-space-start cursor-not-allowed'>
                                                         <p class='s-14 w-500 color-black'>
                                                             {league.league_name}
                                                         </p>

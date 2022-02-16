@@ -7,7 +7,7 @@ import { dev } from '$app/env';
 
 import { get } from '$lib/api/utils';
 
-import type { GeoJsResponse } from '$lib/model/geo-js-interface';
+import type { GeoJsResponse } from '$lib/model/_geojs/geo-js-interfaceterface';
 
 /**
  * Description:

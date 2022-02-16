@@ -81,7 +81,7 @@
 	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
 
 	import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
-import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
+  import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
@@ -166,23 +166,34 @@ import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.sve
 		<div> 
 			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
 		</div>
-
-	
 	{/if}
 
-		<!-- ... 2nd ROW ... -->
-		<div >
-			<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
-		</div>
-
-	<!-- ... 3rd ROW ... -->
-	<div 
-		class='grid-display-column'>
-		<!-- ... widget #1 ... -->
-		<FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
-		<!-- ... widget #2 ... -->
-		<FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
-	</div>
+  {#if !mobileExclusive}
+    <!-- ... 2nd ROW ... -->
+    <div >
+      <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
+    </div>
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <!-- ... widget #1 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+    </div>
+  {:else}
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <div >
+        <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
+      </div>
+      <!-- ... widget #1 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+    </div>
+  {/if}
 
 </section>
 

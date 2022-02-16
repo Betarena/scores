@@ -9,7 +9,7 @@
 	import { page } from '$app/stores'
 	import { dev } from '$app/env'
 	// ... typescript-types;
-	import type { Footer_Data } from '$lib/model/footer'
+	import type { Footer_Data } from '$lib/models/footer/types'
 	// ... image-assets;
 	import logo_full from './assets/betarena-logo-full.svg'
 	import linkedin from './assets/icon/linkedin.svg'

@@ -5,7 +5,7 @@ import { dev } from '$app/env';
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { League_List_Cache_SEO_Ready } from '$lib/model/league_list/types'
+import type { League_List_Cache_SEO_Ready } from '$lib/models/league_list/types'
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
