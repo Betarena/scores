@@ -44,7 +44,7 @@
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
 			method: 'GET'
 		}).then((r) => r.json());
-		
+
 		const response_livescores_football_leagues = await fetch('/api/live_scores/cache-data.json', {
 			method: 'GET'
 		}).then((r) => r.json());
@@ -99,6 +99,7 @@ import type { LiveScores_Football_Translation } from '$lib/models/live_scores_fo
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
 	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
 	export let LIVE_SCORES_DATA_DATA_SEO;
+	export let LIVE_SCORES_DATA_LEAGUES;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 	// ... page-language-declaration;
 	let server_side_language: string = 'en';
