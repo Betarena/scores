@@ -5,7 +5,7 @@ import { dev } from '$app/env'
 // ... import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-import { GET_LIVESCORES_LEAGUES, GET_LIVESCORES_TRANSLATIONS } from '$lib/graphql/query';
+import { GET_LIVESCORES_LEAGUES } from '$lib/graphql/query';
 
 
 /** 

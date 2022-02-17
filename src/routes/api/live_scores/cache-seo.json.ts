@@ -5,7 +5,6 @@ import { dev } from '$app/env';
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { League_List_Cache_SEO_Ready } from '$lib/models/league_list/types'
 import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
 
 /**
@@ -16,11 +15,7 @@ import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_bettin
 export async function get(req, res): Promise<any> {
 
    let lang = req.url['searchParams'].get('lang');
-    // ... check for cache-existance [IN THE USER-GEO-POS];
     const response_usergeo = await getLiveScoresFootball(lang)
-    // ... DEBUGGING;
-    // if (dev) console.debug('-- response_cache --', response_usergeo)
-    // ... return RESPONSE;
     if (response_usergeo) {
         return {
             body: response_usergeo

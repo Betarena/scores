@@ -4,11 +4,10 @@ import { dev } from '$app/env'
 
 // ... import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
-import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
 import { getAllLiveScoresFootball } from '$lib/firebase/livescores_football'
-import type { LiveScore_SEO_Game, All_SportBook_Details_Data, LiveScore_SEO_Game_Scoped_Lang, Scores_Featured_Betting_Sites_Hasura } from '$lib/model/featured_betting_sites/firebase-real-db-interface'
+import type { LiveScore_SEO_Game,  LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_betting_sites/firebase-real-db-interface'
 
 // ... server-variables;
 let userGeo: string

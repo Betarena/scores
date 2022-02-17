@@ -4,10 +4,6 @@ import { dev } from '$app/env';
 // ... import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 
-// ... DECLARING TYPESCRIPT-TYPES imports;
-import type { League_List_Cache_SEO_Ready } from '$lib/models/league_list/types'
-import { GET_LIVESCORES_LEAGUES, GET_LIVESCORES_TRANSLATIONS } from '$lib/graphql/query';
-
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
