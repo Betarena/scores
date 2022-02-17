@@ -13,7 +13,6 @@ import type { LiveScore_SEO_Game } from '$lib/models/featured_betting_sites/fire
  * Description:
  * ~~~~~~~~~~~~~~~~~
  * ... obtains all of the livescores football details data `real_db` Firebase-DB
- * ... @param userGeoLocation
 */
 export async function getAllLiveScoresFootball(): Promise < LiveScore_SEO_Game[] > {
 

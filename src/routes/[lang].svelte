@@ -91,7 +91,7 @@
 	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
 
 	import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
-  import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
+  import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
 import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;

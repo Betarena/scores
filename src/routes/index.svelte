@@ -101,7 +101,7 @@
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-	import LiveScoresWidget from '$lib/components/live_scores/_LiveScores_Widget.svelte';
+	import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
 import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	// ... PAGE PRE-LOADED DATA;
