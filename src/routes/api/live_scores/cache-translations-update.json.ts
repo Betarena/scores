@@ -66,7 +66,7 @@ async function getTranslations(): Promise <any> {
      
       if (dev) console.info('live_scores translations',x);
 
-      return x.scores_livescore_football_translations_dev;
+      return x.scores_livescore_football_translations;
     });
 
 }

@@ -162,7 +162,7 @@
   <!-- ... SEO-DATA-LOADED ... -->
   {#if !loaded}
     <!-- ... iterate over the data to find the correc language ... -->
-    {#each FEATURED_BETTING_SITES_WIDGET_DATA_SEO.scores_featured_betting_sites_translations_dev as WIDGET_SEO_TRANSLATION}
+    {#each FEATURED_BETTING_SITES_WIDGET_DATA_SEO.scores_featured_betting_sites_translations as WIDGET_SEO_TRANSLATION}
       <!-- ... obtain the correct widget translation ... -->
       {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
         <!-- ... SEO-BOX ... -->

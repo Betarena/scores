@@ -21,7 +21,7 @@ export const GET_COMPLETE_LEAGUE_LIST_DATA = gql`
             lang
             leagues
         }
-        scores_leagues_list_translations_dev {
+        scores_leagues_list_translations {
             lang
             translations
         }

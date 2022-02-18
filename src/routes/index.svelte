@@ -171,7 +171,7 @@ import type { LiveScores_Football_Translation } from '$lib/models/live_scores_fo
 =================== -->
 
 <!-- ... adding SEO-META-TAGS for PAGE ... -->
-{#each PAGE_DATA_SEO.scores_seo_homepage_dev as item}
+{#each PAGE_DATA_SEO.scores_seo_homepage as item}
 	{#if item.lang == server_side_language}
 		<!-- content here -->
 		<SvelteSeo

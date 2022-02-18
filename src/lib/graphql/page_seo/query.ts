@@ -8,7 +8,7 @@ import { gql } from 'graphql-request';
 */
 export const GET_COMPLETE_PAGES_SEO_DATA = gql`
     query GET_COMPLETE_PAGES_SEO_DATA @cached(ttl: 300) {
-        scores_seo_homepage_dev {
+        scores_seo_homepage {
             lang
             main_data
             twitter_card

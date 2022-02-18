@@ -9,7 +9,7 @@ import { gql } from 'graphql-request';
 */
  export const GET_FOOTER_DATA = gql`
  query GET_FOOTER_DATA @cached(ttl: 300) {
-		scores_footer_translations_dev {
+		scores_footer_translations {
 			about_us
 			betting_tips
 			follow
@@ -21,7 +21,7 @@ import { gql } from 'graphql-request';
 			terms
 			type_email
 		}
-		scores_footer_links_dev {
+		scores_footer_links {
 			about_us
 			betting_tips
 			latest_news
@@ -204,7 +204,7 @@ export const GET_ALL_FIXTURE_DATA = gql`
  */
  export const GET_LIVESCORES_TRANSLATIONS = gql`
  query GET_LIVESCORES_TRANSLATIONS @cached(ttl: 300) {
-	scores_livescore_football_translations_dev {
+	scores_livescore_football_translations {
 		status
 		status_abv
 		terms
@@ -222,7 +222,7 @@ export const GET_ALL_FIXTURE_DATA = gql`
  */
  export const GET_LIVESCORES_LEAGUES = gql`
  query GET_LIVESCORES_LEAGUES @cached(ttl: 300) {
-	leagues_filtered_country_dev {
+	leagues_filtered_country {
 	  lang
 	  leagues
 	}

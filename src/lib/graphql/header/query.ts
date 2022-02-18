@@ -9,7 +9,7 @@ import { gql } from 'graphql-request';
 */
 export const GET_NAVBAR_DATA = gql`
 	query GET_NAVBAR_DATA @cached(ttl: 300) {
-		scores_header_translations_dev {
+		scores_header_translations {
 			theme_options
 			theme
 			sports
@@ -25,7 +25,7 @@ export const GET_NAVBAR_DATA = gql`
 			content_platform_link
 			sports_list
 		}
-		scores_header_links_dev {
+		scores_header_links {
 			betting_tips
 			lang
 			latest_news
@@ -35,7 +35,7 @@ export const GET_NAVBAR_DATA = gql`
       lang
       other_sports
     }
-    scores_top_bar_messages_dev {
+    scores_top_bar_messages {
       lang
       status
       message

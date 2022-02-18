@@ -101,7 +101,7 @@
 	<!-- ... wait until THIS component recives the required DATA ... -->
 	{#if FOOTER_TRANSLATION_DATA != undefined}
 		<!-- ... identify the correct translation via IF validation -->
-		{#each FOOTER_TRANSLATION_DATA.scores_footer_translations_dev as footer_traslation_obj}
+		{#each FOOTER_TRANSLATION_DATA.scores_footer_translations as footer_traslation_obj}
 			{#if footer_traslation_obj.lang == server_side_language}
 				<!-- ... populate data accordingly ... -->
 
@@ -130,7 +130,7 @@
 								id='social-media-box'
 								class='column-start-grid'>
 								<!-- ... identify the list of social media icons ... -->
-								{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+								{#each FOOTER_TRANSLATION_DATA.scores_footer_links as social_network_obj}
 									{#if social_network_obj.lang == server_side_language}
 										<!-- ... render the correct items ... -->
 										{#each social_network_obj.social_networks as social_network}
@@ -182,7 +182,7 @@
 
 						<!-- ... menu-list num.1 ... -->
 						<!-- ... generate-translations-for-footer ... -->
-						{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
+						{#each FOOTER_TRANSLATION_DATA.scores_footer_links as footer_nav_links_translations}
 							{#if footer_nav_links_translations.lang == server_side_language}
 								<div 
 									id='menu-list'
@@ -327,7 +327,7 @@
 									<div id='social-media-box'
 										class='column-start-grid'>
 										<!-- ... identify the list of social media icons ... -->
-										{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+										{#each FOOTER_TRANSLATION_DATA.scores_footer_links as social_network_obj}
 											{#if social_network_obj.lang == server_side_language}
 												<!-- ... render the correct items ... -->
 												{#each social_network_obj.social_networks as social_network}
@@ -379,7 +379,7 @@
 
 						<!-- ... menu-list num.1 ... -->
 						<!-- ... generate-translations-for-footer ... -->
-						{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
+						{#each FOOTER_TRANSLATION_DATA.scores_footer_links as footer_nav_links_translations}
 							{#if footer_nav_links_translations.lang == server_side_language}
 								<div 
 									id='menu-list'
@@ -570,7 +570,7 @@
 
 							<!-- ... menu-list num.1 ... -->
 							<!-- ... generate-translations-for-footer ... -->
-							{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
+							{#each FOOTER_TRANSLATION_DATA.scores_footer_links as footer_nav_links_translations}
 								{#if footer_nav_links_translations.lang == server_side_language}
 									<div 
 										id='menu-list'>
@@ -665,7 +665,7 @@
 									id='social-media-box'
 									class='column-start-grid'>
 									<!-- ... identify the list of social media icons ... -->
-									{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+									{#each FOOTER_TRANSLATION_DATA.scores_footer_links as social_network_obj}
 										{#if social_network_obj.lang == server_side_language}
 											<!-- ... render the correct items ... -->
 											{#each social_network_obj.social_networks as social_network}

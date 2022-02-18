@@ -67,7 +67,7 @@ async function getLeaguesOrder(): Promise <any> {
     var leagueSort = {};
 
     return  initGrapQLClient().request(GET_LIVESCORES_LEAGUES).then(x=>{
-      let leagues = x.leagues_filtered_country_dev;
+      let leagues = x.leagues_filtered_country;
       for(var k  = 0;  k < leagues.length;k++){
         if(leagues[k].lang == null) continue;
         for(var i = 0; i < leagues[k].leagues.length;i++)
