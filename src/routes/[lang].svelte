@@ -41,7 +41,17 @@
 		}).then((r) => r.json());
 		// ... DEBUGGING;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
+			method: 'GET'
+		}).then((r) => r.json());
 
+		const response_livescores_football_leagues = await fetch('/api/live_scores/cache-data.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+
+		const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
+			method: 'GET'
+		}).then((r) => r.json());
 		// ... return, RESPONSE DATA;
 		if (response_featured_match && response_featured_betting_sites) {
 			return {
@@ -49,7 +59,12 @@
 					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
 					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
 					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
-					PAGE_DATA_SEO: response_seo_page
+					PAGE_DATA_SEO: response_seo_page,
+					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
+					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
+					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations
+
+
 				}
 			};
 		}
@@ -76,12 +91,16 @@
 	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
 
 	import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
+  import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
+import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
 	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
-
+	export let LIVE_SCORES_DATA_DATA_SEO;
+	export let LIVE_SCORES_DATA_LEAGUES;
+	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 	// ... page-language-declaration;
 	let server_side_language: string = 'en';
 	// ... language-translation-declaration;
@@ -128,7 +147,7 @@
 =================== -->
 
 <!-- ... adding SEO-META-TAGS for PAGE ... -->
-{#each PAGE_DATA_SEO.scores_seo_homepage_dev as item}
+{#each PAGE_DATA_SEO.scores_seo_homepage as item}
 	{#if item.lang == server_side_language}
 		<!-- content here -->
 		<SvelteSeo
@@ -159,19 +178,34 @@
 		<div> 
 			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
 		</div>
-
-		<!-- ... 2nd ROW ... -->
-		<div />
 	{/if}
 
-	<!-- ... 3rd ROW ... -->
-	<div 
-		class='grid-display-column'>
-		<!-- ... widget #1 ... -->
-		<FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
-		<!-- ... widget #2 ... -->
-		<FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
-	</div>
+  {#if !mobileExclusive}
+    <!-- ... 2nd ROW ... -->
+    <div >
+		<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
+    </div>
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <!-- ... widget #1 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+    </div>
+  {:else}
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <div >
+        <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
+      </div>
+      <!-- ... widget #1 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+    </div>
+  {/if}
 
 </section>
 

@@ -7,7 +7,7 @@ import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { Hasura_Complete_League_List_Type, League_List_Cache_Ready } from '$lib/model/league_list/types'
+import type { Hasura_Complete_League_List_Type, League_List_Cache_Ready } from '$lib/models/league_list/types'
 import { GET_COMPLETE_LEAGUE_LIST_DATA } from '$lib/graphql/league_list/query'
 
 // ... server-variables;
@@ -114,7 +114,7 @@ async function main(): Promise < Array < League_List_Cache_Ready >> {
         // ...
         leagueObj.all_leagues_list = response.scores_league_list
         // ...
-        leagueObj.translations = response.scores_leagues_list_translations_dev
+        leagueObj.translations = response.scores_leagues_list_translations
         // ...
         leagueObj.unique_county_list = response.scores_league_list.filter((obj, pos, arr) => {
             return arr

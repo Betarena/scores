@@ -1,6 +1,6 @@
 // ...
 export interface Hasura_Complete_Pages_SEO {
-    scores_seo_homepage_dev: {
+    scores_seo_homepage: {
         lang: string
         main_data: {
             canonical: string,

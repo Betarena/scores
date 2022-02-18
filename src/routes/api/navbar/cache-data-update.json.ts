@@ -1,47 +1,43 @@
 // ... import $app `modules`
 import { dev } from '$app/env'
-
 // ... import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
-import { GET_WEBSITE_ALL_LANG_TRANSLATIONS } from '$lib/graphql/query';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { GET_NAVBAR_DATA } from '$lib/graphql/header/query';
+import type { Header_Translation_Response } from '$lib/models/navbar/types';
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(req, res): Promise< any > {
-
+export async function get(): Promise< any > {
 	// ... update cache response;
-	const response = await initGrapQLClient().request(GET_WEBSITE_ALL_LANG_TRANSLATIONS);
-    // ... cache-response;
-    await cacheNavBar(response)
-	// ... DEBUGGING;
-	if (dev) console.debug('-- response --');
+	const response: Header_Translation_Response = await initGrapQLClient().request(GET_NAVBAR_DATA);
+  // ... cache-response;
+  await cacheNavBar(response)
 	// ... return, RESPONSE;
 	return {
-        status: 200,
-        body: 'Success! Navbar Data Updated!'
-    }
+    status: 200,
+    body: '✅ Success! Navbar cache data is updated!'
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //     CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // - cacheNavBar(json_cache)
-// - getCacheNavBar()
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheNavBar(json_cache: any) {
-    // ... TRY;
-    try {
-      //... store (cache) featured_match response,
-      await redis.hset('navbar', 'translation', JSON.stringify(json_cache));
-      // ... DEBUGGING;
-      if (dev) console.debug('navbar-translation successfully stored in cache!')
-    } 
-    // ... CATCH, ERROR;
-    catch (e) {
-      console.log("Unable to cache", 'navbar', e);
-    }
+async function cacheNavBar(json_cache: Header_Translation_Response) {
+  // ... TRY;
+  try {
+    //... store (cache) featured_match response,
+    await redis.hset('navbar', 'data', JSON.stringify(json_cache));
+    // ... DEBUGGING;
+    if (dev) console.debug('✅ navbar-data successfully stored in cache!')
+  } 
+  // ... CATCH, ERROR;
+  catch (e) {
+    console.error("❌ unable to cache", 'navbar-data', e);
+  }
 }

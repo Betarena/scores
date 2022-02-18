@@ -27,8 +27,8 @@
 	import light_icon_theme from './assets/theme-light-icon.svg';
 	import menu_sports_icon from './assets/menu_sports_icon.svg';
 
-	import type { Header_Translation_Response, Header_Translation } from '$lib/model/scores_header_translations';
-	import type { GeoJsResponse } from '$lib/model/geo-js-interface';
+	import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';
+	import type { GeoJsResponse } from '$lib/models/geojs-types';
 	import { getUserLocation } from '$lib/geoJs/init';
 
 	export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
@@ -98,7 +98,7 @@
 	}
 
 	// ... DECLARATIONS of STATE;
-	let selected_sports: string = undefined;
+	let selected_sports: string = 'football';
 
 	/**
 	 * Description
@@ -186,7 +186,7 @@
 		userBetarenaSettings.setGeoJs(userGeoResponse)
 		// ... VALIDATION;
 		// ... check that the `country-GEO` is available on the list;
-		const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.find(function(item) { 
+		const result = HEADER_TRANSLATION_DATA.scores_header_translations.find(function(item) { 
 			return item.bookmakers_countries.find(function(item_2) { 
 				return item_2[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
 			});
@@ -223,7 +223,7 @@
 <header class="column-space-center">
 	{#if HEADER_TRANSLATION_DATA != undefined}
 		<!-- ... identify the correct translation via IF -->
-		{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang_obj}
+		{#each HEADER_TRANSLATION_DATA.scores_header_translations as lang_obj}
 			{#if lang_obj.lang == server_side_language}
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id="top-header" class="row-space-out">
@@ -289,7 +289,7 @@
 								<!-- ... INIT-HIDDEN drop-down menu ... -->
 								{#if dropdown_lang_visible}
 									<div id="dropdown-menu" transition:fly>
-										{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang}
+										{#each HEADER_TRANSLATION_DATA.scores_header_translations as lang}
 											<div id="lang-select" on:click={() => selectLanguage(lang.lang)}>
 												<p class="color-white s-14">
 													{lang.lang.toUpperCase()}
@@ -303,7 +303,7 @@
 
 						<!-- ... NAV BUTTONS ... -->
 						{#if !mobileExclusive}
-							{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
+							{#each HEADER_TRANSLATION_DATA.scores_header_links as lang_link}
 								{#if lang_link.lang == server_side_language}
 									<!-- ... latest news ... -->
 									<a rel="external" href={lang_link.latest_news}>
@@ -398,7 +398,7 @@
 							<!-- ... odds-type ... -->
 							<div
 								id="odds-type-container"
-								class="dropdown-opt-box row-space-start"
+								class="cursor-not-allowed dropdown-opt-box row-space-start"
 								on:click={() => (dropdown_odds_type_visible = !dropdown_odds_type_visible)}
 							>
 								<!-- ... name of the container-opt ... -->
@@ -500,7 +500,9 @@
 
 						{#if !mobileExclusive}
 							<!-- ... sign-in-btn ... -->
-							<button id="sign-in-btn">
+							<button 
+								id="sign-in-btn"
+								class="cursor-not-allowed">
 								<p class="color-white s-14">
 									{lang_obj.sign_in}
 								</p>
@@ -508,7 +510,7 @@
 						{/if}
 
 						{#if mobileExclusive}
-							{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
+							{#each HEADER_TRANSLATION_DATA.scores_header_links as lang_link}
 								{#if lang_link.lang == server_side_language}
 									<a rel="external" href={lang_link.betting_tips}>
 										<!-- ... betting-tips ... -->
@@ -523,98 +525,203 @@
 				</div>
 
 				<!-- ... bottom-SPORTS-navbar-values ... -->
-				<div id="bottom-header" class="row-space-out">
-					<!-- ... sliding-container ... -->
-					<div id="bottom-header-inner" class="row-space-out m-r-10" style="width: fit-content;">
-						<!-- ... sports-btn values ... -->
-						<div class="row-space-out" style="width: fit-content;">
-							{#each { length: 7 } as _, i}
-								<button
-									class="sports-btn m-r-10"
-									on:click={() => (selected_sports = lang_obj.sports[i][0])}
-									class:selected-sports={selected_sports == lang_obj.sports[i][0]}
-								>
-									<img
-										class="m-r-10"
-										src={`/assets/svg/sport-icon/${lang_obj.sports[i][0].toLocaleLowerCase()}.svg`}
-										alt="${lang_obj.sports[i][0]}-img"
-										width="20px"
-										height="20px"
-									/>
-									<p class="color-white s-14 m-r-10">
-										{lang_obj.sports[i][1]}
-									</p>
-									<p class="color-white s-14 sport-counter">123</p>
-								</button>
-							{/each}
-						</div>
-					</div>
+        {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information as sports_info}
+          {#if sports_info.lang === server_side_language}
+            <!-- content here -->
+            <div 
+              id="bottom-header" 
+              class="row-space-out">
+              <!-- ... sliding-container ... -->
+              <div 
+                id="bottom-header-inner" 
+                class="row-space-out m-r-10" 
+                style="width: fit-content;">
+                <!-- ... sports-btn values ... -->
+                <div 
+                  class="row-space-out" 
+                  style="width: fit-content;">
 
-					<!-- ... more sports button container menu ... -->
-					<div id="more-sports-menu-container">
-						<!-- ... menu-more-sports-btn-DESKTOP + TABLET -->
-						{#if !mobileExclusive}
-							<!-- ... menu-sports-btn ... -->
-							<button
-								id="more-sports-menu"
-								on:click={() => (dropdown_more_sports_menu = !dropdown_more_sports_menu)}
-							>
-								<img
-									class="m-r-10"
-									src={menu_sports_icon}
-									alt="menu_btn"
-									width="20px"
-									height="20px"
-								/>
-								<p class="color-white s-14 m-r-10">
-									{lang_obj.more_sports}
-								</p>
-								<!-- ... arrow down [hidden-menu] ... -->
-								{#if !dropdown_more_sports_menu}
-									<img src={arrow_down_fade} alt="arrow_down_fade" width="20px" height="20px" />
-								{:else}
-									<img src={arrow_up} alt="arrow_up" width="20px" height="20px" />
-								{/if}
-							</button>
-							<!-- ... menu-more-sports-btn-mobile -->
-						{:else}
-							<!-- ... menu-sports-btn ... -->
-							<button
-								id="more-sports-menu"
-								on:click={() => (mobileExclusiveMoreSports = !mobileExclusiveMoreSports)}
-							>
-								<p class="color-white s-14">
-									{lang_obj.more_sports}
-								</p>
-							</button>
-						{/if}
-						<!-- ... INIT-HIDDEN-dropdown-more-sports-menu ... -->
-						{#if dropdown_more_sports_menu && !mobileExclusive}
-							<div id="more-sports-dropdown-menu" transition:fly>
-								{#each lang_obj.sports as sport}
-									<button
-										class="sports-btn row-space-out"
-										on:click={() => (dropdown_more_sports_menu = false)}
-									>
-										<div class="row-space-out" style="width: fit-content;">
-											<img
-												class="m-r-5"
-												src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-												alt="${sport[0]}-img"
-												width="20px"
-												height="20px"
-											/>
-											<p class="color-white s-14 m-r-10">
-												{sport[1]}
-											</p>
-										</div>
-										<p class="color-white s-14 sport-counter-dark">123</p>
-									</button>
-								{/each}
-							</div>
-						{/if}
-					</div>
-				</div>
+                  <!-- ... -->
+                  {#each { length: 7 } as _, i}
+                    <!-- ... check - if sport is column ... -->
+                    {#if sports_info[lang_obj.sports[i][0].toString().toLowerCase()] != null}
+                      <!-- content here -->
+                      <button
+                        class="sports-btn m-r-10"
+                        on:click={() => (selected_sports = lang_obj.sports[i][0])}
+                        class:selected-sports={selected_sports == lang_obj.sports[i][0]} >
+                        <img
+                          class="m-r-10"
+                          src={`/assets/svg/sport-icon/${lang_obj.sports[i][0].toLocaleLowerCase()}.svg`}
+                          alt="${lang_obj.sports[i][0]}-img"
+                          width="20px"
+                          height="20px" />
+
+                        <p 
+                          class="color-white s-14 m-r-10">
+                          {lang_obj.sports[i][1]}
+                        </p>
+
+                        <p 
+                          class="color-white s-14 sport-counter">
+                          {sports_info[lang_obj.sports[i][0].toString().toLowerCase()]}
+                        </p>
+                      </button>
+                    {:else}
+                      <!-- else content here -->
+                      {#each sports_info.other_sports as sport}
+                        <!-- content here -->
+                        {#if lang_obj.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
+                          <!-- content here -->
+                          <button
+                            class="sports-btn m-r-10 cursor-not-allowed"
+                            on:click={() => (selected_sports = lang_obj.sports[i][0])}
+                            class:selected-sports={selected_sports == lang_obj.sports[i][0]} >
+                            <img
+                              class="m-r-10 soon-opacitiy"
+                              src={`/assets/svg/sport-icon/${lang_obj.sports[i][0].toLocaleLowerCase()}.svg`}
+                              alt="${lang_obj.sports[i][0]}-img"
+                              width="20px"
+                              height="20px"
+                            />
+
+                            <p 
+                              class="color-white s-14 m-r-10 soon-opacitiy">
+                              {lang_obj.sports[i][1]}
+                            </p>
+
+                            <p 
+                              class="color-white s-14 sport-counter">
+                              {sport[1].toString().toLowerCase()}
+                            </p>
+                          </button>
+                        {/if}
+                      {/each}
+                    {/if}
+                  {/each}
+                </div>
+              </div>
+
+              <!-- ... more sports button container menu ... -->
+              <div 
+                id="more-sports-menu-container">
+                <!-- ... menu-more-sports-btn-DESKTOP + TABLET -->
+                {#if !mobileExclusive}
+                  <!-- ... menu-sports-btn ... -->
+                  <button
+                    id="more-sports-menu"
+                    on:click={() => (dropdown_more_sports_menu = !dropdown_more_sports_menu)}
+                  >
+                    <img
+                      class="m-r-10"
+                      src={menu_sports_icon}
+                      alt="menu_btn"
+                      width="20px"
+                      height="20px"
+                    />
+                    <p class="color-white s-14 m-r-10">
+                      {lang_obj.more_sports}
+                    </p>
+                    <!-- ... arrow down [hidden-menu] ... -->
+                    {#if !dropdown_more_sports_menu}
+                      <img src={arrow_down_fade} alt="arrow_down_fade" width="20px" height="20px" />
+                    {:else}
+                      <img src={arrow_up} alt="arrow_up" width="20px" height="20px" />
+                    {/if}
+                  </button>
+                  <!-- ... menu-more-sports-btn-mobile -->
+                {:else}
+                  <!-- ... menu-sports-btn ... -->
+                  <button
+                    id="more-sports-menu"
+                    on:click={() => (mobileExclusiveMoreSports = !mobileExclusiveMoreSports)}
+                  >
+                    <p class="color-white s-14">
+                      {lang_obj.more_sports}
+                    </p>
+                  </button>
+                {/if}
+                
+                <!-- ... INIT-HIDDEN-dropdown-more-sports-menu ... -->
+                {#if dropdown_more_sports_menu && !mobileExclusive}
+                  <!-- ... -->
+                  <div 
+                    id="more-sports-dropdown-menu" 
+                    transition:fly >
+                    <!-- ... -->
+                    {#each lang_obj.sports as sport}
+                      
+                      <!-- ... check - if sport is column ... -->
+                      {#if sports_info[sport[0].toString().toLowerCase()] != null}
+                        <button
+                          class="sports-btn row-space-out"
+                          on:click={() => (dropdown_more_sports_menu = false)} >
+                          <!-- ... -->
+                          <div 
+                            class="row-space-out" 
+                            style="width: fit-content;">
+                            <!-- ... -->
+                            <img
+                              class="m-r-5"
+                              src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                              alt="${sport[0]}-img"
+                              width="20px"
+                              height="20px"
+                            />
+                            <p 
+                              class="color-white s-14 m-r-10">
+                              {sport[1]}
+                            </p>
+                          </div>
+                          <!-- content here -->
+                          <p 
+                            class="color-white s-14 sport-counter-dark">
+                            {sports_info[sport[0].toString()]}
+                          </p>
+                        </button>
+
+                      {:else}
+                        <!-- else content here -->
+                        {#each sports_info.other_sports as _sport}
+                          <!-- content here -->
+                          {#if sport[0].toString().toLowerCase() === _sport[0].toString().toLowerCase()}
+                            <!-- content here -->
+                            <button
+                              class="sports-btn row-space-out cursor-not-allowed"
+                              on:click={() => (dropdown_more_sports_menu = false)} >
+                              <!-- ... -->
+                              <div 
+                                class="row-space-out" 
+                                style="width: fit-content;">
+                                <!-- ... -->
+                                <img
+                                  class="m-r-5 soon-opacitiy"
+                                  src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                                  alt="${sport[0]}-img"
+                                  width="20px" height="20px"
+                                />
+                                <p 
+                                  class="color-white s-14 m-r-10 soon-opacitiy">
+                                  {sport[1]}
+                                </p>
+                              </div>
+                              <p 
+                                class="color-white s-14 sport-counter-dark">
+                                {_sport[1].toString().toLowerCase()}
+                              </p>
+                            </button>
+                          {/if}
+                        {/each}
+                      {/if}
+
+                    {/each}
+                  </div>
+                {/if}
+              </div>
+
+            </div>
+          {/if}
+        {/each}
 
 				<!-- ... side-bar-[TOP-NAV-BAR] [MOBILE + TABLET] -->
 				{#if tabletExclusive || mobileExclusive}
@@ -659,7 +766,7 @@
 											<!-- ... INIT-HIDDEN drop-down menu ... -->
 											{#if dropdown_lang_visible}
 												<div id="dropdown-menu" transition:fly>
-													{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang}
+													{#each HEADER_TRANSLATION_DATA.scores_header_translations as lang}
 														<div id="lang-select" on:click={() => selectLanguage(lang.lang)}>
 															<p class="color-white s-14">
 																{lang.lang.toUpperCase()}
@@ -697,7 +804,7 @@
 									</div>
 
 									<!-- ... link-based-redirects ... -->
-									{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
+									{#each HEADER_TRANSLATION_DATA.scores_header_links as lang_link}
 										{#if lang_link.lang == server_side_language}
 											<!-- ... latest-news ... -->
 											<div class="side-nav-row">
@@ -912,6 +1019,7 @@
 							out:fly={{ x: 200, duration: 500 }}
 						>
 							<div>
+
 								<!-- ... top-action-row -->
 								<div class="row-space-out">
 									<!-- .. title ... -->
@@ -930,25 +1038,69 @@
 								</div>
 
 								<!-- ... sports-list-grid ... -->
-								<div id="mobile-sports-grid" class="column-start-grid-start m-t-25">
+								<div 
+                  id="mobile-sports-grid" 
+                  class="column-start-grid-start m-t-25">
 									{#each lang_obj.sports as sport}
-										<button class="sports-btn row-space-out">
-											<div class="row-space-out" style="width: fit-content;">
-												<img
-													class="m-r-10"
-													src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-													alt="${sport[0]}-img"
-													width="20px"
-													height="20px"
-												/>
-												<p class="color-white s-14 m-r-10">
-													{sport[1]}
-												</p>
-											</div>
-											<p class="color-white s-14 sport-counter">123</p>
-										</button>
+                    {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information as sports_info}
+                      {#if sports_info.lang === server_side_language}
+                        <!-- ... check - if sport is column ... -->
+                        {#if sports_info[sport[0].toString().toLowerCase()] != null}
+                          <button 
+                            class="sports-btn row-space-out">
+                            <div 
+                              class="row-space-out" 
+                              style="width: fit-content;">
+                              <img
+                                class="m-r-10"
+                                src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                                alt="${sport[0]}-img"
+                                width="20px"
+                                height="20px"
+                              />
+                              <p class="color-white s-14 m-r-10">
+                                {sport[1]}
+                              </p>
+                            </div>
+                            <p class="color-white s-14 sport-counter">
+                              {sports_info[sport[0].toString().toLowerCase()]}
+                            </p>
+                          </button>
+                        {:else}
+                          <!-- else content here -->
+                          {#each sports_info.other_sports as _sport}
+                            <!-- ... -->
+                            {#if sport[0].toString().toLowerCase() === _sport[0].toString().toLowerCase()}
+                              <button 
+                                class="sports-btn row-space-out">
+                                <div 
+                                  class="row-space-out" 
+                                  style="width: fit-content;">
+                                  <img
+                                    class="m-r-10 soon-opacitiy"
+                                    src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                                    alt="${sport[0]}-img"
+                                    width="20px"
+                                    height="20px"
+                                  />
+                                  <p 
+                                    class="color-white s-14 m-r-10 soon-opacitiy">
+                                    {sport[1]}
+                                  </p>
+                                </div>
+                                <p 
+                                  class="color-white s-14 sport-counter">
+                                  {_sport[1].toString().toLowerCase()}
+                                </p>
+                              </button>
+                            {/if}
+                          {/each}
+                        {/if}
+                      {/if}
+									  {/each}
 									{/each}
 								</div>
+
 							</div>
 						</nav>
 					{/if}
@@ -1019,8 +1171,8 @@
 		height: 100vh;
 		width: 100%;
 		padding: 14px 16px;
-		position: fixed;
-		z-index: 1000;
+    position: absolute;
+    z-index: 1000000000;
 		top: 0;
 		bottom: 0;
 		right: 0;
@@ -1204,6 +1356,10 @@
 		border-radius: 20px;
 	}
 
+  .soon-opacitiy {
+    opacity: 0.5;
+  }
+
 
 	button#more-sports-menu {
 		padding: 12.5px 16px;
@@ -1261,7 +1417,7 @@
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
-			max-width: 101px;
+			max-width: 85px;
 		}
 	}
 

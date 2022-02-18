@@ -13,8 +13,8 @@
   import { post } from "$lib/api/utils";
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	// ... DECLARING TYPESCRIPT-TYPES imports;
-	import type { GeoJsResponse } from "$lib/model/geo-js-interface"
-  import type { All_SportBook_Details_Data, Scores_Featured_Betting_Sites_Hasura } from "$lib/model/featured_betting_sites/firebase-real-db-interface";
+	import type { GeoJsResponse } from "$lib/models/geojs-types"
+  import type { All_SportBook_Details_Data, Scores_Featured_Betting_Sites_Hasura } from "$lib/models/featured_betting_sites/firebase-real-db-interface";
 	// ... external components import;
   import FeaturedBettingSitesWidgetContentLoading from "./_FeaturedBettingSitesWidget_ContentLoading.svelte";
   import FeaturedSiteRow from "./_FeaturedSiteRow.svelte";
@@ -162,7 +162,7 @@
   <!-- ... SEO-DATA-LOADED ... -->
   {#if !loaded}
     <!-- ... iterate over the data to find the correc language ... -->
-    {#each FEATURED_BETTING_SITES_WIDGET_DATA_SEO.scores_featured_betting_sites_translations_dev as WIDGET_SEO_TRANSLATION}
+    {#each FEATURED_BETTING_SITES_WIDGET_DATA_SEO.scores_featured_betting_sites_translations as WIDGET_SEO_TRANSLATION}
       <!-- ... obtain the correct widget translation ... -->
       {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
         <!-- ... SEO-BOX ... -->

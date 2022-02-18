@@ -33,7 +33,7 @@ export interface FinalFeaturedSiteResponseDB {
  * 
 */
 export interface Scores_Featured_Betting_Sites_Hasura {
-    scores_featured_betting_sites_translations_dev: {
+    scores_featured_betting_sites_translations: {
         lang: string
         translations: {
             register_cta: string
@@ -45,7 +45,7 @@ export interface Scores_Featured_Betting_Sites_Hasura {
 }
 
 export interface Scores_Featured_Betting_Sites_Data {
-    scores_featured_betting_sites_translations_dev: {
+    scores_featured_betting_sites_translations: {
         lang: string
         translations: {
             register_cta: string
@@ -79,4 +79,24 @@ export interface All_SportBook_Details_Data {
         }
     }[]
     data: Array < FeaturedSite >
+}
+//	let TABLE_GAMES: { [key: string]: LiveScoreLeague[] } = {};
+
+
+
+export interface LiveScore_SEO_Game{
+    tips: { [key: string]: {
+            link: string
+    }};
+    localteam:string;
+    visitorteam:string;
+    links: { [key: string]: string;}
+}
+
+
+export interface LiveScore_SEO_Game_Scoped_Lang{
+    tip: string;
+    localteam:string;
+    visitorteam:string;
+    link: string;
 }

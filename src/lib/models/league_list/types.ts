@@ -15,7 +15,7 @@ export interface Hasura_Complete_League_List_Type {
             league_id: number
         }[]
     }[]
-    scores_leagues_list_translations_dev: {
+    scores_leagues_list_translations: {
         lang: string
         translations: {
             search_form: string

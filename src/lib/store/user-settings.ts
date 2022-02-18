@@ -4,7 +4,7 @@
 
 import { dev } from '$app/env';
 import { writable } from 'svelte/store';
-import type { GeoJsResponse } from '$lib/model/geo-js-interface';
+import type { GeoJsResponse } from '$lib/model/_geojs/geo-js-interfaceterface';
 
 interface User_Setting {
 	lang: string;
