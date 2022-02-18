@@ -1,27 +1,34 @@
+// ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ... contains the TRANSLATION LANG SELECTED by the USER;
-// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import { dev } from '$app/env';
 import { writable } from 'svelte/store';
+import type { GeoJsResponse } from '$lib/model/_geojs/geo-js-interfaceterface';
 
 interface User_Setting {
 	lang: string;
 	theme: string;
+	country_bookmaker: string;
+	geoJs: GeoJsResponse
 }
 
 const user_settings: User_Setting = {
 	lang: undefined,
-	theme: undefined
-};
+	theme: undefined,
+	country_bookmaker: undefined,
+	geoJs: undefined
+}
 
 /**
  * Description:
  * ~~~~~~~~~~~~~~
  * ... initialize the .localStorage();
- * @param {*} key
- * @returns
- */
+ * ... @param {*} key
+ * ... @returns
+*/
 function createLocalStore(key: any): any {
+	
 	const { subscribe, set, update } = writable(user_settings);
 
 	return {
@@ -32,10 +39,10 @@ function createLocalStore(key: any): any {
 		/**
 		 * Description:
 		 * ~~~~~~~~~~~~~~~~~
-		 * [START]
-		 * Method for rendering the .localStorage() form
-		 * the start of the page,
-		 */
+		 * ... [START]
+		 * ... Method for rendering the .localStorage() form
+		 * ... the start of the page,
+		*/
 		useLocalStorage: () => {
 			// ... reset the writable to the localStorage if localStorage already exists,
 			const existing: string = localStorage.getItem(key);
@@ -46,7 +53,9 @@ function createLocalStore(key: any): any {
 				: // ... otherwise, instantiate default config;
 				  {
 						lang: 'en',
-						theme: 'Light'
+						theme: 'Light',
+						country_bookmaker: undefined,
+						geoJs: undefined
 				  };
 			// ... DEBUGGING;
 			if (dev) console.debug('-- exisitng_data --', exisitng_data);
@@ -60,11 +69,11 @@ function createLocalStore(key: any): any {
 		 * Description:
 		 * ~~~~~~~~~~~~~~~~~
 		 * ... method to add the user seleted language
-		 * to the localStoage & application store
-		 * [WORKING]
+		 * ... to the localStoage & application store
+		 * ... [WORKING]
 		 *
-		 * @param {*} item
-		 */
+		 * ... @param {*} lang
+		*/
 		setLang: (lang: string) => {
 			// ... DEBUGGING;
 			if (dev) console.info('-- select-lang --', lang);
@@ -84,11 +93,11 @@ function createLocalStore(key: any): any {
 		 * Description:
 		 * ~~~~~~~~~~~~~~~~~
 		 * ... method to add the user seleted theme
-		 * to the localStoage & application store
-		 * [WORKING]
+		 * ... to the localStoage & application store
+		 * ... [WORKING]
 		 *
-		 * @param {*} item
-		 */
+		 * ... @param {*} theme
+		*/
 		setTheme: (theme: string) => {
 			// ... DEBUGGING;
 			if (dev) console.debug('-- theme-select --', theme);
@@ -102,11 +111,61 @@ function createLocalStore(key: any): any {
 			localStorage.setItem(key, JSON.stringify(existing_data));
 			// ... update the `set()` data;
 			set(existing_data);
+		},
+
+		/**
+		 * Description:
+		 * ~~~~~~~~~~~~~~~~~
+		 * ... method to add the user seleted theme
+		 * ... to the localStoage & application store
+		 * ... [WORKING]
+		 *
+		 * ... @param {*} country_bookmaker
+		*/
+		setCountryBookmaker: (country_bookmaker: string) => {
+			// ... DEBUGGING;
+			if (dev) console.debug('-- country_bookmaker-select --', country_bookmaker);
+			// ... GET DATA FROM LOCALSTORAGE();
+			const existing: string = localStorage.getItem(key);
+			// ... CONVERT TO JSON;
+			const existing_data: User_Setting = JSON.parse(existing);
+			// ... UPDATE THE DATA FOR LANG;
+			existing_data.country_bookmaker = country_bookmaker;
+			// ... UPDATE THE LOCALSTORAGE();
+			localStorage.setItem(key, JSON.stringify(existing_data));
+			// ... update the `set()` data;
+			set(existing_data);
+		},
+
+		/**
+		 * Description:
+		 * ~~~~~~~~~~~~~~~~~
+		 * ... method to add the user seleted theme
+		 * ... to the localStoage & application store
+		 * ... [WORKING]
+		 *
+		 * ... @param {*} country_bookmaker
+		*/
+		setGeoJs: (geojs_res: GeoJsResponse) => {
+			// ... DEBUGGING;
+			// if (dev) console.debug('-- country_bookmaker-select --', geojs_res);
+			// ... GET DATA FROM LOCALSTORAGE();
+			const existing: string = localStorage.getItem(key);
+			// ... CONVERT TO JSON;
+			const existing_data: User_Setting = JSON.parse(existing);
+			// ... UPDATE THE DATA FOR LANG;
+			existing_data.geoJs = geojs_res;
+			// ... UPDATE THE LOCALSTORAGE();
+			localStorage.setItem(key, JSON.stringify(existing_data));
+			// ... update the `set()` data;
+			set(existing_data);
 		}
+
+
 	};
 }
 
 // ... if .localStorage() has the key then it will be used,
 // ... if not the default will be used. Format:
-// export const var = createLocalStore(key, default)
+// ... export const var = createLocalStore(key, default)
 export const userBetarenaSettings = createLocalStore('betarena-scores-platform-settings');

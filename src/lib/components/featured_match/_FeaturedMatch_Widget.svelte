@@ -21,21 +21,20 @@
 	import { getTargetFixtureOdds } from '$lib/firebase/index';
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 	import { ref, onValue } from 'firebase/database';
-	import { getUserLocation } from "$lib/geoJs/init"
 
 	// ... DECLARING TYPESCRIPT-TYPES imports;
 	import type { fixture } from '$lib/store/vote_fixture';
-	import type { FixtureResponse } from '$lib/model/interface-fixture';
-	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response, TranslationsResponse } from '$lib/model/response_models';
+	import type { FixtureResponse } from '$lib/models/featured_match/interface-fixture';
+	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response, TranslationsResponse } from '$lib/models/featured_match/response_models';
 	import { page } from '$app/stores'
 	import { post } from '$lib/api/utils'
-	import type { GeoJsResponse } from "$lib/model/geo-js-interface"
 
 	// ... key component assets;
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
+	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
 
 	// ... main component variables;
-	export let FEATURED_MATCH_WIDGET_DATA_SEO: Array < TranslationsResponse >;
+	export let FEATURED_MATCH_WIDGET_DATA_SEO: TranslationsResponse;
 	let FEATURED_MATCH_WIDGET_DATA: FixtureResponse;
 
 	// ... intercept-key data;
@@ -44,6 +43,8 @@
 	let selected_fixture_data: SelectedFixutre = undefined;
 	let loaded: boolean = false;
 	let nomatches: boolean = false;
+	let refresh: boolean = false;
+	let refresh_data: any = undefined;
 
 	// ... widget-language-declaration;
 	let server_side_language: string = 'en';
@@ -105,8 +106,7 @@
 	// ... main-component-promise; [WORKING]
 	async function get_FeaturedMatchData(): Promise < FixtureResponse > {
 		// ... get the USER-GEO-LOCATION
-		const userGeoResponse: GeoJsResponse = await getUserLocation()
-		let userGeo = userGeoResponse.country_code.toLowerCase()
+		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 		// ... DEBUGGING;
 		if (dev) console.info('-- user target location --', userGeo)
 		// ... GET RESPONSE;
@@ -118,7 +118,7 @@
 			// ... decalre state;
 			nomatches = true;
 			// ...
-			if (dev) console.debug('NO MATCHES!')
+			if (dev) console.debug('NO FEATURED MATCHES AVAILABLE!')
 			// ... return null;
 			return;
 		}
@@ -143,6 +143,21 @@
 		// ... return, DATA,
 		return FEATURED_MATCH_WIDGET_DATA;
 		
+	}
+
+	// ... change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
+	$: refresh_data = $userBetarenaSettings.country_bookmaker;
+	// ...
+	$: if (refresh_data) {
+		// ... reset necessary variables;
+		refresh = true
+		loaded = false
+		showBettingSite = false
+		voteCasted = false
+		// ... give X seconds for re-render component;
+		setTimeout(async() => {
+			refresh = false
+		}, 50)
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -196,6 +211,10 @@
 		_2_vote: undefined
 	};
 	$: if ($fixtureVote.fixtureVotes_Array != undefined && loaded) {
+		initVote()
+	}
+
+	function initVote() {
 		// ... returns the fixture obj. matching the fixture data;
 		const result = $fixtureVote.fixtureVotes_Array.find((fixture) => {
 			return fixture.fixture_id === FEATURED_MATCH_WIDGET_DATA.id;
@@ -206,6 +225,20 @@
 			fixtureDataVote = result;
 			showBettingSite = true;
 			voteCasted = true;
+			return;
+		}
+		// ... else;
+		else {
+			fixtureDataVote = {
+				fixture_id: undefined,
+				fixture_vote: undefined,
+				fixture_vote_val: undefined,
+				_X_vote: undefined,
+				_1_vote: undefined,
+				_2_vote: undefined
+			};
+			showBettingSite = false;
+			voteCasted = false;
 		}
 	}
 
@@ -246,7 +279,7 @@
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
+	// VIEWPORT CHANGES LISTENERS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	/**
@@ -433,7 +466,7 @@
 	<!-- ... SEO-DATA-LOADED ... -->
 	{#if !loaded && !nomatches}
 		<!-- ... iterate over the data to find the correc language ... -->
-		{#each FEATURED_MATCH_WIDGET_DATA_SEO as WIDGET_SEO_TRANSLATION}
+		{#each FEATURED_MATCH_WIDGET_DATA_SEO.widget_featured_match_translations as WIDGET_SEO_TRANSLATION}
 			<!-- ... obtain the correct widget translation ... -->
 			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<div id="seo-featured-match-box">
@@ -453,7 +486,7 @@
 	{#if nomatches && !loaded}
 		<!-- ... title of the widget ... -->
 		<!-- ... iterate over the data to find the correct language ... -->
-		{#each FEATURED_MATCH_WIDGET_DATA_SEO as WIDGET_SEO_TRANSLATION}
+		{#each FEATURED_MATCH_WIDGET_DATA_SEO.widget_featured_match_translations as WIDGET_SEO_TRANSLATION}
 			<!-- ... obtain the correct widget translation ... -->
 			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<!-- ... wiget-title ... -->
@@ -464,13 +497,29 @@
 		{/each}
 
 		<!-- ... no-matches-avaiable-placeholder container ...  -->
-		<div id='featured-no-match-box'
-			class='row-space-start'>
-			<img src={no_featured_match_visual} 
-				alt="no-featured-match-visual"
-				width="80px" height="80px"
-				class='m-r-20'
-			/>
+		<div 
+			id='featured-no-match-box'
+			class='row-space-start'
+			class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+			<!-- ... no-matches-visual ... -->
+			{#if $userBetarenaSettings.theme == 'Dark'}
+				<!-- content here -->
+				<img 
+					src={no_featured_match_visual_dark} 
+					alt="no-featured-match-visual_dark"
+					width="80px" height="80px"
+					class='m-r-20'
+				/>
+			{:else}
+				<!-- else content here -->
+				<img 
+					src={no_featured_match_visual} 
+					alt="no-featured-match-visual"
+					width="80px" height="80px"
+					class='m-r-20'
+				/>
+			{/if}
+			
 			<!-- ... container w/ text ... -->
 			<div>
 				<p class='s-16 m-b-8 w-500'> No Matches Available </p>
@@ -479,7 +528,7 @@
 		</div>
 	{/if}
 
-	{#if !nomatches}
+	{#if !nomatches && !refresh}
 		<!-- ... widget loading ... -->
 		{#await get_FeaturedMatchData()}
 			<!-- promise is pending -->

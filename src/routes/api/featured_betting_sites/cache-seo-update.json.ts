@@ -6,7 +6,7 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { Scores_Featured_Betting_Sites_Hasura } from '$lib/model/featured_betting_sites/firebase-real-db-interface';
+import type { Scores_Featured_Betting_Sites_Hasura } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
 import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/featured_betting_sites/query';
 
 /**

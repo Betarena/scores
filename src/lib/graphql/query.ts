@@ -6,43 +6,10 @@ import { gql } from 'graphql-request';
  * ~~~~~~~~~~~~~
  * ... get ALL of the TRANSLATIONS from the DB
  * for the website-platform
- */
-export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
-	query GET_WEBSITE_ALL_LANG_TRANSLATIONS @cached(ttl: 300) {
-		scores_header_translations_dev {
-			theme_options
-			theme
-			sports
-			sign_in
-			odds_type
-			odds
-			more_sports
-			lang
-			homepage
-			betting_tips_link
-			bookmakers
-			bookmakers_countries
-			content_platform_link
-			sports_list
-		}
-		scores_header_links_dev {
-			betting_tips
-			lang
-			latest_news
-		}
-	}
-`;
-
-
-/**
- * Description
- * ~~~~~~~~~~~~~
- * ... get ALL of the TRANSLATIONS from the DB
- * for the website-platform
- */
+*/
  export const GET_FOOTER_DATA = gql`
  query GET_FOOTER_DATA @cached(ttl: 300) {
-		scores_footer_translations_dev {
+		scores_footer_translations {
 			about_us
 			betting_tips
 			follow
@@ -54,7 +21,7 @@ export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
 			terms
 			type_email
 		}
-		scores_footer_links_dev {
+		scores_footer_links {
 			about_us
 			betting_tips
 			latest_news
@@ -72,7 +39,7 @@ export const GET_WEBSITE_ALL_LANG_TRANSLATIONS = gql`
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
- */
+*/
 export const GET_FEATURED_MATCH_TRANSLATION = gql`
 	query GET_FEATURED_MATCH_TRANSLATION @cached(ttl: 300) {
 		widget_featured_match_translations {
@@ -109,7 +76,7 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
- */
+*/
  export const GET_ALL_SELECTED_MATCH_FIXTURES = gql`
 	query GET_ALL_SELECTED_MATCH_FIXTURES @cached(ttl: 300) {
 		widget_featured_match_selection {
@@ -225,4 +192,39 @@ export const GET_ALL_FIXTURE_DATA = gql`
 			valuebets
 		}
 	}
+`;
+
+
+
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... get ALL of the TRANSLATIONS from the DB
+ * for the scores_livescore
+ */
+ export const GET_LIVESCORES_TRANSLATIONS = gql`
+ query GET_LIVESCORES_TRANSLATIONS @cached(ttl: 300) {
+	scores_livescore_football_translations {
+		status
+		status_abv
+		terms
+		lang
+	  }
+	}
+`;
+
+
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... get ALL of the Leagues order
+ * for the scores_livescore
+ */
+ export const GET_LIVESCORES_LEAGUES = gql`
+ query GET_LIVESCORES_LEAGUES @cached(ttl: 300) {
+	leagues_filtered_country {
+	  lang
+	  leagues
+	}
+  }
 `;

@@ -36,7 +36,7 @@ h6 {
 
 body {
 	color: var(--black);
-	background-color: var(--white);
+	background-color: var(--whitev2);
 	margin: 0 !important;
 	font-family: Roboto;
 	font-size: 14px;
@@ -65,6 +65,7 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	/* 
 	main app colors */
 	--white: #ffffff;
+	--whitev2: #F2F2F2;
 	--primary: #f5620f;
 	--secondary: #37474f;
 	--blue: #0085ff;
@@ -96,7 +97,7 @@ p {
 	font-weight: 400; /* 400 / 500 */
 	line-height: 150%;
 	margin: 0;
-	color: var(--dark);
+	color: var(--dark-theme);
 }
 
 /* ==========================
@@ -168,6 +169,12 @@ FONT EXTRA STYLES
 }
 .place-center {
 	place-self: center;
+}
+.cursor-pointer {
+	cursor: pointer;
+}
+.cursor-not-allowed {
+	cursor: not-allowed !important;
 }
 /* 
 ~~~~~~~~~~~~
@@ -370,6 +377,10 @@ bottom-margins
 ~~~~~~~~~~
 left-margins 
 */
+
+.m-l-10 {
+	margin-left: 10px;
+}
 
 .m-l-8 {
 	margin-left: 8px;
@@ -678,4 +689,12 @@ DARK-MODE FORM CSS STYLE
 
 .dark-background-1 .color-grey {
 	color: #a8a8a8 !important;
+}
+
+/* ... MOBILE VIEW OVERFLOW HIDDEN ... */
+
+@media only screen and (max-width: 375px) {
+	html, body {
+		overflow-x: hidden;
+	}
 }

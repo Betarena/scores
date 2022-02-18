@@ -28,12 +28,43 @@
 		// ... DEBUGGING;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
+		// ... GET RESPONSE;
+		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+		// ... DEBUGGING;
+		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+		
+		// ... GET RESPONSE;
+		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+		// ... DEBUGGING;
+		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
+			method: 'GET'
+		}).then((r) => r.json());
+
+		const response_livescores_football_leagues = await fetch('/api/live_scores/cache-data.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+
+		const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
+			method: 'GET'
+		}).then((r) => r.json());
 		// ... return, RESPONSE DATA;
 		if (response_featured_match && response_featured_betting_sites) {
 			return {
 				props: {
 					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
-					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites
+					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
+					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
+					PAGE_DATA_SEO: response_seo_page,
+					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
+					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
+					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations
+
+
 				}
 			};
 		}
@@ -51,15 +82,33 @@
 =================== -->
 <script lang="ts">
 	import { dev } from '$app/env';
-
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
 	import SvelteSeo from 'svelte-seo';
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
+
+	import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
+  import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
+import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+	export let LEAGUE_LIST_WIDGET_DATA_SEO;
+	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
+	export let LIVE_SCORES_DATA_DATA_SEO;
+	export let LIVE_SCORES_DATA_LEAGUES;
+	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
+	// ... page-language-declaration;
+	let server_side_language: string = 'en';
+	// ... language-translation-declaration;
+	$: if ($page.params.lang === undefined) {
+		server_side_language = 'en';
+	} else {
+		server_side_language = $page.params.lang;
+	}
 
 	/**
 	 * Description:
@@ -97,64 +146,26 @@
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- adding SEO title and meta-tags to the /basket page -->
-<SvelteSeo
-	title="Betarena"
-	description="Betarena"
-	keywords="Betarena, 
-        scores platform"
-	noindex={false}
-	nofollow={false}
-	canonical="https://www.betarena.com/"
-	twitter={{
-		site: '@username',
-		title: 'Betarena',
-		description: 'Betarena',
-		image: 'https://www.example.com/images/cover.jpg',
-		imageAlt: 'Alt text for the card!'
-	}}
-	openGraph={{
-		title: 'Betarena',
-		description: 'Betarena',
-		url: 'https://www.betarena.com/',
-		type: 'website',
-		images: [
-			{
-				url: 'https://www.example.com/images/og-image.jpg',
-				width: 850,
-				height: 650,
-				alt: 'Og Image Alt'
-			}
-		]
-	}}
-	jsonLd={{
-		'@type': 'Article',
-		mainEntityOfPage: {
-			'@type': 'WebPage',
-			'@id': 'https://example.com/article'
-		},
-		headline: 'Article headline',
-		image: [
-			'https://example.com/photos/1x1/photo.jpg',
-			'https://example.com/photos/4x3/photo.jpg',
-			'https://example.com/photos/16x9/photo.jpg'
-		],
-		datePublished: '2020-08-03T17:31:37Z',
-		dateModified: '2020-08-20T09:31:37Z',
-		author: {
-			'@type': 'Person',
-			name: 'John Doe'
-		},
-		publisher: {
-			'@type': 'Organization',
-			name: 'Google',
-			logo: {
-				'@type': 'ImageObject',
-				url: 'https://example.com/logo.jpg'
-			}
-		}
-	}}
-/>
+<!-- ... adding SEO-META-TAGS for PAGE ... -->
+{#each PAGE_DATA_SEO.scores_seo_homepage as item}
+	{#if item.lang == server_side_language}
+		<!-- content here -->
+		<SvelteSeo
+
+			title={item.main_data.title}
+			description={item.main_data.description}
+			keywords={item.main_data.keywords}
+			noindex={JSON.parse(item.main_data.noindex.toString())}
+			nofollow={JSON.parse(item.main_data.nofollow.toString())}
+			canonical={item.main_data.canonical}
+
+			twitter={item.twitter_card}
+
+			openGraph={item.opengraph}
+		/>
+	{/if}
+{/each}
+
 
 <!-- ===================
 	COMPONENT HTML
@@ -163,21 +174,38 @@
 <section id="home-page">
 	
 	{#if !mobileExclusive}
-		 <!-- ... 1st ROW ... -->
-		<div />
-
-		<!-- ... 2nd ROW ... -->
-		<div />
+		<!-- ... 1st ROW ... -->
+		<div> 
+			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
+		</div>
 	{/if}
 
-	<!-- ... 3rd ROW ... -->
-	<div 
-		class='grid-display-column'>
-		<!-- ... widget #1 ... -->
-		<FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
-		<!-- ... widget #2 ... -->
-		<FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
-	</div>
+  {#if !mobileExclusive}
+    <!-- ... 2nd ROW ... -->
+    <div >
+		<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
+    </div>
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <!-- ... widget #1 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+    </div>
+  {:else}
+    <!-- ... 3rd ROW ... -->
+    <div 
+      class='grid-display-column'>
+      <div >
+        <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO}/>
+      </div>
+      <!-- ... widget #1 ... -->
+      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <!-- ... widget #2 ... -->
+      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+    </div>
+  {/if}
 
 </section>
 
@@ -189,6 +217,7 @@
 		display: grid;
 		max-width: 1430px;
 		grid-template-columns: 1fr;
+		align-items: start;
 	}
 
 	div.grid-display-column {

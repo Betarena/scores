@@ -1,6 +1,7 @@
 // ... contains the values of the Fixture User Votes;
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
+import { dev } from '$app/env';
 import { writable } from 'svelte/store';
 
 export interface fixture {
@@ -48,7 +49,7 @@ function createLocalStore(key) {
 		 * @param {*} item
 		 */
 		addToVotes: (fixture_Vote: any) => {
-			console.log('fixture_Vote', fixture_Vote);
+			if (dev) console.log('fixture_Vote', fixture_Vote);
 
 			// get the existing data, stored in the .localStorage();
 			const existing: string = localStorage.getItem(key);

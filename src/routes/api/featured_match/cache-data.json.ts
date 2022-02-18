@@ -6,7 +6,7 @@ import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
-import type { FixtureResponse } from "$lib/model/interface-fixture"
+import type { FixtureResponse } from "$lib/models/featured_match/interface-fixture"
 
 // ... server-variables;
 let userGeo: string
@@ -14,9 +14,9 @@ let userGeo: string
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function post(req, res): Promise < any > {
+export async function post({ params, request }, res): Promise < any > {
     // ... extract the 'geo_js';
-    userGeo = req.body
+    userGeo = await request.json(); // or request.json(), etc
     // ... DEBUGGING;
     if (dev) console.info('-- cache-data.json userGeo --', userGeo)
 

@@ -46,30 +46,32 @@ export interface BestPlayers_Data {
  *
  */
 export interface TranslationsResponse {
-	assists: string;
-	bookmaker: string;
-	bet: string;
-	fair_odds: string;
-	goals: string;
-	home_win: string;
-	lang: string;
-	market: string;
-	market_name: string;
-	market_type: string;
-	matches: string;
-	odds: string;
-	place_bet: string;
-	player: string;
-	players: string;
-	stake: string;
-	rating: string;
-	probability: string;
-	streams: string;
-	type: string;
-	value_bet: string;
-	vote: string;
-	winnings: string;
-	widget_title: string;
+	widget_featured_match_translations: {
+		assists: string;
+		bookmaker: string;
+		bet: string;
+		fair_odds: string;
+		goals: string;
+		home_win: string;
+		lang: string;
+		market: string;
+		market_name: string;
+		market_type: string;
+		matches: string;
+		odds: string;
+		place_bet: string;
+		player: string;
+		players: string;
+		stake: string;
+		rating: string;
+		probability: string;
+		streams: string;
+		type: string;
+		value_bet: string;
+		vote: string;
+		winnings: string;
+		widget_title: string;
+	}[]
 }
 
 /**
@@ -110,4 +112,79 @@ export interface Featured_Match_Translation_Response {
  */
 export interface SelectedFixture_AllData {
 	widget_featured_match_selection: Array < SelectedFixutre >
+}
+
+/**
+ * Responses for LivesScores firebase games
+ */
+
+
+export interface LiveScoreIcon {
+	country:{ [key: string]: LiveScoreBookIcon };
+	
+}
+
+export interface LiveScoreBookIcon {
+	alt:string;
+	icon:string;
+	icon2:string;
+	iso:string;
+	link:string;	
+}
+
+export interface LiveScoreGame {
+	id: number;
+	league_id: number;
+	league: string;
+	localteam: string;
+	visitorteam: string; 
+	localteam_score:string;
+	visitorteam_score:string;
+	minute: string;
+	flag: string;
+	starting_at: string;
+	status: string;
+	starting_at_ts: number;
+	medias: number;
+	links:string[];
+	tips:string[];
+	cards:LiveScoreCard[];
+
+}
+
+export interface LiveScoreLeague {
+	id: number;
+	name:string;
+	flag:string;
+	games:LiveScoreLeagueGame[];
+	order:{ [key: string]: number };
+	
+}
+
+export interface LiveScoreCard {
+	team_name:string;	
+}
+export interface DayName {
+	name:string;
+	day:number;
+	sel:number;
+	table:string;
+}
+
+
+export interface LiveScoreLeagueGame {
+	id: number;
+	localteam: string;
+	visitorteam: string;
+	localScore: string;
+	visitorScore: string;
+	minute: string;
+	hour: string;
+	status: string;
+	medias: number;
+	links:string[];
+	tips:string[];
+	homeCards:number;
+	visitorCards:number;
+	starting_at_ts:number;
 }

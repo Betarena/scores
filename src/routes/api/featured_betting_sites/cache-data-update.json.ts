@@ -8,7 +8,7 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
 // ... DECLARING TYPESCRIPT-TYPES imports;
 import { getAllSportbookDetails } from '$lib/firebase/featured_betting_sites'
-import type { All_SportBook_Details_Data, Scores_Featured_Betting_Sites_Hasura } from '$lib/model/featured_betting_sites/firebase-real-db-interface'
+import type { All_SportBook_Details_Data, Scores_Featured_Betting_Sites_Hasura } from '$lib/models/featured_betting_sites/firebase-real-db-interface'
 import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/featured_betting_sites/query'
 
 // ... server-variables;
@@ -112,7 +112,7 @@ async function getAllFeaturedBettingSite(): Promise < Array < All_SportBook_Deta
     // ... inject the translations data acoordingly into 1 single JSON Object to each sportbook_details;
     for await (const sportBookDetails_elem of sportBookDetails_ObjArray) {
       // ... retrieve the appropiate information from the DB;
-      sportBookDetails_elem.translations = response.scores_featured_betting_sites_translations_dev
+      sportBookDetails_elem.translations = response.scores_featured_betting_sites_translations
       // ... sort positions;
       sportBookDetails_elem.data.sort((a, b) => parseInt(a.position) - parseInt(b.position))
     }

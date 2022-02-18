@@ -11,7 +11,7 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  import type { FeaturedSite, All_SportBook_Details_Data_Translation } from "$lib/model/featured_betting_sites/firebase-real-db-interface";
+  import type { FeaturedSite, All_SportBook_Details_Data_Translation } from "$lib/models/featured_betting_sites/firebase-real-db-interface";
 
   export let data: FeaturedSite;
   export let WIDGET_TRANSLATION: All_SportBook_Details_Data_Translation;
@@ -141,7 +141,8 @@
     <a 
       target="_blank" 
       rel="noreferrer" 
-      href={data.register_link}>
+      href={data.register_link}
+      aria-label={data.title}>
       <img
         style="background-color: var({imageVar}); border-radius: 4px;"
         src={data.image}

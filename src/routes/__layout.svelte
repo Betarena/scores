@@ -8,13 +8,15 @@
 
 <script lang="ts" context="module">
 
-  /** @type {import('@sveltejs/kit').Load} */
+  /** 
+   * @type {import('@sveltejs/kit').Load} 
+  */
   export async function load({url, params, fetch}) {
       // ... DEBUGGING;
-      if (dev) console.debug('-- obtaining translations! --');
+      if (dev) console.debug('ℹ loading navbar, footer cache-data!');
 
       // ... get-response for header data;
-      const response_header = await fetch('/api/navbar/data.json', {
+      const response_header = await fetch('/api/navbar/cache-data.json', {
         method: 'GET',
       }).then(r => r.json());
 
@@ -24,7 +26,8 @@
       }).then(r => r.json());
 
       // ... return, RESPONSE DATA for THIS PAGE;
-      if (response_header) {
+      if (response_header && 
+          response_footer) {
           return {
               status: 200,
               props: {
@@ -34,20 +37,21 @@
           }
       }
 
-      // ... otherwise, ERROR;
+      // ... otherwise, return ERROR;
       return {
           status: 400,
-          error: new Error(`/ page-preloading-error`)
+          error: new Error(`/page-preloading-error`)
       }
   }
 </script>
 
 <!-- ===================
-COMPONENT JS - BASIC 
+  COMPONENT JS - BASIC 
   [TypeScript Written]
 =================== -->
 
 <script lang="ts">
+	import { getStores, navigating, page, session, updated } from '$app/stores';
   import { browser, dev } from '$app/env';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -58,18 +62,20 @@ COMPONENT JS - BASIC
   import Header from '$lib/components/header/_Header.svelte';
   import OfflineAlert from '$lib/components/_Offline_alert.svelte';
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
+  import PlatformAlert from '$lib/components/_Platform_alert.svelte';
 
   import '../app.css';
 
-  import type { Header_Translation_Response, Header_Translation } from '$lib/model/scores_header_translations';
-  import type { Footer_Data } from '$lib/model/footer'
+  // ... load in SEO-DATA for Header, Footer TYPES;
+  import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';
+  import type { Footer_Data } from '$lib/models/footer/types'
 
   export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
   export let FOOTER_TRANSLATION_DATA: Footer_Data;
 
+
   // ... on client-side-rendering;
   if (browser) {
-
       // ... kickstart the .localStorage();
       fixtureVote.useLocalStorage();
       userBetarenaSettings.useLocalStorage();
@@ -81,9 +87,9 @@ COMPONENT JS - BASIC
 
   // ... HIDE/SHOW offline ALERT BADGE;
   let offlineMode: boolean = false;
-
+  // ...
   async function toggleOfflineAlert() {
-      if (dev) console.debug('-- your connection has changed! --');
+      if (dev) console.debug('🔴 your internet connection has changed!');
       offlineMode = !offlineMode;
   }
 </script>
@@ -95,6 +101,8 @@ COMPONENT JS - BASIC
 {#if offlineMode}
   <OfflineAlert />
 {/if}
+
+<PlatformAlert {HEADER_TRANSLATION_DATA} />
 
 <SplashScreen />
 
