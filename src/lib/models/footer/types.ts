@@ -3,7 +3,7 @@
  * ... Redis Cache;
  */
  export interface Footer_Data {
-  scores_footer_translations_dev: {
+  scores_footer_translations: {
       about_us: string
       betting_tips: string
       follow: string
@@ -15,7 +15,7 @@
       terms: string
       type_email: string
   }[]
-  scores_footer_links_dev: {
+  scores_footer_links: {
       about_us: string
       betting_tips: string
       latest_news: string

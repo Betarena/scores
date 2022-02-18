@@ -112,7 +112,7 @@ async function getAllFeaturedBettingSite(): Promise < Array < All_SportBook_Deta
     // ... inject the translations data acoordingly into 1 single JSON Object to each sportbook_details;
     for await (const sportBookDetails_elem of sportBookDetails_ObjArray) {
       // ... retrieve the appropiate information from the DB;
-      sportBookDetails_elem.translations = response.scores_featured_betting_sites_translations_dev
+      sportBookDetails_elem.translations = response.scores_featured_betting_sites_translations
       // ... sort positions;
       sportBookDetails_elem.data.sort((a, b) => parseInt(a.position) - parseInt(b.position))
     }

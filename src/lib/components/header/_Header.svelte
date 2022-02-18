@@ -186,7 +186,7 @@
 		userBetarenaSettings.setGeoJs(userGeoResponse)
 		// ... VALIDATION;
 		// ... check that the `country-GEO` is available on the list;
-		const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.find(function(item) { 
+		const result = HEADER_TRANSLATION_DATA.scores_header_translations.find(function(item) { 
 			return item.bookmakers_countries.find(function(item_2) { 
 				return item_2[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
 			});
@@ -223,7 +223,7 @@
 <header class="column-space-center">
 	{#if HEADER_TRANSLATION_DATA != undefined}
 		<!-- ... identify the correct translation via IF -->
-		{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang_obj}
+		{#each HEADER_TRANSLATION_DATA.scores_header_translations as lang_obj}
 			{#if lang_obj.lang == server_side_language}
 				<!-- ... header TOP NAVBAR section ... -->
 				<div id="top-header" class="row-space-out">
@@ -289,7 +289,7 @@
 								<!-- ... INIT-HIDDEN drop-down menu ... -->
 								{#if dropdown_lang_visible}
 									<div id="dropdown-menu" transition:fly>
-										{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang}
+										{#each HEADER_TRANSLATION_DATA.scores_header_translations as lang}
 											<div id="lang-select" on:click={() => selectLanguage(lang.lang)}>
 												<p class="color-white s-14">
 													{lang.lang.toUpperCase()}
@@ -303,7 +303,7 @@
 
 						<!-- ... NAV BUTTONS ... -->
 						{#if !mobileExclusive}
-							{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
+							{#each HEADER_TRANSLATION_DATA.scores_header_links as lang_link}
 								{#if lang_link.lang == server_side_language}
 									<!-- ... latest news ... -->
 									<a rel="external" href={lang_link.latest_news}>
@@ -510,7 +510,7 @@
 						{/if}
 
 						{#if mobileExclusive}
-							{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
+							{#each HEADER_TRANSLATION_DATA.scores_header_links as lang_link}
 								{#if lang_link.lang == server_side_language}
 									<a rel="external" href={lang_link.betting_tips}>
 										<!-- ... betting-tips ... -->
@@ -766,7 +766,7 @@
 											<!-- ... INIT-HIDDEN drop-down menu ... -->
 											{#if dropdown_lang_visible}
 												<div id="dropdown-menu" transition:fly>
-													{#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang}
+													{#each HEADER_TRANSLATION_DATA.scores_header_translations as lang}
 														<div id="lang-select" on:click={() => selectLanguage(lang.lang)}>
 															<p class="color-white s-14">
 																{lang.lang.toUpperCase()}
@@ -804,7 +804,7 @@
 									</div>
 
 									<!-- ... link-based-redirects ... -->
-									{#each HEADER_TRANSLATION_DATA.scores_header_links_dev as lang_link}
+									{#each HEADER_TRANSLATION_DATA.scores_header_links as lang_link}
 										{#if lang_link.lang == server_side_language}
 											<!-- ... latest-news ... -->
 											<div class="side-nav-row">

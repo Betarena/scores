@@ -26,7 +26,7 @@
 
 {#if HEADER_TRANSLATION_DATA != undefined}
 		<!-- ... identify the correct translation via IF -->
-		{#each HEADER_TRANSLATION_DATA.scores_top_bar_messages_dev as lang_obj}
+		{#each HEADER_TRANSLATION_DATA.scores_top_bar_messages as lang_obj}
       {#if lang_obj.lang === server_side_language}
         <!-- ... -->
         {#if lang_obj.status && show}
