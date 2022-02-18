@@ -264,8 +264,12 @@ $: if (refresh_data) {
 		{#each LIVE_SCORES_DATA_DATA_SEO as d}
 			<p>{d.visitorteam}</p>
 			<p>{d.localteam}</p>
-			<a href="{d.tip}">{d.tip}</a>
-			<a href="{d.link}">{d.link}</a>
+			{#if d.tip != "" }
+				<a href="{d.tip}">{d.tip}</a>
+			{/if}
+			{#if d.link != "" }
+				<a href="{d.link}">{d.link}</a>
+			{/if}
 		{/each}
 	{/if}
 	{#if LIVESCORES_TRANSLATIONS[server_side_language] }
@@ -547,7 +551,6 @@ $: if (refresh_data) {
 		.game-table-container .betarena-menu .numLive:after {
 			content: '';
 			position: absolute;
-			background-image: url("/src/lib/components/live_scores/assets/live.svg");
 			width: 16px;
 			height: 16px;
 			right: -22px;
