@@ -12,7 +12,6 @@
    * @type {import('@sveltejs/kit').Load} 
   */
   export async function load({url, params, fetch}) {
-      console.log('url', url);
 
       // ... redirect-accordingly-https;
       if (!dev && url.protocol != 'https:') {
@@ -83,7 +82,7 @@
   export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
   export let FOOTER_TRANSLATION_DATA: Footer_Data;
 
-  // ...
+  // ... https://stackoverflow.com/questions/4723213/detect-http-or-https-then-force-https-in-javascript
   $: if (!dev && browser && location.protocol !== 'https:') {
     location.replace(`https:${location.href.substring(location.protocol.length)}`);
   }
