@@ -168,22 +168,22 @@
 	 */
 	let viewportDesktop: boolean;
 
-    onMount(async () => {
-        var wInit = document.documentElement.clientWidth;
-        if (wInit >= 1440) {
-            viewportDesktop = true;
-        } else {
-            viewportDesktop = false;
-        }
-        window.addEventListener('resize', function () {
-            var w = document.documentElement.clientWidth;
-            if (w >= 1440) {
-                viewportDesktop = true;
-            } else {
-                viewportDesktop = false;
-            }
-        });
-    });
+  onMount(async () => {
+      var wInit = document.documentElement.clientWidth;
+      if (wInit >= 1280) {
+          viewportDesktop = true;
+      } else {
+          viewportDesktop = false;
+      }
+      window.addEventListener('resize', function () {
+          var w = document.documentElement.clientWidth;
+          if (w >= 1280) {
+              viewportDesktop = true;
+          } else {
+              viewportDesktop = false;
+          }
+      });
+  });
 
 </script>
 

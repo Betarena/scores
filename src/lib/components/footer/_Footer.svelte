@@ -7,7 +7,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
-	import { dev } from '$app/env'
+	import { browser, dev } from '$app/env'
 	// ... typescript-types;
 	import type { Footer_Data } from '$lib/models/footer/types'
 	// ... image-assets;
@@ -91,12 +91,65 @@
 	async function submitEmail() {
 		if (dev) console.debug('subscribing to email newsletter!')
 	}
+
+  // ... assign `logo-link`;
+  let logoLink: string
+  $: if (server_side_language != 'en') {
+    logoLink = $page.url.href + server_side_language
+  } else {
+    logoLink = $page.url.href
+  }
+
+  // ... hide SEO on-load;
+  let hideSEO: boolean = false;
+  // ...
+  $: if (browser) {
+    hideSEO = true
+  }
+
+  	// ... reload-PAGE-check;
+	function reloadPage() {
+		// ... DEBUGGING;
+		if (dev) console.debug('reloading-page-method!')
+		// ...
+		window.location.reload(); 
+	}
 </script>
 
 <!-- ===================
 	COMPONENT HTML
 =================== -->
 
+
+<!-- ... extra-footer-SEO-info ... -->
+{#if FOOTER_TRANSLATION_DATA != undefined && !hideSEO}
+  <!-- ... betarena-logo-homepage-correct-url ... -->
+  <p>{logoLink}</p>
+  <!-- ... nav-links-SEO ... -->
+  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
+      {#if footer_nav_links_translations.lang == server_side_language}
+        <!-- ... -->
+        <p>{footer_nav_links_translations.latest_news}</p>
+        <p>{footer_nav_links_translations.about_us}</p>
+        <p>{footer_nav_links_translations.betting_tips}</p>
+        <p>{footer_nav_links_translations.privacy}</p>
+        <p>{footer_nav_links_translations.social_networks}</p>
+        <p>{footer_nav_links_translations.terms}</p>
+      {/if}
+  {/each}
+  <!-- ... nav-links-social-links ... -->
+  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+    {#if social_network_obj.lang == server_side_language}
+      <!-- ... -->
+      {#each social_network_obj.social_networks as social_network}
+        <p>{social_network[1].toString().toLocaleLowerCase()}</p>
+      {/each}
+    {/if}
+  {/each}
+{/if}
+
+
+<!-- ... footer-HTML ... -->
 <footer>
 	<!-- ... wait until THIS component recives the required DATA ... -->
 	{#if FOOTER_TRANSLATION_DATA != undefined}
@@ -113,9 +166,10 @@
 						<!-- ... brand-logo-betarena ... -->
 						<div 
 							id='brand'
-							class='m-b-16'>
-							<a sveltekit:prefetch href="/">
-								<img src={logo_full} alt="betarena-logo" />
+							class='m-b-16'
+              on:click={() => reloadPage() }>
+							<a sveltekit:prefetch href="/" title={logoLink}>
+								<img src={logo_full} alt="betarena-logo" title={logoLink} />
 							</a>
 						</div>
 
@@ -312,9 +366,10 @@
 								style='width: auto;'>
 								<div 
 									id='brand'
-									class='m-b-25'>
-									<a sveltekit:prefetch href="/">
-										<img src={logo_full} alt="betarena-logo" />
+									class='m-b-25'
+                  on:click={() => reloadPage() }>
+									<a sveltekit:prefetch href="/" title={logoLink}>
+										<img src={logo_full} alt="betarena-logo" title={logoLink} />
 									</a>
 								</div>
 
@@ -510,9 +565,10 @@
 							<!-- ... brand-logo-betarena ... -->
 							<div 
 								id='brand'
-								class='m-b-12'>
-								<a sveltekit:prefetch href="/">
-									<img src={logo_full} alt="betarena-logo" />
+								class='m-b-12' 
+                on:click={() => reloadPage() }>
+								<a sveltekit:prefetch href="/" title={logoLink}>
+									<img src={logo_full} alt="betarena-logo" title={logoLink} />
 								</a>
 							</div>
 
@@ -710,6 +766,7 @@
 		{/each}
 	{/if}
 </footer>
+
 
 <!-- ===================
 	COMPONENT HTML
