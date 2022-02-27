@@ -42,7 +42,7 @@
               <img 
                 id='close-platform-alert-img'
                 src="./assets/svg/alert/close.svg" 
-                alt="" 
+                alt="close-vector" 
                 width="14px" height="14px"
                 on:click={() => show = false} />
           </div>

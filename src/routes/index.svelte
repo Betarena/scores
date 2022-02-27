@@ -201,16 +201,13 @@ import type { LiveScores_Football_Translation } from '$lib/models/live_scores_fo
 		<div> 
 			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
 		</div>
-
 	{/if}
 
-
-		<!-- ... 2nd ROW ... -->
-		<div >
-			<LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
-		</div>
-	
   {#if !mobileExclusive}
+    <!-- ... 2nd ROW ... -->
+    <div >
+      <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
+    </div>
     <!-- ... 3rd ROW ... -->
     <div 
       class='grid-display-column'>
@@ -223,6 +220,9 @@ import type { LiveScores_Football_Translation } from '$lib/models/live_scores_fo
     <!-- ... 3rd ROW ... -->
     <div 
       class='grid-display-column'>
+      <div >
+		    <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
+      </div>
       <!-- ... widget #1 ... -->
       <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
       <!-- ... widget #2 ... -->
