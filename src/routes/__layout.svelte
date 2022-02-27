@@ -84,7 +84,7 @@
   export let FOOTER_TRANSLATION_DATA: Footer_Data;
 
   // ...
-  $: if (browser && location.protocol !== 'https:') {
+  $: if (!dev && browser && location.protocol !== 'https:') {
     location.replace(`https:${location.href.substring(location.protocol.length)}`);
   }
 
