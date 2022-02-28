@@ -227,19 +227,28 @@ import type { LiveScores_Football_Translation } from '$lib/models/live_scores_fo
 	}
 
 	/* 
-    RESPONSIVE FOR TABLET (&+) [768px] */
+  RESPONSIVE FOR TABLET (&+) [768px] */
 	@media only screen and (min-width: 768px) {
 		section#home-page {
 			grid-template-columns: 1fr;
 		}
 	}
 
-	/* 
-    RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
-	@media only screen and (min-width: 1024px) {
+  /* 
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+	@media only screen and (min-width: 1160px) {
 		section#home-page {
 			gap: 20px;
-			grid-template-columns: minmax(auto, 328px) minmax(auto, 502px) minmax(auto, 502px);
+      grid-template-columns: minmax(auto, 275px) minmax(auto, 502px) minmax(auto, 502px);
+		}
+	}
+
+  /* 
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+	@media only screen and (min-width: 1320px) {
+		section#home-page {
+			gap: 20px;
+      grid-template-columns: minmax(auto, 328px) minmax(502px, 502px) minmax(auto, 502px);
 		}
 	}
 </style>
