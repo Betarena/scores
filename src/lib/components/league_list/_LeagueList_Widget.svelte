@@ -170,14 +170,14 @@
 
   onMount(async () => {
       var wInit = document.documentElement.clientWidth;
-      if (wInit >= 1280) {
+      if (wInit >= 1160) {
           viewportDesktop = true;
       } else {
           viewportDesktop = false;
       }
       window.addEventListener('resize', function () {
           var w = document.documentElement.clientWidth;
-          if (w >= 1280) {
+          if (w >= 1160) {
               viewportDesktop = true;
           } else {
               viewportDesktop = false;
@@ -547,6 +547,8 @@
 
 <style>
 
+    /* DESKTOP ONLY WIDGET */
+
     #seo-league-list-box {
         position: absolute;
         z-index: -100;
@@ -557,9 +559,9 @@
     #league-list {
         display: grid;
         background: #ffffff;
-        box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+        box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
         border-radius: 12px;
-        min-width: 100%;
+        min-width: 220px;
         width: 100%;
         max-width: 343px;
         padding-bottom: 4px;
@@ -587,6 +589,10 @@
         border: 1px solid #8C8C8C;
     } input#league-list-search:focus {
         border: 1px solid #4B4B4B;
+    } input#league-list-search[placeholder] {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
     }
 
     #close-btn-search {
@@ -656,9 +662,22 @@
         padding: 28px 0;
     }
 
+    /* MEDIA QUERIES */
+    @media screen and (max-width: 1280px) {
+
+      input#league-list-search {
+        padding: 12px 28px 12px 35px;
+        background-position: 8px 50%;
+      }
+
+      img#close-btn-search {
+        right: 28px;
+      }
+    }
+
     /* .............. 
-	WIDGET DARK THEME 
-	................. */
+    WIDGET DARK THEME 
+    ................. */
 
     .dark-background-1 input#league-list-search {
         /* dark theme/bg */
