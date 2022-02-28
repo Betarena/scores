@@ -663,7 +663,7 @@
     }
 
     /* MEDIA QUERIES */
-    @media screen and (max-width: 1280px) {
+    @media screen and (max-width: 1440px) {
 
       input#league-list-search {
         padding: 12px 28px 12px 35px;
