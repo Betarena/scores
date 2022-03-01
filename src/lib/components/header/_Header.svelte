@@ -107,6 +107,7 @@
 	 */
 
 	// ... DEBUGGING;
+	$: if (dev) console.debug('-- $page --', $page);
 	$: if (dev) console.debug('-- $page.params --', $page.params);
 	$: if (dev) console.debug('-- $page.params.lang --', $page.params.lang);
 	// ... get the URL lang-value QUERY;
@@ -139,6 +140,20 @@
 		// }
 	}
 
+  let logoLink: string
+  $: if (server_side_language != 'en') {
+    logoLink = $page.url.href + server_side_language
+  } else {
+    logoLink = $page.url.href
+  }
+
+  // ... hide SEO on-load;
+  let hideSEO: boolean = false;
+  // ...
+  $: if (browser) {
+    hideSEO = true
+  }
+  
 	// ~~~~~~~~~~~~~~
 	// COMPONENT METHODS
 	// ~~~~~~~~~~~~~~
@@ -219,6 +234,23 @@
 	<div id="background-area-close" on:click={() => closeAllDropdowns()} />
 {/if}
 
+
+<!-- ... extra-header-SEO-info ... -->
+{#if HEADER_TRANSLATION_DATA != undefined &&
+  !hideSEO}
+  {#each HEADER_TRANSLATION_DATA.scores_header_translations as lang_obj}
+    <!-- ... main-homepage-link-in-all-avaialble-languages ... -->
+    {#if lang_obj.lang != 'en'}
+      <!-- content here -->
+      <p>{$page.url.href + lang_obj.lang}</p>
+    {:else}
+      <!-- content here -->
+      <p>{$page.url.href}</p>
+    {/if}
+  {/each}
+{/if}
+
+
 <!-- ... header-for-the-page ... -->
 <header class="column-space-center">
 	{#if HEADER_TRANSLATION_DATA != undefined}
@@ -245,7 +277,7 @@
 						{#if mobileExclusive}
 							<!-- ... brand-logo-betarena-for-mobile-ONLY ... -->
 							<div id="brand" on:click={() => reloadPage() }>
-								<a sveltekit:prefetch href="/">
+								<a sveltekit:prefetch href="/" title={logoLink}>
 									<img src={logo_mini} alt="betarena-logo" width="103px" height="30px" />
 								</a>
 							</div>
@@ -253,7 +285,7 @@
 						{:else}
 							<!-- ... brand-logo-betarena-for-desktop-ONLY ... -->
 							<div id="brand" on:click={() => reloadPage() }>
-								<a sveltekit:prefetch href="/">
+								<a sveltekit:prefetch href="/" title={logoLink}>
 									<img
 										class="m-r-30"
 										src={logo_full}
