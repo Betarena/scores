@@ -4,16 +4,6 @@
 		<meta charset="utf-8" />
 
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <!-- https://stackoverflow.com/questions/6483425/prevent-iphone-from-zooming-in-on-select-in-web-app -->
-
-    <!-- <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0, user-scalable=yes"> -->
-		<!-- https://stackoverflow.com/questions/50729451/pwa-manifest-json-theme-color-and-background-color-not-working-splash-scr -->
-
-    <!-- https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone -->
-    <!-- <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"> -->
-
-    <!-- <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests"> -->
-
 		<meta name="theme-color" content="#292929" />
 
 		<!-- ... Website Icons & Favicons ... -->
@@ -27,14 +17,25 @@
 		<link rel="manifest" crossorigin="use-credentials" href="manifest.json" />
 
 		<!-- ... Website Fonts ... -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
+		<link nonce="%svelte.nonce%" rel="preconnect" href="https://fonts.googleapis.com">
+		<link nonce="%svelte.nonce%" rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link nonce="%svelte.nonce%" href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
 
     <!-- ... ANALYTICS TAGS ... -->
-    <script type="text/javascript" > (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(86583540, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); </script>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-60160331-9"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-60160331-9'); </script>
-
+    <!-- ... YANDEX ... -->
+    <script type="text/javascript" nonce="%svelte.nonce%"> 
+      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)}; m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)}) (window, document, "script", "https://mc.yandex.ru/metrika/tag.js", "ym"); ym(86583540, "init", { clickmap:true, trackLinks:true, accurateTrackBounce:true, webvisor:true }); 
+    </script>
+    <!-- ... GOOGLE V1 ... -->
+    <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-60160331-9"></script> <script> window.dataLayer = window.dataLayer || []; function gtag(){dataLayer.push(arguments);} gtag('js', new Date()); gtag('config', 'UA-60160331-9'); </script> -->
+    <!-- ... GOOGLE V2 ... -->
+    <script nonce="%svelte.nonce%">
+      (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
+      var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=UA-60160331-9'+i+dl;
+      var n=d.querySelector('[nonce]');n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);});
+      (window,document,'script','dataLayer','UA-60160331-9');
+    </script>
+    
 		%svelte.head%
 	</head>
 	<body class='no-scrollbar'>
