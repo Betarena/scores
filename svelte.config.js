@@ -18,14 +18,44 @@ const config = {
 		// ... NODE-JS deployment Environment ...
 		adapter: node(),
 
-    // ... CSP Support
+    // ... CSP Support - [PROD / HEROKU ONLY]
     // ... https://kit.svelte.dev/docs/configuration#csp
     // ... https://github.com/sveltejs/kit/issues/93
+    // ...
+    // ... https://developers.google.com/tag-platform/tag-manager/web/csp [GOOGLE-CSP]
+    // ... https://yandex.com/support/metrica/code/install-counter-csp.html [YANDEX-CSP]
+    // ...
+    // ... [HELP] - https://stackoverflow.com/questions/30939809/google-analytics-js-and-content-security-policy
+    // ... [INFO] - https://web.dev/strict-csp/
+    // ... [HELP] - https://stackoverflow.com/questions/31211359/refused-to-load-the-script-because-it-violates-the-following-content-security-po
+    // ... [HELP] - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
+    // ... [INFO] - https://stackoverflow.com/questions/42922784/what-s-the-purpose-of-the-html-nonce-attribute-for-script-and-style-elements
+    // ... [INFO] - https://developers.google.com/web/fundamentals/security/csp/#inline_code_is_considered_harmful
     csp: {
+      mode: 'nonce',
       directives: {
-        'script-src': ['self', 'unsafe-inline'],
+        // 'default-src': ['*'],        // ... ultimate-default-fallback;
+        // 'script-src-elem': ['self', 
+        //                     'https://betarena-rv-6b382.firebaseio.com/'],
+        'script-src': ['self', 
+                      'unsafe-inline', 
+                      'https://www.googletagmanager.com',
+                      'https://www.google-analytics.com',
+                      'https://ssl.google-analytics.com',
+                      'https://betarena-rv-6b382.firebaseio.com/',
+                      '*.firebaseio.com',
+                      'https://mc.yandex.ru',
+                      'https://yastatic.net'], 
+        'style-src': ['self',
+                      'unsafe-inline',
+                      'https://fonts.googleapis.com'],
         'object-src': ['none'],
         'base-uri': ['none'],
+        // 'img-src': ['http://*', 
+        //             'https://*'],
+        // 'connect-src': ['https://get.geojs.io', 
+        //                 'https://betarena.hasura.app', 
+        //                 'https://betarena-rv-6b382.firebaseio.com/']
       }
     }
 

@@ -95,9 +95,9 @@
   // ... assign `logo-link`;
   let logoLink: string
   $: if (server_side_language != 'en') {
-    logoLink = $page.url.href + server_side_language
+    logoLink = $page.url.origin + '/' + server_side_language
   } else {
-    logoLink = $page.url.href
+    logoLink = $page.url.origin
   }
 
   // ... hide SEO on-load;
