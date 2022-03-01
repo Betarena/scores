@@ -126,7 +126,7 @@
   <!-- ... betarena-logo-homepage-correct-url ... -->
   <p>{logoLink}</p>
   <!-- ... nav-links-SEO ... -->
-  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
+  {#each FOOTER_TRANSLATION_DATA.scores_footer_links as footer_nav_links_translations}
       {#if footer_nav_links_translations.lang == server_side_language}
         <!-- ... -->
         <p>{footer_nav_links_translations.latest_news}</p>
@@ -138,7 +138,7 @@
       {/if}
   {/each}
   <!-- ... nav-links-social-links ... -->
-  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
+  {#each FOOTER_TRANSLATION_DATA.scores_footer_links as social_network_obj}
     {#if social_network_obj.lang == server_side_language}
       <!-- ... -->
       {#each social_network_obj.social_networks as social_network}

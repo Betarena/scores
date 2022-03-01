@@ -238,7 +238,7 @@
 <!-- ... extra-header-SEO-info ... -->
 {#if HEADER_TRANSLATION_DATA != undefined &&
   !hideSEO}
-  {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev as lang_obj}
+  {#each HEADER_TRANSLATION_DATA.scores_header_translations as lang_obj}
     <!-- ... main-homepage-link-in-all-avaialble-languages ... -->
     {#if lang_obj.lang != 'en'}
       <!-- content here -->
