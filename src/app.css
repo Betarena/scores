@@ -698,3 +698,11 @@ DARK-MODE FORM CSS STYLE
 		overflow-x: hidden;
 	}
 }
+
+/* ... zoom-out-mobiles-input-form ... */
+/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */
+@supports (-webkit-overflow-scrolling: touch) {
+  input:active {
+    font-size: 16px !important;
+  }
+}
