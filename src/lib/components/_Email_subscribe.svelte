@@ -52,6 +52,7 @@
     <!-- ... close-icon-img ... -->
     <img 
       id='close-vector'
+      class='cursor-pointer'
       src="assets/svg/close.svg" 
       alt="close-svg" 
       on:click={() => $session.newsletterPopUpShow = false} />
@@ -127,12 +128,24 @@
 
   /* import-form */
   iframe {
-    /*  */
     width: 375px;
     max-width: 375px;
     height: 620px;
     border: none;
     overflow: hidden;
+  }
+
+  /* 
+    RESPONSIVE FOR TABLET (&+) [475px] */
+	@media screen and (min-width: 475px) {
+    div#outer-iframe-cotnainer {
+      width: 465px !important;
+      max-width: none;
+    }
+    iframe {
+      width: 465px !important;
+      max-width: none;
+    }
   }
   /* iframe body {
     margin: 0 !important;
