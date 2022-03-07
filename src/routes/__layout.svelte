@@ -76,7 +76,7 @@
 
   import '../app.css';
 
-  const { session } = getStores();
+  // const { session } = getStores();
 
   // ... load in SEO-DATA for Header, Footer TYPES;
   import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';

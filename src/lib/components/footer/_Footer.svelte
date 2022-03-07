@@ -6,11 +6,10 @@
 <script lang="ts">
 	// ... svelte-imports;
 	import { onMount } from 'svelte'
-	import { page } from '$app/stores'
 	import { browser, dev } from '$app/env'
   import { fade } from 'svelte/transition'
 	import { getStores, navigating, page, session, updated } from '$app/stores';
-  const { session } = getStores();
+  // const { session } = getStores();
 	// ... typescript-types;
 	import type { Footer_Data } from '$lib/models/footer/types'
 	// ... image-assets;

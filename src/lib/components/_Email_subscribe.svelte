@@ -7,7 +7,7 @@
 	import { getStores, navigating, page, session, updated } from '$app/stores';
   import { fade } from 'svelte/transition';
 
-  const { session } = getStores();
+  // const { session } = getStores();
 
   // ... immediately update the data with the lang;
 	let server_side_language: string = 'en';

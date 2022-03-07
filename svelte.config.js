@@ -38,6 +38,7 @@ const config = {
         // 'script-src-elem': ['self', 
         //                     'https://betarena-rv-6b382.firebaseio.com/'],
         'script-src': ['self', 
+                       'strict-dynamic',
                       'unsafe-inline', 
                       'https://www.googletagmanager.com',
                       'https://www.google-analytics.com',
