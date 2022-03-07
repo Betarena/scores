@@ -72,8 +72,11 @@
   import OfflineAlert from '$lib/components/_Offline_alert.svelte';
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';
+  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
 
   import '../app.css';
+
+  const { session } = getStores();
 
   // ... load in SEO-DATA for Header, Footer TYPES;
   import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';
@@ -118,6 +121,8 @@
 <PlatformAlert {HEADER_TRANSLATION_DATA} />
 
 <SplashScreen />
+
+<EmailSubscribe />
 
 <Header {HEADER_TRANSLATION_DATA} />
 

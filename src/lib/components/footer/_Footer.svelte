@@ -9,6 +9,8 @@
 	import { page } from '$app/stores'
 	import { browser, dev } from '$app/env'
   import { fade } from 'svelte/transition'
+	import { getStores, navigating, page, session, updated } from '$app/stores';
+  const { session } = getStores();
 	// ... typescript-types;
 	import type { Footer_Data } from '$lib/models/footer/types'
 	// ... image-assets;
@@ -95,21 +97,8 @@
     // ... DEBUGGING;
 		if (dev) console.debug('subscribing to email newsletter!')
     // ...
-    showEmailForm = true;
-    // ...
-    // setTimeout(async () => {
-    //   // ... IFRAME CSS STYLING;
-    //   let iFrameEmailFormElement = document.getElementById('iframe-email-form');
-    //   // let doc = iFrameEmailFormElement.ownerDocument;
-    //   let doc = (iFrameEmailFormElement.contentWindow || iFrameEmailFormElement.contentDocument);
-    //   // if (doc.document)doc = doc.document
-    //   // ... DEBUGGING;
-    //   if (dev) console.debug('iFrameEmailFormElement', iFrameEmailFormElement);
-    //   if (dev) console.debug('doc', doc.document);
-    //   // ...
-    //   // doc.body.style.backgroundColor = "red";
-    //   // ... 
-    // }, 5000)
+    // showEmailForm = true;
+    $session.newsletterPopUpShow = true;
 	}
 
   // ... assign `logo-link`;
@@ -789,47 +778,8 @@
 </footer>
 
 
-<!-- ... email-submission-send-grid-form ... -->
-{#if showEmailForm}
-  <div 
-    id='background-modal-blur'
-    on:click={() => showEmailForm = false}
-    in:fade />
-
-  <!-- ... IFRAME LANGUAGE CONDITION ... -->
-  {#if server_side_language == 'en'}
-    <!-- ... EN ... -->
-    <iframe
-      id='iframe-email-form'
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/959f35f0-8a5e-11ec-ae12-6ab0b90e93b0" />
-  {:else if server_side_language == 'es'}
-    <!-- ... ES ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/e2e80a33-947e-11ec-9a6f-bab7bbd1e44a" />
-  {:else if server_side_language == 'it'}
-    <!-- ... IT ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/f6daf19c-947f-11ec-9a6f-bab7bbd1e44a" />
-  {:else if server_side_language == 'br'}
-    <!-- ... BR ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/6a180301-9480-11ec-9a6f-bab7bbd1e44a" />
-  {:else if server_side_language == 'pt'}
-    <!-- ... PT ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/ae8bbec3-9480-11ec-9a6f-bab7bbd1e44a" />
-  {/if}
-
-{/if}
-
-
 <!-- ===================
-	COMPONENT HTML
+	COMPONENT STYLE
 =================== -->
 
 <style>
@@ -890,40 +840,6 @@
 		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
 	}
-
-  div#background-modal-blur {
-    position: fixed;
-    top: 0;
-    right: 0;
-    left: 0;
-    z-index: 4;
-    height: 100%;
-    width: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(4px);
-  }
-
-  /* import-form */
-  iframe {
-    position: fixed;
-    right: 0;
-    left: 0;
-    margin: auto;
-    top: 0;
-    bottom: 0;
-    z-index: 5;
-    /*  */
-    width: 469px;
-    height: 597px;
-    border: none;
-  }
-  /* iframe body {
-    margin: 0 !important;
-  }
-  iframe form {
-    width: auto !important;
-    margin: 0 !important;
-  } */
 
 	/* 
     RESPONSIVE FOR TABLET (&+) [768px] */
