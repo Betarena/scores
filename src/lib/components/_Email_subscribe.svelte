@@ -47,34 +47,44 @@
     on:click={() => $session.newsletterPopUpShow = false}
     in:fade />
 
-  <!-- ... IFRAME LANGUAGE CONDITION ... -->
-  {#if server_side_language == 'en'}
-    <!-- ... EN ... -->
-    <iframe
-      id='iframe-email-form'
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/959f35f0-8a5e-11ec-ae12-6ab0b90e93b0" />
-  {:else if server_side_language == 'es'}
-    <!-- ... ES ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/e2e80a33-947e-11ec-9a6f-bab7bbd1e44a" />
-  {:else if server_side_language == 'it'}
-    <!-- ... IT ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/f6daf19c-947f-11ec-9a6f-bab7bbd1e44a" />
-  {:else if server_side_language == 'br'}
-    <!-- ... BR ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/6a180301-9480-11ec-9a6f-bab7bbd1e44a" />
-  {:else if server_side_language == 'pt'}
-    <!-- ... PT ... -->
-    <iframe 
-      title='email-betarena-form'
-      src="https://cdn.forms-content.sg-form.com/ae8bbec3-9480-11ec-9a6f-bab7bbd1e44a" />
-  {/if}
+  <div
+    id="outer-iframe-cotnainer">
+    <!-- ... close-icon-img ... -->
+    <img 
+      id='close-vector'
+      src="assets/svg/close.svg" 
+      alt="close-svg" 
+      on:click={() => $session.newsletterPopUpShow = false} />
+    <!-- ... IFRAME LANGUAGE CONDITION ... -->
+    {#if server_side_language == 'en'}
+      <!-- ... EN ... -->
+      <iframe
+        id='iframe-email-form'
+        title='email-betarena-form'
+        src="https://cdn.forms-content.sg-form.com/959f35f0-8a5e-11ec-ae12-6ab0b90e93b0" />
+    {:else if server_side_language == 'es'}
+      <!-- ... ES ... -->
+      <iframe 
+        title='email-betarena-form'
+        src="https://cdn.forms-content.sg-form.com/e2e80a33-947e-11ec-9a6f-bab7bbd1e44a" />
+    {:else if server_side_language == 'it'}
+      <!-- ... IT ... -->
+      <iframe 
+        title='email-betarena-form'
+        src="https://cdn.forms-content.sg-form.com/f6daf19c-947f-11ec-9a6f-bab7bbd1e44a" />
+    {:else if server_side_language == 'br'}
+      <!-- ... BR ... -->
+      <iframe 
+        title='email-betarena-form'
+        src="https://cdn.forms-content.sg-form.com/6a180301-9480-11ec-9a6f-bab7bbd1e44a" />
+    {:else if server_side_language == 'pt'}
+      <!-- ... PT ... -->
+      <iframe 
+        title='email-betarena-form'
+        src="https://cdn.forms-content.sg-form.com/ae8bbec3-9480-11ec-9a6f-bab7bbd1e44a" />
+    {/if}
+  </div>
+
 
 {/if}
 
@@ -96,8 +106,7 @@
     background: rgba(0, 0, 0, 0.5);
   }
 
-  /* import-form */
-  iframe {
+  div#outer-iframe-cotnainer {
     position: fixed;
     right: 0;
     left: 0;
@@ -105,10 +114,25 @@
     top: 0;
     bottom: 0;
     z-index: 400000001;
+    width: 375px;
+    max-width: 375px;
+    height: 620px;
+    overflow: hidden;
+  } div#outer-iframe-cotnainer img#close-vector {
+    position: absolute;
+    top: 30px;
+    right: 15px;
+    z-index: 400000002;
+  }
+
+  /* import-form */
+  iframe {
     /*  */
-    width: 469px;
-    height: 597px;
+    width: 375px;
+    max-width: 375px;
+    height: 620px;
     border: none;
+    overflow: hidden;
   }
   /* iframe body {
     margin: 0 !important;
