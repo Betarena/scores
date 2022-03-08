@@ -349,7 +349,7 @@ $: if (refresh_data) {
 						<div class="game-status">{g.status.toLowerCase()}</div>
 					{/if}
 				</div>
-				<a class="game-teams" href="{g.links ? g.links[server_side_language]:''}">
+				<a class="game-teams" target="_blank" href="{g.links ? g.links[server_side_language]:''}">
 					<div class="team first {g.localScore < g.visitorScore ? 'loser':''} {g.localScore == g.visitorScore ? 'tie':''}"><span class="teamname">{g.localteam}</span>
 						<span class="cards">
 							{#if g.homeCards > 0}
