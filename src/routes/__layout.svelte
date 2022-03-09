@@ -14,12 +14,12 @@
   export async function load({url, params, fetch}) {
 
       // ... redirect-accordingly-https;
-      if (!dev && url.protocol != 'https:') {
-        return {
-          status: 302,
-          redirect: 'https://' + url.host + url.pathname
-        };
-      }
+      // if (!dev && url.protocol != 'https:') {
+      //   return {
+      //     status: 301,
+      //     redirect: 'https://' + url.host + url.pathname
+      //   };
+      // }
 
       // ... DEBUGGING;
       if (dev) console.debug('ℹ loading navbar!, \n ℹ footer cache-data!');
@@ -86,9 +86,9 @@
   export let FOOTER_TRANSLATION_DATA: Footer_Data;
 
   // ... https://stackoverflow.com/questions/4723213/detect-http-or-https-then-force-https-in-javascript
-  $: if (!dev && browser && location.protocol !== 'https:') {
-    location.replace(`https:${location.href.substring(location.protocol.length)}`);
-  }
+  // $: if (!dev && browser && location.protocol !== 'https:') {
+  //   location.replace(`https:${location.href.substring(location.protocol.length)}`);
+  // }
 
   // ... on client-side-rendering;
   if (browser) {

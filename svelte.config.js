@@ -2,6 +2,31 @@
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
+// /** @type {import('vite').Plugin} */
+// const myPlugin = {
+//   name: 'log-request-middleware',
+//   configureServer(server) {
+
+//     server.middlewares.use((req, res, next) => {
+//       console.log(`Got request ${req.url}`);
+//       next();
+//     });
+
+//     // ... ℹ https://jaketrent.com/post/https-redirect-node-heroku
+//     server.middlewares.use((req, res, next) => {
+//       if (req.header('x-forwarded-proto') !== 'https')
+//         res.redirect(`https://${req.header('host')}${req.url}`);
+//       else
+//         next();
+//     });
+
+//     // server.middlewares.get('/healthcheck', (req, res) => {
+//     //   res.end('ok');
+//     // });
+
+//   }
+// };
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 	// Consult https://github.com/sveltejs/svelte-preprocess
@@ -17,6 +42,10 @@ const config = {
 
 		// ... NODE-JS deployment Environment ...
 		adapter: node(),
+
+    // vite: {
+    //   plugins: [myPlugin],
+    // },
 
     // ... CSP Support - [PROD / HEROKU ONLY]
     // ... https://kit.svelte.dev/docs/configuration#csp
