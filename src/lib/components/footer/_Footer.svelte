@@ -6,8 +6,10 @@
 <script lang="ts">
 	// ... svelte-imports;
 	import { onMount } from 'svelte'
-	import { page } from '$app/stores'
 	import { browser, dev } from '$app/env'
+  import { fade } from 'svelte/transition'
+	import { getStores, navigating, page, session, updated } from '$app/stores';
+  // const { session } = getStores();
 	// ... typescript-types;
 	import type { Footer_Data } from '$lib/models/footer/types'
 	// ... image-assets;
@@ -88,12 +90,19 @@
 	 * ... form SUBMIT method to 
 	 * ... register user on the BETARENA EMAIL LIST
 	*/
+  let showEmailForm: boolean = false;
+  // ...
 	async function submitEmail() {
+    // ... DEBUGGING;
 		if (dev) console.debug('subscribing to email newsletter!')
+    // ...
+    // showEmailForm = true;
+    $session.newsletterPopUpShow = true;
 	}
 
   // ... assign `logo-link`;
   let logoLink: string
+  // ... [REACTIVITY] - METHOD;
   $: if (server_side_language != 'en') {
     logoLink = $page.url.origin + '/' + server_side_language
   } else {
@@ -102,12 +111,12 @@
 
   // ... hide SEO on-load;
   let hideSEO: boolean = false;
-  // ...
+  // ... [REACTIVITY] - METHOD;
   $: if (browser) {
     hideSEO = true
   }
 
-  	// ... reload-PAGE-check;
+  // ... reload-PAGE-check;
 	function reloadPage() {
 		// ... DEBUGGING;
 		if (dev) console.debug('reloading-page-method!')
@@ -769,7 +778,7 @@
 
 
 <!-- ===================
-	COMPONENT HTML
+	COMPONENT STYLE
 =================== -->
 
 <style>

@@ -14,12 +14,12 @@
   export async function load({url, params, fetch}) {
 
       // ... redirect-accordingly-https;
-      if (!dev && url.protocol != 'https:') {
-        return {
-          status: 302,
-          redirect: 'https://' + url.host + url.pathname
-        };
-      }
+      // if (!dev && url.protocol != 'https:') {
+      //   return {
+      //     status: 301,
+      //     redirect: 'https://' + url.host + url.pathname
+      //   };
+      // }
 
       // ... DEBUGGING;
       if (dev) console.debug('ℹ loading navbar!, \n ℹ footer cache-data!');
@@ -72,8 +72,11 @@
   import OfflineAlert from '$lib/components/_Offline_alert.svelte';
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';
+  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
 
   import '../app.css';
+
+  // const { session } = getStores();
 
   // ... load in SEO-DATA for Header, Footer TYPES;
   import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';
@@ -83,9 +86,9 @@
   export let FOOTER_TRANSLATION_DATA: Footer_Data;
 
   // ... https://stackoverflow.com/questions/4723213/detect-http-or-https-then-force-https-in-javascript
-  $: if (!dev && browser && location.protocol !== 'https:') {
-    location.replace(`https:${location.href.substring(location.protocol.length)}`);
-  }
+  // $: if (!dev && browser && location.protocol !== 'https:') {
+  //   location.replace(`https:${location.href.substring(location.protocol.length)}`);
+  // }
 
   // ... on client-side-rendering;
   if (browser) {
@@ -118,6 +121,8 @@
 <PlatformAlert {HEADER_TRANSLATION_DATA} />
 
 <SplashScreen />
+
+<EmailSubscribe />
 
 <Header {HEADER_TRANSLATION_DATA} />
 
