@@ -8,7 +8,7 @@
 	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
-	const { session } = getStores();
+	// const { session } = getStores();
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 

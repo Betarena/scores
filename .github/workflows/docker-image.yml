@@ -16,6 +16,7 @@ env:
   VITE_FIREBASE_DB_AUTH_DOMAIN: ${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}
   VITE_FIREBASE_DB_PROJECT_ID: ${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}
   VITE_FIREBASE_DB_DATABASE_URL: ${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}
+  VITE_REDIS_CONNECTION_URL: ${{secrets.VITE_REDIS_CONNECTION_URL}}
 # ... JOBS TO DO WITH GITHUB WORFLOWS;
 jobs:
   build:
@@ -32,6 +33,7 @@ jobs:
           echo VITE_FIREBASE_DB_AUTH_DOMAIN="${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}" >> .env
           echo VITE_FIREBASE_DB_PROJECT_ID="${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}" >> .env
           echo VITE_FIREBASE_DB_DATABASE_URL="${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}" >> .env
+          echo VITE_REDIS_CONNECTION_URL="${{secrets.VITE_REDIS_CONNECTION_URL}}" >> .env
       # ... build the DOCKER IMAGE CONTAINER;
       - name: Build the Docker image
         run: |
