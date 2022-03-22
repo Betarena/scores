@@ -448,6 +448,15 @@ section {
 	flex-direction: row;
 	flex-wrap: nowrap;
 }
+.row-space-end {
+	display: flex;
+	align-items: center;
+	align-content: center;
+	justify-content: end;
+	width: 100%;
+	flex-direction: row;
+	flex-wrap: nowrap;
+}
 
 /*
 ============
