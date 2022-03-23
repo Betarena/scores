@@ -290,7 +290,7 @@
   }
 
   div#widget-title-row {
-    background: #f2f2f2;
+    background-color: #f2f2f2;
     border-radius: 2px;
     padding: 7px 18px 7px 40px;
     margin: 20px 20px 12.5px 20px;
@@ -337,11 +337,8 @@
 		box-shadow: inset 0px 1px 0px #616161 !important;
 	}
 
-	.dark-background-1 div#featured-rank {
-		background-color: #616161;
+	.dark-background-1 div#widget-title-row {
+		background-color: #616161 !important;
 	}
 
-  .dark-background-1 p#title-box {
-    color: #ffffff;
-  }
 </style>

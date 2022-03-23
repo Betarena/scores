@@ -167,7 +167,7 @@
           <div
             class="row-space-out goals-mobile m-r-8">
             <p 
-              class="medium w-500 w-normal">
+              class="medium w-500 w-normal color-grey">
               {WIDGET_TRANSLATION.widget_translations.goals}
             </p>
             <p 
@@ -229,7 +229,7 @@
     bottom: 0;
   }
   .best-player-row p#box-goals {
-    background: #ffffff;
+    background-color: #ffffff;
     border: 1px solid #e6e6e6;
     box-sizing: border-box;
     border-radius: 4px;
@@ -239,7 +239,7 @@
     width: 64px;
   }
   .best-player-row p#box-odds {
-    background: #F2F2F2;
+    background-color: #F2F2F2;
     border-radius: 4px;
     text-align: center;
     padding: 5px 0;
@@ -276,6 +276,25 @@
 		box-shadow: inset 0px 1px 0px #616161 !important;
     background-color: #4B4B4B !important;
 	}
+
+  .dark-background-1.best-player-row #image-contaier img {
+    border: 1px solid #999999 !important;
+  }
+
+  .dark-background-1.best-player-row p#box-odds {
+    background-color: #616161 !important;
+  }
+
+  .dark-background-1.best-player-row p#box-goals {
+    background: #4B4B4B;
+    border: 1px solid #616161;
+  }
+
+  .dark-background-1 div.goals-mobile, 
+  .dark-background-1 div.odds-mobile {
+    background-color: #616161 !important;
+    border: 1px solid #616161;
+  }
 
   .dark-background-1 p {
     color: #ffffff;
