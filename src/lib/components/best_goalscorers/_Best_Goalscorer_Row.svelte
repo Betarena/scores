@@ -260,10 +260,8 @@
     padding: 10px 12px 10px 12px;
   }
 
-
-
   /* 
-  DESKTOP RESPONSIVNESS */
+  MOBILE RESPONSIVNESS */
   @media only screen and (max-width: 475px) {
     .best-player-row:first-child {
       padding-top: 24px;
