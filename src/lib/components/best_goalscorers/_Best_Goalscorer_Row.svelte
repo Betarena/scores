@@ -277,7 +277,7 @@
     background-color: #4B4B4B !important;
 	}
 
-  .dark-background-1.best-player-row #image-contaier img {
+  .dark-background-1.best-player-row #image-contaier img#player-img {
     border: 1px solid #999999 !important;
   }
 
