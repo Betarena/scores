@@ -50,6 +50,8 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [svelte-content-loader](https://github.com/PaulMaly/svelte-content-loader)
 - [graphql-request](https://www.npmjs.com/package/graphql-request)
 - [color-thief](https://lokeshdhakar.com/projects/color-thief/)
+- [sveltejs/adapter-node](https://www.npmjs.com/package/@sveltejs/adapter-node)
+- [sveltejs/kit](https://www.npmjs.com/package/@sveltejs/kit)
 
 ### Converting `PNG` to `WEBP`
 
@@ -79,6 +81,19 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [optimizing-Hasura-DB-INDEXING-JSON-4](https://www.postgresql.org/docs/9.4/datatype-json.html)
 - [localstorage vs. cookies](https://stackoverflow.com/questions/7799728/localstorage-vs-cookies-performance)
 
+### CSP Guides:
+
+- [sveltekit-csp-config](https://kit.svelte.dev/docs/configuration#csp)
+- [sveltekit-csp-config-github](https://github.com/sveltejs/kit/issues/93)
+- [GOOGLE-CSP](https://developers.google.com/tag-platform/tag-manager/web/csp)
+- [YANDEX-CSP](https://yandex.com/support/metrica/code/install-counter-csp.html)
+- [google-analytics-js-and-content-security-policy-stackoverflow](https://stackoverflow.com/questions/30939809/google-analytics-js-and-content-security-policy)
+- [web.dev/strict-csp](https://web.dev/strict-csp/)
+- [refused-to-load-the-script-because-it-violates-the-following-content-security-po](https://stackoverflow.com/questions/31211359/refused-to-load-the-script-because-it-violates-the-following-content-security-po)
+- [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
+- [what-s-the-purpose-of-the-html-nonce-attribute-for-script-and-style-elements](https://stackoverflow.com/questions/42922784/what-s-the-purpose-of-the-html-nonce-attribute-for-script-and-style-elements)
+- [inline_code_is_considered_harmful](https://developers.google.com/web/fundamentals/security/csp/#inline_code_is_considered_harmful)
+
 ### Code Snippets
 
 - Use the `VITE_` server-side TOKENS
@@ -90,3 +105,9 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 
     [example-1-env-var](https://www.reddit.com/r/sveltejs/comments/mek8rc/svelte_kit_environment_variables/)
     [example-2-env-var](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
+
+
+### Making changes to the `app.html`:
+
+1. Please make the necessary changes to the `sveltekit.config.js` and then,
+2. Delete the `svelte-kit` folder respectively and do `npm run dev` to apply the necessary changes
