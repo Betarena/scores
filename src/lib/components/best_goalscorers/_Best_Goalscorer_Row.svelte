@@ -11,6 +11,7 @@
   
   import type { Single_Goalscorer, Single_Goalscorer_Translations } from "$lib/models/best_goalscorer/types";
 
+  export let pos: number;
   export let data: Single_Goalscorer;
   export let WIDGET_TRANSLATION: Single_Goalscorer_Translations; // ... unecesssary
 
@@ -65,7 +66,8 @@
             <p 
               class="medium w-500 w-normal" 
               style="margin-right: 32px;">
-              {data.pos_num}
+              <!-- {data.pos_num} -->
+              {pos}
             </p>
 
           <!-- ... ℹ player logo-img & team logo ... -->
@@ -126,7 +128,7 @@
             <p 
               class="medium w-500 w-normal" 
               style="margin-right: 32px;">
-              {data.pos_num}
+              {pos}
             </p>
 
           <!-- ... ℹ player logo-img & team logo ... -->

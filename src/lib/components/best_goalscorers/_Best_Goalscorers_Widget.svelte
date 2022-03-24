@@ -225,10 +225,12 @@
                 </div>
               {/if}
 
+              <!-- content here -->
               <!-- ... display the first 5 rows on Mobile; ... -->
-              {#each data.top_geo_goalscorer_players.slice(0, limitViewRow) as item}
+              {#each data.top_geo_goalscorer_players.slice(0, limitViewRow) as data, i}
                   <BestGoalscorerRow 
-                    data={item} 
+                    pos={i+1}
+                    data={data} 
                     {WIDGET_TRANSLATION} />
               {/each}
 
