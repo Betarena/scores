@@ -62,6 +62,7 @@
 <script lang="ts">
 	import { getStores, navigating, page, session, updated } from '$app/stores';
   import { browser, dev } from '$app/env';
+  import { onMount } from 'svelte';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
@@ -73,6 +74,9 @@
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';
   import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
+
+  import * as Sentry from "@sentry/browser";
+  import { BrowserTracing } from "@sentry/tracing";
 
   import '../app.css';
 
@@ -89,6 +93,19 @@
   // $: if (!dev && browser && location.protocol !== 'https:') {
   //   location.replace(`https:${location.href.substring(location.protocol.length)}`);
   // }
+    
+  // ... ℹ SENTRY CODE-SNIPPET;
+  onMount(async() => {
+    Sentry.init({
+      dsn: "https://847e94f5884c4185809a4cee44769d8b@o1009217.ingest.sentry.io/6275655",
+      integrations: [new BrowserTracing()],
+
+      // Set tracesSampleRate to 1.0 to capture 100%
+      // of transactions for performance monitoring.
+      // We recommend adjusting this value in production
+      tracesSampleRate: 1.0,
+    });
+  })
 
   // ... on client-side-rendering;
   if (browser) {
