@@ -94,17 +94,19 @@
   //   location.replace(`https:${location.href.substring(location.protocol.length)}`);
   // }
     
-  // ... ℹ SENTRY CODE-SNIPPET;
+  // ... ℹ SENTRY CODE-SNIPPET; [PRODUCTION-ONLY]
   onMount(async() => {
-    Sentry.init({
-      dsn: "https://847e94f5884c4185809a4cee44769d8b@o1009217.ingest.sentry.io/6275655",
-      integrations: [new BrowserTracing()],
+    if (!dev) {
+      Sentry.init({
+        dsn: "https://847e94f5884c4185809a4cee44769d8b@o1009217.ingest.sentry.io/6275655",
+        integrations: [new BrowserTracing()],
 
-      // Set tracesSampleRate to 1.0 to capture 100%
-      // of transactions for performance monitoring.
-      // We recommend adjusting this value in production
-      tracesSampleRate: 1.0,
-    });
+        // Set tracesSampleRate to 1.0 to capture 100%
+        // of transactions for performance monitoring.
+        // We recommend adjusting this value in production
+        tracesSampleRate: 1.0,
+      });
+    }
   })
 
   // ... on client-side-rendering;
