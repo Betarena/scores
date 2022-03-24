@@ -2,115 +2,135 @@
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
-// /** @type {import('vite').Plugin} */
-// const myPlugin = {
-//   name: 'log-request-middleware',
-//   configureServer(server) {
-
-//     server.middlewares.use((req, res, next) => {
-//       console.log(`Got request ${req.url}`);
-//       next();
-//     });
-
-//     // ... ℹ https://jaketrent.com/post/https-redirect-node-heroku
-//     server.middlewares.use((req, res, next) => {
-//       if (req.header('x-forwarded-proto') !== 'https')
-//         res.redirect(`https://${req.header('host')}${req.url}`);
-//       else
-//         next();
-//     });
-
-//     // server.middlewares.get('/healthcheck', (req, res) => {
-//     //   res.end('ok');
-//     // });
-
-//   }
-// };
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
-	// Consult https://github.com/sveltejs/svelte-preprocess
-	// for more information about preprocessors
+
+	// ... ℹ consult https://github.com/sveltejs/svelte-preprocess
+	// ... ℹ for more information about preprocessors
 	preprocess: preprocess(),
 
 	kit: {
-		// hydrate the <div id="svelte"> element in src/app.html
-		// target: '#svelte',
-
-		// ... adding vercel support ...
+		// ... ℹ NODE-JS deployment Environment ...
 		// adapter: vercel()
-
-		// ... NODE-JS deployment Environment ...
 		adapter: node(),
 
+    // ... ℹ SVELTEKIT-MIDDLEWARE-SUPPORT;
     // vite: {
     //   plugins: [myPlugin],
     // },
 
-    // ... CSP Support - [PROD / HEROKU ONLY]
-    // ... https://kit.svelte.dev/docs/configuration#csp
-    // ... https://github.com/sveltejs/kit/issues/93
-    // ...
+    // ... ℹ CSP Support - [PROD / HEROKU ONLY]
     // ... https://developers.google.com/tag-platform/tag-manager/web/csp [GOOGLE-CSP]
     // ... https://yandex.com/support/metrica/code/install-counter-csp.html [YANDEX-CSP]
-    // ...
-    // ... [HELP] - https://stackoverflow.com/questions/30939809/google-analytics-js-and-content-security-policy
-    // ... [INFO] - https://web.dev/strict-csp/
-    // ... [HELP] - https://stackoverflow.com/questions/31211359/refused-to-load-the-script-because-it-violates-the-following-content-security-po
-    // ... [HELP] - https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy
-    // ... [INFO] - https://stackoverflow.com/questions/42922784/what-s-the-purpose-of-the-html-nonce-attribute-for-script-and-style-elements
-    // ... [INFO] - https://developers.google.com/web/fundamentals/security/csp/#inline_code_is_considered_harmful
+    // ... [https://github.com/sveltejs/kit/issues/4434]
     csp: {
-      mode: 'nonce',
+      mode: 'hash', // ... hash | nonce | auto
       directives: {
-        // 'default-src': ['*'],        // ... ultimate-default-fallback;
+        // ... ℹ ultimate-default-fallback;
+        // 'default-src': [
+        //   '*'
+        // ],
+
+        // ... ℹ this defines valid sources for JavaScript.
+        // ... ℹ falls back to default-src
+        // 'script-src': [
+        //   // ... ℹ DEV;
+        //   'https://localhost:3050/',
+        //   'localhost:*',
+        //   'localhost',
+        //   'http:',
+        //   'http://localhost:3050/',
+        //   // ... ℹ main;
+        //   'self',             // ... ℹ This matches the scheme, origin and port of the document is was served with.
+        //   'strict-dynamic',   // ... ℹ This will allow scripts to load their dependencies without them having to be whitelisted.
+        //   'unsafe-inline',    // ... ℹ This will allow inline resources such as scripts and styles.
+        //   // ... ℹ google;
+        //   // 'https://www.googletagmanager.com',
+        //   // 'https://www.google-analytics.com',
+        //   // 'https://ssl.google-analytics.com',
+        //   // ... ℹ firebase;
+        //   // 'https://betarena-rv-6b382.firebaseio.com/',
+        //   // 'https://*.firebaseio.com',
+        //   // ... ℹ yandex;
+        //   // 'https://mc.yandex.ru',
+        //   // 'https://mc.yandex.az',
+        //   // 'https://mc.yandex.by',
+        //   // 'https://mc.yandex.co.il',
+        //   // 'https://mc.yandex.com',
+        //   // 'https://mc.yandex.com.am',
+        //   // 'https://mc.yandex.com.ge',
+        //   // 'https://mc.yandex.com.tr',
+        //   // 'https://mc.yandex.ee',
+        //   // 'https://mc.yandex.fr',
+        //   // 'https://mc.yandex.kg',
+        //   // 'https://mc.yandex.kz',
+        //   // 'https://mc.yandex.lt',
+        //   // 'https://mc.yandex.lv',
+        //   // 'https://mc.yandex.md',
+        //   // 'https://mc.yandex.tj',
+        //   // 'https://mc.yandex.tm',
+        //   // 'https://mc.yandex.ua',
+        //   // 'https://mc.yandex.uz',
+        //   // 'https://mc.webvisor.com',
+        //   // 'https://mc.webvisor.org',
+        //   // 'https://yastatic.net',
+        // ],
         // 'script-src-elem': ['self', 
         //                     'https://betarena-rv-6b382.firebaseio.com/'],
-        'script-src': ['self', 
-                       'strict-dynamic',
-                      'unsafe-inline', 
-                      'https://www.googletagmanager.com',
-                      'https://www.google-analytics.com',
-                      'https://ssl.google-analytics.com',
-                      'https://betarena-rv-6b382.firebaseio.com/',
-                      '*.firebaseio.com',
-                      'https://mc.yandex.ru',
-                      'https://yastatic.net'], 
-        'style-src': ['self',
-                      'unsafe-inline',
-                      'https://fonts.googleapis.com'],
-        'object-src': ['none'],
-        'base-uri': ['none'],
-        // 'img-src': ['http://*', 
-        //             'https://*'],
-        // 'connect-src': ['https://get.geojs.io', 
-        //                 'https://betarena.hasura.app', 
-        //                 'https://betarena-rv-6b382.firebaseio.com/']
+
+        // ... ℹ this defines valid sources for stylesheets.
+        // ... ℹ falls back to default-src
+        'style-src': [
+          'self',
+          'unsafe-inline',
+          'https://fonts.googleapis.com'
+        ],
+
+        // ... ℹ this defines valid sources for images to be loaded.
+        // ... ℹ falls back to default-src
+        'img-src': [
+          // ... ℹ domain ORIGIN;
+          'self',
+          'https://betarena.com',
+          'https://*.betarena.com',
+          // ... ℹ yandex
+          'https://mc.yandex.ru',
+          // ... ℹ other
+          'https://cdn.sportmonks.com',
+          'https://images1-focus-opensocial.googleusercontent.com',
+          // ... ℹ google
+          'https://www.google-analytics.com',
+        ],
+
+        // ... ℹ
+        'object-src': [
+          'none'
+        ],
+        // ... ℹ
+        'base-uri': [
+          'none'
+        ],
+
+        // ... ℹ
+        // 'connect-src': [
+        //   'https://get.geojs.io', 
+        //   'https://betarena.hasura.app', 
+        //   'https://betarena-rv-6b382.firebaseio.com/',
+        //   'https://mc.yandex.ru',
+        //   'https://www.google-analytics.com'
+        // ],
+
+        // ... ℹ
+        // 'child-src': [
+        //   'blob: https://mc.yandex.ru'
+        // ],
+
+        // ... ℹ
+        // 'frame-src': [
+        //   'blob: https://mc.yandex.ru'
+        // ]
       }
     }
-
-		// ... vite-FS-issue:
-		// ... https://discord.com/channels/457912077277855764/457912077277855766/908213758277607475
-		// vite: {
-		//     server: {
-		//         fs: {
-		//             allow: ['..']
-		//         }
-		//     }
-		// }
-
-		// ... @apollo-client - issue FIX;
-		// ... https://github.com/apollographql/apollo-client/issues/8218
-		// ... https://discord.com/channels/457912077277855764/819723698415599626/821391561429745675
-		// ... https://github.com/FormidableLabs/urql/discussions/1664
-		// vite: {
-		// 	optimizeDeps: {
-		// 		exclude: [
-		// 			'@apollo/client/core',
-		// 			'@apollo/client',
-		// 		]
-		// 	}
-		// }
 	}
 };
 

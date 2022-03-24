@@ -12,35 +12,46 @@
 	 * @type {import('@sveltejs/kit').Load} 
 	*/
 	export async function load({ url, params, fetch }) {
-		// ... DEBUGGING;
-		if (dev) console.debug('-- obtaining translations! --');
-		// ... GET RESPONSE;
+    
+		// ... 🐛 debugging;
+		if (dev) console.debug('ℹ preloading data');
+
+		// ... ℹ get featured-match-response-seo-data;
 		const response_featured_match = await fetch('/api/featured_match/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... DEBUGGING;
+		// ... 🐛 debugging;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
-		// ... GET RESPONSE;
+		// ... ℹ get featured_betting_sites-response-seo-data;
 		const response_featured_betting_sites = await fetch('/api/featured_betting_sites/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... DEBUGGING;
+		// ... 🐛 debugging;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
-		// ... GET RESPONSE;
+		// ... ℹ get league_list-response-seo-data;
 		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... DEBUGGING;
+		// ... 🐛 debugging;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 		
-		// ... GET RESPONSE;
+		// ... ℹ get seo_page-response-seo-data;
 		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... DEBUGGING;
+		// ... 🐛 debugging;
 		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+
+    // ... ℹ get seo_page-response-seo-data;
+		const response_best_goalscorers = await fetch('/api/best_goalscorer/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+		// ... 🐛 debugging;
+		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+
+    // ... ℹ get livescore-widget-response-seo-data;
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
 			method: 'GET'
 		}).then((r) => r.json());
@@ -52,7 +63,8 @@
 		const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... return, RESPONSE DATA;
+
+		// ... ℹ return, RESPONSE DATA;
 		if (response_featured_match && response_featured_betting_sites) {
 			return {
 				props: {
@@ -62,13 +74,12 @@
 					PAGE_DATA_SEO: response_seo_page,
 					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
 					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
-					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations
-
-
+					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
+          BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers
 				}
 			};
 		}
-		// ... otherwise, ERROR;
+		// ... ℹ otherwise, ERROR;
 		return {
 			status: 500,
 			error: new Error(`/ page-preloading-error`)
@@ -89,18 +100,21 @@
 	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-
-	import type { Hasura_Complete_Pages_SEO } from '$lib/model/page_seo/types';
   import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
-import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
+  import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+
+	import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
+  import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
+  export let BEST_GOAL_SCORERS_DATA_SEO;
 	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
 	export let LIVE_SCORES_DATA_DATA_SEO;
 	export let LIVE_SCORES_DATA_LEAGUES;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
+
 	// ... page-language-declaration;
 	let server_side_language: string = 'en';
 	// ... language-translation-declaration;
@@ -192,6 +206,8 @@ import type { LiveScores_Football_Translation } from '$lib/models/live_scores_fo
       <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
       <!-- ... widget #2 ... -->
       <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <!-- ... widget #3 -->
+      <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} />
     </div>
   {:else}
     <!-- ... 3rd ROW ... -->
@@ -204,6 +220,8 @@ import type { LiveScores_Football_Translation } from '$lib/models/live_scores_fo
       <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
       <!-- ... widget #2 ... -->
       <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <!-- ... widget #3 -->
+      <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} />
     </div>
   {/if}
 
