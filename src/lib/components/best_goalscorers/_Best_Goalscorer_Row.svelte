@@ -63,12 +63,14 @@
         <div
           class='row-space-start'>
           <!-- ... Position Number ONLY ON DESKTOP VERSION ... -->
+          <div
+            class="pos-number-player-box">
             <p 
-              class="medium w-500 w-normal" 
-              style="margin-right: 32px;">
+              class="medium w-500">
               <!-- {data.pos_num} -->
               {pos}
             </p>
+          </div>
 
           <!-- ... ℹ player logo-img & team logo ... -->
           <div
@@ -126,8 +128,8 @@
           class='row-space-start m-b-12'>
           <!-- ... Position Number ONLY ON DESKTOP VERSION ... -->
             <p 
-              class="medium w-500 w-normal" 
-              style="margin-right: 32px;">
+              class="medium w-500" 
+              style="margin-right: 20px;">
               {pos}
             </p>
 
@@ -182,10 +184,13 @@
           <div
             class="row-space-out odds-mobile">
             <p 
-              class="medium w-500 w-normal color-grey">
+              style="color: #CCCCCC"
+              class="medium w-500 w-normal color-grey"
+              >
               {WIDGET_TRANSLATION.widget_translations.odds}
             </p>
-            <p 
+            <p  
+              style="color: #CCCCCC"
               class="medium w-500 w-normal color-grey">
               -
             </p>
@@ -229,6 +234,20 @@
     position: absolute;
     right: -5px;
     bottom: 0;
+  }
+  .best-player-row div.pos-number-player-box {
+    width: 8px; 
+    margin-right: 32px; 
+    position: relative;
+  }
+  .best-player-row div.pos-number-player-box p {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    right: 50%;
+    margin: auto;
+    height: 21px;
   }
   .best-player-row p#box-goals {
     background-color: #ffffff;

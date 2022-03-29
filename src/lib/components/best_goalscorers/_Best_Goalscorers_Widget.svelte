@@ -16,6 +16,10 @@
   import BestGoalscorersWidgetContentLoader from "./_Best_Goalscorers_Widget_ContentLoader.svelte";
   import type { GoalScorers_Cache_Ready, GoalScorers_Cache_SEO_Ready } from "$lib/models/best_goalscorer/types";
 
+  // ... key component assets;
+	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
+	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
+
   // ... main component variables;
 	export let BEST_GOAL_SCORERS_DATA_SEO: GoalScorers_Cache_SEO_Ready;
 
@@ -26,6 +30,7 @@
 	let loaded: boolean = false;            // ... holds boolean for data loaded;
   let refresh: boolean = false;
 	let refresh_data: any = undefined;
+  let noBestPlayers: any = false;
 
   // ... widget-language-declaration;
 	let server_side_language: string = 'en';
@@ -61,6 +66,8 @@
 			// ...
 			if (dev) console.debug('❌ no goal scoreres available!')
 			// ... return null;
+      noBestPlayers = true;
+      // ...
 			return;
 		}
 
@@ -175,8 +182,57 @@
     {/each}
   {/if}
 
+  <!-- ... ℹ NO BEST PLAYERS AVAILABLE PLACEHOLDER ...-->
+  {#if noBestPlayers && !loaded}
+    <!-- ... title of the widget ... -->
+    <!-- ... iterate over the data to find the correc language ... -->
+    {#each BEST_GOAL_SCORERS_DATA_SEO.translations as WIDGET_SEO_TRANSLATION}
+      <!-- ... obtain the correct widget translation ... -->
+      {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
+        <!-- ... wiget-title ... -->
+        <h2 
+          class="s-20 m-b-10 color-black-2"
+          style="margin-top: 0;"
+          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+          {WIDGET_SEO_TRANSLATION.widget_translations.best_goal_scorers}
+        </h2>
+      {/if}
+    {/each}
+
+    <!-- ... no-matches-avaiable-placeholder container ...  -->
+    <div 
+      id='no-best-players-box'
+      class='row-space-start'
+      class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+      <!-- ... no-matches-visual ... -->
+      {#if $userBetarenaSettings.theme == 'Dark'}
+        <!-- content here -->
+        <img 
+          src={no_featured_match_visual_dark} 
+          alt="no-featured-match-visual_dark"
+          width="80px" height="80px"
+          class='m-r-20'
+        />
+      {:else}
+        <!-- else content here -->
+        <img 
+          src={no_featured_match_visual} 
+          alt="no-featured-match-visual"
+          width="80px" height="80px"
+          class='m-r-20'
+        />
+      {/if}
+      
+      <!-- ... container w/ text ... -->
+      <div>
+        <p class='s-16 m-b-8 w-500'> No Best Players Available </p>
+        <p class='s-16 color-grey w-400'> Sorry, at this time there is no best players available! </p>
+      </div>
+    </div>
+  {/if}
+
   <!-- ... ℹ promise is pending ... -->
-  {#if !refresh}
+  {#if !noBestPlayers && !refresh}
 
     {#await widgetInit()}
       <BestGoalscorersWidgetContentLoader />
@@ -188,12 +244,13 @@
           {#if WIDGET_TRANSLATION.lang == server_side_language}
 
             <!-- ... wiget-title ... -->
-            <p
+            <h2
               id='widget-title'
-              class="s-20 m-b-10 color-black w-500 w-normal"
+              class="s-20 m-b-10 w-500 w-normal color-black-2"
+              style="margin-top: 0;"
               class:color-white={$userBetarenaSettings.theme == 'Dark'}>
               {WIDGET_TRANSLATION.widget_translations.best_goal_scorers}
-            </p>
+            </h2>
 
             <!-- ... widget-component ... -->
             <div 
@@ -273,6 +330,13 @@
 ==================== -->
 
 <style>
+
+  #no-best-players-box {
+    padding: 20px;
+    background: #FFFFFF;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 12px;
+  }
   
   #seo-featured-betting-site-box {
 		position: absolute;
