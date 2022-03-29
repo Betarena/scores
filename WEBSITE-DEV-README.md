@@ -83,6 +83,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 
 ### CSP Guides:
 
+- ⭐ [csp-cheat-sheet](https://scotthelme.co.uk/csp-cheat-sheet/#script-src)
 - [sveltekit-csp-config](https://kit.svelte.dev/docs/configuration#csp)
 - [sveltekit-csp-config-github](https://github.com/sveltejs/kit/issues/93)
 - [GOOGLE-CSP](https://developers.google.com/tag-platform/tag-manager/web/csp)
@@ -93,6 +94,19 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [Content-Security-Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Security-Policy)
 - [what-s-the-purpose-of-the-html-nonce-attribute-for-script-and-style-elements](https://stackoverflow.com/questions/42922784/what-s-the-purpose-of-the-html-nonce-attribute-for-script-and-style-elements)
 - [inline_code_is_considered_harmful](https://developers.google.com/web/fundamentals/security/csp/#inline_code_is_considered_harmful)
+- [csp-google-cover](https://developers.google.com/web/fundamentals/security/csp?utm_source=devtools#inline_code_is_considered_harmful)
+- [mozilla-csp-cover](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP)
+- [strict-dynamic](https://web.dev/strict-csp/?utm_source=devtools#why-a-strict-csp-is-recommended-over-allowlist-csps)
+- [csp-understand-blog](https://www.troyhunt.com/locking-down-your-website-scripts-with-csp-hashes-nonces-and-report-uri/)
+- [hash-vs-nonce-blog](https://stackoverflow.com/questions/43108890/whitelisting-inline-script-with-csp-sha-256-in-firefox)
+- [example-use-csp-blog](https://www.dumky.net/posts/using-gtm-with-a-content-security-policy-csp-and-impress-your-devops-team-in-the-process/)
+- [blog-on-csp](https://help.branch.io/developers-hub/docs/implement-content-security-protocol-csp)
+- [strict-dynamic-example-inject](https://stackoverflow.com/questions/59848978/strict-dynamic-is-present-so-host-based-whitelisting-is-disabled)
+
+**Hash:**
+
+- [hash-example](https://content-security-policy.com/hash/)
+- [hash-example-code](https://codepen.io/BranchWebSDK/pen/RwRqLmv)
 
 ### Code Snippets
 
