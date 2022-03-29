@@ -112,6 +112,9 @@ FONT COLOURS
 .color-primary {
 	color: #f5620f !important;
 }
+.color-black-2 {
+  color: var(--dark-theme);
+}
 .color-secondary {
 	color: var(--secondary);
 }
