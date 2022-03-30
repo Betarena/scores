@@ -168,7 +168,7 @@
       {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
         <!-- ... SEO-BOX ... -->
         <div id="seo-featured-betting-site-box">
-          <p>{WIDGET_SEO_TRANSLATION.widget_translations.best_goal_scorers}</p>
+          <h2>{WIDGET_SEO_TRANSLATION.widget_translations.best_goal_scorers}</h2>
           <p>{WIDGET_SEO_TRANSLATION.widget_translations.goals}</p>
           <p>{WIDGET_SEO_TRANSLATION.widget_translations.odds}</p>
           <p>{WIDGET_SEO_TRANSLATION.widget_translations.player}</p>
