@@ -243,10 +243,18 @@
     <!-- ... main-homepage-link-in-all-avaialble-languages ... -->
     {#if lang_obj.lang != 'en'}
       <!-- content here -->
-      <p>{$page.url.origin + '/' + lang_obj.lang}</p>
+      <a
+        sveltekit:prefetch
+        href={$page.url.origin + '/' + lang_obj.lang}>
+        <p>{$page.url.origin + '/' + lang_obj.lang}</p>
+      </a>
     {:else}
       <!-- content here -->
-      <p>{$page.url.origin}</p>
+      <a
+        sveltekit:prefetch
+        href={$page.url.origin}>
+        <p>{$page.url.origin}</p>
+      </a>
     {/if}
   {/each}
 {/if}

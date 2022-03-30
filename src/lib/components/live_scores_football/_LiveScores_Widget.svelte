@@ -108,6 +108,8 @@
 	
 			for(var g in games){  			
 				
+				setGameTime(games[g]);
+
 				const newGame:  LiveScoreLeagueGame={
 					id : games[g].id,
 					visitorteam: games[g].visitorteam,
@@ -149,6 +151,22 @@
 			
 		});
 		return data;
+	}
+
+	function setGameTime(g:LiveScoreGame){
+			var x = new Date();
+			var currentTimeZoneOffsetInHours = x.getTimezoneOffset() / 60;
+			var d = new Date(g.starting_at);
+			var dv = g.starting_at.split(' ');
+			var splitDate = dv[0].split('-');
+			d = new Date(parseInt(splitDate[0]),parseInt(splitDate[1])-1,parseInt(splitDate[2]));
+			var splitTime = dv[1].split(':');
+			d.setHours(parseInt(splitTime[0]));
+			d.setMinutes(parseInt(splitTime[1]));
+			d.setSeconds(parseInt(splitTime[2]));
+			d.setTime(d.getTime() - (currentTimeZoneOffsetInHours*60*60*1000));
+			g.starting_at = (d.getFullYear())+"-"+(""+(d.getMonth()+1)).padStart(2,'0')+"-"+(""+(d.getDate())).padStart(2,'0') + " " + (""+(d.getHours())).padStart(2,'0')
+			+ ":" + (""+(d.getMinutes())).padStart(2,'0')+ " " + (""+(d.getSeconds())).padStart(2,'0');
 	}
 
 	function getTerm(t:any,i:number){
