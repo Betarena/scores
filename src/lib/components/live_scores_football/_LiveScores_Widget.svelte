@@ -108,7 +108,7 @@
 	
 			for(var g in games){  			
 				
-				//setGameTime(games[g]);
+				setGameTime(games[g]);
 
 
 				const newGame:  LiveScoreLeagueGame={
@@ -125,7 +125,7 @@
 					visitorCards:games[g].cards? games[g].cards.filter(x=>x.team_name ==  games[g].visitorteam).length:0,
 					tips: games[g].tips,
 					starting_at_ts: games[g].starting_at_ts,
-					hour: games[g].starting_at.split(' ')[1].slice(0,-3)
+					hour: games[g].starting_at
 				}; 
 
 				var l = data.filter(x=>x.id === games[g].league_id)[0];
@@ -156,18 +156,9 @@
 
 	function setGameTime(g:LiveScoreGame){
 			var x = new Date();
-			var currentTimeZoneOffsetInHours = x.getTimezoneOffset() / 60;
-			var d = new Date(g.starting_at);
-			var dv = g.starting_at.split(' ');
-			var splitDate = dv[0].split('-');
-			d = new Date(parseInt(splitDate[0]),parseInt(splitDate[1])-1,parseInt(splitDate[2]));
-			var splitTime = dv[1].split(':');
-			d.setHours(parseInt(splitTime[0]));
-			d.setMinutes(parseInt(splitTime[1]));
-			d.setSeconds(parseInt(splitTime[2]));
-			d.setTime(d.getTime() - (currentTimeZoneOffsetInHours*60*60*1000));
-			g.starting_at = (d.getFullYear())+"-"+(""+(d.getMonth()+1)).padStart(2,'0')+"-"+(""+(d.getDate())).padStart(2,'0') + " " + (""+(d.getHours())).padStart(2,'0')
-			+ ":" + (""+(d.getMinutes())).padStart(2,'0')+ " " + (""+(d.getSeconds())).padStart(2,'0');
+			var currentTimeZoneOffsetInHours = x.getTimezoneOffset() + 60;
+			var d = new Date(g.starting_at_ts*1000 + currentTimeZoneOffsetInHours*60*1000);
+			g.starting_at  = d.getHours() + ":" + d.getMinutes().toString().padEnd(2,'0');
 	}
 
 	function getTerm(t:any,i:number){
