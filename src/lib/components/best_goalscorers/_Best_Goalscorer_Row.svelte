@@ -91,7 +91,7 @@
           <div
             style="margin-left: 16px;">
             <p 
-              class="medium w-500 w-normal">
+              class="medium w-500">
               {data.common_name}
             </p>
             <p 
@@ -107,7 +107,7 @@
           class="row-space-end">
           <p 
             id='box-goals'
-            class="medium w-500 w-normal">
+            class="medium w-500">
             {data.goals}
           </p>
           <p 
@@ -152,7 +152,7 @@
           <div
             style="margin-left: 16px;">
             <p 
-              class="medium w-500 w-normal">
+              class="medium w-500">
               {data.common_name}
             </p>
             <p 
