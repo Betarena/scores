@@ -108,7 +108,8 @@
 	
 			for(var g in games){  			
 				
-				setGameTime(games[g]);
+				//setGameTime(games[g]);
+
 
 				const newGame:  LiveScoreLeagueGame={
 					id : games[g].id,
