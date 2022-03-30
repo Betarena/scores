@@ -67,7 +67,7 @@ async function main(): Promise < GoalScorers_Cache_SEO_Ready > {
   goalscorerObj.top_geo_goalscorer_players = response.scores_best_goalscorers
 
   // ... ℹ generate translations for OBJECT;
-  for (const pos_translation of response.player_positions_translations_dev) {
+  for (const pos_translation of response.player_positions_translations) {
     // ... ℹ generate new empty LANG object;
     const newObject = { }
     // ... ℹ add data correctly;

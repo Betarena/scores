@@ -115,7 +115,7 @@ async function main(): Promise < Array < GoalScorers_Cache_Ready >> {
       // ... ℹ sort data OBJECT [descending order];
       goalscorerObj.top_geo_goalscorer_players.sort((a, b) => b.goals - a.goals);
       // ... ℹ generate translations for OBJECT;
-      for await (const pos_translation of response.player_positions_translations_dev) {
+      for await (const pos_translation of response.player_positions_translations) {
         // ... ℹ generate new empty LANG object;
         const newObject = { }
         // ... ℹ add data correctly;
