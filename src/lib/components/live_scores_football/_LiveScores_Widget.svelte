@@ -110,6 +110,7 @@
 				
 				//setGameTime(games[g]);
 
+
 				const newGame:  LiveScoreLeagueGame={
 					id : games[g].id,
 					visitorteam: games[g].visitorteam,
