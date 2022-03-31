@@ -158,7 +158,7 @@
 			var x = new Date();
 			var currentTimeZoneOffsetInHours = x.getTimezoneOffset() + 60;
 			var d = new Date(g.starting_at_ts*1000 + currentTimeZoneOffsetInHours*60*1000);
-			g.starting_at  = d.getHours().toString().padEnd(2,'0') + ":" + d.getMinutes().toString().padEnd(2,'0');
+			g.starting_at  = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
 	}
 
 	function getTerm(t:any,i:number){
