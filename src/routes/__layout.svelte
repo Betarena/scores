@@ -63,6 +63,7 @@
 	import { getStores, navigating, page, session, updated } from '$app/stores';
   import { browser, dev } from '$app/env';
   import { onMount } from 'svelte';
+  import { GoogleAnalytics } from '@beyonk/svelte-google-analytics'
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
@@ -132,6 +133,14 @@
 <!-- ===================
   COMPONENT HTML
 =================== -->
+
+{#if !dev}
+  <!-- content here -->
+  <GoogleAnalytics 
+    properties={['UA-60160331-9']} 
+    />
+{/if}
+
 
 {#if offlineMode}
   <OfflineAlert />
