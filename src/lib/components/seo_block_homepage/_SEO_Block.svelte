@@ -222,8 +222,20 @@
     max-width: 383px;
     overflow: hidden;
     padding: 20px;
-  } #seo-block-widget-container h2 {
+  }
+  :global(#seo-block-widget-container h2,
+          #seo-block-widget-container h3) {
     margin-top: 0;
+  }
+  :global(#seo-block-widget-container a) {
+    color: #F5620F !important;
+    width: fit-content !important;
+    margin: 0;
+    display: initial;
+  }
+  :global(#seo-block-widget-container p) {
+    margin-bottom: 24px;
+    color: #8C8C8C;
   }
 
   /* ====================
@@ -254,12 +266,14 @@
 	WIDGET DARK THEME 
 	................. */
 
-	.dark-background-1 p#show-more-box {
-		box-shadow: inset 0px 1px 0px #616161 !important;
-	}
-
-	.dark-background-1 div#widget-title-row {
-		background-color: #616161 !important;
-	}
+  :global(
+    #seo-block-widget-container.dark-background-1 h2, 
+    #seo-block-widget-container.dark-background-1 h3) {
+      color: #FFFFFF !important;
+  }
+  :global(
+    #seo-block-widget-container.dark-background-1 p) {
+    color: #A8A8A8 !important;
+  }
 
 </style>
