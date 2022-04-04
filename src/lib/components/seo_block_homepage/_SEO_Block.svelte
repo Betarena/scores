@@ -16,6 +16,7 @@
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
   import type { Hasura_Complete_Pages_SEO } from "$lib/models/page_seo/types";
+  import SeoBlockContentLoader from "./_SEO_Block_ContentLoader.svelte";
 
   // ... main component variables;
 	export let SEO_BLOCK_DATA: Hasura_Complete_Pages_SEO;
@@ -152,7 +153,7 @@
   {#if !noSEOBlockData && !refresh}
 
     {#await widgetInit()}
-      <!-- <BestGoalscorersWidgetContentLoader /> -->
+      <SeoBlockContentLoader />
     <!-- ... promise was fulfilled ... -->
     {:then data}
 
