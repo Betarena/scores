@@ -39,6 +39,9 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [Dot-com-tools](https://www.dotcom-tools.com/)
 - [web-measure-google](https://web.dev/measure/)
 
+- [svelte-implemenatation](https://github.com/imbolc/sapper-google-analytics)
+- [alt.google-analytics](https://www.npmjs.com/package/@analytics/google-analytics)
+
 ## SEO-CHECK
 
 - [seo-browser.com](https://www.seo-browser.com/)
