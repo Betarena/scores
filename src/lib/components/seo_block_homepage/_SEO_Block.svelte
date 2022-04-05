@@ -223,7 +223,8 @@
     overflow: hidden;
     padding: 20px;
   }
-  :global(#seo-block-widget-container h2,
+  :global(#seo-block-widget-container h1,
+          #seo-block-widget-container h2,
           #seo-block-widget-container h3) {
     margin-top: 0;
   }
@@ -267,6 +268,7 @@
 	................. */
 
   :global(
+    #seo-block-widget-container.dark-background-1 h1,
     #seo-block-widget-container.dark-background-1 h2, 
     #seo-block-widget-container.dark-background-1 h3) {
       color: #FFFFFF !important;
