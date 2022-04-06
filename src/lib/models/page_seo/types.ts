@@ -29,4 +29,9 @@ export interface Hasura_Complete_Pages_SEO {
             alt: string
         }
     }[]
+    scores_seo_block_homepage: {
+      html: string
+      lang: string
+      title: string
+    }[]
 }

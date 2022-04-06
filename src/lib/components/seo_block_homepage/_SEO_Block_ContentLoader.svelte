@@ -13,19 +13,10 @@
   import Placehoder_Row_Desktop from "./loaders/desktop/_Placeholder_Row.svelte";
   import Placehoder_Row_Tablet from "./loaders/tablet/_Placeholder_Row.svelte";
   import Placehoder_Row_Mobile from "./loaders/mobile/_Placeholder_Row.svelte";
-  import PlaceholderTableRow from "./loaders/_Placeholder_Table_Row.svelte";
 
-  let showNum: number = 10;
-
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES
 	// ~~~~~~~~~~~~~~~~~~~~~
-
-  $: if (mobileExclusive) {
-    showNum = 5
-  } else {
-    showNum = 10
-  }
 
 	let mobileExclusive: boolean = false;
 	let tabletExclusive: boolean = false;
@@ -68,46 +59,23 @@
 ==================== -->
 
 <div>
-
   <!-- ... widget-component ... -->
   <div 
-    id="best-goalscorer-container"
+    id="seo-block-widget-container"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-    
-    <!-- ... DESKTOP ONLY AND TABLET... -->
-    {#if !mobileExclusive}
-      <!-- ... widget-brakdown-columns-section ... -->
-      <div
-        id='widget-title-row'
-        class="row-space-out"
-        style="width: auto;">
-        <PlaceholderTableRow />
-      </div>
-    {/if}
 
-    <!-- ... display the first 10 rows on Mobile; ... -->
-    {#each {length: showNum} as _, i}
+      <!-- ... DESKTOP CONTENT-LOADER ... -->
       {#if !tabletExclusive}
-        <div 
-          class="best-player-row">
-            <Placehoder_Row_Desktop />
-        </div>
-        <!-- ... TABLET CONTENT-LOADER ... -->
-        {:else if tabletExclusive && !mobileExclusive}
-          <div 
-            class="best-player-row">
-              <Placehoder_Row_Tablet />
-          </div>
-        <!-- ... MOBILE EXCLUSIVE CONTENT-LOADER ... -->
-        {:else if tabletExclusive && mobileExclusive}
-          <div 
-            class="best-player-row">
-              <Placehoder_Row_Mobile />
-          </div>
+        <Placehoder_Row_Desktop />
+      <!-- ... TABLET CONTENT-LOADER ... -->
+      {:else if tabletExclusive && !mobileExclusive}
+        <Placehoder_Row_Tablet />
+      <!-- ... MOBILE ONLY ... -->
+      {:else if tabletExclusive && mobileExclusive}
+        <!-- content here -->
+        <Placehoder_Row_Mobile />
       {/if}
-    {/each}
   </div>
-
 </div>
 
 
@@ -116,8 +84,8 @@
 ==================== -->
 
 <style>
-  
-  #best-goalscorer-container {
+
+  #seo-block-widget-container {
     display: grid;
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -125,42 +93,10 @@
     width: 100%;
     /* max-width: 383px; */
     overflow: hidden;
+    padding: 20px; 
+    width: 100%;
+    min-width: -webkit-fill-available;
   }
-
-  div#widget-title-row {
-    margin: 20px 20px 12.5px 20px;
-  }
-
-  .best-player-row {
-    padding: 12.5px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: relative;
-  }
-
-  /* 
-  MOBILE RESPONSIVNESS */
-  @media only screen and (max-width: 475px) {
-    .best-player-row:first-child {
-      padding-top: 24px;
-    }
-  }
-
-  /* 
-  MOBILE-EXCLUSIVE RESPONSIVNESS */
-	@media only screen and (max-width: 475px) {
-		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */
-		:global(svg) {
-			width: 100% !important;
-		}
-	}
-
-	@media only screen and (max-width: 768px) {
-		:global(svg) {
-			width: 100% !important;
-		}
-	}
 
   /* ====================
     responsivness
@@ -170,9 +106,8 @@
   MOBILE RESPONSIVNESS */
   @media only screen and (min-width: 767px) {
 
-    #best-goalscorer-container {
-      /* min-width: 100%; */
-      max-width: max-content;
+    #seo-block-widget-container {
+      min-width: 100%;
       /* max-width: 700px; */
     }
   }
@@ -181,10 +116,10 @@
   DESKTOP RESPONSIVNESS */
   @media only screen and (min-width: 1024px) {
 
-    #best-goalscorer-container {
-      /* min-width: 100%; */
-      max-width: max-content;
+    #seo-block-widget-container {
+      min-width: 100%;
       /* max-width: 560px; */
     }
   }
+
 </style>

@@ -63,6 +63,8 @@
 	import { getStores, navigating, page, session, updated } from '$app/stores';
   import { browser, dev } from '$app/env';
   import { onMount } from 'svelte';
+  // import { GoogleAnalytics } from '@beyonk/svelte-google-analytics'
+  // import GoogleAnalytics from "sapper-google-analytics/GoogleAnalytics.svelte"
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
@@ -74,6 +76,7 @@
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';
   import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
+  import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
 
   import * as Sentry from "@sentry/browser";
   import { BrowserTracing } from "@sentry/tracing";
@@ -93,6 +96,9 @@
   // $: if (!dev && browser && location.protocol !== 'https:') {
   //   location.replace(`https:${location.href.substring(location.protocol.length)}`);
   // }
+
+  let ga_measurment_id = "UA-60160331-9"  // ... your analytics id
+  // console.log('page', $page);
     
   // ... ℹ SENTRY CODE-SNIPPET; [PRODUCTION-ONLY]
   onMount(async() => {
@@ -132,6 +138,15 @@
 <!-- ===================
   COMPONENT HTML
 =================== -->
+
+<!-- {#if !dev} -->
+  <!-- content here -->
+  <!-- <GoogleAnalytics properties={['UA-60160331-9']} /> -->
+  <GoogleAnalytics 
+    id={ga_measurment_id}
+    />
+<!-- {/if} -->
+
 
 {#if offlineMode}
   <OfflineAlert />

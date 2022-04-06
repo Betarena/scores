@@ -14,5 +14,10 @@ export const GET_COMPLETE_PAGES_SEO_DATA = gql`
             twitter_card
             opengraph
         }
+        scores_seo_block_homepage {
+            html
+            lang
+            title
+        }
     }
 `;
