@@ -88,7 +88,7 @@
   <!-- ... ℹ SEO-DATA-LOADED ... -->
   {#if !loaded}
     <!-- ... iterate over the data to find the correc language ... -->
-    {#each SEO_BLOCK_DATA.scores_seo_block_homepage_dev as WIDGET_SEO_TRANSLATION}
+    {#each SEO_BLOCK_DATA.scores_seo_block_homepage as WIDGET_SEO_TRANSLATION}
       <!-- ... obtain the correct widget translation ... -->
       {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
         <!-- ... SEO-BOX ... -->
@@ -104,7 +104,7 @@
   {#if noSEOBlockData && !loaded}
     <!-- ... title of the widget ... -->
     <!-- ... iterate over the data to find the correc language ... -->
-    {#each SEO_BLOCK_DATA.scores_seo_block_homepage_dev as WIDGET_SEO_TRANSLATION}
+    {#each SEO_BLOCK_DATA.scores_seo_block_homepage as WIDGET_SEO_TRANSLATION}
       <!-- ... obtain the correct widget translation ... -->
       {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
         <!-- ... wiget-title ... -->
@@ -158,7 +158,7 @@
     {:then data}
 
       <!-- ... identify the correct translation via IF -->
-        {#each data.scores_seo_block_homepage_dev as WIDGET_TRANSLATION}
+        {#each data.scores_seo_block_homepage as WIDGET_TRANSLATION}
           {#if WIDGET_TRANSLATION.lang == server_side_language}
 
             <!-- ... wiget-title ... -->
