@@ -359,7 +359,7 @@ $: if (refresh_data) {
 						<div class="game-status">{g.status.toLowerCase()}</div>
 					{/if}
 				</div>
-				<a class="game-teams" target="_blank" href="{g.links ? g.links[server_side_language]:''}">
+				<a aria-label="Teams" class="game-teams" target="_blank" href="{g.links ? g.links[server_side_language]:''}">
 					<div class="team first {g.localScore < g.visitorScore ? 'loser':''} {g.localScore == g.visitorScore ? 'tie':''}"><span class="teamname">{g.localteam}</span>
 						<span class="cards">
 							{#if g.homeCards > 0}
@@ -371,7 +371,7 @@ $: if (refresh_data) {
 						<img alt="red card" class="redcard" src="{redcard}"/>
 					{/if}</span></div></a>
 				{#if g.medias > 0}
-				<a class="game-media" href="{g.links ? g.links[server_side_language]:''}" >
+				<a class="game-media" aria-label="Game Media" href="{g.links ? g.links[server_side_language]:''}" >
 					{#if $userBetarenaSettings.theme == 'Dark'}
 						<img alt="Game Media" style="border-color: #737373;" src="{play_dark}" width="28" height="28"> 
 					{:else}
@@ -379,16 +379,16 @@ $: if (refresh_data) {
 					{/if}
 				</a> 
 				{:else}   
-				<a class="game-media" href="{g.links ? g.links[server_side_language]:''}" >
+				<a class="game-media" aria-label="Game Media" href="{g.links ? g.links[server_side_language]:''}" >
 						<img alt="Game Media" style="visibility:hidden" src="{play_dark}" width="28" height="28"> 
 				</a> 
 				{/if}  
 
 				{#if g.tips != null && g.tips[server_side_language] != undefined}
-					<a class="table-game-tip" style="" href="{g.tips[server_side_language].link}">{LIVESCORES_TRANSLATIONS[server_side_language] ? LIVESCORES_TRANSLATIONS[server_side_language].terms['tip']:''}</a>
+					<a class="table-game-tip" aria-label="Tip" style="" href="{g.tips[server_side_language].link}">{LIVESCORES_TRANSLATIONS[server_side_language] ? LIVESCORES_TRANSLATIONS[server_side_language].terms['tip']:''}</a>
 				{/if}
 
-						<div class="game-book"><a class="lnk-book" href='{bookIcons[userBook] ? bookIcons[userBook].link : bookIcons['default'].link}' target="_blank"><img class="img-book" width="24" height="22" src="{bookIcons[userBook] ? bookIcons[userBook].icon2 : bookIcons['default'].icon}" alt="{bookIcons[userBook] ? bookIcons[userBook].alt : bookIcons['default'].alt}"></a></div>
+						<div class="game-book"><a aria-label="Bookmaker" class="lnk-book" href='{bookIcons[userBook] ? bookIcons[userBook].link : bookIcons['default'].link}' target="_blank"><img class="img-book" width="24" height="22" src="{bookIcons[userBook] ? bookIcons[userBook].icon2 : bookIcons['default'].icon}" alt="{bookIcons[userBook] ? bookIcons[userBook].alt : bookIcons['default'].alt}"></a></div>
 						<div class="game-result"><div class="result first {g.localScore < g.visitorScore ? 'loser':''} {g.localScore == g.visitorScore ? 'tie':''}">{g.localScore}</div><div class="result second {g.localScore > g.visitorScore ? 'loser':''} {g.localScore == g.visitorScore ? 'tie':''}">{g.visitorScore}</div></div>
 					</div> 
 				{/each}
