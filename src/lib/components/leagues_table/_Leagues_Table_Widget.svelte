@@ -418,7 +418,7 @@
     height: 302px;
     overflow-y: scroll;
   } div#dropdown-leagues-container div#more-top-leagues-list-container .top-league-container {
-    padding: 12.5px 20px;
+    padding: 12px 20px;
   }
 
   /* width */

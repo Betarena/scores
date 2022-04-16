@@ -58,7 +58,7 @@
         <!-- ... ℹ first container
         -->
         <div
-          class='row-space-start m-b-12'>
+          class='row-space-start'>
           <!-- ... ℹ team number position 
             ONLY ON DESKTOP VERSION
           -->
@@ -121,7 +121,7 @@
 <style>
 
   .league-table-team-row {
-    padding: 12.5px 20px;
+    padding: 6px 20px;
     background-color: #ffffff;
     /* box-shadow: inset 0px 1px 0px #ebebeb; */
     display: flex;
