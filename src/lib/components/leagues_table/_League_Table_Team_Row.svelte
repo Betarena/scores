@@ -178,13 +178,9 @@
 	................. */
 
 	div.dark-background-1.league-table-team-row {
-		box-shadow: inset 0px 1px 0px #616161 !important;
+		/* box-shadow: inset 0px 1px 0px #616161 !important; */
     background-color: #4B4B4B !important;
 	}
-
-  .dark-background-1.league-table-team-row #image-contaier img#team-img {
-    border: 1px solid #999999 !important;
-  }
 
   .dark-background-1.league-table-team-row p#box-goals {
     background: #4B4B4B;

@@ -12,8 +12,7 @@
   import { post } from "$lib/api/utils";
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	// ... external components import;
-  // import BestGoalscorerRow from "./_Best_Goalscorer_Row.svelte";
-  // import BestGoalscorersWidgetContentLoader from "./_Best_Goalscorers_Widget_ContentLoader.svelte";
+  import LeagueTableWidgetContentLoader from "./_League_Table_Widget_ContentLoader.svelte";
   import LeagueTableTeamRow from "./_League_Table_Team_Row.svelte";
   import type { Leagues_Table_Cache_Ready, Leagues_Table_SEO_Cache_Ready } from "$lib/models/leagues_table/types";
 
@@ -202,7 +201,7 @@
   {#if !noLeaguesTable && !refresh}
 
     {#await widgetInit()}
-      <!-- <BestGoalscorersWidgetContentLoader /> -->
+      <LeagueTableWidgetContentLoader />
     <!-- ... promise was fulfilled
     -->
     {:then data}
@@ -240,7 +239,10 @@
                   <div
                     id="dropdown-box-select"
                     class="row-space-out">
-                    <p>{season_league_data_obj.season_league_name}</p>
+                    <p 
+                      class="s-14 w-500 color-black-2">
+                      {season_league_data_obj.season_league_name}
+                    </p>
                     {#if !toggleDropdown}
                       <img 
                         src={arrow_down} 
@@ -283,7 +285,7 @@
                                 width="20px" height="20px" 
                                 class='m-r-15' />
                             <p 
-                              class='s-14 w-500 color-black'>
+                              class='s-14 w-500 color-black-2'>
                                 {item.season_league_name}
                             </p>
                         </div>
@@ -419,6 +421,26 @@
     padding: 12.5px 20px;
   }
 
+  /* width */
+  div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  /* track */
+  div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar-track {
+    background: #F2F2F2;
+    border-radius: 12px;
+    margin: 5px;
+  }
+  /* handle */
+  div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar-thumb {
+    background: #CCCCCC;
+    border-radius: 12px;
+  }
+  /* handle on hover */
+  /* div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  } */
+
   /* ====================
     responsivness
   ==================== */
@@ -447,8 +469,12 @@
 	WIDGET DARK THEME 
 	................. */
 
-	.dark-background-1 div#widget-title-row {
-		background-color: #616161 !important;
-	}
+  .dark-background-1 div#dropdown-leagues-container div#more-top-leagues-list-container {
+    /* dark theme/dark-gray */
+    background: #616161;
+    /* shadow/black */
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
+    border-radius: 4px;
+  }
 
 </style>
