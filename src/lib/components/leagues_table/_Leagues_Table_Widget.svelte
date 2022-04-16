@@ -280,10 +280,11 @@
                             <!-- ... ℹ vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
                             -->
                             <img 
-                                src='' 
+                                src={item.season_league_logo} 
                                 alt={item.season_league_name.toString() + '-image'} 
                                 width="20px" height="20px" 
-                                class='m-r-15' />
+                                class='m-r-15' 
+                                style="object-fit: contain;"/>
                             <p 
                               class='s-14 w-500 color-black-2'>
                                 {item.season_league_name}
@@ -388,6 +389,7 @@
     width: 100%;
     max-width: 383px;
     overflow: hidden;
+    padding-bottom: 14px;
   }
 
   div#widget-title-row {

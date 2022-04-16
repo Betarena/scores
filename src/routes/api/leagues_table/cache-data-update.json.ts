@@ -104,11 +104,20 @@ async function main(): Promise < Array < Leagues_Table_Cache_Ready >> {
                           const season_league_obj: Single_League_Table_Data = {
                             season_league_id: undefined,
                             season_league_name: undefined,
+                            season_league_logo: undefined,
                             season_league_teams: []
                           }
                           // ... ℹ populate data;
                           season_league_obj.season_league_id = season_league.id.toString()
                           season_league_obj.season_league_name = season_league.name.toString()
+                          // ... ℹ iterate over leagues-seasons for "logo-target";
+                          for (const league_season of response.scores_football_leagues_dev) {
+                            // ... ℹ validate for equality of "league_ids":
+                            if (season_league_obj.season_league_id.toString() === league_season.id.toString()) {
+                              // ... ℹ assign:
+                              season_league_obj.season_league_logo = league_season.data.logo_path.toString() // ✅ exists...
+                            }
+                          }
                           // ... ℹ iterate over THIS standing "teams";
                           for (const team of season_type.standings.data) {
                               // ... ℹ instantiate the TEAM OBJECT CACHE;

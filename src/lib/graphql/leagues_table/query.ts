@@ -9,6 +9,14 @@ import { gql } from 'graphql-request';
 */
 export const GET_LEAGUES_TABLE_DATA = gql`
 	query GET_LEAGUES_TABLE_DATA @cached(ttl: 300) {
+    scores_football_leagues_dev {
+      country
+      data
+      name
+      id
+      season
+      seasons
+    }
     scores_football_standings_dev {
       data
       id

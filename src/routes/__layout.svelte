@@ -136,16 +136,28 @@
 </script>
 
 <!-- ===================
+	SVELTE INJECTION TAGS
+=================== -->
+
+<svelte:head>
+  <!-- head content -->
+  <link rel="alternate" hreflang="en" href="https://ahrefs.com/blog/free-keyword-research-tools/" />
+  <link rel="alternate" hreflang="de" href="https://ahrefs.com/blog/de/kostenlose-keyword-recherche-tools/" />
+  <link rel="alternate" hreflang="zh" href="https://ahrefs.com/blog/zh/free-keyword-research-tools/" />
+  <link rel="alternate" hreflang="x-default" href="https://ahrefs.com/blog/free-keyword-research-tools/" />
+</svelte:head>
+
+<!-- ===================
   COMPONENT HTML
 =================== -->
 
-<!-- {#if !dev} -->
+{#if !dev}
   <!-- content here -->
   <!-- <GoogleAnalytics properties={['UA-60160331-9']} /> -->
   <GoogleAnalytics 
     id={ga_measurment_id}
     />
-<!-- {/if} -->
+{/if}
 
 
 {#if offlineMode}

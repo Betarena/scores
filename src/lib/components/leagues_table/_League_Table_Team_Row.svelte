@@ -149,10 +149,9 @@
     position: absolute;
     top: 0;
     bottom: 0;
-    left: 50%;
-    right: 50%;
+    left: 15%;
     margin: auto;
-    height: 24px;
+    width: 24px;
   }
   .league-table-team-row p#box-goals {
     background-color: #ffffff;

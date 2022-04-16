@@ -1,6 +1,14 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ... ℹ DATA obtained from HASURA [!]
 export interface Hasura_Complete_Leagues_Table_Type {
+    scores_football_leagues_dev: {
+      country: JSON
+      data: JSON
+      name: string
+      id: number
+      season: JSON
+      seasons: JSON
+    }[]
     scores_football_standings_dev: {
         id: number
         type: string
@@ -108,6 +116,7 @@ export interface Single_Team_Object_Data {
 export interface Single_League_Table_Data {
     season_league_id: string
     season_league_name: string
+    season_league_logo: string
     season_league_teams: Array < Single_Team_Object_Data >
 }
 
