@@ -8,6 +8,10 @@ import { gql } from 'graphql-request';
 */
 export const GET_COMPLETE_PAGES_SEO_DATA = gql`
     query GET_COMPLETE_PAGES_SEO_DATA @cached(ttl: 300) {
+        scores_hreflang_dev {
+          hreflang
+          link
+        }
         scores_seo_homepage_dev {
             lang
             main_data

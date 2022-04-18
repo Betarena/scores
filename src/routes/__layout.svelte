@@ -34,6 +34,10 @@
         method: 'GET',
       }).then(r => r.json());
 
+      const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
+        method: 'GET'
+      }).then((r) => r.json());
+
       // ... return, RESPONSE DATA for THIS PAGE;
       if (response_header && 
           response_footer) {
@@ -41,7 +45,8 @@
               status: 200,
               props: {
                   HEADER_TRANSLATION_DATA: response_header,
-                  FOOTER_TRANSLATION_DATA: response_footer
+                  FOOTER_TRANSLATION_DATA: response_footer,
+                  PAGE_DATA_SEO: response_seo_page
               }
           }
       }
@@ -88,9 +93,11 @@
   // ... load in SEO-DATA for Header, Footer TYPES;
   import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';
   import type { Footer_Data } from '$lib/models/footer/types'
+  import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
 
   export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
   export let FOOTER_TRANSLATION_DATA: Footer_Data;
+  export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
 
   // ... https://stackoverflow.com/questions/4723213/detect-http-or-https-then-force-https-in-javascript
   // $: if (!dev && browser && location.protocol !== 'https:') {
@@ -136,16 +143,35 @@
 </script>
 
 <!-- ===================
+	SVELTE INJECTION TAGS
+=================== -->
+
+<svelte:head>
+  <!-- ... ℹ head content 
+  -->
+  {#if PAGE_DATA_SEO}
+    <!-- ... ℹ content here 
+    -->
+    {#each PAGE_DATA_SEO.scores_hreflang_dev as item}
+      <!-- ... ℹ content here 
+      -->
+      <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item.link}" />
+    {/each}
+  {/if}
+</svelte:head>
+
+
+<!-- ===================
   COMPONENT HTML
 =================== -->
 
-<!-- {#if !dev} -->
+{#if !dev}
   <!-- content here -->
   <!-- <GoogleAnalytics properties={['UA-60160331-9']} /> -->
   <GoogleAnalytics 
     id={ga_measurment_id}
     />
-<!-- {/if} -->
+{/if}
 
 
 {#if offlineMode}
