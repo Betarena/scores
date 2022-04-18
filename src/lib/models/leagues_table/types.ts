@@ -94,6 +94,10 @@ export interface Hasura_Complete_Leagues_Table_Type {
       points: string
       title: string
     }[]
+    color_codes_league_standings_positions_dev: {
+      color_codes: JSON
+      sports: string
+    }[]
     leagues_filtered_country: {
         lang: string
         leagues: {
@@ -111,6 +115,7 @@ export interface Single_Team_Object_Data {
     team_name: string
     games_played: string
     points: string
+    color_code: string
 }
 
 export interface Single_League_Table_Data {

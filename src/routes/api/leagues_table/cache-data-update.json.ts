@@ -126,7 +126,8 @@ async function main(): Promise < Array < Leagues_Table_Cache_Ready >> {
                                 team_logo:  undefined,
                                 team_name: undefined,
                                 games_played: undefined,
-                                points: undefined
+                                points: undefined,
+                                color_code: undefined
                               }
                               // ... ℹ iterate over TEAMS DATA for EXTRA INFO;
                               for (const info_team of response.scores_football_teams_dev) {
@@ -135,6 +136,19 @@ async function main(): Promise < Array < Leagues_Table_Cache_Ready >> {
                                       // ... ℹ add extra info;
                                       team_obj.team_logo = info_team.data.logo_path
                                   }
+                              }
+                              // ... ℹ get TEAM COLOR CODE;
+                              if (team.result != null && team.result != undefined) {
+                                // ... ℹ iterate over "sport" color codes;
+                                for (const sport of response.color_codes_league_standings_positions_dev) {
+                                  // ... ℹ validate;
+                                  if (sport.sports === "football") {
+                                    // ... ℹ assign;
+                                    team_obj.color_code = sport.color_codes[team.result.toString()];
+                                  }
+                                }
+                              } else {
+                                team_obj.color_code = 'transparent';
                               }
                               // ... ℹ populate data;
                               team_obj.position = parseInt(team.position.toString());

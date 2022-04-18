@@ -34,6 +34,10 @@ export const GET_LEAGUES_TABLE_DATA = gql`
       points
       title
     }
+    color_codes_league_standings_positions_dev {
+      color_codes
+      sports
+    }
     leagues_filtered_country {
       lang
       leagues

@@ -363,7 +363,7 @@
   }
 
   #show-more-box {
-    padding: 25px 130px;
+    padding: 25px 0;
     text-align: center;
     white-space: nowrap;
     color: var(--primary);

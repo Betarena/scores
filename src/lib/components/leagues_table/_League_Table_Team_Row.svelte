@@ -65,7 +65,9 @@
           <div
             class="team-pos">
             <p 
-              class="team-pos medium w-500">
+              class="team-pos medium w-500"
+              style="background-color: {data.color_code}"
+              class:border-pos={data.color_code === 'transparent'}>
               {data.position}
             </p>
           </div>
@@ -74,7 +76,7 @@
           <div
             id="image-contaier">
             <img
-              id='team-img'
+              class='team-img'
               src={data.team_logo}
               alt=""
             />
@@ -130,9 +132,11 @@
     position: relative;
   }
   .league-table-team-row #image-contaier {
+    width: 32px;
+    height: 32px;
     position: relative;
   }
-  .league-table-team-row #image-contaier img#team-img {
+  .league-table-team-row #image-contaier img.team-img {
     width: 32px;
     height: 32px;
     object-fit: contain;
@@ -143,15 +147,23 @@
     margin-right: 24px; 
     position: relative;
     border-radius: 50%;
-    background-color: dodgerblue;
+    /* background-color: dodgerblue; */
   }
   .league-table-team-row div.team-pos p {
     position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 15%;
     margin: auto;
-    width: 24px;
+    min-width: 24px;
+    text-align: center;
+    border-radius: 50%;
+    height: 24px;
+    /* padding: 4px 8px; */
+    border-radius: 30px;
+    padding: 1.5px 8px;
+    color: white;
+  }
+  .border-pos {
+    color: black !important;
+    border: 1px solid #E6E6E6;
   }
   .league-table-team-row p#box-goals {
     background-color: #ffffff;
@@ -184,6 +196,11 @@
   .dark-background-1.league-table-team-row p#box-goals {
     background: #4B4B4B;
     border: 1px solid #616161;
+  }
+
+  .dark-background-1 .border-pos {
+    color: white !important;
+    border: 1px solid #616161 !important;
   }
 
   .dark-background-1 p {

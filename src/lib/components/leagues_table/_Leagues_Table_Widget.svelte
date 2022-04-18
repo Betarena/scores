@@ -263,44 +263,48 @@
                 <!-- ... ℹ content here 
                 -->
                 <div
-                  id='more-top-leagues-list-container'
-                  class='m-b-20'>
-                  <!-- ... ℹ for-loop-each-population 
-                  -->
-                  {#each data.top_leagues_table_data as item}
-                      <!-- ... ℹ content here 
-                      -->
-                      <div
-                        class="row-space-out top-league-container ">
-                        <!-- ... ℹ row-league-data;
+                  id='more-top-leagues-outer'>
+                  <div
+                    id='more-top-leagues-list-container'
+                    >
+                    <!-- ... ℹ for-loop-each-population 
+                    -->
+                    {#each data.top_leagues_table_data as item}
+                        <!-- ... ℹ content here 
                         -->
                         <div
-                            class='row-space-start cursor-pointer'
-                            on:click={() => dropdownSelect = item.season_league_id}>
-                            <!-- ... ℹ vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
-                            -->
+                          class="row-space-out top-league-container ">
+                          <!-- ... ℹ row-league-data;
+                          -->
+                          <div
+                              class='row-space-start cursor-pointer'
+                              on:click={() => dropdownSelect = item.season_league_id}>
+                              <!-- ... ℹ vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
+                              -->
+                              <img 
+                                  src={item.season_league_logo} 
+                                  alt={item.season_league_name.toString() + '-image'} 
+                                  width="20px" height="20px" 
+                                  class='m-r-15' 
+                                  style="object-fit: contain;"/>
+                              <p 
+                                class='s-14 w-500 color-black-2'>
+                                  {item.season_league_name}
+                              </p>
+                          </div>
+                          <!-- ... ℹ vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
+                          -->
+                          {#if item.season_league_id === dropdownSelect}
                             <img 
-                                src={item.season_league_logo} 
-                                alt={item.season_league_name.toString() + '-image'} 
-                                width="20px" height="20px" 
-                                class='m-r-15' 
-                                style="object-fit: contain;"/>
-                            <p 
-                              class='s-14 w-500 color-black-2'>
-                                {item.season_league_name}
-                            </p>
+                              src={check_league} 
+                              alt=""
+                              width="20px" height="20px"/>
+                          {/if}
                         </div>
-                        <!-- ... ℹ vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
-                        -->
-                        {#if item.season_league_id === dropdownSelect}
-                          <img 
-                            src={check_league} 
-                            alt=""
-                            width="20px" height="20px"/>
-                        {/if}
-                      </div>
-                  {/each}
-                </div>
+                    {/each}
+                  </div>
+              </div>
+                
               {/if}
 
             </div>
@@ -328,11 +332,12 @@
                         class="row-space-end">
                         <p 
                           class="w-400 medium color-grey"
-                          style="margin-right: 37px;">
+                          style="width: 64px; text-align: -webkit-center;">
                           {WIDGET_TRANSLATION.games}
                         </p>
                         <p 
-                          class="w-400 medium color-grey">
+                          class="w-400 medium color-grey"
+                          style="margin-left: 8px; width: 64px; text-align: -webkit-center;">
                           {WIDGET_TRANSLATION.points}
                         </p>
                       </div>
@@ -399,6 +404,27 @@
     white-space: nowrap;
   }
 
+  div#more-top-leagues-outer {
+    position: absolute;
+    top: 115%;
+    width: 100%;
+    /* background-color: #F2F2F2; */
+    background-color: #ffffff;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    z-index: 10000;
+    height: 302px;
+    overflow-y: scroll;
+    padding-right: 6px;
+  } div#more-top-leagues-outer::-webkit-scrollbar  {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    display: none;
+  } div#more-top-leagues-outer::-webkit-scrollbar  {
+    /* Hide scrollbar for IE, Edge and Firefox */ 
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  } 
+
   div#dropdown-leagues-container {
     position: relative;
     margin: 20px 20px 0px 20px;
@@ -409,14 +435,6 @@
     border-radius: 8px;
     position: relative;
   } div#dropdown-leagues-container div#more-top-leagues-list-container {
-    position: absolute;
-    top: 115%;
-    width: 100%;
-    /* background-color: #F2F2F2; */
-    background-color: #ffffff;
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-    border-radius: 4px;
-    z-index: 10000;
     height: 302px;
     overflow-y: scroll;
   } div#dropdown-leagues-container div#more-top-leagues-list-container .top-league-container {
@@ -431,7 +449,7 @@
   div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar-track {
     background: #F2F2F2;
     border-radius: 12px;
-    margin: 5px;
+    margin: 8px;
   }
   /* handle */
   div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar-thumb {
@@ -471,12 +489,22 @@
 	WIDGET DARK THEME 
 	................. */
 
-  .dark-background-1 div#dropdown-leagues-container div#more-top-leagues-list-container {
+  .dark-background-1 div#dropdown-leagues-container div#more-top-leagues-outer {
     /* dark theme/dark-gray */
     background: #616161;
     /* shadow/black */
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
     border-radius: 4px;
+  }
+
+  /* handle */
+  .dark-background-1 div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar-thumb {
+    background: #999999 !important;
+  }
+
+  /* track */
+  .dark-background-1 div#more-top-leagues-list-container::-webkit-scrollbar-track {
+    background: #4B4B4B !important;
   }
 
 </style>
