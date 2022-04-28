@@ -20,36 +20,30 @@
 		const response_featured_match = await fetch('/api/featured_match/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... 🐛 debugging;
-		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
 		// ... ℹ get featured_betting_sites-response-seo-data;
 		const response_featured_betting_sites = await fetch('/api/featured_betting_sites/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... 🐛 debugging;
-		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
 		// ... ℹ get league_list-response-seo-data;
 		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... 🐛 debugging;
-		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 		
 		// ... ℹ get seo_page-response-seo-data;
 		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... 🐛 debugging;
-		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
 
     // ... ℹ get seo_page-response-seo-data;
 		const response_best_goalscorers = await fetch('/api/best_goalscorer/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-		// ... 🐛 debugging;
-		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
+
+    const response_leagues_table = await fetch('/api/leagues_table/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
 
     // ... ℹ get livescore-widget-response-seo-data;
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
@@ -72,6 +66,7 @@
 					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
 					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
 					PAGE_DATA_SEO: response_seo_page,
+          LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
 					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
 					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
 					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
@@ -103,6 +98,7 @@
   import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
   import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
   import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
+  import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
 
 	import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
@@ -113,6 +109,7 @@
   export let BEST_GOAL_SCORERS_DATA_SEO;
 	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
   let SEO_BLOCK_DATA = PAGE_DATA_SEO;
+  export let LEAGUES_TABLE_SCORES_SEO_DATA;
 	export let LIVE_SCORES_DATA_DATA_SEO;
 	export let LIVE_SCORES_DATA_LEAGUES;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
@@ -136,26 +133,40 @@
 	 * appropiate components to display the correct
 	 * component, tailored to a specifc device.
 	 */
-	 let mobileExclusive: boolean = false;
+  let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
-		// MOBILE - VIEW
-		if (wInit <= 1160) {
+		// ... TABLET - VIEW
+		if (wInit >= 1160) {
+			tabletExclusive = false;
+		} else {
+			tabletExclusive = true;
+		}
+		// ... MOBILE - VIEW
+		if (wInit < 475) {
 			mobileExclusive = true;
 		} else {
 			mobileExclusive = false;
 		}
 		window.addEventListener('resize', function () {
 			var w = document.documentElement.clientWidth;
-			// MOBILE - VIEW
-			if (wInit <= 1160) {
+			// ... TABLET - VIEW
+      if (wInit >= 1160) {
+				tabletExclusive = false;
+			} else {
+				tabletExclusive = true;
+			}
+			// ... MOBILE - VIEW
+			if (w < 475) {
 				mobileExclusive = true;
 			} else {
 				mobileExclusive = false;
 			}
 		});
 	});
+
 </script>
 
 <!-- ===================
@@ -190,8 +201,8 @@
 <section id="home-page">
 
   <!-- ... DESKTOP & TABLET VIEW ONLY ... -->
-  {#if !mobileExclusive}
-    <!-- ... 1st ROW ... -->
+  {#if !tabletExclusive && !mobileExclusive}
+  <!-- ... 1st ROW ... -->
 		<div> 
 			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
 		</div>
@@ -215,6 +226,8 @@
       <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
       <!-- ... widget #3 -->
       <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} />
+      <!-- ... widget #4 -->
+      <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} />
     </div>
   <!-- ... MOBILE VIEW ONLY ... -->
   {:else}
@@ -231,6 +244,11 @@
       <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
       <!-- ... widget #4 -->
       <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} />
+      {#if tabletExclusive && !mobileExclusive}
+        <!-- content here -->
+        <!-- ... widget #5 -->
+        <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} />
+      {/if}
       <!-- ... widget #5 -->
       <SeoBlock {SEO_BLOCK_DATA} /> 
     </div>

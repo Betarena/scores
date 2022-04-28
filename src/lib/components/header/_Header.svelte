@@ -51,13 +51,13 @@
 	onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
 		// TABLET - VIEW
-		if (wInit > 768) {
+		if (wInit >= 1160) {
 			tabletExclusive = false;
 		} else {
 			tabletExclusive = true;
 		}
 		// MOBILE - VIEW
-		if (wInit < 475) {
+		if (wInit < 560) {
 			mobileExclusive = true;
 		} else {
 			mobileExclusive = false;
@@ -65,13 +65,13 @@
 		window.addEventListener('resize', function () {
 			var w = document.documentElement.clientWidth;
 			// TABLET - VIEW
-			if (w > 768) {
+			if (w >= 1160) {
 				tabletExclusive = false;
 			} else {
 				tabletExclusive = true;
 			}
 			// MOBILE - VIEW
-			if (w < 475) {
+			if (w < 560) {
 				mobileExclusive = true;
 			} else {
 				mobileExclusive = false;

@@ -1,5 +1,9 @@
 // ...
 export interface Hasura_Complete_Pages_SEO {
+    scores_hreflang: {
+      hreflang: string
+      link: string
+    }[]
     scores_seo_homepage: {
         lang: string
         main_data: {

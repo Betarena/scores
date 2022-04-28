@@ -741,6 +741,10 @@ DARK-MODE FORM CSS STYLE
 	color: #a8a8a8 !important;
 }
 
+.dark-background-1 .color-black-2 {
+	color: #ffffff !important;
+}
+
 /* ... MOBILE VIEW OVERFLOW HIDDEN ... */
 
 @media only screen and (max-width: 375px) {
