@@ -157,7 +157,7 @@
       {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
         <!-- ... wiget-title ... -->
         <h2 
-          class="s-20 m-b-10 color-black-2"
+          class="s-20 m-b-10 w-500 color-black-2"
           style="margin-top: 0;"
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {WIDGET_SEO_TRANSLATION.title}
@@ -214,7 +214,7 @@
             -->
           <h2
             id='widget-title'
-            class="s-20 m-b-10 w-500 w-normal color-black-2"
+            class="s-20 m-b-10 w-500 color-black-2"
             style="margin-top: 0;"
             class:color-white={$userBetarenaSettings.theme == 'Dark'}>
             {WIDGET_TRANSLATION.title}
@@ -238,7 +238,7 @@
                 {#if dropdownSelect === season_league_data_obj.season_league_id}
                   <div
                     id="dropdown-box-select"
-                    class="row-space-out">
+                    class="row-space-out cursor-pointer">
                     <p 
                       class="s-14 w-500 color-black-2">
                       {season_league_data_obj.season_league_name}
@@ -257,7 +257,7 @@
                   </div>
                 {/if}
               {/each}
-              <!-- ... ℹ show main TOP 7 LEAGUES / SEASONS 
+              <!-- ... ℹ show main TOP 8 LEAGUES / SEASONS 
               -->
               {#if toggleDropdown}
                 <!-- ... ℹ content here 
@@ -392,7 +392,7 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     width: 100%;
-    max-width: 383px;
+    /* max-width: 383px; */
     overflow: hidden;
     padding-bottom: 14px;
   }
@@ -439,7 +439,11 @@
     overflow-y: scroll;
   } div#dropdown-leagues-container div#more-top-leagues-list-container .top-league-container {
     padding: 12px 20px;
-  }
+  } div#dropdown-leagues-container div#more-top-leagues-list-container .top-league-container:hover {
+    cursor: pointer;
+  } div#dropdown-leagues-container div#more-top-leagues-list-container .top-league-container:hover p {
+    color: #f5620f !important;
+  } 
 
   /* width */
   div#dropdown-leagues-container div#more-top-leagues-list-container::-webkit-scrollbar {

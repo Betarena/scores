@@ -39,12 +39,14 @@ export async function getTargetFixtureOdds(
 	const lang: string = fixture_data.lang;
 	// ... obtain-sportbook-details;
 	const sportbook_details = await getTargetGeoSportBookDetails(lang);
+  if (dev) console.debug(`odds/${year_}/${new_month_}/${day_}/${fixtureId}`);
 	// ... return the odds-site info & the odds values;
 	return get(child(ref(db_real), `odds/${year_}/${new_month_}/${day_}/${fixtureId}`)).then(
 		(snapshot) => {
 			// ... check if the data exists (should exist at all times anyway);
 			if (snapshot.exists()) {
 				// ... DEBUGGING;
+        if (dev) console.debug("Here! Testing!");
 				// if (dev) console.debug('data from Real DB', [snapshot.val()]) // ... TOO LONG
 				// ...
 				const fixture_odds = snapshot.val();

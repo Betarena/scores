@@ -133,26 +133,40 @@
 	 * appropiate components to display the correct
 	 * component, tailored to a specifc device.
 	 */
-	 let mobileExclusive: boolean = false;
+  let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
-		// MOBILE - VIEW
-		if (wInit <= 1160) {
+		// ... TABLET - VIEW
+		if (wInit >= 1160) {
+			tabletExclusive = false;
+		} else {
+			tabletExclusive = true;
+		}
+		// ... MOBILE - VIEW
+		if (wInit < 475) {
 			mobileExclusive = true;
 		} else {
 			mobileExclusive = false;
 		}
 		window.addEventListener('resize', function () {
 			var w = document.documentElement.clientWidth;
-			// MOBILE - VIEW
-			if (wInit <= 1160) {
+			// ... TABLET - VIEW
+      if (wInit >= 1160) {
+				tabletExclusive = false;
+			} else {
+				tabletExclusive = true;
+			}
+			// ... MOBILE - VIEW
+			if (w < 475) {
 				mobileExclusive = true;
 			} else {
 				mobileExclusive = false;
 			}
 		});
 	});
+
 </script>
 
 <!-- ===================
@@ -187,8 +201,8 @@
 <section id="home-page">
 
   <!-- ... DESKTOP & TABLET VIEW ONLY ... -->
-  {#if !mobileExclusive}
-    <!-- ... 1st ROW ... -->
+  {#if !tabletExclusive && !mobileExclusive}
+  <!-- ... 1st ROW ... -->
 		<div> 
 			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
 		</div>
@@ -230,6 +244,11 @@
       <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
       <!-- ... widget #4 -->
       <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} />
+      {#if tabletExclusive && !mobileExclusive}
+        <!-- content here -->
+        <!-- ... widget #5 -->
+        <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} />
+      {/if}
       <!-- ... widget #5 -->
       <SeoBlock {SEO_BLOCK_DATA} /> 
     </div>
