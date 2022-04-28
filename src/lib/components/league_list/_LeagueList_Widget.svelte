@@ -236,7 +236,7 @@
                         <!-- ... wiget-title ... -->
                         <p
                             id='widget-title'
-                            class="s-20 m-b-10 color-white w-500 w-normal">
+                            class="s-20 m-b-10 color-white w-500">
                             {WIDGET_TRANSLATION.translations.widget_title}
                         </p>
 

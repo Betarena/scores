@@ -64,6 +64,8 @@
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	async function get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre): Promise < void > {
+    // if (dev) console.debug("Here! Testing!");
+    // if (dev) console.debug(selectedFixutreData);
 		// ... get the list of the odds for the;
 		const response = await getTargetFixtureOdds(selectedFixutreData);
 		// ... assign real-time-odds,
@@ -490,9 +492,11 @@
 			<!-- ... obtain the correct widget translation ... -->
 			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<!-- ... wiget-title ... -->
-				<p class="s-20 m-b-10 color-white">
+        <h2 
+        class="s-20 m-b-10 w-500 color-white"
+        style="margin-top: 0px;">
 					{WIDGET_SEO_TRANSLATION.widget_title}
-				</p>
+				</h2>
 			{/if}
 		{/each}
 
@@ -539,10 +543,11 @@
 			<!-- ... identify the correct translation via IF -->
 			{#each FEATURED_MATCH_WIDGET_DATA.translation as WIDGET_TRANSLATION}
 				{#if WIDGET_TRANSLATION.lang == server_side_language}
-					<!-- ... wiget-title ... -->
-					<p class="s-20 m-b-10 color-white">
+          <h2 
+          class="s-20 m-b-10 w-500 color-white"
+          style="margin-top: 0px;">
 						{WIDGET_TRANSLATION.widget_title}
-					</p>
+					</h2>
 
 					<div
 						id="live-score-container"

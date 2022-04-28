@@ -189,7 +189,7 @@
             <!-- ... wiget-title ... -->
             <p
               id='widget-title'
-              class="s-20 m-b-10 color-black w-500 w-normal"
+              class="s-20 m-b-10 color-black w-500"
               class:color-white={$userBetarenaSettings.theme == 'Dark'}>
               {WIDGET_TRANSLATION.translations.widget_title}
             </p>
@@ -344,7 +344,7 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     width: 100%;
-    max-width: 383px;
+    /* max-width: 383px; */
   }
 
   #title-box {

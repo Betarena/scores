@@ -191,7 +191,7 @@
       {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
         <!-- ... wiget-title ... -->
         <h2 
-          class="s-20 m-b-10 color-black-2"
+          class="s-20 m-b-10 w-500 color-black-2"
           style="margin-top: 0;"
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {WIDGET_SEO_TRANSLATION.widget_translations.best_goal_scorers}
@@ -246,7 +246,7 @@
             <!-- ... wiget-title ... -->
             <h2
               id='widget-title'
-              class="s-20 m-b-10 w-500 w-normal color-black-2"
+              class="s-20 m-b-10 w-500 color-black-2"
               style="margin-top: 0;"
               class:color-white={$userBetarenaSettings.theme == 'Dark'}>
               {WIDGET_TRANSLATION.widget_translations.best_goal_scorers}
@@ -351,7 +351,7 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     width: 100%;
-    max-width: 383px;
+    /* max-width: 383px; */
     overflow: hidden;
   }
 

@@ -77,81 +77,83 @@ async function main(): Promise < Leagues_Table_SEO_Cache_Ready > {
 
       // ... ℹ declare language (GEO);
       season_league_cache.lang = country_leagues.lang
-      // ... 🐛 DEBUGGING;
-      if (dev) console.debug('ℹ season_league.lang', season_league_cache.lang)
-      // ... ℹ iterate over each country-league;
-      for await (const country_league of country_leagues.leagues) {
-          // ... ℹ iterate over each top-goal-scorer;
-          for (const season_league of response.scores_football_standings_dev) {
-              // ... ℹ match_league_ids && match correct-lang;
-              if (season_league.id.toString() === country_league.league_id.toString()) {
-                  // ... ℹ iterate over the "season_league" [filtered] data;
-                  for (const season_type of season_league.data) {
-                      // ... ℹ and select the "Regular Season" only!
-                      if (season_type.name.toString() === "Regular Season") {
-                          // ... ℹ instantiate the SEASON-LEAGUE OBJECT CACHE;
-                          const season_league_obj: Single_League_Table_Data = {
-                            season_league_id: undefined,
-                            season_league_name: undefined,
-                            season_league_teams: []
-                          }
-                          // ... ℹ populate data;
-                          season_league_obj.season_league_id = season_league.id.toString()
-                          season_league_obj.season_league_name = season_league.name.toString()
-                          // ... ℹ iterate over THIS standing "teams";
-                          for (const team of season_type.standings.data) {
-                              // ... ℹ instantiate the TEAM OBJECT CACHE;
-                              const team_obj: Single_Team_Object_Data = {
-                                position: undefined,
-                                team_logo:  undefined,
-                                team_name: undefined,
-                                games_played: undefined,
-                                points: undefined
-                              }
-                              // ... ℹ iterate over TEAMS DATA for EXTRA INFO;
-                              for (const info_team of response.scores_football_teams_dev) {
-                                  // ... ℹ identify target team;
-                                  if (info_team.id.toString() === team.team_id.toString()) {
-                                      // ... ℹ add extra info;
-                                      team_obj.team_logo = info_team.data.logo_path
-                                  }
-                              }
-                              // ... ℹ populate data;
-                              team_obj.position = parseInt(team.position.toString());
-                              team_obj.team_name = team.team_name;
-                              team_obj.games_played = team.overall.games_played.toString();
-                              team_obj.points = team.overall.points.toString();
-                              // ... ℹ add team to list of THIS SEASON-LEAGUE;
-                              season_league_obj.season_league_teams.push(team_obj)
-                          }
-                          // ... ℹ add to the gloabal cache data:
-                          season_league_cache.top_leagues_table_data.push(season_league_obj)
-                      }
-                  }
-                  // ... 🐛 DEBUGGING;
-                  // if (dev) console.debug('ℹ player identified!', player.league_id, player.common_name)
-              }
-              // ... ℹ terminating condition;
-              if (season_league_cache.top_leagues_table_data != undefined && 
-                  season_league_cache.top_leagues_table_data.length > 7) {
-                  // ... 🐛 DEBUGGING;
-                  if (dev) console.debug('➤  exiting inner loop! reached limited length of: ', season_league_cache.top_leagues_table_data.length)
-                  // ... 🚀 exit;
-                  break;
-              }
+      if (season_league_cache.lang == 'en') {
+        // ... 🐛 DEBUGGING;
+        // if (dev) console.debug('ℹ season_league.lang', season_league_cache.lang)
+        // ... ℹ iterate over each country-league;
+        for await (const country_league of country_leagues.leagues) {
+            // ... ℹ iterate over each top-goal-scorer;
+            for (const season_league of response.scores_football_standings_dev) {
+                // if (dev) console.debug('ℹ season_league', season_league)
+                // ... ℹ match_league_ids && match correct-lang;
+                if (season_league.id.toString() === country_league.league_id.toString()) {
+                    // ... ℹ iterate over the "season_league" [filtered] data;
+                    for (const season_type of season_league.data) {
+                        // ... ℹ and select the "Regular Season" only!
+                        if (season_type.name.toString() === "Regular Season") {
+                            // ... ℹ instantiate the SEASON-LEAGUE OBJECT CACHE;
+                            const season_league_obj: Single_League_Table_Data = {
+                              season_league_id: undefined,
+                              season_league_name: undefined,
+                              season_league_teams: []
+                            }
+                            // ... ℹ populate data;
+                            season_league_obj.season_league_id = season_league.id.toString()
+                            season_league_obj.season_league_name = season_league.name.toString()
+                            // ... ℹ iterate over THIS standing "teams";
+                            for (const team of season_type.standings.data) {
+                                // ... ℹ instantiate the TEAM OBJECT CACHE;
+                                const team_obj: Single_Team_Object_Data = {
+                                  position: undefined,
+                                  team_logo:  undefined,
+                                  team_name: undefined,
+                                  games_played: undefined,
+                                  points: undefined
+                                }
+                                // ... ℹ iterate over TEAMS DATA for EXTRA INFO;
+                                for (const info_team of response.scores_football_teams_dev) {
+                                    // ... ℹ identify target team;
+                                    if (info_team.id.toString() === team.team_id.toString()) {
+                                        // ... ℹ add extra info;
+                                        team_obj.team_logo = info_team.data.logo_path
+                                    }
+                                }
+                                // ... ℹ populate data;
+                                team_obj.position = parseInt(team.position.toString());
+                                team_obj.team_name = team.team_name;
+                                team_obj.games_played = team.overall.games_played.toString();
+                                team_obj.points = team.overall.points.toString();
+                                // ... ℹ add team to list of THIS SEASON-LEAGUE;
+                                season_league_obj.season_league_teams.push(team_obj)
+                            }
+                            // ... ℹ add to the gloabal cache data:
+                            season_league_cache.top_leagues_table_data.push(season_league_obj)
+                        }
+                    }
+                    // ... 🐛 DEBUGGING;
+                    // if (dev) console.debug('ℹ player identified!', player.league_id, player.common_name)
+                }
+                // ... ℹ terminating condition;
+                if (season_league_cache.top_leagues_table_data != undefined && 
+                    season_league_cache.top_leagues_table_data.length > 7) {
+                    // ... 🐛 DEBUGGING;
+                    if (dev) console.debug('➤  exiting inner loop! reached limited length of: ', season_league_cache.top_leagues_table_data.length)
+                    // ... 🚀 exit;
+                    break;
+                }
+            }
+            // ... ℹ terminating condition;
+            if (season_league_cache.top_leagues_table_data != undefined && 
+              season_league_cache.top_leagues_table_data.length > 7) {
+              // ... 🐛 DEBUGGING;
+              if (dev) console.debug('➤  exiting final loop! reached limited length of: ', season_league_cache.top_leagues_table_data.length)
+              // ... 🚀 exit;
+              break;
           }
-          // ... ℹ terminating condition;
-          if (season_league_cache.top_leagues_table_data != undefined && 
-            season_league_cache.top_leagues_table_data.length > 7) {
-            // ... 🐛 DEBUGGING;
-            if (dev) console.debug('➤  exiting final loop! reached limited length of: ', season_league_cache.top_leagues_table_data.length)
-            // ... 🚀 exit;
-            break;
         }
+        // ... ℹ add to main list;
+        season_league_cache_main.top_leagues_table_data = [...season_league_cache_main.top_leagues_table_data, ...season_league_cache.top_leagues_table_data];
       }
-
-      // ... ℹ add to main list;
-      season_league_cache_main.top_leagues_table_data = [...season_league_cache_main.top_leagues_table_data, ...season_league_cache.top_leagues_table_data];
   }
  
   // ... 🐛 DEBUGING;
