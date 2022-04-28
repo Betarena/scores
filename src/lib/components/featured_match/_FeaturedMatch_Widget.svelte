@@ -493,7 +493,8 @@
 			{#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
 				<!-- ... wiget-title ... -->
         <h2 
-        class="s-20 m-b-10 w-500 color-white">
+        class="s-20 m-b-10 w-500 color-white"
+        style="margin-top: 0px;">
 					{WIDGET_SEO_TRANSLATION.widget_title}
 				</h2>
 			{/if}
@@ -543,7 +544,8 @@
 			{#each FEATURED_MATCH_WIDGET_DATA.translation as WIDGET_TRANSLATION}
 				{#if WIDGET_TRANSLATION.lang == server_side_language}
           <h2 
-          class="s-20 m-b-10 w-500 color-white">
+          class="s-20 m-b-10 w-500 color-white"
+          style="margin-top: 0px;">
 						{WIDGET_TRANSLATION.widget_title}
 					</h2>
 
