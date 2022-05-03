@@ -122,7 +122,7 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 				// ... return the response as an Array;
 				return obj;
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from getTargetGeoSportBookDetails() method for Fireabse DB is incorrect => sportsbook_details/${lang} with sitename: ${siteName}`);
 			}
 		});
 	} else {
@@ -134,7 +134,7 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 				// return the response as an Array;
 				return snapshot.val();
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from getTargetGeoSportBookDetails() method for Fireabse DB is incorrect => sportsbook_details/${lang}`);
 			}
 		});
 	}
