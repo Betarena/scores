@@ -48,7 +48,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [seobility.net](https://www.seobility.net/en/seocheck/)
 - [totheweb.com](https://totheweb.com/learning_center/tools-search-engine-simulator/)
 
-### `NPM Packages`
+## `NPM Packages`
 
 - [svelte-content-loader](https://github.com/PaulMaly/svelte-content-loader)
 - [graphql-request](https://www.npmjs.com/package/graphql-request)
@@ -56,17 +56,17 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [sveltejs/adapter-node](https://www.npmjs.com/package/@sveltejs/adapter-node)
 - [sveltejs/kit](https://www.npmjs.com/package/@sveltejs/kit)
 
-### Converting `PNG` to `WEBP`
+## Converting `PNG` to `WEBP`
 
 -  [cloud-convert](https://cloudconvert.com/png-to-webp)
 
-### `Svelte` and `SvelteKit` Hints / Tips / Fixes
+## `Svelte` and `SvelteKit` Hints / Tips / Fixes
 
 - [auto-redirect-page-URL](https://www.reddit.com/r/sveltejs/comments/p28oht/how_to_redirect_to_a_url_in_svelte_kit/)
 - *discontinued-use-of-`@apollo-client` [init-@apollo-client](https://stackoverflow.com/questions/67135169/how-to-initialize-apolloclient-in-sveltekit-to-work-on-both-ssr-and-client-side)
 - [deploy-to-heroku](https://dev.to/nostro/deploying-to-heroku-with-sveltekit-3350)
 
-### Common Development Issues
+## Common Development Issues
 
 - [js-issues-outline-gist](https://gist.github.com/0bie/5c43e1e53d9f47a7ba6f65732dc027e9)
 - [docker-deployment-node-ENONT-issue](https://coderoad.ru/62950447/NPM-%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%B8%D1%82%D1%8C-%D1%87%D1%82%D0%BE-%D1%82%D0%BE-%D0%B8%D0%B7-github-%D0%B2-%D0%BA%D0%BE%D0%BD%D1%82%D0%B5%D0%B9%D0%BD%D0%B5%D1%80-docker-%D0%BD%D0%B5-%D1%83%D0%B4%D0%B0%D0%B5%D1%82%D1%81%D1%8F)
@@ -84,7 +84,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [optimizing-Hasura-DB-INDEXING-JSON-4](https://www.postgresql.org/docs/9.4/datatype-json.html)
 - [localstorage vs. cookies](https://stackoverflow.com/questions/7799728/localstorage-vs-cookies-performance)
 
-### CSP Guides:
+## CSP Guides:
 
 - ⭐ [csp-cheat-sheet](https://scotthelme.co.uk/csp-cheat-sheet/#script-src)
 - [sveltekit-csp-config](https://kit.svelte.dev/docs/configuration#csp)
@@ -111,7 +111,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [hash-example](https://content-security-policy.com/hash/)
 - [hash-example-code](https://codepen.io/BranchWebSDK/pen/RwRqLmv)
 
-### Code Snippets
+## Code Snippets
 
 - Use the `VITE_` server-side TOKENS
 
@@ -124,11 +124,21 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
     [example-2-env-var](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
 
 
-### Making changes to the `app.html`:
+## Making changes to the `app.html`:
 
 1. Please make the necessary changes to the `sveltekit.config.js` and then,
 2. Delete the `svelte-kit` folder respectively and do `npm run dev` to apply the necessary changes
 
-### Saving TABS:
+## Saving TABS:
 
 https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspace-vscode/68540643#68540643
+
+## Decreasing NPM Packages Sizes:
+
+- https://www.codegrepper.com/code-examples/javascript/node+find+unused+dependencies
+- https://cost-of-modules.herokuapp.com/
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
+
+## Static Assets Sveltekit:
+
+- https://github.com/sveltejs/kit/issues/3959
