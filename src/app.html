@@ -37,6 +37,25 @@
       (window,document,'script','dataLayer','UA-60160331-9');
     </script> -->
 
+  <!-- Begin SessionStack code -->
+  <script type="text/javascript">
+    !function(a,b){var c=window;c.SessionStackKey=a,c[a]=c[a]||{t:b,
+    q:[]};for(var d=["start","stop","identify","getSessionId","log","setOnDataCallback"],e=0;e<d.length;e++)!function(b){
+    c[a][b]=c[a][b]||function(){c[a].q.push([b].concat([].slice.call(arguments,0)));
+    }}(d[e]);var f=document.createElement("script");f.async=1,f.crossOrigin="anonymous",
+    f.src="https://cdn.sessionstack.com/sessionstack.js";var g=document.getElementsByTagName("script")[0];
+    g.parentNode.insertBefore(f,g)}("SessionStack","499a274d02574116b7974876bdea2bfa");
+  </script>
+  <!-- End SessionStack Code -->
+
+    <!-- Begin SessionStack-Sentry code -->
+    <script type="text/javascript">
+      sessionstack("getSessionId",function(s){s&&Raven.setDataCallback(function(t){return t
+      .contexts=t.contexts||{},t.contexts.sessionstack={session_id:s,timestamp:(new Date).
+      getTime()},t})});
+    </script>
+    <!-- End SessionStack-Sentry code -->
+
 		%svelte.head%
 	</head>
 	<body class='no-scrollbar'>
