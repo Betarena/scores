@@ -78,7 +78,7 @@ export async function getTargetFixtureOdds(
 				// ... return the response as an Array;
 				return obj;
 			} else {
-				throw new Error(`Data from getTargetFixtureOdds() method for Firebase DB is incorrect => odds/${year_}/${new_month_}/${day_}/${fixtureId} does not exist! ${fixture_data}`);
+				throw new Error(`Data from getTargetFixtureOdds() method for Firebase DB is incorrect => odds/${year_}/${new_month_}/${day_}/${fixtureId} does not exist! Date: ${fixture_data.date} Game Start: ${fixture_data.game_start} Lang: ${fixture_data.lang}`);
         // return null;
 			}
 		}
