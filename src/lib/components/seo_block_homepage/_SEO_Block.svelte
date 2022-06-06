@@ -46,7 +46,7 @@
 
 		const response: Hasura_Complete_Pages_SEO  = SEO_BLOCK_DATA
 		// ... 🐛 DEBUGGING;
-		if (dev) console.debug('ℹ widgetInit() best goalscorers cache', response)
+		// if (dev) console.debug('ℹ widgetInit() best goalscorers cache', response)
 
     // ... ℹ if response is null;
 		if (response == null || response == undefined) {

@@ -83,7 +83,7 @@
 		let new_month_ = (month_ + 1).toString();
 		new_month_ = ('0' + new_month_).slice(-2);
 		// ... apply-correct-day-structure;
-		let day_ = new Date(fixture_data.date).getDate().toString();
+		let day_ = new Date(fixture_data.date).getUTCDate().toString();
 		day_ = ('0' + day_).slice(-2);
 		// ... obtain FIXTURE-ID;
 		const fixtureId = fixture_data.fixture_id;
@@ -113,8 +113,6 @@
 		if (dev) console.info('-- user target location --', userGeo)
 		// ... GET RESPONSE;
 		const response: FixtureResponse  = await post(`api/featured_match/cache-data.json`, userGeo)
-		// ... DEBUGGING;
-		if (dev) console.debug('-- get_FeaturedMatchData() response --', response)
 		// ... if response is null;
 		if (response == null || response == undefined) {
 			// ... decalre state;

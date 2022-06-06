@@ -58,8 +58,8 @@
 
     // ... ℹ GET RESPONSE;
 		const response: GoalScorers_Cache_Ready  = await post(`api/best_goalscorer/cache-data.json`, userGeo)
-		// ... 🐛 DEBUGGING;
-		if (dev) console.debug('ℹ widgetInit() best goalscorers cache', response)
+		// [🐛] debug;
+		// if (dev) console.debug('ℹ widgetInit() best goalscorers cache', response)
 
     // ... ℹ if response is null;
 		if (response == null || response == undefined) {
