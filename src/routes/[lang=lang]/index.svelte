@@ -216,6 +216,24 @@
 	{/if}
 {/each}
 
+<svelte:head>
+  <!-- ... ℹ head content 
+  -->
+  {#if PAGE_DATA_SEO}
+    <!-- ... ℹ content here 
+    -->
+    {#each PAGE_DATA_SEO.scores_hreflang_dev as item}
+      <!-- ... ℹ content here 
+      -->
+      {#if item.link == null}
+        <!-- content here -->
+        <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/" />
+      {:else}
+        <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item.link}" />
+      {/if}
+    {/each}
+  {/if}
+</svelte:head>
 
 <!-- ===================
 	COMPONENT HTML
