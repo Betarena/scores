@@ -128,14 +128,14 @@
              !tournament_visible) {
       return {
         status: 404,
-        error: new Error("Uh-oh! This tournament is hidden!")
+        error: new Error("Uh-oh! This page does not exist")
       }
     }
     // [ℹ] -> otherwise, total ERROR;
     else {
       return {
         status: 500,
-        error: new Error(`❌ Uh-oh! There has been an /{tournaments} page preloading error`)
+        error: new Error(`Uh-oh! There has been an /{tournaments} page preloading error`)
       };
     }
 
