@@ -50,26 +50,24 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
 */
 
 export async function get(): Promise < any > {
-    // ... DEBUGGING;
-    if (dev) console.debug('-- updating featured_match_widget_cache --')
-    // ... clear the cache data for `featured_match_data`
-    await deleteCacheFeaturedMatch()
-    // ... get all of the SELECTED FIXTURES from HASURA;
-    const response = await getAllMatchSelectedFixtures()
-    // ... iterate over EACH SELECTED FIXTURE, lang, by lang;
-    for await (const selected_fixture of response.widget_featured_match_selection) {
-        userGeo = selected_fixture.lang
-        const response_cache = await getFeaturedMatchData()
-        // ... cache-response;
-        await cacheFeaturedMatchGeoPos(userGeo, response_cache);
-    }
-    // ... DEBUGGING;
-    // if (dev) console.info('-- featured-match.json --', response)
-    // ... return, RESPONSE;
-    return {
-        status: 200,
-        body: 'Success! Featured Match Data Updated!'
-    }
+
+  // ... clear the cache data for `featured_match_data`
+  await deleteCacheFeaturedMatch()
+  // ... get all of the SELECTED FIXTURES from HASURA;
+  const response = await getAllMatchSelectedFixtures()
+  // ... iterate over EACH SELECTED FIXTURE, lang, by lang;
+  for await (const selected_fixture of response.widget_featured_match_selection) {
+      userGeo = selected_fixture.lang
+      const response_cache = await getFeaturedMatchData()
+      // ... cache-response;
+      await cacheFeaturedMatchGeoPos(userGeo, response_cache);
+  }
+  // ... return, RESPONSE;
+  return {
+      status: 200,
+      body: 'Success! Featured Match Data Updated!'
+  }
+
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -109,12 +107,8 @@ async function deleteCacheFeaturedMatch() {
 
 // ... contains all of the `match-selected-fixtures` data;
 async function getAllMatchSelectedFixtures(): Promise < SelectedFixture_AllData > {
-    // ... DEBUGGING;
-    if (dev) console.info('-- getting all of the selected-match-fixtures --')
     // ... push-GRAPH-QL-request;
     const response = await initGrapQLClient().request(GET_ALL_SELECTED_MATCH_FIXTURES)
-    // ... DEBUGGING;
-    if (dev) console.info('-- response getAllMatchSelectedFixtures() --', response)
     // ... reutrn response;
     return response
 }
@@ -160,24 +154,18 @@ async function getFeaturedMatchData(): Promise < FixtureResponse > {
 
 // ... [WORKING]
 async function getSelectedFixture(lang: string) {
-    // ... DEBUGGING;
-    if (dev) console.info('lang', lang)
     // ... declare variables for GRAPH-QL-REQUEST;
     const variables = { 
         lang: lang
     }
     // ... push-GRAPH-QL-request;
     const response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
-    // ... DEBUGGING;
-    if (dev) console.info('-- response getSelectedFixture() --', response)
     // ... reutrn response;
     return response
 }
 
 // ... [WORKING]
 async function get_CompleteFixtureData(fixture_id: number): Promise < CompleteFixtureData_Response > {
-    // ... DEBUGGING;
-    if (dev) console.info('-- fixture_id --', fixture_id)
     // ... declare variables for GRAPH-QL-REQUEST;
     const variables = { 
         id: fixture_id, 
@@ -185,8 +173,6 @@ async function get_CompleteFixtureData(fixture_id: number): Promise < CompleteFi
     }
     // ... push-GRAPH-QL-request;
     const response = await initGrapQLClient().request(GET_ALL_FIXTURE_DATA, variables)
-    // ... DEBUGGING;
-    if (dev) console.info('-- response get_CompleteFixtureData() --', response)
     // ... reutrn response;
     return response;
 }

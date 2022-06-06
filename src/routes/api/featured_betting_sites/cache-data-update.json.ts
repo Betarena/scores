@@ -107,7 +107,7 @@ async function getAllFeaturedBettingSite(): Promise < Array < All_SportBook_Deta
     // ... retrieve the appropiate translations information;
     const response: Scores_Featured_Betting_Sites_Hasura = await initGrapQLClient().request(GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES)
     // ... DEBUGGING;
-    if (dev) console.info('-- widgetInit() --', response)
+    // if (dev) console.info('-- widgetInit() --', response)
     
     // ... inject the translations data acoordingly into 1 single JSON Object to each sportbook_details;
     for await (const sportBookDetails_elem of sportBookDetails_ObjArray) {
