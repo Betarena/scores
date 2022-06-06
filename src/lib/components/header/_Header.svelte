@@ -104,7 +104,7 @@
 
   let server_side_language: string = 'en';
 	$: if ($page.routeId != null) {
-    console.log("HERE44!")
+    if (dev) console.log("HERE44!")
     if ($page.routeId.includes("[lang=lang]")) {
 		  server_side_language = $page.params.lang;
     }
@@ -138,13 +138,13 @@
       !langSelected) {
 			selectLanguage(server_side_language);
       langSelected = true;
-      console.log("HERE!")
+      if (dev) console.log("HERE!")
 		} else if (
       $page.routeId != null &&
       !langSelected) {
 			selectLanguage('en');
       langSelected = true;
-      console.log("HERE2!")
+      if (dev) console.log("HERE2!")
 		}
 
     setUserCountryBookmakerLocation();
@@ -161,7 +161,7 @@
   */
 	function selectLanguage(lang: string) {
 
-    console.log("HERE3!")
+    if (dev) console.log("HERE3!")
     
     // [ℹ] get past instance of LANG;
     const pastLang: string = $userBetarenaSettings.lang == "en" ? "/" : "/" + $userBetarenaSettings.lang;
