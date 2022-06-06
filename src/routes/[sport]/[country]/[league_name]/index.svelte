@@ -146,7 +146,7 @@
 
 
 <script lang="ts">
-  import { goto, invalidate } from '$app/navigation';
+  import { goto, invalidate, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
   import { browser } from '$app/env';
 
@@ -171,7 +171,6 @@
 	// [ℹ] validate LANG change
 	$: if (current_lang != refresh_lang && 
          browser) {
-    // invalidate('/api/tournaments/cache-data.json');
     let newURL: string
     // [ℹ] identify new transaltion change;
     for (const tournament_t of TOURNAMENT_DATA_TRANSLATED_COPIES) {
@@ -188,7 +187,9 @@
       }
     }
     // [ℹ] navigate;
-    goto(newURL, { replaceState: true })
+    // invalidate('/api/tournaments/cache-data.json');
+    // prefetch(newURL);
+    goto(newURL, {replaceState: true})
 	}
 </script>
 
@@ -269,7 +270,7 @@
       href="/{$page.params.sport}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
-        {TOURNAMENT_DATA.sport}
+        {$page.params.sport}
       </p>
     </a>
 
@@ -284,7 +285,7 @@
       href="/{$page.params.sport}/{$page.params.country}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
-        {TOURNAMENT_DATA.country}
+        {$page.params.country}
       </p>
     </a>
 
