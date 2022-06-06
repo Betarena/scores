@@ -1,34 +1,30 @@
-// ... import $app `modules`;
+// [ℹ] import $app `modules`;
 import { dev } from '$app/env';
-
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
-
-// ... DECLARING TYPESCRIPT-TYPES imports;
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
- */
+*/
 
-// ...
-export async function get(): Promise < Hasura_Complete_Pages_SEO > {
+export async function get(): Promise < any > {
 
-    // ... check for cache-existance [IN THE USER-GEO-POS];
-    const response_usergeo = await getCacheHomepageSEODataResponse()
-    // ... DEBUGGING;
-    // if (dev) console.debug('-- response_cache --', response_usergeo)
-    // ... return RESPONSE;
-    if (response_usergeo) {
-        return {
-            body: response_usergeo
-        }
-    }
+  // [ℹ] check for cache-existance [IN THE USER-GEO-POS];
+  const response_usergeo = await getCacheHomepageSEODataResponse()
 
-    // ... should never happen;
+  // [ℹ] return RESPONSE;
+  if (response_usergeo) {
     return {
-        body: null
+      body: response_usergeo
     }
+  }
+
+  // [ℹ] should never happen;
+  return {
+    body: null
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -38,23 +34,23 @@ export async function get(): Promise < Hasura_Complete_Pages_SEO > {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function getCacheHomepageSEODataResponse(): Promise < Hasura_Complete_Pages_SEO | Record < string, never > > {
-    // ... TRY;
-    try {
-        // ... cached data retrival;
-        const cached: string = await redis.hget('seo', 'page_homepage');
-        // ... check for `cached` data
-        if (cached) {
-            // ... convert the data from `string` to `JSON`
-            const parsed: Hasura_Complete_Pages_SEO = JSON.parse(cached);
-            // ... DEBUGGING;
-            if (dev) console.info(`Found seo - League List - in cache`);
-            // ... return, cached data;
-            return parsed;
-        }
-    } 
-    // ... CATCH, ERROR;
-    catch (e) {
-      console.debug("Unable to retrieve from cache", 'seo', 'page_homepage', e);
+  // [ℹ] TRY;
+  try {
+    // [ℹ] cached data retrival;
+    const cached: string = await redis.hget('seo', 'pages');
+    // [ℹ] check for `cached` data
+    if (cached) {
+      // [ℹ] convert the data from `string` to `JSON`
+      const parsed: Hasura_Complete_Pages_SEO = JSON.parse(cached);
+      // [🐛] debug
+      if (dev) console.info("✅ Found seo - League List - in cache");
+      // [ℹ] return, cached data
+      return parsed;
     }
-    return
+  } 
+  // [ℹ] CATCH, ERROR;
+  catch (e) {
+    console.debug("❌ Unable to retrieve from cache", 'seo', 'pages', e);
+  }
+  return
 }

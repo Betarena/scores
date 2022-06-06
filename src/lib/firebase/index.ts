@@ -31,7 +31,7 @@ export async function getTargetFixtureOdds(
 	let new_month_ = (month_ + 1).toString();
 	new_month_ = ('0' + new_month_).slice(-2);
 	// ... apply-correct-day-structure;
-	let day_ = new Date(fixture_data.date).getDate().toString();
+	let day_ = new Date(fixture_data.date).getUTCDate().toString();
 	day_ = ('0' + day_).slice(-2);
 	// ... obtain FIXTURE-ID;
 	const fixtureId = fixture_data.fixture_id;
@@ -45,9 +45,6 @@ export async function getTargetFixtureOdds(
 		(snapshot) => {
 			// ... check if the data exists (should exist at all times anyway);
 			if (snapshot.exists()) {
-				// ... DEBUGGING;
-        if (dev) console.debug("Here! Testing!");
-				// if (dev) console.debug('data from Real DB', [snapshot.val()]) // ... TOO LONG
 				// ...
 				const fixture_odds = snapshot.val();
 				const fixture_odds_keys = Object.keys(snapshot.val());

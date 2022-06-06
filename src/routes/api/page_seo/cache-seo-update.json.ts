@@ -1,12 +1,10 @@
 
-// ... import $app `modules`;
+// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
-
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-
-// ... DECLARING TYPESCRIPT-TYPES imports;
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 import { GET_COMPLETE_PAGES_SEO_DATA } from '$lib/graphql/page_seo/query'
 import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types'
 
@@ -15,24 +13,21 @@ import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types'
 */
 
 export async function get(): Promise < any > {
-    // ... DEBUGGING;
-    if (dev) console.debug('➤ updating-redis-cache league-list-data')
-    // ... get all of the LEAGUE LIST DATA from HASURA;
-    const response = await main()
-    // ... cache;
-    cacheHomepageSEOData(response)
-    // ... return RESPONSE;
-    if (response) {
-        return {
-            status: 200,
-            body: '✅ Success! League list SEO cache data has been updated!'
-        }
-    }
-    
-    // ... should never happen;
+  // [ℹ] get all of the LEAGUE LIST DATA from HASURA;
+  const response = await main()
+  // [ℹ] cache;
+  cacheHomepageSEOData(response)
+  // [ℹ] return RESPONSE;
+  if (response) {
     return {
-        body: null
+      status: 200,
+      body: '✅ Success! League list SEO cache data has been updated!'
     }
+  }
+  // [ℹ] should never happen;
+  return {
+    body: null
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -42,15 +37,15 @@ export async function get(): Promise < any > {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheHomepageSEOData(json_cache: Hasura_Complete_Pages_SEO) {
-    // ... TRY;
-    try {
-        //... store (cache) league_list response,
-        await redis.hset('seo', 'page_homepage', JSON.stringify(json_cache));
-    } 
-    // ... CATCH, ERROR;
-    catch (e) {
-        console.debug('❌ unable to cache - seo / page_homepage', e);
-    }
+  // [ℹ] TRY;
+  try {
+    //[ℹ] store (cache) league_list response,
+    await redis.hset('seo', 'pages', JSON.stringify(json_cache));
+  } 
+  // [ℹ] CATCH, ERROR;
+  catch (e) {
+    console.debug('❌ unable to cache - seo / page_homepage', e);
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -61,19 +56,13 @@ async function cacheHomepageSEOData(json_cache: Hasura_Complete_Pages_SEO) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function main(): Promise < Hasura_Complete_Pages_SEO > {
-    // ...
-    const response = await getAllHomepageSEOData()
-    // if (dev) console.debug('finalObj', finalObj)
-    return response
+  const response = await getAllHomepageSEOData()
+  return response
 }
 
 async function getAllHomepageSEOData(): Promise < Hasura_Complete_Pages_SEO > {
-    // ... DEBUGGING;
-    if (dev) console.debug('➤  FETCH all league filtered country data')
-    // ... push-GRAPH-QL-request;
-    const response = await initGrapQLClient().request(GET_COMPLETE_PAGES_SEO_DATA)
-    // ... DEBUGGING;
-    // if (dev) console.debug('➤ getAllLeagueList() response', response)
-    // ... reutrn response;
-    return response
+  // [ℹ] push-GRAPH-QL-request;
+  const response = await initGrapQLClient().request(GET_COMPLETE_PAGES_SEO_DATA)
+  // [ℹ] reutrn response;
+  return response
 }

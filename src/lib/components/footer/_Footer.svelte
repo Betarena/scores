@@ -14,13 +14,6 @@
 	import type { Footer_Data } from '$lib/models/footer/types'
 	// ... image-assets;
 	import logo_full from './assets/betarena-logo-full.svg'
-	import linkedin from './assets/icon/linkedin.svg'
-	import discord from './assets/icon/discord.svg'
-	import facebook from './assets/icon/facebook.svg'
-	import instagram from './assets/icon/instagram.svg'
-	import medium from './assets/icon/medium.svg'
-	import telegram from './assets/icon/telegram.svg'
-	import twitter from './assets/icon/twitter.svg'
 	import begambleawareorg from './assets/begambleawareorg_black.svg'
 	import legal18icon from './assets/legal-18-action-bet.svg'
  
@@ -202,7 +195,7 @@
 												rel='external'
 												href={social_network[1].toString().toLocaleLowerCase()}>
 												<img 
-													src='./assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+													src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
 													alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
 													title='{social_network[0].toString().toLocaleLowerCase()}-icon'
 													width="32px" height="32px" />
@@ -400,7 +393,7 @@
 														rel='external'
 														href={social_network[1].toString().toLocaleLowerCase()}>
 														<img 
-															src='./assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+															src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
 															alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
 															title='{social_network[0].toString().toLocaleLowerCase()}-icon'
 															width="32px" height="32px" />
@@ -739,7 +732,7 @@
 													rel='external'
 													href={social_network[1].toString().toLocaleLowerCase()}>
 													<img 
-														src='./assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+														src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
 														alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
 														title='{social_network[0].toString().toLocaleLowerCase()}-icon'
 														width="32px" height="32px" />
