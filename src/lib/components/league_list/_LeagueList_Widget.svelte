@@ -55,8 +55,6 @@
 
         // ... GET RESPONSE;
         const response: League_List_Cache_Ready  = await post(`api/league_list/cache-data.json`, userGeo)
-        // ... DEBUGGING;
-        if (dev) console.debug('-- get_FeaturedMatchData() response --', response)
 
         // ... if response is null;
         if (response == null || response == undefined) {

@@ -11,32 +11,43 @@
 	/** 
 	 * @type {import('@sveltejs/kit').Load} 
 	*/
-	export async function load({ url, params, fetch }) {
+	export async function load({ 
+    url, 
+    params, 
+    fetch 
+  }) {
     
-		// ... 🐛 debugging;
-		if (dev) console.debug('ℹ preloading data');
+    /**
+     * GET PRE-LOADED-PAGE-DATA:
+     * ------------------------
+     * ➤ GET featured match data;
+     * ➤ GET featured_betting_sites data;
+     * ➤ GET league_list data;
+     * ➤ GET seo_page data;
+     * ➤ GET seo_page data;
+     * ➤ GET best_goalscorers data;
+     * ➤ GET leagues_table data;
+     * ➤ GET livescores_football data;
+     * ➤ GET livescores_football_leagues data;
+     * ➤ GET livescores_football_translations data;
+    */
 
-		// ... ℹ get featured-match-response-seo-data;
 		const response_featured_match = await fetch('/api/featured_match/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
-		// ... ℹ get featured_betting_sites-response-seo-data;
 		const response_featured_betting_sites = await fetch('/api/featured_betting_sites/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
-		// ... ℹ get league_list-response-seo-data;
 		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 		
-		// ... ℹ get seo_page-response-seo-data;
 		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
-    // ... ℹ get seo_page-response-seo-data;
 		const response_best_goalscorers = await fetch('/api/best_goalscorer/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
@@ -45,7 +56,6 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-    // ... ℹ get livescore-widget-response-seo-data;
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
 			method: 'GET'
 		}).then((r) => r.json());
@@ -58,8 +68,17 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-		// ... ℹ return, RESPONSE DATA;
-		if (response_featured_match && response_featured_betting_sites) {
+		// [ℹ] return, DATA;
+		if (response_featured_match && 
+        response_featured_betting_sites &&
+        response_league_list && 
+        response_seo_page &&
+        response_best_goalscorers &&
+        response_leagues_table &&
+        response_livescores_football &&
+        response_livescores_football_leagues &&
+        response_livescores_football_translations
+      ) {
 			return {
 				props: {
 					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
@@ -74,18 +93,22 @@
 				}
 			};
 		}
-		// ... ℹ otherwise, ERROR;
+		// [ℹ] otherwise, ERROR;
 		return {
 			status: 500,
-			error: new Error(`/ page-preloading-error`)
+			error: new Error(`❌ Uh-oh! Looks like there has been a preloading error!`)
 		};
+
 	}
 </script>
+
 
 <!-- ===================
 	COMPONENT JS - BASIC 
     [TypeScript Written]
 =================== -->
+
+
 <script lang="ts">
 	import { dev } from '$app/env';
 	import { page } from '$app/stores';
@@ -114,9 +137,9 @@
 	export let LIVE_SCORES_DATA_LEAGUES;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 
-	// ... page-language-declaration;
+	// [ℹ] page-language-declaration;
 	let server_side_language: string = 'en';
-	// ... language-translation-declaration;
+	// [ℹ] language-translation-declaration;
 	$: if ($page.params.lang === undefined) {
 		server_side_language = 'en';
 	} else {
@@ -132,7 +155,7 @@
 	 * of the client device and changing between
 	 * appropiate components to display the correct
 	 * component, tailored to a specifc device.
-	 */
+  */
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
@@ -169,34 +192,53 @@
 
 </script>
 
+
 <!-- ===================
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- ... adding SEO-META-TAGS for PAGE ... -->
+
+<!-- [ℹ] adding SEO-META-TAGS for PAGE -->
 {#each PAGE_DATA_SEO.scores_seo_homepage_dev as item}
 	{#if item.lang == server_side_language}
-		<!-- content here -->
+		<!-- [ℹ] content here 
+    -->
 		<SvelteSeo
-
 			title={item.main_data.title}
 			description={item.main_data.description}
 			keywords={item.main_data.keywords}
 			noindex={JSON.parse(item.main_data.noindex.toString())}
 			nofollow={JSON.parse(item.main_data.nofollow.toString())}
 			canonical={item.main_data.canonical}
-
 			twitter={item.twitter_card}
-
 			openGraph={item.opengraph}
 		/>
 	{/if}
 {/each}
 
+<svelte:head>
+  <!-- ... ℹ head content 
+  -->
+  {#if PAGE_DATA_SEO}
+    <!-- ... ℹ content here 
+    -->
+    {#each PAGE_DATA_SEO.scores_hreflang_dev as item}
+      <!-- ... ℹ content here 
+      -->
+      {#if item.link == null}
+        <!-- content here -->
+        <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/" />
+      {:else}
+        <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item.link}" />
+      {/if}
+    {/each}
+  {/if}
+</svelte:head>
 
 <!-- ===================
 	COMPONENT HTML
 =================== -->
+
 
 <section id="home-page">
 
@@ -256,9 +298,12 @@
 	
 </section>
 
+
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
+
+
 <style>
 	section#home-page {
 		display: grid;

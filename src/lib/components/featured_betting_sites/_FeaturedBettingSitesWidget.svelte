@@ -59,8 +59,6 @@
 
     // ... GET RESPONSE;
 		const response: All_SportBook_Details_Data  = await post(`api/featured_betting_sites/cache-data.json`, userGeo)
-		// ... DEBUGGING;
-		if (dev) console.debug('-- get_FeaturedMatchData() response --', response)
 
     // ... if response is null;
 		if (response == null || response == undefined) {

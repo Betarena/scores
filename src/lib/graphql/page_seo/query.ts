@@ -13,15 +13,21 @@ export const GET_COMPLETE_PAGES_SEO_DATA = gql`
           link
         }
         scores_seo_homepage_dev {
-            lang
-            main_data
-            twitter_card
-            opengraph
+          lang
+          main_data
+          twitter_card
+          opengraph
         }
         scores_seo_block_homepage_dev {
-            html
-            lang
-            title
+          html
+          lang
+          title
+        }
+        scores_seo_tournaments_dev {
+          lang
+          main_data
+          opengraph
+          twitter_card
         }
     }
 `;

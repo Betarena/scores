@@ -4,7 +4,7 @@
 
 import { dev } from '$app/env';
 import { writable } from 'svelte/store';
-import type { GeoJsResponse } from '$lib/model/_geojs/geo-js-interfaceterface';
+import type { GeoJsResponse } from '$lib/models/geojs-types';
 
 interface User_Setting {
 	lang: string;
@@ -57,8 +57,6 @@ function createLocalStore(key: any): any {
 						country_bookmaker: undefined,
 						geoJs: undefined
 				  };
-			// ... DEBUGGING;
-			if (dev) console.debug('-- exisitng_data --', exisitng_data);
 			// ... SET ITEM DATA TO LOCALSTORAGE();
 			localStorage.setItem(key, JSON.stringify(exisitng_data));
 			// ... SET DATA TO SUBSCRIBED METHOD;
@@ -99,8 +97,6 @@ function createLocalStore(key: any): any {
 		 * ... @param {*} theme
 		*/
 		setTheme: (theme: string) => {
-			// ... DEBUGGING;
-			if (dev) console.debug('-- theme-select --', theme);
 			// ... GET DATA FROM LOCALSTORAGE();
 			const existing: string = localStorage.getItem(key);
 			// ... CONVERT TO JSON;
@@ -123,8 +119,6 @@ function createLocalStore(key: any): any {
 		 * ... @param {*} country_bookmaker
 		*/
 		setCountryBookmaker: (country_bookmaker: string) => {
-			// ... DEBUGGING;
-			if (dev) console.debug('-- country_bookmaker-select --', country_bookmaker);
 			// ... GET DATA FROM LOCALSTORAGE();
 			const existing: string = localStorage.getItem(key);
 			// ... CONVERT TO JSON;
@@ -144,11 +138,9 @@ function createLocalStore(key: any): any {
 		 * ... to the localStoage & application store
 		 * ... [WORKING]
 		 *
-		 * ... @param {*} country_bookmaker
+		 * ... @param {*} GeoJsResponse
 		*/
 		setGeoJs: (geojs_res: GeoJsResponse) => {
-			// ... DEBUGGING;
-			// if (dev) console.debug('-- country_bookmaker-select --', geojs_res);
 			// ... GET DATA FROM LOCALSTORAGE();
 			const existing: string = localStorage.getItem(key);
 			// ... CONVERT TO JSON;

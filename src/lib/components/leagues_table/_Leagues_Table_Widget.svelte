@@ -58,7 +58,7 @@
     // ... ℹ GET RESPONSE;
 		const response: Leagues_Table_Cache_Ready  = await post(`api/leagues_table/cache-data.json`, userGeo)
 		// ... 🐛 DEBUGGING;
-		if (dev) console.debug('ℹ widgetInit() leagues_table cache', response)
+		// if (dev) console.debug('ℹ widgetInit() leagues_table cache', response)
 
     // ... ℹ if response is null;
 		if (response == null || response == undefined) {
