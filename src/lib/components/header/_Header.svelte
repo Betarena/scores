@@ -120,6 +120,13 @@
     logoLink = $page.url.origin
   }
 
+  let homepageURL: string
+  $: if (server_side_language == 'en') {
+    homepageURL = '/'
+  } else {
+    homepageURL = '/' + $page.params.lang
+  }
+
   /**
    * [ℹ] Upon Browser-Client:
    * ~~~~~~~~~~~~~~~~~~~
@@ -166,6 +173,7 @@
     // [ℹ] get past instance of LANG;
     const pastLang: string = $userBetarenaSettings.lang == "en" ? "/" : "/" + $userBetarenaSettings.lang;
     if (dev) console.log("NEW_URL ", $userBetarenaSettings.lang, lang, pastLang);
+    if (dev) console.log("NEW URL ", $page.routeId);
 		// [ℹ] set the user-lang to corresponding value;
 		userBetarenaSettings.setLang(lang);
     // [ℹ] update the <html lang="">
@@ -174,7 +182,7 @@
 		dropdown_lang_visible = false;
 
     if ($page.routeId != "[lang=lang]/[sport]/[country]/[league_name]" && 
-        $page.routeId != "[sport]/[country]/[league_name]" ) {
+        $page.routeId != "[sport]/[country]/[league_name]") {
 
       // [ℹ] check for EN TRANSLATION;
       if (lang == 'en' &&  
@@ -293,7 +301,9 @@
    * [ℹ] reload current page;
 	*/
   function reloadPage() {
-		window.location.reload(); 
+    if ($page.url.pathname.split("/").length-1 == 1) {
+      window.location.reload();
+    }
 	}
 
 </script>
@@ -372,7 +382,7 @@
             {#if mobileExclusive}
               <!-- ... brand-logo-betarena-for-mobile-ONLY ... -->
               <div id="brand" on:click={() => reloadPage() }>
-                <a sveltekit:prefetch href="/" title={logoLink}>
+                <a sveltekit:prefetch href={homepageURL} title={logoLink}>
                   <img src={logo_mini} alt="betarena-logo" width="103px" height="30px" />
                 </a>
               </div>
@@ -380,7 +390,7 @@
             {:else}
               <!-- ... brand-logo-betarena-for-desktop-ONLY ... -->
               <div id="brand" on:click={() => reloadPage() }>
-                <a sveltekit:prefetch href="/" title={logoLink}>
+                <a sveltekit:prefetch href={homepageURL} title={logoLink}>
                   <img
                     class="m-r-30"
                     src={logo_full}

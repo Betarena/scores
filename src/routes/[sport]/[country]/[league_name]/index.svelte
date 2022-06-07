@@ -8,6 +8,8 @@
 -->
 <script lang="ts" context="module">
 
+  import { removeDiacritics } from '$lib/utils/languages';
+
 	/** 
 	 * @type {import('@sveltejs/kit').Load} 
 	*/
@@ -80,22 +82,33 @@
       }
     }
 
+    sport = sport.replace(/\s/g, '-')
+    country = country.replace(/\s/g, '-')
+    league_name = league_name.replace(/\s/g, '-')
+
     /**
      * [ℹ] regex-ing SEO content;
     */
     for await (const item of response_seo_page.scores_seo_tournaments_dev) {
       // [ℹ] replace;
-      item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{lang}/g, 'en'));
+      item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{lang}/g, lang));
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{sport}/g, sport));
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{country}/g, country));
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{name}/g, league_name));
 
-      item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{lang}/g, 'en'));
+      // [ℹ] canonical exclusive - [EN];
+      for (const iterator of tournament_data_translations) {
+        if (iterator.lang == 'en') {
+          item.main_data.canonical = `https://scores.betarena.com/${iterator.sport.toLowerCase()}/${iterator.country.toLowerCase()}/${iterator.name.replace(/\s/g,'-').toLowerCase()}`
+        }
+      }
+
+      item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{lang}/g, lang));
       item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{sport}/g, sport));
       item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{country}/g, country));
       item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{name}/g, league_name));
 
-      item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{lang}/g, 'en'));
+      item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{lang}/g, lang));
       item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{sport}/g, sport));
       item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{country}/g, country));
       item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{name}/g, league_name));
@@ -181,7 +194,7 @@
         // [ℹ] URL generation;
         newURL = tournament_t.lang == 'en' 
           ? `/${tournament_t.sport.toLowerCase()}/${tournament_t.country.toLowerCase()}/${name.toLowerCase()}` 
-          : `/${tournament_t.lang}/${tournament_t.sport.toLowerCase()}/${tournament_t.country.toLowerCase()}/${name.toLowerCase()}`
+          : `/${removeDiacritics(tournament_t.lang)}/${removeDiacritics(tournament_t.sport.toLowerCase())}/${removeDiacritics(tournament_t.country.toLowerCase())}/${removeDiacritics(name.toLowerCase())}`
         // [ℹ] update lang;
         current_lang = refresh_lang
       }
@@ -225,7 +238,7 @@
     <!-- [ℹ] content here
     -->
     {#each PAGE_DATA_SEO.scores_hreflang_dev as item}
-      <!-- [ℹ] match-languages 
+      <!-- [ℹ] content here
       -->
       {#each TOURNAMENT_DATA_TRANSLATED_COPIES as item_}
         <!-- [ℹ] content here 
@@ -238,14 +251,22 @@
             <link rel="alternate" hrefLang=""pt-BR" href="https://scores.betarena.com/pt/futebol/inglaterra/premier-league/>
             <link rel="alternate" hrefLang="ro" href="https://scores.betarena.com/ro/fotbal/anglia/premier-league/>
           -->
-          <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item_.lang.toLowerCase()}/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
+          <link 
+            rel="alternate" 
+            hreflang={item.hreflang} 
+            href="https://scores.betarena.com/{removeDiacritics(item_.lang.replace(/\s/g,'-').toLowerCase())}/{removeDiacritics(item_.sport.replace(/\s/g,'-').toLowerCase())}/{removeDiacritics(item_.country.replace(/\s/g,'-').toLowerCase())}/{removeDiacritics(item_.name.replace(/\s/g,'-').toLowerCase())}" />
         {/if}
         {#if item.link == null && item_.lang == 'en'}
           <!-- [ℹ] content here
           -->
-          <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
-          <link rel="alternate" hreflang='en' href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
-          <link rel="canonical" href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
+          <link 
+            rel="alternate" 
+            hreflang={item.hreflang} 
+            href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g,'-').toLowerCase()}"/>
+          <link 
+            rel="alternate" 
+            hreflang='en' 
+            href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g,'-').toLowerCase()}"/>
         {/if}
       {/each}
     {/each}
@@ -278,6 +299,7 @@
       src="/assets/svg/tournaments/arrow-right.svg" 
       alt=""
       class="m-r-10"
+      width="14px" height="14px"
     />
 
     <a 
@@ -293,6 +315,7 @@
       src="/assets/svg/tournaments/arrow-right.svg" 
       alt="" 
       class="m-r-10"
+      width="14px" height="14px"
     />
 
     <p
@@ -320,6 +343,7 @@
 		display: grid;
 		max-width: 1430px;
 		grid-template-columns: 1fr;
+    padding-top: 12px !important;
 		align-items: start;
 	}
 

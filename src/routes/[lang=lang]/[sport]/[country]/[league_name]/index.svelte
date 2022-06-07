@@ -10,6 +10,8 @@
 
 <script lang="ts" context="module">
 
+  import { removeDiacritics } from '$lib/utils/languages'
+
 	/** 
 	 * @type {import('@sveltejs/kit').Load} 
 	*/
@@ -39,7 +41,7 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
+		const response_seo_page: Hasura_Complete_Pages_SEO = await fetch('/api/page_seo/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -49,10 +51,13 @@
      * ------------------------
      * Incoming URL:
      * => .../football/england/carabao-cup
+     * & without accents
      * ------------------------
     */
 
-    league_name = league_name.replace(/-/g, ' ');
+    sport = sport.replace(/-/g, ' ')
+    country = country.replace(/-/g, ' ')
+    league_name = league_name.replace(/-/g, ' ')
 
     // [ℹ] identify correct tournaments page-info;
     let tournament_visible: boolean = false;
@@ -60,10 +65,15 @@
     let tournament_data_translations: Single_Tournament_Data_Type[] = [];
     // [ℹ] iterate over each tournament and identify the matching target-tournament;
     for (const tournament of response_tournaments.scores_tournaments_dev) {
+
+      const temp_country: string = removeDiacritics(tournament.country)
+      const temp_name: string = removeDiacritics(tournament.name)
+      const temp_sport: string = removeDiacritics(tournament.sport)
+
       // [ℹ] tournament existance && visibility validation;
-      if (tournament.country.toLowerCase() == country.toLowerCase() &&
-          tournament.name.toLowerCase() == league_name.toLowerCase() &&
-          tournament.sport.toLowerCase() == sport.toLowerCase() &&
+      if (temp_country.toLowerCase() == country.toLowerCase() &&
+          temp_name.toLowerCase() == league_name.toLowerCase() &&
+          temp_sport.toLowerCase() == sport.toLowerCase() &&
           tournament.lang.toLowerCase() == lang.toLowerCase() &&
           tournament.status.toLowerCase() == "published") {
         // [ℹ] correct tournament found;
@@ -85,6 +95,10 @@
       }
     }
 
+    sport = sport.replace(/\s/g, '-')
+    country = country.replace(/\s/g, '-')
+    league_name = league_name.replace(/\s/g, '-')
+
     /**
      * [ℹ] regex-ing SEO content;
     */
@@ -94,6 +108,13 @@
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{sport}/g, sport));
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{country}/g, country));
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{name}/g, league_name));
+
+      // [ℹ] canonical exclusive - [EN];
+      for (const iterator of tournament_data_translations) {
+        if (iterator.lang == 'en') {
+          item.main_data.canonical = `https://scores.betarena.com/${iterator.sport.toLowerCase()}/${iterator.country.toLowerCase()}/${iterator.name.replace(/\s/g,'-').toLowerCase()}`
+        }
+      }
 
       item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{lang}/g, lang));
       item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{sport}/g, sport));
@@ -106,8 +127,9 @@
       item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{name}/g, league_name));
     }
 
-    /**
+    /** =========
      * [ℹ] RETURN
+     * ==========
     */
 
     // [ℹ] -> response data;
@@ -166,6 +188,8 @@
   export let TOURNAMENT_DATA: Single_Tournament_Data_Type;
   export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
 
+  let refresh: boolean = false;
+
   // TODO: replace into a single __layout.svelte method [?] using page-stores [?]
   // [ℹ] page-language-declaration;
 	let server_side_language: string = 'en';
@@ -192,7 +216,7 @@
         // [ℹ] URL generation;
         newURL = tournament_t.lang == 'en' 
           ? `/${tournament_t.sport.toLowerCase()}/${tournament_t.country.toLowerCase()}/${name.toLowerCase()}` 
-          : `/${tournament_t.lang}/${tournament_t.sport.toLowerCase()}/${tournament_t.country.toLowerCase()}/${name.toLowerCase()}`
+          : `/${removeDiacritics(tournament_t.lang)}/${removeDiacritics(tournament_t.sport.toLowerCase())}/${removeDiacritics(tournament_t.country.toLowerCase())}/${removeDiacritics(name.toLowerCase())}`
         // [ℹ] update lang;
         current_lang = refresh_lang
       }
@@ -201,6 +225,12 @@
     // invalidate('/api/tournaments/cache-data.json');
     // prefetch(newURL);
     goto(newURL, {replaceState: true})
+
+    // [ℹ] reset necessary variables;
+		// refresh = true
+    // setTimeout(async() => {
+		// 	refresh = false
+		// }, 50)
 	}
 </script>
 
@@ -236,7 +266,7 @@
     <!-- [ℹ] content here
     -->
     {#each PAGE_DATA_SEO.scores_hreflang_dev as item}
-      <!-- [ℹ] match-languages 
+      <!-- [ℹ] content here
       -->
       {#each TOURNAMENT_DATA_TRANSLATED_COPIES as item_}
         <!-- [ℹ] content here 
@@ -249,14 +279,22 @@
             <link rel="alternate" hrefLang=""pt-BR" href="https://scores.betarena.com/pt/futebol/inglaterra/premier-league/>
             <link rel="alternate" hrefLang="ro" href="https://scores.betarena.com/ro/fotbal/anglia/premier-league/>
           -->
-          <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item_.lang.toLowerCase()}/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
+          <link 
+            rel="alternate" 
+            hreflang={item.hreflang} 
+            href="https://scores.betarena.com/{removeDiacritics(item_.lang.replace(/\s/g, '-').toLowerCase())}/{removeDiacritics(item_.sport.replace(/\s/g, '-').toLowerCase())}/{removeDiacritics(item_.country.replace(/\s/g, '-').toLowerCase())}/{removeDiacritics(item_.name.replace(/\s/g, '-').toLowerCase())}" />
         {/if}
         {#if item.link == null && item_.lang == 'en'}
           <!-- [ℹ] content here
           -->
-          <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
-          <link rel="alternate" hreflang='en' href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
-          <link rel="canonical" href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}" />
+          <link 
+            rel="alternate" 
+            hreflang={item.hreflang} 
+            href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}"/>
+          <link 
+            rel="alternate" 
+            hreflang='en' 
+            href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}"/>
         {/if}
       {/each}
     {/each}
@@ -268,55 +306,62 @@
 	COMPONENT HTML
 =================== -->
 
+
 <section 
   id='tournaments-page'>
 
-  <!-- [ℹ] breadcrumbs URL -->
-  <div
-    id='tournaments-page-breadcrumbs'
-    class='row-space-start'>
+  {#if !refresh}
 
-    <a 
-      sveltekit:prefetch
-      href="/{$page.params.lang}/{$page.params.sport}">
+    <!-- [ℹ] breadcrumbs URL -->
+    <div
+      id='tournaments-page-breadcrumbs'
+      class='row-space-start'>
+
+      <a 
+        sveltekit:prefetch
+        href="/{$page.params.lang}/{$page.params.sport}">
+        <p
+          class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+          {TOURNAMENT_DATA.sport}
+        </p>
+      </a>
+
+      <img 
+        src="/assets/svg/tournaments/arrow-right.svg" 
+        alt=""
+        class="m-r-10"
+        width="14px" height="14px"
+      />
+
+      <a 
+        sveltekit:prefetch
+        href="/{$page.params.lang}/{$page.params.sport}/{$page.params.country}">
+        <p
+          class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+          {TOURNAMENT_DATA.country}
+        </p>
+      </a>
+
+      <img
+        src="/assets/svg/tournaments/arrow-right.svg" 
+        alt="" 
+        class="m-r-10"
+        width="14px" height="14px"
+      />
+
       <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
-        {$page.params.sport}
+        class='s-14 color-white m-r-10 capitalize'>
+        {TOURNAMENT_DATA.name}
       </p>
-    </a>
 
-    <img 
-      src="/assets/svg/tournaments/arrow-right.svg" 
-      alt=""
-      class="m-r-10"
-    />
+    </div>
 
-    <a 
-      sveltekit:prefetch
-      href="/{$page.params.lang}/{$page.params.sport}/{$page.params.country}">
-      <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
-        {$page.params.country}
-      </p>
-    </a>
+    <!-- [ℹ] widgets displayed -->
+    <div>
+      {TOURNAMENT_DATA.widgets}
+    </div>
 
-    <img
-      src="/assets/svg/tournaments/arrow-right.svg" 
-      alt="" 
-      class="m-r-10"
-    />
-
-    <p
-      class='s-14 color-white m-r-10 capitalize'>
-      {TOURNAMENT_DATA.name}
-    </p>
-
-  </div>
-
-  <!-- [ℹ] widgets displayed -->
-  <div>
-    {TOURNAMENT_DATA.widgets}
-  </div>
+  {/if}
       
 </section>
 
@@ -331,6 +376,7 @@
 		display: grid;
 		max-width: 1430px;
 		grid-template-columns: 1fr;
+    padding-top: 12px !important;
 		align-items: start;
 	}
 
