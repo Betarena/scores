@@ -137,6 +137,16 @@
 </script>
 
 <!-- ===================
+	SVELTE INJECTION TAGS
+=================== -->
+
+
+<svelte:head>
+  <html lang="{$page.params.lang == undefined ? 'en' : $page.params.lang}" />
+</svelte:head>
+
+
+<!-- ===================
   COMPONENT HTML
 =================== -->
 
