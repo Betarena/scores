@@ -141,9 +141,6 @@
 		if (!langSelected) {
 			selectLanguage(server_side_language);
       langSelected = true;
-		} else if (!langSelected) {
-			selectLanguage('en');
-      langSelected = true;
 		}
 
     setUserCountryBookmakerLocation();
@@ -164,9 +161,7 @@
     const pastLang: string = $userBetarenaSettings.lang == "en" ? "/" : "/" + $userBetarenaSettings.lang;
 
     // [🐛] debug;
-    if (dev) console.log("Inside Select Langauge!")
-    if (dev) console.log("NEW_URL ", $userBetarenaSettings.lang, lang, pastLang);
-    if (dev) console.log("NEW URL ", $page.routeId);
+    if (dev) console.log("Inside Select Langauge!", $userBetarenaSettings.lang, lang, pastLang)
 
 		// [ℹ] hide the LANG DROPDOWN box;
 		dropdown_lang_visible = false;

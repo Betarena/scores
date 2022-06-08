@@ -154,11 +154,9 @@
 =================== -->
 
 {#if !dev}
-  <!-- content here -->
-  <!-- <GoogleAnalytics properties={['UA-60160331-9']} /> -->
   <GoogleAnalytics 
     id={ga_measurment_id}
-    />
+  />
 {/if}
 
 {#if offlineMode}
