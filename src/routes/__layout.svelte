@@ -40,6 +40,14 @@
       method: 'GET'
     }).then((r) => r.json());
 
+    let Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
+    let Header = (await import('$lib/components/header/_Header.svelte')).default;
+    let OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
+    let SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
+    let PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
+    let EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
+    let GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
+
     // [ℹ] validate, & return DATA [always]
     if (response_header && 
         response_footer &&
@@ -47,10 +55,22 @@
 
       return {
         status: 200,
+        cache: {
+          "maxage": 3600,
+          "private": false
+        },
         props: {
           HEADER_TRANSLATION_DATA: response_header,
           FOOTER_TRANSLATION_DATA: response_footer,
-          PAGE_DATA_SEO: response_seo_page
+          PAGE_DATA_SEO: response_seo_page,
+
+          Footer: Footer,
+          Header: Header,
+          OfflineAlert: OfflineAlert,
+          SplashScreen: SplashScreen,
+          PlatformAlert: PlatformAlert,
+          EmailSubscribe: EmailSubscribe,
+          GoogleAnalytics: GoogleAnalytics
         }
       }
       
@@ -80,13 +100,41 @@
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
   // [ℹ] page-components
-  import Footer from '$lib/components/footer/_Footer.svelte';
-  import Header from '$lib/components/header/_Header.svelte';
-  import OfflineAlert from '$lib/components/_Offline_alert.svelte';
-  import SplashScreen from '$lib/components/_Splash_screen.svelte';
-  import PlatformAlert from '$lib/components/_Platform_alert.svelte';
-  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
-  import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
+
+  export let Footer;
+  export let Header;
+  export let OfflineAlert;
+  export let SplashScreen;
+  export let PlatformAlert;
+  export let EmailSubscribe;
+  export let GoogleAnalytics;
+
+  // import Footer from '$lib/components/footer/_Footer.svelte';
+  // import Header from '$lib/components/header/_Header.svelte';
+  // import OfflineAlert from '$lib/components/_Offline_alert.svelte';
+  // import SplashScreen from '$lib/components/_Splash_screen.svelte';
+  // import PlatformAlert from '$lib/components/_Platform_alert.svelte';
+  // import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
+  // import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
+
+  // let Footer;
+  // let Header;
+  // let OfflineAlert;
+  // let SplashScreen;
+  // let PlatformAlert;
+  // let EmailSubscribe;
+  // let GoogleAnalytics;
+
+  // onMount(async () => {
+	// 	Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
+	// 	Header = (await import('$lib/components/header/_Header.svelte')).default;
+	// 	OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
+	// 	SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
+	// 	PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
+	// 	EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
+	// 	GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
+	// });
+  
   // [ℹ] other
   import * as Sentry from "@sentry/browser";
   import { BrowserTracing } from "@sentry/tracing";
@@ -154,26 +202,32 @@
 =================== -->
 
 {#if !dev}
-  <GoogleAnalytics 
+  <!-- <GoogleAnalytics 
     id={ga_measurment_id}
-  />
+  /> -->
+  <svelte:component this={GoogleAnalytics} id={ga_measurment_id} />
 {/if}
 
 {#if offlineMode}
-  <OfflineAlert />
+  <!-- <OfflineAlert /> -->
+  <svelte:component this={OfflineAlert} />
 {/if}
 
-<PlatformAlert {HEADER_TRANSLATION_DATA} />
-
+<!-- <PlatformAlert {HEADER_TRANSLATION_DATA} />
 <SplashScreen />
-
 <EmailSubscribe />
+<Header {HEADER_TRANSLATION_DATA} /> -->
 
-<Header {HEADER_TRANSLATION_DATA} />
+<svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} />
+<svelte:component this={SplashScreen} />
+<svelte:component this={EmailSubscribe} />
+<svelte:component this={Header} {HEADER_TRANSLATION_DATA} />
+
 
 <main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
   <slot />
-  <Footer {FOOTER_TRANSLATION_DATA} />
+  <!-- <Footer {FOOTER_TRANSLATION_DATA} /> -->
+  <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} />
 </main>
 
 

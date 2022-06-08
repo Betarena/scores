@@ -77,9 +77,22 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    let FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
+    let FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
+    let	LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
+    let	LiveScoresWidget = (await import('$lib/components/live_scores_football/_LiveScores_Widget.svelte')).default;
+    let BestGoalscorersWidget = (await import('$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte')).default;
+    let SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
+    let LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
+
 		// [ℹ] validate, DATA RETURNED;
 		if (response_featured_match && response_featured_betting_sites) {
 			return {
+        status: 200,
+        cache: {
+          "maxage": 3600,
+          "private": false
+        },
 				props: {
 					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
 					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
@@ -89,7 +102,15 @@
 					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
 					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
 					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
-          BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers
+          BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers,
+
+          FeaturedMatchWidget: FeaturedMatchWidget,
+          FeaturedBettingSitesWidget: FeaturedBettingSitesWidget,
+          LeagueListWidget: LeagueListWidget,
+          LiveScoresWidget: LiveScoresWidget,
+          BestGoalscorersWidget: BestGoalscorersWidget,
+          SeoBlock: SeoBlock,
+          LeaguesTableWidget: LeaguesTableWidget
 				}
 			};
 		}
@@ -116,20 +137,47 @@
 	import { onMount } from 'svelte';
 
 	import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
+  import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	// ... import `variables` and values;
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	// ... import sub-components;
 	import SvelteSeo from 'svelte-seo';
-	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
-	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-	import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
-  import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
-  import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
-  import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
-  import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
+
+  export let FeaturedMatchWidget;
+  export let FeaturedBettingSitesWidget;
+  export let LeagueListWidget;
+  export let LiveScoresWidget;
+  export let BestGoalscorersWidget;
+  export let SeoBlock;
+  export let LeaguesTableWidget;
+
+	// ... import sub-components;
+	// import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
+	// import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	// import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
+	// import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
+  // import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+  // import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
+  // import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
+
+  // let FeaturedMatchWidget;
+  // let FeaturedBettingSitesWidget;
+  // let LeagueListWidget;
+  // let LiveScoresWidget;
+  // let BestGoalscorersWidget;
+  // let SeoBlock;
+  // let LeaguesTableWidget;
+
+  // onMount(async () => {
+	// 	FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
+	// 	FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
+	// 	LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
+	// 	LiveScoresWidget = (await import('$lib/components/live_scores_football/_LiveScores_Widget.svelte')).default;
+	// 	BestGoalscorersWidget = (await import('$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte')).default;
+	// 	SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
+	// 	LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
+	// });
 
 	// ... PAGE PRE-LOADED DATA;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
@@ -219,16 +267,13 @@
 	{#if item.lang == server_side_language}
 		<!-- content here -->
 		<SvelteSeo
-
 			title={item.main_data.title}
 			description={item.main_data.description}
 			keywords={item.main_data.keywords}
 			noindex={JSON.parse(item.main_data.noindex.toString())}
 			nofollow={JSON.parse(item.main_data.nofollow.toString())}
 			canonical={item.main_data.canonical}
-
 			twitter={item.twitter_card}
-
 			openGraph={item.opengraph}
 		/>
 	{/if}
@@ -263,30 +308,37 @@
   {#if !tabletExclusive && !mobileExclusive}
     <!-- ... 1st ROW ... -->
 		<div> 
-			<LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} />
+			<!-- <LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} /> -->
+      <svelte:component this={LeagueListWidget} {LEAGUE_LIST_WIDGET_DATA_SEO} />
 		</div>
     <!-- ... 2nd ROW ... -->
     <div 
       class='grid-display-column'>
       <!-- ... widget #1 ... -->
       <div>
-        <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
+        <!-- <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/> -->
+        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} />
       </div>
       <!-- ... widget #2 ... -->
-      <SeoBlock {SEO_BLOCK_DATA} /> 
+      <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
+      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
     </div>
     
     <!-- ... 3rd ROW ... -->
     <div 
       class='grid-display-column'>
       <!-- ... widget #1 ... -->
-      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <!-- <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} /> -->
+      <svelte:component this={FeaturedMatchWidget} {FEATURED_MATCH_WIDGET_DATA_SEO} />
       <!-- ... widget #2 ... -->
-      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <!-- <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} /> -->
+      <svelte:component this={FeaturedBettingSitesWidget} {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
       <!-- ... widget #3 -->
-      <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} />
+      <!-- <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} /> -->
+      <svelte:component this={BestGoalscorersWidget} {BEST_GOAL_SCORERS_DATA_SEO} />
       <!-- ... widget #4 -->
-      <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} />
+      <!-- <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} /> -->
+      <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA} />
     </div>
   <!-- ... MOBILE VIEW ONLY ... -->
   {:else}
@@ -295,21 +347,27 @@
       class='grid-display-column'>
       <!-- ... widget #1 -->
       <div>
-		    <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/>
+		    <!-- <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/> -->
+        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} />
       </div>
       <!-- ... widget #2 ... -->
-      <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <!-- <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} /> -->
+      <svelte:component this={FeaturedBettingSitesWidget} {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
       <!-- ... widget #3 ... -->
-      <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <!-- <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} /> -->
+      <svelte:component this={FeaturedMatchWidget} {FEATURED_MATCH_WIDGET_DATA_SEO} />
       <!-- ... widget #4 -->
-      <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} />
+      <!-- <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} /> -->
+      <svelte:component this={BestGoalscorersWidget} {BEST_GOAL_SCORERS_DATA_SEO} />
       {#if tabletExclusive && !mobileExclusive}
         <!-- content here -->
         <!-- ... widget #4 -->
-        <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} />
+        <!-- <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} /> -->
+        <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA} />
       {/if}
       <!-- ... widget #5 -->
-      <SeoBlock {SEO_BLOCK_DATA} /> 
+      <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
+      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
     </div>
   {/if}
 	

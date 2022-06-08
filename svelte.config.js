@@ -1,28 +1,40 @@
-// import vercel from '@sveltejs/adapter-vercel';
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 
-	// ... ℹ consult https://github.com/sveltejs/svelte-preprocess
-	// ... ℹ for more information about preprocessors
+	// [ℹ] consult https://github.com/sveltejs/svelte-preprocess
+	// [ℹ] for more information about preprocessors
 	preprocess: preprocess(),
 
 	kit: {
-		// ... ℹ NODE-JS deployment Environment ...
-		// adapter: vercel()
+		// [ℹ] NODE-JS deployment Environment
 		adapter: node(),
 
-    // ... ℹ SVELTEKIT-MIDDLEWARE-SUPPORT;
-    // vite: {
-    //   plugins: [myPlugin],
-    // },
+    /**
+     * [ℹ] SVELTEKIT-MIDDLEWARE-SUPPORT;
+    */
+    vite: {
+      // plugins: [myPlugin],
 
-    // ... ℹ CSP Support - [PROD / HEROKU ONLY]
-    // ... https://developers.google.com/tag-platform/tag-manager/web/csp [GOOGLE-CSP]
-    // ... https://yandex.com/support/metrica/code/install-counter-csp.html [YANDEX-CSP]
-    // ... [https://github.com/sveltejs/kit/issues/4434]
+      build: {
+        rollupOptions: {
+          output: {
+            manualChunks: {
+              lodash: ['lodash']
+            }
+          }
+        }
+      }
+    },
+
+    /**
+     * [ℹ] CSP Support - [PROD / HEROKU ONLY]
+     * https://developers.google.com/tag-platform/tag-manager/web/csp [GOOGLE-CSP]
+     * https://yandex.com/support/metrica/code/install-counter-csp.html [YANDEX-CSP]
+     * [https://github.com/sveltejs/kit/issues/4434]
+    */
     csp: {
       mode: 'hash', // ... hash | nonce | auto
       directives: {
