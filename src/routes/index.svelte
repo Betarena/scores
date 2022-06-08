@@ -10,9 +10,40 @@
 <script lang="ts" context="module">
 
 	/** @type {import('@sveltejs/kit').Load} */
-	export async function load({ url, params, fetch }) {
-		// ... DEBUGGING;
-		if (dev) console.debug('-- obtaining translations! --');
+	export async function load({
+    url, 
+    params, 
+    fetch 
+  }) {
+
+    const response_seo_page = await fetch('/api/pages_and_seo/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    // [ℹ] validate URL existance;
+    if (!response_seo_page.scores_urls_dev.urlsArr.includes(url.pathname)) {
+
+      // [ℹ] otherwise, ERROR;
+      return {
+        status: 404,
+        error: new Error("Uh-oh! This page does not exist!")
+      }
+    }
+
+    /**
+     * GET PRE-LOADED-PAGE-DATA:
+     * ------------------------
+     * ➤ GET featured match data;
+     * ➤ GET featured_betting_sites data;
+     * ➤ GET league_list data;
+     * ➤ GET seo_page data;
+     * ➤ GET seo_page data;
+     * ➤ GET best_goalscorers data;
+     * ➤ GET leagues_table data;
+     * ➤ GET livescores_football data;
+     * ➤ GET livescores_football_leagues data;
+     * ➤ GET livescores_football_translations data;
+    */
 
 		const response_featured_match = await fetch('/api/featured_match/cache-seo.json', {
 			method: 'GET'
@@ -23,10 +54,6 @@
 		}).then((r) => r.json());
 
 		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
-			method: 'GET'
-		}).then((r) => r.json());
-
-		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -50,11 +77,7 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-    // ################
-    // ... 🐛 TESTING;
-		// if (dev) console.debug('-- preloaded_translations_response_qty --', response);
-
-		// ... return, RESPONSE DATA;
+		// [ℹ] validate, DATA RETURNED;
 		if (response_featured_match && response_featured_betting_sites) {
 			return {
 				props: {
@@ -70,11 +93,13 @@
 				}
 			};
 		}
-		// ... otherwise, ERROR;
+
+		// [ℹ] otherwise, ERROR;
 		return {
 			status: 500,
-			error: new Error(`/ page-preloading-error`)
+			error: new Error(`Uh-oh! There has been an / page preloading error`)
 		};
+
 	}
 </script>
 
@@ -90,7 +115,7 @@
 
 	import { onMount } from 'svelte';
 
-	import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
+	import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
 	// ... import `variables` and values;
 	import { userBetarenaSettings } from '$lib/store/user-settings';

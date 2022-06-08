@@ -29,24 +29,31 @@
      * ------------------------
      * GET PRE-LOADED-PAGE-DATA:
      * ------------------------
-     * ➤ GET tournaments data;
-     * ➤ GET seo_page-response-seo-data;
+     * ➤ GET complete -> pages_and_seo response data;
      * ------------------------
     */
 
-		const response_tournaments: Hasura_Complete_Tournaments_Type = await fetch('/api/tournaments/cache-data.json', {
+		const response_pages_and_seo: Hasura_Complete_Pages_SEO  = await fetch('/api/pages_and_seo/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
-		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
-			method: 'GET'
-		}).then((r) => r.json());
+     // [ℹ] validate URL existance;
+     if (!response_pages_and_seo.scores_urls_dev.urlsArr.includes(url.pathname)) {
+
+      // [ℹ] otherwise, ERROR;
+      return {
+        status: 404,
+        error: new Error("Uh-oh! This page does not exist!")
+      }
+    }
 
     /**
+     * ------------------------
      * URL Handling Decode:
      * ------------------------
-     * Incoming URL:
+     * Incoming URL [EN-ONLY]
      * => .../football/england/carabao-cup
+     * ------------------------
     */
 
     league_name = league_name.replace(/-/g, ' ');
@@ -56,7 +63,7 @@
     let tournament_data: Single_Tournament_Data_Type = undefined;
     let tournament_data_translations: Single_Tournament_Data_Type[] = [];
     // [ℹ] iterate over each tournament and identify the matching target-tournament;
-    for (const tournament of response_tournaments.scores_tournaments_dev) {
+    for (const tournament of response_pages_and_seo.scores_tournaments_dev) {
       // [ℹ] tournament existance && visibility validation;
       if (tournament.country.toLowerCase() == country.toLowerCase() &&
           tournament.name.toLowerCase() == league_name.toLowerCase() &&
@@ -72,7 +79,7 @@
     // [ℹ] check if tournament has been identified;
     if (tournament_data) {
       // [ℹ] iterate over each tournament and identify the matching target-tournament translations;
-      for (const tournament of response_tournaments.scores_tournaments_dev) {
+      for (const tournament of response_pages_and_seo.scores_tournaments_dev) {
       // [ℹ] tournament existance && visibility validation;
       if (tournament.tournament_id == tournament_data.tournament_id &&
           tournament.status.toLowerCase() == "published") {
@@ -89,7 +96,7 @@
     /**
      * [ℹ] regex-ing SEO content;
     */
-    for await (const item of response_seo_page.scores_seo_tournaments_dev) {
+    for await (const item of response_pages_and_seo.scores_seo_tournaments_dev) {
       // [ℹ] replace;
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{lang}/g, 'en'));
       item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{sport}/g, sport));
@@ -119,20 +126,20 @@
     */
 
     // [ℹ] -> response data;
-		if (response_tournaments &&
-        response_seo_page &&
+		if (response_pages_and_seo &&
+        response_pages_and_seo &&
         tournament_visible) {
       return {
         props: {
           TOURNAMENT_DATA_TRANSLATED_COPIES: tournament_data_translations,
           TOURNAMENT_DATA: tournament_data,
-          PAGE_DATA_SEO: response_seo_page
+          PAGE_DATA_SEO: response_pages_and_seo
         }
       } 
     }
     // [ℹ] -> (TOURNAMENT == OFF) => ERROR
-    else if (response_tournaments &&
-             response_seo_page &&
+    else if (response_pages_and_seo &&
+             response_pages_and_seo &&
              !tournament_visible) {
       return {
         status: 404,
@@ -165,8 +172,7 @@
 
   import SvelteSeo from 'svelte-seo';
 
-  import type { Hasura_Complete_Tournaments_Type, Single_Tournament_Data_Type } from '$lib/models/tournaments/types';
-  import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
+  import type { Hasura_Complete_Pages_SEO, Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
 

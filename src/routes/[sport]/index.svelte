@@ -17,6 +17,20 @@
     fetch
   }) {
 
+    const response_seo_page = await fetch('/api/pages_and_seo/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    // [ℹ] validate URL existance;
+    if (!response_seo_page.scores_urls_dev.urlsArr.includes(url.pathname)) {
+
+      // [ℹ] otherwise, ERROR;
+      return {
+        status: 404,
+        error: new Error("Uh-oh! This page does not exist!")
+      }
+    }
+
 		// [ℹ] return to HOMEPAGE (/ <en>)
 		return {
 			status: 302,

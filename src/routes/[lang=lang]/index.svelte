@@ -16,6 +16,20 @@
     params, 
     fetch 
   }) {
+
+    const response_seo_page = await fetch('/api/pages_and_seo/cache-seo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    // [ℹ] validate URL existance;
+    if (!response_seo_page.scores_urls_dev.urlsArr.includes(url.pathname)) {
+
+      // [ℹ] otherwise, ERROR;
+      return {
+        status: 404,
+        error: new Error("Uh-oh! This page does not exist!")
+      }
+    }
     
     /**
      * GET PRE-LOADED-PAGE-DATA:
@@ -44,10 +58,6 @@
 			method: 'GET'
 		}).then((r) => r.json());
 		
-		const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
-			method: 'GET'
-		}).then((r) => r.json());
-
 		const response_best_goalscorers = await fetch('/api/best_goalscorer/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
@@ -68,7 +78,7 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-		// [ℹ] return, DATA;
+		// [ℹ] validate, DATA RETURNED;
 		if (response_featured_match && 
         response_featured_betting_sites &&
         response_league_list && 
@@ -79,24 +89,27 @@
         response_livescores_football_leagues &&
         response_livescores_football_translations
       ) {
-			return {
-				props: {
-					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
-					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
-					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
-					PAGE_DATA_SEO: response_seo_page,
+
+      return {
+        props: {
+          FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
+          FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
+          LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
+          PAGE_DATA_SEO: response_seo_page,
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
-					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
-					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
-					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
+          LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
+          LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
+          LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
           BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers
-				}
-			};
+        }
+      };
+
 		}
+
 		// [ℹ] otherwise, ERROR;
 		return {
 			status: 500,
-			error: new Error(`❌ Uh-oh! Looks like there has been a preloading error!`)
+			error: new Error(`Uh-oh! There has been an /{lang} page preloading error`)
 		};
 
 	}
@@ -123,7 +136,7 @@
   import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
   import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
 
-	import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
+	import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO;
