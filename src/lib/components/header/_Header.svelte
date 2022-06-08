@@ -177,7 +177,7 @@
 		// [ℹ] set the user-lang to corresponding value;
 		userBetarenaSettings.setLang(lang);
     // [ℹ] update the <html lang="">
-    // document.documentElement.setAttribute('lang', lang);
+    document.documentElement.setAttribute('lang', lang);
 		// [ℹ] hide the LANG DROPDOWN box;
 		dropdown_lang_visible = false;
 
