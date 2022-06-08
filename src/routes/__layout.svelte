@@ -36,14 +36,15 @@
       method: 'GET',
     }).then(r => r.json());
 
-    const response_seo_page = await fetch('/api/page_seo/cache-seo.json', {
+    const response_seo_page = await fetch('/api/pages_and_seo/cache-seo.json', {
       method: 'GET'
     }).then((r) => r.json());
 
-    // [ℹ] validate, & return DATA;
+    // [ℹ] validate, & return DATA [always]
     if (response_header && 
         response_footer &&
         response_seo_page) {
+
       return {
         status: 200,
         props: {
@@ -52,11 +53,12 @@
           PAGE_DATA_SEO: response_seo_page
         }
       }
+      
     }
     // [ℹ] otherwise, ERROR;
     return {
-        status: 400,
-        error: new Error(`❌ Uh-oh! There has been an /{__layout} page preloading error`)
+      status: 400,
+      error: new Error(`Uh-oh! There has been an /{__layout} page preloading error`)
     }
   }
 
@@ -94,7 +96,7 @@
   // [ℹ] load in SEO-DATA for Header, Footer TYPES;
   import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';
   import type { Footer_Data } from '$lib/models/footer/types'
-  import type { Hasura_Complete_Pages_SEO } from '$lib/models/page_seo/types';
+  import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
   export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
   export let FOOTER_TRANSLATION_DATA: Footer_Data;
@@ -131,8 +133,8 @@
   let offlineMode: boolean = false;
   // [ℹ] method:
   async function toggleOfflineAlert() {
-      if (dev) console.debug('🔴 your internet connection has changed!');
-      offlineMode = !offlineMode;
+    if (dev) console.debug('🔴 your internet connection has changed!');
+    offlineMode = !offlineMode;
   }
 </script>
 
@@ -142,14 +144,14 @@
 
 
 <svelte:head>
-  <html lang="{$page.params.lang == undefined ? 'en' : $page.params.lang}" />
+  <!-- https://github.com/sveltejs/kit/issues/3091 -->
+  <html lang="{$page.params.lang == undefined || !PAGE_DATA_SEO.scores_urls_dev.urlsArr.includes($page.url.pathname) ? 'en' : $page.params.lang}" />
 </svelte:head>
 
 
 <!-- ===================
   COMPONENT HTML
 =================== -->
-
 
 {#if !dev}
   <!-- content here -->
@@ -158,7 +160,6 @@
     id={ga_measurment_id}
     />
 {/if}
-
 
 {#if offlineMode}
   <OfflineAlert />
