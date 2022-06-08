@@ -17,32 +17,28 @@
 	import begambleawareorg from './assets/begambleawareorg_black.svg'
 	import legal18icon from './assets/legal-18-action-bet.svg'
  
-	// ... END OF required IMPORTS;
-
 	export let FOOTER_TRANSLATION_DATA: Footer_Data
+  
+  /**
+   * [ℹ] component variables;
+  */
 
-	// ... immediately update the data with the lang;
-	let server_side_language: string = 'en';
-	$: if ($page.params.lang === undefined) {
-		server_side_language = 'en';
-	} else {
-		server_side_language = $page.params.lang;
-	}
-
-	/**
-	 * Description:
-	 * ~~~~~~~~~~~~~~~~~
-	 * ... this function loads when all of the
-	 * ... rest of the components have loaded
-	 * ... and rendered, checking via JS the viewport
-	 * ... of the client device and changing between
-	 * ... appropiate components to display the correct
-	 * ... component, tailored to a specifc device.
-	*/
-	let mobileExclusive: boolean = false;
+  let mobileExclusive: boolean = false;
 	let tabletExclusive: boolean = false;
+  let hideSEO: boolean = false;
+  let showEmailForm: boolean = false;
 
-	onMount(async () => {
+  let server_side_language: string = 'en';
+  let homepageURL: string
+  let logoLink: string
+
+  /**
+   * ~~~~~~~~~~~~~~
+   * COMPONENT REACTIVIYY METHODS
+   * ~~~~~~~~~~~~~~
+  */
+
+  onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
 		// ... debugging;
 		// if (dev) console.debug('resizing', wInit)
@@ -77,14 +73,38 @@
 		});
 	});
 
+  // [ℹ] IMPORTANT - LANG SELECTION [SERVER-SIDE-RENDER]
+  $: if ($page.routeId != null &&
+        !$page.error) {
+
+    if (dev) console.log("Valid Platform Route!")
+
+    if ($page.routeId.includes("[lang=lang]")) {
+		  server_side_language = $page.params.lang;
+      homepageURL = '/'
+      logoLink = $page.url.origin + '/' + server_side_language
+    }
+    else {
+      server_side_language = 'en';
+      homepageURL = '/' + $page.params.lang
+      logoLink = $page.url.origin
+    }
+
+	}
+  else {
+    server_side_language = 'en';
+    homepageURL = '/'
+    logoLink = $page.url.origin
+  }
+
+  $: if (browser) {
+    hideSEO = true
+  }
+
 	/**
-	 * Description: 
-	 * ~~~~~~~~~~~~~~~~~
-	 * ... form SUBMIT method to 
-	 * ... register user on the BETARENA EMAIL LIST
+	 * [ℹ] form SUBMIT method to 
+	 * [ℹ] register user on the BETARENA EMAIL LIST
 	*/
-  let showEmailForm: boolean = false;
-  // ...
 	async function submitEmail() {
     // ... DEBUGGING;
 		if (dev) console.debug('subscribing to email newsletter!')
@@ -93,29 +113,15 @@
     $session.newsletterPopUpShow = true;
 	}
 
-  // ... assign `logo-link`;
-  let logoLink: string
-  // ... [REACTIVITY] - METHOD;
-  $: if (server_side_language != 'en') {
-    logoLink = $page.url.origin + '/' + server_side_language
-  } else {
-    logoLink = $page.url.origin
-  }
-
-  // ... hide SEO on-load;
-  let hideSEO: boolean = false;
-  // ... [REACTIVITY] - METHOD;
-  $: if (browser) {
-    hideSEO = true
-  }
-
-  // ... reload-PAGE-check;
-	function reloadPage() {
-		// ... DEBUGGING;
-		if (dev) console.debug('reloading-page-method!')
-		// ...
-		window.location.reload(); 
+	/**
+   * [ℹ] reload current page;
+	*/
+  function reloadPage() {
+    if ($page.url.pathname.split("/").length-1 == 1) {
+      window.location.reload();
+    }
 	}
+
 </script>
 
 <!-- ===================
@@ -170,7 +176,7 @@
 							id='brand'
 							class='m-b-16'
               on:click={() => reloadPage() }>
-							<a sveltekit:prefetch href="/" title={logoLink}>
+							<a sveltekit:prefetch href={homepageURL} title={logoLink}>
 								<img src={logo_full} alt="betarena-logo" title={logoLink} />
 							</a>
 						</div>
@@ -370,7 +376,7 @@
 									id='brand'
 									class='m-b-25'
                   on:click={() => reloadPage() }>
-									<a sveltekit:prefetch href="/" title={logoLink}>
+									<a sveltekit:prefetch href={homepageURL} title={logoLink}>
 										<img src={logo_full} alt="betarena-logo" title={logoLink} />
 									</a>
 								</div>
@@ -569,7 +575,7 @@
 								id='brand'
 								class='m-b-12' 
                 on:click={() => reloadPage() }>
-								<a sveltekit:prefetch href="/" title={logoLink}>
+								<a sveltekit:prefetch href={homepageURL} title={logoLink}>
 									<img src={logo_full} alt="betarena-logo" title={logoLink} />
 								</a>
 							</div>

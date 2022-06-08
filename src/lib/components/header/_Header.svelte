@@ -52,6 +52,7 @@
   /**
    * [ℹ] component variables;
   */
+ 
   let mobileExclusive: boolean = false;
 	let tabletExclusive: boolean = false;
 	let mobileNavToggleMenu: boolean = false;
@@ -64,6 +65,13 @@
 	let dropdown_more_sports_menu: boolean = false;
 
   let selected_sports: string = 'football';
+
+  let server_side_language: string = 'en';
+  let homepageURL: string
+  let logoLink: string
+
+  let hideSEO: boolean = false;
+  let langSelected: boolean = false;
 
   /**
    * ~~~~~~~~~~~~~~
@@ -102,56 +110,40 @@
 		});
 	});
 
-  let server_side_language: string = 'en';
-	$: if ($page.routeId != null) {
-    if (dev) console.log("HERE44!")
+  // [ℹ] IMPORTANT - LANG SELECTION [SERVER-SIDE-RENDER]
+	$: if ($page.routeId != null &&
+        !$page.error) {
+
+    if (dev) console.log("Valid Platform Route!")
+
     if ($page.routeId.includes("[lang=lang]")) {
 		  server_side_language = $page.params.lang;
+      homepageURL = '/'
+      logoLink = $page.url.origin + '/' + server_side_language
     }
     else {
       server_side_language = 'en';
+      homepageURL = '/' + $page.params.lang
+      logoLink = $page.url.origin
     }
+
 	}
-  
-  let logoLink: string
-  $: if (server_side_language != 'en') {
-    logoLink = $page.url.origin + '/' + server_side_language
-  } else {
+  else {
+    server_side_language = 'en';
+    homepageURL = '/'
     logoLink = $page.url.origin
   }
 
-  let homepageURL: string
-  $: if (server_side_language == 'en') {
-    homepageURL = '/'
-  } else {
-    homepageURL = '/' + $page.params.lang
-  }
-
-  /**
-   * [ℹ] Upon Browser-Client:
-   * ~~~~~~~~~~~~~~~~~~~
-   * ➤ hide the SEO on-load;
-   * ➤ instant-udpate of .selectLanguage();
-   * ➤ instant-update of data for .countryBookemaker();
-  */
-  let hideSEO: boolean = false;
-  let langSelected: boolean = false;
 	$: if (browser) {
 
     hideSEO = true
 
-		if (server_side_language != undefined && 
-      $page.routeId != null &&
-      !langSelected) {
+		if (!langSelected) {
 			selectLanguage(server_side_language);
       langSelected = true;
-      if (dev) console.log("HERE!")
-		} else if (
-      $page.routeId != null &&
-      !langSelected) {
+		} else if (!langSelected) {
 			selectLanguage('en');
       langSelected = true;
-      if (dev) console.log("HERE2!")
 		}
 
     setUserCountryBookmakerLocation();
@@ -167,22 +159,28 @@
    * [ℹ] update the user selected Language `.localStorage()`
   */
 	function selectLanguage(lang: string) {
-
-    if (dev) console.log("HERE3!")
     
     // [ℹ] get past instance of LANG;
     const pastLang: string = $userBetarenaSettings.lang == "en" ? "/" : "/" + $userBetarenaSettings.lang;
+
+    // [🐛] debug;
+    if (dev) console.log("Inside Select Langauge!")
     if (dev) console.log("NEW_URL ", $userBetarenaSettings.lang, lang, pastLang);
     if (dev) console.log("NEW URL ", $page.routeId);
-		// [ℹ] set the user-lang to corresponding value;
-		userBetarenaSettings.setLang(lang);
-    // [ℹ] update the <html lang="">
-    document.documentElement.setAttribute('lang', lang);
+
 		// [ℹ] hide the LANG DROPDOWN box;
 		dropdown_lang_visible = false;
 
     if ($page.routeId != "[lang=lang]/[sport]/[country]/[league_name]" && 
-        $page.routeId != "[sport]/[country]/[league_name]") {
+        $page.routeId != "[sport]/[country]/[league_name]" &&
+        $page.routeId != null &&
+        !$page.error) {
+
+      // [ℹ] update the <html lang="">
+      document.documentElement.setAttribute('lang', lang);
+
+		  // [ℹ] set the user-lang to corresponding value;
+		  userBetarenaSettings.setLang(lang);
 
       // [ℹ] check for EN TRANSLATION;
       if (lang == 'en' &&  
@@ -216,6 +214,8 @@
         // window.history.replaceState({}, "NewPage", newURL);
         goto(newURL, { replaceState: true });
       }
+      // [ℹ] otherwise, check for coming from "[lang]" (/) 
+      // [ℹ] & update page URL with CORRECT TRANSLATION;
       else if (lang != 'en' && 
               pastLang != "/") {
         

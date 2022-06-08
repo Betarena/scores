@@ -9,6 +9,7 @@
 */
 
 export interface Hasura_Complete_Pages_SEO {
+
   scores_hreflang_dev: {
     hreflang: string
     link: string
@@ -24,14 +25,19 @@ export interface Hasura_Complete_Pages_SEO {
     lang: string
     title: string
   }[]
-
-  // [ℹ] used in the < tournaments_page >
   scores_seo_tournaments_dev: {
     lang: string
     main_data: Main_Data
     opengraph: Twitter_Data
     twitter_card: Opengraph_Data
   }[]
+
+  // [ℹ] used in the < tournaments_page_generation >
+  scores_tournaments_dev: Single_Tournament_Data_Type[]
+
+  scores_urls_dev: {
+    urlsArr: string[]
+  }
 }
 
 interface Main_Data {
@@ -59,4 +65,28 @@ interface Opengraph_Data {
   nofollow: boolean,
   title: string,
   description: string
+}
+
+/**
+ * Types for handling all of the PAGE_INFO
+ * of the following pages:
+ * --------------------------------------
+ * ➤ /{lang}/{sport}/{country}/{tournaments}
+ * ➤ /{sport}/{country}/{tournaments}
+*/
+
+export interface Single_Tournament_Data_Type {
+  author: string
+  country: string
+  date: Date
+  id: number
+  tournament_id: number
+  lang: string
+  modified_date: Date
+  name: string
+  sport: string
+  status: "published" | "draft"
+  title: string
+  type: string
+  widgets: Array < string >
 }
