@@ -1,6 +1,10 @@
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
+import viteCompression from 'vite-plugin-compression';
+// import progress from 'vite-plugin-progress'
+import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
+
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 
@@ -17,13 +21,19 @@ const config = {
     */
     vite: {
       // plugins: [myPlugin],
+      plugins: [
+        // https://github.com/vbenjs/vite-plugin-compression
+        viteCompression(),
+        // https://github.com/jeddygong/vite-plugin-progress
+        // progress(),
+        // https://github.com/sanyuan0704/vite-plugin-chunk-split
+        chunkSplitPlugin()
+      ],
 
       build: {
         rollupOptions: {
           output: {
-            manualChunks: {
-              lodash: ['lodash']
-            }
+            manualChunks: undefined
           }
         }
       }
