@@ -2,6 +2,7 @@ import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
 import viteCompression from 'vite-plugin-compression';
+// import * as c from 'vite-plugin-compress';
 // import progress from 'vite-plugin-progress'
 import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
 
@@ -28,6 +29,8 @@ const config = {
         // progress(),
         // https://github.com/sanyuan0704/vite-plugin-chunk-split
         chunkSplitPlugin()
+        // https://github.com/alloc/vite-plugin-compress
+        // c.compress()
       ],
 
       // https://github.com/sveltejs/kit/issues/1571
