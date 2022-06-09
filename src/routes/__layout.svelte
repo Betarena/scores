@@ -115,7 +115,7 @@
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';
   import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
-  // import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
+  import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
 
   // let Footer;
   // let Header;
