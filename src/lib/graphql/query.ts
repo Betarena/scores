@@ -30,6 +30,10 @@ import { gql } from 'graphql-request';
 			terms
 			social_networks
 		}
+    scores_hreflang_dev {
+      hreflang
+      link
+    }
 	}
 `;
 

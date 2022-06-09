@@ -1,45 +1,74 @@
-/**
- * Types for handling all of the PAGE_SEO
- * of the following pages:
- * --------------------------------------
- * ➤ homepage
- * ➤ homepage/{lang}
- * ➤ /{lang}/{sport}/{country}/{tournaments}
- * ➤ /{sport}/{country}/{tournaments}
-*/
 
+
+/**
+ * Redis Cache Response 
+ * [HOMEPAGE - SEO]
+*/
+export interface Cache_Single_Homepage_SEO_Translation_Response {
+  lang: string
+  main_data: Main_Data
+  twitter_card: Twitter_Data
+  opengraph: Opengraph_Data
+  hreflang: Hreflang[]
+}
+
+export interface Cache_Single_Tournaments_SEO_Translation_Response {
+  lang: string
+  main_data: Main_Data
+  twitter_card: Twitter_Data
+  opengraph: Opengraph_Data
+  hreflang: Hreflang[]
+}
+
+export interface Cache_Single_Tournaments_Data_Page_Translation_Response {
+  url: string
+  lang: string
+  data: Single_Tournament_Data_Type
+  alternate_data: Single_Tournament_Data_Type[]
+}
+
+/**
+ * HASURA DB - COMPLETE PAGE / SITEMAP / SEO GRAPHQL QUERY 
+*/
 export interface Hasura_Complete_Pages_SEO {
 
   scores_hreflang_dev: {
-    hreflang: string
     link: string
+    hreflang: string
   }[]
+
+  // [ℹ] homepage
   scores_seo_homepage_dev: {
     lang: string
+
     main_data: Main_Data
     twitter_card: Twitter_Data
     opengraph: Opengraph_Data
   }[]
+  // [ℹ] homepage-seo-block-widget
+  // TODO: remove
   scores_seo_block_homepage_dev: {
-    html: string
     lang: string
+
+    html: string
     title: string
   }[]
+
+  // [ℹ] tournaments-page
   scores_seo_tournaments_dev: {
     lang: string
+
     main_data: Main_Data
     opengraph: Twitter_Data
     twitter_card: Opengraph_Data
   }[]
-
-  // [ℹ] used in the < tournaments_page_generation >
   scores_tournaments_dev: Single_Tournament_Data_Type[]
 
-  scores_urls_dev: {
-    urlsArr: string[]
-  }
 }
 
+/**
+ * Individual / Single Interfaces 
+*/
 interface Main_Data {
   canonical: string,
   noindex: boolean,
@@ -67,21 +96,19 @@ interface Opengraph_Data {
   description: string
 }
 
-/**
- * Types for handling all of the PAGE_INFO
- * of the following pages:
- * --------------------------------------
- * ➤ /{lang}/{sport}/{country}/{tournaments}
- * ➤ /{sport}/{country}/{tournaments}
-*/
+interface Hreflang {
+  link: string
+  hreflang: string
+}
 
 export interface Single_Tournament_Data_Type {
+  lang: string
+
   author: string
   country: string
   date: Date
   id: number
   tournament_id: number
-  lang: string
   modified_date: Date
   name: string
   sport: string
