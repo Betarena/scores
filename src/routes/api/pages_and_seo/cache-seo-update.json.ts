@@ -9,22 +9,38 @@ import { removeDiacritics } from '$lib/utils/languages'
 
 // [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 import { GET_COMPLETE_PAGES_AND_SEO_DATA } from '$lib/graphql/pages_and_seo/query'
-import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types'
+import type { Cache_Single_Homepage_SEO_Translation_Response, 
+  Cache_Single_Tournaments_Data_Page_Translation_Response, 
+  Cache_Single_Tournaments_SEO_Translation_Response, 
+  Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types'
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
 export async function get(): Promise < any > {
-  // [ℹ] get all of the LEAGUE LIST DATA from HASURA;
-  const response = await main()
-  // [ℹ] cache;
-  cacheHomepageSEOData(response)
+
+  // [ℹ] get HASURA-DB response;
+	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await sitemapGeneratorAndCaching(response)
+  await homepageSEOandCaching(langArray, response)
+  await tournamentSEOandCaching(langArray, response)
+  await tournamentPageAndCaching(response)
+
   // [ℹ] return RESPONSE;
   if (response) {
     return {
       status: 200,
-      body: '✅ Success! League list SEO cache data has been updated!'
+      body: '✅ Success! \nPages & Scores SEO cache data updated'
     }
   }
   // [ℹ] should never happen;
@@ -36,36 +52,104 @@ export async function get(): Promise < any > {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //     CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-// - cacheLeagueListSEO(json_cache)
-// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheHomepageSEOData(json_cache: Hasura_Complete_Pages_SEO) {
-  // [ℹ] TRY;
+async function cacheHomepageSEOData (lang: string, json_cache: Cache_Single_Homepage_SEO_Translation_Response) {
   try {
     //[ℹ] store (cache) league_list response,
-    await redis.hset('seo', 'pages', JSON.stringify(json_cache));
+    await redis.hset('homepage_seo', lang, JSON.stringify(json_cache));
   } 
-  // [ℹ] CATCH, ERROR;
   catch (e) {
-    console.debug('❌ unable to cache - seo / page_homepage', e);
+    console.debug('❌ unable to cache - seo / homepage', e);
   }
+}
+
+async function cacheTournamentsPageSEOData (lang: string, json_cache: any ) {
+  try {
+    //[ℹ] store (cache) league_list response,
+    await redis.hset('tournaments_seo', lang, JSON.stringify(json_cache));
+  } 
+  catch (e) {
+    console.debug('❌ unable to cache - seo / tournaments page', e);
+  }
+}
+
+async function cacheTournamentsPageData (url: string, json_cache: any ) {
+  try {
+    //[ℹ] store (cache) league_list response,
+    await redis.hset('tournaments_page_info', url, JSON.stringify(json_cache));
+  } 
+  catch (e) {
+    console.debug('❌ unable to cache - seo / tournaments page', e);
+  }
+}
+
+async function cacheSitemapURLs (url: string) {
+  try {
+    //[ℹ] store (cache) league_list response,
+    await redis.hset('sitemap', url, true);
+  } 
+  catch (e) {
+    console.debug('❌ unable to cache - seo / sitemap', e);
+  }
+}
+
+async function deleteCacheHomepageSEOData () {
+  await redis.del('homepage_seo')
+  return
+}
+
+async function deleteCacheTournamentsPageSEOData () {
+  await redis.del('tournaments_page_seo')
+  return
+}
+
+async function deleteCacheTournamentsPageData () {
+  await redis.del('tournaments_page_info')
+  return
+}
+
+async function deleteCacheSitemapURLs () {
+  await redis.del('sitemap')
+  return
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  STANDARD API FALLBACK
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-// - main()
-// - getAllHomepageSEOtData()
-// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function main(): Promise < Hasura_Complete_Pages_SEO > {
+async function homepageSEOandCaching(langArray: string[], data: Hasura_Complete_Pages_SEO) {
 
-  const response: any = await getAllHomepageSEOData()
+  const finalCacheObj: Cache_Single_Homepage_SEO_Translation_Response = {
+    lang: undefined,
+    main_data: undefined,
+    twitter_card: undefined,
+    opengraph: undefined,
+    hreflang: undefined
+  }
+
+  deleteCacheHomepageSEOData()
+
+  // [ℹ] for-each available translation:
+  for (const lang_ of langArray) {
+    
+    finalCacheObj.lang = lang_
+    finalCacheObj.main_data = data.scores_seo_homepage_dev.find(( { lang } ) => lang_ === lang).main_data;
+    finalCacheObj.twitter_card = data.scores_seo_homepage_dev.find(( { lang } ) => lang_ === lang).twitter_card;
+    finalCacheObj.opengraph = data.scores_seo_homepage_dev.find(( { lang } ) => lang_ === lang).opengraph;
+    finalCacheObj.hreflang = data.scores_hreflang_dev
+
+    // [ℹ] persist-cache-response;
+    await cacheHomepageSEOData(lang_, finalCacheObj);
+  }
+
+}
+
+async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
 
   const urlsArray: string[] = []
 
   // [ℹ] generate appropiate URLS
-  for (const iterator of response.scores_tournaments_dev) {
+  for (const iterator of data.scores_tournaments_dev) {
 
     let url: string;
     const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-');
@@ -101,21 +185,78 @@ async function main(): Promise < Hasura_Complete_Pages_SEO > {
     
     urlsArray.push(url)
   }
+
+  deleteCacheSitemapURLs();
   
   const uniqArray = [...new Set(urlsArray)];
 
-  // console.log("uniqArray", uniqArray)
-  response.scores_urls_dev = {
-    urlsArr: undefined || []
+  for (const url of uniqArray) {
+    cacheSitemapURLs(url)
   }
-  response.scores_urls_dev.urlsArr = uniqArray;
-
-  return response
 }
 
-async function getAllHomepageSEOData(): Promise < any > {
-  // [ℹ] push-GRAPH-QL-request;
-  const response = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
-  // [ℹ] reutrn response;
-  return response
+async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complete_Pages_SEO) {
+
+  const finalCacheObj: Cache_Single_Tournaments_SEO_Translation_Response = {
+    lang: undefined,
+    main_data: undefined,
+    twitter_card: undefined,
+    opengraph: undefined,
+    hreflang: undefined
+  }
+
+  deleteCacheTournamentsPageSEOData()
+
+  // [ℹ] for-each available translation:
+  for (const lang_ of langArray) {
+    
+    finalCacheObj.lang = lang_
+    finalCacheObj.main_data = data.scores_seo_tournaments_dev.find(( { lang } ) => lang_ === lang).main_data;
+    finalCacheObj.twitter_card = data.scores_seo_tournaments_dev.find(( { lang } ) => lang_ === lang).twitter_card;
+    finalCacheObj.opengraph = data.scores_seo_tournaments_dev.find(( { lang } ) => lang_ === lang).opengraph;
+    finalCacheObj.hreflang = data.scores_hreflang_dev
+
+    // [ℹ] persist-cache-response;
+    await cacheTournamentsPageSEOData(lang_, finalCacheObj);
+  }
+
+}
+
+async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
+
+  const finalCacheObj: Cache_Single_Tournaments_Data_Page_Translation_Response = {
+    lang: undefined,
+    url: undefined,
+    data: undefined,
+    alternate_data: undefined,
+  }
+
+  deleteCacheTournamentsPageData();
+
+  // [ℹ] generate appropiate URLS
+  for (const iterator of data.scores_tournaments_dev) {
+
+    const tournament_id = iterator.tournament_id;
+
+    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-');
+    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-');
+    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-');
+    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-');
+
+    // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
+    const url = iterator.lang == 'en' 
+      ? '/' + sport + '/' + country + '/' + league_name
+      : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
+    
+    finalCacheObj.lang = lang
+    finalCacheObj.url = url
+    finalCacheObj.data = iterator
+
+    // [ℹ] identify data-alternate-copies;
+    finalCacheObj.alternate_data = data.scores_tournaments_dev.filter(t => t.tournament_id === tournament_id)
+
+    // [ℹ] persist-cache-response;
+    await cacheTournamentsPageData(url, finalCacheObj);
+  }
+
 }
