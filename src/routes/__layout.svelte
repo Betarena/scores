@@ -209,24 +209,24 @@
 {/if}
 
 {#if offlineMode}
-  <OfflineAlert />
-  <!-- <svelte:component this={OfflineAlert} /> -->
+  <!-- <OfflineAlert /> -->
+  <svelte:component this={OfflineAlert} />
 {/if}
 
-<PlatformAlert {HEADER_TRANSLATION_DATA} />
+<!-- <PlatformAlert {HEADER_TRANSLATION_DATA} />
 <SplashScreen />
 <EmailSubscribe />
-<Header {HEADER_TRANSLATION_DATA} />
+<Header {HEADER_TRANSLATION_DATA} /> -->
 
-<!-- <svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} /> -->
-<!-- <svelte:component this={SplashScreen} /> -->
-<!-- <svelte:component this={EmailSubscribe} /> -->
-<!-- <svelte:component this={Header} {HEADER_TRANSLATION_DATA} /> -->
+<svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} />
+<svelte:component this={SplashScreen} />
+<svelte:component this={EmailSubscribe} />
+<svelte:component this={Header} {HEADER_TRANSLATION_DATA} />
 
 <main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
   <slot />
-  <Footer {FOOTER_TRANSLATION_DATA} />
-  <!-- <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} /> -->
+  <!-- <Footer {FOOTER_TRANSLATION_DATA} /> -->
+  <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} />
 </main>
 
 
