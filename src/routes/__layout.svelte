@@ -202,9 +202,9 @@
 =================== -->
 
 {#if !dev}
-  <!-- <GoogleAnalytics 
+  <GoogleAnalytics 
     id={ga_measurment_id}
-  /> -->
+  />
   <!-- <svelte:component this={GoogleAnalytics} id={ga_measurment_id} /> -->
 {/if}
 
