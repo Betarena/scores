@@ -4,20 +4,21 @@
 =================== -->
 
 <script lang="ts">
-	// ... svelte-imports;
+	// [ℹ] svelte-imports;
 	import { onMount } from 'svelte'
 	import { browser, dev } from '$app/env'
   import { fade } from 'svelte/transition'
 	import { getStores, navigating, page, session, updated } from '$app/stores';
   // const { session } = getStores();
-	// ... typescript-types;
-	import type { Footer_Data } from '$lib/models/footer/types'
-	// ... image-assets;
+	// [ℹ] typescript-types;
+	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types'
+	// [ℹ] image-assets;
 	import logo_full from './assets/betarena-logo-full.svg'
 	import begambleawareorg from './assets/begambleawareorg_black.svg'
 	import legal18icon from './assets/legal-18-action-bet.svg'
  
-	export let FOOTER_TRANSLATION_DATA: Footer_Data
+  // [ℹ] pre-loaded & ready;
+	export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response
   
   /**
    * [ℹ] component variables;
@@ -40,7 +41,7 @@
 
   onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
-		// ... debugging;
+		// [ℹ] debugging;
 		// if (dev) console.debug('resizing', wInit)
 		// TABLET - VIEW
 		if (wInit >= 1440) {
@@ -56,7 +57,7 @@
 		}
 		window.addEventListener('resize', function () {
 			var w = document.documentElement.clientWidth;
-			// ... debugging;
+			// [ℹ] debugging;
 			// if (dev) console.debug('resizing', w)
 			// TABLET - VIEW
 			if (w >= 1440) {
@@ -73,7 +74,7 @@
 		});
 	});
 
-  // [ℹ] IMPORTANT - LANG SELECTION [SERVER-SIDE-RENDER]
+  // [ℹ] IMPORTANT! lang selection [SERVER-SIDE-RENDER]
   $: if ($page.routeId != null &&
         !$page.error) {
 
@@ -106,9 +107,9 @@
 	 * [ℹ] register user on the BETARENA EMAIL LIST
 	*/
 	async function submitEmail() {
-    // ... DEBUGGING;
+    // [ℹ] DEBUGGING;
 		if (dev) console.debug('subscribing to email newsletter!')
-    // ...
+    // [ℹ]
     // showEmailForm = true;
     $session.newsletterPopUpShow = true;
 	}
@@ -129,201 +130,217 @@
 =================== -->
 
 
-<!-- ... extra-footer-SEO-info ... -->
-{#if FOOTER_TRANSLATION_DATA != undefined && !hideSEO}
-  <!-- ... betarena-logo-homepage-correct-url ... -->
+<!-- [ℹ] extra-footer-SEO-info 
+-->
+{#if FOOTER_TRANSLATION_DATA != undefined && 
+    !hideSEO}
+  <!-- [ℹ] betarena-logo-homepage-correct-url 
+  -->
   <p>{logoLink}</p>
-  <!-- ... nav-links-SEO ... -->
-  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
-      {#if footer_nav_links_translations.lang == server_side_language}
-        <!-- ... -->
-        <p>{footer_nav_links_translations.latest_news}</p>
-        <p>{footer_nav_links_translations.about_us}</p>
-        <p>{footer_nav_links_translations.betting_tips}</p>
-        <p>{footer_nav_links_translations.privacy}</p>
-        <p>{footer_nav_links_translations.social_networks}</p>
-        <p>{footer_nav_links_translations.terms}</p>
-      {/if}
-  {/each}
-  <!-- ... nav-links-social-links ... -->
-  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
-    {#if social_network_obj.lang == server_side_language}
-      <!-- ... -->
-      {#each social_network_obj.social_networks as social_network}
-        <p>{social_network[1].toString().toLocaleLowerCase()}</p>
-      {/each}
-    {/if}
+  <!-- [ℹ] nav-links-SEO 
+  -->
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}</p>
+  <!-- [ℹ] nav-links-social-links
+  -->
+  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
+    <p>{social_network[1].toString().toLocaleLowerCase()}</p>
   {/each}
 {/if}
 
 
-<!-- ... footer-HTML ... -->
+<!-- [ℹ] footer-HTML 
+-->
 <footer>
-	<!-- ... wait until THIS component recives the required DATA ... -->
-	{#if FOOTER_TRANSLATION_DATA != undefined}
-		<!-- ... identify the correct translation via IF validation -->
-		{#each FOOTER_TRANSLATION_DATA.scores_footer_translations_dev as footer_traslation_obj}
-			{#if footer_traslation_obj.lang == server_side_language}
-				<!-- ... populate data accordingly ... -->
 
-				<!-- ... mobile - version only ... -->
+	<!-- [ℹ] wait until THIS component recives the required DATA 
+  -->
+	{#if FOOTER_TRANSLATION_DATA != undefined}
+
+				<!-- [ℹ] mobile - version only 
+        -->
 				{#if mobileExclusive && tabletExclusive}
 					<div
 						id="inner-footer">
 						
-						<!-- ... brand-logo-betarena ... -->
+						<!-- [ℹ] brand-logo-betarena 
+            -->
 						<div 
 							id='brand'
 							class='m-b-16'
               on:click={() => reloadPage() }>
+
 							<a sveltekit:prefetch href={homepageURL} title={logoLink}>
 								<img src={logo_full} alt="betarena-logo" title={logoLink} />
 							</a>
+              
 						</div>
 
-						<!-- ... follow-us-and-social-media ... -->
+						<!-- [ℹ] follow-us-and-social-media 
+            -->
 						<div 
 							class='m-b-40'>
-							<p class='color-white s-14 w-normal m-b-20'>
-								{footer_traslation_obj.follow}
+
+							<p 
+                class='color-white s-14 w-normal m-b-20'>
+								{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.follow}
 							</p>
-							<!-- ... social media follows ... -->
+
+							<!-- [ℹ] social media follows 
+              -->
 							<div 
 								id='social-media-box'
 								class='column-start-grid'>
-								<!-- ... identify the list of social media icons ... -->
-								{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
-									{#if social_network_obj.lang == server_side_language}
-										<!-- ... render the correct items ... -->
-										{#each social_network_obj.social_networks as social_network}
-											<!-- ... social-network-component ... -->
-											<a 
-												rel='external'
-												href={social_network[1].toString().toLocaleLowerCase()}>
-												<img 
-													src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
-													alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
-													title='{social_network[0].toString().toLocaleLowerCase()}-icon'
-													width="32px" height="32px" />
-											</a>
-										{/each}
-									{/if}
-								{/each}
+                
+								<!-- [ℹ] identify the list of social media icons 
+                -->
+                {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
+                  <!-- [ℹ] social-network-component 
+                  -->
+                  <a 
+                    rel='external'
+                    href={social_network[1].toString().toLocaleLowerCase()}>
+
+                    <img 
+                      src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+                      alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
+                      title='{social_network[0].toString().toLocaleLowerCase()}-icon'
+                      width="32px" height="32px" 
+                    />
+
+                  </a>
+                {/each}
 							</div>
 						</div>
 
-						<!-- ... subscribe-to-newletter ... -->
+						<!-- [ℹ] subscribe-to-newletter 
+            -->
 						<div 
 							id='newsletter-container' 
 							class='m-b-30'>
-							<!-- ... title-section ... -->
+              
+							<!-- [ℹ] title-section 
+              -->
 							<p 
 								class='color-white s-14 w-normal m-b-8 text-left'>
-								{footer_traslation_obj.subscribe_newsletter}
+								{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_newsletter}
 							</p>
-							<!-- ... form-start ... -->
+
+							<!-- [ℹ] form-start 
+              -->
 							<form on:submit|preventDefault={() => submitEmail()}>
-								<!-- ... input-email-field ... -->
+								<!-- [ℹ] input-email-field 
+                -->
 								<input 
 									type='email' 
 									name='type_email' 
 									id=''
-									placeholder={footer_traslation_obj.type_email}
+									placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.type_email}
 									class='m-b-12 s-14 w-400 color-grey'>
-								<!-- ... button-subscribe-action ... -->
+								<!-- [ℹ] button-subscribe-action 
+                -->
 								<button 
 									type='submit'
 									id='newsletter-subscribe-btn'
 									class='btn-primary'>
 									<p class='color-white s-14 w-500'>
-										{footer_traslation_obj.subscribe_cta}
+										{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_cta}
 									</p>
 								</button>
 							</form>
 						</div>
 
-						<!-- ... menu-list num.1 ... -->
-						<!-- ... generate-translations-for-footer ... -->
-						{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
-							{#if footer_nav_links_translations.lang == server_side_language}
-								<div 
-									id='menu-list'
-									class='m-b-40'>
-									<ul>
-										<!-- ... latest-news ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.latest_news}
-												class='m-b-16'>
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.latest_news}
-												</p>
-											</a>
-										</li>
-										<!-- ... sep .. -->
-										<li class='place-center m-r-10 m-b-16'>
-											<div class='menu-separator' />
-										</li>
-										<!-- ... betting-tips ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.betting_tips}
-												class='m-b-16'>
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.betting_tips}
-												</p>
-											</a>
-										</li>
-										<!-- ... sep .. -->
-										<li class='place-center m-r-10 m-b-16'>
-											<div class='menu-separator' />
-										</li>
-										<!-- ... about us link ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.about_us}
-												class='m-b-16'>
-												<!-- ... about us ... -->
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.about_us}
-												</p>
-											</a>
-										</li>
-									</ul>
-									<ul>
-										<!-- ... terms and conditions ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.terms}>
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.terms}
-												</p>
-											</a>
-										</li>
-										<!-- ... sep .. -->
-										<li class='place-center m-r-10'>
-											<div class='menu-separator' />
-										</li>
-										<!-- ... privacy and conditions ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.privacy}>
-													<p class='color-white s-14 w-normal'>
-														{footer_traslation_obj.privacy}
-													</p>
-											</a>
-										</li>
-									</ul>
-								</div>
-							{/if}
-						{/each}
+						<!-- [ℹ] menu-list num.1 
+            -->
 
-						<!-- ... legal-begambleawareorg ... -->
+						<!-- [ℹ] generate-translations-for-footer 
+            -->
+            <div 
+              id='menu-list'
+              class='m-b-40'>
+              <ul>
+                <!-- [ℹ] latest-news 
+                -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}
+                    class='m-b-16'>
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.latest_news}
+                    </p>
+                  </a>
+                </li>
+                <!-- [ℹ] sep 
+                -->
+                <li class='place-center m-r-10 m-b-16'>
+                  <div class='menu-separator' />
+                </li>
+                <!-- [ℹ] betting-tips 
+                -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}
+                    class='m-b-16'>
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.betting_tips}
+                    </p>
+                  </a>
+                </li>
+                <!-- [ℹ] sep 
+                -->
+                <li class='place-center m-r-10 m-b-16'>
+                  <div class='menu-separator' />
+                </li>
+                <!-- [ℹ] about us link 
+                -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}
+                    class='m-b-16'>
+                    <!-- [ℹ] about us 
+                    -->
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.about_us}
+                    </p>
+                  </a>
+                </li>
+              </ul>
+              <ul>
+                <!-- [ℹ] terms and conditions -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}>
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.terms}
+                    </p>
+                  </a>
+                </li>
+                <!-- [ℹ] sep .. -->
+                <li class='place-center m-r-10'>
+                  <div class='menu-separator' />
+                </li>
+                <!-- [ℹ] privacy and conditions -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}>
+                      <p class='color-white s-14 w-normal'>
+                        {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.privacy}
+                      </p>
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+						<!-- [ℹ] legal-begambleawareorg -->
 						<div 
 							class='row-space-start m-b-30 place-center'
 							style='width: auto;'>
@@ -340,7 +357,7 @@
 								/>
 						</div>
 
-						<!-- ... company-details ... -->
+						<!-- [ℹ] company-details -->
 						<div 
 							class='m-b-16'>
 							<p class='s-14 w-500 color-grey'>
@@ -358,17 +375,17 @@
 					</div>
 				{/if}
 
-				<!-- ... tablet version only ... -->
+				<!-- [ℹ] tablet version only -->
 				{#if !mobileExclusive && tabletExclusive}
 					<div
 						id="inner-footer"
 						class='column-start-grid'>
 
-						<!-- ... top-row-footer-data ... -->
+						<!-- [ℹ] top-row-footer-data -->
 						<div
 							class='row-space-out m-b-50'>
 
-							<!-- ... brand-logo-betarena ... -->
+							<!-- [ℹ] brand-logo-betarena -->
 							<div
 								class='column-space-start'
 								style='width: auto;'>
@@ -381,152 +398,146 @@
 									</a>
 								</div>
 
-								<!-- ... follow-us-and-social-media ... -->
+								<!-- [ℹ] follow-us-and-social-media -->
 								<div>
 									<p class='color-white s-14 w-normal m-b-12'>
-										{footer_traslation_obj.follow}
+										{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.follow}
 									</p>
-									<!-- ... social media follows ... -->
+									<!-- [ℹ] social media follows -->
 									<div id='social-media-box'
 										class='column-start-grid'>
-										<!-- ... identify the list of social media icons ... -->
-										{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
-											{#if social_network_obj.lang == server_side_language}
-												<!-- ... render the correct items ... -->
-												{#each social_network_obj.social_networks as social_network}
-													<!-- ... social-network-component ... -->
-													<a 
-														rel='external'
-														href={social_network[1].toString().toLocaleLowerCase()}>
-														<img 
-															src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
-															alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
-															title='{social_network[0].toString().toLocaleLowerCase()}-icon'
-															width="32px" height="32px" />
-													</a>
-												{/each}
-											{/if}
-										{/each}
+										<!-- [ℹ] identify the list of social media icons -->
+                    <!-- [ℹ] render the correct items -->
+                    {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
+                      <!-- [ℹ] social-network-component -->
+                      <a 
+                        rel='external'
+                        href={social_network[1].toString().toLocaleLowerCase()}>
+                        <img 
+                          src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+                          alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
+                          title='{social_network[0].toString().toLocaleLowerCase()}-icon'
+                          width="32px" height="32px" />
+                      </a>
+                    {/each}
 									</div>
 								</div>
 							</div>
 
-							<!-- ... subscribe-to-newletter ... -->
+							<!-- [ℹ] subscribe-to-newletter -->
 							<div 
 								id='newsletter-container'>
-								<!-- ... title-section ... -->
+								<!-- [ℹ] title-section -->
 								<p class='color-white s-14 w-normal m-b-8 text-left'>
-									{footer_traslation_obj.subscribe_newsletter}
+									{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_newsletter}
 								</p>
-								<!-- ... form-start ... -->
+								<!-- [ℹ] form-start -->
 								<form on:submit|preventDefault={() => submitEmail()}>
-									<!-- ... input-email-field ... -->
+									<!-- [ℹ] input-email-field -->
 									<input 
 										type='email' 
 										name='type_email' 
 										id=''
-										placeholder={footer_traslation_obj.type_email}
+										placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.type_email}
 										class='m-b-12 s-14 w-400 color-grey'>
-									<!-- ... button-subscribe-action ... -->
+									<!-- [ℹ] button-subscribe-action -->
 									<button 
 										type='submit'
 										id='newsletter-subscribe-btn'
 										class='btn-primary'>
 										<p class='color-white s-14 w-500'>
-											{footer_traslation_obj.subscribe_cta}
+											{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_cta}
 										</p>
 									</button>
 								</form>
 							</div>
 						</div>
 
-						<!-- ... menu-list num.1 ... -->
-						<!-- ... generate-translations-for-footer ... -->
-						{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
-							{#if footer_nav_links_translations.lang == server_side_language}
-								<div 
-									id='menu-list'
-									class='m-b-40'>
-									<ul class='m-b-16'>
-										<!-- ... latest-news ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.latest_news}>
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.latest_news}
-												</p>
-											</a>
-										</li>
-										<!-- ... sep .. -->
-										<li class='place-center m-r-10'>
-											<div class='menu-separator' />
-										</li>
-										<!-- ... betting-tips ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.betting_tips}>
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.betting_tips}
-												</p>
-											</a>
-										</li>
-										<!-- ... sep .. -->
-										<li class='place-center m-r-10'>
-											<div class='menu-separator' />
-										</li>
+						<!-- [ℹ] menu-list num.1 -->
 
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.about_us}>
-												<!-- ... about us ... -->
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.about_us}
-												</p>
-											</a>
-										</li>
-										<!-- ... sep .. -->
-										<li class='place-center m-r-10'>
-											<div class='menu-separator' />
-										</li>
-										<!-- ... terms and conditions ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.terms}>
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.terms}
-												</p>
-											</a>
-										</li>
-										<!-- ... sep .. -->
-										<li class='place-center m-r-10'>
-											<div class='menu-separator' />
-										</li>
-										<!-- ... privacy and conditions ... -->
-										<li class='m-r-10'>
-											<a 
-												rel='external'
-												href={footer_nav_links_translations.privacy}>
-												<p class='color-white s-14 w-normal'>
-													{footer_traslation_obj.privacy}
-												</p>
-											</a>
-										</li>
-									</ul>
-								</div>
-							{/if}
-						{/each}
+						<!-- [ℹ] generate-translations-for-footer -->
+
+            <div 
+              id='menu-list'
+              class='m-b-40'>
+              <ul class='m-b-16'>
+                <!-- [ℹ] latest-news -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}>
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.latest_news}
+                    </p>
+                  </a>
+                </li>
+                <!-- [ℹ] sep .. -->
+                <li class='place-center m-r-10'>
+                  <div class='menu-separator' />
+                </li>
+                <!-- [ℹ] betting-tips -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}>
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.betting_tips}
+                    </p>
+                  </a>
+                </li>
+                <!-- [ℹ] sep .. -->
+                <li class='place-center m-r-10'>
+                  <div class='menu-separator' />
+                </li>
+
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}>
+                    <!-- [ℹ] about us -->
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.about_us}
+                    </p>
+                  </a>
+                </li>
+                <!-- [ℹ] sep .. -->
+                <li class='place-center m-r-10'>
+                  <div class='menu-separator' />
+                </li>
+                <!-- [ℹ] terms and conditions -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}>
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.terms}
+                    </p>
+                  </a>
+                </li>
+                <!-- [ℹ] sep .. -->
+                <li class='place-center m-r-10'>
+                  <div class='menu-separator' />
+                </li>
+                <!-- [ℹ] privacy and conditions -->
+                <li class='m-r-10'>
+                  <a 
+                    rel='external'
+                    href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}>
+                    <p class='color-white s-14 w-normal'>
+                      {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.privacy}
+                    </p>
+                  </a>
+                </li>
+              </ul>
+            </div>
 
 						<div
 							class='row-space-out'>
 
-							<!-- ... company-details ... -->
+							<!-- [ℹ] company-details -->
 							<div 
 								class='m-b-8'>
-								<!-- ... company name and details ... -->
+								<!-- [ℹ] company name and details -->
 								<p 
 									class='s-14 w-500 color-grey m-b-8'>
 									Second Act
@@ -534,14 +545,14 @@
 										18 Boulevard Montmartre Paris 75009
 									</span>
 								</p>
-								<!-- ... copytright data ... -->
+								<!-- [ℹ] copytright data -->
 								<p 
 									class='s-14 w-400 color-grey'>
 									© 2021 Betarena All rights reserved 
 								</p>
 							</div>
 
-							<!-- ... legal-begambleawareorg ... -->
+							<!-- [ℹ] legal-begambleawareorg -->
 							<div 
 								class='row-space-start m-b-30 place-center'
 								style='width: auto;'>
@@ -561,16 +572,16 @@
 					</div>
 				{/if}
 
-				<!-- ... desktop version only ... -->
+				<!-- [ℹ] desktop version only -->
 				{#if !mobileExclusive && !tabletExclusive}
 					<div
 						id="inner-footer">
 
-						<!-- ... 1st-column-footer-data ... -->
+						<!-- [ℹ] 1st-column-footer-data -->
 						<div
 							class='column-start-grid'>
 
-							<!-- ... brand-logo-betarena ... -->
+							<!-- [ℹ] brand-logo-betarena -->
 							<div 
 								id='brand'
 								class='m-b-12' 
@@ -580,13 +591,13 @@
 								</a>
 							</div>
 
-							<!-- ... copytright data ... -->
+							<!-- [ℹ] copytright data -->
 							<p 
 								class='s-14 m-b-16 w-400 color-grey'>
 								© 2021 Betarena All rights reserved 
 							</p>
 
-							<!-- ... company-details ... -->
+							<!-- [ℹ] company-details -->
 							<p 
 								class='s-14 w-500 color-grey'>
 								Second Act
@@ -597,159 +608,151 @@
 							</p>
 						</div>
 
-						<!-- ... 2nd-column-footer-data ... -->
+						<!-- [ℹ] 2nd-column-footer-data -->
 						<div
 							class='column-start-grid'>
 
-							<!-- ... subscribe-to-newletter ... -->
+							<!-- [ℹ] subscribe-to-newletter -->
 							<div 
 								id='newsletter-container'
 								class='m-b-40'>
-								<!-- ... title-section ... -->
+								<!-- [ℹ] title-section -->
 								<p class='color-white s-14 w-normal m-b-8 text-left'>
-									{footer_traslation_obj.subscribe_newsletter}
+									{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_newsletter}
 								</p>
-								<!-- ... form-start ... -->
+								<!-- [ℹ] form-start -->
 								<form 
 									on:submit|preventDefault={() => submitEmail()} 
 									class='row-space-out'>
-									<!-- ... input-email-field ... -->
+									<!-- [ℹ] input-email-field -->
 									<input 
 										type='email' 
 										name='type_email' 
 										id=''
-										placeholder={footer_traslation_obj.type_email}
+										placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.type_email}
 										class='m-r-20 s-14 w-400 color-grey'>
-									<!-- ... button-subscribe-action ... -->
+									<!-- [ℹ] button-subscribe-action -->
 									<button 
 										type='submit'
 										id='newsletter-subscribe-btn'
 										class='btn-primary'>
 										<p class='color-white s-14 w-500'>
-											{footer_traslation_obj.subscribe_cta}
+											{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_cta}
 										</p>
 									</button>
 								</form>
 							</div>
 
-							<!-- ... menu-list num.1 ... -->
-							<!-- ... generate-translations-for-footer ... -->
-							{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as footer_nav_links_translations}
-								{#if footer_nav_links_translations.lang == server_side_language}
-									<div 
-										id='menu-list'>
-										<ul>
-											<!-- ... latest-news ... -->
-											<li class='m-r-10'>
-												<a 
-													rel='external'
-													href={footer_nav_links_translations.latest_news}>
-													<p class='color-white s-14 w-normal'>
-														{footer_traslation_obj.latest_news}
-													</p>
-												</a>
-											</li>
-											<!-- ... sep .. -->
-											<li class='place-center m-r-10'>
-												<div class='menu-separator' />
-											</li>
-											<!-- ... betting-tips ... -->
-											<li class='m-r-10'>
-												<a 
-													rel='external'
-													href={footer_nav_links_translations.betting_tips}>
-													<p class='color-white s-14 w-normal'>
-														{footer_traslation_obj.betting_tips}
-													</p>
-												</a>
-											</li>
-											<!-- ... sep .. -->
-											<li class='place-center m-r-10'>
-												<div class='menu-separator' />
-											</li>
-											<!-- ... about_us ... -->
-											<li class='m-r-10'>
-												<a 
-													rel='external'
-													href={footer_nav_links_translations.about_us}>
-													<!-- ... about us ... -->
-													<p class='color-white s-14 w-normal'>
-														{footer_traslation_obj.about_us}
-													</p>
-												</a>
-											</li>
-											<!-- ... sep .. -->
-											<li class='place-center m-r-10'>
-												<div class='menu-separator' />
-											</li>
-											<!-- ... terms and conditions ... -->
-											<li class='m-r-10'>
-												<a 
-													rel='external'
-													href={footer_nav_links_translations.terms}>
-													<p class='color-white s-14 w-normal'>
-														{footer_traslation_obj.terms}
-													</p>
-												</a>
-											</li>
-											<!-- ... sep .. -->
-											<li class='place-center m-r-10'>
-												<div class='menu-separator' />
-											</li>
-											<!-- ... privacy and conditions ... -->
-											<li class='m-r-10'>
-												<a 
-													rel='external'
-													href={footer_nav_links_translations.privacy}>
-													<p class='color-white s-14 w-normal'>
-														{footer_traslation_obj.privacy}
-													</p>
-												</a>
-											</li>
-										</ul>
-									</div>
-								{/if}
-							{/each}
+							<!-- [ℹ] menu-list num.1 -->
+							<!-- [ℹ] generate-translations-for-footer -->
+
+              <div 
+                id='menu-list'>
+                <ul>
+                  <!-- [ℹ] latest-news -->
+                  <li class='m-r-10'>
+                    <a 
+                      rel='external'
+                      href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}>
+                      <p class='color-white s-14 w-normal'>
+                        {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.latest_news}
+                      </p>
+                    </a>
+                  </li>
+                  <!-- [ℹ] sep .. -->
+                  <li class='place-center m-r-10'>
+                    <div class='menu-separator' />
+                  </li>
+                  <!-- [ℹ] betting-tips -->
+                  <li class='m-r-10'>
+                    <a 
+                      rel='external'
+                      href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}>
+                      <p class='color-white s-14 w-normal'>
+                        {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.betting_tips}
+                      </p>
+                    </a>
+                  </li>
+                  <!-- [ℹ] sep .. -->
+                  <li class='place-center m-r-10'>
+                    <div class='menu-separator' />
+                  </li>
+                  <!-- [ℹ] about_us -->
+                  <li class='m-r-10'>
+                    <a 
+                      rel='external'
+                      href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}>
+                      <!-- [ℹ] about us -->
+                      <p class='color-white s-14 w-normal'>
+                        {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.about_us}
+                      </p>
+                    </a>
+                  </li>
+                  <!-- [ℹ] sep .. -->
+                  <li class='place-center m-r-10'>
+                    <div class='menu-separator' />
+                  </li>
+                  <!-- [ℹ] terms and conditions -->
+                  <li class='m-r-10'>
+                    <a 
+                      rel='external'
+                      href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}>
+                      <p class='color-white s-14 w-normal'>
+                        {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.terms}
+                      </p>
+                    </a>
+                  </li>
+                  <!-- [ℹ] sep .. -->
+                  <li class='place-center m-r-10'>
+                    <div class='menu-separator' />
+                  </li>
+                  <!-- [ℹ] privacy and conditions -->
+                  <li class='m-r-10'>
+                    <a 
+                      rel='external'
+                      href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}>
+                      <p class='color-white s-14 w-normal'>
+                        {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.privacy}
+                      </p>
+                    </a>
+                  </li>
+                </ul>
+              </div>
 							
 						</div>
 
-						<!-- ... 3rd-column-footer-data ... -->
+						<!-- [ℹ] 3rd-column-footer-data -->
 						<div
 							class='column-start-grid'>
 
-							<!-- ... follow-us-and-social-media ... -->
+							<!-- [ℹ] follow-us-and-social-media -->
 							<div 
 								class='m-b-40'>
 								<p 
 									class='color-white s-14 w-normal m-b-20'>
-									{footer_traslation_obj.follow}
+									{FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.follow}
 								</p>
-								<!-- ... social media follows ... -->
+								<!-- [ℹ] social media follows -->
 								<div 
 									id='social-media-box'
 									class='column-start-grid'>
-									<!-- ... identify the list of social media icons ... -->
-									{#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev as social_network_obj}
-										{#if social_network_obj.lang == server_side_language}
-											<!-- ... render the correct items ... -->
-											{#each social_network_obj.social_networks as social_network}
-												<!-- ... social-network-component ... -->
-												<a 
-													rel='external'
-													href={social_network[1].toString().toLocaleLowerCase()}>
-													<img 
-														src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
-														alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
-														title='{social_network[0].toString().toLocaleLowerCase()}-icon'
-														width="32px" height="32px" />
-												</a>
-											{/each}
-										{/if}
-									{/each}
+									<!-- [ℹ] identify the list of social media icons -->
+                  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
+                    <!-- [ℹ] social-network-component -->
+                    <a 
+                      rel='external'
+                      href={social_network[1].toString().toLocaleLowerCase()}>
+                      <img 
+                        src='/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg'
+                        alt='{social_network[0].toString().toLocaleLowerCase()}-icon'
+                        title='{social_network[0].toString().toLocaleLowerCase()}-icon'
+                        width="32px" height="32px" />
+                    </a>
+                  {/each}
 								</div>
 							</div>
 
-							<!-- ... legal-begambleawareorg ... -->
+							<!-- [ℹ] legal-begambleawareorg -->
 							<div 
 								class='row-space-start'
 								style='width: auto;'>
@@ -770,8 +773,6 @@
 					</div>
 				{/if}
 
-			{/if}
-		{/each}
 	{/if}
 </footer>
 
@@ -792,7 +793,7 @@
 	}
 	footer #inner-footer {
 		max-width: 1378px;
-		/* ... */
+		/* [ℹ] */
 		display: grid;
 		justify-items: stretch;
 		align-items: center;
