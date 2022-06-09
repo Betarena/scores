@@ -29,20 +29,16 @@
     } = params
 
     /**
-     * ------------------------
-     * GET PRE-LOADED-PAGE-DATA:
-     * ------------------------
-     * ➤ GET complete -> pages_and_seo response data;
-     * ------------------------
+     * [ℹ] Ensure URL Check Existance; 
+     * [ℹ] IMPORTANT;
     */
 
-		const response_pages_and_seo: Hasura_Complete_Pages_SEO = await fetch('/api/pages_and_seo/cache-seo.json', {
+    const response_valid_url = await fetch(`/api/pages_and_seo/cache-seo.json?url=`+url.pathname, {
 			method: 'GET'
 		}).then((r) => r.json());
 
     // [ℹ] validate URL existance;
-    if (!response_pages_and_seo.scores_urls_dev.urlsArr.includes(url.pathname)) {
-
+    if (!response_valid_url) {
       // [ℹ] otherwise, ERROR;
       return {
         status: 404,
@@ -51,86 +47,39 @@
     }
 
     /**
-     * ------------------------
-     * URL Handling Decode:
-     * ------------------------
-     * Incoming URL:
-     * => .../football/england/carabao-cup
-     * & without accents
-     * ------------------------
+     * [ℹ] Loading of (this) page [tournaments] SEO-READY data; 
     */
 
-    sport = sport.replace(/-/g, ' ')
-    country = country.replace(/-/g, ' ')
-    league_name = league_name.replace(/-/g, ' ')
+    const response_tournaments_seo: Cache_Single_Tournaments_SEO_Translation_Response = await fetch(`/api/pages_and_seo/cache-seo.json?lang=`+params.lang+"&page=tournaments", {
+			method: 'GET'
+		}).then((r) => r.json());
 
-    // [ℹ] identify correct tournaments page-info;
-    let tournament_visible: boolean = false;
-    let tournament_data: Single_Tournament_Data_Type = undefined;
-    let tournament_data_translations: Single_Tournament_Data_Type[] = [];
-    // [ℹ] iterate over each tournament and identify the matching target-tournament;
-    for (const tournament of response_pages_and_seo.scores_tournaments_dev) {
-
-      const temp_country: string = removeDiacritics(tournament.country)
-      const temp_name: string = removeDiacritics(tournament.name)
-      const temp_sport: string = removeDiacritics(tournament.sport)
-
-      // [ℹ] tournament existance && visibility validation;
-      if (temp_country.toLowerCase() == country.toLowerCase() &&
-          temp_name.toLowerCase() == league_name.toLowerCase() &&
-          temp_sport.toLowerCase() == sport.toLowerCase() &&
-          tournament.lang.toLowerCase() == lang.toLowerCase() &&
-          tournament.status.toLowerCase() == "published") {
-        // [ℹ] correct tournament found;
-        tournament_visible = true;
-        tournament_data = tournament;
-      }
-    }
-
-    // [ℹ] check if tournament has been identified;
-    if (tournament_data) {
-      // [ℹ] iterate over each tournament and identify the matching target-tournament translations;
-      for (const tournament of response_pages_and_seo.scores_tournaments_dev) {
-      // [ℹ] tournament existance && visibility validation;
-      if (tournament.tournament_id == tournament_data.tournament_id &&
-          tournament.status.toLowerCase() == "published") {
-        // [ℹ] add-tournaments-translations-to-array;
-        tournament_data_translations.push(tournament);
-        }
-      }
-    }
-
-    sport = sport.replace(/\s/g, '-')
-    country = country.replace(/\s/g, '-')
-    league_name = league_name.replace(/\s/g, '-')
+    const response_tournaments_page_info: Cache_Single_Tournaments_Data_Page_Translation_Response = await fetch(`/api/pages_and_seo/cache-seo.json?url=`+url.pathname+"&page=tournaments", {
+			method: 'GET'
+		}).then((r) => r.json());
 
     /**
-     * [ℹ] regex-ing SEO content;
+     * [ℹ] regex-ing SEO content dynamically;
     */
-    for await (const item of response_pages_and_seo.scores_seo_tournaments_dev) {
-      // [ℹ] replace;
-      item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{lang}/g, lang));
-      item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{sport}/g, sport));
-      item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{country}/g, country));
-      item.main_data = JSON.parse(JSON.stringify(item.main_data).replace(/{name}/g, league_name));
 
-      // [ℹ] canonical exclusive - [EN];
-      for (const iterator of tournament_data_translations) {
-        if (iterator.lang == 'en') {
-          item.main_data.canonical = `https://scores.betarena.com/${iterator.sport.toLowerCase()}/${iterator.country.toLowerCase()}/${iterator.name.replace(/\s/g,'-').toLowerCase()}`
-        }
-      }
+    response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{lang}/g, lang));
+    response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{sport}/g, sport));
+    response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{country}/g, country));
+    response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{name}/g, league_name));
 
-      item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{lang}/g, lang));
-      item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{sport}/g, sport));
-      item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{country}/g, country));
-      item.twitter_card = JSON.parse(JSON.stringify(item.twitter_card).replace(/{name}/g, league_name));
+    response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{lang}/g, lang));
+    response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{sport}/g, sport));
+    response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{country}/g, country));
+    response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{name}/g, league_name));
 
-      item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{lang}/g, lang));
-      item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{sport}/g, sport));
-      item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{country}/g, country));
-      item.opengraph = JSON.parse(JSON.stringify(item.opengraph).replace(/{name}/g, league_name));
-    }
+    response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{lang}/g, lang));
+    response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{sport}/g, sport));
+    response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{country}/g, country));
+    response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{name}/g, league_name));
+
+    // [ℹ] canonical exclusive - [EN];
+    let enItemAlt = response_tournaments_page_info.alternate_data.find( ({ lang }) => lang === 'en' );
+    response_tournaments_seo.main_data.canonical = `https://scores.betarena.com/${enItemAlt.sport.toLowerCase()}/${enItemAlt.country.toLowerCase()}/${enItemAlt.name.replace(/\s/g,'-').toLowerCase()}`
 
     /** =========
      * [ℹ] RETURN
@@ -138,36 +87,24 @@
     */
 
     // [ℹ] -> response data;
-		if (response_pages_and_seo &&
-        response_pages_and_seo &&
-        tournament_visible) {
+		if (response_tournaments_seo &&
+        response_tournaments_page_info) {
       return {
         props: {
-          TOURNAMENT_DATA_TRANSLATED_COPIES: tournament_data_translations,
-          TOURNAMENT_DATA: tournament_data,
-          PAGE_DATA_SEO: response_pages_and_seo
+          TOURNAMENT_DATA_TRANSLATED_COPIES: response_tournaments_page_info.alternate_data,
+          TOURNAMENT_DATA: response_tournaments_page_info.data,
+          PAGE_DATA_SEO: response_tournaments_seo
         }
       } 
     }
-    // [ℹ] -> (TOURNAMENT == OFF) => ERROR
-    else if (response_pages_and_seo &&
-             response_pages_and_seo &&
-             !tournament_visible) {
-      return {
-        status: 404,
-        error: new Error("Uh-oh! This page does not exist")
-      }
-    }
+  
     // [ℹ] -> otherwise, total ERROR;
-    else {
-      return {
-        status: 500,
-        error: new Error(`Uh-oh! There has been an /{tournaments} page preloading error`)
-      };
-    }
+    return {
+      status: 500,
+      error: new Error(`Uh-oh! There has been an /{tournaments} page preloading error`)
+    };
 
   }
-
 </script>
 
 
@@ -184,57 +121,51 @@
 
   import SvelteSeo from 'svelte-seo';
 
-  import type { Hasura_Complete_Pages_SEO, Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
+  import type { Cache_Single_Tournaments_Data_Page_Translation_Response, 
+    Cache_Single_Tournaments_SEO_Translation_Response, 
+    Hasura_Complete_Pages_SEO, 
+    Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
 
   export let TOURNAMENT_DATA_TRANSLATED_COPIES: Single_Tournament_Data_Type[];
   export let TOURNAMENT_DATA: Single_Tournament_Data_Type;
-  export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
-
-  let refresh: boolean = false;
+  export let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
 
   // TODO: replace into a single __layout.svelte method [?] using page-stores [?]
-  // [ℹ] page-language-declaration;
-	let server_side_language: string = 'en';
-	// [ℹ] language-translation-declaration;
-	$: if ($page.params.lang === undefined) {
-		server_side_language = 'en';
-	} else {
-		server_side_language = $page.params.lang;
-	}
 
   // [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
   let current_lang: string = $userBetarenaSettings.lang;
 	$: refresh_lang = $userBetarenaSettings.lang;
+
 	// [ℹ] validate LANG change
 	$: if (current_lang != refresh_lang && 
          browser) {
+
     let newURL: string
+
     // [ℹ] identify new transaltion change;
     for (const tournament_t of TOURNAMENT_DATA_TRANSLATED_COPIES) {
       if (tournament_t.lang == $userBetarenaSettings.lang) {
+
         // [ℹ] formatting;
         let name: string = tournament_t.name;
         name = name.replace(/\s+/g, '-');
+        
         // [ℹ] URL generation;
         newURL = tournament_t.lang == 'en' 
           ? `/${tournament_t.sport.toLowerCase()}/${tournament_t.country.toLowerCase()}/${name.toLowerCase()}` 
           : `/${removeDiacritics(tournament_t.lang)}/${removeDiacritics(tournament_t.sport.toLowerCase())}/${removeDiacritics(tournament_t.country.toLowerCase())}/${removeDiacritics(name.toLowerCase())}`
+
         // [ℹ] update lang;
         current_lang = refresh_lang
       }
     }
-    // [ℹ] navigate;
+
+    // [ℹ] navigate [options];
     // invalidate('/api/tournaments/cache-data.json');
     // prefetch(newURL);
-    goto(newURL, {replaceState: true})
-
-    // [ℹ] reset necessary variables;
-		// refresh = true
-    // setTimeout(async() => {
-		// 	refresh = false
-		// }, 50)
+    goto(newURL, { replaceState: true })
 	}
 </script>
 
@@ -246,20 +177,18 @@
 
 <!-- [ℹ] adding SEO-META-TAGS for (this) PAGE 
 -->
-{#each PAGE_DATA_SEO.scores_seo_tournaments_dev as item}
-	{#if item.lang == server_side_language}
-		<SvelteSeo
-			title={item.main_data.title}
-			description={item.main_data.description}
-			keywords={item.main_data.keywords}
-			noindex={JSON.parse(item.main_data.noindex.toString())}
-			nofollow={JSON.parse(item.main_data.nofollow.toString())}
-			canonical={item.main_data.canonical}
-			twitter={item.twitter_card}
-			openGraph={item.opengraph}
-		/>
-	{/if}
-{/each}
+{#if PAGE_DATA_SEO}
+  <SvelteSeo
+    title={PAGE_DATA_SEO.main_data.title}
+    description={PAGE_DATA_SEO.main_data.description}
+    keywords={PAGE_DATA_SEO.main_data.keywords}
+    noindex={JSON.parse(PAGE_DATA_SEO.main_data.noindex.toString())}
+    nofollow={JSON.parse(PAGE_DATA_SEO.main_data.nofollow.toString())}
+    canonical={PAGE_DATA_SEO.main_data.canonical}
+    twitter={PAGE_DATA_SEO.twitter_card}
+    openGraph={PAGE_DATA_SEO.opengraph}
+  />
+{/if}
 
 <!-- [ℹ] adding HREF-LANG-META-TAGS for (this) PAGE 
 -->
@@ -269,7 +198,7 @@
   {#if PAGE_DATA_SEO}
     <!-- [ℹ] content here
     -->
-    {#each PAGE_DATA_SEO.scores_hreflang_dev as item}
+    {#each PAGE_DATA_SEO.hreflang as item}
       <!-- [ℹ] content here
       -->
       {#each TOURNAMENT_DATA_TRANSLATED_COPIES as item_}
@@ -314,58 +243,54 @@
 <section 
   id='tournaments-page'>
 
-  {#if !refresh}
+  <!-- [ℹ] breadcrumbs URL -->
+  <div
+    id='tournaments-page-breadcrumbs'
+    class='row-space-start'>
 
-    <!-- [ℹ] breadcrumbs URL -->
-    <div
-      id='tournaments-page-breadcrumbs'
-      class='row-space-start'>
-
-      <a 
-        sveltekit:prefetch
-        href="/{$page.params.lang}/{$page.params.sport}">
-        <p
-          class='s-14 color-white m-r-10 capitalize cursor-pointer'>
-          {TOURNAMENT_DATA.sport}
-        </p>
-      </a>
-
-      <img 
-        src="/assets/svg/tournaments/arrow-right.svg" 
-        alt=""
-        class="m-r-10"
-        width="14px" height="14px"
-      />
-
-      <a 
-        sveltekit:prefetch
-        href="/{$page.params.lang}/{$page.params.sport}/{$page.params.country}">
-        <p
-          class='s-14 color-white m-r-10 capitalize cursor-pointer'>
-          {TOURNAMENT_DATA.country}
-        </p>
-      </a>
-
-      <img
-        src="/assets/svg/tournaments/arrow-right.svg" 
-        alt="" 
-        class="m-r-10"
-        width="14px" height="14px"
-      />
-
+    <a 
+      sveltekit:prefetch
+      href="/{$page.params.lang}/{$page.params.sport}">
       <p
-        class='s-14 color-white m-r-10 capitalize'>
-        {TOURNAMENT_DATA.name}
+        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+        {TOURNAMENT_DATA.sport}
       </p>
+    </a>
 
-    </div>
+    <img 
+      src="/assets/svg/tournaments/arrow-right.svg" 
+      alt=""
+      class="m-r-10"
+      width="14px" height="14px"
+    />
 
-    <!-- [ℹ] widgets displayed -->
-    <div>
-      {TOURNAMENT_DATA.widgets}
-    </div>
+    <a 
+      sveltekit:prefetch
+      href="/{$page.params.lang}/{$page.params.sport}/{$page.params.country}">
+      <p
+        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+        {TOURNAMENT_DATA.country}
+      </p>
+    </a>
 
-  {/if}
+    <img
+      src="/assets/svg/tournaments/arrow-right.svg" 
+      alt="" 
+      class="m-r-10"
+      width="14px" height="14px"
+    />
+
+    <p
+      class='s-14 color-white m-r-10 capitalize'>
+      {TOURNAMENT_DATA.name}
+    </p>
+
+  </div>
+
+  <!-- [ℹ] widgets displayed -->
+  <div>
+    {TOURNAMENT_DATA.widgets}
+  </div>
       
 </section>
 

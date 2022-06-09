@@ -16,13 +16,18 @@
     fetch 
   }) {
 
-    const response_seo_page = await fetch('/api/pages_and_seo/cache-seo.json', {
+    const urlLang: string = params.lang == undefined ? 'en' : params.lang
+
+    /**
+     * [ℹ] Ensure URL Check Existance; 
+    */
+
+    const response_valid_url = await fetch(`/api/pages_and_seo/cache-seo.json?url=`+url.pathname, {
 			method: 'GET'
 		}).then((r) => r.json());
 
     // [ℹ] validate URL existance;
-    if (!response_seo_page.scores_urls_dev.urlsArr.includes(url.pathname)) {
-
+    if (!response_valid_url) {
       // [ℹ] otherwise, ERROR;
       return {
         status: 404,
@@ -31,6 +36,15 @@
     }
 
     /**
+     * [ℹ] Loading of (this) page [homepage] SEO-READY data; 
+    */
+
+    const response_homepage_seo = await fetch(`/api/pages_and_seo/cache-seo.json?lang=`+params.lang+"&url=homepage", {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    /**
+     * ------------------------
      * GET PRE-LOADED-PAGE-DATA:
      * ------------------------
      * ➤ GET featured match data;
@@ -43,6 +57,7 @@
      * ➤ GET livescores_football data;
      * ➤ GET livescores_football_leagues data;
      * ➤ GET livescores_football_translations data;
+     * ------------------------
     */
 
 		const response_featured_match = await fetch('/api/featured_match/cache-seo.json', {
@@ -97,7 +112,7 @@
 					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
 					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
 					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
-					PAGE_DATA_SEO: response_seo_page,
+					PAGE_DATA_SEO: response_homepage_seo,
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
 					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
 					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
@@ -134,11 +149,27 @@
 	import { amp, browser, dev, mode, prerendering } from '$app/env';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
+	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
 	// ... import `variables` and values;
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import SvelteSeo from 'svelte-seo';
+
+  /**
+   * [v1] - Testing with Standard Imports (client-side)
+  */
+
+	// import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
+	// import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	// import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
+	// import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
+  // import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+  // import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
+  // import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
+
+  /**
+   * [v3] - Testing with Dynamic Imports (server-side) inside load() 
+  */
 
   // export let FeaturedMatchWidget;
   // export let FeaturedBettingSitesWidget;
@@ -148,14 +179,9 @@
   // export let SeoBlock;
   // export let LeaguesTableWidget;
 
-	// ... import sub-components;
-	// import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
-	// import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	// import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-	// import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
-  // import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
-  // import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
-  // import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
+  /**
+   * [v2] - Testing with Dynamic Imports (client-side)
+  */
 
   let FeaturedMatchWidget;
   let FeaturedBettingSitesWidget;
@@ -180,7 +206,7 @@
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
   export let BEST_GOAL_SCORERS_DATA_SEO;
-	export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
+	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
   let SEO_BLOCK_DATA = PAGE_DATA_SEO;
   export let LEAGUES_TABLE_SCORES_SEO_DATA;
 	export let LIVE_SCORES_DATA_DATA_SEO;
@@ -207,17 +233,6 @@
 		server_side_language = $page.params.lang;
 	}
 
-
-	/**
-	 * Description:
-	 * ~~~~~~~~~~~~~~~~~
-	 * This function loads when all of the
-	 * rest of the components have loaded
-	 * and rendered, checking via JS the viewport
-	 * of the client device and changing between
-	 * appropiate components to display the correct
-	 * component, tailored to a specifc device.
-	 */
 	let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
@@ -258,30 +273,31 @@
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- ... adding SEO-META-TAGS for PAGE ... -->
-{#each PAGE_DATA_SEO.scores_seo_homepage_dev as item}
-	{#if item.lang == server_side_language}
-		<!-- content here -->
-		<SvelteSeo
-			title={item.main_data.title}
-			description={item.main_data.description}
-			keywords={item.main_data.keywords}
-			noindex={JSON.parse(item.main_data.noindex.toString())}
-			nofollow={JSON.parse(item.main_data.nofollow.toString())}
-			canonical={item.main_data.canonical}
-			twitter={item.twitter_card}
-			openGraph={item.opengraph}
-		/>
-	{/if}
-{/each}
+<!-- [ℹ] adding SEO-META-TAGS for (this) PAGE 
+-->
+{#if PAGE_DATA_SEO}
+   <!-- content here -->
+  <SvelteSeo
+    title={PAGE_DATA_SEO.main_data.title}
+    description={PAGE_DATA_SEO.main_data.description}
+    keywords={PAGE_DATA_SEO.main_data.keywords}
+    noindex={JSON.parse(PAGE_DATA_SEO.main_data.noindex.toString())}
+    nofollow={JSON.parse(PAGE_DATA_SEO.main_data.nofollow.toString())}
+    canonical={PAGE_DATA_SEO.main_data.canonical}
+    twitter={PAGE_DATA_SEO.twitter_card}
+    openGraph={PAGE_DATA_SEO.opengraph}
+  />
+{/if}
 
+<!-- [ℹ] adding HREFLANG-TAGS for (this) PAGE
+-->
 <svelte:head>
   <!-- ... ℹ head content 
   -->
   {#if PAGE_DATA_SEO}
     <!-- ... ℹ content here 
     -->
-    {#each PAGE_DATA_SEO.scores_hreflang_dev as item}
+    {#each PAGE_DATA_SEO.hreflang as item}
       <!-- ... ℹ content here 
       -->
       {#if item.link == null}
@@ -298,7 +314,8 @@
 	COMPONENT HTML
 =================== -->
 
-<section id="home-page">
+<section 
+  id="home-page">
 
   <!-- ... DESKTOP & TABLET VIEW ONLY ... -->
   {#if !tabletExclusive && !mobileExclusive}
@@ -317,7 +334,7 @@
       </div>
       <!-- ... widget #2 ... -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
-      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
+      <!-- <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} /> -->
     </div>
     
     <!-- ... 3rd ROW ... -->
@@ -363,7 +380,7 @@
       {/if}
       <!-- ... widget #5 -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
-      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
+      <!-- <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} /> -->
     </div>
   {/if}
 	

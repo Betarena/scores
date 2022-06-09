@@ -19,13 +19,16 @@
     fetch
   }) {
 
-    const response_seo_page = await fetch('/api/pages_and_seo/cache-seo.json', {
+    /**
+     * [ℹ] Ensure URL Check Existance; 
+    */
+
+    const response_valid_url = await fetch(`/api/pages_and_seo/cache-seo.json?url=`+url.pathname, {
 			method: 'GET'
 		}).then((r) => r.json());
 
     // [ℹ] validate URL existance;
-    if (!response_seo_page.scores_urls_dev.urlsArr.includes(url.pathname)) {
-
+    if (!response_valid_url) {
       // [ℹ] otherwise, ERROR;
       return {
         status: 404,
