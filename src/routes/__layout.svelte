@@ -22,23 +22,21 @@
      * ------------------------
      * GET PRE-LOADED-PAGE-DATA:
      * ------------------------
-     * ➤ GET header-complete data;
-     * ➤ GET footer-complete data
-     * ➤ GET seo-page data
+     * ➤ GET header-complete (w/ SEO) data;
+     * ➤ GET footer-complete (w/SEO) data;
+     * ➤ GET seo-page data (main SEO) data;
      * ------------------------
     */
 
-    const response_header = await fetch('/api/navbar/cache-data.json', {
+    const urlLang: string = params.lang == undefined ? 'en' : params.lang
+
+    const response_header = await fetch(`/api/navbar/cache-data.json?lang=`+urlLang, {
       method: 'GET',
     }).then(r => r.json());
 
-    const response_footer = await fetch('/api/footer/data.json', {
+    const response_footer = await fetch(`/api/footer/cache-data.json?lang=`+urlLang, {
       method: 'GET',
     }).then(r => r.json());
-
-    const response_seo_page = await fetch('/api/pages_and_seo/cache-seo.json', {
-      method: 'GET'
-    }).then((r) => r.json());
 
     // let Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
     // let Header = (await import('$lib/components/header/_Header.svelte')).default;
@@ -50,8 +48,7 @@
 
     // [ℹ] validate, & return DATA [always]
     if (response_header && 
-        response_footer &&
-        response_seo_page) {
+        response_footer) {
 
       return {
         status: 200,
@@ -62,7 +59,6 @@
         props: {
           HEADER_TRANSLATION_DATA: response_header,
           FOOTER_TRANSLATION_DATA: response_footer,
-          PAGE_DATA_SEO: response_seo_page,
 
           // Footer: Footer,
           // Header: Header,
@@ -71,6 +67,7 @@
           // PlatformAlert: PlatformAlert,
           // EmailSubscribe: EmailSubscribe,
           // GoogleAnalytics: GoogleAnalytics
+
         }
       }
       
@@ -142,13 +139,13 @@
   import '../app.css';
 
   // [ℹ] load in SEO-DATA for Header, Footer TYPES;
-  import type { Header_Translation_Response, Header_Translation } from '$lib/models/navbar/types';
-  import type { Footer_Data } from '$lib/models/footer/types'
+  import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
+  import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types'
   import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
-  export let HEADER_TRANSLATION_DATA: Header_Translation_Response;
-  export let FOOTER_TRANSLATION_DATA: Footer_Data;
-  export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
+  export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
+  export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
+  // export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
 
   let ga_measurment_id = "UA-60160331-9"  // ... GoogleAnalytics ID
     
@@ -193,7 +190,7 @@
 
 <svelte:head>
   <!-- https://github.com/sveltejs/kit/issues/3091 -->
-  <html lang="{$page.params.lang == undefined || !PAGE_DATA_SEO.scores_urls_dev.urlsArr.includes($page.url.pathname) ? 'en' : $page.params.lang}" />
+  <html lang="{$page.params.lang == undefined || !$page.error ? 'en' : $page.params.lang}" />
 </svelte:head>
 
 
@@ -209,24 +206,24 @@
 {/if}
 
 {#if offlineMode}
-  <!-- <OfflineAlert /> -->
-  <svelte:component this={OfflineAlert} />
+  <OfflineAlert />
+  <!-- <svelte:component this={OfflineAlert} /> -->
 {/if}
 
-<!-- <PlatformAlert {HEADER_TRANSLATION_DATA} />
+<PlatformAlert {HEADER_TRANSLATION_DATA} />
 <SplashScreen />
 <EmailSubscribe />
-<Header {HEADER_TRANSLATION_DATA} /> -->
+<Header {HEADER_TRANSLATION_DATA} />
 
-<svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} />
-<svelte:component this={SplashScreen} />
-<svelte:component this={EmailSubscribe} />
-<svelte:component this={Header} {HEADER_TRANSLATION_DATA} />
+<!-- <svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} /> -->
+<!-- <svelte:component this={SplashScreen} /> -->
+<!-- <svelte:component this={EmailSubscribe} /> -->
+<!-- <svelte:component this={Header} {HEADER_TRANSLATION_DATA} /> -->
 
 <main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
   <slot />
-  <!-- <Footer {FOOTER_TRANSLATION_DATA} /> -->
-  <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} />
+  <Footer {FOOTER_TRANSLATION_DATA} />
+  <!-- <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} /> -->
 </main>
 
 
