@@ -7,6 +7,21 @@ import { gql } from 'graphql-request';
  * ... get ALL of the TRANSLATIONS from the DB
  * for the website-platform
 */
+export const GET_HREFLANG_DATA = gql`
+query GET_HREFLANG_DATA @cached(ttl: 300) {
+   scores_hreflang_dev {
+     hreflang
+     link
+   }
+ }
+`;
+
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... get ALL of the TRANSLATIONS from the DB
+ * for the website-platform
+*/
  export const GET_FOOTER_DATA = gql`
  query GET_FOOTER_DATA @cached(ttl: 300) {
 		scores_footer_translations_dev {

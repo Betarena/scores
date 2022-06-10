@@ -37,31 +37,19 @@
     }
 
     /**
-     * [ℹ] Loading of (this) page [homepage] SEO-READY data; 
+     * [ℹ] Loading of (this) page [homepage] SEO-READY DATA; 
     */
 
-    const response_homepage_seo = await fetch(`/api/pages_and_seo/cache-seo.json?lang=`+params.lang+"&url=homepage", {
+    const response_homepage_seo = await fetch('/api/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", {
 			method: 'GET'
 		}).then((r) => r.json());
 
-    /**
-     * GET PRE-LOADED-PAGE-DATA:
-     * ------------------------
-     * ➤ GET featured match data;
-     * ➤ GET featured_betting_sites data;
-     * ➤ GET league_list data;
-     * ➤ GET seo_page data;
-     * ➤ GET seo_page data;
-     * ➤ GET best_goalscorers data;
-     * ➤ GET leagues_table data;
-     * ➤ GET livescores_football data;
-     * ➤ GET livescores_football_leagues data;
-     * ➤ GET livescores_football_translations data;
-    */
 
-		const response_featured_match = await fetch('/api/featured_match/cache-seo.json', {
+		const response_featured_match_seo = await fetch('/api/featured_match/cache-data.json?lang='+urlLang, {
 			method: 'GET'
 		}).then((r) => r.json());
+    
+
 
 		const response_featured_betting_sites = await fetch('/api/featured_betting_sites/cache-seo.json', {
 			method: 'GET'
@@ -91,6 +79,10 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    /**
+    * [v3] - Testing with Dynamic Imports (server-side) inside load() 
+    */
+
     // let FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
     // let FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
     // let	LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
@@ -100,10 +92,10 @@
     // let LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
 
 		// [ℹ] validate, DATA RETURNED;
-		if (response_featured_match && 
+		if (response_homepage_seo &&
+        response_featured_match_seo && 
         response_featured_betting_sites &&
         response_league_list && 
-        response_homepage_seo &&
         response_best_goalscorers &&
         response_leagues_table &&
         response_livescores_football &&
@@ -118,10 +110,11 @@
           "private": false
         },
         props: {
-          FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match,
+          PAGE_DATA_SEO: response_homepage_seo,
+          FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match_seo,
+
           FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
           LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
-          PAGE_DATA_SEO: response_homepage_seo,
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
           LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
@@ -211,8 +204,9 @@
 
 	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
+  import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
 
-	export let FEATURED_MATCH_WIDGET_DATA_SEO;
+	export let FEATURED_MATCH_WIDGET_DATA_SEO : Cache_Single_Lang_Featured_Match_Translation_Response;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
   export let BEST_GOAL_SCORERS_DATA_SEO;
@@ -381,7 +375,6 @@
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
-
 
 <style>
 	section#home-page {

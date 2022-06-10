@@ -7,21 +7,19 @@ import { dev } from '$app/env';
 
 import { get } from '$lib/api/utils';
 
-import type { GeoJsResponse } from '$lib/model/_geojs/geo-js-interfaceterface';
+import type { GeoJsResponse } from '$lib/models/geojs-types';
 
 /**
  * Description:
  * ~~~~~~~~~~~~~~~~~
- * ... checks for the users location
- * ... and stores it for future use;
+ * [ℹ] checks for the users location
+ * [ℹ] and stores it for future use;
  */
 export async function getUserLocation(): Promise<GeoJsResponse> {
-	// ... DEBUGGING;
-	if (dev) console.info('-- getUserLocation() checkpoint --');
-	// ... push-request;
+	// [ℹ] push-request;
 	const response = await get(`https://get.geojs.io/v1/ip/geo.json`);
-	// ... DEBUGGING;
+	// [🐛] debug;
 	if (dev) console.info('GoeJS Response', response);
-	// ... return;
+	// [ℹ] return;
 	return response;
 }
