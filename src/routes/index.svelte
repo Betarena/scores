@@ -56,15 +56,17 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-    // 
-
-		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
+    const response_league_list_seo = await fetch('/api/league_list/cache-data.json?lang='+urlLang, {
 			method: 'GET'
 		}).then((r) => r.json());
+
+    // 
 		
     const response_leagues_table = await fetch('/api/leagues_table/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
+
+    // 
 
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+urlLang, {
 			method: 'GET'
@@ -95,7 +97,7 @@
         response_featured_match_seo && 
         response_featured_betting_sites_seo &&
         response_best_goalscorers_seo &&
-        response_league_list && 
+        response_league_list_seo && 
         response_leagues_table &&
         response_livescores_football &&
         response_livescores_football_leagues &&
@@ -113,8 +115,8 @@
           FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match_seo,
           FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_seo,
           BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers_seo,
+          LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list_seo,
 
-          LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
           
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
@@ -207,13 +209,14 @@
   import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
   import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
   import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/best_goalscorer/types';
+  import type { Cache_Single_Lang_LeagueList_Translation_Response } from '$lib/models/league_list/types';
 
 	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
   export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
+	export let LEAGUE_LIST_WIDGET_DATA_SEO: Cache_Single_Lang_LeagueList_Translation_Response;
 
-	export let LEAGUE_LIST_WIDGET_DATA_SEO;
   let SEO_BLOCK_DATA = PAGE_DATA_SEO;
   export let LEAGUES_TABLE_SCORES_SEO_DATA;
 
@@ -282,16 +285,9 @@
 <!-- [ℹ] adding HREFLANG-TAGS for (this) PAGE
 -->
 <svelte:head>
-  <!-- ... ℹ head content 
-  -->
   {#if PAGE_DATA_SEO}
-    <!-- ... ℹ content here 
-    -->
     {#each PAGE_DATA_SEO.hreflang as item}
-      <!-- ... ℹ content here 
-      -->
       {#if item.link == null}
-        <!-- content here -->
         <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/" />
       {:else}
         <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item.link}" />
