@@ -6,11 +6,12 @@
     - pre-loading `featured_match` data;
 =================
 -->
-
 <script lang="ts" context="module">
 
-	/** @type {import('@sveltejs/kit').Load} */
-	export async function load({
+	/** 
+	 * @type {import('@sveltejs/kit').Load} 
+	*/
+	export async function load({ 
     url, 
     params, 
     fetch 
@@ -36,10 +37,10 @@
     }
 
     /**
-     * [ℹ] Loading of (this) page [homepage] SEO-READY data; 
+     * [ℹ] Loading of (this) page [homepage] SEO-READY DATA; 
     */
 
-    const response_homepage_seo = await fetch(`/api/pages_and_seo/cache-seo.json?lang=`+urlLang+"&page=homepage", {
+    const response_homepage_seo = await fetch('/api/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -51,21 +52,21 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    const response_best_goalscorers_seo = await fetch('/api/best_goalscorer/cache-data.json?lang='+urlLang, {
+			method: 'GET'
+		}).then((r) => r.json());
+
     // 
 
 		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-
-		const response_best_goalscorers = await fetch('/api/best_goalscorer/cache-seo.json', {
-			method: 'GET'
-		}).then((r) => r.json());
-
+		
     const response_leagues_table = await fetch('/api/leagues_table/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
-		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang=en', {
+		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+urlLang, {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -77,6 +78,10 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    /**
+    * [v3] - Testing with Dynamic Imports (server-side) inside load() 
+    */
+
     // let FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
     // let FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
     // let	LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
@@ -86,26 +91,35 @@
     // let LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
 
 		// [ℹ] validate, DATA RETURNED;
-		if (response_featured_match_seo && 
-        response_featured_betting_sites_seo) {
-			return {
+		if (response_homepage_seo &&
+        response_featured_match_seo && 
+        response_featured_betting_sites_seo &&
+        response_best_goalscorers_seo &&
+        response_league_list && 
+        response_leagues_table &&
+        response_livescores_football &&
+        response_livescores_football_leagues &&
+        response_livescores_football_translations
+      ) {
+
+      return {
         status: 200,
         cache: {
           "maxage": 3600,
           "private": false
         },
-				props: {
-					PAGE_DATA_SEO: response_homepage_seo,
-					FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match_seo,
-					FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_seo,
+        props: {
+          PAGE_DATA_SEO: response_homepage_seo,
+          FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match_seo,
+          FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_seo,
+          BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers_seo,
 
-					LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
+          LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
-          BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers,
-
-					LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
-					LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
-					LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
+          
+          LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
+          LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
+          LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
 
           // FeaturedMatchWidget: FeaturedMatchWidget,
           // FeaturedBettingSitesWidget: FeaturedBettingSitesWidget,
@@ -114,36 +128,32 @@
           // BestGoalscorersWidget: BestGoalscorersWidget,
           // SeoBlock: SeoBlock,
           // LeaguesTableWidget: LeaguesTableWidget
-				}
-			};
+        }
+      };
+
 		}
 
 		// [ℹ] otherwise, ERROR;
 		return {
 			status: 500,
-			error: new Error(`Uh-oh! There has been an / page preloading error`)
+			error: new Error(`Uh-oh! There has been an /{lang} page preloading error`)
 		};
 
 	}
 </script>
+
 
 <!-- ===================
 	COMPONENT JS - BASIC 
     [TypeScript Written]
 =================== -->
 
+
 <script lang="ts">
-	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation';
-	import { amp, browser, dev, mode, prerendering } from '$app/env';
+	import { dev } from '$app/env';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
-  import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
-	// ... import `variables` and values;
-	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import SvelteSeo from 'svelte-seo';
-  import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
-  import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
 
   /**
    * [v1] - Testing with Standard Imports (client-side)
@@ -158,18 +168,6 @@
   // import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
 
   /**
-   * [v3] - Testing with Dynamic Imports (server-side) inside load() 
-  */
-
-  // export let FeaturedMatchWidget;
-  // export let FeaturedBettingSitesWidget;
-  // export let LeagueListWidget;
-  // export let LiveScoresWidget;
-  // export let BestGoalscorersWidget;
-  // export let SeoBlock;
-  // export let LeaguesTableWidget;
-
-  /**
    * [v2] - Testing with Dynamic Imports (client-side)
   */
 
@@ -181,6 +179,7 @@
   let SeoBlock;
   let LeaguesTableWidget;
 
+
   onMount(async () => {
 		FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
 		FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
@@ -191,27 +190,38 @@
 		LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
 	});
 
+  /**
+   * [v3] - Testing with Dynamic Imports (server-side) inside load() 
+  */
+
+  // export let FeaturedMatchWidget;
+  // export let FeaturedBettingSitesWidget;
+  // export let LeagueListWidget;
+  // export let LiveScoresWidget;
+  // export let BestGoalscorersWidget;
+  // export let SeoBlock;
+  // export let LeaguesTableWidget;
+
+	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
+  import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
+  import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
+  import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
+  import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/best_goalscorer/types';
+
+	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
+  export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
 
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
-  export let BEST_GOAL_SCORERS_DATA_SEO;
-	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
   let SEO_BLOCK_DATA = PAGE_DATA_SEO;
   export let LEAGUES_TABLE_SCORES_SEO_DATA;
+
 	export let LIVE_SCORES_DATA_DATA_SEO;
 	export let LIVE_SCORES_DATA_LEAGUES;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 
-	// ... redirecting the users to the correct translation page [THAT IS NOT EN]
-	if (browser && $userBetarenaSettings != undefined && $userBetarenaSettings.lang != 'en') {
-		redirect();
-	}
-	async function redirect() {
-		await goto(`/${$userBetarenaSettings.lang}`);
-	}
-
-	let mobileExclusive: boolean = false;
+  let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
 	onMount(async () => {
@@ -247,13 +257,16 @@
 
 </script>
 
+
 <!-- ===================
 	SVELTE INJECTION TAGS
 =================== -->
 
+
 <!-- [ℹ] adding SEO-META-TAGS for (this) PAGE 
 -->
 {#if PAGE_DATA_SEO}
+   <!-- content here -->
   <SvelteSeo
     title={PAGE_DATA_SEO.main_data.title}
     description={PAGE_DATA_SEO.main_data.description}
@@ -269,9 +282,16 @@
 <!-- [ℹ] adding HREFLANG-TAGS for (this) PAGE
 -->
 <svelte:head>
+  <!-- ... ℹ head content 
+  -->
   {#if PAGE_DATA_SEO}
+    <!-- ... ℹ content here 
+    -->
     {#each PAGE_DATA_SEO.hreflang as item}
+      <!-- ... ℹ content here 
+      -->
       {#if item.link == null}
+        <!-- content here -->
         <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/" />
       {:else}
         <link rel="alternate" hreflang={item.hreflang} href="https://scores.betarena.com/{item.link}" />
@@ -284,8 +304,7 @@
 	COMPONENT HTML
 =================== -->
 
-<section 
-  id="home-page">
+<section id="home-page">
 
   <!-- ... DESKTOP & TABLET VIEW ONLY ... -->
   {#if !tabletExclusive && !mobileExclusive}
@@ -356,6 +375,7 @@
 	
 </section>
 
+
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
@@ -375,7 +395,7 @@
 	}
 
 	/* 
-    RESPONSIVE FOR TABLET (&+) [768px] */
+  RESPONSIVE FOR TABLET (&+) [768px] */
 	@media only screen and (min-width: 768px) {
 		section#home-page {
 			grid-template-columns: 1fr;

@@ -16,10 +16,6 @@ import type { GeoJsResponse } from '$lib/models/geojs-types';
  * [ℹ] and stores it for future use;
  */
 export async function getUserLocation(): Promise<GeoJsResponse> {
-	// [ℹ] push-request;
 	const response = await get(`https://get.geojs.io/v1/ip/geo.json`);
-	// [🐛] debug;
-	if (dev) console.info('GoeJS Response', response);
-	// [ℹ] return;
 	return response;
 }

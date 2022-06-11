@@ -52,21 +52,21 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    const response_best_goalscorers_seo = await fetch('/api/best_goalscorer/cache-data.json?lang='+urlLang, {
+			method: 'GET'
+		}).then((r) => r.json());
+
     // 
 
 		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 		
-		const response_best_goalscorers = await fetch('/api/best_goalscorer/cache-seo.json', {
-			method: 'GET'
-		}).then((r) => r.json());
-
     const response_leagues_table = await fetch('/api/leagues_table/cache-seo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
 
-		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+url['pathname'].substring(1), {
+		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+urlLang, {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -95,7 +95,7 @@
         response_featured_match_seo && 
         response_featured_betting_sites_seo &&
         response_league_list && 
-        response_best_goalscorers &&
+        response_best_goalscorers_seo &&
         response_leagues_table &&
         response_livescores_football &&
         response_livescores_football_leagues &&
@@ -118,7 +118,7 @@
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
           LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
           LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
-          BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers,
+          BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers_seo,
 
           // FeaturedMatchWidget: FeaturedMatchWidget,
           // FeaturedBettingSitesWidget: FeaturedBettingSitesWidget,
@@ -205,14 +205,17 @@
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
   import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
   import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
+  import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/best_goalscorer/types';
 
-	export let FEATURED_MATCH_WIDGET_DATA_SEO : Cache_Single_Lang_Featured_Match_Translation_Response;
-	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
-	export let LEAGUE_LIST_WIDGET_DATA_SEO;
-  export let BEST_GOAL_SCORERS_DATA_SEO;
 	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
+	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
+	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
+  export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
+
+	export let LEAGUE_LIST_WIDGET_DATA_SEO;
   let SEO_BLOCK_DATA = PAGE_DATA_SEO;
   export let LEAGUES_TABLE_SCORES_SEO_DATA;
+
 	export let LIVE_SCORES_DATA_DATA_SEO;
 	export let LIVE_SCORES_DATA_LEAGUES;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];

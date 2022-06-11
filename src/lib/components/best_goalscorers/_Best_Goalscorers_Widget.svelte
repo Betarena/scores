@@ -3,43 +3,37 @@
 ==================== -->
 
 <script lang="ts">
-  // ... svelte-imports;
+  
+  // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import { dev } from "$app/env";
-	// ... external `exports` imports;
-  import { post } from "$lib/api/utils";
+
+	// [ℹ] external `exports` imports;
+  import { get } from "$lib/api/utils";
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	// ... external components import;
+
+	// [ℹ] external components import;
   import BestGoalscorerRow from "./_Best_Goalscorer_Row.svelte";
   import BestGoalscorersWidgetContentLoader from "./_Best_Goalscorers_Widget_ContentLoader.svelte";
-  import type { GoalScorers_Cache_Ready, GoalScorers_Cache_SEO_Ready } from "$lib/models/best_goalscorer/types";
+  import type { Cache_Single_Geo_GoalScorers_Translation_Response, Cache_Single_Lang_GoalScorers_Translation_Response } from "$lib/models/best_goalscorer/types";
 
-  // ... key component assets;
+  // [ℹ] key component assets;
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
 
-  // ... main component variables;
-	export let BEST_GOAL_SCORERS_DATA_SEO: GoalScorers_Cache_SEO_Ready;
+  // [ℹ] main component variables;
+	export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
 
-  let staticViewRow: number;              // ... holds the `initial` number of featured sites to be displayed
-  let limitViewRow: number;               // ... holds the actual, `total` limit of the list of featured sites
-  let showMore: boolean = false;          // ... signals to other widget values that the lsit has expanded
-  let displayShowMore: boolean = false;   // ... signal as to whether to display or not the `showMore` / `showLess` data container;
-	let loaded: boolean = false;            // ... holds boolean for data loaded;
+  let staticViewRow: number;              // [ℹ] holds the `initial` number of featured sites to be displayed
+  let limitViewRow: number;               // [ℹ] holds the actual, `total` limit of the list of featured sites
+  let showMore: boolean = false;          // [ℹ] signals to other widget values that the lsit has expanded
+  let displayShowMore: boolean = false;   // [ℹ] signal as to whether to display or not the `showMore` / `showLess` data container;
+	let loaded: boolean = false;            // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;
 	let refresh_data: any = undefined;
   let noBestPlayers: any = false;
-
-  // ... widget-language-declaration;
-	let server_side_language: string = 'en';
-	// ... language-translation-declaration;
-	$: if ($page.params.lang === undefined) {
-		server_side_language = 'en';
-	} else {
-		server_side_language = $page.params.lang;
-	}
 
   /**
    * Description:
@@ -48,51 +42,45 @@
    * ... Returns PROMISE - [INTERFACE - `FinalFeaturedSiteResponseDB`]
   */
   let trueLengthOfArray: number
-  // ...
-  async function widgetInit(): Promise < GoalScorers_Cache_Ready > {
+  // [ℹ]
+  async function widgetInit(): Promise < Cache_Single_Geo_GoalScorers_Translation_Response > {
 
-    // ... ℹ get the USER-GEO-LOCATION;
+    // [ℹ] get the USER-GEO-LOCATION;
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
-    // ... 🐛 DEBUGGING;
-    if (dev) console.debug('ℹ userGeo', userGeo)
 
-    // ... ℹ GET RESPONSE;
-		const response: GoalScorers_Cache_Ready  = await post(`api/best_goalscorer/cache-data.json`, userGeo)
-		// [🐛] debug;
-		// if (dev) console.debug('ℹ widgetInit() best goalscorers cache', response)
+    // [ℹ] GET RESPONSE;
+    const response: Cache_Single_Geo_GoalScorers_Translation_Response = await get('api/best_goalscorer/cache-data.json?geoPos='+userGeo)
 
-    // ... ℹ if response is null;
+    // [ℹ] if response is null;
 		if (response == null || response == undefined) {
-			// ...
+			// [ℹ]
 			if (dev) console.debug('❌ no goal scoreres available!')
-			// ... return null;
+			// [ℹ] return null;
       noBestPlayers = true;
-      // ...
+      // [ℹ]
 			return;
 		}
 
-    // ...
     loaded = true;
 
-    // ... ℹ intercept the length of array;
+    // [ℹ] intercept the length of array;
     trueLengthOfArray = response.top_geo_goalscorer_players.length
 
-    // ... ℹ return the FINAL Promise Value;
+    // [ℹ] return the FINAL Promise Value;
     return response;
   }
 
-  // ... change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
+  // [ℹ] change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
 	$: refresh_data = $userBetarenaSettings.country_bookmaker;
-	// ...
 	$: if (refresh_data) {
-		// ... reset necessary variables;
+		// [ℹ] reset necessary variables;
 		refresh = true
     setTimeout(async() => {
 			refresh = false
 		}, 50)
 	}
 
-  // ... show-more / show-less;
+  // [ℹ] show-more / show-less;
   $: if (viewportDesktop) {
     if (trueLengthOfArray > 10) {
       displayShowMore = true;
@@ -114,25 +102,18 @@
    * ... list of featured site for the website;
   */
   function toggleFullList() {
-    // ... update the showMore Boolean
+    // [ℹ] update the showMore Boolean
     showMore = !showMore;
-    // ... check if the `limitViewRow` matches the `trueLengthOfArray`,
+    // [ℹ] check if the `limitViewRow` matches the `trueLengthOfArray`,
     if (limitViewRow == trueLengthOfArray) {
-      // ... if so, revert back to the original number of list row items,
+      // [ℹ] if so, revert back to the original number of list row items,
       limitViewRow = staticViewRow;
       return;
     }
-    // ... otherwise, expand the list to the full length,
+    // [ℹ] otherwise, expand the list to the full length,
     limitViewRow = trueLengthOfArray;
   }
 
-  /**
-   * Description:
-   * ~~~~~~~~~~~~~~~~~~~
-   * ... onMount() function that verifies that
-   * ... the `viewport` width is of tablet size
-   * ... or greater;
-  */
   let viewportDesktop: boolean;
 
   onMount(async () => {
@@ -153,60 +134,54 @@
   });
 </script>
 
-
 <!-- ===============
     COMPONENT HTML 
 ==================== -->
 
 <div>
 
-  <!-- ... ℹ SEO-DATA-LOADED ... -->
+  <!-- [ℹ] SEO-DATA-LOADED 
+  -->
   {#if !loaded}
-    <!-- ... iterate over the data to find the correc language ... -->
-    {#each BEST_GOAL_SCORERS_DATA_SEO.translations as WIDGET_SEO_TRANSLATION}
-      <!-- ... obtain the correct widget translation ... -->
-      {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
-        <!-- ... SEO-BOX ... -->
-        <div id="seo-featured-betting-site-box">
-          <h2>{WIDGET_SEO_TRANSLATION.widget_translations.best_goal_scorers}</h2>
-          <p>{WIDGET_SEO_TRANSLATION.widget_translations.goals}</p>
-          <p>{WIDGET_SEO_TRANSLATION.widget_translations.odds}</p>
-          <p>{WIDGET_SEO_TRANSLATION.widget_translations.player}</p>
-          <p>{WIDGET_SEO_TRANSLATION.widget_translations.show_more_players}</p>
-          <!-- ... list all of the players in the DB ... -->
-          {#each BEST_GOAL_SCORERS_DATA_SEO.top_geo_goalscorer_players as WIDGET_BEST_PLAYER}
-            <p>{WIDGET_BEST_PLAYER.common_name}</p>
-          {/each}
-        </div>
-      {/if}
-    {/each}
+    <!-- [ℹ] SEO-BOX 
+    -->
+    <div id="seo-featured-betting-site-box">
+      <h2>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.best_goal_scorers}</h2>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.goals}</p>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.odds}</p>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.player}</p>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.show_more_players}</p>
+      <!-- [ℹ] list all of the players in the DB 
+      -->
+      {#each BEST_GOAL_SCORERS_DATA_SEO.top_geo_goalscorer_players as WIDGET_BEST_PLAYER}
+        <p>{WIDGET_BEST_PLAYER.common_name}</p>
+      {/each}
+    </div>
   {/if}
 
-  <!-- ... ℹ NO BEST PLAYERS AVAILABLE PLACEHOLDER ...-->
+  <!-- [ℹ] NO BEST PLAYERS AVAILABLE PLACEHOLDER
+  -->
   {#if noBestPlayers && !loaded}
-    <!-- ... title of the widget ... -->
-    <!-- ... iterate over the data to find the correc language ... -->
-    {#each BEST_GOAL_SCORERS_DATA_SEO.translations as WIDGET_SEO_TRANSLATION}
-      <!-- ... obtain the correct widget translation ... -->
-      {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
-        <!-- ... wiget-title ... -->
-        <h2 
-          class="s-20 m-b-10 w-500 color-black-2"
-          style="margin-top: 0;"
-          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          {WIDGET_SEO_TRANSLATION.widget_translations.best_goal_scorers}
-        </h2>
-      {/if}
-    {/each}
 
-    <!-- ... no-matches-avaiable-placeholder container ...  -->
+    <!-- [ℹ] title of the widget 
+    -->
+    <h2 
+      class="s-20 m-b-10 w-500 color-black-2"
+      style="margin-top: 0;"
+      class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+      {BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.best_goal_scorers}
+    </h2>
+
+    <!-- [ℹ] no-matches-avaiable-placeholder container 
+    -->
     <div 
       id='no-best-players-box'
       class='row-space-start'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-      <!-- ... no-matches-visual ... -->
+
+      <!-- [ℹ] no-matches-visual 
+      -->
       {#if $userBetarenaSettings.theme == 'Dark'}
-        <!-- content here -->
         <img 
           src={no_featured_match_visual_dark} 
           alt="no-featured-match-visual_dark"
@@ -214,7 +189,6 @@
           class='m-r-20'
         />
       {:else}
-        <!-- else content here -->
         <img 
           src={no_featured_match_visual} 
           alt="no-featured-match-visual"
@@ -223,7 +197,8 @@
         />
       {/if}
       
-      <!-- ... container w/ text ... -->
+      <!-- [ℹ] container w/ text 
+      -->
       <div>
         <p class='s-16 m-b-8 w-500'> No Best Players Available </p>
         <p class='s-16 color-grey w-400'> Sorry, at this time there is no best players available! </p>
@@ -231,91 +206,98 @@
     </div>
   {/if}
 
-  <!-- ... ℹ promise is pending ... -->
+  <!-- [ℹ] BEST GOALSCORERS WIDGET DATA 
+  -->
   {#if !noBestPlayers && !refresh}
 
+    <!-- [ℹ] promise is pending 
+    -->
     {#await widgetInit()}
       <BestGoalscorersWidgetContentLoader />
-    <!-- ... promise was fulfilled ... -->
+
+    <!-- [ℹ] promise was fulfilled 
+    -->
     {:then data}
 
-      <!-- ... identify the correct translation via IF -->
-        {#each data.translations as WIDGET_TRANSLATION}
-          {#if WIDGET_TRANSLATION.lang == server_side_language}
+      <!-- [ℹ] wiget-title -->
+      <h2
+        id='widget-title'
+        class="s-20 m-b-10 w-500 color-black-2"
+        style="margin-top: 0;"
+        class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+        {BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.best_goal_scorers}
+      </h2>
 
-            <!-- ... wiget-title ... -->
-            <h2
-              id='widget-title'
-              class="s-20 m-b-10 w-500 color-black-2"
-              style="margin-top: 0;"
-              class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-              {WIDGET_TRANSLATION.widget_translations.best_goal_scorers}
-            </h2>
+      <!-- [ℹ] widget-component -->
+      <div 
+        id="featured-list-container"
+        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+        
+        <!-- [ℹ] DESKTOP ONLY 
+        -->
+        {#if viewportDesktop}
 
-            <!-- ... widget-component ... -->
-            <div 
-              id="featured-list-container"
-              class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-              
-              <!-- ... DESKTOP ONLY ... -->
-              {#if viewportDesktop}
-                <!-- ... widget-brakdown-columns-section ... -->
-                <div
-                  id='widget-title-row'
-                  class="row-space-out"
-                  style="width: auto;">
-                  <p class="w-400 small color-grey">
-                    {WIDGET_TRANSLATION.widget_translations.player}
-                  </p>
-                  <div
-                    class="row-space-end">
-                    <p 
-                      class="w-400 small color-grey"
-                      style="margin-right: 54px;">
-                      {WIDGET_TRANSLATION.widget_translations.goals}
-                    </p>
-                    <p 
-                      class="w-400 small color-grey">
-                      {WIDGET_TRANSLATION.widget_translations.odds}
-                    </p>
-                  </div>
-                </div>
-              {/if}
-
-              <!-- content here -->
-              <!-- ... display the first 5 rows on Mobile; ... -->
-              {#each data.top_geo_goalscorer_players.slice(0, limitViewRow) as data, i}
-                  <BestGoalscorerRow 
-                    pos={i+1}
-                    data={data} 
-                    {WIDGET_TRANSLATION} />
-              {/each}
-
-              <!-- ... show-more / show-less ... -->
-              {#if displayShowMore}
-                <div>
-                  <p 
-                    id="show-more-box" 
-                    on:click={() => toggleFullList()}>
-                    {#if !showMore}
-                      {WIDGET_TRANSLATION.widget_translations.show_more_players}
-                    {:else}
-                      {WIDGET_TRANSLATION.widget_translations.show_less_players}
-                    {/if}
-                  </p>
-                </div>
-              {:else}
-                <p 
-                  id="show-more-box" 
-                  style="padding: 5px; box-shadow: none;" 
-                />
-              {/if}
+          <!-- [ℹ] widget-brakdown-columns-section 
+          -->
+          <div
+            id='widget-title-row'
+            class="row-space-out"
+            style="width: auto;">
+            <p 
+              class="w-400 small color-grey">
+              {BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.player}
+            </p>
+            <div
+              class="row-space-end">
+              <p 
+                class="w-400 small color-grey"
+                style="margin-right: 54px;">
+                {BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.goals}
+              </p>
+              <p 
+                class="w-400 small color-grey">
+                {BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.odds}
+              </p>
             </div>
+          </div>
 
-          {/if}
+        {/if}
+
+        <!-- [ℹ] display the first 5 rows on Mobile
+        -->
+
+        {#each data.top_geo_goalscorer_players.slice(0, limitViewRow) as data, i}
+          <BestGoalscorerRow 
+            pos={i+1}
+            data={data} 
+            WIDGET_TRANSLATION={BEST_GOAL_SCORERS_DATA_SEO.translations} />
         {/each}
 
-    <!-- ... promise was rejected ... -->
+        <!-- [ℹ] show-more / show-less
+        -->
+        {#if displayShowMore}
+          <div>
+            <p 
+              id="show-more-box" 
+              on:click={() => toggleFullList()}>
+              {#if !showMore}
+                {BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.show_more_players}
+              {:else}
+                {BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.show_less_players}
+              {/if}
+            </p>
+          </div>
+        {:else}
+          <p 
+            id="show-more-box" 
+            style="padding: 5px; box-shadow: none;" 
+          />
+        {/if}
+
+      </div>
+
+    <!-- [ℹ] promise was rejected 
+    -->
     {:catch error}
       {error}
     {/await}
@@ -323,7 +305,6 @@
   {/if}
 
 </div>
-
 
 <!-- ===============
     COMPONENT STYLE
