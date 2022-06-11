@@ -64,6 +64,10 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    const response_seo_block_seo = await fetch('/api/seo_block/cache-data.json?lang='+urlLang, {
+			method: 'GET'
+		}).then((r) => r.json());
+
     // 
 
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+urlLang, {
@@ -114,9 +118,9 @@
           FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_seo,
           BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers_seo,
           LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list_seo,
-
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table_seo,
-          
+          SEO_BLOCK_DATA: response_seo_block_seo,
+
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
           LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
           LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
@@ -208,7 +212,8 @@
   import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
   import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/best_goalscorer/types';
   import type { Cache_Single_Lang_LeagueList_Translation_Response } from '$lib/models/league_list/types';
-import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
+  import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
+  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
 
 	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
@@ -216,8 +221,7 @@ import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/
   export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO: Cache_Single_Lang_LeagueList_Translation_Response;
   export let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
-
-  let SEO_BLOCK_DATA = PAGE_DATA_SEO;
+  export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
 
 	export let LIVE_SCORES_DATA_DATA_SEO;
 	export let LIVE_SCORES_DATA_LEAGUES;
@@ -318,7 +322,7 @@ import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/
       </div>
       <!-- ... widget #2 ... -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
-      <!-- <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} /> -->
+      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
     </div>
     
     <!-- ... 3rd ROW ... -->
@@ -364,7 +368,7 @@ import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/
       {/if}
       <!-- ... widget #5 -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
-      <!-- <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} /> -->
+      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
     </div>
   {/if}
 	
