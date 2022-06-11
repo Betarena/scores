@@ -139,8 +139,9 @@
     hideSEO = true
 
 		if (!langSelected) {
-			selectLanguage(server_side_language);
       langSelected = true;
+      userBetarenaSettings.setLang(server_side_language);
+			// selectLanguage(server_side_language);
 		}
 
     setUserCountryBookmakerLocation();
@@ -169,10 +170,9 @@
 		// [ℹ] hide the LANG DROPDOWN box;
 		dropdown_lang_visible = false;
 
+    // [ℹ] switch navigation for appropiate /<lang>
     if ($page.routeId != "[lang=lang]/[sport]/[country]/[league_name]" && 
-        $page.routeId != "[sport]/[country]/[league_name]" &&
-        $page.routeId != null &&
-        !$page.error) {
+        $page.routeId != "[sport]/[country]/[league_name]") {
 
       // [ℹ] update the <html lang="">
       document.documentElement.setAttribute('lang', lang);
