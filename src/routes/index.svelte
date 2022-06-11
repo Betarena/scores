@@ -60,9 +60,7 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-    // 
-		
-    const response_leagues_table = await fetch('/api/leagues_table/cache-seo.json', {
+    const response_leagues_table_seo = await fetch('/api/leagues_table/cache-data.json?lang='+urlLang, {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -98,7 +96,7 @@
         response_featured_betting_sites_seo &&
         response_best_goalscorers_seo &&
         response_league_list_seo && 
-        response_leagues_table &&
+        response_leagues_table_seo &&
         response_livescores_football &&
         response_livescores_football_leagues &&
         response_livescores_football_translations
@@ -117,7 +115,7 @@
           BEST_GOAL_SCORERS_DATA_SEO: response_best_goalscorers_seo,
           LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list_seo,
 
-          LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
+          LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table_seo,
           
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
           LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
@@ -210,15 +208,16 @@
   import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
   import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/best_goalscorer/types';
   import type { Cache_Single_Lang_LeagueList_Translation_Response } from '$lib/models/league_list/types';
+import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
 
 	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
   export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO: Cache_Single_Lang_LeagueList_Translation_Response;
+  export let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
 
   let SEO_BLOCK_DATA = PAGE_DATA_SEO;
-  export let LEAGUES_TABLE_SCORES_SEO_DATA;
 
 	export let LIVE_SCORES_DATA_DATA_SEO;
 	export let LIVE_SCORES_DATA_LEAGUES;
