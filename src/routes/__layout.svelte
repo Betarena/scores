@@ -106,31 +106,31 @@
   // export let EmailSubscribe;
   // export let GoogleAnalytics;
 
-  import Footer from '$lib/components/footer/_Footer.svelte';
-  import Header from '$lib/components/header/_Header.svelte';
-  import OfflineAlert from '$lib/components/_Offline_alert.svelte';
-  import SplashScreen from '$lib/components/_Splash_screen.svelte';
-  import PlatformAlert from '$lib/components/_Platform_alert.svelte';
-  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
+  // import Footer from '$lib/components/footer/_Footer.svelte';
+  // import Header from '$lib/components/header/_Header.svelte';
+  // import OfflineAlert from '$lib/components/_Offline_alert.svelte';
+  // import SplashScreen from '$lib/components/_Splash_screen.svelte';
+  // import PlatformAlert from '$lib/components/_Platform_alert.svelte';
+  // import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
   // import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
 
-  // let Footer;
-  // let Header;
-  // let OfflineAlert;
-  // let SplashScreen;
-  // let PlatformAlert;
-  // let EmailSubscribe;
-  // let GoogleAnalytics;
+  let Footer;
+  let Header;
+  let OfflineAlert;
+  let SplashScreen;
+  let PlatformAlert;
+  let EmailSubscribe;
+  let GoogleAnalytics;
 
-  // onMount(async () => {
-	// 	Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
-	// 	Header = (await import('$lib/components/header/_Header.svelte')).default;
-	// 	OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
-	// 	SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
-	// 	PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
-	// 	EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
-	// 	GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
-	// });
+  onMount(async () => {
+		Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
+		Header = (await import('$lib/components/header/_Header.svelte')).default;
+		OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
+		SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
+		PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
+		EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
+		GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
+	});
   
   // [ℹ] other
   import * as Sentry from "@sentry/browser";
@@ -206,24 +206,24 @@
 {/if}
 
 {#if offlineMode}
-  <OfflineAlert />
-  <!-- <svelte:component this={OfflineAlert} /> -->
+  <!-- <OfflineAlert /> -->
+  <svelte:component this={OfflineAlert} />
 {/if}
 
-<PlatformAlert {HEADER_TRANSLATION_DATA} />
-<SplashScreen />
-<EmailSubscribe />
-<Header {HEADER_TRANSLATION_DATA} />
+<!-- <PlatformAlert {HEADER_TRANSLATION_DATA} /> -->
+<!-- <SplashScreen /> -->
+<!-- <EmailSubscribe /> -->
+<!-- <Header {HEADER_TRANSLATION_DATA} /> -->
 
-<!-- <svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} /> -->
-<!-- <svelte:component this={SplashScreen} /> -->
-<!-- <svelte:component this={EmailSubscribe} /> -->
-<!-- <svelte:component this={Header} {HEADER_TRANSLATION_DATA} /> -->
+<svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} />
+<svelte:component this={SplashScreen} />
+<svelte:component this={EmailSubscribe} />
+<svelte:component this={Header} {HEADER_TRANSLATION_DATA} />
 
 <main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
   <slot />
-  <Footer {FOOTER_TRANSLATION_DATA} />
-  <!-- <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} /> -->
+  <!-- <Footer {FOOTER_TRANSLATION_DATA} /> -->
+  <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} />
 </main>
 
 
