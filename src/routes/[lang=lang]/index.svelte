@@ -44,16 +44,15 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-
 		const response_featured_match_seo = await fetch('/api/featured_match/cache-data.json?lang='+urlLang, {
 			method: 'GET'
 		}).then((r) => r.json());
-    
 
-
-		const response_featured_betting_sites = await fetch('/api/featured_betting_sites/cache-seo.json', {
+		const response_featured_betting_sites_seo = await fetch('/api/featured_betting_sites/cache-data.json?lang='+urlLang, {
 			method: 'GET'
 		}).then((r) => r.json());
+
+    // 
 
 		const response_league_list = await fetch('/api/league_list/cache-seo.json', {
 			method: 'GET'
@@ -94,7 +93,7 @@
 		// [ℹ] validate, DATA RETURNED;
 		if (response_homepage_seo &&
         response_featured_match_seo && 
-        response_featured_betting_sites &&
+        response_featured_betting_sites_seo &&
         response_league_list && 
         response_best_goalscorers &&
         response_leagues_table &&
@@ -112,8 +111,8 @@
         props: {
           PAGE_DATA_SEO: response_homepage_seo,
           FEATURED_MATCH_WIDGET_DATA_SEO: response_featured_match_seo,
+          FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_seo,
 
-          FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites,
           LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list,
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table,
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
@@ -205,9 +204,10 @@
 	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
   import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
+  import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
 
 	export let FEATURED_MATCH_WIDGET_DATA_SEO : Cache_Single_Lang_Featured_Match_Translation_Response;
-	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO;
   export let BEST_GOAL_SCORERS_DATA_SEO;
 	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
