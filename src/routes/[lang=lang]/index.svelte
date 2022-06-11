@@ -68,7 +68,7 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-    // 
+    // Andres's Code (Below)
 
 		const response_livescores_football = await fetch('/api/live_scores/cache-seo.json?lang='+urlLang, {
 			method: 'GET'
@@ -81,6 +81,17 @@
 		const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
 			method: 'GET'
 		}).then((r) => r.json());
+
+    const userGeoResponse: GeoJsResponse = await getUserLocation()
+    console.log("userGeoResponse_s", userGeoResponse)
+
+    const userGeoResponse_v2 = await fetch('https://get.geojs.io/v1/ip/geo.json', {
+			method: 'GET'
+		}).then((r) => r.json());
+    console.log("userGeoResponse_s2", userGeoResponse_v2)
+
+    const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
+    console.log("userGeoResponse_s3", userGeoResponse_v3)
 
     /**
     * [v3] - Testing with Dynamic Imports (server-side) inside load() 
@@ -124,6 +135,10 @@
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
           LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
           LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
+
+          /**
+          * [v3] - Testing with Dynamic Imports (server-side) inside load() 
+          */
 
           // FeaturedMatchWidget: FeaturedMatchWidget,
           // FeaturedBettingSitesWidget: FeaturedBettingSitesWidget,
@@ -214,6 +229,9 @@
   import type { Cache_Single_Lang_LeagueList_Translation_Response } from '$lib/models/league_list/types';
   import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
   import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
+import { getUserLocation } from '$lib/geoJs/init';
+import type { GeoJsResponse } from '$lib/models/geojs-types';
+import { get } from '$lib/api/utils';
 
 	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
