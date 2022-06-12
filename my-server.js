@@ -6,7 +6,7 @@ import express from 'express';
 import sslRedirect from 'heroku-ssl-redirect';
 import * as sslify from 'express-sslify';
 import * as requestIp from 'request-ip'     // https://www.npmjs.com/package/request-ip
-import * as compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
+import compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
 
 const app = express();
 
