@@ -27,7 +27,7 @@
       const response_IP_v2 = await fetch(`/getClientIP`, {
         method: 'GET'
       }).then((r) => r.json());
-      console.log("response_IP_2: ", response_IP_v2);
+      // console.log("response_IP_2: ", response_IP_v2);
     }
 
     console.log("SESSION: ", session);
