@@ -17,6 +17,7 @@ const app = express();
 // app.use(sslRedirect());
 
 app.get('/getClientIP', (req, res, next) => {
+
   var ip = req.headers['x-forwarded-for'] ||
     req.socket.remoteAddress ||
     null;
@@ -24,6 +25,12 @@ app.get('/getClientIP', (req, res, next) => {
 
   var ip2 = req.ip
   console.log('ip2', ip2);
+
+  res.json(
+    {
+      "ip": ip.toString().replace(/,/g, '')
+    }
+  );
 
   res.end()
 })

@@ -13,8 +13,8 @@ import { prerendering } from '$app/env';
 export const handle: Handle = async ({ event, resolve }) => {
 
   // https://github.com/sveltejs/kit/issues/4873
-  const clientAddress = !prerendering ? await event.clientAddress : ''; // incorrect-IP
-  const clientAddressv2 = !prerendering ? event : '' // no-working
+  // const clientAddress = !prerendering ? await event.clientAddress : ''; // incorrect-IP
+  // const clientAddressv2 = !prerendering ? event : '' // no-working
   
   // -----------------
   // [ℹ] before endpoint call

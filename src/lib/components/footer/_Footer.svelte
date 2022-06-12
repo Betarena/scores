@@ -14,8 +14,8 @@
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types'
 	// [ℹ] image-assets;
 	import logo_full from './assets/betarena-logo-full.svg'
-	import begambleawareorg from './assets/begambleawareorg_black.svg'
-	import legal18icon from './assets/legal-18-action-bet.svg'
+	import begambleawareorg from './assets/begambleawareorg_black.png'
+	import legal18icon from './assets/legal-18-action-bet.png'
   // [ℹ] pre-loaded & ready;
 	export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
   
