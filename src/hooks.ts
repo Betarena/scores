@@ -2,12 +2,15 @@ import cookie from 'cookie';                // https://www.npmjs.com/package/coo
 import { v4 as uuid } from '@lukeed/uuid';  // https://www.npmjs.com/package/@lukeed/uuid
 import type { Handle } from '@sveltejs/kit';
 import { getUserLocationFromIP } from '$lib/geoJs/init';
+import { prerendering } from '$app/env';
 
 // https://dev.to/krowemoh/sveltekit-hooks-2bii
 // https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
 // https://rodneylab.com/sveltekit-session-cookies/
 
 export const handle: Handle = async ({ event, resolve }) => {
+
+  const clientAddress = !prerendering ? await event.clientAddress : '';
   
   // -----------------
   // [ℹ] before endpoint call
@@ -22,8 +25,8 @@ export const handle: Handle = async ({ event, resolve }) => {
     // originIP: event.request.headers['x-forwarded-for'] ||
     //   event.request.socket.remoteAddress ||
     //   null
-    originIP: event.clientAddress || '',
-    geoPos: (await getUserLocationFromIP(event.clientAddress)) || '',
+    originIP: clientAddress,
+    geoPos: (await getUserLocationFromIP(clientAddress)),
     lang: 'en',
     theme: 'Light',
   };
