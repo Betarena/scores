@@ -22,8 +22,8 @@ export const handle: Handle = async ({ event, resolve }) => {
     // originIP: event.request.headers['x-forwarded-for'] ||
     //   event.request.socket.remoteAddress ||
     //   null
-    originIP: event.clientAddress,
-    geoPos: (await getUserLocationFromIP(event.clientAddress)),
+    originIP: event.clientAddress || '',
+    geoPos: (await getUserLocationFromIP(event.clientAddress)) || '',
     lang: 'en',
     theme: 'Light',
   };
