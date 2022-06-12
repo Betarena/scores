@@ -16,6 +16,18 @@ const app = express();
 // [ℹ] https://www.npmjs.com/package/heroku-ssl-redirect
 // app.use(sslRedirect());
 
+app.get('/getClientIP', (req, res) => {
+  var ip = req.headers['x-forwarded-for'] ||
+    req.socket.remoteAddress ||
+    null;
+  console.log('ip', ip);
+
+  var ip2 = req.ip
+  console.log('ip2', ip2);
+  res.send(ip)
+})
+
+
 // [ℹ] https://jaketrent.com/post/https-redirect-node-heroku
 // [ℹ] https://webdva.github.io/how-to-force-express-https-tutorial 
 app.use((req, res, next) => {

@@ -19,10 +19,17 @@
   }) {
 
     const response_IP = await fetch(`/api/geojs.json`, {
-			method: 'GET'
+			method: 'POST'
 		}).then((r) => r.json());
-
     console.log("response_IP: ", response_IP);
+
+    if (!dev) {
+      const response_IP_v2 = await fetch(`/getClientIP`, {
+        method: 'GET'
+      }).then((r) => r.json());
+      console.log("response_IP_2: ", response_IP_v2);
+    }
+
     console.log("SESSION: ", session);
 
     const urlLang: string = params.lang == undefined ? 'en' : params.lang
