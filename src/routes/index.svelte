@@ -40,21 +40,21 @@
      * [ℹ] Ensure URL Check Existance; 
     */
 
-    const response_valid_url = await fetch(
-      `/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
-      {
-			  method: 'GET'
-		  }
-    ).then((r) => r.json());
+    // const response_valid_url = await fetch(
+    //   `/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
+    //   {
+		// 	  method: 'GET'
+		//   }
+    // ).then((r) => r.json());
 
     // [ℹ] validate URL existance;
-    if (!response_valid_url) {
-      // [ℹ] otherwise, ERROR;
-      return {
-        status: 404,
-        error: new Error("Uh-oh! This page does not exist!")
-      }
-    }
+    // if (!response_valid_url) {
+    //   // [ℹ] otherwise, ERROR;
+    //   return {
+    //     status: 404,
+    //     error: new Error("Uh-oh! This page does not exist!")
+    //   }
+    // }
 
     /**
      * [ℹ] Loading of (this) page [homepage] SEO-READY DATA; 
@@ -142,10 +142,10 @@
     // console.log("userGeoResponse_s2", userGeoResponse_v2.country_code.toLowerCase())
 
     // 🤔✅ correct ? not sure.
-    const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
-    console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
+    // const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
+    // console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
 
-    const userGeo: string = userGeoResponse_v3.country_code.toLowerCase()
+    // const userGeo: string = userGeoResponse_v3.country_code.toLowerCase()
 
     // [ℹ] testing widget GEO DATA REAL LOADING;
 
@@ -202,14 +202,18 @@
       '/api/leagues_table/cache-data.json?lang='+urlLang,
       '/api/seo_block/cache-data.json?lang='+urlLang,
 
-      '/api/featured_match/cache-data.json?geoPos='+userGeo, 
-      '/api/featured_betting_sites/cache-data.json?geoPos='+userGeo, 
-      '/api/league_list/cache-data.json?geoPos='+userGeo, 
-      '/api/best_goalscorer/cache-data.json?geoPos='+userGeo, 
-      '/api/leagues_table/cache-data.json?geoPos='+userGeo, 
-    ];
+      `/api/pages_and_seo/cache-seo.json?url=`+url.pathname,
 
-    // const requests = [];
+      '/api/live_scores/cache-seo.json?lang='+urlLang, 
+      '/api/live_scores/cache-data.json', 
+      '/api/live_scores/cache-translations.json'
+
+      // '/api/featured_match/cache-data.json?geoPos='+'en', 
+      // '/api/featured_betting_sites/cache-data.json?geoPos='+'en', 
+      // '/api/league_list/cache-data.json?geoPos='+'en', 
+      // '/api/best_goalscorer/cache-data.json?geoPos='+'en', 
+      // '/api/leagues_table/cache-data.json?geoPos='+'en', 
+    ];
 
     const promises = urls.map((url) =>
       fetch(url)
@@ -218,8 +222,6 @@
 
     const data = await Promise.all(promises);
 
-    console.log("data: ", data)
-
     const response_homepage_seo = data[0]
     const response_featured_match_seo = data[1]
     const response_featured_betting_sites_seo = data[2]
@@ -227,15 +229,31 @@
     const response_league_list_seo = data[4]
     const response_leagues_table_seo = data[5]
     const response_seo_block_seo = data[6]
+    const response_livescores_football = data[8]
+    const response_livescores_football_leagues = data[9]
+    const response_livescores_football_translations = data[10]
 
-    const response_featured_match = data[7]
-    const response_featured_betting_sites = data[8]
-    const response_league_list = data[9]
-    const response_best_goalscorers = data[10]
-    const response_leagues_table = data[11]
+    const response_valid_url = data [7]
+
+    if (!response_valid_url) {
+      // [ℹ] otherwise, ERROR;
+      return {
+        status: 404,
+        error: new Error("Uh-oh! This page does not exist!")
+      }
+    }
+
+    // const response_featured_match = data[7]
+    // const response_featured_betting_sites = data[8]
+    // const response_league_list = data[9]
+    // const response_best_goalscorers = data[10]
+    // const response_leagues_table = data[11]
 
     /*
       [v3] - Testing with Dynamic Imports (server-side) inside load() 
+    */
+
+    /*
       // let FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
       // let FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
       // let	LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
@@ -267,26 +285,30 @@
           LEAGUE_LIST_WIDGET_DATA_SEO: response_league_list_seo,
           LEAGUES_TABLE_SCORES_SEO_DATA: response_leagues_table_seo,
           SEO_BLOCK_DATA: response_seo_block_seo,
-
-          // LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
-          // LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
-          // LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
+          // [ℹ]
+          LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
+          LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
+          LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
 
           // [ℹ] testing .load() GEO
 
-          response_IP_2: response_IP_2,
+          // response_IP_2: response_IP_2,
           // userGeoResponse: userGeoResponse.country_code.toLowerCase(),
           // userGeoResponse_v2: userGeoResponse_v2.country_code.toLowerCase(),
-          userGeoResponse_v3: userGeoResponse_v3.country_code.toLowerCase(),
+          // userGeoResponse_v3: userGeoResponse_v3.country_code.toLowerCase(),
           // response: response_league_list,
 
           // [ℹ] data-geo real-test [direct widget data]
-          FEATURED_MATCH_WIDGET_DATA_MAIN : response_featured_match,
-          FEATURED_BETTING_SITES_WIDGET_DATA : response_featured_betting_sites,
-          BEST_GOAL_SCORERS_DATA : response_best_goalscorers,
-          LEAGUE_LIST_WIDGET_DATA : response_league_list,
-          LEAGUES_TABLE_SCORES_DATA: response_leagues_table
+          // FEATURED_MATCH_WIDGET_DATA_MAIN : response_featured_match,
+          // FEATURED_BETTING_SITES_WIDGET_DATA : response_featured_betting_sites,
+          // BEST_GOAL_SCORERS_DATA : response_best_goalscorers,
+          // LEAGUE_LIST_WIDGET_DATA : response_league_list,
+          // LEAGUES_TABLE_SCORES_DATA: response_leagues_table
           // SEO_BLOCK_DATA: response_seo_block_seo,
+
+          /*
+          [v3] - Testing with Dynamic Imports (server-side) inside load() 
+          */
 
           /*
             [v3] - Testing with Dynamic Imports (server-side) inside load() 
@@ -340,7 +362,9 @@
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
+  */
 
+  /*
     let FeaturedMatchWidget;
     let FeaturedBettingSitesWidget;
     let LeagueListWidget;
@@ -361,9 +385,11 @@
 
   */
 
-  /*
+   /*
     [v3] - Testing with Dynamic Imports (server-side) inside load() 
+  */
 
+  /*
     export let FeaturedMatchWidget;
     export let FeaturedBettingSitesWidget;
     export let LeagueListWidget;
@@ -394,18 +420,9 @@
   export let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
   export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
 
-  console.log('PAGE_DATA_SEO', PAGE_DATA_SEO)
-
-	// export let LIVE_SCORES_DATA_DATA_SEO;
-	// export let LIVE_SCORES_DATA_LEAGUES;
-	// export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
-
-  export let response_IP_2
-  export let userGeoResponse
-  export let userGeoResponse_v2
-  export let userGeoResponse_v3
-
-  export let response: Cache_Single_Geo_LeagueList_Translation_Response
+	export let LIVE_SCORES_DATA_DATA_SEO;
+	export let LIVE_SCORES_DATA_LEAGUES;
+	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 
   export let FEATURED_MATCH_WIDGET_DATA_MAIN: FixtureResponse
   export let FEATURED_BETTING_SITES_WIDGET_DATA: All_SportBook_Details_Data
@@ -449,16 +466,13 @@
 
 </script>
 
-
 <!-- ===================
 	SVELTE INJECTION TAGS
 =================== -->
 
-
 <!-- [ℹ] adding SEO-META-TAGS for (this) PAGE 
 -->
 {#if PAGE_DATA_SEO}
-   <!-- content here -->
   <SvelteSeo
     title={PAGE_DATA_SEO.main_data.title}
     description={PAGE_DATA_SEO.main_data.description}
@@ -491,79 +505,68 @@
 
 <section id="home-page">
 
-  <!-- <p>   -->
-    <!-- {response_IP_2} -->
-    <!-- {userGeoResponse} -->
-    <!-- {userGeoResponse_v2} -->
-    <!-- {userGeoResponse_v3}</p> -->
-
-  <!-- <p>{response.lang}</p>
-  {#each response.top_geo_leagues as item}
-    {item.league_name}
-  {/each} -->
-
-  <!-- ... DESKTOP & TABLET VIEW ONLY ... -->
+  <!-- [ℹ] DESKTOP & TABLET VIEW ONLY -->
   {#if !tabletExclusive && !mobileExclusive}
-    <!-- ... 1st ROW ... -->
+    <!-- [ℹ] 1st ROW -->
 		<div> 
 			<!-- <LeagueListWidget {LEAGUE_LIST_WIDGET_DATA_SEO} /> -->
       <svelte:component this={LeagueListWidget} {LEAGUE_LIST_WIDGET_DATA_SEO} {LEAGUE_LIST_WIDGET_DATA} />
 		</div>
-    <!-- ... 2nd ROW ... -->
+    <!-- [ℹ] 2nd ROW -->
     <div 
       class='grid-display-column'>
-      <!-- ... widget #1 ... -->
+      <!-- [ℹ] widget #1 -->
       <div>
         <!-- <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/> -->
-        <!-- <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} /> -->
+        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} />
       </div>
-      <!-- ... widget #2 ... -->
+      <!-- [ℹ] widget #2 -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
       <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
     </div>
     
-    <!-- ... 3rd ROW ... -->
+    <!-- [ℹ] 3rd ROW -->
     <div 
       class='grid-display-column'>
-      <!-- ... widget #1 ... -->
+      <!-- [ℹ] widget #1 -->
       <!-- <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} /> -->
       <svelte:component this={FeaturedMatchWidget} {FEATURED_MATCH_WIDGET_DATA_SEO} {FEATURED_MATCH_WIDGET_DATA_MAIN} />
-      <!-- ... widget #2 ... -->
+      <!-- [ℹ] widget #2 -->
       <!-- <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} /> -->
       <svelte:component this={FeaturedBettingSitesWidget} {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} {FEATURED_BETTING_SITES_WIDGET_DATA} />
-      <!-- ... widget #3 -->
+      <!-- [ℹ] widget #3 -->
       <!-- <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} /> -->
       <svelte:component this={BestGoalscorersWidget} {BEST_GOAL_SCORERS_DATA_SEO} {BEST_GOAL_SCORERS_DATA} />
-      <!-- ... widget #4 -->
+      <!-- [ℹ] widget #4 -->
       <!-- <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} /> -->
       <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA} {LEAGUES_TABLE_SCORES_DATA} />
     </div>
-  <!-- ... MOBILE VIEW ONLY ... -->
+  <!-- [ℹ] MOBILE VIEW ONLY -->
   {:else}
-    <!-- ... 3rd ROW ... -->
+    <!-- [ℹ] 3rd ROW -->
     <div 
       class='grid-display-column'>
-      <!-- ... widget #1 -->
+      <!-- [ℹ] widget #1 -->
       <div>
 		    <!-- <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/> -->
-        <!-- <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} /> -->
+        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} />
       </div>
-      <!-- ... widget #2 ... -->
+      <!-- [ℹ] widget #2 -->
       <!-- <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} /> -->
       <svelte:component this={FeaturedBettingSitesWidget} {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} {FEATURED_BETTING_SITES_WIDGET_DATA}  />
-      <!-- ... widget #3 ... -->
+      <!-- [ℹ] widget #3 -->
       <!-- <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} /> -->
       <svelte:component this={FeaturedMatchWidget} {FEATURED_MATCH_WIDGET_DATA_SEO} {FEATURED_MATCH_WIDGET_DATA_MAIN} />
-      <!-- ... widget #4 -->
+      <!-- [ℹ] widget #4 -->
       <!-- <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} /> -->
       <svelte:component this={BestGoalscorersWidget} {BEST_GOAL_SCORERS_DATA_SEO}  {BEST_GOAL_SCORERS_DATA}/>
       {#if tabletExclusive && !mobileExclusive}
         <!-- content here -->
-        <!-- ... widget #4 -->
+        <!-- [ℹ] widget #4 -->
         <!-- <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} /> -->
         <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA} {LEAGUES_TABLE_SCORES_DATA} />
       {/if}
-      <!-- ... widget #5 -->
+      <!-- [ℹ] widget #5 -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
       <svelte:component this={SeoBlock} {SEO_BLOCK_DATA} />
     </div>
