@@ -113,7 +113,9 @@
     const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
     console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
 
-    const response: Cache_Single_Geo_LeagueList_Translation_Response = await get('api/league_list/cache-data.json?geoPos='+userGeoResponse_v3.country_code.toLowerCase())
+    const response: Cache_Single_Geo_LeagueList_Translation_Response = await fetch('/api/league_list/cache-data.json?geoPos='+userGeoResponse_v3.country_code.toLowerCase(), {
+			method: 'GET'
+		}).then((r) => r.json());
 
     /**
     * [v3] - Testing with Dynamic Imports (server-side) inside load() 
