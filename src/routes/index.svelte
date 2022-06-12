@@ -18,10 +18,10 @@
     session
   }) {
 
-    const response_IP = await fetch(`/api/geojs.json`, {
-			method: 'POST'
-		}).then((r) => r.json());
-    console.log("response_IP: ", response_IP);
+    // const response_IP = await fetch(`/api/geojs.json`, {
+		// 	method: 'POST'
+		// }).then((r) => r.json());
+    // console.log("response_IP: ", response_IP);
 
     if (!dev) {
       const response_IP_v2 = await fetch(`/getClientIP`, {
