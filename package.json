@@ -44,6 +44,7 @@
 		"@sentry/browser": "^6.19.2",
 		"@sentry/tracing": "^6.19.2",
 		"colorthief": "^2.3.2",
+		"compression": "^1.7.4",
 		"cookie": "^0.5.0",
 		"express": "^4.17.3",
 		"express-sslify": "^1.2.0",
