@@ -1,10 +1,10 @@
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
-import viteCompression from 'vite-plugin-compression';
-// import * as c from 'vite-plugin-compress';
-// import progress from 'vite-plugin-progress'
-import { chunkSplitPlugin } from 'vite-plugin-chunk-split';
+import viteCompression from 'vite-plugin-compression';  // https://github.com/vbenjs/vite-plugin-compression
+// import * as c from 'vite-plugin-compress'; // https://github.com/alloc/vite-plugin-compress
+// import progress from 'vite-plugin-progress' // https://github.com/jeddygong/vite-plugin-progress
+import { chunkSplitPlugin } from 'vite-plugin-chunk-split'; // https://github.com/sanyuan0704/vite-plugin-chunk-split
 
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
@@ -21,22 +21,20 @@ const config = {
      * [ℹ] SVELTEKIT-MIDDLEWARE-SUPPORT;
     */
     vite: {
-      // plugins: [myPlugin],
+
       plugins: [
-        // https://github.com/vbenjs/vite-plugin-compression
         viteCompression(),
-        // https://github.com/jeddygong/vite-plugin-progress
-        // progress(),
-        // https://github.com/sanyuan0704/vite-plugin-chunk-split
         chunkSplitPlugin()
-        // https://github.com/alloc/vite-plugin-compress
-        // c.compress()
+        // progress(),  // not-working
+        // c.compress() // note-working
       ],
 
-      // https://github.com/sveltejs/kit/issues/1571
-      // https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
-      // https://www.reddit.com/r/sveltejs/comments/tih8sx/pagespeed_lighthouse_reduce_unused_javascript/
-      // https://github.com/sveltejs/kit/issues/1632
+      /**
+       * [ℹ] https://github.com/sveltejs/kit/issues/1571
+       * [ℹ] https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
+       * [ℹ] https://www.reddit.com/r/sveltejs/comments/tih8sx/pagespeed_lighthouse_reduce_unused_javascript/
+       * [ℹ] https://github.com/sveltejs/kit/issues/1632
+      */
       build: {
         rollupOptions: {
           output: {
