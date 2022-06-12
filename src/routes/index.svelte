@@ -28,14 +28,10 @@
       const response_IP = await fetch(`/getClientIP`, {
         method: 'GET'
       }).then((r) => r);
-
-      await fetch(`https://betarena-scores-platform.herokuapp.com/getClientIP`, {
-        method: 'GET'
-      });
-
-      // await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+      console.log("response_IP: ", response_IP);
       
-      // console.log("response_IP_2: ", response_IP_v2);
+      const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+      console.log("response_IP_2: ", response_IP_2);
     }
 
     console.log("SESSION: ", session);
