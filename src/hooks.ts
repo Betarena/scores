@@ -9,6 +9,8 @@ import { prerendering } from '$app/env';
 // https://rodneylab.com/sveltekit-session-cookies/
 // https://stackoverflow.com/questions/71105799/sveltekit-pass-data-from-server-to-browser
 // https://github.com/sveltejs/kit/pull/3993
+// https://stackoverflow.com/questions/69066169/how-to-implement-cookie-authentication-sveltekit-mongodb
+// https://blog.logrocket.com/authentication-svelte-using-cookies/
 
 export const handle: Handle = async ({ event, resolve }) => {
 

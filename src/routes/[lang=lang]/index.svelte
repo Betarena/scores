@@ -352,38 +352,40 @@
     [v1] - Testing with Standard Imports (client-side)
   */
 
-	import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
-	import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-	import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
-  import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
-  import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
-  import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
+  /*
+
+    import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
+    import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+    import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
+    import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
+    import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+    import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
+    import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
+
+  */
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
   */
 
-  /*
-    let FeaturedMatchWidget;
-    let FeaturedBettingSitesWidget;
-    let LeagueListWidget;
-    let LiveScoresWidget;
-    let BestGoalscorersWidget;
-    let SeoBlock;
-    let LeaguesTableWidget;
+  let FeaturedMatchWidget;
+  let FeaturedBettingSitesWidget;
+  let LeagueListWidget;
+  let LiveScoresWidget;
+  let BestGoalscorersWidget;
+  let SeoBlock;
+  let LeaguesTableWidget;
 
-    onMount(async () => {
-    	FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
-    	FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
-    	LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
-    	LiveScoresWidget = (await import('$lib/components/live_scores_football/_LiveScores_Widget.svelte')).default;
-    	BestGoalscorersWidget = (await import('$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte')).default;
-    	SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
-    	LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
-    });
+  onMount(async () => {
+    FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
+    FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
+    LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
+    LiveScoresWidget = (await import('$lib/components/live_scores_football/_LiveScores_Widget.svelte')).default;
+    BestGoalscorersWidget = (await import('$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte')).default;
+    SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
+    LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
+  });
 
-  */
 
    /*
     [v3] - Testing with Dynamic Imports (server-side) inside load() 
