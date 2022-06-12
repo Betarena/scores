@@ -16,7 +16,7 @@ const app = express();
 // [ℹ] https://www.npmjs.com/package/heroku-ssl-redirect
 // app.use(sslRedirect());
 
-app.get('/getClientIP', (req, res, next) => {
+app.get('/getClientIP.json', (req, res, next) => {
   var ip = req.headers['x-forwarded-for'] ||
     req.socket.remoteAddress ||
     null;
@@ -25,7 +25,7 @@ app.get('/getClientIP', (req, res, next) => {
   var ip2 = req.ip
   console.log('ip2', ip2);
 
-  res.json({ answer: ip })
+  res.end()
 })
 
 
