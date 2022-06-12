@@ -23,6 +23,7 @@
 
   // [ℹ] main component variables;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO: Cache_Single_Lang_LeagueList_Translation_Response;
+  export let LEAGUE_LIST_WIDGET_DATA: Cache_Single_Geo_LeagueList_Translation_Response
 
   /**
    * Description:
@@ -41,7 +42,8 @@
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] GET RESPONSE;
-    const response: Cache_Single_Geo_LeagueList_Translation_Response = await get('api/league_list/cache-data.json?geoPos='+userGeo)
+    // const response: Cache_Single_Geo_LeagueList_Translation_Response = await get('api/league_list/cache-data.json?geoPos='+userGeo)
+    const response: Cache_Single_Geo_LeagueList_Translation_Response = LEAGUE_LIST_WIDGET_DATA
 
     // [ℹ] if response is null;
     if (response == null || response == undefined) {

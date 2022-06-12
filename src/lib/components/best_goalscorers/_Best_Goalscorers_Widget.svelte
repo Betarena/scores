@@ -25,6 +25,7 @@
 
   // [ℹ] main component variables;
 	export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
+  export let BEST_GOAL_SCORERS_DATA: Cache_Single_Geo_GoalScorers_Translation_Response;
 
   let staticViewRow: number;              // [ℹ] holds the `initial` number of featured sites to be displayed
   let limitViewRow: number;               // [ℹ] holds the actual, `total` limit of the list of featured sites
@@ -49,7 +50,8 @@
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] GET RESPONSE;
-    const response: Cache_Single_Geo_GoalScorers_Translation_Response = await get('api/best_goalscorer/cache-data.json?geoPos='+userGeo)
+    // const response: Cache_Single_Geo_GoalScorers_Translation_Response = await get('api/best_goalscorer/cache-data.json?geoPos='+userGeo)
+    const response: Cache_Single_Geo_GoalScorers_Translation_Response = BEST_GOAL_SCORERS_DATA;
 
     // [ℹ] if response is null;
 		if (response == null || response == undefined) {

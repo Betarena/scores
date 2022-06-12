@@ -30,6 +30,7 @@
 
   // [ℹ] main component variables;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
+  export let FEATURED_BETTING_SITES_WIDGET_DATA: All_SportBook_Details_Data
 
   let staticViewRow: number;              // [ℹ] holds the `initial` number of featured sites to be displayed
   let limitViewRow: number;               // [ℹ] holds the actual, `total` limit of the list of featured sites
@@ -53,7 +54,8 @@
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] GET RESPONSE;
-    const response: All_SportBook_Details_Data = await get('api/featured_betting_sites/cache-data.json?geoPos='+userGeo)
+    // const response: All_SportBook_Details_Data = await get('api/featured_betting_sites/cache-data.json?geoPos='+userGeo)
+    const response: All_SportBook_Details_Data = FEATURED_BETTING_SITES_WIDGET_DATA;
 
     // [ℹ] if response is null;
 		if (response == null || response == undefined) {

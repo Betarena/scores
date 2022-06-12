@@ -38,6 +38,7 @@
 
 	// [ℹ] main component variables;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
+  export let FEATURED_MATCH_WIDGET_DATA_MAIN: FixtureResponse;
 
 	// [ℹ] intercept-key data;
 	let FEATURED_MATCH_WIDGET_DATA: FixtureResponse;
@@ -100,7 +101,8 @@
 		// [ℹ] extract userGeoPosition
 		let userGeo: string = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
-		const response: FixtureResponse = await get('api/featured_match/cache-data.json?geoPos='+userGeo)
+		// const response: FixtureResponse = await get('api/featured_match/cache-data.json?geoPos='+userGeo)
+    const response: FixtureResponse = FEATURED_MATCH_WIDGET_DATA_MAIN;
 
 		// [ℹ] if response is null [NO FEATURED-MATCH]
 		if (response == null || response == undefined) {
