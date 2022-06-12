@@ -18,17 +18,15 @@
     fetch
   }) {
 
-    /**
-     * ------------------------
-     * GET PRE-LOADED-PAGE-DATA:
-     * ------------------------
-     * ➤ GET header-complete (w/ SEO) data;
-     * ➤ GET footer-complete (w/SEO) data;
-     * ➤ GET seo-page data (main SEO) data;
-     * ------------------------
-    */
+    // [ℹ] IMPORTANT!
+    const response_valid_url = await fetch(
+      `/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
+      {
+			  method: 'GET'
+		  }
+    ).then((r) => r.json());
 
-    const urlLang: string = params.lang == undefined ? 'en' : params.lang
+    const urlLang: string = params.lang == undefined || !response_valid_url ? 'en' : params.lang
 
     const response_header = await fetch(`/api/navbar/cache-data.json?lang=`+urlLang, {
       method: 'GET',
@@ -38,13 +36,22 @@
       method: 'GET',
     }).then(r => r.json());
 
-    // let Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
-    // let Header = (await import('$lib/components/header/_Header.svelte')).default;
-    // let OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
-    // let SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
-    // let PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
-    // let EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
-    // let GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
+    /*
+    [v3] - Testing with Dynamic Imports (server-side) inside load() 
+    =====
+    NOTES:
+
+    */
+
+    /*
+      let Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
+      let Header = (await import('$lib/components/header/_Header.svelte')).default;
+      let OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
+      let SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
+      let PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
+      let EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
+      let GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
+    */
 
     // [ℹ] validate, & return DATA [always]
     if (response_header && 
@@ -60,13 +67,19 @@
           HEADER_TRANSLATION_DATA: response_header,
           FOOTER_TRANSLATION_DATA: response_footer,
 
-          // Footer: Footer,
-          // Header: Header,
-          // OfflineAlert: OfflineAlert,
-          // SplashScreen: SplashScreen,
-          // PlatformAlert: PlatformAlert,
-          // EmailSubscribe: EmailSubscribe,
-          // GoogleAnalytics: GoogleAnalytics
+          /*
+          [v3] - Testing with Dynamic Imports (server-side) inside load() 
+          */
+
+          /*
+          Footer: Footer,
+          Header: Header,
+          OfflineAlert: OfflineAlert,
+          SplashScreen: SplashScreen,
+          PlatformAlert: PlatformAlert,
+          EmailSubscribe: EmailSubscribe,
+          GoogleAnalytics: GoogleAnalytics
+          */
 
         }
       }
@@ -89,13 +102,16 @@
 
 
 <script lang="ts">
+
   // [ℹ] svelte/+kit
 	import { getStores, navigating, page, session, updated } from '$app/stores';
   import { browser, dev } from '$app/env';
   import { onMount } from 'svelte';
+
   // [ℹ] stores
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
+
   // [ℹ] page-components
 
   // export let Footer;
@@ -141,11 +157,12 @@
   // [ℹ] load in SEO-DATA for Header, Footer TYPES;
   import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
   import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types'
-  import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
   export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
   export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
-  // export let PAGE_DATA_SEO: Hasura_Complete_Pages_SEO;
+
+  // [🐛] debug;
+	$: if (dev) console.debug('HEADER $page: ', $page);
 
   let ga_measurment_id = "UA-60160331-9"  // ... GoogleAnalytics ID
     

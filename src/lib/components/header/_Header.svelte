@@ -5,6 +5,7 @@
 
 
 <script lang="ts">
+  
   /**
    * [ℹ] svelte-kit
   */
@@ -14,10 +15,12 @@
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 	// const { session } = getStores();
+
   /**
    * [ℹ] stroes
   */
 	import { userBetarenaSettings } from '$lib/store/user-settings';
+
   /**
    * [ℹ] header-component
   */
@@ -25,6 +28,7 @@
 	import logo_mini from './assets/betarena-logo-mobile.svg';
 	import menu_burger_bar from './assets/menu-burger.svg';
 	import icon_check from './assets/icon-check.svg';
+
   /**
    * [ℹ] sub-header-component
   */
@@ -35,19 +39,18 @@
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
 	import light_icon_theme from './assets/theme-light-icon.svg';
 	import menu_sports_icon from './assets/menu_sports_icon.svg';
+
   /**
    * [ℹ] header-types
   */
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
 	import type { GeoJsResponse } from '$lib/models/geojs-types';
 	import { getUserLocation } from '$lib/geoJs/init';
+
   /**
    * [ℹ] export-values-expected
   */
 	export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
-
-  // [🐛] debug;
-	$: if (dev) console.debug('HEADER $page: ', $page);
 
   /**
    * [ℹ] component variables;
@@ -170,65 +173,79 @@
 		// [ℹ] hide the LANG DROPDOWN box;
 		dropdown_lang_visible = false;
 
-    // [ℹ] switch navigation for appropiate /<lang>
-    if ($page.routeId != "[lang=lang]/[sport]/[country]/[league_name]" && 
-        $page.routeId != "[sport]/[country]/[league_name]") {
+    // [ℹ] update <html {lang} >
+    document.documentElement.setAttribute('lang', lang);
 
-      // [ℹ] update the <html lang="">
-      document.documentElement.setAttribute('lang', lang);
-
-      // [ℹ] check for EN TRANSLATION;
-      if (lang == 'en' &&  
-          pastLang != "/") {
-        // prefetch(`/`); [? - maybe ?]
-
-        // [ℹ] count number of slashes URL;
-        var count = $page.url.pathname.split("/").length-1
-        // [ℹ] replace path-name accordingly for "EN" - first occurance;
-        const newURL: string = count == 1 ? $page.url.pathname.replace(pastLang, "/") : $page.url.pathname.replace(pastLang, "");
-        // [🐛] debug;
-        if (dev) console.log("NEW_URL: Inside EN", count, newURL)
-
-        // [ℹ] update URL breadcrumb;
-        // window.history.replaceState({}, "NewPage", newURL);
-        goto(newURL, { replaceState: true });
-      } 
-      // [ℹ] otherwise, check for coming from "EN" (/) 
-      // [ℹ] & update page URL with CORRECT TRANSLATION;
-      else if (lang != 'en' && 
-              pastLang == "/") {
-
-        // [ℹ] count number of slashes URL;
-        var countSlash = $page.url.pathname.split("/").length-1
-        // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-        const newURL: string = countSlash > 1 ? $page.url.pathname.replace(pastLang, `/${lang}/`) : $page.url.pathname.replace(pastLang, `/${lang}`);
-        // [🐛] debug;
-        if (dev) console.log(`NEW_URL: Inside V2 ${lang}`, countSlash, newURL)
-
-        // [ℹ] update URL breadcrumb;
-        // window.history.replaceState({}, "NewPage", newURL);
-        goto(newURL, { replaceState: true });
+    // [ℹ] simply ignore current route
+    // [ℹ] & navigate to the homepage (lang)
+    if ($page.error) {
+      if (lang == 'en') {
+        goto('/')
+      } else {
+        goto(`/${lang}`)
       }
-      // [ℹ] otherwise, check for coming from "[lang]" (/) 
-      // [ℹ] & update page URL with CORRECT TRANSLATION;
-      else if (lang != 'en' && 
-              pastLang != "/") {
-        
-        // [ℹ] count number of slashes URL;
-        var countSlash = $page.url.pathname.split("/").length-1
-        // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-        const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
-        // [🐛] debug;
-        if (dev) console.log(`NEW_URL: Inside V3 ${lang}`, countSlash, newURL)
-
-        // [ℹ] update URL breadcrumb;
-        // window.history.replaceState({}, "NewPage", newURL);
-        goto(newURL, { replaceState: true });
-      }
-
+      return;
     }
 
-	}
+    // [ℹ] these routes handle the TRANSLATION REDIRECT ROUTE THEMSELVES;
+    else if ($page.routeId == "[lang=lang]/[sport]/[country]/[league_name]" ||
+        $page.routeId == "[sport]/[country]/[league_name]") {
+      // [ℹ] and do-nothing
+      return;
+    }
+
+    // [ℹ] otherwise, switch navigation for appropiate /<lang>
+
+    // [ℹ] check for EN TRANSLATION;
+    else if (lang == 'en' &&  
+        pastLang != "/") {
+      // prefetch(`/`); [? - maybe ?]
+
+      // [ℹ] count number of slashes URL;
+      var count = $page.url.pathname.split("/").length-1
+      // [ℹ] replace path-name accordingly for "EN" - first occurance;
+      const newURL: string = count == 1 ? $page.url.pathname.replace(pastLang, "/") : $page.url.pathname.replace(pastLang, "");
+      // [🐛] debug;
+      if (dev) console.log("NEW_URL: Inside EN", count, newURL)
+
+      // [ℹ] update URL breadcrumb;
+      // window.history.replaceState({}, "NewPage", newURL);
+      goto(newURL, { replaceState: true });
+    } 
+    // [ℹ] otherwise, check for coming from "EN" (/) 
+    // [ℹ] & update page URL with CORRECT TRANSLATION;
+    else if (lang != 'en' && 
+            pastLang == "/") {
+
+      // [ℹ] count number of slashes URL;
+      var countSlash = $page.url.pathname.split("/").length-1
+      // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+      const newURL: string = countSlash > 1 ? $page.url.pathname.replace(pastLang, `/${lang}/`) : $page.url.pathname.replace(pastLang, `/${lang}`);
+      // [🐛] debug;
+      if (dev) console.log(`NEW_URL: Inside V2 ${lang}`, countSlash, newURL)
+
+      // [ℹ] update URL breadcrumb;
+      // window.history.replaceState({}, "NewPage", newURL);
+      goto(newURL, { replaceState: true });
+    }
+    // [ℹ] otherwise, check for coming from "[lang]" (/) 
+    // [ℹ] & update page URL with CORRECT TRANSLATION;
+    else if (lang != 'en' && 
+            pastLang != "/") {
+      
+      // [ℹ] count number of slashes URL;
+      var countSlash = $page.url.pathname.split("/").length-1
+      // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+      const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
+      // [🐛] debug;
+      if (dev) console.log(`NEW_URL: Inside V3 ${lang}`, countSlash, newURL)
+
+      // [ℹ] update URL breadcrumb;
+      // window.history.replaceState({}, "NewPage", newURL);
+      goto(newURL, { replaceState: true });
+    }
+
+  }
 
   /**
    * [ℹ] udpate the user selected THEME `.localStorage()`
