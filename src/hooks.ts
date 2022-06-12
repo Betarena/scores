@@ -12,6 +12,10 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   // https://github.com/sveltejs/kit/issues/4873
   const clientAddress = !prerendering ? await event.clientAddress : '';
+  console.log("clientAddress", clientAddress)
+
+  const clientAddressv2 = !prerendering ? event.request.headers['x-forwarded-for'] || event.request.socket.remoteAddress || null : ''
+  console.log("clientAddressv2", clientAddressv2)
   
   // -----------------
   // [ℹ] before endpoint call
