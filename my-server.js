@@ -20,15 +20,13 @@ const app = express();
 // ... ℹ https://webdva.github.io/how-to-force-express-https-tutorial 
 app.use((req, res, next) => {
 
-  var ip = req.headers['x-forwarded-for'] ||
-    req.socket.remoteAddress ||
-    null;
+  // var ip = req.headers['x-forwarded-for'] ||
+  //   req.socket.remoteAddress ||
+  //   null;
+  // console.log('ip', ip);
 
-  console.log('ip', ip);
-
-  var ip2 = req.ip
-
-  console.log('ip2', ip2);
+  // var ip2 = req.ip
+  // console.log('ip2', ip2);
 
   if (req.header('x-forwarded-proto') !== 'https')
     res.redirect(`https://${req.header('host')}${req.url}`);

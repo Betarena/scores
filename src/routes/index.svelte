@@ -14,8 +14,11 @@
 	export async function load({ 
     url, 
     params, 
-    fetch 
+    fetch,
+    session
   }) {
+
+    console.log("SESSION: ", session);
 
     const urlLang: string = params.lang == undefined ? 'en' : params.lang
 
