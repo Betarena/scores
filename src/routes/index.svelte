@@ -98,16 +98,18 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
-    
 
+    // 🤔✅ Correct ? not sure
     const userGeoResponse: GeoJsResponse = await getUserLocation()
     console.log("userGeoResponse_s", userGeoResponse.country_code.toLowerCase())
 
+    // ⚠ sometiemes correct on the `console` on client
     const userGeoResponse_v2 = await fetch('https://get.geojs.io/v1/ip/geo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
     console.log("userGeoResponse_s2", userGeoResponse_v2.country_code.toLowerCase())
 
+    // 🤔✅ correct ? not sure.
     const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
     console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
 
@@ -351,7 +353,7 @@ import { get } from '$lib/api/utils';
 
 <section id="home-page">
 
-  <p>  {JSON.parse(response_IP_2)}
+  <p>  {response_IP_2}
     {userGeoResponse}
     {userGeoResponse_v2}
     {userGeoResponse_v3}</p>
