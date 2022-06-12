@@ -25,7 +25,7 @@ app.get('/getClientIP', (req, res, next) => {
   var ip2 = req.ip
   console.log('ip2', ip2);
 
-  res.json({ answer: ip }
+  res.json({ answer: ip })
 })
 
 
