@@ -10,6 +10,7 @@ import { prerendering } from '$app/env';
 
 export const handle: Handle = async ({ event, resolve }) => {
 
+  // https://github.com/sveltejs/kit/issues/4873
   const clientAddress = !prerendering ? await event.clientAddress : '';
   
   // -----------------
@@ -26,7 +27,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     //   event.request.socket.remoteAddress ||
     //   null
     originIP: clientAddress,
-    geoPos: (await getUserLocationFromIP(clientAddress)),
+    geoPos: !prerendering ? (await getUserLocationFromIP(clientAddress)) : '', 
     lang: 'en',
     theme: 'Light',
   };
