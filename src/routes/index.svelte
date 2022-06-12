@@ -503,18 +503,18 @@
       </div>
       <!-- ... widget #2 ... -->
       <!-- <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} /> -->
-      <svelte:component this={FeaturedBettingSitesWidget} {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+      <svelte:component this={FeaturedBettingSitesWidget} {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} {FEATURED_BETTING_SITES_WIDGET_DATA}  />
       <!-- ... widget #3 ... -->
       <!-- <FeaturedMatchWidget {FEATURED_MATCH_WIDGET_DATA_SEO} /> -->
-      <svelte:component this={FeaturedMatchWidget} {FEATURED_MATCH_WIDGET_DATA_SEO} />
+      <svelte:component this={FeaturedMatchWidget} {FEATURED_MATCH_WIDGET_DATA_SEO} {FEATURED_MATCH_WIDGET_DATA_MAIN} />
       <!-- ... widget #4 -->
       <!-- <BestGoalscorersWidget {BEST_GOAL_SCORERS_DATA_SEO} /> -->
-      <svelte:component this={BestGoalscorersWidget} {BEST_GOAL_SCORERS_DATA_SEO} />
+      <svelte:component this={BestGoalscorersWidget} {BEST_GOAL_SCORERS_DATA_SEO}  {BEST_GOAL_SCORERS_DATA}/>
       {#if tabletExclusive && !mobileExclusive}
         <!-- content here -->
         <!-- ... widget #4 -->
         <!-- <LeaguesTableWidget {LEAGUES_TABLE_SCORES_SEO_DATA} /> -->
-        <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA} />
+        <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA} {LEAGUES_TABLE_SCORES_DATA} />
       {/if}
       <!-- ... widget #5 -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
