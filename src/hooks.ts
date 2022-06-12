@@ -7,15 +7,14 @@ import { prerendering } from '$app/env';
 // https://dev.to/krowemoh/sveltekit-hooks-2bii
 // https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
 // https://rodneylab.com/sveltekit-session-cookies/
+// https://stackoverflow.com/questions/71105799/sveltekit-pass-data-from-server-to-browser
+// https://github.com/sveltejs/kit/pull/3993
 
 export const handle: Handle = async ({ event, resolve }) => {
 
   // https://github.com/sveltejs/kit/issues/4873
-  const clientAddress = !prerendering ? await event.clientAddress : '';
-  console.log("clientAddress", clientAddress)
-
-  const clientAddressv2 = !prerendering ? event : ''
-  console.log("clientAddressv2", clientAddressv2)
+  const clientAddress = !prerendering ? await event.clientAddress : ''; // incorrect-IP
+  const clientAddressv2 = !prerendering ? event : '' // no-working
   
   // -----------------
   // [ℹ] before endpoint call
@@ -30,8 +29,8 @@ export const handle: Handle = async ({ event, resolve }) => {
     // originIP: event.request.headers['x-forwarded-for'] ||
     //   event.request.socket.remoteAddress ||
     //   null
-    originIP: clientAddress,
-    geoPos: !prerendering ? (await getUserLocationFromIP(clientAddress)) : '', 
+    // originIP: clientAddress,
+    // geoPos: !prerendering ? (await getUserLocationFromIP(clientAddress)) : '', 
     lang: 'en',
     theme: 'Light',
   };
