@@ -113,6 +113,8 @@
     const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
     console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
 
+    const response: Cache_Single_Geo_LeagueList_Translation_Response = await get('api/league_list/cache-data.json?geoPos='+userGeoResponse_v3.country_code.toLowerCase())
+
     /**
     * [v3] - Testing with Dynamic Imports (server-side) inside load() 
     */
@@ -159,8 +161,9 @@
           response_IP_2: response_IP_2,
           userGeoResponse: userGeoResponse.country_code.toLowerCase(),
           userGeoResponse_v2: userGeoResponse_v2.country_code.toLowerCase(),
-          userGeoResponse_v3: userGeoResponse_v3.country_code.toLowerCase()
+          userGeoResponse_v3: userGeoResponse_v3.country_code.toLowerCase(),
 
+          response: response
           /**
           * [v3] - Testing with Dynamic Imports (server-side) inside load() 
           */
@@ -251,7 +254,7 @@
   import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
   import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
   import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/best_goalscorer/types';
-  import type { Cache_Single_Lang_LeagueList_Translation_Response } from '$lib/models/league_list/types';
+  import type { Cache_Single_Geo_LeagueList_Translation_Response, Cache_Single_Lang_LeagueList_Translation_Response } from '$lib/models/league_list/types';
   import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
   import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
 import { getUserLocation } from '$lib/geoJs/init';
@@ -274,6 +277,8 @@ import { get } from '$lib/api/utils';
   export let userGeoResponse
   export let userGeoResponse_v2
   export let userGeoResponse_v3
+
+  export let response: Cache_Single_Geo_LeagueList_Translation_Response
 
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
@@ -357,6 +362,11 @@ import { get } from '$lib/api/utils';
     {userGeoResponse}
     {userGeoResponse_v2}
     {userGeoResponse_v3}</p>
+
+  <p>{response.lang}</p>
+  {#each response.top_geo_leagues as item}
+    {item.league_name}
+  {/each}
 
   <!-- ... DESKTOP & TABLET VIEW ONLY ... -->
   {#if !tabletExclusive && !mobileExclusive}
