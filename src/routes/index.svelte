@@ -24,7 +24,9 @@
     // console.log("response_IP: ", response_IP);
 
     if (!dev) {
-      const response_IP_v2 = await get(`/getClientIP.json`)
+      const response_IP_v2 = await fetch(`/getClientIP`, {
+        method: 'GET'
+      });
       // console.log("response_IP_2: ", response_IP_v2);
     }
 
