@@ -20,10 +20,10 @@
 
     if (!dev) {
 
-      const response_IP = await fetch(`/getClientIP`, {
-        method: 'GET'
-      }).then((r) => r.json());
-      console.log("response_IP: ", response_IP);
+      // const response_IP = await fetch(`/getClientIP`, {
+      //   method: 'GET'
+      // }).then((r) => r.json());
+      // console.log("response_IP: ", response_IP);
       
       const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
       console.log("response_IP_2: ", response_IP_2);
