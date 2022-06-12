@@ -52,6 +52,7 @@
 		"graphql-request": "^3.6.1",
 		"heroku-ssl-redirect": "^0.1.1",
 		"ioredis": "^4.28.2",
+		"request-ip": "^2.2.0",
 		"svelte": "^3.34.0",
 		"svelte-seo": "^1.3.1"
 	}

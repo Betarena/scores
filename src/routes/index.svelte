@@ -98,6 +98,8 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    
+
     const userGeoResponse: GeoJsResponse = await getUserLocation()
     console.log("userGeoResponse_s", userGeoResponse.country_code.toLowerCase())
 
@@ -349,7 +351,7 @@ import { get } from '$lib/api/utils';
 
 <section id="home-page">
 
-  <p>  {response_IP_2}
+  <p>  {JSON.parse(response_IP_2)}
     {userGeoResponse}
     {userGeoResponse_v2}
     {userGeoResponse_v3}</p>

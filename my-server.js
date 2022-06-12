@@ -5,6 +5,9 @@ import express from 'express';
 import sslRedirect from 'heroku-ssl-redirect';
 import * as sslify from 'express-sslify';
 
+import * as requestIp from 'request-ip'
+// const requestIp = require('request-ip');
+
 const app = express();
 
 // [ℹ] add a route that lives separately from the SvelteKit app
@@ -25,6 +28,9 @@ app.get('/getClientIP', (req, res, next) => {
 
   var ip2 = req.ip
   console.log('ip2', ip2);
+
+  var ip3 = requestIp.getClientIp(req); 
+  console.log('ip3', ip3);
 
   res.json(
     {
