@@ -24,6 +24,7 @@
     // console.log("response_IP: ", response_IP);
 
     if (!dev) {
+
       await fetch(`/getClientIP`, {
         method: 'GET'
       });
@@ -32,7 +33,7 @@
         method: 'GET'
       });
 
-      await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+      // await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
       
       // console.log("response_IP_2: ", response_IP_v2);
     }
