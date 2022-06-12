@@ -14,7 +14,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   const clientAddress = !prerendering ? await event.clientAddress : '';
   console.log("clientAddress", clientAddress)
 
-  const clientAddressv2 = !prerendering ? event.request.headers['x-forwarded-for'] || event.request.socket.remoteAddress || null : ''
+  const clientAddressv2 = !prerendering ? event : ''
   console.log("clientAddressv2", clientAddressv2)
   
   // -----------------
