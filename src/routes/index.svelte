@@ -18,6 +18,8 @@
     session
   }) {
 
+    let response_IP_2;
+
     if (!dev) {
 
       // const response_IP = await fetch(`/getClientIP`, {
@@ -25,7 +27,7 @@
       // }).then((r) => r.json());
       // console.log("response_IP: ", response_IP);
       
-      const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+      response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
       console.log("response_IP_2: ", response_IP_2);
     }
 
@@ -97,15 +99,15 @@
 		}).then((r) => r.json());
 
     const userGeoResponse: GeoJsResponse = await getUserLocation()
-    console.log("userGeoResponse_s", userGeoResponse)
+    console.log("userGeoResponse_s", userGeoResponse.country_code.toLowerCase())
 
     const userGeoResponse_v2 = await fetch('https://get.geojs.io/v1/ip/geo.json', {
 			method: 'GET'
 		}).then((r) => r.json());
-    console.log("userGeoResponse_s2", userGeoResponse_v2)
+    console.log("userGeoResponse_s2", userGeoResponse_v2.country_code.toLowerCase())
 
     const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
-    console.log("userGeoResponse_s3", userGeoResponse_v3)
+    console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
 
     /**
     * [v3] - Testing with Dynamic Imports (server-side) inside load() 
@@ -149,6 +151,11 @@
           LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
           LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
           LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
+
+          response_IP_2: response_IP_2,
+          userGeoResponse: userGeoResponse.country_code.toLowerCase(),
+          userGeoResponse_v2: userGeoResponse_v2.country_code.toLowerCase(),
+          userGeoResponse_v3: userGeoResponse_v3.country_code.toLowerCase()
 
           /**
           * [v3] - Testing with Dynamic Imports (server-side) inside load() 
@@ -259,6 +266,11 @@ import { get } from '$lib/api/utils';
 	export let LIVE_SCORES_DATA_LEAGUES;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
 
+  export let response_IP_2
+  export let userGeoResponse
+  export let userGeoResponse_v2
+  export let userGeoResponse_v3
+
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
@@ -336,6 +348,11 @@ import { get } from '$lib/api/utils';
 =================== -->
 
 <section id="home-page">
+
+  <p>  {response_IP_2}
+    {userGeoResponse}
+    {userGeoResponse_v2}
+    {userGeoResponse_v3}</p>
 
   <!-- ... DESKTOP & TABLET VIEW ONLY ... -->
   {#if !tabletExclusive && !mobileExclusive}
