@@ -254,6 +254,8 @@
     const response_livescores_football_leagues = data[9]
     const response_livescores_football_translations = data[10]
 
+    // [ℹ] data-geo real-test [direct widget data]
+
     // const response_featured_match = data[7]
     // const response_featured_betting_sites = data[8]
     // const response_league_list = data[9]
@@ -309,6 +311,7 @@
           LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
 
           // [ℹ] data-geo real-test [direct widget data]
+          
           // FEATURED_MATCH_WIDGET_DATA_MAIN : response_featured_match,
           // FEATURED_BETTING_SITES_WIDGET_DATA : response_featured_betting_sites,
           // BEST_GOAL_SCORERS_DATA : response_best_goalscorers,
@@ -395,7 +398,7 @@
     LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
   });
 
-   /*
+  /*
     [v3] - Testing with Dynamic Imports (server-side) inside load() 
   */
 
