@@ -138,3 +138,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 ### Saving TABS:
 
 https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspace-vscode/68540643#68540643
+
+### Other:
+
+- [sveltekit-awesome](https://github.com/janosh/awesome-svelte-kit)
