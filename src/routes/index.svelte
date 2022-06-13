@@ -74,54 +74,54 @@
     */
 
 
-      const response_homepage_seo = fetch(
+      const response_homepage_seo = await fetch(
         '/api/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", 
         {
           method: 'GET'
         }
-      )
+      ).then((r) => r.json());
 
-      const response_featured_match_seo = fetch(
+      const response_featured_match_seo = await fetch(
         '/api/featured_match/cache-data.json?lang='+urlLang, 
         {
           method: 'GET'
         }
-      )
+      ).then((r) => r.json());
 
-      const response_featured_betting_sites_seo = fetch(
+      const response_featured_betting_sites_seo = await fetch(
         '/api/featured_betting_sites/cache-data.json?lang='+urlLang, 
         {
           method: 'GET' 
         }
-      )
+      ).then((r) => r.json());
 
-      const response_best_goalscorers_seo = fetch(
+      const response_best_goalscorers_seo = await fetch(
         '/api/best_goalscorer/cache-data.json?lang='+urlLang, 
         {
           method: 'GET'
         }
-      )
+      ).then((r) => r.json());
 
-      const response_league_list_seo = fetch(
+      const response_league_list_seo = await fetch(
         '/api/league_list/cache-data.json?lang='+urlLang, 
         {
           method: 'GET'
         }
-      )
+      ).then((r) => r.json());
 
-      const response_leagues_table_seo = fetch(
+      const response_leagues_table_seo = await fetch(
         '/api/leagues_table/cache-data.json?lang='+urlLang, 
         {
           method: 'GET'
         }
-      )
+      ).then((r) => r.json());
 
-      const response_seo_block_seo = fetch(
+      const response_seo_block_seo = await fetch(
         '/api/seo_block/cache-data.json?lang='+urlLang, 
         {
           method: 'GET'
         }
-      )
+      ).then((r) => r.json());
 
       const response_livescores_football = await fetch(
         '/api/live_scores/cache-seo.json?lang='+urlLang, 
