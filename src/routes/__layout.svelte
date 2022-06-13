@@ -28,6 +28,7 @@
 
     const urlLang: string = params.lang == undefined || !response_valid_url ? 'en' : params.lang
 
+    /*
     const response_header = await fetch(`/api/navbar/cache-data.json?lang=`+urlLang, {
       method: 'GET',
     }).then(r => r.json());
@@ -35,13 +36,12 @@
     const response_footer = await fetch(`/api/footer/cache-data.json?lang=`+urlLang, {
       method: 'GET',
     }).then(r => r.json());
+    */
 
     /**
      * [ℹ] =================
      * [ℹ] further API FETCH enhancing via bundeling requests;
     */
-
-    /*
 
     const urls = [
       '/api/navbar/cache-data.json?lang='+urlLang,
@@ -59,8 +59,6 @@
 
     const response_header = data[0]
     const response_footer = data[1]
-
-    */
 
     /*
     [v3] - Testing with Dynamic Imports (server-side) inside load() 

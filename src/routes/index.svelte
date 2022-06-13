@@ -48,6 +48,8 @@
      * [check-made-as-a-complex-PROMISE]
     */
 
+    /*
+
     const response_valid_url = await fetch(
       `/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
       {
@@ -64,6 +66,8 @@
       }
     }
 
+    */
+
     const urlLang: string = params.lang == undefined ? 'en' : params.lang
 
     /**
@@ -72,6 +76,8 @@
      * [disabled]
      * [check-made-as-a-complex-PROMISE]
     */
+
+    /*
 
 
       const response_homepage_seo = await fetch(
@@ -141,6 +147,7 @@
         method: 'GET'
       }).then((r) => r.json());
 
+    */
 
     /**
      * ==================
@@ -158,11 +165,15 @@
       }).then((r) => r.json());
       console.log("userGeoResponse_s2", userGeoResponse_v2.country_code.toLowerCase())
 
+    */
+
       // [ℹ] correct ? not sure... seems to work and pass GB for me
       const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
       console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
 
-     // const userGeo: string = userGeoResponse_v3.country_code.toLowerCase()
+     const userGeo: string = userGeoResponse_v3.country_code.toLowerCase()
+    /*
+
       const response_featured_match: FixtureResponse = fetch(
         '/api/featured_match/cache-data.json?geoPos='+userGeo, 
         {
@@ -208,7 +219,6 @@
      * [ℹ] =================
     */
 
-    /*
 
     const urls = [
       '/api/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage",
@@ -223,13 +233,13 @@
       // [ℹ] livescores
       '/api/live_scores/cache-seo.json?lang='+urlLang, 
       '/api/live_scores/cache-data.json', 
-      '/api/live_scores/cache-translations.json'
+      '/api/live_scores/cache-translations.json',
 
-      // '/api/featured_match/cache-data.json?geoPos='+'en', 
-      // '/api/featured_betting_sites/cache-data.json?geoPos='+'en', 
-      // '/api/league_list/cache-data.json?geoPos='+'en', 
-      // '/api/best_goalscorer/cache-data.json?geoPos='+'en', 
-      // '/api/leagues_table/cache-data.json?geoPos='+'en', 
+      '/api/featured_match/cache-data.json?geoPos='+'en', 
+      '/api/featured_betting_sites/cache-data.json?geoPos='+'en', 
+      '/api/league_list/cache-data.json?geoPos='+'en', 
+      '/api/best_goalscorer/cache-data.json?geoPos='+'en', 
+      '/api/leagues_table/cache-data.json?geoPos='+'en', 
     ];
 
     const promises = urls.map((url) =>
@@ -254,11 +264,11 @@
 
     // [ℹ] data-geo real-test [direct widget data]
 
-    // const response_featured_match = data[7]
-    // const response_featured_betting_sites = data[8]
-    // const response_league_list = data[9]
-    // const response_best_goalscorers = data[10]
-    // const response_leagues_table = data[11]
+    const response_featured_match = data[11]
+    const response_featured_betting_sites = data[12]
+    const response_league_list = data[13]
+    const response_best_goalscorers = data[14]
+    const response_leagues_table = data[15]
 
     const response_valid_url = data[7]
 
@@ -269,8 +279,6 @@
         error: new Error("Uh-oh! This page does not exist!")
       }
     }
-
-    */
 
     /*
       [v3] - Testing with Dynamic Imports (server-side) inside load() 
@@ -312,11 +320,11 @@
 
           // [ℹ] data-geo real-test [direct widget data]
           
-          // FEATURED_MATCH_WIDGET_DATA_MAIN : response_featured_match,
-          // FEATURED_BETTING_SITES_WIDGET_DATA : response_featured_betting_sites,
-          // BEST_GOAL_SCORERS_DATA : response_best_goalscorers,
-          // LEAGUE_LIST_WIDGET_DATA : response_league_list,
-          // LEAGUES_TABLE_SCORES_DATA: response_leagues_table
+          FEATURED_MATCH_WIDGET_DATA_MAIN : response_featured_match,
+          FEATURED_BETTING_SITES_WIDGET_DATA : response_featured_betting_sites,
+          BEST_GOAL_SCORERS_DATA : response_best_goalscorers,
+          LEAGUE_LIST_WIDGET_DATA : response_league_list,
+          LEAGUES_TABLE_SCORES_DATA: response_leagues_table
           // SEO_BLOCK_DATA: response_seo_block_seo,
 
           /*
