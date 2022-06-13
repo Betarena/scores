@@ -169,9 +169,9 @@
 
       // [ℹ] correct ? not sure... seems to work and pass GB for me
       const userGeoResponse_v3 = await get(`https://get.geojs.io/v1/ip/geo.json`);
-      console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
+      // console.log("userGeoResponse_s3", userGeoResponse_v3.country_code.toLowerCase())
 
-     const userGeo: string = userGeoResponse_v3.country_code.toLowerCase()
+    //  const userGeo: string = userGeoResponse_v3.country_code.toLowerCase()
     /*
 
       const response_featured_match: FixtureResponse = fetch(
