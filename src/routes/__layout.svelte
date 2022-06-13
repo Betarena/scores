@@ -29,13 +29,13 @@
     const urlLang: string = params.lang == undefined || !response_valid_url ? 'en' : params.lang
 
     /*
-    const response_header = await fetch(`/api/navbar/cache-data.json?lang=`+urlLang, {
-      method: 'GET',
-    }).then(r => r.json());
+      const response_header = await fetch(`/api/navbar/cache-data.json?lang=`+urlLang, {
+        method: 'GET',
+      }).then(r => r.json());
 
-    const response_footer = await fetch(`/api/footer/cache-data.json?lang=`+urlLang, {
-      method: 'GET',
-    }).then(r => r.json());
+      const response_footer = await fetch(`/api/footer/cache-data.json?lang=`+urlLang, {
+        method: 'GET',
+      }).then(r => r.json());
     */
 
     /**
@@ -60,23 +60,6 @@
     const response_header = data[0]
     const response_footer = data[1]
 
-    /*
-    [v3] - Testing with Dynamic Imports (server-side) inside load() 
-    =====
-    NOTES:
-
-    */
-
-    /*
-      let Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
-      let Header = (await import('$lib/components/header/_Header.svelte')).default;
-      let OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
-      let SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
-      let PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
-      let EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
-      let GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
-    */
-
     // [ℹ] validate, & return DATA [always]
     if (response_header && 
         response_footer) {
@@ -90,21 +73,6 @@
         props: {
           HEADER_TRANSLATION_DATA: response_header,
           FOOTER_TRANSLATION_DATA: response_footer,
-
-          /*
-          [v3] - Testing with Dynamic Imports (server-side) inside load() 
-          */
-
-          /*
-          Footer: Footer,
-          Header: Header,
-          OfflineAlert: OfflineAlert,
-          SplashScreen: SplashScreen,
-          PlatformAlert: PlatformAlert,
-          EmailSubscribe: EmailSubscribe,
-          GoogleAnalytics: GoogleAnalytics
-          */
-
         }
       }
       
@@ -173,20 +141,6 @@
 		EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
 		GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
 	});
-
-  /*
-    [v3] - Testing with Dynamic Imports (server-side) inside load() 
-  */
-
-  /*
-    export let Footer;
-    export let Header;
-    export let OfflineAlert;
-    export let SplashScreen;
-    export let PlatformAlert;
-    export let EmailSubscribe;
-    export let GoogleAnalytics;
-  */
   
   // [ℹ] other
   import * as Sentry from "@sentry/browser";

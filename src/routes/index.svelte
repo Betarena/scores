@@ -49,23 +49,21 @@
     */
 
     /*
+      const response_valid_url = await fetch(
+        `/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
+        {
+          method: 'GET'
+        }
+      ).then((r) => r.json());
 
-    const response_valid_url = await fetch(
-      `/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
-      {
-        method: 'GET'
+      // [ℹ] validate URL existance;
+      if (!response_valid_url) {
+        // [ℹ] otherwise, ERROR;
+        return {
+          status: 404,
+          error: new Error("Uh-oh! This page does not exist!")
+        }
       }
-    ).then((r) => r.json());
-
-    // [ℹ] validate URL existance;
-    if (!response_valid_url) {
-      // [ℹ] otherwise, ERROR;
-      return {
-        status: 404,
-        error: new Error("Uh-oh! This page does not exist!")
-      }
-    }
-
     */
 
     const urlLang: string = params.lang == undefined ? 'en' : params.lang
@@ -78,8 +76,6 @@
     */
 
     /*
-
-
       const response_homepage_seo = await fetch(
         '/api/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", 
         {
@@ -146,7 +142,6 @@
       const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
         method: 'GET'
       }).then((r) => r.json());
-
     */
 
     /**
@@ -249,6 +244,7 @@
 
     const data = await Promise.all(promises);
 
+    // [🐛] debug
     if (dev) console.log("pre-load() data: ", data)
 
     const response_homepage_seo = data[0]
@@ -264,11 +260,11 @@
 
     // [ℹ] data-geo real-test [direct widget data]
 
-    const response_featured_match = data[11]
-    const response_featured_betting_sites = data[12]
-    const response_league_list = data[13]
-    const response_best_goalscorers = data[14]
-    const response_leagues_table = data[15]
+    // const response_featured_match = data[11]
+    // const response_featured_betting_sites = data[12]
+    // const response_league_list = data[13]
+    // const response_best_goalscorers = data[14]
+    // const response_leagues_table = data[15]
 
     const response_valid_url = data[7]
 
@@ -279,23 +275,6 @@
         error: new Error("Uh-oh! This page does not exist!")
       }
     }
-
-    /*
-      [v3] - Testing with Dynamic Imports (server-side) inside load() 
-      =====
-      NOTES:
-
-    */
-
-    /*
-      // let FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
-      // let FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
-      // let	LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
-      // let	LiveScoresWidget = (await import('$lib/components/live_scores_football/_LiveScores_Widget.svelte')).default;
-      // let BestGoalscorersWidget = (await import('$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte')).default;
-      // let SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
-      // let LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
-    */
 
 		// [ℹ] validate, DATA RETURNED;
 		if (response_homepage_seo) {
@@ -320,28 +299,13 @@
 
           // [ℹ] data-geo real-test [direct widget data]
           
-          FEATURED_MATCH_WIDGET_DATA_MAIN : response_featured_match,
-          FEATURED_BETTING_SITES_WIDGET_DATA : response_featured_betting_sites,
-          BEST_GOAL_SCORERS_DATA : response_best_goalscorers,
-          LEAGUE_LIST_WIDGET_DATA : response_league_list,
-          LEAGUES_TABLE_SCORES_DATA: response_leagues_table
+          // FEATURED_MATCH_WIDGET_DATA_MAIN : response_featured_match,
+          // FEATURED_BETTING_SITES_WIDGET_DATA : response_featured_betting_sites,
+          // BEST_GOAL_SCORERS_DATA : response_best_goalscorers,
+          // LEAGUE_LIST_WIDGET_DATA : response_league_list,
+          // LEAGUES_TABLE_SCORES_DATA: response_leagues_table
           // SEO_BLOCK_DATA: response_seo_block_seo,
 
-          /*
-          [v3] - Testing with Dynamic Imports (server-side) inside load() 
-          */
-
-          /*
-            [v3] - Testing with Dynamic Imports (server-side) inside load() 
-            // FeaturedMatchWidget: FeaturedMatchWidget,
-            // FeaturedBettingSitesWidget: FeaturedBettingSitesWidget,
-            // LeagueListWidget: LeagueListWidget,
-            // LiveScoresWidget: LiveScoresWidget,
-            // BestGoalscorersWidget: BestGoalscorersWidget,
-            // SeoBlock: SeoBlock,
-            // LeaguesTableWidget: LeaguesTableWidget
-          */
-          
         }
       };
 		}
@@ -405,20 +369,6 @@
     SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
     LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
   });
-
-  /*
-    [v3] - Testing with Dynamic Imports (server-side) inside load() 
-  */
-
-  /*
-    export let FeaturedMatchWidget;
-    export let FeaturedBettingSitesWidget;
-    export let LeagueListWidget;
-    export let LiveScoresWidget;
-    export let BestGoalscorersWidget;
-    export let SeoBlock;
-    export let LeaguesTableWidget;
-  */
 
 	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
