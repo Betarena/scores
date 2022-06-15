@@ -81,19 +81,26 @@
     let enItemAlt = response_tournaments_page_info.alternate_data.find( ({ lang }) => lang === 'en' );
     response_tournaments_seo.main_data.canonical = `https://scores.betarena.com/${enItemAlt.sport.toLowerCase()}/${enItemAlt.country.toLowerCase()}/${enItemAlt.name.replace(/\s/g,'-').toLowerCase()}`
 
-    /** =========
+    const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments/league_info/cache-data.json?url=`+url.pathname, {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    /** 
+     * =========
      * [ℹ] RETURN
      * ==========
     */
 
-    // [ℹ] -> response data;
+    // [ℹ] page -> response data chceck
 		if (response_tournaments_seo &&
-        response_tournaments_page_info) {
+        response_tournaments_page_info && 
+        response_league_info) {
       return {
         props: {
+          PAGE_DATA_SEO: response_tournaments_seo,
           TOURNAMENT_DATA_TRANSLATED_COPIES: response_tournaments_page_info.alternate_data,
           TOURNAMENT_DATA: response_tournaments_page_info.data,
-          PAGE_DATA_SEO: response_tournaments_seo
+          LEAGUE_INFO_DATA: response_league_info
         }
       } 
     }
@@ -120,6 +127,7 @@
   import { browser } from '$app/env';
 
   import SvelteSeo from 'svelte-seo';
+  import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
 
   import type { Cache_Single_Tournaments_Data_Page_Translation_Response, 
     Cache_Single_Tournaments_SEO_Translation_Response, 
@@ -127,11 +135,13 @@
     Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
+  import type { Cache_Single_Tournaments_League_Info_Data_Response } from '$lib/models/tournaments/types';
 
+  export let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
   export let TOURNAMENT_DATA_TRANSLATED_COPIES: Single_Tournament_Data_Type[];
   export let TOURNAMENT_DATA: Single_Tournament_Data_Type;
-  export let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
-
+  export let LEAGUE_INFO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
+    
   // TODO: replace into a single __layout.svelte method [?] using page-stores [?]
 
   // [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
@@ -246,7 +256,7 @@
   <!-- [ℹ] breadcrumbs URL -->
   <div
     id='tournaments-page-breadcrumbs'
-    class='row-space-start'>
+    class='row-space-start m-b-20'>
 
     <a 
       sveltekit:prefetch
@@ -287,6 +297,8 @@
 
   </div>
 
+  <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+
   <!-- [ℹ] widgets displayed -->
   <div>
     {TOURNAMENT_DATA.widgets}
@@ -302,7 +314,7 @@
 
 <style>
   section#tournaments-page {
-		display: grid;
+		/* display: grid; */
 		max-width: 1430px;
 		grid-template-columns: 1fr;
     padding-top: 12px !important;

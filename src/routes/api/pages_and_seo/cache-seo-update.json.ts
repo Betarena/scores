@@ -6,13 +6,28 @@ import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { removeDiacritics } from '$lib/utils/languages'
+import fs from 'fs';
+
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const { SitemapStream, streamToPromise } = require('sitemap')
+const { Readable } = require('stream')
+const format = require('xml-formatter');
+
+// import { SitemapStream, streamToPromise } from 'sitemap'
+// import { Readable } from 'stream'
 
 // [ℹ] DECLARING TYPESCRIPT-TYPES imports;
-import { GET_COMPLETE_PAGES_AND_SEO_DATA } from '$lib/graphql/pages_and_seo/query'
-import type { Cache_Single_Homepage_SEO_Translation_Response, 
+import { 
+  GET_COMPLETE_PAGES_AND_SEO_DATA 
+} from '$lib/graphql/pages_and_seo/query'
+
+import type { 
+  Cache_Single_Homepage_SEO_Translation_Response, 
   Cache_Single_Tournaments_Data_Page_Translation_Response, 
   Cache_Single_Tournaments_SEO_Translation_Response, 
-  Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types'
+  Hasura_Complete_Pages_SEO 
+} from '$lib/models/pages_and_seo/types'
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -32,9 +47,9 @@ export async function get(): Promise < any > {
   langArray.push('en')
 
   await sitemapGeneratorAndCaching(response)
-  await homepageSEOandCaching(langArray, response)
-  await tournamentSEOandCaching(langArray, response)
-  await tournamentPageAndCaching(response)
+  // await homepageSEOandCaching(langArray, response)
+  // await tournamentSEOandCaching(langArray, response)
+  // await tournamentPageAndCaching(response)
 
   // [ℹ] return RESPONSE;
   if (response) {
@@ -186,13 +201,15 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     urlsArray.push(url)
   }
 
-  deleteCacheSitemapURLs();
+  // deleteCacheSitemapURLs();
   
   const uniqArray = [...new Set(urlsArray)];
 
-  for (const url of uniqArray) {
-    cacheSitemapURLs(url)
-  }
+  sitemapSave(uniqArray)
+
+  // for (const url of uniqArray) {
+  //   cacheSitemapURLs(url)
+  // }
 }
 
 async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complete_Pages_SEO) {
@@ -259,4 +276,45 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     await cacheTournamentsPageData(url, finalCacheObj);
   }
 
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  OTHER API METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function sitemapSave(uniqArray: string[]) {
+
+  const urlSitemapObjArr: {
+    url: string
+    changefreq: 'daily'
+    priority: number
+  }[] = []
+
+  for (const url of uniqArray) {
+    urlSitemapObjArr.push({
+      url: url,
+      changefreq: 'daily',
+      priority: 0.3
+    })
+  }
+
+  // [ℹ] create a stream to write to
+  const stream = new SitemapStream({ 
+    hostname: 'https://scores.betarena.com/' 
+  })
+
+  // [ℹ] return a promise that resolves with your XML string
+  const sitemapData = await streamToPromise(Readable.from(urlSitemapObjArr).pipe(stream)).then((data) =>
+    data.toString()
+  )
+
+  const formattedXml = format(sitemapData);
+
+  // [ℹ] persist to sitemap.xml;
+  fs.writeFile('./static/sitemap.xml', formattedXml, err => {
+    if (err) {
+      console.error(err);
+    }
+  });
+  
 }

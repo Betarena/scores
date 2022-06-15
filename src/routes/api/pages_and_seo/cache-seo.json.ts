@@ -11,7 +11,7 @@ export async function get(req, res): Promise< any > {
 
   const url: string = req.url['searchParams'].get('url');
   const lang: string = req.url['searchParams'].get('lang');
-  const page: string = req.url['searchParams'].get('page');
+  const page: 'homepage' | 'tournaments' = req.url['searchParams'].get('page');
 
   if (lang && page === 'homepage') {
     const response_cache = await getCacheHomepageSEOData(lang)
