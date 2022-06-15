@@ -283,7 +283,7 @@
     console.log("userGeoResponse", userGeoResponse);
 		let userGeo = userGeoResponse.country_code === undefined ? null : userGeoResponse.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
 
-    if (userGeo != null) {
+    if (userGeo !== null) {
       // [ℹ] store as session;
       // $session.geojs = userGeoResponse
 
@@ -303,8 +303,8 @@
     }
     // [ℹ] use default IP europe
     else {
-      let userGeoResponse_V2: GeoJsResponse = await getUserLocationFromIP("107.189.0.0")
-      let userGeo_v2 = userGeoResponse_V2.country_code === undefined ? null : userGeoResponse_V2.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
+      let userGeoResponse_V2: GeoJsResponse = await getUserLocationFromIP("107.189.0.0");
+      let userGeo_v2 = userGeoResponse_V2.country_code.toLowerCase();
 
       userBetarenaSettings.setGeoJs(userGeoResponse_V2)
 
