@@ -54,7 +54,9 @@
 		"heroku-ssl-redirect": "^0.1.1",
 		"ioredis": "^4.28.2",
 		"request-ip": "^2.2.0",
+		"sitemap": "^7.1.1",
 		"svelte": "^3.34.0",
-		"svelte-seo": "^1.3.1"
+		"svelte-seo": "^1.3.1",
+		"xml-formatter": "^2.6.1"
 	}
 }
