@@ -264,11 +264,7 @@
 
 <!-- [ℹ] SEO-DATA-LOADED 
 -->
-{#if !browser &&
-      PAGE_DATA_SEO && 
-      TOURNAMENT_DATA_TRANSLATED_COPIES &&
-      TOURNAMENT_DATA && 
-      LEAGUE_INFO_DATA}
+{#if !browser}
   
   <div 
     id="seo-widget-container">
@@ -336,7 +332,7 @@
   </div>
 
   <!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
-  <!-- <svelte:component this={LeagueInfoWidget} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
+  <svelte:component this={LeagueInfoWidget} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
 
   <!-- [ℹ] widgets displayed -->
   <div>
