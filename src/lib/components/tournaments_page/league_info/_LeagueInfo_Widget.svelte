@@ -45,25 +45,6 @@
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // REACTIVE SVELTE METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  // [ℹ] change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
-	$: refresh_data = $userBetarenaSettings.country_bookmaker;
-	$: refresh_data = $page.url.pathname;
-	$: if (browser && refresh_data) {
-    // [ℹ] reset necessary variables;
-    // refresh = true
-    setTimeout(async() => {
-      // refresh = false
-      toggleDropdown = false
-      loaded = false
-      // processed = false
-      widgetInit()
-    }, 50)
-	}
-
-  // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
@@ -206,7 +187,7 @@
 		});
   });
 
-  $: console.log("mobileExclusive", mobileExclusive, "tabletExclusive", tabletExclusive)
+  // $: if (dev) console.log("mobileExclusive", mobileExclusive, "tabletExclusive", tabletExclusive)
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// COMPONENT TIMER CLOCK
@@ -226,6 +207,24 @@
 		'Nov',
 		'Dec'
 	];
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // REACTIVE SVELTE METHODS
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  // [ℹ] change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
+	$: refresh_data = $userBetarenaSettings.country_bookmaker;
+	$: refresh_data = $page.url.pathname;
+	$: if (browser && refresh_data) {
+    // [ℹ] reset necessary variables;
+    // refresh = true
+    toggleDropdown = false
+    loaded = false
+    widgetInit()
+    // setTimeout(async() => {
+      // refresh = false
+    // }, 50)
+	}
 
 </script>
 
