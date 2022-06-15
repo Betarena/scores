@@ -264,7 +264,11 @@
 
 <!-- [ℹ] SEO-DATA-LOADED 
 -->
-{#if !browser}
+{#if !browser &&
+      PAGE_DATA_SEO && 
+      TOURNAMENT_DATA_TRANSLATED_COPIES &&
+      TOURNAMENT_DATA && 
+      LEAGUE_INFO_DATA}
   
   <div 
     id="seo-widget-container">

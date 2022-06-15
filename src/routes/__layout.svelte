@@ -206,7 +206,9 @@
 
 <!-- [ℹ] SEO-DATA-LOADED 
 -->
-{#if !browser}
+{#if !browser &&
+      HEADER_TRANSLATION_DATA &&
+      FOOTER_TRANSLATION_DATA}
   
   <div 
     id="seo-widget-container">

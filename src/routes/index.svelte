@@ -474,7 +474,15 @@
 
 <!-- [ℹ] SEO-DATA-LOADED 
 -->
-{#if !browser}
+{#if !browser &&
+  PAGE_DATA_SEO &&
+  FEATURED_MATCH_WIDGET_DATA_SEO &&
+  FEATURED_BETTING_SITES_WIDGET_DATA_SEO && 
+  BEST_GOAL_SCORERS_DATA_SEO &&
+  LEAGUE_LIST_WIDGET_DATA_SEO && 
+  LEAGUES_TABLE_SCORES_SEO_DATA &&
+  SEO_BLOCK_DATA &&
+  LIVE_SCORES_DATA_DATA_SEO}
   
   <div 
     id="seo-widget-container">
