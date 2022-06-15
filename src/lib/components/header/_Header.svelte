@@ -304,18 +304,18 @@
     // [ℹ] use default IP europe
     else {
       let userGeoResponse_V2: GeoJsResponse = await getUserLocationFromIP("107.189.0.0")
-      let userGeo = userGeoResponse.country_code === undefined ? null : userGeoResponse.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
+      let userGeo_v2 = userGeoResponse_V2.country_code === undefined ? null : userGeoResponse_V2.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
 
       userBetarenaSettings.setGeoJs(userGeoResponse_V2)
 
       // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
       const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
-        return item[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
+        return item[0].toString().toLowerCase() === userGeo_v2.toString().toLowerCase() 
       });
 
       // [ℹ] declare;
       if (result) {
-        selectedCountryBookmakers(userGeo)
+        selectedCountryBookmakers(userGeo_v2)
       } else {
         selectedCountryBookmakers('en')
       }
