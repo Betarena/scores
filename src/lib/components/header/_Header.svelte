@@ -280,6 +280,7 @@
 	async function setUserCountryBookmakerLocation() {
 		// [ℹ] get user GEO-LOCATION;
 		const userGeoResponse: GeoJsResponse = await getUserLocation()
+    console.log("userGeoResponse", userGeoResponse);
 		let userGeo = userGeoResponse.country_code.toLowerCase()
 		// [ℹ] store as session;
 		// $session.geojs = userGeoResponse 
