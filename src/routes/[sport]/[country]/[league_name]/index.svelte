@@ -46,11 +46,13 @@
       }
     }
 
+    const urlLang: string = params.lang == undefined ? 'en' : params.lang
+
     /**
      * [ℹ] Loading of (this) page [tournaments] SEO-READY data; 
     */
 
-    const response_tournaments_seo: Cache_Single_Tournaments_SEO_Translation_Response = await fetch(`/api/pages_and_seo/cache-seo.json?lang=`+params.lang+"&page=tournaments", {
+    const response_tournaments_seo: Cache_Single_Tournaments_SEO_Translation_Response = await fetch(`/api/pages_and_seo/cache-seo.json?lang=`+urlLang+"&page=tournaments", {
 			method: 'GET'
 		}).then((r) => r.json());
 
