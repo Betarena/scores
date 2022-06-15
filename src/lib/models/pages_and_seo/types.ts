@@ -1,8 +1,9 @@
-
-
 /**
+ * =================================
  * Redis Cache Response 
  * [HOMEPAGE - SEO]
+ * [MAIN]
+ * =================================
 */
 export interface Cache_Single_Homepage_SEO_Translation_Response {
   lang: string
@@ -28,7 +29,9 @@ export interface Cache_Single_Tournaments_Data_Page_Translation_Response {
 }
 
 /**
+ * =================================
  * HASURA DB - COMPLETE PAGE / SITEMAP / SEO GRAPHQL QUERY 
+ * ================================= 
 */
 export interface Hasura_Complete_Pages_SEO {
 
@@ -63,11 +66,12 @@ export interface Hasura_Complete_Pages_SEO {
     twitter_card: Opengraph_Data
   }[]
   scores_tournaments_dev: Single_Tournament_Data_Type[]
-
 }
 
 /**
+ * =================================
  * Individual / Single Interfaces 
+ * =================================
 */
 interface Main_Data {
   canonical: string,
