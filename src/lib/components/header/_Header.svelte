@@ -45,7 +45,7 @@
   */
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
 	import type { GeoJsResponse } from '$lib/models/geojs-types';
-	import { getUserLocation } from '$lib/geoJs/init';
+	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
 
   /**
    * [ℹ] export-values-expected
@@ -281,20 +281,45 @@
 		// [ℹ] get user GEO-LOCATION;
 		const userGeoResponse: GeoJsResponse = await getUserLocation()
     console.log("userGeoResponse", userGeoResponse);
-		let userGeo = userGeoResponse.country_code.toLowerCase()
-		// [ℹ] store as session;
-		// $session.geojs = userGeoResponse 
-		userBetarenaSettings.setGeoJs(userGeoResponse)
-		// [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
-		const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
-      return item[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
-    });
-		// [ℹ] declare;
-		if (result) {
-			selectedCountryBookmakers(userGeo)
-		} else {
-			selectedCountryBookmakers('en')
-		}
+		let userGeo = userGeoResponse.country_code !== undefined ? null : userGeoResponse.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
+
+    if (userGeo != null) {
+      // [ℹ] store as session;
+      // $session.geojs = userGeoResponse
+
+      userBetarenaSettings.setGeoJs(userGeoResponse)
+      // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
+      const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
+        return item[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
+      });
+
+      // [ℹ] declare;
+      if (result) {
+        selectedCountryBookmakers(userGeo)
+      } else {
+        selectedCountryBookmakers('en')
+      }
+      
+    }
+    // [ℹ] use default IP europe
+    else {
+      let userGeoResponse_V2: GeoJsResponse = await getUserLocationFromIP("107.189.0.0")
+      let userGeo = userGeoResponse.country_code !== undefined ? null : userGeoResponse.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
+
+      userBetarenaSettings.setGeoJs(userGeoResponse_V2)
+      
+      // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
+      const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
+        return item[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
+      });
+
+      // [ℹ] declare;
+      if (result) {
+        selectedCountryBookmakers(userGeo)
+      } else {
+        selectedCountryBookmakers('en')
+      }
+    }
 	}
 
   /**
