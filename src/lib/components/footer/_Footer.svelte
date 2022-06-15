@@ -81,12 +81,12 @@
 
     if ($page.routeId.includes("[lang=lang]")) {
 		  server_side_language = $page.params.lang;
-      homepageURL = '/'
+      homepageURL = '/' + $page.params.lang
       logoLink = $page.url.origin + '/' + server_side_language
     }
     else {
       server_side_language = 'en';
-      homepageURL = '/' + $page.params.lang
+      homepageURL = '/'
       logoLink = $page.url.origin
     }
 
