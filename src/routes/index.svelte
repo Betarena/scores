@@ -327,7 +327,7 @@
 
 
 <script lang="ts">
-	import { dev } from '$app/env';
+	import { browser, dev } from '$app/env';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import SvelteSeo from 'svelte-seo';
@@ -336,40 +336,36 @@
     [v1] - Testing with Standard Imports (client-side)
   */
 
-
-  import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
-  import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-  import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-  import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
-  import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
-  import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
-  import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
-
+  // import FeaturedMatchWidget from '$lib/components/featured_match/_FeaturedMatch_Widget.svelte';
+  // import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+  // import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
+  // import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
+  // import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+  // import SeoBlock from '$lib/components/seo_block_homepage/_SEO_Block.svelte';
+  // import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
     [FASTER OPTION]
   */
 
-  /*
-    let FeaturedMatchWidget;
-    let FeaturedBettingSitesWidget;
-    let LeagueListWidget;
-    let LiveScoresWidget;
-    let BestGoalscorersWidget;
-    let SeoBlock;
-    let LeaguesTableWidget;
+  let FeaturedMatchWidget;
+  let FeaturedBettingSitesWidget;
+  let LeagueListWidget;
+  let LiveScoresWidget;
+  let BestGoalscorersWidget;
+  let SeoBlock;
+  let LeaguesTableWidget;
 
-    onMount(async () => {
-      FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
-      FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
-      LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
-      LiveScoresWidget = (await import('$lib/components/live_scores_football/_LiveScores_Widget.svelte')).default;
-      BestGoalscorersWidget = (await import('$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte')).default;
-      SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
-      LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
-    });
-  */
+  onMount(async () => {
+    FeaturedMatchWidget = (await import('$lib/components/featured_match/_FeaturedMatch_Widget.svelte')).default;
+    FeaturedBettingSitesWidget = (await import('$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte')).default;
+    LeagueListWidget = (await import('$lib/components/league_list/_LeagueList_Widget.svelte')).default;
+    LiveScoresWidget = (await import('$lib/components/live_scores_football/_LiveScores_Widget.svelte')).default;
+    BestGoalscorersWidget = (await import('$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte')).default;
+    SeoBlock = (await import('$lib/components/seo_block_homepage/_SEO_Block.svelte')).default;
+    LeaguesTableWidget = (await import('$lib/components/leagues_table/_Leagues_Table_Widget.svelte')).default;
+  });
 
 	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
   import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
@@ -473,6 +469,129 @@
 
 <!-- ===================
 	COMPONENT HTML
+  [SEO-WIDGETS]
+=================== -->
+
+<!-- [ℹ] SEO-DATA-LOADED 
+-->
+{#if !browser}
+  
+  <div 
+    id="seo-widget-container">
+    
+    <!-- [ℹ] BEST-GOAL-SCORERS-SEO-BOX 
+    -->
+    <div>
+      <h2>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.best_goal_scorers}</h2>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.goals}</p>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.odds}</p>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.player}</p>
+      <p>{BEST_GOAL_SCORERS_DATA_SEO.translations.widget_translations.show_more_players}</p>
+      <!-- [ℹ] list all of the players in the DB 
+      -->
+      {#each BEST_GOAL_SCORERS_DATA_SEO.top_geo_goalscorer_players as WIDGET_BEST_PLAYER}
+        <p>{WIDGET_BEST_PLAYER.common_name}</p>
+      {/each}
+    </div>
+
+    <!-- [ℹ] FEATURED-BETTING-SITES-BOX 
+    -->
+    <div>
+      <p>{FEATURED_BETTING_SITES_WIDGET_DATA_SEO.translations.widget_title}</p>
+      <p>{FEATURED_BETTING_SITES_WIDGET_DATA_SEO.translations.title}</p>
+    </div>
+
+    <!-- [ℹ] FEATURED-MATCH-SEO-BOX 
+    -->
+    <div>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.vote}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.assists}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.rating}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.player}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.matches}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.goals}</p>
+    </div>
+
+    <!-- [ℹ] LEAGUE_LIST-SEO-BOX 
+    -->
+    <div>
+      <!-- [ℹ] translation-expressions 
+      -->
+      <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.widget_title}</p>
+      <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.top_leagues}</p>
+      <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.leagues_by_country}</p>
+      <!-- [ℹ] all-leagues-expressions 
+      -->
+      {#each LEAGUE_LIST_WIDGET_DATA_SEO.all_leagues_list as league}
+        <p>{league.league_name}</p>
+      {/each}
+      <!-- [ℹ] all-unique-country-expressions 
+      -->
+      {#each LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list as country}
+        <p>{country.country_name}</p>
+      {/each}
+    </div>
+
+    <!-- [ℹ] LEAGUE_TABLE-SEO-BOX 
+    -->
+    <div>
+      <h2>{LEAGUES_TABLE_SCORES_SEO_DATA.translations.title}</h2>
+      <!-- [ℹ] list all of the seasons & leagues in the DB 
+      -->
+      {#each LEAGUES_TABLE_SCORES_SEO_DATA.top_leagues_table_data as WIDGET_SEASON_LEAGUE}
+        <p>{WIDGET_SEASON_LEAGUE.season_league_name}</p>
+        <!-- [ℹ] list all of the seasons & leagues -> TEAMS in the DB 
+        -->
+        {#each WIDGET_SEASON_LEAGUE.season_league_teams as WIDGET_TEAM_LEAGUE}
+          <p>{WIDGET_TEAM_LEAGUE.team_name}</p>
+        {/each}
+      {/each}
+    </div>
+
+    <!-- [ℹ] LIVESCORES-SEO-BOX 
+    -->
+    <div>
+      {#each LIVE_SCORES_DATA_DATA_SEO as d}
+        <p>{d.visitorteam}</p>
+        <p>{d.localteam}</p>
+        {#if d.tip != "" }
+          <a href="{d.tip}">{d.tip}</a>
+        {/if}
+        {#if d.link != "" }
+          <a href="{d.link}">{d.link}</a>
+        {/if}
+      {/each}
+    </div>
+
+    <!-- [ℹ] LEAGUE_TABLE-SEO-BOX 
+    -->
+    <div>
+      <h2>{LEAGUES_TABLE_SCORES_SEO_DATA.translations.title}</h2>
+      <!-- [ℹ] list all of the seasons & leagues in the DB 
+      -->
+      {#each LEAGUES_TABLE_SCORES_SEO_DATA.top_leagues_table_data as WIDGET_SEASON_LEAGUE}
+        <p>{WIDGET_SEASON_LEAGUE.season_league_name}</p>
+        <!-- [ℹ] list all of the seasons & leagues -> TEAMS in the DB 
+        -->
+        {#each WIDGET_SEASON_LEAGUE.season_league_teams as WIDGET_TEAM_LEAGUE}
+          <p>{WIDGET_TEAM_LEAGUE.team_name}</p>
+        {/each}
+      {/each}
+    </div>
+
+    <!-- [ℹ] SEO-BOX 
+    -->
+    <div>
+      <h2>{SEO_BLOCK_DATA.title}</h2>
+      {@html SEO_BLOCK_DATA.html}
+    </div>
+
+  </div>
+{/if}
+
+<!-- ===================
+	COMPONENT HTML
 =================== -->
 
 <section id="home-page">
@@ -551,6 +670,14 @@
 =================== -->
 
 <style>
+
+  #seo-widget-container {
+		position: absolute;
+		z-index: -100;
+		top: -9999px;
+		left: -9999px;
+	}
+
 	section#home-page {
 		display: grid;
 		max-width: 1430px;

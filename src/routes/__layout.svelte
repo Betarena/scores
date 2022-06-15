@@ -110,6 +110,7 @@
     [v1] - Testing with Standard Imports (client-side)
   */
 
+  /*
     import Footer from '$lib/components/footer/_Footer.svelte';
     import Header from '$lib/components/header/_Header.svelte';
     import OfflineAlert from '$lib/components/_Offline_alert.svelte';
@@ -117,28 +118,29 @@
     import PlatformAlert from '$lib/components/_Platform_alert.svelte';
     import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
     import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
+  */
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
   */
 
-  // let Footer;
-  // let Header;
-  // let OfflineAlert;
-  // let SplashScreen;
-  // let PlatformAlert;
-  // let EmailSubscribe;
-  // let GoogleAnalytics;
+  let Footer;
+  let Header;
+  let OfflineAlert;
+  let SplashScreen;
+  let PlatformAlert;
+  let EmailSubscribe;
+  let GoogleAnalytics;
 
-  // onMount(async () => {
-	// 	Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
-	// 	Header = (await import('$lib/components/header/_Header.svelte')).default;
-	// 	OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
-	// 	SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
-	// 	PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
-	// 	EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
-	// 	GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
-	// });
+  onMount(async () => {
+		Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
+		Header = (await import('$lib/components/header/_Header.svelte')).default;
+		OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
+		SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
+		PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
+		EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
+		GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
+	});
   
   // [ℹ] other
   import * as Sentry from "@sentry/browser";
@@ -202,6 +204,49 @@
   <html lang="{$page.params.lang == undefined || !$page.error ? 'en' : $page.params.lang}" />
 </svelte:head>
 
+<!-- [ℹ] SEO-DATA-LOADED 
+-->
+{#if !browser}
+  
+  <div 
+    id="seo-widget-container">
+
+    <!-- [ℹ] HEADER SEO
+    -->
+    <div>
+      {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang != 'en'}
+        <a
+          sveltekit:prefetch
+          href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}>
+          <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}</p>
+        </a>
+      {:else}
+        <a
+          sveltekit:prefetch
+          href={$page.url.origin}>
+          <p>{$page.url.origin}</p>
+        </a>
+      {/if}
+    </div>
+
+    <!-- [ℹ] FOOTER SEO 
+    -->
+    <div>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}</p>
+      <!-- [ℹ] nav-links-social-links
+      -->
+      {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
+        <p>{social_network[1].toString().toLocaleLowerCase()}</p>
+      {/each}
+    </div>
+
+  </div>
+{/if}
 
 <!-- ===================
   COMPONENT HTML
@@ -242,6 +287,13 @@
 
 
 <style>
+  #seo-widget-container {
+		position: absolute;
+		z-index: -100;
+		top: -9999px;
+		left: -9999px;
+	}
+  
 	main {
     /* 
     so nothing exceeds the main-page-boundries */

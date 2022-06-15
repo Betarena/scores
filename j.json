@@ -1,0 +1,674 @@
+{
+  "lang": "ro",
+  "url": "/ro/fotbal/mexic/liga-de-expansion-mx",
+  "data": {
+    "author": "Betarena",
+    "country": "Mexic",
+    "date": "2022-06-06T18:04:45.031163+00:00",
+    "id": 1102,
+    "tournament_id": 749,
+    "lang": "ro",
+    "modified_date": "2022-06-06T18:25:58.688965+00:00",
+    "name": "Liga de Expansión MX",
+    "sport": "fotbal",
+    "status": "published",
+    "title": "Rezultate Live",
+    "type": "domestic",
+    "widgets": []
+  },
+  "alternate_data": [{
+    "author": "Betarena",
+    "country": "México",
+    "date": "2022-06-06T18:04:45.031152+00:00",
+    "id": 1099,
+    "tournament_id": 749,
+    "lang": "br",
+    "modified_date": "2022-06-06T18:25:58.688958+00:00",
+    "name": "Liga de Expansión MX",
+    "sport": "futebol",
+    "status": "published",
+    "title": "resultados ao vivo",
+    "type": "domestic",
+    "widgets": []
+  }, {
+    "author": "Betarena",
+    "country": "Mexico",
+    "date": "2022-06-06T18:04:45.031157+00:00",
+    "id": 1100,
+    "tournament_id": 749,
+    "lang": "pt",
+    "modified_date": "2022-06-06T18:25:58.688962+00:00",
+    "name": "Liga de Expansión MX",
+    "sport": "futebol",
+    "status": "published",
+    "title": "resultados",
+    "type": "domestic",
+    "widgets": []
+  }, {
+    "author": "Betarena",
+    "country": "Messico",
+    "date": "2022-06-06T18:04:45.03116+00:00",
+    "id": 1101,
+    "tournament_id": 749,
+    "lang": "it",
+    "modified_date": "2022-06-06T18:25:58.688964+00:00",
+    "name": "Liga de Expansión MX",
+    "sport": "calcio",
+    "status": "published",
+    "title": "live score",
+    "type": "domestic",
+    "widgets": []
+  }, {
+    "author": "Betarena",
+    "country": "Mexic",
+    "date": "2022-06-06T18:04:45.031163+00:00",
+    "id": 1102,
+    "tournament_id": 749,
+    "lang": "ro",
+    "modified_date": "2022-06-06T18:25:58.688965+00:00",
+    "name": "Liga de Expansión MX",
+    "sport": "fotbal",
+    "status": "published",
+    "title": "Rezultate Live",
+    "type": "domestic",
+    "widgets": []
+  }, {
+    "author": "Betarena",
+    "country": "México",
+    "date": "2022-06-06T18:04:45.031167+00:00",
+    "id": 1103,
+    "tournament_id": 749,
+    "lang": "es",
+    "modified_date": "2022-06-06T18:25:58.688967+00:00",
+    "name": "Liga de Expansión MX",
+    "sport": "Fútbol",
+    "status": "published",
+    "title": "en directo",
+    "type": "domestic",
+    "widgets": []
+  }, {
+    "author": "Betarena",
+    "country": "Mexico",
+    "date": "2022-06-06T18:04:45.03117+00:00",
+    "id": 1104,
+    "tournament_id": 749,
+    "lang": "en",
+    "modified_date": "2022-06-06T18:25:58.688982+00:00",
+    "name": "Liga de Expansión MX",
+    "sport": "football",
+    "status": "published",
+    "title": "live score",
+    "type": "domestic",
+    "widgets": []
+  }]
+}
+
+[{
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2005/2006",
+  "id": 5307,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2006/2007",
+  "id": 5308,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2007/2008",
+  "id": 5309,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2008/2009",
+  "id": 5310,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2009/2010",
+  "id": 5311,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2010/2011",
+  "id": 5312,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2011/2012",
+  "id": 5313,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2012/2013",
+  "id": 5318,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2013/2014",
+  "id": 5315,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2014/2015",
+  "id": 5322,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2015/2016",
+  "id": 5321,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2016/2017",
+  "id": 718,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2017/2018",
+  "id": 7907,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2018/2019",
+  "id": 12950,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2019/2020",
+  "id": 16029,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": null,
+  "name": "2020/2021",
+  "id": 17299,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 2,
+  "current_stage_id": 77453618,
+  "name": "2021/2022",
+  "id": 18346,
+  "is_current_season": true,
+  "current_round_id": null
+}]
+
+{
+  "id": 1990,
+  "btts": 42.4,
+  "goal_line": {
+    "over": {
+      "0_5": 84,
+      "1_5": 62.4,
+      "2_5": 44,
+      "3_5": 22.4,
+      "4_5": 11.2,
+      "5_5": 3.2
+    },
+    "under": {
+      "0_5": 16,
+      "1_5": 37.6,
+      "2_5": 56,
+      "3_5": 77.6,
+      "4_5": 88.8,
+      "5_5": 96.8
+    }
+  },
+  "league_id": 2,
+  "season_id": 5307,
+  "updated_at": "2021-09-16T08:47:56Z",
+  "goals_scored": {
+    "all": 1.25,
+    "away": 0.98,
+    "home": 1.53
+  },
+  "goals_conceded": {
+    "all": 1.25,
+    "away": 1.53,
+    "home": 0.98
+  },
+  "win_percentage": {
+    "all": 39.22,
+    "away": 25.98,
+    "home": 52.45
+  },
+  "draw_percentage": 24.02,
+  "number_of_clubs": 32,
+  "number_of_goals": 285,
+  "avg_player_rating": 0,
+  "defeat_percentage": {
+    "all": 39.22,
+    "away": 52.45,
+    "home": 25.98
+  },
+  "number_of_matches": 125,
+  "number_of_redcards": 9,
+  "avg_goals_per_match": 2.28,
+  "season_topscorer_id": 653,
+  "goals_scored_minutes": {
+    "0-15": "11.23%",
+    "15-30": "14.04%",
+    "30-45": "16.84%",
+    "45-60": "16.49%",
+    "60-75": "16.14%",
+    "75-90": "25.26%"
+  },
+  "team_most_corners_id": null,
+  "avg_corners_per_match": 0,
+  "number_of_yellowcards": 439,
+  "avg_redcards_per_match": 0.07,
+  "avg_awaygoals_per_match": 0.98,
+  "avg_homegoals_per_match": 1.53,
+  "season_topscorer_number": 9,
+  "team_most_corners_count": null,
+  "team_with_most_goals_id": 83,
+  "number_of_matches_played": 125,
+  "number_of_yellowredcards": 19,
+  "team_most_cleansheets_id": 19,
+  "avg_yellowcards_per_match": 3.51,
+  "goal_scored_every_minutes": 35,
+  "matches_both_teams_scored": 53,
+  "season_assist_topscorer_id": null,
+  "team_with_most_goals_number": 24,
+  "avg_yellowredcards_per_match": 0.15,
+  "team_most_cleansheets_number": 7,
+  "goalkeeper_most_cleansheets_id": 488,
+  "season_assist_topscorer_number": null,
+  "team_with_most_conceded_goals_id": 57,
+  "team_with_most_goals_per_match_id": 67,
+  "goalkeeper_most_cleansheets_number": 7,
+  "team_with_most_conceded_goals_number": 16,
+  "team_with_most_goals_per_match_number": 2
+}
+
+{
+  "4 1xBet": {
+    "bonus": "+R$1200",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/1xbet_Apostas.png",
+    "stars": "4",
+    "title": "1xBet",
+    "position": "3",
+    "bonus_code": "Sem código",
+    "information": "Com sua ampla gama de jogos e eventos para apostas, a 1xBet promete conquistar um espaço cada vez mais proeminente. Abra uma conta!",
+    "review_link": "https://apostas.betarena.com/1xbet-revisao-da-casa-de-apostas/",
+    "register_link": "https://refpa.top/L?tag=d_47346m_97c_BlogBR&site=47346&ad=97&r=bonus/rules/1st/",
+    "bonus_description": "Bônus de 100% no primeiro depósito até R$1200"
+  },
+  "8 22Bet": {
+    "bonus": "+R$600",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/22bet_Apostas.svg",
+    "stars": "4",
+    "title": "22Bet",
+    "position": "8",
+    "bonus_code": "Sem código",
+    "information": "Com algumas características emocionantes, a 22bet é mais uma casa de apostas com uma boa reputação no mercado de apostas esportivas. Cadastre-se agora!",
+    "review_link": "https://apostas.betarena.com/22bet-revisao-da-casa-de-apostas/",
+    "register_link": "https://qg9t2.app.goo.gl/22betdefault",
+    "bonus_description": "100% de bônus em depósitos até R$600"
+  },
+  "1 Bet365": {
+    "bonus": "+R$200",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/Bet365_Apostas.png",
+    "stars": "5",
+    "title": "Bet365",
+    "position": "1",
+    "bonus_code": "Sem código",
+    "information": "Abra uma conta na Bet365 hoje e aposte em uma grande variedade de mercados com a empresa de apostas esportivas online favorita do mundo.",
+    "review_link": "https://apostas.betarena.com/bet365-apostas-esportivas/",
+    "register_link": "https://qg9t2.app.goo.gl/bet365_general",
+    "bonus_description": "Até 200 reais em bônus de apostas"
+  },
+  "2 Betano": {
+    "bonus": "+R$300",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/08/betano_ad.svg",
+    "stars": "5",
+    "title": "Betano",
+    "position": "2",
+    "bonus_code": "Sem código",
+    "information": "A nova casa de apostas no Brasil. Faça já o seu depósito e comece a ganhar",
+    "review_link": "https://apostas.betarena.com/betano-revisao-da-casa-de-apostas/",
+    "register_link": "https://qg9t2.app.goo.gl/betano_br",
+    "bonus_description": "Até R$300 em bônus de apostas"
+  },
+  "3 Rabona": {
+    "bonus": "+R$650",
+    "image": "https://www.betarena.com/wp-content/uploads/2022/02/rabona.png",
+    "stars": "4",
+    "title": "Rabona",
+    "position": "3",
+    "bonus_code": "Sem código",
+    "information": "Faça já o seu depósito e comece a ganhar",
+    "review_link": "https://apostas.betarena.com/rabona-revisao-da-casa-de-apostas/",
+    "register_link": "https://qg9t2.app.goo.gl/rabona_bonus_brazil",
+    "bonus_description": "Até R$650 em bônus de apostas"
+  },
+  "5 188bet": {
+    "bonus": "+R$200",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/07/188bet_logo.svg",
+    "stars": "5",
+    "title": "188bet",
+    "position": "4",
+    "bonus_code": "Sem código",
+    "information": "Abra uma conta na 188bet hoje! A casa de apostas com odds asiáticas, as melhores do mercado!",
+    "review_link": "https://apostas.betarena.com/188bet-revisao-da-casa-de-apostas/",
+    "register_link": "https://wl188bet.adsrv.eacdn.com/C.ashx?btag=a_7690b_846c_&affid=4191&siteid=7690&adid=846&c=apostasRightbar",
+    "bonus_description": "Até 200 reais em bônus de apostas"
+  },
+  "7 Rivalo": {
+    "bonus": "+R$300",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/07/rivalo_logo.svg",
+    "stars": "4",
+    "title": "Rivalo",
+    "position": "7",
+    "bonus_code": "Sem código",
+    "information": "Abra uma conta na Rivalo hoje e aposte em uma grande variedade de mercados.",
+    "review_link": "https://apostas.betarena.com/rivalo-revisao-da-casa-de-apostas/",
+    "register_link": "https://qg9t2.app.goo.gl/rivalo_br_bonus",
+    "bonus_description": "Até 300 reais em bônus de apostas"
+  },
+  "6 Betfair": {
+    "bonus": "+R$1200",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/betfair_Apostas.svg",
+    "stars": "4",
+    "title": "Betfair",
+    "position": "6",
+    "bonus_code": "Sem código",
+    "information": "Com mais de 20 anos no ramo, a empresa já está mais do que estabelecida no mercado.",
+    "review_link": "https://apostas.betarena.com/betfair-revisao-da-casa-de-apostas/",
+    "register_link": "http://ads.betfair.com/redirect.aspx?pid=2828099&bid=10183",
+    "bonus_description": "Bônus de 100% no primeiro depósito até R$1200"
+  },
+  "9 Betcris": {
+    "bonus": "+R$400",
+    "image": "https://www.betarena.com/wp-content/uploads/2022/03/betcris_logo.webp",
+    "stars": "4",
+    "title": "Betcris",
+    "position": "9",
+    "bonus_code": "Sem código",
+    "information": "Betcris é uma casa de apostas recente no mercado brasileiro com uma grande variedade de mercados!",
+    "review_link": "https://www.betarena.com/",
+    "register_link": "https://qg9t2.app.goo.gl/betcris_brasil",
+    "bonus_description": "100% de bônus em depósitos até R$400"
+  },
+  "99 Betboro": {
+    "bonus": "+R$500",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/betboro_Apostas.svg",
+    "stars": "4",
+    "title": "Betboro",
+    "position": "10",
+    "bonus_code": "Sem código",
+    "information": "Embora ainda seja pouco conhecido pelo público em geral, a Betboro é uma das casas de apostas que mais crescem no mundo. Abra uma conta agora!",
+    "review_link": "https://apostas.betarena.com/betboro-revisao-da-casa-de-apostas/",
+    "register_link": "https://promotions.bboro.com/pt/exclusivo-betarena?btag=37980",
+    "bonus_description": "50% de bônus no primeiro depósito até R$500"
+  }
+}
+
+{
+  "1 1xBet": {
+    "bonus": "+$100",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/1xbet_Apostas.png",
+    "stars": "5",
+    "title": "1xBet",
+    "position": "1",
+    "bonus_code": "Sem código",
+    "information": "Com sua ampla gama de jogos e eventos para apostas, a 1xBet promete conquistar um espaço cada vez mais proeminente. Abra uma conta!",
+    "review_link": "https://apostas.betarena.com/1xbet-revisao-da-casa-de-apostas/",
+    "register_link": "https://refpa.top/L?tag=d_47346m_97c_BlogBR&site=47346&ad=97&r=bonus/rules/1st/",
+    "bonus_description": "Bónus de 100% no primeiro depósito até $100"
+  },
+  "2 22Bet": {
+    "bonus": "+$100",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/22bet_Apostas.svg",
+    "stars": "5",
+    "title": "22Bet",
+    "position": "2",
+    "bonus_code": "Sem código",
+    "information": "Com algumas características emocionantes, a 22bet é mais uma casa de apostas com uma boa reputação no mercado de apostas esportivas. Cadastre-se agora!",
+    "review_link": "https://apostas.betarena.com/1xbet-revisao-da-casa-de-apostas/",
+    "register_link": "https://refpa.top/L?tag=d_47346m_97c_BlogBR&site=47346&ad=97&r=bonus/rules/1st/",
+    "bonus_description": "100% de bônus em depósitos até $100"
+  },
+  "3 Betboro": {
+    "bonus": "+€100",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/06/betboro_Apostas.svg",
+    "stars": "4",
+    "title": "Betboro",
+    "position": "3",
+    "bonus_code": "Sem código",
+    "information": "Embora ainda seja pouco conhecido pelo público em geral, a Betboro é uma das casas de apostas que mais crescem no mundo. Abra uma conta agora!",
+    "review_link": "https://apostas.betarena.com/betboro-revisao-da-casa-de-apostas/",
+    "register_link": "https://promotions.bboro.com/pt/exclusivo-betarena?btag=37980",
+    "bonus_description": "100% de bônus no primeiro depósito até €100"
+  },
+  "4 Megapari": {
+    "bonus": "+$100",
+    "image": "https://apostas.betarena.com/wp-content/uploads/2021/08/megapari.svg",
+    "stars": "4",
+    "title": "Megapari",
+    "position": "4",
+    "bonus_code": "Sem código",
+    "information": "A principal vantagem da nossa empresa de apostas é oferecer uma oportunidade única de colocar apostas AO VIVO.",
+    "review_link": "https://apostas.betarena.com/megapari-revisao-da-casa-de-apostas/",
+    "register_link": "https://qg9t2.app.goo.gl/megapari",
+    "bonus_description": "100% de bônus no primeiro depósito até $100"
+  }
+}
+
+[{
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2005/2006",
+  "id": 5326,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2006/2007",
+  "id": 5327,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2007/2008",
+  "id": 5328,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2008/2009",
+  "id": 5329,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2009/2010",
+  "id": 5330,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2010/2011",
+  "id": 5331,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2011/2012",
+  "id": 5332,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2012/2013",
+  "id": 5333,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2013/2014",
+  "id": 5334,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2014/2015",
+  "id": 5335,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2015/2016",
+  "id": 5337,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2016/2017",
+  "id": 719,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2017/2018",
+  "id": 7908,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2018/2019",
+  "id": 12945,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2019/2020",
+  "id": 16030,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": null,
+  "name": "2020/2021",
+  "id": 17367,
+  "is_current_season": false,
+  "current_round_id": null
+}, {
+  "league_id": 5,
+  "current_stage_id": 77454495,
+  "name": "2021/2022",
+  "id": 18629,
+  "is_current_season": true,
+  "current_round_id": null
+}]
+
+[{
+  "id": 124224,
+  "end": "2009-09-17",
+  "name": 1,
+  "start": "2009-09-17",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}, {
+  "id": 124226,
+  "end": "2009-12-16",
+  "name": 2,
+  "start": "2009-10-01",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}, {
+  "id": 124227,
+  "end": "2009-12-02",
+  "name": 3,
+  "start": "2009-11-05",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}, {
+  "id": 124228,
+  "end": "2009-12-03",
+  "name": 4,
+  "start": "2009-12-02",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}, {
+  "id": 124229,
+  "end": "2009-12-16",
+  "name": 5,
+  "start": "2009-12-03",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}, {
+  "id": 124230,
+  "end": "2009-12-17",
+  "name": 6,
+  "start": "2009-12-16",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}, {
+  "id": 124231,
+  "end": "2009-12-17",
+  "name": 7,
+  "start": "2009-12-17",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}, {
+  "id": 124233,
+  "end": "2009-12-17",
+  "name": 8,
+  "start": "2009-12-17",
+  "stage_id": 10025,
+  "league_id": 5,
+  "season_id": 5330
+}]

@@ -125,9 +125,25 @@
   import { goto, invalidate, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
   import { browser } from '$app/env';
+  import { onMount } from 'svelte';
 
   import SvelteSeo from 'svelte-seo';
-  import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
+
+  /*
+    [v1] - Testing with Standard Imports (client-side)
+  */
+
+  // import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
+
+  /*
+    [v2] - Testing with Dynamic Imports (client-side)
+  */
+
+  let LeagueInfoWidget;
+
+  onMount(async () => {
+		LeagueInfoWidget = (await import('$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte')).default;
+	});
 
   import type { Cache_Single_Tournaments_Data_Page_Translation_Response, 
     Cache_Single_Tournaments_SEO_Translation_Response, 
@@ -244,6 +260,22 @@
   {/if}
 </svelte:head>
 
+<!-- [ℹ] SEO-DATA-LOADED 
+-->
+{#if !browser}
+  
+  <div 
+    id="seo-widget-container">
+
+    <div 
+      id="seo-league-table-site-box">
+      <h2>{LEAGUE_INFO_DATA.data.country}</h2>
+      <h2>{LEAGUE_INFO_DATA.data.name}</h2>
+    </div>
+
+  </div>
+
+{/if}
 
 <!-- ===================
 	COMPONENT HTML
@@ -297,7 +329,8 @@
 
   </div>
 
-  <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+  <!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
+  <svelte:component this={LeagueInfoWidget} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
 
   <!-- [ℹ] widgets displayed -->
   <div>
@@ -313,6 +346,14 @@
 
 
 <style>
+
+  #seo-widget-container {
+		position: absolute;
+		z-index: -100;
+		top: -9999px;
+		left: -9999px;
+	}
+
   section#tournaments-page {
 		/* display: grid; */
 		max-width: 1430px;
