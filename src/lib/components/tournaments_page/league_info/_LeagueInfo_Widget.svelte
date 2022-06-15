@@ -220,7 +220,7 @@
     // refresh = true
     toggleDropdown = false
     loaded = false
-    widgetInit()
+    // widgetInit()
     // setTimeout(async() => {
       // refresh = false
     // }, 50)
