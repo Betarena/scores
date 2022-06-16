@@ -518,27 +518,29 @@
                   <div
                     id='button-extra-info-container'>
 
-                    <!-- <a 
-                      rel="nofollow"
-                      href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}> -->
-                      <div
-                        id="betting-site-container"
-                        class="row-space-start m-r-16">
+                    <div
+                      id="betting-site-container"
+                      class="row-space-start m-r-16">
+
+                      <a 
+                        rel="nofollow"
+                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                         <img 
                           id='sportbook-logo-img'
                           src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
                           alt=''
                         />
-                        <button 
-                          class="place-bet-btn btn-primary">
-                          <p 
-                            class="medium"
-                            on:click={() => toggleCTA = !toggleCTA}>
-                            Bet now
-                          </p>
-                        </button>
-                      </div>
-                    <!-- </a> -->
+                      </a>
+
+                      <button 
+                        class="place-bet-btn btn-primary">
+                        <p 
+                          class="medium"
+                          on:click={() => toggleCTA = !toggleCTA}>
+                          Bet now
+                        </p>
+                      </button>
+                    </div>
 
                     <!-- [ℹ] extra-info pop-up container
                     -->
@@ -885,17 +887,18 @@
               <div
                 id='button-extra-info-container'>
 
-                <!-- <a 
-                  rel="nofollow"
-                  href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}> -->
                   <div
                     id="betting-site-container"
                     class="row-space-end">
-                    <img 
-                      id='sportbook-logo-img'
-                      src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
-                      alt=''
-                    />
+                    <a 
+                      rel="nofollow"
+                      href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                      <img 
+                        id='sportbook-logo-img'
+                        src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                        alt=''
+                      />
+                    </a>
                     <button 
                       class="place-bet-btn btn-primary">
                       <p 
@@ -905,7 +908,6 @@
                       </p>
                     </button>
                   </div>
-                <!-- </a> -->
 
                 <!-- [ℹ] extra-info pop-up container
                 -->
@@ -1206,27 +1208,27 @@
               <div
                 id='button-extra-info-container'>
 
-                <!-- <a 
-                  rel="nofollow"
-                  href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}> -->
-                  <div
-                    id="betting-site-container"
-                    class="row-space-start m-b-8">
+                <div
+                  id="betting-site-container"
+                  class="row-space-start m-b-8">
+                  <a 
+                    rel="nofollow"
+                    href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                     <img 
                       id='sportbook-logo-img'
                       src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
                       alt=''
                     />
-                    <button 
-                      class="place-bet-btn btn-primary">
-                      <p 
-                        class="medium w-500"
-                        on:click={() => toggleCTA = !toggleCTA}>
-                        Bet now
-                      </p>
-                    </button>
-                  </div>
-                <!-- </a> -->
+                  </a>
+                  <button
+                    class="place-bet-btn btn-primary">
+                    <p 
+                      class="medium w-500"
+                      on:click={() => toggleCTA = !toggleCTA}>
+                      Bet now
+                    </p>
+                  </button>
+                </div>
 
                 <!-- [ℹ] extra-info pop-up container
                 -->
