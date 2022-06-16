@@ -46,6 +46,7 @@
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 
   $: if (dev) console.log("LEAGUE_INFO_SEO_DATA: ", LEAGUE_INFO_SEO_DATA)
+  $: if (dev) console.log(dropdownSeasonSelect)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -82,11 +83,6 @@
     const imageURL: string = LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image
     getImageBgColor(imageURL, imageVar)
 
-    // [ℹ] intercept date-league-calculation
-    const startDate = LEAGUE_INFO_SEO_DATA.data.seasons[0].start_date;
-    const endDate = LEAGUE_INFO_SEO_DATA.data.seasons[0].end_date;
-    validateSeasonProgressDate(startDate, endDate);
-
     // [ℹ] order dates by descending order;
     LEAGUE_INFO_SEO_DATA.data.seasons.sort((a, b) => parseFloat(b.name.toString().slice(-2)) - parseFloat(a.name.toString().slice(-2)));
 
@@ -117,6 +113,11 @@
           season.number_of_clubs = "-"
         }
     }
+
+    // [ℹ] intercept date-league-calculation
+    const startDate = LEAGUE_INFO_SEO_DATA.data.seasons[0].start_date;
+    const endDate = LEAGUE_INFO_SEO_DATA.data.seasons[0].end_date;
+    validateSeasonProgressDate(startDate, endDate);
 
     LEAGUE_INFO_SEO_DATA = LEAGUE_INFO_SEO_DATA
 
