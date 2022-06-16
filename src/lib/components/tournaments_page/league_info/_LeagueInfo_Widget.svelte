@@ -45,7 +45,7 @@
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 
-  $: console.log("LEAGUE_INFO_SEO_DATA: ", LEAGUE_INFO_SEO_DATA)
+  $: if (dev) console.log("LEAGUE_INFO_SEO_DATA: ", LEAGUE_INFO_SEO_DATA)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
