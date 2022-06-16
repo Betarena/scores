@@ -524,7 +524,8 @@
 
                       <a 
                         rel="nofollow"
-                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                        style="width: inherit;">
                         <img 
                           id='sportbook-logo-img'
                           src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
@@ -892,7 +893,8 @@
                     class="row-space-end">
                     <a 
                       rel="nofollow"
-                      href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                      href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                      style="width: inherit;">
                       <img 
                         id='sportbook-logo-img'
                         src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
@@ -1213,7 +1215,8 @@
                   class="row-space-start m-b-8">
                   <a 
                     rel="nofollow"
-                    href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                    href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                    style="width: inherit;">
                     <img 
                       id='sportbook-logo-img'
                       src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
