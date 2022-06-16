@@ -285,7 +285,7 @@
     <div 
       id="seo-league-table-site-box">
       <h1>{LEAGUE_INFO_SEO_DATA.data.name}</h1>
-      <h2>{LEAGUE_INFO_SEO_DATA.data.country}</h2>
+      <p>{LEAGUE_INFO_SEO_DATA.data.country}</p>
     </div>
   {/if}
 
@@ -405,10 +405,10 @@
                       width="24px" height="24px"
                       class="m-r-10"
                     />
-                    <h2
+                    <p
                       class="s-16 color-grey w-500 m-0">
                       {LEAGUE_INFO_SEO_DATA.data.country}
-                    </h2>
+                    </p>
                   </div>
 
 
@@ -740,10 +740,10 @@
                       alt=""
                       class="m-r-10"
                     />
-                    <h2
+                    <p
                       class="s-16 color-grey w-500 m-0">
                       {LEAGUE_INFO_SEO_DATA.data.country}
-                    </h2>
+                    </p>
                   </div>
 
                   <!-- [ℹ] num. of teams
@@ -1064,10 +1064,10 @@
                     alt=""
                     class="m-r-10"
                   />
-                  <h2
+                  <p
                     class="s-12 color-grey w-500 m-0">
                     {LEAGUE_INFO_SEO_DATA.data.country}
-                  </h2>
+                  </p>
                 </div>
 
               </div>
