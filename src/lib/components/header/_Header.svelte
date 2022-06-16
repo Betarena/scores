@@ -278,9 +278,15 @@
    * [ℹ] get & set user location;
   */
 	async function setUserCountryBookmakerLocation() {
+
+    // [ℹ] assign pre-set country-code
+    if ($userBetarenaSettings.country_bookmaker !== undefined) {
+      return
+    }
+
 		// [ℹ] get user GEO-LOCATION;
 		const userGeoResponse: GeoJsResponse = await getUserLocation()
-    console.log("userGeoResponse", userGeoResponse);
+    // console.log("userGeoResponse", userGeoResponse);
 		let userGeo = userGeoResponse.country_code === undefined ? null : userGeoResponse.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
 
     if (userGeo !== null) {
@@ -320,6 +326,7 @@
         selectedCountryBookmakers('en')
       }
     }
+
 	}
 
   /**
@@ -415,7 +422,7 @@
         <!-- [ℹ] BETARENA LOGO -->
         {#if mobileExclusive}
           <!-- [ℹ] brand-logo-betarena-for-mobile-ONLY -->
-          <div id="brand" on:click={() => reloadPage() }>
+          <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
             <a sveltekit:prefetch href={homepageURL} title={logoLink}>
               <img src={logo_mini} alt="betarena-logo" width="103px" height="30px" />
             </a>
@@ -423,7 +430,7 @@
           <!-- [ℹ] BETARENA LOGO [DESKTOP ONLY] -->
         {:else}
           <!-- [ℹ] brand-logo-betarena-for-desktop-ONLY -->
-          <div id="brand" on:click={() => reloadPage() }>
+          <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
             <a sveltekit:prefetch href={homepageURL} title={logoLink}>
               <img
                 class="m-r-30"

@@ -110,7 +110,6 @@
     [v1] - Testing with Standard Imports (client-side)
   */
 
-  /*
     import Footer from '$lib/components/footer/_Footer.svelte';
     import Header from '$lib/components/header/_Header.svelte';
     import OfflineAlert from '$lib/components/_Offline_alert.svelte';
@@ -118,12 +117,12 @@
     import PlatformAlert from '$lib/components/_Platform_alert.svelte';
     import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
     import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
-  */
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
   */
 
+  /*
   let Footer;
   let Header;
   let OfflineAlert;
@@ -141,6 +140,7 @@
 		EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
 		GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
 	});
+  */
   
   // [ℹ] other
   import * as Sentry from "@sentry/browser";
@@ -201,11 +201,11 @@
 
 <svelte:head>
   <!-- https://github.com/sveltejs/kit/issues/3091 -->
-  <html lang="{$page.params.lang == undefined || !$page.error ? 'en' : $page.params.lang}" />
+  <html lang="{$page.params.lang === undefined || $page.error ? 'en' : $page.params.lang}" />
 </svelte:head>
 
 <!-- [ℹ] SEO-DATA-LOADED 
--->
+- ->
 {#if !browser &&
       HEADER_TRANSLATION_DATA &&
       FOOTER_TRANSLATION_DATA}
@@ -214,7 +214,7 @@
     id="seo-widget-container">
 
     <!-- [ℹ] HEADER SEO
-    -->
+    - ->
     <div>
       {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang != 'en'}
         <a
@@ -232,7 +232,7 @@
     </div>
 
     <!-- [ℹ] FOOTER SEO 
-    -->
+    - ->
     <div>
       <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}</p>
       <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}</p>
@@ -241,7 +241,7 @@
       <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks}</p>
       <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}</p>
       <!-- [ℹ] nav-links-social-links
-      -->
+      - ->
       {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
         <p>{social_network[1].toString().toLocaleLowerCase()}</p>
       {/each}
@@ -249,6 +249,7 @@
 
   </div>
 {/if}
+-->
 
 <!-- ===================
   COMPONENT HTML

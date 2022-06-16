@@ -10,7 +10,14 @@
   import PlaceholderLeft from "./loaders/desktop/_Placeholder_Left.svelte";
   import PlaceholderRight from "./loaders/desktop/_Placeholder_Right.svelte";
 
-  import PlaceholderWhole from './loaders/tablet/_Placeholder_Whole.svelte';
+  import PlaceholderLeft_T from "./loaders/tablet/_Placeholder_Left.svelte";
+  import PlaceholderRight_T from "./loaders/tablet/_Placeholder_Right.svelte";
+
+  import PlaceholderLeftMiddleRow from './loaders/tablet/_Placeholder_Left_Middle_Row.svelte';
+  import PlaceholderLeftTopRow from './loaders/tablet/_Placeholder_Left_Top_Row.svelte';
+  import PlaceholderRightTopRow from './loaders/tablet/_Placeholder_Right_Top_Row.svelte';
+  import PlaceholderRightMiddleRow from './loaders/tablet/_Placeholder_Right_Middle_Row.svelte';
+  import PlaceholderLeftBottomRow from './loaders/tablet/_Placeholder_Left_Bottom_Row.svelte';
 
   import PlaceholderWholeM from './loaders/mobile/_Placeholder_Whole_M.svelte';
 
@@ -76,7 +83,34 @@
   -->
 	{:else if tabletExclusive && !mobileExclusive}
 
-    <PlaceholderWhole />
+  <!-- <div
+    class="row-space-out-top">
+    <PlaceholderLeft_T />
+    <PlaceholderRight_T />
+  </div> -->
+
+  <div
+    class="row-space-out-top m-b-25">
+    <div
+      class="m-r-5">
+      <PlaceholderLeftTopRow />
+    </div>
+    <PlaceholderRightTopRow />
+  </div>
+
+  <div
+    class="row-space-out">
+    <div
+      class="m-r-24">
+      <PlaceholderLeftMiddleRow />
+    </div>
+    <PlaceholderRightMiddleRow />
+  </div>
+
+  <div
+    class="row-space-start">
+    <PlaceholderLeftBottomRow />
+  </div>
 		
   <!-- [ℹ] MOBILE EXCLUSIVE CONTENT-LOADER 
   -->
@@ -107,14 +141,14 @@
 	@media only screen and (max-width: 475px) {
 		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */
 		:global(svg) {
-			width: 100% !important;
+			/* width: 100% !important; */
 		}
 
 	}
 
 	@media only screen and (max-width: 768px) {
 		:global(svg) {
-			width: 100% !important;
+			/* width: 100% !important; */
 		}
 	}
 

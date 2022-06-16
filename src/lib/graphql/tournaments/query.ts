@@ -35,6 +35,10 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       round_data
       start_date
     }
+    scores_widget_league_info_translations_dev {
+      data
+      lang
+    }
     scores_football_leagues_dev {
       country
       data

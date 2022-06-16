@@ -135,11 +135,13 @@
     [v1] - Testing with Standard Imports (client-side)
   */
 
-  // import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
+  import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
   */
+
+  /*
 
   let LeagueInfoWidget;
 
@@ -147,6 +149,8 @@
 		LeagueInfoWidget = (await import('$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte')).default;
 	});
 
+  */
+ 
   import type { Cache_Single_Tournaments_Data_Page_Translation_Response, 
     Cache_Single_Tournaments_SEO_Translation_Response, 
     Hasura_Complete_Pages_SEO, 
@@ -263,7 +267,6 @@
 </svelte:head>
 
 <!-- [ℹ] SEO-DATA-LOADED 
--->
 {#if !browser}
   
   <div 
@@ -278,6 +281,7 @@
   </div>
 
 {/if}
+-->
 
 <!-- ===================
 	COMPONENT HTML

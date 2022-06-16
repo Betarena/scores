@@ -33,6 +33,7 @@
   let noLeagueInfoBool: any = false;            // [ℹ] identifies the noLeagueInfoBool boolean;
   let dropdownSeasonSelect: any = undefined     // [ℹ] selected TOP LEAGUE;
   let toggleDropdown: boolean = false;          // [ℹ] toggle Dropdown BOX accordingly;
+  let toggleCTA: boolean = false;
 
   let datePercentageDiff: number = 0;           // [ℹ] the (%) difference progress of season
   let dateDateStartDisplay: string;
@@ -43,6 +44,8 @@
   let imageVar: string = '--league-info-bookmaker-bg-';
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
+
+  $: console.log("LEAGUE_INFO_SEO_DATA: ", LEAGUE_INFO_SEO_DATA)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -73,26 +76,25 @@
 
     loaded = true;
 
-    LEAGUE_INFO_SEO_DATA.data.beting_cta_link = response.beting_cta_link
-    LEAGUE_INFO_SEO_DATA.data.betting_site_logo = response.betting_site_logo
+    LEAGUE_INFO_SEO_DATA.data.sportbook_detail = response
 
     // [ℹ] distorted "sportmonks" image color-thief application
-    const imageURL: string = LEAGUE_INFO_SEO_DATA.data.betting_site_logo
+    const imageURL: string = LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image
     getImageBgColor(imageURL, imageVar)
-
-    // [ℹ] select 1st league/season
-    dropdownSeasonSelect = LEAGUE_INFO_SEO_DATA.data.seasons[0]
 
     // [ℹ] intercept date-league-calculation
     const startDate = LEAGUE_INFO_SEO_DATA.data.seasons[0].start_date;
     const endDate = LEAGUE_INFO_SEO_DATA.data.seasons[0].end_date;
     validateSeasonProgressDate(startDate, endDate);
 
+    // [ℹ] order dates by descending order;
+    LEAGUE_INFO_SEO_DATA.data.seasons.sort((a, b) => parseFloat(b.name.toString().slice(-2)) - parseFloat(a.name.toString().slice(-2)));
+
     // [ℹ] 2021/2022 => 21/22 (date) conversion
     for (const season of LEAGUE_INFO_SEO_DATA.data.seasons) {
       
       // [ℹ] check if already processed
-      if (season.name.length != 5) {
+      if (season.name.length > 5) {
 
         if (!season.name.includes('2020')) {
           season.name = season.name.replace(/20/g, "");
@@ -104,7 +106,17 @@
 
       }
     }
-    
+
+    // [ℹ] select 1st league/season
+    dropdownSeasonSelect = LEAGUE_INFO_SEO_DATA.data.seasons[0]
+
+    // [ℹ] number of clubs check;
+    for (const season of LEAGUE_INFO_SEO_DATA.data.seasons) {
+
+        if (season.number_of_clubs === null) {
+          season.number_of_clubs = "-"
+        }
+    }
 
     LEAGUE_INFO_SEO_DATA = LEAGUE_INFO_SEO_DATA
 
@@ -113,10 +125,17 @@
   }
 
   function validateSeasonProgressDate (start_end, end_date) {
+
+    if (start_end === null || end_date === null) {
+      datePercentageDiff = null;
+      if (dev) console.log("identified as NULL!");
+      return
+    }
+
     // [ℹ] check if progress bar should have (%)
-    const currentDate = parseInt(new Date().toString());
-    const startDate = parseInt(new Date(start_end).toString());
-    const endDate = parseInt(new Date(end_date).toString());
+    const currentDate = new Date();
+    const startDate = new Date(start_end);
+    const endDate = new Date(end_date);
 
     // [ℹ] assign date display
     dateDateStartDisplay = new Date(start_end).getUTCDate().toString() + " " + monthNames[new Date(start_end).getMonth().toString()]
@@ -125,14 +144,9 @@
     if (currentDate > startDate &&
         currentDate < endDate) {
 
-      const seasonDiffTime = Math.abs(endDate - startDate);
-      const seasonDiffDays = Math.ceil(seasonDiffTime / (1000 * 60 * 60 * 24)); 
-
-      const currentDiffTime = Math.abs(endDate - currentDate);
-      const currentDiffDays = Math.ceil(currentDiffTime / (1000 * 60 * 60 * 24)); 
-
+      const seasonDiffDays = Math.floor((endDate - startDate) / 86400000);
+      const currentDiffDays =  Math.floor((endDate - currentDate) / 86400000);
       datePercentageDiff = 100 - (currentDiffDays / seasonDiffDays) * 100
-
     } 
     else if (currentDate >= endDate) {
 
@@ -147,6 +161,10 @@
   function selectSeason (season) {
     dropdownSeasonSelect = season;
     validateSeasonProgressDate (dropdownSeasonSelect.start_date, dropdownSeasonSelect.end_date)
+  }
+
+  function closeAllDropdowns() {
+    toggleDropdown = false;
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -213,24 +231,48 @@
   // ~~~~~~~~~~~~~~~~~~~~~
 
   // [ℹ] change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
+  // let old_country = undefined;
+  // let old_page = undefined;
+  // onMount(async () => {
+  //   old_country = $userBetarenaSettings.country_bookmaker;
+  //   old_page = $page.url.pathname;
+  // })
+
+  // $: matchingCountry = old_country === $userBetarenaSettings.country_bookmaker
+  // $: matchingPage = old_page === $page.url.pathname
+
 	$: refresh_data = $userBetarenaSettings.country_bookmaker;
 	$: refresh_data = $page.url.pathname;
-	$: if (browser && refresh_data) {
-    // [ℹ] reset necessary variables;
-    // refresh = true
-    toggleDropdown = false
-    loaded = false
-    // widgetInit()
-    // setTimeout(async() => {
-      // refresh = false
-    // }, 50)
-	}
+
+	// $: if (browser && old_country != undefined && old_page != undefined) {
+    // if (!matchingPage || !matchingCountry) {
+  $: if (browser && refresh_data) {
+      // [ℹ] reset necessary variables;
+      // console.log("Here-updated!")
+      refresh = true
+      toggleDropdown = false
+      loaded = false
+      noLeagueInfoBool = false
+      // widgetInit()
+      // old_country = $userBetarenaSettings.country_bookmaker;
+      // old_page = $page.url.pathname;
+      setTimeout(async() => {
+        refresh = false
+      }, 100)
+    }
+	// }
 
 </script>
 
 <!-- ===============
     COMPONENT HTML 
 =================-->
+
+<!-- [ℹ] area-outside-for-close 
+-->
+{#if toggleDropdown}
+  <div id="background-area-close" on:click={() => closeAllDropdowns()} />
+{/if}
 
 <div>
 
@@ -239,8 +281,8 @@
   {#if !loaded}
     <div 
       id="seo-league-table-site-box">
+      <h1>{LEAGUE_INFO_SEO_DATA.data.name}</h1>
       <h2>{LEAGUE_INFO_SEO_DATA.data.country}</h2>
-      <h2>{LEAGUE_INFO_SEO_DATA.data.name}</h2>
     </div>
   {/if}
 
@@ -249,12 +291,12 @@
   {#if noLeagueInfoBool && !loaded}
     <!-- [ℹ] title of the widget 
     -->
-    <h2 
+    <h1 
       class="s-20 m-b-10 w-500 color-black-2"
       style="margin-top: 0;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
       {LEAGUE_INFO_SEO_DATA.data.name}
-    </h2>
+    </h1>
 
     <!-- [ℹ] no-matches-avaiable-placeholder container 
     -->
@@ -313,7 +355,7 @@
           <!-- [ℹ] top-row data container
           -->
           <div
-            class="row-space-out m-b-40">
+            class="row-space-out-top m-b-40">
 
             <!-- [ℹ] main league info-1st container
             -->
@@ -336,13 +378,13 @@
 
                 <!-- [ℹ] wiget-title
                 -->
-                <h2
+                <h1
                   id='widget-title'
-                  class="s-32 m-b-10 color-black-2"
+                  class="s-32 m-b-10 color-black-2 m-0"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}
                   style="margin: 0; font-weight: 700">
                   {LEAGUE_INFO_SEO_DATA.data.name}
-                </h2>
+                </h1>
 
                 <!-- [ℹ] under-league-info-title
                 -->
@@ -360,10 +402,10 @@
                       width="24px" height="24px"
                       class="m-r-10"
                     />
-                    <p
-                      class="s-16 color-grey w-500">
+                    <h2
+                      class="s-16 color-grey w-500 m-0">
                       {LEAGUE_INFO_SEO_DATA.data.country}
-                    </p>
+                    </h2>
                   </div>
 
 
@@ -394,7 +436,7 @@
                         <p
                           class='s-14 w-500 color-grey no-wrap'>
                           {item.number_of_clubs}
-                          Teams 
+                          {LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                         </p>
                       {/if}
                     {/each}
@@ -446,6 +488,7 @@
                           {#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
                             <p
                               class='s-14 w-500 row-season'
+                              class:color-primary={item.name === dropdownSeasonSelect.name}
                               on:click={() => selectSeason(item)}>
                               {item.name}
                             </p>
@@ -470,35 +513,97 @@
               <div
                 class="row-space-out m-b-15">
 
-                <div
-                  id="betting-site-container"
-                  class="row-space-start m-r-16">
-                  <img 
-                    id='sportbook-logo-img'
-                    src={LEAGUE_INFO_SEO_DATA.data.betting_site_logo}
-                    alt=''
-                  />
-                  <a 
-                    rel="external"
-                    href={LEAGUE_INFO_SEO_DATA.data.beting_cta_link}>
-                    <button 
-                      class="place-bet-btn btn-primary">
-                      <p 
-                        class="medium">
-                        Bet now
-                      </p>
-                    </button>
-                  </a>
-                </div>
+                {#if LEAGUE_INFO_SEO_DATA.data.sportbook_detail}
+
+                  <div
+                    id='button-extra-info-container'>
+
+                    <!-- <a 
+                      rel="nofollow"
+                      href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}> -->
+                      <div
+                        id="betting-site-container"
+                        class="row-space-start m-r-16">
+                        <img 
+                          id='sportbook-logo-img'
+                          src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                          alt=''
+                        />
+                        <button 
+                          class="place-bet-btn btn-primary">
+                          <p 
+                            class="medium"
+                            on:click={() => toggleCTA = !toggleCTA}>
+                            Bet now
+                          </p>
+                        </button>
+                      </div>
+                    <!-- </a> -->
+
+                    <!-- [ℹ] extra-info pop-up container
+                    -->
+                    {#if toggleCTA}
+                      <div 
+                        class="extra-info" 
+                        in:fade>
+
+                        <!--  [ℹ] site-image 
+                        -->
+                        <img
+                          style="background-color: var({imageVar});"
+                          class="extra-info-img"
+                          src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                          alt=""
+                          />
+
+                        <!--  [ℹ] extra-site info 
+                        -->
+                        <div 
+                          class="extra-info-container">
+                          <!--  [ℹ] text 
+                          -->
+                          <p 
+                            class="large">
+                            {LEAGUE_INFO_SEO_DATA.data.sportbook_detail.bonus_description}
+                          </p>
+                          <!--  [ℹ] button_cta 
+                          -->
+                          <a 
+                            rel="nofollow" 
+                            href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                            <button
+                              class="btn-primary btn-cta"
+                              style="width: 100% !important;">
+                              <p 
+                                class="w-500 s-14 w-normal">
+                                Register
+                              </p>
+                            </button>
+                          </a>
+                          <!--  [ℹ] extra-site info text 
+                          -->
+                          <p 
+                            class="small" 
+                            style="color: #CCCCCC;">
+                            {LEAGUE_INFO_SEO_DATA.data.sportbook_detail.information}
+                          </p>
+                        </div>
+                      </div>
+                    {/if}
+
+                  </div>
+
+                {/if}
 
                 <button
-                  id='following-btn'>
+                  id='following-btn'
+                  class="cursor-not-allowed">
                   <p 
                     class="s-14 color-grey w-500 no-wrap">
-                    Following
+                    {LEAGUE_INFO_SEO_DATA.data.translation.following} 
                   </p>
                 </button>
-
+                
               </div>
 
               <!-- [ℹ] season start-end & progress-bar dates select
@@ -506,21 +611,23 @@
               <div
                 class="row-space-start">
 
-                <p
-                  class="s-14 color-grey w-500 m-r-10 no-wrap">
-                  {dateDateStartDisplay}
-                </p>
+                {#if datePercentageDiff != null}
+                  <p
+                    class="s-14 color-grey w-500 m-r-10 no-wrap">
+                      {dateDateStartDisplay}
+                  </p>
 
-                <div 
-                  id="season-progressbar"
-                  class="m-r-10">
-                  <div style="width: ${datePercentageDiff}%;"/>
-                </div>
+                  <div 
+                    id="season-progressbar"
+                    class="m-r-10">
+                    <div style="width: {datePercentageDiff}%;"/>
+                  </div>
 
-                <p
-                  class="s-14 color-grey w-500 no-wrap">
-                  {dateDateEndDisplay}
-                </p>
+                  <p
+                    class="s-14 color-grey w-500 no-wrap">
+                    {dateDateEndDisplay}
+                  </p>
+                {/if}
 
               </div>
 
@@ -542,27 +649,27 @@
               class:activeOpt={selectedOpt == 0}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Overview
+                {LEAGUE_INFO_SEO_DATA.data.translation.overview}
               </p>
             </div>
 
             <div
-              class="opt-container cursor-pointer m-r-32"
+              class="opt-container cursor-not-allowed m-r-32"
               on:click={() => selectedOpt = 1}
               class:activeOpt={selectedOpt == 1}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Content
+                {LEAGUE_INFO_SEO_DATA.data.translation.content} 
               </p>
             </div>
 
             <div
-              class="opt-container cursor-pointer m-r-32"
+              class="opt-container cursor-not-allowed m-r-32"
               on:click={() => selectedOpt = 2}
               class:activeOpt={selectedOpt == 2}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Stats
+                {LEAGUE_INFO_SEO_DATA.data.translation.stats} 
               </p>
             </div>
 
@@ -604,13 +711,13 @@
 
                 <!-- [ℹ] wiget-title
                 -->
-                <h2
+                <h1
                   id='widget-title'
-                  class="s-32 m-b-10 color-black-2"
+                  class="s-32 m-b-10 color-black-2 m-0"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}
                   style="margin: 0; font-weight: 700">
                   {LEAGUE_INFO_SEO_DATA.data.name}
-                </h2>
+                </h1>
 
                 <!-- [ℹ] under-league-info-title
                 -->
@@ -627,10 +734,10 @@
                       alt=""
                       class="m-r-10"
                     />
-                    <p
-                      class="s-16 color-grey w-500">
+                    <h2
+                      class="s-16 color-grey w-500 m-0">
                       {LEAGUE_INFO_SEO_DATA.data.country}
-                    </p>
+                    </h2>
                   </div>
 
                   <!-- [ℹ] num. of teams
@@ -658,7 +765,7 @@
                         <p
                           class='s-14 w-500 color-grey no-wrap'>
                           {item.number_of_clubs}
-                          Teams 
+                          {LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                         </p>
                       {/if}
                     {/each}
@@ -710,6 +817,7 @@
                           {#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
                             <p
                               class='s-14 w-500 row-season'
+                              class:color-primary={item.name === dropdownSeasonSelect.name}
                               on:click={() => selectSeason(item)}>
                               {item.name}
                             </p>
@@ -728,10 +836,11 @@
             <!-- [ℹ] sportsbook-logo & follow btn & container
             -->
             <button
-              id='following-btn'>
+              id='following-btn'
+              class="cursor-not-allowed">
               <p 
                 class="s-14 color-grey w-500 no-wrap">
-                Following
+                {LEAGUE_INFO_SEO_DATA.data.translation.following} 
               </p>
             </button>
 
@@ -746,45 +855,112 @@
             -->
             <div
               class="row-space-start m-r-24">
-              <p
-                class="s-14 color-grey w-500 m-r-10 no-wrap">
-                {dateDateStartDisplay}
-              </p>
 
-              <div 
-                id="season-progressbar"
-                class="m-r-10">
-                <div style="width: ${datePercentageDiff}%;"/>
-              </div>
+              {#if datePercentageDiff != null}
 
-              <p
-                class="s-14 color-grey w-500 no-wrap">
-                {dateDateEndDisplay}
-              </p>
+                <p
+                  class="s-14 color-grey w-500 m-r-10 no-wrap">
+                  {dateDateStartDisplay}
+                </p>
+
+                <div 
+                  id="season-progressbar"
+                  class="m-r-10">
+                  <div style="width: ${datePercentageDiff}%;"/>
+                </div>
+
+                <p
+                  class="s-14 color-grey w-500 no-wrap">
+                  {dateDateEndDisplay}
+                </p>
+
+              {/if}
+
             </div>
 
             <!-- [ℹ] sportsbook-logo
             -->
-            <div
-              id="betting-site-container"
-              class="row-space-end">
-              <img 
-                id='sportbook-logo-img'
-                src={LEAGUE_INFO_SEO_DATA.data.betting_site_logo}
-                alt=''
-              />
-              <a 
-                rel="external"
-                href={LEAGUE_INFO_SEO_DATA.data.beting_cta_link}>
-                <button 
-                  class="place-bet-btn btn-primary">
-                  <p 
-                    class="medium">
-                    Bet now
-                  </p>
-                </button>
-              </a>
-            </div>
+            {#if LEAGUE_INFO_SEO_DATA.data.sportbook_detail}
+
+              <div
+                id='button-extra-info-container'>
+
+                <!-- <a 
+                  rel="nofollow"
+                  href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}> -->
+                  <div
+                    id="betting-site-container"
+                    class="row-space-end">
+                    <img 
+                      id='sportbook-logo-img'
+                      src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                      alt=''
+                    />
+                    <button 
+                      class="place-bet-btn btn-primary">
+                      <p 
+                        class="medium"
+                        on:click={() => toggleCTA = !toggleCTA}>
+                        Bet now
+                      </p>
+                    </button>
+                  </div>
+                <!-- </a> -->
+
+                <!-- [ℹ] extra-info pop-up container
+                -->
+                {#if toggleCTA}
+                  <div 
+                    class="extra-info" 
+                    in:fade>
+
+                    <!--  [ℹ] site-image 
+                    -->
+                    <img
+                      style="background-color: var({imageVar});"
+                      class="extra-info-img"
+                      src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                      alt=""
+                      />
+
+                    <!--  [ℹ] extra-site info 
+                    -->
+                    <div 
+                      class="extra-info-container">
+                      <!--  [ℹ] text 
+                      -->
+                      <p 
+                        class="large">
+                        {LEAGUE_INFO_SEO_DATA.data.sportbook_detail.bonus_description}
+                      </p>
+                      <!--  [ℹ] button_cta 
+                      -->
+                      <a 
+                        rel="nofollow" 
+                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                        <button
+                          class="btn-primary btn-cta"
+                          style="width: 100% !important;">
+                          <p 
+                            class="w-500 s-14 w-normal">
+                            Register
+                          </p>
+                        </button>
+                      </a>
+                      <!--  [ℹ] extra-site info text 
+                      -->
+                      <p 
+                        class="small" 
+                        style="color: #CCCCCC;">
+                        {LEAGUE_INFO_SEO_DATA.data.sportbook_detail.information}
+                      </p>
+                    </div>
+                  </div>
+                {/if}
+
+              </div>
+
+            {/if}
 
           </div>
 
@@ -802,27 +978,27 @@
               class:activeOpt={selectedOpt == 0}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Overview
+                {LEAGUE_INFO_SEO_DATA.data.translation.overview}
               </p>
             </div>
 
             <div
-              class="opt-container cursor-pointer m-r-32"
+              class="opt-container cursor-not-allowed m-r-32"
               on:click={() => selectedOpt = 1}
               class:activeOpt={selectedOpt == 1}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Content
+                {LEAGUE_INFO_SEO_DATA.data.translation.content} 
               </p>
             </div>
 
             <div
-              class="opt-container cursor-pointer m-r-32"
+              class="opt-container cursor-not-allowed m-r-32"
               on:click={() => selectedOpt = 2}
               class:activeOpt={selectedOpt == 2}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Stats
+                {LEAGUE_INFO_SEO_DATA.data.translation.stats} 
               </p>
             </div>
 
@@ -863,13 +1039,13 @@
 
                 <!-- [ℹ] wiget-title
                 -->
-                <h2
+                <h1
                   id='widget-title'
-                  class="s-16 m-b-10 color-black-2"
+                  class="s-16 m-b-10 color-black-2 m-0"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}
                   style="margin: 0; font-weight: 700">
                   {LEAGUE_INFO_SEO_DATA.data.name}
-                </h2>
+                </h1>
 
                 <!-- [ℹ] league-country
                 -->
@@ -881,10 +1057,10 @@
                     alt=""
                     class="m-r-10"
                   />
-                  <p
-                    class="s-12 color-grey w-500">
+                  <h2
+                    class="s-12 color-grey w-500 m-0">
                     {LEAGUE_INFO_SEO_DATA.data.country}
-                  </p>
+                  </h2>
                 </div>
 
               </div>
@@ -936,6 +1112,7 @@
                     {#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
                       <p
                         class='s-14 w-500 row-season'
+                        class:color-primary={item.name === dropdownSeasonSelect.name}
                         on:click={() => selectSeason(item)}>
                         {item.name}
                       </p>
@@ -980,7 +1157,7 @@
                   <p
                     class='s-12 w-500 color-grey no-wrap text-center'>
                     {item.number_of_clubs}
-                    Teams 
+                    {LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                   </p>
                 {/if}
               {/each}
@@ -991,23 +1168,27 @@
             <div
               class="column-space-start">
 
-              <div 
-                id="season-progressbar"
-                class="m-b-8">
-                <div style="width: ${datePercentageDiff}%;"/>
-              </div>
+              {#if datePercentageDiff != null}
 
-              <div
-                class="row-space-out">
-                <p
-                  class="s-12 color-grey w-500 no-wrap">
-                  {dateDateStartDisplay}
-                </p>
-                <p
-                  class="s-12 color-grey w-500 no-wrap">
-                  {dateDateEndDisplay}
-                </p>
-              </div>
+                <div 
+                  id="season-progressbar"
+                  class="m-b-8">
+                  <div style="width: ${datePercentageDiff}%;"/>
+                </div>
+
+                <div
+                  class="row-space-out">
+                  <p
+                    class="s-12 color-grey w-500 no-wrap">
+                    {dateDateStartDisplay}
+                  </p>
+                  <p
+                    class="s-12 color-grey w-500 no-wrap">
+                    {dateDateEndDisplay}
+                  </p>
+                </div>
+
+              {/if}
 
             </div>
 
@@ -1020,32 +1201,94 @@
             
             <!-- [ℹ] sportsbook-logo
             -->
-            <div
-              id="betting-site-container"
-              class="row-space-start m-b-8">
-              <img 
-                id='sportbook-logo-img'
-                src={LEAGUE_INFO_SEO_DATA.data.betting_site_logo}
-                alt=''
-              />
-              <a 
-                rel="external"
-                href={LEAGUE_INFO_SEO_DATA.data.beting_cta_link}>
-                <button 
-                  class="place-bet-btn btn-primary">
-                  <p 
-                    class="medium w-500">
-                    Bet now
-                  </p>
-                </button>
-              </a>
-            </div>
+            {#if LEAGUE_INFO_SEO_DATA.data.sportbook_detail}
+
+              <div
+                id='button-extra-info-container'>
+
+                <!-- <a 
+                  rel="nofollow"
+                  href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}> -->
+                  <div
+                    id="betting-site-container"
+                    class="row-space-start m-b-8">
+                    <img 
+                      id='sportbook-logo-img'
+                      src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                      alt=''
+                    />
+                    <button 
+                      class="place-bet-btn btn-primary">
+                      <p 
+                        class="medium w-500"
+                        on:click={() => toggleCTA = !toggleCTA}>
+                        Bet now
+                      </p>
+                    </button>
+                  </div>
+                <!-- </a> -->
+
+                <!-- [ℹ] extra-info pop-up container
+                -->
+                {#if toggleCTA}
+                  <div 
+                    class="extra-info" 
+                    in:fade>
+
+                    <!--  [ℹ] site-image 
+                    -->
+                    <img
+                      style="background-color: var({imageVar});"
+                      class="extra-info-img"
+                      src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                      alt=""
+                      />
+
+                    <!--  [ℹ] extra-site info 
+                    -->
+                    <div 
+                      class="extra-info-container">
+                      <!--  [ℹ] text 
+                      -->
+                      <p 
+                        class="large">
+                        {LEAGUE_INFO_SEO_DATA.data.sportbook_detail.bonus_description}
+                      </p>
+                      <!--  [ℹ] button_cta 
+                      -->
+                      <a 
+                        rel="nofollow" 
+                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                        <button
+                          class="btn-primary btn-cta"
+                          style="width: 100% !important;">
+                          <p 
+                            class="w-500 s-14 w-normal">
+                            Register
+                          </p>
+                        </button>
+                      </a>
+                      <!--  [ℹ] extra-site info text 
+                      -->
+                      <p 
+                        class="small" 
+                        style="color: #CCCCCC;">
+                        {LEAGUE_INFO_SEO_DATA.data.sportbook_detail.information}
+                      </p>
+                    </div>
+                  </div>
+                {/if}
+
+              </div>
+
+            {/if}
 
             <button
-              id='following-btn'>
+              id='following-btn'
+              class="cursor-not-allowed">
               <p 
                 class="s-14 color-grey w-500 no-wrap">
-                Following
+                {LEAGUE_INFO_SEO_DATA.data.translation.following} 
               </p>
             </button>
 
@@ -1065,27 +1308,27 @@
               class:activeOpt={selectedOpt == 0}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Overview
+                {LEAGUE_INFO_SEO_DATA.data.translation.overview}
               </p>
             </div>
 
             <div
-              class="opt-container cursor-pointer"
+              class="opt-container cursor-not-allowed"
               on:click={() => selectedOpt = 1}
               class:activeOpt={selectedOpt == 1}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Content
+                {LEAGUE_INFO_SEO_DATA.data.translation.content} 
               </p>
             </div>
 
             <div
-              class="opt-container cursor-pointer"
+              class="opt-container cursor-not-allowed"
               on:click={() => selectedOpt = 2}
               class:activeOpt={selectedOpt == 2}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Stats
+                {LEAGUE_INFO_SEO_DATA.data.translation.stats} 
               </p>
             </div>
 
@@ -1110,6 +1353,17 @@
 =================-->
 
 <style>
+
+  #background-area-close {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+  }
 
   #no-best-players-box {
     padding: 20px;
@@ -1227,7 +1481,8 @@
     background-color: var(--league-info-bookmaker-bg-);
   } div#betting-site-container button.place-bet-btn {
     height: 40px;
-		width: 120px;
+		/* width: 120px; */ 
+    min-width: 120px;
 		background-color: #f5620f;
 		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
@@ -1261,7 +1516,45 @@
   } div#view-tournaments-opt-container div.opt-container.activeOpt {
     border-color: #F5620F;
   } div#view-tournaments-opt-container  div.opt-container.activeOpt p {
-    color: #F5620F;
+    color: #F5620F !important;
+  }
+
+  #button-extra-info-container {
+    position: relative;
+  } .extra-info-container {
+    padding: 20px;
+    display: grid;
+    justify-items: stretch;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+  } .extra-info-container p {
+    color: white;
+  } .extra-info {
+    background: #4b4b4b;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    position: absolute;
+    top: 105%;
+    right: 0;
+    /* width: 289px; */
+    max-width: 289px;
+    width: 100%;
+    display: grid;
+    z-index: 100;
+    justify-items: center;
+    overflow: hidden;
+  } .extra-info-img {
+    width: 100%;
+    object-fit: contain;
+    height: 40px;
+  } .btn-cta {
+    border-radius: 8px !important;
+    margin-top: 32px;
+    margin-bottom: 16px;
+    padding: 11.5px !important;
+    width: -webkit-fill-available;
   }
 
   /* ====================
@@ -1314,8 +1607,12 @@
     }
     
     div#betting-site-container img#sportbook-logo-img {
-      width: 100%;
-      max-width: 169px;
+      /* width: 100%; */
+      /* max-width: 169px; */
+    }
+
+    div#betting-site-container {
+      width: 289px;
     }
 
     button#following-btn { 
@@ -1333,11 +1630,17 @@
       /* max-width: 560px; */
     }
 
-    div#betting-site-container {
-      /* min-width: 289px; */
-      min-width: 289px;
+    div#view-tournaments-opt-container div.opt-container:hover p {
+      color: #292929 !important;
     }
 
+    .dark-background-1 div#view-tournaments-opt-container div.opt-container:hover p {
+      color: #FFFFFF !important;
+    }
+
+    .extra-info {
+      left: 0;
+    }
 
   }
 
