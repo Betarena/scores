@@ -869,7 +869,7 @@
                 <div 
                   id="season-progressbar"
                   class="m-r-10">
-                  <div style="width: ${datePercentageDiff}%;"/>
+                  <div style="width: {datePercentageDiff}%;"/>
                 </div>
 
                 <p
@@ -1177,7 +1177,7 @@
                 <div 
                   id="season-progressbar"
                   class="m-b-8">
-                  <div style="width: ${datePercentageDiff}%;"/>
+                  <div style="width: {datePercentageDiff}%;"/>
                 </div>
 
                 <div
