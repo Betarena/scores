@@ -166,6 +166,7 @@
 
   function closeAllDropdowns() {
     toggleDropdown = false;
+    toggleCTA = false;
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -271,7 +272,8 @@
 
 <!-- [ℹ] area-outside-for-close 
 -->
-{#if toggleDropdown}
+{#if toggleDropdown || 
+    toggleCTA}
   <div id="background-area-close" on:click={() => closeAllDropdowns()} />
 {/if}
 
@@ -535,10 +537,10 @@
                       </a>
 
                       <button 
-                        class="place-bet-btn btn-primary">
+                        class="place-bet-btn btn-primary"
+                        on:click={() => toggleCTA = !toggleCTA}>
                         <p 
-                          class="medium"
-                          on:click={() => toggleCTA = !toggleCTA}>
+                          class="medium">
                           Bet now
                         </p>
                       </button>
@@ -903,10 +905,10 @@
                       />
                     </a>
                     <button 
-                      class="place-bet-btn btn-primary">
+                      class="place-bet-btn btn-primary"
+                      on:click={() => toggleCTA = !toggleCTA}>
                       <p 
-                        class="medium"
-                        on:click={() => toggleCTA = !toggleCTA}>
+                        class="medium">
                         Bet now
                       </p>
                     </button>
@@ -1225,10 +1227,10 @@
                     />
                   </a>
                   <button
-                    class="place-bet-btn btn-primary">
+                    class="place-bet-btn btn-primary"
+                    on:click={() => toggleCTA = !toggleCTA}>
                     <p 
-                      class="medium w-500"
-                      on:click={() => toggleCTA = !toggleCTA}>
+                      class="medium w-500">
                       Bet now
                     </p>
                   </button>
