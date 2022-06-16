@@ -375,23 +375,26 @@
      !hideSEO}
   <!-- [ℹ] main-homepage-link-in-all-avaialble-languages
   -->
-  {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang != 'en'}
-    <!-- [ℹ] content here
-    -->
-    <a
-      sveltekit:prefetch
-      href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}>
-      <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}</p>
-    </a>
-  {:else}
-    <!-- [ℹ] content here 
-    -->
-    <a
-      sveltekit:prefetch
-      href={$page.url.origin}>
-      <p>{$page.url.origin}</p>
-    </a>
-  {/if}
+  {#each HEADER_TRANSLATION_DATA.langArray as item}
+    {#if item != 'en'}
+      <!-- [ℹ] content here
+      -->
+      <a
+        sveltekit:prefetch
+        href={$page.url.origin + '/' + item}>
+        <p>{$page.url.origin + '/' + item}</p>
+      </a>
+    {:else}
+      <!-- [ℹ] content here 
+      -->
+      <a
+        sveltekit:prefetch
+        href={$page.url.origin}>
+        <p>{$page.url.origin}</p>
+      </a>
+    {/if}
+  {/each}
+
 {/if}
 
 
