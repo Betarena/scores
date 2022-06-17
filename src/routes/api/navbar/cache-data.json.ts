@@ -1,24 +1,30 @@
-// ... import $app `modules`
+// [ℹ] import $app `modules`
 import { dev } from '$app/env'
+import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
 
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function get(req, res): Promise< any > {
 
-export async function get(): Promise< any > {
-    // ... check for cache-existance;
-    const response_cache = await getCacheNavBar()
-    // ... return RESPONSE;
-    if (response_cache) {
-        return {
-            status: 200,
-            body: response_cache
-        }
+  const lang: string = req.url['searchParams'].get('lang');
+
+  const response_cache = await getCacheNavBar(lang)
+
+  if (response_cache) {
+    return {
+      status: 200,
+      body: response_cache
     }
-    // ... return, ERROR;
+  }
+
+  // [ℹ] should never happen;
+  return {
+    body: null
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -27,24 +33,22 @@ export async function get(): Promise< any > {
 // - getCacheNavBar()
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getCacheNavBar(): Promise < any | Record < string, never > > {
-    // ... TRY;
-    try {
-        // ... cached data retrival;
-        const cached: string = await redis.hget('navbar', 'data');
-        // ... check for `cached` data
-        if (cached) {
-            // ... convert the data from `string` to `JSON`;
-            const parsed: any = JSON.parse(cached);
-            // ... DEBUGGING;
-            if (dev) console.info(`✅ navbar-data retrieved from cache!`);
-            // ... return, cached data;
-            return parsed;
-        }
-    } 
-    // ... CATCH, ERROR;
-    catch (e) {
-      console.error("❌ unable to retrieve navbar-data from cache!", 'navbar', e);
+async function getCacheNavBar(lang: string): Promise < Cache_Single_Lang_Header_Translation_Response | Record < string, never > > {
+  try {
+    // [ℹ] cached data retrival;
+    const cached: string = await redis.hget('navbar_t', lang);
+    // [ℹ] check for `cached` data
+    if (cached) {
+      // [ℹ] convert the data from its "string" to "JSON";
+      const parsed: any = JSON.parse(cached);
+      // [🐛] debug;
+      if (dev) console.info(`✅ navbar_t cache data`);
+      // [ℹ] return, cached data;
+      return parsed;
     }
+  } 
+  catch (e) {
+    console.error("❌ uh-oh! navbar_t cache error", e);
     return
+  }
 }
