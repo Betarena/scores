@@ -55,6 +55,10 @@ import { afterNavigate } from "$app/navigation";
 
   async function widgetInit(): Promise < Cache_Single_Tournaments_League_Info_Data_Response > {
 
+    if (!$userBetarenaSettings.country_bookmaker) {
+      return
+    }
+
     // [ℹ] get the TARGET-LEAGUE-INFO;
     let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
@@ -364,7 +368,7 @@ import { afterNavigate } from "$app/navigation";
 
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if !noLeagueInfoBool && !refresh && browser}
+  {#if !noLeagueInfoBool && !refresh && browser && $userBetarenaSettings.country_bookmaker}
 
     <!-- [ℹ] promise is pending 
     -->
