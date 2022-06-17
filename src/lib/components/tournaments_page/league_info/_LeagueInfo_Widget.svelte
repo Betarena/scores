@@ -364,7 +364,7 @@ import { afterNavigate } from "$app/navigation";
 
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if !noLeagueInfoBool && !refresh}
+  {#if !noLeagueInfoBool && !refresh && browser}
 
     <!-- [ℹ] promise is pending 
     -->
