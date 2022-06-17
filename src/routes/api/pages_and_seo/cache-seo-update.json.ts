@@ -47,8 +47,8 @@ export async function get(): Promise < any > {
   langArray.push('en')
 
   await sitemapGeneratorAndCaching(response)
-  // await homepageSEOandCaching(langArray, response)
-  // await tournamentSEOandCaching(langArray, response)
+  await homepageSEOandCaching(langArray, response)
+  await tournamentSEOandCaching(langArray, response)
   await tournamentPageAndCaching(response)
 
   // [ℹ] return RESPONSE;
