@@ -1,7 +1,6 @@
 {
 	"short_name": "betarena-scores-platform",
 	"name": "Betarena | Scores Platform",
-	"start_url": "/",
 	"icons": [
 		{
 			"src": "/assets/img/192x192.png",
@@ -18,8 +17,9 @@
 	],
 	"background_color": "#292929",
 	"display": "standalone",
-	"scope": "/",
-	"theme_color": "#292929",
+  "start_url": "/",
+  "scope": "/",
+  "theme_color": "#292929",
 	"shortcuts": [],
 	"description": "Betarena Official Scores Platform"
 }

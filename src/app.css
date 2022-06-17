@@ -356,6 +356,9 @@ right-margins
 .m-r-30 {
 	margin-right: 30px;
 }
+.m-r-32 {
+	margin-right: 32px;
+}
 
 /* 
 ~~~~~~~~~~
@@ -466,6 +469,15 @@ section {
 	width: 100%;
 	flex-direction: row;
 	flex-wrap: nowrap;
+}
+.row-space-out-top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  width: 100%;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-content: center;
 }
 .row-space-center {
 	display: flex;

@@ -4,9 +4,9 @@ import type { BestPlayers_Data, TranslationsResponse, SelectedFixutre } from './
 /**
  * INTERFACE
  * ~~~~~~~~~~~~~
- * ... for the tv_stations of the
+ * [ℹ] for the tv_stations of the
  * selected fixture
- */
+*/
 interface Tv_Station {
 	link: string;
 	img: string;
@@ -17,9 +17,9 @@ interface Tv_Station {
 /**
  * INTERFACE
  * ~~~~~~~~~~~~~
- * ... for the value-bets part of the
+ * [ℹ] for the value-bets part of the
  * selected fixture
- */
+*/
 export interface ValueBet {
 	fair_odd: string;
 	stake: number;
@@ -34,8 +34,8 @@ export interface ValueBet {
 /**
  * INTERFACE
  * ~~~~~~~~~~~~~
- * ... match votes for the fixture data
- */
+ * [ℹ] match votes for the fixture data
+*/
 export interface MatchVotes {
 	match_id: number;
 	vote_draw_x: number;
@@ -46,32 +46,64 @@ export interface MatchVotes {
 /**
  * INTERFACE
  * ~~~~~~~~~~~~~
- * ... for the Selected Fixture of the
- * ... response data
- */
+ * [ℹ] for the Selected Fixture of the
+ * [ℹ] response data
+*/
 export interface FixtureResponse {
-	away_team_logo: string; // ... team-away-logo
-	away_team_name: string; // ... team-away-name
-	country_flag: string; // ... country-flag
-	fixture_day: Date; // ... timeStamp
-	home_team_logo: string; // ... home-team-logo
-	home_team_name: string; // ... home-team-name
-	id: number; // ... fixture-id
-	inserted_at: Date; // ... timeStamp
-	league_name: string; // ... league-name
+	away_team_logo: string;
+	away_team_name: string;
+	country_flag: string;
+	fixture_day: Date; // timeStamp
+	home_team_logo: string;
+	home_team_name: string;
+	id: number; // fixture-id
+	inserted_at: Date; // timeStamp
+	league_name: string;
 	probabilities: {
 		home: string;
 		away: string;
 		draw: string;
-	}; // ... probabliylities-data
-	round_name: string; // ... round-name
-	status: string; // ... status-of-the-game-fixture
-	time: Date; // ... timeStamp
-	tvstations: Array<Tv_Station>; // ... array-of-TvStations
-	valuebets: ValueBet; // ... array-of-value-bets
-	live_odds: SelectedFixture_LiveOdds_Response; // ... live-odds-data
+	};
+	round_name: string;
+	status: string;
+	time: Date;  // timeStamp
+	tvstations: Array< Tv_Station >; // array-of-TvStations
+	valuebets: ValueBet; // array-of-value-bets
+	live_odds: SelectedFixture_LiveOdds_Response; // live-odds-data
 	match_votes: MatchVotes;
 	best_players: BestPlayers_Data;
-	translation: Array<TranslationsResponse>;
+	// translation: Array<TranslationsResponse>;
 	selected_data: SelectedFixutre;
+}
+
+/**
+ * [ℹ] Featured Match Cache Interfaces
+*/
+
+export interface Cache_Single_Lang_Featured_Match_Translation_Response {
+  lang: string;
+
+  assists: string;
+  bookmaker: string;
+  bet: string;
+  fair_odds: string;
+  goals: string;
+  home_win: string;
+  market: string;
+  market_name: string;
+  market_type: string;
+  matches: string;
+  odds: string;
+  place_bet: string;
+  player: string;
+  players: string;
+  stake: string;
+  rating: string;
+  probability: string;
+  streams: string;
+  type: string;
+  value_bet: string;
+  vote: string;
+  winnings: string;
+  widget_title: string;
 }

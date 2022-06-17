@@ -38,6 +38,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [GT-Metrix](https://gtmetrix.com/)
 - [Dot-com-tools](https://www.dotcom-tools.com/)
 - [web-measure-google](https://web.dev/measure/)
+- [Page InSight](pagespeed.web.dev)
 
 - [svelte-implemenatation](https://github.com/imbolc/sapper-google-analytics)
 - [alt.google-analytics](https://www.npmjs.com/package/@analytics/google-analytics)
@@ -111,6 +112,11 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [hash-example](https://content-security-policy.com/hash/)
 - [hash-example-code](https://codepen.io/BranchWebSDK/pen/RwRqLmv)
 
+### Text Compression:
+
+- ⭐[Gzip compression with Node.js](https://medium.com/@victor.valencia.rico/gzip-compression-with-node-js-cc3ed74196f9)
+- [GZIP-TEST](https://sitechecker.pro/gzip-test/)
+
 ### Code Snippets
 
 - Use the `VITE_` server-side TOKENS
@@ -132,3 +138,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 ### Saving TABS:
 
 https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspace-vscode/68540643#68540643
+
+### Other:
+
+- [sveltekit-awesome](https://github.com/janosh/awesome-svelte-kit)

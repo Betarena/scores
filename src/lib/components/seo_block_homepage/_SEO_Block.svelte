@@ -3,37 +3,29 @@
 ==================== -->
 
 <script lang="ts">
-  // ... svelte-imports;
+  // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import { dev } from "$app/env";
-	// ... external `exports` imports;
+
+	// [ℹ] external `exports` imports;
   import { post } from "$lib/api/utils";
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  // ... key component assets;
+  // [ℹ] key component assets;
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
-  import type { Hasura_Complete_Pages_SEO } from "$lib/models/page_seo/types";
   import SeoBlockContentLoader from "./_SEO_Block_ContentLoader.svelte";
+  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from "$lib/models/seo_block/types";
 
-  // ... main component variables;
-	export let SEO_BLOCK_DATA: Hasura_Complete_Pages_SEO;
+  // [ℹ] main component variables;
+	export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
 
-	let loaded: boolean = false;            // ... holds boolean for data loaded;
+	let loaded: boolean = false;            // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;
 	let refresh_data: any = undefined;
   let noSEOBlockData: any = false;
-
-  // ... widget-language-declaration;
-	let server_side_language: string = 'en';
-	// ... language-translation-declaration;
-	$: if ($page.params.lang === undefined) {
-		server_side_language = 'en';
-	} else {
-		server_side_language = $page.params.lang;
-	}
 
   /**
    * Description:
@@ -41,35 +33,30 @@
    * ... Intializer of the Widget Function
    * ... Returns PROMISE - [INTERFACE - `FinalFeaturedSiteResponseDB`]
   */
-  // ...
-  async function widgetInit(): Promise < Hasura_Complete_Pages_SEO > {
+  async function widgetInit(): Promise < Cache_Single_Homepage_SEO_Block_Translation_Response > {
 
-		const response: Hasura_Complete_Pages_SEO  = SEO_BLOCK_DATA
-		// ... 🐛 DEBUGGING;
-		// if (dev) console.debug('ℹ widgetInit() best goalscorers cache', response)
+		const response: Cache_Single_Homepage_SEO_Block_Translation_Response  = SEO_BLOCK_DATA
 
-    // ... ℹ if response is null;
+    // [ℹ] ℹ if response is null;
 		if (response == null || response == undefined) {
-			// ...
+			// [ℹ]
 			if (dev) console.debug('❌ no goal scoreres available!')
-			// ... return null;
+			// [ℹ] return null;
       noSEOBlockData = true;
-      // ...
+      // [ℹ]
 			return;
 		}
 
-    // ...
     loaded = true;
 
-    // ... ℹ return the FINAL Promise Value;
+    // [ℹ] ℹ return the FINAL Promise Value;
     return response;
   }
 
-  // ... change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
+  // [ℹ] change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
 	$: refresh_data = $userBetarenaSettings.country_bookmaker;
-	// ...
 	$: if (refresh_data) {
-		// ... reset necessary variables;
+		// [ℹ] reset necessary variables;
 		refresh = true
     setTimeout(async() => {
 			refresh = false
@@ -85,46 +72,37 @@
 
 <div>
 
-  <!-- ... ℹ SEO-DATA-LOADED ... -->
+  <!-- [ℹ] SEO-DATA-LOADED 
+  -->
   {#if !loaded}
-    <!-- ... iterate over the data to find the correc language ... -->
-    {#each SEO_BLOCK_DATA.scores_seo_block_homepage_dev as WIDGET_SEO_TRANSLATION}
-      <!-- ... obtain the correct widget translation ... -->
-      {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
-        <!-- ... SEO-BOX ... -->
-        <div id="seo-featured-betting-site-box">
-          <h2>{WIDGET_SEO_TRANSLATION.title}</h2>
-          {@html WIDGET_SEO_TRANSLATION.html}
-        </div>
-      {/if}
-    {/each}
+    <!-- [ℹ] SEO-BOX 
+    -->
+    <div id="seo-featured-betting-site-box">
+      <h2>{SEO_BLOCK_DATA.title}</h2>
+      {@html SEO_BLOCK_DATA.html}
+    </div>
   {/if}
 
-  <!-- ... ℹ NO BEST PLAYERS AVAILABLE PLACEHOLDER ...-->
+  <!-- [ℹ] NO BEST PLAYERS AVAILABLE PLACEHOLDER 
+  -->
   {#if noSEOBlockData && !loaded}
-    <!-- ... title of the widget ... -->
-    <!-- ... iterate over the data to find the correc language ... -->
-    {#each SEO_BLOCK_DATA.scores_seo_block_homepage_dev as WIDGET_SEO_TRANSLATION}
-      <!-- ... obtain the correct widget translation ... -->
-      {#if WIDGET_SEO_TRANSLATION.lang == server_side_language}
-        <!-- ... wiget-title ... -->
-        <h2 
-          class="s-20 m-b-10 w-500 color-black-2"
-          style="margin-top: 0;"
-          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          {WIDGET_SEO_TRANSLATION.title}
-        </h2>
-      {/if}
-    {/each}
+    <!-- [ℹ] title of the widget 
+    -->
+    <h2 
+      class="s-20 m-b-10 w-500 color-black-2"
+      style="margin-top: 0;"
+      class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+      {SEO_BLOCK_DATA.title}
+    </h2>
 
-    <!-- ... no-matches-avaiable-placeholder container ...  -->
+    <!-- [ℹ] no-matches-avaiable-placeholder container 
+    -->
     <div 
       id='no-best-players-box'
       class='row-space-start'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-      <!-- ... no-matches-visual ... -->
+
       {#if $userBetarenaSettings.theme == 'Dark'}
-        <!-- content here -->
         <img 
           src={no_featured_match_visual_dark} 
           alt="no-featured-match-visual_dark"
@@ -132,7 +110,6 @@
           class='m-r-20'
         />
       {:else}
-        <!-- else content here -->
         <img 
           src={no_featured_match_visual} 
           alt="no-featured-match-visual"
@@ -141,7 +118,7 @@
         />
       {/if}
       
-      <!-- ... container w/ text ... -->
+      <!-- container w/ text -->
       <div>
         <p class='s-16 m-b-8 w-500'> No SEO Block Available </p>
         <p class='s-16 color-grey w-400'> Sorry, at this time there is no SEO data available! </p>
@@ -149,41 +126,39 @@
     </div>
   {/if}
 
-  <!-- ... ℹ promise is pending ... -->
+  <!-- [ℹ] promise is pending 
+  -->
   {#if !noSEOBlockData && !refresh}
 
     {#await widgetInit()}
       <SeoBlockContentLoader />
-    <!-- ... promise was fulfilled ... -->
+
+    <!-- [ℹ] promise was fulfilled 
+    -->
     {:then data}
 
-      <!-- ... identify the correct translation via IF -->
-        {#each data.scores_seo_block_homepage_dev as WIDGET_TRANSLATION}
-          {#if WIDGET_TRANSLATION.lang == server_side_language}
+      <!-- wiget-title -->
+      <h2
+        id='widget-title'
+        class="s-20 m-b-10 w-500 color-black-2"
+        style="margin-top: 0;"
+        class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+        {SEO_BLOCK_DATA.title}
+      </h2>
 
-            <!-- ... wiget-title ... -->
-            <h2
-              id='widget-title'
-              class="s-20 m-b-10 w-500 color-black-2"
-              style="margin-top: 0;"
-              class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-              {WIDGET_TRANSLATION.title}
-            </h2>
+      <!-- [ℹ] widget-component 
+      -->
+      <div 
+        id="seo-block-widget-container"
+        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-            <!-- ... widget-component ... -->
-            <div 
-              id="seo-block-widget-container"
-              class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+        <!-- render SEO-DATA -->
+        {@html SEO_BLOCK_DATA.html}
+        
+      </div>
 
-              <!-- ... render SEO-DATA ... -->
-              {@html WIDGET_TRANSLATION.html}
-             
-            </div>
-
-          {/if}
-        {/each}
-
-    <!-- ... promise was rejected ... -->
+    <!-- [ℹ] promise was rejected 
+    -->
     {:catch error}
       {error}
     {/await}

@@ -1,50 +1,55 @@
-// ... import $app `modules`
+// [ℹ] import $app `modules`
 import { dev } from '$app/env'
+import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
+import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/types';
 
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function get(req, res): Promise< any > {
 
-export async function get(): Promise< any > {
-    // [ℹ] check for cache-existance;
-    const response_cache = await getTournamentsPageData()
-    // ... return RESPONSE;
-    if (response_cache) {
-        return {
-            status: 200,
-            body: response_cache
-        }
+  const geoPos: string = req.url['searchParams'].get('geoPos');
+
+  const response_cache = await getCacheNavBar(geoPos)
+
+  if (response_cache) {
+    return {
+      status: 200,
+      body: response_cache
     }
-    // ... return, ERROR;
+  }
+
+  // [ℹ] should never happen;
+  return {
+    body: null
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //     CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-// - getTournamentsPageData()
+// - getCacheNavBar()
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getTournamentsPageData(): Promise < any | Record < string, never > > {
-  // [ℹ] TRY;
+async function getCacheNavBar(geoPos: string): Promise < Cache_Single_SportbookDetails_Data_Response | Record < string, never > > {
   try {
     // [ℹ] cached data retrival;
-    const cached: string = await redis.hget('tournaments', 'data');
+    const cached: string = await redis.hget('sportbook_details', geoPos);
     // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`;
-      const parsed: any = JSON.parse(cached);
-      // [ℹ] DEBUGGING;
-      if (dev) console.info(`✅ tournaments/data retrieved from cache!`);
+      // [ℹ] convert the data from its "string" to "JSON";
+      const parsed: Cache_Single_SportbookDetails_Data_Response = JSON.parse(cached);
+      // [🐛] debug;
+      if (dev) console.info(`✅ sportbook_details cache data`);
       // [ℹ] return, cached data;
       return parsed;
     }
   } 
-  // [ℹ] CATCH, ERROR;
   catch (e) {
-    console.error("❌ unable to retrieve tournaments/data from cache!", 'tournaments', e);
+    console.error("❌ uh-oh! sportbook_details cache error", e);
+    return
   }
-  return
 }
