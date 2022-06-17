@@ -557,6 +557,7 @@ import { afterNavigate } from "$app/navigation";
                         aria-label="betting_site_logo_widget_league_info"
                         on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                         href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                        target="_blank"
                         style="width: inherit;">
                         <img 
                           id='sportbook-logo-img'
@@ -614,7 +615,8 @@ import { afterNavigate } from "$app/navigation";
                             rel="nofollow" 
                             aria-label="betting_site_logo_widget_league_info"
                             on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
-                            href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                            href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                            target="_blank">
                             <button
                               class="btn-primary btn-cta"
                               style="width: 100% !important;">
@@ -937,10 +939,11 @@ import { afterNavigate } from "$app/navigation";
                       aria-label="betting_site_logo_widget_league_info"
                       on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                       href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                      target="_blank"
                       style="width: inherit;">
                       <img 
                         id='sportbook-logo-img'
-                        src={LEAGUE_INFO_SEO_DATA.data.translation.teams} 
+                        src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
                         alt={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.title}
                       />
                     </a>
@@ -993,7 +996,8 @@ import { afterNavigate } from "$app/navigation";
                         rel="nofollow" 
                         aria-label="betting_site_logo_widget_league_info"
                         on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
-                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                        target="_blank">
                         <button
                           class="btn-primary btn-cta"
                           style="width: 100% !important;">
@@ -1270,6 +1274,7 @@ import { afterNavigate } from "$app/navigation";
                     aria-label="betting_site_logo_widget_league_info"
                     on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                     href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                    target="_blank"
                     style="width: inherit;">
                     <img 
                       id='sportbook-logo-img'
@@ -1326,7 +1331,8 @@ import { afterNavigate } from "$app/navigation";
                         rel="nofollow" 
                         aria-label="betting_site_logo_widget_league_info"
                         on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
-                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
+                        href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                        target="_blank">
                         <button
                           class="btn-primary btn-cta"
                           style="width: 100% !important;">
