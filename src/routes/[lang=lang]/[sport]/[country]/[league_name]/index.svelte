@@ -181,13 +181,15 @@
       if (tournament_t.lang == $userBetarenaSettings.lang) {
 
         // [ℹ] formatting;
-        let name: string = tournament_t.name;
-        name = name.replace(/\s+/g, '-');
+        let lang: string = removeDiacritics(tournament_t.lang.toLowerCase().replace(/\s+/g, '-').replace(/\./g, ''));
+        let sport: string = removeDiacritics(tournament_t.sport.toLowerCase().replace(/\s+/g, '-').replace(/\./g, ''));
+        let country: string = removeDiacritics(tournament_t.country.toLowerCase().replace(/\s+/g, '-').replace(/\./g, ''));
+        let name: string = removeDiacritics(tournament_t.name.toLowerCase().replace(/\s+/g, '-').replace(/\./g, ''));
         
         // [ℹ] URL generation;
         newURL = tournament_t.lang == 'en' 
-          ? `/${tournament_t.sport.toLowerCase()}/${tournament_t.country.toLowerCase()}/${name.toLowerCase()}` 
-          : `/${removeDiacritics(tournament_t.lang)}/${removeDiacritics(tournament_t.sport.toLowerCase())}/${removeDiacritics(tournament_t.country.toLowerCase())}/${removeDiacritics(name.toLowerCase())}`
+          ? `/${sport}/${country}/${name}`
+          : `/${lang}/${sport}/${country}/${name}`
 
         // [ℹ] update lang;
         current_lang = refresh_lang
@@ -247,7 +249,7 @@
           <link 
             rel="alternate" 
             hreflang={item.hreflang} 
-            href="https://scores.betarena.com/{removeDiacritics(item_.lang.replace(/\s/g, '-').toLowerCase())}/{removeDiacritics(item_.sport.replace(/\s/g, '-').toLowerCase())}/{removeDiacritics(item_.country.replace(/\s/g, '-').toLowerCase())}/{removeDiacritics(item_.name.replace(/\s/g, '-').toLowerCase())}" />
+            href="https://scores.betarena.com/{removeDiacritics(item_.lang.replace(/\s/g, '-').replace(/\./g, '').toLowerCase())}/{removeDiacritics(item_.sport.replace(/\s/g, '-').replace(/\./g, '').toLowerCase())}/{removeDiacritics(item_.country.replace(/\s/g, '-').replace(/\./g, '').toLowerCase())}/{removeDiacritics(item_.name.replace(/\s/g, '-').replace(/\./g, '').toLowerCase())}" />
         {/if}
         {#if item.link == null && item_.lang == 'en'}
           <!-- [ℹ] content here
@@ -255,11 +257,11 @@
           <link 
             rel="alternate" 
             hreflang={item.hreflang} 
-            href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}"/>
+            href="https://scores.betarena.com/{item_.sport.toLowerCase().replace(/\s/g, '-').replace(/\./g, '')}/{item_.country.toLowerCase().replace(/\s/g, '-').replace(/\./g, '')}/{item_.name.replace(/\s/g, '-').replace(/\./g, '').toLowerCase()}"/>
           <link 
             rel="alternate" 
             hreflang='en' 
-            href="https://scores.betarena.com/{item_.sport.toLowerCase()}/{item_.country.toLowerCase()}/{item_.name.replace(/\s/g, '-').toLowerCase()}"/>
+            href="https://scores.betarena.com/{item_.sport.toLowerCase().replace(/\s/g, '-').replace(/\./g, '')}/{item_.country.toLowerCase().replace(/\s/g, '-').replace(/\./g, '')}/{item_.name.replace(/\s/g, '-').replace(/\./g, '').toLowerCase()}"/>
         {/if}
       {/each}
     {/each}

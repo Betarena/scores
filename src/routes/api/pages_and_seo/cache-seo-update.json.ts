@@ -49,7 +49,7 @@ export async function get(): Promise < any > {
   await sitemapGeneratorAndCaching(response)
   // await homepageSEOandCaching(langArray, response)
   // await tournamentSEOandCaching(langArray, response)
-  // await tournamentPageAndCaching(response)
+  await tournamentPageAndCaching(response)
 
   // [ℹ] return RESPONSE;
   if (response) {
@@ -167,10 +167,10 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
   for (const iterator of data.scores_tournaments_dev) {
 
     let url: string;
-    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-');
-    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-');
-    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-');
-    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-');
+    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
     // [ℹ] /{lang} or / generation URL
     url = iterator.lang == 'en' 
@@ -201,15 +201,15 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     urlsArray.push(url)
   }
 
-  // deleteCacheSitemapURLs();
+  deleteCacheSitemapURLs();
   
   const uniqArray = [...new Set(urlsArray)];
 
   sitemapSave(uniqArray)
 
-  // for (const url of uniqArray) {
-  //   cacheSitemapURLs(url)
-  // }
+  for (const url of uniqArray) {
+    cacheSitemapURLs(url)
+  }
 }
 
 async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complete_Pages_SEO) {
@@ -255,10 +255,10 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
 
     const tournament_id = iterator.tournament_id;
 
-    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-');
-    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-');
-    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-');
-    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-');
+    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
     // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
     const url = iterator.lang == 'en' 

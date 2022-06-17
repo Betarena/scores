@@ -6,7 +6,7 @@
 
   // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
+  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { page } from "$app/stores";
   import { browser, dev } from "$app/env";
 
@@ -26,6 +26,7 @@
   import team_w from './assets/team-white.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
+import { afterNavigate } from "$app/navigation";
 
   let loaded: boolean = false;                  // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;                 // [ℹ] refresh value speed of the WIDGET;
@@ -169,6 +170,28 @@
     toggleCTA = false;
   }
 
+  function triggerGoggleEvents(action: string) {
+    if (action === "betting_site_logo_widget_league_info") {
+      gtag('event', "betting_site_logo_widget_league_info", { 
+        'event_category': "widget_league_info", 
+        'event_label': "click_betting_site_logo", 
+        'value': "click"
+        }
+      );
+      return
+    }
+
+    if (action === "beting_cta_link_widget_league_info") {
+      gtag('event', "beting_cta_link_widget_league_info", { 
+        'event_category': "widget_league_info", 
+        'event_label': "beting_cta_link_logo", 
+        'value': "click"
+        }
+      );
+      return
+    }
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -179,7 +202,7 @@
 	onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
 		// [ℹ] TABLET - VIEW
-		if (wInit >= 960) {
+		if (wInit >= 1000) {
 			tabletExclusive = false;
 		} else {
 			tabletExclusive = true;
@@ -193,7 +216,7 @@
 		window.addEventListener('resize', function () {
 			var w = document.documentElement.clientWidth;
 			// [ℹ] TABLET - VIEW
-      if (w >= 960) {
+      if (w >= 1000) {
 				tabletExclusive = false;
 			} else {
 				tabletExclusive = true;
@@ -232,37 +255,41 @@
   // REACTIVE SVELTE METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // [ℹ] change data when `$userBetarenaSettings.country_bookmaker` changes `GEO-POSITION`;
-  // let old_country = undefined;
-  // let old_page = undefined;
-  // onMount(async () => {
-  //   old_country = $userBetarenaSettings.country_bookmaker;
-  //   old_page = $page.url.pathname;
-  // })
-
-  // $: matchingCountry = old_country === $userBetarenaSettings.country_bookmaker
-  // $: matchingPage = old_page === $page.url.pathname
-
 	$: refresh_data = $userBetarenaSettings.country_bookmaker;
-	$: refresh_data = $page.url.pathname;
+	// $: refresh_data = $page.url.pathname;
 
 	// $: if (browser && old_country != undefined && old_page != undefined) {
     // if (!matchingPage || !matchingCountry) {
   $: if (browser && refresh_data) {
       // [ℹ] reset necessary variables;
-      // console.log("Here-updated!")
+      if (dev) console.log("League_HERE")
       refresh = true
       toggleDropdown = false
       loaded = false
       noLeagueInfoBool = false
       // widgetInit()
-      // old_country = $userBetarenaSettings.country_bookmaker;
-      // old_page = $page.url.pathname;
       setTimeout(async() => {
         refresh = false
       }, 100)
     }
 	// }
+
+  /*
+
+  onDestroy(async () => {
+    if (dev) console.log("League_HERE Destroyed!")
+  })
+
+  afterUpdate(async () => {
+    if (dev) console.log("League_HERE AfterUpdate")
+  })
+
+  */
+
+  afterNavigate(async () => {
+    if (dev) console.log("League_HERE AfterNavigation")
+    widgetInit()
+  })
 
 </script>
 
@@ -401,7 +428,7 @@
                     <img 
                       id="country-img"
                       src={LEAGUE_INFO_SEO_DATA.data.country_logo}
-                      alt=""
+                      alt={LEAGUE_INFO_SEO_DATA.data.country}
                       width="24px" height="24px"
                       class="m-r-10"
                     />
@@ -421,14 +448,14 @@
                     {#if $userBetarenaSettings.theme == 'Dark'}
                       <img 
                         src={team_w}
-                        alt=""
+                        alt={LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                         width="24px" height="24px"
                         class="m-r-8"
                       />
                     {:else}
                       <img 
                         src={team}
-                        alt=""
+                        alt={LEAGUE_INFO_SEO_DATA.data.translation.teams}
                         width="24px" height="24px"
                         class="m-r-8"
                       />
@@ -514,7 +541,7 @@
               <!-- [ℹ] sportsbook-logo & follow btn & container
               -->
               <div
-                class="row-space-out m-b-15">
+                class="row-space-end m-b-15">
 
                 {#if LEAGUE_INFO_SEO_DATA.data.sportbook_detail}
 
@@ -527,12 +554,13 @@
 
                       <a 
                         rel="nofollow"
+                        on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                         href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                         style="width: inherit;">
                         <img 
                           id='sportbook-logo-img'
                           src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
-                          alt=''
+                          alt={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.title}
                         />
                       </a>
 
@@ -555,12 +583,18 @@
 
                         <!--  [ℹ] site-image 
                         -->
-                        <img
-                          style="background-color: var({imageVar});"
-                          class="extra-info-img"
-                          src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
-                          alt=""
+                        <a 
+                          rel="nofollow" 
+                          on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
+                          href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                          style="width: inherit;">
+                          <img
+                            style="background-color: var({imageVar});"
+                            class="extra-info-img"
+                            src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                            alt={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.title}
                           />
+                        </a>
 
                         <!--  [ℹ] extra-site info 
                         -->
@@ -576,6 +610,7 @@
                           -->
                           <a 
                             rel="nofollow" 
+                            on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
                             href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                             <button
                               class="btn-primary btn-cta"
@@ -737,7 +772,7 @@
                     <img 
                       id="country-img"
                       src={LEAGUE_INFO_SEO_DATA.data.country_logo}
-                      alt=""
+                      alt={LEAGUE_INFO_SEO_DATA.data.country}
                       class="m-r-10"
                     />
                     <p
@@ -755,13 +790,13 @@
                     {#if $userBetarenaSettings.theme == 'Dark'}
                       <img 
                         src={team_w}
-                        alt=""
+                        alt={LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                         width="24px" height="24px"
                       />
                     {:else}
                       <img 
                         src={team}
-                        alt=""
+                        alt={LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                         width="24px" height="24px"
                       />
                     {/if}
@@ -896,12 +931,13 @@
                     class="row-space-end">
                     <a 
                       rel="nofollow"
+                      on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                       href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                       style="width: inherit;">
                       <img 
                         id='sportbook-logo-img'
-                        src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
-                        alt=''
+                        src={LEAGUE_INFO_SEO_DATA.data.translation.teams} 
+                        alt={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.title}
                       />
                     </a>
                     <button 
@@ -923,12 +959,18 @@
 
                     <!--  [ℹ] site-image 
                     -->
-                    <img
-                      style="background-color: var({imageVar});"
-                      class="extra-info-img"
-                      src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
-                      alt=""
-                      />
+                    <a 
+                      rel="nofollow" 
+                      on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
+                      href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                      style="width: inherit;">
+                      <img
+                        style="background-color: var({imageVar});"
+                        class="extra-info-img"
+                        src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                        alt={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.title}
+                        />
+                    </a>
 
                     <!--  [ℹ] extra-site info 
                     -->
@@ -944,6 +986,7 @@
                       -->
                       <a 
                         rel="nofollow" 
+                        on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
                         href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                         <button
                           class="btn-primary btn-cta"
@@ -1061,7 +1104,7 @@
                   <img 
                     id="country-img"
                     src={LEAGUE_INFO_SEO_DATA.data.country_logo}
-                    alt=""
+                    alt={LEAGUE_INFO_SEO_DATA.data.country}
                     class="m-r-10"
                   />
                   <p
@@ -1148,13 +1191,13 @@
               {#if $userBetarenaSettings.theme == 'Dark'}
                 <img 
                   src={team_w}
-                  alt=""
+                  alt={LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                   width="24px" height="24px"
                 />
               {:else}
                 <img 
                   src={team}
-                  alt=""
+                  alt={LEAGUE_INFO_SEO_DATA.data.translation.teams} 
                   width="24px" height="24px"
                 />
               {/if}
@@ -1218,12 +1261,13 @@
                   class="row-space-start m-b-8">
                   <a 
                     rel="nofollow"
+                    on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                     href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                     style="width: inherit;">
                     <img 
                       id='sportbook-logo-img'
                       src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
-                      alt=''
+                      alt={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.title}
                     />
                   </a>
                   <button
@@ -1245,12 +1289,18 @@
 
                     <!--  [ℹ] site-image 
                     -->
-                    <img
-                      style="background-color: var({imageVar});"
-                      class="extra-info-img"
-                      src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
-                      alt=""
-                      />
+                    <a 
+                      rel="nofollow" 
+                      on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
+                      href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
+                      style="width: inherit;">
+                      <img
+                        style="background-color: var({imageVar});"
+                        class="extra-info-img"
+                        src={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.image}
+                        alt={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.title}
+                        />
+                    </a>
 
                     <!--  [ℹ] extra-site info 
                     -->
@@ -1266,6 +1316,7 @@
                       -->
                       <a 
                         rel="nofollow" 
+                        on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
                         href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                         <button
                           class="btn-primary btn-cta"
@@ -1430,7 +1481,8 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 4px;
     z-index: 10000;
-    height: 308px;
+    /* height: 308px; */
+    max-height: 308px;
     overflow-y: scroll;
     padding-right: 6px;
     right: 0;
@@ -1442,7 +1494,8 @@
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container {
-    height: 308px;
+    /* height: 308px; */
+    max-height: 308px;
     overflow-y: scroll;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season {
     padding: 11px 20px;
@@ -1550,7 +1603,7 @@
     max-width: 289px;
     width: 100%;
     display: grid;
-    z-index: 100;
+    z-index: 100000000000;
     justify-items: center;
     overflow: hidden;
   } .extra-info-img {
@@ -1571,7 +1624,7 @@
 
 	/* 
   TABLET RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 575px) and (max-width: 960px)  {
+  @media only screen and (min-width: 575px) and (max-width: 1000px)  {
 
     #leagues-table-container {
       min-width: 100%;
@@ -1631,7 +1684,7 @@
 
   /* 
   DESKTOP RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 960px) {
+  @media only screen and (min-width: 1000px) {
 
     #leagues-table-container {
       min-width: 100%;
@@ -1644,6 +1697,10 @@
 
     .dark-background-1 div#view-tournaments-opt-container div.opt-container:hover p {
       color: #FFFFFF !important;
+    }
+
+    div#season-progressbar {
+      width: 367px !important;
     }
 
     .extra-info {

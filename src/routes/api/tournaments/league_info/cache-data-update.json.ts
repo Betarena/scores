@@ -130,10 +130,10 @@ async function leagueInfoGeneration () {
     const tournament_id = iterator.tournament_id;
     // console.log("tournament_id", tournament_id)
 
-    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-');
-    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-');
-    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-');
-    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-');
+    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
     // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
     const url = iterator.lang == 'en' 
