@@ -554,6 +554,7 @@ import { afterNavigate } from "$app/navigation";
 
                       <a 
                         rel="nofollow"
+                        aria-label="betting_site_logo_widget_league_info"
                         on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                         href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                         style="width: inherit;">
@@ -585,6 +586,7 @@ import { afterNavigate } from "$app/navigation";
                         -->
                         <a 
                           rel="nofollow" 
+                          aria-label="betting_site_logo_widget_league_info"
                           on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                           href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                           style="width: inherit;">
@@ -610,6 +612,7 @@ import { afterNavigate } from "$app/navigation";
                           -->
                           <a 
                             rel="nofollow" 
+                            aria-label="betting_site_logo_widget_league_info"
                             on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
                             href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                             <button
@@ -931,6 +934,7 @@ import { afterNavigate } from "$app/navigation";
                     class="row-space-end">
                     <a 
                       rel="nofollow"
+                      aria-label="betting_site_logo_widget_league_info"
                       on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                       href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                       style="width: inherit;">
@@ -961,6 +965,7 @@ import { afterNavigate } from "$app/navigation";
                     -->
                     <a 
                       rel="nofollow" 
+                      aria-label="betting_site_logo_widget_league_info"
                       on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                       href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                       style="width: inherit;">
@@ -986,6 +991,7 @@ import { afterNavigate } from "$app/navigation";
                       -->
                       <a 
                         rel="nofollow" 
+                        aria-label="betting_site_logo_widget_league_info"
                         on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
                         href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                         <button
@@ -1261,6 +1267,7 @@ import { afterNavigate } from "$app/navigation";
                   class="row-space-start m-b-8">
                   <a 
                     rel="nofollow"
+                    aria-label="betting_site_logo_widget_league_info"
                     on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                     href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                     style="width: inherit;">
@@ -1291,6 +1298,7 @@ import { afterNavigate } from "$app/navigation";
                     -->
                     <a 
                       rel="nofollow" 
+                      aria-label="betting_site_logo_widget_league_info"
                       on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
                       href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}
                       style="width: inherit;">
@@ -1316,6 +1324,7 @@ import { afterNavigate } from "$app/navigation";
                       -->
                       <a 
                         rel="nofollow" 
+                        aria-label="betting_site_logo_widget_league_info"
                         on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
                         href={LEAGUE_INFO_SEO_DATA.data.sportbook_detail.register_link}>
                         <button
