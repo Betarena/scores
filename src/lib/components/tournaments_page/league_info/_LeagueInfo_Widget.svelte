@@ -7,8 +7,9 @@
   // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
+  import { page, session } from "$app/stores";
   import { browser, dev } from "$app/env";
+  import { afterNavigate } from "$app/navigation";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
   import { get } from "$lib/api/utils";
@@ -16,7 +17,8 @@
 
   import type { 
     Cache_Single_SportbookDetails_Data_Response, 
-    Cache_Single_Tournaments_League_Info_Data_Response } from "$lib/models/tournaments/types";
+    Cache_Single_Tournaments_League_Info_Data_Response 
+  } from "$lib/models/tournaments/types";
 
   import LeagueInfoWidgetContentLoader from "./_LeagueInfo_Widget_ContentLoader.svelte";
 
@@ -26,7 +28,6 @@
   import team_w from './assets/team-white.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
-import { afterNavigate } from "$app/navigation";
 
   let loaded: boolean = false;                  // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;                 // [ℹ] refresh value speed of the WIDGET;
@@ -110,6 +111,7 @@ import { afterNavigate } from "$app/navigation";
 
     // [ℹ] select 1st league/season
     dropdownSeasonSelect = LEAGUE_INFO_SEO_DATA.data.seasons[0]
+    $session.selectedSeasonID = dropdownSeasonSelect.id;
 
     // [ℹ] number of clubs check;
     for (const season of LEAGUE_INFO_SEO_DATA.data.seasons) {
@@ -166,6 +168,7 @@ import { afterNavigate } from "$app/navigation";
 
   function selectSeason (season) {
     dropdownSeasonSelect = season;
+    $session.selectedSeasonID = season.id;
     validateSeasonProgressDate (dropdownSeasonSelect.start_date, dropdownSeasonSelect.end_date)
   }
 
