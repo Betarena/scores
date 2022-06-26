@@ -874,7 +874,7 @@
           -->
           <div
             id="standings-view-box"
-            class="row-space-start m-b-15">
+            class="row-space-start m-b-20">
 
             <div
               class="stand-view-opt-box cursor-pointer"
@@ -912,7 +912,7 @@
           -->
           <div
             id="mobile-table-box"
-            class="row-space-out m-t-20">
+            class="row-space-out m-b-12">
 
             <button
               class="table-nav-btn"

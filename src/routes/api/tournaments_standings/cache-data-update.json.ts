@@ -376,6 +376,25 @@ async function standingsDataGenerationAlt () {
             ? null
             : (target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home) / 2
 
+        const team_total_gavg: number = 
+          season_team?.round_name == null ||
+          season_team?.overall?.goals_scored == null
+            ? null
+            : season_team?.overall?.goals_scored / season_team?.round_name;
+
+        const team_home_gavg: number = 
+          season_team?.home?.games_played == null ||
+          season_team?.home?.goals_scored == null
+            ? null
+            : season_team?.home?.goals_scored / season_team?.home?.games_played;
+
+        const team_away_gavg: number = 
+          season_team?.away?.games_played == null ||
+          season_team?.away?.goals_scored == null
+            ? null
+            : season_team?.away?.goals_scored / season_team?.away?.games_played;
+
+        
         const team_obj_total: Standing_Team_Total_Away_Home = {
           team_logo:      team_logo,
           team_name:      team_name,
@@ -388,9 +407,9 @@ async function standingsDataGenerationAlt () {
           lost:           season_team?.overall?.lost,
           gs:             season_team?.overall?.goals_scored,
           ga:             season_team?.overall?.goals_against,
-          gavg:           target_team_stat_hist?.average_goals?.total,
+          gavg:           team_total_gavg,
           cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
-          ycavg:           target_team_stat_hist?.average_yellow_cards,
+          ycavg:          target_team_stat_hist?.average_yellow_cards,
           ov15:           team_total_ov15,
           ov25:           team_total_ov25,
           winP:           team_winP,
@@ -409,9 +428,9 @@ async function standingsDataGenerationAlt () {
           lost:           season_team?.home?.lost,
           gs:             season_team?.home?.goals_scored,
           ga:             season_team?.home?.goals_against,
-          gavg:           target_team_stat_hist?.average_goals?.home,
+          gavg:           team_home_gavg,
           cavg:           null,
-          ycavg:           null,
+          ycavg:          null,
           ov15:           null,
           ov25:           null,
           winP:           team_winP,
@@ -430,9 +449,9 @@ async function standingsDataGenerationAlt () {
           lost:           season_team?.away?.lost,
           gs:             season_team?.away?.goals_scored,
           ga:             season_team?.away?.goals_against,
-          gavg:           target_team_stat_hist?.average_goals?.away,
+          gavg:           team_away_gavg,
           cavg:           null,
-          ycavg:           null,
+          ycavg:          null,
           ov15:           null,
           ov25:           null,
           winP:           team_winP,
