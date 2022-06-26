@@ -171,6 +171,7 @@ export interface BETARENA_HASURA_scores_widget_standings_translations {
   prob?:        string;
   team?:        string;
   yavg?:        string;
+  table?:       string;
   total?:       string;
   tooltips?:    { [key: string]: Tooltip };
   standings?:   string;

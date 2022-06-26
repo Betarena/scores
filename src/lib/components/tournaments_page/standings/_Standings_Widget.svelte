@@ -935,7 +935,7 @@
 
             <p
               class="s-14 w-500 color-black">
-              {STANDINGS_T.translations[`table${selectedOptTableMobile}`]}
+              {STANDINGS_T.translations.table} {selectedOptTableMobile}
             </p>
 
             <button
