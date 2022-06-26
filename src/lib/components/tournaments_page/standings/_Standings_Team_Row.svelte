@@ -21,6 +21,7 @@
       : Array.from(TEAM_DATA[VIEW].rf);
 
   let position
+  let points
   let gavg
   let cavg
   let yavg
@@ -29,6 +30,7 @@
   let winP
 
   $: position = TEAM_DATA[VIEW].position == null || TEAM_DATA[VIEW].position == undefined ? '-' : TEAM_DATA[VIEW].position;
+  $: points = TEAM_DATA[VIEW].points == null || TEAM_DATA[VIEW].points == undefined ? '-' : TEAM_DATA[VIEW].points;
   $: gavg = TEAM_DATA[VIEW].gavg == null || TEAM_DATA[VIEW].gavg == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].gavg.toString()).toFixed(3);
   $: cavg = TEAM_DATA[VIEW].cavg == null || TEAM_DATA[VIEW].cavg == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].cavg.toString()).toFixed(2);
   $: yavg = TEAM_DATA[VIEW].yavg == null || TEAM_DATA[VIEW].yavg == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].yavg.toString()).toFixed(2);
@@ -263,7 +265,7 @@
     <td>
       <p 
         class="s-12 w-500">
-        {TEAM_DATA[VIEW].points}
+        {points}
       </p>
     </td>
 
@@ -421,7 +423,7 @@
         <td>
           <p 
             class="s-12 w-500">
-            {TEAM_DATA[VIEW].points}
+            {points}
           </p>
         </td>
 

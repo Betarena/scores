@@ -518,14 +518,17 @@
                   {STANDINGS_T.translations.pld}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.pld.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.pld.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -535,14 +538,17 @@
                   {STANDINGS_T.translations.w}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.w.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.w.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -552,14 +558,17 @@
                   {STANDINGS_T.translations.d}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.d.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.d.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th>
@@ -568,14 +577,17 @@
                   {STANDINGS_T.translations.l}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.l.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.l.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -585,14 +597,17 @@
                   {STANDINGS_T.translations.gf}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.gf.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.gf.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -602,14 +617,17 @@
                   {STANDINGS_T.translations.ga}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.ga.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.ga.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -619,14 +637,17 @@
                   {STANDINGS_T.translations.gavg}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.gavg.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.gavg.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -636,14 +657,17 @@
                   {STANDINGS_T.translations.yavg}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.yavg.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.yavg.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -653,14 +677,17 @@
                   {STANDINGS_T.translations.cavg}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.cavg.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.cavg.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th
@@ -709,14 +736,17 @@
                   {STANDINGS_T.translations.prob}
                 </p>
 
-                <!-- <div
+                <div
                   class="tooltip-extra-info">
                   <p
-                    class="s-12 color-white">
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.prob.title}
+                  </p>
+                  <p
+                    class="s-12 color-white no-wrap">
                     {STANDINGS_T.translations.tooltips.prob.description}
                   </p>
-                </div> -->
+                </div>
               </th>
 
               <th>
@@ -967,15 +997,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.pts}
                   </p>
-
-                  <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.pts.title}
-                      {STANDINGS_T.translations.tooltips.pts.description}
-                    </p>
-                  </div>
                 </th>
 
                 <th>
@@ -983,15 +1004,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.pld}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.pld.title}
-                      {STANDINGS_T.translations.tooltips.pld.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th
@@ -1000,15 +1012,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.w}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.w.title}
-                      {STANDINGS_T.translations.tooltips.w.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th
@@ -1017,15 +1020,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.d}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.d.title}
-                      {STANDINGS_T.translations.tooltips.d.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th>
@@ -1033,15 +1027,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.l}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.l.title}
-                      {STANDINGS_T.translations.tooltips.l.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th
@@ -1050,15 +1035,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.gf}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.gf.title}
-                      {STANDINGS_T.translations.tooltips.gf.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th
@@ -1067,15 +1043,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.ga}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.ga.title}
-                      {STANDINGS_T.translations.tooltips.ga.description}
-                    </p>
-                  </div> -->
                 </th>
 
               {/if}
@@ -1090,15 +1057,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.gavg}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.gavg.title}
-                      {STANDINGS_T.translations.tooltips.gavg.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th
@@ -1107,15 +1065,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.yavg}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.yavg.title}
-                      {STANDINGS_T.translations.tooltips.yavg.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th
@@ -1124,15 +1073,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.cavg}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.cavg.title}
-                      {STANDINGS_T.translations.tooltips.cavg.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th
@@ -1141,15 +1081,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations["1.5+"]}
                   </p>
-
-                  <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips["1.5+"].title}
-                      {STANDINGS_T.translations.tooltips["1.5+"].description}
-                    </p>
-                  </div>
                 </th>
 
               {/if}
@@ -1164,15 +1095,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations["2.5+"]}
                   </p>
-
-                  <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips["2.5+"].title}
-                      {STANDINGS_T.translations.tooltips["2.5+"].description}
-                    </p>
-                  </div>
                 </th>
 
                 <th>
@@ -1180,15 +1102,6 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.prob}
                   </p>
-
-                  <!-- <div
-                    class="tooltip-extra-info">
-                    <p
-                      class="s-12 color-white">
-                      {STANDINGS_T.translations.tooltips.prob.title}
-                      {STANDINGS_T.translations.tooltips.prob.description}
-                    </p>
-                  </div> -->
                 </th>
 
                 <th>
