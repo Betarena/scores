@@ -1340,9 +1340,12 @@
     position: absolute;
     background: #4B4B4B;
     border-radius: 4px;
-    padding: 12px 9px;
-    bottom: 100%;
-    margin-left: -80px;
+    padding: 9px 12px;
+    bottom: 80%;
+    /* margin-left: -80px; */
+    left: 50%;
+   -webkit-transform: translateX(-50%); /* Safari iOS */
+   transform: translateX(-50%);
   } table.standings_table .row-head th:hover .tooltip-extra-info  {
     visibility: visible !important;
   }
