@@ -286,12 +286,12 @@
 
         <!-- [ℹ] promise was fulfilled 
         -->
-        <h2 
+        <h1 
           class="s-20 m-b-10 w-500 color-black-2"
           style="margin-top: 0px;"
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {STANDINGS_T.translations.standings}
-        </h2>
+        </h1>
 
         <div
           id="standings-table-container"
@@ -755,7 +755,7 @@
 
                 <div
                   id="betting-site-container"
-                  class="row-space-start m-r-16">
+                  class="row-space-start m-r-16 cursor-pointer">
 
                   <a 
                     rel="nofollow"
@@ -773,6 +773,7 @@
 
                   <button 
                     class="place-bet-btn btn-primary"
+                    aria-label="toggleCTA"
                     on:click={() => toggleCTA = !toggleCTA}>
                     <p 
                       class="medium">
@@ -824,6 +825,7 @@
                         target="_blank">
                         <button
                           class="btn-primary btn-cta"
+                          aria-label="registerCTA"
                           style="width: 100% !important;">
                           <p 
                             class="w-500 s-14 w-normal">
@@ -857,12 +859,12 @@
 
         <!-- [ℹ] promise was fulfilled 
         -->
-        <h2 
+        <h1 
           class="s-20 m-b-10 w-500 color-black-2"
           style="margin-top: 0px;"
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {STANDINGS_T.translations.standings}
-        </h2>
+        </h1>
 
         <div 
           id="standings-table-container"
@@ -914,6 +916,7 @@
 
             <button
               class="table-nav-btn"
+              aria-label="selectedOptionTableMobile"
               disabled={selectedOptTableMobile == 1}
               on:click={() => selectedOptTableMobile = selectedOptTableMobile - 1}
               >
@@ -937,6 +940,7 @@
 
             <button
               class="table-nav-btn"
+              aria-label="selectedOptionTableMobile"
               disabled={selectedOptTableMobile == 3}
               on:click={() => selectedOptTableMobile = selectedOptTableMobile + 1}
               >
@@ -1143,6 +1147,7 @@
 
                   <button 
                     class="place-bet-btn btn-primary"
+                    aria-label="toggleCTA"
                     on:click={() => toggleCTA = !toggleCTA}>
                     <p 
                       class="medium">
@@ -1194,6 +1199,7 @@
                         target="_blank">
                         <button
                           class="btn-primary btn-cta"
+                          aria-label="registerCTA"
                           style="width: 100% !important;">
                           <p 
                             class="w-500 s-14 w-normal">
@@ -1292,9 +1298,7 @@
     border: 1px solid #F5620F;
   } div.stand-view-opt-box.activeOpt p{
     color: #F5620F !important;
-  } div.stand-view-opt-box:hover {
-    border: 1px solid #F5620F;
-  } div.stand-view-opt-box:hover p {
+  }  div.stand-view-opt-box:hover p {
     color: #292929 !important;
   } div.stand-view-opt-box:first-child {
     border-radius: 8px 0px 0px 8px;

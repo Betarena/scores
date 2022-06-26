@@ -23,7 +23,7 @@ export async function get(): Promise< unknown > {
   
   // await standingsDataGeneration()
   await standingsDataGenerationAlt()
-  await standingsTranslationGeneration()
+  // await standingsTranslationGeneration()
 
   // [ℹ] return, RESPONSE;
 	return {
@@ -255,7 +255,7 @@ async function standingsDataGenerationAlt () {
   // [ℹ] get HASURA-DB response;
 	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
 
-  deleteCacheTournamentsStandingsData()
+  // deleteCacheTournamentsStandingsData()
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
 
@@ -364,6 +364,18 @@ async function standingsDataGenerationAlt () {
         const team_home_color_code = team_home_position == null ? 'black' : season_color_codes[team_home_position.toString()]
         const team_away_color_code = team_away_position == null ? 'black' : season_color_codes[team_away_position.toString()]
 
+        const team_total_ov15: number =
+          target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away == null ||
+          target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home == null
+            ? null
+            : (target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home) / 2
+
+        const team_total_ov25: number =
+          target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away == null ||
+          target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home == null
+            ? null
+            : (target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home) / 2
+
         const team_obj_total: Standing_Team_Total_Away_Home = {
           team_logo:      team_logo,
           team_name:      team_name,
@@ -378,9 +390,9 @@ async function standingsDataGenerationAlt () {
           ga:             season_team?.overall?.goals_against,
           gavg:           target_team_stat_hist?.average_goals?.total,
           cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
-          ycavg:          target_team_stat_hist?.average_yellow_cards,
-          ov15:           target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home,  // [❓]
-          ov25:           target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home,  // [❓]
+          yavg:           target_team_stat_hist?.average_yellow_cards,
+          ov15:           team_total_ov15,
+          ov25:           team_total_ov25,
           winP:           team_winP,
           rf:             season_team?.recent_form
         }
@@ -399,7 +411,7 @@ async function standingsDataGenerationAlt () {
           ga:             season_team?.home?.goals_against,
           gavg:           target_team_stat_hist?.average_goals?.home,
           cavg:           null,
-          ycavg:          null,
+          yavg:           null,
           ov15:           null,
           ov25:           null,
           winP:           team_winP,
@@ -420,7 +432,7 @@ async function standingsDataGenerationAlt () {
           ga:             season_team?.away?.goals_against,
           gavg:           target_team_stat_hist?.average_goals?.away,
           cavg:           null,
-          ycavg:          null,
+          yavg:           null,
           ov15:           null,
           ov25:           null,
           winP:           team_winP,
@@ -432,7 +444,7 @@ async function standingsDataGenerationAlt () {
         season_gen_list_away.push(team_obj_away)
       }   
       
-      // [ℹ] re-order
+      // [ℹ] re-ordering of team-position for each TOTAL | HOME | AWAY view
       const nullPosTotal = season_gen_list_total.filter(( { position } ) => position == null).length
       const nullPosHome  = season_gen_list_home.filter(( { position } ) => position == null).length
       const nullPosAway  = season_gen_list_away.filter(( { position } ) => position == null).length
@@ -462,16 +474,16 @@ async function standingsDataGenerationAlt () {
 
     final_obj_array.push(finalCacheObj)
 
-    await cacheTournamentsStandingsDataAlt (finalCacheObj.league_id , finalCacheObj);
+    // await cacheTournamentsStandingsDataAlt (finalCacheObj.league_id , finalCacheObj);
   }
 
   // [🐛] debug
-  // const data = JSON.stringify(final_obj_array, null, 4)
-  // fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
-  //   if (err) {
-  //     console.error(err);
-  //   }
-  // });
+  const data = JSON.stringify(final_obj_array, null, 4)
+  fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
+    if (err) {
+      console.error(err);
+    }
+  });
 
   return
 }
