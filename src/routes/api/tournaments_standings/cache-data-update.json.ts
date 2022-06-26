@@ -9,7 +9,8 @@ import { removeDiacritics } from '$lib/utils/languages';
 import type { 
   Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
   Cache_Single_Tournaments_League_Standings_Translation_Data_Response, 
-  Hasura_League_Info_Widget_Data_Response, Standings_Teams 
+  Hasura_League_Info_Widget_Data_Response, 
+  Standing_Team_Total_Away_Home 
 } from '$lib/models/tournaments/types';
 
 import fs from 'fs';
@@ -282,7 +283,9 @@ async function standingsDataGenerationAlt () {
 
       const season_standings_teams_list = season_standings?.data
 
-      const season_gen_list: Standings_Teams[] = []
+      const season_gen_list_total: Standing_Team_Total_Away_Home[] = []
+      const season_gen_list_home:  Standing_Team_Total_Away_Home[] = []
+      const season_gen_list_away:  Standing_Team_Total_Away_Home[] = []
 
       if (season_standings_teams_list == undefined ||
           season_standings_teams_list == null) {
@@ -361,72 +364,97 @@ async function standingsDataGenerationAlt () {
         const team_home_color_code = team_home_position == null ? 'black' : season_color_codes[team_home_position.toString()]
         const team_away_color_code = team_away_position == null ? 'black' : season_color_codes[team_away_position.toString()]
 
-        const team_obj: Standings_Teams = {
-          team_logo: team_logo,
-          team_name: team_name,
-          total: {
-            color_code:     team_total_color_code,
-            points:         season_team?.points,
-            position:       season_team?.position,
-            games_played:   season_team?.round_name,
-            won:            season_team?.overall?.won,
-            draw:           season_team?.overall?.draw,
-            lost:           season_team?.overall?.lost,
-            gs:             season_team?.overall?.goals_scored,
-            ga:             season_team?.overall?.goals_against,
-            gavg:           target_team_stat_hist?.average_goals?.total,
-            cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
-            ycavg:          target_team_stat_hist?.average_yellow_cards,
-            ov15:           target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home,  // [❓]
-            ov25:           target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home,  // [❓]
-            winP:           team_winP,
-            rf:             season_team?.recent_form,
-          },
-          home: {
-            color_code:     team_home_color_code,
-            points:         season_team?.home?.points,
-            position:       team_home_position, // season_team?.home?.points
-            games_played:   season_team?.home?.games_played,
-            won:            season_team?.home?.won,
-            draw:           season_team?.home?.draw,
-            lost:           season_team?.home?.lost,
-            gs:             season_team?.home?.goals_scored,
-            ga:             season_team?.home?.goals_against,
-            gavg:           target_team_stat_hist?.average_goals?.home,
-            cavg:           null,
-            ycavg:          null,
-            ov15:           null,
-            ov25:           null,
-            winP:           team_winP,
-            rf:             null
-          },
-          away: {
-            color_code:     team_away_color_code,
-            points:         season_team?.away?.points,
-            position:       team_away_position, // season_team?.away?.points
-            games_played:   season_team?.away?.games_played,
-            won:            season_team?.away?.won,
-            draw:           season_team?.away?.draw,
-            lost:           season_team?.away?.lost,
-            gs:             season_team?.away?.goals_scored,
-            ga:             season_team?.away?.goals_against,
-            gavg:           target_team_stat_hist?.average_goals?.away,
-            cavg:           null,
-            ycavg:          null,
-            ov15:           null,
-            ov25:           null,
-            winP:           team_winP,
-            rf:             null
-          }
+        const team_obj_total: Standing_Team_Total_Away_Home = {
+          team_logo:      team_logo,
+          team_name:      team_name,
+          color_code:     team_total_color_code,
+          points:         season_team?.points,
+          position:       season_team?.position,
+          games_played:   season_team?.round_name,
+          won:            season_team?.overall?.won,
+          draw:           season_team?.overall?.draw,
+          lost:           season_team?.overall?.lost,
+          gs:             season_team?.overall?.goals_scored,
+          ga:             season_team?.overall?.goals_against,
+          gavg:           target_team_stat_hist?.average_goals?.total,
+          cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
+          ycavg:          target_team_stat_hist?.average_yellow_cards,
+          ov15:           target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home,  // [❓]
+          ov25:           target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home,  // [❓]
+          winP:           team_winP,
+          rf:             season_team?.recent_form
         }
 
-        season_gen_list.push(team_obj)
+        const team_obj_home: Standing_Team_Total_Away_Home = {
+          team_logo:      team_logo,
+          team_name:      team_name,
+          color_code:     team_home_color_code,
+          points:         season_team?.home?.points,
+          position:       team_home_position, // season_team?.home?.points
+          games_played:   season_team?.home?.games_played,
+          won:            season_team?.home?.won,
+          draw:           season_team?.home?.draw,
+          lost:           season_team?.home?.lost,
+          gs:             season_team?.home?.goals_scored,
+          ga:             season_team?.home?.goals_against,
+          gavg:           target_team_stat_hist?.average_goals?.home,
+          cavg:           null,
+          ycavg:          null,
+          ov15:           null,
+          ov25:           null,
+          winP:           team_winP,
+          rf:             null
+        }
+
+        const team_obj_away: Standing_Team_Total_Away_Home = {
+          team_logo:      team_logo,
+          team_name:      team_name,
+          color_code:     team_away_color_code,
+          points:         season_team?.away?.points,
+          position:       team_away_position, // season_team?.away?.points
+          games_played:   season_team?.away?.games_played,
+          won:            season_team?.away?.won,
+          draw:           season_team?.away?.draw,
+          lost:           season_team?.away?.lost,
+          gs:             season_team?.away?.goals_scored,
+          ga:             season_team?.away?.goals_against,
+          gavg:           target_team_stat_hist?.average_goals?.away,
+          cavg:           null,
+          ycavg:          null,
+          ov15:           null,
+          ov25:           null,
+          winP:           team_winP,
+          rf:             null
+        }
+
+        season_gen_list_total.push(team_obj_total)
+        season_gen_list_home.push(team_obj_home)
+        season_gen_list_away.push(team_obj_away)
+      }   
+      
+      // [ℹ] re-order
+      const nullPosTotal = season_gen_list_total.filter(( { position } ) => position == null).length
+      const nullPosHome  = season_gen_list_home.filter(( { position } ) => position == null).length
+      const nullPosAway  = season_gen_list_away.filter(( { position } ) => position == null).length
+
+      if (nullPosTotal == 0) {
+        season_gen_list_total.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
+      }
+
+      if (nullPosHome == 0) {
+        season_gen_list_home.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
+      }
+
+      if (nullPosAway == 0) {
+        season_gen_list_away.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
       }
 
       finalCacheObj.seasons.push (
         {
-          season_id: season_main.id,
-          teams: season_gen_list
+          season_id:    season_main.id,
+          total:        season_gen_list_total,
+          home:         season_gen_list_home,
+          away:         season_gen_list_away
         }
       )
 

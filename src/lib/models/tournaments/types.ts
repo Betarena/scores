@@ -96,15 +96,13 @@ export interface Single_Tournament_Data_Type {
 */
 
 export interface Tournament_Standing_Season {
-  season_id:  number
-  teams:      Standings_Teams[]
-} export interface Standings_Teams {
-  team_logo:  string // >? based on history (constant)
-  team_name:  string // >? based on history (constant)
-  total:      Total_Away_Home
-  home:       Total_Away_Home
-  away:       Total_Away_Home
-} export interface Total_Away_Home {
+  season_id:      number
+  total:    Standing_Team_Total_Away_Home[]
+  home:     Standing_Team_Total_Away_Home[]
+  away:     Standing_Team_Total_Away_Home[]
+} export interface Standing_Team_Total_Away_Home {
+  team_logo:     string          // >? based on history (constant)
+  team_name:     string          // >? based on history (constant)
   color_code:    string          
   position?:     number          // scores_football_standings |"position" if older seasons = scores_football_standings_history
                                  // scores_football_standings |"home +""points" - Use points to determine teams position. If older seasons = scores_football_standings_history
@@ -146,7 +144,7 @@ export interface Tournament_Standing_Season {
                                  // home: ❌
                                  // away: ❌
 
-  ycavg?:        number          // scores_team_statistics    |  "yellow_cards_average" or if older seasons = scores_team_statistics_history (How this data point is populated on this task: https://github.com/Betarena/scores/issues/379)
+  yavg?:        number           // scores_team_statistics    |  "yellow_cards_average" or if older seasons = scores_team_statistics_history (How this data point is populated on this task: https://github.com/Betarena/scores/issues/379)
                                  // home: ❌
                                  // away: ❌
 

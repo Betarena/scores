@@ -8,17 +8,16 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
-  import type { Standings_Teams } from "$lib/models/tournaments/types";
+  import type { Standing_Team_Total_Away_Home } from "$lib/models/tournaments/types";
 
-  export let TEAM_DATA:         Standings_Teams;
-  export let VIEW:              string;
+  export let TEAM_DATA:         Standing_Team_Total_Away_Home;
   export let TABLEMOBILEVIEW:   number = undefined;
 
   let recent_form;
   $ : recent_form = 
-    TEAM_DATA[VIEW].rf == null 
+    TEAM_DATA.rf == null 
       ? ['', '', '', '', '']
-      : Array.from(TEAM_DATA[VIEW].rf);
+      : Array.from(TEAM_DATA.rf);
 
   let position
   let points
@@ -29,14 +28,14 @@
   let ov25
   let winP
 
-  $: position = TEAM_DATA[VIEW].position == null || TEAM_DATA[VIEW].position == undefined ? '-' : TEAM_DATA[VIEW].position;
-  $: points = TEAM_DATA[VIEW].points == null || TEAM_DATA[VIEW].points == undefined ? '-' : TEAM_DATA[VIEW].points;
-  $: gavg = TEAM_DATA[VIEW].gavg == null || TEAM_DATA[VIEW].gavg == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].gavg.toString()).toFixed(3);
-  $: cavg = TEAM_DATA[VIEW].cavg == null || TEAM_DATA[VIEW].cavg == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].cavg.toString()).toFixed(2);
-  $: yavg = TEAM_DATA[VIEW].yavg == null || TEAM_DATA[VIEW].yavg == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].yavg.toString()).toFixed(2);
-  $: ov15 = TEAM_DATA[VIEW].ov15 == null || TEAM_DATA[VIEW].ov15 == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].ov15.toString()).toFixed(2) + '%';
-  $: ov25 = TEAM_DATA[VIEW].ov25 == null || TEAM_DATA[VIEW].ov25 == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].ov25.toString()).toFixed(2) + '%';
-  $: winP = TEAM_DATA[VIEW].winP == null || TEAM_DATA[VIEW].winP == undefined ? '-' : parseFloat(TEAM_DATA[VIEW].winP.toString()).toFixed(2) + '%';
+  $: position = TEAM_DATA.position == null || TEAM_DATA.position == undefined ? '-' : TEAM_DATA.position;
+  $: points = TEAM_DATA.points == null || TEAM_DATA.points == undefined ? '-' : TEAM_DATA.points;
+  $: gavg = TEAM_DATA.gavg == null || TEAM_DATA.gavg == undefined ? '-' : parseFloat(TEAM_DATA.gavg.toString()).toFixed(3);
+  $: cavg = TEAM_DATA.cavg == null || TEAM_DATA.cavg == undefined ? '-' : parseFloat(TEAM_DATA.cavg.toString()).toFixed(2);
+  $: yavg = TEAM_DATA.yavg == null || TEAM_DATA.yavg == undefined ? '-' : parseFloat(TEAM_DATA.yavg.toString()).toFixed(2);
+  $: ov15 = TEAM_DATA.ov15 == null || TEAM_DATA.ov15 == undefined ? '-' : parseFloat(TEAM_DATA.ov15.toString()).toFixed(2) + '%';
+  $: ov25 = TEAM_DATA.ov25 == null || TEAM_DATA.ov25 == undefined ? '-' : parseFloat(TEAM_DATA.ov25.toString()).toFixed(2) + '%';
+  $: winP = TEAM_DATA.winP == null || TEAM_DATA.winP == undefined ? '-' : parseFloat(TEAM_DATA.winP.toString()).toFixed(2) + '%';
 
   let viewportDesktop: boolean;
   let viewportTablet: boolean;
@@ -91,7 +90,7 @@
           <p 
             class="team-pos medium w-500"
             style="background-color: black">
-            {TEAM_DATA[VIEW].position}
+            {TEAM_DATA.position}
           </p>
         </div>
 
@@ -126,62 +125,62 @@
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].points}
+          {TEAM_DATA.points}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].games_played}
+          {TEAM_DATA.games_played}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].won}
+          {TEAM_DATA.won}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].draw}
+          {TEAM_DATA.draw}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].lost}
+          {TEAM_DATA.lost}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].gs}
+          {TEAM_DATA.gs}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].ga}
+          {TEAM_DATA.ga}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].gavg}
+          {TEAM_DATA.gavg}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].cavg}
+          {TEAM_DATA.cavg}
         </p>
         
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].ov15}
+          {TEAM_DATA.ov15}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].ov25}
+          {TEAM_DATA.ov25}
         </p>
 
         <p 
           class="medium w-500">
-          {TEAM_DATA[VIEW].winP}
+          {TEAM_DATA.winP}
         </p>
         
         <div
@@ -228,8 +227,8 @@
           class="team-pos">
           <p 
             class="team-pos s-12 w-500"
-            style="background-color: {TEAM_DATA[VIEW].color_code}"
-            class:border-pos={TEAM_DATA[VIEW].color_code === 'transparent'}
+            style="background-color: {TEAM_DATA.color_code}"
+            class:border-pos={TEAM_DATA.color_code === 'transparent'}
             >
             {position}
           </p>
@@ -272,7 +271,7 @@
     <td>
       <p 
         class="s-12 w-500 color-grey">
-        {TEAM_DATA[VIEW].games_played}
+        {TEAM_DATA.games_played}
       </p>
     </td>
 
@@ -280,14 +279,14 @@
       <p 
         class="s-12 w-500"
         style="color: #59C65D;">
-        {TEAM_DATA[VIEW].won}
+        {TEAM_DATA.won}
       </p>
     </td>
 
     <td>
       <p 
         class="s-12 w-500 color-grey">
-        {TEAM_DATA[VIEW].draw}
+        {TEAM_DATA.draw}
       </p>
     </td>
 
@@ -295,21 +294,21 @@
       <p 
         class="s-12 w-500"
         style="color: #FF3C3C;">
-        {TEAM_DATA[VIEW].lost}
+        {TEAM_DATA.lost}
       </p>
     </td>
 
     <td>
       <p 
         class="s-12 w-500 color-grey">
-        {TEAM_DATA[VIEW].gs}
+        {TEAM_DATA.gs}
       </p>
     </td>
 
     <td>
       <p 
         class="s-12 w-500 color-grey">
-        {TEAM_DATA[VIEW].ga}
+        {TEAM_DATA.ga}
       </p>
     </td>
 
@@ -393,8 +392,8 @@
             class="team-pos">
             <p 
               class="team-pos s-12 w-500"
-              style="background-color: {TEAM_DATA[VIEW].color_code}"
-              class:border-pos={TEAM_DATA[VIEW].color_code === 'transparent'}
+              style="background-color: {TEAM_DATA.color_code}"
+              class:border-pos={TEAM_DATA.color_code === 'transparent'}
               >
               {position}
             </p>
@@ -430,7 +429,7 @@
         <td>
           <p 
             class="s-12 w-500 color-grey">
-            {TEAM_DATA[VIEW].games_played}
+            {TEAM_DATA.games_played}
           </p>
         </td>
 
@@ -438,14 +437,14 @@
           <p 
             class="s-12 w-500"
             style="color: #59C65D;">
-            {TEAM_DATA[VIEW].won}
+            {TEAM_DATA.won}
           </p>
         </td>
 
         <td>
           <p 
             class="s-12 w-500 color-grey">
-            {TEAM_DATA[VIEW].draw}
+            {TEAM_DATA.draw}
           </p>
         </td>
 
@@ -453,21 +452,21 @@
           <p 
             class="s-12 w-500"
             style="color: #FF3C3C;">
-            {TEAM_DATA[VIEW].lost}
+            {TEAM_DATA.lost}
           </p>
         </td>
 
         <td>
           <p 
             class="s-12 w-500 color-grey">
-            {TEAM_DATA[VIEW].gs}
+            {TEAM_DATA.gs}
           </p>
         </td>
 
         <td>
           <p 
             class="s-12 w-500 color-grey">
-            {TEAM_DATA[VIEW].ga}
+            {TEAM_DATA.ga}
           </p>
         </td>
 

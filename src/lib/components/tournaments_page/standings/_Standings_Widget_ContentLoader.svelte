@@ -86,8 +86,13 @@
     {#each {length: showNum} as _, i}
       <div 
         class="teams-row row-space-out">
-          <PlaceholderRowLeft />
-          <PlaceholderRowRight />
+          <div
+            class="yes m-r-15">
+            <PlaceholderRowLeft />
+          </div>
+          <div>
+            <PlaceholderRowRight />
+          </div>
       </div>
     {/each}
 

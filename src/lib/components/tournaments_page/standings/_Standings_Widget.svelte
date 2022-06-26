@@ -28,6 +28,8 @@
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
 	import slider_left from './assets/slider-left.svg'
 	import slider_right from './assets/slider-right.svg'
+  import slider_left_dark from './assets/slider-left-dark.svg'
+	import slider_right_dark from './assets/slider-right-dark.svg'
 
   let loaded:                 boolean = false;  // [ℹ] holds boolean for data loaded;
   let refresh:                boolean = false;  // [ℹ] refresh value speed of the WIDGET;
@@ -36,7 +38,7 @@
   let dropdownSeasonSelect:   any = undefined   // [ℹ] selected TOP LEAGUE;
   let toggleCTA:              boolean = false;
 
-  let diasbleDev: boolean = false;
+  let diasbleDev:             boolean = false;
 
   let selectedOpt:            string = 'total';
   let refreshRow:             boolean = false;
@@ -191,40 +193,6 @@
     widgetInit()
   })
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // REACTIVE [OTHER]
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  // TODO:
-  // [ℹ] re-order teams based on view + position;
-  $: if ($session.selectedSeasonID && selectedOpt) {
-
-    if (dev && diasbleDev) console.log("re-arranging!")
-
-    // let teamsTargetList = STANDINGS_DATA.seasons.find(( { season_id } ) => season_id == $session.selectedSeasonID)?.teams
-    // teamsTargetList.sort((a, b) => parseFloat(a[selectedOpt].position.toString()) - parseFloat(b[selectedOpt].position.toString()));
-    
-    // console.log("re-arranging! teamsTargetList", teamsTargetList.map((e) => e.team_name))
-
-    // for (const season of STANDINGS_DATA.seasons) {
-    //   if (season.season_id === $session.selectedSeasonID) {
-    //     season.teams = teamsTargetList
-    //     console.log("re-arranging! teamsTargetList v2", season.teams.map((e) => e.team_name))
-    //   }
-    // }
-
-    // [ℹ] check for "null-positions"
-    let nullPos = STANDINGS_DATA.seasons.find(( { season_id } ) => season_id == $session.selectedSeasonID)?.teams
-      .filter(( { home, away } ) => 
-        (home?.position == null || home?.position == undefined) ||
-        (away?.position == null || away?.position == undefined)).length
-
-    if (nullPos == 0) {
-      STANDINGS_DATA.seasons.find(( { season_id } ) => season_id == $session.selectedSeasonID)?.teams
-        .sort((a, b) => parseFloat(a[selectedOpt].position.toString()) - parseFloat(b[selectedOpt].position.toString()));
-    }
-  }
-
 </script>
 
 <!-- ===============
@@ -245,9 +213,12 @@
     <div 
       id="seo-widget-box">
       <h1>{STANDINGS_T.translations.standings}</h1>
-      {#each STANDINGS_DATA.seasons[0].teams as team}
-        <p>{team.team_name}</p>
-      {/each}
+      {#if STANDINGS_DATA?.seasons.length != 0}
+        {#each STANDINGS_DATA.seasons[0].total as team}
+          <p>{team.team_name}</p>
+        {/each}
+      {/if}
+      
     </div>
   {/if}
 
@@ -316,8 +287,9 @@
         <!-- [ℹ] promise was fulfilled 
         -->
         <h2 
-          class="s-20 m-b-10 w-500"
-          style="margin-top: 0px;">
+          class="s-20 m-b-10 w-500 color-black-2"
+          style="margin-top: 0px;"
+          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {STANDINGS_T.translations.standings}
         </h2>
 
@@ -760,15 +732,13 @@
 
             <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
             -->
-            {#if !refreshRow}
-              {#each STANDINGS_DATA.seasons as season}
-                {#if season.season_id === $session.selectedSeasonID}
-                  {#each season.teams as team}
-                    <StandingsTeamRow TEAM_DATA={team} VIEW={selectedOpt} />
-                  {/each}
-                {/if}
-              {/each}
-            {/if}
+            {#each STANDINGS_DATA.seasons as season}
+              {#if season.season_id === $session.selectedSeasonID}
+                {#each season[selectedOpt] as team}
+                  <StandingsTeamRow TEAM_DATA={team} />
+                {/each}
+              {/if}
+            {/each}
 
           </table>
 
@@ -888,8 +858,9 @@
         <!-- [ℹ] promise was fulfilled 
         -->
         <h2 
-          class="s-20 m-b-10 w-500"
-          style="margin-top: 0px;">
+          class="s-20 m-b-10 w-500 color-black-2"
+          style="margin-top: 0px;"
+          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {STANDINGS_T.translations.standings}
         </h2>
 
@@ -946,10 +917,17 @@
               disabled={selectedOptTableMobile == 1}
               on:click={() => selectedOptTableMobile = selectedOptTableMobile - 1}
               >
-              <img 
-                src={slider_left} 
-                alt=""
-              />
+              {#if $userBetarenaSettings.theme == 'Dark'}
+                <img 
+                  src={slider_left_dark} 
+                  alt=""
+                />
+              {:else}
+                <img 
+                  src={slider_left} 
+                  alt=""
+                />
+              {/if}
             </button>
 
             <p
@@ -962,10 +940,17 @@
               disabled={selectedOptTableMobile == 3}
               on:click={() => selectedOptTableMobile = selectedOptTableMobile + 1}
               >
-              <img 
-                src={slider_right} 
-                alt=""
-              />
+              {#if $userBetarenaSettings.theme == 'Dark'}
+                <img 
+                  src={slider_right_dark} 
+                  alt=""
+                />
+              {:else}
+                <img 
+                  src={slider_right} 
+                  alt=""
+                />
+              {/if}
             </button>
 
 
@@ -1117,15 +1102,13 @@
 
             <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
             -->
-            {#if !refreshRow}
-              {#each STANDINGS_DATA.seasons as season}
-                {#if season.season_id === $session.selectedSeasonID}
-                  {#each season.teams as team}
-                    <StandingsTeamRow TEAM_DATA={team} VIEW={selectedOpt} TABLEMOBILEVIEW={selectedOptTableMobile} />
-                  {/each}
-                {/if}
-              {/each}
-            {/if}
+            {#each STANDINGS_DATA.seasons as season}
+              {#if season.season_id === $session.selectedSeasonID}
+                {#each season[selectedOpt] as team}
+                  <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} />
+                {/each}
+              {/if}
+            {/each}
 
           </table>
 
