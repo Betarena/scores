@@ -23,7 +23,7 @@ export async function get(): Promise< unknown > {
   
   // await standingsDataGeneration()
   await standingsDataGenerationAlt()
-  // await standingsTranslationGeneration()
+  await standingsTranslationGeneration()
 
   // [ℹ] return, RESPONSE;
 	return {
@@ -255,7 +255,7 @@ async function standingsDataGenerationAlt () {
   // [ℹ] get HASURA-DB response;
 	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
 
-  // deleteCacheTournamentsStandingsData()
+  deleteCacheTournamentsStandingsData()
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
 
@@ -390,7 +390,7 @@ async function standingsDataGenerationAlt () {
           ga:             season_team?.overall?.goals_against,
           gavg:           target_team_stat_hist?.average_goals?.total,
           cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
-          yavg:           target_team_stat_hist?.average_yellow_cards,
+          ycavg:           target_team_stat_hist?.average_yellow_cards,
           ov15:           team_total_ov15,
           ov25:           team_total_ov25,
           winP:           team_winP,
@@ -411,7 +411,7 @@ async function standingsDataGenerationAlt () {
           ga:             season_team?.home?.goals_against,
           gavg:           target_team_stat_hist?.average_goals?.home,
           cavg:           null,
-          yavg:           null,
+          ycavg:           null,
           ov15:           null,
           ov25:           null,
           winP:           team_winP,
@@ -432,7 +432,7 @@ async function standingsDataGenerationAlt () {
           ga:             season_team?.away?.goals_against,
           gavg:           target_team_stat_hist?.average_goals?.away,
           cavg:           null,
-          yavg:           null,
+          ycavg:           null,
           ov15:           null,
           ov25:           null,
           winP:           team_winP,
@@ -474,16 +474,16 @@ async function standingsDataGenerationAlt () {
 
     final_obj_array.push(finalCacheObj)
 
-    // await cacheTournamentsStandingsDataAlt (finalCacheObj.league_id , finalCacheObj);
+    await cacheTournamentsStandingsDataAlt (finalCacheObj.league_id , finalCacheObj);
   }
 
   // [🐛] debug
-  const data = JSON.stringify(final_obj_array, null, 4)
-  fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
-    if (err) {
-      console.error(err);
-    }
-  });
+  // const data = JSON.stringify(final_obj_array, null, 4)
+  // fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
+  //   if (err) {
+  //     console.error(err);
+  //   }
+  // });
 
   return
 }

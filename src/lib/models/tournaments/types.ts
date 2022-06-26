@@ -144,7 +144,7 @@ export interface Tournament_Standing_Season {
                                  // home: ❌
                                  // away: ❌
 
-  yavg?:        number           // scores_team_statistics    |  "yellow_cards_average" or if older seasons = scores_team_statistics_history (How this data point is populated on this task: https://github.com/Betarena/scores/issues/379)
+  ycavg?:        number           // scores_team_statistics    |  "yellow_cards_average" or if older seasons = scores_team_statistics_history (How this data point is populated on this task: https://github.com/Betarena/scores/issues/379)
                                  // home: ❌
                                  // away: ❌
 

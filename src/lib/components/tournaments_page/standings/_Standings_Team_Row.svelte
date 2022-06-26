@@ -23,7 +23,7 @@
   let points
   let gavg
   let cavg
-  let yavg
+  let ycavg
   let ov15
   let ov25
   let winP
@@ -32,7 +32,7 @@
   $: points = TEAM_DATA.points == null || TEAM_DATA.points == undefined ? '-' : TEAM_DATA.points;
   $: gavg = TEAM_DATA.gavg == null || TEAM_DATA.gavg == undefined ? '-' : parseFloat(TEAM_DATA.gavg.toString()).toFixed(2);
   $: cavg = TEAM_DATA.cavg == null || TEAM_DATA.cavg == undefined ? '-' : parseFloat(TEAM_DATA.cavg.toString()).toFixed(2);
-  $: yavg = TEAM_DATA.yavg == null || TEAM_DATA.yavg == undefined ? '-' : parseFloat(TEAM_DATA.yavg.toString()).toFixed(2);
+  $: ycavg = TEAM_DATA.ycavg == null || TEAM_DATA.ycavg == undefined ? '-' : parseFloat(TEAM_DATA.ycavg.toString()).toFixed(2);
   $: ov15 = TEAM_DATA.ov15 == null || TEAM_DATA.ov15 == undefined ? '-' : parseFloat(TEAM_DATA.ov15.toString()).toFixed(0) + '%';
   $: ov25 = TEAM_DATA.ov25 == null || TEAM_DATA.ov25 == undefined ? '-' : parseFloat(TEAM_DATA.ov25.toString()).toFixed(0) + '%';
   $: winP = TEAM_DATA.winP == null || TEAM_DATA.winP == undefined ? '-' : parseFloat(TEAM_DATA.winP.toString()).toFixed(0) + '%';
@@ -322,7 +322,7 @@
     <td>
       <p 
         class="s-12 w-500 color-grey">
-        {yavg}
+        {ycavg}
       </p>
     </td>
 
@@ -485,7 +485,7 @@
         <td>
           <p 
             class="s-12 w-500 color-grey">
-            {yavg}
+            {ycavg}
           </p>
         </td>
 
