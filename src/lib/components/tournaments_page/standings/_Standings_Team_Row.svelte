@@ -30,6 +30,7 @@
 
   $: position = TEAM_DATA.position == null || TEAM_DATA.position == undefined ? '-' : TEAM_DATA.position;
   $: points = TEAM_DATA.points == null || TEAM_DATA.points == undefined ? '-' : TEAM_DATA.points;
+  $: games_played = TEAM_DATA.games_played == null || TEAM_DATA.games_played == undefined ? '-' : TEAM_DATA.games_played;
   $: gavg = TEAM_DATA.gavg == null || TEAM_DATA.gavg == undefined ? '-' : parseFloat(TEAM_DATA.gavg.toString()).toFixed(2);
   $: cavg = TEAM_DATA.cavg == null || TEAM_DATA.cavg == undefined ? '-' : parseFloat(TEAM_DATA.cavg.toString()).toFixed(2);
   $: ycavg = TEAM_DATA.ycavg == null || TEAM_DATA.ycavg == undefined ? '-' : parseFloat(TEAM_DATA.ycavg.toString()).toFixed(2);
@@ -271,7 +272,7 @@
     <td>
       <p 
         class="s-12 w-500 color-grey">
-        {TEAM_DATA.games_played}
+        {games_played}
       </p>
     </td>
 
@@ -429,7 +430,7 @@
         <td>
           <p 
             class="s-12 w-500 color-grey">
-            {TEAM_DATA.games_played}
+            {games_played}
           </p>
         </td>
 
