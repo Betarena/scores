@@ -590,6 +590,9 @@
   tr td {
     padding-top: 16px !important;
 		padding-bottom: 0px;
+    padding: 0px 5px;
+  } tr td p {
+    /* width: fit-content; */
   } tr td:not(:first-child) {
     text-align: center;
   } tr td:first-child {
@@ -626,6 +629,17 @@
       margin-right: 10px; 
     }
 
+    tr td p {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 85px;
+    }
+
+    tr td:last-child {
+      text-align: end;
+    } 
+
   }
 
   @media only screen and (min-width: 475px) and (max-width: 1000px) {
@@ -646,7 +660,7 @@
       padding-left: 0;
     } tr td:last-child {
       padding-right: 0;
-    } 
+    }
 
   }
 

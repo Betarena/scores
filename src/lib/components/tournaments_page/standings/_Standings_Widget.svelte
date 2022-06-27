@@ -111,9 +111,9 @@
   }
 
   function triggerGoggleEvents(action: string) {
-    if (action === "betting_site_logo_widget_league_info") {
-      gtag('event', "betting_site_logo_widget_league_info", { 
-        'event_category': "widget_league_info", 
+    if (action === "betting_site_logo_standings") {
+      gtag('event', "betting_site_logo_standings", { 
+        'event_category': "widget_standings_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
         }
@@ -121,9 +121,9 @@
       return
     }
 
-    if (action === "beting_cta_link_widget_league_info") {
-      gtag('event', "beting_cta_link_widget_league_info", { 
-        'event_category': "widget_league_info", 
+    if (action === "cta_button_standings") {
+      gtag('event', "cta_button_standings", { 
+        'event_category': "widget_standings_info", 
         'event_label': "beting_cta_link_logo", 
         'value': "click"
         }
@@ -136,19 +136,21 @@
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  let tabletView = 1000
+  let mobileView = 725
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
 		// [ℹ] TABLET - VIEW
-		if (wInit >= 1000) {
+		if (wInit >= tabletView) {
 			tabletExclusive = false;
 		} else {
 			tabletExclusive = true;
 		}
 		// [ℹ] MOBILE - VIEW
-		if (wInit <= 725) {
+		if (wInit <= mobileView) {
 			mobileExclusive = true;
 		} else {
 			mobileExclusive = false;
@@ -156,13 +158,13 @@
 		window.addEventListener('resize', function () {
 			var w = document.documentElement.clientWidth;
 			// [ℹ] TABLET - VIEW
-      if (w >= 1000) {
+      if (w >= tabletView) {
 				tabletExclusive = false;
 			} else {
 				tabletExclusive = true;
 			}
 			// [ℹ] MOBILE - VIEW
-			if (w <= 725) {
+			if (w <= mobileView) {
 				mobileExclusive = true;
 			} else {
 				mobileExclusive = false;
@@ -454,9 +456,10 @@
             <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
             -->
             <tr
-              class="row-head m-b-16">
+              class="row-head">
 
-              <th>
+              <th
+                style="width: 100%;">
                 <p
                   class="s-12 m-r-20 color-grey">
                   #
@@ -506,7 +509,8 @@
               <th
                 class="">
                 <p
-                  class="s-12 color-grey">
+                  class="s-12 color-grey"
+                  style="width: 20px;">
                   {STANDINGS_T.translations.w}
                 </p>
 
@@ -526,7 +530,8 @@
               <th
                 class="">
                 <p
-                  class="s-12 color-grey">
+                  class="s-12 color-grey"
+                  style="width: 20px;">
                   {STANDINGS_T.translations.d}
                 </p>
 
@@ -545,7 +550,8 @@
 
               <th>
                 <p
-                  class="s-12 color-grey">
+                  class="s-12 color-grey"
+                  style="width: 20px;">
                   {STANDINGS_T.translations.l}
                 </p>
 
@@ -565,7 +571,8 @@
               <th
                 class="">
                 <p
-                  class="s-12 color-grey">
+                  class="s-12 color-grey"
+                  style="width: 20px;">
                   {STANDINGS_T.translations.gf}
                 </p>
 
@@ -585,7 +592,8 @@
               <th
                 class="">
                 <p
-                  class="s-12 color-grey">
+                  class="s-12 color-grey"
+                  style="width: 20px;">
                   {STANDINGS_T.translations.ga}
                 </p>
 
@@ -723,7 +731,8 @@
 
               <th>
                 <p
-                  class="s-12 color-grey">
+                  class="s-12 color-grey"
+                  style="width: 70px;">
                   {STANDINGS_T.translations.recent_form}
                 </p>
               </th>
@@ -966,9 +975,10 @@
             <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
             -->
             <tr
-              class="row-head m-b-16">
+              class="row-head">
 
-              <th>
+              <th
+                style="width: 100%;">
                 <p
                   class="s-12 m-r-20 color-grey">
                   #
@@ -1095,7 +1105,7 @@
 
                 <th>
                   <p
-                    class="s-12 color-grey">
+                    class="s-12 color-grey no-wrap">
                     {STANDINGS_T.translations.recent_form}
                   </p>
                 </th>
@@ -1103,6 +1113,15 @@
               {/if}
 
             </tr>
+
+            <!-- [ℹ] extra row-space
+            -->
+            {#if $userBetarenaSettings.theme == 'Dark' && selectedOptTableMobile == 1}
+              <tr
+                style="padding: 16px;">
+                <td><p style="color: transparent">-</p></td>
+              </tr>
+            {/if}
 
             <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
             -->
@@ -1225,9 +1244,7 @@
 
           </div>
 
-        </div>
-
-        
+        </div>    
 
       {/if}
 
@@ -1321,19 +1338,22 @@
 		border-collapse: collapse;
 		width: 100%;
     /* extra */
-    margin: 20px 0;
+    margin-bottom: 20px;
     width: -webkit-fill-available;
 	}	table.standings_table .row-head {
 		background: #f2f2f2;
 		border-radius: 2px;
 	} table.standings_table .row-head th {
 		/* padding: 7px 12px; */
-		padding: 7px 0;
+		padding: 7px 5px;
 		vertical-align: middle;
 		border: none !important;
     text-align: center;
     position: relative;
-	} table.standings_table .row-head th:first-child {
+	} table.standings_table .row-head th p {
+    /* width: 10px; */
+    /* width: fit-content; */
+  } table.standings_table .row-head th:first-child {
     padding-left: 20px;
     text-align: left;
   } table.standings_table .row-head th:last-child {
@@ -1416,7 +1436,7 @@
     padding: 12px;
     background: #F2F2F2;
     border-radius: 48px;
-    margin: 0 20px;
+    margin: 0 20px 12px 20px;
     width: auto;
   } div#mobile-table-box button.table-nav-btn {
     border-radius: 50%;
@@ -1482,7 +1502,9 @@
 
   .dark-background-1 table.standings_table .row-head {
 		background-color: #616161 !important;
-	}
+	} .dark-background-1 table.standings_table .row-head.table_1 {
+    /* border-bottom: 16px solid transparent; */
+  }
 
   .dark-background-1 div.stand-view-opt-box:hover p {
     color: white !important;

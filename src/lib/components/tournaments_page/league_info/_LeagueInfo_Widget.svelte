@@ -471,6 +471,7 @@
                     {#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
                       {#if dropdownSeasonSelect.name === item.name}
                         <p
+                          style="width: 70px;"
                           class='s-14 w-500 color-grey no-wrap'>
                           {item.number_of_clubs}
                           {LEAGUE_INFO_SEO_DATA.data.translation.teams} 
