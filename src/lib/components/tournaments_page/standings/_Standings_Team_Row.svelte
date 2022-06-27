@@ -28,6 +28,7 @@
   let ov25
   let winP
 
+  $: team_name = TEAM_DATA.team_name == null || TEAM_DATA.team_name == undefined ? '-' : TEAM_DATA.team_name;
   $: position = TEAM_DATA.position == null || TEAM_DATA.position == undefined ? '-' : TEAM_DATA.position;
   $: points = TEAM_DATA.points == null || TEAM_DATA.points == undefined ? '-' : TEAM_DATA.points;
   $: games_played = TEAM_DATA.games_played == null || TEAM_DATA.games_played == undefined ? '-' : TEAM_DATA.games_played;
@@ -253,7 +254,7 @@
           class="team-name">
           <p 
             class="s-12 w-500 no-wrap">
-            {TEAM_DATA.team_name}
+            {team_name}
           </p>
         </div>
         
@@ -406,7 +407,7 @@
             style="margin-left: 10px;">
             <p 
               class="s-12 w-500">
-              {TEAM_DATA.team_name}
+              {team_name}
             </p>
           </div>
           
