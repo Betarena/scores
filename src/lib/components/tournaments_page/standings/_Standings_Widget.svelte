@@ -214,7 +214,7 @@
   {#if !loaded}
     <div 
       id="seo-widget-box">
-      <h1>{STANDINGS_T.translations.standings}</h1>
+      <h2>{STANDINGS_T.translations.standings}</h2>
       {#if STANDINGS_DATA?.seasons.length != 0}
         {#each STANDINGS_DATA.seasons[0].total as team}
           <p>{team.team_name}</p>
@@ -229,12 +229,12 @@
   {#if noStandingsBool && !loaded}
     <!-- [ℹ] title of the widget 
     -->
-    <h1 
+    <h2 
       class="s-20 m-b-10 w-500 color-black-2"
       style="margin-top: 0;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
       {STANDINGS_T.translations.standings}
-    </h1>
+    </h2>
 
     <!-- [ℹ] no-matches-avaiable-placeholder container 
     -->
@@ -288,12 +288,12 @@
 
         <!-- [ℹ] promise was fulfilled 
         -->
-        <h1 
+        <h2 
           class="s-20 m-b-10 w-500 color-black-2"
           style="margin-top: 0px;"
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {STANDINGS_T.translations.standings}
-        </h1>
+        </h2>
 
         <div
           id="standings-table-container"
