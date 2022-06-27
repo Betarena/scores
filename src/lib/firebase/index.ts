@@ -75,7 +75,7 @@ export async function getTargetFixtureOdds(
 				// ... return the response as an Array;
 				return obj;
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from DB is incorrect: getTargetFixtureOdds() fixture_data ${fixture_data}`);
 			}
 		}
 	);
@@ -118,7 +118,7 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 				// ... return the response as an Array;
 				return obj;
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from DB is incorrect: getTargetGeoSportBookDetails() lang: ${lang} sitename: ${siteName}`);
 			}
 		});
 	} else {
@@ -130,7 +130,7 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 				// return the response as an Array;
 				return snapshot.val();
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from DB is incorrect: getTargetGeoSportBookDetails() lang-only: ${getTargetGeoSportBookDetails}`);
 			}
 		});
 	}
