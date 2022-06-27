@@ -768,8 +768,8 @@
 
                   <a 
                     rel="nofollow"
-                    aria-label="betting_site_logo_widget_league_info"
-                    on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
+                    aria-label="betting_site_logo_standings"
+                    on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
                     href={data.register_link}
                     target="_blank"
                     style="width: inherit;">
@@ -802,8 +802,8 @@
                     -->
                     <a 
                       rel="nofollow" 
-                      aria-label="betting_site_logo_widget_league_info"
-                      on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
+                      aria-label="betting_site_logo_standings"
+                      on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
                       href={data.register_link}
                       style="width: inherit;">
                       <img
@@ -828,8 +828,8 @@
                       -->
                       <a 
                         rel="nofollow" 
-                        aria-label="betting_site_logo_widget_league_info"
-                        on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
+                        aria-label="cta_button_standings"
+                        on:click={() => triggerGoggleEvents("cta_button_standings")}
                         href={data.register_link}
                         target="_blank">
                         <button
@@ -1152,8 +1152,8 @@
 
                   <a 
                     rel="nofollow"
-                    aria-label="betting_site_logo_widget_league_info"
-                    on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
+                    aria-label="betting_site_logo_standings"
+                    on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
                     href={data.register_link}
                     target="_blank"
                     style="width: inherit;">
@@ -1186,8 +1186,8 @@
                     -->
                     <a 
                       rel="nofollow" 
-                      aria-label="betting_site_logo_widget_league_info"
-                      on:click={() => triggerGoggleEvents("betting_site_logo_widget_league_info")}
+                      aria-label="betting_site_logo_standings"
+                      on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
                       href={data.register_link}
                       style="width: inherit;">
                       <img
@@ -1212,8 +1212,8 @@
                       -->
                       <a 
                         rel="nofollow" 
-                        aria-label="betting_site_logo_widget_league_info"
-                        on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
+                        aria-label="cta_button_standings"
+                        on:click={() => triggerGoggleEvents("cta_button_standings")}
                         href={data.register_link}
                         target="_blank">
                         <button
