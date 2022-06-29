@@ -15,6 +15,8 @@ import { session } from "$app/stores";
   export let TABLEMOBILEVIEW:   number = undefined;
   export let currentSeason:     number = undefined;
 
+  $: currentSeason
+
   let recent_form;
   $ : recent_form = 
     TEAM_DATA.rf == null 
@@ -351,7 +353,7 @@ import { session } from "$app/stores";
       </p>
     </td>
 
-    {#if $session.selectedSeasonID && currentSeason}
+    {#if $session.selectedSeasonID && currentSeason != undefined}
       {#if $session.selectedSeasonID === currentSeason}
         <td>
           <p 
@@ -522,7 +524,7 @@ import { session } from "$app/stores";
           </p>
         </td>
 
-        {#if $session.selectedSeasonID && currentSeason}
+        {#if $session.selectedSeasonID && currentSeason != undefined}
           {#if $session.selectedSeasonID === currentSeason}
             <td>
               <p 
@@ -532,7 +534,7 @@ import { session } from "$app/stores";
             </td>
           {/if}
         {/if}
-        
+
         <td>
           <div
             class="row-space-end"

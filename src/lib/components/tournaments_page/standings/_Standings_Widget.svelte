@@ -717,7 +717,7 @@
                 </div>
               </th>
 
-              {#if $session.selectedSeasonID && currentSeason}
+              {#if $session.selectedSeasonID && currentSeason != undefined}
                 {#if $session.selectedSeasonID === currentSeason}
                   <th>
                     <p
@@ -1108,7 +1108,7 @@
                   </p>
                 </th>
 
-                {#if $session.selectedSeasonID && currentSeason}
+                {#if $session.selectedSeasonID && currentSeason != undefined}
                   {#if $session.selectedSeasonID === currentSeason}
                     <th>
                       <p
