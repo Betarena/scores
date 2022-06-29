@@ -44,6 +44,8 @@
   let refreshRow:             boolean = false;
   let selectedOptTableMobile: number = 1;
 
+  let currentSeason:          number = undefined;
+
   let imageVar:               string = '--standings-info-bookmaker-bg-';
 
 	export let STANDINGS_T:     Cache_Single_Tournaments_League_Standings_Translation_Data_Response;
@@ -194,6 +196,10 @@
   afterNavigate(async () => {
     widgetInit()
   })
+
+  if (browser) {
+    currentSeason = $session.selectedSeasonID;
+  }
 
 </script>
 
@@ -710,24 +716,29 @@
                 </div>
               </th>
 
-              <th>
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations.prob}
-                </p>
+              {#if $session.selectedSeasonID && currentSeason}
+                {#if $session.selectedSeasonID === currentSeason}
+                  <th>
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.prob}
+                    </p>
 
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.prob.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.prob.description}
-                  </p>
-                </div>
-              </th>
+                    <div
+                      class="tooltip-extra-info">
+                      <p
+                        class="s-12 color-white no-wrap">
+                        {STANDINGS_T.translations.tooltips.prob.title}
+                      </p>
+                      <p
+                        class="s-12 color-white no-wrap">
+                        {STANDINGS_T.translations.tooltips.prob.description}
+                      </p>
+                    </div>
+                  </th>
+                {/if}
+              {/if}
+
 
               <th>
                 <p
@@ -744,7 +755,7 @@
             {#each STANDINGS_DATA.seasons as season}
               {#if season.season_id === $session.selectedSeasonID}
                 {#each season[selectedOpt] as team}
-                  <StandingsTeamRow TEAM_DATA={team} />
+                  <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
                 {/each}
               {/if}
             {/each}
@@ -1096,12 +1107,16 @@
                   </p>
                 </th>
 
-                <th>
-                  <p
-                    class="s-12 color-grey">
-                    {STANDINGS_T.translations.prob}
-                  </p>
-                </th>
+                {#if $session.selectedSeasonID && currentSeason}
+                  {#if $session.selectedSeasonID === currentSeason}
+                    <th>
+                      <p
+                        class="s-12 color-grey">
+                        {STANDINGS_T.translations.prob}
+                      </p>
+                    </th>
+                  {/if}
+                {/if}
 
                 <th>
                   <p
