@@ -197,9 +197,10 @@
     widgetInit()
   })
 
-  if (browser) {
+  onMount(async () => {
     currentSeason = $session.selectedSeasonID;
-  }
+    console.log("currentSeason: ", currentSeason)
+  })
 
 </script>
 
