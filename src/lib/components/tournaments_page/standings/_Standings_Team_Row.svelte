@@ -15,7 +15,7 @@ import { session } from "$app/stores";
   export let TABLEMOBILEVIEW:   number = undefined;
   export let currentSeason:     number = undefined;
 
-  $: currentSeason
+  $: currentSeason = currentSeason
 
   let recent_form;
   $ : recent_form = 

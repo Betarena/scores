@@ -197,10 +197,12 @@
     widgetInit()
   })
 
-  onMount(async () => {
+  let loadedCurrentSeason: boolean = false;
+  $: if ($session.selectedSeasonID != undefined && !loadedCurrentSeason) {
     currentSeason = $session.selectedSeasonID;
     console.log("currentSeason: ", currentSeason)
-  })
+    loadedCurrentSeason = true;
+  }
 
 </script>
 

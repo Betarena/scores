@@ -324,7 +324,10 @@ async function standingsDataGenerationAlt () {
       for (const season_team of season_standings_teams_list) {
 
         const team_logo: string = response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
-        const team_name: string = response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name;
+        const team_name: string =
+          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null
+            ? season_team?.team_name
+            : response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
 
         const target_team_stat = response.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
         const target_team_stat_hist = response.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_main.id )
@@ -393,7 +396,6 @@ async function standingsDataGenerationAlt () {
           season_team?.away?.goals_scored == null
             ? null
             : season_team?.away?.goals_scored / season_team?.away?.games_played;
-
         
         const team_obj_total: Standing_Team_Total_Away_Home = {
           team_logo:      team_logo,
@@ -497,12 +499,12 @@ async function standingsDataGenerationAlt () {
   }
 
   // [🐛] debug
-  // const data = JSON.stringify(final_obj_array, null, 4)
-  // fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
-  //   if (err) {
-  //     console.error(err);
-  //   }
-  // });
+  const data = JSON.stringify(final_obj_array, null, 4)
+  fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
+    if (err) {
+      console.error(err);
+    }
+  });
 
   return
 }
