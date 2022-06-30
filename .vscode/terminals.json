@@ -1,0 +1,18 @@
+{
+  "autorun": true,
+  "autokill": true,
+  "terminals": [
+    {
+      "name": "repo",
+      "description": "Main Frontend Repository Terminal",
+      "icon": "repo",
+      "color": "terminal.ansiCyan"
+    },
+    {
+      "name": "dev",
+      "description": "Main Frontend Development Deploy Terminal",
+      "icon": "tools",
+      "color": "terminal.ansiBlue"
+    }
+  ]
+}

@@ -38,6 +38,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [GT-Metrix](https://gtmetrix.com/)
 - [Dot-com-tools](https://www.dotcom-tools.com/)
 - [web-measure-google](https://web.dev/measure/)
+- [Page InSight](pagespeed.web.dev)
 
 - [svelte-implemenatation](https://github.com/imbolc/sapper-google-analytics)
 - [alt.google-analytics](https://www.npmjs.com/package/@analytics/google-analytics)
@@ -111,7 +112,12 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [hash-example](https://content-security-policy.com/hash/)
 - [hash-example-code](https://codepen.io/BranchWebSDK/pen/RwRqLmv)
 
-## Code Snippets
+### Text Compression:
+
+- ⭐[Gzip compression with Node.js](https://medium.com/@victor.valencia.rico/gzip-compression-with-node-js-cc3ed74196f9)
+- [GZIP-TEST](https://sitechecker.pro/gzip-test/)
+
+### Code Snippets
 
 - Use the `VITE_` server-side TOKENS
 
@@ -133,12 +139,22 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 
 https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspace-vscode/68540643#68540643
 
-## Decreasing NPM Packages Sizes:
+### Other:
 
-- https://www.codegrepper.com/code-examples/javascript/node+find+unused+dependencies
-- https://cost-of-modules.herokuapp.com/
-- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
+- [sveltekit-awesome](https://github.com/janosh/awesome-svelte-kit)
 
-## Static Assets Sveltekit:
+### Update Caching at once:
 
-- https://github.com/sveltejs/kit/issues/3959
+```
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/pages_and_seo/cache-seo-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/navbar/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/footer/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/featured_match/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/featured_betting_sites/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/best_goalscorer/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/league_list/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/leagues_table/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/seo_block/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/tournaments/league_info/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/tournaments_standings/cache-data-update.json';
+```

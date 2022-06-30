@@ -4,24 +4,16 @@
  * & methods;
  */
 import { dev } from '$app/env';
-
 import { get } from '$lib/api/utils';
 
-import type { GeoJsResponse } from '$lib/model/_geojs/geo-js-interfaceterface';
+import type { GeoJsResponse } from '$lib/models/geojs-types';
 
-/**
- * Description:
- * ~~~~~~~~~~~~~~~~~
- * ... checks for the users location
- * ... and stores it for future use;
- */
-export async function getUserLocation(): Promise<GeoJsResponse> {
-	// ... DEBUGGING;
-	if (dev) console.info('-- getUserLocation() checkpoint --');
-	// ... push-request;
+export async function getUserLocation(): Promise < GeoJsResponse > {
 	const response = await get(`https://get.geojs.io/v1/ip/geo.json`);
-	// ... DEBUGGING;
-	if (dev) console.info('GoeJS Response', response);
-	// ... return;
+	return response;
+}
+
+export async function getUserLocationFromIP(ip:string): Promise < GeoJsResponse > {
+	const response = await get(`https://get.geojs.io/v1/ip/geo/${ip}.json`);
 	return response;
 }

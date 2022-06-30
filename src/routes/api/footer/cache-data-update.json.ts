@@ -1,48 +1,78 @@
-// ... import $app `modules`
+// [ℹ] import $app `modules`
 import { dev } from '$app/env'
-
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
-import { GET_FOOTER_DATA } from '$lib/graphql/query';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { GET_FOOTER_DATA } from '$lib/graphql/query';
+import type { Cache_Single_Lang_Footer_Translation_Response, Hasura_Footer_Translation_Response } from '$lib/models/footer/types';
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(req, res): Promise< any > {
+export async function get(): Promise< any > {
+  
+	// [ℹ] get HASURA-DB response;
+	const response: Hasura_Footer_Translation_Response = await initGrapQLClient().request(GET_FOOTER_DATA);
 
-	// ... otherwise, FALLBACK GRAQPH-QL response;
-	const response = await initGrapQLClient().request(GET_FOOTER_DATA);
-    // ... cache-response;
-    await cacheNavBar(response)
-	// ... DEBUGGING;
-	if (dev) console.debug('-- response --');
-	// ... return, RESPONSE;
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  // [🐛] debug
+  if (dev) console.debug("langArray", langArray)
+
+  const finalCacheObj: Cache_Single_Lang_Footer_Translation_Response = {
+    lang: undefined,
+    scores_footer_translations_dev: undefined,
+    scores_footer_links_dev: undefined,
+  }
+
+  deleteCacheFooter()
+
+  // [ℹ] for-each available translation:
+  for (const lang_ of langArray) {
+    
+    finalCacheObj.lang = lang_;
+    finalCacheObj.scores_footer_translations_dev = response.scores_footer_translations_dev.find(( { lang } ) => lang_ === lang);
+    finalCacheObj.scores_footer_links_dev = response.scores_footer_links_dev.find(( { lang } ) => lang_ === lang);
+
+    // [ℹ] persist-cache-response;
+    await cacheFooter(lang_, finalCacheObj);
+  }
+
+	// [ℹ] return, RESPONSE;
 	return {
-        status: 200,
-        body: 'Success! Footer Data Updated!'
-    }
+    status: 200,
+    body: '✅ Success \nfooter cache data updated!'
+  }
 
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //     CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-// - cacheNavBar(json_cache)
-// - getCacheNavBar()
+// - cacheFooter(lang, json_cache)
+// - deleteCacheFooter()
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheNavBar(json_cache: any) {
-    // ... TRY;
-    try {
-      //... store (cache) featured_match response,
-      await redis.hset('footer', 'translation', JSON.stringify(json_cache));
-      // ... DEBUGGING;
-      if (dev) console.debug('navbar-translation successfully stored in cache!')
-    } 
-    // ... CATCH, ERROR;
-    catch (e) {
-      console.log("Unable to cache", 'navbar', e);
-    }
+async function cacheFooter(lang: string, json_cache: Cache_Single_Lang_Footer_Translation_Response) {
+  try {
+    //[ℹ] persist redis (cache)
+    await redis.hset('footer_t', lang, JSON.stringify(json_cache));
+    // [🐛] debug
+    if (dev) console.debug('✅ footer-data cached')
+  } 
+  catch (e) {
+    console.error("❌ unable to cache", 'footer-data', e);
+  }
+}
+
+async function deleteCacheFooter() {
+  await redis.del('footer_t')
+  return
 }

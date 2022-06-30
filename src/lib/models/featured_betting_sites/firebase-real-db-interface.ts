@@ -5,16 +5,16 @@
  * Betting Site Widget
  */
  export interface FeaturedSite {
-    position: number            // ... featured betting site position in the board
-    image: string               // ... featured image of betting site (large-top-3) URL
-    stars: string               // ... rating given to the featured betting site
-    bonus: string               // ... bonus prize money of the featured betting site;
-    bonus_code: string          // ... bonus code INFO;
-    bonus_description: string   // ... featured betting site dsctiption referral condition
-    register_link: string       // ... `call-to-action` link for the featured betting site;
-    review_link: string         // ... `link_for_review`
-    title: string               // ... name of the featured betting site
-    information: string         // ... INFO
+  position: number            // ... featured betting site position in the board
+  image: string               // ... featured image of betting site (large-top-3) URL
+  stars: string               // ... rating given to the featured betting site
+  bonus: string               // ... bonus prize money of the featured betting site;
+  bonus_code: string          // ... bonus code INFO;
+  bonus_description: string   // ... featured betting site dsctiption referral condition
+  register_link: string       // ... `call-to-action` link for the featured betting site;
+  review_link: string         // ... `link_for_review`
+  title: string               // ... name of the featured betting site
+  information: string         // ... INFO
 }
 
 /**
@@ -29,19 +29,29 @@ export interface FinalFeaturedSiteResponseDB {
 	show_more_less: string[]; // show more less widget data translations [0] = 'showMore', [1] = 'showLess'
 }
 
+export interface Cache_Single_Lang_Featured_Betting_Site_Translation_Response {
+  lang: string
+  translations: {
+    register_cta: string
+    show_more_less: Array < string >
+    title: string
+    widget_title: string
+  }
+}
+
 /**
- * 
+ * [ℹ] Featured Betting Sites HASURA DB
 */
 export interface Scores_Featured_Betting_Sites_Hasura {
-    scores_featured_betting_sites_translations: {
-        lang: string
-        translations: {
-            register_cta: string
-            show_more_less: Array < string >
-            title: string
-            widget_title: string
-        }
-    }[]
+  scores_featured_betting_sites_translations_dev: {
+    lang: string
+    translations: {
+      register_cta: string
+      show_more_less: Array < string >
+      title: string
+      widget_title: string
+    }
+  }[]
 }
 
 export interface Scores_Featured_Betting_Sites_Data {
@@ -69,15 +79,15 @@ export interface All_SportBook_Details_Data_Translation {
 
 export interface All_SportBook_Details_Data {
     lang: string
-    translations: {
-        lang: string
-        translations: {
-            register_cta: string
-            show_more_less: Array < string >
-            title: string
-            widget_title: string
-        }
-    }[]
+    // translations: {
+    //     lang: string
+    //     translations: {
+    //         register_cta: string
+    //         show_more_less: Array < string >
+    //         title: string
+    //         widget_title: string
+    //     }
+    // }[]
     data: Array < FeaturedSite >
 }
 //	let TABLE_GAMES: { [key: string]: LiveScoreLeague[] } = {};

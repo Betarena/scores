@@ -2,7 +2,7 @@ import type { FixtureResponse, MatchVotes } from './interface-fixture';
 
 /**
  * TV_Stations Data for the Response Values;
- */
+*/
 export interface SelectedFixutre {
 	date: string;
 	fixture_id: number;
@@ -12,7 +12,7 @@ export interface SelectedFixutre {
 
 /**
  * Best Players Data for the Respose Values;
- */
+*/
 export interface BestPlayers_Data {
 	fixture_id: number;
 	game_start_date: string;
@@ -44,34 +44,32 @@ export interface BestPlayers_Data {
 
 /**
  *
- */
+*/
 export interface TranslationsResponse {
-	widget_featured_match_translations: {
-		assists: string;
-		bookmaker: string;
-		bet: string;
-		fair_odds: string;
-		goals: string;
-		home_win: string;
-		lang: string;
-		market: string;
-		market_name: string;
-		market_type: string;
-		matches: string;
-		odds: string;
-		place_bet: string;
-		player: string;
-		players: string;
-		stake: string;
-		rating: string;
-		probability: string;
-		streams: string;
-		type: string;
-		value_bet: string;
-		vote: string;
-		winnings: string;
-		widget_title: string;
-	}[]
+  assists: string;
+  bookmaker: string;
+  bet: string;
+  fair_odds: string;
+  goals: string;
+  home_win: string;
+  lang: string;
+  market: string;
+  market_name: string;
+  market_type: string;
+  matches: string;
+  odds: string;
+  place_bet: string;
+  player: string;
+  players: string;
+  stake: string;
+  rating: string;
+  probability: string;
+  streams: string;
+  type: string;
+  value_bet: string;
+  vote: string;
+  winnings: string;
+  widget_title: string;
 }
 
 /**

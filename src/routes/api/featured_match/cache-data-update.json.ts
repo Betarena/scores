@@ -1,24 +1,37 @@
 
-// ... import $app `modules`;
+// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
 
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
-import { getTargetFixtureOdds, getTargetGeoSportBookDetails } from "$lib/firebase/index"
-import { GET_ALL_FIXTURE_DATA, GET_LANG_SELECTED_FIXTURE, GET_ALL_SELECTED_MATCH_FIXTURES } from "$lib/graphql/query"
+import { 
+  getTargetFixtureOdds, 
+  getTargetGeoSportBookDetails } from "$lib/firebase/index"
+import { 
+  GET_ALL_FIXTURE_DATA, 
+  GET_LANG_SELECTED_FIXTURE, 
+  GET_ALL_SELECTED_MATCH_FIXTURES, 
+  GET_HREFLANG_DATA, 
+  GET_FEATURED_MATCH_TRANSLATION } from "$lib/graphql/query"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 
-// ... DECLARING TYPESCRIPT-TYPES imports;
-import type { FixtureResponse } from "$lib/models/featured_match/interface-fixture"
-import type { SelectedFixutre, SelectedFixture_AllData, CompleteFixtureData_Response } from "$lib/models/featured_match/response_models"
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+import type { 
+  Cache_Single_Lang_Featured_Match_Translation_Response, 
+  FixtureResponse } from "$lib/models/featured_match/interface-fixture"
+import type { 
+  SelectedFixutre, 
+  SelectedFixture_AllData, 
+  CompleteFixtureData_Response, 
+  Featured_Match_Translation_Response } from "$lib/models/featured_match/response_models"
 import type { SelectedFixture_LiveOdds_Response } from "$lib/models/featured_match/firebase-real-db-interface"
 
-// ... server-variables;
+// [ℹ] server-variables;
 let userGeo: string
 
-// ... declaring component INSTANCED & VARIABLES;
+// [ℹ] declaring component INSTANCED & VARIABLES;
 let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
-    // ... contains the final-fixture-response-data;
+    // [ℹ] contains the final-fixture-response-data;
     away_team_logo: undefined,             
     away_team_name: undefined,
     country_flag: undefined,
@@ -41,185 +54,215 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
     live_odds: undefined,
     match_votes: undefined,
     best_players: undefined,
-    translation: undefined,
+    // translation: undefined,
     selected_data: undefined
 }
 
-/** 
+/**
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise < any > {
-    // ... DEBUGGING;
-    if (dev) console.debug('-- updating featured_match_widget_cache --')
-    // ... clear the cache data for `featured_match_data`
-    await deleteCacheFeaturedMatch()
-    // ... get all of the SELECTED FIXTURES from HASURA;
-    const response = await getAllMatchSelectedFixtures()
-    // ... iterate over EACH SELECTED FIXTURE, lang, by lang;
-    for await (const selected_fixture of response.widget_featured_match_selection) {
-        userGeo = selected_fixture.lang
-        const response_cache = await getFeaturedMatchData()
-        // ... cache-response;
-        await cacheFeaturedMatchGeoPos(userGeo, response_cache);
-    }
-    // ... DEBUGGING;
-    // if (dev) console.info('-- featured-match.json --', response)
-    // ... return, RESPONSE;
-    return {
-        status: 200,
-        body: 'Success! Featured Match Data Updated!'
-    }
+export async function get(): Promise < unknown > {
+
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await featuredMatchGeoDataGeneration()
+  await featuredMatchLangDataGeneration(langArray)
+
+  // [ℹ] return, RESPONSE;
+  return {
+      status: 200,
+      body: '✅ Success \nFeatured Match Data Updated!'
+  }
+
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// - cacheFeaturedMatchGeoPos(geoPos, json_cache)
-// - deleteCacheFeaturedMatch()
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+/**
+ * [ℹ] Featured Match CACHEING ACTIONS METHODS
+*/
 
 async function cacheFeaturedMatchGeoPos(geoPos: string, json_cache: FixtureResponse) {
-    // ... TRY;
-    try {
-      //... store (cache) featured_match response,
-      await redis.hset('featured_match', geoPos, JSON.stringify(json_cache));
-    } 
-    // ... CATCH, ERROR;
-    catch (e) {
-      console.log("Unable to cache", geoPos, e);
-    }
+  try {
+    // [ℹ] persist redis (cache)
+    await redis.hset('featured_match_geo', geoPos, JSON.stringify(json_cache));
+    // [🐛] debug
+    if (dev) console.debug('✅ featured_match_geo cached')
+  } 
+  catch (e) {
+    console.log('❌ unable to cache featured_match_geo for ', geoPos, e);
+  }
 }
 
-async function deleteCacheFeaturedMatch() {
-    await redis.del('featured_match')
-    return
+async function cacheFeaturedMatchLang(lang: string, json_cache: Cache_Single_Lang_Featured_Match_Translation_Response) {
+  try {
+    // [ℹ] persist redis (cache)
+    await redis.hset('featured_match_t', lang, JSON.stringify(json_cache));
+    // [🐛] debug
+    if (dev) console.debug('✅ featured_match_t lang ', lang, 'cached')
+  } 
+  catch (e) {
+    console.error('❌ unable to cache featured_match_t for ', lang, e);
+  }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  STANDARD API FALLBACK
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// - getAllMatchSelectedFixtures()
-// - getFeaturedMatchData()
-// - getSelectedFixture(userGeoLang: string)
-// - get_CompleteFixtureData(fixture_id: number)
-// - get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre)
-// - assignValueBetsData()
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+async function deleteCacheFeaturedMatchGeoPos() {
+  await redis.del('featured_match_geo')
+  return
+}
 
-// ... contains all of the `match-selected-fixtures` data;
+async function deleteCacheFeaturedMatchLang() {
+  await redis.del('featured_match_t')
+  return
+}
+
+/**
+ * [ℹ] Featured Match CACHE GENERATION
+*/
+
+async function featuredMatchGeoDataGeneration () {
+
+  // [ℹ] clear cache data
+  await deleteCacheFeaturedMatchGeoPos()
+
+  // [ℹ] get all SELECTED FIXTURES from HASURA-DB;
+  const response = await getAllMatchSelectedFixtures()
+
+  // [ℹ] iterate over EACH SELECTED FIXTURE 
+  // [ℹ] & cache => geoPos-by-geoPos;
+  for await (const selected_fixture of response.widget_featured_match_selection) {
+    userGeo = selected_fixture.lang
+    const response_cache = await getFeaturedMatchData()
+    // [ℹ] cache-response;
+    await cacheFeaturedMatchGeoPos(userGeo, response_cache);
+  }
+}
+
+async function featuredMatchLangDataGeneration (langArray: string[]) {
+
+  let finalCacheObj: Cache_Single_Lang_Featured_Match_Translation_Response = undefined
+
+  const response: Featured_Match_Translation_Response = await initGrapQLClient().request(GET_FEATURED_MATCH_TRANSLATION)
+
+  deleteCacheFeaturedMatchLang()
+
+  // [ℹ] for-each available translation:
+  for (const lang_ of langArray) {
+    
+    finalCacheObj = response.widget_featured_match_translations.find(( { lang } ) => lang_ === lang);
+
+    // [ℹ] persist-cache-response;
+    await cacheFeaturedMatchLang(lang_, finalCacheObj);
+  }
+  
+}
+
+/**
+ * [ℹ] Featured Match Methods
+*/
+
+// [ℹ] contains all of the `match-selected-fixtures` data;
 async function getAllMatchSelectedFixtures(): Promise < SelectedFixture_AllData > {
-    // ... DEBUGGING;
-    if (dev) console.info('-- getting all of the selected-match-fixtures --')
-    // ... push-GRAPH-QL-request;
-    const response = await initGrapQLClient().request(GET_ALL_SELECTED_MATCH_FIXTURES)
-    // ... DEBUGGING;
-    if (dev) console.info('-- response getAllMatchSelectedFixtures() --', response)
-    // ... reutrn response;
-    return response
+  // [ℹ] push-GRAPH-QL-request;
+  const response = await initGrapQLClient().request(GET_ALL_SELECTED_MATCH_FIXTURES)
+  // [ℹ] reutrn response;
+  return response
 }
 
-// ... contains the main METHOD for DATA AGGREGATION & ASSIGNING;
+// [ℹ] contains the main METHOD for DATA AGGREGATION & ASSIGNING;
 async function getFeaturedMatchData(): Promise < FixtureResponse > {
-    // ... obtain the target-selected-fixture [HASURA-DB] [FEATURED-MATCH + TRANSLATION DATA]
-    const selectedFixture = await getSelectedFixture(userGeo)
-    // ... [selectedFixture] break-down response;
-    const selected_fixture_id = selectedFixture.widget_featured_match_selection[0].fixture_id
 
-    // ... continue; 
-    // ... create a promise, for obtaining the complete fixture odds data;
-    const promise = await get_TargetFixtureOddsAndInfo(selectedFixture.widget_featured_match_selection[0])
+  // [ℹ] obtain the target-selected-fixture [HASURA-DB] [FEATURED-MATCH + TRANSLATION DATA]
+  const selectedFixture = await getSelectedFixture(userGeo)
 
-    // ... continue; 
-    // ... get the complete fixture data in one JSON Object;
-    const completeData = await get_CompleteFixtureData(selected_fixture_id)
-    // ... [completeData] break-down response;
-    // ...
-    WIDGET_SELECTED_FIXTURE_DATA = completeData.week_fixtures_by_pk
-    // ...
-    WIDGET_SELECTED_FIXTURE_DATA.best_players = completeData.widget_featured_match_best_player_by_pk
-    // ...
-    WIDGET_SELECTED_FIXTURE_DATA.match_votes = completeData.widget_featured_match_votes_by_pk
-    // ... 
-    WIDGET_SELECTED_FIXTURE_DATA.live_odds = promise
-    // ... 
-    WIDGET_SELECTED_FIXTURE_DATA.translation = selectedFixture.widget_featured_match_translations
-    // ... 
-    WIDGET_SELECTED_FIXTURE_DATA.selected_data = selectedFixture.widget_featured_match_selection[0]
+  // [ℹ] [selectedFixture] break-down response;
+  const selected_fixture_id = selectedFixture.widget_featured_match_selection[0].fixture_id
 
-    // ... continue; 
-    // ... get the fixture value-bets;
-    // ... handles `WIDGET_SELECTED_FIXTURE_DATA.valuebets`
-    if (WIDGET_SELECTED_FIXTURE_DATA.valuebets != null) {
-        await assignValueBetsData();
-    }
+  // [ℹ] continue; 
+  // [ℹ] create a promise, for obtaining the complete fixture odds data;
+  const promise = await get_TargetFixtureOddsAndInfo(selectedFixture.widget_featured_match_selection[0])
 
-    // ... RETURN COMPLETE FEATRUED_MATCH_DATA;
-    return WIDGET_SELECTED_FIXTURE_DATA
+  // [ℹ] continue; 
+  // [ℹ] get the complete fixture data in one JSON Object;
+  const completeData = await get_CompleteFixtureData(selected_fixture_id)
+
+  // [ℹ] [completeData] break-down response;
+  WIDGET_SELECTED_FIXTURE_DATA = completeData.week_fixtures_by_pk
+  WIDGET_SELECTED_FIXTURE_DATA.best_players = completeData.widget_featured_match_best_player_by_pk
+  WIDGET_SELECTED_FIXTURE_DATA.match_votes = completeData.widget_featured_match_votes_by_pk
+  WIDGET_SELECTED_FIXTURE_DATA.live_odds = promise
+  // WIDGET_SELECTED_FIXTURE_DATA.translation = selectedFixture.widget_featured_match_translations
+  WIDGET_SELECTED_FIXTURE_DATA.selected_data = selectedFixture.widget_featured_match_selection[0]
+
+  // [ℹ] continue; 
+  // [ℹ] get the fixture value-bets;
+  // [ℹ] handles `WIDGET_SELECTED_FIXTURE_DATA.valuebets`
+  if (WIDGET_SELECTED_FIXTURE_DATA.valuebets != null) {
+      await assignValueBetsData();
+  }
+
+  // [ℹ] RETURN COMPLETE FEATRUED_MATCH_DATA;
+  return WIDGET_SELECTED_FIXTURE_DATA
 }
 
-// ... [WORKING]
 async function getSelectedFixture(lang: string) {
-    // ... DEBUGGING;
-    if (dev) console.info('lang', lang)
-    // ... declare variables for GRAPH-QL-REQUEST;
-    const variables = { 
-        lang: lang
-    }
-    // ... push-GRAPH-QL-request;
-    const response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
-    // ... DEBUGGING;
-    if (dev) console.info('-- response getSelectedFixture() --', response)
-    // ... reutrn response;
-    return response
+  // [ℹ] declare variables for GRAPH-QL-REQUEST;
+  const variables = { 
+    lang: lang
+  }
+  // [ℹ] push-GRAPH-QL-request;
+  const response = await initGrapQLClient().request(GET_LANG_SELECTED_FIXTURE, variables)
+  // [ℹ] reutrn response;
+  return response
 }
 
-// ... [WORKING]
 async function get_CompleteFixtureData(fixture_id: number): Promise < CompleteFixtureData_Response > {
-    // ... DEBUGGING;
-    if (dev) console.info('-- fixture_id --', fixture_id)
-    // ... declare variables for GRAPH-QL-REQUEST;
-    const variables = { 
-        id: fixture_id, 
-        fixture_id: fixture_id 
-    }
-    // ... push-GRAPH-QL-request;
-    const response = await initGrapQLClient().request(GET_ALL_FIXTURE_DATA, variables)
-    // ... DEBUGGING;
-    if (dev) console.info('-- response get_CompleteFixtureData() --', response)
-    // ... reutrn response;
-    return response;
+  // [ℹ] declare variables for GRAPH-QL-REQUEST;
+  const variables = { 
+    id: fixture_id, 
+    fixture_id: fixture_id 
+  }
+  // [ℹ] push-GRAPH-QL-request;
+  const response = await initGrapQLClient().request(GET_ALL_FIXTURE_DATA, variables)
+  // [ℹ] reutrn response;
+  return response;
 }
 
-// ... [WORKING]
 async function get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre): Promise < SelectedFixture_LiveOdds_Response > {
-    // ... get the list of the odds for the;
-    const response = await getTargetFixtureOdds(selectedFixutreData)
-    // ... return,
-    return response
+  // [ℹ] get the list of the odds for the;
+  const response = await getTargetFixtureOdds(selectedFixutreData)
+  // [ℹ] return,
+  return response
 }
 
-// ... [WORKING]
 async function assignValueBetsData(): Promise < void > {
-    // ... obtain-target-fixture-bookmaker-site-name;
-    const siteName: string = WIDGET_SELECTED_FIXTURE_DATA.valuebets.bookmaker
-    // ... pass-in-sport-book-details-parameters;
-    const sportbook_details: any = await getTargetGeoSportBookDetails(
-        userGeo,
-        siteName
-    )
-    // ... check if the data returned exists;
-    if (Object.keys(sportbook_details).length === 0) {
-        // ... if not, return `null`;
-        WIDGET_SELECTED_FIXTURE_DATA.valuebets = null
-        return
+  // [ℹ] obtain-target-fixture-bookmaker-site-name;
+  const siteName: string = WIDGET_SELECTED_FIXTURE_DATA.valuebets.bookmaker
+  // [ℹ] pass-in-sport-book-details-parameters;
+  const sportbook_details: any = await getTargetGeoSportBookDetails(
+    userGeo,
+    siteName
+  )
+  // [ℹ] check if the data returned exists;
+  if (Object.keys(sportbook_details).length === 0) {
+    // [ℹ] if not, return `null`;
+    WIDGET_SELECTED_FIXTURE_DATA.valuebets = null
+    return
+  }
+  else {
+    // [ℹ] otherwise, append the image & the registration link to the data;
+    WIDGET_SELECTED_FIXTURE_DATA.valuebets = {
+      ...WIDGET_SELECTED_FIXTURE_DATA.valuebets,
+      image: sportbook_details.betting_site_info.image,
+      link: sportbook_details.betting_site_info.register_link,
     }
-    else {
-        // ... otherwise, append the image & the registration link to the data;
-        WIDGET_SELECTED_FIXTURE_DATA.valuebets = {
-            ...WIDGET_SELECTED_FIXTURE_DATA.valuebets,
-            image: sportbook_details.betting_site_info.image,
-            link: sportbook_details.betting_site_info.register_link,
-        }
-    }
+  }
 }

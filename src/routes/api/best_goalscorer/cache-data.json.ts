@@ -1,77 +1,108 @@
 
-// ... import $app `modules`;
+// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
-
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
-
-// ... DECLARING TYPESCRIPT-TYPES imports;
-import type { GoalScorers_Cache_Ready } from "$lib/models/best_goalscorer/types"
-
-// ... server-variables;
-let userGeo: string
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+import type { 
+  Cache_Single_Geo_GoalScorers_Translation_Response, 
+  Cache_Single_Lang_GoalScorers_Translation_Response 
+} from '$lib/models/best_goalscorer/types';
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function post({ params, request }, res): Promise < any > {
-    // ... ℹ extract the 'geo_js';
-    userGeo = await request.json(); // or request.json(), etc
-    // ... 🐛 DEBUGGING;
-    if (dev) console.info('ℹ cache-data.json userGeo', userGeo)
+export async function get(req: { url: { [x: string]: { get: (arg0: string) => string; }; }; }, res: any): Promise < unknown > {
 
-    // ... ℹ check for cache-existance [IN THE USER-GEO-POS];
-    const response_usergeo = await get_Best_Goalscorer_FromCache(userGeo)
-    // ... ℹ return RESPONSE;
+  const geoPos: string = req.url['searchParams'].get('geoPos');
+  const lang: string = req.url['searchParams'].get('lang');
+
+  // [ℹ] widget data
+  if (geoPos) {
+    // [ℹ] check for cache-existance [IN THE USER-GEO-POS];
+    const response_usergeo = await getCacheBestGoalscorersForGeoPos (geoPos)
     if (response_usergeo) {
-        return {
-            body: response_usergeo
-        }
+      return {
+        status: 200,
+        body: response_usergeo
+      }
     }
 
-    // ... ℹ otherwise, return the "EN" version - default;
-    const response_en = await get_Best_Goalscorer_FromCache('en')
-    // ... ℹ return RESPONSE;
+    // [ℹ] otherwise, return the "EN" version - default;
+    const response_en = await getCacheBestGoalscorersForGeoPos ('en')
     if (response_en) {
-        return {
-            body: response_en
-        }
+      return {
+        status: 200,
+        body: response_en
+      }
     }
 
-    // ... ℹ otherwise, there is NO BEST PLAYERS available;
+    // [ℹ] otherwise, there is NO MATCHES available;
     return {
-        body: null
+      status: 200,
+      body: null
     }
+  }
+  
+  // [ℹ] translation (also SEO)
+  if (lang) {
+    const response_cache = await getCacheBestGoalscorersForLang (lang)
+    if (response_cache) {
+      return {
+        status: 200,
+        body: response_cache
+      }
+    }
+  }
+
+  // [ℹ] should never happen;
+  return {
+    body: null
+  }    
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// - get_Best_Goalscorer_FromCache(geoPos)
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+/**
+ * [ℹ] Featured Match CACHEING ACTIONS METHODS
+*/
 
-async function get_Best_Goalscorer_FromCache(geoPos: string): Promise < GoalScorers_Cache_Ready | Record < string, never > > {
-    // ... ℹ TRY;
-    try {
-        // ... ℹ cached data retrival;
-        const cached: string = await redis.hget('best_goalscorer', geoPos);
-        // ... ℹ check for `cached` data
-        if (cached) {
-            // ... ℹ convert the data from `string` to `JSON`
-            const parsed: GoalScorers_Cache_Ready = JSON.parse(cached);
-            // ... 🐛 DEBUGGING;
-            if (dev) console.info(`✅ found best_goalscorer ${geoPos} in cache`);
-            // ... ℹ return, cached data;
-            return parsed;
-        }
-        return
-    } 
-    // ... ℹ CATCH, ERROR;
-    catch (e) {
-        // ... ℹ error, return;
-        console.debug("❌ unable to retrieve from cache", geoPos, e);
-        return
+async function getCacheBestGoalscorersForGeoPos (geoPos: string): Promise < Cache_Single_Geo_GoalScorers_Translation_Response | Record < string, never > > {
+  try {
+    // [ℹ] cached data retrival;
+    const cached: string = await redis.hget('best_goalscorer_geo', geoPos);
+    // [ℹ] check for `cached` data
+    if (cached) {
+      // [ℹ] convert the data from `string` to `JSON`
+      const parsed: Cache_Single_Geo_GoalScorers_Translation_Response = JSON.parse(cached);
+      // [🐛] debug;
+      if (dev) console.info("✅ best_goalscorer_geo cache HIT", geoPos);
+      // [ℹ] return, cached data;
+      return parsed;
     }
-    // ... error, return;
     return
+  } 
+  catch (e) {
+    console.debug("❌ best_goalscorer_geo cache MISS", geoPos, e);
+    return
+  }
+}
+
+async function getCacheBestGoalscorersForLang (lang: string): Promise < Cache_Single_Lang_GoalScorers_Translation_Response | Record < string, never > > {
+  try {
+    // [ℹ] cached data retrival;
+    const cached: string = await redis.hget('best_goalscorer_t', lang);
+    // [ℹ] check for `cached` data
+    if (cached) {
+      // [ℹ] convert the data from `string` to `JSON`
+      const parsed: Cache_Single_Lang_GoalScorers_Translation_Response = JSON.parse(cached);
+      // [🐛] debug;
+      if (dev) console.info("✅ best_goalscorer_t cache HIT", lang);
+      // [ℹ] return, cached data;
+      return parsed;
+    }
+    return
+  } 
+  catch (e) {
+    console.debug("❌ best_goalscorer_t cache MISS", lang, e);
+    return
+  }
 }

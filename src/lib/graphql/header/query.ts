@@ -40,5 +40,9 @@ export const GET_NAVBAR_DATA = gql`
       status
       message
     }
+    scores_hreflang_dev {
+      hreflang
+      link
+    }
 	}
 `;

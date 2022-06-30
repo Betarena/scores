@@ -7,6 +7,21 @@ import { gql } from 'graphql-request';
  * ... get ALL of the TRANSLATIONS from the DB
  * for the website-platform
 */
+export const GET_HREFLANG_DATA = gql`
+query GET_HREFLANG_DATA @cached(ttl: 300) {
+   scores_hreflang_dev {
+     hreflang
+     link
+   }
+ }
+`;
+
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... get ALL of the TRANSLATIONS from the DB
+ * for the website-platform
+*/
  export const GET_FOOTER_DATA = gql`
  query GET_FOOTER_DATA @cached(ttl: 300) {
 		scores_footer_translations {
@@ -30,9 +45,12 @@ import { gql } from 'graphql-request';
 			terms
 			social_networks
 		}
+    scores_hreflang_dev {
+      hreflang
+      link
+    }
 	}
 `;
-
 
 /**
  * Description
@@ -194,8 +212,6 @@ export const GET_ALL_FIXTURE_DATA = gql`
 	}
 `;
 
-
-
 /**
  * Description
  * ~~~~~~~~~~~~~
@@ -213,7 +229,6 @@ export const GET_ALL_FIXTURE_DATA = gql`
 	}
 `;
 
-
 /**
  * Description
  * ~~~~~~~~~~~~~
@@ -228,3 +243,4 @@ export const GET_ALL_FIXTURE_DATA = gql`
 	}
   }
 `;
+
