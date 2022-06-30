@@ -1149,7 +1149,7 @@
             {#each STANDINGS_DATA.seasons as season}
               {#if season.season_id === $session.selectedSeasonID}
                 {#each season[selectedOpt] as team}
-                  <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} />
+                  <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
                 {/each}
               {/if}
             {/each}
