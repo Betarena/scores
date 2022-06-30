@@ -51,5 +51,50 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       data
       lang
     }
+
+    # TOURNAMENTS / STANDINGS WIDGET
+    scores_football_standings_dev {
+      data
+      id
+      name
+      type
+    }
+    scores_football_standings_history_dev {
+      id
+      data
+      name
+      season_id
+      type
+    }
+    scores_team_statistics_dev {
+      average_goals
+      average_yellow_cards
+      data
+      name
+      team_id
+      winning_probability
+    }
+    scores_team_statistics_history_dev {
+      average_goals
+      average_yellow_cards
+      data
+      name
+      season_id
+      team_id
+    }
+    color_codes_league_standings_positions_dev {
+      color_codes
+      sports
+    }
+    scores_widget_standings_translations_dev {
+      lang
+      translations
+    }
+    scores_football_teams_dev {
+      data
+      id
+      name
+    }
+
   }
 `;

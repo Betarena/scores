@@ -4,6 +4,8 @@ node_modules
 /.svelte-kit
 /package
 
+# [CRITICAL TO BE UN-TRACKED]
 .env
 
 WEBSITE-DEV-README.md
+datalog/

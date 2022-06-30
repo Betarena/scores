@@ -52,7 +52,6 @@ query GET_HREFLANG_DATA @cached(ttl: 300) {
 	}
 `;
 
-
 /**
  * Description
  * ~~~~~~~~~~~~~
@@ -213,8 +212,6 @@ export const GET_ALL_FIXTURE_DATA = gql`
 	}
 `;
 
-
-
 /**
  * Description
  * ~~~~~~~~~~~~~
@@ -232,7 +229,6 @@ export const GET_ALL_FIXTURE_DATA = gql`
 	}
 `;
 
-
 /**
  * Description
  * ~~~~~~~~~~~~~
@@ -247,3 +243,4 @@ export const GET_ALL_FIXTURE_DATA = gql`
 	}
   }
 `;
+
