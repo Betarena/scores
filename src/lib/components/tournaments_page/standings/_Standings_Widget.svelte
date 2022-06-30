@@ -1357,10 +1357,10 @@
 	table.standings_table {
 		text-align: left;
 		border-collapse: collapse;
-		width: 100%;
+		/* width: 100%; */
     /* extra */
     margin-bottom: 20px;
-    width: -webkit-fill-available;
+    /* width: -webkit-fill-available; */
 	}	table.standings_table .row-head {
 		background: #f2f2f2;
 		border-radius: 2px;
