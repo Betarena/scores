@@ -172,6 +172,11 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
+    // [ℹ] demestic ONLY check;
+    if (iterator.type != "domestic") {
+      continue
+    }
+ 
     // [ℹ] /{lang} or / generation URL
     url = iterator.lang == 'en' 
     ? '/' 
@@ -259,6 +264,11 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+
+    // [ℹ] demestic ONLY check;
+    if (iterator.type != "domestic") {
+      continue
+    }
 
     // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
     const url = iterator.lang == 'en' 
