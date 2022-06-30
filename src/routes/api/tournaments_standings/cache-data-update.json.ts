@@ -325,7 +325,8 @@ async function standingsDataGenerationAlt () {
 
         const team_logo: string = response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
         const team_name: string =
-          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null
+          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
+          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
             ? season_team?.team_name
             : response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
 
