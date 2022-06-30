@@ -9,7 +9,7 @@ import { gql } from 'graphql-request';
 */
 export const GET_HREFLANG_DATA = gql`
 query GET_HREFLANG_DATA @cached(ttl: 300) {
-   scores_hreflang_dev {
+   scores_hreflang {
      hreflang
      link
    }
@@ -45,7 +45,7 @@ query GET_HREFLANG_DATA @cached(ttl: 300) {
 			terms
 			social_networks
 		}
-    scores_hreflang_dev {
+    scores_hreflang {
       hreflang
       link
     }

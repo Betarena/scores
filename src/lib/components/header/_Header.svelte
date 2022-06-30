@@ -295,7 +295,7 @@
 
       userBetarenaSettings.setGeoJs(userGeoResponse)
       // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
-      const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
+      const result = HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries.find(function(item) { 
         return item[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
       });
 
@@ -315,7 +315,7 @@
       userBetarenaSettings.setGeoJs(userGeoResponse_V2)
 
       // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
-      const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
+      const result = HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries.find(function(item) { 
         return item[0].toString().toLowerCase() === userGeo_v2.toString().toLowerCase() 
       });
 
@@ -485,19 +485,19 @@
         <!-- [ℹ] NAV BUTTONS -->
         {#if !mobileExclusive}
           <!-- [ℹ] latest news -->
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.latest_news}>
+          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.latest_news}>
             <button class="btn-main">
               <p class="color-white s-14">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.content_platform_link}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.content_platform_link}
               </p>
             </button>
           </a>
 
           <!-- [ℹ] betting-tips -->
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.betting_tips}>
+          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
             <button class="btn-main">
               <p class="color-white s-14">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.betting_tips_link}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
               </p>
             </button>
           </a>
@@ -515,17 +515,17 @@
               on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
             >
               <p class="color-grey s-12 m-b-5">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.theme}
               </p>
               <div class="row-space-start">
                 <img
                   class="m-r-5"
                   src={light_icon_theme}
-                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries[0][1]}"
+                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries[0][1]}"
                   width="16px"
                   height="16px"
                 />
-                {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   {#if theme.includes($userBetarenaSettings.theme)}
                     <p class="color-white s-14">
                       {theme[1]}
@@ -555,7 +555,7 @@
             <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
             {#if dropdown_theme_visible}
               <div id="theme-dropdown-menu" transition:fly>
-                {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   <div
                     class="theme-opt-box row-space-out"
                     on:click={() => selectedTheme(theme[0])}
@@ -581,10 +581,10 @@
             <!-- [ℹ] name of the container-opt -->
             <div class="m-r-10">
               <p class="color-grey s-12 m-b-5">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.odds}
               </p>
               <p class="color-white s-14">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type[0]}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.odds_type[0]}
               </p>
             </div>
             <!-- [ℹ] arrow down [hidden-menu] -->
@@ -597,7 +597,7 @@
             {#if dropdown_odds_type_visible}
               <!-- [ℹ] dropdown-menu -->
               <div id="odds-type-dropdown-menu" transition:fly>
-                {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type as odd}
+                {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
                   <div
                     class="theme-opt-box"
                     on:click={() => (dropdown_odds_type_visible = false)}
@@ -620,11 +620,11 @@
             <!-- [ℹ] name of the container-opt -->
             <div class="m-r-10">
               <p class="color-grey s-12 m-b-5">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers}
               </p>
               <div class="row-space-start">
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
-                  {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                  {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     {#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
                       <img
                         class="country-flag m-r-5"
@@ -651,7 +651,7 @@
             {#if dropdown_bookmakers_visible}
               <div id="bookmakers-type-dropdown-menu" transition:fly>
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
-                  {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                  {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     <div
                       class="theme-opt-box row-space-start"
                       class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toString().toUpperCase()}
@@ -681,16 +681,16 @@
             id="sign-in-btn"
             class="cursor-not-allowed">
             <p class="color-white s-14">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sign_in}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
             </p>
           </button>
         {/if}
 
         {#if mobileExclusive}
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.betting_tips}>
+          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
             <!-- [ℹ] betting-tips -->
             <p class="color-white s-14">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.betting_tips_link}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
             </p>
           </a>
         {/if}
@@ -714,50 +714,50 @@
           <!-- -->
           {#each { length: 7 } as _, i}
             <!-- [ℹ] check - if sport is column -->
-            {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toString().toLowerCase()] != null}
+            {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()] != null}
               <!-- content here -->
               <button
                 class="sports-btn m-r-10"
-                on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0])}
-                class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]} >
+                on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
                 <img
                   class="m-r-10"
-                  src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toLocaleLowerCase()}.svg`}
-                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]}-img"
+                  src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
                   width="20px"
                   height="20px" />
 
                 <p 
                   class="color-white s-14 m-r-10">
-                  {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][1]}
+                  {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
                 </p>
 
                 <p 
                   class="color-white s-14 sport-counter">
-                  {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toString().toLowerCase()]}
+                  {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
                 </p>
               </button>
             {:else}
               <!-- else content here -->
               {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
                 <!-- content here -->
-                {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
+                {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
                   <!-- content here -->
                   <button
                     class="sports-btn m-r-10 cursor-not-allowed"
-                    on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0])}
-                    class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]} >
+                    on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                    class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
                     <img
                       class="m-r-10 soon-opacitiy"
-                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toLocaleLowerCase()}.svg`}
-                      alt="${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]}-img"
+                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                      alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
                       width="20px"
                       height="20px"
                     />
 
                     <p 
                       class="color-white s-14 m-r-10 soon-opacitiy">
-                      {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][1]}
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
                     </p>
 
                     <p 
@@ -790,7 +790,7 @@
               height="20px"
             />
             <p class="color-white s-14 m-r-10">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.more_sports}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.more_sports}
             </p>
             <!-- [ℹ] arrow down [hidden-menu] -->
             {#if !dropdown_more_sports_menu}
@@ -807,7 +807,7 @@
             on:click={() => (mobileExclusiveMoreSports = !mobileExclusiveMoreSports)}
           >
             <p class="color-white s-14">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.more_sports}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.more_sports}
             </p>
           </button>
         {/if}
@@ -819,7 +819,7 @@
             id="more-sports-dropdown-menu" 
             transition:fly >
             <!-- -->
-            {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports as sport}
+            {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
               
               <!-- [ℹ] check - if sport is column -->
               {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0].toString().toLowerCase()] != null}
@@ -949,7 +949,7 @@
                 {#if mobileExclusive}
                   <button id="sign-in-btn">
                     <p class="color-white s-14">
-                      {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sign_in}
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
                     </p>
                   </button>
                 {/if}
@@ -966,7 +966,7 @@
               <div class="side-nav-row">
                 <a sveltekit:prefetch href='/'>
                   <p class="color-white s-14">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.homepage}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.homepage}
                   </p>
                 </a>
               </div>
@@ -974,18 +974,18 @@
               <!-- [ℹ] link-based-redirects -->
               <!-- [ℹ] latest-news -->
               <div class="side-nav-row">
-                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.latest_news}>
+                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.latest_news}>
                   <p class="color-white s-14">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.content_platform_link}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.content_platform_link}
                   </p>
                 </a>
               </div>
 
               <!-- [ℹ] betting-tips -->
               <div class="side-nav-row">
-                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.betting_tips}>
+                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
                   <p class="color-white s-14">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.betting_tips_link}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
                   </p>
                 </a>
               </div>
@@ -998,18 +998,18 @@
                   on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
                 >
                   <p class="color-grey s-12 m-b-5">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.theme}
                   </p>
                   <div class="row-space-out">
                     <div class="row-space-start">
                       <img
                         class="m-r-5"
                         src={light_icon_theme}
-                        alt={HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries[0][1]}
+                        alt={HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries[0][1]}
                         width="16px"
                         height="16px"
                       />
-                      {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                      {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                         {#if theme.includes($userBetarenaSettings.theme)}
                           <p class="color-white s-14">
                             {theme[1]}
@@ -1033,7 +1033,7 @@
                 <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
                 {#if dropdown_theme_visible}
                   <div transition:fly>
-                    {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                       <div
                         class="side-nav-dropdown-opt row-space-out"
                         on:click={() => selectedTheme(theme[0])}
@@ -1058,11 +1058,11 @@
                 <!-- [ℹ] name of the container-opt -->
                 <div class="m-b-15">
                   <p class="color-grey s-12 m-b-5">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.odds}
                   </p>
                   <div class="row-space-out">
                     <p class="color-white s-14">
-                      {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type[0]}
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.odds_type[0]}
                     </p>
                     <!-- [ℹ] arrow down [hidden-menu] -->
                     {#if !dropdown_odds_type_visible}
@@ -1080,7 +1080,7 @@
                 <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
                 {#if dropdown_odds_type_visible}
                   <div transition:fly>
-                    {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type as odd}
+                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
                       <div
                         class="side-nav-dropdown-opt"
                         on:click={() => (dropdown_odds_type_visible = false)}
@@ -1102,12 +1102,12 @@
                 <!-- [ℹ] name of the container-opt -->
                 <div class="m-b-15">
                   <p class="color-grey s-12 m-b-5">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers}
                   </p>
                   <div class="row-space-out">
                     <div class="row-space-start">
                       {#if $userBetarenaSettings.country_bookmaker != undefined}
-                        {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                        {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                           {#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
                             <img
                               class="country-flag m-r-5"
@@ -1140,7 +1140,7 @@
                 {#if dropdown_bookmakers_visible}
                   <div transition:fly>
                     {#if $userBetarenaSettings.country_bookmaker != undefined}
-                      {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                      {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                         <div
                           class="side-nav-dropdown-opt row-space-start"
                           on:click={() => selectedCountryBookmakers(country[0])}
@@ -1188,7 +1188,7 @@
             <div class="row-space-out">
               <!-- .. title -->
               <p class="s-20 color-white">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports_list}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.sports_list}
               </p>
 
               <!-- [ℹ] close-side-nav -->
@@ -1205,7 +1205,7 @@
             <div 
               id="mobile-sports-grid" 
               class="column-start-grid-start m-t-25">
-              {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports as sport}
+              {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
                 <!-- [ℹ] check - if sport is column -->
                 {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0].toString().toLowerCase()] != null}
                   <button 
