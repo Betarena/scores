@@ -500,12 +500,12 @@ async function standingsDataGenerationAlt () {
   }
 
   // [🐛] debug
-  const data = JSON.stringify(final_obj_array, null, 4)
-  fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
-    if (err) {
-      console.error(err);
-    }
-  });
+  // const data = JSON.stringify(final_obj_array, null, 4)
+  // fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
+  //   if (err) {
+  //     console.error(err);
+  //   }
+  // });
 
   return
 }
