@@ -142,3 +142,19 @@ https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspa
 ### Other:
 
 - [sveltekit-awesome](https://github.com/janosh/awesome-svelte-kit)
+
+### Update Caching at once:
+
+```
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/pages_and_seo/cache-seo-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/navbar/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/footer/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/featured_match/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/featured_betting_sites/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/best_goalscorer/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/league_list/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/leagues_table/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/seo_block/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/tournaments/league_info/cache-data-update.json';
+Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/tournaments_standings/cache-data-update.json';
+```

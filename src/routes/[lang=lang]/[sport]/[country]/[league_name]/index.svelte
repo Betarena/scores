@@ -83,7 +83,21 @@
     let enItemAlt = response_tournaments_page_info.alternate_data.find( ({ lang }) => lang === 'en' );
     response_tournaments_seo.main_data.canonical = `https://scores.betarena.com/${enItemAlt.sport.toLowerCase()}/${enItemAlt.country.toLowerCase()}/${enItemAlt.name.replace(/\s/g,'-').toLowerCase()}`
 
+    /**
+     * [ℹ] widgets data gather cache fetch 
+    */
+
     const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments/league_info/cache-data.json?url=`+url.pathname, {
+			method: 'GET'
+		}).then((r) => r.json());
+    
+    // [ℹ] standings-widget cache data is dependent on the LEAGUE-ID;
+    const response_standings_translations: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = await fetch(`/api/tournaments_standings/cache-data.json?lang=`+urlLang, {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    const league_id = response_tournaments_page_info.data.tournament_id;
+    const response_standings_data: Cache_Single_Tournaments_League_Standings_Info_Data_Response = await fetch(`/api/tournaments_standings/cache-data.json?league_id=`+league_id, {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -96,13 +110,17 @@
     // [ℹ] page -> response data chceck
 		if (response_tournaments_seo &&
         response_tournaments_page_info && 
-        response_league_info) {
+        response_league_info &&
+        response_standings_translations &&
+        response_standings_data) {
       return {
         props: {
           PAGE_DATA_SEO: response_tournaments_seo,
           TOURNAMENT_DATA_TRANSLATED_COPIES: response_tournaments_page_info.alternate_data,
           TOURNAMENT_DATA: response_tournaments_page_info.data,
-          LEAGUE_INFO_DATA: response_league_info
+          LEAGUE_INFO_DATA: response_league_info,
+          STANDINGS_T: response_standings_translations,
+          STANDINGS_DATA: response_standings_data
         }
       } 
     }
@@ -124,6 +142,7 @@
 
 
 <script lang="ts">
+
   import { goto, invalidate, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
   import { browser } from '$app/env';
@@ -136,6 +155,7 @@
   */
 
   import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
+  import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
@@ -151,20 +171,28 @@
 
   */
  
-  import type { Cache_Single_Tournaments_Data_Page_Translation_Response, 
+  import type { 
+    Cache_Single_Tournaments_Data_Page_Translation_Response, 
     Cache_Single_Tournaments_SEO_Translation_Response, 
     Hasura_Complete_Pages_SEO, 
     Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
 
-  import { userBetarenaSettings } from '$lib/store/user-settings';
-  import type { Cache_Single_Tournaments_League_Info_Data_Response } from '$lib/models/tournaments/types';
+  import type { 
+    Cache_Single_Tournaments_League_Info_Data_Response, 
+    Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
+    Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
+  } from '$lib/models/tournaments/types';
 
-  export let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+
+  export let PAGE_DATA_SEO:                     Cache_Single_Tournaments_SEO_Translation_Response;
   export let TOURNAMENT_DATA_TRANSLATED_COPIES: Single_Tournament_Data_Type[];
-  export let TOURNAMENT_DATA: Single_Tournament_Data_Type;
-  export let LEAGUE_INFO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
-    
-  // TODO: replace into a single __layout.svelte method [?] using page-stores [?]
+  export let TOURNAMENT_DATA:                   Single_Tournament_Data_Type;
+  export let LEAGUE_INFO_DATA:                  Cache_Single_Tournaments_League_Info_Data_Response;
+  export let STANDINGS_T:                       Cache_Single_Tournaments_League_Standings_Translation_Data_Response;
+  export let STANDINGS_DATA:                    Cache_Single_Tournaments_League_Standings_Info_Data_Response;
+
+  // TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
   // [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
   let current_lang: string = $userBetarenaSettings.lang;
@@ -201,6 +229,7 @@
     // prefetch(newURL);
     goto(newURL, { replaceState: true })
 	}
+
 </script>
 
 
@@ -268,7 +297,7 @@
   {/if}
 </svelte:head>
 
-<!-- [ℹ] SEO-DATA-LOADED 
+<!-- [ℹ] SEO-DATA-LOADED [ALTERNATIVE]
 {#if !browser}
   
   <div 
@@ -340,10 +369,26 @@
   <!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
   <svelte:component this={LeagueInfoWidget} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
 
-  <!-- [ℹ] widgets displayed -->
-  <div>
-    {TOURNAMENT_DATA.widgets}
+  <div
+    id="widget-grid-display">
+
+    <div 
+      class='grid-display-column'>
+      <svelte:component this={StandingsWidget} {STANDINGS_T} {STANDINGS_DATA} />
+    </div>
+
+    <div 
+      class='grid-display-column'>
+      <!-- [EMPTY] -->
+    </div>
+
   </div>
+
+
+  <!-- [ℹ] widgets displayed -->
+  <!-- <div> -->
+    <!-- {TOURNAMENT_DATA.widgets} -->
+  <!-- </div> -->
       
 </section>
 
@@ -355,6 +400,7 @@
 
 <style>
 
+  /* SEO ALT. WIDGET PAGE */
   #seo-widget-container {
 		position: absolute;
 		z-index: -100;
@@ -370,13 +416,48 @@
 		align-items: start;
 	}
 
+  div#widget-grid-display {
+		display: grid;
+    margin-top: 24px;
+  }
+
+  div.grid-display-column {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+
   div#tournaments-page-breadcrumbs p.capitalize {
     text-transform: capitalize;
-  }
-  div#tournaments-page-breadcrumbs > p {
+  } div#tournaments-page-breadcrumbs > p {
     color: #8C8C8C !important;
-  }
-  div#tournaments-page-breadcrumbs a > p:hover {
+  } div#tournaments-page-breadcrumbs a > p:hover {
     color: #f5620f !important; 
   }
+
+  /* 
+  RESPONSIVE FOR TABLET (&+) [768px] */
+	@media only screen and (min-width: 768px) {
+		div#widget-grid-display {
+			grid-template-columns: 1fr;
+		}
+	}
+
+  /* 
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+	@media only screen and (min-width: 1160px) {
+		div#widget-grid-display {
+			gap: 20px;
+      grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
+		}
+	}
+
+  /* 
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+	@media only screen and (min-width: 1320px) {
+		div#widget-grid-display {
+			gap: 20px;
+      grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
+		}
+	}
 </style>
