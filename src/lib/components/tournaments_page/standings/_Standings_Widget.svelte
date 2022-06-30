@@ -197,8 +197,12 @@
     widgetInit()
   })
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // REACTIVE SVELTE OTHER
+  // ~~~~~~~~~~~~~~~~~~~~~
+
   let loadedCurrentSeason: boolean = false;
-  $: if ($session.selectedSeasonID != undefined && !loadedCurrentSeason) {
+  $: if (browser && $session.selectedSeasonID != undefined && !loadedCurrentSeason) {
     currentSeason = $session.selectedSeasonID;
     console.log("currentSeason: ", currentSeason)
     loadedCurrentSeason = true;
