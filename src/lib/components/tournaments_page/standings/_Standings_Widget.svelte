@@ -204,7 +204,6 @@
   let loadedCurrentSeason: boolean = false;
   $: if (browser && $session.selectedSeasonID != undefined && !loadedCurrentSeason) {
     currentSeason = $session.selectedSeasonID;
-    console.log("currentSeason: ", currentSeason)
     loadedCurrentSeason = true;
   }
 
