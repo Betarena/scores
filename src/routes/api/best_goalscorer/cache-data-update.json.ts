@@ -1,161 +1,237 @@
 
-// ... import $app `modules`;
+// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
-
-// ... import necessary LIBRARIES & MODULES;
+// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-
-// ... DECLARING TYPESCRIPT-TYPES imports;
-import type { Hasura_Complete_GoalScorers_Type, GoalScorers_Cache_Ready } from '$lib/models/best_goalscorer/types'
-import { GET_BEST_GOALSCORERS_DATA } from '$lib/graphql/best_goalscorer/query'
-
-// ... server-variables;
-let userGeo: string
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+import type { 
+  Hasura_Complete_GoalScorers_Type, 
+  Cache_Single_Lang_GoalScorers_Translation_Response, 
+  Single_Goalscorer_Translations,
+  Cache_Single_Geo_GoalScorers_Translation_Response,
+  Cache_Goalscorers_General_Lang_Ready
+} from '$lib/models/best_goalscorer/types'
+import { 
+  GET_BEST_GOALSCORERS_DATA 
+} from '$lib/graphql/best_goalscorer/query'
+import { 
+  GET_HREFLANG_DATA 
+} from '$lib/graphql/query'
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function get(): Promise < unknown > {
+  
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
-export async function get(): Promise < any > {
-    // ... 🐛 DEBUGGING;
-    if (dev) console.debug('ℹ updating best_goalscorer data')
-    // ... ℹ clear the cache data for `best_goalscorer`
-    await delete_Best_Goalscorers_Data()
-    // ... ℹ generate best goal scorers data by GEO;
-    const response = await main()
-    // ... ℹ iterate over EACH SELECTED FIXTURE, lang, by lang;
-    for await (const best_goalscorer of response) {
-        userGeo = best_goalscorer.lang
-        // ... cache-response;
-        await cache_Best_Goalscorers_Data_Geo_Pos(userGeo, best_goalscorer);
-    }
-    // ... DEBUGGING;
-    // if (dev) console.info('-- featured-match.json --', response)
-    // ... return, RESPONSE;
-    return {
-        status: 200,
-        body: '✅ Success! Featured Betting Site Data has been Cached and Updated!'
-    }
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await bestGoalscorersGeoDataGeneration()
+  await bestGoalscorersLangDataGeneration(langArray)
+
+  // [ℹ] return, RESPONSE;
+  return {
+    status: 200,
+    body: '✅ Success \nBest Goalscorers Cache Updated!'
+  }
+  
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// - cache_Best_Goalscorers_Data_Geo_Pos(geoPos, json_cache)
-// - delete_Best_Goalscorers_Data()
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+/**
+ * [ℹ] Best Goalscorers CACHEING ACTIONS METHODS
+*/
 
-async function cache_Best_Goalscorers_Data_Geo_Pos(geoPos: string, json_cache: GoalScorers_Cache_Ready) {
-    // ... TRY;
-    try {
-      //... store (cache) best_goalscorer response,
-      await redis.hset('best_goalscorer', geoPos, JSON.stringify(json_cache));
-    } 
-    // ... CATCH, ERROR;
-    catch (e) {
-      console.log("❌ unable to cache best_goalscorer", geoPos, e);
-    }
+async function cacheBestGoalscorersGeoPos (geoPos: string, json_cache: Cache_Single_Geo_GoalScorers_Translation_Response) {
+  try {
+    // [ℹ] persist redis (cache)
+    await redis.hset('best_goalscorer_geo', geoPos, JSON.stringify(json_cache));
+  } 
+  catch (e) {
+    console.log('❌ unable to cache best_goalscorer_geo for ', geoPos, e);
+  }
 }
 
-async function delete_Best_Goalscorers_Data() {
-    await redis.del('best_goalscorer')
-    return
+async function cacheBestGoalscorersLang (lang: string, json_cache: Cache_Single_Lang_GoalScorers_Translation_Response) {
+  try {
+    // [ℹ] persist redis (cache)
+    await redis.hset('best_goalscorer_t', lang, JSON.stringify(json_cache));
+    // [🐛] debug
+    if (dev) console.debug('✅ best_goalscorer_t lang ', lang, 'cached')
+  } 
+  catch (e) {
+    console.error('❌ unable to cache best_goalscorer_t for ', lang, e);
+  }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  STANDARD API FALLBACK
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// - main()
-// - get_Best_Goalscorers_Data()
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+async function deleteBestGoalscorersGeoPos () {
+  await redis.del('best_goalscorer_geo')
+  return
+}
 
-async function main(): Promise < Array < GoalScorers_Cache_Ready >> {
-  // ...
-  const response: Hasura_Complete_GoalScorers_Type = await get_Best_Goalscorers_Data()
+async function deleteBestGoalscorersLang () {
+  await redis.del('best_goalscorer_t')
+  return
+}
 
-  // ...
-  const finalObj: Array < GoalScorers_Cache_Ready > = []
+/**
+ * [ℹ] Featured Betting Sites CACHE GENERATION
+*/
 
-  // ... for-each country-filtered-league-list,
-  for (const country_leagues of response.leagues_filtered_country) {
-      // ... select-top-7-leagues;
-      const goalscorerObj: GoalScorers_Cache_Ready = {
-          lang: undefined,
-          top_geo_goalscorer_players: [],
-          translations: []
-      }
-      // ... ℹ declare language (GEO);
-      goalscorerObj.lang = country_leagues.lang
-      // ... 🐛 DEBUGGING;
-      if (dev) console.debug('ℹ goalscorerObj.lang', goalscorerObj.lang)
-      // ... ℹ iterate over each country-league;
-      for await (const country_league of country_leagues.leagues) {
-          // ... ℹ iterate over each top-goal-scorer;
-          for (const player of response.scores_best_goalscorers) {
-              // ... ℹ match_league_ids && match correct-lang;
-              if (player.league_id.toString() === country_league.league_id.toString()) {
-                  // ... 🐛 DEBUGGING;
-                  if (dev) console.debug('ℹ player identified!', player.league_id, player.common_name)
-                  // ... ℹ add player to the list of GEO players;
-                  goalscorerObj.top_geo_goalscorer_players.push(player)
-              }
-              // ... ℹ terminating condition;
-              if (goalscorerObj.top_geo_goalscorer_players != undefined && goalscorerObj.top_geo_goalscorer_players.length > 20) {
-                  if (dev) console.debug('➤  exiting inner loop!', goalscorerObj.top_geo_goalscorer_players.length)
-                  break;
-              }
-          }
-          // ... ℹ terminating condition;
-          if (goalscorerObj.top_geo_goalscorer_players != undefined && goalscorerObj.top_geo_goalscorer_players.length > 20) {
-              if (dev) console.debug('➤  exiting main loop', goalscorerObj.top_geo_goalscorer_players.length)
-              break;
-          }
-      }
-      // ... ℹ sort data OBJECT [descending order];
-      goalscorerObj.top_geo_goalscorer_players.sort((a, b) => b.goals - a.goals);
-      // ... ℹ generate translations for OBJECT;
-      for await (const pos_translation of response.player_positions_translations) {
-        // ... ℹ generate new empty LANG object;
-        const newObject = { }
-        // ... ℹ add data correctly;
-        newObject.lang = pos_translation.lang.toString()
-        newObject.positions_translations = pos_translation.position
-        // ... ℹ add in the new translation;
-        for (const widget_translation of response.scores_best_goalscorers_translations) {
-          // ... ℹ validation LANG;
-          if (widget_translation.lang.toString() == newObject.lang) {
-            // ... ℹ add the widget translation;
-            newObject.widget_translations = widget_translation.translations
-          }
-        }
-        // ... ℹ push to final object;
-        goalscorerObj.translations.push(newObject)
-      }
-      // ...
-      let counterPos = 0;
-      // ... ℹ add extra parameter;
-      for await (const player of goalscorerObj.top_geo_goalscorer_players) {
-        counterPos = counterPos + 1;
-        player.pos_num = counterPos;
-      }
-      // ... ℹ push to final object;
-      finalObj.push(goalscorerObj);
+async function bestGoalscorersGeoDataGeneration () {
+
+  await deleteBestGoalscorersGeoPos()
+
+  // [ℹ] ℹ generate best goal scorers data by GEO;
+  const response: Array < Cache_Single_Geo_GoalScorers_Translation_Response > = await mainGeo()
+
+  // [ℹ] iterate over EACH SELECTED FIXTURE 
+  // [ℹ] & cache => geoPos-by-geoPos;
+  for await (const best_goalscorer of response) {
+    const userGeo = best_goalscorer.lang
+    // [ℹ] cache-response;
+    await cacheBestGoalscorersGeoPos(userGeo, best_goalscorer);
   }
 
-  // ... 🐛 DEBUGING;
-  if (dev) console.debug('finalObj', finalObj)
+}
+
+async function bestGoalscorersLangDataGeneration (langArray: string[]) {
+
+  const finalCacheObj: Cache_Single_Lang_GoalScorers_Translation_Response = {
+    top_geo_goalscorer_players: undefined,
+    translations: undefined
+  }
+
+  // [ℹ] ℹ generate best goal scorers data by GEO;
+  const response: Cache_Goalscorers_General_Lang_Ready = await mainLang()
+
+  deleteBestGoalscorersLang()
+
+  // [ℹ] for-each available translation:
+  for (const lang_ of langArray) {
+    
+    finalCacheObj.top_geo_goalscorer_players = response.top_geo_goalscorer_players;
+    finalCacheObj.translations = response.translations.find(( { lang } ) => lang_ === lang);
+
+    // [ℹ] persist-cache-response;
+    await cacheBestGoalscorersLang(lang_, finalCacheObj);
+  }
+
+}
+
+/**
+ * [ℹ] Best Goalscorers Methods
+*/
+
+async function mainGeo(): Promise < Array < Cache_Single_Geo_GoalScorers_Translation_Response >> {
+
+  const response: Hasura_Complete_GoalScorers_Type = await initGrapQLClient().request(GET_BEST_GOALSCORERS_DATA);
+
+  const finalObj: Array < Cache_Single_Geo_GoalScorers_Translation_Response > = []
+
+  // [ℹ] for-each country-filtered-league-list,
+  for (const country_leagues of response.leagues_filtered_country) {
+
+    const goalscorerObj: Cache_Single_Geo_GoalScorers_Translation_Response = {
+      lang: undefined,
+      top_geo_goalscorer_players: []
+    }
+
+    // [ℹ] ℹ declare language [GEO];
+    goalscorerObj.lang = country_leagues.lang
+    
+    // [ℹ] ℹ iterate over each country-league;
+    for await (const country_league of country_leagues.leagues) {
+
+      // [ℹ] ℹ iterate over each top-goal-scorer;
+      for (const player of response.scores_best_goalscorers) {
+
+        // [ℹ] ℹ match_league_ids && match correct-lang;
+        if (player.league_id.toString() === country_league.league_id.toString()) {
+          // [ℹ] ℹ add player to the list of GEO players;
+          goalscorerObj.top_geo_goalscorer_players.push(player)
+        }
+
+        // [ℹ] ℹ terminating condition;
+        if (goalscorerObj.top_geo_goalscorer_players != undefined && 
+            goalscorerObj.top_geo_goalscorer_players.length > 20) {
+          break;
+        }
+      }
+
+      // [ℹ] ℹ terminating condition;
+      if (goalscorerObj.top_geo_goalscorer_players != undefined && 
+          goalscorerObj.top_geo_goalscorer_players.length > 20) {
+        break;
+      }
+    }
+
+    // [ℹ] ℹ sort data OBJECT [descending order];
+    goalscorerObj.top_geo_goalscorer_players.sort((a, b) => b.goals - a.goals);
+
+    let counterPos = 0;
+
+    // [ℹ] ℹ add extra parameter;
+    for await (const player of goalscorerObj.top_geo_goalscorer_players) {
+      counterPos = counterPos + 1;
+      player.pos_num = counterPos;
+    }
+
+    // [ℹ] ℹ push to final object;
+    finalObj.push(goalscorerObj);
+  }
 
   return finalObj
 }
 
-async function get_Best_Goalscorers_Data(): Promise < Hasura_Complete_GoalScorers_Type > {
-  // ... 🐛 DEBUGGING;
-  if (dev) console.debug('➤  FETCH all best goalscorers data')
-  // ... ℹ push-GRAPH-QL-request;
-  const response = await initGrapQLClient().request(GET_BEST_GOALSCORERS_DATA);
-  // ... 🐛 DEBUGGING;
-  // if (dev) console.debug('➤ getAllLeagueList() response', response)
-  // ... ℹ reutrn response;
-  return response
+async function mainLang(): Promise < Cache_Goalscorers_General_Lang_Ready > {
+  
+  const response: Hasura_Complete_GoalScorers_Type = await initGrapQLClient().request(GET_BEST_GOALSCORERS_DATA);
+
+  const goalscorerObj: Cache_Goalscorers_General_Lang_Ready = {
+    top_geo_goalscorer_players: [],
+    translations: []
+  }
+
+  // [ℹ] filter and remove unecessary player-data;
+  goalscorerObj.top_geo_goalscorer_players = response.scores_best_goalscorers.map(( { goals, image_path, league_id, logo_path, position, ...rest} ) => {
+    return rest;
+  });
+
+  // [ℹ] generate translations for OBJECT;
+  for (const pos_translation of response.player_positions_translations) {
+
+    // [ℹ] generate new empty LANG object;
+    const newObject: Single_Goalscorer_Translations = {
+      lang: undefined,
+      positions_translations: undefined,
+      widget_translations: undefined
+    } // NOTE: potential issue
+
+    // [ℹ] add data correctly;
+    newObject.lang = pos_translation.lang.toString()
+    newObject.positions_translations = pos_translation.position
+
+    // [ℹ] add in the new translation;
+    for (const widget_translation of response.scores_best_goalscorers_translations) {
+      // [ℹ] validation LANG;
+      if (widget_translation.lang.toString() == newObject.lang) {
+        // [ℹ] add the widget translation;
+        newObject.widget_translations = widget_translation.translations
+      }
+    }
+
+    // [ℹ] push to final object;
+    goalscorerObj.translations.push(newObject)
+  }
+
+  return goalscorerObj
 }

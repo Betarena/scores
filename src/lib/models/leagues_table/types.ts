@@ -110,41 +110,47 @@ export interface Hasura_Complete_Leagues_Table_Type {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ... ℹ DATA individual types for CAHCE DECLARATION [!]
 export interface Single_Team_Object_Data {
-    position: number
-    team_logo:  string
-    team_name: string
-    games_played: string
-    points: string
-    color_code: string
+  position: number
+  team_logo:  string
+  team_name: string
+  games_played: string
+  points: string
+  color_code: string
 }
 
 export interface Single_League_Table_Data {
-    season_league_id: string
-    season_league_name: string
-    season_league_logo: string
-    season_league_teams: Array < Single_Team_Object_Data >
+  season_league_id: string
+  season_league_name: string
+  season_league_logo: string
+  season_league_teams: Array < Single_Team_Object_Data >
 }
 
 export interface Single_League_Table_Translations {
-    lang: string
-    games: string
-    points: string
-    title: string
+  lang: string
+  games: string
+  points: string
+  title: string
 }
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ... ℹ generated best goalscorers cache object;
-export interface Leagues_Table_Cache_Ready {
-    lang: string
-    top_leagues_table_data: Single_League_Table_Data[]
-    translations: Single_League_Table_Translations[]
+export interface Cache_Single_Geo_Leagues_Table_Translation_Response {
+  lang: string
+  top_leagues_table_data: Single_League_Table_Data[]
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// ... ℹ generated best goalscoreres cache SEO object
+export interface Cache_Single_Lang_Leagues_Table_Translation_Response {
+  top_leagues_table_data: Single_League_Table_Data[]
+  translations: Single_League_Table_Translations
 }
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ... ℹ generated best goalscoreres cache SEO object
 export interface Leagues_Table_SEO_Cache_Ready {
-    top_leagues_table_data: Single_League_Table_Data[]
-    translations: Single_League_Table_Translations[]
+  top_leagues_table_data: Single_League_Table_Data[]
+  translations: Single_League_Table_Translations[]
 }

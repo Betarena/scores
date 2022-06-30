@@ -31,7 +31,7 @@ export async function getTargetFixtureOdds(
 	let new_month_ = (month_ + 1).toString();
 	new_month_ = ('0' + new_month_).slice(-2);
 	// ... apply-correct-day-structure;
-	let day_ = new Date(fixture_data.date).getDate().toString();
+	let day_ = new Date(fixture_data.date).getUTCDate().toString();
 	day_ = ('0' + day_).slice(-2);
 	// ... obtain FIXTURE-ID;
 	const fixtureId = fixture_data.fixture_id;
@@ -45,9 +45,6 @@ export async function getTargetFixtureOdds(
 		(snapshot) => {
 			// ... check if the data exists (should exist at all times anyway);
 			if (snapshot.exists()) {
-				// ... DEBUGGING;
-        if (dev) console.debug("Here! Testing!");
-				// if (dev) console.debug('data from Real DB', [snapshot.val()]) // ... TOO LONG
 				// ...
 				const fixture_odds = snapshot.val();
 				const fixture_odds_keys = Object.keys(snapshot.val());
@@ -78,7 +75,7 @@ export async function getTargetFixtureOdds(
 				// ... return the response as an Array;
 				return obj;
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from DB is incorrect: getTargetFixtureOdds() fixture_data ${fixture_data}`);
 			}
 		}
 	);
@@ -121,7 +118,7 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 				// ... return the response as an Array;
 				return obj;
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from DB is incorrect: getTargetGeoSportBookDetails() lang: ${lang} sitename: ${siteName}`);
 			}
 		});
 	} else {
@@ -133,7 +130,7 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 				// return the response as an Array;
 				return snapshot.val();
 			} else {
-				throw new Error('Data from DB is incorrect');
+				throw new Error(`Data from DB is incorrect: getTargetGeoSportBookDetails() lang-only: ${getTargetGeoSportBookDetails}`);
 			}
 		});
 	}

@@ -31,8 +31,7 @@ export interface Hasura_Complete_League_List_Type {
     }[]
 }
 
-// ...
-export interface League_List_Cache_Ready {
+export interface Cache_Single_Geo_LeagueList_Translation_Response {
     lang: string
     top_geo_leagues: {
         country_id: number
@@ -57,51 +56,66 @@ export interface League_List_Cache_Ready {
         country_name: string
         image_path: string
     }[]
-    translations: {
-        lang: string
-        translations: {
-            search_form: string
-            top_leagues: string
-            leagues_by_country: string
-            widget_title: string
-            competitions_results: string
-            countries_results: string
-            full_list: string
-            no_results: string
-            hide: string
-        }
-    }[]
 }
 
-
-// ... 
 export interface League_List_Cache_SEO_Ready {
-    all_leagues_list: {
-        country_id: number
-        country_name: string
-        image_path: string
-        league_id: number
-        league_name: string
-        logo_path: string
-        type: string
-    }[]
-    unique_county_list: {
-        country_id: number
-        country_name: string
-        image_path: string
-    }[]
+  all_leagues_list: {
+    country_id: number
+    country_name: string
+    image_path: string
+    league_id: number
+    league_name: string
+    logo_path: string
+    type: string
+  }[]
+  unique_county_list: {
+    country_id: number
+    country_name: string
+    image_path: string
+  }[]
+  translations: {
+    lang: string
     translations: {
-        lang: string
-        translations: {
-            search_form: string
-            top_leagues: string
-            leagues_by_country: string
-            widget_title: string
-            competitions_results: string
-            countries_results: string
-            full_list: string
-            no_results: string
-            hide: string
-        }
-    }[]
+      search_form: string
+      top_leagues: string
+      leagues_by_country: string
+      widget_title: string
+      competitions_results: string
+      countries_results: string
+      full_list: string
+      no_results: string
+      hide: string
+    }
+  }[]
+}
+
+export interface Cache_Single_Lang_LeagueList_Translation_Response {
+  all_leagues_list: {
+    country_id: number
+    country_name: string
+    image_path: string
+    league_id: number
+    league_name: string
+    logo_path: string
+    type: string
+  }[]
+  unique_county_list: {
+    country_id: number
+    country_name: string
+    image_path: string
+  }[]
+  translations: {
+    lang: string
+    translations: {
+      search_form: string
+      top_leagues: string
+      leagues_by_country: string
+      widget_title: string
+      competitions_results: string
+      countries_results: string
+      full_list: string
+      no_results: string
+      hide: string
+    }
+  }
 }
