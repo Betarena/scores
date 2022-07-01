@@ -65,15 +65,9 @@ export async function get(req, res): Promise< any > {
 
 async function getCacheHomepageSEOData (lang: string): Promise < Cache_Single_Homepage_SEO_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('homepage_seo', lang);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from its "string" to "JSON";
       const parsed: any = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info(`✅ homepage_seo cache data`);
-      // [ℹ] return, cached data;
       return parsed;
     }
   } 
@@ -85,15 +79,9 @@ async function getCacheHomepageSEOData (lang: string): Promise < Cache_Single_Ho
 
 async function getCacheTournamentSEOData (lang: string): Promise < Cache_Single_Tournaments_SEO_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('tournaments_seo', lang);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from its "string" to "JSON";
       const parsed: any = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info(`✅ tournaments_seo cache data`);
-      // [ℹ] return, cached data;
       return parsed;
     }
   } 
@@ -105,15 +93,9 @@ async function getCacheTournamentSEOData (lang: string): Promise < Cache_Single_
 
 async function getCacheTournamentPageData (url: string): Promise < Cache_Single_Tournaments_Data_Page_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('tournaments_page_info', url);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from its "string" to "JSON";
       const parsed: any = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info(`✅ tournaments_page_info cache data`);
-      // [ℹ] return, cached data;
       return parsed;
     }
   } 
@@ -125,15 +107,9 @@ async function getCacheTournamentPageData (url: string): Promise < Cache_Single_
 
 async function getCacheSitemapURL (url: string): Promise < any | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('sitemap', url);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from its "string" to "JSON";
       const parsed: any = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info(`✅ sitemap cache data`);
-      // [ℹ] return, cached data;
       return parsed;
     }
   } 

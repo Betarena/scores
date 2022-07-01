@@ -217,11 +217,11 @@
     <!-- [ℹ] HEADER SEO
     - ->
     <div>
-      {#if HEADER_TRANSLATION_DATA.scores_header_translations.lang != 'en'}
+      {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang != 'en'}
         <a
           sveltekit:prefetch
-          href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations.lang}>
-          <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations.lang}</p>
+          href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}>
+          <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}</p>
         </a>
       {:else}
         <a
@@ -235,15 +235,15 @@
     <!-- [ℹ] FOOTER SEO 
     - ->
     <div>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.latest_news}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.about_us}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.betting_tips}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.privacy}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.terms}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}</p>
       <!-- [ℹ] nav-links-social-links
       - ->
-      {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
+      {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
         <p>{social_network[1].toString().toLocaleLowerCase()}</p>
       {/each}
     </div>

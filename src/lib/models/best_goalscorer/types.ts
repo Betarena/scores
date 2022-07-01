@@ -20,7 +20,7 @@ export interface Hasura_Complete_GoalScorers_Type {
       show_less_players: string
     }
   }[]
-  player_positions_translations: {
+  player_positions_translations_dev: {
     lang: string
     position: {
       "1": string

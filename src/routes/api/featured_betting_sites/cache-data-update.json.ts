@@ -14,13 +14,13 @@ import { GET_HREFLANG_DATA } from '$lib/graphql/query'
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise < unknown > {
+export async function post(): Promise < unknown > {
 
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang
+  const langArray: string [] = response.scores_hreflang_dev
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 
@@ -105,7 +105,7 @@ async function featuredBettingSiteLangDataGeneration (langArray: string[]) {
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {
     
-    finalCacheObj = response.scores_featured_betting_sites_translations.find(( { lang } ) => lang_ === lang);
+    finalCacheObj = response.scores_featured_betting_sites_translations_dev.find(( { lang } ) => lang_ === lang);
 
     // [ℹ] persist-cache-response;
     await cacheFeaturedBettingSiteLang(lang_, finalCacheObj);

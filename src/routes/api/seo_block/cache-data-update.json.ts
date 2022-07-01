@@ -14,13 +14,13 @@ import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types'
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise< any > {
+export async function post(): Promise< any > {
   
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang
+  const langArray: string [] = response.scores_hreflang_dev
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 
@@ -45,8 +45,8 @@ export async function get(): Promise< any > {
     
     finalCacheObj.lang = lang_;
 
-    finalCacheObj.html = response_data.scores_seo_block_homepage.find(( { lang } ) => lang_ === lang).html;
-    finalCacheObj.title = response_data.scores_seo_block_homepage.find(( { lang } ) => lang_ === lang).title;
+    finalCacheObj.html = response_data.scores_seo_block_homepage_dev.find(( { lang } ) => lang_ === lang).html;
+    finalCacheObj.title = response_data.scores_seo_block_homepage_dev.find(( { lang } ) => lang_ === lang).title;
 
     // [ℹ] persist-cache-response;
     await cacheSEOblock(lang_, finalCacheObj);

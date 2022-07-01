@@ -1,5 +1,5 @@
 /**
- * [ℹ] HASURA: scores_football_standings (&)
+ * [ℹ] HASURA: scores_football_standings (&_dev)
 */
 export interface BETARENA_HASURA_scores_football_standings {
   data?: WelcomeDatum[];
@@ -50,7 +50,7 @@ export interface BETARENA_HASURA_scores_football_standings {
 }
 
 /**
- * [ℹ] HASURA: scores_football_standings_history (&)
+ * [ℹ] HASURA: scores_football_standings_history (&_dev)
 */
 
 export interface BETARENA_HASURA_scores_football_standings_history {
@@ -62,7 +62,7 @@ export interface BETARENA_HASURA_scores_football_standings_history {
 }
 
 /**
- * [ℹ] HASURA: scores_team_statistics (&)
+ * [ℹ] HASURA: scores_team_statistics (&_dev)
 */
 export interface BETARENA_HASURA_scores_team_statistics {
   average_goals?:        AverageGoals;
@@ -136,8 +136,8 @@ export interface BETARENA_HASURA_scores_team_statistics {
 }
 
 /**
- * [ℹ] HASURA: scores_team_statistics_history (&)
- * [ℹ] based-of: scores_team_statistics (&)
+ * [ℹ] HASURA: scores_team_statistics_history (&_dev)
+ * [ℹ] based-of: scores_team_statistics (&_dev)
 */
 export interface BETARENA_HASURA_scores_team_statistics_history {
   average_goals?:        AverageGoals;
@@ -149,7 +149,7 @@ export interface BETARENA_HASURA_scores_team_statistics_history {
 }
 
 /**
- * [ℹ] HASURA: scores_widget_standings_translations (&)
+ * [ℹ] HASURA: scores_widget_standings_translations (&_dev)
 */
 export interface BETARENA_HASURA_scores_widget_standings_translations {
   lang?:         string;
@@ -182,7 +182,7 @@ export interface BETARENA_HASURA_scores_widget_standings_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_football_teams (&)
+ * [ℹ] HASURA: scores_football_teams (&_dev)
 */
 export interface BETARENA_HASURA_scores_football_teams {
   data?: Data;
@@ -205,7 +205,7 @@ export interface BETARENA_HASURA_scores_football_teams {
 
 
 /**
- * [ℹ] HASURA: color_codes_league_standings_positions (&)
+ * [ℹ] HASURA: color_codes_league_standings_positions (&_dev)
 */
 export interface BETARENA_HASURA_color_codes_league_standings_positions {
   color_codes?: ColorCodes;

@@ -50,20 +50,20 @@ export interface Cache_Single_Tournaments_League_Standings_Info_Data_Response {
 
 export interface Hasura_League_Info_Widget_Data_Response {
   // [ℹ] tournaments-page
-  scores_tournaments:                       Single_Tournament_Data_Type[]
-  scores_football_seasons_details:          Scores_Football_Seasons_Details[]
-  scores_football_leagues:                  Scores_Football_Leagues[]
-  sportsbook_details:                       Sportsbook_Details[]
-  scores_widget_league_info_translations:   Scores_Widget_League_Info_Translations[]
+  scores_tournaments_dev:                       Single_Tournament_Data_Type[]
+  scores_football_seasons_details_dev:          Scores_Football_Seasons_Details[]
+  scores_football_leagues_dev:                  Scores_Football_Leagues[]
+  sportsbook_details_dev:                       Sportsbook_Details[]
+  scores_widget_league_info_translations_dev:   Scores_Widget_League_Info_Translations[]
 
   // [ℹ] tournament-page standings
-  scores_football_standings:                BETARENA_HASURA_scores_football_standings[]    
-  scores_football_standings_history:        BETARENA_HASURA_scores_football_standings_history[]
-  scores_team_statistics:                   BETARENA_HASURA_scores_team_statistics[]
-  scores_team_statistics_history:           BETARENA_HASURA_scores_team_statistics_history[]
-  scores_widget_standings_translations:     BETARENA_HASURA_scores_widget_standings_translations[]
-  scores_football_teams:                    BETARENA_HASURA_scores_football_teams[]
-  color_codes_league_standings_positions:   BETARENA_HASURA_color_codes_league_standings_positions[]
+  scores_football_standings_dev:                BETARENA_HASURA_scores_football_standings[]    
+  scores_football_standings_history_dev:        BETARENA_HASURA_scores_football_standings_history[]
+  scores_team_statistics_dev:                   BETARENA_HASURA_scores_team_statistics[]
+  scores_team_statistics_history_dev:           BETARENA_HASURA_scores_team_statistics_history[]
+  scores_widget_standings_translations_dev:     BETARENA_HASURA_scores_widget_standings_translations[]
+  scores_football_teams_dev:                    BETARENA_HASURA_scores_football_teams[]
+  color_codes_league_standings_positions_dev:   BETARENA_HASURA_color_codes_league_standings_positions[]
 }
 
 /**
@@ -187,7 +187,7 @@ export interface League_Info {
   end_date: Date                   // end_date =           endpoint: scores_football_seasons_details | column: "end_date"
 }
 
-// [ℹ] scores_widget_league_info_translations ()
+// [ℹ] scores_widget_league_info_translations (_dev)
 export interface Scores_Widget_League_Info_Translations {
   data?: DataLang;
   lang?: string;
@@ -199,7 +199,7 @@ export interface Scores_Widget_League_Info_Translations {
   following?: string;
 }
 
-// [ℹ] scores_football_seasons_details ()
+// [ℹ] scores_football_seasons_details (_dev)
 export interface Scores_Football_Seasons_Details {
   data_stats?:        DataStats;
   default_data?:      DefaultData;
@@ -287,7 +287,7 @@ export interface Scores_Football_Seasons_Details {
   season_id?: number;
 }
 
-// [ℹ] scores_football_leagues ()
+// [ℹ] scores_football_leagues (_dev)
 export interface Scores_Football_Leagues {
   country?: DataClass;
   data?:    Data;
@@ -348,7 +348,7 @@ export interface Scores_Football_Leagues {
   data?: SeasonElement[];
 }
 
-// [ℹ] sportsbook_details ()
+// [ℹ] sportsbook_details (_dev)
 export interface Sportsbook_Details {
   data?: { [key: string]: Sportbook };
   lang?: string;

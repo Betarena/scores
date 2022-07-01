@@ -18,7 +18,7 @@
 {#if HEADER_TRANSLATION_DATA != undefined}
   <!-- [ℹ] identify the correct translation via IF 
   -->
-  {#if HEADER_TRANSLATION_DATA.scores_top_bar_messages.status && show}
+  {#if HEADER_TRANSLATION_DATA.scores_top_bar_messages_dev.status && show}
     <!-- [ℹ] 
     -->
     <div 
@@ -27,7 +27,7 @@
       -->
       <p 
         class="s-12 color-white">
-        {HEADER_TRANSLATION_DATA.scores_top_bar_messages.message}
+        {HEADER_TRANSLATION_DATA.scores_top_bar_messages_dev.message}
       </p>
         <!-- [ℹ] close-cross
         -->

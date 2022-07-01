@@ -14,13 +14,13 @@ import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function get(): Promise < unknown > {
+export async function post(): Promise < unknown > {
 
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang
+  const langArray: string [] = response.scores_hreflang_dev
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 
@@ -142,7 +142,7 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
     for await (const country_league of country_leagues.leagues) {
 
       // [ℹ] iterate over each top-goal-scorer;
-      for (const season_league of response.scores_football_standings) {
+      for (const season_league of response.scores_football_standings_dev) {
 
         // [ℹ] match_league_ids && match correct-lang;
         if (season_league.id.toString() === country_league.league_id.toString()) {
@@ -166,7 +166,7 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
               season_league_obj.season_league_name = season_league.name.toString()
 
               // [ℹ] iterate over leagues-seasons for "logo-target";
-              for (const league_season of response.scores_football_leagues) {
+              for (const league_season of response.scores_football_leagues_dev) {
                 // [ℹ] validate for equality of "league_ids":
                 if (season_league_obj.season_league_id.toString() === league_season.id.toString()) {
                   // [ℹ] assign:
@@ -188,7 +188,7 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
                 }
 
                 // [ℹ] iterate over TEAMS DATA for EXTRA INFO;
-                for (const info_team of response.scores_football_teams) {
+                for (const info_team of response.scores_football_teams_dev) {
                   // [ℹ] identify target team;
                   if (info_team.id.toString() === team.team_id.toString()) {
                     // [ℹ] add extra info;
@@ -199,7 +199,7 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
                 // [ℹ] get TEAM COLOR CODE;
                 if (team.result != null && team.result != undefined) {
                   // [ℹ] iterate over "sport" color codes;
-                  for (const sport of response.color_codes_league_standings_positions) {
+                  for (const sport of response.color_codes_league_standings_positions_dev) {
                     // [ℹ] validate;
                     if (sport.sports === "football") {
                       // [ℹ] assign;
@@ -256,7 +256,7 @@ async function mainLang(): Promise < Leagues_Table_SEO_Cache_Ready > {
   }
 
   // [ℹ] assign translations;
-  season_league_cache_main.translations = response.scores_standings_home_widget_translations
+  season_league_cache_main.translations = response.scores_standings_home_widget_translations_dev
 
   // [ℹ] for-each country-filtered-league-list,
   for (const country_leagues of response.leagues_filtered_country) {
@@ -277,7 +277,7 @@ async function mainLang(): Promise < Leagues_Table_SEO_Cache_Ready > {
       for await (const country_league of country_leagues.leagues) {
 
         // [ℹ] iterate over each top-goal-scorer;
-        for (const season_league of response.scores_football_standings) {
+        for (const season_league of response.scores_football_standings_dev) {
           
           // [ℹ] match_league_ids && match correct-lang;
           if (season_league.id.toString() === country_league.league_id.toString()) {
@@ -312,7 +312,7 @@ async function mainLang(): Promise < Leagues_Table_SEO_Cache_Ready > {
                   }
 
                   // [ℹ] iterate over TEAMS DATA for EXTRA INFO;
-                  for (const info_team of response.scores_football_teams) {
+                  for (const info_team of response.scores_football_teams_dev) {
 
                     // [ℹ] identify target team;
                     if (info_team.id.toString() === team.team_id.toString()) {

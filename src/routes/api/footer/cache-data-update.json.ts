@@ -10,13 +10,13 @@ import type { Cache_Single_Lang_Footer_Translation_Response, Hasura_Footer_Trans
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise< any > {
+export async function post(): Promise< any > {
   
 	// [ℹ] get HASURA-DB response;
 	const response: Hasura_Footer_Translation_Response = await initGrapQLClient().request(GET_FOOTER_DATA);
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang
+  const langArray: string [] = response.scores_hreflang_dev
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 
@@ -28,8 +28,8 @@ export async function get(): Promise< any > {
 
   const finalCacheObj: Cache_Single_Lang_Footer_Translation_Response = {
     lang: undefined,
-    scores_footer_translations: undefined,
-    scores_footer_links: undefined,
+    scores_footer_translations_dev: undefined,
+    scores_footer_links_dev: undefined,
   }
 
   deleteCacheFooter()
@@ -38,8 +38,8 @@ export async function get(): Promise< any > {
   for (const lang_ of langArray) {
     
     finalCacheObj.lang = lang_;
-    finalCacheObj.scores_footer_translations = response.scores_footer_translations.find(( { lang } ) => lang_ === lang);
-    finalCacheObj.scores_footer_links = response.scores_footer_links.find(( { lang } ) => lang_ === lang);
+    finalCacheObj.scores_footer_translations_dev = response.scores_footer_translations_dev.find(( { lang } ) => lang_ === lang);
+    finalCacheObj.scores_footer_links_dev = response.scores_footer_links_dev.find(( { lang } ) => lang_ === lang);
 
     // [ℹ] persist-cache-response;
     await cacheFooter(lang_, finalCacheObj);

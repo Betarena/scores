@@ -35,13 +35,13 @@ export interface Cache_Single_Tournaments_Data_Page_Translation_Response {
 */
 export interface Hasura_Complete_Pages_SEO {
 
-  scores_hreflang: {
+  scores_hreflang_dev: {
     link: string
     hreflang: string
   }[]
 
   // [ℹ] homepage
-  scores_seo_homepage: {
+  scores_seo_homepage_dev: {
     lang: string
 
     main_data: Main_Data
@@ -50,7 +50,7 @@ export interface Hasura_Complete_Pages_SEO {
   }[]
   // [ℹ] homepage-seo-block-widget
   // TODO: remove
-  scores_seo_block_homepage: {
+  scores_seo_block_homepage_dev: {
     lang: string
 
     html: string
@@ -58,14 +58,14 @@ export interface Hasura_Complete_Pages_SEO {
   }[]
 
   // [ℹ] tournaments-page
-  scores_seo_tournaments: {
+  scores_seo_tournaments_dev: {
     lang: string
 
     main_data: Main_Data
     opengraph: Twitter_Data
     twitter_card: Opengraph_Data
   }[]
-  scores_tournaments: Single_Tournament_Data_Type[]
+  scores_tournaments_dev: Single_Tournament_Data_Type[]
 }
 
 /**

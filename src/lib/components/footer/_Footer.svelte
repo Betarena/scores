@@ -138,15 +138,15 @@
   <p>{logoLink}</p>
   <!-- [ℹ] nav-links-SEO 
   -->
-  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.latest_news}</p>
-  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.about_us}</p>
-  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.betting_tips}</p>
-  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.privacy}</p>
-  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks}</p>
-  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.terms}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks}</p>
+  <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}</p>
   <!-- [ℹ] nav-links-social-links
   -->
-  {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
+  {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
     <p>{social_network[1].toString().toLocaleLowerCase()}</p>
   {/each}
 {/if}
@@ -185,7 +185,7 @@
 
           <p 
             class='color-white s-14 w-normal m-b-20'>
-            {FOOTER_TRANSLATION_DATA.scores_footer_translations.follow}
+            {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.follow}
           </p>
 
           <!-- [ℹ] social media follows 
@@ -196,7 +196,7 @@
             
             <!-- [ℹ] identify the list of social media icons 
             -->
-            {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
+            {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
               <!-- [ℹ] social-network-component 
               -->
               <a 
@@ -225,7 +225,7 @@
           -->
           <p 
             class='color-white s-14 w-normal m-b-8 text-left'>
-            {FOOTER_TRANSLATION_DATA.scores_footer_translations.subscribe_newsletter}
+            {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_newsletter}
           </p>
 
           <!-- [ℹ] form-start 
@@ -237,7 +237,7 @@
               type='email' 
               name='type_email' 
               id=''
-              placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations.type_email}
+              placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.type_email}
               class='m-b-12 s-14 w-400 color-grey'>
             <!-- [ℹ] button-subscribe-action 
             -->
@@ -246,7 +246,7 @@
               id='newsletter-subscribe-btn'
               class='btn-primary'>
               <p class='color-white s-14 w-500'>
-                {FOOTER_TRANSLATION_DATA.scores_footer_translations.subscribe_cta}
+                {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_cta}
               </p>
             </button>
           </form>
@@ -266,10 +266,10 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.latest_news}
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}
                 class='m-b-16'>
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.latest_news}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.latest_news}
                 </p>
               </a>
             </li>
@@ -283,10 +283,10 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.betting_tips}
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}
                 class='m-b-16'>
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.betting_tips}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.betting_tips}
                 </p>
               </a>
             </li>
@@ -300,12 +300,12 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.about_us}
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}
                 class='m-b-16'>
                 <!-- [ℹ] about us 
                 -->
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.about_us}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.about_us}
                 </p>
               </a>
             </li>
@@ -315,9 +315,9 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.terms}>
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}>
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.terms}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.terms}
                 </p>
               </a>
             </li>
@@ -329,9 +329,9 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.privacy}>
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}>
                   <p class='color-white s-14 w-normal'>
-                    {FOOTER_TRANSLATION_DATA.scores_footer_translations.privacy}
+                    {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.privacy}
                   </p>
               </a>
             </li>
@@ -400,14 +400,14 @@
             <!-- [ℹ] follow-us-and-social-media -->
             <div>
               <p class='color-white s-14 w-normal m-b-12'>
-                {FOOTER_TRANSLATION_DATA.scores_footer_translations.follow}
+                {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.follow}
               </p>
               <!-- [ℹ] social media follows -->
               <div id='social-media-box'
                 class='column-start-grid'>
                 <!-- [ℹ] identify the list of social media icons -->
                 <!-- [ℹ] render the correct items -->
-                {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
+                {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
                   <!-- [ℹ] social-network-component -->
                   <a 
                     rel='external'
@@ -428,7 +428,7 @@
             id='newsletter-container'>
             <!-- [ℹ] title-section -->
             <p class='color-white s-14 w-normal m-b-8 text-left'>
-              {FOOTER_TRANSLATION_DATA.scores_footer_translations.subscribe_newsletter}
+              {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_newsletter}
             </p>
             <!-- [ℹ] form-start -->
             <form on:submit|preventDefault={() => submitEmail()}>
@@ -437,7 +437,7 @@
                 type='email' 
                 name='type_email' 
                 id=''
-                placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations.type_email}
+                placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.type_email}
                 class='m-b-12 s-14 w-400 color-grey'>
               <!-- [ℹ] button-subscribe-action -->
               <button 
@@ -445,7 +445,7 @@
                 id='newsletter-subscribe-btn'
                 class='btn-primary'>
                 <p class='color-white s-14 w-500'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.subscribe_cta}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_cta}
                 </p>
               </button>
             </form>
@@ -464,9 +464,9 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.latest_news}>
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}>
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.latest_news}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.latest_news}
                 </p>
               </a>
             </li>
@@ -478,9 +478,9 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.betting_tips}>
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}>
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.betting_tips}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.betting_tips}
                 </p>
               </a>
             </li>
@@ -492,10 +492,10 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.about_us}>
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}>
                 <!-- [ℹ] about us -->
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.about_us}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.about_us}
                 </p>
               </a>
             </li>
@@ -507,9 +507,9 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.terms}>
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}>
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.terms}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.terms}
                 </p>
               </a>
             </li>
@@ -521,9 +521,9 @@
             <li class='m-r-10'>
               <a 
                 rel='external'
-                href={FOOTER_TRANSLATION_DATA.scores_footer_links.privacy}>
+                href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}>
                 <p class='color-white s-14 w-normal'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.privacy}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.privacy}
                 </p>
               </a>
             </li>
@@ -618,7 +618,7 @@
             class='m-b-40'>
             <!-- [ℹ] title-section -->
             <p class='color-white s-14 w-normal m-b-8 text-left'>
-              {FOOTER_TRANSLATION_DATA.scores_footer_translations.subscribe_newsletter}
+              {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_newsletter}
             </p>
             <!-- [ℹ] form-start -->
             <form 
@@ -629,7 +629,7 @@
                 type='email' 
                 name='type_email' 
                 id=''
-                placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations.type_email}
+                placeholder={FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.type_email}
                 class='m-r-20 s-14 w-400 color-grey'>
               <!-- [ℹ] button-subscribe-action -->
               <button 
@@ -637,7 +637,7 @@
                 id='newsletter-subscribe-btn'
                 class='btn-primary'>
                 <p class='color-white s-14 w-500'>
-                  {FOOTER_TRANSLATION_DATA.scores_footer_translations.subscribe_cta}
+                  {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.subscribe_cta}
                 </p>
               </button>
             </form>
@@ -653,9 +653,9 @@
               <li class='m-r-10'>
                 <a 
                   rel='external'
-                  href={FOOTER_TRANSLATION_DATA.scores_footer_links.latest_news}>
+                  href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}>
                   <p class='color-white s-14 w-normal'>
-                    {FOOTER_TRANSLATION_DATA.scores_footer_translations.latest_news}
+                    {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.latest_news}
                   </p>
                 </a>
               </li>
@@ -667,9 +667,9 @@
               <li class='m-r-10'>
                 <a 
                   rel='external'
-                  href={FOOTER_TRANSLATION_DATA.scores_footer_links.betting_tips}>
+                  href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}>
                   <p class='color-white s-14 w-normal'>
-                    {FOOTER_TRANSLATION_DATA.scores_footer_translations.betting_tips}
+                    {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.betting_tips}
                   </p>
                 </a>
               </li>
@@ -681,10 +681,10 @@
               <li class='m-r-10'>
                 <a 
                   rel='external'
-                  href={FOOTER_TRANSLATION_DATA.scores_footer_links.about_us}>
+                  href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}>
                   <!-- [ℹ] about us -->
                   <p class='color-white s-14 w-normal'>
-                    {FOOTER_TRANSLATION_DATA.scores_footer_translations.about_us}
+                    {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.about_us}
                   </p>
                 </a>
               </li>
@@ -696,9 +696,9 @@
               <li class='m-r-10'>
                 <a 
                   rel='external'
-                  href={FOOTER_TRANSLATION_DATA.scores_footer_links.terms}>
+                  href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}>
                   <p class='color-white s-14 w-normal'>
-                    {FOOTER_TRANSLATION_DATA.scores_footer_translations.terms}
+                    {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.terms}
                   </p>
                 </a>
               </li>
@@ -710,9 +710,9 @@
               <li class='m-r-10'>
                 <a 
                   rel='external'
-                  href={FOOTER_TRANSLATION_DATA.scores_footer_links.privacy}>
+                  href={FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}>
                   <p class='color-white s-14 w-normal'>
-                    {FOOTER_TRANSLATION_DATA.scores_footer_translations.privacy}
+                    {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.privacy}
                   </p>
                 </a>
               </li>
@@ -730,14 +730,14 @@
             class='m-b-40'>
             <p 
               class='color-white s-14 w-normal m-b-20'>
-              {FOOTER_TRANSLATION_DATA.scores_footer_translations.follow}
+              {FOOTER_TRANSLATION_DATA.scores_footer_translations_dev.follow}
             </p>
             <!-- [ℹ] social media follows -->
             <div 
               id='social-media-box'
               class='column-start-grid'>
               <!-- [ℹ] identify the list of social media icons -->
-              {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
+              {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
                 <!-- [ℹ] social-network-component -->
                 <a 
                   rel='external'

@@ -3,8 +3,8 @@
  */
 export interface Cache_Single_Lang_Footer_Translation_Response {
   lang: string
-  scores_footer_translations: Footer_Translation_Data
-  scores_footer_links: Footer_Links_Data
+  scores_footer_translations_dev: Footer_Translation_Data
+  scores_footer_links_dev: Footer_Links_Data
 }
 
 /**
@@ -12,12 +12,12 @@ export interface Cache_Single_Lang_Footer_Translation_Response {
  * ... Redis Cache;
  */
 export interface Hasura_Footer_Translation_Response {
-  scores_hreflang: {
+  scores_hreflang_dev: {
     hreflang: string
     link: string
   }[]
-  scores_footer_translations: Footer_Translation_Data[]
-  scores_footer_links: Footer_Links_Data[]
+  scores_footer_translations_dev: Footer_Translation_Data[]
+  scores_footer_links_dev: Footer_Links_Data[]
 }
 
 export interface Footer_Translation_Data {

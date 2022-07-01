@@ -40,7 +40,7 @@ export const GET_NAVBAR_DATA = gql`
       status
       message
     }
-    scores_hreflang {
+    scores_hreflang_dev {
       hreflang
       link
     }

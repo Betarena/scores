@@ -6,11 +6,11 @@ import { gql } from 'graphql-request';
 */
 export const GET_LEAGUE_INFO_FULL_DATA = gql`
   query GET_LEAGUE_INFO_FULL_DATA @cached(ttl: 300) {
-    # HREF-LANG => (scores_hreflang) not required;
+    # HREF-LANG => (scores_hreflang_dev) not required;
     # as this WIDGET IS [URL] based;
 
     # IMPORTANT TOURNAMENTS PAGE WIDGET GENERATION
-    scores_tournaments {
+    scores_tournaments_dev {
       author
       country
       date
@@ -25,7 +25,7 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       type
       widgets
     }
-    scores_football_seasons_details {
+    scores_football_seasons_details_dev {
       data_stats
       default_data
       end_date
@@ -35,11 +35,11 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       round_data
       start_date
     }
-    scores_widget_league_info_translations {
+    scores_widget_league_info_translations_dev {
       data
       lang
     }
-    scores_football_leagues {
+    scores_football_leagues_dev {
       country
       data
       name
@@ -47,26 +47,26 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       season
       seasons
     }
-    sportsbook_details {
+    sportsbook_details_dev {
       data
       lang
     }
 
     # TOURNAMENTS / STANDINGS WIDGET
-    scores_football_standings {
+    scores_football_standings_dev {
       data
       id
       name
       type
     }
-    scores_football_standings_history {
+    scores_football_standings_history_dev {
       id
       data
       name
       season_id
       type
     }
-    scores_team_statistics {
+    scores_team_statistics_dev {
       average_goals
       average_yellow_cards
       data
@@ -74,7 +74,7 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       team_id
       winning_probability
     }
-    scores_team_statistics_history {
+    scores_team_statistics_history_dev {
       average_goals
       average_yellow_cards
       data
@@ -82,15 +82,15 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       season_id
       team_id
     }
-    color_codes_league_standings_positions {
+    color_codes_league_standings_positions_dev {
       color_codes
       sports
     }
-    scores_widget_standings_translations {
+    scores_widget_standings_translations_dev {
       lang
       translations
     }
-    scores_football_teams {
+    scores_football_teams_dev {
       data
       id
       name
