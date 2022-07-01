@@ -62,7 +62,7 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise < unknown > {
+export async function post(): Promise < unknown > {
 
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)

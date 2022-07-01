@@ -16,7 +16,7 @@ let userGeo: string
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise < any > {
+export async function post(): Promise < any > {
     // ... DEBUGGING;
     if (dev) console.debug('-- updating livescores_data --')
     let langs:string[] = ['br','en','es','it','pt','ro'];

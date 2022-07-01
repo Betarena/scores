@@ -12,7 +12,7 @@ import { GET_LIVESCORES_LEAGUES } from '$lib/graphql/query';
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise < any > {
+export async function post(): Promise < any > {
     // ... DEBUGGING;
     if (dev) console.debug('-- updating livescores_data --')
     
