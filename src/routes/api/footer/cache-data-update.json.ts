@@ -10,7 +10,7 @@ import type { Cache_Single_Lang_Footer_Translation_Response, Hasura_Footer_Trans
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise< any > {
+export async function post(): Promise< any > {
   
 	// [ℹ] get HASURA-DB response;
 	const response: Hasura_Footer_Translation_Response = await initGrapQLClient().request(GET_FOOTER_DATA);
