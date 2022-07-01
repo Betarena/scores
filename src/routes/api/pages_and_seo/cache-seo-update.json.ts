@@ -39,7 +39,7 @@ export async function post(): Promise < any > {
 	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
+  const langArray: string [] = response.scores_hreflang
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 
@@ -148,10 +148,10 @@ async function homepageSEOandCaching(langArray: string[], data: Hasura_Complete_
   for (const lang_ of langArray) {
     
     finalCacheObj.lang = lang_
-    finalCacheObj.main_data = data.scores_seo_homepage_dev.find(( { lang } ) => lang_ === lang).main_data;
-    finalCacheObj.twitter_card = data.scores_seo_homepage_dev.find(( { lang } ) => lang_ === lang).twitter_card;
-    finalCacheObj.opengraph = data.scores_seo_homepage_dev.find(( { lang } ) => lang_ === lang).opengraph;
-    finalCacheObj.hreflang = data.scores_hreflang_dev
+    finalCacheObj.main_data = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).main_data;
+    finalCacheObj.twitter_card = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).twitter_card;
+    finalCacheObj.opengraph = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).opengraph;
+    finalCacheObj.hreflang = data.scores_hreflang
 
     // [ℹ] persist-cache-response;
     await cacheHomepageSEOData(lang_, finalCacheObj);
@@ -164,7 +164,7 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
   const urlsArray: string[] = []
 
   // [ℹ] generate appropiate URLS
-  for (const iterator of data.scores_tournaments_dev) {
+  for (const iterator of data.scores_tournaments) {
 
     let url: string;
     const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
@@ -233,10 +233,10 @@ async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complet
   for (const lang_ of langArray) {
     
     finalCacheObj.lang = lang_
-    finalCacheObj.main_data = data.scores_seo_tournaments_dev.find(( { lang } ) => lang_ === lang).main_data;
-    finalCacheObj.twitter_card = data.scores_seo_tournaments_dev.find(( { lang } ) => lang_ === lang).twitter_card;
-    finalCacheObj.opengraph = data.scores_seo_tournaments_dev.find(( { lang } ) => lang_ === lang).opengraph;
-    finalCacheObj.hreflang = data.scores_hreflang_dev
+    finalCacheObj.main_data = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).main_data;
+    finalCacheObj.twitter_card = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).twitter_card;
+    finalCacheObj.opengraph = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).opengraph;
+    finalCacheObj.hreflang = data.scores_hreflang
 
     // [ℹ] persist-cache-response;
     await cacheTournamentsPageSEOData(lang_, finalCacheObj);
@@ -256,7 +256,7 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
   deleteCacheTournamentsPageData();
 
   // [ℹ] generate appropiate URLS
-  for (const iterator of data.scores_tournaments_dev) {
+  for (const iterator of data.scores_tournaments) {
 
     const tournament_id = iterator.tournament_id;
 
@@ -280,7 +280,7 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     finalCacheObj.data = iterator
 
     // [ℹ] identify data-alternate-copies;
-    finalCacheObj.alternate_data = data.scores_tournaments_dev.filter(t => t.tournament_id === tournament_id)
+    finalCacheObj.alternate_data = data.scores_tournaments.filter(t => t.tournament_id === tournament_id)
 
     // [ℹ] persist-cache-response;
     await cacheTournamentsPageData(url, finalCacheObj);

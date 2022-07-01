@@ -4,10 +4,10 @@
 export interface Cache_Single_Lang_Header_Translation_Response {
   lang: string
   langArray: string[]
-  scores_header_translations_dev: Header_Translation;
-  scores_header_links_dev: Header_Links;
+  scores_header_translations: Header_Translation;
+  scores_header_links: Header_Links;
   scores_header_fixtures_information: Header_Sports_Info;
-  scores_top_bar_messages_dev: Header_Top_Bar_Messages;
+  scores_top_bar_messages: Header_Top_Bar_Messages;
 }
 
 /**
@@ -15,12 +15,12 @@ export interface Cache_Single_Lang_Header_Translation_Response {
  * HASURA_DB for Translations
  */
 export interface Hasura_Header_Translation_Response {
-  scores_hreflang_dev: {
+  scores_hreflang: {
     hreflang: string
     link: string
   }[]
-  scores_header_translations_dev: Array < Header_Translation > ;
-  scores_header_links_dev: Array < Header_Links > ;
+  scores_header_translations: Array < Header_Translation > ;
+  scores_header_links: Array < Header_Links > ;
   scores_header_fixtures_information: Array < Header_Sports_Info > ;
   scores_top_bar_messages: Array < Header_Top_Bar_Messages >;
 }

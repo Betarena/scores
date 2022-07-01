@@ -77,7 +77,7 @@ async function sportbookDetailsGeneration () {
 
   deleteCacheSportbookDetailInfoData()
 
-  for (const geoSportbook of response.sportsbook_details_dev) {
+  for (const geoSportbook of response.sportsbook_details) {
 
     finalCacheObj.geoPos = geoSportbook.lang
 
@@ -109,7 +109,7 @@ async function leagueInfoGeneration () {
   deleteCacheTournamentsPageLeagueInfoData()
 
   // [ℹ] generate appropiate URLS
-  for (const iterator of response.scores_tournaments_dev) {
+  for (const iterator of response.scores_tournaments) {
     // [ℹ] per LANG
 
     const finalCacheObj: Cache_Single_Tournaments_League_Info_Data_Response = {
@@ -143,10 +143,10 @@ async function leagueInfoGeneration () {
     finalCacheObj.url = url;
     finalCacheObj.lang = lang;
 
-    const targetWidgetTranslation = response.scores_widget_league_info_translations_dev.find(( { lang } ) => lang === iterator.lang).data
+    const targetWidgetTranslation = response.scores_widget_league_info_translations.find(( { lang } ) => lang === iterator.lang).data
     finalCacheObj.data.translation = targetWidgetTranslation
 
-    const league_target = response.scores_football_leagues_dev.find(( { name, id } ) => name === iterator.name && id === tournament_id)
+    const league_target = response.scores_football_leagues.find(( { name, id } ) => name === iterator.name && id === tournament_id)
     finalCacheObj.data.image_path = league_target.data.logo_path;
     finalCacheObj.data.country_logo = league_target.country.image_path
 
@@ -160,7 +160,7 @@ async function leagueInfoGeneration () {
     for (const season_main of league_target.seasons) {
 
       // [ℹ] match target X season from league Z to extra-info-season-data;
-      const seasonExtraInfo = response.scores_football_seasons_details_dev.find(( { id } ) => id === season_main.id)
+      const seasonExtraInfo = response.scores_football_seasons_details.find(( { id } ) => id === season_main.id)
 
       const num_clubs = seasonExtraInfo?.data_stats === null ? null : seasonExtraInfo?.data_stats.number_of_clubs
       const start_date = seasonExtraInfo?.start_date
@@ -218,7 +218,7 @@ async function leagueInfoGeneration () {
     // deleteCacheTournamentsPageLeagueInfoData()
 
     // [ℹ] generate appropiate URLS
-    for (const iterator of response.scores_tournaments_dev) {
+    for (const iterator of response.scores_tournaments) {
       // [ℹ] per LANG
 
       const tournament_id = iterator.tournament_id;
@@ -228,7 +228,7 @@ async function leagueInfoGeneration () {
       const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-');
       const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-');
 
-      // for (const geoSportbook of response.sportsbook_details_dev) {
+      // for (const geoSportbook of response.sportsbook_details) {
         
         // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
         const url = iterator.lang == 'en' 
@@ -249,7 +249,7 @@ async function leagueInfoGeneration () {
         //   }
         // }
 
-        const league_target = response.scores_football_leagues_dev.find(( { name, id } ) => name === iterator.name && id === tournament_id)
+        const league_target = response.scores_football_leagues.find(( { name, id } ) => name === iterator.name && id === tournament_id)
         finalCacheObj.data.image_path = league_target.data.logo_path;
 
         finalCacheObj.data.country = country;
@@ -262,7 +262,7 @@ async function leagueInfoGeneration () {
         for (const season_main of league_target.seasons) {
 
           // [ℹ] match target X season from league Z to extra-info-season-data;
-          const seasonExtraInfo = response.scores_football_seasons_details_dev.find(( { id } ) => id === season_main.id)
+          const seasonExtraInfo = response.scores_football_seasons_details.find(( { id } ) => id === season_main.id)
 
           const num_clubs = seasonExtraInfo.data_stats 
           const start_date = seasonExtraInfo.start_date

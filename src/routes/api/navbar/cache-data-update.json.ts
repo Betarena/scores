@@ -16,7 +16,7 @@ export async function post(): Promise< any > {
 	const response: Hasura_Header_Translation_Response = await initGrapQLClient().request(GET_NAVBAR_DATA);
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
+  const langArray: string [] = response.scores_hreflang
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 
@@ -30,9 +30,9 @@ export async function post(): Promise< any > {
     lang: undefined,
     langArray: [],
     scores_header_fixtures_information: undefined,
-    scores_header_links_dev: undefined,
-    scores_header_translations_dev: undefined,
-    scores_top_bar_messages_dev: undefined
+    scores_header_links: undefined,
+    scores_header_translations: undefined,
+    scores_top_bar_messages: undefined
   }
 
   deleteCacheNavBar()
@@ -43,9 +43,9 @@ export async function post(): Promise< any > {
     finalCacheObj.lang = lang_;
 
     finalCacheObj.scores_header_fixtures_information = response.scores_header_fixtures_information.find(( { lang } ) => lang_ === lang);  // [ℹ] single bottom-row-header-info
-    finalCacheObj.scores_header_links_dev = response.scores_header_links_dev.find(( { lang } ) => lang_ === lang);                        // [ℹ] single lang-translated-links-terms
-    finalCacheObj.scores_header_translations_dev = response.scores_header_translations_dev.find(( { lang } ) => lang_ === lang);          // [ℹ] single-translated-LANG-terms
-    finalCacheObj.scores_top_bar_messages_dev = response.scores_top_bar_messages_dev.find(( { lang } ) => lang_ === lang);                // [ℹ] platform-top-ALERT-system
+    finalCacheObj.scores_header_links = response.scores_header_links.find(( { lang } ) => lang_ === lang);                        // [ℹ] single lang-translated-links-terms
+    finalCacheObj.scores_header_translations = response.scores_header_translations.find(( { lang } ) => lang_ === lang);          // [ℹ] single-translated-LANG-terms
+    finalCacheObj.scores_top_bar_messages = response.scores_top_bar_messages.find(( { lang } ) => lang_ === lang);                // [ℹ] platform-top-ALERT-system
     finalCacheObj.langArray = langArray;  // [ℹ] languages available for PLATFORM
 
     // [ℹ] persist-cache-response;

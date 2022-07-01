@@ -9,7 +9,7 @@ import { gql } from 'graphql-request';
 */
 export const GET_LEAGUES_TABLE_DATA = gql`
 	query GET_LEAGUES_TABLE_DATA @cached(ttl: 300) {
-    scores_football_leagues_dev {
+    scores_football_leagues {
       country
       data
       name
@@ -17,24 +17,24 @@ export const GET_LEAGUES_TABLE_DATA = gql`
       season
       seasons
     }
-    scores_football_standings_dev {
+    scores_football_standings {
       data
       id
       name
       type
     }
-    scores_football_teams_dev {
+    scores_football_teams {
       data
       id
       name
     }
-    scores_standings_home_widget_translations_dev {
+    scores_standings_home_widget_translations {
       games
       lang
       points
       title
     }
-    color_codes_league_standings_positions_dev {
+    color_codes_league_standings_positions {
       color_codes
       sports
     }

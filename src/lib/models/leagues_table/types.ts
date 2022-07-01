@@ -1,7 +1,7 @@
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // ... ℹ DATA obtained from HASURA [!]
 export interface Hasura_Complete_Leagues_Table_Type {
-    scores_football_leagues_dev: {
+    scores_football_leagues: {
       country: JSON
       data: JSON
       name: string
@@ -9,7 +9,7 @@ export interface Hasura_Complete_Leagues_Table_Type {
       season: JSON
       seasons: JSON
     }[]
-    scores_football_standings_dev: {
+    scores_football_standings: {
         id: number
         type: string
         name: string
@@ -70,7 +70,7 @@ export interface Hasura_Complete_Leagues_Table_Type {
           }
         }[]
     }[]
-    scores_football_teams_dev: {
+    scores_football_teams: {
         id: number
         name: string
         data: {
@@ -88,13 +88,13 @@ export interface Hasura_Complete_Leagues_Table_Type {
           logo_path: string
         }
     }[]
-    scores_standings_home_widget_translations_dev: {
+    scores_standings_home_widget_translations: {
       games: string
       lang: string
       points: string
       title: string
     }[]
-    color_codes_league_standings_positions_dev: {
+    color_codes_league_standings_positions: {
       color_codes: JSON
       sports: string
     }[]
