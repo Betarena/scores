@@ -135,7 +135,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 1. Please make the necessary changes to the `sveltekit.config.js` and then,
 2. Delete the `svelte-kit` folder respectively and do `npm run dev` to apply the necessary changes
 
-## Saving TABS:
+### Saving TABS:
 
 https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspace-vscode/68540643#68540643
 

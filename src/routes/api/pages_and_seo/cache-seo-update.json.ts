@@ -33,7 +33,7 @@ import type {
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise < any > {
+export async function post(): Promise < any > {
 
   // [ℹ] get HASURA-DB response;
 	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)

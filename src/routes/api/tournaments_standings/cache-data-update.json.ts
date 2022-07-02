@@ -19,7 +19,7 @@ import fs from 'fs';
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 
-export async function get(): Promise< unknown > {
+export async function post(): Promise< unknown > {
   
   // await standingsDataGeneration()
   await standingsDataGenerationAlt()

@@ -17,7 +17,7 @@ import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function get(): Promise < any > {
+export async function post(): Promise < any > {
     
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
