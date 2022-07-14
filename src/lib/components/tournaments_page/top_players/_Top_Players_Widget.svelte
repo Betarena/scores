@@ -590,22 +590,7 @@
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
-
-    table.standings_table {
-      margin: 20px;
-    } table.standings_table .row-head th:first-child {
-      padding-left: 10px;
-    } table.standings_table .row-head th:last-child {
-      padding-right: 10px;
-    }
-
-    div#standings-view-box {
-      width: auto;
-    } div.stand-view-opt-box {
-      width: auto;
-      text-align: center;
-    }
-
+    /* EMPTY */
   }
 
   /* 
@@ -623,27 +608,32 @@
     WIDGET DARK THEME
   ==================== */
 
-  .dark-background-1 table.standings_table .row-head {
+  .dark-background-1 div#widget-title-row {
 		background-color: #616161 !important;
-	} .dark-background-1 table.standings_table .row-head.table_1 {
-    /* border-bottom: 16px solid transparent; */
-  }
+	}
+
+  .dark-background-1 p#show-more-box {
+		box-shadow: inset 0px 1px 0px #616161 !important;
+	}
 
   .dark-background-1 div.stand-view-opt-box:hover p {
     color: white !important;
   }
 
-  .dark-background-1 div#mobile-table-box {
-    background: #616161;
-  } .dark-background-1 div#mobile-table-box button.table-nav-btn {
-    background: #A8A8A8;
-  } .dark-background-1 div#mobile-table-box p {
+  .dark-background-1 div#mobile-table-box p {
     color: white;
   }
 
-  .dark-background-1 table.standings_table .row-head .tooltip-extra-info {
+  .dark-background-1 div#more-top-leagues-outer {
+    /* dark theme/dark-gray */
     background: #616161;
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    /* shadow/black */
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
+    border-radius: 4px;
+  } /* handle */ .dark-background-1 div#more-top-leagues-list-container::-webkit-scrollbar-thumb {
+    background: #999999 !important;
+  } /* track */ .dark-background-1 div#more-top-leagues-list-container::-webkit-scrollbar-track {
+    background: #4B4B4B !important;
   }
 
 </style>

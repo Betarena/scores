@@ -214,7 +214,7 @@
 	................. */
 
 	div.dark-background-1.best-player-row {
-		box-shadow: inset 0px 1px 0px #616161 !important;
+		box-shadow: inset 0px 0px 0px #616161 !important;
     background-color: #4B4B4B !important;
 	}
 
@@ -222,18 +222,8 @@
     border: 1px solid #999999 !important;
   }
 
-  .dark-background-1.best-player-row p#box-odds {
-    background-color: #616161 !important;
-  }
-
   .dark-background-1.best-player-row p#box-goals {
     background: #4B4B4B;
-    border: 1px solid #616161;
-  }
-
-  .dark-background-1 div.goals-mobile, 
-  .dark-background-1 div.odds-mobile {
-    background-color: #616161 !important;
     border: 1px solid #616161;
   }
 
