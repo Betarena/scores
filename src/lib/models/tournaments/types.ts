@@ -209,6 +209,9 @@ export interface Scores_Football_Seasons_Details {
   league_id?:         number;
   round_data?:        RoundDatum[];
   start_date?:        Date;
+  goalscorers?:        Goalscorers[];
+  assistscorers?:      Assistscorers[];
+  squad?:              Squad[];
 } export interface DataStats {
   id?:                                    number;
   btts?:                                  number;
@@ -285,7 +288,107 @@ export interface Scores_Football_Seasons_Details {
   stage_id?:  number;
   league_id?: number;
   season_id?: number;
+} export interface Goalscorers {
+  type?:          string;
+  goals?:         number;
+  team_id?:       number;
+  position?:      number;
+  stage_id?:      number;
+  player_id?:     number;
+  season_id?:     number;
+  team_name?:     string;
+  player_name?:   null;
+  penalty_goals?: number;
+} export interface Assistscorers {
+  type?:        string;
+  assists?:     number;
+  team_id?:     number;
+  position?:    number;
+  stage_id?:    number;
+  player_id?:   number;
+  season_id?:   number;
+  team_name?:   string;
+  player_name?: null;
+} export interface Squad {
+  id?:                number;
+  name?:              string;
+  squad?:             SquadSub;
+  founded?:           number | null;
+  twitter?:           null;
+  logoPath?:          null;
+  venue_id?:          number | null;
+  legacy_id?:         number | null;
+  country_id?:        number;
+  short_code?:        null | string;
+  national_team?:     boolean;
+  is_placeholder?:    boolean;
+  current_season_id?: number | null;
+} export interface SquadSub {
+  data?: SquadDatum[];
+} export interface SquadDatum {
+  duels?:                SquadDuels;
+  fouls?:                SquadFouls;
+  goals?:                number;
+  saves?:                null;
+  shots?:                SquadShots;
+  blocks?:               null;
+  number?:               number | null;
+  passes?:               SquadPasses;
+  rating?:               string | null;
+  assists?:              number;
+  captain?:              number;
+  crosses?:              SquadCrosses;
+  injured?:              boolean;
+  lineups?:              number;
+  minutes?:              number;
+  tackles?:              null;
+  dribbles?:             SquadDribbles;
+  hit_post?:             null;
+  owngoals?:             null;
+  redcards?:             number;
+  penalties?:            SquadPenalties;
+  player_id?:            number;
+  yellowred?:            number;
+  appearences?:          number;
+  cleansheets?:          null;
+  dispossesed?:          null;
+  player_name?:          null | string;
+  position_id?:          number;
+  yellowcards?:          number;
+  interceptions?:        null;
+  substitute_in?:        number;
+  substitute_out?:       number;
+  inside_box_saves?:     null;
+  substitutes_on_bench?: number;
+} export interface SquadCrosses {
+  total?:    null;
+  accurate?: null;
+} export interface SquadDribbles {
+  success?:       null;
+  attempts?:      null;
+  dribbled_past?: null;
+} export interface SquadDuels {
+  won?:   null;
+  total?: null;
+} export interface SquadFouls {
+  drawn?:     null;
+  committed?: null;
+} export interface SquadPasses {
+  total?:      null;
+  accuracy?:   null;
+  key_passes?: null;
+} export interface SquadPenalties {
+  won?:       null;
+  saves?:     null;
+  missed?:    null;
+  scores?:    null;
+  committed?: null;
+} export interface SquadShots {
+  shots_total?:      null;
+  shots_on_target?:  null;
+  shots_off_target?: null;
 }
+
 
 // [ℹ] scores_football_leagues (_dev)
 export interface Scores_Football_Leagues {

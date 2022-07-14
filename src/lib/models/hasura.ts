@@ -203,7 +203,6 @@ export interface BETARENA_HASURA_scores_football_teams {
   logo_path?:         string;
 }
 
-
 /**
  * [ℹ] HASURA: color_codes_league_standings_positions (&_dev)
 */
@@ -236,4 +235,101 @@ export interface BETARENA_HASURA_color_codes_league_standings_positions {
   "UEFA Champions League Qualifiers"?:  string;
   "UEFA Conference League Play-offs"?:  string;
   "UEFA Conference League Qualifiers"?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_football_countries (&_dev)
+*/
+export interface BETARENA_HASURA_scores_football_countries {
+  id?:   number;
+  data?: FootballCountriesData;
+  name?: string;
+} export interface FootballCountriesData {
+  id?:         number;
+  name?:       string;
+  extra?:      FootballCountriesExtra;
+  image_path?: string;
+} export interface FootballCountriesExtra {
+  iso?:          string;
+  fifa?:         string;
+  flag?:         string;
+  iso2?:         string;
+  latitude?:     string;
+  continent?:    string;
+  longitude?:    string;
+  sub_region?:   string;
+  world_region?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_football_players (&_dev)
+*/
+export interface BETARENA_HASURA_scores_football_players {
+  data?:        FootballPlayersData;
+  player_id?:   number;
+  common_name?: string;
+  nationality?: string;
+} export interface FootballPlayersData {
+  height?:       null | string;
+  weight?:       null | string;
+  team_id?:      number | null;
+  fullname?:     string;
+  lastname?:     string;
+  birthdate?:    string;
+  firstname?:    string;
+  player_id?:    number;
+  birthplace?:   string;
+  country_id?:   number;
+  image_path?:   string;
+  common_name?:  string;
+  nationality?:  string;
+  position_id?:  number;
+  birthcountry?: string;
+  display_name?: string;
+  team?:         FootballPlayersTeam;
+} export interface FootballPlayersTeam {
+  data?: FootballPlayersTeamData;
+} export interface FootballPlayersTeamData {
+  id?:                number;
+  name?:              string;
+  founded?:           number;
+  twitter?:           string;
+  venue_id?:          number;
+  legacy_id?:         number;
+  logo_path?:         string;
+  country_id?:        number;
+  short_code?:        string;
+  national_team?:     boolean;
+  is_placeholder?:    boolean;
+  current_season_id?: number;
+}
+
+/**
+ * [ℹ] HASURA: scores_widget_top_players_translations (&_dev)
+*/
+export interface BETARENA_HASURA_scores_widget_top_players_translations {
+  lang?: string;
+  data?: TopPlayersData;
+} export interface TopPlayersData {
+  goals?:          string;
+  player?:         string;
+  rating?:         string;
+  assists?:        string;
+  top_players?:    string;
+  total_shots?:    string;
+  show_more_less?: string[];
+}
+
+/**
+ * [ℹ] HASURA: player_positions_translations (&_dev)
+*/
+export interface BETARENA_HASURA_player_positions_translations {
+  lang?:     string;
+  position?: { [key: string]: string };
+}
+
+export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
+  aggregate?: Aggregate;
+} export interface Aggregate {
+  totalCount?: number;
 }
