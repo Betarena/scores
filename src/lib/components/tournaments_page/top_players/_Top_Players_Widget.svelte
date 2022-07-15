@@ -98,19 +98,51 @@
     }, 50)
   }
 
+  $: console.log(`${devConsoleTag} : DETECTED! trueLengthOfArray ${trueLengthOfArray}`)
+
   function selectPlayerView(opt: string) {
     dropdownPlayerViewSelect = opt.toLowerCase().replace(/\s/g, '_')
     selectedPlayerArray = playerArrayConst + dropdownPlayerViewSelect
     showMore = false;
+    // limitViewRow = 10;
     
     let checkPlayerViewOptLength = TOP_PLAYERS_DATA.seasons
-      .find( ({ season_id }) => season_id === $session.selectedSeasonID)[selectedPlayerArray]
+      .find( ({ season_id }) => season_id === $session.selectedSeasonID)
 
-    trueLengthOfArray = 
-      checkPlayerViewOptLength === undefined ||
-      checkPlayerViewOptLength === null 
-        ? 0
-        : checkPlayerViewOptLength.length
+    if (checkPlayerViewOptLength === undefined ||
+      checkPlayerViewOptLength === null) {
+
+      noTopPlayersBool = true;
+      trueLengthOfArray = 0;
+      return;
+
+    } else if (checkPlayerViewOptLength.top_players_assists.length == 0 &&
+      checkPlayerViewOptLength.top_players_goals.length == 0 &&
+      checkPlayerViewOptLength.top_players_rating.length == 0 &&
+      checkPlayerViewOptLength.top_players_total_shots.length == 0) {
+      
+      noTopPlayersBool = true;
+      trueLengthOfArray = 0;
+      return;
+
+    } else {
+      noTopPlayersBool = false;
+      trueLengthOfArray = checkPlayerViewOptLength[selectedPlayerArray].length;
+
+      if (trueLengthOfArray > 10) {
+        displayShowMore = true;
+        staticViewRow = 10;
+        limitViewRow = 10;
+      }
+      else {
+        displayShowMore = false;
+        staticViewRow = 10;
+        limitViewRow = 10;
+      }
+
+      return;
+    }
+
   }
 
   function closeAllDropdowns() {
@@ -203,20 +235,28 @@
     loadedCurrentSeason = true;
   }
 
-  $: if (trueLengthOfArray > 10) {
-    displayShowMore = true;
-    staticViewRow = 10;
-    limitViewRow = 10;
-  }
+  // $: if (trueLengthOfArray > 10) {
+  //   console.log(`${devConsoleTag} 
+  //     Detected players length change!
+  //   `)
+  //   displayShowMore = true;
+  //   staticViewRow = 10;
+  //   limitViewRow = 10;
+  // }
 
   $: if (browser && $session.selectedSeasonID != undefined) {
     selectPlayerView(dropdownPlayerViewSelect)
+    if (dev) console.log(`${devConsoleTag} 
+      Updated season!
+    `)
   }
 
-  $: if (dev) console.log(`${devConsoleTag}
-      trueLengthOfArray: ${trueLengthOfArray}
-      selectedPlayerArray: ${selectedPlayerArray}
-    `)
+  // $: if (dev) console.log(`${devConsoleTag}
+  //     trueLengthOfArray: ${trueLengthOfArray}
+  //     selectedPlayerArray: ${selectedPlayerArray}
+  //     limitViewRow: ${limitViewRow}
+  //     staticViewRow: ${staticViewRow}
+  //   `)
 
 </script>
 
@@ -300,8 +340,8 @@
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if 
-    !noTopPlayersBool && 
-    !refresh && 
+    !noTopPlayersBool &&
+    !refresh &&
     browser && 
     $userBetarenaSettings.country_bookmaker && 
     !diasbleDev}
@@ -370,12 +410,12 @@
                 -->
                 {#each TOP_PLAYERS_T.pl_view_opt as optView}
                   <div
-                    class="row-space-out top-league-container ">
+                    class="row-space-out top-league-container"
+                    on:click={() => selectPlayerView(optView.toLowerCase())}>
                     <!-- [ℹ] row-data;
                     -->
                     <div
-                      class='row-space-start cursor-pointer'
-                      on:click={() => selectPlayerView(optView.toLowerCase())}>
+                      class='row-space-start cursor-pointer'>
                       <!-- [ℹ] vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
                       -->
                       <p 
@@ -484,9 +524,7 @@
 
         <!-- [ℹ] show-more / show-less
         -->
-        {#if
-          displayShowMore &&
-          trueLengthOfArray != 0}
+        {#if displayShowMore}
           <div>
             <p 
               id="show-more-box" 

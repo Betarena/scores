@@ -81,11 +81,11 @@
       <div
         style="margin-left: 16px;">
         <p 
-          class="medium w-500 no-wrap">
+          class="medium w-500">
           {data.player_name}
         </p>
         <p 
-          class="medium w-400 color-grey no-wrap">
+          class="medium w-400 color-grey">
           {translations.pos_t[data.position]}
         </p>
       </div>
