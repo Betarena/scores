@@ -9,7 +9,7 @@
       "color": "terminal.ansiCyan"
     },
     {
-      "name": "dev",
+      "name": "work-env",
       "description": "Main Frontend Development Deploy Terminal",
       "icon": "tools",
       "color": "terminal.ansiBlue"
