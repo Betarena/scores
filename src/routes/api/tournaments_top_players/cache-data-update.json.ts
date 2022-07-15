@@ -37,7 +37,7 @@ export async function post(): Promise< unknown > {
   // [🐛] debug
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${Date.now()}`)
   
-  await tournamentsTopPlayersDataGeneration ()
+  // await tournamentsTopPlayersDataGeneration ()
   await tournamentsTopPlayersTGeneration ()
 
   // [ℹ] return, RESPONSE;
@@ -458,13 +458,17 @@ async function tournamentsTopPlayersTGeneration () {
     const pos_T = response.player_positions_translations_dev
       .find(( { lang } ) => lang === main_lang);
 
+    const noData_T = response.scores_general_translations_dev
+      .find( ({ lang }) => lang === main_lang);
+
     const top_players_view_opt: string[] = [ "Rating", "Goals", "Assists", "Total Shots"]
 
     const mergeObject: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = {
       lang: main_lang,
       ...main_T.data,
       pos_t: pos_T?.position,
-      pl_view_opt: top_players_view_opt
+      pl_view_opt: top_players_view_opt,
+      no_data_t: noData_T.widgets_no_data_available
     }
 
     await cacheTranslationData (main_lang, mergeObject);

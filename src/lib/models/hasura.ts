@@ -328,6 +328,59 @@ export interface BETARENA_HASURA_player_positions_translations {
   position?: { [key: string]: string };
 }
 
+/**
+ * [ℹ] HASURA: scores_general_translations (&_dev)
+*/
+export interface BETARENA_HASURA_scores_general_translations {
+  lang?:                      string;
+  countries?:                 { [key: string]: string }[];
+  widgets_no_data_available?: WidgetsNoDataAvailable;
+  weekdays?:                  Weekdays;
+  months?:                    WelcomeMonths;
+} export interface WelcomeMonths {
+  months?:              MonthsMonths;
+  months_abbreviation?: MonthsAbbreviation;
+} export interface MonthsMonths {
+  May?:       string;
+  July?:      string;
+  June?:      string;
+  April?:     string;
+  March?:     string;
+  August?:    string;
+  January?:   string;
+  October?:   string;
+  December?:  string;
+  February?:  string;
+  November?:  string;
+  September?: string;
+  Setembro?:  string;
+} export interface MonthsAbbreviation {
+  Apr?: string;
+  Aug?: string;
+  Dec?: string;
+  Feb?: string;
+  Jan?: string;
+  Jul?: string;
+  Jun?: string;
+  Mar?: string;
+  May?: string;
+  Nov?: string;
+  Oct?: string;
+  Sep?: string;
+  Set?: string;
+} export interface Weekdays {
+  friday?:    string;
+  monday?:    string;
+  sunday?:    string;
+  tuesday?:   string;
+  saturday?:  string;
+  thursday?:  string;
+  wednesday?: string;
+} export interface WidgetsNoDataAvailable {
+  no_info?:      string;
+  no_info_desc?: string;
+}
+
 export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
   aggregate?: Aggregate;
 } export interface Aggregate {

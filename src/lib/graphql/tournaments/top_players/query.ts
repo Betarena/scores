@@ -88,6 +88,10 @@ export const HASURA_BETARENA_QUERY_TOP_PLAYERS_T = gql`
       lang
       position
     }
+    scores_general_translations_dev {
+      lang
+      widgets_no_data_available
+    }
 
   }
 `;

@@ -291,8 +291,8 @@
       <!-- [ℹ] container w/ text 
       -->
       <div>
-        <p class='s-14 m-b-8 w-500'> No information is available at the moment! </p>
-        <p class='s-14 color-grey w-400'> The lack of data may be due to no information available at the moment, an error, or the widget is still under development for this section. </p>
+        <p class='s-14 m-b-8 w-500'> {TOP_PLAYERS_T.no_data_t.no_info} </p>
+        <p class='s-14 color-grey w-400'> {TOP_PLAYERS_T.no_data_t.no_info_desc} </p>
       </div>
     </div>
   {/if}
@@ -476,12 +476,11 @@
             <!-- [ℹ] container w/ text 
             -->
             <div>
-              <p class='s-14 w-500'> No information is available at the moment! </p>
+              <p class='s-14 w-500'> {TOP_PLAYERS_T.no_data_t.no_info} </p>
             </div>
           </div>
 
         {/if}
-
 
         <!-- [ℹ] show-more / show-less
         -->

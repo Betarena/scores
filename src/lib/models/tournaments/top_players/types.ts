@@ -4,8 +4,10 @@ import type {
   BETARENA_HASURA_scores_football_players, 
   BETARENA_HASURA_scores_football_seasons_details_aggregate, 
   BETARENA_HASURA_scores_football_teams, 
+  BETARENA_HASURA_scores_general_translations, 
   BETARENA_HASURA_scores_widget_top_players_translations,
   TopPlayersData,
+  WidgetsNoDataAvailable,
 } from "$lib/models/hasura"
 import type { Scores_Football_Leagues, Scores_Football_Seasons_Details } from "../types"
 
@@ -30,6 +32,7 @@ export interface BETARENA_HASURA_top_players_query {
 export interface BETARENA_HASURA_top_players_t_query {
   scores_widget_top_players_translations_dev:     BETARENA_HASURA_scores_widget_top_players_translations[]
   player_positions_translations_dev:              BETARENA_HASURA_player_positions_translations[]
+  scores_general_translations_dev:                BETARENA_HASURA_scores_general_translations[]
 }
 
 /**
@@ -42,6 +45,7 @@ export interface REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_respons
   lang?:          string
   pos_t?:         { [key: string]: string }
   pl_view_opt?:   string[]
+  no_data_t?:     WidgetsNoDataAvailable
 }
 
 export interface REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response {
