@@ -81,11 +81,11 @@
       <div
         style="margin-left: 16px;">
         <p 
-          class="medium w-500">
+          class="medium w-500 no-wrap">
           {data.player_name}
         </p>
         <p 
-          class="medium w-400 color-grey">
+          class="medium w-400 color-grey no-wrap">
           {translations.pos_t[data.position]}
         </p>
       </div>
@@ -179,28 +179,6 @@
     border: 1px solid transparent;
   }
 
-  .best-player-row p#box-odds {
-    background-color: #F2F2F2;
-    border-radius: 4px;
-    text-align: center;
-    padding: 5px 0;
-    max-height: 30px;
-    width: 64px;
-  }
-
-  div.goals-mobile {
-    border: 1px solid #E6E6E6;
-    box-sizing: border-box;
-    border-radius: 4px;
-    padding: 10px 12px 10px 12px;
-  }
-  div.odds-mobile {
-    background: #F2F2F2;
-    border-radius: 4px;
-    box-sizing: border-box;
-    padding: 10px 12px 10px 12px;
-  }
-
   /* 
   MOBILE RESPONSIVNESS */
   @media only screen and (max-width: 475px) {
@@ -225,6 +203,10 @@
   .dark-background-1.best-player-row p#box-goals {
     background: #4B4B4B;
     border: 1px solid #616161;
+  } .dark-background-1.best-player-row p#box-goals.rating_grey {
+    background-color: #616161 !important;
+    color: #A8A8A8;
+    border: 1px solid transparent;
   }
 
   .dark-background-1 p {

@@ -21,8 +21,8 @@
   import TopPlayersWidgetContentLoader from "./_Top_Players_Widget_ContentLoader.svelte";
   import TopPlayerRow from "./_Top_Player_Row.svelte";
 
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
+	import no_visual from './assets/no_visual.svg';
+	import no_visual_dark from './assets/no_visual_dark.svg';
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
   import check_league from './assets/check-league.svg';
@@ -34,7 +34,6 @@
   let dropdownPlayerViewSelect: string = "rating";              // [ℹ] selected TOP PLAYER VIEW;
   let playerArrayConst:         string = "top_players_";
   let selectedPlayerArray:      string = "top_players_rating";
-  let toggleCTA:                boolean = false;
   let toggleDropdown:           boolean = false;
   let showMore:                 boolean = false;
   let displayShowMore:          boolean = false;
@@ -45,7 +44,6 @@
   let diasbleDev:               boolean = false;
   let devConsoleTag:            string = "TOP_PLAYER";
 
-  let selectedOpt:              string = 'total';
   let refreshRow:               boolean = false;
 
   let currentSeason:            number = undefined;
@@ -78,7 +76,13 @@
       noTopPlayersBool = false;
     }
 
-    loaded = true;
+    // [🐛] debug TEST TOP PLAYERS MISSING DATA
+    // noTopPlayersBool = true;
+    // loaded = false;
+
+    // loaded = true;
+
+    await new Promise(r => setTimeout(r, 2000));
 
     selectPlayerView(dropdownPlayerViewSelect);
 
@@ -109,7 +113,7 @@
   }
 
   function closeAllDropdowns() {
-    toggleCTA = false;
+    toggleDropdown = false;
   }
 
   function toggleFullList() {
@@ -204,6 +208,10 @@
     limitViewRow = 10;
   }
 
+  $: if (browser && $session.selectedSeasonID != undefined) {
+    selectPlayerView(dropdownPlayerViewSelect)
+  }
+
   $: if (dev) console.log(`${devConsoleTag}
       trueLengthOfArray: ${trueLengthOfArray}
       selectedPlayerArray: ${selectedPlayerArray}
@@ -217,11 +225,12 @@
 
 <!-- [ℹ] area-outside-for-close 
 -->
-{#if toggleCTA}
+{#if toggleDropdown}
   <div id="background-area-close" on:click={() => closeAllDropdowns()} />
 {/if}
 
-<div>
+<div
+  id='widget-outer'>
 
   <!-- [ℹ] SEO-DATA-LOADED 
   -->
@@ -240,53 +249,61 @@
 
   <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if noTopPlayersBool && !loaded}
+  {#if 
+    noTopPlayersBool && 
+    !loaded}
+
     <!-- [ℹ] title of the widget 
     -->
-    <h2 
+    <h2
       class="s-20 m-b-10 w-500 color-black-2"
       style="margin-top: 0;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
       {TOP_PLAYERS_T?.top_players}
     </h2>
 
-    <!-- [ℹ] no-matches-avaiable-placeholder container 
+    <!-- [ℹ] no-widget-data-avaiable-placeholder container 
     -->
-    <div 
+    <div
       id='no-widget-box'
-      class='row-space-start'
+      class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
       <!-- [ℹ] no-visual-asset
       -->
       {#if $userBetarenaSettings.theme == 'Dark'}
         <img 
-          src={no_featured_match_visual_dark} 
-          alt="no-featured-match-visual_dark"
-          width="80px" height="80px"
-          class='m-r-20'
+          src={no_visual_dark} 
+          alt="no_visual_dark"
+          width="32px" height="32px"
+          class='m-b-16'
         />
       {:else}
         <img 
-          src={no_featured_match_visual} 
-          alt="no-featured-match-visual"
-          width="80px" height="80px"
-          class='m-r-20'
+          src={no_visual} 
+          alt="no_visual"
+          width="32px" height="32px"
+          class='m-b-16'
         />
       {/if}
       
       <!-- [ℹ] container w/ text 
       -->
       <div>
-        <p class='s-16 m-b-8 w-500'> No Top Players Info Available </p>
-        <p class='s-16 color-grey w-400'> Sorry, at this time there is no top players info available! </p>
+        <p class='s-14 m-b-8 w-500'> No information is available at the moment! </p>
+        <p class='s-14 color-grey w-400'> The lack of data may be due to no information available at the moment, an error, or the widget is still under development for this section. </p>
       </div>
     </div>
   {/if}
 
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if !noTopPlayersBool && !refresh && browser && $userBetarenaSettings.country_bookmaker && !diasbleDev}
+  {#if 
+    !noTopPlayersBool && 
+    !refresh && 
+    browser && 
+    $userBetarenaSettings.country_bookmaker && 
+    !diasbleDev}
 
     <!-- [ℹ] promise is pending 
     -->
@@ -310,6 +327,7 @@
 
       <div
         id="top-players-widget-container"
+        class:widget-no-data-height={trueLengthOfArray == 0}
         class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
         <!-- [ℹ] dropdown leagues select box 
@@ -350,8 +368,6 @@
                 <!-- [ℹ] for-loop-each-population 
                 -->
                 {#each TOP_PLAYERS_T.pl_view_opt as optView}
-                  <!-- [ℹ] content here 
-                  -->
                   <div
                     class="row-space-out top-league-container ">
                     <!-- [ℹ] row-data;
@@ -362,13 +378,14 @@
                       <!-- [ℹ] vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
                       -->
                       <p 
-                        class='s-14 w-500 color-black-2'>
+                        class='s-14 w-500 color-black-2'
+                        class:color-primary={dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}>
                         {TOP_PLAYERS_T[optView.toLowerCase().replace(/\s/g, '_')]}
                       </p>
                     </div>
                     <!-- [ℹ] vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
                     -->
-                    {#if dropdownPlayerViewSelect === optView.toLowerCase()}
+                    {#if dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}
                       <img 
                         src={check_league}
                         alt=""
@@ -411,24 +428,65 @@
 
         </div>
 
-        <!-- [ℹ] display the first 5 rows on Mobile
+        <!-- [ℹ] no-seasons-data-check
         -->
+        {#if trueLengthOfArray != 0}
 
-        {#each TOP_PLAYERS_DATA.seasons as season}
-          {#if season.season_id === $session.selectedSeasonID}
-            {#each season[selectedPlayerArray].slice(0, limitViewRow) as data, i}
-              <TopPlayerRow 
-                pos={i+1}
-                optView={dropdownPlayerViewSelect}
-                data={data}
-                translations={TOP_PLAYERS_T} />
-            {/each}
-          {/if}
-        {/each}
+          <!-- [ℹ] rows
+          -->
+          {#each TOP_PLAYERS_DATA.seasons as season}
+            {#if season.season_id === $session.selectedSeasonID}
+              {#each season[selectedPlayerArray].slice(0, limitViewRow) as data, i}
+                <TopPlayerRow 
+                  pos={i+1}
+                  optView={dropdownPlayerViewSelect}
+                  data={data}
+                  translations={TOP_PLAYERS_T} />
+              {/each}
+            {/if}
+          {/each}
+
+        {:else}
+
+          <!-- [ℹ] placeholder
+          -->
+          <div
+            class="column-space-center"
+            style="margin-top: 280px;">
+
+            <!-- [ℹ] no-visual-asset
+            -->
+            {#if $userBetarenaSettings.theme == 'Dark'}
+              <img 
+                src={no_visual_dark} 
+                alt="no_visual_dark"
+                width="32px" height="32px"
+                class='m-b-16'
+              />
+            {:else}
+              <img 
+                src={no_visual} 
+                alt="no_visual"
+                width="32px" height="32px"
+                class='m-b-16'
+              />
+            {/if}
+
+            <!-- [ℹ] container w/ text 
+            -->
+            <div>
+              <p class='s-14 w-500'> No information is available at the moment! </p>
+            </div>
+          </div>
+
+        {/if}
+
 
         <!-- [ℹ] show-more / show-less
         -->
-        {#if displayShowMore}
+        {#if
+          displayShowMore &&
+          trueLengthOfArray != 0}
           <div>
             <p 
               id="show-more-box" 
@@ -452,7 +510,7 @@
     <!-- [ℹ] promise was rejected
     -->
     {:catch error}
-      {error}
+      <!-- {error} -->
     {/await}
 
   {/if}
@@ -465,6 +523,8 @@
 
 <style>
 
+  /* [ℹ] OTHER STYLE / CSS */
+
   #background-area-close {
     position: absolute;
     top: 0;
@@ -476,12 +536,21 @@
     z-index: 1000;
   }
 
+  .color-primary {
+    color: #f5620f !important;
+  }
+
+  /* [ℹ] NO DATA WIDGET STYLE / CSS */
+
   #no-widget-box {
     padding: 20px;
     background: #FFFFFF;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
+    text-align: center;
   }
+
+  /* [ℹ] SEO WIDGET DATA */
   
   #seo-widget-box {
 		position: absolute;
@@ -490,25 +559,33 @@
 		left: -9999px;
 	}
 
+  /*
+    [ℹ] WIDGET MAIN STYLE / CSS 
+    [ℹ] MOBILE FIRST
+  */
+
+  div#widget-outer {
+    margin-top: 24px;
+  }
+
+  div#top-players-widget-container.widget-no-data-height {
+    height: 832px;
+  }
+
   #top-players-widget-container {
-    /* display: grid; */
     padding: 0;
-    /* padding-bottom: 20px; */
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     width: 100%;
-    /* max-width: 383px; */
-    /* overflow: hidden; */
     position: relative;
   }
-
   
   div#widget-title-row {
     background-color: #f2f2f2;
     border-radius: 2px;
     padding: 7px 16px 7px 9px;
-    margin: 20px 20px 12.5px 20px;
+    margin: 16px 20px 10px 20px;
   }
 
   div#more-top-leagues-outer {
@@ -536,11 +613,12 @@
     margin: 0 20px 0px 20px;
     padding-top: 20px;
   } div#dropdown-top-players-container div#dropdown-box-select {
-    padding: 12px 20px 12px 20px;
+    padding: 9px 20px;
     border: 1px solid #CCCCCC;
     box-sizing: border-box;
     border-radius: 8px;
     position: relative;
+    height: 40px;
   } div#dropdown-top-players-container div#dropdown-box-select:hover { 
     border: 1px solid #8C8C8C !important;
   } div#dropdown-top-players-container div#more-top-leagues-list-container {
@@ -595,11 +673,18 @@
 
   /* 
   DESKTOP RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 1000px) {
+  @media only screen and (min-width: 1160px) {
 
     #top-players-widget-container {
       min-width: 100%;
-      /* max-width: 560px; */
+    }
+
+    div#widget-outer {
+      margin-top: 0;
+    }
+
+    div#widget-title-row {
+      margin: 20px 20px 12.5px 20px;
     }
 
   }
