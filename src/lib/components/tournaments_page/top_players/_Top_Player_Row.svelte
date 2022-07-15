@@ -200,6 +200,12 @@
     }
 	}
 
+  @media only screen and (min-width: 1240px) {
+    p.player-name {
+      width: 200px;
+    }
+  }
+
   /* .............. 
 	WIDGET DARK THEME 
 	................. */
