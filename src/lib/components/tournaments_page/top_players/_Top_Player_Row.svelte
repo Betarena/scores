@@ -94,7 +94,8 @@
     <!-- [ℹ] second container 
     -->
     <div
-      class="row-space-end">
+      class="row-space-end"
+      style="width: auto;">
       <p 
         id='box-goals'
         class="medium w-500"
@@ -179,13 +180,6 @@
     border: 1px solid transparent;
   }
 
-  p.player-name {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    max-width: 85px;
-  }
-
   /* 
   MOBILE RESPONSIVNESS */
   @media only screen and (max-width: 475px) {
@@ -193,6 +187,18 @@
       padding-top: 24px;
     }
   }
+
+  /* 
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+	@media only screen and (min-width: 1160px) and (max-width: 1240px) {
+		p.player-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 135px;
+      width: 135px;
+    }
+	}
 
   /* .............. 
 	WIDGET DARK THEME 
