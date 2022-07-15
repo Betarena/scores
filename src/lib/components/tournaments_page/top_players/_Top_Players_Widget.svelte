@@ -82,7 +82,8 @@
 
     // loaded = true;
 
-    await new Promise(r => setTimeout(r, 2000));
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    await sleep(2000);
 
     selectPlayerView(dropdownPlayerViewSelect);
 
