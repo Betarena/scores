@@ -81,11 +81,11 @@
       <div
         style="margin-left: 16px;">
         <p 
-          class="medium w-500">
+          class="medium w-500 no-wrap player-name">
           {data.player_name}
         </p>
         <p 
-          class="medium w-400 color-grey">
+          class="medium w-400 color-grey no-wrap">
           {translations.pos_t[data.position]}
         </p>
       </div>
@@ -177,6 +177,13 @@
     background-color: #F2F2F2 !important;
     color: #8C8C8C;
     border: 1px solid transparent;
+  }
+
+  p.player-name {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 150px;
   }
 
   /* 
