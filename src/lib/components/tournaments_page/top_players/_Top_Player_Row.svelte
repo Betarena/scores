@@ -181,7 +181,17 @@
   }
 
   /* 
-  MOBILE RESPONSIVNESS */
+  MOBILE RESPONSIVNESS (&+) */
+  @media only screen and (max-width: 425px) {
+    p.player-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 150px;
+      width: 150px;
+    }
+  }
+
   @media only screen and (max-width: 475px) {
     .best-player-row:first-child {
       padding-top: 24px;
