@@ -37,7 +37,7 @@ export async function post(): Promise< unknown > {
   // [🐛] debug
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${Date.now()}`)
   
-  // await tournamentsTopPlayersDataGeneration ()
+  await tournamentsTopPlayersDataGeneration ()
   await tournamentsTopPlayersTGeneration ()
 
   // [ℹ] return, RESPONSE;
@@ -411,9 +411,12 @@ async function tournamentsTopPlayersDataGeneration () {
 
         const leagueTarget: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = final_obj_array.get(finalCacheObj.league_id)
         leagueTarget.seasons = [...leagueTarget.seasons , ...finalCacheObj.seasons];
+        leagueTarget.seasons.sort((a, b) => parseFloat(b.season_id.toString()) - parseFloat(a.season_id.toString()));
         final_obj_array.set(finalCacheObj.league_id, leagueTarget);
         continue;
       }
+
+      finalCacheObj.seasons.sort((a, b) => parseFloat(b.season_id.toString()) - parseFloat(a.season_id.toString()));
 
       final_obj_array.set(finalCacheObj.league_id, finalCacheObj);
     }
@@ -429,12 +432,12 @@ async function tournamentsTopPlayersDataGeneration () {
   }
 
   // [🐛] debug
-  // const data = JSON.stringify(arrayObj, null, 4)
-  // fs.writeFile('./datalog/tournamentsTopPlayers.json', data, err => {
-  //   if (err) {
-  //     console.error(err);
-  //   }
-  // });
+  const data = JSON.stringify(arrayObj, null, 4)
+  fs.writeFile('./datalog/tournamentsTopPlayers.json', data, err => {
+    if (err) {
+      console.error(err);
+    }
+  });
 
   // [🐛] debug
   if (dev) console.log(`✔ FRONTEND_SCORES_REDIS_tournamentsTopPlayers complete!`)
