@@ -151,8 +151,7 @@ async function mainGeo(): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_d
     const leagueObj: REDIS_CACHE_SINGLE_league_list_geo_data_response = {
       geo: undefined,
       top_geo_leagues: [],
-      all_leagues_list: [],
-      unique_county_list: []
+      all_leagues_list: []
     }
 
     // [ℹ] declare [GEO]
@@ -191,20 +190,6 @@ async function mainGeo(): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_d
       }
     })
     
-    leagueObj.unique_county_list = response.scores_league_list.filter((obj, pos, arr) => {
-        return arr
-          .map(mapObj => mapObj.country_id)
-          .indexOf(obj.country_id) == pos;
-    });
-    leagueObj.unique_county_list = leagueObj.unique_county_list.map(u => ({
-      country_id:     u.country_id,
-      country_name:   u.country_name,
-      image_path:     u.image_path
-    }));
-    leagueObj.unique_county_list.sort(function(a, b) {
-      return compareStrings(a.country_name, b.country_name);
-    })
-
     finalObj.push(leagueObj);
   }
 

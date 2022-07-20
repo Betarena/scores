@@ -51,12 +51,6 @@ export interface REDIS_CACHE_SINGLE_league_list_geo_data_response {
     type:           string
     urls?:          ScoresTournamentsUrls
   }[]
-  // [ℹ] all unique countires
-  unique_county_list: {
-    country_id:     number
-    country_name:   string
-    image_path:     string
-  }[]
 }
 
 export interface REDIS_CACHE_SINGLE_league_list_seo_t_response {
