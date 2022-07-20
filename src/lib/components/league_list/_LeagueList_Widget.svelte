@@ -121,9 +121,11 @@
   let countrySearchData = []
   // [ℹ] listed to search-input text;
   $: if (leagueSearch != undefined && leagueSearch != '' && league_list_data) {
+    
     // [ℹ] reset data;
     leagueSearchData = []
     countrySearchData = []
+
     // [ℹ] iterate for league-data;
     for (const item of league_list_data.all_leagues_list) {
       // [ℹ] identify the correct search league items;
@@ -133,8 +135,9 @@
         leagueSearchData.push(item)
       }
     }
+
     // [ℹ] iterate for country-data;
-    for (const item of league_list_data.unique_county_list) {
+    for (const item of LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list) {
       // [ℹ] identify the correct search country items;
       if (item.country_name.toString().toLowerCase().includes(leagueSearch.toString().toLowerCase())) {
         // [ℹ] store the data;
@@ -311,7 +314,7 @@
                     id='countires-list-container'>
 
                     <!-- [ℹ] for-loop-each-population -->
-                    {#each data.unique_county_list as item}
+                    {#each LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list as item}
 
                         <div
                           class='main-country-container'
