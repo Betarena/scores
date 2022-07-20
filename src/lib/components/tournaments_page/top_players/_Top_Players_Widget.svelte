@@ -331,7 +331,10 @@
       <!-- [ℹ] container w/ text 
       -->
       <div>
-        <p class='s-14 m-b-8 w-500'> {TOP_PLAYERS_T.no_data_t.no_info} </p>
+        <p 
+          class='s-14 m-b-8 w-500'
+          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+          {TOP_PLAYERS_T.no_data_t.no_info} </p>
         <p class='s-14 color-grey w-400'> {TOP_PLAYERS_T.no_data_t.no_info_desc} </p>
       </div>
     </div>
@@ -516,7 +519,11 @@
             <!-- [ℹ] container w/ text 
             -->
             <div>
-              <p class='s-14 w-500'> {TOP_PLAYERS_T.no_data_t.no_info} </p>
+              <p 
+                class='s-14 w-500'
+                class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+                {TOP_PLAYERS_T.no_data_t.no_info} 
+              </p>
             </div>
           </div>
 
