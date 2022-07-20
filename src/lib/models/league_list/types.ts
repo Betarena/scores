@@ -60,6 +60,18 @@ export interface REDIS_CACHE_SINGLE_league_list_geo_data_response {
 }
 
 export interface REDIS_CACHE_SINGLE_league_list_seo_t_response {
+  lang: string
+  translations?: {
+    search_form?:           string
+    top_leagues?:           string
+    leagues_by_country?:    string
+    widget_title?:          string
+    competitions_results?:  string
+    countries_results?:     string
+    full_list?:             string
+    no_results?:            string
+    hide?:                  string
+  }
   all_leagues_list: {
     country_id:               number
     country_name:             string
@@ -74,18 +86,4 @@ export interface REDIS_CACHE_SINGLE_league_list_seo_t_response {
     country_name:             string
     image_path:               string
   }[]
-  translations?: {
-    lang?:                    string
-    translations?: {
-      search_form?:           string
-      top_leagues?:           string
-      leagues_by_country?:    string
-      widget_title?:          string
-      competitions_results?:  string
-      countries_results?:     string
-      full_list?:             string
-      no_results?:            string
-      hide?:                  string
-    }
-  }
 }
