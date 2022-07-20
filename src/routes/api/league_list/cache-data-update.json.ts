@@ -222,9 +222,6 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
     country_name:   u.country_name,
     image_path:     u.image_path
   }));
-  pre_updated_unique_county_list.sort (function(a, b) {
-    return compareStrings(a.country_name, b.country_name);
-  })
 
   // [ℹ] .forEach() [LANG]
   for (const lang_m of langArray) {
@@ -261,6 +258,10 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
           elem.country_name = countryObjFinal[country_name]
         }
       }
+    })
+    // [ℹ] descending alphabetical order
+    preCacheObj.unique_county_list.sort (function(a, b) {
+      return compareStrings(a.country_name, b.country_name);
     })
 
     finalCacheObj.push(preCacheObj)
