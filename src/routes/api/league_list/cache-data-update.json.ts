@@ -130,7 +130,7 @@ async function leagueListLangDataGeneration (langArray: string[]) {
  * [ℹ] League List [MAIN HELPER] Methods
 */
 
-async function mainGeo(): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_data_response >> {
+async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_data_response >> {
 
   const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
 
@@ -196,7 +196,7 @@ async function mainGeo(): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_d
   return finalObj
 }
 
-async function mainLang(langArray: string[]): Promise < REDIS_CACHE_SINGLE_league_list_seo_t_response[] > {
+async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_league_list_seo_t_response[] > {
   
   const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
 
