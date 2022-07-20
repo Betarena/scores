@@ -26,6 +26,8 @@ import type {
   BETARENA_HASURA_scores_tournaments 
 } from '$lib/models/hasura'
 
+import fs from 'fs';
+
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
@@ -265,9 +267,14 @@ async function mainLang(langArray: string[]): Promise < REDIS_CACHE_SINGLE_leagu
     preCacheObj.unique_county_list.forEach ((elem) => {
       const target_country_t: boolean = lang_country_map.has(lang_m);
       if (target_country_t) {
-        const target_country_t: BETARENA_HASURA_scores_general_translations = lang_country_map.get(lang_m);
+        const target_country_t_data: BETARENA_HASURA_scores_general_translations = lang_country_map.get(lang_m);
         const country_name:     string = elem.country_name;
-        elem.country_name = target_country_t.countries[country_name];
+        
+        const countryObjFinal = Object.assign({}, ...target_country_t_data.countries); 
+        // [ℹ] TODO: update to countries[<->] when update on Hasura
+        if (countryObjFinal[country_name] !== undefined) {
+          elem.country_name = countryObjFinal[country_name]
+        }
       }
     })
 
