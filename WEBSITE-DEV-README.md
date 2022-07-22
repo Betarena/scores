@@ -5,13 +5,13 @@ To validate for the correct view and interactiveity with the different devices f
 - [browserstack](https://live.browserstack.com/)
 - [lambdatest](https://accounts.lambdatest.com/billing/plans)
 
-## Databases & Data
+## ⚡ Databases & Data
 
-The platform uses the [`Firebase v9`](https://firebase.google.com/docs/database/web/read-and-write#web-version-9) and `HasuraDB` (w/ PostgreSQL)
+The platform uses the [`Firebase v9`](https://firebase.google.com/docs/database/web/read-and-write#web-version-9) and `HasuraDB` (w/ PostgreSQL & GraphQL)
 
 *if the `deployment` to `Heroku` is necessary, use the following [`guide`](https://hasura.io/docs/latest/graphql/core/deployment/deployment-guides/heroku.html)
 
-## Data Caching
+## ✨ Data Caching
 
 The `scores-platform` uses [`redis`](https://redis.io/download) for `caching` of the API DATA for the correct implementation of faster responses and waiting times for the user.
 Currently deployed on [upstash](https://docs.upstash.com/redis) - `Free-tier` model of the application.
@@ -31,7 +31,9 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 
 *alternative-solution-include the use of `service-workers` and `node-cache`, as per solution example [reddit-thread](https://www.reddit.com/r/sveltejs/comments/p3v280/caching_for_load_function_in_sveltekit/h8vw2l3/)
 
-## Further Validation Metrics
+## 🔎 Front-end Metrics Services
+
+**Website Healthiness**
 
 - [Google-Mobile-Friendliness-Check](https://search.google.com/test/mobile-friendly/result?id=ubORB42h3SuKWcAlkAQssw)
 - [Website-Speed-PingDom](https://tools.pingdom.com/)
@@ -43,13 +45,13 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [svelte-implemenatation](https://github.com/imbolc/sapper-google-analytics)
 - [alt.google-analytics](https://www.npmjs.com/package/@analytics/google-analytics)
 
-## SEO-CHECK
+**SEO Check**
 
 - [seo-browser.com](https://www.seo-browser.com/)
 - [seobility.net](https://www.seobility.net/en/seocheck/)
 - [totheweb.com](https://totheweb.com/learning_center/tools-search-engine-simulator/)
 
-### `NPM Packages`
+## 📂 Project `NPM Packages`
 
 - [svelte-content-loader](https://github.com/PaulMaly/svelte-content-loader)
 - [graphql-request](https://www.npmjs.com/package/graphql-request)
@@ -59,7 +61,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 
 ### Converting `PNG` to `WEBP`
 
--  [cloud-convert](https://cloudconvert.com/png-to-webp)
+- ⭐ [cloud-convert](https://cloudconvert.com/png-to-webp)
 
 ### `Svelte` and `SvelteKit` Hints / Tips / Fixes
 
@@ -85,7 +87,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [optimizing-Hasura-DB-INDEXING-JSON-4](https://www.postgresql.org/docs/9.4/datatype-json.html)
 - [localstorage vs. cookies](https://stackoverflow.com/questions/7799728/localstorage-vs-cookies-performance)
 
-### CSP Guides:
+### 🕸 CSP Guides:
 
 - ⭐ [csp-cheat-sheet](https://scotthelme.co.uk/csp-cheat-sheet/#script-src)
 - [sveltekit-csp-config](https://kit.svelte.dev/docs/configuration#csp)
@@ -112,10 +114,31 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [hash-example](https://content-security-policy.com/hash/)
 - [hash-example-code](https://codepen.io/BranchWebSDK/pen/RwRqLmv)
 
-### Text Compression:
+### 📂 Text Compression:
 
 - ⭐[Gzip compression with Node.js](https://medium.com/@victor.valencia.rico/gzip-compression-with-node-js-cc3ed74196f9)
 - [GZIP-TEST](https://sitechecker.pro/gzip-test/)
+
+### 🔁 Node.js Concurrency
+
+- ⭐ [bull npm](https://www.npmjs.com/package/bull)
+- [bull docs](https://optimalbits.github.io/bull/)
+- ⭐ [heroku blog bull w/ throng](https://devcenter.heroku.com/articles/node-redis-workers)
+- [heroku blog bull w/ throng example](https://github.com/heroku-examples/node-workers-example)
+- [heroku deployment bull](https://stackoverflow.com/questions/67528225/how-to-make-a-redis-bull-queue-in-a-node-js-environment-thats-deployed-to-her)
+- [cluster, CPU worker deployment (like throng)](https://www.npmjs.com/package/cluster)
+- [throng, cluster-based NodeJS apps](https://www.npmjs.com/package/throng)
+- [throng, GitHub](https://github.com/hunterloftis/throng)
+- [heroku dyno types](https://devcenter.heroku.com/articles/dyno-types)
+- [dyno usage](https://devcenter.heroku.com/articles/optimizing-dyno-usage)
+
+### JSON to Types
+
+- [quicktype](https://app.quicktype.io/)
+
+### Different Environements
+
+- [different environments](https://stackoverflow.com/questions/71901036/how-to-use-different-environments-with-env-files-in-nodejs)
 
 ### Code Snippets
 
@@ -129,21 +152,26 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
     [example-1-env-var](https://www.reddit.com/r/sveltejs/comments/mek8rc/svelte_kit_environment_variables/)
     [example-2-env-var](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)
 
+- Setting time-outs in JS
+
+  https://stackoverflow.com/questions/951021/what-is-the-javascript-version-of-sleep/39914235#39914235
 
 ### Making changes to the `app.html`:
 
 1. Please make the necessary changes to the `sveltekit.config.js` and then,
 2. Delete the `svelte-kit` folder respectively and do `npm run dev` to apply the necessary changes
 
-### Saving TABS:
-
-https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspace-vscode/68540643#68540643
+## 💠 Miscellaneous
 
 ### Other:
 
 - [sveltekit-awesome](https://github.com/janosh/awesome-svelte-kit)
 
-### Update Caching at once:
+### Saving TABS:
+
+- https://stackoverflow.com/questions/51312095/save-terminal-tabs-to-saved-workspace-vscode/68540643#68540643
+
+### Update Caching at once Powershell Script:
 
 ```
 Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/pages_and_seo/cache-seo-update.json';
