@@ -15,7 +15,7 @@ import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueue = new Bull('cacheQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueueTourInfo = new Bull('cacheQueueTourInfo', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -26,7 +26,7 @@ export async function post(): Promise < unknown > {
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${new Date().toDateString()}`)
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueue.add();
+  const job = await cacheQueueTourInfo.add();
 
   return {
     status: 200,
@@ -75,7 +75,7 @@ async function deleteCacheSportbookDetailInfoData() {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueue.process (async (job, done) => {
+cacheQueueTourInfo.process (async (job, done) => {
   // console.log(job.data.argumentList);
 
   /* 

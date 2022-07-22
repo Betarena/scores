@@ -14,7 +14,7 @@ const format = require('xml-formatter');
 // [❗] critical
 import Bull from 'bull';
 
-const sitemapQueue = new Bull('sitemapQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // TYPES DECLARATION
@@ -38,7 +38,7 @@ export async function post(): Promise < unknown > {
 
   // [ℹ] job producers
   
-  const job = await sitemapQueue.add();
+  const job = await cacheQueuePageSeo.add();
 
   // [ℹ] should never happen;
   return {
@@ -122,7 +122,7 @@ async function deleteCacheSitemapURLs () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-sitemapQueue.process (async (job, done) => {
+cacheQueuePageSeo.process (async (job, done) => {
   // console.log(job.data.argumentList);
 
   /* 

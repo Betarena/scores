@@ -28,7 +28,7 @@ import type { SelectedFixture_LiveOdds_Response } from "$lib/models/featured_mat
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueue = new Bull('cacheQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueueFeaturedMatch = new Bull('cacheQueueFeaturedMatch', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 // [ℹ] server-variables;
 let userGeo: string
@@ -71,7 +71,7 @@ export async function post(): Promise < unknown > {
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_featured_match_trigerred at: ${new Date().toDateString()}`)
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueue.add();
+  const job = await cacheQueueFeaturedMatch.add();
 
   return {
     status: 200,
@@ -125,7 +125,7 @@ async function deleteCacheFeaturedMatchLang() {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueue.process (async (job, done) => {
+cacheQueueFeaturedMatch.process (async (job, done) => {
   // console.log(job.data.argumentList);
 
   /* 

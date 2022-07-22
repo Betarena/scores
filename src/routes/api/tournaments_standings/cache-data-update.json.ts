@@ -17,7 +17,7 @@ import fs from 'fs';
 // [❗] critical
 import Bull from 'bull';
 
-const cacheQueue = new Bull('cacheQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -26,7 +26,7 @@ export async function post(): Promise < unknown > {
   
   // [ℹ] job producers
   
-  const job = await cacheQueue.add();
+  const job = await cacheQueueTourStand.add();
 
   // [ℹ] should never happen;
   return {
@@ -77,7 +77,7 @@ async function deleteStandingsTranslationData () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueue.process (async (job, done) => {
+cacheQueueTourStand.process (async (job, done) => {
   // console.log(job.data.argumentList);
 
   /* 

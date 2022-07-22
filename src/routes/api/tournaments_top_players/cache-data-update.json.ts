@@ -32,7 +32,7 @@ import type {
 // [❗] critical
 import Bull from 'bull';
 
-const cacheQueue = new Bull('cacheQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueueTourTopPlay = new Bull('cacheQueueTourTopPlay', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -43,7 +43,7 @@ export async function post(): Promise < unknown > {
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${new Date().toDateString()}`)
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueue.add();
+  const job = await cacheQueueTourTopPlay.add();
 
   return {
     status: 200,
@@ -94,7 +94,7 @@ async function deleteStandingsTranslationData () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueue.process (async (job, done) => {
+cacheQueueTourTopPlay.process (async (job, done) => {
   // console.log(job.data.argumentList);
 
   /* 
