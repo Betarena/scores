@@ -28,29 +28,27 @@ import type {
 
 import fs from 'fs';
 
+// [❗] critical
+import Bull from 'bull';
+const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 export async function post(): Promise < unknown > {
-    
-  // [ℹ] get KEY platform translations
-  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_leagues_list_trigerred at: ${new Date().toDateString()}`)
 
-  // [ℹ] push "EN"
-  langArray.push('en')
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueLeaguesList.add();
 
-  await leagueListGeoDataGeneration()
-  await leagueListLangDataGeneration(langArray)
-
-  // [ℹ] return, RESPONSE;
   return {
     status: 200,
-    body: '✅ Success \nLeague List Cache Updated!'
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nLeague List Cache Updated!'
+    }
   }
 
 }
@@ -90,6 +88,34 @@ async function deleteLeagueListLang () {
   await redis.del('league_list_t')
   return
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueueLeaguesList.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await leagueListGeoDataGeneration()
+  await leagueListLangDataGeneration(langArray)
+
+  return "done";
+});
 
 /**
  * [ℹ] League List Sites CACHE GENERATION

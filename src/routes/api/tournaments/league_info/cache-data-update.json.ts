@@ -1,29 +1,40 @@
-// [ℹ] import $app `modules`
 import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
+
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/query';
 import { removeDiacritics } from '$lib/utils/languages';
-import type { Cache_Single_SportbookDetails_Data_Response, Cache_Single_Tournaments_League_Info_Data_Response, Hasura_League_Info_Widget_Data_Response } from '$lib/models/tournaments/types';
+
+import type { 
+  Cache_Single_SportbookDetails_Data_Response, 
+  Cache_Single_Tournaments_League_Info_Data_Response, 
+  Hasura_League_Info_Widget_Data_Response 
+} from '$lib/models/tournaments/types';
 
 import fs from 'fs';
+
+// [❗] critical
+import Bull from 'bull';
+const cacheQueue = new Bull('cacheQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function post(): Promise < unknown > {
 
-export async function post(): Promise< unknown > {
-  
-  await sportbookDetailsGeneration()
-  await leagueInfoGeneration()
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${new Date().toDateString()}`)
 
-  // [ℹ] return, RESPONSE;
-	return {
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueue.add();
+
+  return {
     status: 200,
-    body: '✅ Success \nleague_info & sport-book-details cache data updated!'
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nleague_info & sport-book-details cache data updated!'
+    }
   }
-
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,11 +71,26 @@ async function deleteCacheSportbookDetailInfoData() {
   return
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueue.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  await sportbookDetailsGeneration()
+  await leagueInfoGeneration()
+
+  return "done";
+});
 
 /**
  * [ℹ] Tournaments Page Data Generation Methods
 */
-
 
 async function sportbookDetailsGeneration () {
   

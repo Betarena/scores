@@ -29,23 +29,29 @@ import type {
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
 
+// [❗] critical
+import Bull from 'bull';
+
+const cacheQueue = new Bull('cacheQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function post(): Promise< unknown > {
+export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${Date.now()}`)
-  
-  await tournamentsTopPlayersDataGeneration ()
-  await tournamentsTopPlayersTGeneration ()
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${new Date().toDateString()}`)
 
-  // [ℹ] return, RESPONSE;
-	return {
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueue.add();
+
+  return {
     status: 200,
-    body: '✅ Success \ntournaments_top_players cache data updated!'
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \ntournaments_top_players cache data updated!'
+    }
   }
-
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -83,6 +89,23 @@ async function deleteStandingsTranslationData () {
   await redis.del('tournament_top_player_t')
   return
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueue.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  await tournamentsTopPlayersDataGeneration ()
+  await tournamentsTopPlayersTGeneration ()
+
+  return "done";
+});
 
 /**
  * [ℹ] Tournaments Page Data Generation Methods

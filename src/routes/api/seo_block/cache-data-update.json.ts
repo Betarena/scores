@@ -10,12 +10,63 @@ import { GET_HREFLANG_DATA } from '$lib/graphql/query';
 import { GET_COMPLETE_PAGES_AND_SEO_DATA } from '$lib/graphql/pages_and_seo/query';
 import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
+// [❗] critical
+import Bull from 'bull';
+const cacheQueueSeoBlock = new Bull('cacheQueueSeoBlock', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-
 export async function post(): Promise< any > {
-  
+
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_seo_block_trigerred at: ${new Date().toDateString()}`)
+
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueSeoBlock.add();
+
+  return {
+    status: 200,
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nSEO_Block cache data updated!'
+    }
+  }
+
+}
+
+/**
+ * [ℹ] SEO Block CACHEING ACTIONS METHODS
+*/
+
+async function cacheSEOblock(lang: string, json_cache: Cache_Single_Homepage_SEO_Block_Translation_Response) {
+  try {
+    //[ℹ] persist redis (cache)
+    await redis.hset('seo_block_t', lang, JSON.stringify(json_cache));
+    // [🐛] debug
+    if (dev) console.debug('✅ navbar-data cached')
+  } 
+  catch (e) {
+    console.error("❌ unable to cache", 'navbar-data', e);
+  }
+}
+
+async function deleteSEOblock() {
+  await redis.del('seo_block_t')
+  return
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueueSeoBlock.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
@@ -52,31 +103,5 @@ export async function post(): Promise< any > {
     await cacheSEOblock(lang_, finalCacheObj);
   }
 
-	// [ℹ] return, RESPONSE;
-	return {
-    status: 200,
-    body: '✅ Success \nSEO_Block cache data updated!'
-  }
-
-}
-
-/**
- * [ℹ] SEO Block CACHEING ACTIONS METHODS
-*/
-
-async function cacheSEOblock(lang: string, json_cache: Cache_Single_Homepage_SEO_Block_Translation_Response) {
-  try {
-    //[ℹ] persist redis (cache)
-    await redis.hset('seo_block_t', lang, JSON.stringify(json_cache));
-    // [🐛] debug
-    if (dev) console.debug('✅ navbar-data cached')
-  } 
-  catch (e) {
-    console.error("❌ unable to cache", 'navbar-data', e);
-  }
-}
-
-async function deleteSEOblock() {
-  await redis.del('seo_block_t')
-  return
-}
+  return "done";
+});

@@ -26,6 +26,10 @@ import type {
   Featured_Match_Translation_Response } from "$lib/models/featured_match/response_models"
 import type { SelectedFixture_LiveOdds_Response } from "$lib/models/featured_match/firebase-real-db-interface"
 
+// [❗] critical
+import Bull from 'bull';
+const cacheQueue = new Bull('cacheQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+
 // [ℹ] server-variables;
 let userGeo: string
 
@@ -61,27 +65,20 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
 /**
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-
 export async function post(): Promise < unknown > {
 
-  // [ℹ] get KEY platform translations
-  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_featured_match_trigerred at: ${new Date().toDateString()}`)
 
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueue.add();
 
-  // [ℹ] push "EN"
-  langArray.push('en')
-
-  await featuredMatchGeoDataGeneration()
-  await featuredMatchLangDataGeneration(langArray)
-
-  // [ℹ] return, RESPONSE;
   return {
-      status: 200,
-      body: '✅ Success \nFeatured Match Data Updated!'
+    status: 200,
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nFeatured Match Data Updated!'
+    }
   }
 
 }
@@ -123,6 +120,34 @@ async function deleteCacheFeaturedMatchLang() {
   await redis.del('featured_match_t')
   return
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueue.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await featuredMatchGeoDataGeneration()
+  await featuredMatchLangDataGeneration(langArray)
+
+  return "done";
+});
 
 /**
  * [ℹ] Featured Match CACHE GENERATION

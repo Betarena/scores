@@ -19,31 +19,28 @@ import {
   GET_HREFLANG_DATA 
 } from '$lib/graphql/query'
 
+// [❗] critical
+import Bull from 'bull';
+const cacheQueueGoalscorers = new Bull('cacheQueueGoalscorers', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 export async function post(): Promise < unknown > {
-  
-  // [ℹ] get KEY platform translations
-  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_best_goalscorers_trigerred at: ${new Date().toDateString()}`)
 
-  // [ℹ] push "EN"
-  langArray.push('en')
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueGoalscorers.add();
 
-  await bestGoalscorersGeoDataGeneration()
-  await bestGoalscorersLangDataGeneration(langArray)
-
-  // [ℹ] return, RESPONSE;
   return {
     status: 200,
-    body: '✅ Success \nBest Goalscorers Cache Updated!'
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nBest Goalscorers Cache Updated!'
+    }
   }
-  
 }
 
 /**
@@ -81,6 +78,34 @@ async function deleteBestGoalscorersLang () {
   await redis.del('best_goalscorer_t')
   return
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueueGoalscorers.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await bestGoalscorersGeoDataGeneration()
+  await bestGoalscorersLangDataGeneration(langArray)
+
+  return "done";
+});
 
 /**
  * [ℹ] Featured Betting Sites CACHE GENERATION

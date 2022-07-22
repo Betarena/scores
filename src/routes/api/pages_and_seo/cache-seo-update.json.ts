@@ -1,8 +1,5 @@
-
-// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
 
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { removeDiacritics } from '$lib/utils/languages'
@@ -14,10 +11,15 @@ const { SitemapStream, streamToPromise } = require('sitemap')
 const { Readable } = require('stream')
 const format = require('xml-formatter');
 
-// import { SitemapStream, streamToPromise } from 'sitemap'
-// import { Readable } from 'stream'
+// [❗] critical
+import Bull from 'bull';
 
-// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+const sitemapQueue = new Bull('sitemapQueue', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// TYPES DECLARATION
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 import { 
   GET_COMPLETE_PAGES_AND_SEO_DATA 
 } from '$lib/graphql/pages_and_seo/query'
@@ -32,40 +34,24 @@ import type {
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function post(): Promise < unknown > {
 
-export async function post(): Promise < any > {
+  // [ℹ] job producers
+  
+  const job = await sitemapQueue.add();
 
-  // [ℹ] get HASURA-DB response;
-	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
-
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
-
-  // [ℹ] push "EN"
-  langArray.push('en')
-
-  await sitemapGeneratorAndCaching(response)
-  await homepageSEOandCaching(langArray, response)
-  await tournamentSEOandCaching(langArray, response)
-  await tournamentPageAndCaching(response)
-
-  // [ℹ] return RESPONSE;
-  if (response) {
-    return {
-      status: 200,
-      body: '✅ Success! \nPages & Scores SEO cache data updated'
-    }
-  }
   // [ℹ] should never happen;
   return {
-    body: null
+    status: 200,
+    body: { 
+      job_id: job.id,
+      message: "✅ Success! \nPages & Scores SEO cache data updated"
+    }
   }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
+//  PERSIST CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheHomepageSEOData (lang: string, json_cache: Cache_Single_Homepage_SEO_Translation_Response) {
@@ -108,6 +94,10 @@ async function cacheSitemapURLs (url: string) {
   }
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [ℹ] DELETE CACHE ACTION
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 async function deleteCacheHomepageSEOData () {
   await redis.del('homepage_seo')
   return
@@ -127,6 +117,43 @@ async function deleteCacheSitemapURLs () {
   await redis.del('sitemap')
   return
 }
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+sitemapQueue.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  // [ℹ] get HASURA-DB response;
+	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+  
+  await sitemapGeneratorAndCaching(response)
+  await homepageSEOandCaching(langArray, response)
+  await tournamentSEOandCaching(langArray, response)
+  await tournamentPageAndCaching(response)
+
+  // done(null, {
+  //   queueAt:       job.queue,
+  //   startedAt:     job.processedOn,
+  //   completedOn:   job.finishedOn,
+  //   attemptsMade:  job.attemptsMade,
+  // })
+
+  return "done";
+});
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  STANDARD API FALLBACK
