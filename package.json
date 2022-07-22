@@ -43,6 +43,7 @@
 		"@lukeed/uuid": "^2.0.0",
 		"@sentry/browser": "^6.19.2",
 		"@sentry/tracing": "^6.19.2",
+		"bull": "^4.8.4",
 		"colorthief": "^2.3.2",
 		"compression": "^1.7.4",
 		"cookie": "^0.5.0",
