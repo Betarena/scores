@@ -156,7 +156,7 @@ cacheQueueFeaturedMatch.process (async (job, done) => {
 async function featuredMatchGeoDataGeneration () {
 
   // [ℹ] clear cache data
-  await deleteCacheFeaturedMatchGeoPos()
+  // await deleteCacheFeaturedMatchGeoPos()
 
   // [ℹ] get all SELECTED FIXTURES from HASURA-DB;
   const response = await getAllMatchSelectedFixtures()
@@ -177,7 +177,7 @@ async function featuredMatchLangDataGeneration (langArray: string[]) {
 
   const response: Featured_Match_Translation_Response = await initGrapQLClient().request(GET_FEATURED_MATCH_TRANSLATION)
 
-  deleteCacheFeaturedMatchLang()
+  // deleteCacheFeaturedMatchLang()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {

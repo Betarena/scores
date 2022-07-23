@@ -3,11 +3,11 @@ import { dev } from '$app/env'
 // [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_NAVBAR_DATA } from '$lib/graphql/header/query';
-import type { Cache_Single_Lang_Header_Translation_Response, Hasura_Header_Translation_Response } from '$lib/models/navbar/types';
-import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
+
 import { GET_HREFLANG_DATA } from '$lib/graphql/query';
 import { GET_COMPLETE_PAGES_AND_SEO_DATA } from '$lib/graphql/pages_and_seo/query';
+
+import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
 import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
 // [❗] critical
@@ -87,7 +87,7 @@ cacheQueueSeoBlock.process (async (job, done) => {
     title: undefined,
   }
 
-  deleteSEOblock()
+  // deleteSEOblock()
 
   const response_data: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
 

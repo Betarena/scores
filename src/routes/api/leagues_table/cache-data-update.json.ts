@@ -113,7 +113,7 @@ cacheQueueLeaguesTable.process (async (job, done) => {
 
 async function leagueTableGeoDataGeneration () {
 
-  await deleteLeaguesTableGeoPos ()
+  // await deleteLeaguesTableGeoPos ()
 
   const response: Array < Cache_Single_Geo_Leagues_Table_Translation_Response > = await mainGeo()
 
@@ -136,7 +136,7 @@ async function leagueTableLangDataGeneration (langArray: string[]) {
   // [ℹ] ℹ generate best goal scorers data by GEO;
   const response: Leagues_Table_SEO_Cache_Ready = await mainLang()
 
-  deleteLeaguesTableLang ()
+  // deleteLeaguesTableLang ()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {

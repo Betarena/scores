@@ -123,7 +123,7 @@ cacheQueueLeaguesList.process (async (job, done) => {
 
 async function leagueListGeoDataGeneration () {
 
-  await deleteLeagueListGeoPos()
+  // await deleteLeagueListGeoPos()
 
   // [ℹ] get all of the LEAGUE LIST DATA from HASURA;
   const response: Array < REDIS_CACHE_SINGLE_league_list_geo_data_response > = await mainGeo()
@@ -142,7 +142,7 @@ async function leagueListLangDataGeneration (langArray: string[]) {
   const response: REDIS_CACHE_SINGLE_league_list_seo_t_response [] = await mainLang(langArray)
 
   // [❗] FIXME: make sure [CACHE] is TIME-BASED-EXPIRATION, not DELETE-INSERT based;
-  deleteLeagueListLang()
+  // deleteLeagueListLang()
 
   // [ℹ] for-each available translation:
   for (const item of response) {

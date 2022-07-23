@@ -16,7 +16,6 @@ import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
-
 const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString()())
 
 /** 
@@ -100,7 +99,7 @@ async function standingsDataGenerationAlt () {
   // [ℹ] get HASURA-DB response;
 	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
 
-  deleteCacheTournamentsStandingsData()
+  // deleteCacheTournamentsStandingsData()
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
 
@@ -360,7 +359,7 @@ async function standingsTranslationGeneration () {
   // [ℹ] get HASURA-DB response;
 	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
 
-  deleteStandingsTranslationData ()
+  // deleteStandingsTranslationData ()
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Translation_Data_Response[] = []
 

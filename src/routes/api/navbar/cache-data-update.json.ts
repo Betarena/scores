@@ -47,6 +47,11 @@ async function cacheNavBar(lang: string, json_cache: Cache_Single_Lang_Header_Tr
   }
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [ℹ] DELETE CACHE ACTION
+// [❗] DEPRECEATED [23/07/20222]
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 async function deleteCacheNavBar() {
   await redis.del('navbar_t')
   return
@@ -86,7 +91,7 @@ cacheQueueNavbar.process (async (job, done) => {
     scores_top_bar_messages_dev: undefined
   }
 
-  deleteCacheNavBar()
+  // deleteCacheNavBar()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {

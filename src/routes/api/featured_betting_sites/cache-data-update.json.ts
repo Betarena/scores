@@ -105,7 +105,7 @@ cacheQueueFeaturedBetSite.process (async (job, done) => {
 
 async function featuredBettingSiteGeoDataGeneration () {
   
-  await deleteFeaturedBettingSiteGeoPos()
+  // await deleteFeaturedBettingSiteGeoPos()
 
   // [ℹ] get all of the SELECTED FIXTURES from HASURA;
   const response = await getAllFeaturedBettingSite()
@@ -126,7 +126,7 @@ async function featuredBettingSiteLangDataGeneration (langArray: string[]) {
 
   const response: Scores_Featured_Betting_Sites_Hasura = await initGrapQLClient().request(GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES)
 
-  deleteFeaturedBettingSiteLang()
+  // deleteFeaturedBettingSiteLang()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {

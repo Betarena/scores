@@ -13,7 +13,6 @@ const format = require('xml-formatter');
 
 // [❗] critical
 import Bull from 'bull';
-
 const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString()())
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -96,6 +95,7 @@ async function cacheSitemapURLs (url: string) {
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [ℹ] DELETE CACHE ACTION
+// [❗] DEPRECEATED [23/07/20222]
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function deleteCacheHomepageSEOData () {
@@ -169,7 +169,7 @@ async function homepageSEOandCaching(langArray: string[], data: Hasura_Complete_
     hreflang: undefined
   }
 
-  deleteCacheHomepageSEOData()
+  // deleteCacheHomepageSEOData()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {
@@ -233,7 +233,7 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     urlsArray.push(url)
   }
 
-  deleteCacheSitemapURLs();
+  // deleteCacheSitemapURLs();
   
   const uniqArray = [...new Set(urlsArray)];
 
@@ -254,7 +254,7 @@ async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complet
     hreflang: undefined
   }
 
-  deleteCacheTournamentsPageSEOData()
+  // deleteCacheTournamentsPageSEOData()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {
@@ -280,7 +280,7 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     alternate_data: undefined,
   }
 
-  deleteCacheTournamentsPageData();
+  // deleteCacheTournamentsPageData();
 
   // [ℹ] generate appropiate URLS
   for (const iterator of data.scores_tournaments_dev) {

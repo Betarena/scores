@@ -113,7 +113,7 @@ cacheQueueGoalscorers.process (async (job, done) => {
 
 async function bestGoalscorersGeoDataGeneration () {
 
-  await deleteBestGoalscorersGeoPos()
+  // await deleteBestGoalscorersGeoPos()
 
   // [ℹ] ℹ generate best goal scorers data by GEO;
   const response: Array < Cache_Single_Geo_GoalScorers_Translation_Response > = await mainGeo()
@@ -138,7 +138,7 @@ async function bestGoalscorersLangDataGeneration (langArray: string[]) {
   // [ℹ] ℹ generate best goal scorers data by GEO;
   const response: Cache_Goalscorers_General_Lang_Ready = await mainLang()
 
-  deleteBestGoalscorersLang()
+  // deleteBestGoalscorersLang()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {

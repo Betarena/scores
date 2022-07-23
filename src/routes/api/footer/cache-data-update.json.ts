@@ -83,7 +83,7 @@ cacheQueueFooter.process (async (job, done) => {
     scores_footer_links_dev: undefined,
   }
 
-  deleteCacheFooter()
+  // deleteCacheFooter()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {
