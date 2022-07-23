@@ -119,6 +119,15 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - ⭐[Gzip compression with Node.js](https://medium.com/@victor.valencia.rico/gzip-compression-with-node-js-cc3ed74196f9)
 - [GZIP-TEST](https://sitechecker.pro/gzip-test/)
 
+### Heroku
+
+- [understanding Procfile](https://devcenter.heroku.com/articles/procfile)
+
+### Redis
+
+- [cannot put EXPIRATION on Nested Keyspace Redis](https://stackoverflow.com/questions/56279920/how-to-put-a-ttl-expiration-on-an-hset)
+- [use HLEN to obtain number of keys inside a key space]
+
 ### 🔁 Node.js Concurrency
 
 - ⭐ [bull npm](https://www.npmjs.com/package/bull)
@@ -131,6 +140,17 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 - [throng, GitHub](https://github.com/hunterloftis/throng)
 - [heroku dyno types](https://devcenter.heroku.com/articles/dyno-types)
 - [dyno usage](https://devcenter.heroku.com/articles/optimizing-dyno-usage)
+- [throng Heroku handling](https://github.com/marcosdemelo/throng-on-heroku)
+- [enabling concurrency | heroku](https://devcenter.heroku.com/articles/node-concurrency#enabling-concurrency-in-your-app)
+- [bull example full | stackoverflow](https://stackoverflow.com/questions/49301282/how-to-pass-full-request-or-response-in-redis-bull-queue)
+- [heroku error-pages | heroku](https://devcenter.heroku.com/articles/error-pages#customize-pages)
+
+**Notes**
+
+`Free` `Hobby` `Standard-x1` dyno's only support up to `1` clustering worker per app. Thus, increasing the scaling of the applciation to `>1` (ie: `web` app) will not be allowed.
+Similarly, the use of the `worker` attachement of the Heroku App will be cahrged depending on the `dyno` type used by the `worker`.
+
+Higher rank pricing Heroku Apps need to be purchased to enable the use of the appliaction higher `clustering` and `worker` capabilities.
 
 ### JSON to Types
 
@@ -174,15 +194,15 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 ### Update Caching at once Powershell Script:
 
 ```
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/pages_and_seo/cache-seo-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/navbar/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/footer/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/featured_match/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/featured_betting_sites/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/best_goalscorer/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/league_list/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/leagues_table/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/seo_block/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/tournaments/league_info/cache-data-update.json';
-Invoke-RestMethod -Method "GET" -Uri 'http://192.168.0.40:3050/api/tournaments_standings/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/pages_and_seo/cache-seo-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/navbar/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/footer/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/featured_match/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/featured_betting_sites/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/best_goalscorer/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/league_list/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/leagues_table/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/seo_block/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/tournaments/league_info/cache-data-update.json';
+Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/tournaments_standings/cache-data-update.json';
 ```
