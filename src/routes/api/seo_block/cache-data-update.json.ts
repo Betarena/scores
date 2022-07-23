@@ -12,7 +12,7 @@ import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types'
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueSeoBlock = new Bull('cacheQueueSeoBlock', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueueSeoBlock = new Bull('cacheQueueSeoBlock', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString()())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 

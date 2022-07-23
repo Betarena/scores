@@ -21,7 +21,7 @@ import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueLeaguesTable = new Bull('cacheQueueLeaguesTable', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueueLeaguesTable = new Bull('cacheQueueLeaguesTable', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString()())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 

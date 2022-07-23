@@ -30,7 +30,7 @@ import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString()())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
