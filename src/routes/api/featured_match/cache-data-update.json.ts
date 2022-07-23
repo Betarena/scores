@@ -28,7 +28,7 @@ import type { SelectedFixture_LiveOdds_Response } from "$lib/models/featured_mat
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueFeaturedMatch = new Bull('cacheQueueFeaturedMatch', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString())
+const cacheQueueFeaturedMatch = new Bull('cacheQueueFeaturedMatch', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 // [ℹ] server-variables;
 let userGeo: string

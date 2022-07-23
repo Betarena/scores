@@ -13,7 +13,7 @@ const format = require('xml-formatter');
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString())
+const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // TYPES DECLARATION

@@ -16,7 +16,7 @@ import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString())
+const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 

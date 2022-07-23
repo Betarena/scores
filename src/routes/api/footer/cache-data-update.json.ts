@@ -8,7 +8,7 @@ import type { Cache_Single_Lang_Footer_Translation_Response, Hasura_Footer_Trans
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueFooter = new Bull('cacheQueueFooter', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString())
+const cacheQueueFooter = new Bull('cacheQueueFooter', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 

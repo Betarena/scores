@@ -8,7 +8,7 @@ import type { Cache_Single_Lang_Header_Translation_Response, Hasura_Header_Trans
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueNavbar = new Bull('cacheQueueNavbar', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString())
+const cacheQueueNavbar = new Bull('cacheQueueNavbar', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
