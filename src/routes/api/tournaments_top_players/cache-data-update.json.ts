@@ -32,7 +32,7 @@ import type {
 // [❗] critical
 import Bull from 'bull';
 
-const cacheQueueTourTopPlay = new Bull('cacheQueueTourTopPlay', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString()())
+const cacheQueueTourTopPlay = new Bull('cacheQueueTourTopPlay', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 

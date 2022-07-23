@@ -12,7 +12,7 @@ import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueFeaturedBetSite = new Bull('cacheQueueFeaturedBetSite', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString()())
+const cacheQueueFeaturedBetSite = new Bull('cacheQueueFeaturedBetSite', import.meta.env.VITE_REDIS_CONNECTION_URL_BULL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
