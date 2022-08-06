@@ -19,7 +19,7 @@ import type { Standing_Team_Total_Away_Home } from '$lib/models/tournaments/type
 const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 // [ℹ] global variable
-const dataSurgical: BACKEND_tournament_standings_surgical_update = {
+let dataSurgical: BACKEND_tournament_standings_surgical_update = {
   "leagueSeasons": [
     {
       "leagueId": 755,
@@ -738,9 +738,9 @@ const cacheTarget = "REDIS CACHE | tournament standings surgical"
 */
 export async function post({ request }): Promise < unknown > {
 
-  // const body = await request.json();
-  // if (dev) console.log(body);
-  // dataSurgical = JSON.parse(JSON.stringify(body));
+  const body = await request.json();
+  if (dev) console.log(body);
+  dataSurgical = JSON.parse(JSON.stringify(body));
   
   // [ℹ] job producers
   const job = await cacheQueueTourStand.add();
