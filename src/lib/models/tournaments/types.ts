@@ -52,7 +52,6 @@ export interface Hasura_League_Info_Widget_Data_Response {
   // [ℹ] tournaments-page
   scores_tournaments_dev:                       Single_Tournament_Data_Type[]
   scores_football_seasons_details_dev:          Scores_Football_Seasons_Details[]
-  scores_football_leagues_dev:                  Scores_Football_Leagues[]
   sportsbook_details_dev:                       Sportsbook_Details[]
   scores_widget_league_info_translations_dev:   Scores_Widget_League_Info_Translations[]
 
@@ -388,7 +387,6 @@ export interface Scores_Football_Seasons_Details {
   shots_on_target?:  null;
   shots_off_target?: null;
 }
-
 
 // [ℹ] scores_football_leagues (_dev)
 export interface Scores_Football_Leagues {
