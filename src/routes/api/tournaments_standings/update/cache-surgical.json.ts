@@ -1263,8 +1263,8 @@ async function surgicalDataUpdate_2 () {
             season_id === season_main.id
           ).standings?.data;
 
-        if (dev) console.log(`${season_main.id} is_current_season`);
-        if (dev) console.log(`season_standings_teams_list} is undefined: ${season_standings_teams_list}`);
+        // if (dev) console.log(`${season_main.id} is_current_season`);
+        // if (dev) console.log(`season_standings_teams_list} is undefined: ${season_standings_teams_list}`);
 
       } else {
 
