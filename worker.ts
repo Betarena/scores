@@ -20,28 +20,65 @@ function sleep(ms) {
 
 function start() {
   // Connect to the named work queue
-  let workQueue = new Queue('work', REDIS_URL);
+  let cacheQueueTourStand = new Queue('work', 'cacheQueueTourStand', 
+    { 
+      redis: { 
+        port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+        host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+        password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+        tls: {}
+      }
+    }, 
+    settings
+  );
+  const cacheTarget = "REDIS CACHE | tournament standings surgical"
 
-  workQueue.process(maxJobsPerWorker, async (job) => {
-    // This is an example job that just slowly reports on progress
-    // while doing no work. Replace this with your own job logic.
-    let progress = 0;
+  // [ℹ] Example
+  /*
+    workQueue.process(maxJobsPerWorker, async (job) => {
+      // This is an example job that just slowly reports on progress
+      // while doing no work. Replace this with your own job logic.
+      let progress = 0;
 
-    // throw an error 5% of the time
-    if (Math.random() < 0.05) {
-      throw new Error("This job failed!")
-    }
+      // throw an error 5% of the time
+      if (Math.random() < 0.05) {
+        throw new Error("This job failed!")
+      }
 
-    while (progress < 100) {
-      await sleep(50);
-      progress += 1;
-      job.progress(progress)
-    }
+      while (progress < 100) {
+        await sleep(50);
+        progress += 1;
+        job.progress(progress)
+      }
 
-    // A job can return values that will be stored in Redis as JSON
-    // This return value is unused in this demo application.
-    return { value: "This will be stored" };
+      // A job can return values that will be stored in Redis as JSON
+      // This return value is unused in this demo application.
+      return { value: "This will be stored" };
+    });
+  */
+
+  cacheQueueTourStand.process(async function (job, done) {
+    // console.log(job.data.argumentList);
+    // console.log(job.data)
+  
+    /* 
+    do stuff
+    */
+  
+    const t0 = performance.now();
+    // await surgicalDataUpdate()
+    await surgicalDataUpdate_2(job.data);
+    const t1 = performance.now();
+  
+    logs.push(`${cacheTarget} updated!`);
+    logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+  
+    done(null, { logs: logs });
+  
+  }).catch(err => {
+    console.log(err)
   });
+
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -80,344 +117,6 @@ async function getCacheData (league_id: string): Promise < Cache_Single_Tourname
 */
 
 async function surgicalDataUpdate () {
-  
-  // [ℹ] get HASURA-DB response;
-  const leagueIdsArr = dataSurgical.leagueSeasons.map(a => a.leagueId);
-
-  logs.push(`num. of leagueIds: ${dataSurgical.leagueSeasons.length}`);
-  logs.push(`num. of seasonIds: ${dataSurgical.leagueSeasons.length}`);
-  logs.push(`num. of teamsIds: ${dataSurgical.teamsList.length}`);
-
-  const VARIABLES_1 = {
-    leagueIds: leagueIdsArr,
-    teamIds: dataSurgical.teamsList
-  }
-  
-  const t0 = performance.now();
-  const queryName = "GET_LEAGUE_W_STANDINGS_INFO";
-	const response: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request (
-    GET_LEAGUE_W_STANDINGS_INFO,
-    VARIABLES_1
-  );
-  const t1 = performance.now();
-  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-
-  const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
-  // [ℹ] generate per league
-  for (const iterator of response.scores_football_leagues_dev) {
-
-    const finalCacheObj: Cache_Single_Tournaments_League_Standings_Info_Data_Response = { }
-    finalCacheObj.seasons = []
-
-    finalCacheObj.league_id = iterator.id;
-
-    // [ℹ] get (target) season for (this) leagueId / tournamentId
-    const season_target = dataSurgical.leagueSeasons.find(( { leagueId } ) => leagueId == iterator.id).seasonId;
-
-    // TODO: make use of the "current_standings" instead
-    const season_standings = response.scores_football_standings_dev
-      .find(( { id } ) =>
-        id === iterator.id
-      );
-
-    // const season_standings_hist = response.scores_football_standings_history_dev
-    //   .find(( { id, season_id } ) => 
-    //     id === iterator.id && 
-    //     season_id === season_target
-    //   );
-
-    // [🐛] debug
-    // console.log(
-    //   `league_id: ${league_target?.id}`,
-    //   `season_id: ${season_main?.id}`,
-    //   `season standings-length: ${season_standings_hist?.data.length}`)
-
-    const season_standings_teams_list = season_standings?.data
-      .find(( { name, season_id } ) => 
-        name === "Regular Season" &&
-        season_id === season_target
-      ).standings?.data;
-
-    // const season_standings_teams_list = season_standings_hist?.data
-
-    const season_gen_list_total: Standing_Team_Total_Away_Home[] = []
-    const season_gen_list_home:  Standing_Team_Total_Away_Home[] = []
-    const season_gen_list_away:  Standing_Team_Total_Away_Home[] = []
-    
-    // [ℹ] validation
-    if (season_standings_teams_list == undefined ||
-        season_standings_teams_list == null) {
-      continue;
-    }
-
-    // [ℹ] generate (this) season color codes;
-    const season_color_codes: {
-      [key: number]: string;
-    } = { }
-    for (const season_team of season_standings_teams_list) {
-
-      const team_pos: number = season_team?.position;
-
-      const team_color_code =
-      season_team.result == null && season_team.result == undefined
-        ? 'transparent'
-        : response.color_codes_league_standings_positions_dev.find(( { sports } ) => sports === "football").color_codes[season_team.result.toString()]
-
-      season_color_codes[team_pos] = team_color_code
-    }
-
-    // [ℹ] handling teams info
-    for (const season_team of season_standings_teams_list) {
-
-      // [ℹ] skip teams not part of the update
-      if (!dataSurgical.teamsList.includes(season_team.team_id)) {
-        continue;
-      }
-
-      // [ℹ] proceed with team info generation (update)
-      const team_logo: string = response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
-      const team_name: string =
-        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
-        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
-          ? season_team?.team_name
-          : response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
-
-      const target_team_stat      = response.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
-      const target_team_stat_hist = response.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_target )
-
-      const team_winP: number = 
-        target_team_stat?.winning_probability == null || 
-        target_team_stat?.winning_probability == undefined
-          ? null
-          : target_team_stat?.winning_probability
-
-      const team_home_position: number = 
-        season_team?.home?.points == null ||
-        season_team?.home?.points == undefined 
-          ? null
-          : season_standings_teams_list.filter(( { home } ) => home?.points >= season_team?.home?.points).length
-
-      const team_away_position: number = 
-        season_team?.away?.points == null ||
-        season_team?.away?.points == undefined 
-          ? null
-          : season_standings_teams_list.filter(( { away } ) => away?.points >= season_team?.away?.points).length
-
-      // [🐛] debug
-      // if (team_name === "Manchester City") {
-      //   console.log(
-      //     `seasons_id: ${season_main?.id}`,
-      //     `team_total_position: ${season_team?.position}`,
-      //     `team_total_points: ${season_team?.points}`,
-      //     `team_home_position: ${team_home_position}`,
-      //     `team_home_position verify: ${season_team?.home?.points}`,
-      //     `team_away_position: ${team_away_position}`,
-      //     `team_away_position verify: ${season_team?.away?.points}`,
-      //   )
-      // }
-
-      const team_total_color_code = season_team?.position == null ? 'black' : season_color_codes[season_team?.position.toString()]
-      const team_home_color_code = team_home_position == null ? 'black' : season_color_codes[team_home_position.toString()]
-      const team_away_color_code = team_away_position == null ? 'black' : season_color_codes[team_away_position.toString()]
-
-      const team_total_ov15: number =
-        target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away == null ||
-        target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home == null
-          ? null
-          : (target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home) / 2
-
-      const team_total_ov25: number =
-        target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away == null ||
-        target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home == null
-          ? null
-          : (target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home) / 2
-
-      const team_total_gavg: number = 
-        season_team?.round_name == null ||
-        season_team?.overall?.goals_scored == null
-          ? null
-          : season_team?.overall?.goals_scored / season_team?.round_name;
-
-      const team_home_gavg: number = 
-        season_team?.home?.games_played == null ||
-        season_team?.home?.goals_scored == null
-          ? null
-          : season_team?.home?.goals_scored / season_team?.home?.games_played;
-
-      const team_away_gavg: number = 
-        season_team?.away?.games_played == null ||
-        season_team?.away?.goals_scored == null
-          ? null
-          : season_team?.away?.goals_scored / season_team?.away?.games_played;
-      
-      const team_obj_total: Standing_Team_Total_Away_Home = {
-        team_logo:      team_logo,
-        team_name:      team_name,
-        color_code:     team_total_color_code,
-        points:         season_team?.points,
-        position:       season_team?.position,
-        games_played:   season_team?.round_name,
-        won:            season_team?.overall?.won,
-        draw:           season_team?.overall?.draw,
-        lost:           season_team?.overall?.lost,
-        gs:             season_team?.overall?.goals_scored,
-        ga:             season_team?.overall?.goals_against,
-        gavg:           team_total_gavg,
-        cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
-        ycavg:          target_team_stat_hist?.average_yellow_cards,
-        ov15:           team_total_ov15,
-        ov25:           team_total_ov25,
-        winP:           team_winP,
-        rf:             season_team?.recent_form
-      }
-
-      const team_obj_home: Standing_Team_Total_Away_Home = {
-        team_logo:      team_logo,
-        team_name:      team_name,
-        color_code:     team_home_color_code,
-        points:         season_team?.home?.points,
-        position:       team_home_position, // season_team?.home?.points
-        games_played:   season_team?.home?.games_played,
-        won:            season_team?.home?.won,
-        draw:           season_team?.home?.draw,
-        lost:           season_team?.home?.lost,
-        gs:             season_team?.home?.goals_scored,
-        ga:             season_team?.home?.goals_against,
-        gavg:           team_home_gavg,
-        cavg:           null,
-        ycavg:          null,
-        ov15:           null,
-        ov25:           null,
-        winP:           team_winP,
-        rf:             null
-      }
-
-      const team_obj_away: Standing_Team_Total_Away_Home = {
-        team_logo:      team_logo,
-        team_name:      team_name,
-        color_code:     team_away_color_code,
-        points:         season_team?.away?.points,
-        position:       team_away_position, // season_team?.away?.points
-        games_played:   season_team?.away?.games_played,
-        won:            season_team?.away?.won,
-        draw:           season_team?.away?.draw,
-        lost:           season_team?.away?.lost,
-        gs:             season_team?.away?.goals_scored,
-        ga:             season_team?.away?.goals_against,
-        gavg:           team_away_gavg,
-        cavg:           null,
-        ycavg:          null,
-        ov15:           null,
-        ov25:           null,
-        winP:           team_winP,
-        rf:             null
-      }
-
-      season_gen_list_total.push(team_obj_total)
-      season_gen_list_home.push(team_obj_home)
-      season_gen_list_away.push(team_obj_away)
-    }
-      
-    // [ℹ] re-ordering of team-position for each TOTAL | HOME | AWAY view
-    const nullPosTotal = season_gen_list_total.filter(( { position } ) => position == null).length
-    const nullPosHome  = season_gen_list_home.filter(( { position } ) => position == null).length
-    const nullPosAway  = season_gen_list_away.filter(( { position } ) => position == null).length
-
-    if (nullPosTotal == 0) {
-      season_gen_list_total.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
-    }
-    if (nullPosHome == 0) {
-      season_gen_list_home.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
-    }
-    if (nullPosAway == 0) {
-      season_gen_list_away.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
-    }
-
-    // [ℹ] get existing cached leagues
-    const cachedLeague = await getCacheData(finalCacheObj.league_id.toString());
-
-    // [ℹ] validation cache existance
-    if (cachedLeague != null) {
-
-      // [ℹ] update target seasonId
-      const seasonCacheCheck = cachedLeague.seasons.filter( ({ season_id }) => season_id === season_target).length
-      if (seasonCacheCheck == 0) {
-        cachedLeague.seasons.push(
-          {
-            season_id:    season_target,
-            total:        season_gen_list_total,
-            home:         season_gen_list_home,
-            away:         season_gen_list_away
-          }
-        )
-        finalCacheObj.seasons = cachedLeague.seasons
-
-      } 
-      // [ℹ] leagueId exists
-      else {
-        const omitSeasonId = cachedLeague.seasons.filter( ({ season_id }) => season_id !== season_target)
-        const omittedSeasonId = cachedLeague.seasons.find( ({ season_id }) => season_id === season_target)
-        const omitted_season_gen_list_total = [...new Map((omittedSeasonId.total.concat(season_gen_list_total)).map(item => [item.team_name, item])).values()]
-        const omitted_season_gen_list_home = [...new Map((omittedSeasonId.home.concat(season_gen_list_home)).map(item => [item.team_name, item])).values()]
-        const omitted_season_gen_list_away = [...new Map((omittedSeasonId.away.concat(season_gen_list_away)).map(item => [item.team_name, item])).values()]
-
-        // [ℹ] re-ordering of team-position for each TOTAL | HOME | AWAY view
-        const nullPosTotal = omitted_season_gen_list_total.filter(( { position } ) => position == null).length
-        const nullPosHome  = omitted_season_gen_list_home.filter(( { position } ) => position == null).length
-        const nullPosAway  = omitted_season_gen_list_away.filter(( { position } ) => position == null).length
-    
-        if (nullPosTotal == 0) {
-          omitted_season_gen_list_total.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
-        }
-    
-        if (nullPosHome == 0) {
-          omitted_season_gen_list_home.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
-        }
-    
-        if (nullPosAway == 0) {
-          omitted_season_gen_list_away.sort((a, b) => parseFloat(a.position.toString()) - parseFloat(b.position.toString()));
-        }
-
-        omitSeasonId.push (
-          {
-            season_id:    season_target,
-            total:        omitted_season_gen_list_total,
-            home:         omitted_season_gen_list_home,
-            away:         omitted_season_gen_list_away
-          }
-        )
-        finalCacheObj.seasons = omitSeasonId
-
-      }
-    } else {
-      // [ℹ] data push (sub)
-      finalCacheObj.seasons.push (
-        {
-          season_id:    season_target,
-          total:        season_gen_list_total,
-          home:         season_gen_list_home,
-          away:         season_gen_list_away
-        }
-      )
-    }
-        
-    final_obj_array.push(finalCacheObj)
-
-    await cacheData (finalCacheObj.league_id , finalCacheObj);
-  }
-
-  // [🐛] debug
-  const data = JSON.stringify(final_obj_array, null, 4)
-  fs.writeFile('./datalog/standingsDataGenerationSurgicalAlt.json', data, err => {
-    if (err) {
-      console.error(err);
-    }
-  });
-
-  return
-}
-
-async function surgicalDataUpdate_2 () {
   
   // [ℹ] get HASURA-DB response;
   const leagueIdsArr = dataSurgical.leagueSeasons.map(a => a.leagueId);
