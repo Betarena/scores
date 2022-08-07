@@ -1,7 +1,6 @@
 // [ℹ] import $app `modules`
 import { dev } from '$app/env'
-import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
-import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/types';
+import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 
 // [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"

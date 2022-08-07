@@ -3,15 +3,19 @@ import { dev } from '$app/env'
 // [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_LEAGUE_W_STANDINGS_INFO, GET_LEAGUE_W_STANDINGS_INFO_2, GET_TEAM_W_STATS_INFO_3 } from '$lib/graphql/tournaments/standings/query';
+
+import { 
+  GET_LEAGUE_W_STANDINGS_INFO, 
+  GET_LEAGUE_W_STANDINGS_INFO_2, 
+  GET_TEAM_W_STATS_INFO_3 
+} from '$lib/graphql/tournaments/standings/query';
+
 import type { 
   BACKEND_tournament_standings_surgical_update,
   BETARENA_HASURA_tournament_standings_query,
-  Cache_Single_Tournaments_League_Standings_Info_Data_Response
+  Cache_Single_Tournaments_League_Standings_Info_Data_Response,
+  Standing_Team_Total_Away_Home
 } from '$lib/models/tournaments/standings/types';
-import type { 
-  Standing_Team_Total_Away_Home 
-} from '$lib/models/tournaments/types';
 import type { 
   BETARENA_HASURA_scores_team_statistics_history,
   StandingsDatum 

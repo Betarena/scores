@@ -381,6 +381,70 @@ export interface BETARENA_HASURA_scores_general_translations {
   no_info_desc?: string;
 }
 
+
+/**
+ * [ℹ] HASURA: scores_football_leagues (&_dev)
+*/
+export interface BETARENA_HASURA_scores_football_leagues {
+  country?: ScoresFootballLeaguesDataClass;
+  data?:    Data;
+  id?:      number;
+  name?:    string;
+  season?:  ScoresFootballLeaguesSeasonElement;
+  seasons?: ScoresFootballLeaguesSeasonElement[];
+} export interface ScoresFootballLeaguesDataClass {
+  extra?:      Extra | null;
+  image_path?: string;
+  name?:       string;
+  id?:         number;
+} export interface ScoresFootballLeaguesExtra {
+  iso2?:         string;
+  world_region?: string;
+  iso?:          string;
+  latitude?:     string;
+  sub_region?:   string;
+  flag?:         string;
+  fifa?:         string;
+  longitude?:    string;
+  continent?:    string;
+} export interface ScoresFootballLeaguesData {
+  legacy_id?:         number;
+  country_id?:        number;
+  season?:            DataSeason;
+  country?:           DataCountry;
+  current_stage_id?:  number;
+  is_cup?:            boolean;
+  coverage?:          Coverage;
+  live_standings?:    boolean;
+  active?:            boolean;
+  name?:              string;
+  is_friendly?:       boolean;
+  id?:                number;
+  type?:              string;
+  seasons?:           Seasons;
+  current_round_id?:  null;
+  current_season_id?: number;
+  logo_path?:         string;
+} export interface ScoresFootballLeaguesDataCountry {
+  data?: DataClass;
+} export interface ScoresFootballLeaguesCoverage {
+  topscorer_assists?: boolean;
+  topscorer_goals?:   boolean;
+  predictions?:       boolean;
+  topscorer_cards?:   boolean;
+} export interface ScoresFootballLeaguesDataSeason {
+  data?: SeasonElement;
+} export interface ScoresFootballLeaguesSeasonElement {
+  league_id?:         number;
+  current_stage_id?:  number | null;
+  name?:              string;
+  id?:                number;
+  is_current_season?: boolean;
+  current_round_id?:  number | null;
+} export interface ScoresFootballLeaguesSeasons {
+  data?: SeasonElement[];
+}
+
 /**
  * [ℹ] HASURA: scores_football_seasons_details_aggregate (&_dev)
 */
@@ -388,6 +452,231 @@ export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
   aggregate?: Aggregate;
 } export interface Aggregate {
   totalCount?: number;
+}
+
+/**
+ * [ℹ] HASURA: scores_football_seasons_details (&_dev)
+*/
+export interface BETARENA_HASURA_scores_football_seasons_details {
+  data_stats?:        SeasonDetailsDataStats;
+  default_data?:      SeasonDetailsDefaultData;
+  end_date?:          Date;
+  id?:                number;
+  is_current_season?: boolean;
+  league_id?:         number;
+  round_data?:        SeasonDetailsRoundDatum[];
+  start_date?:        Date;
+  goalscorers?:       SeasonDetailsGoalscorers[];
+  assistscorers?:     SeasonDetailsAssistscorers[];
+  squad?:             SeasonDetailsSquad[];
+} export interface SeasonDetailsDataStats {
+  id?:                                    number;
+  btts?:                                  number;
+  goal_line?:                             GoalLine;
+  league_id?:                             number;
+  season_id?:                             number;
+  updated_at?:                            Date;
+  goals_scored?:                          SeasonDetailsDefeatPercentage;
+  goals_conceded?:                        SeasonDetailsDefeatPercentage;
+  win_percentage?:                        SeasonDetailsDefeatPercentage;
+  draw_percentage?:                       number;
+  number_of_clubs?:                       number;
+  number_of_goals?:                       number;
+  avg_player_rating?:                     number;
+  defeat_percentage?:                     SeasonDetailsDefeatPercentage;
+  number_of_matches?:                     number;
+  number_of_redcards?:                    number;
+  avg_goals_per_match?:                   number;
+  season_topscorer_id?:                   number;
+  goals_scored_minutes?:                  SeasonDetailsGoalsScoredMinutes;
+  team_most_corners_id?:                  null;
+  avg_corners_per_match?:                 number;
+  number_of_yellowcards?:                 number;
+  avg_redcards_per_match?:                number;
+  avg_awaygoals_per_match?:               number;
+  avg_homegoals_per_match?:               number;
+  season_topscorer_number?:               number;
+  team_most_corners_count?:               null;
+  team_with_most_goals_id?:               number;
+  number_of_matches_played?:              number;
+  number_of_yellowredcards?:              number;
+  team_most_cleansheets_id?:              number;
+  avg_yellowcards_per_match?:             number;
+  goal_scored_every_minutes?:             number;
+  matches_both_teams_scored?:             number;
+  season_assist_topscorer_id?:            null;
+  team_with_most_goals_number?:           number;
+  avg_yellowredcards_per_match?:          number;
+  team_most_cleansheets_number?:          number;
+  goalkeeper_most_cleansheets_id?:        number;
+  season_assist_topscorer_number?:        null;
+  team_with_most_conceded_goals_id?:      number;
+  team_with_most_goals_per_match_id?:     number;
+  goalkeeper_most_cleansheets_number?:    number;
+  team_with_most_conceded_goals_number?:  number;
+  team_with_most_goals_per_match_number?: number;
+} export interface SeasonDetailsDefeatPercentage {
+  all?:  number;
+  away?: number;
+  home?: number;
+} export interface SeasonDetailsGoalLine {
+  over?:  { [key: string]: number };
+  under?: { [key: string]: number };
+} export interface SeasonDetailsGoalsScoredMinutes {
+  "0-15"?:  string;
+  "15-30"?: string;
+  "30-45"?: string;
+  "45-60"?: string;
+  "60-75"?: string;
+  "75-90"?: string;
+} export interface SeasonDetailsDefaultData {
+  id?:               number;
+  name?:             string;
+  end_date?:         Date;
+  league_id?:        number;
+  start_date?:       Date;
+  current_round_id?: number;
+  current_stage_id?: number;
+} export interface SeasonDetailsRoundDatum {
+  id?:        number;
+  end?:       Date;
+  name?:      number;
+  start?:     Date;
+  stage_id?:  number;
+  league_id?: number;
+  season_id?: number;
+} export interface SeasonDetailsGoalscorers {
+  type?:          string;
+  goals?:         number;
+  team_id?:       number;
+  position?:      number;
+  stage_id?:      number;
+  player_id?:     number;
+  season_id?:     number;
+  team_name?:     string;
+  player_name?:   null;
+  penalty_goals?: number;
+} export interface SeasonDetailsAssistscorers {
+  type?:        string;
+  assists?:     number;
+  team_id?:     number;
+  position?:    number;
+  stage_id?:    number;
+  player_id?:   number;
+  season_id?:   number;
+  team_name?:   string;
+  player_name?: null;
+} export interface SeasonDetailsSquad {
+  id?:                number;
+  name?:              string;
+  squad?:             SeasonDetailsSquadSub;
+  founded?:           number | null;
+  twitter?:           null;
+  logoPath?:          null;
+  venue_id?:          number | null;
+  legacy_id?:         number | null;
+  country_id?:        number;
+  short_code?:        null | string;
+  national_team?:     boolean;
+  is_placeholder?:    boolean;
+  current_season_id?: number | null;
+} export interface SeasonDetailsSquadSub {
+  data?: SeasonDetailsSquadDatum[];
+} export interface SeasonDetailsSquadDatum {
+  duels?:                SeasonDetailsSquadDuels;
+  fouls?:                SeasonDetailsSquadFouls;
+  goals?:                number;
+  saves?:                null;
+  shots?:                SeasonDetailsSquadShots;
+  blocks?:               null;
+  number?:               number | null;
+  passes?:               SeasonDetailsSquadPasses;
+  rating?:               string | null;
+  assists?:              number;
+  captain?:              number;
+  crosses?:              SeasonDetailsSquadCrosses;
+  injured?:              boolean;
+  lineups?:              number;
+  minutes?:              number;
+  tackles?:              null;
+  dribbles?:             SeasonDetailsSquadDribbles;
+  hit_post?:             null;
+  owngoals?:             null;
+  redcards?:             number;
+  penalties?:            SeasonDetailsSquadPenalties;
+  player_id?:            number;
+  yellowred?:            number;
+  appearences?:          number;
+  cleansheets?:          null;
+  dispossesed?:          null;
+  player_name?:          null | string;
+  position_id?:          number;
+  yellowcards?:          number;
+  interceptions?:        null;
+  substitute_in?:        number;
+  substitute_out?:       number;
+  inside_box_saves?:     null;
+  substitutes_on_bench?: number;
+} export interface SeasonDetailsSquadCrosses {
+  total?:    null;
+  accurate?: null;
+} export interface SeasonDetailsSquadDribbles {
+  success?:       null;
+  attempts?:      null;
+  dribbled_past?: null;
+} export interface SeasonDetailsSquadDuels {
+  won?:   null;
+  total?: null;
+} export interface SeasonDetailsSquadFouls {
+  drawn?:     null;
+  committed?: null;
+} export interface SeasonDetailsSquadPasses {
+  total?:      null;
+  accuracy?:   null;
+  key_passes?: null;
+} export interface SeasonDetailsSquadPenalties {
+  won?:       null;
+  saves?:     null;
+  missed?:    null;
+  scores?:    null;
+  committed?: null;
+} export interface SeasonDetailsSquadShots {
+  shots_total?:      null;
+  shots_on_target?:  null;
+  shots_off_target?: null;
+}
+
+/**
+ * [ℹ] HASURA: sportsbook_details (&_dev)
+*/
+export interface BETARENA_HASURA_sportsbook_details {
+  data?: { [key: string]: Sportbook };
+  lang?: string;
+} export interface Sportbook {
+  bonus?:             string;
+  image?:             string;
+  stars?:             string;
+  title?:             string;
+  position?:          string;
+  bonus_code?:        string;
+  information?:       string;
+  review_link?:       string;
+  register_link?:     string;
+  bonus_description?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_widget_league_info_translations (&_dev)
+*/
+export interface BETARENA_HASURA_scores_widget_league_info_translations {
+  data?: DataLang;
+  lang?: string;
+} export interface DataLang {
+  stats?:     string;
+  teams?:     string;
+  content?:   string;
+  overview?:  string;
+  following?: string;
 }
 
 /**

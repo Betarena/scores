@@ -18,7 +18,7 @@
   import type { 
     Cache_Single_SportbookDetails_Data_Response, 
     Cache_Single_Tournaments_League_Info_Data_Response 
-  } from "$lib/models/tournaments/types";
+  } from "$lib/models/tournaments/league-info/types";
 
   import LeagueInfoWidgetContentLoader from "./_LeagueInfo_Widget_ContentLoader.svelte";
 
