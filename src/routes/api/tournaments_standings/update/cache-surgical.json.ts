@@ -763,12 +763,12 @@ export async function post({ request }): Promise < unknown > {
   
   // [ℹ] job producers
   const job = await cacheQueueTourStand.add();
+  // const job = await cacheQueueTourStand.add(dataSurgical); [📍]
 
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: "✅ Success \ntournaments_standings cache data updated!"
+      job_id: job.id
     }
   }
 }
@@ -809,8 +809,8 @@ async function getCacheData (league_id: string): Promise < Cache_Single_Tourname
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 cacheQueueTourStand.process(async function (job, done) {
-  // console.log(job.data)
-  // console.log(job.data.argumentList);
+  // console.log(job.data) [📍]
+  // console.log(job.data.argumentList); [?]
 
   /* 
   do stuff
