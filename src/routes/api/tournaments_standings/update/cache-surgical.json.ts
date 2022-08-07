@@ -555,7 +555,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
     for (const season_main of iterator.seasons) {
 
       let season_standings_teams_list: StandingsDatum[];
-      let seasonCurrent: boolean;
+      let seasonCurrent = false;
 
       // [ℹ] check if for "current-season"
       if (season_main.is_current_season) {
