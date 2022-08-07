@@ -763,12 +763,12 @@ export async function post({ request }): Promise < unknown > {
   
   // [ℹ] job producers
   const job = await cacheQueueTourStand.add();
-  // const job = await cacheQueueTourStand.add(dataSurgical); [📍]
 
   return {
     status: 200,
     body: { 
-      job_id: job.id
+      job_id: job.id,
+      message: "✅ Success \ntournaments_standings cache data updated!"
     }
   }
 }
@@ -809,8 +809,8 @@ async function getCacheData (league_id: string): Promise < Cache_Single_Tourname
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 cacheQueueTourStand.process(async function (job, done) {
-  // console.log(job.data) [📍]
-  // console.log(job.data.argumentList); [?]
+  // console.log(job.data.argumentList);
+  // console.log(job.data)
 
   /* 
   do stuff
@@ -822,7 +822,7 @@ cacheQueueTourStand.process(async function (job, done) {
   const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
-  logs.push(`completed in: ${((t1 - t0) / 1000).toFixed(2)} sec`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
 
   done(null, { logs: logs });
 
@@ -1192,7 +1192,7 @@ async function surgicalDataUpdate_2 () {
     VARIABLES_1
   );
   const t1 = performance.now();
-  logs.push(`${queryName} completed in: ${((t1 - t0) / 1000).toFixed(2)} sec`);
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
 
@@ -1235,7 +1235,7 @@ async function surgicalDataUpdate_2 () {
     VARIABLES_2
   );
   const t3 = performance.now();
-  logs.push(`${queryName2} completed in: ${((t3 - t2) / 1000).toFixed(2)} sec`);
+  logs.push(`${queryName2} completed in: ${(t3 - t2) / 1000} sec`);
 
   // [ℹ] generate per leagueId
   for (const iterator of response.scores_football_leagues_dev) {
@@ -1263,8 +1263,8 @@ async function surgicalDataUpdate_2 () {
             season_id === season_main.id
           ).standings?.data;
 
-        console.log(`${season_main.id} is_current_season`);
-        console.log(`season_standings_teams_list is undefined: ${season_standings_teams_list}`);
+        if (dev) console.log(`${season_main.id} is_current_season`);
+        if (dev) console.log(`season_standings_teams_list} is undefined: ${season_standings_teams_list}`);
 
       } else {
 
