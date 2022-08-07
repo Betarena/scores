@@ -10,13 +10,31 @@ import type {
   BETARENA_HASURA_tournament_standings_query,
   Cache_Single_Tournaments_League_Standings_Info_Data_Response
 } from '$lib/models/tournaments/standings/types';
+import type { 
+  Standing_Team_Total_Away_Home 
+} from '$lib/models/tournaments/types';
 
 import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
-import type { Standing_Team_Total_Away_Home } from '$lib/models/tournaments/types';
-const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+import type { StandingsDatum } from '$lib/models/hasura';
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueTourStand = new Bull('cacheQueueTourStand', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
 
 // [ℹ] global variable
 let dataSurgical: BACKEND_tournament_standings_surgical_update = {
@@ -732,15 +750,16 @@ let dataSurgical: BACKEND_tournament_standings_surgical_update = {
   ]
 }
 const cacheTarget = "REDIS CACHE | tournament standings surgical"
+const logs = []
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 export async function post({ request }): Promise < unknown > {
 
-  const body = await request.json();
-  if (dev) console.log(body);
-  dataSurgical = JSON.parse(JSON.stringify(body));
+  // const body = await request.json();
+  // if (dev) console.log(body);
+  // dataSurgical = JSON.parse(JSON.stringify(body));
   
   // [ℹ] job producers
   const job = await cacheQueueTourStand.add();
@@ -789,20 +808,26 @@ async function getCacheData (league_id: string): Promise < Cache_Single_Tourname
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueTourStand.process (async (job, done) => {
+cacheQueueTourStand.process(async function (job, done) {
+  // console.log(job.data)
   // console.log(job.data.argumentList);
 
   /* 
   do stuff
   */
 
-  console.time(cacheTarget)
+  const t0 = performance.now();
   // await surgicalDataUpdate()
-  await surgicalDataUpdate_2()
-  console.timeEnd(cacheTarget)
-  console.log(`${cacheTarget} updated!`)
+  await surgicalDataUpdate_2();
+  const t1 = performance.now();
 
-  return "done";
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${((t1 - t0) / 1000).toFixed(2)} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
 
 /**
@@ -813,25 +838,26 @@ async function surgicalDataUpdate () {
   
   // [ℹ] get HASURA-DB response;
   const leagueIdsArr = dataSurgical.leagueSeasons.map(a => a.leagueId);
-  if (dev) console.log(`
-    num. of leagueIds: ${dataSurgical.leagueSeasons.length}
-    num. of seasonIds: ${dataSurgical.leagueSeasons.length}
-    num. of teamsIds: ${dataSurgical.teamsList.length}
-  `);
+
+  logs.push(`num. of leagueIds: ${dataSurgical.leagueSeasons.length}`);
+  logs.push(`num. of seasonIds: ${dataSurgical.leagueSeasons.length}`);
+  logs.push(`num. of teamsIds: ${dataSurgical.teamsList.length}`);
+
   const VARIABLES_1 = {
     leagueIds: leagueIdsArr,
     teamIds: dataSurgical.teamsList
   }
-  if (dev) console.log("VARIABLES_1:", VARIABLES_1);
-  console.time("BETARENA_HASURA_tournament_standings_query")
+  
+  const t0 = performance.now();
+  const queryName = "GET_LEAGUE_W_STANDINGS_INFO";
 	const response: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request (
     GET_LEAGUE_W_STANDINGS_INFO,
     VARIABLES_1
   );
-  console.timeEnd("BETARENA_HASURA_tournament_standings_query")
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
-
   // [ℹ] generate per league
   for (const iterator of response.scores_football_leagues_dev) {
 
@@ -1150,27 +1176,29 @@ async function surgicalDataUpdate_2 () {
   
   // [ℹ] get HASURA-DB response;
   const leagueIdsArr = dataSurgical.leagueSeasons.map(a => a.leagueId);
-  if (dev) console.log(`
-    num. of leagueIds: ${dataSurgical.leagueSeasons.length}
-    num. of seasonIds: ${dataSurgical.leagueSeasons.length}
-    num. of teamsIds: ${dataSurgical.teamsList.length}
-  `);
+
+  logs.push(`num. of leagueIds: ${dataSurgical.leagueSeasons.length}`);
+  logs.push(`num. of seasonIds: ${dataSurgical.leagueSeasons.length}`);
+  logs.push(`num. of teamsIds: ${dataSurgical.teamsList.length}`);
+
   const VARIABLES_1 = {
     leagueIds: leagueIdsArr
   }
-  if (dev) console.log("VARIABLES_1:", VARIABLES_1);
-  console.time("GET_LEAGUE_W_STANDINGS_INFO_2")
+  
+  const t0 = performance.now();
+  const queryName = "GET_LEAGUE_W_STANDINGS_INFO_2";
 	const response: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request (
     GET_LEAGUE_W_STANDINGS_INFO_2,
     VARIABLES_1
   );
-  console.timeEnd("GET_LEAGUE_W_STANDINGS_INFO_2")
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${((t1 - t0) / 1000).toFixed(2)} sec`);
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
 
   let teamIdsArr: number[] = []
 
-  // [ℹ] obtain all targe teams []
+  // [ℹ] obtain all target teams []
   for (const iterator of response.scores_football_leagues_dev) {
     for (const season_main of iterator.seasons) {
 
@@ -1188,48 +1216,66 @@ async function surgicalDataUpdate_2 () {
     }
   }
 
+  // console.log(teamIdsArr.includes(undefined))
   teamIdsArr = teamIdsArr.filter(element => {
     return element !== undefined
   });
 
-  // console.log(teamIdsArr.includes(undefined))
-
   teamIdsArr = [...new Set(teamIdsArr)]
+  logs.push(`num. of teamIdsArr: ${teamIdsArr.length}`);
 
   const VARIABLES_2 = {
     teamIds: teamIdsArr
   }
-  if (dev) console.log("VARIABLES_2:", VARIABLES_2);
-  console.time("GET_TEAM_W_STATS_INFO_3")
+
+  const t2 = performance.now();
+  const queryName2 = "GET_TEAM_W_STATS_INFO_3";
 	const response_team: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request (
     GET_TEAM_W_STATS_INFO_3,
     VARIABLES_2
   );
-  console.timeEnd("GET_TEAM_W_STATS_INFO_3")
+  const t3 = performance.now();
+  logs.push(`${queryName2} completed in: ${((t3 - t2) / 1000).toFixed(2)} sec`);
 
-  // [ℹ] generate appropiate URLS
+  // [ℹ] generate per leagueId
   for (const iterator of response.scores_football_leagues_dev) {
-    // [ℹ] per LANG
 
     const finalCacheObj: Cache_Single_Tournaments_League_Standings_Info_Data_Response = { }
     finalCacheObj.seasons = []
-
-    // finalCacheObj.url = url;
     finalCacheObj.league_id = iterator.id;
 
     // [ℹ] get all seasons for (this) league (tournament-id)
     for (const season_main of iterator.seasons) {
 
-      const season_standings = response.scores_football_standings_history_dev
-        .find(( { id, season_id } ) => id === season_main.league_id && season_id === season_main.id)
+      let season_standings_teams_list: StandingsDatum[];
 
-      // [🐛] debug
-      // console.log(
-      //   `league_id: ${league_target?.id}`,
-      //   `season_id: ${season_main?.id}`,
-      //   `season standings-length: ${season_standings?.data.length}`)
+      // [ℹ] check if for "current-season"
+      if (season_main.is_current_season) {
 
-      const season_standings_teams_list = season_standings?.data
+        const season_standings = response.scores_football_standings_dev
+          .find(( { id } ) =>
+            id === iterator.id
+          );
+
+        season_standings_teams_list = season_standings?.data
+          .find(( { name, season_id } ) => 
+            name === "Regular Season" &&
+            season_id === season_main.id
+          ).standings?.data;
+
+        console.log(`${season_main.id} is_current_season`);
+        console.log(`season_standings_teams_list is undefined: ${season_standings_teams_list}`);
+
+      } else {
+
+        const season_standings_hist = response.scores_football_standings_history_dev
+          .find(( { id, season_id } ) => 
+            id === season_main.league_id && 
+            season_id === season_main.id
+          );
+
+        season_standings_teams_list = season_standings_hist?.data
+      }
 
       const season_gen_list_total: Standing_Team_Total_Away_Home[] = []
       const season_gen_list_home:  Standing_Team_Total_Away_Home[] = []
