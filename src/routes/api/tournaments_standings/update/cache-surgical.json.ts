@@ -105,7 +105,7 @@ async function getCacheData (league_id: string): Promise < Cache_Single_Tourname
 
 cacheQueueTourStand.process (async function (job, done) {
   // console.log(job.data.argumentList);
-  console.log(job.data)
+  // console.log(job.data)
 
   logs = []
   logs.push(`${job.id}`);
