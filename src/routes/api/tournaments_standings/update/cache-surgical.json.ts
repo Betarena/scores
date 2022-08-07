@@ -127,10 +127,10 @@ cacheQueueTourStand.process (async function (job, done) {
   console.log(err)
 });
 
-cacheQueueTourStand.on('completed', function (job, result) {
-  // Job completed with output result!
-  cacheQueueTourStand.obliterate({ force: true })
-})
+// cacheQueueTourStand.on('completed', function (job, result) {
+//   // Job completed with output result!
+//   cacheQueueTourStand.obliterate({ force: true })
+// })
 
 /**
  * [ℹ] Tournaments Page Data Generation Methods
