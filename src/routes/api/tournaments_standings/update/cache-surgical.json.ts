@@ -750,7 +750,7 @@ let dataSurgical: BACKEND_tournament_standings_surgical_update = {
   ]
 }
 const cacheTarget = "REDIS CACHE | tournament standings surgical"
-const logs = []
+let logs = []
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -760,6 +760,8 @@ export async function post({ request }): Promise < unknown > {
   const body = await request.json();
   if (dev) console.log(body);
   dataSurgical = JSON.parse(JSON.stringify(body));
+
+  logs = []
   
   // [ℹ] job producers
   const job = await cacheQueueTourStand.add();
