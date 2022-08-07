@@ -757,9 +757,9 @@ const logs = []
 */
 export async function post({ request }): Promise < unknown > {
 
-  // const body = await request.json();
-  // if (dev) console.log(body);
-  // dataSurgical = JSON.parse(JSON.stringify(body));
+  const body = await request.json();
+  if (dev) console.log(body);
+  dataSurgical = JSON.parse(JSON.stringify(body));
   
   // [ℹ] job producers
   const job = await cacheQueueTourStand.add();
