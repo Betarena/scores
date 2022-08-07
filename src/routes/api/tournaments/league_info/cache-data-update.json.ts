@@ -1,29 +1,40 @@
-// [ℹ] import $app `modules`
 import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
+
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/query';
 import { removeDiacritics } from '$lib/utils/languages';
-import type { Cache_Single_SportbookDetails_Data_Response, Cache_Single_Tournaments_League_Info_Data_Response, Hasura_League_Info_Widget_Data_Response } from '$lib/models/tournaments/types';
+
+import type { 
+  Cache_Single_SportbookDetails_Data_Response, 
+  Cache_Single_Tournaments_League_Info_Data_Response, 
+  Hasura_League_Info_Widget_Data_Response 
+} from '$lib/models/tournaments/types';
 
 import fs from 'fs';
+
+// [❗] critical
+import Bull from 'bull';
+const cacheQueueTourInfo = new Bull('cacheQueueTourInfo', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function post(): Promise < unknown > {
 
-export async function post(): Promise< unknown > {
-  
-  await sportbookDetailsGeneration()
-  await leagueInfoGeneration()
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${new Date().toDateString()}`)
 
-  // [ℹ] return, RESPONSE;
-	return {
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueTourInfo.add();
+
+  return {
     status: 200,
-    body: '✅ Success \nleague_info & sport-book-details cache data updated!'
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nleague_info & sport-book-details cache data updated!'
+    }
   }
-
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -60,11 +71,26 @@ async function deleteCacheSportbookDetailInfoData() {
   return
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueueTourInfo.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  await sportbookDetailsGeneration()
+  await leagueInfoGeneration()
+
+  return "done";
+});
 
 /**
  * [ℹ] Tournaments Page Data Generation Methods
 */
-
 
 async function sportbookDetailsGeneration () {
   
@@ -75,7 +101,7 @@ async function sportbookDetailsGeneration () {
     geoPos: undefined
   }
 
-  deleteCacheSportbookDetailInfoData()
+  // deleteCacheSportbookDetailInfoData()
 
   for (const geoSportbook of response.sportsbook_details_dev) {
 
@@ -106,7 +132,7 @@ async function leagueInfoGeneration () {
 
   // const cacheRedisObj = {}
 
-  deleteCacheTournamentsPageLeagueInfoData()
+  // deleteCacheTournamentsPageLeagueInfoData()
 
   // [ℹ] generate appropiate URLS
   for (const iterator of response.scores_tournaments_dev) {
@@ -193,113 +219,3 @@ async function leagueInfoGeneration () {
 
   return
 }
-
-// [ℹ] complete set integration of GEO & SEO / TRANSLATION for league-info-widget
-
-/*
-  async function otherCompleteGEOandSEO () {
-    
-      // [ℹ] get HASURA-DB response;
-    const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
-
-    const finalCacheObj: Cache_Single_Tournaments_League_Info_Data_Response = {
-      lang: undefined,
-      url: undefined,
-      data: {
-        name: undefined,
-        country: undefined,
-        image_path: undefined,
-        betting_site_logo: undefined,
-        beting_cta_link: undefined,
-        seasons: []
-      }
-    }
-
-    // deleteCacheTournamentsPageLeagueInfoData()
-
-    // [ℹ] generate appropiate URLS
-    for (const iterator of response.scores_tournaments_dev) {
-      // [ℹ] per LANG
-
-      const tournament_id = iterator.tournament_id;
-
-      const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-');
-      const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-');
-      const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-');
-      const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-');
-
-      // for (const geoSportbook of response.sportsbook_details_dev) {
-        
-        // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
-        const url = iterator.lang == 'en' 
-          // ? '/' + sport + '/' + country + '/' + league_name + "?geoPos=" + geoSportbook.lang
-          // : '/' + lang  + '/' + sport + '/' + country + '/' + league_name + "?geoPos=" + geoSportbook.lang
-          ? '/' + sport + '/' + country + '/' + league_name
-          : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
-
-        finalCacheObj.url = url;
-        finalCacheObj.lang = lang;
-
-        // [ℹ] sportbook-details-info
-        // for (const [key, value] of Object.entries(geoSportbook.data)) {
-        //   // [ℹ] based on key-value-pair;
-        //   if (geoSportbook.data[key].position.toString() === '1') {
-        //     finalCacheObj.data.beting_cta_link = value.register_link === undefined ? '' : value.register_link
-        //     finalCacheObj.data.betting_site_logo = value.image === undefined ? '' : value.image
-        //   }
-        // }
-
-        const league_target = response.scores_football_leagues_dev.find(( { name, id } ) => name === iterator.name && id === tournament_id)
-        finalCacheObj.data.image_path = league_target.data.logo_path;
-
-        finalCacheObj.data.country = country;
-        finalCacheObj.data.name = league_name;
-
-        // [ℹ] issues here;
-        finalCacheObj.data.seasons = [] // [ℹ] reset
-
-        // [ℹ] get all seasons for (this) league
-        for (const season_main of league_target.seasons) {
-
-          // [ℹ] match target X season from league Z to extra-info-season-data;
-          const seasonExtraInfo = response.scores_football_seasons_details_dev.find(( { id } ) => id === season_main.id)
-
-          const num_clubs = seasonExtraInfo.data_stats 
-          const start_date = seasonExtraInfo.start_date
-          const end_date = seasonExtraInfo.end_date
-
-          if (num_clubs != null && 
-              start_date != null && 
-              end_date != null) {
-
-            finalCacheObj.data.seasons.push(
-              {
-                ...season_main,
-                number_of_clubs: seasonExtraInfo.data_stats.number_of_clubs,
-                start_date: seasonExtraInfo.start_date,
-                end_date: seasonExtraInfo.end_date
-              }
-            )
-          }
-        }
-
-        // globalArrFinal.push(finalCacheObj)
-        // console.log(finalCacheObj.data.name)
-        
-        // const data = JSON.stringify(finalCacheObj, null, 4)
-        // fs.appendFile('./test-global-final-asaw-without-geo.json', data, err => {
-        //   if (err) {
-        //     console.error(err);
-        //   }
-        //   // file written successfully
-        // });
-
-
-        // [ℹ] persist-cache-response;
-        // await cacheTournamentsPageLeagueInfoData(url, finalCacheObj);
-      // }
-
-    }
-
-  }
-*/

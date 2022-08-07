@@ -381,8 +381,108 @@ export interface BETARENA_HASURA_scores_general_translations {
   no_info_desc?: string;
 }
 
+/**
+ * [ℹ] HASURA: scores_football_seasons_details_aggregate (&_dev)
+*/
 export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
   aggregate?: Aggregate;
 } export interface Aggregate {
   totalCount?: number;
+}
+
+/**
+ * [ℹ] HASURA: scores_league_list (&_dev)
+*/
+export interface BETARENA_HASURA_scores_league_list {
+  country_id:     number
+  country_name:   string
+  image_path:     string
+  league_id:      number
+  league_name:    string
+  logo_path:      string
+  type:           string
+}
+
+/**
+ * [ℹ] HASURA: leagues_filtered_country (&_dev)
+*/
+export interface BETARENA_HASURA_leagues_filtered_country {
+  lang: string
+  leagues: {
+    league_id: number
+  }[]
+}
+
+/**
+ * [ℹ] HASURA: scores_leagues_list_translations (&_dev)
+*/
+export interface BETARENA_HASURA_scores_leagues_list_translations {
+  lang: string
+  translations: {
+    search_form: string
+    top_leagues: string
+    leagues_by_country: string
+    widget_title: string
+    competitions_results: string
+    countries_results: string
+    full_list: string
+    no_results: string
+    hide: string
+  }
+}
+
+/**
+ * [ℹ] HASURA: scores_tournaments (&_dev)
+*/
+export interface BETARENA_HASURA_scores_tournaments {
+  author?:        ScoresTournamentsAuthor;
+  country?:       string;
+  date?:          Date;
+  id?:            number;
+  lang?:          ScoresTournamentsLang;
+  modified_date?: Date;
+  name?:          string;
+  sport?:         ScoresTournamentsSport;
+  status?:        ScoresTournamentsStatus;
+  title?:         ScoresTournamentsTitle;
+  tournament_id?: number;
+  type?:          ScoresTournamentsType;
+  widgets?:       any[];
+  urls?:          ScoresTournamentsUrls;
+} export enum ScoresTournamentsAuthor {
+  Betarena = "Betarena",
+} export enum ScoresTournamentsLang {
+  Br = "br",
+  En = "en",
+  Es = "es",
+  It = "it",
+  Pt = "pt",
+  Ro = "ro",
+} export enum ScoresTournamentsSport {
+  Calcio = "calcio",
+  Football = "football",
+  Fotbal = "fotbal",
+  Futebol = "futebol",
+  Fútbol = "Fútbol",
+} export enum ScoresTournamentsStatus {
+  Draft = "draft",
+  Published = "published",
+} export enum ScoresTournamentsTitle {
+  EnDirecto = "en directo",
+  LiveScore = "live score",
+  Resultados = "resultados",
+  ResultadosAoVivo = "resultados ao vivo",
+  RezultateLive = "Rezultate Live",
+} export enum ScoresTournamentsType {
+  CupInternational = "cup_international",
+  Domestic = "domestic",
+  DomesticCup = "domestic_cup",
+  International = "international",
+} export interface ScoresTournamentsUrls {
+  br?: string;
+  en?: string;
+  es?: string;
+  it?: string;
+  pt?: string;
+  ro?: string;
 }

@@ -17,32 +17,30 @@
   import NoResults from "./_NoResults.svelte";
 
   import { get } from "$lib/api/utils";
-  import type { Cache_Single_Geo_LeagueList_Translation_Response, Cache_Single_Lang_LeagueList_Translation_Response } from "$lib/models/league_list/types";
+
+  import type { 
+    REDIS_CACHE_SINGLE_league_list_geo_data_response, 
+    REDIS_CACHE_SINGLE_league_list_seo_t_response 
+  } from "$lib/models/league_list/types";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
   // [ℹ] main component variables;
-	export let LEAGUE_LIST_WIDGET_DATA_SEO: Cache_Single_Lang_LeagueList_Translation_Response;
-  export let LEAGUE_LIST_WIDGET_DATA: Cache_Single_Geo_LeagueList_Translation_Response
+	export let LEAGUE_LIST_WIDGET_DATA_SEO: REDIS_CACHE_SINGLE_league_list_seo_t_response;
+  export let LEAGUE_LIST_WIDGET_DATA: REDIS_CACHE_SINGLE_league_list_geo_data_response
 
-  /**
-   * Description:
-   * ~~~~~~~~~~~~~~~~~~~
-   * ... Intializer of the Widget Function
-   * ... Returns PROMISE - [INTERFACE - `FinalFeaturedSiteResponseDB`]
-  */
-  let refresh: boolean = false;
-  let loaded: boolean = false;
-  let refresh_data: any = undefined;
-  let league_list_data: Cache_Single_Geo_LeagueList_Translation_Response
+  let refresh:                boolean = false;
+  let loaded:                 boolean = false;
+  let refresh_data:           any = undefined;
+  let league_list_data:       REDIS_CACHE_SINGLE_league_list_geo_data_response
   // [ℹ]
-  async function widgetInit(): Promise < Cache_Single_Geo_LeagueList_Translation_Response > {
+  async function widgetInit(): Promise < REDIS_CACHE_SINGLE_league_list_geo_data_response > {
 
     // [ℹ] get the USER-GEO-LOCATION;
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] GET RESPONSE;
-    const response: Cache_Single_Geo_LeagueList_Translation_Response = await get('api/league_list/cache-data.json?geoPos='+userGeo)
+    const response: REDIS_CACHE_SINGLE_league_list_geo_data_response = await get('api/league_list/cache-data.json?geoPos='+userGeo)
     // const response: Cache_Single_Geo_LeagueList_Translation_Response = LEAGUE_LIST_WIDGET_DATA
 
     // [ℹ] if response is null;
@@ -77,40 +75,45 @@
   // USER ACTIONS METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let leagueSearch: string = undefined;
-  let selectedCountryLeague: string = undefined;
+  let leagueSearch:              string = undefined;
+  let selectedCountryLeagueId:   number = undefined;
 
-  let showFullLeagueList: boolean = false;
-  let fullLeagueListDisplayNum: number = 4;
+  let showFullLeagueList:        boolean = false;
+  let fullLeagueListDisplayNum:  number = 4;
 
-  let showFullCountryList: boolean = false;
+  let showFullCountryList:       boolean = false;
   let fullCountryListDisplayNum: number = 4;
 
-  function selectCountryLeague(targetCountry: string) {
-      if (selectedCountryLeague === targetCountry) {
-          selectedCountryLeague = undefined
-          return;
-      }
-      // [ℹ] else;
-      selectedCountryLeague = targetCountry
+  function selectCountryLeague (targetCountry: number) {
+
+    if (selectedCountryLeagueId === targetCountry) {
+      selectedCountryLeagueId = undefined
+      return;
+    }
+    // [ℹ] else
+    selectedCountryLeagueId = targetCountry
+
   }
 
   function toggleFullLeagueList() {
-      showFullLeagueList = !showFullLeagueList
-      if (fullLeagueListDisplayNum == 4) {
-          fullLeagueListDisplayNum = 1000
-      } else {
-          fullLeagueListDisplayNum = 4
-      }
+
+    showFullLeagueList = !showFullLeagueList
+    if (fullLeagueListDisplayNum == 4) {
+      fullLeagueListDisplayNum = 1000
+    } else {
+      fullLeagueListDisplayNum = 4
+    }
+
   }
 
   function toggleFullCountryList() {
-      showFullCountryList = !showFullCountryList
-      if (fullCountryListDisplayNum == 4) {
-          fullCountryListDisplayNum = 1000
-      } else {
-          fullCountryListDisplayNum = 4
-      }
+
+    showFullCountryList = !showFullCountryList
+    if (fullCountryListDisplayNum == 4) {
+      fullCountryListDisplayNum = 1000
+    } else {
+      fullCountryListDisplayNum = 4
+    }
   }
 
   // [ℹ] change the `search-input-data` upon typing;
@@ -118,39 +121,35 @@
   let countrySearchData = []
   // [ℹ] listed to search-input text;
   $: if (leagueSearch != undefined && leagueSearch != '' && league_list_data) {
-      // [ℹ] reset data;
-      leagueSearchData = []
-      countrySearchData = []
-      // [ℹ] iterate for league-data;
-      for (const item of league_list_data.all_leagues_list) {
-          // [ℹ] identify the correct search league items;
-          if (item.league_name.toString().toLowerCase().includes(leagueSearch.toString().toLowerCase()) || 
-              item.country_name.toString().toLowerCase().includes(leagueSearch.toString().toLowerCase())) {
-              // [ℹ] store the data;
-              leagueSearchData.push(item)
-          }
+    
+    // [ℹ] reset data;
+    leagueSearchData = []
+    countrySearchData = []
+
+    // [ℹ] iterate for league-data;
+    for (const item of league_list_data.all_leagues_list) {
+      // [ℹ] identify the correct search league items;
+      if (item.league_name.toString().toLowerCase().includes(leagueSearch.toString().toLowerCase()) || 
+        item.country_name.toString().toLowerCase().includes(leagueSearch.toString().toLowerCase())) {
+        // [ℹ] store the data;
+        leagueSearchData.push(item)
       }
-      // [ℹ] iterate for country-data;
-      for (const item of league_list_data.unique_county_list) {
-          // [ℹ] identify the correct search country items;
-          if (item.country_name.toString().toLowerCase().includes(leagueSearch.toString().toLowerCase())) {
-              // [ℹ] store the data;
-              countrySearchData.push(item)
-          }
+    }
+
+    // [ℹ] iterate for country-data;
+    for (const item of LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list) {
+      // [ℹ] identify the correct search country items;
+      if (item.country_name.toString().toLowerCase().includes(leagueSearch.toString().toLowerCase())) {
+        // [ℹ] store the data;
+        countrySearchData.push(item)
       }
+    }
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES LISTENERS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	/**
-	 * Description:
-	 * ~~~~~~~~~~~~~~~~~~~
-	 * ... onMount() function that verifies that
-	 * ... the `viewport` width is of tablet size
-	 * ... or greater;
-	 */
 	let viewportDesktop: boolean;
 
   onMount(async () => {
@@ -183,9 +182,9 @@
     id="seo-league-list-box">
     <!-- [ℹ] translation-expressions 
     -->
-    <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.widget_title}</p>
-    <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.top_leagues}</p>
-    <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.leagues_by_country}</p>
+    <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.widget_title}</p>
+    <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.top_leagues}</p>
+    <p>{LEAGUE_LIST_WIDGET_DATA_SEO.translations.leagues_by_country}</p>
     <!-- [ℹ] all-leagues-expressions 
     -->
     {#each LEAGUE_LIST_WIDGET_DATA_SEO.all_leagues_list as league}
@@ -221,7 +220,7 @@
           <p
             id='widget-title'
             class="s-20 m-b-10 color-white w-500">
-            {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.widget_title}
+            {LEAGUE_LIST_WIDGET_DATA_SEO.translations.widget_title}
           </p>
 
           <!-- [ℹ] league-list-container 
@@ -237,7 +236,7 @@
 
                 <input 
                   type="text"
-                  placeholder={LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.search_form}
+                  placeholder={LEAGUE_LIST_WIDGET_DATA_SEO.translations.search_form}
                   bind:value={leagueSearch}
                   id='league-list-search'
                   class='m-b-20' 
@@ -276,7 +275,7 @@
                 <p
                   class='color-grey s-14 m-b-5'
                   style='padding: 0 20px;'>
-                  {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.top_leagues}
+                  {LEAGUE_LIST_WIDGET_DATA_SEO.translations.top_leagues}
                 </p>
 
                 <!-- [ℹ] list-grid 
@@ -306,84 +305,93 @@
                 <p
                   class='color-grey s-14 m-b-5'
                   style='padding: 0 20px;'>
-                  {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.leagues_by_country}
+                  {LEAGUE_LIST_WIDGET_DATA_SEO.translations.leagues_by_country}
                 </p>
 
                 <!-- [ℹ] list-grid 
                 -->
                 <div
                     id='countires-list-container'>
+
                     <!-- [ℹ] for-loop-each-population -->
-                    {#each data.unique_county_list as item}
-                        <!-- content here -->
+                    {#each LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list as item}
+
                         <div
-                            class='main-country-container'
-                            class:selectedCountry={selectedCountryLeague === item.country_name}>
-                            <!-- [ℹ] parent-country [SHOWN] -->
-                            <div
-                                class='country-league-container row-space-start'
-                                on:click={() => selectCountryLeague(item.country_name)}>
-                                <!-- [ℹ] check-if-continent-selected -->
-                                {#if item.country_id.toString() === '147'}
-                                    <!-- content here -->
-                                    <div
-                                        style='width: auto;'
-                                        class='row-space-start m-r-15'>
-                                        <Africa />
-                                    </div>
-                                {:else if item.country_id.toString() === '11240938'}
-                                    <!-- content here -->
-                                    <div
-                                        style='width: auto;'
-                                        class='row-space-start m-r-15'>
-                                        <Asia />
-                                    </div>
-                                {:else if item.country_id.toString() === '24143344'}
-                                    <!-- content here -->
-                                    <div
-                                        style='width: auto;'
-                                        class='row-space-start m-r-15'>
-                                        <NorthCentralAmerica />
-                                    </div>
-                                {:else if item.country_id.toString() === '11555657'}
-                                    <!-- content here -->
-                                    <div
-                                        style='width: auto;'
-                                        class='row-space-start m-r-15'>
-                                        <SouthAmerica />
-                                    </div>
-                                {:else if item.country_id.toString() === '99474'}
-                                    <!-- content here -->
-                                    <div
-                                        style='width: auto;'
-                                        class='row-space-start m-r-15'>
-                                        <World />
-                                    </div>
-                                {:else}
-                                    <img 
-                                        src={item.image_path} 
-                                        alt=""
-                                        title={item.country_name + '-image'} 
-                                        width="20px" height="20px" 
-                                        class='m-r-15' />
-                                {/if}
-                                <p class='s-14 w-500 color-black'>
-                                    {item.country_name}
-                                </p>
-                            </div>
-                            <!-- [ℹ] sub-category [DEFAULT HIDDEN] -->
-                            {#each data.all_leagues_list as league}
-                                {#if league.country_id.toString().toLowerCase() === item.country_id.toString().toLowerCase() 
-                                    && selectedCountryLeague === item.country_name}
-                                    <!-- content here -->
+                          class='main-country-container'
+                          class:selectedCountry={selectedCountryLeagueId === item.country_id}>
+
+                          <!-- [ℹ] parent-country [SHOWN] -->
+                          <div
+                              class='country-league-container row-space-start'
+                              on:click={() => selectCountryLeague(item.country_id)}>
+
+                              <!-- [ℹ] check-if-continent-selected -->
+                              {#if item.country_id.toString() === '147'}
+                                  <!-- content here -->
+                                  <div
+                                      style='width: auto;'
+                                      class='row-space-start m-r-15'>
+                                      <Africa />
+                                  </div>
+                              {:else if item.country_id.toString() === '11240938'}
+                                  <!-- content here -->
+                                  <div
+                                      style='width: auto;'
+                                      class='row-space-start m-r-15'>
+                                      <Asia />
+                                  </div>
+                              {:else if item.country_id.toString() === '24143344'}
+                                  <!-- content here -->
+                                  <div
+                                      style='width: auto;'
+                                      class='row-space-start m-r-15'>
+                                      <NorthCentralAmerica />
+                                  </div>
+                              {:else if item.country_id.toString() === '11555657'}
+                                  <!-- content here -->
+                                  <div
+                                      style='width: auto;'
+                                      class='row-space-start m-r-15'>
+                                      <SouthAmerica />
+                                  </div>
+                              {:else if item.country_id.toString() === '99474'}
+                                  <!-- content here -->
+                                  <div
+                                      style='width: auto;'
+                                      class='row-space-start m-r-15'>
+                                      <World />
+                                  </div>
+                              {:else}
+                                  <img 
+                                      src={item.image_path} 
+                                      alt=""
+                                      title={item.country_name + '-image'} 
+                                      width="20px" height="20px" 
+                                      class='m-r-15' />
+                              {/if}
+
+                              <p class='s-14 w-500 color-black'>
+                                  {item.country_name}
+                              </p>
+                          </div>
+
+                          <!-- [ℹ] sub-category [DEFAULT HIDDEN] -->
+                          {#each data.all_leagues_list as league}
+                              {#if league.country_id.toString().toLowerCase() === item.country_id.toString().toLowerCase() && 
+                                selectedCountryLeagueId === item.country_id}
+                                  <a 
+                                    sveltekit:prefetch
+                                    href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                                     <div
                                         class='country-league-sub-container row-space-start cursor-not-allowed'>
                                         <p class='s-14 w-500 color-black'>
                                             {league.league_name}
                                         </p>
                                     </div>
-                                {/if}
-                            {/each}
+                                  </a>
+                              {/if}
+                          {/each}
+
                         </div>
                     {/each}
                 </div>
@@ -400,7 +408,7 @@
                   <NoResults />
                   <p 
                     class='s-16 m-t-15 color-grey'>
-                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.no_results}
+                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.no_results}
                   </p>
                 </div>
               
@@ -414,7 +422,7 @@
                 <p
                   class='search-title w-500 color-black s-14 m-b-5'
                   style='padding: 0 20px;'>
-                  {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.competitions_results}
+                  {LEAGUE_LIST_WIDGET_DATA_SEO.translations.competitions_results}
                 </p>
 
                 <!-- [ℹ] list-grid 
@@ -454,55 +462,59 @@
                     on:click={() => toggleFullLeagueList()}
                     style='padding: 0 20px;'>
                     {#if !showFullLeagueList}
-                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.full_list}
+                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.full_list}
                     {:else}
-                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.hide}
+                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.hide}
                     {/if}
                   </p>
                 {/if}
 
-                  <!-- [ℹ] list-countries-matching-search -->
-                  <p
-                    class='search-title w-500 color-black s-14 m-b-5'
-                    style='padding: 0 20px;'>
-                    {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.countries_results}
-                  </p>
+                <!-- [ℹ] list-countries-matching-search -->
+                <p
+                  class='search-title w-500 color-black s-14 m-b-5'
+                  style='padding: 0 20px;'>
+                  {LEAGUE_LIST_WIDGET_DATA_SEO.translations.countries_results}
+                </p>
 
-                  <!-- [ℹ] list-grid 
+                <!-- [ℹ] list-grid 
+                -->
+                <div
+                  id='countires-list-container'>
+
+                  <!-- [ℹ] for-loop-each-population 
                   -->
-                  <div
-                    id='countires-list-container'>
+                  {#each countrySearchData.slice(0, fullCountryListDisplayNum) as item}
+                      
+                    <div
+                      class='main-country-container'
+                      class:selectedCountry={selectedCountryLeagueId === item.country_id}>
 
-                    <!-- [ℹ] for-loop-each-population 
-                    -->
-                    {#each countrySearchData.slice(0, fullCountryListDisplayNum) as item}
-                        
-                      <div
-                        class='main-country-container'
-                        class:selectedCountry={selectedCountryLeague === item.country_name}>
+                        <!-- [ℹ] parent-country [SHOWN] 
+                        -->
+                        <div
+                          class='country-league-container row-space-start'
+                          on:click={() => selectCountryLeague(item.country_id)}>
+                          <img 
+                            src={item.image_path} 
+                            alt=""
+                            title={item.country_name + '-image'} 
+                            width="20px" height="20px" 
+                            class='m-r-15' />
+                            <p 
+                              class='s-14 w-500 color-black'>
+                                {item.country_name}
+                            </p>
+                        </div>
 
-                          <!-- [ℹ] parent-country [SHOWN] 
-                          -->
-                          <div
-                            class='country-league-container row-space-start'
-                            on:click={() => selectCountryLeague(item.country_name)}>
-                            <img 
-                              src={item.image_path} 
-                              alt=""
-                              title={item.country_name + '-image'} 
-                              width="20px" height="20px" 
-                              class='m-r-15' />
-                              <p 
-                                class='s-14 w-500 color-black'>
-                                  {item.country_name}
-                              </p>
-                          </div>
-
-                          <!-- [ℹ] sub-category [DEFAULT HIDDEN] 
-                          -->
-                          {#each data.all_leagues_list as league}
-                            {#if league.country_id.toString().toLowerCase() === item.country_id.toString().toLowerCase() &&
-                              selectedCountryLeague === item.country_name}
+                        <!-- [ℹ] sub-category [DEFAULT HIDDEN] 
+                        -->
+                        {#each data.all_leagues_list as league}
+                          {#if 
+                            league.country_id.toString().toLowerCase() === item.country_id.toString().toLowerCase() &&
+                            selectedCountryLeagueId === item.country_id}
+                            <a 
+                              sveltekit:prefetch
+                              href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                               <div
                                 class='country-league-sub-container row-space-start cursor-not-allowed'>
                                 <p 
@@ -510,29 +522,30 @@
                                   {league.league_name}
                                 </p>
                               </div>
-                            {/if}
-                          {/each}
+                            </a>
+                          {/if}
+                        {/each}
 
-                      </div>
-                      
-                    {/each}
+                    </div>
                     
-                  </div>
+                  {/each}
+                  
+                </div>
 
-                  <!-- [ℹ] show-full-list 
-                  -->
-                  {#if countrySearchData.length > 4}
-                    <p 
-                      class='s-14 w-500 color-primary cursor-pointer m-b-20'
-                      on:click={() => toggleFullCountryList()}
-                      style='padding: 0 20px;'>
-                      {#if !showFullCountryList}
-                        {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.full_list}
-                      {:else}
-                        {LEAGUE_LIST_WIDGET_DATA_SEO.translations.translations.hide}
-                      {/if}
-                    </p>
-                  {/if}
+                <!-- [ℹ] show-full-list 
+                -->
+                {#if countrySearchData.length > 4}
+                  <p 
+                    class='s-14 w-500 color-primary cursor-pointer m-b-20'
+                    on:click={() => toggleFullCountryList()}
+                    style='padding: 0 20px;'>
+                    {#if !showFullCountryList}
+                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.full_list}
+                    {:else}
+                      {LEAGUE_LIST_WIDGET_DATA_SEO.translations.hide}
+                    {/if}
+                  </p>
+                {/if}
 
               {/if}
 

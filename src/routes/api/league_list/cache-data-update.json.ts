@@ -1,42 +1,54 @@
 
 // [ℹ] import $app `modules`;
 import { dev } from '$app/env'
+
 // [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
+
 // [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 import type { 
-  Cache_Single_Geo_LeagueList_Translation_Response, 
-  Cache_Single_Lang_LeagueList_Translation_Response, 
-  Hasura_Complete_League_List_Type, 
-  League_List_Cache_SEO_Ready 
+  BETARENA_HASURA_league_list_query,
+  REDIS_CACHE_SINGLE_league_list_geo_data_response,
+  REDIS_CACHE_SINGLE_league_list_seo_t_response
 } from '$lib/models/league_list/types'
-import { GET_COMPLETE_LEAGUE_LIST_DATA } from '$lib/graphql/league_list/query'
-import { GET_HREFLANG_DATA } from '$lib/graphql/query'
+
+import { 
+  GET_COMPLETE_LEAGUE_LIST_DATA 
+} from '$lib/graphql/league_list/query'
+
+import { 
+  GET_HREFLANG_DATA 
+} from '$lib/graphql/query'
+
+import type { 
+  BETARENA_HASURA_scores_general_translations, 
+  BETARENA_HASURA_scores_tournaments 
+} from '$lib/models/hasura'
+
+import fs from 'fs';
+
+// [❗] critical
+import Bull from 'bull';
+const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function post(): Promise < any > {
-    
-  // [ℹ] get KEY platform translations
-  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+export async function post(): Promise < unknown > {
 
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_leagues_list_trigerred at: ${new Date().toDateString()}`)
 
-  // [ℹ] push "EN"
-  langArray.push('en')
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueLeaguesList.add();
 
-  await leagueListGeoDataGeneration()
-  await leagueListLangDataGeneration(langArray)
-
-  // [ℹ] return, RESPONSE;
   return {
     status: 200,
-    body: '✅ Success \nLeague List Cache Updated!'
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nLeague List Cache Updated!'
+    }
   }
 
 }
@@ -45,7 +57,7 @@ export async function post(): Promise < any > {
  * [ℹ] League List CACHEING ACTIONS METHODS
 */
 
-async function cacheLeagueListGeoPos (geoPos: string, json_cache: Cache_Single_Geo_LeagueList_Translation_Response) {
+async function cacheGeoPos (geoPos: string, json_cache: REDIS_CACHE_SINGLE_league_list_geo_data_response) {
   try {
     // [ℹ] persist redis (cache)
     await redis.hset('league_list_geo', geoPos, JSON.stringify(json_cache));
@@ -55,7 +67,7 @@ async function cacheLeagueListGeoPos (geoPos: string, json_cache: Cache_Single_G
   }
 }
 
-async function cacheLeagueListLang (lang: string, json_cache: Cache_Single_Lang_LeagueList_Translation_Response) {
+async function cacheTranslationLang (lang: string, json_cache: REDIS_CACHE_SINGLE_league_list_seo_t_response) {
   try {
     // [ℹ] persist redis (cache)
     await redis.hset('league_list_t', lang, JSON.stringify(json_cache));
@@ -77,151 +89,222 @@ async function deleteLeagueListLang () {
   return
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueueLeaguesList.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await leagueListGeoDataGeneration()
+  await leagueListLangDataGeneration(langArray)
+
+  return "done";
+});
+
 /**
  * [ℹ] League List Sites CACHE GENERATION
 */
 
 async function leagueListGeoDataGeneration () {
 
-  await deleteLeagueListGeoPos()
+  // await deleteLeagueListGeoPos()
 
   // [ℹ] get all of the LEAGUE LIST DATA from HASURA;
-  const response: Array < Cache_Single_Geo_LeagueList_Translation_Response > = await mainGeo()
+  const response: Array < REDIS_CACHE_SINGLE_league_list_geo_data_response > = await mainGeo()
 
   // [ℹ] iterate over EACH LEAGUE OBJECT, lang, by lang;
   for await (const leagueObj of response) {
-    const userGeo = leagueObj.lang
+    const userGeo = leagueObj.geo
     // [ℹ] cache-response;
-    await cacheLeagueListGeoPos(userGeo, leagueObj);
+    await cacheGeoPos(userGeo, leagueObj);
   }
 
 }
 
 async function leagueListLangDataGeneration (langArray: string[]) {
 
-  const finalCacheObj: Cache_Single_Lang_LeagueList_Translation_Response = {
-    all_leagues_list: undefined,
-    unique_county_list: undefined,
-    translations: undefined
-  }
+  const response: REDIS_CACHE_SINGLE_league_list_seo_t_response [] = await mainLang(langArray)
 
-  // [ℹ] ℹ generate best goal scorers data by GEO;
-  const response: League_List_Cache_SEO_Ready = await mainLang()
-
-  deleteLeagueListLang()
+  // [❗] FIXME: make sure [CACHE] is TIME-BASED-EXPIRATION, not DELETE-INSERT based;
+  // deleteLeagueListLang()
 
   // [ℹ] for-each available translation:
-  for (const lang_ of langArray) {
+  for (const item of response) {
     
-    finalCacheObj.all_leagues_list = response.all_leagues_list;
-    finalCacheObj.unique_county_list = response.unique_county_list;
-    finalCacheObj.translations = response.translations.find(( { lang } ) => lang_ === lang);
-
     // [ℹ] persist-cache-response;
-    await cacheLeagueListLang(lang_, finalCacheObj);
+    await cacheTranslationLang (item.lang, item);
   }
-
 }
 
 /**
- * [ℹ] League List Methods
+ * [ℹ] League List [MAIN HELPER] Methods
 */
 
-async function mainGeo(): Promise < Array < Cache_Single_Geo_LeagueList_Translation_Response >> {
+async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_data_response >> {
 
-  const response: Hasura_Complete_League_List_Type = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
+  const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
 
-  const finalObj: Array < Cache_Single_Geo_LeagueList_Translation_Response > = []
+  // [🐛] debug [prod-handy]
+  console.log(`ℹ tournament_map is generating!`)
+  const tournament_map = new Map()
+  for (const t of response.scores_tournaments_dev) {
+    tournament_map.set(t.tournament_id, t)
+  }
+  // [🐛] debug [prod-handy]
+  console.log(`ℹ tournament_map generated! With size: ${tournament_map.size}`)
 
-  // [ℹ] for-each country-filtered-league-list,
+  const finalObj: Array < REDIS_CACHE_SINGLE_league_list_geo_data_response > = []
+
+  // [ℹ] iterate .forEach country [filtered]
   for (const country_leagues of response.leagues_filtered_country) {
 
-    const leagueObj: Cache_Single_Geo_LeagueList_Translation_Response = {
-        lang: undefined,
-        top_geo_leagues: [],
-        all_leagues_list: [],
-        unique_county_list: [],
-        translations: undefined
+    const leagueObj: REDIS_CACHE_SINGLE_league_list_geo_data_response = {
+      geo: undefined,
+      top_geo_leagues: [],
+      all_leagues_list: []
     }
-    // [ℹ] ℹ declare language [GEO];
-    leagueObj.lang = country_leagues.lang
 
-    // [ℹ] select-top-7-leagues;
+    // [ℹ] declare [GEO]
+    leagueObj.geo = country_leagues.lang
+
+    // [ℹ] select [TOP-7] leagues
     for (const country_league of country_leagues.leagues) {
 
-        for (const league of response.scores_league_list) {
-            // [ℹ] match_league_ids && match correct-lang
-            if (league.league_id.toString() === country_league.league_id.toString()) {
-                leagueObj.top_geo_leagues.push(league)
-            }
+      for (const league of response.scores_league_list) {
 
-            if (leagueObj.top_geo_leagues.length > 7) {
-                if (dev) console.debug('➤  exiting inner loop', leagueObj.top_geo_leagues.length)
-                break;
-            }
+        // [ℹ] match_league_ids && match correct-lang
+        if (league.league_id.toString() === country_league.league_id.toString()) {
+          leagueObj.top_geo_leagues.push(league)
         }
-        if (leagueObj.top_geo_leagues.length > 6) {
-            if (dev) console.debug('➤  exiting main loop', leagueObj.top_geo_leagues.length)
-            break;
+
+        if (leagueObj.top_geo_leagues.length > 7) {
+          if (dev) console.debug('➤  exiting inner loop', leagueObj.top_geo_leagues.length)
+          break;
         }
+      }
+
+      if (leagueObj.top_geo_leagues.length > 6) {
+        if (dev) console.debug('➤  exiting main loop', leagueObj.top_geo_leagues.length)
+        break;
+      }
     }
 
+    // [ℹ] aggregate [ALL] LEAGUES-LIST
     leagueObj.all_leagues_list = response.scores_league_list
-
-    leagueObj.unique_county_list = response.scores_league_list.filter((obj, pos, arr) => {
-        return arr
-            .map(mapObj => mapObj.country_id)
-            .indexOf(obj.country_id) == pos;
-    });
-    leagueObj.unique_county_list = leagueObj.unique_county_list.map(u => ({
-        country_id: u.country_id,
-        country_name: u.country_name,
-        image_path: u.image_path
-    }));
-    leagueObj.unique_county_list.sort(function(a, b) {
-        return compareStrings(a.country_name, b.country_name);
+    // [ℹ] inject [URLs]
+    leagueObj.all_leagues_list.forEach((elem) => {
+      const target_tournament: boolean = tournament_map.has(elem.league_id);
+      if (target_tournament) {
+        const target_tournament: BETARENA_HASURA_scores_tournaments = tournament_map.get(elem.league_id);
+        elem.urls = target_tournament.urls
+      }
     })
-
+    
     finalObj.push(leagueObj);
   }
 
   return finalObj
 }
 
-async function mainLang(): Promise < League_List_Cache_SEO_Ready > {
+async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_league_list_seo_t_response[] > {
   
-  const response: Hasura_Complete_League_List_Type = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
+  const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
 
-  const finalObj: League_List_Cache_SEO_Ready = {
-      all_leagues_list: [],
-      unique_county_list: [],
-      translations: undefined
+  // [🐛] debug [prod-handy]
+  console.log(`ℹ lang_country_map is generating!`)
+  const lang_country_map = new Map()
+  for (const t of response.scores_general_translations_dev) {
+    lang_country_map.set(t.lang, t)
+  }
+  // [🐛] debug [prod-handy]
+  console.log(`ℹ lang_country_map generated! With size: ${lang_country_map.size}`)
+
+  const finalCacheObj: REDIS_CACHE_SINGLE_league_list_seo_t_response [] = []
+
+  // [ℹ] universal [EN] [LIST]
+  const pre_unique_county_list = response.scores_league_list.filter ((obj, pos, arr) => {
+    return arr
+      .map(mapObj => mapObj.country_id)
+      .indexOf(obj.country_id) == pos;
+  });
+  const pre_updated_unique_county_list = pre_unique_county_list.map (u => ({
+    country_id:     u.country_id,
+    country_name:   u.country_name,
+    image_path:     u.image_path
+  }));
+
+  // [ℹ] .forEach() [LANG]
+  for (const lang_m of langArray) {
+
+    const widgetTranslation = response.scores_leagues_list_translations_dev
+      .find( ({ lang }) =>  lang === lang_m);
+    
+    if (widgetTranslation == undefined) {
+      continue
+    }
+
+    const preCacheObj: REDIS_CACHE_SINGLE_league_list_seo_t_response = {
+      lang:                undefined,
+      all_leagues_list:    [],
+      unique_county_list:  [],
+      translations:        undefined
+    }
+
+    preCacheObj.lang =                lang_m
+    preCacheObj.all_leagues_list =    response.scores_league_list
+    preCacheObj.translations =        widgetTranslation.translations
+    preCacheObj.unique_county_list =  pre_updated_unique_county_list
+
+    // [ℹ] updating translating [COUNTRY_NAME]
+    preCacheObj.unique_county_list.forEach ((elem) => {
+      const target_country_t: boolean = lang_country_map.has(lang_m);
+      if (target_country_t) {
+        const target_country_t_data: BETARENA_HASURA_scores_general_translations = lang_country_map.get(lang_m);
+        const country_name:     string = elem.country_name;
+        
+        const countryObjFinal = Object.assign({}, ...target_country_t_data.countries); 
+        // [ℹ] TODO: update to countries[<->] when update on Hasura
+        if (countryObjFinal[country_name] !== undefined) {
+          elem.country_name = countryObjFinal[country_name]
+        }
+      }
+    })
+    // [ℹ] descending alphabetical order
+    preCacheObj.unique_county_list.sort (function(a, b) {
+      return compareStrings(a.country_name, b.country_name);
+    })
+
+    finalCacheObj.push(preCacheObj)
   }
 
-  finalObj.all_leagues_list = response.scores_league_list
-  finalObj.translations = response.scores_leagues_list_translations_dev
-  finalObj.unique_county_list = response.scores_league_list.filter((obj, pos, arr) => {
-      return arr
-          .map(mapObj => mapObj.country_id)
-          .indexOf(obj.country_id) == pos;
-  });
-  finalObj.unique_county_list = finalObj.unique_county_list.map(u => ({
-      country_id: u.country_id,
-      country_name: u.country_name,
-      image_path: u.image_path
-  }));
-  finalObj.unique_county_list.sort(function(a, b) {
-      return compareStrings(a.country_name, b.country_name);
-  })
-
-  return finalObj
+  return finalCacheObj
 }
+
+/**
+ * [ℹ] Helper Methods
+*/
 
 function compareStrings(a, b) {
 
-    // Assuming you want case-insensitive comparison
-    a = a.toLowerCase();
-    b = b.toLowerCase();
-  
-    return (a < b) ? -1 : (a > b) ? 1 : 0;
+  // Assuming you want case-insensitive comparison
+  a = a.toLowerCase();
+  b = b.toLowerCase();
+
+  return (a < b) ? -1 : (a > b) ? 1 : 0;
 }

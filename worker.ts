@@ -1,47 +1,91 @@
-// [ℹ] import $app `modules`
-import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
-import redis from "$lib/redis/init"
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/query';
+let throng = require('throng');
+let Queue = require("bull");
 
-import type { 
-  Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
-  Cache_Single_Tournaments_League_Standings_Translation_Data_Response, 
-  Hasura_League_Info_Widget_Data_Response, 
-  Standing_Team_Total_Away_Home 
-} from '$lib/models/tournaments/types';
+// Connect to a local redis instance locally, and the Heroku-provided URL in production
+let REDIS_URL = process.env.REDIS_URL || "redis://127.0.0.1:6379";
 
-import fs from 'fs';
+// Spin up multiple processes to handle jobs to take advantage of more CPU cores
+// See: https://devcenter.heroku.com/articles/node-concurrency for more info
+let workers = process.env.WEB_CONCURRENCY || 2;
 
-// [❗] critical
-import Bull from 'bull';
-const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+// The maximum number of jobs each worker should process at once. This will need
+// to be tuned for your application. If each job is mostly waiting on network 
+// responses it can be much higher. If each job is CPU-intensive, it might need
+// to be much lower.
+let maxJobsPerWorker = 50;
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
-export async function post(): Promise < unknown > {
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+function start() {
+  // Connect to the named work queue
+  let cacheQueueTourStand = new Queue('work', 'cacheQueueTourStand', 
+    { 
+      redis: { 
+        port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+        host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+        password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+        tls: {}
+      }
+    }, 
+    settings
+  );
+  const cacheTarget = "REDIS CACHE | tournament standings surgical"
+
+  // [ℹ] Example
+  /*
+    workQueue.process(maxJobsPerWorker, async (job) => {
+      // This is an example job that just slowly reports on progress
+      // while doing no work. Replace this with your own job logic.
+      let progress = 0;
+
+      // throw an error 5% of the time
+      if (Math.random() < 0.05) {
+        throw new Error("This job failed!")
+      }
+
+      while (progress < 100) {
+        await sleep(50);
+        progress += 1;
+        job.progress(progress)
+      }
+
+      // A job can return values that will be stored in Redis as JSON
+      // This return value is unused in this demo application.
+      return { value: "This will be stored" };
+    });
+  */
+
+  cacheQueueTourStand.process(async function (job, done) {
+    // console.log(job.data.argumentList);
+    // console.log(job.data)
   
-  // [ℹ] job producers
+    /* 
+    do stuff
+    */
   
-  const job = await cacheQueueTourStand.add();
+    const t0 = performance.now();
+    // await surgicalDataUpdate()
+    await surgicalDataUpdate_2(job.data);
+    const t1 = performance.now();
+  
+    logs.push(`${cacheTarget} updated!`);
+    logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+  
+    done(null, { logs: logs });
+  
+  }).catch(err => {
+    console.log(err)
+  });
 
-  // [ℹ] should never happen;
-  return {
-    status: 200,
-    body: { 
-      job_id: job.id,
-      message: "✅ Success \ntournaments_standings cache data updated!"
-    }
-  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  PERSIST CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheTournamentsStandingsDataAlt (league_id: number, json_cache: Cache_Single_Tournaments_League_Standings_Info_Data_Response) {
+async function cacheData (league_id: number, json_cache: Cache_Single_Tournaments_League_Standings_Info_Data_Response) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset('tournament_standings_data', league_id, JSON.stringify(json_cache));
@@ -51,81 +95,131 @@ async function cacheTournamentsStandingsDataAlt (league_id: number, json_cache: 
   }
 }
 
-async function cacheStandingsTranslationData (lang: string, json_cache: Cache_Single_Tournaments_League_Standings_Translation_Data_Response) {
+async function getCacheData (league_id: string): Promise < Cache_Single_Tournaments_League_Standings_Info_Data_Response | Record < string, never > > {
   try {
-    //[ℹ] persist redis (cache)
-    await redis.hset('tournament_standings_t', lang, JSON.stringify(json_cache));
+    const cached: string = await redis.hget('tournament_standings_data', league_id);
+
+    if (cached) {
+      // [🐛] debug;
+      if (dev) console.info(`✅ tournament_standings_data cache data retrieved`);
+      const parsed: Cache_Single_Tournaments_League_Standings_Info_Data_Response = JSON.parse(cached);
+      return parsed;
+    }
   } 
   catch (e) {
-    console.error('❌ unable to cache tournament_standings_t', e);
+    console.error("❌ uh-oh! tournament_standings_data cache error", e);
+    return
   }
 }
-
-async function deleteCacheTournamentsStandingsData () {
-  await redis.del('tournament_standings_data')
-  return
-}
-
-async function deleteStandingsTranslationData () {
-  await redis.del('tournament_standings_t')
-  return
-}
-
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] BULL WORKERS 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-cacheQueueTourStand.process (async (job, done) => {
-  // console.log(job.data.argumentList);
-
-  /* 
-  do stuff
-  */
-
-  await standingsDataGenerationAlt()
-  await standingsTranslationGeneration()
-
-  return "done";
-});
-
 
 /**
  * [ℹ] Tournaments Page Data Generation Methods
 */
 
-async function standingsDataGenerationAlt () {
+async function surgicalDataUpdate () {
   
   // [ℹ] get HASURA-DB response;
-	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
+  const leagueIdsArr = dataSurgical.leagueSeasons.map(a => a.leagueId);
 
-  // deleteCacheTournamentsStandingsData()
+  logs.push(`num. of leagueIds: ${dataSurgical.leagueSeasons.length}`);
+  logs.push(`num. of seasonIds: ${dataSurgical.leagueSeasons.length}`);
+  logs.push(`num. of teamsIds: ${dataSurgical.teamsList.length}`);
+
+  const VARIABLES_1 = {
+    leagueIds: leagueIdsArr
+  }
+  
+  const t0 = performance.now();
+  const queryName = "GET_LEAGUE_W_STANDINGS_INFO_2";
+	const response: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request (
+    GET_LEAGUE_W_STANDINGS_INFO_2,
+    VARIABLES_1
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${((t1 - t0) / 1000).toFixed(2)} sec`);
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
 
-  // [ℹ] generate appropiate URLS
+  let teamIdsArr: number[] = []
+
+  // [ℹ] obtain all target teams []
   for (const iterator of response.scores_football_leagues_dev) {
-    // [ℹ] per LANG
-
-    const finalCacheObj: Cache_Single_Tournaments_League_Standings_Info_Data_Response = { }
-    finalCacheObj.seasons = []
-
-    // finalCacheObj.url = url;
-    finalCacheObj.league_id = iterator.id;
-
-    // [ℹ] get all seasons for (this) league (tournament-id)
     for (const season_main of iterator.seasons) {
 
       const season_standings = response.scores_football_standings_history_dev
         .find(( { id, season_id } ) => id === season_main.league_id && season_id === season_main.id)
 
-      // [🐛] debug
-      // console.log(
-      //   `league_id: ${league_target?.id}`,
-      //   `season_id: ${season_main?.id}`,
-      //   `season standings-length: ${season_standings?.data.length}`)
-
       const season_standings_teams_list = season_standings?.data
+
+      if (season_standings_teams_list == undefined ||
+          season_standings_teams_list == null) {
+        continue;
+      }
+
+      teamIdsArr = teamIdsArr.concat(season_standings_teams_list.map(a => a.team_id));
+    }
+  }
+
+  // console.log(teamIdsArr.includes(undefined))
+  teamIdsArr = teamIdsArr.filter(element => {
+    return element !== undefined
+  });
+
+  teamIdsArr = [...new Set(teamIdsArr)]
+  logs.push(`num. of teamIdsArr: ${teamIdsArr.length}`);
+
+  const VARIABLES_2 = {
+    teamIds: teamIdsArr
+  }
+
+  const t2 = performance.now();
+  const queryName2 = "GET_TEAM_W_STATS_INFO_3";
+	const response_team: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request (
+    GET_TEAM_W_STATS_INFO_3,
+    VARIABLES_2
+  );
+  const t3 = performance.now();
+  logs.push(`${queryName2} completed in: ${((t3 - t2) / 1000).toFixed(2)} sec`);
+
+  // [ℹ] generate per leagueId
+  for (const iterator of response.scores_football_leagues_dev) {
+
+    const finalCacheObj: Cache_Single_Tournaments_League_Standings_Info_Data_Response = { }
+    finalCacheObj.seasons = []
+    finalCacheObj.league_id = iterator.id;
+
+    // [ℹ] get all seasons for (this) league (tournament-id)
+    for (const season_main of iterator.seasons) {
+
+      let season_standings_teams_list: StandingsDatum[];
+
+      // [ℹ] check if for "current-season"
+      if (season_main.is_current_season) {
+
+        const season_standings = response.scores_football_standings_dev
+          .find(( { id } ) =>
+            id === iterator.id
+          );
+
+        season_standings_teams_list = season_standings?.data
+          .find(( { name, season_id } ) => 
+            name === "Regular Season" &&
+            season_id === season_main.id
+          ).standings?.data;
+
+        console.log(`${season_main.id} is_current_season`);
+        console.log(`season_standings_teams_list is undefined: ${season_standings_teams_list}`);
+
+      } else {
+
+        const season_standings_hist = response.scores_football_standings_history_dev
+          .find(( { id, season_id } ) => 
+            id === season_main.league_id && 
+            season_id === season_main.id
+          );
+
+        season_standings_teams_list = season_standings_hist?.data
+      }
 
       const season_gen_list_total: Standing_Team_Total_Away_Home[] = []
       const season_gen_list_home:  Standing_Team_Total_Away_Home[] = []
@@ -167,15 +261,15 @@ async function standingsDataGenerationAlt () {
 
       for (const season_team of season_standings_teams_list) {
 
-        const team_logo: string = response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
+        const team_logo: string = response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
         const team_name: string =
-          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
-          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
+          response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
+          response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
             ? season_team?.team_name
-            : response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
+            : response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
 
-        const target_team_stat = response.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
-        const target_team_stat_hist = response.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_main.id )
+        const target_team_stat = response_team.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
+        const target_team_stat_hist = response_team.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_main.id )
 
         const team_winP: number = 
           target_team_stat?.winning_probability == null || 
@@ -340,47 +434,20 @@ async function standingsDataGenerationAlt () {
 
     final_obj_array.push(finalCacheObj)
 
-    await cacheTournamentsStandingsDataAlt (finalCacheObj.league_id , finalCacheObj);
+    await cacheData (finalCacheObj.league_id , finalCacheObj);
   }
 
   // [🐛] debug
-  // const data = JSON.stringify(final_obj_array, null, 4)
-  // fs.writeFile('./datalog/standingsDataGenerationAlt.json', data, err => {
-  //   if (err) {
-  //     console.error(err);
-  //   }
-  // });
+  const data = JSON.stringify(final_obj_array, null, 4)
+  fs.writeFile('./datalog/standingsDataGenerationSurgicalAlt_NEW.json', data, err => {
+    if (err) {
+      console.error(err);
+    }
+  });
 
   return
 }
 
-async function standingsTranslationGeneration () {
-  
-  // [ℹ] get HASURA-DB response;
-	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
-
-  // deleteStandingsTranslationData ()
-
-  const final_obj_array: Cache_Single_Tournaments_League_Standings_Translation_Data_Response[] = []
-
-  // [ℹ] generate appropiate URLS
-  for (const iterator of response.scores_widget_standings_translations_dev) {
-
-    // [ℹ] per LANG
-    const lang = iterator.lang;
-
-    final_obj_array.push(iterator)
-
-    await cacheStandingsTranslationData(lang, iterator);
-  }
-
-  // [🐛] debug
-  // const data = JSON.stringify(final_obj_array, null, 4)
-  // fs.writeFile('./datalog/standingsTranslationGeneration.json', data, err => {
-  //   if (err) {
-  //     console.error(err);
-  //   }
-  // });
-
-  return
-}
+// Initialize the clustered worker process
+// See: https://devcenter.heroku.com/articles/node-concurrency for more info
+throng({ workers, start });

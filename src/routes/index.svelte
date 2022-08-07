@@ -374,7 +374,7 @@
   import type { Cache_Single_Lang_Featured_Match_Translation_Response, FixtureResponse } from '$lib/models/featured_match/interface-fixture';
   import type { All_SportBook_Details_Data, Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
   import type { Cache_Single_Geo_GoalScorers_Translation_Response, Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/best_goalscorer/types';
-  import type { Cache_Single_Geo_LeagueList_Translation_Response, Cache_Single_Lang_LeagueList_Translation_Response } from '$lib/models/league_list/types';
+  import type { REDIS_CACHE_SINGLE_league_list_geo_data_response, REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/league_list/types';
   import type { Cache_Single_Geo_Leagues_Table_Translation_Response, Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
   import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
 
@@ -382,13 +382,13 @@
   import type { GeoJsResponse } from '$lib/models/geojs-types';
   import { get } from '$lib/api/utils';
 
-	export let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
-	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
-	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
-  export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
-	export let LEAGUE_LIST_WIDGET_DATA_SEO: Cache_Single_Lang_LeagueList_Translation_Response;
-  export let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
-  export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
+	export let PAGE_DATA_SEO:                             Cache_Single_Homepage_SEO_Translation_Response;
+	export let FEATURED_MATCH_WIDGET_DATA_SEO:            Cache_Single_Lang_Featured_Match_Translation_Response;
+	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO:    Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
+  export let BEST_GOAL_SCORERS_DATA_SEO:                Cache_Single_Lang_GoalScorers_Translation_Response;
+	export let LEAGUE_LIST_WIDGET_DATA_SEO:               REDIS_CACHE_SINGLE_league_list_seo_t_response;
+  export let LEAGUES_TABLE_SCORES_SEO_DATA:             Cache_Single_Lang_Leagues_Table_Translation_Response;
+  export let SEO_BLOCK_DATA:                            Cache_Single_Homepage_SEO_Block_Translation_Response;
 
 	export let LIVE_SCORES_DATA_DATA_SEO;
 	export let LIVE_SCORES_DATA_LEAGUES;
@@ -396,7 +396,7 @@
 
   export let FEATURED_MATCH_WIDGET_DATA_MAIN: FixtureResponse
   export let FEATURED_BETTING_SITES_WIDGET_DATA: All_SportBook_Details_Data
-  export let LEAGUE_LIST_WIDGET_DATA: Cache_Single_Geo_LeagueList_Translation_Response
+  export let LEAGUE_LIST_WIDGET_DATA: REDIS_CACHE_SINGLE_league_list_geo_data_response
   export let BEST_GOAL_SCORERS_DATA: Cache_Single_Geo_GoalScorers_Translation_Response
   export let LEAGUES_TABLE_SCORES_DATA: Cache_Single_Geo_Leagues_Table_Translation_Response;
 
