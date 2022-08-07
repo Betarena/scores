@@ -751,7 +751,6 @@ const cacheQueueTourStand = new Bull('cacheQueueTourStand',
 //     263278
 //   ]
 // }
-let dataSurgical;
 const cacheTarget = "REDIS CACHE | tournament standings surgical"
 let logs = []
 
@@ -760,20 +759,21 @@ let logs = []
 */
 export async function post({ request }): Promise < unknown > {
 
-  // logs = []
-
   const body = await request.json();
   if (dev) console.log(body);
-  dataSurgical = JSON.parse(JSON.stringify(body));
+  const dataSurgical = JSON.parse(JSON.stringify(body));
   
   // [ℹ] job producers
-  const job = await cacheQueueTourStand.add();
+  const job = await cacheQueueTourStand.add(dataSurgical);
+
+  console.log(`
+    job_id: ${job.id}
+  `)
 
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: "✅ Success \ntournaments_standings cache data updated!"
+      job_id: job.id
     }
   }
 }
@@ -813,9 +813,11 @@ async function getCacheData (league_id: string): Promise < Cache_Single_Tourname
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueTourStand.process(async function (job, done) {
+cacheQueueTourStand.process (async function (job, done) {
   // console.log(job.data.argumentList);
   // console.log(job.data)
+
+  logs = []
 
   /* 
   do stuff
@@ -823,7 +825,7 @@ cacheQueueTourStand.process(async function (job, done) {
 
   const t0 = performance.now();
   // await surgicalDataUpdate()
-  await surgicalDataUpdate_2();
+  await surgicalDataUpdate_2(job.data);
   const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
@@ -839,18 +841,20 @@ cacheQueueTourStand.process(async function (job, done) {
  * [ℹ] Tournaments Page Data Generation Methods
 */
 
-async function surgicalDataUpdate () {
+/*
+
+async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surgical_update) {
   
   // [ℹ] get HASURA-DB response;
-  const leagueIdsArr = dataSurgical.leagueSeasons.map(a => a.leagueId);
+  const leagueIdsArr = dataUpdate.leagueSeasons.map(a => a.leagueId);
 
-  logs.push(`num. of leagueIds: ${dataSurgical.leagueSeasons.length}`);
-  logs.push(`num. of seasonIds: ${dataSurgical.leagueSeasons.length}`);
-  logs.push(`num. of teamsIds: ${dataSurgical.teamsList.length}`);
+  logs.push(`num. of leagueIds: ${dataUpdate.leagueSeasons.length}`);
+  logs.push(`num. of seasonIds: ${dataUpdate.leagueSeasons.length}`);
+  logs.push(`num. of teamsIds: ${dataUpdate.teamsList.length}`);
 
   const VARIABLES_1 = {
     leagueIds: leagueIdsArr,
-    teamIds: dataSurgical.teamsList
+    teamIds: dataUpdate.teamsList
   }
   
   const t0 = performance.now();
@@ -872,7 +876,7 @@ async function surgicalDataUpdate () {
     finalCacheObj.league_id = iterator.id;
 
     // [ℹ] get (target) season for (this) leagueId / tournamentId
-    const season_target = dataSurgical.leagueSeasons.find(( { leagueId } ) => leagueId == iterator.id).seasonId;
+    const season_target = dataUpdate.leagueSeasons.find(( { leagueId } ) => leagueId == iterator.id).seasonId;
 
     // TODO: make use of the "current_standings" instead
     const season_standings = response.scores_football_standings_dev
@@ -1177,14 +1181,16 @@ async function surgicalDataUpdate () {
   return
 }
 
-async function surgicalDataUpdate_2 () {
+*/
+
+async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_surgical_update) {
   
   // [ℹ] get HASURA-DB response;
-  const leagueIdsArr = dataSurgical.leagueSeasons.map(a => a.leagueId);
+  const leagueIdsArr = dataUpdate.leagueSeasons.map(a => a.leagueId);
 
-  logs.push(`num. of leagueIds: ${dataSurgical.leagueSeasons.length}`);
-  logs.push(`num. of seasonIds: ${dataSurgical.leagueSeasons.length}`);
-  logs.push(`num. of teamsIds: ${dataSurgical.teamsList.length}`);
+  logs.push(`num. of leagueIds: ${dataUpdate.leagueSeasons.length}`);
+  logs.push(`num. of seasonIds: ${dataUpdate.leagueSeasons.length}`);
+  logs.push(`num. of teamsIds: ${dataUpdate.teamsList.length}`);
 
   const VARIABLES_1 = {
     leagueIds: leagueIdsArr
