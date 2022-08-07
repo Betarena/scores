@@ -13,6 +13,7 @@ import type {
   Standing_Team_Total_Away_Home 
 } from '$lib/models/tournaments/types';
 import type { 
+  BETARENA_HASURA_scores_team_statistics_history,
   StandingsDatum 
 } from '$lib/models/hasura';
 
@@ -554,6 +555,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
     for (const season_main of iterator.seasons) {
 
       let season_standings_teams_list: StandingsDatum[];
+      let seasonCurrent: boolean;
 
       // [ℹ] check if for "current-season"
       if (season_main.is_current_season) {
@@ -568,6 +570,8 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
             name === "Regular Season" &&
             season_id === season_main.id
           ).standings?.data;
+
+        seasonCurrent = true
 
         // if (dev) console.log(`${season_main.id} is_current_season`);
         // if (dev) console.log(`season_standings_teams_list} is undefined: ${season_standings_teams_list}`);
@@ -633,6 +637,14 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
         const target_team_stat = response_team.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
         const target_team_stat_hist = response_team.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_main.id )
 
+        let target_team_stats: BETARENA_HASURA_scores_team_statistics_history; // [ℹ] not correct type
+        if (seasonCurrent) {
+          target_team_stats = target_team_stat;
+        }
+        else {
+          target_team_stats = target_team_stat_hist;
+        }
+
         const team_winP: number = 
           target_team_stat?.winning_probability == null || 
           target_team_stat?.winning_probability == undefined
@@ -669,16 +681,16 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
         const team_away_color_code = team_away_position == null ? 'black' : season_color_codes[team_away_position.toString()]
 
         const team_total_ov15: number =
-          target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away == null ||
-          target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home == null
+          target_team_stats?.data[0].goal_line?.over["1_5"]?.away == null ||
+          target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home == null
             ? null
-            : (target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home) / 2
+            : (target_team_stats?.data[0].goal_line?.over["1_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home) / 2
 
         const team_total_ov25: number =
-          target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away == null ||
-          target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home == null
+          target_team_stats?.data[0].goal_line?.over["2_5"]?.away == null ||
+          target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home == null
             ? null
-            : (target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home) / 2
+            : (target_team_stats?.data[0].goal_line?.over["2_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home) / 2
 
         const team_total_gavg: number = 
           season_team?.round_name == null ||
@@ -711,8 +723,8 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
           gs:             season_team?.overall?.goals_scored,
           ga:             season_team?.overall?.goals_against,
           gavg:           team_total_gavg,
-          cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
-          ycavg:          target_team_stat_hist?.average_yellow_cards,
+          cavg:           parseInt(target_team_stats?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
+          ycavg:          target_team_stats?.average_yellow_cards,
           ov15:           team_total_ov15,
           ov25:           team_total_ov25,
           winP:           team_winP,
