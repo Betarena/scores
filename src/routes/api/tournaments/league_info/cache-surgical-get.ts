@@ -25,7 +25,10 @@ export async function get (req, res): Promise < any > {
   const jobW = await cacheQueueTourInfo.getJob(jobId);
 
   if (jobW === null) {
+
+    // [ℹ] ALT
     // res.status(404).end();
+    
     return {
       status: 404,
       body: {
@@ -33,6 +36,7 @@ export async function get (req, res): Promise < any > {
       }
     }
   } else {
+    
     const state = await jobW.getState();
     const progress = jobW.progress;
     const attemptsMade = jobW.attemptsMade;
@@ -40,7 +44,10 @@ export async function get (req, res): Promise < any > {
     const finishedOn = jobW.finishedOn;
     const reason = jobW.failedReason;
     const result = jobW.returnvalue;
+
+    // [ℹ] ALT
     // res.json({ jobId, state, progress, reason });
+
     return {
         status: 200,
         body: { 
