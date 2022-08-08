@@ -178,7 +178,7 @@ export const HASURA_GET_TARGET_TEAMS_AND_PLAYERS = gql`
 
     scores_football_players_dev (
       where: {
-        id: {
+        player_id: {
           _in: $playerIds
         }
       } 
