@@ -148,7 +148,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   }
 
   t0 = performance.now();
-  const queryName = "REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA";
+  const queryName = "HASURA_GET_TARGET_LEAGUES";
   const response: BETARENA_HASURA_top_players_query = await initGrapQLClient().request (
     HASURA_GET_TARGET_LEAGUES,
     VARIABLES_1
@@ -178,7 +178,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   }
 
   t0 = performance.now();
-  const queryName2 = "REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA";
+  const queryName2 = "HASURA_GET_TARGET_SEASONS";
   const response2: BETARENA_HASURA_top_players_season_details_query = await initGrapQLClient().request (
     HASURA_GET_TARGET_SEASONS,
     VARIABLES_2
@@ -191,10 +191,14 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   let teamIdsArr: number[] = []
   let playerIdsArr: number[] = []
   for (const season of response2.scores_football_seasons_details_dev) {
-    for (const team of season.squad) {
-      teamIdsArr.push(team.id)
-      for (const player of team.squad.data) {
-        playerIdsArr.push(player.player_id);
+    // console.log(`season: ${season.id}`)
+    if (season?.squad !== null) {
+      for (const team of season.squad) {
+        // console.log(`team: ${team.id}`)
+        teamIdsArr.push(team.id)
+        for (const player of team.squad.data) {
+          playerIdsArr.push(player.player_id);
+        }
       }
     }
   }
@@ -206,7 +210,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   });
   playerIdsArr = [...new Set(playerIdsArr)]
   teamIdsArr = [...new Set(teamIdsArr)]
-  logs.push(`num. of seasonIdsArr: ${playerIdsArr.length}`);
+  logs.push(`num. of playerIdsArr: ${playerIdsArr.length}`);
   logs.push(`num. of teamIdsArr: ${teamIdsArr.length}`);
 
   // [ℹ] [GET] target teams / players
@@ -217,7 +221,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   }
 
   t0 = performance.now();
-  const queryName3 = "REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA";
+  const queryName3 = "HASURA_GET_TARGET_TEAMS_AND_PLAYERS";
   const response3: BETARENA_HASURA_top_players_query = await initGrapQLClient().request (
     HASURA_GET_TARGET_TEAMS_AND_PLAYERS,
     VARIABLES_3
