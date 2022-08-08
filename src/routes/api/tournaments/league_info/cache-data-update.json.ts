@@ -46,25 +46,16 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  // const job = await cacheQueueTourInfo.add();
+  const job = await cacheQueueTourInfo.add();
 
-  const t0 = performance.now();
-  // await surgicalDataUpdate()
-  await sportbookDetailsGeneration()
-  await leagueInfoGeneration()
-  const t1 = performance.now();
-
-  logs.push(`${cacheTarget} updated!`);
-  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
-
-  // console.log(`
-  //   job_id: ${job.id}
-  // `)
+  console.log(`
+    job_id: ${job.id}
+  `)
 
   return {
     status: 200,
     body: { 
-      job_id: 1
+      job_id: job.id
     }
   }
 }
@@ -120,9 +111,14 @@ cacheQueueTourInfo.process (async function (job, done) {
 
   const t0 = performance.now();
   // await surgicalDataUpdate()
-  await sportbookDetailsGeneration()
-  await leagueInfoGeneration()
+  await sportbookDetailsGeneration();
+  await leagueInfoGeneration();
   const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
 
   logs.push(`${cacheTarget} updated!`);
   logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
@@ -176,14 +172,22 @@ async function leagueInfoGeneration () {
   const queryName = "GET_LEAGUE_INFO_FULL_DATA";
 	const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
   const t1 = performance.now();
-  console.log(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+  if (dev) console.log(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   // const cacheRedisObj = {}
   // deleteCacheTournamentsPageLeagueInfoData()
 
+  // [ℹ] FIXME: speed up the data-processing (takes aroud 450 sec ATM)
+  // [ℹ] data pre-processing;
+  // const players_map = new Map()
+  // for (const p of response_const.scores_football_players_dev) {
+  //   players_map.set(p.player_id, p)
+  // }
+
   // [ℹ] generate appropiate URLS
   for (const iterator of response.scores_tournaments_dev) {
+
     // [ℹ] per LANG
 
     const finalCacheObj: Cache_Single_Tournaments_League_Info_Data_Response = {
@@ -208,7 +212,7 @@ async function leagueInfoGeneration () {
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
-    // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
+    // [ℹ] /{lang}/{sport}/{country}/{league_name} OR /{sport}/{country}/{league_name} generation URL
     const url = iterator.lang == 'en' 
       ? '/' + sport + '/' + country + '/' + league_name
       : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
@@ -216,13 +220,25 @@ async function leagueInfoGeneration () {
     finalCacheObj.url = url;
     finalCacheObj.lang = lang;
 
-    const targetWidgetTranslation = response.scores_widget_league_info_translations_dev.find(( { lang } ) => lang === iterator.lang).data
+    const targetWidgetTranslation = response.scores_widget_league_info_translations_dev
+      .find(( { lang } ) => 
+        lang === iterator.lang
+      ).data
     finalCacheObj.data.translation = targetWidgetTranslation
 
-    const league_target = response.scores_football_leagues_dev.find(( { name, id } ) => name === iterator.name && id === tournament_id)
+    const league_target = response.scores_football_leagues_dev
+      .find(( { name, id } ) => 
+        name === iterator.name && 
+        id === tournament_id
+      )
+    
+    // [🐛] debug erroneous league_ids
     if (league_target == undefined) {
-      console.log(`undefined: ${tournament_id}`)
-      break;
+      console.log(`
+        undefined: ${tournament_id}
+        url: ${url}
+      `)
+      continue;
     }
 
     finalCacheObj.data.image_path = league_target?.data?.logo_path;
@@ -231,7 +247,6 @@ async function leagueInfoGeneration () {
     finalCacheObj.data.country = iterator?.country;
     finalCacheObj.data.name = iterator?.name;
 
-    // [ℹ] issues here;
     finalCacheObj.data.seasons = [] // [ℹ] reset
 
     // [ℹ] get all seasons for (this) league
@@ -244,6 +259,7 @@ async function leagueInfoGeneration () {
       const start_date = seasonExtraInfo?.start_date
       const end_date = seasonExtraInfo?.end_date
 
+      // [ℹ] omit seasons with missing data:
       // if (num_clubs != null && 
       //     start_date != null && 
       //     end_date != null) {
@@ -260,14 +276,15 @@ async function leagueInfoGeneration () {
       // }
     }
 
+    // [ℹ] persist data [MAIN];
     await cacheTournamentsPageLeagueInfoData(url, finalCacheObj);
 
-    // [ℹ] persist object; = impossible due to MAX-REQUEST EXCEEDED FREE PLAN
+    // [ℹ] persist object; = impossible due to MAX-REQUEST EXCEEDED FREE UPSTASH PLAN
     // cacheRedisObj[finalCacheObj.url] = finalCacheObj
   }
 
-  // [ℹ] persist-cache-response; HMSET()
+  // [ℹ] persist-cache-response; HMSET() [ALT]
   // await cacheTournamentsPageLeagueInfoData(cacheRedisObj);
 
-  return
+  return;
 }
