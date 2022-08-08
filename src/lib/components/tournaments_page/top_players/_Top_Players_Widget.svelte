@@ -349,8 +349,6 @@
     $userBetarenaSettings.country_bookmaker && 
     !diasbleDev}
 
-    <TopPlayersWidgetContentLoader />
-
     <!-- [ℹ] promise is pending 
     -->
     {#await widgetInit()}
