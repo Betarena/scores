@@ -349,6 +349,8 @@
     $userBetarenaSettings.country_bookmaker && 
     !diasbleDev}
 
+    <TopPlayersWidgetContentLoader />
+
     <!-- [ℹ] promise is pending 
     -->
     {#await widgetInit()}
@@ -531,7 +533,7 @@
 
         <!-- [ℹ] show-more / show-less
         -->
-        {#if displayShowMore}
+        {#if displayShowMore && trueLengthOfArray != 0}
           <div>
             <p 
               id="show-more-box" 
@@ -543,7 +545,7 @@
               {/if}
             </p>
           </div>
-        {:else}
+        {:else if trueLengthOfArray != 0}
           <p 
             id="show-more-box" 
             style="padding: 5px; box-shadow: none;" 

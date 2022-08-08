@@ -113,6 +113,7 @@
     /* max-width: 383px; */
     overflow: hidden;
     padding: 20px;
+    margin-top: 40px;
   }
 
   .best-player-row {
@@ -124,6 +125,12 @@
   @media only screen and (max-width: 475px) {
     .best-player-row:first-child {
       padding-top: 24px;
+    }
+  }
+
+  @media only screen and (min-width: 768px) {
+    #best-goalscorer-container {
+      margin-top: 40px;
     }
   }
 
