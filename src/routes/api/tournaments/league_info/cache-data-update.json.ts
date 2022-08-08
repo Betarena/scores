@@ -2,20 +2,37 @@ import { dev } from '$app/env'
 
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/query';
+import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/league-info/query';
 import { removeDiacritics } from '$lib/utils/languages';
 
 import type { 
+  BETARENA_HASURA_league_info_query,
   Cache_Single_SportbookDetails_Data_Response, 
-  Cache_Single_Tournaments_League_Info_Data_Response, 
-  Hasura_League_Info_Widget_Data_Response 
-} from '$lib/models/tournaments/types';
+  Cache_Single_Tournaments_League_Info_Data_Response
+} from '$lib/models/tournaments/league-info/types';
 
 import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueTourInfo = new Bull('cacheQueueTourInfo', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueTourInfo = new Bull('cacheQueueTourInfo', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+const cacheTarget = "REDIS CACHE | tournament league_info"
+let logs = []
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -23,16 +40,31 @@ const cacheQueueTourInfo = new Bull('cacheQueueTourInfo', import.meta.env.VITE_R
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${new Date().toDateString()}`)
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueTourInfo.add();
+  // const job = await cacheQueueTourInfo.add();
+
+  const t0 = performance.now();
+  // await surgicalDataUpdate()
+  await sportbookDetailsGeneration()
+  await leagueInfoGeneration()
+  const t1 = performance.now();
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  // console.log(`
+  //   job_id: ${job.id}
+  // `)
 
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: '✅ Success \nleague_info & sport-book-details cache data updated!'
+      job_id: 1
     }
   }
 }
@@ -75,17 +107,30 @@ async function deleteCacheSportbookDetailInfoData() {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueTourInfo.process (async (job, done) => {
+cacheQueueTourInfo.process (async function (job, done) {
   // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
 
   /* 
   do stuff
   */
 
+  const t0 = performance.now();
+  // await surgicalDataUpdate()
   await sportbookDetailsGeneration()
   await leagueInfoGeneration()
+  const t1 = performance.now();
 
-  return "done";
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
 
 /**
@@ -95,7 +140,7 @@ cacheQueueTourInfo.process (async (job, done) => {
 async function sportbookDetailsGeneration () {
   
   // [ℹ] get HASURA-DB response;
-	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
+	const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
 
   let finalCacheObj: Cache_Single_SportbookDetails_Data_Response = {
     geoPos: undefined
@@ -127,11 +172,14 @@ async function sportbookDetailsGeneration () {
 
 async function leagueInfoGeneration () {
   
-  // [ℹ] get HASURA-DB response;
-	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
+  const t0 = performance.now();
+  const queryName = "GET_LEAGUE_INFO_FULL_DATA";
+	const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
+  const t1 = performance.now();
+  console.log(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   // const cacheRedisObj = {}
-
   // deleteCacheTournamentsPageLeagueInfoData()
 
   // [ℹ] generate appropiate URLS
@@ -154,7 +202,6 @@ async function leagueInfoGeneration () {
     }
 
     const tournament_id = iterator.tournament_id;
-    // console.log("tournament_id", tournament_id)
 
     const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
@@ -173,11 +220,16 @@ async function leagueInfoGeneration () {
     finalCacheObj.data.translation = targetWidgetTranslation
 
     const league_target = response.scores_football_leagues_dev.find(( { name, id } ) => name === iterator.name && id === tournament_id)
-    finalCacheObj.data.image_path = league_target.data.logo_path;
-    finalCacheObj.data.country_logo = league_target.country.image_path
+    if (league_target == undefined) {
+      console.log(`undefined: ${tournament_id}`)
+      break;
+    }
 
-    finalCacheObj.data.country = iterator.country;
-    finalCacheObj.data.name = iterator.name;
+    finalCacheObj.data.image_path = league_target?.data?.logo_path;
+    finalCacheObj.data.country_logo = league_target?.country?.image_path;
+
+    finalCacheObj.data.country = iterator?.country;
+    finalCacheObj.data.name = iterator?.name;
 
     // [ℹ] issues here;
     finalCacheObj.data.seasons = [] // [ℹ] reset
@@ -188,7 +240,7 @@ async function leagueInfoGeneration () {
       // [ℹ] match target X season from league Z to extra-info-season-data;
       const seasonExtraInfo = response.scores_football_seasons_details_dev.find(( { id } ) => id === season_main.id)
 
-      const num_clubs = seasonExtraInfo?.data_stats === null ? null : seasonExtraInfo?.data_stats.number_of_clubs
+      const num_clubs = seasonExtraInfo?.data_stats === null ? null : seasonExtraInfo?.data_stats?.number_of_clubs
       const start_date = seasonExtraInfo?.start_date
       const end_date = seasonExtraInfo?.end_date
 
