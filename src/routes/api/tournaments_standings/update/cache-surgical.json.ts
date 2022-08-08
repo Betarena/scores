@@ -720,7 +720,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
           color_code:     team_total_color_code,
           points:         season_team?.points,
           position:       season_team?.position,
-          games_played:   season_team?.round_name,
+          games_played:   season_team?.overall?.games_played, // [ℹ] previously, .round_name
           won:            season_team?.overall?.won,
           draw:           season_team?.overall?.draw,
           lost:           season_team?.overall?.lost,
