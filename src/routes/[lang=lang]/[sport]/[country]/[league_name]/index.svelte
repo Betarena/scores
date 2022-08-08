@@ -87,7 +87,7 @@
      * [ℹ] widgets data gather cache fetch 
     */
 
-    const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments/league_info/cache-data.json?url=`+url.pathname, {
+    const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments_league_info/cache-data.json?url=`+url.pathname, {
 			method: 'GET'
 		}).then((r) => r.json());
 
