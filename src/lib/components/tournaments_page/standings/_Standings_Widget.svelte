@@ -71,7 +71,7 @@
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
     // [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments/cache-data.json?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
 
     // [ℹ] display NO DATA PLACEHOLDER
 		if (response == null || response == undefined) {
