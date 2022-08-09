@@ -286,17 +286,21 @@
                   <!-- [ℹ] for-loop-each-population 
                   -->
                   {#each data.top_geo_leagues as item}
-                    <div
-                      class='top-league-container row-space-start cursor-not-allowed'>
-                      <img 
-                        src={item.logo_path} 
-                        alt={item.league_name.toString() + '-image'} 
-                        width="20px" height="20px" 
-                        class='m-r-15' />
-                      <p class='s-14 w-500 color-black'>
-                        {item.league_name}
-                      </p>
-                    </div>
+                    <a 
+                      sveltekit:prefetch
+                      href={item.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
+                      <div
+                        class='top-league-container row-space-start'>
+                        <img 
+                          src={item.logo_path} 
+                          alt={item.league_name.toString() + '-image'} 
+                          width="20px" height="20px" 
+                          class='m-r-15' />
+                        <p class='s-14 w-500 color-black'>
+                          {item.league_name}
+                        </p>
+                      </div>
+                    </a>
                   {/each}
                 </div>
 
@@ -383,7 +387,7 @@
                                     sveltekit:prefetch
                                     href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                                     <div
-                                        class='country-league-sub-container row-space-start cursor-not-allowed'>
+                                        class='country-league-sub-container row-space-start'>
                                         <p class='s-14 w-500 color-black'>
                                             {league.league_name}
                                         </p>
@@ -435,7 +439,7 @@
                   -->
                   {#each leagueSearchData.slice(0, fullLeagueListDisplayNum) as item}
                     <div
-                      class='top-league-container-search row-space-start cursor-not-allowed'>
+                      class='top-league-container-search row-space-start'>
                       <img 
                         src={item.logo_path} 
                         alt={item.league_name.toString() + '-image'} 
@@ -516,7 +520,7 @@
                               sveltekit:prefetch
                               href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                               <div
-                                class='country-league-sub-container row-space-start cursor-not-allowed'>
+                                class='country-league-sub-container row-space-start'>
                                 <p 
                                   class='s-14 w-500 color-black'>
                                   {league.league_name}
