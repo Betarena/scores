@@ -513,10 +513,31 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
   for (const iterator of response.scores_football_leagues_dev) {
     for (const season_main of iterator.seasons) {
 
-      const season_standings = response.scores_football_standings_history_dev
-        .find(( { id, season_id } ) => id === season_main.league_id && season_id === season_main.id)
+      let season_standings_teams_list: StandingsDatum[];
 
-      const season_standings_teams_list = season_standings?.data
+      if (season_main.is_current_season) {
+
+        const season_standings = response.scores_football_standings_dev
+          .find(( { id } ) =>
+            id === iterator.id
+          );
+
+        season_standings_teams_list = season_standings?.data
+          .find(( { name, season_id } ) => 
+            name === "Regular Season" &&
+            season_id === season_main.id
+          ).standings?.data;
+        
+      } else {
+
+        const season_standings_hist = response.scores_football_standings_history_dev
+        .find(( { id, season_id } ) => 
+          id === season_main.league_id && 
+          season_id === season_main.id
+        );
+
+        season_standings_teams_list = season_standings_hist?.data
+      }
 
       if (season_standings_teams_list == undefined ||
           season_standings_teams_list == null) {
