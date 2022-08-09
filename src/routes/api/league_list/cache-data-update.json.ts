@@ -62,39 +62,16 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  // const job = await cacheQueueLeaguesList.add();
+  const job = await cacheQueueLeaguesList.add();
 
-  const t0 = performance.now();
-
-  // [ℹ] get KEY platform translations
-  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
-
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
-
-  // [ℹ] push "EN"
-  langArray.push('en')
-
-  // await leagueListGeoDataGeneration()
-  await leagueListLangDataGeneration(langArray)
-
-  const t1 = performance.now();
-
-  if (dev) console.log(`
-    ${cacheTarget} updated!
-    completed in: ${(t1 - t0) / 1000} sec
+  console.log(`
+    job_id: ${job.id}
   `)
-
-  // console.log(`
-  //   job_id: ${job.id}
-  // `)
 
   return {
     status: 200,
     body: { 
-      job_id: 1
+      job_id: job.id
     }
   }
 
