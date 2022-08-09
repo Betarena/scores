@@ -26,9 +26,28 @@ import type {
   Featured_Match_Translation_Response } from "$lib/models/featured_match/response_models"
 import type { SelectedFixture_LiveOdds_Response } from "$lib/models/featured_match/firebase-real-db-interface"
 
+import { performance } from 'perf_hooks';
+
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueFeaturedMatch = new Bull('cacheQueueFeaturedMatch', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueFeaturedMatch = new Bull('cacheQueueFeaturedMatch', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+const cacheTarget = "REDIS CACHE | featured match"
+let logs = []
 
 // [ℹ] server-variables;
 let userGeo: string
@@ -68,16 +87,22 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_featured_match_trigerred at: ${new Date().toDateString()}`)
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
   // [ℹ] producers [JOBS]
   const job = await cacheQueueFeaturedMatch.add();
 
+  console.log(`
+    job_id: ${job.id}
+  `)
+
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: '✅ Success \nFeatured Match Data Updated!'
+      job_id: job.id
     }
   }
 
@@ -125,12 +150,18 @@ async function deleteCacheFeaturedMatchLang() {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueFeaturedMatch.process (async (job, done) => {
+cacheQueueFeaturedMatch.process (async function (job, done) {
   // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
 
   /* 
   do stuff
   */
+
+  const t0 = performance.now();
 
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
@@ -146,7 +177,20 @@ cacheQueueFeaturedMatch.process (async (job, done) => {
   await featuredMatchGeoDataGeneration()
   await featuredMatchLangDataGeneration(langArray)
 
-  return "done";
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
 
 /**

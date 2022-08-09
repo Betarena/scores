@@ -44,7 +44,7 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA = gql`
 export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA = gql`
   query REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA 
     @cached 
-    (ttl: 300) 
+    (ttl: 300)
   {
 
     # [ℹ] unecessary to paginate
@@ -57,17 +57,20 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA = gql`
       season
       seasons
     }
+
     scores_football_teams_dev {
       data
       id
       name
     }
+
     scores_football_players_dev {
       data
       player_id
       common_name
       nationality
     }
+
   }
 `;
 
@@ -93,5 +96,97 @@ export const HASURA_BETARENA_QUERY_TOP_PLAYERS_T = gql`
       widgets_no_data_available
     }
 
+  }
+`;
+
+
+/**
+ * [ℹ] SURGICAL DATA QUERY
+ * [ℹ] LEAGUE-ID
+*/
+
+export const HASURA_GET_TARGET_LEAGUES = gql`
+  query HASURA_GET_TARGET_LEAGUES
+    (
+      $leagueIds: [numeric!]
+    )
+    @cached 
+    (ttl: 300)
+  {
+    scores_football_leagues_dev (
+      where: {
+        id: {
+          _in: $leagueIds
+        }
+      }
+    )
+    { # [ℹ] BY LEAGUE ID
+      country
+      data
+      name
+      id
+      season
+      seasons
+    }
+  }
+`;
+
+export const HASURA_GET_TARGET_SEASONS = gql`
+  query HASURA_GET_TARGET_SEASONS
+    (
+      $seasonIds: [numeric!]
+    )
+    @cached 
+    (ttl: 300)
+  {
+    scores_football_seasons_details_dev (
+      where: {
+        id: {
+          _in: $seasonIds
+        }
+      }
+    ) {
+      id
+      league_id
+      goalscorers
+      assistscorers
+      squad
+    }
+  }
+`;
+
+export const HASURA_GET_TARGET_TEAMS_AND_PLAYERS = gql`
+  query HASURA_GET_TARGET_TEAMS_AND_PLAYERS
+    (
+      $teamIds: [numeric!],
+      $playerIds: [numeric!]
+    )
+    @cached 
+    (ttl: 300)
+  {
+    scores_football_teams_dev (
+      where: {
+        id: {
+          _in: $teamIds
+        }
+      } 
+    ) {
+      data
+      id
+      name
+    }
+
+    scores_football_players_dev (
+      where: {
+        player_id: {
+          _in: $playerIds
+        }
+      } 
+    ) {
+      data
+      player_id
+      common_name
+      nationality
+    }
   }
 `;

@@ -8,9 +8,8 @@ import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/query';
 import type { 
   Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
   Cache_Single_Tournaments_League_Standings_Translation_Data_Response, 
-  Hasura_League_Info_Widget_Data_Response, 
   Standing_Team_Total_Away_Home 
-} from '$lib/models/tournaments/types';
+} from '$lib/models/tournaments/standings/types';
 
 import fs from 'fs';
 

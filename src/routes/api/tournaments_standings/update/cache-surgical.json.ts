@@ -3,15 +3,19 @@ import { dev } from '$app/env'
 // [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_LEAGUE_W_STANDINGS_INFO, GET_LEAGUE_W_STANDINGS_INFO_2, GET_TEAM_W_STATS_INFO_3 } from '$lib/graphql/tournaments/standings/query';
+
+import { 
+  GET_LEAGUE_W_STANDINGS_INFO, 
+  GET_LEAGUE_W_STANDINGS_INFO_2, 
+  GET_TEAM_W_STATS_INFO_3 
+} from '$lib/graphql/tournaments/standings/query';
+
 import type { 
   BACKEND_tournament_standings_surgical_update,
   BETARENA_HASURA_tournament_standings_query,
-  Cache_Single_Tournaments_League_Standings_Info_Data_Response
+  Cache_Single_Tournaments_League_Standings_Info_Data_Response,
+  Standing_Team_Total_Away_Home
 } from '$lib/models/tournaments/standings/types';
-import type { 
-  Standing_Team_Total_Away_Home 
-} from '$lib/models/tournaments/types';
 import type { 
   BETARENA_HASURA_scores_team_statistics_history,
   StandingsDatum 
@@ -509,10 +513,31 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
   for (const iterator of response.scores_football_leagues_dev) {
     for (const season_main of iterator.seasons) {
 
-      const season_standings = response.scores_football_standings_history_dev
-        .find(( { id, season_id } ) => id === season_main.league_id && season_id === season_main.id)
+      let season_standings_teams_list: StandingsDatum[];
 
-      const season_standings_teams_list = season_standings?.data
+      if (season_main.is_current_season) {
+
+        const season_standings = response.scores_football_standings_dev
+          .find(( { id } ) =>
+            id === iterator.id
+          );
+
+        season_standings_teams_list = season_standings?.data
+          .find(( { name, season_id } ) => 
+            name === "Regular Season" &&
+            season_id === season_main.id
+          ).standings?.data;
+        
+      } else {
+
+        const season_standings_hist = response.scores_football_standings_history_dev
+        .find(( { id, season_id } ) => 
+          id === season_main.league_id && 
+          season_id === season_main.id
+        );
+
+        season_standings_teams_list = season_standings_hist?.data
+      }
 
       if (season_standings_teams_list == undefined ||
           season_standings_teams_list == null) {
@@ -682,15 +707,21 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
 
         const team_total_ov15: number =
           target_team_stats?.data[0].goal_line?.over["1_5"]?.away == null ||
-          target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home == null
+          target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home == null ||
+          season_team?.overall?.games_played == null
             ? null
-            : (target_team_stats?.data[0].goal_line?.over["1_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home) / 2
+            : season_team?.overall?.games_played == 0
+              ? 0
+              : (target_team_stats?.data[0].goal_line?.over["1_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home) / season_team?.overall?.games_played
 
         const team_total_ov25: number =
           target_team_stats?.data[0].goal_line?.over["2_5"]?.away == null ||
-          target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home == null
+          target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home == null ||
+          season_team?.overall?.games_played == null
             ? null
-            : (target_team_stats?.data[0].goal_line?.over["2_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home) / 2
+            : season_team?.overall?.games_played == 0
+              ? 0
+              : (target_team_stats?.data[0].goal_line?.over["2_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home) / season_team?.overall?.games_played
 
         const team_total_gavg: number = 
           season_team?.round_name == null ||
@@ -716,7 +747,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
           color_code:     team_total_color_code,
           points:         season_team?.points,
           position:       season_team?.position,
-          games_played:   season_team?.round_name,
+          games_played:   season_team?.overall?.games_played, // [ℹ] previously, .round_name
           won:            season_team?.overall?.won,
           draw:           season_team?.overall?.draw,
           lost:           season_team?.overall?.lost,

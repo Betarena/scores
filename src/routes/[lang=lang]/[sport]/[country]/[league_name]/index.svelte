@@ -87,7 +87,7 @@
      * [ℹ] widgets data gather cache fetch 
     */
 
-    const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments/league_info/cache-data.json?url=`+url.pathname, {
+    const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments_league_info/cache-data.json?url=`+url.pathname, {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -193,10 +193,13 @@
     Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
 
   import type { 
-    Cache_Single_Tournaments_League_Info_Data_Response, 
+    Cache_Single_Tournaments_League_Info_Data_Response
+  } from '$lib/models/tournaments/league-info/types';
+
+  import type { 
     Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
     Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
-  } from '$lib/models/tournaments/types';
+  } from '$lib/models/tournaments/standings/types';
 
   import type { 
     REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 

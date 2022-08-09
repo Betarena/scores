@@ -16,10 +16,13 @@
   import { getImageBgColor } from "$lib/utils/color_thief";
 
   import type { 
-    Cache_Single_SportbookDetails_Data_Response, 
+    Cache_Single_SportbookDetails_Data_Response
+  } from "$lib/models/tournaments/league-info/types";
+
+  import type { 
     Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
     Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
-  } from "$lib/models/tournaments/types";
+  } from "$lib/models/tournaments/standings/types";
 
   import StandingsWidgetContentLoader from "./_Standings_Widget_ContentLoader.svelte";
   import StandingsTeamRow from "./_Standings_Team_Row.svelte";
@@ -68,7 +71,7 @@
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
     // [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments/cache-data.json?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
 
     // [ℹ] display NO DATA PLACEHOLDER
 		if (response == null || response == undefined) {

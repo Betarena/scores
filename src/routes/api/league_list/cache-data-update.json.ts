@@ -27,10 +27,28 @@ import type {
 } from '$lib/models/hasura'
 
 import fs from 'fs';
+import { performance } from 'perf_hooks';
 
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+const cacheTarget = "REDIS CACHE | league_list"
+let logs = []
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -38,16 +56,22 @@ const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', import.meta.env.
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_leagues_list_trigerred at: ${new Date().toDateString()}`)
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
   // [ℹ] producers [JOBS]
   const job = await cacheQueueLeaguesList.add();
 
+  console.log(`
+    job_id: ${job.id}
+  `)
+
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: '✅ Success \nLeague List Cache Updated!'
+      job_id: job.id
     }
   }
 
@@ -93,12 +117,18 @@ async function deleteLeagueListLang () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueLeaguesList.process (async (job, done) => {
+cacheQueueLeaguesList.process (async function (job, done) {
   // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
 
   /* 
   do stuff
   */
+
+  const t0 = performance.now();
 
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
@@ -114,7 +144,20 @@ cacheQueueLeaguesList.process (async (job, done) => {
   await leagueListGeoDataGeneration()
   await leagueListLangDataGeneration(langArray)
 
-  return "done";
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
 
 /**
@@ -144,9 +187,18 @@ async function leagueListLangDataGeneration (langArray: string[]) {
   // [❗] FIXME: make sure [CACHE] is TIME-BASED-EXPIRATION, not DELETE-INSERT based;
   // deleteLeagueListLang()
 
+  // [🐛] debug
+  // if (dev) {
+  //   const data = JSON.stringify(response, null, 4)
+  //   fs.writeFile('./datalog/leagueListLangDataGeneration.json', data, err => {
+  //     if (err) {
+  //       console.error(err);
+  //     }
+  //   });
+  // }
+
   // [ℹ] for-each available translation:
   for (const item of response) {
-    
     // [ℹ] persist-cache-response;
     await cacheTranslationLang (item.lang, item);
   }
@@ -223,27 +275,47 @@ async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_
 }
 
 async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_league_list_seo_t_response[] > {
-  
-  const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
 
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ lang_country_map is generating!`)
+  // [ℹ] debug info
+  let t0;
+  let t1;
+
+  /*
+    [ℹ] data breakdown MAIN
+  */
+  
+  t0 = performance.now();
+  const queryName = "HASURA_GET_TARGET_TEAMS_AND_PLAYERS";
+  const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(
+    GET_COMPLETE_LEAGUE_LIST_DATA
+  )
+  t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  t0 = performance.now();
   const lang_country_map = new Map()
   for (const t of response.scores_general_translations_dev) {
     lang_country_map.set(t.lang, t)
   }
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ lang_country_map generated! With size: ${lang_country_map.size}`)
+  t1 = performance.now();
+  console.log(`lang_country_map generated with size: ${lang_country_map.size}`)
+
+  logs.push(`lang_country_map generated with size: ${lang_country_map.size}`)
+  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  // [ℹ] MAIN
 
   const finalCacheObj: REDIS_CACHE_SINGLE_league_list_seo_t_response [] = []
 
   // [ℹ] universal [EN] [LIST]
-  const pre_unique_county_list = response.scores_league_list.filter ((obj, pos, arr) => {
-    return arr
-      .map(mapObj => mapObj.country_id)
-      .indexOf(obj.country_id) == pos;
+  const pre_unique_county_list = response.scores_league_list
+    .filter ((obj, pos, arr) => {
+      return arr
+        .map(mapObj => mapObj.country_id)
+        .indexOf(obj.country_id) == pos;
   });
-  const pre_updated_unique_county_list = pre_unique_county_list.map (u => ({
+  const pre_updated_unique_county_list = pre_unique_county_list
+    .map (u => ({
     country_id:     u.country_id,
     country_name:   u.country_name,
     image_path:     u.image_path
@@ -254,7 +326,7 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
 
     const widgetTranslation = response.scores_leagues_list_translations_dev
       .find( ({ lang }) =>  lang === lang_m);
-    
+
     if (widgetTranslation == undefined) {
       continue
     }
@@ -269,7 +341,12 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
     preCacheObj.lang =                lang_m
     preCacheObj.all_leagues_list =    response.scores_league_list
     preCacheObj.translations =        widgetTranslation.translations
-    preCacheObj.unique_county_list =  pre_updated_unique_county_list
+    preCacheObj.unique_county_list =  pre_unique_county_list
+      .map (u => ({
+      country_id:     u.country_id,
+      country_name:   u.country_name,
+      image_path:     u.image_path
+    }));
 
     // [ℹ] updating translating [COUNTRY_NAME]
     preCacheObj.unique_county_list.forEach ((elem) => {
@@ -277,11 +354,17 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
       if (target_country_t) {
         const target_country_t_data: BETARENA_HASURA_scores_general_translations = lang_country_map.get(lang_m);
         const country_name:     string = elem.country_name;
+
+        // [🐛] debug
+        // if (country_name == "Azerbaijan") {
+        //   console.log(country_name + " " + lang_m + " ");
+        //   console.log(target_country_t_data.countries[country_name])
+        // }
         
-        const countryObjFinal = Object.assign({}, ...target_country_t_data.countries); 
+        // const countryObjFinal = Object.assign({}, ...target_country_t_data.countries); 
         // [ℹ] TODO: update to countries[<->] when update on Hasura
-        if (countryObjFinal[country_name] !== undefined) {
-          elem.country_name = countryObjFinal[country_name]
+        if (target_country_t_data.countries[country_name] !== undefined) {
+          elem.country_name = target_country_t_data.countries[country_name]
         }
       }
     })

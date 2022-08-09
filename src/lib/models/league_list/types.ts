@@ -39,6 +39,7 @@ export interface REDIS_CACHE_SINGLE_league_list_geo_data_response {
     league_name:    string
     logo_path:      string
     type:           string
+    urls?:          ScoresTournamentsUrls
   }[]
   // [ℹ] ALL LEAGUES
   all_leagues_list: {

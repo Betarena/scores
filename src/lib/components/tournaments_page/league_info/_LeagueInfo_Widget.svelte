@@ -18,7 +18,7 @@
   import type { 
     Cache_Single_SportbookDetails_Data_Response, 
     Cache_Single_Tournaments_League_Info_Data_Response 
-  } from "$lib/models/tournaments/types";
+  } from "$lib/models/tournaments/league-info/types";
 
   import LeagueInfoWidgetContentLoader from "./_LeagueInfo_Widget_ContentLoader.svelte";
 
@@ -65,7 +65,7 @@
 
     // [ℹ] get response [lang] [obtained from preload()]
     // [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments/cache-data.json?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
 
     // await new Promise(resolve => setTimeout(resolve, 5000000000));
     // const response: Cache_Single_Geo_Leagues_Table_Translation_Response = LEAGUES_TABLE_SCORES_DATA;

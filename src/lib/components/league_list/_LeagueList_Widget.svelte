@@ -116,11 +116,18 @@
     }
   }
 
+  $: if (leagueSearch === "") {
+    leagueSearch = undefined;
+  }
+
   // [ℹ] change the `search-input-data` upon typing;
   let leagueSearchData = []
   let countrySearchData = []
   // [ℹ] listed to search-input text;
-  $: if (leagueSearch != undefined && leagueSearch != '' && league_list_data) {
+  $: if (leagueSearch != undefined && league_list_data) {
+
+    // alert("triggered!")
+    // console.log("leagueSearch: Hello!");
     
     // [ℹ] reset data;
     leagueSearchData = []
@@ -245,7 +252,7 @@
 
                 <!-- [ℹ] erase-search-input 
                 -->
-                {#if leagueSearch != '' && leagueSearch != undefined}
+                {#if leagueSearch != undefined}
                   {#if $userBetarenaSettings.theme == 'Dark'}
                     <img
                       id='close-btn-search'
@@ -253,7 +260,7 @@
                       src={close_white}
                       alt=""
                       width="20px" height="20px" 
-                      on:click={() => leagueSearch = ''} />
+                      on:click={() => leagueSearch = undefined} />
                   {:else}
                     <img
                       id='close-btn-search'
@@ -261,14 +268,17 @@
                       src={close}
                       alt=""
                       width="20px" height="20px" 
-                      on:click={() => leagueSearch = ''} />
+                      on:click={() => leagueSearch = undefined} />
                   {/if}
                 {/if}
               </div>
 
               <!-- [ℹ] no-search-input-is-made 
               -->
-              {#if leagueSearch == undefined || leagueSearch == ''}
+              <!-- {#if leagueSearch == undefined || leagueSearch == ''} -->
+              <div
+                id="defualt-league-list"
+                class:league-list-hide={leagueSearch != undefined}>
 
                 <!-- [ℹ] list-TOP-7-popular-rating-leagues [GEO-BASED] 
                 -->
@@ -286,17 +296,21 @@
                   <!-- [ℹ] for-loop-each-population 
                   -->
                   {#each data.top_geo_leagues as item}
-                    <div
-                      class='top-league-container row-space-start cursor-not-allowed'>
-                      <img 
-                        src={item.logo_path} 
-                        alt={item.league_name.toString() + '-image'} 
-                        width="20px" height="20px" 
-                        class='m-r-15' />
-                      <p class='s-14 w-500 color-black'>
-                        {item.league_name}
-                      </p>
-                    </div>
+                    <a 
+                      sveltekit:prefetch
+                      href={item.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
+                      <div
+                        class='top-league-container row-space-start'>
+                        <img 
+                          src={item.logo_path} 
+                          alt={item.league_name.toString() + '-image'} 
+                          width="20px" height="20px" 
+                          class='m-r-15' />
+                        <p class='s-14 w-500 color-black'>
+                          {item.league_name}
+                        </p>
+                      </div>
+                    </a>
                   {/each}
                 </div>
 
@@ -383,7 +397,7 @@
                                     sveltekit:prefetch
                                     href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                                     <div
-                                        class='country-league-sub-container row-space-start cursor-not-allowed'>
+                                        class='country-league-sub-container row-space-start'>
                                         <p class='s-14 w-500 color-black'>
                                             {league.league_name}
                                         </p>
@@ -395,10 +409,14 @@
                         </div>
                     {/each}
                 </div>
+              
+              </div>
 
               <!-- [ℹ] no-results-to-show
               -->
-              {:else if leagueSearchData.length === 0 &&
+              {#if 
+                leagueSearch != undefined &&
+                leagueSearchData.length === 0 &&
                 countrySearchData.length === 0}
 
                 <div
@@ -414,7 +432,10 @@
               
               <!-- [ℹ] show-results 
               -->
-              {:else}
+              {:else if 
+                leagueSearch != undefined && 
+                (leagueSearchData.length !== 0 ||
+                countrySearchData.length !== 0)}
                 <!-- [ℹ] search-display-data 
                 -->
                   
@@ -434,22 +455,26 @@
                   <!-- [ℹ] for-loop-each-population 
                   -->
                   {#each leagueSearchData.slice(0, fullLeagueListDisplayNum) as item}
-                    <div
-                      class='top-league-container-search row-space-start cursor-not-allowed'>
-                      <img 
-                        src={item.logo_path} 
-                        alt={item.league_name.toString() + '-image'} 
-                        width="20px" height="20px" 
-                        class='m-r-15' />
-                      <div>
-                        <p class='s-14 color-grey'>
-                          {item.country_name}
-                        </p>
-                        <p class='s-14 w-500 color-black'>
-                          {item.league_name}
-                        </p>
+                    <a 
+                      sveltekit:prefetch
+                      href={item.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
+                      <div
+                        class='top-league-container-search row-space-start'>
+                        <img 
+                          src={item.logo_path} 
+                          alt={item.league_name.toString() + '-image'} 
+                          width="20px" height="20px" 
+                          class='m-r-15' />
+                        <div>
+                          <p class='s-14 color-grey'>
+                            {item.country_name}
+                          </p>
+                          <p class='s-14 w-500 color-black'>
+                            {item.league_name}
+                          </p>
+                        </div>
                       </div>
-                    </div>
+                    </a>
                   {/each}
 
                 </div>
@@ -516,7 +541,7 @@
                               sveltekit:prefetch
                               href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                               <div
-                                class='country-league-sub-container row-space-start cursor-not-allowed'>
+                                class='country-league-sub-container row-space-start'>
                                 <p 
                                   class='s-14 w-500 color-black'>
                                   {league.league_name}
@@ -635,6 +660,13 @@
         cursor: pointer;
     } div#search-list-container .top-league-container-search:hover p {
         color: #f5620f !important;
+    }
+
+    #defualt-league-list {
+      display: block;
+    }
+    #defualt-league-list.league-list-hide {
+      display: none;
     }
 
     div#popular-list-container .top-league-container {

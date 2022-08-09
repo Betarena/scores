@@ -1,7 +1,9 @@
 import type { 
   BETARENA_HASURA_player_positions_translations, 
   BETARENA_HASURA_scores_football_countries, 
+  BETARENA_HASURA_scores_football_leagues, 
   BETARENA_HASURA_scores_football_players, 
+  BETARENA_HASURA_scores_football_seasons_details, 
   BETARENA_HASURA_scores_football_seasons_details_aggregate, 
   BETARENA_HASURA_scores_football_teams, 
   BETARENA_HASURA_scores_general_translations, 
@@ -9,7 +11,6 @@ import type {
   TopPlayersData,
   WidgetsNoDataAvailable,
 } from "$lib/models/hasura"
-import type { Scores_Football_Leagues, Scores_Football_Seasons_Details } from "../types"
 
 /**
  * ==========================================
@@ -19,11 +20,11 @@ import type { Scores_Football_Leagues, Scores_Football_Seasons_Details } from ".
 
 export interface BETARENA_HASURA_top_players_season_details_query {
   scores_football_seasons_details_dev_aggregate:  BETARENA_HASURA_scores_football_seasons_details_aggregate
-  scores_football_seasons_details_dev:            Scores_Football_Seasons_Details[]
+  scores_football_seasons_details_dev:            BETARENA_HASURA_scores_football_seasons_details[]
 }
 
 export interface BETARENA_HASURA_top_players_query {
-  scores_football_leagues_dev:                    Scores_Football_Leagues[]
+  scores_football_leagues_dev:                    BETARENA_HASURA_scores_football_leagues[]
   scores_football_teams_dev:                      BETARENA_HASURA_scores_football_teams[]
   scores_football_countries_dev:                  BETARENA_HASURA_scores_football_countries[] // [❓] unecessary
   scores_football_players_dev:                    BETARENA_HASURA_scores_football_players[]

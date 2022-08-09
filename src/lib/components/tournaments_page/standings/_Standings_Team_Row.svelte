@@ -8,7 +8,7 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
-  import type { Standing_Team_Total_Away_Home } from "$lib/models/tournaments/types";
+  import type { Standing_Team_Total_Away_Home } from "$lib/models/tournaments/standings/types";
 import { session } from "$app/stores";
 
   export let TEAM_DATA:         Standing_Team_Total_Away_Home;
