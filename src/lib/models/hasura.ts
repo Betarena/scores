@@ -333,7 +333,7 @@ export interface BETARENA_HASURA_player_positions_translations {
 */
 export interface BETARENA_HASURA_scores_general_translations {
   lang?:                      string;
-  countries?:                 { [key: string]: string }[];
+  countries?:                 { [key: string]: string };
   widgets_no_data_available?: WidgetsNoDataAvailable;
   weekdays?:                  Weekdays;
   months?:                    WelcomeMonths;
