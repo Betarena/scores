@@ -62,16 +62,39 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueLeaguesList.add();
+  // const job = await cacheQueueLeaguesList.add();
 
-  console.log(`
-    job_id: ${job.id}
+  const t0 = performance.now();
+
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  // await leagueListGeoDataGeneration()
+  await leagueListLangDataGeneration(langArray)
+
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
   `)
+
+  // console.log(`
+  //   job_id: ${job.id}
+  // `)
 
   return {
     status: 200,
     body: { 
-      job_id: job.id
+      job_id: 1
     }
   }
 
@@ -188,19 +211,19 @@ async function leagueListLangDataGeneration (langArray: string[]) {
   // deleteLeagueListLang()
 
   // [🐛] debug
-  if (dev) {
-    const data = JSON.stringify(response, null, 4)
-    fs.writeFile('./datalog/leagueListLangDataGeneration.json', data, err => {
-      if (err) {
-        console.error(err);
-      }
-    });
-  }
+  // if (dev) {
+  //   const data = JSON.stringify(response, null, 4)
+  //   fs.writeFile('./datalog/leagueListLangDataGeneration.json', data, err => {
+  //     if (err) {
+  //       console.error(err);
+  //     }
+  //   });
+  // }
 
   // [ℹ] for-each available translation:
   for (const item of response) {
     // [ℹ] persist-cache-response;
-    // await cacheTranslationLang (item.lang, item);
+    await cacheTranslationLang (item.lang, item);
   }
 }
 
@@ -298,6 +321,8 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
     lang_country_map.set(t.lang, t)
   }
   t1 = performance.now();
+  console.log(`lang_country_map generated with size: ${lang_country_map.size}`)
+
   logs.push(`lang_country_map generated with size: ${lang_country_map.size}`)
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
@@ -324,7 +349,7 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
 
     const widgetTranslation = response.scores_leagues_list_translations_dev
       .find( ({ lang }) =>  lang === lang_m);
-    
+
     if (widgetTranslation == undefined) {
       continue
     }
@@ -339,7 +364,12 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
     preCacheObj.lang =                lang_m
     preCacheObj.all_leagues_list =    response.scores_league_list
     preCacheObj.translations =        widgetTranslation.translations
-    preCacheObj.unique_county_list =  pre_updated_unique_county_list
+    preCacheObj.unique_county_list =  pre_unique_county_list
+      .map (u => ({
+      country_id:     u.country_id,
+      country_name:   u.country_name,
+      image_path:     u.image_path
+    }));
 
     // [ℹ] updating translating [COUNTRY_NAME]
     preCacheObj.unique_county_list.forEach ((elem) => {
@@ -347,6 +377,12 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
       if (target_country_t) {
         const target_country_t_data: BETARENA_HASURA_scores_general_translations = lang_country_map.get(lang_m);
         const country_name:     string = elem.country_name;
+
+        // [🐛] debug
+        // if (country_name == "Azerbaijan") {
+        //   console.log(country_name + " " + lang_m + " ");
+        //   console.log(target_country_t_data.countries[country_name])
+        // }
         
         // const countryObjFinal = Object.assign({}, ...target_country_t_data.countries); 
         // [ℹ] TODO: update to countries[<->] when update on Hasura
