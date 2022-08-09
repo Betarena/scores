@@ -127,7 +127,7 @@ cacheQueueTourTopPlay.on('active', async (job) => {
   await sleep(600000);
   const completed: boolean = await job.isCompleted()
   const streamLogs: string = logs.toString().replace(/,/g," ");
-  if (completed) {
+  if (!completed) {
     await job.discard()
     await job.moveToFailed(new Error(streamLogs))
   }
