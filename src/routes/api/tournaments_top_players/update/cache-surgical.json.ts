@@ -3,7 +3,6 @@ import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
-import fs from 'fs';
 
 import type { 
   BETARENA_HASURA_top_players_query, 
@@ -31,6 +30,9 @@ import type {
   BETARENA_HASURA_scores_football_players, 
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
+
+import { performance } from 'perf_hooks';
+import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
