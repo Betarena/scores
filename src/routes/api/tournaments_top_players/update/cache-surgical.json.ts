@@ -123,6 +123,20 @@ cacheQueueTourTopPlay.process (async function (job, done) {
   console.log(err)
 });
 
+cacheQueueTourTopPlay.on('active', async (job) => {
+  await sleep(600000);
+  const completed: boolean = await job.isCompleted()
+  const streamLogs: string = logs.toString().replace(/,/g," ");
+  if (completed) {
+    await job.discard()
+    await job.moveToFailed(new Error(streamLogs))
+  }
+});
+
+function sleep (ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 /**
  * [ℹ] Tournaments Page Data Generation Methods
 */
