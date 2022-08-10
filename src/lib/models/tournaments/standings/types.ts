@@ -4,9 +4,11 @@ import type {
   BETARENA_HASURA_scores_football_standings, 
   BETARENA_HASURA_scores_football_standings_history, 
   BETARENA_HASURA_scores_football_teams, 
+  BETARENA_HASURA_scores_general_translations, 
   BETARENA_HASURA_scores_team_statistics, 
   BETARENA_HASURA_scores_team_statistics_history, 
-  BETARENA_HASURA_scores_widget_standings_translations, 
+  BETARENA_HASURA_scores_widget_standings_translations,
+  WidgetsNoDataAvailable, 
 } from "$lib/models/hasura"
 
 /**
@@ -42,6 +44,7 @@ export interface BETARENA_HASURA_tournament_standings_query {
  
   scores_widget_standings_translations_dev:     BETARENA_HASURA_scores_widget_standings_translations[]
   color_codes_league_standings_positions_dev:   BETARENA_HASURA_color_codes_league_standings_positions[]
+  scores_general_translations_dev:              BETARENA_HASURA_scores_general_translations[]
 }
 
 /**
@@ -51,8 +54,9 @@ export interface BETARENA_HASURA_tournament_standings_query {
 */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Cache_Single_Tournaments_League_Standings_Translation_Data_Response extends BETARENA_HASURA_scores_widget_standings_translations 
-{ }
+export interface Cache_Single_Tournaments_League_Standings_Translation_Data_Response extends BETARENA_HASURA_scores_widget_standings_translations { 
+  no_data_t?: WidgetsNoDataAvailable
+}
 
 export interface Cache_Single_Tournaments_League_Standings_Info_Data_Response {
   url?:        string

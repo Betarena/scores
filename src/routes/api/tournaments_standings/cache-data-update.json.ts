@@ -6,6 +6,7 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/query';
 
 import type { 
+  BETARENA_HASURA_tournament_standings_query,
   Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
   Cache_Single_Tournaments_League_Standings_Translation_Data_Response, 
   Standing_Team_Total_Away_Home 
@@ -24,13 +25,15 @@ export async function post(): Promise < unknown > {
   
   // [ℹ] job producers
   
-  const job = await cacheQueueTourStand.add();
+  // const job = await cacheQueueTourStand.add();
+
+  await standingsTranslationGeneration()
 
   // [ℹ] should never happen;
   return {
     status: 200,
     body: { 
-      job_id: job.id,
+      job_id: 1,
       message: "✅ Success \ntournaments_standings cache data updated!"
     }
   }
@@ -82,8 +85,8 @@ cacheQueueTourStand.process (async (job, done) => {
   do stuff
   */
 
-  await standingsDataGenerationAlt()
-  await standingsTranslationGeneration()
+  // await standingsDataGenerationAlt()
+  // await standingsTranslationGeneration()
 
   return "done";
 });
@@ -96,7 +99,7 @@ cacheQueueTourStand.process (async (job, done) => {
 async function standingsDataGenerationAlt () {
   
   // [ℹ] get HASURA-DB response;
-	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
+	const response: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
 
   // deleteCacheTournamentsStandingsData()
 
@@ -356,7 +359,7 @@ async function standingsDataGenerationAlt () {
 async function standingsTranslationGeneration () {
   
   // [ℹ] get HASURA-DB response;
-	const response: Hasura_League_Info_Widget_Data_Response = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
+	const response: BETARENA_HASURA_tournament_standings_query = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
 
   // deleteStandingsTranslationData ()
 
@@ -367,6 +370,10 @@ async function standingsTranslationGeneration () {
 
     // [ℹ] per LANG
     const lang = iterator.lang;
+    const data: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = iterator;
+    const noData_T = response.scores_general_translations_dev
+      .find( ({ lang }) => lang === iterator.lang);
+    data.no_data_t = noData_T.widgets_no_data_available
 
     final_obj_array.push(iterator)
 
