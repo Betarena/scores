@@ -108,6 +108,10 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
       lang
       translations
     }
+    scores_general_translations_dev {
+      lang
+      widgets_no_data_available
+    }
     
   }
 `;

@@ -11,9 +11,28 @@ const { SitemapStream, streamToPromise } = require('sitemap')
 const { Readable } = require('stream')
 const format = require('xml-formatter');
 
+import { performance } from 'perf_hooks';
+
 // [❗] critical
 import Bull from 'bull';
-const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+const cacheTarget = "REDIS CACHE | featured match"
+let logs = []
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // TYPES DECLARATION
@@ -35,16 +54,23 @@ import type {
 */
 export async function post(): Promise < unknown > {
 
-  // [ℹ] job producers
-  
+  // [🐛] debug
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
+
+  // [ℹ] producers [JOBS]
   const job = await cacheQueuePageSeo.add();
 
-  // [ℹ] should never happen;
+  console.log(`
+    job_id: ${job.id}
+  `)
+
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: "✅ Success! \nPages & Scores SEO cache data updated"
+      job_id: job.id
     }
   }
 }
@@ -122,12 +148,18 @@ async function deleteCacheSitemapURLs () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueuePageSeo.process (async (job, done) => {
+cacheQueuePageSeo.process (async function (job, done) {
   // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
 
   /* 
   do stuff
   */
+
+  const t0 = performance.now();
 
   // [ℹ] get HASURA-DB response;
 	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
@@ -145,15 +177,22 @@ cacheQueuePageSeo.process (async (job, done) => {
   await tournamentSEOandCaching(langArray, response)
   await tournamentPageAndCaching(response)
 
-  // done(null, {
-  //   queueAt:       job.queue,
-  //   startedAt:     job.processedOn,
-  //   completedOn:   job.finishedOn,
-  //   attemptsMade:  job.attemptsMade,
-  // })
+  const t1 = performance.now();
 
-  return "done";
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  STANDARD API FALLBACK
