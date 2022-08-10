@@ -10,9 +10,28 @@ import type { All_SportBook_Details_Data, Cache_Single_Lang_Featured_Betting_Sit
 import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/featured_betting_sites/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
+import { performance } from 'perf_hooks';
+
 // [❗] critical
 import Bull from 'bull';
-const cacheQueueFeaturedBetSite = new Bull('cacheQueueFeaturedBetSite', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueFeaturedBetSite = new Bull('cacheQueueFeaturedBetSite', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+const cacheTarget = "REDIS CACHE | featured match"
+let logs = []
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -20,16 +39,22 @@ const cacheQueueFeaturedBetSite = new Bull('cacheQueueFeaturedBetSite', import.m
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_featured_betting_sites_trigerred at: ${new Date().toDateString()}`)
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
   // [ℹ] producers [JOBS]
   const job = await cacheQueueFeaturedBetSite.add();
 
+  console.log(`
+    job_id: ${job.id}
+  `)
+
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: '✅ Success \nFeatured Betting Sites Updated!'
+      job_id: job.id
     }
   }
 
@@ -75,12 +100,18 @@ async function deleteFeaturedBettingSiteLang () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueFeaturedBetSite.process (async (job, done) => {
+cacheQueueFeaturedBetSite.process (async function (job, done) {
   // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
 
   /* 
   do stuff
   */
+
+  const t0 = performance.now();
 
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
@@ -96,7 +127,20 @@ cacheQueueFeaturedBetSite.process (async (job, done) => {
   await featuredBettingSiteGeoDataGeneration()
   await featuredBettingSiteLangDataGeneration(langArray)
 
-  return "done";
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
 
 /**
