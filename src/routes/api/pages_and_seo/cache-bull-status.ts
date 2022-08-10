@@ -1,7 +1,7 @@
 import { dev } from '$app/env'
 
 import Bull from 'bull';
-const cacheQueueGoalscorers = new Bull('cacheQueueGoalscorers', 
+const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
@@ -17,7 +17,7 @@ const cacheQueueGoalscorers = new Bull('cacheQueueGoalscorers',
 export async function get (req, res): Promise < any > {
 
   const jobId: string = req.url['searchParams'].get('jobId');
-  const jobW = await cacheQueueGoalscorers.getJob(jobId);
+  const jobW = await cacheQueuePageSeo.getJob(jobId);
 
   if (jobW === null) {
 
