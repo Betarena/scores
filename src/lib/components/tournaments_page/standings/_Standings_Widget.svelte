@@ -78,12 +78,12 @@
     // [ℹ] display NO DATA PLACEHOLDER
 		if (response == null || response == undefined) {
       if (dev) console.debug('❌ no leagues_table available!')
-      noStandingsBool = true;
+      // noStandingsBool = true;
 			return;
 		}
     // [ℹ] otherwise, revert back to DATA AVAILABLE;
     else {
-      noStandingsBool = false;
+      // noStandingsBool = false;
     }
 
     // loaded = true;
@@ -212,14 +212,19 @@
     loadedCurrentSeason = true;
   }
 
+  let seasonCheck: boolean = false;
   $: {
     // [ℹ] check season exists / contains data
-    let seasonCheckLength = STANDINGS_DATA.seasons.find( ({ season_id }) => season_id === $session.selectedSeasonID)?.total?.length;
+    let seasonCheckLength = STANDINGS_DATA.seasons
+      .find( ({ season_id }) => 
+        season_id === $session.selectedSeasonID
+      )?.total?.length;
     noStandingsBool = 
       seasonCheckLength == 0 ||
       seasonCheckLength == undefined
         ? true
         : false;
+    seasonCheck = true
   }
 
 </script>
@@ -253,7 +258,9 @@
 
   <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if noStandingsBool && 
+  {#if 
+    noStandingsBool &&
+    seasonCheck &&
     !loaded}
     <!-- [ℹ] title of the widget 
     -->
@@ -303,10 +310,12 @@
 
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if !noStandingsBool && 
+  {#if 
+    !noStandingsBool && 
     !refresh && 
     browser && 
     $userBetarenaSettings.country_bookmaker &&
+    seasonCheck &&
     !diasbleDev}
 
     <!-- [ℹ] promise is pending 
