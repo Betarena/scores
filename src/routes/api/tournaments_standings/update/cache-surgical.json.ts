@@ -707,21 +707,15 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
 
         const team_total_ov15: number =
           target_team_stats?.data[0].goal_line?.over["1_5"]?.away == null ||
-          target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home == null ||
-          season_team?.overall?.games_played == null
+          target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home == null 
             ? null
-            : season_team?.overall?.games_played == 0
-              ? 0
-              : (target_team_stats?.data[0].goal_line?.over["1_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home) / season_team?.overall?.games_played
+            : (target_team_stats?.data[0].goal_line?.over["1_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home) / 2
 
         const team_total_ov25: number =
           target_team_stats?.data[0].goal_line?.over["2_5"]?.away == null ||
-          target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home == null ||
-          season_team?.overall?.games_played == null
+          target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home == null
             ? null
-            : season_team?.overall?.games_played == 0
-              ? 0
-              : (target_team_stats?.data[0].goal_line?.over["2_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home) / season_team?.overall?.games_played
+            : (target_team_stats?.data[0].goal_line?.over["2_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home) / 2
 
         const team_total_gavg: number = 
           season_team?.round_name == null ||
