@@ -11,31 +11,58 @@ import type {
   Cache_Single_Tournaments_League_Standings_Translation_Data_Response, 
   Standing_Team_Total_Away_Home 
 } from '$lib/models/tournaments/standings/types';
+import type { 
+  BETARENA_HASURA_scores_team_statistics_history, 
+  StandingsDatum 
+} from '$lib/models/hasura';
 
 import fs from 'fs';
+import { performance } from 'perf_hooks';
 
 // [❗] critical
 import Bull from 'bull';
-import type { BETARENA_HASURA_scores_team_statistics_history, StandingsDatum } from '$lib/models/hasura';
-const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueTourStandAll = new Bull('cacheQueueTourStandAll', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+
+const cacheTarget = "REDIS CACHE | tournament standings surgical"
+let logs = []
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
 export async function post(): Promise < unknown > {
   
-  // [ℹ] job producers
-  
-  // const job = await cacheQueueTourStand.add();
+  // [🐛] debug
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
-  await standingsTranslationGeneration()
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueTourStandAll.add();
 
-  // [ℹ] should never happen;
+  console.log(`
+    job_id: ${job.id}
+  `)
+
   return {
     status: 200,
     body: { 
-      job_id: 1,
-      message: "✅ Success \ntournaments_standings cache data updated!"
+      job_id: job.id
     }
   }
 }
@@ -79,17 +106,29 @@ async function deleteStandingsTranslationData () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueTourStand.process (async (job, done) => {
+cacheQueueTourStandAll.process (async function (job, done) {
   // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
 
   /* 
   do stuff
   */
 
-  // await standingsDataGenerationAlt()
-  // await standingsTranslationGeneration()
+  const t0 = performance.now();
+  await standingsDataGenerationAlt()
+  await standingsTranslationGeneration()
+  const t1 = performance.now();
 
-  return "done";
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
 
 
