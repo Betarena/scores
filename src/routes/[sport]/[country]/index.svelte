@@ -36,35 +36,11 @@
       }
     }
 
-    return {
-      status: 200
-    }
+    // [ℹ] return to HOMEPAGE (/ <en>)
+		return {
+			status: 302,
+			redirect: '/'
+		};
 
 	}
 </script>
-
-
-<!-- ===================
-	COMPONENT HTML
-=================== -->
-
-
-<section 
-  id='country-page'>
-  
-</section>
-
-<!-- ===================
-	COMPONENT STYLE
-=================== -->
-
-
-<style>
-  section#country-page {
-    display: grid;
-    max-width: 1430px;
-    grid-template-columns: 1fr;
-    align-items: center;
-    justify-items: center;
-	}
-</style>
