@@ -30,9 +30,29 @@ import type {
 } from '$lib/models/hasura';
 
 // [❗] critical
-import Bull from 'bull';
+import { performance } from 'perf_hooks';
 
-const cacheQueueTourTopPlay = new Bull('cacheQueueTourTopPlay', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+// [❗] critical
+import Bull from 'bull';
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueTourTopPlayAll = new Bull('cacheQueueTourTopPlayAll', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+
+const cacheTarget = "REDIS CACHE | tournament top_players surgical"
+let logs = []
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -40,16 +60,22 @@ const cacheQueueTourTopPlay = new Bull('cacheQueueTourTopPlay', import.meta.env.
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_tournamentsTopPlayers_trigerred at: ${new Date().toDateString()}`)
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueTourTopPlay.add();
+  const job = await cacheQueueTourTopPlayAll.add();
+
+  console.log(`
+    job_id: ${job.id}
+  `)
 
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: '✅ Success \ntournaments_top_players cache data updated!'
+      job_id: job.id
     }
   }
 }
@@ -94,17 +120,29 @@ async function deleteStandingsTranslationData () {
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueueTourTopPlay.process (async (job, done) => {
+cacheQueueTourTopPlayAll.process (async function (job, done) {
   // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
 
   /* 
   do stuff
   */
 
+  const t0 = performance.now();
   await tournamentsTopPlayersDataGeneration ()
   await tournamentsTopPlayersTGeneration ()
+  const t1 = performance.now();
 
-  return "done";
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
 });
 
 /**
