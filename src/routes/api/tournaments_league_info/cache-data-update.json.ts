@@ -13,6 +13,8 @@ import type {
 
 import fs from 'fs';
 
+import { performance } from 'perf_hooks';
+
 // [❗] critical
 import Bull from 'bull';
 const settings = {

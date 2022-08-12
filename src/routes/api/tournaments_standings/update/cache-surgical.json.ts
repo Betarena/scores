@@ -486,6 +486,16 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
 async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_surgical_update) {
   
   // [ℹ] get HASURA-DB response;
+  if (dataUpdate == undefined) {
+    logs.push(`dataUpdate is undefined`)
+    logs.push(`dataUpdate: ${dataUpdate}`)
+    return;
+  }
+  if (dataUpdate.leagueSeasons === undefined) {
+    logs.push(`dataUpdate.leagueSeasons is undefined`)
+    logs.push(`dataUpdate.leagueSeasons: ${dataUpdate?.leagueSeasons}`)
+    return;
+  }
   const leagueIdsArr = dataUpdate.leagueSeasons.map(a => a.leagueId);
 
   logs.push(`num. of leagueIds: ${dataUpdate.leagueSeasons.length}`);
