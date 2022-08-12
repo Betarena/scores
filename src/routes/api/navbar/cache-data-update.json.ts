@@ -108,5 +108,5 @@ cacheQueueNavbar.process (async (job, done) => {
     await cacheNavBar(lang_, finalCacheObj);
   }
 
-  return "done";
+  done();
 });
