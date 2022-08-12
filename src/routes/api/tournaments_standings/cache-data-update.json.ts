@@ -16,6 +16,7 @@ import fs from 'fs';
 
 // [❗] critical
 import Bull from 'bull';
+import type { BETARENA_HASURA_scores_team_statistics_history, StandingsDatum } from '$lib/models/hasura';
 const cacheQueueTourStand = new Bull('cacheQueueTourStand', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
 
 /** 
@@ -118,16 +119,38 @@ async function standingsDataGenerationAlt () {
     // [ℹ] get all seasons for (this) league (tournament-id)
     for (const season_main of iterator.seasons) {
 
-      const season_standings = response.scores_football_standings_history_dev
-        .find(( { id, season_id } ) => id === season_main.league_id && season_id === season_main.id)
+      let season_standings_teams_list: StandingsDatum[];
+      let seasonCurrent = false;
 
-      // [🐛] debug
-      // console.log(
-      //   `league_id: ${league_target?.id}`,
-      //   `season_id: ${season_main?.id}`,
-      //   `season standings-length: ${season_standings?.data.length}`)
+      // [ℹ] check if for "current-season"
+      if (season_main.is_current_season) {
 
-      const season_standings_teams_list = season_standings?.data
+        const season_standings = response.scores_football_standings_dev
+          .find(( { id } ) =>
+            id === iterator.id
+          );
+
+        season_standings_teams_list = season_standings?.data
+          .find(( { name, season_id } ) => 
+            name === "Regular Season" &&
+            season_id === season_main.id
+          ).standings?.data;
+
+        seasonCurrent = true
+
+        // if (dev) console.log(`${season_main.id} is_current_season`);
+        // if (dev) console.log(`season_standings_teams_list} is undefined: ${season_standings_teams_list}`);
+
+      } else {
+
+        const season_standings_hist = response.scores_football_standings_history_dev
+          .find(( { id, season_id } ) => 
+            id === season_main.league_id && 
+            season_id === season_main.id
+          );
+
+        season_standings_teams_list = season_standings_hist?.data
+      }
 
       const season_gen_list_total: Standing_Team_Total_Away_Home[] = []
       const season_gen_list_home:  Standing_Team_Total_Away_Home[] = []
@@ -171,13 +194,21 @@ async function standingsDataGenerationAlt () {
 
         const team_logo: string = response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
         const team_name: string =
-          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
-          response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
+        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
+        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
             ? season_team?.team_name
             : response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
 
         const target_team_stat = response.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
         const target_team_stat_hist = response.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_main.id )
+
+        let target_team_stats: BETARENA_HASURA_scores_team_statistics_history; // [ℹ] not correct type
+        if (seasonCurrent) {
+          target_team_stats = target_team_stat;
+        }
+        else {
+          target_team_stats = target_team_stat_hist;
+        }
 
         const team_winP: number = 
           target_team_stat?.winning_probability == null || 
@@ -215,16 +246,16 @@ async function standingsDataGenerationAlt () {
         const team_away_color_code = team_away_position == null ? 'black' : season_color_codes[team_away_position.toString()]
 
         const team_total_ov15: number =
-          target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away == null ||
-          target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home == null
+          target_team_stats?.data[0].goal_line?.over["1_5"]?.away == null ||
+          target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home == null 
             ? null
-            : (target_team_stat_hist?.data[0].goal_line?.over["1_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["1_5"]?.home) / 2
+            : (target_team_stats?.data[0].goal_line?.over["1_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["1_5"]?.home) / 2
 
         const team_total_ov25: number =
-          target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away == null ||
-          target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home == null
+          target_team_stats?.data[0].goal_line?.over["2_5"]?.away == null ||
+          target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home == null
             ? null
-            : (target_team_stat_hist?.data[0].goal_line?.over["2_5"]?.away + target_team_stat_hist?.data[0]?.goal_line?.over["2_5"]?.home) / 2
+            : (target_team_stats?.data[0].goal_line?.over["2_5"]?.away + target_team_stats?.data[0]?.goal_line?.over["2_5"]?.home) / 2
 
         const team_total_gavg: number = 
           season_team?.round_name == null ||
@@ -250,15 +281,15 @@ async function standingsDataGenerationAlt () {
           color_code:     team_total_color_code,
           points:         season_team?.points,
           position:       season_team?.position,
-          games_played:   season_team?.round_name,
+          games_played:   season_team?.overall?.games_played, // [ℹ] previously, .round_name
           won:            season_team?.overall?.won,
           draw:           season_team?.overall?.draw,
           lost:           season_team?.overall?.lost,
           gs:             season_team?.overall?.goals_scored,
           ga:             season_team?.overall?.goals_against,
           gavg:           team_total_gavg,
-          cavg:           parseInt(target_team_stat_hist?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
-          ycavg:          target_team_stat_hist?.average_yellow_cards,
+          cavg:           parseInt(target_team_stats?.data[0]?.avg_corners), // [📌 inaccurate with "multi-stage" season case, FIXME: TODO:]
+          ycavg:          target_team_stats?.average_yellow_cards,
           ov15:           team_total_ov15,
           ov25:           team_total_ov25,
           winP:           team_winP,
