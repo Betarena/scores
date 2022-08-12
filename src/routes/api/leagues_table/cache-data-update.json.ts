@@ -19,6 +19,8 @@ import type {
 import { GET_LEAGUES_TABLE_DATA } from '$lib/graphql/leagues_table/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
+import { performance } from 'perf_hooks';
+
 // [❗] critical
 import Bull from 'bull';
 const settings = {

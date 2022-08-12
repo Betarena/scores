@@ -96,5 +96,5 @@ cacheQueueFooter.process (async (job, done) => {
     await cacheFooter(lang_, finalCacheObj);
   }
 
-  return "done";
+  done();
 });

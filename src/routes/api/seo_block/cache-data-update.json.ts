@@ -10,6 +10,8 @@ import { GET_COMPLETE_PAGES_AND_SEO_DATA } from '$lib/graphql/pages_and_seo/quer
 import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
 import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
+import { performance } from 'perf_hooks';
+
 // [❗] critical
 import Bull from 'bull';
 const cacheQueueSeoBlock = new Bull('cacheQueueSeoBlock', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
