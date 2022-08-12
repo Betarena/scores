@@ -13,7 +13,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_leagues_dev (
+    scores_football_leagues (
       where: {
         id: {
           _in: $leagueIds
@@ -28,7 +28,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
       season
       seasons
     }
-    scores_football_standings_dev (
+    scores_football_standings (
       where: {
         id: {
           _in: $leagueIds
@@ -41,7 +41,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
       name
       type
     }
-    scores_football_standings_history_dev (
+    scores_football_standings_history (
       where: {
         id: {
           _in: $leagueIds
@@ -56,7 +56,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
       type
     }
 
-    scores_football_teams_dev (
+    scores_football_teams (
       where: {
         id: {
           _in: $teamIds
@@ -68,7 +68,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
       id
       name
     }
-    scores_team_statistics_dev (
+    scores_team_statistics (
       where: {
         team_id: {
           _in: $teamIds
@@ -83,7 +83,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
       team_id
       winning_probability
     }
-    scores_team_statistics_history_dev (
+    scores_team_statistics_history (
       where: {
         team_id: {
           _in: $teamIds
@@ -100,15 +100,15 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
     }
 
     # [ℹ] other data
-    color_codes_league_standings_positions_dev {
+    color_codes_league_standings_positions {
       color_codes
       sports
     }
-    scores_widget_standings_translations_dev {
+    scores_widget_standings_translations {
       lang
       translations
     }
-    scores_general_translations_dev {
+    scores_general_translations {
       lang
       widgets_no_data_available
     }
@@ -127,7 +127,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO_2 = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_leagues_dev (
+    scores_football_leagues (
       where: {
         id: {
           _in: $leagueIds
@@ -142,7 +142,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO_2 = gql`
       season
       seasons
     }
-    scores_football_standings_dev (
+    scores_football_standings (
       where: {
         id: {
           _in: $leagueIds
@@ -155,7 +155,7 @@ export const GET_LEAGUE_W_STANDINGS_INFO_2 = gql`
       name
       type
     }
-    scores_football_standings_history_dev (
+    scores_football_standings_history (
       where: {
         id: {
           _in: $leagueIds
@@ -171,11 +171,11 @@ export const GET_LEAGUE_W_STANDINGS_INFO_2 = gql`
     }
 
     # [ℹ] other data
-    color_codes_league_standings_positions_dev {
+    color_codes_league_standings_positions {
       color_codes
       sports
     }
-    scores_widget_standings_translations_dev {
+    scores_widget_standings_translations {
       lang
       translations
     }
@@ -191,7 +191,7 @@ export const GET_TEAM_W_STATS_INFO_3 = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_teams_dev (
+    scores_football_teams (
       where: {
         id: {
           _in: $teamIds
@@ -203,7 +203,7 @@ export const GET_TEAM_W_STATS_INFO_3 = gql`
       id
       name
     }
-    scores_team_statistics_dev (
+    scores_team_statistics (
       where: {
         team_id: {
           _in: $teamIds
@@ -218,7 +218,7 @@ export const GET_TEAM_W_STATS_INFO_3 = gql`
       team_id
       winning_probability
     }
-    scores_team_statistics_history_dev (
+    scores_team_statistics_history (
       where: {
         team_id: {
           _in: $teamIds

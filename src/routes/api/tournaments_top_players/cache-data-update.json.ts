@@ -132,7 +132,7 @@ async function tournamentsTopPlayersDataGeneration () {
   // [🐛] debug [prod-handy]
   console.log(`ℹ players_map is generating!`)
   const players_map = new Map()
-  for (const p of response_const.scores_football_players_dev) {
+  for (const p of response_const.scores_football_players) {
     players_map.set(p.player_id, p)
   }
   // [🐛] debug [prod-handy]
@@ -141,7 +141,7 @@ async function tournamentsTopPlayersDataGeneration () {
   // [🐛] debug [prod-handy]
   console.log(`ℹ teams_map is generating!`)
   const teams_map = new Map()
-  for (const t of response_const.scores_football_teams_dev) {
+  for (const t of response_const.scores_football_teams) {
     teams_map.set(t.id, t)
   }
   // [🐛] debug [prod-handy]
@@ -162,7 +162,7 @@ async function tournamentsTopPlayersDataGeneration () {
       VARIABLES
     );
 
-    total_limit = response_seasons.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
+    total_limit = response_seasons.scores_football_seasons_details_aggregate.aggregate.totalCount;
     offset += limit;
 
     // [ℹ] exit loop
@@ -172,7 +172,7 @@ async function tournamentsTopPlayersDataGeneration () {
       break;
     }
 
-    for (const iterator of response_const.scores_football_leagues_dev) {
+    for (const iterator of response_const.scores_football_leagues) {
 
       // [ℹ] per LEAGUE
 
@@ -183,7 +183,7 @@ async function tournamentsTopPlayersDataGeneration () {
       // [ℹ] get all seasons for (this) league (tournament-id)
       for (const season_main of iterator.seasons) {
 
-        const season_sub = response_seasons.scores_football_seasons_details_dev
+        const season_sub = response_seasons.scores_football_seasons_details
           .find(( { id, league_id } ) =>  
             league_id === season_main.league_id && 
             id === season_main.id
@@ -475,16 +475,16 @@ async function tournamentsTopPlayersTGeneration () {
   const final_obj_array: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response[] = []
 
   // [ℹ] generate appropiate TRANSLATIONS
-  for (const main_T of response.scores_widget_top_players_translations_dev) {
+  for (const main_T of response.scores_widget_top_players_translations) {
 
     // [ℹ] per LANG
     const main_lang = main_T.lang;
 
     // [ℹ] locate position-player translation;
-    const pos_T = response.player_positions_translations_dev
+    const pos_T = response.player_positions_translations
       .find(( { lang } ) => lang === main_lang);
 
-    const noData_T = response.scores_general_translations_dev
+    const noData_T = response.scores_general_translations
       .find( ({ lang }) => lang === main_lang);
 
     const top_players_view_opt: string[] = [ "Rating", "Goals", "Assists", "Total Shots"]

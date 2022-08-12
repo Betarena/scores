@@ -238,7 +238,7 @@ export interface BETARENA_HASURA_color_codes_league_standings_positions {
 }
 
 /**
- * [ℹ] HASURA: scores_football_countries (&_dev)
+ * [ℹ] HASURA: scores_football_countries (&)
 */
 export interface BETARENA_HASURA_scores_football_countries {
   id?:   number;
@@ -262,7 +262,7 @@ export interface BETARENA_HASURA_scores_football_countries {
 }
 
 /**
- * [ℹ] HASURA: scores_football_players (&_dev)
+ * [ℹ] HASURA: scores_football_players (&)
 */
 export interface BETARENA_HASURA_scores_football_players {
   data?:        FootballPlayersData;
@@ -305,7 +305,7 @@ export interface BETARENA_HASURA_scores_football_players {
 }
 
 /**
- * [ℹ] HASURA: scores_widget_top_players_translations (&_dev)
+ * [ℹ] HASURA: scores_widget_top_players_translations (&)
 */
 export interface BETARENA_HASURA_scores_widget_top_players_translations {
   lang?: string;
@@ -321,7 +321,7 @@ export interface BETARENA_HASURA_scores_widget_top_players_translations {
 }
 
 /**
- * [ℹ] HASURA: player_positions_translations (&_dev)
+ * [ℹ] HASURA: player_positions_translations (&)
 */
 export interface BETARENA_HASURA_player_positions_translations {
   lang?:     string;
@@ -329,7 +329,7 @@ export interface BETARENA_HASURA_player_positions_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_general_translations (&_dev)
+ * [ℹ] HASURA: scores_general_translations (&)
 */
 export interface BETARENA_HASURA_scores_general_translations {
   lang?:                      string;
@@ -383,7 +383,7 @@ export interface BETARENA_HASURA_scores_general_translations {
 
 
 /**
- * [ℹ] HASURA: scores_football_leagues (&_dev)
+ * [ℹ] HASURA: scores_football_leagues (&)
 */
 export interface BETARENA_HASURA_scores_football_leagues {
   country?: ScoresFootballLeaguesDataClass;
@@ -446,7 +446,7 @@ export interface BETARENA_HASURA_scores_football_leagues {
 }
 
 /**
- * [ℹ] HASURA: scores_football_seasons_details_aggregate (&_dev)
+ * [ℹ] HASURA: scores_football_seasons_details_aggregate (&)
 */
 export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
   aggregate?: Aggregate;
@@ -455,7 +455,7 @@ export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
 }
 
 /**
- * [ℹ] HASURA: scores_football_seasons_details (&_dev)
+ * [ℹ] HASURA: scores_football_seasons_details (&)
 */
 export interface BETARENA_HASURA_scores_football_seasons_details {
   data_stats?:        SeasonDetailsDataStats;
@@ -647,7 +647,7 @@ export interface BETARENA_HASURA_scores_football_seasons_details {
 }
 
 /**
- * [ℹ] HASURA: sportsbook_details (&_dev)
+ * [ℹ] HASURA: sportsbook_details (&)
 */
 export interface BETARENA_HASURA_sportsbook_details {
   data?: { [key: string]: Sportbook };
@@ -666,7 +666,7 @@ export interface BETARENA_HASURA_sportsbook_details {
 }
 
 /**
- * [ℹ] HASURA: scores_widget_league_info_translations (&_dev)
+ * [ℹ] HASURA: scores_widget_league_info_translations (&)
 */
 export interface BETARENA_HASURA_scores_widget_league_info_translations {
   data?: DataLang;
@@ -680,7 +680,7 @@ export interface BETARENA_HASURA_scores_widget_league_info_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_league_list (&_dev)
+ * [ℹ] HASURA: scores_league_list (&)
 */
 export interface BETARENA_HASURA_scores_league_list {
   country_id:     number
@@ -693,7 +693,7 @@ export interface BETARENA_HASURA_scores_league_list {
 }
 
 /**
- * [ℹ] HASURA: leagues_filtered_country (&_dev)
+ * [ℹ] HASURA: leagues_filtered_country (&)
 */
 export interface BETARENA_HASURA_leagues_filtered_country {
   lang: string
@@ -703,7 +703,7 @@ export interface BETARENA_HASURA_leagues_filtered_country {
 }
 
 /**
- * [ℹ] HASURA: scores_leagues_list_translations (&_dev)
+ * [ℹ] HASURA: scores_leagues_list_translations (&)
 */
 export interface BETARENA_HASURA_scores_leagues_list_translations {
   lang: string
@@ -721,7 +721,7 @@ export interface BETARENA_HASURA_scores_leagues_list_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_tournaments (&_dev)
+ * [ℹ] HASURA: scores_tournaments (&)
 */
 export interface BETARENA_HASURA_scores_tournaments {
   author?:        ScoresTournamentsAuthor;

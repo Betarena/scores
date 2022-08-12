@@ -144,7 +144,7 @@ async function sportbookDetailsGeneration () {
 
   // deleteCacheSportbookDetailInfoData()
 
-  for (const geoSportbook of response.sportsbook_details_dev) {
+  for (const geoSportbook of response.sportsbook_details) {
 
     finalCacheObj.geoPos = geoSportbook.lang
 
@@ -181,12 +181,12 @@ async function leagueInfoGeneration () {
   // [ℹ] FIXME: speed up the data-processing (takes aroud 450 sec ATM)
   // [ℹ] data pre-processing;
   // const players_map = new Map()
-  // for (const p of response_const.scores_football_players_dev) {
+  // for (const p of response_const.scores_football_players) {
   //   players_map.set(p.player_id, p)
   // }
 
   // [ℹ] generate appropiate URLS
-  for (const iterator of response.scores_tournaments_dev) {
+  for (const iterator of response.scores_tournaments) {
 
     // [ℹ] per LANG
 
@@ -220,13 +220,13 @@ async function leagueInfoGeneration () {
     finalCacheObj.url = url;
     finalCacheObj.lang = lang;
 
-    const targetWidgetTranslation = response.scores_widget_league_info_translations_dev
+    const targetWidgetTranslation = response.scores_widget_league_info_translations
       .find(( { lang } ) => 
         lang === iterator.lang
       ).data
     finalCacheObj.data.translation = targetWidgetTranslation
 
-    const league_target = response.scores_football_leagues_dev
+    const league_target = response.scores_football_leagues
       .find(( { name, id } ) => 
         name === iterator.name && 
         id === tournament_id
@@ -253,7 +253,7 @@ async function leagueInfoGeneration () {
     for (const season_main of league_target.seasons) {
 
       // [ℹ] match target X season from league Z to extra-info-season-data;
-      const seasonExtraInfo = response.scores_football_seasons_details_dev.find(( { id } ) => id === season_main.id)
+      const seasonExtraInfo = response.scores_football_seasons_details.find(( { id } ) => id === season_main.id)
 
       const num_clubs = seasonExtraInfo?.data_stats === null ? null : seasonExtraInfo?.data_stats?.number_of_clubs
       const start_date = seasonExtraInfo?.start_date

@@ -37,11 +37,11 @@ export interface Cache_Single_SportbookDetails_Data_Response extends Sportbook {
 */
 
 export interface BETARENA_HASURA_league_info_query {
-  scores_tournaments_dev:                       BETARENA_HASURA_scores_tournaments[]
-  scores_football_seasons_details_dev:          BETARENA_HASURA_scores_football_seasons_details[]
-  scores_football_leagues_dev:                  BETARENA_HASURA_scores_football_leagues[]
-  sportsbook_details_dev:                       BETARENA_HASURA_sportsbook_details[]
-  scores_widget_league_info_translations_dev:   BETARENA_HASURA_scores_widget_league_info_translations[]
+  scores_tournaments:                       BETARENA_HASURA_scores_tournaments[]
+  scores_football_seasons_details:          BETARENA_HASURA_scores_football_seasons_details[]
+  scores_football_leagues:                  BETARENA_HASURA_scores_football_leagues[]
+  sportsbook_details:                       BETARENA_HASURA_sportsbook_details[]
+  scores_widget_league_info_translations:   BETARENA_HASURA_scores_widget_league_info_translations[]
 }
 
 /**

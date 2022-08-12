@@ -125,7 +125,7 @@ async function standingsDataGenerationAlt () {
       // [ℹ] check if for "current-season"
       if (season_main.is_current_season) {
 
-        const season_standings = response.scores_football_standings_dev
+        const season_standings = response.scores_football_standings
           .find(( { id } ) =>
             id === iterator.id
           );
@@ -143,7 +143,7 @@ async function standingsDataGenerationAlt () {
 
       } else {
 
-        const season_standings_hist = response.scores_football_standings_history_dev
+        const season_standings_hist = response.scores_football_standings_history
           .find(( { id, season_id } ) => 
             id === season_main.league_id && 
             season_id === season_main.id
@@ -194,8 +194,8 @@ async function standingsDataGenerationAlt () {
 
         const team_logo: string = response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
         const team_name: string =
-        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
-        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
+        response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
+        response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
             ? season_team?.team_name
             : response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name
 
@@ -402,7 +402,7 @@ async function standingsTranslationGeneration () {
     // [ℹ] per LANG
     const lang = iterator.lang;
     const data: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = iterator;
-    const noData_T = response.scores_general_translations_dev
+    const noData_T = response.scores_general_translations
       .find( ({ lang }) => lang === iterator.lang);
     data.no_data_t = noData_T.widgets_no_data_available
 

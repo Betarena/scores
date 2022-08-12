@@ -175,7 +175,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   // [ℹ] obtain target seasons []
 
   let seasonIdsArr: number[] = []
-  for (const league of response.scores_football_leagues_dev) {
+  for (const league of response.scores_football_leagues) {
     for (const season_main of league.seasons) {
       seasonIdsArr.push(season_main.id);
     }
@@ -206,7 +206,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
 
   let teamIdsArr: number[] = []
   let playerIdsArr: number[] = []
-  for (const season of response2.scores_football_seasons_details_dev) {
+  for (const season of response2.scores_football_seasons_details) {
     // console.log(`season: ${season.id}`)
     if (season?.squad !== null) {
       for (const team of season.squad) {
@@ -251,11 +251,11 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
 
   t0 = performance.now();
   const players_map = new Map()
-  for (const p of response3.scores_football_players_dev) {
+  for (const p of response3.scores_football_players) {
     players_map.set(p.player_id, p)
   }
   const teams_map = new Map()
-  for (const t of response3.scores_football_teams_dev) {
+  for (const t of response3.scores_football_teams) {
     teams_map.set(t.id, t)
   }
   t1 = performance.now();
@@ -267,7 +267,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
 
   // [ℹ] MAIN
   // [ℹ] generate per LeagueId
-  for (const iterator of response.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues) {
 
     const finalCacheObj: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = { }
     finalCacheObj.seasons = []
@@ -276,7 +276,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
     // [ℹ] get all seasons for (this) league (tournament-id)
     for (const season_main of iterator.seasons) {
 
-      const season_sub = response2.scores_football_seasons_details_dev
+      const season_sub = response2.scores_football_seasons_details
         .find(( { id, league_id } ) =>
           league_id === season_main.league_id && 
           id === season_main.id

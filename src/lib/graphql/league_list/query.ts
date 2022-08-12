@@ -24,17 +24,17 @@ export const GET_COMPLETE_LEAGUE_LIST_DATA = gql`
       leagues
     }
 
-    scores_leagues_list_translations_dev {
+    scores_leagues_list_translations {
       lang
       translations
     }
 
-    scores_tournaments_dev {
+    scores_tournaments {
       id
       tournament_id
       urls
     }
-    scores_general_translations_dev {
+    scores_general_translations {
       lang
       countries
     }

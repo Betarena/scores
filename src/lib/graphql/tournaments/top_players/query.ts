@@ -16,13 +16,13 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA = gql`
 
     # [ℹ] pagination based
 
-    scores_football_seasons_details_dev_aggregate {
+    scores_football_seasons_details_aggregate {
       aggregate {
         totalCount: count
       }
     }
 
-    scores_football_seasons_details_dev (
+    scores_football_seasons_details (
       limit: $limit 
       offset: $offset
     ) {
@@ -49,7 +49,7 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA = gql`
 
     # [ℹ] unecessary to paginate
     
-    scores_football_leagues_dev {
+    scores_football_leagues {
       country
       data
       name
@@ -58,13 +58,13 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA = gql`
       seasons
     }
 
-    scores_football_teams_dev {
+    scores_football_teams {
       data
       id
       name
     }
 
-    scores_football_players_dev {
+    scores_football_players {
       data
       player_id
       common_name
@@ -83,15 +83,15 @@ export const HASURA_BETARENA_QUERY_TOP_PLAYERS_T = gql`
     (ttl: 300) 
   {
     # [ℹ] unecessary to paginate
-    scores_widget_top_players_translations_dev { 
+    scores_widget_top_players_translations { 
       lang
       data
     }
-    player_positions_translations_dev {
+    player_positions_translations {
       lang
       position
     }
-    scores_general_translations_dev {
+    scores_general_translations {
       lang
       widgets_no_data_available
     }
@@ -113,7 +113,7 @@ export const HASURA_GET_TARGET_LEAGUES = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_leagues_dev (
+    scores_football_leagues (
       where: {
         id: {
           _in: $leagueIds
@@ -139,7 +139,7 @@ export const HASURA_GET_TARGET_SEASONS = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_seasons_details_dev (
+    scores_football_seasons_details (
       where: {
         id: {
           _in: $seasonIds
@@ -164,7 +164,7 @@ export const HASURA_GET_TARGET_TEAMS_AND_PLAYERS = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_teams_dev (
+    scores_football_teams (
       where: {
         id: {
           _in: $teamIds
@@ -176,7 +176,7 @@ export const HASURA_GET_TARGET_TEAMS_AND_PLAYERS = gql`
       name
     }
 
-    scores_football_players_dev (
+    scores_football_players (
       where: {
         player_id: {
           _in: $playerIds

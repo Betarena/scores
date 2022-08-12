@@ -165,7 +165,7 @@ cacheQueuePageSeo.process (async function (job, done) {
 	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
+  const langArray: string [] = response.scores_hreflang
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 

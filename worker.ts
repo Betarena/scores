@@ -107,7 +107,7 @@ function start() {
     const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
     // [ℹ] get-all-exisitng-lang-translations;
-    const langArray: string [] = response.scores_hreflang_dev
+    const langArray: string [] = response.scores_hreflang
       .filter(a => a.link)         /* filter for NOT "null" */
       .map(a => a.link)            /* map each LANG */ 
 
@@ -218,7 +218,7 @@ async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_
   // [🐛] debug [prod-handy]
   console.log(`ℹ tournament_map is generating!`)
   const tournament_map = new Map()
-  for (const t of response.scores_tournaments_dev) {
+  for (const t of response.scores_tournaments) {
     tournament_map.set(t.tournament_id, t)
   }
   // [🐛] debug [prod-handy]
@@ -297,7 +297,7 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
 
   t0 = performance.now();
   const lang_country_map = new Map()
-  for (const t of response.scores_general_translations_dev) {
+  for (const t of response.scores_general_translations) {
     lang_country_map.set(t.lang, t)
   }
   t1 = performance.now();
@@ -327,7 +327,7 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
   // [ℹ] .forEach() [LANG]
   for (const lang_m of langArray) {
 
-    const widgetTranslation = response.scores_leagues_list_translations_dev
+    const widgetTranslation = response.scores_leagues_list_translations
       .find( ({ lang }) =>  lang === lang_m);
 
     if (widgetTranslation == undefined) {

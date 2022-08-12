@@ -6,11 +6,11 @@ import { gql } from 'graphql-request';
 */
 export const GET_LEAGUE_INFO_FULL_DATA = gql`
   query GET_LEAGUE_INFO_FULL_DATA @cached (ttl: 300) {
-    # HREF-LANG => (scores_hreflang_dev) not required;
+    # HREF-LANG => (scores_hreflang) not required;
     # as this WIDGET IS [URL] based;
 
     # IMPORTANT TOURNAMENTS PAGE WIDGET GENERATION
-    scores_tournaments_dev {
+    scores_tournaments {
       author
       country
       date
@@ -23,7 +23,7 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       type
       widgets
     }
-    scores_football_seasons_details_dev {
+    scores_football_seasons_details {
       data_stats
       end_date
       id
@@ -31,11 +31,11 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       league_id
       start_date
     }
-    scores_widget_league_info_translations_dev {
+    scores_widget_league_info_translations {
       data
       lang
     }
-    scores_football_leagues_dev {
+    scores_football_leagues {
       country
       data
       name
@@ -43,7 +43,7 @@ export const GET_LEAGUE_INFO_FULL_DATA = gql`
       season
       seasons
     }
-    sportsbook_details_dev {
+    sportsbook_details {
       data
       lang
     }

@@ -19,21 +19,21 @@ import type {
 */
 
 export interface BETARENA_HASURA_top_players_season_details_query {
-  scores_football_seasons_details_dev_aggregate:  BETARENA_HASURA_scores_football_seasons_details_aggregate
-  scores_football_seasons_details_dev:            BETARENA_HASURA_scores_football_seasons_details[]
+  scores_football_seasons_details_aggregate:  BETARENA_HASURA_scores_football_seasons_details_aggregate
+  scores_football_seasons_details:            BETARENA_HASURA_scores_football_seasons_details[]
 }
 
 export interface BETARENA_HASURA_top_players_query {
-  scores_football_leagues_dev:                    BETARENA_HASURA_scores_football_leagues[]
-  scores_football_teams_dev:                      BETARENA_HASURA_scores_football_teams[]
-  scores_football_countries_dev:                  BETARENA_HASURA_scores_football_countries[] // [❓] unecessary
-  scores_football_players_dev:                    BETARENA_HASURA_scores_football_players[]
+  scores_football_leagues:                    BETARENA_HASURA_scores_football_leagues[]
+  scores_football_teams:                      BETARENA_HASURA_scores_football_teams[]
+  scores_football_countries:                  BETARENA_HASURA_scores_football_countries[] // [❓] unecessary
+  scores_football_players:                    BETARENA_HASURA_scores_football_players[]
 }
 
 export interface BETARENA_HASURA_top_players_t_query {
-  scores_widget_top_players_translations_dev:     BETARENA_HASURA_scores_widget_top_players_translations[]
-  player_positions_translations_dev:              BETARENA_HASURA_player_positions_translations[]
-  scores_general_translations_dev:                BETARENA_HASURA_scores_general_translations[]
+  scores_widget_top_players_translations:     BETARENA_HASURA_scores_widget_top_players_translations[]
+  player_positions_translations:              BETARENA_HASURA_player_positions_translations[]
+  scores_general_translations:                BETARENA_HASURA_scores_general_translations[]
 }
 
 /**

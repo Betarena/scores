@@ -16,9 +16,9 @@ import type {
 export interface BETARENA_HASURA_league_list_query {
   scores_league_list:                   BETARENA_HASURA_scores_league_list[]
   leagues_filtered_country:             BETARENA_HASURA_leagues_filtered_country[]
-  scores_leagues_list_translations_dev: BETARENA_HASURA_scores_leagues_list_translations[]
-  scores_tournaments_dev:               BETARENA_HASURA_scores_tournaments[]
-  scores_general_translations_dev:      BETARENA_HASURA_scores_general_translations[]
+  scores_leagues_list_translations: BETARENA_HASURA_scores_leagues_list_translations[]
+  scores_tournaments:               BETARENA_HASURA_scores_tournaments[]
+  scores_general_translations:      BETARENA_HASURA_scores_general_translations[]
 }
 
 /**
