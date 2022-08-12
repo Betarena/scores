@@ -1,8 +1,5 @@
-
-// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
 
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { removeDiacritics } from '$lib/utils/languages'
@@ -14,10 +11,33 @@ const { SitemapStream, streamToPromise } = require('sitemap')
 const { Readable } = require('stream')
 const format = require('xml-formatter');
 
-// import { SitemapStream, streamToPromise } from 'sitemap'
-// import { Readable } from 'stream'
+import { performance } from 'perf_hooks';
 
-// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+// [❗] critical
+import Bull from 'bull';
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+const cacheTarget = "REDIS CACHE | featured match"
+let logs = []
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// TYPES DECLARATION
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 import { 
   GET_COMPLETE_PAGES_AND_SEO_DATA 
 } from '$lib/graphql/pages_and_seo/query'
@@ -32,40 +52,31 @@ import type {
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function post(): Promise < unknown > {
 
-export async function post(): Promise < any > {
+  // [🐛] debug
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
-  // [ℹ] get HASURA-DB response;
-	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueuePageSeo.add();
 
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
+  console.log(`
+    job_id: ${job.id}
+  `)
 
-  // [ℹ] push "EN"
-  langArray.push('en')
-
-  await sitemapGeneratorAndCaching(response)
-  await homepageSEOandCaching(langArray, response)
-  await tournamentSEOandCaching(langArray, response)
-  await tournamentPageAndCaching(response)
-
-  // [ℹ] return RESPONSE;
-  if (response) {
-    return {
-      status: 200,
-      body: '✅ Success! \nPages & Scores SEO cache data updated'
-    }
-  }
-  // [ℹ] should never happen;
   return {
-    body: null
+    status: 200,
+    body: { 
+      job_id: job.id
+    }
   }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
+//  PERSIST CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheHomepageSEOData (lang: string, json_cache: Cache_Single_Homepage_SEO_Translation_Response) {
@@ -108,6 +119,11 @@ async function cacheSitemapURLs (url: string) {
   }
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [ℹ] DELETE CACHE ACTION
+// [❗] DEPRECEATED [23/07/20222]
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 async function deleteCacheHomepageSEOData () {
   await redis.del('homepage_seo')
   return
@@ -129,6 +145,56 @@ async function deleteCacheSitemapURLs () {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueuePageSeo.process (async function (job, done) {
+  // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
+
+  /* 
+  do stuff
+  */
+
+  const t0 = performance.now();
+
+  // [ℹ] get HASURA-DB response;
+	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+  
+  await sitemapGeneratorAndCaching(response)
+  await homepageSEOandCaching(langArray, response)
+  await tournamentSEOandCaching(langArray, response)
+  await tournamentPageAndCaching(response)
+
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
+});
+
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 //  STANDARD API FALLBACK
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -142,7 +208,7 @@ async function homepageSEOandCaching(langArray: string[], data: Hasura_Complete_
     hreflang: undefined
   }
 
-  deleteCacheHomepageSEOData()
+  // deleteCacheHomepageSEOData()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {
@@ -206,7 +272,7 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     urlsArray.push(url)
   }
 
-  deleteCacheSitemapURLs();
+  // deleteCacheSitemapURLs();
   
   const uniqArray = [...new Set(urlsArray)];
 
@@ -227,7 +293,7 @@ async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complet
     hreflang: undefined
   }
 
-  deleteCacheTournamentsPageSEOData()
+  // deleteCacheTournamentsPageSEOData()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {
@@ -253,7 +319,7 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     alternate_data: undefined,
   }
 
-  deleteCacheTournamentsPageData();
+  // deleteCacheTournamentsPageData();
 
   // [ℹ] generate appropiate URLS
   for (const iterator of data.scores_tournaments) {

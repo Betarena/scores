@@ -87,17 +87,27 @@
      * [ℹ] widgets data gather cache fetch 
     */
 
-    const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments/league_info/cache-data.json?url=`+url.pathname, {
-			method: 'GET'
-		}).then((r) => r.json());
-    
-    // [ℹ] standings-widget cache data is dependent on the LEAGUE-ID;
-    const response_standings_translations: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = await fetch(`/api/tournaments_standings/cache-data.json?lang=`+urlLang, {
+    const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments_league_info/cache-data.json?url=`+url.pathname, {
 			method: 'GET'
 		}).then((r) => r.json());
 
     const league_id = response_tournaments_page_info.data.tournament_id;
+    
+    const response_standings_translations: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = await fetch(`/api/tournaments_standings/cache-data.json?lang=`+urlLang, {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    // [ℹ] standings-widget cache data is dependent on the LEAGUE-ID;
     const response_standings_data: Cache_Single_Tournaments_League_Standings_Info_Data_Response = await fetch(`/api/tournaments_standings/cache-data.json?league_id=`+league_id, {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    const response_top_players_translations: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = await fetch(`/api/tournaments_top_players/cache-data.json?lang=`+urlLang, {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    // [ℹ] top-players-widget cache data is dependent on the LEAGUE-ID;
+    const response_top_players_data: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = await fetch(`/api/tournaments_top_players/cache-data.json?league_id=`+league_id, {
 			method: 'GET'
 		}).then((r) => r.json());
 
@@ -112,7 +122,9 @@
         response_tournaments_page_info && 
         response_league_info &&
         response_standings_translations &&
-        response_standings_data) {
+        response_standings_data &&
+        response_top_players_translations &&
+        response_top_players_data) {
       return {
         props: {
           PAGE_DATA_SEO: response_tournaments_seo,
@@ -120,7 +132,9 @@
           TOURNAMENT_DATA: response_tournaments_page_info.data,
           LEAGUE_INFO_DATA: response_league_info,
           STANDINGS_T: response_standings_translations,
-          STANDINGS_DATA: response_standings_data
+          STANDINGS_DATA: response_standings_data,
+          TOP_PLAYERS_T: response_top_players_translations,
+          TOP_PLAYERS_DATA: response_top_players_data
         }
       } 
     }
@@ -156,6 +170,7 @@
 
   import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
   import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
+  import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
@@ -178,10 +193,18 @@
     Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
 
   import type { 
-    Cache_Single_Tournaments_League_Info_Data_Response, 
+    Cache_Single_Tournaments_League_Info_Data_Response
+  } from '$lib/models/tournaments/league-info/types';
+
+  import type { 
     Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
     Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
-  } from '$lib/models/tournaments/types';
+  } from '$lib/models/tournaments/standings/types';
+
+  import type { 
+    REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
+    REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response 
+  } from '$lib/models/tournaments/top_players/types';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
 
@@ -191,6 +214,8 @@
   export let LEAGUE_INFO_DATA:                  Cache_Single_Tournaments_League_Info_Data_Response;
   export let STANDINGS_T:                       Cache_Single_Tournaments_League_Standings_Translation_Data_Response;
   export let STANDINGS_DATA:                    Cache_Single_Tournaments_League_Standings_Info_Data_Response;
+  export let TOP_PLAYERS_T:                     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
+  export let TOP_PLAYERS_DATA:                  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
 
   // TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
@@ -379,7 +404,7 @@
 
     <div 
       class='grid-display-column'>
-      <!-- [EMPTY] -->
+      <svelte:component this={TopPlayersWidget} {TOP_PLAYERS_T} {TOP_PLAYERS_DATA} />
     </div>
 
   </div>

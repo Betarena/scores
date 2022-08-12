@@ -190,6 +190,7 @@
     /* max-width: 383px; */
     /* overflow: hidden; */
     position: relative;
+    margin-top: 40px;
   }
 
   div.teams-row {
@@ -229,6 +230,12 @@
 			/* width: 100% !important; */
 		}
 	}
+
+	@media only screen and (min-width: 768px) {
+    #standings-table-container {
+      margin-top: 40px;
+    }
+  }
 
 	/* WIDGET DARK THEME */
 	.dark-background-1 #fixture-league-title,

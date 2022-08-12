@@ -16,14 +16,19 @@
   import { getImageBgColor } from "$lib/utils/color_thief";
 
   import type { 
-    Cache_Single_SportbookDetails_Data_Response, 
+    Cache_Single_SportbookDetails_Data_Response
+  } from "$lib/models/tournaments/league-info/types";
+
+  import type { 
     Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
     Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
-  } from "$lib/models/tournaments/types";
+  } from "$lib/models/tournaments/standings/types";
 
   import StandingsWidgetContentLoader from "./_Standings_Widget_ContentLoader.svelte";
   import StandingsTeamRow from "./_Standings_Team_Row.svelte";
 
+  import no_visual from './assets/no_visual.svg';
+	import no_visual_dark from './assets/no_visual_dark.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
 	import slider_left from './assets/slider-left.svg'
@@ -68,20 +73,20 @@
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
     // [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments/cache-data.json?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
 
     // [ℹ] display NO DATA PLACEHOLDER
 		if (response == null || response == undefined) {
       if (dev) console.debug('❌ no leagues_table available!')
-      noStandingsBool = true;
+      // noStandingsBool = true;
 			return;
 		}
     // [ℹ] otherwise, revert back to DATA AVAILABLE;
     else {
-      noStandingsBool = false;
+      // noStandingsBool = false;
     }
 
-    loaded = true;
+    // loaded = true;
 
     // STANDINGS_T.data.sportbook_detail = response
 
@@ -207,6 +212,21 @@
     loadedCurrentSeason = true;
   }
 
+  let seasonCheck: boolean = false;
+  $: {
+    // [ℹ] check season exists / contains data
+    let seasonCheckLength = STANDINGS_DATA.seasons
+      .find( ({ season_id }) => 
+        season_id === $session.selectedSeasonID
+      )?.total?.length;
+    noStandingsBool = 
+      seasonCheckLength == 0 ||
+      seasonCheckLength == undefined
+        ? true
+        : false;
+    seasonCheck = true
+  }
+
 </script>
 
 <!-- ===============
@@ -238,53 +258,65 @@
 
   <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if noStandingsBool && !loaded}
+  {#if 
+    noStandingsBool &&
+    seasonCheck &&
+    !loaded}
     <!-- [ℹ] title of the widget 
     -->
-    <h2 
+    <h2
       class="s-20 m-b-10 w-500 color-black-2"
       style="margin-top: 0;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-      {STANDINGS_T.translations.standings}
+      {STANDINGS_T?.translations.standings}
     </h2>
 
-    <!-- [ℹ] no-matches-avaiable-placeholder container 
+    <!-- [ℹ] no-widget-data-avaiable-placeholder container 
     -->
-    <div 
+    <div
       id='no-widget-box'
-      class='row-space-start'
+      class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
       <!-- [ℹ] no-visual-asset
       -->
       {#if $userBetarenaSettings.theme == 'Dark'}
         <img 
-          src={no_featured_match_visual_dark} 
-          alt="no-featured-match-visual_dark"
-          width="80px" height="80px"
-          class='m-r-20'
+          src={no_visual_dark} 
+          alt="no_visual_dark"
+          width="32px" height="32px"
+          class='m-b-16'
         />
       {:else}
         <img 
-          src={no_featured_match_visual} 
-          alt="no-featured-match-visual"
-          width="80px" height="80px"
-          class='m-r-20'
+          src={no_visual} 
+          alt="no_visual"
+          width="32px" height="32px"
+          class='m-b-16'
         />
       {/if}
       
       <!-- [ℹ] container w/ text 
       -->
       <div>
-        <p class='s-16 m-b-8 w-500'> No League Info Available </p>
-        <p class='s-16 color-grey w-400'> Sorry, at this time there is no league info available! </p>
+        <p 
+          class='s-14 m-b-8 w-500'
+          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+          {STANDINGS_T.no_data_t.no_info} </p>
+        <p class='s-14 color-grey w-400'> {STANDINGS_T.no_data_t.no_info_desc} </p>
       </div>
     </div>
   {/if}
 
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if !noStandingsBool && !refresh && browser && $userBetarenaSettings.country_bookmaker && !diasbleDev}
+  {#if 
+    !noStandingsBool && 
+    !refresh && 
+    browser && 
+    $userBetarenaSettings.country_bookmaker &&
+    seasonCheck &&
+    !diasbleDev}
 
     <!-- [ℹ] promise is pending 
     -->
@@ -294,725 +326,209 @@
     -->
     {:then data}
 
-      <!-- [ℹ] widget-component [DESKTOP] [TABLET]
-      -->
-      {#if !mobileExclusive}
-
-        <!-- [ℹ] promise was fulfilled 
+        <!-- [ℹ] widget-component [DESKTOP] [TABLET]
         -->
-        <h2 
-          class="s-20 m-b-10 w-500 color-black-2"
-          style="margin-top: 0px;"
-          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          {STANDINGS_T.translations.standings}
-        </h2>
+        {#if !mobileExclusive}
 
-        <div
-          id="standings-table-container"
-          class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
-          <!-- [ℹ] widget-top-selection-standings-view [DESKTOP]
+          <!-- [ℹ] promise was fulfilled 
           -->
+          <h2 
+            class="s-20 m-b-10 w-500 color-black-2"
+            style="margin-top: 0px;"
+            class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+            {STANDINGS_T.translations.standings}
+          </h2>
+
           <div
-            id="standings-view-box"
-            class="row-space-start m-b-15">
+            id="standings-table-container"
+            class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
+            <!-- [ℹ] widget-top-selection-standings-view [DESKTOP]
+            -->
             <div
-              class="stand-view-opt-box cursor-pointer"
-              on:click={() => selectTableView('total')}
-              class:activeOpt={selectedOpt == 'total'}>
-              <p
-                class="s-14 w-500 color-grey">
-                {STANDINGS_T.translations.total}
-              </p>
+              id="standings-view-box"
+              class="row-space-start m-b-15">
+
+              <div
+                class="stand-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('total')}
+                class:activeOpt={selectedOpt == 'total'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {STANDINGS_T.translations.total}
+                </p>
+              </div>
+
+              <div
+                class="stand-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('home')}
+                class:activeOpt={selectedOpt == 'home'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {STANDINGS_T.translations.home}
+                </p>
+              </div>
+
+              <div
+                class="stand-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('away')}
+                class:activeOpt={selectedOpt == 'away'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {STANDINGS_T.translations.away}
+                </p>
+              </div>
+
             </div>
 
-            <div
-              class="stand-view-opt-box cursor-pointer"
-              on:click={() => selectTableView('home')}
-              class:activeOpt={selectedOpt == 'home'}>
-              <p
-                class="s-14 w-500 color-grey">
-                {STANDINGS_T.translations.home}
-              </p>
-            </div>
+            <!-- [STASHED] [ALTERNATIVE TABLE]
 
-            <div
-              class="stand-view-opt-box cursor-pointer"
-              on:click={() => selectTableView('away')}
-              class:activeOpt={selectedOpt == 'away'}>
-              <p
-                class="s-14 w-500 color-grey">
-                {STANDINGS_T.translations.away}
-              </p>
-            </div>
-
-          </div>
-
-          <!-- [STASHED] [ALTERNATIVE TABLE]
-
-            <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
-            - ->
-            <div
-              id="top-row-standings-head"
-              class="row-space-out">
-
-              <!-- [ℹ] widget table heade [first-left] 
+              <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
               - ->
               <div
-                class="row-space-start">
-                <p
-                  class="s-12 m-r-20">
-                  #
-                </p>
+                id="top-row-standings-head"
+                class="row-space-out">
 
-                <p
-                  class="s-12">
-                  {STANDINGS_T.translations.team}
-                </p>
+                <!-- [ℹ] widget table heade [first-left] 
+                - ->
+                <div
+                  class="row-space-start">
+                  <p
+                    class="s-12 m-r-20">
+                    #
+                  </p>
+
+                  <p
+                    class="s-12">
+                    {STANDINGS_T.translations.team}
+                  </p>
+                </div>
+
+                <!-- [ℹ] widget table heade [second-right] 
+                - ->
+                <div
+                  class="row-space-end">
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.pts}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.pld}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.w}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.d}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.l}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.gf}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.ga}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.gavg}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.yavg}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations.cavg}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations["1.5+"]}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-5">
+                    {STANDINGS_T.translations["2.5+"]}
+                  </p>
+
+                  <p
+                    class="s-12 m-r-20">
+                    {STANDINGS_T.translations.prob}
+                  </p>
+
+                  <p
+                    class="s-12">
+                    {STANDINGS_T.translations.recent_form}
+                  </p>
+                </div>
+
               </div>
 
-              <!-- [ℹ] widget table heade [second-right] 
+              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               - ->
-              <div
-                class="row-space-end">
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.pts}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.pld}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.w}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.d}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.l}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.gf}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.ga}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.gavg}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.yavg}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations.cavg}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations["1.5+"]}
-                </p>
-
-                <p
-                  class="s-12 m-r-5">
-                  {STANDINGS_T.translations["2.5+"]}
-                </p>
-
-                <p
-                  class="s-12 m-r-20">
-                  {STANDINGS_T.translations.prob}
-                </p>
-
-                <p
-                  class="s-12">
-                  {STANDINGS_T.translations.recent_form}
-                </p>
-              </div>
-
-            </div>
-
-            <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
-            - ->
-            {#each STANDINGS_DATA.seasons as season}
-              {#if season.season_id === $session.selectedSeasonID}
-                {#each season.teams as team}
-                  <StandingsTeamRow TEAM_DATA={team} VIEW={selectedOpt} />
-                {/each}
-              {/if}
-            {/each}
-          
-          -->
-
-          <table 
-            class="standings_table">
-
-            <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
-            -->
-            <tr
-              class="row-head">
-
-              <th
-                style="width: 100%;">
-                <p
-                  class="s-12 m-r-20 color-grey">
-                  #
-                  <span class='m-r-20'/>
-                  {STANDINGS_T.translations.team}
-                </p>
-              </th>
-
-              <th>
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations.pts}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.pts.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.pts.description}
-                  </p>
-                </div>
-              </th>
-
-              <th>
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations.pld}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.pld.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.pld.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey"
-                  style="width: 20px;">
-                  {STANDINGS_T.translations.w}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.w.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.w.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey"
-                  style="width: 20px;">
-                  {STANDINGS_T.translations.d}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.d.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.d.description}
-                  </p>
-                </div>
-              </th>
-
-              <th>
-                <p
-                  class="s-12 color-grey"
-                  style="width: 20px;">
-                  {STANDINGS_T.translations.l}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.l.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.l.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey"
-                  style="width: 20px;">
-                  {STANDINGS_T.translations.gf}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.gf.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.gf.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey"
-                  style="width: 20px;">
-                  {STANDINGS_T.translations.ga}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.ga.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.ga.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations.gavg}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.gavg.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.gavg.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations.yavg}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.yavg.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.yavg.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations.cavg}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.cavg.title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips.cavg.description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations["1.5+"]}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips["1.5+"].title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips["1.5+"].description}
-                  </p>
-                </div>
-              </th>
-
-              <th
-                class="">
-                <p
-                  class="s-12 color-grey">
-                  {STANDINGS_T.translations["2.5+"]}
-                </p>
-
-                <div
-                  class="tooltip-extra-info">
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips["2.5+"].title}
-                  </p>
-                  <p
-                    class="s-12 color-white no-wrap">
-                    {STANDINGS_T.translations.tooltips["2.5+"].description}
-                  </p>
-                </div>
-              </th>
-
-              {#if $session.selectedSeasonID && currentSeason != undefined}
-                {#if $session.selectedSeasonID === currentSeason}
-                  <th>
-                    <p
-                      class="s-12 color-grey">
-                      {STANDINGS_T.translations.prob}
-                    </p>
-
-                    <div
-                      class="tooltip-extra-info">
-                      <p
-                        class="s-12 color-white no-wrap">
-                        {STANDINGS_T.translations.tooltips.prob.title}
-                      </p>
-                      <p
-                        class="s-12 color-white no-wrap">
-                        {STANDINGS_T.translations.tooltips.prob.description}
-                      </p>
-                    </div>
-                  </th>
+              {#each STANDINGS_DATA.seasons as season}
+                {#if season.season_id === $session.selectedSeasonID}
+                  {#each season.teams as team}
+                    <StandingsTeamRow TEAM_DATA={team} VIEW={selectedOpt} />
+                  {/each}
                 {/if}
-              {/if}
-
-
-              <th>
-                <p
-                  class="s-12 color-grey"
-                  style="width: 70px;">
-                  {STANDINGS_T.translations.recent_form}
-                </p>
-              </th>
-
-            </tr>
-
-            <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              {/each}
+            
             -->
-            {#each STANDINGS_DATA.seasons as season}
-              {#if season.season_id === $session.selectedSeasonID}
-                {#each season[selectedOpt] as team}
-                  <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
-                {/each}
-              {/if}
-            {/each}
 
-          </table>
+            <table 
+              class="standings_table">
 
-          <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
-          -->
-          <div
-            id="standings-sportbook-details"
-            class="m-t-20">
-
-            {#if data}
-
-              <div
-                id='button-extra-info-container'>
-
-                <div
-                  id="betting-site-container"
-                  class="row-space-start m-r-16 cursor-pointer">
-
-                  <a 
-                    rel="nofollow"
-                    aria-label="betting_site_logo_standings"
-                    on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
-                    href={data.register_link}
-                    target="_blank"
-                    style="width: inherit;">
-                    <img 
-                      id='sportbook-logo-img'
-                      src={data.image}
-                      alt={data.title}
-                    />
-                  </a>
-
-                  <button 
-                    class="place-bet-btn btn-primary"
-                    aria-label="toggleCTA"
-                    on:click={() => toggleCTA = !toggleCTA}>
-                    <p 
-                      class="medium">
-                      Bet now
-                    </p>
-                  </button>
-                </div>
-
-                <!-- [ℹ] extra-info pop-up container
-                -->
-                {#if toggleCTA}
-                  <div 
-                    class="extra-info" 
-                    in:fade>
-
-                    <!--  [ℹ] site-image 
-                    -->
-                    <a 
-                      rel="nofollow" 
-                      aria-label="betting_site_logo_standings"
-                      on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
-                      href={data.register_link}
-                      style="width: inherit;">
-                      <img
-                        style="background-color: var({imageVar});"
-                        class="extra-info-img"
-                        src={data.image}
-                        alt={data.title}
-                      />
-                    </a>
-
-                    <!--  [ℹ] extra-site info 
-                    -->
-                    <div 
-                      class="extra-info-container">
-                      <!--  [ℹ] text 
-                      -->
-                      <p 
-                        class="large">
-                        {data.bonus_description}
-                      </p>
-                      <!--  [ℹ] button_cta 
-                      -->
-                      <a 
-                        rel="nofollow" 
-                        aria-label="cta_button_standings"
-                        on:click={() => triggerGoggleEvents("cta_button_standings")}
-                        href={data.register_link}
-                        target="_blank">
-                        <button
-                          class="btn-primary btn-cta"
-                          aria-label="registerCTA"
-                          style="width: 100% !important;">
-                          <p 
-                            class="w-500 s-14 w-normal">
-                            Register
-                          </p>
-                        </button>
-                      </a>
-                      <!--  [ℹ] extra-site info text 
-                      -->
-                      <p 
-                        class="small" 
-                        style="color: #CCCCCC;">
-                        {data.information}
-                      </p>
-                    </div>
-                    
-                  </div>
-                {/if}
-
-              </div>
-
-            {/if}
-
-          </div>
-
-        </div>
-
-      <!-- [ℹ] widget-component [MOBILE]
-      -->
-      {:else}
-
-        <!-- [ℹ] promise was fulfilled 
-        -->
-        <h1 
-          class="s-20 m-b-10 w-500 color-black-2"
-          style="margin-top: 0px;"
-          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          {STANDINGS_T.translations.standings}
-        </h1>
-
-        <div 
-          id="standings-table-container"
-          class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
-          <!-- [ℹ] widget-top-selection-standings-view [DESKTOP]
-          -->
-          <div
-            id="standings-view-box"
-            class="row-space-start m-b-20">
-
-            <div
-              class="stand-view-opt-box cursor-pointer"
-              on:click={() => selectTableView('total')}
-              class:activeOpt={selectedOpt == 'total'}>
-              <p
-                class="s-14 w-500 color-grey">
-                {STANDINGS_T.translations.total}
-              </p>
-            </div>
-
-            <div
-              class="stand-view-opt-box cursor-pointer"
-              on:click={() => selectTableView('home')}
-              class:activeOpt={selectedOpt == 'home'}>
-              <p
-                class="s-14 w-500 color-grey">
-                {STANDINGS_T.translations.home}
-              </p>
-            </div>
-
-            <div
-              class="stand-view-opt-box cursor-pointer"
-              on:click={() => selectTableView('away')}
-              class:activeOpt={selectedOpt == 'away'}>
-              <p
-                class="s-14 w-500 color-grey">
-                {STANDINGS_T.translations.away}
-              </p>
-            </div>
-
-          </div>
-
-          <!-- [ℹ] widget table view mobile select
-          -->
-          <div
-            id="mobile-table-box"
-            class="row-space-out m-b-12">
-
-            <button
-              class="table-nav-btn"
-              aria-label="selectedOptionTableMobile"
-              disabled={selectedOptTableMobile == 1}
-              on:click={() => selectedOptTableMobile = selectedOptTableMobile - 1}
-              >
-              {#if $userBetarenaSettings.theme == 'Dark'}
-                <img 
-                  src={slider_left_dark} 
-                  alt=""
-                />
-              {:else}
-                <img 
-                  src={slider_left} 
-                  alt=""
-                />
-              {/if}
-            </button>
-
-            <p
-              class="s-14 w-500 color-black">
-              {STANDINGS_T.translations.table} {selectedOptTableMobile}
-            </p>
-
-            <button
-              class="table-nav-btn"
-              aria-label="selectedOptionTableMobile"
-              disabled={selectedOptTableMobile == 3}
-              on:click={() => selectedOptTableMobile = selectedOptTableMobile + 1}
-              >
-              {#if $userBetarenaSettings.theme == 'Dark'}
-                <img 
-                  src={slider_right_dark} 
-                  alt=""
-                />
-              {:else}
-                <img 
-                  src={slider_right} 
-                  alt=""
-                />
-              {/if}
-            </button>
-
-
-          </div>
-
-          <table 
-            class="standings_table">
-
-            <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
-            -->
-            <tr
-              class="row-head">
-
-              <th
-                style="width: 100%;">
-                <p
-                  class="s-12 m-r-20 color-grey">
-                  #
-                  <span class='m-r-20'/>
-                  {STANDINGS_T.translations.team}
-                </p>
-              </th>
-
-              <!-- [ℹ] table view 1 
+              <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
               -->
-              {#if selectedOptTableMobile == 1}
+              <tr
+                class="row-head">
+
+                <th
+                  style="width: 100%;">
+                  <p
+                    class="s-12 m-r-20 color-grey">
+                    #
+                    <span class='m-r-20'/>
+                    {STANDINGS_T.translations.team}
+                  </p>
+                </th>
 
                 <th>
                   <p
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.pts}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.pts.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.pts.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th>
@@ -1020,52 +536,123 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.pld}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.pld.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.pld.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th
                   class="">
                   <p
-                    class="s-12 color-grey">
+                    class="s-12 color-grey"
+                    style="width: 20px;">
                     {STANDINGS_T.translations.w}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.w.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.w.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th
                   class="">
                   <p
-                    class="s-12 color-grey">
+                    class="s-12 color-grey"
+                    style="width: 20px;">
                     {STANDINGS_T.translations.d}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.d.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.d.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th>
                   <p
-                    class="s-12 color-grey">
+                    class="s-12 color-grey"
+                    style="width: 20px;">
                     {STANDINGS_T.translations.l}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.l.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.l.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th
                   class="">
                   <p
-                    class="s-12 color-grey">
+                    class="s-12 color-grey"
+                    style="width: 20px;">
                     {STANDINGS_T.translations.gf}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.gf.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.gf.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th
                   class="">
                   <p
-                    class="s-12 color-grey">
+                    class="s-12 color-grey"
+                    style="width: 20px;">
                     {STANDINGS_T.translations.ga}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.ga.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.ga.description}
+                    </p>
+                  </div>
                 </th>
-
-              {/if}
-
-              <!-- [ℹ] table view 2
-              -->
-              {#if selectedOptTableMobile == 2}
 
                 <th
                   class="">
@@ -1073,6 +660,18 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.gavg}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.gavg.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.gavg.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th
@@ -1081,6 +680,18 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.yavg}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.yavg.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.yavg.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th
@@ -1089,6 +700,18 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations.cavg}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.cavg.title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips.cavg.description}
+                    </p>
+                  </div>
                 </th>
 
                 <th
@@ -1097,13 +720,19 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations["1.5+"]}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips["1.5+"].title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips["1.5+"].description}
+                    </p>
+                  </div>
                 </th>
-
-              {/if}
-
-              <!-- [ℹ] table view 3
-              -->
-              {#if selectedOptTableMobile == 3}
 
                 <th
                   class="">
@@ -1111,6 +740,18 @@
                     class="s-12 color-grey">
                     {STANDINGS_T.translations["2.5+"]}
                   </p>
+
+                  <div
+                    class="tooltip-extra-info">
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips["2.5+"].title}
+                    </p>
+                    <p
+                      class="s-12 color-white no-wrap">
+                      {STANDINGS_T.translations.tooltips["2.5+"].description}
+                    </p>
+                  </div>
                 </th>
 
                 {#if $session.selectedSeasonID && currentSeason != undefined}
@@ -1120,154 +761,545 @@
                         class="s-12 color-grey">
                         {STANDINGS_T.translations.prob}
                       </p>
+
+                      <div
+                        class="tooltip-extra-info">
+                        <p
+                          class="s-12 color-white no-wrap">
+                          {STANDINGS_T.translations.tooltips.prob.title}
+                        </p>
+                        <p
+                          class="s-12 color-white no-wrap">
+                          {STANDINGS_T.translations.tooltips.prob.description}
+                        </p>
+                      </div>
                     </th>
                   {/if}
                 {/if}
 
+
                 <th>
                   <p
-                    class="s-12 color-grey no-wrap">
+                    class="s-12 color-grey"
+                    style="width: 70px;">
                     {STANDINGS_T.translations.recent_form}
                   </p>
                 </th>
-              
-              {/if}
 
-            </tr>
-
-            <!-- [ℹ] extra row-space
-            -->
-            {#if $userBetarenaSettings.theme == 'Dark' && selectedOptTableMobile == 1}
-              <tr
-                style="padding: 16px;">
-                <td><p style="color: transparent">-</p></td>
               </tr>
-            {/if}
 
-            <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              -->
+              {#each STANDINGS_DATA.seasons as season}
+                {#if season.season_id === $session.selectedSeasonID}
+                  {#each season[selectedOpt] as team}
+                    <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
+                  {/each}
+                {/if}
+              {/each}
+
+            </table>
+
+            <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
-            {#each STANDINGS_DATA.seasons as season}
-              {#if season.season_id === $session.selectedSeasonID}
-                {#each season[selectedOpt] as team}
-                  <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
-                {/each}
-              {/if}
-            {/each}
+            <div
+              id="standings-sportbook-details"
+              class="m-t-20">
 
-          </table>
-
-          <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
-          -->
-          <div
-            id="standings-sportbook-details"
-            class="m-t-20">
-
-            {#if data}
-
-              <div
-                id='button-extra-info-container'>
+              {#if data}
 
                 <div
-                  id="betting-site-container"
-                  class="row-space-start m-r-16">
+                  id='button-extra-info-container'>
 
-                  <a 
-                    rel="nofollow"
-                    aria-label="betting_site_logo_standings"
-                    on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
-                    href={data.register_link}
-                    target="_blank"
-                    style="width: inherit;">
-                    <img 
-                      id='sportbook-logo-img'
-                      src={data.image}
-                      alt={data.title}
-                    />
-                  </a>
+                  <div
+                    id="betting-site-container"
+                    class="row-space-start m-r-16 cursor-pointer">
 
-                  <button 
-                    class="place-bet-btn btn-primary"
-                    aria-label="toggleCTA"
-                    on:click={() => toggleCTA = !toggleCTA}>
-                    <p 
-                      class="medium">
-                      Bet now
-                    </p>
-                  </button>
-                </div>
-
-                <!-- [ℹ] extra-info pop-up container
-                -->
-                {#if toggleCTA}
-                  <div 
-                    class="extra-info" 
-                    in:fade>
-
-                    <!--  [ℹ] site-image 
-                    -->
                     <a 
-                      rel="nofollow" 
+                      rel="nofollow"
                       aria-label="betting_site_logo_standings"
                       on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
                       href={data.register_link}
+                      target="_blank"
                       style="width: inherit;">
-                      <img
-                        style="background-color: var({imageVar});"
-                        class="extra-info-img"
+                      <img 
+                        id='sportbook-logo-img'
                         src={data.image}
                         alt={data.title}
                       />
                     </a>
 
-                    <!--  [ℹ] extra-site info 
-                    -->
-                    <div 
-                      class="extra-info-container">
-                      <!--  [ℹ] text 
-                      -->
+                    <button 
+                      class="place-bet-btn btn-primary"
+                      aria-label="toggleCTA"
+                      on:click={() => toggleCTA = !toggleCTA}>
                       <p 
-                        class="large">
-                        {data.bonus_description}
+                        class="medium">
+                        Bet now
                       </p>
-                      <!--  [ℹ] button_cta 
+                    </button>
+                  </div>
+
+                  <!-- [ℹ] extra-info pop-up container
+                  -->
+                  {#if toggleCTA}
+                    <div 
+                      class="extra-info" 
+                      in:fade>
+
+                      <!--  [ℹ] site-image 
                       -->
                       <a 
                         rel="nofollow" 
-                        aria-label="cta_button_standings"
-                        on:click={() => triggerGoggleEvents("cta_button_standings")}
+                        aria-label="betting_site_logo_standings"
+                        on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
                         href={data.register_link}
-                        target="_blank">
-                        <button
-                          class="btn-primary btn-cta"
-                          aria-label="registerCTA"
-                          style="width: 100% !important;">
-                          <p 
-                            class="w-500 s-14 w-normal">
-                            Register
-                          </p>
-                        </button>
+                        style="width: inherit;">
+                        <img
+                          style="background-color: var({imageVar});"
+                          class="extra-info-img"
+                          src={data.image}
+                          alt={data.title}
+                        />
                       </a>
-                      <!--  [ℹ] extra-site info text 
+
+                      <!--  [ℹ] extra-site info 
                       -->
-                      <p 
-                        class="small" 
-                        style="color: #CCCCCC;">
-                        {data.information}
-                      </p>
+                      <div 
+                        class="extra-info-container">
+                        <!--  [ℹ] text 
+                        -->
+                        <p 
+                          class="large">
+                          {data.bonus_description}
+                        </p>
+                        <!--  [ℹ] button_cta 
+                        -->
+                        <a 
+                          rel="nofollow" 
+                          aria-label="cta_button_standings"
+                          on:click={() => triggerGoggleEvents("cta_button_standings")}
+                          href={data.register_link}
+                          target="_blank">
+                          <button
+                            class="btn-primary btn-cta"
+                            aria-label="registerCTA"
+                            style="width: 100% !important;">
+                            <p 
+                              class="w-500 s-14 w-normal">
+                              Register
+                            </p>
+                          </button>
+                        </a>
+                        <!--  [ℹ] extra-site info text 
+                        -->
+                        <p 
+                          class="small" 
+                          style="color: #CCCCCC;">
+                          {data.information}
+                        </p>
+                      </div>
+                      
                     </div>
-                    
-                  </div>
-                {/if}
+                  {/if}
 
-              </div>
+                </div>
 
-            {/if}
+              {/if}
+
+            </div>
 
           </div>
 
-        </div>    
+        <!-- [ℹ] widget-component [MOBILE]
+        -->
+        {:else}
 
-      {/if}
+          <!-- [ℹ] promise was fulfilled 
+          -->
+          <h1 
+            class="s-20 m-b-10 w-500 color-black-2"
+            style="margin-top: 0px;"
+            class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+            {STANDINGS_T.translations.standings}
+          </h1>
+
+          <div 
+            id="standings-table-container"
+            class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+
+            <!-- [ℹ] widget-top-selection-standings-view [DESKTOP]
+            -->
+            <div
+              id="standings-view-box"
+              class="row-space-start m-b-20">
+
+              <div
+                class="stand-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('total')}
+                class:activeOpt={selectedOpt == 'total'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {STANDINGS_T.translations.total}
+                </p>
+              </div>
+
+              <div
+                class="stand-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('home')}
+                class:activeOpt={selectedOpt == 'home'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {STANDINGS_T.translations.home}
+                </p>
+              </div>
+
+              <div
+                class="stand-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('away')}
+                class:activeOpt={selectedOpt == 'away'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {STANDINGS_T.translations.away}
+                </p>
+              </div>
+
+            </div>
+
+            <!-- [ℹ] widget table view mobile select
+            -->
+            <div
+              id="mobile-table-box"
+              class="row-space-out m-b-12">
+
+              <button
+                class="table-nav-btn"
+                aria-label="selectedOptionTableMobile"
+                disabled={selectedOptTableMobile == 1}
+                on:click={() => selectedOptTableMobile = selectedOptTableMobile - 1}
+                >
+                {#if $userBetarenaSettings.theme == 'Dark'}
+                  <img 
+                    src={slider_left_dark} 
+                    alt=""
+                  />
+                {:else}
+                  <img 
+                    src={slider_left} 
+                    alt=""
+                  />
+                {/if}
+              </button>
+
+              <p
+                class="s-14 w-500 color-black">
+                {STANDINGS_T.translations.table} {selectedOptTableMobile}
+              </p>
+
+              <button
+                class="table-nav-btn"
+                aria-label="selectedOptionTableMobile"
+                disabled={selectedOptTableMobile == 3}
+                on:click={() => selectedOptTableMobile = selectedOptTableMobile + 1}
+                >
+                {#if $userBetarenaSettings.theme == 'Dark'}
+                  <img 
+                    src={slider_right_dark} 
+                    alt=""
+                  />
+                {:else}
+                  <img 
+                    src={slider_right} 
+                    alt=""
+                  />
+                {/if}
+              </button>
+
+
+            </div>
+
+            <table 
+              class="standings_table">
+
+              <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
+              -->
+              <tr
+                class="row-head">
+
+                <th
+                  style="width: 100%;">
+                  <p
+                    class="s-12 m-r-20 color-grey">
+                    #
+                    <span class='m-r-20'/>
+                    {STANDINGS_T.translations.team}
+                  </p>
+                </th>
+
+                <!-- [ℹ] table view 1 
+                -->
+                {#if selectedOptTableMobile == 1}
+
+                  <th>
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.pts}
+                    </p>
+                  </th>
+
+                  <th>
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.pld}
+                    </p>
+                  </th>
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.w}
+                    </p>
+                  </th>
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.d}
+                    </p>
+                  </th>
+
+                  <th>
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.l}
+                    </p>
+                  </th>
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.gf}
+                    </p>
+                  </th>
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.ga}
+                    </p>
+                  </th>
+
+                {/if}
+
+                <!-- [ℹ] table view 2
+                -->
+                {#if selectedOptTableMobile == 2}
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.gavg}
+                    </p>
+                  </th>
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.yavg}
+                    </p>
+                  </th>
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations.cavg}
+                    </p>
+                  </th>
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations["1.5+"]}
+                    </p>
+                  </th>
+
+                {/if}
+
+                <!-- [ℹ] table view 3
+                -->
+                {#if selectedOptTableMobile == 3}
+
+                  <th
+                    class="">
+                    <p
+                      class="s-12 color-grey">
+                      {STANDINGS_T.translations["2.5+"]}
+                    </p>
+                  </th>
+
+                  {#if $session.selectedSeasonID && currentSeason != undefined}
+                    {#if $session.selectedSeasonID === currentSeason}
+                      <th>
+                        <p
+                          class="s-12 color-grey">
+                          {STANDINGS_T.translations.prob}
+                        </p>
+                      </th>
+                    {/if}
+                  {/if}
+
+                  <th>
+                    <p
+                      class="s-12 color-grey no-wrap">
+                      {STANDINGS_T.translations.recent_form}
+                    </p>
+                  </th>
+                
+                {/if}
+
+              </tr>
+
+              <!-- [ℹ] extra row-space
+              -->
+              {#if $userBetarenaSettings.theme == 'Dark' && selectedOptTableMobile == 1}
+                <tr
+                  style="padding: 16px;">
+                  <td><p style="color: transparent">-</p></td>
+                </tr>
+              {/if}
+
+              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              -->
+              {#each STANDINGS_DATA.seasons as season}
+                {#if season.season_id === $session.selectedSeasonID}
+                  {#each season[selectedOpt] as team}
+                    <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
+                  {/each}
+                {/if}
+              {/each}
+
+            </table>
+
+            <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
+            -->
+            <div
+              id="standings-sportbook-details"
+              class="m-t-20">
+
+              {#if data}
+
+                <div
+                  id='button-extra-info-container'>
+
+                  <div
+                    id="betting-site-container"
+                    class="row-space-start m-r-16">
+
+                    <a 
+                      rel="nofollow"
+                      aria-label="betting_site_logo_standings"
+                      on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
+                      href={data.register_link}
+                      target="_blank"
+                      style="width: inherit;">
+                      <img 
+                        id='sportbook-logo-img'
+                        src={data.image}
+                        alt={data.title}
+                      />
+                    </a>
+
+                    <button 
+                      class="place-bet-btn btn-primary"
+                      aria-label="toggleCTA"
+                      on:click={() => toggleCTA = !toggleCTA}>
+                      <p 
+                        class="medium">
+                        Bet now
+                      </p>
+                    </button>
+                  </div>
+
+                  <!-- [ℹ] extra-info pop-up container
+                  -->
+                  {#if toggleCTA}
+                    <div 
+                      class="extra-info" 
+                      in:fade>
+
+                      <!--  [ℹ] site-image 
+                      -->
+                      <a 
+                        rel="nofollow" 
+                        aria-label="betting_site_logo_standings"
+                        on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
+                        href={data.register_link}
+                        style="width: inherit;">
+                        <img
+                          style="background-color: var({imageVar});"
+                          class="extra-info-img"
+                          src={data.image}
+                          alt={data.title}
+                        />
+                      </a>
+
+                      <!--  [ℹ] extra-site info 
+                      -->
+                      <div 
+                        class="extra-info-container">
+                        <!--  [ℹ] text 
+                        -->
+                        <p 
+                          class="large">
+                          {data.bonus_description}
+                        </p>
+                        <!--  [ℹ] button_cta 
+                        -->
+                        <a 
+                          rel="nofollow" 
+                          aria-label="cta_button_standings"
+                          on:click={() => triggerGoggleEvents("cta_button_standings")}
+                          href={data.register_link}
+                          target="_blank">
+                          <button
+                            class="btn-primary btn-cta"
+                            aria-label="registerCTA"
+                            style="width: 100% !important;">
+                            <p 
+                              class="w-500 s-14 w-normal">
+                              Register
+                            </p>
+                          </button>
+                        </a>
+                        <!--  [ℹ] extra-site info text 
+                        -->
+                        <p 
+                          class="small" 
+                          style="color: #CCCCCC;">
+                          {data.information}
+                        </p>
+                      </div>
+                      
+                    </div>
+                  {/if}
+
+                </div>
+
+              {/if}
+
+            </div>
+
+          </div>    
+
+        {/if}
 
     <!-- [ℹ] promise was rejected
     -->
@@ -1296,12 +1328,17 @@
     z-index: 1000;
   }
 
+  /* [ℹ] NO DATA WIDGET STYLE / CSS */
+
   #no-widget-box {
     padding: 20px;
     background: #FFFFFF;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
+    text-align: center;
   }
+
+  /* [ℹ] SEO WIDGET DATA */
   
   #seo-widget-box {
 		position: absolute;

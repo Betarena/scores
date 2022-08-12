@@ -6,12 +6,68 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_NAVBAR_DATA } from '$lib/graphql/header/query';
 import type { Cache_Single_Lang_Header_Translation_Response, Hasura_Header_Translation_Response } from '$lib/models/navbar/types';
 
+// [❗] critical
+import Bull from 'bull';
+const cacheQueueNavbar = new Bull('cacheQueueNavbar', import.meta.env.VITE_REDIS_CONNECTION_URL.toString())
+
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
+export async function post(): Promise < unknown > {
 
-export async function post(): Promise< any > {
-  
+  // [🐛] debug
+  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_navbar_trigerred at: ${new Date().toDateString()}`)
+
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueNavbar.add();
+
+  return {
+    status: 200,
+    body: { 
+      job_id: job.id,
+      message: '✅ Success \nnavbar/header cache data updated!'
+    }
+  }
+
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//     CACHING w/ REDIS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function cacheNavBar(lang: string, json_cache: Cache_Single_Lang_Header_Translation_Response) {
+  try {
+    //[ℹ] persist redis (cache)
+    await redis.hset('navbar_t', lang, JSON.stringify(json_cache));
+    // [🐛] debug
+    if (dev) console.debug('✅ navbar-data cached')
+  } 
+  catch (e) {
+    console.error("❌ unable to cache", 'navbar-data', e);
+  }
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [ℹ] DELETE CACHE ACTION
+// [❗] DEPRECEATED [23/07/20222]
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function deleteCacheNavBar() {
+  await redis.del('navbar_t')
+  return
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueueNavbar.process (async (job, done) => {
+  // console.log(job.data.argumentList);
+
+  /* 
+  do stuff
+  */
+
 	// [ℹ] get HASURA-DB response;
 	const response: Hasura_Header_Translation_Response = await initGrapQLClient().request(GET_NAVBAR_DATA);
 
@@ -35,7 +91,7 @@ export async function post(): Promise< any > {
     scores_top_bar_messages: undefined
   }
 
-  deleteCacheNavBar()
+  // deleteCacheNavBar()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {
@@ -52,34 +108,5 @@ export async function post(): Promise< any > {
     await cacheNavBar(lang_, finalCacheObj);
   }
 
-	// [ℹ] return, RESPONSE;
-	return {
-    status: 200,
-    body: '✅ Success \nnavbar/header cache data updated!'
-  }
-
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// - cacheNavBar(lang, json_cache)
-// - deleteCacheNavBar()
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-async function cacheNavBar(lang: string, json_cache: Cache_Single_Lang_Header_Translation_Response) {
-  try {
-    //[ℹ] persist redis (cache)
-    await redis.hset('navbar_t', lang, JSON.stringify(json_cache));
-    // [🐛] debug
-    if (dev) console.debug('✅ navbar-data cached')
-  } 
-  catch (e) {
-    console.error("❌ unable to cache", 'navbar-data', e);
-  }
-}
-
-async function deleteCacheNavBar() {
-  await redis.del('navbar_t')
-  return
-}
+  return "done";
+});

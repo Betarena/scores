@@ -10,31 +10,54 @@ import type { All_SportBook_Details_Data, Cache_Single_Lang_Featured_Betting_Sit
 import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/featured_betting_sites/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
+import { performance } from 'perf_hooks';
+
+// [❗] critical
+import Bull from 'bull';
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueueFeaturedBetSite = new Bull('cacheQueueFeaturedBetSite', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    }
+  }, 
+  settings
+);
+const cacheTarget = "REDIS CACHE | featured match"
+let logs = []
+
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-
 export async function post(): Promise < unknown > {
 
-  // [ℹ] get KEY platform translations
-  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+  // [🐛] debug
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
-  // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang
-    .filter(a => a.link)         /* filter for NOT "null" */
-    .map(a => a.link)            /* map each LANG */ 
+  // [ℹ] producers [JOBS]
+  const job = await cacheQueueFeaturedBetSite.add();
 
-  // [ℹ] push "EN"
-  langArray.push('en')
+  console.log(`
+    job_id: ${job.id}
+  `)
 
-  await featuredBettingSiteGeoDataGeneration()
-  await featuredBettingSiteLangDataGeneration(langArray)
-
-  // [ℹ] return, RESPONSE;
   return {
     status: 200,
-    body: '✅ Success \nFeatured Betting Sites Updated!'
+    body: { 
+      job_id: job.id
+    }
   }
+
 }
 
 /**
@@ -73,13 +96,60 @@ async function deleteFeaturedBettingSiteLang () {
   return
 }
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] BULL WORKERS 
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+cacheQueueFeaturedBetSite.process (async function (job, done) {
+  // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
+
+  /* 
+  do stuff
+  */
+
+  const t0 = performance.now();
+
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang_dev
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  await featuredBettingSiteGeoDataGeneration()
+  await featuredBettingSiteLangDataGeneration(langArray)
+
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
+});
+
 /**
  * [ℹ] Featured Betting Sites CACHE GENERATION
 */
 
 async function featuredBettingSiteGeoDataGeneration () {
   
-  await deleteFeaturedBettingSiteGeoPos()
+  // await deleteFeaturedBettingSiteGeoPos()
 
   // [ℹ] get all of the SELECTED FIXTURES from HASURA;
   const response = await getAllFeaturedBettingSite()
@@ -100,7 +170,7 @@ async function featuredBettingSiteLangDataGeneration (langArray: string[]) {
 
   const response: Scores_Featured_Betting_Sites_Hasura = await initGrapQLClient().request(GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES)
 
-  deleteFeaturedBettingSiteLang()
+  // deleteFeaturedBettingSiteLang()
 
   // [ℹ] for-each available translation:
   for (const lang_ of langArray) {

@@ -7,23 +7,37 @@ import { gql } from 'graphql-request';
  * ... get ALL LEAGUE LIST DATA from the DB
 */
 export const GET_COMPLETE_LEAGUE_LIST_DATA = gql`
-    query GET_COMPLETE_LEAGUE_LIST_DATA @cached(ttl: 300) {
-        scores_league_list {
-            country_id
-            country_name
-            image_path
-            league_id
-            league_name
-            logo_path
-            type
-        }
-        leagues_filtered_country {
-            lang
-            leagues
-        }
-        scores_leagues_list_translations {
-            lang
-            translations
-        }
+  query GET_COMPLETE_LEAGUE_LIST_DATA @cached(ttl: 300) {
+
+    scores_league_list {
+      country_id
+      country_name
+      image_path
+      league_id
+      league_name
+      logo_path
+      type
     }
+
+    leagues_filtered_country {
+      lang
+      leagues
+    }
+
+    scores_leagues_list_translations_dev {
+      lang
+      translations
+    }
+
+    scores_tournaments_dev {
+      id
+      tournament_id
+      urls
+    }
+    scores_general_translations_dev {
+      lang
+      countries
+    }
+
+  }
 `;
