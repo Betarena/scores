@@ -122,5 +122,5 @@ cacheQueueSeoBlock.process (async (job, done) => {
     await cacheSEOblock(lang_, finalCacheObj);
   }
 
-  return "done";
+  done();
 });
