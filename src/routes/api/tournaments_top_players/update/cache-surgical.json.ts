@@ -29,13 +29,14 @@ import type {
   BETARENA_HASURA_scores_football_players, 
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
+import type { BACKEND_tournament_standings_surgical_update } from '$lib/models/tournaments/standings/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 const settings = {
-  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  stalledInterval: 600000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
@@ -65,7 +66,7 @@ export async function post({ request }): Promise < unknown > {
   const dataSurgical = JSON.parse(JSON.stringify(body));
   
   // [ℹ] job producers
-  const job = await cacheQueueTourTopPlay.add(dataSurgical);
+  const job = await cacheQueueTourTopPlay.add(dataSurgical, { timeout: 300000 });
 
   console.log(`
     job_id: ${job.id}
@@ -121,20 +122,6 @@ cacheQueueTourTopPlay.process (async function (job, done) {
   console.log(err)
 });
 
-cacheQueueTourTopPlay.on('active', async (job) => {
-  await sleep(600000);
-  const completed: boolean = await job.isCompleted()
-  const streamLogs: string = logs.toString().replace(/,/g," ");
-  if (!completed) {
-    await job.discard()
-    await job.moveToFailed(new Error(streamLogs))
-  }
-});
-
-function sleep (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -148,7 +135,18 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   /*
     [ℹ] surgical data breakdown
   */
-
+  if (dataUpdate === undefined) {
+    logs.push(`dataUpdate is undefined`)
+    logs.push(`dataUpdate: ${dataUpdate}`)
+    console.log("dataUpdate undefined!")
+    return;
+  }
+  if (dataUpdate.leagueSeasons === undefined) {
+    logs.push(`dataUpdate.leagueSeasons is undefined`)
+    logs.push(`dataUpdate.leagueSeasons: ${dataUpdate?.leagueSeasons}`)
+    console.log("dataUpdate.leagueSeasons undefined!")
+    return;
+  }
   const leagueIdsArr = dataUpdate.leagueSeasons.map(a => a.leagueId);
 
   logs.push(`num. of leagueIds: ${dataUpdate.leagueSeasons.length}`);
