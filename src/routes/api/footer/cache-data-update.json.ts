@@ -36,7 +36,7 @@ export async function post(): Promise < unknown > {
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_footer_trigerred at: ${new Date().toDateString()}`)
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueFooter.add();
+  const job = await cacheQueueFooter.add({});
 
   return {
     status: 200,

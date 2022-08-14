@@ -42,7 +42,7 @@ export async function post(): Promise< any > {
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_seo_block_trigerred at: ${new Date().toDateString()}`)
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueSeoBlock.add();
+  const job = await cacheQueueSeoBlock.add({});
 
   return {
     status: 200,

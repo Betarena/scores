@@ -61,7 +61,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueuePageSeo.add();
+  const job = await cacheQueuePageSeo.add({});
 
   console.log(`
     job_id: ${job.id}

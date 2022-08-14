@@ -36,7 +36,7 @@ export async function post(): Promise < unknown > {
   if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_navbar_trigerred at: ${new Date().toDateString()}`)
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueNavbar.add();
+  const job = await cacheQueueNavbar.add({});
 
   return {
     status: 200,

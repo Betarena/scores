@@ -53,7 +53,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueTourStandAll.add();
+  const job = await cacheQueueTourStandAll.add({});
 
   console.log(`
     job_id: ${job.id}

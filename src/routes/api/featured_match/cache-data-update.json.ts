@@ -93,7 +93,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueFeaturedMatch.add();
+  const job = await cacheQueueFeaturedMatch.add({}, {timeout: 180000});
 
   console.log(`
     job_id: ${job.id}

@@ -45,7 +45,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueFeaturedBetSite.add();
+  const job = await cacheQueueFeaturedBetSite.add({});
 
   console.log(`
     job_id: ${job.id}
