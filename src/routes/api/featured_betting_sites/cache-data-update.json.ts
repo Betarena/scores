@@ -1,41 +1,46 @@
-
-// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 import { getAllSportbookDetails } from '$lib/firebase/featured_betting_sites'
-import type { All_SportBook_Details_Data, Cache_Single_Lang_Featured_Betting_Site_Translation_Response, Scores_Featured_Betting_Sites_Hasura } from '$lib/models/featured_betting_sites/firebase-real-db-interface'
 import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/featured_betting_sites/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
-
 import { performance } from 'perf_hooks';
-
-// [❗] critical
 import Bull from 'bull';
+
+import type { 
+  All_SportBook_Details_Data, 
+  Cache_Single_Lang_Featured_Betting_Site_Translation_Response, 
+  Scores_Featured_Betting_Sites_Hasura 
+} from '$lib/models/featured_betting_sites/firebase-real-db-interface'
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueFeaturedBetSite = new Bull('cacheQueueFeaturedBetSite', 
+const cacheQueueFeaturedBetSite = new Bull (
+  'cacheQueueFeaturedBetSite', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
-const cacheTarget = "REDIS CACHE | featured match"
+const cacheTarget = "REDIS CACHE | featured betting site"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
@@ -45,7 +50,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueFeaturedBetSite.add();
+  const job = await cacheQueueFeaturedBetSite.add({});
 
   console.log(`
     job_id: ${job.id}
@@ -60,9 +65,9 @@ export async function post(): Promise < unknown > {
 
 }
 
-/**
- * [ℹ] Featured Betting Sites CACHEING ACTIONS METHODS
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] CACHING METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheFeaturedBettingSiteGeoPos (geoPos: string, json_cache: All_SportBook_Details_Data) {
   try {
@@ -143,9 +148,9 @@ cacheQueueFeaturedBetSite.process (async function (job, done) {
   console.log(err)
 });
 
-/**
- * [ℹ] Featured Betting Sites CACHE GENERATION
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function featuredBettingSiteGeoDataGeneration () {
   
@@ -183,9 +188,9 @@ async function featuredBettingSiteLangDataGeneration (langArray: string[]) {
 
 }
 
-/**
- * [ℹ] Featured Match Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function getAllFeaturedBettingSite (): Promise < Array < All_SportBook_Details_Data > > {
 

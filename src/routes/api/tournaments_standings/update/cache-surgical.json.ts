@@ -1,8 +1,9 @@
-// [ℹ] import $app `modules`
 import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import fs from 'fs';
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
 import { 
   GET_LEAGUE_W_STANDINGS_INFO, 
@@ -21,34 +22,34 @@ import type {
   StandingsDatum 
 } from '$lib/models/hasura';
 
-import { performance } from 'perf_hooks';
-import fs from 'fs';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueTourStand = new Bull('cacheQueueTourStand', 
+const cacheQueueTourStand = new Bull (
+  'cacheQueueTourStand', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
-
 const cacheTarget = "REDIS CACHE | tournament standings surgical"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post({ request }): Promise < unknown > {
 
   const body = await request.json();
@@ -71,7 +72,7 @@ export async function post({ request }): Promise < unknown > {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//  PERSIST CACHING w/ REDIS
+//  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheData (league_id: number, json_cache: Cache_Single_Tournaments_League_Standings_Info_Data_Response) {
@@ -137,9 +138,9 @@ cacheQueueTourStand.process (async function (job, done) {
 //   cacheQueueTourStand.obliterate({ force: true })
 // })
 
-/**
- * [ℹ] Tournaments Page Data Generation Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /*
 

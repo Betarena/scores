@@ -1,8 +1,17 @@
 import { dev } from '$app/env'
-
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-
+import { 
+  HASURA_BETARENA_QUERY_TOP_PLAYERS_T,
+  HASURA_GET_TARGET_LEAGUES,
+  HASURA_GET_TARGET_SEASONS,
+  HASURA_GET_TARGET_TEAMS_AND_PLAYERS,
+  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA, 
+  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA 
+} from '$lib/graphql/tournaments/top_players/query';
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
+import fs from 'fs';
 
 import type { 
   BETARENA_HASURA_top_players_query, 
@@ -16,50 +25,39 @@ import type {
   Top_player_total_shots,
   Tournament_Season_Top_Player 
 } from '$lib/models/tournaments/top_players/types';
-
-import { 
-  HASURA_BETARENA_QUERY_TOP_PLAYERS_T,
-  HASURA_GET_TARGET_LEAGUES,
-  HASURA_GET_TARGET_SEASONS,
-  HASURA_GET_TARGET_TEAMS_AND_PLAYERS,
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA, 
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA 
-} from '$lib/graphql/tournaments/top_players/query';
-
 import type { 
   BETARENA_HASURA_scores_football_players, 
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
 
-import { performance } from 'perf_hooks';
-import fs from 'fs';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
-import type { BACKEND_tournament_standings_surgical_update } from '$lib/models/tournaments/standings/types';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueTourTopPlay = new Bull('cacheQueueTourTopPlay', 
+const cacheQueueTourTopPlay = new Bull (
+  'cacheQueueTourTopPlay', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
-
 const cacheTarget = "REDIS CACHE | tournament top_players surgical"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post({ request }): Promise < unknown > {
 
   const body = await request.json();
@@ -82,7 +80,7 @@ export async function post({ request }): Promise < unknown > {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
+//  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response) {
@@ -137,9 +135,9 @@ function sleep (ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-/**
- * [ℹ] Tournaments Page Data Generation Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surgical_update) {
 

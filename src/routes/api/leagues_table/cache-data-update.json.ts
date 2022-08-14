@@ -1,12 +1,9 @@
-
-// ... import $app `modules`;
 import { dev } from '$app/env'
-
-// ... import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
-// ... DECLARING TYPESCRIPT-TYPES imports;
 import type { 
   Cache_Single_Geo_Leagues_Table_Translation_Response, 
   Cache_Single_Lang_Leagues_Table_Translation_Response, 
@@ -19,32 +16,34 @@ import type {
 import { GET_LEAGUES_TABLE_DATA } from '$lib/graphql/leagues_table/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
-import { performance } from 'perf_hooks';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueLeaguesTable = new Bull('cacheQueueLeaguesTable', 
+const cacheQueueLeaguesTable = new Bull (
+  'cacheQueueLeaguesTable', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
 const cacheTarget = "REDIS CACHE | leagues_table"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
@@ -54,7 +53,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueLeaguesTable.add();
+  const job = await cacheQueueLeaguesTable.add({});
 
   console.log(`
     job_id: ${job.id}
@@ -68,9 +67,9 @@ export async function post(): Promise < unknown > {
   }
 }
 
-/**
- * [ℹ] Leagues Table (STANDINGS) CACHEING ACTIONS METHODS
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] CACHING METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheLeaguesTableGeoPos (geoPos: string, json_cache: Cache_Single_Geo_Leagues_Table_Translation_Response) {
   try {
@@ -151,10 +150,9 @@ cacheQueueLeaguesTable.process (async function (job, done) {
   console.log(err)
 });
 
-
-/**
- * [ℹ] Leagues Table (STANDINGS) Sites CACHE GENERATION
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function leagueTableGeoDataGeneration () {
 
@@ -195,9 +193,9 @@ async function leagueTableLangDataGeneration (langArray: string[]) {
 
 }
 
-/**
- * [ℹ] Leagues Table (STANDINGS) Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Translation_Response >> {
 
