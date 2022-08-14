@@ -29,6 +29,7 @@ import type {
   BETARENA_HASURA_scores_football_players, 
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
+import type { BACKEND_tournament_standings_surgical_update } from '$lib/models/tournaments/standings/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -65,7 +66,7 @@ export async function post({ request }): Promise < unknown > {
   const dataSurgical = JSON.parse(JSON.stringify(body));
   
   // [ℹ] job producers
-  const job = await cacheQueueTourTopPlay.add(dataSurgical);
+  const job = await cacheQueueTourTopPlay.add(dataSurgical, { timeout: 300000 });
 
   console.log(`
     job_id: ${job.id}
@@ -120,20 +121,6 @@ cacheQueueTourTopPlay.process (async function (job, done) {
 }).catch(err => {
   console.log(err)
 });
-
-cacheQueueTourTopPlay.on('active', async (job) => {
-  await sleep(600000);
-  const completed: boolean = await job.isCompleted()
-  const streamLogs: string = logs.toString().replace(/,/g," ");
-  if (!completed) {
-    await job.discard()
-    await job.moveToFailed(new Error(streamLogs))
-  }
-});
-
-function sleep (ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] METHOD
