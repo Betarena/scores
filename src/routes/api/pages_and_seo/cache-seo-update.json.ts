@@ -1,42 +1,16 @@
 import { dev } from '$app/env'
-
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { removeDiacritics } from '$lib/utils/languages'
 import fs from 'fs';
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const { SitemapStream, streamToPromise } = require('sitemap')
 const { Readable } = require('stream')
 const format = require('xml-formatter');
-
-import { performance } from 'perf_hooks';
-
-// [❗] critical
-import Bull from 'bull';
-const settings = {
-  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
-  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
-  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
-}
-const cacheQueuePageSeo = new Bull('cacheQueuePageSeo', 
-  { 
-    redis: { 
-      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
-      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
-      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
-      tls: {}
-    }
-  }, 
-  settings
-);
-const cacheTarget = "REDIS CACHE | featured match"
-let logs = []
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// TYPES DECLARATION
-// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 import { 
   GET_COMPLETE_PAGES_AND_SEO_DATA 
@@ -49,9 +23,34 @@ import type {
   Hasura_Complete_Pages_SEO 
 } from '$lib/models/pages_and_seo/types'
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+const settings = {
+  stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const cacheQueuePageSeo = new Bull (
+  'cacheQueuePageSeo', 
+  { 
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
+    },
+    settings: settings
+  }
+);
+const cacheTarget = "REDIS CACHE | navbar"
+let logs = []
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
@@ -61,7 +60,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueuePageSeo.add();
+  const job = await cacheQueuePageSeo.add({});
 
   console.log(`
     job_id: ${job.id}
@@ -76,7 +75,7 @@ export async function post(): Promise < unknown > {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//  PERSIST CACHING w/ REDIS
+//  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheHomepageSEOData (lang: string, json_cache: Cache_Single_Homepage_SEO_Translation_Response) {
@@ -118,11 +117,6 @@ async function cacheSitemapURLs (url: string) {
     console.debug('❌ unable to cache - seo / sitemap', e);
   }
 }
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// [ℹ] DELETE CACHE ACTION
-// [❗] DEPRECEATED [23/07/20222]
-// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function deleteCacheHomepageSEOData () {
   await redis.del('homepage_seo')
@@ -193,9 +187,8 @@ cacheQueuePageSeo.process (async function (job, done) {
   console.log(err)
 });
 
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//  STANDARD API FALLBACK
+//  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function homepageSEOandCaching(langArray: string[], data: Hasura_Complete_Pages_SEO) {
@@ -355,7 +348,7 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//  OTHER API METHODS
+//  [HELPER] METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function sitemapSave(uniqArray: string[]) {

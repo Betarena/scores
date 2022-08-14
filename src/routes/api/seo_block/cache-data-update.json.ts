@@ -1,62 +1,70 @@
-// [ℹ] import $app `modules`
 import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
+
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-
 import { GET_HREFLANG_DATA } from '$lib/graphql/query';
 import { GET_COMPLETE_PAGES_AND_SEO_DATA } from '$lib/graphql/pages_and_seo/query';
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
 import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
 import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
 
-import { performance } from 'perf_hooks';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueSeoBlock = new Bull('cacheQueueSeoBlock', 
+const cacheQueueSeoBlock = new Bull (
+  'cacheQueueSeoBlock', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
-const cacheTarget = "REDIS CACHE | league_list"
+const cacheTarget = "REDIS CACHE | seo_block"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
-export async function post(): Promise< any > {
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_seo_block_trigerred at: ${new Date().toDateString()}`)
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueSeoBlock.add();
+  const job = await cacheQueueSeoBlock.add({}, { timeout: 180000 });
+
+  console.log(`
+    job_id: ${job.id}
+  `)
 
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: '✅ Success \nSEO_Block cache data updated!'
+      job_id: job.id
     }
   }
 
 }
 
-/**
- * [ℹ] SEO Block CACHEING ACTIONS METHODS
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] CACHING METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheSEOblock(lang: string, json_cache: Cache_Single_Homepage_SEO_Block_Translation_Response) {
   try {
@@ -82,9 +90,36 @@ async function deleteSEOblock() {
 cacheQueueSeoBlock.process (async (job, done) => {
   // console.log(job.data.argumentList);
 
+  logs = []
+  logs.push(`${job.id}`);
+
   /* 
   do stuff
   */
+
+  const t0 = performance.now();
+  await main();
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
+});
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function main() {
 
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
@@ -122,5 +157,5 @@ cacheQueueSeoBlock.process (async (job, done) => {
     await cacheSEOblock(lang_, finalCacheObj);
   }
 
-  return "done";
-});
+  return;
+}

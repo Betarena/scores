@@ -1,55 +1,68 @@
-// [ℹ] import $app `modules`
 import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_NAVBAR_DATA } from '$lib/graphql/header/query';
-import type { Cache_Single_Lang_Header_Translation_Response, Hasura_Header_Translation_Response } from '$lib/models/navbar/types';
-
-// [❗] critical
+import { performance } from 'perf_hooks';
 import Bull from 'bull';
+
+import type { 
+  Cache_Single_Lang_Header_Translation_Response, 
+  Hasura_Header_Translation_Response 
+} from '$lib/models/navbar/types';
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueNavbar = new Bull('cacheQueueNavbar', 
+const cacheQueueNavbar = new Bull (
+  'cacheQueueNavbar', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
-const cacheTarget = "REDIS CACHE | league_list"
+const cacheTarget = "REDIS CACHE | navbar"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
-  if (dev) console.log(`ℹ FRONTEND_SCORES_REDIS_navbar_trigerred at: ${new Date().toDateString()}`)
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueNavbar.add();
+  const job = await cacheQueueNavbar.add({});
+
+  console.log(`
+    job_id: ${job.id}
+  `)
 
   return {
     status: 200,
     body: { 
-      job_id: job.id,
-      message: '✅ Success \nnavbar/header cache data updated!'
+      job_id: job.id
     }
   }
-
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
+//  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheNavBar(lang: string, json_cache: Cache_Single_Lang_Header_Translation_Response) {
@@ -64,11 +77,6 @@ async function cacheNavBar(lang: string, json_cache: Cache_Single_Lang_Header_Tr
   }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-// [ℹ] DELETE CACHE ACTION
-// [❗] DEPRECEATED [23/07/20222]
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
 async function deleteCacheNavBar() {
   await redis.del('navbar_t')
   return
@@ -81,12 +89,39 @@ async function deleteCacheNavBar() {
 cacheQueueNavbar.process (async (job, done) => {
   // console.log(job.data.argumentList);
 
+  logs = []
+  logs.push(`${job.id}`);
+
   /* 
   do stuff
   */
 
-	// [ℹ] get HASURA-DB response;
-	const response: Hasura_Header_Translation_Response = await initGrapQLClient().request(GET_NAVBAR_DATA);
+  const t0 = performance.now();
+  await main();
+  const t1 = performance.now();
+
+  if (dev) console.log(`
+    ${cacheTarget} updated!
+    completed in: ${(t1 - t0) / 1000} sec
+  `)
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
+});
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function main() {
+
+  // [ℹ] get HASURA-DB response;
+  const response: Hasura_Header_Translation_Response = await initGrapQLClient().request(GET_NAVBAR_DATA);
 
   // [ℹ] get-all-exisitng-lang-translations;
   const langArray: string [] = response.scores_hreflang
@@ -125,5 +160,5 @@ cacheQueueNavbar.process (async (job, done) => {
     await cacheNavBar(lang_, finalCacheObj);
   }
 
-  done();
-});
+  return;
+}

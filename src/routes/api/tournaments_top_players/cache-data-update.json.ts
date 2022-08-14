@@ -1,9 +1,14 @@
 import { dev } from '$app/env'
-
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-
+import { 
+  HASURA_BETARENA_QUERY_TOP_PLAYERS_T,
+  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA, 
+  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA 
+} from '$lib/graphql/tournaments/top_players/query';
 import fs from 'fs';
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
 import type { 
   BETARENA_HASURA_top_players_query, 
@@ -18,45 +23,40 @@ import type {
   Tournament_Season_Top_Player 
 } from '$lib/models/tournaments/top_players/types';
 
-import { 
-  HASURA_BETARENA_QUERY_TOP_PLAYERS_T,
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA, 
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA 
-} from '$lib/graphql/tournaments/top_players/query';
-
 import type { 
   BETARENA_HASURA_scores_football_players, 
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
 
-// [❗] critical
-import { performance } from 'perf_hooks';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueTourTopPlayAll = new Bull('cacheQueueTourTopPlayAll', 
+const cacheQueueTourTopPlayAll = new Bull (
+  'cacheQueueTourTopPlayAll', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
-
-const cacheTarget = "REDIS CACHE | tournament top_players surgical"
+const cacheTarget = "REDIS CACHE | tournament top_players (all)"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
@@ -66,7 +66,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueTourTopPlayAll.add();
+  const job = await cacheQueueTourTopPlayAll.add({});
 
   console.log(`
     job_id: ${job.id}
@@ -81,7 +81,7 @@ export async function post(): Promise < unknown > {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
+//  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response) {
@@ -145,9 +145,9 @@ cacheQueueTourTopPlayAll.process (async function (job, done) {
   console.log(err)
 });
 
-/**
- * [ℹ] Tournaments Page Data Generation Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function tournamentsTopPlayersDataGeneration () {
   

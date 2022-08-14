@@ -1,8 +1,5 @@
 
-// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
-
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { 
   getTargetFixtureOdds, 
@@ -14,45 +11,48 @@ import {
   GET_HREFLANG_DATA, 
   GET_FEATURED_MATCH_TRANSLATION } from "$lib/graphql/query"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
-// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 import type { 
   Cache_Single_Lang_Featured_Match_Translation_Response, 
-  FixtureResponse } from "$lib/models/featured_match/interface-fixture"
+  FixtureResponse 
+} from "$lib/models/featured_match/interface-fixture"
 import type { 
   SelectedFixutre, 
   SelectedFixture_AllData, 
   CompleteFixtureData_Response, 
-  Featured_Match_Translation_Response } from "$lib/models/featured_match/response_models"
-import type { SelectedFixture_LiveOdds_Response } from "$lib/models/featured_match/firebase-real-db-interface"
+  Featured_Match_Translation_Response 
+} from "$lib/models/featured_match/response_models"
+import type { 
+  SelectedFixture_LiveOdds_Response
+} from "$lib/models/featured_match/firebase-real-db-interface"
 
-import { performance } from 'perf_hooks';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueFeaturedMatch = new Bull('cacheQueueFeaturedMatch', 
+const cacheQueueFeaturedMatch = new Bull (
+  'cacheQueueFeaturedMatch', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
 const cacheTarget = "REDIS CACHE | featured match"
 let logs = []
 
-// [ℹ] server-variables;
 let userGeo: string
-
-// [ℹ] declaring component INSTANCED & VARIABLES;
 let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
     // [ℹ] contains the final-fixture-response-data;
     away_team_logo: undefined,             
@@ -81,9 +81,10 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
     selected_data: undefined
 }
 
-/**
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
@@ -93,7 +94,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueFeaturedMatch.add();
+  const job = await cacheQueueFeaturedMatch.add({}, { timeout: 180000 });
 
   console.log(`
     job_id: ${job.id}
@@ -108,9 +109,9 @@ export async function post(): Promise < unknown > {
 
 }
 
-/**
- * [ℹ] Featured Match CACHEING ACTIONS METHODS
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] CACHING METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheFeaturedMatchGeoPos(geoPos: string, json_cache: FixtureResponse) {
   try {
@@ -193,9 +194,9 @@ cacheQueueFeaturedMatch.process (async function (job, done) {
   console.log(err)
 });
 
-/**
- * [ℹ] Featured Match CACHE GENERATION
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function featuredMatchGeoDataGeneration () {
 
@@ -234,9 +235,9 @@ async function featuredMatchLangDataGeneration (langArray: string[]) {
   
 }
 
-/**
- * [ℹ] Featured Match Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 // [ℹ] contains all of the `match-selected-fixtures` data;
 async function getAllMatchSelectedFixtures(): Promise < SelectedFixture_AllData > {

@@ -1,12 +1,11 @@
 
-// [ℹ] import $app `modules`;
 import { dev } from '$app/env'
-
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
+import fs from 'fs';
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
-// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 import type { 
   BETARENA_HASURA_league_list_query,
   REDIS_CACHE_SINGLE_league_list_geo_data_response,
@@ -26,33 +25,34 @@ import type {
   BETARENA_HASURA_scores_tournaments 
 } from '$lib/models/hasura'
 
-import fs from 'fs';
-import { performance } from 'perf_hooks';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueLeaguesList = new Bull('cacheQueueLeaguesList', 
+const cacheQueueLeaguesList = new Bull (
+  'cacheQueueLeaguesList', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
 const cacheTarget = "REDIS CACHE | league_list"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
@@ -62,7 +62,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await cacheQueueLeaguesList.add();
+  const job = await cacheQueueLeaguesList.add({});
 
   console.log(`
     job_id: ${job.id}
@@ -77,9 +77,9 @@ export async function post(): Promise < unknown > {
 
 }
 
-/**
- * [ℹ] League List CACHEING ACTIONS METHODS
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] CACHING METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheGeoPos (geoPos: string, json_cache: REDIS_CACHE_SINGLE_league_list_geo_data_response) {
   try {
@@ -160,9 +160,9 @@ cacheQueueLeaguesList.process (async function (job, done) {
   console.log(err)
 });
 
-/**
- * [ℹ] League List Sites CACHE GENERATION
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function leagueListGeoDataGeneration () {
 
@@ -204,9 +204,9 @@ async function leagueListLangDataGeneration (langArray: string[]) {
   }
 }
 
-/**
- * [ℹ] League List [MAIN HELPER] Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_data_response >> {
 
@@ -378,10 +378,6 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
 
   return finalCacheObj
 }
-
-/**
- * [ℹ] Helper Methods
-*/
 
 function compareStrings(a, b) {
 
