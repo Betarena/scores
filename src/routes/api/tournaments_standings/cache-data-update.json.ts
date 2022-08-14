@@ -1,9 +1,10 @@
-// [ℹ] import $app `modules`
 import { dev } from '$app/env'
-// [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/query';
+import fs from 'fs';
+import Bull from 'bull';
+import { performance } from 'perf_hooks';
 
 import type { 
   BETARENA_HASURA_tournament_standings_query,
@@ -16,34 +17,34 @@ import type {
   StandingsDatum 
 } from '$lib/models/hasura';
 
-import fs from 'fs';
-import { performance } from 'perf_hooks';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueTourStandAll = new Bull('cacheQueueTourStandAll', 
+const cacheQueueTourStandAll = new Bull (
+  'cacheQueueTourStandAll', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
-
-const cacheTarget = "REDIS CACHE | tournament standings surgical"
+const cacheTarget = "REDIS CACHE | tournament standings (all)"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
   
   // [🐛] debug
@@ -68,7 +69,7 @@ export async function post(): Promise < unknown > {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//  PERSIST CACHING w/ REDIS
+//  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheTournamentsStandingsDataAlt (league_id: number, json_cache: Cache_Single_Tournaments_League_Standings_Info_Data_Response) {
@@ -101,7 +102,6 @@ async function deleteStandingsTranslationData () {
   return
 }
 
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -131,10 +131,9 @@ cacheQueueTourStandAll.process (async function (job, done) {
   console.log(err)
 });
 
-
-/**
- * [ℹ] Tournaments Page Data Generation Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function standingsDataGenerationAlt () {
   

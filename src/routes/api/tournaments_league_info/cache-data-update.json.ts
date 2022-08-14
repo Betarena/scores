@@ -1,9 +1,11 @@
 import { dev } from '$app/env'
-
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/league-info/query';
 import { removeDiacritics } from '$lib/utils/languages';
+import fs from 'fs';
+import { performance } from 'perf_hooks';
+import Bull from 'bull';
 
 import type { 
   BETARENA_HASURA_league_info_query,
@@ -11,34 +13,34 @@ import type {
   Cache_Single_Tournaments_League_Info_Data_Response
 } from '$lib/models/tournaments/league-info/types';
 
-import fs from 'fs';
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+// [❗] BULL CRITICAL
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-import { performance } from 'perf_hooks';
-
-// [❗] critical
-import Bull from 'bull';
 const settings = {
   stalledInterval: 300000, // How often check for stalled jobs (use 0 for never checking).
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueueTourInfo = new Bull('cacheQueueTourInfo', 
+const cacheQueueTourInfo = new Bull (
+  'cacheQueueTourInfo', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
       host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
       password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
       tls: {}
-    }
-  }, 
-  settings
+    },
+    settings: settings
+  }
 );
 const cacheTarget = "REDIS CACHE | tournament league_info"
 let logs = []
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] ENDPOINT METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
 export async function post(): Promise < unknown > {
 
   // [🐛] debug
@@ -63,7 +65,7 @@ export async function post(): Promise < unknown > {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
+//  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function cacheTournamentsPageLeagueInfoData (url: string, json_cache: Cache_Single_Tournaments_League_Info_Data_Response) {
@@ -131,9 +133,9 @@ cacheQueueTourInfo.process (async function (job, done) {
   console.log(err)
 });
 
-/**
- * [ℹ] Tournaments Page Data Generation Methods
-*/
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [MAIN] METHOD
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function sportbookDetailsGeneration () {
   
