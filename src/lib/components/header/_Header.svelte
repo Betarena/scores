@@ -470,13 +470,15 @@
             <!-- [ℹ] INIT-HIDDEN drop-down menu -->
             {#if dropdown_lang_visible}
               <div id="dropdown-menu" transition:fly>
-                {#each HEADER_TRANSLATION_DATA.langArray as lang}
-                  <div id="lang-select" on:click={() => selectLanguage(lang)}>
-                    <p class="color-white s-14">
-                      {lang.toUpperCase()}
-                    </p>
-                  </div>
-                {/each}
+                {#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
+                  {#if lang.toUpperCase() != server_side_language.toUpperCase()}
+                    <div id="lang-select" on:click={() => selectLanguage(lang)}>
+                      <p class="color-white s-14">
+                        {lang.toUpperCase()}
+                      </p>
+                    </div>
+                  {/if}
+                  {/each}
               </div>
             {/if}
           </div>
@@ -934,12 +936,14 @@
                   <!-- [ℹ] INIT-HIDDEN drop-down menu -->
                   {#if dropdown_lang_visible}
                     <div id="dropdown-menu" transition:fly>
-                      {#each HEADER_TRANSLATION_DATA.langArray as lang}
-                        <div id="lang-select" on:click={() => selectLanguage(lang)}>
-                          <p class="color-white s-14">
-                            {lang.toUpperCase()}
-                          </p>
-                        </div>
+                      {#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
+                        {#if lang.toUpperCase() != server_side_language.toUpperCase()}
+                          <div id="lang-select" on:click={() => selectLanguage(lang)}>
+                            <p class="color-white s-14">
+                              {lang.toUpperCase()}
+                            </p>
+                          </div>
+                        {/if}
                       {/each}
                     </div>
                   {/if}
