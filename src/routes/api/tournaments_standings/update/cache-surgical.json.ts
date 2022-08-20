@@ -66,7 +66,7 @@ export async function post({ request }): Promise < unknown > {
   return {
     status: 200,
     body: { 
-      job_id: 1
+      job_id: job.id
     }
   }
 }
