@@ -210,11 +210,11 @@ async function tournamentsTopPlayersDataGeneration () {
       VARIABLES
     );
 
-    for (const season of response_seasons.scores_football_seasons_details_dev) {
+    for (const season of response_seasons.scores_football_seasons_details) {
       season_details_map.set(season.id, season);
     }
 
-    total_limit = response_seasons.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
+    total_limit = response_seasons.scores_football_seasons_details_aggregate.aggregate.totalCount;
     offset += limit;
 
     // [ℹ] exit loop
@@ -228,7 +228,7 @@ async function tournamentsTopPlayersDataGeneration () {
 
   // [ℹ] MAIN
   // [ℹ] generate per LeagueId
-  for (const iterator of response_const.scores_football_leagues_dev) {
+  for (const iterator of response_const.scores_football_leagues) {
 
     // [ℹ] per LEAGUE
 

@@ -587,7 +587,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
   */
 
   // [ℹ] generate standings data per / league_id
-  for (const iterator of response.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues) {
 
     const finalCacheObj: Cache_Single_Tournaments_League_Standings_Info_Data_Response = { }
     finalCacheObj.seasons = []
