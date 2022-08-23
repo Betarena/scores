@@ -174,7 +174,12 @@
 		dropdown_lang_visible = false;
 
     // [ℹ] update <html {lang} >
-    document.documentElement.setAttribute('lang', lang);
+    if (lang === 'br') {
+      document.documentElement.setAttribute('lang', 'pt-BR');
+    }
+    else {
+      document.documentElement.setAttribute('lang', lang);
+    }
 
     // [ℹ] simply ignore current route
     // [ℹ] & navigate to the homepage (lang)
