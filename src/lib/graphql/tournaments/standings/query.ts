@@ -1,8 +1,10 @@
-// [ℹ] import necessary libraries;
 import { gql } from 'graphql-request';
 
 /**
- * [ℹ] GET HASURA league based data
+ * [ℹ] Surgical #1 
+ * [ℹ] standings query
+ * [ℹ] Based on League ID
+ * [ℹ] Based on Team ID
 */
 export const GET_LEAGUE_W_STANDINGS_INFO = gql`
   query GET_LEAGUE_W_STANDINGS_INFO
@@ -117,7 +119,9 @@ export const GET_LEAGUE_W_STANDINGS_INFO = gql`
 `;
 
 /**
- * [ℹ] TEST #2
+ * [ℹ] Surgical #2 (ALL)
+ * [ℹ] standings query
+ * [ℹ] Based on League ID
 */
 export const GET_LEAGUE_W_STANDINGS_INFO_2 = gql`
   query GET_LEAGUE_W_STANDINGS_INFO_2
@@ -175,14 +179,15 @@ export const GET_LEAGUE_W_STANDINGS_INFO_2 = gql`
       color_codes
       sports
     }
-    scores_widget_standings_translations_dev {
-      lang
-      translations
-    }
     
   }
 `;
 
+/**
+ * [ℹ] Surgical #2 (ALL)
+ * [ℹ] team statistics query
+ * [ℹ] Based on Team ID
+*/
 export const GET_TEAM_W_STATS_INFO_3 = gql`
   query GET_TEAM_W_STATS_INFO_3
     (
