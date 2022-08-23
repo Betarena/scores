@@ -25,6 +25,7 @@ import type {
 
 import type { 
   BETARENA_HASURA_scores_football_players, 
+  BETARENA_HASURA_scores_football_seasons_details, 
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
 
@@ -150,40 +151,49 @@ cacheQueueTourTopPlayAll.process (async function (job, done) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function tournamentsTopPlayersDataGeneration () {
-  
-  const final_obj_array = new Map <number, REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response> ()
+
+  // [ℹ] debug info
+  let t0;
+  let t1;
+
+  /*
+    [ℹ] all surgical data breakdown
+  */
   
   const limit = 100;
   let offset = 0;
   let total_limit;
 
-  // [🐛] debug [prod-handy]
+  t0 = performance.now();
+  const queryName = "HASURA_GET_TARGET_LEAGUES";
   if (dev) console.log(`ℹ obtaining main const data`)
   const response_const: BETARENA_HASURA_top_players_query = await initGrapQLClient().request(
     REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA,
   );
-  // [🐛] debug [prod-handy]
-  if (dev) console.log(`ℹ main data gathered`)
+  t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-  // [ℹ] JSON-ARRAY => HASHMAP conversion
+  /*
+    [ℹ] JSON-ARRAY => HASHMAP conversions
+  */
   
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ players_map is generating!`)
+  t0 = performance.now();
   const players_map = new Map()
   for (const p of response_const.scores_football_players) {
     players_map.set(p.player_id, p)
   }
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ players_map generated! With size: ${players_map.size}`)
-
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ teams_map is generating!`)
   const teams_map = new Map()
   for (const t of response_const.scores_football_teams) {
     teams_map.set(t.id, t)
   }
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ teams_map generated! With size: ${teams_map.size}`)
+  t1 = performance.now();
+  logs.push(`players_map generated with size: ${players_map.size}`)
+  logs.push(`teams_map generated with size: ${teams_map.size}`)
+  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  const final_obj_array = new Map <number, REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response> ()
+
+  const season_details_map = new Map <number, BETARENA_HASURA_scores_football_seasons_details> ()
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -200,7 +210,11 @@ async function tournamentsTopPlayersDataGeneration () {
       VARIABLES
     );
 
-    total_limit = response_seasons.scores_football_seasons_details_aggregate.aggregate.totalCount;
+    for (const season of response_seasons.scores_football_seasons_details_dev) {
+      season_details_map.set(season.id, season);
+    }
+
+    total_limit = response_seasons.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
     offset += limit;
 
     // [ℹ] exit loop
@@ -210,300 +224,300 @@ async function tournamentsTopPlayersDataGeneration () {
       break;
     }
 
-    for (const iterator of response_const.scores_football_leagues) {
-
-      // [ℹ] per LEAGUE
-
-      const finalCacheObj: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = { }
-      finalCacheObj.seasons = []
-      finalCacheObj.league_id = iterator.id;
-
-      // [ℹ] get all seasons for (this) league (tournament-id)
-      for (const season_main of iterator.seasons) {
-
-        const season_sub = response_seasons.scores_football_seasons_details
-          .find(( { id, league_id } ) =>  
-            league_id === season_main.league_id && 
-            id === season_main.id
-          )
-
-        if (season_sub == undefined ||
-            season_sub == null) {
-          continue;
-        }
-
-        const season_top_player_obj: Tournament_Season_Top_Player = { }
-        season_top_player_obj.season_id = season_main.id;
-        season_top_player_obj.top_players_rating = []  
-        season_top_player_obj.top_players_goals = []
-        season_top_player_obj.top_players_assists = []
-        season_top_player_obj.top_players_total_shots = []
-
-        if (season_sub.squad !== null &&
-          season_sub.squad.length != 0) {
-            
-          for (const season_team of season_sub.squad) {
-            for (const season_team_player of season_team.squad.data) {
-
-              // [ℹ] ignore those players with "NaN" rating
-              if (season_team_player?.rating == null || season_team_player?.rating == undefined) {
-                continue;
-              }
-
-              const top_player: Top_player_ratings = { }
-
-              const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_team_player.player_id);
-              const target_team: BETARENA_HASURA_scores_football_teams = teams_map.get(season_team.id);  // [ℹ] unecessary [?];
-              
-              top_player.avatar = 
-                target_player === undefined ||
-                target_player === null 
-                  ? null
-                  : target_player.data?.image_path;
-
-              top_player.rating =
-                parseFloat(season_team_player.rating.toString());
-
-              top_player.position =
-                target_player === undefined ||
-                target_player === null
-                  ? null
-                  : target_player.data?.position_id;
-
-              top_player.player_name =
-                season_team_player.player_name;
-              
-              top_player.team_logo = 
-                target_team === undefined ||
-                target_team === null
-                  ? null
-                  : target_team.data?.logo_path;
-                
-              top_player.rank =
-                1;
-
-              // [ℹ] ignore those players with "NaN" data
-              if (top_player?.player_name == null || top_player?.position == null) {
-                continue;
-              }
-
-              season_top_player_obj.top_players_rating.push(top_player);
-            }
-
-            season_top_player_obj.top_players_rating.sort((a, b) => parseFloat(b.rating.toString()) - parseFloat(a.rating.toString()));
-            season_top_player_obj.top_players_rating.splice(50);
-          }
-        }
-
-        if (season_sub.goalscorers !== null &&
-          season_sub.goalscorers.length != 0) {
-
-          for (const season_goalscorer of season_sub.goalscorers) {
-
-            // [ℹ] ignore those players with "NaN" goals
-            if (season_goalscorer?.goals == null || season_goalscorer?.goals == undefined) {
-              continue;
-            }
-            
-            const top_player: Top_player_goalscorers = { }
-
-            const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_goalscorer.player_id);
-            const target_team: BETARENA_HASURA_scores_football_teams = teams_map.get(season_goalscorer.team_id);  // [ℹ] unecessary [?];
-
-            top_player.avatar = 
-              target_player === undefined ||
-              target_player === null 
-                ? null
-                : target_player.data?.image_path;
-
-            top_player.goals =
-              season_goalscorer.goals
-
-            top_player.position =
-              target_player === undefined ||
-              target_player === null
-                ? null
-                : target_player.data?.position_id;
-
-            top_player.player_name =
-              season_goalscorer.player_name;
-            
-            top_player.team_logo = 
-              target_team === undefined ||
-              target_team === null
-                ? null
-                : target_team.data?.logo_path;
-              
-            top_player.rank =
-              season_goalscorer.position;
-
-            // [ℹ] ignore those players with "NaN" data
-            if (top_player?.player_name == null || top_player?.position == null) {
-              continue;
-            }
-
-            season_top_player_obj.top_players_goals.push(top_player);
-          }
-
-          season_top_player_obj.top_players_goals.sort((a, b) => parseFloat(b.goals.toString()) - parseFloat(a.goals.toString()));
-          season_top_player_obj.top_players_goals.splice(50);
-        }
-
-        if (season_sub.assistscorers !== null &&
-          season_sub.assistscorers.length != 0) {
-          
-          for (const season_assistscorer of season_sub.assistscorers) {
-
-            // [ℹ] ignore those players with "NaN" assists
-            if (season_assistscorer?.assists == null || season_assistscorer?.assists == undefined) {
-              continue;
-            }
-          
-            const top_player: Top_player_assits = { }
-
-            const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_assistscorer.player_id);
-            const target_team:  BETARENA_HASURA_scores_football_teams  = teams_map.get(season_assistscorer.team_id);  // [ℹ] unecessary [?];
-
-            top_player.avatar = 
-              target_player === undefined ||
-              target_player === null 
-                ? null
-                : target_player.data?.image_path;
-
-            top_player.assists =
-              season_assistscorer.assists
-
-            top_player.position =
-              target_player === undefined ||
-              target_player === null
-                ? null
-                : target_player.data?.position_id;
-
-            top_player.player_name =
-              season_assistscorer.player_name;
-            
-            top_player.team_logo = 
-              target_team === undefined ||
-              target_team === null
-                ? null
-                : target_team.data?.logo_path;
-              
-            top_player.rank =
-              season_assistscorer.position;
-
-            // [ℹ] ignore those players with "NaN" data
-            if (top_player?.player_name == null || top_player?.position == null) {
-              continue;
-            }
-
-            season_top_player_obj.top_players_assists.push(top_player);
-          }
-
-          season_top_player_obj.top_players_assists.sort((a, b) => parseFloat(b.assists.toString()) - parseFloat(a.assists.toString()));
-          season_top_player_obj.top_players_assists.splice(50);
-        }
-
-        if (season_sub.squad !== null &&
-          season_sub.squad.length != 0) {
-            
-          for (const season_team of season_sub.squad) {
-            for (const season_team_player of season_team.squad.data) {
-
-              // [ℹ] ignore those players with "NaN" shots_total
-              if (season_team_player?.shots?.shots_total == null || season_team_player?.shots?.shots_total == undefined) {
-                continue;
-              }
-
-              const top_player: Top_player_total_shots = { }
-
-              const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_team_player.player_id);
-              const target_team: BETARENA_HASURA_scores_football_teams = teams_map.get(season_team.id);  // [ℹ] unecessary [?];
-              
-              top_player.avatar = 
-                target_player === undefined ||
-                target_player === null 
-                  ? null
-                  : target_player.data?.image_path;
-
-              top_player.total_shots =
-                season_team_player?.shots?.shots_total;
-
-              top_player.position =
-                target_player === undefined ||
-                target_player === null
-                  ? null
-                  : target_player.data?.position_id;
-
-              top_player.player_name =
-                season_team_player.player_name;
-              
-              top_player.team_logo = 
-                target_team === undefined ||
-                target_team === null
-                  ? null
-                  : target_team.data?.logo_path;
-                
-              top_player.rank =
-                1;
-
-              // [ℹ] ignore those players with "NaN" data
-              if (top_player?.player_name == null || top_player?.position == null) {
-                continue;
-              }
-
-              season_top_player_obj.top_players_total_shots.push(top_player);
-            }
-
-            season_top_player_obj.top_players_total_shots.sort((a, b) => parseFloat(b.total_shots.toString()) - parseFloat(a.total_shots.toString()));
-            season_top_player_obj.top_players_total_shots.splice(50);
-          }
-        }
-
-        finalCacheObj.seasons.push(season_top_player_obj);
-      }
-
-      if (finalCacheObj.seasons.length == 0) {
-        continue;
-      }
-
-      const leagueExistsBool: boolean = final_obj_array.has(finalCacheObj.league_id)
-        
-      if (leagueExistsBool) {
-
-        const leagueTarget: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = final_obj_array.get(finalCacheObj.league_id)
-        leagueTarget.seasons = [...leagueTarget.seasons , ...finalCacheObj.seasons];
-        leagueTarget.seasons.sort((a, b) => parseFloat(b.season_id.toString()) - parseFloat(a.season_id.toString()));
-        final_obj_array.set(finalCacheObj.league_id, leagueTarget);
-        continue;
-      }
-
-      finalCacheObj.seasons.sort((a, b) => parseFloat(b.season_id.toString()) - parseFloat(a.season_id.toString()));
-
-      final_obj_array.set(finalCacheObj.league_id, finalCacheObj);
-    }
   }
 
-  // [🐛] debug
-  console.log(`ℹ data gathered! total leagues: ${final_obj_array.size}`)
+  // [ℹ] MAIN
+  // [ℹ] generate per LeagueId
+  for (const iterator of response_const.scores_football_leagues_dev) {
+
+    // [ℹ] per LEAGUE
+
+    const finalCacheObj: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = { }
+    finalCacheObj.seasons = []
+    finalCacheObj.league_id = iterator.id;
+
+    // [ℹ] get all seasons for (this) league (tournament-id)
+    for (const season_main of iterator.seasons) {
+
+      const season_sub = season_details_map.get(season_main.id);
+
+      if (season_sub == undefined ||
+          season_sub == null) {
+        continue;
+      }
+
+      const season_top_player_obj: Tournament_Season_Top_Player = { }
+      season_top_player_obj.season_id = season_main.id;
+      season_top_player_obj.top_players_rating = []  
+      season_top_player_obj.top_players_goals = []
+      season_top_player_obj.top_players_assists = []
+      season_top_player_obj.top_players_total_shots = []
+
+      if (season_sub.squad !== null &&
+        season_sub.squad.length != 0) {
+          
+        for (const season_team of season_sub.squad) {
+          for (const season_team_player of season_team.squad.data) {
+
+            // [ℹ] ignore those players with "NaN" rating
+            if (season_team_player?.rating == null || season_team_player?.rating == undefined) {
+              continue;
+            }
+
+            const top_player: Top_player_ratings = { }
+
+            const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_team_player.player_id);
+            const target_team: BETARENA_HASURA_scores_football_teams = teams_map.get(season_team.id);  // [ℹ] unecessary [?];
+            
+            top_player.avatar = 
+              target_player === undefined ||
+              target_player === null 
+                ? null
+                : target_player.data?.image_path;
+
+            top_player.rating =
+              parseFloat(season_team_player.rating.toString());
+
+            top_player.position =
+              target_player === undefined ||
+              target_player === null
+                ? null
+                : target_player.data?.position_id;
+
+            top_player.player_name =
+              season_team_player.player_name;
+            
+            top_player.team_logo = 
+              target_team === undefined ||
+              target_team === null
+                ? null
+                : target_team.data?.logo_path;
+              
+            top_player.rank =
+              1;
+
+            // [ℹ] ignore those players with "NaN" data
+            if (top_player?.player_name == null || top_player?.position == null) {
+              continue;
+            }
+
+            season_top_player_obj.top_players_rating.push(top_player);
+          }
+
+          season_top_player_obj.top_players_rating.sort((a, b) => parseFloat(b.rating.toString()) - parseFloat(a.rating.toString()));
+          season_top_player_obj.top_players_rating.splice(50);
+        }
+      }
+
+      if (season_sub.goalscorers !== null &&
+        season_sub.goalscorers.length != 0) {
+
+        for (const season_goalscorer of season_sub.goalscorers) {
+
+          // [ℹ] ignore those players with "NaN" goals
+          if (season_goalscorer?.goals == null || season_goalscorer?.goals == undefined) {
+            continue;
+          }
+          
+          const top_player: Top_player_goalscorers = { }
+
+          const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_goalscorer.player_id);
+          const target_team: BETARENA_HASURA_scores_football_teams = teams_map.get(season_goalscorer.team_id);  // [ℹ] unecessary [?];
+
+          top_player.avatar = 
+            target_player === undefined ||
+            target_player === null 
+              ? null
+              : target_player.data?.image_path;
+
+          top_player.goals =
+            season_goalscorer.goals
+
+          top_player.position =
+            target_player === undefined ||
+            target_player === null
+              ? null
+              : target_player.data?.position_id;
+
+          top_player.player_name =
+            season_goalscorer.player_name;
+          
+          top_player.team_logo = 
+            target_team === undefined ||
+            target_team === null
+              ? null
+              : target_team.data?.logo_path;
+            
+          top_player.rank =
+            season_goalscorer.position;
+
+          // [ℹ] ignore those players with "NaN" data
+          if (top_player?.player_name == null || top_player?.position == null) {
+            continue;
+          }
+
+          season_top_player_obj.top_players_goals.push(top_player);
+        }
+
+        season_top_player_obj.top_players_goals.sort((a, b) => parseFloat(b.goals.toString()) - parseFloat(a.goals.toString()));
+        season_top_player_obj.top_players_goals.splice(50);
+      }
+
+      if (season_sub.assistscorers !== null &&
+        season_sub.assistscorers.length != 0) {
+        
+        for (const season_assistscorer of season_sub.assistscorers) {
+
+          // [ℹ] ignore those players with "NaN" assists
+          if (season_assistscorer?.assists == null || season_assistscorer?.assists == undefined) {
+            continue;
+          }
+        
+          const top_player: Top_player_assits = { }
+
+          const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_assistscorer.player_id);
+          const target_team:  BETARENA_HASURA_scores_football_teams  = teams_map.get(season_assistscorer.team_id);  // [ℹ] unecessary [?];
+
+          top_player.avatar = 
+            target_player === undefined ||
+            target_player === null 
+              ? null
+              : target_player.data?.image_path;
+
+          top_player.assists =
+            season_assistscorer.assists
+
+          top_player.position =
+            target_player === undefined ||
+            target_player === null
+              ? null
+              : target_player.data?.position_id;
+
+          top_player.player_name =
+            season_assistscorer.player_name;
+          
+          top_player.team_logo = 
+            target_team === undefined ||
+            target_team === null
+              ? null
+              : target_team.data?.logo_path;
+            
+          top_player.rank =
+            season_assistscorer.position;
+
+          // [ℹ] ignore those players with "NaN" data
+          if (top_player?.player_name == null || top_player?.position == null) {
+            continue;
+          }
+
+          season_top_player_obj.top_players_assists.push(top_player);
+        }
+
+        season_top_player_obj.top_players_assists.sort((a, b) => parseFloat(b.assists.toString()) - parseFloat(a.assists.toString()));
+        season_top_player_obj.top_players_assists.splice(50);
+      }
+
+      if (season_sub.squad !== null &&
+        season_sub.squad.length != 0) {
+          
+        for (const season_team of season_sub.squad) {
+          for (const season_team_player of season_team.squad.data) {
+
+            // [ℹ] ignore those players with "NaN" shots_total
+            if (season_team_player?.shots?.shots_total == null || season_team_player?.shots?.shots_total == undefined) {
+              continue;
+            }
+
+            const top_player: Top_player_total_shots = { }
+
+            const target_player: BETARENA_HASURA_scores_football_players = players_map.get(season_team_player.player_id);
+            const target_team: BETARENA_HASURA_scores_football_teams = teams_map.get(season_team.id);  // [ℹ] unecessary [?];
+            
+            top_player.avatar = 
+              target_player === undefined ||
+              target_player === null 
+                ? null
+                : target_player.data?.image_path;
+
+            top_player.total_shots =
+              season_team_player?.shots?.shots_total;
+
+            top_player.position =
+              target_player === undefined ||
+              target_player === null
+                ? null
+                : target_player.data?.position_id;
+
+            top_player.player_name =
+              season_team_player.player_name;
+            
+            top_player.team_logo = 
+              target_team === undefined ||
+              target_team === null
+                ? null
+                : target_team.data?.logo_path;
+              
+            top_player.rank =
+              1;
+
+            // [ℹ] ignore those players with "NaN" data
+            if (top_player?.player_name == null || top_player?.position == null) {
+              continue;
+            }
+
+            season_top_player_obj.top_players_total_shots.push(top_player);
+          }
+
+          season_top_player_obj.top_players_total_shots.sort((a, b) => parseFloat(b.total_shots.toString()) - parseFloat(a.total_shots.toString()));
+          season_top_player_obj.top_players_total_shots.splice(50);
+        }
+      }
+
+      finalCacheObj.seasons.push(season_top_player_obj);
+    }
+
+    if (finalCacheObj.seasons.length == 0) {
+      continue;
+    }
+
+    const leagueExistsBool: boolean = final_obj_array.has(finalCacheObj.league_id)
+      
+    if (leagueExistsBool) {
+
+      const leagueTarget: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = final_obj_array.get(finalCacheObj.league_id)
+      leagueTarget.seasons = [...leagueTarget.seasons , ...finalCacheObj.seasons];
+      leagueTarget.seasons.sort((a, b) => parseFloat(b.season_id.toString()) - parseFloat(a.season_id.toString()));
+      final_obj_array.set(finalCacheObj.league_id, leagueTarget);
+      continue;
+    }
+
+    finalCacheObj.seasons.sort((a, b) => parseFloat(b.season_id.toString()) - parseFloat(a.season_id.toString()));
+
+    final_obj_array.set(finalCacheObj.league_id, finalCacheObj);
+  }
+
   // [ℹ] persist Data
   const arrayObj = []
+  t0 = performance.now();
+  logs.push(`total leagues: ${final_obj_array.size}`)
   for (const [key, value] of final_obj_array.entries()) {
     await cacheData(key, value);
     // arrayObj.push(value);
   }
+  t1 = performance.now();
+  logs.push(`data cache uplaoded completed in: ${(t1 - t0) / 1000} sec`);
 
   // [🐛] debug
-  const data = JSON.stringify(arrayObj, null, 4)
-  fs.writeFile('./datalog/tournamentsTopPlayers.json', data, err => {
-    if (err) {
-      console.error(err);
-    }
-  });
+  if (dev) {
+    const data = JSON.stringify(arrayObj, null, 4)
+    fs.writeFile('./datalog/tournamentsTopPlayers.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
 
-  // [🐛] debug
-  if (dev) console.log(`✔ FRONTEND_SCORES_REDIS_tournamentsTopPlayers complete!`)
-
-  return
+  return;
 }
 
 async function tournamentsTopPlayersTGeneration () {
@@ -541,12 +555,14 @@ async function tournamentsTopPlayersTGeneration () {
   }
 
   // [🐛] debug
-  const data = JSON.stringify(final_obj_array, null, 4)
-  fs.writeFile('./datalog/tournamentsTopPlayersTGeneration.json', data, err => {
-    if (err) {
-      console.error(err);
-    }
-  });
+  if (dev) {
+    const data = JSON.stringify(final_obj_array, null, 4)
+    fs.writeFile('./datalog/tournamentsTopPlayersTGeneration.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
 
   return
 }

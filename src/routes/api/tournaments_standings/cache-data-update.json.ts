@@ -228,6 +228,72 @@ async function standingsDataGenerationAlt () {
       //   }
       // });
 
+      // [ℹ] generate (this season) team equal points (home & away) views;
+      const home_view_teams_map = new Map <number, string[]> ()
+      const away_view_teams_map = new Map <number, string[]> ()
+
+      for (const season_team of season_standings_teams_list) {
+
+        const team_name = season_team.team_name;
+        
+        // [ℹ] dealing with positions of "home" teams
+
+        const team_home_position: number = 
+          season_team?.home?.points == null ||
+          season_team?.home?.points == undefined 
+            ? null
+            : season_team?.home?.points;
+
+        if (home_view_teams_map.has(team_home_position)) {
+          const pos_arr = home_view_teams_map.get(team_home_position);
+          pos_arr.push(team_name)
+          pos_arr.sort()
+          home_view_teams_map.set(team_home_position, pos_arr)
+        } 
+        else {
+          const init_arr = []
+          init_arr.push(team_name)
+          init_arr.sort()
+          home_view_teams_map.set(team_home_position, init_arr)
+        }
+
+        // [ℹ] dealing with positions of "away" teams
+        
+        const team_away_position: number = 
+          season_team?.away?.points == null ||
+          season_team?.away?.points == undefined 
+            ? null
+            : season_team?.away?.points;
+
+        if (away_view_teams_map.has(team_away_position)) {
+          const pos_arr = away_view_teams_map.get(team_away_position);
+          pos_arr.push(team_name)
+          pos_arr.sort()
+          away_view_teams_map.set(team_away_position, pos_arr)
+        } 
+        else {
+          const init_arr = []
+          init_arr.push(team_name)
+          init_arr.sort()
+          away_view_teams_map.set(team_away_position, init_arr)
+        }
+
+      }
+
+      const sortHomeViewAsc = new Map([...home_view_teams_map].sort((a, b) => b[0] - a[0]));
+      const sortAwayViewAsc = new Map([...away_view_teams_map].sort((a, b) => b[0] - a[0]));
+
+      let sortHomeViewAscArr = []
+      let sortHomeAwayAscArr = []
+
+      for (const [key, value] of sortHomeViewAsc.entries()) {
+        sortHomeViewAscArr = sortHomeViewAscArr.concat(value)
+      }
+      for (const [key, value] of sortAwayViewAsc.entries()) {
+        sortHomeAwayAscArr = sortHomeAwayAscArr.concat(value)
+      }
+
+      // [ℹ] generate (this season) team view objects (total | home | away);
       for (const season_team of season_standings_teams_list) {
 
         const team_logo: string = response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
@@ -254,17 +320,11 @@ async function standingsDataGenerationAlt () {
             ? null
             : target_team_stat?.winning_probability
 
-        const team_home_position: number = 
-          season_team?.home?.points == null ||
-          season_team?.home?.points == undefined 
-            ? null
-            : season_standings_teams_list.filter(( { home } ) => home?.points >= season_team?.home?.points).length
-
-        const team_away_position: number = 
-          season_team?.away?.points == null ||
-          season_team?.away?.points == undefined 
-            ? null
-            : season_standings_teams_list.filter(( { away } ) => away?.points >= season_team?.away?.points).length
+          const team_home_position: number = 
+            sortHomeViewAscArr.indexOf(team_name) + 1;
+  
+          const team_away_position: number = 
+            sortHomeAwayAscArr.indexOf(team_name) + 1;
 
         // [🐛] debug
         // if (team_name === "Manchester City") {
@@ -280,8 +340,8 @@ async function standingsDataGenerationAlt () {
         // }
 
         const team_total_color_code = season_team?.position == null ? 'black' : season_color_codes[season_team?.position.toString()]
-        const team_home_color_code = team_home_position == null ? 'black' : season_color_codes[team_home_position.toString()]
-        const team_away_color_code = team_away_position == null ? 'black' : season_color_codes[team_away_position.toString()]
+        // const team_home_color_code = team_home_position == null ? 'black' : season_color_codes[team_home_position.toString()]
+        // const team_away_color_code = team_away_position == null ? 'black' : season_color_codes[team_away_position.toString()]
 
         const team_total_ov15: number =
           target_team_stats?.data[0].goal_line?.over["1_5"]?.away == null ||
@@ -337,7 +397,7 @@ async function standingsDataGenerationAlt () {
         const team_obj_home: Standing_Team_Total_Away_Home = {
           team_logo:      team_logo,
           team_name:      team_name,
-          color_code:     team_home_color_code,
+          color_code:     team_total_color_code,
           points:         season_team?.home?.points,
           position:       team_home_position, // season_team?.home?.points
           games_played:   season_team?.home?.games_played,
@@ -358,7 +418,7 @@ async function standingsDataGenerationAlt () {
         const team_obj_away: Standing_Team_Total_Away_Home = {
           team_logo:      team_logo,
           team_name:      team_name,
-          color_code:     team_away_color_code,
+          color_code:     team_total_color_code,
           points:         season_team?.away?.points,
           position:       team_away_position, // season_team?.away?.points
           games_played:   season_team?.away?.games_played,
