@@ -393,7 +393,7 @@ export interface BETARENA_HASURA_scores_football_leagues {
   season?:  ScoresFootballLeaguesSeasonElement;
   seasons?: ScoresFootballLeaguesSeasonElement[];
 } export interface ScoresFootballLeaguesDataClass {
-  extra?:      Extra | null;
+  extra?:      ScoresFootballLeaguesExtra | null;
   image_path?: string;
   name?:       string;
   id?:         number;
@@ -410,30 +410,30 @@ export interface BETARENA_HASURA_scores_football_leagues {
 } export interface ScoresFootballLeaguesData {
   legacy_id?:         number;
   country_id?:        number;
-  season?:            DataSeason;
-  country?:           DataCountry;
+  season?:            ScoresFootballLeaguesDataSeason;
+  country?:           ScoresFootballLeaguesDataCountry;
   current_stage_id?:  number;
   is_cup?:            boolean;
-  coverage?:          Coverage;
+  coverage?:          ScoresFootballLeaguesCoverage;
   live_standings?:    boolean;
   active?:            boolean;
   name?:              string;
   is_friendly?:       boolean;
   id?:                number;
   type?:              string;
-  seasons?:           Seasons;
+  seasons?:           ScoresFootballLeaguesSeasons;
   current_round_id?:  null;
   current_season_id?: number;
   logo_path?:         string;
 } export interface ScoresFootballLeaguesDataCountry {
-  data?: DataClass;
+  data?: ScoresFootballLeaguesDataClass;
 } export interface ScoresFootballLeaguesCoverage {
   topscorer_assists?: boolean;
   topscorer_goals?:   boolean;
   predictions?:       boolean;
   topscorer_cards?:   boolean;
 } export interface ScoresFootballLeaguesDataSeason {
-  data?: SeasonElement;
+  data?: ScoresFootballLeaguesSeasonElement;
 } export interface ScoresFootballLeaguesSeasonElement {
   league_id?:         number;
   current_stage_id?:  number | null;
@@ -442,7 +442,7 @@ export interface BETARENA_HASURA_scores_football_leagues {
   is_current_season?: boolean;
   current_round_id?:  number | null;
 } export interface ScoresFootballLeaguesSeasons {
-  data?: SeasonElement[];
+  data?: ScoresFootballLeaguesSeasonElement[];
 }
 
 /**
@@ -774,4 +774,14 @@ export interface BETARENA_HASURA_scores_tournaments {
   it?: string;
   pt?: string;
   ro?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_standings_home_widget_translations (&_dev)
+*/
+export interface BETARENA_HASURA_scores_standings_home_widget_translations {
+  games: string
+  lang: string
+  points: string
+  title: string
 }

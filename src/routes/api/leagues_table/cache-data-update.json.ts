@@ -1,20 +1,28 @@
 import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
+import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
+
+import { 
+  REDIS_CACHE_LEAGUES_TABLE_DATA_1, 
+  REDIS_CACHE_LEAGUES_TABLE_DATA_2, 
+  REDIS_CACHE_LEAGUES_TABLE_DATA_3 
+} from '$lib/graphql/leagues_table/query'
+import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
 import type { 
   Cache_Single_Geo_Leagues_Table_Translation_Response, 
   Cache_Single_Lang_Leagues_Table_Translation_Response, 
-  Hasura_Complete_Leagues_Table_Type, 
-  Leagues_Table_Cache_Ready, 
+  BETARENA_HASURA_standings_query, 
   Leagues_Table_SEO_Cache_Ready, 
   Single_League_Table_Data, 
   Single_Team_Object_Data 
 } from '$lib/models/leagues_table/types'
-import { GET_LEAGUES_TABLE_DATA } from '$lib/graphql/leagues_table/query'
-import { GET_HREFLANG_DATA } from '$lib/graphql/query'
+import type { 
+  StandingsDatum 
+} from '$lib/models/hasura';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -131,8 +139,10 @@ cacheQueueLeaguesTable.process (async function (job, done) {
   // [ℹ] push "EN"
   langArray.push('en')
 
-  await leagueTableGeoDataGeneration()
-  await leagueTableLangDataGeneration(langArray)
+  const [geoData, langSeoData] = await main()
+
+  await leagueTableGeoDataGeneration(geoData)
+  await leagueTableLangDataGeneration(langSeoData, langArray)
 
   const t1 = performance.now();
 
@@ -154,11 +164,20 @@ cacheQueueLeaguesTable.process (async function (job, done) {
 //  [MAIN] METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function leagueTableGeoDataGeneration () {
+async function leagueTableGeoDataGeneration (response: Cache_Single_Geo_Leagues_Table_Translation_Response[]) {
 
+  // [ℹ] depreceated
   // await deleteLeaguesTableGeoPos ()
 
-  const response: Array < Cache_Single_Geo_Leagues_Table_Translation_Response > = await mainGeo()
+  // [🐛] debug
+  if (dev) {
+    const data = JSON.stringify(response, null, 4)
+    fs.writeFile('./datalog/leagueTableGeoDataGeneration.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
 
   // [ℹ] iterate over EACH LEAGUE OBJECT, lang, by lang;
   for await (const season_data_league of response) {
@@ -169,16 +188,24 @@ async function leagueTableGeoDataGeneration () {
 
 }
 
-async function leagueTableLangDataGeneration (langArray: string[]) {
+async function leagueTableLangDataGeneration (response: Leagues_Table_SEO_Cache_Ready, langArray: string[]) {
 
   const finalCacheObj: Cache_Single_Lang_Leagues_Table_Translation_Response = {
     top_leagues_table_data: undefined,
     translations: undefined
   }
 
-  // [ℹ] ℹ generate best goal scorers data by GEO;
-  const response: Leagues_Table_SEO_Cache_Ready = await mainLang()
+  // [🐛] debug
+  if (dev) {
+    const data = JSON.stringify(response, null, 4)
+    fs.writeFile('./datalog/leagueTableLangDataGeneration.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
 
+  // [ℹ] depreceated
   // deleteLeaguesTableLang ()
 
   // [ℹ] for-each available translation:
@@ -194,14 +221,58 @@ async function leagueTableLangDataGeneration (langArray: string[]) {
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] METHODS
+//  [HELPER] MAIN METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Translation_Response >> {
+async function main (): Promise < [ Array < Cache_Single_Geo_Leagues_Table_Translation_Response >, Leagues_Table_SEO_Cache_Ready ] > {
 
-  const response: Hasura_Complete_Leagues_Table_Type = await initGrapQLClient().request(GET_LEAGUES_TABLE_DATA);
+  const response: BETARENA_HASURA_standings_query = await initGrapQLClient().request (
+    REDIS_CACHE_LEAGUES_TABLE_DATA_1
+  );
+
+  let leagueIdsArr: number[] = []
+
+  // [ℹ] obtain target top-8 leagues per / GEO
+  for (const country_leagues of response.leagues_filtered_country) {
+    // [ℹ] iterate over each country-league;
+    for await (const country_league of country_leagues.leagues) {
+      const league_id: number = country_league.league_id;
+      leagueIdsArr.push(league_id)
+      if (leagueIdsArr.length == 8) {
+        break;
+      }
+    }
+  }
+  leagueIdsArr = [...new Set(leagueIdsArr)]
+
+  // [ℹ] obtain target leagueID data
+  const league_and_standings_data: BETARENA_HASURA_standings_query = await getTargetLeagueData (leagueIdsArr);
+
+  // [ℹ] obtain target teams needed
+  const teamIdsArr: number[] = await getTargetTeamsList (league_and_standings_data);
+
+  // [ℹ] obtain target teams query data
+  const team_data: BETARENA_HASURA_standings_query = await getTargetTeamData (teamIdsArr);
+
+  /*
+    [ℹ] MAIN [GEO]
+  */
 
   const finalObj: Array < Cache_Single_Geo_Leagues_Table_Translation_Response > = []
+
+  /*
+    [ℹ] MAIN [LANG / SEO]
+  */
+
+  const season_league_cache_main: Leagues_Table_SEO_Cache_Ready = {
+    top_leagues_table_data: [],
+    translations: []
+  }
+  season_league_cache_main.translations = response.scores_standings_home_widget_translations_dev
+
+  /*
+    [ℹ] MAIN LOOP DATA GENERATION
+  */
 
   // [ℹ] for-each country-filtered-league-list,
   for (const country_leagues of response.leagues_filtered_country) {
@@ -212,14 +283,11 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
       top_leagues_table_data: [],
     }
 
-    // [ℹ] declare language (GEO);
-    season_league_cache.lang = country_leagues.lang
+    season_league_cache.lang = country_leagues.lang // [ℹ] geo-position;
 
     // [ℹ] iterate over each country-league;
     for await (const country_league of country_leagues.leagues) {
-
-      // [ℹ] iterate over each top-goal-scorer;
-      for (const season_league of response.scores_football_standings_dev) {
+      for (const season_league of league_and_standings_data.scores_football_standings_dev) {
 
         // [ℹ] match_league_ids && match correct-lang;
         if (season_league.id.toString() === country_league.league_id.toString()) {
@@ -243,7 +311,7 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
               season_league_obj.season_league_name = season_league.name.toString()
 
               // [ℹ] iterate over leagues-seasons for "logo-target";
-              for (const league_season of response.scores_football_leagues_dev) {
+              for (const league_season of league_and_standings_data.scores_football_leagues_dev) {
                 // [ℹ] validate for equality of "league_ids":
                 if (season_league_obj.season_league_id.toString() === league_season.id.toString()) {
                   // [ℹ] assign:
@@ -265,7 +333,7 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
                 }
 
                 // [ℹ] iterate over TEAMS DATA for EXTRA INFO;
-                for (const info_team of response.scores_football_teams_dev) {
+                for (const info_team of team_data.scores_football_teams_dev) {
                   // [ℹ] identify target team;
                   if (info_team.id.toString() === team.team_id.toString()) {
                     // [ℹ] add extra info;
@@ -304,134 +372,114 @@ async function mainGeo(): Promise < Array < Cache_Single_Geo_Leagues_Table_Trans
         
         // [ℹ] terminating condition;
         if (season_league_cache.top_leagues_table_data != undefined && 
-          season_league_cache.top_leagues_table_data.length > 7) {
+            season_league_cache.top_leagues_table_data.length > 7) {
             break;
         }
       }
 
       // [ℹ] terminating condition;
       if (season_league_cache.top_leagues_table_data != undefined && 
-        season_league_cache.top_leagues_table_data.length > 7) {
+          season_league_cache.top_leagues_table_data.length > 7) {
           break;
       }
+    }
+
+    // [ℹ] seo top-leagues only for "EN"
+    if (season_league_cache.lang == 'en') {
+      // [ℹ] translations + seo
+      season_league_cache_main.top_leagues_table_data = [...season_league_cache_main.top_leagues_table_data, ...season_league_cache.top_leagues_table_data];
     }
 
     // [ℹ] push to final object;
     finalObj.push(season_league_cache);
   }
 
-  return finalObj
+  return [finalObj, season_league_cache_main];
 }
 
-async function mainLang(): Promise < Leagues_Table_SEO_Cache_Ready > {
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] OTHER METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-  const response: Hasura_Complete_Leagues_Table_Type = await initGrapQLClient().request(GET_LEAGUES_TABLE_DATA);
+async function getTargetLeagueData (leagueIdsArr: number[]): Promise < BETARENA_HASURA_standings_query > {
 
-  const season_league_cache_main: Leagues_Table_SEO_Cache_Ready = {
-    top_leagues_table_data: [],
-    translations: []
+  const VARIABLES_1 = {
+    leagueIds: leagueIdsArr
   }
+  
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_LEAGUES_TABLE_DATA_2";
+	const response: BETARENA_HASURA_standings_query = await initGrapQLClient().request (
+    REDIS_CACHE_LEAGUES_TABLE_DATA_2,
+    VARIABLES_1
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-  // [ℹ] assign translations;
-  season_league_cache_main.translations = response.scores_standings_home_widget_translations_dev
+  return response;
+}
 
-  // [ℹ] for-each country-filtered-league-list,
-  for (const country_leagues of response.leagues_filtered_country) {
+async function getTargetTeamsList (data: BETARENA_HASURA_standings_query): Promise < number[] >  {
 
-    // [ℹ] select-top-8-leagues;
-    const season_league_cache: Leagues_Table_Cache_Ready = {
-      lang: undefined,              // ... ❌ not used;
-      top_leagues_table_data: [],
-      translations: []              // ... ❌ not used;
-    }
+  let teamIdsArr: number[] = []
 
-    // [ℹ] declare language (GEO);
-    season_league_cache.lang = country_leagues.lang
+  // [ℹ] obtain all target teams []
+  for (const iterator of data.scores_football_leagues_dev) {
+    for (const season_main of iterator.seasons) {
 
-    if (season_league_cache.lang == 'en') {
+      let season_standings_teams_list: StandingsDatum[];
 
-      // [ℹ] iterate over each country-league;
-      for await (const country_league of country_leagues.leagues) {
+      if (season_main.is_current_season) {
 
-        // [ℹ] iterate over each top-goal-scorer;
-        for (const season_league of response.scores_football_standings_dev) {
-          
-          // [ℹ] match_league_ids && match correct-lang;
-          if (season_league.id.toString() === country_league.league_id.toString()) {
+        const season_standings = data.scores_football_standings_dev
+          .find(( { id } ) =>
+            id === iterator.id
+          );
 
-            // [ℹ] iterate over the "season_league" [filtered] data;
-            for (const season_type of season_league.data) {
-
-              // [ℹ] and select the "Regular Season" only!
-              if (season_type.name.toString() === "Regular Season") {
-
-                // [ℹ] instantiate the SEASON-LEAGUE OBJECT CACHE;
-                const season_league_obj: Single_League_Table_Data = {
-                  season_league_id: undefined,
-                  season_league_name: undefined,
-                  season_league_teams: []
-                }
-
-                // [ℹ] populate data;
-                season_league_obj.season_league_id = season_league.id.toString()
-                season_league_obj.season_league_name = season_league.name.toString()
-
-                // [ℹ] iterate over THIS standing "teams";
-                for (const team of season_type.standings.data) {
-
-                  // [ℹ] instantiate the TEAM OBJECT CACHE;
-                  const team_obj: Single_Team_Object_Data = {
-                    position: undefined,
-                    team_logo:  undefined,
-                    team_name: undefined,
-                    games_played: undefined,
-                    points: undefined
-                  }
-
-                  // [ℹ] iterate over TEAMS DATA for EXTRA INFO;
-                  for (const info_team of response.scores_football_teams_dev) {
-
-                    // [ℹ] identify target team;
-                    if (info_team.id.toString() === team.team_id.toString()) {
-                      // [ℹ] add extra info;
-                      team_obj.team_logo = info_team.data.logo_path
-                    }
-
-                  }
-
-                  // [ℹ] populate data;
-                  team_obj.position = parseInt(team.position.toString());
-                  team_obj.team_name = team.team_name;
-                  team_obj.games_played = team.overall.games_played.toString();
-                  team_obj.points = team.overall.points.toString();
-                  // [ℹ] add team to list of THIS SEASON-LEAGUE;
-                  season_league_obj.season_league_teams.push(team_obj)
-
-                }
-                
-                // [ℹ] add to the gloabal cache data:
-                season_league_cache.top_leagues_table_data.push(season_league_obj)
-              }
-            }
-          }
-
-          // [ℹ] terminating condition;
-          if (season_league_cache.top_leagues_table_data != undefined && 
-            season_league_cache.top_leagues_table_data.length > 7) {
-              break;
-          }
-        }
-        // [ℹ] terminating condition;
-        if (season_league_cache.top_leagues_table_data != undefined && 
-          season_league_cache.top_leagues_table_data.length > 7) {
-          break;
-        }
+        season_standings_teams_list = season_standings?.data
+          .find(( { name, season_id } ) => 
+            name === "Regular Season" &&
+            season_id === season_main.id
+          ).standings?.data;
+        
+      } else {
+        continue;
       }
-      
-      // [ℹ] add to main list;
-      season_league_cache_main.top_leagues_table_data = [...season_league_cache_main.top_leagues_table_data, ...season_league_cache.top_leagues_table_data];
+
+      if (season_standings_teams_list == undefined ||
+          season_standings_teams_list == null) {
+        continue;
+      }
+
+      teamIdsArr = teamIdsArr.concat(season_standings_teams_list.map(a => a.team_id));
     }
   }
 
-  return season_league_cache_main
+  // console.log(teamIdsArr.includes(undefined))
+  teamIdsArr = teamIdsArr.filter(element => {
+    return element !== undefined
+  });
+
+  teamIdsArr = [...new Set(teamIdsArr)]
+  logs.push(`num. of teamIdsArr: ${teamIdsArr.length}`);
+
+  return teamIdsArr;
+}
+
+async function getTargetTeamData (teamIdsArr: number[]): Promise < BETARENA_HASURA_standings_query > {
+
+  const VARIABLES_2 = {
+    teamIds: teamIdsArr
+  }
+
+  const t2 = performance.now();
+  const queryName2 = "REDIS_CACHE_LEAGUES_TABLE_DATA_3";
+	const response: BETARENA_HASURA_standings_query = await initGrapQLClient().request (
+    REDIS_CACHE_LEAGUES_TABLE_DATA_3,
+    VARIABLES_2
+  );
+  const t3 = performance.now();
+  logs.push(`${queryName2} completed in: ${(t3 - t2) / 1000} sec`);
+
+  return response;
 }
