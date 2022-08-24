@@ -777,7 +777,7 @@ export interface BETARENA_HASURA_scores_tournaments {
 }
 
 /**
- * [ℹ] HASURA: scores_standings_home_widget_translations (&_dev)
+ * [ℹ] HASURA: scores_standings_home_widget_translations (&)
 */
 export interface BETARENA_HASURA_scores_standings_home_widget_translations {
   games: string

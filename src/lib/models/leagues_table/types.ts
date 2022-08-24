@@ -15,13 +15,13 @@ import type {
 
 export interface BETARENA_HASURA_standings_query {
   leagues_filtered_country:                       BETARENA_HASURA_leagues_filtered_country[]
-  color_codes_league_standings_positions_dev:     BETARENA_HASURA_color_codes_league_standings_positions[]
-  scores_standings_home_widget_translations_dev:  BETARENA_HASURA_scores_standings_home_widget_translations[]
+  color_codes_league_standings_positions:     BETARENA_HASURA_color_codes_league_standings_positions[]
+  scores_standings_home_widget_translations:  BETARENA_HASURA_scores_standings_home_widget_translations[]
 
-  scores_football_leagues_dev:                    BETARENA_HASURA_scores_football_leagues[]
-  scores_football_standings_dev:                  BETARENA_HASURA_scores_football_standings[]    
+  scores_football_leagues:                    BETARENA_HASURA_scores_football_leagues[]
+  scores_football_standings:                  BETARENA_HASURA_scores_football_standings[]    
 
-  scores_football_teams_dev:                      BETARENA_HASURA_scores_football_teams[]
+  scores_football_teams:                      BETARENA_HASURA_scores_football_teams[]
 }
 
 /**

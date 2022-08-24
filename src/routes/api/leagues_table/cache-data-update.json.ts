@@ -268,7 +268,7 @@ async function main (): Promise < [ Array < Cache_Single_Geo_Leagues_Table_Trans
     top_leagues_table_data: [],
     translations: []
   }
-  season_league_cache_main.translations = response.scores_standings_home_widget_translations_dev
+  season_league_cache_main.translations = response.scores_standings_home_widget_translations
 
   /*
     [ℹ] MAIN LOOP DATA GENERATION
@@ -287,7 +287,7 @@ async function main (): Promise < [ Array < Cache_Single_Geo_Leagues_Table_Trans
 
     // [ℹ] iterate over each country-league;
     for await (const country_league of country_leagues.leagues) {
-      for (const season_league of league_and_standings_data.scores_football_standings_dev) {
+      for (const season_league of league_and_standings_data.scores_football_standings) {
 
         // [ℹ] match_league_ids && match correct-lang;
         if (season_league.id.toString() === country_league.league_id.toString()) {
@@ -311,7 +311,7 @@ async function main (): Promise < [ Array < Cache_Single_Geo_Leagues_Table_Trans
               season_league_obj.season_league_name = season_league.name.toString()
 
               // [ℹ] iterate over leagues-seasons for "logo-target";
-              for (const league_season of league_and_standings_data.scores_football_leagues_dev) {
+              for (const league_season of league_and_standings_data.scores_football_leagues) {
                 // [ℹ] validate for equality of "league_ids":
                 if (season_league_obj.season_league_id.toString() === league_season.id.toString()) {
                   // [ℹ] assign:
@@ -333,7 +333,7 @@ async function main (): Promise < [ Array < Cache_Single_Geo_Leagues_Table_Trans
                 }
 
                 // [ℹ] iterate over TEAMS DATA for EXTRA INFO;
-                for (const info_team of team_data.scores_football_teams_dev) {
+                for (const info_team of team_data.scores_football_teams) {
                   // [ℹ] identify target team;
                   if (info_team.id.toString() === team.team_id.toString()) {
                     // [ℹ] add extra info;
@@ -424,14 +424,14 @@ async function getTargetTeamsList (data: BETARENA_HASURA_standings_query): Promi
   let teamIdsArr: number[] = []
 
   // [ℹ] obtain all target teams []
-  for (const iterator of data.scores_football_leagues_dev) {
+  for (const iterator of data.scores_football_leagues) {
     for (const season_main of iterator.seasons) {
 
       let season_standings_teams_list: StandingsDatum[];
 
       if (season_main.is_current_season) {
 
-        const season_standings = data.scores_football_standings_dev
+        const season_standings = data.scores_football_standings
           .find(( { id } ) =>
             id === iterator.id
           );

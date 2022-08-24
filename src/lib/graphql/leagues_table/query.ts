@@ -13,13 +13,13 @@ export const REDIS_CACHE_LEAGUES_TABLE_DATA_1 = gql`
       lang
       leagues
     }
-    scores_standings_home_widget_translations_dev {
+    scores_standings_home_widget_translations {
       games
       lang
       points
       title
     }
-    color_codes_league_standings_positions_dev {
+    color_codes_league_standings_positions {
       color_codes
       sports
     }
@@ -39,7 +39,7 @@ export const REDIS_CACHE_LEAGUES_TABLE_DATA_2 = gql`
     @cached
     (ttl: 300) 
   {
-    scores_football_leagues_dev (
+    scores_football_leagues (
       where: {
         id: {
           _in: $leagueIds
@@ -54,7 +54,7 @@ export const REDIS_CACHE_LEAGUES_TABLE_DATA_2 = gql`
       season
       seasons
     }
-    scores_football_standings_dev (
+    scores_football_standings (
       where: {
         id: {
           _in: $leagueIds
@@ -83,7 +83,7 @@ export const REDIS_CACHE_LEAGUES_TABLE_DATA_3 = gql`
     @cached
     (ttl: 300) 
   {
-    scores_football_teams_dev (
+    scores_football_teams (
       where: {
         id: {
           _in: $teamIds
