@@ -1,11 +1,15 @@
 import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
+import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
 
-import { REDIS_CACHE_LEAGUES_TABLE_DATA_2, REDIS_CACHE_LEAGUES_TABLE_DATA_3 } from '$lib/graphql/leagues_table/query'
-import { GET_LEAGUE_W_STANDINGS_INFO } from '$lib/graphql/tournaments/standings/query';
+import { 
+  REDIS_CACHE_LEAGUES_TABLE_DATA_1, 
+  REDIS_CACHE_LEAGUES_TABLE_DATA_2, 
+  REDIS_CACHE_LEAGUES_TABLE_DATA_3 
+} from '$lib/graphql/leagues_table/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
 import type { 
@@ -135,8 +139,10 @@ cacheQueueLeaguesTable.process (async function (job, done) {
   // [ℹ] push "EN"
   langArray.push('en')
 
-  await leagueTableGeoDataGeneration()
-  await leagueTableLangDataGeneration(langArray)
+  const [geoData, langSeoData] = await main()
+
+  await leagueTableGeoDataGeneration(geoData)
+  await leagueTableLangDataGeneration(langSeoData, langArray)
 
   const t1 = performance.now();
 
@@ -158,11 +164,20 @@ cacheQueueLeaguesTable.process (async function (job, done) {
 //  [MAIN] METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function leagueTableGeoDataGeneration () {
+async function leagueTableGeoDataGeneration (response: Cache_Single_Geo_Leagues_Table_Translation_Response[]) {
 
+  // [ℹ] depreceated
   // await deleteLeaguesTableGeoPos ()
 
-  const [response, other] = await main()
+  // [🐛] debug
+  if (dev) {
+    const data = JSON.stringify(response, null, 4)
+    fs.writeFile('./datalog/leagueTableGeoDataGeneration.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
 
   // [ℹ] iterate over EACH LEAGUE OBJECT, lang, by lang;
   for await (const season_data_league of response) {
@@ -173,15 +188,24 @@ async function leagueTableGeoDataGeneration () {
 
 }
 
-async function leagueTableLangDataGeneration (langArray: string[]) {
+async function leagueTableLangDataGeneration (response: Leagues_Table_SEO_Cache_Ready, langArray: string[]) {
 
   const finalCacheObj: Cache_Single_Lang_Leagues_Table_Translation_Response = {
     top_leagues_table_data: undefined,
     translations: undefined
   }
 
-  const [other, response] = await main()
+  // [🐛] debug
+  if (dev) {
+    const data = JSON.stringify(response, null, 4)
+    fs.writeFile('./datalog/leagueTableLangDataGeneration.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
 
+  // [ℹ] depreceated
   // deleteLeaguesTableLang ()
 
   // [ℹ] for-each available translation:
@@ -203,7 +227,7 @@ async function leagueTableLangDataGeneration (langArray: string[]) {
 async function main (): Promise < [ Array < Cache_Single_Geo_Leagues_Table_Translation_Response >, Leagues_Table_SEO_Cache_Ready ] > {
 
   const response: BETARENA_HASURA_standings_query = await initGrapQLClient().request (
-    GET_LEAGUE_W_STANDINGS_INFO
+    REDIS_CACHE_LEAGUES_TABLE_DATA_1
   );
 
   let leagueIdsArr: number[] = []
@@ -353,16 +377,17 @@ async function main (): Promise < [ Array < Cache_Single_Geo_Leagues_Table_Trans
         }
       }
 
-      if (season_league_cache.lang == 'en') {
-        // [ℹ] translations + seo
-        season_league_cache_main.top_leagues_table_data = [...season_league_cache_main.top_leagues_table_data, ...season_league_cache.top_leagues_table_data];
-      }
-
       // [ℹ] terminating condition;
       if (season_league_cache.top_leagues_table_data != undefined && 
           season_league_cache.top_leagues_table_data.length > 7) {
           break;
       }
+    }
+
+    // [ℹ] seo top-leagues only for "EN"
+    if (season_league_cache.lang == 'en') {
+      // [ℹ] translations + seo
+      season_league_cache_main.top_leagues_table_data = [...season_league_cache_main.top_leagues_table_data, ...season_league_cache.top_leagues_table_data];
     }
 
     // [ℹ] push to final object;
