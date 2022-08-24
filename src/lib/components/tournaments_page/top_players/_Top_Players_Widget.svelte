@@ -98,7 +98,7 @@
     }, 50)
   }
 
-  $: console.log(`${devConsoleTag} : DETECTED! trueLengthOfArray ${trueLengthOfArray}`)
+  $: if (dev && diasbleDev) console.log(`${devConsoleTag} : DETECTED! trueLengthOfArray ${trueLengthOfArray}`)
 
   function selectPlayerView(opt: string) {
     dropdownPlayerViewSelect = opt.toLowerCase().replace(/\s/g, '_')
