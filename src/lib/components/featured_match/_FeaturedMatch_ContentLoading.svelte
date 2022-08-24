@@ -243,6 +243,12 @@
 		}
 	}
 
+  @media only screen and (min-width: 768px) {
+    #live-score-container {
+      margin-top: 40px;
+    }
+  }
+
 	/* WIDGET DARK THEME */
 	.dark-background-1 #fixture-league-title,
 	.dark-background-1 #fixture-visual-box,

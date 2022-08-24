@@ -1030,395 +1030,399 @@
 
         <!-- [ℹ] best-players (Both-Teams) 
         -->
-        <div 
-          id="best-players-box-out">
+        {#if FEATURED_MATCH_WIDGET_DATA.best_players !== null}
 
-          <!-- [ℹ] TEAM - HOME 
-          -->
           <div 
-            class="best-players-box">
+            id="best-players-box-out">
 
+            <!-- [ℹ] TEAM - HOME 
+            -->
             <div 
-              class="row-space-start m-b-16">
-              <img
-                class="m-r-16"
-                src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-                alt=""
-                width="32px"
-                height="32px"
-              />
-              <p class="w-500 large">
-                {FEATURED_MATCH_WIDGET_DATA.home_team_name}
-                {FEATURED_MATCH_WIDGET_DATA_SEO.players}
-              </p>
+              class="best-players-box">
+
+              <div 
+                class="row-space-start m-b-16">
+                <img
+                  class="m-r-16"
+                  src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
+                  alt=""
+                  width="32px"
+                  height="32px"
+                />
+                <p class="w-500 large">
+                  {FEATURED_MATCH_WIDGET_DATA.home_team_name}
+                  {FEATURED_MATCH_WIDGET_DATA_SEO.players}
+                </p>
+              </div>
+
+              <table
+                class="table-best-player">
+
+                <tr
+                  class="row-head m-b-16">
+
+                  <th 
+                    class="rating-head">
+                    <p 
+                      class="w-400 small color-grey">
+                      {FEATURED_MATCH_WIDGET_DATA_SEO.rating}
+                    </p>
+                  </th>
+
+                  <th 
+                    class="player-col">
+                    <p 
+                      class="w-400 small color-grey">
+                      {FEATURED_MATCH_WIDGET_DATA_SEO.player}
+                    </p>
+                  </th>
+
+                  {#if viewportDesktop}
+                    <th 
+                      class="text-center">
+                      <p 
+                        class="w-400 small color-grey">
+                        {FEATURED_MATCH_WIDGET_DATA_SEO.matches}
+                      </p>
+                    </th>
+                    <th 
+                      class="text-center">
+                      <p 
+                        class="w-400 small color-grey">
+                        {FEATURED_MATCH_WIDGET_DATA_SEO.assists}
+                      </p>
+                    </th>
+                    <th 
+                      class="text-center">
+                      <p 
+                        class="w-400 small color-grey">
+                        {FEATURED_MATCH_WIDGET_DATA_SEO.goals}
+                      </p>
+                    </th>
+                  {/if}
+
+                </tr>
+
+                <!-- [ℹ] PLAYER 1 ROW
+                -->
+
+                <tr>
+
+                  <td>
+                    <div
+                      class="rating-box"
+                      class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .local_team_rating_player_1 >= 0 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 7}
+                      class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .local_team_rating_player_1 >= 7 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 9}
+                      class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .local_team_rating_player_1 >= 9}>
+                      <p 
+                        class="w-500 medium">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1}
+                      </p>
+                    </div>
+                  </td>
+
+                  <td 
+                    class="row-space-start">
+                    <img
+                      src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_image_path}
+                      alt=""
+                      width="32px"
+                      height="32px"
+                      class="player-img"
+                    />
+                    <p 
+                      class="w-500 small desktop-small">
+                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1}
+                    </p>
+                  </td>
+
+                  {#if viewportDesktop}
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-matches">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_appearances}
+                      </p>
+                    </td>
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-assits">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_assists}
+                      </p>
+                    </td>
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-goals">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_goals}
+                      </p>
+                    </td>
+                  {/if}
+
+                </tr>
+                
+                <!-- [ℹ] PLAYER 2 ROW
+                -->
+
+                <tr>
+
+                  <td>
+                    <div
+                      class="rating-box"
+                      class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .local_team_rating_player_2 >= 0 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 7}
+                      class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .local_team_rating_player_2 >= 7 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 9}
+                      class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .local_team_rating_player_2 >= 9}>
+                      <p 
+                        class="w-500 medium">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2}
+                      </p>
+                    </div>
+                  </td>
+
+                  <td 
+                    class="row-space-start">
+                    <img
+                      src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_image_path}
+                      alt=""
+                      width="32px"
+                      height="32px"
+                      class="player-img"
+                    />
+                    <p 
+                      class="w-500 small desktop-small">
+                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2}
+                    </p>
+                  </td>
+
+                  {#if viewportDesktop}
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-matches">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_appearances}
+                      </p>
+                    </td>
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-assits">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_assists}
+                      </p>
+                    </td>
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-goals">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_goals}
+                      </p>
+                    </td>
+                  {/if}
+
+                </tr>
+
+              </table>
+
             </div>
 
-            <table
-              class="table-best-player">
-
-              <tr
-                class="row-head m-b-16">
-
-                <th 
-                  class="rating-head">
-                  <p 
-                    class="w-400 small color-grey">
-                    {FEATURED_MATCH_WIDGET_DATA_SEO.rating}
-                  </p>
-                </th>
-
-                <th 
-                  class="player-col">
-                  <p 
-                    class="w-400 small color-grey">
-                    {FEATURED_MATCH_WIDGET_DATA_SEO.player}
-                  </p>
-                </th>
-
-                {#if viewportDesktop}
-                  <th 
-                    class="text-center">
-                    <p 
-                      class="w-400 small color-grey">
-                      {FEATURED_MATCH_WIDGET_DATA_SEO.matches}
-                    </p>
-                  </th>
-                  <th 
-                    class="text-center">
-                    <p 
-                      class="w-400 small color-grey">
-                      {FEATURED_MATCH_WIDGET_DATA_SEO.assists}
-                    </p>
-                  </th>
-                  <th 
-                    class="text-center">
-                    <p 
-                      class="w-400 small color-grey">
-                      {FEATURED_MATCH_WIDGET_DATA_SEO.goals}
-                    </p>
-                  </th>
-                {/if}
-
-              </tr>
-
-              <!-- [ℹ] PLAYER 1 ROW
-              -->
-
-              <tr>
-
-                <td>
-                  <div
-                    class="rating-box"
-                    class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .local_team_rating_player_1 >= 0 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 7}
-                    class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .local_team_rating_player_1 >= 7 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1 < 9}
-                    class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .local_team_rating_player_1 >= 9}>
-                    <p 
-                      class="w-500 medium">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_1}
-                    </p>
-                  </div>
-                </td>
-
-                <td 
-                  class="row-space-start">
-                  <img
-                    src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_image_path}
-                    alt=""
-                    width="32px"
-                    height="32px"
-                    class="player-img"
-                  />
-                  <p 
-                    class="w-500 small desktop-small">
-                    {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1}
-                  </p>
-                </td>
-
-                {#if viewportDesktop}
-                  <td>
-                    <p 
-                      class="w-500 medium boxed-rating-matches">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_appearances}
-                    </p>
-                  </td>
-                  <td>
-                    <p 
-                      class="w-500 medium boxed-rating-assits">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_assists}
-                    </p>
-                  </td>
-                  <td>
-                    <p 
-                      class="w-500 medium boxed-rating-goals">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_1_goals}
-                    </p>
-                  </td>
-                {/if}
-
-              </tr>
+            <!-- [ℹ] TEAM - AWAY 
+            -->
+            <div 
+              class="best-players-box">
               
-              <!-- [ℹ] PLAYER 2 ROW
-              -->
+              <div 
+                class="row-space-start m-b-16">
+                <img
+                  class="m-r-16"
+                  src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
+                  alt=""
+                  width="32px"
+                  height="32px"
+                />
+                <p 
+                  class="w-500 large">
+                  {FEATURED_MATCH_WIDGET_DATA.away_team_name}
+                  {FEATURED_MATCH_WIDGET_DATA_SEO.players}
+                </p>
+              </div>
 
-              <tr>
+              <table 
+                class="table-best-player">
 
-                <td>
-                  <div
-                    class="rating-box"
-                    class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .local_team_rating_player_2 >= 0 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 7}
-                    class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .local_team_rating_player_2 >= 7 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2 < 9}
-                    class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .local_team_rating_player_2 >= 9}>
+                <tr 
+                  class="row-head m-b-16">
+
+                  <th 
+                    class="rating-head">
                     <p 
-                      class="w-500 medium">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_rating_player_2}
+                      class="w-400 small color-grey">
+                      {FEATURED_MATCH_WIDGET_DATA_SEO.rating}
                     </p>
-                  </div>
-                </td>
+                  </th>
 
-                <td 
-                  class="row-space-start">
-                  <img
-                    src={FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_image_path}
-                    alt=""
-                    width="32px"
-                    height="32px"
-                    class="player-img"
-                  />
-                  <p 
-                    class="w-500 small desktop-small">
-                    {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2}
-                  </p>
-                </td>
-
-                {#if viewportDesktop}
-                  <td>
+                  <th 
+                    class="player-col">
                     <p 
-                      class="w-500 medium boxed-rating-matches">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_appearances}
+                      class="w-400 small color-grey">
+                      {FEATURED_MATCH_WIDGET_DATA_SEO.player}
+                    </p>
+                  </th>
+
+                  {#if viewportDesktop}
+                    <th 
+                      class="text-center">
+                      <p 
+                        class="w-400 small color-grey">
+                        {FEATURED_MATCH_WIDGET_DATA_SEO.matches}
+                      </p>
+                    </th>
+                    <th 
+                      class="text-center">
+                      <p 
+                        class="w-400 small color-grey">
+                        {FEATURED_MATCH_WIDGET_DATA_SEO.assists}
+                      </p>
+                    </th>
+                    <th 
+                      class="text-center">
+                      <p 
+                        class="w-400 small color-grey">
+                        {FEATURED_MATCH_WIDGET_DATA_SEO.goals}
+                      </p>
+                    </th>
+                  {/if}
+
+                </tr>
+
+                <!-- [ℹ] PLAYER 1 ROW
+                -->
+                <tr>
+
+                  <td>
+                    <div
+                      class="rating-box"
+                      class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .visitor_team_rating_player_1 >= 0 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 7}
+                      class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .visitor_team_rating_player_1 >= 7 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 9}
+                      class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .visitor_team_rating_player_1 >= 9}>
+                      <p 
+                        class="w-500 medium">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1}
+                      </p>
+                    </div>
+                  </td>
+
+                  <td 
+                    class="row-space-start">
+                    <img
+                      src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_image_path}
+                      alt=""
+                      width="32px"
+                      height="32px"
+                      class="player-img"
+                    />
+                    <p 
+                      class="w-500 small desktop-small">
+                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1}
                     </p>
                   </td>
+
+                  {#if viewportDesktop}
+                    <td>
+                      <p class="w-500 medium boxed-rating-matches">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_appearances}
+                      </p>
+                    </td>
+                    <td>
+                      <p class="w-500 medium boxed-rating-assits">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_assists}
+                      </p>
+                    </td>
+                    <td>
+                      <p class="w-500 medium boxed-rating-goals">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_goals}
+                      </p>
+                    </td>
+                  {/if}
+
+                </tr>
+
+                <!-- [ℹ] PLAYER 2 ROW 
+                -->
+
+                <tr>
+
                   <td>
+                    <div
+                      class="rating-box"
+                      class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .visitor_team_rating_player_2 >= 0 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 7}
+                      class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .visitor_team_rating_player_2 >= 7 &&
+                        FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 9}
+                      class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
+                        .visitor_team_rating_player_2 >= 9}>
+                      <p 
+                        class="w-500 medium">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2}
+                      </p>
+                    </div>
+                  </td>
+
+                  <td 
+                    class="row-space-start">
+                    <img
+                      src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_image_path}
+                      alt=""
+                      width="32px"
+                      height="32px"
+                      class="player-img"
+                    />
                     <p 
-                      class="w-500 medium boxed-rating-assits">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_assists}
+                      class="w-500 small desktop-small">
+                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2}
                     </p>
                   </td>
-                  <td>
-                    <p 
-                      class="w-500 medium boxed-rating-goals">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.local_team_player_2_goals}
-                    </p>
-                  </td>
-                {/if}
 
-              </tr>
+                  {#if viewportDesktop}
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-matches">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_appearances}
+                      </p>
+                    </td>
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-assits">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_assists}
+                      </p>
+                    </td>
+                    <td>
+                      <p 
+                        class="w-500 medium boxed-rating-goals">
+                        {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_goals}
+                      </p>
+                    </td>
+                  {/if}
 
-            </table>
+                </tr>
 
-          </div>
+              </table>
 
-          <!-- [ℹ] TEAM - AWAY 
-				  -->
-					<div 
-            class="best-players-box">
-						
-            <div 
-              class="row-space-start m-b-16">
-              <img
-                class="m-r-16"
-                src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-                alt=""
-                width="32px"
-                height="32px"
-              />
-              <p 
-                class="w-500 large">
-                {FEATURED_MATCH_WIDGET_DATA.away_team_name}
-                {FEATURED_MATCH_WIDGET_DATA_SEO.players}
-              </p>
             </div>
 
-            <table 
-              class="table-best-player">
-
-              <tr 
-                class="row-head m-b-16">
-
-                <th 
-                  class="rating-head">
-                  <p 
-                    class="w-400 small color-grey">
-                    {FEATURED_MATCH_WIDGET_DATA_SEO.rating}
-                  </p>
-                </th>
-
-                <th 
-                  class="player-col">
-                  <p 
-                    class="w-400 small color-grey">
-                    {FEATURED_MATCH_WIDGET_DATA_SEO.player}
-                  </p>
-                </th>
-
-                {#if viewportDesktop}
-                  <th 
-                    class="text-center">
-                    <p 
-                      class="w-400 small color-grey">
-                      {FEATURED_MATCH_WIDGET_DATA_SEO.matches}
-                    </p>
-                  </th>
-                  <th 
-                    class="text-center">
-                    <p 
-                      class="w-400 small color-grey">
-                      {FEATURED_MATCH_WIDGET_DATA_SEO.assists}
-                    </p>
-                  </th>
-                  <th 
-                    class="text-center">
-                    <p 
-                      class="w-400 small color-grey">
-                      {FEATURED_MATCH_WIDGET_DATA_SEO.goals}
-                    </p>
-                  </th>
-                {/if}
-
-              </tr>
-
-              <!-- [ℹ] PLAYER 1 ROW
-              -->
-              <tr>
-
-                <td>
-                  <div
-                    class="rating-box"
-                    class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .visitor_team_rating_player_1 >= 0 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 7}
-                    class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .visitor_team_rating_player_1 >= 7 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1 < 9}
-                    class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .visitor_team_rating_player_1 >= 9}>
-                    <p 
-                      class="w-500 medium">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_1}
-                    </p>
-                  </div>
-                </td>
-
-                <td 
-                  class="row-space-start">
-                  <img
-                    src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_image_path}
-                    alt=""
-                    width="32px"
-                    height="32px"
-                    class="player-img"
-                  />
-                  <p 
-                    class="w-500 small desktop-small">
-                    {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1}
-                  </p>
-                </td>
-
-                {#if viewportDesktop}
-                  <td>
-                    <p class="w-500 medium boxed-rating-matches">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_appearances}
-                    </p>
-                  </td>
-                  <td>
-                    <p class="w-500 medium boxed-rating-assits">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_assists}
-                    </p>
-                  </td>
-                  <td>
-                    <p class="w-500 medium boxed-rating-goals">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_1_goals}
-                    </p>
-                  </td>
-                {/if}
-
-              </tr>
-
-              <!-- [ℹ] PLAYER 2 ROW 
-              -->
-
-              <tr>
-
-                <td>
-                  <div
-                    class="rating-box"
-                    class:bronze={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .visitor_team_rating_player_2 >= 0 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 7}
-                    class:silver={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .visitor_team_rating_player_2 >= 7 &&
-                      FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2 < 9}
-                    class:golden={FEATURED_MATCH_WIDGET_DATA.best_players
-                      .visitor_team_rating_player_2 >= 9}>
-                    <p 
-                      class="w-500 medium">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_rating_player_2}
-                    </p>
-                  </div>
-                </td>
-
-                <td 
-                  class="row-space-start">
-                  <img
-                    src={FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_image_path}
-                    alt=""
-                    width="32px"
-                    height="32px"
-                    class="player-img"
-                  />
-                  <p 
-                    class="w-500 small desktop-small">
-                    {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2}
-                  </p>
-                </td>
-
-                {#if viewportDesktop}
-                  <td>
-                    <p 
-                      class="w-500 medium boxed-rating-matches">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_appearances}
-                    </p>
-                  </td>
-                  <td>
-                    <p 
-                      class="w-500 medium boxed-rating-assits">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_assists}
-                    </p>
-                  </td>
-                  <td>
-                    <p 
-                      class="w-500 medium boxed-rating-goals">
-                      {FEATURED_MATCH_WIDGET_DATA.best_players.visitor_team_player_2_goals}
-                    </p>
-                  </td>
-                {/if}
-
-              </tr>
-
-            </table>
-
           </div>
 
-        </div>
+        {/if}
 
         <!-- [ℹ] value-bets section 
         -->

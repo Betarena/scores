@@ -202,7 +202,15 @@
 
 <svelte:head>
   <!-- https://github.com/sveltejs/kit/issues/3091 -->
-  <html lang="{$page.params.lang === undefined || $page.error ? 'en' : $page.params.lang}" />
+  <html lang="{
+    $page.params.lang === undefined || 
+    $page.error 
+      ? 'en' 
+      : $page.params.lang === 'br'
+        ? 'pt-BR'
+        : $page.params.lang
+    }" 
+  />
 </svelte:head>
 
 <!-- [ℹ] SEO-DATA-LOADED 
