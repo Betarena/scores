@@ -20,7 +20,14 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
 
     # [ℹ] pagination based
 
-    historic_fixtures_dev_aggregate {
+    historic_fixtures_dev_aggregate (
+      where: {
+        fixture_day: {
+          _gte: $start_date, 
+          _lte: $end_date
+        }
+      }
+    ) {
       aggregate {
         totalCount: count
       }
