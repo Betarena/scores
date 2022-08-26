@@ -32,6 +32,20 @@ export interface BETARENA_HASURA_fixtures_odds_query {
 */
 
 export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response {
+  league_id?:  number
+  seasons?:    Tournament_Season_Fixtures_Odds[]
+}
+
+export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response extends FixturesOddsTranslations {
+  lang: string
+}
+
+export interface Tournament_Season_Fixtures_Odds {
+  season_id?: number
+  fixtures?:  Tournament_Fixture_Odds[]
+}
+
+export interface Tournament_Fixture_Odds {
   round: number         // Rounds and weeks = scores_football_seasons_details + round_data + scores_general_translations
   week: number          // Rounds and weeks = scores_football_seasons_details + round_data + scores_general_translations
   date: string          // Day and Month = historic_fixtures + "league_id" + "time" +  scores_general_translations (Filter fixtures between dates or rounds to get fixtures day information, varies depending on the computer date and time of the end user) 
@@ -58,8 +72,4 @@ export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_respon
     home: number
     away: number
   }
-}
-
-export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response extends FixturesOddsTranslations {
-  lang: string
 }
