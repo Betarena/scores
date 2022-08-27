@@ -45,21 +45,11 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
     ) {
       id
       fixture_day
-      league_name
-      country_flag
-      home_team_logo
-      away_team_logo
       away_team_name
-      status
-      tvstations
-      inserted_at
-      time
       home_team_name
       round_name
       data
       league_id
-      probabilities
-      valuebets
       tip_link_wp
       fixture_link_wp
       media_link
