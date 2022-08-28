@@ -11,15 +11,12 @@ import { performance } from 'perf_hooks';
 import Bull from 'bull';
 
 import type { 
-  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
-  REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
-} from '$lib/models/tournaments/top_players/types';
-import type { 
   BETARENA_HASURA_historic_fixtures
 } from '$lib/models/hasura';
 import type { 
   BETARENA_HASURA_fixtures_odds_query, 
   Fixture_Odds_Team, 
+  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
   Rounds_Data, 
   Tournament_Fixture_Odds, 
@@ -100,7 +97,7 @@ export async function post(): Promise < unknown > {
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response) {
+async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset(cacheDataAddr, league_id, JSON.stringify(json_cache));
@@ -110,7 +107,7 @@ async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tour
   }
 }
 
-async function cacheTranslationData (lang: string, json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response) {
+async function cacheTranslationData (lang: string, json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset(cacheTransAddr, lang, JSON.stringify(json_cache));
@@ -465,7 +462,11 @@ async function main () {
   t0 = performance.now();
   logs.push(`total leagues: ${historic_fixtures_by_league.size}`)
   for (const [key, value] of historic_fixtures_by_league.entries()) {
-    await cacheData(key, value);
+    const finalObj: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response = {
+      league_id: key,
+      seasons: value || []
+    }
+    await cacheData(key, finalObj);
     arrayObj.push(value);
   }
   t1 = performance.now();
