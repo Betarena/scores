@@ -52,6 +52,8 @@ async function getCacheData (league_id: string): Promise < REDIS_CACHE_SINGLE_to
   try {
     const cached: string = await redis.hget(cacheDataAddr, league_id);
     if (cached) {
+      // [🐛] debug;
+      if (dev) console.info(`✅ ${cacheDataAddr} cache data retrieved`);
       const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = JSON.parse(cached);
       return parsed;
     }
@@ -66,6 +68,8 @@ async function getCacheTranslationData (lang: string): Promise < REDIS_CACHE_SIN
   try {
     const cached: string = await redis.hget(cacheTransAddr, lang);
     if (cached) {
+      // [🐛] debug;
+      if (dev) console.info(`✅ ${cacheTransAddr} cache data retrieved`);
       const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = JSON.parse(cached);
       return parsed;
     }

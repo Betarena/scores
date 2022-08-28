@@ -50,6 +50,8 @@ async function getTopPlayersData (league_id: string): Promise < REDIS_CACHE_SING
   try {
     const cached: string = await redis.hget('tournament_top_players_data', league_id);
     if (cached) {
+      // [🐛] debug;
+      if (dev) console.info(`✅ tournament_top_players_data cache data retrieved`);
       const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = JSON.parse(cached);
       return parsed;
     }
@@ -64,6 +66,8 @@ async function getTopPlayersDataTranslation (lang: string): Promise < REDIS_CACH
   try {
     const cached: string = await redis.hget('tournament_top_player_t', lang);
     if (cached) {
+      // [🐛] debug;
+      if (dev) console.info(`✅ tournament_top_player_t cache data retrieved`);
       const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = JSON.parse(cached);
       return parsed;
     }
