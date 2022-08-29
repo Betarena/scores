@@ -191,8 +191,8 @@
     // [ℹ] search fixtures by target data
     const fixtures_arr = target_season.fixtures
     .filter( ({ fixture_date, round, week }) => 
-      new Date(fixture_date) > week_start &&
-      new Date(fixture_date) < week_end
+      new Date(fixture_date) >= week_start &&
+      new Date(fixture_date) <= week_end
     );
 
     const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]>();
@@ -262,8 +262,8 @@
     // [ℹ] search fixtures by target data
     const fixtures_arr = target_season.fixtures
     .filter( ({ fixture_date, round, week }) => 
-      new Date(fixture_date) > week_start &&
-      new Date(fixture_date) < week_end
+      new Date(fixture_date) >= week_start &&
+      new Date(fixture_date) <= week_end
     );
 
     const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]>();
