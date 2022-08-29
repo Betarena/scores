@@ -17,6 +17,7 @@
   import type { 
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
+    Rounds_Data, 
     Tournament_Fixture_Odds
   } from "$lib/models/tournaments/fixtures_odds/types";
   import type { 
@@ -145,6 +146,7 @@
   function selectFixturesOdds () {
 
     fixtures_arr_filter = []
+    let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
 
     // [ℹ] current user (client) date
     const date = new Date();
@@ -159,15 +161,41 @@
     // [ℹ] identify "round" start/end dates
     if (optView === 'round') {
 
-      const target_round = target_season.rounds
-      .find( ({ s_date, e_date }) =>
-        new Date(s_date) < date &&
-        new Date(e_date) > date
-      );
+      let target_round: Rounds_Data
+
+      // [ℹ] complex round targeting identification
+      for (let i = 0; i < target_season.rounds.length; i++) {
+        
+        const s_date = new Date(target_season.rounds[i].s_date)
+        const e_date = new Date(target_season.rounds[i].e_date)
+        const past_e_date = 
+          i == 0 
+            ? null
+            : new Date(target_season.rounds[i-1].s_date)
+
+        if (s_date <= date && e_date >= date) {
+          target_round = target_season.rounds[i]
+          break
+        }
+
+        else if (
+          past_e_date !== null && 
+          (past_e_date < date && s_date >= date)) {
+          target_round = target_season.rounds[i]
+          break
+        }
+
+      }
 
       week_start = new Date(target_round.s_date)
       week_end = new Date(target_round.e_date)
       week_name = parseInt(target_round.name)
+
+      // [ℹ] search fixtures by target data
+      temp_fixtures_odds_arr = target_season.fixtures
+      .filter( ({ round }) => 
+        week_name === round
+      );
     }
     // [ℹ] identify "week" start/end dates
     else {
@@ -182,22 +210,24 @@
       week_end = new Date(target_week.e_date)
       week_name = parseInt(target_week.name)
 
+      temp_fixtures_odds_arr = target_season.fixtures
+      .filter( ({ fixture_date }) => 
+        new Date(fixture_date) >= week_start &&
+        new Date(fixture_date) <= week_end
+      );
+
     }
 
     // [ℹ] extra get number of weeeks & rounds
     weeks_total = target_season.weeks.length
     rounds_total = target_season.rounds.length
 
-    // [ℹ] search fixtures by target data
-    const fixtures_arr = target_season.fixtures
-    .filter( ({ fixture_date, round, week }) => 
-      new Date(fixture_date) >= week_start &&
-      new Date(fixture_date) <= week_end
-    );
-
+    /**
+     * [ℹ] group-by fixtures "fixture-day"
+    */
     const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]>();
 
-    for (const fixture of fixtures_arr) {
+    for (const fixture of temp_fixtures_odds_arr) {
       
       const fixDate = fixture.fixture_date;
 
@@ -227,6 +257,7 @@
   function selectFixtureOddsNumber(opt_view: number) {
 
     fixtures_arr_filter = []
+    let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
 
     const target_season = FIXTURES_ODDS_DATA.seasons
     .find( ({ season_id }) => 
@@ -244,6 +275,12 @@
       week_start = new Date(target_round.s_date)
       week_end = new Date(target_round.e_date)
       week_name = parseInt(target_round.name)
+
+      // [ℹ] search fixtures by target data
+      temp_fixtures_odds_arr = target_season.fixtures
+      .filter( ({ round }) => 
+        week_name === round
+      );
     }
     // [ℹ] identify "week" start/end dates
     else {
@@ -257,18 +294,19 @@
       week_end = new Date(target_week.e_date)
       week_name = parseInt(target_week.name)
 
+      temp_fixtures_odds_arr = target_season.fixtures
+      .filter( ({ fixture_date }) => 
+        new Date(fixture_date) >= week_start &&
+        new Date(fixture_date) <= week_end
+      );
     }
 
-    // [ℹ] search fixtures by target data
-    const fixtures_arr = target_season.fixtures
-    .filter( ({ fixture_date, round, week }) => 
-      new Date(fixture_date) >= week_start &&
-      new Date(fixture_date) <= week_end
-    );
-
+    /**
+     * [ℹ] group-by fixtures "fixture-day"
+    */
     const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]>();
 
-    for (const fixture of fixtures_arr) {
+    for (const fixture of temp_fixtures_odds_arr) {
       
       const fixDate = fixture.fixture_date;
 
@@ -291,6 +329,10 @@
     }
 
     fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }
+
+  $: if (optView) {
+    selectFixturesOdds()
   }
 
   function triggerGoggleEvents(action: string) {
@@ -553,7 +595,11 @@
                 -->
                 <p
                   class='s-14 m-r-5 w-500 color-grey'>
-                  {FIXTURES_ODDS_T?.week} {week_name}
+                  {#if optView === "week"}
+                    {FIXTURES_ODDS_T?.week} {week_name}
+                  {:else}
+                    {FIXTURES_ODDS_T?.round} {week_name}
+                  {/if}
                 </p>
                 <!-- [ℹ] arrow down [hidden-menu] 
                 -->
@@ -579,14 +625,25 @@
                   id="dropdown-list-main-container">
                   <div
                     id="dropdown-list-inner-container">
-                    {#each {length: weeks_total} as _,i}
-                      <p
-                        class='s-14 w-500 row-season'
-                        class:color-primary={i === week_name}
-                        on:click={() => selectFixtureOddsNumber(i)}>
-                        {FIXTURES_ODDS_T?.week} {i}
-                      </p>
-                    {/each}
+                    {#if optView === "week"}
+                      {#each {length: weeks_total} as _,i}
+                        <p
+                          class='s-14 w-500 row-season'
+                          class:color-primary={i === week_name}
+                          on:click={() => selectFixtureOddsNumber(i)}>
+                          {FIXTURES_ODDS_T?.week} {i}
+                        </p>
+                      {/each}
+                    {:else}
+                      {#each {length: rounds_total} as _,i}
+                        <p
+                          class='s-14 w-500 row-season'
+                          class:color-primary={i === week_name}
+                          on:click={() => selectFixtureOddsNumber(i)}>
+                          {FIXTURES_ODDS_T?.round} {i}
+                        </p>
+                      {/each}
+                    {/if}
                   </div>
                 </div>
               {/if}
@@ -656,7 +713,11 @@
           <div>
             <p
               class="s-16 w-500 color-black">
-              {FIXTURES_ODDS_T?.week} {week_name}
+              {#if optView === "week"}
+                {FIXTURES_ODDS_T?.week} {week_name}
+              {:else}
+                {FIXTURES_ODDS_T?.round} {week_name}
+              {/if}
             </p>
             <p
               class="s-12 color-grey">
