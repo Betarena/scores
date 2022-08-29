@@ -710,7 +710,8 @@
             {/if}
           </button>
 
-          <div>
+          <div
+            class="text-center">
             <p
               class="s-16 w-500 color-black">
               {#if optView === "week"}
