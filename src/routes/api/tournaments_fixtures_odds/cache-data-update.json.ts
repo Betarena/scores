@@ -307,7 +307,7 @@ async function main () {
       const e_date = new Date(season_start)
 
       s_date.setDate(s_date.getDate() + (index * 7));
-      // e_date.setDate(e_date.getDate() + (index * 7) + 7);
+      e_date.setDate(e_date.getDate() + (index * 7));
 
       // [ℹ] hypothetical alternative to get
       // [ℹ] next-month "sunday"
@@ -318,7 +318,7 @@ async function main () {
       // ).getDate();
 
       s_date.setDate(s_date.getDate() - s_date.getDay() + 1);
-      e_date.setDate(s_date.getDate() - s_date.getDay() + 7);
+      e_date.setDate(e_date.getDate() - e_date.getDay() + 7);
 
       mod_weeks.push({
         name: name?.toString(),
