@@ -69,10 +69,10 @@ export async function post(): Promise < unknown > {
   // [ℹ] producers [JOBS]
   // const job = await CQ_Tour_FixOdds_All.add({});
 
-  // const langArray = await getHrefLang()
+  const langArray = await getHrefLang()
   
   await main()
-  // await main_trans_and_seo(langArray)
+  await main_trans_and_seo(langArray)
 
   // [🐛] debug
   if (dev) {
@@ -199,6 +199,12 @@ async function main () {
       VARIABLES
     );
 
+    // for (const fixture of response.historic_fixtures_dev) {
+    //   if (fixture.id === 18535056) {
+    //     console.log("Here! Found it!")
+    //   }
+    // }
+
     h_fixtures_arr = h_fixtures_arr.concat(response.historic_fixtures_dev)
 
     total_limit = response.historic_fixtures_dev_aggregate.aggregate.totalCount;
@@ -217,6 +223,18 @@ async function main () {
   }
   t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  console.log(`offset: ${offset}`);
+
+  // [🐛] debug
+  // if (dev) {
+  //   const data = JSON.stringify(h_fixtures_arr, null, 4)
+  //   fs.writeFile('./datalog/h_fixtures_arr.json', data, err => {
+  //     if (err) {
+  //       console.error(err);
+  //     }
+  //   });
+  // }
 
   // [ℹ] conversion to hashmap
   t0 = performance.now();
@@ -476,7 +494,7 @@ async function main () {
   t1 = performance.now();
   logs.push(`cache uplaod complete in: ${(t1 - t0) / 1000} sec`);
 
-  // // [🐛] debug
+  // [🐛] debug
   if (dev) {
     const data = JSON.stringify(arrayObj, null, 4)
     fs.writeFile('./datalog/CQ_Tour_FixOdds_All_23.json', data, err => {
