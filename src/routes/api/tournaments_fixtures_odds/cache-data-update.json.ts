@@ -337,7 +337,7 @@ async function main () {
     
     const away_team_name = value.away_team_name;
     const away_red_cards = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.redcards;
-    const away_team_score = value?.data?.stats?.data?.find( ({ team_id }) => team_id === home_team_id )?.goals;
+    const away_team_score = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
 
     const home_team_obj: Fixture_Odds_Team = {
       name: home_team_name,
