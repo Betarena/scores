@@ -318,11 +318,13 @@ async function main () {
 
     const fix_season_id = value.data?.season_id;
     const league_id = value.league_id;
+    const fixture_id = value.id;
     const home_team_id = value.data?.localteam_id;
     const away_team_id = value.data?.visitorteam_id;
 
     const round = value.data?.round?.data?.name;
     const fixture_date = value.fixture_day;
+    const fixture_time = value.time;
     const live_minutes = value.data?.time?.minute;
 
     const tip_link = value.tip_link_wp
@@ -351,17 +353,19 @@ async function main () {
 
     // [ℹ] generate fixtures_odds object
     const fixtures_odds_object: Tournament_Fixture_Odds = {
-      round: round,
-      week: 2,
-      live_minute: live_minutes,
-      fixture_date: fixture_date,
+      id:               fixture_id,
+      round:            round,
+      week:             2, // FIXME:
+      live_minute:      live_minutes,
+      fixture_time:     fixture_time,
+      fixture_date:     fixture_date,
       teams: {
-        home: home_team_obj,
-        away: away_team_obj
+        home:           home_team_obj,
+        away:           away_team_obj
       },
-      tip_link: tip_link,
-      media_link: media_link,
-      fixture_link: fixture_link
+      tip_link:         tip_link,
+      media_link:       media_link,
+      fixture_link:     fixture_link
     }
 
     // [ℹ] target league exists
@@ -496,16 +500,16 @@ async function main_trans_and_seo (langArray :string[]) {
   */
   for (const lang_ of langArray) {
 
-    let object: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = {}
+    const object: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = {}
     object.lang = lang_
 
-    let objectFixOdds = res.scores_widget_football_fixtures_odds_translations_dev
+    const objectFixOdds = res.scores_widget_football_fixtures_odds_translations_dev
       .find(({ lang }) => lang === lang_)
 
-    let objectGeneral = res.scores_general_translations_dev
+    const objectGeneral = res.scores_general_translations_dev
       .find(({ lang }) => lang === lang_)
     
-    let mergedObj = {
+    const mergedObj = {
       ...object, 
       ...objectFixOdds?.translations,
       ...objectGeneral?.months,
