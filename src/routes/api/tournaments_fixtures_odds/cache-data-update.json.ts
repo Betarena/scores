@@ -289,7 +289,7 @@ async function main () {
       const e_date = new Date(season_start)
 
       s_date.setDate(s_date.getDate() + (index * 7));
-      e_date.setDate(s_date.getDate() + (index * 7) + 7);
+      e_date.setDate(e_date.getDate() + (index * 7) + 7);
 
       mod_weeks.push({
         name: name?.toString(),
