@@ -165,7 +165,7 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
 async function main () {
 
   const start_date = "2022-08-10";
-  const end_date = "2022-08-27"; 
+  const end_date = "2022-10-28"; 
   const limit = 1000;
   let offset = 0;
   let total_limit;
@@ -307,7 +307,18 @@ async function main () {
       const e_date = new Date(season_start)
 
       s_date.setDate(s_date.getDate() + (index * 7));
-      e_date.setDate(e_date.getDate() + (index * 7) + 7);
+      // e_date.setDate(e_date.getDate() + (index * 7) + 7);
+
+      // [ℹ] hypothetical alternative to get
+      // [ℹ] next-month "sunday"
+      // const currentMonthDays = new Date(
+      //   s_date.getFullYear(),
+      //   s_date.getMonth() + 1,
+      //   0
+      // ).getDate();
+
+      s_date.setDate(s_date.getDate() - s_date.getDay() + 1);
+      e_date.setDate(s_date.getDate() - s_date.getDay() + 7);
 
       mod_weeks.push({
         name: name?.toString(),
