@@ -45,6 +45,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
     ) {
       id
       fixture_day
+      time
       away_team_name
       home_team_name
       round_name
