@@ -10,6 +10,7 @@
   import { page, session } from "$app/stores";
   import { browser, dev } from "$app/env";
   import { afterNavigate } from "$app/navigation";
+  import { get } from "$lib/api/utils";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
@@ -18,13 +19,24 @@
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
     Tournament_Fixture_Odds
   } from "$lib/models/tournaments/fixtures_odds/types";
+  import type { 
+    Cache_Single_SportbookDetails_Data_Response 
+  } from "$lib/models/tournaments/league-info/types";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
   import check_league from './assets/check-league.svg';
-  
+  import slider_left from './assets/slider-left.svg';
+	import slider_right from './assets/slider-right.svg';
+  import slider_left_dark from './assets/slider-left-dark.svg';
+	import slider_right_dark from './assets/slider-right-dark.svg';
+  import play from './assets/play.svg';
+  import play_dark from './assets/play-dark.svg';
+  import one_red_card from './assets/1_red_card.svg';
+  import two_red_card from './assets/2_red_cards.svg';
+  import three_red_card from './assets/3_red_cards.svg';
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -32,8 +44,12 @@
   let noFixturesOddsBool:       any = false;                    // [ℹ] identifies the noFixturesOddsBool boolean;
   let toggleDropdown:           boolean = false;
   let trueLengthOfArray:        number;
-  let optView:                  'round' | 'week' = 'round'
-  let fixtures_arr:             Tournament_Fixture_Odds[]
+  let optView:                  'round' | 'week' = 'week'
+  let fixtures_arr_filter: {
+    date: Date
+    fixtures: Tournament_Fixture_Odds[]
+  }[] = []
+  let selectedOpt:              string = 'matches';
 
   let diasbleDev:               boolean = false;
   let devConsoleTag:            string = "FIX_ODDS";
@@ -41,6 +57,31 @@
   let refreshRow:               boolean = false;
 
   let currentSeason:            number = undefined;
+
+  const monthNames = [
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec'
+	];
+
+  const weekDays = [
+    'monday',
+    'tuesday',
+    'wednesday',
+    'thursday',
+    'friday',
+    'saturday',
+    'sunday',
+  ];
 
 	export let FIXTURES_ODDS_T:     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
 	export let FIXTURES_ODDS_DATA:  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
@@ -51,13 +92,16 @@
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  async function widgetInit(): Promise < REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response > {
+  async function widgetInit(): Promise < Cache_Single_SportbookDetails_Data_Response > {
 
     if (!$userBetarenaSettings.country_bookmaker || $session?.selectedSeasonID == undefined) {
       return
     }
 
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+
     // [ℹ] get response [lang] [data] [obtained from preload()]
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
 
 		if (FIXTURES_ODDS_T == null || FIXTURES_ODDS_DATA == undefined) {
       if (dev) console.debug('❌ no players_data available!')
@@ -80,7 +124,7 @@
 
     selectFixturesOdds();
 
-    return FIXTURES_ODDS_DATA;
+    return response;
   }
 
   function selectTableView (opt: string) {
@@ -91,55 +135,174 @@
     }, 50)
   }
 
+  let week_start: Date
+  let week_end: Date
+  let week_name: number
+  let ready = false
+  let weeks_total: number
+  let rounds_total: number
+
   function selectFixturesOdds () {
+
+    fixtures_arr_filter = []
 
     // [ℹ] current user (client) date
     const date = new Date();
 
     const target_season = FIXTURES_ODDS_DATA.seasons
-      .find( ({ season_id }) => 
-        season_id === $session.selectedSeasonID
-      );
+    .find( ({ season_id }) => 
+      season_id === $session.selectedSeasonID
+    );
 
-    let week_start: Date
-    let week_end: Date
-    let week_name;
+    if (dev && !diasbleDev) console.log("target_season: ", target_season)
 
     // [ℹ] identify "round" start/end dates
     if (optView === 'round') {
 
       const target_round = target_season.rounds
-        .find( ({ s_date, e_date }) =>
-          new Date(s_date) < date &&
-          new Date(e_date) > date
-        );
+      .find( ({ s_date, e_date }) =>
+        new Date(s_date) < date &&
+        new Date(e_date) > date
+      );
 
       week_start = new Date(target_round.s_date)
       week_end = new Date(target_round.e_date)
-      week_name = target_round.name
+      week_name = parseInt(target_round.name)
     }
     // [ℹ] identify "week" start/end dates
     else {
 
       const target_week = target_season.weeks
-        .find( ({ s_date, e_date }) =>
-          new Date(s_date) < date &&
-          new Date(e_date) > date
-        );
+      .find( ({ s_date, e_date }) =>
+        new Date(s_date) < date &&
+        new Date(e_date) > date
+      );
 
       week_start = new Date(target_week.s_date)
       week_end = new Date(target_week.e_date)
-      week_name = target_week.name
+      week_name = parseInt(target_week.name)
+
+    }
+
+    // [ℹ] extra get number of weeeks & rounds
+    weeks_total = target_season.weeks.length
+    rounds_total = target_season.rounds.length
+
+    // [ℹ] search fixtures by target data
+    const fixtures_arr = target_season.fixtures
+    .filter( ({ fixture_date, round, week }) => 
+      new Date(fixture_date) > week_start &&
+      new Date(fixture_date) < week_end
+    );
+
+    const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]>();
+
+    for (const fixture of fixtures_arr) {
+      
+      const fixDate = fixture.fixture_date;
+
+      if (fixtures_group_by_date.has(fixDate)) {
+        fixtures_group_by_date.get(fixDate).push(fixture)
+      }
+      else {
+        let newFixtureArr: Tournament_Fixture_Odds[] = []
+        newFixtureArr.push(fixture)
+        fixtures_group_by_date.set(fixDate, newFixtureArr)
+      }
+    }
+
+    for (const [key, value] of fixtures_group_by_date.entries()) {
+      const fixObj = {
+        date: key,
+        fixtures: value
+      }
+      fixtures_arr_filter.push(fixObj);
+    }
+
+    fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    ready = true;
+  }
+
+  function selectFixtureOddsNumber(opt_view: number) {
+
+    fixtures_arr_filter = []
+
+    const target_season = FIXTURES_ODDS_DATA.seasons
+    .find( ({ season_id }) => 
+      season_id === $session.selectedSeasonID
+    );
+
+    // [ℹ] identify "round" start/end dates
+    if (optView === 'round') {
+
+      const target_round = target_season.rounds
+      .find( ({ name }) =>
+        parseInt(name) == opt_view
+      );
+
+      week_start = new Date(target_round.s_date)
+      week_end = new Date(target_round.e_date)
+      week_name = parseInt(target_round.name)
+    }
+    // [ℹ] identify "week" start/end dates
+    else {
+
+      const target_week = target_season.weeks
+      .find( ({ name }) =>
+        parseInt(name) == opt_view
+      );
+
+      week_start = new Date(target_week.s_date)
+      week_end = new Date(target_week.e_date)
+      week_name = parseInt(target_week.name)
 
     }
 
     // [ℹ] search fixtures by target data
-    fixtures_arr = target_season.fixtures
-      .filter( ({ fixture_date, round, week }) => 
-        new Date(fixture_date) > week_start &&
-        new Date(fixture_date) < week_end
-      );
+    const fixtures_arr = target_season.fixtures
+    .filter( ({ fixture_date, round, week }) => 
+      new Date(fixture_date) > week_start &&
+      new Date(fixture_date) < week_end
+    );
 
+    const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]>();
+
+    for (const fixture of fixtures_arr) {
+      
+      const fixDate = fixture.fixture_date;
+
+      if (fixtures_group_by_date.has(fixDate)) {
+        fixtures_group_by_date.get(fixDate).push(fixture)
+      }
+      else {
+        let newFixtureArr: Tournament_Fixture_Odds[] = []
+        newFixtureArr.push(fixture)
+        fixtures_group_by_date.set(fixDate, newFixtureArr)
+      }
+    }
+
+    for (const [key, value] of fixtures_group_by_date.entries()) {
+      const fixObj = {
+        date: key,
+        fixtures: value
+      }
+      fixtures_arr_filter.push(fixObj);
+    }
+
+    fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+  }
+
+  function triggerGoggleEvents(action: string) {
+    if (action === "betting_site_logo_standings") {
+      gtag('event', "betting_site_logo_standings", { 
+        'event_category': "widget_standings_info", 
+        'event_label': "click_betting_site_logo", 
+        'value': "click"
+        }
+      );
+      return
+    }
   }
 
   function closeAllDropdowns() {
@@ -308,6 +471,7 @@
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if 
+    ready &&
     !noFixturesOddsBool &&
     !refresh &&
     browser && 
@@ -339,10 +503,385 @@
         class:widget-no-data-height={trueLengthOfArray == 0}
         class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-        {#each fixtures_arr as item}
-          {item?.fixture_date}
-          {item?.teams?.away?.name}
-          {item?.teams?.home?.name}
+        <!-- [ℹ] widget main top controls 
+        -->
+        <div
+          id="fixtures-odds-top-container"
+          class="row-space-out m-b-15">
+
+          <div
+            class="row-space-start">
+
+            <!-- [ℹ] widget top selection fixtures odds views [DESKTOP]
+            -->
+            <div
+              id="fix-odds-view-box"
+              class="row-space-start m-r-20">
+
+              <div
+                class="fix-odds-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('matches')}
+                class:activeOpt={selectedOpt == 'matches'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {FIXTURES_ODDS_T?.matches}
+                </p>
+              </div>
+
+              <div
+                class="fix-odds-view-opt-box cursor-pointer"
+                on:click={() => selectTableView('odds')}
+                class:activeOpt={selectedOpt == 'odds'}>
+                <p
+                  class="s-14 w-500 color-grey">
+                  {FIXTURES_ODDS_T?.odds}
+                </p>
+              </div>
+
+            </div>
+
+            <!-- [ℹ] dropdown season select
+            -->
+            <div
+              id='dropdown-seasons'
+              class="m-r-16">
+              
+              <div
+                class="row-space-start"
+                on:click={() => toggleDropdown = !toggleDropdown}>
+                <!-- [ℹ] display selected week / round
+                -->
+                <p
+                  class='s-14 m-r-5 w-500 color-grey'>
+                  {FIXTURES_ODDS_T?.week} {week_name}
+                </p>
+                <!-- [ℹ] arrow down [hidden-menu] 
+                -->
+                {#if !toggleDropdown}
+                  <img 
+                    src={arrow_down} 
+                    alt="arrow_down" 
+                    width="16px" height="16px" 
+                  />
+                {:else}
+                  <img 
+                    src={arrow_up} 
+                    alt="arrow_up" 
+                    width="16px" height="16px" 
+                  />
+                {/if}
+              </div>
+              
+              <!-- [ℹ] show-dropdown
+              -->
+              {#if toggleDropdown}
+                <div
+                  id="dropdown-list-main-container">
+                  <div
+                    id="dropdown-list-inner-container">
+                    {#each {length: weeks_total} as _,i}
+                      <p
+                        class='s-14 w-500 row-season'
+                        class:color-primary={i === week_name}
+                        on:click={() => selectFixtureOddsNumber(i)}>
+                        {FIXTURES_ODDS_T?.week} {i}
+                      </p>
+                    {/each}
+                  </div>
+                </div>
+              {/if}
+
+            </div>
+
+          </div>
+
+          <!-- [ℹ] widget rounds / weeks selection 
+          -->
+          <div
+            id="widget-round-week-select"
+            class="row-space-start">
+            <div
+              class="row-space-start m-r-16">
+              <input 
+                type="radio" 
+                name="matches-odds-select" 
+                bind:group={optView}
+                id=""
+                class="m-r-8"
+                value={"round"}
+              />
+              {FIXTURES_ODDS_T?.round}
+            </div>
+            <div
+              class="row-space-start">
+              <input 
+                type="radio" 
+                name="matches-odds-select"
+                bind:group={optView}
+                id=""
+                class="m-r-8"
+                value={"week"}
+              />
+              {FIXTURES_ODDS_T?.week}
+            </div>
+          </div>
+
+        </div>
+
+        <!-- [ℹ] widget round / week toggle increment / decrese view 
+        -->
+        <div
+          id="mobile-table-box"
+          class="row-space-out m-b-12">
+
+          <button
+            class="table-nav-btn"
+            aria-label="selectedOptionTableMobile"
+            disabled={week_name == 1}
+            on:click={() => selectFixtureOddsNumber(week_name - 1)}
+            >
+            {#if $userBetarenaSettings.theme == 'Dark'}
+              <img 
+                src={slider_left_dark} 
+                alt=""
+              />
+            {:else}
+              <img 
+                src={slider_left} 
+                alt=""
+              />
+            {/if}
+          </button>
+
+          <div>
+            <p
+              class="s-16 w-500 color-black">
+              {FIXTURES_ODDS_T?.week} {week_name}
+            </p>
+            <p
+              class="s-12 color-grey">
+              {week_start.getDate()}
+              {FIXTURES_ODDS_T?.months_abbreviation[monthNames[week_start.getMonth()]]}
+              -
+              {week_end.getDate()}
+              {FIXTURES_ODDS_T?.months_abbreviation[monthNames[week_end.getMonth()]]}
+            </p>
+          </div>
+
+          <button
+            class="table-nav-btn"
+            aria-label="selectedOptionTableMobile"
+            disabled={week_name == weeks_total}
+            on:click={() => selectFixtureOddsNumber(week_name + 1)}
+            >
+            {#if $userBetarenaSettings.theme == 'Dark'}
+              <img 
+                src={slider_right_dark} 
+                alt=""
+              />
+            {:else}
+              <img 
+                src={slider_right} 
+                alt=""
+              />
+            {/if}
+          </button>
+
+        </div>
+        
+        <!-- [ℹ] generated data fixtures
+         -->
+        {#each fixtures_arr_filter as item}
+          <div>
+            <!-- [ℹ] grouping date fixtures
+            -->
+            <p
+              class="color-grey w-500 s-12 group-fixture-date m-b-8"> 
+              {new Date(item?.date).getDate()} 
+              {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
+              {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
+            </p>
+            <!-- [ℹ] matches loop population 
+            -->
+            {#each item?.fixtures as fixture}
+              <div
+                class="fixture-row row-space-out">
+
+                <!-- [ℹ] fixture left-side container 
+                -->
+                <div
+                  class="row-space-start">
+
+                  <!-- [ℹ] fixture-time
+                  -->
+                  <div
+                    class="m-r-16 fixture-time-box">
+                    <p
+                      class="no-wrap s-14 color-grey">
+                      {
+                        (
+                          new Date(fixture?.fixture_time).getHours() +
+                          ":" +
+                          ('0' + new Date(fixture?.fixture_time).getMinutes()).slice(-2)
+                        ).split(' ').join('')
+                      }
+                    </p>
+                  </div>
+
+                  <!-- [ℹ] fixture-teams
+                  -->
+                  <div
+                    class="column-start-grid-start fixture-teams-box">
+
+                    <div
+                      class="row-space-start">
+                      <p
+                        class="s-14 color-black w-500 m-r-8">
+                        {fixture?.teams?.away?.name}
+                      </p>
+                      {#if fixture?.teams?.away?.red_cards}
+                        {#if fixture?.teams?.away?.red_cards == 1}
+                          <img 
+                            src={one_red_card} 
+                            alt=""
+                            width=12px height=16px
+                          />
+                        {:else if fixture?.teams?.away?.red_cards == 2}
+                          <img 
+                            src={two_red_card} 
+                            alt=""
+                            width=15px height=19px
+                          />
+                        {:else}
+                          <img 
+                            src={three_red_card} 
+                            alt=""
+                            width=18px height=22px
+                          />
+                        {/if}
+                       
+                      {/if}
+                    </div>
+
+                    <div
+                      class="row-space-start">
+                      <p  
+                        class="s-14 color-black w-500 m-r-8">
+                        {fixture?.teams?.home?.name}
+                      </p>
+                      {#if fixture?.teams?.home?.red_cards}
+                        {#if fixture?.teams?.home?.red_cards == 1}
+                          <img 
+                            src={one_red_card} 
+                            alt=""
+                            width=12px height=16px
+                          />
+                        {:else if fixture?.teams?.home?.red_cards == 2}
+                          <img 
+                            src={two_red_card} 
+                            alt=""
+                            width=15px height=19px
+                          />
+                        {:else}
+                          <img 
+                            src={three_red_card} 
+                            alt=""
+                            width=18px height=22px
+                          />
+                        {/if}
+                      {/if}
+                    </div>
+
+                  </div>
+
+                </div>
+
+                <!-- [ℹ] fixture right-side container 
+                -->
+                <div
+                  class="row-space-end"
+                  style="width: auto;">
+
+                  <!-- [ℹ] fixture-link / media-link 
+                  -->
+                  {#if fixture?.fixture_link}
+                    <a 
+                      rel="nofollow"
+                      href={fixture?.fixture_link['en']}
+                      target="_blank"
+                      style="width: inherit;">
+                      <div
+                        class="media-play-btn m-r-16">
+                        <img 
+                          src={play}
+                          alt=""
+                          width=14px height=14px
+                        />
+                      </div>
+                    </a>
+                  {/if}
+
+                  <!-- [ℹ] tip-link 
+                  -->
+                  {#if fixture?.tip_link}
+                    <a 
+                      rel="nofollow"
+                      href={fixture?.tip_link['en']}
+                      target="_blank"
+                      style="width: inherit;">
+                      <div
+                        class="tip-box m-r-16">
+                        <p
+                          class="s-12 color-black">
+                          TIP
+                        </p>
+                      </div>
+                    </a>
+                  {/if}
+
+                  <!-- [ℹ] bet-site 
+                  -->
+                  {#if data}
+                    <a 
+                      rel="nofollow"
+                      aria-label="betting_site_logo_football_fixtures_odds_tournament"
+                      on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_odds_tournament")}
+                      href={data.register_link}
+                      target="_blank"
+                      style="width: inherit;">
+                      <img 
+                        id='sportbook-logo-img'
+                        src={data.image}
+                        alt={data.title}
+                      />
+                    </a>
+                  {/if}
+
+                  <!-- [ℹ] scores 
+                  -->
+                  {#if
+                    fixture?.teams?.away?.score && 
+                    fixture?.teams?.home?.score}
+                    <div
+                      class="column-space-center m-l-10">
+                      <p 
+                        class="s-14 w-500 color-black"
+                        class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                        {fixture?.teams?.away?.score}
+                      </p>
+                      <p 
+                        class="s-14 w-500 color-black"
+                        class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                        {fixture?.teams?.home?.score}
+                      </p>
+                    </div>
+                  {/if}
+                  
+                </div>
+
+              </div>
+            {/each}
+          </div>
         {/each}
 
       </div>
@@ -400,8 +939,153 @@
     [ℹ] MOBILE FIRST
   */
 
+  div#fixtures-odds-top-container {
+    padding: 20px;
+    padding-bottom: 0;
+  }
+
+  div#fix-odds-view-box {
+    width: -webkit-fill-available;
+  } div.fix-odds-view-opt-box {
+    border: 1px solid #CCCCCC;
+    padding: 10px 30px;
+    width: inherit;
+    text-align: center;
+  } div.fix-odds-view-opt-box.activeOpt {
+    border: 1px solid #F5620F;
+  } div.fix-odds-view-opt-box.activeOpt p{
+    color: #F5620F !important;
+  } div.fix-odds-view-opt-box:hover p {
+    color: #292929 !important;
+  } div.fix-odds-view-opt-box:first-child {
+    border-radius: 8px 0px 0px 8px;
+  } div.fix-odds-view-opt-box:last-child {
+    border-radius: 0px 8px 8px 0px;
+  }
+
+  div#widget-round-week-select {
+    width: fit-content;
+  } div#widget-round-week-select input[type="radio"] {
+    width: 1.3em;
+    height: 1.3em;
+    background-color: white;
+    border-radius: 50%;
+    border: 2px solid white;
+    box-shadow: 0 0 0 1px #CCCCCC;
+    -webkit-appearance: none;
+    cursor: pointer;
+  } div#widget-round-week-select input[type="radio"]:checked {
+    background-color: #F5620F;
+    box-shadow: 0 0 0 1px #F5620F;
+  }
+
+  div#dropdown-seasons {
+    border-radius: 4px;
+    position: relative;
+    cursor: pointer;
+  } div#dropdown-seasons:hover p {
+    color: black;
+  } div#dropdown-seasons div#dropdown-list-main-container {
+    position: absolute;
+    top: 115%;
+    width: 100%;
+    /* background-color: #F2F2F2; */
+    background-color: #ffffff;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    z-index: 10000;
+    /* height: 308px; */
+    max-height: 308px;
+    overflow-y: scroll;
+    padding-right: 6px;
+    right: 0;
+  } div#dropdown-seasons div#dropdown-list-main-container::-webkit-scrollbar  {
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    display: none;
+  } div#dropdown-seasons div#dropdown-list-main-container::-webkit-scrollbar  {
+    /* Hide scrollbar for IE, Edge and Firefox */ 
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+  } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container {
+    /* height: 308px; */
+    max-height: 308px;
+    overflow-y: scroll;
+  } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season {
+    padding: 11px 20px;
+  } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season:hover {
+    cursor: pointer;
+    color: #f5620f !important;
+  }
+
+  /* width */
+  div#dropdown-seasons div#dropdown-list-inner-container::-webkit-scrollbar {
+    width: 4px;
+  }
+  /* track */
+  div#dropdown-seasons div#dropdown-list-inner-container::-webkit-scrollbar-track {
+    background: #F2F2F2;
+    border-radius: 12px;
+    margin: 8px;
+  }
+  /* handle */
+  div#dropdown-seasons div#dropdown-list-inner-container::-webkit-scrollbar-thumb {
+    background: #CCCCCC;
+    border-radius: 12px;
+  }
+
+  div#mobile-table-box {
+    padding: 12px;
+    background: #F2F2F2;
+    border-radius: 48px;
+    margin: 0 20px 12px 20px;
+    width: auto;
+  } div#mobile-table-box button.table-nav-btn {
+    border-radius: 50%;
+    background: #4B4B4B;
+    width: 32px;
+    height: 32px;
+    padding: 6px;
+  } div#mobile-table-box button.table-nav-btn:disabled {
+    opacity: 0.2;
+  }
+
+  p.group-fixture-date {
+    background: #F2F2F2;
+    padding: 7px 20px;
+  }
+
+  div.fixture-row {
+    padding: 5px 20px;
+  }
+
+  div.fixture-teams-box {
+    border-left: 1px #E6E6E6 solid;
+    padding-left: 16px;
+  }
+
+  div.media-play-btn {
+    display: flex;
+    padding: 9px;
+    border: 1px solid #CCCCCC;
+    border-radius: 50%;
+  }
+
+  div.tip-box {
+    padding: 6px 12px;
+    border-radius: 4px;
+    border: 1px solid #CCCCCC;
+  }
+
+  img#sportbook-logo-img {
+    width: 30px;
+    height: 30px;
+    object-fit: none;
+    border-radius: 8px;
+    object-position: left;
+  }
+
   div#widget-outer {
-    margin-top: 24px;
+    /* margin-top: 24px; */
   }
 
   div#fixtures-odds-widget-container.widget-no-data-height {
@@ -410,6 +1094,7 @@
 
   #fixtures-odds-widget-container {
     padding: 0;
+    padding-bottom: 16px;
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
@@ -435,7 +1120,14 @@
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
-    /* EMPTY */
+    
+    div#fix-odds-view-box {
+      width: auto;
+    } div.fix-odds-view-opt-box {
+      width: auto;
+      text-align: center;
+    }
+
   }
 
   /* 
@@ -459,5 +1151,13 @@
   /* ====================
     WIDGET DARK THEME
   ==================== */
+
+  .dark-background-1 div#mobile-table-box {
+    background: #616161;
+  } .dark-background-1 div#mobile-table-box button.table-nav-btn {
+    background: #A8A8A8;
+  } .dark-background-1 div#mobile-table-box p {
+    color: white;
+  }
 
 </style>
