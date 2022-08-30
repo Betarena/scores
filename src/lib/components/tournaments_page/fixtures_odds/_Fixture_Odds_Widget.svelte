@@ -1027,19 +1027,22 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
                   -->
                   <div
                     class="m-r-16 fixture-time-box">
-                    <p
-                      class="no-wrap s-14 color-grey">
-                      {
-                        (
-                          new Date(fixture?.fixture_time).getHours() +
-                          ":" +
-                          ('0' + new Date(fixture?.fixture_time).getMinutes()).slice(-2)
-                        ).split(' ').join('')
-                      }
-                    </p>
                     {#if fixture?.live_minute}
-                      <p>
-                        {fixture?.live_minute}
+                      <p
+                        style="color: #FF3C3C;"
+                        class="s-14">
+                        {fixture?.live_minute}'
+                      </p>
+                    {:else}
+                      <p
+                        class="no-wrap s-14 color-grey">
+                        {
+                          (
+                            new Date(fixture?.fixture_time).getHours() +
+                            ":" +
+                            ('0' + new Date(fixture?.fixture_time).getMinutes()).slice(-2)
+                          ).split(' ').join('')
+                        }
                       </p>
                     {/if}
                   </div>
@@ -1188,14 +1191,18 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
                     fixture?.teams?.home?.score}
                     <div
                       class="column-space-center m-l-10">
-                      <p 
+                      <p
                         class="s-14 w-500 color-black"
-                        class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                        class:color-red-bright={fixture?.live_minute}
+                        class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}
+                        >
                         {fixture?.teams?.away?.score}
                       </p>
                       <p 
                         class="s-14 w-500 color-black"
-                        class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                        class:color-red-bright={fixture?.live_minute}
+                        class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}
+                        >
                         {fixture?.teams?.home?.score}
                       </p>
                     </div>
