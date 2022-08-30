@@ -1114,8 +1114,7 @@
                   <div
                     class="m-r-16 fixture-time-box text-center">
                     {#if 
-                      fixture?.status === "LIVE" || 
-                      fixture?.status === "HT"}
+                      fixture?.status === "LIVE"}
                       <p
                         style="color: #FF3C3C;"
                         class="s-14 no-wrap">
@@ -1123,6 +1122,11 @@
                         <span
                           class:visibility-none={tickSecShow}>'
                         </span>
+                      </p>
+                    {:else if fixture?.status === "HT"}
+                      <p
+                        class="no-wrap s-14 color-black">
+                        Ht
                       </p>
                     {:else}
                       <p
