@@ -13,6 +13,8 @@
   import { get } from "$lib/api/utils";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
+	import { db_real } from '$lib/firebase/init';
+	import { ref, onValue } from 'firebase/database';
 
   import type { 
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
@@ -40,6 +42,7 @@
   import one_red_card from './assets/1_red_card.svg';
   import two_red_card from './assets/2_red_cards.svg';
   import three_red_card from './assets/3_red_cards.svg';
+import type { FIREBASE_livescores_now } from "$lib/models/firebase";
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -435,6 +438,92 @@
     `)
   }
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // [ADD-ON] FIREBASE
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
+
+  async function checkForLiveFixtures(data: [string, FIREBASE_livescores_now][]) {
+    // [ℹ] generate map
+    for (const live_fixture of data) {
+      const fixture_id = parseInt(live_fixture[0].toString())
+      const fixture_data = live_fixture[1]
+      liveFixturesMap.set(fixture_id, fixture_data)
+    }
+
+    // [ℹ] validate against "visible" fixtures
+    const currentDate = new Date();
+    const numFixturesToday = fixtures_arr_filter
+    .find( ({ date }) => 
+      (new Date(date).getDate() === currentDate.getDate()) &&
+      (new Date(date).getMonth() === currentDate.getMonth()) &&
+      (new Date(date).getFullYear() === currentDate.getFullYear())
+    )
+
+    if (numFixturesToday != undefined) {
+      const newFixturesArray = fixtures_arr_filter
+      .find( ({ date }) => 
+        (new Date(date).getDate() === currentDate.getDate()) &&
+        (new Date(date).getMonth() === currentDate.getMonth()) &&
+        (new Date(date).getFullYear() === currentDate.getFullYear())
+      )
+      ?.fixtures
+      .map( fixture => {
+        if (liveFixturesMap.has(fixture.id)) {
+          return {
+            ...fixture,
+            live_minute: liveFixturesMap.get(fixture.id)?.time?.minute,
+            teams: {
+              away: {
+                name: fixture?.teams?.away?.name,
+                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
+                score: liveFixturesMap.get(fixture.id)?.scores?.visitorteam_score,
+              },
+              home: {
+                name: fixture?.teams?.home?.name,
+                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
+                score: liveFixturesMap.get(fixture.id)?.scores?.localteam_score,
+              }
+            }
+          }
+        }
+        return fixture
+      })
+
+      fixtures_arr_filter
+      .find( ({ date }) => 
+        (new Date(date).getDate() === currentDate.getDate()) &&
+        (new Date(date).getMonth() === currentDate.getMonth()) &&
+        (new Date(date).getFullYear() === currentDate.getFullYear())
+      )
+      .fixtures = newFixturesArray
+
+      fixtures_arr_filter = fixtures_arr_filter
+    }
+  }
+
+  // [ℹ] Listen To Real-Time Firebase SCORES Updates [WORKING]
+	async function listenRealTimeOddsChange (): Promise < void > {
+
+    const fixtureRef = ref (
+      db_real,
+      'livescores_now/'
+    );
+
+    onValue(fixtureRef, (snapshot) => {
+      // [ℹ] break-down-values
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
+      // if (dev) console.log(data)
+      checkForLiveFixtures(data);
+    });
+
+  }
+
+  onMount(async() => {
+    listenRealTimeOddsChange();
+  })
+
 </script>
 
 <!-- ===============
@@ -516,6 +605,7 @@
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if
+    ready &&
     !noFixturesOddsBool &&
     !refresh &&
     browser && 
@@ -947,6 +1037,11 @@
                         ).split(' ').join('')
                       }
                     </p>
+                    {#if fixture?.live_minute}
+                      <p>
+                        {fixture?.live_minute}
+                      </p>
+                    {/if}
                   </div>
 
                   <!-- [ℹ] fixture-teams
