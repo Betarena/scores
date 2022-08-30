@@ -45,6 +45,7 @@
   import one_red_card from './assets/1_red_card.svg';
   import two_red_card from './assets/2_red_cards.svg';
   import three_red_card from './assets/3_red_cards.svg';
+import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -95,6 +96,98 @@
 	export let FIXTURES_ODDS_DATA:  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
 
   $: if (dev && diasbleDev) console.log("FIXTURES_ODDS_T: ", FIXTURES_ODDS_T)
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // [ADD-ON] FIREBASE
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
+
+  async function checkForLiveFixtures(data: [string, FIREBASE_livescores_now][]) {
+    // [ℹ] generate map
+    for (const live_fixture of data) {
+      const fixture_id = parseInt(live_fixture[0].toString())
+      const fixture_data = live_fixture[1]
+      liveFixturesMap.set(fixture_id, fixture_data)
+    }
+
+    // [ℹ] validate against "visible" fixtures
+    const currentDate = new Date();
+    const numFixturesToday = fixtures_arr_filter
+    .find( ({ date }) => 
+      (new Date(date).getDate() === currentDate.getDate()) &&
+      (new Date(date).getMonth() === currentDate.getMonth()) &&
+      (new Date(date).getFullYear() === currentDate.getFullYear())
+    )
+
+    if (numFixturesToday != undefined) {
+      const newFixturesArray = fixtures_arr_filter
+      .find( ({ date }) => 
+        (new Date(date).getDate() === currentDate.getDate()) &&
+        (new Date(date).getMonth() === currentDate.getMonth()) &&
+        (new Date(date).getFullYear() === currentDate.getFullYear())
+      )
+      ?.fixtures
+      .map( fixture => {
+        if (liveFixturesMap.has(fixture.id)) {
+          return {
+            ...fixture,
+            minute: liveFixturesMap.get(fixture.id)?.time?.minute,
+            status: liveFixturesMap.get(fixture.id)?.time?.status,
+            teams: {
+              away: {
+                name: fixture?.teams?.away?.name,
+                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
+                score: liveFixturesMap.get(fixture.id)?.scores?.visitorteam_score,
+              },
+              home: {
+                name: fixture?.teams?.home?.name,
+                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
+                score: liveFixturesMap.get(fixture.id)?.scores?.localteam_score,
+              }
+            }
+          }
+        }
+        return fixture
+      })
+
+      fixtures_arr_filter
+      .find( ({ date }) => 
+        (new Date(date).getDate() === currentDate.getDate()) &&
+        (new Date(date).getMonth() === currentDate.getMonth()) &&
+        (new Date(date).getFullYear() === currentDate.getFullYear())
+      )
+      .fixtures = newFixturesArray
+
+      fixtures_arr_filter = fixtures_arr_filter
+    }
+  }
+
+  // [ℹ] listen real-time firebase livescores_now changes [WORKING]
+	async function listenRealTimeOddsChange (): Promise < void > {
+
+    const fixtureRef = ref (
+      db_real,
+      'livescores_now/'
+    );
+
+    onValue(fixtureRef, (snapshot) => {
+      // [ℹ] break-down-values
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
+      // if (dev) console.log(data)
+      checkForLiveFixtures(data);
+    });
+
+  }
+
+  let tickSecShow = false;
+
+  onMount(async() => {
+    listenRealTimeOddsChange();
+    setInterval(async () => {
+      tickSecShow = !tickSecShow
+    }, 500)
+  })
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -150,7 +243,7 @@
   let weeks_total: number
   let rounds_total: number
 
-  function selectFixturesOdds () {
+  async function selectFixturesOdds () {
 
     fixtures_arr_filter = []
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
@@ -276,12 +369,17 @@
 
     fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
+    // [ℹ] break-down-values
+    const firebase_real_time = await getLivescoresNow()
+    const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+    checkForLiveFixtures(data)
+
     ready = true;
     noFixturesOddsBool = false;
     loaded = true;
   }
 
-  function selectFixtureOddsNumber(opt_view: number) {
+  async function selectFixtureOddsNumber(opt_view: number) {
 
     fixtures_arr_filter = []
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
@@ -356,6 +454,11 @@
     }
 
     fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+
+    // [ℹ] break-down-values
+    const firebase_real_time = await getLivescoresNow()
+    const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+    checkForLiveFixtures(data)
   }
 
   function selectedRoundsWeeksView(opt_view: "round" | "week") {
@@ -476,93 +579,6 @@
   else {
     server_side_language = 'en';
   }
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // [ADD-ON] FIREBASE
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
-
-  async function checkForLiveFixtures(data: [string, FIREBASE_livescores_now][]) {
-    // [ℹ] generate map
-    for (const live_fixture of data) {
-      const fixture_id = parseInt(live_fixture[0].toString())
-      const fixture_data = live_fixture[1]
-      liveFixturesMap.set(fixture_id, fixture_data)
-    }
-
-    // [ℹ] validate against "visible" fixtures
-    const currentDate = new Date();
-    const numFixturesToday = fixtures_arr_filter
-    .find( ({ date }) => 
-      (new Date(date).getDate() === currentDate.getDate()) &&
-      (new Date(date).getMonth() === currentDate.getMonth()) &&
-      (new Date(date).getFullYear() === currentDate.getFullYear())
-    )
-
-    if (numFixturesToday != undefined) {
-      const newFixturesArray = fixtures_arr_filter
-      .find( ({ date }) => 
-        (new Date(date).getDate() === currentDate.getDate()) &&
-        (new Date(date).getMonth() === currentDate.getMonth()) &&
-        (new Date(date).getFullYear() === currentDate.getFullYear())
-      )
-      ?.fixtures
-      .map( fixture => {
-        if (liveFixturesMap.has(fixture.id)) {
-          return {
-            ...fixture,
-            minute: liveFixturesMap.get(fixture.id)?.time?.minute,
-            status: liveFixturesMap.get(fixture.id)?.time?.status,
-            teams: {
-              away: {
-                name: fixture?.teams?.away?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.scores?.visitorteam_score,
-              },
-              home: {
-                name: fixture?.teams?.home?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.scores?.localteam_score,
-              }
-            }
-          }
-        }
-        return fixture
-      })
-
-      fixtures_arr_filter
-      .find( ({ date }) => 
-        (new Date(date).getDate() === currentDate.getDate()) &&
-        (new Date(date).getMonth() === currentDate.getMonth()) &&
-        (new Date(date).getFullYear() === currentDate.getFullYear())
-      )
-      .fixtures = newFixturesArray
-
-      fixtures_arr_filter = fixtures_arr_filter
-    }
-  }
-
-  // [ℹ] listen real-time firebase livescores_now changes [WORKING]
-	async function listenRealTimeOddsChange (): Promise < void > {
-
-    const fixtureRef = ref (
-      db_real,
-      'livescores_now/'
-    );
-
-    onValue(fixtureRef, (snapshot) => {
-      // [ℹ] break-down-values
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
-      // if (dev) console.log(data)
-      checkForLiveFixtures(data);
-    });
-
-  }
-
-  onMount(async() => {
-    listenRealTimeOddsChange();
-  })
 
 </script>
 
@@ -1087,11 +1103,16 @@
                   -->
                   <div
                     class="m-r-16 fixture-time-box text-center">
-                    {#if fixture?.status === "LIVE"}
+                    {#if 
+                      fixture?.status === "LIVE" || 
+                      fixture?.status === "HT"}
                       <p
                         style="color: #FF3C3C;"
-                        class="s-14">
-                        {fixture?.minute}'
+                        class="s-14 no-wrap">
+                        {fixture?.minute}
+                        <span
+                          class:visibility-none={tickSecShow}>'
+                        </span>
                       </p>
                     {:else}
                       <p
@@ -1260,8 +1281,9 @@
                   <!-- [ℹ] scores 
                   -->
                   {#if
-                    fixture?.teams?.away?.score && 
-                    fixture?.teams?.home?.score}
+                    (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
+                    fixture?.status === "LIVE" ||
+                    fixture?.status === "HT"}
                     <div
                       class="column-space-center m-l-10">
                       <p
@@ -1464,6 +1486,10 @@
     padding: 5px 20px;
   }
 
+  div.fixture-time-box {
+    width: 47px;
+  }
+
   div.fixture-teams-box {
     border-left: 1px #E6E6E6 solid;
     padding-left: 16px;
@@ -1488,6 +1514,10 @@
     object-fit: contain;
     border-radius: 8px;
     object-position: left;
+  }
+
+  span.visibility-none {
+    visibility: hidden;
   }
 
   div#widget-outer {
