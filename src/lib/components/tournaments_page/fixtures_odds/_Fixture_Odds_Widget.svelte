@@ -163,6 +163,8 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
 
     // [ℹ] validation check (#1)
     if (target_season == undefined) {
+      noFixturesOddsBool = true;
+      loaded = false;
       return;
     }
 
@@ -174,6 +176,8 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
       target_season?.weeks === undefined ||
       target_season?.rounds === null || 
       target_season?.rounds === undefined) {
+      noFixturesOddsBool = true;
+      loaded = false;
       return;
     }
 
@@ -271,6 +275,8 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
     fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     ready = true;
+    noFixturesOddsBool = false;
+    loaded = true;
   }
 
   function selectFixtureOddsNumber(opt_view: number) {
