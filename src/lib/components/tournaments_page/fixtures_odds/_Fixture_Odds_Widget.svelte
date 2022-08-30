@@ -161,7 +161,21 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
       season_id === $session.selectedSeasonID
     );
 
+    // [ℹ] validation check (#1)
+    if (target_season == undefined) {
+      return;
+    }
+
     if (dev && !diasbleDev) console.log("target_season: ", target_season)
+
+    // [ℹ] validation check (#1) [weeks / rounds] 
+    if (
+      target_season?.weeks === null ||
+      target_season?.weeks === undefined ||
+      target_season?.rounds === null || 
+      target_season?.rounds === undefined) {
+      return;
+    }
 
     // [ℹ] identify "round" start/end dates
     if (optView === 'round') {
@@ -223,7 +237,7 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
 
     }
 
-    // [ℹ] extra get number of weeeks & rounds
+    // [ℹ] extra get number of total weeks & rounds
     weeks_total = target_season.weeks.length
     rounds_total = target_season.rounds.length
 
@@ -342,8 +356,8 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
   }
 
   function triggerGoggleEvents(action: string) {
-    if (action === "betting_site_logo_standings") {
-      gtag('event', "betting_site_logo_standings", { 
+    if (action === "betting_site_logo_football_fixtures_odds_tournament") {
+      gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
         'event_category': "widget_standings_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -503,7 +517,7 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
     }
   }
 
-  // [ℹ] Listen To Real-Time Firebase SCORES Updates [WORKING]
+  // [ℹ] listen real-time firebase livescores_now changes [WORKING]
 	async function listenRealTimeOddsChange (): Promise < void > {
 
     const fixtureRef = ref (
