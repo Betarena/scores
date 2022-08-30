@@ -331,7 +331,8 @@
     fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
   }
 
-  $: if (optView) {
+  function selectedRoundsWeeksView(opt_view: "round" | "week") {
+    optView = opt_view
     selectFixturesOdds()
   }
 
@@ -355,8 +356,8 @@
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let tabletView = 1000
-  let mobileView = 725
+  const tabletView = 1000
+  const mobileView = 725
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
@@ -524,15 +525,17 @@
     -->
     {#await widgetInit()}
       <!-- <TopPlayersWidgetContentLoader /> -->
+
     <!-- [ℹ] promise was fulfilled
     -->
     {:then data}
 
-      <!-- [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
+      <!-- [ℹ] widget-component
+      [DESKTOP] 
+      [TABLET] 
+      [MOBILE]
       -->
 
-      <!-- [ℹ] promise was fulfilled 
-      -->
       <h2 
         class="s-20 m-b-10 w-500 color-black-2"
         style="margin-top: 0px;"
@@ -545,43 +548,197 @@
         class:widget-no-data-height={trueLengthOfArray == 0}
         class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-        <!-- [ℹ] widget main top controls 
+        <!-- [ℹ] widget main top controls
+        [DESKTOP]
+        [TABLET]
         -->
-        <div
-          id="fixtures-odds-top-container"
-          class="row-space-out m-b-15">
+        {#if !mobileExclusive}
 
+          <!-- [ℹ] widget main top controls 
+          -->
           <div
-            class="row-space-start">
+            id="fixtures-odds-top-container"
+            class="row-space-out m-b-15">
 
-            <!-- [ℹ] widget top selection fixtures odds views [DESKTOP]
-            -->
             <div
-              id="fix-odds-view-box"
-              class="row-space-start m-r-20">
+              class="row-space-start">
 
+              <!-- [ℹ] widget top selection fixtures odds views [DESKTOP]
+              -->
               <div
-                class="fix-odds-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('matches')}
-                class:activeOpt={selectedOpt == 'matches'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {FIXTURES_ODDS_T?.matches}
-                </p>
+                id="fix-odds-view-box"
+                class="row-space-start m-r-20">
+
+                <div
+                  class="fix-odds-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('matches')}
+                  class:activeOpt={selectedOpt == 'matches'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {FIXTURES_ODDS_T?.matches}
+                  </p>
+                </div>
+
+                <div
+                  class="fix-odds-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('odds')}
+                  class:activeOpt={selectedOpt == 'odds'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {FIXTURES_ODDS_T?.odds}
+                  </p>
+                </div>
+
               </div>
 
+              <!-- [ℹ] dropdown season select
+              -->
               <div
-                class="fix-odds-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('odds')}
-                class:activeOpt={selectedOpt == 'odds'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {FIXTURES_ODDS_T?.odds}
-                </p>
+                id='dropdown-seasons'
+                class="m-r-16">
+                
+                <div
+                  class="row-space-start"
+                  on:click={() => toggleDropdown = !toggleDropdown}>
+                  <!-- [ℹ] display selected week / round
+                  -->
+                  <p
+                    class='s-14 m-r-5 w-500 color-grey'>
+                    {#if optView === "week"}
+                      {FIXTURES_ODDS_T?.week} {week_name}
+                    {:else}
+                      {FIXTURES_ODDS_T?.round} {week_name}
+                    {/if}
+                  </p>
+                  <!-- [ℹ] arrow down [hidden-menu] 
+                  -->
+                  {#if !toggleDropdown}
+                    <img 
+                      src={arrow_down} 
+                      alt="arrow_down" 
+                      width="16px" height="16px" 
+                    />
+                  {:else}
+                    <img 
+                      src={arrow_up} 
+                      alt="arrow_up" 
+                      width="16px" height="16px" 
+                    />
+                  {/if}
+                </div>
+                
+                <!-- [ℹ] show-dropdown
+                -->
+                {#if toggleDropdown}
+                  <div
+                    id="dropdown-list-main-container">
+                    <div
+                      id="dropdown-list-inner-container">
+                      {#if optView === "week"}
+                        {#each {length: weeks_total} as _,i}
+                          <p
+                            class='s-14 w-500 row-season'
+                            class:color-primary={i === week_name}
+                            on:click={() => selectFixtureOddsNumber(i+1)}>
+                            {FIXTURES_ODDS_T?.week} {i+1}
+                          </p>
+                        {/each}
+                      {:else}
+                        {#each {length: rounds_total} as _,i}
+                          <p
+                            class='s-14 w-500 row-season'
+                            class:color-primary={i === week_name}
+                            on:click={() => selectFixtureOddsNumber(i)}>
+                            {FIXTURES_ODDS_T?.round} {i}
+                          </p>
+                        {/each}
+                      {/if}
+                    </div>
+                  </div>
+                {/if}
+
               </div>
 
             </div>
 
+            <!-- [ℹ] widget rounds / weeks selection 
+            -->
+            <div
+              id="widget-round-week-select"
+              class="row-space-start">
+              <div
+                on:click={() => selectedRoundsWeeksView("round")}
+                class="row-space-start m-r-16">
+                <input 
+                  type="radio" 
+                  name="matches-odds-select" 
+                  bind:group={optView}
+                  id=""
+                  class="m-r-8"
+                  value={"round"}
+                />
+                <p
+                  class="s-14 w-500 color-black">
+                  {FIXTURES_ODDS_T?.round}
+                </p>
+              </div>
+              <div
+                on:click={() => selectedRoundsWeeksView("week")}
+                class="row-space-start">
+                <input 
+                  type="radio" 
+                  name="matches-odds-select"
+                  bind:group={optView}
+                  id=""
+                  class="m-r-8"
+                  value={"week"}
+                />
+                <p
+                  class="s-14 w-500 color-black">
+                  {FIXTURES_ODDS_T?.week}
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        <!-- [ℹ] widget main top controls
+        [MOBILE]
+        -->
+        {:else}
+
+          <!-- [ℹ] widget top selection fixtures odds views [MOBILE]
+          -->
+          <div
+            id="fix-odds-view-box"
+            class="row-space-start m-b-16">
+
+            <div
+              class="fix-odds-view-opt-box cursor-pointer"
+              on:click={() => selectTableView('matches')}
+              class:activeOpt={selectedOpt == 'matches'}>
+              <p
+                class="s-14 w-500 color-grey">
+                {FIXTURES_ODDS_T?.matches}
+              </p>
+            </div>
+
+            <div
+              class="fix-odds-view-opt-box cursor-pointer"
+              on:click={() => selectTableView('odds')}
+              class:activeOpt={selectedOpt == 'odds'}>
+              <p
+                class="s-14 w-500 color-grey">
+                {FIXTURES_ODDS_T?.odds}
+              </p>
+            </div>
+
+          </div>
+
+          <div
+            id="mobile-middle-control-row"
+            class="row-space-out m-b-20">
+            
             <!-- [ℹ] dropdown season select
             -->
             <div
@@ -629,9 +786,9 @@
                       {#each {length: weeks_total} as _,i}
                         <p
                           class='s-14 w-500 row-season'
-                          class:color-primary={i === week_name}
-                          on:click={() => selectFixtureOddsNumber(i)}>
-                          {FIXTURES_ODDS_T?.week} {i}
+                          class:color-primary={i+1 === week_name}
+                          on:click={() => selectFixtureOddsNumber(i+1)}>
+                          {FIXTURES_ODDS_T?.week} {i+1}
                         </p>
                       {/each}
                     {:else}
@@ -650,40 +807,42 @@
 
             </div>
 
-          </div>
-
-          <!-- [ℹ] widget rounds / weeks selection 
-          -->
-          <div
-            id="widget-round-week-select"
-            class="row-space-start">
+            <!-- [ℹ] widget rounds / weeks selection 
+            -->
             <div
-              class="row-space-start m-r-16">
-              <input 
-                type="radio" 
-                name="matches-odds-select" 
-                bind:group={optView}
-                id=""
-                class="m-r-8"
-                value={"round"}
-              />
-              {FIXTURES_ODDS_T?.round}
-            </div>
-            <div
+              id="widget-round-week-select"
               class="row-space-start">
-              <input 
-                type="radio" 
-                name="matches-odds-select"
-                bind:group={optView}
-                id=""
-                class="m-r-8"
-                value={"week"}
-              />
-              {FIXTURES_ODDS_T?.week}
+              <div
+                on:click={() => selectedRoundsWeeksView("round")}
+                class="row-space-start m-r-16">
+                <input 
+                  type="radio" 
+                  name="matches-odds-select" 
+                  bind:group={optView}
+                  id=""
+                  class="m-r-8"
+                  value={"round"}
+                />
+                {FIXTURES_ODDS_T?.round}
+              </div>
+              <div
+                on:click={() => selectedRoundsWeeksView("week")}
+                class="row-space-start">
+                <input 
+                  type="radio" 
+                  name="matches-odds-select"
+                  bind:group={optView}
+                  id=""
+                  class="m-r-8"
+                  value={"week"}
+                />
+                {FIXTURES_ODDS_T?.week}
+              </div>
             </div>
+
           </div>
 
-        </div>
+        {/if}
 
         <!-- [ℹ] widget round / week toggle increment / decrese view 
         -->
@@ -874,11 +1033,19 @@
                       style="width: inherit;">
                       <div
                         class="media-play-btn m-r-16">
-                        <img 
-                          src={play}
-                          alt=""
-                          width=14px height=14px
-                        />
+                        {#if $userBetarenaSettings.theme == 'Dark'}
+                          <img 
+                            src={play_dark}
+                            alt=""
+                            width=14px height=14px
+                          />
+                        {:else}
+                          <img 
+                            src={play}
+                            alt=""
+                            width=14px height=14px
+                          />
+                        {/if}
                       </div>
                     </a>
                   {/if}
@@ -1001,12 +1168,9 @@
     [ℹ] MOBILE FIRST
   */
 
-  div#fixtures-odds-top-container {
+  div#fix-odds-view-box {
     padding: 20px;
     padding-bottom: 0;
-  }
-
-  div#fix-odds-view-box {
     width: -webkit-fill-available;
   } div.fix-odds-view-opt-box {
     border: 1px solid #CCCCCC;
@@ -1023,6 +1187,10 @@
     border-radius: 8px 0px 0px 8px;
   } div.fix-odds-view-opt-box:last-child {
     border-radius: 0px 8px 8px 0px;
+  }
+
+  div#mobile-middle-control-row {
+    padding: 0 20px;
   }
 
   div#widget-round-week-select {
@@ -1141,7 +1309,7 @@
   img#sportbook-logo-img {
     width: 30px;
     height: 30px;
-    object-fit: none;
+    object-fit: contain;
     border-radius: 8px;
     object-position: left;
   }
@@ -1182,9 +1350,15 @@
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
+
+    div#fixtures-odds-top-container {
+      padding: 20px;
+      padding-bottom: 0;
+    }
     
     div#fix-odds-view-box {
       width: auto;
+      padding: 0;
     } div.fix-odds-view-opt-box {
       width: auto;
       text-align: center;
@@ -1219,6 +1393,34 @@
   } .dark-background-1 div#mobile-table-box button.table-nav-btn {
     background: #A8A8A8;
   } .dark-background-1 div#mobile-table-box p {
+    color: white;
+  }
+
+  .dark-background-1 div#dropdown-seasons div#dropdown-list-main-container {
+    /* dark theme/dark-gray */
+    background: #616161;
+    /* shadow/black */
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
+    border-radius: 4px;
+  }
+  .dark-background-1  div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season  {
+    color: #ffffff;
+  }
+
+  /* handle */
+  .dark-background-1 div#dropdown-seasons div#dropdown-list-inner-container::-webkit-scrollbar-thumb {
+    background: #999999 !important;
+  }
+  /* track */
+  .dark-background-1 div#dropdown-seasons div#dropdown-list-inner-container::-webkit-scrollbar-track {
+    background: #4B4B4B !important;
+  }
+
+  .dark-background-1 p.group-fixture-date {
+    background: #616161 !important;
+  }
+
+  .dark-background-1 p.color-black {
     color: white;
   }
 
