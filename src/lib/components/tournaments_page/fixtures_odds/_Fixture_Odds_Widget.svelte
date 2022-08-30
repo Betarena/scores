@@ -25,6 +25,9 @@
   import type { 
     Cache_Single_SportbookDetails_Data_Response 
   } from "$lib/models/tournaments/league-info/types";
+  import type { 
+    FIREBASE_livescores_now 
+  } from "$lib/models/firebase";
 
   import FixtureOddsWidgetContentLoader from "./_Fixture_Odds_Widget_ContentLoader.svelte";
 
@@ -42,7 +45,6 @@
   import one_red_card from './assets/1_red_card.svg';
   import two_red_card from './assets/2_red_cards.svg';
   import three_red_card from './assets/3_red_cards.svg';
-import type { FIREBASE_livescores_now } from "$lib/models/firebase";
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -493,7 +495,8 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
         if (liveFixturesMap.has(fixture.id)) {
           return {
             ...fixture,
-            live_minute: liveFixturesMap.get(fixture.id)?.time?.minute,
+            minute: liveFixturesMap.get(fixture.id)?.time?.minute,
+            status: liveFixturesMap.get(fixture.id)?.time?.status,
             teams: {
               away: {
                 name: fixture?.teams?.away?.name,
@@ -1047,11 +1050,11 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
                   -->
                   <div
                     class="m-r-16 fixture-time-box">
-                    {#if fixture?.live_minute}
+                    {#if fixture?.status === "LIVE"}
                       <p
                         style="color: #FF3C3C;"
                         class="s-14">
-                        {fixture?.live_minute}'
+                        {fixture?.minute}'
                       </p>
                     {:else}
                       <p
@@ -1213,14 +1216,14 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
                       class="column-space-center m-l-10">
                       <p
                         class="s-14 w-500 color-black"
-                        class:color-red-bright={fixture?.live_minute}
+                        class:color-red-bright={fixture?.status === "LIVE"}
                         class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}
                         >
                         {fixture?.teams?.away?.score}
                       </p>
                       <p 
                         class="s-14 w-500 color-black"
-                        class:color-red-bright={fixture?.live_minute}
+                        class:color-red-bright={fixture?.status === "LIVE"}
                         class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}
                         >
                         {fixture?.teams?.home?.score}

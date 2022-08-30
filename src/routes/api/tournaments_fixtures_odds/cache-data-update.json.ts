@@ -354,7 +354,8 @@ async function main () {
     const round = value.data?.round?.data?.name;
     const fixture_date = value.fixture_day;
     const fixture_time = value.time;
-    const live_minutes = value.data?.time?.minute;
+    const minutes = value.data?.time?.minute;
+    const status = value.data?.time?.status;
 
     const tip_link = value.tip_link_wp
     const media_link = value.media_link;
@@ -384,8 +385,9 @@ async function main () {
     const fixtures_odds_object: Tournament_Fixture_Odds = {
       id:               fixture_id,
       round:            round,
-      week:             2, // FIXME:
-      live_minute:      live_minutes,
+      // week:             2, // FIXME: unecessary, using fixture_date instead
+      minute:           minutes,
+      status:           status,             
       fixture_time:     fixture_time,
       fixture_date:     fixture_date,
       teams: {

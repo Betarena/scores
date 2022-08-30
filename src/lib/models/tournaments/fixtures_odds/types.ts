@@ -65,14 +65,15 @@ export interface Weeks_Data {
 export interface Tournament_Fixture_Odds {
   id:           number
   round:        number      // Rounds and weeks = scores_football_seasons_details + round_data + scores_general_translations
-  week:         number      // Rounds and weeks = scores_football_seasons_details + round_data + scores_general_translations
+  // week:         number      // Rounds and weeks = scores_football_seasons_details + round_data + scores_general_translations
   fixture_time: string      // Day and Month = historic_fixtures + "league_id" + "time" +  scores_general_translations (Filter fixtures between dates or rounds to get fixtures day information, varies depending on the computer date and time of the end user) 
                             // [❓] whats the: historic_fixtures + "league_id" FOR ?
   
   fixture_date: string      // Fixture Date = historic_fixtures + "time" (Varies depending on the computer date and time of the end user)
 
-  live_minute:  number      // live option, from firebase (non-cache-based)  // Fixture Live Time Information (Status LIVE) = livescore_now  + ""minute": 13,"
+  minute:  number           // live option, from firebase (non-cache-based)  // Fixture Live Time Information (Status LIVE) = livescore_now  + ""minute": 13,"
                             // [❓] should be real-time [?] as in, without the user refreshing the app will autamtically show the fixture data is LIVE
+  status: "NS" | "LIVE" | "TBA" | "FT" | string
   teams: {
     home: Fixture_Odds_Team
     away: Fixture_Odds_Team
