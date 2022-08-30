@@ -471,6 +471,14 @@
     }
   }
 
+  $: if (browser && loaded) {
+    onMount(async() => {
+      const firebase_real_time = await getLivescoresNow()
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      checkForLiveFixtures(data)
+    })
+  }
+
   function selectedRoundsWeeksView(opt_view: "round" | "week") {
     optView = opt_view
     selectFixturesOdds()
