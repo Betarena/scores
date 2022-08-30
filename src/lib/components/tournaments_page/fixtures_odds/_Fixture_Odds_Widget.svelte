@@ -1049,7 +1049,7 @@
                   <!-- [ℹ] fixture-time
                   -->
                   <div
-                    class="m-r-16 fixture-time-box">
+                    class="m-r-16 fixture-time-box text-center">
                     {#if fixture?.status === "LIVE"}
                       <p
                         style="color: #FF3C3C;"
@@ -1058,7 +1058,8 @@
                       </p>
                     {:else}
                       <p
-                        class="no-wrap s-14 color-grey">
+                        class="no-wrap s-14 color-black"
+                        class:color-grey={fixture?.status === "FT"}>
                         {
                           (
                             new Date(fixture?.fixture_time).getHours() +
@@ -1067,6 +1068,12 @@
                           ).split(' ').join('')
                         }
                       </p>
+                      {#if fixture?.status === "FT"}
+                        <p
+                          class="no-wrap s-14 color-grey">
+                          FT
+                        </p>
+                      {/if}
                     {/if}
                   </div>
 
@@ -1078,7 +1085,8 @@
                     <div
                       class="row-space-start">
                       <p
-                        class="s-14 color-black w-500 m-r-8">
+                        class="s-14 color-black w-500 m-r-8"
+                        class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
                         {fixture?.teams?.away?.name}
                       </p>
                       {#if fixture?.teams?.away?.red_cards}
@@ -1108,7 +1116,8 @@
                     <div
                       class="row-space-start">
                       <p  
-                        class="s-14 color-black w-500 m-r-8">
+                        class="s-14 color-black w-500 m-r-8"
+                        class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
                         {fixture?.teams?.home?.name}
                       </p>
                       {#if fixture?.teams?.home?.red_cards}
@@ -1338,6 +1347,7 @@
     border-radius: 4px;
     position: relative;
     cursor: pointer;
+    width: 98px;
   } div#dropdown-seasons:hover p {
     color: black;
   } div#dropdown-seasons div#dropdown-list-main-container {
