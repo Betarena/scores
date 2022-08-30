@@ -15,6 +15,7 @@
   import { userBetarenaSettings } from "$lib/store/user-settings";
 	import { db_real } from '$lib/firebase/init';
 	import { ref, onValue } from 'firebase/database';
+  import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
 
   import type { 
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
@@ -45,7 +46,6 @@
   import one_red_card from './assets/1_red_card.svg';
   import two_red_card from './assets/2_red_cards.svg';
   import three_red_card from './assets/3_red_cards.svg';
-import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -373,9 +373,11 @@ import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
     fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     // [ℹ] break-down-values
-    const firebase_real_time = await getLivescoresNow()
-    const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-    checkForLiveFixtures(data)
+    if (loaded) {
+      const firebase_real_time = await getLivescoresNow()
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      checkForLiveFixtures(data)
+    }
 
     ready = true;
     noFixturesOddsBool = false;
@@ -462,9 +464,11 @@ import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
     fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
     // [ℹ] break-down-values
-    const firebase_real_time = await getLivescoresNow()
-    const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-    checkForLiveFixtures(data)
+    if (loaded) {
+      const firebase_real_time = await getLivescoresNow()
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      checkForLiveFixtures(data)
+    }
   }
 
   function selectedRoundsWeeksView(opt_view: "round" | "week") {
