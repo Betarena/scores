@@ -6,6 +6,7 @@ import type {
   BETARENA_HASURA_scores_widget_football_fixtures_odds_translations, 
   BETARENA_HASURA_sportsbook_details,
   FixturesOddsTranslations,
+  MediaLinkWelcome,
   Weekdays,
   WelcomeMonths,
   WidgetsNoDataAvailable,
@@ -79,11 +80,11 @@ export interface Tournament_Fixture_Odds {
     away: Fixture_Odds_Team
   }
 
-  tip_link:     string      // Tip = tip_link_wp + scores_general_translations
-  fixture_link: string      // Fixture Link = fixture_link_wp
-  media_link:   string      // media_link = historic_fixtures + media_link + "video_link"
-  bet_icon?:    string      // Betting Site Icon = sportsbook_details (GEO or forced header option)
-                            // [❔] only 1 betting site at the moment for all fixtures of X GEO (design is wrong)
+  tip_link:     string                // Tip = tip_link_wp + scores_general_translations
+  fixture_link: string                // Fixture Link = fixture_link_wp
+  media_link:   MediaLinkWelcome[]    // media_link = historic_fixtures + media_link + "video_link"
+  bet_icon?:    string                // Betting Site Icon = sportsbook_details (GEO or forced header option)
+                                      // [❔] only 1 betting site at the moment for all fixtures of X GEO (design is wrong)
 }
 
 export interface Fixture_Odds_Team {

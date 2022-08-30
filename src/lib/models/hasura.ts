@@ -1205,7 +1205,21 @@ export interface BETARENA_HASURA_historic_fixtures {
 } export interface Wind {
   speed?:  string;
   degree?: number;
+} export interface MediaLinkWelcome {
+  id?:             number;
+  date?:           string;
+  league?:         string;
+  country?:        string;
+  thumbnail?:      string;
+  teams_name?:     MediaLinkTeamsName;
+  video_link?:     string;
+  video_title?:    string;
+  video_subtitle?: string;
+} export interface MediaLinkTeamsName {
+  local?:   string;
+  visitor?: string;
 }
+
 
 /**
  * [ℹ] HASURA: scores_widget_football_fixtures_odds_translations (&_dev)
