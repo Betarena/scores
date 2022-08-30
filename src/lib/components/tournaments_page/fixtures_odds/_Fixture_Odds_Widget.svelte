@@ -751,7 +751,7 @@
                         {#each {length: weeks_total} as _,i}
                           <p
                             class='s-14 w-500 row-season'
-                            class:color-primary={i === week_name}
+                            class:color-primary={i+1 === week_name}
                             on:click={() => selectFixtureOddsNumber(i+1)}>
                             {FIXTURES_ODDS_T?.week} {i+1}
                           </p>
