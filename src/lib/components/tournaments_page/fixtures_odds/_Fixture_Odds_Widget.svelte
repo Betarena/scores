@@ -351,6 +351,9 @@ import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
 
       if (fixtures_group_by_date.has(fixDate)) {
         fixtures_group_by_date.get(fixDate).push(fixture)
+        let fix_arr = fixtures_group_by_date.get(fixDate)
+        fix_arr.sort((a, b) => new Date(a.fixture_time).getTime() - new Date(b.fixture_time).getTime());
+        fixtures_group_by_date.set(fixDate, fix_arr)
       }
       else {
         let newFixtureArr: Tournament_Fixture_Odds[] = []
@@ -437,6 +440,9 @@ import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
 
       if (fixtures_group_by_date.has(fixDate)) {
         fixtures_group_by_date.get(fixDate).push(fixture)
+        let fix_arr = fixtures_group_by_date.get(fixDate)
+        fix_arr.sort((a, b) => new Date(a.fixture_time).getTime() - new Date(b.fixture_time).getTime());
+        fixtures_group_by_date.set(fixDate, fix_arr)
       }
       else {
         let newFixtureArr: Tournament_Fixture_Odds[] = []
