@@ -24,6 +24,8 @@
     Cache_Single_SportbookDetails_Data_Response 
   } from "$lib/models/tournaments/league-info/types";
 
+  import FixtureOddsWidgetContentLoader from "./_Fixture_Odds_Widget_ContentLoader.svelte";
+
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
   import arrow_down from './assets/arrow-down.svg';
@@ -513,8 +515,7 @@
 
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if 
-    ready &&
+  {#if
     !noFixturesOddsBool &&
     !refresh &&
     browser && 
@@ -524,8 +525,7 @@
     <!-- [ℹ] promise is pending 
     -->
     {#await widgetInit()}
-      <!-- <TopPlayersWidgetContentLoader /> -->
-
+      <FixtureOddsWidgetContentLoader />
     <!-- [ℹ] promise was fulfilled
     -->
     {:then data}
