@@ -460,6 +460,23 @@
     `)
   }
 
+  let server_side_language: string = 'en';
+
+  // [ℹ] IMPORTANT! lang selection [SERVER-SIDE-RENDER]
+  $: if (
+    $page.routeId != null &&
+    !$page.error) {
+    if ($page.routeId.includes("[lang=lang]")) {
+		  server_side_language = $page.params.lang;
+    }
+    else {
+      server_side_language = 'en';
+    }
+	}
+  else {
+    server_side_language = 'en';
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // [ADD-ON] FIREBASE
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -568,8 +585,26 @@
     <div 
       id="seo-widget-box">
       {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
+        {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
+          <p>{item?.teams?.away?.name}</p>
+          <p>{item?.teams?.home?.name}</p>
+          {#if 
+            item?.tip_link && 
+            item?.tip_link[server_side_language]}
+            <p>{item?.tip_link[server_side_language]}</p>
+          {/if}
+          {#if 
+            item?.fixture_link && 
+            item?.fixture_link[server_side_language]}
+            <p>{item?.fixture_link[server_side_language]}</p>
+          {/if}
+          {#if 
+            item?.media_link && 
+            item?.media_link.length != 0}
+            <p>{item?.media_link[0].video_link}</p>
+          {/if}
+        {/each}
       {/if}
-      
     </div>
   {/if}
 
@@ -1027,6 +1062,7 @@
          -->
         {#each fixtures_arr_filter as item}
           <div>
+
             <!-- [ℹ] grouping date fixtures
             -->
             <p
@@ -1035,6 +1071,7 @@
               {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
               {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
             </p>
+
             <!-- [ℹ] matches loop population 
             -->
             {#each item?.fixtures as fixture}
@@ -1155,10 +1192,12 @@
 
                   <!-- [ℹ] fixture-link / media-link 
                   -->
-                  {#if fixture?.fixture_link}
+                  {#if 
+                    fixture?.fixture_link && 
+                    fixture?.fixture_link[server_side_language]}
                     <a 
                       rel="nofollow"
-                      href={fixture?.fixture_link['en']}
+                      href={fixture?.fixture_link[server_side_language]}
                       target="_blank"
                       style="width: inherit;">
                       <div
@@ -1182,10 +1221,12 @@
 
                   <!-- [ℹ] tip-link 
                   -->
-                  {#if fixture?.tip_link}
+                  {#if 
+                    fixture?.tip_link && 
+                    fixture?.tip_link[server_side_language]}
                     <a 
                       rel="nofollow"
-                      href={fixture?.tip_link['en']}
+                      href={fixture?.tip_link[server_side_language]}
                       target="_blank"
                       style="width: inherit;">
                       <div
