@@ -476,6 +476,10 @@ async function main () {
 
   for (const [key, value] of historic_fixtures_by_league.entries()) {
     const newObj: Tournament_Season_Fixtures_Odds[] = [] 
+    if (key == null) { 
+      if (dev) console.log(`league_id: ${key}`)
+      continue;
+    }
     for (let season_fix_odds of value) {
       const seasonId = season_fix_odds.season_id
       const weeks_rounds_data = season_week_round_ranges_map.get(seasonId)
