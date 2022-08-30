@@ -164,8 +164,8 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
 
 async function main () {
 
-  const start_date = "2022-08-10";
-  const end_date = "2022-10-28"; 
+  const start_date = "2022-07-01";
+  const end_date = "2023-01-20"; 
   const limit = 1000;
   let offset = 0;
   let total_limit;
@@ -223,8 +223,6 @@ async function main () {
   }
   t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-
-  console.log(`offset: ${offset}`);
 
   // [🐛] debug
   // if (dev) {
@@ -290,15 +288,13 @@ async function main () {
     const count_weeks: number = await getWeeksDiff(new Date(season_start), new Date(season_end));
 
     // console.log(`seasonId: ${seasonId}`)
-    if (seasonId.toString() == '19740') {
-
-      console.log(`
-        season_start: ${season_start}
-        season_start v2: ${new Date(season_start)}
-        count_weeks: ${count_weeks}
-      `)
-
-    }
+    // if (seasonId.toString() == '19740') {
+    //   console.log(`
+    //     season_start: ${season_start}
+    //     season_start v2: ${new Date(season_start)}
+    //     count_weeks: ${count_weeks}
+    //   `)
+    // }
 
     for (let index = 0; index < count_weeks; index++) {
 
