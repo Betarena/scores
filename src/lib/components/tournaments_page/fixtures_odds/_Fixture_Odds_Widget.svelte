@@ -1016,7 +1016,11 @@
                   class="m-r-8"
                   value={"round"}
                 />
-                {FIXTURES_ODDS_T?.round}
+                <p
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "round"}>
+                  {FIXTURES_ODDS_T?.round}
+                </p>
               </div>
               <div
                 on:click={() => selectedRoundsWeeksView("week")}
@@ -1029,9 +1033,14 @@
                   class="m-r-8"
                   value={"week"}
                 />
-                {FIXTURES_ODDS_T?.week}
+                <p
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "week"}>
+                  {FIXTURES_ODDS_T?.week}
+                </p>
               </div>
             </div>
+
 
           </div>
 
