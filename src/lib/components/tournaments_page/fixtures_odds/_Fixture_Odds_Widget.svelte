@@ -182,6 +182,12 @@
     setInterval(async () => {
       tickSecShow = !tickSecShow
     }, 500)
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden) {
+        selectFixturesOdds()
+        listenRealTimeOddsChange()
+      }
+    });
   })
 
   // ~~~~~~~~~~~~~~~~~~~~~
