@@ -1472,12 +1472,12 @@
     height: 1.3em;
     background-color: white;
     border-radius: 50%;
-    border: 2px solid white;
-    box-shadow: 0 0 0 1px #CCCCCC;
+    border: 1px solid #CCCCCC;
     -webkit-appearance: none;
     cursor: pointer;
   } div#widget-round-week-select input[type="radio"]:checked {
     background-color: #F5620F;
+    border: 2px solid white;
     box-shadow: 0 0 0 1px #F5620F;
   }
 
@@ -1536,28 +1536,6 @@
     border-radius: 12px;
   }
 
-  button#left-btn {
-    width: 32px;
-    height: 32px;
-    background-image: url("./assets/slider-left.svg");
-    background-size: 20px;
-    background-position: center;
-    background-repeat: no-repeat;
-  } button#left-btn:hover {
-    background-image: url("./assets/slider-left-hover.svg");
-  }
-
-  button#right-btn {
-    width: 32px;
-    height: 32px;
-    background-image: url("./assets/slider-right.svg");
-    background-size: 20px;
-    background-position: center;
-    background-repeat: no-repeat;
-  } button#right-btn:hover {
-    background-image: url("./assets/slider-right-hover.svg");
-  }
-
   div#mobile-table-box {
     padding: 12px;
     background: #F2F2F2;
@@ -1572,6 +1550,24 @@
     padding: 6px;
   } div#mobile-table-box button.table-nav-btn:disabled {
     opacity: 0.2;
+  } div#mobile-table-box button#left-btn {
+    width: 32px;
+    height: 32px;
+    background-image: url("./assets/slider-left.svg");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+  } div#mobile-table-box button#left-btn:hover {
+    background-image: url("./assets/slider-left-hover.svg");
+  } div#mobile-table-box button#right-btn {
+    width: 32px;
+    height: 32px;
+    background-image: url("./assets/slider-right.svg");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+  } div#mobile-table-box button#right-btn:hover {
+    background-image: url("./assets/slider-right-hover.svg");
   }
 
   p.group-fixture-date {
@@ -1711,6 +1707,23 @@
     background: #A8A8A8;
   } .dark-background-1 div#mobile-table-box p {
     color: white;
+  }
+
+  .dark-background-1 div.fixture-teams-box {
+    border-left: 1px #616161 solid;
+  }
+
+  .dark-background-1 div.tip-box {
+    border: 1px solid #737373;
+  }
+
+  .dark-background-1 div#widget-round-week-select input[type="radio"] {
+    background-color: transparent;
+    border: 1px solid #999999;
+  } .dark-background-1 div#widget-round-week-select input[type="radio"]:checked {
+    background-color: #F5620F;
+    border: 2px solid #4B4B4B;
+    box-shadow: 0 0 0 1px #F5620F;
   }
 
   .dark-background-1 div#dropdown-seasons div#dropdown-list-main-container {
