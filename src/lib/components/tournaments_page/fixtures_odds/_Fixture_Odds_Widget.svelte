@@ -1599,6 +1599,10 @@
     padding: 6px 12px;
     border-radius: 4px;
     border: 1px solid #CCCCCC;
+  } div.tip-box:hover {
+    border: 1px solid #F5620F !important;
+  } div.tip-box:hover p {
+    color: #F5620F;
   }
 
   img#sportbook-logo-img {
