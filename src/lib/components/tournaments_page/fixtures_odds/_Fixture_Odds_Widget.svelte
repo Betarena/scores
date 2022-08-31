@@ -474,6 +474,14 @@
     })
   }
 
+  let total_nav_num: number = weeks_total
+
+  $: if (optView == "round") {
+    total_nav_num = rounds_total;
+  } else {
+    total_nav_num = weeks_total;
+  }
+
   function selectedRoundsWeeksView(opt_view: "round" | "week") {
     optView = opt_view
     selectFixturesOdds()
@@ -1062,7 +1070,7 @@
             id="right-btn"
             class="table-nav-btn"
             aria-label="selectedOptionTableMobile"
-            disabled={week_name == weeks_total}
+            disabled={week_name == total_nav_num}
             on:click={() => selectFixtureOddsNumber(week_name + 1)}
             >
           </button>
