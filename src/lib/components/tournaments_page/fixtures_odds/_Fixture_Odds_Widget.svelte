@@ -1537,7 +1537,7 @@
   }
 
   div#mobile-table-box {
-    padding: 12px;
+    padding: 5px 12px;
     background: #F2F2F2;
     border-radius: 48px;
     margin: 0 20px 12px 20px;
