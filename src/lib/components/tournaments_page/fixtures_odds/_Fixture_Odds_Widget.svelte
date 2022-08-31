@@ -36,11 +36,6 @@
 	import no_visual_dark from './assets/no_visual_dark.svg';
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
-  import check_league from './assets/check-league.svg';
-  import slider_left from './assets/slider-left.svg';
-	import slider_right from './assets/slider-right.svg';
-  import slider_left_dark from './assets/slider-left-dark.svg';
-	import slider_right_dark from './assets/slider-right-dark.svg';
   import play from './assets/play.svg';
   import play_dark from './assets/play-dark.svg';
   import one_red_card from './assets/1_red_card.svg';
@@ -829,9 +824,9 @@
                         {#each {length: rounds_total} as _,i}
                           <p
                             class='s-14 w-500 row-season'
-                            class:color-primary={i === week_name}
-                            on:click={() => selectFixtureOddsNumber(i)}>
-                            {FIXTURES_ODDS_T?.round} {i}
+                            class:color-primary={i+1 === week_name}
+                            on:click={() => selectFixtureOddsNumber(i+1)}>
+                            {FIXTURES_ODDS_T?.round} {i+1}
                           </p>
                         {/each}
                       {/if}
@@ -860,7 +855,8 @@
                   value={"round"}
                 />
                 <p
-                  class="s-14 w-500 color-black">
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "round"}>
                   {FIXTURES_ODDS_T?.round}
                 </p>
               </div>
@@ -876,7 +872,8 @@
                   value={"week"}
                 />
                 <p
-                  class="s-14 w-500 color-black">
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "week"}>
                   {FIXTURES_ODDS_T?.week}
                 </p>
               </div>
@@ -977,9 +974,9 @@
                       {#each {length: rounds_total} as _,i}
                         <p
                           class='s-14 w-500 row-season'
-                          class:color-primary={i === week_name}
-                          on:click={() => selectFixtureOddsNumber(i)}>
-                          {FIXTURES_ODDS_T?.round} {i}
+                          class:color-primary={i+1 === week_name}
+                          on:click={() => selectFixtureOddsNumber(i+1)}>
+                          {FIXTURES_ODDS_T?.round} {i+1}
                         </p>
                       {/each}
                     {/if}
@@ -1033,22 +1030,12 @@
           class="row-space-out m-b-12">
 
           <button
+            id="left-btn"
             class="table-nav-btn"
             aria-label="selectedOptionTableMobile"
             disabled={week_name == 1}
             on:click={() => selectFixtureOddsNumber(week_name - 1)}
             >
-            {#if $userBetarenaSettings.theme == 'Dark'}
-              <img 
-                src={slider_left_dark} 
-                alt=""
-              />
-            {:else}
-              <img 
-                src={slider_left} 
-                alt=""
-              />
-            {/if}
           </button>
 
           <div
@@ -1072,22 +1059,12 @@
           </div>
 
           <button
+            id="right-btn"
             class="table-nav-btn"
             aria-label="selectedOptionTableMobile"
             disabled={week_name == weeks_total}
             on:click={() => selectFixtureOddsNumber(week_name + 1)}
             >
-            {#if $userBetarenaSettings.theme == 'Dark'}
-              <img 
-                src={slider_right_dark} 
-                alt=""
-              />
-            {:else}
-              <img 
-                src={slider_right} 
-                alt=""
-              />
-            {/if}
           </button>
 
         </div>
@@ -1159,71 +1136,147 @@
 
                   <!-- [ℹ] fixture-teams
                   -->
-                  <div
-                    class="column-start-grid-start fixture-teams-box">
+                  {#if 
+                    fixture?.fixture_link && 
+                    fixture?.fixture_link[server_side_language]}
+                    <a 
+                      rel="nofollow"
+                      href={fixture?.fixture_link[server_side_language]}
+                      target="_blank"
+                      style="width: inherit;">
+                      <div
+                        class="column-start-grid-start fixture-teams-box">
 
+                        <div
+                          class="row-space-start">
+                          <p
+                            class="s-14 color-black w-500 m-r-8"
+                            class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                            {fixture?.teams?.away?.name}
+                          </p>
+                          {#if fixture?.teams?.away?.red_cards}
+                            {#if fixture?.teams?.away?.red_cards == 1}
+                              <img 
+                                src={one_red_card} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {:else if fixture?.teams?.away?.red_cards == 2}
+                              <img 
+                                src={two_red_card} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={three_red_card} 
+                                alt=""
+                                width=18px height=22px
+                              />
+                            {/if}
+                          
+                          {/if}
+                        </div>
+
+                        <div
+                          class="row-space-start">
+                          <p  
+                            class="s-14 color-black w-500 m-r-8"
+                            class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                            {fixture?.teams?.home?.name}
+                          </p>
+                          {#if fixture?.teams?.home?.red_cards}
+                            {#if fixture?.teams?.home?.red_cards == 1}
+                              <img 
+                                src={one_red_card} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {:else if fixture?.teams?.home?.red_cards == 2}
+                              <img 
+                                src={two_red_card} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={three_red_card} 
+                                alt=""
+                                width=18px height=22px
+                              />
+                            {/if}
+                          {/if}
+                        </div>
+
+                      </div>
+                    </a>
+                  {:else}
                     <div
-                      class="row-space-start">
-                      <p
-                        class="s-14 color-black w-500 m-r-8"
-                        class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
-                        {fixture?.teams?.away?.name}
-                      </p>
-                      {#if fixture?.teams?.away?.red_cards}
-                        {#if fixture?.teams?.away?.red_cards == 1}
-                          <img 
-                            src={one_red_card} 
-                            alt=""
-                            width=12px height=16px
-                          />
-                        {:else if fixture?.teams?.away?.red_cards == 2}
-                          <img 
-                            src={two_red_card} 
-                            alt=""
-                            width=15px height=19px
-                          />
-                        {:else}
-                          <img 
-                            src={three_red_card} 
-                            alt=""
-                            width=18px height=22px
-                          />
-                        {/if}
-                       
-                      {/if}
-                    </div>
+                      class="column-start-grid-start fixture-teams-box">
 
-                    <div
-                      class="row-space-start">
-                      <p  
-                        class="s-14 color-black w-500 m-r-8"
-                        class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
-                        {fixture?.teams?.home?.name}
-                      </p>
-                      {#if fixture?.teams?.home?.red_cards}
-                        {#if fixture?.teams?.home?.red_cards == 1}
-                          <img 
-                            src={one_red_card} 
-                            alt=""
-                            width=12px height=16px
-                          />
-                        {:else if fixture?.teams?.home?.red_cards == 2}
-                          <img 
-                            src={two_red_card} 
-                            alt=""
-                            width=15px height=19px
-                          />
-                        {:else}
-                          <img 
-                            src={three_red_card} 
-                            alt=""
-                            width=18px height=22px
-                          />
+                      <div
+                        class="row-space-start">
+                        <p
+                          class="s-14 color-black w-500 m-r-8"
+                          class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                          {fixture?.teams?.away?.name}
+                        </p>
+                        {#if fixture?.teams?.away?.red_cards}
+                          {#if fixture?.teams?.away?.red_cards == 1}
+                            <img 
+                              src={one_red_card} 
+                              alt=""
+                              width=12px height=16px
+                            />
+                          {:else if fixture?.teams?.away?.red_cards == 2}
+                            <img 
+                              src={two_red_card} 
+                              alt=""
+                              width=15px height=19px
+                            />
+                          {:else}
+                            <img 
+                              src={three_red_card} 
+                              alt=""
+                              width=18px height=22px
+                            />
+                          {/if}
+                        
                         {/if}
-                      {/if}
-                    </div>
+                      </div>
 
-                  </div>
+                      <div
+                        class="row-space-start">
+                        <p  
+                          class="s-14 color-black w-500 m-r-8"
+                          class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                          {fixture?.teams?.home?.name}
+                        </p>
+                        {#if fixture?.teams?.home?.red_cards}
+                          {#if fixture?.teams?.home?.red_cards == 1}
+                            <img 
+                              src={one_red_card} 
+                              alt=""
+                              width=12px height=16px
+                            />
+                          {:else if fixture?.teams?.home?.red_cards == 2}
+                            <img 
+                              src={two_red_card} 
+                              alt=""
+                              width=15px height=19px
+                            />
+                          {:else}
+                            <img 
+                              src={three_red_card} 
+                              alt=""
+                              width=18px height=22px
+                            />
+                          {/if}
+                        {/if}
+                      </div>
+
+                    </div>
+                  {/if}
 
                 </div>
 
@@ -1276,7 +1329,7 @@
                         class="tip-box m-r-16">
                         <p
                           class="s-12 color-black">
-                          TIP
+                          {FIXTURES_ODDS_T?.tip}
                         </p>
                       </div>
                     </a>
@@ -1483,6 +1536,28 @@
     border-radius: 12px;
   }
 
+  button#left-btn {
+    width: 32px;
+    height: 32px;
+    background-image: url("./assets/slider-left.svg");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+  } button#left-btn:hover {
+    background-image: url("./assets/slider-left-hover.svg");
+  }
+
+  button#right-btn {
+    width: 32px;
+    height: 32px;
+    background-image: url("./assets/slider-right.svg");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+  } button#right-btn:hover {
+    background-image: url("./assets/slider-right-hover.svg");
+  }
+
   div#mobile-table-box {
     padding: 12px;
     background: #F2F2F2;
@@ -1491,7 +1566,7 @@
     width: auto;
   } div#mobile-table-box button.table-nav-btn {
     border-radius: 50%;
-    background: #4B4B4B;
+    background-color: #4B4B4B;
     width: 32px;
     height: 32px;
     padding: 6px;
@@ -1618,6 +1693,20 @@
 
   .dark-background-1 div#mobile-table-box {
     background: #616161;
+  } .dark-background-1 div#mobile-table-box button#left-btn {
+    background-image: url("./assets/slider-left-dark.svg");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+  } .dark-background-1 div#mobile-table-box button#left-btn:hover {
+    background-image: url("./assets/slider-left-hover.svg");
+  } .dark-background-1 div#mobile-table-box button#right-btn {
+    background-image: url("./assets/slider-right-dark.svg");
+    background-size: 20px;
+    background-position: center;
+    background-repeat: no-repeat;
+  } .dark-background-1 div#mobile-table-box button#right-btn:hover {
+    background-image: url("./assets/slider-right-hover.svg");
   } .dark-background-1 div#mobile-table-box button.table-nav-btn {
     background: #A8A8A8;
   } .dark-background-1 div#mobile-table-box p {
