@@ -1360,7 +1360,7 @@
                     fixture?.status === "LIVE" ||
                     fixture?.status === "HT"}
                     <div
-                      class="column-space-center m-l-10">
+                      class="column-space-center m-l-24">
                       <p
                         class="s-14 w-500 color-black"
                         class:color-red-bright={fixture?.status === "LIVE"}
