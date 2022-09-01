@@ -68,7 +68,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
  * [ℹ] Target Data (season_id's) Used
 */
 export const REDIS_CACHE_FIXTURES_ODDS_DATA_2 = gql`
-  query REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA 
+  query REDIS_CACHE_FIXTURES_ODDS_DATA_2 
     (
       $seasonIds: [numeric!]
     )
@@ -100,7 +100,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_2 = gql`
  * [ℹ] TRANSLATION
 */
 export const REDIS_CACHE_FIXTURES_ODDS_DATA_3 = gql`
-  query HASURA_BETARENA_QUERY_TOP_PLAYERS_T 
+  query REDIS_CACHE_FIXTURES_ODDS_DATA_3 
     @cached 
     (ttl: 300) 
   {
