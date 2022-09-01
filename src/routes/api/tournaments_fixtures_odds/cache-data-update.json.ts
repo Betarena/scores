@@ -164,8 +164,8 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
 
 async function main () {
 
-  const start_date = "2022-07-01";
-  const end_date = "2023-07-20"; 
+  const start_date = "2022-08-01";
+  const end_date = "2023-05-30"; 
   const limit = 1000;
   let offset = 0;
   let total_limit;
@@ -207,19 +207,19 @@ async function main () {
 
     h_fixtures_arr = h_fixtures_arr.concat(response.historic_fixtures_dev)
 
-    total_limit = response.historic_fixtures_dev_aggregate.aggregate.totalCount;
-    offset += limit;
-    
-    counter++
-
     // [ℹ] exit loop
     if (offset >= total_limit) {
       // [🐛] debug
       if (dev) console.log(`ℹ exiting loop!`)
+      logs.push(`total limit: ${total_limit}`)
+      logs.push(`fixtures gathered: ${h_fixtures_arr.length}`)
       logs.push(`exiting loop after ${counter} iterations`)
       break;
     }
 
+    total_limit = response.historic_fixtures_dev_aggregate.aggregate.totalCount;
+    offset += limit;
+    counter++
   }
   t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
