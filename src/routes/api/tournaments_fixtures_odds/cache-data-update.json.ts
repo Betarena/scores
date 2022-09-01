@@ -165,7 +165,7 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
 async function main () {
 
   const start_date = "2022-07-01";
-  const end_date = "2023-01-20"; 
+  const end_date = "2023-07-20"; 
   const limit = 1000;
   let offset = 0;
   let total_limit;
@@ -367,13 +367,13 @@ async function main () {
 
     const home_team_obj: Fixture_Odds_Team = {
       name: home_team_name,
-      score: home_team_score || null,
+      score: home_team_score || 0,
       red_cards: home_red_cards || null
     }
 
     const away_team_obj: Fixture_Odds_Team = {
       name: away_team_name,
-      score: away_team_score || null,
+      score: away_team_score || 0,
       red_cards: away_red_cards || null
     }
 

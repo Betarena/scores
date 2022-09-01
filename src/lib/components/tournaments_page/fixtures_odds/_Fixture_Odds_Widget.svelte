@@ -1041,7 +1041,6 @@
               </div>
             </div>
 
-
           </div>
 
         {/if}
@@ -1172,6 +1171,36 @@
 
                         <div
                           class="row-space-start">
+                          <p  
+                            class="s-14 color-black w-500 m-r-8"
+                            class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                            {fixture?.teams?.home?.name}
+                          </p>
+                          {#if fixture?.teams?.home?.red_cards}
+                            {#if fixture?.teams?.home?.red_cards == 1}
+                              <img 
+                                src={one_red_card} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {:else if fixture?.teams?.home?.red_cards == 2}
+                              <img 
+                                src={two_red_card} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={three_red_card} 
+                                alt=""
+                                width=18px height=22px
+                              />
+                            {/if}
+                          {/if}
+                        </div>
+
+                        <div
+                          class="row-space-start">
                           <p
                             class="s-14 color-black w-500 m-r-8"
                             class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
@@ -1201,41 +1230,41 @@
                           {/if}
                         </div>
 
-                        <div
-                          class="row-space-start">
-                          <p  
-                            class="s-14 color-black w-500 m-r-8"
-                            class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
-                            {fixture?.teams?.home?.name}
-                          </p>
-                          {#if fixture?.teams?.home?.red_cards}
-                            {#if fixture?.teams?.home?.red_cards == 1}
-                              <img 
-                                src={one_red_card} 
-                                alt=""
-                                width=12px height=16px
-                              />
-                            {:else if fixture?.teams?.home?.red_cards == 2}
-                              <img 
-                                src={two_red_card} 
-                                alt=""
-                                width=15px height=19px
-                              />
-                            {:else}
-                              <img 
-                                src={three_red_card} 
-                                alt=""
-                                width=18px height=22px
-                              />
-                            {/if}
-                          {/if}
-                        </div>
-
                       </div>
                     </a>
                   {:else}
                     <div
                       class="column-start-grid-start fixture-teams-box">
+
+                      <div
+                        class="row-space-start">
+                        <p  
+                          class="s-14 color-black w-500 m-r-8"
+                          class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                          {fixture?.teams?.home?.name}
+                        </p>
+                        {#if fixture?.teams?.home?.red_cards}
+                          {#if fixture?.teams?.home?.red_cards == 1}
+                            <img 
+                              src={one_red_card} 
+                              alt=""
+                              width=12px height=16px
+                            />
+                          {:else if fixture?.teams?.home?.red_cards == 2}
+                            <img 
+                              src={two_red_card} 
+                              alt=""
+                              width=15px height=19px
+                            />
+                          {:else}
+                            <img 
+                              src={three_red_card} 
+                              alt=""
+                              width=18px height=22px
+                            />
+                          {/if}
+                        {/if}
+                      </div>
 
                       <div
                         class="row-space-start">
@@ -1265,36 +1294,6 @@
                             />
                           {/if}
                         
-                        {/if}
-                      </div>
-
-                      <div
-                        class="row-space-start">
-                        <p  
-                          class="s-14 color-black w-500 m-r-8"
-                          class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
-                          {fixture?.teams?.home?.name}
-                        </p>
-                        {#if fixture?.teams?.home?.red_cards}
-                          {#if fixture?.teams?.home?.red_cards == 1}
-                            <img 
-                              src={one_red_card} 
-                              alt=""
-                              width=12px height=16px
-                            />
-                          {:else if fixture?.teams?.home?.red_cards == 2}
-                            <img 
-                              src={two_red_card} 
-                              alt=""
-                              width=15px height=19px
-                            />
-                          {:else}
-                            <img 
-                              src={three_red_card} 
-                              alt=""
-                              width=18px height=22px
-                            />
-                          {/if}
                         {/if}
                       </div>
 
@@ -1381,22 +1380,24 @@
                   {#if
                     (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
                     fixture?.status === "LIVE" ||
-                    fixture?.status === "HT"}
+                    fixture?.status === "HT" || 
+                    fixture?.status === "FT"}
                     <div
                       class="column-space-center m-l-24">
-                      <p
-                        class="s-14 w-500 color-black"
-                        class:color-red-bright={fixture?.status === "LIVE"}
-                        class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}
-                        >
-                        {fixture?.teams?.away?.score}
-                      </p>
                       <p 
                         class="s-14 w-500 color-black"
-                        class:color-red-bright={fixture?.status === "LIVE"}
-                        class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}
-                        >
+                        class:color-grey={(fixture?.teams?.home?.score < fixture?.teams?.away?.score) && 
+                          fixture?.status != "LIVE"}
+                        class:color-red-bright={fixture?.status === "LIVE"}>
                         {fixture?.teams?.home?.score}
+                      </p>
+                      <p
+                        class="s-14 w-500 color-black"
+                        class:color-grey={(fixture?.teams?.away?.score < fixture?.teams?.home?.score) && 
+                          fixture?.status != "LIVE"}
+                        class:color-red-bright={fixture?.status === "LIVE"}
+                        >
+                        {fixture?.teams?.away?.score}
                       </p>
                     </div>
                   {/if}
@@ -1603,12 +1604,14 @@
   }
 
   div.fixture-time-box {
-    width: 47px;
+    width: 37px;
+  } div.fixture-time-box p {
+    font-size: 12px;
   }
 
   div.fixture-teams-box {
     border-left: 1px #E6E6E6 solid;
-    padding-left: 16px;
+    padding-left: 8px;
   }
 
   div.media-play-btn {
@@ -1619,18 +1622,20 @@
   }
 
   div.tip-box {
-    padding: 6px 12px;
+    padding: 2.5px 7px;
     border-radius: 4px;
     border: 1px solid #CCCCCC;
   } div.tip-box:hover {
     border: 1px solid #F5620F !important;
+  } div.tip-box p {
+    font-size: 10px;
   } div.tip-box:hover p {
     color: #F5620F;
   }
 
   img#sportbook-logo-img {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     object-fit: contain;
     border-radius: 8px;
     object-position: left;
@@ -1688,6 +1693,28 @@
     } div.fix-odds-view-opt-box {
       width: auto;
       text-align: center;
+    }
+
+    div.fixture-time-box {
+      width: 47px;
+    } div.fixture-time-box p {
+      font-size: 14px;
+    }
+
+    div.fixture-teams-box {
+      border-left: 1px #E6E6E6 solid;
+      padding-left: 16px;
+    }
+
+    div.tip-box {
+      padding: 6px 12px;
+    } div.tip-box p {
+      font-size: 12px;
+    }
+
+    img#sportbook-logo-img {
+      width: 30px;
+      height: 30px;
     }
 
   }
