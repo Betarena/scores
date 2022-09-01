@@ -292,7 +292,11 @@
             ? null
             : new Date(target_season.rounds[i-1].s_date)
 
-        if (s_date <= date && e_date >= date) {
+        if (
+          (s_date <= date && e_date >= date) ||
+          (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) ||
+          (e_date.getDate() == date.getDate() && e_date.getMonth() == date.getMonth() && e_date.getFullYear() == date.getFullYear())
+          ) {
           target_round = target_season.rounds[i]
           break
         }
