@@ -1387,7 +1387,7 @@
                     fixture?.status === "HT" || 
                     fixture?.status === "FT"}
                     <div
-                      class="column-space-center m-l-24">
+                      class="column-space-center m-l-24 fixtures-scores-box">
                       <p 
                         class="s-14 w-500 color-black"
                         class:color-grey={(fixture?.teams?.home?.score < fixture?.teams?.away?.score) && 
@@ -1616,6 +1616,12 @@
   div.fixture-teams-box {
     border-left: 1px #E6E6E6 solid;
     padding-left: 8px;
+  } div.fixture-teams-box p {
+    font-weight: 400;
+  }
+
+  div.fixtures-scores-box p {
+    font-weight: 400;
   }
 
   div.media-play-btn {
@@ -1708,6 +1714,12 @@
     div.fixture-teams-box {
       border-left: 1px #E6E6E6 solid;
       padding-left: 16px;
+    } div.fixture-teams-box p {
+      font-weight: 500;
+    }
+
+    div.fixtures-scores-box p {
+      font-weight: 500;
     }
 
     div.tip-box {
