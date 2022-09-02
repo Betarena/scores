@@ -1234,3 +1234,12 @@ export interface BETARENA_HASURA_scores_widget_football_fixtures_odds_translatio
   round?:   string;
   matches?: string;
 }
+
+
+/**
+ * [ℹ] HASURA: scores_livescore_football_translations (&_dev)
+*/
+export interface BETARENA_HASURA_scores_livescore_football_translations {
+  lang?:       string;
+  status_abv?: Array<string[]>;
+}

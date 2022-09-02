@@ -110,6 +110,10 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_3 = gql`
       lang
       translations
     }
+    scores_livescore_football_translations_dev {
+      lang
+      status_abv
+    }
     scores_general_translations_dev {
       lang
       countries

@@ -71,7 +71,7 @@ export async function post(): Promise < unknown > {
 
   const langArray = await getHrefLang()
   
-  await main()
+  // await main()
   await main_trans_and_seo(langArray)
 
   // [🐛] debug
@@ -554,12 +554,16 @@ async function main_trans_and_seo (langArray :string[]) {
     const objectGeneral = res.scores_general_translations_dev
       .find(({ lang }) => lang === lang_)
     
+    const objectLivescore = res.scores_livescore_football_translations_dev
+      .find(({ lang }) => lang === lang_)
+
     const mergedObj = {
       ...object, 
       ...objectFixOdds?.translations,
       ...objectGeneral?.months,
       ...objectGeneral?.weekdays,
-      ...objectGeneral?.widgets_no_data_available
+      ...objectGeneral?.widgets_no_data_available,
+      status_abv: objectLivescore?.status_abv
     }
 
     fix_odds_translation_map.set(lang_, mergedObj)

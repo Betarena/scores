@@ -3,6 +3,7 @@ import type {
   BETARENA_HASURA_historic_fixtures_aggregate,
   BETARENA_HASURA_scores_football_seasons_details, 
   BETARENA_HASURA_scores_general_translations, 
+  BETARENA_HASURA_scores_livescore_football_translations, 
   BETARENA_HASURA_scores_widget_football_fixtures_odds_translations, 
   BETARENA_HASURA_sportsbook_details,
   FixturesOddsTranslations,
@@ -26,6 +27,7 @@ export interface BETARENA_HASURA_fixtures_odds_query {
   
   scores_widget_football_fixtures_odds_translations_dev:        BETARENA_HASURA_scores_widget_football_fixtures_odds_translations[]
   scores_general_translations_dev:                              BETARENA_HASURA_scores_general_translations[]
+  scores_livescore_football_translations_dev:                   BETARENA_HASURA_scores_livescore_football_translations[]
   sportsbook_details_dev:                                       BETARENA_HASURA_sportsbook_details[]
 }
 
@@ -40,7 +42,7 @@ export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_respon
   seasons?:    Tournament_Season_Fixtures_Odds[]
 }
 
-export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response extends FixturesOddsTranslations, WelcomeMonths, Weekdays, WidgetsNoDataAvailable {
+export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response extends FixturesOddsTranslations, WelcomeMonths, Weekdays, WidgetsNoDataAvailable, BETARENA_HASURA_scores_livescore_football_translations  {
   lang: string
 }
 
