@@ -563,7 +563,7 @@ async function main_trans_and_seo (langArray :string[]) {
       ...objectGeneral?.months,
       ...objectGeneral?.weekdays,
       ...objectGeneral?.widgets_no_data_available,
-      status_abv: objectLivescore?.status_abv
+      status_abv: Object.fromEntries(objectLivescore?.status_abv)
     }
 
     fix_odds_translation_map.set(lang_, mergedObj)

@@ -1137,7 +1137,7 @@
                     {:else if fixture?.status === "HT"}
                       <p
                         class="no-wrap s-14 color-black">
-                        Ht
+                        {FIXTURES_ODDS_T?.status_abv?.HT}
                       </p>
                     {:else}
                       <p
@@ -1154,7 +1154,7 @@
                       {#if fixture?.status === "FT"}
                         <p
                           class="no-wrap s-14 color-grey">
-                          FT
+                          {FIXTURES_ODDS_T?.status_abv?.FT}
                         </p>
                       {/if}
                     {/if}
@@ -1314,7 +1314,9 @@
 
                   <!-- [ℹ] fixture-link / media-link 
                   -->
-                  {#if 
+                  {#if
+                    fixture?.media_link && 
+                    fixture?.media_link.length != 0 &&
                     fixture?.fixture_link && 
                     fixture?.fixture_link[server_side_language]}
                     <a 

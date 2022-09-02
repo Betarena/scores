@@ -42,8 +42,21 @@ export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_respon
   seasons?:    Tournament_Season_Fixtures_Odds[]
 }
 
-export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response extends FixturesOddsTranslations, WelcomeMonths, Weekdays, WidgetsNoDataAvailable, BETARENA_HASURA_scores_livescore_football_translations  {
+export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response extends FixturesOddsTranslations, WelcomeMonths, Weekdays, WidgetsNoDataAvailable  {
   lang: string
+  status_abv?: StatusAbv;
+} export interface StatusAbv {
+    PEN_LIVE?: string;
+    AET?:      string;
+    BREAK?:    string;
+    FT_PEN?:   string;
+    POSTP?:    string;
+    SUSP?:     string;
+    TBA?:      string;
+    WO?:       string;
+    AU?:       string;
+    HT?:       string;
+    FT?:       string;
 }
 
 export interface Tournament_Season_Fixtures_Odds {
