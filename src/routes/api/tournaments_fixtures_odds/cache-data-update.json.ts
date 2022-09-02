@@ -165,7 +165,7 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
 async function main () {
 
   const start_date = "2022-08-01";
-  const end_date = "2023-05-30"; 
+  const end_date = "2023-07-01"; 
   const limit = 1000;
   let offset = 0;
   let total_limit;
@@ -234,6 +234,18 @@ async function main () {
   //   });
   // }
 
+  const mainArrIds = []
+  for (const i of h_fixtures_arr) {
+    mainArrIds.push(i.id)
+  }
+  const duplicates = mainArrIds.filter((e, i, a) => a.indexOf(e) !== i) // [2, 4]
+  logs.push(`duplicates: ${duplicates.length}`)
+
+  // if (dev) {
+  //   const data = JSON.stringify(duplicates, null, 4)
+  //   await fs.writeFile(`./datalog/duplicates_local_main.json`, data);
+  // }
+
   // [ℹ] conversion to hashmap
   t0 = performance.now();
   for (const h_fixture of h_fixtures_arr) {
@@ -242,6 +254,8 @@ async function main () {
   t1 = performance.now();
   logs.push(`historic_fixtures_map generated with size: ${historic_fixtures_map.size}`)
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  // return;
   
   // [ℹ] obtain target season_id's data
   let seasonIdsArr: number[] = []

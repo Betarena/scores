@@ -35,7 +35,8 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
 
     historic_fixtures_dev (
       order_by: {
-        fixture_day: asc
+        fixture_day: asc,
+        id: asc
       },
       limit: $limit,
       offset: $offset,
