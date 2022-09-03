@@ -1714,11 +1714,12 @@
   }
 
   div.fixture-row {
-    padding: 5px 20px;
+    padding: 5px 12px;
   }
 
   div.fixture-time-box {
     width: 37px;
+    margin-right: 8px;
   } div.fixture-time-box p {
     font-size: 12px;
   }
@@ -1730,20 +1731,27 @@
     font-weight: 400;
   }
 
-  div.fixtures-scores-box p {
+  div.fixtures-scores-box {
+    margin-left: 10px;
+  } div.fixtures-scores-box p {
     font-weight: 400;
   }
 
   div.media-play-btn {
     display: flex;
-    padding: 9px;
+    padding: 4px;
+    margin-right: 5px;
     border: 1px solid #CCCCCC;
     border-radius: 50%;
+  } div.media-play-btn img {
+    width: 6px;
+    height: 6px;
   }
 
   div.tip-box {
     padding: 2.5px 7px;
     border-radius: 4px;
+    margin-right: 5px;
     border: 1px solid #CCCCCC;
   } div.tip-box:hover {
     border: 1px solid #F5620F !important;
@@ -1757,7 +1765,7 @@
     width: 20px;
     height: 20px;
     object-fit: contain;
-    border-radius: 8px;
+    border-radius: 4px;
     object-position: left;
   }
 
@@ -1815,8 +1823,13 @@
       text-align: center;
     }
 
+    div.fixture-row {
+      padding: 5px 20px;
+    }
+
     div.fixture-time-box {
       width: 47px;
+      margin-right: 16px;
     } div.fixture-time-box p {
       font-size: 14px;
     }
@@ -1828,14 +1841,25 @@
       font-weight: 500;
     }
 
-    div.fixtures-scores-box p {
+    div.fixtures-scores-box {
+      margin-left: 24px;
+    } div.fixtures-scores-box p {
       font-weight: 500;
     }
 
     div.tip-box {
       padding: 6px 12px;
+      margin-right: 16px;
     } div.tip-box p {
       font-size: 12px;
+    } 
+    
+    div.media-play-btn { 
+      padding: 9px;
+      margin-right: 16px;
+    } div.media-play-btn img {
+      width: 14px;
+      height: 14px;
     }
 
     img#sportbook-logo-img {
