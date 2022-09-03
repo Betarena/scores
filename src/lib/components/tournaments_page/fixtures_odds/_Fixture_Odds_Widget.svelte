@@ -135,12 +135,12 @@
             teams: {
               away: {
                 name: fixture?.teams?.away?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
+                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
                 score: liveFixturesMap.get(fixture.id)?.scores?.visitorteam_score,
               },
               home: {
                 name: fixture?.teams?.home?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
+                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
                 score: liveFixturesMap.get(fixture.id)?.scores?.localteam_score,
               }
             }
