@@ -67,7 +67,11 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  const job = await CQ_Tour_FixOdds_All.add({});
+  // const job = await CQ_Tour_FixOdds_All.add({});
+
+  const langArray = await getHrefLang()
+  await main()
+  await main_trans_and_seo(langArray)
 
   // [🐛] debug
   if (dev) {
@@ -76,14 +80,14 @@ export async function post(): Promise < unknown > {
     }
   }
 
-  console.log(`
-    job_id: ${job.id}
-  `)
+  // console.log(`
+  //   job_id: ${job.id}
+  // `)
 
   return {
     status: 200,
     body: { 
-      job_id: job.id
+      job_id: 1
     }
   }
 }
@@ -140,9 +144,8 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
   */
 
   const t0 = performance.now();
-  const langArray = await getHrefLang()
-  await main()
-  await main_trans_and_seo(langArray)
+  // await tournamentsTopPlayersDataGeneration ()
+  // await tournamentsTopPlayersTGeneration ()
   const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
@@ -306,7 +309,7 @@ async function main () {
     //   `)
     // }
 
-    for (let index = 0; index < count_weeks; index++) {
+    for (let index = 0; index < count_weeks + 1; index++) {
 
       const name = index + 1
       const s_date = new Date(season_start)
