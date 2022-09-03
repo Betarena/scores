@@ -50,6 +50,12 @@ let t1;
 
 export async function post({ request }): Promise < unknown > {
 
+  // [🐛] debug
+  if (dev) console.log(`
+    ℹ ${cacheTarget} 
+    at: ${new Date().toDateString()}
+  `);
+
   const body = await request.json();
   if (dev) console.log(body);
   const dataSurgical = JSON.parse(JSON.stringify(body));
@@ -118,7 +124,7 @@ CQ_Tour_FixOdds_S.process (async function (job, done) {
 
   const t0 = performance.now();
   // await surgicalDataUpdate()
-  await surgicalDataUpdate_2(job.data);
+  // await surgicalDataUpdate_2(job.data);
   const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
@@ -164,9 +170,9 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   
   const newData = await injectNewFixturesData(liveFixturesMap, cacheTargetLeagueData);
 
-  for (const newFixture of newData) {
-    await cacheData(newFixture.league_id, newFixture);
-  }
+  // for (const newFixture of newData) {
+  //   await cacheData(newFixture.league_id, newFixture);
+  // }
 
   // [🐛] debug
   if (dev) {
@@ -221,34 +227,28 @@ async function injectNewFixturesData (liveFixturesMap: Map <number, FIREBASE_liv
       
       if (season.fixtures === null || season.fixtures.length === 0) continue;
 
-      for (let fixture of season.fixtures) {
+      for (const fixture of season.fixtures) {
 
         if (liveFixturesMap.has(fixture.id)) {
 
-          fixture = {
-            ...fixture,
-            minute: liveFixturesMap.get(fixture.id)?.time?.minute,
-            status: liveFixturesMap.get(fixture.id)?.time?.status,
-            teams: {
-              away: {
-                name: fixture?.teams?.away?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.scores?.visitorteam_score,
-              },
-              home: {
-                name: fixture?.teams?.home?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.scores?.localteam_score,
-              }
+          fixture.minute = liveFixturesMap.get(fixture.id)?.time?.minute,
+          fixture.status = liveFixturesMap.get(fixture.id)?.time?.status,
+          fixture.teams = {
+            away: {
+              name: fixture?.teams?.away?.name,
+              red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
+              score: liveFixturesMap.get(fixture.id)?.scores?.visitorteam_score,
+            },
+            home: {
+              name: fixture?.teams?.home?.name,
+              red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
+              score: liveFixturesMap.get(fixture.id)?.scores?.localteam_score,
             }
           }
 
         }
-
       }
-
     }
-
   }
 
   return cacheTargetLeagueData;

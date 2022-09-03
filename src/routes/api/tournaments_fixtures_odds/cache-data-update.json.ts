@@ -67,12 +67,7 @@ export async function post(): Promise < unknown > {
   `);
 
   // [ℹ] producers [JOBS]
-  // const job = await CQ_Tour_FixOdds_All.add({});
-
-  const langArray = await getHrefLang()
-  
-  // await main()
-  await main_trans_and_seo(langArray)
+  const job = await CQ_Tour_FixOdds_All.add({});
 
   // [🐛] debug
   if (dev) {
@@ -81,14 +76,14 @@ export async function post(): Promise < unknown > {
     }
   }
 
-  // console.log(`
-  //   job_id: ${job.id}
-  // `)
+  console.log(`
+    job_id: ${job.id}
+  `)
 
   return {
     status: 200,
     body: { 
-      job_id: 1
+      job_id: job.id
     }
   }
 }
@@ -145,8 +140,9 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
   */
 
   const t0 = performance.now();
-  // await tournamentsTopPlayersDataGeneration ()
-  // await tournamentsTopPlayersTGeneration ()
+  const langArray = await getHrefLang()
+  await main()
+  await main_trans_and_seo(langArray)
   const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
