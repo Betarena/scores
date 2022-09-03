@@ -959,14 +959,18 @@
               <div
                 on:click={() => selectedRoundsWeeksView("round")}
                 class="row-space-start m-r-16">
-                <input 
-                  type="radio" 
-                  name="matches-odds-select" 
-                  bind:group={optView}
-                  id=""
-                  class="m-r-8"
-                  value={"round"}
-                />
+                <label for="round">
+                  <input 
+                    aria-label="select-round-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select" 
+                    bind:group={optView}
+                    id="round"
+                    class="m-r-8"
+                    value={"round"}
+                  />
+                </label>
                 <p
                   class="s-14 w-500 color-grey"
                   class:color-primary={optView === "round"}>
@@ -976,14 +980,18 @@
               <div
                 on:click={() => selectedRoundsWeeksView("week")}
                 class="row-space-start">
-                <input 
-                  type="radio" 
-                  name="matches-odds-select"
-                  bind:group={optView}
-                  id=""
-                  class="m-r-8"
-                  value={"week"}
-                />
+                <label for="week">
+                  <input 
+                    aria-label="select-weekly-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select"
+                    bind:group={optView}
+                    id="week"
+                    class="m-r-8"
+                    value={"week"}
+                  />
+                </label>
                 <p
                   class="s-14 w-500 color-grey"
                   class:color-primary={optView === "week"}>
@@ -1109,14 +1117,18 @@
               <div
                 on:click={() => selectedRoundsWeeksView("round")}
                 class="row-space-start m-r-16">
-                <input 
-                  type="radio" 
-                  name="matches-odds-select" 
-                  bind:group={optView}
-                  id=""
-                  class="m-r-8"
-                  value={"round"}
-                />
+                <label for="round">
+                  <input 
+                    aria-label="select-round-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select" 
+                    bind:group={optView}
+                    id="round"
+                    class="m-r-8"
+                    value={"round"}
+                  />
+                </label>
                 <p
                   class="s-14 w-500 color-grey"
                   class:color-primary={optView === "round"}>
@@ -1126,14 +1138,18 @@
               <div
                 on:click={() => selectedRoundsWeeksView("week")}
                 class="row-space-start">
-                <input 
-                  type="radio" 
-                  name="matches-odds-select"
-                  bind:group={optView}
-                  id=""
-                  class="m-r-8"
-                  value={"week"}
-                />
+                <label for="week">
+                  <input 
+                    aria-label="select-weekly-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select"
+                    bind:group={optView}
+                    id="week"
+                    class="m-r-8"
+                    value={"week"}
+                  />
+                </label>
                 <p
                   class="s-14 w-500 color-grey"
                   class:color-primary={optView === "week"}>

@@ -1475,6 +1475,7 @@
   }
 
   img#league-logo {
+    object-fit: contain;
     width: 40px;
     height: 40px;
   }
