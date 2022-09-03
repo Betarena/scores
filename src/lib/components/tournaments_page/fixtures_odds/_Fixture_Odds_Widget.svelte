@@ -641,18 +641,27 @@
           {#if 
             item?.tip_link && 
             item?.tip_link[server_side_language]}
-            <p>{item?.tip_link[server_side_language]}</p>
+            <a 
+              href={item?.tip_link[server_side_language]}>
+              {item?.tip_link[server_side_language]}
+            </a>
           {/if}
           {#if 
             item?.fixture_link && 
             item?.fixture_link[server_side_language]}
-            <p>{item?.fixture_link[server_side_language]}</p>
+            <a
+              href={item?.tip_link[server_side_language]}>
+              {item?.fixture_link[server_side_language]}
+            </a>
           {/if}
-          {#if 
+          <!-- {#if 
             item?.media_link && 
             item?.media_link.length != 0}
-            <p>{item?.media_link[0].video_link}</p>
-          {/if}
+            <a 
+              href="item?.tip_link[server_side_language]">
+              {item?.media_link[0].video_link}
+            </a>
+          {/if} -->
         {/each}
       {/if}
     </div>
