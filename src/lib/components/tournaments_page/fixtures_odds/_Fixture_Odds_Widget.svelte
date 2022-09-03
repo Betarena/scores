@@ -41,6 +41,9 @@
   import one_red_card from './assets/1_red_card.svg';
   import two_red_card from './assets/2_red_cards.svg';
   import three_red_card from './assets/3_red_cards.svg';
+  import one_red_card_dark from './assets/1_red_card_dark.svg';
+  import two_red_card_dark from './assets/2_red_cards_dark.svg';
+  import three_red_card_dark from './assets/3_red_cards_dark.svg';
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -1182,23 +1185,49 @@
                           </p>
                           {#if fixture?.teams?.home?.red_cards}
                             {#if fixture?.teams?.home?.red_cards == 1}
-                              <img 
-                                src={one_red_card} 
-                                alt=""
-                                width=12px height=16px
-                              />
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={one_red_card_dark} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {:else}
+                                <img 
+                                  src={one_red_card} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {/if}
+                              
                             {:else if fixture?.teams?.home?.red_cards == 2}
-                              <img 
-                                src={two_red_card} 
-                                alt=""
-                                width=15px height=19px
-                              />
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={two_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={two_red_card} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {/if}
+                             
                             {:else}
-                              <img 
-                                src={three_red_card} 
-                                alt=""
-                                width=18px height=22px
-                              />
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={three_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={three_red_card} 
+                                  alt=""
+                                  width=18px height=22px
+                                />
+                              {/if}
                             {/if}
                           {/if}
                         </div>
@@ -1212,25 +1241,51 @@
                           </p>
                           {#if fixture?.teams?.away?.red_cards}
                             {#if fixture?.teams?.away?.red_cards == 1}
-                              <img 
-                                src={one_red_card} 
-                                alt=""
-                                width=12px height=16px
-                              />
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={one_red_card_dark} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {:else}
+                                <img 
+                                  src={one_red_card} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {/if}
+                              
                             {:else if fixture?.teams?.away?.red_cards == 2}
-                              <img 
-                                src={two_red_card} 
-                                alt=""
-                                width=15px height=19px
-                              />
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={two_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={two_red_card} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {/if}
+                              
                             {:else}
-                              <img 
-                                src={three_red_card} 
-                                alt=""
-                                width=18px height=22px
-                              />
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={three_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={three_red_card} 
+                                  alt=""
+                                  width=18px height=22px
+                                />
+                              {/if}
+
                             {/if}
-                          
                           {/if}
                         </div>
 
@@ -1249,23 +1304,50 @@
                         </p>
                         {#if fixture?.teams?.home?.red_cards}
                           {#if fixture?.teams?.home?.red_cards == 1}
-                            <img 
-                              src={one_red_card} 
-                              alt=""
-                              width=12px height=16px
-                            />
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={one_red_card_dark} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {:else}
+                              <img 
+                                src={one_red_card} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {/if}
+                            
                           {:else if fixture?.teams?.home?.red_cards == 2}
-                            <img 
-                              src={two_red_card} 
-                              alt=""
-                              width=15px height=19px
-                            />
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={two_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={two_red_card} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {/if}
+                            
                           {:else}
-                            <img 
-                              src={three_red_card} 
-                              alt=""
-                              width=18px height=22px
-                            />
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={three_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={three_red_card} 
+                                alt=""
+                                width=18px height=22px
+                              />
+                            {/if}
+
                           {/if}
                         {/if}
                       </div>
@@ -1279,25 +1361,51 @@
                         </p>
                         {#if fixture?.teams?.away?.red_cards}
                           {#if fixture?.teams?.away?.red_cards == 1}
-                            <img 
-                              src={one_red_card} 
-                              alt=""
-                              width=12px height=16px
-                            />
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={one_red_card_dark} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {:else}
+                              <img 
+                                src={one_red_card} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {/if}
+                            
                           {:else if fixture?.teams?.away?.red_cards == 2}
-                            <img 
-                              src={two_red_card} 
-                              alt=""
-                              width=15px height=19px
-                            />
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={two_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={two_red_card} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {/if}
+                            
                           {:else}
-                            <img 
-                              src={three_red_card} 
-                              alt=""
-                              width=18px height=22px
-                            />
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={three_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={three_red_card} 
+                                alt=""
+                                width=18px height=22px
+                              />
+                            {/if}
+
                           {/if}
-                        
                         {/if}
                       </div>
 
@@ -1786,6 +1894,10 @@
   }
 
   .dark-background-1 div.tip-box {
+    border: 1px solid #737373;
+  }
+
+  .dark-background-1 div.media-play-btn {
     border: 1px solid #737373;
   }
 
