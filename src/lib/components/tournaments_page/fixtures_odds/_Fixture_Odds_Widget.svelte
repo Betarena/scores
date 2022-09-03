@@ -650,7 +650,7 @@
             item?.fixture_link && 
             item?.fixture_link[server_side_language]}
             <a
-              href={item?.tip_link[server_side_language]}>
+              href={item?.fixture_link[server_side_language]}>
               {item?.fixture_link[server_side_language]}
             </a>
           {/if}
