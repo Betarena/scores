@@ -334,8 +334,9 @@
 
       let target_week = target_season.weeks
       .find( ({ s_date, e_date }) =>
-        new Date(s_date) < date &&
-        new Date(e_date) > date
+        (new Date(s_date) <= date && new Date(e_date) >= date) ||
+        (new Date(s_date).getDate() == date.getDate() && new Date(s_date).getMonth() == date.getMonth() && new Date(s_date).getFullYear() == date.getFullYear()) ||
+        (new Date(e_date).getDate() == date.getDate() && new Date(e_date).getMonth() == date.getMonth() && new Date(e_date).getFullYear() == date.getFullYear())
       );
       
       // [ℹ] past-season situation (user-date > past season end)
