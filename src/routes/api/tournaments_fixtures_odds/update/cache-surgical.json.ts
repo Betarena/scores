@@ -138,12 +138,13 @@ CQ_Tour_FixOdds_S.process (async function (job, done) {
   */
 
   const t0 = performance.now();
+  await surgicalDataUpdate(job.data);
+  const t1 = performance.now();
+
   const fixturesIdsArr = job.data?.fixturesList;
   logs.push(`num. of fixturesIds: ${fixturesIdsArr}`);
   logs.push(`data: ${job.data}`);
   logs.push(`hello!`);
-  await surgicalDataUpdate(job.data);
-  const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
   logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
@@ -158,9 +159,7 @@ CQ_Tour_FixOdds_S.process (async function (job, done) {
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function surgicalDataUpdate (
-  dataUpdate: BACKEND_tournament_standings_surgical_update
-) { 
+async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surgical_update) { 
   
   // [ℹ] validation check
   if (dataUpdate === undefined) {
