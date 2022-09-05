@@ -159,7 +159,9 @@ CQ_Tour_FixOdds_S.process (async function (job, done) {
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surgical_update) { 
+async function surgicalDataUpdate (
+  dataUpdate: BACKEND_tournament_standings_surgical_update
+) { 
   
   // [ℹ] validation check
   if (dataUpdate === undefined) {
