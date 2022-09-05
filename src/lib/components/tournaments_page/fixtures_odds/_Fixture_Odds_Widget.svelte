@@ -692,7 +692,6 @@ Weeks_Data
             item?.tip_link[server_side_language]}
             <a 
               href={item?.tip_link[server_side_language]}>
-              {item?.tip_link[server_side_language]}
             </a>
           {/if}
           {#if 
@@ -700,7 +699,6 @@ Weeks_Data
             item?.fixture_link[server_side_language]}
             <a
               href={item?.fixture_link[server_side_language]}>
-              {item?.fixture_link[server_side_language]}
             </a>
           {/if}
           <!-- {#if 
