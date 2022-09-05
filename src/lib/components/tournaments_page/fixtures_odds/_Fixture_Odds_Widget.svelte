@@ -22,7 +22,8 @@
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
     Rounds_Data, 
     Tournament_Fixture_Odds,
-    Tournament_Season_Fixtures_Odds
+    Tournament_Season_Fixtures_Odds,
+Weeks_Data
   } from "$lib/models/tournaments/fixtures_odds/types";
   import type { 
     Cache_Single_SportbookDetails_Data_Response 
@@ -254,6 +255,7 @@
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
 
     // [ℹ] current user (client) date
+    // const date = new Date("2023-07-29");
     const date = new Date();
 
     const target_season = FIXTURES_ODDS_DATA.seasons
@@ -286,7 +288,7 @@
 
       let target_round: Rounds_Data
 
-      // [ℹ] complex round targeting identification
+      // [ℹ] complex round targeting
       for (let i = 0; i < target_season.rounds.length; i++) {
         
         const s_date = new Date(target_season.rounds[i].s_date)
@@ -314,6 +316,15 @@
 
       }
 
+      // [ℹ] situation validation check
+      // [ℹ] past-season (user-date > (GT) past season end)
+      // [ℹ] select last week of past-season as target_week
+      if (
+        (target_round == null || target_round == undefined) && 
+        new Date(target_season?.rounds[target_season.rounds.length - 1]?.e_date) < date) {
+        target_round = target_season?.rounds[target_season.rounds.length - 1]
+      }
+
       week_start = new Date(target_round.s_date)
       week_end = new Date(target_round.e_date)
       week_name = parseInt(target_round.name)
@@ -327,52 +338,50 @@
     // [ℹ] identify "week" start/end dates
     else {
       
-      let target_week = target_season.weeks
-      .find( ({ s_date, e_date }) =>
-        (new Date(s_date) <= date && new Date(e_date) >= date) ||
-        (new Date(s_date).getDate() == date.getDate() && new Date(s_date).getMonth() == date.getMonth() && new Date(s_date).getFullYear() == date.getFullYear()) ||
-        (new Date(e_date).getDate() == date.getDate() && new Date(e_date).getMonth() == date.getMonth() && new Date(e_date).getFullYear() == date.getFullYear())
-      );
+      let target_week: Weeks_Data
+
+      // [ℹ] complex week targeting
+      for (let i = 0; i < target_season.weeks.length; i++) {
+        
+        const s_date = new Date(target_season.weeks[i].s_date)
+        const e_date = new Date(target_season.weeks[i].e_date)
+        const past_e_date = 
+          i == 0 
+            ? null
+            : new Date(target_season.weeks[i-1].s_date)
+
+        if (
+          (s_date <= date && e_date >= date) ||
+          (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) ||
+          (e_date.getDate() == date.getDate() && e_date.getMonth() == date.getMonth() && e_date.getFullYear() == date.getFullYear())
+          ) {
+          target_week = target_season.weeks[i]
+          break
+        }
+
+        else if (
+          past_e_date !== null && 
+          (past_e_date < date && s_date >= date)) {
+          target_week = target_season.weeks[i]
+          break
+        }
+
+      }
       
       // [ℹ] situation validation check
-      // [ℹ] past-season (user-date > past season end)
+      // [ℹ] past-season (user-date > (GT) past season end)
       // [ℹ] select last week of past-season as target_week
-      if ((target_week == null || target_week == undefined) && 
-        new Date(target_season.weeks[-1].e_date) < date) {
-        target_week = target_season.weeks[-1]
+      if (
+        (target_week == null || target_week == undefined) && 
+        new Date(target_season?.weeks[target_season.weeks.length - 1]?.e_date) < date) {
+        target_week = target_season?.weeks[target_season.weeks.length - 1]
       }
 
       week_start = new Date(target_week.s_date)
       week_end = new Date(target_week.e_date)
       week_name = parseInt(target_week.name)
-      
-      // [ℹ] week does not contain fixtures
-      // [ℹ] increment weeks until next week
-      // [ℹ] is found, select it
-      /*
-        if (!fixtureWeeks.includes(week_name)) {
-          let counterLoop = 0;
-          while (true) {
-            counterLoop++
-            date.setDate(date.getDate() + 7)
-            target_week = target_season.weeks
-            .find( ({ s_date, e_date }) =>
-              new Date(s_date) < date &&
-              new Date(e_date) > date
-            );
-            week_start = new Date(target_week.s_date)
-            week_end = new Date(target_week.e_date)
-            week_name = parseInt(target_week.name)
-            if (fixtureWeeks.includes(week_name)) {
-              break;
-            }
-            if (counterLoop > 100) {
-              break;
-            }
-          }
-        }
-      */
 
+      // [ℹ] search fixtures by target data
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_date }) => 
         new Date(fixture_date) >= week_start &&
