@@ -248,9 +248,6 @@
   let weeks_total: number
   let rounds_total: number
 
-  let fixtureWeeks: number[] = []
-  let weekIndex: number = 0;
-
   async function selectFixturesOdds () {
 
     fixtures_arr_filter = []
@@ -330,8 +327,6 @@
     // [ℹ] identify "week" start/end dates
     else {
       
-      await identifyFixtureWeeks(target_season);
-
       let target_week = target_season.weeks
       .find( ({ s_date, e_date }) =>
         (new Date(s_date) <= date && new Date(e_date) >= date) ||
@@ -339,10 +334,10 @@
         (new Date(e_date).getDate() == date.getDate() && new Date(e_date).getMonth() == date.getMonth() && new Date(e_date).getFullYear() == date.getFullYear())
       );
       
-      // [ℹ] past-season situation (user-date > past season end)
-      // [ℹ] select last week as target
-      if (
-        (target_week == null || target_week == undefined) && 
+      // [ℹ] situation validation check
+      // [ℹ] past-season (user-date > past season end)
+      // [ℹ] select last week of past-season as target_week
+      if ((target_week == null || target_week == undefined) && 
         new Date(target_season.weeks[-1].e_date) < date) {
         target_week = target_season.weeks[-1]
       }
@@ -354,29 +349,29 @@
       // [ℹ] week does not contain fixtures
       // [ℹ] increment weeks until next week
       // [ℹ] is found, select it
-      if (!fixtureWeeks.includes(week_name)) {
-        let counterLoop = 0;
-        while (true) {
-          counterLoop++
-          date.setDate(date.getDate() + 7)
-          target_week = target_season.weeks
-          .find( ({ s_date, e_date }) =>
-            new Date(s_date) < date &&
-            new Date(e_date) > date
-          );
-          week_start = new Date(target_week.s_date)
-          week_end = new Date(target_week.e_date)
-          week_name = parseInt(target_week.name)
-          if (fixtureWeeks.includes(week_name)) {
-            break;
-          }
-          if (counterLoop > 100) {
-            break;
+      /*
+        if (!fixtureWeeks.includes(week_name)) {
+          let counterLoop = 0;
+          while (true) {
+            counterLoop++
+            date.setDate(date.getDate() + 7)
+            target_week = target_season.weeks
+            .find( ({ s_date, e_date }) =>
+              new Date(s_date) < date &&
+              new Date(e_date) > date
+            );
+            week_start = new Date(target_week.s_date)
+            week_end = new Date(target_week.e_date)
+            week_name = parseInt(target_week.name)
+            if (fixtureWeeks.includes(week_name)) {
+              break;
+            }
+            if (counterLoop > 100) {
+              break;
+            }
           }
         }
-      }
-
-      weekIndex = fixtureWeeks.indexOf(week_name)
+      */
 
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_date }) => 
@@ -393,7 +388,7 @@
     /**
      * [ℹ] group-by fixtures "fixture-day"
     */
-    const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]>();
+    const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]> ();
 
     for (const fixture of temp_fixtures_odds_arr) {
       
@@ -420,9 +415,12 @@
       fixtures_arr_filter.push(fixObj);
     }
 
-    fixtures_arr_filter.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    fixtures_arr_filter.sort((a, b) => 
+      new Date(a.date).getTime() - new Date(b.date).getTime()
+    );
 
     // [ℹ] break-down-values
+    // [ℹ] kickstart Fireabse
     if (loaded) {
       const firebase_real_time = await getLivescoresNow()
       const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
@@ -434,31 +432,7 @@
     loaded = true;
   }
 
-  async function identifyFixtureWeeks (target_season: Tournament_Season_Fixtures_Odds ) {
-
-    fixtureWeeks = []
-
-    for (const week of target_season.weeks) {
-
-      let week_start_t = new Date(week.s_date)
-      let week_end_t = new Date(week.e_date)
-      let week_name_t = parseInt(week.name)
-
-      let fixturesArrMatch = target_season.fixtures
-      .filter( ({ fixture_date }) => 
-        new Date(fixture_date) >= week_start_t &&
-        new Date(fixture_date) <= week_end_t
-      );
-
-      if (fixturesArrMatch.length != 0) {
-        fixtureWeeks.push(week_name_t)
-      }
-
-    }
-    
-  }
-
-  async function selectFixtureOddsNumber(opt_view: number) {
+  async function selectFixtureOddsNumber (opt_view: number) {
 
     fixtures_arr_filter = []
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
@@ -488,22 +462,6 @@
     }
     // [ℹ] identify "week" start/end dates
     else {
-
-      let checkInc: boolean =
-        opt_view > week_name
-          ? true
-          : false
-
-      if (fixtureWeeks.includes(opt_view)) {
-        weekIndex = fixtureWeeks.indexOf(opt_view)
-      }
-      else if (!checkInc) {
-        weekIndex--
-        opt_view = fixtureWeeks[weekIndex]
-      } else {
-        weekIndex++
-        opt_view = fixtureWeeks[weekIndex]
-      }
 
       const target_week = target_season.weeks
       .find( ({ name }) =>
@@ -925,14 +883,12 @@
                       id="dropdown-list-inner-container">
                       {#if optView === "week"}
                         {#each {length: weeks_total} as _,i}
-                          {#if fixtureWeeks.includes(i+1)}
-                            <p
-                              class='s-14 w-500 row-season'
-                              class:color-primary={i+1 === week_name}
-                              on:click={() => selectFixtureOddsNumber(i+1)}>
-                              {FIXTURES_ODDS_T?.week} {i+1}
-                            </p>
-                          {/if}
+                          <p
+                            class='s-14 w-500 row-season'
+                            class:color-primary={i+1 === week_name}
+                            on:click={() => selectFixtureOddsNumber(i+1)}>
+                            {FIXTURES_ODDS_T?.week} {i+1}
+                          </p>
                         {/each}
                       {:else}
                         {#each {length: rounds_total} as _,i}
@@ -1085,14 +1041,12 @@
                     id="dropdown-list-inner-container">
                     {#if optView === "week"}
                       {#each {length: weeks_total} as _,i}
-                        {#if fixtureWeeks.includes(i+1)}
-                          <p
-                            class='s-14 w-500 row-season'
-                            class:color-primary={i+1 === week_name}
-                            on:click={() => selectFixtureOddsNumber(i+1)}>
-                            {FIXTURES_ODDS_T?.week} {i+1}
-                          </p>
-                        {/if}
+                        <p
+                          class='s-14 w-500 row-season'
+                          class:color-primary={i+1 === week_name}
+                          on:click={() => selectFixtureOddsNumber(i+1)}>
+                          {FIXTURES_ODDS_T?.week} {i+1}
+                        </p>
                       {/each}
                     {:else}
                       {#each {length: rounds_total} as _,i}
