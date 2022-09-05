@@ -73,8 +73,6 @@ export async function post({ request }): Promise < unknown > {
   // [ℹ] job producers
   const job = await CQ_Tour_FixOdds_S.add(dataSurgical);
 
-  // await surgicalDataUpdate(dataSurgical)
-
   console.log(`
     job_id: ${job.id}
   `)
@@ -141,11 +139,6 @@ CQ_Tour_FixOdds_S.process (async function (job, done) {
   await surgicalDataUpdate(job.data);
   const t1 = performance.now();
 
-  const fixturesIdsArr = job.data?.fixturesList;
-  logs.push(`num. of fixturesIds: ${fixturesIdsArr}`);
-  logs.push(`data: ${job.data}`);
-  logs.push(`hello!`);
-
   logs.push(`${cacheTarget} updated!`);
   logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
 
@@ -166,7 +159,6 @@ async function surgicalDataUpdate (
   // [ℹ] validation check
   if (dataUpdate === undefined) {
     logs.push(`dataUpdate is undefined`)
-    logs.push(`dataUpdate: ${dataUpdate}`)
     console.log("dataUpdate undefined!")
     return;
   }
@@ -241,6 +233,7 @@ async function surgicalDataUpdate (
 
   // [ℹ] persist data
   t0 = performance.now();
+  logs.push(`leagues: ${Array.from(newDataFinal.keys())}`)
   logs.push(`total leagues: ${newDataFinal.size}`)
   for (const [key, value] of newDataFinal.entries()) {
     await cacheData(key, value);
