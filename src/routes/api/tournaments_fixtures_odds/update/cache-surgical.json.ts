@@ -4,14 +4,15 @@ import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
 
-import { getLivescoresNow } from '$lib/firebase/fixtures_odds';
+import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { 
+  REDIS_CACHE_FIXTURES_ODDS_DATA_2, 
+  REDIS_CACHE_FIXTURES_ODDS_ST_DATA_1 
+} from '$lib/graphql/tournaments/fixtures_odds/query';
 
 import type { 
   BACKEND_tournament_standings_surgical_update
 } from '$lib/models/tournaments/standings/types';
-import type { 
-  FIREBASE_livescores_now 
-} from '$lib/models/firebase';
 import type { 
   BETARENA_HASURA_fixtures_odds_query,
   Fixture_Odds_Team,
@@ -21,9 +22,9 @@ import type {
   Tournament_Season_Fixtures_Odds,
   Weeks_Data
 } from '$lib/models/tournaments/fixtures_odds/types';
-import { REDIS_CACHE_FIXTURES_ODDS_DATA_2, REDIS_CACHE_FIXTURES_ODDS_ST_DATA_1 } from '$lib/graphql/tournaments/fixtures_odds/query';
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import type { BETARENA_HASURA_historic_fixtures } from '$lib/models/hasura';
+import type { 
+  BETARENA_HASURA_historic_fixtures 
+} from '$lib/models/hasura';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -137,7 +138,7 @@ CQ_Tour_FixOdds_S.process (async function (job, done) {
   */
 
   const t0 = performance.now();
-  await surgicalDataUpdate(job.data)
+  await surgicalDataUpdate(job.data);
   const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
@@ -234,7 +235,6 @@ async function surgicalDataUpdate (
   )
 
   // [ℹ] persist data
-  const arrayObj = []
   t0 = performance.now();
   logs.push(`total leagues: ${newDataFinal.size}`)
   for (const [key, value] of newDataFinal.entries()) {
