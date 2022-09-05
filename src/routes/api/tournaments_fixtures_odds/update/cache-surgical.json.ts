@@ -139,7 +139,9 @@ CQ_Tour_FixOdds_S.process (async function (job, done) {
 
   const t0 = performance.now();
   const fixturesIdsArr = job.data?.fixturesList;
-  console.log(`num. of fixturesIds: ${fixturesIdsArr}`);
+  logs.push(`num. of fixturesIds: ${fixturesIdsArr}`);
+  logs.push(`data: ${job.data}`);
+  logs.push(`hello!`);
   await surgicalDataUpdate(job.data);
   const t1 = performance.now();
 
