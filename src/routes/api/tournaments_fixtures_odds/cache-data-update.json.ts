@@ -69,9 +69,9 @@ export async function post(): Promise < unknown > {
   // [ℹ] producers [JOBS]
   // const job = await CQ_Tour_FixOdds_All.add({});
 
-  const langArray = await getHrefLang()
+  // const langArray = await getHrefLang()
   await main()
-  await main_trans_and_seo(langArray)
+  // await main_trans_and_seo(langArray)
 
   // [🐛] debug
   if (dev) {
@@ -170,8 +170,8 @@ async function main () {
   let total_limit;
 
   /**
-   * [ℹ] Obtain target historic_fixtures
-   * [ℹ] Obtain taget season_id's 
+   * [ℹ] obtain target historic_fixtures
+   * [ℹ] obtain taget season_id's
   */
 
   let h_fixtures_arr: BETARENA_HASURA_historic_fixtures[] = [] 
@@ -198,11 +198,14 @@ async function main () {
       VARIABLES
     );
 
-    // for (const fixture of response.historic_fixtures_dev) {
-    //   if (fixture.id === 18535056) {
-    //     console.log("Here! Found it!")
-    //   }
-    // }
+    // [🐛] debug
+    /*
+      for (const fixture of response.historic_fixtures_dev) {
+        if (fixture.id === 18535056) {
+          console.log("Here! Found it!")
+        }
+      }
+    */
 
     h_fixtures_arr = h_fixtures_arr.concat(response.historic_fixtures_dev)
 
@@ -224,26 +227,34 @@ async function main () {
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   // [🐛] debug
-  // if (dev) {
-  //   const data = JSON.stringify(h_fixtures_arr, null, 4)
-  //   fs.writeFile('./datalog/h_fixtures_arr.json', data, err => {
-  //     if (err) {
-  //       console.error(err);
-  //     }
-  //   });
-  // }
+  /*
+    if (dev) {
+      const data = JSON.stringify(h_fixtures_arr, null, 4)
+      fs.writeFile('./datalog/h_fixtures_arr.json', data, err => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    }
+  */
 
-  const mainArrIds = []
-  for (const i of h_fixtures_arr) {
-    mainArrIds.push(i.id)
-  }
-  const duplicates = mainArrIds.filter((e, i, a) => a.indexOf(e) !== i) // [2, 4]
-  logs.push(`duplicates: ${duplicates.length}`)
-
-  // if (dev) {
-  //   const data = JSON.stringify(duplicates, null, 4)
-  //   await fs.writeFile(`./datalog/duplicates_local_main.json`, data);
-  // }
+  // [🐛] debug
+  /*
+    const mainArrIds = []
+    for (const i of h_fixtures_arr) {
+      mainArrIds.push(i.id)
+    }
+    const duplicates = mainArrIds.filter((e, i, a) => a.indexOf(e) !== i) // [2, 4]
+    logs.push(`duplicates: ${duplicates.length}`)
+  */
+ 
+  // [🐛] debug
+  /*
+    if (dev) {
+      const data = JSON.stringify(duplicates, null, 4)
+      await fs.writeFile(`./datalog/duplicates_local_main.json`, data);
+    }
+  */
 
   // [ℹ] conversion to hashmap
   t0 = performance.now();
@@ -254,8 +265,6 @@ async function main () {
   logs.push(`historic_fixtures_map generated with size: ${historic_fixtures_map.size}`)
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
-  // return;
-  
   // [ℹ] obtain target season_id's data
   let seasonIdsArr: number[] = []
   for (const [key, value] of historic_fixtures_map.entries()) {
@@ -300,15 +309,17 @@ async function main () {
     const season_end = t_season.default_data.end_date
     const count_weeks: number = await getWeeksDiff(new Date(season_start), new Date(season_end));
 
-    // console.log(`seasonId: ${seasonId}`)
-    // if (seasonId.toString() == '19740') {
-    //   console.log(`
-    //     season_start: ${season_start}
-    //     season_start v2: ${new Date(season_start)}
-    //     count_weeks: ${count_weeks}
-    //   `)
-    // }
-
+    // [🐛] debug
+    /*
+      console.log(`seasonId: ${seasonId}`)
+      if (seasonId.toString() == '19740') {
+        console.log(`
+          season_start: ${season_start}
+          season_start v2: ${new Date(season_start)}
+          count_weeks: ${count_weeks}
+        `)
+      }
+    */
     for (let index = 0; index < count_weeks + 1; index++) {
 
       const name = index + 1
@@ -496,10 +507,23 @@ async function main () {
     for (let season_fix_odds of value) {
       const seasonId = season_fix_odds.season_id
       const weeks_rounds_data = season_week_round_ranges_map.get(seasonId)
-      season_fix_odds = {
-        ...season_fix_odds, 
-        ...weeks_rounds_data
+
+      if (weeks_rounds_data?.weeks == null || weeks_rounds_data?.weeks == undefined ) {
+        if (dev) console.log(`week value: ${weeks_rounds_data?.weeks}`)
       }
+      
+      season_fix_odds = {
+        season_id: seasonId,
+        fixtures: season_fix_odds?.fixtures,
+        weeks: weeks_rounds_data?.weeks || [],
+        rounds: weeks_rounds_data?.rounds || []
+      }
+
+      // [ℹ] remove empty (NaN fixtures num.)
+      // [ℹ] target weeks from weeks_list
+      const modWeeksData = await identifyFixtureWeeks(season_fix_odds)
+      season_fix_odds.weeks = modWeeksData
+
       newObj.push(season_fix_odds)
     }
     historic_fixtures_by_league.set(key, newObj)
@@ -644,4 +668,44 @@ async function getFixturesOddsTranslationData (): Promise < BETARENA_HASURA_fixt
 async function getWeeksDiff (startDate: Date, endDate: Date) {
   const msInWeek = 1000 * 60 * 60 * 24 * 7;
   return Math.round(Math.abs(endDate - startDate) / msInWeek);
+}
+
+async function identifyFixtureWeeks (target_season: Tournament_Season_Fixtures_Odds ): Promise < Weeks_Data[] > {
+
+  const newWeekArr: Weeks_Data[] = []
+
+  for (const week of target_season.weeks) {
+
+    const week_start_t = new Date(week.s_date)
+    const week_end_t = new Date(week.e_date)
+
+    const fixturesArrMatch = target_season.fixtures
+    .filter( ({ fixture_date }) => 
+      new Date(fixture_date) >= week_start_t &&
+      new Date(fixture_date) <= week_end_t
+    );
+    
+    // [ℹ] fixtures exist
+    if (fixturesArrMatch.length != 0) {
+      newWeekArr.push(week)
+    }
+  }
+
+  // [ℹ] additional array re-structuring
+  // [ℹ] validation check for change
+  if (newWeekArr.length !== target_season.weeks.length) {
+
+    // [ℹ] re-sort array descending by "name"
+    newWeekArr.sort((a,b) => parseInt(a.name) - parseInt(b.name));
+
+    // [ℹ] update "name" (id) in sequntial [1,2,3..]
+    // [ℹ] values
+    let counter = 1;
+    for (const item of newWeekArr) {
+      item.name = counter.toString()
+      counter++
+    }
+  }
+
+  return newWeekArr;
 }
