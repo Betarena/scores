@@ -47,8 +47,9 @@ const CQ_Tour_FixOdds_S = new Bull (
     settings: settings
   }
 );
-const cacheTarget = "REDIS CACHE | tournament fixtures_odds (surgical)"
-const cacheDataAddr = "tour_fix_odds_data"
+const cacheQueueProcessName = "CQ_Tour_FixOdds_S"
+const cacheTarget           = "REDIS CACHE | tournament fixtures_odds (surgical)"
+const cacheDataAddr         = "tour_fix_odds_data"
 // [ℹ] debug info
 let logs = []
 let t0;
@@ -73,9 +74,7 @@ export async function post({ request }): Promise < unknown > {
   // [ℹ] job producers
   const job = await CQ_Tour_FixOdds_S.add(dataSurgical);
 
-  console.log(`
-    job_id: ${job.id}
-  `)
+  console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
 
   return {
     status: 200,
@@ -505,12 +504,10 @@ async function injectNewFixturesData (
       // [ℹ] target season exists
       if (target_season != undefined) {
 
-        console.log("here!");
-
         for (const fixture of target_season.fixtures) {
           if (fixture.id === fixture_id) {
             
-            console.log(`before: ${fixture.status}`)
+            if (dev) console.log(`fixture_id: ${fixture.id} | before: ${fixture.status}`)
 
             fixture.round = historicFixturesMap.get(fixture.id)?.data?.round?.data?.name;
             fixture.fixture_date = historicFixturesMap.get(fixture.id)?.fixture_day;
@@ -533,9 +530,7 @@ async function injectNewFixturesData (
             fixture.fixture_link = historicFixturesMap.get(fixture.id).fixture_link_wp
             fixture.media_link = historicFixturesMap.get(fixture.id).media_link
 
-            console.log(`supposed status: ${historicFixturesMap.get(fixture.id)?.data?.time?.status}`)
-
-            console.log(`after: ${fixture.status}`)
+            if (dev) console.log(`fixture_id: ${fixture.id} | after: ${fixture.status} | expected: ${historicFixturesMap.get(fixture.id)?.data?.time?.status}`)
           }
         }
 
