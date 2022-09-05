@@ -678,8 +678,934 @@ Weeks_Data
 <div
   id='widget-outer'>
 
-  
-  
+  <!-- [ℹ] SEO-DATA-LOADED 
+  -->
+  {#if !loaded}
+    <div 
+      id="seo-widget-box">
+      {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
+        {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
+          <p>{item?.teams?.away?.name}</p>
+          <p>{item?.teams?.home?.name}</p>
+          {#if 
+            item?.tip_link && 
+            item?.tip_link[server_side_language]}
+            <a 
+              href={item?.tip_link[server_side_language]}>
+              {item?.tip_link[server_side_language]}
+            </a>
+          {/if}
+          {#if 
+            item?.fixture_link && 
+            item?.fixture_link[server_side_language]}
+            <a
+              href={item?.fixture_link[server_side_language]}>
+              {item?.fixture_link[server_side_language]}
+            </a>
+          {/if}
+          <!-- {#if 
+            item?.media_link && 
+            item?.media_link.length != 0}
+            <a 
+              href="item?.tip_link[server_side_language]">
+              {item?.media_link[0].video_link}
+            </a>
+          {/if} -->
+        {/each}
+      {/if}
+    </div>
+  {/if}
+
+  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  -->
+  {#if 
+    noFixturesOddsBool && 
+    !loaded}
+
+    <!-- [ℹ] title of the widget 
+    -->
+    <h2
+      class="s-20 m-b-10 w-500 color-black-2"
+      style="margin-top: 0;"
+      class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+      {FIXTURES_ODDS_T?.matches}
+    </h2>
+
+    <!-- [ℹ] no-widget-data-avaiable-placeholder container 
+    -->
+    <div
+      id='no-widget-box'
+      class='column-space-center'
+      class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+
+      <!-- [ℹ] no-visual-asset
+      -->
+      {#if $userBetarenaSettings.theme == 'Dark'}
+        <img 
+          src={no_visual_dark} 
+          alt="no_visual_dark"
+          width="32px" height="32px"
+          class='m-b-16'
+        />
+      {:else}
+        <img 
+          src={no_visual} 
+          alt="no_visual"
+          width="32px" height="32px"
+          class='m-b-16'
+        />
+      {/if}
+      
+      <!-- [ℹ] container w/ text 
+      -->
+      <div>
+        <p 
+          class='s-14 m-b-8 w-500'
+          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+          {FIXTURES_ODDS_T.no_info} </p>
+        <p class='s-14 color-grey w-400'> {FIXTURES_ODDS_T.no_info_desc} </p>
+      </div>
+    </div>
+  {/if}
+
+  <!-- [ℹ] MAIN WIDGET COMPONENT
+  -->
+  {#if
+    ready &&
+    !noFixturesOddsBool &&
+    !refresh &&
+    browser && 
+    $userBetarenaSettings.country_bookmaker && 
+    !diasbleDev}
+
+    <!-- [ℹ] promise is pending 
+    -->
+    {#await widgetInit()}
+      <FixtureOddsWidgetContentLoader />
+    <!-- [ℹ] promise was fulfilled
+    -->
+    {:then data}
+
+      <!-- [ℹ] widget-component
+      [DESKTOP] 
+      [TABLET] 
+      [MOBILE]
+      -->
+
+      <h2 
+        class="s-20 m-b-10 w-500 color-black-2"
+        style="margin-top: 0px;"
+        class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+        {FIXTURES_ODDS_T?.matches}
+      </h2>
+
+      <div
+        id="fixtures-odds-widget-container"
+        class:widget-no-data-height={trueLengthOfArray == 0}
+        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+
+        <!-- [ℹ] widget main top controls
+        [DESKTOP]
+        [TABLET]
+        -->
+        {#if !mobileExclusive}
+
+          <!-- [ℹ] widget main top controls 
+          -->
+          <div
+            id="fixtures-odds-top-container"
+            class="row-space-out m-b-15">
+
+            <div
+              class="row-space-start">
+
+              <!-- [ℹ] widget top selection fixtures odds views [DESKTOP]
+              -->
+              <div
+                id="fix-odds-view-box"
+                class="row-space-start m-r-20">
+
+                <div
+                  class="fix-odds-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('matches')}
+                  class:activeOpt={selectedOpt == 'matches'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {FIXTURES_ODDS_T?.matches}
+                  </p>
+                </div>
+
+                <div
+                  class="fix-odds-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('odds')}
+                  class:activeOpt={selectedOpt == 'odds'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {FIXTURES_ODDS_T?.odds}
+                  </p>
+                </div>
+
+              </div>
+
+              <!-- [ℹ] dropdown season select
+              -->
+              <div
+                id='dropdown-seasons'
+                class="m-r-16">
+                
+                <div
+                  class="row-space-start"
+                  on:click={() => toggleDropdown = !toggleDropdown}>
+                  <!-- [ℹ] display selected week / round
+                  -->
+                  <p
+                    class='s-14 m-r-5 w-500 color-grey'>
+                    {#if optView === "week"}
+                      {FIXTURES_ODDS_T?.week} {week_name}
+                    {:else}
+                      {FIXTURES_ODDS_T?.round} {week_name}
+                    {/if}
+                  </p>
+                  <!-- [ℹ] arrow down [hidden-menu] 
+                  -->
+                  {#if !toggleDropdown}
+                    <img 
+                      src={arrow_down} 
+                      alt="arrow_down" 
+                      width="16px" height="16px" 
+                    />
+                  {:else}
+                    <img 
+                      src={arrow_up} 
+                      alt="arrow_up" 
+                      width="16px" height="16px" 
+                    />
+                  {/if}
+                </div>
+                
+                <!-- [ℹ] show-dropdown
+                -->
+                {#if toggleDropdown}
+                  <div
+                    id="dropdown-list-main-container">
+                    <div
+                      id="dropdown-list-inner-container">
+                      {#if optView === "week"}
+                        {#each {length: weeks_total} as _,i}
+                          <p
+                            class='s-14 w-500 row-season'
+                            class:color-primary={i+1 === week_name}
+                            on:click={() => selectFixtureOddsNumber(i+1)}>
+                            {FIXTURES_ODDS_T?.week} {i+1}
+                          </p>
+                        {/each}
+                      {:else}
+                        {#each {length: rounds_total} as _,i}
+                          <p
+                            class='s-14 w-500 row-season'
+                            class:color-primary={i+1 === week_name}
+                            on:click={() => selectFixtureOddsNumber(i+1)}>
+                            {FIXTURES_ODDS_T?.round} {i+1}
+                          </p>
+                        {/each}
+                      {/if}
+                    </div>
+                  </div>
+                {/if}
+
+              </div>
+
+            </div>
+
+            <!-- [ℹ] widget rounds / weeks selection 
+            -->
+            <div
+              id="widget-round-week-select"
+              class="row-space-start">
+              <div
+                on:click={() => selectedRoundsWeeksView("round")}
+                class="row-space-start m-r-16">
+                <label for="round">
+                  <input 
+                    aria-label="select-round-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select" 
+                    bind:group={optView}
+                    id="round"
+                    class="m-r-8"
+                    value={"round"}
+                  />
+                </label>
+                <p
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "round"}>
+                  {FIXTURES_ODDS_T?.round}
+                </p>
+              </div>
+              <div
+                on:click={() => selectedRoundsWeeksView("week")}
+                class="row-space-start">
+                <label for="week">
+                  <input 
+                    aria-label="select-weekly-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select"
+                    bind:group={optView}
+                    id="week"
+                    class="m-r-8"
+                    value={"week"}
+                  />
+                </label>
+                <p
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "week"}>
+                  {FIXTURES_ODDS_T?.week}
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        <!-- [ℹ] widget main top controls
+        [MOBILE]
+        -->
+        {:else}
+
+          <!-- [ℹ] widget top selection fixtures odds views [MOBILE]
+          -->
+          <div
+            id="fix-odds-view-box"
+            class="row-space-start m-b-16">
+
+            <div
+              class="fix-odds-view-opt-box cursor-pointer"
+              on:click={() => selectTableView('matches')}
+              class:activeOpt={selectedOpt == 'matches'}>
+              <p
+                class="s-14 w-500 color-grey">
+                {FIXTURES_ODDS_T?.matches}
+              </p>
+            </div>
+
+            <div
+              class="fix-odds-view-opt-box cursor-pointer"
+              on:click={() => selectTableView('odds')}
+              class:activeOpt={selectedOpt == 'odds'}>
+              <p
+                class="s-14 w-500 color-grey">
+                {FIXTURES_ODDS_T?.odds}
+              </p>
+            </div>
+
+          </div>
+
+          <div
+            id="mobile-middle-control-row"
+            class="row-space-out m-b-20">
+            
+            <!-- [ℹ] dropdown season select
+            -->
+            <div
+              id='dropdown-seasons'
+              class="m-r-16">
+              
+              <div
+                class="row-space-start"
+                on:click={() => toggleDropdown = !toggleDropdown}>
+                <!-- [ℹ] display selected week / round
+                -->
+                <p
+                  class='s-14 m-r-5 w-500 color-grey'>
+                  {#if optView === "week"}
+                    {FIXTURES_ODDS_T?.week} {week_name}
+                  {:else}
+                    {FIXTURES_ODDS_T?.round} {week_name}
+                  {/if}
+                </p>
+                <!-- [ℹ] arrow down [hidden-menu] 
+                -->
+                {#if !toggleDropdown}
+                  <img 
+                    src={arrow_down} 
+                    alt="arrow_down" 
+                    width="16px" height="16px" 
+                  />
+                {:else}
+                  <img 
+                    src={arrow_up} 
+                    alt="arrow_up" 
+                    width="16px" height="16px" 
+                  />
+                {/if}
+              </div>
+              
+              <!-- [ℹ] show-dropdown
+              -->
+              {#if toggleDropdown}
+                <div
+                  id="dropdown-list-main-container">
+                  <div
+                    id="dropdown-list-inner-container">
+                    {#if optView === "week"}
+                      {#each {length: weeks_total} as _,i}
+                        <p
+                          class='s-14 w-500 row-season'
+                          class:color-primary={i+1 === week_name}
+                          on:click={() => selectFixtureOddsNumber(i+1)}>
+                          {FIXTURES_ODDS_T?.week} {i+1}
+                        </p>
+                      {/each}
+                    {:else}
+                      {#each {length: rounds_total} as _,i}
+                        <p
+                          class='s-14 w-500 row-season'
+                          class:color-primary={i+1 === week_name}
+                          on:click={() => selectFixtureOddsNumber(i+1)}>
+                          {FIXTURES_ODDS_T?.round} {i+1}
+                        </p>
+                      {/each}
+                    {/if}
+                  </div>
+                </div>
+              {/if}
+
+            </div>
+
+            <!-- [ℹ] widget rounds / weeks selection 
+            -->
+            <div
+              id="widget-round-week-select"
+              class="row-space-start">
+              <div
+                on:click={() => selectedRoundsWeeksView("round")}
+                class="row-space-start m-r-16">
+                <label for="round">
+                  <input 
+                    aria-label="select-round-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select" 
+                    bind:group={optView}
+                    id="round"
+                    class="m-r-8"
+                    value={"round"}
+                  />
+                </label>
+                <p
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "round"}>
+                  {FIXTURES_ODDS_T?.round}
+                </p>
+              </div>
+              <div
+                on:click={() => selectedRoundsWeeksView("week")}
+                class="row-space-start">
+                <label for="week">
+                  <input 
+                    aria-label="select-weekly-view" 
+                    placeholder=""
+                    type="radio" 
+                    name="matches-odds-select"
+                    bind:group={optView}
+                    id="week"
+                    class="m-r-8"
+                    value={"week"}
+                  />
+                </label>
+                <p
+                  class="s-14 w-500 color-grey"
+                  class:color-primary={optView === "week"}>
+                  {FIXTURES_ODDS_T?.week}
+                </p>
+              </div>
+            </div>
+
+          </div>
+
+        {/if}
+
+        <!-- [ℹ] widget round / week toggle increment / decrese view 
+        -->
+        <div
+          id="mobile-table-box"
+          class="row-space-out m-b-12">
+
+          <button
+            id="left-btn"
+            class="table-nav-btn"
+            aria-label="selectedOptionTableMobile"
+            disabled={week_name == 1}
+            on:click={() => selectFixtureOddsNumber(week_name - 1)}
+            >
+          </button>
+
+          <div
+            class="text-center">
+            <p
+              class="s-16 w-500 color-black">
+              {#if optView === "week"}
+                {FIXTURES_ODDS_T?.week} {week_name}
+              {:else}
+                {FIXTURES_ODDS_T?.round} {week_name}
+              {/if}
+            </p>
+            <p
+              class="s-12 color-grey">
+              {week_start.getDate()}
+              {FIXTURES_ODDS_T?.months_abbreviation[monthNames[week_start.getMonth()]]}
+              -
+              {week_end.getDate()}
+              {FIXTURES_ODDS_T?.months_abbreviation[monthNames[week_end.getMonth()]]}
+            </p>
+          </div>
+
+          <button
+            id="right-btn"
+            class="table-nav-btn"
+            aria-label="selectedOptionTableMobile"
+            disabled={week_name == total_nav_num}
+            on:click={() => selectFixtureOddsNumber(week_name + 1)}
+            >
+          </button>
+
+        </div>
+        
+        <!-- [ℹ] generated data fixtures
+         -->
+        {#each fixtures_arr_filter as item}
+          <div>
+
+            <!-- [ℹ] grouping date fixtures
+            -->
+            <p
+              class="color-grey w-500 s-12 group-fixture-date m-b-8"> 
+              {new Date(item?.date).getDate()} 
+              {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
+              {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
+            </p>
+
+            <!-- [ℹ] matches loop population 
+            -->
+            {#each item?.fixtures as fixture}
+              <div
+                class="fixture-row row-space-out">
+
+                <!-- [ℹ] fixture left-side container 
+                -->
+                <div
+                  class="row-space-start">
+
+                  <!-- [ℹ] fixture-time
+                  -->
+                  <div
+                    class="m-r-16 fixture-time-box text-center">
+                    {#if 
+                      fixture?.status === "LIVE"}
+                      <p
+                        style="color: #FF3C3C;"
+                        class="s-14 no-wrap">
+                        {fixture?.minute}
+                        <span
+                          class:visibility-none={tickSecShow}>'
+                        </span>
+                      </p>
+                    {:else if fixture?.status === "HT"}
+                      <p
+                        class="no-wrap s-14 color-black">
+                        {FIXTURES_ODDS_T?.status_abv?.HT}
+                      </p>
+                    {:else}
+                      <p
+                        class="no-wrap s-14 color-black"
+                        class:color-grey={fixture?.status === "FT"}>
+                        {
+                          (
+                            new Date(fixture?.fixture_time).getHours() +
+                            ":" +
+                            ('0' + new Date(fixture?.fixture_time).getMinutes()).slice(-2)
+                          ).split(' ').join('')
+                        }
+                      </p>
+                      {#if fixture?.status === "FT"}
+                        <p
+                          class="no-wrap s-14 color-grey">
+                          {FIXTURES_ODDS_T?.status_abv?.FT}
+                        </p>
+                      {/if}
+                    {/if}
+                  </div>
+
+                  <!-- [ℹ] fixture-teams
+                  -->
+                  {#if 
+                    fixture?.fixture_link && 
+                    fixture?.fixture_link[server_side_language]}
+                    <a 
+                      rel="nofollow"
+                      href={fixture?.fixture_link[server_side_language]}
+                      target="_blank"
+                      style="width: inherit;">
+                      <div
+                        class="column-start-grid-start fixture-teams-box">
+
+                        <div
+                          class="row-space-start">
+                          <p  
+                            class="s-14 color-black w-500 m-r-8"
+                            class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                            {fixture?.teams?.home?.name}
+                          </p>
+                          {#if fixture?.teams?.home?.red_cards}
+                            {#if fixture?.teams?.home?.red_cards == 1}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={one_red_card_dark} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {:else}
+                                <img 
+                                  src={one_red_card} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {/if}
+                              
+                            {:else if fixture?.teams?.home?.red_cards == 2}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={two_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={two_red_card} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {/if}
+                             
+                            {:else}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={three_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={three_red_card} 
+                                  alt=""
+                                  width=18px height=22px
+                                />
+                              {/if}
+                            {/if}
+                          {/if}
+                        </div>
+
+                        <div
+                          class="row-space-start">
+                          <p
+                            class="s-14 color-black w-500 m-r-8"
+                            class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                            {fixture?.teams?.away?.name}
+                          </p>
+                          {#if fixture?.teams?.away?.red_cards}
+                            {#if fixture?.teams?.away?.red_cards == 1}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={one_red_card_dark} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {:else}
+                                <img 
+                                  src={one_red_card} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {/if}
+                              
+                            {:else if fixture?.teams?.away?.red_cards == 2}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={two_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={two_red_card} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {/if}
+                              
+                            {:else}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={three_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={three_red_card} 
+                                  alt=""
+                                  width=18px height=22px
+                                />
+                              {/if}
+
+                            {/if}
+                          {/if}
+                        </div>
+
+                      </div>
+                    </a>
+                  {:else}
+                    <div
+                      class="column-start-grid-start fixture-teams-box">
+
+                      <div
+                        class="row-space-start">
+                        <p  
+                          class="s-14 color-black w-500 m-r-8"
+                          class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                          {fixture?.teams?.home?.name}
+                        </p>
+                        {#if fixture?.teams?.home?.red_cards}
+                          {#if fixture?.teams?.home?.red_cards == 1}
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={one_red_card_dark} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {:else}
+                              <img 
+                                src={one_red_card} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {/if}
+                            
+                          {:else if fixture?.teams?.home?.red_cards == 2}
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={two_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={two_red_card} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {/if}
+                            
+                          {:else}
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={three_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={three_red_card} 
+                                alt=""
+                                width=18px height=22px
+                              />
+                            {/if}
+
+                          {/if}
+                        {/if}
+                      </div>
+
+                      <div
+                        class="row-space-start">
+                        <p
+                          class="s-14 color-black w-500 m-r-8"
+                          class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                          {fixture?.teams?.away?.name}
+                        </p>
+                        {#if fixture?.teams?.away?.red_cards}
+                          {#if fixture?.teams?.away?.red_cards == 1}
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={one_red_card_dark} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {:else}
+                              <img 
+                                src={one_red_card} 
+                                alt=""
+                                width=12px height=16px
+                              />
+                            {/if}
+                            
+                          {:else if fixture?.teams?.away?.red_cards == 2}
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={two_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={two_red_card} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {/if}
+                            
+                          {:else}
+                            {#if $userBetarenaSettings.theme == 'Dark'}
+                              <img 
+                                src={three_red_card_dark} 
+                                alt=""
+                                width=15px height=19px
+                              />
+                            {:else}
+                              <img 
+                                src={three_red_card} 
+                                alt=""
+                                width=18px height=22px
+                              />
+                            {/if}
+
+                          {/if}
+                        {/if}
+                      </div>
+
+                    </div>
+                  {/if}
+
+                </div>
+
+                <!-- [ℹ] fixture right-side container 
+                -->
+                <div
+                  class="row-space-end"
+                  style="width: auto;">
+
+                  <!-- [ℹ] fixture-link / media-link 
+                  -->
+                  {#if
+                    fixture?.media_link && 
+                    fixture?.media_link.length != 0 &&
+                    fixture?.fixture_link && 
+                    fixture?.fixture_link[server_side_language]}
+                    <a 
+                      rel="nofollow"
+                      href={fixture?.fixture_link[server_side_language]}
+                      target="_blank"
+                      style="width: inherit;">
+                      <div
+                        class="media-play-btn m-r-16">
+                        {#if $userBetarenaSettings.theme == 'Dark'}
+                          <img 
+                            src={play_dark}
+                            alt=""
+                            width=14px height=14px
+                          />
+                        {:else}
+                          <img 
+                            src={play}
+                            alt=""
+                            width=14px height=14px
+                          />
+                        {/if}
+                      </div>
+                    </a>
+                  {/if}
+
+                  <!-- [ℹ] tip-link 
+                  -->
+                  {#if 
+                    fixture?.tip_link && 
+                    fixture?.tip_link[server_side_language]}
+                    <a 
+                      rel="nofollow"
+                      href={fixture?.tip_link[server_side_language]}
+                      target="_blank"
+                      style="width: inherit;">
+                      <div
+                        class="tip-box m-r-16">
+                        <p
+                          class="s-12 color-black">
+                          {FIXTURES_ODDS_T?.tip}
+                        </p>
+                      </div>
+                    </a>
+                  {/if}
+
+                  <!-- [ℹ] bet-site 
+                  -->
+                  {#if data}
+                    <a 
+                      rel="nofollow"
+                      aria-label="betting_site_logo_football_fixtures_odds_tournament"
+                      on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_odds_tournament")}
+                      href={data.register_link}
+                      target="_blank"
+                      style="width: inherit;">
+                      <img 
+                        id='sportbook-logo-img'
+                        src={data.image}
+                        alt={data.title}
+                      />
+                    </a>
+                  {/if}
+
+                  <!-- [ℹ] scores 
+                  -->
+                  {#if
+                    (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
+                    fixture?.status === "LIVE" ||
+                    fixture?.status === "HT" || 
+                    fixture?.status === "FT"}
+                    <div
+                      class="column-space-center m-l-24 fixtures-scores-box">
+                      <p 
+                        class="s-14 w-500 color-black"
+                        class:color-grey={(fixture?.teams?.home?.score < fixture?.teams?.away?.score) && 
+                          fixture?.status != "LIVE"}
+                        class:color-red-bright={fixture?.status === "LIVE"}>
+                        {fixture?.teams?.home?.score}
+                      </p>
+                      <p
+                        class="s-14 w-500 color-black"
+                        class:color-grey={(fixture?.teams?.away?.score < fixture?.teams?.home?.score) && 
+                          fixture?.status != "LIVE"}
+                        class:color-red-bright={fixture?.status === "LIVE"}
+                        >
+                        {fixture?.teams?.away?.score}
+                      </p>
+                    </div>
+                  {/if}
+                  
+                </div>
+
+              </div>
+            {/each}
+          </div>
+        {/each}
+
+      </div>
+
+    <!-- [ℹ] promise was rejected
+    -->
+    {:catch error}
+      <!-- {error} -->
+    {/await}
+
+  {/if}
 
 </div>
 
