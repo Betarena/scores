@@ -46,6 +46,7 @@ const CQ_Tour_FixOdds_All = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "CQ_Tour_FixOdds_All"
 const cacheTarget = "REDIS CACHE | tournament fixtures_odds (all)"
 const cacheDataAddr = "tour_fix_odds_data"
 const cacheTransAddr = "tour_fix_odds_t"
@@ -60,43 +61,51 @@ let t1;
 
 export async function post(): Promise < unknown > {
 
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
-
-  // [ℹ] producers [JOBS]
-  // const job = await CQ_Tour_FixOdds_All.add({});
-
-  // const langArray = await getHrefLang()
-  await main()
-  // await main_trans_and_seo(langArray)
-
-  // [🐛] debug
+  // [ℹ] dev / local environment
   if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
+
+    const langArray = await getHrefLang()
+    await main()
+    await main_trans_and_seo(langArray)
+
     for (const log of logs) {
       console.log(log)
     }
-  }
 
-  // console.log(`
-  //   job_id: ${job.id}
-  // `)
-
-  return {
-    status: 200,
-    body: { 
-      job_id: 1
+    return {
+      status: 200,
+      body: { 
+        job_id: cacheTarget + " done!"
+      }
     }
   }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await CQ_Tour_FixOdds_All.add({});
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return {
+      status: 200,
+      body: { 
+        job_id: job.id
+      }
+    }
+  }
+  
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response) {
+async function cacheData (
+  league_id: number, 
+  json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
+) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset(cacheDataAddr, league_id, JSON.stringify(json_cache));
@@ -106,7 +115,10 @@ async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tour
   }
 }
 
-async function cacheTranslationData (lang: string, json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response) {
+async function cacheTranslationData (
+  lang: string, 
+  json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
+) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset(cacheTransAddr, lang, JSON.stringify(json_cache));
@@ -144,8 +156,9 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
   */
 
   const t0 = performance.now();
-  // await tournamentsTopPlayersDataGeneration ()
-  // await tournamentsTopPlayersTGeneration ()
+  const langArray = await getHrefLang()
+  await main()
+  await main_trans_and_seo(langArray)
   const t1 = performance.now();
 
   logs.push(`${cacheTarget} updated!`);
@@ -619,7 +632,8 @@ async function main_trans_and_seo (langArray :string[]) {
 //  [HELPER] OTHER METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getHrefLang (): Promise < string[] > {
+async function getHrefLang (
+): Promise < string[] > {
   // [ℹ] get KEY platform translations
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
@@ -634,7 +648,9 @@ async function getHrefLang (): Promise < string[] > {
   return langArray;
 }
 
-async function getTargetSeasonDetailsData (seasonIdsArr: number[]): Promise < BETARENA_HASURA_fixtures_odds_query > {
+async function getTargetSeasonDetailsData (
+  seasonIdsArr: number[]
+): Promise < BETARENA_HASURA_fixtures_odds_query > {
 
   const VARIABLES_1 = {
     seasonIds: seasonIdsArr
@@ -652,7 +668,8 @@ async function getTargetSeasonDetailsData (seasonIdsArr: number[]): Promise < BE
   return response;
 }
 
-async function getFixturesOddsTranslationData (): Promise < BETARENA_HASURA_fixtures_odds_query > {
+async function getFixturesOddsTranslationData (
+): Promise < BETARENA_HASURA_fixtures_odds_query > {
 
   const t0 = performance.now();
   const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_3";
@@ -665,12 +682,17 @@ async function getFixturesOddsTranslationData (): Promise < BETARENA_HASURA_fixt
   return response;
 }
 
-async function getWeeksDiff (startDate: Date, endDate: Date) {
+async function getWeeksDiff (
+  startDate: Date, 
+  endDate: Date
+) {
   const msInWeek = 1000 * 60 * 60 * 24 * 7;
   return Math.round(Math.abs(endDate - startDate) / msInWeek);
 }
 
-async function identifyFixtureWeeks (target_season: Tournament_Season_Fixtures_Odds ): Promise < Weeks_Data[] > {
+async function identifyFixtureWeeks (
+  target_season: Tournament_Season_Fixtures_Odds
+): Promise < Weeks_Data[] > {
 
   const newWeekArr: Weeks_Data[] = []
 

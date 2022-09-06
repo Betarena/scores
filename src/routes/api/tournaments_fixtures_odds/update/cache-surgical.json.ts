@@ -59,27 +59,44 @@ let t1;
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post({ request }): Promise < unknown > {
-
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
+export async function post (
+  { request }
+): Promise < unknown > {
 
   const body = await request.json();
   if (dev) console.log(body);
   const dataSurgical = JSON.parse(JSON.stringify(body));
-  
-  // [ℹ] job producers
-  const job = await CQ_Tour_FixOdds_S.add(dataSurgical);
 
-  console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  return {
-    status: 200,
-    body: { 
-      job_id: job.id
+    await surgicalDataUpdate(dataSurgical);
+
+    for (const log of logs) {
+      console.log(log)
+    }
+
+    return {
+      status: 200,
+      body: { 
+        job_id: cacheTarget + " done!"
+      }
+    }
+  }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await CQ_Tour_FixOdds_S.add(dataSurgical);
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return {
+      status: 200,
+      body: { 
+        job_id: job.id
+      }
     }
   }
 }
