@@ -101,12 +101,16 @@ export const HASURA_BETARENA_QUERY_TOP_PLAYERS_T = gql`
 
 
 /**
- * [ℹ] SURGICAL DATA QUERY
- * [ℹ] LEAGUE-ID
+ * [ℹ] Surgical Queries 
 */
 
-export const HASURA_GET_TARGET_LEAGUES = gql`
-  query HASURA_GET_TARGET_LEAGUES
+/**
+ * [ℹ] Tournaments / Top_Players Widget 
+ * [ℹ] Surgical (#1)
+ * [ℹ] Based on League_id's
+*/
+export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_1 = gql`
+  query REDIS_CACHE_TOP_PLAYERS_ST_DATA_1
     (
       $leagueIds: [numeric!]
     )
@@ -131,15 +135,42 @@ export const HASURA_GET_TARGET_LEAGUES = gql`
   }
 `;
 
-export const HASURA_GET_TARGET_SEASONS = gql`
-  query HASURA_GET_TARGET_SEASONS
+/**
+ * [ℹ] Tournaments / Top_Players Widget 
+ * [ℹ] Surgical (#2)
+ * [ℹ] Based on Season_id's
+*/
+export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_2 = gql`
+  query REDIS_CACHE_TOP_PLAYERS_ST_DATA_2
     (
+      $limit: Int,
+      $offset: Int,
       $seasonIds: [numeric!]
     )
     @cached 
     (ttl: 300)
   {
-    scores_football_seasons_details (
+
+    # [ℹ] pagination based
+
+    scores_football_seasons_details_dev_aggregate (
+      where: {
+        id: {
+          _in: $seasonIds
+        }
+      }
+    ) {
+      aggregate {
+        totalCount: count
+      }
+    }
+
+    scores_football_seasons_details_dev (
+      order_by: {
+        id: asc
+      },
+      limit: $limit,
+      offset: $offset,
       where: {
         id: {
           _in: $seasonIds
@@ -155,8 +186,13 @@ export const HASURA_GET_TARGET_SEASONS = gql`
   }
 `;
 
-export const HASURA_GET_TARGET_TEAMS_AND_PLAYERS = gql`
-  query HASURA_GET_TARGET_TEAMS_AND_PLAYERS
+/**
+ * [ℹ] Tournaments / Top_Players Widget 
+ * [ℹ] Surgical (#2)
+ * [ℹ] Based on Team_id's & Player_id's
+*/
+export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_3 = gql`
+  query REDIS_CACHE_TOP_PLAYERS_ST_DATA_3
     (
       $teamIds: [numeric!],
       $playerIds: [numeric!]

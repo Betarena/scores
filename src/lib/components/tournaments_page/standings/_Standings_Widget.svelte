@@ -144,7 +144,7 @@
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let tabletView = 1000
-  let mobileView = 725
+  let mobileView = 820
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
@@ -1513,7 +1513,7 @@
 
 	/* 
   TABLET RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 726px) and (max-width: 1000px)  {
+  @media only screen and (min-width: 821px) and (max-width: 1000px)  {
 
     #standings-table-container {
       min-width: 100%;
@@ -1524,7 +1524,7 @@
 
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 726px) {
+  @media only screen and (min-width: 821px) {
 
     table.standings_table {
       margin: 20px;
