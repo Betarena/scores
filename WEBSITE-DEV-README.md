@@ -190,6 +190,20 @@ heroku logs --remote heroku-dev --tail --dyno web
 ```
 to view logs of a particualr type in the console, for a particular app
 
+
+### GitHub Flow:
+
+```
+//the branch you want to overwrite
+git checkout email 
+
+//reset to the new branch
+git reset --hard origin/staging
+
+// push to remote
+git push -f
+```
+
 ### Other:
 
 - [sveltekit-awesome](https://github.com/janosh/awesome-svelte-kit)
