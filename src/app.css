@@ -57,6 +57,7 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	--secondary: #37474f;
 	--blue: #0085ff;
 	--red: #c62828;
+  --red-bright: #FF3C3C;
 	--theme-color: #e3e3e3;
 	/* 
 	dark theme colors */
@@ -148,6 +149,9 @@ FONT COLOURS
 }
 .color-red {
 	color: var(--red);
+}
+.color-red-bright {
+	color: var(--red-bright) !important;
 }
 .color-white {
 	color: var(--white);
@@ -415,6 +419,10 @@ left-margins
 
 .m-l-8 {
 	margin-left: 8px;
+}
+
+.m-l-24 {
+	margin-left: 24px;
 }
 
 /*

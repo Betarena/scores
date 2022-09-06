@@ -785,3 +785,461 @@ export interface BETARENA_HASURA_scores_standings_home_widget_translations {
   points: string
   title: string
 }
+
+/**
+ * [ℹ] HASURA: historic_fixtures_aggregate (&)
+*/
+export interface BETARENA_HASURA_historic_fixtures_aggregate {
+  aggregate?: Aggregate;
+} export interface Aggregate {
+  totalCount?: number;
+}
+
+/**
+ * [ℹ] HASURA: historic_fixtures (&)
+*/
+export interface BETARENA_HASURA_historic_fixtures {
+  id?:              number;
+  fixture_day?:     string;
+  league_name?:     string;
+  country_flag?:    string;
+  home_team_logo?:  string;
+  away_team_logo?:  string;
+  away_team_name?:  string;
+  status?:          Status;
+  tvstations?:      any[];
+  inserted_at?:     string;
+  time?:            string;
+  home_team_name?:  string;
+  round_name?:      string;
+  data?:            WelcomeData;
+  league_id?:       number;
+  probabilities?:   Probabilities | null;
+  valuebets?:       null;
+  tip_link_wp?:     null;
+  fixture_link_wp?: null;
+  media_link?:      null;
+} export interface WelcomeData {
+  id?:                      number;
+  leg?:                     Leg;
+  time?:                    Time;
+  bench?:                   Bench;
+  cards?:                   GoalsClass;
+  goals?:                   GoalsClass;
+  other?:                   Bench;
+  pitch?:                   null;
+  round?:                   Round;
+  stage?:                   Stage;
+  stats?:                   DataStats;
+  venue?:                   Venue;
+  colors?:                  Colors | null;
+  events?:                  Events;
+  league?:                  League;
+  lineup?:                  Bench;
+  scores?:                  Scores;
+  coaches?:                 Coaches;
+  corners?:                 Corners;
+  deleted?:                 boolean;
+  details?:                 null;
+  comments?:                Bench;
+  group_id?:                null;
+  round_id?:                number;
+  shootout?:                Bench;
+  stage_id?:                number;
+  venue_id?:                number | null;
+  league_id?:               number;
+  localTeam?:               LocalTeamClass;
+  season_id?:               number;
+  sidelined?:               Bench;
+  standings?:               Standings;
+  assistants?:              Assistants;
+  attendance?:              null;
+  formations?:              Formations;
+  referee_id?:              number | null;
+  tvstations?:              Bench;
+  probability?:             Probability;
+  visitorTeam?:             LocalTeamClass;
+  aggregate_id?:            null;
+  commentaries?:            boolean;
+  localteam_id?:            number;
+  neutral_venue?:           boolean;
+  substitutions?:           Bench;
+  is_placeholder?:          boolean;
+  visitorteam_id?:          number;
+  weather_report?:          WeatherReport | null;
+  winner_team_id?:          number | null;
+  winning_odds_calculated?: boolean;
+  referee?:                 Referee;
+  localCoach?:              Coach;
+  visitorCoach?:            Coach;
+} export interface Assistants {
+  first_assistant_id?:  null;
+  fourth_official_id?:  null;
+  second_assistant_id?: null;
+} export interface Bench {
+  data?: BenchDatum[];
+} export interface BenchDatum {
+  posx?:                null;
+  posy?:                null;
+  type?:                DatumType;
+  stats?:               DatumStats;
+  number?:              null;
+  captain?:             null;
+  team_id?:             number;
+  position?:            Position;
+  player_id?:           number;
+  fixture_id?:          number;
+  player_name?:         string;
+  formation_position?:  number | null;
+  additional_position?: null;
+} export enum Position {
+  A = "A",
+  D = "D",
+  G = "G",
+  M = "M",
+} export interface DatumStats {
+  cards?:    StatsCards;
+  duels?:    Duels;
+  fouls?:    Fouls;
+  goals?:    Goals;
+  other?:    { [key: string]: number | null };
+  shots?:    StatsShots;
+  rating?:   null;
+  passing?:  Passing;
+  dribbles?: Dribbles;
+} export interface StatsCards {
+  redcards?:       number;
+  yellowcards?:    number;
+  yellowredcards?: number;
+} export interface Dribbles {
+  success?:       null;
+  attempts?:      null;
+  dribbled_past?: null;
+} export interface Duels {
+  won?:   null;
+  total?: null;
+} export interface Fouls {
+  drawn?:     null;
+  committed?: null;
+} export interface Goals {
+  scored?:        number;
+  assists?:       number;
+  conceded?:      number;
+  owngoals?:      number;
+  team_conceded?: number;
+} export interface Passing {
+  passes?:           null;
+  key_passes?:       null;
+  total_crosses?:    null;
+  accurate_passes?:  null;
+  passes_accuracy?:  null;
+  crosses_accuracy?: null;
+} export interface StatsShots {
+  shots_total?:   null;
+  shots_on_goal?: null;
+} export enum DatumType {
+  Bench = "bench",
+  Lineup = "lineup",
+} export interface GoalsClass {
+  data?: CardsDatum[];
+} export interface CardsDatum {
+  id?:                 number;
+  type?:               string;
+  minute?:             number;
+  reason?:             null;
+  team_id?:            string;
+  on_pitch?:           null;
+  player_id?:          number;
+  fixture_id?:         number;
+  player_name?:        string;
+  extra_minute?:       number | null;
+  player_assist_id?:   null;
+  player_assist_name?: null;
+  result?:             string;
+} export interface Coaches {
+  localteam_coach_id?:   number | null;
+  visitorteam_coach_id?: number | null;
+} export interface Colors {
+  localteam?:   Team;
+  visitorteam?: Team;
+} export interface Team {
+  color?:      string;
+  kit_colors?: string;
+} export interface Corners {
+  data?: CornersDatum[];
+} export interface CornersDatum {
+  id?:           number;
+  minute?:       number;
+  comment?:      string;
+  team_id?:      number;
+  fixture_id?:   number;
+  extra_minute?: null;
+} export interface Events {
+  data?: EventsDatum[];
+} export interface EventsDatum {
+  id?:                  number;
+  type?:                string;
+  minute?:              number;
+  reason?:              null;
+  result?:              null | string;
+  team_id?:             string;
+  injuried?:            null;
+  on_pitch?:            boolean;
+  player_id?:           number;
+  fixture_id?:          number;
+  var_result?:          null;
+  player_name?:         string;
+  extra_minute?:        number | null;
+  related_player_id?:   null;
+  related_player_name?: null;
+} export interface Formations {
+  localteam_formation?:   null;
+  visitorteam_formation?: null;
+} export interface League {
+  data?: LeagueData;
+} export interface LeagueData {
+  id?:                number;
+  name?:              string;
+  type?:              PurpleType;
+  active?:            boolean;
+  is_cup?:            boolean;
+  coverage?:          Coverage;
+  legacy_id?:         number | null;
+  logo_path?:         string;
+  country_id?:        number;
+  is_friendly?:       boolean;
+  live_standings?:    boolean;
+  current_round_id?:  number | null;
+  current_stage_id?:  number | null;
+  current_season_id?: number;
+} export interface Coverage {
+  predictions?:       boolean;
+  topscorer_cards?:   boolean;
+  topscorer_goals?:   boolean;
+  topscorer_assists?: boolean;
+} export enum PurpleType {
+  Domestic = "domestic",
+} export enum Leg {
+  The11 = "1/1",
+} export interface Coach {
+  data?: LocalCoachData;
+} export interface LocalCoachData {
+  team_id?:      number;
+  coach_id?:     number;
+  fullname?:     string;
+  lastname?:     string;
+  birthdate?:    null | string;
+  firstname?:    string;
+  birthplace?:   null;
+  country_id?:   number;
+  image_path?:   null;
+  common_name?:  string;
+  nationality?:  string;
+  birthcountry?: string;
+} export interface LocalTeamClass {
+  data?: LocalTeamData;
+} export interface LocalTeamData {
+  id?:                number;
+  name?:              string;
+  founded?:           number | null;
+  twitter?:           null;
+  venue_id?:          number | null;
+  legacy_id?:         number | null;
+  logo_path?:         string;
+  country_id?:        number;
+  short_code?:        null | string;
+  national_team?:     boolean;
+  is_placeholder?:    boolean;
+  current_season_id?: number;
+} export interface Probability {
+  data?: ProbabilityData;
+} export interface ProbabilityData {
+  fixture_id?:  number;
+  predictions?: Probabilities;
+} export interface Probabilities {
+  away?:          number;
+  btts?:          number;
+  draw?:          number;
+  home?:          number;
+  over_2_5?:      number;
+  over_3_5?:      number;
+  under_2_5?:     number;
+  under_3_5?:     number;
+  AT_over_0_5?:   number;
+  AT_over_1_5?:   number;
+  HT_over_0_5?:   number;
+  HT_over_1_5?:   number;
+  AT_under_0_5?:  number;
+  AT_under_1_5?:  number;
+  HT_under_0_5?:  number;
+  HT_under_1_5?:  number;
+  correct_score?: { [key: string]: number };
+} export interface Referee {
+  data?: RefereeData;
+} export interface RefereeData {
+  id?:          number;
+  fullname?:    string;
+  lastname?:    string;
+  firstname?:   string;
+  common_name?: string;
+} export interface Round {
+  data?: RoundData;
+} export interface RoundData {
+  id?:        number;
+  end?:       string;
+  name?:      number;
+  start?:     string;
+  stage_id?:  number;
+  league_id?: number;
+  season_id?: number;
+} export interface Scores {
+  et_score?:              null;
+  ft_score?:              null | string;
+  ht_score?:              null | string;
+  ps_score?:              null;
+  localteam_score?:       number;
+  visitorteam_score?:     number;
+  localteam_pen_score?:   null;
+  visitorteam_pen_score?: null;
+} export interface Stage {
+  data?: StageData;
+} export interface StageData {
+  id?:                   number;
+  name?:                 string;
+  type?:                 FluffyType;
+  league_id?:            number;
+  season_id?:            number;
+  sort_order?:           number;
+  has_standings?:        boolean;
+  has_outgroup_matches?: number;
+} export enum FluffyType {
+  GroupStage = "Group Stage",
+} export interface Standings {
+  localteam_position?:   number | null;
+  visitorteam_position?: number | null;
+} export interface DataStats {
+  data?: StatsDatum[];
+} export interface StatsDatum {
+  fouls?:          null;
+  goals?:          number;
+  saves?:          null;
+  shots?:          DatumShots;
+  passes?:         null;
+  attacks?:        Attacks;
+  corners?:        number;
+  tackles?:        null;
+  team_id?:        number;
+  injuries?:       null;
+  offsides?:       null;
+  redcards?:       number;
+  throw_in?:       null;
+  ball_safe?:      null;
+  free_kick?:      null;
+  goal_kick?:      null;
+  penalties?:      number;
+  fixture_id?:     number;
+  yellowcards?:    number;
+  goal_attempts?:  null;
+  substitutions?:  number;
+  possessiontime?: null;
+  yellowredcards?: null;
+} export interface Attacks {
+  attacks?:           number;
+  dangerous_attacks?: number;
+} export interface DatumShots {
+  total?:      number;
+  ongoal?:     number;
+  blocked?:    null;
+  offgoal?:    number;
+  insidebox?:  null;
+  outsidebox?: null;
+} export interface Time {
+  minute?:       number | null;
+  second?:       null;
+  status?:       Status;
+  added_time?:   null;
+  injury_time?:  null;
+  starting_at?:  StartingAt;
+  extra_minute?: null;
+} export interface StartingAt {
+  date?:      string;
+  time?:      string;
+  timezone?:  Timezone;
+  date_time?: string;
+  timestamp?: number;
+} export enum Timezone {
+  UTC = "UTC",
+} export enum Status {
+  Ft = "FT",
+  NS = "NS",
+  Tba = "TBA",
+} export interface Venue {
+  data?: VenueData;
+} export interface VenueData {
+  id?:          number;
+  city?:        string;
+  name?:        string;
+  address?:     null | string;
+  surface?:     string;
+  capacity?:    number;
+  image_path?:  null | string;
+  coordinates?: string;
+} export interface WeatherReport {
+  code?:                string;
+  icon?:                string;
+  type?:                string;
+  wind?:                Wind;
+  clouds?:              string;
+  humidity?:            string;
+  pressure?:            number;
+  updated_at?:          string;
+  coordinates?:         Coordinates;
+  temperature?:         Temperature;
+  temperature_celcius?: Temperature;
+} export interface Coordinates {
+  lat?: number;
+  lon?: number;
+} export interface Temperature {
+  temp?: number;
+  unit?: string;
+} export interface Wind {
+  speed?:  string;
+  degree?: number;
+} export interface MediaLinkWelcome {
+  id?:             number;
+  date?:           string;
+  league?:         string;
+  country?:        string;
+  thumbnail?:      string;
+  teams_name?:     MediaLinkTeamsName;
+  video_link?:     string;
+  video_title?:    string;
+  video_subtitle?: string;
+} export interface MediaLinkTeamsName {
+  local?:   string;
+  visitor?: string;
+}
+
+
+/**
+ * [ℹ] HASURA: scores_widget_football_fixtures_odds_translations (&)
+*/
+export interface BETARENA_HASURA_scores_widget_football_fixtures_odds_translations {
+  lang?:         string;
+  translations?: FixturesOddsTranslations;
+} export interface FixturesOddsTranslations {
+  tip?:     string;
+  odds?:    string;
+  week?:    string;
+  round?:   string;
+  matches?: string;
+}
+
+
+/**
+ * [ℹ] HASURA: scores_livescore_football_translations (&)
+*/
+export interface BETARENA_HASURA_scores_livescore_football_translations {
+  lang?:       string;
+  status_abv?: Array<string[]>;
+}

@@ -20,6 +20,7 @@ import type {
 export interface BACKEND_tournament_standings_surgical_update {
   leagueSeasons?: LeagueSeason[];
   teamsList?:     number[];
+  fixturesList?:  number[];
 }
 
 export interface LeagueSeason {

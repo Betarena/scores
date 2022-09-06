@@ -33,9 +33,11 @@
      * [ℹ] IMPORTANT;
     */
 
-    const response_valid_url = await fetch(`/api/pages_and_seo/cache-seo.json?url=`+url.pathname, {
-			method: 'GET'
-		}).then((r) => r.json());
+    const response_valid_url = await fetch(`/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
+      {
+			  method: 'GET'
+		  })
+      .then((r) => r.json());
 
     // [ℹ] validate URL existance;
     if (!response_valid_url) {
@@ -111,8 +113,18 @@
 			method: 'GET'
 		}).then((r) => r.json());
 
+    // [ℹ] fixtures_odds
+    const response_fixtures_odds_translations: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = await fetch(`/api/tournaments_fixtures_odds/cache-data.json?lang=`+urlLang, {
+			method: 'GET'
+		}).then((r) => r.json());
+
+    // [ℹ] fixtures-odds-widget cache data is dependent on the LEAGUE-ID;
+    const response_fixtures_odds_data: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response = await fetch(`/api/tournaments_fixtures_odds/cache-data.json?league_id=`+league_id, {
+			method: 'GET'
+		}).then((r) => r.json());
+    
     /** 
-     * =========
+     * ==========
      * [ℹ] RETURN
      * ==========
     */
@@ -124,7 +136,11 @@
         response_standings_translations &&
         response_standings_data &&
         response_top_players_translations &&
-        response_top_players_data) {
+        response_top_players_data &&
+        // [ℹ] fixtures_odds
+        response_fixtures_odds_translations &&
+        response_fixtures_odds_data
+      ) {
       return {
         props: {
           PAGE_DATA_SEO: response_tournaments_seo,
@@ -134,7 +150,9 @@
           STANDINGS_T: response_standings_translations,
           STANDINGS_DATA: response_standings_data,
           TOP_PLAYERS_T: response_top_players_translations,
-          TOP_PLAYERS_DATA: response_top_players_data
+          TOP_PLAYERS_DATA: response_top_players_data,
+          FIXTURES_ODDS_T: response_fixtures_odds_translations,
+          FIXTURES_ODDS_DATA: response_fixtures_odds_data
         }
       } 
     }
@@ -161,28 +179,32 @@
 	import { page } from '$app/stores';
   import { browser } from '$app/env';
   import { onMount } from 'svelte';
-
+  
+  import { userBetarenaSettings } from '$lib/store/user-settings';
   import SvelteSeo from 'svelte-seo';
 
   /*
-    [v1] - Testing with Standard Imports (client-side)
+    [v1]
+    Standard Imports (client-side)
   */
 
   import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
   import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
   import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
+  import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
 
   /*
-    [v2] - Testing with Dynamic Imports (client-side)
+    [v2]
+    Dynamic Imports (client-side)
   */
 
   /*
 
-  let LeagueInfoWidget;
+    let LeagueInfoWidget;
 
-  onMount(async () => {
-		LeagueInfoWidget = (await import('$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte')).default;
-	});
+    onMount(async () => {
+      LeagueInfoWidget = (await import('$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte')).default;
+    });
 
   */
  
@@ -190,10 +212,11 @@
     Cache_Single_Tournaments_Data_Page_Translation_Response, 
     Cache_Single_Tournaments_SEO_Translation_Response, 
     Hasura_Complete_Pages_SEO, 
-    Single_Tournament_Data_Type } from '$lib/models/pages_and_seo/types';
+    Single_Tournament_Data_Type 
+  } from '$lib/models/pages_and_seo/types';
 
   import type { 
-    Cache_Single_Tournaments_League_Info_Data_Response, 
+    Cache_Single_Tournaments_League_Info_Data_Response
   } from '$lib/models/tournaments/league-info/types';
 
   import type { 
@@ -206,7 +229,10 @@
     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response 
   } from '$lib/models/tournaments/top_players/types';
 
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import type { 
+    REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
+    REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response 
+  } from '$lib/models/tournaments/fixtures_odds/types';
 
   export let PAGE_DATA_SEO:                     Cache_Single_Tournaments_SEO_Translation_Response;
   export let TOURNAMENT_DATA_TRANSLATED_COPIES: Single_Tournament_Data_Type[];
@@ -216,6 +242,8 @@
   export let STANDINGS_DATA:                    Cache_Single_Tournaments_League_Standings_Info_Data_Response;
   export let TOP_PLAYERS_T:                     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
   export let TOP_PLAYERS_DATA:                  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
+  export let FIXTURES_ODDS_T:                   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
+  export let FIXTURES_ODDS_DATA:                REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
 
   // TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
@@ -354,7 +382,7 @@
 
     <a 
       sveltekit:prefetch
-      href="/{$page.params.sport}">
+      href="/{$page.params.lang}/{$page.params.sport}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.sport}
@@ -370,7 +398,7 @@
 
     <a 
       sveltekit:prefetch
-      href="/{$page.params.sport}/{$page.params.country}">
+      href="/{$page.params.lang}/{$page.params.sport}/{$page.params.country}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.country}
@@ -400,6 +428,7 @@
     <div 
       class='grid-display-column'>
       <svelte:component this={StandingsWidget} {STANDINGS_T} {STANDINGS_DATA} />
+      <svelte:component this={FixtureOddsWidget} {FIXTURES_ODDS_T} {FIXTURES_ODDS_DATA} />
     </div>
 
     <div 
