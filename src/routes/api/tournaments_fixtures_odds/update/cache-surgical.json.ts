@@ -90,7 +90,7 @@ export async function post (
   // [ℹ] otherwise prod.
   else {
     // [ℹ] producers [JOBS]
-    const job = await CQ_Tour_FixOdds_S.add(dataSurgical);
+    const job = await CQ_Tour_FixOdds_S.add(dataSurgical, { timeout: 120000 });
     console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
     return {
       status: 200,
