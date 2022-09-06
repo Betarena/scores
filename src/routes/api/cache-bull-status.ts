@@ -42,18 +42,35 @@ export async function get (req: { url: { [x: string]: { get: (arg0: string) => s
     const finishedOn = jobW.finishedOn;
     const reason = jobW.failedReason;
     const result = jobW.returnvalue;
+    const failures = await cacheQueueJob.getFailedCount();
+    const failures_ids = await cacheQueueJob.getFailed();
+    const completed = await cacheQueueJob.getCompletedCount();
+    const active = await cacheQueueJob.getActiveCount();
+    const current = await cacheQueueJob.getActive();
+    const waiting = await cacheQueueJob.getWaitingCount();
     // [ℹ] ALT 2
     return {
         status: 200,
-        body: { 
-          job_id: jobId,
-          state: state,
-          attemptsMade: attemptsMade,
-          processedOn: processedOn,
-          finishedOn: finishedOn,
-          progress: progress,
-          reason: reason,
-          result: result
+        body: {
+          job: {
+            job_id:         jobId,
+            state:          state,
+            attemptsMade:   attemptsMade,
+            processedOn:    processedOn,
+            finishedOn:     finishedOn,
+            progress:       progress,
+            reason:         reason,
+            result:         result
+          },
+          cache_general: {
+            failures:       failures,
+            failures_ids:   failures_ids,    
+            completed:      completed,
+            current_ids:    current,
+            active:         active,
+            waiting:        waiting
+          }
+          
         }
       }
     }
