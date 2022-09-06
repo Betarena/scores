@@ -2,9 +2,7 @@ import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
-  HASURA_BETARENA_QUERY_TOP_PLAYERS_T,
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA, 
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA 
+  REDIS_CACHE_TOP_PLAYERS_DATA_1, REDIS_CACHE_TOP_PLAYERS_DATA_2, REDIS_CACHE_TOP_PLAYERS_DATA_3 
 } from '$lib/graphql/tournaments/top_players/query';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
@@ -50,6 +48,7 @@ const cacheQueueTourTopPlayAll = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueTourTopPlayAll"
 const cacheTarget = "REDIS CACHE | tournament top_players (all)"
 let logs = []
 
@@ -60,32 +59,50 @@ let logs = []
 
 export async function post(): Promise < unknown > {
 
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  // [ℹ] producers [JOBS]
-  const job = await cacheQueueTourTopPlayAll.add({});
+    await tournamentsTopPlayersDataGeneration ()
+    await tournamentsTopPlayersTGeneration ()
+    
+    for (const log of logs) {
+      console.log(log)
+    }
 
-  console.log(`
-    job_id: ${job.id}
-  `)
-
-  return {
-    status: 200,
-    body: { 
-      job_id: job.id
+    return {
+      status: 200,
+      body: { 
+        job_id: cacheTarget + " done!"
+      }
     }
   }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await cacheQueueTourTopPlayAll.add({});
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return {
+      status: 200,
+      body: { 
+        job_id: job.id
+      }
+    }
+  }
+
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response) {
+async function cacheData (
+  league_id: number, 
+  json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response
+) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset('tournament_top_players_data', league_id, JSON.stringify(json_cache));
@@ -95,7 +112,10 @@ async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tour
   }
 }
 
-async function cacheTranslationData (lang: string, json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response) {
+async function cacheTranslationData (
+  lang: string, 
+  json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
+) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset('tournament_top_player_t', lang, JSON.stringify(json_cache));
@@ -152,83 +172,21 @@ cacheQueueTourTopPlayAll.process (async function (job, done) {
 
 async function tournamentsTopPlayersDataGeneration () {
 
-  // [ℹ] debug info
-  let t0;
-  let t1;
+  const response = await getTarget ();
 
-  /*
-    [ℹ] all surgical data breakdown
-  */
-  
-  const limit = 100;
-  let offset = 0;
-  let total_limit;
-
-  t0 = performance.now();
-  const queryName = "HASURA_GET_TARGET_LEAGUES";
-  if (dev) console.log(`ℹ obtaining main const data`)
-  const response_const: BETARENA_HASURA_top_players_query = await initGrapQLClient().request(
-    REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA,
-  );
-  t1 = performance.now();
-  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-
-  /*
-    [ℹ] JSON-ARRAY => HASHMAP conversions
-  */
-  
-  t0 = performance.now();
-  const players_map = new Map()
-  for (const p of response_const.scores_football_players_dev) {
-    players_map.set(p.player_id, p)
-  }
-  const teams_map = new Map()
-  for (const t of response_const.scores_football_teams_dev) {
-    teams_map.set(t.id, t)
-  }
-  t1 = performance.now();
-  logs.push(`players_map generated with size: ${players_map.size}`)
-  logs.push(`teams_map generated with size: ${teams_map.size}`)
-  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+  // [ℹ] JSON-ARRAY => HASHMAP conversions
+  const [players_map, teams_map] = await generateTeamsAndPlayersMap (response)
 
   const final_obj_array = new Map <number, REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response> ()
 
-  const season_details_map = new Map <number, BETARENA_HASURA_scores_football_seasons_details> ()
+  const season_details_map = await getTargetSeasonPlayersInfo ()
 
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
+  /**
+   * [ℹ] MAIN
+   * [ℹ] generate per LeagueId
+  */
 
-    const VARIABLES = {
-      limit: limit,
-      offset: offset
-    }
-    // [🐛] debug
-    // if (dev) console.log(`ℹ variables: ${VARIABLES.limit} ${VARIABLES.offset}`)
-    
-    const response_seasons: BETARENA_HASURA_top_players_season_details_query = await initGrapQLClient().request(
-      REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA,
-      VARIABLES
-    );
-
-    for (const season of response_seasons.scores_football_seasons_details_dev) {
-      season_details_map.set(season.id, season);
-    }
-
-    total_limit = response_seasons.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
-    offset += limit;
-
-    // [ℹ] exit loop
-    if (offset >= total_limit) {
-      // [🐛] debug
-      if (dev) console.log(`ℹ exiting loop!`)
-      break;
-    }
-
-  }
-
-  // [ℹ] MAIN
-  // [ℹ] generate per LeagueId
-  for (const iterator of response_const.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues_dev) {
 
     // [ℹ] per LEAGUE
 
@@ -496,20 +454,19 @@ async function tournamentsTopPlayersDataGeneration () {
     final_obj_array.set(finalCacheObj.league_id, finalCacheObj);
   }
 
-  // [ℹ] persist Data
-  const arrayObj = []
-  t0 = performance.now();
+  // [ℹ] persist data
+  const t0 = performance.now();
   logs.push(`total leagues: ${final_obj_array.size}`)
   for (const [key, value] of final_obj_array.entries()) {
     await cacheData(key, value);
-    // arrayObj.push(value);
   }
-  t1 = performance.now();
+  const t1 = performance.now();
   logs.push(`data cache uplaoded completed in: ${(t1 - t0) / 1000} sec`);
 
   // [🐛] debug
   if (dev) {
-    const data = JSON.stringify(arrayObj, null, 4)
+    const values = Array.from(final_obj_array.values());
+    const data = JSON.stringify(values, null, 4)
     fs.writeFile('./datalog/tournamentsTopPlayers.json', data, err => {
       if (err) {
         console.error(err);
@@ -522,7 +479,9 @@ async function tournamentsTopPlayersDataGeneration () {
 
 async function tournamentsTopPlayersTGeneration () {
   
-	const response: BETARENA_HASURA_top_players_t_query = await initGrapQLClient().request(HASURA_BETARENA_QUERY_TOP_PLAYERS_T);
+	const response: BETARENA_HASURA_top_players_t_query = await initGrapQLClient().request(
+    REDIS_CACHE_TOP_PLAYERS_DATA_3
+  );
 
   const final_obj_array: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response[] = []
 
@@ -565,4 +524,99 @@ async function tournamentsTopPlayersTGeneration () {
   }
 
   return
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] OTHER METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function getTarget (
+): Promise < BETARENA_HASURA_top_players_query > {
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_TOP_PLAYERS_DATA_2";
+  const response: BETARENA_HASURA_top_players_query = await initGrapQLClient().request(
+    REDIS_CACHE_TOP_PLAYERS_DATA_2,
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
+}
+
+async function generateTeamsAndPlayersMap (
+  data: BETARENA_HASURA_top_players_query
+): Promise < [ Map < number, BETARENA_HASURA_scores_football_players >, Map < number, BETARENA_HASURA_scores_football_teams > ] > {
+
+  const t0 = performance.now();
+  const players_map = new Map < number, BETARENA_HASURA_scores_football_players > ()
+  for (const p of data.scores_football_players_dev) {
+    players_map.set(p.player_id, p)
+  }
+  const teams_map = new Map < number, BETARENA_HASURA_scores_football_teams > ()
+  for (const t of data.scores_football_teams_dev) {
+    teams_map.set(t.id, t)
+  }
+  const t1 = performance.now();
+  logs.push(`players_map generated with size: ${players_map.size}`)
+  logs.push(`teams_map generated with size: ${teams_map.size}`)
+  logs.push(`hashmap conversion: ${(t1 - t0) / 1000} sec`);
+
+  return [
+    players_map,
+    teams_map
+  ]
+
+}
+
+async function getTargetSeasonPlayersInfo (
+): Promise < Map < number, BETARENA_HASURA_scores_football_seasons_details > > {
+
+  const limit = 100;
+  let offset = 0;
+  let total_limit;
+
+  const season_details_map = new Map <number, BETARENA_HASURA_scores_football_seasons_details> ()
+  let counter = 0
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_TOP_PLAYERS_DATA_1";
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+
+    // [🐛] debug
+    // if (dev) console.log(`ℹ variables: ${VARIABLES.limit} ${VARIABLES.offset}`)
+    
+    const VARIABLES = {
+      limit: limit,
+      offset: offset
+    }
+
+    const response: BETARENA_HASURA_top_players_season_details_query = await initGrapQLClient().request (
+      REDIS_CACHE_TOP_PLAYERS_DATA_1,
+      VARIABLES
+    );
+
+    for (const season of response.scores_football_seasons_details_dev) {
+      season_details_map.set(season.id, season);
+    }
+
+    // [ℹ] exit loop
+    if (offset >= total_limit) {
+      // [🐛] debug
+      if (dev) console.log(`exiting loop!`)
+      logs.push(`total limit: ${total_limit}`)
+      logs.push(`seasons gathered: ${season_details_map.size}`)
+      logs.push(`exiting loop after ${counter} iterations`)
+      break;
+    }
+
+    total_limit = response.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
+    offset += limit;
+    counter++
+  }
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return season_details_map;
 }

@@ -7,8 +7,8 @@ import { gql } from 'graphql-request';
  * [ℹ] LARGE DATA HANDLING (Query)
  * [ℹ] REQUIRES PAGINATION APPROACH
 */
-export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA = gql`
-  query REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA 
+export const REDIS_CACHE_TOP_PLAYERS_DATA_1 = gql`
+  query REDIS_CACHE_TOP_PLAYERS_DATA_1 
     ($limit: Int, $offset: Int) 
     @cached 
     (ttl: 300)
@@ -23,7 +23,10 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA = gql`
     }
 
     scores_football_seasons_details_dev (
-      limit: $limit 
+      order_by: {
+        id: asc
+      },
+      limit: $limit,
       offset: $offset
     ) {
       id
@@ -41,8 +44,8 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA = gql`
  * [ℹ] LARGE DATA HANDLING (Query)
  * [ℹ] REQUIRES PAGINATION APPROACH
 */
-export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA = gql`
-  query REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA 
+export const REDIS_CACHE_TOP_PLAYERS_DATA_2 = gql`
+  query REDIS_CACHE_TOP_PLAYERS_DATA_2 
     @cached 
     (ttl: 300)
   {
@@ -77,8 +80,8 @@ export const REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA = gql`
 /**
  * [ℹ] TOURNAMENTS / TOP PLAYER WIDGET [TRANSLATION]
 */
-export const HASURA_BETARENA_QUERY_TOP_PLAYERS_T = gql`
-  query HASURA_BETARENA_QUERY_TOP_PLAYERS_T 
+export const REDIS_CACHE_TOP_PLAYERS_DATA_3 = gql`
+  query REDIS_CACHE_TOP_PLAYERS_DATA_3 
     @cached 
     (ttl: 300) 
   {

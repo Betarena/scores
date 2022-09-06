@@ -57,7 +57,7 @@ export async function post({ request }): Promise < unknown > {
   const dataSurgical = JSON.parse(JSON.stringify(body));
   
   // [ℹ] job producers
-  const job = await cacheQueueTourStand.add(dataSurgical);
+  const job = await cacheQueueTourStand.add(dataSurgical, { timeout: 300000 });
 
   console.log(`
     job_id: ${job.id}
