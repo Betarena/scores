@@ -183,6 +183,13 @@ Higher rank pricing Heroku Apps need to be purchased to enable the use of the ap
 
 ## 💠 Miscellaneous
 
+### Heroku:
+
+```
+heroku logs --remote heroku-dev --tail --dyno web
+```
+to view logs of a particualr type in the console, for a particular app
+
 ### Other:
 
 - [sveltekit-awesome](https://github.com/janosh/awesome-svelte-kit)
