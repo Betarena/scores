@@ -393,6 +393,7 @@ Weeks_Data
     // [ℹ] extra get number of total weeks & rounds
     weeks_total = target_season.weeks.length
     rounds_total = target_season.rounds.length
+    total_nav_num = weeks_total
 
     /**
      * [ℹ] group-by fixtures "fixture-day"
