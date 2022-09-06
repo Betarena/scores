@@ -50,6 +50,7 @@ const cacheQueueTourTopPlay = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueTourTopPlay"
 const cacheTarget = "REDIS CACHE | tournament top_players surgical"
 let logs = []
 
@@ -64,18 +65,37 @@ export async function post(
   const body = await request.json();
   if (dev) console.log(body);
   const dataSurgical = JSON.parse(JSON.stringify(body));
-  
-  // [ℹ] job producers
-  const job = await cacheQueueTourTopPlay.add(dataSurgical, { timeout: 300000 });
 
-  console.log(`
-    job_id: ${job.id}
-  `)
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  return {
-    status: 200,
-    body: { 
-      job_id: job.id
+    await surgicalDataUpdate(dataSurgical);
+
+    for (const log of logs) {
+      console.log(log)
+    }
+
+    return {
+      status: 200,
+      body: { 
+        job_id: cacheTarget + " done!"
+      }
+    }
+  }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await cacheQueueTourTopPlay.add(dataSurgical, { timeout: 300000 });
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return {
+      status: 200,
+      body: { 
+        job_id: job.id
+      }
     }
   }
 }
@@ -133,10 +153,6 @@ async function surgicalDataUpdate (
   dataUpdate: BACKEND_tournament_standings_surgical_update
 ) {
 
-  // [ℹ] debug info
-  let t0;
-  let t1;
-
   /*
     [ℹ] surgical data breakdown
   */
@@ -177,23 +193,8 @@ async function surgicalDataUpdate (
     playerIdsArr
   );
 
-  /*
-    [ℹ] JSON-ARRAY => HASHMAP conversions
-  */
-
-  t0 = performance.now();
-  const players_map = new Map()
-  for (const p of response3.scores_football_players_dev) {
-    players_map.set(p.player_id, p)
-  }
-  const teams_map = new Map()
-  for (const t of response3.scores_football_teams_dev) {
-    teams_map.set(t.id, t)
-  }
-  t1 = performance.now();
-  logs.push(`players_map generated with size: ${players_map.size}`)
-  logs.push(`teams_map generated with size: ${teams_map.size}`)
-  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+  // [ℹ] JSON-ARRAY => HASHMAP conversions
+  const [players_map, teams_map] = await generateTeamsAndPlayersMap (response3)
 
   const final_obj_array = new Map <number, REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response> ()
 
@@ -473,19 +474,18 @@ async function surgicalDataUpdate (
   }
 
   // [ℹ] persist cache data to redis
-  const arrayObj = []
-  t0 = performance.now();
+  const t0 = performance.now();
   logs.push(`total leagues: ${final_obj_array.size}`)
   for (const [key, value] of final_obj_array.entries()) {
     await cacheData(key, value);
-    // arrayObj.push(value);
   }
-  t1 = performance.now();
+  const t1 = performance.now();
   logs.push(`data cache uplaoded completed in: ${(t1 - t0) / 1000} sec`);
 
   // [🐛] debug
   if (dev) {
-    const data = JSON.stringify(arrayObj, null, 4)
+    const values = Array.from(final_obj_array.values());
+    const data = JSON.stringify(values, null, 4)
     fs.writeFile('./datalog/tournamentsTopPlayers.json', data, err => {
       if (err) {
         console.error(err);
@@ -663,4 +663,29 @@ async function getTargetTeamsAndPlayers (
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   return response;
+}
+
+async function generateTeamsAndPlayersMap (
+  data: BETARENA_HASURA_top_players_query
+): Promise < [ Map < number, BETARENA_HASURA_scores_football_players >, Map < number, BETARENA_HASURA_scores_football_teams > ] > {
+
+  const t0 = performance.now();
+  const players_map = new Map < number, BETARENA_HASURA_scores_football_players > ()
+  for (const p of data.scores_football_players_dev) {
+    players_map.set(p.player_id, p)
+  }
+  const teams_map = new Map < number, BETARENA_HASURA_scores_football_teams > ()
+  for (const t of data.scores_football_teams_dev) {
+    teams_map.set(t.id, t)
+  }
+  const t1 = performance.now();
+  logs.push(`players_map generated with size: ${players_map.size}`)
+  logs.push(`teams_map generated with size: ${teams_map.size}`)
+  logs.push(`hashmap conversion: ${(t1 - t0) / 1000} sec`);
+
+  return [
+    players_map,
+    teams_map
+  ]
+
 }
