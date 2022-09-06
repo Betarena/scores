@@ -505,6 +505,11 @@ async function injectNewFixturesData (
       if (target_season != undefined) {
 
         for (const fixture of target_season.fixtures) {
+
+          // FIXME: add the check to populate a new "fixture_id"
+          // FIXME: if this does not exist in the "fixtures" array in
+          // FIXME: the first place
+
           if (fixture.id === fixture_id) {
             
             if (dev) console.log(`fixture_id: ${fixture.id} | before: ${fixture.status}`)
@@ -585,7 +590,8 @@ async function injectWeeksRounds (
 
     const newObj: Tournament_Season_Fixtures_Odds[] = [] 
     
-    // FIXME:
+    // FIXME: can be "null" for some reason
+    // FIXME: particulary on the (ALL) cache generation
     if (key == null) { 
       if (dev) console.log(`league_id: ${key}`)
       continue;
