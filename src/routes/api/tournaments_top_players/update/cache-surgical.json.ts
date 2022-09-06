@@ -183,11 +183,11 @@ async function surgicalDataUpdate (
 
   t0 = performance.now();
   const players_map = new Map()
-  for (const p of response3.scores_football_players_dev) {
+  for (const p of response3.scores_football_players) {
     players_map.set(p.player_id, p)
   }
   const teams_map = new Map()
-  for (const t of response3.scores_football_teams_dev) {
+  for (const t of response3.scores_football_teams) {
     teams_map.set(t.id, t)
   }
   t1 = performance.now();
@@ -202,7 +202,7 @@ async function surgicalDataUpdate (
    * [ℹ] generate per LeagueId
   */
 
-  for (const iterator of response.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues) {
 
     const finalCacheObj: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = { }
     finalCacheObj.seasons = []
@@ -526,7 +526,7 @@ async function obtainTargetSeasonIds (
   
   let seasonIdsArr: number[] = []
 
-  for (const league of data.scores_football_leagues_dev) {
+  for (const league of data.scores_football_leagues) {
     for (const season_main of league.seasons) {
       seasonIdsArr.push(season_main.id);
     }
@@ -576,14 +576,14 @@ async function getTargetSeasonPlayersInfo (
 
     // [🐛] debug
     /*
-      for (const fixture of response.historic_fixtures_dev) {
+      for (const fixture of response.historic_fixtures) {
         if (fixture.id === 18535056) {
           console.log("Here! Found it!")
         }
       }
     */
 
-    season_details_arr = season_details_arr.concat(response.scores_football_seasons_details_dev)
+    season_details_arr = season_details_arr.concat(response.scores_football_seasons_details)
 
     // [ℹ] exit loop
     if (offset >= total_limit) {
@@ -595,7 +595,7 @@ async function getTargetSeasonPlayersInfo (
       break;
     }
 
-    total_limit = response.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
+    total_limit = response.scores_football_seasons_details_aggregate.aggregate.totalCount;
     offset += limit;
     counter++
   }

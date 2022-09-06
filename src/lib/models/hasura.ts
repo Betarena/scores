@@ -787,7 +787,7 @@ export interface BETARENA_HASURA_scores_standings_home_widget_translations {
 }
 
 /**
- * [ℹ] HASURA: historic_fixtures_aggregate (&_dev)
+ * [ℹ] HASURA: historic_fixtures_aggregate (&)
 */
 export interface BETARENA_HASURA_historic_fixtures_aggregate {
   aggregate?: Aggregate;
@@ -796,7 +796,7 @@ export interface BETARENA_HASURA_historic_fixtures_aggregate {
 }
 
 /**
- * [ℹ] HASURA: historic_fixtures (&_dev)
+ * [ℹ] HASURA: historic_fixtures (&)
 */
 export interface BETARENA_HASURA_historic_fixtures {
   id?:              number;
@@ -1222,7 +1222,7 @@ export interface BETARENA_HASURA_historic_fixtures {
 
 
 /**
- * [ℹ] HASURA: scores_widget_football_fixtures_odds_translations (&_dev)
+ * [ℹ] HASURA: scores_widget_football_fixtures_odds_translations (&)
 */
 export interface BETARENA_HASURA_scores_widget_football_fixtures_odds_translations {
   lang?:         string;
@@ -1237,7 +1237,7 @@ export interface BETARENA_HASURA_scores_widget_football_fixtures_odds_translatio
 
 
 /**
- * [ℹ] HASURA: scores_livescore_football_translations (&_dev)
+ * [ℹ] HASURA: scores_livescore_football_translations (&)
 */
 export interface BETARENA_HASURA_scores_livescore_football_translations {
   lang?:       string;

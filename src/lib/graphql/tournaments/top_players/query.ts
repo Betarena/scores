@@ -153,7 +153,7 @@ export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_2 = gql`
 
     # [ℹ] pagination based
 
-    scores_football_seasons_details_dev_aggregate (
+    scores_football_seasons_details_aggregate (
       where: {
         id: {
           _in: $seasonIds
@@ -165,7 +165,7 @@ export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_2 = gql`
       }
     }
 
-    scores_football_seasons_details_dev (
+    scores_football_seasons_details (
       order_by: {
         id: asc
       },

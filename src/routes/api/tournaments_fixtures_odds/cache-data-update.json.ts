@@ -213,14 +213,14 @@ async function main () {
 
     // [🐛] debug
     /*
-      for (const fixture of response.historic_fixtures_dev) {
+      for (const fixture of response.historic_fixtures) {
         if (fixture.id === 18535056) {
           console.log("Here! Found it!")
         }
       }
     */
 
-    h_fixtures_arr = h_fixtures_arr.concat(response.historic_fixtures_dev)
+    h_fixtures_arr = h_fixtures_arr.concat(response.historic_fixtures)
 
     // [ℹ] exit loop
     if (offset >= total_limit) {
@@ -232,7 +232,7 @@ async function main () {
       break;
     }
 
-    total_limit = response.historic_fixtures_dev_aggregate.aggregate.totalCount;
+    total_limit = response.historic_fixtures_aggregate.aggregate.totalCount;
     offset += limit;
     counter++
   }
@@ -299,7 +299,7 @@ async function main () {
 
   for (const seasonId of seasonIdsArr) {
 
-    const t_season = season_details_data.scores_football_seasons_details_dev
+    const t_season = season_details_data.scores_football_seasons_details
       .find( ({id}) => id === seasonId);
 
     if (t_season == undefined) {
@@ -584,13 +584,13 @@ async function main_trans_and_seo (langArray :string[]) {
     const object: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = {}
     object.lang = lang_
 
-    const objectFixOdds = res.scores_widget_football_fixtures_odds_translations_dev
+    const objectFixOdds = res.scores_widget_football_fixtures_odds_translations
       .find(({ lang }) => lang === lang_)
 
-    const objectGeneral = res.scores_general_translations_dev
+    const objectGeneral = res.scores_general_translations
       .find(({ lang }) => lang === lang_)
     
-    const objectLivescore = res.scores_livescore_football_translations_dev
+    const objectLivescore = res.scores_livescore_football_translations
       .find(({ lang }) => lang === lang_)
 
     const mergedObj = {
@@ -638,7 +638,7 @@ async function getHrefLang (
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
+  const langArray: string [] = response.scores_hreflang
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 
