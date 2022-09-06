@@ -1,12 +1,14 @@
 // [ℹ] import $app `modules`
 import { dev } from '$app/env'
+import redis from "$lib/redis/init"
+
 import type { 
   REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
   REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response 
 } from '$lib/models/tournaments/top_players/types';
 
-// [ℹ] import necessary LIBRARIES & MODULES;
-import redis from "$lib/redis/init"
+const cacheDataAddr = "tour_fix_odds_data"
+const cacheTransAddr = "tour_fix_odds_t"
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
@@ -17,7 +19,7 @@ export async function get(req, res): Promise < unknown > {
   const league_id: string = req.url['searchParams'].get('league_id');
 
   if (lang) {
-    const response_cache = await getTopPlayersDataTranslation (lang)
+    const response_cache = await getCacheTranslationData (lang)
     if (response_cache) {
       return {
         status: 200,
@@ -27,7 +29,7 @@ export async function get(req, res): Promise < unknown > {
   }
 
   if (league_id) {
-    const response_cache = await getTopPlayersData (league_id)
+    const response_cache = await getCacheData (league_id)
     if (response_cache) {
       return {
         status: 200,
@@ -46,34 +48,34 @@ export async function get(req, res): Promise < unknown > {
 //     CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getTopPlayersData (league_id: string): Promise < REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response | Record < string, never > > {
+async function getCacheData (league_id: string): Promise < REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response | Record < string, never > > {
   try {
-    const cached: string = await redis.hget('tournament_top_players_data', league_id);
+    const cached: string = await redis.hget(cacheDataAddr, league_id);
     if (cached) {
       // [🐛] debug;
-      if (dev) console.info(`✅ tournament_top_players_data cache data retrieved`);
+      if (dev) console.info(`✅ ${cacheDataAddr} cache data retrieved`);
       const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = JSON.parse(cached);
       return parsed;
     }
   } 
   catch (e) {
-    console.error("❌ uh-oh! tournament_standings_data cache error", e);
+    console.error(`❌ uh-oh! ${cacheDataAddr} cache error`, e);
     return
   }
 }
 
-async function getTopPlayersDataTranslation (lang: string): Promise < REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response | Record < string, never > > {
+async function getCacheTranslationData (lang: string): Promise < REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response | Record < string, never > > {
   try {
-    const cached: string = await redis.hget('tournament_top_player_t', lang);
+    const cached: string = await redis.hget(cacheTransAddr, lang);
     if (cached) {
       // [🐛] debug;
-      if (dev) console.info(`✅ tournament_top_player_t cache data retrieved`);
+      if (dev) console.info(`✅ ${cacheTransAddr} cache data retrieved`);
       const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = JSON.parse(cached);
       return parsed;
     }
   } 
   catch (e) {
-    console.error("❌ uh-oh! tournament_standings_t cache error", e);
+    console.error(`❌ uh-oh! ${cacheTransAddr} cache error`, e);
     return
   }
 }

@@ -48,14 +48,14 @@ import { session } from "$app/stores";
 
   onMount(async () => {
     var wInit = document.documentElement.clientWidth;
-    if (wInit > 725) {
+    if (wInit > 820) {
       viewportDesktop = true;
     } else {
       viewportDesktop = false;
     }
     window.addEventListener("resize", function () {
       var w = document.documentElement.clientWidth;
-      if (w > 725) {
+      if (w > 820) {
         viewportDesktop = true;
       } else {
         viewportDesktop = false;
@@ -668,7 +668,7 @@ import { session } from "$app/stores";
 
   } 
 
-  @media only screen and (min-width: 726px) {
+  @media only screen and (min-width: 821px) {
 
     tr td:first-child {
       padding-left: 0;
