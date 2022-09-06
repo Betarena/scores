@@ -5,7 +5,16 @@ import Bull from 'bull';
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function get (req: { url: { [x: string]: { get: (arg0: string) => string; }; }; }, res: any): Promise < unknown > {
+export async function get (
+  req: { 
+    url: {     
+      [x: string]: { 
+        get: (arg0: string) => string; 
+      }; 
+    }; 
+  }, 
+  res: any
+): Promise < unknown > {
 
   const jobQueueName: string = req.url['searchParams'].get('jobQueueName');
   const jobId: string = req.url['searchParams'].get('jobId');
@@ -32,7 +41,7 @@ export async function get (req: { url: { [x: string]: { get: (arg0: string) => s
         msg: null
       }
     }
-  } else {    
+  } else {
     // [ℹ] ALT
     // res.json({ jobId, state, progress, reason });
     const state = await jobW.getState();
@@ -50,28 +59,27 @@ export async function get (req: { url: { [x: string]: { get: (arg0: string) => s
     const waiting = await cacheQueueJob.getWaitingCount();
     // [ℹ] ALT 2
     return {
-        status: 200,
-        body: {
-          job: {
-            job_id:         jobId,
-            state:          state,
-            attemptsMade:   attemptsMade,
-            processedOn:    processedOn,
-            finishedOn:     finishedOn,
-            progress:       progress,
-            reason:         reason,
-            result:         result
-          },
-          cache_general: {
-            failures:       failures,
-            failures_ids:   failures_ids,    
-            completed:      completed,
-            current_ids:    current,
-            active:         active,
-            waiting:        waiting
-          }
-          
+      status: 200,
+      body: {
+        job: {
+          job_id:         jobId,
+          state:          state,
+          attemptsMade:   attemptsMade,
+          processedOn:    processedOn,
+          finishedOn:     finishedOn,
+          progress:       progress,
+          reason:         reason,
+          result:         result
+        },
+        cache_general: {
+          failures:       failures,
+          failures_ids:   failures_ids,    
+          completed:      completed,
+          current_ids:    current,
+          active:         active,
+          waiting:        waiting
         }
       }
     }
+  }
 } 
