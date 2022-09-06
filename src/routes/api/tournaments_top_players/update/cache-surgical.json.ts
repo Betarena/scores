@@ -2,12 +2,9 @@ import { dev } from '$app/env'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
-  HASURA_BETARENA_QUERY_TOP_PLAYERS_T,
-  HASURA_GET_TARGET_LEAGUES,
-  HASURA_GET_TARGET_SEASONS,
-  HASURA_GET_TARGET_TEAMS_AND_PLAYERS,
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_CONST_DATA, 
-  REDIS_CACHE_PREP_GET_TOURNAMENTS_TOP_PLAYERS_DYNAMIC_DATA 
+  REDIS_CACHE_TOP_PLAYERS_ST_DATA_1,
+  REDIS_CACHE_TOP_PLAYERS_ST_DATA_3,
+  REDIS_CACHE_TOP_PLAYERS_ST_DATA_2
 } from '$lib/graphql/tournaments/top_players/query';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
@@ -16,9 +13,7 @@ import fs from 'fs';
 import type { 
   BETARENA_HASURA_top_players_query, 
   BETARENA_HASURA_top_players_season_details_query, 
-  BETARENA_HASURA_top_players_t_query, 
   REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
-  REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response, 
   Top_player_assits, 
   Top_player_goalscorers, 
   Top_player_ratings, 
@@ -27,9 +22,12 @@ import type {
 } from '$lib/models/tournaments/top_players/types';
 import type { 
   BETARENA_HASURA_scores_football_players, 
+  BETARENA_HASURA_scores_football_seasons_details, 
   BETARENA_HASURA_scores_football_teams 
 } from '$lib/models/hasura';
-import type { BACKEND_tournament_standings_surgical_update } from '$lib/models/tournaments/standings/types';
+import type { 
+  BACKEND_tournament_standings_surgical_update 
+} from '$lib/models/tournaments/standings/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -59,7 +57,9 @@ let logs = []
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post({ request }): Promise < unknown > {
+export async function post(
+  { request }
+): Promise < unknown > {
 
   const body = await request.json();
   if (dev) console.log(body);
@@ -84,7 +84,10 @@ export async function post({ request }): Promise < unknown > {
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheData (league_id: number, json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response) {
+async function cacheData (
+  league_id: number, 
+  json_cache: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response
+) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset('tournament_top_players_data', league_id, JSON.stringify(json_cache));
@@ -126,7 +129,9 @@ cacheQueueTourTopPlay.process (async function (job, done) {
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surgical_update) {
+async function surgicalDataUpdate (
+  dataUpdate: BACKEND_tournament_standings_surgical_update
+) {
 
   // [ℹ] debug info
   let t0;
@@ -154,92 +159,23 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   logs.push(`num. of teamsIds: ${dataUpdate.teamsList.length}`);
 
   // [ℹ] [GET] target leagues
+  const response = await getTargetLeagues (leagueIdsArr)
 
-  const VARIABLES_1 = {
-    leagueIds: leagueIdsArr
-  }
-
-  t0 = performance.now();
-  const queryName = "HASURA_GET_TARGET_LEAGUES";
-  const response: BETARENA_HASURA_top_players_query = await initGrapQLClient().request (
-    HASURA_GET_TARGET_LEAGUES,
-    VARIABLES_1
-  );
-  t1 = performance.now();
-  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-
-  // [ℹ] obtain target seasons []
-
-  let seasonIdsArr: number[] = []
-  for (const league of response.scores_football_leagues_dev) {
-    for (const season_main of league.seasons) {
-      seasonIdsArr.push(season_main.id);
-    }
-  }
-  // console.log(teamIdsArr.includes(undefined))
-  seasonIdsArr = seasonIdsArr.filter(element => {
-    return element !== undefined
-  });
-  seasonIdsArr = [...new Set(seasonIdsArr)]
-  logs.push(`num. of seasonIdsArr: ${seasonIdsArr.length}`);
+  // [ℹ] obtain target seasonsId[]
+  const seasonIdsArr = await obtainTargetSeasonIds (response)
 
   // [ℹ] [GET] target seasons / league
+  // [⚠] warning, heavy query, pagination based
+  const response2 = await getTargetSeasonPlayersInfo (seasonIdsArr)
 
-  const VARIABLES_2 = {
-    seasonIds: seasonIdsArr
-  }
-
-  t0 = performance.now();
-  const queryName2 = "HASURA_GET_TARGET_SEASONS";
-  const response2: BETARENA_HASURA_top_players_season_details_query = await initGrapQLClient().request (
-    HASURA_GET_TARGET_SEASONS,
-    VARIABLES_2
-  );
-  t1 = performance.now();
-  logs.push(`${queryName2} completed in: ${(t1 - t0) / 1000} sec`);
-
-  // [ℹ] obtain target teams[] + players[]
-
-  let teamIdsArr: number[] = []
-  let playerIdsArr: number[] = []
-  for (const season of response2.scores_football_seasons_details_dev) {
-    // console.log(`season: ${season.id}`)
-    if (season?.squad !== null) {
-      for (const team of season.squad) {
-        // console.log(`team: ${team.id}`)
-        teamIdsArr.push(team.id)
-        for (const player of team.squad.data) {
-          playerIdsArr.push(player.player_id);
-        }
-      }
-    }
-  }
-  playerIdsArr = playerIdsArr.filter(element => {
-    return element !== undefined
-  });
-  teamIdsArr = teamIdsArr.filter(element => {
-    return element !== undefined
-  });
-  playerIdsArr = [...new Set(playerIdsArr)]
-  teamIdsArr = [...new Set(teamIdsArr)]
-  logs.push(`num. of playerIdsArr: ${playerIdsArr.length}`);
-  logs.push(`num. of teamIdsArr: ${teamIdsArr.length}`);
+  // [ℹ] obtain target teamsId[] + playersId[]
+  const [teamIdsArr, playerIdsArr] = await getTeamsAndPlayersIds (response2)
 
   // [ℹ] [GET] target teams / players
-
-  const VARIABLES_3 = {
-    teamIds: teamIdsArr,
-    playerIds: playerIdsArr
-  }
-
-  t0 = performance.now();
-  const queryName3 = "HASURA_GET_TARGET_TEAMS_AND_PLAYERS";
-  const response3: BETARENA_HASURA_top_players_query = await initGrapQLClient().request (
-    HASURA_GET_TARGET_TEAMS_AND_PLAYERS,
-    VARIABLES_3
+  const response3 = await getTargetTeamsAndPlayers (
+    teamIdsArr, 
+    playerIdsArr
   );
-  t1 = performance.now();
-  logs.push(`${queryName3} completed in: ${(t1 - t0) / 1000} sec`);
 
   /*
     [ℹ] JSON-ARRAY => HASHMAP conversions
@@ -261,8 +197,11 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
 
   const final_obj_array = new Map <number, REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response> ()
 
-  // [ℹ] MAIN
-  // [ℹ] generate per LeagueId
+  /**
+   * [ℹ] MAIN
+   * [ℹ] generate per LeagueId
+  */
+
   for (const iterator of response.scores_football_leagues_dev) {
 
     const finalCacheObj: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = { }
@@ -272,7 +211,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
     // [ℹ] get all seasons for (this) league (tournament-id)
     for (const season_main of iterator.seasons) {
 
-      const season_sub = response2.scores_football_seasons_details_dev
+      const season_sub = response2
         .find(( { id, league_id } ) =>
           league_id === season_main.league_id && 
           id === season_main.id
@@ -555,4 +494,173 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
   }
 
   return;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] OTHER METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function getTargetLeagues (
+  leagueIdsArr: number[]
+): Promise < BETARENA_HASURA_top_players_query > {
+
+  const VARIABLES = {
+    leagueIds: leagueIdsArr
+  }
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_TOP_PLAYERS_ST_DATA_1";
+  const response: BETARENA_HASURA_top_players_query = await initGrapQLClient().request (
+    REDIS_CACHE_TOP_PLAYERS_ST_DATA_1,
+    VARIABLES
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
+}
+
+async function obtainTargetSeasonIds (
+  data: BETARENA_HASURA_top_players_query
+): Promise < number[] > {
+  
+  let seasonIdsArr: number[] = []
+
+  for (const league of data.scores_football_leagues_dev) {
+    for (const season_main of league.seasons) {
+      seasonIdsArr.push(season_main.id);
+    }
+  }
+
+  // console.log(teamIdsArr.includes(undefined))
+  seasonIdsArr = seasonIdsArr.filter(element => {
+    return element !== undefined
+  });
+
+  seasonIdsArr = [...new Set(seasonIdsArr)]
+  logs.push(`num. of seasonIdsArr: ${seasonIdsArr.length}`);
+
+  return seasonIdsArr;
+}
+
+async function getTargetSeasonPlayersInfo (
+  seasonIdsArr: number[]
+): Promise < BETARENA_HASURA_scores_football_seasons_details[] > {
+
+  const limit = 100;
+  let offset = 0;
+  let total_limit;
+
+  let season_details_arr: BETARENA_HASURA_scores_football_seasons_details[] = [] 
+  // const historic_fixtures_map = new Map <number, BETARENA_HASURA_historic_fixtures> ()
+  let counter = 0
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_TOP_PLAYERS_ST_DATA_2";
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+
+    // [🐛] debug
+    // if (dev) console.log(`ℹ variables: ${VARIABLES.limit} ${VARIABLES.offset}`)
+    
+    const VARIABLES = {
+      limit: limit,
+      offset: offset,
+      seasonIds: seasonIdsArr
+    }
+
+    const response: BETARENA_HASURA_top_players_season_details_query = await initGrapQLClient().request (
+      REDIS_CACHE_TOP_PLAYERS_ST_DATA_2,
+      VARIABLES
+    );
+
+    // [🐛] debug
+    /*
+      for (const fixture of response.historic_fixtures_dev) {
+        if (fixture.id === 18535056) {
+          console.log("Here! Found it!")
+        }
+      }
+    */
+
+    season_details_arr = season_details_arr.concat(response.scores_football_seasons_details_dev)
+
+    // [ℹ] exit loop
+    if (offset >= total_limit) {
+      // [🐛] debug
+      if (dev) console.log(`exiting loop!`)
+      logs.push(`total limit: ${total_limit}`)
+      logs.push(`fixtures gathered: ${season_details_arr.length}`)
+      logs.push(`exiting loop after ${counter} iterations`)
+      break;
+    }
+
+    total_limit = response.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
+    offset += limit;
+    counter++
+  }
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return season_details_arr;
+}
+
+async function getTeamsAndPlayersIds (
+  data: BETARENA_HASURA_scores_football_seasons_details[]
+): Promise < [ number[], number[] ] > {
+
+  let teamIdsArr: number[] = []
+  let playerIdsArr: number[] = []
+
+  for (const season of data) {
+    // console.log(`season: ${season.id}`)
+    if (season?.squad !== null) {
+      for (const team of season.squad) {
+        // console.log(`team: ${team.id}`)
+        teamIdsArr.push(team.id)
+        for (const player of team.squad.data) {
+          playerIdsArr.push(player.player_id);
+        }
+      }
+    }
+  }
+
+  playerIdsArr = playerIdsArr.filter(element => {
+    return element !== undefined
+  });
+  teamIdsArr = teamIdsArr.filter(element => {
+    return element !== undefined
+  });
+
+  playerIdsArr = [...new Set(playerIdsArr)]
+  teamIdsArr = [...new Set(teamIdsArr)]
+  logs.push(`num. of playerIdsArr: ${playerIdsArr.length}`);
+  logs.push(`num. of teamIdsArr: ${teamIdsArr.length}`);
+
+  return [
+    teamIdsArr,
+    playerIdsArr
+  ]
+}
+
+async function getTargetTeamsAndPlayers (
+  teamIdsArr:   number[],
+  playerIdsArr: number[]
+): Promise < BETARENA_HASURA_top_players_query >  {
+
+  const VARIABLES = {
+    teamIds: teamIdsArr,
+    playerIds: playerIdsArr
+  }
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_TOP_PLAYERS_ST_DATA_3";
+  const response: BETARENA_HASURA_top_players_query = await initGrapQLClient().request (
+    REDIS_CACHE_TOP_PLAYERS_ST_DATA_3,
+    VARIABLES
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
 }
