@@ -77,8 +77,6 @@
   $: if ($page.routeId != null &&
         !$page.error) {
 
-    if (dev) console.log("Valid Platform Route!")
-
     if ($page.routeId.includes("[lang=lang]")) {
 		  server_side_language = $page.params.lang;
       homepageURL = '/' + $page.params.lang
