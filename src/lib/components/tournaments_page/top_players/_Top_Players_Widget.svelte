@@ -11,6 +11,7 @@
   import { browser, dev } from "$app/env";
   import { afterNavigate } from "$app/navigation";
 
+  import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
   import type { 
@@ -60,7 +61,7 @@
 
   async function widgetInit(): Promise < REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response > {
 
-    if (!$userBetarenaSettings.country_bookmaker || $session?.selectedSeasonID == undefined) {
+    if (!$userBetarenaSettings.country_bookmaker || $sessionStore?.selectedSeasonID == undefined) {
       return
     }
 
@@ -107,7 +108,7 @@
     // limitViewRow = 10;
     
     let checkPlayerViewOptLength = TOP_PLAYERS_DATA.seasons
-      .find( ({ season_id }) => season_id === $session.selectedSeasonID)
+      .find( ({ season_id }) => season_id === $sessionStore.selectedSeasonID)
 
     if (checkPlayerViewOptLength === undefined ||
       checkPlayerViewOptLength === null) {
@@ -230,8 +231,8 @@
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let loadedCurrentSeason: boolean = false;
-  $: if (browser && $session.selectedSeasonID != undefined && !loadedCurrentSeason) {
-    currentSeason = $session.selectedSeasonID;
+  $: if (browser && $sessionStore.selectedSeasonID != undefined && !loadedCurrentSeason) {
+    currentSeason = $sessionStore.selectedSeasonID;
     loadedCurrentSeason = true;
   }
 
@@ -244,7 +245,7 @@
   //   limitViewRow = 10;
   // }
 
-  $: if (browser && $session.selectedSeasonID != undefined) {
+  $: if (browser && $sessionStore.selectedSeasonID != undefined) {
     selectPlayerView(dropdownPlayerViewSelect)
     if (dev) console.log(`${devConsoleTag} 
       Updated season!
@@ -479,7 +480,7 @@
           <!-- [ℹ] rows
           -->
           {#each TOP_PLAYERS_DATA.seasons as season}
-            {#if season.season_id === $session.selectedSeasonID}
+            {#if season.season_id === $sessionStore.selectedSeasonID}
               {#each season[selectedPlayerArray].slice(0, limitViewRow) as data, i}
                 <TopPlayerRow 
                   pos={i+1}

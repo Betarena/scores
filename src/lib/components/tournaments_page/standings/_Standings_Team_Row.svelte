@@ -5,11 +5,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
-
+  
+  import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
   import type { Standing_Team_Total_Away_Home } from "$lib/models/tournaments/standings/types";
-import { session } from "$app/stores";
+  import { session } from "$app/stores";
 
   export let TEAM_DATA:         Standing_Team_Total_Away_Home;
   export let TABLEMOBILEVIEW:   number = undefined;
@@ -353,8 +354,8 @@ import { session } from "$app/stores";
       </p>
     </td>
 
-    {#if $session.selectedSeasonID && currentSeason != undefined}
-      {#if $session.selectedSeasonID === currentSeason}
+    {#if $sessionStore.selectedSeasonID && currentSeason != undefined}
+      {#if $sessionStore.selectedSeasonID === currentSeason}
         <td>
           <p 
             class="s-12 w-500 color-grey">
@@ -524,8 +525,8 @@ import { session } from "$app/stores";
           </p>
         </td>
 
-        {#if $session.selectedSeasonID && currentSeason != undefined}
-          {#if $session.selectedSeasonID === currentSeason}
+        {#if $sessionStore.selectedSeasonID && currentSeason != undefined}
+          {#if $sessionStore.selectedSeasonID === currentSeason}
             <td>
               <p 
                 class="s-12 w-500 color-grey">

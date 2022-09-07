@@ -7,11 +7,12 @@
   // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page, session } from "$app/stores";
+  import { page } from "$app/stores";
   import { browser, dev } from "$app/env";
   import { afterNavigate } from "$app/navigation";
   import { get } from "$lib/api/utils";
 
+  import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
 	import { db_real } from '$lib/firebase/init';
 	import { ref, onValue } from 'firebase/database';
@@ -22,8 +23,7 @@
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
     Rounds_Data, 
     Tournament_Fixture_Odds,
-    Tournament_Season_Fixtures_Odds,
-Weeks_Data
+    Weeks_Data
   } from "$lib/models/tournaments/fixtures_odds/types";
   import type { 
     Cache_Single_SportbookDetails_Data_Response 
@@ -201,14 +201,14 @@ Weeks_Data
 
   async function widgetInit(): Promise < Cache_Single_SportbookDetails_Data_Response > {
 
-    if (!$userBetarenaSettings.country_bookmaker || $session?.selectedSeasonID == undefined) {
+    if (!$userBetarenaSettings.country_bookmaker || $sessionStore?.selectedSeasonID == undefined) {
       return
     }
 
     let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook?geoPos="+userGeo)
 
 		if (FIXTURES_ODDS_T == null || FIXTURES_ODDS_DATA == undefined) {
       if (dev) console.debug('❌ no players_data available!')
@@ -260,7 +260,7 @@ Weeks_Data
 
     const target_season = FIXTURES_ODDS_DATA.seasons
     .find( ({ season_id }) => 
-      season_id === $session.selectedSeasonID
+      season_id === $sessionStore.selectedSeasonID
     );
 
     // [ℹ] validation check (#1)
@@ -449,7 +449,7 @@ Weeks_Data
 
     const target_season = FIXTURES_ODDS_DATA.seasons
     .find( ({ season_id }) => 
-      season_id === $session.selectedSeasonID
+      season_id === $sessionStore.selectedSeasonID
     );
 
     // [ℹ] identify "round" start/end dates
@@ -634,12 +634,12 @@ Weeks_Data
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let loadedCurrentSeason: boolean = false;
-  $: if (browser && $session.selectedSeasonID != undefined && !loadedCurrentSeason) {
-    currentSeason = $session.selectedSeasonID;
+  $: if (browser && $sessionStore.selectedSeasonID != undefined && !loadedCurrentSeason) {
+    currentSeason = $sessionStore.selectedSeasonID;
     loadedCurrentSeason = true;
   }
 
-  $: if (browser && $session.selectedSeasonID != undefined) {
+  $: if (browser && $sessionStore.selectedSeasonID != undefined) {
     selectFixturesOdds()
     if (dev) console.log(`
       ${devConsoleTag} 

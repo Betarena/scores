@@ -8,8 +8,8 @@
 	import { onMount } from 'svelte'
 	import { browser, dev } from '$app/env'
   import { fade } from 'svelte/transition'
-	import { getStores, navigating, page, session, updated } from '$app/stores';
-  // const { session } = getStores();
+	import { getStores, navigating, page, updated } from '$app/stores';
+  import { sessionStore } from '$lib/store/session';
 	// [ℹ] typescript-types;
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types'
 	// [ℹ] image-assets;
@@ -110,7 +110,7 @@
 		if (dev) console.debug('subscribing to email newsletter!')
     // [ℹ]
     // showEmailForm = true;
-    $session.newsletterPopUpShow = true;
+    $sessionStore.newsletterPopUpShow = true;
 	}
 
 	/**
