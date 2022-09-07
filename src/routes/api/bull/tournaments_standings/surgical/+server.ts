@@ -64,7 +64,7 @@ export async function POST({ request }): Promise < unknown > {
     job_id: ${job.id}
   `)
 
-return json({
+  return json({
     job_id: job.id
   })
 }

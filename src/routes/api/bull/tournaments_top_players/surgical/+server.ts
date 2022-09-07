@@ -80,24 +80,18 @@ export async function POST(
       console.log(log)
     }
 
-    return {
-      status: 200,
-      body: { 
-        job_id: cacheTarget + " done!"
-      }
-    }
+    return json({
+      job_id: cacheTarget + " done!"
+    })
   }
   // [ℹ] otherwise prod.
   else {
     // [ℹ] producers [JOBS]
     const job = await cacheQueueTourTopPlay.add(dataSurgical, { timeout: 300000 });
     console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
-    return {
-      status: 200,
-      body: { 
-        job_id: job.id
-      }
-    }
+    return json({
+      job_id: job.id
+    })
   }
 }
 
