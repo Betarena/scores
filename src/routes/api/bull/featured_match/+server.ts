@@ -13,6 +13,7 @@ import {
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
+import { error, json } from '@sveltejs/kit';
 
 import type { 
   Cache_Single_Lang_Featured_Match_Translation_Response, 
@@ -85,7 +86,7 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post(): Promise < unknown > {
+export async function POST(): Promise < unknown > {
 
   // [🐛] debug
   if (dev) console.log(`
@@ -100,13 +101,9 @@ export async function post(): Promise < unknown > {
     job_id: ${job.id}
   `)
 
-  return {
-    status: 200,
-    body: { 
-      job_id: job.id
-    }
-  }
-
+  return json({
+    job_id: job.id
+  })
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

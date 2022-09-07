@@ -4,6 +4,7 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
+import { error, json } from '@sveltejs/kit';
 
 import { 
   GET_LEAGUE_W_STANDINGS_INFO, 
@@ -50,7 +51,7 @@ let logs = []
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post({ request }): Promise < unknown > {
+export async function POST({ request }): Promise < unknown > {
 
   const body = await request.json();
   if (dev) console.log(body);
@@ -63,12 +64,9 @@ export async function post({ request }): Promise < unknown > {
     job_id: ${job.id}
   `)
 
-  return {
-    status: 200,
-    body: { 
-      job_id: job.id
-    }
-  }
+return json({
+    job_id: job.id
+  })
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

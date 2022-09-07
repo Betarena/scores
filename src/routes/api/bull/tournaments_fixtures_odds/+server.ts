@@ -9,6 +9,7 @@ import {
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
+import { error, json } from '@sveltejs/kit';
 
 import type { 
   BETARENA_HASURA_historic_fixtures
@@ -59,7 +60,7 @@ let t1;
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post(): Promise < unknown > {
+export async function POST(): Promise < unknown > {
 
   // [ℹ] dev / local environment
   if (dev) {

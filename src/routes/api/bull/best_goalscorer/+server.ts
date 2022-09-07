@@ -3,6 +3,7 @@ import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
+import { error, json } from '@sveltejs/kit';
 
 import type { 
   Hasura_Complete_GoalScorers_Type, 
@@ -46,7 +47,7 @@ let logs = []
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post(): Promise < unknown > {
+export async function POST (): Promise < unknown > {
 
   // [🐛] debug
   if (dev) console.log(`
@@ -61,12 +62,9 @@ export async function post(): Promise < unknown > {
     job_id: ${job.id}
   `)
 
-  return {
-    status: 200,
-    body: { 
-      job_id: job.id
-    }
-  }
+  return json({
+    job_id: job.id
+  })
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -93,16 +91,6 @@ async function cacheBestGoalscorersLang (lang: string, json_cache: Cache_Single_
   catch (e) {
     console.error('❌ unable to cache best_goalscorer_t for ', lang, e);
   }
-}
-
-async function deleteBestGoalscorersGeoPos () {
-  await redis.del('best_goalscorer_geo')
-  return
-}
-
-async function deleteBestGoalscorersLang () {
-  await redis.del('best_goalscorer_t')
-  return
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

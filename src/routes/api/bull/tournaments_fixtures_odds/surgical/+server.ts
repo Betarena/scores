@@ -3,6 +3,7 @@ import redis from "$lib/redis/init"
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
+import { error, json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
@@ -59,7 +60,7 @@ let t1;
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post (
+export async function POST (
   { request }
 ): Promise < unknown > {
 

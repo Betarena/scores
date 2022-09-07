@@ -9,6 +9,7 @@ import {
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
 import fs from 'fs';
+import { error, json } from '@sveltejs/kit';
 
 import type { 
   BETARENA_HASURA_top_players_query, 
@@ -58,7 +59,7 @@ let logs = []
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function post(
+export async function POST(
   { request }
 ): Promise < unknown > {
 
