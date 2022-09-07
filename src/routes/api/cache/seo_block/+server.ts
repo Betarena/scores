@@ -21,7 +21,7 @@ export async function GET(req: { url: { [x: string]: { get: (arg0: string) => st
     return json(response_cache)
   }
 
-  throw error(400, 'error');
+  return json(null)
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

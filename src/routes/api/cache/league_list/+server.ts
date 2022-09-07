@@ -43,7 +43,7 @@ export async function GET(req: { url: { [x: string]: { get: (arg0: string) => st
     }
   }
 
-  throw error(400, 'error');    
+  return json(null)    
 }
 
 /**

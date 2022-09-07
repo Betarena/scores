@@ -16,7 +16,7 @@ export async function GET (req, res): Promise< any > {
     return json(response_cache)
   }
 
-  throw error(400, 'error');
+  return json(null)
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
