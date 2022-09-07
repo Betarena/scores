@@ -11,7 +11,7 @@ export async function load ({
 
   // [ℹ] critical
   const response_valid_url = await fetch (
-    `/api/pages_and_seo?url=`+url.pathname, 
+    `/api/cache/pages_and_seo?url=`+url.pathname, 
     {
       method: 'GET'
     }
@@ -24,14 +24,14 @@ export async function load ({
       : params.lang
 
   const response_header = await fetch (
-    `/api/navbar?lang=`+urlLang, 
+    `/api/cache/navbar?lang=`+urlLang, 
     {
       method: 'GET'
     }
   ).then(r => r.json())
 
   const response_footer = await fetch (
-    `/api/footer?lang=`+urlLang, 
+    `/api/cache/footer?lang=`+urlLang, 
     {
       method: 'GET',
     }
@@ -44,8 +44,8 @@ export async function load ({
 
   /*
     const urls = [
-      '/api/navbar/cache-data.json?lang='+urlLang,
-      `/api/footer/cache-data.json?lang=`+urlLang
+      '/api/cache/navbar/cache-data.json?lang='+urlLang,
+      `/api/cache/footer/cache-data.json?lang=`+urlLang
     ];
 
     const promises = urls.map((url) =>

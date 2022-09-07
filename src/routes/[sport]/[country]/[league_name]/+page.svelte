@@ -113,7 +113,7 @@
     }
 
     // [ℹ] navigate [options];
-    // invalidate('/api/tournaments/cache-data.json');
+    // invalidate('/api/cache/tournaments/cache-data.json');
     // prefetch(newURL);
     goto(newURL, { replaceState: true })
 	}

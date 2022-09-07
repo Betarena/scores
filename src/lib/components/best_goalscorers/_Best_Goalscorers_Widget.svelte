@@ -50,7 +50,7 @@
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] GET RESPONSE;
-    const response: Cache_Single_Geo_GoalScorers_Translation_Response = await get('api/best_goalscorer?geoPos='+userGeo)
+    const response: Cache_Single_Geo_GoalScorers_Translation_Response = await get('api/cache/best_goalscorer?geoPos='+userGeo)
     // const response: Cache_Single_Geo_GoalScorers_Translation_Response = BEST_GOAL_SCORERS_DATA;
 
     // [ℹ] if response is null;

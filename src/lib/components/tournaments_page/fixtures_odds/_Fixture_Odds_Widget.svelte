@@ -208,7 +208,7 @@
     let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
 
 		if (FIXTURES_ODDS_T == null || FIXTURES_ODDS_DATA == undefined) {
       if (dev) console.debug('❌ no players_data available!')

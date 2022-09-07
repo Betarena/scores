@@ -46,7 +46,7 @@ export async function load ({
 
   /*
     const response_valid_url = await fetch(
-      `/api/pages_and_seo/cache-seo.json?url=`+url.pathname, 
+      `/api/cache/pages_and_seo/cache-seo.json?url=`+url.pathname, 
       {
         method: 'GET'
       }
@@ -73,69 +73,69 @@ export async function load ({
 
   /*
     const response_homepage_seo = await fetch(
-      '/api/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", 
+      '/api/cache/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
     const response_featured_match_seo = await fetch(
-      '/api/featured_match/cache-data.json?lang='+urlLang, 
+      '/api/cache/featured_match/cache-data.json?lang='+urlLang, 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
     const response_featured_betting_sites_seo = await fetch(
-      '/api/featured_betting_sites/cache-data.json?lang='+urlLang, 
+      '/api/cache/featured_betting_sites/cache-data.json?lang='+urlLang, 
       {
         method: 'GET' 
       }
     ).then((r) => r.json());
 
     const response_best_goalscorers_seo = await fetch(
-      '/api/best_goalscorer/cache-data.json?lang='+urlLang, 
+      '/api/cache/best_goalscorer/cache-data.json?lang='+urlLang, 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
     const response_league_list_seo = await fetch(
-      '/api/league_list/cache-data.json?lang='+urlLang, 
+      '/api/cache/league_list/cache-data.json?lang='+urlLang, 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
     const response_leagues_table_seo = await fetch(
-      '/api/leagues_table/cache-data.json?lang='+urlLang, 
+      '/api/cache/leagues_table/cache-data.json?lang='+urlLang, 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
     const response_seo_block_seo = await fetch(
-      '/api/seo_block/cache-data.json?lang='+urlLang, 
+      '/api/cache/seo_block/cache-data.json?lang='+urlLang, 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
     const response_livescores_football = await fetch(
-      '/api/live_scores/cache-seo.json?lang='+urlLang, 
+      '/api/cache/live_scores/cache-seo.json?lang='+urlLang, 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
     const response_livescores_football_leagues = await fetch(
-      '/api/live_scores/cache-data.json', 
+      '/api/cache/live_scores/cache-data.json', 
       {
         method: 'GET'
       }
     ).then((r) => r.json());
 
-    const response_livescores_football_translations = await fetch('/api/live_scores/cache-translations.json', {
+    const response_livescores_football_translations = await fetch('/api/cache/live_scores/cache-translations.json', {
       method: 'GET'
     }).then((r) => r.json());
   */
@@ -166,35 +166,35 @@ export async function load ({
   /*
 
     const response_featured_match: FixtureResponse = fetch(
-      '/api/featured_match/cache-data.json?geoPos='+userGeo, 
+      '/api/cache/featured_match/cache-data.json?geoPos='+userGeo, 
       {
       method: 'GET'
       }
     )
 
     const response_featured_betting_sites: All_SportBook_Details_Data = fetch(
-      '/api/featured_betting_sites/cache-data.json?geoPos='+userGeo, 
+      '/api/cache/featured_betting_sites/cache-data.json?geoPos='+userGeo, 
       {
       method: 'GET'
       }
     )
 
     const response_league_list: Cache_Single_Geo_LeagueList_Translation_Response = fetch(
-      '/api/league_list/cache-data.json?geoPos='+userGeo, 
+      '/api/cache/league_list/cache-data.json?geoPos='+userGeo, 
       {
       method: 'GET'
       }
     )
 
     const response_best_goalscorers: Cache_Single_Geo_GoalScorers_Translation_Response = fetch(
-      '/api/best_goalscorer/cache-data.json?geoPos='+userGeo, 
+      '/api/cache/best_goalscorer/cache-data.json?geoPos='+userGeo, 
       {
       method: 'GET'
       }
     )
 
     const response_leagues_table: Cache_Single_Geo_Leagues_Table_Translation_Response = fetch(
-      '/api/leagues_table/cache-data.json?geoPos='+userGeo, 
+      '/api/cache/leagues_table/cache-data.json?geoPos='+userGeo, 
       {
       method: 'GET'
       }
@@ -211,26 +211,26 @@ export async function load ({
   */
 
   const urls = [
-    '/api/pages_and_seo?lang='+urlLang+"&page=homepage",
-    '/api/featured_match?lang='+urlLang,
-    '/api/featured_betting_sites?lang='+urlLang,
-    '/api/best_goalscorer?lang='+urlLang,
-    '/api/league_list?lang='+urlLang,
-    '/api/leagues_table?lang='+urlLang,
-    '/api/seo_block?lang='+urlLang,
+    '/api/cache/pages_and_seo?lang='+urlLang+"&page=homepage",
+    '/api/cache/featured_match?lang='+urlLang,
+    '/api/cache/featured_betting_sites?lang='+urlLang,
+    '/api/cache/best_goalscorer?lang='+urlLang,
+    '/api/cache/league_list?lang='+urlLang,
+    '/api/cache/leagues_table?lang='+urlLang,
+    '/api/cache/seo_block?lang='+urlLang,
     // [ℹ] page validation check;
-    `/api/pages_and_seo?url=`+url.pathname,
+    `/api/cache/pages_and_seo?url=`+url.pathname,
     // [ℹ] livescores
-    '/api/live_scores?lang='+urlLang, 
-    '/api/live_scores?type=geo', 
-    '/api/live_scores?type=translations',
+    '/api/cache/live_scores?lang='+urlLang, 
+    '/api/cache/live_scores?type=geo', 
+    '/api/cache/live_scores?type=translations',
     
     // [ℹ] geo-based cache load
-    '/api/featured_match?geoPos='+'en', 
-    '/api/featured_betting_sites?geoPos='+'en', 
-    '/api/league_list?geoPos='+'en', 
-    '/api/best_goalscorer?geoPos='+'en', 
-    '/api/leagues_table?geoPos='+'en', 
+    '/api/cache/featured_match?geoPos='+'en', 
+    '/api/cache/featured_betting_sites?geoPos='+'en', 
+    '/api/cache/league_list?geoPos='+'en', 
+    '/api/cache/best_goalscorer?geoPos='+'en', 
+    '/api/cache/leagues_table?geoPos='+'en', 
   ];
 
   const promises = urls.map((url) =>

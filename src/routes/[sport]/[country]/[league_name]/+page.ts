@@ -52,7 +52,7 @@ export async function load({
    * [ℹ] IMPORTANT;
    */
 
-  const response_valid_url = await fetch(`/api/pages_and_seo?url=` + url.pathname, {
+  const response_valid_url = await fetch(`/api/cache/pages_and_seo?url=` + url.pathname, {
       method: 'GET'
     })
     .then((r) => r.json());
@@ -69,11 +69,11 @@ export async function load({
    * [ℹ] Loading of (this) page [tournaments] SEO-READY data; 
    */
 
-  const response_tournaments_seo: Cache_Single_Tournaments_SEO_Translation_Response = await fetch(`/api/pages_and_seo?lang=` + urlLang + "&page=tournaments", {
+  const response_tournaments_seo: Cache_Single_Tournaments_SEO_Translation_Response = await fetch(`/api/cache/pages_and_seo?lang=` + urlLang + "&page=tournaments", {
     method: 'GET'
   }).then((r) => r.json());
 
-  const response_tournaments_page_info: Cache_Single_Tournaments_Data_Page_Translation_Response = await fetch(`/api/pages_and_seo?url=` + url.pathname + "&page=tournaments", {
+  const response_tournaments_page_info: Cache_Single_Tournaments_Data_Page_Translation_Response = await fetch(`/api/cache/pages_and_seo?url=` + url.pathname + "&page=tournaments", {
     method: 'GET'
   }).then((r) => r.json());
 
@@ -106,37 +106,37 @@ export async function load({
    * [ℹ] widgets data gather cache fetch 
    */
 
-  const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/tournaments_league_info?url=` + url.pathname, {
+  const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(`/api/cache/tournaments_league_info?url=` + url.pathname, {
     method: 'GET'
   }).then((r) => r.json());
 
   const league_id = response_tournaments_page_info.data.tournament_id;
 
-  const response_standings_translations: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = await fetch(`/api/tournaments_standings?lang=` + urlLang, {
+  const response_standings_translations: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = await fetch(`/api/cache/tournaments_standings?lang=` + urlLang, {
     method: 'GET'
   }).then((r) => r.json());
 
   // [ℹ] standings-widget cache data is dependent on the LEAGUE-ID;
-  const response_standings_data: Cache_Single_Tournaments_League_Standings_Info_Data_Response = await fetch(`/api/tournaments_standings?league_id=` + league_id, {
+  const response_standings_data: Cache_Single_Tournaments_League_Standings_Info_Data_Response = await fetch(`/api/cache/tournaments_standings?league_id=` + league_id, {
     method: 'GET'
   }).then((r) => r.json());
 
-  const response_top_players_translations: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = await fetch(`/api/tournaments_top_players?lang=` + urlLang, {
+  const response_top_players_translations: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = await fetch(`/api/cache/tournaments_top_players?lang=` + urlLang, {
     method: 'GET'
   }).then((r) => r.json());
 
   // [ℹ] top-players-widget cache data is dependent on the LEAGUE-ID;
-  const response_top_players_data: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = await fetch(`/api/tournaments_top_players?league_id=` + league_id, {
+  const response_top_players_data: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = await fetch(`/api/cache/tournaments_top_players?league_id=` + league_id, {
     method: 'GET'
   }).then((r) => r.json());
 
   // [ℹ] fixtures_odds
-  const response_fixtures_odds_translations: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = await fetch(`/api/tournaments_fixtures_odds?lang=` + urlLang, {
+  const response_fixtures_odds_translations: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = await fetch(`/api/cache/tournaments_fixtures_odds?lang=` + urlLang, {
     method: 'GET'
   }).then((r) => r.json());
 
   // [ℹ] fixtures-odds-widget cache data is dependent on the LEAGUE-ID;
-  const response_fixtures_odds_data: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response = await fetch(`/api/tournaments_fixtures_odds?league_id=` + league_id, {
+  const response_fixtures_odds_data: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response = await fetch(`/api/cache/tournaments_fixtures_odds?league_id=` + league_id, {
     method: 'GET'
   }).then((r) => r.json());
 
