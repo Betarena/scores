@@ -137,13 +137,13 @@
     <div>
       {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang != 'en'}
         <a
-          sveltekit:prefetch
+          data-sveltekit-prefetch
           href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}>
           <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}</p>
         </a>
       {:else}
         <a
-          sveltekit:prefetch
+          data-sveltekit-prefetch
           href={$page.url.origin}>
           <p>{$page.url.origin}</p>
         </a>

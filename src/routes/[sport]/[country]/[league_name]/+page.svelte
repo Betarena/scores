@@ -216,7 +216,7 @@
     class='row-space-start m-b-20'>
 
     <a 
-      sveltekit:prefetch
+      data-sveltekit-prefetch
       href="/{$page.params.lang}/{$page.params.sport}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
@@ -232,7 +232,7 @@
     />
 
     <a 
-      sveltekit:prefetch
+      data-sveltekit-prefetch
       href="/{$page.params.lang}/{$page.params.sport}/{$page.params.country}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>

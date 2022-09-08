@@ -170,7 +170,7 @@
           class='m-b-16'
           on:click={() => reloadPage() }>
 
-          <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+          <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
             <img src={logo_full} alt="betarena-logo" title={logoLink} />
           </a>
           
@@ -390,7 +390,7 @@
               id='brand'
               class='m-b-25'
               on:click={() => reloadPage() }>
-              <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+              <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
                 <img src={logo_full} alt="betarena-logo" title={logoLink} />
               </a>
             </div>
@@ -584,7 +584,7 @@
             id='brand'
             class='m-b-12' 
             on:click={() => reloadPage() }>
-            <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
               <img src={logo_full} alt="betarena-logo" title={logoLink} />
             </a>
           </div>
