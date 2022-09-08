@@ -614,7 +614,12 @@ async function injectWeeksRounds (
       continue;
     }
 
-    for (let season_fix_odds of value?.seasons) {
+    if (value.seasons == null) {
+      console.log(`league_id: ${key} | season is null`)
+      continue;
+    }
+
+    for (let season_fix_odds of value.seasons) {
 
       const seasonId = season_fix_odds.season_id
       const weeks_rounds_data = season_week_round_ranges_map.get(seasonId)
