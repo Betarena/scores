@@ -173,6 +173,11 @@ async function surgicalDataUpdate (
     console.log("dataUpdate undefined!")
     return;
   }
+  if (dataUpdate.fixturesList === undefined) {
+    logs.push(`dataUpdate.fixturesList is fixturesList`)
+    console.log("dataUpdate.leagueSeasons undefined!")
+    return;
+  }
 
   // const leagueIdsArr = dataUpdate.leagueSeasons.map(a => a.leagueId); // not present in body
   const fixturesIdsArr = dataUpdate?.fixturesList;
