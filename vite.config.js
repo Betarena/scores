@@ -8,7 +8,7 @@ import { chunkSplitPlugin } from 'vite-plugin-chunk-split'; // https://github.co
 const config = {
   plugins: [
     viteCompression(),
-    chunkSplitPlugin(),
+    // chunkSplitPlugin(),
     // progress(),  // not-working
     // c.compress() // note-working
     sveltekit()
