@@ -8,7 +8,7 @@
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
-  import { dev } from "$app/env";
+  import { dev } from '$app/environment';
   
 	// [ℹ] external `exports` imports;
 	import { getUserLocation } from "$lib/geoJs/init"

@@ -8,7 +8,7 @@
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
   import { page, session } from "$app/stores";
-  import { browser, dev } from "$app/env";
+  import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
 
   import { sessionStore } from '$lib/store/session';
