@@ -3,7 +3,7 @@
 ==================== -->
 
 <script lang="ts">
-  import { dev } from "$app/env";
+  import { dev } from '$app/environment';
   import { onMount } from "svelte";
 
   import close from './assets/close.svg'
@@ -297,7 +297,7 @@
                   -->
                   {#each data.top_geo_leagues as item}
                     <a 
-                      sveltekit:prefetch
+                      data-sveltekit-prefetch
                       href={item.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                       <div
                         class='top-league-container row-space-start'>
@@ -394,7 +394,7 @@
                               {#if league.country_id.toString().toLowerCase() === item.country_id.toString().toLowerCase() && 
                                 selectedCountryLeagueId === item.country_id}
                                   <a 
-                                    sveltekit:prefetch
+                                    data-sveltekit-prefetch
                                     href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                                     <div
                                         class='country-league-sub-container row-space-start'>
@@ -456,7 +456,7 @@
                   -->
                   {#each leagueSearchData.slice(0, fullLeagueListDisplayNum) as item}
                     <a 
-                      sveltekit:prefetch
+                      data-sveltekit-prefetch
                       href={item.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                       <div
                         class='top-league-container-search row-space-start'>
@@ -538,7 +538,7 @@
                             league.country_id.toString().toLowerCase() === item.country_id.toString().toLowerCase() &&
                             selectedCountryLeagueId === item.country_id}
                             <a 
-                              sveltekit:prefetch
+                              data-sveltekit-prefetch
                               href={league.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}>
                               <div
                                 class='country-league-sub-container row-space-start'>

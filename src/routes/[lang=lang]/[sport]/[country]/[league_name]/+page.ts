@@ -3,7 +3,7 @@ import {
 } from '@sveltejs/kit';
 import {
   dev
-} from '$app/env';
+} from '$app/environment';
 import type {
   PageLoad
 } from './$types';

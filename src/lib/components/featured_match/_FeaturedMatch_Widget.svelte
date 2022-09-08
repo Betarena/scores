@@ -8,7 +8,7 @@
 	import { onMount } from 'svelte';
 	import { page } from '$app/stores'
 	import { fade } from 'svelte/transition';
-	import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/environment';
 
 	// [ℹ] external modules imports;
 	import ColorThief from 'colorthief/dist/color-thief.mjs';

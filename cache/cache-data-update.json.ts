@@ -1,6 +1,6 @@
 
 // [ℹ] import $app `modules`;
-import { dev } from '$app/env'
+import { dev } from '$app/environment'
 
 // [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"

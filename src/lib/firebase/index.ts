@@ -3,7 +3,7 @@
  * ------------------
  * & methods;
  */
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 import { ref, get, child } from 'firebase/database';
 
 import { db_real } from './init';

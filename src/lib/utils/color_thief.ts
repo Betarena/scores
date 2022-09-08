@@ -2,7 +2,7 @@
 // COLOR-THIEF MODULE
 // ~~~~~~~~~~~~~~~~~~~~~
 
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 import ColorThief from 'colorthief/dist/color-thief.mjs';
 
 // [ℹ] declaring a new instance of `ColorThief`;

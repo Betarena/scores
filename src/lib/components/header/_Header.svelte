@@ -10,7 +10,7 @@
    * [ℹ] svelte-kit
   */
 	import { page } from '$app/stores';
-	import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
@@ -380,7 +380,7 @@
       <!-- [ℹ] content here
       -->
       <a
-        sveltekit:prefetch
+        data-sveltekit-prefetch
         href={$page.url.origin + '/' + item}>
         <p>{$page.url.origin + '/' + item}</p>
       </a>
@@ -388,7 +388,7 @@
       <!-- [ℹ] content here 
       -->
       <a
-        sveltekit:prefetch
+        data-sveltekit-prefetch
         href={$page.url.origin}>
         <p>{$page.url.origin}</p>
       </a>
@@ -426,7 +426,7 @@
         {#if mobileExclusive}
           <!-- [ℹ] brand-logo-betarena-for-mobile-ONLY -->
           <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
-            <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
               <img src={logo_mini} alt="betarena-logo" width="103px" height="30px" />
             </a>
           </div>
@@ -434,7 +434,7 @@
         {:else}
           <!-- [ℹ] brand-logo-betarena-for-desktop-ONLY -->
           <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
-            <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
               <img
                 class="m-r-30"
                 src={logo_full}
@@ -968,7 +968,7 @@
             >
               <!-- [ℹ] homepage -->
               <div class="side-nav-row">
-                <a sveltekit:prefetch href='/'>
+                <a data-sveltekit-prefetch href='/'>
                   <p class="color-white s-14">
                     {HEADER_TRANSLATION_DATA.scores_header_translations_dev.homepage}
                   </p>

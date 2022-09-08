@@ -1,5 +1,5 @@
 // [ℹ] import $app `modules`
-import { dev } from '$app/env'
+import { dev } from '$app/environment'
 import type { Cache_Single_Homepage_SEO_Translation_Response, Cache_Single_Tournaments_Data_Page_Translation_Response, Cache_Single_Tournaments_SEO_Translation_Response } from '$lib/models/pages_and_seo/types';
 // [ℹ] import necessary LIBRARIES & MODULES;
 import redis from "$lib/redis/init"

@@ -1,4 +1,4 @@
-import { dev } from '$app/env'
+import { dev } from '$app/environment'
 import { error, json } from '@sveltejs/kit';
 
 import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';

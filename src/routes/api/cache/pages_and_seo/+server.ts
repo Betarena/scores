@@ -1,4 +1,4 @@
-import { dev } from '$app/env'
+import { dev } from '$app/environment'
 import { error, json } from '@sveltejs/kit';
 
 import redis from "$lib/redis/init"

@@ -6,7 +6,7 @@
 <script lang="ts">
 	// [ℹ] svelte-imports;
 	import { onMount } from 'svelte'
-	import { browser, dev } from '$app/env'
+	import { browser, dev } from '$app/environment'
   import { fade } from 'svelte/transition'
 	import { getStores, navigating, page, updated } from '$app/stores';
   import { sessionStore } from '$lib/store/session';
@@ -170,7 +170,7 @@
           class='m-b-16'
           on:click={() => reloadPage() }>
 
-          <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+          <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
             <img src={logo_full} alt="betarena-logo" title={logoLink} />
           </a>
           
@@ -390,7 +390,7 @@
               id='brand'
               class='m-b-25'
               on:click={() => reloadPage() }>
-              <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+              <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
                 <img src={logo_full} alt="betarena-logo" title={logoLink} />
               </a>
             </div>
@@ -584,7 +584,7 @@
             id='brand'
             class='m-b-12' 
             on:click={() => reloadPage() }>
-            <a sveltekit:prefetch href={homepageURL} title={logoLink}>
+            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
               <img src={logo_full} alt="betarena-logo" title={logoLink} />
             </a>
           </div>

@@ -5,7 +5,7 @@
 
 <script lang="ts">
 	import { getStores, navigating, page, updated } from '$app/stores';
-  import { browser, dev } from '$app/env';
+  import { browser, dev } from '$app/environment';
   import { onMount } from 'svelte';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -137,13 +137,13 @@
     <div>
       {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang != 'en'}
         <a
-          sveltekit:prefetch
+          data-sveltekit-prefetch
           href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}>
           <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}</p>
         </a>
       {:else}
         <a
-          sveltekit:prefetch
+          data-sveltekit-prefetch
           href={$page.url.origin}>
           <p>{$page.url.origin}</p>
         </a>
