@@ -7,10 +7,11 @@
   // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page, session } from "$app/stores";
+  import { page } from "$app/stores";
   import { browser, dev } from "$app/env";
   import { afterNavigate } from "$app/navigation";
-
+  
+  import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
   import { get } from "$lib/api/utils";
   import { getImageBgColor } from "$lib/utils/color_thief";
@@ -65,7 +66,7 @@
 
     // [ℹ] get response [lang] [obtained from preload()]
     // [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
 
     // await new Promise(resolve => setTimeout(resolve, 5000000000));
     // const response: Cache_Single_Geo_Leagues_Table_Translation_Response = LEAGUES_TABLE_SCORES_DATA;
@@ -111,7 +112,7 @@
 
     // [ℹ] select 1st league/season
     dropdownSeasonSelect = LEAGUE_INFO_SEO_DATA.data.seasons[0]
-    $session.selectedSeasonID = dropdownSeasonSelect.id;
+    $sessionStore.selectedSeasonID = dropdownSeasonSelect.id;
 
     // [ℹ] number of clubs check;
     for (const season of LEAGUE_INFO_SEO_DATA.data.seasons) {
@@ -168,7 +169,7 @@
 
   function selectSeason (season) {
     dropdownSeasonSelect = season;
-    $session.selectedSeasonID = season.id;
+    $sessionStore.selectedSeasonID = season.id;
     validateSeasonProgressDate (dropdownSeasonSelect.start_date, dropdownSeasonSelect.end_date)
   }
 

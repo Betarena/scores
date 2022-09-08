@@ -9,12 +9,11 @@
   /**
    * [ℹ] svelte-kit
   */
-	import { getStores, navigating, page, session, updated } from '$app/stores';
-	import { amp, browser, dev, mode, prerendering } from '$app/env';
-	import { goto, invalidate, prefetch, prefetchRoutes } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { browser, dev } from '$app/env';
+	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
-	import { fade, fly } from 'svelte/transition';
-	// const { session } = getStores();
+	import { fly } from 'svelte/transition';
 
   /**
    * [ℹ] stroes
@@ -116,8 +115,6 @@
   // [ℹ] IMPORTANT - LANG SELECTION [SERVER-SIDE-RENDER]
 	$: if ($page.routeId != null &&
         !$page.error) {
-
-    if (dev) console.log("Valid Platform Route!")
 
     if ($page.routeId.includes("[lang=lang]")) {
 		  server_side_language = $page.params.lang;
@@ -296,8 +293,6 @@
 
     if (userGeo !== null) {
       // [ℹ] store as session;
-      // $session.geojs = userGeoResponse
-
       userBetarenaSettings.setGeoJs(userGeoResponse)
       // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
       const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 

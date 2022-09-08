@@ -1,11 +1,6 @@
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
-import viteCompression from 'vite-plugin-compression';  // https://github.com/vbenjs/vite-plugin-compression
-// import * as c from 'vite-plugin-compress'; // https://github.com/alloc/vite-plugin-compress
-// import progress from 'vite-plugin-progress' // https://github.com/jeddygong/vite-plugin-progress
-import { chunkSplitPlugin } from 'vite-plugin-chunk-split'; // https://github.com/sanyuan0704/vite-plugin-chunk-split
-
 /** @type {import('@sveltejs/kit').Config} */
 const config = {
 
@@ -18,38 +13,12 @@ const config = {
 		adapter: node(),
 
     /**
-     * [ℹ] SVELTEKIT-MIDDLEWARE-SUPPORT;
-    */
-    vite: {
-
-      plugins: [
-        viteCompression(),
-        chunkSplitPlugin()
-        // progress(),  // not-working
-        // c.compress() // note-working
-      ],
-
-      /**
-       * [ℹ] https://github.com/sveltejs/kit/issues/1571
-       * [ℹ] https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
-       * [ℹ] https://www.reddit.com/r/sveltejs/comments/tih8sx/pagespeed_lighthouse_reduce_unused_javascript/
-       * [ℹ] https://github.com/sveltejs/kit/issues/1632
-      */
-      build: {
-        rollupOptions: {
-          output: {
-            manualChunks: undefined
-          }
-        }
-      }
-    },
-
-    /**
      * [ℹ] CSP Support - [PROD / HEROKU ONLY]
      * https://developers.google.com/tag-platform/tag-manager/web/csp [GOOGLE-CSP]
      * https://yandex.com/support/metrica/code/install-counter-csp.html [YANDEX-CSP]
      * [https://github.com/sveltejs/kit/issues/4434]
     */
+
     /**
       csp: {
         mode: 'hash', // ... hash | nonce | auto

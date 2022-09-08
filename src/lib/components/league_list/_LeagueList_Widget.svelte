@@ -40,7 +40,7 @@
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] GET RESPONSE;
-    const response: REDIS_CACHE_SINGLE_league_list_geo_data_response = await get('api/league_list/cache-data.json?geoPos='+userGeo)
+    const response: REDIS_CACHE_SINGLE_league_list_geo_data_response = await get('api/cache/league_list?geoPos='+userGeo)
     // const response: Cache_Single_Geo_LeagueList_Translation_Response = LEAGUE_LIST_WIDGET_DATA
 
     // [ℹ] if response is null;

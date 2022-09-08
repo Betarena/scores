@@ -4,10 +4,9 @@
 =================== -->
 
 <script lang="ts">
-	import { getStores, navigating, page, session, updated } from '$app/stores';
+	import { getStores, navigating, page, updated } from '$app/stores';
   import { fade } from 'svelte/transition';
-
-  // const { session } = getStores();
+  import { sessionStore } from '$lib/store/session';
 
   // ... immediately update the data with the lang;
 	let server_side_language: string = 'en';
@@ -41,10 +40,10 @@
 =================== -->
 
 <!-- ... email-submission-send-grid-form ... -->
-{#if $session.newsletterPopUpShow}
+{#if $sessionStore.newsletterPopUpShow}
   <div 
     id='background-modal-blur'
-    on:click={() => $session.newsletterPopUpShow = false}
+    on:click={() => $sessionStore.newsletterPopUpShow = false}
     in:fade />
 
   <div
@@ -55,7 +54,7 @@
       class='cursor-pointer'
       src="assets/svg/close.svg" 
       alt="close-svg" 
-      on:click={() => $session.newsletterPopUpShow = false} />
+      on:click={() => $sessionStore.newsletterPopUpShow = false} />
     <!-- ... IFRAME LANGUAGE CONDITION ... -->
     {#if server_side_language == 'en'}
       <!-- ... EN ... -->

@@ -11,6 +11,7 @@
   import { browser, dev } from "$app/env";
   import { afterNavigate } from "$app/navigation";
 
+  import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
   import { get } from "$lib/api/utils";
   import { getImageBgColor } from "$lib/utils/color_thief";
@@ -73,7 +74,7 @@
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
     // [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/tournaments_sportbook/cache-data.json?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
 
     // [ℹ] display NO DATA PLACEHOLDER
 		if (response == null || response == undefined) {
@@ -207,8 +208,8 @@
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let loadedCurrentSeason: boolean = false;
-  $: if (browser && $session.selectedSeasonID != undefined && !loadedCurrentSeason) {
-    currentSeason = $session.selectedSeasonID;
+  $: if (browser && $sessionStore.selectedSeasonID != undefined && !loadedCurrentSeason) {
+    currentSeason = $sessionStore.selectedSeasonID;
     loadedCurrentSeason = true;
   }
 
@@ -217,7 +218,7 @@
     // [ℹ] check season exists / contains data
     let seasonCheckLength = STANDINGS_DATA.seasons
       .find( ({ season_id }) => 
-        season_id === $session.selectedSeasonID
+        season_id === $sessionStore.selectedSeasonID
       )?.total?.length;
     noStandingsBool = 
       seasonCheckLength == 0 ||
@@ -485,7 +486,7 @@
               <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               - ->
               {#each STANDINGS_DATA.seasons as season}
-                {#if season.season_id === $session.selectedSeasonID}
+                {#if season.season_id === $sessionStore.selectedSeasonID}
                   {#each season.teams as team}
                     <StandingsTeamRow TEAM_DATA={team} VIEW={selectedOpt} />
                   {/each}
@@ -754,8 +755,8 @@
                   </div>
                 </th>
 
-                {#if $session.selectedSeasonID && currentSeason != undefined}
-                  {#if $session.selectedSeasonID === currentSeason}
+                {#if $sessionStore.selectedSeasonID && currentSeason != undefined}
+                  {#if $sessionStore.selectedSeasonID === currentSeason}
                     <th>
                       <p
                         class="s-12 color-grey">
@@ -791,7 +792,7 @@
               <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
               {#each STANDINGS_DATA.seasons as season}
-                {#if season.season_id === $session.selectedSeasonID}
+                {#if season.season_id === $sessionStore.selectedSeasonID}
                   {#each season[selectedOpt] as team}
                     <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
                   {/each}
@@ -1145,8 +1146,8 @@
                     </p>
                   </th>
 
-                  {#if $session.selectedSeasonID && currentSeason != undefined}
-                    {#if $session.selectedSeasonID === currentSeason}
+                  {#if $sessionStore.selectedSeasonID && currentSeason != undefined}
+                    {#if $sessionStore.selectedSeasonID === currentSeason}
                       <th>
                         <p
                           class="s-12 color-grey">
@@ -1179,7 +1180,7 @@
               <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
               {#each STANDINGS_DATA.seasons as season}
-                {#if season.season_id === $session.selectedSeasonID}
+                {#if season.season_id === $sessionStore.selectedSeasonID}
                   {#each season[selectedOpt] as team}
                     <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
                   {/each}
