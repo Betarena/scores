@@ -5,7 +5,7 @@
 
 <script lang="ts">
 	import { getStores, navigating, page, updated } from '$app/stores';
-  import { browser, dev } from '$app/env';
+  import { browser, dev } from '$app/environment';
   import { onMount } from 'svelte';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';

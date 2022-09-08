@@ -10,7 +10,7 @@
    * [ℹ] svelte-kit
   */
 	import { page } from '$app/stores';
-	import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';

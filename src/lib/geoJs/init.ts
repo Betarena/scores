@@ -3,7 +3,7 @@
  * ------------------
  * & methods;
  */
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 import { get } from '$lib/api/utils';
 
 import type { GeoJsResponse } from '$lib/models/geojs-types';

@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 import type { PageLoad } from './$types';
 
 import { get } from '$lib/api/utils';

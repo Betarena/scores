@@ -5,7 +5,7 @@
 
 
 <script lang="ts">
-	import { browser, dev } from '$app/env';
+	import { browser, dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import SvelteSeo from 'svelte-seo';

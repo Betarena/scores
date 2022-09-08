@@ -6,7 +6,7 @@
 <script lang="ts">
 	// [ℹ] svelte-imports;
 	import { onMount } from 'svelte'
-	import { browser, dev } from '$app/env'
+	import { browser, dev } from '$app/environment'
   import { fade } from 'svelte/transition'
 	import { getStores, navigating, page, updated } from '$app/stores';
   import { sessionStore } from '$lib/store/session';

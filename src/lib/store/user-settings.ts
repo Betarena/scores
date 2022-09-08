@@ -2,7 +2,7 @@
 // ... contains the TRANSLATION LANG SELECTED by the USER;
 // ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 import { writable } from 'svelte/store';
 import type { GeoJsResponse } from '$lib/models/geojs-types';
 

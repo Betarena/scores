@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit';
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 
 /** 
  * @type {import('./$types').PageLoad} 

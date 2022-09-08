@@ -1,6 +1,6 @@
 import {
   dev
-} from '$app/env';
+} from '$app/environment';
 import {
   error,
   json

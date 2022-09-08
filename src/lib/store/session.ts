@@ -1,4 +1,4 @@
-import { dev } from '$app/env';
+import { dev } from '$app/environment';
 import { writable } from 'svelte/store';
 
 export interface Platform_Session {

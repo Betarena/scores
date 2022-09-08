@@ -3,7 +3,7 @@
 </svelte:head>
 <script>
 	import { getStores, navigating, page, session, updated } from '$app/stores';
-  import { browser, dev } from '$app/env';
+  import { browser, dev } from '$app/environment';
   import { onMount } from 'svelte';
 
   // export let page

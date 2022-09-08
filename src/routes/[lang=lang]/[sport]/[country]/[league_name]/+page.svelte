@@ -8,7 +8,7 @@
 
   import { goto, invalidate, prefetch } from '$app/navigation';
 	import { page } from '$app/stores';
-  import { browser } from '$app/env';
+  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import type { PageData } from './$types';
 
