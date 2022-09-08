@@ -6,7 +6,7 @@ import Bull from 'bull';
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
 */
-export async function get (
+export async function GET (
   req: { 
     url: {     
       [x: string]: { 
