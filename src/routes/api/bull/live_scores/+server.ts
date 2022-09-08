@@ -45,6 +45,7 @@ const CQ_Home_Livescores_All = new Bull(
     settings: settings
   }
 );
+const cacheQueueProcessName = "CQ_Home_Livescores_All"
 const cacheTarget = "REDIS CACHE | homepage livescores"
 let logs = []
 
@@ -62,7 +63,7 @@ export async function POST(): Promise < any > {
   const job = await CQ_Home_Livescores_All.add({});
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
   return json({

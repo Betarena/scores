@@ -45,6 +45,7 @@ const cacheQueuePageSeo = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueuePageSeo"
 const cacheTarget = "REDIS CACHE | navbar"
 let logs = []
 
@@ -64,10 +65,10 @@ export async function POST(): Promise < unknown > {
   const job = await cacheQueuePageSeo.add({});
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
-return json({
+  return json({
     job_id: job.id
   })
 }

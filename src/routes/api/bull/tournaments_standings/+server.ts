@@ -39,6 +39,7 @@ const cacheQueueTourStandAll = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueTourStandAll"
 const cacheTarget = "REDIS CACHE | tournament standings (all)"
 let logs = []
 
@@ -58,7 +59,7 @@ export async function POST(): Promise < unknown > {
   const job = await cacheQueueTourStandAll.add({});
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
   return json({

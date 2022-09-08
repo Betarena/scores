@@ -50,6 +50,7 @@ const cacheQueueFeaturedMatch = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueFeaturedMatch"
 const cacheTarget = "REDIS CACHE | featured match"
 let logs = []
 
@@ -98,7 +99,7 @@ export async function POST(): Promise < unknown > {
   const job = await cacheQueueFeaturedMatch.add({}, { timeout: 180000 });
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
   return json({

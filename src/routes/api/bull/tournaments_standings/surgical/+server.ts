@@ -44,6 +44,7 @@ const cacheQueueTourStand = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueTourStand"
 const cacheTarget = "REDIS CACHE | tournament standings surgical"
 let logs = []
 
@@ -61,7 +62,7 @@ export async function POST({ request }): Promise < unknown > {
   const job = await cacheQueueTourStand.add(dataSurgical, { timeout: 300000 });
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
   return json({

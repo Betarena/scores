@@ -47,6 +47,7 @@ const cacheQueueLeaguesList = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueLeaguesList"
 const cacheTarget = "REDIS CACHE | league_list"
 let logs = []
 
@@ -66,7 +67,7 @@ export async function POST(): Promise < unknown > {
   const job = await cacheQueueLeaguesList.add({});
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
 return json({

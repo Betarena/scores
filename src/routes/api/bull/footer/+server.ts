@@ -32,6 +32,7 @@ const cacheQueueFooter = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueFooter"
 const cacheTarget = "REDIS CACHE | footer"
 let logs = []
 
@@ -51,7 +52,7 @@ export async function POST(): Promise < unknown > {
   const job = await cacheQueueFooter.add({});
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
   return json({

@@ -32,6 +32,7 @@ const cacheQueueSeoBlock = new Bull (
     settings: settings
   }
 );
+const cacheQueueProcessName = "cacheQueueSeoBlock"
 const cacheTarget = "REDIS CACHE | seo_block"
 let logs = []
 
@@ -51,10 +52,10 @@ export async function POST(): Promise < unknown > {
   const job = await cacheQueueSeoBlock.add({}, { timeout: 180000 });
 
   console.log(`
-    job_id: ${job.id}
+    ${cacheQueueProcessName} -> job_id: ${job.id}
   `)
 
-return json({
+  return json({
     job_id: job.id
   })
 
