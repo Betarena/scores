@@ -57,22 +57,44 @@ let logs = []
 
 export async function POST(): Promise < unknown > {
 
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  // [ℹ] producers [JOBS]
-  const job = await cacheQueueLeaguesList.add({});
+    // [ℹ] get KEY platform translations
+    const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
-  console.log(`
-    ${cacheQueueProcessName} -> job_id: ${job.id}
-  `)
+    // [ℹ] get-all-exisitng-lang-translations;
+    const langArray: string [] = response.scores_hreflang_dev
+      .filter(a => a.link)         /* filter for NOT "null" */
+      .map(a => a.link)            /* map each LANG */ 
 
-return json({
-    job_id: job.id
-  })
+    // [ℹ] push "EN"
+    langArray.push('en')
+
+    await leagueListGeoDataGeneration()
+    await leagueListLangDataGeneration(langArray)
+
+    for (const log of logs) {
+      console.log(log)
+    }
+
+    return json({
+      job_id: cacheTarget + " done!"
+    })
+  }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await cacheQueueLeaguesList.add({});
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return json({
+      job_id: job.id
+    })
+  }
 
 }
 

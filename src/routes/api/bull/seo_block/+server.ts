@@ -42,23 +42,32 @@ let logs = []
 
 export async function POST(): Promise < unknown > {
 
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  // [ℹ] producers [JOBS]
-  const job = await cacheQueueSeoBlock.add({}, { timeout: 180000 });
+    await main();
 
-  console.log(`
-    ${cacheQueueProcessName} -> job_id: ${job.id}
-  `)
+    for (const log of logs) {
+      console.log(log)
+    }
 
-  return json({
-    job_id: job.id
-  })
-
+    return json({
+      job_id: cacheTarget + " done!"
+    })
+  }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await cacheQueueSeoBlock.add({});
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return json({
+      job_id: job.id
+    })
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

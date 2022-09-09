@@ -55,22 +55,47 @@ let logs = []
 
 export async function POST(): Promise < unknown > {
 
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  // [ℹ] producers [JOBS]
-  const job = await cacheQueuePageSeo.add({});
+    // [ℹ] get HASURA-DB response;
+    const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
 
-  console.log(`
-    ${cacheQueueProcessName} -> job_id: ${job.id}
-  `)
+    // [ℹ] get-all-exisitng-lang-translations;
+    const langArray: string [] = response.scores_hreflang_dev
+      .filter(a => a.link)         /* filter for NOT "null" */
+      .map(a => a.link)            /* map each LANG */ 
 
-  return json({
-    job_id: job.id
-  })
+    // [ℹ] push "EN"
+    langArray.push('en')
+    
+    await sitemapGeneratorAndCaching(response)
+    await homepageSEOandCaching(langArray, response)
+    await tournamentSEOandCaching(langArray, response)
+    await tournamentPageAndCaching(response)
+
+    for (const log of logs) {
+      console.log(log)
+    }
+
+    return json({
+      job_id: cacheTarget + " done!"
+    })
+  }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await cacheQueuePageSeo.add({});
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return json({
+      job_id: job.id
+    })
+  }
+
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

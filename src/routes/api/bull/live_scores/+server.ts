@@ -52,30 +52,52 @@ let logs = []
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
  */
-export async function POST(): Promise < any > {
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
+export async function POST(): Promise < unknown > {
 
-  // [ℹ] producers [JOBS]
-  const job = await CQ_Home_Livescores_All.add({});
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  console.log(`
-    ${cacheQueueProcessName} -> job_id: ${job.id}
-  `)
+    // [ℹ] cache generation #1
+    await deleteLiveScores()
+    const response: unknown = await getLeaguesOrder()
+    cacheLeaguesOrder(response);
 
-  return json({
-    job_id: job.id
-  })
+    // [ℹ] cache generation #2
+    await main_gen_2()
+
+    // [ℹ] cache generation #3
+    await deleteTranslations()
+    const response3: unknown = await getTranslations()
+    cacheTranslations(response3);
+
+    for (const log of logs) {
+      console.log(log)
+    }
+
+    return json({
+      job_id: cacheTarget + " done!"
+    })
+  }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await CQ_Home_Livescores_All.add({});
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return json({
+      job_id: job.id
+    })
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheLeaguesOrder(json_cache: any) {
+async function cacheLeaguesOrder(json_cache: unknown) {
   try {
     await redis.set('live_scores_leagues', JSON.stringify(json_cache));
   } catch (e) {
@@ -92,13 +114,10 @@ async function cacheFeaturedBettingSiteGeoPos(geoPos: string, json_cache: LiveSc
   }
 }
 
-async function cacheTranslations(json_cache: any) {
-  // ... TRY;
+async function cacheTranslations(json_cache: unknown) {
   try {
-    //... store (cache) featured_match response,
     await redis.set('live_scores_football_translations', JSON.stringify(json_cache));
   }
-  // ... CATCH, ERROR;
   catch (e) {
     console.log("Unable to cache", e);
   }
@@ -173,13 +192,13 @@ CQ_Home_Livescores_All.process(async function (job, done) {
 
 async function getLeaguesOrder(): Promise < unknown > {
 
-  var leagueSort = {};
+  const leagueSort = {};
 
   return initGrapQLClient().request(GET_LIVESCORES_LEAGUES).then(x => {
-    let leagues = x.leagues_filtered_country_dev;
-    for (var k = 0; k < leagues.length; k++) {
+    const leagues = x.leagues_filtered_country_dev;
+    for (let k = 0; k < leagues.length; k++) {
       if (leagues[k].lang == null) continue;
-      for (var i = 0; i < leagues[k].leagues.length; i++) {
+      for (let i = 0; i < leagues[k].leagues.length; i++) {
         leagues[k].leagues[i].index = i;
       }
       leagueSort[leagues[k].lang] = leagues[k].leagues;
@@ -193,18 +212,18 @@ async function getLeaguesOrder(): Promise < unknown > {
 
 async function main_gen_2() {
 
-  let langs: string[] = ['br', 'en', 'es', 'it', 'pt', 'ro'];
+  const langs: string[] = ['br', 'en', 'es', 'it', 'pt', 'ro'];
 
   await deleteLiveScores_2()
   const response: LiveScore_SEO_Game[] = await getLiveScores()
 
   // Aggregate games by language
-  for (var l in langs) {
-    let lang: string = langs[l];
-    let langDate: LiveScore_SEO_Game_Scoped_Lang[] = [];
+  for (const l in langs) {
+    const lang: string = langs[l];
+    const langDate: LiveScore_SEO_Game_Scoped_Lang[] = [];
 
-    for (var g in response) {
-      var game = response[g];
+    for (const g in response) {
+      const game = response[g];
       const newGame: LiveScore_SEO_Game_Scoped_Lang = {
         visitorteam: game.visitorteam,
         localteam: game.localteam,

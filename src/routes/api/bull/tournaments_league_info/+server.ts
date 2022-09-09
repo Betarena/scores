@@ -45,22 +45,34 @@ let logs = []
 
 export async function POST(): Promise < unknown > {
 
-  // [🐛] debug
-  if (dev) console.log(`
-    ℹ ${cacheTarget} 
-    at: ${new Date().toDateString()}
-  `);
+  // [ℹ] dev / local environment
+  if (dev) {
+    console.log(`
+      ${cacheTarget} 
+      at: ${new Date().toDateString()}
+    `);
 
-  // [ℹ] producers [JOBS]
-  const job = await cacheQueueTourInfo.add({});
+    await sportbookDetailsGeneration();
+    await leagueInfoGeneration();
 
-  console.log(`
-    ${cacheQueueProcessName} -> job_id: ${job.id}
-  `)
+    for (const log of logs) {
+      console.log(log)
+    }
 
-  return json({
-    job_id: job.id
-  })
+    return json({
+      job_id: cacheTarget + " done!"
+    })
+  }
+  // [ℹ] otherwise prod.
+  else {
+    // [ℹ] producers [JOBS]
+    const job = await cacheQueueTourInfo.add({});
+    console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
+    return json({
+      job_id: job.id
+    })
+  }
+
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -113,7 +125,6 @@ cacheQueueTourInfo.process (async function (job, done) {
   */
 
   const t0 = performance.now();
-  // await surgicalDataUpdate()
   await sportbookDetailsGeneration();
   await leagueInfoGeneration();
   const t1 = performance.now();
