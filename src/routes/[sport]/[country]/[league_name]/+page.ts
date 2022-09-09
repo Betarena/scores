@@ -45,8 +45,6 @@ export async function load({
     league_name
   } = params
 
-  console.log(params)
-
   /**
    * [ℹ] Ensure URL Check Existance; 
    * [ℹ] IMPORTANT;

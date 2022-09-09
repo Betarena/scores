@@ -108,7 +108,7 @@ async function cacheLeaguesOrder(json_cache: unknown) {
 async function cacheFeaturedBettingSiteGeoPos(geoPos: string, json_cache: LiveScore_SEO_Game_Scoped_Lang[]) {
   try {
     await redis.hset('live_scores', geoPos, JSON.stringify(json_cache));
-    console.log("Caching live_scores" + geoPos);
+    logs.push("Caching live_scores: " + geoPos)
   } catch (e) {
     console.log("Unable to cache", geoPos, e);
   }

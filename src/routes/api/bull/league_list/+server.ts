@@ -233,14 +233,11 @@ async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_
 
   const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
 
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ tournament_map is generating!`)
   const tournament_map = new Map()
   for (const t of response.scores_tournaments_dev) {
     tournament_map.set(t.tournament_id, t)
   }
-  // [🐛] debug [prod-handy]
-  console.log(`ℹ tournament_map generated! With size: ${tournament_map.size}`)
+  logs.push(`tournament_map generated! With size: ${tournament_map.size}`)
 
   const finalObj: Array < REDIS_CACHE_SINGLE_league_list_geo_data_response > = []
 
@@ -319,8 +316,6 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
     lang_country_map.set(t.lang, t)
   }
   t1 = performance.now();
-  console.log(`lang_country_map generated with size: ${lang_country_map.size}`)
-
   logs.push(`lang_country_map generated with size: ${lang_country_map.size}`)
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
