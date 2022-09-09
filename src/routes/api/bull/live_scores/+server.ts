@@ -195,7 +195,7 @@ async function getLeaguesOrder(): Promise < unknown > {
   const leagueSort = {};
 
   return initGrapQLClient().request(GET_LIVESCORES_LEAGUES).then(x => {
-    const leagues = x.leagues_filtered_country_dev;
+    const leagues = x.leagues_filtered_country;
     for (let k = 0; k < leagues.length; k++) {
       if (leagues[k].lang == null) continue;
       for (let i = 0; i < leagues[k].leagues.length; i++) {
@@ -249,6 +249,6 @@ async function getLiveScores(): Promise < LiveScore_SEO_Game[] > {
 
 async function getTranslations(): Promise < any > {
   return initGrapQLClient().request(GET_LIVESCORES_TRANSLATIONS).then(x => {
-    return x.scores_livescore_football_translations_dev;
+    return x.scores_livescore_football_translations;
   });
 }

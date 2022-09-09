@@ -43,7 +43,7 @@ export interface Cache_Single_Lang_Featured_Betting_Site_Translation_Response {
  * [ℹ] Featured Betting Sites HASURA DB
 */
 export interface Scores_Featured_Betting_Sites_Hasura {
-  scores_featured_betting_sites_translations_dev: {
+  scores_featured_betting_sites_translations: {
     lang: string
     translations: {
       register_cta: string
@@ -55,7 +55,7 @@ export interface Scores_Featured_Betting_Sites_Hasura {
 }
 
 export interface Scores_Featured_Betting_Sites_Data {
-    scores_featured_betting_sites_translations_dev: {
+    scores_featured_betting_sites_translations: {
         lang: string
         translations: {
             register_cta: string

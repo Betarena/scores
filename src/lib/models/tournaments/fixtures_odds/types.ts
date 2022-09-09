@@ -20,15 +20,15 @@ import type {
 */
 
 export interface BETARENA_HASURA_fixtures_odds_query {
-  historic_fixtures_dev_aggregate:                              BETARENA_HASURA_historic_fixtures_aggregate
-  historic_fixtures_dev:                                        BETARENA_HASURA_historic_fixtures[]
+  historic_fixtures_aggregate:                              BETARENA_HASURA_historic_fixtures_aggregate
+  historic_fixtures:                                        BETARENA_HASURA_historic_fixtures[]
   
-  scores_football_seasons_details_dev:                          BETARENA_HASURA_scores_football_seasons_details[]
+  scores_football_seasons_details:                          BETARENA_HASURA_scores_football_seasons_details[]
   
-  scores_widget_football_fixtures_odds_translations_dev:        BETARENA_HASURA_scores_widget_football_fixtures_odds_translations[]
-  scores_general_translations_dev:                              BETARENA_HASURA_scores_general_translations[]
-  scores_livescore_football_translations_dev:                   BETARENA_HASURA_scores_livescore_football_translations[]
-  sportsbook_details_dev:                                       BETARENA_HASURA_sportsbook_details[]
+  scores_widget_football_fixtures_odds_translations:        BETARENA_HASURA_scores_widget_football_fixtures_odds_translations[]
+  scores_general_translations:                              BETARENA_HASURA_scores_general_translations[]
+  scores_livescore_football_translations:                   BETARENA_HASURA_scores_livescore_football_translations[]
+  sportsbook_details:                                       BETARENA_HASURA_sportsbook_details[]
 }
 
 /**

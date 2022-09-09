@@ -168,7 +168,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
 
   const final_obj_array: Cache_Single_Tournaments_League_Standings_Info_Data_Response[] = []
   // [ℹ] generate per league
-  for (const iterator of response.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues) {
 
     const finalCacheObj: Cache_Single_Tournaments_League_Standings_Info_Data_Response = { }
     finalCacheObj.seasons = []
@@ -179,12 +179,12 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
     const season_target = dataUpdate.leagueSeasons.find(( { leagueId } ) => leagueId == iterator.id).seasonId;
 
     // TODO: make use of the "current_standings" instead
-    const season_standings = response.scores_football_standings_dev
+    const season_standings = response.scores_football_standings
       .find(( { id } ) =>
         id === iterator.id
       );
 
-    // const season_standings_hist = response.scores_football_standings_history_dev
+    // const season_standings_hist = response.scores_football_standings_history
     //   .find(( { id, season_id } ) => 
     //     id === iterator.id && 
     //     season_id === season_target
@@ -225,7 +225,7 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
       const team_color_code =
       season_team.result == null && season_team.result == undefined
         ? 'transparent'
-        : response.color_codes_league_standings_positions_dev.find(( { sports } ) => sports === "football").color_codes[season_team.result.toString()]
+        : response.color_codes_league_standings_positions.find(( { sports } ) => sports === "football").color_codes[season_team.result.toString()]
 
       season_color_codes[team_pos] = team_color_code
     }
@@ -239,15 +239,15 @@ async function surgicalDataUpdate (dataUpdate: BACKEND_tournament_standings_surg
       }
 
       // [ℹ] proceed with team info generation (update)
-      const team_logo: string = response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
+      const team_logo: string = response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
       const team_name: string =
-        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
-        response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
+        response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
+        response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
           ? season_team?.team_name
-          : response.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
+          : response.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name
 
-      const target_team_stat      = response.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
-      const target_team_stat_hist = response.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_target )
+      const target_team_stat      = response.scores_team_statistics.find( ({ team_id }) => team_id === season_team.team_id)
+      const target_team_stat_hist = response.scores_team_statistics_history.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_target )
 
       const team_winP: number = 
         target_team_stat?.winning_probability == null || 
@@ -522,14 +522,14 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
   let teamIdsArr: number[] = []
 
   // [ℹ] obtain all target teams []
-  for (const iterator of response.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues) {
     for (const season_main of iterator.seasons) {
 
       let season_standings_teams_list: StandingsDatum[];
 
       if (season_main.is_current_season) {
 
-        const season_standings = response.scores_football_standings_dev
+        const season_standings = response.scores_football_standings
           .find(( { id } ) =>
             id === iterator.id
           );
@@ -542,7 +542,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
         
       } else {
 
-        const season_standings_hist = response.scores_football_standings_history_dev
+        const season_standings_hist = response.scores_football_standings_history
         .find(( { id, season_id } ) => 
           id === season_main.league_id && 
           season_id === season_main.id
@@ -586,7 +586,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
   */
 
   // [ℹ] generate standings data per / league_id
-  for (const iterator of response.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues) {
 
     const finalCacheObj: Cache_Single_Tournaments_League_Standings_Info_Data_Response = { }
     finalCacheObj.seasons = []
@@ -601,7 +601,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
       // [ℹ] check if for "current-season"
       if (season_main.is_current_season) {
 
-        const season_standings = response.scores_football_standings_dev
+        const season_standings = response.scores_football_standings
           .find(( { id } ) =>
             id === iterator.id
           );
@@ -619,7 +619,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
 
       } else {
 
-        const season_standings_hist = response.scores_football_standings_history_dev
+        const season_standings_hist = response.scores_football_standings_history
           .find(( { id, season_id } ) => 
             id === season_main.league_id && 
             season_id === season_main.id
@@ -648,7 +648,7 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
         const team_color_code =
         season_team.result == null && season_team.result == undefined
           ? 'transparent'
-          : response.color_codes_league_standings_positions_dev.find(( { sports } ) => sports === "football").color_codes[season_team.result.toString()]
+          : response.color_codes_league_standings_positions.find(( { sports } ) => sports === "football").color_codes[season_team.result.toString()]
 
         season_color_codes[team_pos] = team_color_code
       }
@@ -734,15 +734,15 @@ async function surgicalDataUpdate_2 (dataUpdate: BACKEND_tournament_standings_su
       // [ℹ] generate (this season) team view objects (total | home | away);
       for (const season_team of season_standings_teams_list) {
 
-        const team_logo: string = response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
+        const team_logo: string = response_team.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.logo_path;
         const team_name: string =
-          response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
-          response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
+          response_team.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name == null ||
+          response_team.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name == undefined
             ? season_team?.team_name
-            : response_team.scores_football_teams_dev.find(( { id } ) => id === season_team.team_id)?.data?.name
+            : response_team.scores_football_teams.find(( { id } ) => id === season_team.team_id)?.data?.name
 
-        const target_team_stat = response_team.scores_team_statistics_dev.find( ({ team_id }) => team_id === season_team.team_id)
-        const target_team_stat_hist = response_team.scores_team_statistics_history_dev.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_main.id )
+        const target_team_stat = response_team.scores_team_statistics.find( ({ team_id }) => team_id === season_team.team_id)
+        const target_team_stat_hist = response_team.scores_team_statistics_history.find( ({ team_id, season_id }) => team_id === season_team.team_id && season_id === season_main.id )
 
         let target_team_stats: BETARENA_HASURA_scores_team_statistics_history; // [ℹ] not correct type
         if (seasonCurrent) {

@@ -16,13 +16,13 @@ export const REDIS_CACHE_TOP_PLAYERS_DATA_1 = gql`
 
     # [ℹ] pagination based
 
-    scores_football_seasons_details_dev_aggregate {
+    scores_football_seasons_details_aggregate {
       aggregate {
         totalCount: count
       }
     }
 
-    scores_football_seasons_details_dev (
+    scores_football_seasons_details (
       order_by: {
         id: asc
       },
@@ -52,7 +52,7 @@ export const REDIS_CACHE_TOP_PLAYERS_DATA_2 = gql`
 
     # [ℹ] unecessary to paginate
     
-    scores_football_leagues_dev {
+    scores_football_leagues {
       country
       data
       name
@@ -61,13 +61,13 @@ export const REDIS_CACHE_TOP_PLAYERS_DATA_2 = gql`
       seasons
     }
 
-    scores_football_teams_dev {
+    scores_football_teams {
       data
       id
       name
     }
 
-    scores_football_players_dev {
+    scores_football_players {
       data
       player_id
       common_name
@@ -86,15 +86,15 @@ export const REDIS_CACHE_TOP_PLAYERS_DATA_3 = gql`
     (ttl: 300) 
   {
     # [ℹ] unecessary to paginate
-    scores_widget_top_players_translations_dev { 
+    scores_widget_top_players_translations { 
       lang
       data
     }
-    player_positions_translations_dev {
+    player_positions_translations {
       lang
       position
     }
-    scores_general_translations_dev {
+    scores_general_translations {
       lang
       widgets_no_data_available
     }
@@ -120,7 +120,7 @@ export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_1 = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_leagues_dev (
+    scores_football_leagues (
       where: {
         id: {
           _in: $leagueIds
@@ -156,7 +156,7 @@ export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_2 = gql`
 
     # [ℹ] pagination based
 
-    scores_football_seasons_details_dev_aggregate (
+    scores_football_seasons_details_aggregate (
       where: {
         id: {
           _in: $seasonIds
@@ -168,7 +168,7 @@ export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_2 = gql`
       }
     }
 
-    scores_football_seasons_details_dev (
+    scores_football_seasons_details (
       order_by: {
         id: asc
       },
@@ -203,7 +203,7 @@ export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_3 = gql`
     @cached 
     (ttl: 300)
   {
-    scores_football_teams_dev (
+    scores_football_teams (
       where: {
         id: {
           _in: $teamIds
@@ -215,7 +215,7 @@ export const REDIS_CACHE_TOP_PLAYERS_ST_DATA_3 = gql`
       name
     }
 
-    scores_football_players_dev (
+    scores_football_players (
       where: {
         player_id: {
           _in: $playerIds

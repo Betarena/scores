@@ -101,7 +101,7 @@ export async function POST(): Promise < unknown > {
     const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
     // [ℹ] get-all-exisitng-lang-translations;
-    const langArray: string [] = response.scores_hreflang_dev
+    const langArray: string [] = response.scores_hreflang
       .filter(a => a.link)         /* filter for NOT "null" */
       .map(a => a.link)            /* map each LANG */ 
 
@@ -180,7 +180,7 @@ cacheQueueFeaturedMatch.process (async function (job, done) {
   const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
 
   // [ℹ] get-all-exisitng-lang-translations;
-  const langArray: string [] = response.scores_hreflang_dev
+  const langArray: string [] = response.scores_hreflang
     .filter(a => a.link)         /* filter for NOT "null" */
     .map(a => a.link)            /* map each LANG */ 
 

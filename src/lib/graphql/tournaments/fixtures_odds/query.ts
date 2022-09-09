@@ -20,7 +20,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
 
     # [ℹ] pagination based
 
-    historic_fixtures_dev_aggregate (
+    historic_fixtures_aggregate (
       where: {
         fixture_day: {
           _gte: $start_date, 
@@ -33,7 +33,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
       }
     }
 
-    historic_fixtures_dev (
+    historic_fixtures (
       order_by: {
         fixture_day: asc,
         id: asc
@@ -80,7 +80,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_2 = gql`
     # [ℹ] unecessary to paginate
     # [ℹ] limited to target data
     
-    scores_football_seasons_details_dev (
+    scores_football_seasons_details (
       where: {
         id: {
           _in: $seasonIds
@@ -106,15 +106,15 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_3 = gql`
     (ttl: 300) 
   {
     # [ℹ] unecessary to paginate
-    scores_widget_football_fixtures_odds_translations_dev {
+    scores_widget_football_fixtures_odds_translations {
       lang
       translations
     }
-    scores_livescore_football_translations_dev {
+    scores_livescore_football_translations {
       lang
       status_abv
     }
-    scores_general_translations_dev {
+    scores_general_translations {
       lang
       countries
       widgets_no_data_available
@@ -146,7 +146,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_ST_DATA_1 = gql`
     # [ℹ] unecessary to paginate
     # [ℹ] limited to target data
     
-    historic_fixtures_dev (
+    historic_fixtures (
       where: {
         id: {
           _in: $fixtureIds
