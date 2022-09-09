@@ -187,8 +187,8 @@ async function surgicalDataUpdate (
 
   const hasura_data = await getTargetHistoricFixtures (fixturesIdsArr)
 
-  const leagueIdsArr = hasura_data?.historic_fixtures.map(a => a.league_id);
-  const seasonIdsArr = hasura_data?.historic_fixtures.map(a => a.data?.season_id);
+  const leagueIdsArr = hasura_data?.historic_fixtures_dev.map(a => a.league_id);
+  const seasonIdsArr = hasura_data?.historic_fixtures_dev.map(a => a.data?.season_id);
 
   // [🐛] debug
   if (leagueIdsArr.includes(null)) {
@@ -329,7 +329,7 @@ async function breakdownWeeksRounds (
 
   for (const seasonId of seasonIdsArr) {
 
-    const t_season = season_details_data.scores_football_seasons_details
+    const t_season = season_details_data.scores_football_seasons_details_dev
       .find( ({id}) => id === seasonId);
 
     if (t_season == undefined) {
@@ -415,7 +415,7 @@ async function checkForLiveFixtures (
   const historicFixturesMap = new Map <number, BETARENA_HASURA_historic_fixtures>( );
 
   // [ℹ] generate map
-  for (const hist_fixture of data?.historic_fixtures) {
+  for (const hist_fixture of data.historic_fixtures_dev) {
     const fixture_id = parseInt(hist_fixture?.id.toString())
     historicFixturesMap.set(fixture_id, hist_fixture)
   }
