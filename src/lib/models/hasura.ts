@@ -1243,3 +1243,19 @@ export interface BETARENA_HASURA_scores_livescore_football_translations {
   lang?:       string;
   status_abv?: Array<string[]>;
 }
+
+
+/**
+ * [ℹ] HASURA: widget_league_info_translations (&)
+*/
+export interface BETARENA_HASURA_widget_league_info_translations {
+  lang?: string;
+  data?: WidgetLeagueInfo2Data;
+} export interface WidgetLeagueInfo2Data {
+  clubs?:                 string;
+  goals?:                 string;
+  league_info?:           string;
+  average_goals?:         string;
+  win_percentage?:        string;
+  average_player_rating?: string;
+}

@@ -27,6 +27,7 @@
   import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
   import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
   import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
+  import LeagueInfoWidget2 from '$lib/components/tournaments_page/league_info_2/_LeagueInfo_Widget_2.svelte';
 
   /*
     [v2]
@@ -269,6 +270,7 @@
     <div 
       class='grid-display-column'>
       <svelte:component this={TopPlayersWidget} {TOP_PLAYERS_T} {TOP_PLAYERS_DATA} />
+      <svelte:component this={LeagueInfoWidget2} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
     </div>
 
   </div>
@@ -308,6 +310,7 @@
   div#widget-grid-display {
 		display: grid;
     margin-top: 24px;
+    align-items: start;
   }
 
   div.grid-display-column {

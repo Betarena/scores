@@ -1,7 +1,7 @@
 import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_LEAGUE_INFO_FULL_DATA } from '$lib/graphql/tournaments/league-info/query';
+import { GET_LEAGUE_INFO_FULL_DATA, REDIS_CACHE_LEAGUE_INFO_DATA_1, REDIS_CACHE_LEAGUE_INFO_DATA_2 } from '$lib/graphql/tournaments/league-info/query';
 import { removeDiacritics } from '$lib/utils/languages';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
@@ -149,8 +149,7 @@ cacheQueueTourInfo.process (async function (job, done) {
 
 async function sportbookDetailsGeneration () {
   
-  // [ℹ] get HASURA-DB response;
-	const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
+	const response = await getSportbookDetails ();
 
   let finalCacheObj: Cache_Single_SportbookDetails_Data_Response = {
     geoPos: undefined
@@ -182,12 +181,7 @@ async function sportbookDetailsGeneration () {
 
 async function leagueInfoGeneration () {
   
-  const t0 = performance.now();
-  const queryName = "GET_LEAGUE_INFO_FULL_DATA";
-	const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request(GET_LEAGUE_INFO_FULL_DATA);
-  const t1 = performance.now();
-  if (dev) console.log(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+	const response = await getLeagueInfoData();
 
   // const cacheRedisObj = {}
   // deleteCacheTournamentsPageLeagueInfoData()
@@ -235,10 +229,24 @@ async function leagueInfoGeneration () {
     finalCacheObj.lang = lang;
 
     const targetWidgetTranslation = response.scores_widget_league_info_translations
-      .find(( { lang } ) => 
-        lang === iterator.lang
-      ).data
-    finalCacheObj.data.translation = targetWidgetTranslation
+    .find(( { lang } ) => 
+      lang === iterator.lang
+    ).data
+    // [ℹ] league-info-2 widget data
+    const leagueInfoWidget2Translations = response.widget_league_info_translations
+    .find(( { lang } ) => 
+      lang === iterator.lang
+    )
+
+    finalCacheObj.data.translation = {
+      ...targetWidgetTranslation,
+      clubs:                 leagueInfoWidget2Translations?.data?.clubs,
+      goals:                 leagueInfoWidget2Translations?.data?.goals,
+      league_info:           leagueInfoWidget2Translations?.data?.league_info,
+      average_goals:         leagueInfoWidget2Translations?.data?.average_goals,
+      win_percentage:        leagueInfoWidget2Translations?.data?.win_percentage,
+      average_player_rating: leagueInfoWidget2Translations?.data?.average_player_rating,
+    }
 
     const league_target = response.scores_football_leagues
       .find(( { name, id } ) => 
@@ -273,6 +281,24 @@ async function leagueInfoGeneration () {
       const start_date = seasonExtraInfo?.start_date
       const end_date = seasonExtraInfo?.end_date
 
+      // [ℹ] league-info-2 widget data
+      const num_goals = seasonExtraInfo?.data_stats === null 
+        ? null
+        : seasonExtraInfo?.data_stats?.number_of_goals
+      ;
+      const avg_goals = seasonExtraInfo?.data_stats === null 
+        ? null
+        : seasonExtraInfo?.data_stats?.goals_scored?.all
+      ;
+      const win_p = seasonExtraInfo?.data_stats === null 
+        ? null
+        : seasonExtraInfo?.data_stats?.win_percentage?.all
+      ;
+      const avg_player_r = seasonExtraInfo?.data_stats === null 
+        ? null
+        : seasonExtraInfo?.data_stats?.avg_player_rating
+      ;
+
       // [ℹ] omit seasons with missing data:
       // if (num_clubs != null && 
       //     start_date != null && 
@@ -281,9 +307,14 @@ async function leagueInfoGeneration () {
         finalCacheObj.data.seasons.push(
           {
             ...season_main,
-            number_of_clubs: num_clubs,
-            start_date: start_date,
-            end_date: end_date
+            number_of_clubs:  num_clubs,
+            start_date:       start_date,
+            end_date:         end_date,
+            // [ℹ] league-info-2 widget data
+            goals:            num_goals,
+            avg_goals:        avg_goals,
+            win_p:            win_p,
+            avg_player_r:     avg_player_r
           }
         )
 
@@ -301,4 +332,36 @@ async function leagueInfoGeneration () {
   // await cacheTournamentsPageLeagueInfoData(cacheRedisObj);
 
   return;
+}
+
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] OTHER METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function getSportbookDetails (
+): Promise < BETARENA_HASURA_league_info_query > {
+  
+    const t0 = performance.now();
+    const queryName = "REDIS_CACHE_LEAGUE_INFO_DATA_2";
+    const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request (
+      REDIS_CACHE_LEAGUE_INFO_DATA_2
+    );
+    const t1 = performance.now();
+    logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+  
+    return response;
+  }
+
+async function getLeagueInfoData (
+): Promise < BETARENA_HASURA_league_info_query > {
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_LEAGUE_INFO_DATA_1";
+	const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request (
+    REDIS_CACHE_LEAGUE_INFO_DATA_1
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
 }
