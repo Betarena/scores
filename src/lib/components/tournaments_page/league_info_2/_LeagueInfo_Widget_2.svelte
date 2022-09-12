@@ -26,10 +26,14 @@
   import arrow_up from './assets/arrow-up.svg';
   import check_league from './assets/check-league.svg';
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  COMPONENT VARIABLES
+  // ~~~~~~~~~~~~~~~~~~~~~
+
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
 	let refresh_data:             any = undefined;                // [ℹ] refresh-data value speed;
-  let noTopPlayersBool:         any = false;                    // [ℹ] identifies the noTopPlayersBool boolean;
+  let noWidgetData:         any = false;                    // [ℹ] identifies the noWidgetData boolean;
   let dropdownPlayerViewSelect: string = "rating";              // [ℹ] selected TOP PLAYER VIEW;
   let playerArrayConst:         string = "top_players_";
   let selectedPlayerArray:      string = "top_players_rating";
@@ -65,16 +69,16 @@
 
 		if (LEAGUE_INFO_SEO_DATA == null || LEAGUE_INFO_SEO_DATA == undefined) {
       if (dev) console.debug('❌ no players_data available!')
-      noTopPlayersBool = true;
+      noWidgetData = true;
 			return;
 		}
     // [ℹ] otherwise, revert back to DATA AVAILABLE;
     else {
-      noTopPlayersBool = false;
+      noWidgetData = false;
     }
 
     // [🐛] debug TEST TOP PLAYERS MISSING DATA
-    // noTopPlayersBool = true;
+    // noWidgetData = true;
     // loaded = false;
 
     loaded = true;
@@ -137,7 +141,7 @@
     if (dev) console.log("League_HERE")
     refresh = true
     loaded = false
-    noTopPlayersBool = false
+    noWidgetData = false
     // widgetInit()
     setTimeout(async() => {
       refresh = false
@@ -158,28 +162,12 @@
     loadedCurrentSeason = true;
   }
 
-  // $: if (trueLengthOfArray > 10) {
-  //   console.log(`${devConsoleTag} 
-  //     Detected players length change!
-  //   `)
-  //   displayShowMore = true;
-  //   staticViewRow = 10;
-  //   limitViewRow = 10;
-  // }
-
   $: if (browser && $sessionStore.selectedSeasonID != undefined) {
     // selectPlayerView(dropdownPlayerViewSelect)
     if (dev) console.log(`${devConsoleTag} 
       Updated season!
     `)
   }
-
-  // $: if (dev) console.log(`${devConsoleTag}
-  //     trueLengthOfArray: ${trueLengthOfArray}
-  //     selectedPlayerArray: ${selectedPlayerArray}
-  //     limitViewRow: ${limitViewRow}
-  //     staticViewRow: ${staticViewRow}
-  //   `)
 
 </script>
 
@@ -194,7 +182,7 @@
   -->
   {#if !loaded}
     <div 
-      id="seo-league-table-site-box">
+      id="seo-widget-box">
       <h1>{LEAGUE_INFO_SEO_DATA.data.name}</h1>
       <p>{LEAGUE_INFO_SEO_DATA.data.country}</p>
     </div>
@@ -203,7 +191,7 @@
   <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
   {#if 
-    noTopPlayersBool && 
+    noWidgetData && 
     !loaded}
 
     <!-- [ℹ] title of the widget 
@@ -258,18 +246,16 @@
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if 
-    !noTopPlayersBool &&
+    !noWidgetData &&
     !refresh &&
     browser && 
     $userBetarenaSettings.country_bookmaker && 
     !diasbleDev}
 
-    <LeagueInfoWidget_2ContentLoader />
-
     <!-- [ℹ] promise is pending 
     -->
     {#await widgetInit()}
-      <!-- <LeagueInfoWidget_2ContentLoader /> -->
+      <LeagueInfoWidget_2ContentLoader />
     <!-- [ℹ] promise was fulfilled
     -->
     {:then data}
@@ -391,20 +377,16 @@
 
   /* [ℹ] OTHER STYLE / CSS */
 
-  #background-area-close {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    right: 0;
-    left: 0;
-    height: 100%;
-    width: 100%;
-    z-index: 1000;
-  }
+  /* NaN */
 
-  .color-primary {
-    color: #f5620f !important;
-  }
+  /* [ℹ] SEO WIDGET DATA */
+  
+  #seo-widget-box {
+		position: absolute;
+		z-index: -100;
+		top: -9999px;
+		left: -9999px;
+	}
 
   /* [ℹ] NO DATA WIDGET STYLE / CSS */
 
@@ -415,15 +397,6 @@
     border-radius: 12px;
     text-align: center;
   }
-
-  /* [ℹ] SEO WIDGET DATA */
-  
-  #seo-widget-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
   /*
     [ℹ] WIDGET MAIN STYLE / CSS 
@@ -455,75 +428,6 @@
     border-bottom: none;
   }
   
-  div#widget-title-row {
-    background-color: #f2f2f2;
-    border-radius: 2px;
-    padding: 7px 16px 7px 9px;
-    margin: 16px 20px 10px 20px;
-  }
-
-  div#more-top-leagues-outer {
-    position: absolute;
-    top: 115%;
-    width: 100%;
-    background-color: #ffffff;
-    box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
-    border-radius: 4px;
-    z-index: 10000;
-    max-height: 302px;
-    overflow-y: scroll;
-    padding-right: 6px;
-  } div#more-top-leagues-outer::-webkit-scrollbar  {
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    display: none;
-  } div#more-top-leagues-outer::-webkit-scrollbar  {
-    /* Hide scrollbar for IE, Edge and Firefox */ 
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  } 
-
-  div#dropdown-top-players-container {
-    position: relative;
-    margin: 0 20px 0px 20px;
-    padding-top: 20px;
-  } div#dropdown-top-players-container div#dropdown-box-select {
-    padding: 9px 20px;
-    border: 1px solid #CCCCCC;
-    box-sizing: border-box;
-    border-radius: 8px;
-    position: relative;
-    height: 40px;
-  } div#dropdown-top-players-container div#dropdown-box-select:hover { 
-    border: 1px solid #8C8C8C !important;
-  } div#dropdown-top-players-container div#more-top-leagues-list-container {
-    max-height: 302px;
-    overflow-y: scroll;
-  } div#dropdown-top-players-container div#more-top-leagues-list-container .top-league-container {
-    padding: 12px 20px;
-  } div#dropdown-top-players-container div#more-top-leagues-list-container .top-league-container:hover {
-    cursor: pointer;
-  } div#dropdown-top-players-container div#more-top-leagues-list-container .top-league-container:hover p {
-    color: #f5620f !important;
-  } /* width */   div#dropdown-top-players-container div#more-top-leagues-list-container::-webkit-scrollbar {
-    width: 4px;
-  } /* track */   div#dropdown-top-players-container div#more-top-leagues-list-container::-webkit-scrollbar-track {
-    background: #F2F2F2;
-    border-radius: 12px;
-    margin: 8px;
-  } /* handle */  div#dropdown-top-players-container div#more-top-leagues-list-container::-webkit-scrollbar-thumb {
-    background: #CCCCCC;
-    border-radius: 12px;
-  }
-
-  #show-more-box {
-    padding: 25px 0;
-    text-align: center;
-    white-space: nowrap;
-    color: var(--primary);
-    box-shadow: inset 0px 1px 0px #ebebeb;
-    cursor: pointer;
-  }
-
   /* ====================
     RESPONSIVNESS
   ==================== */
@@ -557,42 +461,11 @@
       margin-top: 0;
     }
 
-    div#widget-title-row {
-      margin: 20px 20px 12.5px 20px;
-    }
-
   }
 
   /* ====================
     WIDGET DARK THEME
   ==================== */
 
-  .dark-background-1 div#widget-title-row {
-		background-color: #616161 !important;
-	}
-
-  .dark-background-1 p#show-more-box {
-		box-shadow: inset 0px 1px 0px #616161 !important;
-	}
-
-  .dark-background-1 div.stand-view-opt-box:hover p {
-    color: white !important;
-  }
-
-  .dark-background-1 div#mobile-table-box p {
-    color: white;
-  }
-
-  .dark-background-1 div#more-top-leagues-outer {
-    /* dark theme/dark-gray */
-    background: #616161;
-    /* shadow/black */
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
-    border-radius: 4px;
-  } /* handle */ .dark-background-1 div#more-top-leagues-list-container::-webkit-scrollbar-thumb {
-    background: #999999 !important;
-  } /* track */ .dark-background-1 div#more-top-leagues-list-container::-webkit-scrollbar-track {
-    background: #4B4B4B !important;
-  }
 
 </style>
