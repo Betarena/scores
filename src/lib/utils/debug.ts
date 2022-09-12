@@ -3,6 +3,7 @@ export function logErrorGroup (
   msg: string
 ) {
   console.groupCollapsed(groupName)
+  msg = msg.replace(/\t/g, '');
   console.error(`${msg}`)
   console.groupEnd()
 }
@@ -12,6 +13,7 @@ export function logDevGroup (
   msg: string
 ) {
   console.groupCollapsed(groupName)
+  msg = msg.replace(/\t/g, '');
   console.log(`${msg}`)
   console.groupEnd()
 }
