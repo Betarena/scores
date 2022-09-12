@@ -59,27 +59,38 @@
   import type { Cache_Single_Geo_Leagues_Table_Translation_Response, Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
   import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
 
-  import { getUserLocation } from '$lib/geoJs/init';
-  import type { GeoJsResponse } from '$lib/models/geojs-types';
-  import { get } from '$lib/api/utils';
+	let PAGE_DATA_SEO:                              Cache_Single_Homepage_SEO_Translation_Response
+	let FEATURED_MATCH_WIDGET_DATA_SEO:             Cache_Single_Lang_Featured_Match_Translation_Response
+	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO:     Cache_Single_Lang_Featured_Betting_Site_Translation_Response
+  let BEST_GOAL_SCORERS_DATA_SEO:                 Cache_Single_Lang_GoalScorers_Translation_Response
+	let LEAGUE_LIST_WIDGET_DATA_SEO:                REDIS_CACHE_SINGLE_league_list_seo_t_response
+  let LEAGUES_TABLE_SCORES_SEO_DATA:              Cache_Single_Lang_Leagues_Table_Translation_Response
+  let SEO_BLOCK_DATA:                             Cache_Single_Homepage_SEO_Block_Translation_Response
+	let LIVE_SCORES_FOOTBALL_TRANSLATIONS:          LiveScores_Football_Translation[]
 
-	let PAGE_DATA_SEO:                             Cache_Single_Homepage_SEO_Translation_Response =                 data.PAGE_DATA_SEO;
-	let FEATURED_MATCH_WIDGET_DATA_SEO:            Cache_Single_Lang_Featured_Match_Translation_Response =          data.FEATURED_MATCH_WIDGET_DATA_SEO;
-	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO:    Cache_Single_Lang_Featured_Betting_Site_Translation_Response =   data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
-  let BEST_GOAL_SCORERS_DATA_SEO:                Cache_Single_Lang_GoalScorers_Translation_Response =             data.BEST_GOAL_SCORERS_DATA_SEO;
-	let LEAGUE_LIST_WIDGET_DATA_SEO:               REDIS_CACHE_SINGLE_league_list_seo_t_response =                  data.LEAGUE_LIST_WIDGET_DATA_SEO;
-  let LEAGUES_TABLE_SCORES_SEO_DATA:             Cache_Single_Lang_Leagues_Table_Translation_Response =           data.LEAGUES_TABLE_SCORES_SEO_DATA;
-  let SEO_BLOCK_DATA:                            Cache_Single_Homepage_SEO_Block_Translation_Response =           data.SEO_BLOCK_DATA;
+  $: PAGE_DATA_SEO =                              $page.data.PAGE_DATA_SEO;
+  $: FEATURED_MATCH_WIDGET_DATA_SEO =             $page.data.FEATURED_MATCH_WIDGET_DATA_SEO;
+  $: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =     $page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+  $: BEST_GOAL_SCORERS_DATA_SEO =                 $page.data.BEST_GOAL_SCORERS_DATA_SEO;
+  $: LEAGUE_LIST_WIDGET_DATA_SEO =                $page.data.LEAGUE_LIST_WIDGET_DATA_SEO;
+  $: LEAGUES_TABLE_SCORES_SEO_DATA =              $page.data.LEAGUES_TABLE_SCORES_SEO_DATA;
+  $: SEO_BLOCK_DATA =                             $page.data.SEO_BLOCK_DATA;
+  $: LIVE_SCORES_DATA_DATA_SEO =                  $page.data.LIVE_SCORES_DATA_DATA_SEO;
+	$: LIVE_SCORES_DATA_LEAGUES =                   $page.data.LIVE_SCORES_DATA_LEAGUES;
+	$: LIVE_SCORES_FOOTBALL_TRANSLATIONS =          $page.data.LIVE_SCORES_FOOTBALL_TRANSLATIONS;
 
-	let LIVE_SCORES_DATA_DATA_SEO                                                       = data.LIVE_SCORES_DATA_DATA_SEO;
-	let LIVE_SCORES_DATA_LEAGUES                                                        = data.LIVE_SCORES_DATA_LEAGUES;
-	let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[]            = data.LIVE_SCORES_FOOTBALL_TRANSLATIONS;
+  // [ℹ] ALT.
+  // [ℹ] pre-loading [GEO]
 
   let FEATURED_MATCH_WIDGET_DATA_MAIN: FixtureResponse
   let FEATURED_BETTING_SITES_WIDGET_DATA: All_SportBook_Details_Data
   let LEAGUE_LIST_WIDGET_DATA: REDIS_CACHE_SINGLE_league_list_geo_data_response
   let BEST_GOAL_SCORERS_DATA: Cache_Single_Geo_GoalScorers_Translation_Response
   let LEAGUES_TABLE_SCORES_DATA: Cache_Single_Geo_Leagues_Table_Translation_Response;
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // VIEWPORT CHANGES
+  // ~~~~~~~~~~~~~~~~~~~~~
 
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;

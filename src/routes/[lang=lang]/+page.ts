@@ -1,5 +1,8 @@
 import { error } from '@sveltejs/kit';
 import { dev } from '$app/environment';
+import type { PageLoad } from './$types';
+
+import { get } from '$lib/api/utils';
 
 /** 
  * @type {import('./$types').PageLoad} 
@@ -7,9 +10,11 @@ import { dev } from '$app/environment';
 export async function load ({
   url, 
   params, 
-  fetch
-}) {
+  fetch,
+  setHeaders
+}): PageLoad {
 
+  let response_IP_2;
 
   /**
    * ==================
@@ -219,13 +224,13 @@ export async function load ({
     '/api/cache/live_scores?lang='+urlLang, 
     '/api/cache/live_scores?type=geo', 
     '/api/cache/live_scores?type=translations',
-    
+    // [ℹ] alt.
     // [ℹ] geo-based cache load
-    '/api/cache/featured_match?geoPos='+'en', 
-    '/api/cache/featured_betting_sites?geoPos='+'en', 
-    '/api/cache/league_list?geoPos='+'en', 
-    '/api/cache/best_goalscorer?geoPos='+'en', 
-    '/api/cache/leagues_table?geoPos='+'en', 
+    // '/api/cache/featured_match?geoPos='+'en', 
+    // '/api/cache/featured_betting_sites?geoPos='+'en', 
+    // '/api/cache/league_list?geoPos='+'en', 
+    // '/api/cache/best_goalscorer?geoPos='+'en', 
+    // '/api/cache/leagues_table?geoPos='+'en', 
   ];
 
   const promises = urls.map((url) =>
@@ -250,7 +255,6 @@ export async function load ({
   const response_livescores_football_translations = data[10]
 
   // [ℹ] data-geo real-test [direct widget data]
-
   // const response_featured_match = data[11]
   // const response_featured_betting_sites = data[12]
   // const response_league_list = data[13]

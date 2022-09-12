@@ -11,7 +11,7 @@
   */
 	import { page } from '$app/stores';
 	import { browser, dev } from '$app/environment';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto, invalidate, invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
@@ -27,6 +27,8 @@
 	import logo_mini from './assets/betarena-logo-mobile.svg';
 	import menu_burger_bar from './assets/menu-burger.svg';
 	import icon_check from './assets/icon-check.svg';
+  import { logDevGroup } from '$lib/utils/debug';
+	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
 
   /**
    * [ℹ] sub-header-component
@@ -44,7 +46,6 @@
   */
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
 	import type { GeoJsResponse } from '$lib/models/geojs-types';
-	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
 
   /**
    * [ℹ] export-values-expected
@@ -155,17 +156,26 @@
 
   /**
    * [ℹ] update the user selected Language `.localStorage()`
+   * [ℹ] complex naviational structure
+   * [ℹ] main platform navigation entry
   */
-	function selectLanguage(lang: string) {
+	async function selectLanguage(lang: string) {
     
     // [ℹ] get past instance of LANG;
     const pastLang: string = $userBetarenaSettings.lang == "en" ? "/" : "/" + $userBetarenaSettings.lang;
-
     // [ℹ] set the user-lang to corresponding value;
     userBetarenaSettings.setLang(lang);
 
     // [🐛] debug;
-    if (dev) console.log("Inside Select Langauge!", $userBetarenaSettings.lang, lang, pastLang)
+    if (dev) logDevGroup (
+      "navbar [DEV]",
+      `
+      Inside Select Langauge!
+      $userBetarenaSettings.lang: ${$userBetarenaSettings.lang}
+      lang: ${lang}
+      pastLang: ${pastLang}
+      `
+    )
 
 		// [ℹ] hide the LANG DROPDOWN box;
 		dropdown_lang_visible = false;
@@ -182,8 +192,10 @@
     // [ℹ] & navigate to the homepage (lang)
     if ($page.error) {
       if (lang == 'en') {
+        if (dev) logDevGroup ("navbar [DEV]", `navigating to EN`)
         goto('/')
       } else {
+        if (dev) logDevGroup ("navbar [DEV]", `navigating to ${lang}`)
         goto(`/${lang}`)
       }
       return;
@@ -196,7 +208,8 @@
       return;
     }
 
-    // [ℹ] otherwise, switch navigation for appropiate /<lang>
+    // [ℹ] otherwise,
+    // [ℹ] switch navigation for appropiate /<lang>
 
     // [ℹ] check for EN TRANSLATION;
     else if (lang == 'en' &&  
@@ -207,12 +220,18 @@
       var count = $page.url.pathname.split("/").length-1
       // [ℹ] replace path-name accordingly for "EN" - first occurance;
       const newURL: string = count == 1 ? $page.url.pathname.replace(pastLang, "/") : $page.url.pathname.replace(pastLang, "");
+
       // [🐛] debug;
-      if (dev) console.log("NEW_URL: Inside EN", count, newURL)
+      if (dev) logDevGroup (
+        "navbar [DEV]",
+        `NEW_URL: Inside EN
+        count: ${count}, 
+        newURL: ${newURL}
+      `)
 
       // [ℹ] update URL breadcrumb;
       // window.history.replaceState({}, "NewPage", newURL);
-      goto(newURL, { replaceState: true });
+      await goto(newURL, { replaceState: true });
     } 
     // [ℹ] otherwise, check for coming from "EN" (/) 
     // [ℹ] & update page URL with CORRECT TRANSLATION;
@@ -223,12 +242,18 @@
       var countSlash = $page.url.pathname.split("/").length-1
       // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
       const newURL: string = countSlash > 1 ? $page.url.pathname.replace(pastLang, `/${lang}/`) : $page.url.pathname.replace(pastLang, `/${lang}`);
+
       // [🐛] debug;
-      if (dev) console.log(`NEW_URL: Inside V2 ${lang}`, countSlash, newURL)
+      if (dev) logDevGroup (
+        "navbar [DEV]",
+        `NEW_URL: Inside V2 ${lang}
+        countSlash: ${countSlash}, 
+        newURL: ${newURL}
+      `)
 
       // [ℹ] update URL breadcrumb;
       // window.history.replaceState({}, "NewPage", newURL);
-      goto(newURL, { replaceState: true });
+      await goto(newURL, { replaceState: true });
     }
     // [ℹ] otherwise, check for coming from "[lang]" (/) 
     // [ℹ] & update page URL with CORRECT TRANSLATION;
@@ -239,18 +264,25 @@
       var countSlash = $page.url.pathname.split("/").length-1
       // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
       const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
+
       // [🐛] debug;
-      if (dev) console.log(`NEW_URL: Inside V3 ${lang}`, countSlash, newURL)
+      if (dev) logDevGroup (
+        "navbar [DEV]",
+        `NEW_URL: Inside V3 ${lang}
+        countSlash: ${countSlash}, 
+        newURL: ${newURL}
+      `)
 
       // [ℹ] update URL breadcrumb;
       // window.history.replaceState({}, "NewPage", newURL);
-      goto(newURL, { replaceState: true });
+      await goto(newURL, { replaceState: true });
     }
 
   }
 
   /**
-   * [ℹ] udpate the user selected THEME `.localStorage()`
+   * [ℹ] udpate the user selected 
+   * [ℹ] THEME `.localStorage()`
   */
 	function selectedTheme(theme: string) {
 		// [ℹ] hide the theme dropdown [OPTIONAL];
@@ -260,7 +292,8 @@
 	}
 
   /**
-   * [ℹ] update the user selected CountryBookmaker `.localStorage()`
+   * [ℹ] update the user selected 
+   * [ℹ] CountryBookmaker `.localStorage()`
   */
 	function selectedCountryBookmakers(countryBookemaker: string) {
 		// [ℹ] hide the countryBookmakers selection [OPTIONAL];
@@ -270,7 +303,8 @@
 	}
 
   /**
-   * [ℹ] update the user selected Sport `.localStorage()`
+   * [ℹ] update the user selected 
+   * [ℹ] Sport `.localStorage()`
   */
   // TODO:
   function selectedSport(sport: string) {
@@ -288,7 +322,9 @@
 
 		// [ℹ] get user GEO-LOCATION;
 		const userGeoResponse: GeoJsResponse = await getUserLocation()
-    // console.log("userGeoResponse", userGeoResponse);
+    
+    if (dev) logDevGroup ("navbar [DEV]", `userGeoResponse: ${userGeoResponse}`)
+    
 		let userGeo = userGeoResponse.country_code === undefined ? null : userGeoResponse.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
 
     if (userGeo !== null) {
@@ -348,6 +384,11 @@
       window.location.reload();
     }
 	}
+
+  // afterNavigate(async() => {
+  //   if (dev) logDevGroup ("navbar [DEV]", `afterNavigate`)
+  //   await invalidateAll()
+  // })
 
 </script>
 
