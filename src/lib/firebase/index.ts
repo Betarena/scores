@@ -10,6 +10,7 @@ import { db_real } from './init';
 
 import type { SelectedFixture_LiveOdds_Response } from '$lib/models/featured_match/firebase-real-db-interface';
 import type { SelectedFixutre } from '$lib/models/featured_match/response_models';
+import { logDevGroup } from '$lib/utils/debug';
 
 /**
  * Description:
@@ -19,11 +20,11 @@ import type { SelectedFixutre } from '$lib/models/featured_match/response_models
  *
  * @param userGeoLocation
 */
-export async function getTargetFixtureOdds(
+export async function getTargetFixtureOdds (
 	fixture_data: SelectedFixutre
 ): Promise<SelectedFixture_LiveOdds_Response> {
 	// ... DEBUGGING;
-	if (dev) console.debug('-- fixture_data --', fixture_data);
+  if (dev) logDevGroup ("firebase [DEV]", `fixture_data: ${fixture_data}`)
 	// ... convert the datetime to the correct variables to search for the fixture;
 	const year_: string = new Date(fixture_data.date).getFullYear().toString();
 	const month_: number = new Date(fixture_data.date).getMonth();
@@ -39,7 +40,7 @@ export async function getTargetFixtureOdds(
 	const lang: string = fixture_data.lang;
 	// ... obtain-sportbook-details;
 	const sportbook_details = await getTargetGeoSportBookDetails(lang);
-  if (dev) console.debug(`odds/${year_}/${new_month_}/${day_}/${fixtureId}`);
+  if (dev) logDevGroup ("firebase [DEV]", `odds/${year_}/${new_month_}/${day_}/${fixtureId}`)
 	// ... return the odds-site info & the odds values;
 	return get(child(ref(db_real), `odds/${year_}/${new_month_}/${day_}/${fixtureId}`)).then(
 		(snapshot) => {
@@ -93,11 +94,10 @@ export async function getTargetFixtureOdds(
 export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise<any> {
 	// ... return the odds-site info & the odds values;
 	if (siteName != undefined) {
-		// console.log('siteName', siteName);
+    if (dev) logDevGroup ("firebase [DEV]", `siteName: ${siteName}`)
 		return get(child(ref(db_real), `sportsbook_details/${lang}`)).then((snapshot) => {
 			// ... check if the data exists (should exist at all times anyway);
 			if (snapshot.exists()) {
-				// console.info('data from Real DB', [snapshot.val()])
 
 				const map = new Map();
 				const sportbook_details_ = snapshot.val();
@@ -108,7 +108,6 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 						siteName.toLowerCase().toString() ==
 						sportbook_details_[rankedOdd]['title'].toLowerCase().toString()
 					) {
-						// console.log('Match Found!')
 						map.set('betting_site_info', sportbook_details_[rankedOdd]);
 					}
 				}
@@ -125,7 +124,6 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 		return get(child(ref(db_real), `sportsbook_details/${lang}`)).then((snapshot) => {
 			// ... check if the data exists (should exist at all times anyway);
 			if (snapshot.exists()) {
-				// console.info('data from Real DB', [snapshot.val()])
 
 				// return the response as an Array;
 				return snapshot.val();

@@ -22,6 +22,7 @@
   // [ℹ] key component assets;
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
+  import { logDevGroup } from "$lib/utils/debug";
 
   // [ℹ] main component variables;
 	export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
@@ -55,11 +56,10 @@
 
     // [ℹ] if response is null;
 		if (response == null || response == undefined) {
-			// [ℹ]
-			if (dev) console.debug('❌ no goal scoreres available!')
+			// [🐛] debug 
+      if (dev) logDevGroup ("best goalscorers block [DEV]", `❌ no data available to email newsletter!`)
 			// [ℹ] return null;
       noBestPlayers = true;
-      // [ℹ]
 			return;
 		}
 

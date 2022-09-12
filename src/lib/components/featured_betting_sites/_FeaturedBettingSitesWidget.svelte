@@ -27,6 +27,7 @@
   import GoldCup from "./assets/_GoldCup.svelte";
   import SilverCup from "./assets/_SilverCup.svelte";
   import BronzeCup from "./assets/_BronzeCup.svelte";
+  import { logDevGroup } from "$lib/utils/debug";
 
   // [ℹ] main component variables;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
@@ -60,8 +61,7 @@
     // [ℹ] if response is null;
 		if (response == null || response == undefined) {
 			// [🐛] debug 
-			if (dev) console.debug('NO FEATURED BETTING SITE!')
-			// [ℹ] return null;
+      if (dev) logDevGroup ("featured betting sites [DEV]", `❌ no data available to email newsletter!`)
 			return;
 		}
 

@@ -227,3 +227,11 @@ Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuap
 Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/tournaments/league_info/cache-data-update.json';
 Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuapp.com/api/tournaments_standings/cache-data-update.json';
 ```
+
+## Structure to DEvelopment of New Features:
+
+### Components:
+
+If you wish to develop new components for the platform, please follow the following guide of how the components must be structured:
+
+- use the `console.group` to group your `devTool` logs and hafve it working in the `DEV` environment.
