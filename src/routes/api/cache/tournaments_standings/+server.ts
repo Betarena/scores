@@ -44,8 +44,6 @@ async function getStandingsData (league_id: string): Promise < Cache_Single_Tour
     const cached: string = await redis.hget('tournament_standings_data', league_id);
 
     if (cached) {
-      // [🐛] debug;
-      if (dev) console.info(`✅ tournament_standings_data cache data retrieved`);
       const parsed: Cache_Single_Tournaments_League_Standings_Info_Data_Response = JSON.parse(cached);
       return parsed;
     }
@@ -61,8 +59,6 @@ async function getStandingsTranslation (lang: string): Promise < Cache_Single_To
     const cached: string = await redis.hget('tournament_standings_t', lang);
 
     if (cached) {
-      // [🐛] debug;
-      if (dev) console.info(`✅ tournament_standings_t cache data retrieved`);
       const parsed: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = JSON.parse(cached);
       return parsed;
     }

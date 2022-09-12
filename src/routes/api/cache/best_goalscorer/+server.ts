@@ -53,18 +53,12 @@ export async function GET(req: { url: { [x: string]: { get: (arg0: string) => st
 
 async function getCacheBestGoalscorersForGeoPos (geoPos: string): Promise < Cache_Single_Geo_GoalScorers_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('best_goalscorer_geo', geoPos);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: Cache_Single_Geo_GoalScorers_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ best_goalscorer_geo cache HIT", geoPos);
-      // [ℹ] return, cached data;
       return parsed;
     }
-    return
+    return;
   } 
   catch (e) {
     console.debug("❌ best_goalscorer_geo cache MISS", geoPos, e);
@@ -74,15 +68,9 @@ async function getCacheBestGoalscorersForGeoPos (geoPos: string): Promise < Cach
 
 async function getCacheBestGoalscorersForLang (lang: string): Promise < Cache_Single_Lang_GoalScorers_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('best_goalscorer_t', lang);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: Cache_Single_Lang_GoalScorers_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ best_goalscorer_t cache HIT", lang);
-      // [ℹ] return, cached data;
       return parsed;
     }
     return

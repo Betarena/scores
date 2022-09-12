@@ -32,7 +32,6 @@ async function getCacheNavBar(geoPos: string): Promise < Cache_Single_SportbookD
     const cached: string = await redis.hget('sportbook_details', geoPos);
     if (cached) {
       const parsed: Cache_Single_SportbookDetails_Data_Response = JSON.parse(cached);
-      if (dev) console.info(`✅ sportbook_details cache data`);
       return parsed;
     }
   } 
