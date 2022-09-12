@@ -70,16 +70,27 @@
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response 
   } from '$lib/models/tournaments/fixtures_odds/types';
 
-  let PAGE_DATA_SEO:                     Cache_Single_Tournaments_SEO_Translation_Response                         = data.PAGE_DATA_SEO;
-  let TOURNAMENT_DATA_TRANSLATED_COPIES: Single_Tournament_Data_Type[]                                             = data.TOURNAMENT_DATA_TRANSLATED_COPIES;
-  let TOURNAMENT_DATA:                   Single_Tournament_Data_Type                                               = data.TOURNAMENT_DATA;
-  let LEAGUE_INFO_DATA:                  Cache_Single_Tournaments_League_Info_Data_Response                        = data.LEAGUE_INFO_DATA;
-  let STANDINGS_T:                       Cache_Single_Tournaments_League_Standings_Translation_Data_Response       = data.STANDINGS_T;
-  let STANDINGS_DATA:                    Cache_Single_Tournaments_League_Standings_Info_Data_Response              = data.STANDINGS_DATA;
-  let TOP_PLAYERS_T:                     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response          = data.TOP_PLAYERS_T;
-  let TOP_PLAYERS_DATA:                  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response            = data.TOP_PLAYERS_DATA;
-  let FIXTURES_ODDS_T:                   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response       = data.FIXTURES_ODDS_T;
-  let FIXTURES_ODDS_DATA:                REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response         = data.FIXTURES_ODDS_DATA;
+  let PAGE_DATA_SEO:                     Cache_Single_Tournaments_SEO_Translation_Response
+  let TOURNAMENT_DATA_TRANSLATED_COPIES: Single_Tournament_Data_Type[]
+  let TOURNAMENT_DATA:                   Single_Tournament_Data_Type
+  let LEAGUE_INFO_DATA:                  Cache_Single_Tournaments_League_Info_Data_Response
+  let STANDINGS_T:                       Cache_Single_Tournaments_League_Standings_Translation_Data_Response
+  let STANDINGS_DATA:                    Cache_Single_Tournaments_League_Standings_Info_Data_Response
+  let TOP_PLAYERS_T:                     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
+  let TOP_PLAYERS_DATA:                  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response
+  let FIXTURES_ODDS_T:                   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
+  let FIXTURES_ODDS_DATA:                REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
+
+  $: PAGE_DATA_SEO                         = $page.data.PAGE_DATA_SEO;
+  $: TOURNAMENT_DATA_TRANSLATED_COPIES     = $page.data.TOURNAMENT_DATA_TRANSLATED_COPIES;
+  $: TOURNAMENT_DATA                       = $page.data.TOURNAMENT_DATA;
+  $: LEAGUE_INFO_DATA                      = $page.data.LEAGUE_INFO_DATA;
+  $: STANDINGS_T                           = $page.data.STANDINGS_T;
+  $: STANDINGS_DATA                        = $page.data.STANDINGS_DATA;
+  $: TOP_PLAYERS_T                         = $page.data.TOP_PLAYERS_T;
+  $: TOP_PLAYERS_DATA                      = $page.data.TOP_PLAYERS_DATA;
+  $: FIXTURES_ODDS_T                       = $page.data.FIXTURES_ODDS_T;
+  $: FIXTURES_ODDS_DATA                    = $page.data.FIXTURES_ODDS_DATA;
 
   // TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
@@ -118,7 +129,6 @@
     // prefetch(newURL);
     goto(newURL, { replaceState: true })
 	}
-
 </script>
 
 
