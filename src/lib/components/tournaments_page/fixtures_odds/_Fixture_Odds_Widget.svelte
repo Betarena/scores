@@ -46,6 +46,7 @@
   import one_red_card_dark from './assets/1_red_card_dark.svg';
   import two_red_card_dark from './assets/2_red_cards_dark.svg';
   import three_red_card_dark from './assets/3_red_cards_dark.svg';
+import { logDevGroup } from "$lib/utils/debug";
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -95,7 +96,7 @@
 	export let FIXTURES_ODDS_T:     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
 	export let FIXTURES_ODDS_DATA:  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
 
-  $: if (dev && diasbleDev) console.log("FIXTURES_ODDS_T: ", FIXTURES_ODDS_T)
+  if (dev && diasbleDev) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_T: ${FIXTURES_ODDS_T}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // [ADD-ON] FIREBASE
@@ -174,7 +175,6 @@
     onValue(fixtureRef, (snapshot) => {
       // [ℹ] break-down-values
       const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
-      // if (dev) console.log(data)
       checkForLiveFixtures(data);
     });
 
@@ -211,7 +211,8 @@
 		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
 
 		if (FIXTURES_ODDS_T == null || FIXTURES_ODDS_DATA == undefined) {
-      if (dev) console.debug('❌ no players_data available!')
+      // [🐛] debug 
+      if (dev) logDevGroup ("fixture odds [DEV]", `❌ no data available!`)
       noFixturesOddsBool = true;
 			return;
 		}
@@ -270,7 +271,7 @@
       return;
     }
 
-    if (dev && !diasbleDev) console.log("target_season: ", target_season)
+    if (dev && !diasbleDev) logDevGroup ("fixture odds [DEV]", `target_season: ${target_season}`)
 
     // [ℹ] validation check (#1) [weeks / rounds] 
     if (
@@ -615,7 +616,6 @@
 
   $: if (browser && refresh_data) {
     // [ℹ] reset necessary variables;
-    if (dev) console.log("League_HERE")
     refresh = true
     loaded = false
     noFixturesOddsBool = false
@@ -641,10 +641,7 @@
 
   $: if (browser && $sessionStore.selectedSeasonID != undefined) {
     selectFixturesOdds()
-    if (dev) console.log(`
-      ${devConsoleTag} 
-      Updated season!
-    `)
+    if (dev) logDevGroup ("fixture odds [DEV]", `Updated season!`)
   }
 
   let server_side_language: string = 'en';

@@ -27,6 +27,7 @@
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
   import check_league from './assets/check-league.svg';
+  import { logDevGroup } from "$lib/utils/debug";
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -52,8 +53,8 @@
 	export let TOP_PLAYERS_T:     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
 	export let TOP_PLAYERS_DATA:  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
 
-  $: if (dev && diasbleDev) console.log("TOP_PLAYERS_T: ", TOP_PLAYERS_T)
-  $: if (dev && diasbleDev) console.log(dropdownPlayerViewSelect)
+  if (dev && diasbleDev) logDevGroup ("tournament top_players [DEV]", `TOP_PLAYERS_T: ${TOP_PLAYERS_T}`)
+  if (dev && diasbleDev) logDevGroup ("tournament top_players [DEV]", `dropdownPlayerViewSelect: ${dropdownPlayerViewSelect}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -68,7 +69,8 @@
     // [ℹ] get response [lang] [data] [obtained from preload()]
 
 		if (TOP_PLAYERS_DATA == null || TOP_PLAYERS_DATA == undefined) {
-      if (dev) console.debug('❌ no players_data available!')
+      // [🐛] debug 
+      if (dev) logDevGroup ("top_players [DEV]", `❌ no data available!`)
       noTopPlayersBool = true;
 			return;
 		}
@@ -99,7 +101,8 @@
     }, 50)
   }
 
-  $: if (dev && diasbleDev) console.log(`${devConsoleTag} : DETECTED! trueLengthOfArray ${trueLengthOfArray}`)
+  // [🐛] debug 
+  if (dev && diasbleDev) logDevGroup ("top_players [DEV]", `trueLengthOfArray ${trueLengthOfArray}`)
 
   function selectPlayerView(opt: string) {
     dropdownPlayerViewSelect = opt.toLowerCase().replace(/\s/g, '_')
@@ -212,7 +215,6 @@
 
   $: if (browser && refresh_data) {
     // [ℹ] reset necessary variables;
-    if (dev) console.log("League_HERE")
     refresh = true
     loaded = false
     noTopPlayersBool = false
@@ -236,28 +238,9 @@
     loadedCurrentSeason = true;
   }
 
-  // $: if (trueLengthOfArray > 10) {
-  //   console.log(`${devConsoleTag} 
-  //     Detected players length change!
-  //   `)
-  //   displayShowMore = true;
-  //   staticViewRow = 10;
-  //   limitViewRow = 10;
-  // }
-
   $: if (browser && $sessionStore.selectedSeasonID != undefined) {
     selectPlayerView(dropdownPlayerViewSelect)
-    if (dev) console.log(`${devConsoleTag} 
-      Updated season!
-    `)
   }
-
-  // $: if (dev) console.log(`${devConsoleTag}
-  //     trueLengthOfArray: ${trueLengthOfArray}
-  //     selectedPlayerArray: ${selectedPlayerArray}
-  //     limitViewRow: ${limitViewRow}
-  //     staticViewRow: ${staticViewRow}
-  //   `)
 
 </script>
 

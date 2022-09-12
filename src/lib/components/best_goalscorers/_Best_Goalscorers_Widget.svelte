@@ -57,8 +57,7 @@
     // [ℹ] if response is null;
 		if (response == null || response == undefined) {
 			// [🐛] debug 
-      if (dev) logDevGroup ("best goalscorers block [DEV]", `❌ no data available to email newsletter!`)
-			// [ℹ] return null;
+      if (dev) logDevGroup ("best goalscorers block [DEV]", `❌ no data available!`)
       noBestPlayers = true;
 			return;
 		}

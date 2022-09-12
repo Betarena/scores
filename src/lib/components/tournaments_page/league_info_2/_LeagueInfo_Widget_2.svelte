@@ -25,6 +25,7 @@
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
   import check_league from './assets/check-league.svg';
+import { logDevGroup } from "$lib/utils/debug";
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
@@ -53,7 +54,7 @@
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 
-  $: if (dev && diasbleDev) console.log("LEAGUE_INFO_SEO_DATA: ", LEAGUE_INFO_SEO_DATA)
+  $: if (dev && diasbleDev) logDevGroup ("league info #2 [DEV]", `LEAGUE_INFO_SEO_DATA: ${LEAGUE_INFO_SEO_DATA}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -68,7 +69,8 @@
     // [ℹ] get response [lang] [data] [obtained from preload()]
 
 		if (LEAGUE_INFO_SEO_DATA == null || LEAGUE_INFO_SEO_DATA == undefined) {
-      if (dev) console.debug('❌ no players_data available!')
+      // [🐛] debug 
+      if (dev) logDevGroup ("league info #2 [DEV]", `❌ no data available!`)
       noWidgetData = true;
 			return;
 		}
@@ -138,7 +140,6 @@
 
   $: if (browser && refresh_data) {
     // [ℹ] reset necessary variables;
-    if (dev) console.log("League_HERE")
     refresh = true
     loaded = false
     noWidgetData = false
@@ -164,9 +165,6 @@
 
   $: if (browser && $sessionStore.selectedSeasonID != undefined) {
     // selectPlayerView(dropdownPlayerViewSelect)
-    if (dev) console.log(`${devConsoleTag} 
-      Updated season!
-    `)
   }
 
 </script>

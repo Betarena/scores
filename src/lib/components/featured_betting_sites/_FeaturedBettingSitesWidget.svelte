@@ -61,7 +61,7 @@
     // [ℹ] if response is null;
 		if (response == null || response == undefined) {
 			// [🐛] debug 
-      if (dev) logDevGroup ("featured betting sites [DEV]", `❌ no data available to email newsletter!`)
+      if (dev) logDevGroup ("featured betting sites [DEV]", `❌ no data available!`)
 			return;
 		}
 
