@@ -403,10 +403,6 @@
     [ℹ] MOBILE FIRST
   */
 
-  div#widget-outer {
-    margin-top: 24px;
-  }
-
   div#top-players-widget-container.widget-no-data-height {
     height: 832px;
   }
@@ -455,10 +451,6 @@
 
     #top-players-widget-container {
       min-width: 100%;
-    }
-
-    div#widget-outer {
-      margin-top: 0;
     }
 
   }
