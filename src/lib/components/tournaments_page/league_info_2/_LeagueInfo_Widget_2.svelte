@@ -352,7 +352,7 @@ import { logDevGroup } from "$lib/utils/debug";
                 {#if season?.win_p == null || season?.win_p == undefined}
                    -
                 {:else}
-                  {season?.win_p}
+                  {season?.win_p}%
                 {/if}
               </p>
             </div>
