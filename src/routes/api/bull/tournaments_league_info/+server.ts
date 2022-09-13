@@ -248,12 +248,22 @@ async function leagueInfoGeneration () {
       average_player_rating: leagueInfoWidget2Translations?.data?.average_player_rating,
     }
 
+    // FIXME:
     const league_target = response.scores_football_leagues
       .find(( { name, id } ) => 
-        name === iterator.name && 
+        // name === iterator.name && 
         id === tournament_id
       )
     
+    // [🐛] debug
+    // if (tournament_id == 462 && iterator.lang == 'pt') {
+    //   console.log(`
+    //     found it: ${JSON.stringify(finalCacheObj, null, 4)}
+    //     leagueInfoWidget2Translations: ${JSON.stringify(leagueInfoWidget2Translations, null, 4)}
+    //   `)
+    //   break;
+    // }
+
     // [🐛] debug erroneous league_ids
     if (league_target == undefined) {
       console.log(`
@@ -324,7 +334,7 @@ async function leagueInfoGeneration () {
     // [ℹ] persist data [MAIN];
     await cacheTournamentsPageLeagueInfoData(url, finalCacheObj);
 
-    // [ℹ] persist object; = impossible due to MAX-REQUEST EXCEEDED FREE UPSTASH PLAN
+    // [ℹ] persist object; = impossible due to MAX-REQUEST EXCEEDED FREE UPSTASH PLAN [ALT]
     // cacheRedisObj[finalCacheObj.url] = finalCacheObj
   }
 
