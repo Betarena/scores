@@ -1,5 +1,5 @@
 import { dev } from '$app/environment'
-import redis from "$lib/redis/init_dev"
+import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import fs from 'fs';
 import { performance } from 'perf_hooks';
