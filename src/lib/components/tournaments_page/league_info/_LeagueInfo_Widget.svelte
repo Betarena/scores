@@ -137,7 +137,7 @@ import { logDevGroup } from "$lib/utils/debug";
 
   function validateSeasonProgressDate (start_end, end_date) {
 
-    if (start_end === null || end_date === null) {
+    if ((start_end === null || end_date === null) || (start_end == undefined || end_date == undefined)) {
       datePercentageDiff = null;
       if (dev) logDevGroup ("league info [DEV]", `identified as NULL!`)
       return
