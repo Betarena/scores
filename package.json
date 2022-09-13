@@ -7,6 +7,8 @@
 		"node": "16.17.0"
 	},
 	"scripts": {
+    "debug": "cross-env NODE_OPTIONS='--inspect' vite dev --host --port 3050",
+    "debug-preview": "cross-env NODE_OPTIONS='--inspect' vite preview --host --port 5000",
 		"dev": "vite dev --host --port 3050",
 		"build": "vite build",
 		"start": "node my-server.js",
@@ -22,6 +24,7 @@
 		"@types/bull": "^3.15.8",
 		"@typescript-eslint/eslint-plugin": "^5.36.2",
 		"@typescript-eslint/parser": "^5.36.2",
+		"cross-env": "^7.0.3",
 		"eslint": "^8.23.0",
 		"eslint-config-prettier": "^8.3.0",
 		"eslint-plugin-svelte3": "^4.0.0",

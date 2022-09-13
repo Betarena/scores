@@ -1,14 +1,15 @@
-// ... import necessary libraries;
 import { gql } from 'graphql-request';
 
 /**
- * Description
- * ~~~~~~~~~~~~~
- * ... get ALL LEAGUE LIST DATA from the DB
+ * [ℹ] Homepage / League List Widget (#1)
 */
-export const GET_COMPLETE_LEAGUE_LIST_DATA = gql`
-  query GET_COMPLETE_LEAGUE_LIST_DATA @cached(ttl: 300) {
+export const REDIS_CACHE_LEAGUE_LIST_DATA_1 = gql`
+  query REDIS_CACHE_LEAGUE_LIST_DATA_1 @cached(ttl: 300) {
 
+    leagues_filtered_country {
+      lang
+      leagues
+    }
     scores_league_list {
       country_id
       country_name
@@ -17,24 +18,19 @@ export const GET_COMPLETE_LEAGUE_LIST_DATA = gql`
       league_name
       logo_path
       type
-    }
-
-    leagues_filtered_country {
-      lang
-      leagues
-    }
-
-    scores_leagues_list_translations_dev {
-      lang
-      translations
-    }
-
-    scores_tournaments_dev {
+    }    
+    scores_tournaments {
       id
       tournament_id
       urls
     }
-    scores_general_translations_dev {
+
+    # [ℹ] translations
+    scores_leagues_list_translations {
+      lang
+      translations
+    }
+    scores_general_translations {
       lang
       countries
     }

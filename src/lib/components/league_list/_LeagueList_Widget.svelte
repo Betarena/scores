@@ -24,6 +24,7 @@
   } from "$lib/models/league_list/types";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
+  import { logDevGroup } from '$lib/utils/debug';
 
   // [ℹ] main component variables;
 	export let LEAGUE_LIST_WIDGET_DATA_SEO: REDIS_CACHE_SINGLE_league_list_seo_t_response;
@@ -45,9 +46,8 @@
 
     // [ℹ] if response is null;
     if (response == null || response == undefined) {
-      // [ℹ]
-      if (dev) console.debug('NO FEATURED BETTING SITE!')
-      // [ℹ] return null;
+      // [🐛] debug 
+      if (dev) logDevGroup ("league list [DEV]", `❌ no data available to email newsletter!`)
       return;
     }
 
@@ -126,9 +126,6 @@
   // [ℹ] listed to search-input text;
   $: if (leagueSearch != undefined && league_list_data) {
 
-    // alert("triggered!")
-    // console.log("leagueSearch: Hello!");
-    
     // [ℹ] reset data;
     leagueSearchData = []
     countrySearchData = []

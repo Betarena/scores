@@ -29,6 +29,7 @@
   import team_w from './assets/team-white.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
+import { logDevGroup } from "$lib/utils/debug";
 
   let loaded: boolean = false;                  // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;                 // [ℹ] refresh value speed of the WIDGET;
@@ -48,8 +49,8 @@
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 
-  $: if (dev) console.log("LEAGUE_INFO_SEO_DATA: ", LEAGUE_INFO_SEO_DATA)
-  $: if (dev) console.log(dropdownSeasonSelect)
+  if (dev) logDevGroup ("league info [DEV]", `LEAGUE_INFO_SEO_DATA: ${LEAGUE_INFO_SEO_DATA}`)
+  if (dev) logDevGroup ("league info [DEV]", `dropdownSeasonSelect: ${dropdownSeasonSelect}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -73,7 +74,8 @@
 
     // [ℹ] display NO DATA PLACEHOLDER
 		if (response == null || response == undefined) {
-      if (dev) console.debug('❌ no leagues_table available!')
+      // [🐛] debug 
+      if (dev) logDevGroup ("league info [DEV]", `❌ no data available!`)
       noLeagueInfoBool = true;
 			return;
 		}
@@ -117,7 +119,7 @@
     // [ℹ] number of clubs check;
     for (const season of LEAGUE_INFO_SEO_DATA.data.seasons) {
 
-        if (season.number_of_clubs === null) {
+        if (season.number_of_clubs === null || season.number_of_clubs === undefined) {
           season.number_of_clubs = "-"
         }
     }
@@ -137,7 +139,7 @@
 
     if (start_end === null || end_date === null) {
       datePercentageDiff = null;
-      if (dev) console.log("identified as NULL!");
+      if (dev) logDevGroup ("league info [DEV]", `identified as NULL!`)
       return
     }
 
@@ -238,8 +240,6 @@
 		});
   });
 
-  // $: if (dev) console.log("mobileExclusive", mobileExclusive, "tabletExclusive", tabletExclusive)
-
   // ~~~~~~~~~~~~~~~~~~~~~
 	// COMPONENT TIMER CLOCK
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -270,7 +270,6 @@
     // if (!matchingPage || !matchingCountry) {
   $: if (browser && refresh_data) {
       // [ℹ] reset necessary variables;
-      if (dev) console.log("League_HERE")
       refresh = true
       toggleDropdown = false
       loaded = false
@@ -282,20 +281,7 @@
     }
 	// }
 
-  /*
-
-  onDestroy(async () => {
-    if (dev) console.log("League_HERE Destroyed!")
-  })
-
-  afterUpdate(async () => {
-    if (dev) console.log("League_HERE AfterUpdate")
-  })
-
-  */
-
   afterNavigate(async () => {
-    if (dev) console.log("League_HERE AfterNavigation")
     widgetInit()
   })
 

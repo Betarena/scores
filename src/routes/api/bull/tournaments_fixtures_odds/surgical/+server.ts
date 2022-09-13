@@ -415,7 +415,7 @@ async function checkForLiveFixtures (
   const historicFixturesMap = new Map <number, BETARENA_HASURA_historic_fixtures>( );
 
   // [ℹ] generate map
-  for (const hist_fixture of data?.historic_fixtures) {
+  for (const hist_fixture of data.historic_fixtures) {
     const fixture_id = parseInt(hist_fixture?.id.toString())
     historicFixturesMap.set(fixture_id, hist_fixture)
   }

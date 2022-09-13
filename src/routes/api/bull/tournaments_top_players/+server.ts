@@ -181,7 +181,7 @@ async function tournamentsTopPlayersDataGeneration () {
    * [ℹ] generate per LeagueId
   */
 
-  for (const iterator of response.scores_football_leagues_dev) {
+  for (const iterator of response.scores_football_leagues) {
 
     // [ℹ] per LEAGUE
 
@@ -481,16 +481,16 @@ async function tournamentsTopPlayersTGeneration () {
   const final_obj_array: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response[] = []
 
   // [ℹ] generate appropiate TRANSLATIONS
-  for (const main_T of response.scores_widget_top_players_translations_dev) {
+  for (const main_T of response.scores_widget_top_players_translations) {
 
     // [ℹ] per LANG
     const main_lang = main_T.lang;
 
     // [ℹ] locate position-player translation;
-    const pos_T = response.player_positions_translations_dev
+    const pos_T = response.player_positions_translations
       .find(( { lang } ) => lang === main_lang);
 
-    const noData_T = response.scores_general_translations_dev
+    const noData_T = response.scores_general_translations
       .find( ({ lang }) => lang === main_lang);
 
     const top_players_view_opt: string[] = [ "Rating", "Goals", "Assists", "Total Shots"]
@@ -545,11 +545,11 @@ async function generateTeamsAndPlayersMap (
 
   const t0 = performance.now();
   const players_map = new Map < number, BETARENA_HASURA_scores_football_players > ()
-  for (const p of data.scores_football_players_dev) {
+  for (const p of data.scores_football_players) {
     players_map.set(p.player_id, p)
   }
   const teams_map = new Map < number, BETARENA_HASURA_scores_football_teams > ()
-  for (const t of data.scores_football_teams_dev) {
+  for (const t of data.scores_football_teams) {
     teams_map.set(t.id, t)
   }
   const t1 = performance.now();
@@ -592,7 +592,7 @@ async function getTargetSeasonPlayersInfo (
       VARIABLES
     );
 
-    for (const season of response.scores_football_seasons_details_dev) {
+    for (const season of response.scores_football_seasons_details) {
       season_details_map.set(season.id, season);
     }
 
@@ -606,7 +606,7 @@ async function getTargetSeasonPlayersInfo (
       break;
     }
 
-    total_limit = response.scores_football_seasons_details_dev_aggregate.aggregate.totalCount;
+    total_limit = response.scores_football_seasons_details_aggregate.aggregate.totalCount;
     offset += limit;
     counter++
   }

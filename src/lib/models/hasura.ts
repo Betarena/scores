@@ -1,5 +1,5 @@
 /**
- * [ℹ] HASURA: scores_football_standings (&_dev)
+ * [ℹ] HASURA: scores_football_standings (&)
 */
 export interface BETARENA_HASURA_scores_football_standings {
   data?: WelcomeDatum[];
@@ -50,7 +50,7 @@ export interface BETARENA_HASURA_scores_football_standings {
 }
 
 /**
- * [ℹ] HASURA: scores_football_standings_history (&_dev)
+ * [ℹ] HASURA: scores_football_standings_history (&)
 */
 
 export interface BETARENA_HASURA_scores_football_standings_history {
@@ -62,7 +62,7 @@ export interface BETARENA_HASURA_scores_football_standings_history {
 }
 
 /**
- * [ℹ] HASURA: scores_team_statistics (&_dev)
+ * [ℹ] HASURA: scores_team_statistics (&)
 */
 export interface BETARENA_HASURA_scores_team_statistics {
   average_goals?:        AverageGoals;
@@ -136,8 +136,8 @@ export interface BETARENA_HASURA_scores_team_statistics {
 }
 
 /**
- * [ℹ] HASURA: scores_team_statistics_history (&_dev)
- * [ℹ] based-of: scores_team_statistics (&_dev)
+ * [ℹ] HASURA: scores_team_statistics_history (&)
+ * [ℹ] based-of: scores_team_statistics (&)
 */
 export interface BETARENA_HASURA_scores_team_statistics_history {
   average_goals?:        AverageGoals;
@@ -149,7 +149,7 @@ export interface BETARENA_HASURA_scores_team_statistics_history {
 }
 
 /**
- * [ℹ] HASURA: scores_widget_standings_translations (&_dev)
+ * [ℹ] HASURA: scores_widget_standings_translations (&)
 */
 export interface BETARENA_HASURA_scores_widget_standings_translations {
   lang?:         string;
@@ -182,7 +182,7 @@ export interface BETARENA_HASURA_scores_widget_standings_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_football_teams (&_dev)
+ * [ℹ] HASURA: scores_football_teams (&)
 */
 export interface BETARENA_HASURA_scores_football_teams {
   data?: Data;
@@ -204,7 +204,7 @@ export interface BETARENA_HASURA_scores_football_teams {
 }
 
 /**
- * [ℹ] HASURA: color_codes_league_standings_positions (&_dev)
+ * [ℹ] HASURA: color_codes_league_standings_positions (&)
 */
 export interface BETARENA_HASURA_color_codes_league_standings_positions {
   color_codes?: ColorCodes;
@@ -238,7 +238,7 @@ export interface BETARENA_HASURA_color_codes_league_standings_positions {
 }
 
 /**
- * [ℹ] HASURA: scores_football_countries (&_dev)
+ * [ℹ] HASURA: scores_football_countries (&)
 */
 export interface BETARENA_HASURA_scores_football_countries {
   id?:   number;
@@ -262,7 +262,7 @@ export interface BETARENA_HASURA_scores_football_countries {
 }
 
 /**
- * [ℹ] HASURA: scores_football_players (&_dev)
+ * [ℹ] HASURA: scores_football_players (&)
 */
 export interface BETARENA_HASURA_scores_football_players {
   data?:        FootballPlayersData;
@@ -305,7 +305,7 @@ export interface BETARENA_HASURA_scores_football_players {
 }
 
 /**
- * [ℹ] HASURA: scores_widget_top_players_translations (&_dev)
+ * [ℹ] HASURA: scores_widget_top_players_translations (&)
 */
 export interface BETARENA_HASURA_scores_widget_top_players_translations {
   lang?: string;
@@ -321,7 +321,7 @@ export interface BETARENA_HASURA_scores_widget_top_players_translations {
 }
 
 /**
- * [ℹ] HASURA: player_positions_translations (&_dev)
+ * [ℹ] HASURA: player_positions_translations (&)
 */
 export interface BETARENA_HASURA_player_positions_translations {
   lang?:     string;
@@ -329,7 +329,7 @@ export interface BETARENA_HASURA_player_positions_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_general_translations (&_dev)
+ * [ℹ] HASURA: scores_general_translations (&)
 */
 export interface BETARENA_HASURA_scores_general_translations {
   lang?:                      string;
@@ -383,7 +383,7 @@ export interface BETARENA_HASURA_scores_general_translations {
 
 
 /**
- * [ℹ] HASURA: scores_football_leagues (&_dev)
+ * [ℹ] HASURA: scores_football_leagues (&)
 */
 export interface BETARENA_HASURA_scores_football_leagues {
   country?: ScoresFootballLeaguesDataClass;
@@ -446,7 +446,7 @@ export interface BETARENA_HASURA_scores_football_leagues {
 }
 
 /**
- * [ℹ] HASURA: scores_football_seasons_details_aggregate (&_dev)
+ * [ℹ] HASURA: scores_football_seasons_details_aggregate (&)
 */
 export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
   aggregate?: Aggregate;
@@ -455,7 +455,7 @@ export interface BETARENA_HASURA_scores_football_seasons_details_aggregate {
 }
 
 /**
- * [ℹ] HASURA: scores_football_seasons_details (&_dev)
+ * [ℹ] HASURA: scores_football_seasons_details (&)
 */
 export interface BETARENA_HASURA_scores_football_seasons_details {
   data_stats?:        SeasonDetailsDataStats;
@@ -647,7 +647,7 @@ export interface BETARENA_HASURA_scores_football_seasons_details {
 }
 
 /**
- * [ℹ] HASURA: sportsbook_details (&_dev)
+ * [ℹ] HASURA: sportsbook_details (&)
 */
 export interface BETARENA_HASURA_sportsbook_details {
   data?: { [key: string]: Sportbook };
@@ -666,7 +666,7 @@ export interface BETARENA_HASURA_sportsbook_details {
 }
 
 /**
- * [ℹ] HASURA: scores_widget_league_info_translations (&_dev)
+ * [ℹ] HASURA: scores_widget_league_info_translations (&)
 */
 export interface BETARENA_HASURA_scores_widget_league_info_translations {
   data?: DataLang;
@@ -680,7 +680,7 @@ export interface BETARENA_HASURA_scores_widget_league_info_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_league_list (&_dev)
+ * [ℹ] HASURA: scores_league_list (&)
 */
 export interface BETARENA_HASURA_scores_league_list {
   country_id:     number
@@ -693,7 +693,7 @@ export interface BETARENA_HASURA_scores_league_list {
 }
 
 /**
- * [ℹ] HASURA: leagues_filtered_country (&_dev)
+ * [ℹ] HASURA: leagues_filtered_country (&)
 */
 export interface BETARENA_HASURA_leagues_filtered_country {
   lang: string
@@ -703,7 +703,7 @@ export interface BETARENA_HASURA_leagues_filtered_country {
 }
 
 /**
- * [ℹ] HASURA: scores_leagues_list_translations (&_dev)
+ * [ℹ] HASURA: scores_leagues_list_translations (&)
 */
 export interface BETARENA_HASURA_scores_leagues_list_translations {
   lang: string
@@ -721,7 +721,7 @@ export interface BETARENA_HASURA_scores_leagues_list_translations {
 }
 
 /**
- * [ℹ] HASURA: scores_tournaments (&_dev)
+ * [ℹ] HASURA: scores_tournaments (&)
 */
 export interface BETARENA_HASURA_scores_tournaments {
   author?:        ScoresTournamentsAuthor;
@@ -777,7 +777,7 @@ export interface BETARENA_HASURA_scores_tournaments {
 }
 
 /**
- * [ℹ] HASURA: scores_standings_home_widget_translations (&_dev)
+ * [ℹ] HASURA: scores_standings_home_widget_translations (&)
 */
 export interface BETARENA_HASURA_scores_standings_home_widget_translations {
   games: string
@@ -787,7 +787,7 @@ export interface BETARENA_HASURA_scores_standings_home_widget_translations {
 }
 
 /**
- * [ℹ] HASURA: historic_fixtures_aggregate (&_dev)
+ * [ℹ] HASURA: historic_fixtures_aggregate (&)
 */
 export interface BETARENA_HASURA_historic_fixtures_aggregate {
   aggregate?: Aggregate;
@@ -796,7 +796,7 @@ export interface BETARENA_HASURA_historic_fixtures_aggregate {
 }
 
 /**
- * [ℹ] HASURA: historic_fixtures (&_dev)
+ * [ℹ] HASURA: historic_fixtures (&)
 */
 export interface BETARENA_HASURA_historic_fixtures {
   id?:              number;
@@ -1222,7 +1222,7 @@ export interface BETARENA_HASURA_historic_fixtures {
 
 
 /**
- * [ℹ] HASURA: scores_widget_football_fixtures_odds_translations (&_dev)
+ * [ℹ] HASURA: scores_widget_football_fixtures_odds_translations (&)
 */
 export interface BETARENA_HASURA_scores_widget_football_fixtures_odds_translations {
   lang?:         string;
@@ -1237,9 +1237,25 @@ export interface BETARENA_HASURA_scores_widget_football_fixtures_odds_translatio
 
 
 /**
- * [ℹ] HASURA: scores_livescore_football_translations (&_dev)
+ * [ℹ] HASURA: scores_livescore_football_translations (&)
 */
 export interface BETARENA_HASURA_scores_livescore_football_translations {
   lang?:       string;
   status_abv?: Array<string[]>;
+}
+
+
+/**
+ * [ℹ] HASURA: widget_league_info_translations (&)
+*/
+export interface BETARENA_HASURA_widget_league_info_translations {
+  lang?: string;
+  data?: WidgetLeagueInfo2Data;
+} export interface WidgetLeagueInfo2Data {
+  clubs?:                 string;
+  goals?:                 string;
+  league_info?:           string;
+  average_goals?:         string;
+  win_percentage?:        string;
+  average_player_rating?: string;
 }

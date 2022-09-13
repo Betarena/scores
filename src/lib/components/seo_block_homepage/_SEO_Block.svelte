@@ -18,6 +18,7 @@
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
   import SeoBlockContentLoader from "./_SEO_Block_ContentLoader.svelte";
   import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from "$lib/models/seo_block/types";
+  import { logDevGroup } from "$lib/utils/debug";
 
   // [ℹ] main component variables;
 	export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
@@ -39,11 +40,10 @@
 
     // [ℹ] ℹ if response is null;
 		if (response == null || response == undefined) {
-			// [ℹ]
-			if (dev) console.debug('❌ no goal scoreres available!')
+			// [🐛] debug
+      if (dev) logDevGroup ("seo block [DEV]", `❌ no data available to email newsletter!`)
 			// [ℹ] return null;
       noSEOBlockData = true;
-      // [ℹ]
 			return;
 		}
 

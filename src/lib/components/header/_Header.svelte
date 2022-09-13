@@ -11,7 +11,7 @@
   */
 	import { page } from '$app/stores';
 	import { browser, dev } from '$app/environment';
-	import { goto } from '$app/navigation';
+	import { afterNavigate, goto, invalidate, invalidateAll } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
@@ -27,6 +27,8 @@
 	import logo_mini from './assets/betarena-logo-mobile.svg';
 	import menu_burger_bar from './assets/menu-burger.svg';
 	import icon_check from './assets/icon-check.svg';
+  import { logDevGroup } from '$lib/utils/debug';
+	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
 
   /**
    * [ℹ] sub-header-component
@@ -44,7 +46,6 @@
   */
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
 	import type { GeoJsResponse } from '$lib/models/geojs-types';
-	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
 
   /**
    * [ℹ] export-values-expected
@@ -155,17 +156,26 @@
 
   /**
    * [ℹ] update the user selected Language `.localStorage()`
+   * [ℹ] complex naviational structure
+   * [ℹ] main platform navigation entry
   */
-	function selectLanguage(lang: string) {
+	async function selectLanguage(lang: string) {
     
     // [ℹ] get past instance of LANG;
     const pastLang: string = $userBetarenaSettings.lang == "en" ? "/" : "/" + $userBetarenaSettings.lang;
-
     // [ℹ] set the user-lang to corresponding value;
     userBetarenaSettings.setLang(lang);
 
     // [🐛] debug;
-    if (dev) console.log("Inside Select Langauge!", $userBetarenaSettings.lang, lang, pastLang)
+    if (dev) logDevGroup (
+      "navbar [DEV]",
+      `
+      Inside Select Langauge!
+      $userBetarenaSettings.lang: ${$userBetarenaSettings.lang}
+      lang: ${lang}
+      pastLang: ${pastLang}
+      `
+    )
 
 		// [ℹ] hide the LANG DROPDOWN box;
 		dropdown_lang_visible = false;
@@ -182,8 +192,10 @@
     // [ℹ] & navigate to the homepage (lang)
     if ($page.error) {
       if (lang == 'en') {
+        if (dev) logDevGroup ("navbar [DEV]", `navigating to EN`)
         goto('/')
       } else {
+        if (dev) logDevGroup ("navbar [DEV]", `navigating to ${lang}`)
         goto(`/${lang}`)
       }
       return;
@@ -196,7 +208,8 @@
       return;
     }
 
-    // [ℹ] otherwise, switch navigation for appropiate /<lang>
+    // [ℹ] otherwise,
+    // [ℹ] switch navigation for appropiate /<lang>
 
     // [ℹ] check for EN TRANSLATION;
     else if (lang == 'en' &&  
@@ -207,12 +220,18 @@
       var count = $page.url.pathname.split("/").length-1
       // [ℹ] replace path-name accordingly for "EN" - first occurance;
       const newURL: string = count == 1 ? $page.url.pathname.replace(pastLang, "/") : $page.url.pathname.replace(pastLang, "");
+
       // [🐛] debug;
-      if (dev) console.log("NEW_URL: Inside EN", count, newURL)
+      if (dev) logDevGroup (
+        "navbar [DEV]",
+        `NEW_URL: Inside EN
+        count: ${count}, 
+        newURL: ${newURL}
+      `)
 
       // [ℹ] update URL breadcrumb;
       // window.history.replaceState({}, "NewPage", newURL);
-      goto(newURL, { replaceState: true });
+      await goto(newURL, { replaceState: true });
     } 
     // [ℹ] otherwise, check for coming from "EN" (/) 
     // [ℹ] & update page URL with CORRECT TRANSLATION;
@@ -223,12 +242,18 @@
       var countSlash = $page.url.pathname.split("/").length-1
       // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
       const newURL: string = countSlash > 1 ? $page.url.pathname.replace(pastLang, `/${lang}/`) : $page.url.pathname.replace(pastLang, `/${lang}`);
+
       // [🐛] debug;
-      if (dev) console.log(`NEW_URL: Inside V2 ${lang}`, countSlash, newURL)
+      if (dev) logDevGroup (
+        "navbar [DEV]",
+        `NEW_URL: Inside V2 ${lang}
+        countSlash: ${countSlash}, 
+        newURL: ${newURL}
+      `)
 
       // [ℹ] update URL breadcrumb;
       // window.history.replaceState({}, "NewPage", newURL);
-      goto(newURL, { replaceState: true });
+      await goto(newURL, { replaceState: true });
     }
     // [ℹ] otherwise, check for coming from "[lang]" (/) 
     // [ℹ] & update page URL with CORRECT TRANSLATION;
@@ -239,18 +264,25 @@
       var countSlash = $page.url.pathname.split("/").length-1
       // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
       const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
+
       // [🐛] debug;
-      if (dev) console.log(`NEW_URL: Inside V3 ${lang}`, countSlash, newURL)
+      if (dev) logDevGroup (
+        "navbar [DEV]",
+        `NEW_URL: Inside V3 ${lang}
+        countSlash: ${countSlash}, 
+        newURL: ${newURL}
+      `)
 
       // [ℹ] update URL breadcrumb;
       // window.history.replaceState({}, "NewPage", newURL);
-      goto(newURL, { replaceState: true });
+      await goto(newURL, { replaceState: true });
     }
 
   }
 
   /**
-   * [ℹ] udpate the user selected THEME `.localStorage()`
+   * [ℹ] udpate the user selected 
+   * [ℹ] THEME `.localStorage()`
   */
 	function selectedTheme(theme: string) {
 		// [ℹ] hide the theme dropdown [OPTIONAL];
@@ -260,7 +292,8 @@
 	}
 
   /**
-   * [ℹ] update the user selected CountryBookmaker `.localStorage()`
+   * [ℹ] update the user selected 
+   * [ℹ] CountryBookmaker `.localStorage()`
   */
 	function selectedCountryBookmakers(countryBookemaker: string) {
 		// [ℹ] hide the countryBookmakers selection [OPTIONAL];
@@ -270,7 +303,8 @@
 	}
 
   /**
-   * [ℹ] update the user selected Sport `.localStorage()`
+   * [ℹ] update the user selected 
+   * [ℹ] Sport `.localStorage()`
   */
   // TODO:
   function selectedSport(sport: string) {
@@ -288,14 +322,16 @@
 
 		// [ℹ] get user GEO-LOCATION;
 		const userGeoResponse: GeoJsResponse = await getUserLocation()
-    // console.log("userGeoResponse", userGeoResponse);
+    
+    if (dev) logDevGroup ("navbar [DEV]", `userGeoResponse: ${userGeoResponse}`)
+    
 		let userGeo = userGeoResponse.country_code === undefined ? null : userGeoResponse.country_code.toLowerCase() // [?] maybe for dynamic-importing purposes ?
 
     if (userGeo !== null) {
       // [ℹ] store as session;
       userBetarenaSettings.setGeoJs(userGeoResponse)
       // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
-      const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
+      const result = HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries.find(function(item) { 
         return item[0].toString().toLowerCase() === userGeo.toString().toLowerCase() 
       });
 
@@ -315,7 +351,7 @@
       userBetarenaSettings.setGeoJs(userGeoResponse_V2)
 
       // [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
-      const result = HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries.find(function(item) { 
+      const result = HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries.find(function(item) { 
         return item[0].toString().toLowerCase() === userGeo_v2.toString().toLowerCase() 
       });
 
@@ -348,6 +384,11 @@
       window.location.reload();
     }
 	}
+
+  // afterNavigate(async() => {
+  //   if (dev) logDevGroup ("navbar [DEV]", `afterNavigate`)
+  //   await invalidateAll()
+  // })
 
 </script>
 
@@ -487,19 +528,19 @@
         <!-- [ℹ] NAV BUTTONS -->
         {#if !mobileExclusive}
           <!-- [ℹ] latest news -->
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.latest_news}>
+          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.latest_news}>
             <button class="btn-main">
               <p class="color-white s-14">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.content_platform_link}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.content_platform_link}
               </p>
             </button>
           </a>
 
           <!-- [ℹ] betting-tips -->
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.betting_tips}>
+          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
             <button class="btn-main">
               <p class="color-white s-14">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.betting_tips_link}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
               </p>
             </button>
           </a>
@@ -517,17 +558,17 @@
               on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
             >
               <p class="color-grey s-12 m-b-5">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.theme}
               </p>
               <div class="row-space-start">
                 <img
                   class="m-r-5"
                   src={light_icon_theme}
-                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries[0][1]}"
+                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries[0][1]}"
                   width="16px"
                   height="16px"
                 />
-                {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   {#if theme.includes($userBetarenaSettings.theme)}
                     <p class="color-white s-14">
                       {theme[1]}
@@ -557,7 +598,7 @@
             <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
             {#if dropdown_theme_visible}
               <div id="theme-dropdown-menu" transition:fly>
-                {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   <div
                     class="theme-opt-box row-space-out"
                     on:click={() => selectedTheme(theme[0])}
@@ -583,10 +624,10 @@
             <!-- [ℹ] name of the container-opt -->
             <div class="m-r-10">
               <p class="color-grey s-12 m-b-5">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.odds}
               </p>
               <p class="color-white s-14">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type[0]}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.odds_type[0]}
               </p>
             </div>
             <!-- [ℹ] arrow down [hidden-menu] -->
@@ -599,7 +640,7 @@
             {#if dropdown_odds_type_visible}
               <!-- [ℹ] dropdown-menu -->
               <div id="odds-type-dropdown-menu" transition:fly>
-                {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type as odd}
+                {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
                   <div
                     class="theme-opt-box"
                     on:click={() => (dropdown_odds_type_visible = false)}
@@ -622,11 +663,11 @@
             <!-- [ℹ] name of the container-opt -->
             <div class="m-r-10">
               <p class="color-grey s-12 m-b-5">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers}
               </p>
               <div class="row-space-start">
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
-                  {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                  {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     {#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
                       <img
                         class="country-flag m-r-5"
@@ -653,7 +694,7 @@
             {#if dropdown_bookmakers_visible}
               <div id="bookmakers-type-dropdown-menu" transition:fly>
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
-                  {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                  {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     <div
                       class="theme-opt-box row-space-start"
                       class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toString().toUpperCase()}
@@ -683,16 +724,16 @@
             id="sign-in-btn"
             class="cursor-not-allowed">
             <p class="color-white s-14">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sign_in}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
             </p>
           </button>
         {/if}
 
         {#if mobileExclusive}
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.betting_tips}>
+          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
             <!-- [ℹ] betting-tips -->
             <p class="color-white s-14">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.betting_tips_link}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
             </p>
           </a>
         {/if}
@@ -716,50 +757,50 @@
           <!-- -->
           {#each { length: 7 } as _, i}
             <!-- [ℹ] check - if sport is column -->
-            {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toString().toLowerCase()] != null}
+            {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()] != null}
               <!-- content here -->
               <button
                 class="sports-btn m-r-10"
-                on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0])}
-                class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]} >
+                on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
                 <img
                   class="m-r-10"
-                  src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toLocaleLowerCase()}.svg`}
-                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]}-img"
+                  src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
                   width="20px"
                   height="20px" />
 
                 <p 
                   class="color-white s-14 m-r-10">
-                  {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][1]}
+                  {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
                 </p>
 
                 <p 
                   class="color-white s-14 sport-counter">
-                  {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toString().toLowerCase()]}
+                  {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
                 </p>
               </button>
             {:else}
               <!-- else content here -->
               {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
                 <!-- content here -->
-                {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
+                {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
                   <!-- content here -->
                   <button
                     class="sports-btn m-r-10 cursor-not-allowed"
-                    on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0])}
-                    class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]} >
+                    on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                    class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
                     <img
                       class="m-r-10 soon-opacitiy"
-                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0].toLocaleLowerCase()}.svg`}
-                      alt="${HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][0]}-img"
+                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                      alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
                       width="20px"
                       height="20px"
                     />
 
                     <p 
                       class="color-white s-14 m-r-10 soon-opacitiy">
-                      {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports[i][1]}
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
                     </p>
 
                     <p 
@@ -792,7 +833,7 @@
               height="20px"
             />
             <p class="color-white s-14 m-r-10">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.more_sports}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.more_sports}
             </p>
             <!-- [ℹ] arrow down [hidden-menu] -->
             {#if !dropdown_more_sports_menu}
@@ -809,7 +850,7 @@
             on:click={() => (mobileExclusiveMoreSports = !mobileExclusiveMoreSports)}
           >
             <p class="color-white s-14">
-              {HEADER_TRANSLATION_DATA.scores_header_translations_dev.more_sports}
+              {HEADER_TRANSLATION_DATA.scores_header_translations.more_sports}
             </p>
           </button>
         {/if}
@@ -821,7 +862,7 @@
             id="more-sports-dropdown-menu" 
             transition:fly >
             <!-- -->
-            {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports as sport}
+            {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
               
               <!-- [ℹ] check - if sport is column -->
               {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0].toString().toLowerCase()] != null}
@@ -953,7 +994,7 @@
                 {#if mobileExclusive}
                   <button id="sign-in-btn">
                     <p class="color-white s-14">
-                      {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sign_in}
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
                     </p>
                   </button>
                 {/if}
@@ -970,7 +1011,7 @@
               <div class="side-nav-row">
                 <a data-sveltekit-prefetch href='/'>
                   <p class="color-white s-14">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.homepage}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.homepage}
                   </p>
                 </a>
               </div>
@@ -978,18 +1019,18 @@
               <!-- [ℹ] link-based-redirects -->
               <!-- [ℹ] latest-news -->
               <div class="side-nav-row">
-                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.latest_news}>
+                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.latest_news}>
                   <p class="color-white s-14">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.content_platform_link}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.content_platform_link}
                   </p>
                 </a>
               </div>
 
               <!-- [ℹ] betting-tips -->
               <div class="side-nav-row">
-                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links_dev.betting_tips}>
+                <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
                   <p class="color-white s-14">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.betting_tips_link}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
                   </p>
                 </a>
               </div>
@@ -1002,18 +1043,18 @@
                   on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
                 >
                   <p class="color-grey s-12 m-b-5">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.theme}
                   </p>
                   <div class="row-space-out">
                     <div class="row-space-start">
                       <img
                         class="m-r-5"
                         src={light_icon_theme}
-                        alt={HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries[0][1]}
+                        alt={HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries[0][1]}
                         width="16px"
                         height="16px"
                       />
-                      {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                      {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                         {#if theme.includes($userBetarenaSettings.theme)}
                           <p class="color-white s-14">
                             {theme[1]}
@@ -1037,7 +1078,7 @@
                 <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
                 {#if dropdown_theme_visible}
                   <div transition:fly>
-                    {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.theme_options as theme}
+                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                       <div
                         class="side-nav-dropdown-opt row-space-out"
                         on:click={() => selectedTheme(theme[0])}
@@ -1062,11 +1103,11 @@
                 <!-- [ℹ] name of the container-opt -->
                 <div class="m-b-15">
                   <p class="color-grey s-12 m-b-5">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.odds}
                   </p>
                   <div class="row-space-out">
                     <p class="color-white s-14">
-                      {HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type[0]}
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.odds_type[0]}
                     </p>
                     <!-- [ℹ] arrow down [hidden-menu] -->
                     {#if !dropdown_odds_type_visible}
@@ -1084,7 +1125,7 @@
                 <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
                 {#if dropdown_odds_type_visible}
                   <div transition:fly>
-                    {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.odds_type as odd}
+                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
                       <div
                         class="side-nav-dropdown-opt"
                         on:click={() => (dropdown_odds_type_visible = false)}
@@ -1106,12 +1147,12 @@
                 <!-- [ℹ] name of the container-opt -->
                 <div class="m-b-15">
                   <p class="color-grey s-12 m-b-5">
-                    {HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers}
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers}
                   </p>
                   <div class="row-space-out">
                     <div class="row-space-start">
                       {#if $userBetarenaSettings.country_bookmaker != undefined}
-                        {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                        {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                           {#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
                             <img
                               class="country-flag m-r-5"
@@ -1144,7 +1185,7 @@
                 {#if dropdown_bookmakers_visible}
                   <div transition:fly>
                     {#if $userBetarenaSettings.country_bookmaker != undefined}
-                      {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.bookmakers_countries as country}
+                      {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                         <div
                           class="side-nav-dropdown-opt row-space-start"
                           on:click={() => selectedCountryBookmakers(country[0])}
@@ -1192,7 +1233,7 @@
             <div class="row-space-out">
               <!-- .. title -->
               <p class="s-20 color-white">
-                {HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports_list}
+                {HEADER_TRANSLATION_DATA.scores_header_translations.sports_list}
               </p>
 
               <!-- [ℹ] close-side-nav -->
@@ -1209,7 +1250,7 @@
             <div 
               id="mobile-sports-grid" 
               class="column-start-grid-start m-t-25">
-              {#each HEADER_TRANSLATION_DATA.scores_header_translations_dev.sports as sport}
+              {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
                 <!-- [ℹ] check - if sport is column -->
                 {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0].toString().toLowerCase()] != null}
                   <button 

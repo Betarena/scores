@@ -53,15 +53,9 @@ export async function GET(req: { url: { [x: string]: { get: (arg0: string) => st
 
 async function getCacheLeaguesTableForGeoPos (geoPos: string): Promise < Cache_Single_Geo_Leagues_Table_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('leagues_table_geo', geoPos);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: Cache_Single_Geo_Leagues_Table_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ leagues_table_geo cache HIT", geoPos);
-      // [ℹ] return, cached data;
       return parsed;
     }
     return
@@ -74,15 +68,9 @@ async function getCacheLeaguesTableForGeoPos (geoPos: string): Promise < Cache_S
 
 async function getLeaguesTableForLang (lang: string): Promise < Cache_Single_Lang_Leagues_Table_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('leagues_table_t', lang);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: Cache_Single_Lang_Leagues_Table_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ leagues_table_t cache HIT", lang);
-      // [ℹ] return, cached data;
       return parsed;
     }
     return

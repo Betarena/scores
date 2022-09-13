@@ -5,6 +5,7 @@
 import { dev } from '$app/environment';
 import { writable } from 'svelte/store';
 import type { GeoJsResponse } from '$lib/models/geojs-types';
+import { logDevGroup } from '$lib/utils/debug';
 
 interface User_Setting {
 	lang: string;
@@ -74,7 +75,7 @@ function createLocalStore(key: any): any {
 		*/
 		setLang: (lang: string) => {
 			// ... DEBUGGING;
-			if (dev) console.info('-- select-lang --', lang);
+      if (dev) logDevGroup ("user-settings [DEV]", `selected lang: ${lang}`)
 			// ... GET DATA FROM LOCALSTORAGE();
 			const existing: string = localStorage.getItem(key);
 			// ... CONVERT TO JSON;

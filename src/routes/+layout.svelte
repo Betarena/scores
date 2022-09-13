@@ -68,8 +68,11 @@
 
   import '../app.css';
 
-  let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response = data.HEADER_TRANSLATION_DATA;
-  let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response = data.FOOTER_TRANSLATION_DATA;
+  let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response
+  let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response
+
+  $: HEADER_TRANSLATION_DATA = $page.data.HEADER_TRANSLATION_DATA;
+  $: FOOTER_TRANSLATION_DATA = $page.data.FOOTER_TRANSLATION_DATA;
 
   let ga_measurment_id = "UA-60160331-9"  // ... GoogleAnalytics ID
     
@@ -135,11 +138,11 @@
     <!-- [ℹ] HEADER SEO
     - ->
     <div>
-      {#if HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang != 'en'}
+      {#if HEADER_TRANSLATION_DATA.scores_header_translations.lang != 'en'}
         <a
           data-sveltekit-prefetch
-          href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}>
-          <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations_dev.lang}</p>
+          href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations.lang}>
+          <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations.lang}</p>
         </a>
       {:else}
         <a
@@ -153,15 +156,15 @@
     <!-- [ℹ] FOOTER SEO 
     - ->
     <div>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.latest_news}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.about_us}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.betting_tips}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.privacy}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links_dev.terms}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.latest_news}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.about_us}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.betting_tips}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.privacy}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks}</p>
+      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.terms}</p>
       <!-- [ℹ] nav-links-social-links
       - ->
-      {#each FOOTER_TRANSLATION_DATA.scores_footer_links_dev.social_networks as social_network}
+      {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
         <p>{social_network[1].toString().toLocaleLowerCase()}</p>
       {/each}
     </div>

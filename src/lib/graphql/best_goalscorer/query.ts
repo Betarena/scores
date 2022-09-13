@@ -21,7 +21,7 @@ export const GET_BEST_GOALSCORERS_DATA = gql`
       lang
       translations
     }
-    player_positions_translations_dev {
+    player_positions_translations {
       lang
       position
     }

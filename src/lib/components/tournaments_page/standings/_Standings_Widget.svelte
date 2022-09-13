@@ -36,6 +36,7 @@
 	import slider_right from './assets/slider-right.svg'
   import slider_left_dark from './assets/slider-left-dark.svg'
 	import slider_right_dark from './assets/slider-right-dark.svg'
+import { logDevGroup } from "$lib/utils/debug";
 
   let loaded:                 boolean = false;  // [ℹ] holds boolean for data loaded;
   let refresh:                boolean = false;  // [ℹ] refresh value speed of the WIDGET;
@@ -57,8 +58,8 @@
 	export let STANDINGS_T:     Cache_Single_Tournaments_League_Standings_Translation_Data_Response;
 	export let STANDINGS_DATA:  Cache_Single_Tournaments_League_Standings_Info_Data_Response;
 
-  $: if (dev && diasbleDev) console.log("STANDINGS_T: ", STANDINGS_T)
-  $: if (dev && diasbleDev) console.log(dropdownSeasonSelect)
+  if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `STANDINGS_T: ${STANDINGS_T}`)
+  if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `dropdownSeasonSelect: ${dropdownSeasonSelect}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -78,7 +79,8 @@
 
     // [ℹ] display NO DATA PLACEHOLDER
 		if (response == null || response == undefined) {
-      if (dev) console.debug('❌ no leagues_table available!')
+      // [🐛] debug 
+      if (dev) logDevGroup ("tournament standings [DEV]", `❌ no data available!`)
       // noStandingsBool = true;
 			return;
 		}
@@ -189,7 +191,6 @@
 
   $: if (browser && refresh_data) {
     // [ℹ] reset necessary variables;
-    if (dev) console.log("League_HERE")
     refresh = true
     loaded = false
     noStandingsBool = false

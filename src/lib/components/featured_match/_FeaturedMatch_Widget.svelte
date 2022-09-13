@@ -35,6 +35,7 @@
 	// [ℹ] key component assets;
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg' 
+  import { logDevGroup, logErrorGroup } from '$lib/utils/debug';
 
 	// [ℹ] main component variables;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
@@ -157,14 +158,14 @@
 			_X_vote: fixtureData._X_vote
 		};
 		// [ℹ] DEBUGGING;
-		if (dev) console.debug('-- handleSubmit() variables --', variables);
+    if (dev) logDevGroup ("featured match [DEV]", `handleSubmit() variables: ${variables}`)
 		// [ℹ] [TRY-CATCH]
 		try {
 			// [ℹ] push-GRAPH-QL-request;
 			const update_fixture_data: SelectedFixture_VoteUpdate_Response =
 				await initGrapQLClient().request(UPDATE_MATCH_FIXTURE_VOTES, variables);
 			// [ℹ] DEBUGGING;
-			if (dev) console.debug('update_fixture_data', update_fixture_data);
+      if (dev) logDevGroup ("featured match [DEV]", `update_fixture_data: ${update_fixture_data}`)
 			// [ℹ] update the existing data on the CASTED-VOTES;
 			FEATURED_MATCH_WIDGET_DATA.match_votes =
 				update_fixture_data.update_widget_featured_match_votes_by_pk;
@@ -173,7 +174,7 @@
 				FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_local +
 				FEATURED_MATCH_WIDGET_DATA.match_votes.vote_win_visitor;
 		} catch (error) {
-			console.error('error', error);
+      if (dev) logErrorGroup ("featured match", `error: ${error}`)
 		}
 	}
 
@@ -238,7 +239,7 @@
 	// [ℹ] function-to-cast-vote,
 	function castVote(voteType: string, voteVal: string): void {
 		// [ℹ] DEBUGGING;
-		if (dev) console.log('-- voteVal --', voteVal);
+    if (dev) logDevGroup ("featured match [DEV]", `voteVal: ${voteVal}`)
 		// [ℹ] check if a vote has already been casted ?;
 		if (!voteCasted) {
 			// [ℹ] update the showBettingSite Frame;
@@ -411,8 +412,7 @@
 			img.crossOrigin = 'Anonymous';
 			img.src = googleProxyURL + encodeURIComponent(imageURL);
 		} catch (e) {
-			// [ℹ] CATCH;
-			if (dev) console.error('-- getImageBgColor() ERR --', e);
+      if (dev) logErrorGroup ("featured match", `getImageBgColor(): error: ${e}`)
 		}
 	}
 

@@ -9,31 +9,31 @@ import { gql } from 'graphql-request';
 export const GET_COMPLETE_PAGES_AND_SEO_DATA = gql`
   query GET_COMPLETE_PAGES_AND_SEO_DATA @cached(ttl: 300) {
     # IMPORTANT HREF-LANG
-    scores_hreflang_dev {
+    scores_hreflang {
       hreflang
       link
     }
     # HOMEPAGE
-    scores_seo_homepage_dev {
+    scores_seo_homepage {
       lang
       main_data
       twitter_card
       opengraph
     }
     # HOMEPAGE SEO WIDGET
-    scores_seo_block_homepage_dev {
+    scores_seo_block_homepage {
       html
       lang
       title
     }
     # TOURNAMENTS SPECIFIC;
-    scores_seo_tournaments_dev {
+    scores_seo_tournaments {
       lang
       main_data
       opengraph
       twitter_card
     }
-    scores_tournaments_dev {
+    scores_tournaments {
       author
       country
       date
@@ -48,7 +48,7 @@ export const GET_COMPLETE_PAGES_AND_SEO_DATA = gql`
       type
       widgets
     }
-    scores_football_seasons_details_dev {
+    scores_football_seasons_details {
       data_stats
       default_data
       end_date
@@ -58,7 +58,7 @@ export const GET_COMPLETE_PAGES_AND_SEO_DATA = gql`
       round_data
       start_date
     }
-    scores_football_leagues_dev {
+    scores_football_leagues {
       country
       data
       name

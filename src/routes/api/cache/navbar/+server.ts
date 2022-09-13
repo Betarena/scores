@@ -26,10 +26,8 @@ export async function GET (req, res): Promise< any > {
 async function getCache (lang: string): Promise < Cache_Single_Lang_Header_Translation_Response | Record < string, never > > {
   try {
     const cached: string = await redis.hget('navbar_t', lang);
-    
     if (cached) {
       const parsed: any = JSON.parse(cached);
-      if (dev) console.info(`✅ navbar_t cache data`);
       return parsed;
     }
   } 
