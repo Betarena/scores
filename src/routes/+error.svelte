@@ -16,7 +16,7 @@
 
 
 <svelte:head>
-  <title>{$page.error}</title>
+  <title>{$page.error.message}</title>
 </svelte:head>
 
 
@@ -34,7 +34,7 @@
       {$page.status}
     </h1>
     <h1 class="s-22 color-black text-center">
-      {$page.error}
+      {$page.error.message}
     </h1>
   </div>
 
