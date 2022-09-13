@@ -293,14 +293,19 @@ import { logDevGroup } from "$lib/utils/debug";
           {#if season.id === $sessionStore.selectedSeasonID}
             
             <div
+              style="padding: 0 0 4px 0;"
               class="league-info-row row-space-out">
               <p
                 class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.teams}
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.teams}:
               </p>
               <p
                 class="s-14 color-black-2 w-500">
-                {season?.number_of_clubs}
+                {#if season?.number_of_clubs == null || season?.number_of_clubs == undefined}
+                   -
+                {:else}
+                  {season?.number_of_clubs}
+                {/if}
               </p>
             </div>
 
@@ -308,11 +313,15 @@ import { logDevGroup } from "$lib/utils/debug";
               class="league-info-row row-space-out">
               <p
                 class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.goals}
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.goals}:
               </p>
               <p
                 class="s-14 color-black-2 w-500">
-                {season?.goals}
+                {#if season?.goals == null || season?.goals == undefined}
+                   -
+                {:else}
+                  {season?.goals}
+                {/if}
               </p>
             </div>
 
@@ -320,11 +329,15 @@ import { logDevGroup } from "$lib/utils/debug";
               class="league-info-row row-space-out">
               <p
                 class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.average_goals}
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.average_goals}:
               </p>
               <p
                 class="s-14 color-black-2 w-500">
-                {season?.avg_goals}
+                {#if season?.avg_goals == null || season?.avg_goals == undefined}
+                   -
+                {:else}
+                  {season?.avg_goals}
+                {/if}
               </p>
             </div>
 
@@ -332,11 +345,15 @@ import { logDevGroup } from "$lib/utils/debug";
               class="league-info-row row-space-out">
               <p
                 class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.win_percentage}
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.win_percentage}:
               </p>
               <p
                 class="s-14 color-black-2 w-500">
-                {season?.win_p}
+                {#if season?.win_p == null || season?.win_p == undefined}
+                   -
+                {:else}
+                  {season?.win_p}
+                {/if}
               </p>
             </div>
 
@@ -344,11 +361,15 @@ import { logDevGroup } from "$lib/utils/debug";
               class="league-info-row row-space-out">
               <p
                 class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.average_player_rating}
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.average_player_rating}:
               </p>
               <p
                 class="s-14 color-black-2 w-500">
-                {season?.avg_player_r}
+                {#if season?.avg_player_r == null || season?.avg_player_r == undefined}
+                   -
+                {:else}
+                  {season?.avg_player_r}
+                {/if}
               </p>
             </div>
 
@@ -418,6 +439,8 @@ import { logDevGroup } from "$lib/utils/debug";
   div.league-info-row {
     padding: 14px 0 4px 0;
     border-bottom: 1px solid white;
+  } div.league-info-row:first-child {
+    padding: 0 0 4px 0;
   } div.league-info-row:last-child {
     border-bottom: none;
   }
@@ -456,6 +479,10 @@ import { logDevGroup } from "$lib/utils/debug";
   /* ====================
     WIDGET DARK THEME
   ==================== */
+
+  .dark-background-1 div.league-info-row {
+    border-bottom: 1px solid #616161;
+  }
 
 
 </style>

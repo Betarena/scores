@@ -119,7 +119,7 @@ import { logDevGroup } from "$lib/utils/debug";
     // [ℹ] number of clubs check;
     for (const season of LEAGUE_INFO_SEO_DATA.data.seasons) {
 
-        if (season.number_of_clubs === null) {
+        if (season.number_of_clubs === null || season.number_of_clubs === undefined) {
           season.number_of_clubs = "-"
         }
     }
