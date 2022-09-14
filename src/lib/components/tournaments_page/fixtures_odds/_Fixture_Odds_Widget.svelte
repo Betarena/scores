@@ -120,7 +120,6 @@
 
   async function checkForLiveFixtures(data: [string, FIREBASE_livescores_now][]) {
     
-    if (!loaded && noWidgetData) return;
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `checkForLiveFixtures()`)
 
     // [ℹ] generate map
@@ -185,7 +184,6 @@
   // [ℹ] listen real-time firebase livescores_now changes [WORKING]
 	async function listenRealTimeOddsChange (): Promise < void > {
 
-    if (!loaded && noWidgetData) return;
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `listenRealTimeOddsChange()`)
 
     const fixtureRef = ref (
@@ -222,6 +220,7 @@
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
 		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
+    loaded = true;
 
 		if (
       FIXTURES_ODDS_T == null || 
@@ -234,13 +233,11 @@
       // [🐛] debug 
       if (dev) logDevGroup ("fixture odds [DEV]", `❌ no data available!`)
       noWidgetData = true;
-      loaded = true;
 			return;
 		}
     // [ℹ] otherwise, revert back to DATA AVAILABLE;
     else {
       noWidgetData = false;
-      loaded = true;
     }
 
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `widgetInit() cont.`)
@@ -261,7 +258,6 @@
   async function selectFixturesOdds () {
 
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `selectFixturesOdds()`)
-    if (!loaded && noWidgetData) return;
 
     fixtures_arr_filter = []
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
@@ -278,11 +274,10 @@
     // [ℹ] validation check (#1)
     if (target_season == undefined) {
       noWidgetData = true;
-      loaded = false;
       return;
     }
 
-    if (dev && !enableLogs) logDevGroup ("fixture odds [DEV]", `target_season: ${target_season}`)
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `target_season: ${target_season}`)
 
     // [ℹ] validation check (#1) [weeks / rounds] 
     if (
@@ -457,7 +452,6 @@
   async function selectFixtureOddsNumber (opt_view: number) {
 
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `selectFixtureOddsNumber()`)
-    if (!loaded && noWidgetData) return;
 
     fixtures_arr_filter = []
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
