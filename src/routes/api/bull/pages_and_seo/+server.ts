@@ -258,7 +258,7 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     // [ℹ] domestic ONLY check;
     // [ℹ] published ONLY check;
     // [ℹ] updated to "status: published" 14/09/2022
-    if (iterator.status == "draft" && iterator.type != "domestic") {
+    if (iterator.status == "draft" || iterator.type != "domestic") {
       continue
     }
 
@@ -362,7 +362,7 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     // [ℹ] domestic ONLY check;
     // [ℹ] published ONLY check;
     // [ℹ] updated to "status: published" 14/09/2022
-    if (iterator.status == "draft" && iterator.type != "domestic") {
+    if (iterator.status == "draft" || iterator.type != "domestic") {
       continue
     }
 
