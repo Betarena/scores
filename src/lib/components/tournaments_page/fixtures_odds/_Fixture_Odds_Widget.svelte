@@ -4,13 +4,13 @@
 
 <script lang="ts">
 
-  // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
   import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { get } from "$lib/api/utils";
+  import { logDevGroup } from "$lib/utils/debug";
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
@@ -46,27 +46,36 @@
   import one_red_card_dark from './assets/1_red_card_dark.svg';
   import two_red_card_dark from './assets/2_red_cards_dark.svg';
   import three_red_card_dark from './assets/3_red_cards_dark.svg';
-import { logDevGroup } from "$lib/utils/debug";
 
-  let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
-  let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
-	let refresh_data:             any = undefined;                // [ℹ] refresh-data value speed;
-  let noFixturesOddsBool:       any = false;                    // [ℹ] identifies the noFixturesOddsBool boolean;
-  let toggleDropdown:           boolean = false;
-  let trueLengthOfArray:        number;
-  let optView:                  'round' | 'week' = 'week'
+  export let FIXTURES_ODDS_T:     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
+	export let FIXTURES_ODDS_DATA:  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
+
+  let loaded:                   boolean = false;                // [ℹ] (boolean) signal for widget has gone through "loading" phase
+  let refresh:                  boolean = false;                // [ℹ] (boolean) signal for widget refresh
+	let refresh_data:             any = undefined;                // [ℹ] (any) variable for declarative refresh-data value lsiten
+  let noWidgetData:             boolean = false;                // [ℹ] (boolean) signal for widget data totally missing
+  let toggleDropdown:           boolean = false;                // [ℹ] (boolean) signal dropdown state
+  let trueLengthOfArray:        number;                         // [ℹ] (number) initial default kay array length
+  let optView:                  'round' | 'week' = 'week'       // [ℹ] (string) view of widget state tracker
   let fixtures_arr_filter: {
     date: Date
     fixtures: Tournament_Fixture_Odds[]
   }[] = []
   let selectedOpt:              string = 'matches';
-
-  let diasbleDev:               boolean = false;
-  let devConsoleTag:            string = "FIX_ODDS";
-
-  let refreshRow:               boolean = false;
+  let tickSecShow:              boolean = false;
+  let week_start:               Date
+  let week_end:                 Date
+  let week_name:                number
+  let ready =                   false
+  let weeks_total:              number
+  let rounds_total:             number
+  let total_nav_num:            number = weeks_total
 
   let currentSeason:            number = undefined;
+
+  let enableLogs:              boolean = true;  
+  let showWidget:              boolean = true;
+  let devConsoleTag:           string = "FIX_ODDS";
 
   const monthNames = [
 		'Jan',
@@ -82,7 +91,6 @@ import { logDevGroup } from "$lib/utils/debug";
 		'Nov',
 		'Dec'
 	];
-
   const weekDays = [
     'monday',
     'tuesday',
@@ -93,10 +101,16 @@ import { logDevGroup } from "$lib/utils/debug";
     'sunday',
   ];
 
-	export let FIXTURES_ODDS_T:     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
-	export let FIXTURES_ODDS_DATA:  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
+  if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_T: ${FIXTURES_ODDS_T}`)
+  if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_DATA: ${FIXTURES_ODDS_DATA}`)
 
-  if (dev && diasbleDev) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_T: ${FIXTURES_ODDS_T}`)
+  if (
+    (FIXTURES_ODDS_DATA == null || FIXTURES_ODDS_DATA == undefined) ||
+    (FIXTURES_ODDS_T == null || FIXTURES_ODDS_T == undefined)
+  ) {
+    noWidgetData = true;
+    loaded = true;
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // [ADD-ON] FIREBASE
@@ -105,6 +119,10 @@ import { logDevGroup } from "$lib/utils/debug";
   const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
 
   async function checkForLiveFixtures(data: [string, FIREBASE_livescores_now][]) {
+    
+    if (!loaded && noWidgetData) return;
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `checkForLiveFixtures()`)
+
     // [ℹ] generate map
     for (const live_fixture of data) {
       const fixture_id = parseInt(live_fixture[0].toString())
@@ -167,6 +185,9 @@ import { logDevGroup } from "$lib/utils/debug";
   // [ℹ] listen real-time firebase livescores_now changes [WORKING]
 	async function listenRealTimeOddsChange (): Promise < void > {
 
+    if (!loaded && noWidgetData) return;
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `listenRealTimeOddsChange()`)
+
     const fixtureRef = ref (
       db_real,
       'livescores_now/'
@@ -180,55 +201,53 @@ import { logDevGroup } from "$lib/utils/debug";
 
   }
 
-  let tickSecShow = false;
-
-  onMount(async() => {
-    listenRealTimeOddsChange();
-    setInterval(async () => {
-      tickSecShow = !tickSecShow
-    }, 500)
-    document.addEventListener("visibilitychange", function() {
-      if (!document.hidden) {
-        selectFixturesOdds()
-        listenRealTimeOddsChange()
-      }
-    });
-  })
-
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  // [ℹ] MAIN
+  // [ℹ] SPORTBOOK-DETAILS [GET]
   async function widgetInit(): Promise < Cache_Single_SportbookDetails_Data_Response > {
 
-    if (!$userBetarenaSettings.country_bookmaker || $sessionStore?.selectedSeasonID == undefined) {
+    // [ℹ] validation of platform key data loaded
+    if (
+      !$userBetarenaSettings.country_bookmaker || 
+      $sessionStore?.selectedSeasonID == undefined
+    ) {
       return
     }
-
     let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `widgetInit()`)
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
 		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
 
-		if (FIXTURES_ODDS_T == null || FIXTURES_ODDS_DATA == undefined) {
+		if (
+      FIXTURES_ODDS_T == null || 
+      FIXTURES_ODDS_T == undefined || 
+      FIXTURES_ODDS_DATA == null ||
+      FIXTURES_ODDS_DATA == undefined || 
+      response == null ||
+      response == undefined
+    ) {
       // [🐛] debug 
       if (dev) logDevGroup ("fixture odds [DEV]", `❌ no data available!`)
-      noFixturesOddsBool = true;
+      noWidgetData = true;
+      loaded = true;
 			return;
 		}
     // [ℹ] otherwise, revert back to DATA AVAILABLE;
     else {
-      noFixturesOddsBool = false;
+      noWidgetData = false;
+      loaded = true;
     }
 
-    // [🐛] debug TEST TOP PLAYERS MISSING DATA
-    // noFixturesOddsBool = true;
-    // loaded = false;
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `widgetInit() cont.`)
 
-    // loaded = true;
-
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    await sleep(2000);
+    // [ℹ] enable when no widget fetch is required, i.e. no const response ...
+    // const sleep = ms => new Promise(r => setTimeout(r, ms));
+    // await sleep(2000);
 
     selectFixturesOdds();
 
@@ -237,20 +256,12 @@ import { logDevGroup } from "$lib/utils/debug";
 
   function selectTableView (opt: string) {
     selectedOpt = opt;
-    refreshRow = true;
-    setTimeout(async() => {
-      refreshRow = false
-    }, 50)
   }
 
-  let week_start: Date
-  let week_end: Date
-  let week_name: number
-  let ready = false
-  let weeks_total: number
-  let rounds_total: number
-
   async function selectFixturesOdds () {
+
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `selectFixturesOdds()`)
+    if (!loaded && noWidgetData) return;
 
     fixtures_arr_filter = []
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
@@ -266,12 +277,12 @@ import { logDevGroup } from "$lib/utils/debug";
 
     // [ℹ] validation check (#1)
     if (target_season == undefined) {
-      noFixturesOddsBool = true;
+      noWidgetData = true;
       loaded = false;
       return;
     }
 
-    if (dev && !diasbleDev) logDevGroup ("fixture odds [DEV]", `target_season: ${target_season}`)
+    if (dev && !enableLogs) logDevGroup ("fixture odds [DEV]", `target_season: ${target_season}`)
 
     // [ℹ] validation check (#1) [weeks / rounds] 
     if (
@@ -279,7 +290,7 @@ import { logDevGroup } from "$lib/utils/debug";
       target_season?.weeks === undefined ||
       target_season?.rounds === null || 
       target_season?.rounds === undefined) {
-      noFixturesOddsBool = true;
+      noWidgetData = true;
       loaded = false;
       return;
     }
@@ -439,11 +450,14 @@ import { logDevGroup } from "$lib/utils/debug";
     }
 
     ready = true;
-    noFixturesOddsBool = false;
+    noWidgetData = false;
     loaded = true;
   }
 
   async function selectFixtureOddsNumber (opt_view: number) {
+
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `selectFixtureOddsNumber()`)
+    if (!loaded && noWidgetData) return;
 
     fixtures_arr_filter = []
     let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] = []
@@ -530,22 +544,6 @@ import { logDevGroup } from "$lib/utils/debug";
     }
   }
 
-  $: if (browser && loaded) {
-    onMount(async() => {
-      const firebase_real_time = await getLivescoresNow()
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-      checkForLiveFixtures(data)
-    })
-  }
-
-  let total_nav_num: number = weeks_total
-
-  $: if (optView == "round") {
-    total_nav_num = rounds_total;
-  } else {
-    total_nav_num = weeks_total;
-  }
-
   function selectedRoundsWeeksView(opt_view: "round" | "week") {
     optView = opt_view
     selectFixturesOdds()
@@ -614,11 +612,14 @@ import { logDevGroup } from "$lib/utils/debug";
 
 	$: refresh_data = $userBetarenaSettings.country_bookmaker;
 
-  $: if (browser && refresh_data) {
+  $: if (
+    browser && 
+    refresh_data
+  ) {
     // [ℹ] reset necessary variables;
     refresh = true
-    loaded = false
-    noFixturesOddsBool = false
+    // loaded = false
+    // noWidgetData = false
     // widgetInit()
     setTimeout(async() => {
       refresh = false
@@ -634,22 +635,61 @@ import { logDevGroup } from "$lib/utils/debug";
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let loadedCurrentSeason: boolean = false;
-  $: if (browser && $sessionStore.selectedSeasonID != undefined && !loadedCurrentSeason) {
+  $: if (
+    browser && 
+    $sessionStore.selectedSeasonID != undefined && 
+    !loadedCurrentSeason
+  ) {
     currentSeason = $sessionStore.selectedSeasonID;
     loadedCurrentSeason = true;
   }
 
-  $: if (browser && $sessionStore.selectedSeasonID != undefined) {
-    selectFixturesOdds()
+  $: if (
+    browser && 
+    $sessionStore.selectedSeasonID != undefined && 
+    !noWidgetData
+  ) {
     if (dev) logDevGroup ("fixture odds [DEV]", `Updated season!`)
+    selectFixturesOdds()
   }
 
-  let server_side_language: string = 'en';
+  $: if (
+    browser &&
+    $sessionStore.selectedSeasonID != undefined && 
+    !noWidgetData
+  ) {
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `browser && loaded`)
+    onMount(async() => {
+      const firebase_real_time = await getLivescoresNow()
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      checkForLiveFixtures(data)
+    })
+    onMount(async() => {
+      listenRealTimeOddsChange();
+      setInterval(async () => {
+        tickSecShow = !tickSecShow
+      }, 500)
+      document.addEventListener("visibilitychange", function() {
+        if (!document.hidden) {
+          selectFixturesOdds()
+          listenRealTimeOddsChange()
+        }
+      });
+    })
+  }
+
+  $: if (optView == "round") {
+    total_nav_num = rounds_total;
+  } else {
+    total_nav_num = weeks_total;
+  }
 
   // [ℹ] IMPORTANT! lang selection [SERVER-SIDE-RENDER]
+  let server_side_language: string = 'en';
   $: if (
     $page.routeId != null &&
-    !$page.error) {
+    !$page.error
+  ) {
     if ($page.routeId.includes("[lang=lang]")) {
 		  server_side_language = $page.params.lang;
     }
@@ -678,7 +718,7 @@ import { logDevGroup } from "$lib/utils/debug";
 
   <!-- [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  {#if !loaded && !noWidgetData}
     <div 
       id="seo-widget-box">
       {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
@@ -716,10 +756,7 @@ import { logDevGroup } from "$lib/utils/debug";
 
   <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if 
-    noFixturesOddsBool && 
-    !loaded}
-
+  {#if noWidgetData && loaded}
     <!-- [ℹ] title of the widget 
     -->
     <h2
@@ -769,12 +806,12 @@ import { logDevGroup } from "$lib/utils/debug";
   <!-- [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if
-    ready &&
-    !noFixturesOddsBool &&
-    !refresh &&
     browser && 
+    !noWidgetData &&
+    !refresh &&
     $userBetarenaSettings.country_bookmaker && 
-    !diasbleDev}
+    ready &&
+    showWidget}
 
     <!-- [ℹ] promise is pending 
     -->
