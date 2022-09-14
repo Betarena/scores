@@ -92,13 +92,13 @@
 		'Dec'
 	];
   const weekDays = [
+    'sunday',
     'monday',
     'tuesday',
     'wednesday',
     'thursday',
     'friday',
-    'saturday',
-    'sunday',
+    'saturday'
   ];
 
   if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_T: ${FIXTURES_ODDS_T}`)
@@ -1268,9 +1268,9 @@
                         class:color-grey={fixture?.status === "FT"}>
                         {
                           (
-                            new Date(fixture?.fixture_time).getHours() +
+                            (new Date(fixture?.fixture_time + "Z").getHours()) +
                             ":" +
-                            ('0' + new Date(fixture?.fixture_time).getMinutes()).slice(-2)
+                            ('0' + new Date(fixture?.fixture_time + "Z").getMinutes()).slice(-2)
                           ).split(' ').join('')
                         }
                       </p>
