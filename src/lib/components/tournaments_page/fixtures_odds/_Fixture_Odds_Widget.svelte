@@ -193,8 +193,10 @@
 
     onValue(fixtureRef, (snapshot) => {
       // [ℹ] break-down-values
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
-      checkForLiveFixtures(data);
+      if (snapshot.val() != null) {
+        const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
+        checkForLiveFixtures(data);
+      }
     });
 
   }
@@ -440,8 +442,10 @@
     // [ℹ] kickstart Fireabse
     if (loaded) {
       const firebase_real_time = await getLivescoresNow()
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-      checkForLiveFixtures(data)
+      if (firebase_real_time != null) {
+        const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+        checkForLiveFixtures(data)
+      }
     }
 
     ready = true;
@@ -533,8 +537,10 @@
     // [ℹ] break-down-values
     if (loaded) {
       const firebase_real_time = await getLivescoresNow()
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-      checkForLiveFixtures(data)
+      if (firebase_real_time != null) {
+        const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+        checkForLiveFixtures(data)
+      }
     }
   }
 
@@ -655,8 +661,10 @@
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `browser && loaded`)
     onMount(async() => {
       const firebase_real_time = await getLivescoresNow()
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-      checkForLiveFixtures(data)
+      if (firebase_real_time != null) {
+        const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+        checkForLiveFixtures(data)
+      }
     })
     onMount(async() => {
       listenRealTimeOddsChange();
