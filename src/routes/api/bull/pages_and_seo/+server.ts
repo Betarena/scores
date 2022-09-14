@@ -148,7 +148,7 @@ async function deleteCacheHomepageSEOData () {
 }
 
 async function deleteCacheTournamentsPageSEOData () {
-  await redis.del('tournaments_page_seo')
+  await redis.del('tournaments_seo')
   return
 }
 
@@ -255,11 +255,12 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
-    // [ℹ] demestic ONLY check;
-    // [ℹ] depreceated 13/09/2022
-    // if (iterator.type != "domestic") {
-    //   continue
-    // }
+    // [ℹ] domestic ONLY check;
+    // [ℹ] published ONLY check;
+    // [ℹ] updated to "status: published" 14/09/2022
+    if (iterator.status == "draft") {
+      continue
+    }
 
     // [🐛] debug
     // if (iterator.tournament_id == 1505) {
@@ -358,11 +359,12 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
-    // [ℹ] demestic ONLY check;
-    // [ℹ] depreceated 13/09/2022
-    // if (iterator.type != "domestic") {
-    //   continue
-    // }
+    // [ℹ] domestic ONLY check;
+    // [ℹ] published ONLY check;
+    // [ℹ] updated to "status: published" 14/09/2022
+    if (iterator.status == "draft") {
+      continue
+    }
 
     // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
     const url = iterator.lang == 'en' 
