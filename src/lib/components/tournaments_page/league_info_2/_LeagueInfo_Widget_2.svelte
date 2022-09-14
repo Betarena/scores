@@ -10,6 +10,7 @@
   import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
+  import { logDevGroup } from "$lib/utils/debug";
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
@@ -22,10 +23,6 @@
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-  import arrow_down from './assets/arrow-down.svg';
-  import arrow_up from './assets/arrow-up.svg';
-  import check_league from './assets/check-league.svg';
-import { logDevGroup } from "$lib/utils/debug";
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
@@ -34,21 +31,11 @@ import { logDevGroup } from "$lib/utils/debug";
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
 	let refresh_data:             any = undefined;                // [ℹ] refresh-data value speed;
-  let noWidgetData:         any = false;                    // [ℹ] identifies the noWidgetData boolean;
-  let dropdownPlayerViewSelect: string = "rating";              // [ℹ] selected TOP PLAYER VIEW;
-  let playerArrayConst:         string = "top_players_";
-  let selectedPlayerArray:      string = "top_players_rating";
-  let toggleDropdown:           boolean = false;
-  let showMore:                 boolean = false;
-  let displayShowMore:          boolean = false;
-  let limitViewRow:             number;                         // [ℹ] holds the actual, `total` limit of the list of featured sites
-  let staticViewRow:            number;                         // [ℹ] holds the `initial` number of featured sites to be displayed
+  let noWidgetData:             any = false;                    // [ℹ] identifies the noWidgetData boolean;
   let trueLengthOfArray:        number;
 
   let diasbleDev:               boolean = false;
   let devConsoleTag:            string = "TOP_PLAYER";
-
-  let refreshRow:               boolean = false;
 
   let currentSeason:            number = undefined;
 
@@ -62,11 +49,9 @@ import { logDevGroup } from "$lib/utils/debug";
 
   async function widgetInit(): Promise < Cache_Single_Tournaments_League_Info_Data_Response > {
 
-    if (!$userBetarenaSettings.country_bookmaker || $sessionStore?.selectedSeasonID == undefined) {
-      return
-    }
-
     // [ℹ] get response [lang] [data] [obtained from preload()]
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    await sleep(3000);
 
 		if (LEAGUE_INFO_SEO_DATA == null || LEAGUE_INFO_SEO_DATA == undefined) {
       // [🐛] debug 
@@ -79,14 +64,11 @@ import { logDevGroup } from "$lib/utils/debug";
       noWidgetData = false;
     }
 
-    // [🐛] debug TEST TOP PLAYERS MISSING DATA
+    // [🐛] debug TEST WIDGET MISSING DATA
     // noWidgetData = true;
     // loaded = false;
 
     loaded = true;
-
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    await sleep(2000);
 
     return LEAGUE_INFO_SEO_DATA;
   }

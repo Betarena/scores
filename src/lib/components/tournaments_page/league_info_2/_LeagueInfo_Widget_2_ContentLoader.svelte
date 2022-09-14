@@ -51,7 +51,7 @@
     /* max-width: 383px; */
     /* overflow: hidden; */
     position: relative;
-    /* margin-top: 40px; */
+    margin-top: 40px;
   }
 
 </style>
