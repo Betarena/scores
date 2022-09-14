@@ -300,7 +300,7 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     urlsArray.push(url)
   }
 
-  deleteCacheSitemapURLs();
+  // deleteCacheSitemapURLs();
   
   const uniqArray = [...new Set(urlsArray)];
 
@@ -347,7 +347,7 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     alternate_data: undefined,
   }
 
-  deleteCacheTournamentsPageData();
+  // deleteCacheTournamentsPageData();
 
   // [ℹ] generate appropiate URLS
   for (const iterator of data.scores_tournaments) {
