@@ -16,7 +16,7 @@
 		server_side_language = $page.params.lang;
 	}
 
-  // ...
+  // [ℹ] alt. newsletter pop-up method
   function toggleNewsletterPopUp() {
     // ...  
     // setTimeout(async () => {
@@ -25,12 +25,7 @@
     //   // let doc = iFrameEmailFormElement.ownerDocument;
     //   let doc = (iFrameEmailFormElement.contentWindow || iFrameEmailFormElement.contentDocument);
     //   // if (doc.document)doc = doc.document
-    //   // ... DEBUGGING;
-    //   if (dev) console.debug('iFrameEmailFormElement', iFrameEmailFormElement);
-    //   if (dev) console.debug('doc', doc.document);
-    //   // ...
     //   // doc.body.style.backgroundColor = "red";
-    //   // ... 
     // }, 5000)
   }
 </script>

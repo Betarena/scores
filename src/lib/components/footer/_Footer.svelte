@@ -16,6 +16,7 @@
 	import logo_full from './assets/betarena-logo-full.svg'
 	import begambleawareorg from './assets/begambleawareorg_black.png'
 	import legal18icon from './assets/legal-18-action-bet.png'
+  import { logDevGroup } from '$lib/utils/debug';
   // [ℹ] pre-loaded & ready;
 	export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
   
@@ -40,8 +41,6 @@
 
   onMount(async () => {
 		var wInit = document.documentElement.clientWidth;
-		// [ℹ] debugging;
-		// if (dev) console.debug('resizing', wInit)
 		// TABLET - VIEW
 		if (wInit >= 1440) {
 			tabletExclusive = false;
@@ -56,8 +55,6 @@
 		}
 		window.addEventListener('resize', function () {
 			var w = document.documentElement.clientWidth;
-			// [ℹ] debugging;
-			// if (dev) console.debug('resizing', w)
 			// TABLET - VIEW
 			if (w >= 1440) {
 				tabletExclusive = false;
@@ -105,9 +102,8 @@
 	*/
 	async function submitEmail() {
     // [ℹ] DEBUGGING;
-		if (dev) console.debug('subscribing to email newsletter!')
-    // [ℹ]
-    // showEmailForm = true;
+    if (dev) logDevGroup ("footer [DEV]", `subscribing to email newsletter!`)
+    // [ℹ] showEmailForm = true;
     $sessionStore.newsletterPopUpShow = true;
 	}
 

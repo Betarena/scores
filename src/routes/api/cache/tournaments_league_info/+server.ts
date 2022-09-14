@@ -32,7 +32,6 @@ async function getCacheNavBar(url: string): Promise < Cache_Single_Lang_Header_T
     const cached: string = await redis.hget('league_info', url);
     if (cached) {
       const parsed: any = JSON.parse(cached);
-      if (dev) console.info(`✅ league_info cache data`);
       return parsed;
     }
   } 

@@ -7,6 +7,7 @@ import {
 } from '@sveltejs/kit';
 
 import redis from "$lib/redis/init"
+import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
@@ -58,7 +59,6 @@ async function getLiveScoresFootballLeagues(): Promise < any | Record < string, 
     const cached: string = await redis.get('live_scores_leagues');
     if (cached) {
       const parsed: any = JSON.parse(cached);
-      if (dev) console.info(`Found seo - live_scores_leagues - in cache`);
       return parsed;
     }
   } catch (e) {
@@ -74,7 +74,6 @@ async function getLiveScoresFootball(
     const cached: string = await redis.hget('live_scores', lang);
     if (cached) {
       const parsed: LiveScore_SEO_Game_Scoped_Lang[] = JSON.parse(cached);
-      if (dev) console.info(`Found seo - live_scores - in cache`);
       return parsed;
     }
   } catch (e) {
@@ -88,7 +87,6 @@ async function getLiveScoresFootballTranslations(): Promise < any | Record < str
     const cached: string = await redis.get('live_scores_football_translations');
     if (cached) {
       const parsed: any = JSON.parse(cached);
-      if (dev) console.info(`Found seo - live_scores_football_translations - in cache`);
       return parsed;
     }
   } catch (e) {

@@ -5,8 +5,8 @@ import { error, json } from '@sveltejs/kit';
 import redis from "$lib/redis/init"
 
 import type { 
-  Cache_Single_Geo_LeagueList_Translation_Response, 
-  Cache_Single_Lang_LeagueList_Translation_Response 
+  REDIS_CACHE_SINGLE_league_list_geo_data_response, 
+  REDIS_CACHE_SINGLE_league_list_seo_t_response 
 } from '$lib/models/league_list/types';
 
 /** 
@@ -50,17 +50,11 @@ export async function GET(req: { url: { [x: string]: { get: (arg0: string) => st
  * [ℹ] Featured Match CACHEING ACTIONS METHODS
 */
 
-async function getCacheLeagueListForGeoPos (geoPos: string): Promise < Cache_Single_Geo_LeagueList_Translation_Response | Record < string, never > > {
+async function getCacheLeagueListForGeoPos (geoPos: string): Promise < REDIS_CACHE_SINGLE_league_list_geo_data_response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('league_list_geo', geoPos);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
-      const parsed: Cache_Single_Geo_LeagueList_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ league_list_geo cache HIT", geoPos);
-      // [ℹ] return, cached data;
+      const parsed: REDIS_CACHE_SINGLE_league_list_geo_data_response = JSON.parse(cached);
       return parsed;
     }
     return
@@ -71,17 +65,11 @@ async function getCacheLeagueListForGeoPos (geoPos: string): Promise < Cache_Sin
   }
 }
 
-async function getLeagueListForLang (lang: string): Promise < Cache_Single_Lang_LeagueList_Translation_Response | Record < string, never > > {
+async function getLeagueListForLang (lang: string): Promise < REDIS_CACHE_SINGLE_league_list_seo_t_response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('league_list_t', lang);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
-      const parsed: Cache_Single_Lang_LeagueList_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ league_list_t cache HIT", lang);
-      // [ℹ] return, cached data;
+      const parsed: REDIS_CACHE_SINGLE_league_list_seo_t_response = JSON.parse(cached);
       return parsed;
     }
     return

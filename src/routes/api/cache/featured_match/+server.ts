@@ -52,15 +52,9 @@ export async function GET(req, res): Promise < unknown > {
 
 async function getCacheFeaturedMatchForGeoPos(geoPos: string): Promise < FixtureResponse | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('featured_match_geo', geoPos);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: FixtureResponse = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ featured_match_geo cache HIT", geoPos);
-      // [ℹ] return, cached data;
       return parsed;
     }
     return
@@ -73,15 +67,9 @@ async function getCacheFeaturedMatchForGeoPos(geoPos: string): Promise < Fixture
 
 async function getCacheFeaturedMatchForLang(lang: string): Promise < Cache_Single_Lang_Featured_Match_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('featured_match_t', lang);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: Cache_Single_Lang_Featured_Match_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ featured_match_t HIT", lang);
-      // [ℹ] return, cached data;
       return parsed;
     }
     return

@@ -1,3 +1,6 @@
+import { dev } from "$app/environment";
+import { logErrorGroup } from "$lib/utils/debug";
+
 /**
  * EXPORT
  * Function / Method
@@ -17,8 +20,8 @@
     }).then((response) => {
         // ... verify if the response is error-free
         if (!response.ok) {
-            console.log('response-data', response);
-            throw new Error('Network response was not ok');
+          if (dev) logErrorGroup ("utils [DEV]", `response: ${response}`)
+          throw new Error('Network response was not ok');
         }
         // ... return the data
         return response.json();
@@ -52,8 +55,8 @@ export async function post(path, data): Promise < any > {
     }).then((response) => {
         // ... verify if the response is error-free
         if (!response.ok) {
-            console.log('response-data', response);
-            throw new Error('Network response was not ok');
+          if (dev) logErrorGroup ("utils [DEV]", `response: ${response}`)
+          throw new Error('Network response was not ok');
         }
         // ... return the data
         return response.json()

@@ -53,15 +53,9 @@ export async function GET(req: { url: { [x: string]: { get: (arg0: string) => st
 
 async function getCacheFeaturedBettingSiteForGeoPos (geoPos: string): Promise < All_SportBook_Details_Data | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('featured_betting_sites_geo', geoPos);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: All_SportBook_Details_Data = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ featured_betting_sites_geo cache HIT", geoPos);
-      // [ℹ] return, cached data;
       return parsed;
     }
     return
@@ -74,15 +68,9 @@ async function getCacheFeaturedBettingSiteForGeoPos (geoPos: string): Promise < 
 
 async function getCacheFeaturedBettingSiteForLang (lang: string): Promise < Cache_Single_Lang_Featured_Betting_Site_Translation_Response | Record < string, never > > {
   try {
-    // [ℹ] cached data retrival;
     const cached: string = await redis.hget('featured_betting_sites_t', lang);
-    // [ℹ] check for `cached` data
     if (cached) {
-      // [ℹ] convert the data from `string` to `JSON`
       const parsed: Cache_Single_Lang_Featured_Betting_Site_Translation_Response = JSON.parse(cached);
-      // [🐛] debug;
-      if (dev) console.info("✅ featured_betting_sites_t cache HIT", lang);
-      // [ℹ] return, cached data;
       return parsed;
     }
     return

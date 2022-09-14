@@ -68,8 +68,11 @@
 
   import '../app.css';
 
-  let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response = data.HEADER_TRANSLATION_DATA;
-  let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response = data.FOOTER_TRANSLATION_DATA;
+  let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response
+  let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response
+
+  $: HEADER_TRANSLATION_DATA = $page.data.HEADER_TRANSLATION_DATA;
+  $: FOOTER_TRANSLATION_DATA = $page.data.FOOTER_TRANSLATION_DATA;
 
   let ga_measurment_id = "UA-60160331-9"  // ... GoogleAnalytics ID
     

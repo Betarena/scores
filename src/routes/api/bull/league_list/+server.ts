@@ -1,4 +1,3 @@
-
 import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
@@ -14,7 +13,7 @@ import type {
 } from '$lib/models/league_list/types'
 
 import { 
-  GET_COMPLETE_LEAGUE_LIST_DATA 
+  REDIS_CACHE_LEAGUE_LIST_DATA_1 
 } from '$lib/graphql/league_list/query'
 
 import { 
@@ -55,7 +54,7 @@ let logs = []
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function POST(): Promise < unknown > {
+export async function POST (): Promise < unknown > {
 
   // [ℹ] dev / local environment
   if (dev) {
@@ -124,16 +123,6 @@ async function cacheTranslationLang (lang: string, json_cache: REDIS_CACHE_SINGL
   }
 }
 
-async function deleteLeagueListGeoPos () {
-  await redis.del('league_list_geo')
-  return
-}
-
-async function deleteLeagueListLang () {
-  await redis.del('league_list_t')
-  return
-}
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -187,57 +176,58 @@ cacheQueueLeaguesList.process (async function (job, done) {
 
 async function leagueListGeoDataGeneration () {
 
-  // await deleteLeagueListGeoPos()
-
   // [ℹ] get all of the LEAGUE LIST DATA from HASURA;
-  const response: Array < REDIS_CACHE_SINGLE_league_list_geo_data_response > = await mainGeo()
+  const response = await mainGeo()
 
-  // [ℹ] iterate over EACH LEAGUE OBJECT, lang, by lang;
+  // [ℹ] iterate over EACH LEAGUE OBJECT, 
+  // [ℹ] lang, by lang;
+  // [ℹ] cache-response;
   for await (const leagueObj of response) {
     const userGeo = leagueObj.geo
-    // [ℹ] cache-response;
     await cacheGeoPos(userGeo, leagueObj);
   }
 
 }
 
-async function leagueListLangDataGeneration (langArray: string[]) {
+async function leagueListLangDataGeneration (
+  langArray: string[]
+) {
 
-  const response: REDIS_CACHE_SINGLE_league_list_seo_t_response [] = await mainLang(langArray)
+  const response = await mainLang(langArray)
 
   // [❗] FIXME: make sure [CACHE] is TIME-BASED-EXPIRATION, not DELETE-INSERT based;
   // deleteLeagueListLang()
 
   // [🐛] debug
-  // if (dev) {
-  //   const data = JSON.stringify(response, null, 4)
-  //   fs.writeFile('./datalog/leagueListLangDataGeneration.json', data, err => {
-  //     if (err) {
-  //       console.error(err);
-  //     }
-  //   });
-  // }
+  /*
+    if (dev) {
+      const data = JSON.stringify(response, null, 4)
+      fs.writeFile('./datalog/leagueListLangDataGeneration.json', data, err => {
+        if (err) {
+          console.error(err);
+        }
+      });
+    }
+  */
 
   // [ℹ] for-each available translation:
+  // [ℹ] persist-cache-response;
   for (const item of response) {
-    // [ℹ] persist-cache-response;
     await cacheTranslationLang (item.lang, item);
   }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] METHODS
+//  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_data_response >> {
+async function mainGeo (): 
+Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_data_response >> {
 
-  const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(GET_COMPLETE_LEAGUE_LIST_DATA)
-
-  const tournament_map = new Map()
-  for (const t of response.scores_tournaments) {
-    tournament_map.set(t.tournament_id, t)
-  }
-  logs.push(`tournament_map generated! With size: ${tournament_map.size}`)
+  const response = await getLeagueListQuery ();
+  const tournament_map = await obtainLeagueListTournamentsMap (
+    response
+  );
 
   const finalObj: Array < REDIS_CACHE_SINGLE_league_list_geo_data_response > = []
 
@@ -292,46 +282,30 @@ async function mainGeo (): Promise < Array < REDIS_CACHE_SINGLE_league_list_geo_
   return finalObj
 }
 
-async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_league_list_seo_t_response[] > {
+async function mainLang (
+  langArray: string[]
+): Promise < REDIS_CACHE_SINGLE_league_list_seo_t_response[] > {
 
-  // [ℹ] debug info
-  let t0;
-  let t1;
-
-  /*
-    [ℹ] data breakdown MAIN
-  */
-  
-  t0 = performance.now();
-  const queryName = "HASURA_GET_TARGET_TEAMS_AND_PLAYERS";
-  const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request(
-    GET_COMPLETE_LEAGUE_LIST_DATA
+  const response = await getLeagueListQuery ()
+  const lang_country_map = await obtainLeagueListTranslationMap (
+    response
   )
-  t1 = performance.now();
-  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-  t0 = performance.now();
-  const lang_country_map = new Map()
-  for (const t of response.scores_general_translations) {
-    lang_country_map.set(t.lang, t)
-  }
-  t1 = performance.now();
-  logs.push(`lang_country_map generated with size: ${lang_country_map.size}`)
-  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
-
-  // [ℹ] MAIN
+  /**
+   * [ℹ] MAIN
+  */
 
   const finalCacheObj: REDIS_CACHE_SINGLE_league_list_seo_t_response [] = []
 
   // [ℹ] universal [EN] [LIST]
   const pre_unique_county_list = response.scores_league_list
-    .filter ((obj, pos, arr) => {
-      return arr
-        .map(mapObj => mapObj.country_id)
-        .indexOf(obj.country_id) == pos;
+  .filter ((obj, pos, arr) => {
+    return arr
+      .map(mapObj => mapObj.country_id)
+      .indexOf(obj.country_id) == pos;
   });
   const pre_updated_unique_county_list = pre_unique_county_list
-    .map (u => ({
+  .map (u => ({
     country_id:     u.country_id,
     country_name:   u.country_name,
     image_path:     u.image_path
@@ -395,11 +369,64 @@ async function mainLang (langArray: string[]): Promise < REDIS_CACHE_SINGLE_leag
   return finalCacheObj
 }
 
-function compareStrings(a, b) {
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+//  [HELPER] OTHER METHODS
+// ~~~~~~~~~~~~~~~~~~~~~~~~
+
+function compareStrings (
+  a, 
+  b
+) {
 
   // Assuming you want case-insensitive comparison
   a = a.toLowerCase();
   b = b.toLowerCase();
 
   return (a < b) ? -1 : (a > b) ? 1 : 0;
+}
+
+async function getLeagueListQuery (
+): Promise < BETARENA_HASURA_league_list_query > {
+  
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_LEAGUE_LIST_DATA_1";
+	const response: BETARENA_HASURA_league_list_query = await initGrapQLClient().request (
+    REDIS_CACHE_LEAGUE_LIST_DATA_1
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
+}
+
+async function obtainLeagueListTranslationMap (
+  data: BETARENA_HASURA_league_list_query
+): Promise < Map < string, BETARENA_HASURA_scores_general_translations > > {
+
+  const t0  = performance.now();
+  const lang_country_map = new Map < string, BETARENA_HASURA_scores_general_translations > ()
+  for (const t of data.scores_general_translations) {
+    lang_country_map.set(t.lang, t)
+  }
+  const t1 = performance.now();
+  logs.push(`lang_country_map generated with size: ${lang_country_map.size}`)
+  logs.push(`hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  return lang_country_map
+}
+
+async function obtainLeagueListTournamentsMap (
+  data: BETARENA_HASURA_league_list_query
+): Promise < Map < number, BETARENA_HASURA_scores_tournaments > > {
+
+  const t0  = performance.now();
+  const tournament_map = new Map < number, BETARENA_HASURA_scores_tournaments > ()
+  for (const t of data.scores_tournaments) {
+    tournament_map.set(t.tournament_id, t)
+  }
+  const t1 = performance.now();
+  logs.push(`tournament_map generated with size: ${tournament_map.size}`)
+  logs.push(`hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  return tournament_map
 }

@@ -24,6 +24,7 @@
   import check_league from './assets/check-league.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
+  import { logDevGroup } from "$lib/utils/debug";
 
   // [ℹ] main component variables;
 	export let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
@@ -53,11 +54,9 @@
 
     // [ℹ] if response is null;
 		if (response == null || response == undefined) {
-			// [ℹ]
-			if (dev) console.debug('❌ no leagues_table available!')
-			// [ℹ] return null;
+			// [🐛] debug 
+      if (dev) logDevGroup ("league table [DEV]", `❌ no data available to email newsletter!`)
       noLeaguesTable = true;
-      // [ℹ]
 			return;
 		}
 
