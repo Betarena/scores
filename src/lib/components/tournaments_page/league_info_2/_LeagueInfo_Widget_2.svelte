@@ -85,8 +85,8 @@ import { logDevGroup } from "$lib/utils/debug";
 
     loaded = true;
 
-    // const sleep = ms => new Promise(r => setTimeout(r, ms));
-    // await sleep(2000);
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    await sleep(2000);
 
     return LEAGUE_INFO_SEO_DATA;
   }
@@ -352,7 +352,7 @@ import { logDevGroup } from "$lib/utils/debug";
                 {#if season?.win_p == null || season?.win_p == undefined}
                    -
                 {:else}
-                  {season?.win_p}
+                  {season?.win_p}%
                 {/if}
               </p>
             </div>
@@ -438,7 +438,7 @@ import { logDevGroup } from "$lib/utils/debug";
 
   div.league-info-row {
     padding: 14px 0 4px 0;
-    border-bottom: 1px solid white;
+    border-bottom: 1px solid #E6E6E6;
   } div.league-info-row:first-child {
     padding: 0 0 4px 0;
   } div.league-info-row:last-child {

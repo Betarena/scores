@@ -157,8 +157,8 @@ export async function load({
     response_top_players_translations &&
     response_top_players_data &&
     // [ℹ] fixtures_odds
-    response_fixtures_odds_translations &&
-    response_fixtures_odds_data
+    response_fixtures_odds_translations
+    // && response_fixtures_odds_data // [ℹ] can be "null"
   ) {
     return {
 
