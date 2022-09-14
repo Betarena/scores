@@ -266,8 +266,8 @@
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `widgetInit() cont.`)
 
     // [ℹ] enable when no widget fetch is required, i.e. no const response ...
-    // const sleep = ms => new Promise(r => setTimeout(r, ms));
-    // await sleep(2000);
+    const sleep = ms => new Promise(r => setTimeout(r, ms));
+    await sleep(2000);
 
     selectFixturesOdds();
 
