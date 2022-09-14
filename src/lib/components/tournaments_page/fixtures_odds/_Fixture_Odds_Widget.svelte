@@ -46,6 +46,7 @@
   import one_red_card_dark from './assets/1_red_card_dark.svg';
   import two_red_card_dark from './assets/2_red_cards_dark.svg';
   import three_red_card_dark from './assets/3_red_cards_dark.svg';
+import { logDevGroup } from "$lib/utils/debug";
 
   export let FIXTURES_ODDS_T:     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
 	export let FIXTURES_ODDS_DATA:  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
