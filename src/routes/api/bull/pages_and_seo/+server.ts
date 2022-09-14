@@ -260,6 +260,15 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     // if (iterator.type != "domestic") {
     //   continue
     // }
+
+    // [🐛] debug
+    // if (iterator.tournament_id == 1505) {
+    //   console.log(`
+    //     Found it!
+    //     url: ${'/' + lang  + '/' + sport + '/' + country + '/' + league_name}
+    //   `)
+    //   break
+    // }
  
     // [ℹ] /{lang} or / generation URL
     url = iterator.lang == 'en' 
