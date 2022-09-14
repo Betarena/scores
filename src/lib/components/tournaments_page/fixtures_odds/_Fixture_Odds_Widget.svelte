@@ -201,6 +201,27 @@
 
   }
 
+  onMount(async() => {
+    const firebase_real_time = await getLivescoresNow()
+    if (firebase_real_time != null) {
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      checkForLiveFixtures(data)
+    }
+  })
+  
+  onMount(async() => {
+    listenRealTimeOddsChange();
+    setInterval(async () => {
+      tickSecShow = !tickSecShow
+    }, 500)
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden) {
+        selectFixturesOdds()
+        listenRealTimeOddsChange()
+      }
+    });
+  })
+
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -566,6 +587,76 @@
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
+  // REACTIVE SVELTE METHODS
+  // [! CRITICAL !]
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+	$: refresh_data = $userBetarenaSettings.country_bookmaker;
+
+  $: if (
+    browser && 
+    refresh_data
+  ) {
+    // [ℹ] reset necessary variables;
+    refresh = true
+    // loaded = false
+    // noWidgetData = false
+    // widgetInit()
+    setTimeout(async() => {
+      refresh = false
+    }, 100)
+  }
+
+  afterNavigate(async () => {
+    widgetInit()
+  })
+
+  // [ℹ] IMPORTANT! lang selection [SERVER-SIDE-RENDER]
+  let server_side_language: string = 'en';
+  $: if (
+    $page.routeId != null &&
+    !$page.error
+  ) {
+    if ($page.routeId.includes("[lang=lang]")) {
+		  server_side_language = $page.params.lang;
+    }
+    else {
+      server_side_language = 'en';
+    }
+	}
+  else {
+    server_side_language = 'en';
+  }
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // REACTIVE SVELTE OTHER
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let loadedCurrentSeason: boolean = false;
+  $: if (
+    browser && 
+    $sessionStore.selectedSeasonID != undefined && 
+    !loadedCurrentSeason
+  ) {
+    currentSeason = $sessionStore.selectedSeasonID;
+    loadedCurrentSeason = true;
+  }
+
+  $: if (
+    browser && 
+    $sessionStore.selectedSeasonID != undefined
+  ) {
+    if (dev) logDevGroup ("fixture odds [DEV]", `Updated season!`)
+    selectFixturesOdds()
+  }
+
+  $: if (optView == "round") {
+    total_nav_num = rounds_total;
+  } else {
+    total_nav_num = weeks_total;
+  }
+  
+  // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
 
@@ -606,101 +697,19 @@
   });
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // REACTIVE SVELTE METHODS
-  // [! CRITICAL !]
+  // DEBUG
   // ~~~~~~~~~~~~~~~~~~~~~
 
-	$: refresh_data = $userBetarenaSettings.country_bookmaker;
-
-  $: if (
-    browser && 
-    refresh_data
-  ) {
-    // [ℹ] reset necessary variables;
-    refresh = true
-    // loaded = false
-    // noWidgetData = false
-    // widgetInit()
-    setTimeout(async() => {
-      refresh = false
-    }, 100)
-  }
-
-  afterNavigate(async () => {
-    widgetInit()
-  })
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // REACTIVE SVELTE OTHER
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  let loadedCurrentSeason: boolean = false;
-  $: if (
-    browser && 
-    $sessionStore.selectedSeasonID != undefined && 
-    !loadedCurrentSeason
-  ) {
-    currentSeason = $sessionStore.selectedSeasonID;
-    loadedCurrentSeason = true;
-  }
-
-  $: if (
-    browser && 
-    $sessionStore.selectedSeasonID != undefined && 
-    !noWidgetData
-  ) {
-    if (dev) logDevGroup ("fixture odds [DEV]", `Updated season!`)
-    selectFixturesOdds()
-  }
-
-  $: if (
-    browser &&
-    $sessionStore.selectedSeasonID != undefined && 
-    !noWidgetData
-  ) {
-    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `browser && loaded`)
-    onMount(async() => {
-      const firebase_real_time = await getLivescoresNow()
-      if (firebase_real_time != null) {
-        const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-        checkForLiveFixtures(data)
-      }
-    })
-    onMount(async() => {
-      listenRealTimeOddsChange();
-      setInterval(async () => {
-        tickSecShow = !tickSecShow
-      }, 500)
-      document.addEventListener("visibilitychange", function() {
-        if (!document.hidden) {
-          selectFixturesOdds()
-          listenRealTimeOddsChange()
-        }
-      });
-    })
-  }
-
-  $: if (optView == "round") {
-    total_nav_num = rounds_total;
-  } else {
-    total_nav_num = weeks_total;
-  }
-
-  // [ℹ] IMPORTANT! lang selection [SERVER-SIDE-RENDER]
-  let server_side_language: string = 'en';
-  $: if (
-    $page.routeId != null &&
-    !$page.error
-  ) {
-    if ($page.routeId.includes("[lang=lang]")) {
-		  server_side_language = $page.params.lang;
-    }
-    else {
-      server_side_language = 'en';
-    }
-	}
-  else {
-    server_side_language = 'en';
+  $: if (dev && enableLogs) {
+    logDevGroup ("fixture odds [DEV]", 
+    `
+    ${browser} 
+    ${!noWidgetData}
+    ${!refresh}
+    ${$userBetarenaSettings.country_bookmaker}
+    ${ready}
+    ${showWidget}
+    `)
   }
 
 </script>
