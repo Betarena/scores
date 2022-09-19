@@ -530,15 +530,17 @@
         <div id="fixture-league-title" class="row-space-start">
           <!-- [ℹ] league-icon 
           -->
-          <img class="img-flag" src={FEATURED_MATCH_WIDGET_DATA.country_flag} alt="" />
-          <!-- [ℹ] league-name-title 
-          -->
-          <p class="w-500 large color-dark m-r-8">
-            {data.league_name}
-            <span class="w-400 color-grey">
-              (Round {FEATURED_MATCH_WIDGET_DATA.round_name})
-            </span>
-          </p>
+          <a href={data.urls[FEATURED_MATCH_WIDGET_DATA_SEO.lang]}>
+            <img class="img-flag" src={FEATURED_MATCH_WIDGET_DATA.country_flag} alt="" />
+            <!-- [ℹ] league-name-title 
+            -->
+            <p class="w-500 large color-dark m-r-8">
+              {data.league_name}
+              <span class="w-400 color-grey">
+                (Round {FEATURED_MATCH_WIDGET_DATA.round_name})
+              </span>
+            </p>
+          </a>
         </div>
 
         <!-- [ℹ] fixture-visual-voting 

@@ -1,6 +1,6 @@
 
 import { dev } from '$app/environment'
-import redis from "$lib/redis/init"
+import redis from "$lib/redis/init_dev"
 import { 
   getTargetFixtureOdds, 
   getTargetGeoSportBookDetails } from "$lib/firebase/index"
@@ -9,7 +9,8 @@ import {
   GET_LANG_SELECTED_FIXTURE, 
   GET_ALL_SELECTED_MATCH_FIXTURES, 
   GET_HREFLANG_DATA, 
-  GET_FEATURED_MATCH_TRANSLATION } from "$lib/graphql/query"
+  GET_FEATURED_MATCH_TRANSLATION, 
+  REDIS_CACHE_FEATURED_MATCH_DATA_1} from "$lib/graphql/query"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
@@ -28,6 +29,7 @@ import type {
 import type { 
   SelectedFixture_LiveOdds_Response
 } from "$lib/models/featured_match/firebase-real-db-interface"
+import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura'
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -80,7 +82,9 @@ let WIDGET_SELECTED_FIXTURE_DATA: FixtureResponse = {
     match_votes: undefined,
     best_players: undefined,
     // translation: undefined,
-    selected_data: undefined
+    selected_data: undefined,
+    league_id: undefined,
+    urls: undefined
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -276,19 +280,25 @@ async function getFeaturedMatchData(): Promise < FixtureResponse > {
   // [ℹ] get the complete fixture data in one JSON Object;
   const completeData = await get_CompleteFixtureData(selected_fixture_id)
 
+  // [ℹ] continue;
+  // [ℹ] get the fixtures tournaments URLS data;
+  const fixture_league_id = completeData.week_fixtures_by_pk.league_id
+  const tournamentsData = await getTargetTournaments(fixture_league_id)
+
   // [ℹ] [completeData] break-down response;
-  WIDGET_SELECTED_FIXTURE_DATA = completeData.week_fixtures_by_pk
-  WIDGET_SELECTED_FIXTURE_DATA.best_players = completeData.widget_featured_match_best_player_by_pk
-  WIDGET_SELECTED_FIXTURE_DATA.match_votes = completeData.widget_featured_match_votes_by_pk
-  WIDGET_SELECTED_FIXTURE_DATA.live_odds = promise
+  WIDGET_SELECTED_FIXTURE_DATA = completeData.week_fixtures_by_pk;
+  WIDGET_SELECTED_FIXTURE_DATA.best_players = completeData.widget_featured_match_best_player_by_pk;
+  WIDGET_SELECTED_FIXTURE_DATA.match_votes = completeData.widget_featured_match_votes_by_pk;
+  WIDGET_SELECTED_FIXTURE_DATA.live_odds = promise;
   // WIDGET_SELECTED_FIXTURE_DATA.translation = selectedFixture.widget_featured_match_translations
   WIDGET_SELECTED_FIXTURE_DATA.selected_data = selectedFixture.widget_featured_match_selection[0]
+  WIDGET_SELECTED_FIXTURE_DATA.urls = tournamentsData[0]?.urls;
 
   // [ℹ] continue; 
   // [ℹ] get the fixture value-bets;
   // [ℹ] handles `WIDGET_SELECTED_FIXTURE_DATA.valuebets`
   if (WIDGET_SELECTED_FIXTURE_DATA.valuebets != null) {
-      await assignValueBetsData();
+    await assignValueBetsData();
   }
 
   // [ℹ] RETURN COMPLETE FEATRUED_MATCH_DATA;
@@ -322,6 +332,17 @@ async function get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre
   // [ℹ] get the list of the odds for the;
   const response = await getTargetFixtureOdds(selectedFixutreData)
   // [ℹ] return,
+  return response
+}
+
+async function getTargetTournaments(tournament_id: number): Promise < BETARENA_HASURA_scores_tournaments[] > {
+  const variables = { 
+    tournament_id: tournament_id
+  }
+  const response = await initGrapQLClient().request(
+    REDIS_CACHE_FEATURED_MATCH_DATA_1, 
+    variables
+  )
   return response
 }
 
