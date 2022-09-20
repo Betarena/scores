@@ -73,7 +73,7 @@
 
   let currentSeason:            number = undefined;
 
-  let enableLogs:              boolean = true;  
+  let enableLogs:              boolean = false;  
   let showWidget:              boolean = true;
   let devConsoleTag:           string = "FIX_ODDS";
 
@@ -696,10 +696,12 @@
       week_name = parseInt(target_week.name)
 
       // [ℹ] search fixtures by target data
+      // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
+      // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
       temp_fixtures_odds_arr = target_season.fixtures
-      .filter( ({ fixture_date }) => 
-        new Date(fixture_date) >= week_start &&
-        new Date(fixture_date) <= week_end
+      .filter( ({ fixture_time }) => 
+        new Date(fixture_time) >= week_start &&
+        new Date(fixture_time) <= week_end
       );
 
     }
@@ -715,7 +717,7 @@
     const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]> ();
 
     for (const fixture of temp_fixtures_odds_arr) {
-      
+
       const fixDate = fixture.fixture_date;
 
       if (fixtures_group_by_date.has(fixDate)) {
@@ -802,9 +804,9 @@
       week_name = parseInt(target_week.name)
 
       temp_fixtures_odds_arr = target_season.fixtures
-      .filter( ({ fixture_date }) => 
-        new Date(fixture_date) >= week_start &&
-        new Date(fixture_date) <= week_end
+      .filter( ({ fixture_time }) => 
+        new Date(fixture_time) >= week_start &&
+        new Date(fixture_time) <= week_end
       );
     }
 
