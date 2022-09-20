@@ -229,7 +229,7 @@
     // console.log("cross_sportbooks", cross_sportbooks)
 
     if (cross_sportbooks == 0) {
-      console.log("No Matching Sportbook Details")
+      if (dev) console.log("No Matching Sportbook Details")
       return;
     }
 
@@ -247,14 +247,17 @@
           fixture.live_odds = {
             home: {
               betting_site_icon_link: undefined,
+              register_link: undefined,
               value: undefined
             },
             draw: {
               betting_site_icon_link: undefined,
+              register_link: undefined,
               value: undefined
             },
             away: {
               betting_site_icon_link: undefined,
+              register_link: undefined,
               value: undefined
             }
           }
@@ -263,6 +266,7 @@
 
             const sportbook_name_main = sportbook.title
             const sportbook_logo = sportbook.image
+            const sportbook_link = sportbook.register_link
 
             for (const sportbook_from_fixture of sportbook_list) {
 
@@ -276,10 +280,13 @@
                 fixture.live_odds[odds_for[sp_count]].betting_site_icon_link = 
                   sportbook_logo
                 ;
+                fixture.live_odds[odds_for[sp_count]].register_link = 
+                  sportbook_link
+                ;
 
                 // [ℹ] validation instance of 1
                 // [ℹ] intersecting sportbooks
-                // [ℹ] re-use the sportbook
+                // [ℹ] re-use the sportbook #1
                 if (sp_count == 0 && cross_sportbooks == 1) {
                   
                   fixture.live_odds.draw.value = 
@@ -288,12 +295,18 @@
                   fixture.live_odds.draw.betting_site_icon_link = 
                     sportbook_logo
                   ;
+                  fixture.live_odds.draw.register_link = 
+                    sportbook_link
+                  ;
 
                   fixture.live_odds.away.value = 
                     sportbook_from_fixture?.markets['1X2FT'].data[2].value
                   ;
                   fixture.live_odds.away.betting_site_icon_link = 
                     sportbook_logo
+                  ;
+                  fixture.live_odds.away.register_link = 
+                    sportbook_link
                   ;
 
                   sp_count = 3;
@@ -302,7 +315,7 @@
 
                 // [ℹ] validation instance of 2
                 // [ℹ] intersecting sportbooks
-                // [ℹ] re-use the sportbook
+                // [ℹ] re-use the sportbook #1
                 if (sp_count == 0 && cross_sportbooks == 2) {
                   
                   fixture.live_odds.draw.value = 
@@ -310,6 +323,9 @@
                   ;
                   fixture.live_odds.draw.betting_site_icon_link = 
                     sportbook_logo
+                  ;
+                  fixture.live_odds.draw.register_link = 
+                    sportbook_link
                   ;
 
                   sp_count++;
@@ -340,14 +356,17 @@
           fixture.live_odds = {
             home: {
               betting_site_icon_link: undefined,
+              register_link: undefined,
               value: undefined
             },
             draw: {
               betting_site_icon_link: undefined,
+              register_link: undefined,
               value: undefined
             },
             away: {
               betting_site_icon_link: undefined,
+              register_link: undefined,
               value: undefined
             }
           }
@@ -356,6 +375,7 @@
 
             const sportbook_name_main = sportbook.title
             const sportbook_logo = sportbook.image
+            const sportbook_link = sportbook.register_link
 
             for (const sportbook_from_fixture of sportbook_list) {
 
@@ -369,6 +389,9 @@
                 fixture.live_odds.home.betting_site_icon_link = 
                   sportbook_logo
                 ;
+                fixture.live_odds.home.register_link = 
+                  sportbook_link
+                ;
                 
                 fixture.live_odds.draw.value = 
                   sportbook_from_fixture?.markets['1X2FT'].data[1].value
@@ -376,12 +399,18 @@
                 fixture.live_odds.draw.betting_site_icon_link = 
                   sportbook_logo
                 ;
+                fixture.live_odds.draw.register_link = 
+                  sportbook_link
+                ;
 
                 fixture.live_odds.away.value = 
                   sportbook_from_fixture?.markets['1X2FT'].data[2].value
                 ;
                 fixture.live_odds.away.betting_site_icon_link = 
                   sportbook_logo
+                ;
+                fixture.live_odds.away.register_link = 
+                  sportbook_link
                 ;
 
                 break;
@@ -495,9 +524,9 @@
   onDestroy(async() => {
     // [ℹ] close LISTEN EVENT connection
     for (const [key, value] of realTimeOddsListenMap.entries()) {
-      console.groupCollapsed("closing connections [DEV]");
-      console.log("closing connection")
-      console.groupEnd();
+      if (dev) console.groupCollapsed("closing connections [DEV]");
+      if (dev) console.log("closing connection")
+      if (dev) console.groupEnd();
       value();
     }
   })
@@ -861,7 +890,16 @@
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_football_fixtures_odds_tournament") {
       gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
-        'event_category': "widget_standings_info", 
+        'event_category': "widget_fixture_odds_info", 
+        'event_label': "click_betting_site_logo", 
+        'value': "click"
+        }
+      );
+      return
+    }
+    if (action === "tournaments_football_fixtures_odds") {
+      gtag('event', "tournaments_football_fixtures_odds", { 
+        'event_category': "widget_fixture_odds_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
         }
@@ -2327,50 +2365,74 @@
                         <!-- 
                         [ℹ] home
                         -->
-                        <div 
-                          class="bet-site-box column-space-center m-r-5 cursor-pointer">
-                          <p
-                            class="s-12 color-black-2 w-500">
-                            {fixture?.live_odds?.home.value}
-                          </p>
-                          <img  
-                            src={fixture?.live_odds?.home.betting_site_icon_link} 
-                            alt=""
-                            width=48px height=24px
-                          />
-                        </div>
+                        <a 
+                          rel="nofollow"
+                          aria-label="betting_site_logo_fixtures_odds"
+                          on:click={() => triggerGoggleEvents("tournaments_football_fixtures_odds")}
+                          href={fixture?.live_odds?.home?.register_link}
+                          target="_blank"
+                          style="width: inherit;">
+                          <div 
+                            class="bet-site-box column-space-center m-r-5 cursor-pointer">
+                            <p
+                              class="s-12 color-black-2 w-500">
+                              {fixture?.live_odds?.home?.value}
+                            </p>
+                            <img  
+                              src={fixture?.live_odds?.home.betting_site_icon_link} 
+                              alt=""
+                              width=48px height=24px
+                            />
+                          </div>
+                        </a>
 
                         <!-- 
                         [ℹ] draw
                         -->
-                        <div
-                          class="bet-site-box column-space-center m-r-5 cursor-pointer">
-                          <p
-                            class="s-12 color-black-2 w-500">
-                            {fixture?.live_odds?.draw.value}
-                          </p>
-                          <img  
-                            src={fixture?.live_odds?.draw.betting_site_icon_link} 
-                            alt=""
-                            width=48px height=24px
-                          />
-                        </div>
+                        <a 
+                          rel="nofollow"
+                          aria-label="betting_site_logo_fixtures_odds"
+                          on:click={() => triggerGoggleEvents("tournaments_football_fixtures_odds")}
+                          href={fixture?.live_odds?.draw?.register_link}
+                          target="_blank"
+                          style="width: inherit;">
+                          <div
+                            class="bet-site-box column-space-center m-r-5 cursor-pointer">
+                            <p
+                              class="s-12 color-black-2 w-500">
+                              {fixture?.live_odds?.draw?.value}
+                            </p>
+                            <img  
+                              src={fixture?.live_odds?.draw.betting_site_icon_link} 
+                              alt=""
+                              width=48px height=24px
+                            />
+                          </div>
+                        </a>
 
                         <!-- 
                         [ℹ] away
                         -->
-                        <div
-                          class="bet-site-box column-space-center cursor-pointer">
-                          <p
-                            class="s-12 color-black-2 w-500">
-                            {fixture?.live_odds?.away.value}
-                          </p>
-                          <img  
-                            src={fixture?.live_odds?.away.betting_site_icon_link} 
-                            alt=""
-                            width=48px height=24px
-                          />
-                        </div>
+                        <a 
+                          rel="nofollow"
+                          aria-label="betting_site_logo_fixtures_odds"
+                          on:click={() => triggerGoggleEvents("tournaments_football_fixtures_odds")}
+                          href={fixture?.live_odds?.away?.register_link}
+                          target="_blank"
+                          style="width: inherit;">
+                          <div
+                            class="bet-site-box column-space-center cursor-pointer">
+                            <p
+                              class="s-12 color-black-2 w-500">
+                              {fixture?.live_odds?.away?.value}
+                            </p>
+                            <img  
+                              src={fixture?.live_odds?.away.betting_site_icon_link} 
+                              alt=""
+                              width=48px height=24px
+                            />
+                          </div>
+                        </a>
                       
                       </div>
                     

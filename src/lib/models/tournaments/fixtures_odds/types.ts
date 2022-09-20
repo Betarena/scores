@@ -117,6 +117,7 @@ export interface LiveOdds {
   draw: LiveOddsSingle
 
 } export interface LiveOddsSingle {
-  betting_site_icon_link: string
-  value: number
+  betting_site_icon_link?:   string
+  register_link?:            string
+  value?:                    number
 }
