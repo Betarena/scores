@@ -24,12 +24,12 @@ import type {
   SelectedFixutre, 
   SelectedFixture_AllData, 
   CompleteFixtureData_Response, 
-  Featured_Match_Translation_Response 
+  Featured_Match_Translation_Response, 
+  BETARENA_HASURA_featured_match_query
 } from "$lib/models/featured_match/response_models"
 import type { 
   SelectedFixture_LiveOdds_Response
 } from "$lib/models/featured_match/firebase-real-db-interface"
-import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura'
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -292,7 +292,7 @@ async function getFeaturedMatchData(): Promise < FixtureResponse > {
   WIDGET_SELECTED_FIXTURE_DATA.live_odds = promise;
   // WIDGET_SELECTED_FIXTURE_DATA.translation = selectedFixture.widget_featured_match_translations
   WIDGET_SELECTED_FIXTURE_DATA.selected_data = selectedFixture.widget_featured_match_selection[0]
-  WIDGET_SELECTED_FIXTURE_DATA.urls = tournamentsData[0]?.urls;
+  WIDGET_SELECTED_FIXTURE_DATA.urls = tournamentsData.scores_tournaments[0]?.urls || null;
 
   // [ℹ] continue; 
   // [ℹ] get the fixture value-bets;
@@ -335,7 +335,7 @@ async function get_TargetFixtureOddsAndInfo(selectedFixutreData: SelectedFixutre
   return response
 }
 
-async function getTargetTournaments(tournament_id: number): Promise < BETARENA_HASURA_scores_tournaments[] > {
+async function getTargetTournaments(tournament_id: number): Promise < BETARENA_HASURA_featured_match_query > {
   const variables = { 
     tournament_id: tournament_id
   }
