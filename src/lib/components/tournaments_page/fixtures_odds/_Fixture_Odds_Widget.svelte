@@ -1519,12 +1519,15 @@
 
               <!-- [ℹ] grouping date fixtures
               -->
-              <p
-                class="color-grey w-500 s-12 group-fixture-date m-b-8"> 
-                {new Date(item?.date).getDate()} 
-                {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
-                {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
-              </p>
+              <div
+                class="group-fixture-date m-b-8">
+                <p
+                  class="color-grey w-500 s-12"> 
+                  {new Date(item?.date).getDate()} 
+                  {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
+                  {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
+                </p>
+              </div>
 
               <!-- [ℹ] matches loop population 
               -->
