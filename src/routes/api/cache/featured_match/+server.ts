@@ -2,7 +2,7 @@
 import { dev } from '$app/environment'
 import { error, json } from '@sveltejs/kit';
 
-import redis from "$lib/redis/init_dev"
+import redis from "$lib/redis/init"
 import type { 
   Cache_Single_Lang_Featured_Match_Translation_Response, 
   FixtureResponse 

@@ -1,6 +1,6 @@
 
 import { dev } from '$app/environment'
-import redis from "$lib/redis/init_dev"
+import redis from "$lib/redis/init"
 import { 
   getTargetFixtureOdds, 
   getTargetGeoSportBookDetails } from "$lib/firebase/index"

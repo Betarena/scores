@@ -3,7 +3,7 @@ import { error, json } from '@sveltejs/kit';
 
 import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 
-import redis from "$lib/redis/init_dev"
+import redis from "$lib/redis/init"
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 
