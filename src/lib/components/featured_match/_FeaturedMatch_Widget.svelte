@@ -530,7 +530,7 @@
         <div id="fixture-league-title" class="row-space-start">
           <!-- [ℹ] league-icon 
           -->
-          <a href={data.urls[FEATURED_MATCH_WIDGET_DATA_SEO.lang]}>
+          <a href={data?.urls[FEATURED_MATCH_WIDGET_DATA_SEO?.lang]}>
             <img class="img-flag" src={FEATURED_MATCH_WIDGET_DATA.country_flag} alt="" />
             <!-- [ℹ] league-name-title 
             -->
