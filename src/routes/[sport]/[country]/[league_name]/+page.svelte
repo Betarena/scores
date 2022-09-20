@@ -228,7 +228,7 @@
 
     <a 
       data-sveltekit-prefetch
-      href="/{$page.params.lang}/{$page.params.sport}">
+      href="/{$page.params.sport}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.sport}
@@ -244,7 +244,7 @@
 
     <a 
       data-sveltekit-prefetch
-      href="/{$page.params.lang}/{$page.params.sport}/{$page.params.country}">
+      href="/{$page.params.sport}/{$page.params.country}">
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.country}
