@@ -13,7 +13,7 @@ export async function GET (req, res): Promise< any > {
   const geoPos: string = req.url['searchParams'].get('geoPos');
   const all: string = req.url['searchParams'].get('all');
 
-  if (all) {
+  if (all && geoPos) {
     const response_cache = await getCacheAll(geoPos)
     if (response_cache) {
       return json(response_cache)

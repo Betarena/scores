@@ -15,8 +15,8 @@
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
 	import { db_real } from '$lib/firebase/init';
-	import { ref, onValue } from 'firebase/database';
-  import { getLivescoresNow } from "$lib/firebase/fixtures_odds";
+	import { ref, onValue, type Unsubscribe } from 'firebase/database';
+  import { getLivescoresNow, getOdds } from "$lib/firebase/fixtures_odds";
 
   import type { 
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
@@ -29,7 +29,7 @@
     Cache_Single_SportbookDetails_Data_Response 
   } from "$lib/models/tournaments/league-info/types";
   import type { 
-    FIREBASE_livescores_now 
+    FIREBASE_livescores_now, FIREBASE_odds 
   } from "$lib/models/firebase";
 
   import FixtureOddsWidgetContentLoader from "./_Fixture_Odds_Widget_ContentLoader.svelte";
@@ -61,7 +61,7 @@
     date: Date
     fixtures: Tournament_Fixture_Odds[]
   }[] = []
-  let selectedOpt:              string = 'matches';
+  let selectedOpt:              'odds' | 'matches' = 'matches';
   let tickSecShow:              boolean = false;
   let week_start:               Date
   let week_end:                 Date
@@ -100,6 +100,9 @@
     'friday',
     'saturday'
   ];
+
+  let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[]
+  let realTimeOddsListenMap: Map<number, Unsubscribe> = new Map<number, Unsubscribe>();
 
   if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_T: ${FIXTURES_ODDS_T}`)
   if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_DATA: ${FIXTURES_ODDS_DATA}`)
@@ -181,10 +184,9 @@
     }
   }
 
-  // [ℹ] listen real-time firebase livescores_now changes [WORKING]
-	async function listenRealTimeOddsChange (): Promise < void > {
+	async function listenRealTimeLivescoresNowChange (): Promise < void > {
 
-    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `listenRealTimeOddsChange()`)
+    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `listenRealTimeLivescoresNowChange()`)
 
     const fixtureRef = ref (
       db_real,
@@ -201,15 +203,282 @@
 
   }
 
+  async function checkForFixtureOddsInject(fixture_id: number, sportbook_list: FIREBASE_odds[]) {
+
+    // if (dev) console.log("snapshot fixture_id", fixture_id)
+    // if (dev) console.log("snapshot sportbook_list", sportbook_list)
+
+    // [ℹ] match "data.key" (fixture_id)
+    // [ℹ] with available (fixture_id's)
+    // [ℹ] and populate the SPORTBOOK_DETAILS
+    // [ℹ] based on the "top-3" OR avaialble ODDS
+    // [ℹ] for the selected GEO-POSITION
+    // [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
+
+    if (SPORTBOOK_DETAILS_LIST == undefined) {
+      return
+    }
+
+    // [ℹ] generate matching sporbook names
+    let sportbook_main_arr:   string[] = SPORTBOOK_DETAILS_LIST.map(s => s.title.toLowerCase())
+    let sportbook_main_arr_2: string[] = sportbook_list.map(s => s.sportbook.toLowerCase())
+
+    let intersection:     string[] = sportbook_main_arr.filter(x => sportbook_main_arr_2.includes(x));
+    let cross_sportbooks: number   = intersection.length;
+
+    // console.log("cross_sportbooks", cross_sportbooks)
+
+    if (cross_sportbooks == 0) {
+      console.log("No Matching Sportbook Details")
+      return;
+    }
+
+    for (const fixtures_group_by_date of fixtures_arr_filter) {
+      for (const fixture of fixtures_group_by_date.fixtures) {
+      
+        // [ℹ] pre-live fixture validation
+        // [ℹ] use TOP-3 betting sites
+        // [ℹ] as odds-display
+        if (fixture.status == "NS" && fixture.id == fixture_id) {
+
+          let sp_count: number = 0;
+          let odds_for: string[] = ['home', 'draw', 'away']
+
+          fixture.live_odds = {
+            home: {
+              betting_site_icon_link: undefined,
+              value: undefined
+            },
+            draw: {
+              betting_site_icon_link: undefined,
+              value: undefined
+            },
+            away: {
+              betting_site_icon_link: undefined,
+              value: undefined
+            }
+          }
+
+          for (const sportbook of SPORTBOOK_DETAILS_LIST) {
+
+            const sportbook_name_main = sportbook.title
+            const sportbook_logo = sportbook.image
+
+            for (const sportbook_from_fixture of sportbook_list) {
+
+              const sportbook_name = sportbook_from_fixture.sportbook;
+
+              if (sportbook_name.toLowerCase() == sportbook_name_main.toLowerCase()) {
+
+                fixture.live_odds[odds_for[sp_count]].value = 
+                  sportbook_from_fixture?.markets['1X2FT'].data[sp_count].value
+                ;
+                fixture.live_odds[odds_for[sp_count]].betting_site_icon_link = 
+                  sportbook_logo
+                ;
+
+                // [ℹ] validation instance of 1
+                // [ℹ] intersecting sportbooks
+                // [ℹ] re-use the sportbook
+                if (sp_count == 0 && cross_sportbooks == 1) {
+                  
+                  fixture.live_odds.draw.value = 
+                    sportbook_from_fixture?.markets['1X2FT'].data[1].value
+                  ;
+                  fixture.live_odds.draw.betting_site_icon_link = 
+                    sportbook_logo
+                  ;
+
+                  fixture.live_odds.away.value = 
+                    sportbook_from_fixture?.markets['1X2FT'].data[2].value
+                  ;
+                  fixture.live_odds.away.betting_site_icon_link = 
+                    sportbook_logo
+                  ;
+
+                  sp_count = 3;
+                  break;
+                }
+
+                // [ℹ] validation instance of 2
+                // [ℹ] intersecting sportbooks
+                // [ℹ] re-use the sportbook
+                if (sp_count == 0 && cross_sportbooks == 2) {
+                  
+                  fixture.live_odds.draw.value = 
+                    sportbook_from_fixture?.markets['1X2FT'].data[1].value
+                  ;
+                  fixture.live_odds.draw.betting_site_icon_link = 
+                    sportbook_logo
+                  ;
+
+                  sp_count++;
+                }
+
+                sp_count++;
+
+                if (sp_count == 3) {
+                  break;
+                }
+              }
+            }
+
+            if (sp_count == 3) {
+              break;
+            }
+
+          }
+
+        }
+
+        // [ℹ] live fixture validation
+        // [ℹ] use TOP-1 betting sites
+        // [ℹ] as odds-display
+        // [ℹ] main sportbook
+        if (fixture.status != "NS" && fixture.id == fixture_id) {
+
+          fixture.live_odds = {
+            home: {
+              betting_site_icon_link: undefined,
+              value: undefined
+            },
+            draw: {
+              betting_site_icon_link: undefined,
+              value: undefined
+            },
+            away: {
+              betting_site_icon_link: undefined,
+              value: undefined
+            }
+          }
+
+          for (const sportbook of SPORTBOOK_DETAILS_LIST) {
+
+            const sportbook_name_main = sportbook.title
+            const sportbook_logo = sportbook.image
+
+            for (const sportbook_from_fixture of sportbook_list) {
+
+              const sportbook_name = sportbook_from_fixture.sportbook;
+
+              if (sportbook_name.toLowerCase() == sportbook_name_main.toLowerCase()) {
+
+                fixture.live_odds.home.value = 
+                  sportbook_from_fixture?.markets['1X2FT'].data[0].value
+                ;
+                fixture.live_odds.home.betting_site_icon_link = 
+                  sportbook_logo
+                ;
+                
+                fixture.live_odds.draw.value = 
+                  sportbook_from_fixture?.markets['1X2FT'].data[1].value
+                ;
+                fixture.live_odds.draw.betting_site_icon_link = 
+                  sportbook_logo
+                ;
+
+                fixture.live_odds.away.value = 
+                  sportbook_from_fixture?.markets['1X2FT'].data[2].value
+                ;
+                fixture.live_odds.away.betting_site_icon_link = 
+                  sportbook_logo
+                ;
+
+                break;
+              }
+            }
+          }
+        
+        }
+
+      }
+    }
+
+    // [ℹ] assign changes
+    fixtures_arr_filter = fixtures_arr_filter
+  }
+
+	async function listenRealTimeOddsChange (): Promise < void > {
+
+    realTimeOddsListenMap = new Map<number, Unsubscribe>();
+
+    // if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `listenRealTimeOddsChange()`)
+    // if (dev) console.log("snapshot", fixtures_arr_filter.length)
+
+    // [ℹ] iterate over ALL fixtures
+    // [ℹ] of SELECTED season
+    for (const season_fixture_date_group of fixtures_arr_filter) {
+
+      // [ℹ] convert the datetime to the correct variables to search for the fixture;
+      // [ℹ] FIXME: issue with the use of UTC DATE, for "getUTCDate" giving yesterdays date
+      const year_: string = new Date(season_fixture_date_group.date).getFullYear().toString();
+      const month_: number = new Date(season_fixture_date_group.date).getMonth();
+      let new_month_ = (month_ + 1).toString();
+      new_month_ = ('0' + new_month_).slice(-2);
+      let day_ = new Date(season_fixture_date_group.date).getDate().toString();
+      day_ = ('0' + day_).slice(-2);
+      
+      // [ℹ] iterater over fixtures 
+      // [ℹ] [BY DATE GROUP]
+      // [ℹ] assign "onValue" event-listeners
+      for (const season_fixture of season_fixture_date_group.fixtures) {
+
+        if (season_fixture.status == "FT") {
+          continue
+        }
+
+        const fixture_id = season_fixture.id;
+
+        // [ℹ] listen to real-time fixture event changes;
+        const fixtureRef = ref (
+          db_real,
+          'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id
+        );
+
+        // if (fixture_id == 18528023) {
+        //   if (dev) console.log("snapshot", `odds/${year_}/${new_month_}/${day_}/${fixture_id}`)
+        // }
+
+        const listenEventRef = onValue(fixtureRef, (snapshot) => {
+          // [ℹ] break-down-values
+          if (snapshot.val() != null) {
+            // if (dev) console.log("snapshot.key", snapshot.key)
+            const sportbook_array: FIREBASE_odds[] = []
+            const data: [string, FIREBASE_odds][] = Object.entries(snapshot.val())
+            for (const sportbook of data) {
+              sportbook[1].sportbook = sportbook[0].toString();
+              sportbook_array.push(sportbook[1])
+            }
+            const fixture_id_: number = parseInt(snapshot.key)
+            checkForFixtureOddsInject(fixture_id_, sportbook_array);
+          }
+        });
+
+        realTimeOddsListenMap.set(fixture_id, listenEventRef);
+      }
+
+    }
+
+  }
+
+  // [ℹ] one-off event read "livescores_now"
   onMount(async() => {
     const firebase_real_time = await getLivescoresNow()
     if (firebase_real_time != null) {
       const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
       checkForLiveFixtures(data)
     }
+    const firebase_odds = await getOdds(fixtures_arr_filter)
+    if (firebase_odds.size != 0) {
+      for (const [key, value] of firebase_odds.entries()) {
+        checkForFixtureOddsInject(key, value);
+      }
+    }
   })
   
+  // [ℹ] real-time listen-events init.
   onMount(async() => {
+    listenRealTimeLivescoresNowChange();
     listenRealTimeOddsChange();
     setInterval(async () => {
       tickSecShow = !tickSecShow
@@ -217,9 +486,20 @@
     document.addEventListener("visibilitychange", function() {
       if (!document.hidden) {
         selectFixturesOdds()
-        listenRealTimeOddsChange()
+        listenRealTimeLivescoresNowChange()
+        listenRealTimeOddsChange();
       }
     });
+  })
+
+  onDestroy(async() => {
+    // [ℹ] close LISTEN EVENT connection
+    for (const [key, value] of realTimeOddsListenMap.entries()) {
+      console.groupCollapsed("closing connections [DEV]");
+      console.log("closing connection")
+      console.groupEnd();
+      value();
+    }
   })
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -243,6 +523,7 @@
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
 		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
+    const response_all: Cache_Single_SportbookDetails_Data_Response[] = await get("/api/cache/tournaments_sportbook?all=true&geoPos="+userGeo)
     loaded = true;
 
 		if (
@@ -271,10 +552,13 @@
 
     selectFixturesOdds();
 
+    SPORTBOOK_DETAILS_LIST = response_all;
+    SPORTBOOK_DETAILS_LIST.sort((a, b) => parseInt(b.position) - parseInt(a.position))
+
     return response;
   }
 
-  function selectTableView (opt: string) {
+  function selectTableView (opt: 'odds' | 'matches') {
     selectedOpt = opt;
   }
 
@@ -467,6 +751,7 @@
         const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
         checkForLiveFixtures(data)
       }
+      listenRealTimeOddsChange()
     }
 
     ready = true;
@@ -562,6 +847,7 @@
         const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
         checkForLiveFixtures(data)
       }
+      listenRealTimeOddsChange()
     }
   }
 
@@ -1217,82 +1503,207 @@
           </button>
 
         </div>
+
+        <!--
+        [ℹ] widget MATCHES | ODDS view  
+        -->
+
+        {#if selectedOpt == 'matches'}
         
-        <!-- [ℹ] generated data fixtures
-         -->
-        {#each fixtures_arr_filter as item}
-          <div>
+          <!-- [ℹ] generated data fixtures
+          -->
+          {#each fixtures_arr_filter as item}
+            <div>
 
-            <!-- [ℹ] grouping date fixtures
-            -->
-            <p
-              class="color-grey w-500 s-12 group-fixture-date m-b-8"> 
-              {new Date(item?.date).getDate()} 
-              {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
-              {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
-            </p>
+              <!-- [ℹ] grouping date fixtures
+              -->
+              <p
+                class="color-grey w-500 s-12 group-fixture-date m-b-8"> 
+                {new Date(item?.date).getDate()} 
+                {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
+                {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
+              </p>
 
-            <!-- [ℹ] matches loop population 
-            -->
-            {#each item?.fixtures as fixture}
-              <div
-                class="fixture-row row-space-out">
-
-                <!-- [ℹ] fixture left-side container 
-                -->
+              <!-- [ℹ] matches loop population 
+              -->
+              {#each item?.fixtures as fixture}
                 <div
-                  class="row-space-start">
+                  class="fixture-row row-space-out">
 
-                  <!-- [ℹ] fixture-time
+                  <!-- [ℹ] fixture left-side container 
                   -->
                   <div
-                    class="m-r-16 fixture-time-box text-center">
-                    {#if 
-                      fixture?.status === "LIVE"}
-                      <p
-                        style="color: #FF3C3C;"
-                        class="s-14 no-wrap">
-                        {fixture?.minute}
-                        <span
-                          class:visibility-none={tickSecShow}>'
-                        </span>
-                      </p>
-                    {:else if fixture?.status === "HT"}
-                      <p
-                        class="no-wrap s-14 color-black">
-                        {FIXTURES_ODDS_T?.status_abv?.HT}
-                      </p>
-                    {:else}
-                      <p
-                        class="no-wrap s-14 color-black"
-                        class:color-grey={fixture?.status === "FT"}>
-                        {
-                          (
-                            (new Date(fixture?.fixture_time + "Z").getHours()) +
-                            ":" +
-                            ('0' + new Date(fixture?.fixture_time + "Z").getMinutes()).slice(-2)
-                          ).split(' ').join('')
-                        }
-                      </p>
-                      {#if fixture?.status === "FT"}
-                        <p
-                          class="no-wrap s-14 color-grey">
-                          {FIXTURES_ODDS_T?.status_abv?.FT}
-                        </p>
-                      {/if}
-                    {/if}
-                  </div>
+                    class="row-space-start">
 
-                  <!-- [ℹ] fixture-teams
-                  -->
-                  {#if 
-                    fixture?.fixture_link && 
-                    fixture?.fixture_link[server_side_language]}
-                    <a 
-                      rel="nofollow"
-                      href={fixture?.fixture_link[server_side_language]}
-                      target="_blank"
-                      style="width: inherit;">
+                    <!-- [ℹ] fixture-time
+                    -->
+                    <div
+                      class="m-r-16 fixture-time-box text-center">
+                      {#if 
+                        fixture?.status === "LIVE"}
+                        <p
+                          style="color: #FF3C3C;"
+                          class="s-14 no-wrap">
+                          {fixture?.minute}
+                          <span
+                            class:visibility-none={tickSecShow}>'
+                          </span>
+                        </p>
+                      {:else if fixture?.status === "HT"}
+                        <p
+                          class="no-wrap s-14 color-black">
+                          {FIXTURES_ODDS_T?.status_abv?.HT}
+                        </p>
+                      {:else}
+                        <p
+                          class="no-wrap s-14 color-black"
+                          class:color-grey={fixture?.status === "FT"}>
+                          {
+                            (
+                              (new Date(fixture?.fixture_time + "Z").getHours()) +
+                              ":" +
+                              ('0' + new Date(fixture?.fixture_time + "Z").getMinutes()).slice(-2)
+                            ).split(' ').join('')
+                          }
+                        </p>
+                        {#if fixture?.status === "FT"}
+                          <p
+                            class="no-wrap s-14 color-grey">
+                            {FIXTURES_ODDS_T?.status_abv?.FT}
+                          </p>
+                        {/if}
+                      {/if}
+                    </div>
+
+                    <!-- [ℹ] fixture-teams
+                    -->
+                    {#if 
+                      fixture?.fixture_link && 
+                      fixture?.fixture_link[server_side_language]}
+                      <a 
+                        rel="nofollow"
+                        href={fixture?.fixture_link[server_side_language]}
+                        target="_blank"
+                        style="width: inherit;">
+                        <div
+                          class="column-start-grid-start fixture-teams-box">
+
+                          <div
+                            class="row-space-start">
+                            <p  
+                              class="s-14 color-black w-500 m-r-8"
+                              class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                              {fixture?.teams?.home?.name}
+                            </p>
+                            {#if fixture?.teams?.home?.red_cards}
+                              {#if fixture?.teams?.home?.red_cards == 1}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={one_red_card_dark} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={one_red_card} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {/if}
+                                
+                              {:else if fixture?.teams?.home?.red_cards == 2}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={two_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={two_red_card} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {/if}
+                              
+                              {:else}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={three_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={three_red_card} 
+                                    alt=""
+                                    width=18px height=22px
+                                  />
+                                {/if}
+                              {/if}
+                            {/if}
+                          </div>
+
+                          <div
+                            class="row-space-start">
+                            <p
+                              class="s-14 color-black w-500 m-r-8"
+                              class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                              {fixture?.teams?.away?.name}
+                            </p>
+                            {#if fixture?.teams?.away?.red_cards}
+                              {#if fixture?.teams?.away?.red_cards == 1}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={one_red_card_dark} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={one_red_card} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {/if}
+                                
+                              {:else if fixture?.teams?.away?.red_cards == 2}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={two_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={two_red_card} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {/if}
+                                
+                              {:else}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={three_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={three_red_card} 
+                                    alt=""
+                                    width=18px height=22px
+                                  />
+                                {/if}
+
+                              {/if}
+                            {/if}
+                          </div>
+
+                        </div>
+                      </a>
+                    {:else}
                       <div
                         class="column-start-grid-start fixture-teams-box">
 
@@ -1333,7 +1744,7 @@
                                   width=15px height=19px
                                 />
                               {/if}
-                             
+                              
                             {:else}
                               {#if $userBetarenaSettings.theme == 'Dark'}
                                 <img 
@@ -1348,6 +1759,7 @@
                                   width=18px height=22px
                                 />
                               {/if}
+
                             {/if}
                           {/if}
                         </div>
@@ -1410,238 +1822,550 @@
                         </div>
 
                       </div>
-                    </a>
-                  {:else}
-                    <div
-                      class="column-start-grid-start fixture-teams-box">
+                    {/if}
 
-                      <div
-                        class="row-space-start">
-                        <p  
-                          class="s-14 color-black w-500 m-r-8"
-                          class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
-                          {fixture?.teams?.home?.name}
-                        </p>
-                        {#if fixture?.teams?.home?.red_cards}
-                          {#if fixture?.teams?.home?.red_cards == 1}
-                            {#if $userBetarenaSettings.theme == 'Dark'}
-                              <img 
-                                src={one_red_card_dark} 
-                                alt=""
-                                width=12px height=16px
-                              />
-                            {:else}
-                              <img 
-                                src={one_red_card} 
-                                alt=""
-                                width=12px height=16px
-                              />
-                            {/if}
-                            
-                          {:else if fixture?.teams?.home?.red_cards == 2}
-                            {#if $userBetarenaSettings.theme == 'Dark'}
-                              <img 
-                                src={two_red_card_dark} 
-                                alt=""
-                                width=15px height=19px
-                              />
-                            {:else}
-                              <img 
-                                src={two_red_card} 
-                                alt=""
-                                width=15px height=19px
-                              />
-                            {/if}
-                            
+                  </div>
+
+                  <!-- [ℹ] fixture right-side container 
+                  -->
+                  <div
+                    class="row-space-end"
+                    style="width: auto;">
+
+                    <!-- [ℹ] fixture-link / media-link 
+                    -->
+                    {#if
+                      fixture?.media_link && 
+                      fixture?.media_link.length != 0 &&
+                      fixture?.fixture_link && 
+                      fixture?.fixture_link[server_side_language]}
+                      <a 
+                        rel="nofollow"
+                        href={fixture?.fixture_link[server_side_language]}
+                        target="_blank"
+                        style="width: inherit;">
+                        <div
+                          class="media-play-btn m-r-16">
+                          {#if $userBetarenaSettings.theme == 'Dark'}
+                            <img 
+                              src={play_dark}
+                              alt=""
+                              width=14px height=14px
+                            />
                           {:else}
-                            {#if $userBetarenaSettings.theme == 'Dark'}
-                              <img 
-                                src={three_red_card_dark} 
-                                alt=""
-                                width=15px height=19px
-                              />
-                            {:else}
-                              <img 
-                                src={three_red_card} 
-                                alt=""
-                                width=18px height=22px
-                              />
-                            {/if}
-
+                            <img 
+                              src={play}
+                              alt=""
+                              width=14px height=14px
+                            />
                           {/if}
-                        {/if}
-                      </div>
+                        </div>
+                      </a>
+                    {/if}
 
+                    <!-- [ℹ] tip-link 
+                    -->
+                    {#if 
+                      fixture?.tip_link && 
+                      fixture?.tip_link[server_side_language]}
+                      <a 
+                        rel="nofollow"
+                        href={fixture?.tip_link[server_side_language]}
+                        target="_blank"
+                        style="width: inherit;">
+                        <div
+                          class="tip-box m-r-16">
+                          <p
+                            class="s-12 color-black">
+                            {FIXTURES_ODDS_T?.tip}
+                          </p>
+                        </div>
+                      </a>
+                    {/if}
+
+                    <!-- [ℹ] bet-site 
+                    -->
+                    {#if data}
+                      <a 
+                        rel="nofollow"
+                        aria-label="betting_site_logo_football_fixtures_odds_tournament"
+                        on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_odds_tournament")}
+                        href={data.register_link}
+                        target="_blank"
+                        style="width: inherit;">
+                        <img 
+                          id='sportbook-logo-img'
+                          src={data.image}
+                          alt={data.title}
+                        />
+                      </a>
+                    {/if}
+
+                    <!-- [ℹ] scores 
+                    -->
+                    {#if
+                      (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
+                      fixture?.status === "LIVE" ||
+                      fixture?.status === "HT" || 
+                      fixture?.status === "FT"}
                       <div
-                        class="row-space-start">
+                        class="column-space-center m-l-24 fixtures-scores-box">
+                        <p 
+                          class="s-14 w-500 color-black"
+                          class:color-grey={(fixture?.teams?.home?.score < fixture?.teams?.away?.score) && 
+                            fixture?.status != "LIVE"}
+                          class:color-red-bright={fixture?.status === "LIVE"}>
+                          {fixture?.teams?.home?.score}
+                        </p>
                         <p
-                          class="s-14 color-black w-500 m-r-8"
-                          class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
-                          {fixture?.teams?.away?.name}
+                          class="s-14 w-500 color-black"
+                          class:color-grey={(fixture?.teams?.away?.score < fixture?.teams?.home?.score) && 
+                            fixture?.status != "LIVE"}
+                          class:color-red-bright={fixture?.status === "LIVE"}
+                          >
+                          {fixture?.teams?.away?.score}
                         </p>
-                        {#if fixture?.teams?.away?.red_cards}
-                          {#if fixture?.teams?.away?.red_cards == 1}
-                            {#if $userBetarenaSettings.theme == 'Dark'}
-                              <img 
-                                src={one_red_card_dark} 
-                                alt=""
-                                width=12px height=16px
-                              />
-                            {:else}
-                              <img 
-                                src={one_red_card} 
-                                alt=""
-                                width=12px height=16px
-                              />
-                            {/if}
-                            
-                          {:else if fixture?.teams?.away?.red_cards == 2}
-                            {#if $userBetarenaSettings.theme == 'Dark'}
-                              <img 
-                                src={two_red_card_dark} 
-                                alt=""
-                                width=15px height=19px
-                              />
-                            {:else}
-                              <img 
-                                src={two_red_card} 
-                                alt=""
-                                width=15px height=19px
-                              />
-                            {/if}
-                            
-                          {:else}
-                            {#if $userBetarenaSettings.theme == 'Dark'}
-                              <img 
-                                src={three_red_card_dark} 
-                                alt=""
-                                width=15px height=19px
-                              />
-                            {:else}
-                              <img 
-                                src={three_red_card} 
-                                alt=""
-                                width=18px height=22px
-                              />
-                            {/if}
-
-                          {/if}
-                        {/if}
                       </div>
-
-                    </div>
-                  {/if}
+                    {/if}
+                    
+                  </div>
 
                 </div>
+              {/each}
+            </div>
+          {/each}
 
-                <!-- [ℹ] fixture right-side container 
-                -->
+        {:else}
+
+          <!-- [ℹ] generated data fixtures
+          -->
+          {#each fixtures_arr_filter as item}
+            <div>
+
+              <!-- [ℹ] grouping date fixtures
+              -->
+              <p
+                class="color-grey w-500 s-12 group-fixture-date m-b-8"> 
+                {new Date(item?.date).getDate()} 
+                {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
+                {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
+              </p>
+
+              <!-- [ℹ] matches loop population 
+              -->
+              {#each item?.fixtures as fixture}
                 <div
-                  class="row-space-end"
-                  style="width: auto;">
+                  class="fixture-row row-space-out">
 
-                  <!-- [ℹ] fixture-link / media-link 
+                  <!-- [ℹ] fixture left-side container 
                   -->
-                  {#if
-                    fixture?.media_link && 
-                    fixture?.media_link.length != 0 &&
-                    fixture?.fixture_link && 
-                    fixture?.fixture_link[server_side_language]}
-                    <a 
-                      rel="nofollow"
-                      href={fixture?.fixture_link[server_side_language]}
-                      target="_blank"
-                      style="width: inherit;">
-                      <div
-                        class="media-play-btn m-r-16">
-                        {#if $userBetarenaSettings.theme == 'Dark'}
-                          <img 
-                            src={play_dark}
-                            alt=""
-                            width=14px height=14px
-                          />
-                        {:else}
-                          <img 
-                            src={play}
-                            alt=""
-                            width=14px height=14px
-                          />
-                        {/if}
-                      </div>
-                    </a>
-                  {/if}
+                  <div
+                    class="row-space-start">
 
-                  <!-- [ℹ] tip-link 
-                  -->
-                  {#if 
-                    fixture?.tip_link && 
-                    fixture?.tip_link[server_side_language]}
-                    <a 
-                      rel="nofollow"
-                      href={fixture?.tip_link[server_side_language]}
-                      target="_blank"
-                      style="width: inherit;">
-                      <div
-                        class="tip-box m-r-16">
+                    <!-- [ℹ] fixture-time
+                    -->
+                    <div
+                      class="m-r-16 fixture-time-box text-center">
+                      {#if 
+                        fixture?.status === "LIVE"}
                         <p
-                          class="s-12 color-black">
-                          {FIXTURES_ODDS_T?.tip}
+                          style="color: #FF3C3C;"
+                          class="s-14 no-wrap">
+                          {fixture?.minute}
+                          <span
+                            class:visibility-none={tickSecShow}>'
+                          </span>
+                        </p>
+                      {:else if fixture?.status === "HT"}
+                        <p
+                          class="no-wrap s-14 color-black">
+                          {FIXTURES_ODDS_T?.status_abv?.HT}
+                        </p>
+                      {:else}
+                        <p
+                          class="no-wrap s-14 color-black"
+                          class:color-grey={fixture?.status === "FT"}>
+                          {
+                            (
+                              (new Date(fixture?.fixture_time + "Z").getHours()) +
+                              ":" +
+                              ('0' + new Date(fixture?.fixture_time + "Z").getMinutes()).slice(-2)
+                            ).split(' ').join('')
+                          }
+                        </p>
+                        {#if fixture?.status === "FT"}
+                          <p
+                            class="no-wrap s-14 color-grey">
+                            {FIXTURES_ODDS_T?.status_abv?.FT}
+                          </p>
+                        {/if}
+                      {/if}
+                    </div>
+
+                    <!-- [ℹ] fixture-teams
+                    -->
+                    {#if 
+                      fixture?.fixture_link && 
+                      fixture?.fixture_link[server_side_language]}
+                      <a 
+                        rel="nofollow"
+                        href={fixture?.fixture_link[server_side_language]}
+                        target="_blank"
+                        style="width: inherit;">
+                        <div
+                          class="column-start-grid-start fixture-teams-box">
+
+                          <div
+                            class="row-space-start">
+                            <p  
+                              class="s-14 color-black w-500 m-r-8"
+                              class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                              {fixture?.teams?.home?.name}
+                            </p>
+                            {#if fixture?.teams?.home?.red_cards}
+                              {#if fixture?.teams?.home?.red_cards == 1}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={one_red_card_dark} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={one_red_card} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {/if}
+                                
+                              {:else if fixture?.teams?.home?.red_cards == 2}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={two_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={two_red_card} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {/if}
+                              
+                              {:else}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={three_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={three_red_card} 
+                                    alt=""
+                                    width=18px height=22px
+                                  />
+                                {/if}
+                              {/if}
+                            {/if}
+                          </div>
+
+                          <div
+                            class="row-space-start">
+                            <p
+                              class="s-14 color-black w-500 m-r-8"
+                              class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                              {fixture?.teams?.away?.name}
+                            </p>
+                            {#if fixture?.teams?.away?.red_cards}
+                              {#if fixture?.teams?.away?.red_cards == 1}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={one_red_card_dark} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={one_red_card} 
+                                    alt=""
+                                    width=12px height=16px
+                                  />
+                                {/if}
+                                
+                              {:else if fixture?.teams?.away?.red_cards == 2}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={two_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={two_red_card} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {/if}
+                                
+                              {:else}
+                                {#if $userBetarenaSettings.theme == 'Dark'}
+                                  <img 
+                                    src={three_red_card_dark} 
+                                    alt=""
+                                    width=15px height=19px
+                                  />
+                                {:else}
+                                  <img 
+                                    src={three_red_card} 
+                                    alt=""
+                                    width=18px height=22px
+                                  />
+                                {/if}
+
+                              {/if}
+                            {/if}
+                          </div>
+
+                        </div>
+                      </a>
+                    {:else}
+                      <div
+                        class="column-start-grid-start fixture-teams-box">
+
+                        <div
+                          class="row-space-start">
+                          <p  
+                            class="s-14 color-black w-500 m-r-8"
+                            class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
+                            {fixture?.teams?.home?.name}
+                          </p>
+                          {#if fixture?.teams?.home?.red_cards}
+                            {#if fixture?.teams?.home?.red_cards == 1}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={one_red_card_dark} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {:else}
+                                <img 
+                                  src={one_red_card} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {/if}
+                              
+                            {:else if fixture?.teams?.home?.red_cards == 2}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={two_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={two_red_card} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {/if}
+                              
+                            {:else}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={three_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={three_red_card} 
+                                  alt=""
+                                  width=18px height=22px
+                                />
+                              {/if}
+
+                            {/if}
+                          {/if}
+                        </div>
+
+                        <div
+                          class="row-space-start">
+                          <p
+                            class="s-14 color-black w-500 m-r-8"
+                            class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
+                            {fixture?.teams?.away?.name}
+                          </p>
+                          {#if fixture?.teams?.away?.red_cards}
+                            {#if fixture?.teams?.away?.red_cards == 1}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={one_red_card_dark} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {:else}
+                                <img 
+                                  src={one_red_card} 
+                                  alt=""
+                                  width=12px height=16px
+                                />
+                              {/if}
+                              
+                            {:else if fixture?.teams?.away?.red_cards == 2}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={two_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={two_red_card} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {/if}
+                              
+                            {:else}
+                              {#if $userBetarenaSettings.theme == 'Dark'}
+                                <img 
+                                  src={three_red_card_dark} 
+                                  alt=""
+                                  width=15px height=19px
+                                />
+                              {:else}
+                                <img 
+                                  src={three_red_card} 
+                                  alt=""
+                                  width=18px height=22px
+                                />
+                              {/if}
+
+                            {/if}
+                          {/if}
+                        </div>
+
+                      </div>
+                    {/if}
+
+                  </div>
+
+                  <!-- [ℹ] fixture right-side container 
+                  -->
+                  <div
+                    class="row-space-end"
+                    style="width: auto;">
+
+                    <!-- 
+                    [ℹ] scores 
+                    -->
+                    {#if
+                      (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
+                      fixture?.status === "LIVE" ||
+                      fixture?.status === "HT" || 
+                      fixture?.status === "FT"}
+                      <div
+                        class="column-space-center fixtures-scores-box">
+                        <p 
+                          class="s-14 w-500 color-black"
+                          class:color-grey={(fixture?.teams?.home?.score < fixture?.teams?.away?.score) && 
+                            fixture?.status != "LIVE"}
+                          class:color-red-bright={fixture?.status === "LIVE"}>
+                          {fixture?.teams?.home?.score}
+                        </p>
+                        <p
+                          class="s-14 w-500 color-black"
+                          class:color-grey={(fixture?.teams?.away?.score < fixture?.teams?.home?.score) && 
+                            fixture?.status != "LIVE"}
+                          class:color-red-bright={fixture?.status === "LIVE"}
+                          >
+                          {fixture?.teams?.away?.score}
                         </p>
                       </div>
-                    </a>
-                  {/if}
+                    {/if}
 
-                  <!-- [ℹ] bet-site 
-                  -->
-                  {#if data}
-                    <a 
-                      rel="nofollow"
-                      aria-label="betting_site_logo_football_fixtures_odds_tournament"
-                      on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_odds_tournament")}
-                      href={data.register_link}
-                      target="_blank"
-                      style="width: inherit;">
-                      <img 
-                        id='sportbook-logo-img'
-                        src={data.image}
-                        alt={data.title}
-                      />
-                    </a>
-                  {/if}
+                    <!-- 
+                    [ℹ] live-odds 
+                    -->
+                    {#if fixture?.live_odds != undefined && fixture?.status != "FT"}
 
-                  <!-- [ℹ] scores 
-                  -->
-                  {#if
-                    (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
-                    fixture?.status === "LIVE" ||
-                    fixture?.status === "HT" || 
-                    fixture?.status === "FT"}
-                    <div
-                      class="column-space-center m-l-24 fixtures-scores-box">
-                      <p 
-                        class="s-14 w-500 color-black"
-                        class:color-grey={(fixture?.teams?.home?.score < fixture?.teams?.away?.score) && 
-                          fixture?.status != "LIVE"}
-                        class:color-red-bright={fixture?.status === "LIVE"}>
-                        {fixture?.teams?.home?.score}
-                      </p>
-                      <p
-                        class="s-14 w-500 color-black"
-                        class:color-grey={(fixture?.teams?.away?.score < fixture?.teams?.home?.score) && 
-                          fixture?.status != "LIVE"}
-                        class:color-red-bright={fixture?.status === "LIVE"}
-                        >
-                        {fixture?.teams?.away?.score}
-                      </p>
-                    </div>
-                  {/if}
-                  
+                      <div
+                        class="m-l-24 row-space-out"
+                        style="width: auto;">
+                        
+                        <!-- 
+                        [ℹ] home
+                        -->
+                        <div 
+                          class="bet-site-box column-space-center m-r-5">
+                          <p
+                            class="s-12 color-black-2">
+                            {fixture?.live_odds?.home.value}
+                          </p>
+                          <img  
+                            src={fixture?.live_odds?.home.betting_site_icon_link} 
+                            alt=""
+                            width=48px height=24px
+                          />
+                        </div>
+
+                        <!-- 
+                        [ℹ] draw
+                        -->
+                        <div
+                          class="bet-site-box column-space-center m-r-5">
+                          <p
+                            class="s-12 color-black-2">
+                            {fixture?.live_odds?.draw.value}
+                          </p>
+                          <img  
+                            src={fixture?.live_odds?.draw.betting_site_icon_link} 
+                            alt=""
+                            width=48px height=24px
+                          />
+                        </div>
+
+                        <!-- 
+                        [ℹ] away
+                        -->
+                        <div
+                          class="bet-site-box column-space-center">
+                          <p
+                            class="s-12 color-black-2">
+                            {fixture?.live_odds?.away.value}
+                          </p>
+                          <img  
+                            src={fixture?.live_odds?.away.betting_site_icon_link} 
+                            alt=""
+                            width=48px height=24px
+                          />
+                        </div>
+                      
+                      </div>
+                    
+                    {:else}
+                      
+                      <div  
+                        class="m-l-24 no-odds-available-box">
+                        <p
+                          class="s-14 no-wrap color-black-2">
+                          No odds available
+                        </p>
+                      </div>
+
+                    {/if}
+                    
+                  </div>
+
                 </div>
+              {/each}
+            </div>
+          {/each}
 
-              </div>
-            {/each}
-          </div>
-        {/each}
+        {/if}
 
       </div>
 
@@ -1887,6 +2611,21 @@
     object-fit: contain;
     border-radius: 4px;
     object-position: left;
+  }
+
+  div.bet-site-box {
+    border-radius: 4px;
+    border: 1px solid #CCCCCC;
+  } div.bet-site-box img {
+    object-fit: cover;
+  } div.bet-site-box p {
+    padding: 4px 12px;
+  }
+
+  div.no-odds-available-box {
+    border: 1px solid #CCCCCC;
+    padding: 13px 20px;
+    border-radius: 4px;
   }
 
   span.visibility-none {
