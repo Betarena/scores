@@ -20,7 +20,7 @@ export async function GET(req, res): Promise < unknown > {
   if (geoPos) {
     // [ℹ] check for cache-existance [IN THE USER-GEO-POS];
     const response_usergeo = await getCacheFeaturedMatchForGeoPos(geoPos)
-    const fixture_time = new Date(response_usergeo?.time + 'Z')
+    const fixture_time = new Date(response_usergeo?.time)
     const in_future = fixture_time.getTime() > new Date().getTime()
     if (response_usergeo && in_future) {
       return json(response_usergeo)
