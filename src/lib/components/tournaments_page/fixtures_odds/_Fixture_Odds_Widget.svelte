@@ -1942,14 +1942,37 @@
           {#each fixtures_arr_filter as item}
             <div>
 
-              <!-- [ℹ] grouping date fixtures
-              -->
-              <p
-                class="color-grey w-500 s-12 group-fixture-date m-b-8"> 
-                {new Date(item?.date).getDate()} 
-                {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
-                {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
-              </p>
+              <div
+                class="group-fixture-date row-space-out m-b-8">
+                <!-- 
+                [ℹ] grouping date fixtures
+                -->
+                <p
+                  class="color-grey w-500 s-12"> 
+                  {new Date(item?.date).getDate()} 
+                  {FIXTURES_ODDS_T.months_abbreviation[monthNames[new Date(item?.date).getMonth()]]}, 
+                  {FIXTURES_ODDS_T[weekDays[new Date(item?.date).getDay()]]}
+                </p>
+                <!-- 
+                [ℹ] home | away | draw
+                -->
+                <div
+                  class="row-space-end"
+                  style="width: auto;">
+                  <p
+                    class="color-grey s-12 w-500 m-r-24">
+                    Home
+                  </p>
+                  <p
+                    class="color-grey s-12 w-500 m-r-24">
+                    Draw
+                  </p>
+                  <p
+                    class="color-grey s-12 w-500 m-r-10">
+                    Away
+                  </p>
+                </div>
+              </div>
 
               <!-- [ℹ] matches loop population 
               -->
@@ -2300,9 +2323,9 @@
                         [ℹ] home
                         -->
                         <div 
-                          class="bet-site-box column-space-center m-r-5">
+                          class="bet-site-box column-space-center m-r-5 cursor-pointer">
                           <p
-                            class="s-12 color-black-2">
+                            class="s-12 color-black-2 w-500">
                             {fixture?.live_odds?.home.value}
                           </p>
                           <img  
@@ -2316,9 +2339,9 @@
                         [ℹ] draw
                         -->
                         <div
-                          class="bet-site-box column-space-center m-r-5">
+                          class="bet-site-box column-space-center m-r-5 cursor-pointer">
                           <p
-                            class="s-12 color-black-2">
+                            class="s-12 color-black-2 w-500">
                             {fixture?.live_odds?.draw.value}
                           </p>
                           <img  
@@ -2332,9 +2355,9 @@
                         [ℹ] away
                         -->
                         <div
-                          class="bet-site-box column-space-center">
+                          class="bet-site-box column-space-center cursor-pointer">
                           <p
-                            class="s-12 color-black-2">
+                            class="s-12 color-black-2 w-500">
                             {fixture?.live_odds?.away.value}
                           </p>
                           <img  
@@ -2552,7 +2575,7 @@
     background-image: url("./assets/slider-right-hover.svg");
   }
 
-  p.group-fixture-date {
+  div.group-fixture-date {
     background: #F2F2F2;
     padding: 7px 20px;
   }
@@ -2616,6 +2639,11 @@
   div.bet-site-box {
     border-radius: 4px;
     border: 1px solid #CCCCCC;
+    overflow: hidden;
+  } div.bet-site-box:hover {
+    border: 1px solid #F5620F !important;
+  } div.bet-site-box:hover p {
+    color: #F5620F !important;
   } div.bet-site-box img {
     object-fit: cover;
   } div.bet-site-box p {
@@ -2626,6 +2654,7 @@
     border: 1px solid #CCCCCC;
     padding: 13px 20px;
     border-radius: 4px;
+    width: 160px;
   }
 
   span.visibility-none {
@@ -2813,12 +2842,20 @@
     background: #4B4B4B !important;
   }
 
-  .dark-background-1 p.group-fixture-date {
+  .dark-background-1 div.group-fixture-date {
     background: #616161 !important;
   }
 
   .dark-background-1 p.color-black {
     color: white;
+  }
+
+  .dark-background-1 div.bet-site-box {
+    border: 1px solid #737373;
+  }
+
+  .dark-background-1 div.no-odds-available-box {
+    border: 1px solid #737373;
   }
 
 </style>
