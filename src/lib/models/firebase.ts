@@ -479,3 +479,28 @@ export interface FIREBASE_livescores_now {
   degree?: number;
   speed?:  string;
 }
+
+/**
+ * [ℹ] ODDS [TYPES]
+*/
+export interface FIREBASE_odds {
+  gameid?:    number;
+  markets?:   { [key: string]: The1X2FTValue };
+  // [ℹ] extra
+  sportbook?: string;
+} export interface The1X2FTValue {
+  bookmaker_deep_link?: string;
+  data?:                The1X2FTDatum[];
+  label?:               string;
+  last_update?:         string;
+  live?:                boolean;
+} export interface The1X2FTDatum {
+  american?:    string;
+  dp3?:         string;
+  label?:       string;
+  previous?:    number;
+  probability?: string;
+  status?:      number;
+  value?:       number;
+  total?:       string;
+}
