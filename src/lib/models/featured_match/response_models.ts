@@ -1,4 +1,15 @@
+import type { BETARENA_HASURA_scores_tournaments } from '../hasura';
 import type { FixtureResponse, MatchVotes } from './interface-fixture';
+
+/**
+ * ==========================================
+ * HASURA DB - COMPLETE WIDGET REQUIRED DATA 
+ * ========================================== 
+*/
+
+export interface BETARENA_HASURA_featured_match_query {
+  scores_tournaments: BETARENA_HASURA_scores_tournaments[]
+}
 
 /**
  * TV_Stations Data for the Response Values;
@@ -9,6 +20,7 @@ export interface SelectedFixutre {
 	game_start: string;
 	lang: string;
 }
+
 
 /**
  * Best Players Data for the Respose Values;

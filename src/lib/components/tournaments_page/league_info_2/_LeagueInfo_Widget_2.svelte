@@ -264,6 +264,7 @@
             src={LEAGUE_INFO_SEO_DATA?.data?.image_path}
             alt=""
             width=24px height=24px
+            style="object-fit: contain;"
           />
           <p
             class="s-16 color-black-2 w-500">

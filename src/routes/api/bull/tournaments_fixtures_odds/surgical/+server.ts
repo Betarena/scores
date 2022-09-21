@@ -521,39 +521,48 @@ async function injectNewFixturesData (
       // [ℹ] target season exists
       if (target_season != undefined) {
 
-        for (const fixture of target_season.fixtures) {
+        // [ℹ] validate fixture existance amongst
+        // [ℹ] exisitng fixutre id's
+        const fixture_ids_arr: number[] = target_season.fixtures.map(f => f.id)
 
-          // FIXME: add the check to populate a new "fixture_id"
-          // FIXME: if this does not exist in the "fixtures" array in
-          // FIXME: the first place
+        if (fixture_ids_arr.includes(fixture_id)) {
+          for (const fixture of target_season.fixtures) {
 
-          if (fixture.id === fixture_id) {
-            
-            if (dev) console.log(`fixture_id: ${fixture.id} | before: ${fixture.status}`)
+            // FIXME: add the check to populate a new "fixture_id"
+            // FIXME: if this does not exist in the "fixtures" array in
 
-            fixture.round = historicFixturesMap.get(fixture.id)?.data?.round?.data?.name;
-            fixture.fixture_date = historicFixturesMap.get(fixture.id)?.fixture_day;
-            fixture.fixture_time = historicFixturesMap.get(fixture.id)?.time;
-            fixture.minute = historicFixturesMap.get(fixture.id)?.data?.time?.minute;
-            fixture.status = historicFixturesMap.get(fixture.id)?.data?.time?.status;
-            fixture.teams = {
-              away: {
-                name: fixture?.teams?.away?.name,
-                red_cards: historicFixturesMap.get(fixture.id)?.data?.stats?.data[1]?.redcards,
-                score: historicFixturesMap.get(fixture.id)?.data?.scores?.visitorteam_score,
-              },
-              home: {
-                name: fixture?.teams?.home?.name,
-                red_cards: historicFixturesMap.get(fixture.id)?.data?.stats?.data[0]?.redcards,
-                score: historicFixturesMap.get(fixture.id)?.data?.scores?.localteam_score,
+            if (fixture.id === fixture_id) {
+              
+              if (dev) console.log(`fixture_id: ${fixture.id} | before: ${fixture.status}`)
+
+              fixture.round = historicFixturesMap.get(fixture.id)?.data?.round?.data?.name;
+              fixture.fixture_date = historicFixturesMap.get(fixture.id)?.fixture_day;
+              fixture.fixture_time = historicFixturesMap.get(fixture.id)?.time;
+              fixture.minute = historicFixturesMap.get(fixture.id)?.data?.time?.minute;
+              fixture.status = historicFixturesMap.get(fixture.id)?.data?.time?.status;
+              fixture.teams = {
+                away: {
+                  name: fixture?.teams?.away?.name,
+                  red_cards: historicFixturesMap.get(fixture.id)?.data?.stats?.data[1]?.redcards,
+                  score: historicFixturesMap.get(fixture.id)?.data?.scores?.visitorteam_score,
+                },
+                home: {
+                  name: fixture?.teams?.home?.name,
+                  red_cards: historicFixturesMap.get(fixture.id)?.data?.stats?.data[0]?.redcards,
+                  score: historicFixturesMap.get(fixture.id)?.data?.scores?.localteam_score,
+                }
               }
-            }
-            fixture.tip_link = historicFixturesMap.get(fixture.id).tip_link_wp
-            fixture.fixture_link = historicFixturesMap.get(fixture.id).fixture_link_wp
-            fixture.media_link = historicFixturesMap.get(fixture.id).media_link
+              fixture.tip_link = historicFixturesMap.get(fixture.id).tip_link_wp
+              fixture.fixture_link = historicFixturesMap.get(fixture.id).fixture_link_wp
+              fixture.media_link = historicFixturesMap.get(fixture.id).media_link
 
-            if (dev) console.log(`fixture_id: ${fixture.id} | after: ${fixture.status} | expected: ${historicFixturesMap.get(fixture.id)?.data?.time?.status}`)
+              if (dev) console.log(`fixture_id: ${fixture.id} | after: ${fixture.status} | expected: ${historicFixturesMap.get(fixture.id)?.data?.time?.status}`)
+            }
           }
+        }
+        // [ℹ] else, inject new fixture id
+        else {
+          target_season.fixtures.push(fixtures_odds_object)
         }
 
         cacheTargetLeagueData.set(league_id, league_fixtures_obj_arr);
