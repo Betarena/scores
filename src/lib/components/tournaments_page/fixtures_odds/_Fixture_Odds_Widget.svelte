@@ -205,9 +205,6 @@
 
   async function checkForFixtureOddsInject(fixture_id: number, sportbook_list: FIREBASE_odds[]) {
 
-    // if (dev) console.log("snapshot fixture_id", fixture_id)
-    // if (dev) console.log("snapshot sportbook_list", sportbook_list)
-
     // [ℹ] match "data.key" (fixture_id)
     // [ℹ] with available (fixture_id's)
     // [ℹ] and populate the SPORTBOOK_DETAILS
@@ -280,7 +277,7 @@
 
                 if (
                   sportbook_from_fixture?.markets['1X2FT'] == undefined ||
-                  sportbook_from_fixture?.markets['1X2FT'].data[sp_count].value == undefined
+                  sportbook_from_fixture?.markets['1X2FT']?.data[sp_count]?.value == undefined
                 ) {
                   continue;
                 }
@@ -288,7 +285,7 @@
                 // console.log("sportbook_name_main", sportbook_name_main, fixture_id)
 
                 fixture.live_odds[odds_for[sp_count]].value = 
-                  sportbook_from_fixture?.markets['1X2FT'].data[sp_count].value
+                  sportbook_from_fixture?.markets['1X2FT']?.data[sp_count]?.value
                 ;
                 fixture.live_odds[odds_for[sp_count]].betting_site_icon_link = 
                   sportbook_logo
@@ -303,7 +300,7 @@
                 if (sp_count == 0 && cross_sportbooks == 1) {
                   
                   fixture.live_odds.draw.value = 
-                    sportbook_from_fixture?.markets['1X2FT'].data[1].value
+                    sportbook_from_fixture?.markets['1X2FT']?.data[1]?.value
                   ;
                   fixture.live_odds.draw.betting_site_icon_link = 
                     sportbook_logo
@@ -313,7 +310,7 @@
                   ;
 
                   fixture.live_odds.away.value = 
-                    sportbook_from_fixture?.markets['1X2FT'].data[2].value
+                    sportbook_from_fixture?.markets['1X2FT']?.data[2]?.value
                   ;
                   fixture.live_odds.away.betting_site_icon_link = 
                     sportbook_logo
@@ -332,7 +329,7 @@
                 if (sp_count == 0 && cross_sportbooks == 2) {
                   
                   fixture.live_odds.draw.value = 
-                    sportbook_from_fixture?.markets['1X2FT'].data[1].value
+                    sportbook_from_fixture?.markets['1X2FT']?.data[1]?.value
                   ;
                   fixture.live_odds.draw.betting_site_icon_link = 
                     sportbook_logo
@@ -375,7 +372,7 @@
             main_sportbook != undefined
           ) {
             fixture.live_odds.away.value = 
-              main_odds?.markets['1X2FT'].data[2].value
+              main_odds?.markets['1X2FT']?.data[2]?.value
             ;
             fixture.live_odds.away.betting_site_icon_link = 
               main_sportbook?.image
@@ -427,9 +424,9 @@
 
                 if (
                   sportbook_from_fixture?.markets['1X2FT'] == undefined ||
-                  sportbook_from_fixture?.markets['1X2FT'].data[0].value == undefined ||
-                  sportbook_from_fixture?.markets['1X2FT'].data[1].value == undefined ||
-                  sportbook_from_fixture?.markets['1X2FT'].data[2].value == undefined
+                  sportbook_from_fixture?.markets['1X2FT']?.data[0]?.value == undefined ||
+                  sportbook_from_fixture?.markets['1X2FT']?.data[1]?.value == undefined ||
+                  sportbook_from_fixture?.markets['1X2FT']?.data[2]?.value == undefined
                 ) {
                   continue;
                 }
