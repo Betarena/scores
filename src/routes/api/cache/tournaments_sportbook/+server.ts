@@ -14,15 +14,23 @@ export async function GET (req, res): Promise< any > {
   const all: string = req.url['searchParams'].get('all');
 
   if (all && geoPos) {
-    const response_cache = await getCacheAll(geoPos)
+    let response_cache = await getCacheAll(geoPos)
     if (response_cache) {
+      return json(response_cache)
+    }
+    else {
+      response_cache = await getCacheAll("en")
       return json(response_cache)
     }
   }
 
   if (!all) {
-    const response_cache = await getCache(geoPos)
+    let response_cache = await getCache(geoPos)
     if (response_cache) {
+      return json(response_cache)
+    }
+    else {
+      response_cache = await getCache("en")
       return json(response_cache)
     }
   }
