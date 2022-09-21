@@ -2443,7 +2443,7 @@
                     {#if fixture?.live_odds != undefined && fixture?.status != "FT"}
 
                       <div
-                        class="m-l-24 row-space-out"
+                        class="main-bet-box row-space-out"
                         style="width: auto;">
                         
                         <!-- 
@@ -2465,7 +2465,6 @@
                             <img  
                               src={fixture?.live_odds?.home.betting_site_icon_link} 
                               alt=""
-                              width=48px height=24px
                             />
                           </div>
                         </a>
@@ -2489,7 +2488,6 @@
                             <img  
                               src={fixture?.live_odds?.draw.betting_site_icon_link} 
                               alt=""
-                              width=48px height=24px
                             />
                           </div>
                         </a>
@@ -2513,7 +2511,6 @@
                             <img  
                               src={fixture?.live_odds?.away.betting_site_icon_link} 
                               alt=""
-                              width=48px height=24px
                             />
                           </div>
                         </a>
@@ -2523,7 +2520,7 @@
                     {:else}
                       
                       <div  
-                        class="m-l-24 no-odds-available-box">
+                        class="no-odds-available-box">
                         <p
                           class="s-14 no-wrap color-grey">
                           No odds available
@@ -2754,6 +2751,10 @@
     padding-left: 8px;
   } div.fixture-teams-box p {
     font-weight: 400;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 85px;
   }
 
   div.fixtures-scores-box {
@@ -2794,22 +2795,26 @@
     object-position: left;
   }
 
-  div.bet-site-box {
+  div.main-bet-box {
+    margin-left: 6px;
+  } div.main-bet-box div.bet-site-box {
     border-radius: 4px;
     border: 1px solid #CCCCCC;
     overflow: hidden;
-    max-height: 48px;
-    max-width: 48px;
-  } div.bet-site-box:hover {
+    max-height: 40px;
+    max-width: 40px;
+  } div.main-bet-box div.bet-site-box:hover {
     border: 1px solid #F5620F !important;
-  } div.bet-site-box:hover p {
+  } div.main-bet-box div.bet-site-box:hover p {
     color: #F5620F !important;
-  } div.bet-site-box:hover img {
+  } div.main-bet-box div.bet-site-box:hover img {
     border-top: 1px solid #F5620F !important;
-  } div.bet-site-box img {
+  } div.main-bet-box div.bet-site-box img {
     object-fit: cover;
     border-top: 1px solid #CCCCCC;
-  } div.bet-site-box p {
+    width: 40px;
+    height: 20px;
+  } div.main-bet-box div.bet-site-box p {
     padding: 2px 0px;
   }
 
@@ -2842,6 +2847,18 @@
   /* ====================
     RESPONSIVNESS
   ==================== */
+
+  /* 
+  TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
+  @media only screen and (min-width: 400px) {
+    div.fixture-teams-box p {
+      font-weight: 400;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 150px;
+    }
+  }
 
 	/* 
   TABLET RESPONSIVNESS (&+) */
@@ -2915,6 +2932,16 @@
     img#sportbook-logo-img {
       width: 30px;
       height: 30px;
+    }
+
+    div.main-bet-box {
+      margin-left: 24px;
+    } div.main-bet-box div.bet-site-box {
+      max-height: 48px;
+      max-width: 48px;
+    } div.main-bet-box div.bet-site-box img {
+      width: 48px;
+      height: 24px;
     }
 
   }
@@ -3011,13 +3038,13 @@
   }
 
   .dark-background-1 div.bet-site-box {
-    border: 1px solid #737373;
+    border: 1px solid #737373 !important;
   } .dark-background-1 div.bet-site-box img {
-    border-top: 1px solid #737373;
+    border-top: 1px solid #737373 !important;
   }
 
   .dark-background-1 div.no-odds-available-box {
-    border: 1px solid #737373;
+    border: 1px solid #737373 !important;
   }
 
 </style>
