@@ -527,21 +527,23 @@
 
         <!-- [ℹ] league-game-title 
         -->
-        <div id="fixture-league-title" class="row-space-start">
-          <!-- [ℹ] league-icon 
-          -->
-          <a href={data?.urls == undefined ? "" : data?.urls[FEATURED_MATCH_WIDGET_DATA_SEO?.lang]}>
-            <img class="img-flag" src={FEATURED_MATCH_WIDGET_DATA.country_flag} alt="" />
-            <!-- [ℹ] league-name-title 
+        <a 
+          href={data?.urls == undefined ? "" : data?.urls[FEATURED_MATCH_WIDGET_DATA_SEO?.lang]}
+          >
+          <div id="fixture-league-title" class="row-space-start">
+            <!-- [ℹ] league-icon 
             -->
-            <p class="w-500 large color-dark m-r-8">
-              {data.league_name}
-              <span class="w-400 color-grey">
-                (Round {FEATURED_MATCH_WIDGET_DATA.round_name})
-              </span>
-            </p>
-          </a>
-        </div>
+              <img class="img-flag" src={FEATURED_MATCH_WIDGET_DATA.country_flag} alt="" />
+              <!-- [ℹ] league-name-title 
+              -->
+              <p class="w-500 large color-dark m-r-8">
+                {data.league_name}
+                <span class="w-400 color-grey">
+                  (Round {FEATURED_MATCH_WIDGET_DATA.round_name})
+                </span>
+              </p>
+          </div>
+        </a>
 
         <!-- [ℹ] fixture-visual-voting 
         -->
