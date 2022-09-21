@@ -100,10 +100,24 @@ export interface Tournament_Fixture_Odds {
   media_link:   MediaLinkWelcome[]    // media_link = historic_fixtures + media_link + "video_link"
   bet_icon?:    string                // Betting Site Icon = sportsbook_details (GEO or forced header option)
                                       // [❔] only 1 betting site at the moment for all fixtures of X GEO (design is wrong)
+
+  // [ℹ] extra-real-time-odds
+  live_odds?:   LiveOdds
 }
 
 export interface Fixture_Odds_Team {
   name:      string   // Team Names = historic_fixtures + "home_team_name" + "away_team_name"
   score:     number   // Score = historic_fixtures + "ft_score" [❓] what is this field [complex property]
   red_cards: number   // Red Cards = historic_fixtures + "cards"
+}
+
+export interface LiveOdds {
+  home: LiveOddsSingle
+  away: LiveOddsSingle
+  draw: LiveOddsSingle
+
+} export interface LiveOddsSingle {
+  betting_site_icon_link?:   string
+  register_link?:            string
+  value?:                    number
 }

@@ -1,16 +1,15 @@
 import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_LEAGUE_INFO_FULL_DATA, REDIS_CACHE_LEAGUE_INFO_DATA_1, REDIS_CACHE_LEAGUE_INFO_DATA_2 } from '$lib/graphql/tournaments/league-info/query';
+import { REDIS_CACHE_LEAGUE_INFO_DATA_1 } from '$lib/graphql/tournaments/league-info/query';
 import { removeDiacritics } from '$lib/utils/languages';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import type { 
   BETARENA_HASURA_league_info_query,
-  Cache_Single_SportbookDetails_Data_Response, 
   Cache_Single_Tournaments_League_Info_Data_Response
 } from '$lib/models/tournaments/league-info/types';
 
@@ -52,7 +51,6 @@ export async function POST(): Promise < unknown > {
       at: ${new Date().toDateString()}
     `);
 
-    await sportbookDetailsGeneration();
     await leagueInfoGeneration();
 
     for (const log of logs) {
@@ -89,26 +87,6 @@ async function cacheTournamentsPageLeagueInfoData (url: string, json_cache: Cach
   }
 }
 
-async function cacheCacheSportbookDetailInfoData (geoPos: string, json_cache: Cache_Single_SportbookDetails_Data_Response) {
-  try {
-    //[ℹ] persist redis (cache)
-    await redis.hset('sportbook_details', geoPos, JSON.stringify(json_cache));
-  } 
-  catch (e) {
-    console.error('❌ unable to cache sportbook_details', e);
-  }
-}
-
-async function deleteCacheTournamentsPageLeagueInfoData() {
-  await redis.del('league_info')
-  return
-}
-
-async function deleteCacheSportbookDetailInfoData() {
-  await redis.del('sportbook_details')
-  return
-}
-
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -125,7 +103,6 @@ cacheQueueTourInfo.process (async function (job, done) {
   */
 
   const t0 = performance.now();
-  await sportbookDetailsGeneration();
   await leagueInfoGeneration();
   const t1 = performance.now();
 
@@ -146,38 +123,6 @@ cacheQueueTourInfo.process (async function (job, done) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-
-async function sportbookDetailsGeneration () {
-  
-	const response = await getSportbookDetails ();
-
-  let finalCacheObj: Cache_Single_SportbookDetails_Data_Response = {
-    geoPos: undefined
-  }
-
-  // deleteCacheSportbookDetailInfoData()
-
-  for (const geoSportbook of response.sportsbook_details) {
-
-    finalCacheObj.geoPos = geoSportbook.lang
-
-    // [ℹ] sportbook-details-info
-    for (const [key, value] of Object.entries(geoSportbook.data)) {
-      // [ℹ] based on key-value-pair;
-      if (geoSportbook.data[key].position.toString() === '1') {
-        finalCacheObj = {
-          ...value,
-          geoPos: geoSportbook.lang
-        }
-      }
-    }
-
-    // [ℹ] persist-cache-response;
-    await cacheCacheSportbookDetailInfoData(finalCacheObj.geoPos, finalCacheObj)
-
-  }
-
-}
 
 async function leagueInfoGeneration () {
   
@@ -347,20 +292,6 @@ async function leagueInfoGeneration () {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [HELPER] OTHER METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-
-async function getSportbookDetails (
-): Promise < BETARENA_HASURA_league_info_query > {
-  
-    const t0 = performance.now();
-    const queryName = "REDIS_CACHE_LEAGUE_INFO_DATA_2";
-    const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request (
-      REDIS_CACHE_LEAGUE_INFO_DATA_2
-    );
-    const t1 = performance.now();
-    logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-  
-    return response;
-  }
 
 async function getLeagueInfoData (
 ): Promise < BETARENA_HASURA_league_info_query > {

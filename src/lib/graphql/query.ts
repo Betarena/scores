@@ -111,6 +111,31 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
+*/
+export const REDIS_CACHE_FEATURED_MATCH_DATA_1 = gql`
+query REDIS_CACHE_FEATURED_MATCH_DATA_1 
+  ($tournament_id: Int!)
+  @cached (ttl: 300) {
+    scores_tournaments (
+      where: { 
+        tournament_id: { 
+          _eq: $tournament_id
+        } 
+      }
+    ) {
+      id
+      tournament_id
+      urls
+    }
+  }
+`;
+
+
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... get the selected GEO-lang based
+ * selected fixture from the DB
  */
 export const GET_LANG_SELECTED_FIXTURE = gql`
 	query GET_LANG_SELECTED_FIXTURE($lang: String!) @cached(ttl: 300) {
@@ -208,6 +233,7 @@ export const GET_ALL_FIXTURE_DATA = gql`
 			time
 			tvstations
 			valuebets
+      league_id
 		}
 	}
 `;

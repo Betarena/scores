@@ -11,10 +11,28 @@ import redis from "$lib/redis/init"
 export async function GET (req, res): Promise< any > {
 
   const geoPos: string = req.url['searchParams'].get('geoPos');
+  const all: string = req.url['searchParams'].get('all');
 
-  const response_cache = await getCacheNavBar(geoPos)
-  if (response_cache) {
-    return json(response_cache)
+  if (all && geoPos) {
+    let response_cache = await getCacheAll(geoPos)
+    if (response_cache) {
+      return json(response_cache)
+    }
+    else {
+      response_cache = await getCacheAll("en")
+      return json(response_cache)
+    }
+  }
+
+  if (!all) {
+    let response_cache = await getCache(geoPos)
+    if (response_cache) {
+      return json(response_cache)
+    }
+    else {
+      response_cache = await getCache("en")
+      return json(response_cache)
+    }
   }
 
   // [ℹ] should never happen;
@@ -24,10 +42,8 @@ export async function GET (req, res): Promise< any > {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //     CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
-// - getCacheNavBar()
-// ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getCacheNavBar(geoPos: string): Promise < Cache_Single_SportbookDetails_Data_Response | Record < string, never > > {
+async function getCache(geoPos: string): Promise < Cache_Single_SportbookDetails_Data_Response | Record < string, never > > {
   try {
     const cached: string = await redis.hget('sportbook_details', geoPos);
     if (cached) {
@@ -37,6 +53,20 @@ async function getCacheNavBar(geoPos: string): Promise < Cache_Single_SportbookD
   } 
   catch (e) {
     console.error("❌ uh-oh! sportbook_details cache error", e);
+    return
+  }
+}
+
+async function getCacheAll(geoPos: string): Promise < Cache_Single_SportbookDetails_Data_Response[] | Record < string, never > > {
+  try {
+    const cached: string = await redis.hget('sportbook_details_all', geoPos);
+    if (cached) {
+      const parsed: Cache_Single_SportbookDetails_Data_Response[] = JSON.parse(cached);
+      return parsed;
+    }
+  } 
+  catch (e) {
+    console.error("❌ uh-oh! sportbook_details_all cache error", e);
     return
   }
 }
