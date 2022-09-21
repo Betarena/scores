@@ -216,22 +216,28 @@
       return
     }
 
+    // [ℹ] check existance of odds for this country
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+    if (SPORTBOOK_DETAILS_LIST.find(({ geoPos }) => geoPos == userGeo) == undefined) {
+      return
+    }
+
     // [ℹ] generate matching sporbook names
     let sportbook_main_arr:   string[] = SPORTBOOK_DETAILS_LIST.map(s => s.title.toLowerCase())
     let sportbook_main_arr_2: string[] = sportbook_list.map(s => s.sportbook.toLowerCase())
 
     let intersection:     string[] = sportbook_main_arr.filter(x => sportbook_main_arr_2.includes(x));
     let cross_sportbooks: number   = intersection.length;
-
     // console.log("cross_sportbooks", cross_sportbooks, fixture_id)
-
-    if (cross_sportbooks == 0) {
-      if (dev) console.log("No Matching Sportbook Details")
-      return;
-    }
 
     for (const fixtures_group_by_date of fixtures_arr_filter) {
       for (const fixture of fixtures_group_by_date.fixtures) {
+
+        if (fixture.id == fixture_id && cross_sportbooks == 0) {
+          if (dev) console.log("No Matching Sportbook Details")
+          fixture.live_odds = undefined;
+          return;
+        }
       
         // [ℹ] pre-live fixture validation
         // [ℹ] use TOP-3 betting sites
@@ -836,12 +842,21 @@
     // [ℹ] break-down-values
     // [ℹ] kickstart Fireabse
     if (loaded) {
+      // [ℹ] livescores
       const firebase_real_time = await getLivescoresNow()
       if (firebase_real_time != null) {
         const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
         checkForLiveFixtures(data)
       }
-      listenRealTimeOddsChange()
+      listenRealTimeLivescoresNowChange()
+      // [ℹ] odds init
+      const firebase_odds = await getOdds(fixtures_arr_filter)
+      if (firebase_odds.size != 0) {
+        for (const [key, value] of firebase_odds.entries()) {
+          checkForFixtureOddsInject(key, value);
+        }
+      }
+      listenRealTimeOddsChange();
     }
 
     ready = true;
