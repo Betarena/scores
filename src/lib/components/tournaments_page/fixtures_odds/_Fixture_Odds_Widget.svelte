@@ -2522,8 +2522,8 @@
                       <div  
                         class="no-odds-available-box">
                         <p
-                          class="s-14 no-wrap color-grey">
-                          No odds available
+                          class="s-14 no-wrap color-grey text-center">
+                          {FIXTURES_ODDS_T?.no_odds}
                         </p>
                       </div>
 
@@ -2820,10 +2820,10 @@
 
   div.no-odds-available-box {
     border: 1px solid #CCCCCC;
-    padding: 13px 20px;
+    padding: 8px 0px;
     border-radius: 4px;
-    min-width: 160px;
-    max-height: 48px;
+    min-width: 128px;
+    max-height: 40px;
   }
 
   span.visibility-none {
@@ -2942,6 +2942,12 @@
     } div.main-bet-box div.bet-site-box img {
       width: 48px;
       height: 24px;
+    }
+
+    div.no-odds-available-box {
+      padding: 13px 20px;
+      min-width: 160px;
+      max-height: 48px;
     }
 
   }

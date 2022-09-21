@@ -1233,6 +1233,7 @@ export interface BETARENA_HASURA_scores_widget_football_fixtures_odds_translatio
   week?:    string;
   round?:   string;
   matches?: string;
+  no_odds?: string;
 }
 
 
