@@ -2770,8 +2770,11 @@
     border: 1px solid #F5620F !important;
   } div.bet-site-box:hover p {
     color: #F5620F !important;
+  } div.bet-site-box:hover img {
+    border-top: 1px solid #F5620F !important;
   } div.bet-site-box img {
     object-fit: cover;
+    border-top: 1px solid #CCCCCC;
   } div.bet-site-box p {
     padding: 4px 12px;
   }
@@ -2780,7 +2783,7 @@
     border: 1px solid #CCCCCC;
     padding: 13px 20px;
     border-radius: 4px;
-    width: 160px;
+    min-width: 160px;
   }
 
   span.visibility-none {
