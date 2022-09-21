@@ -2435,7 +2435,7 @@
                             class="bet-site-box column-space-center m-r-5 cursor-pointer">
                             <p
                               class="s-12 color-black-2 w-500">
-                              {fixture?.live_odds?.home?.value}
+                              {fixture?.live_odds?.home?.value?.toFixed(2)}
                             </p>
                             <img  
                               src={fixture?.live_odds?.home.betting_site_icon_link} 
@@ -2459,7 +2459,7 @@
                             class="bet-site-box column-space-center m-r-5 cursor-pointer">
                             <p
                               class="s-12 color-black-2 w-500">
-                              {fixture?.live_odds?.draw?.value}
+                              {fixture?.live_odds?.draw?.value?.toFixed(2)}
                             </p>
                             <img  
                               src={fixture?.live_odds?.draw.betting_site_icon_link} 
@@ -2483,7 +2483,7 @@
                             class="bet-site-box column-space-center cursor-pointer">
                             <p
                               class="s-12 color-black-2 w-500">
-                              {fixture?.live_odds?.away?.value}
+                              {fixture?.live_odds?.away?.value?.toFixed(2)}
                             </p>
                             <img  
                               src={fixture?.live_odds?.away.betting_site_icon_link} 
