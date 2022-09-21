@@ -278,7 +278,10 @@
 
               if (sportbook_name.toLowerCase() == sportbook_name_main.toLowerCase()) {
 
-                if (sportbook_from_fixture?.markets['1X2FT'] == undefined) {
+                if (
+                  sportbook_from_fixture?.markets['1X2FT'] == undefined ||
+                  sportbook_from_fixture?.markets['1X2FT'].data[sp_count].value == undefined
+                ) {
                   continue;
                 }
 
@@ -366,7 +369,11 @@
           // [ℹ] last odds "away" in the
           // [ℹ] case of missing odds
           // [ℹ] assing #1 ("home") odds
-          if (fixture.live_odds.away.value == undefined) {
+          if (
+            fixture.live_odds.away.value == undefined && 
+            main_odds != undefined &&
+            main_sportbook != undefined
+          ) {
             fixture.live_odds.away.value = 
               main_odds?.markets['1X2FT'].data[2].value
             ;
@@ -418,6 +425,15 @@
 
               if (sportbook_name.toLowerCase() == sportbook_name_main.toLowerCase()) {
 
+                if (
+                  sportbook_from_fixture?.markets['1X2FT'] == undefined ||
+                  sportbook_from_fixture?.markets['1X2FT'].data[0].value == undefined ||
+                  sportbook_from_fixture?.markets['1X2FT'].data[1].value == undefined ||
+                  sportbook_from_fixture?.markets['1X2FT'].data[2].value == undefined
+                ) {
+                  continue;
+                }
+
                 fixture.live_odds.home.value = 
                   sportbook_from_fixture?.markets['1X2FT'].data[0].value
                 ;
@@ -457,6 +473,13 @@
               break
             }
           }
+
+          // [ℹ] extra validation
+          // [ℹ] no live odds found
+          if (!found_odds) {
+            fixture.live_odds = undefined
+          }
+
         }
 
       }
