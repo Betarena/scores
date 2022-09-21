@@ -2078,18 +2078,18 @@
                 [ℹ] home | away | draw
                 -->
                 <div
-                  class="row-space-end"
+                  class="row-space-end odds-head"
                   style="width: auto;">
                   <p
-                    class="color-grey s-12 w-500 m-r-24">
+                    class="color-grey s-12 w-500">
                     {FIXTURES_ODDS_T?.home}
                   </p>
                   <p
-                    class="color-grey s-12 w-500 m-r-24">
+                    class="color-grey s-12 w-500">
                     {FIXTURES_ODDS_T?.draw}
                   </p>
                   <p
-                    class="color-grey s-12 w-500 m-r-10">
+                    class="color-grey s-12 w-500">
                     {FIXTURES_ODDS_T?.away}
                   </p>
                 </div>
@@ -2604,8 +2604,8 @@
     width: inherit;
     text-align: center;
   } div.fix-odds-view-opt-box.activeOpt {
-    border: 1px solid #F5620F;
-  } div.fix-odds-view-opt-box.activeOpt p{
+    border: 1px solid #F5620F !important;
+  } div.fix-odds-view-opt-box.activeOpt p {
     color: #F5620F !important;
   } div.fix-odds-view-opt-box:hover p {
     color: #292929 !important;
@@ -2790,6 +2790,12 @@
     object-position: left;
   }
 
+  div.odds-head p {
+    margin-right: 13px;
+  } div.odds-head p:last-child {
+    margin-right: 0px;
+  }
+
   div.main-bet-box {
     margin-left: 6px;
   } div.main-bet-box div.bet-site-box {
@@ -2817,7 +2823,7 @@
     border: 1px solid #CCCCCC;
     padding: 8px 0px;
     border-radius: 4px;
-    min-width: 128px;
+    min-width: 130px;
     max-height: 40px;
     margin-left: 6px;
   }
@@ -2929,6 +2935,12 @@
       height: 30px;
     }
 
+    div.odds-head p {
+      margin-right: 24px;
+    } div.odds-head p:last-child {
+      margin-right: 10px;
+    }
+
     div.main-bet-box {
       margin-left: 24px;
     } div.main-bet-box div.bet-site-box {
@@ -2960,15 +2972,18 @@
       margin-top: 0;
     }
 
-    div#widget-title-row {
-      margin: 20px 20px 12.5px 20px;
-    }
-
   }
 
   /* ====================
     WIDGET DARK THEME
   ==================== */
+
+  .dark-background-1 div.fix-odds-view-opt-box {
+    border: 1px solid #737373;
+  }
+  .dark-background-1 div#fix-odds-view-box div.fix-odds-view-opt-box:hover p {
+    color: #FFFFFF !important;
+  }
 
   .dark-background-1 div#mobile-table-box {
     background: #616161;
@@ -3048,5 +3063,4 @@
   .dark-background-1 div.no-odds-available-box {
     border: 1px solid #737373 !important;
   }
-
 </style>
