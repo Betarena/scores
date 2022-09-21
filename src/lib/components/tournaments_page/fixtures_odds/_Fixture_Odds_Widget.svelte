@@ -2848,7 +2848,6 @@
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 400px) {
     div.fixture-teams-box p.odds-view {
-      font-weight: 400;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -2942,7 +2941,7 @@
 
     div.no-odds-available-box {
       padding: 13px 20px;
-      min-width: 160px;
+      min-width: 154px;
       max-height: 48px;
       margin-left: 24px;
     }
