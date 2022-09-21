@@ -2556,7 +2556,9 @@
 
 <style>
 
-  /* [ℹ] OTHER STYLE / CSS */
+  /* 
+    [ℹ] OTHER STYLE / CSS 
+  */
 
   #background-area-close {
     position: absolute;
@@ -2569,7 +2571,20 @@
     z-index: 1000;
   }
 
-  /* [ℹ] NO DATA WIDGET STYLE / CSS */
+  /* 
+    [ℹ] SEO WIDGET DATA 
+  */
+  
+  #seo-widget-box {
+		position: absolute;
+		z-index: -100;
+		top: -9999px;
+		left: -9999px;
+	}
+
+  /* 
+    [ℹ] NO DATA WIDGET STYLE / CSS 
+  */
 
   #no-widget-box {
     padding: 20px;
@@ -2579,15 +2594,7 @@
     text-align: center;
   }
 
-  /* [ℹ] SEO WIDGET DATA */
   
-  #seo-widget-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
-
   /*
     [ℹ] WIDGET MAIN STYLE / CSS 
     [ℹ] MOBILE FIRST
@@ -2812,10 +2819,6 @@
     visibility: hidden;
   }
 
-  div#widget-outer {
-    /* margin-top: 24px; */
-  }
-
   div#fixtures-odds-widget-container.widget-no-data-height {
     height: 832px;
   }
@@ -2955,11 +2958,9 @@
   .dark-background-1 div.fixture-teams-box {
     border-left: 1px #616161 solid;
   }
-
   .dark-background-1 div.tip-box {
     border: 1px solid #737373;
   }
-
   .dark-background-1 div.media-play-btn {
     border: 1px solid #737373;
   }
@@ -2980,7 +2981,7 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
     border-radius: 4px;
   }
-  .dark-background-1  div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season  {
+  .dark-background-1  div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season {
     color: #ffffff;
   }
 
