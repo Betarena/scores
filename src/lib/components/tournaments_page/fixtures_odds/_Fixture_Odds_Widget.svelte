@@ -2981,6 +2981,8 @@
 
   .dark-background-1 div.bet-site-box {
     border: 1px solid #737373;
+  } .dark-background-1 div.bet-site-box img {
+    border-top: 1px solid #737373;
   }
 
   .dark-background-1 div.no-odds-available-box {
