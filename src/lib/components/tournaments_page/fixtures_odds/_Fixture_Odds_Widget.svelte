@@ -1966,6 +1966,7 @@
                       fixture?.fixture_link[server_side_language]}
                       <a 
                         rel="nofollow"
+                        aria-label="media_link_redirect"
                         href={fixture?.fixture_link[server_side_language]}
                         target="_blank"
                         style="width: inherit;">
@@ -1995,6 +1996,7 @@
                       fixture?.tip_link[server_side_language]}
                       <a 
                         rel="nofollow"
+                        aria-label="tip_link_redirect"
                         href={fixture?.tip_link[server_side_language]}
                         target="_blank"
                         style="width: inherit;">
