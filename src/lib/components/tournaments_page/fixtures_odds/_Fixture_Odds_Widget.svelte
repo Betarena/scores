@@ -1640,7 +1640,7 @@
               <!-- [ℹ] grouping date fixtures
               -->
               <div
-                class="group-fixture-date m-b-8">
+                class="group-fixture-date m-t-10 m-b-8">
                 <p
                   class="color-grey w-500 s-12"> 
                   {new Date(item?.date).getDate()} 
@@ -2796,6 +2796,7 @@
     border-radius: 4px;
     border: 1px solid #CCCCCC;
     overflow: hidden;
+    max-height: 48px;
   } div.bet-site-box:hover {
     border: 1px solid #F5620F !important;
   } div.bet-site-box:hover p {
@@ -2806,7 +2807,7 @@
     object-fit: cover;
     border-top: 1px solid #CCCCCC;
   } div.bet-site-box p {
-    padding: 4px 12px;
+    padding: 2px 0px;
   }
 
   div.no-odds-available-box {
@@ -2814,6 +2815,7 @@
     padding: 13px 20px;
     border-radius: 4px;
     min-width: 160px;
+    max-height: 48px;
   }
 
   span.visibility-none {
@@ -2868,6 +2870,8 @@
 
     div.fixture-row {
       padding: 5px 20px;
+      max-height: 56px;
+      height: 56px;
     }
 
     div.fixture-time-box {
