@@ -2082,15 +2082,15 @@
                   style="width: auto;">
                   <p
                     class="color-grey s-12 w-500 m-r-24">
-                    Home
+                    {FIXTURES_ODDS_T?.home}
                   </p>
                   <p
                     class="color-grey s-12 w-500 m-r-24">
-                    Draw
+                    {FIXTURES_ODDS_T?.draw}
                   </p>
                   <p
                     class="color-grey s-12 w-500 m-r-10">
-                    Away
+                    {FIXTURES_ODDS_T?.away}
                   </p>
                 </div>
               </div>
