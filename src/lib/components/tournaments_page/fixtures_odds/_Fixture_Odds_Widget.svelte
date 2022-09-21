@@ -228,7 +228,8 @@
 
     let intersection:     string[] = sportbook_main_arr.filter(x => sportbook_main_arr_2.includes(x));
     let cross_sportbooks: number   = intersection.length;
-    // console.log("cross_sportbooks", cross_sportbooks, fixture_id)
+    // if (dev) console.log("cross_sportbooks", cross_sportbooks, fixture_id)
+    // if (dev) console.log("intersection", intersection, fixture_id)
 
     for (const fixtures_group_by_date of fixtures_arr_filter) {
       for (const fixture of fixtures_group_by_date.fixtures) {
@@ -288,7 +289,13 @@
                   continue;
                 }
 
-                // console.log("sportbook_name_main", sportbook_name_main, fixture_id)
+                // [ℹ] assign main odds #1
+                if (sp_count == 0) {
+                  main_odds = sportbook_from_fixture
+                  main_sportbook = sportbook
+                }
+
+                // if (dev) console.log("sportbook_name_main", sportbook_name_main, fixture_id)
 
                 fixture.live_odds[odds_for[sp_count]].value = 
                   sportbook_from_fixture?.markets['1X2FT']?.data[sp_count]?.value
@@ -345,12 +352,6 @@
                   ;
 
                   sp_count++;
-                }
-
-                // [ℹ] assign main odds #1
-                if (sp_count == 0) {
-                  main_odds = sportbook_from_fixture
-                  main_sportbook = sportbook
                 }
 
                 sp_count++;
