@@ -2162,7 +2162,7 @@
                           <div
                             class="row-space-start">
                             <p  
-                              class="s-14 color-black w-500 m-r-8"
+                              class="s-14 color-black w-500 m-r-8 odds-view"
                               class:color-grey={fixture?.teams?.home?.score < fixture?.teams?.away?.score}>
                               {fixture?.teams?.home?.name}
                             </p>
@@ -2218,7 +2218,7 @@
                           <div
                             class="row-space-start">
                             <p
-                              class="s-14 color-black w-500 m-r-8"
+                              class="s-14 color-black w-500 m-r-8 odds-view"
                               class:color-grey={fixture?.teams?.away?.score < fixture?.teams?.home?.score}>
                               {fixture?.teams?.away?.name}
                             </p>
@@ -2745,6 +2745,7 @@
     padding-left: 8px;
   } div.fixture-teams-box p {
     font-weight: 400;
+  } div.fixture-teams-box p.odds-view {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
@@ -2818,6 +2819,7 @@
     border-radius: 4px;
     min-width: 128px;
     max-height: 40px;
+    margin-left: 6px;
   }
 
   span.visibility-none {
@@ -2845,7 +2847,7 @@
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 400px) {
-    div.fixture-teams-box p {
+    div.fixture-teams-box p.odds-view {
       font-weight: 400;
       overflow: hidden;
       white-space: nowrap;
@@ -2942,6 +2944,7 @@
       padding: 13px 20px;
       min-width: 160px;
       max-height: 48px;
+      margin-left: 24px;
     }
 
   }
