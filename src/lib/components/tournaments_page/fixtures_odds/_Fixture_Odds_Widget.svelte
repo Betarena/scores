@@ -216,12 +216,6 @@
       return
     }
 
-    // [ℹ] check existance of odds for this country
-    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
-    if (SPORTBOOK_DETAILS_LIST.find(({ geoPos }) => geoPos == userGeo) == undefined) {
-      return
-    }
-
     // [ℹ] generate matching sporbook names
     let sportbook_main_arr:   string[] = SPORTBOOK_DETAILS_LIST.map(s => s.title.toLowerCase())
     let sportbook_main_arr_2: string[] = sportbook_list.map(s => s.sportbook.toLowerCase())
