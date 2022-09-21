@@ -2896,7 +2896,7 @@
     }
 
     div.fixture-time-box {
-      width: 47px;
+      min-width: 47px;
       margin-right: 16px;
     } div.fixture-time-box p {
       font-size: 14px;
