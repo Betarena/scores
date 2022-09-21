@@ -2797,6 +2797,7 @@
     border: 1px solid #CCCCCC;
     overflow: hidden;
     max-height: 48px;
+    max-width: 48px;
   } div.bet-site-box:hover {
     border: 1px solid #F5620F !important;
   } div.bet-site-box:hover p {
