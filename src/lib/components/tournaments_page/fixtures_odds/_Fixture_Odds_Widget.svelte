@@ -1127,7 +1127,8 @@
 <div
   id='widget-outer'>
 
-  <!-- [ℹ] SEO-DATA-LOADED 
+  <!-- 
+  [ℹ] SEO DATA
   -->
   {#if !loaded && !noWidgetData}
     <div 
@@ -1165,7 +1166,9 @@
     </div>
   {/if}
 
-  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  <!-- 
+  [ℹ] NO WIDGET DATA
+  [ℹ] PLACEHOLDER
   -->
   {#if noWidgetData && loaded}
     <!-- [ℹ] title of the widget 
@@ -1214,7 +1217,11 @@
     </div>
   {/if}
 
-  <!-- [ℹ] MAIN WIDGET COMPONENT
+  <!-- 
+  [ℹ] MAIN WIDGET COMPONENT
+  [ℹ] -> loading animation
+  [ℹ] -> data propagation
+  [ℹ] -> error handling
   -->
   {#if
     browser && 
