@@ -262,6 +262,10 @@
             }
           }
 
+          // [ℹ] insurance odds #1
+          let main_odds:      FIREBASE_odds
+          let main_sportbook: Cache_Single_SportbookDetails_Data_Response
+
           for (const sportbook of SPORTBOOK_DETAILS_LIST) {
 
             const sportbook_name_main = sportbook.title
@@ -337,6 +341,12 @@
                   sp_count++;
                 }
 
+                // [ℹ] assign main odds #1
+                if (sp_count == 0) {
+                  main_odds = sportbook_from_fixture
+                  main_sportbook = sportbook
+                }
+
                 sp_count++;
 
                 if (sp_count == 3) {
@@ -351,6 +361,23 @@
 
           }
 
+          // [ℹ] extra validation
+          // [ℹ] when there is a missing 
+          // [ℹ] last odds "away" in the
+          // [ℹ] case of missing odds
+          // [ℹ] assing #1 ("home") odds
+          if (fixture.live_odds.away.value == undefined) {
+            fixture.live_odds.away.value = 
+              main_odds?.markets['1X2FT'].data[2].value
+            ;
+            fixture.live_odds.away.betting_site_icon_link = 
+              main_sportbook?.image
+            ;
+            fixture.live_odds.away.register_link = 
+              main_sportbook?.register_link
+            ;
+          }
+
         }
 
         // [ℹ] live fixture validation
@@ -358,6 +385,8 @@
         // [ℹ] as odds-display
         // [ℹ] main sportbook
         if (fixture.status != "NS" && fixture.id == fixture_id) {
+
+          let found_odds: boolean = false;
 
           fixture.live_odds = {
             home: {
@@ -418,18 +447,22 @@
                 fixture.live_odds.away.register_link = 
                   sportbook_link
                 ;
-
+                
+                found_odds = true;
                 break;
               }
             }
+
+            if (found_odds) {
+              break
+            }
           }
-        
         }
 
       }
     }
 
-    // [ℹ] assign changes
+    // [ℹ] assign changes (persist)
     fixtures_arr_filter = fixtures_arr_filter
   }
 
@@ -1992,7 +2025,7 @@
             <div>
 
               <div
-                class="group-fixture-date row-space-out m-b-8">
+                class="group-fixture-date row-space-out m-t-10 m-b-8">
                 <!-- 
                 [ℹ] grouping date fixtures
                 -->
@@ -2447,7 +2480,7 @@
                       <div  
                         class="m-l-24 no-odds-available-box">
                         <p
-                          class="s-14 no-wrap color-black-2">
+                          class="s-14 no-wrap color-grey">
                           No odds available
                         </p>
                       </div>
