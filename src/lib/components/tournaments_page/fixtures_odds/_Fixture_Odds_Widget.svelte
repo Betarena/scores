@@ -2825,7 +2825,7 @@
     border-radius: 4px;
     min-width: 130px;
     max-height: 40px;
-    margin-left: 6px;
+    margin-left: 13px;
   }
 
   span.visibility-none {
