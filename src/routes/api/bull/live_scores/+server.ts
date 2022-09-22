@@ -212,7 +212,7 @@ async function getLeaguesOrder(): Promise < unknown > {
 
 async function main_gen_2() {
 
-  const langs: string[] = ['br', 'en', 'es', 'it', 'pt', 'ro'];
+  const langs: string[] = ['br', 'en', 'es', 'it', 'pt', 'ro', 'se'];
 
   await deleteLiveScores_2()
   const response: LiveScore_SEO_Game[] = await getLiveScores()
