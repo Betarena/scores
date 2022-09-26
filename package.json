@@ -3,8 +3,8 @@
 	"description": "Betarena Official Scores Platform PWA",
 	"version": "0.5.6",
 	"engines": {
-		"npm": "8.19.1",
-		"node": "16.17.0"
+		"npm": "8.19.2",
+		"node": "16.17.1"
 	},
 	"scripts": {
     "debug": "cross-env NODE_OPTIONS='--inspect' vite dev --host --port 3050",
