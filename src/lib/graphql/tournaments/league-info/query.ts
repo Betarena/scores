@@ -26,6 +26,7 @@ export const REDIS_CACHE_LEAGUE_INFO_DATA_1 = gql`
       title
       type
       widgets
+      seo_content
     }
     scores_football_leagues {
       country
@@ -50,6 +51,10 @@ export const REDIS_CACHE_LEAGUE_INFO_DATA_1 = gql`
       lang
     }
     widget_league_info_translations {
+      lang
+      data
+    }
+    scores_widget_tournament_about_translations {
       lang
       data
     }

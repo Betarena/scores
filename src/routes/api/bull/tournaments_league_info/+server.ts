@@ -154,7 +154,8 @@ async function leagueInfoGeneration () {
         // betting_site_logo?: undefined,
         // beting_cta_link?: undefined,
         seasons: [],
-        translation: undefined         
+        translation: undefined,
+        seo_content: undefined         
       }
     }
 
@@ -182,6 +183,11 @@ async function leagueInfoGeneration () {
     .find(( { lang } ) => 
       lang === iterator.lang
     )
+    // [ℹ] league-info-2 widget data
+    const aboutTournamentTranslation = response.scores_widget_tournament_about_translations
+    .find(( { lang } ) => 
+      lang === iterator.lang
+    )
 
     finalCacheObj.data.translation = {
       ...targetWidgetTranslation,
@@ -191,6 +197,7 @@ async function leagueInfoGeneration () {
       average_goals:         leagueInfoWidget2Translations?.data?.average_goals,
       win_percentage:        leagueInfoWidget2Translations?.data?.win_percentage,
       average_player_rating: leagueInfoWidget2Translations?.data?.average_player_rating,
+      about_the_league:      aboutTournamentTranslation?.data?.about_the_league
     }
 
     // FIXME:
@@ -224,6 +231,7 @@ async function leagueInfoGeneration () {
     finalCacheObj.data.country = iterator?.country;
     finalCacheObj.data.name = iterator?.name;
 
+    finalCacheObj.data.seo_content = iterator?.seo_content;
     finalCacheObj.data.seasons = [] // [ℹ] reset
 
     // [ℹ] get all seasons for (this) league

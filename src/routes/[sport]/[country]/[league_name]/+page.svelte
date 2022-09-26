@@ -28,7 +28,8 @@
   import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
   import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
   import LeagueInfoWidget2 from '$lib/components/tournaments_page/league_info_2/_LeagueInfo_Widget_2.svelte';
-
+	import AboutBlock from '$lib/components/tournaments_page/about_block/_About_Block.svelte';
+  
   /*
     [v2]
     Dynamic Imports (client-side)
@@ -228,7 +229,12 @@
 
     <a 
       data-sveltekit-prefetch
-      href="/{$page.params.sport}">
+      href={
+        $page.params.lang != undefined
+          ? `/${$page.params.lang}/${$page.params.sport}`
+          : `/${$page.params.sport}`
+        }
+      >
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.sport}
@@ -244,7 +250,12 @@
 
     <a 
       data-sveltekit-prefetch
-      href="/{$page.params.sport}/{$page.params.country}">
+      href={
+        $page.params.lang != undefined
+          ? `/${$page.params.lang}/${$page.params.sport}/${$page.params.country}`
+          : `/${$page.params.sport}/${$page.params.country}`
+      }
+      >
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.country}
@@ -275,6 +286,7 @@
       class='grid-display-column'>
       <svelte:component this={StandingsWidget} {STANDINGS_T} {STANDINGS_DATA} />
       <svelte:component this={FixtureOddsWidget} {FIXTURES_ODDS_T} {FIXTURES_ODDS_DATA} />
+      <svelte:component this={AboutBlock} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
     </div>
 
     <div 
