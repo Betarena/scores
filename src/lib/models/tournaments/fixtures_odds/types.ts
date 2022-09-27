@@ -57,6 +57,7 @@ export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_resp
     AU?:       string;
     HT?:       string;
     FT?:       string;
+    CANCL?:    string;
 }
 
 export interface Tournament_Season_Fixtures_Odds {

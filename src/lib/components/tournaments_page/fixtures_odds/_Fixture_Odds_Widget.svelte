@@ -1706,7 +1706,7 @@
                         {#if fixture?.status === "CANCL"}
                           <p
                             class="no-wrap s-14 color-grey">
-                            CANCL
+                            {FIXTURES_ODDS_T?.status_abv?.CANCL}
                           </p>
                         {/if}
                         {#if fixture?.status === "SUSP"}
