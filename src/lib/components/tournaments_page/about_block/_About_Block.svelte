@@ -149,7 +149,7 @@
   {#if !loaded}
     <div 
       id="seo-widget-box">
-      <h1>{LEAGUE_INFO_SEO_DATA?.data?.seo_content}</h1>
+      {@html LEAGUE_INFO_SEO_DATA?.data?.seo_content}
     </div>
   {/if}
 
@@ -341,6 +341,28 @@
     border-radius: 0 0 12px 12px !important;
   }
 
+  :global(
+    #about-tour-widget-container h1,
+    #about-tour-widget-container h2, 
+    #about-tour-widget-container h3,
+    #about-tour-widget-container h4) {
+      color: #292929 !important;
+  }
+  :global(
+    #about-tour-widget-container p,
+    #about-tour-widget-container section div.faq-body) {
+    color: #8C8C8C !important;
+  }
+  :global(
+    #about-tour-widget-container h3) {
+      margin: 20px 0 12px 0;
+  }
+
+  :global(
+    #about-tour-widget-container section > div) {
+    border: 1px solid #E6E6E6 !important;
+  }
+
   /* ====================
     RESPONSIVNESS
   ==================== */
@@ -389,7 +411,8 @@
     color: #A8A8A8 !important;
   }
 
-  :global(#about-tour-widget-container section > div) {
+  :global(
+    #about-tour-widget-container.dark-background-1 section > div) {
     border: 1px solid #616161 !important;
   }
 
