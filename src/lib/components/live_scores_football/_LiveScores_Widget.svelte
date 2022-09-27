@@ -25,6 +25,7 @@
 	export let LIVE_SCORES_DATA_DATA_SEO: LiveScore_SEO_Game_Scoped_Lang[];
 	export let LIVE_SCORES_DATA_LEAGUES: any;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
+	export let LIVESCORES_FOOTBALL_TOURNAMENTS: any[];
 
 	var leagueSort = {};
 
@@ -260,7 +261,9 @@ $: if (refresh_data) {
 	bookIcons = bookIcons;
 }
 
-
+	function getTournamentLink(d: LiveScoreLeague, server_side_language: string): string {
+		return LIVESCORES_FOOTBALL_TOURNAMENTS[d.id].urls[server_side_language];
+	}
 </script>
  
 
@@ -342,7 +345,7 @@ $: if (refresh_data) {
 			<div class="league-title">
 			<div class="icon-league">
 				<img class="img-flag" src="{d.flag}" width="19" height="12" alt="League Country Flag">
-				<span class="league-name">{d.name}</span>
+				<a class="league-name" href="{getTournamentLink(d,server_side_language)}">{d.name}</a>
 			</div>
 		</div>
 		<div class="game-list">

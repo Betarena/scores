@@ -270,3 +270,17 @@ export const GET_ALL_FIXTURE_DATA = gql`
   }
 `;
 
+/**
+ * Description
+ * ~~~~~~~~~~~~~
+ * ... Get Tournament Links
+ * 
+ */
+ export const GET_LIVESCORES_TOURNAMENTS_LINKS = gql`
+ query GET_LIVESCORES_TOURNAMENTS_LINKS @cached(ttl: 300) {
+	scores_tournaments {
+	   tournament_id
+	   urls
+	}
+  }
+`;

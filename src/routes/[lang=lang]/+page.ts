@@ -224,6 +224,7 @@ export async function load ({
     '/api/cache/live_scores?lang='+urlLang, 
     '/api/cache/live_scores?type=geo', 
     '/api/cache/live_scores?type=translations',
+    '/api/cache/live_scores?type=tournaments',
     // [ℹ] alt.
     // [ℹ] geo-based cache load
     // '/api/cache/featured_match?geoPos='+'en', 
@@ -253,6 +254,7 @@ export async function load ({
   const response_livescores_football = data[8]
   const response_livescores_football_leagues = data[9]
   const response_livescores_football_translations = data[10]
+  const response_livescores_football_tournaments = data[11]
 
   // [ℹ] data-geo real-test [direct widget data]
   // const response_featured_match = data[11]
@@ -281,7 +283,8 @@ export async function load ({
     response_seo_block_seo &&
     response_livescores_football &&
     response_livescores_football_leagues &&
-    response_livescores_football_translations
+    response_livescores_football_translations &&
+    response_livescores_football_tournaments
   ) {
 
     // setHeaders({
@@ -300,6 +303,7 @@ export async function load ({
       LIVE_SCORES_DATA_DATA_SEO : response_livescores_football,
       LIVE_SCORES_DATA_LEAGUES : response_livescores_football_leagues,
       LIVE_SCORES_FOOTBALL_TRANSLATIONS : response_livescores_football_translations,
+      LIVESCORES_FOOTBALL_TOURNAMENTS: response_livescores_football_tournaments
 
       // [ℹ] data-geo real-test [direct widget data]
       
