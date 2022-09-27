@@ -58,6 +58,10 @@ export const REDIS_CACHE_LEAGUE_INFO_DATA_1 = gql`
       lang
       data
     }
+    scores_general_translations {
+      lang
+      widgets_no_data_available
+    }
   }
 `;
 

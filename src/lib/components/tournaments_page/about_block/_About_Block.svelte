@@ -199,10 +199,10 @@
         <p 
           class='s-14 m-b-8 w-500'
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          No League Info Available 
+          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info}
         </p>
         <p class='s-14 color-grey w-400'> 
-          Sorry, at this time there is no league info available! 
+          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info_desc}
         </p>
       </div>
     </div>

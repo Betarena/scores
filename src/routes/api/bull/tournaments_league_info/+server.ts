@@ -183,8 +183,13 @@ async function leagueInfoGeneration () {
     .find(( { lang } ) => 
       lang === iterator.lang
     )
-    // [ℹ] league-info-2 widget data
+    // [ℹ] about-tournament widget data
     const aboutTournamentTranslation = response.scores_widget_tournament_about_translations
+    .find(( { lang } ) => 
+      lang === iterator.lang
+    )
+    // [ℹ] no-widget-translations data
+    const noWidgetTranslation = response.scores_general_translations
     .find(( { lang } ) => 
       lang === iterator.lang
     )
@@ -197,7 +202,9 @@ async function leagueInfoGeneration () {
       average_goals:         leagueInfoWidget2Translations?.data?.average_goals,
       win_percentage:        leagueInfoWidget2Translations?.data?.win_percentage,
       average_player_rating: leagueInfoWidget2Translations?.data?.average_player_rating,
-      about_the_league:      aboutTournamentTranslation?.data?.about_the_league
+      about_the_league:      aboutTournamentTranslation?.data?.about_the_league,
+      no_info:               noWidgetTranslation?.widgets_no_data_available?.no_info,
+      no_info_desc:          noWidgetTranslation?.widgets_no_data_available?.no_info_desc
     }
 
     // FIXME:
