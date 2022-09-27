@@ -1691,6 +1691,30 @@
                             {FIXTURES_ODDS_T?.status_abv?.FT}
                           </p>
                         {/if}
+                        {#if fixture?.status === "AET"}
+                          <p
+                            class="no-wrap s-14 color-grey">
+                            {FIXTURES_ODDS_T?.status_abv?.AET}
+                          </p>
+                        {/if}
+                        {#if fixture?.status === "POSTP"}
+                          <p
+                            class="no-wrap s-14 color-grey">
+                            {FIXTURES_ODDS_T?.status_abv?.POSTP}
+                          </p>
+                        {/if}
+                        {#if fixture?.status === "CANCL"}
+                          <p
+                            class="no-wrap s-14 color-grey">
+                            CANCL
+                          </p>
+                        {/if}
+                        {#if fixture?.status === "SUSP"}
+                          <p
+                            class="no-wrap s-14 color-grey">
+                            {FIXTURES_ODDS_T?.status_abv?.SUSP}
+                          </p>
+                        {/if}
                       {/if}
                     </div>
 

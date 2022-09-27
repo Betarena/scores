@@ -28,7 +28,8 @@
   import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
   import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
   import LeagueInfoWidget2 from '$lib/components/tournaments_page/league_info_2/_LeagueInfo_Widget_2.svelte';
-
+	import AboutBlock from '$lib/components/tournaments_page/about_block/_About_Block.svelte';
+  
   /*
     [v2]
     Dynamic Imports (client-side)
@@ -129,6 +130,44 @@
     // prefetch(newURL);
     goto(newURL, { replaceState: true })
 	}
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // [ℹ] VIEWPORT CHANGES
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		var wInit = document.documentElement.clientWidth;
+		// [ℹ] TABLET - VIEW
+		if (wInit >= 1160) {
+			tabletExclusive = false;
+		} else {
+			tabletExclusive = true;
+		}
+		// [ℹ] MOBILE - VIEW
+		if (wInit < 475) {
+			mobileExclusive = true;
+		} else {
+			mobileExclusive = false;
+		}
+		window.addEventListener('resize', function () {
+			var w = document.documentElement.clientWidth;
+			// [ℹ] TABLET - VIEW
+      if (w >= 1160) {
+				tabletExclusive = false;
+			} else {
+				tabletExclusive = true;
+			}
+			// [ℹ] MOBILE - VIEW
+			if (w < 475) {
+				mobileExclusive = true;
+			} else {
+				mobileExclusive = false;
+			}
+		});
+	});
 </script>
 
 
@@ -221,14 +260,20 @@
 <section 
   id='tournaments-page'>
 
-  <!-- [ℹ] breadcrumbs URL -->
+  <!-- 
+  [ℹ] breadcrumbs URL -->
   <div
     id='tournaments-page-breadcrumbs'
     class='row-space-start m-b-20'>
 
     <a 
       data-sveltekit-prefetch
-      href="/{$page.params.sport}">
+      href={
+        $page.params.lang != undefined
+          ? `/${$page.params.lang}/${$page.params.sport}`
+          : `/${$page.params.sport}`
+        }
+      >
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.sport}
@@ -244,7 +289,12 @@
 
     <a 
       data-sveltekit-prefetch
-      href="/{$page.params.sport}/{$page.params.country}">
+      href={
+        $page.params.lang != undefined
+          ? `/${$page.params.lang}/${$page.params.sport}/${$page.params.country}`
+          : `/${$page.params.sport}/${$page.params.country}`
+      }
+      >
       <p
         class='s-14 color-white m-r-10 capitalize cursor-pointer'>
         {TOURNAMENT_DATA.country}
@@ -265,28 +315,50 @@
 
   </div>
 
-  <!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
-  <svelte:component this={LeagueInfoWidget} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+  {#if !tabletExclusive && !mobileExclusive}
 
-  <div
-    id="widget-grid-display">
+    <!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
+    <svelte:component this={LeagueInfoWidget} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
 
-    <div 
-      class='grid-display-column'>
-      <svelte:component this={StandingsWidget} {STANDINGS_T} {STANDINGS_DATA} />
-      <svelte:component this={FixtureOddsWidget} {FIXTURES_ODDS_T} {FIXTURES_ODDS_DATA} />
+    <div
+      id="widget-grid-display">
+
+      <div 
+        class='grid-display-column'>
+        <svelte:component this={StandingsWidget} {STANDINGS_T} {STANDINGS_DATA} />
+        <svelte:component this={FixtureOddsWidget} {FIXTURES_ODDS_T} {FIXTURES_ODDS_DATA} />
+        <svelte:component this={AboutBlock} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+      </div>
+
+      <div 
+        class='grid-display-column'>
+        <svelte:component this={TopPlayersWidget} {TOP_PLAYERS_T} {TOP_PLAYERS_DATA} />
+        <svelte:component this={LeagueInfoWidget2} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+      </div>
+
     </div>
 
-    <div 
-      class='grid-display-column'>
-      <svelte:component this={TopPlayersWidget} {TOP_PLAYERS_T} {TOP_PLAYERS_DATA} />
-      <svelte:component this={LeagueInfoWidget2} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+  {:else}
+
+    <!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
+    <svelte:component this={LeagueInfoWidget} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+
+    <div
+      id="widget-grid-display">
+      <div 
+        class='grid-display-column'>
+        <svelte:component this={StandingsWidget} {STANDINGS_T} {STANDINGS_DATA} />
+        <svelte:component this={FixtureOddsWidget} {FIXTURES_ODDS_T} {FIXTURES_ODDS_DATA} />
+        <svelte:component this={TopPlayersWidget} {TOP_PLAYERS_T} {TOP_PLAYERS_DATA} />
+        <svelte:component this={LeagueInfoWidget2} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+        <svelte:component this={AboutBlock} LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} />
+      </div>
     </div>
 
-  </div>
+  {/if}
 
-
-  <!-- [ℹ] widgets displayed -->
+  <!-- 
+  [ℹ] widgets displayed -->
   <!-- <div> -->
     <!-- {TOURNAMENT_DATA.widgets} -->
   <!-- </div> -->

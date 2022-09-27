@@ -738,6 +738,7 @@ export interface BETARENA_HASURA_scores_tournaments {
   type?:          ScoresTournamentsType;
   widgets?:       any[];
   urls?:          ScoresTournamentsUrls;
+  seo_content?:   string;
 } export enum ScoresTournamentsAuthor {
   Betarena = "Betarena",
 } export enum ScoresTournamentsLang {
@@ -1262,4 +1263,14 @@ export interface BETARENA_HASURA_widget_league_info_translations {
   average_goals?:         string;
   win_percentage?:        string;
   average_player_rating?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_widget_tournament_about_translations (&)
+*/
+export interface BETARENA_HASURA_scores_widget_tournament_about_translations {
+  lang?: string;
+  data?: WidgetTournamentAboutData;
+} export interface WidgetTournamentAboutData {
+  about_the_league?:      string;
 }

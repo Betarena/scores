@@ -89,7 +89,8 @@ export interface Tournament_Fixture_Odds {
 
   minute:  number           // live option, from firebase (non-cache-based)  // Fixture Live Time Information (Status LIVE) = livescore_now  + ""minute": 13,"
                             // [❓] should be real-time [?] as in, without the user refreshing the app will autamtically show the fixture data is LIVE
-  status: "NS" | "LIVE" | "TBA" | "FT" | string
+  // [ℹ] https://docs.sportmonks.com/football/api-references/statussus-and-definitions
+  status: "NS" | "LIVE" | "TBA" | "FT" | "HT" | "ET" | "PEN_LIVE" | "AET" | "BREAK" | "FT_PEN" | "CANCL" | "POSTP" | "SUSP"
   teams: {
     home: Fixture_Odds_Team
     away: Fixture_Odds_Team
