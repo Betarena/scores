@@ -593,9 +593,9 @@
     [ℹ] MOBILE FIRST
   */
 
-  div#widget-outer {
+  /* div#widget-outer {
     margin-top: 24px;
-  }
+  } */
 
   div#top-players-widget-container.widget-no-data-height {
     height: 832px;

@@ -1,13 +1,17 @@
 import type { 
   BETARENA_HASURA_scores_football_leagues, 
   BETARENA_HASURA_scores_football_seasons_details,
+  BETARENA_HASURA_scores_general_translations,
   BETARENA_HASURA_scores_tournaments,
   BETARENA_HASURA_scores_widget_league_info_translations, 
+  BETARENA_HASURA_scores_widget_tournament_about_translations, 
   BETARENA_HASURA_sportsbook_details, 
   BETARENA_HASURA_widget_league_info_translations, 
   ScoresFootballLeaguesSeasonElement, 
   Sportbook, 
-  WidgetLeagueInfo2Data
+  WidgetLeagueInfo2Data,
+  WidgetsNoDataAvailable,
+  WidgetTournamentAboutData
 } from "$lib/models/hasura"
 
 /**
@@ -39,12 +43,14 @@ export interface Cache_Single_SportbookDetails_Data_Response extends Sportbook {
 */
 
 export interface BETARENA_HASURA_league_info_query {
-  scores_tournaments:                       BETARENA_HASURA_scores_tournaments[]
-  scores_football_seasons_details:          BETARENA_HASURA_scores_football_seasons_details[]
-  scores_football_leagues:                  BETARENA_HASURA_scores_football_leagues[]
-  sportsbook_details:                       BETARENA_HASURA_sportsbook_details[]
-  scores_widget_league_info_translations:   BETARENA_HASURA_scores_widget_league_info_translations[]
-  widget_league_info_translations:          BETARENA_HASURA_widget_league_info_translations[]
+  scores_tournaments:                           BETARENA_HASURA_scores_tournaments[]
+  scores_football_seasons_details:              BETARENA_HASURA_scores_football_seasons_details[]
+  scores_football_leagues:                      BETARENA_HASURA_scores_football_leagues[]
+  sportsbook_details:                           BETARENA_HASURA_sportsbook_details[]
+  scores_widget_league_info_translations:       BETARENA_HASURA_scores_widget_league_info_translations[]
+  widget_league_info_translations:              BETARENA_HASURA_widget_league_info_translations[]
+  scores_widget_tournament_about_translations:  BETARENA_HASURA_scores_widget_tournament_about_translations[]
+  scores_general_translations:                  BETARENA_HASURA_scores_general_translations[]
 }
 
 /**
@@ -64,7 +70,8 @@ export interface League_Info {
   seasons:                SeasonDataLeagueInfo[]
   translation:            League_Info_Translations
   sportbook_detail?:      Cache_Single_SportbookDetails_Data_Response
-} export interface League_Info_Translations extends WidgetLeagueInfo2Data {
+  seo_content?:           string
+} export interface League_Info_Translations extends WidgetLeagueInfo2Data, WidgetTournamentAboutData, WidgetsNoDataAvailable {
   stats?:     string;
   teams?:     string;
   content?:   string;

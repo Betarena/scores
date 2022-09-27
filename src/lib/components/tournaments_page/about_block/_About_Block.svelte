@@ -19,7 +19,7 @@
     Cache_Single_Tournaments_League_Info_Data_Response 
   } from "$lib/models/tournaments/league-info/types";
 
-  import LeagueInfoWidget_2ContentLoader from "./_LeagueInfo_Widget_2_ContentLoader.svelte";
+  import AboutBlockContentLoader from "./_About_Block_ContentLoader.svelte";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
@@ -53,22 +53,22 @@
     const sleep = ms => new Promise(r => setTimeout(r, ms));
     await sleep(3000);
 
-		if (LEAGUE_INFO_SEO_DATA == null || LEAGUE_INFO_SEO_DATA == undefined) {
+    loaded = true;
+
+		if (
+      LEAGUE_INFO_SEO_DATA == undefined ||
+      LEAGUE_INFO_SEO_DATA?.data?.seo_content == undefined
+    ) {
       // [🐛] debug 
       if (dev) logDevGroup ("league info #2 [DEV]", `❌ no data available!`)
       noWidgetData = true;
 			return;
 		}
-    // [ℹ] otherwise, revert back to DATA AVAILABLE;
+    // [ℹ] otherwise, 
+    // [ℹ] revert back
     else {
       noWidgetData = false;
     }
-
-    // [🐛] debug TEST WIDGET MISSING DATA
-    // noWidgetData = true;
-    // loaded = false;
-
-    loaded = true;
 
     return LEAGUE_INFO_SEO_DATA;
   }
@@ -135,20 +135,6 @@
     widgetInit()
   })
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // REACTIVE SVELTE OTHER
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  let loadedCurrentSeason: boolean = false;
-  $: if (browser && $sessionStore.selectedSeasonID != undefined && !loadedCurrentSeason) {
-    currentSeason = $sessionStore.selectedSeasonID;
-    loadedCurrentSeason = true;
-  }
-
-  $: if (browser && $sessionStore.selectedSeasonID != undefined) {
-    // selectPlayerView(dropdownPlayerViewSelect)
-  }
-
 </script>
 
 <!-- ===============
@@ -163,8 +149,7 @@
   {#if !loaded}
     <div 
       id="seo-widget-box">
-      <h1>{LEAGUE_INFO_SEO_DATA.data.name}</h1>
-      <p>{LEAGUE_INFO_SEO_DATA.data.country}</p>
+      {@html LEAGUE_INFO_SEO_DATA?.data?.seo_content}
     </div>
   {/if}
 
@@ -172,7 +157,7 @@
   -->
   {#if 
     noWidgetData && 
-    !loaded}
+    loaded}
 
     <!-- [ℹ] title of the widget 
     -->
@@ -235,7 +220,7 @@
     <!-- [ℹ] promise is pending 
     -->
     {#await widgetInit()}
-      <LeagueInfoWidget_2ContentLoader />
+      <AboutBlockContentLoader />
     <!-- [ℹ] promise was fulfilled
     -->
     {:then data}
@@ -249,115 +234,17 @@
         class="s-20 m-b-10 w-500 color-black-2"
         style="margin-top: 0px;"
         class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-        {LEAGUE_INFO_SEO_DATA?.data?.translation?.league_info}
+        {LEAGUE_INFO_SEO_DATA?.data?.translation?.about_the_league}
       </h2>
 
       <div
-        id="top-players-widget-container"
+        id="about-tour-widget-container"
         class:widget-no-data-height={trueLengthOfArray == 0}
         class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-        <div
-          class="row-space-start m-b-16">
-          <img 
-            class="m-r-10"
-            src={LEAGUE_INFO_SEO_DATA?.data?.image_path}
-            alt=""
-            width=24px height=24px
-            style="object-fit: contain;"
-          />
-          <p
-            class="s-16 color-black-2 w-500">
-            {LEAGUE_INFO_SEO_DATA?.data?.name}
-          </p>
-        </div>
-        
-        {#each LEAGUE_INFO_SEO_DATA?.data?.seasons as season}
-          {#if season.id === $sessionStore.selectedSeasonID}
-            
-            <div
-              style="padding: 0 0 4px 0;"
-              class="league-info-row row-space-out">
-              <p
-                class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.teams}:
-              </p>
-              <p
-                class="s-14 color-black-2 w-500">
-                {#if season?.number_of_clubs == null || season?.number_of_clubs == undefined}
-                   -
-                {:else}
-                  {season?.number_of_clubs}
-                {/if}
-              </p>
-            </div>
-
-            <div 
-              class="league-info-row row-space-out">
-              <p
-                class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.goals}:
-              </p>
-              <p
-                class="s-14 color-black-2 w-500">
-                {#if season?.goals == null || season?.goals == undefined}
-                   -
-                {:else}
-                  {season?.goals}
-                {/if}
-              </p>
-            </div>
-
-            <div
-              class="league-info-row row-space-out">
-              <p
-                class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.average_goals}:
-              </p>
-              <p
-                class="s-14 color-black-2 w-500">
-                {#if season?.avg_goals == null || season?.avg_goals == undefined}
-                   -
-                {:else}
-                  {season?.avg_goals}
-                {/if}
-              </p>
-            </div>
-
-            <div
-              class="league-info-row row-space-out">
-              <p
-                class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.win_percentage}:
-              </p>
-              <p
-                class="s-14 color-black-2 w-500">
-                {#if season?.win_p == null || season?.win_p == undefined}
-                   -
-                {:else}
-                  {season?.win_p}%
-                {/if}
-              </p>
-            </div>
-
-            <div
-              class="league-info-row row-space-out">
-              <p
-                class="s-14 color-grey">
-                {LEAGUE_INFO_SEO_DATA?.data?.translation?.average_player_rating}:
-              </p>
-              <p
-                class="s-14 color-black-2 w-500">
-                {#if season?.avg_player_r == null || season?.avg_player_r == undefined}
-                   -
-                {:else}
-                  {season?.avg_player_r}
-                {/if}
-              </p>
-            </div>
-
-          {/if}
-        {/each}
+        <!-- 
+        [ℹ] render SEO-DATA -->
+        {@html LEAGUE_INFO_SEO_DATA.data.seo_content}
         
       </div>
 
@@ -405,11 +292,11 @@
     [ℹ] MOBILE FIRST
   */
 
-  div#top-players-widget-container.widget-no-data-height {
+  div#about-tour-widget-container.widget-no-data-height {
     height: 832px;
   }
 
-  #top-players-widget-container {
+  #about-tour-widget-container {
     padding: 0;
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -419,15 +306,77 @@
     padding: 20px;
   }
 
-  div.league-info-row {
-    padding: 14px 0 4px 0;
-    border-bottom: 1px solid #E6E6E6;
-  } div.league-info-row:first-child {
-    padding: 0 0 4px 0;
-  } div.league-info-row:last-child {
-    border-bottom: none;
+:global(#about-tour-widget-container a) {
+    color: #F5620F !important;
+    width: fit-content !important;
+    margin: 0;
+    display: initial;
   }
-  
+
+  :global(#about-tour-widget-container section) {
+    padding: 0 !important;
+    padding-bottom: 0 !important;
+    min-height: fit-content;
+  }
+  :global(#about-tour-widget-container section div:first-child) {
+    border: 1px solid #E6E6E6;
+    border-radius: 12px 12px 0 0 !important;
+  }
+  :global(#about-tour-widget-container section > div) {
+    border: 1px solid #E6E6E6;
+    padding: 20px;
+  }
+  :global(#about-tour-widget-container section > div > h4) {
+    margin: 0 !important;
+    margin-bottom: 8px;
+  }
+  :global(#about-tour-widget-container section div.faq-body) {
+    border: none !important;
+  }
+  :global(#about-tour-widget-container section hr) {
+    display: none;
+  }
+  :global(#about-tour-widget-container section div:last-child) {
+    border: 1px solid #E6E6E6;
+    border-radius: 0 0 12px 12px !important;
+  }
+
+  :global(
+    #about-tour-widget-container h3) {
+      font-size: 20px;
+  }
+  :global(
+    #about-tour-widget-container h4,
+    #about-tour-widget-container p) {
+      font-size: 16px;
+  }
+  :global(
+    #about-tour-widget-container section div.faq-body) {
+      font-size: 14px;
+  }
+
+  :global(
+    #about-tour-widget-container h1,
+    #about-tour-widget-container h2, 
+    #about-tour-widget-container h3,
+    #about-tour-widget-container h4) {
+      color: #292929 !important;
+  }
+  :global(
+    #about-tour-widget-container p,
+    #about-tour-widget-container section div.faq-body) {
+    color: #8C8C8C !important;
+  }
+  :global(
+    #about-tour-widget-container h3) {
+      margin: 20px 0 12px 0;
+  }
+
+  :global(
+    #about-tour-widget-container section > div) {
+    border: 1px solid #E6E6E6 !important;
+  }
+
   /* ====================
     RESPONSIVNESS
   ==================== */
@@ -436,7 +385,7 @@
   TABLET RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) and (max-width: 1000px)  {
 
-    #top-players-widget-container {
+    #about-tour-widget-container {
       min-width: 100%;
       /* max-width: 700px; */
     }
@@ -453,7 +402,7 @@
   DESKTOP RESPONSIVNESS (&+) */
   @media only screen and (min-width: 1160px) {
 
-    #top-players-widget-container {
+    #about-tour-widget-container {
       min-width: 100%;
     }
 
@@ -463,8 +412,22 @@
     WIDGET DARK THEME
   ==================== */
 
-  .dark-background-1 div.league-info-row {
-    border-bottom: 1px solid #616161;
+  :global(
+    #about-tour-widget-container.dark-background-1 h1,
+    #about-tour-widget-container.dark-background-1 h2, 
+    #about-tour-widget-container.dark-background-1 h3,
+    #about-tour-widget-container.dark-background-1 h4) {
+      color: #FFFFFF !important;
+  }
+  :global(
+    #about-tour-widget-container.dark-background-1 p,
+    #about-tour-widget-container.dark-background-1 section div.faq-body) {
+    color: #A8A8A8 !important;
+  }
+
+  :global(
+    #about-tour-widget-container.dark-background-1 section > div) {
+    border: 1px solid #616161 !important;
   }
 
 

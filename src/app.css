@@ -32,6 +32,9 @@ body {
     MOBILE 
     disable pinchin & user zooming on */
 	/* touch-action: pan-x pan-y; */
+  /* 
+    SAFARI */
+  -webkit-text-size-adjust: none;
 }
 
 * {

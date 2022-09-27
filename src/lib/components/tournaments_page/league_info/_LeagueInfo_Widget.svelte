@@ -350,8 +350,12 @@ import { logDevGroup } from "$lib/utils/debug";
       <!-- [ℹ] container w/ text 
       -->
       <div>
-        <p class='s-16 m-b-8 w-500'> No League Info Available </p>
-        <p class='s-16 color-grey w-400'> Sorry, at this time there is no league info available! </p>
+        <p class='s-16 m-b-8 w-500'> 
+          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info}
+        </p>
+        <p class='s-16 color-grey w-400'>
+          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info_desc}
+        </p>
       </div>
     </div>
   {/if}

@@ -154,7 +154,8 @@ async function leagueInfoGeneration () {
         // betting_site_logo?: undefined,
         // beting_cta_link?: undefined,
         seasons: [],
-        translation: undefined         
+        translation: undefined,
+        seo_content: undefined         
       }
     }
 
@@ -182,6 +183,16 @@ async function leagueInfoGeneration () {
     .find(( { lang } ) => 
       lang === iterator.lang
     )
+    // [ℹ] about-tournament widget data
+    const aboutTournamentTranslation = response.scores_widget_tournament_about_translations
+    .find(( { lang } ) => 
+      lang === iterator.lang
+    )
+    // [ℹ] no-widget-translations data
+    const noWidgetTranslation = response.scores_general_translations
+    .find(( { lang } ) => 
+      lang === iterator.lang
+    )
 
     finalCacheObj.data.translation = {
       ...targetWidgetTranslation,
@@ -191,6 +202,9 @@ async function leagueInfoGeneration () {
       average_goals:         leagueInfoWidget2Translations?.data?.average_goals,
       win_percentage:        leagueInfoWidget2Translations?.data?.win_percentage,
       average_player_rating: leagueInfoWidget2Translations?.data?.average_player_rating,
+      about_the_league:      aboutTournamentTranslation?.data?.about_the_league,
+      no_info:               noWidgetTranslation?.widgets_no_data_available?.no_info,
+      no_info_desc:          noWidgetTranslation?.widgets_no_data_available?.no_info_desc
     }
 
     // FIXME:
@@ -224,6 +238,7 @@ async function leagueInfoGeneration () {
     finalCacheObj.data.country = iterator?.country;
     finalCacheObj.data.name = iterator?.name;
 
+    finalCacheObj.data.seo_content = iterator?.seo_content;
     finalCacheObj.data.seasons = [] // [ℹ] reset
 
     // [ℹ] get all seasons for (this) league
