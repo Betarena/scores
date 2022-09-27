@@ -342,6 +342,20 @@
   }
 
   :global(
+    #about-tour-widget-container h3) {
+      font-size: 20px;
+  }
+  :global(
+    #about-tour-widget-container h4,
+    #about-tour-widget-container p) {
+      font-size: 16px;
+  }
+  :global(
+    #about-tour-widget-container section div.faq-body) {
+      font-size: 14px;
+  }
+
+  :global(
     #about-tour-widget-container h1,
     #about-tour-widget-container h2, 
     #about-tour-widget-container h3,
