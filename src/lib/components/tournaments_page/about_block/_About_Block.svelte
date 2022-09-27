@@ -53,22 +53,22 @@
     const sleep = ms => new Promise(r => setTimeout(r, ms));
     await sleep(3000);
 
-		if (LEAGUE_INFO_SEO_DATA == null || LEAGUE_INFO_SEO_DATA == undefined) {
+    loaded = true;
+
+		if (
+      LEAGUE_INFO_SEO_DATA == undefined ||
+      LEAGUE_INFO_SEO_DATA?.data?.seo_content == undefined
+    ) {
       // [🐛] debug 
       if (dev) logDevGroup ("league info #2 [DEV]", `❌ no data available!`)
       noWidgetData = true;
 			return;
 		}
-    // [ℹ] otherwise, revert back to DATA AVAILABLE;
+    // [ℹ] otherwise, 
+    // [ℹ] revert back
     else {
       noWidgetData = false;
     }
-
-    // [🐛] debug TEST WIDGET MISSING DATA
-    // noWidgetData = true;
-    // loaded = false;
-
-    loaded = true;
 
     return LEAGUE_INFO_SEO_DATA;
   }
@@ -157,7 +157,7 @@
   -->
   {#if 
     noWidgetData && 
-    !loaded}
+    loaded}
 
     <!-- [ℹ] title of the widget 
     -->
