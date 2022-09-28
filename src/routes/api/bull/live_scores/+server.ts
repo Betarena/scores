@@ -10,6 +10,9 @@ import {
   GET_LIVESCORES_LEAGUES
 } from '$lib/graphql/query';
 import {
+  GET_LIVESCORES_TOURNAMENTS_LINKS
+} from '$lib/graphql/query';
+import {
   GET_LIVESCORES_TRANSLATIONS
 } from '$lib/graphql/query';
 
@@ -74,6 +77,10 @@ export async function POST(): Promise < unknown > {
     const response3: unknown = await getTranslations()
     cacheTranslations(response3);
 
+    await deleteLinks()
+    const response4: unknown = await getTournamentsLinks()
+    cacheLinks(response4);
+
     for (const log of logs) {
       console.log(log)
     }
@@ -123,8 +130,22 @@ async function cacheTranslations(json_cache: unknown) {
   }
 }
 
+async function cacheLinks(json_cache: unknown) {
+  try {
+    await redis.set('live_scores_football_tournaments', JSON.stringify(json_cache));
+  }
+  catch (e) {
+    console.log("Unable to cache", e);
+  }
+}
+
 async function deleteLiveScores() {
   await redis.del('live_scores_leagues')
+  return
+}
+
+async function deleteLinks() {
+  await redis.del('live_scores_football_tournaments')
   return
 }
 
@@ -210,9 +231,26 @@ async function getLeaguesOrder(): Promise < unknown > {
 
 }
 
+
+async function getTournamentsLinks(): Promise < unknown > {
+
+  const leagueLinks = {};
+  return initGrapQLClient().request(GET_LIVESCORES_TOURNAMENTS_LINKS).then(x => {
+
+    const tournaments = x.scores_tournaments;
+    
+
+    for (let k = 0; k < tournaments.length; k++) {   
+      leagueLinks[tournaments[k].tournament_id]={urls:tournaments[k].urls};
+    }
+    return leagueLinks;
+  });
+
+}
+
 async function main_gen_2() {
 
-  const langs: string[] = ['br', 'en', 'es', 'it', 'pt', 'ro'];
+  const langs: string[] = ['br', 'en', 'es', 'it', 'pt', 'ro', 'se'];
 
   await deleteLiveScores_2()
   const response: LiveScore_SEO_Game[] = await getLiveScores()

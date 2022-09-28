@@ -6,8 +6,11 @@ import type {
   BETARENA_HASURA_scores_livescore_football_translations, 
   BETARENA_HASURA_scores_widget_football_fixtures_odds_translations, 
   BETARENA_HASURA_sportsbook_details,
+  DataStats,
   FixturesOddsTranslations,
   MediaLinkWelcome,
+  Round,
+  Time,
   Weekdays,
   WelcomeMonths,
   WidgetsNoDataAvailable,
@@ -19,9 +22,17 @@ import type {
  * ========================================== 
 */
 
+export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARENA_HASURA_historic_fixtures {
+  stats_j?:            DataStats
+  localteam_id_j?:     number
+  visitorteam_id_j?:   number
+  round_j?:            Round
+  time_j?:             Time
+}
+
 export interface BETARENA_HASURA_fixtures_odds_query {
   historic_fixtures_aggregate:                              BETARENA_HASURA_historic_fixtures_aggregate
-  historic_fixtures:                                        BETARENA_HASURA_historic_fixtures[]
+  historic_fixtures:                                        BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
   
   scores_football_seasons_details:                          BETARENA_HASURA_scores_football_seasons_details[]
   
@@ -57,6 +68,7 @@ export interface REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_resp
     AU?:       string;
     HT?:       string;
     FT?:       string;
+    CANCL?:    string;
 }
 
 export interface Tournament_Season_Fixtures_Odds {
@@ -89,7 +101,8 @@ export interface Tournament_Fixture_Odds {
 
   minute:  number           // live option, from firebase (non-cache-based)  // Fixture Live Time Information (Status LIVE) = livescore_now  + ""minute": 13,"
                             // [❓] should be real-time [?] as in, without the user refreshing the app will autamtically show the fixture data is LIVE
-  status: "NS" | "LIVE" | "TBA" | "FT" | string
+  // [ℹ] https://docs.sportmonks.com/football/api-references/statussus-and-definitions
+  status: "NS" | "LIVE" | "TBA" | "FT" | "HT" | "ET" | "PEN_LIVE" | "AET" | "BREAK" | "FT_PEN" | "CANCL" | "POSTP" | "SUSP"
   teams: {
     home: Fixture_Odds_Team
     away: Fixture_Odds_Team

@@ -67,6 +67,7 @@
   let LEAGUES_TABLE_SCORES_SEO_DATA:              Cache_Single_Lang_Leagues_Table_Translation_Response
   let SEO_BLOCK_DATA:                             Cache_Single_Homepage_SEO_Block_Translation_Response
 	let LIVE_SCORES_FOOTBALL_TRANSLATIONS:          LiveScores_Football_Translation[]
+	let LIVESCORES_FOOTBALL_TOURNAMENTS:            any
 
   $: PAGE_DATA_SEO =                              $page.data.PAGE_DATA_SEO;
   $: FEATURED_MATCH_WIDGET_DATA_SEO =             $page.data.FEATURED_MATCH_WIDGET_DATA_SEO;
@@ -78,6 +79,7 @@
   $: LIVE_SCORES_DATA_DATA_SEO =                  $page.data.LIVE_SCORES_DATA_DATA_SEO;
 	$: LIVE_SCORES_DATA_LEAGUES =                   $page.data.LIVE_SCORES_DATA_LEAGUES;
 	$: LIVE_SCORES_FOOTBALL_TRANSLATIONS =          $page.data.LIVE_SCORES_FOOTBALL_TRANSLATIONS;
+	$: LIVESCORES_FOOTBALL_TOURNAMENTS =          $page.data.LIVESCORES_FOOTBALL_TOURNAMENTS;
 
   // [ℹ] ALT.
   // [ℹ] pre-loading [GEO]
@@ -311,7 +313,7 @@
       <!-- [ℹ] widget #1 -->
       <div>
         <!-- <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/> -->
-        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} />
+        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} {LIVESCORES_FOOTBALL_TOURNAMENTS}/>
       </div>
       <!-- [ℹ] widget #2 -->
       <!-- <SeoBlock {SEO_BLOCK_DATA} />  -->
@@ -342,7 +344,7 @@
       <!-- [ℹ] widget #1 -->
       <div>
 		    <!-- <LiveScoresWidget {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS}/> -->
-        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} />
+        <svelte:component this={LiveScoresWidget} {LIVE_SCORES_DATA_DATA_SEO} {LIVE_SCORES_DATA_LEAGUES} {LIVE_SCORES_FOOTBALL_TRANSLATIONS} {LIVESCORES_FOOTBALL_TOURNAMENTS}/>
       </div>
       <!-- [ℹ] widget #2 -->
       <!-- <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} /> -->
