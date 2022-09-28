@@ -23,6 +23,7 @@
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
     Rounds_Data, 
     Tournament_Fixture_Odds,
+    Tournament_Season_Fixtures_Odds,
     Weeks_Data
   } from "$lib/models/tournaments/fixtures_odds/types";
   import type { 
@@ -662,25 +663,56 @@
     // const date = new Date("2023-07-29");
     const date = new Date();
 
-    const target_season = FIXTURES_ODDS_DATA.seasons
+    let target_season = FIXTURES_ODDS_DATA.seasons
     .find( ({ season_id }) => 
       season_id === $sessionStore.selectedSeasonID
     );
 
+    if (dev) logDevGroup ("fixture odds [DEV]", `target_season: ${target_season}`);
+
     // [ℹ] validation check (#1)
     if (target_season == undefined) {
-      noWidgetData = true;
-      return;
+
+      // [ℹ] validation check (#1.2)
+      // [ℹ] past season
+      // [ℹ] get target data
+      // [ℹ] and inject in exisitng
+      if (currentSeason != $sessionStore.selectedSeasonID) {
+        const response: Tournament_Season_Fixtures_Odds = await get("/api/hasura/tournaments/fixture_odds?seasonId="+$sessionStore.selectedSeasonID)
+        if (dev) logDevGroup ("fixture odds [DEV]", `response: ${response}`);
+        if (response == undefined || response == null) {
+          noWidgetData = true;
+          return;
+        }
+        else {
+          FIXTURES_ODDS_DATA.seasons
+          .push(response)
+          target_season = response
+          if (dev) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_DATA seasons: ${FIXTURES_ODDS_DATA.seasons.length}`);
+        }
+      }
+      else {
+        if (dev) logDevGroup ("fixture odds [DEV]", `NO DATA`);
+        noWidgetData = true;
+        return;
+      }
     }
 
-    if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `target_season: ${target_season}`)
+    if (dev) logDevGroup ("fixture odds [DEV]", `
+      currentSeason: ${currentSeason}
+      FIXTURES_ODDS_DATA seasons: ${FIXTURES_ODDS_DATA.seasons.length}
+      target_season: ${target_season.season_id}
+      fixtures length: ${target_season.fixtures.length}
+    `)
 
-    // [ℹ] validation check (#1) [weeks / rounds] 
+    // [ℹ] validation check (#1) [weeks / rounds / fixtures] 
     if (
       target_season?.weeks === null ||
       target_season?.weeks === undefined ||
       target_season?.rounds === null || 
-      target_season?.rounds === undefined) {
+      target_season?.rounds === undefined ||
+      target_season?.fixtures === null || 
+      target_season?.fixtures === undefined) {
       noWidgetData = true;
       loaded = false;
       return;

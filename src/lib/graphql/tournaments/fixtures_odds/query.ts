@@ -168,3 +168,45 @@ export const REDIS_CACHE_FIXTURES_ODDS_ST_DATA_1 = gql`
 
   }
 `;
+
+
+/**
+ * [ℹ] Surgical Queries
+ * [ℹ] Season Id Based
+*/
+export const REDIS_CACHE_FIXTURES_ODDS_DATA_4 = gql`
+  query REDIS_CACHE_FIXTURES_ODDS_DATA_4 
+    (
+      $season_id: Int
+    ) 
+    @cached 
+    (ttl: 300)
+  {
+
+    # [ℹ] pagination based
+
+    historic_fixtures (
+      order_by: {
+        fixture_day: asc,
+        id: asc
+      },
+      where: {
+        season_id: {
+          _eq: $season_id
+        }
+      }
+    ) {
+      id
+      fixture_day
+      time
+      away_team_name
+      home_team_name
+      round_name
+      data
+      league_id
+      tip_link_wp
+      fixture_link_wp
+      media_link
+    }
+  }
+`;
