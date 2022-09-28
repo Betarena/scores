@@ -12,7 +12,8 @@ import type {
   BETARENA_HASURA_historic_fixtures
 } from '$lib/models/hasura';
 import type { 
-  BETARENA_HASURA_fixtures_odds_query, 
+  BETARENA_HASURA_fixtures_odds_query,
+  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   Fixture_Odds_Team, 
   Rounds_Data, 
   Tournament_Fixture_Odds, 
@@ -70,7 +71,7 @@ async function main (
     SEASON_ID
   );
 
-  const historic_fixtures_map = new Map <number, BETARENA_HASURA_historic_fixtures> ()
+  const historic_fixtures_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures> ()
 
   // [ℹ] conversion to hashmap
   t0 = performance.now();
@@ -138,29 +139,29 @@ async function main (
   
   for (const [key, value] of historic_fixtures_map.entries()) {
 
-    const fix_season_id = value.data?.season_id;
-    const league_id = value.league_id;
-    const fixture_id = value.id;
-    const home_team_id = value.data?.localteam_id;
-    const away_team_id = value.data?.visitorteam_id;
+    // const fix_season_id = value.data?.season_id;
+    // const league_id = value.league_id;
+    const fixture_id =      value?.id;
+    const home_team_id =    value?.localteam_id_j;
+    const away_team_id =    value?.visitorteam_id_j;
 
-    const round = value.data?.round?.data?.name;
-    const fixture_date = value.fixture_day;
-    const fixture_time = value.time;
-    const minutes = value.data?.time?.minute;
-    const status = value.data?.time?.status;
+    const round =           value?.round_j?.data?.name;
+    const fixture_date =    value.fixture_day;
+    const fixture_time =    value.time;
+    const minutes =         value.time_j?.minute;
+    const status =          value.time_j?.status;
 
-    const tip_link = value.tip_link_wp
-    const media_link = value.media_link;
-    const fixture_link = value.fixture_link_wp;
+    const tip_link =        value.tip_link_wp
+    const media_link =      value.media_link;
+    const fixture_link =    value.fixture_link_wp;
     
-    const home_team_name = value.home_team_name;
-    const home_red_cards = value?.data?.stats?.data?.find( ({ team_id }) => team_id === home_team_id )?.redcards;
-    const home_team_score = value?.data?.stats?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
+    const home_team_name =  value.home_team_name;
+    const home_red_cards =  value?.stats_j?.data?.find( ({ team_id }) => team_id === home_team_id )?.redcards;
+    const home_team_score = value?.stats_j?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
     
-    const away_team_name = value.away_team_name;
-    const away_red_cards = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.redcards;
-    const away_team_score = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
+    const away_team_name =  value.away_team_name;
+    const away_red_cards =  value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.redcards;
+    const away_team_score = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
 
     const home_team_obj: Fixture_Odds_Team = {
       name: home_team_name,
@@ -240,7 +241,7 @@ async function main (
 
 async function getTargetSeasonFixtures (
   seasonId: number
-): Promise < BETARENA_HASURA_historic_fixtures[] > {
+): Promise < BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] > {
 
   // [ℹ] obtain target historic_fixtures
   const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_4";
