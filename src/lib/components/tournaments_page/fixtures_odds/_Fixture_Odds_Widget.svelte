@@ -814,6 +814,9 @@
       // [ℹ] search fixtures by target data
       // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
       // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
+      week_end.setHours(week_end.getHours() + 24)
+      // if (dev) console.log(week_end)
+
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_time }) => 
         new Date(fixture_time) >= week_start &&
