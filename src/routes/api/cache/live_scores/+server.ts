@@ -107,7 +107,6 @@ async function getLiveScoresFootballTranslations(): Promise < any | Record < str
 async function getTournamentLinks(): Promise < any | Record < string, never > > {
   try {
     const cached: string = await redis.get('live_scores_football_tournaments');
-    console.debug(cached)
     if (cached) {
       const parsed: any = JSON.parse(cached);
       return parsed;
