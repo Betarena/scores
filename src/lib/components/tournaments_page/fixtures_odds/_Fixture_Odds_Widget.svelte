@@ -815,7 +815,8 @@
       // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
       // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
       week_end.setHours(week_end.getHours() + 24)
-      // if (dev) console.log(week_end)
+      // if (dev) console.log("week_end", week_end)
+      // if (dev) console.log("week_start", week_start)
 
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_time }) => 
@@ -930,6 +931,8 @@
       week_start = new Date(target_week.s_date)
       week_end = new Date(target_week.e_date)
       week_name = parseInt(target_week.name)
+
+      week_end.setHours(week_end.getHours() + 24)
 
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_time }) => 
