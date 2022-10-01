@@ -49,4 +49,4 @@
 # ⚠ Warning:
 
 Please ensure that your code does not contain `console` without the `if (dev) console...`
-to avoid memory overflows on the server.
+to avoid memory overflows on the server. Or remove the `console` if no longer needed.
