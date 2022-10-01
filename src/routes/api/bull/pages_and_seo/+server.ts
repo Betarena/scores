@@ -102,7 +102,10 @@ export async function POST(): Promise < unknown > {
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheHomepageSEOData (lang: string, json_cache: Cache_Single_Homepage_SEO_Translation_Response) {
+async function cacheHomepageSEOData (
+  lang: string, 
+  json_cache: Cache_Single_Homepage_SEO_Translation_Response
+) {
   try {
     //[ℹ] store (cache) league_list response,
     await redis.hset('homepage_seo', lang, JSON.stringify(json_cache));
@@ -112,7 +115,10 @@ async function cacheHomepageSEOData (lang: string, json_cache: Cache_Single_Home
   }
 }
 
-async function cacheTournamentsPageSEOData (lang: string, json_cache: any ) {
+async function cacheTournamentsPageSEOData (
+  lang: string, 
+  json_cache: any
+) {
   try {
     //[ℹ] store (cache) league_list response,
     await redis.hset('tournaments_seo', lang, JSON.stringify(json_cache));
@@ -122,7 +128,10 @@ async function cacheTournamentsPageSEOData (lang: string, json_cache: any ) {
   }
 }
 
-async function cacheTournamentsPageData (url: string, json_cache: any ) {
+async function cacheTournamentsPageData (
+  url: string, 
+  json_cache: any
+) {
   try {
     //[ℹ] store (cache) league_list response,
     await redis.hset('tournaments_page_info', url, JSON.stringify(json_cache));
@@ -132,7 +141,9 @@ async function cacheTournamentsPageData (url: string, json_cache: any ) {
   }
 }
 
-async function cacheSitemapURLs (url: string) {
+async function cacheSitemapURLs (
+  url: string
+) {
   try {
     //[ℹ] store (cache) league_list response,
     await redis.hset('sitemap', url, true);
@@ -215,7 +226,10 @@ cacheQueuePageSeo.process (async function (job, done) {
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function homepageSEOandCaching(langArray: string[], data: Hasura_Complete_Pages_SEO) {
+async function homepageSEOandCaching(
+  langArray: string[], 
+  data: Hasura_Complete_Pages_SEO
+) {
 
   const finalCacheObj: Cache_Single_Homepage_SEO_Translation_Response = {
     lang: undefined,
@@ -242,7 +256,9 @@ async function homepageSEOandCaching(langArray: string[], data: Hasura_Complete_
 
 }
 
-async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
+async function sitemapGeneratorAndCaching(
+  data: Hasura_Complete_Pages_SEO
+) {
 
   const urlsArray: string[] = []
 
@@ -255,9 +271,8 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
-    // [ℹ] domestic ONLY check;
-    // [ℹ] published ONLY check;
-    // [ℹ] updated to "status: published" 14/09/2022
+    // [ℹ] [depreceated] domestic ONLY check
+    // [ℹ] [new] published ONLY check - 14/09/2022
     if (iterator.status == "draft") {
       continue
     }
@@ -271,31 +286,35 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
     //   break
     // }
  
-    // [ℹ] /{lang} or / generation URL
+    // [ℹ] /
+    // [ℹ] /{lang}
     url = iterator.lang == 'en' 
     ? '/' 
     : '/' + lang;
     
     urlsArray.push(url)
 
-    // [ℹ] /{lang}/{sport} or /{sport} generation URL
+    // [ℹ] /{sport}
+    // [ℹ] /{lang}/{sport}
     url = iterator.lang == 'en' 
-      ? '/' + sport 
-      : '/' + lang + '/' + sport;
+    ? '/' + sport 
+    : '/' + lang + '/' + sport;
 
     urlsArray.push(url)
 
-    // [ℹ] /{lang}/{sport}/{country} or /{sport}/{country} generation URL
+    // [ℹ] /{lang}/{sport}/{country}
+    // [ℹ] /{sport}/{country}
     url = iterator.lang == 'en' 
-      ? '/' + sport + '/' + country
-      : '/' + lang  + '/' + sport + '/' + country
+    ? '/' + sport + '/' + country
+    : '/' + lang  + '/' + sport + '/' + country
     
     urlsArray.push(url)
 
-    // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
+    // [ℹ] /{lang}/{sport}/{country}/{league_name}
+    // [ℹ] /{sport}/{country}/{league_name}
     url = iterator.lang == 'en' 
-      ? '/' + sport + '/' + country + '/' + league_name
-      : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
+    ? '/' + sport + '/' + country + '/' + league_name
+    : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
     
     urlsArray.push(url)
   }
@@ -311,7 +330,10 @@ async function sitemapGeneratorAndCaching(data: Hasura_Complete_Pages_SEO) {
   }
 }
 
-async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complete_Pages_SEO) {
+async function tournamentSEOandCaching(
+  langArray: string[], 
+  data: Hasura_Complete_Pages_SEO
+) {
 
   const finalCacheObj: Cache_Single_Tournaments_SEO_Translation_Response = {
     lang: undefined,
@@ -338,7 +360,9 @@ async function tournamentSEOandCaching(langArray: string[], data: Hasura_Complet
 
 }
 
-async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
+async function tournamentPageAndCaching(
+  data: Hasura_Complete_Pages_SEO
+) {
 
   const finalCacheObj: Cache_Single_Tournaments_Data_Page_Translation_Response = {
     lang: undefined,
@@ -359,17 +383,17 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
-    // [ℹ] domestic ONLY check;
-    // [ℹ] published ONLY check;
-    // [ℹ] updated to "status: published" 14/09/2022
+    // [ℹ] [depreceated] domestic ONLY check
+    // [ℹ] [new] published ONLY check - 14/09/2022
     if (iterator.status == "draft") {
       continue
     }
 
-    // [ℹ] /{lang}/{sport}/{country}/{league_name} or /{sport}/{country}/{league_name} generation URL
+    // [ℹ] /{sport}/{country}/{league_name}
+    // [ℹ] /{lang}/{sport}/{country}/{league_name}
     const url = iterator.lang == 'en' 
-      ? '/' + sport + '/' + country + '/' + league_name
-      : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
+    ? '/' + sport + '/' + country + '/' + league_name
+    : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
     
     finalCacheObj.lang = lang
     finalCacheObj.url = url
@@ -378,7 +402,6 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
     // [ℹ] identify data-alternate-copies;
     finalCacheObj.alternate_data = data.scores_tournaments.filter(t => t.tournament_id === tournament_id)
 
-    // [ℹ] persist-cache-response;
     await cacheTournamentsPageData(url, finalCacheObj);
   }
 
@@ -388,7 +411,9 @@ async function tournamentPageAndCaching(data: Hasura_Complete_Pages_SEO) {
 //  [HELPER] METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function sitemapSave(uniqArray: string[]) {
+async function sitemapSave(
+  uniqArray: string[]
+) {
 
   const urlSitemapObjArr: {
     url: string
