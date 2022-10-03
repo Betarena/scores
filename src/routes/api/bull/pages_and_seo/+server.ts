@@ -14,7 +14,7 @@ const { Readable } = require('stream')
 const format = require('xml-formatter');
 
 import { 
-  GET_COMPLETE_PAGES_AND_SEO_DATA 
+  REDIS_CACHE_PAGES_AND_SEO 
 } from '$lib/graphql/pages_and_seo/query'
 
 import type { 
@@ -63,7 +63,9 @@ export async function POST(): Promise < unknown > {
     `);
 
     // [ℹ] get HASURA-DB response;
-    const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
+    const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(
+      REDIS_CACHE_PAGES_AND_SEO
+    )
 
     // [ℹ] get-all-exisitng-lang-translations;
     const langArray: string [] = response.scores_hreflang
@@ -73,10 +75,10 @@ export async function POST(): Promise < unknown > {
     // [ℹ] push "EN"
     langArray.push('en')
     
-    await sitemapGeneratorAndCaching(response)
-    await homepageSEOandCaching(langArray, response)
-    await tournamentSEOandCaching(langArray, response)
-    await tournamentPageAndCaching(response)
+    await sitemap_generation(response)
+    await homepage_seo(langArray, response)
+    await tournaments_seo(langArray, response)
+    await tournaments_page_generation(response)
 
     for (const log of logs) {
       console.log(log)
@@ -153,16 +155,6 @@ async function cacheSitemapURLs (
   }
 }
 
-async function deleteCacheHomepageSEOData () {
-  await redis.del('homepage_seo')
-  return
-}
-
-async function deleteCacheTournamentsPageSEOData () {
-  await redis.del('tournaments_seo')
-  return
-}
-
 async function deleteCacheTournamentsPageData () {
   await redis.del('tournaments_page_info')
   return
@@ -191,7 +183,9 @@ cacheQueuePageSeo.process (async function (job, done) {
   const t0 = performance.now();
 
   // [ℹ] get HASURA-DB response;
-	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(GET_COMPLETE_PAGES_AND_SEO_DATA)
+	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(
+    REDIS_CACHE_PAGES_AND_SEO
+  )
 
   // [ℹ] get-all-exisitng-lang-translations;
   const langArray: string [] = response.scores_hreflang
@@ -201,10 +195,10 @@ cacheQueuePageSeo.process (async function (job, done) {
   // [ℹ] push "EN"
   langArray.push('en')
   
-  await sitemapGeneratorAndCaching(response)
-  await homepageSEOandCaching(langArray, response)
-  await tournamentSEOandCaching(langArray, response)
-  await tournamentPageAndCaching(response)
+  await sitemap_generation(response)
+  await homepage_seo(langArray, response)
+  await tournaments_seo(langArray, response)
+  await tournaments_page_generation(response)
 
   const t1 = performance.now();
 
@@ -226,43 +220,17 @@ cacheQueuePageSeo.process (async function (job, done) {
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function homepageSEOandCaching(
-  langArray: string[], 
+async function sitemap_generation(
   data: Hasura_Complete_Pages_SEO
 ) {
 
-  const finalCacheObj: Cache_Single_Homepage_SEO_Translation_Response = {
-    lang: undefined,
-    main_data: undefined,
-    twitter_card: undefined,
-    opengraph: undefined,
-    hreflang: undefined
-  }
-
-  // deleteCacheHomepageSEOData()
-
-  // [ℹ] for-each available translation:
-  for (const lang_ of langArray) {
-    
-    finalCacheObj.lang = lang_
-    finalCacheObj.main_data = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).main_data;
-    finalCacheObj.twitter_card = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).twitter_card;
-    finalCacheObj.opengraph = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).opengraph;
-    finalCacheObj.hreflang = data.scores_hreflang
-
-    // [ℹ] persist-cache-response;
-    await cacheHomepageSEOData(lang_, finalCacheObj);
-  }
-
-}
-
-async function sitemapGeneratorAndCaching(
-  data: Hasura_Complete_Pages_SEO
-) {
+  // [ℹ] per [LANG - URL]
+  // [ℹ] no-cache-deletion-required
 
   const urlsArray: string[] = []
 
-  // [ℹ] generate appropiate URLS
+  // [ℹ] use longest chain (scores_tournaments)
+  // [ℹ] to generate all URL combinations
   for (const iterator of data.scores_tournaments) {
 
     let url: string;
@@ -278,91 +246,63 @@ async function sitemapGeneratorAndCaching(
     }
 
     // [🐛] debug
-    // if (iterator.tournament_id == 1505) {
-    //   console.log(`
-    //     Found it!
-    //     url: ${'/' + lang  + '/' + sport + '/' + country + '/' + league_name}
-    //   `)
-    //   break
-    // }
+    /*
+      if (iterator.tournament_id == 1505) {
+        console.log(`
+          Found it!
+          url: ${'/' + lang  + '/' + sport + '/' + country + '/' + league_name}
+        `)
+        break
+      }
+    */
+
+    /*
+      [ℹ] / or /{lang}
+      [ℹ] /{sport} or /{lang}/{sport}
+      [ℹ] /{sport}/{country} or /{lang}/{sport}/{country}
+      [ℹ] /{sport}/{country}/{league_name} or /{lang}/{sport}/{country}/{league_name}
+    */
  
-    // [ℹ] /
-    // [ℹ] /{lang}
     url = iterator.lang == 'en' 
     ? '/' 
     : '/' + lang;
-    
     urlsArray.push(url)
 
-    // [ℹ] /{sport}
-    // [ℹ] /{lang}/{sport}
     url = iterator.lang == 'en' 
     ? '/' + sport 
     : '/' + lang + '/' + sport;
-
     urlsArray.push(url)
 
-    // [ℹ] /{lang}/{sport}/{country}
-    // [ℹ] /{sport}/{country}
     url = iterator.lang == 'en' 
     ? '/' + sport + '/' + country
     : '/' + lang  + '/' + sport + '/' + country
-    
     urlsArray.push(url)
 
-    // [ℹ] /{lang}/{sport}/{country}/{league_name}
-    // [ℹ] /{sport}/{country}/{league_name}
     url = iterator.lang == 'en' 
     ? '/' + sport + '/' + country + '/' + league_name
     : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
-    
     urlsArray.push(url)
   }
 
-  // deleteCacheSitemapURLs();
-  
-  const uniqArray = [...new Set(urlsArray)];
+  // [ℹ] use fixtures urls to generate
+  // [ℹ] additional URL combninations
 
+
+  const uniqArray = [...new Set(urlsArray)];
   sitemapSave(uniqArray)
 
+  // deleteCacheSitemapURLs();
   for (const url of uniqArray) {
     cacheSitemapURLs(url)
   }
 }
 
-async function tournamentSEOandCaching(
-  langArray: string[], 
+async function tournaments_page_generation(
   data: Hasura_Complete_Pages_SEO
 ) {
 
-  const finalCacheObj: Cache_Single_Tournaments_SEO_Translation_Response = {
-    lang: undefined,
-    main_data: undefined,
-    twitter_card: undefined,
-    opengraph: undefined,
-    hreflang: undefined
-  }
-
-  // deleteCacheTournamentsPageSEOData()
-
-  // [ℹ] for-each available translation:
-  for (const lang_ of langArray) {
-    
-    finalCacheObj.lang = lang_
-    finalCacheObj.main_data = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).main_data;
-    finalCacheObj.twitter_card = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).twitter_card;
-    finalCacheObj.opengraph = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).opengraph;
-    finalCacheObj.hreflang = data.scores_hreflang
-
-    // [ℹ] persist-cache-response;
-    await cacheTournamentsPageSEOData(lang_, finalCacheObj);
-  }
-
-}
-
-async function tournamentPageAndCaching(
-  data: Hasura_Complete_Pages_SEO
-) {
+  // [ℹ] per [LANG - URL]
+  // [ℹ] no-cache-deletion-required
 
   const finalCacheObj: Cache_Single_Tournaments_Data_Page_Translation_Response = {
     lang: undefined,
@@ -371,9 +311,6 @@ async function tournamentPageAndCaching(
     alternate_data: undefined,
   }
 
-  // deleteCacheTournamentsPageData();
-
-  // [ℹ] generate appropiate URLS
   for (const iterator of data.scores_tournaments) {
 
     const tournament_id = iterator.tournament_id;
@@ -399,10 +336,68 @@ async function tournamentPageAndCaching(
     finalCacheObj.url = url
     finalCacheObj.data = iterator
 
-    // [ℹ] identify data-alternate-copies;
+    // [ℹ] identify url alternate-copies (translations) 
     finalCacheObj.alternate_data = data.scores_tournaments.filter(t => t.tournament_id === tournament_id)
 
     await cacheTournamentsPageData(url, finalCacheObj);
+  }
+
+}
+
+async function homepage_seo(
+  langArray: string[], 
+  data: Hasura_Complete_Pages_SEO
+) {
+
+  // [ℹ] per [LANG]
+  // [ℹ] no-cache-deletion-required
+ 
+  const finalCacheObj: Cache_Single_Homepage_SEO_Translation_Response = {
+    lang: undefined,
+    main_data: undefined,
+    twitter_card: undefined,
+    opengraph: undefined,
+    hreflang: undefined
+  }
+
+  for (const lang_ of langArray) {
+    
+    finalCacheObj.lang = lang_
+    finalCacheObj.main_data = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).main_data;
+    finalCacheObj.twitter_card = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).twitter_card;
+    finalCacheObj.opengraph = data.scores_seo_homepage.find(( { lang } ) => lang_ === lang).opengraph;
+    finalCacheObj.hreflang = data.scores_hreflang
+
+    await cacheHomepageSEOData(lang_, finalCacheObj);
+  }
+
+}
+
+async function tournaments_seo(
+  langArray: string[], 
+  data: Hasura_Complete_Pages_SEO
+) {
+
+  // [ℹ] per [LANG]
+  // [ℹ] no-cache-deletion-required
+
+  const finalCacheObj: Cache_Single_Tournaments_SEO_Translation_Response = {
+    lang: undefined,
+    main_data: undefined,
+    twitter_card: undefined,
+    opengraph: undefined,
+    hreflang: undefined
+  }
+
+  for (const lang_ of langArray) {
+    
+    finalCacheObj.lang = lang_
+    finalCacheObj.main_data = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).main_data;
+    finalCacheObj.twitter_card = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).twitter_card;
+    finalCacheObj.opengraph = data.scores_seo_tournaments.find(( { lang } ) => lang_ === lang).opengraph;
+    finalCacheObj.hreflang = data.scores_hreflang
+
+    await cacheTournamentsPageSEOData(lang_, finalCacheObj);
   }
 
 }
