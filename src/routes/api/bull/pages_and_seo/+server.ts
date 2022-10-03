@@ -21,7 +21,7 @@ import type {
   Cache_Single_Homepage_SEO_Translation_Response, 
   Cache_Single_Tournaments_Data_Page_Translation_Response, 
   Cache_Single_Tournaments_SEO_Translation_Response, 
-  Hasura_Complete_Pages_SEO 
+  BETARENA_HASURA_QUERY_pages_and_seo 
 } from '$lib/models/pages_and_seo/types'
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -63,15 +63,13 @@ export async function POST(): Promise < unknown > {
     `);
 
     // [ℹ] get HASURA-DB response;
-    const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(
+    const response: BETARENA_HASURA_QUERY_pages_and_seo = await initGrapQLClient().request(
       REDIS_CACHE_PAGES_AND_SEO
     )
-
     // [ℹ] get-all-exisitng-lang-translations;
     const langArray: string [] = response.scores_hreflang
       .filter(a => a.link)         /* filter for NOT "null" */
       .map(a => a.link)            /* map each LANG */ 
-
     // [ℹ] push "EN"
     langArray.push('en')
     
@@ -183,7 +181,7 @@ cacheQueuePageSeo.process (async function (job, done) {
   const t0 = performance.now();
 
   // [ℹ] get HASURA-DB response;
-	const response: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(
+	const response: BETARENA_HASURA_QUERY_pages_and_seo = await initGrapQLClient().request(
     REDIS_CACHE_PAGES_AND_SEO
   )
 
@@ -221,7 +219,7 @@ cacheQueuePageSeo.process (async function (job, done) {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function sitemap_generation(
-  data: Hasura_Complete_Pages_SEO
+  data: BETARENA_HASURA_QUERY_pages_and_seo
 ) {
 
   // [ℹ] per [LANG - URL]
@@ -298,7 +296,7 @@ async function sitemap_generation(
 }
 
 async function tournaments_page_generation(
-  data: Hasura_Complete_Pages_SEO
+  data: BETARENA_HASURA_QUERY_pages_and_seo
 ) {
 
   // [ℹ] per [LANG - URL]
@@ -346,7 +344,7 @@ async function tournaments_page_generation(
 
 async function homepage_seo(
   langArray: string[], 
-  data: Hasura_Complete_Pages_SEO
+  data: BETARENA_HASURA_QUERY_pages_and_seo
 ) {
 
   // [ℹ] per [LANG]
@@ -375,7 +373,7 @@ async function homepage_seo(
 
 async function tournaments_seo(
   langArray: string[], 
-  data: Hasura_Complete_Pages_SEO
+  data: BETARENA_HASURA_QUERY_pages_and_seo
 ) {
 
   // [ℹ] per [LANG]

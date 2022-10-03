@@ -35,13 +35,11 @@ export interface Cache_Single_Tournaments_Data_Page_Translation_Response {
  * ========================================== 
 */
 
-export interface Hasura_Complete_Pages_SEO {
+export interface BETARENA_HASURA_QUERY_pages_and_seo {
   scores_hreflang:            BETARENA_HASURA_scores_hreflang[]
   scores_seo_homepage:        BETARENA_HASURA_scores_seo_homepage[]
   scores_seo_tournaments:     BETARENA_HASURA_scores_seo_tournaments[]
   scores_tournaments:         BETARENA_HASURA_scores_tournaments[]
-  
-  scores_seo_block_homepage:  BETARENA_HASURA_scores_seo_block_homepage[]
 }
 
 // export interface Single_Tournament_Data_Type {
