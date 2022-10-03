@@ -8,8 +8,10 @@ import { performance } from 'perf_hooks';
 import Bull from 'bull';
 import { error, json } from '@sveltejs/kit';
 
-import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
-import type { Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
+import type { 
+  BETARENA_HASURA_seo_block_query, 
+  Cache_Single_Homepage_SEO_Block_Translation_Response 
+} from '$lib/models/seo_block/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -139,9 +141,7 @@ async function main() {
     title: undefined,
   }
 
-  // deleteSEOblock()
-
-  const response_data: Hasura_Complete_Pages_SEO = await initGrapQLClient().request(
+  const response_data: BETARENA_HASURA_seo_block_query = await initGrapQLClient().request(
     REDIS_CACHE_HOMEAPGE_SEO_BLOCK
   )
 
