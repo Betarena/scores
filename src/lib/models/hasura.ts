@@ -1,4 +1,62 @@
 /**
+ * [ℹ] HASURA: scores_hreflang (&)
+*/
+export interface BETARENA_HASURA_scores_hreflang {
+  link?:     string
+  hreflang?: string
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_homepage (&)
+*/
+export interface BETARENA_HASURA_scores_seo_homepage {
+  lang:         string
+  main_data:    Main_Data
+  twitter_card: Twitter_Data
+  opengraph:    Opengraph_Data
+} interface Main_Data {
+  canonical:    string
+  noindex:      boolean
+  keywords:     string
+  nofollow:     boolean
+  title:        string
+  description:  string
+} interface Twitter_Data {
+  canonical:    string
+  noindex:      boolean
+  keywords:     string
+  nofollow:     boolean
+  title:        string
+  description:  string
+} interface Opengraph_Data {
+  canonical:    string
+  noindex:      boolean
+  keywords:     string
+  nofollow:     boolean
+  title:        string
+  description:  string
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_tournaments (&)
+*/
+export interface BETARENA_HASURA_scores_seo_tournaments {
+  lang:         string
+  main_data:    Main_Data
+  twitter_card: Twitter_Data
+  opengraph:    Opengraph_Data
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_block_homepage (&)
+*/
+export interface BETARENA_HASURA_scores_seo_block_homepage {
+  lang:   string
+  html:   string
+  title:  string
+}
+
+/**
  * [ℹ] HASURA: scores_football_standings (&)
 */
 export interface BETARENA_HASURA_scores_football_standings {
@@ -52,7 +110,6 @@ export interface BETARENA_HASURA_scores_football_standings {
 /**
  * [ℹ] HASURA: scores_football_standings_history (&)
 */
-
 export interface BETARENA_HASURA_scores_football_standings_history {
   id?:        number;
   data?:      StandingsDatum[];
