@@ -1,8 +1,10 @@
-// ... import necessary libraries;
 import { gql } from 'graphql-request';
 
 export const REDIS_CACHE_PAGES_AND_SEO = gql`
-  query REDIS_CACHE_PAGES_AND_SEO @cached(ttl: 300) {
+  query REDIS_CACHE_PAGES_AND_SEO 
+  @cached
+  (ttl: 300) 
+  {
     scores_hreflang {
       hreflang
       link
@@ -19,7 +21,16 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       opengraph
       twitter_card
     }
-    scores_tournaments {
+    scores_endpoints_translations(limit: 10) {
+      countries_translation
+      lang
+      sport
+      sports_translation
+    }
+    scores_football_countries {
+      name
+    }
+    scores_tournaments(limit: 100) {
       author
       country
       date
@@ -33,6 +44,12 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       title
       type
       widgets
+      urls
+    }
+    historic_fixtures(limit: 50) {
+      id
+      urls
+      status
     }
   }
 `;
