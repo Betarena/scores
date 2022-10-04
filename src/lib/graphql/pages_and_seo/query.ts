@@ -21,6 +21,13 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       opengraph
       twitter_card
     }
+    scores_seo_fixtures {
+      lang
+      main_data
+      opengraph
+      sports_type
+      twitter_card
+    }
     scores_endpoints_translations(limit: 10) {
       countries_translation
       lang
@@ -59,6 +66,11 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       id
       urls
       publish_status
+      away_team_name
+      home_team_name
+      league_name
+      fixture_day
+      league_id
       venue_name_j: data(path: "$.venue.data.name")
       venue_city_j: data(path: "$.venue.data.city")
       country_id_j: data(path: "$.league.data.country_id")

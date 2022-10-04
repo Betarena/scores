@@ -676,15 +676,21 @@ async function fixtures_page_generation(
       const url_value = value.replace('https://scores.betarena.com', '');
       const lang_ = key
 
+      console.log("iterator?.country_id_j", iterator?.country_id_j)
+
       const country =
         iterator?.country_id_j == undefined
           ? undefined
           : data?.scores_football_countries.find( ({ id }) => id == iterator?.country_id_j)?.name
 
+      console.log("country", country)
+
       const country_t =
          country == undefined
           ? undefined
           : data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.countries_translation[country]
+
+      console.log("country_t",   country_t)
 
       const sport =
         data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.sports_translation['football']
