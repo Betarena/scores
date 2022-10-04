@@ -9,9 +9,12 @@ import { error, json } from '@sveltejs/kit';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const { SitemapStream, streamToPromise } = require('sitemap')
+const { SitemapStream, streamToPromise, simpleSitemapAndIndex, SitemapIndexStream } = require('sitemap')
 const { Readable } = require('stream')
 const format = require('xml-formatter');
+const { createGzip } = require('zlib')
+// const { createReadStream, createWriteStream } = require('fs');
+// const { resolve } = require('path');
 
 import { 
   REDIS_CACHE_PAGES_AND_SEO 
@@ -46,7 +49,7 @@ const cacheQueuePageSeo = new Bull (
   }
 );
 const cacheQueueProcessName = "cacheQueuePageSeo"
-const cacheTarget = "REDIS CACHE | navbar"
+const cacheTarget = "REDIS CACHE | pages & seo"
 let logs = []
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -66,6 +69,7 @@ export async function POST(): Promise < unknown > {
     const response: BETARENA_HASURA_QUERY_pages_and_seo = await initGrapQLClient().request(
       REDIS_CACHE_PAGES_AND_SEO
     )
+
     // [ℹ] get-all-exisitng-lang-translations;
     const langArray: string [] = response.scores_hreflang
       .filter(a => a.link)         /* filter for NOT "null" */
@@ -74,13 +78,15 @@ export async function POST(): Promise < unknown > {
     langArray.push('en')
     
     await sitemap_generation(response)
-    await homepage_seo(langArray, response)
-    await tournaments_seo(langArray, response)
-    await tournaments_page_generation(response)
+    // await homepage_seo(langArray, response)
+    // await tournaments_seo(langArray, response)
+    // await tournaments_page_generation(response)
 
     for (const log of logs) {
       console.log(log)
     }
+
+    console.log("done!")
 
     return json({
       job_id: cacheTarget + " done!"
@@ -218,81 +224,340 @@ cacheQueuePageSeo.process (async function (job, done) {
 //  [MAIN] METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
+interface Links {
+  url:    string
+  links:  Alt_Links[]
+} interface Alt_Links {
+  lang: string
+  url:  string
+}
+
 async function sitemap_generation(
   data: BETARENA_HASURA_QUERY_pages_and_seo
 ) {
 
   // [ℹ] per [LANG - URL]
   // [ℹ] no-cache-deletion-required
+  // [ℹ] TTL of 24h
 
-  const urlsArray: string[] = []
+  let urlsArray: Links[] = []
 
-  // [ℹ] use longest chain (scores_tournaments)
-  // [ℹ] to generate all URL combinations
-  for (const iterator of data.scores_tournaments) {
+  const lang_links = new Map<string, Links>()
+  const sport_links = new Map<string, Links>()
+  const country_links = new Map<string, Links>()
 
-    let url: string;
-    const lang: string = removeDiacritics(iterator.lang.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
-    const sport: string = removeDiacritics(iterator.sport.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
-    const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
-    const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+  // [ℹ] use tournaments urls to generate
+  // [ℹ] MAIN URL combninations
+  for (const iterator of data.scores_endpoints_translations) {
+    
+    let url: string
+    const lang_ = iterator?.lang
+    const sport_ = iterator?.sport
+    let sport_t = iterator?.sports_translation[sport_]
+    sport_t = removeDiacritics(sport_t.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
-    // [ℹ] [depreceated] domestic ONLY check
-    // [ℹ] [new] published ONLY check - 14/09/2022
-    if (iterator.status == "draft") {
-      continue
+    /*
+      [ℹ] /or /{lang}/
+    */
+    url = 
+      lang_ == 'en'
+        ? '/'
+        : '/' + lang_
+    ;
+    if (lang_links.has('en')) {
+      const existing_links = lang_links.get('en')
+        // FIXME: precautionary validation
+        // TODO: update backend "scores_tournaments"
+        // TODO: to make single rows for each tournament
+        // TODO: as URLS contain necesary translations
+        // TODO: and make the ID unique in that case
+        const lang_exists = existing_links.links.find( ({lang}) => lang === lang_)
+        if (lang_exists) {
+          continue;
+        }
+        // [ℹ] EN is main
+        if (lang_ == 'en') {
+          existing_links.url = url
+        }
+        const link: Alt_Links = {
+          lang: lang_,
+          url: url
+        }
+        existing_links.links.push(link)
+        lang_links.set('en', existing_links)
+    }
+    else {
+      const link: Alt_Links = {
+        lang: lang_,
+        url: url
+      }
+      const links_: Links = {
+        url:    undefined,
+        links:  []
+      }
+      links_.links.push(link)
+      // [ℹ] EN is main
+      if (lang_ == 'en') {
+        links_.url = url
+      }
+      lang_links.set('en', links_)
     }
 
-    // [🐛] debug
     /*
-      if (iterator.tournament_id == 1505) {
-        console.log(`
-          Found it!
-          url: ${'/' + lang  + '/' + sport + '/' + country + '/' + league_name}
-        `)
-        break
-      }
+      [ℹ] sports generation
+      [ℹ] /{sport} or /{lang}/{sport}
     */
+    url = 
+      lang_ == 'en'
+        ? '/' + sport_t
+        : '/' + lang_ + '/' + sport_t
+    ;
+    if (sport_links.has(sport_)) {
+      const existing_links = sport_links.get(sport_)
+        // FIXME: precautionary validation
+        // TODO: update backend "scores_tournaments"
+        // TODO: to make single rows for each tournament
+        // TODO: as URLS contain necesary translations
+        // TODO: and make the ID unique in that case
+        const lang_exists = existing_links.links.find( ({lang}) => lang === lang_)
+        if (lang_exists) {
+          continue;
+        }
+        // [ℹ] EN is main
+        if (lang_ == 'en') {
+          existing_links.url = url
+        }
+        const link: Alt_Links = {
+          lang: lang_,
+          url: url
+        }
+        existing_links.links.push(link)
+        sport_links.set(sport_, existing_links)
+    }
+    else {
+      const link: Alt_Links = {
+        lang: lang_,
+        url: url
+      }
+      const links_: Links = {
+        url:    undefined,
+        links:  []
+      }
+      links_.links.push(link)
+      // [ℹ] EN is main
+      if (lang_ == 'en') {
+        links_.url = url
+      }
+      sport_links.set(sport_, links_)
+    }
+
+    // [ℹ] countires generation
+    for (const country_item of data.scores_football_countries) {
+      const country = country_item?.name
+      let country_t = iterator?.countries_translation[country]
+      country_t = 
+        country_t == undefined
+          ? removeDiacritics(country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '')
+          : removeDiacritics(country_t.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
+      ;
+
+      url = 
+      lang_ == 'en'
+        ? '/' + sport_t + '/' + country_t
+        : '/' + lang_ + '/' + sport_t + '/' + country_t
+      ;
+
+      if (country_links.has(country)) {
+        const existing_links = country_links.get(country)
+          // FIXME: precautionary validation
+          // TODO: update backend "scores_tournaments"
+          // TODO: to make single rows for each tournament
+          // TODO: as URLS contain necesary translations
+          // TODO: and make the ID unique in that case
+          const lang_exists = existing_links.links.find( ({lang}) => lang === lang_)
+          if (lang_exists) {
+            continue;
+          }
+          // [ℹ] EN is main
+          if (lang_ == 'en') {
+            existing_links.url = url
+          }
+          const link: Alt_Links = {
+            lang: lang_,
+            url: url
+          }
+          existing_links.links.push(link)
+          country_links.set(country, existing_links)
+      }
+      else {
+        const link: Alt_Links = {
+          lang: lang_,
+          url: url
+        }
+        const links_: Links = {
+          url:    undefined,
+          links:  []
+        }
+        links_.links.push(link)
+        // [ℹ] EN is main
+        if (lang_ == 'en') {
+          links_.url = url
+        }
+        country_links.set(country, links_)
+      }
+    }
+
+  }
+
+  const tournaments_links = new Map <number, Links>()
+
+  // [ℹ] use tournaments urls to generate
+  // [ℹ] additional URL combninations
+  for (const iterator of data.scores_tournaments) {
 
     /*
-      [ℹ] / or /{lang}
-      [ℹ] /{sport} or /{lang}/{sport}
-      [ℹ] /{sport}/{country} or /{lang}/{sport}/{country}
       [ℹ] /{sport}/{country}/{league_name} or /{lang}/{sport}/{country}/{league_name}
     */
- 
-    url = iterator.lang == 'en' 
-    ? '/' 
-    : '/' + lang;
-    urlsArray.push(url)
+   
+    // [ℹ] [depreceated] domestic ONLY check
+    // [ℹ] [new] published ONLY check - 14/09/2022
+    if (
+      iterator.status == "draft" || 
+      iterator.urls == undefined
+    ) {
+      continue
+    }
+  
+    const league_id: number = iterator?.tournament_id
 
-    url = iterator.lang == 'en' 
-    ? '/' + sport 
-    : '/' + lang + '/' + sport;
-    urlsArray.push(url)
-
-    url = iterator.lang == 'en' 
-    ? '/' + sport + '/' + country
-    : '/' + lang  + '/' + sport + '/' + country
-    urlsArray.push(url)
-
-    url = iterator.lang == 'en' 
-    ? '/' + sport + '/' + country + '/' + league_name
-    : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
-    urlsArray.push(url)
+    for (let [key, value] of Object.entries(iterator.urls)) {
+      value = value.replace('https://scores.betarena.com/', '');
+      if (tournaments_links.has(league_id)) {
+        const existing_links = tournaments_links.get(league_id)
+        // FIXME: precautionary validation
+        // TODO: update backend "scores_tournaments"
+        // TODO: to make single rows for each tournament
+        // TODO: as URLS contain necesary translations
+        // TODO: and make the ID unique in that case
+        const lang_exists = existing_links.links.find( ({lang}) => lang === key)
+        if (lang_exists) {
+          continue;
+        }
+        // [ℹ] EN is main
+        if (key == 'en') {
+          existing_links.url = value
+        }
+        const link: Alt_Links = {
+          url: value,
+          lang: key
+        }
+        existing_links.links.push(link)
+        tournaments_links.set(league_id, existing_links)
+      }
+      else {
+        const link: Alt_Links = {
+          lang: key,
+          url: value
+        }
+        const links_: Links = {
+          url:    undefined,
+          links:  []
+        }
+        links_.links.push(link)
+        // [ℹ] EN is main
+        if (key == 'en') {
+          links_.url = value
+        }
+        tournaments_links.set(league_id, links_)
+      }
+    }
   }
+
+  const fixtures_links = new Map <number, Links> ()
 
   // [ℹ] use fixtures urls to generate
   // [ℹ] additional URL combninations
+  for (const iterator of data.historic_fixtures) {
 
+    // [ℹ] [depreceated] domestic ONLY check
+    // [ℹ] [new] published ONLY check - 14/09/2022
+    if (
+      iterator.publish_status == "draft" || 
+      iterator.urls == undefined
+    ) {
+      continue
+    }
 
-  const uniqArray = [...new Set(urlsArray)];
-  sitemapSave(uniqArray)
+    const fixture_id = iterator?.id;
+
+    for (let [key, value] of Object.entries(iterator.urls)) {
+      value = value.replace('https://scores.betarena.com/', '');
+      if (fixtures_links.has(fixture_id)) {
+        const existing_links = fixtures_links.get(fixture_id)
+        // [ℹ] EN is main
+        if (key == 'en') {
+          existing_links.url = value
+        }
+        const link: Alt_Links = {
+          url: value,
+          lang: key
+        }
+        existing_links.links.push(link)
+        fixtures_links.set(fixture_id, existing_links)
+      }
+      else {
+        const link: Alt_Links = {
+          lang: key,
+          url: value
+        }
+        const links_: Links = {
+          url:    undefined,
+          links:  []
+        }
+        links_.links.push(link)
+        // [ℹ] EN is main
+        if (key == 'en') {
+          links_.url = value
+        }
+        fixtures_links.set(fixture_id, links_)
+      }
+    }
+
+  }
+
+  urlsArray = [
+    ...urlsArray,
+    ...Array.from(lang_links.values()),
+    ...Array.from(sport_links.values()),
+    ...Array.from(country_links.values()),
+    ...Array.from(tournaments_links.values()),
+    ...Array.from(fixtures_links.values())
+  ]
+
+  if (dev) console.log(`lang_links size: ${lang_links.size}`)
+  if (dev) console.log(`sport_links size: ${sport_links.size}`)
+  if (dev) console.log(`country_links size: ${country_links.size}`)
+  if (dev) console.log(`tournaments_links size: ${tournaments_links.size}`)
+  if (dev) console.log(`fixtures_links size: ${fixtures_links.size}`)
+  if (dev) console.log(`urlsArray length: ${urlsArray.length}`)
+
+  // const uniqArray = [...new Set(urlsArray)];
+  await sitemapSave_2(urlsArray)
+
+  // [🐛] debug
+  // if (dev) {
+  //   const data = JSON.stringify(urlsArray, null, 4)
+  //   fs.writeFile(`./datalog/sitemap_uniqArray.json`, data, err => {
+  //     if (err) {
+  //       console.error(err);
+  //     }
+  //   });
+  // }
 
   // deleteCacheSitemapURLs();
-  for (const url of uniqArray) {
-    cacheSitemapURLs(url)
-  }
+  // for (const url of uniqArray) {
+  //   cacheSitemapURLs(url)
+  // }
 }
 
 async function tournaments_page_generation(
@@ -428,7 +693,9 @@ async function sitemapSave(
   })
 
   // [ℹ] return a promise that resolves with your XML string
-  const sitemapData = await streamToPromise(Readable.from(urlSitemapObjArr).pipe(stream)).then((data) =>
+  const sitemapData = await streamToPromise(
+  Readable.from(urlSitemapObjArr).pipe(stream))
+  .then((data) =>
     data.toString()
   )
 
@@ -441,4 +708,96 @@ async function sitemapSave(
     }
   });
   
+}
+
+async function sitemapSave_2(
+  uniqArray: Links[]
+) {
+
+  const urlSitemapObjArr: {
+    url: string
+    changefreq: 'daily'
+    priority: number
+  }[] = []
+
+  for (const link of uniqArray) {
+    urlSitemapObjArr.push({
+      ...link,
+      changefreq: 'daily',
+      priority: 0.3
+    })
+  }
+
+  const limit = 50000;
+  let offset = 0;
+  let count = 0;
+  const sitemapArrLoc: string[] = []
+  const host = 'https://scores.betarena.com/'
+
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+    const tempSitemapUrls = urlSitemapObjArr.slice(offset, offset + limit);
+
+    // [ℹ] exit
+    if (tempSitemapUrls.length == 0) {
+      if (dev) console.log(`exiting loop 1`);
+      break;
+    }
+
+    const stream = new SitemapStream({ 
+      hostname: host,
+      xmlns: { // trim the xml namespace
+        news: false, // flip to false to omit the xml namespace for news
+        xhtml: true,
+        image: false,
+        video: false,
+        custom: [
+          'xmlns:xhtml="http://www.w3.org/TR/xhtml11/xhtml11_schema.html"'
+        ]
+      }
+    })
+
+    // TODO: Find a way to get the ".gz" compression working
+    // FIXME: 
+
+    // NOTE: not working "sitemap" with "links" fields
+    // for (const iterator of tempSitemapUrls) {
+    //   stream.write(iterator)
+    // }
+    // stream
+    //   .pipe(createGzip())
+    //   .pipe(fs.createWriteStream(`./static/sitemaps/sitemap-${count}.xml.gz`));
+
+    // NOTE: alternative method
+    // [ℹ] return a promise that resolves with your XML string
+    const sitemapData = await streamToPromise(
+      Readable.from(tempSitemapUrls).pipe(stream))
+      .then((data) =>
+        data.toString()
+      )
+    stream.end()
+  
+    const formattedXml = format(sitemapData);
+  
+    // [ℹ] persist to sitemap.xml;
+    fs.writeFile(`./static/sitemaps/sitemap-${count}.xml`, formattedXml, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+
+    sitemapArrLoc.push(`sitemaps/sitemap-${count}.xml`)
+    offset = offset + limit;
+    count++;
+  }
+
+  // [ℹ] generate sitemap-index's
+  const smis = new SitemapIndexStream({level: 'warn'})
+  for (const iterator of sitemapArrLoc) {
+    smis.write({url: host +iterator})
+  }
+  smis
+    .pipe(createGzip())
+    .pipe(fs.createWriteStream('./static/sitemaps/sitemap-index.xml.gz'));
+  smis.end()
 }
