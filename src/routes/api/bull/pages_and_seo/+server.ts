@@ -1,5 +1,5 @@
 import { dev } from '$app/environment'
-import redis from "$lib/redis/init"
+import redis from "$lib/redis/init_dev"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { removeDiacritics } from '$lib/utils/languages'
 import fs from 'fs';
@@ -431,7 +431,7 @@ async function sitemap_generation(
     const league_id: number = iterator?.tournament_id
 
     for (let [key, value] of Object.entries(iterator.urls)) {
-      value = value.replace('https://scores.betarena.com/', '');
+      value = value.replace('https://scores.betarena.com', '');
       if (tournaments_links.has(league_id)) {
         const existing_links = tournaments_links.get(league_id)
         // FIXME: precautionary validation
@@ -491,7 +491,7 @@ async function sitemap_generation(
     const fixture_id = iterator?.id;
 
     for (let [key, value] of Object.entries(iterator.urls)) {
-      value = value.replace('https://scores.betarena.com/', '');
+      value = value.replace('https://scores.betarena.com', '');
       if (fixtures_links.has(fixture_id)) {
         const existing_links = fixtures_links.get(fixture_id)
         // [ℹ] EN is main
@@ -541,23 +541,30 @@ async function sitemap_generation(
   if (dev) console.log(`fixtures_links size: ${fixtures_links.size}`)
   if (dev) console.log(`urlsArray length: ${urlsArray.length}`)
 
-  // const uniqArray = [...new Set(urlsArray)];
   await sitemapSave_2(urlsArray)
 
+  let cache_unique_arr = []
+  for (const urls of urlsArray) {
+    for (const links of urls.links) {
+      cache_unique_arr.push(links?.url)
+    }
+  }
+  cache_unique_arr = [...new Set(cache_unique_arr)];
+
   // [🐛] debug
-  // if (dev) {
-  //   const data = JSON.stringify(urlsArray, null, 4)
-  //   fs.writeFile(`./datalog/sitemap_uniqArray.json`, data, err => {
-  //     if (err) {
-  //       console.error(err);
-  //     }
-  //   });
-  // }
+  if (dev) {
+    const data = JSON.stringify(cache_unique_arr, null, 4)
+    fs.writeFile(`./datalog/cache_unique_arr.json`, data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
 
   // deleteCacheSitemapURLs();
-  // for (const url of uniqArray) {
-  //   cacheSitemapURLs(url)
-  // }
+  for (const url of cache_unique_arr) {
+    cacheSitemapURLs(url)
+  }
 }
 
 async function tournaments_page_generation(
