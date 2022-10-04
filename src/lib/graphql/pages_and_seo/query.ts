@@ -28,6 +28,7 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       sports_translation
     }
     scores_football_countries {
+      id
       name
     }
     scores_tournaments(limit: 100) {
@@ -52,6 +53,7 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       status
       venue_name_j: data(path: "$.venue.data.name")
       venue_city_j: data(path: "$.venue.data.city")
+      country_id_j: data(path: "$.league.data.country_id")
     }
   }
 `;
