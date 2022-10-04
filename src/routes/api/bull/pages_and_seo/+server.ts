@@ -9,12 +9,10 @@ import { error, json } from '@sveltejs/kit';
 
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
-const { SitemapStream, streamToPromise, simpleSitemapAndIndex, SitemapIndexStream } = require('sitemap')
+const { SitemapStream, streamToPromise, simpleSitemapAndIndex, SitemapIndexStream } = require('sitemap');
 const { Readable } = require('stream')
 const format = require('xml-formatter');
-const { createGzip } = require('zlib')
-// const { createReadStream, createWriteStream } = require('fs');
-// const { resolve } = require('path');
+const { createGzip } = require('zlib');
 
 import { 
   REDIS_CACHE_PAGES_AND_SEO 
@@ -79,7 +77,7 @@ export async function POST(): Promise < unknown > {
     
     await sitemap_generation(response)
     // await homepage_seo(langArray, response)
-    // await tournaments_seo(langArray, response)
+    // await tournaments_page_seo(langArray, response)
     // await tournaments_page_generation(response)
 
     for (const log of logs) {
@@ -127,7 +125,7 @@ async function cacheTournamentsPageSEOData (
 ) {
   try {
     //[ℹ] store (cache) league_list response,
-    await redis.hset('tournaments_seo', lang, JSON.stringify(json_cache));
+    await redis.hset('tournaments_page_seo', lang, JSON.stringify(json_cache));
   } 
   catch (e) {
     console.debug('❌ unable to cache - seo / tournaments page', e);
@@ -201,7 +199,7 @@ cacheQueuePageSeo.process (async function (job, done) {
   
   await sitemap_generation(response)
   await homepage_seo(langArray, response)
-  await tournaments_seo(langArray, response)
+  await tournaments_page_seo(langArray, response)
   await tournaments_page_generation(response)
 
   const t1 = performance.now();
@@ -643,7 +641,7 @@ async function homepage_seo(
 
 }
 
-async function tournaments_seo(
+async function tournaments_page_seo(
   langArray: string[], 
   data: BETARENA_HASURA_QUERY_pages_and_seo
 ) {
@@ -670,6 +668,11 @@ async function tournaments_seo(
     await cacheTournamentsPageSEOData(lang_, finalCacheObj);
   }
 
+}
+
+async function fixtures_page_seo(
+) {
+  return
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
