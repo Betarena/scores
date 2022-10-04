@@ -1331,3 +1331,18 @@ export interface BETARENA_HASURA_scores_widget_tournament_about_translations {
 } export interface WidgetTournamentAboutData {
   about_the_league?:      string;
 }
+
+/**
+ * [ℹ] HASURA: scores_endpoints_translations (&)
+*/
+export interface BETARENA_HASURA_scores_endpoints_translations {
+  countries_translation?: { [key: string]: string };
+  lang?:                  string;
+  sport?:                 string;
+  sports_translation?:    EndpointSportsTranslation;
+  title?:                 string;
+  type?:                  string;
+  id?:                    number;
+} export interface EndpointSportsTranslation {
+  football?: string;
+}

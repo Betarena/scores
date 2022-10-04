@@ -1,4 +1,7 @@
 import type { 
+  BETARENA_HASURA_historic_fixtures,
+  BETARENA_HASURA_scores_endpoints_translations,
+  BETARENA_HASURA_scores_football_countries,
   BETARENA_HASURA_scores_hreflang, 
   BETARENA_HASURA_scores_seo_block_homepage, 
   BETARENA_HASURA_scores_seo_homepage, 
@@ -40,6 +43,9 @@ export interface BETARENA_HASURA_QUERY_pages_and_seo {
   scores_seo_homepage:        BETARENA_HASURA_scores_seo_homepage[]
   scores_seo_tournaments:     BETARENA_HASURA_scores_seo_tournaments[]
   scores_tournaments:         BETARENA_HASURA_scores_tournaments[]
+  historic_fixtures:          BETARENA_HASURA_historic_fixtures[]
+  scores_endpoints_translations: BETARENA_HASURA_scores_endpoints_translations[]
+  scores_football_countries:  BETARENA_HASURA_scores_football_countries[]
 }
 
 // export interface Single_Tournament_Data_Type {
