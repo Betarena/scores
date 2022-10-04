@@ -85,7 +85,7 @@ export async function POST(): Promise < unknown > {
     // await tournaments_page_generation(response)
     // await tournaments_page_seo(langArray, response)
     // [ℹ] fixtures-pages
-    // await fixtures_page_seo(langArray, response)
+    await fixtures_page_seo(langArray, response)
     await fixtures_page_generation(response)
 
     for (const log of logs) {

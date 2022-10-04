@@ -31,7 +31,7 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       id
       name
     }
-    scores_tournaments(limit: 100) {
+    scores_tournaments(limit: 1) {
       author
       country
       date
@@ -47,10 +47,18 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       widgets
       urls
     }
-    historic_fixtures(limit: 50) {
+    historic_fixtures
+    (
+      # limit: 50,
+      where: {
+        id: {
+          _eq: 18535246
+        }
+      }
+    ) {
       id
       urls
-      status
+      publish_status
       venue_name_j: data(path: "$.venue.data.name")
       venue_city_j: data(path: "$.venue.data.city")
       country_id_j: data(path: "$.league.data.country_id")
