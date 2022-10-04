@@ -877,6 +877,8 @@ export interface BETARENA_HASURA_historic_fixtures {
   tip_link_wp?:     null;
   fixture_link_wp?: null;
   media_link?:      null;
+  urls?:           Urls;
+  publish_status?: PublishStatus;
 } export interface WelcomeData {
   id?:                      number;
   leg?:                     Leg;
@@ -1276,6 +1278,17 @@ export interface BETARENA_HASURA_historic_fixtures {
 } export interface MediaLinkTeamsName {
   local?:   string;
   visitor?: string;
+} export enum PublishStatus {
+  Draft = "draft",
+  Published = "published"
+} export interface Urls {
+  br?: string;
+  en?: string;
+  es?: string;
+  it?: string;
+  pt?: string;
+  ro?: string;
+  se?: string;
 }
 
 
@@ -1345,4 +1358,33 @@ export interface BETARENA_HASURA_scores_endpoints_translations {
   id?:                    number;
 } export interface EndpointSportsTranslation {
   football?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_fixtures (&)
+*/
+export interface BETARENA_HASURA_scores_seo_fixtures {
+  lang?:         string;
+  main_data?:    Main_Data;
+  opengraph?:    FixturesOpengraph;
+  sports_type?:  string;
+  twitter_card?: FixturesTwitterCard;
+} export interface FixturesOpengraph {
+  url?:         string;
+  type?:        string;
+  title?:       string;
+  images?:      FixturesImage[];
+  locale?:      string;
+  description?: string;
+} export interface FixturesImage {
+  alt?:    string;
+  url?:    string;
+  width?:  number;
+  height?: number;
+} export interface FixturesTwitterCard {
+  site?:        string;
+  image?:       string;
+  title?:       string;
+  imageAlt?:    string;
+  description?: string;
 }

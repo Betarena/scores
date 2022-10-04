@@ -22,7 +22,9 @@ import type {
   Cache_Single_Homepage_SEO_Translation_Response, 
   Cache_Single_Tournaments_Data_Page_Translation_Response, 
   Cache_Single_Tournaments_SEO_Translation_Response, 
-  BETARENA_HASURA_QUERY_pages_and_seo 
+  BETARENA_HASURA_QUERY_pages_and_seo, 
+  REDIS_CACHE_SINGLE_fixtures_seo_response,
+  REDIS_CACHE_SINGLE_fixtures_page_info_response
 } from '$lib/models/pages_and_seo/types'
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -75,10 +77,16 @@ export async function POST(): Promise < unknown > {
     // [ℹ] push "EN"
     langArray.push('en')
     
+    // [ℹ] platform
     await sitemap_generation(response)
+    // [ℹ] homepage
     // await homepage_seo(langArray, response)
-    // await tournaments_page_seo(langArray, response)
+    // [ℹ] tournaments-pages
     // await tournaments_page_generation(response)
+    // await tournaments_page_seo(langArray, response)
+    // [ℹ] fixtures-pages
+    // await fixtures_page_seo(langArray, response)
+    await fixtures_page_generation(response)
 
     for (const log of logs) {
       console.log(log)
@@ -132,13 +140,12 @@ async function cacheTournamentsPageSEOData (
   }
 }
 
-async function cacheTournamentsPageData (
-  url: string, 
+async function cache_fixtures_seo (
+  lang: string, 
   json_cache: any
 ) {
   try {
-    //[ℹ] store (cache) league_list response,
-    await redis.hset('tournaments_page_info', url, JSON.stringify(json_cache));
+    await redis.hset('fixtures_seo', lang, JSON.stringify(json_cache));
   } 
   catch (e) {
     console.debug('❌ unable to cache - seo / tournaments page', e);
@@ -154,6 +161,31 @@ async function cacheSitemapURLs (
   } 
   catch (e) {
     console.debug('❌ unable to cache - seo / sitemap', e);
+  }
+}
+
+async function cache_tournaments_page_info (
+  url: string, 
+  json_cache: any
+) {
+  try {
+    //[ℹ] store (cache) league_list response,
+    await redis.hset('tournaments_page_info', url, JSON.stringify(json_cache));
+  } 
+  catch (e) {
+    console.debug('❌ unable to cache - seo / tournaments page', e);
+  }
+}
+
+async function cache_fixtures_page_info (
+  url: string, 
+  json_cache: any
+) {
+  try {
+    await redis.hset('fixtures_page_info', url, JSON.stringify(json_cache));
+  } 
+  catch (e) {
+    console.debug('❌ unable to cache - seo / tournaments page', e);
   }
 }
 
@@ -607,7 +639,111 @@ async function tournaments_page_generation(
     // [ℹ] identify url alternate-copies (translations) 
     finalCacheObj.alternate_data = data.scores_tournaments.filter(t => t.tournament_id === tournament_id)
 
-    await cacheTournamentsPageData(url, finalCacheObj);
+    await cache_tournaments_page_info(url, finalCacheObj);
+  }
+
+}
+
+async function fixtures_page_generation(
+  data: BETARENA_HASURA_QUERY_pages_and_seo
+) {
+
+  // [ℹ] per [LANG - URL]
+  // [ℹ] no-cache-deletion-required
+
+  const fixtures_links = new Map <number, Links> ()
+
+  for (const iterator of data.historic_fixtures) {
+
+    // [ℹ] [depreceated] domestic ONLY check
+    // [ℹ] [new] published ONLY check - 14/09/2022
+    if (
+      iterator.publish_status == "draft" || 
+      iterator.urls == undefined
+    ) {
+      continue
+    }
+
+    // [ℹ] /{sport}/{fixture}
+    // [ℹ] /{lang}/{sport}/{fixture}
+
+    const fixture_id = iterator?.id;
+    const tournament_id = iterator?.league_id;
+    const league_name = iterator?.league_name;
+
+    for (const [key, value] of Object.entries(iterator.urls)) {
+
+      const url_value = value.replace('https://scores.betarena.com', '');
+
+      const finalCacheObj: REDIS_CACHE_SINGLE_fixtures_page_info_response = {}
+
+      finalCacheObj.lang = key
+      finalCacheObj.url = url_value
+      finalCacheObj.data = {
+        league_name: league_name,
+        widgets: [],
+        home_team_name: iterator?.home_team_name,
+        away_team_name: iterator?.away_team_name,
+        id: fixture_id,
+        fixture_day: iterator?.fixture_day,
+        venue_city: iterator?.venue_city_j,
+        venue_name: iterator?.venue_name_j,
+      }
+      finalCacheObj.alternate_data = data.scores_tournaments.filter(t => t.tournament_id === tournament_id)
+      
+      await cache_fixtures_page_info(url_value, finalCacheObj);
+    }
+
+  }
+
+  // [ℹ] use fixtures urls to generate
+  // [ℹ] additional URL combninations
+  for (const iterator of data.historic_fixtures) {
+
+    // [ℹ] [depreceated] domestic ONLY check
+    // [ℹ] [new] published ONLY check - 14/09/2022
+    if (
+      iterator.publish_status == "draft" || 
+      iterator.urls == undefined
+    ) {
+      continue
+    }
+
+    const fixture_id = iterator?.id;
+
+    for (let [key, value] of Object.entries(iterator.urls)) {
+      value = value.replace('https://scores.betarena.com', '');
+      if (fixtures_links.has(fixture_id)) {
+        const existing_links = fixtures_links.get(fixture_id)
+        // [ℹ] EN is main
+        if (key == 'en') {
+          existing_links.url = value
+        }
+        const link: Alt_Links = {
+          url: value,
+          lang: key
+        }
+        existing_links.links.push(link)
+        fixtures_links.set(fixture_id, existing_links)
+      }
+      else {
+        const link: Alt_Links = {
+          lang: key,
+          url: value
+        }
+        const links_: Links = {
+          url:    undefined,
+          links:  []
+        }
+        links_.links.push(link)
+        // [ℹ] EN is main
+        if (key == 'en') {
+          links_.url = value
+        }
+        fixtures_links.set(fixture_id, links_)
+      }
+    }
+
   }
 
 }
@@ -671,7 +807,31 @@ async function tournaments_page_seo(
 }
 
 async function fixtures_page_seo(
+  langArray: string[], 
+  data: BETARENA_HASURA_QUERY_pages_and_seo
 ) {
+  // [ℹ] per [LANG]
+  // [ℹ] no-cache-deletion-required
+
+  const finalCacheObj: REDIS_CACHE_SINGLE_fixtures_seo_response = {
+    lang: undefined,
+    hreflang: undefined,
+    main_data: undefined,
+    twitter_card: undefined,
+    opengraph: undefined
+  }
+
+  for (const lang_ of langArray) {
+    
+    finalCacheObj.lang = lang_
+    finalCacheObj.main_data = data.scores_seo_fixtures.find(( { lang } ) => lang_ === lang).main_data;
+    finalCacheObj.twitter_card = data.scores_seo_fixtures.find(( { lang } ) => lang_ === lang).twitter_card;
+    finalCacheObj.opengraph = data.scores_seo_fixtures.find(( { lang } ) => lang_ === lang).opengraph;
+    finalCacheObj.hreflang = data.scores_hreflang
+
+    await cache_fixtures_seo(lang_, finalCacheObj);
+  }
+
   return
 }
 
