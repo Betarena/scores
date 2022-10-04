@@ -651,15 +651,13 @@ async function fixtures_page_generation(
   // [ℹ] per [LANG - URL]
   // [ℹ] no-cache-deletion-required
 
-  const fixtures_links = new Map <number, Links> ()
-
   for (const iterator of data.historic_fixtures) {
 
     // [ℹ] [depreceated] domestic ONLY check
     // [ℹ] [new] published ONLY check - 14/09/2022
     if (
-      iterator.publish_status == "draft" || 
-      iterator.urls == undefined
+      iterator?.publish_status == "draft" || 
+      iterator?.urls == undefined
     ) {
       continue
     }
@@ -673,13 +671,29 @@ async function fixtures_page_generation(
 
     for (const [key, value] of Object.entries(iterator.urls)) {
 
-      const url_value = value.replace('https://scores.betarena.com', '');
-
       const finalCacheObj: REDIS_CACHE_SINGLE_fixtures_page_info_response = {}
 
-      finalCacheObj.lang = key
+      const url_value = value.replace('https://scores.betarena.com', '');
+      const lang_ = key
+
+      const country =
+        iterator?.country_id_j == undefined
+          ? undefined
+          : data?.scores_football_countries.find( ({ id }) => id == iterator?.country_id_j)?.name
+
+      const country_t =
+         country == undefined
+          ? undefined
+          : data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.countries_translation[country]
+
+      const sport =
+        data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.sports_translation['football']
+
+      finalCacheObj.lang = lang_
       finalCacheObj.url = url_value
       finalCacheObj.data = {
+        sport: sport,
+        country: country_t,
         league_name: league_name,
         widgets: [],
         home_team_name: iterator?.home_team_name,
@@ -689,59 +703,9 @@ async function fixtures_page_generation(
         venue_city: iterator?.venue_city_j,
         venue_name: iterator?.venue_name_j,
       }
-      finalCacheObj.alternate_data = data.scores_tournaments.filter(t => t.tournament_id === tournament_id)
+      finalCacheObj.alternate_data = iterator?.urls
       
       await cache_fixtures_page_info(url_value, finalCacheObj);
-    }
-
-  }
-
-  // [ℹ] use fixtures urls to generate
-  // [ℹ] additional URL combninations
-  for (const iterator of data.historic_fixtures) {
-
-    // [ℹ] [depreceated] domestic ONLY check
-    // [ℹ] [new] published ONLY check - 14/09/2022
-    if (
-      iterator.publish_status == "draft" || 
-      iterator.urls == undefined
-    ) {
-      continue
-    }
-
-    const fixture_id = iterator?.id;
-
-    for (let [key, value] of Object.entries(iterator.urls)) {
-      value = value.replace('https://scores.betarena.com', '');
-      if (fixtures_links.has(fixture_id)) {
-        const existing_links = fixtures_links.get(fixture_id)
-        // [ℹ] EN is main
-        if (key == 'en') {
-          existing_links.url = value
-        }
-        const link: Alt_Links = {
-          url: value,
-          lang: key
-        }
-        existing_links.links.push(link)
-        fixtures_links.set(fixture_id, existing_links)
-      }
-      else {
-        const link: Alt_Links = {
-          lang: key,
-          url: value
-        }
-        const links_: Links = {
-          url:    undefined,
-          links:  []
-        }
-        links_.links.push(link)
-        // [ℹ] EN is main
-        if (key == 'en') {
-          links_.url = value
-        }
-        fixtures_links.set(fixture_id, links_)
-      }
     }
 
   }
