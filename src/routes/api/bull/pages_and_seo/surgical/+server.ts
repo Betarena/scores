@@ -188,7 +188,8 @@ async function main(
       return;
     }
     logs.push(`remove URLs for: ${data?.data?.id}`)
-    for (const [key, value] of Object.entries(data?.data?.urls)) {
+    for (let [key, value] of Object.entries(data?.data?.urls)) {
+      value = value.replace('https://scores.betarena.com', '');
       await del_target_sitemap_url(value)
       await del_target_fixture_page_url(value)
     }
