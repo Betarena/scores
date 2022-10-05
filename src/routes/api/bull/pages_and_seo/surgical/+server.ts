@@ -1,7 +1,6 @@
 import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
-import { removeDiacritics } from '$lib/utils/languages'
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
@@ -15,15 +14,11 @@ const format = require('xml-formatter');
 const { createGzip } = require('zlib');
 
 import { 
-  REDIS_CACHE_PAGES_AND_SEO, REDIS_CACHE_PAGES_AND_SEO_FIXTURE_TARGET 
+  REDIS_CACHE_PAGES_AND_SEO_FIXTURE_TARGET 
 } from '$lib/graphql/pages_and_seo/query'
 
 import type { 
-  Cache_Single_Homepage_SEO_Translation_Response, 
-  Cache_Single_Tournaments_Data_Page_Translation_Response, 
-  Cache_Single_Tournaments_SEO_Translation_Response, 
   BETARENA_HASURA_QUERY_pages_and_seo, 
-  REDIS_CACHE_SINGLE_fixtures_seo_response,
   REDIS_CACHE_SINGLE_fixtures_page_info_response
 } from '$lib/models/pages_and_seo/types'
 import type { BETARENA_HASURA_EVENT_update_fixture_sitemap } from '$lib/models/hasura';
@@ -38,7 +33,7 @@ const settings = {
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
 const cacheQueuePageSeo = new Bull (
-  'cacheQueuePageSeo', 
+  'cacheQueuePageSeoFixture', 
   { 
     redis: { 
       port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
@@ -49,8 +44,8 @@ const cacheQueuePageSeo = new Bull (
     settings: settings
   }
 );
-const cacheQueueProcessName = "cacheQueuePageSeo"
-const cacheTarget = "REDIS CACHE | pages & seo"
+const cacheQueueProcessName = "cacheQueuePageSeoFixture"
+const cacheTarget = "REDIS CACHE | pages & seo (surgical)"
 let logs = []
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -192,9 +187,10 @@ async function main(
       logs.push(`No URLs`)
       return;
     }
+    logs.push(`remove URLs for: ${data?.data?.id}`)
     for (const [key, value] of Object.entries(data?.data?.urls)) {
-      del_target_sitemap_url(value)
-      del_target_fixture_page_url(value)
+      await del_target_sitemap_url(value)
+      await del_target_fixture_page_url(value)
     }
     return
   }
@@ -312,7 +308,7 @@ async function sitemap_generation(
   // await sitemapSave(cache_unique_arr)
 
   for (const url of cache_unique_arr) {
-    cache_sitemap_url(url)
+    await cache_sitemap_url(url)
   }
 }
 
