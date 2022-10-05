@@ -1,5 +1,5 @@
 import { dev } from '$app/environment'
-import redis from "$lib/redis/init_dev"
+import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { removeDiacritics } from '$lib/utils/languages'
 import fs from 'fs';
@@ -80,10 +80,10 @@ export async function POST(): Promise < unknown > {
     // [ℹ] platform
     await sitemap_generation(response)
     // [ℹ] homepage
-    // await homepage_seo(langArray, response)
+    await homepage_seo(langArray, response)
     // [ℹ] tournaments-pages
-    // await tournaments_page_generation(response)
-    // await tournaments_page_seo(langArray, response)
+    await tournaments_page_generation(response)
+    await tournaments_page_seo(langArray, response)
     // [ℹ] fixtures-pages
     await fixtures_page_seo(langArray, response)
     await fixtures_page_generation(response)
@@ -229,10 +229,16 @@ cacheQueuePageSeo.process (async function (job, done) {
   // [ℹ] push "EN"
   langArray.push('en')
   
+  // [ℹ] platform
   await sitemap_generation(response)
+  // [ℹ] homepage
   await homepage_seo(langArray, response)
-  await tournaments_page_seo(langArray, response)
+  // [ℹ] tournaments-pages
   await tournaments_page_generation(response)
+  await tournaments_page_seo(langArray, response)
+  // [ℹ] fixtures-pages
+  await fixtures_page_seo(langArray, response)
+  await fixtures_page_generation(response)
 
   const t1 = performance.now();
 
@@ -591,7 +597,10 @@ async function sitemap_generation(
     });
   }
 
-  // deleteCacheSitemapURLs();
+  await sitemapSave(cache_unique_arr)
+  // await sitemapSave_2(urlsArray)
+
+  deleteCacheSitemapURLs();
   for (const url of cache_unique_arr) {
     cacheSitemapURLs(url)
   }
@@ -610,6 +619,8 @@ async function tournaments_page_generation(
     data: undefined,
     alternate_data: undefined,
   }
+
+  deleteCacheTournamentsPageData()
 
   for (const iterator of data.scores_tournaments) {
 
@@ -676,21 +687,15 @@ async function fixtures_page_generation(
       const url_value = value.replace('https://scores.betarena.com', '');
       const lang_ = key
 
-      console.log("iterator?.country_id_j", iterator?.country_id_j)
-
       const country =
         iterator?.country_id_j == undefined
           ? undefined
           : data?.scores_football_countries.find( ({ id }) => id == iterator?.country_id_j)?.name
 
-      console.log("country", country)
-
       const country_t =
          country == undefined
           ? undefined
           : data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.countries_translation[country]
-
-      console.log("country_t",   country_t)
 
       const sport =
         data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.sports_translation['football']

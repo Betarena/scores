@@ -135,7 +135,7 @@ async function get_cache_fixtures_seo (url: string): Promise < any | Record < st
 
 async function get_cache_fixtures_info (url: string): Promise < any | Record < string, never > > {
   try {
-    const cached: string = await redis.hget('cache_fixtures_page_info', url);
+    const cached: string = await redis.hget('fixtures_page_info', url);
     if (cached) {
       const parsed: any = JSON.parse(cached);
       return parsed;
