@@ -28,7 +28,7 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       sports_type
       twitter_card
     }
-    scores_endpoints_translations(limit: 10) {
+    scores_endpoints_translations {
       countries_translation
       lang
       sport
@@ -38,7 +38,7 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       id
       name
     }
-    scores_tournaments(limit: 1) {
+    scores_tournaments {
       author
       country
       date
