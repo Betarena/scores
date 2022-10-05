@@ -814,7 +814,8 @@
       // [ℹ] search fixtures by target data
       // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
       // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
-      let mod_end_week = week_end
+      // if (dev) console.log("week_end", week_end)
+      let mod_end_week = new Date(target_week.e_date)
       mod_end_week.setHours(mod_end_week.getHours() + 24)
       // if (dev) console.log("week_end", week_end)
       // if (dev) console.log("week_start", week_start)
@@ -936,7 +937,7 @@
       // [ℹ] search fixtures by target data
       // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
       // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
-      let mod_end_week = week_end
+      let mod_end_week = new Date(target_week.e_date)
       mod_end_week.setHours(mod_end_week.getHours() + 24)
       // if (dev) console.log("week_end", week_end)
       // if (dev) console.log("week_start", week_start)
