@@ -274,16 +274,15 @@ async function sitemap_generation(
 
   // [ℹ] per [LANG - URL]
   // [ℹ] no-cache-deletion-required
-  // [ℹ] TTL of 24h
+  // [ℹ] TTL of 24h [?]
 
   let urlsArray: Links[] = []
 
+  // [ℹ] use tournaments urls to generate
+  // [ℹ] MAIN URL combninations
   const lang_links = new Map<string, Links>()
   const sport_links = new Map<string, Links>()
   const country_links = new Map<string, Links>()
-
-  // [ℹ] use tournaments urls to generate
-  // [ℹ] MAIN URL combninations
   for (const iterator of data.scores_endpoints_translations) {
     
     let url: string
@@ -445,10 +444,9 @@ async function sitemap_generation(
 
   }
 
-  const tournaments_links = new Map <number, Links>()
-
   // [ℹ] use tournaments urls to generate
   // [ℹ] additional URL combninations
+  const tournaments_links = new Map <number, Links>()
   for (const iterator of data.scores_tournaments) {
 
     /*
@@ -509,10 +507,9 @@ async function sitemap_generation(
     }
   }
 
-  const fixtures_links = new Map <number, Links> ()
-
   // [ℹ] use fixtures urls to generate
   // [ℹ] additional URL combninations
+  const fixtures_links = new Map <number, Links> ()
   for (const iterator of data.historic_fixtures) {
 
     // [ℹ] [depreceated] domestic ONLY check
