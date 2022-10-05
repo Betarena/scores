@@ -22,8 +22,18 @@
   $: PAGE_SEO                       = $page.data.PAGE_SEO;
   $: FIXTURE_INFO                   = $page.data.FIXTURE_INFO;
 
-  // TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
+  $: country_link =
+    FIXTURE_INFO?.data?.country == undefined
+      ? undefined
+      : FIXTURE_INFO?.data?.country.toLowerCase().replace(/\s/g, '-').replace(/\./g, '')
+  ;
+  $: league_name_link =
+    FIXTURE_INFO?.data?.league_name == undefined
+      ? undefined
+      : FIXTURE_INFO?.data?.league_name.toLowerCase().replace(/\s/g, '-').replace(/\./g, '')
+  ;
 
+  // TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
   // [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
   let current_lang: string = $userBetarenaSettings.lang;
 	$: refresh_lang = $userBetarenaSettings.lang;
@@ -33,13 +43,9 @@
     current_lang != refresh_lang && 
     browser
   ) {
-    // [ℹ] update lang;
     current_lang = refresh_lang
-    console.log("current_lang", current_lang)
     let newURL = FIXTURE_INFO.alternate_data[current_lang]
-    console.log("newURL", newURL)
     newURL = newURL.replace('https://scores.betarena.com', '')
-    console.log("newURL", newURL)
 
     // [ℹ] navigate [options];
     // invalidate('/api/cache/tournaments/cache-data.json');
@@ -52,7 +58,8 @@
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- [ℹ] adding SEO-META-TAGS for (this) PAGE 
+<!-- 
+[ℹ] adding SEO-META-TAGS for (this) PAGE 
 -->
 {#if PAGE_SEO}
   <SvelteSeo
@@ -67,12 +74,55 @@
   />
 {/if}
 
+<!-- 
+[ℹ] adding HREF-LANG-META-TAGS for (this) PAGE 
+-->
+<svelte:head>
+  {#if PAGE_SEO}
+    {#each PAGE_SEO.hreflang as item}
+      {#each Object.entries(FIXTURE_INFO.alternate_data) as [lang, link]}
+        {#if item.link == lang}
+          <!-- 
+            [ℹ] expected alternate example
+            <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+            <link rel="alternate" hrefLang="it" href="https://scores.betarena.com/it/calcio/aston-villa-southampton-50977>
+            <link rel="alternate" hrefLang="es" href="https://scores.betarena.com/es/futbol/aston-villa-southampton-50977>
+            <link rel="alternate" hrefLang="pt" href="https://scores.betarena.com/pt/futebol/aston-villa-southampton-50977>
+            <link rel="alternate" hrefLang=""pt-BR" href="https://scores.betarena.com/br/futebol/aston-villa-southampton-50977>
+            <link rel="alternate" hrefLang="ro" href="https://scores.betarena.com/ro/fotbal/aston-villa-southampton-50977>
+            <link rel="alternate" hrefLang="se" href="https://scores.betarena.com/se/fotboll/aston-villa-southampton-50977>
+            <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+            <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          -->
+          <link 
+            rel="alternate" 
+            hreflang={item.hreflang} 
+            href={link} />
+        {/if}
+        {#if item.link == null && lang == 'en'}
+          <!-- 
+            [ℹ] EN here
+          -->
+          <link 
+            rel="alternate" 
+            hreflang={item.hreflang} 
+            href={link} />
+          <link 
+            rel="alternate" 
+            hreflang='en' 
+            href={link} />
+        {/if}
+      {/each}
+    {/each}
+  {/if}
+</svelte:head>
+
 <!-- ===================
 	COMPONENT HTML
 =================== -->
 
 
-<section 
+<section
   id='tournaments-page'>
 
   <!-- 
@@ -81,6 +131,8 @@
     id='tournaments-page-breadcrumbs'
     class='row-space-start m-b-20'>
 
+    <!-- 
+    [ℹ] sport -->
     <a 
       data-sveltekit-prefetch
       href={
@@ -102,12 +154,14 @@
       width="14px" height="14px"
     />
 
+    <!-- 
+    [ℹ] country -->
     <a 
       data-sveltekit-prefetch
       href={
         $page.params.lang != undefined
-          ? `/${$page.params.lang}/${$page.params.sport}/${$page.params.country}`
-          : `/${$page.params.sport}/${$page.params.country}`
+          ? `/${$page.params.lang}/${$page.params.sport}/${country_link}`
+          : `/${$page.params.sport}/${country_link}`
       }
       >
       <p
@@ -123,28 +177,49 @@
       width="14px" height="14px"
     />
 
+    <!-- 
+    [ℹ] league_name -->
+    <a 
+      data-sveltekit-prefetch
+      href={
+        $page.params.lang != undefined
+          ? `/${$page.params.lang}/${$page.params.sport}/${country_link}/${league_name_link}`
+          : `/${$page.params.sport}/${country_link}/${league_name_link}`
+      }
+      >
+      <p
+        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+        {FIXTURE_INFO?.data?.league_name}
+      </p>
+    </a>
+
+    <img
+      src="/assets/svg/tournaments/arrow-right.svg" 
+      alt="" 
+      class="m-r-10"
+      width="14px" height="14px"
+    />
+
+    <!-- 
+    [ℹ] fxiture_name -->
     <p
       class='s-14 color-white m-r-10 capitalize'>
-      {FIXTURE_INFO?.data?.league_name}
+      {FIXTURE_INFO?.data?.home_team_name}
+      vs
+      {FIXTURE_INFO?.data?.away_team_name}
     </p>
 
   </div>
 
 </section>
 
+
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
 
-<style>
 
-  /* SEO ALT. WIDGET PAGE */
-  #seo-widget-container {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
+<style>
 
   section#tournaments-page {
 		/* display: grid; */
