@@ -177,7 +177,8 @@ async function main () {
   */
 
   const current_seasons = await get_current_seasons()
-  const current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
+  let current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
+  if (dev) current_seasons_arr = [19285] // [ℹ] manual update target seasons
   if (dev) console.log(`current_seasons_arr`, current_seasons_arr)
 
   /**
@@ -616,7 +617,7 @@ async function get_target_historic_fixtures (
   t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-  
+
   // [🐛] debug
   // FIXME: some duplicates [?]
   /*
