@@ -814,14 +814,15 @@
       // [ℹ] search fixtures by target data
       // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
       // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
-      week_end.setHours(week_end.getHours() + 24)
+      let mod_end_week = week_end
+      mod_end_week.setHours(mod_end_week.getHours() + 24)
       // if (dev) console.log("week_end", week_end)
       // if (dev) console.log("week_start", week_start)
 
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_time }) => 
         new Date(fixture_time) >= week_start &&
-        new Date(fixture_time) <= week_end
+        new Date(fixture_time) <= mod_end_week
       );
 
     }
@@ -932,12 +933,18 @@
       week_end = new Date(target_week.e_date)
       week_name = parseInt(target_week.name)
 
-      week_end.setHours(week_end.getHours() + 24)
+      // [ℹ] search fixtures by target data
+      // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
+      // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
+      let mod_end_week = week_end
+      mod_end_week.setHours(mod_end_week.getHours() + 24)
+      // if (dev) console.log("week_end", week_end)
+      // if (dev) console.log("week_start", week_start)
 
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_time }) => 
         new Date(fixture_time) >= week_start &&
-        new Date(fixture_time) <= week_end
+        new Date(fixture_time) <= mod_end_week
       );
     }
 
