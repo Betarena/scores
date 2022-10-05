@@ -1,18 +1,40 @@
 import { gql } from 'graphql-request';
 
+
+/**
+ * [ℹ] GET current seasons
+*/
+export const REDIS_CACHE_FIXTURES_ODDS_DATA_0 = gql`
+  query REDIS_CACHE_FIXTURES_ODDS_DATA_0 
+    @cached 
+    (ttl: 300)
+  {
+    scores_football_seasons_details (
+      where: 
+      {
+        is_current_season: {
+          _eq: true
+        }
+      }
+    ) {
+      id
+    }
+  }
+`;
+
 /**
  * [ℹ] Tournaments / Fixtures_Odds Widget (MAIN)
  * [ℹ] Warning [⚠]
  * [ℹ] Large Query
  * [ℹ] Pagination Required
+ * [ℹ] _0 dependent
 */
 export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
   query REDIS_CACHE_FIXTURES_ODDS_DATA_1 
     (
-      $start_date: timestamp,
-      $end_date: timestamp,
       $limit: Int,
-      $offset: Int
+      $offset: Int,
+      $seasonIds: [numeric!]
     ) 
     @cached 
     (ttl: 300)
@@ -22,9 +44,8 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
 
     historic_fixtures_aggregate (
       where: {
-        fixture_day: {
-          _gte: $start_date, 
-          _lte: $end_date
+        season_id: {
+          _in: $seasonIds
         }
       }
     ) {
@@ -41,9 +62,8 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
       limit: $limit,
       offset: $offset,
       where: {
-        fixture_day: {
-          _gte: $start_date, 
-          _lte: $end_date
+        season_id: {
+          _in: $seasonIds
         }
       }
     ) {
@@ -58,6 +78,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
       tip_link_wp
       fixture_link_wp
       media_link
+      season_id
     }
   }
 `;

@@ -2,6 +2,7 @@ import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
+  REDIS_CACHE_FIXTURES_ODDS_DATA_0,
   REDIS_CACHE_FIXTURES_ODDS_DATA_1, 
   REDIS_CACHE_FIXTURES_ODDS_DATA_2, 
   REDIS_CACHE_FIXTURES_ODDS_DATA_3
@@ -171,108 +172,22 @@ CQ_Tour_FixOdds_All.process (async function (job, done) {
 
 async function main () {
 
-  const start_date = "2022-08-01";
-  const end_date = "2023-07-01"; 
-  const limit = 1000;
-  let offset = 0;
-  let total_limit;
+  /**
+   * [ℹ] obtain target current season_id's
+  */
+
+  const current_seasons = await get_current_seasons()
+  const current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
+  if (dev) console.log(`current_seasons_arr`, current_seasons_arr)
 
   /**
    * [ℹ] obtain target historic_fixtures
    * [ℹ] obtain taget season_id's
   */
 
-  let h_fixtures_arr: BETARENA_HASURA_historic_fixtures[] = [] 
-  const historic_fixtures_map = new Map <number, BETARENA_HASURA_historic_fixtures> ()
-  let counter = 0
-
-  // [ℹ] obtain target historic_fixtures
-  const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_1";
-  t0 = performance.now();
-  // eslint-disable-next-line no-constant-condition
-  while (true) {
-
-    const VARIABLES = {
-      limit: limit,
-      offset: offset,
-      start_date: start_date,
-      end_date: end_date
-    }
-    // [🐛] debug
-    // if (dev) console.log(`ℹ variables: ${VARIABLES.limit} ${VARIABLES.offset}`)
-    
-    const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
-      REDIS_CACHE_FIXTURES_ODDS_DATA_1,
-      VARIABLES
-    );
-
-    // [🐛] debug
-    /*
-      for (const fixture of response.historic_fixtures) {
-        if (fixture.id === 18535056) {
-          console.log("Here! Found it!")
-        }
-      }
-    */
-
-    h_fixtures_arr = h_fixtures_arr.concat(response.historic_fixtures)
-
-    // [ℹ] exit loop
-    if (offset >= total_limit) {
-      // [🐛] debug
-      if (dev) console.log(`ℹ exiting loop!`)
-      logs.push(`total limit: ${total_limit}`)
-      logs.push(`fixtures gathered: ${h_fixtures_arr.length}`)
-      logs.push(`exiting loop after ${counter} iterations`)
-      break;
-    }
-
-    total_limit = response.historic_fixtures_aggregate.aggregate.totalCount;
-    offset += limit;
-    counter++
-  }
-  t1 = performance.now();
-  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-
-  // [🐛] debug
-  /*
-    if (dev) {
-      const data = JSON.stringify(h_fixtures_arr, null, 4)
-      fs.writeFile('./datalog/h_fixtures_arr.json', data, err => {
-        if (err) {
-          console.error(err);
-        }
-      });
-    }
-  */
-
-  // [🐛] debug
-  /*
-    const mainArrIds = []
-    for (const i of h_fixtures_arr) {
-      mainArrIds.push(i.id)
-    }
-    const duplicates = mainArrIds.filter((e, i, a) => a.indexOf(e) !== i) // [2, 4]
-    logs.push(`duplicates: ${duplicates.length}`)
-  */
+  const h_fixtures_arr = await get_target_historic_fixtures(current_seasons_arr)
+  const historic_fixtures_map = await generate_historic_fixtures_map(h_fixtures_arr)
  
-  // [🐛] debug
-  /*
-    if (dev) {
-      const data = JSON.stringify(duplicates, null, 4)
-      await fs.writeFile(`./datalog/duplicates_local_main.json`, data);
-    }
-  */
-
-  // [ℹ] conversion to hashmap
-  t0 = performance.now();
-  for (const h_fixture of h_fixtures_arr) {
-    historic_fixtures_map.set(h_fixture.id, h_fixture);
-  }
-  t1 = performance.now();
-  logs.push(`historic_fixtures_map generated with size: ${historic_fixtures_map.size}`)
-  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
-
   // [ℹ] obtain target season_id's data
   let seasonIdsArr: number[] = []
   for (const [key, value] of historic_fixtures_map.entries()) {
@@ -300,7 +215,6 @@ async function main () {
     if (t_season == undefined) {
       continue;
     }
-
 
     const seasonObj: Tournament_Season_Fixtures_Odds = {}
 
@@ -503,7 +417,7 @@ async function main () {
 
   /**
    * [ℹ] merge rounds & weeks data
-   * [ℹ] with each league_id's (sub) season_id 
+   * [ℹ] with each league_id's (&-sub) season_id 
   */
 
   for (const [key, value] of historic_fixtures_by_league.entries()) {
@@ -538,7 +452,6 @@ async function main () {
   }
 
   // [ℹ] persist data
-  const arrayObj = []
   t0 = performance.now();
   logs.push(`total leagues: ${historic_fixtures_by_league.size}`)
   for (const [key, value] of historic_fixtures_by_league.entries()) {
@@ -547,14 +460,13 @@ async function main () {
       seasons: value || []
     }
     await cacheData(key, finalObj);
-    arrayObj.push(value);
   }
   t1 = performance.now();
   logs.push(`cache uplaod complete in: ${(t1 - t0) / 1000} sec`);
 
   // [🐛] debug
   if (dev) {
-    const data = JSON.stringify(arrayObj, null, 4)
+    const data = JSON.stringify(historic_fixtures_by_league.values(), null, 4)
     fs.writeFile('./datalog/CQ_Tour_FixOdds_All_23.json', data, err => {
       if (err) {
         console.error(err);
@@ -641,6 +553,104 @@ async function getHrefLang (
   langArray.push('en')
 
   return langArray;
+}
+
+async function get_current_seasons (
+): Promise < BETARENA_HASURA_fixtures_odds_query > {
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_0";
+	const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
+    REDIS_CACHE_FIXTURES_ODDS_DATA_0
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
+}
+
+async function get_target_historic_fixtures (
+  seasonIdsArr: number[]
+): Promise < BETARENA_HASURA_historic_fixtures[] > {
+
+  const limit = 1000;
+  let offset = 0;
+  let total_limit;
+
+  let h_fixtures_arr: BETARENA_HASURA_historic_fixtures[] = [] 
+  let counter = 0
+
+  // [ℹ] obtain target historic_fixtures
+  const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_1";
+  t0 = performance.now();
+  // eslint-disable-next-line no-constant-condition
+  while (true) {
+
+    const VARIABLES = {
+      limit: limit,
+      offset: offset,
+      seasonIds: seasonIdsArr
+    }
+    
+    const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
+      REDIS_CACHE_FIXTURES_ODDS_DATA_1,
+      VARIABLES
+    );
+
+    h_fixtures_arr = h_fixtures_arr.concat(response.historic_fixtures)
+
+    // [ℹ] exit loop
+    if (offset >= total_limit) {
+      // [🐛] debug
+      if (dev) console.log(`exiting loop`)
+      logs.push(`total limit: ${total_limit}`)
+      logs.push(`fixtures gathered: ${h_fixtures_arr.length}`)
+      logs.push(`exiting loop after ${counter} iterations`)
+      break;
+    }
+
+    total_limit = response.historic_fixtures_aggregate.aggregate.totalCount;
+    offset += limit;
+    counter++
+  }
+  t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  
+  // [🐛] debug
+  // FIXME: some duplicates [?]
+  /*
+    const mainArrIds = []
+    for (const i of h_fixtures_arr) {
+      mainArrIds.push(i.id)
+    }
+    const duplicates = mainArrIds.filter((e, i, a) => a.indexOf(e) !== i) // [2, 4]
+    logs.push(`duplicates: ${duplicates.length}`)
+
+    if (dev) {
+      const data = JSON.stringify(duplicates, null, 4)
+      await fs.writeFile(`./datalog/duplicates_local_main.json`, data);
+    }
+  */
+
+  return h_fixtures_arr;
+}
+
+async function generate_historic_fixtures_map (
+  h_fixtures_arr: BETARENA_HASURA_historic_fixtures[]
+): Promise < Map <number, BETARENA_HASURA_historic_fixtures> > {
+  const historic_fixtures_map = new Map <number, BETARENA_HASURA_historic_fixtures>()
+
+  // [ℹ] conversion to hashmap
+  t0 = performance.now();
+  for (const h_fixture of h_fixtures_arr) {
+    historic_fixtures_map.set(h_fixture.id, h_fixture);
+  }
+  t1 = performance.now();
+  logs.push(`historic_fixtures_map generated with size: ${historic_fixtures_map.size}`)
+  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  return historic_fixtures_map;
 }
 
 async function getTargetSeasonDetailsData (
