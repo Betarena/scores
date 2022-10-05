@@ -34,7 +34,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_1 = gql`
     (
       $limit: Int,
       $offset: Int,
-      $seasonIds: [numeric!]
+      $seasonIds: [Int!]
     ) 
     @cached 
     (ttl: 300)
