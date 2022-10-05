@@ -142,7 +142,7 @@
         }
       >
       <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+        class='s-14 color-white m-r-10 capitalize cursor-pointer no-wrap'>
         {FIXTURE_INFO?.data?.sport}
       </p>
     </a>
@@ -165,7 +165,7 @@
       }
       >
       <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+        class='s-14 color-white m-r-10 capitalize cursor-pointer no-wrap'>
         {FIXTURE_INFO?.data?.country}
       </p>
     </a>
@@ -188,7 +188,7 @@
       }
       >
       <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer'>
+        class='s-14 color-white m-r-10 capitalize cursor-pointer no-wrap'>
         {FIXTURE_INFO?.data?.league_name}
       </p>
     </a>
@@ -203,7 +203,7 @@
     <!-- 
     [ℹ] fxiture_name -->
     <p
-      class='s-14 color-white m-r-10 capitalize'>
+      class='s-14 color-white m-r-10 capitalize fixture-name'>
       {FIXTURE_INFO?.data?.home_team_name}
       vs
       {FIXTURE_INFO?.data?.away_team_name}
@@ -231,10 +231,26 @@
 
   div#tournaments-page-breadcrumbs p.capitalize {
     text-transform: capitalize;
+    overflow: hidden;
   } div#tournaments-page-breadcrumbs > p {
     color: #8C8C8C !important;
   } div#tournaments-page-breadcrumbs a > p:hover {
     color: #f5620f !important; 
+  } 
+
+  /* ====================
+    RESPONSIVNESS
+  ==================== */
+
+  /* 
+  MOBILE ONLY RESPONSIVNESS (&+) */
+  @media only screen and (max-width:450px) {
+    div#tournaments-page-breadcrumbs p.fixture-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      max-width: 50px;
+    }
   }
 
 </style>
