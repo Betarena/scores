@@ -1341,7 +1341,8 @@
                     <!-- [ℹ] display selected week / round
                     -->
                     <p
-                      class='s-14 m-r-5 w-500 color-grey'>
+                      class='s-14 m-r-5 w-500 color-grey'
+                      style="white-space: nowrap;">
                       {#if optView === "week"}
                         {FIXTURES_ODDS_T?.week} {week_name}
                       {:else}
@@ -1499,7 +1500,8 @@
                   <!-- [ℹ] display selected week / round
                   -->
                   <p
-                    class='s-14 m-r-5 w-500 color-grey'>
+                    class='s-14 m-r-5 w-500 color-grey'
+                    style="white-space: nowrap;">
                     {#if optView === "week"}
                       {FIXTURES_ODDS_T?.week} {week_name}
                     {:else}
@@ -2713,6 +2715,7 @@
     /* height: 308px; */
     max-height: 308px;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding-right: 6px;
     right: 0;
   } div#dropdown-seasons div#dropdown-list-main-container::-webkit-scrollbar  {
@@ -2726,8 +2729,12 @@
     /* height: 308px; */
     max-height: 308px;
     overflow-y: scroll;
+    overflow-x: hidden;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season {
-    padding: 11px 20px;
+    /* padding: 11px 20px; */
+    padding: 11px 2px;
+    white-space: nowrap;
+    text-align: center;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season:hover {
     cursor: pointer;
     color: #f5620f !important;
