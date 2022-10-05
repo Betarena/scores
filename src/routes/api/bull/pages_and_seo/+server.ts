@@ -577,8 +577,6 @@ async function sitemap_generation(
   if (dev) console.log(`fixtures_links size: ${fixtures_links.size}`)
   if (dev) console.log(`urlsArray length: ${urlsArray.length}`)
 
-  await sitemapSave_2(urlsArray)
-
   let cache_unique_arr = []
   for (const urls of urlsArray) {
     for (const links of urls.links) {
