@@ -15,7 +15,7 @@ const format = require('xml-formatter');
 const { createGzip } = require('zlib');
 
 import { 
-  REDIS_CACHE_PAGES_AND_SEO 
+  REDIS_CACHE_PAGES_AND_SEO, REDIS_CACHE_PAGES_AND_SEO_FIXTURE_TARGET 
 } from '$lib/graphql/pages_and_seo/query'
 
 import type { 
@@ -26,6 +26,7 @@ import type {
   REDIS_CACHE_SINGLE_fixtures_seo_response,
   REDIS_CACHE_SINGLE_fixtures_page_info_response
 } from '$lib/models/pages_and_seo/types'
+import type { BETARENA_HASURA_EVENT_update_fixture_sitemap } from '$lib/models/hasura';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -63,27 +64,6 @@ export async function POST (
   const body = await request.json();
   if (dev) console.log(body);
   const dataSurgical = JSON.parse(JSON.stringify(body));
-
-  console.log("dataSurgical", dataSurgical)
-
-  // "payload": {
-  //   "data": {
-  //     "id": 18457751,
-  //     "publish_status": "string"
-  //     "urls": {
-  //       "br": "https://scores.betarena.com/br/futebol/atk-mohun-bagan-odisha-fc-18457751",
-  //       "en": "https://scores.betarena.com/football/atk-mohun-bagan-odisha-fc-18457751",
-  //       "es": "https://scores.betarena.com/es/futbol/atk-mohun-bagan-odisha-fc-18457751",
-  //       "it": "https://scores.betarena.com/it/calcio/atk-mohun-bagan-odisha-fc-18457751",
-  //       "pt": "https://scores.betarena.com/pt/futebol/atk-mohun-bagan-odisha-fc-18457751",
-  //       "ro": "https://scores.betarena.com/ro/fotbal/atk-mohun-bagan-odisha-fc-18457751",
-  //       "se": "https://scores.betarena.com/se/fotboll/atk-mohun-bagan-odisha-fc-18457751"
-  //     }
-  //   },
-  //   "table": {
-  //     "name": "historic_fixtures",
-  //     "schema": "public"
-  //   }
 
   // [ℹ] dev / local environment
   if (dev) {
@@ -124,7 +104,6 @@ async function cache_sitemap_url (
   url: string
 ) {
   try {
-    //[ℹ] store (cache) league_list response,
     await redis.hset('sitemap', url, true);
   } 
   catch (e) {
@@ -147,14 +126,14 @@ async function cache_fixtures_page_info (
 async function del_target_sitemap_url (
   url: string
 ) {
-  await redis.hdel('fixtures_page_info', url)
+  await redis.hdel('sitemap', url)
   return
 }
 
 async function del_target_fixture_page_url (
   url: string
 ) {
-  await redis.hdel('tournaments_page_info', url)
+  await redis.hdel('fixtures_page_info', url)
   return
 }
 
@@ -204,24 +183,44 @@ interface Links {
 }
 
 async function main(
-  data
+  data: BETARENA_HASURA_EVENT_update_fixture_sitemap
 ) {
 
-  // [ℹ] get HASURA-DB response;
-  // const response: BETARENA_HASURA_QUERY_pages_and_seo = await initGrapQLClient().request(
-  //   REDIS_CACHE_PAGES_AND_SEO_FIXTURE_TARGET
-  // )
+  // [ℹ] remove URL
+  if (data?.data?.publish_status != "published") {
+    if (data?.data?.urls == undefined) {
+      logs.push(`No URLs`)
+      return;
+    }
+    for (const [key, value] of Object.entries(data?.data?.urls)) {
+      del_target_sitemap_url(value)
+      del_target_fixture_page_url(value)
+    }
+    return
+  }
 
-  // // [ℹ] get-all-exisitng-lang-translations;
-  // const langArray: string [] = response.scores_hreflang
-  // .filter(a => a.link)         /* filter for NOT "null" */
-  // .map(a => a.link)            /* map each LANG */ 
-  // langArray.push('en')
+  const fixture_id = data?.data?.id
+
+  const VARIABLES = {
+    fixtureId: fixture_id
+  }
+
+  // [ℹ] get HASURA-DB response;
+  const response: BETARENA_HASURA_QUERY_pages_and_seo = await initGrapQLClient().request(
+    REDIS_CACHE_PAGES_AND_SEO_FIXTURE_TARGET,
+    VARIABLES
+  )
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang
+  .filter(a => a.link)         /* filter for NOT "null" */
+  .map(a => a.link)            /* map each LANG */ 
+  langArray.push('en')
   
-  // // [ℹ] platform
-  // await sitemap_generation(response)
-  // // [ℹ] fixtures-pages
-  // await fixtures_page_generation(response)
+  // [ℹ] platform
+  await sitemap_generation(response)
+  // [ℹ] fixtures-pages
+  await fixtures_page_generation(response)
 }
 
 async function sitemap_generation(
@@ -310,7 +309,7 @@ async function sitemap_generation(
     });
   }
 
-  await sitemapSave(cache_unique_arr)
+  // await sitemapSave(cache_unique_arr)
 
   for (const url of cache_unique_arr) {
     cache_sitemap_url(url)

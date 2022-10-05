@@ -1,3 +1,19 @@
+
+/**
+ * [ℹ] HASURA: [EVENT] update_fixture_sitemap
+*/
+export interface BETARENA_HASURA_EVENT_update_fixture_sitemap {
+  data?:  UpdateFixturesData;
+  table?: Table;
+} export interface UpdateFixturesData {
+  id?:             number;
+  publish_status?: string;
+  urls?:           Urls;
+} export interface Table {
+  name?:   string;
+  schema?: string;
+}
+
 /**
  * [ℹ] HASURA: scores_hreflang (&)
 */
