@@ -62,12 +62,18 @@ export async function load({
    * [ℹ] regex-ing SEO content dynamically;
   */
 
-  const id = response_fixtures_page_info?.data?.fixture_id;
+  const id = 
+    response_fixtures_page_info?.data?.id == undefined
+      ? undefined
+      : response_fixtures_page_info?.data?.id.toString()
   const league_name = response_fixtures_page_info?.data?.league_name;
   const country = response_fixtures_page_info?.data?.country;
   const home_team_name = response_fixtures_page_info?.data?.home_team_name;
   const away_team_name = response_fixtures_page_info?.data?.away_team_name;
-  const fixture_day = response_fixtures_page_info?.data?.fixture_day;
+  const fixture_day = 
+    response_fixtures_page_info?.data?.fixture_day == undefined
+      ? undefined
+      : response_fixtures_page_info?.data?.fixture_day.replace('T00:00:00', '')
   const venue_name = response_fixtures_page_info?.data?.venue_name;
   const venue_city = response_fixtures_page_info?.data?.venue_city;
 
