@@ -148,7 +148,7 @@ cacheQueuePageSeo.process (async function (job, done) {
   */
 
   const t0 = performance.now();
-  // await main(job.data)
+  await main(job.data)
   const t1 = performance.now();
 
   if (dev) console.log(`
