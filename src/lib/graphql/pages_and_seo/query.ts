@@ -1,37 +1,46 @@
-// ... import necessary libraries;
 import { gql } from 'graphql-request';
 
 /**
- * Description
- * ~~~~~~~~~~~~~
- * ... get ALL LEAGUE LIST DATA from the DB
+ * [ℹ] Complete Page & Seo Query
+ * [ℹ] Caching & Sitemap generation 
 */
-export const GET_COMPLETE_PAGES_AND_SEO_DATA = gql`
-  query GET_COMPLETE_PAGES_AND_SEO_DATA @cached(ttl: 300) {
-    # IMPORTANT HREF-LANG
+export const REDIS_CACHE_PAGES_AND_SEO = gql`
+  query REDIS_CACHE_PAGES_AND_SEO 
+  @cached
+  (ttl: 300) 
+  {
     scores_hreflang {
       hreflang
       link
     }
-    # HOMEPAGE
     scores_seo_homepage {
       lang
       main_data
       twitter_card
       opengraph
     }
-    # HOMEPAGE SEO WIDGET
-    scores_seo_block_homepage {
-      html
-      lang
-      title
-    }
-    # TOURNAMENTS SPECIFIC;
     scores_seo_tournaments {
       lang
       main_data
       opengraph
       twitter_card
+    }
+    scores_seo_fixtures {
+      lang
+      main_data
+      opengraph
+      sports_type
+      twitter_card
+    }
+    scores_endpoints_translations {
+      countries_translation
+      lang
+      sport
+      sports_translation
+    }
+    scores_football_countries {
+      id
+      name
     }
     scores_tournaments {
       author
@@ -47,24 +56,87 @@ export const GET_COMPLETE_PAGES_AND_SEO_DATA = gql`
       title
       type
       widgets
+      urls
     }
-    scores_football_seasons_details {
-      data_stats
-      default_data
-      end_date
+    historic_fixtures
+    (
+      # limit: 50,
+      # FIXME: temporary "where"
+      # FIXME: remove in PROD
+      where: {
+        id: {
+          _eq: 18535246
+        }
+      }
+    ) {
       id
-      is_current_season
+      urls
+      publish_status
+      away_team_name
+      home_team_name
+      league_name
+      fixture_day
       league_id
-      round_data
-      start_date
+      venue_name_j: data(path: "$.venue.data.name")
+      venue_city_j: data(path: "$.venue.data.city")
+      country_id_j: data(path: "$.league.data.country_id")
     }
-    scores_football_leagues {
-      country
-      data
-      name
+  }
+`;
+
+/**
+ * [ℹ] Surgical Target Fixture
+ * [ℹ] Caching & Sitemap Update 
+*/
+export const REDIS_CACHE_PAGES_AND_SEO_FIXTURE_TARGET = gql`
+  query REDIS_CACHE_PAGES_AND_SEO_FIXTURE_TARGET 
+    (
+      $fixtureId: Int!
+    ) 
+    @cached 
+    (ttl: 300)
+  {
+    scores_hreflang {
+      hreflang
+      link
+    }
+    scores_seo_fixtures {
+      lang
+      main_data
+      opengraph
+      sports_type
+      twitter_card
+    }
+    scores_endpoints_translations {
+      countries_translation
+      lang
+      sport
+      sports_translation
+    }
+    scores_football_countries {
       id
-      season
-      seasons
+      name
+    }
+    historic_fixtures
+    (
+      # limit: 50,
+      where: {
+        id: {
+          _eq: $fixtureId
+        }
+      }
+    ) {
+      id
+      urls
+      publish_status
+      away_team_name
+      home_team_name
+      league_name
+      fixture_day
+      league_id
+      venue_name_j: data(path: "$.venue.data.name")
+      venue_city_j: data(path: "$.venue.data.city")
+      country_id_j: data(path: "$.league.data.country_id")
     }
   }
 `;

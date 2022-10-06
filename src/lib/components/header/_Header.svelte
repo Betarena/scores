@@ -202,8 +202,11 @@
     }
 
     // [ℹ] these routes handle the TRANSLATION REDIRECT ROUTE THEMSELVES;
-    else if ($page.routeId == "[lang=lang]/[sport]/[country]/[league_name]" ||
-        $page.routeId == "[sport]/[country]/[league_name]") {
+    else if (
+      $page.routeId == "[lang=lang]/[sport]/[country]/[league_name]" ||
+      $page.routeId == "[sport]/[country]/[league_name]" ||
+      $page.routeId == "[sport]/[fixture=fixture]" ||
+      $page.routeId == "[lang=lang]/[sport]/[fixture=fixture]") {
       // [ℹ] and do-nothing
       return;
     }
