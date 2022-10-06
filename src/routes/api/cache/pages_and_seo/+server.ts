@@ -20,7 +20,7 @@ export async function GET (req, res): Promise< any > {
 
   const url: string = req.url['searchParams'].get('url');
   const lang: string = req.url['searchParams'].get('lang');
-  const page: 'homepage' | 'tournaments' = req.url['searchParams'].get('page');
+  const page: 'homepage' | 'tournaments' | 'fixtures' = req.url['searchParams'].get('page');
   const sitemap: string = req.url['searchParams'].get('sitemap'); // [ℹ] can be whatever
 
   if (sitemap && !url && !page && !lang) {
@@ -51,6 +51,20 @@ export async function GET (req, res): Promise< any > {
 
   if (lang && page === 'tournaments') {
     const response_cache = await getCacheTournamentSEOData(lang)
+    if (response_cache) {
+      return json(response_cache)
+    }
+  }
+
+  if (url && page === 'fixtures') {
+    const response_cache = await get_cache_fixtures_info(url)
+    if (response_cache) {
+      return json(response_cache)
+    }
+  }
+
+  if (lang && page === 'fixtures') {
+    const response_cache = await get_cache_fixtures_seo(lang)
     if (response_cache) {
       return json(response_cache)
     }
@@ -101,6 +115,34 @@ async function getCacheTournamentPageData (url: string): Promise < Cache_Single_
   } 
   catch (e) {
     console.error("❌ uh-oh! tournaments_page_info cache error", e);
+    return
+  }
+}
+
+async function get_cache_fixtures_seo (url: string): Promise < any | Record < string, never > > {
+  try {
+    const cached: string = await redis.hget('fixtures_seo', url);
+    if (cached) {
+      const parsed: any = JSON.parse(cached);
+      return parsed;
+    }
+  } 
+  catch (e) {
+    console.error("❌ uh-oh! fixtures_seo cache error", e);
+    return
+  }
+}
+
+async function get_cache_fixtures_info (url: string): Promise < any | Record < string, never > > {
+  try {
+    const cached: string = await redis.hget('fixtures_page_info', url);
+    if (cached) {
+      const parsed: any = JSON.parse(cached);
+      return parsed;
+    }
+  } 
+  catch (e) {
+    console.error("❌ uh-oh! cache_fixtures_page_info cache error", e);
     return
   }
 }

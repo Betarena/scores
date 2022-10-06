@@ -1,3 +1,77 @@
+
+/**
+ * [ℹ] HASURA: [EVENT] update_fixture_sitemap
+*/
+export interface BETARENA_HASURA_EVENT_update_fixture_sitemap {
+  data?:  UpdateFixturesData;
+  table?: Table;
+} export interface UpdateFixturesData {
+  id?:             number;
+  publish_status?: string;
+  urls?:           Urls;
+} export interface Table {
+  name?:   string;
+  schema?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_hreflang (&)
+*/
+export interface BETARENA_HASURA_scores_hreflang {
+  link?:     string
+  hreflang?: string
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_homepage (&)
+*/
+export interface BETARENA_HASURA_scores_seo_homepage {
+  lang:         string
+  main_data:    Main_Data
+  twitter_card: Twitter_Data
+  opengraph:    Opengraph_Data
+} interface Main_Data {
+  canonical:    string
+  noindex:      boolean
+  keywords:     string
+  nofollow:     boolean
+  title:        string
+  description:  string
+} interface Twitter_Data {
+  canonical:    string
+  noindex:      boolean
+  keywords:     string
+  nofollow:     boolean
+  title:        string
+  description:  string
+} interface Opengraph_Data {
+  canonical:    string
+  noindex:      boolean
+  keywords:     string
+  nofollow:     boolean
+  title:        string
+  description:  string
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_tournaments (&)
+*/
+export interface BETARENA_HASURA_scores_seo_tournaments {
+  lang:         string
+  main_data:    Main_Data
+  twitter_card: Twitter_Data
+  opengraph:    Opengraph_Data
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_block_homepage (&)
+*/
+export interface BETARENA_HASURA_scores_seo_block_homepage {
+  lang:   string
+  html:   string
+  title:  string
+}
+
 /**
  * [ℹ] HASURA: scores_football_standings (&)
 */
@@ -52,7 +126,6 @@ export interface BETARENA_HASURA_scores_football_standings {
 /**
  * [ℹ] HASURA: scores_football_standings_history (&)
 */
-
 export interface BETARENA_HASURA_scores_football_standings_history {
   id?:        number;
   data?:      StandingsDatum[];
@@ -820,6 +893,8 @@ export interface BETARENA_HASURA_historic_fixtures {
   tip_link_wp?:     null;
   fixture_link_wp?: null;
   media_link?:      null;
+  urls?:           Urls;
+  publish_status?: PublishStatus;
 } export interface WelcomeData {
   id?:                      number;
   leg?:                     Leg;
@@ -1219,6 +1294,17 @@ export interface BETARENA_HASURA_historic_fixtures {
 } export interface MediaLinkTeamsName {
   local?:   string;
   visitor?: string;
+} export enum PublishStatus {
+  Draft = "draft",
+  Published = "published"
+} export interface Urls {
+  br?: string;
+  en?: string;
+  es?: string;
+  it?: string;
+  pt?: string;
+  ro?: string;
+  se?: string;
 }
 
 
@@ -1273,4 +1359,48 @@ export interface BETARENA_HASURA_scores_widget_tournament_about_translations {
   data?: WidgetTournamentAboutData;
 } export interface WidgetTournamentAboutData {
   about_the_league?:      string;
+}
+
+/**
+ * [ℹ] HASURA: scores_endpoints_translations (&)
+*/
+export interface BETARENA_HASURA_scores_endpoints_translations {
+  countries_translation?: { [key: string]: string };
+  lang?:                  string;
+  sport?:                 string;
+  sports_translation?:    EndpointSportsTranslation;
+  title?:                 string;
+  type?:                  string;
+  id?:                    number;
+} export interface EndpointSportsTranslation {
+  football?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_seo_fixtures (&)
+*/
+export interface BETARENA_HASURA_scores_seo_fixtures {
+  lang?:         string;
+  main_data?:    Main_Data;
+  opengraph?:    FixturesOpengraph;
+  sports_type?:  string;
+  twitter_card?: FixturesTwitterCard;
+} export interface FixturesOpengraph {
+  url?:         string;
+  type?:        string;
+  title?:       string;
+  images?:      FixturesImage[];
+  locale?:      string;
+  description?: string;
+} export interface FixturesImage {
+  alt?:    string;
+  url?:    string;
+  width?:  number;
+  height?: number;
+} export interface FixturesTwitterCard {
+  site?:        string;
+  image?:       string;
+  title?:       string;
+  imageAlt?:    string;
+  description?: string;
 }

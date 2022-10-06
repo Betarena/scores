@@ -814,10 +814,16 @@
       // [ℹ] search fixtures by target data
       // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
       // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
+      // if (dev) console.log("week_end", week_end)
+      let mod_end_week = new Date(target_week.e_date)
+      mod_end_week.setHours(mod_end_week.getHours() + 24)
+      // if (dev) console.log("week_end", week_end)
+      // if (dev) console.log("week_start", week_start)
+
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_time }) => 
         new Date(fixture_time) >= week_start &&
-        new Date(fixture_time) <= week_end
+        new Date(fixture_time) <= mod_end_week
       );
 
     }
@@ -928,10 +934,18 @@
       week_end = new Date(target_week.e_date)
       week_name = parseInt(target_week.name)
 
+      // [ℹ] search fixtures by target data
+      // [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
+      // [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
+      let mod_end_week = new Date(target_week.e_date)
+      mod_end_week.setHours(mod_end_week.getHours() + 24)
+      // if (dev) console.log("week_end", week_end)
+      // if (dev) console.log("week_start", week_start)
+
       temp_fixtures_odds_arr = target_season.fixtures
       .filter( ({ fixture_time }) => 
         new Date(fixture_time) >= week_start &&
-        new Date(fixture_time) <= week_end
+        new Date(fixture_time) <= mod_end_week
       );
     }
 
@@ -1335,7 +1349,8 @@
                     <!-- [ℹ] display selected week / round
                     -->
                     <p
-                      class='s-14 m-r-5 w-500 color-grey'>
+                      class='s-14 m-r-5 w-500 color-grey'
+                      style="white-space: nowrap;">
                       {#if optView === "week"}
                         {FIXTURES_ODDS_T?.week} {week_name}
                       {:else}
@@ -1493,7 +1508,8 @@
                   <!-- [ℹ] display selected week / round
                   -->
                   <p
-                    class='s-14 m-r-5 w-500 color-grey'>
+                    class='s-14 m-r-5 w-500 color-grey'
+                    style="white-space: nowrap;">
                     {#if optView === "week"}
                       {FIXTURES_ODDS_T?.week} {week_name}
                     {:else}
@@ -2707,6 +2723,7 @@
     /* height: 308px; */
     max-height: 308px;
     overflow-y: scroll;
+    overflow-x: hidden;
     padding-right: 6px;
     right: 0;
   } div#dropdown-seasons div#dropdown-list-main-container::-webkit-scrollbar  {
@@ -2720,8 +2737,12 @@
     /* height: 308px; */
     max-height: 308px;
     overflow-y: scroll;
+    overflow-x: hidden;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season {
-    padding: 11px 20px;
+    /* padding: 11px 20px; */
+    padding: 11px 2px;
+    white-space: nowrap;
+    text-align: center;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season:hover {
     cursor: pointer;
     color: #f5620f !important;

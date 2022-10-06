@@ -131,7 +131,8 @@ async function leagueInfoGeneration () {
   // const cacheRedisObj = {}
   // deleteCacheTournamentsPageLeagueInfoData()
 
-  // [ℹ] FIXME: speed up the data-processing (takes aroud 450 sec ATM)
+  // FIXME: speed up the data-processing 
+  // FIXME: (takes aroud 450 sec ATM)
   // [ℹ] data pre-processing;
   // const players_map = new Map()
   // for (const p of response_const.scores_football_players) {
@@ -141,7 +142,7 @@ async function leagueInfoGeneration () {
   // [ℹ] generate appropiate URLS
   for (const iterator of response.scores_tournaments) {
 
-    // [ℹ] per LANG
+    // [ℹ] per [LANG]
 
     const finalCacheObj: Cache_Single_Tournaments_League_Info_Data_Response = {
       lang: undefined,
@@ -166,7 +167,9 @@ async function leagueInfoGeneration () {
     const country: string = removeDiacritics(iterator.country.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
     const league_name: string = removeDiacritics(iterator.name.toString().toLowerCase()).replace(/\s/g,'-').replace(/\./g, '');
 
-    // [ℹ] /{lang}/{sport}/{country}/{league_name} OR /{sport}/{country}/{league_name} generation URL
+    // [ℹ] /{lang}/{sport}/{country}/{league_name} OR 
+    // [ℹ] /{sport}/{country}/{league_name} 
+    // [ℹ] generation URL
     const url = iterator.lang == 'en' 
       ? '/' + sport + '/' + country + '/' + league_name
       : '/' + lang  + '/' + sport + '/' + country + '/' + league_name
@@ -207,12 +210,15 @@ async function leagueInfoGeneration () {
       no_info_desc:          noWidgetTranslation?.widgets_no_data_available?.no_info_desc
     }
 
-    // FIXME:
+    // NOTE: using "name" does not work,
+    // NOTE: as we are comparing [iterator-name] (translated)
+    // NOTE: to the "EN" league name
+    // NOTE: so league_id / tournament_id is suffieicent
     const league_target = response.scores_football_leagues
-      .find(( { name, id } ) => 
-        // name === iterator.name && 
-        id === tournament_id
-      )
+    .find(( { name, id } ) => 
+      // name === iterator.name &&
+      id === tournament_id
+    )
     
     // [🐛] debug
     // if (tournament_id == 462 && iterator.lang == 'pt') {
@@ -224,8 +230,11 @@ async function leagueInfoGeneration () {
     // }
 
     // [🐛] debug erroneous league_ids
+    // FIXME: there appears to be some leagues
+    // FIXME: not present in the DB "scores_football_leagues"
+    // FIXME: but are present in the "scores_tournaments" [?]
     if (league_target == undefined) {
-      console.log(`
+      if (dev) console.log(`
         undefined: ${tournament_id}
         url: ${url}
       `)
