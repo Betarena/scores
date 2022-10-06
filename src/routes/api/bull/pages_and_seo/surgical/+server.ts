@@ -32,7 +32,7 @@ const settings = {
   guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
   drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
 }
-const cacheQueuePageSeo = new Bull (
+const cacheQueuePageSeoFixture = new Bull (
   'cacheQueuePageSeoFixture', 
   { 
     redis: { 
@@ -82,7 +82,7 @@ export async function POST (
   // [ℹ] otherwise prod.
   else {
     // [ℹ] producers [JOBS]
-    const job = await cacheQueuePageSeo.add(dataSurgical, { timeout: 120000 });
+    const job = await cacheQueuePageSeoFixture.add(dataSurgical, { timeout: 120000 });
     console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
     return json({
       job_id: job.id
@@ -136,7 +136,7 @@ async function del_target_fixture_page_url (
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-cacheQueuePageSeo.process (async function (job, done) {
+cacheQueuePageSeoFixture.process (async function (job, done) {
   // console.log(job.data.argumentList);
   console.log(job.data)
 
