@@ -870,6 +870,7 @@
 			padding: 56px 34px;
 			text-align: center;
 			text-align: -webkit-center;
+      text-align: -moz-center;
 		}
 
 		footer #inner-footer {
