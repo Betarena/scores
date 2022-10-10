@@ -10,7 +10,7 @@ import {
   REDIS_CACHE_LEAGUES_TABLE_DATA_1, 
   REDIS_CACHE_LEAGUES_TABLE_DATA_2, 
   REDIS_CACHE_LEAGUES_TABLE_DATA_3 
-} from '$lib/graphql/leagues_table/query'
+} from '$lib/graphql/home/leagues_table/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 
 import type { 
@@ -20,7 +20,7 @@ import type {
   Leagues_Table_SEO_Cache_Ready, 
   Single_League_Table_Data, 
   Single_Team_Object_Data 
-} from '$lib/models/leagues_table/types'
+} from '$lib/models/home/leagues_table/types'
 import type { 
   StandingsDatum 
 } from '$lib/models/hasura';

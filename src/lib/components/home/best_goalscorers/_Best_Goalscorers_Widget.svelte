@@ -17,7 +17,7 @@
 	// [ℹ] external components import;
   import BestGoalscorerRow from "./_Best_Goalscorer_Row.svelte";
   import BestGoalscorersWidgetContentLoader from "./_Best_Goalscorers_Widget_ContentLoader.svelte";
-  import type { Cache_Single_Geo_GoalScorers_Translation_Response, Cache_Single_Lang_GoalScorers_Translation_Response } from "$lib/models/best_goalscorer/types";
+  import type { Cache_Single_Geo_GoalScorers_Translation_Response, Cache_Single_Lang_GoalScorers_Translation_Response } from "$lib/models/home/best_goalscorer/types";
 
   // [ℹ] key component assets;
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'

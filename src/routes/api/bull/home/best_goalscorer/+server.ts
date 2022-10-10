@@ -11,7 +11,7 @@ import type {
   Single_Goalscorer_Translations,
   Cache_Single_Geo_GoalScorers_Translation_Response,
   Cache_Goalscorers_General_Lang_Ready
-} from '$lib/models/best_goalscorer/types'
+} from '$lib/models/home/best_goalscorer/types'
 import { 
   GET_BEST_GOALSCORERS_DATA 
 } from '$lib/graphql/best_goalscorer/query'

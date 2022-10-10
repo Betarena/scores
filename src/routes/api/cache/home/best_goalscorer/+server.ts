@@ -7,7 +7,7 @@ import redis from "$lib/redis/init"
 import type { 
   Cache_Single_Geo_GoalScorers_Translation_Response, 
   Cache_Single_Lang_GoalScorers_Translation_Response 
-} from '$lib/models/best_goalscorer/types';
+} from '$lib/models/home/best_goalscorer/types';
 
 /** 
  * @type {import('@sveltejs/kit').RequestHandler} 

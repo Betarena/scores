@@ -9,7 +9,7 @@ import { error, json } from '@sveltejs/kit';
 import type { 
   Cache_Single_Lang_Footer_Translation_Response, 
   Hasura_Footer_Translation_Response 
-} from '$lib/models/footer/types';
+} from '$lib/models/_main_/footer/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL

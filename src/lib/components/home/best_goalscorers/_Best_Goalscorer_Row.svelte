@@ -9,7 +9,7 @@
   // ... external modules imports;
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
-  import type { Single_Goalscorer, Single_Goalscorer_Translations } from "$lib/models/best_goalscorer/types";
+  import type { Single_Goalscorer, Single_Goalscorer_Translations } from "$lib/models/home/best_goalscorer/types";
 
   export let pos: number;
   export let data: Single_Goalscorer;

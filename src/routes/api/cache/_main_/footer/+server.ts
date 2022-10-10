@@ -3,7 +3,7 @@ import { error, json } from '@sveltejs/kit';
 
 import redis from "$lib/redis/init"
 
-import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types';
+import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET(req, res): Promise< any > {

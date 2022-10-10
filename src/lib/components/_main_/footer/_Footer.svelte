@@ -11,7 +11,7 @@
 	import { getStores, navigating, page, updated } from '$app/stores';
   import { sessionStore } from '$lib/store/session';
 	// [ℹ] typescript-types;
-	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types'
+	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types'
 	// [ℹ] image-assets;
 	import logo_full from './assets/betarena-logo-full.svg'
 	import begambleawareorg from './assets/begambleawareorg_black.png'
