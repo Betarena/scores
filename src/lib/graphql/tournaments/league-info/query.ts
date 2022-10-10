@@ -115,7 +115,8 @@ export const REDIS_CACHE_LEAGUE_INFO_DATA_3 = gql`
 export const REDIS_CACHE_LEAGUE_INFO_DATA_4 = gql`
   query REDIS_CACHE_LEAGUE_INFO_DATA_4 
   (
-    $league_ids_arr: [Int!]
+    $league_ids_arr: [Int!],
+    $league_ids_arr_2: [numeric!]
   )
   @cached 
   (ttl: 300) 
@@ -147,7 +148,7 @@ export const REDIS_CACHE_LEAGUE_INFO_DATA_4 = gql`
     scores_football_leagues (
       where: {
         id: {
-          _in: $league_ids_arr
+          _in: $league_ids_arr_2
         }
       }
     ) {
@@ -161,7 +162,7 @@ export const REDIS_CACHE_LEAGUE_INFO_DATA_4 = gql`
     scores_football_seasons_details (
       where: {
         league_id: {
-          _in: $league_ids_arr
+          _in: $league_ids_arr_2
         }
       }
     ) {

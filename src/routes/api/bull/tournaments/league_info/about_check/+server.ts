@@ -358,7 +358,8 @@ async function get_main_league_info_data (
 ): Promise < BETARENA_HASURA_league_info_query > {
 
   const VARIABLES = {
-    league_ids_arr: league_ids_arr
+    league_ids_arr: league_ids_arr,
+    league_ids_arr_2: league_ids_arr
   }
 
   const t0 = performance.now();
