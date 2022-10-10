@@ -1,7 +1,7 @@
 import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { GET_NAVBAR_DATA } from '$lib/graphql/header/query';
+import { GET_NAVBAR_DATA } from '$lib/graphql/_main_/header/query';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
 import { error, json } from '@sveltejs/kit';
@@ -9,7 +9,7 @@ import { error, json } from '@sveltejs/kit';
 import type { 
   Cache_Single_Lang_Header_Translation_Response, 
   Hasura_Header_Translation_Response 
-} from '$lib/models/navbar/types';
+} from '$lib/models/_main_/navbar/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
