@@ -1282,7 +1282,7 @@
         [ℹ] widget-component
         [ℹ] [DESKTOP / TABLET / MOBILE] 
         -->
-        <h2 
+        <h2
           class="s-20 m-b-10 w-500 color-black-2"
           style="margin-top: 0px;"
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
@@ -1723,7 +1723,7 @@
                             class:color-grey={fixture?.status === "FT"}>
                             {
                               (
-                                (new Date(fixture?.fixture_time + "Z").getHours()) +
+                                ('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
                                 ":" +
                                 ('0' + new Date(fixture?.fixture_time + "Z").getMinutes()).slice(-2)
                               ).split(' ').join('')
@@ -2199,7 +2199,7 @@
                             class:color-grey={fixture?.status === "FT"}>
                             {
                               (
-                                (new Date(fixture?.fixture_time + "Z").getHours()) +
+                                ('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
                                 ":" +
                                 ('0' + new Date(fixture?.fixture_time + "Z").getMinutes()).slice(-2)
                               ).split(' ').join('')
