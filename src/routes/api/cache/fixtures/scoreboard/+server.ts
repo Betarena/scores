@@ -9,9 +9,7 @@ import type {
 
 const cache_data_addr = "scoreboard_data"
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
+/** @type {import('@sveltejs/kit').RequestHandler} */
 export async function GET (req, res): Promise < unknown > {
 
   const lang: string = req.url['searchParams'].get('lang');
@@ -27,13 +25,15 @@ export async function GET (req, res): Promise < unknown > {
   return json(null)
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ~~~~~~~~~
+// REDIS
+// ~~~~~~~~~
 
-async function get_cache_main_data (league_id: string): Promise < REDIS_CACHE_SINGLE_scoreboard_data | Record < string, never > > {
+async function get_cache_main_data (
+  fixture_id: string
+): Promise < REDIS_CACHE_SINGLE_scoreboard_data | Record < string, never > > {
   try {
-    const cached: string = await redis.hget(cache_data_addr, league_id);
+    const cached: string = await redis.hget(cache_data_addr, fixture_id);
     if (cached) {
       const parsed: REDIS_CACHE_SINGLE_scoreboard_data = JSON.parse(cached);
       return parsed;
