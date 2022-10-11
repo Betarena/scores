@@ -12,10 +12,23 @@
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
+	import { get } from "$lib/api/utils";
+	import { get_livescores_now, get_odds } from "$lib/firebase/scoreboard";
+	import { onValue, ref, type Unsubscribe } from "firebase/database";
+	import { db_real } from "$lib/firebase/init";
 
 	import type { 
     REDIS_CACHE_SINGLE_scoreboard_data 
   } from "$lib/models/fixtures/scoreboard/types";
+	import type {
+    REDIS_CACHE_SINGLE_fixtures_page_info_response 
+  } from "$lib/models/_main_/pages_and_seo/types";
+	import type { 
+    FIREBASE_livescores_now, FIREBASE_odds 
+  } from "$lib/models/firebase";
+	import type { 
+    Cache_Single_SportbookDetails_Data_Response 
+  } from "$lib/models/tournaments/league-info/types";
 
 	import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 
@@ -27,48 +40,70 @@
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  export let FIXTURE_INFO:       REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
 
-  let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
-  let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
-	let refresh_data:             any = undefined;                // [ℹ] refresh-data value speed;
-  let no_widget_data:           any = false;                    // [ℹ] identifies the no_widget_data boolean;
-  let currentSeason:            number = undefined;
+  let SPORTBOOK_INFO:            Cache_Single_SportbookDetails_Data_Response;
+  let SPORTBOOK_DETAILS_LIST:    Cache_Single_SportbookDetails_Data_Response[]
+
+  let loaded:            boolean = false;         // [ℹ] holds boolean for data loaded;
+  let refresh:           boolean = false;         // [ℹ] refresh value speed of the WIDGET;
+	let refresh_data:      any = undefined;         // [ℹ] refresh-data value speed;
+  let no_widget_data:    any = false;             // [ℹ] identifies the no_widget_data boolean;
+  let selected_view      = 0;
+  let currentSeason:     number = undefined;
+  let tick_sec_show:     boolean = false;
 
   // [🐞]
-  let diasbleDev:               boolean = false;
-  let dev_console_tag:          string = "fixtures | scoreboard [DEV]";
+  let enable_logs:       boolean = true;
+  let dev_console_tag:   string = "fixtures | scoreboard [DEV]";
 
   // [🐞]
-  $: if (dev && diasbleDev) logDevGroup (`${dev_console_tag}`, `FIXTURE_SCOREBOARD: ${FIXTURE_SCOREBOARD}`)
+  $: if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `FIXTURE_SCOREBOARD: ${FIXTURE_SCOREBOARD}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
   // [ℹ] MAIN
+  // [ℹ] In Use
   async function widget_init (
   ): Promise < REDIS_CACHE_SINGLE_scoreboard_data > {
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
-    const sleep = ms => new Promise(r => setTimeout(r, ms));
-    await sleep(3000);
+    // const sleep = ms => new Promise(r => setTimeout(r, ms));
+    // await sleep(3000);
+
+    if (!$userBetarenaSettings.country_bookmaker) {
+      return
+    }
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+
+    // [ℹ] [GET] response sportbook [geo]
+		const response_main_sportbook: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo)
+    const response_all_spotbooks: Cache_Single_SportbookDetails_Data_Response[] = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo)
 
     loaded = true;
 
+    // [ℹ] data validation check
 		if (
-      FIXTURE_SCOREBOARD == undefined
+      FIXTURE_SCOREBOARD == undefined ||
+      response_main_sportbook == undefined || 
+      response_all_spotbooks == undefined
     ) {
       // [🐞]
-      if (dev) logDevGroup ("league info #2 [DEV]", `❌ no data available!`)
+      if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
       no_widget_data = true;
 			return;
 		}
-    // [ℹ] otherwise, 
-    // [ℹ] revert back
+    // [ℹ] otherwise, no data
     else {
       no_widget_data = false;
     }
+
+    SPORTBOOK_INFO = response_main_sportbook;
+    SPORTBOOK_DETAILS_LIST = response_all_spotbooks;
+    SPORTBOOK_DETAILS_LIST.sort((a, b) => parseInt(a.position) - parseInt(b.position))
 
     return FIXTURE_SCOREBOARD;
   }
@@ -133,6 +168,242 @@
 
   afterNavigate(async () => {
     widget_init()
+  })
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// COMPONENT TIMER CLOCK
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	let current_date: Date = new Date();
+	let date_obj_diff: number = Date.parse(current_date.toString()) - Date.parse(new Date().toString());
+
+	$: if (loaded) {
+		date_obj_diff = Date.parse(FIXTURE_SCOREBOARD?.fixture_time.toString()) - Date.parse(new Date().toString());
+		setInterval(() => {
+			date_obj_diff = Date.parse(FIXTURE_SCOREBOARD?.fixture_time.toString()) - Date.parse(new Date().toString());
+		}, 1000);
+	}
+
+	const monthNames = [
+		'Jan',
+		'Feb',
+		'Mar',
+		'Apr',
+		'May',
+		'Jun',
+		'Jul',
+		'Aug',
+		'Sep',
+		'Oct',
+		'Nov',
+		'Dec'
+	];
+
+	const getOrdinalNum = (number) => {
+		let selector;
+		if (number <= 0) {
+			selector = 4;
+		} else if ((number > 3 && number < 21) || number % 10 > 3) {
+			selector = 0;
+		} else {
+			selector = number % 10;
+		}
+		return number + ['th', 'st', 'nd', 'rd', ''][selector];
+	};
+
+	$: countD_sec = Math.floor((date_obj_diff / 1000) % 60).toString();
+	$: if (parseInt(countD_sec) < 10) {
+		countD_sec = '0' + countD_sec;
+	}
+	$: countD_min = Math.floor((date_obj_diff / 1000 / 60) % 60).toString();
+	$: if (parseInt(countD_min) < 10) {
+		countD_min = '0' + countD_min;
+	}
+	$: countD_h = Math.floor((date_obj_diff / (1000 * 60 * 60)) % 24).toString();
+	$: if (parseInt(countD_h) < 10) {
+		countD_h = '0' + countD_h;
+	}
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // [ADD-ON] FIREBASE
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let real_time_unsubscribe: Unsubscribe;
+  const live_fixtures_map = new Map<number, FIREBASE_livescores_now>();
+
+  async function check_live_fixtures (
+    data: [string, FIREBASE_livescores_now][]
+  ) {
+    
+    // [🐞]
+    if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `in-check_live_fixtures()`)
+
+    // [ℹ] generate FIREBASE fixtures-map
+    for (const live_fixture of data) {
+      const fixture_id = parseInt(live_fixture[0].toString())
+      const fixture_data = live_fixture[1]
+      live_fixtures_map.set(fixture_id, fixture_data)
+    }
+
+    // [ℹ] validate against [this] fixture_id
+    const fixture_id = FIXTURE_SCOREBOARD?.id;
+
+    if (live_fixtures_map.has(fixture_id)) {
+      if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `fixture livescore_now exists!`)
+      // [ℹ] update fixture data;
+      FIXTURE_SCOREBOARD.minute = live_fixtures_map.get(fixture_id)?.time?.minute
+      FIXTURE_SCOREBOARD.status = live_fixtures_map.get(fixture_id)?.time?.status
+      FIXTURE_SCOREBOARD.teams.away.score = live_fixtures_map.get(fixture_id)?.scores?.localteam_score
+      FIXTURE_SCOREBOARD.teams.home.score = live_fixtures_map.get(fixture_id)?.scores?.visitorteam_score
+    }
+    FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD
+  }
+
+	async function listen_real_time_livescores_now (
+  ): Promise < void > {
+
+    // [🐞]
+    if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `in-listen_real_time_livescores_now()`)
+
+    const fixtureRef = ref (
+      db_real,
+      'livescores_now/'
+    );
+
+    onValue(fixtureRef, (snapshot) => {
+      // [ℹ] break-down-values
+      if (snapshot.val() != null) {
+        const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
+        check_live_fixtures(data);
+      }
+    });
+
+  }
+
+  async function check_fixture_odds_inject(
+    sportbook_list: FIREBASE_odds[]
+  ) {
+
+    // [ℹ] match "data.key" (fixture_id)
+    // [ℹ] with available (fixture_id's)
+    // [ℹ] and populate the SPORTBOOK_DETAILS
+    // [ℹ] based on the "top-1" OR avaialble ODDS
+    // [ℹ] for the selected GEO-POSITION
+    // [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
+
+    if (SPORTBOOK_DETAILS_LIST == undefined) {
+      return;
+    }
+
+    let count = 0;
+
+    for (const firebase_sportbook of sportbook_list) {
+      const firebase_sportbook_title = firebase_sportbook?.sportbook
+      for (const main_sportbook of SPORTBOOK_DETAILS_LIST) {
+        const main_sportbook_title = main_sportbook?.title
+        if (
+          main_sportbook_title.toLowerCase() == firebase_sportbook_title.toLowerCase() &&
+          firebase_sportbook.markets['1X2FT'] != null &&
+          firebase_sportbook.markets != null &&
+          firebase_sportbook.markets['1X2FT'].data[0].value != null &&
+          firebase_sportbook.markets['1X2FT'].data[1].value != null &&
+          firebase_sportbook.markets['1X2FT'].data[2].value != null &&
+          count != 1
+        ) {
+          FIXTURE_SCOREBOARD._1x2.home = firebase_sportbook.markets['1X2FT'].data[0].value
+          FIXTURE_SCOREBOARD._1x2.away = firebase_sportbook.markets['1X2FT'].data[1].value
+          FIXTURE_SCOREBOARD._1x2.draw = firebase_sportbook.markets['1X2FT'].data[2].value
+          SPORTBOOK_INFO = main_sportbook
+          count = 1
+        }
+      }
+    }
+
+    // [ℹ] assign changes [persist]
+    FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD
+  }
+
+	async function listen_real_time_odds (
+  ): Promise < void > {
+
+    const fixture_status = FIXTURE_SCOREBOARD?.status;
+    if (fixture_status == 'FT') {
+      return
+    }
+
+    const sportbook_array: FIREBASE_odds[] = []
+    const fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
+    const fixture_id = FIXTURE_SCOREBOARD?.id;
+
+    // [ℹ] [GET] target fixture odds
+    // [ℹ] only non-"FT" in THIS method
+
+    const year_: string = new Date(fixture_time).getFullYear().toString();
+    const month_: number = new Date(fixture_time).getMonth();
+    let new_month_ = (month_ + 1).toString();
+    new_month_ = ('0' + new_month_).slice(-2);
+    let day_ = new Date(fixture_time).getDate().toString();
+    day_ = ('0' + day_).slice(-2);
+
+    // [ℹ] listen to real-time fixture event changes;
+    const fixtureRef = ref (
+      db_real,
+      'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id
+    );
+
+    const listenEventRef = onValue(fixtureRef, (snapshot) => {
+      // [ℹ] break-down-values
+      if (snapshot.val() != null) {
+        const data: [string, FIREBASE_odds][] = Object.entries(snapshot.val())
+        for (const sportbook of data) {
+          sportbook[1].sportbook = sportbook[0].toString();
+          sportbook_array.push(sportbook[1])
+        }
+      }
+    });
+
+    real_time_unsubscribe = listenEventRef;
+  }
+
+  // [ℹ] one-off event read "livescores_now"
+  onMount(async() => {
+    const firebase_real_time = await get_livescores_now()
+    if (firebase_real_time != null) {
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      check_live_fixtures(data)
+    }
+    const fixture_status = FIXTURE_SCOREBOARD?.status;
+    if (fixture_status != 'FT') {
+      const fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
+      const fixture_id = FIXTURE_SCOREBOARD?.id;
+      const firebase_odds = await get_odds(fixture_time, fixture_id)
+      if (firebase_odds.length != 0) {
+        check_fixture_odds_inject(firebase_odds);
+      }
+    }
+  })
+  
+  // [ℹ] real-time listen-events init.
+  onMount(async() => {
+    listen_real_time_livescores_now();
+    listen_real_time_odds();
+    setInterval(async () => {
+      tick_sec_show = !tick_sec_show
+    }, 500)
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden) {
+        listen_real_time_livescores_now()
+        listen_real_time_odds();
+      }
+    });
+  })
+
+  onDestroy(async() => {
+    // [ℹ] close LISTEN EVENT connection
+    if (dev) console.groupCollapsed("closing connections [DEV]");
+    if (dev) console.log("closing connection")
+    if (dev) console.groupEnd();
+    real_time_unsubscribe();
   })
 
 </script>
@@ -215,23 +486,276 @@
     !refresh &&
     browser && 
     $userBetarenaSettings.country_bookmaker && 
-    !diasbleDev}
+    !enable_logs}
 
-    <ScoreboardLoader />
 
     <!-- 
     [ℹ] promise is pending 
     -->
     {#await widget_init()}
-      <!-- <ScoreboardLoader /> -->
+      <ScoreboardLoader />
     <!-- 
     [ℹ] promise was fulfilled
     -->
     {:then data}
 
-      <!-- 
+      <!--
       [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
       -->
+      <div 
+        id="scoreboard-widget-container"
+        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+
+        <!-- 
+        [ℹ] top-row data container
+        -->
+        <div
+          id="scoreboard-top-box"
+          class="column-space-center">
+
+          <!-- 
+          [ℹ] league info
+          -->
+          <div
+            class="row-space-center m-b-15">
+            <img 
+              src=''
+              alt=""
+              width=20px
+              height=20px
+              class="m-r-10"
+            />
+            <p
+              class="color-white">
+              {FIXTURE_INFO?.data?.league_name}
+              -
+              Round
+              {FIXTURE_SCOREBOARD?.round}
+            </p>
+          </div>
+
+          <!-- 
+          [ℹ] teams / fixture info box
+          -->
+          <div
+            class="
+              row-space-out
+              m-b-20
+            ">
+            <!-- 
+            [ℹ] team #1
+            -->
+            <div
+              class="
+                column-space-center 
+                team-box
+              ">
+              <img 
+                src={FIXTURE_SCOREBOARD.home_team_logo}
+                alt=""
+                class="m-b-12"
+              />
+              <p
+                class="
+                  s-14
+                  w-500
+                  color-white
+                ">
+                {FIXTURE_SCOREBOARD.home_team_name}
+              </p>
+            </div>
+            <!-- 
+            [ℹ] fixture info
+            -->
+            <div
+              style="align-self: center;">
+              <p 
+                class="
+                  w-500 
+                  x-large 
+                  desktop-x-large
+                  color-white
+                ">
+                {countD_h}:{countD_min}:{countD_sec}
+              </p>
+              <p 
+                class="
+                  w-400 
+                  small 
+                  color-grey 
+                  desktop-medium
+                " 
+                style="white-space: nowrap;">
+                {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                  '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                ).slice(-2)}h
+              </p>
+            </div>
+            <!-- 
+            [ℹ] team #2
+            -->
+            <div
+              class="
+                column-space-center 
+                team-box
+              ">
+              <img 
+                src={FIXTURE_SCOREBOARD.away_team_logo}
+                alt=""
+                class="m-b-12"
+              />
+              <p
+                class="
+                  s-14
+                  w-500
+                  color-white
+                ">
+                {FIXTURE_SCOREBOARD.away_team_name}
+              </p>
+            </div>
+          </div>
+
+          <!-- 
+          [ℹ] betting site
+          -->
+          <div
+            class="
+              row-space-center
+              bet-site-box
+              m-b-8
+            ">
+            <p 
+              class="
+                s-12
+                color-grey
+                m-r-10
+              ">
+              Featured by
+            </p>
+            <img 
+              src={SPORTBOOK_INFO?.image}
+              alt=""
+            />
+          </div>
+
+          <!-- 
+          [ℹ] odds
+          -->
+          <div
+            id="btn-vote-container" 
+            class="row-space-out">
+                
+            <!-- 
+            [ℹ] ODDS #1 -->
+            <div
+              class="
+                odds-box
+                row-space-out
+              ">
+              {#if !mobileExclusive}
+                <img 
+                  src={FIXTURE_SCOREBOARD.home_team_logo} 
+                  alt=""
+                />
+              {:else}
+                <p  
+                  class="
+                    color-grey
+                    s-14
+                    w-500
+                  ">
+                  1
+                </p>
+              {/if}
+            </div>
+
+            <!-- 
+            [ℹ] ODDS #X -->
+            <div
+              class="
+                odds-box
+                row-space-out
+              ">
+              {#if !mobileExclusive}
+                <img 
+                  src={FIXTURE_SCOREBOARD.home_team_logo} 
+                  alt=""
+                />
+              {:else}
+                <p  
+                  class="
+                    color-grey
+                    s-14
+                    w-500
+                  ">
+                  X
+                </p>
+              {/if}
+            </div>
+
+            <!-- 
+            [ℹ] ODDS #2 -->
+            <div
+              class="
+                odds-box
+                row-space-out
+              ">
+              {#if !mobileExclusive}
+                <img 
+                  src={FIXTURE_SCOREBOARD.away_team_logo} 
+                  alt=""
+                />
+              {:else}
+                <p  
+                  class="
+                    color-grey
+                    s-14
+                    w-500
+                  ">
+                  2
+                </p>
+              {/if}
+            </div>
+
+          </div>
+ 
+        </div>
+
+        <!-- 
+        [ℹ] bottom-navigation
+        -->
+        <div
+          id="scoreboard-bottom-nav-box"
+          class="row-space-even">
+          <div
+            class="
+              opt-container 
+              cursor-pointer
+            "
+            on:click={() => selected_view = 0}
+            class:activeOpt={selected_view == 0}>
+            <p
+              class="s-14 color-grey w-500 no-wrap">
+              Overview
+            </p>
+          </div>
+          <div
+            class="
+              opt-container 
+              cursor-not-allowed
+            "
+            on:click={() => selected_view = 1}
+            class:activeOpt={selected_view == 1}>
+            <p
+              class="s-14 color-grey w-500 no-wrap">
+              News and Views
+            </p>
+          </div>
+        </div>
+      </div>
 
     <!-- 
     [ℹ] promise was rejected
@@ -275,92 +799,68 @@
 
   /*
     [ℹ] WIDGET MAIN STYLE / CSS 
-    [ℹ] MOBILE FIRST
+    [ℹ] NOTE: [MOBILE-FIRST]
   */
 
-  div#about-tour-widget-container.widget-no-data-height {
-    height: 832px;
-  }
-
-  #about-tour-widget-container {
+  #scoreboard-widget-container {
     padding: 0;
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
+    overflow: hidden;
     width: 100%;
     position: relative;
-    padding: 20px;
+    padding: none;
+    background-image: url(./assets/banner.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   }
 
-:global(#about-tour-widget-container a) {
+  div#scoreboard-widget-container div#scoreboard-top-box {
+    padding: 20px 12px;
+  }
+
+  /* team-info style */
+  div#scoreboard-widget-container div#scoreboard-top-box div.team-box img {
+    width: 72px;
+    height: 72px;
+  } 
+  
+  /* bet-site */
+  div#scoreboard-widget-container div#scoreboard-top-box div.bet-site-box img {
+    width: 67px;
+    height: 28px;
+    border-radius: 5.49px;
+    object-fit: cover;
+  }
+
+  /* odds style */
+  div#scoreboard-widget-container div#scoreboard-top-box div.odds-box {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid #4B4B4B;
+    backdrop-filter: blur(4px);
+    border-radius: 8px;
+    padding: 16px;
+  } div#scoreboard-widget-container div#scoreboard-top-box div.odds-box img {
+    width: 28px;
+    height: 28px;
+  }
+
+  /* bottom nav */
+  div#scoreboard-widget-container div#scoreboard-bottom-nav-box {
+    background-color: #FFFFFF;
+    padding: 20px 10px 0 10px;
+  } div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container {
+    border-bottom: solid 2.5px transparent;
+    width: 100%;
+    text-align: center;
+  } div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container p {
+    padding-bottom: 12px;
+  } div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container.activeOpt {
+    border-color: #F5620F;
+  } div#scoreboard-widget-container div#scoreboard-bottom-nav-box  div.opt-container.activeOpt p {
     color: #F5620F !important;
-    width: fit-content !important;
-    margin: 0;
-    display: initial;
-  }
-
-  :global(#about-tour-widget-container section) {
-    padding: 0 !important;
-    padding-bottom: 0 !important;
-    min-height: fit-content;
-  }
-  :global(#about-tour-widget-container section div:first-child) {
-    border: 1px solid #E6E6E6;
-    border-radius: 12px 12px 0 0 !important;
-  }
-  :global(#about-tour-widget-container section > div) {
-    border: 1px solid #E6E6E6;
-    padding: 20px;
-  }
-  :global(#about-tour-widget-container section > div > h4) {
-    margin: 0 !important;
-    margin-bottom: 8px;
-  }
-  :global(#about-tour-widget-container section div.faq-body) {
-    border: none !important;
-  }
-  :global(#about-tour-widget-container section hr) {
-    display: none;
-  }
-  :global(#about-tour-widget-container section div:last-child) {
-    border: 1px solid #E6E6E6;
-    border-radius: 0 0 12px 12px !important;
-  }
-
-  :global(
-    #about-tour-widget-container h3) {
-      font-size: 20px;
-  }
-  :global(
-    #about-tour-widget-container h4,
-    #about-tour-widget-container p) {
-      font-size: 16px;
-  }
-  :global(
-    #about-tour-widget-container section div.faq-body) {
-      font-size: 14px;
-  }
-
-  :global(
-    #about-tour-widget-container h1,
-    #about-tour-widget-container h2, 
-    #about-tour-widget-container h3,
-    #about-tour-widget-container h4) {
-      color: #292929 !important;
-  }
-  :global(
-    #about-tour-widget-container p,
-    #about-tour-widget-container section div.faq-body) {
-    color: #8C8C8C !important;
-  }
-  :global(
-    #about-tour-widget-container h3) {
-      margin: 20px 0 12px 0;
-  }
-
-  :global(
-    #about-tour-widget-container section > div) {
-    border: 1px solid #E6E6E6 !important;
   }
 
   /* ====================
@@ -371,7 +871,7 @@
   TABLET RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) and (max-width: 1000px)  {
 
-    #about-tour-widget-container {
+    #scoreboard-widget-container {
       min-width: 100%;
       /* max-width: 700px; */
     }
@@ -388,7 +888,7 @@
   DESKTOP RESPONSIVNESS (&+) */
   @media only screen and (min-width: 1160px) {
 
-    #about-tour-widget-container {
+    #scoreboard-widget-container {
       min-width: 100%;
     }
 
@@ -397,24 +897,6 @@
   /* ====================
     WIDGET DARK THEME
   ==================== */
-
-  :global(
-    #about-tour-widget-container.dark-background-1 h1,
-    #about-tour-widget-container.dark-background-1 h2, 
-    #about-tour-widget-container.dark-background-1 h3,
-    #about-tour-widget-container.dark-background-1 h4) {
-      color: #FFFFFF !important;
-  }
-  :global(
-    #about-tour-widget-container.dark-background-1 p,
-    #about-tour-widget-container.dark-background-1 section div.faq-body) {
-    color: #A8A8A8 !important;
-  }
-
-  :global(
-    #about-tour-widget-container.dark-background-1 section > div) {
-    border: 1px solid #616161 !important;
-  }
 
 
 </style>

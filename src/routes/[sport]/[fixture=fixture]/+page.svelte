@@ -234,7 +234,7 @@
 
   <!-- 
   [ℹ] widgets -->
-  <ScoreboardWidget {FIXTURE_SCOREBOARD} />
+  <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} />
 
 </section>
 

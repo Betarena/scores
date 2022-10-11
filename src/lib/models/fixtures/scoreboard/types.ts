@@ -58,24 +58,28 @@ export interface Fixture_Scoreboard_Info {
     away: Fixture_Scoreboard_Team
   }
   // NOTE: Scoreboard Before the match (fixture_scoreboard);
-  name?:   string            // [hasura] Tournament name (Link) | scores_tournaments/urls
-  round?:  number            // [hasura] historic_fixtures/round_name
-  home_team_name?: string    // [hasura] historic_fixtures/home_team_name
-  home_team_logo?: string    // [hasura] historic_fixtures/home_team_logo
-  away_team_name?: string    // [hasura] historic_fixtures/away_team_name
-  away_team_logo?: string    // [hasura] historic_fixtures/away_team_logo
-  counter?: string           // [] (Just available 24 hours before the match)
-  fixture_time?: string      // [hasura] historic_fixtures/time
-  _1x2?: string              // [firebase] https://betarena-rv-6b382.firebaseio.com/odds
-  _1x2_link?: string         // [sportbook-cache] sportsbook_details/data
+  name?:   string                 // [hasura] Tournament name (Link) | scores_tournaments/urls
+  round?:  number                 // [hasura] historic_fixtures/round_name
+  home_team_name?: string         // [hasura] historic_fixtures/home_team_name
+  home_team_logo?: string         // [hasura] historic_fixtures/home_team_logo
+  away_team_name?: string         // [hasura] historic_fixtures/away_team_name
+  away_team_logo?: string         // [hasura] historic_fixtures/away_team_logo
+  counter?: string                // [] (Just available 24 hours before the match)
+  fixture_time?: string           // [hasura] historic_fixtures/time
+  _1x2?: Fixture_Scorebaord_Odds  // [firebase] https://betarena-rv-6b382.firebaseio.com/odds
+  _1x2_link?: string              // [sportbook-cache] sportsbook_details/data
   // NOTE: Scoreboard during the match;
-  score?: string             // [firebase] Live Score Now Firebase
-  minute?: number            // [firebase] Live Score Now Firebase
+  score?: string                  // [firebase] Live Score Now Firebase
+  minute?: number                 // [firebase] Live Score Now Firebase
   // NOTE: Scoreboard after the match;
-  score_post?: string        // [hasura] JSON($path) historic_fixtures/data/scores
-  status?: string            // [hasura] historic_fixtures/status
-  post_date?: string         // [hasura] historic_fixtures/time
+  score_post?: string             // [hasura] JSON($path) historic_fixtures/data/scores
+  status?: string                 // [hasura] historic_fixtures/status
+  post_date?: string              // [hasura] historic_fixtures/time
 } export interface Fixture_Scoreboard_Team {
   name?: string
   score?: number
+} export interface Fixture_Scorebaord_Odds {
+  home?: number
+  draw?: number
+  away?: number
 }
