@@ -418,7 +418,8 @@
 <div
   id='widget-outer'>
 
-  <!-- [ℹ] SEO-DATA-LOADED 
+  <!-- 
+  [ℹ] SEO-DATA-LOADED 
   -->
   <!-- {#if !loaded}
     <div 
@@ -427,30 +428,23 @@
     </div>
   {/if} -->
 
-  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  <!-- 
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  <!-- {#if 
+  {#if
     no_widget_data && 
     loaded}
 
-    <!-- [ℹ] title of the widget 
-    - ->
-    <h2
-      class="s-20 m-b-10 w-500 color-black-2"
-      style="margin-top: 0;"
-      class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-      {LEAGUE_INFO_SEO_DATA?.data?.translation?.league_info}
-    </h2>
-
     <!-- [ℹ] no-widget-data-avaiable-placeholder container 
-    - ->
+    -->
     <div
       id='no-widget-box'
       class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-      <!-- [ℹ] no-visual-asset
-      - ->
+      <!-- 
+      [ℹ] no-visual-asset
+      -->
       {#if $userBetarenaSettings.theme == 'Dark'}
         <img 
           src={no_visual_dark} 
@@ -467,30 +461,30 @@
         />
       {/if}
       
-      <!-- [ℹ] container w/ text 
-      - ->
+      <!-- 
+      [ℹ] container w/ text 
+      -->
       <div>
         <p 
           class='s-14 m-b-8 w-500'
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info}
+          NO INFO
         </p>
         <p class='s-14 color-grey w-400'> 
-          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info_desc}
+          NO INFO DESC
         </p>
       </div>
     </div>
-  {/if} -->
+  {/if}
 
-  <!-- [ℹ] MAIN WIDGET COMPONENT
+  <!-- 
+  [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if 
     !no_widget_data &&
     !refresh &&
     browser && 
-    $userBetarenaSettings.country_bookmaker && 
-    !enable_logs}
-
+    $userBetarenaSettings.country_bookmaker}
 
     <!-- 
     [ℹ] promise is pending 
