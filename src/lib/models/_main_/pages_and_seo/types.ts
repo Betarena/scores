@@ -3,13 +3,12 @@ import type {
   BETARENA_HASURA_scores_endpoints_translations,
   BETARENA_HASURA_scores_football_countries,
   BETARENA_HASURA_scores_hreflang, 
-  BETARENA_HASURA_scores_seo_block_homepage, 
   BETARENA_HASURA_scores_seo_fixtures, 
   BETARENA_HASURA_scores_seo_homepage, 
   BETARENA_HASURA_scores_seo_tournaments, 
   BETARENA_HASURA_scores_tournaments, 
   Urls
-} from "../hasura"
+} from "../../hasura"
 
 /**
  * ==========================================
