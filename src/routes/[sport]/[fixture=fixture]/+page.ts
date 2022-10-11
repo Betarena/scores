@@ -49,13 +49,19 @@ export async function load({
    * [ℹ] [fixtures] SEO-READY data; 
   */
 
-  const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(`/api/cache/_main_/pages_and_seo?lang=` + urlLang + "&page=fixtures", {
-    method: 'GET'
-  }).then((r) => r.json());
+  const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(
+    `/api/cache/_main_/pages_and_seo?lang=` + urlLang + "&page=fixtures", 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
-  const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname + "&page=fixtures", {
-    method: 'GET'
-  }).then((r) => r.json());
+  const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
+    `/api/cache/_main_/pages_and_seo?url=` + url.pathname + "&page=fixtures", 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
   /**
    * [ℹ] regex-ing SEO content dynamically;
@@ -119,13 +125,12 @@ export async function load({
 
   const fixture_id = response_fixtures_page_info?.data?.id;
 
-  const response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = 
-    await fetch(
-      `/api/cache/fixtures/scoreboard?fixture_id=` + fixture_id, 
-      {
-        method: 'GET'
-    })
-    .then((r) => r.json());
+  const response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(
+    `/api/cache/fixtures/scoreboard?fixture_id=` + fixture_id, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
   /** 
    * ==========
@@ -134,9 +139,9 @@ export async function load({
   */
 
   if (
-    response_fixtures_seo &&
-    response_fixtures_page_info &&
-    response_scoreboard
+    response_fixtures_seo
+    && response_fixtures_page_info
+    // && response_scoreboard // NOTE:IMPORTANT: can be null -load from hasura
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,

@@ -83,6 +83,12 @@
 		const response_main_sportbook: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo)
     const response_all_spotbooks: Cache_Single_SportbookDetails_Data_Response[] = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo)
 
+    if (FIXTURE_SCOREBOARD == undefined) {
+      const fixture_id = FIXTURE_INFO.data.id;
+      const response_fixture: REDIS_CACHE_SINGLE_scoreboard_data = await get("/api/hasura/fixtures/scoreboard?fixture_id="+fixture_id)
+      FIXTURE_SCOREBOARD = response_fixture
+    }
+
     loaded = true;
 
     // [ℹ] data validation check
@@ -104,6 +110,8 @@
     SPORTBOOK_INFO = response_main_sportbook;
     SPORTBOOK_DETAILS_LIST = response_all_spotbooks;
     SPORTBOOK_DETAILS_LIST.sort((a, b) => parseInt(a.position) - parseInt(b.position))
+    
+    FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD
 
     return FIXTURE_SCOREBOARD;
   }
