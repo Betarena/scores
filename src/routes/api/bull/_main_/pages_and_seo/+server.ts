@@ -16,7 +16,7 @@ const { createGzip } = require('zlib');
 
 import { 
   REDIS_CACHE_PAGES_AND_SEO 
-} from '$lib/graphql/pages_and_seo/query'
+} from '$lib/graphql/_main_/pages_and_seo/query'
 
 import type { 
   Cache_Single_Homepage_SEO_Translation_Response, 
@@ -25,7 +25,7 @@ import type {
   BETARENA_HASURA_QUERY_pages_and_seo, 
   REDIS_CACHE_SINGLE_fixtures_seo_response,
   REDIS_CACHE_SINGLE_fixtures_page_info_response
-} from '$lib/models/pages_and_seo/types'
+} from '$lib/models/_main_/pages_and_seo/types'
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL

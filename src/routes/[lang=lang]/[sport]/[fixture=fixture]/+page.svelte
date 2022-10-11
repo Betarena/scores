@@ -13,7 +13,7 @@
 	import type { 
     REDIS_CACHE_SINGLE_fixtures_page_info_response, 
     REDIS_CACHE_SINGLE_fixtures_seo_response 
-  } from '$lib/models/pages_and_seo/types';
+  } from '$lib/models/_main_/pages_and_seo/types';
 	import { goto } from '$app/navigation';
 
   let PAGE_SEO:                     REDIS_CACHE_SINGLE_fixtures_seo_response

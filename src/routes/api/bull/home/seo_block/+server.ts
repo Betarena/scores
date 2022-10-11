@@ -3,7 +3,7 @@ import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { GET_HREFLANG_DATA } from '$lib/graphql/query';
-import { REDIS_CACHE_HOMEAPGE_SEO_BLOCK } from '$lib/graphql/seo_block/query';
+import { REDIS_CACHE_HOMEAPGE_SEO_BLOCK } from '$lib/graphql/home/seo_block/query';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
 import { error, json } from '@sveltejs/kit';
@@ -11,7 +11,7 @@ import { error, json } from '@sveltejs/kit';
 import type { 
   BETARENA_HASURA_seo_block_query, 
   Cache_Single_Homepage_SEO_Block_Translation_Response 
-} from '$lib/models/seo_block/types';
+} from '$lib/models/home/seo_block/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL

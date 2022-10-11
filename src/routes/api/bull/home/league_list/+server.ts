@@ -10,11 +10,11 @@ import type {
   BETARENA_HASURA_league_list_query,
   REDIS_CACHE_SINGLE_league_list_geo_data_response,
   REDIS_CACHE_SINGLE_league_list_seo_t_response
-} from '$lib/models/league_list/types'
+} from '$lib/models/home/league_list/types'
 
 import { 
   REDIS_CACHE_LEAGUE_LIST_DATA_1 
-} from '$lib/graphql/league_list/query'
+} from '$lib/graphql/home/league_list/query'
 
 import { 
   GET_HREFLANG_DATA 

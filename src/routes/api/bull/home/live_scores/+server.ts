@@ -22,7 +22,7 @@ import {
 import type {
   LiveScore_SEO_Game,
   LiveScore_SEO_Game_Scoped_Lang
-} from '$lib/models/featured_betting_sites/firebase-real-db-interface'
+} from '$lib/models/home/featured_betting_sites/firebase-real-db-interface'
 
 import { performance } from 'perf_hooks';
 import Bull from 'bull';

@@ -2,7 +2,7 @@ import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL'
 import { getAllSportbookDetails } from '$lib/firebase/featured_betting_sites'
-import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/featured_betting_sites/query'
+import { GET_TRANSLATIONS_DATA_FEATURED_BETTING_SITES } from '$lib/graphql/home/featured_betting_sites/query'
 import { GET_HREFLANG_DATA } from '$lib/graphql/query'
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
@@ -12,7 +12,7 @@ import type {
   All_SportBook_Details_Data, 
   Cache_Single_Lang_Featured_Betting_Site_Translation_Response, 
   Scores_Featured_Betting_Sites_Hasura 
-} from '$lib/models/featured_betting_sites/firebase-real-db-interface'
+} from '$lib/models/home/featured_betting_sites/firebase-real-db-interface'
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL

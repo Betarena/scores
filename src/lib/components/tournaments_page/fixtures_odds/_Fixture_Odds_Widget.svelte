@@ -613,8 +613,8 @@
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `widgetInit()`)
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
-    const response_all: Cache_Single_SportbookDetails_Data_Response[] = await get("/api/cache/tournaments_sportbook?all=true&geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo)
+    const response_all: Cache_Single_SportbookDetails_Data_Response[] = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo)
     loaded = true;
 
 		if (

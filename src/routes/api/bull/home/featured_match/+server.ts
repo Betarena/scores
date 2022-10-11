@@ -19,17 +19,17 @@ import { error, json } from '@sveltejs/kit';
 import type { 
   Cache_Single_Lang_Featured_Match_Translation_Response, 
   FixtureResponse 
-} from "$lib/models/featured_match/interface-fixture"
+} from "$lib/models/home/featured_match/interface-fixture"
 import type { 
   SelectedFixutre, 
   SelectedFixture_AllData, 
   CompleteFixtureData_Response, 
   Featured_Match_Translation_Response, 
   BETARENA_HASURA_featured_match_query
-} from "$lib/models/featured_match/response_models"
+} from "$lib/models/home/featured_match/response_models"
 import type { 
   SelectedFixture_LiveOdds_Response
-} from "$lib/models/featured_match/firebase-real-db-interface"
+} from "$lib/models/home/featured_match/firebase-real-db-interface"
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL

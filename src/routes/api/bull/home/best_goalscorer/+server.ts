@@ -14,7 +14,7 @@ import type {
 } from '$lib/models/home/best_goalscorer/types'
 import { 
   GET_BEST_GOALSCORERS_DATA 
-} from '$lib/graphql/best_goalscorer/query'
+} from '$lib/graphql/home/best_goalscorer/query'
 import { 
   GET_HREFLANG_DATA 
 } from '$lib/graphql/query'
