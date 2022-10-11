@@ -124,8 +124,8 @@
 <!-- ============
   COMPONENT STYLE
 =================-->
-<style>
 
+<style>
 	#leagues-table-container-loader {
 		min-width: 100%;
     padding: 20px;
@@ -134,29 +134,5 @@
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     width: 100%;
-	}
-
-	/* 
-    MOBILE-EXCLUSIVE RESPONSIVNESS */
-	@media only screen and (max-width: 475px) {
-		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */
-		:global(svg) {
-			/* width: 100% !important; */
-		}
-
-	}
-
-	@media only screen and (max-width: 768px) {
-		:global(svg) {
-			/* width: 100% !important; */
-		}
-	}
-
-	/* WIDGET DARK THEME */
-	.dark-background-1 #fixture-league-title,
-	.dark-background-1 #fixture-visual-box,
-	.dark-background-1 .best-players-box,
-	.dark-background-1 #live-stream-box {
-		box-shadow: inset 0px -1px 0px #616161 !important;
 	}
 </style>
