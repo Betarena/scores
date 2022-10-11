@@ -1,19 +1,11 @@
 import type { 
   BETARENA_HASURA_historic_fixtures,
-  BETARENA_HASURA_scores_football_leagues, 
   BETARENA_HASURA_scores_football_seasons_details,
-  BETARENA_HASURA_scores_general_translations,
   BETARENA_HASURA_scores_tournaments,
-  BETARENA_HASURA_scores_widget_league_info_translations, 
-  BETARENA_HASURA_scores_widget_tournament_about_translations, 
-  BETARENA_HASURA_sportsbook_details, 
-  BETARENA_HASURA_widget_league_info_translations, 
-  Scores, 
-  ScoresFootballLeaguesSeasonElement, 
-  Sportbook, 
-  WidgetLeagueInfo2Data,
-  WidgetsNoDataAvailable,
-  WidgetTournamentAboutData
+  DataStats,
+  Round,
+  Scores,
+  Time
 } from "$lib/models/hasura"
 
 /**
@@ -39,18 +31,24 @@ export interface REDIS_CACHE_SINGLE_scoreboard_data extends Fixture_Scoreboard_I
 */
 
 export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARENA_HASURA_historic_fixtures {
-  scores_j?:            Scores
+  stats_j?:            DataStats
+  localteam_id_j?:     number
+  visitorteam_id_j?:   number
+  time_j?:             Time
+  round_j?:            Round
+  scores_j?:           Scores
 }
 
-export interface BETARENA_HASURA_league_info_query {
-  scores_tournaments:   BETARENA_HASURA_scores_tournaments[]
-  historic_fixtures:    BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
+export interface BETARENA_HASURA_scoreboard_query {
+  scores_football_seasons_details: BETARENA_HASURA_scores_football_seasons_details[]
+  scores_tournaments:              BETARENA_HASURA_scores_tournaments[]
+  historic_fixtures:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
 }
 
 /**
- * =================================
- * TOURNAMENTS PAGE DATA [INTERFACES]
- * =================================
+ * ==========================================
+ * SPECIFIC COMPONENT PAGE DATA [INTERFACES]
+ * ==========================================
 */
 
 export interface Fixture_Scoreboard_Info {

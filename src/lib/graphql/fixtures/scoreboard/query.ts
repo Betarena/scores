@@ -72,12 +72,17 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_1 = gql`
       away_team_name
       home_team_name
       round_name
-      data
       league_id
-      tip_link_wp
-      fixture_link_wp
-      media_link
       season_id
+      # [alt V1]
+      # data
+      # [alt V2]
+      stats_j: data(path: "$.stats")
+      localteam_id_j: data(path: "$.localteam_id")
+      visitorteam_id_j: data(path: "$.visitorteam_id")
+      time_j: data(path: "$.time")
+      round_j: data(path: "$.round")
+      scores_j: data(path: "$.scores")
     }
   }
 `;

@@ -14,13 +14,13 @@ import type {
   BETARENA_HASURA_historic_fixtures
 } from '$lib/models/hasura';
 import type { 
-  BETARENA_HASURA_fixtures_odds_query, 
-  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
-} from '$lib/models/tournaments/fixtures_odds/types';
-import { 
-  GET_HREFLANG_DATA 
-} from '$lib/graphql/query';
-import type { Fixture_Scoreboard_Info, Fixture_Scoreboard_Team } from '$lib/models/fixtures/scoreboard/types';
+  BETARENA_HASURA_scoreboard_query, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures
+} from '$lib/models/fixtures/scoreboard/types';
+import type { 
+  Fixture_Scoreboard_Info, 
+  Fixture_Scoreboard_Team, 
+  REDIS_CACHE_SINGLE_scoreboard_data 
+} from '$lib/models/fixtures/scoreboard/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -92,7 +92,7 @@ export async function POST(): Promise < unknown > {
 
 async function cacheData (
   league_id: number, 
-  json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
+  json_cache: REDIS_CACHE_SINGLE_scoreboard_data
 ) {
   try {
     await redis.hset(cache_data_addr, league_id, JSON.stringify(json_cache));
@@ -148,9 +148,10 @@ async function main () {
   */
 
   const current_seasons = await get_current_seasons()
+  // eslint-disable-next-line prefer-const
   let current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
-  if (dev) current_seasons_arr = [19285] // [ℹ] manual update target seasons
-  if (dev) console.log(`current_seasons_arr`, current_seasons_arr)
+  // if (dev) current_seasons_arr = [19285] // [ℹ] manual update target seasons
+  // if (dev) console.log(`current_seasons_arr`, current_seasons_arr)
 
   /**
    * [ℹ] obtain target historic_fixtures
@@ -165,27 +166,31 @@ async function main () {
    * [ℹ] & persistance [END]
   */
 
+  const cache_data_arr: Fixture_Scoreboard_Info[] = []
+
+  // FIXME: no use of "scores_j" field
+
   for (const [key, value] of historic_fixtures_map.entries()) {
 
-    const fix_season_id = value.data?.season_id;
-    const league_id = value.league_id;
-    const fixture_id = value.id;
-    const home_team_id = value.data?.localteam_id;
-    const away_team_id = value.data?.visitorteam_id;
+    const fix_season_id = value?.data?.season_id;
+    const league_id = value?.league_id;
+    const fixture_id = value?.id;
+    const home_team_id = value?.localteam_id_j;
+    const away_team_id = value?.visitorteam_id_j;
 
-    const round = value.data?.round?.data?.name;
-    const fixture_date = value.fixture_day;
-    const fixture_time = value.time;
-    const minutes = value.data?.time?.minute;
-    const status = value.data?.time?.status;
+    const round = value?.round_j?.data?.name;
+    const fixture_date = value?.fixture_day;
+    const fixture_time = value?.time;
+    const minutes = value?.time_j?.minute;
+    const status = value?.time_j?.status;
 
     const home_team_name = value.home_team_name;
     const home_team_logo = value.home_team_logo;
-    const home_team_score = value?.data?.stats?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
+    const home_team_score = value?.stats_j?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
     
     const away_team_name = value.away_team_name;
     const away_team_logo = value.away_team_logo;
-    const away_team_score = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
+    const away_team_score = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
 
     const home_team_obj: Fixture_Scoreboard_Team = {
       name: home_team_name,
@@ -214,12 +219,13 @@ async function main () {
       }
     }
 
-    await cacheData(key, fixture_object);
+    // await cacheData(key, fixture_object);
+    cache_data_arr.push(fixture_object)
   }
 
   // [🐛] debug
   if (dev) {
-    const data = JSON.stringify(historic_fixtures_map.values(), null, 4)
+    const data = JSON.stringify(cache_data_arr, null, 4)
     fs.writeFile(`./datalog/${cacheQueueProcessName}.json`, data, err => {
       if (err) {
         console.error(err);
@@ -235,11 +241,11 @@ async function main () {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function get_current_seasons (
-): Promise < BETARENA_HASURA_fixtures_odds_query > {
+): Promise < BETARENA_HASURA_scoreboard_query > {
 
   const t0 = performance.now();
   const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_0";
-	const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
+	const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
     REDIS_CACHE_SCOREBOARD_ODDS_DATA_0
   );
   const t1 = performance.now();
@@ -250,7 +256,7 @@ async function get_current_seasons (
 
 async function get_target_historic_fixtures (
   seasonIdsArr: number[]
-): Promise < BETARENA_HASURA_historic_fixtures[] > {
+): Promise < BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] > {
 
   const limit = 1000;
   let offset = 0;
@@ -271,7 +277,7 @@ async function get_target_historic_fixtures (
       seasonIds: seasonIdsArr
     }
     
-    const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
+    const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
       REDIS_CACHE_SCOREBOARD_ODDS_DATA_1,
       VARIABLES
     );
@@ -316,9 +322,9 @@ async function get_target_historic_fixtures (
 }
 
 async function generate_historic_fixtures_map (
-  h_fixtures_arr: BETARENA_HASURA_historic_fixtures[]
-): Promise < Map <number, BETARENA_HASURA_historic_fixtures> > {
-  const historic_fixtures_map = new Map <number, BETARENA_HASURA_historic_fixtures>()
+  h_fixtures_arr: BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
+): Promise < Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures> > {
+  const historic_fixtures_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures>()
 
   // [ℹ] conversion to hashmap
   t0 = performance.now();
