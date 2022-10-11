@@ -5,7 +5,7 @@ import { error, json } from '@sveltejs/kit';
 
 import type { 
   REDIS_CACHE_SINGLE_scoreboard_data
-} from '$lib/models/tournaments/top_players/types';
+} from '$lib/models/fixtures/scoreboard/types';
 
 const cache_data_addr = "scoreboard_data"
 
