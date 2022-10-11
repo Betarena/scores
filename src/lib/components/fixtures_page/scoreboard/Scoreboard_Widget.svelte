@@ -33,7 +33,6 @@
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
 	let refresh_data:             any = undefined;                // [ℹ] refresh-data value speed;
   let no_widget_data:           any = false;                    // [ℹ] identifies the no_widget_data boolean;
-  let trueLengthOfArray:        number;
   let currentSeason:            number = undefined;
 
   // [🐞]

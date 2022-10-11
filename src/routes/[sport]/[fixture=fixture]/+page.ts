@@ -119,9 +119,13 @@ export async function load({
 
   const fixture_id = response_fixtures_page_info?.data?.id;
 
-  const response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(`/api/cache/fixtures/scoreboard?fixture_id=` + fixture_id, {
-    method: 'GET'
-  }).then((r) => r.json());
+  const response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = 
+    await fetch(
+      `/api/cache/fixtures/scoreboard?fixture_id=` + fixture_id, 
+      {
+        method: 'GET'
+    })
+    .then((r) => r.json());
 
   /** 
    * ==========
