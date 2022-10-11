@@ -108,6 +108,20 @@
     return FIXTURE_SCOREBOARD;
   }
 
+  function triggerGoggleEvents(
+    action: string
+  ) {
+    if (action === "betting_site_logo_football_fixtures_scoreboard_fixtures") {
+      gtag('event', "fixtures_scoreboard_odds", { 
+        'event_category': "widget_fixture_scoreboard_info", 
+        'event_label': "click_betting_site_logo", 
+        'value': "click"
+        }
+      );
+      return
+    }
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -673,26 +687,38 @@
 
           <!-- 
           [ℹ] betting site
+          [ℹ] non-"FT"
           -->
-          <div
-            class="
-              row-space-center
-              bet-site-box
-              m-b-8
-            ">
-            <p 
+          {#if FIXTURE_SCOREBOARD.status != "FT"}
+            <div
               class="
-                s-12
-                color-grey
-                m-r-10
+                row-space-center
+                bet-site-box
+                m-b-8
               ">
-              Featured by
-            </p>
-            <img 
-              src={SPORTBOOK_INFO?.image}
-              alt=""
-            />
-          </div>
+              <p 
+                class="
+                  s-12
+                  color-grey
+                  m-r-10
+                ">
+                Featured by
+              </p>
+              <a 
+                rel="nofollow"
+                aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                href={SPORTBOOK_INFO?.register_link}
+                target="_blank"
+                style="width: fit-content;">
+                <img 
+                  id='sportbook-logo-img'
+                  src={SPORTBOOK_INFO?.image}
+                  alt={SPORTBOOK_INFO?.title}
+                />
+              </a>
+            </div>
+          {/if}
 
           <!-- 
           [ℹ] odds
