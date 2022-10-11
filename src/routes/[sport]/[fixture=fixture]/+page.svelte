@@ -19,6 +19,7 @@
   } from '$lib/models/fixtures/scoreboard/types';
 
   import SvelteSeo from 'svelte-seo';
+	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
 
   let PAGE_SEO:                     REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response
@@ -233,7 +234,7 @@
 
   <!-- 
   [ℹ] widgets -->
-  
+  <ScoreboardWidget {FIXTURE_SCOREBOARD} />
 
 </section>
 

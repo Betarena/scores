@@ -217,11 +217,13 @@
     $userBetarenaSettings.country_bookmaker && 
     !diasbleDev}
 
+    <ScoreboardLoader />
+
     <!-- 
     [ℹ] promise is pending 
     -->
     {#await widget_init()}
-      <ScoreboardLoader />
+      <!-- <ScoreboardLoader /> -->
     <!-- 
     [ℹ] promise was fulfilled
     -->

@@ -6,10 +6,10 @@
   class="animation-target"
   width="100%" 
   height="120" 
-  viewBox="0 0 141 120" 
+  viewBox="0 0 88 104" 
   fill="none"
   xmlns="http://www.w3.org/2000/svg"
   preserveAspectRatio="none">
-  <rect opacity="0.3" x="27" width="88" height="88" rx="44" fill="#8C8C8C"/>
-  <rect opacity="0.3" y="100" width="141" height="20" rx="2" fill="#8C8C8C"/>
+  <rect x="8" width="72" height="72" rx="36" fill="#616161"/>
+  <rect y="84" width="88" height="20" rx="2" fill="#616161"/>
 </svg>
