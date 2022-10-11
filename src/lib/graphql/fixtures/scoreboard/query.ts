@@ -70,7 +70,9 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_1 = gql`
       fixture_day
       time
       away_team_name
+      away_team_logo
       home_team_name
+      home_team_logo
       round_name
       league_id
       season_id

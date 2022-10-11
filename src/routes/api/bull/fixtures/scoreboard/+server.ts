@@ -204,18 +204,18 @@ async function main () {
 
     // [ℹ] generate [final] fixture object
     const fixture_object: Fixture_Scoreboard_Info = {
-      id:               fixture_id,
-      round:            round,
-      home_team_name:   home_team_name,
-      home_team_logo:   home_team_logo,
-      away_team_name:   away_team_name,
-      away_team_logo:   away_team_logo,
-      minute:           minutes,
-      status:           status,             
-      fixture_time:     fixture_time,
+      id:               fixture_id || null,
+      round:            round || null,
+      home_team_name:   home_team_name || null,
+      home_team_logo:   home_team_logo || null,
+      away_team_name:   away_team_name || null,
+      away_team_logo:   away_team_logo || null,
+      minute:           minutes || null,
+      status:           status || null,             
+      fixture_time:     fixture_time || null,
       teams: {
-        home:           home_team_obj,
-        away:           away_team_obj
+        home:           home_team_obj || null,
+        away:           away_team_obj || null
       }
     }
 
