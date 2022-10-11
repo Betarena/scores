@@ -89,8 +89,37 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_1 = gql`
   }
 `;
 
+/**
+ * [ℹ] GET Target Leagues 
+*/
+export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_2 = gql`
+  query REDIS_CACHE_SCOREBOARD_ODDS_DATA_2 
+    (
+      $league_ids_arr: [numeric!]
+    ) 
+    @cached 
+    (ttl: 300)
+  {
+    scores_football_leagues (
+      where: {
+        id: {
+          _in: $league_ids_arr
+        }
+      }
+    ) {
+      id
+      # [alt V1]
+      # data
+      # [alt V2]
+      image_path_j: data(path: "$.logo_path")
+    }
+  }
+`; 
+
 /** 
+ * ====================
  * [ℹ] Surgical Queries
+ * ====================
 */
 
 /**

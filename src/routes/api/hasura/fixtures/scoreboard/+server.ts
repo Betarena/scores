@@ -5,6 +5,7 @@ import { error, json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
+  REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
   REDIS_CACHE_SCOREBOARD_ODDS_DATA_3 
 } from '$lib/graphql/fixtures/scoreboard/query';
 
@@ -13,6 +14,8 @@ import type {
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures
 } from '$lib/models/tournaments/fixtures_odds/types';
 import type { 
+  BETARENA_HASURA_scoreboard_query,
+  BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues,
   Fixture_Scoreboard_Info, 
   Fixture_Scoreboard_Team, 
   REDIS_CACHE_SINGLE_scoreboard_data 
@@ -59,14 +62,21 @@ async function main (
     return null;
   }
 
+  const fixture_data = fixture[0]
+  const league_id = fixture_data?.league_id;
+
+  /**
+   * [ℹ] obtain target league 
+  */
+
+  const league_data = await get_target_league([league_id])
+  const league_img = league_data[0]?.image_path_j;
+
   /**
    * [ℹ] generate FIXTURE data 
   */
 
-  const fixture_data = fixture[0]
-
   const fix_season_id = fixture_data?.data?.season_id;
-  const league_id = fixture_data?.league_id;
   const fixture_id = fixture_data?.id;
   const home_team_id = fixture_data?.localteam_id_j;
   const away_team_id = fixture_data?.visitorteam_id_j;
@@ -109,7 +119,8 @@ async function main (
     teams: {
       home:           home_team_obj || null,
       away:           away_team_obj || null
-    }
+    },
+    league_logo:      league_img || null
   }
 
   // [ℹ] return fixture
@@ -130,7 +141,7 @@ async function get_target_fixture (
   const VARIABLES = {
     fixture_id: fixture_id
   }
-  const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
+  const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
     REDIS_CACHE_SCOREBOARD_ODDS_DATA_3,
     VARIABLES
   );
@@ -138,4 +149,24 @@ async function get_target_fixture (
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   return response.historic_fixtures;
+}
+
+async function get_target_league (
+  league_ids_arr: number[]
+): Promise < BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[] > {
+
+  const VARIABLES_1 = {
+    league_ids_arr: league_ids_arr
+  }
+  
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_2";
+	const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
+    REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
+    VARIABLES_1
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response.scores_football_leagues;
 }

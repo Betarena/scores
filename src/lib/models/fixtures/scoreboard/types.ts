@@ -1,6 +1,7 @@
 import type { 
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
+  BETARENA_HASURA_scores_football_leagues,
   BETARENA_HASURA_scores_football_seasons_details,
   BETARENA_HASURA_scores_tournaments,
   DataStats,
@@ -40,11 +41,16 @@ export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARE
   scores_j?:           Scores
 }
 
+export interface BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues extends BETARENA_HASURA_scores_football_leagues {
+  image_path_j?:       string
+}
+
 export interface BETARENA_HASURA_scoreboard_query {
   scores_football_seasons_details: BETARENA_HASURA_scores_football_seasons_details[]
   scores_tournaments:              BETARENA_HASURA_scores_tournaments[]
   historic_fixtures_aggregate:     BETARENA_HASURA_historic_fixtures_aggregate
   historic_fixtures:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
+  scores_football_leagues:         BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[]
 }
 
 /**
@@ -59,6 +65,7 @@ export interface Fixture_Scoreboard_Info {
     home: Fixture_Scoreboard_Team
     away: Fixture_Scoreboard_Team
   }
+  league_logo?: string
   // NOTE: Scoreboard Before the match (fixture_scoreboard);
   name?:   string                 // [hasura] Tournament name (Link) | scores_tournaments/urls
   round?:  number                 // [hasura] historic_fixtures/round_name

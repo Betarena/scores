@@ -3,7 +3,8 @@ import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
   REDIS_CACHE_SCOREBOARD_ODDS_DATA_0,
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_1
+  REDIS_CACHE_SCOREBOARD_ODDS_DATA_1,
+  REDIS_CACHE_SCOREBOARD_ODDS_DATA_2
 } from '$lib/graphql/fixtures/scoreboard/query';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
@@ -14,7 +15,7 @@ import type {
   BETARENA_HASURA_historic_fixtures
 } from '$lib/models/hasura';
 import type { 
-  BETARENA_HASURA_scoreboard_query, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures
+  BETARENA_HASURA_scoreboard_query, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures, BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues
 } from '$lib/models/fixtures/scoreboard/types';
 import type { 
   Fixture_Scoreboard_Info, 
@@ -149,18 +150,25 @@ async function main () {
 
   const current_seasons = await get_current_seasons()
   // eslint-disable-next-line prefer-const
-  let current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
+  let current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id)
   if (dev) current_seasons_arr = [19734] // [ℹ] manual update target seasons
   // if (dev) console.log(`current_seasons_arr`, current_seasons_arr)
 
   /**
    * [ℹ] obtain target historic_fixtures
-   * [ℹ] obtain taget season_id's
+   * [ℹ] convert to map
+   * [ℹ] obtain target league_id's
+   * [ℹ] convert to map
   */
 
   const h_fixtures_arr = await get_target_historic_fixtures(current_seasons_arr)
   const historic_fixtures_map = await generate_historic_fixtures_map(h_fixtures_arr)
- 
+
+  // eslint-disable-next-line prefer-const
+  let leagues_ids_arr: number[] = h_fixtures_arr?.map(a => a.league_id)
+  const leagues_data = await get_target_leagues(leagues_ids_arr)
+  const league_map = await generate_leagues_map(leagues_data)
+
   /**
    * [ℹ] data pre-processing
    * [ℹ] & persistance [END]
@@ -216,7 +224,8 @@ async function main () {
       teams: {
         home:           home_team_obj || null,
         away:           away_team_obj || null
-      }
+      },
+      league_logo:      league_map.get(league_id)?.image_path_j || null
     }
 
     await cacheData(key, fixture_object)
@@ -337,4 +346,41 @@ async function generate_historic_fixtures_map (
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
   return historic_fixtures_map;
+}
+
+async function get_target_leagues (
+  league_ids_arr: number[]
+): Promise < BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[] > {
+
+  const VARIABLES_1 = {
+    league_ids_arr: league_ids_arr
+  }
+  
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_2";
+	const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
+    REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
+    VARIABLES_1
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response.scores_football_leagues;
+}
+
+async function generate_leagues_map (
+  league_arr: BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[]
+): Promise < Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues> > {
+  const leagues_arr_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues>()
+
+  // [ℹ] conversion to hashmap
+  t0 = performance.now();
+  for (const h_fixture of league_arr) {
+    leagues_arr_map.set(h_fixture.id, h_fixture);
+  }
+  t1 = performance.now();
+  logs.push(`leagues_arr_map generated with size: ${leagues_arr_map.size}`)
+  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  return leagues_arr_map;
 }
