@@ -88,3 +88,48 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_1 = gql`
     }
   }
 `;
+
+/** 
+ * [ℹ] Surgical Queries
+*/
+
+/**
+ * [ℹ] GET Target Fixture 
+*/
+export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_3 = gql`
+  query REDIS_CACHE_SCOREBOARD_ODDS_DATA_3
+    (
+      $fixture_id: Int!
+    ) 
+    @cached 
+    (ttl: 300)
+  {
+    historic_fixtures (
+      where: {
+        id: {
+          _eq: $fixture_id
+        }
+      }
+    ) {
+      id
+      fixture_day
+      time
+      away_team_name
+      away_team_logo
+      home_team_name
+      home_team_logo
+      round_name
+      league_id
+      season_id
+      # [alt V1]
+      # data
+      # [alt V2]
+      stats_j: data(path: "$.stats")
+      localteam_id_j: data(path: "$.localteam_id")
+      visitorteam_id_j: data(path: "$.visitorteam_id")
+      time_j: data(path: "$.time")
+      round_j: data(path: "$.round")
+      scores_j: data(path: "$.scores")
+    }
+  }
+`;
