@@ -539,7 +539,7 @@
       <!--
       [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
       -->
-      <div 
+      <div
         id="scoreboard-widget-container"
         class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
@@ -1847,5 +1847,9 @@
   /* ====================
     WIDGET DARK THEME
   ==================== */
+
+  div#scoreboard-widget-container.dark-background-1 div#scoreboard-bottom-nav-box {
+    background-color: #4B4B4B;
+  }
 
 </style>
