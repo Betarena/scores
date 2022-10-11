@@ -150,7 +150,7 @@ async function main () {
   const current_seasons = await get_current_seasons()
   // eslint-disable-next-line prefer-const
   let current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
-  // if (dev) current_seasons_arr = [19285] // [ℹ] manual update target seasons
+  if (dev) current_seasons_arr = [19734] // [ℹ] manual update target seasons
   // if (dev) console.log(`current_seasons_arr`, current_seasons_arr)
 
   /**
@@ -219,11 +219,13 @@ async function main () {
       }
     }
 
-    // await cacheData(key, fixture_object);
+    await cacheData(key, fixture_object)
+
+    // [🐞]
     cache_data_arr.push(fixture_object)
   }
 
-  // [🐛] debug
+  // [🐞]
   if (dev) {
     const data = JSON.stringify(cache_data_arr, null, 4)
     fs.writeFile(`./datalog/${cacheQueueProcessName}.json`, data, err => {
