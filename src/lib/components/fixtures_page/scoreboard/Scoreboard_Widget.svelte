@@ -228,7 +228,7 @@
   // [ADD-ON] FIREBASE
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let real_time_unsubscribe: Unsubscribe;
+  let real_time_unsubscribe: Unsubscribe[] = []
   const live_fixtures_map = new Map<number, FIREBASE_livescores_now>();
 
   async function check_live_fixtures (
@@ -270,7 +270,7 @@
       'livescores_now/'
     );
 
-    onValue(fixtureRef, (snapshot) => {
+    const listen_livescore_event_ref = onValue(fixtureRef, (snapshot) => {
       // [ℹ] break-down-values
       if (snapshot.val() != null) {
         const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
@@ -278,6 +278,7 @@
       }
     });
 
+    real_time_unsubscribe.push(listen_livescore_event_ref);
   }
 
   async function check_fixture_odds_inject(
@@ -351,7 +352,7 @@
       'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id
     );
 
-    const listenEventRef = onValue(fixtureRef, (snapshot) => {
+    const listen_odds_event_ref = onValue(fixtureRef, (snapshot) => {
       // [ℹ] break-down-values
       if (snapshot.val() != null) {
         const data: [string, FIREBASE_odds][] = Object.entries(snapshot.val())
@@ -362,7 +363,7 @@
       }
     });
 
-    real_time_unsubscribe = listenEventRef;
+    real_time_unsubscribe.push(listen_odds_event_ref);
   }
 
   // [ℹ] one-off event read "livescores_now"
@@ -400,10 +401,12 @@
 
   onDestroy(async() => {
     // [ℹ] close LISTEN EVENT connection
-    if (dev) console.groupCollapsed("closing connections [DEV]");
-    if (dev) console.log("closing connection")
-    if (dev) console.groupEnd();
-    real_time_unsubscribe();
+    for (const iterator of real_time_unsubscribe) {
+      if (dev) console.groupCollapsed("closing connections [DEV]");
+      if (dev) console.log("closing connection")
+      if (dev) console.groupEnd();
+      iterator();
+    }
   })
 
 </script>
