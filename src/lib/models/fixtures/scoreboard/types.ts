@@ -1,5 +1,6 @@
 import type { 
   BETARENA_HASURA_historic_fixtures,
+  BETARENA_HASURA_historic_fixtures_aggregate,
   BETARENA_HASURA_scores_football_seasons_details,
   BETARENA_HASURA_scores_tournaments,
   DataStats,
@@ -42,6 +43,7 @@ export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARE
 export interface BETARENA_HASURA_scoreboard_query {
   scores_football_seasons_details: BETARENA_HASURA_scores_football_seasons_details[]
   scores_tournaments:              BETARENA_HASURA_scores_tournaments[]
+  historic_fixtures_aggregate:     BETARENA_HASURA_historic_fixtures_aggregate
   historic_fixtures:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
 }
 
