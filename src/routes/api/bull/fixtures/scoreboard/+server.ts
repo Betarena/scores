@@ -15,11 +15,7 @@ import type {
 } from '$lib/models/hasura';
 import type { 
   BETARENA_HASURA_fixtures_odds_query, 
-  Fixture_Odds_Team, 
   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
-  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
-  Tournament_Fixture_Odds, 
-  Tournament_Season_Fixtures_Odds, 
 } from '$lib/models/tournaments/fixtures_odds/types';
 import { 
   GET_HREFLANG_DATA 

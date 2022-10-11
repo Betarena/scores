@@ -18,12 +18,12 @@
   */
 
   import FeaturedMatchWidget from '$lib/components/home/featured_match/_FeaturedMatch_Widget.svelte';
-  import FeaturedBettingSitesWidget from '$lib/components/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-  import LeagueListWidget from '$lib/components/league_list/_LeagueList_Widget.svelte';
-  import LiveScoresWidget from '$lib/components/live_scores_football/_LiveScores_Widget.svelte';
-  import BestGoalscorersWidget from '$lib/components/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+  import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+  import LeagueListWidget from '$lib/components/home/league_list/_LeagueList_Widget.svelte';
+  import LiveScoresWidget from '$lib/components/home/live_scores_football/_LiveScores_Widget.svelte';
+  import BestGoalscorersWidget from '$lib/components/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
   import SeoBlock from '$lib/components/home/seo_block_homepage/_SEO_Block.svelte';
-  import LeaguesTableWidget from '$lib/components/leagues_table/_Leagues_Table_Widget.svelte';
+  import LeaguesTableWidget from '$lib/components/home/leagues_table/_Leagues_Table_Widget.svelte';
 
   /*
     [v2] - Testing with Dynamic Imports (client-side)
@@ -50,14 +50,14 @@
     });
   */
 
-	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/pages_and_seo/types';
-  import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
-  import type { Cache_Single_Lang_Featured_Match_Translation_Response, FixtureResponse } from '$lib/models/featured_match/interface-fixture';
-  import type { All_SportBook_Details_Data, Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
+	import type { Cache_Single_Homepage_SEO_Translation_Response, Hasura_Complete_Pages_SEO } from '$lib/models/_main_/pages_and_seo/types';
+  import type { LiveScores_Football_Translation } from '$lib/models/home/live_scores_football/types';
+  import type { Cache_Single_Lang_Featured_Match_Translation_Response, FixtureResponse } from '$lib/models/home/featured_match/interface-fixture';
+  import type { All_SportBook_Details_Data, Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
   import type { Cache_Single_Geo_GoalScorers_Translation_Response, Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
-  import type { REDIS_CACHE_SINGLE_league_list_geo_data_response, REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/league_list/types';
-  import type { Cache_Single_Geo_Leagues_Table_Translation_Response, Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/leagues_table/types';
-  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/seo_block/types';
+  import type { REDIS_CACHE_SINGLE_league_list_geo_data_response, REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
+  import type { Cache_Single_Geo_Leagues_Table_Translation_Response, Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
+  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
 
 	let PAGE_DATA_SEO:                              Cache_Single_Homepage_SEO_Translation_Response
 	let FEATURED_MATCH_WIDGET_DATA_SEO:             Cache_Single_Lang_Featured_Match_Translation_Response

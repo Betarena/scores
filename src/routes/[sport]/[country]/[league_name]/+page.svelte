@@ -50,7 +50,7 @@
     Cache_Single_Tournaments_SEO_Translation_Response, 
     Hasura_Complete_Pages_SEO, 
     Single_Tournament_Data_Type 
-  } from '$lib/models/pages_and_seo/types';
+  } from '$lib/models/_main_/pages_and_seo/types';
 
   import type { 
     Cache_Single_Tournaments_League_Info_Data_Response

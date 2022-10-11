@@ -31,7 +31,7 @@
   */
 
   import Footer from '$lib/components/_main_/footer/_Footer.svelte';
-  import Header from '$lib/components/header/_Header.svelte';
+  import Header from '$lib/components/_main_/header/_Header.svelte';
   import OfflineAlert from '$lib/components/_Offline_alert.svelte';
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';

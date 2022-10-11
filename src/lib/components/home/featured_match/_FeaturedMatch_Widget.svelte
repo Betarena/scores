@@ -102,7 +102,7 @@
 		// [ℹ] extract userGeoPosition
 		let userGeo: string = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
-		const response: FixtureResponse = await get('api/cache/featured_match?geoPos='+userGeo)
+		const response: FixtureResponse = await get('api/cache/home/featured_match?geoPos='+userGeo)
     // const response: FixtureResponse = FEATURED_MATCH_WIDGET_DATA_MAIN;
 
 		// [ℹ] if response is null [NO FEATURED-MATCH]

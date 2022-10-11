@@ -33,7 +33,7 @@ export async function load({
    * [ℹ] IMPORTANT;
    */
 
-  const response_valid_url = await fetch(`/api/cache/pages_and_seo?url=` + url.pathname, {
+  const response_valid_url = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname, {
     method: 'GET'
   })
   .then((r) => r.json());
@@ -50,11 +50,11 @@ export async function load({
    * [ℹ] Loading of (this) page [fixtures] SEO-READY data; 
    */
 
-  const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(`/api/cache/pages_and_seo?lang=` + urlLang + "&page=fixtures", {
+  const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(`/api/cache/_main_/pages_and_seo?lang=` + urlLang + "&page=fixtures", {
     method: 'GET'
   }).then((r) => r.json());
 
-  const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(`/api/cache/pages_and_seo?url=` + url.pathname + "&page=fixtures", {
+  const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname + "&page=fixtures", {
     method: 'GET'
   }).then((r) => r.json());
 
