@@ -303,7 +303,6 @@ async function get_target_historic_fixtures (
   t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-
   // [🐛] debug
   // FIXME: some duplicates [?]
   /*
