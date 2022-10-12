@@ -899,7 +899,7 @@
                       </p>
                       <p  
                         class="
-                          color-grey
+                          color-white
                           s-14
                           w-500
                         ">
@@ -1275,7 +1275,7 @@
                         />
                         <p  
                           class="
-                            color-grey
+                            olor-white
                             s-14
                             w-500
                           ">
@@ -1423,13 +1423,12 @@
                   -->
                   {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
                     <div
-                      class="m-b-30"
+                      class="m-b-20"
                       style="align-self: center;">
                       <p 
                         class="
                           w-500 
-                          x-large 
-                          desktop-x-large
+                          s-20
                           color-white
                           text-center
                         ">
@@ -1437,10 +1436,9 @@
                       </p>
                       <p 
                         class="
-                          w-400 
-                          small 
+                          w-400
+                          s-16
                           color-grey 
-                          desktop-medium
                           text-center
                         " 
                         style="white-space: nowrap;">
@@ -1621,7 +1619,7 @@
                             />
                             <p  
                               class="
-                                color-grey
+                                color-white
                                 s-14
                                 w-500
                               ">
