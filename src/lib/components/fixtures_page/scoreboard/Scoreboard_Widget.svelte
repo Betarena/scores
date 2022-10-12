@@ -746,6 +746,22 @@
                       :
                       {FIXTURE_SCOREBOARD?.teams?.away?.score}
                     </p>
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-grey
+                      ">
+                      {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                        (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                      {/if}
+                      {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                        (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                      {/if}
+                      {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                        (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                      {/if}
+                    </p>
                   </div>
                 {/if}
                 <!-- 
@@ -1095,6 +1111,22 @@
                       :
                       {FIXTURE_SCOREBOARD?.teams?.away?.score}
                     </p>
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-grey
+                      ">
+                      {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                        (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                      {/if}
+                      {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                        (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                      {/if}
+                      {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                        (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                      {/if}
+                    </p>
                   </div>
                 {/if}
                 <!-- 
@@ -1414,6 +1446,22 @@
                         {FIXTURE_SCOREBOARD?.teams?.home?.score}
                         :
                         {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                      </p>
+                      <p
+                        class="
+                          s-14
+                          w-500
+                          color-grey
+                        ">
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                          (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                          (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                          (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                        {/if}
                       </p>
                     </div>
                   {/if}
@@ -1757,6 +1805,22 @@
                     :
                     {FIXTURE_SCOREBOARD?.teams?.away?.score}
                   </p>
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-grey
+                    ">
+                    {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                      (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                    {/if}
+                    {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                      (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                    {/if}
+                    {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                      (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                    {/if}
+                  </p>
                 </div>
               {/if}
               <!-- 
@@ -1948,6 +2012,22 @@
                     {FIXTURE_SCOREBOARD?.teams?.home?.score}
                     :
                     {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                  </p>
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-grey
+                    ">
+                    {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                      (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                    {/if}
+                    {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                      (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                    {/if}
+                    {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                      (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                    {/if}
                   </p>
                 </div>
               {/if}

@@ -10,11 +10,8 @@ import {
 } from '$lib/graphql/fixtures/scoreboard/query';
 
 import type { 
-  BETARENA_HASURA_fixtures_odds_query,
-  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures
-} from '$lib/models/tournaments/fixtures_odds/types';
-import type { 
   BETARENA_HASURA_scoreboard_query,
+  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues,
   Fixture_Scoreboard_Info, 
   Fixture_Scoreboard_Team, 
@@ -76,16 +73,20 @@ async function main (
    * [ℹ] generate FIXTURE data 
   */
 
-  const fix_season_id = fixture_data?.data?.season_id;
+  // const fix_season_id = fixture_data?.data?.season_id;
   const fixture_id = fixture_data?.id;
   const home_team_id = fixture_data?.localteam_id_j;
   const away_team_id = fixture_data?.visitorteam_id_j;
 
   const round = fixture_data?.round_j?.data?.name;
-  const fixture_date = fixture_data?.fixture_day;
+  // const fixture_date = fixture_data?.fixture_day;
   const fixture_time = fixture_data?.time;
   const minutes = fixture_data?.time_j?.minute;
   const status = fixture_data?.time_j?.status;
+
+  const ht_score = fixture_data?.scores_j?.ht_score;
+  const et_score = fixture_data?.scores_j?.et_score;
+  const ps_score = fixture_data?.scores_j?.ps_score;
 
   const home_team_name = fixture_data.home_team_name;
   const home_team_logo = fixture_data.home_team_logo;
@@ -120,7 +121,12 @@ async function main (
       home:           home_team_obj || null,
       away:           away_team_obj || null
     },
-    league_logo:      league_img || null
+    league_logo:      league_img || null,
+    score_post: {
+      ht_score:       ht_score || null,
+      et_score:       et_score || null,
+      ps_score:       ps_score || null
+    }
   }
 
   // [ℹ] return fixture

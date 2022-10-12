@@ -191,21 +191,23 @@ async function main () {
 
   const cache_data_arr: Fixture_Scoreboard_Info[] = []
 
-  // FIXME: no use of "scores_j" field
-
   for (const [key, value] of historic_fixtures_map.entries()) {
 
-    const fix_season_id = value?.data?.season_id;
+    // const fix_season_id = value?.data?.season_id;
     const league_id = value?.league_id;
     const fixture_id = value?.id;
     const home_team_id = value?.localteam_id_j;
     const away_team_id = value?.visitorteam_id_j;
 
     const round = value?.round_j?.data?.name;
-    const fixture_date = value?.fixture_day;
+    // const fixture_date = value?.fixture_day;
     const fixture_time = value?.time;
     const minutes = value?.time_j?.minute;
     const status = value?.time_j?.status;
+
+    const ht_score = value?.scores_j?.ht_score;
+    const et_score = value?.scores_j?.et_score;
+    const ps_score = value?.scores_j?.ps_score;
 
     const home_team_name = value.home_team_name;
     const home_team_logo = value.home_team_logo;
@@ -240,7 +242,12 @@ async function main () {
         home:           home_team_obj || null,
         away:           away_team_obj || null
       },
-      league_logo:      league_map.get(league_id)?.image_path_j || null
+      league_logo:      league_map.get(league_id)?.image_path_j || null,
+      score_post: {
+        ht_score:       ht_score || null,
+        et_score:       et_score || null,
+        ps_score:       ps_score || null
+      }
     }
 
     await cache_data(key, fixture_object)

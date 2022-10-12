@@ -85,7 +85,7 @@ export interface Fixture_Scoreboard_Info {
   score?: string                  // [firebase] Live Score Now Firebase
   minute?: number                 // [firebase] Live Score Now Firebase
   // NOTE: Scoreboard after the match;
-  score_post?: string             // [hasura] JSON($path) historic_fixtures/data/scores
+  score_post?: Fixture_Scorebaord_Scores // [hasura] JSON($path) historic_fixtures/data/scores
   status?: string                 // [hasura] historic_fixtures/status
   post_date?: string              // [hasura] historic_fixtures/time
 } export interface Fixture_Scoreboard_Team {
@@ -95,4 +95,8 @@ export interface Fixture_Scoreboard_Info {
   home?: number
   draw?: number
   away?: number
+} export interface Fixture_Scorebaord_Scores {
+  ht_score?: string
+  et_score?: string
+  ps_score?: string
 }
