@@ -2154,6 +2154,7 @@
     [ℹ] NOTE: [MOBILE-FIRST]
   */
 
+  /* scorebaord-main */
   #scoreboard-widget-container {
     background-color: #4B4B4B;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -2168,6 +2169,7 @@
     background-size: cover;
   } 
 
+  /* scorebaord-top */
   div#scoreboard-widget-container div#scoreboard-top-box {
     position: relative;
     padding: 20px 12px;
@@ -2290,7 +2292,7 @@
     padding-bottom: 8px;
   }
 
-  /* miniature [ONLY] [TABLET] [DESKTOP] */
+  /* miniature [ONLY] [TABLET] && [DESKTOP] */
   div#scoreboard-widget-container.miniature.tablet-miniature {
     position: fixed;
     top: 0;
