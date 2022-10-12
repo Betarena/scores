@@ -140,33 +140,41 @@
   let count = 0;
 
   onMount(async() => {
-    window.addEventListener('scroll', function(ev) {
+    if (browser) {
       let target_div = document.getElementById('scoreboard-widget-container');
-      if (count == 0) {
-        initial_div_distance = target_div.getBoundingClientRect().top;
-        count = 1;
-      }
-      let distance_top_from_div = target_div.getBoundingClientRect().top;
-      let distance_top_scroll = window.scrollY;
-      // console.log("HERE", initial_div_distance, distance_top_scroll, distance_top_from_div)
-      // [ℹ] when [STANDARD VIEW]
-      if (
-        distance_top_from_div <= 0 &&
-        !enable_miniature
-      ) {
-        enable_miniature = true
-      }
-      // [ℹ] when [MINIATURE VIEW]
-      if (
-        initial_div_distance != undefined &&
-        count == 1 &&
-        distance_top_scroll <= initial_div_distance &&
-        enable_miniature
-      ) {
-        enable_miniature = false
-      }
-    });
+      window.addEventListener('scroll', function(ev) {
+        target_div = document.getElementById('scoreboard-widget-container');
+        if (count == 0) {
+          initial_div_distance = target_div.getBoundingClientRect().top;
+          count = 1;
+        }
+        let distance_top_from_div = target_div.getBoundingClientRect().top;
+        let distance_top_scroll = window.scrollY;
+        console.log("HERE", `
+          initial_div_distance: ${initial_div_distance}
+          distance_top_scroll: ${distance_top_scroll}
+          distance_top_from_div: ${distance_top_from_div}
+        `)
+        // [ℹ] when [STANDARD VIEW]
+        if (
+          distance_top_from_div <= 0 &&
+          !enable_miniature
+        ) {
+          enable_miniature = true
+        }
+        // [ℹ] when [MINIATURE VIEW]
+        if (
+          initial_div_distance != undefined &&
+          count == 1 &&
+          distance_top_scroll <= initial_div_distance &&
+          enable_miniature
+        ) {
+          enable_miniature = false
+        }
+      });
+    }
   })
+    
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
@@ -2196,14 +2204,16 @@
   div#scoreboard-widget-container.miniature.tablet-miniature {
     position: fixed;
     top: 0;
-    right: 0;
-    left: 0;
-    border-radius: 0 !important;
+    right: auto;
+    left: auto;
+    border-radius: 0 0 12px 12px !important;
     padding-top: 20px;
     background-image: url(./assets/banner.svg) !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
+    max-width: 1430px;
+    width: calc(100vw - 68px);
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box {
     /* display: grid;
 		grid-auto-flow: column;
@@ -2286,6 +2296,11 @@
       width: 100%;
     }
 
+    /* miniature [TABLET] */
+    div#scoreboard-widget-container.miniature.tablet-miniature {
+      min-width: auto;
+    }
+
   }
 
   /* 
@@ -2331,6 +2346,11 @@
       bottom: 100%;
       right: 0;
       width: auto;
+    }
+
+    /* miniature [TABLET] */
+    div#scoreboard-widget-container.miniature.tablet-miniature {
+      min-width: auto;
     }
 
   }
