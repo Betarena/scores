@@ -237,6 +237,7 @@
 
 	let current_date: Date = new Date();
 	let date_obj_diff: number = Date.parse(current_date.toString()) - Date.parse(new Date().toString());
+  let show_countdown: boolean = false;
 
 	$: if (loaded) {
 		date_obj_diff = Date.parse(FIXTURE_SCOREBOARD?.fixture_time.toString()) - Date.parse(new Date().toString());
@@ -284,6 +285,13 @@
 	$: if (parseInt(countD_h) < 10) {
 		countD_h = '0' + countD_h;
 	}
+  $: countD_day = Math.floor(date_obj_diff / (1000 * 60 * 60 * 24));
+
+  $: if (countD_day > 1) {
+    show_countdown = false
+  } else {
+    show_countdown = true
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // [ADD-ON] FIREBASE
@@ -677,11 +685,11 @@
                     <p 
                       class="
                         w-500 
-                        x-large 
-                        desktop-x-large
+                        x-large
                         color-white
                         text-center
-                      ">
+                      "
+                      class:visibility-none={!show_countdown}>
                       {countD_h}:{countD_min}:{countD_sec}
                     </p>
                     <p 
@@ -1058,10 +1066,10 @@
                       class="
                         w-500 
                         x-large 
-                        desktop-x-large
                         color-white
                         text-center
-                      ">
+                      "
+                      class:visibility-none={!show_countdown}>
                       {countD_h}:{countD_min}:{countD_sec}
                     </p>
                     <p 
@@ -1431,7 +1439,8 @@
                           s-20
                           color-white
                           text-center
-                        ">
+                        "
+                        class:visibility-none={!show_countdown}>
                         {countD_h}:{countD_min}:{countD_sec}
                       </p>
                       <p 
@@ -1440,7 +1449,7 @@
                           s-16
                           color-grey 
                           text-center
-                        " 
+                        "
                         style="white-space: nowrap;">
                         {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
                         {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
@@ -1816,7 +1825,8 @@
                       desktop-x-large
                       color-white
                       text-center
-                    ">
+                    "
+                    class:visibility-none={!show_countdown}>
                     {countD_h}:{countD_min}:{countD_sec}
                   </p>
                   <p 
@@ -2025,10 +2035,10 @@
                     class="
                       w-500 
                       x-large 
-                      desktop-x-large
                       color-white
                       text-center
-                    ">
+                    "
+                    class:visibility-none={!show_countdown}>
                     {countD_h}:{countD_min}:{countD_sec}
                   </p>
                   <p 
@@ -2209,7 +2219,9 @@
 
   /* [ℹ] OTHER STYLE / CSS */
 
-  /* NaN */
+  .visibility-none {
+    visibility: hidden;
+  }
 
   /* [ℹ] SEO WIDGET DATA */
   
