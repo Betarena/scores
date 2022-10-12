@@ -618,23 +618,26 @@
                   m-b-15
                   cursor-pointer
                 ">
-                <div
-                  id="league-info-img-box"
-                  class="m-r-10">
-                  <img 
-                    src={FIXTURE_SCOREBOARD?.league_logo}
-                    alt=""
-                    width=14px
-                    height=14px
-                  />
-                </div>
-                <p
-                  class="color-white">
-                  {FIXTURE_INFO?.data?.league_name}
-                  -
-                  Round
-                  {FIXTURE_SCOREBOARD?.round}
-                </p>
+                <a 
+                  href={FIXTURE_SCOREBOARD?.league_urls[FIXTURE_SCOREBOARD_TRANSLATION?.lang]}>
+                  <div
+                    id="league-info-img-box"
+                    class="m-r-10">
+                    <img 
+                      src={FIXTURE_SCOREBOARD?.league_logo}
+                      alt=""
+                      width=14px
+                      height=14px
+                    />
+                  </div>
+                  <p
+                    class="color-white">
+                    {FIXTURE_INFO?.data?.league_name}
+                    -
+                    Round
+                    {FIXTURE_SCOREBOARD?.round}
+                  </p>
+                </a>
               </div>
 
               <!-- 
@@ -966,23 +969,26 @@
                   row-space-center 
                   cursor-pointer
                 ">
-                <div
-                  id="league-info-img-box"
-                  class="m-r-10">
-                  <img 
-                    src={FIXTURE_SCOREBOARD?.league_logo}
-                    alt=""
-                    width=14px
-                    height=14px
-                  />
-                </div>
-                <p
-                  class="color-white">
-                  {FIXTURE_INFO?.data?.league_name}
-                  -
-                  Round
-                  {FIXTURE_SCOREBOARD?.round}
-                </p>
+                <a 
+                  href={FIXTURE_SCOREBOARD?.league_urls[FIXTURE_SCOREBOARD_TRANSLATION?.lang]}>
+                  <div
+                    id="league-info-img-box"
+                    class="m-r-10">
+                    <img 
+                      src={FIXTURE_SCOREBOARD?.league_logo}
+                      alt=""
+                      width=14px
+                      height=14px
+                    />
+                  </div>
+                  <p
+                    class="color-white">
+                    {FIXTURE_INFO?.data?.league_name}
+                    -
+                    Round
+                    {FIXTURE_SCOREBOARD?.round}
+                  </p>
+                </a>
               </div>
 
               <!-- 
@@ -1342,23 +1348,26 @@
                       cursor-pointer
                       m-b-20
                     ">
-                    <div
-                      id="league-info-img-box"
-                      class="m-r-10">
-                      <img 
-                        src={FIXTURE_SCOREBOARD?.league_logo}
-                        alt=""
-                        width=14px
-                        height=14px
-                      />
-                    </div>
-                    <p
-                      class="color-white">
-                      {FIXTURE_INFO?.data?.league_name}
-                      -
-                      Round
-                      {FIXTURE_SCOREBOARD?.round}
-                    </p>
+                    <a 
+                      href={FIXTURE_SCOREBOARD?.league_urls[FIXTURE_SCOREBOARD_TRANSLATION?.lang]}>
+                      <div
+                        id="league-info-img-box"
+                        class="m-r-10">
+                        <img 
+                          src={FIXTURE_SCOREBOARD?.league_logo}
+                          alt=""
+                          width=14px
+                          height=14px
+                        />
+                      </div>
+                      <p
+                        class="color-white">
+                        {FIXTURE_INFO?.data?.league_name}
+                        -
+                        Round
+                        {FIXTURE_SCOREBOARD?.round}
+                      </p>
+                    </a>
                   </div>
 
                   <!-- 

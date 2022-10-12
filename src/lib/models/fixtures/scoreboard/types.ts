@@ -9,6 +9,7 @@ import type {
   Round,
   ScoreboardTranslations,
   Scores,
+  ScoresTournamentsUrls,
   Time
 } from "$lib/models/hasura"
 
@@ -52,6 +53,7 @@ export interface BETARENA_HASURA_scoreboard_query {
   scores_tournaments:              BETARENA_HASURA_scores_tournaments[]
   historic_fixtures_aggregate:     BETARENA_HASURA_historic_fixtures_aggregate
   historic_fixtures:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
+  // NOTE: league-img
   scores_football_leagues:         BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[]
   // NOTE: translations
   scores_fixture_scoreboard_translations: BETARENA_HASURA_scores_fixture_scoreboard_translations[]
@@ -70,6 +72,7 @@ export interface Fixture_Scoreboard_Info {
     away: Fixture_Scoreboard_Team
   }
   league_logo?: string
+  league_urls?: ScoresTournamentsUrls
   // NOTE: Scoreboard Before the match (fixture_scoreboard);
   name?:   string                 // [hasura] Tournament name (Link) | scores_tournaments/urls
   round?:  number                 // [hasura] historic_fixtures/round_name

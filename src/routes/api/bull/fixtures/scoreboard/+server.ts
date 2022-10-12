@@ -13,7 +13,7 @@ import Bull from 'bull';
 import { error, json } from '@sveltejs/kit';
 
 import type { 
-  BETARENA_HASURA_historic_fixtures
+  BETARENA_HASURA_historic_fixtures, BETARENA_HASURA_scores_tournaments
 } from '$lib/models/hasura';
 import type { 
   BETARENA_HASURA_scoreboard_query, 
@@ -174,6 +174,8 @@ async function main () {
    * [ℹ] convert to map
    * [ℹ] obtain target league_id's
    * [ℹ] convert to map
+   * [ℹ] obtain target tournament
+   * [ℹ] convert to map
   */
 
   const h_fixtures_arr = await get_target_historic_fixtures(current_seasons_arr)
@@ -181,8 +183,10 @@ async function main () {
 
   // eslint-disable-next-line prefer-const
   let leagues_ids_arr: number[] = h_fixtures_arr?.map(a => a.league_id)
-  const leagues_data = await get_target_leagues(leagues_ids_arr)
+
+  const [leagues_data, tournaments_data] = await get_target_leagues(leagues_ids_arr)
   const league_map = await generate_leagues_map(leagues_data)
+  const tournaments_map = await generate_tournaments_map(tournaments_data)
 
   /**
    * [ℹ] data pre-processing
@@ -208,6 +212,11 @@ async function main () {
     const ht_score = value?.scores_j?.ht_score;
     const et_score = value?.scores_j?.et_score;
     const ps_score = value?.scores_j?.ps_score;
+
+    const urls = 
+      tournaments_map.has(league_id) == true
+        ? tournaments_map.get(league_id)?.urls
+        : null
 
     const home_team_name = value.home_team_name;
     const home_team_logo = value.home_team_logo;
@@ -243,6 +252,7 @@ async function main () {
         away:           away_team_obj || null
       },
       league_logo:      league_map.get(league_id)?.image_path_j || null,
+      league_urls:      urls,
       score_post: {
         ht_score:       ht_score || null,
         et_score:       et_score || null,
@@ -422,10 +432,11 @@ async function generate_historic_fixtures_map (
 
 async function get_target_leagues (
   league_ids_arr: number[]
-): Promise < BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[] > {
+): Promise < [BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[], BETARENA_HASURA_scores_tournaments[]] > {
 
   const VARIABLES_1 = {
-    league_ids_arr: league_ids_arr
+    league_ids_arr: league_ids_arr,
+    league_ids_arr_2: league_ids_arr
   }
   
   const t0 = performance.now();
@@ -437,7 +448,7 @@ async function get_target_leagues (
   const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-  return response.scores_football_leagues;
+  return [response.scores_football_leagues, response.scores_tournaments];
 }
 
 async function generate_leagues_map (
@@ -455,6 +466,23 @@ async function generate_leagues_map (
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
   return leagues_arr_map;
+}
+
+async function generate_tournaments_map (
+  league_arr: BETARENA_HASURA_scores_tournaments[]
+): Promise < Map <number, BETARENA_HASURA_scores_tournaments> > {
+  const tournaments_arr_map = new Map <number, BETARENA_HASURA_scores_tournaments>()
+
+  // [ℹ] conversion to hashmap
+  t0 = performance.now();
+  for (const tournament of league_arr) {
+    tournaments_arr_map.set(tournament?.tournament_id, tournament);
+  }
+  t1 = performance.now();
+  logs.push(`tournaments_arr_map generated with size: ${tournaments_arr_map.size}`)
+  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  return tournaments_arr_map;
 }
 
 async function getHrefLang (

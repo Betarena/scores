@@ -90,12 +90,13 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_1 = gql`
 `;
 
 /**
- * [ℹ] GET Target Leagues 
+ * [ℹ] GET Target Leagues & League Link
 */
 export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_2 = gql`
   query REDIS_CACHE_SCOREBOARD_ODDS_DATA_2 
     (
-      $league_ids_arr: [numeric!]
+      $league_ids_arr: [numeric!],
+      $league_ids_arr_2: [Int!]
     ) 
     @cached 
     (ttl: 300)
@@ -112,6 +113,16 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_2 = gql`
       # data
       # [alt V2]
       image_path_j: data(path: "$.logo_path")
+    }
+    scores_tournaments (
+      where: {
+        tournament_id: {
+          _in: $league_ids_arr_2
+        }
+      }
+    ) {
+      tournament_id
+      urls
     }
   }
 `;

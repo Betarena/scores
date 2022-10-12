@@ -17,6 +17,7 @@ import type {
   Fixture_Scoreboard_Team, 
   REDIS_CACHE_SINGLE_scoreboard_data 
 } from '$lib/models/fixtures/scoreboard/types';
+import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = []
@@ -66,8 +67,9 @@ async function main (
    * [ℹ] obtain target league 
   */
 
-  const league_data = await get_target_league([league_id])
+  const [league_data, tournaments_data] = await get_target_league_and_tournament_info([league_id])
   const league_img = league_data[0]?.image_path_j;
+  const tournament_urls = tournaments_data[0]?.urls;
 
   /**
    * [ℹ] generate FIXTURE data 
@@ -122,6 +124,7 @@ async function main (
       away:           away_team_obj || null
     },
     league_logo:      league_img || null,
+    league_urls:      tournament_urls || null,
     score_post: {
       ht_score:       ht_score || null,
       et_score:       et_score || null,
@@ -157,12 +160,13 @@ async function get_target_fixture (
   return response.historic_fixtures;
 }
 
-async function get_target_league (
+async function get_target_league_and_tournament_info (
   league_ids_arr: number[]
-): Promise < BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[] > {
+): Promise < [BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[], BETARENA_HASURA_scores_tournaments[]] > {
 
   const VARIABLES_1 = {
-    league_ids_arr: league_ids_arr
+    league_ids_arr: league_ids_arr,
+    league_ids_arr_2: league_ids_arr
   }
   
   const t0 = performance.now();
@@ -174,5 +178,5 @@ async function get_target_league (
   const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-  return response.scores_football_leagues;
+  return [response.scores_football_leagues, response.scores_tournaments];
 }
