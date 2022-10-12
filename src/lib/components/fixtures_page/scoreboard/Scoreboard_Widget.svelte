@@ -500,12 +500,16 @@
   <!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
-  <!-- {#if !loaded}
+  {#if !loaded}
     <div 
       id="seo-widget-box">
-      {@html LEAGUE_INFO_SEO_DATA?.data?.seo_content}
+      <p>{FIXTURE_SCOREBOARD?.away_team_name}</p>
+      <p>{FIXTURE_SCOREBOARD?.home_team_name}</p>
+      <a href={$page.url.href}>
+        {$page.url.href}
+      </a>
     </div>
-  {/if} -->
+  {/if}
 
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
