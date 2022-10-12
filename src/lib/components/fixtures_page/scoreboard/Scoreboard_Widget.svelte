@@ -2453,6 +2453,12 @@
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
 
+    /* scorebaord-top */
+    div#scoreboard-widget-container div#scoreboard-top-box {
+      min-height: 207px;
+      max-height: 207px;
+    }
+
     /* bottom nav */
     div#scoreboard-widget-container div#scoreboard-bottom-nav-box {
       justify-content: center !important;
