@@ -13,7 +13,7 @@ import type {
   REDIS_CACHE_SINGLE_fixtures_seo_response
 } from '$lib/models/_main_/pages_and_seo/types';
 import type { 
-  REDIS_CACHE_SINGLE_scoreboard_data 
+  REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
 } from '$lib/models/fixtures/scoreboard/types';
 
 /** @type {import('./$types').PageLoad} */
@@ -132,6 +132,13 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  const response_scoreboard_translation: REDIS_CACHE_SINGLE_scoreboard_translation = await fetch(
+    `/api/cache/fixtures/scoreboard?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -142,11 +149,13 @@ export async function load({
     response_fixtures_seo
     && response_fixtures_page_info
     // && response_scoreboard // NOTE:IMPORTANT: can be null -load from hasura
+    && response_scoreboard_translation
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
       FIXTURE_INFO: response_fixtures_page_info,
-      FIXTURE_SCOREBOARD: response_scoreboard
+      FIXTURE_SCOREBOARD: response_scoreboard,
+      FIXTURE_SCOREBOARD_TRANSLATION: response_scoreboard_translation
     }
   }
 
