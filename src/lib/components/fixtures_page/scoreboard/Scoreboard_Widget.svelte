@@ -150,7 +150,7 @@
         }
         let distance_top_from_div = target_div.getBoundingClientRect().top;
         let distance_top_scroll = window.scrollY;
-        console.log("HERE", `
+        if (dev) console.log("HERE", `
           initial_div_distance: ${initial_div_distance}
           distance_top_scroll: ${distance_top_scroll}
           distance_top_from_div: ${distance_top_from_div}
@@ -361,7 +361,7 @@
     // [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
 
     if (SPORTBOOK_DETAILS_LIST == undefined) {
-      console.log("SPORTBOOK_DETAILS_LIST = UNDEFINED")
+      if (dev) console.log("SPORTBOOK_DETAILS_LIST = UNDEFINED")
       return;
     }
 
@@ -380,8 +380,8 @@
           firebase_sportbook.markets['1X2FT'].data[2].value != null &&
           count != 1
         ) {
-          console.log("main_sportbook_title", main_sportbook_title)
-          console.log("firebase_sportbook", firebase_sportbook)
+          if (dev) console.log("main_sportbook_title", main_sportbook_title)
+          if (dev) console.log("firebase_sportbook", firebase_sportbook)
           FIXTURE_SCOREBOARD._1x2 = undefined
           FIXTURE_SCOREBOARD._1x2 = {
             home: undefined,
