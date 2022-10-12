@@ -647,7 +647,7 @@
                 id="fixture-info-box"
                 class="
                   row-space-out
-                  m-b-20
+                  m-b-10
                 ">
                 <!-- 
                 [ℹ] team #1
@@ -929,7 +929,8 @@
 
                 </div>
               {:else}
-                <div>
+                <div
+                  class="fixture-time-btm">
                   <p 
                     class="
                       w-400 
@@ -955,10 +956,13 @@
 
               <!-- 
               [ℹ] background-gradient
+              [ℹ] non-"FT"
               -->
-              <div
-                id="background-gradient-box">
-              </div>
+              {#if FIXTURE_SCOREBOARD.status != "FT"}
+                <div
+                  id="background-gradient-box">
+                </div>
+              {/if}
 
               <!-- 
               [ℹ] league info
@@ -1276,7 +1280,8 @@
               <!-- 
               [ℹ] display fixture-time -->
               {:else}
-                <div>
+                <div
+                  class="fixture-time-btm">
                   <p 
                     class="
                       w-400 
@@ -2245,6 +2250,11 @@
     height: 28px;
   }
 
+  /* fixture-time [completion] */
+  div#scoreboard-widget-container div#scoreboard-top-box div.fixture-time-btm {
+    z-index: 1;
+  }
+
   /* bottom nav */
   div#scoreboard-widget-container div#scoreboard-bottom-nav-box {
     background-color: #FFFFFF;
@@ -2265,8 +2275,8 @@
   div#background-gradient-box {
     position: absolute;
     bottom: 0;
-    background: linear-gradient(174.38deg, rgba(41, 41, 41, 0) 4.48%, #292929 46.39%);
-    height: 135px;
+    background: linear-gradient(180deg, rgba(41, 41, 41, 0) 4.48%, #292929 46.39%);
+    height: 60px;
     width: 100%;
     z-index: 0;
   }
@@ -2379,6 +2389,10 @@
       bottom: 100%;
     }
 
+    /* background-gradient */
+    div#background-gradient-box {
+      height: 135px;
+    }
   }
 
   /* 
