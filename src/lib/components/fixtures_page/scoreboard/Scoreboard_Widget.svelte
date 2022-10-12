@@ -532,14 +532,16 @@
         <img 
           src={no_visual_dark} 
           alt="no_visual_dark"
-          width="32px" height="32px"
+          width=32px
+          height=32px
           class='m-b-16'
         />
       {:else}
         <img 
           src={no_visual} 
           alt="no_visual"
-          width="32px" height="32px"
+          width=32px
+          height=32px
           class='m-b-16'
         />
       {/if}
@@ -622,6 +624,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD?.league_logo}
                     alt=""
+                    width=14px
+                    height=14px
                   />
                 </div>
                 <p
@@ -654,6 +658,8 @@
                     src={FIXTURE_SCOREBOARD.home_team_logo}
                     alt=""
                     class="m-b-12"
+                    width=72px
+                    height=72px
                   />
                   <p
                     class="
@@ -781,6 +787,8 @@
                     src={FIXTURE_SCOREBOARD.away_team_logo}
                     alt=""
                     class="m-b-12"
+                    width=72px
+                    height=72px
                   />
                   <p
                     class="
@@ -846,21 +854,14 @@
                     ">
                     <!-- 
                     [ℹ] team-img / odds-type -->
-                    {#if !mobileExclusive}
-                      <img 
-                        src={FIXTURE_SCOREBOARD.home_team_logo} 
-                        alt=""
-                      />
-                    {:else}
-                      <p  
-                        class="
-                          color-grey
-                          s-14
-                          w-500
-                        ">
-                        1
-                      </p>
-                    {/if}
+                    <p  
+                      class="
+                        color-grey
+                        s-14
+                        w-500
+                      ">
+                      1
+                    </p>
                     <p
                       class="
                         color-white
@@ -878,23 +879,14 @@
                       odds-box
                       row-space-out
                     ">
-                    <!-- 
-                    [ℹ] team-img / odds-type -->
-                    {#if !mobileExclusive}
-                      <img 
-                        src={close_icon} 
-                        alt=""
-                      />
-                    {:else}
-                      <p  
-                        class="
-                          color-grey
-                          s-14
-                          w-500
-                        ">
-                        X
-                      </p>
-                    {/if}
+                    <p  
+                      class="
+                        color-grey
+                        s-14
+                        w-500
+                      ">
+                      X
+                    </p>
                     <p  
                       class="
                         color-grey
@@ -914,21 +906,14 @@
                     ">
                     <!-- 
                     [ℹ] team-img / odds-type -->
-                    {#if !mobileExclusive}
-                      <img 
-                        src={FIXTURE_SCOREBOARD.away_team_logo} 
-                        alt=""
-                      />
-                    {:else}
-                      <p  
-                        class="
-                          color-grey
-                          s-14
-                          w-500
-                        ">
-                        2
-                      </p>
-                    {/if}
+                    <p  
+                      class="
+                        color-grey
+                        s-14
+                        w-500
+                      ">
+                      2
+                    </p>
                     <p
                       class="
                         color-white
@@ -987,6 +972,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD?.league_logo}
                     alt=""
+                    width=14px
+                    height=14px
                   />
                 </div>
                 <p
@@ -1019,6 +1006,8 @@
                     src={FIXTURE_SCOREBOARD.home_team_logo}
                     alt=""
                     class="m-b-12"
+                    width=72px
+                    height=72px
                   />
                   <p
                     class="
@@ -1147,6 +1136,8 @@
                     src={FIXTURE_SCOREBOARD.away_team_logo}
                     alt=""
                     class="m-b-12"
+                    width=72px
+                    height=72px
                   />
                   <p
                     class="
@@ -1322,6 +1313,8 @@
                       src={FIXTURE_SCOREBOARD.home_team_logo}
                       alt=""
                       class="m-b-12"
+                      width=88px
+                      height=88px
                     />
                     <p
                       class="
@@ -1355,6 +1348,8 @@
                       <img 
                         src={FIXTURE_SCOREBOARD?.league_logo}
                         alt=""
+                        width=14px
+                        height=14px
                       />
                     </div>
                     <p
@@ -1628,6 +1623,8 @@
                       src={FIXTURE_SCOREBOARD.away_team_logo}
                       alt=""
                       class="m-b-12"
+                      width=88px
+                      height=88px
                     />
                     <p
                       class="
@@ -1722,6 +1719,8 @@
                 <img 
                   src={FIXTURE_SCOREBOARD.home_team_logo}
                   alt=""
+                  width=40px
+                  height=40px
                 />
               </div>
               <!-- 
@@ -1844,6 +1843,8 @@
                 <img 
                   src={FIXTURE_SCOREBOARD.away_team_logo}
                   alt=""
+                  width=40px
+                  height=40px
                 />
                 <p
                   class="
@@ -1928,6 +1929,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD.home_team_logo}
                     alt=""
+                    width=40px
+                    height=40px
                   />
                 </div>
               </div>
@@ -2059,6 +2062,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD.away_team_logo}
                     alt=""
+                    width=40px
+                    height=40px
                   />
                   <p
                     class="
