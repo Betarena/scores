@@ -52,8 +52,10 @@
 	let refresh_data:      any = undefined;         // [ℹ] refresh-data value speed;
   let no_widget_data:    any = false;             // [ℹ] identifies the no_widget_data boolean;
   let selected_view      = 0;
-  let currentSeason:     number = undefined;
   let tick_sec_show:     boolean = false;
+  let enable_miniature:  boolean = false;
+
+  let currentSeason:     number = undefined;
 
   // [🐞]
   let enable_logs:       boolean = true;
@@ -133,6 +135,38 @@
       return
     }
   }
+
+  let initial_div_distance: number = undefined;
+  let count = 0;
+
+  onMount(async() => {
+    window.addEventListener('scroll', function(ev) {
+      let target_div = document.getElementById('scoreboard-widget-container');
+      if (count == 0) {
+        initial_div_distance = target_div.getBoundingClientRect().top;
+        count = 1;
+      }
+      let distance_top_from_div = target_div.getBoundingClientRect().top;
+      let distance_top_scroll = window.scrollY;
+      // console.log("HERE", initial_div_distance, distance_top_scroll, distance_top_from_div)
+      // [ℹ] when [STANDARD VIEW]
+      if (
+        distance_top_from_div <= 0 &&
+        !enable_miniature
+      ) {
+        enable_miniature = true
+      }
+      // [ℹ] when [MINIATURE VIEW]
+      if (
+        initial_div_distance != undefined &&
+        count == 1 &&
+        distance_top_scroll <= initial_div_distance &&
+        enable_miniature
+      ) {
+        enable_miniature = false
+      }
+    });
+  })
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
@@ -533,559 +567,207 @@
     {:then data}
 
       <!--
-      [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
+      [ℹ] [STANDARD] widget-component [DESKTOP] [TABLET] [MOBILE]
       -->
-      <div
-        id="scoreboard-widget-container"
-        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
-        <!-- 
-        [ℹ] top-row data container
-        -->
+      {#if !enable_miniature}
         <div
-          id="scoreboard-top-box"
-          class="column-space-center">
+          id="scoreboard-widget-container"
+          class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
           <!-- 
-          [ℹ] [MOBILE]
+          [ℹ] top-row data container
           -->
-          {#if mobileExclusive}
+          <div
+            id="scoreboard-top-box"
+            class="column-space-center">
 
             <!-- 
-            [ℹ] background-gradient
+            [ℹ] [MOBILE]
             -->
-            <div
-              id="background-gradient-box">
-            </div>
-            
-            <!-- 
-            [ℹ] league info
-            -->
-            <div
-              id="league-info-box"
-              class="
-                row-space-center 
-                m-b-15
-                cursor-pointer
-              ">
-              <div
-                id="league-info-img-box"
-                class="m-r-10">
-                <img 
-                  src={FIXTURE_SCOREBOARD?.league_logo}
-                  alt=""
-                />
-              </div>
-              <p
-                class="color-white">
-                {FIXTURE_INFO?.data?.league_name}
-                -
-                Round
-                {FIXTURE_SCOREBOARD?.round}
-              </p>
-            </div>
+            {#if mobileExclusive}
 
-            <!-- 
-            [ℹ] teams / fixture info box
-            -->
-            <div
-              id="fixture-info-box"
-              class="
-                row-space-out
-                m-b-20
-              ">
               <!-- 
-              [ℹ] team #1
+              [ℹ] background-gradient
               -->
               <div
-                class="
-                  column-space-center 
-                  team-box
-                ">
-                <img 
-                  src={FIXTURE_SCOREBOARD.home_team_logo}
-                  alt=""
-                  class="m-b-12"
-                />
-                <p
-                  class="
-                    s-14
-                    w-500
-                    color-white
-                  ">
-                  {FIXTURE_SCOREBOARD.home_team_name}
-                </p>
+                id="background-gradient-box">
               </div>
+              
               <!-- 
-              [ℹ] fixture info
-              [ℹ] =?> non-"FT"
-              [ℹ] =?> in-Play
-              [ℹ] =?> "FT"
-              -->
-              {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
-                <div
-                  style="align-self: center;">
-                  <p 
-                    class="
-                      w-500 
-                      x-large 
-                      desktop-x-large
-                      color-white
-                      text-center
-                    ">
-                    {countD_h}:{countD_min}:{countD_sec}
-                  </p>
-                  <p 
-                    class="
-                      w-400 
-                      small 
-                      color-grey 
-                      desktop-medium
-                      text-center
-                    " 
-                    style="white-space: nowrap;">
-                    {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                    {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                      '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
-                    ).slice(-2)}h
-                  </p>
-                </div>
-              {:else if FIXTURE_SCOREBOARD.status != "FT" }
-                <div
-                  class="
-                    column-space-center
-                  ">
-                  <p
-                    class="
-                      color-white
-                      s-42
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
-                    :
-                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
-                  </p>
-                  <p
-                    class="
-                      color-grey
-                      s-16
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?.minute}
-                    <span
-                      class:visibility-none={tick_sec_show}>'
-                    </span>
-                  </p>
-                </div>
-              {:else if FIXTURE_SCOREBOARD.status == "FT" }
-                <div
-                  class="
-                    column-space-center
-                  ">
-                  <p
-                    class="
-                      s-14
-                      w-500
-                      color-grey
-                    ">
-                    FT
-                  </p>
-                  <p
-                    class="
-                      color-white
-                      s-42
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
-                    :
-                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
-                  </p>
-                </div>
-              {/if}
-              <!-- 
-              [ℹ] team #2
+              [ℹ] league info
               -->
               <div
+                id="league-info-box"
                 class="
-                  column-space-center 
-                  team-box
+                  row-space-center 
+                  m-b-15
+                  cursor-pointer
                 ">
-                <img 
-                  src={FIXTURE_SCOREBOARD.away_team_logo}
-                  alt=""
-                  class="m-b-12"
-                />
-                <p
-                  class="
-                    s-14
-                    w-500
-                    color-white
-                  ">
-                  {FIXTURE_SCOREBOARD.away_team_name}
-                </p>
-              </div>
-            </div>
-
-            <!-- 
-            [ℹ] betting site
-            [ℹ] non-"FT"
-            -->
-            {#if FIXTURE_SCOREBOARD.status != "FT"}
-              <div
-                class="
-                  row-space-center
-                  bet-site-box
-                  m-b-8
-                ">
-                <p 
-                  class="
-                    s-12
-                    color-grey
-                    m-r-10
-                  ">
-                  Featured by
-                </p>
-                <a 
-                  rel="nofollow"
-                  aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                  on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                  href={SPORTBOOK_INFO?.register_link}
-                  target="_blank"
-                  style="width: fit-content;">
+                <div
+                  id="league-info-img-box"
+                  class="m-r-10">
                   <img 
-                    id='sportbook-logo-img'
-                    src={SPORTBOOK_INFO?.image}
-                    alt={SPORTBOOK_INFO?.title}
+                    src={FIXTURE_SCOREBOARD?.league_logo}
+                    alt=""
                   />
-                </a>
-              </div>
-            {/if}
-
-            <!-- 
-            [ℹ] odds
-            [ℹ] non-"FT"
-            -->
-            {#if FIXTURE_SCOREBOARD.status != "FT"}
-              <div
-                id="btn-vote-container" 
-                class="row-space-center">
-                    
-                <!-- 
-                [ℹ] ODDS #1 -->
-                <div
-                  class="
-                    odds-box
-                    row-space-out
-                  ">
-                  <!-- 
-                  [ℹ] team-img / odds-type -->
-                  {#if !mobileExclusive}
-                    <img 
-                      src={FIXTURE_SCOREBOARD.home_team_logo} 
-                      alt=""
-                    />
-                  {:else}
-                    <p  
-                      class="
-                        color-grey
-                        s-14
-                        w-500
-                      ">
-                      1
-                    </p>
-                  {/if}
-                  <p
-                    class="
-                      color-white
-                      s-14
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?._1x2?.home}
-                  </p>
                 </div>
-
-                <!-- 
-                [ℹ] ODDS #X -->
-                <div
-                  class="
-                    odds-box
-                    row-space-out
-                  ">
-                  <!-- 
-                  [ℹ] team-img / odds-type -->
-                  {#if !mobileExclusive}
-                    <img 
-                      src={close_icon} 
-                      alt=""
-                    />
-                  {:else}
-                    <p  
-                      class="
-                        color-grey
-                        s-14
-                        w-500
-                      ">
-                      X
-                    </p>
-                  {/if}
-                  <p  
-                    class="
-                      color-grey
-                      s-14
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?._1x2?.draw}
-                  </p>
-                </div>
-
-                <!-- 
-                [ℹ] ODDS #2 -->
-                <div
-                  class="
-                    odds-box
-                    row-space-out
-                  ">
-                  <!-- 
-                  [ℹ] team-img / odds-type -->
-                  {#if !mobileExclusive}
-                    <img 
-                      src={FIXTURE_SCOREBOARD.away_team_logo} 
-                      alt=""
-                    />
-                  {:else}
-                    <p  
-                      class="
-                        color-grey
-                        s-14
-                        w-500
-                      ">
-                      2
-                    </p>
-                  {/if}
-                  <p
-                    class="
-                      color-white
-                      s-14
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?._1x2?.away}
-                  </p>
-                </div>
-
-              </div>
-            {:else}
-              <div>
-                <p 
-                  class="
-                    w-400 
-                    small 
-                    color-grey 
-                    desktop-medium
-                  " 
-                  style="white-space: nowrap;">
-                  {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                  {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                  {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                  {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                    '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
-                  ).slice(-2)}h
-                </p>
-              </div>
-            {/if}
-
-          <!-- 
-          [ℹ] [TABLET]
-          -->
-          {:else if !mobileExclusive && tabletExclusive}
-
-            <!-- 
-            [ℹ] background-gradient
-            -->
-            <div
-              id="background-gradient-box">
-            </div>
-
-            <!-- 
-            [ℹ] league info
-            -->
-            <div
-              id="league-info-box"
-              class="
-                row-space-center 
-                cursor-pointer
-              ">
-              <div
-                id="league-info-img-box"
-                class="m-r-10">
-                <img 
-                  src={FIXTURE_SCOREBOARD?.league_logo}
-                  alt=""
-                />
-              </div>
-              <p
-                class="color-white">
-                {FIXTURE_INFO?.data?.league_name}
-                -
-                Round
-                {FIXTURE_SCOREBOARD?.round}
-              </p>
-            </div>
-
-            <!-- 
-            [ℹ] teams / fixture info box
-            -->
-            <div
-              id="fixture-info-box"
-              class="
-                row-space-out
-                m-b-20
-              ">
-              <!-- 
-              [ℹ] team #1
-              -->
-              <div
-                class="
-                  column-space-center 
-                  team-box
-                ">
-                <img 
-                  src={FIXTURE_SCOREBOARD.home_team_logo}
-                  alt=""
-                  class="m-b-12"
-                />
                 <p
-                  class="
-                    s-14
-                    w-500
-                    color-white
-                  ">
-                  {FIXTURE_SCOREBOARD.home_team_name}
+                  class="color-white">
+                  {FIXTURE_INFO?.data?.league_name}
+                  -
+                  Round
+                  {FIXTURE_SCOREBOARD?.round}
                 </p>
               </div>
-              <!-- 
-              [ℹ] fixture info
-              [ℹ] =?> non-"FT"
-              [ℹ] =?> in-Play
-              [ℹ] =?> "FT"
-              -->
-              {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
-                <div
-                  class="m-b-30"
-                  style="align-self: center;">
-                  <p 
-                    class="
-                      w-500 
-                      x-large 
-                      desktop-x-large
-                      color-white
-                      text-center
-                    ">
-                    {countD_h}:{countD_min}:{countD_sec}
-                  </p>
-                  <p 
-                    class="
-                      w-400 
-                      small 
-                      color-grey 
-                      desktop-medium
-                      text-center
-                    " 
-                    style="white-space: nowrap;">
-                    {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                    {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                      '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
-                    ).slice(-2)}h
-                  </p>
-                </div>
-              {:else if FIXTURE_SCOREBOARD.status != "FT" }
-                <div
-                  class="
-                    column-space-center
-                  ">
-                  <p
-                    class="
-                      color-white
-                      s-42
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
-                    :
-                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
-                  </p>
-                  <p
-                    class="
-                      color-grey
-                      s-16
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?.minute}
-                    <span
-                      class:visibility-none={tick_sec_show}>'
-                    </span>
-                  </p>
-                </div>
-              {:else if FIXTURE_SCOREBOARD.status == "FT" }
-                <div
-                  class="
-                    column-space-center
-                  ">
-                  <p
-                    class="
-                      s-14
-                      w-500
-                      color-grey
-                    ">
-                    FT
-                  </p>
-                  <p
-                    class="
-                      color-white
-                      s-42
-                      w-500
-                    ">
-                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
-                    :
-                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
-                  </p>
-                </div>
-              {/if}
-              <!-- 
-              [ℹ] team #2
-              -->
-              <div
-                class="
-                  column-space-center 
-                  team-box
-                ">
-                <img 
-                  src={FIXTURE_SCOREBOARD.away_team_logo}
-                  alt=""
-                  class="m-b-12"
-                />
-                <p
-                  class="
-                    s-14
-                    w-500
-                    color-white
-                  ">
-                  {FIXTURE_SCOREBOARD.away_team_name}
-                </p>
-              </div>
-            </div>
 
-            <!-- 
-            [ℹ] bet-site + odds -->
-            {#if FIXTURE_SCOREBOARD.status != "FT"}
+              <!-- 
+              [ℹ] teams / fixture info box
+              -->
               <div
-                id="tablet-bet-odds-box">
+                id="fixture-info-box"
+                class="
+                  row-space-out
+                  m-b-20
+                ">
                 <!-- 
-                [ℹ] betting site
-                [ℹ] non-"FT"
+                [ℹ] team #1
                 -->
+                <div
+                  class="
+                    column-space-center 
+                    team-box
+                  ">
+                  <img 
+                    src={FIXTURE_SCOREBOARD.home_team_logo}
+                    alt=""
+                    class="m-b-12"
+                  />
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-white
+                    ">
+                    {FIXTURE_SCOREBOARD.home_team_name}
+                  </p>
+                </div>
+                <!-- 
+                [ℹ] fixture info
+                [ℹ] =?> non-"FT"
+                [ℹ] =?> in-Play
+                [ℹ] =?> "FT"
+                -->
+                {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                  <div
+                    style="align-self: center;">
+                    <p 
+                      class="
+                        w-500 
+                        x-large 
+                        desktop-x-large
+                        color-white
+                        text-center
+                      ">
+                      {countD_h}:{countD_min}:{countD_sec}
+                    </p>
+                    <p 
+                      class="
+                        w-400 
+                        small 
+                        color-grey 
+                        desktop-medium
+                        text-center
+                      " 
+                      style="white-space: nowrap;">
+                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                      {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                      ).slice(-2)}h
+                    </p>
+                  </div>
+                {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                  <div
+                    class="
+                      column-space-center
+                    ">
+                    <p
+                      class="
+                        color-white
+                        s-42
+                        w-500
+                      ">
+                      {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                      :
+                      {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                    </p>
+                    <p
+                      class="
+                        color-grey
+                        s-16
+                        w-500
+                      ">
+                      {FIXTURE_SCOREBOARD?.minute}
+                      <span
+                        class:visibility-none={tick_sec_show}>'
+                      </span>
+                    </p>
+                  </div>
+                {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                  <div
+                    class="
+                      column-space-center
+                    ">
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-grey
+                      ">
+                      FT
+                    </p>
+                    <p
+                      class="
+                        color-white
+                        s-42
+                        w-500
+                      ">
+                      {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                      :
+                      {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                    </p>
+                  </div>
+                {/if}
+                <!-- 
+                [ℹ] team #2
+                -->
+                <div
+                  class="
+                    column-space-center 
+                    team-box
+                  ">
+                  <img 
+                    src={FIXTURE_SCOREBOARD.away_team_logo}
+                    alt=""
+                    class="m-b-12"
+                  />
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-white
+                    ">
+                    {FIXTURE_SCOREBOARD.away_team_name}
+                  </p>
+                </div>
+              </div>
+
+              <!-- 
+              [ℹ] betting site
+              [ℹ] non-"FT"
+              -->
+              {#if FIXTURE_SCOREBOARD.status != "FT"}
                 <div
                   class="
                     row-space-center
@@ -1114,11 +796,13 @@
                     />
                   </a>
                 </div>
+              {/if}
 
-                <!-- 
-                [ℹ] odds
-                [ℹ] non-"FT"
-                -->
+              <!-- 
+              [ℹ] odds
+              [ℹ] non-"FT"
+              -->
+              {#if FIXTURE_SCOREBOARD.status != "FT"}
                 <div
                   id="btn-vote-container" 
                   class="row-space-center">
@@ -1132,10 +816,21 @@
                     ">
                     <!-- 
                     [ℹ] team-img / odds-type -->
-                    <img 
-                      src={FIXTURE_SCOREBOARD.home_team_logo} 
-                      alt=""
-                    />
+                    {#if !mobileExclusive}
+                      <img 
+                        src={FIXTURE_SCOREBOARD.home_team_logo} 
+                        alt=""
+                      />
+                    {:else}
+                      <p  
+                        class="
+                          color-grey
+                          s-14
+                          w-500
+                        ">
+                        1
+                      </p>
+                    {/if}
                     <p
                       class="
                         color-white
@@ -1155,10 +850,21 @@
                     ">
                     <!-- 
                     [ℹ] team-img / odds-type -->
-                    <img 
-                      src={close_icon} 
-                      alt=""
-                    />
+                    {#if !mobileExclusive}
+                      <img 
+                        src={close_icon} 
+                        alt=""
+                      />
+                    {:else}
+                      <p  
+                        class="
+                          color-grey
+                          s-14
+                          w-500
+                        ">
+                        X
+                      </p>
+                    {/if}
                     <p  
                       class="
                         color-grey
@@ -1178,10 +884,21 @@
                     ">
                     <!-- 
                     [ℹ] team-img / odds-type -->
-                    <img 
-                      src={FIXTURE_SCOREBOARD.away_team_logo} 
-                      alt=""
-                    />
+                    {#if !mobileExclusive}
+                      <img 
+                        src={FIXTURE_SCOREBOARD.away_team_logo} 
+                        alt=""
+                      />
+                    {:else}
+                      <p  
+                        class="
+                          color-grey
+                          s-14
+                          w-500
+                        ">
+                        2
+                      </p>
+                    {/if}
                     <p
                       class="
                         color-white
@@ -1193,49 +910,81 @@
                   </div>
 
                 </div>
-              </div>
+              {:else}
+                <div>
+                  <p 
+                    class="
+                      w-400 
+                      small 
+                      color-grey 
+                      desktop-medium
+                    " 
+                    style="white-space: nowrap;">
+                    {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                    {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                      '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                    ).slice(-2)}h
+                  </p>
+                </div>
+              {/if}
+
             <!-- 
-            [ℹ] display fixture-time -->
-            {:else}
-              <div>
-                <p 
-                  class="
-                    w-400 
-                    small 
-                    color-grey 
-                    desktop-medium
-                  " 
-                  style="white-space: nowrap;">
-                  {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                  {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                  {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                  {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                    '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
-                  ).slice(-2)}h
-                </p>
-              </div>
-            {/if}
-
-          <!-- 
-          [ℹ] [DESKTOP]
-          -->
-          {:else}
-
-            <div
-              class="
-                row-space-out
-              "> 
+            [ℹ] [TABLET]
+            -->
+            {:else if !mobileExclusive && tabletExclusive}
 
               <!-- 
-              [ℹ] team #1
+              [ℹ] background-gradient
               -->
               <div
+                id="background-gradient-box">
+              </div>
+
+              <!-- 
+              [ℹ] league info
+              -->
+              <div
+                id="league-info-box"
                 class="
-                  column-space-center 
-                  team-box
+                  row-space-center 
+                  cursor-pointer
                 ">
                 <div
-                  class="inner-team-box-1">
+                  id="league-info-img-box"
+                  class="m-r-10">
+                  <img 
+                    src={FIXTURE_SCOREBOARD?.league_logo}
+                    alt=""
+                  />
+                </div>
+                <p
+                  class="color-white">
+                  {FIXTURE_INFO?.data?.league_name}
+                  -
+                  Round
+                  {FIXTURE_SCOREBOARD?.round}
+                </p>
+              </div>
+
+              <!-- 
+              [ℹ] teams / fixture info box
+              -->
+              <div
+                id="fixture-info-box"
+                class="
+                  row-space-out
+                  m-b-20
+                ">
+                <!-- 
+                [ℹ] team #1
+                -->
+                <div
+                  class="
+                    column-space-center 
+                    team-box
+                  ">
                   <img 
                     src={FIXTURE_SCOREBOARD.home_team_logo}
                     alt=""
@@ -1250,40 +999,6 @@
                     {FIXTURE_SCOREBOARD.home_team_name}
                   </p>
                 </div>
-              </div>
-
-              <!-- 
-              [ℹ] league info
-              [ℹ] fixture info box
-              [ℹ] bet-site + odds
-              -->
-              <div
-                class="column-space-center">
-
-                <div
-                  id="league-info-box"
-                  class="
-                    row-space-center 
-                    cursor-pointer
-                    m-b-20
-                  ">
-                  <div
-                    id="league-info-img-box"
-                    class="m-r-10">
-                    <img 
-                      src={FIXTURE_SCOREBOARD?.league_logo}
-                      alt=""
-                    />
-                  </div>
-                  <p
-                    class="color-white">
-                    {FIXTURE_INFO?.data?.league_name}
-                    -
-                    Round
-                    {FIXTURE_SCOREBOARD?.round}
-                  </p>
-                </div>
-
                 <!-- 
                 [ℹ] fixture info
                 [ℹ] =?> non-"FT"
@@ -1373,157 +1088,14 @@
                     </p>
                   </div>
                 {/if}
-
                 <!-- 
-                [ℹ] bet-site + odds -->
-                {#if FIXTURE_SCOREBOARD.status != "FT"}
-                  <div
-                    id="tablet-bet-odds-box">
-                    <!-- 
-                    [ℹ] betting site
-                    [ℹ] non-"FT"
-                    -->
-                    <div
-                      class="
-                        row-space-center
-                        bet-site-box
-                        m-b-8
-                      ">
-                      <p 
-                        class="
-                          s-12
-                          color-grey
-                          m-r-10
-                        ">
-                        Featured by
-                      </p>
-                      <a 
-                        rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                        on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                        href={SPORTBOOK_INFO?.register_link}
-                        target="_blank"
-                        style="width: fit-content;">
-                        <img 
-                          id='sportbook-logo-img'
-                          src={SPORTBOOK_INFO?.image}
-                          alt={SPORTBOOK_INFO?.title}
-                        />
-                      </a>
-                    </div>
-
-                    <!-- 
-                    [ℹ] odds
-                    [ℹ] non-"FT"
-                    -->
-                    <div
-                      id="btn-vote-container" 
-                      class="row-space-center">
-                          
-                      <!-- 
-                      [ℹ] ODDS #1 -->
-                      <div
-                        class="
-                          odds-box
-                          row-space-out
-                        ">
-                        <!-- 
-                        [ℹ] team-img / odds-type -->
-                        <img 
-                          src={FIXTURE_SCOREBOARD.home_team_logo} 
-                          alt=""
-                        />
-                        <p
-                          class="
-                            color-white
-                            s-14
-                            w-500
-                          ">
-                          {FIXTURE_SCOREBOARD?._1x2?.home}
-                        </p>
-                      </div>
-
-                      <!-- 
-                      [ℹ] ODDS #X -->
-                      <div
-                        class="
-                          odds-box
-                          row-space-out
-                        ">
-                        <!-- 
-                        [ℹ] team-img / odds-type -->
-                        <img 
-                          src={close_icon} 
-                          alt=""
-                        />
-                        <p  
-                          class="
-                            color-grey
-                            s-14
-                            w-500
-                          ">
-                          {FIXTURE_SCOREBOARD?._1x2?.draw}
-                        </p>
-                      </div>
-
-                      <!-- 
-                      [ℹ] ODDS #2 -->
-                      <div
-                        class="
-                          odds-box
-                          row-space-out
-                        ">
-                        <!-- 
-                        [ℹ] team-img / odds-type -->
-                        <img 
-                          src={FIXTURE_SCOREBOARD.away_team_logo} 
-                          alt=""
-                        />
-                        <p
-                          class="
-                            color-white
-                            s-14
-                            w-500
-                          ">
-                          {FIXTURE_SCOREBOARD?._1x2?.away}
-                        </p>
-                      </div>
-
-                    </div>
-                  </div>
-                <!-- 
-                [ℹ] display fixture-time -->
-                {:else}
-                  <div>
-                    <p 
-                      class="
-                        w-400 
-                        small 
-                        color-grey 
-                        desktop-medium
-                      " 
-                      style="white-space: nowrap;">
-                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                      {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
-                      ).slice(-2)}h
-                    </p>
-                  </div>
-                {/if}
-              </div>
-
-              <!-- 
-              [ℹ] team #2
-              -->
-              <div
-                class="
-                  column-space-center 
-                  team-box
-                ">
+                [ℹ] team #2
+                -->
                 <div
-                  class="inner-team-box-2">
+                  class="
+                    column-space-center 
+                    team-box
+                  ">
                   <img 
                     src={FIXTURE_SCOREBOARD.away_team_logo}
                     alt=""
@@ -1540,43 +1112,903 @@
                 </div>
               </div>
 
-            </div> 
-           
+              <!-- 
+              [ℹ] bet-site + odds -->
+              {#if FIXTURE_SCOREBOARD.status != "FT"}
+                <div
+                  id="tablet-bet-odds-box">
+                  <!-- 
+                  [ℹ] betting site
+                  [ℹ] non-"FT"
+                  -->
+                  <div
+                    class="
+                      row-space-center
+                      bet-site-box
+                      m-b-8
+                    ">
+                    <p 
+                      class="
+                        s-12
+                        color-grey
+                        m-r-10
+                      ">
+                      Featured by
+                    </p>
+                    <a 
+                      rel="nofollow"
+                      aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                      on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                      href={SPORTBOOK_INFO?.register_link}
+                      target="_blank"
+                      style="width: fit-content;">
+                      <img 
+                        id='sportbook-logo-img'
+                        src={SPORTBOOK_INFO?.image}
+                        alt={SPORTBOOK_INFO?.title}
+                      />
+                    </a>
+                  </div>
+
+                  <!-- 
+                  [ℹ] odds
+                  [ℹ] non-"FT"
+                  -->
+                  <div
+                    id="btn-vote-container" 
+                    class="row-space-center">
+                        
+                    <!-- 
+                    [ℹ] ODDS #1 -->
+                    <div
+                      class="
+                        odds-box
+                        row-space-out
+                      ">
+                      <!-- 
+                      [ℹ] team-img / odds-type -->
+                      <img 
+                        src={FIXTURE_SCOREBOARD.home_team_logo} 
+                        alt=""
+                      />
+                      <p
+                        class="
+                          color-white
+                          s-14
+                          w-500
+                        ">
+                        {FIXTURE_SCOREBOARD?._1x2?.home}
+                      </p>
+                    </div>
+
+                    <!-- 
+                    [ℹ] ODDS #X -->
+                    <div
+                      class="
+                        odds-box
+                        row-space-out
+                      ">
+                      <!-- 
+                      [ℹ] team-img / odds-type -->
+                      <img 
+                        src={close_icon} 
+                        alt=""
+                      />
+                      <p  
+                        class="
+                          color-grey
+                          s-14
+                          w-500
+                        ">
+                        {FIXTURE_SCOREBOARD?._1x2?.draw}
+                      </p>
+                    </div>
+
+                    <!-- 
+                    [ℹ] ODDS #2 -->
+                    <div
+                      class="
+                        odds-box
+                        row-space-out
+                      ">
+                      <!-- 
+                      [ℹ] team-img / odds-type -->
+                      <img 
+                        src={FIXTURE_SCOREBOARD.away_team_logo} 
+                        alt=""
+                      />
+                      <p
+                        class="
+                          color-white
+                          s-14
+                          w-500
+                        ">
+                        {FIXTURE_SCOREBOARD?._1x2?.away}
+                      </p>
+                    </div>
+
+                  </div>
+                </div>
+              <!-- 
+              [ℹ] display fixture-time -->
+              {:else}
+                <div>
+                  <p 
+                    class="
+                      w-400 
+                      small 
+                      color-grey 
+                      desktop-medium
+                    " 
+                    style="white-space: nowrap;">
+                    {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                    {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                      '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                    ).slice(-2)}h
+                  </p>
+                </div>
+              {/if}
+
+            <!-- 
+            [ℹ] [DESKTOP]
+            -->
+            {:else}
+
+              <div
+                class="
+                  row-space-out
+                "> 
+
+                <!-- 
+                [ℹ] team #1
+                -->
+                <div
+                  class="
+                    column-space-center 
+                    team-box
+                  ">
+                  <div
+                    class="inner-team-box-1">
+                    <img 
+                      src={FIXTURE_SCOREBOARD.home_team_logo}
+                      alt=""
+                      class="m-b-12"
+                    />
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-white
+                      ">
+                      {FIXTURE_SCOREBOARD.home_team_name}
+                    </p>
+                  </div>
+                </div>
+
+                <!-- 
+                [ℹ] league info
+                [ℹ] fixture info box
+                [ℹ] bet-site + odds
+                -->
+                <div
+                  class="column-space-center">
+
+                  <div
+                    id="league-info-box"
+                    class="
+                      row-space-center 
+                      cursor-pointer
+                      m-b-20
+                    ">
+                    <div
+                      id="league-info-img-box"
+                      class="m-r-10">
+                      <img 
+                        src={FIXTURE_SCOREBOARD?.league_logo}
+                        alt=""
+                      />
+                    </div>
+                    <p
+                      class="color-white">
+                      {FIXTURE_INFO?.data?.league_name}
+                      -
+                      Round
+                      {FIXTURE_SCOREBOARD?.round}
+                    </p>
+                  </div>
+
+                  <!-- 
+                  [ℹ] fixture info
+                  [ℹ] =?> non-"FT"
+                  [ℹ] =?> in-Play
+                  [ℹ] =?> "FT"
+                  -->
+                  {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                    <div
+                      class="m-b-30"
+                      style="align-self: center;">
+                      <p 
+                        class="
+                          w-500 
+                          x-large 
+                          desktop-x-large
+                          color-white
+                          text-center
+                        ">
+                        {countD_h}:{countD_min}:{countD_sec}
+                      </p>
+                      <p 
+                        class="
+                          w-400 
+                          small 
+                          color-grey 
+                          desktop-medium
+                          text-center
+                        " 
+                        style="white-space: nowrap;">
+                        {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                        {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                          '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                        ).slice(-2)}h
+                      </p>
+                    </div>
+                  {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                    <div
+                      class="
+                        column-space-center
+                      ">
+                      <p
+                        class="
+                          color-white
+                          s-42
+                          w-500
+                        ">
+                        {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                        :
+                        {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                      </p>
+                      <p
+                        class="
+                          color-grey
+                          s-16
+                          w-500
+                        ">
+                        {FIXTURE_SCOREBOARD?.minute}
+                        <span
+                          class:visibility-none={tick_sec_show}>'
+                        </span>
+                      </p>
+                    </div>
+                  {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                    <div
+                      class="
+                        column-space-center
+                      ">
+                      <p
+                        class="
+                          s-14
+                          w-500
+                          color-grey
+                        ">
+                        FT
+                      </p>
+                      <p
+                        class="
+                          color-white
+                          s-42
+                          w-500
+                        ">
+                        {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                        :
+                        {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                      </p>
+                    </div>
+                  {/if}
+
+                  <!-- 
+                  [ℹ] bet-site + odds -->
+                  {#if FIXTURE_SCOREBOARD.status != "FT"}
+                    <div
+                      id="tablet-bet-odds-box">
+                      <!-- 
+                      [ℹ] betting site
+                      [ℹ] non-"FT"
+                      -->
+                      <div
+                        class="
+                          row-space-center
+                          bet-site-box
+                          m-b-8
+                        ">
+                        <p 
+                          class="
+                            s-12
+                            color-grey
+                            m-r-10
+                          ">
+                          Featured by
+                        </p>
+                        <a 
+                          rel="nofollow"
+                          aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                          on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                          href={SPORTBOOK_INFO?.register_link}
+                          target="_blank"
+                          style="width: fit-content;">
+                          <img 
+                            id='sportbook-logo-img'
+                            src={SPORTBOOK_INFO?.image}
+                            alt={SPORTBOOK_INFO?.title}
+                          />
+                        </a>
+                      </div>
+
+                      <!-- 
+                      [ℹ] odds
+                      [ℹ] non-"FT"
+                      -->
+                      <div
+                        id="btn-vote-container" 
+                        class="row-space-center">
+                            
+                        <!-- 
+                        [ℹ] ODDS #1 -->
+                        <div
+                          class="
+                            odds-box
+                            row-space-out
+                          ">
+                          <!-- 
+                          [ℹ] team-img / odds-type -->
+                          <img 
+                            src={FIXTURE_SCOREBOARD.home_team_logo} 
+                            alt=""
+                          />
+                          <p
+                            class="
+                              color-white
+                              s-14
+                              w-500
+                            ">
+                            {FIXTURE_SCOREBOARD?._1x2?.home}
+                          </p>
+                        </div>
+
+                        <!-- 
+                        [ℹ] ODDS #X -->
+                        <div
+                          class="
+                            odds-box
+                            row-space-out
+                          ">
+                          <!-- 
+                          [ℹ] team-img / odds-type -->
+                          <img 
+                            src={close_icon} 
+                            alt=""
+                          />
+                          <p  
+                            class="
+                              color-grey
+                              s-14
+                              w-500
+                            ">
+                            {FIXTURE_SCOREBOARD?._1x2?.draw}
+                          </p>
+                        </div>
+
+                        <!-- 
+                        [ℹ] ODDS #2 -->
+                        <div
+                          class="
+                            odds-box
+                            row-space-out
+                          ">
+                          <!-- 
+                          [ℹ] team-img / odds-type -->
+                          <img 
+                            src={FIXTURE_SCOREBOARD.away_team_logo} 
+                            alt=""
+                          />
+                          <p
+                            class="
+                              color-white
+                              s-14
+                              w-500
+                            ">
+                            {FIXTURE_SCOREBOARD?._1x2?.away}
+                          </p>
+                        </div>
+
+                      </div>
+                    </div>
+                  <!-- 
+                  [ℹ] display fixture-time -->
+                  {:else}
+                    <div>
+                      <p 
+                        class="
+                          w-400 
+                          small 
+                          color-grey 
+                          desktop-medium
+                        " 
+                        style="white-space: nowrap;">
+                        {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                        {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                          '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                        ).slice(-2)}h
+                      </p>
+                    </div>
+                  {/if}
+                </div>
+
+                <!-- 
+                [ℹ] team #2
+                -->
+                <div
+                  class="
+                    column-space-center 
+                    team-box
+                  ">
+                  <div
+                    class="inner-team-box-2">
+                    <img 
+                      src={FIXTURE_SCOREBOARD.away_team_logo}
+                      alt=""
+                      class="m-b-12"
+                    />
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-white
+                      ">
+                      {FIXTURE_SCOREBOARD.away_team_name}
+                    </p>
+                  </div>
+                </div>
+
+              </div> 
+            
+            {/if}
+          </div>
+
+          <!-- 
+          [ℹ] bottom-navigation
+          -->
+          <div
+            id="scoreboard-bottom-nav-box"
+            class="row-space-even">
+            <div
+              class="
+                opt-container 
+                cursor-pointer
+              "
+              on:click={() => selected_view = 0}
+              class:activeOpt={selected_view == 0}>
+              <p
+                class="s-14 color-grey w-500 no-wrap">
+                Overview
+              </p>
+            </div>
+            <div
+              class="
+                opt-container 
+                cursor-not-allowed
+              "
+              on:click={() => selected_view = 1}
+              class:activeOpt={selected_view == 1}>
+              <p
+                class="s-14 color-grey w-500 no-wrap">
+                News and Views
+              </p>
+            </div>
+          </div>
+        </div>
+      <!-- 
+      [ℹ] [MINIATURE] widget-component [DESKTOP] [TABLET] [MOBILE]
+      -->
+      {:else}
+
+        <div
+          id="scoreboard-widget-container"
+          class="miniature"
+          class:tablet-miniature={!mobileExclusive}
+          class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+
+          <!-- 
+          [ℹ] [MOBILE]
+          -->
+          {#if mobileExclusive}
+
+            <!-- 
+            [ℹ] teams / fixture info box
+            -->
+            <div
+              id="fixture-info-box"
+              class="
+                row-space-center
+                m-b-20
+              ">
+              <!-- 
+              [ℹ] team #1
+              -->
+              <div
+                class="
+                  row-space-out 
+                  team-box
+                  one
+                ">
+                <p
+                  class="
+                    s-14
+                    w-500
+                    color-white
+                  ">
+                  {FIXTURE_SCOREBOARD.home_team_name}
+                </p>
+                <img 
+                  src={FIXTURE_SCOREBOARD.home_team_logo}
+                  alt=""
+                />
+              </div>
+              <!-- 
+              [ℹ] fixture info
+              [ℹ] =?> non-"FT"
+              [ℹ] =?> in-Play
+              [ℹ] =?> "FT"
+              -->
+              {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                <div
+                  class="middle-info"
+                  style="align-self: center;">
+                  <p 
+                    class="
+                      w-500 
+                      x-large 
+                      desktop-x-large
+                      color-white
+                      text-center
+                    ">
+                    {countD_h}:{countD_min}:{countD_sec}
+                  </p>
+                  <p 
+                    class="
+                      w-400 
+                      small 
+                      color-grey 
+                      desktop-medium
+                      text-center
+                    " 
+                    style="white-space: nowrap;">
+                    {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                    {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                      '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                    ).slice(-2)}h
+                  </p>
+                </div>
+              {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                <div
+                  class="
+                    column-space-center
+                    middle-info
+                  ">
+                  <p
+                    class="
+                      color-white
+                      s-42
+                      w-500
+                    ">
+                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                    :
+                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                  </p>
+                  <p
+                    class="
+                      color-grey
+                      s-16
+                      w-500
+                    ">
+                    {FIXTURE_SCOREBOARD?.minute}
+                    <span
+                      class:visibility-none={tick_sec_show}>'
+                    </span>
+                  </p>
+                </div>
+              {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                <div
+                  class="
+                    column-space-center
+                    middle-info
+                  ">
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-grey
+                    ">
+                    FT
+                  </p>
+                  <p
+                    class="
+                      color-white
+                      s-42
+                      w-500
+                    ">
+                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                    :
+                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                  </p>
+                </div>
+              {/if}
+              <!-- 
+              [ℹ] team #2
+              -->
+              <div
+                class="
+                  row-space-out  
+                  team-box
+                  two
+                ">
+                <img 
+                  src={FIXTURE_SCOREBOARD.away_team_logo}
+                  alt=""
+                />
+                <p
+                  class="
+                    s-14
+                    w-500
+                    color-white
+                  ">
+                  {FIXTURE_SCOREBOARD.away_team_name}
+                </p>
+              </div>
+            </div>
+
+            <!-- 
+            [ℹ] bottom-navigation
+            -->
+            <div
+              id="scoreboard-bottom-nav-box"
+              class="row-space-even">
+              <div
+                class="
+                  opt-container 
+                  cursor-pointer
+                "
+                on:click={() => selected_view = 0}
+                class:activeOpt={selected_view == 0}>
+                <p
+                  class="s-14 color-grey w-500 no-wrap">
+                  Overview
+                </p>
+              </div>
+              <div
+                class="
+                  opt-container 
+                  cursor-not-allowed
+                "
+                on:click={() => selected_view = 1}
+                class:activeOpt={selected_view == 1}>
+                <p
+                  class="s-14 color-grey w-500 no-wrap">
+                  News and Views
+                </p>
+              </div>
+            </div>
+
+          <!-- 
+          [ℹ] [TABLET] && [DESKTOP]
+          -->
+          {:else}
+
+            <!-- 
+            [ℹ] teams / fixture info box
+            -->
+            <div
+              id="fixture-info-box"
+              class="
+                row-space-center
+                m-b-20
+              ">
+
+              <!-- 
+              [ℹ] team #1
+              -->
+              <div
+                class="
+                  column-space-center
+                  team-box
+                  one
+                ">
+                <div  
+                  class="
+                    row-space-out 
+                    inner-team-box-1
+                  ">
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-white
+                    ">
+                    {FIXTURE_SCOREBOARD.home_team_name}
+                  </p>
+                  <img 
+                    src={FIXTURE_SCOREBOARD.home_team_logo}
+                    alt=""
+                  />
+                </div>
+              </div>
+              
+              <!-- 
+              [ℹ] fixture info
+              [ℹ] =?> non-"FT"
+              [ℹ] =?> in-Play
+              [ℹ] =?> "FT"
+              -->
+              {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                <div
+                  class="middle-info"
+                  style="align-self: center;">
+                  <p 
+                    class="
+                      w-500 
+                      x-large 
+                      desktop-x-large
+                      color-white
+                      text-center
+                    ">
+                    {countD_h}:{countD_min}:{countD_sec}
+                  </p>
+                  <p 
+                    class="
+                      w-400 
+                      small 
+                      color-grey 
+                      desktop-medium
+                      text-center
+                    " 
+                    style="white-space: nowrap;">
+                    {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                    {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                    {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
+                      '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                    ).slice(-2)}h
+                  </p>
+                </div>
+              {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                <div
+                  class="
+                    column-space-center
+                    middle-info
+                  ">
+                  <p
+                    class="
+                      color-white
+                      s-42
+                      w-500
+                    ">
+                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                    :
+                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                  </p>
+                  <p
+                    class="
+                      color-grey
+                      s-16
+                      w-500
+                    ">
+                    {FIXTURE_SCOREBOARD?.minute}
+                    <span
+                      class:visibility-none={tick_sec_show}>'
+                    </span>
+                  </p>
+                </div>
+              {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                <div
+                  class="
+                    column-space-center
+                    middle-info
+                  ">
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-grey
+                    ">
+                    FT
+                  </p>
+                  <p
+                    class="
+                      color-white
+                      s-42
+                      w-500
+                      no-wrap
+                    ">
+                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
+                    :
+                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
+                  </p>
+                </div>
+              {/if}
+
+              <!-- 
+              [ℹ] team #2
+              -->
+              <div
+                class="
+                  column-space-center  
+                  team-box
+                  two
+                ">
+                <div  
+                  class="
+                    row-space-out   
+                    inner-team-box-2
+                  ">
+                  <img 
+                    src={FIXTURE_SCOREBOARD.away_team_logo}
+                    alt=""
+                  />
+                  <p
+                    class="
+                      s-14
+                      w-500
+                      color-white
+                    ">
+                    {FIXTURE_SCOREBOARD.away_team_name}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <!-- 
+            [ℹ] bottom-navigation
+            -->
+            <div
+              id="scoreboard-bottom-nav-box"
+              class="row-space-even">
+              <div
+                class="
+                  opt-container 
+                  cursor-pointer
+                "
+                on:click={() => selected_view = 0}
+                class:activeOpt={selected_view == 0}>
+                <p
+                  class="s-14 color-grey w-500 no-wrap">
+                  Overview
+                </p>
+              </div>
+              <div
+                class="
+                  opt-container 
+                  cursor-not-allowed
+                "
+                on:click={() => selected_view = 1}
+                class:activeOpt={selected_view == 1}>
+                <p
+                  class="s-14 color-grey w-500 no-wrap">
+                  News and Views
+                </p>
+              </div>
+            </div>
+
           {/if}
         </div>
 
-        <!-- 
-        [ℹ] bottom-navigation
-        -->
-        <div
-          id="scoreboard-bottom-nav-box"
-          class="row-space-even">
-          <div
-            class="
-              opt-container 
-              cursor-pointer
-            "
-            on:click={() => selected_view = 0}
-            class:activeOpt={selected_view == 0}>
-            <p
-              class="s-14 color-grey w-500 no-wrap">
-              Overview
-            </p>
-          </div>
-          <div
-            class="
-              opt-container 
-              cursor-not-allowed
-            "
-            on:click={() => selected_view = 1}
-            class:activeOpt={selected_view == 1}>
-            <p
-              class="s-14 color-grey w-500 no-wrap">
-              News and Views
-            </p>
-          </div>
-        </div>
-      </div>
+      {/if}
 
     <!-- 
     [ℹ] promise was rejected
@@ -1636,7 +2068,7 @@
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
-  }
+  } 
 
   div#scoreboard-widget-container div#scoreboard-top-box {
     position: relative;
@@ -1723,6 +2155,82 @@
     height: 135px;
     width: 100%;
     z-index: 0;
+  }
+
+  /* miniature [ONLY] [MOBILE] */
+  div#scoreboard-widget-container.miniature {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    border-radius: 0 !important;
+    background: #292929 !important;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box {
+    width: auto; 
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.one {
+    margin-right: 20px;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.one p {
+    margin-right: 15px;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.two {
+    margin-left: 20px;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.two p {
+    margin-left: 15px;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box img {
+    width: 40px;
+    height: 40px;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box p {
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 30px;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.middle-info {
+    width: auto;
+  } div#scoreboard-widget-container.miniature div#scoreboard-bottom-nav-box {
+    background-color: #FFFFFF;
+    padding: 10px 15px 0 15px;
+  } div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container p {
+    padding-bottom: 8px;
+  }
+
+  /* miniature [ONLY] [TABLET] [DESKTOP] */
+  div#scoreboard-widget-container.miniature.tablet-miniature {
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 0;
+    border-radius: 0 !important;
+    padding-top: 20px;
+    background-image: url(./assets/banner.svg) !important;
+    background-position: center !important;
+    background-repeat: no-repeat !important;
+    background-size: cover !important;
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box {
+    /* display: grid;
+		grid-auto-flow: column;
+		justify-items: center;
+		align-items: center;
+		justify-content: center;
+		grid-template-columns: 1fr 1fr 1fr;
+		text-align: center;
+    z-index: 1; */
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box p {
+    overflow: visible;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 200px;
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box {
+    position: relative;
+    width: -webkit-fill-available;
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-1 {
+    position: absolute;
+    right: 0;
+    width: auto;
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 {
+    position: absolute;
+    left: 0;
+    width: auto;
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.middle-info {
+    width: 100px;
   }
 
   /* ====================
