@@ -435,10 +435,6 @@
     });
   })
 
-  $: if (SPORTBOOK_DETAILS_LIST) {
-    console.debug(SPORTBOOK_DETAILS_LIST)
-  }
-
   onDestroy(async() => {
     // [ℹ] close LISTEN EVENT connection
     for (const iterator of real_time_unsubscribe) {
