@@ -44,13 +44,10 @@ export async function get_odds (
   let day_ = new Date(fixture_time).getDate().toString();
   day_ = ('0' + day_).slice(-2);
 
-  console.debug('odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id)
-
   await get(child(ref(db_real), 'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id))
   .then((snapshot) => {
     if (snapshot.exists()) {
       const data: [string, FIREBASE_odds][] = Object.entries(snapshot.val())
-      console.log("WASSAP", data.length)
       for (const sportbook of data) {
         sportbook[1].sportbook = sportbook[0].toString();
         sportbook_array.push(sportbook[1])
@@ -58,6 +55,5 @@ export async function get_odds (
     }
   })
 
-  console.log("WASSAP", sportbook_array.length)
   return sportbook_array
 }
