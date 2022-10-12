@@ -2444,14 +2444,6 @@
       /* max-width: 700px; */
     }
 
-    /* odds style */
-    div#scoreboard-widget-container div#scoreboard-top-box div.odds-box {
-      margin-right: 20px;
-      width: 100%;
-    } div#scoreboard-widget-container div#scoreboard-top-box div.odds-box:last-child {
-      margin-right: 0px;
-    }
-
     /* odds-bet style */
     div#tablet-bet-odds-box {
       position: relative;    
@@ -2479,6 +2471,14 @@
       margin-right: 32px;
     } div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container:last-child {
       margin-right: 0;
+    }
+
+    /* odds style */
+    div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a div.odds-box {
+      margin-right: 20px;
+      width: 100%;
+    } div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a:last-child div.odds-box {
+      margin-right: 0px;
     }
 
     /* background-gradient */
