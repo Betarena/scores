@@ -15,7 +15,7 @@
     REDIS_CACHE_SINGLE_fixtures_seo_response 
   } from '$lib/models/_main_/pages_and_seo/types';
 	import type { 
-    REDIS_CACHE_SINGLE_scoreboard_data 
+    REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
   } from '$lib/models/fixtures/scoreboard/types';
 
   import SvelteSeo from 'svelte-seo';
@@ -24,6 +24,7 @@
   let PAGE_SEO:                     REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response
   let FIXTURE_SCOREBOARD:           REDIS_CACHE_SINGLE_scoreboard_data
+  let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -32,6 +33,7 @@
   $: PAGE_SEO                       = $page.data.PAGE_SEO;
   $: FIXTURE_INFO                   = $page.data.FIXTURE_INFO;
   $: FIXTURE_SCOREBOARD             = $page.data.FIXTURE_SCOREBOARD;
+  $: FIXTURE_SCOREBOARD_TRANSLATION = $page.data.FIXTURE_SCOREBOARD_TRANSLATION;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -234,7 +236,7 @@
 
   <!-- 
   [ℹ] widgets -->
-  <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} />
+  <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
 
 </section>
 

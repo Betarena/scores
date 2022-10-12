@@ -18,7 +18,7 @@
 	import { db_real } from "$lib/firebase/init";
 
 	import type { 
-    REDIS_CACHE_SINGLE_scoreboard_data 
+    REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
   } from "$lib/models/fixtures/scoreboard/types";
 	import type {
     REDIS_CACHE_SINGLE_fixtures_page_info_response 
@@ -43,6 +43,7 @@
 
   export let FIXTURE_INFO:       REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
+  export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation
 
   let SPORTBOOK_INFO:            Cache_Single_SportbookDetails_Data_Response;
   let SPORTBOOK_DETAILS_LIST:    Cache_Single_SportbookDetails_Data_Response[]
@@ -1603,7 +1604,7 @@
               class:activeOpt={selected_view == 0}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                Overview
+                {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
               </p>
             </div>
             <div
@@ -1615,7 +1616,7 @@
               class:activeOpt={selected_view == 1}>
               <p
                 class="s-14 color-grey w-500 no-wrap">
-                News and Views
+                {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
               </p>
             </div>
           </div>
@@ -1797,7 +1798,7 @@
                 class:activeOpt={selected_view == 0}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
-                  Overview
+                  {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                 </p>
               </div>
               <div
@@ -1809,7 +1810,7 @@
                 class:activeOpt={selected_view == 1}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
-                  News and Views
+                  {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
                 </p>
               </div>
             </div>
@@ -1996,7 +1997,7 @@
                 class:activeOpt={selected_view == 0}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
-                  Overview
+                  {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                 </p>
               </div>
               <div
@@ -2008,7 +2009,7 @@
                 class:activeOpt={selected_view == 1}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
-                  News and Views
+                  {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
                 </p>
               </div>
             </div>

@@ -114,7 +114,24 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_2 = gql`
       image_path_j: data(path: "$.logo_path")
     }
   }
-`; 
+`;
+
+/**
+ * [ℹ] Fixtures / Scoreboard Widget (#4)
+ * [ℹ] TRANSLATION
+*/
+export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_4 = gql`
+  query REDIS_CACHE_SCOREBOARD_ODDS_DATA_4 
+    @cached 
+    (ttl: 300) 
+  {
+    # [ℹ] unecessary to paginate
+    scores_fixture_scoreboard_translations {
+      lang
+      translations
+    }
+  }
+`;
 
 /** 
  * ====================

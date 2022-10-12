@@ -1404,3 +1404,14 @@ export interface BETARENA_HASURA_scores_seo_fixtures {
   imageAlt?:    string;
   description?: string;
 }
+
+/**
+ * [ℹ] HASURA: scores_fixture_scoreboard_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixture_scoreboard_translations {
+  lang?:         string;
+  translations?: ScoreboardTranslations;
+} export interface ScoreboardTranslations {
+  overview?:   string;
+  news_views?: string;
+}

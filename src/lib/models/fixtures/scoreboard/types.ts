@@ -1,11 +1,13 @@
 import type { 
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
+  BETARENA_HASURA_scores_fixture_scoreboard_translations,
   BETARENA_HASURA_scores_football_leagues,
   BETARENA_HASURA_scores_football_seasons_details,
   BETARENA_HASURA_scores_tournaments,
   DataStats,
   Round,
+  ScoreboardTranslations,
   Scores,
   Time
 } from "$lib/models/hasura"
@@ -17,8 +19,8 @@ import type {
 */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface REDIS_CACHE_SINGLE_scoreboard_translation {
-  // empty
+export interface REDIS_CACHE_SINGLE_scoreboard_translation extends ScoreboardTranslations {
+  lang?: string
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -51,6 +53,8 @@ export interface BETARENA_HASURA_scoreboard_query {
   historic_fixtures_aggregate:     BETARENA_HASURA_historic_fixtures_aggregate
   historic_fixtures:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
   scores_football_leagues:         BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[]
+  // NOTE: translations
+  scores_fixture_scoreboard_translations: BETARENA_HASURA_scores_fixture_scoreboard_translations[]
 }
 
 /**

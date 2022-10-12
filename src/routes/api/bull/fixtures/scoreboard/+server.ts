@@ -4,7 +4,8 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
   REDIS_CACHE_SCOREBOARD_ODDS_DATA_0,
   REDIS_CACHE_SCOREBOARD_ODDS_DATA_1,
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_2
+  REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
+  REDIS_CACHE_SCOREBOARD_ODDS_DATA_4
 } from '$lib/graphql/fixtures/scoreboard/query';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
@@ -15,13 +16,17 @@ import type {
   BETARENA_HASURA_historic_fixtures
 } from '$lib/models/hasura';
 import type { 
-  BETARENA_HASURA_scoreboard_query, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures, BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues
+  BETARENA_HASURA_scoreboard_query, 
+  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures, 
+  BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues, 
+  REDIS_CACHE_SINGLE_scoreboard_translation
 } from '$lib/models/fixtures/scoreboard/types';
 import type { 
   Fixture_Scoreboard_Info, 
   Fixture_Scoreboard_Team, 
   REDIS_CACHE_SINGLE_scoreboard_data 
 } from '$lib/models/fixtures/scoreboard/types';
+import { GET_HREFLANG_DATA } from '$lib/graphql/query';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -47,6 +52,7 @@ const CQ_Fixture_Scoreboard = new Bull (
 const cacheQueueProcessName = "CQ_Fixture_Scoreboard"
 const cacheTarget = "REDIS CACHE | fixture scoreboard (all)"
 const cache_data_addr = "scoreboard_data"
+const cache_trans_addr = "scoreboard_trans"
 // [ℹ] debug info
 let logs = []
 let t0;
@@ -65,6 +71,8 @@ export async function POST(): Promise < unknown > {
       at: ${new Date().toDateString()}
     `);
 
+    const langArray = await getHrefLang()
+    await main_trans_and_seo(langArray)
     await main()
 
     for (const log of logs) {
@@ -91,7 +99,7 @@ export async function POST(): Promise < unknown > {
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheData (
+async function cache_data (
   league_id: number, 
   json_cache: REDIS_CACHE_SINGLE_scoreboard_data
 ) {
@@ -103,11 +111,16 @@ async function cacheData (
   }
 }
 
-// [ℹ] DEPRECEATED CACHE DELETE (13/07/2022)
-
-async function delCacheData () {
-  await redis.del(cache_data_addr)
-  return
+async function cache_translation (
+  lang: string, 
+  json_cache: REDIS_CACHE_SINGLE_scoreboard_translation
+) {
+  try {
+    await redis.hset(cache_trans_addr, lang, JSON.stringify(json_cache));
+  } 
+  catch (e) {
+    console.error(`❌ unable to cache ${cache_trans_addr}`, e);
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -126,6 +139,8 @@ CQ_Fixture_Scoreboard.process (async function (job, done) {
   */
 
   const t0 = performance.now();
+  const langArray = await getHrefLang()
+  await main_trans_and_seo(langArray)
   await main()
   const t1 = performance.now();
 
@@ -228,7 +243,7 @@ async function main () {
       league_logo:      league_map.get(league_id)?.image_path_j || null
     }
 
-    await cacheData(key, fixture_object)
+    await cache_data(key, fixture_object)
 
     // [🐞]
     cache_data_arr.push(fixture_object)
@@ -245,6 +260,56 @@ async function main () {
   }
 
   return;
+}
+
+async function main_trans_and_seo (
+  langArray :string[]
+) {
+
+  const res = await get_widget_translations()
+
+  const fix_odds_translation_map = new Map <string, REDIS_CACHE_SINGLE_scoreboard_translation> ()
+
+  /**
+   * [ℹ] MAIN 
+  */
+  for (const lang_ of langArray) {
+
+    const object: REDIS_CACHE_SINGLE_scoreboard_translation = {}
+    object.lang = lang_
+
+    const objectFixOdds = res.scores_fixture_scoreboard_translations
+      .find(({ lang }) => lang === lang_)
+
+    const mergedObj = {
+      ...object, 
+      ...objectFixOdds?.translations
+    }
+
+    fix_odds_translation_map.set(lang_, mergedObj)
+  }
+
+  // [🐛] debug
+  if (dev) {
+    const data = JSON.stringify(fix_odds_translation_map.values(), null, 4)
+    fs.writeFile('./datalog/main_trans_and_seo.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  // [ℹ] persist data
+  t0 = performance.now();
+  logs.push(`total lang's: ${fix_odds_translation_map.size}`)
+  for (const [key, value] of fix_odds_translation_map.entries()) {
+    await cache_translation(key, value);
+  }
+  t1 = performance.now();
+  logs.push(`cache uplaod complete in: ${(t1 - t0) / 1000} sec`);
+
+  return
+
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -383,4 +448,34 @@ async function generate_leagues_map (
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
   return leagues_arr_map;
+}
+
+async function getHrefLang (
+): Promise < string[] > {
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  return langArray;
+}
+
+async function get_widget_translations (
+): Promise < BETARENA_HASURA_scoreboard_query > {
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_4";
+  const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
+    REDIS_CACHE_SCOREBOARD_ODDS_DATA_4
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
 }
