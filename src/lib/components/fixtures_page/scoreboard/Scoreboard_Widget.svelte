@@ -737,6 +737,7 @@
                         s-14
                         w-500
                         color-grey
+                        ft-text
                       ">
                       FT
                     </p>
@@ -1102,6 +1103,7 @@
                         s-14
                         w-500
                         color-grey
+                        ft-text
                       ">
                       FT
                     </p>
@@ -1117,7 +1119,7 @@
                     </p>
                     <p
                       class="
-                        s-14
+                        s-16
                         w-500
                         color-grey
                       ">
@@ -1281,7 +1283,7 @@
                   <p 
                     class="
                       w-400 
-                      small 
+                      s-14 
                       color-grey 
                       desktop-medium
                     " 
@@ -1438,6 +1440,7 @@
                           s-14
                           w-500
                           color-grey
+                          ft-text
                         ">
                         FT
                       </p>
@@ -1453,7 +1456,7 @@
                       </p>
                       <p
                         class="
-                          s-14
+                          s-16
                           w-500
                           color-grey
                         ">
@@ -1590,11 +1593,12 @@
                   <!-- 
                   [ℹ] display fixture-time -->
                   {:else}
-                    <div>
+                    <div
+                      class="m-t-20">
                       <p 
                         class="
                           w-400 
-                          small 
+                          s-14 
                           color-grey 
                           desktop-medium
                         " 
@@ -1796,6 +1800,7 @@
                       s-14
                       w-500
                       color-grey
+                      ft-text
                     ">
                     FT
                   </p>
@@ -2003,6 +2008,7 @@
                       s-14
                       w-500
                       color-grey
+                      ft-text
                     ">
                     FT
                   </p>
@@ -2149,8 +2155,7 @@
   */
 
   #scoreboard-widget-container {
-    padding: 0;
-    background: #ffffff;
+    background-color: #4B4B4B;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
     overflow: hidden;
@@ -2407,12 +2412,19 @@
       height: 88px;
     } div#scoreboard-widget-container div#scoreboard-top-box div.team-box {
       position: relative;
+    } div#scoreboard-widget-container div#scoreboard-top-box div.team-box p {
+      font-size: 16px;
     } div#scoreboard-widget-container div#scoreboard-top-box div.team-box div.inner-team-box-1 {
       position: absolute;
-      left: 10%;
+      left: 25%;
+      text-align: center;
     } div#scoreboard-widget-container div#scoreboard-top-box div.team-box div.inner-team-box-2 {
       position: absolute;
-      right: 10%;
+      right: 25%;
+      text-align: center;
+    } p.ft-text {
+      font-size: 16px !important;
+      margin-bottom: -10px
     }
 
     /* odds style */
