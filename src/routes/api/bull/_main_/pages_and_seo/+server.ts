@@ -684,12 +684,14 @@ async function fixtures_page_generation(
 
       const country =
         iterator?.country_id_j == undefined
-          ? undefined
+          ? null
           : data?.scores_football_countries.find( ({ id }) => id == iterator?.country_id_j)?.name
 
+      // NOTE: sometimes no-country translation avaialble
+      // NOTE: use the default as universal-transaltion
       const country_t =
-         country == undefined
-          ? undefined
+         country == null
+          ? country
           : data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.countries_translation[country]
 
       const sport =
