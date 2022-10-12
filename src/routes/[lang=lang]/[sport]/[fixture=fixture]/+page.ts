@@ -125,12 +125,23 @@ export async function load({
 
   const fixture_id = response_fixtures_page_info?.data?.id;
 
-  const response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(
     `/api/cache/fixtures/scoreboard?fixture_id=` + fixture_id, 
     {
       method: 'GET'
     }
   ).then((r) => r.json());
+
+  if (response_scoreboard == undefined) {
+    if (dev) console.debug("Non Current Season Fixture - loading from Hasura Directly")
+    response_scoreboard = await fetch(
+      `/api/hasura/fixtures/scoreboard?fixture_id=` + fixture_id, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
 
   const response_scoreboard_translation: REDIS_CACHE_SINGLE_scoreboard_translation = await fetch(
     `/api/cache/fixtures/scoreboard?lang=` + urlLang, 
@@ -148,7 +159,7 @@ export async function load({
   if (
     response_fixtures_seo
     && response_fixtures_page_info
-    // && response_scoreboard // NOTE:IMPORTANT: can be null -load from hasura
+    && response_scoreboard
     && response_scoreboard_translation
   ) {
     return {

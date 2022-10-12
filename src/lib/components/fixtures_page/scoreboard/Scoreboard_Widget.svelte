@@ -89,14 +89,6 @@
 		const response_main_sportbook: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo)
     const response_all_spotbooks: Cache_Single_SportbookDetails_Data_Response[] = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo)
 
-    if (FIXTURE_SCOREBOARD == undefined) {
-      // [🐞]
-      if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `no cached fixture (loading Hasura)`)
-      const fixture_id = FIXTURE_INFO.data.id;
-      const response_fixture: REDIS_CACHE_SINGLE_scoreboard_data = await get("/api/hasura/fixtures/scoreboard?fixture_id="+fixture_id)
-      FIXTURE_SCOREBOARD = response_fixture
-    }
-
     loaded = true;
 
     // [ℹ] data validation check
