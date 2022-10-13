@@ -332,7 +332,7 @@
   ): Promise < void > {
 
     // [🐞]
-    if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `in-listen_real_time_livescores_now()`)
+    if (dev) console.debug("Triggered listen_real_time_livescores_now()");
 
     const fixtureRef = ref (
       db_real,
@@ -414,6 +414,9 @@
       return
     }
 
+    // [🐞]
+    if (dev) console.debug("Triggered listen_real_time_odds()");
+
     const sportbook_array: FIREBASE_odds[] = []
     const fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
     const fixture_id = FIXTURE_SCOREBOARD?.id;
@@ -482,13 +485,17 @@
     });
   })
 
+  // [! CRITICAL !]
   onDestroy(async() => {
+    // [🐞]
+    if (dev) console.groupCollapsed("%cclosing connections [DEV]", 'background: red; color: #fffff');
     // [ℹ] close LISTEN EVENT connection
-    if (dev) console.groupCollapsed("closing connections [DEV]");
     for (const iterator of real_time_unsubscribe) {
+      // [🐞]
       if (dev) console.log("closing connection")
       iterator();
     }
+    // [🐞]
     if (dev) console.groupEnd();
   })
 
@@ -622,8 +629,9 @@
             [ℹ] top-row data container
             -->
             <div
-              id="scoreboard-top-box"
-              class="column-space-center">
+              id="scoreboard-top-box"              
+              class="column-space-center"
+              class:full-time={FIXTURE_SCOREBOARD.status == "FT"}>
 
               <!-- 
               [ℹ] [MOBILE]
@@ -2304,6 +2312,11 @@
   div#scoreboard-widget-container div#scoreboard-top-box {
     position: relative;
     padding: 20px 12px;
+    min-height: 282px;
+    max-height: 282px;
+  } div#scoreboard-widget-container div#scoreboard-top-box.full-time {
+    min-height: 215px;
+    max-height: 215px;
   }
 
   /* league-info */
@@ -2522,7 +2535,8 @@
   @media only screen and (min-width: 726px) {
 
     /* scorebaord-top */
-    div#scoreboard-widget-container div#scoreboard-top-box {
+    div#scoreboard-widget-container div#scoreboard-top-box,
+    div#scoreboard-widget-container div#scoreboard-top-box.full-time {
       min-height: 207px;
       max-height: 207px;
     }
