@@ -1101,7 +1101,7 @@
                       <p 
                         class="
                           w-500 
-                          x-large 
+                          s-20
                           color-white
                           text-center
                         "
@@ -1111,9 +1111,8 @@
                       <p 
                         class="
                           w-400 
-                          small 
+                          s-16 
                           color-grey 
-                          desktop-medium
                           text-center
                         " 
                         style="white-space: nowrap;">
@@ -1319,7 +1318,7 @@
                           />
                           <p  
                             class="
-                              olor-white
+                              color-white
                               s-14
                               w-500
                             ">
@@ -1369,7 +1368,7 @@
                     <p 
                       class="
                         w-400 
-                        s-14 
+                        s-14
                         color-grey 
                         desktop-medium
                       " 
@@ -2341,8 +2340,8 @@
 		text-align: center;
     z-index: 1;
   } div#scoreboard-widget-container div#scoreboard-top-box div#fixture-info-box div.team-box img {
-    max-width: 72px;
-    max-height: 72px;
+    width: 72px;
+    height: 72px;
   } div#scoreboard-widget-container span.visibility-none {
     visibility: hidden;
   }
@@ -2514,6 +2513,17 @@
       /* max-width: 700px; */
     }
 
+    /* scorebaord-top */
+    div#scoreboard-widget-container div#scoreboard-top-box,
+    div#scoreboard-widget-container div#scoreboard-top-box.full-time {
+      min-height: 254px;
+      max-height: 254px;
+      background-image: url(./assets/banner-tablet.svg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
     /* odds-bet style */
     div#tablet-bet-odds-box {
       position: relative;    
@@ -2525,24 +2535,14 @@
 
     /* background-gradient */
     div#background-gradient-box {
-      height: 135px;
+      height: 60px;
+      width: 100%;
     }
   }
 
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
-
-    /* scorebaord-top */
-    div#scoreboard-widget-container div#scoreboard-top-box,
-    div#scoreboard-widget-container div#scoreboard-top-box.full-time {
-      min-height: 207px;
-      max-height: 207px;
-      background-image: url(./assets/banner.svg);
-      background-position: center;
-      background-repeat: no-repeat;
-      background-size: cover;
-    }
 
     /* bottom nav */
     div#scoreboard-widget-container div#scoreboard-bottom-nav-box {
@@ -2554,19 +2554,18 @@
       margin-right: 0;
     }
 
+    /* team-info style */
+    div#scoreboard-widget-container div#scoreboard-top-box div#fixture-info-box div.team-box img {
+      width: 88px;
+      height: 88px;
+    }
+
     /* odds style */
     div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a div.odds-box {
       margin-right: 20px;
       width: 100%;
     } div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a:last-child div.odds-box {
       margin-right: 0px;
-    }
-
-    /* background-gradient */
-    div#background-gradient-box {
-      background: linear-gradient(174.38deg, rgba(41, 41, 41, 0) 4.48%, #292929 46.39%);
-      height: 60px;
-      width: 100%;
     }
 
     /* miniature [TABLET] */
@@ -2584,16 +2583,24 @@
       min-width: 100%;
     }
 
+    /* scorebaord-top */
+    div#scoreboard-widget-container div#scoreboard-top-box,
+    div#scoreboard-widget-container div#scoreboard-top-box.full-time {
+      min-height: 207px;
+      max-height: 207px;
+      background-image: url(./assets/banner.svg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
+    }
+
     /* league-info */
     div#scoreboard-widget-container div#scoreboard-top-box div#league-info-box p:hover {
       color: #F5620F !important;
     }
 
     /* team-info style */
-    div#scoreboard-widget-container div#scoreboard-top-box div.team-box img {
-      width: 88px;
-      height: 88px;
-    } div#scoreboard-widget-container div#scoreboard-top-box div.team-box {
+    div#scoreboard-widget-container div#scoreboard-top-box div.team-box {
       position: relative;
     } div#scoreboard-widget-container div#scoreboard-top-box div.team-box p {
       font-size: 16px;
