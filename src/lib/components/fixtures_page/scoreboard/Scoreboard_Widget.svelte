@@ -995,9 +995,8 @@
                     <p 
                       class="
                         w-400 
-                        small 
+                        s-14 
                         color-grey 
-                        desktop-medium
                       " 
                       style="white-space: nowrap;">
                       {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
