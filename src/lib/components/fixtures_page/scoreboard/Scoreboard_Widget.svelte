@@ -2302,10 +2302,6 @@
     width: 100%;
     position: relative;
     padding: none;
-    background-image: url(./assets/banner.svg);
-    background-position: center;
-    background-repeat: no-repeat;
-    background-size: cover;
   } 
 
   /* scorebaord-top */
@@ -2314,6 +2310,10 @@
     padding: 20px 12px;
     min-height: 282px;
     max-height: 282px;
+    background-image: url(./assets/banner-mobile.svg);
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
   } div#scoreboard-widget-container div#scoreboard-top-box.full-time {
     min-height: 215px;
     max-height: 215px;
@@ -2539,6 +2539,10 @@
     div#scoreboard-widget-container div#scoreboard-top-box.full-time {
       min-height: 207px;
       max-height: 207px;
+      background-image: url(./assets/banner.svg);
+      background-position: center;
+      background-repeat: no-repeat;
+      background-size: cover;
     }
 
     /* bottom nav */
