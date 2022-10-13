@@ -240,9 +240,9 @@
   let show_countdown: boolean = false;
 
 	$: if (loaded) {
-		date_obj_diff = Date.parse(FIXTURE_SCOREBOARD?.fixture_time.toString()) - Date.parse(new Date().toString());
+		date_obj_diff = Date.parse(FIXTURE_SCOREBOARD?.fixture_time.toString() + "Z") - Date.parse(new Date().toString());
 		setInterval(() => {
-			date_obj_diff = Date.parse(FIXTURE_SCOREBOARD?.fixture_time.toString()) - Date.parse(new Date().toString());
+			date_obj_diff = Date.parse(FIXTURE_SCOREBOARD?.fixture_time.toString() + "Z") - Date.parse(new Date().toString());
 		}, 1000);
 	}
 
@@ -418,7 +418,7 @@
     if (dev) console.debug("Triggered listen_real_time_odds()");
 
     const sportbook_array: FIREBASE_odds[] = []
-    const fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
+    const fixture_time = FIXTURE_SCOREBOARD?.fixture_time + "Z";
     const fixture_id = FIXTURE_SCOREBOARD?.id;
 
     // [ℹ] [GET] target fixture odds
@@ -738,11 +738,11 @@
                           text-center
                         " 
                         style="white-space: nowrap;">
-                        {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                        {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                          '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                        {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
+                        {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMonth().toString()]}
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getHours().toString()}:{(
+                          '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                         ).slice(-2)}h
                       </p>
                     </div>
@@ -999,11 +999,11 @@
                         color-grey 
                       " 
                       style="white-space: nowrap;">
-                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
                       {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getHours().toString()}:{(
+                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                       ).slice(-2)}h
                     </p>
                   </div>
@@ -1116,11 +1116,11 @@
                           text-center
                         " 
                         style="white-space: nowrap;">
-                        {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                        {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
                         {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                        {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                          '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
+                        {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getHours().toString()}:{(
+                          '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                         ).slice(-2)}h
                       </p>
                     </div>
@@ -1373,11 +1373,11 @@
                         desktop-medium
                       " 
                       style="white-space: nowrap;">
-                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
+                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
                       {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getHours().toString()}:{(
+                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                       ).slice(-2)}h
                     </p>
                   </div>
@@ -1486,11 +1486,11 @@
                             text-center
                           "
                           style="white-space: nowrap;">
-                          {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                          {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                          {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                          {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                            '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                          {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
+                          {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMonth().toString()]}
+                          {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
+                          {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getHours().toString()}:{(
+                            '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                           ).slice(-2)}h
                         </p>
                       </div>
@@ -1718,11 +1718,11 @@
                             desktop-medium
                           " 
                           style="white-space: nowrap;">
-                          {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                          {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                          {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                          {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                            '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                          {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
+                          {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMonth().toString()]}
+                          {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
+                          {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getHours().toString()}:{(
+                            '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                           ).slice(-2)}h
                         </p>
                       </div>
@@ -1872,11 +1872,11 @@
                         text-center
                       " 
                       style="white-space: nowrap;">
-                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                      {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
+                      {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMonth().toString()]}
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
                       {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                       ).slice(-2)}h
                     </p>
                   </div>
@@ -2088,11 +2088,11 @@
                         text-center
                       " 
                       style="white-space: nowrap;">
-                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time).getDate())}
-                      {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time).getMonth().toString()]}
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                      {new Date(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}:{(
-                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time).getMinutes().toString()
+                      {getOrdinalNum(new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getDate())}
+                      {monthNames[new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMonth().toString()]}
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getFullYear().toString().substr(-2)},
+                      {new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getHours().toString()}:{(
+                        '0' + new Date(FIXTURE_SCOREBOARD?.fixture_time + "Z").getMinutes().toString()
                       ).slice(-2)}h
                     </p>
                   </div>
