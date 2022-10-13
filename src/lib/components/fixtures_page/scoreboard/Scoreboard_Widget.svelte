@@ -393,8 +393,8 @@
             draw: undefined
           }
           FIXTURE_SCOREBOARD._1x2.home = firebase_sportbook.markets['1X2FT'].data[0].value.toFixed(2);
-          FIXTURE_SCOREBOARD._1x2.away = firebase_sportbook.markets['1X2FT'].data[1].value.toFixed(2);
-          FIXTURE_SCOREBOARD._1x2.draw = firebase_sportbook.markets['1X2FT'].data[2].value.toFixed(2);
+          FIXTURE_SCOREBOARD._1x2.draw = firebase_sportbook.markets['1X2FT'].data[1].value.toFixed(2);
+          FIXTURE_SCOREBOARD._1x2.away = firebase_sportbook.markets['1X2FT'].data[2].value.toFixed(2);
           SPORTBOOK_INFO = main_sportbook
           count = 1
         }
