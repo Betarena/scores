@@ -370,10 +370,10 @@
 
     let count = 0;
 
-    for (const firebase_sportbook of sportbook_list) {
-      const firebase_sportbook_title = firebase_sportbook?.sportbook
-      for (const main_sportbook of SPORTBOOK_DETAILS_LIST) {
-        const main_sportbook_title = main_sportbook?.title
+    for (const main_sportbook of SPORTBOOK_DETAILS_LIST) {
+      const main_sportbook_title = main_sportbook?.title
+      for (const firebase_sportbook of sportbook_list) {
+        const firebase_sportbook_title = firebase_sportbook?.sportbook
         if (
           main_sportbook_title.toLowerCase() == firebase_sportbook_title.toLowerCase() &&
           firebase_sportbook.markets['1X2FT'] != null &&
