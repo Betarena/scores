@@ -353,7 +353,8 @@ async function fixtures_page_generation(
       // NOTE: sometimes no-country translation avaialble
       // NOTE: use the default as universal-transaltion
       const country_t =
-         country == null
+         country == null ||
+         data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.countries_translation[country] == undefined
           ? country
           : data?.scores_endpoints_translations.find( ({lang}) => lang == lang_)?.countries_translation[country]
 
