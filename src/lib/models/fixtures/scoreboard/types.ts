@@ -95,9 +95,9 @@ export interface Fixture_Scoreboard_Info {
   name?: string
   score?: number
 } export interface Fixture_Scorebaord_Odds {
-  home?: number
-  draw?: number
-  away?: number
+  home?: number | string
+  draw?: number | string
+  away?: number | string
 } export interface Fixture_Scorebaord_Scores {
   ht_score?: string
   et_score?: string
