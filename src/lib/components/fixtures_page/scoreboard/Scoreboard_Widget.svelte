@@ -695,7 +695,7 @@
                       team-box
                     ">
                     <img 
-                      src={FIXTURE_SCOREBOARD.home_team_logo}
+                      src={FIXTURE_SCOREBOARD?.home_team_logo}
                       alt=""
                       class="m-b-12"
                       width=72px
@@ -707,7 +707,7 @@
                         w-500
                         color-white
                       ">
-                      {FIXTURE_SCOREBOARD.home_team_name}
+                      {FIXTURE_SCOREBOARD?.home_team_short_code}
                     </p>
                   </div>
                   <!-- 
@@ -836,7 +836,7 @@
                         w-500
                         color-white
                       ">
-                      {FIXTURE_SCOREBOARD.away_team_name}
+                      {FIXTURE_SCOREBOARD?.away_team_short_code}
                     </p>
                   </div>
                 </div>

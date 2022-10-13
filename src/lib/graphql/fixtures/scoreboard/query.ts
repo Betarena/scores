@@ -85,6 +85,8 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_1 = gql`
       time_j: data(path: "$.time")
       round_j: data(path: "$.round")
       scores_j: data(path: "$.scores")
+      localteam_short_code_j: data(path: "$.localTeam.data.short_code")
+      visitorteam_short_code_j: data(path: "$.visitorTeam.data.short_code")
     }
   }
 `;
@@ -187,6 +189,8 @@ export const REDIS_CACHE_SCOREBOARD_ODDS_DATA_3 = gql`
       time_j: data(path: "$.time")
       round_j: data(path: "$.round")
       scores_j: data(path: "$.scores")
+      localteam_short_code_j: data(path: "$.localTeam.data.short_code")
+      visitorteam_short_code_j: data(path: "$.visitorTeam.data.short_code")
     }
   }
 `;

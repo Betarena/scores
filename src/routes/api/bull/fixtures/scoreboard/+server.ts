@@ -221,10 +221,12 @@ async function main () {
     const home_team_name = value.home_team_name;
     const home_team_logo = value.home_team_logo;
     const home_team_score = value?.stats_j?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
-    
+    const home_team_short_code = value?.localteam_short_code_j
+
     const away_team_name = value.away_team_name;
     const away_team_logo = value.away_team_logo;
     const away_team_score = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
+    const away_team_short_code = value?.visitorteam_short_code_j
 
     const home_team_obj: Fixture_Scoreboard_Team = {
       name: home_team_name,
@@ -242,8 +244,10 @@ async function main () {
       round:            round || null,
       home_team_name:   home_team_name || null,
       home_team_logo:   home_team_logo || null,
+      home_team_short_code: home_team_short_code || home_team_name.slice(0, 3).toUpperCase() || null,
       away_team_name:   away_team_name || null,
       away_team_logo:   away_team_logo || null,
+      away_team_short_code: away_team_short_code || away_team_name.slice(0, 3).toUpperCase() || null,
       minute:           minutes || null,
       status:           status || null,             
       fixture_time:     fixture_time || null,

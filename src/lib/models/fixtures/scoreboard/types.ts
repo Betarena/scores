@@ -42,6 +42,8 @@ export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARE
   time_j?:             Time
   round_j?:            Round
   scores_j?:           Scores
+  localteam_short_code_j?: string
+  visitorteam_short_code_j?: string
 }
 
 export interface BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues extends BETARENA_HASURA_scores_football_leagues {
@@ -78,8 +80,10 @@ export interface Fixture_Scoreboard_Info {
   round?:  number                 // [hasura] historic_fixtures/round_name
   home_team_name?: string         // [hasura] historic_fixtures/home_team_name
   home_team_logo?: string         // [hasura] historic_fixtures/home_team_logo
+  home_team_short_code?: string   
   away_team_name?: string         // [hasura] historic_fixtures/away_team_name
   away_team_logo?: string         // [hasura] historic_fixtures/away_team_logo
+  away_team_short_code?: string
   counter?: string                // [] (Just available 24 hours before the match)
   fixture_time?: string           // [hasura] historic_fixtures/time
   _1x2?: Fixture_Scorebaord_Odds  // [firebase] https://betarena-rv-6b382.firebaseio.com/odds
