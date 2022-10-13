@@ -336,6 +336,8 @@ export interface FIREBASE_livescores_now {
   visitorteam_score?: number;
   ft_score?:          string;
   ht_score?:          string;
+  et_score?:          string;
+  ps_score?:          string;
 } export interface Stage {
   data?: StageData;
 } export interface StageData {

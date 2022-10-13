@@ -323,6 +323,9 @@
       FIXTURE_SCOREBOARD.status = live_fixtures_map.get(fixture_id)?.time?.status
       FIXTURE_SCOREBOARD.teams.home.score = live_fixtures_map.get(fixture_id)?.scores?.localteam_score
       FIXTURE_SCOREBOARD.teams.away.score = live_fixtures_map.get(fixture_id)?.scores?.visitorteam_score
+      FIXTURE_SCOREBOARD.score_post.ht_score = live_fixtures_map.get(fixture_id)?.scores?.ht_score;
+      FIXTURE_SCOREBOARD.score_post.et_score = live_fixtures_map.get(fixture_id)?.scores?.et_score;
+      FIXTURE_SCOREBOARD.score_post.ps_score = live_fixtures_map.get(fixture_id)?.scores?.ps_score;
     }
     FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD
     lazy_load_data_check = true
@@ -765,11 +768,23 @@
                         class="
                           color-grey
                           s-16
-                          w-500
+                          w-400
                         ">
                         {FIXTURE_SCOREBOARD?.minute}
                         <span
                           class:visibility-none={tick_sec_show}>'
+                        </span>
+                        <span
+                          class="color-white">
+                          {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                            (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                          {/if}
+                          {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                            (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                          {/if}
+                          {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                            (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                          {/if}
                         </span>
                       </p>
                     </div>
@@ -1143,11 +1158,23 @@
                         class="
                           color-grey
                           s-16
-                          w-500
+                          w-400
                         ">
                         {FIXTURE_SCOREBOARD?.minute}
                         <span
                           class:visibility-none={tick_sec_show}>'
+                        </span>
+                        <span
+                          class="color-white">
+                          {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                            (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                          {/if}
+                          {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                            (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                          {/if}
+                          {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                            (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                          {/if}
                         </span>
                       </p>
                     </div>
@@ -1498,6 +1525,7 @@
                       <div
                         class="
                           column-space-center
+                          m-b-10
                         ">
                         <p
                           class="
@@ -1513,11 +1541,23 @@
                           class="
                             color-grey
                             s-16
-                            w-500
+                            w-400
                           ">
                           {FIXTURE_SCOREBOARD?.minute}
                           <span
                             class:visibility-none={tick_sec_show}>'
+                          </span>
+                          <span
+                            class="color-white">
+                            {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                              (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                            {/if}
+                            {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                              (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                            {/if}
+                            {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                              (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                            {/if}
                           </span>
                         </p>
                       </div>
@@ -1906,12 +1946,24 @@
                       class="
                         color-grey
                         s-14
-                        w-500
+                        w-400
                         minute-text
                       ">
                       {FIXTURE_SCOREBOARD?.minute}
                       <span
                         class:visibility-none={tick_sec_show}>'
+                      </span>
+                      <span
+                        class="color-white">
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                          (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                          (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                          (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                        {/if}
                       </span>
                     </p>
                   </div>
@@ -2122,11 +2174,23 @@
                       class="
                         color-grey
                         s-16
-                        w-500
+                        w-400
                       ">
                       {FIXTURE_SCOREBOARD?.minute}
                       <span
                         class:visibility-none={tick_sec_show}>'
+                      </span>
+                      <span
+                        class="color-white">
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                          (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                          (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                          (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                        {/if}
                       </span>
                     </p>
                   </div>
