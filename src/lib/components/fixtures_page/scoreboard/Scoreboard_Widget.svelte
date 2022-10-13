@@ -1782,7 +1782,6 @@
               id="fixture-info-box"
               class="
                 row-space-center
-                m-b-20
               ">
               <!-- 
               [ℹ] team #1
@@ -1855,7 +1854,7 @@
                   <p
                     class="
                       color-white
-                      s-42
+                      s-32
                       w-500
                     ">
                     {FIXTURE_SCOREBOARD?.teams?.home?.score}
@@ -1865,8 +1864,9 @@
                   <p
                     class="
                       color-grey
-                      s-16
+                      s-14
                       w-500
+                      minute-text
                     ">
                     {FIXTURE_SCOREBOARD?.minute}
                     <span
@@ -1987,7 +1987,6 @@
               id="fixture-info-box"
               class="
                 row-space-center
-                m-b-20
               ">
 
               <!-- 
@@ -2015,8 +2014,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD.home_team_logo}
                     alt=""
-                    width=40px
-                    height=40px
+                    width=56px
+                    height=56px
                   />
                 </div>
               </div>
@@ -2067,7 +2066,7 @@
                   <p
                     class="
                       color-white
-                      s-42
+                      s-32
                       w-500
                     ">
                     {FIXTURE_SCOREBOARD?.teams?.home?.score}
@@ -2148,8 +2147,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD.away_team_logo}
                     alt=""
-                    width=40px
-                    height=40px
+                    width=56px
+                    height=56px
                   />
                   <p
                     class="
@@ -2307,7 +2306,9 @@
   }
 
   /* odds style */
-  div#scoreboard-widget-container div#scoreboard-top-box div.odds-box {
+  div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a {
+    width: 100% !important;
+  } div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a div.odds-box {
     background: rgba(0, 0, 0, 0.3);
     border: 1px solid #4B4B4B;
     backdrop-filter: blur(4px);
@@ -2315,11 +2316,11 @@
     padding: 10px 16px;
     height: 48px;
     z-index: 1;
-  } div#scoreboard-widget-container div#scoreboard-top-box div.odds-box {
+  } div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a div.odds-box {
     margin-right: 8px;
-  } div#scoreboard-widget-container div#scoreboard-top-box div.odds-box:last-child {
+  } div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a:last-child div.odds-box {
     margin-right: 0px;
-  } div#scoreboard-widget-container div#scoreboard-top-box div.odds-box img {
+  } div#scoreboard-widget-container div#scoreboard-top-box div#btn-vote-container a div.odds-box img {
     width: 28px;
     height: 28px;
   }
@@ -2363,6 +2364,10 @@
     left: 0;
     border-radius: 0 !important;
     background: #292929 !important;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box {
+    padding: 20px 10px;
+    min-height: 80px;
+    max-height: 80px;
   } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box {
     width: auto; 
   } div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.one {
@@ -2381,23 +2386,24 @@
     white-space: nowrap;
     text-overflow: ellipsis;
     max-width: 30px;
+  } div#scoreboard-widget-container.miniature div#fixture-info-box div.middle-info p.minute-text {
+    margin-top: -5px;
   } div#scoreboard-widget-container.miniature div#fixture-info-box div.middle-info {
     width: auto;
   } div#scoreboard-widget-container.miniature div#scoreboard-bottom-nav-box {
     background-color: #FFFFFF;
     padding: 10px 15px 0 15px;
-  } div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container p {
+  } div#scoreboard-widget-container.miniature div#scoreboard-bottom-nav-box div.opt-container p {
     padding-bottom: 8px;
   }
 
   /* miniature [ONLY] [TABLET] && [DESKTOP] */
   div#scoreboard-widget-container.miniature.tablet-miniature {
     position: fixed;
-    top: 0;
+    top: 10px;
     right: auto;
     left: auto;
-    border-radius: 0 0 12px 12px !important;
-    padding-top: 20px;
+    border-radius: 12px !important;
     background-image: url(./assets/banner.svg) !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
@@ -2413,6 +2419,9 @@
 		grid-template-columns: 1fr 1fr 1fr;
 		text-align: center;
     z-index: 1; */
+    padding: 20px 10px;
+    min-height: 98px;
+    max-height: 98px;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box p {
     overflow: visible;
     white-space: nowrap;
@@ -2421,16 +2430,23 @@
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box {
     position: relative;
     width: -webkit-fill-available;
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box img {
+    width: 56px;
+    height: 56px;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-1 {
     position: absolute;
-    right: 0;
+    right: 40px;
     width: auto;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 {
     position: absolute;
-    left: 0;
+    left: 40px;
     width: auto;
+  } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-1 p,
+    div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 p  {
+    font-size: 16px;  
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.middle-info {
-    width: 100px;
+    width: auto;
+    white-space: nowrap;
   }
 
   /* ====================
@@ -2555,9 +2571,17 @@
       width: auto;
     }
 
-    /* miniature [TABLET] */
+    /* miniature [DESKTOP] */
     div#scoreboard-widget-container.miniature.tablet-miniature {
       min-width: auto;
+    } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-1 {
+      position: absolute;
+      right: 72px;
+      width: auto;
+    } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 {
+      position: absolute;
+      left: 72px;
+      width: auto;
     }
 
   }
