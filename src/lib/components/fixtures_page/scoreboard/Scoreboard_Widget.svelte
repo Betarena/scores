@@ -321,8 +321,8 @@
       // [ℹ] update fixture data;
       FIXTURE_SCOREBOARD.minute = live_fixtures_map.get(fixture_id)?.time?.minute
       FIXTURE_SCOREBOARD.status = live_fixtures_map.get(fixture_id)?.time?.status
-      FIXTURE_SCOREBOARD.teams.away.score = live_fixtures_map.get(fixture_id)?.scores?.localteam_score
-      FIXTURE_SCOREBOARD.teams.home.score = live_fixtures_map.get(fixture_id)?.scores?.visitorteam_score
+      FIXTURE_SCOREBOARD.teams.home.score = live_fixtures_map.get(fixture_id)?.scores?.localteam_score
+      FIXTURE_SCOREBOARD.teams.away.score = live_fixtures_map.get(fixture_id)?.scores?.visitorteam_score
     }
     FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD
     lazy_load_data_check = true
