@@ -1880,6 +1880,9 @@
                       column-space-center
                       middle-info
                     ">
+                    <!-- 
+                    [ℹ] LIVE score
+                    -->
                     <p
                       class="
                         color-white
@@ -1890,6 +1893,9 @@
                       :
                       {FIXTURE_SCOREBOARD?.teams?.away?.score}
                     </p>
+                    <!-- 
+                    [ℹ] LIVE minutes
+                    -->
                     <p
                       class="
                         color-grey
@@ -1909,25 +1915,22 @@
                       column-space-center
                       middle-info
                     ">
-                    <p
-                      class="
-                        s-14
-                        w-500
-                        color-grey
-                        ft-text
-                      ">
-                      FT
-                    </p>
+                    <!-- 
+                    [ℹ] FT score
+                    -->
                     <p
                       class="
                         color-white
-                        s-42
+                        s-32
                         w-500
                       ">
                       {FIXTURE_SCOREBOARD?.teams?.home?.score}
                       :
                       {FIXTURE_SCOREBOARD?.teams?.away?.score}
                     </p>
+                    <!-- 
+                    [ℹ] FT scores
+                    -->
                     <p
                       class="
                         s-14
@@ -2031,7 +2034,8 @@
                     class="
                       row-space-out 
                       inner-team-box-1
-                    ">
+                    "
+                    class:full-time={FIXTURE_SCOREBOARD.status == "FT"}>
                     <p
                       class="
                         s-14
@@ -2062,7 +2066,7 @@
                     <p 
                       class="
                         w-500 
-                        x-large 
+                        s-20
                         color-white
                         text-center
                       "
@@ -2072,7 +2076,7 @@
                     <p 
                       class="
                         w-400 
-                        small 
+                        s-16
                         color-grey 
                         desktop-medium
                         text-center
@@ -2092,6 +2096,9 @@
                       column-space-center
                       middle-info
                     ">
+                    <!-- 
+                    [ℹ] LIVE score
+                    -->
                     <p
                       class="
                         color-white
@@ -2102,6 +2109,9 @@
                       :
                       {FIXTURE_SCOREBOARD?.teams?.away?.score}
                     </p>
+                    <!-- 
+                    [ℹ] LIVE minutes
+                    -->
                     <p
                       class="
                         color-grey
@@ -2120,19 +2130,13 @@
                       column-space-center
                       middle-info
                     ">
-                    <p
-                      class="
-                        s-14
-                        w-500
-                        color-grey
-                        ft-text
-                      ">
-                      FT
-                    </p>
+                    <!-- 
+                    [ℹ] FT score
+                    -->
                     <p
                       class="
                         color-white
-                        s-42
+                        s-32
                         w-500
                         no-wrap
                       ">
@@ -2140,9 +2144,12 @@
                       :
                       {FIXTURE_SCOREBOARD?.teams?.away?.score}
                     </p>
+                    <!-- 
+                    [ℹ] FT scores
+                    -->
                     <p
                       class="
-                        s-14
+                        s-16
                         w-500
                         color-grey
                       ">
@@ -2172,7 +2179,8 @@
                     class="
                       row-space-out   
                       inner-team-box-2
-                    ">
+                    "
+                    class:full-time={FIXTURE_SCOREBOARD.status == "FT"}>
                     <img 
                       src={FIXTURE_SCOREBOARD.away_team_logo}
                       alt=""
@@ -2439,7 +2447,7 @@
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
-    max-width: 1430px;
+    max-width: 1362px;
     width: calc(100vw - 68px);
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box {
     /* display: grid;
@@ -2466,17 +2474,18 @@
     height: 56px;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-1 {
     position: absolute;
-    right: 40px;
+    right: 5px;
     width: auto;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 {
     position: absolute;
-    left: 40px;
+    left: 5px;
     width: auto;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-1 p,
     div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 p  {
     font-size: 16px;  
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.middle-info {
-    width: auto;
+    min-width: 134px;
+    max-width: 134px;
     white-space: nowrap;
   }
 
@@ -2607,12 +2616,16 @@
       min-width: auto;
     } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-1 {
       position: absolute;
-      right: 72px;
+      right: 0;
       width: auto;
     } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 {
       position: absolute;
-      left: 72px;
+      left: 0;
       width: auto;
+    } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.middle-info {
+      min-width: 217px;
+      max-width: 217px;
+      white-space: nowrap;
     }
 
   }
