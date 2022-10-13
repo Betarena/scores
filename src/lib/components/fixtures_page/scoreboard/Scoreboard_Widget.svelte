@@ -133,21 +133,23 @@
   let initial_div_distance: number = undefined;
   let count = 0;
 
-  if (browser && !lazy_load_data_check) {
+  $: if (browser && lazy_load_data_check) {
     let target_div = document.getElementById('scoreboard-widget-container');
     window.addEventListener('scroll', function(ev) {
       target_div = document.getElementById('scoreboard-widget-container');
       if (count == 0) {
-        initial_div_distance = target_div.getBoundingClientRect().top;
+        initial_div_distance = target_div.getBoundingClientRect().top + window.scrollY;
         count = 1;
       }
       let distance_top_from_div = target_div.getBoundingClientRect().top;
       let distance_top_scroll = window.scrollY;
-      if (dev) console.log("HERE", `
-        initial_div_distance: ${initial_div_distance}
-        distance_top_scroll: ${distance_top_scroll}
-        distance_top_from_div: ${distance_top_from_div}
-      `)
+      // [🐞]
+      // if (dev) console.log(
+      //  `
+      //   initial_div_distance: ${initial_div_distance}
+      //   distance_top_scroll: ${distance_top_scroll}
+      //   distance_top_from_div: ${distance_top_from_div}
+      // `)
       // [ℹ] when [STANDARD VIEW]
       if (
         distance_top_from_div <= 0 &&
@@ -360,7 +362,8 @@
     // [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
 
     if (SPORTBOOK_DETAILS_LIST == undefined) {
-      if (dev) console.log("SPORTBOOK_DETAILS_LIST = UNDEFINED")
+      // [🐞]
+      // if (dev) console.log("SPORTBOOK_DETAILS_LIST = UNDEFINED")
       lazy_load_data_check = true
       return;
     }
@@ -380,8 +383,9 @@
           firebase_sportbook.markets['1X2FT'].data[2].value != null &&
           count != 1
         ) {
-          if (dev) console.log("main_sportbook_title", main_sportbook_title)
-          if (dev) console.log("firebase_sportbook", firebase_sportbook)
+          // [🐞]
+          // if (dev) console.log("main_sportbook_title", main_sportbook_title)
+          // if (dev) console.log("firebase_sportbook", firebase_sportbook)
           FIXTURE_SCOREBOARD._1x2 = undefined
           FIXTURE_SCOREBOARD._1x2 = {
             home: undefined,
@@ -391,9 +395,6 @@
           FIXTURE_SCOREBOARD._1x2.home = firebase_sportbook.markets['1X2FT'].data[0].value.toFixed(2);
           FIXTURE_SCOREBOARD._1x2.away = firebase_sportbook.markets['1X2FT'].data[1].value.toFixed(2);
           FIXTURE_SCOREBOARD._1x2.draw = firebase_sportbook.markets['1X2FT'].data[2].value.toFixed(2);
-          console.log(FIXTURE_SCOREBOARD._1x2.home)
-          console.log(FIXTURE_SCOREBOARD._1x2.away)
-          console.log(FIXTURE_SCOREBOARD._1x2.draw)
           SPORTBOOK_INFO = main_sportbook
           count = 1
         }
@@ -483,12 +484,12 @@
 
   onDestroy(async() => {
     // [ℹ] close LISTEN EVENT connection
+    if (dev) console.groupCollapsed("closing connections [DEV]");
     for (const iterator of real_time_unsubscribe) {
-      if (dev) console.groupCollapsed("closing connections [DEV]");
       if (dev) console.log("closing connection")
-      if (dev) console.groupEnd();
       iterator();
     }
+    if (dev) console.groupEnd();
   })
 
   async function kickstart_one_off_data (
