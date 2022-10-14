@@ -1189,7 +1189,8 @@
                   {:else if FIXTURE_SCOREBOARD.status == "FT" }
                     <div
                       class="
-                        column-space-center
+                        column-space-
+                        m-t-15
                       ">
                       <p
                         class="
@@ -2598,14 +2599,17 @@
     }
 
     /* scorebaord-top */
-    div#scoreboard-widget-container div#scoreboard-top-box,
-    div#scoreboard-widget-container div#scoreboard-top-box.full-time {
+    div#scoreboard-widget-container div#scoreboard-top-box {
       min-height: 254px;
       max-height: 254px;
       background-image: url(./assets/banner-tablet.svg);
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
+    }
+    div#scoreboard-widget-container div#scoreboard-top-box.full-time {
+      min-height: 200px;
+      max-height: 200px;
     }
 
     /* odds-bet style */
@@ -2655,6 +2659,11 @@
     /* miniature [TABLET] */
     div#scoreboard-widget-container.miniature.tablet-miniature {
       min-width: auto;
+    }
+
+    p.ft-text {
+      font-size: 16px !important;
+      margin-bottom: -10px
     }
 
   }
