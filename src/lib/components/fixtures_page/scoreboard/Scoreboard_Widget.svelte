@@ -770,10 +770,14 @@
                           s-16
                           w-400
                         ">
-                        {FIXTURE_SCOREBOARD?.minute}
-                        <span
-                          class:visibility-none={tick_sec_show}>'
-                        </span>
+                        {#if FIXTURE_SCOREBOARD.status == "HT"}
+                          HT
+                        {:else}
+                          {FIXTURE_SCOREBOARD?.minute}
+                          <span
+                            class:visibility-none={tick_sec_show}>'
+                          </span>
+                        {/if}
                         <span
                           class="color-white">
                           {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
@@ -1160,10 +1164,14 @@
                           s-16
                           w-400
                         ">
-                        {FIXTURE_SCOREBOARD?.minute}
-                        <span
-                          class:visibility-none={tick_sec_show}>'
-                        </span>
+                        {#if FIXTURE_SCOREBOARD.status == "HT"}
+                          HT
+                        {:else}
+                          {FIXTURE_SCOREBOARD?.minute}
+                          <span
+                            class:visibility-none={tick_sec_show}>'
+                          </span>
+                        {/if}
                         <span
                           class="color-white">
                           {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
@@ -1543,10 +1551,14 @@
                             s-16
                             w-400
                           ">
-                          {FIXTURE_SCOREBOARD?.minute}
-                          <span
-                            class:visibility-none={tick_sec_show}>'
-                          </span>
+                          {#if FIXTURE_SCOREBOARD.status == "HT"}
+                            HT
+                          {:else}
+                            {FIXTURE_SCOREBOARD?.minute}
+                            <span
+                              class:visibility-none={tick_sec_show}>'
+                            </span>
+                          {/if}
                           <span
                             class="color-white">
                             {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
@@ -1949,10 +1961,14 @@
                         w-400
                         minute-text
                       ">
-                      {FIXTURE_SCOREBOARD?.minute}
-                      <span
-                        class:visibility-none={tick_sec_show}>'
-                      </span>
+                      {#if FIXTURE_SCOREBOARD.status == "HT"}
+                        HT
+                      {:else}
+                        {FIXTURE_SCOREBOARD?.minute}
+                        <span
+                          class:visibility-none={tick_sec_show}>'
+                        </span>
+                      {/if}
                       <span
                         class="color-white">
                         {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
@@ -2176,10 +2192,14 @@
                         s-16
                         w-400
                       ">
-                      {FIXTURE_SCOREBOARD?.minute}
-                      <span
-                        class:visibility-none={tick_sec_show}>'
-                      </span>
+                      {#if FIXTURE_SCOREBOARD.status == "HT"}
+                        HT
+                      {:else}
+                        {FIXTURE_SCOREBOARD?.minute}
+                        <span
+                          class:visibility-none={tick_sec_show}>'
+                        </span>
+                      {/if}
                       <span
                         class="color-white">
                         {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
