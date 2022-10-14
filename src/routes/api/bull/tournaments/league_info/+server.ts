@@ -77,7 +77,10 @@ export async function POST(): Promise < unknown > {
 //  [MAIN] CACHING METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function cacheTournamentsPageLeagueInfoData (url: string, json_cache: Cache_Single_Tournaments_League_Info_Data_Response) {
+async function cacheTournamentsPageLeagueInfoData (
+  url: string, 
+  json_cache: Cache_Single_Tournaments_League_Info_Data_Response
+) {
   try {
     //[ℹ] persist redis (cache)
     await redis.hset('league_info', url, JSON.stringify(json_cache));
