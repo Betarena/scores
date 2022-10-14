@@ -710,7 +710,7 @@
                         w-500
                         color-white
                       ">
-                      {FIXTURE_SCOREBOARD?.home_team_short_code}
+                      {FIXTURE_SCOREBOARD?.home_team_name}
                     </p>
                   </div>
                   <!-- 
@@ -851,7 +851,7 @@
                         w-500
                         color-white
                       ">
-                      {FIXTURE_SCOREBOARD?.away_team_short_code}
+                      {FIXTURE_SCOREBOARD?.away_team_name}
                     </p>
                   </div>
                 </div>
@@ -1873,10 +1873,10 @@
                       w-500
                       color-white
                     ">
-                    {FIXTURE_SCOREBOARD.home_team_name}
+                    {FIXTURE_SCOREBOARD?.home_team_short_code}
                   </p>
                   <img 
-                    src={FIXTURE_SCOREBOARD.home_team_logo}
+                    src={FIXTURE_SCOREBOARD?.home_team_logo}
                     alt=""
                     width=40px
                     height=40px
@@ -2017,7 +2017,7 @@
                     two
                   ">
                   <img 
-                    src={FIXTURE_SCOREBOARD.away_team_logo}
+                    src={FIXTURE_SCOREBOARD?.away_team_logo}
                     alt=""
                     width=40px
                     height=40px
@@ -2028,7 +2028,7 @@
                       w-500
                       color-white
                     ">
-                    {FIXTURE_SCOREBOARD.away_team_name}
+                    {FIXTURE_SCOREBOARD?.away_team_short_code}
                   </p>
                 </div>
               </div>
