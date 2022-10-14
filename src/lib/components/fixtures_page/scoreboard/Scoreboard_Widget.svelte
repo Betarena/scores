@@ -286,8 +286,8 @@
 		countD_h = '0' + countD_h;
 	}
 
-  $: countD_day = Math.floor(date_obj_diff / (1000 * 60 * 60 * 24));
-  $: if (countD_day > 1) {
+  $: countD_t_h = Math.floor(date_obj_diff / (1000 * 60 * 60));
+  $: if (countD_t_h > 24) {
     show_countdown = false
   } else {
     show_countdown = true
