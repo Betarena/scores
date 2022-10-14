@@ -8,7 +8,7 @@
   import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
-  import { logDevGroup } from "$lib/utils/debug";
+  import { logDevGroup, log_info_group } from "$lib/utils/debug";
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
@@ -303,7 +303,9 @@
     data: [string, FIREBASE_livescores_now][]
   ) {
     // [🐞]
-    if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `in-check_live_fixtures()`)
+    const logs_name = dev_console_tag + " check_live_fixtures";
+    const logs: string[] = []
+    logs.push(`checking livescores_now`)
 
     // [ℹ] generate FIREBASE fixtures-map
     for (const live_fixture of data) {
@@ -316,7 +318,8 @@
     const fixture_id = FIXTURE_SCOREBOARD?.id;
 
     if (live_fixtures_map.has(fixture_id)) {
-      if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `fixture livescore_now exists!`)
+      // [🐞]
+      logs.push(`fixture ${fixture_id} livescore_now exists!`) 
       // [ℹ] update fixture data;
       FIXTURE_SCOREBOARD.minute = live_fixtures_map.get(fixture_id)?.time?.minute
       FIXTURE_SCOREBOARD.status = live_fixtures_map.get(fixture_id)?.time?.status
@@ -328,13 +331,21 @@
     }
     FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD
     lazy_load_data_check = true
+
+    // [🐞]
+    if (dev) log_info_group(logs_name, logs)
   }
 
 	async function listen_real_time_livescores_now (
   ): Promise < void > {
 
+    const fixture_status = FIXTURE_SCOREBOARD?.status;
+    if (fixture_status == 'FT') {
+      return
+    }
+
     // [🐞]
-    if (dev) console.debug("Triggered listen_real_time_livescores_now()");
+    if (dev) console.log("%cTriggered livescore_now listen", 'background: green; color: #fffff');
 
     const fixtureRef = ref (
       db_real,
@@ -356,6 +367,11 @@
     sportbook_list: FIREBASE_odds[]
   ) {
 
+    // [🐞]
+    const logs_name = dev_console_tag + " check_fixture_odds_inject";
+    const logs: string[] = []
+    logs.push(`checking odds`)
+
     // [ℹ] match "data.key" (fixture_id)
     // [ℹ] with available (fixture_id's)
     // [ℹ] and populate the SPORTBOOK_DETAILS
@@ -365,7 +381,7 @@
 
     if (SPORTBOOK_DETAILS_LIST == undefined) {
       // [🐞]
-      // if (dev) console.log("SPORTBOOK_DETAILS_LIST = UNDEFINED")
+      logs.push(`SPORTBOOK_DETAILS_LIST is undefined`)
       lazy_load_data_check = true
       return;
     }
@@ -386,8 +402,8 @@
           count != 1
         ) {
           // [🐞]
-          // if (dev) console.log("main_sportbook_title", main_sportbook_title)
-          // if (dev) console.log("firebase_sportbook", firebase_sportbook)
+          logs.push(`main_sportbook_title: ${main_sportbook_title}`)
+          logs.push(`firebase_sportbook: ${firebase_sportbook}`)
           FIXTURE_SCOREBOARD._1x2 = undefined
           FIXTURE_SCOREBOARD._1x2 = {
             home: undefined,
@@ -406,6 +422,9 @@
     // [ℹ] assign changes [persist]
     FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD
     lazy_load_data_check = true
+
+    // [🐞]
+    if (dev) log_info_group(logs_name, logs)
   }
 
 	async function listen_real_time_odds (
@@ -417,7 +436,7 @@
     }
 
     // [🐞]
-    if (dev) console.debug("Triggered listen_real_time_odds()");
+    if (dev) console.log("%cTriggered odds listen", 'background: green; color: #fffff');
 
     const sportbook_array: FIREBASE_odds[] = []
     const fixture_time = FIXTURE_SCOREBOARD?.fixture_time + "Z";
@@ -454,7 +473,7 @@
     real_time_unsubscribe.push(listen_odds_event_ref);
   }
 
-  // [ℹ] one-off event read "livescores_now"
+  // [ℹ] one-off real-time "read" init.
   onMount(async() => {
     const firebase_real_time = await get_livescores_now()
     if (firebase_real_time != null) {
@@ -490,7 +509,7 @@
   // [! CRITICAL !]
   onDestroy(async() => {
     // [🐞]
-    if (dev) console.groupCollapsed("%cclosing connections [DEV]", 'background: red; color: #fffff');
+    if (dev) console.groupCollapsed("%cclosing firebase connections [DEV]", 'background: red; color: #fffff');
     // [ℹ] close LISTEN EVENT connection
     for (const iterator of real_time_unsubscribe) {
       // [🐞]
