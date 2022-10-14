@@ -8,10 +8,7 @@ import fs from 'fs';
 import { performance } from 'perf_hooks';
 import { error, json } from '@sveltejs/kit';
 
-import type { 
-  BETARENA_HASURA_historic_fixtures
-} from '$lib/models/hasura';
-import type { 
+import type {
   BETARENA_HASURA_fixtures_odds_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   Fixture_Odds_Team, 
