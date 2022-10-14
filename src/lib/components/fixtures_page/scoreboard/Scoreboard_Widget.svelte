@@ -73,7 +73,6 @@
   // [ℹ] MAIN
   // [ℹ] In Use
   // [ℹ] (x2) cache
-  // [ℹ] (x1) hasura-default
   async function widget_init (
   ): Promise < REDIS_CACHE_SINGLE_scoreboard_data > {
 

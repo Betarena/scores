@@ -4,12 +4,12 @@
 
 <script lang="ts">
 
-  // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page, session } from "$app/stores";
+  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
+  import { logDevGroup } from "$lib/utils/debug";
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
@@ -30,13 +30,10 @@
 
   import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
 	import slider_left from './assets/slider-left.svg'
 	import slider_right from './assets/slider-right.svg'
   import slider_left_dark from './assets/slider-left-dark.svg'
 	import slider_right_dark from './assets/slider-right-dark.svg'
-import { logDevGroup } from "$lib/utils/debug";
 
   let loaded:                 boolean = false;  // [ℹ] holds boolean for data loaded;
   let refresh:                boolean = false;  // [ℹ] refresh value speed of the WIDGET;
@@ -65,26 +62,29 @@ import { logDevGroup } from "$lib/utils/debug";
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  // [ℹ] MAIN
+  // [ℹ] In Use
+  // [ℹ] (x1) cache
   async function widgetInit(): Promise < Cache_Single_SportbookDetails_Data_Response > {
 
     if (!$userBetarenaSettings.country_bookmaker) {
       return
     }
-
     let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
-    // [ℹ] get response [lang] [data] [obtained from preload()]
-    // [ℹ] get response [geo]
+    // [ℹ] [GET] response sportbook [geo]
 		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo)
 
-    // [ℹ] display NO DATA PLACEHOLDER
-		if (response == null || response == undefined) {
-      // [🐛] debug 
+    // [ℹ] data validation check
+		if (
+      response == undefined
+    ) {
+      // [🐞] 
       if (dev) logDevGroup ("tournament standings [DEV]", `❌ no data available!`)
       // noStandingsBool = true;
 			return;
 		}
-    // [ℹ] otherwise, revert back to DATA AVAILABLE;
+    // [ℹ] otherwise, no data
     else {
       // noStandingsBool = false;
     }
