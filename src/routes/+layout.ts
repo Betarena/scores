@@ -11,7 +11,7 @@ export async function load ({
 
   // [ℹ] critical
   const response_valid_url = await fetch (
-    `/api/cache/pages_and_seo?url=`+url.pathname, 
+    `/api/cache/_main_/pages_and_seo?url=`+url.pathname, 
     {
       method: 'GET'
     }
@@ -24,14 +24,14 @@ export async function load ({
       : params.lang
 
   const response_header = await fetch (
-    `/api/cache/navbar?lang=`+urlLang, 
+    `/api/cache/_main_/navbar?lang=`+urlLang, 
     {
       method: 'GET'
     }
   ).then(r => r.json())
 
   const response_footer = await fetch (
-    `/api/cache/footer?lang=`+urlLang, 
+    `/api/cache/_main_/footer?lang=`+urlLang, 
     {
       method: 'GET',
     }
