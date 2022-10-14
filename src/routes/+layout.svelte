@@ -11,8 +11,8 @@
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
 
-  import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
-  import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/footer/types'
+  import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
+  import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types'
 	import type { PageData } from './$types';
 
   // [ℹ] session replacement
@@ -30,8 +30,8 @@
     Standard Imports (client-side)
   */
 
-  import Footer from '$lib/components/footer/_Footer.svelte';
-  import Header from '$lib/components/header/_Header.svelte';
+  import Footer from '$lib/components/_main_/footer/_Footer.svelte';
+  import Header from '$lib/components/_main_/header/_Header.svelte';
   import OfflineAlert from '$lib/components/_Offline_alert.svelte';
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';

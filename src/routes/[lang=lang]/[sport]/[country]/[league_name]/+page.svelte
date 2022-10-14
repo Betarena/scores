@@ -13,7 +13,6 @@
   import type { PageData } from './$types';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import SvelteSeo from 'svelte-seo';
   import { removeDiacritics } from '$lib/utils/languages';
 
 	export let data: PageData;
@@ -23,6 +22,7 @@
     Standard Imports (client-side)
   */
 
+  import SvelteSeo from 'svelte-seo';
   import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
   import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
   import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
@@ -46,11 +46,8 @@
   */
  
   import type { 
-    Cache_Single_Tournaments_Data_Page_Translation_Response, 
-    Cache_Single_Tournaments_SEO_Translation_Response, 
-    Hasura_Complete_Pages_SEO, 
-    Single_Tournament_Data_Type 
-  } from '$lib/models/pages_and_seo/types';
+    Cache_Single_Tournaments_SEO_Translation_Response
+  } from '$lib/models/_main_/pages_and_seo/types';
 
   import type { 
     Cache_Single_Tournaments_League_Info_Data_Response
@@ -71,9 +68,13 @@
     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response 
   } from '$lib/models/tournaments/fixtures_odds/types';
 
+	import type { 
+    BETARENA_HASURA_scores_tournaments 
+  } from '$lib/models/hasura';
+
   let PAGE_DATA_SEO:                     Cache_Single_Tournaments_SEO_Translation_Response
-  let TOURNAMENT_DATA_TRANSLATED_COPIES: Single_Tournament_Data_Type[]
-  let TOURNAMENT_DATA:                   Single_Tournament_Data_Type
+  let TOURNAMENT_DATA_TRANSLATED_COPIES: BETARENA_HASURA_scores_tournaments[]
+  let TOURNAMENT_DATA:                   BETARENA_HASURA_scores_tournaments
   let LEAGUE_INFO_DATA:                  Cache_Single_Tournaments_League_Info_Data_Response
   let STANDINGS_T:                       Cache_Single_Tournaments_League_Standings_Translation_Data_Response
   let STANDINGS_DATA:                    Cache_Single_Tournaments_League_Standings_Info_Data_Response
@@ -194,17 +195,9 @@
 <!-- [ℹ] adding HREF-LANG-META-TAGS for (this) PAGE 
 -->
 <svelte:head>
-  <!-- [ℹ] head content
-  -->
   {#if PAGE_DATA_SEO}
-    <!-- [ℹ] content here
-    -->
     {#each PAGE_DATA_SEO.hreflang as item}
-      <!-- [ℹ] content here
-      -->
       {#each TOURNAMENT_DATA_TRANSLATED_COPIES as item_}
-        <!-- [ℹ] content here 
-        -->
         {#if item.link == item_.lang}
           <!-- [ℹ] content here 
             <link rel="alternate" hrefLang="it" href="https://scores.betarena.com/it/calcio/inghilterra/premier-league/>
