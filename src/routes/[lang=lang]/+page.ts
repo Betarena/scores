@@ -46,7 +46,7 @@ export async function load ({
 
   /*
     const response_valid_url = await fetch(
-      `/api/cache/pages_and_seo/cache-seo.json?url=`+url.pathname, 
+      `/api/cache/_main_/pages_and_seo/cache-seo.json?url=`+url.pathname, 
       {
         method: 'GET'
       }
@@ -73,7 +73,7 @@ export async function load ({
 
   /*
     const response_homepage_seo = await fetch(
-      '/api/cache/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", 
+      '/api/cache/_main_/pages_and_seo/cache-seo.json?lang='+urlLang+"&page=homepage", 
       {
         method: 'GET'
       }
@@ -211,20 +211,20 @@ export async function load ({
   */
 
   const urls = [
-    '/api/cache/pages_and_seo?lang='+urlLang+"&page=homepage",
-    '/api/cache/featured_match?lang='+urlLang,
-    '/api/cache/featured_betting_sites?lang='+urlLang,
-    '/api/cache/best_goalscorer?lang='+urlLang,
-    '/api/cache/league_list?lang='+urlLang,
-    '/api/cache/leagues_table?lang='+urlLang,
-    '/api/cache/seo_block?lang='+urlLang,
+    '/api/cache/_main_/pages_and_seo?lang='+urlLang+"&page=homepage",
+    '/api/cache/home/featured_match?lang='+urlLang,
+    '/api/cache/home/featured_betting_sites?lang='+urlLang,
+    '/api/cache/home/best_goalscorer?lang='+urlLang,
+    '/api/cache/home/league_list?lang='+urlLang,
+    '/api/cache/home/leagues_table?lang='+urlLang,
+    '/api/cache/home/seo_block?lang='+urlLang,
     // [ℹ] page validation check;
-    `/api/cache/pages_and_seo?url=`+url.pathname,
+    `/api/cache/_main_/pages_and_seo?url=`+url.pathname,
     // [ℹ] livescores
-    '/api/cache/live_scores?lang='+urlLang, 
-    '/api/cache/live_scores?type=geo', 
-    '/api/cache/live_scores?type=translations',
-    '/api/cache/live_scores?type=tournaments',
+    '/api/cache/home/live_scores?lang='+urlLang, 
+    '/api/cache/home/live_scores?type=geo', 
+    '/api/cache/home/live_scores?type=translations',
+    '/api/cache/home/live_scores?type=tournaments',
     // [ℹ] alt.
     // [ℹ] geo-based cache load
     // '/api/cache/featured_match?geoPos='+'en', 

@@ -11,16 +11,16 @@ import type {
 import type {
   REDIS_CACHE_SINGLE_fixtures_page_info_response,
   REDIS_CACHE_SINGLE_fixtures_seo_response
-} from '$lib/models/pages_and_seo/types';
+} from '$lib/models/_main_/pages_and_seo/types';
+import type { 
+  REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
+} from '$lib/models/fixtures/scoreboard/types';
 
-/** 
- * @type {import('./$types').PageLoad} 
- */
+/** @type {import('./$types').PageLoad} */
 export async function load({
   url,
   params,
-  fetch,
-  setHeaders
+  fetch
 }): PageLoad {
 
   const {
@@ -29,34 +29,39 @@ export async function load({
   } = params
 
   /**
-   * [ℹ] Ensure URL Check Existance; 
-   * [ℹ] IMPORTANT;
-   */
+   * [ℹ] IMPORTANT
+   * [ℹ] Ensure URL is Valid 
+  */
 
-  const response_valid_url = await fetch(`/api/cache/pages_and_seo?url=` + url.pathname, {
+  const response_valid_url = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname, {
     method: 'GET'
   })
   .then((r) => r.json());
 
-  // [ℹ] validate URL existance;
   if (!response_valid_url) {
-    // [ℹ] otherwise, ERROR;
     throw error(404, `Uh-oh! This page does not exist!`);
   }
 
   const urlLang: string = params.lang == undefined ? 'en' : params.lang
 
   /**
-   * [ℹ] Loading of (this) page [fixtures] SEO-READY data; 
-   */
+   * [ℹ] Loading of (this) page 
+   * [ℹ] [fixtures] SEO-READY data; 
+  */
 
-  const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(`/api/cache/pages_and_seo?lang=` + urlLang + "&page=fixtures", {
-    method: 'GET'
-  }).then((r) => r.json());
+  const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(
+    `/api/cache/_main_/pages_and_seo?lang=` + urlLang + "&page=fixtures", 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
-  const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(`/api/cache/pages_and_seo?url=` + url.pathname + "&page=fixtures", {
-    method: 'GET'
-  }).then((r) => r.json());
+  const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
+    `/api/cache/_main_/pages_and_seo?url=` + url.pathname + "&page=fixtures", 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
   /**
    * [ℹ] regex-ing SEO content dynamically;
@@ -114,22 +119,56 @@ export async function load({
   const enItemAlt = response_fixtures_page_info.alternate_data['en']
   response_fixtures_seo.main_data.canonical = enItemAlt;
 
+  /**
+   * [ℹ] [GET] page widgets data
+  */
+
+  const fixture_id = response_fixtures_page_info?.data?.id;
+
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(
+    `/api/cache/fixtures/scoreboard?fixture_id=` + fixture_id, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  if (response_scoreboard == undefined) {
+    if (dev) console.debug("Non Current Season Fixture - loading from Hasura Directly")
+    response_scoreboard = await fetch(
+      `/api/hasura/fixtures/scoreboard?fixture_id=` + fixture_id, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
+
+  const response_scoreboard_translation: REDIS_CACHE_SINGLE_scoreboard_translation = await fetch(
+    `/api/cache/fixtures/scoreboard?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
    * ==========
-   */
+  */
 
-  // [ℹ] page -> response data chceck
   if (
-    response_fixtures_seo &&
-    response_fixtures_page_info
+    response_fixtures_seo
+    && response_fixtures_page_info
+    && response_scoreboard
+    && response_scoreboard_translation
   ) {
     return {
-      PAGE_SEO:   response_fixtures_seo,
-      FIXTURE_INFO:  response_fixtures_page_info
+      PAGE_SEO: response_fixtures_seo,
+      FIXTURE_INFO: response_fixtures_page_info,
+      FIXTURE_SCOREBOARD: response_scoreboard,
+      FIXTURE_SCOREBOARD_TRANSLATION: response_scoreboard_translation
     }
   }
 
-  throw error(500, `Uh-oh! There has been an /{fixtures} page preloading error`);
+  throw error(500, `Uh-oh! There has been an /{fixture} page preloading error`);
 }

@@ -5,6 +5,24 @@
       "color": "#ffffff",
       "backgroundColor": "black",
       "overviewRulerColor": "grey"
+    },
+    {
+      "text": "[🐞]",
+      "color": "#ffffff",
+      "backgroundColor": "black",
+      "overviewRulerColor": "grey"
+    },
+    {
+      "text": "IMPORTANT",
+      "color": "#ffffff",
+      "backgroundColor": "red",
+      "overviewRulerColor": "grey"
+    },
+    {
+      "text": "[! CRITICAL !]",
+      "color": "#ffffff",
+      "backgroundColor": "red",
+      "overviewRulerColor": "grey"
     }
   ]
 }

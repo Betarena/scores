@@ -7,12 +7,12 @@
 		"node": "16.17.0"
 	},
 	"scripts": {
-    "debug": "cross-env NODE_OPTIONS='--inspect' vite dev --host --port 3050",
-    "debug-preview": "cross-env NODE_OPTIONS='--inspect' vite preview --host --port 5000",
+		"debug": "cross-env NODE_OPTIONS='--inspect' vite dev --host --port 3050",
+		"debug-preview": "cross-env NODE_OPTIONS='--inspect' vite preview --host --port 5000",
 		"dev": "vite dev --host --port 3050",
 		"build": "vite build",
-    "staging": "npm run dev -- --mode staging",
-    "start": "node my-server.js",
+		"staging": "npm run dev -- --mode staging",
+		"start": "node my-server.js",
 		"preview": "vite preview --host --port 5000",
 		"check": "svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
@@ -39,7 +39,7 @@
 		"tslib": "^2.3.1",
 		"typescript": "^4.4.3",
 		"vite": "^3.1.0",
-		"vite-plugin-chunk-split": "^0.3.0",
+		"vite-plugin-chunk-split": "^0.4.1",
 		"vite-plugin-compress": "^2.1.1",
 		"vite-plugin-compression": "^0.5.1",
 		"vite-plugin-progress": "^0.0.3"

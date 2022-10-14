@@ -67,7 +67,7 @@ import { logDevGroup } from "$lib/utils/debug";
 
     // [ℹ] get response [lang] [obtained from preload()]
     // [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments_sportbook?geoPos="+userGeo)
+		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo)
 
     // await new Promise(resolve => setTimeout(resolve, 5000000000));
     // const response: Cache_Single_Geo_Leagues_Table_Translation_Response = LEAGUES_TABLE_SCORES_DATA;

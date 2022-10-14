@@ -15,7 +15,7 @@ export async function load({
    * [ℹ] Ensure URL Check Existance; 
    */
 
-  const response_valid_url = await fetch(`/api/cache/pages_and_seo?url=` + url.pathname, {
+  const response_valid_url = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname, {
     method: 'GET'
   }).then((r) => r.json());
 
