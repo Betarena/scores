@@ -1,17 +1,22 @@
 import { dev } from '$app/environment'
+import { json } from '@sveltejs/kit';
+import { performance } from 'perf_hooks';
+
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { REDIS_CACHE_LEAGUE_INFO_DATA_1, REDIS_CACHE_LEAGUE_INFO_DATA_3 } from '$lib/graphql/tournaments/league-info/query';
+import { 
+  REDIS_CACHE_LEAGUE_INFO_DATA_3, 
+  REDIS_CACHE_LEAGUE_INFO_DATA_4 
+} from '$lib/graphql/tournaments/league-info/query';
 import { removeDiacritics } from '$lib/utils/languages';
-import fs from 'fs';
-import { performance } from 'perf_hooks';
-import Bull from 'bull';
-import { json } from '@sveltejs/kit';
 
 import type { 
   BETARENA_HASURA_league_info_query,
   Cache_Single_Tournaments_League_Info_Data_Response
 } from '$lib/models/tournaments/league-info/types';
+
+import fs from 'fs';
+import Bull from 'bull';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -35,7 +40,7 @@ const CQ_Tour_Info_About = new Bull (
   }
 );
 const cacheQueueProcessName = "CQ_Tour_Info_About"
-const cacheTarget = "REDIS CACHE | tournament league_info"
+const cacheTarget = "REDIS CACHE | tournament league_info (about_check)"
 let logs = []
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -82,7 +87,6 @@ async function cacheTournamentsPageLeagueInfoData (
   json_cache: Cache_Single_Tournaments_League_Info_Data_Response
 ) {
   try {
-    //[ℹ] persist redis (cache)
     await redis.hset('league_info', url, JSON.stringify(json_cache));
   } 
   catch (e) {
@@ -143,6 +147,16 @@ async function main () {
     league_ids_arr
   )
 
+  // [🐞]
+  if (dev) {
+    const data = JSON.stringify(league_ids_arr, null, 4)
+    fs.writeFile(`./datalog/league_ids_arr.json`, data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
+
   // const cacheRedisObj = {}
   // deleteCacheTournamentsPageLeagueInfoData()
 
@@ -186,22 +200,22 @@ async function main () {
     finalCacheObj.url = url
     finalCacheObj.lang = lang
 
-    const targetWidgetTranslation = response.scores_widget_league_info_translations
+    const targetWidgetTranslation = response_main.scores_widget_league_info_translations
     .find(( { lang } ) => 
       lang === iterator.lang
     ).data
     // [ℹ] no-widget-translations data
-    const noWidgetTranslation = response.scores_general_translations
+    const noWidgetTranslation = response_main.scores_general_translations
     .find(( { lang } ) => 
       lang === iterator.lang
     )
     // [ℹ] league-info-2 [widget] data
-    const leagueInfoWidget2Translations = response.widget_league_info_translations
+    const leagueInfoWidget2Translations = response_main.widget_league_info_translations
     .find(( { lang } ) => 
       lang === iterator.lang
     )
     // [ℹ] about-tournament [widget] data
-    const aboutTournamentTranslation = response.scores_widget_tournament_about_translations
+    const aboutTournamentTranslation = response_main.scores_widget_tournament_about_translations
     .find(( { lang } ) => 
       lang === iterator.lang
     )
@@ -223,7 +237,7 @@ async function main () {
     // NOTE: as we are comparing [iterator-name] (translated)
     // NOTE: to the "EN" league name
     // NOTE: so league_id / tournament_id is suffieicent
-    const league_target = response.scores_football_leagues
+    const league_target = response_main.scores_football_leagues
     .find(( { name, id } ) => 
       // name === iterator.name &&
       id === tournament_id
@@ -263,7 +277,7 @@ async function main () {
     for (const season_main of league_target.seasons) {
 
       // [ℹ] match target X season from league Z to extra-info-season-data;
-      const seasonExtraInfo = response.scores_football_seasons_details.find(( { id } ) => id === season_main.id)
+      const seasonExtraInfo = response_main.scores_football_seasons_details.find(( { id } ) => id === season_main.id)
 
       const num_clubs = seasonExtraInfo?.data_stats === null ? null : seasonExtraInfo?.data_stats?.number_of_clubs
       const start_date = seasonExtraInfo?.start_date
@@ -335,7 +349,7 @@ async function get_check_finished_season_rounds (
   yesterday.setDate(yesterday.getDate() - 1)
   let yesterday_str = yesterday.toISOString().slice(0, 10)
   yesterday_str = "\"end\": \"" + yesterday_str + "\""
-  console.log("yesterday_str", yesterday_str)
+  logs.push("yesterday_str", yesterday_str)
 
   const VARIABLES = {
     _iregex: yesterday_str
@@ -363,9 +377,9 @@ async function get_main_league_info_data (
   }
 
   const t0 = performance.now();
-  const queryName = "REDIS_CACHE_LEAGUE_INFO_DATA_1";
+  const queryName = "REDIS_CACHE_LEAGUE_INFO_DATA_4";
   const response: BETARENA_HASURA_league_info_query = await initGrapQLClient().request (
-    REDIS_CACHE_LEAGUE_INFO_DATA_1,
+    REDIS_CACHE_LEAGUE_INFO_DATA_4,
     VARIABLES
   );
   const t1 = performance.now();
