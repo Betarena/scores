@@ -4,7 +4,7 @@
 
 <svg 
   class="animation-target"
-  width="100%" 
+  width="141" 
   height="120" 
   viewBox="0 0 141 120" 
   fill="none"
