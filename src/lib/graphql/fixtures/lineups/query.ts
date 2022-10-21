@@ -127,7 +127,8 @@ export const REDIS_CACHE_LINEUPS_DATA_2 = gql`
 */
 
 /**
- * [ℹ] GET Target Fixture 
+ * [ℹ] GET Target Fixture
+ * [ℹ] MAIN-MIRROR
 */
 export const REDIS_CACHE_LINEUPS_DATA_3 = gql`
   query REDIS_CACHE_LINEUPS_DATA_3
@@ -154,17 +155,18 @@ export const REDIS_CACHE_LINEUPS_DATA_3 = gql`
       round_name
       league_id
       season_id
+      teams_rating
       # [alt V1]
       # data
       # [alt V2]
-      stats_j: data(path: "$.stats")
       localteam_id_j: data(path: "$.localteam_id")
       visitorteam_id_j: data(path: "$.visitorteam_id")
-      time_j: data(path: "$.time")
-      round_j: data(path: "$.round")
-      scores_j: data(path: "$.scores")
-      localteam_short_code_j: data(path: "$.localTeam.data.short_code")
-      visitorteam_short_code_j: data(path: "$.visitorTeam.data.short_code")
+      lineup_j:  data(path: "$.lineup.data")
+      formations_j:  data(path: "$.formations")
+      substitutions_j: data(path: "$.substitutions.data")
+      home_coach_j: data(path: "$.localCoach.data")
+      away_coach_j: data(path: "$.visitorCoach.data")
+      events_j: data(path: "$.events.data")
     }
   }
 `;
