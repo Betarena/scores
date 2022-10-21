@@ -2517,6 +2517,7 @@
     left: 0;
     border-radius: 0 !important;
     background: #292929 !important;
+    z-index: 1000;
   } div#scoreboard-widget-container.miniature div#fixture-info-box {
     padding: 20px 10px;
     min-height: 80px;
@@ -2563,6 +2564,7 @@
     background-size: cover !important;
     max-width: 1362px;
     width: calc(100vw - 68px);
+    z-index: 1000;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box {
     /* display: grid;
 		grid-auto-flow: column;
