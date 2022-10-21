@@ -6,7 +6,8 @@ import { GET_HREFLANG_DATA } from '$lib/graphql/query';
 import { 
   REDIS_CACHE_LINEUPS_DATA_0, 
   REDIS_CACHE_LINEUPS_DATA_1, 
-  REDIS_CACHE_LINEUPS_DATA_2 
+  REDIS_CACHE_LINEUPS_DATA_2, 
+  REDIS_CACHE_LINEUPS_DATA_4
 } from '$lib/graphql/fixtures/lineups/query';
 
 import fs from 'fs';
@@ -21,9 +22,12 @@ import type {
 import type { 
   BETARENA_HASURA_lineups_query, 
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures, 
+  BETARENA_HASURA_SURGICAL_JSONB_scores_football_players, 
   Fixture_Lineups, 
+  Fixture_Player, 
   REDIS_CACHE_SINGLE_lineups_data, 
   REDIS_CACHE_SINGLE_lineups_translation, 
+  Sub_Player, 
   Team_Lineup
 } from '$lib/models/fixtures/lineups/types';
 
@@ -80,7 +84,7 @@ export async function POST(): Promise < unknown > {
 
     const langArray = await getHrefLang()
     await main_trans_and_seo(langArray)
-    // await main()
+    await main()
 
     for (const log of logs) {
       console.log(log)
@@ -185,6 +189,24 @@ async function main () {
   const historic_fixtures_map = await generate_historic_fixtures_map(h_fixtures_arr)
 
   /**
+   * [ℹ] obtain target football_players
+   * [ℹ] convert to map
+  */
+  let football_player_ids: number[] = []
+  for (const fixture of historic_fixtures_map.values()) {
+    const lineup_ids = fixture?.lineup_j.map(p => p?.player_id)
+    const subs_ids = [
+      ...fixture.substitutions_j.map(p => p.player_in_id),
+      ...fixture.substitutions_j.map(p => p.player_out_id)
+    ]
+    football_player_ids = [
+      ...new Set(football_player_ids.concat(lineup_ids.concat(subs_ids)))
+    ]
+  }
+  const player_data = await get_target_player_data(football_player_ids)
+  const players_map = await generate_players_map(player_data)
+
+  /**
    * [ℹ] data pre-processing
    * [ℹ] & persistance [END]
   */
@@ -204,7 +226,9 @@ async function main () {
     const home_team_name = value?.home_team_name || null;
     const home_team_logo = value?.home_team_logo || null;
     const home_team_coach_name = value?.home_coach_j?.fullname || null;
-    const home_team_lineup = 
+    const home_team_coach_avatar = value?.home_coach_j?.image_path || null;
+    const home_team_short_code = value?.localteam_short_code_j;
+    const home_team_lineup: Fixture_Player[] = 
       value?.lineup_j == null || value?.lineup_j.length == 0
         ? []
         : value?.lineup_j
@@ -213,11 +237,12 @@ async function main () {
             player_name: p.player_name,
             number: p.number,
             position: p.position,
-            formation_position: p.formation_position
+            formation_position: p.formation_position,
+            player_avatar: players_map.get(p.player_id)?.image_path_j || null
           }) /* extract target players */
         )
     ;
-    const home_team_subs = 
+    const home_team_subs: Sub_Player[] = 
       value?.substitutions_j == null || value?.substitutions_j.length == 0
         ? []
         : value?.substitutions_j
@@ -226,7 +251,9 @@ async function main () {
             player_in_id: p.player_in_id,
             player_out_id: p.player_out_id,
             player_in_name: p.player_in_name,
-            player_out_name: p.player_out_name
+            player_out_name: p.player_out_name,
+            player_avatar_in: players_map.get(p.player_in_id)?.image_path_j || null,
+            player_avatar_out: players_map.get(p.player_out_id)?.image_path_j || null
           })
         )
     ;
@@ -235,7 +262,9 @@ async function main () {
     const away_team_name = value?.away_team_name;
     const away_team_logo = value?.away_team_logo;
     const away_team_coach_name = value?.away_coach_j?.fullname || null;
-    const away_team_lineup = 
+    const away_team_coach_avatar = value?.away_coach_j?.image_path || null;
+    const away_team_short_code = value?.visitorteam_short_code_j;
+    const away_team_lineup: Fixture_Player[] = 
       value?.lineup_j == null || value?.lineup_j.length == 0
         ? []
         : value?.lineup_j
@@ -244,11 +273,12 @@ async function main () {
             player_name: p.player_name,
             number: p.number,
             position: p.position,
-            formation_position: p.formation_position
+            formation_position: p.formation_position,
+            player_avatar: players_map.get(p.player_id)?.image_path_j || null
           }) /* extract target players */
         )
     ;
-    const away_team_subs = 
+    const away_team_subs: Sub_Player[] = 
       value?.substitutions_j == null || value?.substitutions_j.length == 0
         ? []
         : value?.substitutions_j
@@ -257,7 +287,9 @@ async function main () {
             player_in_id: p.player_in_id,
             player_out_id: p.player_out_id,
             player_in_name: p.player_in_name,
-            player_out_name: p.player_out_name
+            player_out_name: p.player_out_name,
+            player_avatar_in: players_map.get(p.player_in_id)?.image_path_j || null,
+            player_avatar_out: players_map.get(p.player_out_id)?.image_path_j || null
           })
         )
     ;
@@ -265,18 +297,22 @@ async function main () {
     const home_team_obj: Team_Lineup = {
       team_name:      home_team_name,
       team_logo:      home_team_logo,
+      team_short_code: home_team_short_code || home_team_name.slice(0, 3).toUpperCase() || null,
       coach_name:     home_team_coach_name,
+      coach_avatar:   home_team_coach_avatar,
       lineup:         home_team_lineup,
-      formation:      value?.formations_j,
+      formation:      value?.formations_j?.localteam_formation,
       substitutions:  home_team_subs
     }
 
     const away_team_obj: Team_Lineup = {
       team_name:      away_team_name,
       team_logo:      away_team_logo,
+      team_short_code: away_team_short_code || away_team_short_code.slice(0, 3).toUpperCase() || null,
       coach_name:     away_team_coach_name,
+      coach_avatar:   away_team_coach_avatar,
       lineup:         away_team_lineup,
-      formation:      value?.formations_j,
+      formation:      value?.formations_j?.visitorteam_formation,
       substitutions:  away_team_subs
     }
 
@@ -464,6 +500,43 @@ async function generate_historic_fixtures_map (
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
   return historic_fixtures_map;
+}
+
+async function get_target_player_data (
+  playerIdsArr: number[]
+): Promise < BETARENA_HASURA_SURGICAL_JSONB_scores_football_players[] >  {
+
+  const VARIABLES = {
+    playerIds: playerIdsArr
+  }
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_LINEUPS_DATA_4";
+  const response: BETARENA_HASURA_lineups_query = await initGrapQLClient().request (
+    REDIS_CACHE_LINEUPS_DATA_4,
+    VARIABLES
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response.scores_football_players;
+}
+
+async function generate_players_map (
+  players_arr: BETARENA_HASURA_SURGICAL_JSONB_scores_football_players[]
+): Promise < Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_players> > {
+  const players_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_players>()
+
+  // [ℹ] conversion to hashmap
+  t0 = performance.now();
+  for (const h_fixture of players_arr) {
+    players_map.set(h_fixture.player_id, h_fixture);
+  }
+  t1 = performance.now();
+  logs.push(`players_map generated with size: ${players_map.size}`)
+  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
+
+  return players_map;
 }
 
 async function getHrefLang (
