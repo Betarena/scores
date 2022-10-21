@@ -4,21 +4,16 @@ import type {
   BETARENA_HASURA_historic_fixtures_aggregate,
   BETARENA_HASURA_player_positions_translations,
   BETARENA_HASURA_scores_fixture_lineup_translations,
-  BETARENA_HASURA_scores_football_leagues,
+  BETARENA_HASURA_scores_football_players,
   BETARENA_HASURA_scores_football_seasons_details,
   BETARENA_HASURA_scores_general_translations,
-  BETARENA_HASURA_scores_tournaments,
-  DataStats,
-  Events,
   EventsDatum,
+  FixtureLineupTranslations,
   Formations,
   HistFixturesTeamsRating,
   HistFixtures_Substitue,
   LocalCoachData,
-  Round,
-  ScoreboardTranslations,
-  Scores,
-  Time
+  WidgetsNoDataAvailable
 } from "$lib/models/hasura"
 
 /**
@@ -28,8 +23,10 @@ import type {
 */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface REDIS_CACHE_SINGLE_lineups_translation extends ScoreboardTranslations {
+export interface REDIS_CACHE_SINGLE_lineups_translation extends WidgetsNoDataAvailable, FixtureLineupTranslations {
   lang?: string
+  // [ℹ] for completion
+  position?: { [key: string]: string };
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -52,12 +49,19 @@ export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARE
   home_coach_j?:       LocalCoachData
   away_coach_j?:       LocalCoachData
   events_j?:           EventsDatum[]
+  localteam_short_code_j?:    string
+  visitorteam_short_code_j?:  string
+}
+
+export interface BETARENA_HASURA_SURGICAL_JSONB_scores_football_players extends BETARENA_HASURA_scores_football_players {
+  image_path_j?:     string
 }
 
 export interface BETARENA_HASURA_lineups_query {
   scores_football_seasons_details?: BETARENA_HASURA_scores_football_seasons_details[]
   historic_fixtures_aggregate?:     BETARENA_HASURA_historic_fixtures_aggregate
   historic_fixtures?:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
+  scores_football_players?:         BETARENA_HASURA_SURGICAL_JSONB_scores_football_players[]
   // NOTE: translations
   player_positions_translations?:   BETARENA_HASURA_player_positions_translations[]
   scores_general_translations?:     BETARENA_HASURA_scores_general_translations[]
@@ -95,12 +99,15 @@ export interface Fixture_Lineups {
 } export interface Team_Lineup {
   team_name?:     string
   team_logo?:     string
+  team_short_code?:  string
   coach_name?:    string
+  coach_avatar?:  string
   lineup?:        Fixture_Player[] // historic_fixtures/lineup*
-  formation?:     Formations
+  formation?:     string
   substitutions?: Sub_Player[]
 } export interface Fixture_Player extends BenchDatum {
   player_avatar?:  string   // scores_football_players/data/image_path
 } export interface Sub_Player extends HistFixtures_Substitue {
-  player_avatar?:  string   // scores_football_players/data/image_path
+  player_avatar_in?:    string   // scores_football_players/data/image_path
+  player_avatar_out?:   string   // scores_football_players/data/image_path
 }

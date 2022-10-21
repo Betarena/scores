@@ -88,6 +88,34 @@ export const REDIS_CACHE_LINEUPS_DATA_1 = gql`
       home_coach_j: data(path: "$.localCoach.data")
       away_coach_j: data(path: "$.visitorCoach.data")
       events_j: data(path: "$.events.data")
+      localteam_short_code_j: data(path: "$.localTeam.data.short_code")
+      visitorteam_short_code_j: data(path: "$.visitorTeam.data.short_code")
+    }
+  }
+`;
+
+/**
+ * [ℹ] Tournaments / Top_Players Widget 
+ * [ℹ] Surgical (#2)
+ * [ℹ] Based on Team_id's & Player_id's
+*/
+export const REDIS_CACHE_LINEUPS_DATA_4 = gql`
+  query REDIS_CACHE_LINEUPS_DATA_4
+  (
+    $playerIds: [numeric!]
+  )
+  @cached 
+  (ttl: 300)
+  {
+    scores_football_players (
+      where: {
+        player_id: {
+          _in: $playerIds
+        }
+      } 
+    ) {
+      player_id
+      image_path_j: data(path: "$.image_path")
     }
   }
 `;
