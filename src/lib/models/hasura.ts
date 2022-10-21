@@ -895,6 +895,7 @@ export interface BETARENA_HASURA_historic_fixtures {
   media_link?:      null;
   urls?:           Urls;
   publish_status?: PublishStatus;
+  teams_rating?:   HistFixturesTeamsRating;
 } export interface WelcomeData {
   id?:                      number;
   leg?:                     Leg;
@@ -939,7 +940,7 @@ export interface BETARENA_HASURA_historic_fixtures {
   commentaries?:            boolean;
   localteam_id?:            number;
   neutral_venue?:           boolean;
-  substitutions?:           Bench;
+  substitutions?:           Substitue;
   is_placeholder?:          boolean;
   visitorteam_id?:          number;
   weather_report?:          WeatherReport | null;
@@ -968,6 +969,20 @@ export interface BETARENA_HASURA_historic_fixtures {
   player_name?:         string;
   formation_position?:  number | null;
   additional_position?: null;
+} export interface Substitue {
+  data?: HistFixtures_Substitue[];
+} export interface HistFixtures_Substitue {
+  id?:              number;
+  type?:            string;
+  minute?:          number;
+  team_id?:         string;
+  injuried?:        boolean | null;
+  fixture_id?:      number;
+  extra_minute?:    number | null;
+  player_in_id?:    number;
+  player_out_id?:   number;
+  player_in_name?:  string;
+  player_out_name?: string;
 } export enum Position {
   A = "A",
   D = "D",
@@ -1305,6 +1320,9 @@ export interface BETARENA_HASURA_historic_fixtures {
   pt?: string;
   ro?: string;
   se?: string;
+} export interface HistFixturesTeamsRating {
+  away_team?: number | null
+  home_team?: number | null
 }
 
 
@@ -1415,3 +1433,26 @@ export interface BETARENA_HASURA_scores_fixture_scoreboard_translations {
   overview?:   string;
   news_views?: string;
 }
+
+/**
+ * [ℹ] HASURA: scores_fixture_lineup_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixture_lineup_translations {
+  lang?:         string;
+  translations?: FixtureLineupTranslations;
+} export interface FixtureLineupTranslations {
+  out?:   string;
+  title?: string;
+}
+
+/**
+ * [ℹ] HASURA: scores_incidents_translations (&)
+*/
+export interface BETARENA_HASURA_scores_incidents_translations {
+  lang?:         string;
+  translations?: IncidentsTranslations;
+} export interface IncidentsTranslations {
+  out?:   string;
+  title?: string;
+}
+
