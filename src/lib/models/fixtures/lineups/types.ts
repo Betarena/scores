@@ -51,6 +51,7 @@ export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARE
   events_j?:           EventsDatum[]
   localteam_short_code_j?:    string
   visitorteam_short_code_j?:  string
+  status_j?:           string
 }
 
 export interface BETARENA_HASURA_SURGICAL_JSONB_scores_football_players extends BETARENA_HASURA_scores_football_players {
@@ -75,6 +76,8 @@ export interface BETARENA_HASURA_lineups_query {
 */
 
 export interface Fixture_Lineups {
+  id?:     number
+  status?: string
 
   // NOTE: Starting Lineups Before Match (fixture_lineups):
   home?: Team_Lineup

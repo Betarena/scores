@@ -1068,21 +1068,31 @@ export interface BETARENA_HASURA_historic_fixtures {
 } export interface Events {
   data?: EventsDatum[];
 } export interface EventsDatum {
+  fixture_id?:          number;
   id?:                  number;
-  type?:                string;
   minute?:              number;
-  reason?:              null;
-  result?:              null | string;
-  team_id?:             string;
-  injuried?:            null;
   on_pitch?:            boolean;
   player_id?:           number;
-  fixture_id?:          number;
-  var_result?:          null;
   player_name?:         string;
-  extra_minute?:        number | null;
-  related_player_id?:   null;
-  related_player_name?: null;
+  team_id?:             string;
+  type?:                FluffyType2;
+  related_player_id?:   number;
+  related_player_name?: string;
+  injuried?:            boolean;
+  extra_minute?:        number;
+  result?:              string;
+  reason?:              string;
+  var_result?:          string;
+  player_assist_id?:    number;
+  player_assist_name?:  string;
+} export enum FluffyType2 {
+  Goal = "goal",
+  MissedPenalty = "missed_penalty",
+  OwnGoal = "own-goal",
+  Penalty = "penalty",
+  Substitution = "substitution",
+  Var = "var",
+  Yellowcard = "yellowcard",
 } export interface Formations {
   localteam_formation?:   null;
   visitorteam_formation?: null;
