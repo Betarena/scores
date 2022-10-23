@@ -442,7 +442,7 @@
     browser && 
     $userBetarenaSettings.country_bookmaker}
 
-    <LineupsLoader />
+    <!-- <LineupsLoader /> -->
 
     <!-- 
     [ℹ] promise is pending 
