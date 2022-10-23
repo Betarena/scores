@@ -25,6 +25,7 @@
   export let PLAYER_INFO:                 Fixture_Player;
   export let FIXTURE_LINEUPS_TRANSLATION: REDIS_CACHE_SINGLE_lineups_translation;
   export let STATUS:                      string
+  export let TYPE:                        'R' | 'L'
 
   let ratingColorCode:    string;
 
@@ -60,113 +61,232 @@
       player-row
       row-space-out
     "
+    class:type-L={TYPE == "L"}
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'} 
     in:fade>
 
-      <!-- 
-      [ℹ] right-container
-      [ℹ] player avatar
-      [ℹ] player name
-      [ℹ] player visual icons -->
-      <div
-        class="
-          row-space-start
-        ">
-        <img 
-          src={PLAYER_INFO?.player_avatar} 
-          alt=""
-          width=40px
-          height=40px
-          class="lineup-img"
-        />
-        <div>
-          <div
-            class="
-              row-space-start
-              player-info-row
-            ">
+      {#if TYPE == "R"}
+        <!-- 
+        [ℹ] right-container
+        [ℹ] player avatar
+        [ℹ] player name
+        [ℹ] player visual icons -->
+        <div
+          class="
+            row-space-start
+          ">
+          <!-- 
+          [ℹ] player avatar -->
+          <img 
+            src={PLAYER_INFO?.player_avatar} 
+            alt=""
+            width=40px
+            height=40px
+            class="lineup-img"
+          />
+          <!-- 
+          [ℹ] player main box -->
+          <div>
+            <div
+              class="
+                row-space-start
+                player-info-row
+              ">
+              <p
+                class="
+                  w-500
+                  color-black
+                  lineup-player-name
+                ">
+                {PLAYER_INFO?.number} {PLAYER_INFO?.player_name}
+              </p>
+              <!--
+              [ℹ] injured-player -->
+              {#if PLAYER_INFO?.events?.injured}
+                <img 
+                  src={injured} 
+                  alt=""
+                />
+              {/if}
+              <!--
+              [ℹ] yellowcard-player -->
+              {#if PLAYER_INFO?.events?.yeallow_card}
+                <img 
+                  src={yellow_card}
+                  alt=""
+                />
+                {#if PLAYER_INFO?.events?.yeallow_card > 1}
+                  <p>
+                    2
+                  </p>
+                {/if}
+              {/if}
+              <!--
+              [ℹ] goals-player (inc. own-goals) -->
+              {#if PLAYER_INFO?.events?.goals}
+                <img 
+                  src={football} 
+                  alt=""
+                />
+              {/if}
+              <!--
+              [ℹ] red-card-player -->
+              {#if PLAYER_INFO?.events?.red_card}
+                <img 
+                  src={red_card}
+                  alt=""
+                />
+                {#if PLAYER_INFO?.events?.red_card > 1}
+                  <p>
+                    2
+                  </p>
+                {/if}
+              {/if}
+            </div>
             <p
               class="
-                w-500
-                color-black
+                w-400
+                color-grey
                 lineup-player-name
               ">
-              {PLAYER_INFO?.number} {PLAYER_INFO?.player_name}
+              {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
             </p>
-            <!--
-            [ℹ] injured-player -->
-            {#if PLAYER_INFO?.events?.injured}
-              <img 
-                src={injured} 
-                alt=""
-              />
-            {/if}
-            <!--
-            [ℹ] yellowcard-player -->
-            {#if PLAYER_INFO?.events?.yeallow_card}
-              <img 
-                src={yellow_card}
-                alt=""
-              />
-              {#if PLAYER_INFO?.events?.yeallow_card > 1}
-                <p>
-                  2
-                </p>
-              {/if}
-            {/if}
-            <!--
-            [ℹ] goals-player (inc. own-goals) -->
-            {#if PLAYER_INFO?.events?.goals}
-              <img 
-                src={football} 
-                alt=""
-              />
-            {/if}
-            <!--
-            [ℹ] red-card-player -->
-            {#if PLAYER_INFO?.events?.red_card}
-              <img 
-                src={red_card}
-                alt=""
-              />
-              {#if PLAYER_INFO?.events?.red_card > 1}
-                <p>
-                  2
-                </p>
-              {/if}
-            {/if}
           </div>
-          <p
-            class="
-              w-400
-              color-grey
-              lineup-player-name
-            ">
-            {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
-          </p>
         </div>
 
-      </div>
+        <!-- 
+        [ℹ] left-container
+        [ℹ] player rating-->
+        <div
+          class="row-space-end"
+          style="width: auto;">
+          {#if 
+            STATUS == "FT"
+            && PLAYER_INFO?.rating != undefined}
+            <p 
+              id='box-goals'
+              class="medium w-500"
+              class:rating_golden={ratingColorCode === "G"}
+              class:rating_silver={ratingColorCode === "Y"}
+              class:rating_bronze={ratingColorCode === "T"}>
+              {PLAYER_INFO?.rating}
+            </p>
+          {/if}
+        </div>
+      {:else}
 
-      <!-- 
-      [ℹ] left-container
-      [ℹ] player rating-->
-      <div
-        class="row-space-end"
-        style="width: auto;">
-        {#if 
-          STATUS == "FT"
-          && PLAYER_INFO?.rating != undefined}
-          <p 
-            id='box-goals'
-            class="medium w-500"
-            class:rating_golden={ratingColorCode === "G"}
-            class:rating_silver={ratingColorCode === "Y"}
-            class:rating_bronze={ratingColorCode === "T"}>
-            {PLAYER_INFO?.rating}
-          </p>
-        {/if}
-      </div>
+        <!-- 
+        [ℹ] right-container
+        [ℹ] player rating-->
+        <div
+          class="row-space-start"
+          style="width: auto;">
+          {#if 
+            STATUS == "FT"
+            && PLAYER_INFO?.rating != undefined}
+            <p 
+              id='box-goals'
+              class="medium w-500"
+              class:rating_golden={ratingColorCode === "G"}
+              class:rating_silver={ratingColorCode === "Y"}
+              class:rating_bronze={ratingColorCode === "T"}>
+              {PLAYER_INFO?.rating}
+            </p>
+          {/if}
+        </div>
+
+        <!-- 
+        [ℹ] left-container
+        [ℹ] player avatar
+        [ℹ] player name
+        [ℹ] player visual icons -->
+        <div
+          class="
+            row-space-end
+          ">
+          <!-- 
+          [ℹ] player main box -->
+          <div>
+            <div
+              class="
+                row-space-start
+                player-info-row
+              ">
+              <!--
+              [ℹ] injured-player -->
+              {#if PLAYER_INFO?.events?.injured}
+                <img 
+                  src={injured} 
+                  alt=""
+                />
+              {/if}
+              <!--
+              [ℹ] yellowcard-player -->
+              {#if PLAYER_INFO?.events?.yeallow_card}
+                <img 
+                  src={yellow_card}
+                  alt=""
+                />
+                {#if PLAYER_INFO?.events?.yeallow_card > 1}
+                  <p>
+                    2
+                  </p>
+                {/if}
+              {/if}
+              <!--
+              [ℹ] goals-player (inc. own-goals) -->
+              {#if PLAYER_INFO?.events?.goals}
+                <img 
+                  src={football} 
+                  alt=""
+                />
+              {/if}
+              <!--
+              [ℹ] red-card-player -->
+              {#if PLAYER_INFO?.events?.red_card}
+                <img 
+                  src={red_card}
+                  alt=""
+                />
+                {#if PLAYER_INFO?.events?.red_card > 1}
+                  <p>
+                    2
+                  </p>
+                {/if}
+              {/if}
+              <!-- 
+              [ℹ] player name -->
+              <p
+                class="
+                  w-500
+                  color-black
+                  lineup-player-name
+                ">
+                {PLAYER_INFO?.number} {PLAYER_INFO?.player_name}
+              </p>
+            </div>
+            <!-- 
+            [ℹ] player positon -->
+            <p
+              class="
+                w-400
+                color-grey
+                lineup-player-name
+              ">
+              {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
+            </p>
+          </div>
+          <!-- 
+          [ℹ] player avatar -->
+          <img 
+            src={PLAYER_INFO?.player_avatar} 
+            alt=""
+            width=40px
+            height=40px
+            class="lineup-img"
+          />
+        </div>
+      {/if}
       
   </div>
 {/if}
@@ -205,6 +325,17 @@
     background-color: #8C8C8C !important;
   } div.player-row p#box-goals.rating_bronze {
     background-color: #dbb884 !important;
+  }
+
+  /* TYPE "L" */
+  div.player-row.type-L img.lineup-img {
+    margin-left: 16px;
+  } div.player-row.type-L p.lineup-player-name {
+    /* dynamic */
+    text-align: end;
+  } div.player-row div.player-info-row img {
+    /* dynamic */
+    margin-right: 8px;
   }
 
   /* 

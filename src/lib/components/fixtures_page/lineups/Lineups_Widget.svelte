@@ -30,11 +30,14 @@
     REDIS_CACHE_SINGLE_fixtures_page_info_response 
   } from "$lib/models/_main_/pages_and_seo/types";
 
-	import type { EventsDatum } from "$lib/models/hasura";
+	import type { 
+    EventsDatum 
+  } from "$lib/models/hasura";
 
 	// import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 	import LineupsLoader from "./Lineups_Loader.svelte";
 	import LineupVectorMobile from "./Lineup_Vector_Mobile.svelte";
+	import LineupVectorTablet from "./Lineup_Vector_Tablet.svelte";
 	import LineupPlayerRow from "./Lineup_Player_Row.svelte";
 	import LineupPlayerVisual from "./Lineup_Player_Visual.svelte";
 
@@ -465,190 +468,459 @@
         <!-- 
         [ℹ] [MOBILE]
         -->
-
-        <!-- 
-        [ℹ] toggle lineup team -->
-        <div
-          id="lineup-top-view-box-select"
-          class="
-            row-space-out
-          ">
-          <!--
-          [ℹ] home team btn. -->
-          <button
-            class="
-              row-space-start
-              team-select-btn
-            "
-            class:activeOpt={selected_view == 'home'}
-            on:click={() => selected_view = 'home'}>
-            <img 
-              src={FIXTURE_LINEUPS?.home?.team_logo} 
-              alt=""
-              width=20px
-              height=20px
-              class="sel-team-img"
-            />
-            <p
-              class="
-                w-500
-                color-black
-              ">
-              {FIXTURE_LINEUPS?.home?.team_short_code}
-            </p>
-          </button>
-          <!--
-          [ℹ] away team btn. -->
-          <button
-            class="
-              row-space-end
-              team-select-btn
-            "
-            class:activeOpt={selected_view == 'away'}
-            on:click={() => selected_view = 'away'}>
-            <p
-              class="
-                w-500
-                color-black
-              ">
-              {FIXTURE_LINEUPS?.away?.team_short_code}
-            </p>
-            <img 
-              src={FIXTURE_LINEUPS?.away?.team_logo} 
-              alt=""
-              width=20px
-              height=20px
-              class="sel-team-img"
-            />
-          </button>
-        </div>
-
-        <!-- 
-        [ℹ] team visiualization -->
-        <div
-          id="lineup-vector-box">
-          <div
-            id="lineup-vector">
-            <LineupVectorMobile />
-          </div>
+        {#if mobileExclusive}
           <!-- 
-          [ℹ] lineup - absolute box -->
+          [ℹ] toggle lineup team -->
           <div
-            id="overlay-player-pos-box">
-            {#each formation_pos_arr as pos}
-              <div
-                id="overlay-column">
-                {#each FIXTURE_LINEUPS[selected_view].lineup as player}
-                  {#if pos == player?.position}
-                    <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                  {/if}
-                {/each}
-              </div>
-            {/each}
-          </div>
-        </div>
-        
-        <!-- 
-        [ℹ] selected lineup - home / away (logo) -->
-        <div
-          class="
-            row-space-out
-            team-main-select
-          ">
-          <div
+            id="lineup-top-view-box-select"
             class="
-              row-space-start
+              row-space-out
             ">
-            <!-- 
-            [ℹ] team icon -->
-            <img 
-              src={FIXTURE_LINEUPS[selected_view]?.team_logo} 
-              alt=""
-              width=40px
-              height=40px
-              class="main-team-img"
-            />
-            <!-- 
-            [ℹ] team name -->
-            <p
+            <!--
+            [ℹ] home team btn. -->
+            <button
               class="
-                w-500
-                color-black
-              ">
-              {FIXTURE_LINEUPS[selected_view]?.team_name}
-              <br/>
-              <span
+                row-space-start
+                team-select-btn
+              "
+              class:activeOpt={selected_view == 'home'}
+              on:click={() => selected_view = 'home'}>
+              <img 
+                src={FIXTURE_LINEUPS?.home?.team_logo} 
+                alt=""
+                width=20px
+                height=20px
+                class="sel-team-img"
+              />
+              <p
                 class="
-                  w-400
-                  color-grey
+                  w-500
+                  color-black
                 ">
-                {FIXTURE_LINEUPS[selected_view]?.formation}
-              </span>
-            </p>
+                {FIXTURE_LINEUPS?.home?.team_short_code}
+              </p>
+            </button>
+            <!--
+            [ℹ] away team btn. -->
+            <button
+              class="
+                row-space-end
+                team-select-btn
+              "
+              class:activeOpt={selected_view == 'away'}
+              on:click={() => selected_view = 'away'}>
+              <p
+                class="
+                  w-500
+                  color-black
+                ">
+                {FIXTURE_LINEUPS?.away?.team_short_code}
+              </p>
+              <img 
+                src={FIXTURE_LINEUPS?.away?.team_logo} 
+                alt=""
+                width=20px
+                height=20px
+                class="sel-team-img"
+              />
+            </button>
           </div>
+
           <!-- 
-          [ℹ] team-rating -->
-          {#if FIXTURE_LINEUPS?.status == "FT"}
+          [ℹ] team visiualization -->
+          <div
+            id="lineup-vector-box">
             <div
-              class="row-space-end">
-              <p>
-                {FIXTURE_LINEUPS[selected_view]?.team_rating}
+              id="lineup-vector">
+              <LineupVectorMobile />
+            </div>
+            <!-- 
+            [ℹ] lineup - absolute box -->
+            <div
+              id="overlay-player-pos-box">
+              {#each formation_pos_arr as pos}
+                <div
+                  id="overlay-column">
+                  {#each FIXTURE_LINEUPS[selected_view].lineup as player}
+                    {#if pos == player?.position}
+                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                    {/if}
+                  {/each}
+                </div>
+              {/each}
+            </div>
+          </div>
+          
+          <!-- 
+          [ℹ] selected lineup - home / away (logo) -->
+          <div
+            class="
+              row-space-out
+              team-main-select
+            ">
+            <div
+              class="
+                row-space-start
+              ">
+              <!-- 
+              [ℹ] team icon -->
+              <img 
+                src={FIXTURE_LINEUPS[selected_view]?.team_logo} 
+                alt=""
+                width=40px
+                height=40px
+                class="main-team-img"
+              />
+              <!-- 
+              [ℹ] team name -->
+              <p
+                class="
+                  w-500
+                  color-black
+                ">
+                {FIXTURE_LINEUPS[selected_view]?.team_name}
+                <br/>
+                <span
+                  class="
+                    w-400
+                    color-grey
+                  ">
+                  {FIXTURE_LINEUPS[selected_view]?.formation}
+                </span>
               </p>
             </div>
-          {/if}
-        </div>
-
-        <!-- 
-        [ℹ] selected lineup - home / away -->
-        <div
-          class="lineup-box">
-          <!-- 
-          [ℹ] coach single - home / away -->
-          <div
-            class="
-              row-space-start
-              player-row
-            ">
             <!-- 
-            [ℹ] player avatar -->
-            <img 
-              src={FIXTURE_LINEUPS[selected_view]?.coach_avatar} 
-              alt=""
-              width=40px
-              height=40px
-              class="lineup-img"
-            />
-            <!-- 
-            [ℹ] player name -->
-            <p
-              class="
-                w-500
-                color-black
-                lineup-player-name
-              ">
-              {FIXTURE_LINEUPS[selected_view]?.coach_name}
-              <br/>
-              <span
-                class="
-                  w-400
-                  color-grey
-                ">
-                {FIXTURE_LINEUPS_TRANSLATION['c']}
-              </span>
-            </p>
+            [ℹ] team-rating -->
+            {#if FIXTURE_LINEUPS?.status == "FT"}
+              <div
+                class="row-space-end">
+                <p>
+                  {FIXTURE_LINEUPS[selected_view]?.team_rating}
+                </p>
+              </div>
+            {/if}
           </div>
-          <!-- 
-          [ℹ] rest of lineup-team -->
-          {#each FIXTURE_LINEUPS[selected_view].lineup as player}
-            <LineupPlayerRow PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
-          {/each}
-        </div>
 
+          <!-- 
+          [ℹ] selected lineup - home / away -->
+          <div
+            class="lineup-box">
+            <!-- 
+            [ℹ] coach single - home / away -->
+            <div
+              class="
+                row-space-start
+                player-row
+              ">
+              <!-- 
+              [ℹ] player avatar -->
+              <img 
+                src={FIXTURE_LINEUPS[selected_view]?.coach_avatar} 
+                alt=""
+                width=40px
+                height=40px
+                class="lineup-img"
+              />
+              <!-- 
+              [ℹ] player name -->
+              <p
+                class="
+                  w-500
+                  color-black
+                  lineup-player-name
+                ">
+                {FIXTURE_LINEUPS[selected_view]?.coach_name}
+                <br/>
+                <span
+                  class="
+                    w-400
+                    color-grey
+                  ">
+                  {FIXTURE_LINEUPS_TRANSLATION['c']}
+                </span>
+              </p>
+            </div>
+            <!-- 
+            [ℹ] rest of lineup-team -->
+            {#each FIXTURE_LINEUPS[selected_view].lineup as player}
+              <LineupPlayerRow TYPE="R" PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
+            {/each}
+          </div>
         <!-- 
         [ℹ] [TABLET] && [DESKTOP]
-        TODO:
+        [ℹ] drastic layout change
         -->
+        {:else}
+        
+          <!-- 
+          [ℹ] team visiualization -->
+          <div
+            id="lineup-vector-box">
+            <div
+              id="lineup-vector">
+              <LineupVectorTablet />
+            </div>
+            <!-- 
+            [ℹ] lineup - absolute box 
+            [ℹ] home team 
+            [ℹ] away team -->
+            <div
+              id="overlay-player-pos-box">
+              <!-- 
+              [ℹ] home -->
+              {#each formation_pos_arr as pos}
+                <div
+                  id="overlay-column">
+                  {#each FIXTURE_LINEUPS.home.lineup as player}
+                    {#if pos == player?.position}
+                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                    {/if}
+                  {/each}
+                </div>
+              {/each}
+              <!-- 
+              [ℹ] away -->
+              {#each formation_pos_arr.reverse() as pos}
+                <div
+                  id="overlay-column">
+                  {#each FIXTURE_LINEUPS.away.lineup as player}
+                    {#if pos == player?.position}
+                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                    {/if}
+                  {/each}
+                </div>
+              {/each}
+            </div>
+          </div>
 
+          <!-- 
+          [ℹ] team info ROW -->
+          <div
+            id="team-info-box"
+            class="row-space-out">
+
+            <!-- 
+            [ℹ] home team info -->
+            <div
+              class="
+                row-space-start
+                team-main-select
+              ">
+              <!-- 
+              [ℹ] team-info -->
+              <div
+                class="
+                  row-space-start
+                "
+                style="width: auto;">
+                <!-- 
+                [ℹ] team icon -->
+                <img 
+                  src={FIXTURE_LINEUPS?.home?.team_logo} 
+                  alt=""
+                  width=40px
+                  height=40px
+                  class="main-team-img"
+                />
+                <!-- 
+                [ℹ] team name -->
+                <p
+                  class="
+                    w-500
+                    color-black
+                    team-name
+                  ">
+                  {FIXTURE_LINEUPS?.home?.team_name}
+                  <br/>
+                  <span
+                    class="
+                      w-400
+                      color-grey
+                    ">
+                    {FIXTURE_LINEUPS?.home?.formation}
+                  </span>
+                </p>
+              </div>
+              <!-- 
+              [ℹ] team-rating -->
+              {#if 
+                FIXTURE_LINEUPS?.status == "FT"
+                && FIXTURE_LINEUPS?.home?.team_rating != undefined}
+                <p 
+                  id='box-goals'
+                  class="medium w-500"
+                  class:rating_golden={FIXTURE_LINEUPS?.home?.team_rating >= 9}
+                  class:rating_silver={FIXTURE_LINEUPS?.home?.team_rating >= 7}
+                  class:rating_bronze={FIXTURE_LINEUPS?.home?.team_rating >= 0}>
+                  {FIXTURE_LINEUPS?.home?.team_rating}
+                </p>
+              {/if}
+            </div>
+
+            <!-- 
+            [ℹ] away team info -->
+            <div
+              class="
+                row-space-end
+                team-main-select
+              ">
+              <!-- 
+              [ℹ] team-rating -->
+              {#if 
+                FIXTURE_LINEUPS?.status == "FT"
+                && FIXTURE_LINEUPS?.away?.team_rating != undefined}
+                <p 
+                  id='box-goals'
+                  class="medium w-500"
+                  class:rating_golden={FIXTURE_LINEUPS?.away?.team_rating >= 9}
+                  class:rating_silver={FIXTURE_LINEUPS?.away?.team_rating >= 7}
+                  class:rating_bronze={FIXTURE_LINEUPS?.away?.team_rating >= 0}>
+                  {FIXTURE_LINEUPS?.away?.team_rating}
+                </p>
+              {/if}
+              <!-- 
+              [ℹ] team-info -->
+              <div
+                class="
+                  row-space-end
+                "
+                style="width: auto;">
+                <!-- 
+                [ℹ] team name -->
+                <p
+                  class="
+                    w-500
+                    color-black
+                    team-name
+                  ">
+                  {FIXTURE_LINEUPS?.away?.team_name}
+                  <br/>
+                  <span
+                    class="
+                      w-400
+                      color-grey
+                    ">
+                    {FIXTURE_LINEUPS?.away?.formation}
+                  </span>
+                </p>
+                <!-- 
+                [ℹ] team icon -->
+                <img 
+                  src={FIXTURE_LINEUPS?.away?.team_logo} 
+                  alt=""
+                  width=40px
+                  height=40px
+                  class="main-team-img"
+                />
+              </div>
+            </div>
+           
+          </div>
+
+          <!-- 
+          [ℹ] team lineup ROW -->
+          <div
+            id="team-lineup-box"
+            class="row-space-out">
+
+            <!-- 
+            [ℹ] home lineup -->
+            <div
+              class="lineup-box">
+              <!-- 
+              [ℹ] coach single - home / away -->
+              <div
+                class="
+                  row-space-start
+                  player-row
+                ">
+                <!-- 
+                [ℹ] coach avatar -->
+                <img 
+                  src={FIXTURE_LINEUPS.home?.coach_avatar} 
+                  alt=""
+                  width=40px
+                  height=40px
+                  class="lineup-img"
+                />
+                <!-- 
+                [ℹ] coach name -->
+                <p
+                  class="
+                    w-500
+                    color-black
+                    lineup-player-name
+                  ">
+                  {FIXTURE_LINEUPS.home?.coach_name}
+                  <br/>
+                  <span
+                    class="
+                      w-400
+                      color-grey
+                    ">
+                    {FIXTURE_LINEUPS_TRANSLATION['c']}
+                  </span>
+                </p>
+              </div>
+              <!-- 
+              [ℹ] rest of lineup-team -->
+              {#each FIXTURE_LINEUPS.home.lineup as player}
+                <LineupPlayerRow TYPE="R" PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
+              {/each}
+            </div>
+
+            <!--
+            [ℹ] divider -->
+            <div id="divider" />
+
+            <!-- 
+            [ℹ] away lineup -->
+            <div
+              class="lineup-box">
+              <!-- 
+              [ℹ] coach single - home / away -->
+              <div
+                class="
+                  row-space-end
+                  player-row
+                ">
+                <!-- 
+                [ℹ] coach name -->
+                <p
+                  class="
+                    w-500
+                    color-black
+                    lineup-player-name
+                  ">
+                  {FIXTURE_LINEUPS?.away?.coach_name}
+                  <br/>
+                  <span
+                    class="
+                      w-400
+                      color-grey
+                    ">
+                    {FIXTURE_LINEUPS_TRANSLATION['c']}
+                  </span>
+                </p>
+                <!-- 
+                [ℹ] player avatar -->
+                <img 
+                  src={FIXTURE_LINEUPS?.away?.coach_avatar} 
+                  alt=""
+                  width=40px
+                  height=40px
+                  class="lineup-img"
+                />
+              </div>
+              <!-- 
+              [ℹ] rest of lineup-team -->
+              {#each FIXTURE_LINEUPS.away.lineup as player}
+                <LineupPlayerRow TYPE="L" PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
+              {/each}
+            </div>
+          </div>
+          
+        {/if}
       </div>
 
     <!-- 
@@ -705,6 +977,8 @@
     width: 100%;
     position: relative;
     padding: none;
+    /* override */
+    padding-bottom: 7px;
   }
 
   /* top-box btn view select */
@@ -780,13 +1054,16 @@
     object-fit: contain;
     border-radius: 50%;
     border: 1px solid #E6E6E6;
-    /* dynamic */
     margin-right: 16px;
   } div.lineup-box div.player-row p.lineup-player-name {
-    /* dynamic */
     font-size: 14px;
+  } div.lineup-box:last-child div.player-row img.lineup-img {
+    margin-left: 16px;
+  } div.lineup-box:last-child div.player-row p.lineup-player-name{
+    text-align: end;
   }
-  
+
+
   /* ====================
     RESPONSIVNESS [TABLET] [DESKTOP]
   ==================== */
@@ -805,7 +1082,61 @@
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
-    /* EMPTY */
+
+    /* lineup-vector box */
+    div#lineup-vector-box {
+      padding: 20px 20px 8px 20px;
+    } div#lineup-vector-box div#lineup-vector {
+      margin: 20px 20px 8px 20px;
+    } div#lineup-vector-box div#overlay-player-pos-box {
+      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    } 
+
+    /* main team select */
+    div#team-info-box div.team-main-select {
+      padding: 15px 0;
+      border-bottom: 1px solid #E6E6E6;
+      width: 100%;
+    } div#team-info-box div.team-main-select:first-child {
+      margin: 0 0 8px 20px;
+    } div#team-info-box div.team-main-select:last-child {
+      margin: 0 20px 8px 0;
+    } div#team-info-box div.team-main-select:first-child img.main-team-img {
+      margin-right: 16px;
+    } div#team-info-box div.team-main-select:last-child img.main-team-img {
+      margin-left: 16px;
+    } div#team-info-box div.team-main-select:first-child p.team-name {
+      margin-right: 16px;
+    } div#team-info-box div.team-main-select:last-child p.team-name {
+      margin-left: 16px;
+    } div#team-info-box div.team-main-select p#box-goals {
+      box-sizing: border-box;
+      text-align: center;
+      border-radius: 30px;
+      padding: 1.5px 8px;
+      max-height: 24px;
+      width: auto;
+      color: white;
+    } div#team-info-box div.team-main-select p#box-goals.rating_golden {
+      background-color: #ffb904 !important;
+    } div#team-info-box div.team-main-select p#box-goals.rating_silver {
+      background-color: #8C8C8C !important;
+    } div#team-info-box div.team-main-select p#box-goals.rating_bronze {
+      background-color: #dbb884 !important;
+    }
+
+    /* main team lineup */
+    div#team-lineup-box div.lineup-box {
+      width: 100%;
+    } 
+  
+    /* lineup divider */
+    div#divider {
+      background-color: #E6E6E6;
+      width: 1px;
+      height: 653px;
+    }
+  
   }
 
   /* 
