@@ -22,9 +22,20 @@
     REDIS_CACHE_SINGLE_lineups_translation 
   } from "$lib/models/fixtures/lineups/types";
 
+	import type { 
+    FIREBASE_livescores_now 
+  } from "$lib/models/firebase";
+
+	import type {
+    REDIS_CACHE_SINGLE_fixtures_page_info_response 
+  } from "$lib/models/_main_/pages_and_seo/types";
+
+	import type { EventsDatum } from "$lib/models/hasura";
+
 	// import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 	import LineupsLoader from "./Lineups_Loader.svelte";
 	import LineupVectorMobile from "./Lineup_Vector_Mobile.svelte";
+	import LineupPlayerRow from "./Lineup_Player_Row.svelte";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
@@ -33,7 +44,7 @@
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // export let FIXTURE_INFO:       REDIS_CACHE_SINGLE_fixtures_page_info_response;
+  // export let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response;
   export let FIXTURE_LINEUPS:              REDIS_CACHE_SINGLE_lineups_data
   export let FIXTURE_LINEUPS_TRANSLATION:  REDIS_CACHE_SINGLE_lineups_translation
 
@@ -154,6 +165,174 @@
   afterNavigate(async () => {
     widget_init()
   })
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // [ADD-ON] FIREBASE
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let real_time_unsubscribe: Unsubscribe[] = []
+  const live_fixtures_map = new Map<number, FIREBASE_livescores_now>();
+
+  async function check_live_fixtures (
+    data: [string, FIREBASE_livescores_now][]
+  ) {
+    // [🐞]
+    const logs_name = dev_console_tag + " check_live_fixtures";
+    const logs: string[] = []
+    logs.push(`checking livescores_now`)
+
+    // [ℹ] generate FIREBASE fixtures-map
+    for (const live_fixture of data) {
+      const fixture_id = parseInt(live_fixture[0].toString())
+      const fixture_data = live_fixture[1]
+      live_fixtures_map.set(fixture_id, fixture_data)
+    }
+
+    // [ℹ] validate against [this] fixture_id
+    const fixture_id = FIXTURE_LINEUPS?.id;
+
+    if (live_fixtures_map.has(fixture_id)) {
+      // [🐞]
+      logs.push(`fixture ${fixture_id} livescore_now exists!`) 
+      // [ℹ] update fixture data;
+      FIXTURE_LINEUPS.status = live_fixtures_map.get(fixture_id)?.time?.status
+      FIXTURE_LINEUPS.events = live_fixtures_map.get(fixture_id)?.events?.data
+      // [ℹ] update fixture lineup
+      // [ℹ] with appropiate events HOME && AWAY
+      for (const player of FIXTURE_LINEUPS.home.lineup) {
+        for (const live_event of FIXTURE_LINEUPS.events) {
+          if (player.player_id == live_event.player_id) {
+            if (player.player_id == live_event.player_id) {
+              if (live_event.injuried) {
+                player.events.injured = true;
+              }
+              if (live_event.type == 'yellowcard') {
+                player.events.yeallow_card =
+                  player.events.yeallow_card == null
+                    ? 1
+                    : player.events.yeallow_card + 1
+                ;
+              }
+              if (live_event.type == 'redcard') {
+                player.events.yeallow_card = 1;
+              }
+              if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+                player.events.goals =
+                  player.events.goals == null
+                    ? 1
+                    : player.events.goals + 1
+                ;
+              }
+            }
+          }
+        }
+      }
+      for (const player of FIXTURE_LINEUPS.away.lineup) {
+        for (const live_event of FIXTURE_LINEUPS.events) {
+          if (player.player_id == live_event.player_id) {
+              if (live_event.injuried) {
+                player.events.injured = true;
+              }
+              if (live_event.type == 'yellowcard') {
+                player.events.yeallow_card =
+                  player.events.yeallow_card == null
+                    ? 1
+                    : player.events.yeallow_card + 1
+                ;
+              }
+              if (live_event.type == 'redcard') {
+                player.events.yeallow_card = 1;
+              }
+              if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+                player.events.goals =
+                  player.events.goals == null
+                    ? 1
+                    : player.events.goals + 1
+                ;
+              }
+            }
+        }
+      }
+    }
+    FIXTURE_LINEUPS = FIXTURE_LINEUPS
+    // TODO: lazy_load_data_check = true
+
+    // [🐞]
+    if (dev) log_info_group(logs_name, logs)
+  }
+
+	async function listen_real_time_livescores_now (
+  ): Promise < void > {
+
+    const fixture_status = FIXTURE_LINEUPS?.status;
+    if (fixture_status == 'FT') {
+      return
+    }
+
+    // [🐞]
+    if (dev) console.log("%cTriggered livescore_now listen", 'background: green; color: #fffff');
+
+    const fixtureRef = ref (
+      db_real,
+      'livescores_now/'
+    );
+
+    const listen_livescore_event_ref = onValue(fixtureRef, (snapshot) => {
+      // [ℹ] break-down-values
+      if (snapshot.val() != null) {
+        const data: [string, FIREBASE_livescores_now][] = Object.entries(snapshot.val())
+        check_live_fixtures(data);
+      }
+    });
+
+    real_time_unsubscribe.push(listen_livescore_event_ref);
+  }
+
+  // [ℹ] one-off real-time "read" init.
+  onMount(async() => {
+    const firebase_real_time = await get_livescores_now()
+    if (firebase_real_time != null) {
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      check_live_fixtures(data)
+    }
+  })
+  
+  // [ℹ] real-time listen-events init.
+  onMount(async() => {
+    listen_real_time_livescores_now();
+    document.addEventListener("visibilitychange", function() {
+      if (!document.hidden) {
+        listen_real_time_livescores_now()
+      }
+    });
+  })
+
+  // [! CRITICAL !]
+  onDestroy(async() => {
+    // [🐞]
+    if (dev) console.groupCollapsed("%cclosing firebase connections [DEV]", 'background: red; color: #fffff');
+    // [ℹ] close LISTEN EVENT connection
+    for (const iterator of real_time_unsubscribe) {
+      // [🐞]
+      if (dev) console.log("closing connection")
+      iterator();
+    }
+    // [🐞]
+    if (dev) console.groupEnd();
+  })
+
+  async function kickstart_one_off_data (
+  ) {
+    const firebase_real_time = await get_livescores_now()
+    if (firebase_real_time != null) {
+      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+      check_live_fixtures(data)
+    }
+  }
+
+  $: if (FIXTURE_LINEUPS != undefined) {
+    kickstart_one_off_data()
+  }
 
 </script>
 
@@ -453,40 +632,8 @@
           </div>
           <!-- 
           [ℹ] rest of lineup-team -->
-          {#each FIXTURE_LINEUPS[selected_view].lineup as team}
-            <div
-              class="
-                row-space-start
-                player-row
-              ">
-              <!-- 
-              [ℹ] player avatar -->
-              <img 
-                src={team?.player_avatar} 
-                alt=""
-                width=40px
-                height=40px
-                class="lineup-img"
-              />
-              <!-- 
-              [ℹ] player name -->
-              <p
-                class="
-                  w-500
-                  color-black
-                  lineup-player-name
-                ">
-                {team?.player_name}
-                <br/>
-                <span
-                  class="
-                    w-400
-                    color-grey
-                  ">
-                  {FIXTURE_LINEUPS_TRANSLATION[team?.position.toLowerCase()]}
-                </span>
-              </p>
-            </div>
+          {#each FIXTURE_LINEUPS[selected_view].lineup as player}
+            <LineupPlayerRow PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
           {/each}
         </div>
 
@@ -628,8 +775,6 @@
   /* lineup-box */
   div.lineup-box div.player-row {
     padding: 8px 20px;
-  } div.lineup-box div.player-row:last-child {
-    padding: 8px 20px 20px 20px;
   } div.lineup-box div.player-row img.lineup-img {
     object-fit: contain;
     border-radius: 50%;
@@ -640,7 +785,7 @@
     /* dynamic */
     font-size: 14px;
   }
-
+  
   /* ====================
     RESPONSIVNESS [TABLET] [DESKTOP]
   ==================== */
@@ -659,7 +804,7 @@
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
-    
+    /* EMPTY */
   }
 
   /* 
@@ -675,7 +820,7 @@
   /* 
   DESKTOP [L] RESPONSIVNESS (&+) */
   @media only screen and (min-width: 1160px) {
-
+    /* EMPTY */
   }
 
   /* ====================

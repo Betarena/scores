@@ -1093,6 +1093,7 @@ export interface BETARENA_HASURA_historic_fixtures {
   Substitution = "substitution",
   Var = "var",
   Yellowcard = "yellowcard",
+  Redcard = "redcard"
 } export interface Formations {
   localteam_formation?:   null;
   visitorteam_formation?: null;

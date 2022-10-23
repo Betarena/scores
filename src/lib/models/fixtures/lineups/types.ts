@@ -94,10 +94,6 @@ export interface Fixture_Lineups {
 
   // NOTE: Starting Lineups After the Match:
   sub_icon?: string          // Sub icon (minute of the sub) : historic_fixtures/events
-  injured_icon?: string      // Injured icon : historic_fixtures/events/injured
-  yellow_card_icon?: string  // Yellow card icon (number indication when more than one) : historic_fixtures/lineup/stats/cards
-  red_card_icon?: string     // Red card icon : historic_fixtures/lineup/stats/cards
-  goal_icon?: string         // Goal icon (number indication when more than one) : historic_fixtures/lineup/stats/goals
 
 } export interface Team_Lineup {
   team_name?:     string
@@ -109,8 +105,22 @@ export interface Fixture_Lineups {
   formation?:     string
   substitutions?: Sub_Player[]
 } export interface Fixture_Player extends BenchDatum {
-  player_avatar?:  string   // scores_football_players/data/image_path
+  player_avatar?:  string                 // [hasura] scores_football_players/data/image_path
+  rating?:         string                 // [hasura | firebase] player rating - post-match
+  events?:         Fixture_Player_Events  // [custom-inject] individual player-associated events
+  // [default included]
+  // player_id?:      number
+  // player_name?:    string
+  // number?:         number 
+  // position?:       string
+  // formation_position?: string,
+} export interface Fixture_Player_Events {
+  injured?:      boolean | null
+  yeallow_card?: number | null
+  red_card?:     number | null
+  goals?:        number | null
 } export interface Sub_Player extends HistFixtures_Substitue {
-  player_avatar_in?:    string   // scores_football_players/data/image_path
-  player_avatar_out?:   string   // scores_football_players/data/image_path
+  player_avatar_in?:    string    // scores_football_players/data/image_path
+  player_avatar_out?:   string    // scores_football_players/data/image_path
+  rating?:              string    // [hasura | firebase] player rating - post-match [?]
 }

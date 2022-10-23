@@ -232,14 +232,49 @@ async function main () {
         : value?.lineup_j
           .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
           .map(p => ({
+            player_id: p.player_id,
             player_name: p.player_name,
             number: p.number,
             position: p.position,
             formation_position: p.formation_position,
-            player_avatar: players_map.get(p.player_id)?.image_path_j || null
+            player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+            rating: p?.stats?.rating || null,
+            events: undefined
           }) /* extract target players */
         )
     ;
+    for (const h_player of home_team_lineup) {
+      h_player.events = {
+        injured: false,
+        yeallow_card: null,
+        red_card: null,
+        goals: null
+      }
+      for (const event of value.events_j) {
+        if (h_player.player_id == event.player_id) {
+          if (event.injuried) {
+            h_player.events.injured = true;
+          }
+          if (event.type == 'yellowcard') {
+            h_player.events.yeallow_card =
+              h_player.events.yeallow_card == null
+                ? 1
+                : h_player.events.yeallow_card + 1
+            ;
+          }
+          if (event.type == 'redcard') {
+            h_player.events.red_card = 1;
+          }
+          if (event.type == 'goal' || event.type == 'own-goal') {
+            h_player.events.goals =
+              h_player.events.goals == null
+                ? 1
+                : h_player.events.goals + 1
+            ;
+          }
+        }
+      }
+    }
     const home_team_subs: Sub_Player[] = 
       value?.substitutions_j == null || value?.substitutions_j.length == 0
         ? []
@@ -268,14 +303,49 @@ async function main () {
         : value?.lineup_j
           .filter(player => player.team_id == away_team_id)    /* filter target AWAY_TEAM_ID */
           .map(p => ({
+            player_id: p.player_id,
             player_name: p.player_name,
             number: p.number,
             position: p.position,
             formation_position: p.formation_position,
-            player_avatar: players_map.get(p.player_id)?.image_path_j || null
+            player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+            rating: p?.stats?.rating || null,
+            events: undefined
           }) /* extract target players */
         )
     ;
+    for (const a_player of away_team_lineup) {
+      a_player.events = {
+        injured: false,
+        yeallow_card: null,
+        red_card: null,
+        goals: null
+      }
+      for (const event of value.events_j) {
+        if (a_player.player_id == event.player_id) {
+          if (event.injuried) {
+            a_player.events.injured = true;
+          }
+          if (event.type == 'yellowcard') {
+            a_player.events.yeallow_card =
+              a_player.events.yeallow_card == null
+                ? 1
+                : a_player.events.yeallow_card + 1
+            ;
+          }
+          if (event.type == 'redcard') {
+            a_player.events.red_card = 1;
+          }
+          if (event.type == 'goal' || event.type == 'own-goal') {
+            a_player.events.goals =
+              a_player.events.goals == null
+                ? 1
+                : a_player.events.goals + 1
+            ;
+          }
+        }
+      }
+    }
     const away_team_subs: Sub_Player[] = 
       value?.substitutions_j == null || value?.substitutions_j.length == 0
         ? []
