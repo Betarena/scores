@@ -36,6 +36,7 @@
 	import LineupsLoader from "./Lineups_Loader.svelte";
 	import LineupVectorMobile from "./Lineup_Vector_Mobile.svelte";
 	import LineupPlayerRow from "./Lineup_Player_Row.svelte";
+	import LineupPlayerVisual from "./Lineup_Player_Visual.svelte";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
@@ -196,10 +197,18 @@
       logs.push(`fixture ${fixture_id} livescore_now exists!`) 
       // [ℹ] update fixture data;
       FIXTURE_LINEUPS.status = live_fixtures_map.get(fixture_id)?.time?.status
+      // FIXME: make compatible TYPES for hasura/events && firebase/events
       FIXTURE_LINEUPS.events = live_fixtures_map.get(fixture_id)?.events?.data
-      // [ℹ] update fixture lineup
+      // [ℹ] update fixture-target lineup
       // [ℹ] with appropiate events HOME && AWAY
       for (const player of FIXTURE_LINEUPS.home.lineup) {
+        // [ℹ] reset player events
+        player.events = {
+          injured: false,
+          yeallow_card: null,
+          red_card: null,
+          goals: null
+        }
         for (const live_event of FIXTURE_LINEUPS.events) {
           if (player.player_id == live_event.player_id) {
             if (player.player_id == live_event.player_id) {
@@ -228,6 +237,13 @@
         }
       }
       for (const player of FIXTURE_LINEUPS.away.lineup) {
+        // [ℹ] reset player events
+        player.events = {
+          injured: false,
+          yeallow_card: null,
+          red_card: null,
+          goals: null
+        }
         for (const live_event of FIXTURE_LINEUPS.events) {
           if (player.player_id == live_event.player_id) {
               if (live_event.injuried) {
@@ -253,8 +269,11 @@
             }
         }
       }
+
+      // [ℹ] reactiveity on-set main
+      FIXTURE_LINEUPS = FIXTURE_LINEUPS
     }
-    FIXTURE_LINEUPS = FIXTURE_LINEUPS
+
     // TODO: lazy_load_data_check = true
 
     // [🐞]
@@ -519,36 +538,9 @@
             {#each formation_pos_arr as pos}
               <div
                 id="overlay-column">
-                {#each FIXTURE_LINEUPS[selected_view].lineup as team}
-                  {#if pos == team?.position}
-                    <div
-                      class="
-                        column-space-center
-                      ">
-                      <!-- 
-                      [ℹ] player avatar -->
-                      <img 
-                        src={team?.player_avatar} 
-                        alt=""
-                        width=32px
-                        height=32px
-                        class="lineup-img"
-                      />
-                      <!-- 
-                      [ℹ] player name -->
-                      <p
-                        class="
-                          w-500
-                          color-black
-                          lineup-player-name
-                        ">
-                        {team?.player_name}
-                        <br/>
-                        <span>
-                          {team?.number}
-                        </span>
-                      </p>
-                    </div>
+                {#each FIXTURE_LINEUPS[selected_view].lineup as player}
+                  {#if pos == player?.position}
+                    <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
                   {/if}
                 {/each}
               </div>
@@ -560,35 +552,50 @@
         [ℹ] selected lineup - home / away (logo) -->
         <div
           class="
-            row-space-start
+            row-space-out
             team-main-select
           ">
-          <!-- 
-          [ℹ] team icon -->
-          <img 
-            src={FIXTURE_LINEUPS[selected_view].team_logo} 
-            alt=""
-            width=40px
-            height=40px
-            class="main-team-img"
-          />
-          <!-- 
-          [ℹ] team name -->
-          <p
+          <div
             class="
-              w-500
-              color-black
+              row-space-start
             ">
-            {FIXTURE_LINEUPS[selected_view].team_name}
-            <br/>
-            <span
+            <!-- 
+            [ℹ] team icon -->
+            <img 
+              src={FIXTURE_LINEUPS[selected_view]?.team_logo} 
+              alt=""
+              width=40px
+              height=40px
+              class="main-team-img"
+            />
+            <!-- 
+            [ℹ] team name -->
+            <p
               class="
-                w-400
-                color-grey
+                w-500
+                color-black
               ">
-              {FIXTURE_LINEUPS[selected_view].formation}
-            </span>
-          </p>
+              {FIXTURE_LINEUPS[selected_view]?.team_name}
+              <br/>
+              <span
+                class="
+                  w-400
+                  color-grey
+                ">
+                {FIXTURE_LINEUPS[selected_view]?.formation}
+              </span>
+            </p>
+          </div>
+          <!-- 
+          [ℹ] team-rating -->
+          {#if FIXTURE_LINEUPS?.status == "FT"}
+            <div
+              class="row-space-end">
+              <p>
+                {FIXTURE_LINEUPS[selected_view]?.team_rating}
+              </p>
+            </div>
+          {/if}
         </div>
 
         <!-- 
@@ -711,6 +718,8 @@
     width: 100%;
     padding: 10px;
     max-height: 40px;
+  } div#lineup-top-view-box-select button.team-select-btn p {
+    font-size: 14px;
   } div#lineup-top-view-box-select button.team-select-btn:hover:active,
     div#lineup-top-view-box-select button.team-select-btn.activeOpt {
     border: 1px solid #F5620F !important;
@@ -748,15 +757,6 @@
   } div#lineup-vector-box div#overlay-player-pos-box div#overlay-column {
     display: grid;
     gap: 8px;
-  } div#lineup-vector-box div#overlay-player-pos-box div#overlay-column img.lineup-img {
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.12);
-    object-fit: contain;
-    border-radius: 50%;
-  } div#lineup-vector-box div#overlay-player-pos-box div#overlay-column p.lineup-player-name,
-    div#lineup-vector-box div#overlay-player-pos-box div#overlay-column p.lineup-player-name span {
-    text-align: center;
-    /* dynamic */
-    font-size: 10px;
   }
 
   /* main team select */
@@ -764,6 +764,7 @@
     padding: 15px 0;
     margin: 0 20px 8px 20px;
     border-bottom: 1px solid #E6E6E6;
+    width: auto;
   } div.team-main-select img.main-team-img {
     /* dynamic */
     margin-right: 16px;
@@ -772,7 +773,7 @@
     font-size: 14px;
   }
 
-  /* lineup-box */
+  /* lineup-box - coach-only */
   div.lineup-box div.player-row {
     padding: 8px 20px;
   } div.lineup-box div.player-row img.lineup-img {
