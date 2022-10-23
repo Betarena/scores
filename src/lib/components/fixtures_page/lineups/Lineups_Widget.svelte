@@ -389,6 +389,13 @@
     no_widget_data && 
     loaded}
 
+    <h2
+      class="s-20 m-b-10 w-500 color-black-2"
+      style="margin-top: 0px;"
+      class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+      {FIXTURE_LINEUPS_TRANSLATION?.title}
+    </h2>
+
     <!-- [ℹ] no-widget-data-avaiable-placeholder container 
     -->
     <div
