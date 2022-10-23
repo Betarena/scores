@@ -99,6 +99,7 @@ export interface Fixture_Lineups {
   team_name?:     string
   team_logo?:     string
   team_short_code?:  string
+  team_rating?:   number | null
   coach_name?:    string
   coach_avatar?:  string
   lineup?:        Fixture_Player[] // historic_fixtures/lineup*
