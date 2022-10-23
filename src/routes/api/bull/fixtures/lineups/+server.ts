@@ -215,12 +215,10 @@ async function main () {
 
   for (const [key, value] of historic_fixtures_map.entries()) {
 
-    // const league_id = value?.league_id;
-    // const fixture_id = value?.id;
+    const fixture_id = value?.id;
     const home_team_id = value?.localteam_id_j;
     const away_team_id = value?.visitorteam_id_j;
-
-    // const fixture_time = value?.time;
+    const status = value?.status_j;
 
     // [ℹ] home-team
     const home_team_name = value?.home_team_name || null;
@@ -318,6 +316,8 @@ async function main () {
 
     // [ℹ] generate [final] fixture object
     const fixture_object: Fixture_Lineups = {
+      id: fixture_id,
+      status: status,
       home: home_team_obj,
       away: away_team_obj,
       events: value?.events_j,
