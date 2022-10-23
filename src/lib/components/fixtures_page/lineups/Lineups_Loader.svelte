@@ -14,6 +14,10 @@
 	import MobileLoaderPitchVector from "./loaders/mobile/Loader_Pitch_Vector.svelte";
 	import MobileLoaderTeamRow from "./loaders/mobile/Loader_Team_Row.svelte";
 
+	import TabletLoaderPitchVector from "./loaders/tablet/Loader_Pitch_Vector.svelte";
+	import TabletLoaderTeamRowLeft from "./loaders/tablet/Loader_Team_Row_Left.svelte";
+	import TabletLoaderTeamRowRight from "./loaders/tablet/Loader_Team_Row_Right.svelte";
+
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -86,9 +90,59 @@
     
   <!-- 
   [ℹ] [DESKTOP] [TABLET]
-  TODO:
   -->
   {:else}
+
+    <TabletLoaderPitchVector />
+
+    <div
+      class="row-space-out">
+
+      <!-- 
+      [ℹ] left box -->
+      <div
+        id="loader-player-box">
+        <div
+          class="
+            loader-player-row
+            row-space-start
+          ">
+          <TabletLoaderTeamRowLeft />
+        </div>
+        {#each {length: 3} as _,i}
+          <div
+            class="
+              loader-player-row
+              row-space-start
+            ">
+            <TabletLoaderTeamRowLeft />
+          </div>
+        {/each}
+      </div>
+
+      <!-- 
+      [ℹ] right box -->
+      <div
+        id="loader-player-box">
+        <div
+          class="
+            loader-player-row
+            row-space-end
+          ">
+          <TabletLoaderTeamRowRight />
+        </div>
+        {#each {length: 3} as _,i}
+          <div
+            class="
+              loader-player-row
+              row-space-end
+            ">
+            <TabletLoaderTeamRowRight />
+          </div>
+        {/each}
+      </div>
+
+    </div>
 
   {/if}
   
@@ -135,7 +189,11 @@
   /* 
   DESKTOP RESPONSIVNESS (&+) */
   @media only screen and (min-width: 1001px)  {
-    /* EMPTY */
+
+    /* plyaer row box */
+    div#fixture-lineups-loader div#loader-player-box {
+      width: 100%;
+    }
   }
 
   /* ====================
