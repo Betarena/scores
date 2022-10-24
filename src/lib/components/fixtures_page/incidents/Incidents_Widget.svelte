@@ -592,7 +592,7 @@
 
   /* team info box */
   div#team-info-box {
-    padding: 20px 20px 15px 20px;
+    padding: 20px 20px 0 20px;
   } div#team-info-box p {
     font-size: 16px;
     margin-left: 12px;
