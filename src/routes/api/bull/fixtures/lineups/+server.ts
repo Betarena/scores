@@ -248,7 +248,8 @@ async function main () {
         injured: false,
         yeallow_card: null,
         red_card: null,
-        goals: null
+        goals: null,
+        substitution: null
       }
       for (const event of value.events_j) {
         if (h_player.player_id == event.player_id) {
@@ -271,6 +272,11 @@ async function main () {
                 ? 1
                 : h_player.events.goals + 1
             ;
+          }
+        }
+        if (h_player.player_id == event.related_player_id) {
+          if (event.type == 'substitution') {
+            h_player.events.substitution = event;
           }
         }
       }
@@ -319,7 +325,8 @@ async function main () {
         injured: false,
         yeallow_card: null,
         red_card: null,
-        goals: null
+        goals: null,
+        substitution: null
       }
       for (const event of value.events_j) {
         if (a_player.player_id == event.player_id) {
@@ -342,6 +349,11 @@ async function main () {
                 ? 1
                 : a_player.events.goals + 1
             ;
+          }
+        }
+        if (a_player.player_id == event.related_player_id) {
+          if (event.type == 'substitution') {
+            a_player.events.substitution = event;
           }
         }
       }

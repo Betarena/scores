@@ -17,6 +17,7 @@
   import yellow_card from './assets/yellow-card.svg';
   import red_card from './assets/red-card.svg';
   import football from './assets/football.svg';
+  import substitution from './assets/corner-up-right.svg';
   
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
@@ -143,14 +144,34 @@
                 {/if}
               {/if}
             </div>
-            <p
-              class="
-                w-400
-                color-grey
-                lineup-player-name
-              ">
-              {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
-            </p>
+            {#if PLAYER_INFO?.events?.substitution}
+              <div
+                class="
+                  row-space-start
+                ">
+                <img 
+                  src={substitution}
+                  alt=""
+                />
+                <p
+                  class="
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  ">
+                  Out: {PLAYER_INFO?.events?.substitution?.player_name}
+                </p>
+              </div>
+            {:else}
+              <p
+                class="
+                  w-400
+                  color-grey
+                  lineup-player-name
+                ">
+                  {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
+              </p>
+            {/if}
           </div>
         </div>
 
@@ -173,6 +194,7 @@
             </p>
           {/if}
         </div>
+        
       {:else}
 
         <!-- 
@@ -209,7 +231,7 @@
           <div>
             <div
               class="
-                row-space-start
+                row-space-end
                 player-info-row
               ">
               <!--
@@ -267,14 +289,34 @@
             </div>
             <!-- 
             [ℹ] player positon -->
-            <p
-              class="
-                w-400
-                color-grey
-                lineup-player-name
-              ">
-              {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
-            </p>
+            {#if PLAYER_INFO?.events?.substitution}
+              <div
+                class="
+                  row-space-end
+                ">
+                <img 
+                  src={substitution}
+                  alt=""
+                />
+                <p
+                  class="
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  ">
+                  Out: {PLAYER_INFO?.events?.substitution?.player_name}
+                </p>
+              </div>
+            {:else}
+              <p
+                class="
+                  w-400
+                  color-grey
+                  lineup-player-name
+                ">
+                  {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
+              </p>
+            {/if}
           </div>
           <!-- 
           [ℹ] player avatar -->

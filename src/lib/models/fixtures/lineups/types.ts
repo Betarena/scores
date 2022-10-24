@@ -116,10 +116,11 @@ export interface Fixture_Lineups {
   // position?:       string
   // formation_position?: string,
 } export interface Fixture_Player_Events {
-  injured?:      boolean | null
-  yeallow_card?: number | null
-  red_card?:     number | null
-  goals?:        number | null
+  injured?:       boolean | null
+  yeallow_card?:  number | null
+  red_card?:      number | null
+  goals?:         number | null
+  substitution?:  EventsDatum
 } export interface Sub_Player extends HistFixtures_Substitue {
   player_avatar_in?:    string    // scores_football_players/data/image_path
   player_avatar_out?:   string    // scores_football_players/data/image_path

@@ -108,7 +108,8 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
 			injured: false,
 			yeallow_card: null,
 			red_card: null,
-			goals: null
+			goals: null,
+      substitution: null
 		};
 		for (const event of fixture_data.events_j) {
 			if (h_player.player_id == event.player_id) {
@@ -126,6 +127,11 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
 					h_player.events.goals = h_player.events.goals == null ? 1 : h_player.events.goals + 1;
 				}
 			}
+      if (h_player.player_id == event.related_player_id) {
+        if (event.type == 'substitution') {
+          h_player.events.substitution = event;
+        }
+      }
 		}
 	}
 	const home_team_subs: Sub_Player[] =
@@ -171,7 +177,8 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
 			injured: false,
 			yeallow_card: null,
 			red_card: null,
-			goals: null
+			goals: null,
+      substitution: null
 		};
 		for (const event of fixture_data.events_j) {
 			if (a_player.player_id == event.player_id) {
@@ -188,7 +195,13 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
 				if (event.type == 'goal' || event.type == 'own-goal') {
 					a_player.events.goals = a_player.events.goals == null ? 1 : a_player.events.goals + 1;
 				}
+        
 			}
+      if (a_player.player_id == event.related_player_id) {
+        if (event.type == 'substitution') {
+          a_player.events.substitution = event;
+        }
+      }
 		}
 	}
 	const away_team_subs: Sub_Player[] =
