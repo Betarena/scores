@@ -598,13 +598,17 @@
             </div>
             <!-- 
             [ℹ] team-rating -->
-            {#if FIXTURE_LINEUPS?.status == "FT"}
-              <div
-                class="row-space-end">
-                <p>
-                  {FIXTURE_LINEUPS[selected_view]?.team_rating}
-                </p>
-              </div>
+            {#if 
+              FIXTURE_LINEUPS?.status == "FT"
+              && FIXTURE_LINEUPS?.home?.team_rating != undefined}
+              <p 
+                id='box-goals'
+                class="medium w-500"
+                class:rating_golden={FIXTURE_LINEUPS?.home?.team_rating >= 9}
+                class:rating_silver={FIXTURE_LINEUPS?.home?.team_rating >= 7}
+                class:rating_bronze={FIXTURE_LINEUPS?.home?.team_rating >= 0}>
+                {FIXTURE_LINEUPS?.home?.team_rating}
+              </p>
             {/if}
           </div>
 
@@ -1052,6 +1056,20 @@
   } div.team-main-select p {
     /* dynamic */
     font-size: 14px;
+  } div.team-main-select p#box-goals {
+    box-sizing: border-box;
+    text-align: center;
+    border-radius: 30px;
+    padding: 1.5px 8px;
+    max-height: 24px;
+    width: auto;
+    color: white;
+  } div.team-main-select p#box-goals.rating_golden {
+    background-color: #ffb904 !important;
+  } div.team-main-select p#box-goals.rating_silver {
+    background-color: #8C8C8C !important;
+  } div.team-main-select p#box-goals.rating_bronze {
+    background-color: #dbb884 !important;
   }
 
   /* lineup-box - coach-only */
@@ -1065,9 +1083,9 @@
   } div.lineup-box div.player-row p.lineup-player-name {
     font-size: 14px;
   } div.lineup-box:last-child div.player-row img.lineup-img {
-    margin-left: 16px;
+    margin-right: 16px;
   } div.lineup-box:last-child div.player-row p.lineup-player-name{
-    text-align: end;
+    text-align: start;
   }
 
 
