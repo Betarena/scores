@@ -58,6 +58,12 @@
   let no_widget_data:    any = false;               // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
   let selected_view:     'home' | 'away' = 'home';  // [ℹ] change "mobile-only" view on TEAM-LINEUPS
 
+  const formation_pos_arr_main = [
+    'G',
+    'D',
+    'M',
+    'A'
+  ]
   const formation_pos_arr = [
     'G',
     'D',
@@ -545,7 +551,7 @@
             [ℹ] lineup - absolute box -->
             <div
               id="overlay-player-pos-box">
-              {#each formation_pos_arr as pos}
+              {#each formation_pos_arr_main as pos}
                 <div
                   id="overlay-column">
                   {#each FIXTURE_LINEUPS[selected_view].lineup as player}
@@ -679,7 +685,7 @@
               id="overlay-player-pos-box">
               <!-- 
               [ℹ] home -->
-              {#each formation_pos_arr as pos}
+              {#each formation_pos_arr_main as pos}
                 <div
                   id="overlay-column">
                   {#each FIXTURE_LINEUPS.home.lineup as player}
