@@ -213,7 +213,7 @@
             color-black
             result-text
           ">
-          {INCIDENT_INFO?.related_player_name}
+          {INCIDENT_INFO?.player_name}
         </p>
         <!--
         [ℹ] out player -->
@@ -222,7 +222,7 @@
             w-400
             color-grey
           ">
-          Out: {INCIDENT_INFO?.player_name}
+          Out: {INCIDENT_INFO?.related_player_name}
         </p>
       {/if}
 
@@ -324,7 +324,7 @@
             w-400
             color-grey
           ">
-          Out: {INCIDENT_INFO?.player_name}
+          Out: {INCIDENT_INFO?.related_player_name}
         </p>
         <!--
         [ℹ] in player -->
@@ -334,7 +334,7 @@
             color-black
             result-text
           ">
-          {INCIDENT_INFO?.related_player_name}
+          {INCIDENT_INFO?.player_name}
         </p>
       {/if}
 
