@@ -20,6 +20,7 @@
   import inj_substitution from './assets/inj-substitution.svg';
   import yellow_card from './assets/yellow-card.svg';
   import red_card from './assets/red-card.svg';
+  import yellowred_card from './assets/yellowred.svg';
   import penalty from './assets/penalty.svg';
   import penalty_miss from './assets/miss-penalty.svg';
   import var_red from './assets/var-red.svg';
@@ -59,6 +60,9 @@
     }
     if (INCIDENT_INFO?.type == "redcard") {
       icon = red_card
+    }
+    if (INCIDENT_INFO?.type == "yellowred") {
+      icon = yellowred_card
     }
     if (INCIDENT_INFO?.type == "var") {
       icon = var_red
@@ -188,7 +192,7 @@
         </p>
       {/if}
 
-      {#if INCIDENT_INFO?.type == 'yellowcard' || INCIDENT_INFO?.type == 'redcard' || INCIDENT_INFO?.type == 'missed_penalty'}
+      {#if INCIDENT_INFO?.type == 'yellowcard' || INCIDENT_INFO?.type == 'redcard' || INCIDENT_INFO?.type == 'yellowred' || INCIDENT_INFO?.type == 'missed_penalty'}
         <!--
         [ℹ] yewllow / red card-player -->
         <p
@@ -300,7 +304,7 @@
         </p>
       {/if}
 
-      {#if INCIDENT_INFO?.type == 'yellowcard' || INCIDENT_INFO?.type == 'redcard' || INCIDENT_INFO?.type == 'missed_penalty'}
+      {#if INCIDENT_INFO?.type == 'yellowcard' || INCIDENT_INFO?.type == 'redcard' || INCIDENT_INFO?.type == 'yellowred' || INCIDENT_INFO?.type == 'missed_penalty'}
         <!--
         [ℹ] yewllow / red card-player -->
         <p
