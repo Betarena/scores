@@ -1,32 +1,30 @@
 import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { 
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_0,
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_1,
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_4
-} from '$lib/graphql/fixtures/scoreboard/query';
+
+import { GET_HREFLANG_DATA } from '$lib/graphql/query';
+import {
+   REDIS_CACHE_FIXTURE_INCIDENTS_DATA_0, 
+   REDIS_CACHE_FIXTURE_INCIDENTS_DATA_1,
+   REDIS_CACHE_FIXTURE_INCIDENTS_DATA_3 
+  } from '$lib/graphql/fixtures/incidents/query';
+
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
 import { error, json } from '@sveltejs/kit';
 
 import type { 
-  BETARENA_HASURA_historic_fixtures, BETARENA_HASURA_scores_tournaments
+  BETARENA_HASURA_historic_fixtures, EventsDatum
 } from '$lib/models/hasura';
 import type { 
-  BETARENA_HASURA_scoreboard_query, 
+  BETARENA_HASURA_incidents_query, 
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures, 
-  BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues, 
-  REDIS_CACHE_SINGLE_scoreboard_translation
-} from '$lib/models/fixtures/scoreboard/types';
-import type { 
-  Fixture_Scoreboard_Info, 
-  Fixture_Scoreboard_Team, 
-  REDIS_CACHE_SINGLE_scoreboard_data 
-} from '$lib/models/fixtures/scoreboard/types';
-import { GET_HREFLANG_DATA } from '$lib/graphql/query';
+  Fixture_Incidents, 
+  Incident_Team, 
+  REDIS_CACHE_SINGLE_incidents_data, 
+  REDIS_CACHE_SINGLE_incidents_translation 
+} from '$lib/models/fixtures/incidents/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -110,7 +108,7 @@ export async function POST(): Promise < unknown > {
 
 async function cache_data (
   league_id: number, 
-  json_cache: REDIS_CACHE_SINGLE_scoreboard_data
+  json_cache: REDIS_CACHE_SINGLE_incidents_data
 ) {
   try {
     await redis.hset(cache_data_addr, league_id, JSON.stringify(json_cache));
@@ -122,7 +120,7 @@ async function cache_data (
 
 async function cache_translation (
   lang: string, 
-  json_cache: REDIS_CACHE_SINGLE_scoreboard_translation
+  json_cache: REDIS_CACHE_SINGLE_incidents_translation
 ) {
   try {
     await redis.hset(cache_trans_addr, lang, JSON.stringify(json_cache));
@@ -181,96 +179,67 @@ async function main () {
   /**
    * [ℹ] obtain target historic_fixtures
    * [ℹ] convert to map
-   * [ℹ] obtain target league_id's
-   * [ℹ] convert to map
-   * [ℹ] obtain target tournament
-   * [ℹ] convert to map
   */
 
   const h_fixtures_arr = await get_target_historic_fixtures(current_seasons_arr)
   const historic_fixtures_map = await generate_historic_fixtures_map(h_fixtures_arr)
-
-  // eslint-disable-next-line prefer-const
-  let leagues_ids_arr: number[] = h_fixtures_arr?.map(a => a.league_id)
-
-  const [leagues_data, tournaments_data] = await get_target_leagues(leagues_ids_arr)
-  const league_map = await generate_leagues_map(leagues_data)
-  const tournaments_map = await generate_tournaments_map(tournaments_data)
 
   /**
    * [ℹ] data pre-processing
    * [ℹ] & persistance [END]
   */
 
-  const cache_data_arr: Fixture_Scoreboard_Info[] = []
+  const cache_data_arr: Fixture_Incidents[] = []
 
   for (const [key, value] of historic_fixtures_map.entries()) {
 
-    // const fix_season_id = value?.data?.season_id;
-    const league_id = value?.league_id;
     const fixture_id = value?.id;
-    const home_team_id = value?.localteam_id_j;
-    const away_team_id = value?.visitorteam_id_j;
+    const status = value?.status_j;
+    const events = 
+      value?.events_j == undefined
+        ? []
+        : value?.events_j.sort((a, b) => parseFloat(b.minute.toString()) - parseFloat(a.minute.toString()));
 
-    const round = value?.round_j?.data?.name;
-    // const fixture_date = value?.fixture_day;
-    const fixture_time = value?.time;
-    const minutes = value?.time_j?.minute;
-    const status = value?.time_j?.status;
+    // [ℹ] home-team
+    const home_team_id = value?.localteam_id_j;
+    const home_team_name = value?.home_team_name || null;
+    const home_team_logo = value?.home_team_logo || null; 
+
+    // [ℹ] away-team
+    const away_team_id = value?.visitorteam_id_j;
+    const away_team_name = value?.away_team_name;
+    const away_team_logo = value?.away_team_logo;
 
     const ht_score = value?.scores_j?.ht_score;
+    const ft_score = value?.scores_j?.ft_score;
     const et_score = value?.scores_j?.et_score;
     const ps_score = value?.scores_j?.ps_score;
 
-    const urls = 
-      tournaments_map.has(league_id) == true
-        ? tournaments_map.get(league_id)?.urls
-        : null
-
-    const home_team_name = value.home_team_name;
-    const home_team_logo = value.home_team_logo;
-    const home_team_score = value?.stats_j?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
-    const home_team_short_code = value?.localteam_short_code_j
-
-    const away_team_name = value.away_team_name;
-    const away_team_logo = value.away_team_logo;
-    const away_team_score = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
-    const away_team_short_code = value?.visitorteam_short_code_j
-
-    const home_team_obj: Fixture_Scoreboard_Team = {
-      name: home_team_name,
-      score: home_team_score || 0
+    const home_team_obj: Incident_Team = {
+      team_name: home_team_name || null,
+      team_logo: home_team_logo || null,
+      team_id: home_team_id
     }
 
-    const away_team_obj: Fixture_Scoreboard_Team = {
-      name: away_team_name,
-      score: away_team_score || 0
+    const away_team_obj: Incident_Team = {
+      team_name: away_team_name || null,
+      team_logo: away_team_logo || null,
+      team_id: away_team_id
     }
 
     // [ℹ] generate [final] fixture object
-    const fixture_object: Fixture_Scoreboard_Info = {
+    const fixture_object: Fixture_Incidents = {
       id:               fixture_id || null,
-      round:            round || null,
-      home_team_name:   home_team_name || null,
-      home_team_logo:   home_team_logo || null,
-      home_team_short_code: home_team_short_code || home_team_name.slice(0, 3).toUpperCase() || null,
-      away_team_name:   away_team_name || null,
-      away_team_logo:   away_team_logo || null,
-      away_team_short_code: away_team_short_code || away_team_name.slice(0, 3).toUpperCase() || null,
-      minute:           minutes || null,
-      status:           status || null,             
-      fixture_time:     fixture_time || null,
-      teams: {
-        home:           home_team_obj || null,
-        away:           away_team_obj || null
-      },
-      league_logo:      league_map.get(league_id)?.image_path_j || null,
-      league_urls:      urls,
+      status:           status,
       score_post: {
         ht_score:       ht_score || null,
+        ft_score:       ft_score || null,
         et_score:       et_score || null,
         ps_score:       ps_score || null
-      }
+      },
+      events:           events,
+      home:             home_team_obj,
+      away:             away_team_obj
     }
 
     await cache_data(key, fixture_object)
@@ -298,17 +267,17 @@ async function main_trans_and_seo (
 
   const res = await get_widget_translations()
 
-  const fix_odds_translation_map = new Map <string, REDIS_CACHE_SINGLE_scoreboard_translation> ()
+  const fix_odds_translation_map = new Map <string, REDIS_CACHE_SINGLE_incidents_translation> ()
 
   /**
    * [ℹ] MAIN 
   */
   for (const lang_ of langArray) {
 
-    const object: REDIS_CACHE_SINGLE_scoreboard_translation = {}
+    const object: REDIS_CACHE_SINGLE_incidents_translation = {}
     object.lang = lang_
 
-    const objectFixOdds = res.scores_fixture_scoreboard_translations
+    const objectFixOdds = res.scores_incidents_translations
       .find(({ lang }) => lang === lang_)
 
     const mergedObj = {
@@ -347,12 +316,12 @@ async function main_trans_and_seo (
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function get_current_seasons (
-): Promise < BETARENA_HASURA_scoreboard_query > {
+): Promise < BETARENA_HASURA_incidents_query > {
 
   const t0 = performance.now();
-  const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_0";
-	const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
-    REDIS_CACHE_SCOREBOARD_ODDS_DATA_0
+  const queryName = "REDIS_CACHE_FIXTURE_INCIDENTS_DATA_0";
+	const response: BETARENA_HASURA_incidents_query = await initGrapQLClient().request (
+    REDIS_CACHE_FIXTURE_INCIDENTS_DATA_0
   );
   const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
@@ -372,7 +341,7 @@ async function get_target_historic_fixtures (
   let counter = 0
 
   // [ℹ] obtain target historic_fixtures
-  const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_1";
+  const queryName = "REDIS_CACHE_FIXTURE_INCIDENTS_DATA_1";
   t0 = performance.now();
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -383,8 +352,8 @@ async function get_target_historic_fixtures (
       seasonIds: seasonIdsArr
     }
     
-    const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
-      REDIS_CACHE_SCOREBOARD_ODDS_DATA_1,
+    const response: BETARENA_HASURA_incidents_query = await initGrapQLClient().request (
+      REDIS_CACHE_FIXTURE_INCIDENTS_DATA_1,
       VARIABLES
     );
 
@@ -443,61 +412,6 @@ async function generate_historic_fixtures_map (
   return historic_fixtures_map;
 }
 
-async function get_target_leagues (
-  league_ids_arr: number[]
-): Promise < [BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[], BETARENA_HASURA_scores_tournaments[]] > {
-
-  const VARIABLES_1 = {
-    league_ids_arr: league_ids_arr,
-    league_ids_arr_2: league_ids_arr
-  }
-  
-  const t0 = performance.now();
-  const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_2";
-	const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
-    REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
-    VARIABLES_1
-  );
-  const t1 = performance.now();
-  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
-
-  return [response.scores_football_leagues, response.scores_tournaments];
-}
-
-async function generate_leagues_map (
-  league_arr: BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[]
-): Promise < Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues> > {
-  const leagues_arr_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues>()
-
-  // [ℹ] conversion to hashmap
-  t0 = performance.now();
-  for (const h_fixture of league_arr) {
-    leagues_arr_map.set(h_fixture.id, h_fixture);
-  }
-  t1 = performance.now();
-  logs.push(`leagues_arr_map generated with size: ${leagues_arr_map.size}`)
-  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
-
-  return leagues_arr_map;
-}
-
-async function generate_tournaments_map (
-  league_arr: BETARENA_HASURA_scores_tournaments[]
-): Promise < Map <number, BETARENA_HASURA_scores_tournaments> > {
-  const tournaments_arr_map = new Map <number, BETARENA_HASURA_scores_tournaments>()
-
-  // [ℹ] conversion to hashmap
-  t0 = performance.now();
-  for (const tournament of league_arr) {
-    tournaments_arr_map.set(tournament?.tournament_id, tournament);
-  }
-  t1 = performance.now();
-  logs.push(`tournaments_arr_map generated with size: ${tournaments_arr_map.size}`)
-  logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
-
-  return tournaments_arr_map;
-}
-
 async function getHrefLang (
 ): Promise < string[] > {
   // [ℹ] get KEY platform translations
@@ -515,12 +429,12 @@ async function getHrefLang (
 }
 
 async function get_widget_translations (
-): Promise < BETARENA_HASURA_scoreboard_query > {
+): Promise < BETARENA_HASURA_incidents_query > {
 
   const t0 = performance.now();
-  const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_4";
-  const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
-    REDIS_CACHE_SCOREBOARD_ODDS_DATA_4
+  const queryName = "REDIS_CACHE_FIXTURE_INCIDENTS_DATA_3";
+  const response: BETARENA_HASURA_incidents_query = await initGrapQLClient().request (
+    REDIS_CACHE_FIXTURE_INCIDENTS_DATA_3
   );
   const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);

@@ -1,19 +1,10 @@
 import type { 
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
-  BETARENA_HASURA_player_positions_translations,
-  BETARENA_HASURA_scores_fixture_lineup_translations,
-  BETARENA_HASURA_scores_football_leagues,
   BETARENA_HASURA_scores_football_seasons_details,
-  BETARENA_HASURA_scores_general_translations,
   BETARENA_HASURA_scores_incidents_translations,
-  BETARENA_HASURA_scores_tournaments,
-  DataStats,
-  Events,
-  Formations,
+  EventsDatum,
   IncidentsTranslations,
-  Round,
-  ScoreboardTranslations,
   Scores,
   Time
 } from "$lib/models/hasura"
@@ -41,16 +32,17 @@ export interface REDIS_CACHE_SINGLE_incidents_data extends Fixture_Incidents {
 */
 
 export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARENA_HASURA_historic_fixtures {
-  events_j?:            Events
+  localteam_id_j?:      number
+  visitorteam_id_j?:    number
+  status_j?:            string
+  events_j?:            EventsDatum[]
+  scores_j?:            Scores
 }
 
-export interface BETARENA_HASURA_scoreboard_query {
+export interface BETARENA_HASURA_incidents_query {
   scores_football_seasons_details: BETARENA_HASURA_scores_football_seasons_details[]
-  scores_tournaments:              BETARENA_HASURA_scores_tournaments[]
   historic_fixtures_aggregate:     BETARENA_HASURA_historic_fixtures_aggregate
   historic_fixtures:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
-  // NOTE: league-img
-  scores_football_leagues:         BETARENA_HASURA_scores_football_leagues[]
   // NOTE: translations
   scores_incidents_translations:   BETARENA_HASURA_scores_incidents_translations[]
 }
@@ -61,41 +53,31 @@ export interface BETARENA_HASURA_scoreboard_query {
  * ==========================================
 */
 
-export interface Fixture_Incidents {
-
+export interface Fixture_Incidents extends EventsDatum {
   // NOTE:IMPORTANT The fixture_incident widget is only available once the fixture starts. 
   // NOTE:IMPORTANT If there are fixtures without incidents, the widget should not be shown.
 
-  // NOTE: There are different icons that illustrate different incidents in the fixture:
-  icon?: string
-  time?: string
-  score?: string
-  // NOTE: goal = A goal has been scored (Icon, time, score, player name, assist player name);
-  player_name_assist?: string
-  // NOTE: penalty = Penalty has been scored (Icon, time, score, player name );
-  // NOTE: missed_penalty = The penalty has been missed (Icon, time, player name );
-  pen_type?: 'pen_score' | 'pen_miss'
-  // NOTE: own-goal = Own goal (Icon, time, score, player name);
-  player_name?: string
-  // NOTE: Goal Disallowed (Icon, time, score);
-  // NOTE: Goal under review;
-  type?: 'Goal Disallowed' | 'Goal Under Review'
-  // NOTE: yellowcard = Yellow card is given to a player (Icon, time, player name);
-  // NOTE: yellowred = Second yellow card for player resulting in a red (Icon, time, player name);
-  // NOTE: redcard = Direct red card (Icon, time, player name);
-  cart_type?: 'red' | 'yellow'
-  // NOTE: substitution = A player got substituted, and the new player got in (Icon*, time, player name in, player name out);
-  player_name_in?: string
-  player_name_out?: string
-  // NOTE: pen_shootout_goal = Penalty in penalty shootout has been scored (Icon, time, score, player name);
-  // NOTE: pen_shootout_miss = Penalty in penalty shootout has been scored (Icon, time, score, player name);
-  pen_shootout_type?: 'pen_shootout_score' | 'pen_shootout_miss'
-
-  // NOTE: AFTER the fixture is ended:
-  // NOTE: Hasura endpoint Prod:
-  // historic_fixtures/events/data
+  id?:          number
+  status?:      string
+  score_post?:  Fixture_Scorebaord_Scores // [hasura] JSON($path) historic_fixtures/data/scores
+  home?:        Incident_Team  // home-team events-only
+  away?:        Incident_Team  // away-team events-only
+  events?:      EventsDatum[]
 
   // NOTE: DURING the fixture:
   // NOTE: Frebase endpoint
   // livescore_now/events/data
+
+  // NOTE: AFTER the fixture is ended:
+  // NOTE: Hasura endpoint Prod:
+  // historic_fixtures/events/data
+} export interface Incident_Team {
+  team_name?:     string
+  team_logo?:     string
+  team_id?:       number
+} export interface Fixture_Scorebaord_Scores {
+  ht_score?: string
+  ft_score?: string
+  et_score?: string
+  ps_score?: string
 }

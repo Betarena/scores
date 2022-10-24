@@ -16,6 +16,7 @@ import type {
   REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
 } from '$lib/models/fixtures/scoreboard/types';
 import type { REDIS_CACHE_SINGLE_lineups_data, REDIS_CACHE_SINGLE_lineups_translation } from '$lib/models/fixtures/lineups/types';
+import type { REDIS_CACHE_SINGLE_incidents_data, REDIS_CACHE_SINGLE_incidents_translation } from '$lib/models/fixtures/incidents/types';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({
@@ -176,6 +177,31 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_incidents: REDIS_CACHE_SINGLE_incidents_data = await fetch(
+    `/api/cache/fixtures/incidents?fixture_id=` + fixture_id, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  if (response_incidents == undefined) {
+    if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
+    response_incidents = await fetch(
+      `/api/hasura/fixtures/incidents?fixture_id=` + fixture_id, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
+
+  const response_incidents_translation: REDIS_CACHE_SINGLE_incidents_translation = await fetch(
+    `/api/cache/fixtures/incidents?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -189,6 +215,8 @@ export async function load({
     && response_scoreboard_translation
     && response_lineups
     && response_lineups_translation
+    && response_incidents
+    && response_incidents_translation
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
@@ -196,7 +224,9 @@ export async function load({
       FIXTURE_SCOREBOARD: response_scoreboard,
       FIXTURE_SCOREBOARD_TRANSLATION: response_scoreboard_translation,
       FIXTURE_LINEUPS: response_lineups,
-      FIXTURE_LINEUPS_TRANSLATION: response_lineups_translation
+      FIXTURE_LINEUPS_TRANSLATION: response_lineups_translation,
+      FIXTURE_INCIDENTS: response_incidents,
+      FXITURE_INCIDENTS_TRANSLATION: response_incidents_translation
     }
   }
 

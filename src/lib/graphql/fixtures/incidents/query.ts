@@ -40,7 +40,6 @@ export const REDIS_CACHE_FIXTURE_INCIDENTS_DATA_1 = gql`
   {
 
     # [ℹ] pagination based
-
     historic_fixtures_aggregate (
       where: {
         season_id: {
@@ -79,13 +78,17 @@ export const REDIS_CACHE_FIXTURE_INCIDENTS_DATA_1 = gql`
       # [alt V1]
       # data
       # [alt V2]
+      localteam_id_j: data(path: "$.localteam_id")
+      visitorteam_id_j: data(path: "$.visitorteam_id")
       events_j:  data(path: "$.events.data")
+      status_j: data(path: "$.time.status")
+      scores_j: data(path: "$.scores")
     }
   }
 `;
 
 /**
- * [ℹ] Fixtures / Scoreboard Widget (#4)
+ * [ℹ] Fixtures / Incidents Widget (#4)
  * [ℹ] TRANSLATION
 */
 export const REDIS_CACHE_FIXTURE_INCIDENTS_DATA_3 = gql`
@@ -94,7 +97,7 @@ export const REDIS_CACHE_FIXTURE_INCIDENTS_DATA_3 = gql`
     (ttl: 300) 
   {
     # [ℹ] unecessary to paginate
-    scores_fixture_scoreboard_translations {
+    scores_incidents_translations {
       lang
       translations
     }
@@ -138,14 +141,11 @@ export const REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4 = gql`
       # [alt V1]
       # data
       # [alt V2]
-      stats_j: data(path: "$.stats")
       localteam_id_j: data(path: "$.localteam_id")
       visitorteam_id_j: data(path: "$.visitorteam_id")
-      time_j: data(path: "$.time")
-      round_j: data(path: "$.round")
+      events_j:  data(path: "$.events.data")
+      status_j: data(path: "$.time.status")
       scores_j: data(path: "$.scores")
-      localteam_short_code_j: data(path: "$.localTeam.data.short_code")
-      visitorteam_short_code_j: data(path: "$.visitorTeam.data.short_code")
     }
   }
 `;
