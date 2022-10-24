@@ -445,16 +445,16 @@
           <!-- 
           [ℹ] ET SCORE [SECTION]
           -->
-          <p
-            class="
-              w-500
-              color-black
-              event-milestone-text
-            ">
-            {#if FIXTURE_INCIDENTS?.score_post?.et_score != undefined}
-              ET {FIXTURE_INCIDENTS?.score_post?.et_score}
-            {/if}
-          </p>
+          {#if FIXTURE_INCIDENTS?.score_post?.et_score != undefined}
+            <p
+              class="
+                w-500
+                color-black
+                event-milestone-text
+              ">
+                ET {FIXTURE_INCIDENTS?.score_post?.et_score}
+            </p>
+          {/if}
           {#each FIXTURE_INCIDENTS?.events as event}
             {#if event?.minute > 90}
               <!-- 
@@ -474,16 +474,16 @@
           <!-- 
           [ℹ] FT SCORE [SECTION]
           -->
-          <p
-            class="
-              w-500
-              color-black
-              event-milestone-text
-            ">
-            {#if FIXTURE_INCIDENTS?.score_post?.ft_score != undefined}
-              FT {FIXTURE_INCIDENTS?.score_post?.ft_score}
-            {/if}
-          </p>
+          {#if FIXTURE_INCIDENTS?.score_post?.ft_score != undefined}
+            <p
+              class="
+                w-500
+                color-black
+                event-milestone-text
+              ">
+                FT {FIXTURE_INCIDENTS?.score_post?.ft_score}
+            </p>
+          {/if}
           {#each FIXTURE_INCIDENTS?.events as event}
             {#if event?.minute >= 45 && event?.minute <= 90}
               <!-- 
@@ -503,16 +503,16 @@
           <!-- 
           [ℹ] HT SCORE [SECTION]
           -->
-          <p
-            class="
-              w-500
-              color-black
-              event-milestone-text
-            ">
-            {#if FIXTURE_INCIDENTS?.score_post?.ht_score != undefined}
-              HT {FIXTURE_INCIDENTS?.score_post?.ht_score}
-            {/if}
-          </p>
+          {#if FIXTURE_INCIDENTS?.score_post?.ht_score != undefined}
+            <p
+              class="
+                w-500
+                color-black
+                event-milestone-text
+              ">
+                HT {FIXTURE_INCIDENTS?.score_post?.ht_score}
+            </p>
+          {/if}
           {#each FIXTURE_INCIDENTS?.events as event}
             {#if event?.minute <= 45}
               <!-- 
@@ -587,7 +587,7 @@
     position: relative;
     padding: none;
     /* override */
-    padding-bottom: 7px;
+    padding-bottom: 20px;
   }
 
   /* team info box */
