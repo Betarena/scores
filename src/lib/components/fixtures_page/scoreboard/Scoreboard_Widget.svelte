@@ -1870,6 +1870,10 @@
         -->
         {:else}
 
+          <div 
+            id="empty-widget-placeholder"
+            class:full-time={FIXTURE_SCOREBOARD.status == "FT"} />
+
           <div
             id="scoreboard-widget-container"
             class="miniature"
@@ -2510,6 +2514,13 @@
   }
 
   /* miniature [ONLY] [MOBILE] */
+  div#empty-widget-placeholder {
+    min-height: 334px;
+    max-height: 334px;
+  } div#empty-widget-placeholder.full-time {
+    min-height: 267px;
+    max-height: 267px;
+  }
   div#scoreboard-widget-container.miniature {
     position: fixed;
     top: 0;
@@ -2632,6 +2643,15 @@
       max-height: 200px;
     }
 
+    /* placeholder during miniature */
+    div#empty-widget-placeholder {
+      min-height: 306px;
+      max-height: 306px;
+    } div#empty-widget-placeholder.full-time {
+      min-height: 252px;
+      max-height: 252px;
+    }
+
     /* odds-bet style */
     div#tablet-bet-odds-box {
       position: relative;    
@@ -2706,6 +2726,13 @@
       background-repeat: no-repeat;
       background-size: cover;
     }
+
+    /* placeholder during miniature */
+    div#empty-widget-placeholder {
+      min-height: 259px;
+      max-height: 259px;
+    }
+
 
     /* league-info */
     div#scoreboard-widget-container div#scoreboard-top-box div#league-info-box p:hover {
