@@ -136,7 +136,7 @@
         color-black
         lineup-player-name
       ">
-      {PLAYER_INFO?.player_name.split(' ')[1]}
+      {PLAYER_INFO?.player_name.split(' ')[1] || PLAYER_INFO?.player_name.split(' ')[0]}
       <br/>
       <span>
         {PLAYER_INFO?.number}
