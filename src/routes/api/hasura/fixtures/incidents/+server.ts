@@ -4,7 +4,7 @@ import { performance } from 'perf_hooks';
 import { error, json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { REDIS_CACHE_LINEUPS_DATA_3 } from '$lib/graphql/fixtures/lineups/query';
+import { REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4 } from '$lib/graphql/fixtures/incidents/query';
 
 import type { 
   BETARENA_HASURA_incidents_query,
@@ -117,13 +117,13 @@ async function get_target_fixture(
 	fixture_id: number
 ): Promise<BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]> {
 	// [ℹ] obtain target historic_fixtures [fixture_id]
-	const queryName = 'REDIS_CACHE_LINEUPS_DATA_3';
+	const queryName = 'REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4';
 	t0 = performance.now();
 	const VARIABLES = {
 		fixture_id: fixture_id
 	};
 	const response: BETARENA_HASURA_incidents_query = await initGrapQLClient().request(
-		REDIS_CACHE_LINEUPS_DATA_3,
+		REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4,
 		VARIABLES
 	);
 	t1 = performance.now();
