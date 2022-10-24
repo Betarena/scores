@@ -578,7 +578,7 @@
   */
 
   /* lineups-main */
-  #incidents-widget-container {
+  div#incidents-widget-container {
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
@@ -602,9 +602,11 @@
   }
 
   /* events table box */
-  div#incidents-events-box p.event-milestone-text {
+  div#incidents-widget-container div#incidents-events-box p.event-milestone-text {
     padding: 14px 0 6px 0;
     text-align: center;
+  } :global(div#incidents-widget-container div#incidents-events-box div.incident-row:last-child) {
+    border-bottom: 0;
   }
 
   /* ====================
