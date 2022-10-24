@@ -95,6 +95,14 @@
           alt=""
           class="injured-box"
         />
+      <!--
+      [ℹ] substitution-player -->
+      {:else if PLAYER_INFO?.events?.substitution}
+        <img 
+          src={substitution} 
+          alt=""
+          class="substituion-box"
+        />
       {/if}
       <!--
       [ℹ] yellowcard-player -->
@@ -117,15 +125,6 @@
           src={football} 
           alt=""
           class="goal-box"
-        />
-      {/if}
-      <!--
-      [ℹ] substitution-player -->
-      {#if PLAYER_INFO?.events?.substitution}
-        <img 
-          src={substitution} 
-          alt=""
-          class="substituion-box"
         />
       {/if}
     </div>
