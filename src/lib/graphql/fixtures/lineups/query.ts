@@ -196,6 +196,9 @@ export const REDIS_CACHE_LINEUPS_DATA_3 = gql`
       home_coach_j: data(path: "$.localCoach.data")
       away_coach_j: data(path: "$.visitorCoach.data")
       events_j: data(path: "$.events.data")
+      localteam_short_code_j: data(path: "$.localTeam.data.short_code")
+      visitorteam_short_code_j: data(path: "$.visitorTeam.data.short_code")
+      status_j: data(path: "$.time.status")
     }
   }
 `;
