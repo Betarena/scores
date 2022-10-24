@@ -219,6 +219,9 @@
           goals: null,
           substitution: null
         }
+        if (FIXTURE_LINEUPS.events == undefined) {
+          continue;
+        }
         for (const live_event of FIXTURE_LINEUPS.events) {
           if (player.player_id == live_event.player_id) {
             if (player.player_id == live_event.player_id) {
@@ -259,6 +262,9 @@
           red_card: null,
           goals: null,
           substitution: null
+        }
+        if (FIXTURE_LINEUPS.events == undefined) {
+          continue;
         }
         for (const live_event of FIXTURE_LINEUPS.events) {
           if (player.player_id == live_event.player_id) {
