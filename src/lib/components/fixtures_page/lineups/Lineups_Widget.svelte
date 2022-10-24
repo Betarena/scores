@@ -65,10 +65,10 @@
     'A'
   ]
   const formation_pos_arr = [
-    'G',
-    'D',
+    'A',
     'M',
-    'A'
+    'D',
+    'G'
   ]
 
   let currentSeason:     number = undefined;
@@ -698,7 +698,7 @@
               {/each}
               <!-- 
               [ℹ] away -->
-              {#each formation_pos_arr.reverse() as pos}
+              {#each formation_pos_arr as pos}
                 <div
                   id="overlay-column">
                   {#each FIXTURE_LINEUPS.away.lineup as player}
@@ -1095,7 +1095,6 @@
     text-align: start;
   }
 
-
   /* ====================
     RESPONSIVNESS [TABLET] [DESKTOP]
   ==================== */
@@ -1160,7 +1159,11 @@
     /* main team lineup */
     div#team-lineup-box div.lineup-box {
       width: 100%;
-    } 
+    } div#team-lineup-box div.lineup-box:last-child div.player-row img.lineup-img {
+      margin-left: 16px;
+    } div#team-lineup-box div.lineup-box:last-child div.player-row p.lineup-player-name{
+      text-align: end;
+    }
   
     /* lineup divider */
     div#divider {
