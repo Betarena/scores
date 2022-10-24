@@ -159,6 +159,14 @@
                     color-grey
                     lineup-player-name
                   ">
+                  {PLAYER_INFO?.events?.substitution?.minute}'
+                </p>
+                <p
+                  class="
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  ">
                   Out: {PLAYER_INFO?.events?.substitution?.player_name}
                 </p>
               </div>
@@ -298,6 +306,14 @@
                   src={substitution}
                   alt=""
                 />
+                <p
+                  class="
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  ">
+                  {PLAYER_INFO?.events?.substitution?.minute}'
+                </p>
                 <p
                   class="
                     w-400

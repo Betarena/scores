@@ -17,6 +17,8 @@
   import yellow_card from './assets/yellow-card.svg';
   import red_card from './assets/red-card.svg';
   import football from './assets/football.svg';
+  import football_red from './assets/football-red.svg';
+  import substitution from './assets/corner-up-left.svg';
   
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
@@ -91,6 +93,7 @@
         <img
           src={injured} 
           alt=""
+          class="injured-box"
         />
       {/if}
       <!--
@@ -114,6 +117,15 @@
           src={football} 
           alt=""
           class="goal-box"
+        />
+      {/if}
+      <!--
+      [ℹ] substitution-player -->
+      {#if PLAYER_INFO?.events?.substitution}
+        <img 
+          src={substitution} 
+          alt=""
+          class="substituion-box"
         />
       {/if}
     </div>
@@ -179,6 +191,14 @@
     position: absolute;
     bottom: 0;
     left: 80%;
+  } div#main-player-box div.player-main-info-box img.substituion-box {
+    position: absolute;
+    top: 0;
+    right: 80%;
+  } div#main-player-box div.player-main-info-box img.injured-box {
+    position: absolute;
+    top: 0;
+    right: 80%;
   } div#main-player-box p.lineup-player-name {
     white-space: nowrap;
     overflow: hidden;
