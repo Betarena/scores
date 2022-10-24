@@ -10,6 +10,7 @@ import type {
   BETARENA_HASURA_incidents_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   Fixture_Incidents, 
+  Incident_Team, 
   REDIS_CACHE_SINGLE_incidents_data 
 } from '$lib/models/fixtures/incidents/types';
 
@@ -57,12 +58,37 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_incidents_d
 
   const fixture_id = fixture_data?.id;
   const status = fixture_data?.status_j;
+  const events = 
+    fixture_data?.events_j == undefined
+      ? []
+      : fixture_data?.events_j.sort((a, b) => parseFloat(b.minute.toString()) - parseFloat(a.minute.toString()));
 
-  const events = fixture_data?.events_j
+  // [ℹ] home-team
+  const home_team_id = fixture_data?.localteam_id_j;
+  const home_team_name = fixture_data?.home_team_name || null;
+  const home_team_logo = fixture_data?.home_team_logo || null; 
+
+  // [ℹ] away-team
+  const away_team_id = fixture_data?.visitorteam_id_j;
+  const away_team_name = fixture_data?.away_team_name;
+  const away_team_logo = fixture_data?.away_team_logo;
 
   const ht_score = fixture_data?.scores_j?.ht_score;
+  const ft_score = fixture_data?.scores_j?.ft_score;
   const et_score = fixture_data?.scores_j?.et_score;
   const ps_score = fixture_data?.scores_j?.ps_score;
+
+  const home_team_obj: Incident_Team = {
+    team_name: home_team_name || null,
+    team_logo: home_team_logo || null,
+    team_id: home_team_id
+  }
+
+  const away_team_obj: Incident_Team = {
+    team_name: away_team_name || null,
+    team_logo: away_team_logo || null,
+    team_id: away_team_id
+  }
 
   // [ℹ] generate [final] fixture object
   const fixture_object: Fixture_Incidents = {
@@ -70,10 +96,13 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_incidents_d
     status:           status,
     score_post: {
       ht_score:       ht_score || null,
+      ft_score:       ft_score || null,
       et_score:       et_score || null,
       ps_score:       ps_score || null
     },
-    events:           events
+    events:           events,
+    home:             home_team_obj,
+    away:             away_team_obj
   }
 
   // [ℹ] return fixture
