@@ -349,18 +349,19 @@
     if (dev) console.groupEnd();
   })
 
-  async function kickstart_one_off_data (
-  ) {
-    const firebase_real_time = await get_livescores_now()
-    if (firebase_real_time != null) {
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-      check_live_fixtures(data)
-    }
-  }
+  // FIXME:
+  // async function kickstart_one_off_data (
+  // ) {
+  //   const firebase_real_time = await get_livescores_now()
+  //   if (firebase_real_time != null) {
+  //     const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+  //     check_live_fixtures(data)
+  //   }
+  // }
 
-  $: if (FIXTURE_LINEUPS != undefined) {
-    kickstart_one_off_data()
-  }
+  // $: if (FIXTURE_LINEUPS != undefined) {
+  //   kickstart_one_off_data()
+  // }
 
 </script>
 
