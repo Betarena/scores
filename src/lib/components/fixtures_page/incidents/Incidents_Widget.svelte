@@ -191,6 +191,12 @@
       logs.push(`fixture ${fixture_id} livescore_now exists!`)
       // [ℹ] update fixture data;
       FIXTURE_INCIDENTS.status = live_fixtures_map.get(fixture_id)?.time?.status
+      FIXTURE_INCIDENTS.score_post = {
+        ht_score: live_fixtures_map.get(fixture_id)?.scores?.ht_score,
+        ft_score: live_fixtures_map.get(fixture_id)?.scores?.ft_score,
+        et_score: live_fixtures_map.get(fixture_id)?.scores?.et_score,
+        ps_score: live_fixtures_map.get(fixture_id)?.scores?.ps_score
+      }
       // FIXME: make compatible TYPES for hasura/events && firebase/events
       FIXTURE_INCIDENTS.events = live_fixtures_map.get(fixture_id)?.events?.data
       FIXTURE_INCIDENTS.events.sort((a, b) => parseFloat(b.minute.toString()) - parseFloat(a.minute.toString()));
@@ -265,18 +271,19 @@
     if (dev) console.groupEnd();
   })
 
-  async function kickstart_one_off_data (
-  ) {
-    const firebase_real_time = await get_livescores_now()
-    if (firebase_real_time != null) {
-      const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-      check_live_fixtures(data)
-    }
-  }
+  // FIXME:
+  // async function kickstart_one_off_data (
+  // ) {
+  //   const firebase_real_time = await get_livescores_now()
+  //   if (firebase_real_time != null) {
+  //     const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
+  //     check_live_fixtures(data)
+  //   }
+  // }
 
-  $: if (FIXTURE_INCIDENTS != undefined) {
-    kickstart_one_off_data()
-  }
+  // $: if (FIXTURE_INCIDENTS != undefined) {
+  //   kickstart_one_off_data()
+  // }
 
 </script>
 
@@ -485,7 +492,7 @@
             </p>
           {/if}
           {#each FIXTURE_INCIDENTS?.events as event}
-            {#if event?.minute >= 45 && event?.minute <= 90}
+            {#if event?.minute > 45 && event?.minute <= 90}
               <!-- 
               [ℹ] home team
               -->
