@@ -37,6 +37,7 @@
 	// import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 	import LineupsLoader from "./Lineups_Loader.svelte";
 	import LineupVectorMobile from "./Lineup_Vector_Mobile.svelte";
+	import LineupVectorMobileAway from "./Lineup_Vector_Mobile_Away.svelte";
 	import LineupVectorTablet from "./Lineup_Vector_Tablet.svelte";
 	import LineupPlayerRow from "./Lineup_Player_Row.svelte";
 	import LineupPlayerVisual from "./Lineup_Player_Visual.svelte";
@@ -682,22 +683,43 @@
             id="lineup-vector-box">
             <div
               id="lineup-vector">
-              <LineupVectorMobile />
+              {#if selected_view == 'home'}
+                <LineupVectorMobile />
+              {:else}
+                <LineupVectorMobileAway />
+              {/if}
             </div>
             <!-- 
             [ℹ] lineup - absolute box -->
             <div
               id="overlay-player-pos-box">
-              {#each formation_pos_arr_main as pos}
-                <div
-                  id="overlay-column">
-                  {#each FIXTURE_LINEUPS[selected_view].lineup as player}
-                    {#if pos == player?.position}
-                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                    {/if}
-                  {/each}
-                </div>
-              {/each}
+              <!-- 
+              [ℹ] home -->
+              {#if selected_view == 'home'}
+                {#each formation_pos_arr_main as pos}
+                  <div
+                    id="overlay-column">
+                    {#each FIXTURE_LINEUPS[selected_view].lineup as player}
+                      {#if pos == player?.position}
+                        <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                      {/if}
+                    {/each}
+                  </div>
+                {/each}
+              <!-- 
+              [ℹ] away -->
+              {:else}
+                {#each formation_pos_arr as pos}
+                  <div
+                    id="overlay-column">
+                    {#each FIXTURE_LINEUPS[selected_view].lineup as player}
+                      {#if pos == player?.position}
+                        <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                      {/if}
+                    {/each}
+                  </div>
+                {/each}
+              {/if}
             </div>
           </div>
           
