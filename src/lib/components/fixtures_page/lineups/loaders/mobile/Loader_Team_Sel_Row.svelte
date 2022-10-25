@@ -15,8 +15,8 @@
   xmlns="http://www.w3.org/2000/svg"
   preserveAspectRatio="none">
   <g clip-path="url(#clip0_5647_356481)">
-  <path d="M151 0H295C299.418 0 303 3.58172 303 8V32C303 36.4183 299.418 40 295 40H151V0Z" fill="#F2F2F2"/>
-  <path d="M0 8C0 3.58172 3.58172 0 8 0H152V40H8C3.58172 40 0 36.4183 0 32V8Z" fill="#F2F2F2"/>
+  <path d="M151 0H295C299.418 0 303 3.58172 303 8V32C303 36.4183 299.418 40 295 40H151V0Z" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
+  <path d="M0 8C0 3.58172 3.58172 0 8 0H152V40H8C3.58172 40 0 36.4183 0 32V8Z" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
   </g>
   <defs>
   <clipPath id="clip0_5647_356481">
