@@ -144,6 +144,9 @@
                 {/if}
               {/if}
             </div>
+            <!--
+            [ℹ] substitution / position[T]
+             -->
             {#if PLAYER_INFO?.events?.substitution}
               <div
                 class="
@@ -152,6 +155,9 @@
                 <img 
                   src={substitution}
                   alt=""
+                  width=16px
+                  height=16px
+                  class="m-r-5"
                 />
                 <p
                   class="
@@ -159,14 +165,7 @@
                     color-grey
                     lineup-player-name
                   ">
-                  {PLAYER_INFO?.events?.substitution?.minute}'
-                </p>
-                <p
-                  class="
-                    w-400
-                    color-grey
-                    lineup-player-name
-                  ">
+                  {PLAYER_INFO?.events?.substitution?.minute}' 
                   Out: {PLAYER_INFO?.events?.substitution?.player_name}
                 </p>
               </div>
@@ -295,7 +294,7 @@
                 {PLAYER_INFO?.number} {PLAYER_INFO?.player_name}
               </p>
             </div>
-            <!-- 
+            <!--
             [ℹ] player positon -->
             {#if PLAYER_INFO?.events?.substitution}
               <div
@@ -305,6 +304,9 @@
                 <img 
                   src={substitution}
                   alt=""
+                  width=16px
+                  height=16px
+                  class="m-r-5"
                 />
                 <p
                   class="
@@ -312,14 +314,7 @@
                     color-grey
                     lineup-player-name
                   ">
-                  {PLAYER_INFO?.events?.substitution?.minute}'
-                </p>
-                <p
-                  class="
-                    w-400
-                    color-grey
-                    lineup-player-name
-                  ">
+                  {PLAYER_INFO?.events?.substitution?.minute}' 
                   Out: {PLAYER_INFO?.events?.substitution?.player_name}
                 </p>
               </div>
