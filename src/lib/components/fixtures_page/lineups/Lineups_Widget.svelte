@@ -496,6 +496,8 @@
   $: if (
     FIXTURE_LINEUPS
     && browser 
+    && FIXTURE_LINEUPS?.away?.formation
+    && FIXTURE_LINEUPS?.home?.formation
     && (FIXTURE_LINEUPS?.away?.lineup == undefined || FIXTURE_LINEUPS?.away?.lineup.length == 0)
     && (FIXTURE_LINEUPS?.home?.lineup == undefined || FIXTURE_LINEUPS?.home?.lineup.length == 0)) {
     no_widget_data = true
@@ -565,6 +567,9 @@
       rt_home_count = rt_home_count + form_pos_num;
     }
     away_team_formation_map = away_team_formation_map
+  } else {
+    no_widget_data = true
+    loaded = true
   }
 
 </script>

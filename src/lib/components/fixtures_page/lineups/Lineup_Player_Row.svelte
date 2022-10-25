@@ -170,14 +170,16 @@
                 </p>
               </div>
             {:else}
-              <p
-                class="
-                  w-400
-                  color-grey
-                  lineup-player-name
-                ">
-                  {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
-              </p>
+              {#if PLAYER_INFO?.position}
+                <p
+                  class="
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  ">
+                    {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
+                </p>
+              {/if}
             {/if}
           </div>
         </div>
@@ -319,14 +321,16 @@
                 </p>
               </div>
             {:else}
-              <p
-                class="
-                  w-400
-                  color-grey
-                  lineup-player-name
-                ">
-                  {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
-              </p>
+              {#if PLAYER_INFO?.position}
+                <p
+                  class="
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  ">
+                    {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
+                </p>
+              {/if}
             {/if}
           </div>
           <!-- 
