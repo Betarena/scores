@@ -69,7 +69,7 @@ export async function POST(): Promise < unknown > {
   // [ℹ] otherwise prod.
   else {
     // [ℹ] producers [JOBS]
-    const job = await CQ_Tour_Info_About.add({});
+    const job = await CQ_Tour_Info_About.add({}, { timeout: 300000 });
     console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
     return json({
       job_id: job.id
