@@ -200,9 +200,9 @@
     right: 80%;
   } div#main-player-box p.lineup-player-name {
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 60px;
+    /* overflow: hidden; */
+    /* text-overflow: ellipsis; */
+    /* max-width: 60px; */
     /* dynamic */
     font-size: 10px;
   }
