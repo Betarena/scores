@@ -546,6 +546,7 @@
     let away_team_formation_arr_temp = FIXTURE_LINEUPS?.away?.formation.split('-')
     away_team_formation_arr_temp.unshift('1'); // [ℹ] add goalkeeper pos
     away_team_formation_arr_temp.reverse();
+    FIXTURE_LINEUPS?.away?.lineup.sort((a, b) => parseFloat(b.formation_position.toString()) - parseFloat(a.formation_position.toString()));
     away_team_formation_map = new Map <string, Fixture_Player[]>() // [ℹ] reset player-list
     for (const form_pos of away_team_formation_arr_temp) {
       let form_pos_num = parseInt(form_pos)
