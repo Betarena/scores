@@ -1315,7 +1315,9 @@
     }
 
     /* main team lineup */
-    div#team-lineup-box div.lineup-box {
+    div#team-lineup-box {
+      align-items: flex-start;
+    } div#team-lineup-box div.lineup-box {
       width: 100%;
     } div#team-lineup-box div.lineup-box:last-child div.player-row img.lineup-img {
       margin-left: 16px;
