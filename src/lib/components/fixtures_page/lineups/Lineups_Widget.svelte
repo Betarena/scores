@@ -18,6 +18,7 @@
 	import { db_real } from "$lib/firebase/init";
 
 	import type { 
+	Fixture_Player,
     REDIS_CACHE_SINGLE_lineups_data, 
     REDIS_CACHE_SINGLE_lineups_translation 
   } from "$lib/models/fixtures/lineups/types";
@@ -71,6 +72,23 @@
     'D',
     'G'
   ]
+
+  let home_team_formation_map = new Map <string, Fixture_Player[]>()
+  let away_team_formation_map = new Map <string, Fixture_Player[]>()
+
+  // NOTE: [Sportmonks]
+  // NOTE: Formation Number | Outcome
+  // 1 - Keeper [G]
+  // 2 - Right-back [D]
+  // 3 - Central defender [D]
+  // 4 - Central defender [D]
+  // 5 - Left-back [D]
+  // 6 - Right central midfielder [M]
+  // 7 - Central midfielder [M]
+  // 8 - Left central midfielder [M]
+  // 9 - Right-winger [A]
+  // 10 - Central forward [A]
+  // 11 - Left-winger [A]
 
   let currentSeason:     number = undefined;
 
@@ -486,6 +504,69 @@
     no_widget_data = false
   }
 
+  $: if (
+    FIXTURE_LINEUPS
+    && browser 
+    && FIXTURE_LINEUPS?.away?.formation
+    && FIXTURE_LINEUPS?.home?.formation
+    && (FIXTURE_LINEUPS?.away?.lineup != undefined || FIXTURE_LINEUPS?.away?.lineup.length != 0)
+    && (FIXTURE_LINEUPS?.home?.lineup != undefined || FIXTURE_LINEUPS?.home?.lineup.length != 0)
+  ) {
+    // NOTE: home-team
+    let rt_home_count = 0
+    let count_pos_diff = 0;
+    let home_team_formation_arr_temp = FIXTURE_LINEUPS?.home?.formation.split('-')
+    home_team_formation_arr_temp.unshift('1'); // [ℹ] add goalkeeper pos
+    home_team_formation_map = new Map <string, Fixture_Player[]>() // [ℹ] reset player-list
+    for (const form_pos of home_team_formation_arr_temp) {
+      let form_pos_num = parseInt(form_pos)
+      let form_pos_code = form_pos + count_pos_diff.toString()
+      for (let i = rt_home_count; i < (rt_home_count + form_pos_num); i++) {
+        const player = FIXTURE_LINEUPS?.home?.lineup[i];
+        if (home_team_formation_map.has(form_pos_code)) {
+          let exist_lineup_list = home_team_formation_map.get(form_pos_code)
+          exist_lineup_list.push(player)
+          home_team_formation_map.set(form_pos_code, exist_lineup_list)
+        }
+        else {
+          const lineup_list = []
+          lineup_list.push(player)
+          home_team_formation_map.set(form_pos_code, lineup_list)
+        }
+      }
+      count_pos_diff++;
+      rt_home_count = rt_home_count + form_pos_num;
+    }
+    home_team_formation_map = home_team_formation_map
+    // NOTE: away-team
+    rt_home_count = 0
+    count_pos_diff = 0;
+    let away_team_formation_arr_temp = FIXTURE_LINEUPS?.away?.formation.split('-')
+    away_team_formation_arr_temp.unshift('1'); // [ℹ] add goalkeeper pos
+    away_team_formation_arr_temp.reverse();
+    away_team_formation_map = new Map <string, Fixture_Player[]>() // [ℹ] reset player-list
+    for (const form_pos of away_team_formation_arr_temp) {
+      let form_pos_num = parseInt(form_pos)
+      let form_pos_code = form_pos + count_pos_diff.toString()
+      for (let i = rt_home_count; i < (rt_home_count + form_pos_num); i++) {
+        const player = FIXTURE_LINEUPS?.away?.lineup[i];
+        if (away_team_formation_map.has(form_pos_code)) {
+          let exist_lineup_list = away_team_formation_map.get(form_pos_code)
+          exist_lineup_list.push(player)
+          away_team_formation_map.set(form_pos_code, exist_lineup_list)
+        }
+        else {
+          const lineup_list = []
+          lineup_list.push(player)
+          away_team_formation_map.set(form_pos_code, lineup_list)
+        }
+      }
+      count_pos_diff++;
+      rt_home_count = rt_home_count + form_pos_num;
+    }
+    away_team_formation_map = away_team_formation_map
+  }
+
 </script>
 
 <!-- ===============
@@ -696,27 +777,23 @@
               id="overlay-player-pos-box">
               <!-- 
               [ℹ] home -->
-              {#if selected_view == 'home'}
-                {#each formation_pos_arr_main as pos}
+              {#if selected_view == 'home' && home_team_formation_map.size != 0}
+                {#each Array.from(home_team_formation_map.values()) as players_list}
                   <div
                     id="overlay-column">
-                    {#each FIXTURE_LINEUPS[selected_view].lineup as player}
-                      {#if pos == player?.position}
-                        <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                      {/if}
+                    {#each Array.from(players_list) as player}
+                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
                     {/each}
                   </div>
                 {/each}
               <!-- 
               [ℹ] away -->
               {:else}
-                {#each formation_pos_arr as pos}
+                {#each Array.from(away_team_formation_map.values()) as players_list}
                   <div
                     id="overlay-column">
-                    {#each FIXTURE_LINEUPS[selected_view].lineup as player}
-                      {#if pos == player?.position}
-                        <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                      {/if}
+                    {#each Array.from(players_list) as player}
+                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
                     {/each}
                   </div>
                 {/each}
@@ -845,25 +922,25 @@
               id="overlay-player-pos-box">
               <!-- 
               [ℹ] home -->
-              {#each formation_pos_arr_main as pos}
+              {#each Array.from(home_team_formation_map.values()) as players_list}
                 <div
                   id="overlay-column">
-                  {#each FIXTURE_LINEUPS.home.lineup as player}
-                    {#if pos == player?.position}
-                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                    {/if}
+                  {#each Array.from(players_list) as player}
+                    <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
                   {/each}
                 </div>
               {/each}
               <!-- 
+              [ℹ] empty-col -->
+              <div id="overlay-column" />
+              <div id="overlay-column" />
+              <!-- 
               [ℹ] away -->
-              {#each formation_pos_arr as pos}
+              {#each Array.from(away_team_formation_map.values()) as players_list}
                 <div
                   id="overlay-column">
-                  {#each FIXTURE_LINEUPS.away.lineup as player}
-                    {#if pos == player?.position}
-                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                    {/if}
+                  {#each Array.from(players_list) as player}
+                    <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
                   {/each}
                 </div>
               {/each}
@@ -1198,7 +1275,9 @@
     margin: 8px 20px;
   } div#lineup-vector-box div#overlay-player-pos-box {
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(fit-content, 1fr));
+    grid-template-rows: 1fr;
+    grid-auto-flow: column;
     align-items: center;
     align-content: center;
     /* dynamic */
@@ -1279,7 +1358,8 @@
     } div#lineup-vector-box div#lineup-vector {
       margin: 20px 20px 8px 20px;
     } div#lineup-vector-box div#overlay-player-pos-box {
-      grid-template-columns: 1fr 1fr 1.5fr 1.5fr 1.5fr 1.5fr 1fr 1fr;
+      grid-template-columns: repeat(auto-fit, minmax(fit-content, 1fr));
+      grid-template-rows: 1fr;
     } 
 
     /* main team select */

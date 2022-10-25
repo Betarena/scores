@@ -504,7 +504,7 @@ async function main () {
     const home_team_obj: Team_Lineup = {
       team_name:      home_team_name,
       team_logo:      home_team_logo,
-      team_short_code: home_team_short_code || home_team_name.slice(0, 3).toUpperCase() || null,
+      team_short_code: home_team_short_code || home_team_name?.slice(0, 3).toUpperCase() || null,
       team_rating:    value?.teams_rating?.home_team || null,
       coach_name:     home_team_coach_name,
       coach_avatar:   home_team_coach_avatar,
@@ -517,7 +517,7 @@ async function main () {
     const away_team_obj: Team_Lineup = {
       team_name:      away_team_name,
       team_logo:      away_team_logo,
-      team_short_code: away_team_short_code || away_team_short_code.slice(0, 3).toUpperCase() || null,
+      team_short_code: away_team_short_code || away_team_name?.slice(0, 3).toUpperCase() || null,
       team_rating:    value?.teams_rating?.away_team || null,
       coach_name:     away_team_coach_name,
       coach_avatar:   away_team_coach_avatar,
