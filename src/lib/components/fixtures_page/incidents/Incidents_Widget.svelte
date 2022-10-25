@@ -199,7 +199,9 @@
       }
       // FIXME: make compatible TYPES for hasura/events && firebase/events
       FIXTURE_INCIDENTS.events = live_fixtures_map.get(fixture_id)?.events?.data
-      FIXTURE_INCIDENTS.events.sort((a, b) => parseFloat(b.minute.toString()) - parseFloat(a.minute.toString()));
+      if (FIXTURE_INCIDENTS.events != undefined && FIXTURE_INCIDENTS.events.length != 0) {
+        FIXTURE_INCIDENTS.events.sort((a, b) => parseFloat(b.minute.toString()) - parseFloat(a.minute.toString()));
+      }
 
       // [ℹ] reactiveity on-set main
       FIXTURE_INCIDENTS = FIXTURE_INCIDENTS
@@ -292,7 +294,8 @@
   $: if (
     FIXTURE_INCIDENTS
     && browser 
-    && (FIXTURE_INCIDENTS?.status == "NS" || FIXTURE_INCIDENTS?.status == "POST")) {
+    && (FIXTURE_INCIDENTS?.status == "NS" || FIXTURE_INCIDENTS?.status == "POST")
+    && (FIXTURE_INCIDENTS?.events == undefined || FIXTURE_INCIDENTS?.events.length == 0)) {
     no_widget_data = true
     loaded = true
   } else {
@@ -484,21 +487,23 @@
                 ET {FIXTURE_INCIDENTS?.score_post?.et_score}
             </p>
           {/if}
-          {#each FIXTURE_INCIDENTS?.events as event}
-            {#if event?.minute > 90}
-              <!-- 
-              [ℹ] home team
-              -->
-              {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
-              <!-- 
-              [ℹ] away team
-              -->
-              {:else}
-                <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+          {#if FIXTURE_INCIDENTS?.events}
+            {#each FIXTURE_INCIDENTS?.events as event}
+              {#if event?.minute > 90}
+                <!-- 
+                [ℹ] home team
+                -->
+                {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
+                <!-- 
+                [ℹ] away team
+                -->
+                {:else}
+                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+                {/if}
               {/if}
-            {/if}
-          {/each}
+            {/each}
+          {/if}
 
           <!-- 
           [ℹ] FT SCORE [SECTION]
@@ -513,21 +518,23 @@
                 FT {FIXTURE_INCIDENTS?.score_post?.ft_score}
             </p>
           {/if}
-          {#each FIXTURE_INCIDENTS?.events as event}
-            {#if event?.minute > 45 && event?.minute <= 90}
-              <!-- 
-              [ℹ] home team
-              -->
-              {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
-              <!-- 
-              [ℹ] away team
-              -->
-              {:else}
-                <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+          {#if FIXTURE_INCIDENTS?.events}
+            {#each FIXTURE_INCIDENTS?.events as event}
+              {#if event?.minute > 45 && event?.minute <= 90}
+                <!-- 
+                [ℹ] home team
+                -->
+                {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
+                <!-- 
+                [ℹ] away team
+                -->
+                {:else}
+                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+                {/if}
               {/if}
-            {/if}
-          {/each}
+            {/each}
+          {/if}
           
           <!-- 
           [ℹ] HT SCORE [SECTION]
@@ -542,21 +549,23 @@
                 HT {FIXTURE_INCIDENTS?.score_post?.ht_score}
             </p>
           {/if}
-          {#each FIXTURE_INCIDENTS?.events as event}
-            {#if event?.minute <= 45}
-              <!-- 
-              [ℹ] home team
-              -->
-              {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
-              <!-- 
-              [ℹ] away team
-              -->
-              {:else}
-                <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+          {#if FIXTURE_INCIDENTS?.events}
+            {#each FIXTURE_INCIDENTS?.events as event}
+              {#if event?.minute <= 45}
+                <!-- 
+                [ℹ] home team
+                -->
+                {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
+                <!-- 
+                [ℹ] away team
+                -->
+                {:else}
+                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+                {/if}
               {/if}
-            {/if}
-          {/each}
+            {/each}
+          {/if}
         </div>
 
       </div>
