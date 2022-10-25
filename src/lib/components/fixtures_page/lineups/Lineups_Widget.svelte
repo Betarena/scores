@@ -1194,7 +1194,7 @@
       width: 100%;
     } div#team-lineup-box div.lineup-box:last-child div.player-row img.lineup-img {
       margin-left: 16px;
-    } div#team-lineup-box div.lineup-box:last-child div.player-row p.lineup-player-name{
+    } div#team-lineup-box div.lineup-box:last-child div.player-row p.lineup-player-name {
       text-align: end;
     }
   
@@ -1227,5 +1227,11 @@
     WIDGET DARK THEME
   ==================== */
 
+  :global(div#lineup-widget-container.dark-background-1 div#team-info-box div.team-main-select) {
+    border-bottom: 1px solid #616161;
+  }
+  div#lineup-widget-container.dark-background-1 div#divider {
+    background-color: #616161;
+  }
 
 </style>

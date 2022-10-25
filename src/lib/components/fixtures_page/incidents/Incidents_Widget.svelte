@@ -627,7 +627,7 @@
     padding: 14px 0 6px 0;
     text-align: center;
   } :global(div#incidents-widget-container div#incidents-events-box div.incident-row:last-child) {
-    border-bottom: 0;
+    border-bottom: 0 !important;
   }
 
   /* ====================
@@ -671,5 +671,8 @@
     WIDGET DARK THEME
   ==================== */
 
+  :global(div#incidents-widget-container.dark-background-1 div#incidents-events-box div.incident-row) {
+    border-bottom: 1px solid #616161;
+  }
 
 </style>
