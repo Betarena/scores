@@ -296,6 +296,94 @@
           }
         }
       }
+      // [ℹ] update fixture-target bench
+      // [ℹ] with appropiate events HOME && AWAY
+      for (const player of FIXTURE_LINEUPS.home.bench) {
+        // [ℹ] reset player events
+        player.events = {
+          injured: false,
+          yeallow_card: null,
+          red_card: null,
+          goals: null,
+          substitution: null
+        }
+        if (FIXTURE_LINEUPS.events == undefined) {
+          continue;
+        }
+        for (const live_event of FIXTURE_LINEUPS.events) {
+          if (player.player_id == live_event.player_id) {
+            if (player.player_id == live_event.player_id) {
+              if (live_event.type == 'yellowcard') {
+                player.events.yeallow_card =
+                  player.events.yeallow_card == null
+                    ? 1
+                    : player.events.yeallow_card + 1
+                ;
+              }
+              if (live_event.type == 'redcard') {
+                player.events.yeallow_card = 1;
+              }
+              if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+                player.events.goals =
+                  player.events.goals == null
+                    ? 1
+                    : player.events.goals + 1
+                ;
+              }
+            }
+          }
+          if (player.player_id == live_event.related_player_id) {
+            if (live_event.type == 'substitution') {
+              player.events.substitution = live_event;
+            }
+            if (live_event.injuried) {
+              player.events.injured = true;
+            }
+          }
+        }
+      }
+      for (const player of FIXTURE_LINEUPS.away.bench) {
+        // [ℹ] reset player events
+        player.events = {
+          injured: false,
+          yeallow_card: null,
+          red_card: null,
+          goals: null,
+          substitution: null
+        }
+        if (FIXTURE_LINEUPS.events == undefined) {
+          continue;
+        }
+        for (const live_event of FIXTURE_LINEUPS.events) {
+          if (player.player_id == live_event.player_id) {
+            if (live_event.type == 'yellowcard') {
+              player.events.yeallow_card =
+                player.events.yeallow_card == null
+                  ? 1
+                  : player.events.yeallow_card + 1
+              ;
+            }
+            if (live_event.type == 'redcard') {
+              player.events.yeallow_card = 1;
+            }
+            if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+              player.events.goals =
+                player.events.goals == null
+                  ? 1
+                  : player.events.goals + 1
+              ;
+            }
+          }
+          if (player.player_id == live_event.related_player_id) {
+            if (live_event.type == 'substitution') {
+              player.events.substitution = live_event;
+            }
+            if (live_event.injuried) {
+              player.events.injured = true;
+            }
+          }
+        }
+      }
 
       // [ℹ] reactiveity on-set main
       FIXTURE_LINEUPS = FIXTURE_LINEUPS
@@ -411,12 +499,27 @@
   {#if !loaded}
     <div 
       id="seo-widget-box">
+      <!-- 
+      [ℹ] widget-title -->
+      <h2>{FIXTURE_LINEUPS_TRANSLATION?.title}</h2>
+      <!--
+      [ℹ] home-team 
+      [ℹ] home full team (lineup) + (bench) -->
       <p>{FIXTURE_LINEUPS?.home?.team_name}</p>
       {#each FIXTURE_LINEUPS?.home?.lineup as player}
         <p>{player?.player_name}</p>
       {/each}
+      {#each FIXTURE_LINEUPS?.home?.bench as player}
+        <p>{player?.player_name}</p>
+      {/each}
+      <!--
+      [ℹ] away-team
+      [ℹ] away full team (lineup) + (bench) -->
       <p>{FIXTURE_LINEUPS?.away?.team_name}</p>
       {#each FIXTURE_LINEUPS?.away?.lineup as player}
+        <p>{player?.player_name}</p>
+      {/each}
+      {#each FIXTURE_LINEUPS?.away?.bench as player}
         <p>{player?.player_name}</p>
       {/each}
     </div>
@@ -693,7 +796,7 @@
             </div>
             <!-- 
             [ℹ] rest of lineup-team -->
-            {#each FIXTURE_LINEUPS[selected_view].lineup as player}
+            {#each FIXTURE_LINEUPS[selected_view].bench as player}
               <LineupPlayerRow TYPE="R" PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
             {/each}
           </div>
@@ -915,7 +1018,7 @@
               </div>
               <!-- 
               [ℹ] rest of lineup-team -->
-              {#each FIXTURE_LINEUPS.home.lineup as player}
+              {#each FIXTURE_LINEUPS.home.bench as player}
                 <LineupPlayerRow TYPE="R" PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
               {/each}
             </div>
@@ -965,7 +1068,7 @@
               </div>
               <!-- 
               [ℹ] rest of lineup-team -->
-              {#each FIXTURE_LINEUPS.away.lineup as player}
+              {#each FIXTURE_LINEUPS.away.bench as player}
                 <LineupPlayerRow TYPE="L" PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
               {/each}
             </div>

@@ -61,12 +61,13 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
   */
   let football_player_ids: number[] = []
   const lineup_ids = fixture_data?.lineup_j.map(p => p?.player_id)
-  const subs_ids = [
-    ...fixture_data.substitutions_j.map(p => p.player_in_id),
-    ...fixture_data.substitutions_j.map(p => p.player_out_id)
-  ]
+  const bench_ids = fixture_data?.bench_j.map(p => p?.player_id)
+  // const subs_ids = [
+  //   ...fixture.substitutions_j.map(p => p.player_in_id),
+  //   ...fixture.substitutions_j.map(p => p.player_out_id)
+  // ]
   football_player_ids = [
-    ...new Set(football_player_ids.concat(lineup_ids.concat(subs_ids)))
+    ...new Set(football_player_ids.concat(lineup_ids.concat(bench_ids)))
   ]
   const player_data = await get_target_player_data(football_player_ids)
   const players_map = await generate_players_map(player_data)
@@ -75,183 +76,323 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
 	 * [ℹ] generate FIXTURE data
   */
 
-	const fixture_id = fixture_data?.id;
-	const home_team_id = fixture_data?.localteam_id_j;
-	const away_team_id = fixture_data?.visitorteam_id_j;
-	const status = fixture_data?.status_j;
+  const fixture_id = fixture_data?.id;
+  const home_team_id = fixture_data?.localteam_id_j;
+  const away_team_id = fixture_data?.visitorteam_id_j;
+  const status = fixture_data?.status_j;
 
-	// [ℹ] home-team
-	const home_team_name = fixture_data?.home_team_name || null;
-	const home_team_logo = fixture_data?.home_team_logo || null;
-	const home_team_coach_name = fixture_data?.home_coach_j?.fullname || null;
-	const home_team_coach_avatar = fixture_data?.home_coach_j?.image_path || null;
-	const home_team_short_code = fixture_data?.localteam_short_code_j;
-	const home_team_lineup: Fixture_Player[] =
-		fixture_data?.lineup_j == null || fixture_data?.lineup_j.length == 0
-			? []
-			: fixture_data?.lineup_j
-					.filter((player) => player.team_id == home_team_id) /* filter target HOME_TEAM_ID */
-					.map(
-						(p) => ({
-							player_id: p.player_id,
-							player_name: p.player_name,
-							number: p.number,
-							position: p.position,
-							formation_position: p.formation_position,
-							player_avatar: players_map.get(p.player_id)?.image_path_j || null,
-							rating: p?.stats?.rating || null,
-							events: undefined
-						}) /* extract target players */
-					);
-	for (const h_player of home_team_lineup) {
-		h_player.events = {
-			injured: false,
-			yeallow_card: null,
-			red_card: null,
-			goals: null,
+  // [ℹ] home-team-vital-info
+  const home_team_name = fixture_data?.home_team_name || null;
+  const home_team_logo = fixture_data?.home_team_logo || null;
+  const home_team_coach_name = fixture_data?.home_coach_j?.fullname || null;
+  const home_team_coach_avatar = fixture_data?.home_coach_j?.image_path || null;
+  const home_team_short_code = fixture_data?.localteam_short_code_j;
+  // [ℹ] home-team lineup [init]
+  const home_team_lineup: Fixture_Player[] = 
+    fixture_data?.lineup_j == null || fixture_data?.lineup_j.length == 0
+      ? []
+      : fixture_data?.lineup_j
+        .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
+        .map(p => ({
+          player_id: p.player_id,
+          player_name: p.player_name,
+          number: p.number,
+          position: p.position,
+          formation_position: p.formation_position,
+          player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+          rating: p?.stats?.rating || null,
+          events: undefined
+        }) /* extract target players */
+      )
+  ;
+  // [ℹ] home-team lineup [data-injection]
+  for (const h_player of home_team_lineup) {
+    h_player.events = {
+      injured: false,
+      yeallow_card: null,
+      red_card: null,
+      goals: null,
       substitution: null
-		};
-		for (const event of fixture_data.events_j) {
-			if (h_player.player_id == event.player_id) {
-				if (event.type == 'yellowcard') {
-					h_player.events.yeallow_card =
-						h_player.events.yeallow_card == null ? 1 : h_player.events.yeallow_card + 1;
-				}
-				if (event.type == 'redcard') {
-					h_player.events.red_card = 1;
-				}
-				if (event.type == 'goal' || event.type == 'own-goal') {
-					h_player.events.goals = h_player.events.goals == null ? 1 : h_player.events.goals + 1;
-				}
-			}
+    }
+    for (const event of fixture_data.events_j) {
+      if (h_player.player_id == event.player_id) {
+        if (event.type == 'yellowcard') {
+          h_player.events.yeallow_card =
+            h_player.events.yeallow_card == null
+              ? 1
+              : h_player.events.yeallow_card + 1
+          ;
+        }
+        if (event.type == 'redcard') {
+          h_player.events.red_card = 1;
+        }
+        if (event.type == 'goal' || event.type == 'own-goal') {
+          h_player.events.goals =
+            h_player.events.goals == null
+              ? 1
+              : h_player.events.goals + 1
+          ;
+        }
+      }
       if (h_player.player_id == event.related_player_id) {
         if (event.injuried) {
-					h_player.events.injured = true;
-				}
+          h_player.events.injured = true;
+        }
         if (event.type == 'substitution') {
           h_player.events.substitution = event;
         }
       }
-		}
-	}
-	const home_team_subs: Sub_Player[] =
-		fixture_data?.substitutions_j == null || fixture_data?.substitutions_j.length == 0
-			? []
-			: fixture_data?.substitutions_j
-					.filter(
-						(player) => parseInt(player?.team_id) == away_team_id
-					) /* filter target HOME_TEAM_ID */
-					.map((p) => ({
-						player_in_id: p.player_in_id,
-						player_out_id: p.player_out_id,
-						player_in_name: p.player_in_name,
-						player_out_name: p.player_out_name,
-						player_avatar_in: players_map.get(p.player_in_id)?.image_path_j || null,
-						player_avatar_out: players_map.get(p.player_out_id)?.image_path_j || null
-					}));
-	// [ℹ] away-team
-	const away_team_name = fixture_data?.away_team_name;
-	const away_team_logo = fixture_data?.away_team_logo;
-	const away_team_coach_name = fixture_data?.away_coach_j?.fullname || null;
-	const away_team_coach_avatar = fixture_data?.away_coach_j?.image_path || null;
-	const away_team_short_code = fixture_data?.visitorteam_short_code_j;
-	const away_team_lineup: Fixture_Player[] =
-		fixture_data?.lineup_j == null || fixture_data?.lineup_j.length == 0
-			? []
-			: fixture_data?.lineup_j
-					.filter((player) => player.team_id == away_team_id) /* filter target AWAY_TEAM_ID */
-					.map(
-						(p) => ({
-							player_id: p.player_id,
-							player_name: p.player_name,
-							number: p.number,
-							position: p.position,
-							formation_position: p.formation_position,
-							player_avatar: players_map.get(p.player_id)?.image_path_j || null,
-							rating: p?.stats?.rating || null,
-							events: undefined
-						}) /* extract target players */
-					);
-	for (const a_player of away_team_lineup) {
-		a_player.events = {
-			injured: false,
-			yeallow_card: null,
-			red_card: null,
-			goals: null,
+    }
+  }
+  // [ℹ] home-team bench [init]
+  const home_team_bench: Fixture_Player[] = 
+    fixture_data?.bench_j == null 
+    || fixture_data?.bench_j.length == 0
+      ? []
+      : fixture_data?.bench_j
+        .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
+        .map(p => ({
+          player_id: p.player_id,
+          player_name: p.player_name,
+          number: p.number,
+          position: p.position,
+          formation_position: p.formation_position,
+          player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+          rating: p?.stats?.rating || null,
+          events: undefined
+        }) /* extract target players */
+      )
+  ;
+  // [ℹ] home-team bench [data-injection]
+  for (const h_player of home_team_bench) {
+    h_player.events = {
+      injured: false,
+      yeallow_card: null,
+      red_card: null,
+      goals: null,
       substitution: null
-		};
-		for (const event of fixture_data.events_j) {
-			if (a_player.player_id == event.player_id) {
-				if (event.type == 'yellowcard') {
-					a_player.events.yeallow_card =
-						a_player.events.yeallow_card == null ? 1 : a_player.events.yeallow_card + 1;
-				}
-				if (event.type == 'redcard') {
-					a_player.events.red_card = 1;
-				}
-				if (event.type == 'goal' || event.type == 'own-goal') {
-					a_player.events.goals = a_player.events.goals == null ? 1 : a_player.events.goals + 1;
-				}
-        
-			}
+    }
+    for (const event of fixture_data.events_j) {
+      if (h_player.player_id == event.player_id) {
+        if (event.type == 'yellowcard') {
+          h_player.events.yeallow_card =
+            h_player.events.yeallow_card == null
+              ? 1
+              : h_player.events.yeallow_card + 1
+          ;
+        }
+        if (event.type == 'redcard') {
+          h_player.events.red_card = 1;
+        }
+        if (event.type == 'goal' || event.type == 'own-goal') {
+          h_player.events.goals =
+            h_player.events.goals == null
+              ? 1
+              : h_player.events.goals + 1
+          ;
+        }
+      }
+      if (h_player.player_id == event.related_player_id) {
+        if (event.injuried) {
+          h_player.events.injured = true;
+        }
+        if (event.type == 'substitution') {
+          h_player.events.substitution = event;
+        }
+      }
+    }
+  }
+  // [ℹ] home-team substituion-detail event
+  const home_team_subs: Sub_Player[] = 
+    fixture_data?.substitutions_j == null || fixture_data?.substitutions_j.length == 0
+      ? []
+      : fixture_data?.substitutions_j
+        .filter(player => parseInt(player?.team_id) == away_team_id)    /* filter target HOME_TEAM_ID */
+        .map(p => ({
+          player_in_id: p.player_in_id,
+          player_out_id: p.player_out_id,
+          player_in_name: p.player_in_name,
+          player_out_name: p.player_out_name,
+          player_avatar_in: players_map.get(p.player_in_id)?.image_path_j || null,
+          player_avatar_out: players_map.get(p.player_out_id)?.image_path_j || null
+        })
+      )
+  ;
+  
+  // [ℹ] away-team
+  const away_team_name = fixture_data?.away_team_name;
+  const away_team_logo = fixture_data?.away_team_logo;
+  const away_team_coach_name = fixture_data?.away_coach_j?.fullname || null;
+  const away_team_coach_avatar = fixture_data?.away_coach_j?.image_path || null;
+  const away_team_short_code = fixture_data?.visitorteam_short_code_j;
+  // [ℹ] away-team lineup [init]
+  const away_team_lineup: Fixture_Player[] = 
+    fixture_data?.lineup_j == null || fixture_data?.lineup_j.length == 0
+      ? []
+      : fixture_data?.lineup_j
+        .filter(player => player.team_id == away_team_id)    /* filter target AWAY_TEAM_ID */
+        .map(p => ({
+          player_id: p.player_id,
+          player_name: p.player_name,
+          number: p.number,
+          position: p.position,
+          formation_position: p.formation_position,
+          player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+          rating: p?.stats?.rating || null,
+          events: undefined
+        }) /* extract target players */
+      )
+  ;
+  // [ℹ] away-team lineup [data-injection]
+  for (const a_player of away_team_lineup) {
+    a_player.events = {
+      injured: false,
+      yeallow_card: null,
+      red_card: null,
+      goals: null,
+      substitution: null
+    }
+    for (const event of fixture_data.events_j) {
+      if (a_player.player_id == event.player_id) {
+        if (event.type == 'yellowcard') {
+          a_player.events.yeallow_card =
+            a_player.events.yeallow_card == null
+              ? 1
+              : a_player.events.yeallow_card + 1
+          ;
+        }
+        if (event.type == 'redcard') {
+          a_player.events.red_card = 1;
+        }
+        if (event.type == 'goal' || event.type == 'own-goal') {
+          a_player.events.goals =
+            a_player.events.goals == null
+              ? 1
+              : a_player.events.goals + 1
+          ;
+        }
+      }
       if (a_player.player_id == event.related_player_id) {
         if (event.injuried) {
-					a_player.events.injured = true;
-				}
+          a_player.events.injured = true;
+        }
         if (event.type == 'substitution') {
           a_player.events.substitution = event;
         }
       }
-		}
-	}
-	const away_team_subs: Sub_Player[] =
-		fixture_data?.substitutions_j == null || fixture_data?.substitutions_j.length == 0
-			? []
-			: fixture_data?.substitutions_j
-					.filter(
-						(player) => parseInt(player?.team_id) == away_team_id
-					) /* filter target AWAY_TEAM_ID */
-					.map((p) => ({
-						player_in_id: p.player_in_id,
-						player_out_id: p.player_out_id,
-						player_in_name: p.player_in_name,
-						player_out_name: p.player_out_name,
-						player_avatar_in: players_map.get(p.player_in_id)?.image_path_j || null,
-						player_avatar_out: players_map.get(p.player_out_id)?.image_path_j || null
-					}));
-	const home_team_obj: Team_Lineup = {
-		team_name: home_team_name,
-		team_logo: home_team_logo,
-		team_short_code: home_team_short_code || home_team_name.slice(0, 3).toUpperCase() || null,
-		team_rating: fixture_data?.teams_rating?.home_team || null,
-		coach_name: home_team_coach_name,
-		coach_avatar: home_team_coach_avatar,
-		lineup: home_team_lineup,
-		formation: fixture_data?.formations_j?.localteam_formation,
-		substitutions: home_team_subs
-	};
+    }
+  }
+  // [ℹ] away-team bench [init]
+  const away_team_bench: Fixture_Player[] = 
+    fixture_data?.bench_j == null 
+    || fixture_data?.bench_j.length == 0
+      ? []
+      : fixture_data?.bench_j
+        .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
+        .map(p => ({
+          player_id: p.player_id,
+          player_name: p.player_name,
+          number: p.number,
+          position: p.position,
+          formation_position: p.formation_position,
+          player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+          rating: p?.stats?.rating || null,
+          events: undefined
+        }) /* extract target players */
+      )
+  ;
+  // [ℹ] away-team bench [data-injection]
+  for (const a_player of away_team_bench) {
+    a_player.events = {
+      injured: false,
+      yeallow_card: null,
+      red_card: null,
+      goals: null,
+      substitution: null
+    }
+    for (const event of fixture_data.events_j) {
+      if (a_player.player_id == event.player_id) {
+        if (event.type == 'yellowcard') {
+          a_player.events.yeallow_card =
+            a_player.events.yeallow_card == null
+              ? 1
+              : a_player.events.yeallow_card + 1
+          ;
+        }
+        if (event.type == 'redcard') {
+          a_player.events.red_card = 1;
+        }
+        if (event.type == 'goal' || event.type == 'own-goal') {
+          a_player.events.goals =
+            a_player.events.goals == null
+              ? 1
+              : a_player.events.goals + 1
+          ;
+        }
+      }
+      if (a_player.player_id == event.related_player_id) {
+        if (event.injuried) {
+          a_player.events.injured = true;
+        }
+        if (event.type == 'substitution') {
+          a_player.events.substitution = event;
+        }
+      }
+    }
+  }
+  // [ℹ] away-team substituion-detail event
+  const away_team_subs: Sub_Player[] = 
+    fixture_data?.substitutions_j == null || fixture_data?.substitutions_j.length == 0
+      ? []
+      : fixture_data?.substitutions_j
+        .filter(player => parseInt(player?.team_id) == away_team_id)    /* filter target AWAY_TEAM_ID */
+        .map(p => ({
+          player_in_id: p.player_in_id,
+          player_out_id: p.player_out_id,
+          player_in_name: p.player_in_name,
+          player_out_name: p.player_out_name,
+          player_avatar_in: players_map.get(p.player_in_id)?.image_path_j || null,
+          player_avatar_out: players_map.get(p.player_out_id)?.image_path_j || null
+        })
+      )
+  ;
 
-	const away_team_obj: Team_Lineup = {
-		team_name: away_team_name,
-		team_logo: away_team_logo,
-		team_short_code: away_team_short_code || away_team_short_code.slice(0, 3).toUpperCase() || null,
-		team_rating: fixture_data?.teams_rating?.away_team || null,
-		coach_name: away_team_coach_name,
-		coach_avatar: away_team_coach_avatar,
-		lineup: away_team_lineup,
-		formation: fixture_data?.formations_j?.visitorteam_formation,
-		substitutions: away_team_subs
-	};
 
-	// [ℹ] generate [final] fixture object
-	const fixture_object: Fixture_Lineups = {
-		id: fixture_id,
-		status: status,
-		home: home_team_obj,
-		away: away_team_obj,
-		events: fixture_data?.events_j,
-		team_ratings: fixture_data?.teams_rating
-	};
+  const home_team_obj: Team_Lineup = {
+    team_name:      home_team_name,
+    team_logo:      home_team_logo,
+    team_short_code: home_team_short_code || home_team_name.slice(0, 3).toUpperCase() || null,
+    team_rating:    fixture_data?.teams_rating?.home_team || null,
+    coach_name:     home_team_coach_name,
+    coach_avatar:   home_team_coach_avatar,
+    lineup:         home_team_lineup,
+    bench:          home_team_bench,
+    formation:      fixture_data?.formations_j?.localteam_formation,
+    substitutions:  home_team_subs
+  }
+
+  const away_team_obj: Team_Lineup = {
+    team_name:      away_team_name,
+    team_logo:      away_team_logo,
+    team_short_code: away_team_short_code || away_team_short_code.slice(0, 3).toUpperCase() || null,
+    team_rating:    fixture_data?.teams_rating?.away_team || null,
+    coach_name:     away_team_coach_name,
+    coach_avatar:   away_team_coach_avatar,
+    lineup:         away_team_lineup,
+    bench:          away_team_bench,
+    formation:      fixture_data?.formations_j?.visitorteam_formation,
+    substitutions:  away_team_subs
+  }
+
+  // [ℹ] generate [final] fixture object
+  const fixture_object: Fixture_Lineups = {
+    id: fixture_id,
+    status: status,
+    home: home_team_obj,
+    away: away_team_obj,
+    events: fixture_data?.events_j,
+    team_ratings: fixture_data?.teams_rating
+  }
 
 	// [ℹ] return fixture
 	return fixture_object;

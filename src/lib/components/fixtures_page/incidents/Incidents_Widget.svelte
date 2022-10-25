@@ -314,6 +314,11 @@
   {#if !loaded}
     <div 
       id="seo-widget-box">
+      <!-- 
+      [ℹ] widget-title -->
+      <h2>{FXITURE_INCIDENTS_TRANSLATION?.title}</h2>
+      <!-- 
+      [ℹ] team-names -->
       <p>{FIXTURE_INCIDENTS?.home?.team_name}</p>
       <p>{FIXTURE_INCIDENTS?.away?.team_name}</p>
     </div>

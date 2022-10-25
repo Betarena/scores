@@ -44,6 +44,7 @@ export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARE
   localteam_id_j?:     number
   visitorteam_id_j?:   number
   lineup_j?:           BenchDatum[]
+  bench_j?:            BenchDatum[]
   formations_j?:       Formations
   substitutions_j?:    HistFixtures_Substitue[]
   home_coach_j?:       LocalCoachData
@@ -102,7 +103,8 @@ export interface Fixture_Lineups {
   team_rating?:   number | null
   coach_name?:    string
   coach_avatar?:  string
-  lineup?:        Fixture_Player[] // historic_fixtures/lineup*
+  lineup?:        Fixture_Player[]  // historic_fixtures/lineup/data*
+  bench?:         Fixture_Player[]  // historic_fixtures/bench/data*
   formation?:     string
   substitutions?: Sub_Player[]
 } export interface Fixture_Player extends BenchDatum {
