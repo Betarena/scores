@@ -292,7 +292,7 @@
   $: if (
     FIXTURE_INCIDENTS
     && browser 
-    && FIXTURE_INCIDENTS?.status == "NS" || FIXTURE_INCIDENTS?.status == "POST") {
+    && (FIXTURE_INCIDENTS?.status == "NS" || FIXTURE_INCIDENTS?.status == "POST")) {
     no_widget_data = true
     loaded = true
   } else {
