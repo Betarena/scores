@@ -314,6 +314,9 @@
         for (const live_event of FIXTURE_LINEUPS.events) {
           if (player.player_id == live_event.player_id) {
             if (player.player_id == live_event.player_id) {
+              if (live_event.type == 'substitution') {
+                player.events.substitution = live_event;
+              }
               if (live_event.type == 'yellowcard') {
                 player.events.yeallow_card =
                   player.events.yeallow_card == null
@@ -334,9 +337,6 @@
             }
           }
           if (player.player_id == live_event.related_player_id) {
-            if (live_event.type == 'substitution') {
-              player.events.substitution = live_event;
-            }
             if (live_event.injuried) {
               player.events.injured = true;
             }
@@ -357,6 +357,9 @@
         }
         for (const live_event of FIXTURE_LINEUPS.events) {
           if (player.player_id == live_event.player_id) {
+            if (live_event.type == 'substitution') {
+              player.events.substitution = live_event;
+            }
             if (live_event.type == 'yellowcard') {
               player.events.yeallow_card =
                 player.events.yeallow_card == null
@@ -376,9 +379,7 @@
             }
           }
           if (player.player_id == live_event.related_player_id) {
-            if (live_event.type == 'substitution') {
-              player.events.substitution = live_event;
-            }
+
             if (live_event.injuried) {
               player.events.injured = true;
             }

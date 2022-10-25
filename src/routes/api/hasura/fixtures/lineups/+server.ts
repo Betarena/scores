@@ -175,6 +175,9 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
     }
     for (const event of fixture_data.events_j) {
       if (h_player.player_id == event.player_id) {
+        if (event.type == 'substitution') {
+          h_player.events.substitution = event;
+        }
         if (event.type == 'yellowcard') {
           h_player.events.yeallow_card =
             h_player.events.yeallow_card == null
@@ -196,9 +199,6 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
       if (h_player.player_id == event.related_player_id) {
         if (event.injuried) {
           h_player.events.injured = true;
-        }
-        if (event.type == 'substitution') {
-          h_player.events.substitution = event;
         }
       }
     }
@@ -314,6 +314,9 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
     }
     for (const event of fixture_data.events_j) {
       if (a_player.player_id == event.player_id) {
+        if (event.type == 'substitution') {
+          a_player.events.substitution = event;
+        }
         if (event.type == 'yellowcard') {
           a_player.events.yeallow_card =
             a_player.events.yeallow_card == null
@@ -335,9 +338,6 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
       if (a_player.player_id == event.related_player_id) {
         if (event.injuried) {
           a_player.events.injured = true;
-        }
-        if (event.type == 'substitution') {
-          a_player.events.substitution = event;
         }
       }
     }
