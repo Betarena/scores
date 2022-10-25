@@ -381,6 +381,21 @@
   //   kickstart_one_off_data()
   // }
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // REACTIVE SVELTE METHODS
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  $: if (
+    FIXTURE_LINEUPS
+    && browser 
+    && (FIXTURE_LINEUPS?.away?.lineup == undefined || FIXTURE_LINEUPS?.away?.lineup.length == 0)
+    && (FIXTURE_LINEUPS?.home?.lineup == undefined || FIXTURE_LINEUPS?.home?.lineup.length == 0)) {
+    no_widget_data = true
+    loaded = true
+  } else {
+    no_widget_data = false
+  }
+
 </script>
 
 <!-- ===============
