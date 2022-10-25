@@ -106,6 +106,8 @@
         src={icon}
         alt=""
         class="event-icon"
+        width=18px
+        height=18px
       />
       <p
         class="
@@ -113,7 +115,7 @@
           color-grey
           minute-text
         ">
-        {INCIDENT_INFO?.minute}'
+        {('0' + INCIDENT_INFO?.minute).slice(-2)}'
       </p>
 
       {#if INCIDENT_INFO?.type == 'goal'}
@@ -131,7 +133,7 @@
         [ℹ] goal-scorer -->
         <p
           class="
-            w-500
+            w-400
             color-black-2
             result-text
           ">
@@ -139,13 +141,15 @@
         </p>
         <!--
         [ℹ] player-assist -->
-        <p
-          class="
-            w-400
-            color-grey
-          ">
-          Assits: {INCIDENT_INFO?.related_player_name}
-        </p>
+        {#if INCIDENT_INFO?.related_player_name}
+          <p
+            class="
+              w-400
+              color-grey
+            ">
+            Assits: {INCIDENT_INFO?.related_player_name}
+          </p>
+        {/if}
       {/if}
 
       {#if INCIDENT_INFO?.type == 'own-goal'}
@@ -163,7 +167,7 @@
         [ℹ] goal-scorer -->
         <p
           class="
-            w-500
+            w-400
             color-black-2
           ">
           {INCIDENT_INFO?.player_name}
@@ -185,7 +189,7 @@
         [ℹ] goal-scorer -->
         <p
           class="
-            w-500
+            w-400
             color-black-2
           ">
           {INCIDENT_INFO?.player_name}
@@ -231,18 +235,20 @@
       {#if INCIDENT_INFO?.type == 'goal'}
         <!--
         [ℹ] player-assist -->
-        <p
-          class="
-            w-400
-            color-grey
-          ">
-          Assits: {INCIDENT_INFO?.related_player_name}
-        </p>
+        {#if INCIDENT_INFO?.related_player_name}
+          <p
+            class="
+              w-400
+              color-grey
+            ">
+            Assits: {INCIDENT_INFO?.related_player_name}
+          </p>
+        {/if}
         <!--
         [ℹ] goal-scorer -->
         <p
           class="
-            w-500
+            w-400
             color-black-2
             result-text
           ">
@@ -265,7 +271,7 @@
         [ℹ] goal-scorer -->
         <p
           class="
-            w-500
+            w-400
             color-black-2
           ">
           {INCIDENT_INFO?.player_name}
@@ -297,7 +303,7 @@
         [ℹ] goal-scorer -->
         <p
           class="
-            w-500
+            w-400
             color-black-2
           ">
           {INCIDENT_INFO?.player_name}
@@ -348,7 +354,7 @@
           color-grey
           minute-text
         ">
-        {INCIDENT_INFO?.minute}'
+        {('0' + INCIDENT_INFO?.minute).slice(-2)}'
       </p>
       <!--
       [ℹ] goal-icon -->
@@ -356,6 +362,8 @@
         src={icon}
         alt=""
         class="event-icon"
+        width=18px
+        height=18px
       />
 
     {/if}

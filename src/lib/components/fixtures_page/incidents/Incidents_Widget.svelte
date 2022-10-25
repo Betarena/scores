@@ -437,7 +437,7 @@
             <p
               class="
                 color-black-2
-                w-500
+                w-400
               ">
               {FIXTURE_INCIDENTS?.home?.team_name}
             </p>
@@ -446,11 +446,14 @@
           <!-- 
           [ℹ] away team -->
           <div
-            class="row-space-end">
+            class="
+              row-space-end
+              away-team  
+            ">
             <p
               class="
                 color-black-2
-                w-500
+                w-400
               ">
               {FIXTURE_INCIDENTS?.away?.team_name}
             </p>
@@ -622,7 +625,7 @@
   } div#team-info-box p {
     font-size: 16px;
     margin-left: 12px;
-  } div#team-info-box div:last-child p {
+  } div#team-info-box div.away-team p {
     margin-right: 12px;
     margin-left: 0;
   }
