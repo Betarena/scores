@@ -431,7 +431,7 @@
             />
             <p
               class="
-                color-black
+                color-black-2
                 w-500
               ">
               {FIXTURE_INCIDENTS?.home?.team_name}
@@ -444,7 +444,7 @@
             class="row-space-end">
             <p
               class="
-                color-black
+                color-black-2
                 w-500
               ">
               {FIXTURE_INCIDENTS?.away?.team_name}
@@ -470,7 +470,7 @@
             <p
               class="
                 w-500
-                color-black
+                color-black-2
                 event-milestone-text
               ">
                 ET {FIXTURE_INCIDENTS?.score_post?.et_score}
@@ -499,7 +499,7 @@
             <p
               class="
                 w-500
-                color-black
+                color-black-2
                 event-milestone-text
               ">
                 FT {FIXTURE_INCIDENTS?.score_post?.ft_score}
@@ -528,7 +528,7 @@
             <p
               class="
                 w-500
-                color-black
+                color-black-2
                 event-milestone-text
               ">
                 HT {FIXTURE_INCIDENTS?.score_post?.ht_score}

@@ -96,7 +96,7 @@
               <p
                 class="
                   w-500
-                  color-black
+                  color-black-2
                   lineup-player-name
                 ">
                 {PLAYER_INFO?.number} {PLAYER_INFO?.player_name}
@@ -289,7 +289,7 @@
               <p
                 class="
                   w-500
-                  color-black
+                  color-black-2
                   lineup-player-name
                 ">
                 {PLAYER_INFO?.number} {PLAYER_INFO?.player_name}

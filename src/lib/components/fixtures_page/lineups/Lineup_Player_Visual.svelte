@@ -133,7 +133,7 @@
     <p
       class="
         w-500
-        color-black
+        color-black-2
         lineup-player-name
       ">
       {PLAYER_INFO?.player_name.split(' ')[1] || PLAYER_INFO?.player_name.split(' ')[0]}

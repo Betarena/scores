@@ -122,7 +122,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.result}
@@ -132,7 +132,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.player_name}
@@ -154,7 +154,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.result}
@@ -164,7 +164,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
           ">
           {INCIDENT_INFO?.player_name}
         </p>
@@ -176,7 +176,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.result}
@@ -186,7 +186,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
           ">
           {INCIDENT_INFO?.player_name}
         </p>
@@ -198,7 +198,7 @@
         <p
           class="
             w-400
-            color-black
+            color-black-2
           ">
           {INCIDENT_INFO?.player_name}
         </p>
@@ -210,7 +210,7 @@
         <p
           class="
             w-400
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.player_name}
@@ -243,7 +243,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.player_name}
@@ -253,7 +253,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.result}
@@ -266,7 +266,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
           ">
           {INCIDENT_INFO?.player_name}
         </p>
@@ -275,7 +275,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.result}
@@ -288,7 +288,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.result}
@@ -298,7 +298,7 @@
         <p
           class="
             w-500
-            color-black
+            color-black-2
           ">
           {INCIDENT_INFO?.player_name}
         </p>
@@ -310,7 +310,7 @@
         <p
           class="
             w-400
-            color-black
+            color-black-2
           ">
           {INCIDENT_INFO?.player_name}
         </p>
@@ -331,7 +331,7 @@
         <p
           class="
             w-400
-            color-black
+            color-black-2
             result-text
           ">
           {INCIDENT_INFO?.player_name}

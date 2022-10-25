@@ -542,7 +542,7 @@
               <p
                 class="
                   w-500
-                  color-black
+                  color-black-2
                 ">
                 {FIXTURE_LINEUPS?.home?.team_short_code}
               </p>
@@ -559,7 +559,7 @@
               <p
                 class="
                   w-500
-                  color-black
+                  color-black-2
                 ">
                 {FIXTURE_LINEUPS?.away?.team_short_code}
               </p>
@@ -623,7 +623,7 @@
               <p
                 class="
                   w-500
-                  color-black
+                  color-black-2
                 ">
                 {FIXTURE_LINEUPS[selected_view]?.team_name}
                 <br/>
@@ -677,7 +677,7 @@
               <p
                 class="
                   w-500
-                  color-black
+                  color-black-2
                   lineup-player-name
                 ">
                 {FIXTURE_LINEUPS[selected_view]?.coach_name}
@@ -778,7 +778,7 @@
                 <p
                   class="
                     w-500
-                    color-black
+                    color-black-2
                     team-name
                   ">
                   {FIXTURE_LINEUPS?.home?.team_name}
@@ -841,7 +841,7 @@
                 <p
                   class="
                     w-500
-                    color-black
+                    color-black-2
                     team-name
                   ">
                   {FIXTURE_LINEUPS?.away?.team_name}
@@ -899,7 +899,7 @@
                 <p
                   class="
                     w-500
-                    color-black
+                    color-black-2
                     lineup-player-name
                   ">
                   {FIXTURE_LINEUPS.home?.coach_name}
@@ -940,7 +940,7 @@
                 <p
                   class="
                     w-500
-                    color-black
+                    color-black-2
                     lineup-player-name
                   ">
                   {FIXTURE_LINEUPS?.away?.coach_name}
