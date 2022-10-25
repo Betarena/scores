@@ -94,6 +94,8 @@
           src={injured} 
           alt=""
           class="injured-box"
+          width=12px
+          height=12px
         />
       <!--
       [ℹ] substitution-player -->
@@ -102,15 +104,29 @@
           src={substitution} 
           alt=""
           class="substituion-box"
+          width=12px
+          height=12px
         />
       {/if}
       <!--
+      [ℹ] redcard-player -->
+      {#if PLAYER_INFO?.events?.red_card}
+        <img
+          src={red_card}
+          alt=""
+          class="yellow-card-box"
+          width=14px
+          height=14px
+        />
+      <!--
       [ℹ] yellowcard-player -->
-      {#if PLAYER_INFO?.events?.yeallow_card}
+      {:else if PLAYER_INFO?.events?.yeallow_card}
         <img
           src={yellow_card}
           alt=""
           class="yellow-card-box"
+          width=14px
+          height=14px
         />
         {#if PLAYER_INFO?.events?.yeallow_card > 1}
           <p>
@@ -125,6 +141,8 @@
           src={football} 
           alt=""
           class="goal-box"
+          width=12px
+          height=12px
         />
       {/if}
     </div>
@@ -136,7 +154,9 @@
         color-black-2
         lineup-player-name
       ">
-      {PLAYER_INFO?.player_name.split(' ')[1] || PLAYER_INFO?.player_name.split(' ')[0]}
+      <!-- {PLAYER_INFO?.player_name.split(' ')[1] || PLAYER_INFO?.player_name.split(' ')[0]} -->
+      {PLAYER_INFO?.player_name.split(' ')[0] + " " + (PLAYER_INFO?.player_name.split(' ')[1] || "")}
+      <!-- {PLAYER_INFO?.player_name} -->
       <br/>
       <span>
         {PLAYER_INFO?.number}
@@ -163,6 +183,7 @@
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.12);
     object-fit: contain;
     border-radius: 50%;
+    background-color: white;
   } div#main-player-box div.player-main-info-box p#box-goals {
     box-sizing: border-box;
     text-align: center;

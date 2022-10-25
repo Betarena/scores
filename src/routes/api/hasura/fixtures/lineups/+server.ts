@@ -96,7 +96,7 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
         .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
         .map(p => ({
           player_id: p.player_id,
-          player_name: p.player_name,
+          player_name: players_map.get(p.player_id)?.common_name || null, // p.player_name,
           number: p.number,
           position: p.position,
           formation_position: p.formation_position,
@@ -235,7 +235,7 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
         .filter(player => player.team_id == away_team_id)    /* filter target AWAY_TEAM_ID */
         .map(p => ({
           player_id: p.player_id,
-          player_name: p.player_name,
+          player_name: players_map.get(p.player_id)?.common_name || null, // p.player_name,
           number: p.number,
           position: p.position,
           formation_position: p.formation_position,

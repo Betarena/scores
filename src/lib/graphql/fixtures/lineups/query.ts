@@ -117,6 +117,7 @@ export const REDIS_CACHE_LINEUPS_DATA_4 = gql`
       } 
     ) {
       player_id
+      common_name
       image_path_j: data(path: "$.image_path")
     }
   }

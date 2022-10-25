@@ -1256,7 +1256,7 @@
     } div#lineup-vector-box div#lineup-vector {
       margin: 20px 20px 8px 20px;
     } div#lineup-vector-box div#overlay-player-pos-box {
-      grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+      grid-template-columns: 1fr 1fr 1.5fr 1.5fr 1.5fr 1.5fr 1fr 1fr;
     } 
 
     /* main team select */
