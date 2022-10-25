@@ -2,11 +2,12 @@ import type {
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
   BETARENA_HASURA_scores_football_seasons_details,
+  BETARENA_HASURA_scores_general_translations,
   BETARENA_HASURA_scores_incidents_translations,
   EventsDatum,
   IncidentsTranslations,
   Scores,
-  Time
+  WidgetsNoDataAvailable
 } from "$lib/models/hasura"
 
 /**
@@ -16,7 +17,7 @@ import type {
 */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface REDIS_CACHE_SINGLE_incidents_translation extends IncidentsTranslations {
+export interface REDIS_CACHE_SINGLE_incidents_translation extends IncidentsTranslations, WidgetsNoDataAvailable {
   lang?: string
 }
 
@@ -44,6 +45,7 @@ export interface BETARENA_HASURA_incidents_query {
   historic_fixtures_aggregate:     BETARENA_HASURA_historic_fixtures_aggregate
   historic_fixtures:               BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
   // NOTE: translations
+  scores_general_translations?:    BETARENA_HASURA_scores_general_translations[]
   scores_incidents_translations:   BETARENA_HASURA_scores_incidents_translations[]
 }
 

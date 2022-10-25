@@ -285,6 +285,20 @@
   //   kickstart_one_off_data()
   // }
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // REACTIVE SVELTE METHODS
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  $: if (
+    FIXTURE_INCIDENTS
+    && browser 
+    && FIXTURE_INCIDENTS?.status == "NS" || FIXTURE_INCIDENTS?.status == "POST") {
+    no_widget_data = true
+    loaded = true
+  } else {
+    no_widget_data = false
+  }
+
 </script>
 
 <!-- ===============

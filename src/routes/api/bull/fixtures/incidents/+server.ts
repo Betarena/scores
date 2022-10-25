@@ -280,9 +280,13 @@ async function main_trans_and_seo (
     const objectFixOdds = res.scores_incidents_translations
       .find(({ lang }) => lang === lang_)
 
+    const objectFixGeneralTranslation = res.scores_general_translations
+      .find(({ lang }) => lang === lang_)
+
     const mergedObj = {
       ...object, 
-      ...objectFixOdds?.translations
+      ...objectFixOdds?.translations,
+      ...objectFixGeneralTranslation?.widgets_no_data_available
     }
 
     fix_odds_translation_map.set(lang_, mergedObj)

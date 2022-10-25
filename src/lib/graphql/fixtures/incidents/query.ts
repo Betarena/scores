@@ -101,6 +101,10 @@ export const REDIS_CACHE_FIXTURE_INCIDENTS_DATA_3 = gql`
       lang
       translations
     }
+    scores_general_translations {
+      lang
+      widgets_no_data_available
+    }
   }
 `;
 
