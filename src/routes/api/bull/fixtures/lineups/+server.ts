@@ -349,7 +349,7 @@ async function main () {
       || value?.substitutions_j.length == 0
         ? []
         : value?.substitutions_j
-          .filter(player => parseInt(player?.team_id) == away_team_id)    /* filter target HOME_TEAM_ID */
+          .filter(player => parseInt(player?.team_id) == home_team_id)    /* filter target HOME_TEAM_ID */
           .map(p => ({
             player_in_id: p.player_in_id,
             player_out_id: p.player_out_id,
@@ -431,7 +431,7 @@ async function main () {
       || value?.bench_j.length == 0
         ? []
         : value?.bench_j
-          .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
+          .filter(player => player.team_id == away_team_id)    /* filter target AWAY_TEAM_ID */
           .map(p => ({
             player_id: p.player_id,
             player_name: p.player_name,
