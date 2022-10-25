@@ -9,8 +9,7 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
 	import type { 
-    Fixture_Player, 
-    REDIS_CACHE_SINGLE_lineups_translation 
+    Fixture_Player
   } from "$lib/models/fixtures/lineups/types";
 
   import injured from './assets/injured.svg';
@@ -154,8 +153,8 @@
         color-black-2
         lineup-player-name
       ">
-      <!-- {PLAYER_INFO?.player_name.split(' ')[1] || PLAYER_INFO?.player_name.split(' ')[0]} -->
-      {PLAYER_INFO?.player_name.split(' ')[0] + " " + (PLAYER_INFO?.player_name.split(' ')[1] || "")}
+      {PLAYER_INFO?.player_name.split(' ')[1] || PLAYER_INFO?.player_name.split(' ')[0]}
+      <!-- {PLAYER_INFO?.player_name.split(' ')[0] + " " + (PLAYER_INFO?.player_name.split(' ')[1] || "")} -->
       <!-- {PLAYER_INFO?.player_name} -->
       <br/>
       <span>
@@ -174,6 +173,7 @@
 
   div#main-player-box {
     text-align: center;
+    /* width: fit-content; */
   } div#main-player-box div.player-main-info-box {
     position: relative;
   } div#main-player-box div.player-main-info-box img.lineup-img {
