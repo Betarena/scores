@@ -18,6 +18,8 @@
   import football_red from './assets/football-red.svg';
   import substitution from './assets/substitution.svg';
   import inj_substitution from './assets/inj-substitution.svg';
+  import w_substitution from './assets/w-substitution.svg';
+  import w_inj_substitution from './assets/w-inj-substitution.svg';
   import yellow_card from './assets/yellow-card.svg';
   import red_card from './assets/red-card.svg';
   import yellowred_card from './assets/yellowred.svg';
@@ -49,10 +51,20 @@
     }
     if (INCIDENT_INFO?.type == "substitution") {
       if (INCIDENT_INFO?.injuried) {
-        icon = inj_substitution
+        if ($userBetarenaSettings.theme == 'Dark') {
+          icon = w_inj_substitution
+        }
+        else {
+          icon = inj_substitution
+        }
       }
       else {
-        icon = substitution
+        if ($userBetarenaSettings.theme == 'Dark') {
+          icon = w_substitution
+        }
+        else {
+          icon = substitution
+        }
       }
     }
     if (INCIDENT_INFO?.type == "yellowcard") {
