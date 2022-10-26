@@ -1424,8 +1424,8 @@
       margin: 20px 20px 8px 20px;
     } div#lineup-vector-box div#overlay-player-pos-box {
       display: flex !important;
-      min-height: unset;
-      max-height: unset;
+      /* min-height: unset; */
+      /* max-height: unset; */
     } div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, 1fr);
