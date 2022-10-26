@@ -166,7 +166,7 @@
                     lineup-player-name
                   ">
                   {PLAYER_INFO?.events?.substitution?.minute}' 
-                  Out: {PLAYER_INFO?.events?.substitution?.player_name}
+                  Out: {PLAYER_INFO?.events?.substitution?.related_player_name}
                 </p>
               </div>
             {:else}
@@ -317,7 +317,7 @@
                     lineup-player-name
                   ">
                   {PLAYER_INFO?.events?.substitution?.minute}' 
-                  Out: {PLAYER_INFO?.events?.substitution?.player_name}
+                  Out: {PLAYER_INFO?.events?.substitution?.related_player_name}
                 </p>
               </div>
             {:else}
