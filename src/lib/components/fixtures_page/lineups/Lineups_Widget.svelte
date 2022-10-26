@@ -60,17 +60,11 @@
   let no_widget_data:    any = false;               // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
   let selected_view:     'home' | 'away' = 'home';  // [ℹ] change "mobile-only" view on TEAM-LINEUPS
 
-  const formation_pos_arr_main = [
+  const formation_pos_arr = [
     'G',
     'D',
     'M',
     'A'
-  ]
-  const formation_pos_arr = [
-    'A',
-    'M',
-    'D',
-    'G'
   ]
 
   let home_team_formation_map = new Map <string, Fixture_Player[]>()
@@ -496,10 +490,11 @@
   $: if (
     FIXTURE_LINEUPS
     && browser 
-    && FIXTURE_LINEUPS?.away?.formation
-    && FIXTURE_LINEUPS?.home?.formation
+    && FIXTURE_LINEUPS?.away?.formation == undefined
+    && FIXTURE_LINEUPS?.home?.formation == undefined
     && (FIXTURE_LINEUPS?.away?.lineup == undefined || FIXTURE_LINEUPS?.away?.lineup.length == 0)
-    && (FIXTURE_LINEUPS?.home?.lineup == undefined || FIXTURE_LINEUPS?.home?.lineup.length == 0)) {
+    && (FIXTURE_LINEUPS?.home?.lineup == undefined || FIXTURE_LINEUPS?.home?.lineup.length == 0)
+  ) {
     no_widget_data = true
     loaded = true
   } else {
@@ -568,7 +563,55 @@
       rt_home_count = rt_home_count + form_pos_num;
     }
     away_team_formation_map = away_team_formation_map
-  } else {
+  }
+  // [ℹ] only-lineup available
+  else if (
+    FIXTURE_LINEUPS
+    && browser 
+    && (FIXTURE_LINEUPS?.away?.lineup != undefined || FIXTURE_LINEUPS?.away?.lineup.length != 0)
+    && (FIXTURE_LINEUPS?.home?.lineup != undefined || FIXTURE_LINEUPS?.home?.lineup.length != 0)
+  ) {
+    // NOTE: home-team
+    home_team_formation_map = new Map <string, Fixture_Player[]>() // [ℹ] reset player-list
+    for (const form_pos of formation_pos_arr) {
+      for (const player of FIXTURE_LINEUPS?.home?.lineup) {
+        if (form_pos == player?.position) {
+          if (home_team_formation_map.has(form_pos)) {
+            let exist_lineup_list = home_team_formation_map.get(form_pos)
+            exist_lineup_list.push(player)
+            home_team_formation_map.set(form_pos, exist_lineup_list)
+          }
+          else {
+            const lineup_list = []
+            lineup_list.push(player)
+            home_team_formation_map.set(form_pos, lineup_list)
+          }
+        }
+      }
+    }
+    home_team_formation_map = home_team_formation_map
+    // NOTE: away-team
+    away_team_formation_map = new Map <string, Fixture_Player[]>() // [ℹ] reset player-list
+    for (const form_pos of formation_pos_arr) {
+      for (const player of FIXTURE_LINEUPS?.away?.lineup) {
+        if (form_pos == player?.position) {
+          if (away_team_formation_map.has(form_pos)) {
+            let exist_lineup_list = away_team_formation_map.get(form_pos)
+            exist_lineup_list.push(player)
+            away_team_formation_map.set(form_pos, exist_lineup_list)
+          }
+          else {
+            const lineup_list = []
+            lineup_list.push(player)
+            away_team_formation_map.set(form_pos, lineup_list)
+          }
+        }
+      }
+    }
+    away_team_formation_map = away_team_formation_map
+  }
+  // [ℹ] no-lineups && no-formations
+  else {
     no_widget_data = true
     loaded = true
   }
@@ -841,7 +884,7 @@
                     w-400
                     color-grey
                   ">
-                  {FIXTURE_LINEUPS[selected_view]?.formation}
+                  {FIXTURE_LINEUPS[selected_view]?.formation || ""}
                 </span>
               </p>
             </div>
@@ -997,7 +1040,7 @@
                       w-400
                       color-grey
                     ">
-                    {FIXTURE_LINEUPS?.home?.formation}
+                    {FIXTURE_LINEUPS?.home?.formation || ""}
                   </span>
                 </p>
               </div>
@@ -1060,7 +1103,7 @@
                       w-400
                       color-grey
                     ">
-                    {FIXTURE_LINEUPS?.away?.formation}
+                    {FIXTURE_LINEUPS?.away?.formation || ""}
                   </span>
                 </p>
                 <!-- 
