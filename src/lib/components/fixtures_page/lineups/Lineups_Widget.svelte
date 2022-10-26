@@ -1347,11 +1347,13 @@
     position: relative;
     padding: 15px;
     min-height: 400px;
+    height: 400px;
     max-height: 400px;
   } div#lineup-vector-box div#overlay-player-pos-box div#overlay-column {
     display: grid;
     gap: 8px;
     height: -webkit-fill-available;
+    height: -moz-fill-available;
   }
 
   /* main team select */
@@ -1433,8 +1435,11 @@
       grid-auto-flow: column;
       align-items: center;
       align-content: center;
+      height: -webkit-fill-available;
+      height: -moz-fill-available;
     } div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid div#overlay-column {
       height: -webkit-fill-available;
+      height: -moz-fill-available;
     }    
 
     /* main team select */
