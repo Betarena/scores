@@ -58,6 +58,8 @@
 	let refresh_data:      any = undefined;           // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
   let no_widget_data:    any = false;               // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
 
+  let show_placeholder:  boolean = false
+
   // [🐞]
   let enable_logs:       boolean = true;
   let dev_console_tag:   string = "fixtures | incidents [DEV]";
@@ -332,7 +334,8 @@
   -->
   {#if
     no_widget_data && 
-    loaded}
+    loaded
+    && show_placeholder}
 
     <h2
       class="s-20 m-b-10 w-500 color-black-2"

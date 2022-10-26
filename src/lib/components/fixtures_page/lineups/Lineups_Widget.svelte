@@ -85,6 +85,7 @@
   // 11 - Left-winger [A]
 
   let currentSeason:     number = undefined;
+  let show_placeholder:  boolean = false
 
   // [🐞]
   let enable_logs:       boolean = true;
@@ -670,7 +671,8 @@
   -->
   {#if
     no_widget_data && 
-    loaded}
+    loaded
+    && show_placeholder}
 
     <h2
       class="s-20 m-b-10 w-500 color-black-2"
