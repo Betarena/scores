@@ -1870,6 +1870,10 @@
         -->
         {:else}
 
+          <div 
+            id="empty-widget-placeholder"
+            class:full-time={FIXTURE_SCOREBOARD.status == "FT"} />
+
           <div
             id="scoreboard-widget-container"
             class="miniature"
@@ -2510,6 +2514,13 @@
   }
 
   /* miniature [ONLY] [MOBILE] */
+  div#empty-widget-placeholder {
+    min-height: 334px;
+    max-height: 334px;
+  } div#empty-widget-placeholder.full-time {
+    min-height: 267px;
+    max-height: 267px;
+  }
   div#scoreboard-widget-container.miniature {
     position: fixed;
     top: 0;
@@ -2517,6 +2528,7 @@
     left: 0;
     border-radius: 0 !important;
     background: #292929 !important;
+    z-index: 1000;
   } div#scoreboard-widget-container.miniature div#fixture-info-box {
     padding: 20px 10px;
     min-height: 80px;
@@ -2563,6 +2575,7 @@
     background-size: cover !important;
     max-width: 1362px;
     width: calc(100vw - 68px);
+    z-index: 1000;
   } div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box {
     /* display: grid;
 		grid-auto-flow: column;
@@ -2628,6 +2641,15 @@
     div#scoreboard-widget-container div#scoreboard-top-box.full-time {
       min-height: 200px;
       max-height: 200px;
+    }
+
+    /* placeholder during miniature */
+    div#empty-widget-placeholder {
+      min-height: 306px;
+      max-height: 306px;
+    } div#empty-widget-placeholder.full-time {
+      min-height: 252px;
+      max-height: 252px;
     }
 
     /* odds-bet style */
@@ -2704,6 +2726,13 @@
       background-repeat: no-repeat;
       background-size: cover;
     }
+
+    /* placeholder during miniature */
+    div#empty-widget-placeholder {
+      min-height: 259px;
+      max-height: 259px;
+    }
+
 
     /* league-info */
     div#scoreboard-widget-container div#scoreboard-top-box div#league-info-box p:hover {
