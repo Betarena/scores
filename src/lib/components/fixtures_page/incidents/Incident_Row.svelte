@@ -382,6 +382,7 @@
     padding: 14px 0 4px 0;
     margin: 0 20px;
     width: -webkit-fill-available;
+    width: -moz-available;
     border-bottom: 1px solid #E6E6E6;
   } div.incident-row p {
     font-size: 14px;
