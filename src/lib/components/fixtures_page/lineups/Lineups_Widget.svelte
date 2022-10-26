@@ -220,6 +220,8 @@
       logs.push(`fixture ${fixture_id} livescore_now exists!`) 
       // [ℹ] update fixture data;
       FIXTURE_LINEUPS.status = live_fixtures_map.get(fixture_id)?.time?.status
+      FIXTURE_LINEUPS.home.formation = live_fixtures_map.get(fixture_id)?.formations?.localteam_formation
+      FIXTURE_LINEUPS.away.formation = live_fixtures_map.get(fixture_id)?.formations?.visitorteam_formation
       // FIXME: make compatible TYPES for hasura/events && firebase/events
       FIXTURE_LINEUPS.events = live_fixtures_map.get(fixture_id)?.events?.data
       // [ℹ] update fixture-target lineup
