@@ -1530,5 +1530,8 @@
   div#lineup-widget-container.dark-background-1 div#divider {
     background-color: #616161;
   }
+  div#lineup-widget-container.dark-background-1 div.team-main-select {
+    border-bottom: 1px solid #616161;
+  }
 
 </style>
