@@ -79,11 +79,12 @@
           <!-- 
           [ℹ] player avatar -->
           <img 
-            src={PLAYER_INFO?.player_avatar} 
+            src={PLAYER_INFO?.player_avatar || "https://cdn.sportmonks.com/images/soccer/placeholder.png"} 
             alt=""
             width=40px
             height=40px
             class="lineup-img"
+            on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
           />
           <!-- 
           [ℹ] player main box -->
@@ -336,11 +337,12 @@
           <!-- 
           [ℹ] player avatar -->
           <img 
-            src={PLAYER_INFO?.player_avatar} 
+            src={PLAYER_INFO?.player_avatar || "https://cdn.sportmonks.com/images/soccer/placeholder.png"} 
             alt=""
             width=40px
             height=40px
             class="lineup-img"
+            on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
           />
         </div>
       {/if}

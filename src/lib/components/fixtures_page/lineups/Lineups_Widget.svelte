@@ -933,6 +933,7 @@
                 width=40px
                 height=40px
                 class="lineup-img"
+                on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
               />
               <!-- 
               [ℹ] player name -->
@@ -1160,6 +1161,7 @@
                   width=40px
                   height=40px
                   class="lineup-img"
+                  on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
                 />
                 <!-- 
                 [ℹ] coach name -->
@@ -1228,6 +1230,7 @@
                   width=40px
                   height=40px
                   class="lineup-img"
+                  on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
                 />
               </div>
               <!-- 

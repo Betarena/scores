@@ -296,39 +296,34 @@
   [ℹ] widgets 
   [ℹ] MOBILE-->
 
-  {#if mobileExclusive || tabletExclusive}
+  <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
 
-    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
-
-    <div
-      id="widget-grid-display">
-      <div 
-        class='grid-display-column'>
-        <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
-        <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
-      </div>
+  <div
+    id="widget-grid-display"
+    class:display-none={!mobileExclusive && !tabletExclusive}>
+    <div 
+      class='grid-display-column'>
+      <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+      <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
     </div>
+  </div>
 
   <!-- 
   [ℹ] widgets 
   [ℹ] TABLET && DESKTOP -->
-  {:else}
 
-    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
-    
-    <div
-      id="widget-grid-display">
-      <div 
-        class='grid-display-column'>
-        <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
-      </div>
-      <div 
-        class='grid-display-column'>
-        <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
-      </div>
+  <div
+    id="widget-grid-display"
+    class:display-none={mobileExclusive || tabletExclusive}>
+    <div 
+      class='grid-display-column'>
+      <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
     </div>
-
-  {/if}
+    <div 
+      class='grid-display-column'>
+      <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+    </div>
+  </div>
 
 </section>
 
@@ -367,6 +362,10 @@
   } div#fixture-page-breadcrumbs a > p:hover {
     color: #f5620f !important; 
   } 
+
+  .display-none {
+    display: none !important;
+  }
 
   /* ====================
     RESPONSIVNESS

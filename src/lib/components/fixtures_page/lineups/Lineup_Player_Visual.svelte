@@ -66,11 +66,12 @@
         player-main-info-box
       ">
       <img 
-        src={PLAYER_INFO?.player_avatar} 
+        src={PLAYER_INFO?.player_avatar || "https://cdn.sportmonks.com/images/soccer/placeholder.png"} 
         alt=""
         width=32px
         height=32px
         class="lineup-img"
+        on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
       />
       <!-- 
       [ℹ] player rating -->
