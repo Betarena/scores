@@ -193,7 +193,8 @@
           style="width: auto;">
           {#if 
             STATUS == "FT"
-            && PLAYER_INFO?.rating != undefined}
+            && PLAYER_INFO?.rating != undefined
+            && parseInt(PLAYER_INFO?.rating) != 0}
             <p 
               id='box-goals'
               class="medium w-500"
@@ -215,7 +216,8 @@
           style="width: auto;">
           {#if 
             STATUS == "FT"
-            && PLAYER_INFO?.rating != undefined}
+            && PLAYER_INFO?.rating != undefined
+            && parseInt(PLAYER_INFO?.rating) != 0}
             <p 
               id='box-goals'
               class="medium w-500"
