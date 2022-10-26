@@ -140,8 +140,9 @@
             w-500
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.result || ""}
+          "
+          class:display-none={INCIDENT_INFO?.result == undefined}>
+          {INCIDENT_INFO?.result}
         </p>
         <!--
         [ℹ] goal-scorer -->
@@ -150,8 +151,9 @@
             w-400
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
         <!--
         [ℹ] player-assist -->
@@ -174,8 +176,9 @@
             w-500
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.result || ""}
+          "
+          class:display-none={INCIDENT_INFO?.result == undefined}>
+          {INCIDENT_INFO?.result}
         </p>
         <!--
         [ℹ] goal-scorer -->
@@ -183,8 +186,9 @@
           class="
             w-400
             color-black-2
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
       {/if}
 
@@ -196,8 +200,9 @@
             w-500
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.result || ""}
+          "
+          class:display-none={INCIDENT_INFO?.result == undefined}>
+          {INCIDENT_INFO?.result}
         </p>
         <!--
         [ℹ] goal-scorer -->
@@ -205,8 +210,9 @@
           class="
             w-400
             color-black-2
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
       {/if}
 
@@ -217,8 +223,9 @@
           class="
             w-400
             color-black-2
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
       {/if}
 
@@ -230,8 +237,9 @@
             w-400
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
         <!--
         [ℹ] out player -->
@@ -265,8 +273,9 @@
             w-400
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
         <!--
         [ℹ] result -->
@@ -275,8 +284,9 @@
             w-500
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.result || ""}
+          "
+          class:display-none={INCIDENT_INFO?.result == undefined}>
+          {INCIDENT_INFO?.result}
         </p>
       {/if}
 
@@ -287,8 +297,9 @@
           class="
             w-400
             color-black-2
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
         <!--
         [ℹ] result -->
@@ -297,8 +308,9 @@
             w-500
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.result || ""}
+          "
+          class:display-none={INCIDENT_INFO?.result == undefined}>
+          {INCIDENT_INFO?.result}
         </p>
       {/if}
 
@@ -310,8 +322,9 @@
             w-500
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.result || ""}
+          "
+          class:display-none={INCIDENT_INFO?.result == undefined}>
+          {INCIDENT_INFO?.result}
         </p>
         <!--
         [ℹ] goal-scorer -->
@@ -319,8 +332,9 @@
           class="
             w-400
             color-black-2
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
       {/if}
 
@@ -331,8 +345,9 @@
           class="
             w-400
             color-black-2
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
       {/if}
 
@@ -353,8 +368,9 @@
             w-400
             color-black-2
             result-text
-          ">
-          {INCIDENT_INFO?.player_name || ""}
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
         </p>
       {/if}
 
@@ -392,6 +408,10 @@
 ==================== -->
 
 <style>
+
+  .display-none {
+    display: none;
+  }
 
   /* events row */
   div.incident-row {
