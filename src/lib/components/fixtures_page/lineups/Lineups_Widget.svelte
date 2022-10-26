@@ -1341,6 +1341,8 @@
     z-index: 1;
     position: relative;
     padding: 15px;
+    min-height: 400px;
+    max-height: 400px;
   } div#lineup-vector-box div#overlay-player-pos-box div#overlay-column {
     display: grid;
     gap: 8px;
@@ -1417,6 +1419,8 @@
     } div#lineup-vector-box div#overlay-player-pos-box {
       grid-template-columns: repeat(auto-fit, minmax(fit-content, 1fr));
       grid-template-rows: 1fr;
+      min-height: unset;
+      max-height: unset;
     } 
 
     /* main team select */
