@@ -314,7 +314,7 @@
   <!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <!-- 
@@ -325,7 +325,7 @@
       <p>{FIXTURE_INCIDENTS?.home?.team_name}</p>
       <p>{FIXTURE_INCIDENTS?.away?.team_name}</p>
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER

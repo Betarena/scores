@@ -628,7 +628,7 @@
   <!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <!-- 
@@ -638,24 +638,32 @@
       [ℹ] home-team 
       [ℹ] home full team (lineup) + (bench) -->
       <p>{FIXTURE_LINEUPS?.home?.team_name}</p>
-      {#each FIXTURE_LINEUPS?.home?.lineup as player}
-        <p>{player?.player_name}</p>
-      {/each}
-      {#each FIXTURE_LINEUPS?.home?.bench as player}
-        <p>{player?.player_name}</p>
-      {/each}
+      {#if FIXTURE_LINEUPS?.home?.lineup}
+        {#each FIXTURE_LINEUPS?.home?.lineup as player}
+          <p>{player?.player_name}</p>
+        {/each}
+      {/if}
+      {#if FIXTURE_LINEUPS?.home?.bench}
+        {#each FIXTURE_LINEUPS?.home?.bench as player}
+          <p>{player?.player_name}</p>
+        {/each}
+      {/if}
       <!--
       [ℹ] away-team
       [ℹ] away full team (lineup) + (bench) -->
       <p>{FIXTURE_LINEUPS?.away?.team_name}</p>
-      {#each FIXTURE_LINEUPS?.away?.lineup as player}
-        <p>{player?.player_name}</p>
-      {/each}
-      {#each FIXTURE_LINEUPS?.away?.bench as player}
-        <p>{player?.player_name}</p>
-      {/each}
+      {#if FIXTURE_LINEUPS?.away?.lineup}
+        {#each FIXTURE_LINEUPS?.away?.lineup as player}
+          <p>{player?.player_name}</p>
+        {/each}
+      {/if}
+      {#if FIXTURE_LINEUPS?.away?.bench}
+        {#each FIXTURE_LINEUPS?.away?.bench as player}
+          <p>{player?.player_name}</p>
+        {/each}
+      {/if}
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
