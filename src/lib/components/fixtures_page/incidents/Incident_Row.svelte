@@ -151,7 +151,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
         <!--
         [ℹ] player-assist -->
@@ -184,7 +184,7 @@
             w-400
             color-black-2
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
       {/if}
 
@@ -206,7 +206,7 @@
             w-400
             color-black-2
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
       {/if}
 
@@ -218,7 +218,7 @@
             w-400
             color-black-2
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
       {/if}
 
@@ -231,7 +231,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
         <!--
         [ℹ] out player -->
@@ -266,7 +266,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
         <!--
         [ℹ] result -->
@@ -288,7 +288,7 @@
             w-400
             color-black-2
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
         <!--
         [ℹ] result -->
@@ -320,7 +320,7 @@
             w-400
             color-black-2
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
       {/if}
 
@@ -332,7 +332,7 @@
             w-400
             color-black-2
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
       {/if}
 
@@ -354,7 +354,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.player_name}
+          {INCIDENT_INFO?.player_name || ""}
         </p>
       {/if}
 
