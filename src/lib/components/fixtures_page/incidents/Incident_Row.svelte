@@ -114,8 +114,10 @@
           w-400
           color-grey
           minute-text
-        ">
-        {('0' + INCIDENT_INFO?.minute).slice(-2)}'
+        "
+        class:single-min={[...INCIDENT_INFO?.minute.toString()].length == 1}
+        >
+        {INCIDENT_INFO?.minute}'
       </p>
 
       {#if INCIDENT_INFO?.type == 'goal'}
@@ -353,8 +355,10 @@
           w-400
           color-grey
           minute-text
-        ">
-        {('0' + INCIDENT_INFO?.minute).slice(-2)}'
+        "
+        class:single-min={[...INCIDENT_INFO?.minute.toString()].length == 1}
+        >
+        {INCIDENT_INFO?.minute}'
       </p>
       <!--
       [ℹ] goal-icon -->
@@ -401,7 +405,15 @@
   } div.incident-row.type-R p.result-text {
     margin-left: 8px;
     margin-right: 0;
-  } 
+  }
+
+  div.incident-row .single-min {
+    margin-left: 4px;
+    margin-right: 16px !important;
+  } div.incident-row.type-R .single-min {
+    margin-left: 16px !important;
+    margin-right: 4px;
+  }
 
   /* 
   MOBILE RESPONSIVNESS (&+) */
