@@ -1355,7 +1355,7 @@
     display: grid;
     gap: 8px;
     height: -webkit-fill-available;
-    height: -moz-fill-available;
+    height: -moz-available;
   }
 
   /* main team select */
@@ -1438,10 +1438,12 @@
       align-items: center;
       align-content: center;
       height: -webkit-fill-available;
-      height: -moz-fill-available;
+      /* height: -moz-available; */
+      height: inherit;
     } div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid div#overlay-column {
       height: -webkit-fill-available;
-      height: -moz-fill-available;
+      /* height: -moz-available; */
+      height: inherit;
     }    
 
     /* main team select */
