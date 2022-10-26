@@ -141,7 +141,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.result}
+          {INCIDENT_INFO?.result || ""}
         </p>
         <!--
         [ℹ] goal-scorer -->
@@ -175,7 +175,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.result}
+          {INCIDENT_INFO?.result || ""}
         </p>
         <!--
         [ℹ] goal-scorer -->
@@ -197,7 +197,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.result}
+          {INCIDENT_INFO?.result || ""}
         </p>
         <!--
         [ℹ] goal-scorer -->
@@ -276,7 +276,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.result}
+          {INCIDENT_INFO?.result || ""}
         </p>
       {/if}
 
@@ -298,7 +298,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.result}
+          {INCIDENT_INFO?.result || ""}
         </p>
       {/if}
 
@@ -311,7 +311,7 @@
             color-black-2
             result-text
           ">
-          {INCIDENT_INFO?.result}
+          {INCIDENT_INFO?.result || ""}
         </p>
         <!--
         [ℹ] goal-scorer -->
