@@ -976,31 +976,36 @@
             [ℹ] home team 
             [ℹ] away team -->
             <div
-              id="overlay-player-pos-box">
+              id="overlay-player-pos-box"
+              class="row-space-out">
               <!-- 
               [ℹ] home -->
-              {#each Array.from(home_team_formation_map.values()) as players_list}
-                <div
-                  id="overlay-column">
-                  {#each Array.from(players_list) as player}
-                    <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                  {/each}
-                </div>
-              {/each}
-              <!-- 
-              [ℹ] empty-col -->
-              <div id="overlay-column" />
-              <div id="overlay-column" />
+              <div
+                class="overlay-grid"
+                style="width: 100%;">
+                {#each Array.from(home_team_formation_map.values()) as players_list}
+                  <div
+                    id="overlay-column">
+                    {#each Array.from(players_list) as player}
+                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                    {/each}
+                  </div>
+                {/each}
+              </div>
               <!-- 
               [ℹ] away -->
-              {#each Array.from(away_team_formation_map.values()) as players_list}
-                <div
-                  id="overlay-column">
-                  {#each Array.from(players_list) as player}
-                    <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
-                  {/each}
-                </div>
-              {/each}
+              <div 
+                class="overlay-grid"
+                style="width: 100%;">
+                {#each Array.from(away_team_formation_map.values()) as players_list}
+                  <div
+                    id="overlay-column">
+                    {#each Array.from(players_list) as player}
+                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                    {/each}
+                  </div>
+                {/each}
+              </div>
             </div>
           </div>
 
@@ -1332,7 +1337,7 @@
     margin: 8px 20px;
   } div#lineup-vector-box div#overlay-player-pos-box {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(fit-content, 1fr));
+    grid-template-columns: repeat(auto-fill, 1fr);
     grid-template-rows: 1fr;
     grid-auto-flow: column;
     align-items: center;
@@ -1346,6 +1351,7 @@
   } div#lineup-vector-box div#overlay-player-pos-box div#overlay-column {
     display: grid;
     gap: 8px;
+    height: -webkit-fill-available;
   }
 
   /* main team select */
@@ -1417,11 +1423,19 @@
     } div#lineup-vector-box div#lineup-vector {
       margin: 20px 20px 8px 20px;
     } div#lineup-vector-box div#overlay-player-pos-box {
-      grid-template-columns: repeat(auto-fit, minmax(fit-content, 1fr));
-      grid-template-rows: 1fr;
+      display: flex !important;
       min-height: unset;
       max-height: unset;
-    } 
+    } div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, 1fr);
+      grid-template-rows: 1fr;
+      grid-auto-flow: column;
+      align-items: center;
+      align-content: center;
+    } div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid div#overlay-column {
+      height: -webkit-fill-available;
+    }    
 
     /* main team select */
     div#team-info-box div.team-main-select {
