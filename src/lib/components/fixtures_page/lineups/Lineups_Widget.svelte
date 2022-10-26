@@ -522,7 +522,7 @@
         const player = FIXTURE_LINEUPS?.home?.lineup[i];
         if (home_team_formation_map.has(form_pos_code)) {
           let exist_lineup_list = home_team_formation_map.get(form_pos_code)
-          exist_lineup_list.push(player)
+          exist_lineup_list.unshift(player)
           home_team_formation_map.set(form_pos_code, exist_lineup_list)
         }
         else {
@@ -550,7 +550,7 @@
         const player = FIXTURE_LINEUPS?.away?.lineup[i];
         if (away_team_formation_map.has(form_pos_code)) {
           let exist_lineup_list = away_team_formation_map.get(form_pos_code)
-          exist_lineup_list.push(player)
+          exist_lineup_list.unshift(player)
           away_team_formation_map.set(form_pos_code, exist_lineup_list)
         }
         else {
