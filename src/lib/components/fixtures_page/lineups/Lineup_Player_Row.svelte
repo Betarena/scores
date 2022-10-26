@@ -360,6 +360,7 @@
     object-fit: contain;
     border-radius: 50%;
     border: 1px solid #E6E6E6;
+    background-color: #FFFFFF;
     /* dynamic */
     margin-right: 16px;
   } div.player-row div.player-info-row p.lineup-player-name {

@@ -900,14 +900,14 @@
             [ℹ] team-rating -->
             {#if 
               FIXTURE_LINEUPS?.status == "FT"
-              && FIXTURE_LINEUPS?.home?.team_rating != undefined}
+              && FIXTURE_LINEUPS[selected_view]?.team_rating != undefined}
               <p 
                 id='box-goals'
                 class="medium w-500"
-                class:rating_golden={FIXTURE_LINEUPS?.home?.team_rating >= 9}
-                class:rating_silver={FIXTURE_LINEUPS?.home?.team_rating >= 7}
-                class:rating_bronze={FIXTURE_LINEUPS?.home?.team_rating >= 0}>
-                {FIXTURE_LINEUPS?.home?.team_rating}
+                class:rating_bronze={parseFloat(FIXTURE_LINEUPS[selected_view]?.team_rating.toString()) >= 0 && parseFloat(FIXTURE_LINEUPS[selected_view]?.team_rating.toString()) < 7}
+                class:rating_silver={parseFloat(FIXTURE_LINEUPS[selected_view]?.team_rating.toString()) >= 7 && parseFloat(FIXTURE_LINEUPS[selected_view]?.team_rating.toString()) < 9}
+                class:rating_golden={parseFloat(FIXTURE_LINEUPS[selected_view]?.team_rating.toString()) >= 9}>
+                {FIXTURE_LINEUPS[selected_view]?.team_rating}
               </p>
             {/if}
           </div>
@@ -1065,9 +1065,9 @@
                 <p 
                   id='box-goals'
                   class="medium w-500"
-                  class:rating_golden={FIXTURE_LINEUPS?.home?.team_rating >= 9}
-                  class:rating_silver={FIXTURE_LINEUPS?.home?.team_rating >= 7}
-                  class:rating_bronze={FIXTURE_LINEUPS?.home?.team_rating >= 0}>
+                  class:rating_bronze={parseFloat(FIXTURE_LINEUPS?.home?.team_rating.toString()) >= 0 && parseFloat(FIXTURE_LINEUPS?.home?.team_rating.toString()) < 7}
+                  class:rating_silver={parseFloat(FIXTURE_LINEUPS?.home?.team_rating.toString()) >= 7 && parseFloat(FIXTURE_LINEUPS?.home?.team_rating.toString()) < 9}
+                  class:rating_golden={parseFloat(FIXTURE_LINEUPS?.home?.team_rating.toString()) >= 9}>
                   {FIXTURE_LINEUPS?.home?.team_rating}
                 </p>
               {/if}
@@ -1088,9 +1088,9 @@
                 <p 
                   id='box-goals'
                   class="medium w-500"
-                  class:rating_golden={FIXTURE_LINEUPS?.away?.team_rating >= 9}
-                  class:rating_silver={FIXTURE_LINEUPS?.away?.team_rating >= 7}
-                  class:rating_bronze={FIXTURE_LINEUPS?.away?.team_rating >= 0}>
+                  class:rating_bronze={parseFloat(FIXTURE_LINEUPS?.away?.team_rating.toString()) >= 0 && parseFloat(FIXTURE_LINEUPS?.away?.team_rating.toString()) < 7}
+                  class:rating_silver={parseFloat(FIXTURE_LINEUPS?.away?.team_rating.toString()) >= 7 && parseFloat(FIXTURE_LINEUPS?.away?.team_rating.toString()) < 9}
+                  class:rating_golden={parseFloat(FIXTURE_LINEUPS?.away?.team_rating.toString()) >= 9}>
                   {FIXTURE_LINEUPS?.away?.team_rating}
                 </p>
               {/if}
@@ -1374,12 +1374,12 @@
     max-height: 24px;
     width: auto;
     color: white;
-  } div.team-main-select p#box-goals.rating_golden {
-    background-color: #ffb904 !important;
-  } div.team-main-select p#box-goals.rating_silver {
-    background-color: #8C8C8C !important;
   } div.team-main-select p#box-goals.rating_bronze {
     background-color: #dbb884 !important;
+  } div.team-main-select p#box-goals.rating_silver {
+    background-color: #8C8C8C !important;
+  } div.team-main-select p#box-goals.rating_golden {
+    background-color: #ffb904 !important;
   }
 
   /* lineup-box - coach-only */
