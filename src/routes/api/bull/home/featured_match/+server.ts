@@ -36,9 +36,9 @@ import type {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 const settings = {
-  stalledInterval: 600000, // How often check for stalled jobs (use 0 for never checking).
-  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
-  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+  stalledInterval: 600000,   // NOTE: 10 min. : (milliseconds) How often check for stalled jobs (use 0 for never checking)
+  guardInterval: 5000,       // NOTE: (milliseconds) Poll interval for delayed jobs and added jobs.
+  drainDelay: 300            // NOTE: (milliseconds) A timeout for when the queue is in drained state (empty waiting for jobs).
 }
 const cacheQueueFeaturedMatch = new Bull (
   'cacheQueueFeaturedMatch', 
@@ -52,6 +52,11 @@ const cacheQueueFeaturedMatch = new Bull (
     settings: settings
   }
 );
+const job_settings = {
+  timeout: 300000,            // NOTE: 5 min. : The number of milliseconds after which the job should be fail with a timeout error [optional]
+  removeOnComplete: 50        // NOTE: If true, removes the job when it successfully
+                              // completes. A number specified the amount of jobs to keep. Default behavior is to keep the job in the completed set.
+}
 const cacheQueueProcessName = "cacheQueueFeaturedMatch"
 const cacheTarget = "REDIS CACHE | featured match"
 let logs = []
@@ -126,7 +131,7 @@ export async function POST(): Promise < unknown > {
   // [ℹ] otherwise prod.
   else {
     // [ℹ] producers [JOBS]
-    const job = await cacheQueueFeaturedMatch.add({});
+    const job = await cacheQueueFeaturedMatch.add({}, job_settings);
     console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
     return json({
       job_id: job.id

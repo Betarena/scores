@@ -19,6 +19,7 @@ export async function GET (
 
   const jobQueueName: string = req.url['searchParams'].get('jobQueueName');
   const jobId: string = req.url['searchParams'].get('jobId');
+  const jobAction: string = req.url['searchParams'].get('action');
 
   const cacheQueueJob = new Bull(jobQueueName, 
   {
@@ -32,17 +33,34 @@ export async function GET (
 
   const jobW = await cacheQueueJob.getJob(jobId);
 
+  // [ℹ] error
   if (jobW === null) {
     // [ℹ] ALT
     // res.status(404).end();
     // [ℹ] ALT 2
-    return {
-      status: 404,
-      body: {
-        msg: null
+    return json (
+      {
+        queue: jobQueueName,
+        jobId: jobId,
+        msg: `Target job does not exist!`,
       }
-    }
-  } else {
+    )
+  }
+  // [ℹ] execute "delete" job action
+  else if (jobAction == "delete") {
+    await jobW.remove()
+    // await jobW.discard()
+    const state = await jobW.getState();
+    return json (
+      {
+        job: jobId,
+        state: state,
+        msg: "Job Removed!"
+      }
+    ) 
+  }
+  // [ℹ] simple job info GET
+  else {
     // [ℹ] ALT
     // res.json({ jobId, state, progress, reason });
     const state = await jobW.getState();
