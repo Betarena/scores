@@ -40,7 +40,7 @@ const CQ_Tour_Info_About = new Bull (
   }
 );
 const job_settings = {
-  timeout: 300000,            // NOTE: The number of milliseconds after which the job should be fail with a timeout error [optional]
+  timeout: 300000,            // NOTE: 5 min. : The number of milliseconds after which the job should be fail with a timeout error [optional]
   removeOnComplete: 50        // NOTE: If true, removes the job when it successfully
                               // completes. A number specified the amount of jobs to keep. Default behavior is to keep the job in the completed set.
 }
