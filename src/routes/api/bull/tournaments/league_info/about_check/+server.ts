@@ -108,7 +108,7 @@ CQ_Tour_Info_About.process (async function (job, done) {
   // console.log(job.data)
 
   logs = []
-  logs.push(`${job.id}`);
+  logs.push(`jobId: ${job.id}`);
 
   /* 
   do stuff
@@ -145,6 +145,7 @@ async function main () {
     logs.push(`no leagues to update`)
     return
   }
+  logs.push(`No. of leagues: ${response.scores_football_seasons_details.length}`);
 
   const league_ids_arr: number[] = response.scores_football_seasons_details.map(s => s.league_id)
 
