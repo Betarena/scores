@@ -17,14 +17,30 @@
 	import type { 
     REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
   } from '$lib/models/fixtures/scoreboard/types';
+  import type { 
+    REDIS_CACHE_SINGLE_lineups_data, 
+    REDIS_CACHE_SINGLE_lineups_translation 
+  } from '$lib/models/fixtures/lineups/types';
+
+	import type { 
+    REDIS_CACHE_SINGLE_incidents_data, 
+    REDIS_CACHE_SINGLE_incidents_translation 
+  } from '$lib/models/fixtures/incidents/types';
 
   import SvelteSeo from 'svelte-seo';
 	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
+	import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
+	import IncidentsWidget from '$lib/components/fixtures_page/incidents/Incidents_Widget.svelte';
+	import { onMount } from 'svelte';
 
   let PAGE_SEO:                     REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response
   let FIXTURE_SCOREBOARD:           REDIS_CACHE_SINGLE_scoreboard_data
   let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation
+  let FIXTURE_LINEUPS:              REDIS_CACHE_SINGLE_lineups_data
+  let FIXTURE_LINEUPS_TRANSLATION:  REDIS_CACHE_SINGLE_lineups_translation
+  let FIXTURE_INCIDENTS:              REDIS_CACHE_SINGLE_incidents_data
+  let FXITURE_INCIDENTS_TRANSLATION:  REDIS_CACHE_SINGLE_incidents_translation
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -34,6 +50,10 @@
   $: FIXTURE_INFO                   = $page.data.FIXTURE_INFO;
   $: FIXTURE_SCOREBOARD             = $page.data.FIXTURE_SCOREBOARD;
   $: FIXTURE_SCOREBOARD_TRANSLATION = $page.data.FIXTURE_SCOREBOARD_TRANSLATION;
+  $: FIXTURE_LINEUPS                = $page.data.FIXTURE_LINEUPS;
+  $: FIXTURE_LINEUPS_TRANSLATION    = $page.data.FIXTURE_LINEUPS_TRANSLATION;
+  $: FIXTURE_INCIDENTS              = $page.data.FIXTURE_INCIDENTS;
+  $: FXITURE_INCIDENTS_TRANSLATION  = $page.data.FXITURE_INCIDENTS_TRANSLATION;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -49,6 +69,44 @@
   // ~~~~~~~~~~~~~~~~~~~~~
   //  PAGE METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // [ℹ] VIEWPORT CHANGES
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		var wInit = document.documentElement.clientWidth;
+		// [ℹ] TABLET - VIEW
+		if (wInit >= 1160) {
+			tabletExclusive = false;
+		} else {
+			tabletExclusive = true;
+		}
+		// [ℹ] MOBILE - VIEW
+		if (wInit < 475) {
+			mobileExclusive = true;
+		} else {
+			mobileExclusive = false;
+		}
+		window.addEventListener('resize', function () {
+			var w = document.documentElement.clientWidth;
+			// [ℹ] TABLET - VIEW
+      if (w >= 1160) {
+				tabletExclusive = false;
+			} else {
+				tabletExclusive = true;
+			}
+			// [ℹ] MOBILE - VIEW
+			if (w < 475) {
+				mobileExclusive = true;
+			} else {
+				mobileExclusive = false;
+			}
+		});
+	});
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE METHODS
@@ -235,8 +293,37 @@
   </div>
 
   <!-- 
-  [ℹ] widgets -->
+  [ℹ] widgets 
+  [ℹ] MOBILE-->
+
   <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
+
+  <div
+    id="widget-grid-display"
+    class:display-none={!mobileExclusive && !tabletExclusive}>
+    <div 
+      class='grid-display-column'>
+      <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+      <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+    </div>
+  </div>
+
+  <!-- 
+  [ℹ] widgets 
+  [ℹ] TABLET && DESKTOP -->
+
+  <div
+    id="widget-grid-display"
+    class:display-none={mobileExclusive || tabletExclusive}>
+    <div 
+      class='grid-display-column'>
+      <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+    </div>
+    <div 
+      class='grid-display-column'>
+      <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+    </div>
+  </div>
 
 </section>
 
@@ -254,6 +341,19 @@
 		align-items: start;
 	}
 
+  
+  div#widget-grid-display {
+		display: grid;
+    margin-top: 24px;
+    align-items: start;
+  }
+
+  div.grid-display-column {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
+
   div#fixture-page-breadcrumbs p.capitalize {
     text-transform: capitalize;
     overflow: hidden;
@@ -263,13 +363,17 @@
     color: #f5620f !important; 
   } 
 
+  .display-none {
+    display: none !important;
+  }
+
   /* ====================
     RESPONSIVNESS
   ==================== */
 
   /* 
   MOBILE ONLY RESPONSIVNESS (&+) */
-  @media only screen and (max-width:450px) {
+  @media only screen and (max-width: 450px) {
     div#fixture-page-breadcrumbs p.fixture-name {
       overflow: hidden;
       white-space: nowrap;
@@ -277,5 +381,31 @@
       max-width: 50px;
     }
   }
+
+  /* 
+  RESPONSIVE FOR TABLET (&+) [768px] */
+	@media only screen and (min-width: 768px) {
+		div#widget-grid-display {
+			grid-template-columns: 1fr;
+		}
+	}
+
+  /* 
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+	@media only screen and (min-width: 1160px) {
+		div#widget-grid-display {
+			gap: 20px;
+      grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
+		}
+	}
+
+  /* 
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+	@media only screen and (min-width: 1320px) {
+		div#widget-grid-display {
+			gap: 20px;
+      grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
+		}
+	}
 
 </style>

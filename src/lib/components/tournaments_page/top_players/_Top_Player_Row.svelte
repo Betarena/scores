@@ -182,12 +182,18 @@
 
   /* 
   MOBILE RESPONSIVNESS (&+) */
-  @media only screen and (max-width: 425px) {
+  @media only screen and (max-width: 375px) {
     p.player-name {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       max-width: 150px;
+      width: auto !important;
+    }
+  }
+
+  @media only screen and (max-width: 425px) {
+    p.player-name {
       width: 150px;
     }
   }
