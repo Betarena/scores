@@ -48,7 +48,7 @@ export async function GET (
   // [ℹ] execute action
   else if (jobAction == "delete") {
     await jobW.remove()
-    await jobW.discard()
+    // await jobW.discard()
     const state = await jobW.getState();
     return json (
       {
