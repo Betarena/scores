@@ -38,13 +38,14 @@ export async function GET (
     // [ℹ] ALT
     // res.status(404).end();
     // [ℹ] ALT 2
-    return {
-      status: 404,
-      body: {
-        msg: `Target JobId for Queue: ${jobQueueName} does not exist!`
+    return json (
+      {
+        queue: jobQueueName,
+        jobId: jobId,
+        msg: `Target job does not exist!`,
       }
-    }
-  } 
+    )
+  }
   // [ℹ] execute action
   else if (jobAction == "delete") {
     await jobW.remove()
