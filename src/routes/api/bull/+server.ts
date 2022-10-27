@@ -54,8 +54,20 @@ export async function GET (
     return json (
       {
         job: jobId,
+        queue: jobQueueName,
         state: state,
         msg: "Job Removed!"
+      }
+    ) 
+  }
+  // [ℹ] execute "obliterate" queue action
+  // NOTE: destroys queue entirely
+  else if (jobAction == "obliterate") {
+    await cacheQueueJob.obliterate({ force: true })
+    return json (
+      {
+        queue: jobQueueName,
+        msg: "Queue Deleted!"
       }
     ) 
   }
