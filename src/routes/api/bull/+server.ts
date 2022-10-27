@@ -46,7 +46,7 @@ export async function GET (
       }
     )
   }
-  // [ℹ] execute action
+  // [ℹ] execute "delete" job action
   else if (jobAction == "delete") {
     await jobW.remove()
     // await jobW.discard()
@@ -59,7 +59,7 @@ export async function GET (
       }
     ) 
   }
-  // [ℹ] simple GET
+  // [ℹ] simple job info GET
   else {
     // [ℹ] ALT
     // res.json({ jobId, state, progress, reason });
