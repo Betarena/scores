@@ -66,9 +66,7 @@ export async function POST({ request }): Promise < unknown > {
   // [ℹ] job producers
   const job = await cacheQueueTourStand.add(dataSurgical, job_settings);
 
-  console.log(`
-    ${cacheQueueProcessName} -> job_id: ${job.id}
-  `)
+  console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
 
   return json({
     job_id: job.id
