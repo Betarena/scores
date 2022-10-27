@@ -32,9 +32,9 @@ import type {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 const settings = {
-  stalledInterval: 600000, // How often check for stalled jobs (use 0 for never checking).
-  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
-  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+  stalledInterval: 600000,   // NOTE: 10 min. : (milliseconds) How often check for stalled jobs (use 0 for never checking)
+  guardInterval: 5000,       // NOTE: (milliseconds) Poll interval for delayed jobs and added jobs.
+  drainDelay: 300            // NOTE: (milliseconds) A timeout for when the queue is in drained state (empty waiting for jobs).
 }
 const CQ_Tour_FixOdds_S = new Bull (
   'CQ_Tour_FixOdds_S', 
@@ -48,6 +48,11 @@ const CQ_Tour_FixOdds_S = new Bull (
     settings: settings
   }
 );
+const job_settings = {
+  timeout: 120000,            // NOTE: 5 min. : The number of milliseconds after which the job should be fail with a timeout error [optional]
+  removeOnComplete: 50        // NOTE: If true, removes the job when it successfully
+                              // completes. A number specified the amount of jobs to keep. Default behavior is to keep the job in the completed set.
+}
 const cacheQueueProcessName = "CQ_Tour_FixOdds_S"
 const cacheTarget           = "REDIS CACHE | tournament fixtures_odds (surgical)"
 const cacheDataAddr         = "tour_fix_odds_data"
@@ -88,7 +93,7 @@ export async function POST (
   // [ℹ] otherwise prod.
   else {
     // [ℹ] producers [JOBS]
-    const job = await CQ_Tour_FixOdds_S.add(dataSurgical, { timeout: 120000 });
+    const job = await CQ_Tour_FixOdds_S.add(dataSurgical, job_settings);
     console.log(`${cacheQueueProcessName} -> job_id: ${job.id}`)
     return json({
       job_id: job.id
