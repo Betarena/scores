@@ -180,11 +180,19 @@ export const REDIS_CACHE_FIXTURES_ODDS_ST_DATA_1 = gql`
       away_team_name
       home_team_name
       round_name
-      data
+      season_id
       league_id
       tip_link_wp
       fixture_link_wp
       media_link
+      # [alt V1]
+      # data
+      # [alt V2]
+      stats_j: data(path: "$.stats")
+      localteam_id_j: data(path: "$.localteam_id")
+      visitorteam_id_j: data(path: "$.visitorteam_id")
+      round_j: data(path: "$.round")
+      time_j: data(path: "$.time")
     }
 
   }

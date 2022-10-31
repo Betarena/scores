@@ -888,6 +888,7 @@ export interface BETARENA_HASURA_historic_fixtures {
   round_name?:      string;
   data?:            WelcomeData;
   league_id?:       number;
+  season_id?:       number;
   probabilities?:   Probabilities | null;
   valuebets?:       null;
   tip_link_wp?:     null;
