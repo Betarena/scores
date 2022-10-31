@@ -557,6 +557,9 @@
   {#if !loaded}
     <div 
       id="seo-widget-box">
+      <!-- 
+      [ℹ] widget-title -->
+      <h2>{FIXTURE_SCOREBOARD_TRANSLATION?.title}</h2>
       <p>{FIXTURE_SCOREBOARD?.away_team_name}</p>
       <p>{FIXTURE_SCOREBOARD?.home_team_name}</p>
       <a href={$page.url.href}>
