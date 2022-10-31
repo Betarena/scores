@@ -8,15 +8,11 @@ import type {
   PageLoad
 } from './$types';
 
-import type {
-  REDIS_CACHE_SINGLE_fixtures_page_info_response,
-  REDIS_CACHE_SINGLE_fixtures_seo_response
-} from '$lib/models/_main_/pages_and_seo/types';
-import type { 
-  REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
-} from '$lib/models/fixtures/scoreboard/types';
+import type { REDIS_CACHE_SINGLE_fixtures_page_info_response, REDIS_CACHE_SINGLE_fixtures_seo_response } from '$lib/models/_main_/pages_and_seo/types';
+import type { REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation } from '$lib/models/fixtures/scoreboard/types';
 import type { REDIS_CACHE_SINGLE_lineups_data, REDIS_CACHE_SINGLE_lineups_translation } from '$lib/models/fixtures/lineups/types';
 import type { REDIS_CACHE_SINGLE_incidents_data, REDIS_CACHE_SINGLE_incidents_translation } from '$lib/models/fixtures/incidents/types';
+import type { REDIS_CACHE_SINGLE_statistics_data, REDIS_CACHE_SINGLE_statistics_translation } from '$lib/models/fixtures/statistics/types';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({
@@ -202,6 +198,38 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  const response_featured_betting_sites_translation: REDIS_CACHE_SINGLE_lineups_translation = await fetch(
+    `/api/cache/home/featured_betting_sites?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_statistics: REDIS_CACHE_SINGLE_statistics_data = await fetch(
+    `/api/cache/fixtures/incidents?fixture_id=` + fixture_id, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  if (response_statistics == undefined) {
+    if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
+    response_statistics = await fetch(
+      `/api/hasura/fixtures/statistics?fixture_id=` + fixture_id, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
+
+  const response_statistics_translation: REDIS_CACHE_SINGLE_statistics_translation = await fetch(
+    `/api/cache/fixtures/statistics?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -217,6 +245,9 @@ export async function load({
     && response_lineups_translation
     && response_incidents
     && response_incidents_translation
+    && response_featured_betting_sites_translation
+    && response_statistics
+    && response_statistics_translation
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
@@ -226,7 +257,10 @@ export async function load({
       FIXTURE_LINEUPS: response_lineups,
       FIXTURE_LINEUPS_TRANSLATION: response_lineups_translation,
       FIXTURE_INCIDENTS: response_incidents,
-      FXITURE_INCIDENTS_TRANSLATION: response_incidents_translation
+      FXITURE_INCIDENTS_TRANSLATION: response_incidents_translation,
+      FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_translation,
+      FIXTURE_STATISTICS: response_statistics,
+      FIXTURE_STATISTICS_TRANSLATION: response_statistics_translation
     }
   }
 

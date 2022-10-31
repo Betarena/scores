@@ -246,6 +246,8 @@ export async function load({
     && response_incidents
     && response_incidents_translation
     && response_featured_betting_sites_translation
+    && response_statistics
+    && response_statistics_translation
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
