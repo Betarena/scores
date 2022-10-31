@@ -207,7 +207,7 @@ export async function load({
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_statistics: REDIS_CACHE_SINGLE_statistics_data = await fetch(
-    `/api/cache/fixtures/incidents?fixture_id=` + fixture_id, 
+    `/api/cache/fixtures/statistics?fixture_id=` + fixture_id, 
     {
       method: 'GET'
     }

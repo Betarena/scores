@@ -76,7 +76,7 @@
 
   // [🐞]
   let enable_logs:       boolean = true;
-  let dev_console_tag:   string = "fixtures | incidents [DEV]";
+  let dev_console_tag:   string = "fixtures | statistics [DEV]";
 
   // [🐞]
   $: if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `FIXTURE_STATISTICS: ${FIXTURE_STATISTICS}`)
