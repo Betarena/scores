@@ -472,7 +472,9 @@
               </p>
               {#each item.loc_arr as sub_nav,i}
 
-                {#if item.key == "Shots"}
+                {#if item.key == "Shots"
+                  && FIXTURE_STATISTICS?.stats[0]?.shots
+                  && FIXTURE_STATISTICS?.stats[1]?.shots}
                   <StatisticsRow 
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0]?.shots[sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1]?.shots[sub_nav]} 
@@ -481,7 +483,9 @@
                   />
                 {/if}
 
-                {#if item.key == "Passes"}
+                {#if item.key == "Passes"
+                  && FIXTURE_STATISTICS?.stats[0]?.passes
+                  && FIXTURE_STATISTICS?.stats[1]?.passes}
                   <StatisticsRow 
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0]?.passes[sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1]?.passes[sub_nav]} 
@@ -490,7 +494,9 @@
                   />
                 {/if}
 
-                {#if item.key == "Attacks"}
+                {#if item.key == "Attacks"
+                  && FIXTURE_STATISTICS?.stats[0]?.attacks
+                  && FIXTURE_STATISTICS?.stats[1]?.attacks}
                   <StatisticsRow 
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0]?.attacks[sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1]?.attacks[sub_nav]} 
@@ -499,7 +505,9 @@
                   />
                 {/if}
 
-                {#if item.key == "Other Stats"}
+                {#if item.key == "Other Stats"
+                  && FIXTURE_STATISTICS?.stats[0][sub_nav]
+                  && FIXTURE_STATISTICS?.stats[1][sub_nav]}
                   <StatisticsRow 
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0][sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1][sub_nav]} 
