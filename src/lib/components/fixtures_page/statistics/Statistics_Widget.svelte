@@ -477,6 +477,7 @@
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0]?.shots[sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1]?.shots[sub_nav]} 
                     STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[sub_nav]}
+                    OPT={sub_nav}
                   />
                 {/if}
 
@@ -485,6 +486,7 @@
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0]?.passes[sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1]?.passes[sub_nav]} 
                     STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[sub_nav]}
+                    OPT={sub_nav}
                   />
                 {/if}
 
@@ -493,6 +495,7 @@
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0]?.attacks[sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1]?.attacks[sub_nav]} 
                     STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[sub_nav]}
+                    OPT={sub_nav}
                   />
                 {/if}
 
@@ -501,6 +504,7 @@
                     TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats[0][sub_nav]}
                     TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats[1][sub_nav]} 
                     STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[sub_nav]}
+                    OPT={sub_nav}
                   />
                 {/if}
 

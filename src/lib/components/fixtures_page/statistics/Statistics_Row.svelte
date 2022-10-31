@@ -15,6 +15,7 @@
   export let TEAM_HOME_STAT: string;
   export let TEAM_AWAY_STAT: string;
   export let STAT_TRANSLATION: string;
+  export let OPT: string
 
   let greaterClass: string
 
@@ -54,6 +55,9 @@
       "
       class:greaterClass={greaterClass == "H"}>
       {TEAM_HOME_STAT}
+      {#if OPT == "possessiontime" || OPT == "percentage"}
+      %
+      {/if}
     </p>
     <p  
       class="
@@ -69,6 +73,9 @@
       "
       class:greaterClass={greaterClass == "A"}>
       {TEAM_AWAY_STAT}
+      {#if OPT == "possessiontime" || OPT == "percentage"}
+      %
+      {/if}
     </p>
   </div>
 
