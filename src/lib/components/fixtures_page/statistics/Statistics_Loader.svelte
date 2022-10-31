@@ -67,6 +67,7 @@
     border-radius: 12px;
     /* dynamic */
     padding: 20px;
+    margin-top: 40px;
 	}
 
   /* plyaer row box */
