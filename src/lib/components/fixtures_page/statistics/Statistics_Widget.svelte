@@ -327,10 +327,6 @@
       <!-- 
       [ℹ] widget-title -->
       <h2>{FIXTURE_STATISTICS_TRANSLATION?.title}</h2>
-      <!-- 
-      [ℹ] team-names -->
-      <p>{FIXTURE_STATISTICS?.home?.team_name}</p>
-      <p>{FIXTURE_STATISTICS?.away?.team_name}</p>
     </div>
   <!-- {/if} -->
 
