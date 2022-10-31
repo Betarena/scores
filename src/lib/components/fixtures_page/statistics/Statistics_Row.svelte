@@ -65,6 +65,7 @@
       class="
         w-400
         color-grey
+        text-translate
       ">
       {STAT_TRANSLATION}
     </p>
@@ -98,11 +99,18 @@
     border-bottom: 1px solid #E6E6E6;
     width: -webkit-fill-available;
     width: -moz-available;
+    position: relative;
   } div.stats-row p {
     font-size: 14px;
     display: flex;
   } div.stats-row p.greaterClass {
     color: #F5620F !important;
+  } div.stats-row p.text-translate {
+    position: absolute;
+    margin: auto;
+    left: 0;
+    right: 0;
+    width: fit-content;
   }
 
   /* 
