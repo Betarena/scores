@@ -48,27 +48,27 @@
   let show_placeholder:  boolean = false
 
   const stats_menu: {
-    key: 'Shots' | 'Passes' | 'Attacks' | 'Other Stats' 
+    key: 'shots_title' | 'passes_title' | 'attacks_title' | 'other' 
     loc_arr: string[]
     loc_trans: string[]
   }[] = [
     {
-      key: "Shots",
+      key: "shots_title",
       loc_arr: ["total", "ongoal", "blocked", "offgoal", "insidebox", "outsidebox"],
       loc_trans: ["Total", "Ongoal", "Blocked", "Offgoal", "Insidebox", "Outsidebox"]
     },
     {
-      key: "Passes",
+      key: "passes_title",
       loc_arr: ["total", "accurate", "percentage"],
       loc_trans: ["Total", "Accurate", "Percentage"]
     },
     {
-      key: "Attacks",
+      key: "attacks_title",
       loc_arr: ["attacks", "dangerous_attacks"],
       loc_trans: ["Attacks", "Dangerous Attacks"]
     },
     {
-      key: "Other Stats",
+      key: "other",
       loc_arr: ["possessiontime", "fouls", "corners", "offsides", "yellowcards", "redcards", "yellowredcards", "saves", "substitutions", "goal_kick", "goal_attempts", "free_kick", "throw_in", "ball_safe", "goals", "penalties", "injuries"],
       loc_trans: ["Possession Time", "Fouls", "Corners", "Offsides", "Yellow Cards", "Red Cards", "Yellow Red Cards", "Saves", "Substitutions", "Goal Kicks", "Goal Attempts", "Free Kicks", "Throw-ins", "Ball Safe", "Goals", "Penalties", "Injuries"]
     }
@@ -468,11 +468,11 @@
                   color-black-2
                   text-group-stats
                 ">
-                {item.key}:
+                {FIXTURE_STATISTICS_TRANSLATION[item.key]}
               </p>
               {#each item.loc_arr as sub_nav,i}
 
-                {#if item.key == "Shots"
+                {#if item.key == "shots_title"
                   && FIXTURE_STATISTICS?.stats[0]?.shots
                   && FIXTURE_STATISTICS?.stats[1]?.shots}
                   <StatisticsRow 
@@ -483,7 +483,7 @@
                   />
                 {/if}
 
-                {#if item.key == "Passes"
+                {#if item.key == "passes_title"
                   && FIXTURE_STATISTICS?.stats[0]?.passes
                   && FIXTURE_STATISTICS?.stats[1]?.passes}
                   <StatisticsRow 
@@ -494,7 +494,7 @@
                   />
                 {/if}
 
-                {#if item.key == "Attacks"
+                {#if item.key == "attacks_title"
                   && FIXTURE_STATISTICS?.stats[0]?.attacks
                   && FIXTURE_STATISTICS?.stats[1]?.attacks}
                   <StatisticsRow 
@@ -505,7 +505,7 @@
                   />
                 {/if}
 
-                {#if item.key == "Other Stats"
+                {#if item.key == "other"
                   && FIXTURE_STATISTICS?.stats[0][sub_nav]
                   && FIXTURE_STATISTICS?.stats[1][sub_nav]}
                   <StatisticsRow 

@@ -104,4 +104,8 @@
     WIDGET DARK THEME
   ==================== */
 
+  div#statistics-lineups-loader.dark-background-1 div#loader-player-box div.loader-player-row {
+    border-bottom: 1px solid #616161;
+  }
+
 </style>

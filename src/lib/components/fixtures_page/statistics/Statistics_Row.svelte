@@ -54,9 +54,11 @@
         color-black-2
       "
       class:greaterClass={greaterClass == "H"}>
-      {TEAM_HOME_STAT}
+      {parseInt(TEAM_HOME_STAT)}
       {#if OPT == "possessiontime" || OPT == "percentage"}
+      <span>
       %
+      </span>
       {/if}
     </p>
     <p  
@@ -72,9 +74,11 @@
         color-black-2
       "
       class:greaterClass={greaterClass == "A"}>
-      {TEAM_AWAY_STAT}
+      {parseInt(TEAM_AWAY_STAT)}
       {#if OPT == "possessiontime" || OPT == "percentage"}
+      <span>
       %
+      </span>
       {/if}
     </p>
   </div>
@@ -93,8 +97,10 @@
     margin: 0 20px;
     border-bottom: 1px solid #E6E6E6;
     width: -webkit-fill-available;
+    width: -moz-available;
   } div.stats-row p {
     font-size: 14px;
+    display: flex;
   } div.stats-row p.greaterClass {
     color: #F5620F !important;
   }
