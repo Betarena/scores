@@ -309,6 +309,34 @@
     no_widget_data = false
   }
 
+  let null_groups: string[] = []
+
+  $: if (
+    FIXTURE_STATISTICS
+    && browser) {
+
+    null_groups = []
+    
+    // [ℹ] check for "stats.shots" EMPTY
+    if (FIXTURE_STATISTICS?.stats[0]?.shots == null
+      && FIXTURE_STATISTICS?.stats[1]?.shots == null) {
+      null_groups.push("shots_title")
+    }
+
+    // [ℹ] check for "stats.passes" EMPTY
+    if (FIXTURE_STATISTICS?.stats[0]?.passes == null
+      && FIXTURE_STATISTICS?.stats[1]?.passes == null) {
+      null_groups.push("passes_title")
+    }
+
+    // [ℹ] check for "stats.passes" EMPTY
+    if (FIXTURE_STATISTICS?.stats[0]?.attacks == null
+      && FIXTURE_STATISTICS?.stats[1]?.attacks == null) {
+      null_groups.push("attacks_title")
+    }
+
+  }
+
 </script>
 
 <!-- ===============
@@ -462,14 +490,20 @@
             [ℹ] attacks-section 
             [ℹ] other-stats-section -->
             {#each stats_menu as item}
-              <p
-                class="
-                  w-500
-                  color-black-2
-                  text-group-stats
-                ">
-                {FIXTURE_STATISTICS_TRANSLATION[item.key]}
-              </p>
+              <!-- 
+              [ℹ] group-statistics-name -->
+              {#if !null_groups.includes(item.key)}
+                <p
+                  class="
+                    w-500
+                    color-black-2
+                    text-group-stats
+                  ">
+                  {FIXTURE_STATISTICS_TRANSLATION[item.key]}
+                </p>
+              {/if}
+              <!-- 
+              [ℹ] group-statistics-data -->
               {#each item.loc_arr as sub_nav,i}
 
                 {#if item.key == "shots_title"
