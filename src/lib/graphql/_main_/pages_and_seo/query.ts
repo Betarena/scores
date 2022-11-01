@@ -58,7 +58,16 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       widgets
       urls
     }
-    historic_fixtures {
+    historic_fixtures
+    (
+      # limit: 50,
+      # FIXME: too large of a query for 300k - 2M records
+      where: {
+        publish_status: {
+          _eq: "published"
+        }
+      }
+    ) {
       id
       urls
       publish_status
