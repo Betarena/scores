@@ -156,10 +156,19 @@
 	}
 
 	function setGameTime(g:LiveScoreGame){
-			var d = new Date(g.starting_at);
-    		var currentTimeZoneOffsetInHours = new Date().getTimezoneOffset() / 60;
-			d.setTime(d.getTime() - (currentTimeZoneOffsetInHours*60*60*1000));
-			g.starting_at  = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
+		var x = new Date();
+		var currentTimeZoneOffsetInHours = x.getTimezoneOffset() / 60;
+		var d = new Date(g.starting_at);
+		var dv = g.starting_at.split(' ');
+		var splitDate = dv[0].split('-');
+		d = new Date(splitDate[0],splitDate[1]-1,splitDate[2]);
+		var splitTime = dv[1].split(':');
+		d.setHours(splitTime[0]);
+		d.setMinutes(splitTime[1]);
+		d.setSeconds(splitTime[2]);
+		d.setTime(d.getTime() - (currentTimeZoneOffsetInHours*60*60*1000));
+		g.starting_at = (""+(d.getHours())).padStart(2,'0')
+		+ ":" + (""+(d.getMinutes())).padStart(2,'0');
 	}
 
 	function getTerm(t:any,i:number){
