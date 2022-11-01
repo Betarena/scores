@@ -20,6 +20,7 @@ export async function GET (
   const jobQueueName: string = req.url['searchParams'].get('jobQueueName');
   const jobId: string = req.url['searchParams'].get('jobId');
   const jobAction: string = req.url['searchParams'].get('action');
+  const jobStatus: string = req.url['searchParams'].get('status');
 
   const cacheQueueJob = new Bull(jobQueueName, 
   {
@@ -30,6 +31,34 @@ export async function GET (
       tls: {}
     }
   });
+
+  // NOTE: Queue
+
+  // [ℹ] execute "complete:clean" queue action
+  // [ℹ] from over "24-hours-ago"
+  if (jobAction == "clean") {
+    const cleanNum = await cacheQueueJob.clean(86400000)
+    return json (
+      {
+        queue: jobQueueName,
+        numCleaned: cleanNum.length,
+        msg: "Queue Cleaned!"
+      }
+    ) 
+  }
+  // [ℹ] execute "obliterate" queue action
+  // NOTE: destroys queue entirely
+  if (jobAction == "obliterate") {
+    await cacheQueueJob.obliterate({ force: true })
+    return json (
+      {
+        queue: jobQueueName,
+        msg: "Queue Deleted!"
+      }
+    ) 
+  }
+
+  // NOTE: Job
 
   const jobW = await cacheQueueJob.getJob(jobId);
 
@@ -57,17 +86,6 @@ export async function GET (
         queue: jobQueueName,
         state: state,
         msg: "Job Removed!"
-      }
-    ) 
-  }
-  // [ℹ] execute "obliterate" queue action
-  // NOTE: destroys queue entirely
-  else if (jobAction == "obliterate") {
-    await cacheQueueJob.obliterate({ force: true })
-    return json (
-      {
-        queue: jobQueueName,
-        msg: "Queue Deleted!"
       }
     ) 
   }

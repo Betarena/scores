@@ -636,7 +636,7 @@
       id="seo-widget-box">
       <!-- 
       [ℹ] widget-title -->
-      <!-- <h2>{FIXTURE_LINEUPS_TRANSLATION?.title}</h2> -->
+      <h2>{FIXTURE_LINEUPS_TRANSLATION?.title}</h2>
       <!--
       [ℹ] home-team 
       [ℹ] home full team (lineup) + (bench) -->
