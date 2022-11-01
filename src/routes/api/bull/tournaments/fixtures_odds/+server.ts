@@ -1,4 +1,6 @@
 import { dev } from '$app/environment'
+import { error, json } from '@sveltejs/kit';
+
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
@@ -7,15 +9,13 @@ import {
   REDIS_CACHE_FIXTURES_ODDS_DATA_2, 
   REDIS_CACHE_FIXTURES_ODDS_DATA_3
 } from '$lib/graphql/tournaments/fixtures_odds/query';
+
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 import Bull from 'bull';
-import { error, json } from '@sveltejs/kit';
 
 import type { 
-  BETARENA_HASURA_historic_fixtures
-} from '$lib/models/hasura';
-import type { 
+  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   BETARENA_HASURA_fixtures_odds_query, 
   Fixture_Odds_Team, 
   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
@@ -103,7 +103,6 @@ async function cacheData (
   json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
 ) {
   try {
-    //[ℹ] persist redis (cache)
     await redis.hset(cacheDataAddr, league_id, JSON.stringify(json_cache));
   } 
   catch (e) {
@@ -116,7 +115,6 @@ async function cacheTranslationData (
   json_cache: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
 ) {
   try {
-    //[ℹ] persist redis (cache)
     await redis.hset(cacheTransAddr, lang, JSON.stringify(json_cache));
   } 
   catch (e) {
@@ -177,8 +175,9 @@ async function main () {
   */
 
   const current_seasons = await get_current_seasons()
+  // eslint-disable-next-line prefer-const
   let current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
-  if (dev) current_seasons_arr = [19285] // [ℹ] manual update target seasons
+  // if (dev) current_seasons_arr = [19285] // [ℹ] manual update target seasons
   if (dev) console.log(`current_seasons_arr`, current_seasons_arr)
 
   /**
@@ -192,14 +191,14 @@ async function main () {
   // [ℹ] obtain target season_id's data
   let seasonIdsArr: number[] = []
   for (const [key, value] of historic_fixtures_map.entries()) {
-    const season_id = value.data.season_id
+    const season_id = value?.season_id
     seasonIdsArr.push(season_id);
   }
   seasonIdsArr = [...new Set(seasonIdsArr)]
   logs.push(`seasonIdsArr (unique): ${seasonIdsArr.length}`)
 
   // [ℹ] obtain target season_details data [hasura]
-  const season_details_data = await getTargetSeasonDetailsData (seasonIdsArr);
+  const season_details_data = await get_target_season_details (seasonIdsArr);
 
   /**
    * [ℹ] breakdown season by weeks
@@ -230,7 +229,7 @@ async function main () {
 
     const season_start = t_season.default_data.start_date
     const season_end = t_season.default_data.end_date
-    const count_weeks: number = await getWeeksDiff(new Date(season_start), new Date(season_end));
+    const count_weeks: number = await get_weeks_diff(new Date(season_start), new Date(season_end));
 
     // [🐛] debug
     /*
@@ -288,29 +287,29 @@ async function main () {
   
   for (const [key, value] of historic_fixtures_map.entries()) {
 
-    const fix_season_id = value.data?.season_id;
-    const league_id = value.league_id;
-    const fixture_id = value.id;
-    const home_team_id = value.data?.localteam_id;
-    const away_team_id = value.data?.visitorteam_id;
+    const fix_season_id = value?.season_id;
+    const league_id = value?.league_id;
+    const fixture_id = value?.id;
+    const home_team_id = value?.localteam_id_j;
+    const away_team_id = value?.visitorteam_id_j;
 
-    const round = value.data?.round?.data?.name;
-    const fixture_date = value.fixture_day;
-    const fixture_time = value.time;
-    const minutes = value.data?.time?.minute;
-    const status = value.data?.time?.status;
+    const round = value?.round_j?.data?.name;
+    const fixture_date = value?.fixture_day;
+    const fixture_time = value?.time;
+    const minutes = value?.time_j?.minute;
+    const status = value?.time_j?.status;
 
-    const tip_link = value.tip_link_wp
-    const media_link = value.media_link;
-    const fixture_link = value.fixture_link_wp;
+    const tip_link = value?.tip_link_wp
+    const media_link = value?.media_link;
+    const fixture_link = value?.fixture_link_wp;
     
-    const home_team_name = value.home_team_name;
-    const home_red_cards = value?.data?.stats?.data?.find( ({ team_id }) => team_id === home_team_id )?.redcards;
-    const home_team_score = value?.data?.stats?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
+    const home_team_name = value?.home_team_name;
+    const home_red_cards = value?.stats_j?.data?.find( ({ team_id }) => team_id === home_team_id )?.redcards;
+    const home_team_score = value?.stats_j?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
     
-    const away_team_name = value.away_team_name;
-    const away_red_cards = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.redcards;
-    const away_team_score = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
+    const away_team_name = value?.away_team_name;
+    const away_red_cards = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.redcards;
+    const away_team_score = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
 
     const home_team_obj: Fixture_Odds_Team = {
       name: home_team_name,
@@ -349,70 +348,38 @@ async function main () {
       const target_season = league_fixtures_obj_arr.find (
         ({ season_id }) => 
           season_id === fix_season_id
-      )
+        )
+      ;
 
       // [ℹ] target season exists
       if (target_season != undefined) {
-
-        // [🐛] debug
-        /*
-          const debug_league = 19517
-          if (fix_season_id === 19517) {
-            logs.push(`Pushing to existing season!`);
-          }
-        */
-        
         league_fixtures_obj_arr.find(
           ({ season_id }) => season_id === fix_season_id
         ).fixtures.push(fixtures_odds_object)
-
-        let arr = league_fixtures_obj_arr
-
-        historic_fixtures_by_league.set(league_id, arr);
+        historic_fixtures_by_league.set(league_id, league_fixtures_obj_arr);
       }
       // [ℹ] no target season, init.
       else {
-
-        // [🐛] debug
-        /*
-          const debug_league = 19517
-          if (fix_season_id === 19517) {
-            logs.push(`19517! No target, generating new!`);
-          }
-        */
-          
         const new_league_id_obj: Tournament_Season_Fixtures_Odds = {
           season_id: fix_season_id,
           fixtures: []
         }
         new_league_id_obj.fixtures.push(fixtures_odds_object)
-
         league_fixtures_obj_arr.push(new_league_id_obj)
-        
-        let arr = league_fixtures_obj_arr
-        
-        historic_fixtures_by_league.set(league_id, arr);
+        historic_fixtures_by_league.set(league_id, league_fixtures_obj_arr);
       }
     }
-    // [ℹ] no league_id yet exists
+    // [ℹ] no target league_id yet exists
+    // [ℹ] initialize MAP with LEAGUE
     else {
-
-      if (fix_season_id === 19517) {
-        logs.push(`19517! Generating new`);
-      }
-
       const new_league_id_obj: Tournament_Season_Fixtures_Odds = {
         season_id: fix_season_id,
         fixtures: []
       }
       new_league_id_obj.fixtures.push(fixtures_odds_object)
-
       const fixtures_season_obj_arr: Tournament_Season_Fixtures_Odds[] = []
       fixtures_season_obj_arr.push(new_league_id_obj)
-
-      let data = fixtures_season_obj_arr
-
-      historic_fixtures_by_league.set(league_id, data);
+      historic_fixtures_by_league.set(league_id, fixtures_season_obj_arr);
     }
   }
 
@@ -444,7 +411,7 @@ async function main () {
 
       // [ℹ] remove empty (NaN fixtures num.)
       // [ℹ] target weeks from weeks_list
-      const modWeeksData = await identifyFixtureWeeks(season_fix_odds)
+      const modWeeksData = await identify_fixtures_weeks(season_fix_odds)
       season_fix_odds.weeks = modWeeksData
 
       newObj.push(season_fix_odds)
@@ -480,7 +447,7 @@ async function main () {
 
 async function main_trans_and_seo (langArray :string[]) {
 
-  const res = await getFixturesOddsTranslationData()
+  const res = await get_fixtures_translations()
 
   const fix_odds_translation_map = new Map <string, REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response> ()
 
@@ -514,19 +481,17 @@ async function main_trans_and_seo (langArray :string[]) {
   }
 
   // [ℹ] persist data
-  const arrayObj = []
   t0 = performance.now();
   logs.push(`total lang's: ${fix_odds_translation_map.size}`)
   for (const [key, value] of fix_odds_translation_map.entries()) {
     await cacheTranslationData(key, value);
-    arrayObj.push(value);
   }
   t1 = performance.now();
   logs.push(`cache uplaod complete in: ${(t1 - t0) / 1000} sec`);
 
   // [🐛] debug
   if (dev) {
-    const data = JSON.stringify(arrayObj, null, 4)
+    const data = JSON.stringify(fix_odds_translation_map.values(), null, 4)
     fs.writeFile('./datalog/main_trans_and_seo.json', data, err => {
       if (err) {
         console.error(err);
@@ -572,13 +537,13 @@ async function get_current_seasons (
 
 async function get_target_historic_fixtures (
   seasonIdsArr: number[]
-): Promise < BETARENA_HASURA_historic_fixtures[] > {
+): Promise < BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] > {
 
   const limit = 1000;
   let offset = 0;
   let total_limit;
 
-  let h_fixtures_arr: BETARENA_HASURA_historic_fixtures[] = [] 
+  let h_fixtures_arr: BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] = [] 
   let counter = 0
 
   // [ℹ] obtain target historic_fixtures
@@ -638,9 +603,9 @@ async function get_target_historic_fixtures (
 }
 
 async function generate_historic_fixtures_map (
-  h_fixtures_arr: BETARENA_HASURA_historic_fixtures[]
-): Promise < Map <number, BETARENA_HASURA_historic_fixtures> > {
-  const historic_fixtures_map = new Map <number, BETARENA_HASURA_historic_fixtures>()
+  h_fixtures_arr: BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
+): Promise < Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures> > {
+  const historic_fixtures_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures>()
 
   // [ℹ] conversion to hashmap
   t0 = performance.now();
@@ -654,7 +619,7 @@ async function generate_historic_fixtures_map (
   return historic_fixtures_map;
 }
 
-async function getTargetSeasonDetailsData (
+async function get_target_season_details (
   seasonIdsArr: number[]
 ): Promise < BETARENA_HASURA_fixtures_odds_query > {
 
@@ -674,7 +639,7 @@ async function getTargetSeasonDetailsData (
   return response;
 }
 
-async function getFixturesOddsTranslationData (
+async function get_fixtures_translations (
 ): Promise < BETARENA_HASURA_fixtures_odds_query > {
 
   const t0 = performance.now();
@@ -688,7 +653,7 @@ async function getFixturesOddsTranslationData (
   return response;
 }
 
-async function getWeeksDiff (
+async function get_weeks_diff (
   startDate: Date, 
   endDate: Date
 ) {
@@ -696,7 +661,7 @@ async function getWeeksDiff (
   return Math.round(Math.abs(endDate - startDate) / msInWeek);
 }
 
-async function identifyFixtureWeeks (
+async function identify_fixtures_weeks (
   target_season: Tournament_Season_Fixtures_Odds
 ): Promise < Weeks_Data[] > {
 

@@ -163,6 +163,7 @@
     border-radius: 12px;
     /* dynamic */
     padding: 20px;
+    margin-top: 40px;
 	}
 
   /* plyaer row box */
@@ -199,5 +200,9 @@
   /* ====================
     WIDGET DARK THEME
   ==================== */
+
+  div#fixture-lineups-loader.dark-background-1 div#loader-player-box div.loader-player-row:first-child {
+    border-bottom: 1px solid #616161;
+  }
 
 </style>

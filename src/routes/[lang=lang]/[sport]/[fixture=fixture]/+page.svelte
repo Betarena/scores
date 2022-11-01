@@ -7,6 +7,7 @@
   import { page } from '$app/stores';
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
 
@@ -27,11 +28,21 @@
     REDIS_CACHE_SINGLE_incidents_translation 
   } from '$lib/models/fixtures/incidents/types';
 
+	import type { 
+    Cache_Single_Lang_Featured_Betting_Site_Translation_Response 
+  } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
+
+	import type { 
+    REDIS_CACHE_SINGLE_statistics_data, 
+    REDIS_CACHE_SINGLE_statistics_translation 
+  } from '$lib/models/fixtures/statistics/types';
+
   import SvelteSeo from 'svelte-seo';
 	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
 	import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
 	import IncidentsWidget from '$lib/components/fixtures_page/incidents/Incidents_Widget.svelte';
-	import { onMount } from 'svelte';
+  import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
 
   let PAGE_SEO:                     REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response
@@ -41,6 +52,9 @@
   let FIXTURE_LINEUPS_TRANSLATION:  REDIS_CACHE_SINGLE_lineups_translation
   let FIXTURE_INCIDENTS:              REDIS_CACHE_SINGLE_incidents_data
   let FXITURE_INCIDENTS_TRANSLATION:  REDIS_CACHE_SINGLE_incidents_translation
+	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response
+  let FIXTURE_STATISTICS:             REDIS_CACHE_SINGLE_statistics_data
+  let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -54,6 +68,9 @@
   $: FIXTURE_LINEUPS_TRANSLATION    = $page.data.FIXTURE_LINEUPS_TRANSLATION;
   $: FIXTURE_INCIDENTS              = $page.data.FIXTURE_INCIDENTS;
   $: FXITURE_INCIDENTS_TRANSLATION  = $page.data.FXITURE_INCIDENTS_TRANSLATION;
+  $: FEATURED_BETTING_SITES_WIDGET_DATA_SEO = $page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+  $: FIXTURE_STATISTICS             = $page.data.FIXTURE_STATISTICS;
+  $: FIXTURE_STATISTICS_TRANSLATION = $page.data.FIXTURE_STATISTICS_TRANSLATION;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -294,36 +311,40 @@
 
   <!-- 
   [ℹ] widgets 
-  [ℹ] MOBILE-->
-
-  <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
-
-  <div
-    id="widget-grid-display"
-    class:display-none={!mobileExclusive && !tabletExclusive}>
-    <div 
-      class='grid-display-column'>
-      <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
-      <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+  [ℹ] MOBILE 
+  -->
+  {#if mobileExclusive || tabletExclusive}
+    <div
+      id="widget-grid-display">
+      <div 
+        class='grid-display-column'>
+        <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
+        <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+        <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+        <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+        <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+      </div>
     </div>
-  </div>
-
   <!-- 
   [ℹ] widgets 
   [ℹ] TABLET && DESKTOP -->
+  {:else}
+    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
 
-  <div
-    id="widget-grid-display"
-    class:display-none={mobileExclusive || tabletExclusive}>
-    <div 
-      class='grid-display-column'>
-      <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+    <div
+      id="widget-grid-display">
+      <div 
+        class='grid-display-column'>
+        <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+      </div>
+      <div 
+        class='grid-display-column'>
+        <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+        <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+        <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+      </div>
     </div>
-    <div 
-      class='grid-display-column'>
-      <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
-    </div>
-  </div>
+  {/if}
 
 </section>
 
@@ -341,7 +362,17 @@
 		align-items: start;
 	}
 
+  /* page breadcrumbs */
+  div#fixture-page-breadcrumbs p.capitalize {
+    text-transform: capitalize;
+    overflow: hidden;
+  } div#fixture-page-breadcrumbs > p {
+    color: #8C8C8C !important;
+  } div#fixture-page-breadcrumbs a > p:hover {
+    color: #f5620f !important; 
+  } 
   
+  /* widget layout */
   div#widget-grid-display {
 		display: grid;
     margin-top: 24px;
@@ -354,19 +385,6 @@
 		gap: 24px;
 	}
 
-  div#fixture-page-breadcrumbs p.capitalize {
-    text-transform: capitalize;
-    overflow: hidden;
-  } div#fixture-page-breadcrumbs > p {
-    color: #8C8C8C !important;
-  } div#fixture-page-breadcrumbs a > p:hover {
-    color: #f5620f !important; 
-  } 
-
-  .display-none {
-    display: none !important;
-  }
-
   /* ====================
     RESPONSIVNESS
   ==================== */
@@ -374,25 +392,33 @@
   /* 
   MOBILE ONLY RESPONSIVNESS (&+) */
   @media only screen and (max-width: 450px) {
+
+    /* page breadcrumbs */
     div#fixture-page-breadcrumbs p.fixture-name {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       max-width: 50px;
     }
+
   }
 
   /* 
   RESPONSIVE FOR TABLET (&+) [768px] */
 	@media only screen and (min-width: 768px) {
+
+    /* widget layout */
 		div#widget-grid-display {
 			grid-template-columns: 1fr;
 		}
+    
 	}
 
   /* 
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
 	@media only screen and (min-width: 1160px) {
+
+    /* widget layout */
 		div#widget-grid-display {
 			gap: 20px;
       grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
@@ -402,7 +428,11 @@
   /* 
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
 	@media only screen and (min-width: 1320px) {
+
+    /* widget layout */
 		div#widget-grid-display {
+      display: grid;
+      align-items: start;
 			gap: 20px;
       grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
 		}

@@ -61,11 +61,13 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
     historic_fixtures
     (
       # limit: 50,
-      # FIXME: temporary "where"
-      # FIXME: remove in PROD
+      # FIXME: too large of a query for 300k - 2M records
+      # FIXME: needs a WHERE clause with "publish_status" for now
+      # FIXME: update to include "pagination" + loop one iteration && cache-stream
+      # FIXME: of data straight to cache
       where: {
-        id: {
-          _eq: 18535246
+        publish_status: {
+          _eq: "published"
         }
       }
     ) {
