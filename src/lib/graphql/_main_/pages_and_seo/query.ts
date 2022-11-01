@@ -58,17 +58,7 @@ export const REDIS_CACHE_PAGES_AND_SEO = gql`
       widgets
       urls
     }
-    historic_fixtures
-    (
-      # limit: 50,
-      # FIXME: temporary "where"
-      # FIXME: remove in PROD
-      where: {
-        id: {
-          _eq: 18535246
-        }
-      }
-    ) {
+    historic_fixtures {
       id
       urls
       publish_status

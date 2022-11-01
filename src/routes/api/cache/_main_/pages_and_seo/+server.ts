@@ -13,7 +13,7 @@ import type {
   Cache_Single_Homepage_SEO_Translation_Response, 
   Cache_Single_Tournaments_Data_Page_Translation_Response, 
   Cache_Single_Tournaments_SEO_Translation_Response 
-} from '$lib/models/pages_and_seo/types';
+} from '$lib/models/_main_/pages_and_seo/types';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET (req, res): Promise< any > {
