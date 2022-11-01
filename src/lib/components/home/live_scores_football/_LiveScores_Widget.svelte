@@ -156,9 +156,9 @@
 	}
 
 	function setGameTime(g:LiveScoreGame){
-			var x = new Date();
-			var currentTimeZoneOffsetInHours = x.getTimezoneOffset() + 60;
-			var d = new Date(g.starting_at_ts*1000 + currentTimeZoneOffsetInHours*60*1000);
+			var d = new Date(g.starting_at);
+    		var currentTimeZoneOffsetInHours = new Date().getTimezoneOffset() / 60;
+			d.setTime(d.getTime() - (currentTimeZoneOffsetInHours*60*60*1000));
 			g.starting_at  = d.getHours().toString().padStart(2,'0') + ":" + d.getMinutes().toString().padStart(2,'0');
 	}
 
