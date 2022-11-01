@@ -7,6 +7,7 @@ import { error, json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
+  REDIS_CACHE_FIXTURES_ODDS_DATA_0,
   REDIS_CACHE_FIXTURES_ODDS_DATA_2, 
   REDIS_CACHE_FIXTURES_ODDS_ST_DATA_1 
 } from '$lib/graphql/tournaments/fixtures_odds/query';
@@ -16,6 +17,7 @@ import type {
 } from '$lib/models/tournaments/standings/types';
 import type { 
   BETARENA_HASURA_fixtures_odds_query,
+  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   Fixture_Odds_Team,
   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
   Rounds_Data, 
@@ -23,9 +25,6 @@ import type {
   Tournament_Season_Fixtures_Odds,
   Weeks_Data
 } from '$lib/models/tournaments/fixtures_odds/types';
-import type { 
-  BETARENA_HASURA_historic_fixtures 
-} from '$lib/models/hasura';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -188,12 +187,35 @@ async function surgicalDataUpdate (
   const fixturesIdsArr = dataUpdate?.fixturesList;
   
   // logs.push(`num. of leagueIds: ${dataUpdate.leagueSeasons.length}`);
-  logs.push(`num. of fixturesIds: ${fixturesIdsArr}`);
+  logs.push(`Num. of fixturesIds: ${fixturesIdsArr}`);
+
+  /**
+   * [ℹ] obtain target current season_id's
+  */
+
+  const current_seasons = await get_current_seasons()
+  const current_seasons_arr: number[] = current_seasons?.scores_football_seasons_details.map(a => a.id);
+
+  /**
+   * [ℹ] obtain target historic_fixtures data
+   * [ℹ] filter-out those none-current-season ones
+  */
 
   const hasura_data = await getTargetHistoricFixtures (fixturesIdsArr)
 
-  const leagueIdsArr = hasura_data?.historic_fixtures.map(a => a.league_id);
-  const seasonIdsArr = hasura_data?.historic_fixtures.map(a => a.data?.season_id);
+  const hasura_data_current = hasura_data?.historic_fixtures.filter(obj => {
+    return current_seasons_arr.includes(obj?.season_id);
+  });
+  // [ℹ] exit
+	if (hasura_data_current.length == 0) {
+    logs.push(`no current_season fixtures present`)
+    logs.push(`exiting`)
+		return;
+	}
+  logs.push(`Num. of fixtures (post-filter) -> ${hasura_data_current.length}`)
+
+  const leagueIdsArr = hasura_data_current?.map(a => a?.league_id);
+  const seasonIdsArr = hasura_data_current?.map(a => a?.season_id);
 
   // [🐛] debug
   if (leagueIdsArr.includes(null)) {
@@ -203,7 +225,7 @@ async function surgicalDataUpdate (
     console.log(`contains null`)
   }
 
-  const historicFixturesMap = await checkForLiveFixtures (hasura_data);
+  const historicFixturesMap = await generate_historic_fixtures_map (hasura_data_current);
 
   // [🐛] debug
   if (dev) {
@@ -279,6 +301,20 @@ async function surgicalDataUpdate (
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [HELPER] OTHER METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function get_current_seasons (
+): Promise < BETARENA_HASURA_fixtures_odds_query > {
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_0";
+  const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
+    REDIS_CACHE_FIXTURES_ODDS_DATA_0
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
+}
 
 async function getTargetHistoricFixtures (
   fixturesIdsArr: number[]
@@ -413,14 +449,14 @@ async function getWeeksDiff (
   return Math.round(Math.abs(endDate - startDate) / msInWeek);
 }
 
-async function checkForLiveFixtures (
-  data: BETARENA_HASURA_fixtures_odds_query
-): Promise < Map <number, BETARENA_HASURA_historic_fixtures> >  {
+async function generate_historic_fixtures_map (
+  data: BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]
+): Promise < Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures> >  {
 
-  const historicFixturesMap = new Map <number, BETARENA_HASURA_historic_fixtures>( );
+  const historicFixturesMap = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures>( );
 
   // [ℹ] generate map
-  for (const hist_fixture of data.historic_fixtures) {
+  for (const hist_fixture of data) {
     const fixture_id = parseInt(hist_fixture?.id.toString())
     historicFixturesMap.set(fixture_id, hist_fixture)
   }
@@ -451,36 +487,36 @@ async function getTargetLeagueFixturesData (
 }
 
 async function injectNewFixturesData (
-  historicFixturesMap:    Map <number, BETARENA_HASURA_historic_fixtures>, 
+  historicFixturesMap:    Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures>, 
   cacheTargetLeagueData:  Map <number, REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response> 
 ): Promise < Map <number, REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response> > {
 
   // [ℹ] iterating over target fixtures to update
   for (const [key, value] of historicFixturesMap.entries()) {
 
-    const fix_season_id = value.data?.season_id;
-    const league_id = value.league_id;
-    const fixture_id = value.id;
-    const home_team_id = value.data?.localteam_id;
-    const away_team_id = value.data?.visitorteam_id;
+    const fix_season_id = value?.season_id;
+    const league_id = value?.league_id;
+    const fixture_id = value?.id;
+    const home_team_id = value?.localteam_id_j;
+    const away_team_id = value?.visitorteam_id_j;
 
-    const round = value.data?.round?.data?.name;
-    const fixture_date = value.fixture_day;
-    const fixture_time = value.time;
-    const minutes = value.data?.time?.minute;
-    const status = value.data?.time?.status;
+    const round = value?.round_j?.data?.name;
+    const fixture_date = value?.fixture_day;
+    const fixture_time = value?.time;
+    const minutes = value?.time_j?.minute;
+    const status = value?.time_j?.status;
 
-    const tip_link = value.tip_link_wp
-    const media_link = value.media_link;
-    const fixture_link = value.fixture_link_wp;
+    const tip_link = value?.tip_link_wp
+    const media_link = value?.media_link;
+    const fixture_link = value?.fixture_link_wp;
     
-    const home_team_name = value.home_team_name;
-    const home_red_cards = value?.data?.stats?.data?.find( ({ team_id }) => team_id === home_team_id )?.redcards;
-    const home_team_score = value?.data?.stats?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
+    const home_team_name = value?.home_team_name;
+    const home_red_cards = value?.stats_j?.data?.find( ({ team_id }) => team_id === home_team_id )?.redcards;
+    const home_team_score = value?.stats_j?.data?.find( ({team_id}) => team_id === home_team_id )?.goals;
     
-    const away_team_name = value.away_team_name;
-    const away_red_cards = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.redcards;
-    const away_team_score = value?.data?.stats?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
+    const away_team_name = value?.away_team_name;
+    const away_red_cards = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.redcards;
+    const away_team_score = value?.stats_j?.data?.find( ({ team_id }) => team_id === away_team_id )?.goals;
 
     const home_team_obj: Fixture_Odds_Team = {
       name: home_team_name,
@@ -540,28 +576,28 @@ async function injectNewFixturesData (
               
               if (dev) console.log(`fixture_id: ${fixture.id} | before: ${fixture.status}`)
 
-              fixture.round = historicFixturesMap.get(fixture.id)?.data?.round?.data?.name;
+              fixture.round = historicFixturesMap.get(fixture.id)?.round_j?.data?.name;
               fixture.fixture_date = historicFixturesMap.get(fixture.id)?.fixture_day;
               fixture.fixture_time = historicFixturesMap.get(fixture.id)?.time;
-              fixture.minute = historicFixturesMap.get(fixture.id)?.data?.time?.minute;
-              fixture.status = historicFixturesMap.get(fixture.id)?.data?.time?.status;
+              fixture.minute = historicFixturesMap.get(fixture.id)?.time_j?.minute;
+              fixture.status = historicFixturesMap.get(fixture.id)?.time_j?.status;
               fixture.teams = {
                 away: {
                   name: fixture?.teams?.away?.name,
-                  red_cards: historicFixturesMap.get(fixture.id)?.data?.stats?.data[1]?.redcards,
-                  score: historicFixturesMap.get(fixture.id)?.data?.scores?.visitorteam_score,
+                  red_cards: historicFixturesMap.get(fixture.id)?.stats_j?.data[1]?.redcards,
+                  score: historicFixturesMap.get(fixture.id)?.stats_j?.data[1]?.goals
                 },
                 home: {
                   name: fixture?.teams?.home?.name,
-                  red_cards: historicFixturesMap.get(fixture.id)?.data?.stats?.data[0]?.redcards,
-                  score: historicFixturesMap.get(fixture.id)?.data?.scores?.localteam_score,
+                  red_cards: historicFixturesMap.get(fixture.id)?.stats_j?.data[0]?.redcards,
+                  score: historicFixturesMap.get(fixture.id)?.stats_j?.data[0]?.goals
                 }
               }
               fixture.tip_link = historicFixturesMap.get(fixture.id).tip_link_wp
               fixture.fixture_link = historicFixturesMap.get(fixture.id).fixture_link_wp
               fixture.media_link = historicFixturesMap.get(fixture.id).media_link
 
-              if (dev) console.log(`fixture_id: ${fixture.id} | after: ${fixture.status} | expected: ${historicFixturesMap.get(fixture.id)?.data?.time?.status}`)
+              if (dev) console.log(`fixture_id: ${fixture.id} | after: ${fixture.status} | expected: ${historicFixturesMap.get(fixture.id)?.time_j?.status}`)
             }
           }
         }

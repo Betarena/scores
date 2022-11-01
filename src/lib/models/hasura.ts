@@ -888,6 +888,7 @@ export interface BETARENA_HASURA_historic_fixtures {
   round_name?:      string;
   data?:            WelcomeData;
   league_id?:       number;
+  season_id?:       number;
   probabilities?:   Probabilities | null;
   valuebets?:       null;
   tip_link_wp?:     null;
@@ -1468,3 +1469,44 @@ export interface BETARENA_HASURA_scores_incidents_translations {
   title?: string;
 }
 
+/**
+ * [ℹ] HASURA: scores_fixture_stats_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixture_stats_translations {
+  lang?:         string;
+  translations?: FixtureStatsTranslations;
+} export interface FixtureStatsTranslations {
+  fouls?:          string;
+  goals?:          string;
+  other?:          string;
+  saves?:          string;
+  title?:          string;
+  total?:          string;
+  ongoal?:         string;
+  attacks?:        string;
+  blocked?:        string;
+  corners?:        string;
+  offgoal?:        string;
+  tackles?:        string;
+  accurate?:       string;
+  injuries?:       string;
+  offsides?:       string;
+  redcards?:       string;
+  throw_in?:       string;
+  ball_safe?:      string;
+  free_kick?:      string;
+  goal_kick?:      string;
+  insidebox?:      string;
+  penalties?:      string;
+  outsidebox?:     string;
+  percentage?:     string;
+  shots_title?:    string;
+  yellowcards?:    string;
+  passes_title?:   string;
+  total_passes?:   string;
+  attacks_title?:  string;
+  goal_attempts?:  string;
+  substitutions?:  string;
+  possessiontime?: string;
+  yellowredcards?: string;
+}

@@ -55,7 +55,7 @@
 		let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
     // [ℹ] GET RESPONSE;
-    const response: All_SportBook_Details_Data = await get('api/cache/home/featured_betting_sites?geoPos='+userGeo)
+    const response: All_SportBook_Details_Data = await get('/api/cache/home/featured_betting_sites?geoPos='+userGeo)
     // const response: All_SportBook_Details_Data = FEATURED_BETTING_SITES_WIDGET_DATA;
 
     // [ℹ] if response is null;
@@ -147,14 +147,14 @@
 
   <!-- [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <!-- [ℹ] SEO-BOX 
     -->
     <div id="seo-featured-betting-site-box">
       <p>{FEATURED_BETTING_SITES_WIDGET_DATA_SEO.translations.widget_title}</p>
       <p>{FEATURED_BETTING_SITES_WIDGET_DATA_SEO.translations.title}</p>
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- [ℹ] FEATURED BETTING SITES WIDGET
   -->
