@@ -51,6 +51,7 @@
 		"@sentry/browser": "^7.12.1",
 		"@sentry/tracing": "^7.12.1",
 		"bull": "^4.9.0",
+		"bullmq": "^3.1.1",
 		"colorthief": "^2.3.2",
 		"compression": "^1.7.4",
 		"cookie": "^0.5.0",
