@@ -13,6 +13,7 @@ import type { REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_
 import type { REDIS_CACHE_SINGLE_lineups_data, REDIS_CACHE_SINGLE_lineups_translation } from '$lib/models/fixtures/lineups/types';
 import type { REDIS_CACHE_SINGLE_incidents_data, REDIS_CACHE_SINGLE_incidents_translation } from '$lib/models/fixtures/incidents/types';
 import type { REDIS_CACHE_SINGLE_statistics_data, REDIS_CACHE_SINGLE_statistics_translation } from '$lib/models/fixtures/statistics/types';
+import type { REDIS_CACHE_SINGLE_content_data } from '$lib/models/fixtures/content/types';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({
@@ -230,6 +231,24 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_content: REDIS_CACHE_SINGLE_content_data[] = await fetch(
+    `/api/cache/fixtures/content?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  if (response_content == undefined) {
+    if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
+    response_content = await fetch(
+      `/api/hasura/fixtures/content?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -248,6 +267,7 @@ export async function load({
     && response_featured_betting_sites_translation
     && response_statistics
     && response_statistics_translation
+    && response_content
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
@@ -260,7 +280,8 @@ export async function load({
       FXITURE_INCIDENTS_TRANSLATION: response_incidents_translation,
       FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_translation,
       FIXTURE_STATISTICS: response_statistics,
-      FIXTURE_STATISTICS_TRANSLATION: response_statistics_translation
+      FIXTURE_STATISTICS_TRANSLATION: response_statistics_translation,
+      FIXTURE_CONTENT: response_content
     }
   }
 

@@ -9,6 +9,7 @@
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
 
+  import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import type { 
@@ -37,24 +38,30 @@
     REDIS_CACHE_SINGLE_statistics_translation 
   } from '$lib/models/fixtures/statistics/types';
 
+	import type { 
+    REDIS_CACHE_SINGLE_content_data 
+  } from '$lib/models/fixtures/content/types';
+
   import SvelteSeo from 'svelte-seo';
 	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
 	import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
 	import IncidentsWidget from '$lib/components/fixtures_page/incidents/Incidents_Widget.svelte';
   import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
+	import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
 
-  let PAGE_SEO:                     REDIS_CACHE_SINGLE_fixtures_seo_response
-  let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response
-  let FIXTURE_SCOREBOARD:           REDIS_CACHE_SINGLE_scoreboard_data
+  let PAGE_SEO:                       REDIS_CACHE_SINGLE_fixtures_seo_response
+  let FIXTURE_INFO:                   REDIS_CACHE_SINGLE_fixtures_page_info_response
+  let FIXTURE_SCOREBOARD:             REDIS_CACHE_SINGLE_scoreboard_data
   let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation
-  let FIXTURE_LINEUPS:              REDIS_CACHE_SINGLE_lineups_data
-  let FIXTURE_LINEUPS_TRANSLATION:  REDIS_CACHE_SINGLE_lineups_translation
+  let FIXTURE_LINEUPS:                REDIS_CACHE_SINGLE_lineups_data
+  let FIXTURE_LINEUPS_TRANSLATION:    REDIS_CACHE_SINGLE_lineups_translation
   let FIXTURE_INCIDENTS:              REDIS_CACHE_SINGLE_incidents_data
   let FXITURE_INCIDENTS_TRANSLATION:  REDIS_CACHE_SINGLE_incidents_translation
 	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response
   let FIXTURE_STATISTICS:             REDIS_CACHE_SINGLE_statistics_data
   let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation
+  let FIXTURE_CONTENT:                REDIS_CACHE_SINGLE_content_data[]
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -71,6 +78,7 @@
   $: FEATURED_BETTING_SITES_WIDGET_DATA_SEO = $page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
   $: FIXTURE_STATISTICS             = $page.data.FIXTURE_STATISTICS;
   $: FIXTURE_STATISTICS_TRANSLATION = $page.data.FIXTURE_STATISTICS_TRANSLATION;
+  $: FIXTURE_CONTENT                = $page.data.FIXTURE_CONTENT;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -316,13 +324,23 @@
   {#if mobileExclusive || tabletExclusive}
     <div
       id="widget-grid-display">
+      <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
+      <!-- 
+      [ℹ] "Overview" view selection -->
       <div 
-        class='grid-display-column'>
-        <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
+        class='grid-display-column'
+        class:display-none={$sessionStore.fixture_select_view == "news"}>
         <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
         <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
         <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+      </div>
+      <!-- 
+      [ℹ] "News" view selection -->
+      <div
+        id="widget-grid-display"
+        class:display-none={$sessionStore.fixture_select_view == "overview"}>
+        <ContentWidget {FIXTURE_CONTENT} />
       </div>
     </div>
   <!-- 
@@ -330,9 +348,11 @@
   [ℹ] TABLET && DESKTOP -->
   {:else}
     <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
-
+    <!-- 
+    [ℹ] "Overview" view selection -->
     <div
-      id="widget-grid-display">
+      id="widget-grid-display"
+      class:display-none={$sessionStore.fixture_select_view == "news"}>
       <div 
         class='grid-display-column'>
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
@@ -343,6 +363,13 @@
         <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
         <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
       </div>
+    </div>
+    <!-- 
+    [ℹ] "News" view selection -->
+    <div
+      id="widget-grid-display"
+      class:display-none={$sessionStore.fixture_select_view == "overview"}>
+      <ContentWidget {FIXTURE_CONTENT} />
     </div>
   {/if}
 
@@ -379,11 +406,16 @@
     align-items: start;
   }
 
+  /* widget layout-inner */
   div.grid-display-column {
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 24px;
 	}
+
+  .display-none {
+    display: none !important;
+  }
 
   /* ====================
     RESPONSIVNESS
