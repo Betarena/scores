@@ -11,8 +11,8 @@
   xmlns="http://www.w3.org/2000/svg"
 >
   <g filter="url(#filter0_i_5651_348484)">
-    <rect width="64" height="52" fill="#4B4B4B"/>
-    <rect y="20" width="64" height="20" rx="2" fill="#616161"/>
+    <rect width="64" height="52" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #4b4b4b;' : 'fill: #FFFFFF;'} />
+    <rect y="20" width="64" height="20" rx="2" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
   </g>
   <defs>
     <filter id="filter0_i_5651_348484" x="0" y="0" width="64" height="52" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
