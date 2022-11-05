@@ -1510,3 +1510,31 @@ export interface BETARENA_HASURA_scores_fixture_stats_translations {
   possessiontime?: string;
   yellowredcards?: string;
 }
+
+/**
+ * [ℹ] HASURA: external_content (&)
+*/
+export interface BETARENA_HASURA_external_content {
+  id?:             number;
+  source?:         Source;
+  title?:          string;
+  lang?:           Lang;
+  link?:           string;
+  featured_media?: string | null;
+  excerpt?:        string;
+  author?:         string;
+  date?:           string;
+  gameid?:         number;
+  category?:       number;
+} export enum Lang {
+  En = "en",
+  Es = "es",
+  It = "it",
+  Se = "se",
+  Ro = "ro",
+  Br = "br",
+  Pt = "pt"
+} export enum Source {
+  BtaWordpress = "bta_wordpress",
+  ApostasWordpress = "apostas_wordpress"
+}
