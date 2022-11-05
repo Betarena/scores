@@ -10,25 +10,27 @@
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
+	import type { REDIS_CACHE_SINGLE_content_data } from "$lib/models/fixtures/content/types";
+
 	import ContentLoader from "./Content_Loader.svelte";
-	// import StatisticsRow from "./Statistics_Row.svelte";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	import type { REDIS_CACHE_SINGLE_content_data } from "$lib/models/fixtures/content/types";
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // export let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response;
   export let FIXTURE_CONTENT:                 REDIS_CACHE_SINGLE_content_data[]
   // export let FIXTURE_STATISTICS_TRANSLATION:     REDIS_CACHE_SINGLE_statistics_translation
 
-  let loaded:            boolean = false;           // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
-  let refresh:           boolean = false;           // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
-	let refresh_data:      any = undefined;           // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
-  let no_widget_data:    any = false;               // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
+  let loaded:            boolean = false;  // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
+  let refresh:           boolean = false;  // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
+	let refresh_data:      any = undefined;  // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
+  let no_widget_data:    any = false;      // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
+
+  let limitViewRow:      number = 12;      // [ℹ] holds the actual, `total` limit of the list of rows allowed
+  let showMore:          boolean = false;  // [ℹ] signals to other widget values that the lsit has expanded
 
   let show_placeholder:  boolean = false;
 
@@ -86,6 +88,18 @@
     FIXTURE_CONTENT = FIXTURE_CONTENT
 
     return FIXTURE_CONTENT;
+  }
+
+  function toggle_full_list() {
+    showMore = !showMore;
+    // [ℹ] check if "limitViewRow" matches "trueLengthOfArray",
+    if (limitViewRow == FIXTURE_CONTENT.length) {
+      // [ℹ] if so, revert back original rows,
+      limitViewRow = 12;
+      return;
+    }
+    // [ℹ] otherwise, expand list to full length,
+    limitViewRow = FIXTURE_CONTENT.length;
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -264,7 +278,7 @@
 
         <!-- 
         [ℹ] [MOBILE] [TABLET] [DESKTOP]
-        [ℹ] no cross-platform design change
+        [ℹ] (minimal) cross-platform design change
         -->
 
         <!-- 
@@ -286,7 +300,7 @@
         <!-- 
         [ℹ] content list container -->
         <div>
-          {#each FIXTURE_CONTENT as item}
+          {#each FIXTURE_CONTENT.slice(0, limitViewRow) as item}
             <a 
               aria-label="fixture-post-link"
               href={item?.link}
@@ -306,28 +320,57 @@
                   height=80px
                 />
                 <!-- 
-                [ℹ] media-title -->
-                <div>
+                [ℹ] media-title + post-info -->
+                <div
+                  class="media-box">
                   <p
                     class="
                       w-500
                       color-black-2
+                      post-title
                     ">
                     {item?.title}
                   </p>
+                  <!-- 
+                  [ℹ] show time on tablet/desktop -->
+                  {#if !mobileExclusive}
+                    <p
+                      class="
+                        color-grey
+                        post-desc
+                      ">
+                      {item?.excerpt}
+                    </p>
+                  {/if}
+                  <!-- 
+                  [ℹ] author
+                  [ℹ] date -->
                   <p
                     class="
                       color-grey
+                      author-date-info
                     ">
-                    {item?.author}
-                    |
-                    {monthNames[new Date(item?.date.toString()).getMonth()]}
-                    {new Date(item?.date.toString()).getDate()},
-                    {new Date(item?.date.toString()).getFullYear()}
-                    {#if !mobileExclusive}
+                    <span>
+                      {item?.author}
+                    </span>
+                    <span>
                       |
-                      {new Date(item?.date.toString()).getHours()}:
-                      {new Date(item?.date.toString()).getMinutes()}
+                    </span>
+                    <span>
+                      {monthNames[new Date(item?.date.toString()).getMonth()]}
+                      {new Date(item?.date.toString()).getDate()},
+                      {new Date(item?.date.toString()).getFullYear()}
+                    </span>
+                    <!-- 
+                    [ℹ] show time on tablet/desktop -->
+                    {#if !mobileExclusive}
+                      <span>
+                        |
+                      </span>
+                      <span>
+                        {new Date(item?.date.toString()).getHours()}:
+                        {new Date(item?.date.toString()).getMinutes()}
+                      </span>
                     {/if}
                   </p>
                 </div>
@@ -335,6 +378,29 @@
             </a>
           {/each}
         </div>
+
+        <!-- 
+        [ℹ] show more -->
+        {#if FIXTURE_CONTENT 
+          && FIXTURE_CONTENT.length > 1}
+          <div
+            id="display-all-btn"
+            class="
+              row-space-center">
+            <p
+              class="
+                w-500
+                color-primary
+              "
+              on:click={() => toggle_full_list()}>
+              {#if !showMore}
+                See All
+              {:else}
+                See Less
+              {/if}
+            </p>
+          </div>
+        {/if}
 
       </div>
 
@@ -393,7 +459,7 @@
     position: relative;
     padding: none;
     /* override */
-    padding-bottom: 20px;
+    padding-bottom: 0;
   }
 
   /* top tab box */
@@ -420,13 +486,21 @@
     border-radius: 8px;
     /* dynamic */
     margin-right: 20px;
-  } div#content-widget-container div.content-row p {
+  } div#content-widget-container div.content-row div.media-box p.post-title {
+    font-size: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
     display: -webkit-box;
     -webkit-line-clamp: 3; /* number of lines to show */
             line-clamp: 3;
     -webkit-box-orient: vertical;
+  } div#content-widget-container div.content-row div.media-box p.author-date-info span {
+    margin-right: 12px;
+  }
+
+  /* display more box */
+  div#display-all-btn {
+    padding: 26px 0;
   }
 
   /* ====================
@@ -447,7 +521,29 @@
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
-    /* EMPTY */
+    /* content-row */
+    div#content-widget-container div.content-row img {
+      width: 144px;
+      height: 96px;
+      margin-right: 20px;
+    } div#content-widget-container div.content-row div.media-box p.post-title {
+      font-size: 18px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      -webkit-line-clamp: 1; /* number of lines to show */
+              line-clamp: 1;
+      -webkit-box-orient: vertical;
+      margin-bottom: 6px;
+    } div#content-widget-container div.content-row div.media-box p.post-desc {
+      font-size: 16px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: -webkit-box;
+      -webkit-line-clamp: 1; /* number of lines to show */
+              line-clamp: 1;
+      -webkit-box-orient: vertical;
+      margin-bottom: 12px;
+    }
   }
 
   /* 
