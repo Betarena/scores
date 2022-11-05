@@ -3,7 +3,7 @@ import { error, json } from '@sveltejs/kit';
 
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { 
+import {
   REDIS_CACHE_FIXTURE_CONTENT_DATA_0, 
   REDIS_CACHE_FIXTURE_CONTENT_DATA_1, 
   REDIS_CACHE_FIXTURE_CONTENT_DATA_2 
@@ -13,11 +13,13 @@ import { Queue, Worker } from 'bullmq';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
 
-import type { 
+import type {
   BETARENA_HASURA_external_content,
   BETARENA_HASURA_historic_fixtures 
 } from '$lib/models/hasura';
-import type { BETARENA_HASURA_content_query } from '$lib/models/fixtures/content/types';
+import type {
+  BETARENA_HASURA_content_query
+ } from '$lib/models/fixtures/content/types';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
