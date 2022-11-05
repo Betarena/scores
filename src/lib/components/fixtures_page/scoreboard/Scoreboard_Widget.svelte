@@ -52,7 +52,6 @@
   let refresh:           boolean = false;         // [ℹ] refresh value speed of the WIDGET;
 	let refresh_data:      any = undefined;         // [ℹ] refresh-data value speed;
   let no_widget_data:    any = false;             // [ℹ] identifies the no_widget_data boolean;
-  let selected_view      = 0;
   let tick_sec_show:     boolean = false;
   let enable_miniature:  boolean = false;
   let lazy_load_data_check: boolean = false;
@@ -1844,8 +1843,8 @@
                   opt-container 
                   cursor-pointer
                 "
-                on:click={() => selected_view = 0}
-                class:activeOpt={selected_view == 0}>
+                on:click={() => $sessionStore.fixture_select_view = "overview"}
+                class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
                   {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
@@ -1856,8 +1855,8 @@
                   opt-container 
                   cursor-not-allowed
                 "
-                on:click={() => selected_view = 1}
-                class:activeOpt={selected_view == 1}>
+                on:click={() => $sessionStore.fixture_select_view = "news"}
+                class:activeOpt={$sessionStore.fixture_select_view == "news"}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
                   {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
@@ -2083,8 +2082,8 @@
                     opt-container 
                     cursor-pointer
                   "
-                  on:click={() => selected_view = 0}
-                  class:activeOpt={selected_view == 0}>
+                  on:click={() => $sessionStore.fixture_select_view = "overview"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
                     {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
@@ -2095,8 +2094,8 @@
                     opt-container 
                     cursor-not-allowed
                   "
-                  on:click={() => selected_view = 1}
-                  class:activeOpt={selected_view == 1}>
+                  on:click={() => $sessionStore.fixture_select_view = "news"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "news"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
                     {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
@@ -2323,8 +2322,8 @@
                     opt-container 
                     cursor-pointer
                   "
-                  on:click={() => selected_view = 0}
-                  class:activeOpt={selected_view == 0}>
+                  on:click={() => $sessionStore.fixture_select_view = "overview"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
                     {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
@@ -2335,8 +2334,8 @@
                     opt-container 
                     cursor-not-allowed
                   "
-                  on:click={() => selected_view = 1}
-                  class:activeOpt={selected_view == 1}>
+                  on:click={() => $sessionStore.fixture_select_view = "news"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "news"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
                     {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
