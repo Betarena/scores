@@ -338,7 +338,7 @@
       <!-- 
       [ℹ] "News" view selection -->
       <div
-        id="widget-grid-display"
+        id="widget-grid-display-news"
         class:display-none={$sessionStore.fixture_select_view == "overview"}>
         <ContentWidget {FIXTURE_CONTENT} />
       </div>
@@ -367,7 +367,7 @@
     <!-- 
     [ℹ] "News" view selection -->
     <div
-      id="widget-grid-display"
+      id="widget-grid-display-news"
       class:display-none={$sessionStore.fixture_select_view == "overview"}>
       <ContentWidget {FIXTURE_CONTENT} />
     </div>
@@ -413,6 +413,12 @@
 		gap: 24px;
 	}
 
+  div#widget-grid-display-news {
+    display: grid;
+    margin-top: 24px;
+    align-items: start;
+  }
+
   .display-none {
     display: none !important;
   }
@@ -424,7 +430,6 @@
   /* 
   MOBILE ONLY RESPONSIVNESS (&+) */
   @media only screen and (max-width: 450px) {
-
     /* page breadcrumbs */
     div#fixture-page-breadcrumbs p.fixture-name {
       overflow: hidden;
@@ -432,24 +437,20 @@
       text-overflow: ellipsis;
       max-width: 50px;
     }
-
   }
 
   /* 
   RESPONSIVE FOR TABLET (&+) [768px] */
 	@media only screen and (min-width: 768px) {
-
     /* widget layout */
 		div#widget-grid-display {
 			grid-template-columns: 1fr;
 		}
-    
 	}
 
   /* 
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
 	@media only screen and (min-width: 1160px) {
-
     /* widget layout */
 		div#widget-grid-display {
 			gap: 20px;
@@ -460,7 +461,6 @@
   /* 
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
 	@media only screen and (min-width: 1320px) {
-
     /* widget layout */
 		div#widget-grid-display {
       display: grid;
