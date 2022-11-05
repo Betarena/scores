@@ -181,7 +181,11 @@
       id="seo-widget-box">
       <!-- 
       [ℹ] widget-title -->
-      <!-- <h2>{FIXTURE_STATISTICS_TRANSLATION?.title}</h2> -->
+      {#each FIXTURE_CONTENT as item}
+        <p>{item.title}</p>
+        <p>{item.link}</p>
+        <p>{item.excerpt}</p>
+        {/each}
     </div>
   <!-- {/if} -->
 
@@ -370,6 +374,11 @@
                       <span>
                         {new Date(item?.date.toString()).getHours()}:
                         {new Date(item?.date.toString()).getMinutes()}
+                        {#if new Date(item?.date.toString()).getHours() > 12}
+                          pm
+                        {:else}
+                          am
+                        {/if}
                       </span>
                     {/if}
                   </p>
