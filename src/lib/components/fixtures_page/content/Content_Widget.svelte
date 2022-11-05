@@ -239,13 +239,13 @@
     browser && 
     $userBetarenaSettings.country_bookmaker}
 
-    <ContentLoader />
+    <!-- <ContentLoader /> -->
 
     <!-- 
     [ℹ] promise is pending 
     -->
     {#await widget_init()}
-      <!-- <StatisticsLoader /> -->
+      <ContentLoader />
     <!-- 
     [ℹ] promise was fulfilled
     -->
@@ -268,47 +268,71 @@
         -->
 
         <!-- 
+        [ℹ] option [default NEW] -->
+        <div
+          class="
+            row-space-start
+            top-tab-box
+          ">
+          <p
+            class="
+              w-500
+            "
+            class:activeOpt={true}>
+            New
+          </p>
+        </div>
+
+        <!-- 
         [ℹ] content list container -->
         <div>
           {#each FIXTURE_CONTENT as item}
-            <div
-              class="
-                row-space-start
-                content-row
-              ">
-              <!-- 
-              [ℹ] featured-media -->
-              <img 
-                src={item?.featured_media}
-                alt=""
-                width=80px
-                height=80px
-              />
-              <!-- 
-              [ℹ] media-title -->
-              <div>
-                <p
-                  class="
-                    w-500
-                    color-black-2
-                  ">
-                  {item?.title}
-                </p>
-                <p
-                  class="
-                    color-grey
-                  ">
-                  {item?.author}
-                  |
-                  {monthNames[new Date(item?.date.toString()).getMonth()]}
-                  {new Date(item?.date.toString()).getDate()},
-                  {new Date(item?.date.toString()).getFullYear()}
-                  |
-                  {new Date(item?.date.toString()).getHours()}:
-                  {new Date(item?.date.toString()).getMinutes()}
-                </p>
+            <a 
+              aria-label="fixture-post-link"
+              href={item?.link}
+              target="_blank"
+              style="width: fit-content;">
+              <div
+                class="
+                  row-space-start
+                  content-row
+                ">
+                <!-- 
+                [ℹ] featured-media -->
+                <img 
+                  src={item?.featured_media}
+                  alt=""
+                  width=80px
+                  height=80px
+                />
+                <!-- 
+                [ℹ] media-title -->
+                <div>
+                  <p
+                    class="
+                      w-500
+                      color-black-2
+                    ">
+                    {item?.title}
+                  </p>
+                  <p
+                    class="
+                      color-grey
+                    ">
+                    {item?.author}
+                    |
+                    {monthNames[new Date(item?.date.toString()).getMonth()]}
+                    {new Date(item?.date.toString()).getDate()},
+                    {new Date(item?.date.toString()).getFullYear()}
+                    {#if !mobileExclusive}
+                      |
+                      {new Date(item?.date.toString()).getHours()}:
+                      {new Date(item?.date.toString()).getMinutes()}
+                    {/if}
+                  </p>
+                </div>
               </div>
-            </div>
+            </a>
           {/each}
         </div>
 
@@ -372,9 +396,23 @@
     padding-bottom: 20px;
   }
 
+  /* top tab box */
+  div#content-widget-container div.top-tab-box {
+    padding: 20px 20px 0 20px;
+  } div#content-widget-container div.top-tab-box p {
+    font-size: 14px;
+    padding-bottom: 12px;
+  } div#content-widget-container div.top-tab-box p.activeOpt {
+    color: #F5620F;
+    border-bottom: 1px solid #F5620F;
+  }
+
   /* content-row */
   div#content-widget-container div.content-row {
-    padding: 20px 20px 0 20px;
+    padding: 20px 0;
+    border-bottom: 1px solid #E6E6E6;
+    width: -webkit-fill-available;
+    margin: 0 20px;
   } div#content-widget-container div.content-row img {
     object-fit: cover;
     width: 80px;
@@ -382,6 +420,13 @@
     border-radius: 8px;
     /* dynamic */
     margin-right: 20px;
+  } div#content-widget-container div.content-row p {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 3; /* number of lines to show */
+            line-clamp: 3;
+    -webkit-box-orient: vertical;
   }
 
   /* ====================
