@@ -42,6 +42,11 @@
     REDIS_CACHE_SINGLE_content_data 
   } from '$lib/models/fixtures/content/types';
 
+	import type { 
+    REDIS_CACHE_SINGLE_about_data, 
+    REDIS_CACHE_SINGLE_about_translation 
+  } from '$lib/models/fixtures/about/types';
+
   import SvelteSeo from 'svelte-seo';
 	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
 	import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
@@ -49,6 +54,7 @@
   import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
 	import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
+	import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
 
   let PAGE_SEO:                       REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                   REDIS_CACHE_SINGLE_fixtures_page_info_response
@@ -62,6 +68,8 @@
   let FIXTURE_STATISTICS:             REDIS_CACHE_SINGLE_statistics_data
   let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation
   let FIXTURE_CONTENT:                REDIS_CACHE_SINGLE_content_data[]
+  let FIXTURE_ABOUT:                  REDIS_CACHE_SINGLE_about_data
+  let FIXTURE_ABOUT_TRANSLATION:      REDIS_CACHE_SINGLE_about_translation
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -79,6 +87,8 @@
   $: FIXTURE_STATISTICS             = $page.data.FIXTURE_STATISTICS;
   $: FIXTURE_STATISTICS_TRANSLATION = $page.data.FIXTURE_STATISTICS_TRANSLATION;
   $: FIXTURE_CONTENT                = $page.data.FIXTURE_CONTENT;
+  $: FIXTURE_ABOUT                  = $page.data.FIXTURE_ABOUT;
+  $: FIXTURE_ABOUT_TRANSLATION      = $page.data.FIXTURE_ABOUT_TRANSLATION;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -334,6 +344,7 @@
         <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
         <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
       </div>
       <!-- 
       [ℹ] "News" view selection -->
@@ -356,6 +367,7 @@
       <div 
         class='grid-display-column'>
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
       </div>
       <div 
         class='grid-display-column'>
