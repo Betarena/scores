@@ -3,16 +3,17 @@
 ==================== -->
 
 <script lang="ts">
-  // ... svelte-imports;
+
   import { fade } from "svelte/transition";
   import { onMount } from "svelte";
   import { page } from "$app/stores";
   import { dev } from '$app/environment';
-  // ...
+
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  import Placehoder_Row_Desktop from "./loaders/_Placeholder_Row.svelte";
-  import Placehoder_FAQ_Row_Desktop from "./loaders/_Placeholder_FAQ_Row.svelte";
+  import Placehoder_Row_Desktop from "./loaders/Loader_Row.svelte"
+  import Placehoder_FAQ_Row_Desktop from "./loaders/Loader_FAQ_Row.svelte"
+	import LoaderBottomBtn from "./loaders/Loader_Bottom_Btn.svelte";
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES
@@ -92,6 +93,20 @@
         {/each}
       </div>
 
+
+      <!-- 
+      [ℹ] [DESKTOP] [TABLET]
+      -->
+      {#if !mobileExclusive}
+        <div
+          class="
+            row-space-center
+            box-bottom-btn
+          ">
+          <LoaderBottomBtn />
+        </div>
+      {/if}
+
   </div>
 </div>
 
@@ -115,19 +130,29 @@
     min-width: -webkit-fill-available;
     margin-top: 40px;
     height: 1362px;
+    position: relative;
   }
 
   #about-tour-widget-container-load div#faq-section div.faq-row:first-child {
     border: 1px solid #E6E6E6;
     border-radius: 12px 12px 0 0 !important;
-  }
-  #about-tour-widget-container-load div#faq-section div.faq-row:last-child {
+  } #about-tour-widget-container-load div#faq-section div.faq-row:last-child {
     border: 1px solid #E6E6E6;
     border-radius: 0 0 12px 12px !important;
-  }
-  #about-tour-widget-container-load div#faq-section div.faq-row {
+  } #about-tour-widget-container-load div#faq-section div.faq-row {
     border: 1px solid #E6E6E6;
     padding: 20px;
+  }
+
+  #about-tour-widget-container-load div.box-bottom-btn {
+    padding: 24px 0;
+    border-top: 1px solid #E6E6E6;
+    margin-right: -20px;
+    margin-left: -20px;
+    width: -webkit-fill-available;
+    position: absolute;
+    bottom: 0;
+    background-color: #FFFFFF;
   }
 
   /* ====================
