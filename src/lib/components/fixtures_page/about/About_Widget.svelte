@@ -35,8 +35,6 @@
 	let refresh_data:      any = undefined;  // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
   let no_widget_data:    any = false;      // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
 
-  let showMore:          boolean = false;  // [ℹ] signals to other widget values that the lsit has expanded
-
   let show_placeholder:  boolean = true;   // [ℹ] [override] placeholder for "no-widget-data"
 
   // [🐞]
@@ -78,10 +76,6 @@
     FIXTURE_ABOUT = FIXTURE_ABOUT
 
     return FIXTURE_ABOUT;
-  }
-
-  function toggle_full_list() {
-    showMore = !showMore;
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -257,8 +251,7 @@
 
       <div
         id="about-widget-container"
-        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-        class:show-full={showMore}>
+        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
         <!-- 
         [ℹ] [MOBILE] [TABLET] [DESKTOP]
@@ -268,26 +261,6 @@
         <!--
         [ℹ] render SEO-DATA -->
         {@html FIXTURE_ABOUT?.seo_data}
-
-        <!-- 
-        [ℹ] show more btn -->
-        <div
-          id="display-all-btn"
-          class="
-            row-space-center">
-          <p
-            class="
-              w-500
-              color-primary
-            "
-            on:click={() => toggle_full_list()}>
-            {#if !showMore}
-              See All
-            {:else}
-              See Less
-            {/if}
-          </p>
-        </div>
 
       </div>
 
@@ -345,22 +318,15 @@
     width: 100%;
     position: relative;
     padding: 20px;
-    /* override */
-    max-height: 1362px;
-    padding-bottom: 0;
-  } div#about-widget-container.show-full {
-    max-height: auto;
   }
 
   /* widget injected HTML style override */
-
   :global(#about-widget-container a) {
     color: #F5620F !important;
     width: fit-content !important;
     margin: 0;
     display: initial;
   }
-
   :global(#about-widget-container section) {
     padding: 0 !important;
     padding-bottom: 0 !important;
@@ -388,7 +354,6 @@
     border: 1px solid #E6E6E6;
     border-radius: 0 0 12px 12px !important;
   }
-
   :global(#about-widget-container h3) {
     font-size: 20px;
   }
@@ -399,7 +364,6 @@
   :global(#about-widget-container section div.faq-body) {
       font-size: 14px;
   }
-
   :global(#about-widget-container h1,
     #about-widget-container h2, 
     #about-widget-container h3,
@@ -413,22 +377,10 @@
   :global(#about-widget-container h3) {
       margin: 20px 0 12px 0;
   }
-
   :global(#about-widget-container section > div) {
     border: 1px solid #E6E6E6 !important;
   }
   
-  /* display more box */
-  #about-widget-container div#display-all-btn {
-    padding: 26px 0;
-    border-top: 1px solid #E6E6E6;
-    margin-right: -20px;
-    margin-left: -20px;
-    width: auto;;
-  } #about-widget-container div#display-all-btn p {
-    color: #F5620F !important;
-  }
-
   /* ====================
     RESPONSIVNESS [TABLET] [DESKTOP]
   ==================== */
