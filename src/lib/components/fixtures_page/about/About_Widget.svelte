@@ -3,23 +3,22 @@
 =================-->
 
 <script lang="ts">
-
-  // [ℹ] svelte-imports;
-  import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
-  import { logDevGroup } from "$lib/utils/debug";
+  import { logDevGroup, log_info_group } from "$lib/utils/debug";
 
-  import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
-  import type { 
-    Cache_Single_Tournaments_League_Info_Data_Response 
-  } from "$lib/models/tournaments/league-info/types";
+	import type { 
+    REDIS_CACHE_SINGLE_content_data 
+  } from "$lib/models/fixtures/content/types";
+	import type { 
+    REDIS_CACHE_SINGLE_about_data, 
+    REDIS_CACHE_SINGLE_about_translation 
+  } from "$lib/models/fixtures/about/types";
 
-  import AboutBlockContentLoader from "./_About_Block_ContentLoader.svelte";
+	import AboutLoader from "./About_Loader.svelte";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
@@ -28,26 +27,31 @@
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
-  let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
-	let refresh_data:             any = undefined;                // [ℹ] refresh-data value speed;
-  let noWidgetData:             any = false;                    // [ℹ] identifies the noWidgetData boolean;
-  let trueLengthOfArray:        number;
+  export let FIXTURE_ABOUT:                 REDIS_CACHE_SINGLE_about_data
+  export let FIXTURE_ABOUT_TRANSLATION:     REDIS_CACHE_SINGLE_about_translation
 
-  let diasbleDev:               boolean = false;
-  let devConsoleTag:            string = "TOP_PLAYER";
+  let loaded:            boolean = false;  // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
+  let refresh:           boolean = false;  // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
+	let refresh_data:      any = undefined;  // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
+  let no_widget_data:    any = false;      // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
 
-  let currentSeason:            number = undefined;
+  let show_placeholder:  boolean = true;   // [ℹ] [override] placeholder for "no-widget-data"
 
-	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
+  // [🐞]
+  let enable_logs:       boolean = true;
+  let dev_console_tag:   string = "fixtures | about [DEV]";
 
-  $: if (dev && diasbleDev) logDevGroup ("league info #2 [DEV]", `LEAGUE_INFO_SEO_DATA: ${LEAGUE_INFO_SEO_DATA}`)
+  // [🐞]
+  $: if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `FIXTURE_ABOUT: ${FIXTURE_ABOUT}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  async function widgetInit(): Promise < Cache_Single_Tournaments_League_Info_Data_Response > {
+  // [ℹ] MAIN
+  // [ℹ] Not In Use
+  async function widget_init (
+  ): Promise < REDIS_CACHE_SINGLE_about_data > {
 
     // [ℹ] get response [lang] [data] [obtained from preload()]
     const sleep = ms => new Promise(r => setTimeout(r, ms));
@@ -55,22 +59,23 @@
 
     loaded = true;
 
+    // [ℹ] data validation check
 		if (
-      LEAGUE_INFO_SEO_DATA == undefined ||
-      LEAGUE_INFO_SEO_DATA?.data?.seo_content == undefined
+      FIXTURE_ABOUT == undefined
     ) {
-      // [🐛] debug 
-      if (dev) logDevGroup ("league info #2 [DEV]", `❌ no data available!`)
-      noWidgetData = true;
+      // [🐞]
+      if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
+      no_widget_data = true;
 			return;
 		}
-    // [ℹ] otherwise, 
-    // [ℹ] revert back
+    // [ℹ] otherwise, no data
     else {
-      noWidgetData = false;
+      no_widget_data = false;
     }
 
-    return LEAGUE_INFO_SEO_DATA;
+    FIXTURE_ABOUT = FIXTURE_ABOUT
+
+    return FIXTURE_ABOUT;
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -124,15 +129,15 @@
     // [ℹ] reset necessary variables;
     refresh = true
     loaded = false
-    noWidgetData = false
-    // widgetInit()
+    no_widget_data = false
+    // widget_init()
     setTimeout(async() => {
       refresh = false
     }, 100)
   }
 
   afterNavigate(async () => {
-    widgetInit()
+    widget_init()
   })
 
 </script>
@@ -144,28 +149,33 @@
 <div
   id='widget-outer'>
 
-  <!-- [ℹ] SEO-DATA-LOADED 
+  <!-- 
+  [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
-      {@html LEAGUE_INFO_SEO_DATA?.data?.seo_content}
+      <!-- 
+      [ℹ] widget-title -->
+      <h2>{FIXTURE_ABOUT_TRANSLATION?.title}</h2>
+      <!-- 
+      [ℹ] & complete text block -->
+      <p>{FIXTURE_ABOUT?.seo_data}</p>
     </div>
-  {/if}
+  <!-- {/if} -->
 
-  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  <!-- 
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if 
-    noWidgetData && 
-    loaded}
+  {#if no_widget_data
+    && loaded
+    && show_placeholder}
 
-    <!-- [ℹ] title of the widget 
-    -->
     <h2
       class="s-20 m-b-10 w-500 color-black-2"
-      style="margin-top: 0;"
+      style="margin-top: 0px;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-      {LEAGUE_INFO_SEO_DATA?.data?.translation?.league_info}
+      {FIXTURE_ABOUT_TRANSLATION?.title}
     </h2>
 
     <!-- [ℹ] no-widget-data-avaiable-placeholder container 
@@ -175,83 +185,90 @@
       class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-      <!-- [ℹ] no-visual-asset
+      <!-- 
+      [ℹ] no-visual-asset
       -->
       {#if $userBetarenaSettings.theme == 'Dark'}
         <img 
           src={no_visual_dark} 
           alt="no_visual_dark"
-          width="32px" height="32px"
+          width=32px
+          height=32px
           class='m-b-16'
         />
       {:else}
         <img 
           src={no_visual} 
           alt="no_visual"
-          width="32px" height="32px"
+          width=32px
+          height=32px
           class='m-b-16'
         />
       {/if}
       
-      <!-- [ℹ] container w/ text 
+      <!-- 
+      [ℹ] container w/ text 
       -->
       <div>
         <p 
           class='s-14 m-b-8 w-500'
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info}
+          {FIXTURE_ABOUT_TRANSLATION?.no_info}
         </p>
         <p class='s-14 color-grey w-400'> 
-          {LEAGUE_INFO_SEO_DATA?.data?.translation?.no_info_desc}
+          {FIXTURE_ABOUT_TRANSLATION?.no_info_desc}
         </p>
       </div>
     </div>
   {/if}
 
-  <!-- [ℹ] MAIN WIDGET COMPONENT
+  <!-- 
+  [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if 
-    !noWidgetData &&
-    !refresh &&
-    browser && 
-    $userBetarenaSettings.country_bookmaker && 
-    !diasbleDev}
+  {#if !no_widget_data
+    && !refresh
+    && browser 
+    && $userBetarenaSettings.country_bookmaker}
 
-    <!-- [ℹ] promise is pending 
+    <!-- <AboutLoader /> -->
+
+    <!-- 
+    [ℹ] promise is pending 
     -->
-    {#await widgetInit()}
-      <AboutBlockContentLoader />
-    <!-- [ℹ] promise was fulfilled
+    {#await widget_init()}
+      <AboutLoader />
+    <!-- 
+    [ℹ] promise was fulfilled
     -->
     {:then data}
 
-      <!-- [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
-      -->
-
-      <!-- [ℹ] promise was fulfilled 
-      -->
-      <h2 
+      <h2
         class="s-20 m-b-10 w-500 color-black-2"
         style="margin-top: 0px;"
         class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-        {LEAGUE_INFO_SEO_DATA?.data?.translation?.about_the_league}
+        {FIXTURE_ABOUT_TRANSLATION?.title}
       </h2>
 
       <div
-        id="about-tour-widget-container"
-        class:widget-no-data-height={trueLengthOfArray == 0}
+        id="about-widget-container"
         class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
         <!-- 
+        [ℹ] [MOBILE] [TABLET] [DESKTOP]
+        [ℹ] (minimal) cross-platform design change
+        -->
+
+        <!--
         [ℹ] render SEO-DATA -->
-        {@html LEAGUE_INFO_SEO_DATA.data.seo_content}
-        
+        {@html FIXTURE_ABOUT?.seo_data}
+
       </div>
 
-    <!-- [ℹ] promise was rejected
+    <!-- 
+    [ℹ] promise was rejected
     -->
     {:catch error}
-      <!-- {error} -->
+      {error}
     {/await}
 
   {/if}
@@ -266,7 +283,7 @@
 
   /* [ℹ] OTHER STYLE / CSS */
 
-  /* NaN */
+  /* EMPTY */
 
   /* [ℹ] SEO WIDGET DATA */
   
@@ -289,150 +306,138 @@
 
   /*
     [ℹ] WIDGET MAIN STYLE / CSS 
-    [ℹ] MOBILE FIRST
+    [ℹ] NOTE: [MOBILE-FIRST]
   */
 
-  div#about-tour-widget-container.widget-no-data-height {
-    height: 832px;
-  }
-
-  #about-tour-widget-container {
-    padding: 0;
+  /* widget-main */
+  div#about-widget-container {
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 12px;
+    overflow: hidden;
     width: 100%;
     position: relative;
     padding: 20px;
   }
 
-:global(#about-tour-widget-container a) {
+  /* widget injected HTML style override */
+  :global(#about-widget-container a) {
     color: #F5620F !important;
     width: fit-content !important;
     margin: 0;
     display: initial;
   }
-
-  :global(#about-tour-widget-container section) {
+  :global(#about-widget-container section) {
     padding: 0 !important;
     padding-bottom: 0 !important;
     min-height: fit-content;
   }
-  :global(#about-tour-widget-container section div:first-child) {
+  :global(#about-widget-container section div:first-child) {
     border: 1px solid #E6E6E6;
     border-radius: 12px 12px 0 0 !important;
   }
-  :global(#about-tour-widget-container section > div) {
+  :global(#about-widget-container section > div) {
     border: 1px solid #E6E6E6;
     padding: 20px;
   }
-  :global(#about-tour-widget-container section > div > h4) {
+  :global(#about-widget-container section > div > h4) {
     margin: 0 !important;
     margin-bottom: 8px;
   }
-  :global(#about-tour-widget-container section div.faq-body) {
+  :global(#about-widget-container section div.faq-body) {
     border: none !important;
   }
-  :global(#about-tour-widget-container section hr) {
+  :global(#about-widget-container section hr) {
     display: none;
   }
-  :global(#about-tour-widget-container section div:last-child) {
+  :global(#about-widget-container section div:last-child) {
     border: 1px solid #E6E6E6;
     border-radius: 0 0 12px 12px !important;
   }
-
-  :global(
-    #about-tour-widget-container h3) {
-      font-size: 20px;
+  :global(#about-widget-container h3) {
+    font-size: 20px;
   }
-  :global(
-    #about-tour-widget-container h4,
-    #about-tour-widget-container p) {
+  :global(#about-widget-container h4,
+    #about-widget-container p) {
       font-size: 16px;
   }
-  :global(
-    #about-tour-widget-container section div.faq-body) {
+  :global(#about-widget-container section div.faq-body) {
       font-size: 14px;
   }
-
-  :global(
-    #about-tour-widget-container h1,
-    #about-tour-widget-container h2, 
-    #about-tour-widget-container h3,
-    #about-tour-widget-container h4) {
+  :global(#about-widget-container h1,
+    #about-widget-container h2, 
+    #about-widget-container h3,
+    #about-widget-container h4) {
       color: #292929 !important;
   }
-  :global(
-    #about-tour-widget-container p,
-    #about-tour-widget-container section div.faq-body) {
+  :global(#about-widget-container p,
+    #about-widget-container section div.faq-body) {
     color: #8C8C8C !important;
   }
-  :global(
-    #about-tour-widget-container h3) {
+  :global(#about-widget-container h3) {
       margin: 20px 0 12px 0;
   }
-
-  :global(
-    #about-tour-widget-container section > div) {
+  :global(#about-widget-container section > div) {
     border: 1px solid #E6E6E6 !important;
   }
 
-  :global(#about-tour-widget-container p) {
+  :global(#about-widget-container p) {
     margin-bottom: 14px;
   }
-
+  
   /* ====================
-    RESPONSIVNESS
+    RESPONSIVNESS [TABLET] [DESKTOP]
   ==================== */
 
 	/* 
   TABLET RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) and (max-width: 1000px)  {
 
-    #about-tour-widget-container {
+    #about-widget-container {
       min-width: 100%;
       /* max-width: 700px; */
     }
-
+    
   }
 
   /* 
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
-    /* EMPTY */
+   
   }
 
   /* 
-  DESKTOP RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 1160px) {
+  DESKTOP [M-L] RESPONSIVNESS (&+) */
+  @media only screen and (min-width: 1000px) {
 
-    #about-tour-widget-container {
+    #about-widget-container {
       min-width: 100%;
     }
 
+  }
+
+  /* 
+  DESKTOP [L] RESPONSIVNESS (&+) */
+  @media only screen and (min-width: 1160px) {
+    /* EMPTY */
   }
 
   /* ====================
     WIDGET DARK THEME
   ==================== */
 
-  :global(
-    #about-tour-widget-container.dark-background-1 h1,
-    #about-tour-widget-container.dark-background-1 h2, 
-    #about-tour-widget-container.dark-background-1 h3,
-    #about-tour-widget-container.dark-background-1 h4) {
+  :global(#about-widget-container.dark-background-1 h1,
+    #about-widget-container.dark-background-1 h2, 
+    #about-widget-container.dark-background-1 h3,
+    #about-widget-container.dark-background-1 h4) {
       color: #FFFFFF !important;
   }
-  :global(
-    #about-tour-widget-container.dark-background-1 p,
-    #about-tour-widget-container.dark-background-1 section div.faq-body) {
+  :global(#about-widget-container.dark-background-1 p,
+    #about-widget-container.dark-background-1 section div.faq-body) {
     color: #A8A8A8 !important;
   }
-
-  :global(
-    #about-tour-widget-container.dark-background-1 section > div) {
+  :global(#about-widget-container.dark-background-1 section > div) {
     border: 1px solid #616161 !important;
   }
-
 
 </style>

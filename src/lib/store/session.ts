@@ -4,11 +4,13 @@ import { writable } from 'svelte/store';
 export interface Platform_Session {
   newsletterPopUpShow: boolean // [ℹ] Email_subscribe.svelte
   selectedSeasonID:    number  // [ℹ] Tournament Page Critical [❗]
+  fixture_select_view: "overview" | "news" // [ℹ] Fixture Page View Critical [❗]
 }
 
 const seassion_store: Platform_Session = {
   newsletterPopUpShow: false,
-  selectedSeasonID: undefined
+  selectedSeasonID: undefined,
+  fixture_select_view: "overview"
 };
 
 function createLocalStore () {
