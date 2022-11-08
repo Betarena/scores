@@ -129,6 +129,28 @@ export const REDIS_CACHE_FIXTURE_CONTENT_DATA_2 = gql`
   }
 `;
 
+/**
+ * [ℹ] Fixtures / Content Widget (#4)
+ * [ℹ] TRANSLATION
+*/
+export const REDIS_CACHE_FIXTURE_ABOUT_DATA_4 = gql`
+  query REDIS_CACHE_FIXTURE_ABOUT_DATA_4 
+    @cached 
+    (ttl: 300) 
+  {
+    # [ℹ] unecessary to paginate
+    scores_general_translations {
+      lang
+      widgets_no_data_available
+    }
+    scores_fixtures_content_translations {
+      lang
+      translations
+    }
+  }
+`;
+
+
 /** 
  * ====================
  * [ℹ] Surgical Queries

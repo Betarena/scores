@@ -39,7 +39,7 @@
   } from '$lib/models/fixtures/statistics/types';
 
 	import type { 
-    REDIS_CACHE_SINGLE_content_data 
+    REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation 
   } from '$lib/models/fixtures/content/types';
 
 	import type { 
@@ -68,6 +68,7 @@
   let FIXTURE_STATISTICS:             REDIS_CACHE_SINGLE_statistics_data
   let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation
   let FIXTURE_CONTENT:                REDIS_CACHE_SINGLE_content_data[]
+  let FIXTURE_CONTENT_TRANSLATION:    REDIS_CACHE_SINGLE_content_translation
   let FIXTURE_ABOUT:                  REDIS_CACHE_SINGLE_about_data
   let FIXTURE_ABOUT_TRANSLATION:      REDIS_CACHE_SINGLE_about_translation
 
@@ -87,6 +88,7 @@
   $: FIXTURE_STATISTICS             = $page.data.FIXTURE_STATISTICS;
   $: FIXTURE_STATISTICS_TRANSLATION = $page.data.FIXTURE_STATISTICS_TRANSLATION;
   $: FIXTURE_CONTENT                = $page.data.FIXTURE_CONTENT;
+  $: FIXTURE_CONTENT_TRANSLATION    = $page.data.FIXTURE_CONTENT_TRANSLATION;
   $: FIXTURE_ABOUT                  = $page.data.FIXTURE_ABOUT;
   $: FIXTURE_ABOUT_TRANSLATION      = $page.data.FIXTURE_ABOUT_TRANSLATION;
 
@@ -351,7 +353,7 @@
       <div
         id="widget-grid-display-news"
         class:display-none={$sessionStore.fixture_select_view == "overview"}>
-        <ContentWidget {FIXTURE_CONTENT} {FIXTURE_SCOREBOARD_TRANSLATION} />
+        <ContentWidget {FIXTURE_CONTENT} {FIXTURE_CONTENT_TRANSLATION} />
       </div>
     </div>
   <!-- 
@@ -381,7 +383,7 @@
     <div
       id="widget-grid-display-news"
       class:display-none={$sessionStore.fixture_select_view == "overview"}>
-      <ContentWidget {FIXTURE_CONTENT} {FIXTURE_SCOREBOARD_TRANSLATION} />
+      <ContentWidget {FIXTURE_CONTENT} {FIXTURE_CONTENT_TRANSLATION} />
     </div>
   {/if}
 

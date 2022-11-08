@@ -10,8 +10,7 @@
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
-	import type { REDIS_CACHE_SINGLE_content_data } from "$lib/models/fixtures/content/types";
-	import type { REDIS_CACHE_SINGLE_scoreboard_translation } from "$lib/models/fixtures/scoreboard/types";
+	import type { REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation } from "$lib/models/fixtures/content/types";
 
 	import ContentLoader from "./Content_Loader.svelte";
 
@@ -22,8 +21,8 @@
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  export let FIXTURE_CONTENT:                   REDIS_CACHE_SINGLE_content_data[]
-  export let FIXTURE_SCOREBOARD_TRANSLATION:    REDIS_CACHE_SINGLE_scoreboard_translation
+  export let FIXTURE_CONTENT:                REDIS_CACHE_SINGLE_content_data[]
+  export let FIXTURE_CONTENT_TRANSLATION:    REDIS_CACHE_SINGLE_content_translation
 
   let loaded:            boolean = false;  // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
   let refresh:           boolean = false;  // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
@@ -182,7 +181,7 @@
       id="seo-widget-box">
       <!-- 
       [ℹ] widget-title -->
-      <h2>{FIXTURE_SCOREBOARD_TRANSLATION?.news_views}</h2>
+      <h2>{FIXTURE_CONTENT_TRANSLATION?.news_and_views}</h2>
       <!-- 
       [ℹ] widget-contents list -->
       {#each FIXTURE_CONTENT as item}
@@ -205,7 +204,7 @@
       class="s-20 m-b-10 w-500 color-black-2"
       style="margin-top: 0px;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-      {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+      {FIXTURE_CONTENT_TRANSLATION?.news_and_views}
     </h2>
 
     <!-- [ℹ] no-widget-data-avaiable-placeholder container 
@@ -243,10 +242,10 @@
         <p 
           class='s-14 m-b-8 w-500'
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-          <!-- {FIXTURE_STATISTICS_TRANSLATION?.no_info} -->
+          {FIXTURE_CONTENT_TRANSLATION?.no_info}
         </p>
         <p class='s-14 color-grey w-400'> 
-          <!-- {FIXTURE_STATISTICS_TRANSLATION?.no_info_desc} -->
+          {FIXTURE_CONTENT_TRANSLATION?.no_info_desc}
         </p>
       </div>
     </div>
@@ -277,7 +276,7 @@
         class="s-20 m-b-10 w-500 color-black-2"
         style="margin-top: 0px;"
         class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-        {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+        {FIXTURE_CONTENT_TRANSLATION?.news_and_views}
       </h2>
 
       <div
@@ -301,7 +300,7 @@
               w-500
             "
             class:activeOpt={true}>
-            New
+            {FIXTURE_CONTENT_TRANSLATION?.new}
           </p>
         </div>
 
@@ -412,7 +411,7 @@
               "
               on:click={() => toggle_full_list()}>
               {#if !showMore}
-                See All
+                {FIXTURE_CONTENT_TRANSLATION?.view_all}
               {:else}
                 See Less
               {/if}

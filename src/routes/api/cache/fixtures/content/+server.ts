@@ -2,17 +2,26 @@ import { dev } from '$app/environment'
 import redis from "$lib/redis/init"
 import { error, json } from '@sveltejs/kit';
 
-import type {
-  REDIS_CACHE_SINGLE_statistics_data
-} from '$lib/models/fixtures/statistics/types';
+import type { 
+  REDIS_CACHE_SINGLE_content_data, 
+  REDIS_CACHE_SINGLE_content_translation 
+} from '$lib/models/fixtures/content/types';
 
 const cache_data_addr = "fixture_content_data"
+const cache_trans_addr = "fixture_content_trans"
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function GET (req, res): Promise < unknown > {
 
   const lang: string = req.url['searchParams'].get('lang');
   const fixture_id: string = req.url['searchParams'].get('fixture_id');
+
+  if (lang && !fixture_id) {
+    const response_cache = await get_cache_translation_data (lang)
+    if (response_cache) {
+      return json(response_cache)
+    }
+  }
 
   if (lang && fixture_id) {
     const id = fixture_id + "_" + lang
@@ -32,16 +41,32 @@ export async function GET (req, res): Promise < unknown > {
 
 async function get_cache_main_data (
   fixture_id: string
-): Promise < REDIS_CACHE_SINGLE_statistics_data | Record < string, never > > {
+): Promise < REDIS_CACHE_SINGLE_content_data | Record < string, never > > {
   try {
     const cached: string = await redis.hget(cache_data_addr, fixture_id);
     if (cached) {
-      const parsed: REDIS_CACHE_SINGLE_statistics_data = JSON.parse(cached);
+      const parsed: REDIS_CACHE_SINGLE_content_data = JSON.parse(cached);
       return parsed;
     }
   } 
   catch (e) {
     console.error(`❌ uh-oh! ${cache_data_addr} cache error`, e);
+    return
+  }
+}
+
+async function get_cache_translation_data (
+  lang: string
+): Promise < REDIS_CACHE_SINGLE_content_translation | Record < string, never > > {
+  try {
+    const cached: string = await redis.hget(cache_trans_addr, lang);
+    if (cached) {
+      const parsed: REDIS_CACHE_SINGLE_content_translation = JSON.parse(cached);
+      return parsed;
+    }
+  } 
+  catch (e) {
+    console.error(`❌ uh-oh! ${cache_trans_addr} cache error`, e);
     return
   }
 }

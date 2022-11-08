@@ -1554,3 +1554,15 @@ export interface BETARENA_HASURA_scores_fixture_about_translations {
 } export interface FixtureAboutTranslations {
   title?:          string;
 }
+
+/**
+ * [ℹ] HASURA: scores_fixtures_content_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixtures_content_translations {
+  lang?:         string;
+  translations?: FixtureContentTranslations;
+} export interface FixtureContentTranslations {
+  new?:            string;
+  view_all?:       string;
+  news_and_views?: string;
+}

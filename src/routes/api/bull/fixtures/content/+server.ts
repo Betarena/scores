@@ -4,6 +4,7 @@ import { error, json } from '@sveltejs/kit';
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import {
+  REDIS_CACHE_FIXTURE_ABOUT_DATA_4,
   REDIS_CACHE_FIXTURE_CONTENT_DATA_0, 
   REDIS_CACHE_FIXTURE_CONTENT_DATA_1, 
   REDIS_CACHE_FIXTURE_CONTENT_DATA_2 
@@ -19,8 +20,9 @@ import type {
   BETARENA_HASURA_historic_fixtures 
 } from '$lib/models/hasura';
 import type {
-  BETARENA_HASURA_content_query
+  BETARENA_HASURA_content_query, REDIS_CACHE_SINGLE_content_translation
  } from '$lib/models/fixtures/content/types';
+import { GET_HREFLANG_DATA } from '$lib/graphql/query';
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 // [❗] BULL CRITICAL
@@ -29,6 +31,7 @@ import type {
 const cacheTarget = "REDIS CACHE | fixture content (all)"
 const cacheQueueProcessName = "CQ_Fixture_Content"
 const cache_data_addr = "fixture_content_data"
+const cache_trans_addr = "fixture_content_trans"
 
 // NOTE: V1 Bull V3
 const settings = {
@@ -96,6 +99,8 @@ export async function POST(): Promise < unknown > {
       [ℹ] => Link
       [ℹ] => Excerpt
     */
+    const langArray = await getHrefLang()
+    await main_trans_and_seo(langArray)
     await main()
 
     for (const log of logs) {
@@ -134,6 +139,18 @@ async function cache_data (
   }
 }
 
+async function cache_translation (
+  id: string | number,
+  json_cache: object
+) {
+  try {
+    await redis.hset(cache_trans_addr, id, JSON.stringify(json_cache));
+  } 
+  catch (e) {
+    console.error(`❌ unable to cache ${cache_trans_addr}`, e);
+  }
+}
+
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,6 +168,8 @@ CQ_Fixture_Content.process (async function (job, done) {
   */
 
   const t0 = performance.now();
+  const langArray = await getHrefLang()
+  await main_trans_and_seo(langArray)
   await main()
   const t1 = performance.now();
 
@@ -237,6 +256,60 @@ async function main () {
   }
 
   return;
+}
+
+async function main_trans_and_seo (
+  langArray :string[]
+) {
+
+  const res = await get_widget_translations()
+
+  const fix_odds_translation_map = new Map <string, REDIS_CACHE_SINGLE_content_translation> ()
+
+  /**
+   * [ℹ] MAIN 
+  */
+  for (const lang_ of langArray) {
+
+    const object: REDIS_CACHE_SINGLE_content_translation = {}
+    object.lang = lang_
+
+    const objectFixAbout = res.scores_fixtures_content_translations
+      .find(({ lang }) => lang === lang_)
+
+    const objectFixGeneralTranslation = res.scores_general_translations
+      .find(({ lang }) => lang === lang_)
+
+    const mergedObj = {
+      ...object, 
+      ...objectFixAbout?.translations,
+      ...objectFixGeneralTranslation?.widgets_no_data_available
+    }
+
+    fix_odds_translation_map.set(lang_, mergedObj)
+  }
+
+  // [🐛] debug
+  if (dev) {
+    const data = JSON.stringify(fix_odds_translation_map.values(), null, 4)
+    fs.writeFile('./datalog/main_trans_and_seo.json', data, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
+  }
+
+  // [ℹ] persist data
+  t0 = performance.now();
+  logs.push(`total lang's: ${fix_odds_translation_map.size}`)
+  for (const [key, value] of fix_odds_translation_map.entries()) {
+    await cache_translation(key, value);
+  }
+  t1 = performance.now();
+  logs.push(`cache uplaod complete in: ${(t1 - t0) / 1000} sec`);
+
+  return
+
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -400,4 +473,34 @@ async function generate_external_content_map (
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
   return map;
+}
+
+async function getHrefLang (
+): Promise < string[] > {
+  // [ℹ] get KEY platform translations
+  const response = await initGrapQLClient().request(GET_HREFLANG_DATA)
+
+  // [ℹ] get-all-exisitng-lang-translations;
+  const langArray: string [] = response.scores_hreflang
+    .filter(a => a.link)         /* filter for NOT "null" */
+    .map(a => a.link)            /* map each LANG */ 
+
+  // [ℹ] push "EN"
+  langArray.push('en')
+
+  return langArray;
+}
+  
+async function get_widget_translations (
+): Promise < BETARENA_HASURA_content_query > {
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_FIXTURE_ABOUT_DATA_4";
+  const response: BETARENA_HASURA_content_query = await initGrapQLClient().request (
+    REDIS_CACHE_FIXTURE_ABOUT_DATA_4
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response;
 }

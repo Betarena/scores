@@ -2,11 +2,10 @@ import type {
   BETARENA_HASURA_external_content,
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
-  BETARENA_HASURA_scores_fixture_stats_translations,
+  BETARENA_HASURA_scores_fixtures_content_translations,
   BETARENA_HASURA_scores_football_seasons_details,
   BETARENA_HASURA_scores_general_translations,
-  FixtureStatsTranslations,
-  StatsDatum,
+  FixtureContentTranslations,
   WidgetsNoDataAvailable
 } from "$lib/models/hasura"
 
@@ -15,6 +14,12 @@ import type {
  * CACHING PERSIST - COMPLETE WIDGET REQUIRED DATA
  * ========================================== 
 */
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface REDIS_CACHE_SINGLE_content_translation extends FixtureContentTranslations, WidgetsNoDataAvailable {
+  lang?: string
+}
+
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface REDIS_CACHE_SINGLE_content_data extends Fixture_Content {
@@ -33,6 +38,9 @@ export interface BETARENA_HASURA_content_query {
   historic_fixtures:                BETARENA_HASURA_historic_fixtures[]
   external_content_aggregate:       BETARENA_HASURA_historic_fixtures_aggregate
   external_content:                 BETARENA_HASURA_external_content[]
+  // NOTE: translations
+  scores_general_translations?:      BETARENA_HASURA_scores_general_translations[]
+  scores_fixtures_content_translations: BETARENA_HASURA_scores_fixtures_content_translations[]
 }
 
 /**
