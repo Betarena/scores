@@ -4,7 +4,7 @@ import { error, json } from '@sveltejs/kit';
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import {
-  REDIS_CACHE_FIXTURE_ABOUT_DATA_4,
+  REDIS_CACHE_FIXTURE_CONTENT_DATA_4,
   REDIS_CACHE_FIXTURE_CONTENT_DATA_0, 
   REDIS_CACHE_FIXTURE_CONTENT_DATA_1, 
   REDIS_CACHE_FIXTURE_CONTENT_DATA_2 
@@ -283,6 +283,7 @@ async function main_trans_and_seo (
     const mergedObj = {
       ...object, 
       ...objectFixAbout?.translations,
+      ...objectFixGeneralTranslation?.months,
       ...objectFixGeneralTranslation?.widgets_no_data_available
     }
 
@@ -495,9 +496,9 @@ async function get_widget_translations (
 ): Promise < BETARENA_HASURA_content_query > {
 
   const t0 = performance.now();
-  const queryName = "REDIS_CACHE_FIXTURE_ABOUT_DATA_4";
+  const queryName = "REDIS_CACHE_FIXTURE_CONTENT_DATA_4";
   const response: BETARENA_HASURA_content_query = await initGrapQLClient().request (
-    REDIS_CACHE_FIXTURE_ABOUT_DATA_4
+    REDIS_CACHE_FIXTURE_CONTENT_DATA_4
   );
   const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);

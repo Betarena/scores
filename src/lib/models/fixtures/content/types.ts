@@ -6,6 +6,7 @@ import type {
   BETARENA_HASURA_scores_football_seasons_details,
   BETARENA_HASURA_scores_general_translations,
   FixtureContentTranslations,
+  WelcomeMonths,
   WidgetsNoDataAvailable
 } from "$lib/models/hasura"
 
@@ -16,7 +17,7 @@ import type {
 */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface REDIS_CACHE_SINGLE_content_translation extends FixtureContentTranslations, WidgetsNoDataAvailable {
+export interface REDIS_CACHE_SINGLE_content_translation extends FixtureContentTranslations, WidgetsNoDataAvailable, WelcomeMonths {
   lang?: string
 }
 

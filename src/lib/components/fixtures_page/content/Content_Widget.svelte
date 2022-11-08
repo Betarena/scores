@@ -368,7 +368,7 @@
                       class="
                         color-grey
                       ">
-                      {monthNames[new Date(item?.date.toString()).getMonth()]}
+                      {FIXTURE_CONTENT_TRANSLATION?.months[monthNames[new Date(item?.date).getMonth()]]}
                       {new Date(item?.date.toString()).getDate()},
                       {new Date(item?.date.toString()).getFullYear()}
                     </p>
