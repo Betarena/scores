@@ -15,6 +15,7 @@ import type { REDIS_CACHE_SINGLE_incidents_data, REDIS_CACHE_SINGLE_incidents_tr
 import type { REDIS_CACHE_SINGLE_statistics_data, REDIS_CACHE_SINGLE_statistics_translation } from '$lib/models/fixtures/statistics/types';
 import type { REDIS_CACHE_SINGLE_content_data } from '$lib/models/fixtures/content/types';
 import type { REDIS_CACHE_SINGLE_about_data, REDIS_CACHE_SINGLE_about_translation } from '$lib/models/fixtures/about/types';
+import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({
@@ -200,7 +201,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  const response_featured_betting_sites_translation: REDIS_CACHE_SINGLE_lineups_translation = await fetch(
+  const response_featured_betting_sites_translation: Cache_Single_Lang_Featured_Betting_Site_Translation_Response = await fetch(
     `/api/cache/home/featured_betting_sites?lang=` + urlLang, 
     {
       method: 'GET'
@@ -274,9 +275,6 @@ export async function load({
       method: 'GET'
     }
   ).then((r) => r.json());
-
-  console.log("response_about", response_about)
-  console.log("response_about_translation", response_about_translation)
 
   /** 
    * ==========
