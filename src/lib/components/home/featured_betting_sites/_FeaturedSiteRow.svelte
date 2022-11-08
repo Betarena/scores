@@ -315,6 +315,9 @@
   }
   .featured-row .button-extra-info-container {
     position: relative;
+  } .featured-row .button-extra-info-container button:hover,
+    .featured-row .button-extra-info-container button.btn-cta:hover {
+    background-color: #F77C42;
   }
   .extra-info-container {
     padding: 20px;
