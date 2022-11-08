@@ -3,7 +3,9 @@ import { error, json } from '@sveltejs/kit';
 
 import redis from "$lib/redis/init"
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import Bull from 'bull';
 import { Queue, Worker } from 'bullmq';
+
 import { GET_HREFLANG_DATA } from '$lib/graphql/query';
 import { 
   REDIS_CACHE_FIXTURE_ABOUT_DATA_0, 
@@ -31,20 +33,44 @@ const cacheTarget = "REDIS CACHE | fixture about (all)"
 const cacheQueueProcessName = "CQ_Fixture_About"
 const cache_data_addr = "fixture_about_data"
 const cache_trans_addr = "fixture_about_trans"
-const CQ_Fixture_About = new Queue (
-  cacheQueueProcessName,
+
+// NOTE: V1 Bull V3
+const settings = {
+  stalledInterval: 600000, // How often check for stalled jobs (use 0 for never checking).
+  guardInterval: 5000, // Poll interval for delayed jobs and added jobs.
+  drainDelay: 300 // A timeout for when the queue is in drained state (empty waiting for jobs).
+}
+const CQ_Fixture_About = new Bull (
+  cacheQueueProcessName, 
   { 
-    connection: { 
-      port: 6379, 
-      host: "localhost", 
-      password: "J6*&+@yDsRhyPU4%"
+    redis: { 
+      port: import.meta.env.VITE_REDIS_BULL_ENDPOINT.toString(), 
+      host: import.meta.env.VITE_REDIS_BULL_HOST.toString(), 
+      password: import.meta.env.VITE_REDIS_BULL_PASS.toString(), 
+      tls: {}
     },
-    defaultJobOptions: {
-      removeOnComplete: true,
-      removeOnFail: 5
-    }
+    settings: settings
   }
 );
+
+// NOTE: V2 BullMQ
+/*
+  const CQ_Fixture_About = new Queue (
+    cacheQueueProcessName,
+    { 
+      connection: { 
+        port: 6379, 
+        host: "localhost", 
+        password: "J6*&+@yDsRhyPU4%"
+      },
+      defaultJobOptions: {
+        removeOnComplete: true,
+        removeOnFail: 5
+      }
+    }
+  );
+*/
+
 // [ℹ] debug info
 let logs = []
 let t0: number;
@@ -126,16 +152,41 @@ async function cache_translation (
 //  [MAIN] BULL WORKERS 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
+// NOTE: V1 Bull V3
+CQ_Fixture_About.process (async function (job, done) {
+  // console.log(job.data.argumentList);
+  // console.log(job.data)
+
+  logs = []
+  logs.push(`${job.id}`);
+
+  /* 
+  do stuff
+  */
+
+  const t0 = performance.now();
+  const langArray = await getHrefLang()
+  await main_trans_and_seo(langArray)
+  await main(langArray)
+  const t1 = performance.now();
+
+  logs.push(`${cacheTarget} updated!`);
+  logs.push(`completed in: ${(t1 - t0) / 1000} sec`);
+
+  done(null, { logs: logs });
+
+}).catch(err => {
+  console.log(err)
+});
+
+// NOTE: V2 BullMQ
+/**
 const worker = new Worker (
   cacheQueueProcessName, 
   async job =>
   {
     logs = []
     logs.push(`JobId: ${job.id}`);
-
-    /* 
-    do stuff
-    */
 
     const t0 = performance.now();
     const langArray = await getHrefLang()
@@ -156,6 +207,7 @@ const worker = new Worker (
     }
   }
 );
+*/
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] METHOD
