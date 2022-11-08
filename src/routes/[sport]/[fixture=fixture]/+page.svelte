@@ -332,9 +332,9 @@
   [ℹ] MOBILE 
   -->
   {#if mobileExclusive || tabletExclusive}
+    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} />
     <div
       id="widget-grid-display">
-      <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} />
       <!-- 
       [ℹ] "Overview" view selection -->
       <div 
