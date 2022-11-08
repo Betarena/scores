@@ -422,9 +422,18 @@
     WIDGET DARK THEME
   ==================== */
 
-  /* events table box */
-  :global(div#about-widget-container.dark-background-1 div#statistics-box div.stats-row) {
-    border-bottom: 1px solid #616161;
+  :global(#about-widget-container.dark-background-1 h1,
+    #about-widget-container.dark-background-1 h2, 
+    #about-widget-container.dark-background-1 h3,
+    #about-widget-container.dark-background-1 h4) {
+      color: #FFFFFF !important;
+  }
+  :global(#about-widget-container.dark-background-1 p,
+    #about-widget-container.dark-background-1 section div.faq-body) {
+    color: #A8A8A8 !important;
+  }
+  :global(#about-widget-container.dark-background-1 section > div) {
+    border: 1px solid #616161 !important;
   }
 
 </style>
