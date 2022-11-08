@@ -11,6 +11,7 @@
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
 	import type { REDIS_CACHE_SINGLE_content_data } from "$lib/models/fixtures/content/types";
+	import type { REDIS_CACHE_SINGLE_scoreboard_translation } from "$lib/models/fixtures/scoreboard/types";
 
 	import ContentLoader from "./Content_Loader.svelte";
 
@@ -21,15 +22,15 @@
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  export let FIXTURE_CONTENT:                 REDIS_CACHE_SINGLE_content_data[]
-  // export let FIXTURE_STATISTICS_TRANSLATION:     REDIS_CACHE_SINGLE_statistics_translation
+  export let FIXTURE_CONTENT:                   REDIS_CACHE_SINGLE_content_data[]
+  export let FIXTURE_SCOREBOARD_TRANSLATION:    REDIS_CACHE_SINGLE_scoreboard_translation
 
   let loaded:            boolean = false;  // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
   let refresh:           boolean = false;  // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
 	let refresh_data:      any = undefined;  // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
   let no_widget_data:    any = false;      // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
 
-  let limitViewRow:      number = 12;      // [ℹ] holds the actual, `total` limit of the list of rows allowed
+  let limitViewRow:      number = 10;      // [ℹ] holds the actual, `total` limit of the list of rows allowed
   let showMore:          boolean = false;  // [ℹ] signals to other widget values that the lsit has expanded
 
   let show_placeholder:  boolean = false;
@@ -95,7 +96,7 @@
     // [ℹ] check if "limitViewRow" matches "trueLengthOfArray",
     if (limitViewRow == FIXTURE_CONTENT.length) {
       // [ℹ] if so, revert back original rows,
-      limitViewRow = 12;
+      limitViewRow = 10;
       return;
     }
     // [ℹ] otherwise, expand list to full length,
@@ -181,9 +182,12 @@
       id="seo-widget-box">
       <!-- 
       [ℹ] widget-title -->
+      <h2>{FIXTURE_SCOREBOARD_TRANSLATION?.news_views}</h2>
+      <!-- 
+      [ℹ] widget-contents list -->
       {#each FIXTURE_CONTENT as item}
-        <p>{item.title}</p>
-        <p>{item.link}</p>
+        <a href={item.link}>{item.link}</a>
+        <h3>{item.title}</h3>
         <p>{item.excerpt}</p>
         {/each}
     </div>
@@ -201,7 +205,7 @@
       class="s-20 m-b-10 w-500 color-black-2"
       style="margin-top: 0px;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-      <!-- {FIXTURE_STATISTICS_TRANSLATION?.title} -->
+      {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
     </h2>
 
     <!-- [ℹ] no-widget-data-avaiable-placeholder container 
@@ -273,7 +277,7 @@
         class="s-20 m-b-10 w-500 color-black-2"
         style="margin-top: 0px;"
         class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-        <!-- {FIXTURE_STATISTICS_TRANSLATION?.title} -->
+        {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
       </h2>
 
       <div
@@ -303,13 +307,13 @@
 
         <!-- 
         [ℹ] content list container -->
-        <div>
+        <div
+          id="content-box">
           {#each FIXTURE_CONTENT.slice(0, limitViewRow) as item}
             <a 
               aria-label="fixture-post-link"
               href={item?.link}
-              target="_blank"
-              style="width: fit-content;">
+              target="_blank">
               <div
                 class="
                   row-space-start
@@ -327,14 +331,14 @@
                 [ℹ] media-title + post-info -->
                 <div
                   class="media-box">
-                  <p
+                  <h3
                     class="
                       w-500
                       color-black-2
                       post-title
                     ">
                     {item?.title}
-                  </p>
+                  </h3>
                   <!-- 
                   [ℹ] show time on tablet/desktop -->
                   {#if !mobileExclusive}
@@ -343,45 +347,49 @@
                         color-grey
                         post-desc
                       ">
-                      {item?.excerpt}
+                      {item?.excerpt.replace("<p>", "").replace("</p>", "")}
                     </p>
                   {/if}
                   <!-- 
                   [ℹ] author
                   [ℹ] date -->
-                  <p
+                  <div
                     class="
-                      color-grey
+                      row-space-start
                       author-date-info
                     ">
-                    <span>
+                    <p
+                      class="
+                        color-grey
+                      ">
                       {item?.author}
-                    </span>
-                    <span>
-                      |
-                    </span>
-                    <span>
+                    </p>
+                    <div class="divider" />
+                    <p
+                      class="
+                        color-grey
+                      ">
                       {monthNames[new Date(item?.date.toString()).getMonth()]}
                       {new Date(item?.date.toString()).getDate()},
                       {new Date(item?.date.toString()).getFullYear()}
-                    </span>
-                    <!-- 
-                    [ℹ] show time on tablet/desktop -->
+                    </p>
                     {#if !mobileExclusive}
-                      <span>
-                        |
-                      </span>
-                      <span>
-                        {new Date(item?.date.toString()).getHours()}:
-                        {new Date(item?.date.toString()).getMinutes()}
+                      <div class="divider" />
+                      <p
+                        class="
+                          color-grey
+                        ">
+                        {((new Date(item?.date.toString()).getHours() % 12) || 12)
+                        + ":" 
+                        + new Date(item?.date.toString()).getMinutes()}
                         {#if new Date(item?.date.toString()).getHours() > 12}
                           pm
                         {:else}
                           am
                         {/if}
-                      </span>
+                      </p>
                     {/if}
-                  </p>
+                  </div>
                 </div>
               </div>
             </a>
@@ -391,7 +399,7 @@
         <!-- 
         [ℹ] show more -->
         {#if FIXTURE_CONTENT 
-          && FIXTURE_CONTENT.length > 1}
+          && FIXTURE_CONTENT.length > 10}
           <div
             id="display-all-btn"
             class="
@@ -400,6 +408,7 @@
               class="
                 w-500
                 color-primary
+                cursor-pointer
               "
               on:click={() => toggle_full_list()}>
               {#if !showMore}
@@ -473,29 +482,39 @@
 
   /* top tab box */
   div#content-widget-container div.top-tab-box {
-    padding: 20px 20px 0 20px;
+    padding: 20px 0 0 0;
+    border-bottom: 1px solid #E6E6E6;
+    margin-right: 20px;
+    margin-left: 20px;
+    width: -webkit-fill-available;
+    margin-bottom: 20px;
   } div#content-widget-container div.top-tab-box p {
     font-size: 14px;
     padding-bottom: 12px;
   } div#content-widget-container div.top-tab-box p.activeOpt {
     color: #F5620F;
-    border-bottom: 1px solid #F5620F;
+    border-bottom: 4px solid #F5620F;
   }
 
   /* content-row */
-  div#content-widget-container div.content-row {
+  div#content-widget-container div#content-box a div.content-row {
     padding: 20px 0;
     border-bottom: 1px solid #E6E6E6;
     width: -webkit-fill-available;
     margin: 0 20px;
-  } div#content-widget-container div.content-row img {
+  } div#content-widget-container div#content-box a:first-child div.content-row {
+    border-top: 1px solid #E6E6E6;
+  } div#content-widget-container div#content-box a:last-child div.content-row {
+    border-top: none;
+  } div#content-widget-container div#content-box div.content-row img {
     object-fit: cover;
     width: 80px;
     height: 80px;
     border-radius: 8px;
     /* dynamic */
     margin-right: 20px;
-  } div#content-widget-container div.content-row div.media-box p.post-title {
+  } div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title {
+    margin-top: 0;
     font-size: 14px;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -503,8 +522,13 @@
     -webkit-line-clamp: 3; /* number of lines to show */
             line-clamp: 3;
     -webkit-box-orient: vertical;
-  } div#content-widget-container div.content-row div.media-box p.author-date-info span {
+  } div#content-widget-container div#content-box a div.content-row div.media-box div.author-date-info p {
+    padding-right: 12px;
+  } div#content-widget-container div#content-box a div.content-row div.media-box div.author-date-info div.divider {
+    height: 14px;
     margin-right: 12px;
+    width: 1px;
+    background-color: #CCCCCC;
   }
 
   /* display more box */
@@ -531,11 +555,11 @@
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
     /* content-row */
-    div#content-widget-container div.content-row img {
+    div#content-widget-container div#content-box a div.content-row img {
       width: 144px;
       height: 96px;
       margin-right: 20px;
-    } div#content-widget-container div.content-row div.media-box p.post-title {
+    } div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title {
       font-size: 18px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -543,7 +567,7 @@
               line-clamp: 1;
       -webkit-box-orient: vertical;
       margin-bottom: 6px;
-    } div#content-widget-container div.content-row div.media-box p.post-desc {
+    } div#content-widget-container div#content-box a div.content-row div.media-box p.post-desc {
       font-size: 16px;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -563,6 +587,11 @@
       min-width: 100%;
     }
 
+    /* content-row */
+    div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title:hover {
+      color: #F5620F;
+    }
+
   }
 
   /* 
@@ -576,8 +605,11 @@
   ==================== */
 
   /* events table box */
-  :global(div#content-widget-container.dark-background-1 div#statistics-box div.stats-row) {
+  div#content-widget-container.dark-background-1 div.top-tab-box,
+  div#content-widget-container.dark-background-1 div#content-box a div.content-row {
     border-bottom: 1px solid #616161;
+  } div#content-widget-container.dark-background-1 div#content-box a:first-child div.content-row {
+    border-top: 1px solid #616161;
   }
 
 </style>

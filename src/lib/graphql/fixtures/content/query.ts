@@ -103,8 +103,8 @@ export const REDIS_CACHE_FIXTURE_CONTENT_DATA_2 = gql`
 
     external_content (
       order_by: {
-        date: asc,
-        id: asc
+        date: desc,
+        id: desc
       },
       limit: $limit,
       offset: $offset,
@@ -149,6 +149,9 @@ export const REDIS_CACHE_FIXTURE_CONTENT_DATA_3 = gql`
     (ttl: 300)
   {
     external_content (
+      order_by: {
+        date: desc
+      },
       where: {
         gameid: {
           _eq: $gameId

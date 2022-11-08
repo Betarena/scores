@@ -351,7 +351,7 @@
       <div
         id="widget-grid-display-news"
         class:display-none={$sessionStore.fixture_select_view == "overview"}>
-        <ContentWidget {FIXTURE_CONTENT} />
+        <ContentWidget {FIXTURE_CONTENT} {FIXTURE_SCOREBOARD_TRANSLATION} />
       </div>
     </div>
   <!-- 
@@ -381,7 +381,7 @@
     <div
       id="widget-grid-display-news"
       class:display-none={$sessionStore.fixture_select_view == "overview"}>
-      <ContentWidget {FIXTURE_CONTENT} />
+      <ContentWidget {FIXTURE_CONTENT} {FIXTURE_SCOREBOARD_TRANSLATION} />
     </div>
   {/if}
 
