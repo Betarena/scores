@@ -351,7 +351,7 @@
       <!-- 
       [ℹ] "News" view selection -->
       <div
-        id="widget-grid-display-news"
+        id="grid-display-column"
         class:display-none={$sessionStore.fixture_select_view == "overview"}>
         <ContentWidget {FIXTURE_CONTENT} {FIXTURE_CONTENT_TRANSLATION} />
       </div>
