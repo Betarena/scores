@@ -334,7 +334,7 @@
   {#if mobileExclusive || tabletExclusive}
     <div
       id="widget-grid-display">
-      <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
+      <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} />
       <!-- 
       [ℹ] "Overview" view selection -->
       <div 
@@ -358,7 +358,7 @@
   [ℹ] widgets 
   [ℹ] TABLET && DESKTOP -->
   {:else}
-    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} />
+    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} />
     <!-- 
     [ℹ] "Overview" view selection -->
     <div

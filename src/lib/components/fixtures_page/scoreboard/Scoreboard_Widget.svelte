@@ -29,6 +29,9 @@
 	import type { 
     Cache_Single_SportbookDetails_Data_Response 
   } from "$lib/models/tournaments/league-info/types";
+	import type { 
+    REDIS_CACHE_SINGLE_content_data
+  } from "$lib/models/fixtures/content/types";
 
 	import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 
@@ -43,7 +46,8 @@
 
   export let FIXTURE_INFO:       REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
-  export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation
+  export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
+  export let FIXTURE_CONTENT:    REDIS_CACHE_SINGLE_content_data[]
 
   let SPORTBOOK_INFO:            Cache_Single_SportbookDetails_Data_Response;
   let SPORTBOOK_DETAILS_LIST:    Cache_Single_SportbookDetails_Data_Response[]
@@ -1850,18 +1854,21 @@
                   {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                 </p>
               </div>
-              <div
-                class="
-                  opt-container 
-                  cursor-not-allowed
-                "
-                on:click={() => $sessionStore.fixture_select_view = "news"}
-                class:activeOpt={$sessionStore.fixture_select_view == "news"}>
-                <p
-                  class="s-14 color-grey w-500 no-wrap">
-                  {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
-                </p>
-              </div>
+              {#if FIXTURE_CONTENT != undefined
+                && FIXTURE_CONTENT.length != 0}
+                <div
+                  class="
+                    opt-container 
+                    cursor-not-allowed
+                  "
+                  on:click={() => $sessionStore.fixture_select_view = "news"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "news"}>
+                  <p
+                    class="s-14 color-grey w-500 no-wrap">
+                    {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+                  </p>
+                </div>
+              {/if}
             </div>
           </div>
         <!-- 
@@ -2089,18 +2096,21 @@
                     {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                   </p>
                 </div>
-                <div
-                  class="
-                    opt-container 
-                    cursor-not-allowed
-                  "
-                  on:click={() => $sessionStore.fixture_select_view = "news"}
-                  class:activeOpt={$sessionStore.fixture_select_view == "news"}>
-                  <p
-                    class="s-14 color-grey w-500 no-wrap">
-                    {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
-                  </p>
-                </div>
+                {#if FIXTURE_CONTENT != undefined
+                  && FIXTURE_CONTENT.length != 0}
+                  <div
+                    class="
+                      opt-container 
+                      cursor-not-allowed
+                    "
+                    on:click={() => $sessionStore.fixture_select_view = "news"}
+                    class:activeOpt={$sessionStore.fixture_select_view == "news"}>
+                    <p
+                      class="s-14 color-grey w-500 no-wrap">
+                      {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+                    </p>
+                  </div>
+                {/if}
               </div>
 
             <!-- 
@@ -2329,18 +2339,22 @@
                     {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                   </p>
                 </div>
-                <div
-                  class="
-                    opt-container 
-                    cursor-not-allowed
-                  "
-                  on:click={() => $sessionStore.fixture_select_view = "news"}
-                  class:activeOpt={$sessionStore.fixture_select_view == "news"}>
-                  <p
-                    class="s-14 color-grey w-500 no-wrap">
-                    {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
-                  </p>
-                </div>
+                {#if FIXTURE_CONTENT != undefined
+                  && FIXTURE_CONTENT.length != 0}
+                  <div
+                    class="
+                      opt-container 
+                      cursor-not-allowed
+                    "
+                    on:click={() => $sessionStore.fixture_select_view = "news"}
+                    class:activeOpt={$sessionStore.fixture_select_view == "news"}>
+                    <p
+                      class="s-14 color-grey w-500 no-wrap">
+                      {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+                    </p>
+                  </div>
+                {/if}
+
               </div>
 
             {/if}
