@@ -377,6 +377,10 @@
     border: 1px solid #E6E6E6 !important;
   }
 
+  :global(#about-tour-widget-container p) {
+    margin-bottom: 14px;
+  }
+
   /* ====================
     RESPONSIVNESS
   ==================== */
