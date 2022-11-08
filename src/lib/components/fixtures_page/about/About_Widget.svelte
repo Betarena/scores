@@ -37,7 +37,7 @@
 
   let showMore:          boolean = false;  // [ℹ] signals to other widget values that the lsit has expanded
 
-  let show_placeholder:  boolean = false;
+  let show_placeholder:  boolean = true;   // [ℹ] [override] placeholder for "no-widget-data"
 
   // [🐞]
   let enable_logs:       boolean = true;
@@ -236,7 +236,7 @@
     && browser 
     && $userBetarenaSettings.country_bookmaker}
 
-    <AboutLoader />
+    <!-- <AboutLoader /> -->
 
     <!-- 
     [ℹ] promise is pending 
