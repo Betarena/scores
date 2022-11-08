@@ -208,7 +208,7 @@
                 <!-- [ℹ] Featured Image Details 
                 -->
                 <p 
-                  class="x-large color-black"
+                  class="x-large color-black site-name"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}>
                   {data.data[1].title}
                 </p>
@@ -232,7 +232,7 @@
                 <!-- [ℹ] Featured Image Details 
                 -->
                 <p 
-                  class="x-large color-black"
+                  class="x-large color-black site-name"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}>
                   {data.data[0].title}
                 </p>
@@ -249,7 +249,7 @@
               >
 
               <div 
-                id="featured-rank" 
+                id="featured-rank"
                 style="margin-top: 20px;">
 
                 <BronzeCup imageURL={data.data[2].image} />
@@ -257,7 +257,7 @@
                 <!-- [ℹ] Featured Image Details 
                 -->
                 <p 
-                  class="x-large color-black"
+                  class="x-large color-black site-name"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}>
                   {data.data[2].title}
                 </p>
@@ -407,6 +407,10 @@
     #featured-list-container {
       min-width: 100%;
       /* max-width: 560px; */
+    }
+
+    p.site-name:hover {
+      color: #F5620F;
     }
   }
 
