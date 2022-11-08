@@ -1858,8 +1858,8 @@
                 && FIXTURE_CONTENT.length != 0}
                 <div
                   class="
-                    opt-container 
-                    cursor-not-allowed
+                    opt-container
+                    cursor-pointer
                   "
                   on:click={() => $sessionStore.fixture_select_view = "news"}
                   class:activeOpt={$sessionStore.fixture_select_view == "news"}>
@@ -2100,8 +2100,8 @@
                   && FIXTURE_CONTENT.length != 0}
                   <div
                     class="
-                      opt-container 
-                      cursor-not-allowed
+                      opt-container
+                      cursor-pointer
                     "
                     on:click={() => $sessionStore.fixture_select_view = "news"}
                     class:activeOpt={$sessionStore.fixture_select_view == "news"}>
@@ -2343,8 +2343,8 @@
                   && FIXTURE_CONTENT.length != 0}
                   <div
                     class="
-                      opt-container 
-                      cursor-not-allowed
+                      opt-container
+                      cursor-pointer
                     "
                     on:click={() => $sessionStore.fixture_select_view = "news"}
                     class:activeOpt={$sessionStore.fixture_select_view == "news"}>
@@ -2805,6 +2805,11 @@
       white-space: nowrap;
     }
 
+    /* bottom nav */
+    div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container p:hover {
+      color: #292929 !important;
+    }
+
   }
 
   /* 
@@ -2827,5 +2832,10 @@
   div#scoreboard-widget-container.dark-background-1 div#scoreboard-bottom-nav-box {
     background-color: #4B4B4B;
   }
+
+  /* bottom nav */
+  div#scoreboard-widget-container.dark-background-1 div#scoreboard-bottom-nav-box div.opt-container p:hover {
+      color: #FFFFFF !important;
+    }
 
 </style>
