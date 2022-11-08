@@ -589,7 +589,7 @@
 
     /* content-row */
     div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title:hover {
-      color: #F5620F;
+      color: #F5620F !important;
     }
 
   }
