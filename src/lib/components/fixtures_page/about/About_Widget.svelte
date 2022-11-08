@@ -380,6 +380,10 @@
   :global(#about-widget-container section > div) {
     border: 1px solid #E6E6E6 !important;
   }
+
+  :global(#about-widget-container p) {
+    margin-bottom: 14px;
+  }
   
   /* ====================
     RESPONSIVNESS [TABLET] [DESKTOP]
