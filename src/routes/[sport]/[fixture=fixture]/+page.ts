@@ -13,6 +13,9 @@ import type { REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_
 import type { REDIS_CACHE_SINGLE_lineups_data, REDIS_CACHE_SINGLE_lineups_translation } from '$lib/models/fixtures/lineups/types';
 import type { REDIS_CACHE_SINGLE_incidents_data, REDIS_CACHE_SINGLE_incidents_translation } from '$lib/models/fixtures/incidents/types';
 import type { REDIS_CACHE_SINGLE_statistics_data, REDIS_CACHE_SINGLE_statistics_translation } from '$lib/models/fixtures/statistics/types';
+import type { REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation } from '$lib/models/fixtures/content/types';
+import type { REDIS_CACHE_SINGLE_about_data, REDIS_CACHE_SINGLE_about_translation } from '$lib/models/fixtures/about/types';
+import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({
@@ -198,7 +201,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  const response_featured_betting_sites_translation: REDIS_CACHE_SINGLE_lineups_translation = await fetch(
+  const response_featured_betting_sites_translation: Cache_Single_Lang_Featured_Betting_Site_Translation_Response = await fetch(
     `/api/cache/home/featured_betting_sites?lang=` + urlLang, 
     {
       method: 'GET'
@@ -230,6 +233,56 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_content: REDIS_CACHE_SINGLE_content_data[] = await fetch(
+    `/api/cache/fixtures/content?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  if (response_content == undefined) {
+    if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
+    response_content = await fetch(
+      `/api/hasura/fixtures/content?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
+
+  const response_content_translation: REDIS_CACHE_SINGLE_content_translation = await fetch(
+    `/api/cache/fixtures/content?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_about: REDIS_CACHE_SINGLE_about_data = await fetch(
+    `/api/cache/fixtures/about?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  if (response_about == undefined) {
+    if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
+    response_about = await fetch(
+      `/api/hasura/fixtures/about?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
+
+  const response_about_translation: REDIS_CACHE_SINGLE_about_translation = await fetch(
+    `/api/cache/fixtures/about?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -248,6 +301,10 @@ export async function load({
     && response_featured_betting_sites_translation
     && response_statistics
     && response_statistics_translation
+    && response_content
+    && response_content_translation
+    // && response_about // IMPORTANT can be "NULL"
+    && response_about_translation
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
@@ -260,7 +317,11 @@ export async function load({
       FXITURE_INCIDENTS_TRANSLATION: response_incidents_translation,
       FEATURED_BETTING_SITES_WIDGET_DATA_SEO: response_featured_betting_sites_translation,
       FIXTURE_STATISTICS: response_statistics,
-      FIXTURE_STATISTICS_TRANSLATION: response_statistics_translation
+      FIXTURE_STATISTICS_TRANSLATION: response_statistics_translation,
+      FIXTURE_CONTENT: response_content,
+      FIXTURE_CONTENT_TRANSLATION: response_content_translation,
+      FIXTURE_ABOUT: response_about,
+      FIXTURE_ABOUT_TRANSLATION: response_about_translation
     }
   }
 

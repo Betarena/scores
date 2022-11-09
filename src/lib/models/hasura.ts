@@ -897,6 +897,12 @@ export interface BETARENA_HASURA_historic_fixtures {
   urls?:           Urls;
   publish_status?: PublishStatus;
   teams_rating?:   HistFixturesTeamsRating;
+  seo_fixtures?:    string;
+  seo_fixtures_pt?: string;
+  seo_fixtures_br?: string;
+  seo_fixtures_es?: string;
+  seo_fixtures_ro?: string;
+  seo_fixtures_se?: string;
 } export interface WelcomeData {
   id?:                      number;
   leg?:                     Leg;
@@ -1509,4 +1515,54 @@ export interface BETARENA_HASURA_scores_fixture_stats_translations {
   substitutions?:  string;
   possessiontime?: string;
   yellowredcards?: string;
+}
+
+/**
+ * [ℹ] HASURA: external_content (&)
+*/
+export interface BETARENA_HASURA_external_content {
+  id?:             number;
+  source?:         Source;
+  title?:          string;
+  lang?:           Lang;
+  link?:           string;
+  featured_media?: string | null;
+  excerpt?:        string;
+  author?:         string;
+  date?:           string;
+  gameid?:         number;
+  category?:       number;
+} export enum Lang {
+  En = "en",
+  Es = "es",
+  It = "it",
+  Se = "se",
+  Ro = "ro",
+  Br = "br",
+  Pt = "pt"
+} export enum Source {
+  BtaWordpress = "bta_wordpress",
+  ApostasWordpress = "apostas_wordpress"
+}
+
+/**
+ * [ℹ] HASURA: scores_fixture_about_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixture_about_translations {
+  lang?:         string;
+  translations?: FixtureAboutTranslations;
+} export interface FixtureAboutTranslations {
+  title?:          string;
+}
+
+/**
+ * [ℹ] HASURA: scores_fixtures_content_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixtures_content_translations {
+  lang?:         string;
+  translations?: FixtureContentTranslations;
+} export interface FixtureContentTranslations {
+  new?:            string;
+  view_all?:       string;
+  news_and_views?: string;
 }

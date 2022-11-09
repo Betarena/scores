@@ -17,9 +17,11 @@
 
 	// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 	import type { GeoJsResponse } from "$lib/models/geojs-types"
-  import type { All_SportBook_Details_Data,
+  import type { 
+    All_SportBook_Details_Data,
     Cache_Single_Lang_Featured_Betting_Site_Translation_Response, 
-    Scores_Featured_Betting_Sites_Hasura } from "$lib/models/featured_betting_sites/firebase-real-db-interface";
+    Scores_Featured_Betting_Sites_Hasura 
+  } from "$lib/models/home/featured_betting_sites/firebase-real-db-interface";
 
 	// [ℹ] external components import;
   import FeaturedBettingSitesWidgetContentLoading from "./_FeaturedBettingSitesWidget_ContentLoading.svelte";
@@ -31,7 +33,7 @@
 
   // [ℹ] main component variables;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
-  export let FEATURED_BETTING_SITES_WIDGET_DATA: All_SportBook_Details_Data
+  // export let FEATURED_BETTING_SITES_WIDGET_DATA: All_SportBook_Details_Data
 
   let staticViewRow: number;              // [ℹ] holds the `initial` number of featured sites to be displayed
   let limitViewRow: number;               // [ℹ] holds the actual, `total` limit of the list of featured sites
@@ -151,7 +153,7 @@
     <!-- [ℹ] SEO-BOX 
     -->
     <div id="seo-featured-betting-site-box">
-      <p>{FEATURED_BETTING_SITES_WIDGET_DATA_SEO.translations.widget_title}</p>
+      <h2>{FEATURED_BETTING_SITES_WIDGET_DATA_SEO.translations.widget_title}</h2>
       <p>{FEATURED_BETTING_SITES_WIDGET_DATA_SEO.translations.title}</p>
     </div>
   <!-- {/if} -->
@@ -206,7 +208,7 @@
                 <!-- [ℹ] Featured Image Details 
                 -->
                 <p 
-                  class="x-large color-black"
+                  class="x-large color-black site-name"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}>
                   {data.data[1].title}
                 </p>
@@ -230,7 +232,7 @@
                 <!-- [ℹ] Featured Image Details 
                 -->
                 <p 
-                  class="x-large color-black"
+                  class="x-large color-black site-name"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}>
                   {data.data[0].title}
                 </p>
@@ -247,7 +249,7 @@
               >
 
               <div 
-                id="featured-rank" 
+                id="featured-rank"
                 style="margin-top: 20px;">
 
                 <BronzeCup imageURL={data.data[2].image} />
@@ -255,7 +257,7 @@
                 <!-- [ℹ] Featured Image Details 
                 -->
                 <p 
-                  class="x-large color-black"
+                  class="x-large color-black site-name"
                   class:color-white={$userBetarenaSettings.theme == 'Dark'}>
                   {data.data[2].title}
                 </p>
@@ -405,6 +407,10 @@
     #featured-list-container {
       min-width: 100%;
       /* max-width: 560px; */
+    }
+
+    p.site-name:hover {
+      color: #F5620F;
     }
   }
 

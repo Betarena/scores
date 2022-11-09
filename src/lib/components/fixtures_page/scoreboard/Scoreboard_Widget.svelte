@@ -29,6 +29,9 @@
 	import type { 
     Cache_Single_SportbookDetails_Data_Response 
   } from "$lib/models/tournaments/league-info/types";
+	import type { 
+    REDIS_CACHE_SINGLE_content_data
+  } from "$lib/models/fixtures/content/types";
 
 	import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 
@@ -43,7 +46,8 @@
 
   export let FIXTURE_INFO:       REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
-  export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation
+  export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
+  export let FIXTURE_CONTENT:    REDIS_CACHE_SINGLE_content_data[]
 
   let SPORTBOOK_INFO:            Cache_Single_SportbookDetails_Data_Response;
   let SPORTBOOK_DETAILS_LIST:    Cache_Single_SportbookDetails_Data_Response[]
@@ -52,7 +56,6 @@
   let refresh:           boolean = false;         // [ℹ] refresh value speed of the WIDGET;
 	let refresh_data:      any = undefined;         // [ℹ] refresh-data value speed;
   let no_widget_data:    any = false;             // [ℹ] identifies the no_widget_data boolean;
-  let selected_view      = 0;
   let tick_sec_show:     boolean = false;
   let enable_miniature:  boolean = false;
   let lazy_load_data_check: boolean = false;
@@ -1844,25 +1847,28 @@
                   opt-container 
                   cursor-pointer
                 "
-                on:click={() => selected_view = 0}
-                class:activeOpt={selected_view == 0}>
+                on:click={() => $sessionStore.fixture_select_view = "overview"}
+                class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
                   {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                 </p>
               </div>
-              <div
-                class="
-                  opt-container 
-                  cursor-not-allowed
-                "
-                on:click={() => selected_view = 1}
-                class:activeOpt={selected_view == 1}>
-                <p
-                  class="s-14 color-grey w-500 no-wrap">
-                  {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
-                </p>
-              </div>
+              {#if FIXTURE_CONTENT != undefined
+                && FIXTURE_CONTENT.length != 0}
+                <div
+                  class="
+                    opt-container
+                    cursor-pointer
+                  "
+                  on:click={() => $sessionStore.fixture_select_view = "news"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "news"}>
+                  <p
+                    class="s-14 color-grey w-500 no-wrap">
+                    {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+                  </p>
+                </div>
+              {/if}
             </div>
           </div>
         <!-- 
@@ -2083,25 +2089,28 @@
                     opt-container 
                     cursor-pointer
                   "
-                  on:click={() => selected_view = 0}
-                  class:activeOpt={selected_view == 0}>
+                  on:click={() => $sessionStore.fixture_select_view = "overview"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
                     {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                   </p>
                 </div>
-                <div
-                  class="
-                    opt-container 
-                    cursor-not-allowed
-                  "
-                  on:click={() => selected_view = 1}
-                  class:activeOpt={selected_view == 1}>
-                  <p
-                    class="s-14 color-grey w-500 no-wrap">
-                    {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
-                  </p>
-                </div>
+                {#if FIXTURE_CONTENT != undefined
+                  && FIXTURE_CONTENT.length != 0}
+                  <div
+                    class="
+                      opt-container
+                      cursor-pointer
+                    "
+                    on:click={() => $sessionStore.fixture_select_view = "news"}
+                    class:activeOpt={$sessionStore.fixture_select_view == "news"}>
+                    <p
+                      class="s-14 color-grey w-500 no-wrap">
+                      {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+                    </p>
+                  </div>
+                {/if}
               </div>
 
             <!-- 
@@ -2323,25 +2332,29 @@
                     opt-container 
                     cursor-pointer
                   "
-                  on:click={() => selected_view = 0}
-                  class:activeOpt={selected_view == 0}>
+                  on:click={() => $sessionStore.fixture_select_view = "overview"}
+                  class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
                     {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
                   </p>
                 </div>
-                <div
-                  class="
-                    opt-container 
-                    cursor-not-allowed
-                  "
-                  on:click={() => selected_view = 1}
-                  class:activeOpt={selected_view == 1}>
-                  <p
-                    class="s-14 color-grey w-500 no-wrap">
-                    {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
-                  </p>
-                </div>
+                {#if FIXTURE_CONTENT != undefined
+                  && FIXTURE_CONTENT.length != 0}
+                  <div
+                    class="
+                      opt-container
+                      cursor-pointer
+                    "
+                    on:click={() => $sessionStore.fixture_select_view = "news"}
+                    class:activeOpt={$sessionStore.fixture_select_view == "news"}>
+                    <p
+                      class="s-14 color-grey w-500 no-wrap">
+                      {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
+                    </p>
+                  </div>
+                {/if}
+
               </div>
 
             {/if}
@@ -2792,6 +2805,11 @@
       white-space: nowrap;
     }
 
+    /* bottom nav */
+    div#scoreboard-widget-container div#scoreboard-bottom-nav-box div.opt-container p:hover {
+      color: #292929 !important;
+    }
+
   }
 
   /* 
@@ -2814,5 +2832,10 @@
   div#scoreboard-widget-container.dark-background-1 div#scoreboard-bottom-nav-box {
     background-color: #4B4B4B;
   }
+
+  /* bottom nav */
+  div#scoreboard-widget-container.dark-background-1 div#scoreboard-bottom-nav-box div.opt-container p:hover {
+      color: #FFFFFF !important;
+    }
 
 </style>
