@@ -1,3 +1,7 @@
+/**
+ * NOTE: This file contains all of the HASURA DB
+ * NOTE: TypeScript Interfaces 
+*/
 
 /**
  * [ℹ] HASURA: [EVENT] update_fixture_sitemap
@@ -1565,4 +1569,29 @@ export interface BETARENA_HASURA_scores_fixtures_content_translations {
   new?:            string;
   view_all?:       string;
   news_and_views?: string;
+}
+
+/**
+ * [ℹ] HASURA: widget_featured_match_votes (&)
+*/
+export interface BETARENA_HASURA_widget_featured_match_votes {
+	match_id?:         number;
+	vote_draw_x?:      number;
+	vote_win_local?:   number;
+	vote_win_visitor?: number;
+}
+
+/**
+ * [ℹ] HASURA: scores_fixture_voting_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixture_voting_translations {
+  lang?:         string;
+  translations?: FixtureVotesTranslations;
+} export interface FixtureVotesTranslations {
+  bet?:          string;
+  vote?:         string;
+  stake?:        string;
+  winnings?:     string;
+  probability?:  string;
+  widget_title?: string;
 }
