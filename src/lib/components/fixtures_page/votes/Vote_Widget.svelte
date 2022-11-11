@@ -948,8 +948,12 @@
               <!-- 
               [ℹ] STAKES DATA 
               -->
-              <div 
-                class="m-b-20 row-space-out">
+              <div
+                id="box-row"
+                class="
+                  m-b-20 
+                  row-space-out
+                ">
                 
                 <!-- 
                 [ℹ] Win Type 
@@ -1113,25 +1117,48 @@
                   />
                 </div>
 
+                <!-- 
+                [ℹ] PLACE BET BUTTON 
+                [ℹ] [DESKTOP]
+                -->
+                {#if !mobileExclusive && !tabletExclusive}
+                  <a
+                    href={SPORTBOOK_INFO.register_link}>
+                    <button 
+                      class="
+                        place-bet-btn 
+                        btn-primary
+                      ">
+                      <p
+                        class="small">
+                        {FIXTURE_VOTES_TRANSLATION?.bet}
+                      </p>
+                    </button>
+                  </a>
+                {/if}
+
               </div>
 
               <!-- 
               [ℹ] PLACE BET BUTTON 
+              [ℹ] [MOBILE] OR [TABLET]
               -->
-              <a
-                href={SPORTBOOK_INFO.register_link}>
-                <button 
-                  class="
-                    place-bet-btn 
-                    btn-primary 
-                    m-b-12
-                  ">
-                  <p
-                    class="small">
-                    {FIXTURE_VOTES_TRANSLATION?.bet}
-                  </p>
-                </button>
-              </a>
+              {#if mobileExclusive || tabletExclusive}
+                <a
+                  href={SPORTBOOK_INFO.register_link}>
+                  <button 
+                    class="
+                      place-bet-btn 
+                      btn-primary 
+                      m-b-12
+                    ">
+                    <p
+                      class="small">
+                      {FIXTURE_VOTES_TRANSLATION?.bet}
+                    </p>
+                  </button>
+                </a>
+              {/if}
 
               <!-- 
               [ℹ] BETTING SITE INFO 
@@ -1254,7 +1281,7 @@
 
   /* widget bet site container */
 	div#site-bet-box {
-		margin-top: 35px;
+		margin-top: 20px;
 		background: #f2f2f2;
 		border-radius: 8px;
 		position: relative;
@@ -1267,24 +1294,24 @@
 		padding: 20px 12px;
 		background: #f2f2f2;
 		border-radius: 8px;
-	} div#site-bet-box div#inner-site-container button.place-bet-btn {
+	} div#site-bet-box div#inner-site-container div#box-row button.place-bet-btn {
 		height: 46px;
 		width: 100%;
 		background-color: #f5620f;
 		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
-	} div#site-bet-box div#inner-site-container	.input-value {
+	} div#site-bet-box div#inner-site-container	div#box-row .input-value {
 		-moz-appearance: textfield;
 		background: #ffffff;
 		border-radius: 8px;
 		height: 48px;
-		width: 76px;
+		/* width: 76px; */
 		border: none;
-	} div#site-bet-box div#inner-site-container input {
+	} div#site-bet-box div#inner-site-container div#box-row input {
 		background: rgb(255, 255, 255);
 		color: black !important;
 		opacity: 1 !important;
-	}	div#site-bet-box div#inner-site-container input#win-type {
+	}	div#site-bet-box div#inner-site-container div#box-row input#win-type {
 		width: 100%;
 		border-radius: 5px;
 		border: 0;
@@ -1342,12 +1369,16 @@
 			height: 44px;
 		} div#site-bet-box div#inner-site-container .input-value {
 			width: 100%;
-			max-width: 164px;
+			max-width: 160px;
 			padding: 14px;
 		} div#site-bet-box div#inner-site-container input#win-type.desktop-view-winnings {
 			padding: 0;
 			text-align: end;
-		}
+    } div#site-bet-box div#inner-site-container div#box-row > * {
+      margin-right: 16px;
+    } div#site-bet-box div#inner-site-container div#box-row > *:last-child {
+      margin-right: 0;
+    }
 
 	}
 
@@ -1363,10 +1394,13 @@
 		}
 
     /* widget bet site container */
-		div#site-bet-box div#inner-site-container .input-value {
+		div#site-bet-box div#inner-site-container .input-value,
+    div#site-bet-box div#inner-site-container a {
 			width: 100%;
-			max-width: 110px;
-		}
+			max-width: 160px;
+    } div#site-bet-box div#inner-site-container div#box-row button.place-bet-btn {
+      margin-top: 27px;
+    }
 	}
 
   /* 
