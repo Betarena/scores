@@ -728,6 +728,8 @@
             ? null
             : new Date(target_season.rounds[i-1].s_date)
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with user date matching an on-going fixtures-week
         if (
           (s_date <= date && e_date >= date) ||
           (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) ||
@@ -737,9 +739,21 @@
           break
         }
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with a look at future upcoming fixtures
         else if (
           past_e_date !== null && 
           (past_e_date < date && s_date >= date)) {
+          target_round = target_season.rounds[i]
+          break
+        }
+
+        // [ℹ] case for LEAGUE not yet started,
+        // [ℹ] with a look at future upcoming fixtures
+        else if (
+          past_e_date === null
+          && s_date >= date
+        ) {
           target_round = target_season.rounds[i]
           break
         }
@@ -780,24 +794,39 @@
             ? null
             : new Date(target_season.weeks[i-1].s_date)
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with user date matching an on-going fixtures-week
         if (
-          (s_date <= date && e_date >= date) ||
-          (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) ||
-          (e_date.getDate() == date.getDate() && e_date.getMonth() == date.getMonth() && e_date.getFullYear() == date.getFullYear())
+          (s_date <= date && e_date >= date) 
+          || (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) 
+          || (e_date.getDate() == date.getDate() && e_date.getMonth() == date.getMonth() && e_date.getFullYear() == date.getFullYear())
           ) {
           target_week = target_season.weeks[i]
           break
         }
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with a look at future upcoming fixtures
         else if (
-          past_e_date !== null && 
-          (past_e_date < date && s_date >= date)) {
+          past_e_date !== null 
+          && (past_e_date < date && s_date >= date)
+        ) {
+          target_week = target_season.weeks[i]
+          break
+        }
+
+        // [ℹ] case for LEAGUE not yet started,
+        // [ℹ] with a look at future upcoming fixtures
+        else if (
+          past_e_date === null
+          && s_date >= date
+        ) {
           target_week = target_season.weeks[i]
           break
         }
 
       }
-      
+
       // [ℹ] situation validation check
       // [ℹ] past-season (user-date > (GT) past season end)
       // [ℹ] select last week of past-season as target_week
