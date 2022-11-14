@@ -444,17 +444,29 @@
 
 <!-- [ℹ] header-for-the-page 
 -->
-<header class="column-space-center">
+<header 
+  class="column-space-center">
   {#if HEADER_TRANSLATION_DATA != undefined}
 
-    <!-- [ℹ] identify the correct translation via
+    <!-- 
+    [ℹ] identify the correct translation via
     -->
     
-    <!-- [ℹ] header TOP NAVBAR section -->
-    <div id="top-header" class="row-space-out">
-      <!-- [ℹ] 1st half of the header nav -->
-      <div class="row-space-start" style="width: fit-content;">
-        <!-- [ℹ] menu-burger-bar [ℹ] [CONDITIONAL - ONLY TABLET & MOBILE] -->
+    <!-- 
+    [ℹ] header TOP NAVBAR section -->
+    <div
+      id="top-header" 
+      class="row-space-out">
+      <!-- 
+      [ℹ] 1st half of the header nav 
+      -->
+      <div 
+        class="row-space-start"
+        style="width: fit-content;">
+        <!-- 
+        [ℹ] menu-burger-bar 
+        [ℹ] [CONDITIONAL - ONLY TABLET & MOBILE] 
+        -->
         {#if tabletExclusive}
           <img
             id="burger-menu"
@@ -493,7 +505,7 @@
         {/if}
 
         <!-- 
-        [ℹ] LANGUAGE SELECTION 
+        [ℹ] LANGUAGE SELECTION [DESKTOP]
         -->
         {#if !tabletExclusive}
           <!-- 
@@ -565,11 +577,12 @@
         {/if}
 
         <!-- 
-        [ℹ] NAV BUTTONS 
+        [ℹ] NAV BUTTONS [TABLET] [DESKTOP]
         -->
         {#if !mobileExclusive}
           <!-- 
-          [ℹ] latest news -->
+          [ℹ] latest news 
+          -->
           <a 
             rel="external" 
             href={HEADER_TRANSLATION_DATA.scores_header_links.latest_news}>
@@ -586,7 +599,8 @@
           </a>
 
           <!-- 
-          [ℹ] betting-tips -->
+          [ℹ] betting-tips 
+          -->
           <a 
             rel="external" 
             href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
@@ -607,21 +621,31 @@
       <!-- 
       [ℹ] 2nd half of the header nav 
       -->
-      <div 
+      <div
         class="row-space-start" 
         style="width: fit-content;">
 
         {#if !tabletExclusive}
           <!-- 
-          [ℹ] theme-options -->
-          <div id="theme-opt-container" class="dropdown-opt-box row-space-start">
+          [ℹ] theme-options box
+          -->
+          <div
+            id="theme-opt-container" 
+            class="
+              dropdown-opt-box 
+              row-space-start
+            ">
             <!-- 
             [ℹ] name of the container-opt -->
             <div
               class="m-r-10"
               on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}>
               <p 
-                class="color-grey s-12 m-b-5">
+                class="
+                  color-grey 
+                  s-12 
+                  m-b-5
+                ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.theme}
               </p>
               <div 
@@ -636,7 +660,10 @@
                 {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   {#if theme.includes($userBetarenaSettings.theme)}
                     <p 
-                      class="color-white s-14">
+                      class="
+                        color-white 
+                        s-14
+                      ">
                       {theme[1]}
                     </p>
                   {/if}
@@ -663,17 +690,30 @@
             {/if}
             <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
             {#if dropdown_theme_visible}
-              <div id="theme-dropdown-menu" transition:fly>
+              <div 
+                id="theme-dropdown-menu" 
+                transition:fly>
                 {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   <div
-                    class="theme-opt-box row-space-out"
-                    on:click={() => selectedTheme(theme[0])}
-                  >
-                    <p class="color-white s-14">
+                    class="
+                      theme-opt-box 
+                      row-space-out
+                    "
+                    on:click={() => selectedTheme(theme[0])}>
+                    <p 
+                      class="
+                        color-white 
+                        s-14
+                      ">
                       {theme[1]}
                     </p>
                     {#if theme.includes($userBetarenaSettings.theme)}
-                      <img src={icon_check} alt={theme[0]} width="16px" height="16px" />
+                      <img 
+                        src={icon_check} 
+                        alt={theme[0]} 
+                        width="16px" 
+                        height="16px" 
+                      />
                     {/if}
                   </div>
                 {/each}
@@ -682,10 +722,15 @@
           </div>
 
           <!-- 
-          [ℹ] odds-type -->
+          [ℹ] odds-type box
+          -->
           <div
             id="odds-type-container"
-            class="cursor-not-allowed dropdown-opt-box row-space-start"
+            class="
+              cursor-not-allowed 
+              dropdown-opt-box 
+              row-space-start
+            "
             on:click={() => (dropdown_odds_type_visible = !dropdown_odds_type_visible)}>
             <!-- 
             [ℹ] name of the container-opt -->
@@ -753,13 +798,17 @@
           [ℹ] bookmakers-type -->
           <div
             id="bookmakers-type-container"
-            class="dropdown-opt-box row-space-start m-r-30"
+            class="
+              dropdown-opt-box 
+              row-space-start 
+              m-r-30
+            "
             on:click={() => (dropdown_bookmakers_visible = !dropdown_bookmakers_visible)}>
             <!-- 
             [ℹ] name of the container-opt -->
             <div 
               class="m-r-10">
-              <p 
+              <p
                 class="
                   color-grey 
                   s-12 
@@ -767,20 +816,26 @@
                 ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers}
               </p>
-              <div 
+              <div
                 class="row-space-start">
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
                   {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     {#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
                       <img
-                        class="country-flag m-r-5"
+                        class="
+                          country-flag 
+                          m-r-5
+                        "
                         src="https://betarena.com/images/flags/{country[0]}.svg"
                         alt="{country[1]}"
                         width="20px"
                         height="14px"
                       />
                       <p 
-                        class="color-white s-14">
+                        class="
+                          color-white 
+                          s-14
+                        ">
                         {country[1]}
                       </p>
                     {/if}
@@ -814,18 +869,27 @@
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
                   {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     <div
-                      class="theme-opt-box row-space-start"
+                      class="
+                        theme-opt-box 
+                        row-space-start
+                      "
                       class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toString().toUpperCase()}
                       on:click={() => selectedCountryBookmakers(country[0])}>
                       <img
-                        class="country-flag m-r-10"
+                        class="
+                          country-flag
+                          m-r-10
+                        "
                         src="https://betarena.com/images/flags/{country[0]}.svg"
                         alt="{country[1]}"
                         width="20px"
                         height="14px"
                       />
                       <p 
-                        class="color-white s-14">
+                        class="
+                          color-white 
+                          s-14
+                        ">
                         {country[1]}
                       </p>
                     </div>
@@ -877,7 +941,8 @@
       id="bottom-header" 
       class="row-space-out">
       <!-- 
-      [ℹ] sliding-container -->
+      [ℹ] sliding-container 
+      -->
       <div 
         id="bottom-header-inner" 
         class="
@@ -886,17 +951,22 @@
         " 
         style="width: fit-content;">
         <!-- 
-        [ℹ] sports-btn values -->
+        [ℹ] sports-btn values 
+        -->
         <div 
           class="row-space-out" 
           style="width: fit-content;">
 
           {#each { length: 7 } as _, i}
             <!-- 
-            [ℹ] check - if sport is column -->
+            [ℹ] check - if sport is column
+            -->
             {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()] != null}
               <button
-                class="sports-btn m-r-10"
+                class="
+                  sports-btn 
+                  m-r-10
+                "
                 on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
                 class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
                 <img
@@ -906,12 +976,20 @@
                   width="20px"
                   height="20px" 
                 />
-                <p 
-                  class="color-white s-14 m-r-10">
+                <p
+                  class="
+                    color-white 
+                    s-14 
+                    m-r-10
+                  ">
                   {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
                 </p>
-                <p 
-                  class="color-white s-14 sport-counter">
+                <p
+                  class="
+                    color-white 
+                    s-14 
+                    sport-counter
+                  ">
                   {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
                 </p>
               </button>
@@ -919,22 +997,38 @@
               {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
                 {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
                   <button
-                    class="sports-btn m-r-10 cursor-not-allowed"
+                    class="
+                      sports-btn 
+                      m-r-10 
+                      cursor-not-allowed
+                    "
                     on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
                     class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
                     <img
-                      class="m-r-10 soon-opacitiy"
+                      class="
+                        m-r-10 
+                        soon-opacitiy
+                      "
                       src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
                       alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
                       width="20px"
                       height="20px"
                     />
                     <p 
-                      class="color-white s-14 m-r-10 soon-opacitiy">
+                      class="
+                        color-white 
+                        s-14 
+                        m-r-10 
+                        soon-opacitiy
+                      ">
                       {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
                     </p>
                     <p 
-                      class="color-white s-14 sport-counter">
+                      class="
+                        color-white 
+                        s-14 
+                        sport-counter
+                      ">
                       {sport[1].toString().toLowerCase()}
                     </p>
                   </button>
@@ -1390,7 +1484,8 @@
       {/if}
     {/if}
 
-    <!-- [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] -->
+    <!-- 
+    [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] -->
     {#if mobileExclusive}
       {#if mobileExclusiveMoreSports}
         <nav
