@@ -211,7 +211,7 @@
     -->
     {#if !refresh}
 
-      <LeagueListLoader />
+      <!-- <LeagueListLoader /> -->
 
       <!-- [ℹ] promise is pending 
       -->
