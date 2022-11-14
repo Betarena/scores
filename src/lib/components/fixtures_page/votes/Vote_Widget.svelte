@@ -315,7 +315,7 @@
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let tabletView = 1000
+  let tabletView = 1160
   let mobileView = 725
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
@@ -974,39 +974,34 @@
                 <!-- 
                 [ℹ] Win Type 
                 -->
-                <div 
-                  class="text-center">
-                  {#if fixture_data_vote_obj.fixture_vote == '1'}
-                    <p 
-                      class="
-                        w-400 
-                        medium 
-                        m-b-8 
-                        color-grey
-                      ">
+                <div
+                  class="
+                    text-center
+                    stakes-info-box
+                  ">
+
+                  <!-- 
+                  [ℹ] type of vote select - text
+                  -->
+                  <p 
+                    class="
+                      w-400 
+                      medium 
+                      m-b-8 
+                      color-grey
+                    ">
+                    {#if fixture_data_vote_obj.fixture_vote == '1'}
                       Home win
-                    </p>
-                  {:else if fixture_data_vote_obj.fixture_vote == 'X'}
-                    <p 
-                      class="
-                        w-400 
-                        medium 
-                        m-b-8 
-                        color-grey
-                      ">
+                    {:else if fixture_data_vote_obj.fixture_vote == 'X'}
                       Draw
-                    </p>
-                  {:else}
-                    <p 
-                      class="
-                        w-400 
-                        medium 
-                        m-b-8 
-                        color-grey
-                        ">
+                    {:else}
                       Away win
-                    </p>
-                  {/if}
+                    {/if}
+                  </p>
+                  
+                  <!-- 
+                  [ℹ] box stakes show
+                  -->
                   <div
                     class="
                       input-value 
@@ -1014,6 +1009,7 @@
                       medium 
                       text-center
                     ">
+
                     {#if !mobileExclusive}
                       {#if fixture_data_vote_obj.fixture_vote == '1'}
                         <img
@@ -1043,6 +1039,7 @@
                         />
                       {/if}
                     {/if}
+
                     <input
                       id="win-type"
                       class="
@@ -1055,6 +1052,7 @@
                       bind:value={fixture_data_vote_obj.fixture_vote_val}
                       disabled
                     />
+
                   </div>
                 </div>
 
@@ -1073,7 +1071,10 @@
                 [ℹ] Stake 
                 -->
                 <div
-                  class="text-center">
+                  class="
+                    text-center
+                    stakes-info-box
+                  ">
                   <p 
                     class="
                       w-400 
@@ -1110,7 +1111,10 @@
                 [ℹ] Winnings 
                 -->
                 <div
-                  class="text-center">
+                  class="
+                    text-center
+                    stakes-info-box
+                  ">
                   <p
                     class="
                       w-400 
@@ -1139,7 +1143,8 @@
                 -->
                 {#if !mobileExclusive && !tabletExclusive}
                   <a
-                    href={SPORTBOOK_INFO.register_link}>
+                    href={SPORTBOOK_INFO.register_link}
+                    class="anchor-bet-box">
                     <button 
                       class="
                         place-bet-btn 
@@ -1161,7 +1166,8 @@
               -->
               {#if mobileExclusive || tabletExclusive}
                 <a
-                  href={SPORTBOOK_INFO.register_link}>
+                  href={SPORTBOOK_INFO.register_link}
+                  class="anchor-bet-box">
                   <button 
                     class="
                       place-bet-btn 
@@ -1310,37 +1316,52 @@
 		padding: 20px 12px;
 		background: #f2f2f2;
 		border-radius: 8px;
-	} div#site-bet-box div#inner-site-container div#box-row button.place-bet-btn {
-		height: 46px;
-		width: 100%;
-		background-color: #f5620f;
-		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
-		border-radius: 8px;
-	} div#site-bet-box div#inner-site-container	div#box-row .input-value {
+	} div#site-bet-box div#inner-site-container div#box-row > * {
+    margin-right: 4px;
+  } div#site-bet-box div#inner-site-container div#box-row > *:last-child {
+    margin-right: 0;
+  } div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box {
+    width: 100%;
+  } div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input#win-type {
+		border-radius: 5px;
+		border: 0;
+		outline: none;
+	} div#site-bet-box div#inner-site-container	div#box-row div.stakes-info-box .input-value {
 		-moz-appearance: textfield;
 		background: #ffffff;
 		border-radius: 8px;
 		height: 48px;
 		/* width: 76px; */
 		border: none;
-	} div#site-bet-box div#inner-site-container div#box-row input {
+	} div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input {
 		background: rgb(255, 255, 255);
 		color: black !important;
 		opacity: 1 !important;
-	}	div#site-bet-box div#inner-site-container div#box-row input#win-type {
+	} div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn {
+		height: 46px;
 		width: 100%;
-		border-radius: 5px;
-		border: 0;
-		outline: none;
+		background-color: #f5620f;
+		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
+		border-radius: 8px;
+    margin-top: 0;
 	}
+
+  /* widget bet site container width decalrations */
+  div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box button,
+  div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input,
+  div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value,
+  div#site-bet-box div#inner-site-container a.anchor-bet-box {
+    /* max-width: -webkit-fill-available; */
+    width: inherit;
+  }
 
   /* ====================
     RESPONSIVNESS [TABLET] [DESKTOP]
   ==================== */
 
 	/* 
-  TABLET RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 726px) and (max-width: 1000px)  {
+  NOTE: TABLET [EXCLUSIVE] RESPONSIVNESS (&+) */
+  @media only screen and (min-width: 726px) and (max-width: 1160px)  {
 
     #votes-widget-container {
       min-width: 100%;
@@ -1350,29 +1371,9 @@
   }
 
   /* 
-  TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
+  NOTE: TABLET && DESKTOP [SHARED] RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
    
-  }
-
-  /* 
-  DESKTOP [M-L] RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 1000px) {
-
-    #votes-widget-container {
-      min-width: 100%;
-    }
-
-  }
-
-  /* ====================
-    responsivness
-  ==================== */
-
-	/* 
-  MOBILE RESPONSIVNESS */
-	@media only screen and (min-width: 700px) {
-    
     /* widget vote container */
     div#votes-widget-container div#btn-vote-container button.cast-vote-btn {
 			min-width: 206px;
@@ -1383,24 +1384,28 @@
     /* widget bet site container */
     div#site-bet-box #inner-site-container button {
 			height: 44px;
-		} div#site-bet-box div#inner-site-container .input-value {
-			width: 100%;
-			max-width: 160px;
-			padding: 14px;
-		} div#site-bet-box div#inner-site-container input#win-type.desktop-view-winnings {
-			padding: 0;
-			text-align: end;
-    } div#site-bet-box div#inner-site-container div#box-row > * {
+		}  div#site-bet-box div#inner-site-container div#box-row > * {
       margin-right: 16px;
     } div#site-bet-box div#inner-site-container div#box-row > *:last-child {
       margin-right: 0;
+    } div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value {
+			width: 100%;
+			/* max-width: 160px; */
+			padding: 14px;
+		} div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input#win-type.desktop-view-winnings {
+			padding: 0;
+			text-align: end;
     }
 
-	}
+  }
 
-	/* 
-  DESKTOP RESPONSIVNESS */
-	@media only screen and (min-width: 1024px) {
+  /* 
+  DESKTOP [M-L] RESPONSIVNESS (&+) */
+  @media only screen and (min-width: 1160px) {
+
+    #votes-widget-container {
+      min-width: 100%;
+    }
 
     /* widget vote container */
 		div#votes-widget-container div#btn-vote-container button.cast-vote-btn {
@@ -1410,14 +1415,15 @@
 		}
 
     /* widget bet site container */
-		div#site-bet-box div#inner-site-container .input-value,
-    div#site-bet-box div#inner-site-container a {
+		div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value,
+    div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box a.anchor-bet-box {
 			width: 100%;
-			max-width: 160px;
-    } div#site-bet-box div#inner-site-container div#box-row button.place-bet-btn {
+			/* max-width: 160px; */
+    } div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn {
       margin-top: 27px;
     }
-	}
+
+  }
 
   /* 
   DESKTOP [L] RESPONSIVNESS (&+) */
