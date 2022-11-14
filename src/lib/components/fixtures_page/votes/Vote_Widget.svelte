@@ -311,6 +311,21 @@
 		}
 	}
 
+  function triggerGoggleEvents(
+    action: string
+  ) {
+    if (action === "football_fixtures_voting") {
+      gtag('event', "football_fixtures_voting", { 
+        'event_category': "football_fixtures_voting", 
+        'event_label': "click_betting_site_logo", 
+        'value': "click"
+        }
+      );
+      return
+    }
+  }
+
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -944,7 +959,12 @@
               style="position: absolute; top: 12px; right: 20px;"
               on:click={() => (show_bet_site = false)}
             />
-            <a href={SPORTBOOK_INFO.register_link}>
+            <a 
+              rel="nofollow"
+              aria-label="football_fixtures_voting"
+              on:click={() => triggerGoggleEvents("football_fixtures_voting")}
+              target="_blank"
+              href={SPORTBOOK_INFO.register_link}>
               <img
                 id="stakesSiteImg"
                 src={SPORTBOOK_INFO.image}
@@ -1143,6 +1163,10 @@
                 -->
                 {#if !mobileExclusive && !tabletExclusive}
                   <a
+                    rel="nofollow"
+                    aria-label="football_fixtures_voting"
+                    on:click={() => triggerGoggleEvents("football_fixtures_voting")}
+                    target="_blank"
                     href={SPORTBOOK_INFO.register_link}
                     class="anchor-bet-box">
                     <button 
@@ -1166,6 +1190,10 @@
               -->
               {#if mobileExclusive || tabletExclusive}
                 <a
+                  rel="nofollow"
+                  aria-label="football_fixtures_voting"
+                  on:click={() => triggerGoggleEvents("football_fixtures_voting")}
+                  target="_blank"
                   href={SPORTBOOK_INFO.register_link}
                   class="anchor-bet-box">
                   <button 
@@ -1429,33 +1457,30 @@
     WIDGET DARK THEME
   ==================== */
 
-	.dark-background-1 .cast-vote-btn {
+	div#votes-widget-container.dark-background-1  div#btn-vote-container button.cast-vote-btn {
 		background-color: #616161 !important;
 		border: 1px solid #999999 !important;
-	}	.dark-background-1 .cast-vote-btn.active {
+	}	div#votes-widget-container.dark-background-1  div#btn-vote-container button.dark-background-1 .cast-vote-btn.active {
 		border: 1px solid #f5620f !important;
 	}
 
-	.dark-background-1 p {
-		color: #ffffff;
+	div#votes-widget-container.dark-background-1 p {
+		color: #ffffff !important;
 	}
 
-	.dark-background-1 .probablitiy-text {
+	div#votes-widget-container.dark-background-1 .probablitiy-text {
 		color: #a8a8a8 !important;
 	}
 
-	.dark-background-1 #site-bet-box,
-	.dark-background-1 #inner-site-container {
+	div#votes-widget-container.dark-background-1 #site-bet-box,
+	div#votes-widget-container.dark-background-1 div#site-bet-box div#inner-site-container {
 		background-color: #616161 !important;
-	}
-	.dark-background-1 #inner-site-container .input-value {
+	} div#votes-widget-container.dark-background-1 div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value {
 		background-color: #4b4b4b !important;
 		color: #ffffff !important;
-	} .dark-background-1 #inner-site-container input {
+	} div#votes-widget-container.dark-background-1 div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input {
 		color: #ffffff !important;
-	}
-  
-	.dark-background-1 input#win-type {
+	}	div#votes-widget-container.dark-background-1  div#site-bet-box div#box-row div.stakes-info-box input#win-type {
 		background-color: #4b4b4b !important;
 	}
   
