@@ -873,7 +873,7 @@
     <!--
     [ℹ] bottom NAV SPORTS navbar values 
     -->
-    <div 
+    <div
       id="bottom-header" 
       class="row-space-out">
       <!-- 
@@ -1020,7 +1020,10 @@
               [ℹ] check - if sport is column -->
               {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0].toString().toLowerCase()] != null}
                 <button
-                  class="sports-btn row-space-out"
+                  class="
+                    sports-btn 
+                    row-space-out
+                  "
                   on:click={() => (dropdown_more_sports_menu = false)} >
                   <div
                     class="row-space-out" 
@@ -1052,19 +1055,18 @@
                 </button>
 
               {:else}
-                <!-- else content here -->
                 {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
-                  <!-- content here -->
                   {#if sport[0].toString().toLowerCase() === _sport[0].toString().toLowerCase()}
-                    <!-- content here -->
                     <button
-                      class="sports-btn row-space-out cursor-not-allowed"
+                      class="
+                        sports-btn 
+                        row-space-out 
+                        cursor-not-allowed
+                      "
                       on:click={() => (dropdown_more_sports_menu = false)} >
-                      <!-- -->
                       <div 
                         class="row-space-out" 
                         style="width: fit-content;">
-                        <!-- -->
                         <img
                           class="m-r-5 soon-opacitiy"
                           src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
@@ -1072,12 +1074,21 @@
                           width="20px" height="20px"
                         />
                         <p 
-                          class="color-white s-14 m-r-10 soon-opacitiy">
+                          class="
+                            color-white 
+                            s-14 
+                            m-r-10 
+                            soon-opacitiy
+                          ">
                           {sport[1]}
                         </p>
                       </div>
-                      <p 
-                        class="color-white s-14 sport-counter-dark">
+                      <p
+                        class="
+                          color-white 
+                          s-14 
+                          sport-counter-dark
+                        ">
                         {_sport[1].toString().toLowerCase()}
                       </p>
                     </button>
