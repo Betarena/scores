@@ -696,7 +696,11 @@
                   {/if}
                   <span
                     class:active_p={fixture_data_vote_obj.fixture_vote == '1'}>
-                    {FIXTURE_VOTES_DATA._1x2.home.toString()}
+                    {#if FIXTURE_VOTES_DATA._1x2.home}
+                      {FIXTURE_VOTES_DATA._1x2.home.toString()}
+                    {:else}
+                      -
+                    {/if}
                   </span>
                 </p>
             </button>
@@ -783,7 +787,11 @@
                   {/if}
                   <span 
                     class:active_p={fixture_data_vote_obj.fixture_vote == 'X'}>
-                    {FIXTURE_VOTES_DATA._1x2.draw.toString()}
+                    {#if FIXTURE_VOTES_DATA._1x2.draw}
+                      {FIXTURE_VOTES_DATA._1x2.draw.toString()}
+                    {:else}
+                      -
+                    {/if}
                   </span>
                 </p>
             </button>
@@ -867,7 +875,11 @@
                   {/if}
                   <span 
                     class:active_p={fixture_data_vote_obj.fixture_vote == '2'}>
-                    {FIXTURE_VOTES_DATA._1x2.away.toString()}
+                    {#if FIXTURE_VOTES_DATA._1x2.away}
+                      {FIXTURE_VOTES_DATA._1x2.away.toString()}
+                    {:else}
+                      -
+                    {/if}
                   </span>
                 </p>
               </button>
@@ -914,7 +926,8 @@
         </div>
 
         <!-- 
-        [ℹ] stakes-site-info-pop-up -->
+        [ℹ] stakes-site-info-pop-up 
+        -->
         {#if show_bet_site}
           <div
             id="site-bet-box" 
@@ -942,7 +955,10 @@
               />
             </a>
 
-            <div 
+            <!-- 
+            [ℹ] bottom container info
+            -->
+            <div
               id="inner-site-container">
 
               <!-- 
