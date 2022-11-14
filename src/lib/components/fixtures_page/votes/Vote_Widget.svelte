@@ -1400,7 +1400,7 @@
   }
 
   /* 
-  DESKTOP [M-L] RESPONSIVNESS (&+) */
+  NOTE: DESKTOP [M-L] RESPONSIVNESS (&+) */
   @media only screen and (min-width: 1160px) {
 
     #votes-widget-container {
@@ -1423,12 +1423,6 @@
       margin-top: 27px;
     }
 
-  }
-
-  /* 
-  DESKTOP [L] RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 1160px) {
-    /* EMPTY */
   }
 
   /* ====================
