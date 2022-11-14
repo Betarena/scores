@@ -465,7 +465,7 @@
         style="width: fit-content;">
         <!-- 
         [ℹ] menu-burger-bar 
-        [ℹ] [CONDITIONAL - ONLY TABLET & MOBILE] 
+        [ℹ] [TABLET] [MOBILE] 
         -->
         {#if tabletExclusive}
           <img
@@ -482,17 +482,34 @@
         [ℹ] BETARENA LOGO [MOBILE ONLY]
         -->
         {#if mobileExclusive}
-          <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
-            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
-              <img src={logo_mini} alt="betarena-logo" width="103px" height="30px" />
+          <div 
+            id="brand" 
+            class="cursor-pointer" 
+            on:click={() => reloadPage() }>
+            <a
+              data-sveltekit-prefetch 
+              href={homepageURL} 
+              title={logoLink}>
+              <img
+                src={logo_mini} 
+                alt="betarena-logo" 
+                width="103px" 
+                height="30px" 
+              />
             </a>
           </div>
         <!-- 
         [ℹ] BETARENA LOGO [DESKTOP ONLY] 
         -->
         {:else}
-          <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
-            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
+          <div 
+            id="brand" 
+            class="cursor-pointer" 
+            on:click={() => reloadPage() }>
+            <a 
+              data-sveltekit-prefetch 
+              href={homepageURL} 
+              title={logoLink}>
               <img
                 class="m-r-30"
                 src={logo_full}
@@ -942,6 +959,7 @@
       class="row-space-out">
       <!-- 
       [ℹ] sliding-container 
+      FIXME: avoid using in-line styles
       -->
       <div 
         id="bottom-header-inner" 
@@ -952,47 +970,100 @@
         style="width: fit-content;">
         <!-- 
         [ℹ] sports-btn values 
+        FIXME: avoid using in-line styles
         -->
         <div 
           class="row-space-out" 
           style="width: fit-content;">
-
+          <!-- 
+          [ℹ] show only first 7 sports
+          -->
           {#each { length: 7 } as _, i}
             <!-- 
-            [ℹ] check - if sport is column
+            [ℹ] check - if "sport" column exists
+            [ℹ] meaning "data" exists
             -->
             {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()] != null}
-              <button
-                class="
-                  sports-btn 
-                  m-r-10
-                "
-                on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
-                class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
-                <img
-                  class="m-r-10"
-                  src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
-                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
-                  width="20px"
-                  height="20px" 
-                />
-                <p
+              <!-- 
+              [ℹ] check if "sport" == "Football"
+              -->
+              {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0] == 'football'}
+                <a
+                  data-sveltekit-prefetch 
+                  href={homepageURL} 
+                  title={logoLink}>
+                  <button
+                    class="
+                      sports-btn 
+                      m-r-10
+                    "
+                    on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                    class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
+                    <img
+                      class="m-r-10"
+                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                      alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
+                      width="20px"
+                      height="20px" 
+                    />
+                    <p
+                      class="
+                        color-white 
+                        s-14 
+                        m-r-10
+                      ">
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
+                    </p>
+                    <p
+                      class="
+                        color-white 
+                        s-14 
+                        sport-counter
+                      ">
+                      {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
+                    </p>
+                  </button>
+                </a>
+              <!-- 
+              [ℹ] otherwise, standard sport display
+              -->
+              {:else}
+                <button
                   class="
-                    color-white 
-                    s-14 
+                    sports-btn 
                     m-r-10
-                  ">
-                  {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
-                </p>
-                <p
-                  class="
-                    color-white 
-                    s-14 
-                    sport-counter
-                  ">
-                  {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
-                </p>
-              </button>
+                  "
+                  on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                  class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
+                  <img
+                    class="m-r-10"
+                    src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                    alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
+                    width="20px"
+                    height="20px" 
+                  />
+                  <p
+                    class="
+                      color-white 
+                      s-14 
+                      m-r-10
+                    ">
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
+                  </p>
+                  <p
+                    class="
+                      color-white 
+                      s-14 
+                      sport-counter
+                    ">
+                    {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
+                  </p>
+                </button>
+              {/if}
+              <!-- 
+            [ℹ] otherwise, no-data exists
+            [ℹ] and sport should show "soon"
+            -->
             {:else}
               {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
                 {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
