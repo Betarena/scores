@@ -344,7 +344,10 @@
 
     const fixture_status = FIXTURE_SCOREBOARD?.status;
     if (fixture_status == 'FT') {
-      return
+      // [🐞]
+      if (dev) logDevGroup (`${dev_console_tag}`, `fixture is FT!`)
+      lazy_load_data_check = true
+      return;
     }
 
     // [🐞]
