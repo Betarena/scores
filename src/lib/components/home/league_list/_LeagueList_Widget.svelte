@@ -14,6 +14,7 @@
   import SouthAmerica from "./assets/_South_America.svelte";
   import World from "./assets/_World.svelte";
 
+	import LeagueListLoader from './LeagueList_Loader.svelte';
   import NoResults from "./_NoResults.svelte";
 
   import { get } from "$lib/api/utils";
@@ -21,7 +22,7 @@
   import type { 
     REDIS_CACHE_SINGLE_league_list_geo_data_response, 
     REDIS_CACHE_SINGLE_league_list_seo_t_response 
-  } from "$lib/models/league_list/types";
+  } from "$lib/models/home/league_list/types";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
   import { logDevGroup } from '$lib/utils/debug';
@@ -210,9 +211,12 @@
     -->
     {#if !refresh}
 
+      <LeagueListLoader />
+
       <!-- [ℹ] promise is pending 
       -->
       {#await widgetInit()}
+        <LeagueListLoader />
       <!-- [ℹ] promise was fulfilled 
       -->
       {:then data}
