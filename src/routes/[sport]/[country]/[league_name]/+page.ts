@@ -165,6 +165,18 @@ export async function load({
    * ==========
    */
 
+  // [🐞]
+  if (dev) {
+    if (response_tournaments_seo == undefined) console.log("response_tournaments_seo")
+    if (response_tournaments_page_info == undefined) console.log("response_tournaments_page_info")
+    if (response_league_info == undefined) console.log("response_league_info")
+    if (response_standings_translations == undefined) console.log("response_standings_translations")
+    if (response_standings_data == undefined) console.log("response_standings_data")
+    if (response_top_players_translations == undefined) console.log("response_top_players_translations")
+    if (response_top_players_data == undefined) console.log("response_top_players_data")
+    if (response_fixtures_odds_translations == undefined) console.log("response_fixtures_odds_translations")
+  }
+
   // [ℹ] page -> response data chceck
   if (
     response_tournaments_seo &&
