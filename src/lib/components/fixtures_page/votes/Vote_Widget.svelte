@@ -1407,7 +1407,11 @@
 			min-width: 206px;
 			width: 100%;
 			height: 48px;
-		}
+		} div#votes-widget-container div#btn-vote-container button.cast-vote-btn:hover {
+		  border: 1px solid #f5620f !important;
+    } div#votes-widget-container div#btn-vote-container button.cast-vote-btn:hover span {
+      color: #f5620f !important;
+    }
 
     /* widget bet site container */
     div#site-bet-box #inner-site-container button {
@@ -1460,7 +1464,11 @@
 	div#votes-widget-container.dark-background-1  div#btn-vote-container button.cast-vote-btn {
 		background-color: #616161 !important;
 		border: 1px solid #999999 !important;
-	}	div#votes-widget-container.dark-background-1  div#btn-vote-container button.dark-background-1 .cast-vote-btn.active {
+	} div#votes-widget-container.dark-background-1  div#btn-vote-container button.cast-vote-btn:hover {
+    border: 1px solid #f5620f !important;
+  }	div#votes-widget-container.dark-background-1  div#btn-vote-container button.cast-vote-btn:hover span {
+    color: #f5620f !important;
+  } div#votes-widget-container.dark-background-1  div#btn-vote-container button.dark-background-1 .cast-vote-btn.active {
 		border: 1px solid #f5620f !important;
 	}
 
