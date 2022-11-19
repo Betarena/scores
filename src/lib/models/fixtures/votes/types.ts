@@ -42,6 +42,7 @@ export interface BETARENA_HASURA_votes_mutation {
 
 export interface Fixture_Votes {
   time?:           string
+  status?:         string
   home_team_logo?: string
   away_team_logo?: string
   match_votes?:    BETARENA_HASURA_widget_featured_match_votes

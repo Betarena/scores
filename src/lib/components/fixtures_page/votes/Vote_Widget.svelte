@@ -152,8 +152,8 @@
       _1x2: undefined
     }
 
-
     FIXTURE_VOTES_DATA.time = HIST_FIXTURE_DATA?.time
+    FIXTURE_VOTES_DATA.status = HIST_FIXTURE_DATA?.status_j
     FIXTURE_VOTES_DATA.match_votes = response.widget_featured_match_votes[0]
     FIXTURE_VOTES_DATA.probabilities = HIST_FIXTURE_DATA?.probabilities
     FIXTURE_VOTES_DATA._1x2 = undefined // NOTE: populated from FIREBASE, if exist & "live"
@@ -652,7 +652,7 @@
 
         <!-- 
         [ℹ] voting hint text -->
-        {#if !vote_casted}
+        {#if !vote_casted && FIXTURE_VOTES_DATA.status != "FT"}
           <p
             class="
               w-500 
@@ -688,8 +688,8 @@
                 m-b-12
               "
               class:active={fixture_data_vote_obj.fixture_vote == '1'}
-              disabled={vote_casted}
-              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home.toString())}>
+              disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
+              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA.match_votes.vote_win_local.toString())}>
                 <p
                   class="
                     w-500 
@@ -723,7 +723,8 @@
             <!-- 
             [ℹ] fixture-probability 
             -->
-            {#if !show_bet_site}
+            {#if !show_bet_site 
+              && FIXTURE_VOTES_DATA?.status != "FT"}
               <p 
                 class="
                   w-400 
@@ -736,7 +737,10 @@
                 {/if}
                 {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.home.toString())).toFixed(2)}%
               </p>
-            {:else if FIXTURE_VOTES_DATA?.match_votes != undefined}
+            {:else if 
+              FIXTURE_VOTES_DATA?.match_votes != undefined 
+              || (FIXTURE_VOTES_DATA?.match_votes != undefined 
+                  && FIXTURE_VOTES_DATA?.status == "FT")}
               <p 
                 class="
                   large
@@ -776,8 +780,8 @@
                 m-b-12
               "
               class:active={fixture_data_vote_obj.fixture_vote == 'X'}
-              disabled={vote_casted}
-              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw.toString())}>
+              disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
+              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA.match_votes.vote_draw_x.toString())}>
                 <p 
                   class="
                     w-500 
@@ -814,7 +818,8 @@
             <!-- 
             [ℹ] fixture-probability 
             -->
-            {#if !show_bet_site}
+            {#if !show_bet_site 
+              && FIXTURE_VOTES_DATA?.status != "FT"}
               <p 
                 class="
                   w-400 
@@ -827,7 +832,10 @@
                 {/if}
                 {Math.round(parseInt(FIXTURE_VOTES_DATA.probabilities.draw.toString())).toFixed(2)}%
               </p>
-            {:else if FIXTURE_VOTES_DATA.match_votes != undefined}
+            {:else if 
+              FIXTURE_VOTES_DATA?.match_votes != undefined 
+              || (FIXTURE_VOTES_DATA?.match_votes != undefined 
+                  && FIXTURE_VOTES_DATA?.status == "FT")}
               <p 
                 class="
                   large
@@ -867,8 +875,8 @@
                   m-b-12
                 "
                 class:active={fixture_data_vote_obj.fixture_vote == '2'}
-                disabled={vote_casted}
-                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away.toString())}>
+                disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
+                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA.match_votes.vote_win_visitor.toString())}>
                 <p 
                   class="
                     w-500 
@@ -902,7 +910,8 @@
               <!-- 
               [ℹ] fixture-probability 
               -->
-              {#if !show_bet_site}
+              {#if !show_bet_site 
+                && FIXTURE_VOTES_DATA?.status != "FT"}
                 <p 
                   class="
                     w-400 
@@ -915,7 +924,10 @@
                   {/if}
                   {Math.round(parseInt(FIXTURE_VOTES_DATA.probabilities.away.toString())).toFixed(2)}%
                 </p>
-              {:else if FIXTURE_VOTES_DATA.match_votes != undefined}
+              {:else if 
+                FIXTURE_VOTES_DATA?.match_votes != undefined 
+                || (FIXTURE_VOTES_DATA?.match_votes != undefined 
+                    && FIXTURE_VOTES_DATA?.status == "FT")}
                 <p 
                   class="
                     large
