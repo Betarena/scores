@@ -7,10 +7,11 @@
   // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page, session } from "$app/stores";
+  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
 
+  import { logDevGroup } from "$lib/utils/debug";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
@@ -27,7 +28,6 @@
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
   import check_league from './assets/check-league.svg';
-  import { logDevGroup } from "$lib/utils/debug";
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;
@@ -93,8 +93,8 @@
     return TOP_PLAYERS_DATA;
   }
 
-  function selectTableView(opt: string) {
-    selectedOpt = opt;
+  function selectTableView (opt: string) {
+    // selectedOpt = opt;
     refreshRow = true;
     setTimeout(async() => {
       refreshRow = false
@@ -104,7 +104,7 @@
   // [🐛] debug 
   if (dev && diasbleDev) logDevGroup ("top_players [DEV]", `trueLengthOfArray ${trueLengthOfArray}`)
 
-  function selectPlayerView(opt: string) {
+  function selectPlayerView (opt: string) {
     dropdownPlayerViewSelect = opt.toLowerCase().replace(/\s/g, '_')
     selectedPlayerArray = playerArrayConst + dropdownPlayerViewSelect
     showMore = false;
@@ -113,23 +113,23 @@
     let checkPlayerViewOptLength = TOP_PLAYERS_DATA.seasons
       .find( ({ season_id }) => season_id === $sessionStore.selectedSeasonID)
 
-    if (checkPlayerViewOptLength === undefined ||
-      checkPlayerViewOptLength === null) {
+    // TODO: direct Hasura DB data of TOP-PLAYERS EXTRACT for Target Season
+    // TODO: create endpoint accordingly
+
+    // [ℹ] validation of NO-WIDGET-DATA
+    if (checkPlayerViewOptLength == undefined
+      || (checkPlayerViewOptLength.top_players_assists.length == 0
+      && checkPlayerViewOptLength.top_players_goals.length == 0
+      && checkPlayerViewOptLength.top_players_rating.length == 0
+      && checkPlayerViewOptLength.top_players_total_shots.length == 0)) {
 
       noTopPlayersBool = true;
       trueLengthOfArray = 0;
       return;
 
-    } else if (checkPlayerViewOptLength.top_players_assists.length == 0 &&
-      checkPlayerViewOptLength.top_players_goals.length == 0 &&
-      checkPlayerViewOptLength.top_players_rating.length == 0 &&
-      checkPlayerViewOptLength.top_players_total_shots.length == 0) {
-      
-      noTopPlayersBool = true;
-      trueLengthOfArray = 0;
-      return;
-
-    } else {
+    }
+    // [ℹ] there is data to show 
+    else {
       noTopPlayersBool = false;
       trueLengthOfArray = checkPlayerViewOptLength[selectedPlayerArray].length;
 
@@ -149,7 +149,7 @@
 
   }
 
-  function closeAllDropdowns() {
+  function closeAllDropdowns () {
     toggleDropdown = false;
   }
 
@@ -257,7 +257,8 @@
 <div
   id='widget-outer'>
 
-  <!-- [ℹ] SEO-DATA-LOADED 
+  <!-- 
+  [ℹ] SEO-DATA-LOADED 
   -->
   {#if !loaded}
     <div 
@@ -272,7 +273,8 @@
     </div>
   {/if}
 
-  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  <!-- 
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
   {#if 
     noTopPlayersBool && 
