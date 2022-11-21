@@ -3,8 +3,8 @@ import { dev } from '$app/environment'
 import { error, json } from '@sveltejs/kit';
 
 import type { 
-  Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
-  Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
+  REDIS_CACHE_SINGLE_tournament_standings_data, 
+  REDIS_CACHE_SINGLE_tournament_standings_translation 
 } from '$lib/models/tournaments/standings/types';
 
 import redis from "$lib/redis/init"
@@ -39,12 +39,12 @@ export async function GET (req, res): Promise< any > {
 //     CACHING w/ REDIS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function getStandingsData (league_id: string): Promise < Cache_Single_Tournaments_League_Standings_Info_Data_Response | Record < string, never > > {
+async function getStandingsData (league_id: string): Promise < REDIS_CACHE_SINGLE_tournament_standings_data | Record < string, never > > {
   try {
     const cached: string = await redis.hget('tournament_standings_data', league_id);
 
     if (cached) {
-      const parsed: Cache_Single_Tournaments_League_Standings_Info_Data_Response = JSON.parse(cached);
+      const parsed: REDIS_CACHE_SINGLE_tournament_standings_data = JSON.parse(cached);
       return parsed;
     }
   } 
@@ -54,12 +54,12 @@ async function getStandingsData (league_id: string): Promise < Cache_Single_Tour
   }
 }
 
-async function getStandingsTranslation (lang: string): Promise < Cache_Single_Tournaments_League_Standings_Translation_Data_Response | Record < string, never > > {
+async function getStandingsTranslation (lang: string): Promise < REDIS_CACHE_SINGLE_tournament_standings_translation | Record < string, never > > {
   try {
     const cached: string = await redis.hget('tournament_standings_t', lang);
 
     if (cached) {
-      const parsed: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = JSON.parse(cached);
+      const parsed: REDIS_CACHE_SINGLE_tournament_standings_translation = JSON.parse(cached);
       return parsed;
     }
   } 
