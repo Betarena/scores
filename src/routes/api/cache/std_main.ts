@@ -4,6 +4,7 @@
  */
 import redis from '$lib/redis/init';
 
+// [ℹ] _main_
 export const navbar_cache_trans_addr = 'navbar_t';
 export const footer_cache_trans_addr = 'footer_t';
 export const cache_sitemap_urls_key = 'sitemap';
