@@ -244,7 +244,8 @@
     COMPONENT HTML 
 =================-->
 
-<!-- [ℹ] area-outside-for-close 
+<!-- 
+[ℹ] area-outside-for-close 
 -->
 {#if toggleCTA}
   <div id="background-area-close" on:click={() => closeAllDropdowns()} />
@@ -252,7 +253,8 @@
 
 <div>
 
-  <!-- [ℹ] SEO-DATA-LOADED 
+  <!-- 
+  [ℹ] SEO-DATA-LOADED 
   -->
   {#if !loaded}
     <div 
@@ -277,13 +279,15 @@
     </div>
   {/if}
 
-  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  <!-- 
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
   {#if 
     noStandingsBool &&
     seasonCheck &&
     !loaded}
-    <!-- [ℹ] title of the widget 
+    <!-- 
+    [ℹ] title of the widget 
     -->
     <h2
       class="s-20 m-b-10 w-500 color-black-2"
@@ -292,44 +296,61 @@
       {STANDINGS_T?.translations.standings}
     </h2>
 
-    <!-- [ℹ] no-widget-data-avaiable-placeholder container 
+    <!-- 
+    [ℹ] no-widget-data-avaiable-placeholder container 
     -->
     <div
       id='no-widget-box'
       class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-      <!-- [ℹ] no-visual-asset
+      <!-- 
+      [ℹ] no-visual-asset
       -->
       {#if $userBetarenaSettings.theme == 'Dark'}
         <img 
           src={no_visual_dark} 
           alt="no_visual_dark"
-          width="32px" height="32px"
+          width=32
+          height=32
           class='m-b-16'
         />
       {:else}
         <img 
           src={no_visual} 
           alt="no_visual"
-          width="32px" height="32px"
+          width=32
+          height=32
           class='m-b-16'
         />
       {/if}
       
-      <!-- [ℹ] container w/ text 
+      <!-- 
+      [ℹ] container w/ text 
       -->
       <div>
         <p 
-          class='s-14 m-b-8 w-500'
+          class='
+            s-14 
+            m-b-8 
+            w-500
+          '
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {STANDINGS_T.no_data_t.no_info} </p>
-        <p class='s-14 color-grey w-400'> {STANDINGS_T.no_data_t.no_info_desc} </p>
+        <p 
+          class='
+            s-14 
+            color-grey 
+            w-400
+          '> 
+          {STANDINGS_T.no_data_t.no_info_desc} 
+        </p>
       </div>
     </div>
   {/if}
 
-  <!-- [ℹ] MAIN WIDGET COMPONENT
+  <!-- 
+  [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if 
     !noStandingsBool && 
@@ -339,22 +360,31 @@
     seasonCheck &&
     !diasbleDev}
 
-    <!-- [ℹ] promise is pending 
+    <!-- 
+    [ℹ] promise is pending 
     -->
     {#await widgetInit()}
       <StandingsWidgetContentLoader />
-    <!-- [ℹ] promise was fulfilled
+    <!-- 
+    [ℹ] promise was fulfilled
     -->
     {:then data}
 
-        <!-- [ℹ] widget-component [DESKTOP] [TABLET]
+        <!-- 
+        [ℹ] widget-component [DESKTOP] [TABLET]
         -->
         {#if !mobileExclusive}
 
-          <!-- [ℹ] promise was fulfilled 
+          <!-- 
+          [ℹ] promise was fulfilled 
           -->
-          <h2 
-            class="s-20 m-b-10 w-500 color-black-2"
+          <h2
+            class="
+              s-20 
+              m-b-10 
+              w-500 
+              color-black-2
+            "
             style="margin-top: 0px;"
             class:color-white={$userBetarenaSettings.theme == 'Dark'}>
             {STANDINGS_T.translations.standings}
@@ -368,41 +398,66 @@
             -->
             <div
               id="standings-view-box"
-              class="row-space-start m-b-15">
+              class="
+                row-space-start 
+                m-b-15
+              ">
 
               <div
-                class="stand-view-opt-box cursor-pointer"
+                class="
+                  stand-view-opt-box 
+                  cursor-pointer
+                "
                 on:click={() => selectTableView('total')}
                 class:activeOpt={selectedOpt == 'total'}>
                 <p
-                  class="s-14 w-500 color-grey">
+                  class=" 
+                    s-14 
+                    w-500 
+                    color-grey
+                  ">
                   {STANDINGS_T.translations.total}
                 </p>
               </div>
 
               <div
-                class="stand-view-opt-box cursor-pointer"
+                class="
+                  stand-view-opt-box 
+                  cursor-pointer
+                "
                 on:click={() => selectTableView('home')}
                 class:activeOpt={selectedOpt == 'home'}>
                 <p
-                  class="s-14 w-500 color-grey">
+                  class="
+                    s-14 
+                    w-500 
+                    color-grey
+                  ">
                   {STANDINGS_T.translations.home}
                 </p>
               </div>
 
               <div
-                class="stand-view-opt-box cursor-pointer"
+                class="
+                  stand-view-opt-box 
+                  cursor-pointer
+                "
                 on:click={() => selectTableView('away')}
                 class:activeOpt={selectedOpt == 'away'}>
                 <p
-                  class="s-14 w-500 color-grey">
+                  class="
+                    s-14 
+                    w-500 
+                    color-grey
+                  ">
                   {STANDINGS_T.translations.away}
                 </p>
               </div>
 
             </div>
 
-            <!-- [STASHED] [ALTERNATIVE TABLE]
+            <!-- 
+            [ℹ] [STASHED] [V1] [ALTERNATIVE TABLE]
 
               <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
               - ->
@@ -518,7 +573,8 @@
             <table 
               class="standings_table">
 
-              <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
+              <!-- 
+              [ℹ] widget-top-row-table-standings [DESKTOP]
               -->
               <tr
                 class="row-head">
@@ -808,7 +864,8 @@
 
               </tr>
 
-              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              <!-- 
+              [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
               {#each STANDINGS_DATA.seasons as season}
                 {#if season.season_id === $sessionStore.selectedSeasonID}
@@ -824,11 +881,9 @@
                   -->
                   {:else}
                     {#each season.group_total as group}
-                      <tr>
-                        <td colspan="20" 
-                          style="
-                            padding: 16px 0px 0 0;
-                          ">
+                      <tr
+                        class="group-row-head">
+                        <td colspan="20">
                           <p
                             class="
                               w-500
@@ -850,7 +905,8 @@
 
             </table>
 
-            <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
+            <!-- 
+            [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
             <div
               id="standings-sportbook-details"
@@ -863,9 +919,13 @@
 
                   <div
                     id="betting-site-container"
-                    class="row-space-start m-r-16 cursor-pointer">
+                    class="
+                      row-space-start 
+                      m-r-16 
+                      cursor-pointer
+                    ">
 
-                    <a 
+                    <a
                       rel="nofollow"
                       aria-label="betting_site_logo_standings"
                       on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
@@ -880,7 +940,10 @@
                     </a>
 
                     <button 
-                      class="place-bet-btn btn-primary"
+                      class="
+                        place-bet-btn 
+                        btn-primary
+                      "
                       aria-label="toggleCTA"
                       on:click={() => toggleCTA = !toggleCTA}>
                       <p 
@@ -893,7 +956,7 @@
                   <!-- [ℹ] extra-info pop-up container
                   -->
                   {#if toggleCTA}
-                    <div 
+                    <div
                       class="extra-info" 
                       in:fade>
 
@@ -913,17 +976,20 @@
                         />
                       </a>
 
-                      <!--  [ℹ] extra-site info 
+                      <!--  
+                      [ℹ] extra-site info 
                       -->
-                      <div 
+                      <div
                         class="extra-info-container">
-                        <!--  [ℹ] text 
+                        <!--  
+                        [ℹ] text 
                         -->
                         <p 
                           class="large">
                           {data.bonus_description}
                         </p>
-                        <!--  [ℹ] button_cta 
+                        <!--  
+                        [ℹ] button_cta 
                         -->
                         <a 
                           rel="nofollow" 
@@ -932,7 +998,10 @@
                           href={data.register_link}
                           target="_blank">
                           <button
-                            class="btn-primary btn-cta"
+                            class="
+                              btn-primary 
+                              btn-cta
+                            "
                             aria-label="registerCTA"
                             style="width: 100% !important;">
                             <p 
@@ -941,7 +1010,8 @@
                             </p>
                           </button>
                         </a>
-                        <!--  [ℹ] extra-site info text 
+                        <!--  
+                        [ℹ] extra-site info text 
                         -->
                         <p 
                           class="small" 
@@ -961,11 +1031,13 @@
 
           </div>
 
-        <!-- [ℹ] widget-component [MOBILE]
+        <!-- 
+        [ℹ] widget-component [MOBILE]
         -->
         {:else}
 
-          <!-- [ℹ] promise was fulfilled 
+          <!-- 
+          [ℹ] promise was fulfilled 
           -->
           <h1 
             class="s-20 m-b-10 w-500 color-black-2"
@@ -1242,15 +1314,20 @@
                   -->
                   {:else}
                     {#each season.group_total as group}
-                      <p
-                        class="
-                          w-500
-                          color-black-2
-                          group-head-text
-                          text-center
-                        ">
-                        {group.group_name}
-                      </p>
+                      <tr
+                        class="group-row-head">
+                        <td colspan="20">
+                          <p
+                            class="
+                              w-500
+                              color-black-2
+                              group-head-text
+                              text-center
+                            ">
+                            {group.group_name}
+                          </p>
+                        </td>
+                      </tr>
                       {#each group.group_standings as team}
                         <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
                       {/each}
@@ -1374,7 +1451,8 @@
 
         {/if}
 
-    <!-- [ℹ] promise was rejected
+    <!-- 
+    [ℹ] promise was rejected
     -->
     {:catch error}
       {error}
@@ -1579,7 +1657,10 @@
     opacity: 0.2;
   }
 
-  p.group-head-text {
+  /* group-text head */
+  tr.group-row-head td {
+    padding: 16px 0px 0 0;
+  } tr.group-row-head td p.group-head-text {
     font-size: 16px;
   }
    
