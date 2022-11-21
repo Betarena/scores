@@ -80,62 +80,92 @@ export interface BETARENA_HASURA_scores_seo_block_homepage {
  * [ℹ] HASURA: scores_football_standings (&)
 */
 export interface BETARENA_HASURA_scores_football_standings {
-  data?: WelcomeDatum[];
-  id?:   number;
-  name?: string;
-  type?: string;
-} export interface WelcomeDatum {
-  stage_name?: string;
-  round_name?: number;
-  league_id?:  number;
-  round_id?:   number;
-  name?:       string;
-  season_id?:  number;
-  standings?:  Standings;
-  resource?:   string;
-  id?:         number;
-  type?:       string;
-  stage_id?:   number;
-} export interface Standings {
-  data?: StandingsDatum[];
-} export interface StandingsDatum {
-  status?:      null;
-  team_id?:     number;
-  points?:      number;
-  home?:        Away;
-  round_name?:  number;
-  team_name?:   string;
-  round_id?:    number;
-  away?:        Away;
-  result?:      null | string;
-  overall?:     Away;
-  group_name?:  null;
-  recent_form?: string;
-  total?:       Total;
-  group_id?:    null;
-  position?:    number;
-} export interface Away {
-  lost?:          number;
-  points?:        number;
-  won?:           number;
-  games_played?:  number;
-  goals_scored?:  number;
-  draw?:          number;
-  goals_against?: number;
-} export interface Total {
-  points?:          number;
-  goal_difference?: string;
+  league_id?: number;
+  data?:      StandingsHistDatum[];
+  name?:      string;
+  type?:      string;
+  season_id?: number;
+  multipart?: boolean;
 }
 
 /**
  * [ℹ] HASURA: scores_football_standings_history (&)
 */
 export interface BETARENA_HASURA_scores_football_standings_history {
-  id?:        number;
-  data?:      StandingsDatum[];
+  league_id?: number;
+  data?:      StandingsHistDatum[];
   name?:      string;
-  season_id?: number;
   type?:      string;
+  season_id?: number;
+  multipart?: boolean;
+} export interface StandingsHistDatum {
+  id?:         number;
+  name?:       string;
+  resource?:   string;
+  round_id?:   number;
+  stage_id?:   number;
+  league_id?:  number;
+  season_id?:  number;
+  standings?:  PurpleStandingsHist;
+  round_name?: number;
+  stage_name?: string;
+  type?:       string;
+} export interface PurpleStandingsHist {
+  data?: PurpleDatumHist[];
+} export interface PurpleDatumHist {
+  away?:        AwayHist;
+  home?:        AwayHist;
+  total?:       TotalHist;
+  points?:      number;
+  result?:      null | string;
+  status?:      null;
+  overall?:     AwayHist;
+  team_id?:     number;
+  group_id?:    number | null;
+  position?:    number;
+  round_id?:    number;
+  team_name?:   string;
+  group_name?:  null | string;
+  round_name?:  number;
+  recent_form?: string;
+  // [inner-group-stage]
+  id?:          number;
+  name?:        string;
+  resource?:    string;
+  stage_id?:    number;
+  league_id?:   number;
+  season_id?:   number;
+  standings?:   FluffyStandingsHist;
+  stage_name?:  string;
+} export interface AwayHist {
+  won?:           number;
+  draw?:          number;
+  lost?:          number;
+  points?:        number;
+  games_played?:  number;
+  goals_scored?:  number;
+  goals_against?: number;
+} export interface FluffyStandingsHist {
+  data?: FluffyDatum[];
+} export interface FluffyDatum {
+  away?:        AwayHist;
+  home?:        AwayHist;
+  total?:       TotalHist;
+  points?:      number;
+  result?:      null | string;
+  status?:      null;
+  overall?:     AwayHist;
+  team_id?:     number;
+  group_id?:    number;
+  position?:    number;
+  round_id?:    number;
+  team_name?:   string;
+  group_name?:  string;
+  round_name?:  number;
+  recent_form?: string;
+} export interface TotalHist {
+  points?:          number;
+  goal_difference?: string;
 }
 
 /**

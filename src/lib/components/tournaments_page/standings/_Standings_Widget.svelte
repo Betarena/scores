@@ -21,8 +21,8 @@
   } from "$lib/models/tournaments/league-info/types";
 
   import type { 
-    Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
-    Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
+    REDIS_CACHE_SINGLE_tournament_standings_data, 
+    REDIS_CACHE_SINGLE_tournament_standings_translation 
   } from "$lib/models/tournaments/standings/types";
 
   import StandingsWidgetContentLoader from "./_Standings_Widget_ContentLoader.svelte";
@@ -52,8 +52,8 @@
 
   let imageVar:               string = '--standings-info-bookmaker-bg-';
 
-	export let STANDINGS_T:     Cache_Single_Tournaments_League_Standings_Translation_Data_Response;
-	export let STANDINGS_DATA:  Cache_Single_Tournaments_League_Standings_Info_Data_Response;
+	export let STANDINGS_T:     REDIS_CACHE_SINGLE_tournament_standings_translation;
+	export let STANDINGS_DATA:  REDIS_CACHE_SINGLE_tournament_standings_data;
 
   if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `STANDINGS_T: ${STANDINGS_T}`)
   if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `dropdownSeasonSelect: ${dropdownSeasonSelect}`)
@@ -217,10 +217,19 @@
   let seasonCheck: boolean = false;
   $: {
     // [ℹ] check season exists / contains data
-    let seasonCheckLength = STANDINGS_DATA.seasons
+    let season = STANDINGS_DATA.seasons
       .find( ({ season_id }) => 
         season_id === $sessionStore.selectedSeasonID
-      )?.total?.length;
+      )
+    ;
+    let seasonCheckLength = 0;
+    if (season != undefined) {
+      seasonCheckLength = 
+        season.group == false
+          ? season?.total.length
+          : season?.group_total.length
+      ;
+    }
     noStandingsBool = 
       seasonCheckLength == 0 ||
       seasonCheckLength == undefined
@@ -250,9 +259,19 @@
       id="seo-widget-box">
       <h2>{STANDINGS_T.translations.standings}</h2>
       {#if STANDINGS_DATA?.seasons.length != 0}
-        {#each STANDINGS_DATA.seasons[0].total as team}
-          <p>{team.team_name}</p>
-        {/each}
+        {#if !STANDINGS_DATA.seasons[0].group}
+          {#each STANDINGS_DATA.seasons[0].total as team}
+            <p>{team.team_name}</p>
+          {/each}
+        {:else}
+          {#each STANDINGS_DATA.seasons[0].group_total as group}
+            <p>{group.group_name}</p>
+            {#each group.group_standings as team}
+              <p>{team.team_name}</p>
+            {/each}
+          {/each}
+        {/if}
+        
       {/if}
       
     </div>
@@ -779,7 +798,6 @@
                   {/if}
                 {/if}
 
-
                 <th>
                   <p
                     class="s-12 color-grey"
@@ -794,9 +812,39 @@
               -->
               {#each STANDINGS_DATA.seasons as season}
                 {#if season.season_id === $sessionStore.selectedSeasonID}
-                  {#each season[selectedOpt] as team}
-                    <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
-                  {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A REGUALR-TYPE
+                  -->
+                  {#if !season.group}
+                    {#each season[selectedOpt] as team}
+                      <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
+                    {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
+                  -->
+                  {:else}
+                    {#each season.group_total as group}
+                      <tr>
+                        <td colspan="20" 
+                          style="
+                            padding: 16px 0px 0 0;
+                          ">
+                          <p
+                            class="
+                              w-500
+                              color-black-2
+                              group-head-text
+                              text-center
+                            ">
+                            {group.group_name}
+                          </p>
+                        </td>
+                      </tr>
+                      {#each group.group_standings as team}
+                        <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
+                      {/each}
+                    {/each}
+                  {/if}
                 {/if}
               {/each}
 
@@ -1182,9 +1230,32 @@
               -->
               {#each STANDINGS_DATA.seasons as season}
                 {#if season.season_id === $sessionStore.selectedSeasonID}
-                  {#each season[selectedOpt] as team}
-                    <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
-                  {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A REGUALR-TYPE
+                  -->
+                  {#if !season.group}
+                    {#each season[selectedOpt] as team}
+                      <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
+                    {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
+                  -->
+                  {:else}
+                    {#each season.group_total as group}
+                      <p
+                        class="
+                          w-500
+                          color-black-2
+                          group-head-text
+                          text-center
+                        ">
+                        {group.group_name}
+                      </p>
+                      {#each group.group_standings as team}
+                        <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
+                      {/each}
+                    {/each}
+                  {/if}
                 {/if}
               {/each}
 
@@ -1506,6 +1577,10 @@
     padding: 6px;
   } div#mobile-table-box button.table-nav-btn:disabled {
     opacity: 0.2;
+  }
+
+  p.group-head-text {
+    font-size: 16px;
   }
    
 
