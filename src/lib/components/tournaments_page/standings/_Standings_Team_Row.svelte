@@ -10,7 +10,6 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
   import type { Standing_Team_Total_Away_Home } from "$lib/models/tournaments/standings/types";
-  import { session } from "$app/stores";
 
   export let TEAM_DATA:         Standing_Team_Total_Away_Home;
   export let TABLEMOBILEVIEW:   number = undefined;
@@ -71,7 +70,7 @@
 ==================== -->
 
 <!-- [STASHED] 
-<div 
+<div
   class="league-table-team-row"
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'} 
   in:fade>
@@ -212,7 +211,8 @@
 </div>
 -->
 
-<!-- [ℹ] ALTERNAITVE ROW APPROACH V.2
+<!-- 
+[ℹ] ALTERNAITVE ROW APPROACH [V.2]
 -->
 
 {#if viewportDesktop}
@@ -391,7 +391,8 @@
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'} 
       in:fade>
 
-      <!-- [ℹ] team main details box left
+      <!-- 
+      [ℹ] team main details box left
       -->
       <td>
         <div
@@ -423,10 +424,12 @@
         </div>
       </td>
 
-      <!-- [ℹ] team main further info box right
+      <!-- 
+      [ℹ] team main further info box right
       -->
 
-      <!-- [ℹ] tabler view 1
+      <!-- 
+      [ℹ] tabler view 1
       -->
       {#if TABLEMOBILEVIEW == 1}
 
@@ -483,7 +486,8 @@
 
       {/if}
 
-      <!-- [ℹ] tabler view 2
+      <!-- 
+      [ℹ] tabler view 2
       -->
       {#if TABLEMOBILEVIEW == 2}
         <td>
@@ -515,7 +519,8 @@
         </td>
       {/if}
 
-      <!-- [ℹ] tabler view 3
+      <!-- 
+      [ℹ] tabler view 3
       -->
       {#if TABLEMOBILEVIEW == 3}
         <td>
