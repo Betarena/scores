@@ -1,6 +1,9 @@
 /**
  * NOTE: This file contains all of the HASURA DB
  * NOTE: TypeScript Interfaces 
+ * NOTE: IMPORTANT 
+ * NOTE: This File is kept in-sync with that of the CACHE-WORKER-APP
+ * NOTE: which handles the data generation and QUERIES for CACHING
 */
 
 /**
