@@ -27,9 +27,9 @@
 
 	// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 	import type { fixture } from '$lib/store/vote_fixture';
-	import type { FixtureResponse } from '$lib/models/featured_match/interface-fixture';
-	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response } from '$lib/models/featured_match/response_models';
-  import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/featured_match/interface-fixture';
+	import type { FixtureResponse } from '$lib/models/home/featured_match/interface-fixture';
+	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response } from '$lib/models/home/featured_match/response_models';
+  import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/home/featured_match/interface-fixture';
 	import { get } from '$lib/api/utils'
   
 	// [ℹ] key component assets;

@@ -8,7 +8,7 @@ import type {
   PageLoad
 } from './$types';
 
-import type { REDIS_CACHE_SINGLE_fixtures_page_info_response, REDIS_CACHE_SINGLE_fixtures_seo_response } from '$lib/models/_main_/pages_and_seo/types';
+import type { REDIS_CACHE_SINGLE_fixtures_page_info_response, REDIS_CACHE_SINGLE_fixtures_seo_response, REDIS_CACHE_SINGLE_general_countries_translation, REDIS_CACHE_SINGLE_general_sport_translation } from '$lib/models/_main_/pages_and_seo/types';
 import type { REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation } from '$lib/models/fixtures/scoreboard/types';
 import type { REDIS_CACHE_SINGLE_lineups_data, REDIS_CACHE_SINGLE_lineups_translation } from '$lib/models/fixtures/lineups/types';
 import type { REDIS_CACHE_SINGLE_incidents_data, REDIS_CACHE_SINGLE_incidents_translation } from '$lib/models/fixtures/incidents/types';
@@ -16,6 +16,7 @@ import type { REDIS_CACHE_SINGLE_statistics_data, REDIS_CACHE_SINGLE_statistics_
 import type { REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation } from '$lib/models/fixtures/content/types';
 import type { REDIS_CACHE_SINGLE_about_data, REDIS_CACHE_SINGLE_about_translation } from '$lib/models/fixtures/about/types';
 import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
+import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({
@@ -57,8 +58,11 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  // [ℹ] extract number of fixture_id
+  const fixture_id = url.pathname.match(/\d+$/);
+
   const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=` + url.pathname + "&page=fixtures", 
+    `/api/cache/_main_/pages_and_seo?fixture_id=` + fixture_id + "&page=fixtures", 
     {
       method: 'GET'
     }
@@ -73,7 +77,7 @@ export async function load({
       ? undefined
       : response_fixtures_page_info?.data?.id.toString()
   const league_name = response_fixtures_page_info?.data?.league_name;
-  const country = response_fixtures_page_info?.data?.country;
+  const country_id = response_fixtures_page_info?.data?.country_id;
   const home_team_name = response_fixtures_page_info?.data?.home_team_name;
   const away_team_name = response_fixtures_page_info?.data?.away_team_name;
   const fixture_day = 
@@ -82,6 +86,27 @@ export async function load({
       : response_fixtures_page_info?.data?.fixture_day.replace('T00:00:00', '')
   const venue_name = response_fixtures_page_info?.data?.venue_name;
   const venue_city = response_fixtures_page_info?.data?.venue_city;
+
+  const response_country_translation: REDIS_CACHE_SINGLE_general_countries_translation = await fetch(
+    `/api/cache/_main_/pages_and_seo?country_id=` + country_id,
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  const country = response_country_translation?.translations[lang];
+
+  response_fixtures_page_info.data.country = country
+  response_fixtures_page_info.data.sport = 'football'
+
+  // const response_sport_translation: REDIS_CACHE_SINGLE_general_sport_translation = await fetch(
+  //   `/api/cache/_main_/pages_and_seo?sport=` + country_id,
+  //   {
+  //     method: 'GET'
+  //   }
+  // ).then((r) => r.json());
+
+  // const sport_typ = response_sport_translation[lang]
 
   response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{id}/g, id));
   response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{lang}/g, lang));
@@ -124,7 +149,7 @@ export async function load({
    * [ℹ] [GET] page widgets data
   */
 
-  const fixture_id = response_fixtures_page_info?.data?.id;
+  // const fixture_id = response_fixtures_page_info?.data?.id;
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(
@@ -283,6 +308,13 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  const response_votes_translation: REDIS_CACHE_SINGLE_votes_translation = await fetch(
+    `/api/cache/fixtures/votes?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -305,6 +337,7 @@ export async function load({
     && response_content_translation
     // && response_about // IMPORTANT can be "NULL"
     && response_about_translation
+    && response_votes_translation
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
@@ -321,7 +354,8 @@ export async function load({
       FIXTURE_CONTENT: response_content,
       FIXTURE_CONTENT_TRANSLATION: response_content_translation,
       FIXTURE_ABOUT: response_about,
-      FIXTURE_ABOUT_TRANSLATION: response_about_translation
+      FIXTURE_ABOUT_TRANSLATION: response_about_translation,
+      FIXTURE_VOTES_TRANSLATION: response_votes_translation
     }
   }
 

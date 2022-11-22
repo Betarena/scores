@@ -1,66 +1,35 @@
-import { dev } from '$app/environment'
+import { dev } from '$app/environment';
 import { error, json } from '@sveltejs/kit';
-import redis from "$lib/redis/init"
 
-import type { 
-  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
-  REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response 
-} from '$lib/models/tournaments/top_players/types';
+import {
+	get_target_hset_cache_data,
+	tour_top_play_cache_trans_addr,
+	tour_top_play_cache_data_addr
+} from '../../std_main';
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
-export async function GET (req, res): Promise < unknown > {
+/**
+ * @type {import('@sveltejs/kit').RequestHandler}
+ */
+export async function GET(req, res): Promise<unknown> {
+	const lang: string = req.url['searchParams'].get('lang');
+	const league_id: string = req.url['searchParams'].get('league_id');
 
-  const lang: string = req.url['searchParams'].get('lang');
-  const league_id: string = req.url['searchParams'].get('league_id');
+	if (lang) {
+		const response_cache = await get_target_hset_cache_data(tour_top_play_cache_trans_addr, lang);
+		if (response_cache) {
+			return json(response_cache);
+		}
+	}
 
-  if (lang) {
-    const response_cache = await getTopPlayersDataTranslation (lang)
-    if (response_cache) {
-      return json(response_cache)
-    }
-  }
+	if (league_id) {
+		const response_cache = await get_target_hset_cache_data(
+			tour_top_play_cache_data_addr,
+			league_id
+		);
+		if (response_cache) {
+			return json(response_cache);
+		}
+	}
 
-  if (league_id) {
-    const response_cache = await getTopPlayersData (league_id)
-    if (response_cache) {
-      return json(response_cache)
-    }
-  }
-
-  // [ℹ] should never happen;
-  return json(null)
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-async function getTopPlayersData (league_id: string): Promise < REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response | Record < string, never > > {
-  try {
-    const cached: string = await redis.hget('tournament_top_players_data', league_id);
-    if (cached) {
-      const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = JSON.parse(cached);
-      return parsed;
-    }
-  } 
-  catch (e) {
-    console.error("❌ uh-oh! tournament_standings_data cache error", e);
-    return
-  }
-}
-
-async function getTopPlayersDataTranslation (lang: string): Promise < REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response | Record < string, never > > {
-  try {
-    const cached: string = await redis.hget('tournament_top_player_t', lang);
-    if (cached) {
-      const parsed: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = JSON.parse(cached);
-      return parsed;
-    }
-  } 
-  catch (e) {
-    console.error("❌ uh-oh! tournament_standings_t cache error", e);
-    return
-  }
+	return json(null);
 }
