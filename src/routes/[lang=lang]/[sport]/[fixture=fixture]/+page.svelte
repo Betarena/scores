@@ -46,6 +46,8 @@
     REDIS_CACHE_SINGLE_about_data, 
     REDIS_CACHE_SINGLE_about_translation 
   } from '$lib/models/fixtures/about/types';
+  
+	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 
   import SvelteSeo from 'svelte-seo';
 	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
@@ -56,7 +58,6 @@
 	import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
 	import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
 	import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
-	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 
   let PAGE_SEO:                       REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                   REDIS_CACHE_SINGLE_fixtures_page_info_response

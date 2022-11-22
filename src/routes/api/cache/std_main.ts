@@ -13,6 +13,8 @@ export const cache_tournaments_seo_key = 'tournaments_seo';
 export const cache_tournaments_info_key = 'tournaments_page_info';
 export const cache_fixtures_seo_key = 'fixtures_seo';
 export const cache_fixtures_info_key = 'fixtures_page_info';
+export const cache_sport_translations = "general_sport_translations"
+export const cache_country_translations = "general_country_translations"
 // [ℹ] home-page
 export const best_goalscorer_cache_data_addr = 'best_goalscorer_geo';
 export const best_goalscorer_cache_trans_addr = 'best_goalscorer_t';
