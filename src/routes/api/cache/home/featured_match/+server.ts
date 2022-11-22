@@ -41,7 +41,7 @@ export async function GET(req, res): Promise<unknown> {
 	if (lang) {
 		const response_cache = await get_target_hset_cache_data(
 			featured_match_cache_trans_addr,
-			geoPos
+			lang
 		);
 		if (response_cache) {
 			return json(response_cache);
