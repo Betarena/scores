@@ -183,7 +183,7 @@
 
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_widget_league_info") {
-      gtag('event', "betting_site_logo_widget_league_info", { 
+      window.gtag('event', "betting_site_logo_widget_league_info", { 
         'event_category': "widget_league_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -193,7 +193,7 @@
     }
 
     if (action === "beting_cta_link_widget_league_info") {
-      gtag('event', "beting_cta_link_widget_league_info", { 
+      window.gtag('event', "beting_cta_link_widget_league_info", { 
         'event_category': "widget_league_info", 
         'event_label': "beting_cta_link_logo", 
         'value': "click"

@@ -122,7 +122,7 @@
 
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_standings") {
-      gtag('event', "betting_site_logo_standings", { 
+      window.gtag('event', "betting_site_logo_standings", { 
         'event_category': "widget_standings_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -132,7 +132,7 @@
     }
 
     if (action === "cta_button_standings") {
-      gtag('event', "cta_button_standings", { 
+      window.gtag('event', "cta_button_standings", { 
         'event_category': "widget_standings_info", 
         'event_label': "beting_cta_link_logo", 
         'value': "click"

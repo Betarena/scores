@@ -1028,7 +1028,7 @@
 
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_football_fixtures_odds_tournament") {
-      gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
+      window.gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
         'event_category': "widget_fixture_odds_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -1037,7 +1037,7 @@
       return
     }
     if (action === "tournaments_football_fixtures_odds") {
-      gtag('event', "tournaments_football_fixtures_odds", { 
+      window.gtag('event', "tournaments_football_fixtures_odds", { 
         'event_category': "widget_fixture_odds_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
