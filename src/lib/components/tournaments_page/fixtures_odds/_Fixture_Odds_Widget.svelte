@@ -1198,6 +1198,7 @@
   <!-- {#if !loaded && !noWidgetData} -->
     <div 
       id="seo-widget-box">
+      <h2>{FIXTURES_ODDS_T?.matches}</h2>
       {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
         {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
           <p>{item?.teams?.away?.name}</p>

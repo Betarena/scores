@@ -149,6 +149,7 @@
   <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
+      <h2>{LEAGUE_INFO_SEO_DATA?.data?.translation?.league_info}</h2>
       {@html LEAGUE_INFO_SEO_DATA?.data?.seo_content}
     </div>
   <!-- {/if} -->
