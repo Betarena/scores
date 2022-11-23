@@ -892,7 +892,8 @@
                               group-head-text
                               text-center
                             ">
-                            {group.group_name}
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
                           </p>
                         </td>
                       </tr>
@@ -1336,7 +1337,8 @@
                               group-head-text
                               text-center
                             ">
-                            {group.group_name}
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
                           </p>
                         </td>
                       </tr>
