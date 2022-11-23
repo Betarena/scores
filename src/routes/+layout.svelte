@@ -36,7 +36,6 @@
   import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';
   import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
-  // import GoogleAnalytics from '$lib/components/_GoogleAnalytics.svelte';
 
   /*
     [v2] 
@@ -50,7 +49,6 @@
     let SplashScreen;
     let PlatformAlert;
     let EmailSubscribe;
-    let GoogleAnalytics;
 
     onMount(async () => {
       Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
@@ -59,7 +57,6 @@
       SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
       PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
       EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
-      GoogleAnalytics = (await import('$lib/components/_GoogleAnalytics.svelte')).default;
     });
   */
   
@@ -74,8 +71,6 @@
   $: HEADER_TRANSLATION_DATA = $page.data.HEADER_TRANSLATION_DATA;
   $: FOOTER_TRANSLATION_DATA = $page.data.FOOTER_TRANSLATION_DATA;
 
-  let ga_measurment_id = "UA-60160331-9"  // ... GoogleAnalytics ID
-    
   // [ℹ] SENTRY CODE-SNIPPET; [PRODUCTION-ONLY]
   onMount(async() => {
     if (!dev) {
@@ -176,13 +171,6 @@
 <!-- ===================
   COMPONENT HTML
 =================== -->
-
-{#if !dev}
-  <!-- <GoogleAnalytics 
-    id={ga_measurment_id}
-  /> -->
-  <!-- <svelte:component this={GoogleAnalytics} id={ga_measurment_id} /> -->
-{/if}
 
 {#if offlineMode}
   <svelte:component this={OfflineAlert} />
