@@ -11,6 +11,7 @@
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   
+  import { logDevGroup } from "$lib/utils/debug";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
   import { get } from "$lib/api/utils";
@@ -22,6 +23,7 @@
   } from "$lib/models/tournaments/league-info/types";
 
   import LeagueInfoWidgetContentLoader from "./_LeagueInfo_Widget_ContentLoader.svelte";
+  import World from "./assets/_World.svelte";
 
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
@@ -29,7 +31,6 @@
   import team_w from './assets/team-white.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
-import { logDevGroup } from "$lib/utils/debug";
 
   let loaded: boolean = false;                  // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;                 // [ℹ] refresh value speed of the WIDGET;
@@ -423,13 +424,22 @@ import { logDevGroup } from "$lib/utils/debug";
                   -->
                   <div
                     class='row-space-start m-r-16'>
-                    <img 
-                      id="country-img"
-                      src={LEAGUE_INFO_SEO_DATA.data.country_logo}
-                      alt={LEAGUE_INFO_SEO_DATA.data.country}
-                      width="24px" height="24px"
-                      class="m-r-10"
-                    />
+                    {#if LEAGUE_INFO_SEO_DATA.data.country == 'World'}
+                      <div
+                        style='width: auto;'
+                        class="row-space-start m-r-10">
+                        <World />
+                      </div>
+                    {:else}
+                      <img 
+                        id="country-img"
+                        src={LEAGUE_INFO_SEO_DATA.data.country_logo}
+                        alt={LEAGUE_INFO_SEO_DATA.data.country}
+                        width=24 
+                        height=24
+                        class="m-r-10"
+                      />
+                    {/if}
                     <p
                       class="s-16 color-grey w-500 m-0">
                       {LEAGUE_INFO_SEO_DATA.data.country}
@@ -773,12 +783,22 @@ import { logDevGroup } from "$lib/utils/debug";
                   -->
                   <div
                     class='row-space-start m-r-16'>
-                    <img 
-                      id="country-img"
-                      src={LEAGUE_INFO_SEO_DATA.data.country_logo}
-                      alt={LEAGUE_INFO_SEO_DATA.data.country}
-                      class="m-r-10"
-                    />
+                    {#if LEAGUE_INFO_SEO_DATA.data.country == 'World'}
+                      <div
+                        style='width: auto;'
+                        class="row-space-start m-r-10">
+                        <World />
+                      </div>
+                    {:else}
+                      <img 
+                        id="country-img"
+                        src={LEAGUE_INFO_SEO_DATA.data.country_logo}
+                        alt={LEAGUE_INFO_SEO_DATA.data.country}
+                        width=24 
+                        height=24
+                        class="m-r-10"
+                      />
+                    {/if}
                     <p
                       class="s-16 color-grey w-500 m-0">
                       {LEAGUE_INFO_SEO_DATA.data.country}
@@ -1110,12 +1130,22 @@ import { logDevGroup } from "$lib/utils/debug";
                 -->
                 <div
                   class='row-space-start m-r-16'>
-                  <img 
-                    id="country-img"
-                    src={LEAGUE_INFO_SEO_DATA.data.country_logo}
-                    alt={LEAGUE_INFO_SEO_DATA.data.country}
-                    class="m-r-10"
-                  />
+                  {#if LEAGUE_INFO_SEO_DATA.data.country == 'World'}
+                    <div
+                      style='width: auto;'
+                      class="row-space-start m-r-10">
+                      <World />
+                    </div>
+                  {:else}
+                    <img 
+                      id="country-img"
+                      src={LEAGUE_INFO_SEO_DATA.data.country_logo}
+                      alt={LEAGUE_INFO_SEO_DATA.data.country}
+                      width=24 
+                      height=24
+                      class="m-r-10"
+                    />
+                  {/if}
                   <p
                     class="s-12 color-grey w-500 m-0">
                     {LEAGUE_INFO_SEO_DATA.data.country}
