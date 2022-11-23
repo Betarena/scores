@@ -32,23 +32,28 @@ export async function load({
 
   /**
    * [ℹ] IMPORTANT
-   * [ℹ] Ensure URL is Valid 
+   * [ℹ] checking URL is valid & viewable
   */
 
-  const response_valid_url = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname, {
-    method: 'GET'
-  })
-  .then((r) => r.json());
+  const response_valid_url = await fetch(
+    `/api/cache/_main_/pages_and_seo?url=` + url.pathname, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
+  // [ℹ] exit
   if (!response_valid_url) {
     throw error(404, `Uh-oh! This page does not exist!`);
   }
 
+  // [ℹ] extract critical data from URL
   const urlLang: string = params.lang == undefined ? 'en' : params.lang
+  const fixture_id = url.pathname.match(/\d+$/);
 
   /**
-   * [ℹ] Loading of (this) page 
-   * [ℹ] [fixtures] SEO-READY data; 
+   * [ℹ] load (THIS) fixture page 
+   * [ℹ] seo ready data
   */
 
   const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(
@@ -57,9 +62,6 @@ export async function load({
       method: 'GET'
     }
   ).then((r) => r.json());
-
-  // [ℹ] extract number of fixture_id
-  const fixture_id = url.pathname.match(/\d+$/);
 
   const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
     `/api/cache/_main_/pages_and_seo?fixture_id=` + fixture_id + "&page=fixtures", 
@@ -94,7 +96,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  const country = response_country_translation?.translations[lang];
+  const country = response_country_translation?.translations[urlLang];
 
   response_fixtures_page_info.data.country = country
   response_fixtures_page_info.data.sport = 'football'
