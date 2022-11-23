@@ -1743,7 +1743,7 @@
     tr.row-divider td {
       padding-left: 0;
       padding-right: 0;
-  }
+    }
 
   }
 
