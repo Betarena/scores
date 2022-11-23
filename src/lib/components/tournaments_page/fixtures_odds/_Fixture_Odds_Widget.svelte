@@ -1195,7 +1195,7 @@
   <!-- 
   [ℹ] SEO DATA
   -->
-  {#if !loaded && !noWidgetData}
+  <!-- {#if !loaded && !noWidgetData} -->
     <div 
       id="seo-widget-box">
       {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
@@ -1229,7 +1229,7 @@
         {/each}
       {/if}
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA

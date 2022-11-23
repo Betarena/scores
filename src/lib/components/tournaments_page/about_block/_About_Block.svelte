@@ -146,12 +146,12 @@
 
   <!-- [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       {@html LEAGUE_INFO_SEO_DATA?.data?.seo_content}
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->

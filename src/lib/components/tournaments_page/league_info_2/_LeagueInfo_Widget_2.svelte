@@ -160,13 +160,13 @@
 
   <!-- [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <h1>{LEAGUE_INFO_SEO_DATA.data.name}</h1>
       <p>{LEAGUE_INFO_SEO_DATA.data.country}</p>
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->

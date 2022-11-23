@@ -256,7 +256,7 @@
   <!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <h2>{STANDINGS_T.translations.standings}</h2>
@@ -277,7 +277,7 @@
       {/if}
       
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
