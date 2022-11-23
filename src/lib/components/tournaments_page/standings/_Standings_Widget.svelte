@@ -884,6 +884,7 @@
                       <tr
                         class="group-row-head">
                         <td colspan="20">
+                          <div class="table-divider" />
                           <p
                             class="
                               w-500
@@ -899,6 +900,12 @@
                         <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
                       {/each}
                     {/each}
+                    <tr
+                      class="row-divider">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                      </td>
+                    </tr>
                   {/if}
                 {/if}
               {/each}
@@ -1140,6 +1147,9 @@
 
             </div>
 
+            <!-- 
+            [ℹ] STANDINGS TABLE
+            -->
             <table 
               class="standings_table">
 
@@ -1298,7 +1308,8 @@
                 </tr>
               {/if}
 
-              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              <!-- 
+              [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
               {#each STANDINGS_DATA.seasons as season}
                 {#if season.season_id === $sessionStore.selectedSeasonID}
@@ -1317,6 +1328,7 @@
                       <tr
                         class="group-row-head">
                         <td colspan="20">
+                          <div class="table-divider" />
                           <p
                             class="
                               w-500
@@ -1332,13 +1344,20 @@
                         <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
                       {/each}
                     {/each}
+                    <tr
+                      class="row-divider">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                      </td>
+                    </tr>
                   {/if}
                 {/if}
               {/each}
 
             </table>
 
-            <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
+            <!-- 
+            [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
             <div
               id="standings-sportbook-details"
@@ -1660,8 +1679,25 @@
   /* group-text head */
   tr.group-row-head td {
     padding: 16px 0px 0 0;
+  } tr.group-row-head td {
+    padding-left: 20px;
+    padding-right: 20px;
   } tr.group-row-head td p.group-head-text {
     font-size: 16px;
+  } table.standings_table tr:nth-of-type(2) td div.table-divider {
+    display: none !important;
+  } table.standings_table tr.group-row-head td div.table-divider,
+    table.standings_table tr.row-divider td div.table-divider {
+    height: 1px;
+    width: 100%;
+    background: #E6E6E6;
+  } table.standings_table tr.group-row-head td div.table-divider {
+    margin-bottom: 16px;
+  } table.standings_table tr.row-divider td div.table-divider {
+    margin-top: 24px;
+  } tr.row-divider td {
+    padding-left: 20px;
+    padding-right: 20px;
   }
    
 
@@ -1698,6 +1734,16 @@
       width: auto;
       text-align: center;
     }
+
+    /* group dividers style [update] */
+    tr.group-row-head td {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    tr.row-divider td {
+      padding-left: 0;
+      padding-right: 0;
+  }
 
   }
 
@@ -1737,6 +1783,13 @@
   .dark-background-1 table.standings_table .row-head .tooltip-extra-info {
     background: #616161;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark-background-1 table.standings_table tr.group-row-head td div.table-divider,
+  .dark-background-1 table.standings_table tr.row-divider td div.table-divider {
+    height: 1px;
+    width: 100%;
+    background: #616161;
   }
 
 </style>
