@@ -227,7 +227,7 @@
       seasonCheckLength = 
         season.group == false
           ? season?.total.length
-          : season?.group_total.length
+          : season?.group_standings.length
       ;
     }
     noStandingsBool = 
@@ -266,9 +266,9 @@
             <p>{team.team_name}</p>
           {/each}
         {:else}
-          {#each STANDINGS_DATA.seasons[0].group_total as group}
+          {#each STANDINGS_DATA.seasons[0].group_standings as group}
             <p>{group.group_name}</p>
-            {#each group.group_standings as team}
+            {#each group.total as team}
               <p>{team.team_name}</p>
             {/each}
           {/each}
@@ -880,7 +880,7 @@
                   [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
                   -->
                   {:else}
-                    {#each season.group_total as group}
+                    {#each season.group_standings as group}
                       <tr
                         class="group-row-head">
                         <td colspan="20">
@@ -897,7 +897,7 @@
                           </p>
                         </td>
                       </tr>
-                      {#each group.group_standings as team}
+                      {#each group[selectedOpt] as team}
                         <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
                       {/each}
                     {/each}
@@ -1325,7 +1325,7 @@
                   [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
                   -->
                   {:else}
-                    {#each season.group_total as group}
+                    {#each season.group_standings as group}
                       <tr
                         class="group-row-head">
                         <td colspan="20">
@@ -1342,7 +1342,7 @@
                           </p>
                         </td>
                       </tr>
-                      {#each group.group_standings as team}
+                      {#each group[selectedOpt] as team}
                         <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
                       {/each}
                     {/each}

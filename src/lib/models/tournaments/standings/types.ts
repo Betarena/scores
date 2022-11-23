@@ -79,11 +79,13 @@ export interface Tournament_Standing_Season {
   away?:         Standing_Team_Total_Away_Home[]
   group?:        boolean
   // group-based-standings types
-  group_total?:  Groups_Standings[]
+  group_standings?: Groups_Standings[]
 } export interface Groups_Standings {
-  group_name?:       string
-  group_round?:      number
-  group_standings?:  Standing_Team_Total_Away_Home[]
+  group_name?:   string
+  group_round?:  number
+  total?:        Standing_Team_Total_Away_Home[]
+  home?:         Standing_Team_Total_Away_Home[]
+  away?:         Standing_Team_Total_Away_Home[]
 } export interface Standing_Team_Total_Away_Home {
   team_logo:     string          // >? based on history (constant)
   team_name:     string          // >? based on history (constant)
