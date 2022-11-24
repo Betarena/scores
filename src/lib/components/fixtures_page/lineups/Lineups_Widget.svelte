@@ -35,7 +35,6 @@
     EventsDatum 
   } from "$lib/models/hasura";
 
-	// import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 	import LineupsLoader from "./Lineups_Loader.svelte";
 	import LineupVectorMobile from "./Lineup_Vector_Mobile.svelte";
 	import LineupVectorMobileAway from "./Lineup_Vector_Mobile_Away.svelte";
@@ -626,7 +625,8 @@
 =================-->
 
 <div
-  id='widget-outer'>
+  id='widget-outer'
+  class:display_none={no_widget_data && !show_placeholder}>
 
   <!-- 
   [ℹ] SEO-DATA-LOADED 
@@ -672,8 +672,8 @@
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
   {#if
-    no_widget_data && 
-    loaded
+    no_widget_data  
+    && loaded
     && show_placeholder}
 
     <h2
@@ -683,7 +683,8 @@
       {FIXTURE_LINEUPS_TRANSLATION?.title}
     </h2>
 
-    <!-- [ℹ] no-widget-data-avaiable-placeholder container 
+    <!-- 
+    [ℹ] no-widget-data-avaiable-placeholder container 
     -->
     <div
       id='no-widget-box'
@@ -731,10 +732,10 @@
   [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if
-    !no_widget_data &&
-    !refresh &&
-    browser && 
-    $userBetarenaSettings.country_bookmaker}
+    !no_widget_data
+    && !refresh
+    && browser
+    && $userBetarenaSettings.country_bookmaker}
 
     <!-- <LineupsLoader /> -->
 
@@ -1264,8 +1265,9 @@
 <style>
 
   /* [ℹ] OTHER STYLE / CSS */
-
-  /* EMPTY */
+  .display_none {
+    display: none;
+  }
 
   /* [ℹ] SEO WIDGET DATA */
   
