@@ -52,6 +52,10 @@
 
   let imageVar:               string = '--standings-info-bookmaker-bg-';
 
+  let only_total_view_league_ids = [
+    732 // [ℹ] World Cup
+  ]
+
 	export let STANDINGS_T:     REDIS_CACHE_SINGLE_tournament_standings_translation;
 	export let STANDINGS_DATA:  REDIS_CACHE_SINGLE_tournament_standings_data;
 
@@ -122,7 +126,7 @@
 
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_standings") {
-      gtag('event', "betting_site_logo_standings", { 
+      window.gtag('event', "betting_site_logo_standings", { 
         'event_category': "widget_standings_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -132,7 +136,7 @@
     }
 
     if (action === "cta_button_standings") {
-      gtag('event', "cta_button_standings", { 
+      window.gtag('event', "cta_button_standings", { 
         'event_category': "widget_standings_info", 
         'event_label': "beting_cta_link_logo", 
         'value': "click"
@@ -227,7 +231,7 @@
       seasonCheckLength = 
         season.group == false
           ? season?.total.length
-          : season?.group_total.length
+          : season?.group_standings.length
       ;
     }
     noStandingsBool = 
@@ -256,7 +260,7 @@
   <!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <h2>{STANDINGS_T.translations.standings}</h2>
@@ -266,9 +270,9 @@
             <p>{team.team_name}</p>
           {/each}
         {:else}
-          {#each STANDINGS_DATA.seasons[0].group_total as group}
+          {#each STANDINGS_DATA.seasons[0].group_standings as group}
             <p>{group.group_name}</p>
-            {#each group.group_standings as team}
+            {#each group.total as team}
               <p>{team.team_name}</p>
             {/each}
           {/each}
@@ -277,7 +281,7 @@
       {/if}
       
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
@@ -409,7 +413,8 @@
                   cursor-pointer
                 "
                 on:click={() => selectTableView('total')}
-                class:activeOpt={selectedOpt == 'total'}>
+                class:activeOpt={selectedOpt == 'total'}
+                class:total_view_only={only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}>
                 <p
                   class=" 
                     s-14 
@@ -420,39 +425,44 @@
                 </p>
               </div>
 
-              <div
-                class="
-                  stand-view-opt-box 
-                  cursor-pointer
-                "
-                on:click={() => selectTableView('home')}
-                class:activeOpt={selectedOpt == 'home'}>
-                <p
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
+                <div
                   class="
-                    s-14 
-                    w-500 
-                    color-grey
-                  ">
-                  {STANDINGS_T.translations.home}
-                </p>
-              </div>
+                    stand-view-opt-box 
+                    cursor-pointer
+                  "
+                  on:click={() => selectTableView('home')}
+                  class:activeOpt={selectedOpt == 'home'}>
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    ">
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
 
-              <div
-                class="
-                  stand-view-opt-box 
-                  cursor-pointer
-                "
-                on:click={() => selectTableView('away')}
-                class:activeOpt={selectedOpt == 'away'}>
-                <p
+                <div
                   class="
-                    s-14 
-                    w-500 
-                    color-grey
-                  ">
-                  {STANDINGS_T.translations.away}
-                </p>
-              </div>
+                    stand-view-opt-box 
+                    cursor-pointer
+                  "
+                  on:click={() => selectTableView('away')}
+                  class:activeOpt={selectedOpt == 'away'}>
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    ">
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+              {/if}
 
             </div>
 
@@ -880,10 +890,11 @@
                   [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
                   -->
                   {:else}
-                    {#each season.group_total as group}
+                    {#each season.group_standings as group}
                       <tr
                         class="group-row-head">
                         <td colspan="20">
+                          <div class="table-divider" />
                           <p
                             class="
                               w-500
@@ -891,14 +902,21 @@
                               group-head-text
                               text-center
                             ">
-                            {group.group_name}
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
                           </p>
                         </td>
                       </tr>
-                      {#each group.group_standings as team}
+                      {#each group[selectedOpt] as team}
                         <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
                       {/each}
                     {/each}
+                    <tr
+                      class="row-divider">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                      </td>
+                    </tr>
                   {/if}
                 {/if}
               {/each}
@@ -1054,37 +1072,55 @@
             -->
             <div
               id="standings-view-box"
-              class="row-space-start m-b-20">
+              class="
+                row-space-start 
+                m-b-20
+              ">
 
               <div
-                class="stand-view-opt-box cursor-pointer"
+                class="
+                  stand-view-opt-box 
+                  cursor-pointer
+                "
                 on:click={() => selectTableView('total')}
-                class:activeOpt={selectedOpt == 'total'}>
+                class:activeOpt={selectedOpt == 'total'}
+                class:total_view_only={only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}>
                 <p
-                  class="s-14 w-500 color-grey">
+                  class="
+                    s-14 
+                    w-500 
+                    color-grey
+                  ">
                   {STANDINGS_T.translations.total}
                 </p>
               </div>
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('home')}
-                class:activeOpt={selectedOpt == 'home'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.home}
-                </p>
-              </div>
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('away')}
-                class:activeOpt={selectedOpt == 'away'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.away}
-                </p>
-              </div>
+                <div
+                  class="stand-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('home')}
+                  class:activeOpt={selectedOpt == 'home'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
+
+                <div
+                  class="stand-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('away')}
+                  class:activeOpt={selectedOpt == 'away'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+
+              {/if}
 
             </div>
 
@@ -1140,6 +1176,9 @@
 
             </div>
 
+            <!-- 
+            [ℹ] STANDINGS TABLE
+            -->
             <table 
               class="standings_table">
 
@@ -1298,7 +1337,8 @@
                 </tr>
               {/if}
 
-              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              <!-- 
+              [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
               {#each STANDINGS_DATA.seasons as season}
                 {#if season.season_id === $sessionStore.selectedSeasonID}
@@ -1313,10 +1353,11 @@
                   [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
                   -->
                   {:else}
-                    {#each season.group_total as group}
+                    {#each season.group_standings as group}
                       <tr
                         class="group-row-head">
                         <td colspan="20">
+                          <div class="table-divider" />
                           <p
                             class="
                               w-500
@@ -1324,21 +1365,29 @@
                               group-head-text
                               text-center
                             ">
-                            {group.group_name}
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
                           </p>
                         </td>
                       </tr>
-                      {#each group.group_standings as team}
+                      {#each group[selectedOpt] as team}
                         <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
                       {/each}
                     {/each}
+                    <tr
+                      class="row-divider">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                      </td>
+                    </tr>
                   {/if}
                 {/if}
               {/each}
 
             </table>
 
-            <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
+            <!-- 
+            [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
             <div
               id="standings-sportbook-details"
@@ -1530,6 +1579,8 @@
     border-radius: 8px 0px 0px 8px;
   } div.stand-view-opt-box:last-child {
     border-radius: 0px 8px 8px 0px;
+  } div.stand-view-opt-box.total_view_only {
+    border-radius: 8px !important;
   }
 
   /* old - table approach */
@@ -1660,8 +1711,25 @@
   /* group-text head */
   tr.group-row-head td {
     padding: 16px 0px 0 0;
+  } tr.group-row-head td {
+    padding-left: 20px;
+    padding-right: 20px;
   } tr.group-row-head td p.group-head-text {
     font-size: 16px;
+  } table.standings_table tr:nth-of-type(2) td div.table-divider {
+    display: none !important;
+  } table.standings_table tr.group-row-head td div.table-divider,
+    table.standings_table tr.row-divider td div.table-divider {
+    height: 1px;
+    width: 100%;
+    background: #E6E6E6;
+  } table.standings_table tr.group-row-head td div.table-divider {
+    margin-bottom: 16px;
+  } table.standings_table tr.row-divider td div.table-divider {
+    margin-top: 24px;
+  } tr.row-divider td {
+    padding-left: 20px;
+    padding-right: 20px;
   }
    
 
@@ -1697,6 +1765,16 @@
     } div.stand-view-opt-box {
       width: auto;
       text-align: center;
+    }
+
+    /* group dividers style [update] */
+    tr.group-row-head td {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    tr.row-divider td {
+      padding-left: 0;
+      padding-right: 0;
     }
 
   }
@@ -1737,6 +1815,13 @@
   .dark-background-1 table.standings_table .row-head .tooltip-extra-info {
     background: #616161;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark-background-1 table.standings_table tr.group-row-head td div.table-divider,
+  .dark-background-1 table.standings_table tr.row-divider td div.table-divider {
+    height: 1px;
+    width: 100%;
+    background: #616161;
   }
 
 </style>

@@ -32,23 +32,28 @@ export async function load({
 
   /**
    * [ℹ] IMPORTANT
-   * [ℹ] Ensure URL is Valid 
+   * [ℹ] checking URL is valid & viewable
   */
 
-  const response_valid_url = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname, {
-    method: 'GET'
-  })
-  .then((r) => r.json());
+  const response_valid_url = await fetch(
+    `/api/cache/_main_/pages_and_seo?url=` + url.pathname, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
+  // [ℹ] exit
   if (!response_valid_url) {
     throw error(404, `Uh-oh! This page does not exist!`);
   }
 
+  // [ℹ] extract critical data from URL
   const urlLang: string = params.lang == undefined ? 'en' : params.lang
+  const fixture_id = url.pathname.match(/\d+$/);
 
   /**
-   * [ℹ] Loading of (this) page 
-   * [ℹ] [fixtures] SEO-READY data; 
+   * [ℹ] load (THIS) fixture page 
+   * [ℹ] seo ready data
   */
 
   const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(
@@ -57,9 +62,6 @@ export async function load({
       method: 'GET'
     }
   ).then((r) => r.json());
-
-  // [ℹ] extract number of fixture_id
-  const fixture_id = url.pathname.match(/\d+$/);
 
   const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
     `/api/cache/_main_/pages_and_seo?fixture_id=` + fixture_id + "&page=fixtures", 
@@ -94,7 +96,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  const country = response_country_translation?.translations[lang];
+  const country = response_country_translation?.translations[urlLang];
 
   response_fixtures_page_info.data.country = country
   response_fixtures_page_info.data.sport = 'football'
@@ -150,6 +152,7 @@ export async function load({
   */
 
   // const fixture_id = response_fixtures_page_info?.data?.id;
+  const use_hasura = true
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(
@@ -159,7 +162,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  if (response_scoreboard == undefined) {
+  if (response_scoreboard == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_scoreboard = await fetch(
       `/api/hasura/fixtures/scoreboard?fixture_id=` + fixture_id, 
@@ -184,7 +187,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  if (response_lineups == undefined) {
+  if (response_lineups == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_lineups = await fetch(
       `/api/hasura/fixtures/lineups?fixture_id=` + fixture_id, 
@@ -209,7 +212,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  if (response_incidents == undefined) {
+  if (response_incidents == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_incidents = await fetch(
       `/api/hasura/fixtures/incidents?fixture_id=` + fixture_id, 
@@ -241,7 +244,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  if (response_statistics == undefined) {
+  if (response_statistics == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_statistics = await fetch(
       `/api/hasura/fixtures/statistics?fixture_id=` + fixture_id, 
@@ -266,7 +269,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  if (response_content == undefined) {
+  if (response_content == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_content = await fetch(
       `/api/hasura/fixtures/content?fixture_id=` + fixture_id + `&lang=` + urlLang, 
@@ -291,7 +294,7 @@ export async function load({
     }
   ).then((r) => r.json());
 
-  if (response_about == undefined) {
+  if (response_about == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_about = await fetch(
       `/api/hasura/fixtures/about?fixture_id=` + fixture_id + `&lang=` + urlLang, 

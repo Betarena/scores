@@ -48,8 +48,9 @@
   // NOTE: lazy-loaded component data
   export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
   export let FIXTURE_VOTES_TRANSLATION: REDIS_CACHE_SINGLE_votes_translation
-	let FIXTURE_VOTES_DATA:  Fixture_Votes;
-  let SPORTBOOK_INFO:      Cache_Single_SportbookDetails_Data_Response;
+
+	let FIXTURE_VOTES_DATA:     Fixture_Votes;
+  let SPORTBOOK_INFO:         Cache_Single_SportbookDetails_Data_Response;
   let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
 
   let loaded:            boolean = false;     // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
@@ -58,7 +59,7 @@
   let no_widget_data:    any = false;         // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
   let lazy_load_data_check: boolean = false;
 
-  let show_placeholder:  boolean = true;      // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
+  let show_placeholder:  boolean = false;      // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
 
 	let user_stake_amount: number = 50.0;       // [ℹ] user const stake amount (input)
 	let total_votes:       number = undefined;  // [ℹ] fixture-total votes
@@ -87,8 +88,7 @@
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // [ℹ] MAIN
-  // [ℹ] Not In Use
+  // [ℹ] MAIN WIDGET METHOD
   async function widget_init (
   ): Promise < void > {
 
@@ -119,27 +119,45 @@
     ;
     loaded = true;
 
-    // [🐞]
-    if (dev) logDevGroup (`${dev_console_tag}`, `response: ${response}`)
+    const responses_invalid = 
+      response == undefined
+      || response_main_sportbook == undefined
+      || response_all_spotbooks == undefined
+    ;
 
-    // [ℹ] data validation check
-		if (response == undefined) {
+    // [ℹ] data validation check [#1]
+		if (responses_invalid) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
       no_widget_data = true;
 			return;
 		}
-    // [ℹ] otherwise, no data
-    // [ℹ] can be length [] = 0
     else {
       no_widget_data = false;
     }
 
+    // ~~~~~~~~~~~~~~~~
     // [ℹ] data pre-processing
 
     const HIST_FIXTURE_DATA = response.historic_fixtures[0]
 
-    console.log("HIST_FIXTURE_DATA", HIST_FIXTURE_DATA)
+    // [ℹ] data validation check [#2]
+    const validation_check =
+      response.widget_featured_match_votes.length == 0
+      && HIST_FIXTURE_DATA.status_j == "FT"
+    ;
+
+    no_widget_data =
+      validation_check == true
+        ? true
+        : false
+    ;
+    if (no_widget_data) {
+      return
+    }
+
+    // [🐞]
+    if (dev) console.log("HIST_FIXTURE_DATA", HIST_FIXTURE_DATA)
 
     SPORTBOOK_INFO = response_main_sportbook;
     SPORTBOOK_DETAILS_LIST = response_all_spotbooks;
@@ -315,16 +333,18 @@
     action: string
   ) {
     if (action === "football_fixtures_voting") {
-      gtag('event', "football_fixtures_voting", { 
-        'event_category': "football_fixtures_voting", 
-        'event_label': "click_betting_site_logo", 
-        'value': "click"
+      window.gtag(
+        'event', 
+        "football_fixtures_voting", 
+        { 
+          'event_category': "football_fixtures_voting", 
+          'event_label': "click_betting_site_logo", 
+          'value': "click"
         }
       );
       return
     }
   }
-
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
@@ -542,7 +562,8 @@
 =================-->
 
 <div
-  id='widget-outer'>
+  id='widget-outer'
+  class:display_none={no_widget_data && !show_placeholder}>
 
   <!-- 
   [ℹ] SEO-DATA-LOADED 
@@ -689,7 +710,7 @@
               "
               class:active={fixture_data_vote_obj.fixture_vote == '1'}
               disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
-              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA.match_votes.vote_win_local.toString())}>
+              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home.toString())}>
                 <p
                   class="
                     w-500 
@@ -781,7 +802,7 @@
               "
               class:active={fixture_data_vote_obj.fixture_vote == 'X'}
               disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
-              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA.match_votes.vote_draw_x.toString())}>
+              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw.toString())}>
                 <p 
                   class="
                     w-500 
@@ -876,7 +897,7 @@
                 "
                 class:active={fixture_data_vote_obj.fixture_vote == '2'}
                 disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
-                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA.match_votes.vote_win_visitor.toString())}>
+                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away.toString())}>
                 <p 
                   class="
                     w-500 
@@ -1259,7 +1280,9 @@
 
   /* [ℹ] OTHER STYLE / CSS */
 
-  /* EMPTY */
+  .display_none {
+    display: none;
+  }
 
   /* [ℹ] SEO WIDGET DATA */
   
@@ -1465,6 +1488,8 @@
 			/* max-width: 160px; */
     } div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn {
       margin-top: 27px;
+    } div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn:hover {
+		  background-color: #F77C42;
     }
 
   }

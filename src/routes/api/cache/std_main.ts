@@ -101,7 +101,10 @@ export async function get_target_set_cache_data(key: string, id: string): Promis
 export async function get_target_string_cache_data(key: string): Promise<any> {
 	try {
 		const cached: string = await redis.get(key);
-		return cached;
+    if (cached) {
+      const parsed: any = JSON.parse(cached);
+      return parsed;
+    }
 	} catch (e) {
 		console.error(`❌ uh-oh! ${key} cache error`, e);
 		return;

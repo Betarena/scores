@@ -4,7 +4,6 @@
 
 <script lang="ts">
 
-  // [ℹ] svelte-imports;
   import { fade } from "svelte/transition";
   import { afterUpdate, onDestroy, onMount } from "svelte";
   import { page } from "$app/stores";
@@ -14,10 +13,12 @@
   import { logDevGroup } from "$lib/utils/debug";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
+	import { get } from "$lib/api/utils";
 
   import type { 
     REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
-    REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response 
+    REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response, 
+	  Tournament_Season_Top_Player
   } from "$lib/models/tournaments/top_players/types";
 
   import TopPlayersWidgetContentLoader from "./_Top_Players_Widget_ContentLoader.svelte";
@@ -42,6 +43,7 @@
   let limitViewRow:             number;                         // [ℹ] holds the actual, `total` limit of the list of featured sites
   let staticViewRow:            number;                         // [ℹ] holds the `initial` number of featured sites to be displayed
   let trueLengthOfArray:        number;
+  let lazyLoadingSeasonFixture: boolean = false;
 
   let diasbleDev:               boolean = false;
   let devConsoleTag:            string = "TOP_PLAYER";
@@ -104,17 +106,41 @@
   // [🐛] debug 
   if (dev && diasbleDev) logDevGroup ("top_players [DEV]", `trueLengthOfArray ${trueLengthOfArray}`)
 
-  function selectPlayerView (opt: string) {
+  async function selectPlayerView (opt: string) {
     dropdownPlayerViewSelect = opt.toLowerCase().replace(/\s/g, '_')
     selectedPlayerArray = playerArrayConst + dropdownPlayerViewSelect
     showMore = false;
     // limitViewRow = 10;
     
     let checkPlayerViewOptLength = TOP_PLAYERS_DATA.seasons
-      .find( ({ season_id }) => season_id === $sessionStore.selectedSeasonID)
+      .find( ({ season_id }) => 
+        season_id === $sessionStore.selectedSeasonID
+      )
+    ;
 
-    // TODO: direct Hasura DB data of TOP-PLAYERS EXTRACT for Target Season
-    // TODO: create endpoint accordingly
+    if (checkPlayerViewOptLength == undefined) {
+      lazyLoadingSeasonFixture = true;
+      // TODO: direct Hasura DB data of TOP-PLAYERS EXTRACT for Target Season
+      // TODO: create endpoint accordingly
+      const response: Tournament_Season_Top_Player = 
+        await get(
+          `/api/hasura/tournaments/top_players?seasonId=`+$sessionStore.selectedSeasonID
+        )
+      ;
+      if (response == undefined) {
+        noTopPlayersBool = true;
+        trueLengthOfArray = 0;
+        lazyLoadingSeasonFixture = false;
+        return;
+      }
+      else {
+        TOP_PLAYERS_DATA.seasons
+        .push(response)
+        TOP_PLAYERS_DATA = TOP_PLAYERS_DATA
+        checkPlayerViewOptLength = response
+        lazyLoadingSeasonFixture = false;
+      }
+    }
 
     // [ℹ] validation of NO-WIDGET-DATA
     if (checkPlayerViewOptLength == undefined
@@ -260,7 +286,7 @@
   <!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <h2>{TOP_PLAYERS_T?.top_players}</h2>
@@ -271,7 +297,7 @@
       {/if}
       
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
@@ -326,7 +352,8 @@
     </div>
   {/if}
 
-  <!-- [ℹ] MAIN WIDGET COMPONENT
+  <!-- 
+  [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if 
     !noTopPlayersBool &&
@@ -335,210 +362,212 @@
     $userBetarenaSettings.country_bookmaker && 
     !diasbleDev}
 
-    <!-- [ℹ] promise is pending 
+    <!--
+    [ℹ] promise is pending 
     -->
     {#await widgetInit()}
       <TopPlayersWidgetContentLoader />
-    <!-- [ℹ] promise was fulfilled
+    <!-- 
+    [ℹ] promise was fulfilled
     -->
     {:then data}
 
-      <!-- [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
-      -->
+      {#if lazyLoadingSeasonFixture}
+        <TopPlayersWidgetContentLoader />
+      {:else}
+        <h2 
+          class="s-20 m-b-10 w-500 color-black-2"
+          style="margin-top: 0px;"
+          class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+          {TOP_PLAYERS_T?.top_players}
+        </h2>
 
-      <!-- [ℹ] promise was fulfilled 
-      -->
-      <h2 
-        class="s-20 m-b-10 w-500 color-black-2"
-        style="margin-top: 0px;"
-        class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-        {TOP_PLAYERS_T?.top_players}
-      </h2>
-
-      <div
-        id="top-players-widget-container"
-        class:widget-no-data-height={trueLengthOfArray == 0}
-        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
-        <!-- [ℹ] dropdown leagues select box 
-        -->
         <div
-          id="dropdown-top-players-container"
-          on:click={() => toggleDropdown = !toggleDropdown}>
+          id="top-players-widget-container"
+          class:widget-no-data-height={trueLengthOfArray == 0}
+          class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-          <!-- [ℹ] main seleced 
+          <!-- [ℹ] dropdown leagues select box 
           -->
           <div
-            id="dropdown-box-select"
-            class="row-space-out cursor-pointer">
-            <p 
-              class="s-14 w-500 color-black-2">
-              {TOP_PLAYERS_T[dropdownPlayerViewSelect]}
-            </p>
-            {#if !toggleDropdown}
-              <img 
-                src={arrow_down} 
-                alt=""
-                width="20px" height="20px"/>
-            {:else}
-              <img 
-                src={arrow_up} 
-                alt=""
-                width="20px" height="20px"/>
-            {/if}
-          </div>
+            id="dropdown-top-players-container"
+            on:click={() => toggleDropdown = !toggleDropdown}>
 
-          <!-- [ℹ] show main TOP PLAYERS VIEWS 
-          -->
-          {#if toggleDropdown}
+            <!-- [ℹ] main seleced 
+            -->
             <div
-              id='more-top-leagues-outer'>
+              id="dropdown-box-select"
+              class="row-space-out cursor-pointer">
+              <p 
+                class="s-14 w-500 color-black-2">
+                {TOP_PLAYERS_T[dropdownPlayerViewSelect]}
+              </p>
+              {#if !toggleDropdown}
+                <img 
+                  src={arrow_down} 
+                  alt=""
+                  width="20px" height="20px"/>
+              {:else}
+                <img 
+                  src={arrow_up} 
+                  alt=""
+                  width="20px" height="20px"/>
+              {/if}
+            </div>
+
+            <!-- [ℹ] show main TOP PLAYERS VIEWS 
+            -->
+            {#if toggleDropdown}
               <div
-                id='more-top-leagues-list-container'>
-                <!-- [ℹ] for-loop-each-population 
-                -->
-                {#each TOP_PLAYERS_T.pl_view_opt as optView}
-                  <div
-                    class="row-space-out top-league-container"
-                    on:click={() => selectPlayerView(optView.toLowerCase())}>
-                    <!-- [ℹ] row-data;
-                    -->
+                id='more-top-leagues-outer'>
+                <div
+                  id='more-top-leagues-list-container'>
+                  <!-- [ℹ] for-loop-each-population 
+                  -->
+                  {#each TOP_PLAYERS_T.pl_view_opt as optView}
                     <div
-                      class='row-space-start cursor-pointer'>
+                      class="row-space-out top-league-container"
+                      on:click={() => selectPlayerView(optView.toLowerCase())}>
+                      <!-- [ℹ] row-data;
+                      -->
+                      <div
+                        class='row-space-start cursor-pointer'>
+                        <!-- [ℹ] vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
+                        -->
+                        <p 
+                          class='s-14 w-500 color-black-2'
+                          class:color-primary={dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}>
+                          {TOP_PLAYERS_T[optView.toLowerCase().replace(/\s/g, '_')]}
+                        </p>
+                      </div>
                       <!-- [ℹ] vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
                       -->
-                      <p 
-                        class='s-14 w-500 color-black-2'
-                        class:color-primary={dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}>
-                        {TOP_PLAYERS_T[optView.toLowerCase().replace(/\s/g, '_')]}
-                      </p>
+                      {#if dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}
+                        <img 
+                          src={check_league}
+                          alt=""
+                          width="20px" height="20px"/>
+                      {/if}
                     </div>
-                    <!-- [ℹ] vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
-                    -->
-                    {#if dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}
-                      <img 
-                        src={check_league}
-                        alt=""
-                        width="20px" height="20px"/>
-                    {/if}
-                  </div>
-                {/each}
+                  {/each}
 
+                </div>
               </div>
-            </div>
-          {/if}
-        </div>
-
-        <!-- [ℹ] widget-brakdown-columns-section 
-        -->
-        <div
-          id='widget-title-row'
-          class="row-space-out"
-          style="width: auto;">
-
-          <div
-            class="row-space-start">
-            <p 
-              class="w-400 small color-grey m-r-20">
-              #
-            </p>
-            <p
-              class="w-400 small color-grey">
-              {TOP_PLAYERS_T.player}
-            </p>
+            {/if}
           </div>
 
-          <div
-            class="row-space-end">
-            <p 
-              class="w-400 small color-grey">
-              {TOP_PLAYERS_T[dropdownPlayerViewSelect]}
-            </p>
-          </div>
-
-        </div>
-
-        <!-- [ℹ] no-seasons-data-check
-        -->
-        {#if trueLengthOfArray != 0}
-
-          <!-- [ℹ] rows
-          -->
-          {#each TOP_PLAYERS_DATA.seasons as season}
-            {#if season.season_id === $sessionStore.selectedSeasonID}
-              {#each season[selectedPlayerArray].slice(0, limitViewRow) as data, i}
-                <TopPlayerRow 
-                  pos={i+1}
-                  optView={dropdownPlayerViewSelect}
-                  data={data}
-                  translations={TOP_PLAYERS_T} />
-              {/each}
-            {/if}
-          {/each}
-
-        {:else}
-
-          <!-- [ℹ] placeholder
+          <!-- [ℹ] widget-brakdown-columns-section 
           -->
           <div
-            class="column-space-center"
-            style="margin-top: 280px;">
+            id='widget-title-row'
+            class="row-space-out"
+            style="width: auto;">
 
-            <!-- [ℹ] no-visual-asset
-            -->
-            {#if $userBetarenaSettings.theme == 'Dark'}
-              <img 
-                src={no_visual_dark} 
-                alt="no_visual_dark"
-                width="32px" height="32px"
-                class='m-b-16'
-              />
-            {:else}
-              <img 
-                src={no_visual} 
-                alt="no_visual"
-                width="32px" height="32px"
-                class='m-b-16'
-              />
-            {/if}
-
-            <!-- [ℹ] container w/ text 
-            -->
-            <div>
+            <div
+              class="row-space-start">
               <p 
-                class='s-14 w-500'
-                class:color-white={$userBetarenaSettings.theme == 'Dark'}>
-                {TOP_PLAYERS_T.no_data_t.no_info} 
+                class="w-400 small color-grey m-r-20">
+                #
+              </p>
+              <p
+                class="w-400 small color-grey">
+                {TOP_PLAYERS_T.player}
               </p>
             </div>
+
+            <div
+              class="row-space-end">
+              <p 
+                class="w-400 small color-grey">
+                {TOP_PLAYERS_T[dropdownPlayerViewSelect]}
+              </p>
+            </div>
+
           </div>
 
-        {/if}
+          <!-- [ℹ] no-seasons-data-check
+          -->
+          {#if trueLengthOfArray != 0}
 
-        <!-- [ℹ] show-more / show-less
-        -->
-        {#if displayShowMore && trueLengthOfArray != 0}
-          <div>
+            <!-- [ℹ] rows
+            -->
+            {#each TOP_PLAYERS_DATA.seasons as season}
+              {#if season.season_id === $sessionStore.selectedSeasonID}
+                {#each season[selectedPlayerArray].slice(0, limitViewRow) as data, i}
+                  <TopPlayerRow 
+                    pos={i+1}
+                    optView={dropdownPlayerViewSelect}
+                    data={data}
+                    translations={TOP_PLAYERS_T} />
+                {/each}
+              {/if}
+            {/each}
+
+          {:else}
+
+            <!-- [ℹ] placeholder
+            -->
+            <div
+              class="column-space-center"
+              style="margin-top: 280px;">
+
+              <!-- [ℹ] no-visual-asset
+              -->
+              {#if $userBetarenaSettings.theme == 'Dark'}
+                <img 
+                  src={no_visual_dark} 
+                  alt="no_visual_dark"
+                  width="32px" height="32px"
+                  class='m-b-16'
+                />
+              {:else}
+                <img 
+                  src={no_visual} 
+                  alt="no_visual"
+                  width="32px" height="32px"
+                  class='m-b-16'
+                />
+              {/if}
+
+              <!-- [ℹ] container w/ text 
+              -->
+              <div>
+                <p 
+                  class='s-14 w-500'
+                  class:color-white={$userBetarenaSettings.theme == 'Dark'}>
+                  {TOP_PLAYERS_T.no_data_t.no_info} 
+                </p>
+              </div>
+            </div>
+
+          {/if}
+
+          <!-- [ℹ] show-more / show-less
+          -->
+          {#if displayShowMore && trueLengthOfArray != 0}
+            <div>
+              <p 
+                id="show-more-box" 
+                on:click={() => toggleFullList ()}>
+                {#if !showMore}
+                  {TOP_PLAYERS_T.show_more_less[1]}
+                {:else}
+                  {TOP_PLAYERS_T.show_more_less[0]}
+                {/if}
+              </p>
+            </div>
+          {:else if trueLengthOfArray != 0}
             <p 
               id="show-more-box" 
-              on:click={() => toggleFullList ()}>
-              {#if !showMore}
-                {TOP_PLAYERS_T.show_more_less[1]}
-              {:else}
-                {TOP_PLAYERS_T.show_more_less[0]}
-              {/if}
-            </p>
-          </div>
-        {:else if trueLengthOfArray != 0}
-          <p 
-            id="show-more-box" 
-            style="padding: 5px; box-shadow: none;" 
-          />
-        {/if}
-        
-      </div>
+              style="padding: 5px; box-shadow: none;" 
+            />
+          {/if}
+          
+        </div>
+      {/if}
 
-    <!-- [ℹ] promise was rejected
+    <!-- 
+    [ℹ] promise was rejected
     -->
     {:catch error}
       <!-- {error} -->

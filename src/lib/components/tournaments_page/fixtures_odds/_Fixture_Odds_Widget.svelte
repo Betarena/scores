@@ -1028,7 +1028,7 @@
 
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_football_fixtures_odds_tournament") {
-      gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
+      window.gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
         'event_category': "widget_fixture_odds_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -1037,7 +1037,7 @@
       return
     }
     if (action === "tournaments_football_fixtures_odds") {
-      gtag('event', "tournaments_football_fixtures_odds", { 
+      window.gtag('event', "tournaments_football_fixtures_odds", { 
         'event_category': "widget_fixture_odds_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -1195,9 +1195,10 @@
   <!-- 
   [ℹ] SEO DATA
   -->
-  {#if !loaded && !noWidgetData}
+  <!-- {#if !loaded && !noWidgetData} -->
     <div 
       id="seo-widget-box">
+      <h2>{FIXTURES_ODDS_T?.matches}</h2>
       {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
         {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
           <p>{item?.teams?.away?.name}</p>
@@ -1229,7 +1230,7 @@
         {/each}
       {/if}
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA

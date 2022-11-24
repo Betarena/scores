@@ -158,21 +158,24 @@
 <div
   id='widget-outer'>
 
-  <!-- [ℹ] SEO-DATA-LOADED 
+  <!-- 
+  [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <h1>{LEAGUE_INFO_SEO_DATA.data.name}</h1>
+      <h2>{LEAGUE_INFO_SEO_DATA?.data?.translation?.league_info}</h2>
       <p>{LEAGUE_INFO_SEO_DATA.data.country}</p>
     </div>
-  {/if}
+  <!-- {/if} -->
 
-  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  <!-- 
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if 
-    noWidgetData && 
-    !loaded}
+  {#if
+    noWidgetData 
+    && !loaded}
 
     <!-- [ℹ] title of the widget 
     -->
@@ -223,14 +226,15 @@
     </div>
   {/if}
 
-  <!-- [ℹ] MAIN WIDGET COMPONENT
+  <!-- 
+  [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if 
-    !noWidgetData &&
-    !refresh &&
-    browser && 
-    $userBetarenaSettings.country_bookmaker && 
-    !diasbleDev}
+  {#if
+    !noWidgetData 
+    && !refresh
+    && browser 
+    && $userBetarenaSettings.country_bookmaker 
+    && !diasbleDev}
 
     <!-- [ℹ] promise is pending 
     -->
@@ -239,9 +243,6 @@
     <!-- [ℹ] promise was fulfilled
     -->
     {:then data}
-
-      <!-- [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
-      -->
 
       <!-- [ℹ] promise was fulfilled 
       -->
