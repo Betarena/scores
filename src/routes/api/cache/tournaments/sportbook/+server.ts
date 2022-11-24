@@ -1,72 +1,39 @@
-import { dev } from '$app/environment'
+import { dev } from '$app/environment';
 import { error, json } from '@sveltejs/kit';
 
-import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+import {
+	get_target_hset_cache_data,
+	sportbook_details_all,
+	sportbook_details
+} from '../../std_main';
 
-import redis from "$lib/redis/init"
+/**
+ * @type {import('@sveltejs/kit').RequestHandler}
+ */
+export async function GET(req, res): Promise<any> {
+	const geoPos: string = req.url['searchParams'].get('geoPos');
+	const all: string = req.url['searchParams'].get('all');
 
-/** 
- * @type {import('@sveltejs/kit').RequestHandler} 
-*/
-export async function GET (req, res): Promise< any > {
+	if (all && geoPos) {
+		let response_cache = await get_target_hset_cache_data(sportbook_details_all, geoPos);
+		if (response_cache) {
+			return json(response_cache);
+		} else {
+			response_cache = await get_target_hset_cache_data(sportbook_details_all, 'en');
+			return json(response_cache);
+		}
+	}
 
-  const geoPos: string = req.url['searchParams'].get('geoPos');
-  const all: string = req.url['searchParams'].get('all');
+	if (!all) {
+		let response_cache = await get_target_hset_cache_data(sportbook_details, geoPos);
+		if (response_cache) {
+			return json(response_cache);
+		} else {
+			response_cache = await get_target_hset_cache_data(sportbook_details, 'en');
+			return json(response_cache);
+		}
+	}
 
-  if (all && geoPos) {
-    let response_cache = await getCacheAll(geoPos)
-    if (response_cache) {
-      return json(response_cache)
-    }
-    else {
-      response_cache = await getCacheAll("en")
-      return json(response_cache)
-    }
-  }
-
-  if (!all) {
-    let response_cache = await getCache(geoPos)
-    if (response_cache) {
-      return json(response_cache)
-    }
-    else {
-      response_cache = await getCache("en")
-      return json(response_cache)
-    }
-  }
-
-  // [ℹ] should never happen;
-  return json(null)
-}
-
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//     CACHING w/ REDIS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-async function getCache(geoPos: string): Promise < Cache_Single_SportbookDetails_Data_Response | Record < string, never > > {
-  try {
-    const cached: string = await redis.hget('sportbook_details', geoPos);
-    if (cached) {
-      const parsed: Cache_Single_SportbookDetails_Data_Response = JSON.parse(cached);
-      return parsed;
-    }
-  } 
-  catch (e) {
-    console.error("❌ uh-oh! sportbook_details cache error", e);
-    return
-  }
-}
-
-async function getCacheAll(geoPos: string): Promise < Cache_Single_SportbookDetails_Data_Response[] | Record < string, never > > {
-  try {
-    const cached: string = await redis.hget('sportbook_details_all', geoPos);
-    if (cached) {
-      const parsed: Cache_Single_SportbookDetails_Data_Response[] = JSON.parse(cached);
-      return parsed;
-    }
-  } 
-  catch (e) {
-    console.error("❌ uh-oh! sportbook_details_all cache error", e);
-    return
-  }
+	// [ℹ] should never happen;
+	return json(null);
 }

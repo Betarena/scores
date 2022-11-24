@@ -39,23 +39,33 @@ export interface REDIS_CACHE_SINGLE_fixtures_seo_response extends BETARENA_HASUR
 }
 
 export interface REDIS_CACHE_SINGLE_fixtures_page_info_response {
-  url?:            string
-  lang?:           string
+  league_id?:      string
   data?:           Fixtures_Page_Data
   alternate_data?: Urls
 } export interface Fixtures_Page_Data {
-  sport?:           string    // (breadcrumbs & URL)
-  country?:         string    // (breadcrumbs) = "league": { "data": { "country_id": 6783} = scores_football_countries = scores_general_translations = countries 
-  league_name?:     string    // (breadcrumbs)
-  // status?: string          // (Definition if the fixture is visible or not)
-  // sport: string            // historic_fixtures / sport
-  widgets?:         string[]  // (The widgets that will be loaded on this fixtures section) = scores_widgets_list
-  home_team_name?:  string    // historic_fixtures / home_team_name
-  away_team_name?:  string    // historic_fixtures / away_team_name
+  sport_typ?:       string;   // (breadcrumbs & URL) [translations]
+  country_id?:      number;   // (breadcrumbs) = "league": { "data": { "country_id": 6783} = scores_football_countries = scores_general_translations = countries 
+  sport?:           string;
+  country?:         string;
+  league_name?:     string;             // (breadcrumbs)
+  // status?: string                   // (Definition if the fixture is visible or not)
+  // sport: string                     // historic_fixtures / sport
+  widgets?:         string[]           // (The widgets that will be loaded on this fixtures section) = scores_widgets_list
+  home_team_name?:  string             // historic_fixtures / home_team_name
+  away_team_name?:  string             // historic_fixtures / away_team_name
   id?:              number    // historic_fixtures / id
   fixture_day?:     string    // historic_fixtures / fixture_day
   venue_name?:      string    // historic_fixtures / "venue": {"data": { "name": "Stadiumi Liri Ballabani"}
   venue_city?:      string    // = historic_fixtures / "venue": {"data": { "city": "Burreli"}
+}
+
+export interface REDIS_CACHE_SINGLE_general_countries_translation {
+  country_id?: number
+  translations?: { [key: string]: string }
+}
+
+export interface REDIS_CACHE_SINGLE_general_sport_translation {
+  [key: string]: string
 }
 
 /**

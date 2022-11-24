@@ -728,6 +728,8 @@
             ? null
             : new Date(target_season.rounds[i-1].s_date)
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with user date matching an on-going fixtures-week
         if (
           (s_date <= date && e_date >= date) ||
           (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) ||
@@ -737,9 +739,21 @@
           break
         }
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with a look at future upcoming fixtures
         else if (
           past_e_date !== null && 
           (past_e_date < date && s_date >= date)) {
+          target_round = target_season.rounds[i]
+          break
+        }
+
+        // [ℹ] case for LEAGUE not yet started,
+        // [ℹ] with a look at future upcoming fixtures
+        else if (
+          past_e_date === null
+          && s_date >= date
+        ) {
           target_round = target_season.rounds[i]
           break
         }
@@ -780,24 +794,39 @@
             ? null
             : new Date(target_season.weeks[i-1].s_date)
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with user date matching an on-going fixtures-week
         if (
-          (s_date <= date && e_date >= date) ||
-          (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) ||
-          (e_date.getDate() == date.getDate() && e_date.getMonth() == date.getMonth() && e_date.getFullYear() == date.getFullYear())
+          (s_date <= date && e_date >= date) 
+          || (s_date.getDate() == date.getDate() && s_date.getMonth() == date.getMonth() && s_date.getFullYear() == date.getFullYear()) 
+          || (e_date.getDate() == date.getDate() && e_date.getMonth() == date.getMonth() && e_date.getFullYear() == date.getFullYear())
           ) {
           target_week = target_season.weeks[i]
           break
         }
 
+        // [ℹ] case for LEAGUE on-going,
+        // [ℹ] with a look at future upcoming fixtures
         else if (
-          past_e_date !== null && 
-          (past_e_date < date && s_date >= date)) {
+          past_e_date !== null 
+          && (past_e_date < date && s_date >= date)
+        ) {
+          target_week = target_season.weeks[i]
+          break
+        }
+
+        // [ℹ] case for LEAGUE not yet started,
+        // [ℹ] with a look at future upcoming fixtures
+        else if (
+          past_e_date === null
+          && s_date >= date
+        ) {
           target_week = target_season.weeks[i]
           break
         }
 
       }
-      
+
       // [ℹ] situation validation check
       // [ℹ] past-season (user-date > (GT) past season end)
       // [ℹ] select last week of past-season as target_week
@@ -999,7 +1028,7 @@
 
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_football_fixtures_odds_tournament") {
-      gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
+      window.gtag('event', "betting_site_logo_football_fixtures_odds_tournament", { 
         'event_category': "widget_fixture_odds_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -1008,7 +1037,7 @@
       return
     }
     if (action === "tournaments_football_fixtures_odds") {
-      gtag('event', "tournaments_football_fixtures_odds", { 
+      window.gtag('event', "tournaments_football_fixtures_odds", { 
         'event_category': "widget_fixture_odds_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -1166,9 +1195,10 @@
   <!-- 
   [ℹ] SEO DATA
   -->
-  {#if !loaded && !noWidgetData}
+  <!-- {#if !loaded && !noWidgetData} -->
     <div 
       id="seo-widget-box">
+      <h2>{FIXTURES_ODDS_T?.matches}</h2>
       {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
         {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
           <p>{item?.teams?.away?.name}</p>
@@ -1200,7 +1230,7 @@
         {/each}
       {/if}
     </div>
-  {/if}
+  <!-- {/if} -->
 
   <!-- 
   [ℹ] NO WIDGET DATA

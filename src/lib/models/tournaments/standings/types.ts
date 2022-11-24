@@ -9,7 +9,7 @@ import type {
   BETARENA_HASURA_scores_team_statistics_history, 
   BETARENA_HASURA_scores_widget_standings_translations,
   WidgetsNoDataAvailable, 
-} from "$lib/models/hasura"
+} from "../../../../lib/models/hasura.js"
 
 /**
  * ==========================================
@@ -36,8 +36,8 @@ export interface LeagueSeason {
 
 export interface BETARENA_HASURA_tournament_standings_query {
   scores_football_leagues:                  BETARENA_HASURA_scores_football_leagues[]
-  scores_football_standings:                BETARENA_HASURA_scores_football_standings[]    
-  scores_football_standings_history:        BETARENA_HASURA_scores_football_standings_history[]
+  dev_scores_football_standings:            BETARENA_HASURA_scores_football_standings[]    
+  dev_scores_football_standings_history:    BETARENA_HASURA_scores_football_standings_history[]
 
   scores_football_teams:                    BETARENA_HASURA_scores_football_teams[]
   scores_team_statistics:                   BETARENA_HASURA_scores_team_statistics[]
@@ -55,11 +55,12 @@ export interface BETARENA_HASURA_tournament_standings_query {
 */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface Cache_Single_Tournaments_League_Standings_Translation_Data_Response extends BETARENA_HASURA_scores_widget_standings_translations { 
+export interface REDIS_CACHE_SINGLE_tournament_standings_translation 
+  extends BETARENA_HASURA_scores_widget_standings_translations { 
   no_data_t?: WidgetsNoDataAvailable
 }
 
-export interface Cache_Single_Tournaments_League_Standings_Info_Data_Response {
+export interface REDIS_CACHE_SINGLE_tournament_standings_data {
   url?:        string
   league_id?:  number
   seasons?:    Tournament_Standing_Season[]
@@ -72,10 +73,19 @@ export interface Cache_Single_Tournaments_League_Standings_Info_Data_Response {
 */
 
 export interface Tournament_Standing_Season {
-  season_id:      number
-  total:    Standing_Team_Total_Away_Home[]
-  home:     Standing_Team_Total_Away_Home[]
-  away:     Standing_Team_Total_Away_Home[]
+  season_id?:    number
+  total?:        Standing_Team_Total_Away_Home[]
+  home?:         Standing_Team_Total_Away_Home[]
+  away?:         Standing_Team_Total_Away_Home[]
+  group?:        boolean
+  // group-based-standings types
+  group_standings?: Groups_Standings[]
+} export interface Groups_Standings {
+  group_name?:   string
+  group_round?:  number
+  total?:        Standing_Team_Total_Away_Home[]
+  home?:         Standing_Team_Total_Away_Home[]
+  away?:         Standing_Team_Total_Away_Home[]
 } export interface Standing_Team_Total_Away_Home {
   team_logo:     string          // >? based on history (constant)
   team_name:     string          // >? based on history (constant)
@@ -137,4 +147,4 @@ export interface Tournament_Standing_Season {
   rf?:           string          // scores_football_standings if older seasons = scores_football_standings_history
                                  // home: ❌
                                  // away: ❌
-} 
+}

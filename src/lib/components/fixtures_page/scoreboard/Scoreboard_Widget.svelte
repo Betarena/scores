@@ -122,7 +122,7 @@
     action: string
   ) {
     if (action === "betting_site_logo_football_fixtures_scoreboard_fixtures") {
-      gtag('event', "fixtures_scoreboard_odds", { 
+      window.gtag('event', "fixtures_scoreboard_odds", { 
         'event_category': "widget_fixture_scoreboard_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -344,7 +344,10 @@
 
     const fixture_status = FIXTURE_SCOREBOARD?.status;
     if (fixture_status == 'FT') {
-      return
+      // [🐞]
+      if (dev) logDevGroup (`${dev_console_tag}`, `fixture is FT!`)
+      lazy_load_data_check = true
+      return;
     }
 
     // [🐞]

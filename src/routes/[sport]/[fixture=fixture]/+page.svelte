@@ -46,6 +46,8 @@
     REDIS_CACHE_SINGLE_about_data, 
     REDIS_CACHE_SINGLE_about_translation 
   } from '$lib/models/fixtures/about/types';
+  
+	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 
   import SvelteSeo from 'svelte-seo';
 	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
@@ -55,6 +57,7 @@
 	import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
 	import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
 	import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
+	import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
 
   let PAGE_SEO:                       REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                   REDIS_CACHE_SINGLE_fixtures_page_info_response
@@ -71,6 +74,7 @@
   let FIXTURE_CONTENT_TRANSLATION:    REDIS_CACHE_SINGLE_content_translation
   let FIXTURE_ABOUT:                  REDIS_CACHE_SINGLE_about_data
   let FIXTURE_ABOUT_TRANSLATION:      REDIS_CACHE_SINGLE_about_translation
+  let FIXTURE_VOTES_TRANSLATION:      REDIS_CACHE_SINGLE_votes_translation
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -91,6 +95,7 @@
   $: FIXTURE_CONTENT_TRANSLATION    = $page.data.FIXTURE_CONTENT_TRANSLATION;
   $: FIXTURE_ABOUT                  = $page.data.FIXTURE_ABOUT;
   $: FIXTURE_ABOUT_TRANSLATION      = $page.data.FIXTURE_ABOUT_TRANSLATION;
+  $: FIXTURE_VOTES_TRANSLATION      = $page.data.FIXTURE_VOTES_TRANSLATION;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -342,6 +347,7 @@
       <div 
         class='grid-display-column'
         class:display-none={$sessionStore.fixture_select_view == "news"}>
+        <VoteWidget {FIXTURE_INFO} {FIXTURE_VOTES_TRANSLATION} />
         <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
         <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
@@ -368,6 +374,7 @@
       class:display-none={$sessionStore.fixture_select_view == "news"}>
       <div 
         class='grid-display-column'>
+        <VoteWidget {FIXTURE_INFO} {FIXTURE_VOTES_TRANSLATION} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
         <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
       </div>

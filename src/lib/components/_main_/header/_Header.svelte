@@ -444,17 +444,29 @@
 
 <!-- [ℹ] header-for-the-page 
 -->
-<header class="column-space-center">
+<header 
+  class="column-space-center">
   {#if HEADER_TRANSLATION_DATA != undefined}
 
-    <!-- [ℹ] identify the correct translation via
+    <!-- 
+    [ℹ] identify the correct translation via
     -->
     
-    <!-- [ℹ] header TOP NAVBAR section -->
-    <div id="top-header" class="row-space-out">
-      <!-- [ℹ] 1st half of the header nav -->
-      <div class="row-space-start" style="width: fit-content;">
-        <!-- [ℹ] menu-burger-bar [ℹ] [CONDITIONAL - ONLY TABLET & MOBILE] -->
+    <!-- 
+    [ℹ] header TOP NAVBAR section -->
+    <div
+      id="top-header" 
+      class="row-space-out">
+      <!-- 
+      [ℹ] 1st half of the header nav 
+      -->
+      <div 
+        class="row-space-start"
+        style="width: fit-content;">
+        <!-- 
+        [ℹ] menu-burger-bar 
+        [ℹ] [TABLET] [MOBILE] 
+        -->
         {#if tabletExclusive}
           <img
             id="burger-menu"
@@ -466,19 +478,38 @@
           />
         {/if}
 
-        <!-- [ℹ] BETARENA LOGO -->
+        <!-- 
+        [ℹ] BETARENA LOGO [MOBILE ONLY]
+        -->
         {#if mobileExclusive}
-          <!-- [ℹ] brand-logo-betarena-for-mobile-ONLY -->
-          <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
-            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
-              <img src={logo_mini} alt="betarena-logo" width="103px" height="30px" />
+          <div 
+            id="brand" 
+            class="cursor-pointer" 
+            on:click={() => reloadPage() }>
+            <a
+              data-sveltekit-prefetch 
+              href={homepageURL} 
+              title={logoLink}>
+              <img
+                src={logo_mini} 
+                alt="betarena-logo" 
+                width="103px" 
+                height="30px" 
+              />
             </a>
           </div>
-          <!-- [ℹ] BETARENA LOGO [DESKTOP ONLY] -->
+        <!-- 
+        [ℹ] BETARENA LOGO [DESKTOP ONLY] 
+        -->
         {:else}
-          <!-- [ℹ] brand-logo-betarena-for-desktop-ONLY -->
-          <div id="brand" class="cursor-pointer" on:click={() => reloadPage() }>
-            <a data-sveltekit-prefetch href={homepageURL} title={logoLink}>
+          <div 
+            id="brand" 
+            class="cursor-pointer" 
+            on:click={() => reloadPage() }>
+            <a 
+              data-sveltekit-prefetch 
+              href={homepageURL} 
+              title={logoLink}>
               <img
                 class="m-r-30"
                 src={logo_full}
@@ -490,34 +521,68 @@
           </div>
         {/if}
 
-        <!-- [ℹ] LANGUAGE SELECTION -->
+        <!-- 
+        [ℹ] LANGUAGE SELECTION [DESKTOP]
+        -->
         {#if !tabletExclusive}
-          <!-- [ℹ] language-change-dropdown-select -->
-          <div id="lang-container" class="m-r-30">
-            <!-- [ℹ] INIT-selected-lang -->
+          <!-- 
+          [ℹ] language-change-dropdown-select 
+          -->
+          <div 
+            id="lang-container" 
+            class="m-r-30">
+            <!-- 
+            [ℹ] INIT-selected-lang 
+            -->
             <div
               id="selected-language-btn"
               class:active-lang-select={dropdown_lang_visible == true}
               class="row-space-out"
-              on:click={() => (dropdown_lang_visible = !dropdown_lang_visible)}
-            >
-              <p class="color-white s-14 mr-5">
+              on:click={() => (dropdown_lang_visible = !dropdown_lang_visible)}>
+              <p 
+                class="
+                  color-white 
+                  s-14 
+                  mr-5
+                ">
                 {server_side_language.toUpperCase()}
               </p>
-              <!-- [ℹ] arrow down [hidden-menu] -->
+              <!-- 
+              [ℹ] arrow down [hidden-menu] 
+              -->
               {#if !dropdown_lang_visible}
-                <img src={arrow_down} alt="arrow_down" width="16px" height="16px" />
+                <img 
+                  src={arrow_down} 
+                  alt="arrow_down" 
+                  width="16px" 
+                  height="16px" 
+                />
               {:else}
-                <img src={arrow_up} alt="arrow_up" width="16px" height="16px" />
+                <img 
+                  src={arrow_up} 
+                  alt="arrow_up" 
+                  width="16px" 
+                  height="16px" 
+                />
               {/if}
             </div>
-            <!-- [ℹ] INIT-HIDDEN drop-down menu -->
+            <!-- 
+            [ℹ] INITIALLY-HIDDEN drop-down menu 
+            -->
             {#if dropdown_lang_visible}
-              <div id="dropdown-menu" transition:fly>
+              <div 
+                id="dropdown-menu" 
+                transition:fly>
                 {#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
                   {#if lang.toUpperCase() != server_side_language.toUpperCase()}
-                    <div id="lang-select" on:click={() => selectLanguage(lang)}>
-                      <p class="color-white s-14">
+                    <div 
+                      id="lang-select" 
+                      on:click={() => selectLanguage(lang)}>
+                      <p 
+                        class="
+                          color-white 
+                          s-14
+                        ">
                         {lang.toUpperCase()}
                       </p>
                     </div>
@@ -528,21 +593,41 @@
           </div>
         {/if}
 
-        <!-- [ℹ] NAV BUTTONS -->
+        <!-- 
+        [ℹ] NAV BUTTONS [TABLET] [DESKTOP]
+        -->
         {#if !mobileExclusive}
-          <!-- [ℹ] latest news -->
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.latest_news}>
-            <button class="btn-main">
-              <p class="color-white s-14">
+          <!-- 
+          [ℹ] latest news 
+          -->
+          <a 
+            rel="external" 
+            href={HEADER_TRANSLATION_DATA.scores_header_links.latest_news}>
+            <button 
+              class="btn-main">
+              <p 
+                class="
+                  color-white 
+                  s-14
+                ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.content_platform_link}
               </p>
             </button>
           </a>
 
-          <!-- [ℹ] betting-tips -->
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
-            <button class="btn-main">
-              <p class="color-white s-14">
+          <!-- 
+          [ℹ] betting-tips 
+          -->
+          <a 
+            rel="external" 
+            href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
+            <button 
+              class="btn-main">
+              <p 
+                class="
+                  color-white 
+                  s-14
+                ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
               </p>
             </button>
@@ -550,20 +635,38 @@
         {/if}
       </div>
 
-      <!-- [ℹ] 2nd half of the header nav -->
-      <div class="row-space-start" style="width: fit-content;">
+      <!-- 
+      [ℹ] 2nd half of the header nav 
+      -->
+      <div
+        class="row-space-start" 
+        style="width: fit-content;">
+
         {#if !tabletExclusive}
-          <!-- [ℹ] theme-options -->
-          <div id="theme-opt-container" class="dropdown-opt-box row-space-start">
-            <!-- [ℹ] name of the container-opt -->
+          <!-- 
+          [ℹ] theme-options box
+          -->
+          <div
+            id="theme-opt-container" 
+            class="
+              dropdown-opt-box 
+              row-space-start
+            ">
+            <!-- 
+            [ℹ] name of the container-opt -->
             <div
               class="m-r-10"
-              on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
-            >
-              <p class="color-grey s-12 m-b-5">
+              on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}>
+              <p 
+                class="
+                  color-grey 
+                  s-12 
+                  m-b-5
+                ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.theme}
               </p>
-              <div class="row-space-start">
+              <div 
+                class="row-space-start">
                 <img
                   class="m-r-5"
                   src={light_icon_theme}
@@ -573,7 +676,11 @@
                 />
                 {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   {#if theme.includes($userBetarenaSettings.theme)}
-                    <p class="color-white s-14">
+                    <p 
+                      class="
+                        color-white 
+                        s-14
+                      ">
                       {theme[1]}
                     </p>
                   {/if}
@@ -600,17 +707,30 @@
             {/if}
             <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
             {#if dropdown_theme_visible}
-              <div id="theme-dropdown-menu" transition:fly>
+              <div 
+                id="theme-dropdown-menu" 
+                transition:fly>
                 {#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
                   <div
-                    class="theme-opt-box row-space-out"
-                    on:click={() => selectedTheme(theme[0])}
-                  >
-                    <p class="color-white s-14">
+                    class="
+                      theme-opt-box 
+                      row-space-out
+                    "
+                    on:click={() => selectedTheme(theme[0])}>
+                    <p 
+                      class="
+                        color-white 
+                        s-14
+                      ">
                       {theme[1]}
                     </p>
                     {#if theme.includes($userBetarenaSettings.theme)}
-                      <img src={icon_check} alt={theme[0]} width="16px" height="16px" />
+                      <img 
+                        src={icon_check} 
+                        alt={theme[0]} 
+                        width="16px" 
+                        height="16px" 
+                      />
                     {/if}
                   </div>
                 {/each}
@@ -618,37 +738,71 @@
             {/if}
           </div>
 
-          <!-- [ℹ] odds-type -->
+          <!-- 
+          [ℹ] odds-type box
+          -->
           <div
             id="odds-type-container"
-            class="cursor-not-allowed dropdown-opt-box row-space-start"
-            on:click={() => (dropdown_odds_type_visible = !dropdown_odds_type_visible)}
-          >
-            <!-- [ℹ] name of the container-opt -->
-            <div class="m-r-10">
-              <p class="color-grey s-12 m-b-5">
+            class="
+              cursor-not-allowed 
+              dropdown-opt-box 
+              row-space-start
+            "
+            on:click={() => (dropdown_odds_type_visible = !dropdown_odds_type_visible)}>
+            <!-- 
+            [ℹ] name of the container-opt -->
+            <div 
+              class="m-r-10">
+              <p 
+                class="
+                  color-grey 
+                  s-12 
+                  m-b-5
+                ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.odds}
               </p>
-              <p class="color-white s-14">
+              <p 
+                class="
+                  color-white 
+                  s-14
+                ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.odds_type[0]}
               </p>
             </div>
-            <!-- [ℹ] arrow down [hidden-menu] -->
+            <!-- 
+            [ℹ] arrow down [hidden-menu] -->
             {#if !dropdown_odds_type_visible}
-              <img src={arrow_down_fade} alt="arrow_down_fade" width="16px" height="16px" />
+              <img 
+                src={arrow_down_fade} 
+                alt="arrow_down_fade" 
+                width="16px" 
+                height="16px" 
+              />
             {:else}
-              <img src={arrow_up} alt="arrow_up" width="16px" height="16px" />
+              <img 
+                src={arrow_up} 
+                alt="arrow_up" 
+                width="16px" 
+                height="16px" 
+              />
             {/if}
-            <!-- [ℹ] INIT-HIDDEN-dropdown-odds-type -->
+            <!-- 
+            [ℹ] INIT-HIDDEN-dropdown-odds-type -->
             {#if dropdown_odds_type_visible}
-              <!-- [ℹ] dropdown-menu -->
-              <div id="odds-type-dropdown-menu" transition:fly>
+              <!-- 
+              [ℹ] dropdown-menu -->
+              <div 
+                id="odds-type-dropdown-menu" 
+                transition:fly>
                 {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
                   <div
                     class="theme-opt-box"
-                    on:click={() => (dropdown_odds_type_visible = false)}
-                  >
-                    <p class="color-white s-14">
+                    on:click={() => (dropdown_odds_type_visible = false)}>
+                    <p 
+                      class="
+                        color-white 
+                        s-14
+                      ">
                       {odd}
                     </p>
                   </div>
@@ -657,29 +811,48 @@
             {/if}
           </div>
 
-          <!-- [ℹ] bookmakers-type -->
+          <!-- 
+          [ℹ] bookmakers-type -->
           <div
             id="bookmakers-type-container"
-            class="dropdown-opt-box row-space-start m-r-30"
-            on:click={() => (dropdown_bookmakers_visible = !dropdown_bookmakers_visible)}
-          >
-            <!-- [ℹ] name of the container-opt -->
-            <div class="m-r-10">
-              <p class="color-grey s-12 m-b-5">
+            class="
+              dropdown-opt-box 
+              row-space-start 
+              m-r-30
+            "
+            on:click={() => (dropdown_bookmakers_visible = !dropdown_bookmakers_visible)}>
+            <!-- 
+            [ℹ] name of the container-opt -->
+            <div 
+              class="m-r-10">
+              <p
+                class="
+                  color-grey 
+                  s-12 
+                  m-b-5
+                ">
                 {HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers}
               </p>
-              <div class="row-space-start">
+              <div
+                class="row-space-start">
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
                   {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     {#if country.includes($userBetarenaSettings.country_bookmaker.toString().toUpperCase())}
                       <img
-                        class="country-flag m-r-5"
+                        class="
+                          country-flag 
+                          m-r-5
+                        "
                         src="https://betarena.com/images/flags/{country[0]}.svg"
                         alt="{country[1]}"
                         width="20px"
                         height="14px"
                       />
-                      <p class="color-white s-14">
+                      <p 
+                        class="
+                          color-white 
+                          s-14
+                        ">
                         {country[1]}
                       </p>
                     {/if}
@@ -687,30 +860,53 @@
                 {/if}
               </div>
             </div>
-            <!-- [ℹ] arrow down [hidden-menu] -->
+            <!-- 
+            [ℹ] arrow down [hidden-menu] -->
             {#if !dropdown_bookmakers_visible}
-              <img src={arrow_down_fade} alt="arrow_down_fade" width="16px" height="16px" />
+              <img 
+                src={arrow_down_fade} 
+                alt="arrow_down_fade" 
+                width="16px" 
+                height="16px" 
+              />
             {:else}
-              <img src={arrow_up} alt="arrow_up" width="16px" height="16px" />
+              <img 
+                src={arrow_up} 
+                alt="arrow_up" 
+                width="16px" 
+                height="16px" 
+              />
             {/if}
-            <!-- [ℹ] INIT-HIDDEN-dropdown-bookmakers-type -->
+            <!-- 
+            [ℹ] INIT-HIDDEN-dropdown-bookmakers-type -->
             {#if dropdown_bookmakers_visible}
-              <div id="bookmakers-type-dropdown-menu" transition:fly>
+              <div 
+                id="bookmakers-type-dropdown-menu" 
+                transition:fly>
                 {#if $userBetarenaSettings.country_bookmaker != undefined}
                   {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
                     <div
-                      class="theme-opt-box row-space-start"
+                      class="
+                        theme-opt-box 
+                        row-space-start
+                      "
                       class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toString().toUpperCase()}
-                      on:click={() => selectedCountryBookmakers(country[0])}
-                    >
+                      on:click={() => selectedCountryBookmakers(country[0])}>
                       <img
-                        class="country-flag m-r-10"
+                        class="
+                          country-flag
+                          m-r-10
+                        "
                         src="https://betarena.com/images/flags/{country[0]}.svg"
                         alt="{country[1]}"
                         width="20px"
                         height="14px"
                       />
-                      <p class="color-white s-14">
+                      <p 
+                        class="
+                          color-white 
+                          s-14
+                        ">
                         {country[1]}
                       </p>
                     </div>
@@ -722,20 +918,32 @@
         {/if}
 
         {#if !mobileExclusive}
-          <!-- [ℹ] sign-in-btn -->
+          <!--
+          [ℹ] sign-in-btn -->
           <button 
             id="sign-in-btn"
             class="cursor-not-allowed">
-            <p class="color-white s-14">
+            <p 
+              class="
+              color-white 
+              s-14
+            ">
               {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
             </p>
           </button>
         {/if}
 
         {#if mobileExclusive}
-          <a rel="external" href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
-            <!-- [ℹ] betting-tips -->
-            <p class="color-white s-14">
+          <!--
+          [ℹ] betting-tips -->
+          <a 
+            rel="external" 
+            href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
+            <p 
+              class="
+                color-white 
+                s-14
+              ">
               {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
             </p>
           </a>
@@ -743,71 +951,155 @@
       </div>
     </div>
 
-    <!-- [ℹ] bottom-SPORTS-navbar-values -->
-    <div 
+    <!--
+    [ℹ] bottom NAV SPORTS navbar values 
+    -->
+    <div
       id="bottom-header" 
       class="row-space-out">
-      <!-- [ℹ] sliding-container -->
+      <!-- 
+      [ℹ] sliding-container 
+      FIXME: avoid using in-line styles
+      -->
       <div 
         id="bottom-header-inner" 
-        class="row-space-out m-r-10" 
+        class="
+          row-space-out 
+          m-r-10
+        " 
         style="width: fit-content;">
-        <!-- [ℹ] sports-btn values -->
+        <!-- 
+        [ℹ] sports-btn values 
+        FIXME: avoid using in-line styles
+        -->
         <div 
           class="row-space-out" 
           style="width: fit-content;">
-
-          <!-- -->
+          <!-- 
+          [ℹ] show only first 7 sports
+          -->
           {#each { length: 7 } as _, i}
-            <!-- [ℹ] check - if sport is column -->
+            <!-- 
+            [ℹ] check - if "sport" column exists
+            [ℹ] meaning "data" exists
+            -->
             {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()] != null}
-              <!-- content here -->
-              <button
-                class="sports-btn m-r-10"
-                on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
-                class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
-                <img
-                  class="m-r-10"
-                  src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
-                  alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
-                  width="20px"
-                  height="20px" />
-
-                <p 
-                  class="color-white s-14 m-r-10">
-                  {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
-                </p>
-
-                <p 
-                  class="color-white s-14 sport-counter">
-                  {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
-                </p>
-              </button>
-            {:else}
-              <!-- else content here -->
-              {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
-                <!-- content here -->
-                {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
-                  <!-- content here -->
+              <!-- 
+              [ℹ] check if "sport" == "Football"
+              -->
+              {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0] == 'football'}
+                <a
+                  data-sveltekit-prefetch 
+                  href={homepageURL} 
+                  title={logoLink}>
                   <button
-                    class="sports-btn m-r-10 cursor-not-allowed"
+                    class="
+                      sports-btn 
+                      m-r-10
+                    "
                     on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
                     class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
                     <img
-                      class="m-r-10 soon-opacitiy"
+                      class="m-r-10"
+                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                      alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
+                      width="20px"
+                      height="20px" 
+                    />
+                    <p
+                      class="
+                        color-white 
+                        s-14 
+                        m-r-10
+                      ">
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
+                    </p>
+                    <p
+                      class="
+                        color-white 
+                        s-14 
+                        sport-counter
+                      ">
+                      {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
+                    </p>
+                  </button>
+                </a>
+              <!-- 
+              [ℹ] otherwise, standard sport display
+              -->
+              {:else}
+                <button
+                  class="
+                    sports-btn 
+                    m-r-10
+                  "
+                  on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                  class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
+                  <img
+                    class="m-r-10"
+                    src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
+                    alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
+                    width="20px"
+                    height="20px" 
+                  />
+                  <p
+                    class="
+                      color-white 
+                      s-14 
+                      m-r-10
+                    ">
+                    {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
+                  </p>
+                  <p
+                    class="
+                      color-white 
+                      s-14 
+                      sport-counter
+                    ">
+                    {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase()]}
+                  </p>
+                </button>
+              {/if}
+              <!-- 
+            [ℹ] otherwise, no-data exists
+            [ℹ] and sport should show "soon"
+            -->
+            {:else}
+              {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
+                {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toString().toLowerCase() === sport[0].toString().toLowerCase()}
+                  <button
+                    class="
+                      sports-btn 
+                      m-r-10 
+                      cursor-not-allowed
+                    "
+                    on:click={() => (selected_sports = HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0])}
+                    class:selected-sports={selected_sports == HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]} >
+                    <img
+                      class="
+                        m-r-10 
+                        soon-opacitiy
+                      "
                       src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0].toLocaleLowerCase()}.svg`}
                       alt="${HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]}-img"
                       width="20px"
                       height="20px"
                     />
-
                     <p 
-                      class="color-white s-14 m-r-10 soon-opacitiy">
+                      class="
+                        color-white 
+                        s-14 
+                        m-r-10 
+                        soon-opacitiy
+                      ">
                       {HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][1]}
                     </p>
-
                     <p 
-                      class="color-white s-14 sport-counter">
+                      class="
+                        color-white 
+                        s-14 
+                        sport-counter
+                      ">
                       {sport[1].toString().toLowerCase()}
                     </p>
                   </button>
@@ -818,16 +1110,18 @@
         </div>
       </div>
 
-      <!-- [ℹ] more sports button container menu -->
+      <!-- 
+      [ℹ] "more sports" button box -->
       <div 
         id="more-sports-menu-container">
-        <!-- [ℹ] menu-more-sports-btn-DESKTOP + TABLET -->
+        <!-- 
+        [ℹ] menu-more-sports-btn-DESKTOP + TABLET -->
         {#if !mobileExclusive}
-          <!-- [ℹ] menu-sports-btn -->
+          <!-- 
+          [ℹ] menu-sports-btn -->
           <button
             id="more-sports-menu"
-            on:click={() => (dropdown_more_sports_menu = !dropdown_more_sports_menu)}
-          >
+            on:click={() => (dropdown_more_sports_menu = !dropdown_more_sports_menu)}>
             <img
               class="m-r-10"
               src={menu_sports_icon}
@@ -835,48 +1129,70 @@
               width="20px"
               height="20px"
             />
-            <p class="color-white s-14 m-r-10">
+            <p 
+              class="
+                color-white 
+                s-14 
+                m-r-10
+              ">
               {HEADER_TRANSLATION_DATA.scores_header_translations.more_sports}
             </p>
-            <!-- [ℹ] arrow down [hidden-menu] -->
+            <!-- 
+            [ℹ] arrow down [hidden-menu] -->
             {#if !dropdown_more_sports_menu}
-              <img src={arrow_down_fade} alt="arrow_down_fade" width="20px" height="20px" />
+              <img 
+                src={arrow_down_fade} 
+                alt="arrow_down_fade" 
+                width="20px" 
+                height="20px" 
+              />
             {:else}
-              <img src={arrow_up} alt="arrow_up" width="20px" height="20px" />
+              <img 
+                src={arrow_up} 
+                alt="arrow_up" 
+                width="20px" 
+                height="20px" 
+              />
             {/if}
           </button>
-          <!-- [ℹ] menu-more-sports-btn-mobile -->
+          <!-- 
+          [ℹ] menu-more-sports-btn-mobile -->
         {:else}
-          <!-- [ℹ] menu-sports-btn -->
           <button
             id="more-sports-menu"
-            on:click={() => (mobileExclusiveMoreSports = !mobileExclusiveMoreSports)}
-          >
-            <p class="color-white s-14">
+            on:click={() => (mobileExclusiveMoreSports = !mobileExclusiveMoreSports)}>
+            <p 
+              class="
+                color-white 
+                s-14
+              ">
               {HEADER_TRANSLATION_DATA.scores_header_translations.more_sports}
             </p>
           </button>
         {/if}
         
-        <!-- [ℹ] INIT-HIDDEN-dropdown-more-sports-menu -->
-        {#if dropdown_more_sports_menu && !mobileExclusive}
-          <!-- -->
+        <!-- 
+        [ℹ] INIT-HIDDEN-dropdown-more-sports-menu -->
+        {#if 
+          dropdown_more_sports_menu 
+          && !mobileExclusive}
           <div 
             id="more-sports-dropdown-menu" 
             transition:fly >
-            <!-- -->
+
             {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
-              
-              <!-- [ℹ] check - if sport is column -->
+              <!-- 
+              [ℹ] check - if sport is column -->
               {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0].toString().toLowerCase()] != null}
                 <button
-                  class="sports-btn row-space-out"
+                  class="
+                    sports-btn 
+                    row-space-out
+                  "
                   on:click={() => (dropdown_more_sports_menu = false)} >
-                  <!-- -->
-                  <div 
+                  <div
                     class="row-space-out" 
                     style="width: fit-content;">
-                    <!-- -->
                     <img
                       class="m-r-5"
                       src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
@@ -885,31 +1201,37 @@
                       height="20px"
                     />
                     <p 
-                      class="color-white s-14 m-r-10">
+                      class="
+                        color-white 
+                        s-14 
+                        m-r-10
+                      ">
                       {sport[1]}
                     </p>
                   </div>
-                  <!-- content here -->
-                  <p 
-                    class="color-white s-14 sport-counter-dark">
+                  <p
+                    class="
+                      color-white 
+                      s-14 
+                      sport-counter-dark
+                    ">
                     {HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0].toString()]}
                   </p>
                 </button>
 
               {:else}
-                <!-- else content here -->
                 {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
-                  <!-- content here -->
                   {#if sport[0].toString().toLowerCase() === _sport[0].toString().toLowerCase()}
-                    <!-- content here -->
                     <button
-                      class="sports-btn row-space-out cursor-not-allowed"
+                      class="
+                        sports-btn 
+                        row-space-out 
+                        cursor-not-allowed
+                      "
                       on:click={() => (dropdown_more_sports_menu = false)} >
-                      <!-- -->
                       <div 
                         class="row-space-out" 
                         style="width: fit-content;">
-                        <!-- -->
                         <img
                           class="m-r-5 soon-opacitiy"
                           src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
@@ -917,12 +1239,21 @@
                           width="20px" height="20px"
                         />
                         <p 
-                          class="color-white s-14 m-r-10 soon-opacitiy">
+                          class="
+                            color-white 
+                            s-14 
+                            m-r-10 
+                            soon-opacitiy
+                          ">
                           {sport[1]}
                         </p>
                       </div>
-                      <p 
-                        class="color-white s-14 sport-counter-dark">
+                      <p
+                        class="
+                          color-white 
+                          s-14 
+                          sport-counter-dark
+                        ">
                         {_sport[1].toString().toLowerCase()}
                       </p>
                     </button>
@@ -937,7 +1268,9 @@
 
     </div>
 
-    <!-- [ℹ] side-bar-[TOP-NAV-BAR] [MOBILE + TABLET] -->
+    <!--
+    [ℹ] side-bar-[TOP-NAV-BAR] [MOBILE + TABLET] 
+    -->
     {#if tabletExclusive || mobileExclusive}
       {#if mobileNavToggleMenu}
         <nav
@@ -1222,7 +1555,8 @@
       {/if}
     {/if}
 
-    <!-- [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] -->
+    <!-- 
+    [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] -->
     {#if mobileExclusive}
       {#if mobileExclusiveMoreSports}
         <nav

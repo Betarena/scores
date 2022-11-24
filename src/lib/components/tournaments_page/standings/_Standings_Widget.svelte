@@ -21,8 +21,8 @@
   } from "$lib/models/tournaments/league-info/types";
 
   import type { 
-    Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
-    Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
+    REDIS_CACHE_SINGLE_tournament_standings_data, 
+    REDIS_CACHE_SINGLE_tournament_standings_translation 
   } from "$lib/models/tournaments/standings/types";
 
   import StandingsWidgetContentLoader from "./_Standings_Widget_ContentLoader.svelte";
@@ -52,8 +52,12 @@
 
   let imageVar:               string = '--standings-info-bookmaker-bg-';
 
-	export let STANDINGS_T:     Cache_Single_Tournaments_League_Standings_Translation_Data_Response;
-	export let STANDINGS_DATA:  Cache_Single_Tournaments_League_Standings_Info_Data_Response;
+  let only_total_view_league_ids = [
+    732 // [ℹ] World Cup
+  ]
+
+	export let STANDINGS_T:     REDIS_CACHE_SINGLE_tournament_standings_translation;
+	export let STANDINGS_DATA:  REDIS_CACHE_SINGLE_tournament_standings_data;
 
   if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `STANDINGS_T: ${STANDINGS_T}`)
   if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `dropdownSeasonSelect: ${dropdownSeasonSelect}`)
@@ -122,7 +126,7 @@
 
   function triggerGoggleEvents(action: string) {
     if (action === "betting_site_logo_standings") {
-      gtag('event', "betting_site_logo_standings", { 
+      window.gtag('event', "betting_site_logo_standings", { 
         'event_category': "widget_standings_info", 
         'event_label': "click_betting_site_logo", 
         'value': "click"
@@ -132,7 +136,7 @@
     }
 
     if (action === "cta_button_standings") {
-      gtag('event', "cta_button_standings", { 
+      window.gtag('event', "cta_button_standings", { 
         'event_category': "widget_standings_info", 
         'event_label': "beting_cta_link_logo", 
         'value': "click"
@@ -217,10 +221,19 @@
   let seasonCheck: boolean = false;
   $: {
     // [ℹ] check season exists / contains data
-    let seasonCheckLength = STANDINGS_DATA.seasons
+    let season = STANDINGS_DATA.seasons
       .find( ({ season_id }) => 
         season_id === $sessionStore.selectedSeasonID
-      )?.total?.length;
+      )
+    ;
+    let seasonCheckLength = 0;
+    if (season != undefined) {
+      seasonCheckLength = 
+        season.group == false
+          ? season?.total.length
+          : season?.group_standings.length
+      ;
+    }
     noStandingsBool = 
       seasonCheckLength == 0 ||
       seasonCheckLength == undefined
@@ -235,7 +248,8 @@
     COMPONENT HTML 
 =================-->
 
-<!-- [ℹ] area-outside-for-close 
+<!-- 
+[ℹ] area-outside-for-close 
 -->
 {#if toggleCTA}
   <div id="background-area-close" on:click={() => closeAllDropdowns()} />
@@ -243,28 +257,41 @@
 
 <div>
 
-  <!-- [ℹ] SEO-DATA-LOADED 
+  <!-- 
+  [ℹ] SEO-DATA-LOADED 
   -->
-  {#if !loaded}
+  <!-- {#if !loaded} -->
     <div 
       id="seo-widget-box">
       <h2>{STANDINGS_T.translations.standings}</h2>
       {#if STANDINGS_DATA?.seasons.length != 0}
-        {#each STANDINGS_DATA.seasons[0].total as team}
-          <p>{team.team_name}</p>
-        {/each}
+        {#if !STANDINGS_DATA.seasons[0].group}
+          {#each STANDINGS_DATA.seasons[0].total as team}
+            <p>{team.team_name}</p>
+          {/each}
+        {:else}
+          {#each STANDINGS_DATA.seasons[0].group_standings as group}
+            <p>{group.group_name}</p>
+            {#each group.total as team}
+              <p>{team.team_name}</p>
+            {/each}
+          {/each}
+        {/if}
+        
       {/if}
       
     </div>
-  {/if}
+  <!-- {/if} -->
 
-  <!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  <!-- 
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
   {#if 
     noStandingsBool &&
     seasonCheck &&
     !loaded}
-    <!-- [ℹ] title of the widget 
+    <!-- 
+    [ℹ] title of the widget 
     -->
     <h2
       class="s-20 m-b-10 w-500 color-black-2"
@@ -273,44 +300,61 @@
       {STANDINGS_T?.translations.standings}
     </h2>
 
-    <!-- [ℹ] no-widget-data-avaiable-placeholder container 
+    <!-- 
+    [ℹ] no-widget-data-avaiable-placeholder container 
     -->
     <div
       id='no-widget-box'
       class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-      <!-- [ℹ] no-visual-asset
+      <!-- 
+      [ℹ] no-visual-asset
       -->
       {#if $userBetarenaSettings.theme == 'Dark'}
         <img 
           src={no_visual_dark} 
           alt="no_visual_dark"
-          width="32px" height="32px"
+          width=32
+          height=32
           class='m-b-16'
         />
       {:else}
         <img 
           src={no_visual} 
           alt="no_visual"
-          width="32px" height="32px"
+          width=32
+          height=32
           class='m-b-16'
         />
       {/if}
       
-      <!-- [ℹ] container w/ text 
+      <!-- 
+      [ℹ] container w/ text 
       -->
       <div>
         <p 
-          class='s-14 m-b-8 w-500'
+          class='
+            s-14 
+            m-b-8 
+            w-500
+          '
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {STANDINGS_T.no_data_t.no_info} </p>
-        <p class='s-14 color-grey w-400'> {STANDINGS_T.no_data_t.no_info_desc} </p>
+        <p 
+          class='
+            s-14 
+            color-grey 
+            w-400
+          '> 
+          {STANDINGS_T.no_data_t.no_info_desc} 
+        </p>
       </div>
     </div>
   {/if}
 
-  <!-- [ℹ] MAIN WIDGET COMPONENT
+  <!-- 
+  [ℹ] MAIN WIDGET COMPONENT
   -->
   {#if 
     !noStandingsBool && 
@@ -320,22 +364,31 @@
     seasonCheck &&
     !diasbleDev}
 
-    <!-- [ℹ] promise is pending 
+    <!-- 
+    [ℹ] promise is pending 
     -->
     {#await widgetInit()}
       <StandingsWidgetContentLoader />
-    <!-- [ℹ] promise was fulfilled
+    <!-- 
+    [ℹ] promise was fulfilled
     -->
     {:then data}
 
-        <!-- [ℹ] widget-component [DESKTOP] [TABLET]
+        <!-- 
+        [ℹ] widget-component [DESKTOP] [TABLET]
         -->
         {#if !mobileExclusive}
 
-          <!-- [ℹ] promise was fulfilled 
+          <!-- 
+          [ℹ] promise was fulfilled 
           -->
-          <h2 
-            class="s-20 m-b-10 w-500 color-black-2"
+          <h2
+            class="
+              s-20 
+              m-b-10 
+              w-500 
+              color-black-2
+            "
             style="margin-top: 0px;"
             class:color-white={$userBetarenaSettings.theme == 'Dark'}>
             {STANDINGS_T.translations.standings}
@@ -349,41 +402,72 @@
             -->
             <div
               id="standings-view-box"
-              class="row-space-start m-b-15">
+              class="
+                row-space-start 
+                m-b-15
+              ">
 
               <div
-                class="stand-view-opt-box cursor-pointer"
+                class="
+                  stand-view-opt-box 
+                  cursor-pointer
+                "
                 on:click={() => selectTableView('total')}
-                class:activeOpt={selectedOpt == 'total'}>
+                class:activeOpt={selectedOpt == 'total'}
+                class:total_view_only={only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}>
                 <p
-                  class="s-14 w-500 color-grey">
+                  class=" 
+                    s-14 
+                    w-500 
+                    color-grey
+                  ">
                   {STANDINGS_T.translations.total}
                 </p>
               </div>
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('home')}
-                class:activeOpt={selectedOpt == 'home'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.home}
-                </p>
-              </div>
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
+                <div
+                  class="
+                    stand-view-opt-box 
+                    cursor-pointer
+                  "
+                  on:click={() => selectTableView('home')}
+                  class:activeOpt={selectedOpt == 'home'}>
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    ">
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('away')}
-                class:activeOpt={selectedOpt == 'away'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.away}
-                </p>
-              </div>
+                <div
+                  class="
+                    stand-view-opt-box 
+                    cursor-pointer
+                  "
+                  on:click={() => selectTableView('away')}
+                  class:activeOpt={selectedOpt == 'away'}>
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    ">
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+              {/if}
 
             </div>
 
-            <!-- [STASHED] [ALTERNATIVE TABLE]
+            <!-- 
+            [ℹ] [STASHED] [V1] [ALTERNATIVE TABLE]
 
               <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
               - ->
@@ -499,7 +583,8 @@
             <table 
               class="standings_table">
 
-              <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
+              <!-- 
+              [ℹ] widget-top-row-table-standings [DESKTOP]
               -->
               <tr
                 class="row-head">
@@ -779,7 +864,6 @@
                   {/if}
                 {/if}
 
-
                 <th>
                   <p
                     class="s-12 color-grey"
@@ -790,19 +874,57 @@
 
               </tr>
 
-              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              <!-- 
+              [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
               {#each STANDINGS_DATA.seasons as season}
                 {#if season.season_id === $sessionStore.selectedSeasonID}
-                  {#each season[selectedOpt] as team}
-                    <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
-                  {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A REGUALR-TYPE
+                  -->
+                  {#if !season.group}
+                    {#each season[selectedOpt] as team}
+                      <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
+                    {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
+                  -->
+                  {:else}
+                    {#each season.group_standings as group}
+                      <tr
+                        class="group-row-head">
+                        <td colspan="20">
+                          <div class="table-divider" />
+                          <p
+                            class="
+                              w-500
+                              color-black-2
+                              group-head-text
+                              text-center
+                            ">
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
+                          </p>
+                        </td>
+                      </tr>
+                      {#each group[selectedOpt] as team}
+                        <StandingsTeamRow TEAM_DATA={team} {currentSeason} />
+                      {/each}
+                    {/each}
+                    <tr
+                      class="row-divider">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                      </td>
+                    </tr>
+                  {/if}
                 {/if}
               {/each}
 
             </table>
 
-            <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
+            <!-- 
+            [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
             <div
               id="standings-sportbook-details"
@@ -815,9 +937,13 @@
 
                   <div
                     id="betting-site-container"
-                    class="row-space-start m-r-16 cursor-pointer">
+                    class="
+                      row-space-start 
+                      m-r-16 
+                      cursor-pointer
+                    ">
 
-                    <a 
+                    <a
                       rel="nofollow"
                       aria-label="betting_site_logo_standings"
                       on:click={() => triggerGoggleEvents("betting_site_logo_standings")}
@@ -832,7 +958,10 @@
                     </a>
 
                     <button 
-                      class="place-bet-btn btn-primary"
+                      class="
+                        place-bet-btn 
+                        btn-primary
+                      "
                       aria-label="toggleCTA"
                       on:click={() => toggleCTA = !toggleCTA}>
                       <p 
@@ -845,7 +974,7 @@
                   <!-- [ℹ] extra-info pop-up container
                   -->
                   {#if toggleCTA}
-                    <div 
+                    <div
                       class="extra-info" 
                       in:fade>
 
@@ -865,17 +994,20 @@
                         />
                       </a>
 
-                      <!--  [ℹ] extra-site info 
+                      <!--  
+                      [ℹ] extra-site info 
                       -->
-                      <div 
+                      <div
                         class="extra-info-container">
-                        <!--  [ℹ] text 
+                        <!--  
+                        [ℹ] text 
                         -->
                         <p 
                           class="large">
                           {data.bonus_description}
                         </p>
-                        <!--  [ℹ] button_cta 
+                        <!--  
+                        [ℹ] button_cta 
                         -->
                         <a 
                           rel="nofollow" 
@@ -884,7 +1016,10 @@
                           href={data.register_link}
                           target="_blank">
                           <button
-                            class="btn-primary btn-cta"
+                            class="
+                              btn-primary 
+                              btn-cta
+                            "
                             aria-label="registerCTA"
                             style="width: 100% !important;">
                             <p 
@@ -893,7 +1028,8 @@
                             </p>
                           </button>
                         </a>
-                        <!--  [ℹ] extra-site info text 
+                        <!--  
+                        [ℹ] extra-site info text 
                         -->
                         <p 
                           class="small" 
@@ -913,11 +1049,13 @@
 
           </div>
 
-        <!-- [ℹ] widget-component [MOBILE]
+        <!-- 
+        [ℹ] widget-component [MOBILE]
         -->
         {:else}
 
-          <!-- [ℹ] promise was fulfilled 
+          <!-- 
+          [ℹ] promise was fulfilled 
           -->
           <h1 
             class="s-20 m-b-10 w-500 color-black-2"
@@ -934,37 +1072,55 @@
             -->
             <div
               id="standings-view-box"
-              class="row-space-start m-b-20">
+              class="
+                row-space-start 
+                m-b-20
+              ">
 
               <div
-                class="stand-view-opt-box cursor-pointer"
+                class="
+                  stand-view-opt-box 
+                  cursor-pointer
+                "
                 on:click={() => selectTableView('total')}
-                class:activeOpt={selectedOpt == 'total'}>
+                class:activeOpt={selectedOpt == 'total'}
+                class:total_view_only={only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}>
                 <p
-                  class="s-14 w-500 color-grey">
+                  class="
+                    s-14 
+                    w-500 
+                    color-grey
+                  ">
                   {STANDINGS_T.translations.total}
                 </p>
               </div>
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('home')}
-                class:activeOpt={selectedOpt == 'home'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.home}
-                </p>
-              </div>
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('away')}
-                class:activeOpt={selectedOpt == 'away'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.away}
-                </p>
-              </div>
+                <div
+                  class="stand-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('home')}
+                  class:activeOpt={selectedOpt == 'home'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
+
+                <div
+                  class="stand-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('away')}
+                  class:activeOpt={selectedOpt == 'away'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+
+              {/if}
 
             </div>
 
@@ -1020,6 +1176,9 @@
 
             </div>
 
+            <!-- 
+            [ℹ] STANDINGS TABLE
+            -->
             <table 
               class="standings_table">
 
@@ -1178,19 +1337,57 @@
                 </tr>
               {/if}
 
-              <!-- [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+              <!-- 
+              [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
               {#each STANDINGS_DATA.seasons as season}
                 {#if season.season_id === $sessionStore.selectedSeasonID}
-                  {#each season[selectedOpt] as team}
-                    <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
-                  {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A REGUALR-TYPE
+                  -->
+                  {#if !season.group}
+                    {#each season[selectedOpt] as team}
+                      <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
+                    {/each}
+                  <!-- 
+                  [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
+                  -->
+                  {:else}
+                    {#each season.group_standings as group}
+                      <tr
+                        class="group-row-head">
+                        <td colspan="20">
+                          <div class="table-divider" />
+                          <p
+                            class="
+                              w-500
+                              color-black-2
+                              group-head-text
+                              text-center
+                            ">
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
+                          </p>
+                        </td>
+                      </tr>
+                      {#each group[selectedOpt] as team}
+                        <StandingsTeamRow TEAM_DATA={team} TABLEMOBILEVIEW={selectedOptTableMobile} {currentSeason} />
+                      {/each}
+                    {/each}
+                    <tr
+                      class="row-divider">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                      </td>
+                    </tr>
+                  {/if}
                 {/if}
               {/each}
 
             </table>
 
-            <!-- [ℹ] widget-sportbook-details-table-standings [DESKTOP]
+            <!-- 
+            [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
             <div
               id="standings-sportbook-details"
@@ -1303,7 +1500,8 @@
 
         {/if}
 
-    <!-- [ℹ] promise was rejected
+    <!-- 
+    [ℹ] promise was rejected
     -->
     {:catch error}
       {error}
@@ -1381,6 +1579,8 @@
     border-radius: 8px 0px 0px 8px;
   } div.stand-view-opt-box:last-child {
     border-radius: 0px 8px 8px 0px;
+  } div.stand-view-opt-box.total_view_only {
+    border-radius: 8px !important;
   }
 
   /* old - table approach */
@@ -1507,6 +1707,30 @@
   } div#mobile-table-box button.table-nav-btn:disabled {
     opacity: 0.2;
   }
+
+  /* group-text head */
+  tr.group-row-head td {
+    padding: 16px 0px 0 0;
+  } tr.group-row-head td {
+    padding-left: 20px;
+    padding-right: 20px;
+  } tr.group-row-head td p.group-head-text {
+    font-size: 16px;
+  } table.standings_table tr:nth-of-type(2) td div.table-divider {
+    display: none !important;
+  } table.standings_table tr.group-row-head td div.table-divider,
+    table.standings_table tr.row-divider td div.table-divider {
+    height: 1px;
+    width: 100%;
+    background: #E6E6E6;
+  } table.standings_table tr.group-row-head td div.table-divider {
+    margin-bottom: 16px;
+  } table.standings_table tr.row-divider td div.table-divider {
+    margin-top: 24px;
+  } tr.row-divider td {
+    padding-left: 20px;
+    padding-right: 20px;
+  }
    
 
   /* ====================
@@ -1541,6 +1765,16 @@
     } div.stand-view-opt-box {
       width: auto;
       text-align: center;
+    }
+
+    /* group dividers style [update] */
+    tr.group-row-head td {
+      padding-left: 0;
+      padding-right: 0;
+    }
+    tr.row-divider td {
+      padding-left: 0;
+      padding-right: 0;
     }
 
   }
@@ -1581,6 +1815,13 @@
   .dark-background-1 table.standings_table .row-head .tooltip-extra-info {
     background: #616161;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+  }
+
+  .dark-background-1 table.standings_table tr.group-row-head td div.table-divider,
+  .dark-background-1 table.standings_table tr.row-divider td div.table-divider {
+    height: 1px;
+    width: 100%;
+    background: #616161;
   }
 
 </style>

@@ -197,10 +197,12 @@ FONT EXTRA STYLES
 .text-center {
 	text-align: center;
 	text-align: -webkit-center;
+  text-align: -moz-center;
 }
 .text-left {
 	text-align: left;
 	text-align: -webkit-left;
+  text-align: -moz-left;
 }
 .place-center {
 	place-self: center;

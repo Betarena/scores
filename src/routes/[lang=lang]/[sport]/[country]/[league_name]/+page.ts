@@ -20,8 +20,8 @@ import type {
   Cache_Single_Tournaments_League_Info_Data_Response
 } from '$lib/models/tournaments/league-info/types';
 import type {
-  Cache_Single_Tournaments_League_Standings_Translation_Data_Response,
-  Cache_Single_Tournaments_League_Standings_Info_Data_Response
+  REDIS_CACHE_SINGLE_tournament_standings_translation,
+  REDIS_CACHE_SINGLE_tournament_standings_data
 } from '$lib/models/tournaments/standings/types';
 import type {
   REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response,
@@ -123,13 +123,13 @@ export async function load({
 
   const league_id = response_tournaments_page_info.data.tournament_id;
 
-  const response_standings_translations: Cache_Single_Tournaments_League_Standings_Translation_Data_Response = await fetch(
+  const response_standings_translations: REDIS_CACHE_SINGLE_tournament_standings_translation = await fetch(
     `/api/cache/tournaments/standings?lang=` + urlLang, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
-  const response_standings_data: Cache_Single_Tournaments_League_Standings_Info_Data_Response = await fetch(
+  const response_standings_data: REDIS_CACHE_SINGLE_tournament_standings_data = await fetch(
     `/api/cache/tournaments/standings?league_id=` + league_id, {
       method: 'GET'
     }
@@ -164,6 +164,18 @@ export async function load({
    * [ℹ] RETURN
    * ==========
    */
+  
+  // [🐞]
+  if (dev) {
+    if (response_tournaments_seo == undefined) console.log("response_tournaments_seo")
+    if (response_tournaments_page_info == undefined) console.log("response_tournaments_page_info")
+    if (response_league_info == undefined) console.log("response_league_info")
+    if (response_standings_translations == undefined) console.log("response_standings_translations")
+    if (response_standings_data == undefined) console.log("response_standings_data")
+    if (response_top_players_translations == undefined) console.log("response_top_players_translations")
+    if (response_top_players_data == undefined) console.log("response_top_players_data")
+    if (response_fixtures_odds_translations == undefined) console.log("response_fixtures_odds_translations")
+  }
 
   // [ℹ] page -> response data chceck
   if (

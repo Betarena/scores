@@ -54,8 +54,8 @@
   } from '$lib/models/tournaments/league-info/types';
 
   import type { 
-    Cache_Single_Tournaments_League_Standings_Info_Data_Response, 
-    Cache_Single_Tournaments_League_Standings_Translation_Data_Response 
+    REDIS_CACHE_SINGLE_tournament_standings_data, 
+    REDIS_CACHE_SINGLE_tournament_standings_translation 
   } from '$lib/models/tournaments/standings/types';
 
   import type { 
@@ -76,8 +76,8 @@
   let TOURNAMENT_DATA_TRANSLATED_COPIES: BETARENA_HASURA_scores_tournaments[]
   let TOURNAMENT_DATA:                   BETARENA_HASURA_scores_tournaments
   let LEAGUE_INFO_DATA:                  Cache_Single_Tournaments_League_Info_Data_Response
-  let STANDINGS_T:                       Cache_Single_Tournaments_League_Standings_Translation_Data_Response
-  let STANDINGS_DATA:                    Cache_Single_Tournaments_League_Standings_Info_Data_Response
+  let STANDINGS_T:                       REDIS_CACHE_SINGLE_tournament_standings_translation
+  let STANDINGS_DATA:                    REDIS_CACHE_SINGLE_tournament_standings_data
   let TOP_PLAYERS_T:                     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
   let TOP_PLAYERS_DATA:                  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response
   let FIXTURES_ODDS_T:                   REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
