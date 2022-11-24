@@ -1488,6 +1488,8 @@
 			/* max-width: 160px; */
     } div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn {
       margin-top: 27px;
+    } div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn:hover {
+		  background-color: #F77C42;
     }
 
   }
