@@ -1487,6 +1487,7 @@
     /* main team lineup */
     div#team-lineup-box {
       align-items: flex-start;
+      position: relative;
     } div#team-lineup-box div.lineup-box {
       width: 100%;
     } div#team-lineup-box div.lineup-box:last-child div.player-row img.lineup-img {
@@ -1499,7 +1500,12 @@
     div#divider {
       background-color: #E6E6E6;
       width: 1px;
-      height: 653px;
+      position: absolute;
+      bottom: 0;
+      top: 0;
+      height: -webkit-fill-available;
+      margin: auto;
+      right: 50%;
     }
   
   }
