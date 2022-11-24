@@ -52,6 +52,10 @@
 
   let imageVar:               string = '--standings-info-bookmaker-bg-';
 
+  let only_total_view_league_ids = [
+    732 // [ℹ] World Cup
+  ]
+
 	export let STANDINGS_T:     REDIS_CACHE_SINGLE_tournament_standings_translation;
 	export let STANDINGS_DATA:  REDIS_CACHE_SINGLE_tournament_standings_data;
 
@@ -409,7 +413,8 @@
                   cursor-pointer
                 "
                 on:click={() => selectTableView('total')}
-                class:activeOpt={selectedOpt == 'total'}>
+                class:activeOpt={selectedOpt == 'total'}
+                class:total_view_only={only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}>
                 <p
                   class=" 
                     s-14 
@@ -420,39 +425,44 @@
                 </p>
               </div>
 
-              <div
-                class="
-                  stand-view-opt-box 
-                  cursor-pointer
-                "
-                on:click={() => selectTableView('home')}
-                class:activeOpt={selectedOpt == 'home'}>
-                <p
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
+                <div
                   class="
-                    s-14 
-                    w-500 
-                    color-grey
-                  ">
-                  {STANDINGS_T.translations.home}
-                </p>
-              </div>
+                    stand-view-opt-box 
+                    cursor-pointer
+                  "
+                  on:click={() => selectTableView('home')}
+                  class:activeOpt={selectedOpt == 'home'}>
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    ">
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
 
-              <div
-                class="
-                  stand-view-opt-box 
-                  cursor-pointer
-                "
-                on:click={() => selectTableView('away')}
-                class:activeOpt={selectedOpt == 'away'}>
-                <p
+                <div
                   class="
-                    s-14 
-                    w-500 
-                    color-grey
-                  ">
-                  {STANDINGS_T.translations.away}
-                </p>
-              </div>
+                    stand-view-opt-box 
+                    cursor-pointer
+                  "
+                  on:click={() => selectTableView('away')}
+                  class:activeOpt={selectedOpt == 'away'}>
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    ">
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+              {/if}
 
             </div>
 
@@ -1062,37 +1072,55 @@
             -->
             <div
               id="standings-view-box"
-              class="row-space-start m-b-20">
+              class="
+                row-space-start 
+                m-b-20
+              ">
 
               <div
-                class="stand-view-opt-box cursor-pointer"
+                class="
+                  stand-view-opt-box 
+                  cursor-pointer
+                "
                 on:click={() => selectTableView('total')}
-                class:activeOpt={selectedOpt == 'total'}>
+                class:activeOpt={selectedOpt == 'total'}
+                class:total_view_only={only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}>
                 <p
-                  class="s-14 w-500 color-grey">
+                  class="
+                    s-14 
+                    w-500 
+                    color-grey
+                  ">
                   {STANDINGS_T.translations.total}
                 </p>
               </div>
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('home')}
-                class:activeOpt={selectedOpt == 'home'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.home}
-                </p>
-              </div>
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
 
-              <div
-                class="stand-view-opt-box cursor-pointer"
-                on:click={() => selectTableView('away')}
-                class:activeOpt={selectedOpt == 'away'}>
-                <p
-                  class="s-14 w-500 color-grey">
-                  {STANDINGS_T.translations.away}
-                </p>
-              </div>
+                <div
+                  class="stand-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('home')}
+                  class:activeOpt={selectedOpt == 'home'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
+
+                <div
+                  class="stand-view-opt-box cursor-pointer"
+                  on:click={() => selectTableView('away')}
+                  class:activeOpt={selectedOpt == 'away'}>
+                  <p
+                    class="s-14 w-500 color-grey">
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+
+              {/if}
 
             </div>
 
@@ -1551,6 +1579,8 @@
     border-radius: 8px 0px 0px 8px;
   } div.stand-view-opt-box:last-child {
     border-radius: 0px 8px 8px 0px;
+  } div.stand-view-opt-box.total_view_only {
+    border-radius: 8px !important;
   }
 
   /* old - table approach */
