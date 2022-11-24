@@ -59,7 +59,7 @@
   let no_widget_data:    any = false;         // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
   let lazy_load_data_check: boolean = false;
 
-  let show_placeholder:  boolean = true;      // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
+  let show_placeholder:  boolean = false;      // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
 
 	let user_stake_amount: number = 50.0;       // [ℹ] user const stake amount (input)
 	let total_votes:       number = undefined;  // [ℹ] fixture-total votes
@@ -562,7 +562,8 @@
 =================-->
 
 <div
-  id='widget-outer'>
+  id='widget-outer'
+  class:display_none={no_widget_data && !show_placeholder}>
 
   <!-- 
   [ℹ] SEO-DATA-LOADED 
@@ -1279,7 +1280,9 @@
 
   /* [ℹ] OTHER STYLE / CSS */
 
-  /* EMPTY */
+  .display_none {
+    display: none;
+  }
 
   /* [ℹ] SEO WIDGET DATA */
   
