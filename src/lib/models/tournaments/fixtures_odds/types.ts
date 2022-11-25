@@ -11,6 +11,7 @@ import type {
   MediaLinkWelcome,
   Round,
   Time,
+  Urls,
   Weekdays,
   WelcomeMonths,
   WidgetsNoDataAvailable,
@@ -109,7 +110,7 @@ export interface Tournament_Fixture_Odds {
   }
 
   tip_link:     string                // Tip = tip_link_wp + scores_general_translations
-  fixture_link: string                // Fixture Link = fixture_link_wp
+  fixture_link: Urls                  // Fixture Link = fixture_link_wp NOTE: now official-new FIXTURE-LINKS
   media_link:   MediaLinkWelcome[]    // media_link = historic_fixtures + media_link + "video_link"
   bet_icon?:    string                // Betting Site Icon = sportsbook_details (GEO or forced header option)
                                       // [❔] only 1 betting site at the moment for all fixtures of X GEO (design is wrong)
