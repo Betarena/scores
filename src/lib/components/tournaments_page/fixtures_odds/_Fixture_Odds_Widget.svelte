@@ -1798,9 +1798,8 @@
                         fixture?.fixture_link && 
                         fixture?.fixture_link[server_side_language]}
                         <a 
-                          rel="nofollow"
+                          data-sveltekit-prefetch
                           href={fixture?.fixture_link[server_side_language]}
-                          target="_blank"
                           style="width: inherit;">
                           <div
                             class="column-start-grid-start fixture-teams-box">
@@ -2057,10 +2056,9 @@
                         fixture?.fixture_link && 
                         fixture?.fixture_link[server_side_language]}
                         <a 
-                          rel="nofollow"
-                          aria-label="media_link_redirect"
+                          data-sveltekit-prefetch
                           href={fixture?.fixture_link[server_side_language]}
-                          target="_blank"
+                          aria-label="media_link_redirect"
                           style="width: inherit;">
                           <div
                             class="media-play-btn m-r-16">
@@ -2250,9 +2248,8 @@
                         fixture?.fixture_link && 
                         fixture?.fixture_link[server_side_language]}
                         <a 
-                          rel="nofollow"
+                          data-sveltekit-prefetch
                           href={fixture?.fixture_link[server_side_language]}
-                          target="_blank"
                           style="width: inherit;">
                           <div
                             class="column-start-grid-start fixture-teams-box">
