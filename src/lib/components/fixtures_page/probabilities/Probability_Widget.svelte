@@ -60,7 +60,7 @@
 	let refresh_data:      any = undefined;     // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
   let no_widget_data:    any = false;         // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
   let showMore:          boolean = false;
-  let displayShowMore:   boolean = false;
+  let limitViewRow:      number = 8;          // [ℹ] holds the actual, `total` limit of the list of featured sites
   let lazy_load_data_check: boolean = false;
 
   let show_placeholder:  boolean = false;     // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
@@ -188,6 +188,11 @@
 
   function toggleFullList() {
     showMore = !showMore;
+    limitViewRow =
+      showMore == true
+        ? 100
+        : 5
+    ;
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -502,13 +507,14 @@
     && browser 
     && $userBetarenaSettings.country_bookmaker}
 
-    <ProbabilityLoader />
+    <!-- [🐞] -->
+    <!-- <ProbabilityLoader /> -->
 
     <!-- 
     [ℹ] promise is pending 
     -->
     {#await widget_init()}
-      <!-- <ProbabilityLoader /> -->
+      <ProbabilityLoader />
     <!-- 
     [ℹ] promise was fulfilled
     -->
@@ -717,7 +723,8 @@
         <!-- 
         [ℹ] Other Probabilities + Odds Box [Section Main]
         -->
-        {#each Object.entries(FIXTURE_PROB_DATA.probabilites) as [key, value]}
+        {#each Object.entries(FIXTURE_PROB_DATA.probabilites).slice(0, limitViewRow) as [key, value]}
+
           {#if !exclude_prob_list.includes(key)}
             <!-- 
             Probabilites ROW
@@ -785,63 +792,66 @@
               </div>
             </div>
           {/if}
-        {/each}
-          
-        <!--
-        [ℹ] Correct Socre Title (txt)
-        -->
-        <p
-          id="correct-score-text"
-          class="
-            w-400
-            color-grey
-            text-center
-          ">
-          {FIXTURE_PROBS_TRANSLATION?.correct_score}
-        </p>
 
-        <!--
-        [ℹ] Correct Socre Grid-Box (box)
-        -->
-        <div
-          id="correct-score-box">
-          {#each Object.entries(FIXTURE_PROB_DATA.probabilites.correct_score) as [key, value]}
-            <!-- 
-            Probabilities Title
+          {#if key == 'correct_score'}
+            <!--
+            [ℹ] Correct Socre Title (txt)
+            -->
+            <p
+              id="correct-score-text"
+              class="
+                w-400
+                color-grey
+                text-center
+              ">
+              {FIXTURE_PROBS_TRANSLATION?.correct_score}
+            </p>
+
+            <!--
+            [ℹ] Correct Socre Grid-Box (box)
             -->
             <div
-              class="
-                column-space-center
-              ">
-              <p
-                class="
-                  w-500
-                  color-black-2
-                ">
-                <!-- TODO: Translation INSERT -->
-                {key}
-              </p>
-              <button 
-                class="
-                  place-bet-btn 
-                  btn-primary
-                ">
-                <p
-                  class="small">
-                  {value.toFixed(0)}%
-                </p>
-              </button>
-              <p
-                class="
-                  w-400
-                  color-grey
-                ">
-                {FIXTURE_PROBS_TRANSLATION?.odds} -
-              </p>
+              id="correct-score-box">
+              {#each Object.entries(FIXTURE_PROB_DATA.probabilites.correct_score) as [key, value]}
+                <!-- 
+                Probabilities Title
+                -->
+                <div
+                  class="
+                    column-space-center
+                  ">
+                  <p
+                    class="
+                      w-500
+                      color-black-2
+                    ">
+                    <!-- TODO: Translation INSERT -->
+                    {key}
+                  </p>
+                  <button 
+                    class="
+                      place-bet-btn 
+                      btn-primary
+                    ">
+                    <p
+                      class="small">
+                      {value.toFixed(0)}%
+                    </p>
+                  </button>
+                  <p
+                    class="
+                      w-400
+                      color-grey
+                    ">
+                    {FIXTURE_PROBS_TRANSLATION?.odds} -
+                  </p>
+                </div>
+              {/each}
             </div>
-          {/each}
-        </div>
 
+          {/if}
+        {/each}
+          
         <!--
         [ℹ] Show more / show less (box)
         -->
