@@ -17,6 +17,7 @@ import type { REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_transl
 import type { REDIS_CACHE_SINGLE_about_data, REDIS_CACHE_SINGLE_about_translation } from '$lib/models/fixtures/about/types';
 import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
+import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({
@@ -318,6 +319,13 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  const response_probability_translation: REDIS_CACHE_SINGLE_probabilities_translation = await fetch(
+    `/api/hasura/fixtures/probabilities?lang=` + urlLang, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -341,6 +349,7 @@ export async function load({
     // && response_about // IMPORTANT can be "NULL"
     && response_about_translation
     && response_votes_translation
+    && response_probability_translation
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
@@ -358,7 +367,8 @@ export async function load({
       FIXTURE_CONTENT_TRANSLATION: response_content_translation,
       FIXTURE_ABOUT: response_about,
       FIXTURE_ABOUT_TRANSLATION: response_about_translation,
-      FIXTURE_VOTES_TRANSLATION: response_votes_translation
+      FIXTURE_VOTES_TRANSLATION: response_votes_translation,
+      FIXTURE_PROBS_TRANSLATION: response_probability_translation
     }
   }
 
