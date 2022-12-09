@@ -786,7 +786,13 @@
                     class="
                       color-grey
                     ">
-                    {value.toFixed(2)}
+                    {#if key == 'btts'}
+                      {FIXTURE_PROB_DATA?.odds?.btts}
+                    {:else if key == 'over_2_5'}
+                      {FIXTURE_PROB_DATA?.odds?.over_2_5}
+                    {:else}
+                      -
+                    {/if}
                   </p>
                 </button>
               </div>
