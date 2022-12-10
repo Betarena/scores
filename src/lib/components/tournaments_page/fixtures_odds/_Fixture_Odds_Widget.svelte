@@ -514,7 +514,7 @@
       // [ℹ] assign "onValue" event-listeners
       for (const season_fixture of season_fixture_date_group.fixtures) {
 
-        if (season_fixture.status == "FT") {
+        if (["FT", "FT_PEN"].includes(season_fixture.status)) {
           continue
         }
 
@@ -1750,7 +1750,7 @@
                         {:else}
                           <p
                             class="no-wrap s-14 color-black"
-                            class:color-grey={fixture?.status === "FT"}>
+                            class:color-grey={["FT", "FT_PEN"].includes(fixture?.status)}>
                             {
                               (
                                 ('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
@@ -2121,10 +2121,8 @@
                       <!-- [ℹ] scores 
                       -->
                       {#if
-                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
-                        fixture?.status === "LIVE" ||
-                        fixture?.status === "HT" || 
-                        fixture?.status === "FT"}
+                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score) 
+                        || ["FT", "FT_PEN", "LIVE", "HT"].includes(fixture?.status)}
                         <div
                           class="column-space-center m-l-24 fixtures-scores-box">
                           <p 
@@ -2224,7 +2222,7 @@
                         {:else}
                           <p
                             class="no-wrap s-14 color-black"
-                            class:color-grey={fixture?.status === "FT"}>
+                            class:color-grey={["FT", "FT_PEN"].includes(fixture?.status)}>
                             {
                               (
                                 ('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
@@ -2502,10 +2500,8 @@
                       [ℹ] scores 
                       -->
                       {#if
-                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
-                        fixture?.status === "LIVE" ||
-                        fixture?.status === "HT" || 
-                        fixture?.status === "FT"}
+                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score)
+                        || ["FT", "FT_PEN", "LIVE", "HT"].includes(fixture?.status)}
                         <div
                           class="column-space-center fixtures-scores-box">
                           <p 
@@ -2529,7 +2525,7 @@
                       <!-- 
                       [ℹ] live-odds 
                       -->
-                      {#if fixture?.live_odds != undefined && fixture?.status != "FT"}
+                      {#if fixture?.live_odds != undefined && !["FT", "FT_PEN"].includes(fixture?.status)}
 
                         <div
                           class="main-bet-box row-space-out"
