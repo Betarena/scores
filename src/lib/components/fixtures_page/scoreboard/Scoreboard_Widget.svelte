@@ -140,10 +140,10 @@
     window.addEventListener('scroll', function(ev) {
       target_div = document.getElementById('scoreboard-widget-container');
       if (count == 0) {
-        initial_div_distance = target_div.getBoundingClientRect().top + window.scrollY;
+        initial_div_distance = target_div.getBoundingClientRect().bottom + window.scrollY;
         count = 1;
       }
-      let distance_top_from_div = target_div.getBoundingClientRect().top;
+      let distance_top_from_div = target_div.getBoundingClientRect().bottom;
       let distance_top_scroll = window.scrollY;
       // [🐞]
       // if (dev) console.log(
