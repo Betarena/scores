@@ -336,7 +336,7 @@
                       color-black-2
                       post-title
                     ">
-                    {item?.title}
+                    {@html item?.title}
                   </h3>
                   <!-- 
                   [ℹ] show time on tablet/desktop -->
