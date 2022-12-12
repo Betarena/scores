@@ -110,8 +110,8 @@
   if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_DATA: ${FIXTURES_ODDS_DATA}`)
 
   if (
-    (FIXTURES_ODDS_DATA == null || FIXTURES_ODDS_DATA == undefined) ||
-    (FIXTURES_ODDS_T == null || FIXTURES_ODDS_T == undefined)
+    FIXTURES_ODDS_DATA == undefined
+    || FIXTURES_ODDS_T == undefined
   ) {
     noWidgetData = true;
     loaded = true;
@@ -618,12 +618,9 @@
     loaded = true;
 
 		if (
-      FIXTURES_ODDS_T == null || 
-      FIXTURES_ODDS_T == undefined || 
-      FIXTURES_ODDS_DATA == null ||
-      FIXTURES_ODDS_DATA == undefined || 
-      response == null ||
-      response == undefined
+      FIXTURES_ODDS_T == undefined
+      || FIXTURES_ODDS_DATA == undefined
+      || response == undefined
     ) {
       // [🐛] debug 
       if (dev) logDevGroup ("fixture odds [DEV]", `❌ no data available!`)
@@ -654,6 +651,10 @@
   }
 
   async function selectFixturesOdds () {
+
+    if (FIXTURES_ODDS_DATA == undefined) {
+      return
+    }
 
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `selectFixturesOdds()`)
 
@@ -1199,7 +1200,8 @@
     <div 
       id="seo-widget-box">
       <h2>{FIXTURES_ODDS_T?.matches}</h2>
-      {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
+      {#if FIXTURES_ODDS_DATA != undefined 
+        && FIXTURES_ODDS_DATA?.seasons.length != 0}
         {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
           <p>{item?.teams?.away?.name}</p>
           <p>{item?.teams?.home?.name}</p>
