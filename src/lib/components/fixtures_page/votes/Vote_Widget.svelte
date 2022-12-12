@@ -144,7 +144,7 @@
     // [ℹ] data validation check [#2]
     const validation_check =
       response.widget_featured_match_votes.length == 0
-      && HIST_FIXTURE_DATA.status_j == "FT"
+      && ["FT", "FT_PEN"].includes(HIST_FIXTURE_DATA?.status_j)
     ;
 
     no_widget_data =
@@ -673,7 +673,9 @@
 
         <!-- 
         [ℹ] voting hint text -->
-        {#if !vote_casted && FIXTURE_VOTES_DATA.status != "FT"}
+        {#if 
+          !vote_casted 
+          && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
           <p
             class="
               w-500 
@@ -709,7 +711,7 @@
                 m-b-12
               "
               class:active={fixture_data_vote_obj.fixture_vote == '1'}
-              disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
+              disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
               on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home.toString())}>
                 <p
                   class="
@@ -745,7 +747,7 @@
             [ℹ] fixture-probability 
             -->
             {#if !show_bet_site 
-              && FIXTURE_VOTES_DATA?.status != "FT"}
+              && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
               <p 
                 class="
                   w-400 
@@ -761,7 +763,7 @@
             {:else if 
               FIXTURE_VOTES_DATA?.match_votes != undefined 
               || (FIXTURE_VOTES_DATA?.match_votes != undefined 
-                  && FIXTURE_VOTES_DATA?.status == "FT")}
+                  && ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status))}
               <p 
                 class="
                   large
@@ -801,7 +803,7 @@
                 m-b-12
               "
               class:active={fixture_data_vote_obj.fixture_vote == 'X'}
-              disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
+              disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
               on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw.toString())}>
                 <p 
                   class="
@@ -840,7 +842,7 @@
             [ℹ] fixture-probability 
             -->
             {#if !show_bet_site 
-              && FIXTURE_VOTES_DATA?.status != "FT"}
+              && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
               <p 
                 class="
                   w-400 
@@ -856,7 +858,7 @@
             {:else if 
               FIXTURE_VOTES_DATA?.match_votes != undefined 
               || (FIXTURE_VOTES_DATA?.match_votes != undefined 
-                  && FIXTURE_VOTES_DATA?.status == "FT")}
+                  && ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status))}
               <p 
                 class="
                   large
@@ -896,7 +898,7 @@
                   m-b-12
                 "
                 class:active={fixture_data_vote_obj.fixture_vote == '2'}
-                disabled={vote_casted || FIXTURE_VOTES_DATA.status == "FT"}
+                disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
                 on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away.toString())}>
                 <p 
                   class="
@@ -932,7 +934,7 @@
               [ℹ] fixture-probability 
               -->
               {#if !show_bet_site 
-                && FIXTURE_VOTES_DATA?.status != "FT"}
+                && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
                 <p 
                   class="
                     w-400 
@@ -948,7 +950,7 @@
               {:else if 
                 FIXTURE_VOTES_DATA?.match_votes != undefined 
                 || (FIXTURE_VOTES_DATA?.match_votes != undefined 
-                    && FIXTURE_VOTES_DATA?.status == "FT")}
+                    && ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status))}
                 <p 
                   class="
                     large

@@ -343,9 +343,9 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_SCOREBOARD?.status;
-    if (fixture_status == 'FT') {
+    if (["FT", "FT_PEN"].includes(fixture_status)) {
       // [🐞]
-      if (dev) logDevGroup (`${dev_console_tag}`, `fixture is FT!`)
+      if (dev) logDevGroup (`${dev_console_tag}`, `fixture is ${fixture_status}!`)
       lazy_load_data_check = true
       return;
     }
@@ -437,7 +437,9 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_SCOREBOARD?.status;
-    if (fixture_status == 'FT') {
+    if (["FT", "FT_PEN"].includes(fixture_status)) {
+      // [🐞]
+      if (dev) logDevGroup (`${dev_console_tag}`, `fixture is ${fixture_status}!`)
       return
     }
 
@@ -487,7 +489,7 @@
       check_live_fixtures(data)
     }
     const fixture_status = FIXTURE_SCOREBOARD?.status;
-    if (fixture_status != 'FT') {
+    if (!["FT", "FT_PEN"].includes(fixture_status)) {
       const fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
       const fixture_id = FIXTURE_SCOREBOARD?.id;
       const firebase_odds = await get_odds(fixture_time, fixture_id)
@@ -534,7 +536,7 @@
       check_live_fixtures(data)
     }
     const fixture_status = FIXTURE_SCOREBOARD?.status;
-    if (fixture_status != 'FT') {
+    if (!["FT", "FT_PEN"].includes(fixture_status)) {
       const fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
       const fixture_id = FIXTURE_SCOREBOARD?.id;
       const firebase_odds = await get_odds(fixture_time, fixture_id)
@@ -658,7 +660,7 @@
             <div
               id="scoreboard-top-box"              
               class="column-space-center"
-              class:full-time={FIXTURE_SCOREBOARD.status == "FT"}>
+              class:full-time={["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}>
 
               <!-- 
               [ℹ] [MOBILE]
@@ -773,7 +775,7 @@
                         ).slice(-2)}h
                       </p>
                     </div>
-                  {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                  {:else if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                     <div
                       class="
                         column-space-center
@@ -816,7 +818,7 @@
                         </span>
                       </p>
                     </div>
-                  {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                  {:else if ["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                     <div
                       class="
                         column-space-center
@@ -888,7 +890,7 @@
                 [ℹ] betting site
                 [ℹ] non-"FT"
                 -->
-                {#if FIXTURE_SCOREBOARD.status != "FT"}
+                {#if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}
                   <div
                     class="
                       row-space-center
@@ -923,7 +925,7 @@
                 [ℹ] odds
                 [ℹ] non-"FT"
                 -->
-                {#if FIXTURE_SCOREBOARD.status != "FT"}
+                {#if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}
                   <div
                     id="btn-vote-container" 
                     class="row-space-center">
@@ -1061,7 +1063,7 @@
                 [ℹ] background-gradient
                 [ℹ] non-"FT"
                 -->
-                {#if FIXTURE_SCOREBOARD.status != "FT"}
+                {#if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}
                   <div
                     id="background-gradient-box">
                   </div>
@@ -1167,7 +1169,7 @@
                         ).slice(-2)}h
                       </p>
                     </div>
-                  {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                  {:else if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                     <div
                       class="
                         column-space-center
@@ -1210,7 +1212,7 @@
                         </span>
                       </p>
                     </div>
-                  {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                  {:else if ["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                     <div
                       class="
                         column-space-
@@ -1281,7 +1283,7 @@
 
                 <!-- 
                 [ℹ] bet-site + odds -->
-                {#if FIXTURE_SCOREBOARD.status != "FT"}
+                {#if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}
                   <div
                     id="tablet-bet-odds-box">
                     <!-- 
@@ -1554,7 +1556,7 @@
                           ).slice(-2)}h
                         </p>
                       </div>
-                    {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                    {:else if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                       <div
                         class="
                           column-space-center
@@ -1598,7 +1600,7 @@
                           </span>
                         </p>
                       </div>
-                    {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                    {:else if ["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                       <div
                         class="
                           column-space-center
@@ -1643,7 +1645,7 @@
 
                     <!-- 
                     [ℹ] bet-site + odds -->
-                    {#if FIXTURE_SCOREBOARD.status != "FT"}
+                    {#if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}
                       <div
                         id="tablet-bet-odds-box">
                         <!-- 
@@ -1881,7 +1883,7 @@
 
           <div 
             id="empty-widget-placeholder"
-            class:full-time={FIXTURE_SCOREBOARD.status == "FT"} />
+            class:full-time={["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)} />
 
           <div
             id="scoreboard-widget-container"
@@ -1964,7 +1966,7 @@
                       ).slice(-2)}h
                     </p>
                   </div>
-                {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                {:else if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                   <div
                     class="
                       column-space-center
@@ -2015,7 +2017,7 @@
                       </span>
                     </p>
                   </div>
-                {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                {:else if ["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                   <div
                     class="
                       column-space-center
@@ -2144,7 +2146,7 @@
                       row-space-out 
                       inner-team-box-1
                     "
-                    class:full-time={FIXTURE_SCOREBOARD.status == "FT"}>
+                    class:full-time={["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}>
                     <p
                       class="
                         s-14
@@ -2199,7 +2201,7 @@
                       ).slice(-2)}h
                     </p>
                   </div>
-                {:else if FIXTURE_SCOREBOARD.status != "FT" }
+                {:else if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                   <div
                     class="
                       column-space-center
@@ -2249,7 +2251,7 @@
                       </span>
                     </p>
                   </div>
-                {:else if FIXTURE_SCOREBOARD.status == "FT" }
+                {:else if ["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status) }
                   <div
                     class="
                       column-space-center
@@ -2305,7 +2307,7 @@
                       row-space-out   
                       inner-team-box-2
                     "
-                    class:full-time={FIXTURE_SCOREBOARD.status == "FT"}>
+                    class:full-time={["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}>
                     <img 
                       src={FIXTURE_SCOREBOARD.away_team_logo}
                       alt=""

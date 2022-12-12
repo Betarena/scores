@@ -415,7 +415,7 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_LINEUPS?.status;
-    if (fixture_status == 'FT') {
+    if (["FT", "FT_PEN"].includes(fixture_status)) {
       return
     }
 
@@ -904,7 +904,7 @@
             <!-- 
             [ℹ] team-rating -->
             {#if 
-              FIXTURE_LINEUPS?.status == "FT"
+              ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
               && FIXTURE_LINEUPS[selected_view]?.team_rating != undefined}
               <p 
                 id='box-goals'
@@ -1066,7 +1066,7 @@
               <!-- 
               [ℹ] team-rating -->
               {#if 
-                FIXTURE_LINEUPS?.status == "FT"
+                ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
                 && FIXTURE_LINEUPS?.home?.team_rating != undefined}
                 <p 
                   id='box-goals'
@@ -1089,7 +1089,7 @@
               <!-- 
               [ℹ] team-rating -->
               {#if 
-                FIXTURE_LINEUPS?.status == "FT"
+                ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
                 && FIXTURE_LINEUPS?.away?.team_rating != undefined}
                 <p 
                   id='box-goals'

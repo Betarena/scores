@@ -219,7 +219,7 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_INCIDENTS?.status;
-    if (fixture_status == 'FT') {
+    if (["FT", "FT_PEN"].includes(fixture_status)) {
       return
     }
 
