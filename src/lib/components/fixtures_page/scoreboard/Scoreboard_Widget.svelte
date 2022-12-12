@@ -925,14 +925,18 @@
                 [ℹ] odds
                 [ℹ] non-"FT"
                 -->
-                {#if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)}
+                {#if !["FT", "FT_PEN"].includes(FIXTURE_SCOREBOARD?.status)
+                  && FIXTURE_SCOREBOARD?._1x2?.home
+                  && FIXTURE_SCOREBOARD?._1x2?.draw
+                  && FIXTURE_SCOREBOARD?._1x2?.away}
                   <div
                     id="btn-vote-container" 
                     class="row-space-center">
                         
                     <!-- 
-                    [ℹ] ODDS #1 -->
-                    <a 
+                    [ℹ] ODDS #1 
+                    -->
+                    <a
                       rel="nofollow"
                       aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
                       on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
@@ -945,8 +949,9 @@
                           row-space-out
                         ">
                         <!-- 
-                        [ℹ] team-img / odds-type -->
-                        <p  
+                        [ℹ] team-img / odds-type 
+                        -->
+                        <p
                           class="
                             color-grey
                             s-14
@@ -966,8 +971,9 @@
                     </a>
 
                     <!-- 
-                    [ℹ] ODDS #X -->
-                    <a 
+                    [ℹ] ODDS #X 
+                    -->
+                    <a
                       rel="nofollow"
                       aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
                       on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
@@ -979,7 +985,7 @@
                           odds-box
                           row-space-out
                         ">
-                        <p  
+                        <p
                           class="
                             color-grey
                             s-14
@@ -987,7 +993,7 @@
                           ">
                           X
                         </p>
-                        <p  
+                        <p
                           class="
                             color-white
                             s-14
@@ -999,8 +1005,9 @@
                     </a>
 
                     <!-- 
-                    [ℹ] ODDS #2 -->
-                    <a 
+                    [ℹ] ODDS #2 
+                    -->
+                    <a
                       rel="nofollow"
                       aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
                       on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
@@ -1013,8 +1020,9 @@
                           row-space-out
                         ">
                         <!-- 
-                        [ℹ] team-img / odds-type -->
-                        <p  
+                        [ℹ] team-img / odds-type 
+                        -->
+                        <p
                           class="
                             color-grey
                             s-14
@@ -1323,104 +1331,108 @@
                     [ℹ] odds
                     [ℹ] non-"FT"
                     -->
-                    <div
-                      id="btn-vote-container" 
-                      class="row-space-center">
-                          
-                      <!-- 
-                      [ℹ] ODDS #1 -->
-                      <a 
-                        rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                        on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                        href={SPORTBOOK_INFO?.register_link}
-                        target="_blank"
-                        style="width: fit-content;">
-                        <div
-                          class="
-                            odds-box
-                            row-space-out
-                          ">
-                          <!-- 
-                          [ℹ] team-img / odds-type -->
-                          <img 
-                            src={FIXTURE_SCOREBOARD.home_team_logo} 
-                            alt=""
-                          />
-                          <p
+                    {#if FIXTURE_SCOREBOARD?._1x2?.home
+                      && FIXTURE_SCOREBOARD?._1x2?.draw
+                      && FIXTURE_SCOREBOARD?._1x2?.away}
+                      <div
+                        id="btn-vote-container" 
+                        class="row-space-center">
+                            
+                        <!-- 
+                        [ℹ] ODDS #1 -->
+                        <a 
+                          rel="nofollow"
+                          aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                          on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                          href={SPORTBOOK_INFO?.register_link}
+                          target="_blank"
+                          style="width: fit-content;">
+                          <div
                             class="
-                              color-white
-                              s-14
-                              w-500
+                              odds-box
+                              row-space-out
                             ">
-                            {FIXTURE_SCOREBOARD?._1x2?.home}
-                          </p>
-                        </div>
-                      </a>
+                            <!-- 
+                            [ℹ] team-img / odds-type -->
+                            <img 
+                              src={FIXTURE_SCOREBOARD.home_team_logo} 
+                              alt=""
+                            />
+                            <p
+                              class="
+                                color-white
+                                s-14
+                                w-500
+                              ">
+                              {FIXTURE_SCOREBOARD?._1x2?.home}
+                            </p>
+                          </div>
+                        </a>
 
-                      <!-- 
-                      [ℹ] ODDS #X -->
-                      <a 
-                        rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                        on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                        href={SPORTBOOK_INFO?.register_link}
-                        target="_blank"
-                        style="width: fit-content;">
-                        <div
-                          class="
-                            odds-box
-                            row-space-out
-                          ">
-                          <!-- 
-                          [ℹ] team-img / odds-type -->
-                          <img 
-                            src={close_icon} 
-                            alt=""
-                          />
-                          <p  
+                        <!-- 
+                        [ℹ] ODDS #X -->
+                        <a 
+                          rel="nofollow"
+                          aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                          on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                          href={SPORTBOOK_INFO?.register_link}
+                          target="_blank"
+                          style="width: fit-content;">
+                          <div
                             class="
-                              color-white
-                              s-14
-                              w-500
+                              odds-box
+                              row-space-out
                             ">
-                            {FIXTURE_SCOREBOARD?._1x2?.draw}
-                          </p>
-                        </div>
-                      </a>
+                            <!-- 
+                            [ℹ] team-img / odds-type -->
+                            <img 
+                              src={close_icon} 
+                              alt=""
+                            />
+                            <p  
+                              class="
+                                color-white
+                                s-14
+                                w-500
+                              ">
+                              {FIXTURE_SCOREBOARD?._1x2?.draw}
+                            </p>
+                          </div>
+                        </a>
 
-                      <!-- 
-                      [ℹ] ODDS #2 -->
-                      <a 
-                        rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                        on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                        href={SPORTBOOK_INFO?.register_link}
-                        target="_blank"
-                        style="width: fit-content;">
-                        <div
-                          class="
-                            odds-box
-                            row-space-out
-                          ">
-                          <!-- 
-                          [ℹ] team-img / odds-type -->
-                          <img 
-                            src={FIXTURE_SCOREBOARD.away_team_logo} 
-                            alt=""
-                          />
-                          <p
+                        <!-- 
+                        [ℹ] ODDS #2 -->
+                        <a 
+                          rel="nofollow"
+                          aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                          on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                          href={SPORTBOOK_INFO?.register_link}
+                          target="_blank"
+                          style="width: fit-content;">
+                          <div
                             class="
-                              color-white
-                              s-14
-                              w-500
+                              odds-box
+                              row-space-out
                             ">
-                            {FIXTURE_SCOREBOARD?._1x2?.away}
-                          </p>
-                        </div>
-                      </a>
+                            <!-- 
+                            [ℹ] team-img / odds-type -->
+                            <img 
+                              src={FIXTURE_SCOREBOARD.away_team_logo} 
+                              alt=""
+                            />
+                            <p
+                              class="
+                                color-white
+                                s-14
+                                w-500
+                              ">
+                              {FIXTURE_SCOREBOARD?._1x2?.away}
+                            </p>
+                          </div>
+                        </a>
 
-                    </div>
+                      </div>
+                    {/if}
                   </div>
                 <!-- 
                 [ℹ] display fixture-time -->
@@ -1681,108 +1693,119 @@
                           </a>
                         </div>
 
-                        <!-- 
-                        [ℹ] odds
-                        [ℹ] non-"FT"
-                        -->
-                        <div
-                          id="btn-vote-container" 
-                          class="row-space-center">
-                              
+                        {#if FIXTURE_SCOREBOARD?._1x2?.home
+                          && FIXTURE_SCOREBOARD?._1x2?.draw
+                          && FIXTURE_SCOREBOARD?._1x2?.away}
                           <!-- 
-                          [ℹ] ODDS #1 -->
-                          <a 
-                            rel="nofollow"
-                            aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                            on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                            href={SPORTBOOK_INFO?.register_link}
-                            target="_blank"
-                            style="width: fit-content;">
-                            <div
-                              class="
-                                odds-box
-                                row-space-out
-                              ">
-                              <!-- 
-                              [ℹ] team-img / odds-type -->
-                              <img 
-                                src={FIXTURE_SCOREBOARD.home_team_logo} 
-                                alt=""
-                              />
-                              <p
+                          [ℹ] odds
+                          [ℹ] non-"FT"
+                          -->
+                          <div
+                            id="btn-vote-container" 
+                            class="row-space-center">
+                                
+                            <!-- 
+                            [ℹ] ODDS #1 
+                            -->
+                            <a
+                              rel="nofollow"
+                              aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                              on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                              href={SPORTBOOK_INFO?.register_link}
+                              target="_blank"
+                              style="width: fit-content;">
+                              <div
                                 class="
-                                  color-white
-                                  s-14
-                                  w-500
+                                  odds-box
+                                  row-space-out
                                 ">
-                                {FIXTURE_SCOREBOARD?._1x2?.home}
-                              </p>
-                            </div>
-                          </a>
+                                <!-- 
+                                [ℹ] team-img / odds-type 
+                                -->
+                                <img 
+                                  src={FIXTURE_SCOREBOARD.home_team_logo} 
+                                  alt=""
+                                />
+                                <p
+                                  class="
+                                    color-white
+                                    s-14
+                                    w-500
+                                  ">
+                                  {FIXTURE_SCOREBOARD?._1x2?.home}
+                                </p>
+                              </div>
+                            </a>
 
-                          <!-- 
-                          [ℹ] ODDS #X -->
-                          <a 
-                            rel="nofollow"
-                            aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                            on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                            href={SPORTBOOK_INFO?.register_link}
-                            target="_blank"
-                            style="width: fit-content;">
-                            <div
-                              class="
-                                odds-box
-                                row-space-out
-                              ">
-                              <!-- 
-                              [ℹ] team-img / odds-type -->
-                              <img 
-                                src={close_icon} 
-                                alt=""
-                              />
-                              <p  
+                            <!-- 
+                            [ℹ] ODDS #X 
+                            -->
+                            <a
+                              rel="nofollow"
+                              aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                              on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                              href={SPORTBOOK_INFO?.register_link}
+                              target="_blank"
+                              style="width: fit-content;">
+                              <div
                                 class="
-                                  color-white
-                                  s-14
-                                  w-500
+                                  odds-box
+                                  row-space-out
                                 ">
-                                {FIXTURE_SCOREBOARD?._1x2?.draw}
-                              </p>
-                            </div>
-                          </a>
+                                <!-- 
+                                [ℹ] team-img / odds-type 
+                                -->
+                                <img 
+                                  src={close_icon} 
+                                  alt=""
+                                />
+                                <p  
+                                  class="
+                                    color-white
+                                    s-14
+                                    w-500
+                                  ">
+                                  {FIXTURE_SCOREBOARD?._1x2?.draw}
+                                </p>
+                              </div>
+                            </a>
 
-                          <!-- 
-                          [ℹ] ODDS #2 -->
-                          <a 
-                            rel="nofollow"
-                            aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                            on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
-                            href={SPORTBOOK_INFO?.register_link}
-                            target="_blank"
-                            style="width: fit-content;">
-                            <div
-                              class="
-                                odds-box
-                                row-space-out
-                              ">
-                              <!-- 
-                              [ℹ] team-img / odds-type -->
-                              <img 
-                                src={FIXTURE_SCOREBOARD.away_team_logo} 
-                                alt=""
-                              />
-                              <p
+                            <!-- 
+                            [ℹ] ODDS #2 
+                            -->
+                            <a
+                              rel="nofollow"
+                              aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                              on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+                              href={SPORTBOOK_INFO?.register_link}
+                              target="_blank"
+                              style="width: fit-content;">
+                              <div
                                 class="
-                                  color-white
-                                  s-14
-                                  w-500
+                                  odds-box
+                                  row-space-out
                                 ">
-                                {FIXTURE_SCOREBOARD?._1x2?.away}
-                              </p>
-                            </div>
-                          </a>
+                                <!-- 
+                                [ℹ] team-img / odds-type 
+                                -->
+                                <img 
+                                  src={FIXTURE_SCOREBOARD.away_team_logo} 
+                                  alt=""
+                                />
+                                <p
+                                  class="
+                                    color-white
+                                    s-14
+                                    w-500
+                                  ">
+                                  {FIXTURE_SCOREBOARD?._1x2?.away}
+                                </p>
+                              </div>
+                            </a>
 
-                        </div>
+                          </div>
+                        {/if}
+
                       </div>
                     <!-- 
                     [ℹ] display fixture-time -->
