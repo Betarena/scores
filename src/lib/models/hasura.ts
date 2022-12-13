@@ -1653,7 +1653,7 @@ export interface BETARENA_HASURA_scores_fixture_probabilities_translations {
   ht_over_1_5?:       string;
   at_under_0_5?:      string;
   at_under_1_5?:      string;
-  away_team_in?:      string;
+  away_team_win?:      string;
   ht_under_0_5?:      string;
   ht_under_1_5?:      string;
   correct_score?:     string;
