@@ -830,7 +830,7 @@
                           color-grey
                           ft-text
                         ">
-                        FT
+                        {FIXTURE_SCOREBOARD?.status}
                       </p>
                       <p
                         class="
@@ -1233,7 +1233,7 @@
                           color-grey
                           ft-text
                         ">
-                        FT
+                        {FIXTURE_SCOREBOARD?.status}
                       </p>
                       <p
                         class="
@@ -1624,7 +1624,7 @@
                             color-grey
                             ft-text
                           ">
-                          FT
+                          {FIXTURE_SCOREBOARD?.status}
                         </p>
                         <p
                           class="
