@@ -642,7 +642,10 @@
                   btn-primary
                 "
                 on:click={() => toggle_cta('home')}>
-                <p>
+                <p
+                  class="
+                    w-500
+                  ">
                   {FIXTURE_PROB_DATA?.probabilites?.home.toFixed(0)}%
                 </p>
               </button>
@@ -760,7 +763,10 @@
                   btn-primary
                 "
                 on:click={() => toggle_cta('draw')}>
-                <p>
+                <p  
+                  class="
+                    w-500
+                  ">
                   {FIXTURE_PROB_DATA?.probabilites?.draw.toFixed(0)}%
                 </p>
               </button>
@@ -878,7 +884,10 @@
                   btn-primary
                 "
                 on:click={() => toggle_cta('away')}>
-                <p>
+                <p
+                  class="
+                    w-500
+                  ">
                   {FIXTURE_PROB_DATA?.probabilites?.away.toFixed(0)}%
                 </p>
               </button>
@@ -1045,7 +1054,10 @@
                       btn-primary
                     "
                     on:click={() => toggle_cta(key)}>
-                    <p>
+                    <p
+                      class="
+                        w-500
+                      ">
                       {value.toFixed(0)}%
                     </p>
                   </button>
@@ -1140,6 +1152,7 @@
                   <p
                     class="
                       color-grey
+                      w-400
                     ">
                     {#if key == 'btts' 
                       && FIXTURE_PROB_DATA?.odds?.btts != undefined}
@@ -1203,7 +1216,10 @@
                         btn-primary
                       "
                       on:click={() => toggle_cta(key)}>
-                      <p>
+                      <p  
+                        class="
+                          w-500
+                        ">
                         {value.toFixed(0)}%
                       </p>
                     </button>
@@ -1335,7 +1351,7 @@
     left: 0;
     height: 100%;
     width: 100%;
-    z-index: 1000;
+    z-index: 998;
   }
 
   .display_none {
@@ -1409,7 +1425,9 @@
 		border-radius: 8px;
     margin-top: 8px;
     margin-bottom: 12px;
-	}
+	} div#prob-widget-container div#team-row-probabilities div.team-box button.place-bet-btn p {
+    font-size: 14px;
+  }
 
   /* probabilites head box style */
   div#prob-widget-container div#probabilites-head-box {
@@ -1432,6 +1450,8 @@
 		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
     margin-top: 0;
+  } div.prob-odds-row div#button-extra-info-container button.place-bet-btn p {
+    font-size: 14px;
   } div.prob-odds-row p.equal-sign {
     margin: 0 8px;
     font-size: 14px;
@@ -1443,6 +1463,8 @@
 		border-radius: 8px;
     margin-top: 0;
     border: 1px solid #CCCCCC !important;
+  } div.prob-odds-row button.odds-box-btn p {
+    font-size: 14px;
   }
 
   /* probabilites [correct-score] rows style */
@@ -1466,6 +1488,8 @@
 		border-radius: 8px;
     margin-top: 8px;
     margin-bottom: 12px;
+  } div#correct-score-box button.place-bet-btn p {
+    font-size: 14px;
   }
 
   #button-extra-info-container {
@@ -1507,6 +1531,11 @@
     padding: 11.5px !important;
     width: -webkit-fill-available;
   }
+  
+  button.place-bet-btn:hover,
+  .btn-cta:hover {
+    background: #F77C42 !important;
+  }
 
   /* show-more / show-less style */
   #show-more-box {
@@ -1516,6 +1545,9 @@
     white-space: nowrap;
     color: var(--primary);
     cursor: pointer;
+    border-top: 1px solid #EBEBEB;
+    margin: 0 -20px;
+    margin-top: 20px;
   }
 
   /* ====================
@@ -1565,6 +1597,10 @@
 		border-radius: 8px;
     margin-top: 0;
     border: 1px solid #737373 !important;
+  }
+
+  div#prob-widget-container.dark-background-1 #show-more-box {
+    border-top: 1px solid #616161;
   }
 
 </style>

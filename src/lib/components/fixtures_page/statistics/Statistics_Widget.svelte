@@ -344,7 +344,8 @@
 =================-->
 
 <div
-  id='widget-outer'>
+  id='widget-outer'
+  class:display_none={no_widget_data && !show_placeholder}>
 
   <!-- 
   [ℹ] SEO-DATA-LOADED 
@@ -576,7 +577,9 @@
 
   /* [ℹ] OTHER STYLE / CSS */
 
-  /* EMPTY */
+  .display_none {
+    display: none;
+  }
 
   /* [ℹ] SEO WIDGET DATA */
   
