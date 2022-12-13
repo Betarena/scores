@@ -210,6 +210,10 @@
     }
   }
 
+  function closeAllDropdowns() {
+    toggleCTA = false;
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -444,6 +448,13 @@
 <!-- ===============
     COMPONENT HTML 
 =================-->
+
+<!-- 
+[ℹ] area-outside-for-close 
+-->
+{#if toggleCTA}
+  <div id="background-area-close" on:click={() => closeAllDropdowns()} />
+{/if}
 
 <div
   id='widget-outer'
@@ -1177,19 +1188,95 @@
                       w-500
                       color-black-2
                     ">
-                    <!-- TODO: Translation INSERT -->
                     {key}
                   </p>
-                  <button 
-                    class="
-                      place-bet-btn 
-                      btn-primary
-                    ">
-                    <p
-                      class="small">
-                      {value.toFixed(0)}%
-                    </p>
-                  </button>
+                  <!-- 
+                  Probabilities BUTTON
+                  + Bet-Site PopUp
+                  -->
+                  <div
+                    id='button-extra-info-container'>
+
+                    <button
+                      class="
+                        place-bet-btn 
+                        btn-primary
+                      "
+                      on:click={() => toggle_cta(key)}>
+                      <p>
+                        {value.toFixed(0)}%
+                      </p>
+                    </button>
+
+                    <!-- 
+                    [ℹ] extra-info pop-up container
+                    -->
+                    {#if toggleCTA
+                      && toggleCTA_Key == key}
+                      <div
+                        class="extra-info" 
+                        in:fade>
+
+                        <!--  
+                        [ℹ] site-image 
+                        -->
+                        <a 
+                          rel="nofollow" 
+                          aria-label="fixture_football_fixtures_probabilities"
+                          on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
+                          href={SPORTBOOK_INFO?.register_link}
+                          style="width: inherit;">
+                          <img
+                            style="background-color: var({imageVar});"
+                            class="extra-info-img"
+                            src={SPORTBOOK_INFO?.image}
+                            alt={SPORTBOOK_INFO?.title}
+                          />
+                        </a>
+
+                        <!--  
+                        [ℹ] extra-site info 
+                        -->
+                        <div
+                          class="extra-info-container">
+                          <!--  
+                          [ℹ] text 
+                          -->
+                          <p 
+                            class="large">
+                            {SPORTBOOK_INFO?.bonus_description}
+                          </p>
+                          <!--  
+                          [ℹ] button_cta 
+                          -->
+                          <a 
+                            rel="nofollow" 
+                            aria-label="fixture_football_fixtures_probabilities"
+                            on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
+                            href={SPORTBOOK_INFO?.register_link}
+                            target="_blank">
+                            <button
+                              class="btn-primary btn-cta"
+                              style="width: 100% !important;">
+                              <p 
+                                class="w-500 s-14 w-normal">
+                                Register
+                              </p>
+                            </button>
+                          </a>
+                          <!--  
+                          [ℹ] extra-site info text 
+                          -->
+                          <p 
+                            class="small" 
+                            style="color: #CCCCCC;">
+                            {SPORTBOOK_INFO?.information}
+                          </p>
+                        </div>
+                      </div>
+                    {/if}
+
+                  </div>
                   <p
                     class="
                       w-400
@@ -1239,6 +1326,17 @@
 <style>
 
   /* [ℹ] OTHER STYLE / CSS */
+
+  #background-area-close {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+  }
 
   .display_none {
     display: none;
