@@ -613,7 +613,12 @@
                 color-grey
                 odds-text
               ">
-              {FIXTURE_PROBS_TRANSLATION?.odds} {FIXTURE_PROB_DATA?.odds?._1x2?.home}
+              {FIXTURE_PROBS_TRANSLATION?.odds}
+              {#if FIXTURE_PROB_DATA?.odds?._1x2?.home != undefined}
+                {FIXTURE_PROB_DATA?.odds?._1x2?.home}
+              {:else}
+                -
+              {/if}
             </p>
           </div>
 
@@ -648,7 +653,12 @@
                 color-grey
                 odds-text
               ">
-              {FIXTURE_PROBS_TRANSLATION?.odds} {FIXTURE_PROB_DATA?.odds?._1x2?.draw}
+              {FIXTURE_PROBS_TRANSLATION?.odds}
+              {#if FIXTURE_PROB_DATA?.odds?._1x2?.draw != undefined}
+                {FIXTURE_PROB_DATA?.odds?._1x2?.draw}
+              {:else}
+                -
+              {/if}
             </p>
           </div>
 
@@ -683,7 +693,12 @@
                 color-grey
                 odds-text
               ">
-              {FIXTURE_PROBS_TRANSLATION?.odds} {FIXTURE_PROB_DATA?.odds?._1x2?.away}
+              {FIXTURE_PROBS_TRANSLATION?.odds}
+              {#if FIXTURE_PROB_DATA?.odds?._1x2?.away != undefined}
+                {FIXTURE_PROB_DATA?.odds?._1x2?.away}
+              {:else}
+                -
+              {/if}
             </p>
           </div>
           
@@ -786,9 +801,11 @@
                     class="
                       color-grey
                     ">
-                    {#if key == 'btts'}
+                    {#if key == 'btts' 
+                      && FIXTURE_PROB_DATA?.odds?.btts != undefined}
                       {FIXTURE_PROB_DATA?.odds?.btts}
-                    {:else if key == 'over_2_5'}
+                    {:else if key == 'over_2_5'
+                      && FIXTURE_PROB_DATA?.odds?.over_2_5 != undefined}
                       {FIXTURE_PROB_DATA?.odds?.over_2_5}
                     {:else}
                       -
