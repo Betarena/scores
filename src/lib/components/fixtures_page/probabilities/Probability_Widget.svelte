@@ -116,9 +116,11 @@
       await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo)
     ;
     loaded = true;
-
+    
     const responses_invalid = 
       response == undefined
+      || response.historic_fixtures[0] == undefined
+      || response.historic_fixtures[0]?.probabilities == undefined
       || response_main_sportbook == undefined
       || response_all_spotbooks == undefined
     ;
