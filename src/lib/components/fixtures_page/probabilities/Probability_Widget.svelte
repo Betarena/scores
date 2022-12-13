@@ -580,8 +580,8 @@
           </p>
           <a 
             rel="nofollow"
-            aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-            on:click={() => triggerGoggleEvents("betting_site_logo_football_fixtures_scoreboard_fixtures")}
+            aria-label="fixture_football_fixtures_probabilities"
+            on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
             href={SPORTBOOK_INFO?.register_link}
             target="_blank"
             style="width: fit-content;">
@@ -680,7 +680,7 @@
                     <a 
                       rel="nofollow" 
                       aria-label="fixture_football_fixtures_probabilities"
-                      on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
+                      on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
                       href={SPORTBOOK_INFO?.register_link}
                       target="_blank">
                       <button
@@ -798,7 +798,7 @@
                     <a 
                       rel="nofollow" 
                       aria-label="fixture_football_fixtures_probabilities"
-                      on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
+                      on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
                       href={SPORTBOOK_INFO?.register_link}
                       target="_blank">
                       <button
@@ -916,7 +916,7 @@
                     <a 
                       rel="nofollow" 
                       aria-label="fixture_football_fixtures_probabilities"
-                      on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
+                      on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
                       href={SPORTBOOK_INFO?.register_link}
                       target="_blank">
                       <button
@@ -1083,7 +1083,7 @@
                         <a 
                           rel="nofollow" 
                           aria-label="fixture_football_fixtures_probabilities"
-                          on:click={() => triggerGoggleEvents("beting_cta_link_widget_league_info")}
+                          on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
                           href={SPORTBOOK_INFO?.register_link}
                           target="_blank">
                           <button
