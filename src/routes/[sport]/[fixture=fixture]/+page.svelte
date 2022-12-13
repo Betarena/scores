@@ -356,8 +356,8 @@
         <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
         <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
-        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
         <ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
+        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
       </div>
       <!-- 
       [ℹ] "News" view selection -->
