@@ -519,7 +519,7 @@
                 color-black-2
                 event-milestone-text
               ">
-                {FIXTURE_INCIDENTS?.status} {FIXTURE_INCIDENTS?.score_post?.ft_score}
+                FT {FIXTURE_INCIDENTS?.score_post?.ft_score}
             </p>
           {/if}
           {#if FIXTURE_INCIDENTS?.events}
