@@ -197,7 +197,7 @@
     limitViewRow =
       showMore == true
         ? 100
-        : 5
+        : 8
     ;
   }
 
