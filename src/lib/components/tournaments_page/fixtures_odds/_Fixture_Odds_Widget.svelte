@@ -1761,6 +1761,12 @@
                               ).split(' ').join('')
                             }
                           </p>
+                          {#if fixture?.status === "FT_PEN"}
+                            <p
+                              class="no-wrap s-14 color-grey">
+                              {FIXTURES_ODDS_T?.status_abv?.FT_PEN}
+                            </p>
+                          {/if}
                           {#if fixture?.status === "FT"}
                             <p
                               class="no-wrap s-14 color-grey">
@@ -2233,6 +2239,12 @@
                               ).split(' ').join('')
                             }
                           </p>
+                          {#if fixture?.status === "FT_PEN"}
+                            <p
+                              class="no-wrap s-14 color-grey">
+                              {FIXTURES_ODDS_T?.status_abv?.FT_PEN}
+                            </p>
+                          {/if}
                           {#if fixture?.status === "FT"}
                             <p
                               class="no-wrap s-14 color-grey">
