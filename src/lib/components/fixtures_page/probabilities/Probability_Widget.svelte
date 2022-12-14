@@ -986,27 +986,44 @@
           class="
             row-space-out
           ">
-          <p
+          <div
             class="
-              w-400
-              color-grey
+              prob-head-box
             ">
-            {FIXTURE_PROBS_TRANSLATION?.market}
-          </p>
-          <p
+            <p
+              class="
+                w-400
+                color-grey
+              ">
+              {FIXTURE_PROBS_TRANSLATION?.market}
+            </p>
+          </div>
+          <div
             class="
-              w-400
-              color-grey
+              prob-head-box
+              text-center
             ">
-            {FIXTURE_PROBS_TRANSLATION?.probabilities}
-          </p>
-          <p
+            <p
+              class="
+                w-400
+                color-grey
+              ">
+              {FIXTURE_PROBS_TRANSLATION?.probabilities}
+            </p>
+          </div>
+          <div
             class="
-              w-400
-              color-grey
+              prob-head-box
+              text-center
             ">
-            {FIXTURE_PROBS_TRANSLATION?.odds}
-          </p>
+            <p
+              class="
+                w-400
+                color-grey
+              ">
+              {FIXTURE_PROBS_TRANSLATION?.odds}
+            </p>
+          </div>
         </div>
 
         <!-- 
@@ -1035,103 +1052,98 @@
                 {FIXTURE_PROBS_TRANSLATION[key]}:
               </p>
               <!-- 
-              Group Button
+              Probabilities BUTTON
+              + Bet-Site PopUp
               -->
               <div
-                class="
-                  row-space-end
-                ">
+                id='button-extra-info-container'>
+
+                <button
+                  class="
+                    place-bet-btn 
+                    btn-primary
+                  "
+                  on:click={() => toggle_cta(key)}>
+                  <p
+                    class="
+                      w-500
+                    ">
+                    {value.toFixed(0)}%
+                  </p>
+                </button>
+
                 <!-- 
-                Probabilities BUTTON
-                + Bet-Site PopUp
+                [ℹ] extra-info pop-up container
                 -->
                 <div
-                  id='button-extra-info-container'>
+                  class="extra-info fade-in"
+                  class:display_none={(!toggleCTA || toggleCTA_Key != key)}
+                  in:fade>
 
-                  <button
-                    class="
-                      place-bet-btn 
-                      btn-primary
-                    "
-                    on:click={() => toggle_cta(key)}>
-                    <p
-                      class="
-                        w-500
-                      ">
-                      {value.toFixed(0)}%
-                    </p>
-                  </button>
+                  <!--  
+                  [ℹ] site-image 
+                  -->
+                  <a
+                    rel="nofollow" 
+                    aria-label="fixture_football_fixtures_probabilities"
+                    on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
+                    href={SPORTBOOK_INFO?.register_link}
+                    style="width: inherit;">
+                    <img
+                      style="background-color: var({imageVar});"
+                      class="extra-info-img"
+                      src={SPORTBOOK_INFO?.image}
+                      alt={SPORTBOOK_INFO?.title}
+                    />
+                  </a>
 
-                  <!-- 
-                  [ℹ] extra-info pop-up container
+                  <!--  
+                  [ℹ] extra-site info 
                   -->
                   <div
-                    class="extra-info fade-in"
-                    class:display_none={(!toggleCTA || toggleCTA_Key != key)}
-                    in:fade>
-
+                    class="extra-info-container">
                     <!--  
-                    [ℹ] site-image 
+                    [ℹ] text 
                     -->
-                    <a
+                    <p 
+                      class="large">
+                      {SPORTBOOK_INFO?.bonus_description}
+                    </p>
+                    <!--  
+                    [ℹ] button_cta 
+                    -->
+                    <a 
                       rel="nofollow" 
                       aria-label="fixture_football_fixtures_probabilities"
                       on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
                       href={SPORTBOOK_INFO?.register_link}
-                      style="width: inherit;">
-                      <img
-                        style="background-color: var({imageVar});"
-                        class="extra-info-img"
-                        src={SPORTBOOK_INFO?.image}
-                        alt={SPORTBOOK_INFO?.title}
-                      />
+                      target="_blank">
+                      <button
+                        class="btn-primary btn-cta"
+                        style="width: 100% !important;">
+                        <p 
+                          class="w-500 s-14 w-normal">
+                          Register
+                        </p>
+                      </button>
                     </a>
-
                     <!--  
-                    [ℹ] extra-site info 
+                    [ℹ] extra-site info text 
                     -->
-                    <div
-                      class="extra-info-container">
-                      <!--  
-                      [ℹ] text 
-                      -->
-                      <p 
-                        class="large">
-                        {SPORTBOOK_INFO?.bonus_description}
-                      </p>
-                      <!--  
-                      [ℹ] button_cta 
-                      -->
-                      <a 
-                        rel="nofollow" 
-                        aria-label="fixture_football_fixtures_probabilities"
-                        on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
-                        href={SPORTBOOK_INFO?.register_link}
-                        target="_blank">
-                        <button
-                          class="btn-primary btn-cta"
-                          style="width: 100% !important;">
-                          <p 
-                            class="w-500 s-14 w-normal">
-                            Register
-                          </p>
-                        </button>
-                      </a>
-                      <!--  
-                      [ℹ] extra-site info text 
-                      -->
-                      <p 
-                        class="small" 
-                        style="color: #CCCCCC;">
-                        {SPORTBOOK_INFO?.information}
-                      </p>
-                    </div>
+                    <p 
+                      class="small" 
+                      style="color: #CCCCCC;">
+                      {SPORTBOOK_INFO?.information}
+                    </p>
                   </div>
-
                 </div>
-                <!-- 
-                Equal Sign
-                -->
+
+              </div>
+              <!-- 
+              Equal Sign
+              [TABLET] [DESKTOP]
+              -->
+              {#if !mobileExclusive}
                 <p
                   class="
                     w-400
@@ -1140,30 +1152,30 @@
                   ">
                   =
                 </p>
-                <!-- 
-                Odds BUTTON
-                -->
-                <button
+              {/if}
+              <!-- 
+              Odds BUTTON
+              -->
+              <button
+                class="
+                  odds-box-btn
+                ">
+                <p
                   class="
-                    odds-box-btn
+                    color-grey
+                    w-400
                   ">
-                  <p
-                    class="
-                      color-grey
-                      w-400
-                    ">
-                    {#if key == 'btts' 
-                      && FIXTURE_PROB_DATA?.odds?.btts != undefined}
-                      {FIXTURE_PROB_DATA?.odds?.btts}
-                    {:else if key == 'over_2_5'
-                      && FIXTURE_PROB_DATA?.odds?.over_2_5 != undefined}
-                      {FIXTURE_PROB_DATA?.odds?.over_2_5}
-                    {:else}
-                      -
-                    {/if}
-                  </p>
-                </button>
-              </div>
+                  {#if key == 'btts' 
+                    && FIXTURE_PROB_DATA?.odds?.btts != undefined}
+                    {FIXTURE_PROB_DATA?.odds?.btts}
+                  {:else if key == 'over_2_5'
+                    && FIXTURE_PROB_DATA?.odds?.over_2_5 != undefined}
+                    {FIXTURE_PROB_DATA?.odds?.over_2_5}
+                  {:else}
+                    -
+                  {/if}
+                </p>
+              </button>
             </div>
           {/if}
 
@@ -1354,6 +1366,23 @@
     display: none !important;
   }
 
+  .fade-in {
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 0.5s;
+  }
+
+  @keyframes fadeInOpacity {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+
   /* [ℹ] SEO WIDGET DATA */
   
   #seo-widget-box {
@@ -1405,7 +1434,8 @@
     margin-bottom: 24px;
     border-bottom: 1px #E6E6E6 solid;
   } div#prob-widget-container div#team-row-probabilities div.team-box {
-    margin-right: 16px;
+    /* margin-right: 16px; */
+    margin-right: 8px;
   } div#prob-widget-container div#team-row-probabilities div.team-box:last-child {
     margin-right: 0;
   } div#prob-widget-container div#team-row-probabilities div.team-box p.market-type-text {
@@ -1428,8 +1458,8 @@
   /* probabilites head box style */
   div#prob-widget-container div#probabilites-head-box {
     margin-bottom: 12px;
-  } div#prob-widget-container div#probabilites-head-box p:last-child {
-    margin-right: 53px;
+  } div.prob-head-box {
+    width: 100%;
   }
 
   /* probabilites [main] rows style */
@@ -1437,28 +1467,31 @@
     padding-bottom: 12px;
   } div.prob-odds-row p.prob-title {
     font-size: 14px;
-    width: 160px;
+    width: 100%;
+  } div.prob-odds-row div#button-extra-info-container {
+    margin-right: 8px;
+    margin-left: 8px;
   } div.prob-odds-row div#button-extra-info-container button.place-bet-btn {
     height: 48px;
 		width: 100%;
-    max-width: 139px;
 		background-color: #f5620f;
 		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
     margin-top: 0;
+    padding: 0;
   } div.prob-odds-row div#button-extra-info-container button.place-bet-btn p {
     font-size: 14px;
   } div.prob-odds-row p.equal-sign {
-    margin: 0 8px;
+    margin: 0 4px;
     font-size: 14px;
   } div.prob-odds-row button.odds-box-btn {
     height: 48px;
 		width: 100%;
-    max-width: 139px;
 		background-color: #ffffff;
 		border-radius: 8px;
     margin-top: 0;
     border: 1px solid #CCCCCC !important;
+    padding: 0;
   } div.prob-odds-row button.odds-box-btn p {
     font-size: 14px;
   }
@@ -1478,7 +1511,6 @@
   } div#correct-score-box button.place-bet-btn {
     height: 48px;
 		width: 100%;
-    max-width: 139px;
 		background-color: #f5620f;
 		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
@@ -1491,7 +1523,6 @@
   #button-extra-info-container {
     position: relative;
     width: 100%;
-    max-width: 139px;
   } .extra-info-container {
     padding: 20px;
     display: grid;
@@ -1528,6 +1559,7 @@
     width: -webkit-fill-available;
   }
   
+  /* TODO: bring into one CLASS */
   button.place-bet-btn:hover,
   .btn-cta:hover {
     background: #F77C42 !important;
@@ -1544,23 +1576,6 @@
     border-top: 1px solid #EBEBEB;
     margin: 0 -20px;
     margin-top: 20px;
-  }
-
-  .fade-in {
-    opacity: 1;
-    animation-name: fadeInOpacity;
-    animation-iteration-count: 1;
-    animation-timing-function: ease-in;
-    animation-duration: 0.5s;
-  }
-
-  @keyframes fadeInOpacity {
-    0% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
   }
 
   /* ====================
@@ -1582,6 +1597,11 @@
   NOTE: TABLET && DESKTOP [SHARED] RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
    
+    div.prob-odds-row div#button-extra-info-container {
+      margin-right: unset;
+      margin-left: 8px;
+    }
+
   }
 
   /* 
