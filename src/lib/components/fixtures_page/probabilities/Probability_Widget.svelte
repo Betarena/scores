@@ -205,8 +205,8 @@
     if (toggleCTA_Key == key) {
       toggleCTA = !toggleCTA
     } else {
-      toggleCTA_Key = key
       toggleCTA = true;
+      toggleCTA_Key = key
     }
   }
 
@@ -1065,70 +1065,68 @@
                   <!-- 
                   [ℹ] extra-info pop-up container
                   -->
-                  {#if toggleCTA
-                    && toggleCTA_Key == key}
-                    <div
-                      class="extra-info" 
-                      in:fade>
+                  <div
+                    class="extra-info fade-in"
+                    class:display_none={(!toggleCTA || toggleCTA_Key != key)}
+                    in:fade>
 
+                    <!--  
+                    [ℹ] site-image 
+                    -->
+                    <a
+                      rel="nofollow" 
+                      aria-label="fixture_football_fixtures_probabilities"
+                      on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
+                      href={SPORTBOOK_INFO?.register_link}
+                      style="width: inherit;">
+                      <img
+                        style="background-color: var({imageVar});"
+                        class="extra-info-img"
+                        src={SPORTBOOK_INFO?.image}
+                        alt={SPORTBOOK_INFO?.title}
+                      />
+                    </a>
+
+                    <!--  
+                    [ℹ] extra-site info 
+                    -->
+                    <div
+                      class="extra-info-container">
                       <!--  
-                      [ℹ] site-image 
+                      [ℹ] text 
+                      -->
+                      <p 
+                        class="large">
+                        {SPORTBOOK_INFO?.bonus_description}
+                      </p>
+                      <!--  
+                      [ℹ] button_cta 
                       -->
                       <a 
                         rel="nofollow" 
                         aria-label="fixture_football_fixtures_probabilities"
                         on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
                         href={SPORTBOOK_INFO?.register_link}
-                        style="width: inherit;">
-                        <img
-                          style="background-color: var({imageVar});"
-                          class="extra-info-img"
-                          src={SPORTBOOK_INFO?.image}
-                          alt={SPORTBOOK_INFO?.title}
-                        />
+                        target="_blank">
+                        <button
+                          class="btn-primary btn-cta"
+                          style="width: 100% !important;">
+                          <p 
+                            class="w-500 s-14 w-normal">
+                            Register
+                          </p>
+                        </button>
                       </a>
-
                       <!--  
-                      [ℹ] extra-site info 
+                      [ℹ] extra-site info text 
                       -->
-                      <div
-                        class="extra-info-container">
-                        <!--  
-                        [ℹ] text 
-                        -->
-                        <p 
-                          class="large">
-                          {SPORTBOOK_INFO?.bonus_description}
-                        </p>
-                        <!--  
-                        [ℹ] button_cta 
-                        -->
-                        <a 
-                          rel="nofollow" 
-                          aria-label="fixture_football_fixtures_probabilities"
-                          on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
-                          href={SPORTBOOK_INFO?.register_link}
-                          target="_blank">
-                          <button
-                            class="btn-primary btn-cta"
-                            style="width: 100% !important;">
-                            <p 
-                              class="w-500 s-14 w-normal">
-                              Register
-                            </p>
-                          </button>
-                        </a>
-                        <!--  
-                        [ℹ] extra-site info text 
-                        -->
-                        <p 
-                          class="small" 
-                          style="color: #CCCCCC;">
-                          {SPORTBOOK_INFO?.information}
-                        </p>
-                      </div>
+                      <p 
+                        class="small" 
+                        style="color: #CCCCCC;">
+                        {SPORTBOOK_INFO?.information}
+                      </p>
                     </div>
-                  {/if}
+                  </div>
 
                 </div>
                 <!-- 
@@ -1227,70 +1225,68 @@
                     <!-- 
                     [ℹ] extra-info pop-up container
                     -->
-                    {#if toggleCTA
-                      && toggleCTA_Key == key}
-                      <div
-                        class="extra-info" 
-                        in:fade>
+                    <div
+                      class="extra-info fade-in"
+                      class:display_none={(!toggleCTA || toggleCTA_Key != key)}
+                      in:fade>
 
+                      <!--  
+                      [ℹ] site-image 
+                      -->
+                      <a 
+                        rel="nofollow" 
+                        aria-label="fixture_football_fixtures_probabilities"
+                        on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
+                        href={SPORTBOOK_INFO?.register_link}
+                        style="width: inherit;">
+                        <img
+                          style="background-color: var({imageVar});"
+                          class="extra-info-img"
+                          src={SPORTBOOK_INFO?.image}
+                          alt={SPORTBOOK_INFO?.title}
+                        />
+                      </a>
+
+                      <!--  
+                      [ℹ] extra-site info 
+                      -->
+                      <div
+                        class="extra-info-container">
                         <!--  
-                        [ℹ] site-image 
+                        [ℹ] text 
+                        -->
+                        <p 
+                          class="large">
+                          {SPORTBOOK_INFO?.bonus_description}
+                        </p>
+                        <!--  
+                        [ℹ] button_cta 
                         -->
                         <a 
                           rel="nofollow" 
                           aria-label="fixture_football_fixtures_probabilities"
                           on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
                           href={SPORTBOOK_INFO?.register_link}
-                          style="width: inherit;">
-                          <img
-                            style="background-color: var({imageVar});"
-                            class="extra-info-img"
-                            src={SPORTBOOK_INFO?.image}
-                            alt={SPORTBOOK_INFO?.title}
-                          />
+                          target="_blank">
+                          <button
+                            class="btn-primary btn-cta"
+                            style="width: 100% !important;">
+                            <p 
+                              class="w-500 s-14 w-normal">
+                              Register
+                            </p>
+                          </button>
                         </a>
-
                         <!--  
-                        [ℹ] extra-site info 
+                        [ℹ] extra-site info text 
                         -->
-                        <div
-                          class="extra-info-container">
-                          <!--  
-                          [ℹ] text 
-                          -->
-                          <p 
-                            class="large">
-                            {SPORTBOOK_INFO?.bonus_description}
-                          </p>
-                          <!--  
-                          [ℹ] button_cta 
-                          -->
-                          <a 
-                            rel="nofollow" 
-                            aria-label="fixture_football_fixtures_probabilities"
-                            on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
-                            href={SPORTBOOK_INFO?.register_link}
-                            target="_blank">
-                            <button
-                              class="btn-primary btn-cta"
-                              style="width: 100% !important;">
-                              <p 
-                                class="w-500 s-14 w-normal">
-                                Register
-                              </p>
-                            </button>
-                          </a>
-                          <!--  
-                          [ℹ] extra-site info text 
-                          -->
-                          <p 
-                            class="small" 
-                            style="color: #CCCCCC;">
-                            {SPORTBOOK_INFO?.information}
-                          </p>
-                        </div>
+                        <p 
+                          class="small" 
+                          style="color: #CCCCCC;">
+                          {SPORTBOOK_INFO?.information}
+                        </p>
                       </div>
-                    {/if}
+                    </div>
 
                   </div>
                   <p
@@ -1355,7 +1351,7 @@
   }
 
   .display_none {
-    display: none;
+    display: none !important;
   }
 
   /* [ℹ] SEO WIDGET DATA */
@@ -1548,6 +1544,23 @@
     border-top: 1px solid #EBEBEB;
     margin: 0 -20px;
     margin-top: 20px;
+  }
+
+  .fade-in {
+    opacity: 1;
+    animation-name: fadeInOpacity;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in;
+    animation-duration: 0.5s;
+  }
+
+  @keyframes fadeInOpacity {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
   }
 
   /* ====================
