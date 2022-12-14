@@ -110,8 +110,8 @@
   if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `FIXTURES_ODDS_DATA: ${FIXTURES_ODDS_DATA}`)
 
   if (
-    (FIXTURES_ODDS_DATA == null || FIXTURES_ODDS_DATA == undefined) ||
-    (FIXTURES_ODDS_T == null || FIXTURES_ODDS_T == undefined)
+    FIXTURES_ODDS_DATA == undefined
+    || FIXTURES_ODDS_T == undefined
   ) {
     noWidgetData = true;
     loaded = true;
@@ -514,7 +514,7 @@
       // [ℹ] assign "onValue" event-listeners
       for (const season_fixture of season_fixture_date_group.fixtures) {
 
-        if (season_fixture.status == "FT") {
+        if (["FT", "FT_PEN"].includes(season_fixture.status)) {
           continue
         }
 
@@ -618,12 +618,9 @@
     loaded = true;
 
 		if (
-      FIXTURES_ODDS_T == null || 
-      FIXTURES_ODDS_T == undefined || 
-      FIXTURES_ODDS_DATA == null ||
-      FIXTURES_ODDS_DATA == undefined || 
-      response == null ||
-      response == undefined
+      FIXTURES_ODDS_T == undefined
+      || FIXTURES_ODDS_DATA == undefined
+      || response == undefined
     ) {
       // [🐛] debug 
       if (dev) logDevGroup ("fixture odds [DEV]", `❌ no data available!`)
@@ -654,6 +651,10 @@
   }
 
   async function selectFixturesOdds () {
+
+    if (FIXTURES_ODDS_DATA == undefined) {
+      return
+    }
 
     if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `selectFixturesOdds()`)
 
@@ -1199,7 +1200,8 @@
     <div 
       id="seo-widget-box">
       <h2>{FIXTURES_ODDS_T?.matches}</h2>
-      {#if FIXTURES_ODDS_DATA?.seasons.length != 0}
+      {#if FIXTURES_ODDS_DATA != undefined 
+        && FIXTURES_ODDS_DATA?.seasons.length != 0}
         {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
           <p>{item?.teams?.away?.name}</p>
           <p>{item?.teams?.home?.name}</p>
@@ -1750,7 +1752,7 @@
                         {:else}
                           <p
                             class="no-wrap s-14 color-black"
-                            class:color-grey={fixture?.status === "FT"}>
+                            class:color-grey={["FT", "FT_PEN"].includes(fixture?.status)}>
                             {
                               (
                                 ('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
@@ -1759,6 +1761,12 @@
                               ).split(' ').join('')
                             }
                           </p>
+                          {#if fixture?.status === "FT_PEN"}
+                            <p
+                              class="no-wrap s-14 color-grey">
+                              {FIXTURES_ODDS_T?.status_abv?.FT_PEN}
+                            </p>
+                          {/if}
                           {#if fixture?.status === "FT"}
                             <p
                               class="no-wrap s-14 color-grey">
@@ -2121,10 +2129,8 @@
                       <!-- [ℹ] scores 
                       -->
                       {#if
-                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
-                        fixture?.status === "LIVE" ||
-                        fixture?.status === "HT" || 
-                        fixture?.status === "FT"}
+                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score) 
+                        || ["FT", "FT_PEN", "LIVE", "HT"].includes(fixture?.status)}
                         <div
                           class="column-space-center m-l-24 fixtures-scores-box">
                           <p 
@@ -2224,7 +2230,7 @@
                         {:else}
                           <p
                             class="no-wrap s-14 color-black"
-                            class:color-grey={fixture?.status === "FT"}>
+                            class:color-grey={["FT", "FT_PEN"].includes(fixture?.status)}>
                             {
                               (
                                 ('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
@@ -2233,6 +2239,12 @@
                               ).split(' ').join('')
                             }
                           </p>
+                          {#if fixture?.status === "FT_PEN"}
+                            <p
+                              class="no-wrap s-14 color-grey">
+                              {FIXTURES_ODDS_T?.status_abv?.FT_PEN}
+                            </p>
+                          {/if}
                           {#if fixture?.status === "FT"}
                             <p
                               class="no-wrap s-14 color-grey">
@@ -2502,10 +2514,8 @@
                       [ℹ] scores 
                       -->
                       {#if
-                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score) ||
-                        fixture?.status === "LIVE" ||
-                        fixture?.status === "HT" || 
-                        fixture?.status === "FT"}
+                        (fixture?.teams?.away?.score && fixture?.teams?.home?.score)
+                        || ["FT", "FT_PEN", "LIVE", "HT"].includes(fixture?.status)}
                         <div
                           class="column-space-center fixtures-scores-box">
                           <p 
@@ -2529,7 +2539,7 @@
                       <!-- 
                       [ℹ] live-odds 
                       -->
-                      {#if fixture?.live_odds != undefined && fixture?.status != "FT"}
+                      {#if fixture?.live_odds != undefined && !["FT", "FT_PEN"].includes(fixture?.status)}
 
                         <div
                           class="main-bet-box row-space-out"

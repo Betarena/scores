@@ -192,7 +192,7 @@
           class="row-space-end"
           style="width: auto;">
           {#if 
-            STATUS == "FT"
+            ["FT", "FT_PEN"].includes(STATUS)
             && PLAYER_INFO?.rating != undefined
             && parseInt(PLAYER_INFO?.rating) != 0}
             <p 

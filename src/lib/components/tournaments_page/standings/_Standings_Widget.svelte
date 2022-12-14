@@ -82,15 +82,17 @@
     // [ℹ] data validation check
 		if (
       response == undefined
+      || STANDINGS_DATA == undefined
     ) {
       // [🐞] 
       if (dev) logDevGroup ("tournament standings [DEV]", `❌ no data available!`)
-      // noStandingsBool = true;
+      console.log("HERE!");
+      noStandingsBool = true;
 			return;
 		}
     // [ℹ] otherwise, no data
     else {
-      // noStandingsBool = false;
+      noStandingsBool = false;
     }
 
     // loaded = true;
@@ -219,7 +221,7 @@
   }
 
   let seasonCheck: boolean = false;
-  $: {
+  $: if (STANDINGS_DATA != undefined) {
     // [ℹ] check season exists / contains data
     let season = STANDINGS_DATA.seasons
       .find( ({ season_id }) => 
@@ -240,6 +242,9 @@
         ? true
         : false;
     seasonCheck = true
+  }
+  else {
+    seasonCheck = true;
   }
 
 </script>
@@ -264,7 +269,8 @@
     <div 
       id="seo-widget-box">
       <h2>{STANDINGS_T.translations.standings}</h2>
-      {#if STANDINGS_DATA?.seasons.length != 0}
+      {#if STANDINGS_DATA != undefined 
+        && STANDINGS_DATA?.seasons.length != 0}
         {#if !STANDINGS_DATA.seasons[0].group}
           {#each STANDINGS_DATA.seasons[0].total as team}
             <p>{team.team_name}</p>

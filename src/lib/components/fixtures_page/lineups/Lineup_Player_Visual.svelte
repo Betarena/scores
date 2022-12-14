@@ -76,7 +76,7 @@
       <!-- 
       [ℹ] player rating -->
       {#if 
-        STATUS == "FT"
+        ["FT", "FT_PEN"].includes(STATUS)
         && PLAYER_INFO?.rating != undefined}
         <p 
           id='box-goals'
