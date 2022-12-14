@@ -99,6 +99,7 @@
     // [ℹ] data validation check
 		if (
       FIXTURE_STATISTICS == undefined
+      || FIXTURE_STATISTICS.stats.length == 0
     ) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
