@@ -1651,7 +1651,6 @@
   div#prob-widget-container.dark-background-1 div.prob-odds-row button.odds-box-btn {
     height: 48px;
 		width: 100%;
-    max-width: 139px;
 		background-color: #4B4B4B;
 		border-radius: 8px;
     margin-top: 0;
