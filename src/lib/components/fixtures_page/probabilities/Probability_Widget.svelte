@@ -386,6 +386,13 @@
       }
     }
 
+    // [ℹ] no sportbook is present
+    if (count == 0) {
+      // [ℹ] distorted "sportmonks" image color-thief application
+      const imageURL: string = SPORTBOOK_INFO?.image
+      getImageBgColor(imageURL, imageVar)
+    }
+
     // [ℹ] assign changes [persist]
     FIXTURE_PROB_DATA = FIXTURE_PROB_DATA
     lazy_load_data_check = true
