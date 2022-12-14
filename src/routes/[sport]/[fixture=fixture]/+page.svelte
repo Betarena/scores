@@ -48,6 +48,7 @@
   } from '$lib/models/fixtures/about/types';
   
 	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
+	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
 
   import SvelteSeo from 'svelte-seo';
 	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
@@ -58,6 +59,7 @@
 	import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
 	import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
 	import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
+	import ProbabilityWidget from '$lib/components/fixtures_page/probabilities/Probability_Widget.svelte';
 
   let PAGE_SEO:                       REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                   REDIS_CACHE_SINGLE_fixtures_page_info_response
@@ -75,6 +77,7 @@
   let FIXTURE_ABOUT:                  REDIS_CACHE_SINGLE_about_data
   let FIXTURE_ABOUT_TRANSLATION:      REDIS_CACHE_SINGLE_about_translation
   let FIXTURE_VOTES_TRANSLATION:      REDIS_CACHE_SINGLE_votes_translation
+  let FIXTURE_PROBS_TRANSLATION:      REDIS_CACHE_SINGLE_probabilities_translation
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -96,6 +99,7 @@
   $: FIXTURE_ABOUT                  = $page.data.FIXTURE_ABOUT;
   $: FIXTURE_ABOUT_TRANSLATION      = $page.data.FIXTURE_ABOUT_TRANSLATION;
   $: FIXTURE_VOTES_TRANSLATION      = $page.data.FIXTURE_VOTES_TRANSLATION;
+  $: FIXTURE_PROBS_TRANSLATION      = $page.data.FIXTURE_PROBS_TRANSLATION;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -352,6 +356,7 @@
         <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
         <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+        <ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
         <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
       </div>
       <!-- 
@@ -383,6 +388,7 @@
         <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
         <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
         <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+        <ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
       </div>
     </div>
     <!-- 

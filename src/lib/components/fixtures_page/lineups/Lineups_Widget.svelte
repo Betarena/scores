@@ -415,7 +415,7 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_LINEUPS?.status;
-    if (fixture_status == 'FT') {
+    if (["FT", "FT_PEN"].includes(fixture_status)) {
       return
     }
 
@@ -543,7 +543,15 @@
     let away_team_formation_arr_temp = FIXTURE_LINEUPS?.away?.formation.split('-')
     away_team_formation_arr_temp.unshift('1'); // [ℹ] add goalkeeper pos
     away_team_formation_arr_temp.reverse();
-    FIXTURE_LINEUPS?.away?.lineup.sort((a, b) => parseFloat(b.formation_position.toString()) - parseFloat(a.formation_position.toString()));
+    // NOTE: sometimes formation_position has been "null" #905
+    let null_formation = 
+      FIXTURE_LINEUPS?.away?.lineup.filter( ({formation_position}) => formation_position == undefined).length > 0
+        ? true
+        : false
+    ;
+    if (!null_formation) {
+      FIXTURE_LINEUPS?.away?.lineup.sort((a, b) => parseFloat(b.formation_position.toString()) - parseFloat(a.formation_position.toString()));
+    }
     away_team_formation_map = new Map <string, Fixture_Player[]>() // [ℹ] reset player-list
     for (const form_pos of away_team_formation_arr_temp) {
       let form_pos_num = parseInt(form_pos)
@@ -904,7 +912,7 @@
             <!-- 
             [ℹ] team-rating -->
             {#if 
-              FIXTURE_LINEUPS?.status == "FT"
+              ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
               && FIXTURE_LINEUPS[selected_view]?.team_rating != undefined}
               <p 
                 id='box-goals'
@@ -1066,7 +1074,7 @@
               <!-- 
               [ℹ] team-rating -->
               {#if 
-                FIXTURE_LINEUPS?.status == "FT"
+                ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
                 && FIXTURE_LINEUPS?.home?.team_rating != undefined}
                 <p 
                   id='box-goals'
@@ -1089,7 +1097,7 @@
               <!-- 
               [ℹ] team-rating -->
               {#if 
-                FIXTURE_LINEUPS?.status == "FT"
+                ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
                 && FIXTURE_LINEUPS?.away?.team_rating != undefined}
                 <p 
                   id='box-goals'

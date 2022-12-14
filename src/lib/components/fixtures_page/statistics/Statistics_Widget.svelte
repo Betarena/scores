@@ -99,6 +99,7 @@
     // [ℹ] data validation check
 		if (
       FIXTURE_STATISTICS == undefined
+      || FIXTURE_STATISTICS.stats.length == 0
     ) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
@@ -224,7 +225,7 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_STATISTICS?.status;
-    if (fixture_status == 'FT') {
+    if (["FT", "FT_PEN"].includes(fixture_status)) {
       return
     }
 
@@ -344,7 +345,8 @@
 =================-->
 
 <div
-  id='widget-outer'>
+  id='widget-outer'
+  class:display_none={no_widget_data && !show_placeholder}>
 
   <!-- 
   [ℹ] SEO-DATA-LOADED 
@@ -576,7 +578,9 @@
 
   /* [ℹ] OTHER STYLE / CSS */
 
-  /* EMPTY */
+  .display_none {
+    display: none;
+  }
 
   /* [ℹ] SEO WIDGET DATA */
   

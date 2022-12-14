@@ -1629,3 +1629,35 @@ export interface BETARENA_HASURA_scores_fixture_voting_translations {
   probability?:  string;
   widget_title?: string;
 }
+
+/**
+ * [ℹ] HASURA: scores_fixture_probabilities_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixture_probabilities_translations {
+  lang?: string;
+  data?: FixtureProbabilitiesDataTranslation;
+} export interface FixtureProbabilitiesDataTranslation {
+  btts?:              string;
+  draw?:              string;
+  odds?:              string;
+  market?:            string;
+  over_2_5?:          string;
+  over_3_5?:          string;
+  show_less?:         string;
+  under_2_5?:         string;
+  under_3_5?:         string;
+  at_over_0_5?:       string;
+  at_over_1_5?:       string;
+  featured_by?:       string;
+  ht_over_0_5?:       string;
+  ht_over_1_5?:       string;
+  at_under_0_5?:      string;
+  at_under_1_5?:      string;
+  away_team_win?:      string;
+  ht_under_0_5?:      string;
+  ht_under_1_5?:      string;
+  correct_score?:     string;
+  home_team_win?:     string;
+  probabilities?:     string;
+  show_more_options?: string;
+}
