@@ -74,6 +74,22 @@
     'correct_score'
   ]
 
+  let probabilities_order = [ 
+    'over_2_5',
+    "over_3_5",
+    "under_2_5",
+    "under_3_5",
+    "HT_over_0_5",
+    "HT_under_0_5",
+    "HT_over_1_5",
+    "HT_under_1_5",
+    "AT_over_0_5",
+    "AT_under_0_5",
+    "AT_over_1_5",
+    "AT_under_1_5",
+    "correct_score"
+  ]
+
   let imageVar: string = '--probabilities-info-bookmaker-bg-';
 
   // [🐞]
@@ -1029,189 +1045,28 @@
         <!-- 
         [ℹ] Other Probabilities + Odds Box [Section Main]
         -->
-        {#each Object.entries(FIXTURE_PROB_DATA.probabilites).slice(0, limitViewRow) as [key, value]}
-
-          {#if !exclude_prob_list.includes(key)}
-            <!-- 
-            Probabilites ROW
-            -->
-            <div
-              class="
-                row-space-out
-                prob-odds-row
-              ">
-              <!-- 
-              Probabilities Title
-              -->
-              <p
-                class="
-                  w-500
-                  color-black-2
-                  prob-title
-                ">
-                {FIXTURE_PROBS_TRANSLATION[key]}:
-              </p>
-              <!-- 
-              Probabilities BUTTON
-              + Bet-Site PopUp
-              -->
-              <div
-                id='button-extra-info-container'>
-
-                <button
-                  class="
-                    place-bet-btn 
-                    btn-primary
-                  "
-                  on:click={() => toggle_cta(key)}>
-                  <p
-                    class="
-                      w-500
-                    ">
-                    {value.toFixed(0)}%
-                  </p>
-                </button>
-
+        {#each probabilities_order as prob_item_order}
+          {#each Object.entries(FIXTURE_PROB_DATA.probabilites).slice(0, limitViewRow) as [key, value]}
+            {#if prob_item_order == key}
+              {#if !exclude_prob_list.includes(key)}
                 <!-- 
-                [ℹ] extra-info pop-up container
-                -->
-                <div
-                  class="extra-info fade-in"
-                  class:display_none={(!toggleCTA || toggleCTA_Key != key)}
-                  in:fade>
-
-                  <!--  
-                  [ℹ] site-image 
-                  -->
-                  <a
-                    rel="nofollow" 
-                    aria-label="fixture_football_fixtures_probabilities"
-                    on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
-                    href={SPORTBOOK_INFO?.register_link}
-                    style="width: inherit;">
-                    <img
-                      style="background-color: var({imageVar});"
-                      class="extra-info-img"
-                      src={SPORTBOOK_INFO?.image}
-                      alt={SPORTBOOK_INFO?.title}
-                    />
-                  </a>
-
-                  <!--  
-                  [ℹ] extra-site info 
-                  -->
-                  <div
-                    class="extra-info-container">
-                    <!--  
-                    [ℹ] text 
-                    -->
-                    <p 
-                      class="large">
-                      {SPORTBOOK_INFO?.bonus_description}
-                    </p>
-                    <!--  
-                    [ℹ] button_cta 
-                    -->
-                    <a 
-                      rel="nofollow" 
-                      aria-label="fixture_football_fixtures_probabilities"
-                      on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
-                      href={SPORTBOOK_INFO?.register_link}
-                      target="_blank">
-                      <button
-                        class="btn-primary btn-cta"
-                        style="width: 100% !important;">
-                        <p 
-                          class="w-500 s-14 w-normal">
-                          Register
-                        </p>
-                      </button>
-                    </a>
-                    <!--  
-                    [ℹ] extra-site info text 
-                    -->
-                    <p 
-                      class="small" 
-                      style="color: #CCCCCC;">
-                      {SPORTBOOK_INFO?.information}
-                    </p>
-                  </div>
-                </div>
-
-              </div>
-              <!-- 
-              Equal Sign
-              [TABLET] [DESKTOP]
-              -->
-              {#if !mobileExclusive}
-                <p
-                  class="
-                    w-400
-                    color-grey
-                    equal-sign
-                  ">
-                  =
-                </p>
-              {/if}
-              <!-- 
-              Odds BUTTON
-              -->
-              <button
-                class="
-                  odds-box-btn
-                ">
-                <p
-                  class="
-                    color-grey
-                    w-400
-                  ">
-                  {#if key == 'btts' 
-                    && FIXTURE_PROB_DATA?.odds?.btts != undefined}
-                    {FIXTURE_PROB_DATA?.odds?.btts}
-                  {:else if key == 'over_2_5'
-                    && FIXTURE_PROB_DATA?.odds?.over_2_5 != undefined}
-                    {FIXTURE_PROB_DATA?.odds?.over_2_5}
-                  {:else}
-                    -
-                  {/if}
-                </p>
-              </button>
-            </div>
-          {/if}
-
-          {#if key == 'correct_score'}
-            <!--
-            [ℹ] Correct Socre Title (txt)
-            -->
-            <p
-              id="correct-score-text"
-              class="
-                w-400
-                color-grey
-                text-center
-              ">
-              {FIXTURE_PROBS_TRANSLATION?.correct_score}
-            </p>
-
-            <!--
-            [ℹ] Correct Socre Grid-Box (box)
-            -->
-            <div
-              id="correct-score-box">
-              {#each Object.entries(FIXTURE_PROB_DATA.probabilites.correct_score) as [key, value]}
-                <!-- 
-                Probabilities Title
+                Probabilites ROW
                 -->
                 <div
                   class="
-                    column-space-center
+                    row-space-out
+                    prob-odds-row
                   ">
+                  <!-- 
+                  Probabilities Title
+                  -->
                   <p
                     class="
                       w-500
                       color-black-2
+                      prob-title
                     ">
-                    {key}
+                    {FIXTURE_PROBS_TRANSLATION[key]}:
                   </p>
                   <!-- 
                   Probabilities BUTTON
@@ -1226,7 +1081,7 @@
                         btn-primary
                       "
                       on:click={() => toggle_cta(key)}>
-                      <p  
+                      <p
                         class="
                           w-500
                         ">
@@ -1245,7 +1100,7 @@
                       <!--  
                       [ℹ] site-image 
                       -->
-                      <a 
+                      <a
                         rel="nofollow" 
                         aria-label="fixture_football_fixtures_probabilities"
                         on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
@@ -1301,18 +1156,182 @@
                     </div>
 
                   </div>
-                  <p
+                  <!-- 
+                  Equal Sign
+                  [TABLET] [DESKTOP]
+                  -->
+                  {#if !mobileExclusive}
+                    <p
+                      class="
+                        w-400
+                        color-grey
+                        equal-sign
+                      ">
+                      =
+                    </p>
+                  {/if}
+                  <!-- 
+                  Odds BUTTON
+                  -->
+                  <button
                     class="
-                      w-400
-                      color-grey
+                      odds-box-btn
                     ">
-                    {FIXTURE_PROBS_TRANSLATION?.odds} -
-                  </p>
+                    <p
+                      class="
+                        color-grey
+                        w-400
+                      ">
+                      {#if key == 'btts' 
+                        && FIXTURE_PROB_DATA?.odds?.btts != undefined}
+                        {FIXTURE_PROB_DATA?.odds?.btts}
+                      {:else if key == 'over_2_5'
+                        && FIXTURE_PROB_DATA?.odds?.over_2_5 != undefined}
+                        {FIXTURE_PROB_DATA?.odds?.over_2_5}
+                      {:else}
+                        -
+                      {/if}
+                    </p>
+                  </button>
                 </div>
-              {/each}
-            </div>
+              {/if}
 
-          {/if}
+              {#if key == 'correct_score'}
+                <!--
+                [ℹ] Correct Socre Title (txt)
+                -->
+                <p
+                  id="correct-score-text"
+                  class="
+                    w-400
+                    color-grey
+                    text-center
+                  ">
+                  {FIXTURE_PROBS_TRANSLATION?.correct_score}
+                </p>
+
+                <!--
+                [ℹ] Correct Socre Grid-Box (box)
+                -->
+                <div
+                  id="correct-score-box">
+                  {#each Object.entries(FIXTURE_PROB_DATA.probabilites.correct_score) as [key, value]}
+                    <!-- 
+                    Probabilities Title
+                    -->
+                    <div
+                      class="
+                        column-space-center
+                      ">
+                      <p
+                        class="
+                          w-500
+                          color-black-2
+                        ">
+                        {key}
+                      </p>
+                      <!-- 
+                      Probabilities BUTTON
+                      + Bet-Site PopUp
+                      -->
+                      <div
+                        id='button-extra-info-container'>
+
+                        <button
+                          class="
+                            place-bet-btn 
+                            btn-primary
+                          "
+                          on:click={() => toggle_cta(key)}>
+                          <p  
+                            class="
+                              w-500
+                            ">
+                            {value.toFixed(0)}%
+                          </p>
+                        </button>
+
+                        <!-- 
+                        [ℹ] extra-info pop-up container
+                        -->
+                        <div
+                          class="extra-info fade-in"
+                          class:display_none={(!toggleCTA || toggleCTA_Key != key)}
+                          in:fade>
+
+                          <!--  
+                          [ℹ] site-image 
+                          -->
+                          <a 
+                            rel="nofollow" 
+                            aria-label="fixture_football_fixtures_probabilities"
+                            on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
+                            href={SPORTBOOK_INFO?.register_link}
+                            style="width: inherit;">
+                            <img
+                              style="background-color: var({imageVar});"
+                              class="extra-info-img"
+                              src={SPORTBOOK_INFO?.image}
+                              alt={SPORTBOOK_INFO?.title}
+                            />
+                          </a>
+
+                          <!--  
+                          [ℹ] extra-site info 
+                          -->
+                          <div
+                            class="extra-info-container">
+                            <!--  
+                            [ℹ] text 
+                            -->
+                            <p 
+                              class="large">
+                              {SPORTBOOK_INFO?.bonus_description}
+                            </p>
+                            <!--  
+                            [ℹ] button_cta 
+                            -->
+                            <a 
+                              rel="nofollow" 
+                              aria-label="fixture_football_fixtures_probabilities"
+                              on:click={() => triggerGoggleEvents("fixture_football_fixtures_probabilities")}
+                              href={SPORTBOOK_INFO?.register_link}
+                              target="_blank">
+                              <button
+                                class="btn-primary btn-cta"
+                                style="width: 100% !important;">
+                                <p 
+                                  class="w-500 s-14 w-normal">
+                                  Register
+                                </p>
+                              </button>
+                            </a>
+                            <!--  
+                            [ℹ] extra-site info text 
+                            -->
+                            <p 
+                              class="small" 
+                              style="color: #CCCCCC;">
+                              {SPORTBOOK_INFO?.information}
+                            </p>
+                          </div>
+                        </div>
+
+                      </div>
+                      <p
+                        class="
+                          w-400
+                          color-grey
+                        ">
+                        {FIXTURE_PROBS_TRANSLATION?.odds} -
+                      </p>
+                    </div>
+                  {/each}
+                </div>
+
+              {/if}
+            {/if}
+          {/each}
         {/each}
           
         <!--
