@@ -261,7 +261,7 @@
     if (dev) logDevGroup (`${dev_console_tag}`, `vote_val: ${vote_val}`)
 
     if (vote_val == undefined) {
-      vote_val = '1'
+      vote_val = '1.5'
     }
 
 		// [ℹ] check vote already casted
