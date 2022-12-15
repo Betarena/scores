@@ -1132,8 +1132,10 @@ export interface BETARENA_HASURA_historic_fixtures {
   player_assist_name?:  string;
 } export enum FluffyType2 {
   Goal = "goal",
-  MissedPenalty = "missed_penalty",
+  MissPenaltyShootOut = "pen_shootout_miss",
+  GoalPenaltyShootOut = "pen_shootout_goal",
   OwnGoal = "own-goal",
+  MissedPenalty = "missed_penalty",
   Penalty = "penalty",
   Substitution = "substitution",
   Var = "var",

@@ -79,10 +79,10 @@
     if (INCIDENT_INFO?.type == "var") {
       icon = var_red
     }
-    if (INCIDENT_INFO?.type == "penalty") {
+    if (["penalty", "pen_shootout_goal"].includes(INCIDENT_INFO?.type)) {
       icon = penalty
     }
-    if (INCIDENT_INFO?.type == "missed_penalty") {
+    if (["missed_penalty", "pen_shootout_miss"].includes(INCIDENT_INFO?.type)) {
       icon = penalty_miss
     }
   }
@@ -192,7 +192,7 @@
         </p>
       {/if}
 
-      {#if INCIDENT_INFO?.type == 'var' || INCIDENT_INFO?.type == 'penalty'}
+      {#if ['var','penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)}
         <!--
         [ℹ] result -->
         <p
@@ -216,9 +216,10 @@
         </p>
       {/if}
 
-      {#if INCIDENT_INFO?.type == 'yellowcard' || INCIDENT_INFO?.type == 'redcard' || INCIDENT_INFO?.type == 'yellowred' || INCIDENT_INFO?.type == 'missed_penalty'}
+      {#if ['yellowcard','redcard','yellowred','missed_penalty', 'pen_shootout_miss'].includes(INCIDENT_INFO?.type)}
         <!--
-        [ℹ] yewllow / red card-player -->
+        [ℹ] yewllow / red card-player 
+        -->
         <p
           class="
             w-400
@@ -314,7 +315,17 @@
         </p>
       {/if}
 
-      {#if INCIDENT_INFO?.type == 'var' || INCIDENT_INFO?.type == 'penalty'}
+      {#if ['var','penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)}
+        <!--
+        [ℹ] goal-scorer -->
+        <p
+          class="
+            w-400
+            color-black-2
+          "
+          class:display-none={INCIDENT_INFO?.player_name == undefined}>
+          {INCIDENT_INFO?.player_name}
+        </p>
         <!--
         [ℹ] result -->
         <p
@@ -326,19 +337,9 @@
           class:display-none={INCIDENT_INFO?.result == undefined}>
           {INCIDENT_INFO?.result}
         </p>
-        <!--
-        [ℹ] goal-scorer -->
-        <p
-          class="
-            w-400
-            color-black-2
-          "
-          class:display-none={INCIDENT_INFO?.player_name == undefined}>
-          {INCIDENT_INFO?.player_name}
-        </p>
       {/if}
 
-      {#if INCIDENT_INFO?.type == 'yellowcard' || INCIDENT_INFO?.type == 'redcard' || INCIDENT_INFO?.type == 'yellowred' || INCIDENT_INFO?.type == 'missed_penalty'}
+      {#if ['yellowcard','redcard','yellowred','missed_penalty', 'pen_shootout_miss'].includes(INCIDENT_INFO?.type)}
         <!--
         [ℹ] yewllow / red card-player -->
         <p
@@ -377,7 +378,8 @@
       <!-- 
       [ℹ] default
       [ℹ] img-icon
-      [ℹ] event minute -->
+      [ℹ] event minute 
+      -->
       <p
         class="
           w-400
@@ -388,8 +390,10 @@
         >
         {INCIDENT_INFO?.minute}'
       </p>
+
       <!--
-      [ℹ] goal-icon -->
+      [ℹ] goal-icon 
+      -->
       <img
         src={icon}
         alt=""

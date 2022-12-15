@@ -65,6 +65,7 @@
   let dev_console_tag:   string = "fixtures | incidents [DEV]";
 
   // [🐞]
+  if (dev) console.log(`FIXTURE_INCIDENTS`, FIXTURE_INCIDENTS)
   $: if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `FIXTURE_INCIDENTS: ${FIXTURE_INCIDENTS}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -479,6 +480,47 @@
           id="incidents-events-box">
 
           <!-- 
+          [ℹ] PEN SCORE [SECTION]
+          -->
+          {#if FIXTURE_INCIDENTS?.score_post?.ps_score != undefined}
+            <p
+              class="
+                w-500
+                color-black-2
+                event-milestone-text
+              ">
+                PEN {FIXTURE_INCIDENTS?.score_post?.ps_score}
+            </p>
+          {/if}
+          {#if FIXTURE_INCIDENTS?.events}
+            {#each FIXTURE_INCIDENTS?.events as event}
+              {#if ["pen_shootout_miss", "pen_shootout_goal"].includes(event?.type)}
+                <!-- 
+                [ℹ] home team
+                -->
+                {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='L' 
+                  />
+                <!-- 
+                [ℹ] away team
+                -->
+                {:else}
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='R' 
+                  />
+                {/if}
+              {/if}
+            {/each}
+          {/if}
+
+          <!-- 
           [ℹ] ET SCORE [SECTION]
           -->
           {#if FIXTURE_INCIDENTS?.score_post?.et_score != undefined}
@@ -555,7 +597,8 @@
           {/if}
           {#if FIXTURE_INCIDENTS?.events}
             {#each FIXTURE_INCIDENTS?.events as event}
-              {#if event?.minute <= 45}
+              {#if event?.minute <= 45
+                && !["pen_shootout_miss", "pen_shootout_goal"].includes(event?.type)}
                 <!-- 
                 [ℹ] home team
                 -->
