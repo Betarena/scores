@@ -135,40 +135,47 @@
   let initial_div_distance: number = undefined;
   let count = 0;
 
-  $: if (browser && lazy_load_data_check) {
+  function scroll_listen() {
     let target_div = document.getElementById('scoreboard-widget-container');
-    window.addEventListener('scroll', function(ev) {
-      target_div = document.getElementById('scoreboard-widget-container');
-      if (count == 0) {
-        initial_div_distance = target_div.getBoundingClientRect().bottom + window.scrollY;
-        count = 1;
-      }
-      let distance_top_from_div = target_div.getBoundingClientRect().bottom;
-      let distance_top_scroll = window.scrollY;
-      // [🐞]
-      // if (dev) console.log(
-      //  `
-      //   initial_div_distance: ${initial_div_distance}
-      //   distance_top_scroll: ${distance_top_scroll}
-      //   distance_top_from_div: ${distance_top_from_div}
-      // `)
-      // [ℹ] when [STANDARD VIEW]
-      if (
-        distance_top_from_div <= 0 &&
-        !enable_miniature
-      ) {
-        enable_miniature = true
-      }
-      // [ℹ] when [MINIATURE VIEW]
-      if (
-        initial_div_distance != undefined &&
-        count == 1 &&
-        distance_top_scroll <= initial_div_distance &&
-        enable_miniature
-      ) {
-        enable_miniature = false
-      }
-    });
+    if (target_div == undefined) {
+      console.log('target_div is null!', target_div)
+      return
+    }
+    if (count == 0) {
+      initial_div_distance = target_div.getBoundingClientRect().bottom + window.scrollY;
+      count = 1;
+    }
+    let distance_top_from_div = target_div.getBoundingClientRect().bottom;
+    let distance_top_scroll = window.scrollY;
+    // [🐞]
+    /*
+      if (dev) console.log(
+       `
+        initial_div_distance: ${initial_div_distance}
+        distance_top_scroll: ${distance_top_scroll}
+        distance_top_from_div: ${distance_top_from_div}
+      `)
+    */
+    // [ℹ] when [STANDARD VIEW]
+    if (
+      distance_top_from_div <= 0 &&
+      !enable_miniature
+    ) {
+      enable_miniature = true
+    }
+    // [ℹ] when [MINIATURE VIEW]
+    if (
+      initial_div_distance != undefined &&
+      count == 1 &&
+      distance_top_scroll <= initial_div_distance &&
+      enable_miniature
+    ) {
+      enable_miniature = false
+    }
+  }
+
+  $: if (browser && lazy_load_data_check) {
+    window.addEventListener('scroll', scroll_listen)
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -526,6 +533,12 @@
     }
     // [🐞]
     if (dev) console.groupEnd();
+
+    // [ℹ] remove event listeners
+    if (browser) {
+      if (dev) console.log('removing scroll event listener')
+      window.removeEventListener('scroll', scroll_listen)
+    }
   })
 
   async function kickstart_one_off_data (
