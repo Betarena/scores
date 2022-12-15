@@ -296,7 +296,10 @@
 	}
 
   $: countD_t_h = Math.floor(date_obj_diff / (1000 * 60 * 60));
-  $: if (countD_t_h > 23) {
+  $: if (
+    countD_t_h > 23 
+    || countD_sec.includes('-')
+  ) {
     show_countdown = false
   } else {
     show_countdown = true
