@@ -254,11 +254,15 @@
   */
 	function cast_vote (
     vote_type: string, 
-    vote_val: string
+    vote_val: string | number
   ): void {
 
 		// [🐞]
     if (dev) logDevGroup (`${dev_console_tag}`, `vote_val: ${vote_val}`)
+
+    if (vote_val == undefined) {
+      vote_val = '1'
+    }
 
 		// [ℹ] check vote already casted
 		if (!vote_casted) {
@@ -268,7 +272,7 @@
 			fixture_data_vote_obj = {
 				fixture_id: FIXTURE_INFO?.data?.id,
 				fixture_vote: vote_type,
-				fixture_vote_val: vote_val,
+				fixture_vote_val: vote_val as string,
 				_X_vote: 0,
 				_1_vote: 0,
 				_2_vote: 0
@@ -712,7 +716,7 @@
               "
               class:active={fixture_data_vote_obj.fixture_vote == '1'}
               disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home.toString())}>
+              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home)}>
                 <p
                   class="
                     w-500 
@@ -758,7 +762,11 @@
                 {#if mobileExclusive}
                   <br />
                 {/if}
-                {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.home.toString())).toFixed(2)}%
+                {#if FIXTURE_VOTES_DATA?.probabilities?.home != undefined}
+                  {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.home.toString())).toFixed(2)}%
+                {:else}
+                  -
+                {/if}
               </p>
             {:else if 
               FIXTURE_VOTES_DATA?.match_votes != undefined 
@@ -804,7 +812,7 @@
               "
               class:active={fixture_data_vote_obj.fixture_vote == 'X'}
               disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw.toString())}>
+              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw)}>
                 <p 
                   class="
                     w-500 
@@ -853,7 +861,11 @@
                 {#if mobileExclusive}
                   <br />
                 {/if}
-                {Math.round(parseInt(FIXTURE_VOTES_DATA.probabilities.draw.toString())).toFixed(2)}%
+                {#if FIXTURE_VOTES_DATA?.probabilities?.draw != undefined}
+                  {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.draw.toString())).toFixed(2)}%
+                {:else}
+                  -
+                {/if}
               </p>
             {:else if 
               FIXTURE_VOTES_DATA?.match_votes != undefined 
@@ -899,7 +911,7 @@
                 "
                 class:active={fixture_data_vote_obj.fixture_vote == '2'}
                 disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away.toString())}>
+                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away)}>
                 <p 
                   class="
                     w-500 
@@ -945,7 +957,11 @@
                   {#if mobileExclusive}
                     <br />
                   {/if}
-                  {Math.round(parseInt(FIXTURE_VOTES_DATA.probabilities.away.toString())).toFixed(2)}%
+                  {#if FIXTURE_VOTES_DATA?.probabilities?.away != undefined}
+                    {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.away.toString())).toFixed(2)}%
+                  {:else}
+                    -
+                  {/if}
                 </p>
               {:else if 
                 FIXTURE_VOTES_DATA?.match_votes != undefined 
@@ -1349,6 +1365,7 @@
 		text-align: center;
 		color: #8c8c8c;
 		width: min-content;
+    white-space: nowrap;
 	} div#votes-widget-container div#btn-vote-container button.cast-vote-btn .active_p {
 		color: #f5620f !important;
 	}
