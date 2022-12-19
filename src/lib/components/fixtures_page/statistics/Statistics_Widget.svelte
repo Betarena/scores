@@ -302,7 +302,7 @@
   $: if (
     FIXTURE_STATISTICS
     && browser 
-    && (FIXTURE_STATISTICS?.status == "NS" || FIXTURE_STATISTICS?.status == "POST")
+    && (["NS", "TBA", "POSTP"].includes(FIXTURE_STATISTICS?.status))
     && (FIXTURE_STATISTICS?.stats == undefined || FIXTURE_STATISTICS?.stats.length == 0)) {
     no_widget_data = true
     loaded = true

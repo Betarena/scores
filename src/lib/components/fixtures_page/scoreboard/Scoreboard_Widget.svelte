@@ -761,7 +761,7 @@
                   [ℹ] =?> in-Play
                   [ℹ] =?> "FT"
                   -->
-                  {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                  {#if ["NS", "TBA", "POSTP"].includes(FIXTURE_SCOREBOARD?.status)}
                     <div
                       style="align-self: center;">
                       <p 
@@ -1163,7 +1163,7 @@
                   [ℹ] =?> in-Play
                   [ℹ] =?> "FT"
                   -->
-                  {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                  {#if ["NS", "TBA", "POSTP"].includes(FIXTURE_SCOREBOARD?.status)}
                     <div
                       class="m-b-30"
                       style="align-self: center;">
@@ -1554,7 +1554,7 @@
                     [ℹ] =?> in-Play
                     [ℹ] =?> "FT"
                     -->
-                    {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                    {#if ["NS", "TBA", "POSTP"].includes(FIXTURE_SCOREBOARD?.status)}
                       <div
                         class="m-b-20"
                         style="align-self: center;">
@@ -1973,7 +1973,7 @@
                 [ℹ] =?> in-Play
                 [ℹ] =?> "FT"
                 -->
-                {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                {#if ["NS", "TBA", "POSTP"].includes(FIXTURE_SCOREBOARD?.status)}
                   <div
                     class="middle-info"
                     style="align-self: center;">
@@ -2209,7 +2209,7 @@
                 [ℹ] =?> in-Play
                 [ℹ] =?> "FT"
                 -->
-                {#if FIXTURE_SCOREBOARD.status == "NS" || FIXTURE_SCOREBOARD.status == "POSTP"}
+                {#if ["NS", "TBA", "POSTP"].includes(FIXTURE_SCOREBOARD?.status)}
                   <div
                     class="middle-info"
                     style="align-self: center;">
