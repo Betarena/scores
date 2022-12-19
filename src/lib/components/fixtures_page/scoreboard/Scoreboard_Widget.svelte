@@ -178,6 +178,11 @@
     window.addEventListener('scroll', scroll_listen)
   }
 
+  function trigger_content_view(view: 'overview' | 'news') {
+    $sessionStore.fixture_select_view = view;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -1891,7 +1896,7 @@
                   opt-container 
                   cursor-pointer
                 "
-                on:click={() => $sessionStore.fixture_select_view = "overview"}
+                on:click={() => trigger_content_view("overview")}
                 class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                 <p
                   class="s-14 color-grey w-500 no-wrap">
@@ -1905,7 +1910,7 @@
                     opt-container
                     cursor-pointer
                   "
-                  on:click={() => $sessionStore.fixture_select_view = "news"}
+                  on:click={() => trigger_content_view("news")}
                   class:activeOpt={$sessionStore.fixture_select_view == "news"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
@@ -2133,7 +2138,7 @@
                     opt-container 
                     cursor-pointer
                   "
-                  on:click={() => $sessionStore.fixture_select_view = "overview"}
+                  on:click={() => trigger_content_view("overview")}
                   class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
@@ -2147,7 +2152,7 @@
                       opt-container
                       cursor-pointer
                     "
-                    on:click={() => $sessionStore.fixture_select_view = "news"}
+                    on:click={() => trigger_content_view("news")}
                     class:activeOpt={$sessionStore.fixture_select_view == "news"}>
                     <p
                       class="s-14 color-grey w-500 no-wrap">
@@ -2376,7 +2381,7 @@
                     opt-container 
                     cursor-pointer
                   "
-                  on:click={() => $sessionStore.fixture_select_view = "overview"}
+                  on:click={() => trigger_content_view("overview")}
                   class:activeOpt={$sessionStore.fixture_select_view == "overview"}>
                   <p
                     class="s-14 color-grey w-500 no-wrap">
@@ -2390,7 +2395,7 @@
                       opt-container
                       cursor-pointer
                     "
-                    on:click={() => $sessionStore.fixture_select_view = "news"}
+                    on:click={() => trigger_content_view("news")}
                     class:activeOpt={$sessionStore.fixture_select_view == "news"}>
                     <p
                       class="s-14 color-grey w-500 no-wrap">
