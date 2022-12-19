@@ -1334,15 +1334,6 @@
 
               </tr>
 
-              <!-- [ℹ] extra row-space
-              -->
-              {#if $userBetarenaSettings.theme == 'Dark' && selectedOptTableMobile == 1}
-                <tr
-                  style="padding: 16px;">
-                  <td><p style="color: transparent">-</p></td>
-                </tr>
-              {/if}
-
               <!-- 
               [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
