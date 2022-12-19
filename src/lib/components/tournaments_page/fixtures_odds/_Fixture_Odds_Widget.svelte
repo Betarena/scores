@@ -1218,7 +1218,7 @@
             item?.fixture_link[server_side_language]}
             <a
               href={item?.fixture_link[server_side_language]}>
-              {item?.fixture_link[server_side_language]}
+              {item?.teams?.home?.name} vs. {item?.teams?.away?.name}
             </a>
           {/if}
           <!-- {#if 
