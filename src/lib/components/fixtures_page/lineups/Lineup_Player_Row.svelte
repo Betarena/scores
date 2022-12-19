@@ -71,13 +71,15 @@
         [ℹ] right-container
         [ℹ] player avatar
         [ℹ] player name
-        [ℹ] player visual icons -->
+        [ℹ] player visual icons 
+        -->
         <div
           class="
             row-space-start
           ">
           <!-- 
-          [ℹ] player avatar -->
+          [ℹ] player avatar 
+          -->
           <img 
             src={PLAYER_INFO?.player_avatar || "https://cdn.sportmonks.com/images/soccer/placeholder.png"} 
             alt=""
@@ -87,7 +89,8 @@
             on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
           />
           <!-- 
-          [ℹ] player main box -->
+          [ℹ] player main box 
+          -->
           <div>
             <div
               class="
@@ -103,7 +106,8 @@
                 {PLAYER_INFO?.number} {PLAYER_INFO?.player_name}
               </p>
               <!--
-              [ℹ] injured-player -->
+              [ℹ] injured-player 
+              -->
               {#if PLAYER_INFO?.events?.injured}
                 <img 
                   src={injured} 
@@ -111,7 +115,8 @@
                 />
               {/if}
               <!--
-              [ℹ] yellowcard-player -->
+              [ℹ] yellowcard-player 
+              -->
               {#if PLAYER_INFO?.events?.yeallow_card}
                 <img 
                   src={yellow_card}
@@ -124,7 +129,8 @@
                 {/if}
               {/if}
               <!--
-              [ℹ] goals-player (inc. own-goals) -->
+              [ℹ] goals-player (inc. own-goals) 
+              -->
               {#if PLAYER_INFO?.events?.goals}
                 <img 
                   src={football} 
@@ -132,7 +138,8 @@
                 />
               {/if}
               <!--
-              [ℹ] red-card-player -->
+              [ℹ] red-card-player 
+              -->
               {#if PLAYER_INFO?.events?.red_card}
                 <img 
                   src={red_card}
@@ -187,12 +194,13 @@
 
         <!-- 
         [ℹ] left-container
-        [ℹ] player rating-->
+        [ℹ] player rating
+        -->
         <div
           class="row-space-end"
           style="width: auto;">
           {#if 
-            ["FT", "FT_PEN"].includes(STATUS)
+            ["FT", "FT_PEN", "LIVE"].includes(STATUS)
             && PLAYER_INFO?.rating != undefined
             && parseInt(PLAYER_INFO?.rating) != 0}
             <p 
@@ -210,12 +218,13 @@
 
         <!-- 
         [ℹ] right-container
-        [ℹ] player rating-->
+        [ℹ] player rating
+        -->
         <div
           class="row-space-start"
           style="width: auto;">
           {#if 
-            STATUS == "FT"
+            ["FT", "FT_PEN", "LIVE"].includes(STATUS)
             && PLAYER_INFO?.rating != undefined
             && parseInt(PLAYER_INFO?.rating) != 0}
             <p 
@@ -233,13 +242,15 @@
         [ℹ] left-container
         [ℹ] player avatar
         [ℹ] player name
-        [ℹ] player visual icons -->
+        [ℹ] player visual icons 
+        -->
         <div
           class="
             row-space-end
           ">
           <!-- 
-          [ℹ] player main box -->
+          [ℹ] player main box 
+          -->
           <div>
             <div
               class="
@@ -247,7 +258,8 @@
                 player-info-row
               ">
               <!--
-              [ℹ] injured-player -->
+              [ℹ] injured-player 
+              -->
               {#if PLAYER_INFO?.events?.injured}
                 <img 
                   src={injured} 
@@ -255,7 +267,8 @@
                 />
               {/if}
               <!--
-              [ℹ] yellowcard-player -->
+              [ℹ] yellowcard-player 
+              -->
               {#if PLAYER_INFO?.events?.yeallow_card}
                 <img 
                   src={yellow_card}
@@ -268,7 +281,8 @@
                 {/if}
               {/if}
               <!--
-              [ℹ] goals-player (inc. own-goals) -->
+              [ℹ] goals-player (inc. own-goals) 
+              -->
               {#if PLAYER_INFO?.events?.goals}
                 <img 
                   src={football} 
@@ -276,7 +290,8 @@
                 />
               {/if}
               <!--
-              [ℹ] red-card-player -->
+              [ℹ] red-card-player 
+              -->
               {#if PLAYER_INFO?.events?.red_card}
                 <img 
                   src={red_card}
@@ -289,7 +304,8 @@
                 {/if}
               {/if}
               <!-- 
-              [ℹ] player name -->
+              [ℹ] player name 
+              -->
               <p
                 class="
                   w-500
@@ -300,7 +316,8 @@
               </p>
             </div>
             <!--
-            [ℹ] player positon -->
+            [ℹ] player positon 
+            -->
             {#if PLAYER_INFO?.events?.substitution}
               <div
                 class="
@@ -337,7 +354,8 @@
             {/if}
           </div>
           <!-- 
-          [ℹ] player avatar -->
+          [ℹ] player avatar 
+          -->
           <img 
             src={PLAYER_INFO?.player_avatar || "https://cdn.sportmonks.com/images/soccer/placeholder.png"} 
             alt=""

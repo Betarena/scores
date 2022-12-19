@@ -74,9 +74,10 @@
         on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
       />
       <!-- 
-      [ℹ] player rating -->
+      [ℹ] player rating 
+      -->
       {#if 
-        ["FT", "FT_PEN"].includes(STATUS)
+        ["FT", "FT_PEN", "LIVE"].includes(STATUS)
         && PLAYER_INFO?.rating != undefined}
         <p 
           id='box-goals'
@@ -88,7 +89,8 @@
         </p>
       {/if}
       <!--
-      [ℹ] injured-player -->
+      [ℹ] injured-player 
+      -->
       {#if PLAYER_INFO?.events?.injured}
         <img
           src={injured} 
@@ -98,7 +100,8 @@
           height=12px
         />
       <!--
-      [ℹ] substitution-player -->
+      [ℹ] substitution-player 
+      -->
       {:else if PLAYER_INFO?.events?.substitution}
         <img 
           src={substitution} 
@@ -109,7 +112,8 @@
         />
       {/if}
       <!--
-      [ℹ] redcard-player -->
+      [ℹ] redcard-player 
+      -->
       {#if PLAYER_INFO?.events?.red_card}
         <img
           src={red_card}
@@ -119,7 +123,8 @@
           height=14px
         />
       <!--
-      [ℹ] yellowcard-player -->
+      [ℹ] yellowcard-player 
+      -->
       {:else if PLAYER_INFO?.events?.yeallow_card}
         <img
           src={yellow_card}
@@ -135,7 +140,8 @@
         {/if}
       {/if}
       <!--
-      [ℹ] goals-player (inc. own-goals) -->
+      [ℹ] goals-player (inc. own-goals) 
+      -->
       {#if PLAYER_INFO?.events?.goals}
         <img 
           src={football} 
@@ -147,7 +153,8 @@
       {/if}
     </div>
     <!-- 
-    [ℹ] player name -->
+    [ℹ] player name 
+    -->
     <p
       class="
         w-500
