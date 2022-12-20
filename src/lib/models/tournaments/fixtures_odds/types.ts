@@ -80,9 +80,12 @@ export interface Tournament_Season_Fixtures_Odds {
 }
 
 export interface Rounds_Data {
-  name?:   string
-  s_date?: string
-  e_date?: string
+  name?:      string
+  type?:      'round' | 'advanced'
+  s_date?:    string
+  e_date?:    string
+  stage_id?:  number
+  value?:     number
 }
 
 export interface Weeks_Data {
