@@ -111,40 +111,49 @@ export async function load({
 
   // const sport_typ = response_sport_translation[lang]
 
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{id}/g, id));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{lang}/g, lang));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{sport}/g, sport));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{country}/g, country));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{name}/g, league_name));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{home_team_name}/g, home_team_name));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{away_team_name}/g, away_team_name));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{fixtures_day}/g, fixture_day));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{data.venue.data.name}/g, venue_name));
-  response_fixtures_seo.main_data = JSON.parse(JSON.stringify(response_fixtures_seo.main_data).replace(/{data.venue.data.city}/g, venue_city));
+  response_fixtures_seo.main_data = JSON.parse(
+    JSON.stringify(response_fixtures_seo.main_data)
+    .replace(/{id}/g, id)
+    .replace(/{lang}/g, lang)
+    .replace(/{sport}/g, sport)
+    .replace(/{country}/g, country)
+    .replace(/{name}/g, league_name)
+    .replace(/{home_team_name}/g, home_team_name)
+    .replace(/{away_team_name}/g, away_team_name)
+    .replace(/{fixtures_day}/g, fixture_day)
+    .replace(/{data.venue.data.name}/g, venue_name)
+    .replace(/{data.venue.data.city}/g, venue_city)
+  );
 
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{id}/g, id));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{lang}/g, lang));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{sport}/g, sport));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{country}/g, country));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{name}/g, league_name));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{home_team_name}/g, home_team_name));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{away_team_name}/g, away_team_name));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{fixtures_day}/g, fixture_day));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{data.venue.data.name}/g, venue_name));
-  response_fixtures_seo.twitter_card = JSON.parse(JSON.stringify(response_fixtures_seo.twitter_card).replace(/{data.venue.data.city}/g, venue_city));
+  response_fixtures_seo.twitter_card = JSON.parse(
+    JSON.stringify(response_fixtures_seo.twitter_card)
+    .replace(/{id}/g, id)
+    .replace(/{lang}/g, lang)
+    .replace(/{sport}/g, sport)
+    .replace(/{country}/g, country)
+    .replace(/{name}/g, league_name)
+    .replace(/{home_team_name}/g, home_team_name)
+    .replace(/{away_team_name}/g, away_team_name)
+    .replace(/{fixtures_day}/g, fixture_day)
+    .replace(/{data.venue.data.name}/g, venue_name)
+    .replace(/{data.venue.data.city}/g, venue_city)
+  );
 
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{id}/g, id));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{lang}/g, lang));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{sport}/g, sport));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{country}/g, country));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{name}/g, league_name));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{home_team_name}/g, home_team_name));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{away_team_name}/g, away_team_name));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{fixtures_day}/g, fixture_day));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{data.venue.data.name}/g, venue_name));
-  response_fixtures_seo.opengraph = JSON.parse(JSON.stringify(response_fixtures_seo.opengraph).replace(/{data.venue.data.city}/g, venue_city));
+  response_fixtures_seo.opengraph = JSON.parse(
+    JSON.stringify(response_fixtures_seo.opengraph)
+    .replace(/{id}/g, id)
+    .replace(/{lang}/g, lang)
+    .replace(/{sport}/g, sport)
+    .replace(/{country}/g, country)
+    .replace(/{name}/g, league_name)
+    .replace(/{home_team_name}/g, home_team_name)
+    .replace(/{away_team_name}/g, away_team_name)
+    .replace(/{fixtures_day}/g, fixture_day)
+    .replace(/{data.venue.data.name}/g, venue_name)
+    .replace(/{data.venue.data.city}/g, venue_city)
+  );
 
-  // [ℹ] canonical exclusive - [EN];
+  // [ℹ] canonical exclusive SET - [EN];
   const enItemAlt = response_fixtures_page_info.alternate_data['en']
   response_fixtures_seo.main_data.canonical = enItemAlt;
 
