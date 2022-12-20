@@ -83,18 +83,29 @@
 
     loaded = true;
 
-    // [ℹ] data validation check
-		if (
-      FIXTURE_INCIDENTS == undefined
-    ) {
+    // [ℹ] [standard] data validation check [#1]
+		if (FIXTURE_INCIDENTS == undefined) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
       no_widget_data = true;
 			return;
 		}
-    // [ℹ] otherwise, no data
     else {
       no_widget_data = false;
+    }
+
+    // [ℹ] data validation check [#2]
+    const validation_check =
+      ["POSTP"].includes(FIXTURE_INCIDENTS?.status)
+    ;
+
+    no_widget_data =
+      validation_check == true
+        ? true
+        : false
+    ;
+    if (no_widget_data) {
+      return
     }
 
     FIXTURE_INCIDENTS = FIXTURE_INCIDENTS
@@ -149,7 +160,9 @@
 
 	$: refresh_data = $userBetarenaSettings.country_bookmaker;
 
-  $: if (browser && refresh_data) {
+  $: if (browser 
+    && refresh_data
+  ) {
     // [ℹ] reset necessary variables;
     refresh = true
     loaded = false
