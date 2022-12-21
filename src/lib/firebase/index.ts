@@ -95,7 +95,7 @@ export async function getTargetGeoSportBookDetails(lang: string, siteName?: stri
 	// ... return the odds-site info & the odds values;
 	if (siteName != undefined) {
     if (dev) logDevGroup ("firebase [DEV]", `siteName: ${siteName}`)
-		return get(child(ref(db_real), `sportsbook_details/${lang}`)).then((snapshot) => {
+		return await get(child(ref(db_real), `sportsbook_details/${lang}`)).then((snapshot) => {
 			// ... check if the data exists (should exist at all times anyway);
 			if (snapshot.exists()) {
 
