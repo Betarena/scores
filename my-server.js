@@ -30,20 +30,20 @@ const app = express();
 */
 app.get('/getClientIP', (req, res, next) => {
 
-  let ip = req.headers['x-forwarded-for'] ||
+  const ip = req.headers['x-forwarded-for'] ||
     req.socket.remoteAddress ||
     null;
   console.log('ip', ip);
 
-  let ip2 = req.ip
+  const ip2 = req.ip
   console.log('ip2', ip2);
 
-  let ip3 = requestIp.getClientIp(req); 
+  const ip3 = requestIp.getClientIp(req); 
   console.log('ip3', ip3);
 
   let ipAddr = req.headers["x-forwarded-for"];
   if (ipAddr){
-    let list = ipAddr.split(",");
+    const list = ipAddr.split(",");
     ipAddr = list[list.length-1];
   } else {
     ipAddr = req.connection.remoteAddress;

@@ -304,7 +304,7 @@ async function breakdownWeeksAndRounds (
 
   const season_fixture_arr: BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] = []
   // [ℹ] get all fixtures[] from this SEASON
-  for (const [, fixture_data] of historic_fixtures_map.entries()) {
+  for await (const [, fixture_data] of historic_fixtures_map.entries()) {
     const fixture_season_id = fixture_data?.season_id;
     // [ℹ] validation check
     if (fixture_season_id == t_season?.id) {
@@ -341,7 +341,7 @@ async function breakdownWeeksAndRounds (
   const season_rounds_stage_mod_data: Rounds_Data[] = []
   // [ℹ] complete rounds generation data based off STAGE_ID
   // [ℹ] using THIS SEASON stage data
-  for (const stage of t_season.stages) {
+  for await (const stage of t_season.stages) {
     // [ℹ] validation check
     const rounds_match_stage = mod_rounds
     .find( ({ stage_id }) => stage_id === stage.id);
@@ -384,7 +384,7 @@ async function breakdownWeeksAndRounds (
   // [ℹ] order season fixtures by ASC dates
   mod_rounds.sort((a,b) => new Date(a.s_date).getTime() - new Date(b.s_date).getTime());
   let round_count = 1
-  for (const round_moded of mod_rounds) {
+  for await (const round_moded of mod_rounds) {
     round_moded.value = round_count;
     round_count++;
   }
