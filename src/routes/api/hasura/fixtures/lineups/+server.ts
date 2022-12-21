@@ -24,7 +24,7 @@ let t1;
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
 	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 	const target_season_fixtures = await main(fixture_id);
 	return json(target_season_fixtures);
@@ -452,7 +452,7 @@ async function generate_players_map (
 
   // [ℹ] conversion to hashmap
   t0 = performance.now();
-  for (const h_fixture of players_arr) {
+  for await (const h_fixture of players_arr) {
     players_map.set(h_fixture.player_id, h_fixture);
   }
   t1 = performance.now();

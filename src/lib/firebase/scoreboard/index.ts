@@ -13,7 +13,7 @@ import type {
 
 export async function get_livescores_now (
 ): Promise < unknown > {
-  return get(child(ref(db_real), `livescores_now`))
+  return await get(child(ref(db_real), `livescores_now`))
   .then((snapshot) => {
     if (snapshot.exists()) {
       return snapshot.val()

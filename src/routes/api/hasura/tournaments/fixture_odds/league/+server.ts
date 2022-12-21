@@ -435,7 +435,7 @@ async function breakdownWeeksAndRounds (
 
   const season_start = season_fixture_arr[0]?.fixture_day.replace('T00:00:00', '')
   const season_end =   season_fixture_arr[season_fixture_arr.length-1]?.fixture_day.replace('T00:00:00', '')
-  const count_weeks: number = await get_weeks_diff(new Date(season_start), new Date(season_end));
+  const count_weeks: number = get_weeks_diff(new Date(season_start), new Date(season_end));
 
   // [🐞]
   /**
@@ -488,7 +488,7 @@ async function breakdownWeeksAndRounds (
   return season_week_round_ranges_map;
 }
 
-async function get_weeks_diff (
+function get_weeks_diff (
   startDate: Date, 
   endDate: Date
 ) {
