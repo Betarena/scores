@@ -14,7 +14,7 @@ import {
 } from '../../std_main';
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET(req): Promise<any> {
+export async function GET(req): Promise<unknown> {
 	const url: string = req.url['searchParams'].get('url');
 	const lang: string = req.url['searchParams'].get('lang');
 	const page: 'homepage' | 'tournaments' | 'fixtures' = req.url['searchParams'].get('page');

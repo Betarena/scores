@@ -7,7 +7,7 @@ import {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(req): Promise<any> {
+export async function GET(req): Promise<unknown> {
 	const geoPos: string = req.url['searchParams'].get('geoPos');
 	const all: string = req.url['searchParams'].get('all');
 

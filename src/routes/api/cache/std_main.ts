@@ -62,7 +62,7 @@ export const fixture_votes_cache_trans_addr = 'fixture_votes_trans';
  * @param id
  * @returns
  */
-export async function get_target_hset_cache_data(key: string, id: string): Promise<any> {
+export async function get_target_hset_cache_data(key: string, id: string): Promise<unknown> {
 	try {
 		const cached: string = await redis.hget(key, id);
 		if (cached) {
@@ -81,7 +81,7 @@ export async function get_target_hset_cache_data(key: string, id: string): Promi
  * @param id
  * @returns
  */
-export async function get_target_set_cache_data(key: string, id: string): Promise<any> {
+export async function get_target_set_cache_data(key: string, id: string): Promise<unknown> {
 	try {
 		const cached: number = await redis.sismember(key, id);
 		console.log(id, cached);
@@ -98,7 +98,7 @@ export async function get_target_set_cache_data(key: string, id: string): Promis
  * @param id
  * @returns
  */
-export async function get_target_string_cache_data(key: string): Promise<any> {
+export async function get_target_string_cache_data(key: string): Promise<unknown> {
 	try {
 		const cached: string = await redis.get(key);
     if (cached) {

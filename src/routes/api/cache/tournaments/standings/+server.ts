@@ -9,7 +9,7 @@ import {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(req): Promise<any> {
+export async function GET(req): Promise<unknown> {
 	const lang: string = req.url['searchParams'].get('lang');
 	const league_id: string = req.url['searchParams'].get('league_id');
 

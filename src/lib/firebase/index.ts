@@ -91,7 +91,7 @@ export async function getTargetFixtureOdds (
  *
  * @param userGeoLocation
 */
-export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise<any> {
+export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise<unknown> {
 	// ... return the odds-site info & the odds values;
 	if (siteName != undefined) {
     if (dev) logDevGroup ("firebase [DEV]", `siteName: ${siteName}`)

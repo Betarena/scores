@@ -7,8 +7,7 @@ import {
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(req)
-): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
 	const lang = req.url['searchParams'].get('lang');
 	const type: 'translations' | 'geo' | 'tournaments' = req.url['searchParams'].get('type');
 
