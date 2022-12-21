@@ -79,7 +79,7 @@ async function main (
   logs.push(`historic_fixtures_map generated with size: ${historic_fixtures_map.size}`)
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
-  // [🐛] debug
+  // [🐞]
   /*
     if (dev) {
       const data = JSON.stringify(h_fixtures_arr, null, 4)
@@ -91,7 +91,7 @@ async function main (
     }
   */
 
-  // [🐛] debug
+  // [🐞]
   /*
     const mainArrIds = []
     for (const i of h_fixtures_arr) {
@@ -101,7 +101,7 @@ async function main (
     logs.push(`duplicates: ${duplicates.length}`)
   */
  
-  // [🐛] debug
+  // [🐞]
   /*
     if (dev) {
       const data = JSON.stringify(duplicates, null, 4)
@@ -116,7 +116,8 @@ async function main (
 
   const season_week_round_ranges_map = await breakdownWeeksAndRounds(
     SEASON_ID,
-    season_details_data
+    season_details_data,
+    historic_fixtures_map
   )
   // [ℹ] exit
   if (season_week_round_ranges_map == undefined) {
@@ -278,37 +279,126 @@ async function getTargetSeasonDetailsData (
 
 async function breakdownWeeksAndRounds (
   SEASON_ID: number,
-  season_details_data: BETARENA_HASURA_fixtures_odds_query
+  season_details_data: BETARENA_HASURA_fixtures_odds_query,
+  historic_fixtures_map: Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures>
 ): Promise < Map <number, Tournament_Season_Fixtures_Odds> > {
+
+  /**
+   * [ℹ] breakdown season by weeks
+   * [ℹ] breakdown season by rounds
+   * [ℹ] NOTE: updated [20/12/2022]
+   * [ℹ] NOTE: using HIST-FIXTURES DATA for
+   * [ℹ] NOTE: week start-end identification.
+   * [ℹ] NOTE: For rounds - using stages and stage_id
+   * [ℹ] NOTE: data to identify matching fixtures to 
+   * [ℹ] NOTE: stages / rounds span
+  */
 
   const season_week_round_ranges_map = new Map <number, Tournament_Season_Fixtures_Odds> ();
 
   const t_season = season_details_data.scores_football_seasons_details
   .find( ({id}) => id === SEASON_ID);
-  
+
   // [ℹ] season does not exist
   if (t_season == undefined) {
     return;
   }
 
+  const season_fixture_arr: BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] = []
+  // [ℹ] get all fixtures[] from this SEASON
+  for (const [id, fixture_data] of historic_fixtures_map.entries()) {
+    const fixture_season_id = fixture_data?.season_id;
+    // [ℹ] validation check
+    if (fixture_season_id == t_season?.id) {
+      season_fixture_arr.push(fixture_data)
+    }
+  }
+
+  // [ℹ] order season fixtures by ASC dates
+  season_fixture_arr.sort((a,b) => new Date(a.fixture_day).getTime() - new Date(b.fixture_day).getTime());
+
+  // [🐞]
+  if (dev) {
+    console.log(`SEASON start_date: ${season_fixture_arr[0]?.fixture_day.replace('T00:00:00', '')}`)
+    console.log(`SEASON end_date: ${season_fixture_arr[season_fixture_arr.length-1]?.fixture_day.replace('T00:00:00', '')}`)
+  }
+
   const seasonObj: Tournament_Season_Fixtures_Odds = {}
 
-  const mod_rounds: Rounds_Data[] = t_season.round_data
-  .map( d => ({
-      s_date: d?.start?.toString(),
-      e_date: d?.end?.toString(),
-      name: d?.name?.toString()
+  // ~~~~~~~~~~~~~~~
+  // ROUNDS DATA GENERATION
+  // ~~~~~~~~~~~~~~~
+
+  // [ℹ] cherry-pick rounds data correctly
+  let mod_rounds: Rounds_Data[] = t_season.round_data
+  .map(d => ({
+      name:     d?.name.toString(),
+      type:     'round',
+      s_date:   d?.start.toString(),
+      e_date:   d?.end.toString(),
+      stage_id: d?.stage_id
     })
   );
 
+  const season_rounds_stage_mod_data: Rounds_Data[] = []
+  // [ℹ] complete rounds generation data based off STAGE_ID
+  // [ℹ] using THIS SEASON stage data
+  for (const stage of t_season.stages) {
+    // [ℹ] validation check
+    const rounds_match_stage = mod_rounds
+    .find( ({ stage_id }) => stage_id === stage.id);
+    if (rounds_match_stage != undefined) {
+      // [🐞]
+      if (dev) console.log(`removing already existing stage_id in MAIN: ${stage.id}`)
+      continue;
+    }
+    // [ℹ] get matching stage fixtures
+    const stage_fixtures = season_fixture_arr
+    .filter( ({ stage_id_j }) => stage_id_j === stage.id);
+    // [ℹ] validation check
+    if (stage_fixtures != undefined) {
+      // [ℹ] order season fixtures (stage) by ASC dates
+      stage_fixtures.sort((a,b) => Date.parse(a.fixture_day) - Date.parse(b.fixture_day));
+      const stage_start_date = stage_fixtures[0]?.fixture_day.replace('T00:00:00', '')
+      const stage_end_date = stage_fixtures[stage_fixtures.length-1]?.fixture_day.replace('T00:00:00', '')
+      // [ℹ] generate stage object in the rounds form
+      const stage_obj: Rounds_Data = {
+        name:     stage?.name,
+        type:     'advanced',
+        s_date:   stage_start_date,
+        e_date:   stage_end_date,
+        stage_id: stage?.id
+      }
+      season_rounds_stage_mod_data.push(stage_obj)
+    }
+  }
+
+  // [ℹ] merge both rounds and stages data as a single
+  // [ℹ] rounds objects-array
+  if (dev) console.log(`rounds length (pre-merge): ${mod_rounds.length}`)
+  mod_rounds = mod_rounds.concat(season_rounds_stage_mod_data)
+  if (dev) console.log(`rounds length (post-merge): ${mod_rounds.length}`)
+
+  // [ℹ] order season fixtures by ASC dates
+  mod_rounds.sort((a,b) => new Date(a.s_date).getTime() - new Date(b.s_date).getTime());
+  let round_count = 1
+  for (const round_moded of mod_rounds) {
+    round_moded.value = round_count;
+    round_count++;
+  }
+
+  // ~~~~~~~~~~~~~~~
+  // WEEKS DATA GENERATION
+  // ~~~~~~~~~~~~~~~
+
   const mod_weeks: Weeks_Data[] = []
 
-  const season_start = t_season.default_data.start_date
-  const season_end = t_season.default_data.end_date
-  const count_weeks: number = await getWeeksDiff(new Date(season_start), new Date(season_end));
+  const season_start = season_fixture_arr[0]?.fixture_day.replace('T00:00:00', '')
+  const season_end =   season_fixture_arr[season_fixture_arr.length-1]?.fixture_day.replace('T00:00:00', '')
+  const count_weeks: number = await get_weeks_diff(new Date(season_start), new Date(season_end));
 
-  // [🐛] debug
-  /*
+  // [🐞]
+  /**
     console.log(`seasonId: ${seasonId}`)
     if (seasonId.toString() == '19740') {
       console.log(`
@@ -318,6 +408,7 @@ async function breakdownWeeksAndRounds (
       `)
     }
   */
+  
   for (let index = 0; index < count_weeks + 1; index++) {
 
     const name = index + 1
@@ -346,20 +437,23 @@ async function breakdownWeeksAndRounds (
 
   }
 
+  // ~~~~~~~~~~~~~~~
+  // END DATA GENERATION
+  // ~~~~~~~~~~~~~~~
+
   seasonObj.rounds = mod_rounds
   seasonObj.weeks = mod_weeks
-
   season_week_round_ranges_map.set(SEASON_ID, seasonObj)
 
   return season_week_round_ranges_map;
 }
 
-async function getWeeksDiff (
+async function get_weeks_diff (
   startDate: Date, 
   endDate: Date
 ) {
   const msInWeek = 1000 * 60 * 60 * 24 * 7;
-  return Math.round(Math.abs(endDate - startDate) / msInWeek);
+  return Math.round(Math.abs(endDate.getTime() - startDate.getTime()) / msInWeek);
 }
 
 async function identifyFixtureWeeks (

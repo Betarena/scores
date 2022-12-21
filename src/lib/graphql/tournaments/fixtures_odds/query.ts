@@ -119,6 +119,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_2 = gql`
       league_id
       round_data
       default_data
+      stages
     }
 
   }
@@ -250,6 +251,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_4 = gql`
       visitorteam_id_j: data(path: "$.visitorteam_id")
       round_j: data(path: "$.round")
       time_j: data(path: "$.time")
+      stage_id_j: data(path: "$.stage.data.id")
     }
   }
 `;

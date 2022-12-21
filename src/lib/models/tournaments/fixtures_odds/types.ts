@@ -29,6 +29,7 @@ export interface BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures extends BETARE
   visitorteam_id_j?:   number
   round_j?:            Round
   time_j?:             Time
+  stage_id_j:          number
 }
 
 export interface BETARENA_HASURA_fixtures_odds_query {
