@@ -2,9 +2,6 @@ import {
   error,
   redirect
 } from '@sveltejs/kit';
-import {
-  dev
-} from '$app/environment';
 import type {
   PageLoad
 } from './$types';
@@ -14,9 +11,7 @@ import type {
  */
 export async function load({
   url,
-  params,
-  fetch,
-  setHeaders
+  fetch
 }): PageLoad {
 
   /**

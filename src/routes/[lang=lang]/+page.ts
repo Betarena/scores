@@ -11,8 +11,6 @@ export async function load ({
   fetch
 }): PageLoad {
 
-  let response_IP_2;
-
   /**
    * ==================
    * [ℹ] Attempt to Identify the USERS IP from "pre-load()"
@@ -20,6 +18,7 @@ export async function load ({
   */
 
   if (!dev) {
+    // let response_IP_2;
     // ⚠❌ does not appear to work
     // const response_IP = await fetch(`/getClientIP`, {
     //   method: 'GET'

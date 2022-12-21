@@ -30,8 +30,7 @@ import type {
 export async function load({
   url,
   params,
-  fetch,
-  setHeaders
+  fetch
 }): PageLoad {
 
   const {

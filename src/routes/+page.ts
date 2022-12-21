@@ -9,11 +9,8 @@ import type { PageLoad } from './$types';
 export async function load ({
   url, 
   params, 
-  fetch,
-  setHeaders
+  fetch
 }): PageLoad {
-
-  let response_IP_2;
 
   /**
    * ==================
@@ -22,6 +19,7 @@ export async function load ({
   */
 
   if (!dev) {
+    // let response_IP_2;
     // ⚠❌ does not appear to work
     // const response_IP = await fetch(`/getClientIP`, {
     //   method: 'GET'
