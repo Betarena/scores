@@ -7,7 +7,7 @@ WORKDIR /app
 # [ℹ] Installs required node packages
 COPY package.json package-lock.json ./
 # RUN apk add --no-cache git
-RUN apk add --no-cache python3=3.11.1-r1 make=4.4-r1 g++=12.2.1_git20220924-r5
+RUN apk add --no-cache python3=3.11 make=4.4 g++=12.2
 RUN npm i --omit=optional
 
 # [ℹ] Builds node application
