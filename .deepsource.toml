@@ -5,7 +5,7 @@ name = "docker"
 enabled = true
 
   [analyzers.meta]
-  dockerfile_paths = ["https://github.com/Betarena/scores/blob/main/Dockerfile"]
+  dockerfile_paths = ["https://github.com/Betarena/scores/blob/dev/Dockerfile"]
 
 [[analyzers]]
 name = "javascript"
