@@ -41,7 +41,7 @@ import { logErrorGroup } from "$lib/utils/debug";
  * @param {*} data 
  * @returns 
 */
-export async function post(path, data): Promise < any > {
+export async function post(path, data): Promise<unknown> {
     // ...
     return await fetch(path, {
         method: 'POST',

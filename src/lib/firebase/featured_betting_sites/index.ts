@@ -4,8 +4,8 @@
  * ~~~~~~~~~~~~~~~~~
  * ... & methods;
 */
-import { db_real } from '$lib/firebase/init'
-import { child, get, ref } from 'firebase/database'
+import { db_real } from '$lib/firebase/init';
+import { child, get, ref } from 'firebase/database';
 
 /**
  * Description:
@@ -13,7 +13,7 @@ import { child, get, ref } from 'firebase/database'
  * ... obtains all of the sportbook details data `real_db` Firebase-DB
  * ... @param userGeoLocation
 */
-export async function getAllSportbookDetails(): Promise < any > {
+export async function getAllSportbookDetails(): Promise<unknown> {
 
     // ... get all the `sportbook_details` data from `Firebase DB`;
     return get(child(ref(db_real), `sportsbook_details`)).then((snapshot) => {
