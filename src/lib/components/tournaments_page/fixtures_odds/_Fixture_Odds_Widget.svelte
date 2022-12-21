@@ -923,6 +923,8 @@
       new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
+    if (dev) console.log('fixtures_arr_filter', fixtures_arr_filter)
+
     // [ℹ] break-down-values
     // [ℹ] kickstart Fireabse calls
     if (loaded) {
@@ -2004,8 +2006,8 @@
                         style="width: inherit;"
                         data-sveltekit-prefetch
                         class:disable-anchor={
-                          !fixture?.fixture_link 
-                          || !fixture?.fixture_link[server_side_language]
+                          fixture?.fixture_link == undefined
+                          || fixture?.fixture_link[server_side_language] == undefined
                         }>
                         <div
                           class="
@@ -2429,8 +2431,8 @@
                         style="width: inherit;"
                         data-sveltekit-prefetch
                         class:disable-anchor={
-                          !fixture?.fixture_link 
-                          || !fixture?.fixture_link[server_side_language]
+                          fixture?.fixture_link == undefined
+                          || fixture?.fixture_link[server_side_language] == undefined
                         }>
                         <div
                           class="

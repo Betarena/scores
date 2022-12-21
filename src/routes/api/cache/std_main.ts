@@ -32,7 +32,7 @@ export const live_scores_football_translations = 'live_scores_football_translati
 export const live_scores_football_tournaments = 'live_scores_football_tournaments';
 export const seo_block_cache_trans_addr = 'seo_block_t';
 // [ℹ] tournaments
-export const fixture_odds_cache_data_addr = 'tour_fix_odds_data_v2'; // NOTE: for DEV new => tour_fix_odds_data_v2 | OLD => tour_fix_odds_data
+export const fixture_odds_cache_data_addr = 'tour_fix_odds_data'; // NOTE: for DEV new => tour_fix_odds_data_v2 | OLD => tour_fix_odds_data
 export const fixture_odds_cache_trans_addr = 'tour_fix_odds_t';
 export const league_info_cache_data_addr = 'league_info';
 export const sportbook_details = 'sportbook_details';

@@ -163,7 +163,7 @@ async function main (
 
     const tip_link =        value.tip_link_wp
     const media_link =      value.media_link;
-    const fixture_link =    value.fixture_link_wp;
+    const fixture_link =    value.urls;
     
     const home_team_name =  value.home_team_name;
     const home_red_cards =  value?.stats_j?.data?.find( ({ team_id }) => team_id === home_team_id )?.redcards;
