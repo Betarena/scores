@@ -176,19 +176,19 @@ async function main (
     // [ℹ] generate fixtures_odds object
     const fixtures_odds_object: Tournament_Fixture_Odds = {
       id:               fixture_id,
-      round:            round,
+      round,
       // week:             2, // FIXME: unecessary, using fixture_date instead
       minute:           minutes,
-      status:           status,             
-      fixture_time:     fixture_time,
-      fixture_date:     fixture_date,
+      status,             
+      fixture_time,
+      fixture_date,
       teams: {
         home:           home_team_obj,
         away:           away_team_obj
       },
-      tip_link:         tip_link,
-      media_link:       media_link,
-      fixture_link:     fixture_link
+      tip_link,
+      media_link,
+      fixture_link
     }
 
     // [ℹ] add fixtures

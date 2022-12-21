@@ -344,8 +344,8 @@ async function getTargetSeasonPlayersInfo (
     // if (dev) console.log(`ℹ variables: ${VARIABLES.limit} ${VARIABLES.offset}`)
     
     const VARIABLES = {
-      limit: limit,
-      offset: offset,
+      limit,
+      offset,
       seasonIds: seasonIdsArr
     }
 
