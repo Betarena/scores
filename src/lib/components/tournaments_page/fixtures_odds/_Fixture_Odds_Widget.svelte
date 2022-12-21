@@ -505,16 +505,16 @@
       const year_: string = new Date(season_fixture_date_group.date).getFullYear().toString();
       const month_: number = new Date(season_fixture_date_group.date).getMonth();
       let new_month_ = (month_ + 1).toString();
-      new_month_ = ('0' + new_month_).slice(-2);
+      new_month_ = (`0${new_month_}`).slice(-2);
       let day_ = new Date(season_fixture_date_group.date).getDate().toString();
-      day_ = ('0' + day_).slice(-2);
+      day_ = (`0${day_}`).slice(-2);
       
       // [ℹ] iterater over fixtures 
       // [ℹ] [BY DATE GROUP]
       // [ℹ] assign "onValue" event-listeners
       for (const season_fixture of season_fixture_date_group.fixtures) {
 
-        if (["FT", "FT_PEN"].includes(season_fixture.status)) {
+        if (["FT", "FT_PEN", "AET"].includes(season_fixture.status)) {
           continue
         }
 
@@ -523,7 +523,7 @@
         // [ℹ] listen to real-time fixture event changes;
         const fixtureRef = ref (
           db_real,
-          'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id
+          `odds/${year_}/${new_month_}/${day_}/${fixture_id}`
         );
 
         // if (fixture_id == 18528023) {
@@ -1963,7 +1963,7 @@
                               s-14 
                               color-black
                             "
-                            class:color-grey={["FT", "FT_PEN"].includes(fixture?.status)}>
+                            class:color-grey={["FT", "FT_PEN", "AET"].includes(fixture?.status)}>
                             {
                               (
                                 ('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
@@ -2237,7 +2237,7 @@
                       [ℹ] fixture scores BOX SHOW/HIDE
                       -->
                       {#if (fixture?.teams?.away?.score && fixture?.teams?.home?.score) 
-                        || ["FT", "FT_PEN", "LIVE", "HT"].includes(fixture?.status)}
+                        || ["FT", "FT_PEN", "AET", "LIVE", "HT"].includes(fixture?.status)}
                         <div
                           class="
                             column-space-center 
@@ -2382,7 +2382,7 @@
                               s-14 
                               color-black
                             "
-                            class:color-grey={["FT", "FT_PEN"].includes(fixture?.status)}>
+                            class:color-grey={["FT", "FT_PEN", "AET"].includes(fixture?.status)}>
                             {
                               (('0' + new Date(fixture?.fixture_time + "Z").getHours()).slice(-2) +
                                 ":" +
@@ -2590,7 +2590,7 @@
                       -->
                       {#if
                         (fixture?.teams?.away?.score && fixture?.teams?.home?.score)
-                        || ["FT", "FT_PEN", "LIVE", "HT"].includes(fixture?.status)}
+                        || ["FT", "FT_PEN", "AET", "LIVE", "HT"].includes(fixture?.status)}
                         <div
                           class="column-space-center fixtures-scores-box">
                           <p 
@@ -2614,7 +2614,8 @@
                       <!-- 
                       [ℹ] live-odds 
                       -->
-                      {#if fixture?.live_odds != undefined && !["FT", "FT_PEN"].includes(fixture?.status)}
+                      {#if fixture?.live_odds != undefined 
+                        && !["FT", "FT_PEN", "AET"].includes(fixture?.status)}
 
                         <div
                           class="main-bet-box row-space-out"
