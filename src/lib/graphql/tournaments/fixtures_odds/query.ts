@@ -239,10 +239,12 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_4 = gql`
       away_team_name
       home_team_name
       round_name
+      season_id
       league_id
       tip_link_wp
       fixture_link_wp
       media_link
+      urls
       # [alt V1]
       # data
       # [alt V2]
@@ -251,6 +253,7 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_4 = gql`
       visitorteam_id_j: data(path: "$.visitorteam_id")
       round_j: data(path: "$.round")
       time_j: data(path: "$.time")
+      scores_j: data(path: "$.scores")
       stage_id_j: data(path: "$.stage.data.id")
     }
   }

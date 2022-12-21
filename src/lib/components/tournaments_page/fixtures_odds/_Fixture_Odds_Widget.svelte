@@ -688,7 +688,7 @@
       // [ℹ] and inject in exisitng
       if (currentSeason != $sessionStore.selectedSeasonID) {
         lazyLoadingSeasonFixture = true;
-        const response: Tournament_Season_Fixtures_Odds = await get("/api/hasura/tournaments/fixture_odds?seasonId="+$sessionStore.selectedSeasonID)
+        const response: Tournament_Season_Fixtures_Odds = await get(`/api/hasura/tournaments/fixture_odds?seasonId=${$sessionStore.selectedSeasonID}`)
         if (response == undefined) {
           noWidgetData = true;
           lazyLoadingSeasonFixture = false;
@@ -697,6 +697,7 @@
         else {
           FIXTURES_ODDS_DATA.seasons
           .push(response)
+          if (dev) console.log('FIXTURES_ODDS_DATA', FIXTURES_ODDS_DATA)
           FIXTURES_ODDS_DATA = FIXTURES_ODDS_DATA
           target_season = response
           lazyLoadingSeasonFixture = false;
@@ -879,7 +880,11 @@
     // [ℹ] extra get number of total weeks & rounds
     weeks_total = target_season.weeks.length
     rounds_total = target_season.rounds.length
-    total_nav_num = weeks_total
+    total_nav_num = 
+      optView === 'round'
+        ? rounds_total
+        : weeks_total
+    ;
 
     /**
      * [ℹ] group-by fixtures "fixture-day" using a map
@@ -1988,7 +1993,10 @@
                       FIXME: data-sveltekit-prefetch syntax error
                       -->
                       <a
-                        href={fixture?.fixture_link[server_side_language]}
+                        href={fixture?.fixture_link == undefined 
+                          ? ''
+                          : fixture?.fixture_link[server_side_language]
+                        }
                         style="width: inherit;"
                         data-sveltekit-prefetch
                         class:disable-anchor={
@@ -2410,7 +2418,10 @@
                       FIXME: data-sveltekit-prefetch syntax error
                       -->
                       <a
-                        href={fixture?.fixture_link[server_side_language]}
+                        href={fixture?.fixture_link == undefined 
+                          ? ''
+                          : fixture?.fixture_link[server_side_language]
+                        }
                         style="width: inherit;"
                         data-sveltekit-prefetch
                         class:disable-anchor={
