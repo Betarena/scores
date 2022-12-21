@@ -9,11 +9,12 @@
   /**
    * [ℹ] svelte-kit
   */
-	import { browser, dev } from '$app/environment';
-	import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { fly } from 'svelte/transition';
+
+  import { browser, dev } from '$app/environment';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
+  import { onMount } from 'svelte';
+  import { fly } from 'svelte/transition';
 /**
    * [ℹ] stroes
   */
