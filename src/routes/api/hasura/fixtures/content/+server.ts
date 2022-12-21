@@ -1,7 +1,5 @@
-import { dev } from '$app/environment';
-import fs from 'fs';
 import { performance } from 'perf_hooks';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { REDIS_CACHE_FIXTURE_CONTENT_DATA_3 } from '$lib/graphql/fixtures/content/query';

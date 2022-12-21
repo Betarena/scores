@@ -1,5 +1,4 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import {
 	cache_country_translations,

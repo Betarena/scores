@@ -1,5 +1,4 @@
-import { dev } from '$app/environment'
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
  
 import { get_target_hset_cache_data, navbar_cache_trans_addr } from '../../std_main';
 

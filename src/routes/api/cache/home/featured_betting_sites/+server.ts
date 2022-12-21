@@ -1,7 +1,4 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
-
-import redis from '$lib/redis/init';
+import { json } from '@sveltejs/kit';
 
 import {
 	get_target_hset_cache_data,

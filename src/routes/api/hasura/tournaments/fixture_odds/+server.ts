@@ -6,7 +6,7 @@ import {
 } from '$lib/graphql/tournaments/fixtures_odds/query';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import type {
   BETARENA_HASURA_fixtures_odds_query,
