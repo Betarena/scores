@@ -37,7 +37,7 @@ export async function load({
   */
 
   const response_valid_url = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=` + url.pathname, 
+    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, 
     {
       method: 'GET'
     }
@@ -58,14 +58,14 @@ export async function load({
   */
 
   const response_fixtures_seo: REDIS_CACHE_SINGLE_fixtures_seo_response = await fetch(
-    `/api/cache/_main_/pages_and_seo?lang=` + urlLang + "&page=fixtures", 
+    `/api/cache/_main_/pages_and_seo?lang=${urlLang}&page=fixtures`, 
     {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_fixtures_page_info: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
-    `/api/cache/_main_/pages_and_seo?fixture_id=` + fixture_id + "&page=fixtures", 
+    `/api/cache/_main_/pages_and_seo?fixture_id=${fixture_id}&page=fixtures`, 
     {
       method: 'GET'
     }
@@ -91,7 +91,7 @@ export async function load({
   const venue_city = response_fixtures_page_info?.data?.venue_city;
 
   const response_country_translation: REDIS_CACHE_SINGLE_general_countries_translation = await fetch(
-    `/api/cache/_main_/pages_and_seo?country_id=` + country_id,
+    `/api/cache/_main_/pages_and_seo?country_id=${country_id}`,
     {
       method: 'GET'
     }
@@ -166,7 +166,7 @@ export async function load({
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_scoreboard: REDIS_CACHE_SINGLE_scoreboard_data = await fetch(
-    `/api/cache/fixtures/scoreboard?fixture_id=` + fixture_id, 
+    `/api/cache/fixtures/scoreboard?fixture_id=${fixture_id}`, 
     {
       method: 'GET'
     }
@@ -175,7 +175,7 @@ export async function load({
   if (response_scoreboard == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_scoreboard = await fetch(
-      `/api/hasura/fixtures/scoreboard?fixture_id=` + fixture_id, 
+      `/api/hasura/fixtures/scoreboard?fixture_id=${fixture_id}`, 
       {
         method: 'GET'
       }
@@ -183,7 +183,7 @@ export async function load({
   }
 
   const response_scoreboard_translation: REDIS_CACHE_SINGLE_scoreboard_translation = await fetch(
-    `/api/cache/fixtures/scoreboard?lang=` + urlLang, 
+    `/api/cache/fixtures/scoreboard?lang=${urlLang}`, 
     {
       method: 'GET'
     }
@@ -191,7 +191,7 @@ export async function load({
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_lineups: REDIS_CACHE_SINGLE_lineups_data = await fetch(
-    `/api/cache/fixtures/lineups?fixture_id=` + fixture_id, 
+    `/api/cache/fixtures/lineups?fixture_id=${fixture_id}`, 
     {
       method: 'GET'
     }
@@ -200,7 +200,7 @@ export async function load({
   if (response_lineups == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_lineups = await fetch(
-      `/api/hasura/fixtures/lineups?fixture_id=` + fixture_id, 
+      `/api/hasura/fixtures/lineups?fixture_id=${fixture_id}`, 
       {
         method: 'GET'
       }
@@ -208,7 +208,7 @@ export async function load({
   }
 
   const response_lineups_translation: REDIS_CACHE_SINGLE_lineups_translation = await fetch(
-    `/api/cache/fixtures/lineups?lang=` + urlLang, 
+    `/api/cache/fixtures/lineups?lang=${urlLang}`, 
     {
       method: 'GET'
     }
@@ -216,7 +216,7 @@ export async function load({
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_incidents: REDIS_CACHE_SINGLE_incidents_data = await fetch(
-    `/api/cache/fixtures/incidents?fixture_id=` + fixture_id, 
+    `/api/cache/fixtures/incidents?fixture_id=${fixture_id}`, 
     {
       method: 'GET'
     }
@@ -225,7 +225,7 @@ export async function load({
   if (response_incidents == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_incidents = await fetch(
-      `/api/hasura/fixtures/incidents?fixture_id=` + fixture_id, 
+      `/api/hasura/fixtures/incidents?fixture_id=${fixture_id}`, 
       {
         method: 'GET'
       }
@@ -233,14 +233,14 @@ export async function load({
   }
 
   const response_incidents_translation: REDIS_CACHE_SINGLE_incidents_translation = await fetch(
-    `/api/cache/fixtures/incidents?lang=` + urlLang, 
+    `/api/cache/fixtures/incidents?lang=${urlLang}`, 
     {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_featured_betting_sites_translation: Cache_Single_Lang_Featured_Betting_Site_Translation_Response = await fetch(
-    `/api/cache/home/featured_betting_sites?lang=` + urlLang, 
+    `/api/cache/home/featured_betting_sites?lang=${urlLang}`, 
     {
       method: 'GET'
     }
@@ -248,7 +248,7 @@ export async function load({
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_statistics: REDIS_CACHE_SINGLE_statistics_data = await fetch(
-    `/api/cache/fixtures/statistics?fixture_id=` + fixture_id, 
+    `/api/cache/fixtures/statistics?fixture_id=${fixture_id}`, 
     {
       method: 'GET'
     }
@@ -257,7 +257,7 @@ export async function load({
   if (response_statistics == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_statistics = await fetch(
-      `/api/hasura/fixtures/statistics?fixture_id=` + fixture_id, 
+      `/api/hasura/fixtures/statistics?fixture_id=${fixture_id}`, 
       {
         method: 'GET'
       }
@@ -265,7 +265,7 @@ export async function load({
   }
 
   const response_statistics_translation: REDIS_CACHE_SINGLE_statistics_translation = await fetch(
-    `/api/cache/fixtures/statistics?lang=` + urlLang, 
+    `/api/cache/fixtures/statistics?lang=${urlLang}`,
     {
       method: 'GET'
     }
@@ -273,7 +273,7 @@ export async function load({
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_content: REDIS_CACHE_SINGLE_content_data[] = await fetch(
-    `/api/cache/fixtures/content?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+    `/api/cache/fixtures/content?fixture_id=${fixture_id}&lang=${urlLang}`, 
     {
       method: 'GET'
     }
@@ -282,7 +282,7 @@ export async function load({
   if (response_content == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_content = await fetch(
-      `/api/hasura/fixtures/content?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+      `/api/hasura/fixtures/content?fixture_id=${fixture_id}&lang=${urlLang}`, 
       {
         method: 'GET'
       }
@@ -290,7 +290,7 @@ export async function load({
   }
 
   const response_content_translation: REDIS_CACHE_SINGLE_content_translation = await fetch(
-    `/api/cache/fixtures/content?lang=` + urlLang, 
+    `/api/cache/fixtures/content?lang=${urlLang}`, 
     {
       method: 'GET'
     }
@@ -298,7 +298,7 @@ export async function load({
 
   // NOTE:IMPORTANT: can be null -load from hasura
   let response_about: REDIS_CACHE_SINGLE_about_data = await fetch(
-    `/api/cache/fixtures/about?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+    `/api/cache/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, 
     {
       method: 'GET'
     }
@@ -307,7 +307,7 @@ export async function load({
   if (response_about == undefined || use_hasura) {
     if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
     response_about = await fetch(
-      `/api/hasura/fixtures/about?fixture_id=` + fixture_id + `&lang=` + urlLang, 
+      `/api/hasura/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, 
       {
         method: 'GET'
       }
@@ -315,21 +315,21 @@ export async function load({
   }
 
   const response_about_translation: REDIS_CACHE_SINGLE_about_translation = await fetch(
-    `/api/cache/fixtures/about?lang=` + urlLang, 
+    `/api/cache/fixtures/about?lang=${urlLang}`, 
     {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_votes_translation: REDIS_CACHE_SINGLE_votes_translation = await fetch(
-    `/api/cache/fixtures/votes?lang=` + urlLang, 
+    `/api/cache/fixtures/votes?lang=${urlLang}`, 
     {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_probability_translation: REDIS_CACHE_SINGLE_probabilities_translation = await fetch(
-    `/api/hasura/fixtures/probabilities?lang=` + urlLang, 
+    `/api/hasura/fixtures/probabilities?lang=${urlLang}`, 
     {
       method: 'GET'
     }

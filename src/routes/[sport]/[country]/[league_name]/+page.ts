@@ -51,7 +51,7 @@ export async function load({
    */
 
   const response_valid_url = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=` + url.pathname, {
+    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
@@ -72,40 +72,54 @@ export async function load({
    */
 
   const response_tournaments_seo: Cache_Single_Tournaments_SEO_Translation_Response = await fetch(
-    `/api/cache/_main_/pages_and_seo?lang=` + urlLang + "&page=tournaments", {
+    `/api/cache/_main_/pages_and_seo?lang=${urlLang}&page=tournaments`, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_tournaments_page_info: Cache_Single_Tournaments_Data_Page_Translation_Response = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=` + url.pathname + "&page=tournaments", {
+    `/api/cache/_main_/pages_and_seo?url=${url.pathname}&page=tournaments`, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   /**
    * [ℹ] regex-ing SEO content dynamically;
-   */
+  */
 
-  response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{lang}/g, lang));
-  response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{sport}/g, sport));
-  response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{country}/g, country));
-  response_tournaments_seo.main_data = JSON.parse(JSON.stringify(response_tournaments_seo.main_data).replace(/{name}/g, league_name));
+  response_tournaments_seo.main_data = 
+    JSON.parse(JSON.stringify(response_tournaments_seo.main_data)
+      .replace(/{lang}/g, lang)
+      .replace(/{sport}/g, sport)
+      .replace(/{country}/g, country)
+      .replace(/{name}/g, league_name)
+    )
+  ;
 
-  response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{lang}/g, lang));
-  response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{sport}/g, sport));
-  response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{country}/g, country));
-  response_tournaments_seo.twitter_card = JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card).replace(/{name}/g, league_name));
+  response_tournaments_seo.twitter_card = 
+    JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card)
+      .replace(/{lang}/g, lang)
+      .replace(/{sport}/g, sport)
+      .replace(/{country}/g, country)
+      .replace(/{name}/g, league_name)
+    )
+  ;
 
-  response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{lang}/g, lang));
-  response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{sport}/g, sport));
-  response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{country}/g, country));
-  response_tournaments_seo.opengraph = JSON.parse(JSON.stringify(response_tournaments_seo.opengraph).replace(/{name}/g, league_name));
+  response_tournaments_seo.opengraph = 
+    JSON.parse(JSON.stringify(response_tournaments_seo.opengraph)
+      .replace(/{lang}/g, lang)
+      .replace(/{sport}/g, sport)
+      .replace(/{country}/g, country)
+      .replace(/{name}/g, league_name)
+    )
+  ;
 
   // [ℹ] canonical exclusive - [LANG];
-  const enItemAlt = response_tournaments_page_info.alternate_data.find(({
-    lang
-  }) => lang === urlLang);
+  const enItemAlt = response_tournaments_page_info.alternate_data
+    .find( ({lang}) => 
+      lang === urlLang
+    )
+  ;
   response_tournaments_seo.main_data.canonical = 
     urlLang == 'en'
       ? `https://scores.betarena.com/${enItemAlt.sport.toLowerCase()}/${enItemAlt.country.toLowerCase()}/${enItemAlt.name.replace(/\s/g,'-').toLowerCase()}`
@@ -116,7 +130,7 @@ export async function load({
   */
 
   const response_league_info: Cache_Single_Tournaments_League_Info_Data_Response = await fetch(
-    `/api/cache/tournaments/league_info?url=` + url.pathname, {
+    `/api/cache/tournaments/league_info?url=${url.pathname}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
@@ -124,37 +138,37 @@ export async function load({
   const league_id = response_tournaments_page_info.data.tournament_id;
 
   const response_standings_translations: REDIS_CACHE_SINGLE_tournament_standings_translation = await fetch(
-    `/api/cache/tournaments/standings?lang=` + urlLang, {
+    `/api/cache/tournaments/standings?lang=${urlLang}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_standings_data: REDIS_CACHE_SINGLE_tournament_standings_data = await fetch(
-    `/api/cache/tournaments/standings?league_id=` + league_id, {
+    `/api/cache/tournaments/standings?league_id=${league_id}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_top_players_translations: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response = await fetch(
-    `/api/cache/tournaments/top_players?lang=` + urlLang, {
+    `/api/cache/tournaments/top_players?lang=${urlLang}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_top_players_data: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response = await fetch(
-    `/api/cache/tournaments/top_players?league_id=` + league_id, {
+    `/api/cache/tournaments/top_players?league_id=${league_id}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_fixtures_odds_translations: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = await fetch(
-    `/api/cache/tournaments/fixtures_odds?lang=` + urlLang, {
+    `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
 
   const response_fixtures_odds_data: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response = await fetch(
-    `/api/cache/tournaments/fixtures_odds?league_id=` + league_id, {
+    `/api/cache/tournaments/fixtures_odds?league_id=${league_id}`, {
       method: 'GET'
     }
   ).then((r) => r.json());
