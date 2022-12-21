@@ -14,7 +14,7 @@ const logs = [];
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
   const lang: string = req.url['searchParams'].get('lang');
 	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 	const target_season_fixtures = await main(fixture_id, lang);

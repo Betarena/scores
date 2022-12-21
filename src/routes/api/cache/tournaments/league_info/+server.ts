@@ -5,7 +5,7 @@ import { get_target_hset_cache_data, league_info_cache_data_addr } from '../../s
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(req, res): Promise<any> {
+export async function GET(req): Promise<any> {
 	const url: string = req.url['searchParams'].get('url');
 
 	const response_cache = await get_target_hset_cache_data(league_info_cache_data_addr, url);

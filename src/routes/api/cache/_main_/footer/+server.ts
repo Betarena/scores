@@ -1,9 +1,9 @@
 import { json } from '@sveltejs/kit';
 
-import { get_target_hset_cache_data, footer_cache_trans_addr } from '../../std_main';
+import { footer_cache_trans_addr, get_target_hset_cache_data } from '../../std_main';
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET(req, res): Promise< any > {
+export async function GET(req): Promise< any > {
 
   const lang: string = req.url['searchParams'].get('lang');
 
