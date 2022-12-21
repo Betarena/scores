@@ -1920,7 +1920,10 @@
                 -->
                 {#each item?.fixtures as fixture}
                   <div
-                    class="fixture-row row-space-out">
+                    class="
+                      fixture-row 
+                      row-space-out
+                    ">
                     <!-- 
                     [ℹ] fixture left-side container 
                     -->
@@ -1985,7 +1988,7 @@
                               s-14 
                               color-grey
                             ">
-                            {FIXTURES_ODDS_T?.status_abv[fixture?.status]}
+                            {fixture?.status == "NS" ? "NS" : FIXTURES_ODDS_T?.status_abv[fixture?.status]}
                           </p>
                         {/if}
                       </div>
