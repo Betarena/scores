@@ -33,9 +33,9 @@
 
   let loaded: boolean = false;                  // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;                 // [ℹ] refresh value speed of the WIDGET;
-	let refresh_data: any = undefined;            // [ℹ] refresh-data value speed;
-  let noLeagueInfoBool: any = false;            // [ℹ] identifies the noLeagueInfoBool boolean;
-  let dropdownSeasonSelect: any = undefined     // [ℹ] selected TOP LEAGUE;
+	let refresh_data: unknown = undefined;            // [ℹ] refresh-data value speed;
+  let noLeagueInfoBool: unknown = false;            // [ℹ] identifies the noLeagueInfoBool boolean;
+  let dropdownSeasonSelect: unknown = undefined     // [ℹ] selected TOP LEAGUE;
   let toggleDropdown: boolean = false;          // [ℹ] toggle Dropdown BOX accordingly;
   let toggleCTA: boolean = false;
 

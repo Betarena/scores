@@ -19,8 +19,8 @@
 
 	let loaded: boolean = false;            // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;
-	let refresh_data: any = undefined;
-  let noSEOBlockData: any = false;
+	let refresh_data: unknown = undefined;
+  let noSEOBlockData: unknown = false;
 
   /**
    * Description:

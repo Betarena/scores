@@ -28,7 +28,7 @@ const user_settings: User_Setting = {
  * ... @param {*} key
  * ... @returns
 */
-function createLocalStore(key: any): any {
+function createLocalStore(key: unknown): unknown {
 	
 	const { subscribe, set, update } = writable(user_settings);
 

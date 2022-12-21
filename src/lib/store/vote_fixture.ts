@@ -49,7 +49,7 @@ function createLocalStore(key) {
 		 *
 		 * @param {*} item
 		 */
-		addToVotes: (fixture_Vote: any) => {
+		addToVotes: (fixture_Vote: unknown) => {
       if (dev) logDevGroup ("vote_fixtures [DEV]", `fixture_Vote: ${fixture_Vote}`)
 
 			// get the existing data, stored in the .localStorage();

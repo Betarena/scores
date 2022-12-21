@@ -44,7 +44,7 @@
 	let loaded: boolean = false;
 	let nomatches: boolean = false;
 	let refresh: boolean = false;
-	let refresh_data: any = undefined;
+	let refresh_data: unknown = undefined;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// COMPONENT METHODS DATA LOADING

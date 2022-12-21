@@ -29,8 +29,8 @@
   let displayShowMore: boolean = false;   // [ℹ] signal as to whether to display or not the `showMore` / `showLess` data container;
 	let loaded: boolean = false;            // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;
-	let refresh_data: any = undefined;
-  let noBestPlayers: any = false;
+	let refresh_data: unknown = undefined;
+  let noBestPlayers: unknown = false;
 
   /**
    * Description:

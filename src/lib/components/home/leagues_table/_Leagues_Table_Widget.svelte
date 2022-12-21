@@ -27,8 +27,8 @@
 
 	let loaded: boolean = false;            // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;           // [ℹ] refresh value speed of the WIDGET;
-	let refresh_data: any = undefined;      // [ℹ] refresh-data value speed;
-  let noLeaguesTable: any = false;        // [ℹ] identifies the noLeaguesTable boolean;
+	let refresh_data: unknown = undefined;      // [ℹ] refresh-data value speed;
+  let noLeaguesTable: unknown = false;        // [ℹ] identifies the noLeaguesTable boolean;
   let dropdownSelect: string = undefined  // [ℹ] selected TOP LEAGUE;
   let toggleDropdown: boolean = false;    // [ℹ] toggle Dropdown BOX accordingly;
 

@@ -102,7 +102,7 @@ export async function get_target_string_cache_data(key: string): Promise<unknown
 	try {
 		const cached: string = await redis.get(key);
     if (cached) {
-      const parsed: any = JSON.parse(cached);
+      const parsed: unknown = JSON.parse(cached);
       return parsed;
     }
 	} catch (e) {
