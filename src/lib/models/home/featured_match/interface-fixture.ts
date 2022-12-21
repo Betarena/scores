@@ -1,6 +1,6 @@
 import type { ScoresTournamentsUrls } from '../hasura';
 import type { SelectedFixture_LiveOdds_Response } from './firebase-real-db-interface';
-import type { BestPlayers_Data, TranslationsResponse, SelectedFixutre } from './response_models';
+import type { BestPlayers_Data, SelectedFixutre } from './response_models';
 
 /**
  * INTERFACE
