@@ -417,9 +417,9 @@
     const year_: string = new Date(fixture_time).getFullYear().toString();
     const month_: number = new Date(fixture_time).getMonth();
     let new_month_ = (month_ + 1).toString();
-    new_month_ = ('0' + new_month_).slice(-2);
+    new_month_ = (`0${new_month_}`).slice(-2);
     let day_ = new Date(fixture_time).getDate().toString();
-    day_ = ('0' + day_).slice(-2);
+    day_ = (`0${day_}`).slice(-2);
 
     // [ℹ] listen to real-time fixture event changes;
     const fixtureRef = ref (

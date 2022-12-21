@@ -71,11 +71,11 @@
 
 		// [ℹ] apply-correct-month-structure;
 		let new_month_ = (month_ + 1).toString();
-		new_month_ = ('0' + new_month_).slice(-2);
+		new_month_ = (`0${new_month_}`).slice(-2);
 
 		// [ℹ] apply-correct-day-structure;
 		let day_ = new Date(fixture_data.date).getUTCDate().toString();
-		day_ = ('0' + day_).slice(-2);
+		day_ = (`0${day_}`).slice(-2);
 
 		// [ℹ] obtain FIXTURE-ID;
 		const fixtureId = fixture_data.fixture_id;

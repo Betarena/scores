@@ -20,7 +20,7 @@ export async function GET(req, res): Promise<unknown> {
 	}
 
 	if (lang && fixture_id) {
-		const id = fixture_id + '_' + lang;
+		const id = `${fixture_id}_${lang}`;
 		const response_cache = await get_target_hset_cache_data(fixture_about_cache_data_addr, id);
 		if (dev) console.log(`id: ${id}`);
 		if (response_cache) {

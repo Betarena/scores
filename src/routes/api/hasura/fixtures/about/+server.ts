@@ -56,7 +56,7 @@ async function main (
   const data_point_root = 
     LANG == "en"
       ? "seo_fixtures"
-      : "seo_fixtures_" + LANG
+      : `seo_fixtures_${LANG}`
 
 	// [ℹ] exit
   if (fixture_data[data_point_root] == undefined) {

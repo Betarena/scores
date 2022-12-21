@@ -40,11 +40,11 @@ export async function get_odds (
   const year_: string = new Date(fixture_time).getFullYear().toString();
   const month_: number = new Date(fixture_time).getMonth();
   let new_month_ = (month_ + 1).toString();
-  new_month_ = ('0' + new_month_).slice(-2);
+  new_month_ = (`0${new_month_}`).slice(-2);
   let day_ = new Date(fixture_time).getDate().toString();
-  day_ = ('0' + day_).slice(-2);
+  day_ = (`0${day_}`).slice(-2);
 
-  await get(child(ref(db_real), 'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id))
+  await get(child(ref(db_real), `odds/${year_}/${new_month_}/${day_}/${fixture_id}`))
   .then((snapshot) => {
     if (snapshot.exists()) {
       const data: [string, FIREBASE_odds][] = Object.entries(snapshot.val())
