@@ -15,7 +15,7 @@ const logs = []
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise < unknown > {
+export async function GET(req): Promise < unknown > {
 
   const seasonId: string = req.url['searchParams'].get('seasonId');
 
@@ -395,7 +395,7 @@ async function getTeamsAndPlayersIds (
   let teamIdsArr: number[] = []
   let playerIdsArr: number[] = []
 
-  for (const season of data) {
+  for await (const season of data) {
     // console.log(`season: ${season.id}`)
     if (season?.squad !== null) {
       for (const team of season.squad) {
@@ -458,11 +458,11 @@ async function generateTeamsAndPlayersMap (
 
   const t0 = performance.now();
   const players_map = new Map < number, BETARENA_HASURA_scores_football_players > ()
-  for (const p of data.scores_football_players) {
+  for await (const p of data.scores_football_players) {
     players_map.set(p.player_id, p)
   }
   const teams_map = new Map < number, BETARENA_HASURA_scores_football_teams > ()
-  for (const t of data.scores_football_teams) {
+  for await (const t of data.scores_football_teams) {
     teams_map.set(t.id, t)
   }
   const t1 = performance.now();
@@ -474,5 +474,4 @@ async function generateTeamsAndPlayersMap (
     players_map,
     teams_map
   ]
-
 }

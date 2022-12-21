@@ -30,7 +30,7 @@ let t1;
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise < unknown > {
+export async function GET(req): Promise < unknown > {
 
   // [ℹ] get seasonId
   const leagueId: string = req.url['searchParams'].get('leagueId');
@@ -149,7 +149,7 @@ async function main (
   historic_fixtures_season_arr.season_id = SEASON_ID;
   historic_fixtures_season_arr.fixtures = [];
   
-  for (const [key, value] of historic_fixtures_map.entries()) {
+  for (const [, value] of historic_fixtures_map.entries()) {
 
     // const fix_season_id = value.data?.season_id;
     // const league_id = value.league_id;
@@ -342,7 +342,7 @@ async function breakdownWeeksAndRounds (
 
   const season_fixture_arr: BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] = []
   // [ℹ] get all fixtures[] from this SEASON
-  for (const [id, fixture_data] of historic_fixtures_map.entries()) {
+  for (const [, fixture_data] of historic_fixtures_map.entries()) {
     const fixture_season_id = fixture_data?.season_id;
     // [ℹ] validation check
     if (fixture_season_id == t_season?.id) {
@@ -502,7 +502,7 @@ async function identifyFixtureWeeks (
 
   const newWeekArr: Weeks_Data[] = []
 
-  for (const week of target_season.weeks) {
+  for await (const week of target_season.weeks) {
 
     const week_start_t = new Date(week.s_date)
     const week_end_t = new Date(week.e_date)
@@ -529,7 +529,7 @@ async function identifyFixtureWeeks (
     // [ℹ] update "name" (id) in sequntial [1,2,3..]
     // [ℹ] values
     let counter = 1;
-    for (const item of newWeekArr) {
+    for await (const item of newWeekArr) {
       item.name = counter.toString()
       counter++
     }
