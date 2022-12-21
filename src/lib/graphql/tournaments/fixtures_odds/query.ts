@@ -258,3 +258,30 @@ export const REDIS_CACHE_FIXTURES_ODDS_DATA_4 = gql`
     }
   }
 `;
+
+/**
+ * [ℹ] GET current seasons of TARGET LEAGUE
+*/
+export const REDIS_CACHE_FIXTURES_ODDS_DATA_5 = gql`
+  query REDIS_CACHE_FIXTURES_ODDS_DATA_5
+    (
+      $league_id: numeric
+    ) 
+    @cached 
+    (ttl: 300)
+  {
+    scores_football_seasons_details (
+      where: 
+      {
+        is_current_season: {
+          _eq: true
+        },
+        league_id: {
+          _eq: $league_id
+        }
+      }
+    ) {
+      id
+    }
+  }
+`;

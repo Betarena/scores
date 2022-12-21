@@ -2,7 +2,8 @@ import { dev } from '$app/environment'
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { 
   REDIS_CACHE_FIXTURES_ODDS_DATA_2, 
-  REDIS_CACHE_FIXTURES_ODDS_DATA_4
+  REDIS_CACHE_FIXTURES_ODDS_DATA_4,
+  REDIS_CACHE_FIXTURES_ODDS_DATA_5
 } from '$lib/graphql/tournaments/fixtures_odds/query';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
@@ -12,11 +13,13 @@ import type {
   BETARENA_HASURA_fixtures_odds_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   Fixture_Odds_Team, 
+  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
   Rounds_Data, 
   Tournament_Fixture_Odds, 
   Tournament_Season_Fixtures_Odds, 
   Weeks_Data
 } from '$lib/models/tournaments/fixtures_odds/types';
+import type { BETARENA_HASURA_scores_football_seasons_details } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = []
@@ -30,9 +33,9 @@ let t1;
 export async function GET(req, res): Promise < unknown > {
 
   // [ℹ] get seasonId
-  const seasonId: string = req.url['searchParams'].get('seasonId');
+  const leagueId: string = req.url['searchParams'].get('leagueId');
 
-  const target_season_fixtures = await main(seasonId)
+  const target_season_fixtures = await main(leagueId)
 
   return json(target_season_fixtures)
 }
@@ -42,15 +45,26 @@ export async function GET(req, res): Promise < unknown > {
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 async function main (
-  _seasonId: string
-): Promise < Tournament_Season_Fixtures_Odds | null > {
+  _leagueId: string
+): Promise < REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response | null > {
+
+  const LEAGUE_ID = parseInt(_leagueId)
+
+  const target_current_season_arr = await get_league_current_seasons (
+    LEAGUE_ID
+  )
+  // [ℹ] exit
+  if (target_current_season_arr == undefined
+    || target_current_season_arr.length == 0) {
+    return null;
+  }
 
   // [ℹ] relying on Season Id
   // [ℹ] to get ALL Fixtures
   // [ℹ] for ALL seasons
   // [ℹ] and return
 
-  const SEASON_ID = parseInt(_seasonId)
+  const SEASON_ID = target_current_season_arr[0].id
 
   /**
    * [ℹ] obtain target historic_fixtures
@@ -230,12 +244,34 @@ async function main (
 
   // [ℹ] return fixtures for THIS
   // [ℹ] target season
-  return historic_fixtures_season_arr;
+  return {
+    league_id: parseInt(_leagueId),
+    seasons: [historic_fixtures_season_arr]
+  }
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [HELPER] OTHER METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
+
+async function get_league_current_seasons (
+  league_id: number
+): Promise < BETARENA_HASURA_scores_football_seasons_details[] > {
+
+  const t0 = performance.now();
+  const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_5";
+  const VARIABLES = {
+    league_id: league_id
+  }
+  const response: BETARENA_HASURA_fixtures_odds_query = await initGrapQLClient().request (
+    REDIS_CACHE_FIXTURES_ODDS_DATA_5,
+    VARIABLES
+  );
+  const t1 = performance.now();
+  logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+  return response.scores_football_seasons_details;
+}
 
 async function getTargetSeasonFixtures (
   seasonId: number

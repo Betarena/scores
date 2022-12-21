@@ -167,8 +167,14 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  // const response_fixtures_odds_data: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response = await fetch(
+  //   `/api/cache/tournaments/fixtures_odds?league_id=${league_id}`, {
+  //     method: 'GET'
+  //   }
+  // ).then((r) => r.json());
+
   const response_fixtures_odds_data: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response = await fetch(
-    `/api/cache/tournaments/fixtures_odds?league_id=${league_id}`, {
+    `/api/hasura/tournaments/fixture_odds/league?leagueId=${league_id}`, {
       method: 'GET'
     }
   ).then((r) => r.json());

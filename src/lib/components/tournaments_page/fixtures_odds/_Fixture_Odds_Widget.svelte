@@ -679,6 +679,8 @@
       season_id === $sessionStore.selectedSeasonID
     );
 
+    if (dev) console.log('FIXTURES_ODDS_DATA', FIXTURES_ODDS_DATA)
+
     // [ℹ] validation check (#1)
     if (target_season == undefined) {
 
