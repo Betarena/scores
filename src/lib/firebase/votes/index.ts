@@ -1,9 +1,9 @@
-import { ref, get, child } from 'firebase/database'
-import { db_real } from '$lib/firebase/init'
+import { db_real } from '$lib/firebase/init';
+import { child, get, ref } from 'firebase/database';
 
-import type { 
-  FIREBASE_odds 
-} from '$lib/models/firebase'
+import type {
+  FIREBASE_odds
+} from '$lib/models/firebase';
 
 /**
  * ==================================

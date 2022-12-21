@@ -3,21 +3,20 @@
 ==================== -->
 
 <script lang="ts">
-  import { onMount } from "svelte";
   import { fade } from "svelte/transition";
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
-	import type { 
-    Fixture_Player, 
-    REDIS_CACHE_SINGLE_lineups_translation 
-  } from "$lib/models/fixtures/lineups/types";
+	import type {
+		Fixture_Player,
+		REDIS_CACHE_SINGLE_lineups_translation
+	} from "$lib/models/fixtures/lineups/types";
 
-  import injured from './assets/injured.svg';
-  import yellow_card from './assets/yellow-card.svg';
-  import red_card from './assets/red-card.svg';
-  import football from './assets/football.svg';
   import substitution from './assets/corner-up-right.svg';
+  import football from './assets/football.svg';
+  import injured from './assets/injured.svg';
+  import red_card from './assets/red-card.svg';
+  import yellow_card from './assets/yellow-card.svg';
   
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES

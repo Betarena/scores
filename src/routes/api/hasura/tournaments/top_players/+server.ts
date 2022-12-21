@@ -1,10 +1,13 @@
-import { dev } from '$app/environment'
+import { dev } from '$app/environment';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import {
+  REDIS_CACHE_TOP_PLAYERS_ST_DATA_2,
+  REDIS_CACHE_TOP_PLAYERS_ST_DATA_3,
+} from '$lib/graphql/tournaments/top_players/query';
+import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
-import { json } from '@sveltejs/kit';
 
-import { REDIS_CACHE_TOP_PLAYERS_ST_DATA_2, REDIS_CACHE_TOP_PLAYERS_ST_DATA_3 } from '$lib/graphql/tournaments/top_players/query';
 import type { BETARENA_HASURA_scores_football_players, BETARENA_HASURA_scores_football_teams, BETARENA_HASURA_scores_football_seasons_details } from '$lib/models/hasura';
 import type { Tournament_Season_Top_Player, Top_player_ratings, Top_player_goalscorers, Top_player_assits, Top_player_total_shots, BETARENA_HASURA_top_players_season_details_query, BETARENA_HASURA_top_players_query } from '$lib/models/tournaments/top_players/types';
 

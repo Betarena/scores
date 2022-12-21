@@ -4,15 +4,12 @@
 
 <script lang="ts">
   // ... svelte-imports;
-  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
-  // ...
+// ...
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-  import Placehoder_Row_Desktop from "./loaders/desktop/_Placeholder_Row.svelte";
-  import Placehoder_Row_Tablet from "./loaders/tablet/_Placeholder_Row.svelte";
-  import Placehoder_Row_Mobile from "./loaders/mobile/_Placeholder_Row.svelte";
+	import Placehoder_Row_Desktop from "./loaders/desktop/_Placeholder_Row.svelte";
+	import Placehoder_Row_Mobile from "./loaders/mobile/_Placeholder_Row.svelte";
+	import Placehoder_Row_Tablet from "./loaders/tablet/_Placeholder_Row.svelte";
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

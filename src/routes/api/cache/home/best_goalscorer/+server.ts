@@ -1,9 +1,9 @@
 import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	best_goalscorer_cache_data_addr,
-	best_goalscorer_cache_trans_addr
+  best_goalscorer_cache_data_addr,
+  best_goalscorer_cache_trans_addr,
+  get_target_hset_cache_data,
 } from '../../std_main';
 
 /**

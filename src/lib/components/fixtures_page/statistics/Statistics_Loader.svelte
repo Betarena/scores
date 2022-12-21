@@ -3,11 +3,7 @@
 ==================== -->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
-
+  
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import LoaderCenterBlock from "./loaders/Loader_Center_Block.svelte";

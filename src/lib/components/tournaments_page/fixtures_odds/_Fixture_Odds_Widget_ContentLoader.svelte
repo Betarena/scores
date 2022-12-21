@@ -12,10 +12,10 @@
   import DesktopPlaceholderLeftHead from './loaders/desktop/_Placeholder_Left_Head.svelte';
   import DesktopPlaceholderRightHead from './loaders/desktop/_Placeholder_Right_Head.svelte';
 
+  import PlaceholderBodyMain from './loaders/mobile/_Placeholder_Body_Main.svelte';
   import PlaceholderHeadLow from './loaders/mobile/_Placeholder_Head_Low.svelte';
   import PlaceholderHeadMid from './loaders/mobile/_Placeholder_Head_Mid.svelte';
   import PlaceholderHeadTop from './loaders/mobile/_Placeholder_Head_Top.svelte';
-  import PlaceholderBodyMain from './loaders/mobile/_Placeholder_Body_Main.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

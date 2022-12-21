@@ -4,16 +4,13 @@
 
 <script lang="ts">
 
-  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  import Placehoder_Row_Desktop from "./loaders/Loader_Row.svelte"
-  import Placehoder_FAQ_Row_Desktop from "./loaders/Loader_FAQ_Row.svelte"
-	import LoaderBottomBtn from "./loaders/Loader_Bottom_Btn.svelte";
+  import LoaderBottomBtn from "./loaders/Loader_Bottom_Btn.svelte";
+  import Placehoder_FAQ_Row_Desktop from "./loaders/Loader_FAQ_Row.svelte";
+  import Placehoder_Row_Desktop from "./loaders/Loader_Row.svelte";
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

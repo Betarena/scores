@@ -3,49 +3,48 @@
 =================-->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
   import { get } from "$lib/api/utils";
   import { logDevGroup } from "$lib/utils/debug";
+  import { onDestroy, onMount } from "svelte";
 
+  import { getLivescoresNow, getOdds } from "$lib/firebase/fixtures_odds";
+  import { db_real } from '$lib/firebase/init';
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { db_real } from '$lib/firebase/init';
-	import { ref, onValue, type Unsubscribe } from 'firebase/database';
-  import { getLivescoresNow, getOdds } from "$lib/firebase/fixtures_odds";
+  import { onValue, ref, type Unsubscribe } from 'firebase/database';
 
-  import type { 
-    REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
-    REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response, 
-    Rounds_Data, 
-    Tournament_Fixture_Odds,
-    Tournament_Season_Fixtures_Odds,
-    Weeks_Data
-  } from "$lib/models/tournaments/fixtures_odds/types";
-  import type { 
-    Cache_Single_SportbookDetails_Data_Response 
-  } from "$lib/models/tournaments/league-info/types";
-  import type { 
-    FIREBASE_livescores_now, FIREBASE_odds 
+  import type {
+  	FIREBASE_livescores_now, FIREBASE_odds
   } from "$lib/models/firebase";
+  import type {
+  	REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response,
+  	REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response,
+  	Rounds_Data,
+  	Tournament_Fixture_Odds,
+  	Tournament_Season_Fixtures_Odds,
+  	Weeks_Data
+  } from "$lib/models/tournaments/fixtures_odds/types";
+  import type {
+  	Cache_Single_SportbookDetails_Data_Response
+  } from "$lib/models/tournaments/league-info/types";
 
   import FixtureOddsWidgetContentLoader from "./_Fixture_Odds_Widget_ContentLoader.svelte";
 
+	import one_red_card from './assets/1_red_card.svg';
+	import one_red_card_dark from './assets/1_red_card_dark.svg';
+	import two_red_card from './assets/2_red_cards.svg';
+	import two_red_card_dark from './assets/2_red_cards_dark.svg';
+	import three_red_card from './assets/3_red_cards.svg';
+	import three_red_card_dark from './assets/3_red_cards_dark.svg';
+	import arrow_down from './assets/arrow-down.svg';
+	import arrow_up from './assets/arrow-up.svg';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-  import arrow_down from './assets/arrow-down.svg';
-  import arrow_up from './assets/arrow-up.svg';
-  import play from './assets/play.svg';
-  import play_dark from './assets/play-dark.svg';
-  import one_red_card from './assets/1_red_card.svg';
-  import two_red_card from './assets/2_red_cards.svg';
-  import three_red_card from './assets/3_red_cards.svg';
-  import one_red_card_dark from './assets/1_red_card_dark.svg';
-  import two_red_card_dark from './assets/2_red_cards_dark.svg';
-  import three_red_card_dark from './assets/3_red_cards_dark.svg';
+	import play_dark from './assets/play-dark.svg';
+	import play from './assets/play.svg';
 
   export let FIXTURES_ODDS_T:     REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
 	export let FIXTURES_ODDS_DATA:  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;

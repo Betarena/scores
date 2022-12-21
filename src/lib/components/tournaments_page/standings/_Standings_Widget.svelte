@@ -4,36 +4,35 @@
 
 <script lang="ts">
 
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { logDevGroup } from "$lib/utils/debug";
+  import { onMount } from "svelte";
+  import { fade } from "svelte/transition";
 
+  import { get } from "$lib/api/utils";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
-  import { get } from "$lib/api/utils";
   import { getImageBgColor } from "$lib/utils/color_thief";
 
-  import type { 
-    Cache_Single_SportbookDetails_Data_Response
+  import type {
+  	Cache_Single_SportbookDetails_Data_Response
   } from "$lib/models/tournaments/league-info/types";
 
-  import type { 
-    REDIS_CACHE_SINGLE_tournament_standings_data, 
-    REDIS_CACHE_SINGLE_tournament_standings_translation 
+  import type {
+  	REDIS_CACHE_SINGLE_tournament_standings_data,
+  	REDIS_CACHE_SINGLE_tournament_standings_translation
   } from "$lib/models/tournaments/standings/types";
 
-  import StandingsWidgetContentLoader from "./_Standings_Widget_ContentLoader.svelte";
   import StandingsTeamRow from "./_Standings_Team_Row.svelte";
+  import StandingsWidgetContentLoader from "./_Standings_Widget_ContentLoader.svelte";
 
   import no_visual from './assets/no_visual.svg';
-	import no_visual_dark from './assets/no_visual_dark.svg';
-	import slider_left from './assets/slider-left.svg'
-	import slider_right from './assets/slider-right.svg'
-  import slider_left_dark from './assets/slider-left-dark.svg'
-	import slider_right_dark from './assets/slider-right-dark.svg'
+  import no_visual_dark from './assets/no_visual_dark.svg';
+  import slider_left_dark from './assets/slider-left-dark.svg';
+  import slider_left from './assets/slider-left.svg';
+  import slider_right_dark from './assets/slider-right-dark.svg';
+  import slider_right from './assets/slider-right.svg';
 
   let loaded:                 boolean = false;  // [ℹ] holds boolean for data loaded;
   let refresh:                boolean = false;  // [ℹ] refresh value speed of the WIDGET;

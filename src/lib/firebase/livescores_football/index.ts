@@ -4,10 +4,9 @@
  * ~~~~~~~~~~~~~~~~~
  * ... & methods;
 */
-import { dev } from '$app/environment'
-import { ref, get, child } from 'firebase/database'
-import { db_real } from '$lib/firebase/init'
+import { db_real } from '$lib/firebase/init';
 import type { LiveScore_SEO_Game } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
+import { child, get, ref } from 'firebase/database';
 
 /**
  * Description:

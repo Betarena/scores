@@ -3,29 +3,28 @@
 ==================== -->
 
 <script lang="ts">
-  import { onMount } from "svelte";
   import { fade } from "svelte/transition";
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
   
-	import type { 
-    REDIS_CACHE_SINGLE_lineups_translation 
-  } from "$lib/models/fixtures/lineups/types";
+	import type {
+		REDIS_CACHE_SINGLE_lineups_translation
+	} from "$lib/models/fixtures/lineups/types";
 
 	import type { EventsDatum } from "$lib/models/hasura";
 
-  import football from './assets/football.svg';
   import football_red from './assets/football-red.svg';
-  import substitution from './assets/substitution.svg';
+  import football from './assets/football.svg';
   import inj_substitution from './assets/inj-substitution.svg';
-  import w_substitution from './assets/w-substitution.svg';
-  import w_inj_substitution from './assets/w-inj-substitution.svg';
-  import yellow_card from './assets/yellow-card.svg';
-  import red_card from './assets/red-card.svg';
-  import yellowred_card from './assets/yellowred.svg';
-  import penalty from './assets/penalty.svg';
   import penalty_miss from './assets/miss-penalty.svg';
+  import penalty from './assets/penalty.svg';
+  import red_card from './assets/red-card.svg';
+  import substitution from './assets/substitution.svg';
   import var_red from './assets/var-red.svg';
+  import w_inj_substitution from './assets/w-inj-substitution.svg';
+  import w_substitution from './assets/w-substitution.svg';
+  import yellow_card from './assets/yellow-card.svg';
+  import yellowred_card from './assets/yellowred.svg';
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES

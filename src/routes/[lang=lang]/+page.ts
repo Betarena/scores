@@ -1,8 +1,6 @@
-import { error } from '@sveltejs/kit';
 import { dev } from '$app/environment';
+import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-
-import { get } from '$lib/api/utils';
 
 /** 
  * @type {import('./$types').PageLoad} 
@@ -10,8 +8,7 @@ import { get } from '$lib/api/utils';
 export async function load ({
   url, 
   params, 
-  fetch,
-  setHeaders
+  fetch
 }): PageLoad {
 
   let response_IP_2;

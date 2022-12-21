@@ -3,9 +3,9 @@
 // ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import { dev } from '$app/environment';
-import { writable } from 'svelte/store';
 import type { GeoJsResponse } from '$lib/models/geojs-types';
 import { logDevGroup } from '$lib/utils/debug';
+import { writable } from 'svelte/store';
 
 interface User_Setting {
 	lang: string;

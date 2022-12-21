@@ -1,12 +1,12 @@
-import { dev } from '$app/environment'
+import { dev } from '$app/environment';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { 
-  REDIS_CACHE_FIXTURES_ODDS_DATA_2, 
-  REDIS_CACHE_FIXTURES_ODDS_DATA_4
+import {
+  REDIS_CACHE_FIXTURES_ODDS_DATA_2,
+  REDIS_CACHE_FIXTURES_ODDS_DATA_4,
 } from '$lib/graphql/tournaments/fixtures_odds/query';
+import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
-import { json } from '@sveltejs/kit';
 
 import type {
   BETARENA_HASURA_fixtures_odds_query,

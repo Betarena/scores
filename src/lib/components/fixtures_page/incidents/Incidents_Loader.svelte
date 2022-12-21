@@ -3,16 +3,12 @@
 ==================== -->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
-
+  
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
   import LoaderIncident from "./loaders/Loader_Incident.svelte";
-	import LoaderTeamLeft from "./loaders/Loader_Team_Left.svelte";
-	import LoaderTeamRight from "./loaders/Loader_Team_Right.svelte";
+  import LoaderTeamLeft from "./loaders/Loader_Team_Left.svelte";
+  import LoaderTeamRight from "./loaders/Loader_Team_Right.svelte";
 
 </script>
 

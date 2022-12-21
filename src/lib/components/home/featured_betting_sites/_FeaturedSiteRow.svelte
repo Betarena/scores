@@ -5,13 +5,12 @@
 <script lang="ts">
   import { onMount } from "svelte";
   import { fade } from "svelte/transition";
-
-  // ... external modules imports;
+// ... external modules imports;
 	import ColorThief from 'colorthief/dist/color-thief.mjs';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  import type { FeaturedSite, All_SportBook_Details_Data_Translation, Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from "$lib/models/featured_betting_sites/firebase-real-db-interface";
+  import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response, FeaturedSite } from "$lib/models/featured_betting_sites/firebase-real-db-interface";
 
   export let data: FeaturedSite;
   export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;

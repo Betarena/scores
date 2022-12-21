@@ -4,9 +4,8 @@
  * ~~~~~~~~~~~~~~~~~
  * ... & methods;
 */
-import { dev } from '$app/environment'
-import { ref, get, child } from 'firebase/database'
 import { db_real } from '$lib/firebase/init'
+import { child, get, ref } from 'firebase/database'
 
 /**
  * Description:

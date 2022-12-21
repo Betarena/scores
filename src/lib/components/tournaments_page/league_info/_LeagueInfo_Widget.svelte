@@ -5,32 +5,31 @@
 <script lang="ts">
 
   // [ℹ] svelte-imports;
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
+  import { onMount } from "svelte";
+  import { fade } from "svelte/transition";
   
-  import { logDevGroup } from "$lib/utils/debug";
+  import { get } from "$lib/api/utils";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
-  import { get } from "$lib/api/utils";
   import { getImageBgColor } from "$lib/utils/color_thief";
+  import { logDevGroup } from "$lib/utils/debug";
 
-  import type { 
-    Cache_Single_SportbookDetails_Data_Response, 
-    Cache_Single_Tournaments_League_Info_Data_Response 
+  import type {
+  	Cache_Single_SportbookDetails_Data_Response,
+  	Cache_Single_Tournaments_League_Info_Data_Response
   } from "$lib/models/tournaments/league-info/types";
 
-  import LeagueInfoWidgetContentLoader from "./_LeagueInfo_Widget_ContentLoader.svelte";
   import World from "./assets/_World.svelte";
+  import LeagueInfoWidgetContentLoader from "./_LeagueInfo_Widget_ContentLoader.svelte";
 
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
-  import team from './assets/team.svg';
+  import no_featured_match_visual from './assets/no_featured_match_visual.svg';
+  import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
   import team_w from './assets/team-white.svg';
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
+  import team from './assets/team.svg';
 
   let loaded: boolean = false;                  // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;                 // [ℹ] refresh value speed of the WIDGET;

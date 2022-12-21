@@ -4,21 +4,15 @@
 
 <script lang="ts">
   // [ℹ] svelte-imports;
-  import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
-  import { page } from "$app/stores";
   import { dev } from '$app/environment';
-
-	// [ℹ] external `exports` imports;
-  import { post } from "$lib/api/utils";
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-
-  // [ℹ] key component assets;
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
-  import SeoBlockContentLoader from "./_SEO_Block_ContentLoader.svelte";
-  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from "$lib/models/seo_block/types";
-  import { logDevGroup } from "$lib/utils/debug";
+// [ℹ] external `exports` imports;
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+// [ℹ] key component assets;
+	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from "$lib/models/seo_block/types";
+	import { logDevGroup } from "$lib/utils/debug";
+	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
+	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
+	import SeoBlockContentLoader from "./_SEO_Block_ContentLoader.svelte";
 
   // [ℹ] main component variables;
 	export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;

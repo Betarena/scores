@@ -6,31 +6,26 @@
 
 <script lang="ts">
 
-  import { goto } from '$app/navigation';
-	import { page } from '$app/stores';
   import { browser } from '$app/environment';
+  import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { onMount } from 'svelte';
-  import type { PageData } from './$types';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { removeDiacritics } from '$lib/utils/languages';
-
-	export let data: PageData;
-
-  /*
+/*
     [v1]
     Standard Imports (client-side)
   */
 
-  import SvelteSeo from 'svelte-seo';
+  import AboutBlock from '$lib/components/tournaments_page/about_block/_About_Block.svelte';
+  import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
   import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
+  import LeagueInfoWidget2 from '$lib/components/tournaments_page/league_info_2/_LeagueInfo_Widget_2.svelte';
   import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
   import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
-  import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
-  import LeagueInfoWidget2 from '$lib/components/tournaments_page/league_info_2/_LeagueInfo_Widget_2.svelte';
-	import AboutBlock from '$lib/components/tournaments_page/about_block/_About_Block.svelte';
-  
-  /*
+  import SvelteSeo from 'svelte-seo';
+/*
     [v2]
     Dynamic Imports (client-side)
   */
@@ -45,32 +40,32 @@
 
   */
  
-  import type { 
-    Cache_Single_Tournaments_SEO_Translation_Response
+  import type {
+  	Cache_Single_Tournaments_SEO_Translation_Response
   } from '$lib/models/_main_/pages_and_seo/types';
 
-  import type { 
-    Cache_Single_Tournaments_League_Info_Data_Response
+  import type {
+  	Cache_Single_Tournaments_League_Info_Data_Response
   } from '$lib/models/tournaments/league-info/types';
 
-  import type { 
-    REDIS_CACHE_SINGLE_tournament_standings_data, 
-    REDIS_CACHE_SINGLE_tournament_standings_translation 
+  import type {
+  	REDIS_CACHE_SINGLE_tournament_standings_data,
+  	REDIS_CACHE_SINGLE_tournament_standings_translation
   } from '$lib/models/tournaments/standings/types';
 
-  import type { 
-    REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
-    REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response 
+  import type {
+  	REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response,
+  	REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
   } from '$lib/models/tournaments/top_players/types';
 
-  import type { 
-    REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
-    REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response 
+  import type {
+  	REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response,
+  	REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
   } from '$lib/models/tournaments/fixtures_odds/types';
 
-	import type { 
-    BETARENA_HASURA_scores_tournaments 
-  } from '$lib/models/hasura';
+	import type {
+		BETARENA_HASURA_scores_tournaments
+	} from '$lib/models/hasura';
 
   let PAGE_DATA_SEO:                     Cache_Single_Tournaments_SEO_Translation_Response
   let TOURNAMENT_DATA_TRANSLATED_COPIES: BETARENA_HASURA_scores_tournaments[]

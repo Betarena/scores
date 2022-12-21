@@ -3,41 +3,40 @@
 =================-->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
+  import { page } from "$app/stores";
   import { logDevGroup, log_info_group } from "$lib/utils/debug";
+  import { onDestroy, onMount } from "svelte";
 
+  import { get } from "$lib/api/utils";
+  import { db_real } from "$lib/firebase/init";
+  import { get_livescores_now, get_odds } from "$lib/firebase/scoreboard";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { get } from "$lib/api/utils";
-	import { get_livescores_now, get_odds } from "$lib/firebase/scoreboard";
-	import { onValue, ref, type Unsubscribe } from "firebase/database";
-	import { db_real } from "$lib/firebase/init";
+  import { onValue, ref, type Unsubscribe } from "firebase/database";
 
-	import type { 
-    REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
-  } from "$lib/models/fixtures/scoreboard/types";
 	import type {
-    REDIS_CACHE_SINGLE_fixtures_page_info_response 
-  } from "$lib/models/_main_/pages_and_seo/types";
-	import type { 
-    FIREBASE_livescores_now, FIREBASE_odds 
-  } from "$lib/models/firebase";
-	import type { 
-    Cache_Single_SportbookDetails_Data_Response 
-  } from "$lib/models/tournaments/league-info/types";
-	import type { 
-    REDIS_CACHE_SINGLE_content_data
-  } from "$lib/models/fixtures/content/types";
+		FIREBASE_livescores_now, FIREBASE_odds
+	} from "$lib/models/firebase";
+	import type {
+		REDIS_CACHE_SINGLE_content_data
+	} from "$lib/models/fixtures/content/types";
+	import type {
+		REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation
+	} from "$lib/models/fixtures/scoreboard/types";
+	import type {
+		Cache_Single_SportbookDetails_Data_Response
+	} from "$lib/models/tournaments/league-info/types";
+	import type {
+		REDIS_CACHE_SINGLE_fixtures_page_info_response
+	} from "$lib/models/_main_/pages_and_seo/types";
 
 	import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	// import banner from './assets/banner.svg';
+// import banner from './assets/banner.svg';
   import close_icon from './assets/close.svg';
 
   // ~~~~~~~~~~~~~~~~~~~~~

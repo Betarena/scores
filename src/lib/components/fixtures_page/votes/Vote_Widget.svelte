@@ -3,37 +3,37 @@
 =================-->
 
 <script lang="ts">
-  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { logDevGroup, logErrorGroup, log_info_group } from "$lib/utils/debug";
-	import { fade } from "svelte/transition";
+  import { onDestroy, onMount } from "svelte";
+  import { fade } from "svelte/transition";
 
 	import { get } from "$lib/api/utils";
-  import { initGrapQLClient } from "$lib/graphql/init_graphQL";
-	import { onValue, ref, type Unsubscribe } from "firebase/database";
 	import { db_real } from "$lib/firebase/init";
-  import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { fixtureVote, type fixture } from '$lib/store/vote_fixture';
-	import { HASURA_FIXTURE_VOTES_DATA_0, HASURA_FIXTURE_VOTES_INIT_UPDATE } from "$lib/graphql/fixtures/votes/query";
-  import { getImageBgColor } from "$lib/utils/color_thief";
 	import { get_odds } from "$lib/firebase/votes";
+	import { HASURA_FIXTURE_VOTES_DATA_0, HASURA_FIXTURE_VOTES_INIT_UPDATE } from "$lib/graphql/fixtures/votes/query";
+	import { initGrapQLClient } from "$lib/graphql/init_graphQL";
+	import { userBetarenaSettings } from "$lib/store/user-settings";
+	import { fixtureVote, type fixture } from '$lib/store/vote_fixture';
+	import { getImageBgColor } from "$lib/utils/color_thief";
+	import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
-    REDIS_CACHE_SINGLE_fixtures_page_info_response 
-  } from "$lib/models/_main_/pages_and_seo/types";
-	import type { 
-    BETARENA_HASURA_votes_mutation, 
-    BETARENA_HASURA_votes_query, 
-    Fixture_Votes, 
-	  REDIS_CACHE_SINGLE_votes_translation
-  } from "$lib/models/fixtures/votes/types";
-	import type { 
-    Cache_Single_SportbookDetails_Data_Response 
-  } from "$lib/models/tournaments/league-info/types";
-	import type { 
-    FIREBASE_odds 
-  } from "$lib/models/firebase";
+		FIREBASE_odds
+	} from "$lib/models/firebase";
+	import type {
+		BETARENA_HASURA_votes_mutation,
+		BETARENA_HASURA_votes_query,
+		Fixture_Votes,
+		REDIS_CACHE_SINGLE_votes_translation
+	} from "$lib/models/fixtures/votes/types";
+	import type {
+		Cache_Single_SportbookDetails_Data_Response
+	} from "$lib/models/tournaments/league-info/types";
+	import type {
+		REDIS_CACHE_SINGLE_fixtures_page_info_response
+	} from "$lib/models/_main_/pages_and_seo/types";
 
 	import VoteLoader from "./Vote_Loader.svelte";
 

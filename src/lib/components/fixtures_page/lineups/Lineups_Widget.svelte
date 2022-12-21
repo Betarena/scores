@@ -3,44 +3,34 @@
 =================-->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { logDevGroup, log_info_group } from "$lib/utils/debug";
+  import { onDestroy, onMount } from "svelte";
 
-  import { sessionStore } from '$lib/store/session';
+  import { db_real } from "$lib/firebase/init";
+  import { get_livescores_now } from "$lib/firebase/scoreboard";
   import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { get } from "$lib/api/utils";
-	import { get_livescores_now, get_odds } from "$lib/firebase/scoreboard";
-	import { onValue, ref, type Unsubscribe } from "firebase/database";
-	import { db_real } from "$lib/firebase/init";
-
-	import type { 
-	Fixture_Player,
-    REDIS_CACHE_SINGLE_lineups_data, 
-    REDIS_CACHE_SINGLE_lineups_translation 
-  } from "$lib/models/fixtures/lineups/types";
-
-	import type { 
-    FIREBASE_livescores_now 
-  } from "$lib/models/firebase";
+  import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
-    REDIS_CACHE_SINGLE_fixtures_page_info_response 
-  } from "$lib/models/_main_/pages_and_seo/types";
+		Fixture_Player,
+		REDIS_CACHE_SINGLE_lineups_data,
+		REDIS_CACHE_SINGLE_lineups_translation
+	} from "$lib/models/fixtures/lineups/types";
 
-	import type { 
-    EventsDatum 
-  } from "$lib/models/hasura";
+	import type {
+		FIREBASE_livescores_now
+	} from "$lib/models/firebase";
 
+	
+	
 	import LineupsLoader from "./Lineups_Loader.svelte";
+	import LineupPlayerRow from "./Lineup_Player_Row.svelte";
+	import LineupPlayerVisual from "./Lineup_Player_Visual.svelte";
 	import LineupVectorMobile from "./Lineup_Vector_Mobile.svelte";
 	import LineupVectorMobileAway from "./Lineup_Vector_Mobile_Away.svelte";
 	import LineupVectorTablet from "./Lineup_Vector_Tablet.svelte";
-	import LineupPlayerRow from "./Lineup_Player_Row.svelte";
-	import LineupPlayerVisual from "./Lineup_Player_Visual.svelte";
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';

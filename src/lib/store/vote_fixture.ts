@@ -18,7 +18,7 @@ interface fixtureVoteData {
 	fixtureVotes_Array: Array<fixture>;
 }
 
-let fixture_vote_list: fixtureVoteData = {
+const fixture_vote_list: fixtureVoteData = {
 	fixtureVotes_Array: undefined
 };
 

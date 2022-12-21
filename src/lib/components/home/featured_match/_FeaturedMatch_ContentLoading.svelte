@@ -7,23 +7,23 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import Desktop_PlaceholderLeagueInfo from './loaders/desktop/_Placeholder_LeagueInfo.svelte';
-	import Desktop_Placeholder_VisualVote from './loaders/desktop/_Placeholder_VisualVote.svelte';
-	import Desktop_PlaceholderTvStations from './loaders/desktop/_Placeholder_TvStations.svelte';
 	import Desktop_PlaceholderBestPlayers from './loaders/desktop/_Placeholder_BestPlayers.svelte';
+	import Desktop_PlaceholderLeagueInfo from './loaders/desktop/_Placeholder_LeagueInfo.svelte';
+	import Desktop_PlaceholderTvStations from './loaders/desktop/_Placeholder_TvStations.svelte';
 	import Desktop_PlaceholderValueBets from './loaders/desktop/_Placeholder_ValueBets.svelte';
+	import Desktop_Placeholder_VisualVote from './loaders/desktop/_Placeholder_VisualVote.svelte';
 
-	import Tablet_PlaceholderLeagueInfo from './loaders/tablet/_Placeholder_LeagueInfo.svelte';
-	import Tablet_Placeholder_VisualVote from './loaders/tablet/_Placeholder_VisualVote.svelte';
-	import Tablet_PlaceholderTvStations from './loaders/tablet/_Placeholder_TvStations.svelte';
 	import Tablet_PlaceholderBestPlayers from './loaders/tablet/_Placeholder_BestPlayers.svelte';
+	import Tablet_PlaceholderLeagueInfo from './loaders/tablet/_Placeholder_LeagueInfo.svelte';
+	import Tablet_PlaceholderTvStations from './loaders/tablet/_Placeholder_TvStations.svelte';
 	import Tablet_PlaceholderValueBets from './loaders/tablet/_Placeholder_ValueBets.svelte';
+	import Tablet_Placeholder_VisualVote from './loaders/tablet/_Placeholder_VisualVote.svelte';
 
-	import Mobile_PlaceholderLeagueInfo from './loaders/mobile/_Placeholder_LeagueInfo.svelte';
-	import Mobile_Placeholder_VisualVote from './loaders/mobile/_Placeholder_VisualVote.svelte';
-	import Mobile_PlaceholderTvStations from './loaders/mobile/_Placeholder_TvStations.svelte';
 	import Mobile_PlaceholderBestPlayers from './loaders/mobile/_Placeholder_BestPlayers.svelte';
+	import Mobile_PlaceholderLeagueInfo from './loaders/mobile/_Placeholder_LeagueInfo.svelte';
+	import Mobile_PlaceholderTvStations from './loaders/mobile/_Placeholder_TvStations.svelte';
 	import Mobile_PlaceholderValueBets from './loaders/mobile/_Placeholder_ValueBets.svelte';
+	import Mobile_Placeholder_VisualVote from './loaders/mobile/_Placeholder_VisualVote.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

@@ -6,8 +6,8 @@
   import { dev } from '$app/environment';
   import { onMount } from "svelte";
 
-  import close from './assets/close.svg'
-  import close_white from './assets/close-white.svg'
+  import close_white from './assets/close-white.svg';
+  import close from './assets/close.svg';
   import Africa from "./assets/_Africa.svelte";
   import Asia from "./assets/_Asia.svelte";
   import NorthCentralAmerica from "./assets/_North_Central_America.svelte";
@@ -15,13 +15,13 @@
   import World from "./assets/_World.svelte";
 
 	import LeagueListLoader from './LeagueList_Loader.svelte';
-  import NoResults from "./_NoResults.svelte";
+	import NoResults from "./_NoResults.svelte";
 
   import { get } from "$lib/api/utils";
 
-  import type { 
-    REDIS_CACHE_SINGLE_league_list_geo_data_response, 
-    REDIS_CACHE_SINGLE_league_list_seo_t_response 
+  import type {
+  	REDIS_CACHE_SINGLE_league_list_geo_data_response,
+  	REDIS_CACHE_SINGLE_league_list_seo_t_response
   } from "$lib/models/home/league_list/types";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";

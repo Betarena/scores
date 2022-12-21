@@ -1,25 +1,25 @@
-import { dev } from '$app/environment'
+import { dev } from '$app/environment';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { 
-  REDIS_CACHE_FIXTURES_ODDS_DATA_2, 
+import {
+  REDIS_CACHE_FIXTURES_ODDS_DATA_2,
   REDIS_CACHE_FIXTURES_ODDS_DATA_4,
-  REDIS_CACHE_FIXTURES_ODDS_DATA_5
+  REDIS_CACHE_FIXTURES_ODDS_DATA_5,
 } from '$lib/graphql/tournaments/fixtures_odds/query';
+import { json } from '@sveltejs/kit';
 import fs from 'fs';
 import { performance } from 'perf_hooks';
-import { json } from '@sveltejs/kit';
 
+import type { BETARENA_HASURA_scores_football_seasons_details } from '$lib/models/hasura';
 import type {
   BETARENA_HASURA_fixtures_odds_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
-  Fixture_Odds_Team, 
-  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, 
-  Rounds_Data, 
-  Tournament_Fixture_Odds, 
-  Tournament_Season_Fixtures_Odds, 
+  Fixture_Odds_Team,
+  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response,
+  Rounds_Data,
+  Tournament_Fixture_Odds,
+  Tournament_Season_Fixtures_Odds,
   Weeks_Data
 } from '$lib/models/tournaments/fixtures_odds/types';
-import type { BETARENA_HASURA_scores_football_seasons_details } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = []

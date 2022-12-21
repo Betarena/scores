@@ -9,13 +9,12 @@
   /**
    * [ℹ] svelte-kit
   */
-	import { page } from '$app/stores';
 	import { browser, dev } from '$app/environment';
-	import { afterNavigate, goto, invalidate, invalidateAll } from '$app/navigation';
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
-
-  /**
+/**
    * [ℹ] stroes
   */
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -23,29 +22,27 @@
   /**
    * [ℹ] header-component
   */
+	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
+	import { logDevGroup } from '$lib/utils/debug';
 	import logo_full from './assets/betarena-logo-full.svg';
 	import logo_mini from './assets/betarena-logo-mobile.svg';
-	import menu_burger_bar from './assets/menu-burger.svg';
 	import icon_check from './assets/icon-check.svg';
-  import { logDevGroup } from '$lib/utils/debug';
-	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
-
-  /**
+	import menu_burger_bar from './assets/menu-burger.svg';
+/**
    * [ℹ] sub-header-component
   */
-	import close from './assets/close.svg';
-	import arrow_down from './assets/arrow-down.svg';
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
-	import arrow_up from './assets/arrow-up.svg';
+	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
-	import light_icon_theme from './assets/theme-light-icon.svg';
+	import arrow_up from './assets/arrow-up.svg';
+	import close from './assets/close.svg';
 	import menu_sports_icon from './assets/menu_sports_icon.svg';
-
-  /**
+	import light_icon_theme from './assets/theme-light-icon.svg';
+/**
    * [ℹ] header-types
   */
+  import type { GeoJsResponse } from '$lib/models/geojs-types';
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
-	import type { GeoJsResponse } from '$lib/models/geojs-types';
 
   /**
    * [ℹ] export-values-expected

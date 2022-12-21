@@ -4,62 +4,62 @@
 =================== -->
 
 <script lang="ts">
+  import { browser } from '$app/environment';
+  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+  import { onMount } from 'svelte';
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import type { 
-    REDIS_CACHE_SINGLE_fixtures_page_info_response, 
-    REDIS_CACHE_SINGLE_fixtures_seo_response 
-  } from '$lib/models/_main_/pages_and_seo/types';
-	import type { 
-    REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation 
-  } from '$lib/models/fixtures/scoreboard/types';
-  import type { 
-    REDIS_CACHE_SINGLE_lineups_data, 
-    REDIS_CACHE_SINGLE_lineups_translation 
-  } from '$lib/models/fixtures/lineups/types';
+	import type {
+		REDIS_CACHE_SINGLE_lineups_data,
+		REDIS_CACHE_SINGLE_lineups_translation
+	} from '$lib/models/fixtures/lineups/types';
+	import type {
+		REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_translation
+	} from '$lib/models/fixtures/scoreboard/types';
+	import type {
+		REDIS_CACHE_SINGLE_fixtures_page_info_response,
+		REDIS_CACHE_SINGLE_fixtures_seo_response
+	} from '$lib/models/_main_/pages_and_seo/types';
 
-	import type { 
-    REDIS_CACHE_SINGLE_incidents_data, 
-    REDIS_CACHE_SINGLE_incidents_translation 
-  } from '$lib/models/fixtures/incidents/types';
+	import type {
+		REDIS_CACHE_SINGLE_incidents_data,
+		REDIS_CACHE_SINGLE_incidents_translation
+	} from '$lib/models/fixtures/incidents/types';
 
-	import type { 
-    Cache_Single_Lang_Featured_Betting_Site_Translation_Response 
-  } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
+	import type {
+		Cache_Single_Lang_Featured_Betting_Site_Translation_Response
+	} from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 
-	import type { 
-    REDIS_CACHE_SINGLE_statistics_data, 
-    REDIS_CACHE_SINGLE_statistics_translation 
-  } from '$lib/models/fixtures/statistics/types';
+	import type {
+		REDIS_CACHE_SINGLE_statistics_data,
+		REDIS_CACHE_SINGLE_statistics_translation
+	} from '$lib/models/fixtures/statistics/types';
 
-	import type { 
-    REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation 
-  } from '$lib/models/fixtures/content/types';
+	import type {
+		REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation
+	} from '$lib/models/fixtures/content/types';
 
-	import type { 
-    REDIS_CACHE_SINGLE_about_data, 
-    REDIS_CACHE_SINGLE_about_translation 
-  } from '$lib/models/fixtures/about/types';
+	import type {
+		REDIS_CACHE_SINGLE_about_data,
+		REDIS_CACHE_SINGLE_about_translation
+	} from '$lib/models/fixtures/about/types';
   
-	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
+	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 
-  import SvelteSeo from 'svelte-seo';
-	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
-	import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
-	import IncidentsWidget from '$lib/components/fixtures_page/incidents/Incidents_Widget.svelte';
+  import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
+  import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
+  import IncidentsWidget from '$lib/components/fixtures_page/incidents/Incidents_Widget.svelte';
+  import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
+  import ProbabilityWidget from '$lib/components/fixtures_page/probabilities/Probability_Widget.svelte';
+  import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
+  import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
+  import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
   import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
-	import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
-	import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
-	import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
-	import ProbabilityWidget from '$lib/components/fixtures_page/probabilities/Probability_Widget.svelte';
+  import SvelteSeo from 'svelte-seo';
 
   let PAGE_SEO:                       REDIS_CACHE_SINGLE_fixtures_seo_response
   let FIXTURE_INFO:                   REDIS_CACHE_SINGLE_fixtures_page_info_response

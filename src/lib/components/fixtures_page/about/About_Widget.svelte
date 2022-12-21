@@ -3,20 +3,17 @@
 =================-->
 
 <script lang="ts">
-  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
-  import { logDevGroup, log_info_group } from "$lib/utils/debug";
+  import { logDevGroup } from "$lib/utils/debug";
+  import { onMount } from "svelte";
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
-	import type { 
-    REDIS_CACHE_SINGLE_content_data 
-  } from "$lib/models/fixtures/content/types";
-	import type { 
-    REDIS_CACHE_SINGLE_about_data, 
-    REDIS_CACHE_SINGLE_about_translation 
-  } from "$lib/models/fixtures/about/types";
+	import type {
+		REDIS_CACHE_SINGLE_about_data,
+		REDIS_CACHE_SINGLE_about_translation
+	} from "$lib/models/fixtures/about/types";
 
 	import AboutLoader from "./About_Loader.svelte";
 

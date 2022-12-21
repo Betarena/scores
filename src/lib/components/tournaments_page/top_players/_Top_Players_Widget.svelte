@@ -4,31 +4,29 @@
 
 <script lang="ts">
 
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
+  import { onMount } from "svelte";
 
-  import { logDevGroup } from "$lib/utils/debug";
+  import { get } from "$lib/api/utils";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { get } from "$lib/api/utils";
+  import { logDevGroup } from "$lib/utils/debug";
 
-  import type { 
-    REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, 
-    REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response, 
-	  Tournament_Season_Top_Player
+  import type {
+  	REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response,
+  	REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response,
+  	Tournament_Season_Top_Player
   } from "$lib/models/tournaments/top_players/types";
 
   import TopPlayersWidgetContentLoader from "./_Top_Players_Widget_ContentLoader.svelte";
   import TopPlayerRow from "./_Top_Player_Row.svelte";
 
+	import arrow_down from './assets/arrow-down.svg';
+	import arrow_up from './assets/arrow-up.svg';
+	import check_league from './assets/check-league.svg';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-  import arrow_down from './assets/arrow-down.svg';
-  import arrow_up from './assets/arrow-up.svg';
-  import check_league from './assets/check-league.svg';
 
   let loaded:                   boolean = false;                // [ℹ] holds boolean for data loaded;
   let refresh:                  boolean = false;                // [ℹ] refresh value speed of the WIDGET;

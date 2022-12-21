@@ -5,31 +5,24 @@
 <script lang="ts">
 
   // [ℹ] svelte-imports;
-  import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
-  import { page } from "$app/stores";
   import { dev } from '$app/environment';
-  
-	// [ℹ] external `exports` imports;
-	import { getUserLocation } from "$lib/geoJs/init"
-  import { get, post } from "$lib/api/utils";
+  import { onMount } from "svelte";
+  import { fade } from "svelte/transition";
+// [ℹ] external `exports` imports;
+	import { get } from "$lib/api/utils";
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-
-	// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
-	import type { GeoJsResponse } from "$lib/models/geojs-types"
-  import type { 
-    All_SportBook_Details_Data,
-    Cache_Single_Lang_Featured_Betting_Site_Translation_Response, 
-    Scores_Featured_Betting_Sites_Hasura 
-  } from "$lib/models/home/featured_betting_sites/firebase-real-db-interface";
-
-	// [ℹ] external components import;
-  import FeaturedBettingSitesWidgetContentLoading from "./_FeaturedBettingSitesWidget_ContentLoading.svelte";
-  import FeaturedSiteRow from "./_FeaturedSiteRow.svelte";
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+	import type {
+		All_SportBook_Details_Data,
+		Cache_Single_Lang_Featured_Betting_Site_Translation_Response
+	} from "$lib/models/home/featured_betting_sites/firebase-real-db-interface";
+// [ℹ] external components import;
+  import { logDevGroup } from "$lib/utils/debug";
+  import BronzeCup from "./assets/_BronzeCup.svelte";
   import GoldCup from "./assets/_GoldCup.svelte";
   import SilverCup from "./assets/_SilverCup.svelte";
-  import BronzeCup from "./assets/_BronzeCup.svelte";
-  import { logDevGroup } from "$lib/utils/debug";
+  import FeaturedBettingSitesWidgetContentLoading from "./_FeaturedBettingSitesWidget_ContentLoading.svelte";
+  import FeaturedSiteRow from "./_FeaturedSiteRow.svelte";
 
   // [ℹ] main component variables;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;

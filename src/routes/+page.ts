@@ -1,8 +1,7 @@
-import { error } from '@sveltejs/kit';
 import { dev } from '$app/environment';
-import type { PageLoad } from './$types';
+import { error } from '@sveltejs/kit';
 
-import { get } from '$lib/api/utils';
+import type { PageLoad } from './$types';
 
 /** 
  * @type {import('./$types').PageLoad} 

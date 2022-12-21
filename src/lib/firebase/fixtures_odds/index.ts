@@ -1,8 +1,7 @@
-import { dev } from '$app/environment'
-import { ref, get, child, type Unsubscribe } from 'firebase/database'
 import { db_real } from '$lib/firebase/init'
 import type { FIREBASE_odds } from '$lib/models/firebase'
 import type { Tournament_Fixture_Odds } from '$lib/models/tournaments/fixtures_odds/types'
+import { child, get, ref } from 'firebase/database'
 
 export async function getLivescoresNow(): Promise < unknown > {
 

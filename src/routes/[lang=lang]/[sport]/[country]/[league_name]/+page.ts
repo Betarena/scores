@@ -1,32 +1,28 @@
 import {
-  error
-} from '@sveltejs/kit';
-import {
   dev
 } from '$app/environment';
+import {
+  error
+} from '@sveltejs/kit';
 import type {
   PageLoad
 } from './$types';
 
 import type {
-  Cache_Single_Tournaments_SEO_Translation_Response,
-  Cache_Single_Tournaments_Data_Page_Translation_Response
-} from '$lib/models/_main_/pages_and_seo/types';
-import type {
-  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response,
-  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
+  REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response, REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
 } from '$lib/models/tournaments/fixtures_odds/types';
 import type {
   Cache_Single_Tournaments_League_Info_Data_Response
 } from '$lib/models/tournaments/league-info/types';
 import type {
-  REDIS_CACHE_SINGLE_tournament_standings_translation,
-  REDIS_CACHE_SINGLE_tournament_standings_data
+  REDIS_CACHE_SINGLE_tournament_standings_data, REDIS_CACHE_SINGLE_tournament_standings_translation
 } from '$lib/models/tournaments/standings/types';
 import type {
-  REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response,
-  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response
+  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response, REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
 } from '$lib/models/tournaments/top_players/types';
+import type {
+  Cache_Single_Tournaments_Data_Page_Translation_Response, Cache_Single_Tournaments_SEO_Translation_Response
+} from '$lib/models/_main_/pages_and_seo/types';
 
 /** 
  * @type {import('./$types').PageLoad} 
