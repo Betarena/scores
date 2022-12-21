@@ -89,14 +89,14 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_incidents_d
   // [ℹ] generate [final] fixture object
   const fixture_object: Fixture_Incidents = {
     id:               fixture_id || null,
-    status:           status,
+    status,
     score_post: {
       ht_score:       ht_score || null,
       ft_score:       ft_score || null,
       et_score:       et_score || null,
       ps_score:       ps_score || null
     },
-    events:           events,
+    events,
     home:             home_team_obj,
     away:             away_team_obj
   }
@@ -116,7 +116,7 @@ async function get_target_fixture(
 	const queryName = 'REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4';
 	const t0 = performance.now();
 	const VARIABLES = {
-		fixture_id: fixture_id
+		fixture_id
 	};
 	const response: BETARENA_HASURA_incidents_query = await initGrapQLClient().request(
 		REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4,

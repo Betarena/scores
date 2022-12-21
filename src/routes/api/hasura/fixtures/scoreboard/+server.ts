@@ -148,7 +148,7 @@ async function get_target_fixture (
   const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_3";
   const t0 = performance.now();
   const VARIABLES = {
-    fixture_id: fixture_id
+    fixture_id
   }
   const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
     REDIS_CACHE_SCOREBOARD_ODDS_DATA_3,
@@ -165,7 +165,7 @@ async function get_target_league_and_tournament_info (
 ): Promise < [BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[], BETARENA_HASURA_scores_tournaments[]] > {
 
   const VARIABLES_1 = {
-    league_ids_arr: league_ids_arr,
+    league_ids_arr,
     league_ids_arr_2: league_ids_arr
   }
   

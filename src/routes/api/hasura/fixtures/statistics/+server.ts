@@ -85,10 +85,10 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_statistics_
   // [ℹ] generate [final] fixture object
   const fixture_object: Fixture_Statistics = {
     id:      fixture_id || null,
-    status:  status,
+    status,
     home:    home_team_obj,
     away:    away_team_obj,
-    stats:   stats
+    stats
   }
 
   // [ℹ] return fixture
@@ -106,7 +106,7 @@ async function get_target_fixture(
 	const queryName = 'REDIS_CACHE_FIXTURE_STATISTICS_DATA_4';
 	const t0 = performance.now();
 	const VARIABLES = {
-		fixture_id: fixture_id
+		fixture_id
 	};
 	const response: BETARENA_HASURA_statistics_query = await initGrapQLClient().request(
 		REDIS_CACHE_FIXTURE_STATISTICS_DATA_4,

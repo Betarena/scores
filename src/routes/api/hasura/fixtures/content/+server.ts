@@ -67,7 +67,7 @@ async function get_target_content (
 	const t0 = performance.now();
 	const VARIABLES = {
 		gameId: fixture_id,
-    lang: lang
+    lang
 	};
 	const response: BETARENA_HASURA_content_query = await initGrapQLClient().request(
 		REDIS_CACHE_FIXTURE_CONTENT_DATA_3,

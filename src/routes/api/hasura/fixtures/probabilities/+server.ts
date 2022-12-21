@@ -135,7 +135,7 @@ async function get_target_fixture(
 	const queryName = 'REDIS_CACHE_FIXTURE_PROBABILITIES_0';
 	const t0 = performance.now();
 	const VARIABLES = {
-		fixture_id: fixture_id
+		fixture_id
 	};
 	const response: BETARENA_HASURA_probabilities_query = await initGrapQLClient().request(
 		REDIS_CACHE_FIXTURE_PROBABILITIES_0,
@@ -171,7 +171,7 @@ async function get_widget_translations (
   const queryName = "REDIS_CACHE_FIXTURE_PROBABILITIES_1";
   const t0 = performance.now();
   const VARIABLES = {
-		lang: lang
+		lang
 	};
   const response: BETARENA_HASURA_probabilities_query = await initGrapQLClient().request (
     REDIS_CACHE_FIXTURE_PROBABILITIES_1,
