@@ -1,21 +1,19 @@
-import { performance } from 'perf_hooks';
 import { json } from '@sveltejs/kit';
+import { performance } from 'perf_hooks';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4 } from '$lib/graphql/fixtures/incidents/query';
+import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
-import type { 
+import type {
   BETARENA_HASURA_incidents_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
-  Fixture_Incidents, 
-  Incident_Team, 
-  REDIS_CACHE_SINGLE_incidents_data 
+  Fixture_Incidents,
+  Incident_Team,
+  REDIS_CACHE_SINGLE_incidents_data
 } from '$lib/models/fixtures/incidents/types';
 
 // [ℹ] debug info
 const logs = [];
-let t0;
-let t1;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
@@ -116,7 +114,7 @@ async function get_target_fixture(
 ): Promise<BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]> {
 	// [ℹ] obtain target historic_fixtures [fixture_id]
 	const queryName = 'REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4';
-	t0 = performance.now();
+	const t0 = performance.now();
 	const VARIABLES = {
 		fixture_id: fixture_id
 	};
@@ -124,7 +122,7 @@ async function get_target_fixture(
 		REDIS_CACHE_FIXTURE_INCIDENTS_DATA_4,
 		VARIABLES
 	);
-	t1 = performance.now();
+	const t1 = performance.now();
 	logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
 	return response.historic_fixtures;

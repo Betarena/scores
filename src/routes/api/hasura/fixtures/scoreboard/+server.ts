@@ -1,26 +1,24 @@
-import { performance } from 'perf_hooks';
 import { json } from '@sveltejs/kit';
+import { performance } from 'perf_hooks';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { 
+import {
   REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_3 
+  REDIS_CACHE_SCOREBOARD_ODDS_DATA_3
 } from '$lib/graphql/fixtures/scoreboard/query';
+import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
-import type { 
+import type {
   BETARENA_HASURA_scoreboard_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues,
-  Fixture_Scoreboard_Info, 
-  Fixture_Scoreboard_Team, 
-  REDIS_CACHE_SINGLE_scoreboard_data 
+  Fixture_Scoreboard_Info,
+  Fixture_Scoreboard_Team,
+  REDIS_CACHE_SINGLE_scoreboard_data
 } from '$lib/models/fixtures/scoreboard/types';
 import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = []
-let t0;
-let t1;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
@@ -148,7 +146,7 @@ async function get_target_fixture (
 
   // [ℹ] obtain target historic_fixtures [fixture_id]
   const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_3";
-  t0 = performance.now();
+  const t0 = performance.now();
   const VARIABLES = {
     fixture_id: fixture_id
   }
@@ -156,7 +154,7 @@ async function get_target_fixture (
     REDIS_CACHE_SCOREBOARD_ODDS_DATA_3,
     VARIABLES
   );
-  t1 = performance.now();
+  const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   return response.historic_fixtures;

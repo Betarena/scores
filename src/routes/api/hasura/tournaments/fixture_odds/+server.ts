@@ -2,7 +2,7 @@ import { dev } from '$app/environment';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import {
   REDIS_CACHE_FIXTURES_ODDS_DATA_2,
-  REDIS_CACHE_FIXTURES_ODDS_DATA_4,
+  REDIS_CACHE_FIXTURES_ODDS_DATA_4
 } from '$lib/graphql/tournaments/fixtures_odds/query';
 import { json } from '@sveltejs/kit';
 import fs from 'fs';
@@ -11,17 +11,15 @@ import { performance } from 'perf_hooks';
 import type {
   BETARENA_HASURA_fixtures_odds_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
-  Fixture_Odds_Team, 
-  Rounds_Data, 
-  Tournament_Fixture_Odds, 
-  Tournament_Season_Fixtures_Odds, 
+  Fixture_Odds_Team,
+  Rounds_Data,
+  Tournament_Fixture_Odds,
+  Tournament_Season_Fixtures_Odds,
   Weeks_Data
 } from '$lib/models/tournaments/fixtures_odds/types';
 
 // [ℹ] debug info
 const logs = []
-let t0;
-let t1;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
@@ -71,11 +69,11 @@ async function main (
   const historic_fixtures_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures> ()
 
   // [ℹ] conversion to hashmap
-  t0 = performance.now();
+  const t0 = performance.now();
   for (const h_fixture of h_fixtures_arr) {
     historic_fixtures_map.set(h_fixture.id, h_fixture);
   }
-  t1 = performance.now();
+  const t1 = performance.now();
   logs.push(`historic_fixtures_map generated with size: ${historic_fixtures_map.size}`)
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 
@@ -243,7 +241,7 @@ async function getTargetSeasonFixtures (
 
   // [ℹ] obtain target historic_fixtures
   const queryName = "REDIS_CACHE_FIXTURES_ODDS_DATA_4";
-  t0 = performance.now();
+  const t0 = performance.now();
   const VARIABLES = {
     season_id: seasonId
   }
@@ -251,7 +249,7 @@ async function getTargetSeasonFixtures (
     REDIS_CACHE_FIXTURES_ODDS_DATA_4,
     VARIABLES
   );
-  t1 = performance.now();
+  const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   return response.historic_fixtures;
