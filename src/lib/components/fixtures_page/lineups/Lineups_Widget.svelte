@@ -212,6 +212,7 @@
       // FIXME: make compatible TYPES for hasura/events && firebase/events
       FIXTURE_LINEUPS.events = live_fixtures_map.get(fixture_id)?.events?.data
       const FIREBASE_LINEUPS_DATA = live_fixtures_map.get(fixture_id)?.lineup?.data
+      const FIREBASE_BENCH_DATA = live_fixtures_map.get(fixture_id)?.bench?.data
       // [ℹ] update fixture-target lineup
       // [ℹ] with appropiate events HOME && AWAY
       for (const player of FIXTURE_LINEUPS.home.lineup) {
@@ -316,9 +317,9 @@
       // [ℹ] with appropiate events HOME && AWAY
       for (const player of FIXTURE_LINEUPS.home.bench) {
         // [ℹ] update player ratings
-        for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
-          if (player?.player_id == fixture_lineup?.player_id) {
-            player.rating = fixture_lineup?.stats?.rating;
+        for (const fixture_bench of FIREBASE_BENCH_DATA) {
+          if (player?.player_id == fixture_bench?.player_id) {
+            player.rating = fixture_bench?.stats?.rating;
           }
         }
         // [ℹ] reset player events
@@ -366,9 +367,9 @@
       }
       for (const player of FIXTURE_LINEUPS.away.bench) {
         // [ℹ] update player ratings
-        for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
-          if (player?.player_id == fixture_lineup?.player_id) {
-            player.rating = fixture_lineup?.stats?.rating;
+        for (const fixture_bench of FIREBASE_BENCH_DATA) {
+          if (player?.player_id == fixture_bench?.player_id) {
+            player.rating = fixture_bench?.stats?.rating;
           }
         }
         // [ℹ] reset player events
