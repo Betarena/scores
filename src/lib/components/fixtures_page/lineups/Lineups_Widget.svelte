@@ -23,8 +23,6 @@
 		FIREBASE_livescores_now
 	} from "$lib/models/firebase";
 
-	
-	
 	import LineupsLoader from "./Lineups_Loader.svelte";
 	import LineupPlayerRow from "./Lineup_Player_Row.svelte";
 	import LineupPlayerVisual from "./Lineup_Player_Visual.svelte";
@@ -213,9 +211,14 @@
       FIXTURE_LINEUPS.away.formation = live_fixtures_map.get(fixture_id)?.formations?.visitorteam_formation
       // FIXME: make compatible TYPES for hasura/events && firebase/events
       FIXTURE_LINEUPS.events = live_fixtures_map.get(fixture_id)?.events?.data
+      const FIREBASE_LINEUPS_DATA = live_fixtures_map.get(fixture_id)?.lineup?.data
       // [ℹ] update fixture-target lineup
       // [ℹ] with appropiate events HOME && AWAY
       for (const player of FIXTURE_LINEUPS.home.lineup) {
+        // [ℹ] update player ratings
+        for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
+          player.rating = fixture_lineup?.stats?.rating;
+        }
         // [ℹ] reset player events
         player.events = {
           injured: false,
@@ -260,6 +263,10 @@
         }
       }
       for (const player of FIXTURE_LINEUPS.away.lineup) {
+        // [ℹ] update player ratings
+        for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
+          player.rating = fixture_lineup?.stats?.rating;
+        }
         // [ℹ] reset player events
         player.events = {
           injured: false,
@@ -304,6 +311,10 @@
       // [ℹ] update fixture-target bench
       // [ℹ] with appropiate events HOME && AWAY
       for (const player of FIXTURE_LINEUPS.home.bench) {
+        // [ℹ] update player ratings
+        for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
+          player.rating = fixture_lineup?.stats?.rating;
+        }
         // [ℹ] reset player events
         player.events = {
           injured: false,
@@ -348,6 +359,10 @@
         }
       }
       for (const player of FIXTURE_LINEUPS.away.bench) {
+        // [ℹ] update player ratings
+        for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
+          player.rating = fixture_lineup?.stats?.rating;
+        }
         // [ℹ] reset player events
         player.events = {
           injured: false,
