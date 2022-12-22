@@ -4,27 +4,22 @@
 
 <script lang="ts">
   // [ℹ] svelte-imports;
-  import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
-  import { page } from "$app/stores";
   import { dev } from '$app/environment';
-
-	// [ℹ] external `exports` imports;
+  import { onMount } from "svelte";
+// [ℹ] external `exports` imports;
   import { get } from "$lib/api/utils";
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-
-	// [ℹ] external components import;
-  import LeagueTableWidgetContentLoader from "./_League_Table_Widget_ContentLoader.svelte";
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+// [ℹ] external components import;
+  import type { Cache_Single_Geo_Leagues_Table_Translation_Response, Cache_Single_Lang_Leagues_Table_Translation_Response } from "$lib/models/leagues_table/types";
   import LeagueTableTeamRow from "./_League_Table_Team_Row.svelte";
-  import type { Cache_Single_Lang_Leagues_Table_Translation_Response, Cache_Single_Geo_Leagues_Table_Translation_Response, Leagues_Table_SEO_Cache_Ready } from "$lib/models/leagues_table/types";
-
-  // [ℹ] key component assets;
+  import LeagueTableWidgetContentLoader from "./_League_Table_Widget_ContentLoader.svelte";
+// [ℹ] key component assets;
+  import { logDevGroup } from "$lib/utils/debug";
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
   import check_league from './assets/check-league.svg';
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
-  import { logDevGroup } from "$lib/utils/debug";
+  import no_featured_match_visual from './assets/no_featured_match_visual.svg';
+  import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
   // [ℹ] main component variables;
 	export let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
@@ -32,8 +27,8 @@
 
 	let loaded: boolean = false;            // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;           // [ℹ] refresh value speed of the WIDGET;
-	let refresh_data: any = undefined;      // [ℹ] refresh-data value speed;
-  let noLeaguesTable: any = false;        // [ℹ] identifies the noLeaguesTable boolean;
+	let refresh_data: unknown = undefined;      // [ℹ] refresh-data value speed;
+  let noLeaguesTable: unknown = false;        // [ℹ] identifies the noLeaguesTable boolean;
   let dropdownSelect: string = undefined  // [ℹ] selected TOP LEAGUE;
   let toggleDropdown: boolean = false;    // [ℹ] toggle Dropdown BOX accordingly;
 

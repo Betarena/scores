@@ -3,39 +3,34 @@
 =================-->
 
 <script lang="ts">
-  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
-  import { logDevGroup, logErrorGroup, log_info_group } from "$lib/utils/debug";
-	import { fade } from "svelte/transition";
+  import { logDevGroup, log_info_group } from "$lib/utils/debug";
+  import { onDestroy, onMount } from "svelte";
+  import { fade } from "svelte/transition";
 
 	import { get } from "$lib/api/utils";
-  import { initGrapQLClient } from "$lib/graphql/init_graphQL";
-	import { onValue, ref, type Unsubscribe } from "firebase/database";
 	import { db_real } from "$lib/firebase/init";
-  import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { fixtureVote, type fixture } from '$lib/store/vote_fixture';
-	import { HASURA_FIXTURE_VOTES_DATA_0, HASURA_FIXTURE_VOTES_INIT_UPDATE } from "$lib/graphql/fixtures/votes/query";
-  import { getImageBgColor } from "$lib/utils/color_thief";
 	import { get_odds } from "$lib/firebase/votes";
 	import { REDIS_CACHE_FIXTURE_PROBABILITIES_0 } from "$lib/graphql/fixtures/probabilities/query";
+	import { initGrapQLClient } from "$lib/graphql/init_graphQL";
+	import { userBetarenaSettings } from "$lib/store/user-settings";
+	import { getImageBgColor } from "$lib/utils/color_thief";
+	import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
-    REDIS_CACHE_SINGLE_fixtures_page_info_response 
-  } from "$lib/models/_main_/pages_and_seo/types";
-	import type { 
-    BETARENA_HASURA_votes_mutation, 
-    BETARENA_HASURA_votes_query, 
-    Fixture_Votes, 
-	  REDIS_CACHE_SINGLE_votes_translation
-  } from "$lib/models/fixtures/votes/types";
-	import type { 
-    Cache_Single_SportbookDetails_Data_Response 
-  } from "$lib/models/tournaments/league-info/types";
-	import type { 
-    FIREBASE_odds 
-  } from "$lib/models/firebase";
+		FIREBASE_odds
+	} from "$lib/models/firebase";
 	import type { Fixture_Probabilities, REDIS_CACHE_SINGLE_probabilities_translation } from "$lib/models/fixtures/probabilities/types";
+	import type {
+		BETARENA_HASURA_votes_query
+	} from "$lib/models/fixtures/votes/types";
+	import type {
+		Cache_Single_SportbookDetails_Data_Response
+	} from "$lib/models/tournaments/league-info/types";
+	import type {
+		REDIS_CACHE_SINGLE_fixtures_page_info_response
+	} from "$lib/models/_main_/pages_and_seo/types";
 
 	import ProbabilityLoader from "./Probability_Loader.svelte";
 
@@ -417,9 +412,9 @@
     const year_: string = new Date(fixture_time).getFullYear().toString();
     const month_: number = new Date(fixture_time).getMonth();
     let new_month_ = (month_ + 1).toString();
-    new_month_ = ('0' + new_month_).slice(-2);
+    new_month_ = (`0${new_month_}`).slice(-2);
     let day_ = new Date(fixture_time).getDate().toString();
-    day_ = ('0' + day_).slice(-2);
+    day_ = (`0${day_}`).slice(-2);
 
     // [ℹ] listen to real-time fixture event changes;
     const fixtureRef = ref (

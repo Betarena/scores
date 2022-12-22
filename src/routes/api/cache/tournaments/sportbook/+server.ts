@@ -1,16 +1,13 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	sportbook_details_all,
-	sportbook_details
+    get_target_hset_cache_data, sportbook_details, sportbook_details_all
 } from '../../std_main';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(req, res): Promise<any> {
+export async function GET(req): Promise<unknown> {
 	const geoPos: string = req.url['searchParams'].get('geoPos');
 	const all: string = req.url['searchParams'].get('all');
 

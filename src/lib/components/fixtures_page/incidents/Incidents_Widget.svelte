@@ -3,45 +3,35 @@
 =================-->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { logDevGroup, log_info_group } from "$lib/utils/debug";
+  import { onDestroy, onMount } from "svelte";
 
-  import { sessionStore } from '$lib/store/session';
+  import { db_real } from "$lib/firebase/init";
+  import { get_livescores_now } from "$lib/firebase/scoreboard";
   import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { get } from "$lib/api/utils";
-	import { get_livescores_now, get_odds } from "$lib/firebase/scoreboard";
-	import { onValue, ref, type Unsubscribe } from "firebase/database";
-	import { db_real } from "$lib/firebase/init";
-
-	import type { 
-    REDIS_CACHE_SINGLE_lineups_data, 
-    REDIS_CACHE_SINGLE_lineups_translation 
-  } from "$lib/models/fixtures/lineups/types";
-
-	import type { 
-    FIREBASE_livescores_now 
-  } from "$lib/models/firebase";
+  import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
-    REDIS_CACHE_SINGLE_fixtures_page_info_response 
-  } from "$lib/models/_main_/pages_and_seo/types";
+		REDIS_CACHE_SINGLE_lineups_data
+	} from "$lib/models/fixtures/lineups/types";
 
-	import type { 
-    EventsDatum 
-  } from "$lib/models/hasura";
+	import type {
+		FIREBASE_livescores_now
+	} from "$lib/models/firebase";
 
-	import type { 
-    REDIS_CACHE_SINGLE_incidents_data, 
-    REDIS_CACHE_SINGLE_incidents_translation 
-  } from "$lib/models/fixtures/incidents/types";
+	
+	
+	import type {
+		REDIS_CACHE_SINGLE_incidents_data,
+		REDIS_CACHE_SINGLE_incidents_translation
+	} from "$lib/models/fixtures/incidents/types";
 
 	import IncidentsLoader from "./Incidents_Loader.svelte";
-  import IncidentRow from "./Incident_Row.svelte";
+	import IncidentRow from "./Incident_Row.svelte";
 
+	import { FIXTURE_FULL_TIME_OPT, FIXTURE_NOT_START_OPT } from '$lib/models/sportmonks';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -65,6 +55,7 @@
   let dev_console_tag:   string = "fixtures | incidents [DEV]";
 
   // [🐞]
+  if (dev) console.log(`FIXTURE_INCIDENTS`, FIXTURE_INCIDENTS)
   $: if (dev && enable_logs) logDevGroup (`${dev_console_tag}`, `FIXTURE_INCIDENTS: ${FIXTURE_INCIDENTS}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -82,18 +73,29 @@
 
     loaded = true;
 
-    // [ℹ] data validation check
-		if (
-      FIXTURE_INCIDENTS == undefined
-    ) {
+    // [ℹ] [standard] data validation check [#1]
+		if (FIXTURE_INCIDENTS == undefined) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
       no_widget_data = true;
 			return;
 		}
-    // [ℹ] otherwise, no data
     else {
       no_widget_data = false;
+    }
+
+    // [ℹ] data validation check [#2]
+    const validation_check =
+      FIXTURE_NOT_START_OPT.includes(FIXTURE_INCIDENTS?.status)
+    ;
+
+    no_widget_data =
+      validation_check == true
+        ? true
+        : false
+    ;
+    if (no_widget_data) {
+      return
     }
 
     FIXTURE_INCIDENTS = FIXTURE_INCIDENTS
@@ -148,7 +150,9 @@
 
 	$: refresh_data = $userBetarenaSettings.country_bookmaker;
 
-  $: if (browser && refresh_data) {
+  $: if (browser 
+    && refresh_data
+  ) {
     // [ℹ] reset necessary variables;
     refresh = true
     loaded = false
@@ -219,7 +223,7 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_INCIDENTS?.status;
-    if (["FT", "FT_PEN"].includes(fixture_status)) {
+    if (FIXTURE_FULL_TIME_OPT.includes(fixture_status)) {
       return
     }
 
@@ -479,6 +483,47 @@
           id="incidents-events-box">
 
           <!-- 
+          [ℹ] PEN SCORE [SECTION]
+          -->
+          {#if FIXTURE_INCIDENTS?.score_post?.ps_score != undefined}
+            <p
+              class="
+                w-500
+                color-black-2
+                event-milestone-text
+              ">
+                PEN {FIXTURE_INCIDENTS?.score_post?.ps_score}
+            </p>
+          {/if}
+          {#if FIXTURE_INCIDENTS?.events}
+            {#each FIXTURE_INCIDENTS?.events as event}
+              {#if ["pen_shootout_miss", "pen_shootout_goal"].includes(event?.type)}
+                <!-- 
+                [ℹ] home team
+                -->
+                {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='L' 
+                  />
+                <!-- 
+                [ℹ] away team
+                -->
+                {:else}
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='R' 
+                  />
+                {/if}
+              {/if}
+            {/each}
+          {/if}
+
+          <!-- 
           [ℹ] ET SCORE [SECTION]
           -->
           {#if FIXTURE_INCIDENTS?.score_post?.et_score != undefined}
@@ -555,7 +600,8 @@
           {/if}
           {#if FIXTURE_INCIDENTS?.events}
             {#each FIXTURE_INCIDENTS?.events as event}
-              {#if event?.minute <= 45}
+              {#if event?.minute <= 45
+                && !["pen_shootout_miss", "pen_shootout_goal"].includes(event?.type)}
                 <!-- 
                 [ℹ] home team
                 -->

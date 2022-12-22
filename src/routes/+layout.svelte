@@ -4,40 +4,27 @@
 =================== -->
 
 <script lang="ts">
-	import { getStores, navigating, page, updated } from '$app/stores';
-  import { browser, dev } from '$app/environment';
-  import { onMount } from 'svelte';
+	import { browser, dev } from '$app/environment';
+	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
 
+  import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
   import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
-  import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types'
-	import type { PageData } from './$types';
-
-  // [ℹ] session replacement
-
-
-	export let data: PageData;
-
-  // [🐛] debug;
-  let disableDev = true;
-  if (dev && !disableDev) console.log(`data`, data);
-	if (dev && !disableDev) console.debug('$page: ', $page);
-
-  /*
+/*
     [v1]
     Standard Imports (client-side)
   */
 
+  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
   import Footer from '$lib/components/_main_/footer/_Footer.svelte';
   import Header from '$lib/components/_main_/header/_Header.svelte';
   import OfflineAlert from '$lib/components/_Offline_alert.svelte';
-  import SplashScreen from '$lib/components/_Splash_screen.svelte';
   import PlatformAlert from '$lib/components/_Platform_alert.svelte';
-  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
-
-  /*
+  import SplashScreen from '$lib/components/_Splash_screen.svelte';
+/*
     [v2] 
     Dynamic Imports (client-side)
   */

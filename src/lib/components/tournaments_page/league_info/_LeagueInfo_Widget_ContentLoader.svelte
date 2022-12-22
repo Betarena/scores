@@ -10,14 +10,12 @@
   import PlaceholderLeft from "./loaders/desktop/_Placeholder_Left.svelte";
   import PlaceholderRight from "./loaders/desktop/_Placeholder_Right.svelte";
 
-  import PlaceholderLeft_T from "./loaders/tablet/_Placeholder_Left.svelte";
-  import PlaceholderRight_T from "./loaders/tablet/_Placeholder_Right.svelte";
-
+  
+  import PlaceholderLeftBottomRow from './loaders/tablet/_Placeholder_Left_Bottom_Row.svelte';
   import PlaceholderLeftMiddleRow from './loaders/tablet/_Placeholder_Left_Middle_Row.svelte';
   import PlaceholderLeftTopRow from './loaders/tablet/_Placeholder_Left_Top_Row.svelte';
-  import PlaceholderRightTopRow from './loaders/tablet/_Placeholder_Right_Top_Row.svelte';
   import PlaceholderRightMiddleRow from './loaders/tablet/_Placeholder_Right_Middle_Row.svelte';
-  import PlaceholderLeftBottomRow from './loaders/tablet/_Placeholder_Left_Bottom_Row.svelte';
+  import PlaceholderRightTopRow from './loaders/tablet/_Placeholder_Right_Top_Row.svelte';
 
   import PlaceholderWholeM from './loaders/mobile/_Placeholder_Whole_M.svelte';
 

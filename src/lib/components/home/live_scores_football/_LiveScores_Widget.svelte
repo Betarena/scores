@@ -6,26 +6,24 @@
 	// ... external components import;
 	// ... external `exports` imports;
 	import { db_real } from '$lib/firebase/init';
-	import { ref, onValue } from 'firebase/database';
-
-	// ... DECLARING TYPESCRIPT-TYPES imports;
-	import type {   LiveScoreGame, LiveScoreLeagueGame, LiveScoreLeague, DayName, LiveScoreIcon, LiveScoreBookIcon } from '$lib/models/featured_match/response_models';
-	import { page } from '$app/stores'
-
-
-	// ... key component assets;
-	import play from './assets/play.svg'
-	import play_dark from './assets/play_dark.svg'
-	import redcard from './assets/card.svg'
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import PlaceholderLivescores from './loaders/_Placeholder_Livescores.svelte';
+	import { onValue, ref } from 'firebase/database';
+// ... DECLARING TYPESCRIPT-TYPES imports;
+	import { page } from '$app/stores';
+	import type { DayName, LiveScoreBookIcon, LiveScoreGame, LiveScoreIcon, LiveScoreLeague, LiveScoreLeagueGame } from '$lib/models/featured_match/response_models';
+// ... key component assets;
 	import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
-	import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';	
+	import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import redcard from './assets/card.svg';
+	import play from './assets/play.svg';
+	import play_dark from './assets/play_dark.svg';
+	import PlaceholderLivescores from './loaders/_Placeholder_Livescores.svelte';
+	
 
 	export let LIVE_SCORES_DATA_DATA_SEO: LiveScore_SEO_Game_Scoped_Lang[];
-	export let LIVE_SCORES_DATA_LEAGUES: any;
+	export let LIVE_SCORES_DATA_LEAGUES: unknown;
 	export let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
-	export let LIVESCORES_FOOTBALL_TOURNAMENTS: any[];
+	export let LIVESCORES_FOOTBALL_TOURNAMENTS: unknown[];
 
 	var leagueSort = {};
 
@@ -38,9 +36,9 @@
 	
 	let isMoreGames: boolean = false;
 	let refresh: boolean = false;
-	let refresh_data: any = undefined;
-	let LIVESCORES_TRANSLATIONS: any = {};
-	let hasCachedGames: any ={};
+	let refresh_data: unknown = undefined;
+	let LIVESCORES_TRANSLATIONS: unknown = {};
+	let hasCachedGames: unknown ={};
 	let bookIcons: { [key: string]: LiveScoreBookIcon }  = {};
 	let requestedIcons:boolean = false;
 	// ... widget-language-declaration;

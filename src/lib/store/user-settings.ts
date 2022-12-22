@@ -3,9 +3,9 @@
 // ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 import { dev } from '$app/environment';
-import { writable } from 'svelte/store';
 import type { GeoJsResponse } from '$lib/models/geojs-types';
 import { logDevGroup } from '$lib/utils/debug';
+import { writable } from 'svelte/store';
 
 interface User_Setting {
 	lang: string;
@@ -28,7 +28,7 @@ const user_settings: User_Setting = {
  * ... @param {*} key
  * ... @returns
 */
-function createLocalStore(key: any): any {
+function createLocalStore(key: unknown): unknown {
 	
 	const { subscribe, set, update } = writable(user_settings);
 

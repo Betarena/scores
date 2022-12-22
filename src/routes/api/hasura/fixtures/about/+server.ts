@@ -1,23 +1,19 @@
-import { dev } from '$app/environment';
-import fs from 'fs';
+import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
-import { error, json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { REDIS_CACHE_FIXTURE_ABOUT_DATA_3 } from '$lib/graphql/fixtures/about/query';
+import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import type { BETARENA_HASURA_about_query, REDIS_CACHE_SINGLE_about_data } from '$lib/models/fixtures/about/types';
 import type { BETARENA_HASURA_historic_fixtures } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = [];
-let t0;
-let t1;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
   const lang: string = req.url['searchParams'].get('lang');
 	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 	const target_season_fixtures = await main(fixture_id, lang);
@@ -58,7 +54,7 @@ async function main (
   const data_point_root = 
     LANG == "en"
       ? "seo_fixtures"
-      : "seo_fixtures_" + LANG
+      : `seo_fixtures_${LANG}`
 
 	// [ℹ] exit
   if (fixture_data[data_point_root] == undefined) {
@@ -82,15 +78,15 @@ async function get_target_fixture (
 ): Promise < BETARENA_HASURA_historic_fixtures[] > {
 	// [ℹ] obtain target external_content [fixture_id based]
 	const queryName = 'REDIS_CACHE_FIXTURE_ABOUT_DATA_3';
-	t0 = performance.now();
+	const t0 = performance.now();
 	const VARIABLES = {
-		fixture_id: fixture_id
+		fixture_id
 	};
 	const response: BETARENA_HASURA_about_query = await initGrapQLClient().request(
 		REDIS_CACHE_FIXTURE_ABOUT_DATA_3,
 		VARIABLES
 	);
-	t1 = performance.now();
+	const t1 = performance.now();
 	logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
 	return response.historic_fixtures;

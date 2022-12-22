@@ -1,8 +1,7 @@
-import { dev } from '$app/environment'
-import { ref, get, child, type Unsubscribe } from 'firebase/database'
 import { db_real } from '$lib/firebase/init'
 import type { FIREBASE_odds } from '$lib/models/firebase'
 import type { Tournament_Fixture_Odds } from '$lib/models/tournaments/fixtures_odds/types'
+import { child, get, ref } from 'firebase/database'
 
 export async function getLivescoresNow(): Promise < unknown > {
 
@@ -33,9 +32,9 @@ export async function getOdds (
     const year_: string = new Date(season_fixture_date_group.date).getFullYear().toString();
     const month_: number = new Date(season_fixture_date_group.date).getMonth();
     let new_month_ = (month_ + 1).toString();
-    new_month_ = ('0' + new_month_).slice(-2);
+    new_month_ = (`0${new_month_}`).slice(-2);
     let day_ = new Date(season_fixture_date_group.date).getDate().toString();
-    day_ = ('0' + day_).slice(-2);
+    day_ = (`0${day_}`).slice(-2);
 
     // [ℹ] iterater over fixtures 
     // [ℹ] [BY DATE GROUP]

@@ -1,21 +1,20 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import {
-	cache_country_translations,
-	cache_fixtures_info_key,
-	cache_fixtures_seo_key,
-	cache_homepage_seo_key,
-	cache_sitemap_urls_key,
-	cache_sport_translations,
-	cache_tournaments_info_key,
-	cache_tournaments_seo_key,
-	get_target_hset_cache_data,
-	get_target_set_cache_data
+    cache_country_translations,
+    cache_fixtures_info_key,
+    cache_fixtures_seo_key,
+    cache_homepage_seo_key,
+    cache_sitemap_urls_key,
+    cache_sport_translations,
+    cache_tournaments_info_key,
+    cache_tournaments_seo_key,
+    get_target_hset_cache_data,
+    get_target_set_cache_data
 } from '../../std_main';
 
 /** @type {import('./$types').RequestHandler} */
-export async function GET(req, res): Promise<any> {
+export async function GET(req): Promise<unknown> {
 	const url: string = req.url['searchParams'].get('url');
 	const lang: string = req.url['searchParams'].get('lang');
 	const page: 'homepage' | 'tournaments' | 'fixtures' = req.url['searchParams'].get('page');

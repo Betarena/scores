@@ -1,16 +1,13 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	tour_top_play_cache_trans_addr,
-	tour_top_play_cache_data_addr
+    get_target_hset_cache_data, tour_top_play_cache_data_addr, tour_top_play_cache_trans_addr
 } from '../../std_main';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(req, res): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
 	const lang: string = req.url['searchParams'].get('lang');
 	const league_id: string = req.url['searchParams'].get('league_id');
 

@@ -1,24 +1,20 @@
-import { dev } from '$app/environment';
-import fs from 'fs';
+import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
-import { error, json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { REDIS_CACHE_FIXTURE_CONTENT_DATA_3 } from '$lib/graphql/fixtures/content/query';
+import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
 import type { BETARENA_HASURA_content_query, REDIS_CACHE_SINGLE_content_data } from '$lib/models/fixtures/content/types';
 import type { BETARENA_HASURA_external_content } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = [];
-let t0;
-let t1;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
   const lang: string = req.url['searchParams'].get('lang');
 	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 	const target_season_fixtures = await main(fixture_id, lang);
@@ -68,16 +64,16 @@ async function get_target_content (
 ): Promise< BETARENA_HASURA_external_content[] > {
 	// [ℹ] obtain target external_content [fixture_id based]
 	const queryName = 'REDIS_CACHE_FIXTURE_CONTENT_DATA_3';
-	t0 = performance.now();
+	const t0 = performance.now();
 	const VARIABLES = {
 		gameId: fixture_id,
-    lang: lang
+    lang
 	};
 	const response: BETARENA_HASURA_content_query = await initGrapQLClient().request(
 		REDIS_CACHE_FIXTURE_CONTENT_DATA_3,
 		VARIABLES
 	);
-	t1 = performance.now();
+	const t1 = performance.now();
 	logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
 	return response.external_content;

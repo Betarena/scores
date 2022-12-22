@@ -2,9 +2,6 @@ import {
   error,
   redirect
 } from '@sveltejs/kit';
-import {
-  dev
-} from '$app/environment';
 import type {
   PageLoad
 } from './$types';
@@ -14,18 +11,19 @@ import type {
  */
 export async function load({
   url,
-  params,
-  fetch,
-  setHeaders
+  fetch
 }): PageLoad {
 
   /**
    * [ℹ] Ensure URL Check Existance; 
    */
 
-  const response_valid_url = await fetch(`/api/cache/_main_/pages_and_seo?url=` + url.pathname, {
-    method: 'GET'
-  }).then((r) => r.json());
+  const response_valid_url = await fetch(
+    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
 
   if (!response_valid_url) {
     throw error(404, `Uh-oh! This page does not exist!`);

@@ -3,22 +3,19 @@
 ==================== -->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import DesktopLoaderTeam from "./loaders/desktop/Loader_Team.svelte";
-	import DesktopLoaderMiddle from "./loaders/desktop/Loader_Middle.svelte";
 	import DesktopLoaderBottom from "./loaders/desktop/Loader_Bottom.svelte";
+	import DesktopLoaderMiddle from "./loaders/desktop/Loader_Middle.svelte";
+	import DesktopLoaderTeam from "./loaders/desktop/Loader_Team.svelte";
 	import DesktopLoaderTop from "./loaders/desktop/Loader_Top.svelte";
 
+  import MobileLoaderBottom from "./loaders/mobile/Loader_Bottom.svelte";
+  import MobileLoaderMiddle from "./loaders/mobile/Loader_Middle.svelte";
   import MobileLoaderTeam from "./loaders/mobile/Loader_Team.svelte";
-	import MobileLoaderMiddle from "./loaders/mobile/Loader_Middle.svelte";
-	import MobileLoaderBottom from "./loaders/mobile/Loader_Bottom.svelte";
-	import MobileLoaderTop from "./loaders/mobile/Loader_Top.svelte";
+  import MobileLoaderTop from "./loaders/mobile/Loader_Top.svelte";
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

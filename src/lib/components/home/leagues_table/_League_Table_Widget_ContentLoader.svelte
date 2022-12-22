@@ -4,13 +4,10 @@
 
 <script lang="ts">
   // ... svelte-imports;
-  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
-  // ...
+// ...
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-  import PlaceholderTableRow from "./loaders/_Placeholder_Row.svelte";
+	import PlaceholderTableRow from "./loaders/_Placeholder_Row.svelte";
 
   let showNum: number = 10;
 

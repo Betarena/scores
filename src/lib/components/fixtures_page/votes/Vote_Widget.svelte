@@ -3,37 +3,37 @@
 =================-->
 
 <script lang="ts">
-  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { logDevGroup, logErrorGroup, log_info_group } from "$lib/utils/debug";
-	import { fade } from "svelte/transition";
+  import { onDestroy, onMount } from "svelte";
+  import { fade } from "svelte/transition";
 
 	import { get } from "$lib/api/utils";
-  import { initGrapQLClient } from "$lib/graphql/init_graphQL";
-	import { onValue, ref, type Unsubscribe } from "firebase/database";
 	import { db_real } from "$lib/firebase/init";
-  import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { fixtureVote, type fixture } from '$lib/store/vote_fixture';
-	import { HASURA_FIXTURE_VOTES_DATA_0, HASURA_FIXTURE_VOTES_INIT_UPDATE } from "$lib/graphql/fixtures/votes/query";
-  import { getImageBgColor } from "$lib/utils/color_thief";
 	import { get_odds } from "$lib/firebase/votes";
+	import { HASURA_FIXTURE_VOTES_DATA_0, HASURA_FIXTURE_VOTES_INIT_UPDATE } from "$lib/graphql/fixtures/votes/query";
+	import { initGrapQLClient } from "$lib/graphql/init_graphQL";
+	import { userBetarenaSettings } from "$lib/store/user-settings";
+	import { fixtureVote, type fixture } from '$lib/store/vote_fixture';
+	import { getImageBgColor } from "$lib/utils/color_thief";
+	import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
-    REDIS_CACHE_SINGLE_fixtures_page_info_response 
-  } from "$lib/models/_main_/pages_and_seo/types";
-	import type { 
-    BETARENA_HASURA_votes_mutation, 
-    BETARENA_HASURA_votes_query, 
-    Fixture_Votes, 
-	  REDIS_CACHE_SINGLE_votes_translation
-  } from "$lib/models/fixtures/votes/types";
-	import type { 
-    Cache_Single_SportbookDetails_Data_Response 
-  } from "$lib/models/tournaments/league-info/types";
-	import type { 
-    FIREBASE_odds 
-  } from "$lib/models/firebase";
+		FIREBASE_odds
+	} from "$lib/models/firebase";
+	import type {
+		BETARENA_HASURA_votes_mutation,
+		BETARENA_HASURA_votes_query,
+		Fixture_Votes,
+		REDIS_CACHE_SINGLE_votes_translation
+	} from "$lib/models/fixtures/votes/types";
+	import type {
+		Cache_Single_SportbookDetails_Data_Response
+	} from "$lib/models/tournaments/league-info/types";
+	import type {
+		REDIS_CACHE_SINGLE_fixtures_page_info_response
+	} from "$lib/models/_main_/pages_and_seo/types";
 
 	import VoteLoader from "./Vote_Loader.svelte";
 
@@ -254,11 +254,15 @@
   */
 	function cast_vote (
     vote_type: string, 
-    vote_val: string
+    vote_val: string | number
   ): void {
 
 		// [🐞]
     if (dev) logDevGroup (`${dev_console_tag}`, `vote_val: ${vote_val}`)
+
+    if (vote_val == undefined) {
+      vote_val = '1.5'
+    }
 
 		// [ℹ] check vote already casted
 		if (!vote_casted) {
@@ -268,7 +272,7 @@
 			fixture_data_vote_obj = {
 				fixture_id: FIXTURE_INFO?.data?.id,
 				fixture_vote: vote_type,
-				fixture_vote_val: vote_val,
+				fixture_vote_val: vote_val as string,
 				_X_vote: 0,
 				_1_vote: 0,
 				_2_vote: 0
@@ -494,9 +498,9 @@
     const year_: string = new Date(fixture_time).getFullYear().toString();
     const month_: number = new Date(fixture_time).getMonth();
     let new_month_ = (month_ + 1).toString();
-    new_month_ = ('0' + new_month_).slice(-2);
+    new_month_ = (`0${new_month_}`).slice(-2);
     let day_ = new Date(fixture_time).getDate().toString();
-    day_ = ('0' + day_).slice(-2);
+    day_ = (`0${day_}`).slice(-2);
 
     // [ℹ] listen to real-time fixture event changes;
     const fixtureRef = ref (
@@ -712,7 +716,7 @@
               "
               class:active={fixture_data_vote_obj.fixture_vote == '1'}
               disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home.toString())}>
+              on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home)}>
                 <p
                   class="
                     w-500 
@@ -758,7 +762,11 @@
                 {#if mobileExclusive}
                   <br />
                 {/if}
-                {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.home.toString())).toFixed(2)}%
+                {#if FIXTURE_VOTES_DATA?.probabilities?.home != undefined}
+                  {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.home.toString())).toFixed(2)}%
+                {:else}
+                  -
+                {/if}
               </p>
             {:else if 
               FIXTURE_VOTES_DATA?.match_votes != undefined 
@@ -804,7 +812,7 @@
               "
               class:active={fixture_data_vote_obj.fixture_vote == 'X'}
               disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw.toString())}>
+              on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw)}>
                 <p 
                   class="
                     w-500 
@@ -853,7 +861,11 @@
                 {#if mobileExclusive}
                   <br />
                 {/if}
-                {Math.round(parseInt(FIXTURE_VOTES_DATA.probabilities.draw.toString())).toFixed(2)}%
+                {#if FIXTURE_VOTES_DATA?.probabilities?.draw != undefined}
+                  {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.draw.toString())).toFixed(2)}%
+                {:else}
+                  -
+                {/if}
               </p>
             {:else if 
               FIXTURE_VOTES_DATA?.match_votes != undefined 
@@ -899,7 +911,7 @@
                 "
                 class:active={fixture_data_vote_obj.fixture_vote == '2'}
                 disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away.toString())}>
+                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away)}>
                 <p 
                   class="
                     w-500 
@@ -945,7 +957,11 @@
                   {#if mobileExclusive}
                     <br />
                   {/if}
-                  {Math.round(parseInt(FIXTURE_VOTES_DATA.probabilities.away.toString())).toFixed(2)}%
+                  {#if FIXTURE_VOTES_DATA?.probabilities?.away != undefined}
+                    {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.away.toString())).toFixed(2)}%
+                  {:else}
+                    -
+                  {/if}
                 </p>
               {:else if 
                 FIXTURE_VOTES_DATA?.match_votes != undefined 
@@ -1349,6 +1365,7 @@
 		text-align: center;
 		color: #8c8c8c;
 		width: min-content;
+    white-space: nowrap;
 	} div#votes-widget-container div#btn-vote-container button.cast-vote-btn .active_p {
 		color: #f5620f !important;
 	}

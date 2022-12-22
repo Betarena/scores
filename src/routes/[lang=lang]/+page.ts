@@ -1,8 +1,6 @@
-import { error } from '@sveltejs/kit';
 import { dev } from '$app/environment';
+import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
-
-import { get } from '$lib/api/utils';
 
 /** 
  * @type {import('./$types').PageLoad} 
@@ -10,11 +8,8 @@ import { get } from '$lib/api/utils';
 export async function load ({
   url, 
   params, 
-  fetch,
-  setHeaders
+  fetch
 }): PageLoad {
-
-  let response_IP_2;
 
   /**
    * ==================
@@ -23,6 +18,7 @@ export async function load ({
   */
 
   if (!dev) {
+    // let response_IP_2;
     // ⚠❌ does not appear to work
     // const response_IP = await fetch(`/getClientIP`, {
     //   method: 'GET'
@@ -211,20 +207,21 @@ export async function load ({
   */
 
   const urls = [
-    '/api/cache/_main_/pages_and_seo?lang='+urlLang+"&page=homepage",
-    '/api/cache/home/featured_match?lang='+urlLang,
-    '/api/cache/home/featured_betting_sites?lang='+urlLang,
-    '/api/cache/home/best_goalscorer?lang='+urlLang,
-    '/api/cache/home/league_list?lang='+urlLang,
-    '/api/cache/home/leagues_table?lang='+urlLang,
-    '/api/cache/home/seo_block?lang='+urlLang,
+    `/api/cache/_main_/pages_and_seo?lang=${urlLang}&page=homepage`,
+    // [ℹ] home
+    `/api/cache/home/featured_match?lang=${urlLang}`,
+    `/api/cache/home/featured_betting_sites?lang=${urlLang}`,
+    `/api/cache/home/best_goalscorer?lang=${urlLang}`,
+    `/api/cache/home/league_list?lang=${urlLang}`,
+    `/api/cache/home/leagues_table?lang=${urlLang}`,
+    `/api/cache/home/seo_block?lang=${urlLang}`,
     // [ℹ] page validation check;
-    `/api/cache/_main_/pages_and_seo?url=`+url.pathname,
+    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
     // [ℹ] livescores
-    '/api/cache/home/live_scores?lang='+urlLang, 
-    '/api/cache/home/live_scores?type=geo', 
-    '/api/cache/home/live_scores?type=translations',
-    '/api/cache/home/live_scores?type=tournaments',
+    `/api/cache/home/live_scores?lang=${urlLang}`, 
+    `/api/cache/home/live_scores?type=geo`, 
+    `/api/cache/home/live_scores?type=translations`,
+    `/api/cache/home/live_scores?type=tournaments`,
     // [ℹ] alt.
     // [ℹ] geo-based cache load
     // '/api/cache/featured_match?geoPos='+'en', 

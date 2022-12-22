@@ -1,4 +1,4 @@
-import type { 
+import type {
   BenchDatum,
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
@@ -14,7 +14,8 @@ import type {
   HistFixtures_Substitue,
   LocalCoachData,
   WidgetsNoDataAvailable
-} from "$lib/models/hasura"
+} from "$lib/models/hasura";
+import type { FIXTURE_STATUS_TYPES } from "$lib/models/sportmonks";
 
 /**
  * ==========================================
@@ -78,7 +79,7 @@ export interface BETARENA_HASURA_lineups_query {
 
 export interface Fixture_Lineups {
   id?:     number
-  status?: string
+  status?: FIXTURE_STATUS_TYPES
 
   // NOTE: Starting Lineups Before Match (fixture_lineups):
   home?: Team_Lineup

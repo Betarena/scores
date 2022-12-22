@@ -5,18 +5,17 @@
 
 <script lang="ts">
 	// [ℹ] svelte-imports;
-	import { onMount } from 'svelte'
-	import { browser, dev } from '$app/environment'
-  import { fade } from 'svelte/transition'
-	import { getStores, navigating, page, updated } from '$app/stores';
-  import { sessionStore } from '$lib/store/session';
-	// [ℹ] typescript-types;
-	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types'
+	import { browser, dev } from '$app/environment';
+	import { page } from '$app/stores';
+	import { sessionStore } from '$lib/store/session';
+	import { onMount } from 'svelte';
+// [ℹ] typescript-types;
+	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
 	// [ℹ] image-assets;
-	import logo_full from './assets/betarena-logo-full.svg'
-	import begambleawareorg from './assets/begambleawareorg_black.png'
-	import legal18icon from './assets/legal-18-action-bet.png'
-  import { logDevGroup } from '$lib/utils/debug';
+	import { logDevGroup } from '$lib/utils/debug';
+	import begambleawareorg from './assets/begambleawareorg_black.png';
+	import logo_full from './assets/betarena-logo-full.svg';
+	import legal18icon from './assets/legal-18-action-bet.png';
   // [ℹ] pre-loaded & ready;
 	export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
   

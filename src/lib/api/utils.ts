@@ -11,7 +11,7 @@ import { logErrorGroup } from "$lib/utils/debug";
  * @param endpoint
  * @returns
  */
- export async function get(endpoint: string): Promise< any > {
+ export async function get(endpoint: string): Promise<unknown> {
     // curcanavigate CORS issues
     // endpoint = 'https://cors-anywhere.herokuapp.com/' + endpoint // comment this out before subemission,
     // ...
@@ -41,7 +41,7 @@ import { logErrorGroup } from "$lib/utils/debug";
  * @param {*} data 
  * @returns 
 */
-export async function post(path, data): Promise < any > {
+export async function post(path, data): Promise<unknown> {
     // ...
     return await fetch(path, {
         method: 'POST',

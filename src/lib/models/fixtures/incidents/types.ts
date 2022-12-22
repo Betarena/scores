@@ -1,4 +1,4 @@
-import type { 
+import type {
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
   BETARENA_HASURA_scores_football_seasons_details,
@@ -9,6 +9,7 @@ import type {
   Scores,
   WidgetsNoDataAvailable
 } from "$lib/models/hasura"
+import type { FIXTURE_STATUS_TYPES } from "$lib/models/sportmonks"
 
 /**
  * ==========================================
@@ -60,7 +61,7 @@ export interface Fixture_Incidents extends EventsDatum {
   // NOTE:IMPORTANT If there are fixtures without incidents, the widget should not be shown.
 
   id?:          number
-  status?:      string
+  status?:      FIXTURE_STATUS_TYPES
   score_post?:  Fixture_Scorebaord_Scores // [hasura] JSON($path) historic_fixtures/data/scores
   home?:        Incident_Team  // home-team events-only
   away?:        Incident_Team  // away-team events-only

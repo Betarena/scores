@@ -9,11 +9,11 @@
 
 	// ... 
 	import Placeholder_Desktop_Row from './loaders/desktop/_Placeholder_Row.svelte';
-	import Placeholder_Tablet_Row from './loaders/tablet/_Placeholder_Row.svelte';
 	import Placeholder_Mobile_Row from './loaders/mobile/_Placeholder_Row.svelte';
+	import Placeholder_Tablet_Row from './loaders/tablet/_Placeholder_Row.svelte';
 	import BronzeCup_Loader from './loaders/_BronzeCup.svelte';
-	import SilverCup_Loader from './loaders/_SilverCup.svelte';
 	import GoldCup_Loader from './loaders/_GoldCup.svelte';
+	import SilverCup_Loader from './loaders/_SilverCup.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

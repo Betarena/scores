@@ -1,28 +1,13 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	live_scores,
-	get_target_string_cache_data,
-	live_scores_leagues,
-	live_scores_football_translations,
-	live_scores_football_tournaments
+  get_target_hset_cache_data, get_target_string_cache_data, live_scores, live_scores_football_tournaments, live_scores_football_translations, live_scores_leagues
 } from '../../std_main';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(
-	req: {
-		url: {
-			[x: string]: {
-				get: (arg0: string) => string;
-			};
-		};
-	},
-	res: any
-): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
 	const lang = req.url['searchParams'].get('lang');
 	const type: 'translations' | 'geo' | 'tournaments' = req.url['searchParams'].get('type');
 

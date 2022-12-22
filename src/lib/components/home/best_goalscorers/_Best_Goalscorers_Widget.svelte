@@ -5,24 +5,19 @@
 <script lang="ts">
   
   // [ℹ] svelte-imports;
-  import { fade } from "svelte/transition";
-  import { onMount } from "svelte";
-  import { page } from "$app/stores";
   import { dev } from '$app/environment';
-
-	// [ℹ] external `exports` imports;
+  import { onMount } from "svelte";
+// [ℹ] external `exports` imports;
   import { get } from "$lib/api/utils";
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-
-	// [ℹ] external components import;
-  import BestGoalscorerRow from "./_Best_Goalscorer_Row.svelte";
-  import BestGoalscorersWidgetContentLoader from "./_Best_Goalscorers_Widget_ContentLoader.svelte";
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+// [ℹ] external components import;
   import type { Cache_Single_Geo_GoalScorers_Translation_Response, Cache_Single_Lang_GoalScorers_Translation_Response } from "$lib/models/home/best_goalscorer/types";
-
-  // [ℹ] key component assets;
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg'
-  import { logDevGroup } from "$lib/utils/debug";
+  import BestGoalscorersWidgetContentLoader from "./_Best_Goalscorers_Widget_ContentLoader.svelte";
+  import BestGoalscorerRow from "./_Best_Goalscorer_Row.svelte";
+// [ℹ] key component assets;
+	import { logDevGroup } from "$lib/utils/debug";
+	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
+	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
   // [ℹ] main component variables;
 	export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
@@ -34,8 +29,8 @@
   let displayShowMore: boolean = false;   // [ℹ] signal as to whether to display or not the `showMore` / `showLess` data container;
 	let loaded: boolean = false;            // [ℹ] holds boolean for data loaded;
   let refresh: boolean = false;
-	let refresh_data: any = undefined;
-  let noBestPlayers: any = false;
+	let refresh_data: unknown = undefined;
+  let noBestPlayers: unknown = false;
 
   /**
    * Description:

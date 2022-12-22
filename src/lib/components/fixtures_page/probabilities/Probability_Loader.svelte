@@ -4,18 +4,15 @@
 
 <script lang="ts">
 
-  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import MobileLoaderMainStd from "./loaders/mobile/Loader_Main_Std.svelte";
 	import MobileLoaderProbBtn from "./loaders/mobile/Loader_Prob_Btn.svelte";
 	import LoaderBetSite from "./loaders/tablet/Loader_Bet_Site.svelte";
-	import LoaderTeamBox from "./loaders/tablet/Loader_Team_Box.svelte";
 	import LoaderProbBtn from "./loaders/tablet/Loader_Prob_Btn.svelte";
+	import LoaderTeamBox from "./loaders/tablet/Loader_Team_Box.svelte";
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

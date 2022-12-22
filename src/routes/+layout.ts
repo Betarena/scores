@@ -1,4 +1,5 @@
 import { error } from '@sveltejs/kit';
+
 import type { PageLoad } from './$types';
 
 /** @type {import('./$types').PageLoad} */
@@ -10,12 +11,12 @@ export async function load ({
 }): PageLoad {
 
   // [ℹ] critical
-  const response_valid_url = await fetch (
-    `/api/cache/_main_/pages_and_seo?url=`+url.pathname, 
+  const response_valid_url = await fetch(
+    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, 
     {
       method: 'GET'
     }
-  ).then((r) => r.json())
+  ).then((r) => r.json());
 
   const urlLang: string = 
     params.lang == undefined || 
@@ -24,14 +25,14 @@ export async function load ({
       : params.lang
 
   const response_header = await fetch (
-    `/api/cache/_main_/navbar?lang=`+urlLang, 
+    `/api/cache/_main_/navbar?lang=${urlLang}`, 
     {
       method: 'GET'
     }
   ).then(r => r.json())
 
   const response_footer = await fetch (
-    `/api/cache/_main_/footer?lang=`+urlLang, 
+    `/api/cache/_main_/footer?lang=${urlLang}`, 
     {
       method: 'GET',
     }

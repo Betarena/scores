@@ -5,37 +5,32 @@
 <script lang="ts">
 
 	// [ℹ] svelte-imports;
-	import { onMount } from 'svelte';
-	import { page } from '$app/stores'
-	import { fade } from 'svelte/transition';
 	import { browser, dev } from '$app/environment';
-
-	// [ℹ] external modules imports;
+	import { onMount } from 'svelte';
+	import { fade } from 'svelte/transition';
+// [ℹ] external modules imports;
 	import ColorThief from 'colorthief/dist/color-thief.mjs';
 
 	// [ℹ] external components import;
 	import FeaturedMatchContentLoading from './_FeaturedMatch_ContentLoading.svelte';
 
 	// [ℹ] external `exports` imports;
-	import { db_real } from '$lib/firebase/init';
-	import { UPDATE_MATCH_FIXTURE_VOTES } from '$lib/graphql/mutation';
-	import { fixtureVote } from '$lib/store/vote_fixture';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getTargetFixtureOdds } from '$lib/firebase/index';
+	import { db_real } from '$lib/firebase/init';
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-	import { ref, onValue } from 'firebase/database';
-
-	// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+	import { UPDATE_MATCH_FIXTURE_VOTES } from '$lib/graphql/mutation';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { fixtureVote } from '$lib/store/vote_fixture';
+	import { onValue, ref } from 'firebase/database';
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+	import { get } from '$lib/api/utils';
+	import type { Cache_Single_Lang_Featured_Match_Translation_Response, FixtureResponse } from '$lib/models/home/featured_match/interface-fixture';
+	import type { SelectedFixture_VoteUpdate_Response, SelectedFixutre } from '$lib/models/home/featured_match/response_models';
 	import type { fixture } from '$lib/store/vote_fixture';
-	import type { FixtureResponse } from '$lib/models/home/featured_match/interface-fixture';
-	import type { SelectedFixutre, SelectedFixture_VoteUpdate_Response } from '$lib/models/home/featured_match/response_models';
-  import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/home/featured_match/interface-fixture';
-	import { get } from '$lib/api/utils'
-  
-	// [ℹ] key component assets;
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg'
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg' 
-  import { logDevGroup, logErrorGroup } from '$lib/utils/debug';
+// [ℹ] key component assets;
+	import { logDevGroup, logErrorGroup } from '$lib/utils/debug';
+	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
+	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
 	// [ℹ] main component variables;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
@@ -49,7 +44,7 @@
 	let loaded: boolean = false;
 	let nomatches: boolean = false;
 	let refresh: boolean = false;
-	let refresh_data: any = undefined;
+	let refresh_data: unknown = undefined;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// COMPONENT METHODS DATA LOADING
@@ -71,11 +66,11 @@
 
 		// [ℹ] apply-correct-month-structure;
 		let new_month_ = (month_ + 1).toString();
-		new_month_ = ('0' + new_month_).slice(-2);
+		new_month_ = (`0${new_month_}`).slice(-2);
 
 		// [ℹ] apply-correct-day-structure;
 		let day_ = new Date(fixture_data.date).getUTCDate().toString();
-		day_ = ('0' + day_).slice(-2);
+		day_ = (`0${day_}`).slice(-2);
 
 		// [ℹ] obtain FIXTURE-ID;
 		const fixtureId = fixture_data.fixture_id;

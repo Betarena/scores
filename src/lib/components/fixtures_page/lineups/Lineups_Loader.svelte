@@ -3,16 +3,13 @@
 ==================== -->
 
 <script lang="ts">
-  import { fade } from "svelte/transition";
   import { onMount } from "svelte";
-  import { page } from "$app/stores";
-  import { dev } from '$app/environment';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import MobileLoaderTeamSelRow from "./loaders/mobile/Loader_Team_Sel_Row.svelte";
 	import MobileLoaderPitchVector from "./loaders/mobile/Loader_Pitch_Vector.svelte";
 	import MobileLoaderTeamRow from "./loaders/mobile/Loader_Team_Row.svelte";
+	import MobileLoaderTeamSelRow from "./loaders/mobile/Loader_Team_Sel_Row.svelte";
 
 	import TabletLoaderPitchVector from "./loaders/tablet/Loader_Pitch_Vector.svelte";
 	import TabletLoaderTeamRowLeft from "./loaders/tablet/Loader_Team_Row_Left.svelte";

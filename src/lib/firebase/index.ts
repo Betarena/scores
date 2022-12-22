@@ -4,7 +4,7 @@
  * & methods;
  */
 import { dev } from '$app/environment';
-import { ref, get, child } from 'firebase/database';
+import { child, get, ref } from 'firebase/database';
 
 import { db_real } from './init';
 
@@ -30,10 +30,10 @@ export async function getTargetFixtureOdds (
 	const month_: number = new Date(fixture_data.date).getMonth();
 	// ... apply-correct-month-structure;
 	let new_month_ = (month_ + 1).toString();
-	new_month_ = ('0' + new_month_).slice(-2);
+	new_month_ = (`0${new_month_}`).slice(-2);
 	// ... apply-correct-day-structure;
 	let day_ = new Date(fixture_data.date).getUTCDate().toString();
-	day_ = ('0' + day_).slice(-2);
+	day_ = (`0${day_}`).slice(-2);
 	// ... obtain FIXTURE-ID;
 	const fixtureId = fixture_data.fixture_id;
 	// ... obtain-fixture-language;
@@ -91,11 +91,11 @@ export async function getTargetFixtureOdds (
  *
  * @param userGeoLocation
 */
-export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise<any> {
+export async function getTargetGeoSportBookDetails(lang: string, siteName?: string): Promise<unknown> {
 	// ... return the odds-site info & the odds values;
 	if (siteName != undefined) {
     if (dev) logDevGroup ("firebase [DEV]", `siteName: ${siteName}`)
-		return get(child(ref(db_real), `sportsbook_details/${lang}`)).then((snapshot) => {
+		return await get(child(ref(db_real), `sportsbook_details/${lang}`)).then((snapshot) => {
 			// ... check if the data exists (should exist at all times anyway);
 			if (snapshot.exists()) {
 

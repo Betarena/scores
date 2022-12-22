@@ -7,18 +7,18 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  import PlaceholderRowRight from './loaders/desktop/_Placeholder_Row_Right.svelte';
-  import PlaceholderRowLeft from './loaders/desktop/_Placeholder_Row_Left.svelte';
-  import PlaceholderHead from './loaders/desktop/_Placeholder_Head.svelte';
-  import PlaceholderViewSel from './loaders/desktop/_Placeholder_ViewSel.svelte';
   import PlaceholderBottom from './loaders/desktop/_Placeholder_Bottom.svelte';
+  import PlaceholderHead from './loaders/desktop/_Placeholder_Head.svelte';
+  import PlaceholderRowLeft from './loaders/desktop/_Placeholder_Row_Left.svelte';
+  import PlaceholderRowRight from './loaders/desktop/_Placeholder_Row_Right.svelte';
+  import PlaceholderViewSel from './loaders/desktop/_Placeholder_ViewSel.svelte';
 
   import PlaceholderBottomM from './loaders/mobile/_Placeholder_Bottom.svelte';
   import PlaceholderHeadM from './loaders/mobile/_Placeholder_Head.svelte';
-  import PlaceholderViewSelM from './loaders/mobile/_Placeholder_ViewSel.svelte';
-  import PlaceholderRowLeftM from './loaders/mobile/_Placeholder_Row_Left_M.svelte'
-  import PlaceholderRowRightM from './loaders/mobile/_Placeholder_Row_Right_M.svelte'
+  import PlaceholderRowLeftM from './loaders/mobile/_Placeholder_Row_Left_M.svelte';
+  import PlaceholderRowRightM from './loaders/mobile/_Placeholder_Row_Right_M.svelte';
   import PlaceholderTableViewM from './loaders/mobile/_Placeholder_Table_View.svelte';
+  import PlaceholderViewSelM from './loaders/mobile/_Placeholder_ViewSel.svelte';
   
   let showNum: number = 10;
 

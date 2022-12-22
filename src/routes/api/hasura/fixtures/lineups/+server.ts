@@ -1,32 +1,28 @@
-import { dev } from '$app/environment';
-import fs from 'fs';
+import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
-import { error, json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { REDIS_CACHE_LINEUPS_DATA_3, REDIS_CACHE_LINEUPS_DATA_4 } from '$lib/graphql/fixtures/lineups/query';
+import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
 import type {
-	BETARENA_HASURA_lineups_query,
-	BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
-	BETARENA_HASURA_SURGICAL_JSONB_scores_football_players,
-	Fixture_Lineups,
-	Fixture_Player,
-	REDIS_CACHE_SINGLE_lineups_data,
-	Sub_Player,
-	Team_Lineup
+  BETARENA_HASURA_lineups_query,
+  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
+  BETARENA_HASURA_SURGICAL_JSONB_scores_football_players,
+  Fixture_Lineups,
+  Fixture_Player,
+  REDIS_CACHE_SINGLE_lineups_data,
+  Sub_Player,
+  Team_Lineup
 } from '$lib/models/fixtures/lineups/types';
 
 // [ℹ] debug info
 const logs = [];
-let t0;
-let t1;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
 	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 	const target_season_fixtures = await main(fixture_id);
 	return json(target_season_fixtures);
@@ -389,7 +385,7 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_lineups_dat
   // [ℹ] generate [final] fixture object
   const fixture_object: Fixture_Lineups = {
     id: fixture_id,
-    status: status,
+    status,
     home: home_team_obj,
     away: away_team_obj,
     events: fixture_data?.events_j,
@@ -409,15 +405,15 @@ async function get_target_fixture(
 ): Promise<BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[]> {
 	// [ℹ] obtain target historic_fixtures [fixture_id]
 	const queryName = 'REDIS_CACHE_LINEUPS_DATA_3';
-	t0 = performance.now();
+	const t0 = performance.now();
 	const VARIABLES = {
-		fixture_id: fixture_id
+		fixture_id
 	};
 	const response: BETARENA_HASURA_lineups_query = await initGrapQLClient().request(
 		REDIS_CACHE_LINEUPS_DATA_3,
 		VARIABLES
 	);
-	t1 = performance.now();
+	const t1 = performance.now();
 	logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
 	return response.historic_fixtures;
@@ -453,11 +449,11 @@ async function generate_players_map (
   const players_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_players>()
 
   // [ℹ] conversion to hashmap
-  t0 = performance.now();
-  for (const h_fixture of players_arr) {
+  const t0 = performance.now();
+  for await (const h_fixture of players_arr) {
     players_map.set(h_fixture.player_id, h_fixture);
   }
-  t1 = performance.now();
+  const t1 = performance.now();
   logs.push(`players_map generated with size: ${players_map.size}`)
   logs.push(`Hashmap conversion completed in: ${(t1 - t0) / 1000} sec`);
 

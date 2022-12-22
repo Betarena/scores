@@ -1,12 +1,11 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import { get_target_hset_cache_data, league_info_cache_data_addr } from '../../std_main';
 
 /**
  * @type {import('@sveltejs/kit').RequestHandler}
  */
-export async function GET(req, res): Promise<any> {
+export async function GET(req): Promise<unknown> {
 	const url: string = req.url['searchParams'].get('url');
 
 	const response_cache = await get_target_hset_cache_data(league_info_cache_data_addr, url);

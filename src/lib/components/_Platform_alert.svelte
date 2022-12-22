@@ -3,7 +3,6 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
-  import { page } from "$app/stores";
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
 
   export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;

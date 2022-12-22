@@ -1,14 +1,11 @@
-import { dev } from '$app/environment';
-import { error, json } from '@sveltejs/kit';
+import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	fixture_scoreboard_cache_trans_addr,
-	fixture_scoreboard_cache_data_addr
+    fixture_scoreboard_cache_data_addr, fixture_scoreboard_cache_trans_addr, get_target_hset_cache_data
 } from '../../std_main';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
-export async function GET(req, res): Promise<unknown> {
+export async function GET(req): Promise<unknown> {
 	const lang: string = req.url['searchParams'].get('lang');
 	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 

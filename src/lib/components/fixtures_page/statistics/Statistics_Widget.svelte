@@ -3,28 +3,25 @@
 =================-->
 
 <script lang="ts">
-  import { afterUpdate, onDestroy, onMount } from "svelte";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { logDevGroup, log_info_group } from "$lib/utils/debug";
+  import { onDestroy, onMount } from "svelte";
 
+  import { db_real } from "$lib/firebase/init";
+  import { get_livescores_now } from "$lib/firebase/scoreboard";
   import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { get_livescores_now } from "$lib/firebase/scoreboard";
-	import { onValue, ref, type Unsubscribe } from "firebase/database";
-	import { db_real } from "$lib/firebase/init";
-
-	import type { 
-    FIREBASE_livescores_now 
-  } from "$lib/models/firebase";
+  import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
-    REDIS_CACHE_SINGLE_fixtures_page_info_response 
-  } from "$lib/models/_main_/pages_and_seo/types";
+		FIREBASE_livescores_now
+	} from "$lib/models/firebase";
 
-	import type { 
-    REDIS_CACHE_SINGLE_statistics_data, 
-    REDIS_CACHE_SINGLE_statistics_translation 
-  } from "$lib/models/fixtures/statistics/types";
+	
+	import type {
+		REDIS_CACHE_SINGLE_statistics_data,
+		REDIS_CACHE_SINGLE_statistics_translation
+	} from "$lib/models/fixtures/statistics/types";
 
 	import StatisticsLoader from "./Statistics_Loader.svelte";
 	import StatisticsRow from "./Statistics_Row.svelte";
@@ -302,7 +299,7 @@
   $: if (
     FIXTURE_STATISTICS
     && browser 
-    && (FIXTURE_STATISTICS?.status == "NS" || FIXTURE_STATISTICS?.status == "POST")
+    && (["NS", "TBA", "POSTP"].includes(FIXTURE_STATISTICS?.status))
     && (FIXTURE_STATISTICS?.stats == undefined || FIXTURE_STATISTICS?.stats.length == 0)) {
     no_widget_data = true
     loaded = true

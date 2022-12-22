@@ -1,12 +1,12 @@
 // [ℹ] https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
 // [ℹ] https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
 
-import { handler } from './build/handler.js';
 import express from 'express';
-import sslRedirect from 'heroku-ssl-redirect';
-import * as sslify from 'express-sslify';
-import * as requestIp from 'request-ip'     // https://www.npmjs.com/package/request-ip
+import { handler } from './build/handler.js';
+// import sslRedirect from 'heroku-ssl-redirect';
 import compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
+import * as sslify from 'express-sslify';
+import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/request-ip
 
 const app = express();
 
@@ -30,20 +30,20 @@ const app = express();
 */
 app.get('/getClientIP', (req, res, next) => {
 
-  var ip = req.headers['x-forwarded-for'] ||
+  const ip = req.headers['x-forwarded-for'] ||
     req.socket.remoteAddress ||
     null;
   console.log('ip', ip);
 
-  var ip2 = req.ip
+  const ip2 = req.ip
   console.log('ip2', ip2);
 
-  var ip3 = requestIp.getClientIp(req); 
+  const ip3 = requestIp.getClientIp(req); 
   console.log('ip3', ip3);
 
-  var ipAddr = req.headers["x-forwarded-for"];
+  let ipAddr = req.headers["x-forwarded-for"];
   if (ipAddr){
-    var list = ipAddr.split(",");
+    const list = ipAddr.split(",");
     ipAddr = list[list.length-1];
   } else {
     ipAddr = req.connection.remoteAddress;

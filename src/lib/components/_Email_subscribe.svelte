@@ -4,9 +4,9 @@
 =================== -->
 
 <script lang="ts">
-	import { getStores, navigating, page, updated } from '$app/stores';
-  import { fade } from 'svelte/transition';
-  import { sessionStore } from '$lib/store/session';
+	import { page } from '$app/stores';
+	import { sessionStore } from '$lib/store/session';
+	import { fade } from 'svelte/transition';
 
   // ... immediately update the data with the lang;
 	let server_side_language: string = 'en';

@@ -1,34 +1,30 @@
-import { dev } from '$app/environment'
-import fs from 'fs';
+import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
-import { error, json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { 
+import {
   REDIS_CACHE_SCOREBOARD_ODDS_DATA_2,
-  REDIS_CACHE_SCOREBOARD_ODDS_DATA_3 
+  REDIS_CACHE_SCOREBOARD_ODDS_DATA_3
 } from '$lib/graphql/fixtures/scoreboard/query';
+import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
-import type { 
+import type {
   BETARENA_HASURA_scoreboard_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
   BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues,
-  Fixture_Scoreboard_Info, 
-  Fixture_Scoreboard_Team, 
-  REDIS_CACHE_SINGLE_scoreboard_data 
+  Fixture_Scoreboard_Info,
+  Fixture_Scoreboard_Team,
+  REDIS_CACHE_SINGLE_scoreboard_data
 } from '$lib/models/fixtures/scoreboard/types';
 import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = []
-let t0;
-let t1;
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-export async function GET(req, res): Promise < unknown > {
+export async function GET(req): Promise < unknown > {
   const fixture_id: string = req.url['searchParams'].get('fixture_id');
   const target_season_fixtures = await main(fixture_id)
   return json(target_season_fixtures)
@@ -150,15 +146,15 @@ async function get_target_fixture (
 
   // [ℹ] obtain target historic_fixtures [fixture_id]
   const queryName = "REDIS_CACHE_SCOREBOARD_ODDS_DATA_3";
-  t0 = performance.now();
+  const t0 = performance.now();
   const VARIABLES = {
-    fixture_id: fixture_id
+    fixture_id
   }
   const response: BETARENA_HASURA_scoreboard_query = await initGrapQLClient().request (
     REDIS_CACHE_SCOREBOARD_ODDS_DATA_3,
     VARIABLES
   );
-  t1 = performance.now();
+  const t1 = performance.now();
   logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
   return response.historic_fixtures;
@@ -169,7 +165,7 @@ async function get_target_league_and_tournament_info (
 ): Promise < [BETARENA_HASURA_SURGICAL_JSONB_scores_football_leagues[], BETARENA_HASURA_scores_tournaments[]] > {
 
   const VARIABLES_1 = {
-    league_ids_arr: league_ids_arr,
+    league_ids_arr,
     league_ids_arr_2: league_ids_arr
   }
   

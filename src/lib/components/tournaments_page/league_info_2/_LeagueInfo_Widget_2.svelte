@@ -5,18 +5,16 @@
 <script lang="ts">
 
   // [ℹ] svelte-imports;
-  import { fade } from "svelte/transition";
-  import { afterUpdate, onDestroy, onMount } from "svelte";
-  import { page } from "$app/stores";
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
   import { logDevGroup } from "$lib/utils/debug";
+  import { onMount } from "svelte";
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
-  import type { 
-    Cache_Single_Tournaments_League_Info_Data_Response 
+  import type {
+  	Cache_Single_Tournaments_League_Info_Data_Response
   } from "$lib/models/tournaments/league-info/types";
 
   import LeagueInfoWidget_2ContentLoader from "./_LeagueInfo_Widget_2_ContentLoader.svelte";

@@ -580,6 +580,7 @@ export interface BETARENA_HASURA_scores_football_seasons_details {
   goalscorers?:       SeasonDetailsGoalscorers[];
   assistscorers?:     SeasonDetailsAssistscorers[];
   squad?:             SeasonDetailsSquad[];
+  stages?:            SeasonDetailsStagesDataum[];
 } export interface SeasonDetailsDataStats {
   id?:                                    number;
   btts?:                                  number;
@@ -755,6 +756,15 @@ export interface BETARENA_HASURA_scores_football_seasons_details {
   shots_total?:      null;
   shots_on_target?:  null;
   shots_off_target?: null;
+} export interface SeasonDetailsStagesDataum {
+  id?:                   number;
+  name?:                 string;
+  type?:                 null | string;
+  league_id?:            number;
+  season_id?:            number;
+  sort_order?:           number | null;
+  has_standings?:        boolean;
+  has_outgroup_matches?: number;
 }
 
 /**
@@ -1132,8 +1142,10 @@ export interface BETARENA_HASURA_historic_fixtures {
   player_assist_name?:  string;
 } export enum FluffyType2 {
   Goal = "goal",
-  MissedPenalty = "missed_penalty",
+  MissPenaltyShootOut = "pen_shootout_miss",
+  GoalPenaltyShootOut = "pen_shootout_goal",
   OwnGoal = "own-goal",
+  MissedPenalty = "missed_penalty",
   Penalty = "penalty",
   Substitution = "substitution",
   Var = "var",

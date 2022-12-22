@@ -1,9 +1,7 @@
-import cookie from 'cookie';                // https://www.npmjs.com/package/cookie
-import { v4 as uuid } from '@lukeed/uuid';  // https://www.npmjs.com/package/@lukeed/uuid
-import type { Handle } from '@sveltejs/kit';
-import { getUserLocationFromIP } from '$lib/geoJs/init';
-import { prerendering } from '$app/environment';
+import { v4 as uuid } from '@lukeed/uuid';
+import cookie from 'cookie';
 
+import type { Handle } from '@sveltejs/kit';
 // https://dev.to/krowemoh/sveltekit-hooks-2bii
 // https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
 // https://rodneylab.com/sveltekit-session-cookies/
