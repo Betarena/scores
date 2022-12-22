@@ -49,6 +49,7 @@
   
 	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
 	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
+	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
 
   import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
   import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
