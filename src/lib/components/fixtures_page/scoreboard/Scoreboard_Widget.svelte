@@ -183,6 +183,7 @@
   function trigger_content_view(view: 'overview' | 'news') {
     $sessionStore.fixture_select_view = view;
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    setTimeout(async() => { window.scrollTo({ top: 0, behavior: 'smooth' }); }, 150)
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
