@@ -12,6 +12,7 @@
 		REDIS_CACHE_SINGLE_lineups_translation
 	} from "$lib/models/fixtures/lineups/types";
 
+  import { FIXTURE_LIVE_TIME_OPT, type FIXTURE_STATUS_TYPES } from "$lib/models/sportmonks";
   import substitution from './assets/corner-up-right.svg';
   import football from './assets/football.svg';
   import injured from './assets/injured.svg';
@@ -24,7 +25,7 @@
 
   export let PLAYER_INFO:                 Fixture_Player;
   export let FIXTURE_LINEUPS_TRANSLATION: REDIS_CACHE_SINGLE_lineups_translation;
-  export let STATUS:                      string
+  export let STATUS:                      FIXTURE_STATUS_TYPES
   export let TYPE:                        'R' | 'L'
 
   let ratingColorCode:    string;
@@ -199,7 +200,7 @@
           class="row-space-end"
           style="width: auto;">
           {#if 
-            ["FT", "FT_PEN", "LIVE"].includes(STATUS)
+            FIXTURE_LIVE_TIME_OPT.includes(STATUS)
             && PLAYER_INFO?.rating != undefined
             && parseInt(PLAYER_INFO?.rating) != 0}
             <p 
@@ -223,7 +224,7 @@
           class="row-space-start"
           style="width: auto;">
           {#if 
-            ["FT", "FT_PEN", "LIVE"].includes(STATUS)
+            FIXTURE_LIVE_TIME_OPT.includes(STATUS)
             && PLAYER_INFO?.rating != undefined
             && parseInt(PLAYER_INFO?.rating) != 0}
             <p 
