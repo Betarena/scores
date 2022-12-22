@@ -2744,7 +2744,6 @@
   /* 
     [ℹ] OTHER STYLE / CSS 
   */
-
   #background-area-close {
     position: absolute;
     top: 0;
@@ -2755,7 +2754,6 @@
     width: 100%;
     z-index: 1000;
   }
-
   a.disable-anchor {
     pointer-events: none;
   }
@@ -2782,13 +2780,11 @@
     border-radius: 12px;
     text-align: center;
   }
-
   
   /*
     [ℹ] WIDGET MAIN STYLE / CSS 
     [ℹ] MOBILE FIRST
   */
-
   div#fix-odds-view-box {
     padding: 20px;
     padding-bottom: 0;
@@ -2813,7 +2809,6 @@
   div#mobile-middle-control-row {
     padding: 0 20px;
   }
-
   div#widget-round-week-select {
     width: fit-content;
   } div#widget-round-week-select input[type="radio"] {
@@ -2854,20 +2849,17 @@
     padding-right: 6px;
     right: 0;
   } div#dropdown-seasons div#dropdown-list-main-container::-webkit-scrollbar  {
-    /* Hide scrollbar for Chrome, Safari and Opera */
-    display: none;
-  } div#dropdown-seasons div#dropdown-list-main-container::-webkit-scrollbar  {
     /* Hide scrollbar for IE, Edge and Firefox */ 
     -ms-overflow-style: none;  /* IE and Edge */
     scrollbar-width: none;  /* Firefox */
+    /* Hide scrollbar for Chrome, Safari and Opera */
+    display: none;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container {
-    /* height: 308px; */
     max-height: 308px;
     overflow-y: scroll;
     overflow-x: hidden;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season {
-    /* padding: 11px 20px; */
-    padding: 11px 2px;
+    padding: 11px 2px 11px 8px;
     white-space: nowrap;
     text-align: center;
   } div#dropdown-seasons div#dropdown-list-main-container div#dropdown-list-inner-container .row-season:hover {
