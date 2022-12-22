@@ -1,4 +1,4 @@
-import type { 
+import type {
   BETARENA_HASURA_historic_fixtures,
   BETARENA_HASURA_historic_fixtures_aggregate,
   BETARENA_HASURA_scores_fixture_scoreboard_translations,
@@ -12,6 +12,7 @@ import type {
   ScoresTournamentsUrls,
   Time
 } from "$lib/models/hasura"
+import type { FIXTURE_STATUS_TYPES } from "$lib/models/sportmonks"
 
 /**
  * ==========================================
@@ -93,8 +94,8 @@ export interface Fixture_Scoreboard_Info {
   minute?: number                 // [firebase] Live Score Now Firebase
   // NOTE: Scoreboard after the match;
   score_post?: Fixture_Scorebaord_Scores // [hasura] JSON($path) historic_fixtures/data/scores
-  status?: string                 // [hasura] historic_fixtures/status
-  post_date?: string              // [hasura] historic_fixtures/time
+  status?: FIXTURE_STATUS_TYPES          // [hasura] historic_fixtures/status
+  post_date?: string                     // [hasura] historic_fixtures/time
 } export interface Fixture_Scoreboard_Team {
   name?: string
   score?: number
