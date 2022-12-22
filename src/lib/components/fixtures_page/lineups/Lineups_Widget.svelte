@@ -217,7 +217,9 @@
       for (const player of FIXTURE_LINEUPS.home.lineup) {
         // [ℹ] update player ratings
         for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
-          player.rating = fixture_lineup?.stats?.rating;
+          if (player?.player_id == fixture_lineup?.player_id) {
+            player.rating = fixture_lineup?.stats?.rating;
+          }
         }
         // [ℹ] reset player events
         player.events = {
@@ -265,7 +267,9 @@
       for (const player of FIXTURE_LINEUPS.away.lineup) {
         // [ℹ] update player ratings
         for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
-          player.rating = fixture_lineup?.stats?.rating;
+          if (player?.player_id == fixture_lineup?.player_id) {
+            player.rating = fixture_lineup?.stats?.rating;
+          }
         }
         // [ℹ] reset player events
         player.events = {
@@ -313,7 +317,9 @@
       for (const player of FIXTURE_LINEUPS.home.bench) {
         // [ℹ] update player ratings
         for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
-          player.rating = fixture_lineup?.stats?.rating;
+          if (player?.player_id == fixture_lineup?.player_id) {
+            player.rating = fixture_lineup?.stats?.rating;
+          }
         }
         // [ℹ] reset player events
         player.events = {
@@ -361,7 +367,9 @@
       for (const player of FIXTURE_LINEUPS.away.bench) {
         // [ℹ] update player ratings
         for (const fixture_lineup of FIREBASE_LINEUPS_DATA) {
-          player.rating = fixture_lineup?.stats?.rating;
+          if (player?.player_id == fixture_lineup?.player_id) {
+            player.rating = fixture_lineup?.stats?.rating;
+          }
         }
         // [ℹ] reset player events
         player.events = {
@@ -408,6 +416,7 @@
 
       // [ℹ] reactiveity on-set main
       FIXTURE_LINEUPS = FIXTURE_LINEUPS
+      if (dev) console.log('FIXTURE_LINEUPS UPDATED', FIXTURE_LINEUPS)
     }
 
     // TODO: lazy_load_data_check = true
