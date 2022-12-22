@@ -31,6 +31,7 @@
 	import IncidentsLoader from "./Incidents_Loader.svelte";
 	import IncidentRow from "./Incident_Row.svelte";
 
+	import { FIXTURE_FULL_TIME_OPT, FIXTURE_NOT_START_OPT } from '$lib/models/sportmonks';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -85,7 +86,7 @@
 
     // [ℹ] data validation check [#2]
     const validation_check =
-      ["POSTP"].includes(FIXTURE_INCIDENTS?.status)
+      FIXTURE_NOT_START_OPT.includes(FIXTURE_INCIDENTS?.status)
     ;
 
     no_widget_data =
@@ -222,7 +223,7 @@
   ): Promise < void > {
 
     const fixture_status = FIXTURE_INCIDENTS?.status;
-    if (["FT", "FT_PEN"].includes(fixture_status)) {
+    if (FIXTURE_FULL_TIME_OPT.includes(fixture_status)) {
       return
     }
 
