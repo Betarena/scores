@@ -889,7 +889,8 @@
 
     /**
      * [ℹ] group-by fixtures "fixture-day" using a map
-     * [ℹ] sorted by fixture-time in "ASC" order
+     * [ℹ] sort key => values by fixture-time in "ASC" order
+     * [ℹ] and, generate array from set map data with array-objects
     */
     const fixtures_group_by_date = new Map <string, Tournament_Fixture_Odds[]> ();
     for (const fixture of temp_fixtures_odds_arr) {
@@ -923,6 +924,7 @@
       new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
+    // [🐞]
     if (dev) console.log('fixtures_arr_filter', fixtures_arr_filter)
 
     // [ℹ] break-down-values
