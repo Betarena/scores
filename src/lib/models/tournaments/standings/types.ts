@@ -1,15 +1,15 @@
-import type { 
+import type {
   BETARENA_HASURA_color_codes_league_standings_positions,
   BETARENA_HASURA_scores_football_leagues,
-  BETARENA_HASURA_scores_football_standings, 
-  BETARENA_HASURA_scores_football_standings_history, 
-  BETARENA_HASURA_scores_football_teams, 
-  BETARENA_HASURA_scores_general_translations, 
-  BETARENA_HASURA_scores_team_statistics, 
-  BETARENA_HASURA_scores_team_statistics_history, 
+  BETARENA_HASURA_scores_football_standings,
+  BETARENA_HASURA_scores_football_standings_history,
+  BETARENA_HASURA_scores_football_teams,
+  BETARENA_HASURA_scores_general_translations,
+  BETARENA_HASURA_scores_team_statistics,
+  BETARENA_HASURA_scores_team_statistics_history,
   BETARENA_HASURA_scores_widget_standings_translations,
-  WidgetsNoDataAvailable, 
-} from "../../../../lib/models/hasura.js"
+  WidgetsNoDataAvailable
+} from "../../../../lib/models/hasura.js";
 
 /**
  * ==========================================
@@ -36,8 +36,8 @@ export interface LeagueSeason {
 
 export interface BETARENA_HASURA_tournament_standings_query {
   scores_football_leagues:                  BETARENA_HASURA_scores_football_leagues[]
-  dev_scores_football_standings:            BETARENA_HASURA_scores_football_standings[]    
-  dev_scores_football_standings_history:    BETARENA_HASURA_scores_football_standings_history[]
+  scores_football_standings:            BETARENA_HASURA_scores_football_standings[]    
+  scores_football_standings_history:    BETARENA_HASURA_scores_football_standings_history[]
 
   scores_football_teams:                    BETARENA_HASURA_scores_football_teams[]
   scores_team_statistics:                   BETARENA_HASURA_scores_team_statistics[]
