@@ -17,6 +17,7 @@ import type { REDIS_CACHE_SINGLE_scoreboard_data, REDIS_CACHE_SINGLE_scoreboard_
 import type { REDIS_CACHE_SINGLE_statistics_data, REDIS_CACHE_SINGLE_statistics_translation } from '$lib/models/fixtures/statistics/types';
 import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
+import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 import type { REDIS_CACHE_SINGLE_fixtures_page_info_response, REDIS_CACHE_SINGLE_fixtures_seo_response, REDIS_CACHE_SINGLE_general_countries_translation } from '$lib/models/_main_/pages_and_seo/types';
 
 /** @type {import('./$types').PageLoad} */
@@ -335,6 +336,12 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  const response_fixtures_odds_translations: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = await fetch(
+    `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`, {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -359,6 +366,8 @@ export async function load({
     && response_about_translation
     && response_votes_translation
     && response_probability_translation
+    // extra
+    && response_fixtures_odds_translations
   ) {
     return {
       PAGE_SEO: response_fixtures_seo,
@@ -377,7 +386,9 @@ export async function load({
       FIXTURE_ABOUT: response_about,
       FIXTURE_ABOUT_TRANSLATION: response_about_translation,
       FIXTURE_VOTES_TRANSLATION: response_votes_translation,
-      FIXTURE_PROBS_TRANSLATION: response_probability_translation
+      FIXTURE_PROBS_TRANSLATION: response_probability_translation,
+      // extra
+      FIXTURES_ODDS_T: response_fixtures_odds_translations
     }
   }
 

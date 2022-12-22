@@ -59,6 +59,7 @@
   import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
   import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
   import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+  import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
   import SvelteSeo from 'svelte-seo';
 
   let PAGE_SEO:                       REDIS_CACHE_SINGLE_fixtures_seo_response
@@ -78,6 +79,7 @@
   let FIXTURE_ABOUT_TRANSLATION:      REDIS_CACHE_SINGLE_about_translation
   let FIXTURE_VOTES_TRANSLATION:      REDIS_CACHE_SINGLE_votes_translation
   let FIXTURE_PROBS_TRANSLATION:      REDIS_CACHE_SINGLE_probabilities_translation
+  let FIXTURES_ODDS_T:                REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -100,6 +102,7 @@
   $: FIXTURE_ABOUT_TRANSLATION      = $page.data.FIXTURE_ABOUT_TRANSLATION;
   $: FIXTURE_VOTES_TRANSLATION      = $page.data.FIXTURE_VOTES_TRANSLATION;
   $: FIXTURE_PROBS_TRANSLATION      = $page.data.FIXTURE_PROBS_TRANSLATION;
+  $: FIXTURES_ODDS_T                = $page.data.FIXTURES_ODDS_T;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -371,7 +374,7 @@
   [ℹ] widgets 
   [ℹ] TABLET && DESKTOP -->
   {:else}
-    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} />
+    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} {FIXTURES_ODDS_T} />
     <!-- 
     [ℹ] "Overview" view selection -->
     <div

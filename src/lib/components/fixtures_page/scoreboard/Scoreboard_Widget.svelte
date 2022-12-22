@@ -38,6 +38,7 @@
 	import no_visual_dark from './assets/no_visual_dark.svg';
 // import banner from './assets/banner.svg';
   import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT, FIXTURE_NOT_START_OPT } from '$lib/models/sportmonks';
+  import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
   import close_icon from './assets/close.svg';
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -48,6 +49,7 @@
 	export let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
   export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
   export let FIXTURE_CONTENT:    REDIS_CACHE_SINGLE_content_data[]
+  export let FIXTURES_ODDS_T:    REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
 
   let SPORTBOOK_INFO:            Cache_Single_SportbookDetails_Data_Response;
   let SPORTBOOK_DETAILS_LIST:    Cache_Single_SportbookDetails_Data_Response[]
@@ -787,7 +789,7 @@
                             ft-text
                             text-center
                           ">
-                          {FIXTURE_SCOREBOARD?.status}
+                          {FIXTURES_ODDS_T?.status_abv[FIXTURE_SCOREBOARD?.status]}
                         </p>
                       {/if}
                       <p 
@@ -1188,7 +1190,7 @@
                             ft-text
                             text-center
                           ">
-                          {FIXTURE_SCOREBOARD?.status}
+                          {FIXTURES_ODDS_T?.status_abv[FIXTURE_SCOREBOARD?.status]}
                         </p>
                       {/if}
                       <p 
@@ -1577,7 +1579,7 @@
                               ft-text
                               text-center
                             ">
-                            {FIXTURE_SCOREBOARD?.status}
+                            {FIXTURES_ODDS_T?.status_abv[FIXTURE_SCOREBOARD?.status]}
                           </p>
                         {/if}
                         <p
@@ -1993,7 +1995,7 @@
                           ft-text
                           text-center
                         ">
-                        {FIXTURE_SCOREBOARD?.status}
+                        {FIXTURES_ODDS_T?.status_abv[FIXTURE_SCOREBOARD?.status]}
                       </p>
                     {/if}
                     <p 
@@ -2245,7 +2247,7 @@
                           ft-text
                           text-center
                         ">
-                        {FIXTURE_SCOREBOARD?.status}
+                        {FIXTURES_ODDS_T?.status_abv[FIXTURE_SCOREBOARD?.status]}
                       </p>
                     {/if}
                     <p 
