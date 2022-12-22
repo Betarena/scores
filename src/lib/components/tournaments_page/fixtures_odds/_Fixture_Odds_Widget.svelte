@@ -2840,7 +2840,8 @@
   } div#dropdown-seasons div#dropdown-list-main-container {
     position: absolute;
     top: 115%;
-    width: 100%;
+    width: auto;
+    min-width: 100%;
     /* background-color: #F2F2F2; */
     background-color: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
