@@ -96,9 +96,9 @@
 
     // [ℹ] data validation check
 		if (
-      FIXTURE_SCOREBOARD == undefined ||
-      response_main_sportbook == undefined || 
-      response_all_spotbooks == undefined
+      FIXTURE_SCOREBOARD == undefined
+      || response_main_sportbook == undefined
+      || response_all_spotbooks == undefined
     ) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
@@ -455,6 +455,7 @@
     if (FIXTURE_FULL_TIME_OPT.includes(fixture_status)) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `fixture is ${fixture_status}!`)
+      lazy_load_data_check = true
       return
     }
 
@@ -476,9 +477,9 @@
     day_ = (`0${day_}`).slice(-2);
 
     // [ℹ] listen to real-time fixture event changes;
-    const fixtureRef = ref (
+    const fixtureRef = ref(
       db_real,
-      'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id
+      `odds/${year_}/${new_month_}/${day_}/${fixture_id}`
     );
 
     const listen_odds_event_ref = onValue(fixtureRef, (snapshot) => {
@@ -490,6 +491,10 @@
           sportbook_array.push(sportbook[1])
         }
         check_fixture_odds_inject(sportbook_array);
+      }
+      else {
+        if (dev) console.log('listen_odds_event_ref | snapshot.val()', snapshot.val())
+        lazy_load_data_check = true
       }
     });
 
@@ -769,6 +774,22 @@
                   {#if FIXTURE_NOT_START_OPT.includes(FIXTURE_SCOREBOARD?.status)}
                     <div
                       style="align-self: center;">
+                      <!-- 
+                      [ℹ] POSTPONED condition
+                      -->
+                      {#if FIXTURE_SCOREBOARD?.status === "POSTP" 
+                        || FIXTURE_SCOREBOARD?.status === "TBA"}
+                        <p
+                          class="
+                            s-14
+                            w-500
+                            color-grey
+                            ft-text
+                            text-center
+                          ">
+                          {FIXTURE_SCOREBOARD?.status}
+                        </p>
+                      {/if}
                       <p 
                         class="
                           w-500 
@@ -1154,6 +1175,22 @@
                     <div
                       class="m-b-30"
                       style="align-self: center;">
+                      <!-- 
+                      [ℹ] POSTPONED condition
+                      -->
+                      {#if FIXTURE_SCOREBOARD?.status === "POSTP" 
+                        || FIXTURE_SCOREBOARD?.status === "TBA"}
+                        <p
+                          class="
+                            s-14
+                            w-500
+                            color-grey
+                            ft-text
+                            text-center
+                          ">
+                          {FIXTURE_SCOREBOARD?.status}
+                        </p>
+                      {/if}
                       <p 
                         class="
                           w-500 
@@ -1527,7 +1564,23 @@
                       <div
                         class="m-b-20"
                         style="align-self: center;">
-                        <p 
+                        <!-- 
+                        [ℹ] POSTPONED condition
+                        -->
+                        {#if FIXTURE_SCOREBOARD?.status === "POSTP" 
+                          || FIXTURE_SCOREBOARD?.status === "TBA"}
+                          <p
+                            class="
+                              s-14
+                              w-500
+                              color-grey
+                              ft-text
+                              text-center
+                            ">
+                            {FIXTURE_SCOREBOARD?.status}
+                          </p>
+                        {/if}
+                        <p
                           class="
                             w-500 
                             s-20
@@ -1927,6 +1980,22 @@
                   <div
                     class="middle-info"
                     style="align-self: center;">
+                    <!-- 
+                    [ℹ] POSTPONED condition
+                    -->
+                    {#if FIXTURE_SCOREBOARD?.status === "POSTP" 
+                      || FIXTURE_SCOREBOARD?.status === "TBA"}
+                      <p
+                        class="
+                          s-14
+                          w-500
+                          color-grey
+                          ft-text
+                          text-center
+                        ">
+                        {FIXTURE_SCOREBOARD?.status}
+                      </p>
+                    {/if}
                     <p 
                       class="
                         w-500 
@@ -2163,6 +2232,22 @@
                   <div
                     class="middle-info"
                     style="align-self: center;">
+                    <!-- 
+                    [ℹ] POSTPONED condition
+                    -->
+                    {#if FIXTURE_SCOREBOARD?.status === "POSTP" 
+                      || FIXTURE_SCOREBOARD?.status === "TBA"}
+                      <p
+                        class="
+                          s-14
+                          w-500
+                          color-grey
+                          ft-text
+                          text-center
+                        ">
+                        {FIXTURE_SCOREBOARD?.status}
+                      </p>
+                    {/if}
                     <p 
                       class="
                         w-500 
