@@ -1250,23 +1250,32 @@
       <h2>{FIXTURES_ODDS_T?.matches}</h2>
       {#if FIXTURES_ODDS_DATA != undefined 
         && FIXTURES_ODDS_DATA?.seasons.length != 0}
+        <!-- 
+        [ℹ] fixtures text loop
+        -->
         {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
           <p>{item?.teams?.away?.name}</p>
           <p>{item?.teams?.home?.name}</p>
-          {#if 
-            item?.tip_link && 
-            item?.tip_link[server_side_language]}
-            <a 
-              href={item?.tip_link[server_side_language]}>
-              {item?.tip_link[server_side_language]}
-            </a>
-          {/if}
+        {/each}
+        <!-- 
+        [ℹ] fixtures FIXTURE LINK loop
+        [ℹ] fixtures TIP LINK loop
+        -->
+        {#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
           {#if 
             item?.fixture_link && 
             item?.fixture_link[server_side_language]}
             <a
               href={item?.fixture_link[server_side_language]}>
-              {item?.teams?.home?.name} vs. {item?.teams?.away?.name}
+              FIXTURE: {item?.teams?.home?.name} vs. {item?.teams?.away?.name}
+            </a>
+          {/if}
+          {#if 
+            item?.tip_link && 
+            item?.tip_link[server_side_language]}
+            <a 
+              href={item?.tip_link[server_side_language]}>
+              TIP: {item?.tip_link[server_side_language]}
             </a>
           {/if}
           <!-- {#if 
