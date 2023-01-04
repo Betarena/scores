@@ -15,7 +15,6 @@ import type {
   Fixture_Head_2_Head,
   REDIS_CACHE_SINGLE_h2h_translation
 } from '$lib/models/fixtures/head-2-head/types';
-import type { BETARENA_HASURA_football_h2h } from '$lib/models/hasura';
 
 // [ℹ] debug info
 const logs = [];
@@ -102,27 +101,41 @@ async function main (
       : `${team_1},${team_2}`
   ;
 
+  const team_ids_arr = [team_1, team_2]
+
   /**
 	 * [ℹ] obtain target football_h2h [team_ids]
   */
 	const football_h2h = await get_target_head2head(
-    team_ids
+    team_ids,
+    team_ids_arr
   );
   // [ℹ] exit
   if (football_h2h == undefined
-    || football_h2h.length == 0) {
+    || football_h2h.football_h2h.length == 0
+    || football_h2h.scores_football_teams.length == 0) {
     // [🐞]
     console.log(`football_h2h has no data on ${team_ids}`)
     console.log(`exiting...`)
     return null;
   }
 
-  const football_h2h_data = football_h2h[0]
+  const football_h2h_data = football_h2h.football_h2h[0]
+  const football_teams_data = football_h2h.scores_football_teams
+
+  const team_1_data = football_teams_data.find( ({ id }) => id == team_1)
+  const team_2_data = football_teams_data.find( ({ id }) => id == team_2)
 
   // [ℹ] generate [final] fixture object
   const fixture_object: Fixture_Head_2_Head = {
     id:     fixture_id || null,
-    data:   football_h2h_data || null
+    data:   football_h2h_data || null,
+    teams_data: {
+      team_1_logo: team_1_data?.data?.logo_path,
+      team_1_name: team_1_data?.data?.name,
+      team_2_logo: team_2_data?.data?.logo_path,
+      team_2_name: team_2_data?.data?.name
+    }
   }
 
   // [ℹ] return fixture
@@ -195,13 +208,15 @@ async function get_target_fixture (
 }
 
 async function get_target_head2head (
-	team_ids: string
-): Promise < BETARENA_HASURA_football_h2h[] > {
+	team_ids: string,
+  team_ids_arr: number[]
+): Promise < BETARENA_HASURA_head_2_head_query > {
 	// [ℹ] obtain target historic_fixtures [fixture_id]
 	const queryName = 'REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1';
 	const t0 = performance.now();
 	const VARIABLES = {
-		team_ids
+		team_ids,
+    team_ids_arr
 	};
 	const response: BETARENA_HASURA_head_2_head_query = await initGrapQLClient().request(
 		REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1,
@@ -210,7 +225,7 @@ async function get_target_head2head (
 	const t1 = performance.now();
 	logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
-	return response.football_h2h;
+	return response;
 }
 
 async function get_widget_translations (

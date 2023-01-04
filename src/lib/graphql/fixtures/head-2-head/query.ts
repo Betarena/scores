@@ -45,6 +45,7 @@ export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1 = gql`
   query REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1
   (
     $team_ids: String!
+    $team_ids_arr: [numeric!]
   ) 
   @cached
   (ttl: 300)
@@ -63,6 +64,18 @@ export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1 = gql`
       yellow_cards_avg
       overs
       btts
+    }
+    scores_football_teams (
+      where: {
+        id: {
+          _in: $teamIds
+        }
+      }
+    )
+    { # [ℹ] BY TEAM ID
+      id
+      name
+      data
     }
   }
 `;
