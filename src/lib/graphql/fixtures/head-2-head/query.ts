@@ -44,7 +44,7 @@ export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_0 = gql`
 export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1 = gql`
   query REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1
   (
-    $team_ids: String!
+    $team_ids: String!,
     $team_ids_arr: [numeric!]
   ) 
   @cached
@@ -68,7 +68,7 @@ export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1 = gql`
     scores_football_teams (
       where: {
         id: {
-          _in: $teamIds
+          _in: $team_ids_arr
         }
       }
     )
