@@ -13,7 +13,8 @@
 	import LoaderPastFixture from "./loaders/tablet/Loader_Past_Fixture.svelte";
 	import LoaderTopProgressBar from "./loaders/tablet/Loader_Top_Progress_Bar.svelte";
 	import LoaderTopStatsBox from "./loaders/tablet/Loader_Top_Stats_Box.svelte";
-	import LoaderTopWidgetTeamInfo from "./loaders/tablet/Loader_Top_Widget_Team_Info.svelte";
+	import LoaderTopWidgetTeamInfo_L from "./loaders/tablet/Loader_Top_Widget_Team_Info_L.svelte";
+	import LoaderTopWidgetTeamInfo_R from "./loaders/tablet/Loader_Top_Widget_Team_Info_R.svelte";
 	import TopWidgetText from "./loaders/tablet/Loader_Top_Widget_Text.svelte";
 
 	import MobileLoaderPastFixture from "./loaders/mobile/Loader_Past_Fixture.svelte";
@@ -66,7 +67,7 @@
   [ℹ] widget-component 
   -->
   <div 
-    id="fixture-prob-loader"
+    id="h2h-fixture-loader"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
     <!-- 
@@ -74,10 +75,16 @@
     -->
     {#if mobileExclusive}
 
-      <TopWidgetText />
+      <div
+        class="top-text-box">
+        <TopWidgetText />
+      </div>
 
       <div
-        class="row-space-out">
+        id="team-info-row"
+        class="
+          row-space-out
+        ">
         <MobileLoaderTeamIcon />
         <LoaderTopStatsBox />
         <MobileLoaderTeamIcon />
@@ -126,13 +133,17 @@
     -->
     {#if !mobileExclusive}
 
-      <TopWidgetText />
+      <div
+        class="top-text-box">
+        <TopWidgetText />
+      </div>
       
       <div
+        id="team-info-row"
         class="row-space-out">
-        <LoaderTopWidgetTeamInfo />
+        <LoaderTopWidgetTeamInfo_L />
         <LoaderTopStatsBox />
-        <LoaderTopWidgetTeamInfo />
+        <LoaderTopWidgetTeamInfo_R />
       </div>
 
       <div
@@ -183,7 +194,7 @@
 
 <style>
 
-  #fixture-prob-loader {
+  #h2h-fixture-loader {
     display: grid;
     background: #ffffff;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -196,6 +207,16 @@
     min-width: -webkit-fill-available;
     margin-top: 40px;
     position: relative;
+  }
+
+  div.top-text-box {
+    width: 100%;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+
+  div#team-info-row {
+    margin-bottom: 15px;
   }
 
   /* fixture bet info */
@@ -215,6 +236,10 @@
     justify-content: center;
   }
 
+  :global(div#h2h-fixture-loader svg) {
+    width: auto !important;
+  }
+
   /* ====================
     responsivness
   ==================== */
@@ -223,7 +248,7 @@
   [TABLET] && [DESKTOP] RESPONSIVNESS */
   @media only screen and (min-width: 767px) {
 
-    #fixture-prob-loader {
+    #h2h-fixture-loader {
       min-width: 100%;
       /* max-width: 700px; */
     }
@@ -231,6 +256,8 @@
     div#grid-bet-stats {
       position: relative;
       display: grid;
+      grid-gap: 15px;
+      margin-top: 20px;
       grid-auto-flow: row;
       grid-template-columns: 1fr 1fr;
     }
@@ -240,9 +267,17 @@
       padding: 12px 20px;
     }
 
+    div#h2h-fixture-loader.dark-background-1 div.fixture-info-box {
+      border: 1px #616161 solid;
+    }
+
     div.fixture-past-box {
       padding: 24px 0;
       justify-content: unset;
+    }
+
+    :global(div#h2h-fixture-loader div.fixture-past-box svg) {
+      width: 100% !important;
     }
 
   }
@@ -251,7 +286,7 @@
   DESKTOP RESPONSIVNESS */
   @media only screen and (min-width: 1024px) {
 
-    #fixture-prob-loader {
+    #h2h-fixture-loader {
       min-width: 100%;
       /* max-width: 560px; */
     }
@@ -261,7 +296,10 @@
     WIDGET DARK THEME
   ==================== */
 
-  div#fixture-prob-loader.dark-background-1 div#team-box {
+  div#h2h-fixture-loader.dark-background-1 div.fixture-info-box {
+    border-bottom: 1px #616161 solid;
+  }
+  div#h2h-fixture-loader.dark-background-1 div.fixture-past-box {
     border-bottom: 1px #616161 solid;
   }
 
