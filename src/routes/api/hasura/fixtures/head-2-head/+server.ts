@@ -143,8 +143,10 @@ async function main (
     teams_data: {
       team_1_logo: team_1_data?.data?.logo_path,
       team_1_name: team_1_data?.data?.name,
+      team_1_short: team_1_data?.data?.short_code,
       team_2_logo: team_2_data?.data?.logo_path,
-      team_2_name: team_2_data?.data?.name
+      team_2_name: team_2_data?.data?.name,
+      team_2_short: team_2_data?.data?.short_code,
     },
     corner_avg
   }

@@ -847,7 +847,7 @@
                   no-wrap
                 ">
                 {#if mobileExclusive}
-                  {FIXTURE_H2H?.data?.data?.localTeam?.data?.short_code}
+                  {FIXTURE_H2H?.teams_data?.team_1_short}
                 {:else}
                   {FIXTURE_H2H?.teams_data?.team_1_name}
                 {/if}
@@ -884,7 +884,7 @@
                   no-wrap
                 ">
                 {#if mobileExclusive}
-                  {FIXTURE_H2H?.data?.data?.visitorTeam?.data?.short_code}
+                  {FIXTURE_H2H?.teams_data?.team_2_short}
                 {:else}
                   {FIXTURE_H2H?.teams_data?.team_2_name}
                 {/if}
