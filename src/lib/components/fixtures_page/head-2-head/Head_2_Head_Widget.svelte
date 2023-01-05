@@ -616,8 +616,8 @@
               <p
                 class="
                   w-500
-                  s-32
                   color-black-2
+                  main-txt
                 ">
                 {FIXTURE_H2H?.data?.wins_draws?.team_1}
               </p>
@@ -634,8 +634,8 @@
               <p
                 class="
                   w-500
-                  s-32
                   color-black-2
+                  main-txt
                 ">
                 {FIXTURE_H2H?.data?.wins_draws?.draws}
               </p>
@@ -652,8 +652,8 @@
               <p
                 class="
                   w-500
-                  s-32
                   color-black-2
+                  main-txt
                 ">
                 {FIXTURE_H2H?.data?.wins_draws?.team_2}
               </p>
@@ -862,6 +862,7 @@
               -->
               <p
                 class="
+                  w-500
                   color-black-2
                   score-txt
                 ">
@@ -1010,6 +1011,8 @@
     text-align: center;
   } div#main-widget-info-row div.stat-box-out div.stat-win-box:nth-of-type(2) {
     margin: 0 6px;
+  } div#main-widget-info-row div.stat-box-out div.stat-win-box p.main-txt {
+    font-size: 24px;
   }
 
   /* competition box */
@@ -1017,6 +1020,8 @@
     margin-top: 16px;
   } div#competition-progress-box div.progress-box-out {
     width: 100%;
+  } div#competition-progress-box div.progress-box-out:first-child {
+    margin-right: 15px;
   } div#competition-progress-box div.progress-box-out p {
     margin-bottom: 8px;
   } div#competition-progress-box div.progress-box-out:last-child p {
@@ -1053,6 +1058,13 @@
     margin: 8px 0;
   } div.past-fixture-row div.score-info-box p.score-txt {
     margin: 0 24px;
+    font-size: 16px;
+  } div.past-fixture-row p.team-text {
+    font-size: 16px
+  } div.past-fixture-row p.team-text:first-child {
+    margin-right: 12px;
+  } div.past-fixture-row p.team-text:last-child {
+    margin-left: 12px;
   }
 
   /* ====================
@@ -1080,6 +1092,8 @@
       height: 64px;
     } div#main-widget-info-row div.stat-box-out div.stat-win-box:nth-of-type(2) {
       margin: 0 44px;
+    } div#main-widget-info-row div.stat-box-out div.stat-win-box p.main-txt {
+      font-size: 32px;
     }
 
     /* fixture bet info */
@@ -1102,12 +1116,15 @@
       transform: translate(-50%, 0);
       width: fit-content;
       margin: unset;
+    } div.past-fixture-row p.team-text {
+      position: absolute;
+      font-size: 16px
     } div.past-fixture-row p.team-text:first-child {
-      position: absolute;
       right: 100%;
+      margin-right: 12px;
     } div.past-fixture-row p.team-text:last-child {
-      position: absolute;
       left: 100%;
+      margin-left: 12px;
     }
 
     div#h2h-widget-container.dark-background-1 div#grid-bet-stats :global(div.bet-info-box) {
