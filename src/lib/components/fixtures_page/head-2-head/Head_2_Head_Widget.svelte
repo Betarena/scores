@@ -446,6 +446,18 @@
       <!-- 
       [ℹ] widget-title -->
       <!-- <h2>{FIXTURE_VOTES_TRANSLATION?.widget_title}</h2> -->
+      <!-- 
+      [ℹ] team-names
+      -->
+      {#each FIXTURE_H2H?.teams_data as item}
+        <p>{item?.team_name}</p>
+      {/each}
+      <!-- 
+      [ℹ] league-names [from-fixtures]
+      -->
+      {#each FIXTURE_H2H?.data?.last_5_data as item}
+        <p>{item?.league?.data?.name}</p>
+      {/each}
     </div>
   <!-- {/if} -->
 
