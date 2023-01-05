@@ -826,7 +826,7 @@
                 color-grey
                 no-wrap
               ">
-              {item?.league} - {FIXTURE_H2H_TRANSLATION?.round} {item?.round}
+              {item?.league?.data?.name} - {FIXTURE_H2H_TRANSLATION?.round} {item?.round?.data?.name}
             </p>
 
             <!-- 
