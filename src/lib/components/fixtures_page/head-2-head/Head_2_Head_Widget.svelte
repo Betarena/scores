@@ -516,7 +516,7 @@
     && $userBetarenaSettings.country_bookmaker}
 
     <!-- [🐞] -->
-    <H2H_Loader />
+    <!-- <H2H_Loader /> -->
 
     <!-- 
     [ℹ] promise is pending 
