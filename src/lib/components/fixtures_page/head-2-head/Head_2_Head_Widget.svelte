@@ -595,7 +595,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data?.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_name}
+                {FIXTURE_H2H?.teams_data[0].team_name}
               </p>
             {/if}
           </div>
@@ -679,7 +679,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data?.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_name}
+                {FIXTURE_H2H?.teams_data[1].team_name}
               </p>
             {/if}
             <img 
@@ -711,7 +711,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data?.team_1_name}
+                {FIXTURE_H2H?.teams_data[0].team_name}
               </p>
             {/if}
             <div
@@ -735,7 +735,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data?.team_2_name}
+                {FIXTURE_H2H?.teams_data[1].team_name}
               </p>
             {/if}
             <div
@@ -826,7 +826,20 @@
                 color-grey
                 no-wrap
               ">
-              {item?.league?.data?.name} - {FIXTURE_H2H_TRANSLATION?.round} {item?.round?.data?.name}
+              <!--
+              [ℹ] league text info
+              -->
+              {#if item?.league != undefined
+                && item?.league?.data?.name != undefined}
+                {item?.league?.data?.name}
+              {/if}
+              <!--
+              [ℹ] round text info
+              -->
+              {#if item?.round != undefined
+                && item?.round?.data?.name != undefined}
+                - {FIXTURE_H2H_TRANSLATION?.round} {item?.round?.data?.name}
+              {/if}
             </p>
 
             <!-- 
