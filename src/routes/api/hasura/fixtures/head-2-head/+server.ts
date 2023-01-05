@@ -9,6 +9,7 @@ import {
   REDIS_CACHE_FIXTURE_HEAD_2_HEAD_2
 } from '$lib/graphql/fixtures/head-2-head/query';
 
+import { dev } from '$app/environment';
 import type {
   BETARENA_HASURA_head_2_head_query,
   BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
@@ -103,6 +104,8 @@ async function main (
 
   const team_ids_arr = [team_1, team_2]
 
+  if (dev) console.log('team_ids_arr', team_ids_arr)
+
   /**
 	 * [ℹ] obtain target football_h2h [team_ids]
   */
@@ -126,6 +129,13 @@ async function main (
   const team_1_data = football_teams_data.find( ({ id }) => id == team_1)
   const team_2_data = football_teams_data.find( ({ id }) => id == team_2)
 
+  // [ℹ] calc for corners-avg
+  let corner_avg = 0
+  for (const match of football_h2h_data.last_5_data) {
+    if (dev) console.log('match?.corners?.data?.length', match?.corners?.data?.length)
+    corner_avg = corner_avg + match?.corners?.data?.length 
+  }
+
   // [ℹ] generate [final] fixture object
   const fixture_object: Fixture_Head_2_Head = {
     id:     fixture_id || null,
@@ -135,7 +145,8 @@ async function main (
       team_1_name: team_1_data?.data?.name,
       team_2_logo: team_2_data?.data?.logo_path,
       team_2_name: team_2_data?.data?.name
-    }
+    },
+    corner_avg
   }
 
   // [ℹ] return fixture
