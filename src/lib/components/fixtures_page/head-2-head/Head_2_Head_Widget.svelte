@@ -14,7 +14,6 @@
 	import { REDIS_CACHE_FIXTURE_PROBABILITIES_0 } from "$lib/graphql/fixtures/probabilities/query";
 	import { initGrapQLClient } from "$lib/graphql/init_graphQL";
 	import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { getImageBgColor } from "$lib/utils/color_thief";
 	import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
@@ -331,20 +330,9 @@
 
           SPORTBOOK_INFO = main_sportbook
 
-          // [ℹ] distorted "sportmonks" image color-thief application
-          const imageURL: string = SPORTBOOK_INFO?.image
-          getImageBgColor(imageURL, imageVar)
-    
           count = 1
         }
       }
-    }
-
-    // [ℹ] no sportbook is present
-    if (count == 0) {
-      // [ℹ] distorted "sportmonks" image color-thief application
-      const imageURL: string = SPORTBOOK_INFO?.image
-      getImageBgColor(imageURL, imageVar)
     }
 
     // [ℹ] assign changes [persist]
