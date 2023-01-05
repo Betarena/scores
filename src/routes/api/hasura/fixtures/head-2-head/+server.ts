@@ -140,14 +140,20 @@ async function main (
   const fixture_object: Fixture_Head_2_Head = {
     id:     fixture_id || null,
     data:   football_h2h_data || null,
-    teams_data: {
-      team_1_logo: team_1_data?.data?.logo_path,
-      team_1_name: team_1_data?.data?.name,
-      team_1_short: team_1_data?.data?.short_code,
-      team_2_logo: team_2_data?.data?.logo_path,
-      team_2_name: team_2_data?.data?.name,
-      team_2_short: team_2_data?.data?.short_code,
-    },
+    teams_data: [
+      {
+        team_logo: team_1_data?.data?.logo_path,
+        team_name: team_1_data?.data?.name,
+        team_short: team_1_data?.data?.short_code,
+        team_id: team_1,
+      },
+      {
+        team_logo: team_2_data?.data?.logo_path,
+        team_name: team_2_data?.data?.name,
+        team_short: team_2_data?.data?.short_code,
+        team_id: team_2,
+      }
+    ],
     corner_avg
   }
 

@@ -48,13 +48,11 @@ export interface BETARENA_HASURA_head_2_head_query {
 export interface Fixture_Head_2_Head {
   id?:    number | null
   data?:  BETARENA_HASURA_football_h2h
-  teams_data?: Fixture_Head_2_Head_Teams_Data
+  teams_data?: Fixture_Head_2_Head_Teams_Data[]
   corner_avg?: number
 } export interface Fixture_Head_2_Head_Teams_Data {
-  team_1_name?:   string
-  team_1_logo?:   string
-  team_1_short?:  string
-  team_2_name?:   string
-  team_2_logo?:   string
-  team_2_short?:  string
+  team_name?:   string
+  team_logo?:   string
+  team_short?:  string
+  team_id?:     number
 }

@@ -576,7 +576,7 @@
             row-space-out
           ">
           <!-- 
-          [ℹ] TEAM 1 INFO
+          [ℹ] TEAM 1 INFO [LOCAL-TEAM]
           -->
           <div
             class="
@@ -584,8 +584,8 @@
               team-box
             ">
             <img 
-              src={FIXTURE_H2H?.teams_data?.team_1_logo}
-              alt='{FIXTURE_H2H?.teams_data?.team_1_name} Logo'
+              src={FIXTURE_H2H?.teams_data[0].team_logo}
+              alt='{FIXTURE_H2H?.teams_data[0].team_name} Logo'
               class='team-logo'
             />
             {#if !mobileExclusive}
@@ -595,7 +595,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data?.team_1_name}
+                {FIXTURE_H2H?.teams_data?.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_name}
               </p>
             {/if}
           </div>
@@ -665,7 +665,7 @@
           </div>
 
           <!-- 
-          [ℹ] TEAM 2 INFO
+          [ℹ] TEAM 2 INFO [VISITOR-TEAM]
           -->
           <div
             class="
@@ -679,12 +679,12 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data?.team_2_name}
+                {FIXTURE_H2H?.teams_data?.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_name}
               </p>
             {/if}
             <img 
-              src={FIXTURE_H2H?.teams_data?.team_2_logo}
-              alt='{FIXTURE_H2H?.teams_data?.team_2_name} Logo'
+            src={FIXTURE_H2H?.teams_data[1].team_logo}
+            alt='{FIXTURE_H2H?.teams_data[1].team_name} Logo'
               class='team-logo'
             />
           </div>
@@ -847,14 +847,14 @@
                   no-wrap
                 ">
                 {#if mobileExclusive}
-                  {FIXTURE_H2H?.teams_data?.team_1_short}
+                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_short}
                 {:else}
-                  {FIXTURE_H2H?.teams_data?.team_1_name}
+                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_name}
                 {/if}
               </p>
               <img
-                src={FIXTURE_H2H?.teams_data?.team_1_logo}
-                alt='{FIXTURE_H2H?.teams_data?.team_1_logo} Logo'
+                src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo}
+                alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo} Logo'
                 width="24"
               />
               <!-- 
@@ -874,8 +874,8 @@
               [ℹ] fixture-team_2 text
               -->
               <img
-                src={FIXTURE_H2H?.teams_data?.team_2_logo}
-                alt='{FIXTURE_H2H?.teams_data?.team_2_logo} Logo'
+                src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo}
+                alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo} Logo'
                 width="24"
               />
               <p
@@ -885,9 +885,9 @@
                   no-wrap
                 ">
                 {#if mobileExclusive}
-                  {FIXTURE_H2H?.teams_data?.team_2_short}
+                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_short}
                 {:else}
-                  {FIXTURE_H2H?.teams_data?.team_2_name}
+                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_name}
                 {/if}
               </p>
             </div>
