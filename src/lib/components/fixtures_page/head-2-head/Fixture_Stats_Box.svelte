@@ -97,28 +97,35 @@
   <!-- 
   [ℹ] second-column [bet-info]
   -->
-  <div
-    class="row-space-end">
-    <img 
-      src={SPORTBOOK_INFO?.image}
-      alt="{SPORTBOOK_INFO?.title} Logo"
-      width="40"
-      class="bet-site-logo"
-    />
-    <button
-      class="
-        place-bet-btn 
-        btn-primary
-      "
-      on:click={() => trigger_google()}>
-      <p
+  <a 
+    rel="nofollow"
+    aria-label="fixtures_football_fixtures_h2h"
+    on:click={() => trigger_google()}
+    href={SPORTBOOK_INFO?.register_link}
+    target="_blank"
+    style="width: fit-content;">
+    <div
+      class="row-space-end">
+      <img 
+        src={SPORTBOOK_INFO?.image}
+        alt="{SPORTBOOK_INFO?.title} Logo"
+        width="40"
+        class="bet-site-logo"
+      />
+      <button
         class="
-          w-500
+          place-bet-btn 
+          btn-primary
         ">
-        Follow Bet
-      </p>
-    </button>
-  </div>
+        <p
+          class="
+            w-500
+          ">
+          Follow Bet
+        </p>
+      </button>
+    </div>
+  </a>
 </div>
 
 <!-- ===============

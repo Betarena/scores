@@ -6,7 +6,8 @@ import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import {
   REDIS_CACHE_FIXTURE_HEAD_2_HEAD_0,
   REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1,
-  REDIS_CACHE_FIXTURE_HEAD_2_HEAD_2
+  REDIS_CACHE_FIXTURE_HEAD_2_HEAD_2,
+  REDIS_CACHE_FIXTURE_HEAD_2_HEAD_3
 } from '$lib/graphql/fixtures/head-2-head/query';
 
 import { dev } from '$app/environment';
@@ -101,9 +102,8 @@ async function main (
       ? `${team_2},${team_1}`
       : `${team_1},${team_2}`
   ;
-
   const team_ids_arr = [team_1, team_2]
-
+  // [🐞]
   if (dev) console.log('team_ids_arr', team_ids_arr)
 
   /**
@@ -129,11 +129,29 @@ async function main (
   const team_1_data = football_teams_data.find( ({ id }) => id == team_1)
   const team_2_data = football_teams_data.find( ({ id }) => id == team_2)
 
+  const fixture_ids = football_h2h_data?.last_5_data.map(a => a.id)
+  // [🐞]
+  if (dev) console.log(`fixture_ids`, fixture_ids)
+
+  /**
+	 * [ℹ] obtain target [last 5 fixtures] football_h2h [historic_fixtures]
+  */
+	const last_5_fixtures = await get_target_past_fixtures(
+    fixture_ids,
+  );
+  const last_5_data_urls = last_5_fixtures
+  .map( ({ id, urls }) => 
+    ({ id, urls })
+  )
+  // [🐞]
+  if (dev) console.log(`last_5_data_urls`, last_5_data_urls)
+
   // [ℹ] calc for corners-avg
   let corner_avg = 0
   for (const match of football_h2h_data.last_5_data) {
+    // [🐞]
     if (dev) console.log('match?.corners?.data?.length', match?.corners?.data?.length)
-    corner_avg = corner_avg + match?.corners?.data?.length 
+    corner_avg = corner_avg + match?.corners?.data?.length
   }
 
   // [ℹ] generate [final] fixture object
@@ -154,7 +172,8 @@ async function main (
         team_id: team_2,
       }
     ],
-    corner_avg
+    corner_avg,
+    last_5_data_urls
   }
 
   // [ℹ] return fixture
@@ -245,6 +264,25 @@ async function get_target_head2head (
 	logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
 
 	return response;
+}
+
+async function get_target_past_fixtures (
+	fixture_ids: number[]
+): Promise < BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures[] > {
+	// [ℹ] obtain target historic_fixtures [fixture_id]
+	const queryName = 'REDIS_CACHE_FIXTURE_HEAD_2_HEAD_3';
+	const t0 = performance.now();
+	const VARIABLES = {
+		fixture_ids
+	};
+	const response: BETARENA_HASURA_head_2_head_query = await initGrapQLClient().request(
+		REDIS_CACHE_FIXTURE_HEAD_2_HEAD_3,
+		VARIABLES
+	);
+	const t1 = performance.now();
+	logs.push(`${queryName} completed in: ${(t1 - t0) / 1000} sec`);
+
+	return response.historic_fixtures;
 }
 
 async function get_widget_translations (

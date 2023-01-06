@@ -35,6 +35,7 @@
   
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
 
+	import { page } from '$app/stores';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -244,6 +245,26 @@
   afterNavigate(async () => {
     widget_init()
   })
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // REACTIVE LANG SVELTE
+  // [! CRITICAL !]
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let server_side_language: string = 'en';
+  $: if ($page.routeId != null
+    && !$page.error
+  ) {
+    if ($page.routeId.includes("[lang=lang]")) {
+		  server_side_language = $page.params.lang;
+    }
+    else {
+      server_side_language = 'en';
+    }
+	  }
+  else {
+    server_side_language = 'en';
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // [ADD-ON] FIREBASE
@@ -715,7 +736,8 @@
               </p>
             {/if}
             <div
-              class="team-progress-bar">
+              class="team-progress-bar"
+              class:greater_win_ration={team1Percent > team2Percent}>
               <div 
                 style="
                   width: {team1Percent}%;
@@ -739,7 +761,8 @@
               </p>
             {/if}
             <div
-              class="team-progress-bar">
+              class="team-progress-bar"
+              class:greater_win_ration={team2Percent > team1Percent}>
               <div 
                 style="
                   width: {team2Percent}%;
@@ -810,114 +833,118 @@
         [ℹ] main widget last 5 fixtures data
         -->
         {#each FIXTURE_H2H?.data?.last_5_data as item}
-          <div
-            class="
-              row-space-out
-              past-fixture-row
-            "
-            class:row-space-out={!mobileExclusive}
-            class:column-space-center={mobileExclusive}>
-            
-            <!-- 
-            [ℹ] info on fixture league-round
-            -->
-            <p
-              class="
-                color-grey
-                no-wrap
-              ">
-              <!--
-              [ℹ] league text info
-              -->
-              {#if item?.league != undefined
-                && item?.league?.data?.name != undefined}
-                {item?.league?.data?.name}
-              {/if}
-              <!--
-              [ℹ] round text info
-              -->
-              {#if item?.round != undefined
-                && item?.round?.data?.name != undefined}
-                - {FIXTURE_H2H_TRANSLATION?.round} {item?.round?.data?.name}
-              {/if}
-            </p>
 
-            <!-- 
-            [ℹ] info on fixture main teams/score
-            -->
+          <a 
+            href="{FIXTURE_H2H?.last_5_data_urls?.find( ({ id }) => id == item?.id)?.urls[server_side_language]}">
             <div
               class="
-                row-space-center
-                score-info-box
-              ">
+                row-space-out
+                past-fixture-row
+              "
+              class:row-space-out={!mobileExclusive}
+              class:column-space-center={mobileExclusive}>
+              
               <!-- 
-              [ℹ] fixture-team_1 text
+              [ℹ] info on fixture league-round
               -->
               <p
                 class="
-                  color-black-2
-                  team-text
+                  color-grey
                   no-wrap
                 ">
-                {#if mobileExclusive}
-                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_short}
-                {:else}
-                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_name}
+                <!--
+                [ℹ] league text info
+                -->
+                {#if item?.league != undefined
+                  && item?.league?.data?.name != undefined}
+                  {item?.league?.data?.name}
+                {/if}
+                <!--
+                [ℹ] round text info
+                -->
+                {#if item?.round != undefined
+                  && item?.round?.data?.name != undefined}
+                  - {FIXTURE_H2H_TRANSLATION?.round} {item?.round?.data?.name}
                 {/if}
               </p>
-              <img
-                src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo}
-                alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo} Logo'
-                width="24"
-              />
+
               <!-- 
-              [ℹ] fixture-score text
+              [ℹ] info on fixture main teams/score
               -->
-              <p
+              <div
                 class="
-                  w-500
-                  color-black-2
-                  score-txt
+                  row-space-center
+                  score-info-box
                 ">
-                {item?.scores?.localteam_score}
-                -
-                {item?.scores?.visitorteam_score}
-              </p>
+                <!-- 
+                [ℹ] fixture-team_1 text
+                -->
+                <p
+                  class="
+                    color-black-2
+                    team-text
+                    no-wrap
+                  ">
+                  {#if mobileExclusive}
+                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_short}
+                  {:else}
+                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_name}
+                  {/if}
+                </p>
+                <img
+                  src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo}
+                  alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo} Logo'
+                  width="24"
+                />
+                <!-- 
+                [ℹ] fixture-score text
+                -->
+                <p
+                  class="
+                    w-500
+                    color-black-2
+                    score-txt
+                  ">
+                  {item?.scores?.localteam_score}
+                  -
+                  {item?.scores?.visitorteam_score}
+                </p>
+                <!-- 
+                [ℹ] fixture-team_2 text
+                -->
+                <img
+                  src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo}
+                  alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo} Logo'
+                  width="24"
+                />
+                <p
+                  class="
+                    color-black-2
+                    team-text
+                    no-wrap
+                  ">
+                  {#if mobileExclusive}
+                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_short}
+                  {:else}
+                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_name}
+                  {/if}
+                </p>
+              </div>
+
               <!-- 
-              [ℹ] fixture-team_2 text
+              [ℹ] starting date for fixture
               -->
-              <img
-                src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo}
-                alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo} Logo'
-                width="24"
-              />
               <p
                 class="
-                  color-black-2
-                  team-text
+                  color-grey
                   no-wrap
                 ">
-                {#if mobileExclusive}
-                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_short}
-                {:else}
-                  {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_name}
-                {/if}
+                {MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.date_time + "Z").getMonth().toString()]}
+                {new Date(item?.time?.starting_at?.date_time + "Z").getDate().toString()},
+                {new Date(item?.time?.starting_at?.date_time + "Z").getFullYear().toString()}
               </p>
             </div>
-
-            <!-- 
-            [ℹ] starting date for fixture
-            -->
-            <p
-              class="
-                color-grey
-                no-wrap
-              ">
-              {MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.date_time + "Z").getMonth().toString()]}
-              {new Date(item?.time?.starting_at?.date_time + "Z").getDate().toString()},
-              {new Date(item?.time?.starting_at?.date_time + "Z").getFullYear().toString()}
-            </p>
-          </div>
+          </a>
         {/each}
 
       </div>
@@ -1051,6 +1078,10 @@
     /* width: 40%; */ /* Adjust with JavaScript */
     height: 12px;
     border-radius: 10px;
+  }
+
+  .greater_win_ration {
+    background-color: #FFB904;
   }
 
   /* fixture bet info */

@@ -81,6 +81,34 @@ export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_1 = gql`
 `;
 
 /**
+ * [ℹ] GET Target Fixture [main] [DATA]
+*/
+export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_3 = gql`
+  query REDIS_CACHE_FIXTURE_HEAD_2_HEAD_3
+  (
+    $fixture_ids: [Int!]
+  ) 
+  @cached
+  (ttl: 300)
+  {
+    historic_fixtures (
+      where: {
+        id: {
+          _in: $fixture_ids
+        }
+      }
+    ) {
+      id
+      fixture_day
+      time
+      season_id
+      league_id
+      urls
+    }
+  }
+`;
+
+/**
  * [ℹ] GET Target Fixture [main] [TRANSLATION]
 */
 export const REDIS_CACHE_FIXTURE_HEAD_2_HEAD_2 = gql`

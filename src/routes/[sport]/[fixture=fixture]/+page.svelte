@@ -364,10 +364,10 @@
         <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
         <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+        <Head_2HeadWidget {FIXTURE_INFO} {FIXTURE_H2H} {FIXTURE_H2H_TRANSLATION} />
         <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
         <ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
         <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
-        <Head_2HeadWidget {FIXTURE_INFO} {FIXTURE_H2H} {FIXTURE_H2H_TRANSLATION} />
       </div>
       <!-- 
       [ℹ] "News" view selection -->
@@ -391,8 +391,8 @@
         class='grid-display-column'>
         <VoteWidget {FIXTURE_INFO} {FIXTURE_VOTES_TRANSLATION} />
         <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
-        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
         <Head_2HeadWidget {FIXTURE_INFO} {FIXTURE_H2H} {FIXTURE_H2H_TRANSLATION} />
+        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
       </div>
       <div 
         class='grid-display-column'>
