@@ -103,6 +103,7 @@ async function main (
       : `${team_1},${team_2}`
   ;
   const team_ids_arr = [team_1, team_2]
+  team_ids_arr.sort().reverse()
   // [🐞]
   if (dev) console.log('team_ids_arr', team_ids_arr)
 
@@ -126,8 +127,8 @@ async function main (
   const football_h2h_data = football_h2h.football_h2h[0]
   const football_teams_data = football_h2h.scores_football_teams
 
-  const team_1_data = football_teams_data.find( ({ id }) => id == team_1)
-  const team_2_data = football_teams_data.find( ({ id }) => id == team_2)
+  const team_1_data = football_teams_data.find( ({ id }) => id == team_ids_arr[0])
+  const team_2_data = football_teams_data.find( ({ id }) => id == team_ids_arr[1])
 
   const fixture_ids = football_h2h_data?.last_5_data.map(a => a.id)
   // [🐞]
@@ -163,13 +164,13 @@ async function main (
         team_logo: team_1_data?.data?.logo_path,
         team_name: team_1_data?.data?.name,
         team_short: team_1_data?.data?.short_code,
-        team_id: team_1,
+        team_id: team_ids_arr[0],
       },
       {
         team_logo: team_2_data?.data?.logo_path,
         team_name: team_2_data?.data?.name,
         team_short: team_2_data?.data?.short_code,
-        team_id: team_2,
+        team_id: team_ids_arr[1],
       }
     ],
     corner_avg,
