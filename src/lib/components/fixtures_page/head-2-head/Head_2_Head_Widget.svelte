@@ -736,9 +736,9 @@
               </p>
             {/if}
             <div
-              class="team-progress-bar"
-              class:greater_win_ration={team1Percent > team2Percent}>
+              class="team-progress-bar">
               <div 
+                class:greater_win_ration={team1Percent > team2Percent}
                 style="
                   width: {team1Percent}%;
                 "/>
@@ -761,9 +761,9 @@
               </p>
             {/if}
             <div
-              class="team-progress-bar"
-              class:greater_win_ration={team2Percent > team1Percent}>
+              class="team-progress-bar">
               <div 
+                class:greater_win_ration={team2Percent > team1Percent}
                 style="
                   width: {team2Percent}%;
                 "/>
@@ -1069,19 +1069,20 @@
   } div#competition-progress-box div.progress-box-out:first-child div.team-progress-bar {
     margin-right: 12px;
     text-align: -webkit-right;
+    text-align: -moz-right;
   } div#competition-progress-box div.progress-box-out div.team-progress-bar {
     background: #E6E6E6;
     border-radius: 10px;
     width: 100%;
   } div#competition-progress-box div.progress-box-out div.team-progress-bar > div {
-    background-color: #F5620F;
+    background-color: #FFB904;
     /* width: 40%; */ /* Adjust with JavaScript */
     height: 12px;
     border-radius: 10px;
   }
 
-  .greater_win_ration {
-    background-color: #FFB904;
+  div#competition-progress-box div.progress-box-out div.team-progress-bar > div.greater_win_ration {
+    background-color: #F5620F !important;
   }
 
   /* fixture bet info */
