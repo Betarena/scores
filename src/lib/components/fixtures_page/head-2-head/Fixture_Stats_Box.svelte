@@ -76,7 +76,7 @@
           {(parseInt(value) / 5) * 100}%
         {:else if type == 'ycavg'
           || type == 'corners'}
-          {(value / 5)}
+          {(value / 5).toPrecision(2)}
         {/if}
       </p>
       <p
