@@ -383,7 +383,7 @@
   @media only screen and (max-width: 600px) {
     :global(#about-tour-widget-container .video-container > iframe) {
       width: 100%;
-      height: auto;
+      height: 250px;
       border-radius: 20px;
     }
   }
