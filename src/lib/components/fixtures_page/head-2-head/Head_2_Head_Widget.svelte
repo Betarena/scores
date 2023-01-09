@@ -36,6 +36,7 @@
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
   
+	import { getImageBgColor } from '$lib/utils/color_thief';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -64,6 +65,8 @@
   let team2Percent: number = 0;           // [ℹ] the (%) difference progress of season
 
   let show_placeholder:  boolean = false;     // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
+
+  let imageVar: string = '--h2h-widget-bookmaker-bg-'
 
   // [🐞]
   let enable_logs:       boolean = true;
@@ -352,9 +355,20 @@
 
           SPORTBOOK_INFO = main_sportbook
 
+          // [ℹ] distorted "sportmonks" image color-thief application
+          const imageURL: string = SPORTBOOK_INFO?.image
+          getImageBgColor(imageURL, imageVar)
+
           count = 1
         }
       }
+    }
+
+    // [ℹ] no sportbook is present
+    if (count == 0) {
+      // [ℹ] distorted "sportmonks" image color-thief application
+      const imageURL: string = SPORTBOOK_INFO?.image
+      getImageBgColor(imageURL, imageVar)
     }
 
     // [ℹ] assign changes [persist]
@@ -797,6 +811,7 @@
               {SPORTBOOK_INFO}
               on:google_click={() => trigger_event_google('fixtures_football_fixtures_h2h')}
               type={'overs'}
+              {imageVar}
             />
           {/each}
 
@@ -810,6 +825,7 @@
             {SPORTBOOK_INFO}
             on:google_click={() => trigger_event_google('fixtures_football_fixtures_h2h')}
             type={'ycavg'}
+            {imageVar}
           />
 
           <!-- 
@@ -822,6 +838,7 @@
             {SPORTBOOK_INFO}
             on:google_click={() => trigger_event_google('fixtures_football_fixtures_h2h')}
             type={'corners'}
+            {imageVar}
           />
 
           <!-- 
@@ -834,6 +851,7 @@
             {SPORTBOOK_INFO}
             on:google_click={() => trigger_event_google('fixtures_football_fixtures_h2h')}
             type={'btts'}
+            {imageVar}
           />
 
         </div>
@@ -841,120 +859,123 @@
         <!-- 
         [ℹ] main widget last 5 fixtures data
         -->
-        {#each FIXTURE_H2H?.data?.last_5_data as item}
+        <div
+          id="list-past-fixtures-box">
+          {#each FIXTURE_H2H?.data?.last_5_data as item}
 
-          <a 
-            href="{FIXTURE_H2H?.last_5_data_urls?.find( ({ id }) => id == item?.id)?.urls[server_side_language]}">
-            <div
-              class="
-                row-space-out
-                past-fixture-row
-              "
-              class:row-space-out={!mobileExclusive}
-              class:column-space-center={mobileExclusive}>
-              
-              <!-- 
-              [ℹ] info on fixture league-round
-              -->
-              <p
-                class="
-                  color-grey
-                  no-wrap
-                ">
-                <!--
-                [ℹ] league text info
-                -->
-                {#if item?.league != undefined
-                  && item?.league?.data?.name != undefined}
-                  {item?.league?.data?.name}
-                {/if}
-                <!--
-                [ℹ] round text info
-                -->
-                {#if item?.round != undefined
-                  && item?.round?.data?.name != undefined}
-                  - {FIXTURE_H2H_TRANSLATION?.round} {item?.round?.data?.name}
-                {/if}
-              </p>
-
-              <!-- 
-              [ℹ] info on fixture main teams/score
-              -->
+            <a 
+              href="{FIXTURE_H2H?.last_5_data_urls?.find( ({ id }) => id == item?.id)?.urls[server_side_language]}">
               <div
                 class="
-                  row-space-center
-                  score-info-box
-                ">
+                  row-space-out
+                  past-fixture-row
+                "
+                class:row-space-out={!mobileExclusive}
+                class:column-space-center={mobileExclusive}>
+                
                 <!-- 
-                [ℹ] fixture-team_1 text
+                [ℹ] info on fixture league-round
                 -->
                 <p
                   class="
-                    color-black-2
-                    team-text
+                    color-grey
                     no-wrap
                   ">
-                  {#if mobileExclusive}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_short}
-                  {:else}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_name}
+                  <!--
+                  [ℹ] league text info
+                  -->
+                  {#if item?.league != undefined
+                    && item?.league?.data?.name != undefined}
+                    {item?.league?.data?.name}
+                  {/if}
+                  <!--
+                  [ℹ] round text info
+                  -->
+                  {#if item?.round != undefined
+                    && item?.round?.data?.name != undefined}
+                    - {FIXTURE_H2H_TRANSLATION?.round} {item?.round?.data?.name}
                   {/if}
                 </p>
-                <img
-                  src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo}
-                  alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo} Logo'
-                  width="24"
-                />
+
                 <!-- 
-                [ℹ] fixture-score text
+                [ℹ] info on fixture main teams/score
                 -->
-                <p
+                <div
                   class="
-                    w-500
-                    color-black-2
-                    score-txt
+                    row-space-center
+                    score-info-box
                   ">
-                  {item?.scores?.localteam_score}
-                  -
-                  {item?.scores?.visitorteam_score}
-                </p>
+                  <!-- 
+                  [ℹ] fixture-team_1 text
+                  -->
+                  <p
+                    class="
+                      color-black-2
+                      team-text
+                      no-wrap
+                    ">
+                    {#if mobileExclusive}
+                      {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_short}
+                    {:else}
+                      {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_name}
+                    {/if}
+                  </p>
+                  <img
+                    src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo}
+                    alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.localteam_id)?.team_logo} Logo'
+                    width="24"
+                  />
+                  <!-- 
+                  [ℹ] fixture-score text
+                  -->
+                  <p
+                    class="
+                      w-500
+                      color-black-2
+                      score-txt
+                    ">
+                    {item?.scores?.localteam_score}
+                    -
+                    {item?.scores?.visitorteam_score}
+                  </p>
+                  <!-- 
+                  [ℹ] fixture-team_2 text
+                  -->
+                  <img
+                    src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo}
+                    alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo} Logo'
+                    width="24"
+                  />
+                  <p
+                    class="
+                      color-black-2
+                      team-text
+                      no-wrap
+                    ">
+                    {#if mobileExclusive}
+                      {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_short}
+                    {:else}
+                      {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_name}
+                    {/if}
+                  </p>
+                </div>
+
                 <!-- 
-                [ℹ] fixture-team_2 text
+                [ℹ] starting date for fixture
                 -->
-                <img
-                  src={FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo}
-                  alt='{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_logo} Logo'
-                  width="24"
-                />
                 <p
                   class="
-                    color-black-2
-                    team-text
+                    color-grey
                     no-wrap
                   ">
-                  {#if mobileExclusive}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_short}
-                  {:else}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id == item?.visitorteam_id)?.team_name}
-                  {/if}
+                  {FIXTURES_ODDS_T?.months_abbreviation[MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.timestamp*1000).getMonth().toString()]]}
+                  {new Date(item?.time?.starting_at?.timestamp*1000).getDate()},
+                  {new Date(item?.time?.starting_at?.timestamp*1000).getFullYear()}
                 </p>
               </div>
-
-              <!-- 
-              [ℹ] starting date for fixture
-              -->
-              <p
-                class="
-                  color-grey
-                  no-wrap
-                ">
-                {FIXTURES_ODDS_T?.months_abbreviation[MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.timestamp*1000).getMonth().toString()]]}
-                {new Date(item?.time?.starting_at?.timestamp*1000).getDate()},
-                {new Date(item?.time?.starting_at?.timestamp*1000).getFullYear()}
-              </p>
-            </div>
-          </a>
-        {/each}
+            </a>
+          {/each}
+        </div>
 
       </div>
 
@@ -1040,7 +1061,7 @@
     border-radius: 12px;
     /* overflow: hidden; */
     width: 100%;
-    position: relative;
+    /* position: relative; */
     padding: 20px;
   }
 
@@ -1096,28 +1117,28 @@
 
   /* fixture bet info */
   div#grid-bet-stats {
-    position: relative;
+    /* position: relative; */
 		display: grid;
   } /* NOTE: rest fixture bet info styles inside component */
 
   /* past-fixture-data */
-  div.past-fixture-row {
+  div#list-past-fixtures-box div.past-fixture-row {
     border-bottom: 1px solid #E6E6E6;
     padding: 24px 0;
     position: relative;
-  } div.past-fixture-row:last-child {
+  } div#list-past-fixtures-box a:last-child div.past-fixture-row {
     border: none !important;
     padding-bottom: 0;
-  } div.past-fixture-row div.score-info-box {
+  } div#list-past-fixtures-box div.past-fixture-row div.score-info-box {
     margin: 8px 0;
-  } div.past-fixture-row div.score-info-box p.score-txt {
+  } div#list-past-fixtures-box div.past-fixture-row div.score-info-box p.score-txt {
     margin: 0 24px;
     font-size: 16px;
-  } div.past-fixture-row p.team-text {
+  } div#list-past-fixtures-box div.past-fixture-row p.team-text {
     font-size: 16px
-  } div.past-fixture-row p.team-text:first-child {
+  } div#list-past-fixtures-box div.past-fixture-row p.team-text:first-child {
     margin-right: 12px;
-  } div.past-fixture-row p.team-text:last-child {
+  } div#list-past-fixtures-box div.past-fixture-row p.team-text:last-child {
     margin-left: 12px;
   }
 
@@ -1164,19 +1185,19 @@
     }
 
     /* past-fixture-data */
-    div.past-fixture-row div.score-info-box {
+    div#list-past-fixtures-box div.past-fixture-row div.score-info-box {
       position: absolute;
       left: 50%;
       transform: translate(-50%, 0);
       width: fit-content;
       margin: unset;
-    } div.past-fixture-row p.team-text {
+    } div#list-past-fixtures-box div.past-fixture-row p.team-text {
       position: absolute;
       font-size: 16px
-    } div.past-fixture-row p.team-text:first-child {
+    } div#list-past-fixtures-box div.past-fixture-row p.team-text:first-child {
       right: 100%;
       margin-right: 12px;
-    } div.past-fixture-row p.team-text:last-child {
+    } div#list-past-fixtures-box div.past-fixture-row p.team-text:last-child {
       left: 100%;
       margin-left: 12px;
     }
@@ -1194,6 +1215,12 @@
       min-width: 100%;
     }
 
+    /* past-fixture-data */
+
+    div#list-past-fixtures-box div.past-fixture-row div.score-info-box:hover p {
+      color: #F5620F !important;
+    }
+
   }
 
   /* ====================
@@ -1204,7 +1231,7 @@
     border-bottom: 1px solid #616161 !important;
   }
 
-  div#h2h-widget-container.dark-background-1 div.past-fixture-row {
+  div#h2h-widget-container.dark-background-1 div#list-past-fixtures-box div.past-fixture-row {
     border-bottom: 1px solid #616161;
   }
 
