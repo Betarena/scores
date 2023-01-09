@@ -5,6 +5,7 @@
 <script lang="ts">
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
+  import { page } from '$app/stores';
   import { logDevGroup, log_info_group } from "$lib/utils/debug";
   import { onDestroy, onMount } from "svelte";
 
@@ -14,6 +15,7 @@
 	import { REDIS_CACHE_FIXTURE_PROBABILITIES_0 } from "$lib/graphql/fixtures/probabilities/query";
 	import { initGrapQLClient } from "$lib/graphql/init_graphQL";
 	import { userBetarenaSettings } from "$lib/store/user-settings";
+	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
 	import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
@@ -31,11 +33,9 @@
 	import H2H_Loader from "./Head_2_Head_Loader.svelte";
 
 	import type { Fixture_Head_2_Head, REDIS_CACHE_SINGLE_h2h_translation } from '$lib/models/fixtures/head-2-head/types';
+	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
   
-	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
-
-	import { page } from '$app/stores';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -48,6 +48,7 @@
   export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
   export let FIXTURE_H2H: Fixture_Head_2_Head;
   export let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
+  export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
 
 	let FIXTURE_PROB_DATA:      Fixture_Probabilities;
   let SPORTBOOK_INFO:         Cache_Single_SportbookDetails_Data_Response;
@@ -939,9 +940,9 @@
                   color-grey
                   no-wrap
                 ">
-                {MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.date_time + "Z").getMonth().toString()]}
-                {new Date(item?.time?.starting_at?.date_time + "Z").getDate().toString()},
-                {new Date(item?.time?.starting_at?.date_time + "Z").getFullYear().toString()}
+                {FIXTURES_ODDS_T?.months_abbreviation[MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.timestamp*1000).getMonth().toString()]]}
+                {new Date(item?.time?.starting_at?.timestamp*1000).getDate()},
+                {new Date(item?.time?.starting_at?.timestamp*1000).getFullYear()}
               </p>
             </div>
           </a>

@@ -352,7 +352,13 @@
   [ℹ] MOBILE 
   -->
   {#if mobileExclusive || tabletExclusive}
-    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} />
+    <ScoreboardWidget 
+      {FIXTURE_SCOREBOARD} 
+      {FIXTURE_INFO} 
+      {FIXTURE_SCOREBOARD_TRANSLATION} 
+      {FIXTURE_CONTENT} 
+      {FIXTURES_ODDS_T}
+    />
     <div
       id="widget-grid-display">
       <!-- 
@@ -360,14 +366,39 @@
       <div 
         class='grid-display-column'
         class:display-none={$sessionStore.fixture_select_view == "news"}>
-        <VoteWidget {FIXTURE_INFO} {FIXTURE_VOTES_TRANSLATION} />
-        <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
-        <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
-        <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
-        <Head_2HeadWidget {FIXTURE_INFO} {FIXTURE_H2H} {FIXTURE_H2H_TRANSLATION} />
-        <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
-        <ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
-        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
+        <VoteWidget 
+          {FIXTURE_INFO} 
+          {FIXTURE_VOTES_TRANSLATION} 
+        />
+        <IncidentsWidget 
+          {FIXTURE_INCIDENTS} 
+          {FXITURE_INCIDENTS_TRANSLATION} 
+        />
+        <FeaturedBettingSitesWidget 
+          {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} 
+        />
+        <LineupsWidget 
+          {FIXTURE_LINEUPS} 
+          {FIXTURE_LINEUPS_TRANSLATION} 
+        />
+        <Head_2HeadWidget 
+          {FIXTURE_INFO} 
+          {FIXTURE_H2H} 
+          {FIXTURE_H2H_TRANSLATION} 
+          {FIXTURES_ODDS_T}
+        />
+        <StatisticsWidget 
+          {FIXTURE_STATISTICS} 
+          {FIXTURE_STATISTICS_TRANSLATION} 
+        />
+        <ProbabilityWidget 
+          {FIXTURE_INFO} 
+          {FIXTURE_PROBS_TRANSLATION} 
+        />
+        <AboutWidget 
+          {FIXTURE_ABOUT} 
+          {FIXTURE_ABOUT_TRANSLATION} 
+        />
       </div>
       <!-- 
       [ℹ] "News" view selection -->
@@ -379,35 +410,72 @@
     </div>
   <!-- 
   [ℹ] widgets 
-  [ℹ] TABLET && DESKTOP -->
+  [ℹ] TABLET && DESKTOP 
+  -->
   {:else}
-    <ScoreboardWidget {FIXTURE_SCOREBOARD} {FIXTURE_INFO} {FIXTURE_SCOREBOARD_TRANSLATION} {FIXTURE_CONTENT} {FIXTURES_ODDS_T} />
+    <ScoreboardWidget 
+      {FIXTURE_SCOREBOARD} 
+      {FIXTURE_INFO} 
+      {FIXTURE_SCOREBOARD_TRANSLATION} 
+      {FIXTURE_CONTENT} 
+      {FIXTURES_ODDS_T} 
+    />
     <!-- 
-    [ℹ] "Overview" view selection -->
+    [ℹ] "Overview" view selection 
+    -->
     <div
       id="widget-grid-display"
       class:display-none={$sessionStore.fixture_select_view == "news"}>
       <div 
         class='grid-display-column'>
-        <VoteWidget {FIXTURE_INFO} {FIXTURE_VOTES_TRANSLATION} />
-        <LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
-        <Head_2HeadWidget {FIXTURE_INFO} {FIXTURE_H2H} {FIXTURE_H2H_TRANSLATION} />
-        <AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
+        <VoteWidget 
+          {FIXTURE_INFO} 
+          {FIXTURE_VOTES_TRANSLATION} 
+        />
+        <LineupsWidget 
+          {FIXTURE_LINEUPS} 
+          {FIXTURE_LINEUPS_TRANSLATION} 
+        />
+        <Head_2HeadWidget 
+          {FIXTURE_INFO} 
+          {FIXTURE_H2H} 
+          {FIXTURE_H2H_TRANSLATION}
+          {FIXTURES_ODDS_T}
+        />
+        <AboutWidget 
+          {FIXTURE_ABOUT} 
+          {FIXTURE_ABOUT_TRANSLATION} 
+        />
       </div>
       <div 
         class='grid-display-column'>
-        <FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
-        <IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
-        <StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
-        <ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
+        <FeaturedBettingSitesWidget 
+          {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} 
+        />
+        <IncidentsWidget 
+          {FIXTURE_INCIDENTS} 
+          {FXITURE_INCIDENTS_TRANSLATION} 
+        />
+        <StatisticsWidget 
+          {FIXTURE_STATISTICS} 
+          {FIXTURE_STATISTICS_TRANSLATION} 
+        />
+        <ProbabilityWidget 
+          {FIXTURE_INFO} 
+          {FIXTURE_PROBS_TRANSLATION} 
+        />
       </div>
     </div>
     <!-- 
-    [ℹ] "News" view selection -->
+    [ℹ] "News" view selection 
+    -->
     <div
       id="widget-grid-display-news"
       class:display-none={$sessionStore.fixture_select_view == "overview"}>
-      <ContentWidget {FIXTURE_CONTENT} {FIXTURE_CONTENT_TRANSLATION} />
+      <ContentWidget 
+        {FIXTURE_CONTENT} 
+        {FIXTURE_CONTENT_TRANSLATION} 
+      />
     </div>
   {/if}
 
