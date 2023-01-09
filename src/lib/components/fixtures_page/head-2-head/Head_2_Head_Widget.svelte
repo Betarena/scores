@@ -606,8 +606,8 @@
               team-box
             ">
             <img 
-              src={FIXTURE_H2H?.teams_data[0].team_logo}
-              alt='{FIXTURE_H2H?.teams_data[0].team_name} Logo'
+              src={FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_logo}
+              alt='{FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_name} Logo'
               class='team-logo'
             />
             {#if !mobileExclusive}
@@ -617,7 +617,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data[0].team_name}
+                {FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_name}
               </p>
             {/if}
           </div>
@@ -641,8 +641,12 @@
                   color-black-2
                   main-txt
                 ">
-                {FIXTURE_H2H?.data?.wins_draws?.team_1}
-              </p>
+                {#if FIXTURE_INFO?.data?.home_team_name == FIXTURE_H2H?.teams_data[0].team_name}
+                  {FIXTURE_H2H?.data?.wins_draws?.team_1}
+                {:else}
+                  {FIXTURE_H2H?.data?.wins_draws?.team_2}
+                {/if}
+                </p>
               <p  
                 class="color-grey">
                 {FIXTURE_H2H_TRANSLATION?.wins}
@@ -677,7 +681,11 @@
                   color-black-2
                   main-txt
                 ">
-                {FIXTURE_H2H?.data?.wins_draws?.team_2}
+                {#if FIXTURE_INFO?.data?.away_team_name == FIXTURE_H2H?.teams_data[0].team_name}
+                  {FIXTURE_H2H?.data?.wins_draws?.team_1}
+                {:else}
+                  {FIXTURE_H2H?.data?.wins_draws?.team_2}
+                {/if}
               </p>
               <p  
                 class="color-grey">
@@ -701,12 +709,12 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data[1].team_name}
+                {FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_name}
               </p>
             {/if}
             <img 
-            src={FIXTURE_H2H?.teams_data[1].team_logo}
-            alt='{FIXTURE_H2H?.teams_data[1].team_name} Logo'
+              src={FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_logo}
+              alt='{FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_name} Logo'
               class='team-logo'
             />
           </div>
