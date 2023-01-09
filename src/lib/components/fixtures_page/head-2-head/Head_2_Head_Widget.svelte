@@ -146,8 +146,14 @@
     FIXTURE_PROB_DATA.time = HIST_FIXTURE_DATA?.time
 
     // [ℹ] calcuate (%) of 5 matches
-    team1Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_1 / 5) * 100)
-    team2Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_2 / 5) * 100)
+    if (FIXTURE_INFO?.data?.home_team_name == FIXTURE_H2H?.teams_data[0].team_name) {
+      team1Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_1 / 5) * 100)
+      team2Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_2 / 5) * 100)
+    }
+    else {
+      team1Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_2 / 5) * 100)
+      team2Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_1 / 5) * 100)
+    }
 
     // [ℹ] regardless of STATUS, 
     // [ℹ] VOTE_DATA is shown until it is erased from "/odds"
