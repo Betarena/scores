@@ -203,7 +203,7 @@
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let tabletView = 1160;
-  let mobileView = 725;
+  let mobileView = 870;
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
@@ -1159,7 +1159,7 @@
 
 	/* 
   NOTE: TABLET [EXCLUSIVE] RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 726px) and (max-width: 1160px)  {
+  @media only screen and (min-width: 871px) and (max-width: 1160px)  {
 
     #h2h-widget-container {
       min-width: 100%;
@@ -1170,7 +1170,7 @@
 
   /* 
   NOTE: TABLET && DESKTOP [SHARED] RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 726px) {
+  @media only screen and (min-width: 871px) {
    
     /* first row info */
     div#main-widget-info-row img.team-logo {
