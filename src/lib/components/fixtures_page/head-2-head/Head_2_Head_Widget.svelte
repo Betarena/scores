@@ -1093,7 +1093,10 @@
 
   /* competition box */
   div#competition-progress-box {
-    margin-top: 16px;
+    margin: 16px -20px 0 -20px;
+    width: -webkit-fill-available;
+    padding: 0 20px 20px 20px;
+    border-bottom: 1px solid #E6E6E6;
   } div#competition-progress-box div.progress-box-out {
     width: 100%;
   } div#competition-progress-box div.progress-box-out:first-child {
@@ -1241,4 +1244,7 @@
     border-bottom: 1px solid #616161;
   }
 
+  div#h2h-widget-container.dark-background-1 div#competition-progress-box {
+    border-bottom: 1px solid #616161;
+  }
 </style>
