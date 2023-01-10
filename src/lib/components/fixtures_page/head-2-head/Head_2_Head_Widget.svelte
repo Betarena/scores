@@ -203,7 +203,7 @@
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let tabletView = 1160;
-  let mobileView = 870;
+  let mobileView = 725;
   let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
@@ -886,6 +886,7 @@
                   class="
                     color-grey
                     no-wrap
+                    league-text
                   ">
                   <!--
                   [ℹ] league text info
@@ -1159,7 +1160,7 @@
 
 	/* 
   NOTE: TABLET [EXCLUSIVE] RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 871px) and (max-width: 1160px)  {
+  @media only screen and (min-width: 726px) and (max-width: 1160px)  {
 
     #h2h-widget-container {
       min-width: 100%;
@@ -1170,7 +1171,7 @@
 
   /* 
   NOTE: TABLET && DESKTOP [SHARED] RESPONSIVNESS (&+) */
-  @media only screen and (min-width: 871px) {
+  @media only screen and (min-width: 726px) {
    
     /* first row info */
     div#main-widget-info-row img.team-logo {
@@ -1219,6 +1220,19 @@
     div#h2h-widget-container.dark-background-1 div#grid-bet-stats :global(div.bet-info-box) {
       border: 1px solid #616161 !important;
     }
+  }
+
+  @media only screen and (max-width: 865px) {
+
+    /* past-fixture-data */
+    div#list-past-fixtures-box div.past-fixture-row {
+      padding: 15px 0;
+    }
+    div#list-past-fixtures-box div.past-fixture-row p.league-text {
+      max-width: 100px;
+      white-space: pre-wrap !important;
+    }
+
   }
 
   /* 
