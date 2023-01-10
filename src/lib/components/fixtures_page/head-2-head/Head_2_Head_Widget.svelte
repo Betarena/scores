@@ -1135,6 +1135,9 @@
     border-bottom: 1px solid #E6E6E6;
     padding: 24px 0;
     position: relative;
+    width: -webkit-fill-available;
+    margin: 0 -20px;
+    padding: 24px 20px 24px 20px;
   } div#list-past-fixtures-box a:last-child div.past-fixture-row {
     border: none !important;
     padding-bottom: 0;
@@ -1194,7 +1197,10 @@
     }
 
     /* past-fixture-data */
-    div#list-past-fixtures-box div.past-fixture-row div.score-info-box {
+    div#list-past-fixtures-box div.past-fixture-row {
+    padding: 24px 0;
+    margin: 0;
+  } div#list-past-fixtures-box div.past-fixture-row div.score-info-box {
       position: absolute;
       left: 50%;
       transform: translate(-50%, 0);
