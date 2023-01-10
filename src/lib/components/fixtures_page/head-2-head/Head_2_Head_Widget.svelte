@@ -1239,12 +1239,13 @@
   div#h2h-widget-container.dark-background-1 div#grid-bet-stats :global(div.bet-info-box) {
     border-bottom: 1px solid #616161 !important;
   }
-
   div#h2h-widget-container.dark-background-1 div#list-past-fixtures-box div.past-fixture-row {
     border-bottom: 1px solid #616161;
   }
-
   div#h2h-widget-container.dark-background-1 div#competition-progress-box {
     border-bottom: 1px solid #616161;
+  }
+  div#h2h-widget-container.dark-background-1 div#competition-progress-box div.progress-box-out div.team-progress-bar {
+    background-color: #616161;
   }
 </style>
