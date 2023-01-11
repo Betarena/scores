@@ -1,10 +1,10 @@
 # 📃 Description
 
-<- Please include a summary of the change and which issue is fixed. ->
-<- List any dependencies that are required for this change. ->
-<- Please also include relevant motivation and context. using the respective @user-name and the relevant fix/code created. ->
+> Please include a summary of the change and which issue is fixed.
+> List any dependencies that are required for this change.
+> Please also include relevant motivation and context. using the respective @user-name and the relevant fix/code created.
 
-- @... "<what-has-been-done>"
+- @<user-name> "<what-has-been-done>"
 
 **Fixes** 
 
@@ -12,7 +12,7 @@
 
 ## ℹ Type of change
 
-<- Please delete options that are not relevant. ->
+> Please delete options that are not relevant.
 
 - [ ] 🛠 Bug fix (non-breaking change which fixes an issue)
 - [ ] 🚀 New feature (non-breaking change which adds functionality)
@@ -21,14 +21,13 @@
 
 # 🧰 How Has This Been Tested?
 
-<- Please describe the tests that you ran to verify your changes. -> 
-<- Provide instructions so we can reproduce. -> 
-<- Please also list any relevant details for your test configuration ->
+> Please describe the tests that you ran to verify your changes.
+> by simply checking the appropiate checkbox 
 
-- [ ] `local-testing`
-- [ ] `heroku-local-environment-tested`
+- [ ] `localhost`
+- [ ] `heroku deployment`
 
-🔽 (Optional) __remove if non-applicable__
+> 🔽 (Optional)
 **Test Configuration**:
 * Firmware version:
 * Hardware:
@@ -39,7 +38,7 @@
 
 - [ ] `This code` follows the style guidelines of this project
 - [ ] `This code` is self-reviewed
-- [ ] `This code` is commented, __particularly in hard-to-understand areas__
+- [ ] `This code` is properly commented, __particularly in hard-to-understand areas__
 - [ ] `Documentation` has been updated
 - [ ] `This code` does not generate new warnings
 - [ ] `This code` contains added tests that prove my fix is effective or that my feature works
