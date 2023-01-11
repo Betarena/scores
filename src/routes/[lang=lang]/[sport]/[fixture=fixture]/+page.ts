@@ -10,6 +10,7 @@ import type {
 
 import type { REDIS_CACHE_SINGLE_about_data, REDIS_CACHE_SINGLE_about_translation } from '$lib/models/fixtures/about/types';
 import type { REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation } from '$lib/models/fixtures/content/types';
+import type { Fixture_Head_2_Head, REDIS_CACHE_SINGLE_h2h_translation } from '$lib/models/fixtures/head-2-head/types';
 import type { REDIS_CACHE_SINGLE_incidents_data, REDIS_CACHE_SINGLE_incidents_translation } from '$lib/models/fixtures/incidents/types';
 import type { REDIS_CACHE_SINGLE_lineups_data, REDIS_CACHE_SINGLE_lineups_translation } from '$lib/models/fixtures/lineups/types';
 import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
@@ -342,6 +343,31 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  // NOTE:IMPORTANT: can be null -load from hasura
+  let response_h2h: Fixture_Head_2_Head = await fetch(
+    `/api/cache/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  if (response_h2h == undefined || use_hasura) {
+    if (dev) console.debug("Non current_season fixture - loading from Hasura Directly")
+    response_h2h = await fetch(
+      `/api/hasura/fixtures/head-2-head?fixture_id=${fixture_id}`, 
+      {
+        method: 'GET'
+      }
+    ).then((r) => r.json());
+  }
+
+  const response_h2h_translation: REDIS_CACHE_SINGLE_h2h_translation = await fetch(
+    `/api/hasura/fixtures/head-2-head?lang=${urlLang}`, 
+    {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -366,6 +392,8 @@ export async function load({
     && response_about_translation
     && response_votes_translation
     && response_probability_translation
+    && response_h2h
+    && response_h2h_translation
     // extra
     && response_fixtures_odds_translations
   ) {
@@ -387,6 +415,8 @@ export async function load({
       FIXTURE_ABOUT_TRANSLATION: response_about_translation,
       FIXTURE_VOTES_TRANSLATION: response_votes_translation,
       FIXTURE_PROBS_TRANSLATION: response_probability_translation,
+      FIXTURE_H2H: response_h2h,
+      FIXTURE_H2H_TRANSLATION: response_h2h_translation,
       // extra
       FIXTURES_ODDS_T: response_fixtures_odds_translations
     }

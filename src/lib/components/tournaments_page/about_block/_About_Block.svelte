@@ -379,6 +379,24 @@
     margin-bottom: 14px;
   }
 
+  /* Mobile styles */
+  @media only screen and (max-width: 600px) {
+    :global(#about-tour-widget-container .video-container > iframe) {
+      width: 100%;
+      height: 250px;
+      border-radius: 20px;
+    }
+  }
+
+  /* Desktop styles */
+  @media only screen and (min-width: 600px) {
+    :global(#about-tour-widget-container .video-container > iframe) {
+      width: 100%;
+      height: 470px;
+      border-radius: 20px;
+    }
+  }
+
   /* ====================
     RESPONSIVNESS
   ==================== */
