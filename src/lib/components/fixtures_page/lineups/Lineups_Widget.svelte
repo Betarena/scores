@@ -14,6 +14,8 @@
   import { onValue, ref, type Unsubscribe } from "firebase/database";
 
 	import type {
+		BETARENA_HASURA_lineups_query,
+		BETARENA_HASURA_SURGICAL_JSONB_scores_football_players,
 		Fixture_Player,
 		REDIS_CACHE_SINGLE_lineups_data,
 		REDIS_CACHE_SINGLE_lineups_translation
@@ -30,6 +32,8 @@
 	import LineupVectorMobileAway from "./Lineup_Vector_Mobile_Away.svelte";
 	import LineupVectorTablet from "./Lineup_Vector_Tablet.svelte";
 
+	import { REDIS_CACHE_LINEUPS_DATA_4 } from '$lib/graphql/fixtures/lineups/query';
+	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -209,10 +213,122 @@
       FIXTURE_LINEUPS.status = live_fixtures_map.get(fixture_id)?.time?.status
       FIXTURE_LINEUPS.home.formation = live_fixtures_map.get(fixture_id)?.formations?.localteam_formation
       FIXTURE_LINEUPS.away.formation = live_fixtures_map.get(fixture_id)?.formations?.visitorteam_formation
+      
       // FIXME: make compatible TYPES for hasura/events && firebase/events
       FIXTURE_LINEUPS.events = live_fixtures_map.get(fixture_id)?.events?.data
+
+      // FIXME: assuming that the CACHED data exist and present
+
       const FIREBASE_LINEUPS_DATA = live_fixtures_map.get(fixture_id)?.lineup?.data
       const FIREBASE_BENCH_DATA = live_fixtures_map.get(fixture_id)?.bench?.data
+
+      // NOTE: check if the "cache" data is out of date
+      // NOTE: requiring auto-lineup data generation
+      // NOTE: on the spot
+
+      if (FIXTURE_LINEUPS.home.lineup.length == 0
+        && FIXTURE_LINEUPS.away.lineup.length == 0
+        && FIXTURE_LINEUPS.home.bench.length == 0
+        && FIXTURE_LINEUPS.away.bench.length == 0) {
+
+        const home_team_id = live_fixtures_map.get(fixture_id)?.localteam_id;
+        const away_team_id = live_fixtures_map.get(fixture_id)?.visitorteam_id;
+
+        /**
+         * [ℹ] obtain target football_players
+         * [ℹ] convert to map
+        */
+        let football_player_ids: number[] = []
+        const lineup_ids = FIREBASE_LINEUPS_DATA.map(p => p?.player_id)
+        const bench_ids = FIREBASE_BENCH_DATA.map(p => p?.player_id)
+        football_player_ids = [
+          ...new Set(football_player_ids.concat(lineup_ids.concat(bench_ids)))
+        ]
+        const player_data = await get_target_player_data(football_player_ids)
+        const players_map = await generate_players_map(player_data)
+
+        // [ℹ] home-team lineup [init]
+        const home_team_lineup: Fixture_Player[] = 
+          FIREBASE_LINEUPS_DATA.length == 0
+            ? []
+            : FIREBASE_LINEUPS_DATA
+              .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
+              .map(p => ({
+                player_id: p.player_id,
+                player_name: players_map.get(p.player_id)?.common_name || p.player_name || null,
+                number: p.number,
+                position: p.position,
+                formation_position: p.formation_position,
+                player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+                rating: p?.stats?.rating || null,
+                events: undefined
+              }) /* extract target players */
+            )
+        ;
+
+        // [ℹ] home-team bench [init]
+        const home_team_bench: Fixture_Player[] = 
+          FIREBASE_BENCH_DATA.length == 0
+            ? []
+            : FIREBASE_BENCH_DATA
+              .filter(player => player.team_id == home_team_id)    /* filter target HOME_TEAM_ID */
+              .map(p => ({
+                player_id: p.player_id,
+                player_name: p.player_name,
+                number: p.number,
+                position: p.position,
+                formation_position: p.formation_position,
+                player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+                rating: p?.stats?.rating || null,
+                events: undefined
+              }) /* extract target players */
+            )
+        ;
+
+        // [ℹ] away-team lineup [init]
+        const away_team_lineup: Fixture_Player[] = 
+          FIREBASE_LINEUPS_DATA.length == 0
+            ? []
+            : FIREBASE_LINEUPS_DATA
+              .filter(player => player.team_id == away_team_id)    /* filter target AWAY_TEAM_ID */
+              .map(p => ({
+                player_id: p.player_id,
+                player_name: players_map.get(p.player_id)?.common_name || p.player_name || null,
+                number: p.number,
+                position: p.position,
+                formation_position: p.formation_position,
+                player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+                rating: p?.stats?.rating || null,
+                events: undefined
+              }) /* extract target players */
+            )
+        ;
+
+        // [ℹ] away-team bench [init]
+        const away_team_bench: Fixture_Player[] = 
+          FIREBASE_BENCH_DATA.length == 0
+            ? []
+            : FIREBASE_BENCH_DATA
+              .filter(player => player.team_id == away_team_id)    /* filter target AWAY_TEAM_ID */
+              .map(p => ({
+                player_id: p.player_id,
+                player_name: p.player_name,
+                number: p.number,
+                position: p.position,
+                formation_position: p.formation_position,
+                player_avatar: players_map.get(p.player_id)?.image_path_j || null,
+                rating: p?.stats?.rating || null,
+                events: undefined
+              }) /* extract target players */
+            )
+        ;
+
+        FIXTURE_LINEUPS.home.lineup = home_team_lineup
+        FIXTURE_LINEUPS.away.lineup = away_team_lineup
+        FIXTURE_LINEUPS.home.bench = home_team_bench
+        FIXTURE_LINEUPS.away.bench = away_team_bench
+      }
+      
       // [ℹ] update fixture-target lineup
       // [ℹ] with appropiate events HOME && AWAY
       for (const player of FIXTURE_LINEUPS.home.lineup) {
@@ -639,6 +755,48 @@
   else {
     no_widget_data = true
     loaded = true
+  }
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // ADDITIONAL GRAPHQL
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  async function get_target_player_data (
+    playerIdsArr: number[]
+  ): Promise < BETARENA_HASURA_SURGICAL_JSONB_scores_football_players[] >  {
+
+    playerIdsArr = playerIdsArr.filter(function (el) {
+      return el != undefined;
+    });
+
+    const VARIABLES = {
+      playerIds: playerIdsArr
+    }
+
+    const t0 = performance.now();
+    const queryName = "REDIS_CACHE_LINEUPS_DATA_4";
+    const response: BETARENA_HASURA_lineups_query = await initGrapQLClient().request (
+      REDIS_CACHE_LINEUPS_DATA_4,
+      VARIABLES
+    );
+    const t1 = performance.now();
+
+    return response.scores_football_players;
+  }
+
+  async function generate_players_map (
+    players_arr: BETARENA_HASURA_SURGICAL_JSONB_scores_football_players[]
+  ): Promise < Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_players> > {
+    const players_map = new Map <number, BETARENA_HASURA_SURGICAL_JSONB_scores_football_players>()
+
+    // [ℹ] conversion to hashmap
+    const t0 = performance.now();
+    for await (const h_fixture of players_arr) {
+      players_map.set(h_fixture.player_id, h_fixture);
+    }
+    const t1 = performance.now();
+
+    return players_map;
   }
 
 </script>
