@@ -34,11 +34,13 @@ export async function load({
 }): PageLoad {
 
   const {
-    lang,
+    // lang,
     sport,
     country,
     league_name
   } = params
+
+  const _lang = params?.lang
 
   /**
    * [ℹ] Ensure URL Check Existance; 
@@ -84,7 +86,7 @@ export async function load({
 
   response_tournaments_seo.main_data = 
     JSON.parse(JSON.stringify(response_tournaments_seo.main_data)
-      .replace(/{lang}/g, lang)
+      .replace(/{lang}/g, _lang)
       .replace(/{sport}/g, sport)
       .replace(/{country}/g, country)
       .replace(/{name}/g, league_name)
@@ -93,7 +95,7 @@ export async function load({
 
   response_tournaments_seo.twitter_card = 
     JSON.parse(JSON.stringify(response_tournaments_seo.twitter_card)
-      .replace(/{lang}/g, lang)
+      .replace(/{lang}/g, _lang)
       .replace(/{sport}/g, sport)
       .replace(/{country}/g, country)
       .replace(/{name}/g, league_name)
@@ -102,7 +104,7 @@ export async function load({
 
   response_tournaments_seo.opengraph = 
     JSON.parse(JSON.stringify(response_tournaments_seo.opengraph)
-      .replace(/{lang}/g, lang)
+      .replace(/{lang}/g, _lang)
       .replace(/{sport}/g, sport)
       .replace(/{country}/g, country)
       .replace(/{name}/g, league_name)
@@ -111,7 +113,7 @@ export async function load({
 
   // [ℹ] canonical exclusive - [LANG];
   const enItemAlt = response_tournaments_page_info.alternate_data
-    .find( ({lang}) => 
+    .find( ({ lang }) => 
       lang === urlLang
     )
   ;
@@ -179,20 +181,6 @@ export async function load({
    * [ℹ] RETURN
    * ==========
    */
-
-  // [🐞]
-  if (dev) {
-    console.log('league_id: ', league_id)
-    if (response_tournaments_seo == undefined) console.log("response_tournaments_seo")
-    if (response_tournaments_page_info == undefined) console.log("response_tournaments_page_info")
-    if (response_league_info == undefined) console.log("response_league_info")
-    if (response_standings_translations == undefined) console.log("response_standings_translations")
-    if (response_standings_data == undefined) console.log("response_standings_data")
-    if (response_top_players_translations == undefined) console.log("response_top_players_translations")
-    if (response_top_players_data == undefined) console.log("response_top_players_data")
-    if (response_fixtures_odds_translations == undefined) console.log("response_fixtures_odds_translations")
-    if (response_fixtures_odds_data == undefined) console.log("response_fixtures_odds_data")
-  }
 
   // [🐞]
   if (dev) {

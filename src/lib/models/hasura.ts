@@ -1673,3 +1673,48 @@ export interface BETARENA_HASURA_scores_fixture_probabilities_translations {
   probabilities?:     string;
   show_more_options?: string;
 }
+
+/**
+ * [ℹ] HASURA: football_h2h (&)
+*/
+export interface BETARENA_HASURA_football_h2h {
+  team_ids?:         string;
+  data?:             WelcomeData;
+  last_5_data?:      WelcomeData[];
+  wins_draws?:       football_h2h_WINSDraws;
+  yellow_cards_avg?: number;
+  overs?:            football_h2h_Overs;
+  btts?:             football_h2h_Btts;
+} export interface football_h2h_Btts {
+  btts_count?: number;
+} export interface football_h2h_Overs {
+  over_1_5_count?: number;
+  over_2_5_count?: number;
+  over_3_5_count?: number;
+} export interface football_h2h_WINSDraws {
+  draws?:  number;
+  team_1?: number;
+  team_2?: number;
+}
+
+/**
+ * [ℹ] HASURA: scores_fixtures_h2h_translations (&)
+*/
+export interface BETARENA_HASURA_scores_fixtures_h2h_translations {
+  lang?:         string;
+  translations?: h2h_Translations;
+} export interface h2h_Translations {
+  in?:           string;
+  btts?:         string;
+  wins?:         string;
+  draws?:        string;
+  round?:        string;
+  last_5?:       string;
+  corners?:      string;
+  matches?:      string;
+  over_1_5?:     string;
+  over_2_5?:     string;
+  over_3_5?:     string;
+  widget_title?: string;
+  yellow_cards?: string;
+}
