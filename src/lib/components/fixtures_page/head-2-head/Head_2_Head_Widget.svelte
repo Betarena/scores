@@ -110,7 +110,8 @@
     loaded = true;
     
     const responses_invalid = 
-      response == undefined
+      FIXTURE_H2H == undefined
+      || response == undefined
       || response.historic_fixtures[0] == undefined
       || response.historic_fixtures[0]?.probabilities == undefined
       || response_main_sportbook == undefined
@@ -474,20 +475,23 @@
     <div 
       id="seo-widget-box">
       <!-- 
-      [ℹ] widget-title -->
+      [ℹ] widget-title 
+      -->
       <!-- <h2>{FIXTURE_VOTES_TRANSLATION?.widget_title}</h2> -->
-      <!-- 
-      [ℹ] team-names
-      -->
-      {#each FIXTURE_H2H?.teams_data as item}
-        <p>{item?.team_name}</p>
-      {/each}
-      <!-- 
-      [ℹ] league-names [from-fixtures]
-      -->
-      {#each FIXTURE_H2H?.data?.last_5_data as item}
-        <p>{item?.league?.data?.name}</p>
-      {/each}
+      {#if FIXTURE_H2H != undefined}
+        <!-- 
+        [ℹ] team-names
+        -->
+        {#each FIXTURE_H2H?.teams_data as item}
+          <p>{item?.team_name}</p>
+        {/each}
+        <!-- 
+        [ℹ] league-names [from-fixtures]
+        -->
+        {#each FIXTURE_H2H?.data?.last_5_data as item}
+          <p>{item?.league?.data?.name}</p>
+        {/each}
+      {/if}
     </div>
   <!-- {/if} -->
 

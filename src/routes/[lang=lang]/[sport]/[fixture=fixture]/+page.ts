@@ -374,6 +374,29 @@ export async function load({
    * ==========
   */
 
+  // [🐞]
+  if (dev) {
+    console.log('fixture_id: ', fixture_id)
+    if (response_fixtures_seo == undefined) console.log("response_fixtures_seo is undefined")
+    if (response_fixtures_page_info == undefined) console.log("response_fixtures_page_info is undefined")
+    if (response_scoreboard == undefined) console.log("response_scoreboard is undefined")
+    if (response_scoreboard_translation == undefined) console.log("response_scoreboard_translation is undefined")
+    if (response_lineups == undefined) console.log("response_lineups is undefined")
+    if (response_lineups_translation == undefined) console.log("response_lineups_translation is undefined")
+    if (response_incidents == undefined) console.log("response_incidents is undefined")
+    if (response_incidents_translation == undefined) console.log("response_incidents_translation is undefined")
+    if (response_featured_betting_sites_translation == undefined) console.log("response_featured_betting_sites_translation is undefined")
+    if (response_statistics == undefined) console.log("response_statistics is undefined")
+    if (response_statistics_translation == undefined) console.log("response_statistics_translation is undefined")
+    if (response_content == undefined) console.log("response_content is undefined")
+    if (response_content_translation == undefined) console.log("response_content_translation is undefined")
+    if (response_about_translation == undefined) console.log("response_about_translation is undefined")
+    if (response_votes_translation == undefined) console.log("response_votes_translation is undefined")
+    if (response_h2h == undefined) console.log("response_h2h is undefined")
+    if (response_h2h_translation == undefined) console.log("response_h2h_translation is undefined")
+    if (response_fixtures_odds_translations == undefined) console.log("response_fixtures_odds_translations is undefined")
+  }
+
   if (
     response_fixtures_seo
     && response_fixtures_page_info
@@ -392,7 +415,7 @@ export async function load({
     && response_about_translation
     && response_votes_translation
     && response_probability_translation
-    && response_h2h
+    // && response_h2h // IMPORTANT can be "NULL"
     && response_h2h_translation
     // extra
     && response_fixtures_odds_translations
