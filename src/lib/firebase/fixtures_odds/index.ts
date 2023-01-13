@@ -5,7 +5,7 @@ import { child, get, ref } from 'firebase/database'
 
 export async function getLivescoresNow(): Promise < unknown > {
 
-  return get(child(ref(db_real), `livescores_now`))
+  return await get(child(ref(db_real), `livescores_now`))
   .then((snapshot) => {
     if (snapshot.exists()) {
       return snapshot.val()
@@ -26,7 +26,7 @@ export async function getOdds (
 
   // [ℹ] iterate over ALL fixtures
   // [ℹ] of SELECTED season
-  for (const season_fixture_date_group of fixtures_arr_filter) {
+  for await (const season_fixture_date_group of fixtures_arr_filter) {
 
     // [ℹ] convert the datetime to the correct variables to search for the fixture;
     const year_: string = new Date(season_fixture_date_group.date).getFullYear().toString();
@@ -39,7 +39,7 @@ export async function getOdds (
     // [ℹ] iterater over fixtures 
     // [ℹ] [BY DATE GROUP]
     // [ℹ] assign "onValue" event-listeners
-    for (const season_fixture of season_fixture_date_group.fixtures) {
+    for await (const season_fixture of season_fixture_date_group.fixtures) {
 
       if (season_fixture.status == "FT") {
         continue
@@ -47,7 +47,7 @@ export async function getOdds (
 
       const fixture_id = season_fixture.id;
 
-      get(child(ref(db_real), 'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id))
+      get(child(ref(db_real), `odds/${year_}/${new_month_}/${day_}/${fixture_id}`))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const sportbook_array: FIREBASE_odds[] = []

@@ -232,8 +232,8 @@ export async function load ({
     // '/api/cache/leagues_table?geoPos='+'en', 
   ];
 
-  const promises = urls.map((url) =>
-    fetch(url)
+  const promises = urls.map((_url) =>
+    fetch(_url)
     .then((response) => response.json())
   );
 

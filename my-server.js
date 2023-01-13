@@ -28,7 +28,7 @@ const app = express();
  * [ℹ] separate from SvelteKit endpoint in attempts to
  * [ℹ] identify clients (IP - address)
 */
-app.get('/getClientIP', (req, res, next) => {
+app.get('/getClientIP', (req, res) => {
 
   const ip = req.headers['x-forwarded-for'] ||
     req.socket.remoteAddress ||

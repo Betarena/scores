@@ -423,7 +423,7 @@ async function get_target_player_data (
   playerIdsArr: number[]
 ): Promise < BETARENA_HASURA_SURGICAL_JSONB_scores_football_players[] >  {
 
-  playerIdsArr = playerIdsArr.filter(function (el) {
+  playerIdsArr = playerIdsArr.filter((el) => {
     return el != undefined;
   });
 

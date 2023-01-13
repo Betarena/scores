@@ -14,20 +14,11 @@ import { child, get, ref } from 'firebase/database';
  * ... @param userGeoLocation
 */
 export async function getAllSportbookDetails(): Promise<unknown> {
-
     // ... get all the `sportbook_details` data from `Firebase DB`;
-    return get(child(ref(db_real), `sportsbook_details`)).then((snapshot) => {
-
-        // ... existance verifying;
+    return await get(child(ref(db_real), `sportsbook_details`)).then((snapshot) => {
         if (snapshot.exists()) {
-
-            // ... return RAW DATA;
             return snapshot.val()
-
-        // ... else, return `empty`;
         } else {
-
-            // ... return null;
             return;
         }
     })
