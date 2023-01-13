@@ -47,7 +47,7 @@ export async function getOdds (
 
       const fixture_id = season_fixture.id;
 
-      get(child(ref(db_real), 'odds/' + year_ + '/' + new_month_ + '/' + day_ + '/' + fixture_id))
+      get(child(ref(db_real), `odds/${year_}/${new_month_}/${day_}/${fixture_id}`))
       .then((snapshot) => {
         if (snapshot.exists()) {
           const sportbook_array: FIREBASE_odds[] = []
