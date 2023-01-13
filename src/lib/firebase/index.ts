@@ -53,9 +53,9 @@ export async function getTargetFixtureOdds (
 				const map = new Map();
 				let count = 0;
 				// ... iterate over the data of the `lang` in sportbook details;
-				for (const rankedOdd in sportbook_details) {
+				for (const rankedOdd of Object.keys(sportbook_details)) {
 					// ... iterate over the data of the fixture avaiable ODDS;
-					for (const avaiableOdd in fixture_odds_keys) {
+					for (const avaiableOdd of Object.keys(fixture_odds_keys)) {
 						// ...
 						const targetFixture = fixture_odds_keys[avaiableOdd];
 						const fixtureOdd = fixture_odds[targetFixture];
