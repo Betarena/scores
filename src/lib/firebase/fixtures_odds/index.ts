@@ -39,7 +39,7 @@ export async function getOdds (
     // [ℹ] iterater over fixtures 
     // [ℹ] [BY DATE GROUP]
     // [ℹ] assign "onValue" event-listeners
-    for (const season_fixture of season_fixture_date_group.fixtures) {
+    for await (const season_fixture of season_fixture_date_group.fixtures) {
 
       if (season_fixture.status == "FT") {
         continue
