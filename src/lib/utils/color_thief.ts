@@ -41,7 +41,7 @@ export function getImageBgColor(imgURL: string, imageVar: string) {
     // instantiate the image Type;
     const img = new Image();
     // listen, event to wait for the image to load
-    img.addEventListener('load', function () {
+    img.addEventListener('load', (e) => {
       // get the array of RGB values,
       const colorValues = colorThief.getColor(img);
       // convert the RGB values to HEX value,
