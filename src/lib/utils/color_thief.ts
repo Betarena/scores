@@ -11,6 +11,24 @@ const colorThief = new ColorThief();
 /**
  * Description:
  * ~~~~~~~~~~~~~~~~~~~~
+ * A function-method to convert the
+ * [x,a,c] of RBG values to `#HEX` values
+ * @param r
+ * @param g
+ * @param b
+ * @returns (# a singel #HEX-Color Value)
+*/
+export const rgbToHex = (r, g, b) =>
+  '#' + [r, g, b]
+  .map((x) => {
+    const hex = x.toString(16);
+    return hex.length === 1 ? `0${hex}` : hex;
+  })
+  .join('');
+
+/**
+ * Description:
+ * ~~~~~~~~~~~~~~~~~~~~
  * a function-method to obtain the main
  * `primary` color of the image
  * and place it on the background
@@ -23,7 +41,7 @@ export function getImageBgColor(imgURL: string, imageVar: string) {
     // instantiate the image Type;
     const img = new Image();
     // listen, event to wait for the image to load
-    img.addEventListener('load', function () {
+    img.addEventListener('load', () => {
       // get the array of RGB values,
       const colorValues = colorThief.getColor(img);
       // convert the RGB values to HEX value,
@@ -43,21 +61,3 @@ export function getImageBgColor(imgURL: string, imageVar: string) {
     if (dev) console.error('-- getImageBgColor() ERR --', e);
   }
 }
-
-/**
- * Description:
- * ~~~~~~~~~~~~~~~~~~~~
- * A function-method to convert the
- * [x,a,c] of RBG values to `#HEX` values
- * @param r
- * @param g
- * @param b
- * @returns (# a singel #HEX-Color Value)
-*/
-export const rgbToHex = (r, g, b) =>
-  '#' + [r, g, b]
-  .map((x) => {
-    const hex = x.toString(16);
-    return hex.length === 1 ? '0' + hex : hex;
-  })
-  .join('');

@@ -147,13 +147,14 @@
     FIXTURE_PROB_DATA.time = HIST_FIXTURE_DATA?.time
 
     // [ℹ] calcuate (%) of 5 matches
-    if (FIXTURE_INFO?.data?.home_team_name == FIXTURE_H2H?.teams_data[0].team_name) {
-      team1Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_1 / 5) * 100)
-      team2Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_2 / 5) * 100)
-    }
-    else {
+    if ((FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_id
+        > FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_id)) {
       team1Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_2 / 5) * 100)
       team2Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_1 / 5) * 100)
+    }
+    else {
+      team1Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_1 / 5) * 100)
+      team2Percent = ((FIXTURE_H2H?.data?.wins_draws?.team_2 / 5) * 100)
     }
 
     // [ℹ] regardless of STATUS, 
@@ -665,10 +666,11 @@
                   color-black-2
                   main-txt
                 ">
-                {#if FIXTURE_INFO?.data?.home_team_name == FIXTURE_H2H?.teams_data[0].team_name}
-                  {FIXTURE_H2H?.data?.wins_draws?.team_1}
-                {:else}
+                {#if (FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_id
+                      > FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_id)}
                   {FIXTURE_H2H?.data?.wins_draws?.team_2}
+                {:else}
+                  {FIXTURE_H2H?.data?.wins_draws?.team_1}
                 {/if}
                 </p>
               <p  
@@ -705,10 +707,11 @@
                   color-black-2
                   main-txt
                 ">
-                {#if FIXTURE_INFO?.data?.away_team_name == FIXTURE_H2H?.teams_data[0].team_name}
-                  {FIXTURE_H2H?.data?.wins_draws?.team_1}
-                {:else}
+                {#if (FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_id
+                      > FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_id)}
                   {FIXTURE_H2H?.data?.wins_draws?.team_2}
+                {:else}
+                  {FIXTURE_H2H?.data?.wins_draws?.team_1}
                 {/if}
               </p>
               <p  
@@ -765,7 +768,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data[0].team_name}
+                {FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_name}
               </p>
             {/if}
             <div
@@ -790,7 +793,7 @@
                   w-500
                   color-black-2
                 ">
-                {FIXTURE_H2H?.teams_data[1].team_name}
+                {FIXTURE_H2H?.teams_data.find( ({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_name}
               </p>
             {/if}
             <div
@@ -1226,7 +1229,7 @@
     }
   }
 
-  @media only screen and (max-width: 865px) {
+  @media only screen and (min-width: 726px) and (max-width: 865px) {
 
     /* past-fixture-data */
     div#list-past-fixtures-box div.past-fixture-row {

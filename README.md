@@ -56,6 +56,16 @@ npm run dev
 npm run dev -- --open
 ```
 
+### Dev Environment [Codespaces]
+
+If you're using `codespaces` enabled for the `scores-platform` development - simply launch the
+`dev` branch and once the `codespace` has successfully loaded run the following commands:
+
+```
+npm install -g npm@8.19.1
+npm install
+```
+
 ### Production Environment
 
 Before creating a production version of your app, install an [adapter](https://kit.svelte.dev/docs#adapters) for your target environment. Then:
