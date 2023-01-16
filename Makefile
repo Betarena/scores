@@ -22,7 +22,7 @@ dev-start:
 	echo 'DEV Ready!'
 
 dev-docker-start:
-	echo 'Starting DEV [docker] Environment'
+	echo 'Starting DEV - Docker Environment'
 	echo 'Removing Old DEV Logs'
 	-rm -r ./datalog/*
 	docker-compose -f docker-compose.dev.yml up
@@ -32,9 +32,9 @@ dev-clean:
 	echo 'Removing Old DEV Logs'
 	rm -r ./datalog/
 
-git-post-main-pr:
-  # from Develop and assuming your master is up to date with origin/master
-  git checkout main
-  git pull origin main
-  git checkout dev
-  git reset --hard main
+# from Develop and assuming your master is up to date with origin/master
+# git-post-main-pr:
+# 	git checkout main
+# 	git pull origin main
+# 	git checkout dev
+# 	git reset --hard main
