@@ -29,5 +29,6 @@ WORKDIR /app
 COPY --from=build /app .
 COPY . .
 
-EXPOSE 3000
-CMD ["node", "./build"]
+EXPOSE 5055
+# CMD ["node", "./build"]
+CMD ["npm", "start"]
