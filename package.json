@@ -11,6 +11,8 @@
 		"debug-preview": "cross-env NODE_OPTIONS='--inspect' vite preview --host --port 5000",
 		"debug-bull": "cross-env NODE_DEBUG='bull' vite preview --host --port 5000",
 		"dev": "vite dev --host --port 3050",
+    "dev-docker": "vite dev --host --port 5055",
+    "docker-dev-up": "docker-compose -f docker-compose.dev.yml up",
 		"build": "vite build",
 		"staging": "npm run dev -- --mode staging",
 		"start": "node my-server.js",
