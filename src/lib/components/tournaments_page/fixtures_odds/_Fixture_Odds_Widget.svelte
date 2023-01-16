@@ -1994,14 +1994,16 @@
                           [ℹ] NOTE: status_abv trnasltions on hasura must
                           [ℹ] NOTE: must match that of the SPORTMONKS data
                           -->
-                          <p
-                            class="
-                              no-wrap 
-                              s-14 
-                              color-grey
-                            ">
-                            {fixture?.status == "NS" ? "NS" : FIXTURES_ODDS_T?.status_abv[fixture?.status]}
-                          </p>
+                          {#if fixture?.status != "NS"}
+                            <p
+                              class="
+                                no-wrap 
+                                s-14 
+                                color-grey
+                              ">
+                              {FIXTURES_ODDS_T?.status_abv[fixture?.status]}
+                            </p>
+                          {/if}
                         {/if}
                       </div>
 
