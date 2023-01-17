@@ -7,13 +7,13 @@ import { handler } from './build/handler.js';
 import compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
 import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/request-ip
 
-import fs from 'fs';
+// import fs from 'fs';
 
-var options = {
-    key: fs.readFileSync('./certs/privkey.pem'),
-    cert: fs.readFileSync('./certs/cert.pem'),
-  }
-;
+// var options = {
+//     key: fs.readFileSync('./certs/privkey.pem'),
+//     cert: fs.readFileSync('./certs/cert.pem'),
+//   }
+// ;
 
 const app = express();
 
