@@ -14,7 +14,9 @@ jobs:
         key: ${{secrets.WEB_SERVER_KEY}}
         port: ${{secrets.WEB_SERVER_PORT}}
         script: | 
-          whoami
+          # TEST
+          # whoami
+          # ls -a
           cd web/scores
-          whoami
-          ls -a
+          git pull origin enhance/feature-docker-deploy
+          make update-scores-web
