@@ -10,6 +10,11 @@ log-listen:
 	echo 'Starting PROD container'
 	docker-compose -f docker-compose.yml up
 
+update-scores-web:
+	echo 'Updating PROD Scores Web container...'
+	git pull origin enhance/feature-docker-deploy
+	docker-compose -f docker-compose.yml up -d
+
 # ===========
 # DEVELOPMENT
 # ===========
