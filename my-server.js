@@ -7,7 +7,6 @@ import https from 'https';
 import { handler } from './build/handler.js';
 // import sslRedirect from 'heroku-ssl-redirect';
 import compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
-import * as sslify from 'express-sslify';
 import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/request-ip
 
 import fs from 'fs';
@@ -75,18 +74,18 @@ app.get('/getClientIP', (req, res) => {
  * [ℹ] https://jaketrent.com/post/https-redirect-node-heroku
  * [ℹ] https://webdva.github.io/how-to-force-express-https-tutorial 
 */
-app.use((req, res, next) => {
-  if (req.header('x-forwarded-proto') !== 'https')
-    res.redirect(`https://${req.header('host')}${req.url}`);
-  else
-    next();
-});
+// app.use((req, res, next) => {
+//   if (req.header('x-forwarded-proto') !== 'https')
+//     res.redirect(`https://${req.header('host')}${req.url}`);
+//   else
+//     next();
+// });
 
 /**
  * [ℹ] https://www.npmjs.com/package/express-sslify
  * [ℹ] https://stackoverflow.com/questions/51234023/heroku-nodejs-redirect-http-to-http
 */
-app.use(sslify.HTTPS({ trustProtoHeader: true }))
+// app.use(sslify.HTTPS({ trustProtoHeader: true }))
 
 // [ℹ] compress all responses
 app.use(compression())
