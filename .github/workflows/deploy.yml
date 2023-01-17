@@ -17,3 +17,4 @@ jobs:
           whoami
           cd web/scores
           whoami
+          ls -a
