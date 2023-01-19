@@ -2783,8 +2783,8 @@
   #seo-widget-box {
 		position: absolute;
 		z-index: -100;
-		top: -9999px;
-		left: -9999px;
+		top: -999999px;
+		left: -999999px;
 	}
 
   /* 
