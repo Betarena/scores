@@ -101,7 +101,7 @@ app.use(handler);
  * [ℹ] initialize app;
  * [ℹ] https://stackoverflow.com/questions/15693192/heroku-node-js-error-web-process-failed-to-bind-to-port-within-60-seconds-o 
 */
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 5000, () => {
 	console.log(`listening on port ${process.env.PORT}`);
 });
 
