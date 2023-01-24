@@ -1,22 +1,12 @@
 // [ℹ] https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
 // [ℹ] https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
-import express from 'express';
-// import http from 'http';
-// import https from 'https';
 
+import express from 'express';
 import { handler } from './build/handler.js';
 // import sslRedirect from 'heroku-ssl-redirect';
 import compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
 import * as sslify from 'express-sslify';
 import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/request-ip
-
-// import fs from 'fs';
-
-// var options = {
-//     key: fs.readFileSync('./certs/privkey.pem'),
-//     cert: fs.readFileSync('./certs/cert.pem'),
-//   }
-// ;
 
 const app = express();
 
@@ -75,12 +65,12 @@ app.get('/getClientIP', (req, res) => {
  * [ℹ] https://jaketrent.com/post/https-redirect-node-heroku
  * [ℹ] https://webdva.github.io/how-to-force-express-https-tutorial 
 */
-// app.use((req, res, next) => {
-//   if (req.header('x-forwarded-proto') !== 'https')
-//     res.redirect(`https://${req.header('host')}${req.url}`);
-//   else
-//     next();
-// });
+app.use((req, res, next) => {
+  if (req.header('x-forwarded-proto') !== 'https')
+    res.redirect(`https://${req.header('host')}${req.url}`);
+  else
+    next();
+});
 
 /**
  * [ℹ] https://www.npmjs.com/package/express-sslify
@@ -102,17 +92,5 @@ app.use(handler);
  * [ℹ] https://stackoverflow.com/questions/15693192/heroku-node-js-error-web-process-failed-to-bind-to-port-within-60-seconds-o 
 */
 app.listen(process.env.PORT || 5000, () => {
-	console.log(`listening on port ${process.env.PORT}`);
+	console.log('listening on port 5000');
 });
-
-// ~~~~~~~~~~~~~~~~~~~~~~
-// APP SPIN-UP [PROD] [V2]
-// ~~~~~~~~~~~~~~~~~~~~~~
-
-// http.createServer(app).listen(80, function(){
-//   console.log(`[HTTP | Server]: Server is running on port: ${80}`);
-// });
-
-// https.createServer(options, app).listen(443, function(){
-//   console.log(`[HTTPS | Server]: Server is running on port: ${443}`);
-// });
