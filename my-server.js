@@ -1,8 +1,8 @@
 // [ℹ] https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
 // [ℹ] https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
 import express from 'express';
-import http from 'http';
-import https from 'https';
+// import http from 'http';
+// import https from 'https';
 
 import { handler } from './build/handler.js';
 // import sslRedirect from 'heroku-ssl-redirect';
@@ -10,13 +10,13 @@ import compression from 'compression'; // https://expressjs.com/en/resources/mid
 import * as sslify from 'express-sslify';
 import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/request-ip
 
-import fs from 'fs';
+// import fs from 'fs';
 
-var options = {
-    key: fs.readFileSync('./certs/privkey.pem'),
-    cert: fs.readFileSync('./certs/cert.pem'),
-  }
-;
+// var options = {
+//     key: fs.readFileSync('./certs/privkey.pem'),
+//     cert: fs.readFileSync('./certs/cert.pem'),
+//   }
+// ;
 
 const app = express();
 
@@ -101,18 +101,18 @@ app.use(handler);
  * [ℹ] initialize app;
  * [ℹ] https://stackoverflow.com/questions/15693192/heroku-node-js-error-web-process-failed-to-bind-to-port-within-60-seconds-o 
 */
-// app.listen(process.env.PORT, () => {
-// 	console.log(`listening on port ${process.env.PORT}`);
-// });
+app.listen(process.env.PORT, () => {
+	console.log(`listening on port ${process.env.PORT}`);
+});
 
 // ~~~~~~~~~~~~~~~~~~~~~~
 // APP SPIN-UP [PROD] [V2]
 // ~~~~~~~~~~~~~~~~~~~~~~
 
-http.createServer(app).listen(80, function(){
-  console.log(`[HTTP | Server]: Server is running on port: ${80}`);
-});
+// http.createServer(app).listen(80, function(){
+//   console.log(`[HTTP | Server]: Server is running on port: ${80}`);
+// });
 
-https.createServer(options, app).listen(443, function(){
-  console.log(`[HTTPS | Server]: Server is running on port: ${443}`);
-});
+// https.createServer(options, app).listen(443, function(){
+//   console.log(`[HTTPS | Server]: Server is running on port: ${443}`);
+// });
