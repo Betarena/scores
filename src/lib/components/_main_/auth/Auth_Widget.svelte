@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
   import { userBetarenaSettings, type Scores_User } from '$lib/store/user-settings';
   import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
   import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-  import { GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
+  import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
 
   import discord_icon from './assets/discord.svg';
   import email_verify from './assets/email-verify.svg';
@@ -45,6 +45,8 @@ COMPONENT JS (w/ TS)
   let web3_wallet_address: string;
   let success_auth: boolean = false;
   let error_auth: boolean = false;
+  let email_error_format: boolean = false;
+  let email_already_in_use: boolean = false;
 
   const actionCodeSettings = {
     // [ℹ] URL / DOMAIN you want to redirect back to.
@@ -109,26 +111,59 @@ COMPONENT JS (w/ TS)
     }
   }
 
+  async function check_email_user_exists (email_input: string) {
+    
+  }
+
   async function login_with_email_link () {
     // DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
     try {
+      email_error_format = false 
       processing = true
       // [🐞]
       if (dev) console.log('email_input', email_input)
+      await fetchSignInMethodsForEmail(
+        auth, 
+        email_input
+      )
+      .then((signInMethods) => {
+        if (signInMethods.length) {
+          // [ℹ] The email already exists in the Auth database. You can check the
+          // [ℹ] sign-in methods associated with it by checking signInMethods array.
+          // [ℹ] Show the option to sign in with that sign-in method.
+          email_already_in_use = true;
+        } else {
+          // [ℹ] User does not exist. Ask user to sign up.
+          email_already_in_use = false;
+        }
+      })
+      .catch((error) => { 
+        // Some error occurred.
+      });
+      // [ℹ] validation
+      if (email_already_in_use) {
+        if (dev) console.log('🟠 Exit MagicLink')
+        processing = false
+        error_auth = true
+        setTimeout(() => {
+          error_auth = false
+        }, 1500)
+        return
+      }
+      // [ℹ] cont. send email
       await sendSignInLinkToEmail(
         auth, 
         email_input, 
         actionCodeSettings
       )
       .then(() => {
-        // NOTE: The link was successfully sent - (custom) UI update
+        // [ℹ] The link was successfully sent - (custom) UI update
         processing = false
         auth_view = false
         email_verify_process = true
-        // NOTE: Save the email in localStroage()
-        // NOTE: if they open the link on the same device.
+        // [ℹ] Save the email in localStroage() for retrival on same device
         window.localStorage.setItem('emailForSignIn', email_input);
-        // NOTE: listen for email deep link cont.
+        // NOTE: listen for email deep link continued
       })
       .catch((error) => {
         // TODO: Error Authetication Handle
@@ -352,6 +387,15 @@ COMPONENT JS (w/ TS)
   function close_email_sent_view () {
     $sessionStore.auth_show = false
     email_verify_process = false
+    auth_view = true
+  }
+
+  function wrong_email_format () {
+    email_error_format = true 
+    error_auth = true
+    setTimeout(() => {
+      error_auth = false
+    }, 1500)
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -422,6 +466,7 @@ COMPONENT HTML
 {#if $sessionStore.auth_show}
   <div
     id='background-modal-blur'
+    on:click={() => $sessionStore.auth_show = false}
     in:fade 
   />
 {/if}
@@ -557,7 +602,7 @@ COMPONENT HTML
           <br>
           <span
             class="color-black-2">
-            youremail@gmail.com.
+            {email_input}
           </span>
           <br>
           Please verify your email to continue.
@@ -566,7 +611,10 @@ COMPONENT HTML
         [ℹ] verify email to my inbox
         -->
         <p
-          class="color-primary"
+          class="
+            color-primary
+            cursor-pointer
+          "
           style="margin-top: 8px;"
           on:click={() => open_email()}>
           Go to my inbox
@@ -579,7 +627,10 @@ COMPONENT HTML
           style="margin-top: 24px;">
           Did not get the email? 
           <span
-            class="color-primary"
+            class="
+              color-primary
+              cursor-pointer
+            "
             on:click={() => login_with_email_link()}>
             Resend email
           </span>
@@ -643,26 +694,57 @@ COMPONENT HTML
           Enter your email address to sign up
         {/if}
       </p>
-      <input
-        type="text"
-        placeholder="email@gmail.com"
-        bind:value={email_input}
-        id='email'
-        autocomplete="off"
-      />
-      <button
-        id="email-btn"
-        class="
-          btn-primary 
-        "
-        on:click={() => login_with_email_link()}>
-        <p
+      <form 
+        on:submit|preventDefault={() => login_with_email_link()}>
+        <!-- 
+        [ℹ] input email
+        -->
+        <input
+          id='email'
+          type="email"
+          placeholder="email@gmail.com"
+          bind:value={email_input}
+          on:invalid={() => wrong_email_format()}
+          autocomplete="off"
+          class:error-email={email_error_format || email_already_in_use}
+        />
+        <!-- 
+        [ℹ] error email validation format
+        -->
+        {#if email_error_format}
+          <p
+            class="color-error"
+            style="margin-top: 10px;">
+            Wrong format
+          </p>
+        {/if}
+        <!-- 
+        [ℹ] error email validation exists
+        -->
+        {#if email_already_in_use}
+          <p
+            class="color-error"
+            style="margin-top: 10px;">
+            Email already in use
+          </p>
+        {/if}
+        <!-- 
+        [ℹ] submit email button
+        -->
+        <button
+          id="email-btn"
           class="
-            w-500
-          ">
-          Continue with email
-        </p>
-      </button>
+            btn-primary 
+          "
+          type="submit">
+          <p
+            class="
+              w-500
+            ">
+            Continue with email
+          </p>
+        </button>
+      </form>
 
       <!-- 
       [ℹ] auth login/sign-up w/alt. OAuth2 options
@@ -931,6 +1013,7 @@ COMPONENT STYLE
     outline: none;
     font-size: 14px;
     margin-top: 12px;
+    color: #000000;
   } input#email:hover {
     border: 1px solid #8C8C8C;
   } input#email:focus {
@@ -939,6 +1022,10 @@ COMPONENT STYLE
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  } input#email::placeholder {
+    color: #CCCCCC;
+  } input#email.error-email {
+    border: 1px solid #FF3C3C !important;
   }
   button#email-btn {
     height: 40px;
@@ -950,6 +1037,7 @@ COMPONENT STYLE
     margin-top: 12px;
   } button#email-btn p {
     color: #FFFFFF;
+    font-size: 14px;
   }
   
   /* 
@@ -995,6 +1083,7 @@ COMPONENT STYLE
     margin-right: 12px;
   } button#metamask p {
     margin-left: 12px;
+    font-size: 14px;
   }
 
   /* 
@@ -1042,6 +1131,10 @@ COMPONENT STYLE
   div#widget-outer.dark-background-1 input#email {
     background: #4B4B4B;
     border: 1px solid #737373;
+  } div#widget-outer.dark-background-1 input#email {
+    color: #FFFFFF;
+  } div#widget-outer.dark-background-1 input#email::placeholder {
+    color: #737373;
   }
 
   div#widget-outer.dark-background-1 div#other-oauth-divider-box div.hr-box,
