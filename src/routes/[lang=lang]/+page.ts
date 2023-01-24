@@ -270,6 +270,21 @@ export async function load ({
     throw error(404, `Uh-oh! This page does not exist!`);
   }
 
+  // [🐞]
+  if (dev) {
+    if (response_homepage_seo == undefined) console.log("response_homepage_seo is undefined")
+    if (response_featured_match_seo == undefined) console.log("response_featured_match_seo is undefined")
+    if (response_featured_betting_sites_seo == undefined) console.log("response_featured_betting_sites_seo is undefined")
+    if (response_best_goalscorers_seo == undefined) console.log("response_best_goalscorers_seo is undefined")
+    if (response_league_list_seo == undefined) console.log("response_league_list_seo is undefined")
+    if (response_leagues_table_seo == undefined) console.log("response_leagues_table_seo is undefined")
+    if (response_seo_block_seo == undefined) console.log("response_seo_block_seo is undefined")
+    if (response_livescores_football == undefined) console.log("response_livescores_football is undefined")
+    if (response_livescores_football_leagues == undefined) console.log("response_livescores_football_leagues is undefined")
+    if (response_livescores_football_translations == undefined) console.log("response_livescores_football_translations is undefined")
+    if (response_livescores_football_tournaments == undefined) console.log("response_livescores_football_tournaments is undefined")
+  }
+
   if (
     response_homepage_seo &&
     response_featured_match_seo &&
