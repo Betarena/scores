@@ -522,7 +522,8 @@ COMPONENT HTML
 {#if $sessionStore.auth_show}
   <div
     id='widget-outer'
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+    in:fade>
 
     <!-- 
     [ℹ] processing view box
@@ -707,6 +708,7 @@ COMPONENT HTML
           on:invalid={() => wrong_email_format()}
           autocomplete="off"
           class:error-email={email_error_format || email_already_in_use}
+          required
         />
         <!-- 
         [ℹ] error email validation format
