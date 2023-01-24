@@ -30,7 +30,7 @@ COMPONENT JS - BASIC
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/_main_/navbar/types";
 
 	import { sessionStore } from '$lib/store/session';
-	import AuthWidget from '../auth/Auth_Widget.svelte';
+	// import AuthWidget from '../auth/Auth_Widget.svelte';
 
   /**
    * [ℹ] component variables;
@@ -435,7 +435,7 @@ TODO:FIXME: not generating for each LANG
 [ℹ] show/hide auth widget
 -->
 <!-- {#if show_auth} -->
-  <AuthWidget />
+  <!-- <AuthWidget /> -->
 <!-- {/if}4 -->
 
 <!-- 
