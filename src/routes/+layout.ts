@@ -61,6 +61,9 @@ export async function load ({
     const response_header = data[0]
     const response_footer = data[1]
   */
+ 
+  if (response_header == undefined) console.log("response_header is undefined")
+  if (response_footer == undefined) console.log("response_footer is undefined")
 
   if (
     response_header &&
