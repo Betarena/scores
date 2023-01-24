@@ -1,22 +1,36 @@
-name: remote ssh command
-on: [push]
-jobs:
+# ....................................
+# ... GITHUB ACIONS CI/CD WORKFLOW ...
+# ....................................
+# DESCRIPTION
+# ....................................
+# This Github Action is responsible with the
+# auto-deployment of the main (branch) to the
+# location of the server
+# ....................................
 
+name: 🚀 Deployment
+# [ℹ] when to trigger this project
+on:
+  push:
+    branches: [main]
+# [ℹ] JOBS TO DO WITH GITHUB WORFLOWS;
+jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
     steps:
     - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@v0.1.7
+      # [ℹ] declaring ENV variables to be used in the project-CI/CD
       with:
         host: ${{secrets.WEB_SERVER_HOST}}
         username: ${{secrets.WEB_SERVER_USERNAME}}
         key: ${{secrets.WEB_SERVER_KEY}}
         port: ${{secrets.WEB_SERVER_PORT}}
         script: | 
-          # TEST
-          # whoami
-          # ls -a
+          # [ℹ] Navigate to target project directory
           cd web/scores
+          # [ℹ] Update the directory with latests changes
           git pull origin enhance/feature-docker-deploy
+          # [ℹ] Run target makefile command
           make update-scores-web
