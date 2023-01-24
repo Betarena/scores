@@ -926,8 +926,7 @@ TODO:FIXME: not generating for each LANG
         [ℹ] sign-in-btn 
         [ℹ] <conditional>
         -->
-        {#if !mobileExclusive
-          && $userBetarenaSettings.user == undefined}
+        {#if $userBetarenaSettings.user == undefined}
           <button
             id="sign-in-btn"
             class="cursor-pointer"
@@ -940,8 +939,7 @@ TODO:FIXME: not generating for each LANG
               {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
             </p>
           </button>
-        {:else if !mobileExclusive
-          && $userBetarenaSettings.user != undefined}
+        {:else if $userBetarenaSettings.user != undefined}
           <div
             id="user-profile-box"
             class="row-space-start">
@@ -1014,24 +1012,6 @@ TODO:FIXME: not generating for each LANG
               </div>
             {/if}
           </div>
-        {/if}
-
-        <!--
-        [ℹ] betting-tips
-        [ℹ] <conditional>
-        -->
-        {#if mobileExclusive}
-          <a 
-            rel="external" 
-            href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
-            <p 
-              class="
-                color-white 
-                s-14
-              ">
-              {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
-            </p>
-          </a>
         {/if}
       </div>
     </div>
@@ -1354,19 +1334,25 @@ TODO:FIXME: not generating for each LANG
     </div>
 
     <!--
-    [ℹ] side-bar-[TOP-NAV-BAR] [MOBILE + TABLET] 
+    [ℹ] navbar (side) 
+    [ℹ] [MOBILE + TABLET]
+    [ℹ] <conditional>
     -->
-    {#if tabletExclusive || mobileExclusive}
+    {#if tabletExclusive 
+      || mobileExclusive}
       {#if mobileNavToggleMenu}
         <nav
           class:tablet-exclusive={mobileExclusive == false}
           in:fly={{ x: -200, duration: 500 }}
-          out:fly={{ x: -200, duration: 500 }}
-        >
+          out:fly={{ x: -200, duration: 500 }}>
           <div>
-            <!-- [ℹ] top-action-row -->
+            <!-- 
+            [ℹ] top-action-row 
+            -->
             <div class="row-space-out">
-              <!-- [ℹ] close-side-nav -->
+              <!-- 
+              [ℹ] close-side-nav 
+              -->
               <img
                 src={close}
                 alt="close-icon"
@@ -1375,27 +1361,43 @@ TODO:FIXME: not generating for each LANG
                 on:click={() => (mobileNavToggleMenu = false)}
               />
 
-              <div class="row-space-start" style="width: fit-content;">
-                <!-- [ℹ] language-change-dropdown-select -->
-                <div id="lang-container" class:m-r-24={mobileExclusive}>
-                  <!-- [ℹ] INIT-selected-lang -->
+              <div 
+                class="row-space-start" 
+                style="width: fit-content;">
+                <!-- 
+                [ℹ] language-change-dropdown-select 
+                -->
+                <div 
+                  id="lang-container" 
+                  class:m-r-24={mobileExclusive}>
+                  <!-- 
+                  [ℹ] INIT-selected-lang 
+                  -->
                   <div
                     id="selected-language-btn"
                     class:active-lang-select={dropdown_lang_visible == true}
                     class="row-space-out"
-                    on:click={() => (dropdown_lang_visible = !dropdown_lang_visible)}
-                  >
-                    <p class="color-white s-14 mr-5">
+                    on:click={() => (dropdown_lang_visible = !dropdown_lang_visible)}>
+                    <p 
+                      class="
+                        color-white 
+                        s-14 
+                        mr-5
+                      ">
                       {server_side_language.toUpperCase()}
                     </p>
-                    <!-- [ℹ] arrow down [hidden-menu] -->
+                    <!-- 
+                    [ℹ] arrow down [hidden-menu] 
+                    -->
                     {#if !dropdown_lang_visible}
                       <img src={arrow_down} alt="arrow_down" width="16px" height="16px" />
                     {:else}
                       <img src={arrow_up} alt="arrow_up" width="16px" height="16px" />
                     {/if}
                   </div>
-                  <!-- [ℹ] INIT-HIDDEN drop-down menu -->
+                  <!-- 
+                  [ℹ] INIT-HIDDEN drop-down menu 
+                  -->
                   {#if dropdown_lang_visible}
                     <div id="dropdown-menu" transition:fly>
                       {#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
@@ -1411,13 +1413,21 @@ TODO:FIXME: not generating for each LANG
                   {/if}
                 </div>
 
-                <!-- [ℹ] sign-in-btn -->
+                <!-- 
+                [ℹ] sign-in-btn 
+                -->
                 {#if mobileExclusive}
-                  <button id="sign-in-btn">
-                    <p class="color-white s-14">
-                      {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
+                  <a 
+                    rel="external" 
+                    href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
+                    <p 
+                      class="
+                        color-white 
+                        s-14
+                      ">
+                      {HEADER_TRANSLATION_DATA.scores_header_translations.betting_tips_link}
                     </p>
-                  </button>
+                  </a>
                 {/if}
               </div>
             </div>
@@ -2009,6 +2019,36 @@ COMPONENT STYLE
 		border-radius: 2px;
 	}
 
+  /* 
+  AUTH BOX 
+  */
+  div#user-profile-box {
+    width: auto;
+    position: relative;
+  } div#user-profile-box div#user-profile-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: unset;
+    margin-top: 5px;
+    background: #292929;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 4px;
+    overflow: hidden;
+    z-index: 2000;
+    /* height: 80px; */
+    width: 168px;
+  } div#user-profile-box div#user-profile-dropdown div.theme-opt-box {
+    padding: 9.5px 16px;
+    box-shadow: inset 0px -1px 0px #3c3c3c;
+    background: #4b4b4b;
+    height: 40px;
+  } div#user-profile-box div#user-profile-dropdown div.theme-opt-box:hover p {
+    color: #f5620f;
+  } div#user-profile-box p#wallet-text {
+    margin-right: 14px;
+  }
+
 	/* 
   RESPONSIVE FOR TABLET (&+) [768px] 
   */
@@ -2045,13 +2085,11 @@ COMPONENT STYLE
 		/*
 		theme-options-container */
 		#theme-opt-container,
-		#odds-type-container,
-    div#user-profile-box {
+		#odds-type-container {
 			position: relative;
 		}
 		#theme-dropdown-menu,
-		#odds-type-dropdown-menu,
-    div#user-profile-box div#user-profile-dropdown {
+		#odds-type-dropdown-menu {
 			position: absolute;
 			top: 100%;
 			left: 0%;
@@ -2065,27 +2103,18 @@ COMPONENT STYLE
 			width: 168px;
 		}
 		#theme-dropdown-menu .theme-opt-box,
-		#odds-type-dropdown-menu .theme-opt-box,
-    div#user-profile-box div#user-profile-dropdown div.theme-opt-box {
+		#odds-type-dropdown-menu .theme-opt-box {
 			padding: 9.5px 16px;
 			box-shadow: inset 0px -1px 0px #3c3c3c;
 			background: #4b4b4b;
 			height: 40px;
 		}
 		#theme-dropdown-menu .theme-opt-box:hover p,
-		#odds-type-dropdown-menu .theme-opt-box:hover p,
-    div#user-profile-box div#user-profile-dropdown div.theme-opt-box:hover p {
+		#odds-type-dropdown-menu .theme-opt-box:hover p {
 			color: #f5620f;
 		}
 
-    div#user-profile-box {
-      width: auto;
-    } div#user-profile-box div#user-profile-dropdown {
-      right: 0;
-      left: unset;
-    } div#user-profile-box p#wallet-text {
-      margin-right: 14px;
-    }
+    
 
 		/* 
 		bookmakers-options-container */
