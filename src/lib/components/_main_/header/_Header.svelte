@@ -54,7 +54,6 @@ COMPONENT JS - BASIC
   let logoLink: string
   let hideSEO: boolean = false;
   let langSelected: boolean = false;
-  let show_auth: boolean = false;
 
   /**
    * ~~~~~~~~~~~~~~
@@ -373,9 +372,12 @@ COMPONENT JS - BASIC
   //   await invalidateAll()
   // })
 
+  /**
+   * [ℹ] logout current user;
+	*/
   function logout() {
-    dropdown_odds_type_visible = false
-    $sessionStore.user = false
+    dropdown_user_auth = false
+    userBetarenaSettings.signOutUser()
   }
 </script>
 
@@ -432,11 +434,9 @@ TODO:FIXME: not generating for each LANG
 <!-- 
 [ℹ] show/hide auth widget
 -->
-{#if show_auth}
-  <AuthWidget 
-    on:close_widget={() => show_auth = false}
-  />
-{/if}
+<!-- {#if show_auth} -->
+  <AuthWidget />
+<!-- {/if}4 -->
 
 <!-- 
 [ℹ] main header INIT
@@ -927,11 +927,11 @@ TODO:FIXME: not generating for each LANG
         [ℹ] <conditional>
         -->
         {#if !mobileExclusive
-          && $sessionStore.user == false}
+          && $userBetarenaSettings.user == undefined}
           <button
             id="sign-in-btn"
             class="cursor-pointer"
-            on:click={() => show_auth = !show_auth}>
+            on:click={() => $sessionStore.auth_show = !$sessionStore.auth_show}>
             <p 
               class="
               color-white
@@ -941,7 +941,7 @@ TODO:FIXME: not generating for each LANG
             </p>
           </button>
         {:else if !mobileExclusive
-          && $sessionStore.user == true}
+          && $userBetarenaSettings.user != undefined}
           <div
             id="user-profile-box"
             class="row-space-start">
@@ -949,16 +949,16 @@ TODO:FIXME: not generating for each LANG
             [ℹ] user wallet address
             [ℹ] <conditional>
             -->
-            {#if $sessionStore?.web3_wallet_addr != undefined}
+            {#if $userBetarenaSettings.user?.web3_wallet_addr != undefined}
               <p
                 id="wallet-text"
                 class="
                   color-white
                   w-500
                 ">
-                {$sessionStore?.web3_wallet_addr.slice(0, 5)}
+                {$userBetarenaSettings.user?.web3_wallet_addr.slice(0, 5)}
                 ...
-                {$sessionStore?.web3_wallet_addr.slice(-5)}
+                {$userBetarenaSettings.user?.web3_wallet_addr.slice(-5)}
               </p>
             {/if}
             <!--
@@ -2078,7 +2078,9 @@ COMPONENT STYLE
 			color: #f5620f;
 		}
 
-    div#user-profile-box div#user-profile-dropdown {
+    div#user-profile-box {
+      width: auto;
+    } div#user-profile-box div#user-profile-dropdown {
       right: 0;
       left: unset;
     } div#user-profile-box p#wallet-text {

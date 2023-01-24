@@ -3,24 +3,28 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
+  import { browser, dev } from '$app/environment';
+  import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { createEventDispatcher, onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
   import { app_m, auth } from '$lib/firebase/init';
   import { sessionStore } from '$lib/store/session';
+  import { userBetarenaSettings, type Scores_User } from '$lib/store/user-settings';
   import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
   import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-  import { GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithEmailLink, signInWithPopup } from "firebase/auth";
+  import { GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
 
-  import { browser, dev } from '$app/environment';
-  import { goto } from '$app/navigation';
-  import apple_icon from './assets/apple.svg';
   import discord_icon from './assets/discord.svg';
   import email_verify from './assets/email-verify.svg';
+  import error_icon from './assets/error-alert.svg';
+  import github_dark_icon from './assets/github-dark.svg';
+  import github_icon from './assets/github.svg';
   import google_icon from './assets/google.svg';
   import loader_animation from './assets/lodaer-anim-2.svg';
   import logo from './assets/logo-auth.svg';
+  import logo_dark from './assets/logo-dark.svg';
   import metamask_icon from './assets/metamask.svg';
   import success_icon from './assets/success-alert.svg';
 
@@ -32,17 +36,20 @@ COMPONENT JS (w/ TS)
 
   // NOTE: NO WIDGET SPECIFIC SEO or PRE-LOAD DATA REQUIRED
 
-  let email_input: string = 'migbashdev@gmail.com'
+  let email_input: string
+  if (dev) email_input = 'migbashdev@gmail.com'
   let processing: boolean = false;
   let email_verify_process: boolean = false;
   let auth_view: boolean = true;
   let auth_type: 'login' | 'register';
   let web3_wallet_address: string;
+  let success_auth: boolean = false;
+  let error_auth: boolean = false;
 
   const actionCodeSettings = {
     // [ℹ] URL / DOMAIN you want to redirect back to.
     // [ℹ] URL must be in the authorized domains list in the Firebase Console.
-    url: 'http://localhost:3050',
+    url: `${$page.url?.origin}${$page.url?.pathname}`,
     handleCodeInApp: true, // [ℹ] This must be set true
     // dynamicLinkDomain: 'http://localhost:3050/auth'
     // iOS: {
@@ -63,82 +70,88 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  /*
   function close_widget() {
 		dispatch('close_widget');
 	}
+  */
 
   async function login_with_google () {
-    // NOTE: https://firebase.google.com/docs/auth/web/google-signin
+    // DOC: https://firebase.google.com/docs/auth/web/google-signin
     try {
       processing = true
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider)
       .then((result) => {
-        // NOTE: This gives you a Google Access Token. 
-        // NOTE: You can use it to access the Google API.
+        // [ℹ] This gives you a Google Access Token & Google API
         // const credential = GoogleAuthProvider.credentialFromResult(result);
         // const token = credential.accessToken;
-        // if (dev) console.log('token', token)
-        // NOTE: The signed-in user info.
-        const user = result.user;
-        if (dev) console.log('user', user)
-        if (dev) console.log('user', user?.displayName)
-        // TODO: Success Authetication Handle
-        $sessionStore.user = true
-        processing = false
+        // [ℹ] user info
+        const user = result?.user;
+        success_auth_wrap(user)
       })
       .catch((error) => {
-        // NOTE: Handle Errors here.
+        processing = false
+        // TODO: Error Authetication Handle
+        // [ℹ] handle errors
         const errorCode = error.code;
         const errorMessage = error.message;
         const email = error.customData.email; // The email of the user's account used.
-        // NOTE: The AuthCredential type that was used.
+        // [ℹ] AuthCredential used
         // const credential = GoogleAuthProvider.credentialFromError(error);
+        // [🐞]
         if (dev) console.log('errorCode', errorCode)
         if (dev) console.log('errorMessage', errorMessage)
-        // TODO: Error Authetication Handle
-        processing = false
       });
     } catch (error) {
-      processing = false
       console.log(`❌ Google auth error: ${error}`)
+      processing = false
     }
   }
 
   async function login_with_email_link () {
-    // NOTE: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+    // DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
     try {
+      processing = true
+      // [🐞]
       if (dev) console.log('email_input', email_input)
-      await sendSignInLinkToEmail(auth, email_input, actionCodeSettings)
+      await sendSignInLinkToEmail(
+        auth, 
+        email_input, 
+        actionCodeSettings
+      )
       .then(() => {
-        // The link was successfully sent. Inform the user.
-        // Save the email locally so you don't need to ask the user for it again
-        // if they open the link on the same device.
+        // NOTE: The link was successfully sent - (custom) UI update
+        processing = false
+        auth_view = false
+        email_verify_process = true
+        // NOTE: Save the email in localStroage()
+        // NOTE: if they open the link on the same device.
         window.localStorage.setItem('emailForSignIn', email_input);
-        // TODO: Success Authetication Handle
+        // NOTE: listen for email deep link cont.
       })
       .catch((error) => {
+        // TODO: Error Authetication Handle
         const errorCode = error.code;
         const errorMessage = error.message;
-        // TODO: Error Authetication Handle
       });
     } catch (e) {
       console.log(e);
     }
   }
-
-  // NOTE: Confirm the link is a sign-in with email link.
+  // [ℹ] DeepLink listener EmailLink Cont. [END]
   $: if (browser) {
-    if (dev) console.log("HERE! testing for Link Email!")
     if (isSignInWithEmailLink(auth, window.location.href)) {
-      if (dev) console.log("HERE! isSignInWithEmailLink()!")
-      // NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL
-      // Additional state parameters can also be passed via URL.
-      // This can be used to continue the user's intended action before triggering
-      // the sign-in operation.
-      // Get the email if available. This should be available if the user completes
-      // the flow on the same device where they started it.
+      // [🐞]
+      if (dev) console.log("🔵 EmailLink OAuth2")
+      // NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
+      // NOTE: Additional state parameters can also be passed via URL.
+      // NOTE: This can be used to continue the user's intended action before triggering
+      // NOTE: the sign-in operation.
+      // NOTE: Get the email if available. This should be available if the user completes
+      // NOTE: the flow on the same device where they started it.
       let email = window.localStorage.getItem('emailForSignIn');
+      // [🐞]
       if (dev) console.log('email', email)
       if (!email) {
         // User opened the link on a different device. To prevent session fixation
@@ -148,6 +161,9 @@ COMPONENT JS (w/ TS)
       // The client SDK will parse the code from the link for you.
       signInWithEmailLink(auth, email, window.location.href)
       .then((result) => {
+        const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`
+        // [🐞]
+        if (dev) console.log("🟢 EmailLink Auth")
         // NOTE: Clear email from storage.
         window.localStorage.removeItem('emailForSignIn');
         // NOTE: You can access the new user via result.user
@@ -155,8 +171,11 @@ COMPONENT JS (w/ TS)
         // result.additionalUserInfo.profile == null
         // NOTE: You can check if the user is new or existing:
         // result.additionalUserInfo.isNewUser
+          // [🐞]
         if (dev) console.log('displayName', result?.user?.displayName)
         if (dev) console.log('email', result?.user?.email)
+        success_auth_wrap(result?.user)
+        goto(revert_url, { replaceState: true });
       })
       .catch((error) => {
         // Some error occurred, you can inspect the code: error.code
@@ -166,77 +185,175 @@ COMPONENT JS (w/ TS)
     }
   }
 
-  // TODO: Awaiting Enabling of APPLE SERVICE
-  // NOTE: Discontinued - for GitHub
-  async function login_with_apple () {
+  // NOTE: Apple Login Discontinued - instead for GitHub
+  async function login_with_github () {
     try {
-      const provider = new GoogleAuthProvider();
+      processing = true
+      const provider = new GithubAuthProvider();
       await signInWithPopup(auth, provider)
       .then((result) => {
-        // This gives you a Google Access Token. You can use it to access the Google API.
-        const credential = GoogleAuthProvider.credentialFromResult(result);
-        const token = credential.accessToken;
-        // The signed-in user info.
+        // [ℹ] this gives you a GitHub Access Token. 
+        // const credential = GithubAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+        // [ℹ] user info
         const user = result.user;
-        // ...
+        success_auth_wrap(user)
       }).catch((error) => {
-        // Handle Errors here.
+        processing = false
+        // [ℹ] handle errors
         const errorCode = error.code;
         const errorMessage = error.message;
+        // [🐞]
         console.log('errorCode', errorCode)
         console.log('errorMessage', errorMessage)
-        // The email of the user's account used.
+        // [ℹ] the email used
         const email = error.customData.email;
-        // The AuthCredential type that was used.
-        const credential = GoogleAuthProvider.credentialFromError(error);
-        // ...
+        // [ℹ] AuthCredential used
+        const credential = GithubAuthProvider.credentialFromError(error);
+        // [🐞]
+        if (dev) console.log('credential', credential)
+        if (dev) console.log('email', email)
+        // TODO: error user-sign in
+        // signInWithCredential(auth, credential)
+        // .then(user => {
+        //   // You can now link the pending credential from the first
+        //   // error.
+        //   linkWithCredential(error.credential)
+        // })
+        // .catch(error => log(error))
       });
     } catch (e) {
       console.log(e);
     }
   }
 
-  // NOTE:
-  // TODO: Login With Discord
-  // NOTE: https://www.reddit.com/r/Firebase/comments/n4uv1o/sign_in_with_discord/
-  // NOTE: https://github.com/luizkc/firebase-discord-oauth2-example
-  // NOTE: https://stackoverflow.com/questions/70171124/discord-oauth2-with-firebase-functions
-  // NOTE: https://stackoverflow.com/questions/53992730/how-would-i-authorize-users-using-discord-oauth2-0-for-firebase-authentication-o
   async function login_with_discord () {
+    // DOC: https://www.reddit.com/r/Firebase/comments/n4uv1o/sign_in_with_discord/
+    // DOC: https://github.com/luizkc/firebase-discord-oauth2-example
+    // DOC: https://stackoverflow.com/questions/70171124/discord-oauth2-with-firebase-functions
+    // DOC: https://stackoverflow.com/questions/53992730/how-would-i-authorize-users-using-discord-oauth2-0-for-firebase-authentication-o
     try {
+      processing = true
       const callback_auth_url = $page?.url?.origin
-      console.log('callback_auth_url', callback_auth_url)
+      // [🐞]
+      if (dev) console.log('callback_auth_url', callback_auth_url)
       const discord_outh_url = import.meta.env.VITE_DISCORD_OAUTH_URL
       const final_url_nav = `${discord_outh_url}?redirect_url=${callback_auth_url}`
+      // [ℹ] initiate discord OAuth2
       goto(final_url_nav)
     } catch (e) {
+      processing = false
       console.log(e);
+    }
+  }
+  // [ℹ] DeepLink listener Discord Cont. [END]
+  $: if (browser) {
+    // [🐞]
+    if (dev) console.log("Testing for Discord Link!")
+    const f_uid = $page.url.searchParams.get('f_uid')
+    const oauth2 = $page.url.searchParams.get('oauth2')
+    const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`
+    // [ℹ] validate user is attempting Discord OAuth2
+    if (oauth2 == 'discord' 
+      && f_uid != null) {
+      // [🐞]
+      if (dev) console.log("🔵 Discrod OAuth2")
+      goto(revert_url, { replaceState: true });
+      signInWithCustomToken(auth, f_uid)
+      .then((userCredential) => {
+        // [ℹ] successful sign-in / login
+        // [🐞]
+        if (dev) console.log("🟢 Discrod OAuth2")
+        const user = userCredential.user;
+        success_auth_wrap(user)
+      })
+      .catch((error) => {
+        // TODO: complete authetication error handle
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        // [🐞]
+        if (dev) console.error('errorMessage', errorMessage)
+        if (dev) console.error('errorCode', errorCode)
+      });
     }
   }
 
   async function login_with_metamask () {
-    // NOTE: https://moralis.io/create-a-web3-firebase-login-with-metamask/
-    // NOTE: https://docs.moralis.io/authentication-api/integrations/firebase-nodejs
-    // NOTE: https://moralis.io/web3-firebase-authentication-create-a-web3-sign-in-with-moralis/
-    // NOTE: https://moralisweb3.github.io/firebase-extensions/service-account-converter/
-    // NOTE: OTHER => https://moralisweb3.github.io/Moralis-JS-SDK/demos/firebase-auth-ext/
+    // DOC: https://moralis.io/create-a-web3-firebase-login-with-metamask/
+    // DOC: https://docs.moralis.io/authentication-api/integrations/firebase-nodejs
+    // DOC: https://moralis.io/web3-firebase-authentication-create-a-web3-sign-in-with-moralis/
+    // DOC: https://moralisweb3.github.io/firebase-extensions/service-account-converter/
+    // DOC: OTHER => https://moralisweb3.github.io/Moralis-JS-SDK/demos/firebase-auth-ext/
+    // DOC: https://admin.moralis.io/users
     // IMPORTANT: betarena-ios "usage" project-id
-    processing = true
-    // [ℹ] create Moralis instance
-    const moralisAuth = getMoralisAuth(app_m);
     try {
-      // NOTE: default sign-in is Metamask
+      processing = true
+      // [ℹ] create Moralis instance
+      const moralisAuth = getMoralisAuth(app_m);
+      // NOTE: default sign-in opt. is Metamask
       const moralis_auth = await signInWithMoralis(moralisAuth);
-      web3_wallet_address = moralis_auth?.credentials?.user?.displayName
-      $sessionStore.web3_wallet_addr = moralis_auth?.credentials?.user?.displayName
-      $sessionStore.user = true
-      processing = false;
+      // [🐞]
+      if (dev) console.log("🟢 Moralis Auth")
+      success_auth_wrap(null, moralis_auth?.credentials?.user?.displayName)
     } catch (error) {
+      // [🐞]
       console.error(`❌ Moralis auth error: ${error}`)
       processing = false;
     }
   }
-  
+
+  function success_auth_wrap (
+    user?: User, 
+    web3_wallet_addr?: string
+  ) {
+    // NOTE: complete authetication
+    let user_obj: Scores_User = user
+    // [ℹ] initiate stores
+    if (user != undefined) {
+      user_obj.web3_wallet_addr = undefined
+    }
+    if (web3_wallet_addr != undefined) {
+      user_obj = {
+        phoneNumber: undefined,
+        photoURL: undefined,
+        providerId: undefined,
+        uid: undefined,
+        reload: undefined,
+        toJSON: undefined,
+        displayName: undefined,
+        email: undefined,
+        tenantId: undefined,
+        delete: undefined,
+        getIdToken: undefined,
+        getIdTokenResult: undefined,
+        refreshToken: undefined,
+        providerData: undefined,
+        metadata: undefined,
+        isAnonymous: undefined,
+        emailVerified: undefined,
+        web3_wallet_addr: undefined
+      }
+      user_obj.web3_wallet_addr = web3_wallet_addr
+    }
+    userBetarenaSettings.signInUser(user_obj)
+    // [ℹ] default UI/UX triggers
+    $sessionStore.auth_show = false
+    processing = false;
+    success_auth = true;
+    setTimeout(() => {
+      success_auth = false;
+    }, 1500)
+  }
+
+  function open_email () {
+    window.open('mailto:');
+  }
+
+  function close_email_sent_view () {
+    $sessionStore.auth_show = false
+    email_verify_process = false
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -302,274 +419,390 @@ COMPONENT HTML
 <!-- 
 [ℹ] background backdrop fade
 -->
-<div
-  id='background-modal-blur'
-  in:fade 
-/>
+{#if $sessionStore.auth_show}
+  <div
+    id='background-modal-blur'
+    in:fade 
+  />
+{/if}
 
 <!-- 
-[ℹ] auth message show box
+[ℹ] auth message show box [success]
 -->
-<div
-  id="auth-alert-box"
-  class="row-space-start"
-  transition:fade>
-  <img 
-    src={success_icon}
-    alt="Success Icon"
-    title="Success Icon"
-  />
-  Success! User logged in
-</div>
+{#if success_auth}
+  <div
+    id="auth-alert-box"
+    class="row-space-start"
+    transition:fade>
+    <img 
+      src={success_icon}
+      alt="Success Icon"
+      title="Success Icon"
+    />
+    <p
+      class="w-500">
+      Success! User
+      {#if auth_type == 'login'}
+        logged in
+      {:else}
+        signed up
+      {/if}
+    </p>
+  </div>
+{/if}
+
+<!-- 
+[ℹ] auth message show box [error]
+-->
+{#if error_auth}
+  <div
+    id="auth-alert-box"
+    class="row-space-start"
+    transition:fade>
+    <img 
+      src={error_icon}
+      alt="Error Icon"
+      title="Error Icon"
+    />
+    <p
+      class="w-500">
+      Uh-oh! There has been an error
+    </p>
+  </div>
+{/if}
 
 <!-- 
 [ℹ] main auth widget component
 -->
-<div
-  id='widget-outer'>
+{#if $sessionStore.auth_show}
+  <div
+    id='widget-outer'
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
-  <!-- 
-  [ℹ] processing view box
-  [ℹ] HIDDEN by DEFAULT
-  -->
-  {#if processing}
-    <div
-      id="processing-auth-box">
+    <!-- 
+    [ℹ] processing view box
+    [ℹ] HIDDEN by DEFAULT
+    -->
+    {#if processing}
       <div
-        id="inner-processing-box">
+        id="processing-auth-box">
+        <div
+          id="inner-processing-box">
+          <img 
+            src={loader_animation}
+            alt="Loader Vector"
+            title="Processing..."
+          />
+          <p
+            class="
+              color-grey
+            ">
+            Processing
+          </p>
+        </div>
+      </div>
+    {/if}
+
+    <!-- 
+    [ℹ] email verification view box
+    [ℹ] HIDDEN by DEFAULT
+    -->
+    {#if email_verify_process}
+      <div
+        id="email-auth-verify-box">
+        <!-- 
+        [ℹ] close icon logo
+        -->
         <img 
-          src={loader_animation}
-          alt="Loader Vector"
-          title="Processing..."
+          id='close-vector'
+          class='cursor-pointer'
+          src="/assets/svg/close.svg" 
+          alt="close-svg"
+          on:click={() => close_email_sent_view()}
         />
+
+        <!-- 
+        [ℹ] verify text
+        -->
         <p
           class="
-            color-grey
-          ">
-          Processing
+            w-500
+            color-black-2
+          "
+          style="font-size: 20px;">
+          Verification
+        </p>
+        <!-- 
+        [ℹ] verify email
+        -->
+        <p
+          class="color-grey">
+          Please verify your email
+        </p>
+        <!-- 
+        [ℹ] verify email icon
+        -->
+        <img 
+          id="email-verify-icon"
+          src={email_verify}
+          alt="Email Vector"
+          title="Email Vector"
+        />
+        <!-- 
+        [ℹ] verify email text
+        -->
+        <p
+          class="color-grey">
+          An email has been sent to
+          <br>
+          <span
+            class="color-black-2">
+            youremail@gmail.com.
+          </span>
+          <br>
+          Please verify your email to continue.
+        </p>
+        <!-- 
+        [ℹ] verify email to my inbox
+        -->
+        <p
+          class="color-primary"
+          style="margin-top: 8px;"
+          on:click={() => open_email()}>
+          Go to my inbox
+        </p>
+        <!-- 
+        [ℹ] verify no email text
+        -->
+        <p
+          class="color-grey"
+          style="margin-top: 24px;">
+          Did not get the email? 
+          <span
+            class="color-primary"
+            on:click={() => login_with_email_link()}>
+            Resend email
+          </span>
         </p>
       </div>
-    </div>
-  {/if}
+    {/if}
 
-  <!-- 
-  [ℹ] email verification view box
-  [ℹ] HIDDEN by DEFAULT
-  -->
-  {#if email_verify_process}
-    <div
-      id="">
-      <p>Verification</p>
-      <p>Please verify your email</p>
+    <!-- 
+    [ℹ] authetication view
+    [ℹ] SHOWN by DEFAULT
+    -->
+    {#if auth_view}
+      <!-- 
+      [ℹ] close icon logo
+      -->
       <img 
-        src={email_verify}
-        alt="Email Vector"
-        title="Email Vector"
+        id='close-vector'
+        class='cursor-pointer'
+        src="/assets/svg/close.svg" 
+        alt="close-svg"
+        on:click={() => $sessionStore.auth_show = false}
       />
-      <p>An email has been sent to youremail@gmail.com. Please verify your email to continue.</p>
-      <p>Go to my inbox</p>
-      <p>Did not get the email? Resend email</p>
-    </div>
-  {/if}
 
-  <!-- 
-  [ℹ] authetication view
-  [ℹ] SHOWN by DEFAULT
-  -->
-  {#if auth_view}
-    <!-- 
-    [ℹ] close icon logo
-    -->
-    <img 
-      id='close-vector'
-      class='cursor-pointer'
-      src="/assets/svg/close.svg" 
-      alt="close-svg"
-      on:click={() => close_widget()}
-    />
+      <!-- 
+      [ℹ] auth logo betarena
+      -->
+      <img
+        id="auth-logo"
+        src={$userBetarenaSettings.theme == 'Dark' ? logo_dark : logo}
+        alt="Betarena Logo"
+        title="Betarena Logo"
+        aria-label="Betarena Logo"
+      />
 
-    <!-- 
-    [ℹ] auth logo betarena
-    -->
-    <img 
-      src={logo}
-      alt="Betarena Logo"
-      title="Betarena Logo"
-      aria-label="Betarena Logo"
-    />
-
-    <!-- 
-    [ℹ] auth login/sign-up text
-    -->
-    <p
-      class="
-        color-black-2
-      ">
-      {#if auth_type == 'login'}
-        Login
-      {:else}
-        Sign Up
-      {/if}
-    </p>
-
-    <!-- 
-    [ℹ] auth login/sign-up w/email-opt
-    -->
-    <p
-      class="
-        color-grey
-      ">
-      {#if auth_type == 'login'}
-        Enter your email address to login
-      {:else}
-        Enter your email address to sign up
-      {/if}
-    </p>
-    <input
-      type="text"
-      placeholder="email@gmail.com"
-      bind:value={email_input}
-      id='email'
-      autocomplete="off"
-    />
-    <button
-      id="email-btn"
-      class="
-        btn-primary 
-      "
-      on:click={() => login_with_email_link()}>
-      Continue with email
-    </button>
-
-    <!-- 
-    [ℹ] auth login/sign-up w/alt. OAuth2 options
-    -->
-    <div
-      id="other-oauth-divider-box"
-      class="row-space-out">
-      <div class="hr-box"/>
+      <!-- 
+      [ℹ] auth login/sign-up text
+      -->
       <p
+        id="auth-head"
         class="
-          color-grey
+          color-black-2
+          w-500
         ">
-        Or
+        {#if auth_type == 'login'}
+          Login
+        {:else}
+          Sign Up
+        {/if}
       </p>
-      <div class="hr-box"/>
-    </div>
-    <div
-      id="oauth-box"
-      class="row-space-out">
-      <!-- 
-      [ℹ] GOOGLE 
-      -->
-      <button
-        class="btn-auth-opt"
-        on:click={() => login_with_google()}>
-        <img 
-          src={google_icon}
-          alt="Google Icon"
-          title="Google Icon"
-        />
-      </button>
-      <!-- 
-      [ℹ] DISCROD 
-      -->
-      <button
-        class="btn-auth-opt"
-        on:click={() => login_with_discord()}>
-        <img 
-          src={discord_icon}
-          alt="Discord Icon"
-          title="Discord Icon"
-        />
-      </button>
-      <!-- 
-      [ℹ] APPLE 
-      -->
-      <button
-        class="btn-auth-opt">
-        <img 
-          src={apple_icon}
-          alt="Apple Icon"
-          title="Apple Icon"
-        />
-      </button>
-    </div>
 
-    <!-- 
-    [ℹ] auth login/sign-up w/alt. Web3
-    -->
-    <div
-      id="web3-divider-box"
-      class="row-space-out">
-      <div class="hr-box"/>
+      <!-- 
+      [ℹ] auth login/sign-up w/email-opt
+      -->
       <p
         class="
           color-grey
         ">
         {#if auth_type == 'login'}
-          Or login with your crypto wallet
+          Enter your email address to login
         {:else}
-          Or sign up with your crypto wallet
+          Enter your email address to sign up
         {/if}
       </p>
-      <div class="hr-box"/>
-    </div>
-    <button
-      id="metamask"
-      class="
-        row-space-center
-        btn-auth-opt
-      "
-      on:click={() => login_with_metamask()}>
-      <img 
-        src={metamask_icon}
-        alt="Metamask Icon"
-        title="Metamask Icon"
+      <input
+        type="text"
+        placeholder="email@gmail.com"
+        bind:value={email_input}
+        id='email'
+        autocomplete="off"
       />
-      <p>
-        MetaMask
+      <button
+        id="email-btn"
+        class="
+          btn-primary 
+        "
+        on:click={() => login_with_email_link()}>
+        <p
+          class="
+            w-500
+          ">
+          Continue with email
+        </p>
+      </button>
+
+      <!-- 
+      [ℹ] auth login/sign-up w/alt. OAuth2 options
+      -->
+      <div
+        id="other-oauth-divider-box"
+        class="row-space-out">
+        <div class="hr-box"/>
+        <p
+          class="
+            color-grey
+          ">
+          Or
+        </p>
+        <div class="hr-box"/>
+      </div>
+      <div
+        id="oauth-box"
+        class="row-space-out">
+        <!-- 
+        [ℹ] GOOGLE 
+        -->
+        <button
+          class="btn-auth-opt"
+          on:click={() => login_with_google()}>
+          <img 
+            src={google_icon}
+            alt="Google Icon"
+            title="Google Icon"
+          />
+        </button>
+        <!-- 
+        [ℹ] DISCROD 
+        -->
+        <button
+          class="btn-auth-opt"
+          on:click={() => login_with_discord()}>
+          <img 
+            src={discord_icon}
+            alt="Discord Icon"
+            title="Discord Icon"
+          />
+        </button>
+        <!-- 
+        [ℹ] GITHUB 
+        -->
+        <button
+          class="btn-auth-opt"
+          on:click={() => login_with_github()}>
+          <img 
+            src={$userBetarenaSettings.theme == 'Dark' ? github_dark_icon : github_icon}
+            alt="Github Icon"
+            title="Github Icon"
+          />
+        </button>
+      </div>
+
+      <!-- 
+      [ℹ] auth login/sign-up w/alt. Web3
+      -->
+      <div
+        id="web3-divider-box"
+        class="row-space-out">
+        <div class="hr-box"/>
+        <p
+          class="
+            color-grey
+          ">
+          {#if auth_type == 'login'}
+            Or login with your crypto wallet
+          {:else}
+            Or sign up with your crypto wallet
+          {/if}
+        </p>
+        <div class="hr-box"/>
+      </div>
+      <button
+        id="metamask"
+        class="
+          row-space-center
+          btn-auth-opt
+        "
+        on:click={() => login_with_metamask()}>
+        <img 
+          src={metamask_icon}
+          alt="Metamask Icon"
+          title="Metamask Icon"
+        />
+        <p
+          class="
+            w-500
+            color-black-2
+          ">
+          MetaMask
+        </p>
+      </button>
+
+      <!-- 
+      [ℹ] auth login/sign-up w/alt. text prompt for account
+      -->
+      <p
+        id="account-onboard-text"
+        class="
+          color-grey
+        ">
+        {#if auth_type == 'login'}
+          Do not have an account?
+          <span
+            class="
+              color-primary
+              cursor-pointer
+            "
+            on:click={() => auth_type = 'register'}>
+            Register
+          </span> 
+        {:else}
+          Already have an account? 
+          <span
+            class="
+              color-primary
+              cursor-pointer
+            "
+            on:click={() => auth_type = 'login'}>
+            Login
+          </span> 
+        {/if}
       </p>
-    </button>
+    {/if}
 
-    <!-- 
-    [ℹ] auth login/sign-up w/alt. text prompt for account
-    -->
-    <p
-      id="account-onboard-text"
-      class="
-        color-grey
-      ">
-      {#if auth_type == 'login'}
-        Do not have an account?
-        <span
-          class="
-            color-primary
-          "
-          on:click={() => auth_type = 'register'}>
-          Register
-        </span> 
-      {:else}
-        Already have an account? 
-        <span
-          class="
-            color-primary
-          "
-          on:click={() => auth_type = 'login'}>
-          Login
-        </span> 
-      {/if}
-    </p>
-  {/if}
-
-</div>
+  </div>
+{/if}
 
 <!-- ===============
 COMPONENT STYLE
 =================-->
 
 <style>
-  /* [ℹ] OTHER STYLE / CSS */
+  /* 
+  [ℹ] OTHER STYLE / CSS 
+  */
 
   div#background-modal-blur {
     position: fixed;
@@ -594,6 +827,9 @@ COMPONENT STYLE
     backdrop-filter: blur(4px);
     padding: 14px 18px;
     border-radius: 6px;
+  } div#auth-alert-box p {
+    color: #FFFFFF;
+    margin-left: 10px;
   }
 
   /* [ℹ] SEO WIDGET DATA */
@@ -601,8 +837,9 @@ COMPONENT STYLE
   /* [ℹ] NO DATA WIDGET STYLE / CSS */
 
   /*
-    [ℹ] WIDGET MAIN STYLE / CSS 
-    [ℹ] NOTE: [MOBILE-FIRST]
+  [ℹ] WIDGET MAIN STYLE / CSS 
+  [ℹ] NOTE: [MOBILE-FIRST]
+  [ℹ] NOTE: Media Queires Followed
   */
 
   /* 
@@ -614,6 +851,7 @@ COMPONENT STYLE
     z-index: 10000;
     margin: auto;
     width: fit-content;
+    width: 328px;
     right: 0;
     left: 0;
     bottom: 0;
@@ -656,11 +894,25 @@ COMPONENT STYLE
     height: 48px;
   }
 
+  div#email-auth-verify-box {
+  } div#email-auth-verify-box img#email-verify-icon {
+    margin: 30px 0;
+  }
+
+  img#auth-logo {
+    margin-bottom: 12px;
+  }
+
   img#close-vector {
     position: absolute;
     top: 20px;
     right: 20px;
     z-index: 400000002;
+  }
+
+  p#auth-head {
+    font-size: 20px;
+    margin-bottom: 5px;
   }
 
   /* 
@@ -696,6 +948,8 @@ COMPONENT STYLE
     border-radius: 8px;
     padding: 10px 24px;
     margin-top: 12px;
+  } button#email-btn p {
+    color: #FFFFFF;
   }
   
   /* 
@@ -776,5 +1030,29 @@ COMPONENT STYLE
   /* ====================
     [MAIN] WIDGET DARK THEME
   ==================== */
+
+  div#widget-outer.dark-background-1 {
+    background: #4B4B4B;
+  }
+
+  div#widget-outer.dark-background-1 div#processing-auth-box {
+    background: rgba(41, 41, 41, 0.8);
+  }
+
+  div#widget-outer.dark-background-1 input#email {
+    background: #4B4B4B;
+    border: 1px solid #737373;
+  }
+
+  div#widget-outer.dark-background-1 div#other-oauth-divider-box div.hr-box,
+  div#widget-outer.dark-background-1 div#web3-divider-box div.hr-box {
+    background: #737373;
+  }
+
+  div#widget-outer.dark-background-1 div#oauth-box button.btn-auth-opt,
+  div#widget-outer.dark-background-1 button#metamask.btn-auth-opt {
+    border: 1px solid #737373 !important;
+    background: #4B4B4B;
+  }
 
 </style>
