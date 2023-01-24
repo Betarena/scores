@@ -1,78 +1,60 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
-    [TypeScript Written]
+COMPONENT JS - BASIC 
+[TypeScript]
 =================== -->
-
-
 <script lang="ts">
-  
-  /**
-   * [ℹ] svelte-kit
-  */
-
   import { browser, dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
   import { fly } from 'svelte/transition';
-/**
-   * [ℹ] stroes
-  */
+
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-  /**
-   * [ℹ] header-component
-  */
 	import { getUserLocation, getUserLocationFromIP } from '$lib/geoJs/init';
 	import { logDevGroup } from '$lib/utils/debug';
-	import logo_full from './assets/betarena-logo-full.svg';
-	import logo_mini from './assets/betarena-logo-mobile.svg';
-	import icon_check from './assets/icon-check.svg';
-	import menu_burger_bar from './assets/menu-burger.svg';
-/**
-   * [ℹ] sub-header-component
-  */
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
 	import arrow_up from './assets/arrow-up.svg';
+	import logo_full from './assets/betarena-logo-full.svg';
+	import logo_mini from './assets/betarena-logo-mobile.svg';
 	import close from './assets/close.svg';
+	import icon_check from './assets/icon-check.svg';
+	import menu_burger_bar from './assets/menu-burger.svg';
 	import menu_sports_icon from './assets/menu_sports_icon.svg';
+	import profile_avatar from './assets/profile-avatar.svg';
 	import light_icon_theme from './assets/theme-light-icon.svg';
-/**
-   * [ℹ] header-types
-  */
-  import type { GeoJsResponse } from '$lib/models/geojs-types';
-  import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
 
-  /**
-   * [ℹ] export-values-expected
-  */
-	export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
+  import type { GeoJsResponse } from '$lib/models/geojs-types';
+  import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/_main_/navbar/types";
+
+	import { sessionStore } from '$lib/store/session';
+	import AuthWidget from '../auth/Auth_Widget.svelte';
 
   /**
    * [ℹ] component variables;
   */
- 
+
+	export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
+  
   let mobileExclusive: boolean = false;
 	let tabletExclusive: boolean = false;
 	let mobileNavToggleMenu: boolean = false;
 	let mobileExclusiveMoreSports: boolean = false;
-
   let dropdown_lang_visible: boolean = false;
 	let dropdown_theme_visible: boolean = false;
 	let dropdown_odds_type_visible: boolean = false;
 	let dropdown_bookmakers_visible: boolean = false;
 	let dropdown_more_sports_menu: boolean = false;
-
+  let dropdown_user_auth: boolean = false;
   let selected_sports: string = 'football';
-
   let server_side_language: string = 'en';
   let homepageURL: string
   let logoLink: string
-
   let hideSEO: boolean = false;
   let langSelected: boolean = false;
+  let show_auth: boolean = false;
 
   /**
    * ~~~~~~~~~~~~~~
@@ -391,35 +373,43 @@
   //   await invalidateAll()
   // })
 
+  function logout() {
+    dropdown_odds_type_visible = false
+    $sessionStore.user = false
+  }
 </script>
-
 
 <!-- ===================
 	COMPONENT HTML
 =================== -->
 
-
-<!-- [ℹ] area-outside-for-close-click-DESKTOP-menu 
+<!-- 
+[ℹ] area outside to close action
 -->
-{#if dropdown_lang_visible || 
-     dropdown_more_sports_menu || 
-     dropdown_theme_visible || 
-     dropdown_odds_type_visible || 
-     dropdown_bookmakers_visible }
-	<div id="background-area-close" on:click={() => closeAllDropdowns()} />
+{#if dropdown_lang_visible
+  || dropdown_more_sports_menu
+  || dropdown_theme_visible
+  || dropdown_odds_type_visible 
+  || dropdown_bookmakers_visible}
+	<div 
+    id="background-area-close" 
+    on:click={() => closeAllDropdowns()} 
+  />
 {/if}
 
-
-<!-- [ℹ] extra-header-SEO-info 
-  TODO: not generating for each LANG
+<!--
+[ℹ] extra-header-SEO-info
+TODO:FIXME: not generating for each LANG
 -->
-{#if HEADER_TRANSLATION_DATA != undefined &&
-     !hideSEO}
-  <!-- [ℹ] main-homepage-link-in-all-avaialble-languages
+{#if HEADER_TRANSLATION_DATA != undefined
+    && !hideSEO}
+  <!-- 
+  [ℹ] main-homepage-link-in-all-avaialble-languages
   -->
   {#each HEADER_TRANSLATION_DATA.langArray as item}
     {#if item != 'en'}
-      <!-- [ℹ] content here
+      <!-- 
+      [ℹ] content here
       -->
       <a
         data-sveltekit-prefetch
@@ -439,28 +429,35 @@
 
 {/if}
 
-
-<!-- [ℹ] header-for-the-page 
+<!-- 
+[ℹ] show/hide auth widget
 -->
-<header 
+{#if show_auth}
+  <AuthWidget 
+    on:close_widget={() => show_auth = false}
+  />
+{/if}
+
+<!-- 
+[ℹ] main header INIT
+-->
+<header
   class="column-space-center">
   {#if HEADER_TRANSLATION_DATA != undefined}
 
     <!-- 
-    [ℹ] identify the correct translation via
+    [ℹ] header TOP NAVBAR section 
     -->
-    
-    <!-- 
-    [ℹ] header TOP NAVBAR section -->
     <div
       id="top-header" 
       class="row-space-out">
       <!-- 
       [ℹ] 1st half of the header nav 
       -->
-      <div 
+      <div
         class="row-space-start"
         style="width: fit-content;">
+
         <!-- 
         [ℹ] menu-burger-bar 
         [ℹ] [TABLET] [MOBILE] 
@@ -640,10 +637,10 @@
         class="row-space-start" 
         style="width: fit-content;">
 
+        <!-- 
+        [ℹ] theme-options box
+        -->
         {#if !tabletExclusive}
-          <!-- 
-          [ℹ] theme-options box
-          -->
           <div
             id="theme-opt-container" 
             class="
@@ -651,7 +648,8 @@
               row-space-start
             ">
             <!-- 
-            [ℹ] name of the container-opt -->
+            [ℹ] name of the container-opt 
+            -->
             <div
               class="m-r-10"
               on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}>
@@ -685,7 +683,9 @@
                 {/each}
               </div>
             </div>
-            <!-- [ℹ] arrow down [hidden-menu] -->
+            <!-- 
+            [ℹ] arrow down [hidden-menu] 
+            -->
             {#if !dropdown_theme_visible}
               <img
                 src={arrow_down_fade}
@@ -703,7 +703,9 @@
                 on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
               />
             {/if}
-            <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
+            <!-- 
+            [ℹ] INIT-HIDDEN-dropdown-theme-select 
+            -->
             {#if dropdown_theme_visible}
               <div 
                 id="theme-dropdown-menu" 
@@ -748,7 +750,8 @@
             "
             on:click={() => (dropdown_odds_type_visible = !dropdown_odds_type_visible)}>
             <!-- 
-            [ℹ] name of the container-opt -->
+            [ℹ] name of the container-opt 
+            -->
             <div 
               class="m-r-10">
               <p 
@@ -768,7 +771,8 @@
               </p>
             </div>
             <!-- 
-            [ℹ] arrow down [hidden-menu] -->
+            [ℹ] arrow down [hidden-menu] 
+            -->
             {#if !dropdown_odds_type_visible}
               <img 
                 src={arrow_down_fade} 
@@ -785,10 +789,12 @@
               />
             {/if}
             <!-- 
-            [ℹ] INIT-HIDDEN-dropdown-odds-type -->
+            [ℹ] INIT-HIDDEN-dropdown-odds-type 
+            -->
             {#if dropdown_odds_type_visible}
               <!-- 
-              [ℹ] dropdown-menu -->
+              [ℹ] dropdown-menu 
+              -->
               <div 
                 id="odds-type-dropdown-menu" 
                 transition:fly>
@@ -810,7 +816,8 @@
           </div>
 
           <!-- 
-          [ℹ] bookmakers-type -->
+          [ℹ] bookmakers-type 
+          -->
           <div
             id="bookmakers-type-container"
             class="
@@ -915,25 +922,105 @@
           </div>
         {/if}
 
-        {#if !mobileExclusive}
-          <!--
-          [ℹ] sign-in-btn -->
-          <button 
+        <!--
+        [ℹ] sign-in-btn 
+        [ℹ] <conditional>
+        -->
+        {#if !mobileExclusive
+          && $sessionStore.user == false}
+          <button
             id="sign-in-btn"
-            class="cursor-not-allowed">
+            class="cursor-pointer"
+            on:click={() => show_auth = !show_auth}>
             <p 
               class="
-              color-white 
+              color-white
               s-14
             ">
               {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
             </p>
           </button>
+        {:else if !mobileExclusive
+          && $sessionStore.user == true}
+          <div
+            id="user-profile-box"
+            class="row-space-start">
+            <!--
+            [ℹ] user wallet address
+            [ℹ] <conditional>
+            -->
+            {#if $sessionStore?.web3_wallet_addr != undefined}
+              <p
+                id="wallet-text"
+                class="
+                  color-white
+                  w-500
+                ">
+                {$sessionStore?.web3_wallet_addr.slice(0, 5)}
+                ...
+                {$sessionStore?.web3_wallet_addr.slice(-5)}
+              </p>
+            {/if}
+            <!--
+            [ℹ] user avatar img
+            -->
+            <img
+              src={profile_avatar}
+              alt='Profile Icon'
+              title='Profile Avatar'
+              on:click={() => dropdown_user_auth = !dropdown_user_auth}
+              class="cursor-pointer"
+            />
+            <!-- 
+            [ℹ] dropdown profile
+            -->
+            {#if dropdown_user_auth}
+              <div
+                id="user-profile-dropdown">
+                <!--
+                [ℹ] profile page button
+                -->
+                <div
+                  class="
+                    theme-opt-box
+                    cursor-pointer
+                  "
+                  on:click={() => (dropdown_odds_type_visible = false)}>
+                  <p 
+                    class="
+                      color-white 
+                      s-14
+                    ">
+                    Profile
+                  </p>
+                </div>
+                <!--
+                [ℹ] logout page button
+                -->
+                <div
+                  class="
+                    theme-opt-box
+                    cursor-pointer
+                  "
+                  on:click={() => logout()}>
+                  <p 
+                    class="
+                      color-white 
+                      s-14
+                    ">
+                    Logout
+                  </p>
+                </div>
+              </div>
+            {/if}
+          </div>
         {/if}
 
+        <!--
+        [ℹ] betting-tips
+        [ℹ] <conditional>
+        -->
         {#if mobileExclusive}
-          <!--
-          [ℹ] betting-tips -->
           <a 
             rel="external" 
             href={HEADER_TRANSLATION_DATA.scores_header_links.betting_tips}>
@@ -1554,7 +1641,8 @@
     {/if}
 
     <!-- 
-    [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] -->
+    [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] 
+    -->
     {#if mobileExclusive}
       {#if mobileExclusiveMoreSports}
         <nav
@@ -1649,12 +1737,10 @@
   {/if}
 </header>
 
-
 <!-- ===================
-	COMPONENT STYLE
-	[MOBILE FIRST]
+COMPONENT STYLE
+[MOBILE FIRST]
 =================== -->
-
 
 <style>
 	header {
@@ -1665,7 +1751,8 @@
 	}
 
 	/* 
-	top-header-betarena-brand & bottom-header */
+	top-header-betarena-brand & bottom-header 
+  */
 	header #top-header,
 	header #bottom-header {
 		max-width: 1430px;
@@ -1680,17 +1767,16 @@
 	}
 
 	/* 
-	bottom-header-sports-nav */
+	bottom-header-sports-nav 
+  */
 	header #bottom-header {
 		padding: 6px 16px;
 		height: 56px !important;
 		bottom: 0;
-	}
-	header #bottom-header-inner::-webkit-scrollbar {
+	}	header #bottom-header-inner::-webkit-scrollbar {
 		/* Hide scrollbar for Chrome, Safari and Opera */
 		display: none;
-	}
-	header #bottom-header-inner {
+	}	header #bottom-header-inner {
 		/* width: 100%; */
 		overflow-x: scroll;
 		overflow-y: hidden;
@@ -1700,14 +1786,16 @@
 	}
 
 	/* 
-	[MOBILE-ONLY] */
+	[MOBILE-ONLY] 
+  */
 	#burger-menu {
 		margin-right: 16.15px;
 	}
 
 	/* [ℹ] 
 	[MOBILE + TABLET] @ < 768px
-	SIDE-NAV-BAR-navigational-link [ℹ] */
+	SIDE-NAV-BAR-navigational-link [ℹ] 
+  */
 	nav {
 		background-color: #292929;
 		height: 100vh;
@@ -1723,49 +1811,42 @@
 		/* Hide scrollbar for IE, Edge and Firefox */
 		-ms-overflow-style: none;
 		scrollbar-width: none;
-	}
-	nav::-webkit-scrollbar {
+	}	nav::-webkit-scrollbar {
 		/* Hide scrollbar for Chrome, Safari and Opera */
 		display: none;
-	}
-	nav.tablet-exclusive {
+	}	nav.tablet-exclusive {
 		padding: 24px 34px;
 		max-width: 374px !important;
-	}
-	nav .side-nav-row {
+	}	nav .side-nav-row {
 		width: 100%;
 		padding: 12px 0;
-	}
-	nav .side-nav-row:hover p {
+	}	nav .side-nav-row:hover p {
 		color: #f5620f;
-	}
-	nav .side-nav-dropdown {
+	}	nav .side-nav-dropdown {
 		width: 100%;
 		box-shadow: inset 0px -1px 0px #616161;
-	}
-	nav .side-nav-dropdown-opt {
+	}	nav .side-nav-dropdown-opt {
 		width: 100%;
 		padding: 9.5px 0;
-	}
-	nav .side-nav-dropdown-opt p {
+	}	nav .side-nav-dropdown-opt p {
 		font-weight: 400;
 	}
 
 	/* [ℹ]
 	[MOBILE ONLY] @ < 425px
-	SIDE-NAV-BAR-more-menu-sports-navigational-container [ℹ] */
+	SIDE-NAV-BAR-more-menu-sports-navigational-container [ℹ] 
+  */
 	nav#mobile-exclusive-sports-menu {
 		padding: 21px 16px;
-	}
-	nav#mobile-exclusive-sports-menu #mobile-sports-grid {
+	}	nav#mobile-exclusive-sports-menu #mobile-sports-grid {
 		gap: 12px;
-	}
-	nav#mobile-exclusive-sports-menu #mobile-sports-grid .sports-btn:hover {
+	}	nav#mobile-exclusive-sports-menu #mobile-sports-grid .sports-btn:hover {
 		border: 1px solid #f5620f !important;
 	}
 
 	/*
-	LANG SELECT CONTAINER */
+	LANG SELECT CONTAINER 
+  */
 	#lang-container {
 		position: relative;
 	}
@@ -1777,9 +1858,8 @@
 		cursor: pointer;
 		padding: 5px 12px;
 		background-color: transparent;
-	}
-	#selected-language-btn:hover,
-	#selected-language-btn.active-lang-select {
+	}	#selected-language-btn:hover,
+	  #selected-language-btn.active-lang-select {
 		background-color: rgba(255, 255, 255, 0.1);
 		border-radius: 4px;
 	}
@@ -1801,18 +1881,17 @@
 		background: #4b4b4b;
 		cursor: pointer;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
-	}
-	#lang-select:hover {
+	}	#lang-select:hover {
 		background: #292929;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 	}
 
 	/*
-	more-sports-container-menu */
+	more-sports-container-menu 
+  */
 	#more-sports-menu-container {
 		position: relative;
-	}
-	#more-sports-dropdown-menu {
+	}	#more-sports-dropdown-menu {
 		position: absolute;
 		top: 100%;
 		right: 0%;
@@ -1829,8 +1908,7 @@
 		gap: 12px;
 		padding: 16px;
 		justify-items: start;
-	}
-	#more-sports-dropdown-menu .sports-btn {
+	}	#more-sports-dropdown-menu .sports-btn {
 		background: #4b4b4b;
 		border: 1px solid #8c8c8c !important;
 		box-sizing: border-box;
@@ -1838,29 +1916,26 @@
 		width: 200px;
 		height: 44px;
 		padding: 8.5px 10px 8.5px 12.5px;
-	}
-	#more-sports-dropdown-menu .sport-counter-dark {
+	}	#more-sports-dropdown-menu .sport-counter-dark {
 		background-color: #292929;
 		padding: 3px 8px;
 		border-radius: 20px;
-	}
-	#more-sports-dropdown-menu .sports-btn:hover {
+	}	#more-sports-dropdown-menu .sports-btn:hover {
 		background: #292929;
-	}
-	#more-sports-dropdown-menu .sports-btn:hover .sport-counter-dark {
+	}	#more-sports-dropdown-menu .sports-btn:hover .sport-counter-dark {
 		background: #4b4b4b;
 	}
 
 	/*
 	=============
 	BUTTONS 
+	=============
 	*/
 	button.btn-main {
 		padding: 11px 20px;
 		background: transparent;
 		border-radius: 29px;
-	}
-	button.btn-main:hover {
+	}	button.btn-main:hover {
 		background: #4b4b4b;
 		border-radius: 29px;
 	}
@@ -1873,11 +1948,9 @@
 		border: 1px solid #ffffff !important;
 		box-sizing: border-box;
 		border-radius: 8px;
-	}
-	button#sign-in-btn:hover {
+	}	button#sign-in-btn:hover {
 		border: 1px solid #f5620f !important;
-	}
-	button#sign-in-btn:hover p {
+	}	button#sign-in-btn:hover p {
 		color: #f5620f;
 	}
 
@@ -1888,11 +1961,9 @@
 		box-sizing: border-box;
 		border-radius: 29px;
 		height: 44px;
-	}
-	button.sports-btn.selected-sports {
+	}	button.sports-btn.selected-sports {
 		border: 1px solid #f5620f !important;
-	}
-	button.sports-btn .sport-counter {
+	}	button.sports-btn .sport-counter {
 		padding: 3px 8px;
 		background: #4b4b4b;
 		border-radius: 20px;
@@ -1902,7 +1973,6 @@
     opacity: 0.5;
   }
 
-
 	button#more-sports-menu {
 		padding: 12.5px 16px;
 		background: transparent;
@@ -1911,11 +1981,9 @@
 		border-radius: 29px;
 		height: 44px;
 		position: relative;
-	}
-	button#more-sports-menu:hover {
+	}	button#more-sports-menu:hover {
 		border: 1px solid #ffffff !important;
-	}
-	button#more-sports-menu::after {
+	}	button#more-sports-menu::after {
 		content: '';
 		position: absolute;
 		right: 108%;
@@ -1942,7 +2010,8 @@
 	}
 
 	/* 
-    RESPONSIVE FOR TABLET (&+) [768px] */
+  RESPONSIVE FOR TABLET (&+) [768px] 
+  */
 	@media screen and (min-width: 768px) {
 		header #top-header {
 			padding: 23px 34px;
@@ -1964,7 +2033,8 @@
 	}
 
 	/* 
-    RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
+  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] 
+  */
 	@media screen and (min-width: 1024px) {
 		/* 
 		desktop hover effects */
@@ -1975,11 +2045,13 @@
 		/*
 		theme-options-container */
 		#theme-opt-container,
-		#odds-type-container {
+		#odds-type-container,
+    div#user-profile-box {
 			position: relative;
 		}
 		#theme-dropdown-menu,
-		#odds-type-dropdown-menu {
+		#odds-type-dropdown-menu,
+    div#user-profile-box div#user-profile-dropdown {
 			position: absolute;
 			top: 100%;
 			left: 0%;
@@ -1993,16 +2065,25 @@
 			width: 168px;
 		}
 		#theme-dropdown-menu .theme-opt-box,
-		#odds-type-dropdown-menu .theme-opt-box {
+		#odds-type-dropdown-menu .theme-opt-box,
+    div#user-profile-box div#user-profile-dropdown div.theme-opt-box {
 			padding: 9.5px 16px;
 			box-shadow: inset 0px -1px 0px #3c3c3c;
 			background: #4b4b4b;
 			height: 40px;
 		}
 		#theme-dropdown-menu .theme-opt-box:hover p,
-		#odds-type-dropdown-menu .theme-opt-box:hover p {
+		#odds-type-dropdown-menu .theme-opt-box:hover p,
+    div#user-profile-box div#user-profile-dropdown div.theme-opt-box:hover p {
 			color: #f5620f;
 		}
+
+    div#user-profile-box div#user-profile-dropdown {
+      right: 0;
+      left: unset;
+    } div#user-profile-box p#wallet-text {
+      margin-right: 14px;
+    }
 
 		/* 
 		bookmakers-options-container */

@@ -4,12 +4,16 @@ export interface Platform_Session {
   newsletterPopUpShow: boolean // [ℹ] Email_subscribe.svelte
   selectedSeasonID:    number  // [ℹ] Tournament Page Critical [❗]
   fixture_select_view: "overview" | "news" // [ℹ] Fixture Page View Critical [❗]
+  user:                boolean // [ℹ] Authenticated User
+  web3_wallet_addr: string // [ℹ] Authenticated User [WEB3]
 }
 
 const seassion_store: Platform_Session = {
   newsletterPopUpShow: false,
   selectedSeasonID: undefined,
-  fixture_select_view: "overview"
+  fixture_select_view: "overview",
+  user: false,
+  web3_wallet_addr: undefined
 };
 
 function createLocalStore () {
@@ -23,6 +27,13 @@ function createLocalStore () {
 
     toggleNewsletter: () => {
       seassion_store.newsletterPopUpShow = !seassion_store.newsletterPopUpShow;
+    },
+
+    userAuthSuccess: () => {
+      seassion_store.user = true
+    },
+    userAuthLogout: () => {
+      seassion_store.user = false
     }
   }
 
