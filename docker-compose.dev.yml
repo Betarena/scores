@@ -1,0 +1,32 @@
+# Please refer https://aka.ms/HTTPSinContainer on how to setup an https developer certificate for your ASP .NET Core service.
+
+version: '3.4'
+
+services:
+
+  scores_web:
+    image: scores_web
+    restart: always
+    environment:
+      PORT: ${PORT}
+      VITE_HASURA_DB_URL: ${VITE_HASURA_DB_URL}
+      VITE_HASURA_DB_TOKEN: ${VITE_HASURA_DB_TOKEN}
+      VITE_FIREBASE_DB_API_KEY: ${VITE_FIREBASE_DB_API_KEY}
+      VITE_FIREBASE_DB_AUTH_DOMAIN: ${VITE_FIREBASE_DB_AUTH_DOMAIN}
+      VITE_FIREBASE_DB_PROJECT_ID: ${VITE_FIREBASE_DB_PROJECT_ID}
+      VITE_FIREBASE_DB_DATABASE_URL: ${VITE_FIREBASE_DB_DATABASE_URL}
+      VITE_REDIS_HOST: ${VITE_REDIS_HOST}
+      VITE_REDIS_PORT: ${VITE_REDIS_PORT}
+      VITE_REDIS_PASS: ${VITE_REDIS_PASS}
+      VITE_REDIS_CACHE_DB: ${VITE_REDIS_CACHE_DB}
+      VITE_REDIS_BULL_DB: ${VITE_REDIS_BULL_DB}
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    # NOTE: enalbe-DEV hot-reload [INPORTANT]
+    volumes:
+      - .:/app
+      - /app/node_modules # path as its own volume to avoid copying over local Node modules to Docker
+    ports:
+      - 5055:5055
+      - 24678:24678

@@ -2000,7 +2000,16 @@
                               s-14 
                               color-grey
                             ">
-                            {fixture?.status == "NS" ? "NS" : FIXTURES_ODDS_T?.status_abv[fixture?.status]}
+                            {#if fixture?.status != "NS"}
+                              <p
+                                class="
+                                  no-wrap 
+                                  s-14 
+                                  color-grey
+                                ">
+                                {FIXTURES_ODDS_T?.status_abv[fixture?.status]}
+                              </p>
+                            {/if}
                           </p>
                         {/if}
                       </div>
@@ -2774,8 +2783,8 @@
   #seo-widget-box {
 		position: absolute;
 		z-index: -100;
-		top: -9999px;
-		left: -9999px;
+		top: -999999px;
+		left: -999999px;
 	}
 
   /* 

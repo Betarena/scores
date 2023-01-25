@@ -4,6 +4,7 @@ node_modules
 /.svelte-kit
 /package
 /gif
+certs/*
 
 # [CRITICAL TO BE UN-TRACKED]
 .env
