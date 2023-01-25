@@ -441,6 +441,10 @@ COMPONENT JS (w/ TS)
     email_error_format = false
   }
 
+  // $: if (browser) {
+  //   console.log(provider('isCoinbaseWallet'))
+  // }
+
   /**
    * Validates what Web3 wallet extension
    * is being used for the platform
@@ -466,7 +470,8 @@ COMPONENT JS (w/ TS)
       else {
         target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
       }
-      if (dev) console.log(`🔵 More than 1 provider identified! - ${window.ethereum.providers.length}`)
+      console.log(`🔵 More than 1 provider identified! - ${window.ethereum.providers.length}`)
+      console.log(target_wallet)
     }
 
     // [ℹ] TARGET (THIS) single provider check true
