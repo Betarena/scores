@@ -47,7 +47,31 @@ This project is dependent on the following libraries and technologies:
 
 ### Dev Environment
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+> There are a few ways in which you can start working with development, all listed below:
+
+1. ⭐️ [Preferred]
+
+Using `GitHub | Codespaces`. To get started simply launch the
+`dev` branch and once the `codespace` has successfully loaded 
+check for `node` and `npm` to match those in the `package.json > engines`.
+If versions do not match, run the following commands:
+
+```
+npm install -g npm@8.19.1
+npm install
+```
+
+---
+
+2. `Local Dev`
+
+Clone the latest `main` branch and begin development:
+
+```bash
+npm install (or `pnpm install` or `yarn`)
+```
+
+and start the development server:
 
 ```bash
 npm run dev
@@ -56,15 +80,26 @@ npm run dev
 npm run dev -- --open
 ```
 
-### Dev Environment [Codespaces]
+---
 
-If you're using `codespaces` enabled for the `scores-platform` development - simply launch the
-`dev` branch and once the `codespace` has successfully loaded run the following commands:
+3. `Docker DEV`
 
+If you do not have the supported/defined `node` and `npm` versions
+installed on your local machine, you can opt to use the configured `Docker`
+DEV environemnt.
+
+For this you will need:
+  - `Docker Desktop` downloded on your local machine,
+  - `Makefile` (or `Node`)
+
+```bash
+make dev-docker-start
+
+# OR if no Make installed
+npm run docker-dev-up
 ```
-npm install -g npm@8.19.1
-npm install
-```
+
+`NOTE:` 🔥 Hot-reload enabled for `Docker DEV`
 
 ### Production Environment
 

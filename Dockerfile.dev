@@ -2,6 +2,7 @@
 
 # ==== Builder Image
 FROM node:16.17.0-alpine as build
+
 WORKDIR /app
 
 # [ℹ] Installs required node packages
@@ -19,16 +20,10 @@ RUN apk add --no-cache \
 
 # [ℹ] Builds node application
 COPY . .
-RUN npm run build
 
-# ==== Final Image
-FROM node:16.17.0-alpine as final
-USER node:node
-WORKDIR /app
-
-COPY --from=build /app .
-COPY . .
-
+# Expose port 3000 for the SvelteKit app and 24678 for Vite's HMR
 EXPOSE 5055
+EXPOSE 24678
+
 # CMD ["node", "./build"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "dev-docker"]

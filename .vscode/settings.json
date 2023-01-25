@@ -20,6 +20,12 @@
       "overviewRulerColor": "grey"
     },
     {
+      "text": "DOC:",
+      "color": "#ffffff",
+      "backgroundColor": "blue",
+      "overviewRulerColor": "grey"
+    },
+    {
       "text": "IMPORTANT",
       "color": "#ffffff",
       "backgroundColor": "red",
