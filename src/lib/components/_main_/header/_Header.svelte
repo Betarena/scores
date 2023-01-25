@@ -387,7 +387,7 @@ COMPONENT JS - BASIC
 =================== -->
 
 <!-- 
-[ℹ] area outside to close action
+[ℹ] area outside to close action (outer header)
 -->
 {#if dropdown_lang_visible
   || dropdown_more_sports_menu
@@ -436,17 +436,30 @@ TODO:FIXME: not generating for each LANG
 <!-- 
 [ℹ] show/hide auth widget
 -->
-<!-- {#if show_auth} -->
-  <AuthWidget />
-<!-- {/if}4 -->
+<AuthWidget />
 
 <!-- 
 [ℹ] main header INIT
 -->
 <header
   class="column-space-center">
-  {#if HEADER_TRANSLATION_DATA != undefined}
 
+  <!-- 
+  [ℹ] area outside to close action (inner header)
+  -->
+  {#if dropdown_lang_visible
+    || dropdown_more_sports_menu
+    || dropdown_theme_visible
+    || dropdown_odds_type_visible 
+    || dropdown_bookmakers_visible
+    || dropdown_user_auth}
+    <div 
+      id="background-area-close-inner" 
+      on:click={() => closeAllDropdowns()} 
+    />
+  {/if}
+
+  {#if HEADER_TRANSLATION_DATA != undefined}
     <!-- 
     [ℹ] header TOP NAVBAR section 
     -->
@@ -2163,5 +2176,16 @@ COMPONENT STYLE
 			width: 100%;
 			z-index: 1000;
 		}
+
+    #background-area-close-inner {
+      position: absolute;
+			top: 0;
+			bottom: 0;
+			right: 0;
+			left: 0;
+			height: 100%;
+			width: 100%;
+			z-index: 1000;
+    }
 	}
 </style>

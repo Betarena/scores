@@ -6,7 +6,7 @@ COMPONENT JS (w/ TS)
   import { browser, dev } from '$app/environment';
   import { goto } from '$app/navigation';
   import { page } from '$app/stores';
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
   import { app_m, auth } from '$lib/firebase/init';
@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
   import { userBetarenaSettings, type Scores_User } from '$lib/store/user-settings';
   import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
   import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-  import { GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
+  import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
 
   import discord_icon from './assets/discord.svg';
   import email_verify from './assets/email-verify.svg';
@@ -32,24 +32,29 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-	const dispatch = createEventDispatcher();
-
-  // NOTE: NO WIDGET SPECIFIC SEO or PRE-LOAD DATA REQUIRED
+  // NOTE: NO WIDGET SPECIFIC SEO or 
+  // NOTE: PRE-LOAD DATA REQUIRED
 
   let email_input: string
   let processing: boolean = false;
   let email_verify_process: boolean = false;
+  let email_sent_process: boolean = false;
+  let allow_resend: boolean = false;
+  let sent_email_date: Date = undefined
+  let dateObjDif: number
   let auth_view: boolean = true;
-  let auth_type: 'login' | 'register';
+  let auth_type: 'login' | 'register' = 'login';
   let success_auth: boolean = false;
   let error_auth: boolean = false;
   let email_error_format: boolean = false;
   let email_already_in_use: boolean = false;
 
-  const actionCodeSettings = {
+  $: actionCodeSettings.url = `${$page.url?.origin}${$page.url?.pathname}?auth_type=${auth_type}`
+
+  let actionCodeSettings = {
     // [ℹ] URL / DOMAIN you want to redirect back to.
     // [ℹ] URL must be in the authorized domains list in the Firebase Console.
-    url: `${$page.url?.origin}${$page.url?.pathname}`,
+    url: `${$page.url?.origin}${$page.url?.pathname}?auth_type=${auth_type}`,
     handleCodeInApp: true, // [ℹ] This must be set true
     // dynamicLinkDomain: 'http://localhost:3050/auth'
     // iOS: {
@@ -110,10 +115,6 @@ COMPONENT JS (w/ TS)
     }
   }
 
-  async function check_email_user_exists (email_input: string) {
-    
-  }
-
   async function login_with_email_link () {
     // DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
     try {
@@ -121,24 +122,24 @@ COMPONENT JS (w/ TS)
       processing = true
       // [🐞]
       if (dev) console.log('email_input', email_input)
-      // await fetchSignInMethodsForEmail(
-      //   auth, 
-      //   email_input
-      // )
-      // .then((signInMethods) => {
-      //   if (signInMethods.length) {
-      //     // [ℹ] The email already exists in the Auth database. You can check the
-      //     // [ℹ] sign-in methods associated with it by checking signInMethods array.
-      //     // [ℹ] Show the option to sign in with that sign-in method.
-      //     email_already_in_use = true;
-      //   } else {
-      //     // [ℹ] User does not exist. Ask user to sign up.
-      //     email_already_in_use = false;
-      //   }
-      // })
-      // .catch((error) => { 
-      //   // Some error occurred.
-      // });
+      await fetchSignInMethodsForEmail(
+        auth, 
+        email_input
+      )
+      .then((signInMethods) => {
+        if (signInMethods.length) {
+          // [ℹ] The email already exists in the Auth database. You can check the
+          // [ℹ] sign-in methods associated with it by checking signInMethods array.
+          // [ℹ] Show the option to sign in with that sign-in method.
+          email_already_in_use = true;
+        } else {
+          // [ℹ] User does not exist. Ask user to sign up.
+          email_already_in_use = false;
+        }
+      })
+      .catch((error) => { 
+        // Some error occurred.
+      });
       // [ℹ] validation
       // if (email_already_in_use) {
       //   if (dev) console.log('🟠 Exit MagicLink')
@@ -159,8 +160,14 @@ COMPONENT JS (w/ TS)
         // [ℹ] The link was successfully sent - (custom) UI update
         processing = false
         auth_view = false
-        email_verify_process = true
-        // [ℹ] Save the email in localStroage() for retrival on same device
+        if (email_already_in_use) {
+          email_sent_process = true
+          sent_email_date = new Date()
+          sent_email_date.setMinutes(sent_email_date.getMinutes() + 5) // [ℹ] add 5 min.
+        } else {
+          email_verify_process = true
+        }
+        // [ℹ] store target email in localStroage() for retrival on same device
         window.localStorage.setItem('emailForSignIn', email_input);
         // NOTE: listen for email deep link continued
       })
@@ -173,6 +180,32 @@ COMPONENT JS (w/ TS)
       console.log(e);
     }
   }
+
+  $: if (sent_email_date != undefined) {
+    dateObjDif =
+      sent_email_date.getTime() - Date.parse(new Date().toString());
+    setInterval(() => {
+			dateObjDif =
+        sent_email_date.getTime() - Date.parse(new Date().toString());
+		}, 1000);
+  }
+
+  $: countD_sec = Math.floor((dateObjDif / 1000) % 60).toString();
+	$: if (parseInt(countD_sec) < 10) {
+		countD_sec = '0' + countD_sec;
+	}
+	$: countD_min = Math.floor((dateObjDif / 1000 / 60) % 60).toString();
+	$: if (parseInt(countD_min) < 10) {
+		countD_min = '0' + countD_min;
+	}
+  
+  $: if (countD_sec.includes('-')) {
+    // sent_email_date = undefined
+    allow_resend = true
+  } else {
+    allow_resend = false
+  }
+
   // [ℹ] DeepLink listener EmailLink Cont. [END]
   $: if (browser) {
     if (isSignInWithEmailLink(auth, window.location.href)) {
@@ -195,6 +228,7 @@ COMPONENT JS (w/ TS)
       // The client SDK will parse the code from the link for you.
       signInWithEmailLink(auth, email, window.location.href)
       .then((result) => {
+        auth_type = $page?.url?.searchParams?.get('auth_type')?.toString() as 'login' | 'register'
         const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`
         // [🐞]
         if (dev) console.log("🟢 EmailLink Auth")
@@ -322,11 +356,20 @@ COMPONENT JS (w/ TS)
     // IMPORTANT: betarena-ios "usage" project-id
     try {
       processing = true
+      // [ℹ] restrict only to MetaMask (original)
+      if (!provider('isMetaMask')[0]) {
+        alert('Please install the MetaMask Wallet Extension!')
+        processing = false
+        return
+      }
       // [ℹ] create Moralis instance
       const moralisAuth = getMoralisAuth(app_m);
+      // [🐞]
+      // if (dev) console.log(moralisAuth) 
       // NOTE: default sign-in opt. is Metamask
       const moralis_auth = await signInWithMoralis(moralisAuth);
       // [🐞]
+      // if (dev) console.log(moralis_auth)
       if (dev) console.log("🟢 Moralis Auth")
       success_auth_wrap(null, moralis_auth?.credentials?.user?.displayName)
     } catch (error) {
@@ -393,8 +436,53 @@ COMPONENT JS (w/ TS)
     auth_view = true
     email_input = undefined
     email_verify_process = false
+    email_sent_process = false
     email_already_in_use = false
     email_error_format = false
+  }
+
+  /**
+   * Validates what Web3 wallet extension
+   * is being used for the platform
+   * @param walletType
+   */
+  function provider (
+    walletType: 'isMetaMask' | 'isCoinbaseWallet' | 'isBraveWallet'
+  ): [boolean, any] {
+    // [ℹ] no ethereum wallet present
+    if (!window.ethereum) { 
+      return [false, null];
+      // throw new Error("No injected ethereum object."); 
+    }
+
+    // [ℹ] default provider (single) assign
+    let target_wallet = window.ethereum
+
+    // [ℹ] multiple provider(s) check true
+    if (Array.isArray(window.ethereum.providers)) {
+      if (walletType == 'isMetaMask') { 
+        target_wallet = window.ethereum.providers.find((provider) => provider[walletType] && provider?.isBraveWallet == undefined)
+      }
+      else {
+        target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
+      }
+      if (dev) console.log(`🔵 More than 1 provider identified! - ${window.ethereum.providers.length}`)
+    }
+
+    // [ℹ] TARGET (THIS) single provider check true
+    if (target_wallet != undefined) {
+      console.log(`🟢 ${walletType} identified`)
+      // DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
+      // DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
+      // NOTE: conflicting use of CoinBaseWallet & MetaMask
+      // NOTE: setting MetaMask as main wallet
+      target_wallet.request({ method: 'eth_requestAccounts' });
+      return [true, target_wallet]
+    }
+    else {
+      console.log(`🔴 no target wallet (${walletType}) identified`)
+      return [false, null]
+    }
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -639,6 +727,105 @@ COMPONENT HTML
     {/if}
 
     <!-- 
+    [ℹ] email sent view box
+    [ℹ] HIDDEN by DEFAULT
+    -->
+    {#if email_sent_process}
+      <div
+        id="email-auth-verify-box">
+        <!-- 
+        [ℹ] close icon logo
+        -->
+        <img 
+          id='close-vector'
+          class='cursor-pointer'
+          src="/assets/svg/close.svg" 
+          alt="close-svg"
+          on:click={() => $sessionStore.auth_show = false}
+        />
+
+        <!-- 
+        [ℹ] verify text
+        -->
+        <p
+          class="
+            w-500
+            color-black-2
+          "
+          style="font-size: 20px;">
+          Check your email
+        </p>
+        <!-- 
+        [ℹ] verify email
+        -->
+        <p
+          class="color-grey">
+          Please follow the link in your email
+        </p>
+        <!-- 
+        [ℹ] verify email icon
+        -->
+        <img 
+          id="email-verify-icon"
+          src={email_verify}
+          alt="Email Vector"
+          title="Email Vector"
+        />
+        <!-- 
+        [ℹ] verify email text
+        -->
+        <p
+          class="color-grey">
+          An email has been sent to
+          <br>
+          <span
+            class="color-black-2">
+            {email_input}
+          </span>
+          <br>
+          Please follow the link in your email to login.
+        </p>
+        <!-- 
+        [ℹ] verify email to my inbox
+        -->
+        <p
+          class="
+            color-primary
+            cursor-pointer
+          "
+          style="margin-top: 8px;"
+          on:click={() => window.open('mailto:')}>
+          Go to my inbox
+        </p>
+        <!-- 
+        [ℹ] verify no email text
+        -->
+        {#if allow_resend}
+          <p
+            class="color-grey"
+            style="margin-top: 24px;">
+            Did not get the email? 
+            <span
+              class="
+                color-primary
+                cursor-pointer
+              "
+              on:click={() => login_with_email_link()}>
+              Resend email
+            </span>
+          </p>
+        {:else}
+          <p
+            class="color-grey"
+            style="margin-top: 24px;">
+            {countD_min}:{countD_sec} to resend option
+          </p>
+        {/if}
+        
+      </div>
+    {/if}
+
+    <!-- 
     [ℹ] authetication view
     [ℹ] SHOWN by DEFAULT
     -->
@@ -698,6 +885,7 @@ COMPONENT HTML
         on:submit|preventDefault={() => login_with_email_link()}>
         <!-- 
         [ℹ] input email
+        class:error-email={email_error_format || email_already_in_use}
         -->
         <input
           id='email'
@@ -706,7 +894,7 @@ COMPONENT HTML
           bind:value={email_input}
           on:invalid={() => wrong_email_format()}
           autocomplete="off"
-          class:error-email={email_error_format || email_already_in_use}
+          class:error-email={email_error_format}
           required
         />
         <!-- 
@@ -721,7 +909,6 @@ COMPONENT HTML
         {/if}
         <!-- 
         [ℹ] error email validation exists
-        -->
         {#if email_already_in_use}
           <p
             class="color-error"
@@ -729,6 +916,7 @@ COMPONENT HTML
             Email already in use
           </p>
         {/if}
+        -->
         <!-- 
         [ℹ] submit email button
         -->
@@ -935,7 +1123,7 @@ COMPONENT STYLE
     z-index: 10000;
     margin: auto;
     width: fit-content;
-    width: 85%;
+    width: 92%;
     right: 0;
     left: 0;
     bottom: 0;
@@ -1012,6 +1200,7 @@ COMPONENT STYLE
     border-radius: 8px;
     padding: 12px;
     width: -webkit-fill-available;
+    width: -moz-available;
     height: 44px;
     outline: none;
     font-size: 14px;
@@ -1041,6 +1230,8 @@ COMPONENT STYLE
   } button#email-btn p {
     color: #FFFFFF;
     font-size: 14px;
+  } button#email-btn:hover {
+    background: #F77C42;
   }
   
   /* 
@@ -1061,6 +1252,8 @@ COMPONENT STYLE
     border: 1px solid #E6E6E6 !important;
     border-radius: 60px;
     margin-right: 12px;
+  } div#oauth-box button.btn-auth-opt:hover {
+    border: 1px solid #F5620F !important;
   } div#oauth-box button.btn-auth-opt:last-child {
     margin-right: unset;
   }
@@ -1084,6 +1277,8 @@ COMPONENT STYLE
     border: 1px solid #E6E6E6 !important;
     border-radius: 60px;
     margin-right: 12px;
+  } button#metamask.btn-auth-opt:hover {
+    border: 1px solid #F5620F !important;
   } button#metamask p {
     margin-left: 12px;
     font-size: 14px;
