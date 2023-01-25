@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
   import { userBetarenaSettings, type Scores_User } from '$lib/store/user-settings';
   import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
   import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
-  import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
+  import { GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
 
   import discord_icon from './assets/discord.svg';
   import email_verify from './assets/email-verify.svg';
@@ -37,12 +37,10 @@ COMPONENT JS (w/ TS)
   // NOTE: NO WIDGET SPECIFIC SEO or PRE-LOAD DATA REQUIRED
 
   let email_input: string
-  if (dev) email_input = 'migbashdev@gmail.com'
   let processing: boolean = false;
   let email_verify_process: boolean = false;
   let auth_view: boolean = true;
   let auth_type: 'login' | 'register';
-  let web3_wallet_address: string;
   let success_auth: boolean = false;
   let error_auth: boolean = false;
   let email_error_format: boolean = false;
@@ -67,6 +65,7 @@ COMPONENT JS (w/ TS)
   // [🐞]
   let enable_logs:       boolean = true;
   let dev_console_tag:   string = "_main_ | authentication [DEV]";
+  if (dev) email_input = 'migbashdev@gmail.com'
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -122,34 +121,34 @@ COMPONENT JS (w/ TS)
       processing = true
       // [🐞]
       if (dev) console.log('email_input', email_input)
-      await fetchSignInMethodsForEmail(
-        auth, 
-        email_input
-      )
-      .then((signInMethods) => {
-        if (signInMethods.length) {
-          // [ℹ] The email already exists in the Auth database. You can check the
-          // [ℹ] sign-in methods associated with it by checking signInMethods array.
-          // [ℹ] Show the option to sign in with that sign-in method.
-          email_already_in_use = true;
-        } else {
-          // [ℹ] User does not exist. Ask user to sign up.
-          email_already_in_use = false;
-        }
-      })
-      .catch((error) => { 
-        // Some error occurred.
-      });
+      // await fetchSignInMethodsForEmail(
+      //   auth, 
+      //   email_input
+      // )
+      // .then((signInMethods) => {
+      //   if (signInMethods.length) {
+      //     // [ℹ] The email already exists in the Auth database. You can check the
+      //     // [ℹ] sign-in methods associated with it by checking signInMethods array.
+      //     // [ℹ] Show the option to sign in with that sign-in method.
+      //     email_already_in_use = true;
+      //   } else {
+      //     // [ℹ] User does not exist. Ask user to sign up.
+      //     email_already_in_use = false;
+      //   }
+      // })
+      // .catch((error) => { 
+      //   // Some error occurred.
+      // });
       // [ℹ] validation
-      if (email_already_in_use) {
-        if (dev) console.log('🟠 Exit MagicLink')
-        processing = false
-        error_auth = true
-        setTimeout(() => {
-          error_auth = false
-        }, 1500)
-        return
-      }
+      // if (email_already_in_use) {
+      //   if (dev) console.log('🟠 Exit MagicLink')
+      //   processing = false
+      //   error_auth = true
+      //   setTimeout(() => {
+      //     error_auth = false
+      //   }, 1500)
+      //   return
+      // }
       // [ℹ] cont. send email
       await sendSignInLinkToEmail(
         auth, 
@@ -374,20 +373,12 @@ COMPONENT JS (w/ TS)
     // [ℹ] default UI/UX triggers
     $sessionStore.auth_show = false
     processing = false;
+    email_input = undefined;
     success_auth = true;
     setTimeout(() => {
       success_auth = false;
+      auth_type = 'login'
     }, 1500)
-  }
-
-  function open_email () {
-    window.open('mailto:');
-  }
-
-  function close_email_sent_view () {
-    $sessionStore.auth_show = false
-    email_verify_process = false
-    auth_view = true
   }
 
   function wrong_email_format () {
@@ -396,6 +387,14 @@ COMPONENT JS (w/ TS)
     setTimeout(() => {
       error_auth = false
     }, 1500)
+  }
+
+  $: if (!$sessionStore.auth_show) {
+    auth_view = true
+    email_input = undefined
+    email_verify_process = false
+    email_already_in_use = false
+    email_error_format = false
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -564,7 +563,7 @@ COMPONENT HTML
           class='cursor-pointer'
           src="/assets/svg/close.svg" 
           alt="close-svg"
-          on:click={() => close_email_sent_view()}
+          on:click={() => $sessionStore.auth_show = false}
         />
 
         <!-- 
@@ -617,7 +616,7 @@ COMPONENT HTML
             cursor-pointer
           "
           style="margin-top: 8px;"
-          on:click={() => open_email()}>
+          on:click={() => window.open('mailto:')}>
           Go to my inbox
         </p>
         <!-- 
@@ -909,6 +908,7 @@ COMPONENT STYLE
     margin: auto;
     background: rgba(0, 0, 0, 0.8);
     backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     padding: 14px 18px;
     border-radius: 6px;
   } div#auth-alert-box p {
@@ -935,7 +935,7 @@ COMPONENT STYLE
     z-index: 10000;
     margin: auto;
     width: fit-content;
-    width: 328px;
+    width: 85%;
     right: 0;
     left: 0;
     bottom: 0;
@@ -956,6 +956,7 @@ COMPONENT STYLE
   div#processing-auth-box {
     position: absolute;
     backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
     width: 100%;
     height: 100%;
     top: 0;
@@ -1096,26 +1097,34 @@ COMPONENT STYLE
   }
 
   /* ====================
-    [MAIN] RESPONSIVNESS [TABLET] [DESKTOP]
+    [MAIN] RESPONSIVNESS 
+    [TABLET] [DESKTOP]
   ==================== */
 
 	/* 
   NOTE: TABLET [EXCLUSIVE] RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) and (max-width: 1160px)  {
-
+    /* empty */
   }
 
   /* 
   NOTE: TABLET && DESKTOP [SHARED] RESPONSIVNESS (&+) */
   @media only screen and (min-width: 726px) {
+    #widget-outer {
+      width: 340px;
+    }
   }
 
   @media only screen and (min-width: 726px) and (max-width: 865px) {
+    /* empty */
   }
 
   /* 
   NOTE: DESKTOP [M-L] RESPONSIVNESS (&+) */
   @media only screen and (min-width: 1160px) {
+    #widget-outer {
+      width: 328px;
+    }
   }
 
   /* ====================

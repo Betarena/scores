@@ -356,6 +356,7 @@ COMPONENT JS - BASIC
 		dropdown_odds_type_visible = false;
 		dropdown_bookmakers_visible = false;
 		dropdown_more_sports_menu = false;
+    dropdown_user_auth = false;
 	}
 
 	/**
@@ -392,7 +393,8 @@ COMPONENT JS - BASIC
   || dropdown_more_sports_menu
   || dropdown_theme_visible
   || dropdown_odds_type_visible 
-  || dropdown_bookmakers_visible}
+  || dropdown_bookmakers_visible
+  || dropdown_user_auth}
 	<div 
     id="background-area-close" 
     on:click={() => closeAllDropdowns()} 
@@ -977,7 +979,6 @@ TODO:FIXME: not generating for each LANG
                 id="user-profile-dropdown">
                 <!--
                 [ℹ] profile page button
-                -->
                 <div
                   class="
                     theme-opt-box
@@ -992,6 +993,7 @@ TODO:FIXME: not generating for each LANG
                     Profile
                   </p>
                 </div>
+                -->
                 <!--
                 [ℹ] logout page button
                 -->
