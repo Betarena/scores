@@ -471,7 +471,8 @@ COMPONENT JS (w/ TS)
         target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
       }
       console.log(`🔵 More than 1 provider identified! - ${window.ethereum.providers.length}`)
-      console.log(target_wallet)
+      console.log('target_wallet', target_wallet)
+      console.log('window.ethereum.providers', window.ethereum.providers)
     }
 
     // [ℹ] TARGET (THIS) single provider check true
