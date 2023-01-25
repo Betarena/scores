@@ -1341,6 +1341,8 @@ COMPONENT STYLE
     color: #FFFFFF;
   } div#widget-outer.dark-background-1 input#email::placeholder {
     color: #737373;
+  } div#widget-outer.dark-background-1 input#email:hover {
+    border: 1px solid #8C8C8C;
   }
 
   div#widget-outer.dark-background-1 div#other-oauth-divider-box div.hr-box,
@@ -1352,6 +1354,11 @@ COMPONENT STYLE
   div#widget-outer.dark-background-1 button#metamask.btn-auth-opt {
     border: 1px solid #737373 !important;
     background: #4B4B4B;
+  }
+
+  div#widget-outer.dark-background-1 div#oauth-box button.btn-auth-opt:hover,
+  div#widget-outer.dark-background-1 button#metamask.btn-auth-opt:hover {
+    border: 1px solid #F5620F !important;
   }
 
 </style>
