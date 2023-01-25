@@ -460,19 +460,35 @@ COMPONENT JS (w/ TS)
     }
 
     // [ℹ] default provider (single) assign
-    let target_wallet = window.ethereum
+    let target_wallet = undefined
 
     // [ℹ] multiple provider(s) check true
     if (Array.isArray(window.ethereum.providers)) {
       if (walletType == 'isMetaMask') { 
         target_wallet = window.ethereum.providers.find((provider) => provider[walletType] && provider?.isBraveWallet == undefined)
       }
-      else {
-        target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
-      }
-      console.log(`🔵 More than 1 provider identified! - ${window.ethereum.providers.length}`)
+      // [ℹ] alternative
+      // else {
+      //   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
+      // }
+      console.log(`🔵 More than 1 provider identified!`, window.ethereum.providers.length)
       console.log('target_wallet', target_wallet)
       console.log('window.ethereum.providers', window.ethereum.providers)
+    }
+    else {
+      if (walletType == 'isMetaMask'
+        && window.ethereum?.isBraveWallet == undefined
+        && window.ethereum?.isMetaMask != undefined
+        && window.ethereum?.isMetaMask) { 
+        target_wallet = window.ethereum[walletType]
+      }
+      // [ℹ] alternative
+      // else {
+      //   target_wallet = window.ethereum[walletType]
+      // }
+      console.log(`🔵 1 provider identified!`, window.ethereum)
+      console.log('target_wallet', target_wallet)
+      console.log('window.ethereum', window.ethereum)
     }
 
     // [ℹ] TARGET (THIS) single provider check true
