@@ -12,7 +12,7 @@ import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/reques
 
 import fs from 'fs';
 
-var options = {
+let options = {
     key: fs.readFileSync('./certs/privkey.pem'),
     cert: fs.readFileSync('./certs/cert.pem'),
   }
