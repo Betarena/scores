@@ -109,10 +109,10 @@ app.use(handler);
 // APP SPIN-UP [PROD] [V2]
 // ~~~~~~~~~~~~~~~~~~~~~~
 
-http.createServer(app).listen(80, function(){
+http.createServer(app).listen(80, () => {
   console.log(`[HTTP | Server]: Server is running on port: ${80}`);
 });
 
-https.createServer(options, app).listen(443, function(){
+https.createServer(options, app).listen(443, () => {
   console.log(`[HTTPS | Server]: Server is running on port: ${443}`);
 });
