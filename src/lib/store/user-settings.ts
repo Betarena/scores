@@ -10,7 +10,7 @@ import { writable } from 'svelte/store';
 
 export interface Scores_User
   extends User {
-  web3_wallet_addr?: string | undefined // [ℹ] Authenticated User [WEB3]
+  web3_wallet_addr?: string // [ℹ] Authenticated User [WEB3]
 }
 
 interface User_Setting {
