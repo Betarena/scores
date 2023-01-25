@@ -471,9 +471,9 @@ COMPONENT JS (w/ TS)
       // else {
       //   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
       // }
-      console.log(`🔵 More than 1 provider identified!`, window.ethereum.providers.length)
-      console.log('target_wallet', target_wallet)
-      console.log('window.ethereum.providers', window.ethereum.providers)
+      if (dev) console.log(`🔵 More than 1 provider identified!`, window.ethereum.providers.length)
+      if (dev) console.log('target_wallet', target_wallet)
+      if (dev) console.log('window.ethereum.providers', window.ethereum.providers)
     }
     else {
       if (walletType == 'isMetaMask'
@@ -486,14 +486,14 @@ COMPONENT JS (w/ TS)
       // else {
       //   target_wallet = window.ethereum[walletType]
       // }
-      console.log(`🔵 1 provider identified!`, window.ethereum)
-      console.log('target_wallet', target_wallet)
-      console.log('window.ethereum', window.ethereum)
+      if (dev) console.log(`🔵 1 provider identified!`, window.ethereum)
+      if (dev) console.log('target_wallet', target_wallet)
+      if (dev) console.log('window.ethereum', window.ethereum)
     }
 
     // [ℹ] TARGET (THIS) single provider check true
     if (target_wallet != undefined) {
-      console.log(`🟢 ${walletType} identified`)
+      if (dev) console.log(`🟢 ${walletType} identified`)
       // DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
       // DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
       // NOTE: conflicting use of CoinBaseWallet & MetaMask
