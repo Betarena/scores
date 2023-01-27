@@ -1,14 +1,16 @@
-// [ℹ] https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
-// [ℹ] https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
+// DOC: https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
+// DOC: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
 import express from 'express';
 import http from 'http';
 import https from 'https';
 
 import { handler } from './build/handler.js';
 // import sslRedirect from 'heroku-ssl-redirect';
-import compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
+// DOC: https://expressjs.com/en/resources/middleware/compression.html
+import compression from 'compression';
 import * as sslify from 'express-sslify';
-import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/request-ip
+// DOC: https://www.npmjs.com/package/request-ip
+import * as requestIp from 'request-ip';
 
 import fs from 'fs';
 

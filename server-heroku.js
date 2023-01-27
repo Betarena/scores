@@ -4,18 +4,13 @@
 import express from 'express';
 import { handler } from './build/handler.js';
 // import sslRedirect from 'heroku-ssl-redirect';
-import compression from 'compression'; // DOC: https://expressjs.com/en/resources/middleware/compression.html
+// DOC: https://expressjs.com/en/resources/middleware/compression.html
+import compression from 'compression';
 import * as sslify from 'express-sslify';
-import * as requestIp from 'request-ip'; // DOC: https://www.npmjs.com/package/request-ip
+// DOC: https://www.npmjs.com/package/request-ip
+import * as requestIp from 'request-ip';
 
 const app = express();
-
-/**
- *  [ℹ] add a route that lives separately from the SvelteKit app
-*/
-// app.get('/healthcheck', (req, res) => {
-// 	res.end('ok');
-// });
 
 /**
  * [ℹ] enable ssl redirect
