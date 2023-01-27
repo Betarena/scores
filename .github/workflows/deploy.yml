@@ -19,7 +19,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: executing remote ssh commands using password
+    - name: (STEP) Executing remote ssh commands using key
       uses: appleboy/ssh-action@v0.1.7
       # [ℹ] declaring ENV variables to be used in the project-CI/CD
       with:
