@@ -26,4 +26,4 @@ EXPOSE 5055
 EXPOSE 24678
 
 # CMD ["node", "./build"]
-CMD ["npm", "run", "dev-docker"]
+CMD ["npm", "run", "dev:docker"]
