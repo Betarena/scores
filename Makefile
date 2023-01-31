@@ -12,7 +12,7 @@ log-listen:
 
 update-scores-web:
 	echo 'Updating PROD Scores Web container...'
-	git pull origin enhance/feature-docker-deploy
+	git pull origin main
 	-docker rm $$(docker stop $$(docker ps -a -q --filter="name=scores_scores_web_1" --format="{{.ID}}"))
 	-docker rmi $$(docker images -q scores_web)
 	-docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)

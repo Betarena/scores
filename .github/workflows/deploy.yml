@@ -19,7 +19,7 @@ jobs:
     name: Build
     runs-on: ubuntu-latest
     steps:
-    - name: (STEP) Executing remote ssh commands using key
+    - name: executing remote ssh commands using password
       uses: appleboy/ssh-action@v0.1.7
       # [ℹ] declaring ENV variables to be used in the project-CI/CD
       with:
@@ -31,6 +31,6 @@ jobs:
           # [ℹ] Navigate to target project directory
           cd web/scores
           # [ℹ] Update the directory with latests changes
-          git pull origin enhance/feature-docker-deploy
+          git pull origin main
           # [ℹ] Run target makefile command
           make update-scores-web

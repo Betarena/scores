@@ -3,8 +3,8 @@
   // https://stackoverflow.com/questions/46722701/is-there-a-way-to-remove-unused-imports-and-declarations-from-angular-2
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
-   "source.organizeImports": true,
-   "source.sortMembers": true
+    "source.organizeImports": true,
+    "source.sortMembers": true
   },
   "todohighlight.keywords": [
     {
