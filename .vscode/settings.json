@@ -1,11 +1,12 @@
 {
-  // https://stackoverflow.com/questions/64365300/how-can-i-remove-unused-imports-declarations-from-the-entire-project-of-react-ty
-  // https://stackoverflow.com/questions/46722701/is-there-a-way-to-remove-unused-imports-and-declarations-from-angular-2
+  // DOC: https://stackoverflow.com/questions/64365300/how-can-i-remove-unused-imports-declarations-from-the-entire-project-of-react-ty
+  // DOC: https://stackoverflow.com/questions/46722701/is-there-a-way-to-remove-unused-imports-and-declarations-from-angular-2
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
     "source.organizeImports": true,
     "source.sortMembers": true
   },
+  // NOTE: custom highlighter for data
   "todohighlight.keywords": [
     {
       "text": "NOTE:",
