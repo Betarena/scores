@@ -337,7 +337,7 @@
     && seasonCheck
     && !diasbleDev}
 
-    <StandingsWidgetContentLoader />
+    <!-- <StandingsWidgetContentLoader /> -->
 
     <!-- 
     [ℹ] promise is pending 
