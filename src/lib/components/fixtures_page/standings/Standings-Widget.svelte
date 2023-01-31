@@ -802,7 +802,6 @@
     /* padding: 20px; */
     /* padding-bottom: 0; */
     margin: 20px;
-    margin-bottom: 0;
     width: -webkit-fill-available;
   } div.stand-view-opt-box {
     border: 1px solid #CCCCCC;
@@ -951,6 +950,7 @@
 
     div#standings-view-box {
       width: auto;
+      margin-bottom: 0;
     } div.stand-view-opt-box {
       width: 96px;
       max-width: 96px;
