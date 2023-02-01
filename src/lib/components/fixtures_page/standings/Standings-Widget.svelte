@@ -28,14 +28,19 @@
   import no_visual from './assets/no_visual.svg';
   import no_visual_dark from './assets/no_visual_dark.svg';
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  COMPONENT VARIABLES
+  // ~~~~~~~~~~~~~~~~~~~~~
+
   let loaded:                 boolean = false;  // [ℹ] holds boolean for data loaded;
   let refresh:                boolean = false;  // [ℹ] refresh value speed of the WIDGET;
 	let refresh_data:           any = undefined;  // [ℹ] refresh-data value speed;
-  let noStandingsBool:        any = false;      // [ℹ] identifies the noStandingsBool boolean;
+  let no_widget_data:         boolean = false;  // [ℹ] identifies the no_widget_data boolean;
   let dropdownSeasonSelect:   any = undefined   // [ℹ] selected TOP LEAGUE;
   let toggleCTA:              boolean = false;
   let showMore:               boolean = false;
   let currentSeason:          number = undefined;
+  let show_placeholder:       boolean = false;     // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
 
   let diasbleDev:             boolean = false;
   
@@ -69,12 +74,12 @@
 		if (STANDINGS_DATA == undefined) {
       // [🐞] 
       if (dev) logDevGroup ("tournament standings [DEV]", `❌ no data available!`)
-      noStandingsBool = true;
+      no_widget_data = true;
 			return;
 		}
     // [ℹ] otherwise, no data
     else {
-      noStandingsBool = false;
+      no_widget_data = false;
     }
     // loaded = true;
     // STANDINGS_T.data.sportbook_detail = response
@@ -151,7 +156,7 @@
     // [ℹ] reset necessary variables;
     refresh = true
     loaded = false
-    noStandingsBool = false
+    no_widget_data = false
     // widgetInit()
     setTimeout(async() => {
       refresh = false
@@ -181,7 +186,7 @@
           : season?.group_standings.length
       ;
     }
-    noStandingsBool = 
+    no_widget_data = 
       seasonCheckLength == 0 ||
       seasonCheckLength == undefined
         ? true
@@ -207,7 +212,8 @@
   />
 {/if}
 
-<div>
+<div
+  class:display_none={no_widget_data && !show_placeholder}>
 
   <!-- 
   [ℹ] SEO-DATA-LOADED 
@@ -239,7 +245,7 @@
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if noStandingsBool
+  {#if no_widget_data
     && seasonCheck
     && !loaded}
     <!-- 
@@ -300,7 +306,7 @@
   <!-- 
   [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if !noStandingsBool 
+  {#if !no_widget_data 
     && !refresh
     && browser
     && $userBetarenaSettings.country_bookmaker
@@ -724,6 +730,10 @@
 =================-->
 
 <style>
+
+  .display_none {
+    display: none !important;
+  }
 
   #background-area-close {
     position: absolute;
