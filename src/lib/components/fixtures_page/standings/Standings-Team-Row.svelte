@@ -274,7 +274,7 @@
   } tr td:first-child {
     padding-left: 20px;
   } tr td:last-child {
-    padding-right: 20px;
+    padding-right: 10px;
   } 
   
   .border-pos {

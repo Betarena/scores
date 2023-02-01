@@ -771,7 +771,7 @@
   div#standings-view-box {
     /* padding: 20px; */
     /* padding-bottom: 0; */
-    margin: 20px;
+    margin: 20px 20px 15px 20px;
     width: -webkit-fill-available;
   } div.stand-view-opt-box {
     border: 1px solid #CCCCCC;
@@ -798,7 +798,7 @@
     width: auto;
     text-align: center;
     border-radius: 8px;
-    margin: 20px;
+    margin: 20px 15px 15px 0;
   }
 
   /* old - table approach */
@@ -836,7 +836,7 @@
     padding-left: 20px;
     text-align: left;
   } table.standings_table .row-head th:last-child {
-    padding-right: 20px;
+    padding-right: 10px;
     text-align: right;
   } table.standings_table .row-head .tooltip-extra-info {
     visibility: hidden;
