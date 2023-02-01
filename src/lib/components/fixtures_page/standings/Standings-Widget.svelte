@@ -1,5 +1,5 @@
 <!-- ===============
-	  COMPONENT JS (w/ TS)
+	COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
@@ -9,14 +9,9 @@
   import { logDevGroup } from "$lib/utils/debug";
   import { onMount } from "svelte";
 
-  import { get } from "$lib/api/utils";
   import { userBetarenaSettings } from "$lib/store/user-settings";
-  import { getImageBgColor } from "$lib/utils/color_thief";
 
-  import type {
-  	Cache_Single_SportbookDetails_Data_Response
-  } from "$lib/models/tournaments/league-info/types";
-
+  
   import type {
   	REDIS_CACHE_SINGLE_tournament_standings_data,
   	REDIS_CACHE_SINGLE_tournament_standings_translation,
@@ -40,16 +35,13 @@
   let dropdownSeasonSelect:   any = undefined   // [ℹ] selected TOP LEAGUE;
   let toggleCTA:              boolean = false;
   let showMore:               boolean = false;
+  let currentSeason:          number = undefined;
 
   let diasbleDev:             boolean = false;
   
   let selectedOpt:            'total' | 'home' | 'away' = 'total';
   let refreshRow:             boolean = false;
   let selectedOptTableMobile: number = 1;
-
-  let currentSeason:          number = undefined;
-
-  let imageVar:               string = '--standings-info-bookmaker-bg-';
 
   let only_total_view_league_ids = [
     732 // [ℹ] World Cup
@@ -61,35 +53,22 @@
 
   if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `STANDINGS_T: ${STANDINGS_T}`)
   if (dev && diasbleDev) logDevGroup ("tournament standings [DEV]", `dropdownSeasonSelect: ${dropdownSeasonSelect}`)
-  if (dev) console.log(STANDINGS_T)
-  if (dev) console.log(STANDINGS_DATA)
-
+  // if (dev) console.log(STANDINGS_T)
+  // if (dev) console.log(STANDINGS_DATA)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
   // [ℹ] MAIN
-  // [ℹ] In Use
-  // [ℹ] (x1) cache
+  // [ℹ] [NaN]
   async function widgetInit(): 
-  Promise < Cache_Single_SportbookDetails_Data_Response > {
-
-    if (!$userBetarenaSettings.country_bookmaker) {
-      return
-    }
-    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
-
-    // [ℹ] [GET] response sportbook [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo)
+  Promise < void > {
 
     // [ℹ] data validation check
-		if (response == undefined
-      || STANDINGS_DATA == undefined
-    ) {
+		if (STANDINGS_DATA == undefined) {
       // [🐞] 
       if (dev) logDevGroup ("tournament standings [DEV]", `❌ no data available!`)
-      console.log("HERE!");
       noStandingsBool = true;
 			return;
 		}
@@ -97,14 +76,8 @@
     else {
       noStandingsBool = false;
     }
-
     // loaded = true;
-
     // STANDINGS_T.data.sportbook_detail = response
-
-    // [ℹ] distorted "sportmonks" image color-thief application
-    const imageURL: string = response.image
-    getImageBgColor(imageURL, imageVar)
 
     // [ℹ] order dates by descending order;
     // STANDINGS_T.data.seasons.sort((a, b) => parseFloat(b.name.toString().slice(-2)) - parseFloat(a.name.toString().slice(-2)));
@@ -113,8 +86,6 @@
     // dropdownSeasonSelect = STANDINGS_T.data.seasons[0]
 
     STANDINGS_T = STANDINGS_T
-
-    return response;
   }
 
   function selectTableView(opt: 'total' | 'home' | 'away') {
@@ -202,7 +173,6 @@
     STANDINGS_DATA.seasons.sort((a, b) => b.season_id - a.season_id);
     // [ℹ] check season exists / contains data
     season = STANDINGS_DATA.seasons[0];
-    if (dev) console.log('HERE! season?.season_id', season?.season_id)
     let seasonCheckLength = 0;
     if (season != undefined) {
       seasonCheckLength = 
