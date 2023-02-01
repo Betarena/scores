@@ -11,7 +11,6 @@
 
   import { userBetarenaSettings } from "$lib/store/user-settings";
 
-  
   import type {
   	REDIS_CACHE_SINGLE_tournament_standings_data,
   	REDIS_CACHE_SINGLE_tournament_standings_translation,

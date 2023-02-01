@@ -78,32 +78,41 @@
       <div
         class="team-pos">
         <p 
-          class="team-pos s-12 w-500"
+          class="
+            team-pos 
+            s-12 
+            w-500
+          "
           style="background-color: {TEAM_DATA.color_code}"
-          class:border-pos={TEAM_DATA.color_code === 'transparent'}
-          >
+          class:border-pos={TEAM_DATA.color_code === 'transparent'}>
           {position}
         </p>
       </div>
       <!-- 
       [ℹ] team logo
+      <conditional>
       -->
-      <div
-        id="image-contaier">
-        <img
-          class='team-img'
-          src={TEAM_DATA.team_logo}
-          alt=""
-        />
-      </div>
+      {#if viewportDesktop}
+        <div
+          id="image-contaier">
+          <img
+            class='team-img'
+            src={TEAM_DATA.team_logo}
+            alt=""
+          />
+        </div>
+      {/if}
       <!-- 
       [ℹ] team name
       -->
       <div
-        style="margin-left: 16px;"
         class="team-name">
         <p 
-          class="s-12 w-500 no-wrap">
+          class="
+            s-12 
+            w-500 
+            no-wrap
+          ">
           {team_name}
         </p>
       </div>
@@ -282,6 +291,10 @@
     border: 1px solid #E6E6E6;
   }
 
+  div.team-name {
+    margin-left: 2.5px;
+  }
+
   div.recent-form-dot {
     border-radius: 50%;
     height: 12px;
@@ -336,6 +349,10 @@
       padding-left: 0;
     } tr td:last-child {
       padding-right: 0;
+    }
+
+    div.team-name {
+      margin-left: 16px;
     }
 
   }
