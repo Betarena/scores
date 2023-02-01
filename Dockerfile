@@ -31,4 +31,4 @@ COPY . .
 
 EXPOSE 5055
 # CMD ["node", "./build"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:docker"]

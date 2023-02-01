@@ -1,12 +1,6 @@
-import {
-  dev
-} from '$app/environment';
-import {
-  error
-} from '@sveltejs/kit';
-import type {
-  PageLoad
-} from './$types';
+import { dev } from '$app/environment';
+import { error } from '@sveltejs/kit';
+import type { PageLoad } from './$types';
 
 import type { REDIS_CACHE_SINGLE_about_data, REDIS_CACHE_SINGLE_about_translation } from '$lib/models/fixtures/about/types';
 import type { REDIS_CACHE_SINGLE_content_data, REDIS_CACHE_SINGLE_content_translation } from '$lib/models/fixtures/content/types';
@@ -19,6 +13,7 @@ import type { REDIS_CACHE_SINGLE_statistics_data, REDIS_CACHE_SINGLE_statistics_
 import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
+import type { REDIS_CACHE_SINGLE_tournament_standings_data, REDIS_CACHE_SINGLE_tournament_standings_translation } from '$lib/models/tournaments/standings/types';
 import type { REDIS_CACHE_SINGLE_fixtures_page_info_response, REDIS_CACHE_SINGLE_fixtures_seo_response, REDIS_CACHE_SINGLE_general_countries_translation } from '$lib/models/_main_/pages_and_seo/types';
 
 /** @type {import('./$types').PageLoad} */
@@ -81,6 +76,7 @@ export async function load({
     response_fixtures_page_info?.data?.id == undefined
       ? undefined
       : response_fixtures_page_info?.data?.id.toString()
+  ;
   const league_name = response_fixtures_page_info?.data?.league_name;
   const country_id = response_fixtures_page_info?.data?.country_id;
   const home_team_name = response_fixtures_page_info?.data?.home_team_name;
@@ -89,6 +85,7 @@ export async function load({
     response_fixtures_page_info?.data?.fixture_day == undefined
       ? undefined
       : response_fixtures_page_info?.data?.fixture_day.replace('T00:00:00', '')
+  ;
   const venue_name = response_fixtures_page_info?.data?.venue_name;
   const venue_city = response_fixtures_page_info?.data?.venue_city;
 
@@ -368,6 +365,22 @@ export async function load({
     }
   ).then((r) => r.json());
 
+  // [🐞]
+  const league_id = response_scoreboard?.league_id;
+  if (dev) console.log('league_id', league_id)
+
+  const response_standings_translations: REDIS_CACHE_SINGLE_tournament_standings_translation = await fetch(
+    `/api/cache/tournaments/standings?lang=${urlLang}`, {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
+  const response_standings_data: REDIS_CACHE_SINGLE_tournament_standings_data = await fetch(
+    `/api/cache/tournaments/standings?league_id=${league_id}`, {
+      method: 'GET'
+    }
+  ).then((r) => r.json());
+
   /** 
    * ==========
    * [ℹ] RETURN
@@ -395,6 +408,8 @@ export async function load({
     if (response_h2h == undefined) console.log("response_h2h is undefined")
     if (response_h2h_translation == undefined) console.log("response_h2h_translation is undefined")
     if (response_fixtures_odds_translations == undefined) console.log("response_fixtures_odds_translations is undefined")
+    if (response_standings_translations == undefined) console.log("response_standings_translations is undefined")
+    if (response_standings_data == undefined) console.log("response_standings_data is undefined")
   }
 
   if (
@@ -441,7 +456,9 @@ export async function load({
       FIXTURE_H2H: response_h2h,
       FIXTURE_H2H_TRANSLATION: response_h2h_translation,
       // extra
-      FIXTURES_ODDS_T: response_fixtures_odds_translations
+      FIXTURES_ODDS_T: response_fixtures_odds_translations,
+      STANDINGS_T: response_standings_translations,
+      STANDINGS_DATA: response_standings_data
     }
   }
 

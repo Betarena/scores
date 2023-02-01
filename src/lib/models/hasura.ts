@@ -1718,3 +1718,32 @@ export interface BETARENA_HASURA_scores_fixtures_h2h_translations {
   widget_title?: string;
   yellow_cards?: string;
 }
+
+/**
+ * [ℹ] HASURA: auth_translations (&)
+*/
+export interface BETARENA_HASURA_auth_translations {
+  lang?:        string;
+  translation?: Auth_Translation;
+} export interface Auth_Translation {
+  or?:                string;
+  inbox?:             string;
+  login?:             string;
+  err_msg?:           string[];
+  log_out?:           string;
+  profile?:           string;
+  sign_up?:           string;
+  register?:          string;
+  email_msg?:         string[];
+  no_account?:        string;
+  processing?:        string;
+  success_msg?:       string[];
+  verification?:      string;
+  verify_email?:      string;
+  or_web3_login?:     string;
+  account_exists?:    string;
+  email_continue?:    string;
+  or_web3_signup?:    string;
+  no_email_verify?:   string[];
+  email_verify_sent?: string[];
+}

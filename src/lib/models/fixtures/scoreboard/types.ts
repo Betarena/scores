@@ -74,6 +74,7 @@ export interface Fixture_Scoreboard_Info {
     home: Fixture_Scoreboard_Team
     away: Fixture_Scoreboard_Team
   }
+  league_id?:   number
   league_logo?: string
   league_urls?: ScoresTournamentsUrls
   // NOTE: Scoreboard Before the match (fixture_scoreboard);
