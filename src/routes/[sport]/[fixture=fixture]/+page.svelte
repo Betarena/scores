@@ -422,6 +422,11 @@
           {FIXTURE_H2H_TRANSLATION} 
           {FIXTURES_ODDS_T}
         />
+        <StandingsWidget
+          {STANDINGS_T} 
+          {STANDINGS_DATA}
+          {FIXTURE_INFO}
+        />
         <StatisticsWidget 
           {FIXTURE_STATISTICS} 
           {FIXTURE_STATISTICS_TRANSLATION} 
@@ -429,11 +434,6 @@
         <ProbabilityWidget 
           {FIXTURE_INFO} 
           {FIXTURE_PROBS_TRANSLATION} 
-        />
-        <StandingsWidget
-          {STANDINGS_T} 
-          {STANDINGS_DATA}
-          {FIXTURE_INFO}
         />
         <AboutWidget 
           {FIXTURE_ABOUT} 
