@@ -16,6 +16,8 @@ COMPONENT JS (w/ TS)
   import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
   import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
 
+  import { get } from '$lib/api/utils';
+  import type { REDIS_CACHE_SINGLE_auth_translation } from '$lib/models/_main_/auth/types';
   import discord_icon from './assets/discord.svg';
   import email_verify from './assets/email-verify.svg';
   import error_icon from './assets/error-alert.svg';
@@ -76,11 +78,30 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  /*
-  function close_widget() {
-		dispatch('close_widget');
-	}
-  */
+  // [ℹ] MAIN WIDGET METHOD
+  async function widget_init (): Promise < REDIS_CACHE_SINGLE_auth_translation > {
+
+    let server_side_language: string = 'en';
+    if ($page.routeId != null
+      && !$page.error
+    ) {
+      if ($page.routeId.includes("[lang=lang]")) {
+        server_side_language = $page.params.lang;
+      }
+      else {
+        server_side_language = 'en';
+      }
+      }
+    else {
+      server_side_language = 'en';
+    }
+
+    const response_auth: REDIS_CACHE_SINGLE_auth_translation = 
+      await get(`/api/hasura/_main_/auth?lang=${server_side_language}`)
+    ;
+
+    return response_auth
+  }
 
   async function login_with_google () {
     // DOC: https://firebase.google.com/docs/auth/web/google-signin
@@ -441,6 +462,7 @@ COMPONENT JS (w/ TS)
     email_error_format = false
   }
 
+  // [🐞]
   // $: if (browser) {
   //   console.log(provider('isCoinbaseWallet'))
   // }
@@ -496,9 +518,18 @@ COMPONENT JS (w/ TS)
       if (dev) console.log(`🟢 ${walletType} identified`)
       // DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
       // DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
+      // DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
+      // DOC: https://github.com/MetaMask/metamask-extension/issues/13622
       // NOTE: conflicting use of CoinBaseWallet & MetaMask
       // NOTE: setting MetaMask as main wallet
-      target_wallet.request({ method: 'eth_requestAccounts' });
+      // NOTE: IMPORTANT causes issues with FireFox
+      // target_wallet.request({ method: 'eth_requestAccounts' }); 
+      // NOTE: Not working
+      // window.ethereum.setSelectedProvider(target_wallet);
+      // window.ethereum.request({
+      //   method: 'wallet_requestPermissions',
+      //   params: [{ eth_accounts: {}}]
+      // }); 
       return [true, target_wallet]
     }
     else {
@@ -569,524 +600,532 @@ COMPONENT JS (w/ TS)
 COMPONENT HTML 
 =================-->
 
-<!-- 
-[ℹ] background backdrop fade
--->
-{#if $sessionStore.auth_show}
-  <div
-    id='background-modal-blur'
-    on:click={() => $sessionStore.auth_show = false}
-    in:fade 
-  />
-{/if}
+{#await widget_init()}
+  <!-- promise is pending -->
+{:then WIDGET_LAZY_LOAD_DATA}
 
-<!-- 
-[ℹ] auth message show box [success]
--->
-{#if success_auth}
-  <div
-    id="auth-alert-box"
-    class="row-space-start"
-    transition:fade>
-    <img 
-      src={success_icon}
-      alt="Success Icon"
-      title="Success Icon"
+  <!-- 
+  [ℹ] background backdrop fade
+  -->
+  {#if $sessionStore.auth_show}
+    <div
+      id='background-modal-blur'
+      on:click={() => $sessionStore.auth_show = false}
+      in:fade 
     />
-    <p
-      class="w-500">
-      Success! User
-      {#if auth_type == 'login'}
-        logged in
-      {:else}
-        signed up
-      {/if}
-    </p>
-  </div>
-{/if}
+  {/if}
 
-<!-- 
-[ℹ] auth message show box [error]
--->
-{#if error_auth}
-  <div
-    id="auth-alert-box"
-    class="row-space-start"
-    transition:fade>
-    <img 
-      src={error_icon}
-      alt="Error Icon"
-      title="Error Icon"
-    />
-    <p
-      class="w-500">
-      Uh-oh! There has been an error
-    </p>
-  </div>
-{/if}
+  <!-- 
+  [ℹ] auth message show box [success]
+  -->
+  {#if success_auth}
+    <div
+      id="auth-alert-box"
+      class="row-space-start"
+      transition:fade>
+      <img 
+        src={success_icon}
+        alt="Success Icon"
+        title="Success Icon"
+      />
+      <p
+        class="w-500">
+        {#if auth_type == 'login'}
+          {WIDGET_LAZY_LOAD_DATA?.success_msg[0]}
+        {:else}
+          {WIDGET_LAZY_LOAD_DATA?.success_msg[1]}
+        {/if}
+      </p>
+    </div>
+  {/if}
 
-<!-- 
-[ℹ] main auth widget component
--->
-{#if $sessionStore.auth_show}
-  <div
-    id='widget-outer'
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-    in:fade>
+  <!-- 
+  [ℹ] auth message show box [error]
+  -->
+  {#if error_auth}
+    <div
+      id="auth-alert-box"
+      class="row-space-start"
+      transition:fade>
+      <img 
+        src={error_icon}
+        alt="Error Icon"
+        title="Error Icon"
+      />
+      <p
+        class="w-500">
+        {WIDGET_LAZY_LOAD_DATA?.err_msg[0]}
+      </p>
+    </div>
+  {/if}
 
-    <!-- 
-    [ℹ] processing view box
-    [ℹ] HIDDEN by DEFAULT
-    -->
-    {#if processing}
-      <div
-        id="processing-auth-box">
+  <!-- 
+  [ℹ] main auth widget component
+  -->
+  {#if $sessionStore.auth_show}
+    <div
+      id='widget-outer'
+      class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+      in:fade>
+
+      <!-- 
+      [ℹ] processing view box
+      [ℹ] HIDDEN by DEFAULT
+      -->
+      {#if processing}
         <div
-          id="inner-processing-box">
+          id="processing-auth-box">
+          <div
+            id="inner-processing-box">
+            <img 
+              src={loader_animation}
+              alt="Loader Vector"
+              title="Processing..."
+            />
+            <p
+              class="
+                color-grey
+              ">
+              Processing
+            </p>
+          </div>
+        </div>
+      {/if}
+
+      <!-- 
+      [ℹ] email verification view box
+      [ℹ] HIDDEN by DEFAULT
+      -->
+      {#if email_verify_process}
+        <div
+          id="email-auth-verify-box">
+          <!-- 
+          [ℹ] close icon logo
+          -->
           <img 
-            src={loader_animation}
-            alt="Loader Vector"
-            title="Processing..."
+            id='close-vector'
+            class='cursor-pointer'
+            src="/assets/svg/close.svg" 
+            alt="close-svg"
+            on:click={() => $sessionStore.auth_show = false}
           />
+
+          <!-- 
+          [ℹ] verify text
+          -->
           <p
             class="
-              color-grey
-            ">
-            Processing
+              w-500
+              color-black-2
+            "
+            style="font-size: 20px;">
+            {WIDGET_LAZY_LOAD_DATA?.verification}
           </p>
-        </div>
-      </div>
-    {/if}
-
-    <!-- 
-    [ℹ] email verification view box
-    [ℹ] HIDDEN by DEFAULT
-    -->
-    {#if email_verify_process}
-      <div
-        id="email-auth-verify-box">
-        <!-- 
-        [ℹ] close icon logo
-        -->
-        <img 
-          id='close-vector'
-          class='cursor-pointer'
-          src="/assets/svg/close.svg" 
-          alt="close-svg"
-          on:click={() => $sessionStore.auth_show = false}
-        />
-
-        <!-- 
-        [ℹ] verify text
-        -->
-        <p
-          class="
-            w-500
-            color-black-2
-          "
-          style="font-size: 20px;">
-          Verification
-        </p>
-        <!-- 
-        [ℹ] verify email
-        -->
-        <p
-          class="color-grey">
-          Please verify your email
-        </p>
-        <!-- 
-        [ℹ] verify email icon
-        -->
-        <img 
-          id="email-verify-icon"
-          src={email_verify}
-          alt="Email Vector"
-          title="Email Vector"
-        />
-        <!-- 
-        [ℹ] verify email text
-        -->
-        <p
-          class="color-grey">
-          An email has been sent to
-          <br>
-          <span
-            class="color-black-2">
-            {email_input}
-          </span>
-          <br>
-          Please verify your email to continue.
-        </p>
-        <!-- 
-        [ℹ] verify email to my inbox
-        -->
-        <p
-          class="
-            color-primary
-            cursor-pointer
-          "
-          style="margin-top: 8px;"
-          on:click={() => window.open('mailto:')}>
-          Go to my inbox
-        </p>
-        <!-- 
-        [ℹ] verify no email text
-        -->
-        <p
-          class="color-grey"
-          style="margin-top: 24px;">
-          Did not get the email? 
-          <span
+          <!-- 
+          [ℹ] verify email
+          -->
+          <p
+            class="color-grey">
+            {WIDGET_LAZY_LOAD_DATA?.verify_email}
+          </p>
+          <!-- 
+          [ℹ] verify email icon
+          -->
+          <img 
+            id="email-verify-icon"
+            src={email_verify}
+            alt="Email Vector"
+            title="Email Vector"
+          />
+          <!-- 
+          [ℹ] verify email text
+          -->
+          <p
+            class="color-grey">
+            {WIDGET_LAZY_LOAD_DATA?.email_verify_sent[0]}
+            <br>
+            <span
+              class="color-black-2">
+              {email_input}
+            </span>
+            <br>
+            {WIDGET_LAZY_LOAD_DATA?.email_verify_sent[1]}
+          </p>
+          <!-- 
+          [ℹ] verify email to my inbox
+          -->
+          <p
             class="
               color-primary
               cursor-pointer
             "
-            on:click={() => login_with_email_link()}>
-            Resend email
-          </span>
-        </p>
-      </div>
-    {/if}
-
-    <!-- 
-    [ℹ] email sent view box
-    [ℹ] HIDDEN by DEFAULT
-    -->
-    {#if email_sent_process}
-      <div
-        id="email-auth-verify-box">
-        <!-- 
-        [ℹ] close icon logo
-        -->
-        <img 
-          id='close-vector'
-          class='cursor-pointer'
-          src="/assets/svg/close.svg" 
-          alt="close-svg"
-          on:click={() => $sessionStore.auth_show = false}
-        />
-
-        <!-- 
-        [ℹ] verify text
-        -->
-        <p
-          class="
-            w-500
-            color-black-2
-          "
-          style="font-size: 20px;">
-          Check your email
-        </p>
-        <!-- 
-        [ℹ] verify email
-        -->
-        <p
-          class="color-grey">
-          Please follow the link in your email
-        </p>
-        <!-- 
-        [ℹ] verify email icon
-        -->
-        <img 
-          id="email-verify-icon"
-          src={email_verify}
-          alt="Email Vector"
-          title="Email Vector"
-        />
-        <!-- 
-        [ℹ] verify email text
-        -->
-        <p
-          class="color-grey">
-          An email has been sent to
-          <br>
-          <span
-            class="color-black-2">
-            {email_input}
-          </span>
-          <br>
-          Please follow the link in your email to login.
-        </p>
-        <!-- 
-        [ℹ] verify email to my inbox
-        -->
-        <p
-          class="
-            color-primary
-            cursor-pointer
-          "
-          style="margin-top: 8px;"
-          on:click={() => window.open('mailto:')}>
-          Go to my inbox
-        </p>
-        <!-- 
-        [ℹ] verify no email text
-        -->
-        {#if allow_resend}
+            style="margin-top: 8px;"
+            on:click={() => window.open('mailto:')}>
+            {WIDGET_LAZY_LOAD_DATA?.inbox}
+          </p>
+          <!-- 
+          [ℹ] verify no email text
+          -->
           <p
             class="color-grey"
             style="margin-top: 24px;">
-            Did not get the email? 
+            {WIDGET_LAZY_LOAD_DATA?.no_email_verify[0]}
             <span
               class="
                 color-primary
                 cursor-pointer
               "
               on:click={() => login_with_email_link()}>
-              Resend email
+              {WIDGET_LAZY_LOAD_DATA?.no_email_verify[1]}
             </span>
           </p>
-        {:else}
-          <p
-            class="color-grey"
-            style="margin-top: 24px;">
-            {countD_min}:{countD_sec} to resend option
-          </p>
-        {/if}
-        
-      </div>
-    {/if}
-
-    <!-- 
-    [ℹ] authetication view
-    [ℹ] SHOWN by DEFAULT
-    -->
-    {#if auth_view}
-      <!-- 
-      [ℹ] close icon logo
-      -->
-      <img 
-        id='close-vector'
-        class='cursor-pointer'
-        src="/assets/svg/close.svg" 
-        alt="close-svg"
-        on:click={() => $sessionStore.auth_show = false}
-      />
+        </div>
+      {/if}
 
       <!-- 
-      [ℹ] auth logo betarena
+      [ℹ] email sent view box
+      [ℹ] HIDDEN by DEFAULT
       -->
-      <img
-        id="auth-logo"
-        src={$userBetarenaSettings.theme == 'Dark' ? logo_dark : logo}
-        alt="Betarena Logo"
-        title="Betarena Logo"
-        aria-label="Betarena Logo"
-      />
+      {#if email_sent_process}
+        <div
+          id="email-auth-verify-box">
+          <!-- 
+          [ℹ] close icon logo
+          -->
+          <img 
+            id='close-vector'
+            class='cursor-pointer'
+            src="/assets/svg/close.svg" 
+            alt="close-svg"
+            on:click={() => $sessionStore.auth_show = false}
+          />
 
-      <!-- 
-      [ℹ] auth login/sign-up text
-      -->
-      <p
-        id="auth-head"
-        class="
-          color-black-2
-          w-500
-        ">
-        {#if auth_type == 'login'}
-          Login
-        {:else}
-          Sign Up
-        {/if}
-      </p>
-
-      <!-- 
-      [ℹ] auth login/sign-up w/email-opt
-      -->
-      <p
-        class="
-          color-grey
-        ">
-        {#if auth_type == 'login'}
-          Enter your email address to login
-        {:else}
-          Enter your email address to sign up
-        {/if}
-      </p>
-      <form 
-        on:submit|preventDefault={() => login_with_email_link()}>
-        <!-- 
-        [ℹ] input email
-        class:error-email={email_error_format || email_already_in_use}
-        -->
-        <input
-          id='email'
-          type="email"
-          placeholder="email@gmail.com"
-          bind:value={email_input}
-          on:invalid={() => wrong_email_format()}
-          autocomplete="off"
-          class:error-email={email_error_format}
-          required
-        />
-        <!-- 
-        [ℹ] error email validation format
-        -->
-        {#if email_error_format}
-          <p
-            class="color-error"
-            style="margin-top: 10px;">
-            Wrong format
-          </p>
-        {/if}
-        <!-- 
-        [ℹ] error email validation exists
-        {#if email_already_in_use}
-          <p
-            class="color-error"
-            style="margin-top: 10px;">
-            Email already in use
-          </p>
-        {/if}
-        -->
-        <!-- 
-        [ℹ] submit email button
-        -->
-        <button
-          id="email-btn"
-          class="
-            btn-primary 
-          "
-          type="submit">
+          <!-- 
+          [ℹ] verify text
+          -->
           <p
             class="
               w-500
-            ">
-            Continue with email
+              color-black-2
+            "
+            style="font-size: 20px;">
+            Check your email
           </p>
-        </button>
-      </form>
+          <!-- 
+          [ℹ] verify email
+          -->
+          <p
+            class="color-grey">
+            Please follow the link in your email
+          </p>
+          <!-- 
+          [ℹ] verify email icon
+          -->
+          <img 
+            id="email-verify-icon"
+            src={email_verify}
+            alt="Email Vector"
+            title="Email Vector"
+          />
+          <!-- 
+          [ℹ] verify email text
+          -->
+          <p
+            class="color-grey">
+            An email has been sent to
+            <br>
+            <span
+              class="color-black-2">
+              {email_input}
+            </span>
+            <br>
+            Please follow the link in your email to login.
+          </p>
+          <!-- 
+          [ℹ] verify email to my inbox
+          -->
+          <p
+            class="
+              color-primary
+              cursor-pointer
+            "
+            style="margin-top: 8px;"
+            on:click={() => window.open('mailto:')}>
+            Go to my inbox
+          </p>
+          <!-- 
+          [ℹ] verify no email text
+          -->
+          {#if allow_resend}
+            <p
+              class="color-grey"
+              style="margin-top: 24px;">
+              Did not get the email? 
+              <span
+                class="
+                  color-primary
+                  cursor-pointer
+                "
+                on:click={() => login_with_email_link()}>
+                Resend email
+              </span>
+            </p>
+          {:else}
+            <p
+              class="color-grey"
+              style="margin-top: 24px;">
+              {countD_min}:{countD_sec} to resend option
+            </p>
+          {/if}
+          
+        </div>
+      {/if}
 
       <!-- 
-      [ℹ] auth login/sign-up w/alt. OAuth2 options
+      [ℹ] authetication view
+      [ℹ] SHOWN by DEFAULT
       -->
-      <div
-        id="other-oauth-divider-box"
-        class="row-space-out">
-        <div class="hr-box"/>
+      {#if auth_view}
+        <!-- 
+        [ℹ] close icon logo
+        -->
+        <img 
+          id='close-vector'
+          class='cursor-pointer'
+          src="/assets/svg/close.svg" 
+          alt="close-svg"
+          on:click={() => $sessionStore.auth_show = false}
+        />
+
+        <!-- 
+        [ℹ] auth logo betarena
+        -->
+        <img
+          id="auth-logo"
+          src={$userBetarenaSettings.theme == 'Dark' ? logo_dark : logo}
+          alt="Betarena Logo"
+          title="Betarena Logo"
+          aria-label="Betarena Logo"
+        />
+
+        <!-- 
+        [ℹ] auth login/sign-up text
+        -->
         <p
+          id="auth-head"
           class="
-            color-grey
+            color-black-2
+            w-500
           ">
-          Or
+          {#if auth_type == 'login'}
+            {WIDGET_LAZY_LOAD_DATA?.login}
+          {:else}
+            {WIDGET_LAZY_LOAD_DATA?.sign_up}
+          {/if}
         </p>
-        <div class="hr-box"/>
-      </div>
-      <div
-        id="oauth-box"
-        class="row-space-out">
-        <!-- 
-        [ℹ] GOOGLE 
-        -->
-        <button
-          class="btn-auth-opt"
-          on:click={() => login_with_google()}>
-          <img 
-            src={google_icon}
-            alt="Google Icon"
-            title="Google Icon"
-          />
-        </button>
-        <!-- 
-        [ℹ] DISCROD 
-        -->
-        <button
-          class="btn-auth-opt"
-          on:click={() => login_with_discord()}>
-          <img 
-            src={discord_icon}
-            alt="Discord Icon"
-            title="Discord Icon"
-          />
-        </button>
-        <!-- 
-        [ℹ] GITHUB 
-        -->
-        <button
-          class="btn-auth-opt"
-          on:click={() => login_with_github()}>
-          <img 
-            src={$userBetarenaSettings.theme == 'Dark' ? github_dark_icon : github_icon}
-            alt="Github Icon"
-            title="Github Icon"
-          />
-        </button>
-      </div>
 
-      <!-- 
-      [ℹ] auth login/sign-up w/alt. Web3
-      -->
-      <div
-        id="web3-divider-box"
-        class="row-space-out">
-        <div class="hr-box"/>
+        <!-- 
+        [ℹ] auth login/sign-up w/email-opt
+        -->
         <p
           class="
             color-grey
           ">
           {#if auth_type == 'login'}
-            Or login with your crypto wallet
+            {WIDGET_LAZY_LOAD_DATA?.email_msg[0]}
           {:else}
-            Or sign up with your crypto wallet
+            {WIDGET_LAZY_LOAD_DATA?.email_msg[1]}
           {/if}
         </p>
-        <div class="hr-box"/>
-      </div>
-      <button
-        id="metamask"
-        class="
-          row-space-center
-          btn-auth-opt
-        "
-        on:click={() => login_with_metamask()}>
-        <img 
-          src={metamask_icon}
-          alt="Metamask Icon"
-          title="Metamask Icon"
-        />
-        <p
+        <form 
+          on:submit|preventDefault={() => login_with_email_link()}>
+          <!-- 
+          [ℹ] input email
+          class:error-email={email_error_format || email_already_in_use}
+          -->
+          <input
+            id='email'
+            type="email"
+            placeholder="email@gmail.com"
+            bind:value={email_input}
+            on:invalid={() => wrong_email_format()}
+            autocomplete="off"
+            class:error-email={email_error_format}
+            required
+          />
+          <!-- 
+          [ℹ] error email validation format
+          -->
+          {#if email_error_format}
+            <p
+              class="color-error"
+              style="margin-top: 10px;">
+              {WIDGET_LAZY_LOAD_DATA?.err_msg[1]}
+            </p>
+          {/if}
+          <!-- 
+          [ℹ] error email validation exists
+          {#if email_already_in_use}
+            <p
+              class="color-error"
+              style="margin-top: 10px;">
+              Email already in use
+            </p>
+          {/if}
+          -->
+          <!-- 
+          [ℹ] submit email button
+          -->
+          <button
+            id="email-btn"
+            class="
+              btn-primary 
+            "
+            type="submit">
+            <p
+              class="
+                w-500
+              ">
+              {WIDGET_LAZY_LOAD_DATA?.email_continue}
+            </p>
+          </button>
+        </form>
+
+        <!-- 
+        [ℹ] auth login/sign-up w/alt. OAuth2 options
+        -->
+        <div
+          id="other-oauth-divider-box"
+          class="row-space-out">
+          <div class="hr-box"/>
+          <p
+            class="
+              color-grey
+            ">
+            {WIDGET_LAZY_LOAD_DATA?.or}
+          </p>
+          <div class="hr-box"/>
+        </div>
+        <div
+          id="oauth-box"
+          class="row-space-out">
+          <!-- 
+          [ℹ] GOOGLE 
+          -->
+          <button
+            class="btn-auth-opt"
+            on:click={() => login_with_google()}>
+            <img 
+              src={google_icon}
+              alt="Google Icon"
+              title="Google Icon"
+            />
+          </button>
+          <!-- 
+          [ℹ] DISCROD 
+          -->
+          <button
+            class="btn-auth-opt"
+            on:click={() => login_with_discord()}>
+            <img 
+              src={discord_icon}
+              alt="Discord Icon"
+              title="Discord Icon"
+            />
+          </button>
+          <!-- 
+          [ℹ] GITHUB 
+          -->
+          <button
+            class="btn-auth-opt"
+            on:click={() => login_with_github()}>
+            <img 
+              src={$userBetarenaSettings.theme == 'Dark' ? github_dark_icon : github_icon}
+              alt="Github Icon"
+              title="Github Icon"
+            />
+          </button>
+        </div>
+
+        <!-- 
+        [ℹ] auth login/sign-up w/alt. Web3
+        -->
+        <div
+          id="web3-divider-box"
+          class="row-space-out">
+          <div class="hr-box"/>
+          <p
+            class="
+              color-grey
+            ">
+            {#if auth_type == 'login'}
+              {WIDGET_LAZY_LOAD_DATA?.or_web3_login}
+            {:else}
+              {WIDGET_LAZY_LOAD_DATA?.or_web3_signup}
+            {/if}
+          </p>
+          <div class="hr-box"/>
+        </div>
+        <button
+          id="metamask"
           class="
-            w-500
-            color-black-2
+            row-space-center
+            btn-auth-opt
+          "
+          on:click={() => login_with_metamask()}>
+          <img 
+            src={metamask_icon}
+            alt="Metamask Icon"
+            title="Metamask Icon"
+          />
+          <p
+            class="
+              w-500
+              color-black-2
+            ">
+            MetaMask
+          </p>
+        </button>
+
+        <!-- 
+        [ℹ] auth login/sign-up w/alt. text prompt for account
+        -->
+        <p
+          id="account-onboard-text"
+          class="
+            color-grey
           ">
-          MetaMask
+          {#if auth_type == 'login'}
+            {WIDGET_LAZY_LOAD_DATA?.no_account}
+            <span
+              class="
+                color-primary
+                cursor-pointer
+              "
+              on:click={() => auth_type = 'register'}>
+              {WIDGET_LAZY_LOAD_DATA?.register}
+            </span> 
+          {:else}
+            {WIDGET_LAZY_LOAD_DATA?.account_exists}
+            <span
+              class="
+                color-primary
+                cursor-pointer
+              "
+              on:click={() => auth_type = 'login'}>
+              {WIDGET_LAZY_LOAD_DATA?.login}
+            </span> 
+          {/if}
         </p>
-      </button>
+      {/if}
 
-      <!-- 
-      [ℹ] auth login/sign-up w/alt. text prompt for account
-      -->
-      <p
-        id="account-onboard-text"
-        class="
-          color-grey
-        ">
-        {#if auth_type == 'login'}
-          Do not have an account?
-          <span
-            class="
-              color-primary
-              cursor-pointer
-            "
-            on:click={() => auth_type = 'register'}>
-            Register
-          </span> 
-        {:else}
-          Already have an account? 
-          <span
-            class="
-              color-primary
-              cursor-pointer
-            "
-            on:click={() => auth_type = 'login'}>
-            Login
-          </span> 
-        {/if}
-      </p>
-    {/if}
+    </div>
+  {/if}
 
-  </div>
-{/if}
+<!-- promise was fulfilled -->
+{:catch error}
+<!-- promise was rejected -->
+{/await}
 
 <!-- ===============
 COMPONENT STYLE

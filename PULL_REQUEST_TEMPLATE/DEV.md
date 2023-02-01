@@ -25,7 +25,7 @@
 > by simply checking the appropiate checkbox 
 
 - [ ] `localhost`
-- [ ] `heroku deployment`
+- [ ] `heroku` | `DEV`
 
 > 🔽 (Optional)
 **Test Configuration**:
@@ -34,7 +34,7 @@
 * Toolchain:
 * SDK:
 
-# ✔ Checklist:
+# ✔ Self-checklist:
 
 - [ ] `This code` follows the style guidelines of this project
 - [ ] `This code` is self-reviewed

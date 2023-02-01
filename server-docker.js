@@ -1,14 +1,14 @@
-// [ℹ] https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
-// [ℹ] https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
+// DOC: https://github.com/sveltejs/kit/tree/master/packages/adapter-node#custom-server
+// DOC: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/import
 import express from 'express';
 import http from 'http';
 import https from 'https';
 
 import { handler } from './build/handler.js';
-// import sslRedirect from 'heroku-ssl-redirect';
-import compression from 'compression'; // https://expressjs.com/en/resources/middleware/compression.html
+// DOC: https://expressjs.com/en/resources/middleware/compression.html
+import compression from 'compression';
 import * as sslify from 'express-sslify';
-import * as requestIp from 'request-ip'; // https://www.npmjs.com/package/request-ip
+// DOC: https://www.npmjs.com/package/request-ip
 
 import fs from 'fs';
 
@@ -21,23 +21,10 @@ const options = {
 const app = express();
 
 /**
- *  [ℹ] add a route that lives separately from the SvelteKit app
-*/
-// app.get('/healthcheck', (req, res) => {
-// 	res.end('ok');
-// });
-
-/**
- * [ℹ] enable ssl redirect
- * [ℹ] https://www.npmjs.com/package/heroku-ssl-redirect
- * => does not seem to be working
-*/
-// app.use(sslRedirect());
-
-/**
  * [ℹ] separate from SvelteKit endpoint in attempts to
  * [ℹ] identify clients (IP - address)
 */
+/**
 app.get('/getClientIP', (req, res) => {
 
   const ip = req.headers['x-forwarded-for'] ||
@@ -69,6 +56,7 @@ app.get('/getClientIP', (req, res) => {
 
   res.end()
 })
+*/
 
 /**
  * [ℹ] [FORCE] https-redirect
@@ -96,14 +84,6 @@ app.use(compression())
  * [ℹ] including serving prerendered pages and static assets
 */
 app.use(handler);
-
-/**
- * [ℹ] initialize app;
- * [ℹ] https://stackoverflow.com/questions/15693192/heroku-node-js-error-web-process-failed-to-bind-to-port-within-60-seconds-o 
-*/
-// app.listen(process.env.PORT, () => {
-// 	console.log(`listening on port ${process.env.PORT}`);
-// });
 
 // ~~~~~~~~~~~~~~~~~~~~~~
 // APP SPIN-UP [PROD] [V2]
