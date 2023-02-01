@@ -5,12 +5,10 @@ import http from 'http';
 import https from 'https';
 
 import { handler } from './build/handler.js';
-// import sslRedirect from 'heroku-ssl-redirect';
 // DOC: https://expressjs.com/en/resources/middleware/compression.html
 import compression from 'compression';
 import * as sslify from 'express-sslify';
 // DOC: https://www.npmjs.com/package/request-ip
-import * as requestIp from 'request-ip';
 
 import fs from 'fs';
 
@@ -26,6 +24,7 @@ const app = express();
  * [ℹ] separate from SvelteKit endpoint in attempts to
  * [ℹ] identify clients (IP - address)
 */
+/**
 app.get('/getClientIP', (req, res) => {
 
   const ip = req.headers['x-forwarded-for'] ||
@@ -57,6 +56,7 @@ app.get('/getClientIP', (req, res) => {
 
   res.end()
 })
+*/
 
 /**
  * [ℹ] [FORCE] https-redirect

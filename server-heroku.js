@@ -8,7 +8,6 @@ import { handler } from './build/handler.js';
 import compression from 'compression';
 import * as sslify from 'express-sslify';
 // DOC: https://www.npmjs.com/package/request-ip
-import * as requestIp from 'request-ip';
 
 const app = express();
 
@@ -23,6 +22,7 @@ const app = express();
  * [ℹ] separate from SvelteKit endpoint in attempts to
  * [ℹ] identify clients (IP - address)
 */
+/**
 app.get('/getClientIP', (req, res, next) => {
 
   const ip = req.headers['x-forwarded-for'] ||
@@ -54,11 +54,13 @@ app.get('/getClientIP', (req, res, next) => {
 
   res.end()
 })
+*/
 
 /**
  * [ℹ] [FORCE] https-redirect
  * DOC: https://jaketrent.com/post/https-redirect-node-heroku
- * DOC: https://webdva.github.io/how-to-force-express-https-tutorial 
+ * DOC: https://webdva.github.io/how-to-force-express-https-tutorial
+ * [HEROKU]
 */
 app.use((req, res, next) => {
   if (req.header('x-forwarded-proto') !== 'https')
