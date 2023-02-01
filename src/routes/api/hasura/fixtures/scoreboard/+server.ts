@@ -123,6 +123,7 @@ async function main (
       home:           home_team_obj || null,
       away:           away_team_obj || null
     },
+    league_id,
     league_logo:      league_img || null,
     league_urls:      tournament_urls || null,
     score_post: {

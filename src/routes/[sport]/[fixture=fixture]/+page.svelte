@@ -51,6 +51,7 @@
 	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
 	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
+	import type { REDIS_CACHE_SINGLE_tournament_standings_data, REDIS_CACHE_SINGLE_tournament_standings_translation } from '$lib/models/tournaments/standings/types';
 
   import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
   import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
@@ -59,6 +60,7 @@
   import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
   import ProbabilityWidget from '$lib/components/fixtures_page/probabilities/Probability_Widget.svelte';
   import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
+  import StandingsWidget from '$lib/components/fixtures_page/standings/Standings-Widget.svelte';
   import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
   import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
   import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
@@ -84,6 +86,8 @@
   let FIXTURES_ODDS_T:                REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
   let FIXTURE_H2H:                    Fixture_Head_2_Head
   let FIXTURE_H2H_TRANSLATION:        REDIS_CACHE_SINGLE_h2h_translation
+  let STANDINGS_T:                    REDIS_CACHE_SINGLE_tournament_standings_translation
+  let STANDINGS_DATA:                 REDIS_CACHE_SINGLE_tournament_standings_data
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -109,6 +113,8 @@
   $: FIXTURES_ODDS_T                = $page.data.FIXTURES_ODDS_T;
   $: FIXTURE_H2H                    = $page.data.FIXTURE_H2H;
   $: FIXTURE_H2H_TRANSLATION        = $page.data.FIXTURE_H2H_TRANSLATION;
+  $: STANDINGS_T                    = $page.data.STANDINGS_T;
+  $: STANDINGS_DATA                 = $page.data.STANDINGS_DATA;
 
   $: country_link =
     FIXTURE_INFO?.data?.country == undefined
@@ -262,23 +268,33 @@
   id='fixture-page'>
 
   <!-- 
-  [ℹ] breadcrumbs URL -->
+  [ℹ] breadcrumbs URL 
+  -->
   <div
     id='fixture-page-breadcrumbs'
-    class='row-space-start m-b-20'>
+    class='
+      row-space-start 
+      m-b-20
+    '>
 
     <!-- 
-    [ℹ] sport -->
+    [ℹ] sport 
+    -->
     <a 
       data-sveltekit-prefetch
-      href={
-        $page.params.lang != undefined
-          ? `/${$page.params.lang}/${$page.params.sport}`
-          : `/${$page.params.sport}`
-        }
-      >
+      href={$page.params.lang != undefined
+        ? `/${$page.params.lang}/${$page.params.sport}`
+        : `/${$page.params.sport}`
+      }>
       <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer no-wrap'>
+        class='
+          s-14 
+          color-white 
+          m-r-10 
+          capitalize 
+          cursor-pointer 
+          no-wrap
+        '>
         {FIXTURE_INFO?.data?.sport}
       </p>
     </a>
@@ -291,17 +307,23 @@
     />
 
     <!-- 
-    [ℹ] country -->
-    <a 
+    [ℹ] country 
+    -->
+    <a
       data-sveltekit-prefetch
-      href={
-        $page.params.lang != undefined
-          ? `/${$page.params.lang}/${$page.params.sport}/${country_link}`
-          : `/${$page.params.sport}/${country_link}`
-      }
-      >
+      href={$page.params.lang != undefined
+        ? `/${$page.params.lang}/${$page.params.sport}/${country_link}`
+        : `/${$page.params.sport}/${country_link}`
+      }>
       <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer no-wrap'>
+        class='
+          s-14 
+          color-white 
+          m-r-10 
+          capitalize 
+          cursor-pointer 
+          no-wrap
+        '>
         {FIXTURE_INFO?.data?.country}
       </p>
     </a>
@@ -314,17 +336,23 @@
     />
 
     <!-- 
-    [ℹ] league_name -->
+    [ℹ] league_name 
+    -->
     <a 
       data-sveltekit-prefetch
-      href={
-        $page.params.lang != undefined
-          ? `/${$page.params.lang}/${$page.params.sport}/${country_link}/${league_name_link}`
-          : `/${$page.params.sport}/${country_link}/${league_name_link}`
-      }
-      >
+      href={$page.params.lang != undefined
+        ? `/${$page.params.lang}/${$page.params.sport}/${country_link}/${league_name_link}`
+        : `/${$page.params.sport}/${country_link}/${league_name_link}`
+      }>
       <p
-        class='s-14 color-white m-r-10 capitalize cursor-pointer no-wrap'>
+        class='
+          s-14 
+          color-white
+          m-r-10 
+          capitalize 
+          cursor-pointer 
+          no-wrap
+        '>
         {FIXTURE_INFO?.data?.league_name}
       </p>
     </a>
@@ -337,9 +365,16 @@
     />
 
     <!-- 
-    [ℹ] fxiture_name -->
+    [ℹ] fxiture_name 
+    -->
     <p
-      class='s-14 color-white m-r-10 capitalize fixture-name'>
+      class='
+        s-14 
+        color-white 
+        m-r-10 
+        capitalize 
+        fixture-name
+      '>
       {FIXTURE_INFO?.data?.home_team_name}
       vs
       {FIXTURE_INFO?.data?.away_team_name}
@@ -395,6 +430,11 @@
           {FIXTURE_INFO} 
           {FIXTURE_PROBS_TRANSLATION} 
         />
+        <StandingsWidget
+          {STANDINGS_T} 
+          {STANDINGS_DATA}
+          {FIXTURE_INFO}
+        />
         <AboutWidget 
           {FIXTURE_ABOUT} 
           {FIXTURE_ABOUT_TRANSLATION} 
@@ -441,6 +481,11 @@
           {FIXTURE_H2H} 
           {FIXTURE_H2H_TRANSLATION}
           {FIXTURES_ODDS_T}
+        />
+        <StandingsWidget
+          {STANDINGS_T} 
+          {STANDINGS_DATA}
+          {FIXTURE_INFO}
         />
         <AboutWidget 
           {FIXTURE_ABOUT} 
