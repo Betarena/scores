@@ -2,23 +2,23 @@
 
 **PRs**
 
-- <Bulleted list of `Pull Requests` Part of this merge to `main`>
-- _Like:_ `#3452`
+> Bulleted list of `Pull Requests` Part of this merge to `main`
+
+> - `#3452` - `example`
 
 ---
 
 **Detailed**
 
-- Grouped by `Pull Request`, with each section containing the issues
-relevant to set `Pull Request` like (below)
+> Grouped by `Pull Request`, with each section containing the issues relevant to set `Pull Request` - `example`
 
-**PR** `#73023`
-- closes `#56`
-- closes `#695`
+> **PR** `#73023`
+> - closes `#56`
+> - closes `#695`
 
 ## ℹ Type of change
 
-<- Please delete options that are not relevant. ->
+> Please delete options that are not relevant.
 
 - [ ] 🛠 Bug fix (non-breaking change which fixes an issue)
 - [ ] 🚀 New feature (non-breaking change which adds functionality)
@@ -27,21 +27,20 @@ relevant to set `Pull Request` like (below)
 
 # 🧰 How Has This Been Tested?
 
-<- Please describe the tests that you ran to verify your changes. -> 
-<- Provide instructions so we can reproduce. -> 
-<- Please also list any relevant details for your test configuration ->
+> Please describe the tests that you ran to verify your changes.
+> by simply checking the appropiate checkbox 
 
-- [ ] `local-testing`
-- [ ] `heroku-local-environment-tested`
+- [ ] `localhost`
+- [ ] `heroku` | `DEV`
 
-🔽 (Optional) __remove if non-applicable__
+> 🔽 (Optional)
 **Test Configuration**:
 * Firmware version:
 * Hardware:
 * Toolchain:
 * SDK:
 
-# ✔ Checklist:
+# ✔ Self-checklist:
 
 - [ ] `This code` follows the style guidelines of this project
 - [ ] `This code` is self-reviewed
