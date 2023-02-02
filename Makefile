@@ -61,4 +61,4 @@ git-del-branches-w-origin:
 	echo 'Deleting branches not present in origin + /dev'
 	# Original command (below) is without \(...\) syntax
 	# git fetch -p ; git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <\(git branch -vv | grep origin\) | awk '{print $$1}' | xargs git branch -D
-	git branch --merged | grep -v "*" | grep -v "main" | xargs git branch -d
+	# git branch --merged | grep -v "*" | grep -v "main" | xargs git branch -d
