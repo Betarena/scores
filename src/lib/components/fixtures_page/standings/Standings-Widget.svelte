@@ -421,6 +421,7 @@
               class="
                 cursor-pointer
               "
+              class:activeOpt={selectedOptTableMobile == 2}
               on:click={() => toggle_mobile_form()}>
               <p
                 class="
@@ -808,6 +809,12 @@
     text-align: center;
     border-radius: 8px;
     margin: 20px 15px 15px 0;
+  } #form-view-opt-box.activeOpt {
+    border: 1px solid #F5620F;
+  } #form-view-opt-box.activeOpt p {
+    color: #F5620F !important;
+  } #form-view-opt-box:hover p {
+    color: #292929 !important;
   }
 
   /* old - table approach */
@@ -971,7 +978,8 @@
     /* border-bottom: 16px solid transparent; */
   }
 
-  .dark-background-1 div.stand-view-opt-box:hover p {
+  .dark-background-1 div.stand-view-opt-box:hover p,
+  .dark-background-1 #form-view-opt-box:hover p {
     color: white !important;
   }
 
