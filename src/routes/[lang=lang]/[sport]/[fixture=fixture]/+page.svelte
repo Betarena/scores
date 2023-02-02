@@ -435,6 +435,11 @@
           {FIXTURE_INFO} 
           {FIXTURE_PROBS_TRANSLATION} 
         />
+        <StandingsWidget
+          {STANDINGS_T} 
+          {STANDINGS_DATA}
+          {FIXTURE_INFO}
+        />
         <AboutWidget 
           {FIXTURE_ABOUT} 
           {FIXTURE_ABOUT_TRANSLATION} 

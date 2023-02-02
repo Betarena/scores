@@ -18,6 +18,11 @@ update-scores-web:
 	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
 	# docker-compose -f docker-compose.yml up -d
 	docker-compose -f docker-compose.yml up -d --build
+	# -docker rm $$(docker stop $$(docker ps -a -q --filter="name=scores_scores_web_1" --format="{{.ID}}"))
+	# -docker rmi $$(docker images -q scores_web)
+	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
+	# docker-compose -f docker-compose.yml up -d
+	docker-compose -f docker-compose.yml up -d --build
 
 # ===========
 # DEVELOPMENT
