@@ -1747,3 +1747,39 @@ export interface BETARENA_HASURA_auth_translations {
   no_email_verify?:   string[];
   email_verify_sent?: string[];
 }
+
+
+/**
+ * [ℹ] HASURA: profile_translations (&)
+*/
+export interface BETARENA_HASURA_profile_translations {
+  lang?:        string;
+  data?: Profile_Translation;
+} export interface Profile_Translation {
+  name?:                    string;
+  save?:                    string;
+  soon?:                    string;
+  author?:                  string;
+  scores?:                  string;
+  username?:                string;
+  dashboard?:               string;
+  name_desc?:               string;
+  save_photo?:              string;
+  crypto_desc?:             string;
+  delete_desc?:             string;
+  wallet_full?:             string;
+  acc_settings?:            string;
+  crypto_title?:            string;
+  delete_title?:            string;
+  delete_button?:           string;
+  profile_photo?:           string;
+  required_field?:          string;
+  dashboard_title?:         string;
+  wallet_connected?:        string;
+  cancel_expression?:       string;
+  profile_photo_desc?:      string;
+  delete_account_desc?:     string;
+  connect_wallet_title?:    string;
+  delete_account_title?:    string;
+  disconnect_wallet_title?: string;
+}
