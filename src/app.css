@@ -165,6 +165,9 @@ FONT COLOURS
 .color-blue {
 	color: var(--blue);
 }
+.color-grey-shade {
+	color: var(--grey-shade);
+}
 .color-blue-green-gradient {
 	background: -webkit-linear-gradient(rgba(0, 255, 117, 1), rgba(0, 163, 255, 1));
 	background-clip: text;
@@ -215,6 +218,9 @@ FONT EXTRA STYLES
 }
 .cursor-not-allowed {
 	cursor: not-allowed !important;
+}
+.display-none {
+  display: none;
 }
 /* 
 ~~~~~~~~~~~~
