@@ -1,13 +1,10 @@
 /**
- * Simple GLOBALLY used method
- * for determining the current platfrom
- * language for Server-Side Rendering (SSR)
- * applications
- * 
- * @param page_route_id 
- * @param page_error 
- * @param page_params_lang 
- * @returns 
+ * @description Simple function
+ * to determine language (SSR) of platform
+ * @param {string | undefined} page_route_id 
+ * @param {unknown | undefined} page_error 
+ * @param {string | undefined} page_params_lang 
+ * @returns string (language)
 */
 export function platfrom_lang_ssr (
   page_route_id?: string | undefined,
@@ -29,13 +26,12 @@ export function platfrom_lang_ssr (
 }
 
 /**
- * Simple method that will return boolean for
+ * @description Simple function to return
  * the TABLET and MOBILE viewport changes
- * as a array/tuple
- * 
- * @param TABLET_VIEW 
- * @param MOBILE_VIEW 
- * @returns 
+ * as a array/tuple of both states
+ * @param {number} TABLET_VIEW 
+ * @param {number}MOBILE_VIEW 
+ * @returns boolean (true/false)
 */
 export function viewport_change (
   TABLET_VIEW: number,
