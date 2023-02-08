@@ -8,9 +8,23 @@ import { logDevGroup } from '$lib/utils/debug';
 import type { User } from 'firebase/auth';
 import { writable } from 'svelte/store';
 
-export interface Scores_User
-  extends User {
-  web3_wallet_addr?: string // [ℹ] Authenticated User [WEB3]
+export type Auth_Type = 'discord' | 'email' | 'wallet' | 'google' | 'github'
+
+export interface Betarena_User {
+  // [ℹ] default (betarena) specific 
+  // [ℹ] main user info [DB]
+  // email?: string
+  lang:              string
+  username:          string
+  registration_type: Auth_Type[]
+  register_date:     string
+  profile_photo:     string | undefined
+  web3_wallet_addr:  string | undefined // [ℹ] Authenticated User [WEB3]
+}
+
+export interface Scores_User {
+  firebase_user_data: User
+  scores_user_data: Betarena_User
 }
 
 interface User_Setting {
@@ -172,13 +186,61 @@ function createLocalStore(key: string) {
 		 *
 		 * ➤ @param {*} User
 		*/
-    signInUser: (user: User) => {
+    signInUser: (user: Scores_User) => {
       // [ℹ] GET DATA FROM LOCALSTORAGE();
       const existing: string = localStorage.getItem(key);
       // [ℹ] CONVERT TO JSON;
       const existing_data: User_Setting = JSON.parse(existing);
       // [ℹ] UPDATE THE DATA FOR LANG;
       existing_data.user = user;
+      // [ℹ] UPDATE THE LOCALSTORAGE();
+      localStorage.setItem(key, JSON.stringify(existing_data));
+      // [ℹ] update the `set()` data;
+      set(existing_data);
+    },
+
+    /**
+     * @param profile_pic 
+    */
+    updateProfilePicture: (profile_pic: string | undefined) => {
+      // [ℹ] GET DATA FROM LOCALSTORAGE();
+      const existing: string = localStorage.getItem(key);
+      // [ℹ] CONVERT TO JSON;
+      const existing_data: User_Setting = JSON.parse(existing);
+      // [ℹ] UPDATE THE DATA FOR LANG;
+      existing_data.user.scores_user_data.profile_photo = profile_pic;
+      // [ℹ] UPDATE THE LOCALSTORAGE();
+      localStorage.setItem(key, JSON.stringify(existing_data));
+      // [ℹ] update the `set()` data;
+      set(existing_data);
+    },
+
+    /**
+     * @param wallet 
+    */
+    updateUsername: (username: string) => {
+      // [ℹ] GET DATA FROM LOCALSTORAGE();
+      const existing: string = localStorage.getItem(key);
+      // [ℹ] CONVERT TO JSON;
+      const existing_data: User_Setting = JSON.parse(existing);
+      // [ℹ] UPDATE THE DATA FOR USERNAME;
+      existing_data.user.scores_user_data.username = username;
+      // [ℹ] UPDATE THE LOCALSTORAGE();
+      localStorage.setItem(key, JSON.stringify(existing_data));
+      // [ℹ] update the `set()` data;
+      set(existing_data);
+    },
+
+    /**
+     * @param wallet 
+    */
+    updateWalletAddr: (wallet: string | undefined) => {
+      // [ℹ] GET DATA FROM LOCALSTORAGE();
+      const existing: string = localStorage.getItem(key);
+      // [ℹ] CONVERT TO JSON;
+      const existing_data: User_Setting = JSON.parse(existing);
+      // [ℹ] UPDATE THE DATA FOR WEB3 WALLET;
+      existing_data.user.scores_user_data.web3_wallet_addr = wallet;
       // [ℹ] UPDATE THE LOCALSTORAGE();
       localStorage.setItem(key, JSON.stringify(existing_data));
       // [ℹ] update the `set()` data;
