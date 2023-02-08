@@ -235,3 +235,16 @@ Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuap
 If you wish to develop new components for the platform, please follow the following guide of how the components must be structured:
 
 - use the `console.group` to group your `devTool` logs and hafve it working in the `DEV` environment.
+
+### References
+
+| Ref. Num. | Sources |
+| ------ | ------ |
+| [1] | 
+  https://moralis.io/create-a-web3-firebase-login-with-metamask/
+  https://docs.moralis.io/authentication-api/integrations/firebase-nodejs
+  https://moralis.io/web3-firebase-authentication-create-a-web3-sign-in-with-moralis/
+  https://moralisweb3.github.io/firebase-extensions/service-account-converter/
+  https://moralisweb3.github.io/Moralis-JS-SDK/demos/firebase-auth-ext/
+  https://admin.moralis.io/users
+| 
