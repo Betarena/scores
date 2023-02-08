@@ -3,14 +3,17 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
-	import { db_firestore, storage } from "$lib/firebase/init";
+	import { auth, db_firestore, storage } from "$lib/firebase/init";
 	import { userBetarenaSettings } from "$lib/store/user-settings";
 	import { deleteObject, getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 	import type { REDIS_CACHE_SINGLE_profile_translation } from "$lib/models/profile/account-setting/types";
 
 	import { dlog, errlog } from "$lib/utils/debug";
-	import { doc, updateDoc } from "firebase/firestore";
+	import { viewport_change } from "$lib/utils/platform-functions";
+	import { deleteUser } from "firebase/auth";
+	import { deleteDoc, doc, updateDoc } from "firebase/firestore";
+	import { onMount } from "svelte";
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
@@ -20,7 +23,9 @@ COMPONENT JS (w/ TS)
   // FIXME: missing Upload / Remove - Profile Picture Translation
   dlog(RESPONSE_PROFILE_DATA, true)
 
-  let files;
+  let files: HTMLInputElement["files"];
+  let fileInputElem: HTMLInputElement;
+  let usernameInput: string;
   let profile_picture_exists:   boolean = false;
   let profile_wallet_connected: boolean = false;
   let processing: boolean = false;
@@ -39,12 +44,15 @@ COMPONENT JS (w/ TS)
     ? false 
     : true
   ;
-
+  $: usernameInput = $userBetarenaSettings?.user?.scores_user_data?.username;
+  
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  async function upload_profile_picture () {
+  // TODO:
+    // -> add profile picture crop (circular) step
+  async function upload_profile_picture (): Promise < void > {
     // NOTE: `file` is of type `FileList`, not an Array:
 		// DOC: https://developer.mozilla.org/en-US/docs/Web/API/FileList
     processing = true;
@@ -80,8 +88,11 @@ COMPONENT JS (w/ TS)
     processing = false;
   }
 
-  async function remove_picture () {
-    if (!profile_picture_exists) return;
+  async function remove_picture (): Promise < void > {
+    if (!profile_picture_exists) {
+      fileInputElem.click()
+      return;
+    }
     dlog('🔵 Removing user profile picture')
     // [ℹ] remove from localStorage()
     userBetarenaSettings.updateProfilePicture(undefined)
@@ -106,18 +117,126 @@ COMPONENT JS (w/ TS)
     });
   }
 
-  // TODO: update username
+  /**
+   * @description updates user's username on
+   * firebase services; and localStorage
+   * @returns
+   */
+  async function update_username (): Promise < void > {
+    dlog('🔵 Username (update)')
+    // [ℹ] (update)from localStorage()
+    userBetarenaSettings.updateUsername(usernameInput)
+    // [ℹ] (update)from Firebase - Firestore
+    const userRef = doc(
+      db_firestore, 
+      "betarena_users",
+      $userBetarenaSettings?.user?.firebase_user_data?.uid
+    );
+    await updateDoc(userRef, {
+      username: usernameInput
+    });
+  }
+
   // TODO: update wallet address (+connect/disconnect)
+    // -> connect to MetaMask and retrieve data
     // -> update Firestore: wallet-id + providers
+    // -> display on Moralis/Users
+  async function connect_wallet (): Promise < void > {
+    // DOC: REF -> [1]
+    try {
+      processing = true
+      auth_service = 'wallet'
+      // [ℹ] restrict only to MetaMask (original)
+      if (!provider('isMetaMask')[0]) {
+        dlog("🔴 Moralis Auth not found!")
+        alert('Please install the MetaMask Wallet Extension!')
+        processing = false
+        return
+      }
+      // [ℹ] create Moralis instance
+      const moralisAuth = getMoralisAuth(app);
+      // NOTE: default sign-in opt. is Metamask
+      const moralis_auth = await signInWithMoralis(moralisAuth);
+      dlog("🟢 Moralis Auth")
+      success_auth_wrap(
+        null, 
+        moralis_auth?.credentials?.user?.displayName,
+        auth_service
+      )
+    } catch (error) {
+      errlog(`Moralis Auth error: ${error}`)
+      processing = false;
+    }
+  }
+  
   // TODO: save settings (persist changes made to current instance)
     // -> to localStorage()
     // -> firestore
-  // TODO: delete account action
+  async function save_settings (): Promise < void > {
+
+  }
+  
+  /**
+   * @description removes user's data from all sources:
+   * firebase services; and clears up localstorage; redirects
+   * to main page
+   * @returns
+   */
+  async function delete_user (): Promise < void > {
+    dlog('🔵 Init - delete_user', true)
+    // [ℹ] remove from Firebase - Storage
+    const desertRef = ref(
+      storage, 
+      `Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}.png`
+    );
+    deleteObject(desertRef)
+    .then(() => {
+      dlog('ℹ️ Success - Profile picture removed')
+    }).catch((error) => {
+      errlog(error)
+    });
+    // [ℹ] remove from Firebase - Firestore
+    // DOC: https://firebase.google.com/docs/firestore/manage-data/delete-data
+    await deleteDoc(doc(
+      db_firestore, 
+      "betarena_users", 
+      $userBetarenaSettings?.user?.firebase_user_data?.uid
+    ));
+    // [ℹ] remove from Firebase - Auth
+    // DOC: https://firebase.google.com/docs/auth/web/manage-users#delete_a_user
+    const user = auth.currentUser;
+    deleteUser(user)
+    .then(() => {
+      dlog('ℹ User deleted from Auth')
+    }).catch((error) => {
+      errlog(error)
+    });
+    // [ℹ] from localStorage()
+    userBetarenaSettings.signOutUser()
+    dlog('🟢 Success! User deleted', true)
+    // goto('/', {replaceState: true})
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
+  // VIEWPORT CHANGES | IMPORTANT
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  const TABLET_VIEW = 768
+  const MOBILE_VIEW = 767 // 768 - Tablet (start)
+  let mobileExclusive, tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		[tabletExclusive, mobileExclusive] = viewport_change (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    )
+		window.addEventListener('resize', function () {
+		  [tabletExclusive, mobileExclusive] = viewport_change (
+        TABLET_VIEW,
+        MOBILE_VIEW
+      )
+		});
+  });
 </script>
 
 <!--===============
@@ -146,16 +265,18 @@ COMPONENT HTML
   <-conditional->
   -->
   <div
-    class="
-      row-space-out
-      m-b-24  
-    ">
-    <div>
+    class={!tabletExclusive ? 'row-space-out m-b-24' : 'm-b-24'}>
+    <!-- 
+    [ℹ] profile photo section row
+    -->
+    <div
+      class:m-b-16={mobileExclusive}>
       <p
         class="
           s-16
           w-500
-        ">
+        "
+        class:m-b-6={mobileExclusive}>
         {RESPONSE_PROFILE_DATA?.profile_photo}
       </p>
       <span
@@ -167,24 +288,28 @@ COMPONENT HTML
         {RESPONSE_PROFILE_DATA?.profile_photo_desc}
       </span>
     </div>
-    <label
-      for="avatar">
-      <div
-        class="
-          btn-hollow
-          w-500
-          s-14
-        "
-        on:click={() => remove_picture()}>
-        {!profile_picture_exists ? 'Upload' : 'Remove'}
-      </div>
-    </label>
+    <!-- 
+    [ℹ] profile picture action (btn)
+    -->
+    <button
+      class="
+        btn-hollow
+        w-500
+        s-14
+      "
+      on:click={() => remove_picture()}>
+      {!profile_picture_exists ? 'Upload' : 'Remove'}
+    </button>
+    <!-- 
+    [ℹ] profile picture input
+    -->
     {#if !profile_picture_exists}
       <input
         accept="image/png, image/jpeg"
         id="avatar"
         class="custom-file-input"
         name="avatar"
+        bind:this={fileInputElem}
         bind:files={files}
         type="file"
         disabled={processing}
@@ -267,6 +392,7 @@ COMPONENT HTML
       placeholder="{RESPONSE_PROFILE_DATA?.username}"
       aria-placeholder="Username input here"
       aria-label="Username input"
+      bind:value={usernameInput}
     />
   </div>
   <!-- 
@@ -276,19 +402,18 @@ COMPONENT HTML
   [ℹ] cryptocurrency wallet update
   -->
   <div
-    class="
-      row-space-out
-      m-b-24  
-    ">
+    class={!tabletExclusive ? 'row-space-out m-b-24' : 'm-b-24'}>
     <!-- 
-    [ℹ] username text
+    [ℹ] username text (box)
     -->
-    <div>
+    <div
+      class:m-b-16={mobileExclusive}>
       <p
         class="
           s-16
           w-500
-        ">
+        "
+        class:m-b-6={mobileExclusive}>
         {RESPONSE_PROFILE_DATA?.crypto_title}
       </p>
       <span
@@ -315,34 +440,37 @@ COMPONENT HTML
   [ℹ] save settings (button)
   -->
   <button
-    class="btn-primary-v2">
+    class="btn-primary-v2"
+    on:click={() => update_username()}>
     {RESPONSE_PROFILE_DATA?.save}
   </button>
   <!-- 
   [ℹ] divider
   -->
-  <div 
-    id="settings-hr-divider" 
-    class="
-      m-t-20 
-      m-b-20
-    "
+  <div
+    id="settings-hr-divider"
+    class={!mobileExclusive ? 'm-t-20  m-b-20' : 'm-t-30 m-b-30'}
   />
   <!-- 
   [ℹ] fourth row
   <-contents->
+  [ℹ] delete text / desc
   [ℹ] delete account (action)
   -->
   <div
-    class="
-      row-space-out
-    ">
-    <div>
+    class={!tabletExclusive ? 'row-space-out m-b-24' : ''}>
+    <!-- 
+    [ℹ] delete text / desc
+    -->
+    <div
+      class:m-b-16={mobileExclusive}>
       <p
         class="
           s-16
           w-500
-        ">
+          color-red-bright
+        "
+        class:m-b-6={mobileExclusive}>
         {RESPONSE_PROFILE_DATA?.delete_account_title}
       </p>
       <span
@@ -353,12 +481,17 @@ COMPONENT HTML
         {RESPONSE_PROFILE_DATA?.delete_desc}
       </span>
     </div>
+    <!-- 
+    [ℹ] delete action (btn)
+    -->
     <button
       class="
         btn-hollow
         w-500
         s-14
-      ">
+        color-red-bright
+      "
+      on:click={() => delete_user()}>
       {RESPONSE_PROFILE_DATA?.delete_account_title}
     </button>
   </div>
@@ -378,10 +511,8 @@ COMPONENT STYLE
   }
 
   input[type='text'] {
-    /* white theme/white */
-    background: #FFFFFF;
     /* white theme/gray */
-    border: 1px solid #CCCCCC;;
+    border: 1px solid var(--grey-shade);
     box-sizing: border-box;
     border-radius: 8px;
     padding: 20px 12px;
@@ -390,13 +521,17 @@ COMPONENT STYLE
     outline: none;
     font-size: 14px;
   } input[type='text']:hover {
-    border: 1px solid #8C8C8C;
+    border: 1px solid var(--grey);
   } input[type='text']:focus {
-    border: 1px solid #4B4B4B;
+    border: 1px solid var(--dark-theme-1);
   } input[type='text'][placeholder] {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+
+  button {
+    width: -webkit-fill-available;
   }
 
   div#settings-hr-divider {
@@ -418,4 +553,15 @@ COMPONENT STYLE
     position: absolute;
     z-index: -1;
   }
+
+  /* ====================
+    RESPONSIVNESS
+  ==================== */
+
+  @media only screen and (min-width: 575px)  {
+    button {
+      width: auto;
+    }
+  }
+
 </style>
