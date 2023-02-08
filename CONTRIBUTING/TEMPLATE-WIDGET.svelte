@@ -4,6 +4,8 @@ COMPONENT JS (w/ TS)
 
 <script lang="ts">
 
+  import profile_avatar from './assets/profile-avatar.svg';
+
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -29,6 +31,12 @@ COMPONENT HTML
 =================-->
 
 <!-- HTML GOES HERE -->
+
+<img 
+  src={profile_avatar}
+  alt='Profile Avatar Icon'
+  title='Profile Avatar Icon'
+/>
 
 <!-- ===============
 COMPONENT STYLE
