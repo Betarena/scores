@@ -11,3 +11,6 @@ certs/*
 
 WEBSITE-DEV-README.md
 datalog/
+
+# [PERSONAL]
+.vscode/
