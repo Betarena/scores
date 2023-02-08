@@ -21,7 +21,7 @@ COMPONENT JS (w/ TS)
   const PROFILE_MENU_OPT: PROFILE_OPT[] = ['Dashboard', 'Account Settings', 'Scores', 'Author']
   
   let selectedMenuOpt: PROFILE_OPT = 'Dashboard'
-  let showDropdown: boolean = false;
+  let showDropdown:    boolean     = false;
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -32,6 +32,10 @@ COMPONENT JS (w/ TS)
     showDropdown = false
     if (selectedMenuOpt == 'Dashboard') goto('/u/dashboard', { replaceState: true })
     if (selectedMenuOpt == 'Account Settings') goto('/u/settings', { replaceState: true })
+  }
+
+  function closeAllDropdowns(): void {
+    showDropdown = false
   }
 
   $: {
@@ -65,6 +69,13 @@ COMPONENT JS (w/ TS)
 <!-- ===============
 COMPONENT HTML 
 =================-->
+
+{#if !mobileExclusive && showDropdown}
+  <div 
+    id="background-area-close" 
+    on:click={() => closeAllDropdowns()} 
+  />
+{/if}
 
 <div
   id="profile-menu-widget-container"
@@ -130,7 +141,7 @@ COMPONENT HTML
         on:click={() => showDropdown = !showDropdown} 
       />
       <div
-        id="dropdown-menu-opt-tablet-select">
+        id="dropdown-menu-opt-mobile">
         {#each PROFILE_MENU_OPT as item}
           <MenuOptRow 
             VIEW_OPT={2}
@@ -173,7 +184,7 @@ COMPONENT HTML
       -->
       {#if showDropdown}
         <div
-          id="dropdown-menu-opt-tablet-select">
+          id="dropdown-menu-opt-tablet">
           {#each PROFILE_MENU_OPT as item}
             <MenuOptRow 
               VIEW_OPT={2}
@@ -218,6 +229,17 @@ COMPONENT STYLE
 =================-->
 
 <style>
+  div#background-area-close {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    width: 100%;
+    z-index: 1000;
+  }
+  
   /* profile widget */
   div#profile-menu-widget-container {
     background: #FFFFFF;
@@ -240,7 +262,7 @@ COMPONENT STYLE
     width: 100%;
     background: rgba(0, 0, 0, 0.5);
   }
-  div#dropdown-menu-opt-tablet-select {
+  div#dropdown-menu-opt-mobile {
     position: fixed;
     z-index: 999999;
     bottom: 0;
@@ -252,25 +274,25 @@ COMPONENT STYLE
     padding: 12px 0 5px 0;
   }
 
-  /* 
-  RESPONSIVE FOR TABLET (&+) [768px] 
-  */
+  /* ====================
+    RESPONSIVNESS
+  ==================== */
+
 	@media screen and (min-width: 768px) {
     /* tablet styles dropdown */
     div#dropdown-menu-opt-tablet-box {
       position: relative;
-    } div#dropdown-menu-opt-tablet-select {
+    } div#dropdown-menu-opt-tablet {
       position: absolute;
       top: 115%;
-      width: 260px;
-      background-color: #ffffff;
-      box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-      border-radius: 4px;
+      right: 12.5%;
       z-index: 10000;
+      width: 260px;
+      background-color: var(--white);
+      box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
+      border-radius: 16px;
       max-height: 209px;
-      overflow-y: scroll;
-      padding-right: 6px;
-      right: 0;
+      overflow: hidden;
     }
   }
 </style>

@@ -224,4 +224,14 @@ COMPONENT STYLE
     background-color: var(--whitev2);
     border-radius: 20px;
   }
+
+  /* ====================
+    RESPONSIVNESS
+  ==================== */
+
+  @media only screen and (min-width: 725px)  {
+    div.mobile-select-menu-opt-box {
+      padding: 0 20px 0 0;
+    }
+  }
 </style>
