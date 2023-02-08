@@ -1,6 +1,5 @@
 /* ==========================
-	setting the default 
-    website layout
+	setting the default website layout
 ========================== */
 
 body,
@@ -42,8 +41,7 @@ body {
 }
 
 /* ==========================
-    declaring global app CSS 
-    variables
+  declaring global app CSS variables
 ========================== */
 
 /* to learn more -> 
@@ -62,6 +60,7 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	--red: #c62828;
   --red-bright: #FF3C3C;
 	--theme-color: #e3e3e3;
+  --grey-color: #E6E6E6;
 	/* 
 	dark theme colors */
 	--black: #000000;
@@ -71,10 +70,13 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	--dark-theme: #292929;
 	--dark-theme-1: #4b4b4b;
 	/* 
-    breakpoints */
+  breakpoints */
 	--mobile: 375;
 	--tablet: 767;
 	--desktop: 1440;
+  /* 
+  other [fades] */
+  --oragne-pale-bg: rgba(247, 124, 66, 0.2);
 }
 
 a {
@@ -92,8 +94,8 @@ p {
 }
 
 /* ==========================
-    VARIABLE FONT SIZES 
-    & other STYLES for text
+  VARIABLE FONT SIZES 
+  & other STYLES for text
 ========================== */
 
 /* DEFAULT BETARENA CSS VALUES */
@@ -309,6 +311,9 @@ page titles */
 ~~~~~~~~~~
 top-margins 
 */
+.m-t-5 {
+	margin-top: 5px;
+}
 .m-t-10 {
 	margin-top: 10px;
 }
@@ -344,11 +349,17 @@ right-margins
 .m-r-5 {
 	margin-right: 5px;
 }
+.m-r-6 {
+	margin-right: 6px;
+}
 .m-r-8 {
 	margin-right: 8px;
 }
 .m-r-10 {
 	margin-right: 10px;
+}
+.m-r-12 {
+	margin-right: 12px;
 }
 .m-r-15 {
 	margin-right: 15px;
@@ -393,6 +404,9 @@ bottom-margins
 }
 .m-b-20 {
 	margin-bottom: 20px;
+}
+.m-b-24 {
+	margin-bottom: 24px;
 }
 .m-b-25 {
 	margin-bottom: 25px;
@@ -631,6 +645,27 @@ BUTTON STYLES
 .btn-white p {
 	color: var(--black);
 }
+
+.btn-primary-v2 {
+	background: var(--primary);
+  border-radius: 8px;
+  padding: 11.5px 24px;
+  height: 44px;
+	color: var(--white);
+}
+
+.btn-hollow {
+	background: transparent;
+  border: 1px solid var(--grey-color) !important;
+  border-radius: 8px;
+  padding: 11.5px 20px;
+  height: 44px;
+	color: var(--dark-theme);
+} .btn-hollow:hover {
+  border: 1px solid var(--primary);
+	color: var(--primary);
+}
+
 /* 
 ~~~~~~~~~~~~~
 BUTTON ICON IMG
