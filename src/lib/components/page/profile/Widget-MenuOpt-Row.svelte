@@ -31,6 +31,8 @@ COMPONENT JS (w/ TS)
   export let showDropdown: boolean;
 
   let selectedMenuOptIcon: string = undefined;
+  let isHoverMenuOptItem: boolean = false;
+  let hoverMenuOptIconAlt: string = undefined;
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
@@ -59,9 +61,11 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS [REACTIVE]
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  $: if (MENU_OPT == 'Dashboard' && SELECTED_OPT != MENU_OPT) selectedMenuOptIcon = home
-  $: if (MENU_OPT == 'Dashboard' && SELECTED_OPT == MENU_OPT) selectedMenuOptIcon = home_select
+  $: if (MENU_OPT == 'Dashboard' && SELECTED_OPT != MENU_OPT) selectedMenuOptIcon = home;
+  $: if (MENU_OPT == 'Dashboard') hoverMenuOptIconAlt = home_select
+  $: if (MENU_OPT == 'Dashboard' && SELECTED_OPT == MENU_OPT) selectedMenuOptIcon = home_select 
   $: if (MENU_OPT == 'Account Settings' && SELECTED_OPT != MENU_OPT) selectedMenuOptIcon = settings
+  $: if (MENU_OPT == 'Account Settings') hoverMenuOptIconAlt = settings_select
   $: if (MENU_OPT == 'Account Settings' && SELECTED_OPT == MENU_OPT) selectedMenuOptIcon = settings_select
   $: if (MENU_OPT == 'Scores') selectedMenuOptIcon = calendar
   $: if (MENU_OPT == 'Author') selectedMenuOptIcon = edit
@@ -90,6 +94,7 @@ COMPONENT HTML
     class="
       row-space-out
       mobile-select-menu-opt-box
+      cursor-pointer
     "
     on:click={() => toggle_dropdown()}>
     <div
@@ -135,7 +140,11 @@ COMPONENT HTML
       profile-menu-opt
     "
     on:click={() => update_selected_opt()}
-    class:selected-opt-active={SELECTED_OPT == MENU_OPT && !tabletExclusive}>
+    class:selected-opt-active={SELECTED_OPT == MENU_OPT && !tabletExclusive}
+    class:cursor-pointer={!['Scores','Author'].includes(MENU_OPT)}
+    class:cursor-not-allowed={['Scores','Author'].includes(MENU_OPT)}
+    on:mouseenter={() => isHoverMenuOptItem = true}
+    on:mouseleave={() => isHoverMenuOptItem = false}>
     <!-- 
     [ℹ] menu opt row
     <-contents->
@@ -150,7 +159,7 @@ COMPONENT HTML
       [ℹ] menu option icon
       -->
       <img
-        src={selectedMenuOptIcon}
+        src={!isHoverMenuOptItem || ['Scores','Author'].includes(MENU_OPT) ? selectedMenuOptIcon : hoverMenuOptIconAlt}
         alt="{MENU_OPT} Icon"
         aria-label="{MENU_OPT} Icon"
         height="20"
@@ -169,7 +178,8 @@ COMPONENT HTML
         "
         class:color-grey={SELECTED_OPT != MENU_OPT}
         class:color-black-2={SELECTED_OPT == MENU_OPT}
-        class:color-grey-shade={['Scores','Author'].includes(MENU_OPT)}>
+        class:color-grey-shade={['Scores','Author'].includes(MENU_OPT)}
+        class:menu-opt-text={!['Scores','Author'].includes(MENU_OPT)}>
         {MENU_OPT}
       </p>
     </div>
@@ -223,6 +233,8 @@ COMPONENT STYLE
     padding: 3px 8px;
     background-color: var(--whitev2);
     border-radius: 20px;
+  } div.profile-menu-opt:hover p.menu-opt-text {
+    color: var(--dark-theme)
   }
 
   /* ====================
