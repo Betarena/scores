@@ -1,11 +1,12 @@
-import type { 
+import type {
   BETARENA_HASURA_historic_fixtures,
-  BETARENA_HASURA_scores_fixture_voting_translations, 
-  BETARENA_HASURA_scores_general_translations, 
+  BETARENA_HASURA_scores_fixture_voting_translations,
+  BETARENA_HASURA_scores_general_translations,
   BETARENA_HASURA_widget_featured_match_votes,
   FixtureVotesTranslations,
   WidgetsNoDataAvailable
 } from "$lib/models/hasura";
+import type { FIXTURE_STATUS_TYPES } from "$lib/models/sportmonks";
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface REDIS_CACHE_SINGLE_votes_translation extends FixtureVotesTranslations, WidgetsNoDataAvailable {
@@ -42,7 +43,7 @@ export interface BETARENA_HASURA_votes_mutation {
 
 export interface Fixture_Votes {
   time?:           string
-  status?:         string
+  status?:         FIXTURE_STATUS_TYPES
   home_team_logo?: string
   away_team_logo?: string
   match_votes?:    BETARENA_HASURA_widget_featured_match_votes

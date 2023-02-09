@@ -37,6 +37,7 @@
 
 	import VoteLoader from "./Vote_Loader.svelte";
 
+	import { FIXTURE_NO_VOTES_OPT } from '$lib/models/sportmonks';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -144,7 +145,7 @@
     // [ℹ] data validation check [#2]
     const validation_check =
       response.widget_featured_match_votes.length == 0
-      && ["FT", "FT_PEN"].includes(HIST_FIXTURE_DATA?.status_j)
+      && FIXTURE_NO_VOTES_OPT.includes(HIST_FIXTURE_DATA?.status_j)
     ;
 
     no_widget_data =
@@ -676,10 +677,11 @@
         -->
 
         <!-- 
-        [ℹ] voting hint text -->
-        {#if 
+        [ℹ] voting hint text 
+        -->
+        {#if
           !vote_casted 
-          && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
+          && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
           <p
             class="
               w-500 
@@ -693,11 +695,11 @@
         {/if}
 
         <!-- 
-        [ℹ] voting results btn -->
+        [ℹ] voting results btn 
+        -->
         <div
           id="btn-vote-container" 
-          class="row-space-out">
-            
+          class="row-space-out">     
           <!-- 
           [ℹ] ODDS #1 
           -->
@@ -707,7 +709,6 @@
               text-center 
               column
             ">
-
             <button
               class="
                 row-space-out 
@@ -715,7 +716,7 @@
                 m-b-12
               "
               class:active={fixture_data_vote_obj.fixture_vote == '1'}
-              disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
+              disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
               on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home)}>
                 <p
                   class="
@@ -746,12 +747,11 @@
                   </span>
                 </p>
             </button>
-
             <!-- 
             [ℹ] fixture-probability 
             -->
             {#if !show_bet_site 
-              && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
+              && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
               <p 
                 class="
                   w-400 
@@ -771,7 +771,7 @@
             {:else if 
               FIXTURE_VOTES_DATA?.match_votes != undefined 
               || (FIXTURE_VOTES_DATA?.match_votes != undefined 
-                  && ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status))}
+                  && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status))}
               <p 
                 class="
                   large
@@ -793,7 +793,6 @@
               </p>
             {/if}
           </div>
-
           <!--
           [ℹ] ODDS #X
           -->
@@ -803,7 +802,6 @@
               text-center 
               column
             ">
-
             <button
               class="
                 row-space-out 
@@ -811,7 +809,7 @@
                 m-b-12
               "
               class:active={fixture_data_vote_obj.fixture_vote == 'X'}
-              disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
+              disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
               on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw)}>
                 <p 
                   class="
@@ -845,12 +843,11 @@
                   </span>
                 </p>
             </button>
-
             <!-- 
             [ℹ] fixture-probability 
             -->
             {#if !show_bet_site 
-              && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
+              && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
               <p 
                 class="
                   w-400 
@@ -867,10 +864,10 @@
                   -
                 {/if}
               </p>
-            {:else if 
+            {:else if
               FIXTURE_VOTES_DATA?.match_votes != undefined 
               || (FIXTURE_VOTES_DATA?.match_votes != undefined 
-                  && ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status))}
+                  && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status))}
               <p 
                 class="
                   large
@@ -892,7 +889,6 @@
               </p>
             {/if}
           </div>
-
           <!-- 
           [ℹ] ODDS #2 
           -->
@@ -902,93 +898,90 @@
               column 
               text-center
             ">
-
-              <button
+            <button
+              class="
+                row-space-out 
+                cast-vote-btn 
+                m-b-12
+              "
+              class:active={fixture_data_vote_obj.fixture_vote == '2'}
+              disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+              on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away)}>
+              <p 
                 class="
-                  row-space-out 
-                  cast-vote-btn 
-                  m-b-12
-                "
-                class:active={fixture_data_vote_obj.fixture_vote == '2'}
-                disabled={vote_casted || ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-                on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away)}>
-                <p 
-                  class="
-                    w-500 
-                    medium 
-                    row-space-out
-                  ">
-                  {#if mobileExclusive}
-                    <span 
-                      class="color-grey"> 
-                      2 
-                    </span>
-                  {:else}
-                    <img
-                      src={FIXTURE_VOTES_DATA?.away_team_logo}
-                      alt=""
-                      width="28px"
-                      height="28px"
-                    />
-                  {/if}
+                  w-500 
+                  medium 
+                  row-space-out
+                ">
+                {#if mobileExclusive}
                   <span 
-                    class:active_p={fixture_data_vote_obj.fixture_vote == '2'}>
-                    {#if FIXTURE_VOTES_DATA._1x2.away}
-                      {FIXTURE_VOTES_DATA._1x2.away.toString()}
-                    {:else}
-                      -
-                    {/if}
+                    class="color-grey"> 
+                    2 
                   </span>
-                </p>
-              </button>
-
-              <!-- 
-              [ℹ] fixture-probability 
-              -->
-              {#if !show_bet_site 
-                && !["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status)}
-                <p 
-                  class="
-                    w-400 
-                    probablitiy-text 
-                    medium
-                  ">
-                  {FIXTURE_VOTES_TRANSLATION?.probability}
-                  {#if mobileExclusive}
-                    <br />
-                  {/if}
-                  {#if FIXTURE_VOTES_DATA?.probabilities?.away != undefined}
-                    {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.away.toString())).toFixed(2)}%
+                {:else}
+                  <img
+                    src={FIXTURE_VOTES_DATA?.away_team_logo}
+                    alt=""
+                    width="28px"
+                    height="28px"
+                  />
+                {/if}
+                <span 
+                  class:active_p={fixture_data_vote_obj.fixture_vote == '2'}>
+                  {#if FIXTURE_VOTES_DATA._1x2.away}
+                    {FIXTURE_VOTES_DATA._1x2.away.toString()}
                   {:else}
                     -
                   {/if}
-                </p>
-              {:else if 
-                FIXTURE_VOTES_DATA?.match_votes != undefined 
-                || (FIXTURE_VOTES_DATA?.match_votes != undefined 
-                    && ["FT", "FT_PEN"].includes(FIXTURE_VOTES_DATA?.status))}
-                <p 
+                </span>
+              </p>
+            </button>
+            <!-- 
+            [ℹ] fixture-probability 
+            -->
+            {#if !show_bet_site 
+              && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+              <p 
+                class="
+                  w-400 
+                  probablitiy-text 
+                  medium
+                ">
+                {FIXTURE_VOTES_TRANSLATION?.probability}
+                {#if mobileExclusive}
+                  <br />
+                {/if}
+                {#if FIXTURE_VOTES_DATA?.probabilities?.away != undefined}
+                  {Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.away.toString())).toFixed(2)}%
+                {:else}
+                  -
+                {/if}
+              </p>
+            {:else if 
+              FIXTURE_VOTES_DATA?.match_votes != undefined 
+              || (FIXTURE_VOTES_DATA?.match_votes != undefined 
+                  && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status))}
+              <p 
+                class="
+                  large
+                ">
+                <span 
                   class="
-                    large
+                    color-dark
+                    w-500
                   ">
-                  <span 
-                    class="
-                      color-dark
-                      w-500
-                    ">
-                    {((FIXTURE_VOTES_DATA.match_votes.vote_win_visitor / total_votes) * 100).toFixed(0)}%
-                  </span>
-                  <span 
-                    class="
-                      color-grey
-                      w-400
-                    ">
-                    ({FIXTURE_VOTES_DATA.match_votes.vote_win_visitor})
-                  </span>
-                </p>
-              {/if}
+                  {((FIXTURE_VOTES_DATA.match_votes.vote_win_visitor / total_votes) * 100).toFixed(0)}%
+                </span>
+                <span 
+                  class="
+                    color-grey
+                    w-400
+                  ">
+                  ({FIXTURE_VOTES_DATA.match_votes.vote_win_visitor})
+                </span>
+              </p>
+            {/if}
           </div>
-
         </div>
 
         <!-- 

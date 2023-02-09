@@ -1,10 +1,22 @@
 export const FIXTURE_NOT_START_OPT: FIXTURE_STATUS_TYPES[] = [
+  "CANCL",
+  "POSTP",
+  "INT",
   "NS",
   "TBA",
-  "SUSP",
-  "INT",
-  "POSTP",
-  "CANCL"
+  "SUSP"
+]
+export const FIXTURE_NO_VOTES_OPT: FIXTURE_STATUS_TYPES[] = [
+  'FT',
+  'AET',
+  'FT_PEN',
+  'CANCL',
+  'POSTP',
+  'INT',
+  'ABAN',
+  'SUSP',
+  'AWARDED',
+  'WO'
 ]
 export const FIXTURE_LIVE_TIME_OPT: FIXTURE_STATUS_TYPES[] = [
   "LIVE",
@@ -19,7 +31,7 @@ export const FIXTURE_FULL_TIME_OPT: FIXTURE_STATUS_TYPES[] = [
   "FT_PEN"
 ]
 
-// [ℹ] https://docs.sportmonks.com/football/api-references/statussus-and-definitions
+// DOC: https://docs.sportmonks.com/football/api-references/statussus-and-definitions
 export type FIXTURE_STATUS_TYPES =
   // [ℹ] GAME NOT STARTED
   "NS"          // The initial status of a game
@@ -28,6 +40,9 @@ export type FIXTURE_STATUS_TYPES =
   | "INT"       // The game has been interrupted. Can be due to bad weather
   | "POSTP"     // The game has been postponed
   | "CANCL"     // The game has been canceled
+  | "ABAN"      // The game has been abandoned
+  | "AWARDED"   // The game has been awarded
+  | "WO"        // The game has been walk-over
   // [ℹ] GAME IS LIVE
   | "LIVE"      // The game is currently inplay
   | "HT"        // The game currently is in half-time
