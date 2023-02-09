@@ -44,12 +44,12 @@ const user_settings: User_Setting = {
 }
 
 /**
- * Description:
- * ~~~~~~~~~~~~~~
- * ... initialize the .localStorage();
- * ... @param {*} key
- * ... @returns
-*/
+ * @description initializer of svelte-stores
+ * method, with localstorage persistance for
+ * browser-refresh resitant
+ * @param {string} key 
+ * @returns 
+ */
 function createLocalStore(key: string) {
 	
 	const { subscribe, set, update } = writable(user_settings);
@@ -59,13 +59,11 @@ function createLocalStore(key: string) {
 		set,
 		update,
 
-		/**
-		 * Description:
-		 * ~~~~~~~~~~~~~~~~~
-		 * ➤ [START]
-		 * ➤ Method for rendering the .localStorage() form
-		 * ➤ the start of the page,
-		*/
+    /**
+     * @description sets platform localstroage;
+     * check for its existance, otherwise initializes
+     * a default new one
+     */
 		useLocalStorage: () => {
 			// [ℹ] reset the writable to the localStorage if localStorage already exists,
 			const existing: string = localStorage.getItem(key);
@@ -87,15 +85,11 @@ function createLocalStore(key: string) {
 			set(exisitng_data);
 		},
 
-		/**
-		 * Description:
-		 * ~~~~~~~~~~~~~~~~~
-		 * ➤ method to add the user seleted language
-		 * ➤ to the localStoage & application store
-		 * ➤ [WORKING]
-		 *
-		 * ➤ @param {*} lang
-		*/
+    /**
+     * @description sets platform language;
+     * and updates the svelte store;
+     * @param {string} lang 
+     */
 		setLang: (lang: string) => {
 			// ... DEBUGGING;
       if (dev) logDevGroup ("user-settings [DEV]", `selected lang: ${lang}`)
@@ -111,15 +105,11 @@ function createLocalStore(key: string) {
 			set(existing_data);
 		},
 
-		/**
-		 * Description:
-		 * ~~~~~~~~~~~~~~~~~
-		 * ➤ method to add the user seleted theme
-		 * ➤ to the localStoage & application store
-		 * ➤ [WORKING]
-		 *
-		 * ➤ @param {*} theme
-		*/
+    /**
+     * @description sets platform theme;
+     * and updates the svelte store;
+     * @param {string} theme 
+     */
 		setTheme: (theme: string) => {
 			// ... GET DATA FROM LOCALSTORAGE();
 			const existing: string = localStorage.getItem(key);
@@ -134,13 +124,9 @@ function createLocalStore(key: string) {
 		},
 
 		/**
-		 * Description:
-		 * ~~~~~~~~~~~~~~~~~
-		 * ➤ method to add the user seleted theme
-		 * ➤ to the localStoage & application store
-		 * ➤ [WORKING]
-		 *
-		 * ➤ @param {*} country_bookmaker
+     * @description sets platform country bookmaker
+     * and updates the svelte store;
+     * @param {string} country_bookmaker
 		*/
 		setCountryBookmaker: (country_bookmaker: string) => {
 			// ... GET DATA FROM LOCALSTORAGE();
@@ -156,13 +142,9 @@ function createLocalStore(key: string) {
 		},
 
 		/**
-		 * Description:
-		 * ~~~~~~~~~~~~~~~~~
-		 * ➤ method to add the user seleted theme
-		 * ➤ to the localStoage & application store
-		 * ➤ [WORKING]
-		 *
-		 * ➤ @param {*} GeoJsResponse
+     * @description sets GeoJs info object data to localStorage
+     * and updates the svelte store;
+     * @param {GeoJsResponse} GeoJsResponse
 		*/
 		setGeoJs: (geojs_res: GeoJsResponse) => {
 			// ... GET DATA FROM LOCALSTORAGE();
@@ -178,13 +160,9 @@ function createLocalStore(key: string) {
 		},
 
     /**
-		 * Description:
-		 * ~~~~~~~~~~~~~~~~~
-		 * ➤ method to add the user data
-		 * ➤ to the localStoage & application store
-		 * ➤ [WORKING]
-		 *
-		 * ➤ @param {*} User
+     * @description adds user to localStorage for user's profile picture
+     * and updates the svelte store;
+		 * @param {Scores_User} User
 		*/
     signInUser: (user: Scores_User) => {
       // [ℹ] GET DATA FROM LOCALSTORAGE();
@@ -200,7 +178,9 @@ function createLocalStore(key: string) {
     },
 
     /**
-     * @param profile_pic 
+     * @description updates localStorage for user's profile picture;
+     * and updates the svelte store;
+     * @param {string | undefined} profile_pic
     */
     updateProfilePicture: (profile_pic: string | undefined) => {
       // [ℹ] GET DATA FROM LOCALSTORAGE();
@@ -216,7 +196,9 @@ function createLocalStore(key: string) {
     },
 
     /**
-     * @param wallet 
+     * @description updates localStorage for user's username
+     * and updates the svelte store;
+     * @param {string} username 
     */
     updateUsername: (username: string) => {
       // [ℹ] GET DATA FROM LOCALSTORAGE();
@@ -232,7 +214,9 @@ function createLocalStore(key: string) {
     },
 
     /**
-     * @param wallet 
+     * @description updates localStorage for user's walletAddress;
+     * and updates the svelte store;
+     * @param {string | undefined} wallet
     */
     updateWalletAddr: (wallet: string | undefined) => {
       // [ℹ] GET DATA FROM LOCALSTORAGE();
@@ -248,28 +232,20 @@ function createLocalStore(key: string) {
     },
 
     /**
-		 * Description:
-		 * ~~~~~~~~~~~~~~~~~
-		 * ➤ method to remove the user data from
-		 * ➤ the localStoage & application store
-		 * ➤ [WORKING]
+		 * @description removes user data from localStorage;
+     * and updates the svelte store;
 		*/
     signOutUser: () => {
-      // [ℹ] GET DATA FROM LOCALSTORAGE();
       const existing: string = localStorage.getItem(key);
-      // [ℹ] CONVERT TO JSON;
       const existing_data: User_Setting = JSON.parse(existing);
-      // [ℹ] UPDATE THE DATA FOR LANG;
       existing_data.user = undefined;
-      // [ℹ] UPDATE THE LOCALSTORAGE();
       localStorage.setItem(key, JSON.stringify(existing_data));
-      // [ℹ] update the `set()` data;
       set(existing_data);
     }
 	};
 }
 
-// ... if .localStorage() has the key then it will be used,
-// ... if not the default will be used. Format:
-// ... export const var = createLocalStore(key, default)
+// [ℹ] if .localStorage() has the key then it will be used,
+// [ℹ] if not the default will be used. Format:
+// [ℹ] export const var = createLocalStore(key, default)
 export const userBetarenaSettings = createLocalStore('betarena-scores-platform-settings');
