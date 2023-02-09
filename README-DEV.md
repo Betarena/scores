@@ -248,3 +248,7 @@ If you wish to develop new components for the platform, please follow the follow
   https://moralisweb3.github.io/Moralis-JS-SDK/demos/firebase-auth-ext/
   https://admin.moralis.io/users
 | 
+
+#### Documenting
+
+https://stackoverflow.com/questions/63668154/describe-and-hint-what-parameters-a-function-requires
