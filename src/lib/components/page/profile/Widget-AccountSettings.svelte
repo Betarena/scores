@@ -539,6 +539,7 @@ COMPONENT HTML
         w-500
         s-14
         color-red-bright
+        danger
       "
       on:click={() => modal_delete_show = true}>
       {RESPONSE_PROFILE_DATA?.delete_account_title}

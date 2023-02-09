@@ -55,6 +55,7 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	--white: #ffffff;
 	--whitev2: #F2F2F2;
 	--primary: #f5620f;
+  --primary-fade: #F77C42;
 	--secondary: #37474f;
 	--blue: #0085ff;
 	--red: #c62828;
@@ -659,6 +660,8 @@ BUTTON STYLES
   padding: 11.5px 24px;
   height: 44px;
 	color: var(--white);
+} .btn-primary-v2:hover {
+  background-color: var(--primary-fade);
 }
 
 .btn-hollow {
@@ -669,8 +672,10 @@ BUTTON STYLES
   height: 44px;
 	color: var(--dark-theme);
 } .btn-hollow:hover {
-  border: 1px solid var(--primary);
+  border: 1px solid var(--primary) !important;
 	color: var(--primary);
+} .btn-hollow.danger {
+  border: 1px solid var(--red) !important;
 }
 
 /* 
