@@ -9,15 +9,20 @@ COMPONENT JS (w/ TS)
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
-  import { app_m, auth } from '$lib/firebase/init';
+  import { get } from '$lib/api/utils';
+  import { app, auth, db_firestore } from '$lib/firebase/init';
   import { sessionStore } from '$lib/store/session';
-  import { userBetarenaSettings, type Scores_User } from '$lib/store/user-settings';
+  import { userBetarenaSettings, type Auth_Type, type Scores_User } from '$lib/store/user-settings';
+  import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
   import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
   import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
   import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from "firebase/auth";
+  import { doc, setDoc } from 'firebase/firestore';
+  import { generateUsername } from "unique-username-generator";
 
-  import { get } from '$lib/api/utils';
   import type { REDIS_CACHE_SINGLE_auth_translation } from '$lib/models/_main_/auth/types';
+
+  import { dlog, errlog } from '$lib/utils/debug';
   import discord_icon from './assets/discord.svg';
   import email_verify from './assets/email-verify.svg';
   import error_icon from './assets/error-alert.svg';
@@ -46,6 +51,7 @@ COMPONENT JS (w/ TS)
   let dateObjDif: number
   let auth_view: boolean = true;
   let auth_type: 'login' | 'register' = 'login';
+  let auth_service: Auth_Type;
   let success_auth: boolean = false;
   let error_auth: boolean = false;
   let email_error_format: boolean = false;
@@ -75,26 +81,23 @@ COMPONENT JS (w/ TS)
   if (dev) email_input = 'migbashdev@gmail.com'
 
   // ~~~~~~~~~~~~~~~~~~~~~
+  // (SSR) LANG SVELTE | IMPORTANT
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let server_side_language = platfrom_lang_ssr (
+    $page?.routeId,
+    $page?.error,
+    $page?.params?.lang
+  )
+  // [🐞]
+  if (dev) console.debug('server_side_language', server_side_language)
+
+  // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
   // [ℹ] MAIN WIDGET METHOD
   async function widget_init (): Promise < REDIS_CACHE_SINGLE_auth_translation > {
-
-    let server_side_language: string = 'en';
-    if ($page.routeId != null
-      && !$page.error
-    ) {
-      if ($page.routeId.includes("[lang=lang]")) {
-        server_side_language = $page.params.lang;
-      }
-      else {
-        server_side_language = 'en';
-      }
-      }
-    else {
-      server_side_language = 'en';
-    }
 
     const response_auth: REDIS_CACHE_SINGLE_auth_translation = 
       await get(`/api/hasura/_main_/auth?lang=${server_side_language}`)
@@ -105,17 +108,20 @@ COMPONENT JS (w/ TS)
 
   async function login_with_google () {
     // DOC: https://firebase.google.com/docs/auth/web/google-signin
+    // DOC: read (^) for access to more Google API access upon Auth
     try {
       processing = true
+      auth_service = 'google'
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider)
       .then((result) => {
-        // [ℹ] This gives you a Google Access Token & Google API
-        // const credential = GoogleAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
         // [ℹ] user info
         const user = result?.user;
-        success_auth_wrap(user)
+        success_auth_wrap(
+          user,
+          null,
+          auth_service
+        )
       })
       .catch((error) => {
         processing = false
@@ -126,13 +132,57 @@ COMPONENT JS (w/ TS)
         const email = error.customData.email; // The email of the user's account used.
         // [ℹ] AuthCredential used
         // const credential = GoogleAuthProvider.credentialFromError(error);
-        // [🐞]
-        if (dev) console.log('errorCode', errorCode)
-        if (dev) console.log('errorMessage', errorMessage)
+        errlog(errorCode)
+        errlog(errorMessage)
       });
     } catch (error) {
       console.log(`❌ Google auth error: ${error}`)
       processing = false
+    }
+  }
+
+  async function login_with_github () {
+    try {
+      auth_service = 'discord'
+      processing = true
+      const provider = new GithubAuthProvider();
+      await signInWithPopup(auth, provider)
+      .then((result) => {
+        // [ℹ] this gives you a GitHub Access Token. 
+        // const credential = GithubAuthProvider.credentialFromResult(result);
+        // const token = credential.accessToken;
+        // [ℹ] user info
+        const user = result.user;
+        success_auth_wrap(
+          user,
+          null,
+          auth_service
+        )
+      }).catch((error) => {
+        processing = false
+        // [ℹ] handle errors
+        const errorCode = error.code;
+        const errorMessage = error.message;
+        errlog(errorCode)
+        errlog(errorMessage)
+        // [ℹ] the email used
+        const email = error.customData.email;
+        // [ℹ] AuthCredential used
+        const credential = GithubAuthProvider.credentialFromError(error);
+        // [🐞]
+        if (dev) console.log('credential', credential)
+        if (dev) console.log('email', email)
+        // TODO: error user-sign in
+        // signInWithCredential(auth, credential)
+        // .then(user => {
+        //   // You can now link the pending credential from the first
+        //   // error.
+        //   linkWithCredential(error.credential)
+        // })
+        // .catch(error => log(error))
+      });
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -141,8 +191,7 @@ COMPONENT JS (w/ TS)
     try {
       email_error_format = false 
       processing = true
-      // [🐞]
-      if (dev) console.log('email_input', email_input)
+      dlog(email_input)
       await fetchSignInMethodsForEmail(
         auth, 
         email_input
@@ -201,37 +250,11 @@ COMPONENT JS (w/ TS)
       console.log(e);
     }
   }
-
-  $: if (sent_email_date != undefined) {
-    dateObjDif =
-      sent_email_date.getTime() - Date.parse(new Date().toString());
-    setInterval(() => {
-			dateObjDif =
-        sent_email_date.getTime() - Date.parse(new Date().toString());
-		}, 1000);
-  }
-
-  $: countD_sec = Math.floor((dateObjDif / 1000) % 60).toString();
-	$: if (parseInt(countD_sec) < 10) {
-		countD_sec = '0' + countD_sec;
-	}
-	$: countD_min = Math.floor((dateObjDif / 1000 / 60) % 60).toString();
-	$: if (parseInt(countD_min) < 10) {
-		countD_min = '0' + countD_min;
-	}
-  
-  $: if (countD_sec.includes('-')) {
-    // sent_email_date = undefined
-    allow_resend = true
-  } else {
-    allow_resend = false
-  }
-
   // [ℹ] DeepLink listener EmailLink Cont. [END]
   $: if (browser) {
     if (isSignInWithEmailLink(auth, window.location.href)) {
-      // [🐞]
-      if (dev) console.log("🔵 EmailLink OAuth2")
+      auth_service = 'email'
+      dlog("🔵 EmailLink OAuth2")
       // NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
       // NOTE: Additional state parameters can also be passed via URL.
       // NOTE: This can be used to continue the user's intended action before triggering
@@ -239,31 +262,31 @@ COMPONENT JS (w/ TS)
       // NOTE: Get the email if available. This should be available if the user completes
       // NOTE: the flow on the same device where they started it.
       let email = window.localStorage.getItem('emailForSignIn');
-      // [🐞]
-      if (dev) console.log('email', email)
+      dlog(email)
       if (!email) {
         // User opened the link on a different device. To prevent session fixation
         // attacks, ask the user to provide the associated email again. For example:
         email = window.prompt('Please provide your email for confirmation');
       }
-      // The client SDK will parse the code from the link for you.
+      // [ℹ] Client SDK to parse the code from the link for you.
       signInWithEmailLink(auth, email, window.location.href)
       .then((result) => {
         auth_type = $page?.url?.searchParams?.get('auth_type')?.toString() as 'login' | 'register'
         const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`
-        // [🐞]
-        if (dev) console.log("🟢 EmailLink Auth")
-        // NOTE: Clear email from storage.
+        dlog("🟢 EmailLink Auth")
         window.localStorage.removeItem('emailForSignIn');
         // NOTE: You can access the new user via result.user
         // NOTE: Additional user info profile not available via:
         // result.additionalUserInfo.profile == null
         // NOTE: You can check if the user is new or existing:
         // result.additionalUserInfo.isNewUser
-          // [🐞]
-        if (dev) console.log('displayName', result?.user?.displayName)
-        if (dev) console.log('email', result?.user?.email)
-        success_auth_wrap(result?.user)
+        dlog(result?.user?.displayName)
+        dlog(result?.user?.email)
+        success_auth_wrap(
+          result?.user,
+          null,
+          auth_service
+        )
         goto(revert_url, { replaceState: true });
       })
       .catch((error) => {
@@ -271,48 +294,6 @@ COMPONENT JS (w/ TS)
         // Common errors could be invalid email and invalid or expired OTPs.
         console.log(error);
       });
-    }
-  }
-
-  // NOTE: Apple Login Discontinued - instead for GitHub
-  async function login_with_github () {
-    try {
-      processing = true
-      const provider = new GithubAuthProvider();
-      await signInWithPopup(auth, provider)
-      .then((result) => {
-        // [ℹ] this gives you a GitHub Access Token. 
-        // const credential = GithubAuthProvider.credentialFromResult(result);
-        // const token = credential.accessToken;
-        // [ℹ] user info
-        const user = result.user;
-        success_auth_wrap(user)
-      }).catch((error) => {
-        processing = false
-        // [ℹ] handle errors
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // [🐞]
-        console.log('errorCode', errorCode)
-        console.log('errorMessage', errorMessage)
-        // [ℹ] the email used
-        const email = error.customData.email;
-        // [ℹ] AuthCredential used
-        const credential = GithubAuthProvider.credentialFromError(error);
-        // [🐞]
-        if (dev) console.log('credential', credential)
-        if (dev) console.log('email', email)
-        // TODO: error user-sign in
-        // signInWithCredential(auth, credential)
-        // .then(user => {
-        //   // You can now link the pending credential from the first
-        //   // error.
-        //   linkWithCredential(error.credential)
-        // })
-        // .catch(error => log(error))
-      });
-    } catch (e) {
-      console.log(e);
     }
   }
 
@@ -324,45 +305,48 @@ COMPONENT JS (w/ TS)
     try {
       processing = true
       const callback_auth_url = $page?.url?.origin
-      // [🐞]
-      if (dev) console.log('callback_auth_url', callback_auth_url)
+      dlog(callback_auth_url)
       const discord_outh_url = import.meta.env.VITE_DISCORD_OAUTH_URL
       const final_url_nav = `${discord_outh_url}?redirect_url=${callback_auth_url}`
       // [ℹ] initiate discord OAuth2
       goto(final_url_nav)
-    } catch (e) {
+    } catch (error) {
+      errlog(error)
       processing = false
-      console.log(e);
     }
   }
   // [ℹ] DeepLink listener Discord Cont. [END]
   $: if (browser) {
-    // [🐞]
-    if (dev) console.log("Testing for Discord Link!")
+    dlog("🟠 Looking for Discord DeepLink!")
     const f_uid = $page.url.searchParams.get('f_uid')
     const oauth2 = $page.url.searchParams.get('oauth2')
     const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`
     // [ℹ] validate user is attempting Discord OAuth2
     if (oauth2 == 'discord' 
       && f_uid != null) {
-      // [🐞]
-      if (dev) console.log("🔵 Discrod OAuth2")
+      // [ℹ] success;
+      dlog("🔵 Discord OAuth2")
+      // [ℹ] clean up url from query
       goto(revert_url, { replaceState: true });
+      // [ℹ] firebase sign-in
       signInWithCustomToken(auth, f_uid)
       .then((userCredential) => {
         // [ℹ] successful sign-in / login
-        // [🐞]
-        if (dev) console.log("🟢 Discrod OAuth2")
-        const user = userCredential.user;
-        success_auth_wrap(user)
+        auth_service = 'discord'
+        dlog("🟢 Success! Discord OAuth2")
+        const user = userCredential?.user;
+        success_auth_wrap(
+          user, 
+          null,
+          auth_service
+        )
       })
       .catch((error) => {
         // TODO: complete authetication error handle
         const errorCode = error.code;
         const errorMessage = error.message;
-        // [🐞]
-        if (dev) console.error('errorMessage', errorMessage)
-        if (dev) console.error('errorCode', errorCode)
+        errlog(errorCode)
+        errlog(errorMessage)
       });
     }
   }
@@ -377,62 +361,94 @@ COMPONENT JS (w/ TS)
     // IMPORTANT: betarena-ios "usage" project-id
     try {
       processing = true
+      auth_service = 'wallet'
       // [ℹ] restrict only to MetaMask (original)
       if (!provider('isMetaMask')[0]) {
+        dlog("🔴 Moralis Auth not found!")
         alert('Please install the MetaMask Wallet Extension!')
         processing = false
         return
       }
       // [ℹ] create Moralis instance
-      const moralisAuth = getMoralisAuth(app_m);
-      // [🐞]
-      // if (dev) console.log(moralisAuth) 
+      const moralisAuth = getMoralisAuth(app);
       // NOTE: default sign-in opt. is Metamask
       const moralis_auth = await signInWithMoralis(moralisAuth);
-      // [🐞]
-      // if (dev) console.log(moralis_auth)
-      if (dev) console.log("🟢 Moralis Auth")
-      success_auth_wrap(null, moralis_auth?.credentials?.user?.displayName)
+      dlog("🟢 Moralis Auth")
+      success_auth_wrap(
+        null, 
+        moralis_auth?.credentials?.user?.displayName,
+        auth_service
+      )
     } catch (error) {
-      // [🐞]
-      console.error(`❌ Moralis auth error: ${error}`)
+      errlog(`Moralis Auth error: ${error}`)
       processing = false;
     }
   }
 
-  function success_auth_wrap (
-    user?: User, 
-    web3_wallet_addr?: string
+  async function success_auth_wrap (
+    firebase_user?: User,
+    web3_wallet_addr?: string,
+    auth_provider_type?: Auth_Type
   ) {
     // NOTE: complete authetication
-    let user_obj: Scores_User = user
-    // [ℹ] initiate stores
-    if (user != undefined) {
-      user_obj.web3_wallet_addr = undefined
+    let user_obj: Scores_User = {
+      firebase_user_data: firebase_user,
+      scores_user_data: {
+        lang: server_side_language,
+        registration_type: [],
+        // NOTE: max. length - no separator - no random digits
+        username: generateUsername("", 0, 10),
+        register_date: firebase_user?.metadata?.creationTime,
+        profile_photo: firebase_user?.photoURL,
+        web3_wallet_addr: web3_wallet_addr || undefined
+      }
     }
     if (web3_wallet_addr != undefined) {
-      user_obj = {
-        phoneNumber: undefined,
-        photoURL: undefined,
-        providerId: undefined,
-        uid: undefined,
-        reload: undefined,
-        toJSON: undefined,
-        displayName: undefined,
-        email: undefined,
-        tenantId: undefined,
-        delete: undefined,
-        getIdToken: undefined,
-        getIdTokenResult: undefined,
-        refreshToken: undefined,
-        providerData: undefined,
-        metadata: undefined,
-        isAnonymous: undefined,
-        emailVerified: undefined,
-        web3_wallet_addr: undefined
-      }
-      user_obj.web3_wallet_addr = web3_wallet_addr
+      // user_obj = {
+      //   // Google User TYPE
+      //   phoneNumber: undefined,
+      //   photoURL: undefined,
+      //   providerId: undefined,
+      //   uid: undefined,
+      //   reload: undefined,
+      //   toJSON: undefined,
+      //   displayName: undefined,
+      //   email: undefined,
+      //   tenantId: undefined,
+      //   delete: undefined,
+      //   getIdToken: undefined,
+      //   getIdTokenResult: undefined,
+      //   refreshToken: undefined,
+      //   providerData: undefined,
+      //   metadata: undefined,
+      //   isAnonymous: undefined,
+      //   emailVerified: undefined,
+      //   // Betarena User TYPE
+      //   lang: undefined, // TODO:
+      //   profile_photo: undefined, // TODO: 
+      //   register_date: undefined, // TODO:
+      //   registration_type: [], // TODO:
+      //   username: undefined,
+      //   web3_wallet_addr: undefined
+      // }
+      // user_obj.web3_wallet_addr = web3_wallet_addr
     }
+    // [ℹ] populate user data to firestore (DB)
+    try {
+      dlog(user_obj?.firebase_user_data.uid)
+      dlog(typeof(user_obj))
+      await setDoc(
+        doc(
+          db_firestore, 
+          "betarena_users", 
+          user_obj?.firebase_user_data?.uid
+        ), 
+        JSON.parse(JSON.stringify(user_obj.scores_user_data))
+      );
+    } catch (e) {
+      console.error("Error adding document: ", e);
+    }
+    // [ℹ] continue;
     userBetarenaSettings.signInUser(user_obj)
     // [ℹ] default UI/UX triggers
     $sessionStore.auth_show = false
@@ -538,61 +554,51 @@ COMPONENT JS (w/ TS)
     }
   }
 
+  ////// CLOCKDOWN TIMER EMAIL CHECk
+
+  $: if (sent_email_date != undefined) {
+    dateObjDif =
+      sent_email_date.getTime() - Date.parse(new Date().toString());
+    setInterval(() => {
+			dateObjDif =
+        sent_email_date.getTime() - Date.parse(new Date().toString());
+		}, 1000);
+  }
+  $: countD_sec = Math.floor((dateObjDif / 1000) % 60).toString();
+	$: if (parseInt(countD_sec) < 10) {
+		countD_sec = '0' + countD_sec;
+	}
+	$: countD_min = Math.floor((dateObjDif / 1000 / 60) % 60).toString();
+	$: if (parseInt(countD_min) < 10) {
+		countD_min = '0' + countD_min;
+	}
+  $: if (countD_sec.includes('-')) {
+    // sent_email_date = undefined
+    allow_resend = true
+  } else {
+    allow_resend = false
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
+  // VIEWPORT CHANGES | IMPORTANT
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let tabletView = 1160;
-  let mobileView = 725;
-  let mobileExclusive: boolean = false;
-  let tabletExclusive: boolean = false;
+  const TABLET_VIEW = 1160
+  const MOBILE_VIEW = 725
+  let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit = document.documentElement.clientWidth;
-		if (wInit >= tabletView) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		if (wInit <= mobileView) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
+		[tabletExclusive, mobileExclusive] = viewport_change (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    )
 		window.addEventListener('resize', function () {
-			var w = document.documentElement.clientWidth;
-      if (w >= tabletView) {
-				tabletExclusive = false;
-			} else {
-				tabletExclusive = true;
-			}
-			if (w <= mobileView) {
-				mobileExclusive = true;
-			} else {
-				mobileExclusive = false;
-			}
+		  [tabletExclusive, mobileExclusive] = viewport_change (
+        TABLET_VIEW,
+        MOBILE_VIEW
+      )
 		});
   });
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // REACTIVE LANG SVELTE
-  // [! CRITICAL !]
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  let server_side_language: string = 'en';
-  $: if ($page.routeId != null
-    && !$page.error
-  ) {
-    if ($page.routeId.includes("[lang=lang]")) {
-		  server_side_language = $page.params.lang;
-    }
-    else {
-      server_side_language = 'en';
-    }
-	  }
-  else {
-    server_side_language = 'en';
-  }
 
 </script>
 
