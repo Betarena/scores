@@ -70,6 +70,7 @@
   ]
 
   let probabilities_order = [ 
+    'btts',
     'over_2_5',
     "over_3_5",
     "under_2_5",
