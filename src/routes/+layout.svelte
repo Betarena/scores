@@ -1,6 +1,5 @@
 <!-- ===================
-  COMPONENT JS - BASIC 
-  [TypeScript Written]
+  COMPONENT SCRIPT 
 =================== -->
 
 <script lang="ts">
@@ -10,47 +9,24 @@
 
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote } from '$lib/store/vote_fixture';
-
-  import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
-  import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
-/*
-    [v1]
-    Standard Imports (client-side)
-  */
-
-  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
-  import Footer from '$lib/components/_main_/footer/_Footer.svelte';
-  import Header from '$lib/components/_main_/header/_Header.svelte';
-  import OfflineAlert from '$lib/components/_Offline_alert.svelte';
-  import PlatformAlert from '$lib/components/_Platform_alert.svelte';
-  import SplashScreen from '$lib/components/_Splash_screen.svelte';
-/*
-    [v2] 
-    Dynamic Imports (client-side)
-  */
-
-  /*
-    let Footer;
-    let Header;
-    let OfflineAlert;
-    let SplashScreen;
-    let PlatformAlert;
-    let EmailSubscribe;
-
-    onMount(async () => {
-      Footer = (await import('$lib/components/footer/_Footer.svelte')).default;
-      Header = (await import('$lib/components/header/_Header.svelte')).default;
-      OfflineAlert = (await import('$lib/components/_Offline_alert.svelte')).default;
-      SplashScreen = (await import('$lib/components/_Splash_screen.svelte')).default;
-      PlatformAlert = (await import('$lib/components/_Platform_alert.svelte')).default;
-      EmailSubscribe = (await import('$lib/components/_Email_subscribe.svelte')).default;
-    });
-  */
-  
+  import { dlog } from '$lib/utils/debug';
   import * as Sentry from "@sentry/browser";
   import { BrowserTracing } from "@sentry/tracing";
 
+  import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
+  import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
+
+  import Navbar from '$lib/components/page/profile/Navbar.svelte';
+  import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
+  import Footer from '$lib/components/_main_/footer/_Footer.svelte';
+  import Header from '$lib/components/_main_/header/Header.svelte';
+  import OfflineAlert from '$lib/components/_Offline_alert.svelte';
+  import PlatformAlert from '$lib/components/_Platform_alert.svelte';
+  import SplashScreen from '$lib/components/_Splash_screen.svelte';
+
   import '../app.css';
+
+  const VALID_PROFILE_PAGE_URL: string[] = ['/u/dashboard', '/u/settings']
 
   let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response
   let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response
@@ -86,7 +62,7 @@
   // [ℹ] hide/show offline alert
   let offlineMode: boolean = false;
   async function toggleOfflineAlert() {
-    if (dev) console.debug('🔴 your internet connection has changed!');
+    dlog('🔴 your internet connection has changed!', true)
     offlineMode = !offlineMode;
   }
 </script>
@@ -98,8 +74,8 @@
 <svelte:head>
   <!-- https://github.com/sveltejs/kit/issues/3091 -->
   <html lang="{
-    $page.params.lang === undefined || 
-    $page.error 
+    $page.params.lang === undefined 
+    || $page.error 
       ? 'en' 
       : $page.params.lang === 'br'
         ? 'pt-BR'
@@ -108,90 +84,36 @@
   />
 </svelte:head>
 
-<!-- [ℹ] SEO-DATA-LOADED 
-- ->
-{#if !browser &&
-      HEADER_TRANSLATION_DATA &&
-      FOOTER_TRANSLATION_DATA}
-  
-  <div 
-    id="seo-widget-container">
-
-    <!-- [ℹ] HEADER SEO
-    - ->
-    <div>
-      {#if HEADER_TRANSLATION_DATA.scores_header_translations.lang != 'en'}
-        <a
-          data-sveltekit-prefetch
-          href={$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations.lang}>
-          <p>{$page.url.origin + '/' + HEADER_TRANSLATION_DATA.scores_header_translations.lang}</p>
-        </a>
-      {:else}
-        <a
-          data-sveltekit-prefetch
-          href={$page.url.origin}>
-          <p>{$page.url.origin}</p>
-        </a>
-      {/if}
-    </div>
-
-    <!-- [ℹ] FOOTER SEO 
-    - ->
-    <div>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.latest_news}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.about_us}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.betting_tips}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.privacy}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks}</p>
-      <p>{FOOTER_TRANSLATION_DATA.scores_footer_links.terms}</p>
-      <!-- [ℹ] nav-links-social-links
-      - ->
-      {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
-        <p>{social_network[1].toString().toLocaleLowerCase()}</p>
-      {/each}
-    </div>
-
-  </div>
-{/if}
--->
-
 <!-- ===================
   COMPONENT HTML
 =================== -->
 
 {#if offlineMode}
-  <svelte:component this={OfflineAlert} />
+  <OfflineAlert />
 {/if}
 
-<!-- <PlatformAlert {HEADER_TRANSLATION_DATA} /> -->
-<!-- <SplashScreen /> -->
-<!-- <EmailSubscribe /> -->
-<!-- <Header {HEADER_TRANSLATION_DATA} /> -->
+<PlatformAlert {HEADER_TRANSLATION_DATA} />
+<SplashScreen />
+<EmailSubscribe />
 
-<svelte:component this={PlatformAlert} {HEADER_TRANSLATION_DATA} />
-<svelte:component this={SplashScreen} />
-<svelte:component this={EmailSubscribe} />
-<svelte:component this={Header} {HEADER_TRANSLATION_DATA} />
+{#if !VALID_PROFILE_PAGE_URL.includes($page?.url?.pathname)}
+  <Header {HEADER_TRANSLATION_DATA} />
+{/if}
 
-<main class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
+<main 
+  class:dark-background={$userBetarenaSettings.theme == 'Dark'}>
+  {#if VALID_PROFILE_PAGE_URL.includes($page?.url?.pathname)}
+    <Navbar />
+  {/if}
   <slot />
-  <svelte:component this={Footer} {FOOTER_TRANSLATION_DATA} />
+  <Footer {FOOTER_TRANSLATION_DATA} />
 </main>
-
 
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
 
-
 <style>
-  #seo-widget-container {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
-  
 	main {
     /* 
     so nothing exceeds the main-page-boundries */
@@ -219,7 +141,8 @@
   }
 
   /* 
-  RESPONSIVE FOR TABLET (&+) [768px] */
+  RESPONSIVE FOR TABLET (&+) [768px] 
+  */
   @media screen and (min-width: 768px) {
     main::before {
       height: 495px;
@@ -227,7 +150,8 @@
   }
 
   /* 
-  RESPONSIVE FOR TABLET (&+) [768px] */
+  RESPONSIVE FOR TABLET (&+) [768px] 
+  */
   @media screen and (min-width: 1024px) {
     main::before {
       height: 100%;
