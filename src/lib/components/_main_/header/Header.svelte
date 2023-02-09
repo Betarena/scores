@@ -30,16 +30,15 @@ COMPONENT JS - BASIC
   import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/_main_/navbar/types";
 
 	import { sessionStore } from '$lib/store/session';
+	import { viewport_change } from '$lib/utils/platform-functions';
 	import AuthWidget from '../auth/Auth_Widget.svelte';
 
-  /**
-   * [ℹ] component variables;
-  */
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  COMPONENT VARIABLES
+  // ~~~~~~~~~~~~~~~~~~~~~
 
 	export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
   
-  let mobileExclusive: boolean = false;
-	let tabletExclusive: boolean = false;
 	let mobileNavToggleMenu: boolean = false;
 	let mobileExclusiveMoreSports: boolean = false;
   let dropdown_lang_visible: boolean = false;
@@ -55,42 +54,32 @@ COMPONENT JS - BASIC
   let hideSEO: boolean = false;
   let langSelected: boolean = false;
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  // VIEWPORT CHANGES | IMPORTANT
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  const TABLET_VIEW = 1160
+  const MOBILE_VIEW = 560
+  let mobileExclusive, tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		[tabletExclusive, mobileExclusive] = viewport_change (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    )
+		window.addEventListener('resize', function () {
+		  [tabletExclusive, mobileExclusive] = viewport_change (
+        TABLET_VIEW,
+        MOBILE_VIEW
+      )
+		});
+  });
+
   /**
    * ~~~~~~~~~~~~~~
    * COMPONENT REACTIVIYY METHODS
    * ~~~~~~~~~~~~~~
   */
-
-  onMount(async () => {
-		var wInit = document.documentElement.clientWidth;
-		// TABLET - VIEW
-		if (wInit >= 1160) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		// MOBILE - VIEW
-		if (wInit < 560) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
-		window.addEventListener('resize', function () {
-			var w = document.documentElement.clientWidth;
-			// TABLET - VIEW
-			if (w >= 1160) {
-				tabletExclusive = false;
-			} else {
-				tabletExclusive = true;
-			}
-			// MOBILE - VIEW
-			if (w < 560) {
-				mobileExclusive = true;
-			} else {
-				mobileExclusive = false;
-			}
-		});
-	});
 
   // [ℹ] IMPORTANT - LANG SELECTION [SERVER-SIDE-RENDER]
 	$: if ($page.routeId != null &&
@@ -115,30 +104,25 @@ COMPONENT JS - BASIC
   }
 
 	$: if (browser) {
-
     hideSEO = true
-
 		if (!langSelected) {
       langSelected = true;
       userBetarenaSettings.setLang(server_side_language);
 			// selectLanguage(server_side_language);
 		}
-
     setUserCountryBookmakerLocation();
 	}
 
-  /**
-   * ~~~~~~~~~~~~~~
-   * COMPONENT METHODS
-   * ~~~~~~~~~~~~~~
-  */
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  COMPONENT METHODS
+  // ~~~~~~~~~~~~~~~~~~~~~
 
   /**
-   * [ℹ] update the user selected Language `.localStorage()`
-   * [ℹ] complex naviational structure
-   * [ℹ] main platform navigation entry
+   * @description update user selected lang on
+   * localStorage; including complex naviational structure;
+   * holds main platform navigation entry
   */
-	async function selectLanguage(lang: string) {
+	async function selectLanguage (lang: string) {
     
     // [ℹ] get past instance of LANG;
     const pastLang: string = $userBetarenaSettings.lang == "en" ? "/" : "/" + $userBetarenaSettings.lang;
@@ -266,7 +250,7 @@ COMPONENT JS - BASIC
    * [ℹ] udpate the user selected 
    * [ℹ] THEME `.localStorage()`
   */
-	function selectedTheme(theme: string) {
+	function selectedTheme (theme: string) {
 		// [ℹ] hide the theme dropdown [OPTIONAL];
 		// dropdown_theme_visible = false
 		// [ℹ] update the THEME selection user settings
@@ -277,7 +261,7 @@ COMPONENT JS - BASIC
    * [ℹ] update the user selected 
    * [ℹ] CountryBookmaker `.localStorage()`
   */
-	function selectedCountryBookmakers(countryBookemaker: string) {
+	function selectedCountryBookmakers (countryBookemaker: string) {
 		// [ℹ] hide the countryBookmakers selection [OPTIONAL];
 		// dropdown_bookmakers_visible = false
 		// [ℹ] update the userCountryBookmakerSelection settings;
@@ -289,12 +273,12 @@ COMPONENT JS - BASIC
    * [ℹ] Sport `.localStorage()`
   */
   // TODO:
-  function selectedSport(sport: string) {
+  function selectedSport (sport: string) {
   }
 
   /**
    * [ℹ] get & set user location;
-  */
+   */
 	async function setUserCountryBookmakerLocation() {
 
     // [ℹ] assign pre-set country-code
@@ -348,9 +332,9 @@ COMPONENT JS - BASIC
 	}
 
   /**
-   * [ℹ] closes all dropdown boxes;
-  */
-	function closeAllDropdowns() {
+   * @description simply closes all possible dropdowns open
+	 */
+	function closeAllDropdowns(): void {
 		dropdown_lang_visible = false;
 		dropdown_theme_visible = false;
 		dropdown_odds_type_visible = false;
@@ -360,9 +344,9 @@ COMPONENT JS - BASIC
 	}
 
 	/**
-   * [ℹ] reload current page;
-	*/
-  function reloadPage() {
+   * @description simply reloads the current page
+	 */
+  function reloadPage(): void {
     if ($page.url.pathname.split("/").length-1 == 1) {
       window.location.reload();
     }
@@ -374,7 +358,7 @@ COMPONENT JS - BASIC
   // })
 
   /**
-   * [ℹ] logout current user;
+   * @description logout user; and additional ui changes
 	*/
   function logout() {
     dropdown_user_auth = false
@@ -443,7 +427,6 @@ TODO:FIXME: not generating for each LANG
 -->
 <header
   class="column-space-center">
-
   <!-- 
   [ℹ] area outside to close action (inner header)
   -->
@@ -560,21 +543,12 @@ TODO:FIXME: not generating for each LANG
               <!-- 
               [ℹ] arrow down [hidden-menu] 
               -->
-              {#if !dropdown_lang_visible}
-                <img 
-                  src={arrow_down} 
-                  alt="arrow_down" 
-                  width="16px" 
-                  height="16px" 
-                />
-              {:else}
-                <img 
-                  src={arrow_up} 
-                  alt="arrow_up" 
-                  width="16px" 
-                  height="16px" 
-                />
-              {/if}
+              <img 
+                src={!dropdown_lang_visible ? arrow_down : arrow_up} 
+                alt={!dropdown_lang_visible ? 'arrow_down' : 'arrow_up'} 
+                width="16" 
+                height="16" 
+              />
             </div>
             <!-- 
             [ℹ] INITIALLY-HIDDEN drop-down menu 
@@ -701,23 +675,13 @@ TODO:FIXME: not generating for each LANG
             <!-- 
             [ℹ] arrow down [hidden-menu] 
             -->
-            {#if !dropdown_theme_visible}
-              <img
-                src={arrow_down_fade}
-                alt="arrow_down_fade"
-                width="16px"
-                height="16px"
-                on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
-              />
-            {:else}
-              <img
-                src={arrow_up}
-                alt="arrow_up"
-                width="16px"
-                height="16px"
-                on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
-              />
-            {/if}
+            <img
+              src={!dropdown_theme_visible ? arrow_down_fade : arrow_up}
+              alt={!dropdown_theme_visible ? 'arrow_down_fade' : 'arrow_up'}
+              width="16"
+              height="16"
+              on:click={() => (dropdown_theme_visible = !dropdown_theme_visible)}
+            />
             <!-- 
             [ℹ] INIT-HIDDEN-dropdown-theme-select 
             -->
@@ -788,21 +752,12 @@ TODO:FIXME: not generating for each LANG
             <!-- 
             [ℹ] arrow down [hidden-menu] 
             -->
-            {#if !dropdown_odds_type_visible}
-              <img 
-                src={arrow_down_fade} 
-                alt="arrow_down_fade" 
-                width="16px" 
-                height="16px" 
-              />
-            {:else}
-              <img 
-                src={arrow_up} 
-                alt="arrow_up" 
-                width="16px" 
-                height="16px" 
-              />
-            {/if}
+            <img 
+              src={!dropdown_odds_type_visible ? arrow_down_fade : arrow_up} 
+              alt={!dropdown_odds_type_visible ? 'arrow_down_fade' : 'arrow_up'}
+              width="16" 
+              height="16" 
+            />
             <!-- 
             [ℹ] INIT-HIDDEN-dropdown-odds-type 
             -->
@@ -842,7 +797,8 @@ TODO:FIXME: not generating for each LANG
             "
             on:click={() => (dropdown_bookmakers_visible = !dropdown_bookmakers_visible)}>
             <!-- 
-            [ℹ] name of the container-opt -->
+            [ℹ] name of the container-opt 
+            -->
             <div 
               class="m-r-10">
               <p
@@ -881,24 +837,17 @@ TODO:FIXME: not generating for each LANG
               </div>
             </div>
             <!-- 
-            [ℹ] arrow down [hidden-menu] -->
-            {#if !dropdown_bookmakers_visible}
-              <img 
-                src={arrow_down_fade} 
-                alt="arrow_down_fade" 
-                width="16px" 
-                height="16px" 
-              />
-            {:else}
-              <img 
-                src={arrow_up} 
-                alt="arrow_up" 
-                width="16px" 
-                height="16px" 
-              />
-            {/if}
+            [ℹ] arrow down [hidden-menu]
+            -->
+            <img 
+              src={!dropdown_bookmakers_visible ? arrow_down_fade : arrow_up} 
+              alt={!dropdown_bookmakers_visible ? 'arrow_down_fade' : 'arrow_up'}
+              width="16" 
+              height="16" 
+            />
             <!-- 
-            [ℹ] INIT-HIDDEN-dropdown-bookmakers-type -->
+            [ℹ] INIT-HIDDEN-dropdown-bookmakers-type 
+            -->
             {#if dropdown_bookmakers_visible}
               <div 
                 id="bookmakers-type-dropdown-menu" 
@@ -941,7 +890,7 @@ TODO:FIXME: not generating for each LANG
         [ℹ] sign-in-btn 
         [ℹ] <conditional>
         -->
-        {#if $userBetarenaSettings.user == undefined}
+        {#if $userBetarenaSettings?.user == undefined}
           <button
             id="sign-in-btn"
             class="cursor-pointer"
@@ -954,7 +903,7 @@ TODO:FIXME: not generating for each LANG
               {HEADER_TRANSLATION_DATA.scores_header_translations.sign_in}
             </p>
           </button>
-        {:else if $userBetarenaSettings.user != undefined}
+        {:else if $userBetarenaSettings?.user != undefined}
           <div
             id="user-profile-box"
             class="row-space-start">
@@ -962,16 +911,16 @@ TODO:FIXME: not generating for each LANG
             [ℹ] user wallet address
             [ℹ] <conditional>
             -->
-            {#if $userBetarenaSettings.user?.web3_wallet_addr != undefined}
+            {#if $userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr != undefined}
               <p
                 id="wallet-text"
                 class="
                   color-white
                   w-500
                 ">
-                {$userBetarenaSettings.user?.web3_wallet_addr.slice(0, 5)}
+                {$userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr.slice(0, 5)}
                 ...
-                {$userBetarenaSettings.user?.web3_wallet_addr.slice(-5)}
+                {$userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr.slice(-5)}
               </p>
             {/if}
             <!--
@@ -992,21 +941,24 @@ TODO:FIXME: not generating for each LANG
                 id="user-profile-dropdown">
                 <!--
                 [ℹ] profile page button
-                <div
-                  class="
-                    theme-opt-box
-                    cursor-pointer
-                  "
-                  on:click={() => (dropdown_odds_type_visible = false)}>
-                  <p 
-                    class="
-                      color-white 
-                      s-14
-                    ">
-                    Profile
-                  </p>
-                </div>
                 -->
+                <a 
+                  href="/u/dashboard">
+                  <div
+                    class="
+                      theme-opt-box
+                      cursor-pointer
+                    "
+                    on:click={() => (dropdown_odds_type_visible = false)}>
+                    <p 
+                      class="
+                        color-white 
+                        s-14
+                      ">
+                      Profile
+                    </p>
+                  </div>
+                </a>
                 <!--
                 [ℹ] logout page button
                 -->
@@ -1218,22 +1170,14 @@ TODO:FIXME: not generating for each LANG
               {HEADER_TRANSLATION_DATA.scores_header_translations.more_sports}
             </p>
             <!-- 
-            [ℹ] arrow down [hidden-menu] -->
-            {#if !dropdown_more_sports_menu}
-              <img 
-                src={arrow_down_fade} 
-                alt="arrow_down_fade" 
-                width="20px" 
-                height="20px" 
-              />
-            {:else}
-              <img 
-                src={arrow_up} 
-                alt="arrow_up" 
-                width="20px" 
-                height="20px" 
-              />
-            {/if}
+            [ℹ] arrow down [hidden-menu] 
+            -->
+            <img 
+              src={!dropdown_more_sports_menu ? arrow_down_fade : arrow_up} 
+              alt={!dropdown_more_sports_menu ? 'arrow_down_fade' : 'arrow_up'} 
+              width="20" 
+              height="20" 
+            />
           </button>
           <!-- 
           [ℹ] menu-more-sports-btn-mobile -->
@@ -1404,11 +1348,12 @@ TODO:FIXME: not generating for each LANG
                     <!-- 
                     [ℹ] arrow down [hidden-menu] 
                     -->
-                    {#if !dropdown_lang_visible}
-                      <img src={arrow_down} alt="arrow_down" width="16px" height="16px" />
-                    {:else}
-                      <img src={arrow_up} alt="arrow_up" width="16px" height="16px" />
-                    {/if}
+                    <img 
+                      src={!dropdown_lang_visible ? arrow_down : arrow_up} 
+                      alt={!dropdown_lang_visible ? 'arrow_down' : 'arrow_up'}
+                      width="16" 
+                      height="16" 
+                    />
                   </div>
                   <!-- 
                   [ℹ] INIT-HIDDEN drop-down menu 
@@ -1508,17 +1453,15 @@ TODO:FIXME: not generating for each LANG
                         {/if}
                       {/each}
                     </div>
-                    <!-- [ℹ] arrow down [hidden-menu] -->
-                    {#if !dropdown_theme_visible}
-                      <img
-                        src={arrow_down_fade}
-                        alt="arrow_down_fade"
-                        width="16px"
-                        height="16px"
-                      />
-                    {:else}
-                      <img src={arrow_up_fade} alt="arrow_up_fade" width="16px" height="16px" />
-                    {/if}
+                    <!-- 
+                    [ℹ] arrow down [hidden-menu] 
+                    -->
+                    <img
+                      src={!dropdown_theme_visible ? arrow_down_fade : arrow_up_fade}
+                      alt={!dropdown_theme_visible ? 'arrow_down_fade' : 'arrow_up_fade'}
+                      width="16"
+                      height="16"
+                    />
                   </div>
                 </div>
                 <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
@@ -1555,17 +1498,15 @@ TODO:FIXME: not generating for each LANG
                     <p class="color-white s-14">
                       {HEADER_TRANSLATION_DATA.scores_header_translations.odds_type[0]}
                     </p>
-                    <!-- [ℹ] arrow down [hidden-menu] -->
-                    {#if !dropdown_odds_type_visible}
-                      <img
-                        src={arrow_down_fade}
-                        alt="arrow_down_fade"
-                        width="16px"
-                        height="16px"
-                      />
-                    {:else}
-                      <img src={arrow_up_fade} alt="arrow_up_fade" width="16px" height="16px" />
-                    {/if}
+                    <!-- 
+                    [ℹ] arrow down [hidden-menu] 
+                    -->
+                    <img
+                      src={!dropdown_odds_type_visible ? arrow_down_fade : arrow_up_fade}
+                      alt={!dropdown_odds_type_visible ? 'arrow_down_fade' : 'arrow_up_fade'}
+                      width="16"
+                      height="16"
+                    />
                   </div>
                 </div>
                 <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
@@ -1614,17 +1555,15 @@ TODO:FIXME: not generating for each LANG
                         {/each}
                       {/if}
                     </div>
-                    <!-- [ℹ] arrow down [hidden-menu] -->
-                    {#if !dropdown_bookmakers_visible}
-                      <img
-                        src={arrow_down_fade}
-                        alt="arrow_down_fade"
-                        width="16px"
-                        height="16px"
-                      />
-                    {:else}
-                      <img src={arrow_up_fade} alt="arrow_up_fade" width="16px" height="16px" />
-                    {/if}
+                    <!-- 
+                    [ℹ] arrow down [hidden-menu] 
+                    -->
+                    <img
+                      src={!dropdown_bookmakers_visible ? arrow_down_fade : arrow_up_fade}
+                      alt={!dropdown_bookmakers_visible ? arrow_down_fade : arrow_up_fade}
+                      width="16"
+                      height="16"
+                    />
                   </div>
                 </div>
                 <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
