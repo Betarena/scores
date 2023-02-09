@@ -36,17 +36,22 @@ COMPONENT HTML
   [ℹ] icon 
   [ℹ] text 
   -->
-  <div 
+  <div
     id='background-modal-blur'>
     <div
-      id="dashboard-not-available-container">
+      id="dashboard-not-available-container"
+      class="text-center">
       <img 
         src={home} 
         alt=""
+        width="40"
+        height="40"
+        class="m-b-16"
       />
       <p
         class="
           color-grey
+          s-14
         ">
         Dashboard content will be available soon
       </p>
@@ -56,10 +61,10 @@ COMPONENT HTML
   [ℹ] widget title
   -->
   <h2
+    id="widget-title"
     class="
       w-500
       s-20
-      m-b-24  
     ">
     Dashboard
   </h2>
@@ -67,6 +72,7 @@ COMPONENT HTML
   [ℹ] dashboard stats info
   -->
   <div
+    id="stats-box"
     class="dashboard-row-info">
     <img 
       src={stats_row_img}
@@ -77,31 +83,29 @@ COMPONENT HTML
   [ℹ] dashboard metamask info (#1)
   -->
   <div
-    class="
-      row-space-out
-      dashboard-row-info
-    ">
+    id="nft-volume-box"
+    class="dashboard-row-info">
     <img 
       src={metamask_volume}
       alt="Metamask Volume"
-      style="
-        width: -webkit-fill-available;
-        max-width: 50%;
-      "
     />
+  </div>
+  <!-- 
+  [ℹ] dashboard metamask info (#1)
+  -->
+  <div
+    id="nft-marketshare-box"
+    class="dashboard-row-info">
     <img 
       src={nft_marketshare_img}
       alt="Metamask Volume"
-      style="
-        width: -webkit-fill-available;
-        max-width: 50%;
-      "
     />
   </div>
   <!-- 
   [ℹ] dashboard metamask info (#2)
   -->
   <div
+    id="metamask-percent-ratio"
     class="dashboard-row-info">
     <img 
       src={metamask_percent_ration}
@@ -115,6 +119,8 @@ COMPONENT STYLE
 =================-->
 
 <style>
+
+  /* layer (top) box */
   div#background-modal-blur {
     position: absolute;
     top: 0;
@@ -136,7 +142,8 @@ COMPONENT STYLE
     top: 0;
     bottom: 0;
   }
-  /* account widget */
+
+  /* (main) account widget */
   div#dashboard-widget-container {
     position: relative;
     background: #FFFFFF;
@@ -144,9 +151,66 @@ COMPONENT STYLE
     border-radius: 12px;
     padding: 20px;
     overflow: hidden;
-  } div#dashboard-widget-container div.dashboard-row-info {
-    padding: 20px 0;
-  } div#dashboard-widget-container div.dashboard-row-info img {
-    width: -webkit-fill-available;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 20px;
+    max-height: 572px;
+    overflow: hidden;
   }
+
+  h2 {
+    margin: 0;
+  }
+
+  /* grid control */
+  div#dashboard-widget-container > h2#widget-title {
+    grid-row: 1;
+    grid-column: 1/2;
+  } div#dashboard-widget-container > div#stats-box {
+    grid-row: 2;
+    grid-column: 1/2;
+  } div#dashboard-widget-container > div#nft-volume-box {
+    grid-row: 3;
+    grid-column: 1/2;
+  } div#dashboard-widget-container > div#nft-marketshare-box {
+    grid-row: 4;
+    grid-column: 1/2;
+  } div#dashboard-widget-container > div#metamask-percent-ratio {
+    grid-row: 5;
+    grid-column: 1/2;
+  }
+
+  /* grid (items) control */
+  div#dashboard-widget-container div.dashboard-row-info {
+  } div#dashboard-widget-container div.dashboard-row-info img {
+    width: 100%;
+  }
+
+  /* ====================
+    RESPONSIVNESS
+  ==================== */
+
+  @media only screen and (min-width: 575px)  {
+    /* grid control */
+    div#dashboard-widget-container {
+      grid-template-columns: 1fr 1fr;
+      max-height: unset;
+    } div#dashboard-widget-container > h2#widget-title {
+      grid-row: unset;
+      grid-column: 1/4;
+    } div#dashboard-widget-container > div#stats-box {
+      grid-row: unset;
+      grid-column: 1/4;
+    } div#dashboard-widget-container > div#nft-volume-box {
+      grid-column: 1/2;
+      grid-row: unset;
+    } div#dashboard-widget-container > div#nft-marketshare-box {
+      grid-row: unset;
+      grid-column: 2/4;
+    } div#dashboard-widget-container > div#metamask-percent-ratio {
+      grid-row: unset;
+      grid-column: 1/4;
+    }
+  }
+
 </style>
