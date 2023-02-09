@@ -362,7 +362,9 @@
               if (live_event.type == 'redcard') {
                 player.events.yeallow_card = 1;
               }
-              if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+              if (live_event.type == 'goal' 
+              || live_event.type == 'own-goal'
+              || live_event.type == 'penalty') {
                 player.events.goals =
                   player.events.goals == null
                     ? 1
@@ -411,7 +413,9 @@
             if (live_event.type == 'redcard') {
               player.events.yeallow_card = 1;
             }
-            if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+            if (live_event.type == 'goal' 
+            || live_event.type == 'own-goal'
+            || live_event.type == 'penalty') {
               player.events.goals =
                 player.events.goals == null
                   ? 1
@@ -465,7 +469,9 @@
               if (live_event.type == 'redcard') {
                 player.events.yeallow_card = 1;
               }
-              if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+              if (live_event.type == 'goal' 
+              || live_event.type == 'own-goal'
+              || live_event.type == 'penalty') {
                 player.events.goals =
                   player.events.goals == null
                     ? 1
@@ -514,7 +520,9 @@
             if (live_event.type == 'redcard') {
               player.events.yeallow_card = 1;
             }
-            if (live_event.type == 'goal' || live_event.type == 'own-goal') {
+            if (live_event.type == 'goal' 
+            || live_event.type == 'own-goal'
+            || live_event.type == 'penalty') {
               player.events.goals =
                 player.events.goals == null
                   ? 1
