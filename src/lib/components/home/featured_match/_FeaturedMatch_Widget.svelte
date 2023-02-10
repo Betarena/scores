@@ -34,7 +34,6 @@
 
 	// [ℹ] main component variables;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
-  export let FEATURED_MATCH_WIDGET_DATA_MAIN: FixtureResponse;
 
 	// [ℹ] intercept-key data;
 	let FEATURED_MATCH_WIDGET_DATA: FixtureResponse;
@@ -98,10 +97,9 @@
 		let userGeo: string = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
 		const response: FixtureResponse = await get('api/cache/home/featured_match?geoPos='+userGeo)
-    // const response: FixtureResponse = FEATURED_MATCH_WIDGET_DATA_MAIN;
 
 		// [ℹ] if response is null [NO FEATURED-MATCH]
-		if (response == null || response == undefined) {
+		if (response == undefined) {
 			// [ℹ] decalre state;
 			nomatches = true;
 			// [ℹ] return null;
@@ -436,68 +434,82 @@
 
 <div>
 
-	<!-- [ℹ] SEO-DATA-LOADED 
+	<!-- 
+  [ℹ] SEO-DATA-LOADED 
   -->
 	{#if !loaded && !nomatches}
-		<!-- [ℹ] iterate over the data to find the correc language 
-    -->
-    <div id="seo-featured-match-box">
-      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}</p>
-      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.vote}</p>
-      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.assists}</p>
-      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.rating}</p>
-      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.player}</p>
-      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.matches}</p>
-      <p>{FEATURED_MATCH_WIDGET_DATA_SEO.goals}</p>
+    <div 
+      id="seo-featured-match-box">
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO?.vote}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO?.assists}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO?.rating}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO?.player}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO?.matches}</p>
+      <p>{FEATURED_MATCH_WIDGET_DATA_SEO?.goals}</p>
     </div>
 	{/if}
 
-	<!-- [ℹ] NO FEATURED MATCHES AVAILABLE PLACEHOLDER 
+	<!-- 
+  [ℹ] NO FEATURED MATCHES AVAILABLE PLACEHOLDER 
   -->
 	{#if nomatches && !loaded}
-		<!-- [ℹ] title of the widget 
+		<!-- 
+    [ℹ] title of the widget 
     -->
-    <h2 
-    class="s-20 m-b-10 w-500 color-white"
-    style="margin-top: 0px;">
+    <h2
+      class="
+        s-20 
+        m-b-10 
+        w-500 
+        color-white
+      "
+      style="margin-top: 0px;">
       {FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
     </h2>
-
-		<!-- [ℹ] no-matches-avaiable-placeholder container 
+		<!-- 
+    [ℹ] no-matches-avaiable-placeholder container 
     -->
-		<div 
+		<div
 			id='featured-no-match-box'
 			class='row-space-start'
 			class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
-			<!-- [ℹ] no-matches-visual 
+			<!-- 
+      [ℹ] no-matches-visual 
       -->
-			{#if $userBetarenaSettings.theme == 'Dark'}
-				<img 
-					src={no_featured_match_visual_dark} 
-					alt="no-featured-match-visual_dark"
-					width="80px" height="80px"
-					class='m-r-20'
-				/>
-			{:else}
-				<img 
-					src={no_featured_match_visual} 
-					alt="no-featured-match-visual"
-					width="80px" height="80px"
-					class='m-r-20'
-				/>
-			{/if}
-			
-			<!-- [ℹ] container w/ text 
+      <img 
+        src={$userBetarenaSettings.theme == 'Dark' ? no_featured_match_visual_dark : no_featured_match_visual} 
+        alt="No widget visual icon"
+        width="80" 
+        height="80"
+        class='m-r-20'
+      />
+			<!-- 
+      [ℹ] container w/ text 
       -->
 			<div>
-				<p class='s-16 m-b-8 w-500'> No Matches Available </p>
-				<p class='s-16 color-grey w-400'> Sorry, at this time there is no featured match available! </p>
+				<p 
+          class='
+            s-16 
+            m-b-8 
+            w-500
+          '> 
+          {FEATURED_MATCH_WIDGET_DATA_SEO?.place_holder?.info} 
+        </p>
+				<p 
+          class='
+            s-16 
+            color-grey 
+            w-400
+          '> 
+          {FEATURED_MATCH_WIDGET_DATA_SEO?.place_holder?.no_matches}
+        </p>
 			</div>
 		</div>
 	{/if}
 
-  <!-- [ℹ] FEATURED MATCH WIDGET 
+  <!-- 
+  [ℹ] FEATURED MATCH WIDGET 
   -->
 	{#if !nomatches && !refresh}
 		<!-- [ℹ] widget loading 

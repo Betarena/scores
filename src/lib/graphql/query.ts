@@ -85,6 +85,7 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
 			vote
 			winnings
 			widget_title
+      place_holder
 		}
 	}
 `;

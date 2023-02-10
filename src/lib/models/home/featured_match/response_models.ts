@@ -1,4 +1,4 @@
-import type { BETARENA_HASURA_scores_tournaments } from '../hasura';
+import type { BETARENA_HASURA_scores_tournaments } from '../../hasura';
 import type { FixtureResponse, MatchVotes } from './interface-fixture';
 
 /**
@@ -54,34 +54,35 @@ export interface BestPlayers_Data {
 	visitor_team_rating_player_2: number;
 }
 
-/**
- *
-*/
 export interface TranslationsResponse {
-  assists: string;
-  bookmaker: string;
-  bet: string;
-  fair_odds: string;
-  goals: string;
-  home_win: string;
-  lang: string;
-  market: string;
-  market_name: string;
-  market_type: string;
-  matches: string;
-  odds: string;
-  place_bet: string;
-  player: string;
-  players: string;
-  stake: string;
-  rating: string;
-  probability: string;
-  streams: string;
-  type: string;
-  value_bet: string;
-  vote: string;
-  winnings: string;
-  widget_title: string;
+  assists:       string;
+  bookmaker:     string;
+  bet:           string;
+  fair_odds:     string;
+  goals:         string;
+  home_win:      string;
+  lang:          string;
+  market:        string;
+  market_name:   string;
+  market_type:   string;
+  matches:       string;
+  odds:          string;
+  place_bet:     string;
+  player:        string;
+  players:       string;
+  stake:         string;
+  rating:        string;
+  probability:   string;
+  streams:       string;
+  type:          string;
+  value_bet:     string;
+  vote:          string;
+  winnings:      string;
+  widget_title:  string;
+  place_holder: {
+    no_matches:  string
+    info:        string
+  }
 }
 
 /**

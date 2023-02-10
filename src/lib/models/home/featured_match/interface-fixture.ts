@@ -1,6 +1,6 @@
-import type { ScoresTournamentsUrls } from '../hasura';
+import type { ScoresTournamentsUrls } from '../../hasura';
 import type { SelectedFixture_LiveOdds_Response } from './firebase-real-db-interface';
-import type { BestPlayers_Data, SelectedFixutre } from './response_models';
+import type { BestPlayers_Data, SelectedFixutre, TranslationsResponse } from './response_models';
 
 /**
  * INTERFACE
@@ -83,30 +83,7 @@ export interface FixtureResponse {
  * [ℹ] Featured Match Cache Interfaces
 */
 
-export interface Cache_Single_Lang_Featured_Match_Translation_Response {
+export interface Cache_Single_Lang_Featured_Match_Translation_Response 
+  extends TranslationsResponse {
   lang: string;
-
-  assists: string;
-  bookmaker: string;
-  bet: string;
-  fair_odds: string;
-  goals: string;
-  home_win: string;
-  market: string;
-  market_name: string;
-  market_type: string;
-  matches: string;
-  odds: string;
-  place_bet: string;
-  player: string;
-  players: string;
-  stake: string;
-  rating: string;
-  probability: string;
-  streams: string;
-  type: string;
-  value_bet: string;
-  vote: string;
-  winnings: string;
-  widget_title: string;
 }
