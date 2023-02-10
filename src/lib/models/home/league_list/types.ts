@@ -1,8 +1,8 @@
-import type { 
-  BETARENA_HASURA_leagues_filtered_country, 
-  BETARENA_HASURA_scores_general_translations, 
-  BETARENA_HASURA_scores_leagues_list_translations, 
-  BETARENA_HASURA_scores_league_list, 
+import type {
+  BETARENA_HASURA_leagues_filtered_country,
+  BETARENA_HASURA_scores_general_translations,
+  BETARENA_HASURA_scores_leagues_list_translations,
+  BETARENA_HASURA_scores_league_list,
   BETARENA_HASURA_scores_tournaments,
   ScoresTournamentsUrls
 } from "../hasura"
@@ -75,6 +75,7 @@ export interface REDIS_CACHE_SINGLE_league_list_seo_t_response {
     league_name:              string
     logo_path:                string
     type:                     string
+    urls?:                    ScoresTournamentsUrls
   }[]
   unique_county_list: {
     country_id:               number
