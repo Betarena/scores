@@ -11,7 +11,7 @@
   import { get } from "$lib/api/utils";
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from "$lib/store/user-settings";
-  import { logDevGroup } from "$lib/utils/debug";
+  import { dlog, logDevGroup } from "$lib/utils/debug";
 
   import type {
   	REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response,
@@ -52,6 +52,8 @@
 
 	export let TOP_PLAYERS_T:     REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
 	export let TOP_PLAYERS_DATA:  REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
+
+  dlog(TOP_PLAYERS_DATA, false)
 
   if (dev && diasbleDev) logDevGroup ("tournament top_players [DEV]", `TOP_PLAYERS_T: ${TOP_PLAYERS_T}`)
   if (dev && diasbleDev) logDevGroup ("tournament top_players [DEV]", `dropdownPlayerViewSelect: ${dropdownPlayerViewSelect}`)
@@ -262,9 +264,9 @@
     loadedCurrentSeason = true;
   }
 
-  $: if (browser && $sessionStore.selectedSeasonID != undefined) {
-    selectPlayerView(dropdownPlayerViewSelect)
-  }
+  // $: if (browser && $sessionStore.selectedSeasonID != undefined) {
+  //   selectPlayerView(dropdownPlayerViewSelect)
+  // }
 
 </script>
 
