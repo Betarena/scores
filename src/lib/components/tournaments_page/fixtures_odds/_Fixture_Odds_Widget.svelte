@@ -7,7 +7,7 @@
   import { afterNavigate } from "$app/navigation";
   import { page } from "$app/stores";
   import { get } from "$lib/api/utils";
-  import { logDevGroup } from "$lib/utils/debug";
+  import { dlog, dlogv2, logDevGroup } from "$lib/utils/debug";
   import { onDestroy, onMount } from "svelte";
 
   import { getLivescoresNow, getOdds } from "$lib/firebase/fixtures_odds";
@@ -33,6 +33,7 @@
 
   import FixtureOddsWidgetContentLoader from "./_Fixture_Odds_Widget_ContentLoader.svelte";
 
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import one_red_card from './assets/1_red_card.svg';
 	import one_red_card_dark from './assets/1_red_card_dark.svg';
 	import two_red_card from './assets/2_red_cards.svg';
@@ -677,12 +678,18 @@
     .find( ({ season_id }) => 
       season_id === $sessionStore.selectedSeasonID
     );
-
-    if (dev) console.log('FIXTURES_ODDS_DATA', FIXTURES_ODDS_DATA)
+    dlogv2(
+      'FIXTURE ODDS [WIDGET]', 
+      ['$sessionStore.selectedSeasonID', 
+      $sessionStore.selectedSeasonID, 
+      'FIXTURES_ODDS_DATA', 
+      FIXTURES_ODDS_DATA], 
+      true, 
+      'background: violet; color: #000000'
+    )
 
     // [ℹ] validation check (#1)
     if (target_season == undefined) {
-
       // [ℹ] validation check (#1.2)
       // [ℹ] past season
       // [ℹ] get target data
@@ -692,13 +699,13 @@
         const response: Tournament_Season_Fixtures_Odds = await get(`/api/hasura/tournaments/fixture_odds?seasonId=${$sessionStore.selectedSeasonID}`)
         if (response == undefined) {
           noWidgetData = true;
+          loaded = true;
           lazyLoadingSeasonFixture = false;
           return;
         }
         else {
           FIXTURES_ODDS_DATA.seasons
           .push(response)
-          if (dev) console.log('FIXTURES_ODDS_DATA', FIXTURES_ODDS_DATA)
           FIXTURES_ODDS_DATA = FIXTURES_ODDS_DATA
           target_season = response
           lazyLoadingSeasonFixture = false;
@@ -708,6 +715,7 @@
       // [ℹ] no data and exit
       else {
         noWidgetData = true;
+        loaded = true;
         return;
       }
     }
@@ -1128,24 +1136,15 @@
   })
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // REACTIVE LANG SVELTE
-  // [! CRITICAL !]
+  // (SSR) LANG SVELTE | IMPORTANT
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let server_side_language: string = 'en';
-  $: if ($page.routeId != null
-    && !$page.error
-  ) {
-    if ($page.routeId.includes("[lang=lang]")) {
-		  server_side_language = $page.params.lang;
-    }
-    else {
-      server_side_language = 'en';
-    }
-	  }
-  else {
-    server_side_language = 'en';
-  }
+  let server_side_language = platfrom_lang_ssr (
+    $page?.routeId,
+    $page?.error,
+    $page?.params?.lang
+  )
+  dlog(`server_side_language: ${server_side_language}`)
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER
@@ -1154,16 +1153,14 @@
   let loadedCurrentSeason: boolean = false;
   $: if (browser
     && $sessionStore.selectedSeasonID != undefined 
-    && !loadedCurrentSeason
-  ) {
+    && !loadedCurrentSeason) {
     currentSeason = $sessionStore.selectedSeasonID;
     loadedCurrentSeason = true;
   }
 
   $: if (browser
-    && $sessionStore.selectedSeasonID != undefined
-  ) {
-    if (dev) logDevGroup ("fixture odds [DEV]", `Updated season!`)
+    && $sessionStore.selectedSeasonID != undefined) {
+    dlog(`selected season: ${$sessionStore.selectedSeasonID}`, true)
     select_fixtures_odds()
   }
 
@@ -1174,38 +1171,23 @@
   }
   
   // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
+  // VIEWPORT CHANGES | IMPORTANT
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  const tabletView = 1000
-  const mobileView = 725
-  let mobileExclusive: boolean = false;
-  let tabletExclusive: boolean = false;
+  const TABLET_VIEW = 1000
+  const MOBILE_VIEW = 725
+  let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit = document.documentElement.clientWidth;
-		if (wInit >= tabletView) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		if (wInit <= mobileView) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
+		[tabletExclusive, mobileExclusive] = viewport_change (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    )
 		window.addEventListener('resize', function () {
-			var w = document.documentElement.clientWidth;
-      if (w >= tabletView) {
-				tabletExclusive = false;
-			} else {
-				tabletExclusive = true;
-			}
-			if (w <= mobileView) {
-				mobileExclusive = true;
-			} else {
-				mobileExclusive = false;
-			}
+		  [tabletExclusive, mobileExclusive] = viewport_change (
+        TABLET_VIEW,
+        MOBILE_VIEW
+      )
 		});
   });
 
@@ -1213,16 +1195,19 @@
   // DEBUG
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  $: if (dev && enableLogs) {
-    logDevGroup ("fixture odds [DEV]", 
-    `
-    ${browser} 
-    ${!noWidgetData}
-    ${!refresh}
-    ${$userBetarenaSettings.country_bookmaker}
-    ${ready}
-    ${showWidget}
-    `)
+  $: if (dev) {
+    dlogv2(
+      'FIXTURE ODDS [WIDGET]', 
+      [`brwoser: ${browser}`,
+      `noWidgetData: ${noWidgetData}`,
+      `refresh: ${refresh}`,
+      `$userBetarenaSettings.country_bookmaker: ${$userBetarenaSettings.country_bookmaker}`,
+      `ready: ${ready}`,
+      `showWidget: ${showWidget}`,
+      `loaded: ${loaded}`], 
+      true, 
+      'background: violet; color: #000000'
+    )
   }
 
 </script>
