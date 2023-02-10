@@ -1,5 +1,5 @@
 <!-- ===============
-	  COMPONENT JS (w/ TS)
+	COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
@@ -582,7 +582,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+  COMPONENT HTML 
 =================-->
 
 <div
@@ -596,7 +596,8 @@
       id="seo-widget-box">
       <p>{FIXTURE_SCOREBOARD?.away_team_name}</p>
       <p>{FIXTURE_SCOREBOARD?.home_team_name}</p>
-      <a href={$page.url.href}>
+      <a 
+        href={$page.url.href}>
         {$page.url.href}
       </a>
     </div>
@@ -605,48 +606,44 @@
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if
-    no_widget_data && 
-    loaded}
-
-    <!-- [ℹ] no-widget-data-avaiable-placeholder container 
+  {#if no_widget_data 
+    && loaded}
+    <!-- 
+    [ℹ] no-widget-data-avaiable-placeholder container 
     -->
     <div
       id='no-widget-box'
       class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
       <!-- 
       [ℹ] no-visual-asset
       -->
-      {#if $userBetarenaSettings.theme == 'Dark'}
-        <img 
-          src={no_visual_dark} 
-          alt="no_visual_dark"
-          width=32px
-          height=32px
-          class='m-b-16'
-        />
-      {:else}
-        <img 
-          src={no_visual} 
-          alt="no_visual"
-          width=32px
-          height=32px
-          class='m-b-16'
-        />
-      {/if}
-      
+      <img 
+        src={$userBetarenaSettings.theme == 'Dark' ? no_visual_dark : no_visual} 
+        alt="No visual icon"
+        width=32
+        height=32
+        class='m-b-16'
+      />
       <!-- 
       [ℹ] container w/ text 
       -->
       <div>
         <p 
-          class='s-14 m-b-8 w-500'
+          class='
+            s-14 
+            m-b-8 
+            w-500
+          '
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           NO INFO
         </p>
-        <p class='s-14 color-grey w-400'> 
+        <p 
+          class='
+            s-14 
+            color-grey 
+            w-400
+          '> 
           NO INFO DESC
         </p>
       </div>
@@ -656,11 +653,10 @@
   <!-- 
   [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if
-    !no_widget_data &&
-    !refresh &&
-    browser && 
-    $userBetarenaSettings.country_bookmaker}
+  {#if !no_widget_data
+    && !refresh 
+    && browser 
+    && $userBetarenaSettings.country_bookmaker}
 
     <!-- 
     [ℹ] promise is pending 
@@ -2645,7 +2641,7 @@
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-    max-width: 30px;
+    max-width: 35px;
   } div#scoreboard-widget-container.miniature div#fixture-info-box div.middle-info p.minute-text {
     margin-top: -5px;
   } div#scoreboard-widget-container.miniature div#fixture-info-box div.middle-info {
