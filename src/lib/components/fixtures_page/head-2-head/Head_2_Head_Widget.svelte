@@ -111,6 +111,7 @@
     
     const responses_invalid = 
       FIXTURE_H2H == undefined
+      || FIXTURE_H2H?.teams_data == undefined
       || response == undefined
       || response.historic_fixtures[0] == undefined
       || response.historic_fixtures[0]?.probabilities == undefined
