@@ -478,7 +478,8 @@
         </div>
 
         <!-- 
-        [ℹ] events table -->
+        [ℹ] events table 
+        -->
         <div
           id="incidents-events-box">
 
@@ -543,12 +544,22 @@
                 [ℹ] home team
                 -->
                 {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='L' 
+                  />
                 <!-- 
                 [ℹ] away team
                 -->
                 {:else}
-                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='R' 
+                  />
                 {/if}
               {/if}
             {/each}
@@ -574,12 +585,22 @@
                 [ℹ] home team
                 -->
                 {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='L' 
+                  />
                 <!-- 
                 [ℹ] away team
                 -->
                 {:else}
-                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='R' 
+                  />
                 {/if}
               {/if}
             {/each}
@@ -606,12 +627,22 @@
                 [ℹ] home team
                 -->
                 {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='L' />
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status}
+                    TYPE='L' 
+                  />
                 <!-- 
                 [ℹ] away team
                 -->
                 {:else}
-                  <IncidentRow INCIDENT_INFO={event} {FXITURE_INCIDENTS_TRANSLATION} STATUS={FIXTURE_INCIDENTS?.status} TYPE='R' />
+                  <IncidentRow 
+                    INCIDENT_INFO={event} 
+                    {FXITURE_INCIDENTS_TRANSLATION} 
+                    STATUS={FIXTURE_INCIDENTS?.status} 
+                    TYPE='R'
+                  />
                 {/if}
               {/if}
             {/each}
