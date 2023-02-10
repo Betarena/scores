@@ -64,7 +64,7 @@ export function dlog (
 */
 export function dlogv2 (
   groupName:string, 
-  msgs: object[] | string[],
+  msgs: unknown[],
   show?: boolean,
   style?: string
 ) {
