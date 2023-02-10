@@ -3,7 +3,6 @@
 ==================== -->
 
 <script lang="ts">
-  
 	  
 	import type {
 		Fixture_Player
@@ -19,10 +18,10 @@
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  export let PLAYER_INFO:                 Fixture_Player;
-  export let STATUS:                      string
+  export let PLAYER_INFO:  Fixture_Player
+  export let STATUS:       string
 
-  let ratingColorCode:    string;
+  let ratingColorCode: string;
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // REACTIVE SVELTE OTHER

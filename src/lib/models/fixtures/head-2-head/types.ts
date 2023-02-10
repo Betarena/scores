@@ -46,11 +46,11 @@ export interface BETARENA_HASURA_head_2_head_query {
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface Fixture_Head_2_Head {
-  id?:    number | null
-  data?:  BETARENA_HASURA_football_h2h
-  teams_data?: Fixture_Head_2_Head_Teams_Data[]
-  corner_avg?: number
-  last_5_data_urls?: BETARENA_HASURA_historic_fixtures[]
+  id?:                number | null
+  data?:              BETARENA_HASURA_football_h2h
+  teams_data?:        Fixture_Head_2_Head_Teams_Data[]
+  corner_avg?:        number
+  last_5_data_urls?:  BETARENA_HASURA_historic_fixtures[]
 } export interface Fixture_Head_2_Head_Teams_Data {
   team_name?:   string
   team_logo?:   string

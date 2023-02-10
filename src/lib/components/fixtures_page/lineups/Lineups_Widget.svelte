@@ -5,7 +5,7 @@
 <script lang="ts">
   import { browser, dev } from '$app/environment';
   import { afterNavigate } from "$app/navigation";
-  import { logDevGroup, log_info_group } from "$lib/utils/debug";
+  import { dlog, logDevGroup, log_info_group } from "$lib/utils/debug";
   import { onDestroy, onMount } from "svelte";
 
   import { db_real } from "$lib/firebase/init";
@@ -34,6 +34,7 @@
 
 	import { REDIS_CACHE_LINEUPS_DATA_4 } from '$lib/graphql/fixtures/lineups/query';
 	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -101,9 +102,7 @@
     loaded = true;
 
     // [ℹ] data validation check
-		if (
-      FIXTURE_LINEUPS == undefined
-    ) {
+		if (FIXTURE_LINEUPS == undefined) {
       // [🐞]
       if (dev) logDevGroup (`${dev_console_tag}`, `❌ no data available!`)
       no_widget_data = true;
@@ -113,49 +112,28 @@
     else {
       no_widget_data = false;
     }
-
     FIXTURE_LINEUPS = FIXTURE_LINEUPS
-
     return FIXTURE_LINEUPS;
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
+  // VIEWPORT CHANGES | IMPORTANT
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  let tabletView = 1000
-  let mobileView = 725
-  let mobileExclusive: boolean = false;
-  let tabletExclusive: boolean = false;
+  const TABLET_VIEW = 1000
+  const MOBILE_VIEW = 725
+  let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit = document.documentElement.clientWidth;
-		// [ℹ] TABLET - VIEW
-		if (wInit >= tabletView) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		// [ℹ] MOBILE - VIEW
-		if (wInit <= mobileView) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
+		[tabletExclusive, mobileExclusive] = viewport_change (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    )
 		window.addEventListener('resize', function () {
-			var w = document.documentElement.clientWidth;
-			// [ℹ] TABLET - VIEW
-      if (w >= tabletView) {
-				tabletExclusive = false;
-			} else {
-				tabletExclusive = true;
-			}
-			// [ℹ] MOBILE - VIEW
-			if (w <= mobileView) {
-				mobileExclusive = true;
-			} else {
-				mobileExclusive = false;
-			}
+		  [tabletExclusive, mobileExclusive] = viewport_change (
+        TABLET_VIEW,
+        MOBILE_VIEW
+      )
 		});
   });
 
@@ -222,6 +200,9 @@
       const FIREBASE_LINEUPS_DATA = live_fixtures_map.get(fixture_id)?.lineup?.data
       const FIREBASE_BENCH_DATA = live_fixtures_map.get(fixture_id)?.bench?.data
 
+      dlog(FIREBASE_LINEUPS_DATA, true)
+      dlog(FIREBASE_BENCH_DATA, true)
+
       // NOTE: check if the "cache" data is out of date
       // NOTE: requiring auto-lineup data generation
       // NOTE: on the spot
@@ -229,7 +210,9 @@
       if (FIXTURE_LINEUPS.home.lineup.length == 0
         && FIXTURE_LINEUPS.away.lineup.length == 0
         && FIXTURE_LINEUPS.home.bench.length == 0
-        && FIXTURE_LINEUPS.away.bench.length == 0) {
+        && FIXTURE_LINEUPS.away.bench.length == 0
+        && FIREBASE_LINEUPS_DATA != undefined
+        && FIREBASE_BENCH_DATA != undefined) {
 
         const home_team_id = live_fixtures_map.get(fixture_id)?.localteam_id;
         const away_team_id = live_fixtures_map.get(fixture_id)?.visitorteam_id;
@@ -860,18 +843,20 @@
   <!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
-  {#if
-    no_widget_data  
+  {#if no_widget_data
     && loaded
     && show_placeholder}
-
     <h2
-      class="s-20 m-b-10 w-500 color-black-2"
+      class="
+        s-20 
+        m-b-10 
+        w-500 
+        color-black-2
+      "
       style="margin-top: 0px;"
       class:color-white={$userBetarenaSettings.theme == 'Dark'}>
       {FIXTURE_LINEUPS_TRANSLATION?.title}
     </h2>
-
     <!-- 
     [ℹ] no-widget-data-avaiable-placeholder container 
     -->
@@ -879,38 +864,35 @@
       id='no-widget-box'
       class='column-space-center'
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
       <!-- 
       [ℹ] no-visual-asset
       -->
-      {#if $userBetarenaSettings.theme == 'Dark'}
-        <img 
-          src={no_visual_dark} 
-          alt="no_visual_dark"
-          width=32px
-          height=32px
-          class='m-b-16'
-        />
-      {:else}
-        <img 
-          src={no_visual} 
-          alt="no_visual"
-          width=32px
-          height=32px
-          class='m-b-16'
-        />
-      {/if}
-      
+      <img 
+        src={$userBetarenaSettings.theme == 'Dark' ? no_visual_dark : no_visual} 
+        alt="No visual icon"
+        width=32
+        height=32
+        class='m-b-16'
+      />
       <!-- 
       [ℹ] container w/ text 
       -->
       <div>
         <p 
-          class='s-14 m-b-8 w-500'
+          class='
+            s-14 
+            m-b-8 
+            w-500'
+          
           class:color-white={$userBetarenaSettings.theme == 'Dark'}>
           {FIXTURE_LINEUPS_TRANSLATION?.no_info}
         </p>
-        <p class='s-14 color-grey w-400'> 
+        <p 
+          class='
+            s-14 
+            color-grey 
+            w-400
+          '> 
           {FIXTURE_LINEUPS_TRANSLATION?.no_info_desc}
         </p>
       </div>
@@ -920,14 +902,10 @@
   <!-- 
   [ℹ] MAIN WIDGET COMPONENT
   -->
-  {#if
-    !no_widget_data
+  {#if !no_widget_data
     && !refresh
     && browser
     && $userBetarenaSettings.country_bookmaker}
-
-    <!-- <LineupsLoader /> -->
-
     <!-- 
     [ℹ] promise is pending 
     -->
@@ -937,9 +915,13 @@
     [ℹ] promise was fulfilled
     -->
     {:then data}
-
       <h2
-        class="s-20 m-b-10 w-500 color-black-2"
+        class="
+          s-20 
+          m-b-10 
+          w-500 
+          color-black-2
+        "
         style="margin-top: 0px;"
         class:color-white={$userBetarenaSettings.theme == 'Dark'}>
         {FIXTURE_LINEUPS_TRANSLATION?.title}
@@ -948,20 +930,21 @@
       <div
         id="lineup-widget-container"
         class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
-
         <!-- 
         [ℹ] [MOBILE]
         -->
         {#if mobileExclusive}
           <!-- 
-          [ℹ] toggle lineup team -->
+          [ℹ] toggle lineup team
+          -->
           <div
             id="lineup-top-view-box-select"
             class="
               row-space-out
             ">
             <!--
-            [ℹ] home team btn. -->
+            [ℹ] home team btn. 
+            -->
             <button
               class="
                 row-space-start
@@ -985,7 +968,8 @@
               </p>
             </button>
             <!--
-            [ℹ] away team btn. -->
+            [ℹ] away team btn. 
+            -->
             <button
               class="
                 row-space-end
@@ -1009,9 +993,9 @@
               />
             </button>
           </div>
-
           <!-- 
-          [ℹ] team visiualization -->
+          [ℹ] team visiualization 
+          -->
           <div
             id="lineup-vector-box">
             <div
@@ -1023,37 +1007,47 @@
               {/if}
             </div>
             <!-- 
-            [ℹ] lineup - absolute box -->
+            [ℹ] lineup - absolute box 
+            -->
             <div
               id="overlay-player-pos-box">
               <!-- 
-              [ℹ] home -->
-              {#if selected_view == 'home' && home_team_formation_map.size != 0}
+              [ℹ] home 
+              -->
+              {#if selected_view == 'home' 
+                && home_team_formation_map.size != 0}
                 {#each Array.from(home_team_formation_map.values()) as players_list}
                   <div
                     id="overlay-column">
                     {#each Array.from(players_list) as player}
-                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                      <LineupPlayerVisual 
+                        PLAYER_INFO={player} 
+                        STATUS={FIXTURE_LINEUPS?.status} 
+                      />
                     {/each}
                   </div>
                 {/each}
               <!-- 
-              [ℹ] away -->
+              [ℹ] away 
+              -->
               {:else}
                 {#each Array.from(away_team_formation_map.values()) as players_list}
                   <div
                     id="overlay-column">
                     {#each Array.from(players_list) as player}
-                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                      <LineupPlayerVisual 
+                        PLAYER_INFO={player} 
+                        STATUS={FIXTURE_LINEUPS?.status} 
+                      />
                     {/each}
                   </div>
                 {/each}
               {/if}
             </div>
           </div>
-          
           <!-- 
-          [ℹ] selected lineup - home / away (logo) -->
+          [ℹ] selected lineup - home / away (logo) 
+          -->
           <div
             class="
               row-space-out
@@ -1064,16 +1058,18 @@
                 row-space-start
               ">
               <!-- 
-              [ℹ] team icon -->
-              <img 
+              [ℹ] team icon 
+              -->
+              <img
                 src={FIXTURE_LINEUPS[selected_view]?.team_logo} 
                 alt=""
-                width=40px
-                height=40px
+                width=40
+                height=40
                 class="main-team-img"
               />
               <!-- 
-              [ℹ] team name -->
+              [ℹ] team name 
+              -->
               <p
                 class="
                   w-500
@@ -1091,7 +1087,8 @@
               </p>
             </div>
             <!-- 
-            [ℹ] team-rating -->
+            [ℹ] team-rating 
+            -->
             {#if 
               ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
               && FIXTURE_LINEUPS[selected_view]?.team_rating != undefined}
@@ -1105,30 +1102,33 @@
               </p>
             {/if}
           </div>
-
           <!-- 
-          [ℹ] selected lineup - home / away -->
+          [ℹ] selected lineup - home / away 
+          -->
           <div
             class="lineup-box">
             <!-- 
-            [ℹ] coach single - home / away -->
+            [ℹ] coach single - home / away 
+            -->
             <div
               class="
                 row-space-start
                 player-row
               ">
               <!-- 
-              [ℹ] player avatar -->
-              <img 
+              [ℹ] player avatar
+              -->
+              <img
                 src={FIXTURE_LINEUPS[selected_view]?.coach_avatar} 
                 alt=""
-                width=40px
-                height=40px
+                width=40
+                height=40
                 class="lineup-img"
                 on:error={(e) => e.target.src = "https://cdn.sportmonks.com/images/soccer/placeholder.png"}
               />
               <!-- 
-              [ℹ] player name -->
+              [ℹ] player name 
+              -->
               <p
                 class="
                   w-500
@@ -1147,9 +1147,15 @@
               </p>
             </div>
             <!-- 
-            [ℹ] rest of lineup-team -->
+            [ℹ] rest of lineup-team 
+            -->
             {#each FIXTURE_LINEUPS[selected_view].bench as player}
-              <LineupPlayerRow TYPE="R" PLAYER_INFO={player} {FIXTURE_LINEUPS_TRANSLATION} STATUS={FIXTURE_LINEUPS?.status} />
+              <LineupPlayerRow 
+                TYPE="R" 
+                PLAYER_INFO={player} 
+                {FIXTURE_LINEUPS_TRANSLATION} 
+                STATUS={FIXTURE_LINEUPS?.status} 
+              />
             {/each}
           </div>
         <!-- 
@@ -1157,9 +1163,9 @@
         [ℹ] drastic layout change
         -->
         {:else}
-        
           <!-- 
-          [ℹ] team visiualization -->
+          [ℹ] team visiualization 
+          -->
           <div
             id="lineup-vector-box">
             <div
@@ -1169,12 +1175,14 @@
             <!-- 
             [ℹ] lineup - absolute box 
             [ℹ] home team 
-            [ℹ] away team -->
+            [ℹ] away team 
+            -->
             <div
               id="overlay-player-pos-box"
               class="row-space-out">
               <!-- 
-              [ℹ] home -->
+              [ℹ] home 
+              -->
               <div
                 class="overlay-grid"
                 style="width: 100%;">
@@ -1182,21 +1190,28 @@
                   <div
                     id="overlay-column">
                     {#each Array.from(players_list) as player}
-                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                      <LineupPlayerVisual 
+                        PLAYER_INFO={player} 
+                        STATUS={FIXTURE_LINEUPS?.status} 
+                      />
                     {/each}
                   </div>
                 {/each}
               </div>
               <!-- 
-              [ℹ] away -->
-              <div 
+              [ℹ] away 
+              -->
+              <div
                 class="overlay-grid"
                 style="width: 100%;">
                 {#each Array.from(away_team_formation_map.values()) as players_list}
                   <div
                     id="overlay-column">
                     {#each Array.from(players_list) as player}
-                      <LineupPlayerVisual PLAYER_INFO={player} STATUS={FIXTURE_LINEUPS?.status} />
+                      <LineupPlayerVisual 
+                        PLAYER_INFO={player} 
+                        STATUS={FIXTURE_LINEUPS?.status} 
+                      />
                     {/each}
                   </div>
                 {/each}
@@ -1205,36 +1220,40 @@
           </div>
 
           <!-- 
-          [ℹ] team info ROW -->
+          [ℹ] team info ROW 
+          -->
           <div
             id="team-info-box"
             class="row-space-out">
-
             <!-- 
-            [ℹ] home team info -->
+            [ℹ] home team info 
+            -->
             <div
               class="
                 row-space-start
                 team-main-select
               ">
               <!-- 
-              [ℹ] team-info -->
+              [ℹ] team-info 
+              -->
               <div
                 class="
                   row-space-start
                 "
                 style="width: auto;">
                 <!-- 
-                [ℹ] team icon -->
+                [ℹ] team icon 
+                -->
                 <img 
                   src={FIXTURE_LINEUPS?.home?.team_logo} 
                   alt=""
-                  width=40px
-                  height=40px
+                  width=40
+                  height=40
                   class="main-team-img"
                 />
                 <!-- 
-                [ℹ] team name -->
+                [ℹ] team name 
+                -->
                 <p
                   class="
                     w-500
@@ -1253,9 +1272,9 @@
                 </p>
               </div>
               <!-- 
-              [ℹ] team-rating -->
-              {#if 
-                ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
+              [ℹ] team-rating 
+              -->
+              {#if ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
                 && FIXTURE_LINEUPS?.home?.team_rating != undefined}
                 <p 
                   id='box-goals'
@@ -1269,14 +1288,16 @@
             </div>
 
             <!-- 
-            [ℹ] away team info -->
+            [ℹ] away team info 
+            -->
             <div
               class="
                 row-space-end
                 team-main-select
               ">
               <!-- 
-              [ℹ] team-rating -->
+              [ℹ] team-rating 
+              -->
               {#if 
                 ["FT", "FT_PEN"].includes(FIXTURE_LINEUPS?.status)
                 && FIXTURE_LINEUPS?.away?.team_rating != undefined}
@@ -1290,14 +1311,16 @@
                 </p>
               {/if}
               <!-- 
-              [ℹ] team-info -->
+              [ℹ] team-info 
+              -->
               <div
                 class="
                   row-space-end
                 "
                 style="width: auto;">
                 <!-- 
-                [ℹ] team name -->
+                [ℹ] team name 
+                -->
                 <p
                   class="
                     w-500
@@ -1315,7 +1338,8 @@
                   </span>
                 </p>
                 <!-- 
-                [ℹ] team icon -->
+                [ℹ] team icon 
+                -->
                 <img 
                   src={FIXTURE_LINEUPS?.away?.team_logo} 
                   alt=""
@@ -1432,19 +1456,15 @@
               {/each}
             </div>
           </div>
-          
         {/if}
       </div>
-
     <!-- 
     [ℹ] promise was rejected
     -->
     {:catch error}
       {error}
     {/await}
-
   {/if}
-
 </div>
 
 <!-- ===============

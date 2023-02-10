@@ -161,16 +161,16 @@ async function main (
     data:   football_h2h_data || null,
     teams_data: [
       {
-        team_logo: team_1_data?.data?.logo_path,
-        team_name: team_1_data?.data?.name,
+        team_logo:  team_1_data?.data?.logo_path,
+        team_name:  team_1_data?.data?.name,
         team_short: team_1_data?.data?.short_code || team_1_data?.data?.name.slice(0, 3).toUpperCase() || null,
-        team_id: team_ids_arr[0],
+        team_id:    team_ids_arr[0]
       },
       {
-        team_logo: team_2_data?.data?.logo_path,
-        team_name: team_2_data?.data?.name,
+        team_logo:  team_2_data?.data?.logo_path,
+        team_name:  team_2_data?.data?.name,
         team_short: team_2_data?.data?.short_code || team_2_data?.data?.name.slice(0, 3).toUpperCase() || null,
-        team_id: team_ids_arr[1],
+        team_id:    team_ids_arr[1]
       }
     ],
     corner_avg,
