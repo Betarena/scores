@@ -1,5 +1,11 @@
 import { dev } from "$app/environment";
 
+export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`
+export const ERROR_CODE_INVALID = 404
+export const ERROR_CODE_PRELOAD = 500
+export const LAYOUT_1_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/layout)`
+export const HOME_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/lang)`
+
 /**
  * @param groupName 
  * @param msg 
@@ -54,7 +60,6 @@ export function dlog (
   // [🐞]
   if (dev && show) console.debug(msg)
 }
-
 
 /**
  * @param groupName 
