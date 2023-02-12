@@ -246,8 +246,12 @@ If you wish to develop new components for the platform, please follow the follow
   https://moralis.io/web3-firebase-authentication-create-a-web3-sign-in-with-moralis/
   https://moralisweb3.github.io/firebase-extensions/service-account-converter/
   https://moralisweb3.github.io/Moralis-JS-SDK/demos/firebase-auth-ext/
-  https://admin.moralis.io/users
-| 
+  https://admin.moralis.io/users |
+| [2] |
+  https://stackoverflow.com/questions/43691808/http-performance-many-small-requests-or-one-big-one
+  https://svelte.dev/repl/ec6f6b61329f4f43ae049464d73d8158?version=3.23.1
+  https://svelte.dev/repl/16b375da9b39417dae837b5006799cb4?version=3.25.0
+|
 
 #### Documenting
 
