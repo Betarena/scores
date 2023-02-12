@@ -1,6 +1,7 @@
 import { v4 as uuid } from '@lukeed/uuid';
 import cookie from 'cookie';
 
+import { dlog } from '$lib/utils/debug';
 import type { Handle } from '@sveltejs/kit';
 // https://dev.to/krowemoh/sveltekit-hooks-2bii
 // https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
@@ -18,6 +19,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   
   // -----------------
   // [ℹ] before endpoint call
+  // -----------------
 
   // [ℹ] getting cookies from request headers - all requests have cookies on them
 	const cookies = cookie.parse(event.request.headers.get('cookie') || '');
@@ -34,9 +36,7 @@ export const handle: Handle = async ({ event, resolve }) => {
     lang: 'en',
     theme: 'Light',
   };
-
-  // [🐛] debug
-  // console.log('event.locals.user', event.locals.user);
+  dlog(event?.locals?.user)
 
 	// TODO https://github.com/sveltejs/kit/issues/1046
 	// if (event.url.searchParams.has('_method')) {
@@ -45,11 +45,13 @@ export const handle: Handle = async ({ event, resolve }) => {
 
   // -----------------
   // [ℹ] endpoint call
+  // -----------------
 
 	const response = await resolve(event);
 
   // -----------------
   // [ℹ] after endpoint call
+  // -----------------
 
   // [ℹ] if this is the first time the user has visited this app,
 	if (!cookies.betarenaCOOKIE) {
@@ -70,7 +72,6 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 /** @type {import('@sveltejs/kit').GetSession} */
 export function getSession(event) {
-
   return event?.locals?.user
   ? 
     {
