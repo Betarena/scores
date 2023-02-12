@@ -1,3 +1,4 @@
+import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
 import type { PageLoad } from './$types';
@@ -8,9 +9,8 @@ export async function load ({
   params, 
   fetch,
   setHeaders
-}): Promise < PageLoad > {
+}): Promise<PageLoad> {
 
-  // [ℹ] critical
   const response_valid_url = await fetch(
     `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, 
     {
@@ -19,42 +19,49 @@ export async function load ({
   ).then((r) => r.json());
 
   const urlLang: string = 
-    params.lang == undefined 
-    || !response_valid_url 
+    params.lang == undefined || 
+    !response_valid_url 
       ? 'en' 
       : params.lang
-  ;
 
-  const response_header = await fetch (
-    `/api/cache/_main_/navbar?lang=${urlLang}`, 
-    {
-      method: 'GET'
-    }
-  ).then(r => r.json())
+  // --------------
+	// [ℹ] preload data DOC: REF: [2]
+	// --------------
 
-  const response_footer = await fetch (
-    `/api/cache/_main_/footer?lang=${urlLang}`, 
-    {
-      method: 'GET',
-    }
-  ).then(r => r.json())
+  const urls = [
+    `/api/cache/_main_/navbar?lang=${urlLang}`,
+    `/api/cache/_main_/footer?lang=${urlLang}`
+  ];
 
-  if (response_header == undefined) console.log("response_header is undefined")
-  if (response_footer == undefined) console.log("response_footer is undefined") 
+  const promises = urls.map((url) =>
+    fetch(url)
+    .then((response) => response.json())
+  );
 
-  if (
-    response_header &&
-    response_footer) {
-      
-    setHeaders({
-      'cache-control': 'public, max-age=3600'
-    });
+  const data = await Promise.all(promises);
 
-    return {
-      HEADER_TRANSLATION_DATA: response_header,
-      FOOTER_TRANSLATION_DATA: response_footer
-    }
+  const [
+    HEADER_TRANSLATION_DATA,
+    FOOTER_TRANSLATION_DATA
+  ] = data
+
+  // --------------
+	// [ℹ] return(s)
+	// --------------
+
+  const INVALID_PAGE_DATA_POINTS: boolean =
+  data.includes(undefined);
+
+  // [ℹ] exit;
+  if (INVALID_PAGE_DATA_POINTS) {
+    throw error(ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG);
   }
-  
-  throw error(400, `Uh-oh! There has been an /{__layout} page preloading error`);
+
+  setHeaders({
+    'cache-control': 'public, max-age=3600'
+  });
+  return {
+    HEADER_TRANSLATION_DATA,
+    FOOTER_TRANSLATION_DATA
+  }
 }
