@@ -2,15 +2,21 @@ import { v4 as uuid } from '@lukeed/uuid';
 import cookie from 'cookie';
 
 import { dlog } from '$lib/utils/debug';
-import type { Handle } from '@sveltejs/kit';
-// https://dev.to/krowemoh/sveltekit-hooks-2bii
-// https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
-// https://rodneylab.com/sveltekit-session-cookies/
-// https://stackoverflow.com/questions/71105799/sveltekit-pass-data-from-server-to-browser
-// https://github.com/sveltejs/kit/pull/3993
-// https://stackoverflow.com/questions/69066169/how-to-implement-cookie-authentication-sveltekit-mongodb
-// https://blog.logrocket.com/authentication-svelte-using-cookies/
+import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
+import type { Handle, RequestEvent } from '@sveltejs/kit';
 
+/**
+ * @description
+ * DOC: https://dev.to/krowemoh/sveltekit-hooks-2bii
+ * DOC: https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
+ * DOC: https://rodneylab.com/sveltekit-session-cookies/
+ * DOC: https://stackoverflow.com/questions/71105799/sveltekit-pass-data-from-server-to-browser
+ * DOC: https://github.com/sveltejs/kit/pull/3993
+ * DOC: https://stackoverflow.com/questions/69066169/how-to-implement-cookie-authentication-sveltekit-mongodb
+ * DOC: https://blog.logrocket.com/authentication-svelte-using-cookies/
+ * @param param0 
+ * @returns 
+ */
 export const handle: Handle = async ({ event, resolve }) => {
 
   // https://github.com/sveltejs/kit/issues/4873
@@ -21,7 +27,8 @@ export const handle: Handle = async ({ event, resolve }) => {
   // [ℹ] before endpoint call
   // -----------------
 
-  // [ℹ] getting cookies from request headers - all requests have cookies on them
+  // [ℹ] getting cookies from request headers
+  // [ℹ] all requests have cookies on them
 	const cookies = cookie.parse(event.request.headers.get('cookie') || '');
 
   // [ℹ] assign "locals" context from "cookie"
@@ -38,7 +45,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   };
   dlog(event?.locals?.user)
 
-	// TODO https://github.com/sveltejs/kit/issues/1046
+	// TODO: https://github.com/sveltejs/kit/issues/1046
 	// if (event.url.searchParams.has('_method')) {
 	// 	event.method = event.url.searchParams.get('_method').toUpperCase();
 	// }
@@ -47,7 +54,12 @@ export const handle: Handle = async ({ event, resolve }) => {
   // [ℹ] endpoint call
   // -----------------
 
-	const response = await resolve(event);
+  // [ℹ] past use with cookies-template
+	// const response = await resolve(event);
+  // [ℹ] new with response of <html lang...>
+  const response = await resolve(event, {
+    transformPageChunk: ({ html }) => html.replace('%lang%', get_lang(event))
+  });
 
   // -----------------
   // [ℹ] after endpoint call
@@ -88,4 +100,20 @@ export function getSession(event) {
     }
   : 
     {};
+}
+
+/**
+ * @description obtains the current platform translation
+ * as a hook.server.ts method/function
+ * @param {RequestEvent<Partial<Record<string, string>>>} event 
+ * @returns {string} language
+ */
+function get_lang(event: RequestEvent<Partial<Record<string, string>>>): string {
+  const lang = platfrom_lang_ssr (
+    event?.routeId,
+    event?.error, // FIXME: event.error does not exist in a hook
+    event?.params?.lang
+  )
+  dlog(`HOOKS | get_lang: ${lang}`, true)
+  return lang
 }
