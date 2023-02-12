@@ -251,7 +251,15 @@ If you wish to develop new components for the platform, please follow the follow
   https://stackoverflow.com/questions/43691808/http-performance-many-small-requests-or-one-big-one
   https://svelte.dev/repl/ec6f6b61329f4f43ae049464d73d8158?version=3.23.1
   https://svelte.dev/repl/16b375da9b39417dae837b5006799cb4?version=3.25.0
-|
+| [3] |
+  https://dev.to/krowemoh/sveltekit-hooks-2bii
+  https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
+  https://rodneylab.com/sveltekit-session-cookies/
+  https://stackoverflow.com/questions/71105799/sveltekit-pass-data-from-server-to-browser
+  https://github.com/sveltejs/kit/pull/3993
+  https://stackoverflow.com/questions/69066169/how-to-implement-cookie-authentication-sveltekit-mongodb
+  https://blog.logrocket.com/authentication-svelte-using-cookies/
+| 
 
 #### Documenting
 

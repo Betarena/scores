@@ -7,13 +7,7 @@ import type { Handle, RequestEvent } from '@sveltejs/kit';
 
 /**
  * @description
- * DOC: https://dev.to/krowemoh/sveltekit-hooks-2bii
- * DOC: https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
- * DOC: https://rodneylab.com/sveltekit-session-cookies/
- * DOC: https://stackoverflow.com/questions/71105799/sveltekit-pass-data-from-server-to-browser
- * DOC: https://github.com/sveltejs/kit/pull/3993
- * DOC: https://stackoverflow.com/questions/69066169/how-to-implement-cookie-authentication-sveltekit-mongodb
- * DOC: https://blog.logrocket.com/authentication-svelte-using-cookies/
+ * DOC: REF: [3]
  * @param param0 
  * @returns 
  */
