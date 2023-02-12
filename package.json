@@ -26,7 +26,6 @@
 	"devDependencies": {
 		"@sveltejs/adapter-node": "1.0.0-next.88",
 		"@sveltejs/kit": "1.0.0-next.477",
-		"@types/bull": "^3.15.8",
 		"@typescript-eslint/eslint-plugin": "^5.36.2",
 		"@typescript-eslint/parser": "^5.36.2",
 		"cross-env": "^7.0.3",
@@ -56,8 +55,6 @@
 		"@moralisweb3/next": "^2.11.1",
 		"@sentry/browser": "^7.12.1",
 		"@sentry/tracing": "^7.12.1",
-		"bull": "^4.9.0",
-		"bullmq": "^3.1.1",
 		"colorthief": "^2.3.2",
 		"compression": "^1.7.4",
 		"cookie": "^0.5.0",
