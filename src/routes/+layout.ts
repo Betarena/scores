@@ -8,7 +8,7 @@ export async function load ({
   params, 
   fetch,
   setHeaders
-}): PageLoad {
+}): Promise < PageLoad > {
 
   // [ℹ] critical
   const response_valid_url = await fetch(
@@ -19,10 +19,11 @@ export async function load ({
   ).then((r) => r.json());
 
   const urlLang: string = 
-    params.lang == undefined || 
-    !response_valid_url 
+    params.lang == undefined 
+    || !response_valid_url 
       ? 'en' 
       : params.lang
+  ;
 
   const response_header = await fetch (
     `/api/cache/_main_/navbar?lang=${urlLang}`, 
@@ -38,30 +39,6 @@ export async function load ({
     }
   ).then(r => r.json())
 
-  /**
-   * [ℹ] =================
-   * [ℹ] further API FETCH enhancing via bundeling requests;
-  */
-
-  /*
-    const urls = [
-      '/api/cache/navbar/cache-data.json?lang='+urlLang,
-      `/api/cache/footer/cache-data.json?lang=`+urlLang
-    ];
-
-    const promises = urls.map((url) =>
-      fetch(url)
-      .then((response) => response.json())
-    );
-
-    const data = await Promise.all(promises);
-
-    if (dev) console.log("pre-load() data: ", data)
-
-    const response_header = data[0]
-    const response_footer = data[1]
-  */
- 
   if (response_header == undefined) console.log("response_header is undefined")
   if (response_footer == undefined) console.log("response_footer is undefined") 
 
