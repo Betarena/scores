@@ -126,7 +126,7 @@
           color-grey
           minute-text
         "
-        class:single-min={[...INCIDENT_INFO?.minute.toString()].length == 1}
+        class:single-min={INCIDENT_INFO?.minute < 10}
         >
         {INCIDENT_INFO?.minute}'
       </p>
@@ -385,7 +385,7 @@
           color-grey
           minute-text
         "
-        class:single-min={[...INCIDENT_INFO?.minute.toString()].length == 1}
+        class:single-min={INCIDENT_INFO?.minute < 10}
         >
         {INCIDENT_INFO?.minute}'
       </p>

@@ -1125,7 +1125,7 @@ export interface BETARENA_HASURA_historic_fixtures {
 } export interface EventsDatum {
   fixture_id?:          number;
   id?:                  number;
-  minute?:              number;
+  minute?:              number | null;
   on_pitch?:            boolean;
   player_id?:           number;
   player_name?:         string;
@@ -1469,10 +1469,10 @@ export interface BETARENA_HASURA_scores_endpoints_translations {
 export interface BETARENA_HASURA_scores_seo_fixtures {
   lang?:         string;
   main_data?:    Main_Data;
-  opengraph?:    FixturesOpengraph;
+  opengraph?:    OpenGraph;
   sports_type?:  string;
   twitter_card?: FixturesTwitterCard;
-} export interface FixturesOpengraph {
+} export interface OpenGraph {
   url?:         string;
   type?:        string;
   title?:       string;

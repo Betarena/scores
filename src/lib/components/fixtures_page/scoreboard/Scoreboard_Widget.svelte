@@ -34,12 +34,13 @@
 
 	import ScoreboardLoader from "./Scoreboard_Loader.svelte";
 
+// import banner from './assets/banner.svg';
+	import close_icon from './assets/close.svg';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-// import banner from './assets/banner.svg';
+
   import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT, FIXTURE_NOT_START_OPT } from '$lib/models/sportmonks';
   import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
-  import close_icon from './assets/close.svg';
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
@@ -717,8 +718,8 @@
                       <img 
                         src={FIXTURE_SCOREBOARD?.league_logo}
                         alt=""
-                        width=14px
-                        height=14px
+                        width=14
+                        height=14
                       />
                     </div>
                     <p
@@ -752,8 +753,8 @@
                       src={FIXTURE_SCOREBOARD?.home_team_logo}
                       alt=""
                       class="m-b-12"
-                      width=72px
-                      height=72px
+                      width=72
+                      height=72
                     />
                     <p
                       class="
@@ -913,8 +914,8 @@
                       src={FIXTURE_SCOREBOARD.away_team_logo}
                       alt=""
                       class="m-b-12"
-                      width=72px
-                      height=72px
+                      width=72
+                      height=72
                     />
                     <p
                       class="
@@ -1117,8 +1118,8 @@
                       <img 
                         src={FIXTURE_SCOREBOARD?.league_logo}
                         alt=""
-                        width=14px
-                        height=14px
+                        width=14
+                        height=14
                       />
                     </div>
                     <p
@@ -1152,8 +1153,8 @@
                       src={FIXTURE_SCOREBOARD.home_team_logo}
                       alt=""
                       class="m-b-12"
-                      width=72px
-                      height=72px
+                      width=72
+                      height=72
                     />
                     <p
                       class="
@@ -1314,8 +1315,8 @@
                       src={FIXTURE_SCOREBOARD.away_team_logo}
                       alt=""
                       class="m-b-12"
-                      width=72px
-                      height=72px
+                      width=72
+                      height=72
                     />
                     <p
                       class="
@@ -1368,6 +1369,8 @@
                           id='sportbook-logo-img'
                           src={SPORTBOOK_INFO?.image}
                           alt={SPORTBOOK_INFO?.title}
+                          width="67"
+                          height="28"
                         />
                       </a>
                     </div>
@@ -1395,10 +1398,13 @@
                             row-space-out
                           ">
                           <!-- 
-                          [ℹ] team-img / odds-type -->
+                          [ℹ] team-img / odds-type 
+                          -->
                           <img 
                             src={FIXTURE_SCOREBOARD.home_team_logo} 
-                            alt=""
+                            alt="home team bet icon"
+                            width="28"
+                            height="28"
                           />
                           <p
                             class="
@@ -1426,10 +1432,13 @@
                             row-space-out
                           ">
                           <!-- 
-                          [ℹ] team-img / odds-type -->
+                          [ℹ] team-img / odds-type 
+                          -->
                           <img 
                             src={close_icon} 
-                            alt=""
+                            alt="bet draw icon"
+                            width="28"
+                            height="28"
                           />
                           <p  
                             class="
@@ -1457,10 +1466,13 @@
                             row-space-out
                           ">
                           <!-- 
-                          [ℹ] team-img / odds-type -->
+                          [ℹ] team-img / odds-type 
+                          -->
                           <img 
                             src={FIXTURE_SCOREBOARD.away_team_logo} 
-                            alt=""
+                            alt="away team bet icon"
+                            width="28"
+                            height="28"
                           />
                           <p
                             class="
@@ -1502,8 +1514,8 @@
                         src={FIXTURE_SCOREBOARD.home_team_logo}
                         alt=""
                         class="m-b-12"
-                        width=88px
-                        height=88px
+                        width=88
+                        height=88
                       />
                       <p
                         class="
@@ -1539,8 +1551,8 @@
                           <img 
                             src={FIXTURE_SCOREBOARD?.league_logo}
                             alt=""
-                            width=14px
-                            height=14px
+                            width=14
+                            height=14
                           />
                         </div>
                         <p
@@ -1732,6 +1744,8 @@
                               id='sportbook-logo-img'
                               src={SPORTBOOK_INFO?.image}
                               alt={SPORTBOOK_INFO?.title}
+                              width="67"
+                              height="28"
                             />
                           </a>
                         </div>
@@ -1764,7 +1778,9 @@
                               -->
                               <img 
                                 src={FIXTURE_SCOREBOARD.home_team_logo} 
-                                alt=""
+                                alt="home team bet icon"
+                                width="28"
+                                height="28"
                               />
                               <p
                                 class="
@@ -1797,7 +1813,9 @@
                               -->
                               <img 
                                 src={close_icon} 
-                                alt=""
+                                alt="bet draw icon"
+                                width="28"
+                                height="28"
                               />
                               <p  
                                 class="
@@ -1830,7 +1848,9 @@
                               -->
                               <img 
                                 src={FIXTURE_SCOREBOARD.away_team_logo} 
-                                alt=""
+                                alt="away team bet icon"
+                                width="28"
+                                height="28"
                               />
                               <p
                                 class="
@@ -1863,8 +1883,8 @@
                         src={FIXTURE_SCOREBOARD.away_team_logo}
                         alt=""
                         class="m-b-12"
-                        width=88px
-                        height=88px
+                        width=88
+                        height=88
                       />
                       <p
                         class="
@@ -1965,8 +1985,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD?.home_team_logo}
                     alt=""
-                    width=40px
-                    height=40px
+                    width=40
+                    height=40
                   />
                 </div>
                 <!-- 
@@ -2126,8 +2146,8 @@
                   <img 
                     src={FIXTURE_SCOREBOARD?.away_team_logo}
                     alt=""
-                    width=40px
-                    height=40px
+                    width=40
+                    height=40
                   />
                   <p
                     class="
@@ -2506,7 +2526,7 @@
     padding: 20px 12px;
     min-height: 282px;
     max-height: 282px;
-    background-image: url(./assets/banner-mobile.svg);
+    background-image: url(./assets/banner-mobile.png);
     background-position: center;
     background-repeat: no-repeat;
     background-size: cover;
@@ -2660,7 +2680,7 @@
     right: auto;
     left: auto;
     border-radius: 12px !important;
-    background-image: url(./assets/banner.svg) !important;
+    background-image: url(./assets/banner.png) !important;
     background-position: center !important;
     background-repeat: no-repeat !important;
     background-size: cover !important;
@@ -2724,7 +2744,7 @@
     div#scoreboard-widget-container div#scoreboard-top-box {
       min-height: 254px;
       max-height: 254px;
-      background-image: url(./assets/banner-tablet.svg);
+      background-image: url(./assets/banner-tablet.png);
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;
@@ -2812,7 +2832,7 @@
     div#scoreboard-widget-container div#scoreboard-top-box.full-time {
       min-height: 207px;
       max-height: 207px;
-      background-image: url(./assets/banner.svg);
+      background-image: url(./assets/banner.png);
       background-position: center;
       background-repeat: no-repeat;
       background-size: cover;

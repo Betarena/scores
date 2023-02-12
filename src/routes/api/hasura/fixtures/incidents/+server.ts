@@ -57,7 +57,8 @@ async function main(_fixture_id: string): Promise<REDIS_CACHE_SINGLE_incidents_d
   const events = 
     fixture_data?.events_j == undefined
       ? []
-      : fixture_data?.events_j.sort((a, b) => parseFloat(b.minute.toString()) - parseFloat(a.minute.toString()));
+      : fixture_data?.events_j.sort((a, b) => b?.minute - a?.minute)
+  ;
 
   // [ℹ] home-team
   const home_team_id = fixture_data?.localteam_id_j;
