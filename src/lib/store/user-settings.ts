@@ -2,9 +2,7 @@
 // ... contains the TRANSLATION LANG SELECTED by the USER;
 // ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import { dev } from '$app/environment';
 import type { GeoJsResponse } from '$lib/models/geojs-types';
-import { logDevGroup } from '$lib/utils/debug';
 import type { User } from 'firebase/auth';
 import { writable } from 'svelte/store';
 
@@ -101,12 +99,6 @@ function createLocalStore(key: string) {
 		 * @param {string} lang
 		 */
 		setLang: (lang: string) => {
-			// ... DEBUGGING;
-			if (dev)
-				logDevGroup(
-					'user-settings [DEV]',
-					`selected lang: ${lang}`
-				);
 			// ... GET DATA FROM LOCALSTORAGE();
 			const existing: string =
 				localStorage.getItem(key);

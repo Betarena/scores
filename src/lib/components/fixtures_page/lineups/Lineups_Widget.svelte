@@ -676,11 +676,6 @@
 
 			// [ℹ] reactiveity on-set main
 			FIXTURE_LINEUPS = FIXTURE_LINEUPS;
-			if (dev)
-				console.log(
-					'FIXTURE_LINEUPS UPDATED',
-					FIXTURE_LINEUPS
-				);
 		}
 
 		// TODO: lazy_load_data_check = true

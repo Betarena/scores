@@ -6,6 +6,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import {
 		dlog,
+		dlogv2,
 		INCIDENT_FW_DEBUG_STYLE,
 		INCIDENT_FW_DEBUG_TAG,
 		INCIDENT_FW_DEBUG_TOGGLE, log_info_group
@@ -257,12 +258,7 @@
 			return;
 		}
 
-		// [🐞]
-		if (dev)
-			console.log(
-				'%cTriggered livescore_now listen',
-				'background: green; color: #fffff'
-			);
+    dlog(`${INCIDENT_FW_DEBUG_TAG} Triggered odds listen`, INCIDENT_FW_DEBUG_TOGGLE, INCIDENT_FW_DEBUG_STYLE);
 
 		const fixtureRef = ref(
 			db_real,
@@ -316,20 +312,17 @@
 
 	// [! CRITICAL !]
 	onDestroy(async () => {
-		// [🐞]
-		if (dev)
-			console.groupCollapsed(
-				'%cclosing firebase connections [DEV]',
-				'background: red; color: #fffff'
-			);
-		// [ℹ] close LISTEN EVENT connection
+		const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
-			// [🐞]
-			if (dev) console.log('closing connection');
+      logsMsg.push('closing connection')
 			iterator();
 		}
-		// [🐞]
-		if (dev) console.groupEnd();
+    dlogv2(
+      `${INCIDENT_FW_DEBUG_TAG} closing firebase connections`,
+      logsMsg,
+      INCIDENT_FW_DEBUG_TOGGLE, 
+      INCIDENT_FW_DEBUG_STYLE
+    )
 	});
 
 	// FIXME:

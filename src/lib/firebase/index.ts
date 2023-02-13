@@ -3,18 +3,17 @@
  * ------------------
  * & methods;
  */
-import { dev } from '$app/environment';
 import {
-	child,
-	get,
-	ref
+  child,
+  get,
+  ref
 } from 'firebase/database';
 
 import { db_real } from './init';
 
 import type { SelectedFixture_LiveOdds_Response } from '$lib/models/featured_match/firebase-real-db-interface';
 import type { SelectedFixutre } from '$lib/models/featured_match/response_models';
-import { logDevGroup } from '$lib/utils/debug';
+import { dlog, FIREBASE_DEBUG_STYLE, FIREBASE_DEBUG_TAG, FIREBASE_DEBUG_TOGGLE } from '$lib/utils/debug';
 
 /**
  * Description:
@@ -27,13 +26,8 @@ import { logDevGroup } from '$lib/utils/debug';
 export async function getTargetFixtureOdds(
 	fixture_data: SelectedFixutre
 ): Promise<SelectedFixture_LiveOdds_Response> {
-	// ... DEBUGGING;
-	if (dev)
-		logDevGroup(
-			'firebase [DEV]',
-			`fixture_data: ${fixture_data}`
-		);
-	// ... convert the datetime to the correct variables to search for the fixture;
+  dlog(`${FIREBASE_DEBUG_TAG} fixture_data: ${fixture_data}`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
+  // ... convert the datetime to the correct variables to search for the fixture;
 	const year_: string = new Date(
 		fixture_data.date
 	)
@@ -57,11 +51,7 @@ export async function getTargetFixtureOdds(
 	// ... obtain-sportbook-details;
 	const sportbook_details =
 		await getTargetGeoSportBookDetails(lang);
-	if (dev)
-		logDevGroup(
-			'firebase [DEV]',
-			`odds/${year_}/${new_month_}/${day_}/${fixtureId}`
-		);
+  dlog(`${FIREBASE_DEBUG_TAG} odds/${year_}/${new_month_}/${day_}/${fixtureId}`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
 	// ... return the odds-site info & the odds values;
 	return get(
 		child(
@@ -143,12 +133,8 @@ export async function getTargetGeoSportBookDetails(
 ): Promise<unknown> {
 	// ... return the odds-site info & the odds values;
 	if (siteName != undefined) {
-		if (dev)
-			logDevGroup(
-				'firebase [DEV]',
-				`siteName: ${siteName}`
-			);
-		return await get(
+    dlog(`${FIREBASE_DEBUG_TAG} siteName: ${siteName}`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
+    return await get(
 			child(
 				ref(db_real),
 				`sportsbook_details/${lang}`
