@@ -18,6 +18,7 @@ export const cache_fixtures_seo_key =
 	'fixtures_seo';
 export const cache_fixtures_info_key =
 	'fixtures_page_info';
+export const cache_fixtures_infov2_key = "fixtures_page_info_v2";
 export const cache_sport_translations =
 	'general_sport_translations';
 export const cache_country_translations =
@@ -98,6 +99,10 @@ export const fixture_statistics_cache_trans_addr =
 	'fixture_statistics_trans';
 export const fixture_votes_cache_trans_addr =
 	'fixture_votes_trans';
+export const fixture_prob_cache_trans_addr =
+	'fixture_prob_trans';
+export const fixture_h2h_cache_trans_addr =
+	'fixture_h2h_trans';
 
 /**
  * [HSET] [GET] Method
