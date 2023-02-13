@@ -6,6 +6,9 @@ export const ERROR_CODE_PRELOAD = 500;
 export const LAYOUT_1_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/layout)`;
 export const HOME_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/lang)`;
 
+export const NAVBAR_DEBUG_TAG = 'navbar [DEBUG] |'
+export const NAVBAR_DEBUG_STYLE = 'background: purple; color: #FFFFFF'
+
 /**
  * @param groupName
  * @param msg
@@ -53,15 +56,23 @@ export function log_info_group(
 	console.groupEnd();
 }
 
+
 /**
- * @param msg
+ * @description Advanced debug logging method
+ * for displaying target information based on
+ * supplied arguments, and styling.
+ * @param msg 
+ * @param show 
+ * @param style 
  */
 export function dlog(
 	msg: string | object,
-	show?: boolean
+	show?: boolean,
+	style?: string
 ) {
 	// [🐞]
-	if (dev && show) console.debug(msg);
+	if (dev && show && !style) console.debug(msg);
+	if (dev && typeof(msg) == 'string' && show && style) console.debug(`%c${msg}`, style);
 }
 
 /**
