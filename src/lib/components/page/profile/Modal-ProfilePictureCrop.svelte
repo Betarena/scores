@@ -50,6 +50,7 @@ COMPONENT JS (w/ TS)
     imageCropBox.removeEventListener('mousedown', mousedown_event, true)
     window.removeEventListener('mouseup', mouseup_event, true)
     window.removeEventListener('mousemove', mousemove_event, true)
+    reset_crop = true
     dispatch('upload_selected_img', {
       img: new_img_crop
     });
@@ -68,6 +69,9 @@ COMPONENT JS (w/ TS)
 	  image.src = URL.createObjectURL(file);
     image.onload = function () {
       reset_crop = true
+      imageCropBox.addEventListener('touchstart', mousedown_event, true)
+      window.addEventListener('touchend', mouseup_event, true)
+      window.addEventListener('touchmove', mousemove_event, true)
       imageCropBox.addEventListener('mousedown', mousedown_event, true)
       window.addEventListener('mouseup', mouseup_event, true)
       window.addEventListener('mousemove', mousemove_event, true)
@@ -77,16 +81,24 @@ COMPONENT JS (w/ TS)
   function mousedown_event (event) {
     let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
     dlog('imageCropBox clicked!', true)
+    // alert('imageCropBox clicked!')
     reset_crop = false
     crop_selected = true;
+    const left_val = imageCropBox.offsetLeft - (event?.clientX || event?.touches[0].clientX)
+    const right_val = imageCropBox.offsetTop - (event?.clientY || event?.touches[0].clientY)
+    dlog(`${left_val}`, true)
+    dlog(`${right_val}`, true)
+    dlog(event, true)
+    // dlog(touchevent, true)
     offset = [
-      imageCropBox.offsetLeft - event.clientX,
-      imageCropBox.offsetTop - event.clientY
+      left_val,
+      right_val
     ];
   }
 
   function mouseup_event () {
     dlog('mouse is up!', true)
+    // alert('mouse is up!')
     crop_selected = false;
   }
 
@@ -95,13 +107,17 @@ COMPONENT JS (w/ TS)
     let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
     if (crop_selected) {
       dlog('moving selector!', true)
-      event.preventDefault()
+      dlog(event, true)
+      // alert('moving selector!')
+      // event.preventDefault()
       let mousePosition = {
-        x: event.clientX,
-        y: event.clientY
+        x: ((event)?.clientX || (event)?.touches[0].clientX),
+        y: ((event)?.clientY || (event)?.touches[0].clientY)
       };
       const image_left = mousePosition.x + offset[0]
       const image_top = mousePosition.y + offset[1]
+      dlog(`${image_left}`, true)
+      dlog(`${image_top}`, true)
       let img_width = image.offsetWidth
       let img_height = image.offsetHeight
       let crop_width_a = imageCropBox.offsetWidth
@@ -109,8 +125,8 @@ COMPONENT JS (w/ TS)
       // [ℹ] prevent from going outside image bounds
       if (image_left <= 0 
       || image_top <= 0
-      || (image_left + crop_width_a + event.movementX) >= img_width
-      || (image_top + crop_height_a + event.movementY) >= img_height) {
+      || (image_left + crop_width_a + ((event)?.movementX || 0)) >= img_width
+      || (image_top + crop_height_a + ((event)?.movementY || 0)) >= img_height) {
         return;
       }
       imageCropBox.style.left = `${image_left}px`;
@@ -224,6 +240,7 @@ COMPONENT HTML
         width="50"
         height="50"
         draggable="false"
+        style="pointer-events: none"
       />
     </div>
     <!-- <canvas id="example" width="150" height="150"></canvas> -->
@@ -315,7 +332,7 @@ COMPONENT STYLE
     width: fit-content;
     position: relative;
     overflow: hidden;
-  } div#image-box-out > div#image-box-in > img {
+  } div#image-box-out > div#image-box-in > img#profile-image {
     /* position */
     z-index: 2;
     /* style */
@@ -324,6 +341,13 @@ COMPONENT STYLE
     background-color: var(--white);
     mask-image: radial-gradient(150px circle at var(--imageCropBox-mask-left) var(--imageCropBox-mask-top), black 50%, rgba(0, 0, 0, 0.5) 50%);
     -webkit-mask-image: radial-gradient(150px circle at var(--imageCropBox-mask-left) var(--imageCropBox-mask-top), black 50%, rgba(0, 0, 0, 0.5) 50%);
+    /* user-drag: none;  
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    pointer-events: none; */
   } div#image-box-out > div#image-box-in > div#profile-cricle-img-crop {
     /* position */
     position: absolute;
