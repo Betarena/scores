@@ -15,26 +15,28 @@
 =================== -->
 
 {#if HEADER_TRANSLATION_DATA != undefined}
-	<!-- [ℹ] identify the correct translation via IF 
+	<!-- 
+  [ℹ] identify the correct translation via IF 
   -->
 	{#if HEADER_TRANSLATION_DATA.scores_top_bar_messages.status && show}
-		<!-- [ℹ] 
-    -->
 		<div id="platform-alert-container">
-			<!-- [ℹ] 
-      -->
-			<p class="s-12 color-white">
+			<p 
+        class="
+          s-12 
+          color-white
+        ">
 				{HEADER_TRANSLATION_DATA
 					.scores_top_bar_messages.message}
 			</p>
-			<!-- [ℹ] close-cross
-        -->
+			<!-- 
+      [ℹ] close-cross
+      -->
 			<img
 				id="close-platform-alert-img"
 				src="/assets/svg/alert/close.svg"
 				alt="close-vector"
-				width="14px"
-				height="14px"
+				width="14"
+				height="14"
 				on:click={() => (show = false)}
 			/>
 		</div>

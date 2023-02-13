@@ -33,6 +33,7 @@
 
 {#if show}
 	<div>
+    <!-- FIXME: need width & height -->
 		<img
 			id="brand-svg"
 			src="/assets/svg/logo-main.svg"

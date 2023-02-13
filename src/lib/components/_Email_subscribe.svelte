@@ -47,8 +47,10 @@
 		<img
 			id="close-vector"
 			class="cursor-pointer"
-			src="assets/svg/close.svg"
+			src="/assets/svg/close.svg"
 			alt="close-svg"
+      width="20"
+      height="20"
 			on:click={() =>
 				($sessionStore.newsletterPopUpShow = false)}
 		/>
