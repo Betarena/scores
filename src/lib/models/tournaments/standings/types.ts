@@ -1,150 +1,152 @@
 import type {
-  BETARENA_HASURA_color_codes_league_standings_positions,
-  BETARENA_HASURA_scores_football_leagues,
-  BETARENA_HASURA_scores_football_standings,
-  BETARENA_HASURA_scores_football_standings_history,
-  BETARENA_HASURA_scores_football_teams,
-  BETARENA_HASURA_scores_general_translations,
-  BETARENA_HASURA_scores_team_statistics,
-  BETARENA_HASURA_scores_team_statistics_history,
-  BETARENA_HASURA_scores_widget_standings_translations,
-  WidgetsNoDataAvailable
-} from "../../../../lib/models/hasura.js";
+	BETARENA_HASURA_color_codes_league_standings_positions,
+	BETARENA_HASURA_scores_football_leagues,
+	BETARENA_HASURA_scores_football_standings,
+	BETARENA_HASURA_scores_football_standings_history,
+	BETARENA_HASURA_scores_football_teams,
+	BETARENA_HASURA_scores_general_translations,
+	BETARENA_HASURA_scores_team_statistics,
+	BETARENA_HASURA_scores_team_statistics_history,
+	BETARENA_HASURA_scores_widget_standings_translations,
+	WidgetsNoDataAvailable
+} from '../../../../lib/models/hasura.js';
 
 /**
  * ==========================================
  * BACKEND - COMPLETE WIDGET SURGICAL REQUIRED DATA
- * ========================================== 
-*/
+ * ==========================================
+ */
 
 export interface BACKEND_tournament_standings_surgical_update {
-  leagueSeasons?: LeagueSeason[];
-  teamsList?:     number[];
-  fixturesList?:  number[];
+	leagueSeasons?: LeagueSeason[];
+	teamsList?: number[];
+	fixturesList?: number[];
 }
 
 export interface LeagueSeason {
-  leagueId?: number;
-  seasonId?: number;
+	leagueId?: number;
+	seasonId?: number;
 }
 
 /**
  * ==========================================
- * HASURA DB - COMPLETE WIDGET REQUIRED DATA 
- * ========================================== 
-*/
+ * HASURA DB - COMPLETE WIDGET REQUIRED DATA
+ * ==========================================
+ */
 
 export interface BETARENA_HASURA_tournament_standings_query {
-  scores_football_leagues:                  BETARENA_HASURA_scores_football_leagues[]
-  scores_football_standings:            BETARENA_HASURA_scores_football_standings[]    
-  scores_football_standings_history:    BETARENA_HASURA_scores_football_standings_history[]
+	scores_football_leagues: BETARENA_HASURA_scores_football_leagues[];
+	scores_football_standings: BETARENA_HASURA_scores_football_standings[];
+	scores_football_standings_history: BETARENA_HASURA_scores_football_standings_history[];
 
-  scores_football_teams:                    BETARENA_HASURA_scores_football_teams[]
-  scores_team_statistics:                   BETARENA_HASURA_scores_team_statistics[]
-  scores_team_statistics_history:           BETARENA_HASURA_scores_team_statistics_history[]
- 
-  scores_widget_standings_translations:     BETARENA_HASURA_scores_widget_standings_translations[]
-  color_codes_league_standings_positions:   BETARENA_HASURA_color_codes_league_standings_positions[]
-  scores_general_translations:              BETARENA_HASURA_scores_general_translations[]
+	scores_football_teams: BETARENA_HASURA_scores_football_teams[];
+	scores_team_statistics: BETARENA_HASURA_scores_team_statistics[];
+	scores_team_statistics_history: BETARENA_HASURA_scores_team_statistics_history[];
+
+	scores_widget_standings_translations: BETARENA_HASURA_scores_widget_standings_translations[];
+	color_codes_league_standings_positions: BETARENA_HASURA_color_codes_league_standings_positions[];
+	scores_general_translations: BETARENA_HASURA_scores_general_translations[];
 }
 
 /**
  * ==========================================
- * CACHING PERSIST - COMPLETE WIDGET REQUIRED DATA 
- * ========================================== 
-*/
+ * CACHING PERSIST - COMPLETE WIDGET REQUIRED DATA
+ * ==========================================
+ */
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface REDIS_CACHE_SINGLE_tournament_standings_translation 
-  extends BETARENA_HASURA_scores_widget_standings_translations { 
-  no_data_t?: WidgetsNoDataAvailable
+export interface REDIS_CACHE_SINGLE_tournament_standings_translation
+	extends BETARENA_HASURA_scores_widget_standings_translations {
+	no_data_t?: WidgetsNoDataAvailable;
 }
 
 export interface REDIS_CACHE_SINGLE_tournament_standings_data {
-  url?:        string
-  league_id?:  number
-  seasons?:    Tournament_Standing_Season[]
+	url?: string;
+	league_id?: number;
+	seasons?: Tournament_Standing_Season[];
 }
 
 /**
  * ==========================================
- * OTHER CACHE INTERFACES - COMPLETE WIDGET REQUIRED DATA 
- * ========================================== 
-*/
+ * OTHER CACHE INTERFACES - COMPLETE WIDGET REQUIRED DATA
+ * ==========================================
+ */
 
 export interface Tournament_Standing_Season {
-  season_id?:    number
-  total?:        Standing_Team_Total_Away_Home[]
-  home?:         Standing_Team_Total_Away_Home[]
-  away?:         Standing_Team_Total_Away_Home[]
-  group?:        boolean
-  // group-based-standings types
-  group_standings?: Groups_Standings[]
-} export interface Groups_Standings {
-  group_name?:   string
-  group_round?:  number
-  total?:        Standing_Team_Total_Away_Home[]
-  home?:         Standing_Team_Total_Away_Home[]
-  away?:         Standing_Team_Total_Away_Home[]
-} export interface Standing_Team_Total_Away_Home {
-  team_logo:     string          // >? based on history (constant)
-  team_name:     string          // >? based on history (constant)
-  color_code:    string          
-  position?:     number          // scores_football_standings |"position" if older seasons = scores_football_standings_history
-                                 // scores_football_standings |"home +""points" - Use points to determine teams position. If older seasons = scores_football_standings_history
-                                 // scores_football_standings |"away +""points" - Use points to determine teams position. If older seasons = scores_football_standings_history
-                                  
-  points?:       number          // scores_football_standings | "overall" + "points" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "home" + "points" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "points" if older seasons = scores_football_standings_history
+	season_id?: number;
+	total?: Standing_Team_Total_Away_Home[];
+	home?: Standing_Team_Total_Away_Home[];
+	away?: Standing_Team_Total_Away_Home[];
+	group?: boolean;
+	// group-based-standings types
+	group_standings?: Groups_Standings[];
+}
+export interface Groups_Standings {
+	group_name?: string;
+	group_round?: number;
+	total?: Standing_Team_Total_Away_Home[];
+	home?: Standing_Team_Total_Away_Home[];
+	away?: Standing_Team_Total_Away_Home[];
+}
+export interface Standing_Team_Total_Away_Home {
+	team_logo: string; // >? based on history (constant)
+	team_name: string; // >? based on history (constant)
+	color_code: string;
+	position?: number; // scores_football_standings |"position" if older seasons = scores_football_standings_history
+	// scores_football_standings |"home +""points" - Use points to determine teams position. If older seasons = scores_football_standings_history
+	// scores_football_standings |"away +""points" - Use points to determine teams position. If older seasons = scores_football_standings_history
 
-  games_played?: number          // scores_football_standings | "round_name" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "games_played" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "games_played" if older seasons = scores_football_standings_history
+	points?: number; // scores_football_standings | "overall" + "points" if older seasons = scores_football_standings_history
+	// scores_football_standings | "home" + "points" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "points" if older seasons = scores_football_standings_history
 
-  won?:          number          // scores_football_standings |  "overall" + "won" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "home" + "won" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "won" if older seasons = scores_football_standings_history
+	games_played?: number; // scores_football_standings | "round_name" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "games_played" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "games_played" if older seasons = scores_football_standings_history
 
-  draw?:         number          // scores_football_standings |  "overall" + "draw" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "home" + "draw" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "draw" if older seasons = scores_football_standings_history
+	won?: number; // scores_football_standings |  "overall" + "won" if older seasons = scores_football_standings_history
+	// scores_football_standings | "home" + "won" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "won" if older seasons = scores_football_standings_history
 
-  lost?:         number          // scores_football_standings |  "overall" + "lost" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "home" + "lost" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "lost" if older seasons = scores_football_standings_history
+	draw?: number; // scores_football_standings |  "overall" + "draw" if older seasons = scores_football_standings_history
+	// scores_football_standings | "home" + "draw" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "draw" if older seasons = scores_football_standings_history
 
-  gs?:           number          // scores_football_standings |  "overall" + "goals_scored" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "home" + "goals_scored" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "goals_scored" if older seasons = scores_football_standings_history
+	lost?: number; // scores_football_standings |  "overall" + "lost" if older seasons = scores_football_standings_history
+	// scores_football_standings | "home" + "lost" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "lost" if older seasons = scores_football_standings_history
 
-  ga?:           number          // scores_football_standings |  "overall" + "goals_against" if older seasons = scores_football_standings_history
-                                 // Goals Against = scores_football_standings | "home" + "goals_against" if older seasons = scores_football_standings_history
-                                 // scores_football_standings | "away" + "goals_against" if older seasons = scores_football_standings_history
+	gs?: number; // scores_football_standings |  "overall" + "goals_scored" if older seasons = scores_football_standings_history
+	// scores_football_standings | "home" + "goals_scored" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "goals_scored" if older seasons = scores_football_standings_history
 
-  gavg?:         number          // scores_team_statistics    |  "total" or if older seasons = scores_team_statistics_history
-                                 // Goal Average = scores_team_statistics |"home" or if older seasons = scores_team_statistics_history
-                                 // scores_team_statistics |"away" or if older seasons = scores_team_statistics_history
+	ga?: number; // scores_football_standings |  "overall" + "goals_against" if older seasons = scores_football_standings_history
+	// Goals Against = scores_football_standings | "home" + "goals_against" if older seasons = scores_football_standings_history
+	// scores_football_standings | "away" + "goals_against" if older seasons = scores_football_standings_history
 
-  cavg?:         number          // scores_team_statistics    |  "avg_corners" or if older seasons = scores_team_statistics_history
-                                 // home: ❌
-                                 // away: ❌
+	gavg?: number; // scores_team_statistics    |  "total" or if older seasons = scores_team_statistics_history
+	// Goal Average = scores_team_statistics |"home" or if older seasons = scores_team_statistics_history
+	// scores_team_statistics |"away" or if older seasons = scores_team_statistics_history
 
-  ycavg?:        number           // scores_team_statistics    |  "yellow_cards_average" or if older seasons = scores_team_statistics_history (How this data point is populated on this task: https://github.com/Betarena/scores/issues/379)
-                                 // home: ❌
-                                 // away: ❌
+	cavg?: number; // scores_team_statistics    |  "avg_corners" or if older seasons = scores_team_statistics_history
+	// home: ❌
+	// away: ❌
 
-  ov15?:         number          // scores_team_statistics    |  "goal_line > 1_5" or if older seasons = scores_team_statistics_history
-                                 // home: ❌ 
-                                 // away: ❌
+	ycavg?: number; // scores_team_statistics    |  "yellow_cards_average" or if older seasons = scores_team_statistics_history (How this data point is populated on this task: https://github.com/Betarena/scores/issues/379)
+	// home: ❌
+	// away: ❌
 
-  ov25?:         number          // scores_team_statistics    |  "goal_line > 2_5" or if older seasons = scores_team_statistics_history
-                                 // home: ❌
-                                 // away: ❌
+	ov15?: number; // scores_team_statistics    |  "goal_line > 1_5" or if older seasons = scores_team_statistics_history
+	// home: ❌
+	// away: ❌
 
-  winP?:         number          // scores_team_statistics    |  (How this data is populated on this task: https://github.com/Betarena/scores/issues/380)
+	ov25?: number; // scores_team_statistics    |  "goal_line > 2_5" or if older seasons = scores_team_statistics_history
+	// home: ❌
+	// away: ❌
 
-  rf?:           string          // scores_football_standings if older seasons = scores_football_standings_history
-                                 // home: ❌
-                                 // away: ❌
+	winP?: number; // scores_team_statistics    |  (How this data is populated on this task: https://github.com/Betarena/scores/issues/380)
+
+	rf?: string; // scores_football_standings if older seasons = scores_football_standings_history
+	// home: ❌
+	// away: ❌
 }

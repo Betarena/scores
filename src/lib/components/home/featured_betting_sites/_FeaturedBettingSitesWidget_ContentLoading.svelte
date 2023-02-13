@@ -7,7 +7,7 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	// ... 
+	// ...
 	import Placeholder_Desktop_Row from './loaders/desktop/_Placeholder_Row.svelte';
 	import Placeholder_Mobile_Row from './loaders/mobile/_Placeholder_Row.svelte';
 	import Placeholder_Tablet_Row from './loaders/tablet/_Placeholder_Row.svelte';
@@ -23,7 +23,8 @@
 	let tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit = document.documentElement.clientWidth;
+		var wInit =
+			document.documentElement.clientWidth;
 		// ... TABLET - VIEW
 		if (wInit > 768) {
 			tabletExclusive = false;
@@ -36,21 +37,25 @@
 		} else {
 			mobileExclusive = false;
 		}
-		window.addEventListener('resize', function () {
-			var w = document.documentElement.clientWidth;
-			// ... TABLET - VIEW
-			if (w > 768) {
-				tabletExclusive = false;
-			} else {
-				tabletExclusive = true;
+		window.addEventListener(
+			'resize',
+			function () {
+				var w =
+					document.documentElement.clientWidth;
+				// ... TABLET - VIEW
+				if (w > 768) {
+					tabletExclusive = false;
+				} else {
+					tabletExclusive = true;
+				}
+				// ... MOBILE - VIEW
+				if (w < 475) {
+					mobileExclusive = true;
+				} else {
+					mobileExclusive = false;
+				}
 			}
-			// ... MOBILE - VIEW
-			if (w < 475) {
-				mobileExclusive = true;
-			} else {
-				mobileExclusive = false;
-			}
-		});
+		);
 	});
 </script>
 
@@ -58,99 +63,96 @@
   COMPONENT HTML 
 ==================== -->
 
-<div 
-	id="live-score-container" 
-	class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+<div
+	id="live-score-container"
+	class:dark-background-1={$userBetarenaSettings.theme ==
+		'Dark'}
+>
 	<!-- ... DESKTOP CONTENT-LOADER ... -->
 	{#if !tabletExclusive}
 		<!-- ... rating-box-sites ... -->
-		<div 
-			id="feature-rank-display">
+		<div id="feature-rank-display">
 			<!-- ... silver-cup-asset ... -->
-			<div 
-				id="featured-rank" 
-				style="margin-top: 20px;">
+			<div
+				id="featured-rank"
+				style="margin-top: 20px;"
+			>
 				<SilverCup_Loader />
 			</div>
 			<!-- ... gold-cup-asset ... -->
-			<div 
-				id="featured-rank" 
-				style="margin-bottom: 20px;">
+			<div
+				id="featured-rank"
+				style="margin-bottom: 20px;"
+			>
 				<GoldCup_Loader />
 			</div>
 			<!-- ... bronze-cup-asset ... -->
-			<div 
-				id="featured-rank" 
-				style="margin-top: 20px;">
+			<div
+				id="featured-rank"
+				style="margin-top: 20px;"
+			>
 				<BronzeCup_Loader />
 			</div>
 		</div>
 		<!-- ... row-title-intro ... -->
-		<div 
-			id="title-box" />
+		<div id="title-box" />
 		<!-- ... row-data-simulated ... -->
-		{#each {length: 5} as _, i}
-			<div 
-				class='featured-row'>
+		{#each { length: 5 } as _, i}
+			<div class="featured-row">
 				<Placeholder_Desktop_Row />
 			</div>
 		{/each}
 		<!-- ... show-more-less ... -->
-		<div
-			id='show-more-box' />
-	<!-- ... TABLET CONTENT-LOADER ... -->
+		<div id="show-more-box" />
+		<!-- ... TABLET CONTENT-LOADER ... -->
 	{:else if tabletExclusive && !mobileExclusive}
 		<!-- ... rating-box-sites ... -->
-		<div 
-			id="feature-rank-display">
+		<div id="feature-rank-display">
 			<!-- ... silver-cup-asset ... -->
-			<div 
+			<div
 				id="featured-rank"
-				style="margin-top: 20px;">
+				style="margin-top: 20px;"
+			>
 				<!-- ... cup ... -->
 				<SilverCup_Loader />
 			</div>
 			<!-- ... gold-cup-asset ... -->
-			<div 
-				id="featured-rank" 
-				style="margin-bottom: 20px;">
+			<div
+				id="featured-rank"
+				style="margin-bottom: 20px;"
+			>
 				<GoldCup_Loader />
 			</div>
 			<!-- ... bronze-cup-asset ... -->
-			<div 
-				id="featured-rank" 
-				style="margin-top: 20px;">
+			<div
+				id="featured-rank"
+				style="margin-top: 20px;"
+			>
 				<BronzeCup_Loader />
 			</div>
 		</div>
 		<!-- ... row-title-intro ... -->
-		<div 
-			id="title-box" />
+		<div id="title-box" />
 		<!-- ... row-data-simulated ... -->
-		{#each {length: 5} as _, i}
-			<div 
-				class='featured-row'>
+		{#each { length: 5 } as _, i}
+			<div class="featured-row">
 				<Placeholder_Tablet_Row />
 			</div>
 		{/each}
 		<!-- ... show-more-less ... -->
-		<div
-			id='show-more-box' />
-	<!-- ... MOBILE EXCLUSIVE CONTENT-LOADER ... -->
+		<div id="show-more-box" />
+		<!-- ... MOBILE EXCLUSIVE CONTENT-LOADER ... -->
 	{:else if tabletExclusive && mobileExclusive}
 		<!-- ... row-title-intro ... -->
-		<div 
-			id="title-box" />
+		<div id="title-box" />
 		<!-- ... row-data-simulated ... -->
-		{#each {length: 5} as _, i}
-			<div 
-				class='featured-row'>
+		{#each { length: 5 } as _, i}
+			<div class="featured-row">
 				<Placeholder_Mobile_Row />
 			</div>
 		{/each}
 		<!-- ... show-more-less ... -->
-		<div
-			id='show-more-box' />
+		<div id="show-more-box" />
 	{/if}
 </div>
 
@@ -181,7 +183,7 @@
 
 	div#show-more-box {
 		height: 72px;
-    	box-shadow: inset 0px 1px 0px #ebebeb;
+		box-shadow: inset 0px 1px 0px #ebebeb;
 	}
 
 	div#title-box {
@@ -189,11 +191,10 @@
 	}
 
 	@media only screen and (min-width: 767px) {
-
 		#featured-rank {
 			height: 257px;
 			padding: 16px 39px;
-			background: #F2F2F2;
+			background: #f2f2f2;
 			border-radius: 12px;
 			justify-items: center;
 			position: relative;
@@ -212,10 +213,9 @@
 			width: 100%;
 			max-width: 700px;
 		} */
-  }
+	}
 
 	@media only screen and (min-width: 1024px) {
-
 		#featured-rank {
 			padding: 16px 8px;
 		}

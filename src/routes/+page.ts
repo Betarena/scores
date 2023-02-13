@@ -1,9 +1,9 @@
 import {
-  dlog,
-  ERROR_CODE_INVALID,
-  ERROR_CODE_PRELOAD,
-  HOME_LANG_PAGE_ERROR_MSG,
-  PAGE_INVALID_MSG
+	dlog,
+	ERROR_CODE_INVALID,
+	ERROR_CODE_PRELOAD,
+	HOME_LANG_PAGE_ERROR_MSG,
+	PAGE_INVALID_MSG
 } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
@@ -20,7 +20,7 @@ export async function load({
 	const urlLang: string =
 		params.lang == undefined ? 'en' : params.lang;
 
-  // --------------
+	// --------------
 	// [ℹ] preload data DOC: REF: [2]
 	// --------------
 
@@ -70,7 +70,7 @@ export async function load({
 	// [ℹ] return(s)
 	// --------------
 
-  // [ℹ] exit;
+	// [ℹ] exit;
 	if (!VALID_URL) {
 		throw error(
 			ERROR_CODE_INVALID,
@@ -82,35 +82,41 @@ export async function load({
 	const INVALID_PAGE_DATA_POINTS: boolean =
 		data.includes(undefined);
 
-  const indexesOf = (arr, item) => 
-    arr.reduce(
-      (acc, v, i) => (v === item && acc.push(i), acc),
-  []);
-  dlog(`null (preload): ${indexesOf(data, null)}`, true)
+	const indexesOf = (arr, item) =>
+		arr.reduce(
+			(acc, v, i) => (
+				v === item && acc.push(i), acc
+			),
+			[]
+		);
+	dlog(
+		`null (preload): ${indexesOf(data, null)}`,
+		true
+	);
 
-  // FIXME: currently based on checking for any NULL/UNDEFINED data points
+	// FIXME: currently based on checking for any NULL/UNDEFINED data points
 	// FIXME: should still allow for page access if page is VALID but widget data or
 	// FIXME: otherwise page component is simply missing
-  // [ℹ] exit;
-  if (INVALID_PAGE_DATA_POINTS) {
-    throw error(
-      ERROR_CODE_PRELOAD,
-      HOME_LANG_PAGE_ERROR_MSG
-    );
-  }
+	// [ℹ] exit;
+	if (INVALID_PAGE_DATA_POINTS) {
+		throw error(
+			ERROR_CODE_PRELOAD,
+			HOME_LANG_PAGE_ERROR_MSG
+		);
+	}
 
-  // FIXME: types not working
-  return {
-    PAGE_DATA_SEO,
-    FEATURED_MATCH_WIDGET_DATA_SEO,
-    FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
-    BEST_GOAL_SCORERS_DATA_SEO,
-    LEAGUE_LIST_WIDGET_DATA_SEO,
-    LEAGUES_TABLE_SCORES_SEO_DATA,
-    SEO_BLOCK_DATA,
-    LIVE_SCORES_DATA_DATA_SEO,
-    LIVE_SCORES_DATA_LEAGUES,
-    LIVE_SCORES_FOOTBALL_TRANSLATIONS,
-    LIVESCORES_FOOTBALL_TOURNAMENTS
-  };
+	// FIXME: types not working
+	return {
+		PAGE_DATA_SEO,
+		FEATURED_MATCH_WIDGET_DATA_SEO,
+		FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
+		BEST_GOAL_SCORERS_DATA_SEO,
+		LEAGUE_LIST_WIDGET_DATA_SEO,
+		LEAGUES_TABLE_SCORES_SEO_DATA,
+		SEO_BLOCK_DATA,
+		LIVE_SCORES_DATA_DATA_SEO,
+		LIVE_SCORES_DATA_LEAGUES,
+		LIVE_SCORES_FOOTBALL_TRANSLATIONS,
+		LIVESCORES_FOOTBALL_TOURNAMENTS
+	};
 }

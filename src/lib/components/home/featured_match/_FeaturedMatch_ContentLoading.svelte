@@ -33,7 +33,8 @@
 	let tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit = document.documentElement.clientWidth;
+		var wInit =
+			document.documentElement.clientWidth;
 		// TABLET - VIEW
 		if (wInit > 768) {
 			tabletExclusive = false;
@@ -46,21 +47,25 @@
 		} else {
 			mobileExclusive = false;
 		}
-		window.addEventListener('resize', function () {
-			var w = document.documentElement.clientWidth;
-			// TABLET - VIEW
-			if (w > 768) {
-				tabletExclusive = false;
-			} else {
-				tabletExclusive = true;
+		window.addEventListener(
+			'resize',
+			function () {
+				var w =
+					document.documentElement.clientWidth;
+				// TABLET - VIEW
+				if (w > 768) {
+					tabletExclusive = false;
+				} else {
+					tabletExclusive = true;
+				}
+				// MOBILE - VIEW
+				if (w < 475) {
+					mobileExclusive = true;
+				} else {
+					mobileExclusive = false;
+				}
 			}
-			// MOBILE - VIEW
-			if (w < 475) {
-				mobileExclusive = true;
-			} else {
-				mobileExclusive = false;
-			}
-		});
+		);
 	});
 </script>
 
@@ -68,7 +73,11 @@
   COMPONENT HTML 
 ==================== -->
 
-<div id="live-score-container" class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+<div
+	id="live-score-container"
+	class:dark-background-1={$userBetarenaSettings.theme ==
+		'Dark'}
+>
 	<!-- ... DESKTOP CONTENT-LOADER ... -->
 	{#if !tabletExclusive}
 		<!-- ... LEAGUE-GAME-TITLE ... -->
@@ -243,11 +252,11 @@
 		}
 	}
 
-  @media only screen and (min-width: 768px) {
-    #live-score-container {
-      margin-top: 40px;
-    }
-  }
+	@media only screen and (min-width: 768px) {
+		#live-score-container {
+			margin-top: 40px;
+		}
+	}
 
 	/* WIDGET DARK THEME */
 	.dark-background-1 #fixture-league-title,

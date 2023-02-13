@@ -18,14 +18,18 @@
 		cx="20"
 		cy="21"
 		r="20"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="56"
 		width="184"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="56"
@@ -33,6 +37,8 @@
 		width="109"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 </svg>

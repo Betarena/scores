@@ -31,9 +31,9 @@ body {
     MOBILE 
     disable pinchin & user zooming on */
 	/* touch-action: pan-x pan-y; */
-  /* 
+	/* 
     SAFARI */
-  -webkit-text-size-adjust: none;
+	-webkit-text-size-adjust: none;
 }
 
 * {
@@ -53,16 +53,16 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	/* 
 	main app colors */
 	--white: #ffffff;
-	--whitev2: #F2F2F2;
+	--whitev2: #f2f2f2;
 	--primary: #f5620f;
-  --primary-fade: #F77C42;
+	--primary-fade: #f77c42;
 	--secondary: #37474f;
 	--blue: #0085ff;
 	--red: #c62828;
-  --red-bright: #FF3C3C;
+	--red-bright: #ff3c3c;
 	--theme-color: #e3e3e3;
-  --grey-color: #E6E6E6;
-  --grey-shade: #CCCCCC;
+	--grey-color: #e6e6e6;
+	--grey-shade: #cccccc;
 	/* 
 	dark theme colors */
 	--black: #000000;
@@ -76,9 +76,9 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	--mobile: 375;
 	--tablet: 767;
 	--desktop: 1440;
-  /* 
+	/* 
   other [fades] */
-  --oragne-pale-bg: rgba(247, 124, 66, 0.2);
+	--oragne-pale-bg: rgba(247, 124, 66, 0.2);
 }
 
 a {
@@ -103,39 +103,39 @@ p {
 /* DEFAULT BETARENA CSS VALUES */
 
 h1 {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 700;
-  font-size: 32px;
-  line-height: 140%;
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 700;
+	font-size: 32px;
+	line-height: 140%;
 }
 h2 {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 20px;
-  line-height: 150%;
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 20px;
+	line-height: 150%;
 }
 h3 {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 18px;
-  line-height: 150%;
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 18px;
+	line-height: 150%;
 }
 h4 {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 150%;
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 16px;
+	line-height: 150%;
 }
 h5 {
-  font-family: 'Roboto';
-  font-style: normal;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 150%;
+	font-family: 'Roboto';
+	font-style: normal;
+	font-weight: 500;
+	font-size: 14px;
+	line-height: 150%;
 }
 
 /* 
@@ -146,7 +146,7 @@ FONT COLOURS
 	color: #f5620f !important;
 }
 .color-black-2 {
-  color: var(--dark-theme);
+	color: var(--dark-theme);
 }
 .color-secondary {
 	color: var(--secondary);
@@ -170,7 +170,10 @@ FONT COLOURS
 	color: var(--grey-shade);
 }
 .color-blue-green-gradient {
-	background: -webkit-linear-gradient(rgba(0, 255, 117, 1), rgba(0, 163, 255, 1));
+	background: -webkit-linear-gradient(
+		rgba(0, 255, 117, 1),
+		rgba(0, 163, 255, 1)
+	);
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
@@ -204,12 +207,12 @@ FONT EXTRA STYLES
 .text-center {
 	text-align: center;
 	text-align: -webkit-center;
-  text-align: -moz-center;
+	text-align: -moz-center;
 }
 .text-left {
 	text-align: left;
 	text-align: -webkit-left;
-  text-align: -moz-left;
+	text-align: -moz-left;
 }
 .place-center {
 	place-self: center;
@@ -221,7 +224,7 @@ FONT EXTRA STYLES
 	cursor: not-allowed !important;
 }
 .display-none {
-  display: none;
+	display: none;
 }
 /* 
 ~~~~~~~~~~~~
@@ -506,13 +509,13 @@ section {
 	flex-wrap: nowrap;
 }
 .row-space-out-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  width: 100%;
-  flex-direction: row;
-  flex-wrap: nowrap;
-  align-content: center;
+	display: flex;
+	align-items: flex-start;
+	justify-content: space-between;
+	width: 100%;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-content: center;
 }
 .row-space-center {
 	display: flex;
@@ -656,26 +659,29 @@ BUTTON STYLES
 
 .btn-primary-v2 {
 	background: var(--primary);
-  border-radius: 8px;
-  padding: 11.5px 24px;
-  height: 44px;
+	border-radius: 8px;
+	padding: 11.5px 24px;
+	height: 44px;
 	color: var(--white);
-} .btn-primary-v2:hover {
-  background-color: var(--primary-fade);
+}
+.btn-primary-v2:hover {
+	background-color: var(--primary-fade);
 }
 
 .btn-hollow {
 	background: transparent;
-  border: 1px solid var(--grey-color) !important;
-  border-radius: 8px;
-  padding: 11.5px 20px;
-  height: 44px;
+	border: 1px solid var(--grey-color) !important;
+	border-radius: 8px;
+	padding: 11.5px 20px;
+	height: 44px;
 	color: var(--dark-theme);
-} .btn-hollow:hover {
-  border: 1px solid var(--primary) !important;
+}
+.btn-hollow:hover {
+	border: 1px solid var(--primary) !important;
 	color: var(--primary);
-} .btn-hollow.danger {
-  border: 1px solid var(--red) !important;
+}
+.btn-hollow.danger {
+	border: 1px solid var(--red) !important;
 }
 
 /* 
@@ -777,7 +783,8 @@ ANIMATIONS FORM CSS STYLE
 	}
 }
 .animation-target {
-	-webkit-animation: flickerAnimation 1.5s infinite;
+	-webkit-animation: flickerAnimation 1.5s
+		infinite;
 	-moz-animation: flickerAnimation 1.5s infinite;
 	-o-animation: flickerAnimation 1.5s infinite;
 	animation: flickerAnimation 1.5s infinite;
@@ -793,7 +800,9 @@ DARK-MODE FORM CSS STYLE
 	background-color: var(--dark-theme) !important;
 }
 .dark-background-1 {
-	background-color: var(--dark-theme-1) !important;
+	background-color: var(
+		--dark-theme-1
+	) !important;
 }
 
 .dark-background-1 .color-grey {
@@ -807,7 +816,8 @@ DARK-MODE FORM CSS STYLE
 /* ... MOBILE VIEW OVERFLOW HIDDEN ... */
 
 @media only screen and (max-width: 375px) {
-	html, body {
+	html,
+	body {
 		overflow-x: hidden;
 	}
 }
@@ -815,7 +825,7 @@ DARK-MODE FORM CSS STYLE
 /* ... zoom-out-mobiles-input-form ... */
 /* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */
 @supports (-webkit-overflow-scrolling: touch) {
-  input:active {
-    font-size: 16px !important;
-  }
+	input:active {
+		font-size: 16px !important;
+	}
 }

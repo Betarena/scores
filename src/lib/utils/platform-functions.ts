@@ -1,50 +1,47 @@
 /**
  * @description Simple function
  * to determine language (SSR) of platform
- * @param {string | undefined} page_route_id 
- * @param {unknown | undefined} page_error 
- * @param {string | undefined} page_params_lang 
+ * @param {string | undefined} page_route_id
+ * @param {unknown | undefined} page_error
+ * @param {string | undefined} page_params_lang
  * @returns string (language)
-*/
-export function platfrom_lang_ssr (
-  page_route_id?: string | undefined,
-  page_error?: unknown | undefined,
-  page_params_lang?: string | undefined,
+ */
+export function platfrom_lang_ssr(
+	page_route_id?: string | undefined,
+	page_error?: unknown | undefined,
+	page_params_lang?: string | undefined
 ): string {
-  // NOTE: default (EN)
-  let server_side_language = 'en'
-  // [ℹ] validation (#1)
-  const validation_1 = page_route_id != null && !page_error
-  if (!validation_1) return server_side_language
-  // [ℹ] validation (#2)
-  server_side_language =
-    page_route_id.includes("[lang=lang]")
-      ? page_params_lang
-      : 'en'
-  ;
-  return server_side_language;
+	// NOTE: default (EN)
+	let server_side_language = 'en';
+	// [ℹ] validation (#1)
+	const validation_1 =
+		page_route_id != null && !page_error;
+	if (!validation_1) return server_side_language;
+	// [ℹ] validation (#2)
+	server_side_language = page_route_id.includes(
+		'[lang=lang]'
+	)
+		? page_params_lang
+		: 'en';
+	return server_side_language;
 }
 
 /**
  * @description Simple function to return
  * the TABLET and MOBILE viewport changes
  * as a array/tuple of both states
- * @param {number} TABLET_VIEW 
- * @param {number}MOBILE_VIEW 
+ * @param {number} TABLET_VIEW
+ * @param {number}MOBILE_VIEW
  * @returns boolean (true/false)
-*/
-export function viewport_change (
-  TABLET_VIEW: number,
-  MOBILE_VIEW: number
+ */
+export function viewport_change(
+	TABLET_VIEW: number,
+	MOBILE_VIEW: number
 ) {
-  const w = document.documentElement.clientWidth;
-  const tabletExclusive =
-    w >= TABLET_VIEW
-      ? false
-      : true;
-  const mobileExclusive =
-    w <= MOBILE_VIEW
-      ? true
-      : false;
-  return [tabletExclusive, mobileExclusive]
+	const w = document.documentElement.clientWidth;
+	const tabletExclusive =
+		w >= TABLET_VIEW ? false : true;
+	const mobileExclusive =
+		w <= MOBILE_VIEW ? true : false;
+	return [tabletExclusive, mobileExclusive];
 }

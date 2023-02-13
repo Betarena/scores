@@ -39,7 +39,9 @@ COMPONENT JS (w/ TS)
 		selectedMenuOpt = event?.detail?.opt || event;
 		showDropdown = false;
 		if (selectedMenuOpt == 'Dashboard')
-			goto('/u/dashboard', { replaceState: true });
+			goto('/u/dashboard', {
+				replaceState: true
+			});
 		if (selectedMenuOpt == 'Account Settings')
 			goto('/u/settings', { replaceState: true });
 	}
@@ -65,16 +67,18 @@ COMPONENT JS (w/ TS)
 		tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		[tabletExclusive, mobileExclusive] = viewport_change(
-			TABLET_VIEW,
-			MOBILE_VIEW
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
+		window.addEventListener(
+			'resize',
+			function () {
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
+			}
 		);
-		window.addEventListener('resize', function () {
-			[tabletExclusive, mobileExclusive] = viewport_change(
-				TABLET_VIEW,
-				MOBILE_VIEW
-			);
-		});
 	});
 </script>
 
@@ -91,7 +95,8 @@ COMPONENT HTML
 
 <div
 	id="profile-menu-widget-container"
-	class:row-space-out={tabletExclusive && !mobileExclusive}
+	class:row-space-out={tabletExclusive &&
+		!mobileExclusive}
 >
 	<!-- 
   <-contents->
@@ -110,8 +115,9 @@ COMPONENT HTML
     -->
 		<img
 			id="menu-summary-profile-picture"
-			src={$userBetarenaSettings?.user?.scores_user_data
-				?.profile_photo || profile_avatar}
+			src={$userBetarenaSettings?.user
+				?.scores_user_data?.profile_photo ||
+				profile_avatar}
 			alt="Profile Icon"
 			title="Profile Icon"
 			aria-label="Profile Icon"
@@ -129,8 +135,8 @@ COMPONENT HTML
         color-black-2
       "
 		>
-			{$userBetarenaSettings?.user?.scores_user_data
-				?.username}
+			{$userBetarenaSettings?.user
+				?.scores_user_data?.username}
 		</p>
 	</div>
 
@@ -157,7 +163,8 @@ COMPONENT HTML
 		{#if showDropdown}
 			<div
 				id="background-modal-blur"
-				on:click={() => (showDropdown = !showDropdown)}
+				on:click={() =>
+					(showDropdown = !showDropdown)}
 			/>
 			<div id="dropdown-menu-opt-mobile">
 				{#each PROFILE_MENU_OPT as item}
@@ -265,7 +272,8 @@ COMPONENT STYLE
 		border-radius: 12px;
 	}
 
-	div#profile-menu-widget-container > div#profile-main-row {
+	div#profile-menu-widget-container
+		> div#profile-main-row {
 		padding: 20px 20px 0 20px;
 	}
 	div#profile-menu-widget-container

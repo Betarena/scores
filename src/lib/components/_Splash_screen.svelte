@@ -11,14 +11,18 @@
 	 * Set a Timer To Show/Hide the
 	 * Elements of the HTML Page
 	 */
-	let show: boolean = true
-	onMount(async() => {
+	let show: boolean = true;
+	onMount(async () => {
 		// ... itialiazing timer,
 		// ... reset all of the values to its initial state;
-		setTimeout(async() => {
-			show = false
-			document.documentElement.classList.remove('no-scrollbar')
-			document.body.classList.remove('no-scrollbar')
+		setTimeout(async () => {
+			show = false;
+			document.documentElement.classList.remove(
+				'no-scrollbar'
+			);
+			document.body.classList.remove(
+				'no-scrollbar'
+			);
 		}, 500);
 	});
 </script>
@@ -29,7 +33,12 @@
 
 {#if show}
 	<div>
-		<img id="brand-svg" src="/assets/svg/logo-main.svg" alt="betarena-logo" style="zoom: 0.5;" />
+		<img
+			id="brand-svg"
+			src="/assets/svg/logo-main.svg"
+			alt="betarena-logo"
+			style="zoom: 0.5;"
+		/>
 	</div>
 {/if}
 

@@ -6,14 +6,14 @@ import { gql } from 'graphql-request';
  * ~~~~~~~~~~~~~
  * ... get ALL of the TRANSLATIONS from the DB
  * for the website-platform
-*/
+ */
 export const GET_HREFLANG_DATA = gql`
-query GET_HREFLANG_DATA @cached(ttl: 300) {
-   scores_hreflang {
-     hreflang
-     link
-   }
- }
+	query GET_HREFLANG_DATA @cached(ttl: 300) {
+		scores_hreflang {
+			hreflang
+			link
+		}
+	}
 `;
 
 /**
@@ -21,9 +21,9 @@ query GET_HREFLANG_DATA @cached(ttl: 300) {
  * ~~~~~~~~~~~~~
  * ... get ALL of the TRANSLATIONS from the DB
  * for the website-platform
-*/
- export const GET_FOOTER_DATA = gql`
- query GET_FOOTER_DATA @cached(ttl: 300) {
+ */
+export const GET_FOOTER_DATA = gql`
+	query GET_FOOTER_DATA @cached(ttl: 300) {
 		scores_footer_translations {
 			about_us
 			betting_tips
@@ -45,10 +45,10 @@ query GET_HREFLANG_DATA @cached(ttl: 300) {
 			terms
 			social_networks
 		}
-    scores_hreflang {
-      hreflang
-      link
-    }
+		scores_hreflang {
+			hreflang
+			link
+		}
 	}
 `;
 
@@ -57,9 +57,10 @@ query GET_HREFLANG_DATA @cached(ttl: 300) {
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
-*/
+ */
 export const GET_FEATURED_MATCH_TRANSLATION = gql`
-	query GET_FEATURED_MATCH_TRANSLATION @cached(ttl: 300) {
+	query GET_FEATURED_MATCH_TRANSLATION
+	@cached(ttl: 300) {
 		widget_featured_match_translations {
 			assists
 			bookmaker
@@ -85,7 +86,7 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
 			vote
 			winnings
 			widget_title
-      place_holder
+			place_holder
 		}
 	}
 `;
@@ -95,12 +96,13 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
-*/
- export const GET_ALL_SELECTED_MATCH_FIXTURES = gql`
-	query GET_ALL_SELECTED_MATCH_FIXTURES @cached(ttl: 300) {
+ */
+export const GET_ALL_SELECTED_MATCH_FIXTURES = gql`
+	query GET_ALL_SELECTED_MATCH_FIXTURES
+	@cached(ttl: 300) {
 		widget_featured_match_selection {
 			date
-			fixture_id	
+			fixture_id
 			game_start
 			lang
 		}
@@ -112,25 +114,22 @@ export const GET_FEATURED_MATCH_TRANSLATION = gql`
  * ~~~~~~~~~~~~~
  * ... get the selected GEO-lang based
  * selected fixture from the DB
-*/
+ */
 export const REDIS_CACHE_FEATURED_MATCH_DATA_1 = gql`
-query REDIS_CACHE_FEATURED_MATCH_DATA_1 
-  ($tournament_id: Int!)
-  @cached (ttl: 300) {
-    scores_tournaments (
-      where: { 
-        tournament_id: { 
-          _eq: $tournament_id
-        } 
-      }
-    ) {
-      id
-      tournament_id
-      urls
-    }
-  }
+	query REDIS_CACHE_FEATURED_MATCH_DATA_1(
+		$tournament_id: Int!
+	) @cached(ttl: 300) {
+		scores_tournaments(
+			where: {
+				tournament_id: { _eq: $tournament_id }
+			}
+		) {
+			id
+			tournament_id
+			urls
+		}
+	}
 `;
-
 
 /**
  * Description
@@ -139,8 +138,11 @@ query REDIS_CACHE_FEATURED_MATCH_DATA_1
  * selected fixture from the DB
  */
 export const GET_LANG_SELECTED_FIXTURE = gql`
-	query GET_LANG_SELECTED_FIXTURE($lang: String!) @cached(ttl: 300) {
-		widget_featured_match_selection(where: { lang: { _eq: $lang } }) {
+	query GET_LANG_SELECTED_FIXTURE($lang: String!)
+	@cached(ttl: 300) {
+		widget_featured_match_selection(
+			where: { lang: { _eq: $lang } }
+		) {
 			date
 			fixture_id
 			game_start
@@ -183,8 +185,13 @@ export const GET_LANG_SELECTED_FIXTURE = gql`
  * from different tables from PostgresDB
  */
 export const GET_ALL_FIXTURE_DATA = gql`
-	query GET_ALL_FIXTURE_DATA($id: Int!, $fixture_id: numeric!) @cached(ttl: 300) {
-		widget_featured_match_best_player_by_pk(fixture_id: $fixture_id) {
+	query GET_ALL_FIXTURE_DATA(
+		$id: Int!
+		$fixture_id: numeric!
+	) @cached(ttl: 300) {
+		widget_featured_match_best_player_by_pk(
+			fixture_id: $fixture_id
+		) {
 			fixture_id
 			game_start_date
 			local_team_player_1
@@ -212,7 +219,9 @@ export const GET_ALL_FIXTURE_DATA = gql`
 			visitor_team_rating_player_1
 			visitor_team_rating_player_2
 		}
-		widget_featured_match_votes_by_pk(match_id: $fixture_id) {
+		widget_featured_match_votes_by_pk(
+			match_id: $fixture_id
+		) {
 			match_id
 			vote_draw_x
 			vote_win_local
@@ -234,7 +243,7 @@ export const GET_ALL_FIXTURE_DATA = gql`
 			time
 			tvstations
 			valuebets
-      league_id
+			league_id
 		}
 	}
 `;
@@ -245,14 +254,15 @@ export const GET_ALL_FIXTURE_DATA = gql`
  * ... get ALL of the TRANSLATIONS from the DB
  * for the scores_livescore
  */
- export const GET_LIVESCORES_TRANSLATIONS = gql`
- query GET_LIVESCORES_TRANSLATIONS @cached(ttl: 300) {
-	scores_livescore_football_translations {
-		status
-		status_abv
-		terms
-		lang
-	  }
+export const GET_LIVESCORES_TRANSLATIONS = gql`
+	query GET_LIVESCORES_TRANSLATIONS
+	@cached(ttl: 300) {
+		scores_livescore_football_translations {
+			status
+			status_abv
+			terms
+			lang
+		}
 	}
 `;
 
@@ -262,26 +272,27 @@ export const GET_ALL_FIXTURE_DATA = gql`
  * ... get ALL of the Leagues order
  * for the scores_livescore
  */
- export const GET_LIVESCORES_LEAGUES = gql`
- query GET_LIVESCORES_LEAGUES @cached(ttl: 300) {
-	leagues_filtered_country {
-	  lang
-	  leagues
+export const GET_LIVESCORES_LEAGUES = gql`
+	query GET_LIVESCORES_LEAGUES @cached(ttl: 300) {
+		leagues_filtered_country {
+			lang
+			leagues
+		}
 	}
-  }
 `;
 
 /**
  * Description
  * ~~~~~~~~~~~~~
  * ... Get Tournament Links
- * 
+ *
  */
- export const GET_LIVESCORES_TOURNAMENTS_LINKS = gql`
- query GET_LIVESCORES_TOURNAMENTS_LINKS @cached(ttl: 300) {
-	scores_tournaments {
-	   tournament_id
-	   urls
+export const GET_LIVESCORES_TOURNAMENTS_LINKS = gql`
+	query GET_LIVESCORES_TOURNAMENTS_LINKS
+	@cached(ttl: 300) {
+		scores_tournaments {
+			tournament_id
+			urls
+		}
 	}
-  }
 `;

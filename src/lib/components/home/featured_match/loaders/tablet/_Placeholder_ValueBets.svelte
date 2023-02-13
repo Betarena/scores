@@ -14,7 +14,9 @@
 		width="660"
 		height="32"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="19"
@@ -22,7 +24,9 @@
 		width="56"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="105"
@@ -30,7 +34,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="183"
@@ -38,7 +44,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="428"
@@ -46,7 +54,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="512"
@@ -54,7 +64,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="596"
@@ -62,7 +74,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="19"
@@ -70,7 +84,9 @@
 		width="56"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="105"
@@ -78,7 +94,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="183"
@@ -86,7 +104,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="428"
@@ -94,7 +114,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="512"
@@ -102,7 +124,9 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		x="596"
@@ -110,6 +134,8 @@
 		width="64"
 		height="30"
 		rx="4"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 </svg>

@@ -1,7 +1,6 @@
 <!--===============
 COMPONENT JS (w/ TS)
 =================-->
-
 <script lang="ts">
 	import { page } from '$app/stores';
 	import AccountSettingsBoard from '$lib/components/page/profile/Widget-AccountSettings.svelte';
@@ -10,29 +9,36 @@ COMPONENT JS (w/ TS)
 	import { dlogv2 } from '$lib/utils/debug';
 	import type { PageData } from './$types';
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
+	// ~~~~~~~~~~~~~~~~~~~~~
+	// COMPONENT VARIABLES
+	// ~~~~~~~~~~~~~~~~~~~~~
 
-  export let data: PageData
-  dlogv2("Profile Page", [data], true, 'background: black; color: #fffff')
+	export let data: PageData;
+	dlogv2(
+		'Profile Page',
+		[data],
+		true,
+		'background: black; color: #fffff'
+	);
 
-  const VALID_PAGE_URL: string[] = ['dashboard', 'settings']
-  // VALID_PAGE_URL.includes($page?.url?.pathname.split('/')[1])
+	const VALID_PAGE_URL: string[] = [
+		'dashboard',
+		'settings'
+	];
+	// VALID_PAGE_URL.includes($page?.url?.pathname.split('/')[1])
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
+	// ~~~~~~~~~~~~~~~~~~~~~
+	// COMPONENT METHODS
+	// ~~~~~~~~~~~~~~~~~~~~~
 
-  // TODO: have this check on the navbar directly
-  // $: if ($userBetarenaSettings?.user == undefined) {
-  //   goto('/')
-  // }
+	// TODO: have this check on the navbar directly
+	// $: if ($userBetarenaSettings?.user == undefined) {
+	//   goto('/')
+	// }
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
-  // ~~~~~~~~~~~~~~~~~~~~~
-
+	// ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES
+	// ~~~~~~~~~~~~~~~~~~~~~
 </script>
 
 <!--===============
@@ -40,56 +46,53 @@ COMPONENT HTML
 =================-->
 
 <section>
-  <div
-    id="widget-grid-display">
-    <div
-      id="usermenu-widget">
-      <UserMenu />
-    </div>
-    <!-- 
+	<div id="widget-grid-display">
+		<div id="usermenu-widget">
+			<UserMenu />
+		</div>
+		<!-- 
     [ℹ] account settings widget
     <-conditional->
     -->
-    <div
-      id="main-profile-page-widget">
-      {#if $page?.url?.pathname.includes('settings')}
-        <AccountSettingsBoard
-          RESPONSE_PROFILE_DATA={data?.RESPONSE_PROFILE_DATA}
-        />
-      {:else if $page?.url?.pathname.includes('dashboard')}
-        <DashboardWidget />
-      {/if}
-    </div>
-  </div>
+		<div id="main-profile-page-widget">
+			{#if $page?.url?.pathname.includes('settings')}
+				<AccountSettingsBoard
+					RESPONSE_PROFILE_DATA={data?.RESPONSE_PROFILE_DATA}
+				/>
+			{:else if $page?.url?.pathname.includes('dashboard')}
+				<DashboardWidget />
+			{/if}
+		</div>
+	</div>
 </section>
 
 <!--===============
 COMPONENT STYLE
 =================-->
-
 <style>
-
-  /* page widget layout */
-  div#widget-grid-display {
+	/* page widget layout */
+	div#widget-grid-display {
 		display: grid;
-    margin-top: 24px;
-    gap: 20px;
-    align-items: start;
-  }
+		margin-top: 24px;
+		gap: 20px;
+		align-items: start;
+	}
 
-  /* ====================
+	/* ====================
     RESPONSIVNESS
   ==================== */
 
-  /* 
+	/* 
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] 
   */
 	@media only screen and (min-width: 1160px) {
-    /* page widget layout */
-    div#widget-grid-display {
+		/* page widget layout */
+		div#widget-grid-display {
 			gap: 20px;
-      grid-template-columns: minmax(auto, 328px) minmax(auto, 1024px);
+			grid-template-columns: minmax(auto, 328px) minmax(
+					auto,
+					1024px
+				);
 		}
 	}
-
 </style>

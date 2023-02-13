@@ -91,15 +91,20 @@
 -->
 {#if PAGE_DATA_SEO}
 	<SvelteSeo
-    title={PAGE_DATA_SEO.main_data.title}
-    description={PAGE_DATA_SEO.main_data.description}
-    keywords={PAGE_DATA_SEO.main_data.keywords}
-    noindex={JSON.parse(PAGE_DATA_SEO.main_data.noindex.toString())}
-    nofollow={JSON.parse(PAGE_DATA_SEO.main_data.nofollow.toString())}
-    canonical={PAGE_DATA_SEO.main_data.canonical}
-    twitter={PAGE_DATA_SEO.twitter_card}
-    openGraph={PAGE_DATA_SEO.opengraph}
-  />
+		title={PAGE_DATA_SEO.main_data.title}
+		description={PAGE_DATA_SEO.main_data
+			.description}
+		keywords={PAGE_DATA_SEO.main_data.keywords}
+		noindex={JSON.parse(
+			PAGE_DATA_SEO.main_data.noindex.toString()
+		)}
+		nofollow={JSON.parse(
+			PAGE_DATA_SEO.main_data.nofollow.toString()
+		)}
+		canonical={PAGE_DATA_SEO.main_data.canonical}
+		twitter={PAGE_DATA_SEO.twitter_card}
+		openGraph={PAGE_DATA_SEO.opengraph}
+	/>
 {/if}
 
 <!-- 
@@ -173,7 +178,7 @@
 				{LEAGUES_TABLE_SCORES_SEO_DATA}
 			/>
 		</div>
-  <!-- 
+		<!-- 
   [ℹ] MOBILE VIEW ONLY 
   -->
 	{:else}

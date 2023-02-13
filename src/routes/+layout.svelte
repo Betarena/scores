@@ -59,14 +59,23 @@
 		fixtureVote.useLocalStorage();
 		userBetarenaSettings.useLocalStorage();
 		// [ℹ] kickstart offline-badge on info;
-		window.addEventListener('offline', toggleOfflineAlert);
-		window.addEventListener('online', toggleOfflineAlert);
+		window.addEventListener(
+			'offline',
+			toggleOfflineAlert
+		);
+		window.addEventListener(
+			'online',
+			toggleOfflineAlert
+		);
 	}
 
 	// [ℹ] hide/show offline alert
 	let offlineMode: boolean = false;
 	async function toggleOfflineAlert() {
-		dlog('🔴 your internet connection has changed!', true);
+		dlog(
+			'🔴 your internet connection has changed!',
+			true
+		);
 		offlineMode = !offlineMode;
 	}
 </script>

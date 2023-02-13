@@ -11,7 +11,8 @@
 
 <div id="offline-alert-container">
 	<p class="s-12 color-white">
-		Warning there is no connection to the internet you are using the website in offline mode
+		Warning there is no connection to the internet
+		you are using the website in offline mode
 	</p>
 </div>
 

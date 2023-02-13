@@ -1,13 +1,17 @@
 import type { ScoresTournamentsUrls } from '../../hasura';
 import type { SelectedFixture_LiveOdds_Response } from './firebase-real-db-interface';
-import type { BestPlayers_Data, SelectedFixutre, TranslationsResponse } from './response_models';
+import type {
+	BestPlayers_Data,
+	SelectedFixutre,
+	TranslationsResponse
+} from './response_models';
 
 /**
  * INTERFACE
  * ~~~~~~~~~~~~~
  * [ℹ] for the tv_stations of the
  * selected fixture
-*/
+ */
 interface Tv_Station {
 	link: string;
 	img: string;
@@ -20,7 +24,7 @@ interface Tv_Station {
  * ~~~~~~~~~~~~~
  * [ℹ] for the value-bets part of the
  * selected fixture
-*/
+ */
 export interface ValueBet {
 	fair_odd: string;
 	stake: number;
@@ -36,7 +40,7 @@ export interface ValueBet {
  * INTERFACE
  * ~~~~~~~~~~~~~
  * [ℹ] match votes for the fixture data
-*/
+ */
 export interface MatchVotes {
 	match_id: number;
 	vote_draw_x: number;
@@ -49,7 +53,7 @@ export interface MatchVotes {
  * ~~~~~~~~~~~~~
  * [ℹ] for the Selected Fixture of the
  * [ℹ] response data
-*/
+ */
 export interface FixtureResponse {
 	away_team_logo: string;
 	away_team_name: string;
@@ -67,23 +71,23 @@ export interface FixtureResponse {
 	};
 	round_name: string;
 	status: string;
-	time: Date;  // timeStamp
-	tvstations: Array< Tv_Station >; // array-of-TvStations
+	time: Date; // timeStamp
+	tvstations: Array<Tv_Station>; // array-of-TvStations
 	valuebets: ValueBet; // array-of-value-bets
 	live_odds: SelectedFixture_LiveOdds_Response; // live-odds-data
 	match_votes: MatchVotes;
 	best_players: BestPlayers_Data;
 	// translation: Array<TranslationsResponse>;
 	selected_data: SelectedFixutre;
-  league_id: number;
-  urls?: ScoresTournamentsUrls;
+	league_id: number;
+	urls?: ScoresTournamentsUrls;
 }
 
 /**
  * [ℹ] Featured Match Cache Interfaces
-*/
+ */
 
-export interface Cache_Single_Lang_Featured_Match_Translation_Response 
-  extends TranslationsResponse {
-  lang: string;
+export interface Cache_Single_Lang_Featured_Match_Translation_Response
+	extends TranslationsResponse {
+	lang: string;
 }
