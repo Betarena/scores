@@ -28,7 +28,7 @@ COMPONENT JS (w/ TS)
   export let SELECTED_OPT: PROFILE_OPT;
   export let mobileExclusive: boolean;
   export let tabletExclusive: boolean;
-  export let showDropdown: boolean;
+  export let showDropdown: boolean = false;
 
   let selectedMenuOptIcon: string = undefined;
   let isHoverMenuOptItem: boolean = false;
