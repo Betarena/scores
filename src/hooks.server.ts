@@ -51,6 +51,7 @@ export const handle: Handle = async ({ event, resolve }) => {
   // [ℹ] past use with cookies-template
 	// const response = await resolve(event);
   // [ℹ] new with response of <html lang...>
+  // DOC: https://github.com/sveltejs/kit/issues/3091
   const response = await resolve(event, {
     transformPageChunk: ({ html }) => html.replace('%lang%', get_lang(event))
   });
