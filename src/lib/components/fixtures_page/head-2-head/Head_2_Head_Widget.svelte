@@ -7,17 +7,15 @@
 	import { page } from '$app/stores';
 	import {
 		dlog,
+		dlogv2,
 		H2H_FW_DEBUG_STYLE,
 		H2H_FW_DEBUG_TAG,
 		H2H_FW_DEBUG_TOGGLE, log_info_group
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils';
 	import { db_real } from '$lib/firebase/init';
 	import { get_odds } from '$lib/firebase/votes';
-	import { REDIS_CACHE_FIXTURE_PROBABILITIES_0 } from '$lib/graphql/fixtures/probabilities/query';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
 	import {
@@ -28,7 +26,6 @@
 
 	import type { FIREBASE_odds } from '$lib/models/firebase';
 	import type { Fixture_Probabilities } from '$lib/models/fixtures/probabilities/types';
-	import type { BETARENA_HASURA_votes_query } from '$lib/models/fixtures/votes/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 
 	import FixtureStatsBox from './Fixture_Stats_Box.svelte';
@@ -42,6 +39,7 @@
 	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
 	import { getImageBgColor } from '$lib/utils/color_thief';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -49,16 +47,15 @@
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	// NOTE: NO WIDGET SPECIFIC SEO or PRE-LOAD DATA REQUIRED
-	// NOTE: lazy-loaded component data
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_H2H: Fixture_Head_2_Head;
 	export let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
 	export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
+  // TEST:FIXME:
+  export let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
+	export let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
 
 	let FIXTURE_PROB_DATA: Fixture_Probabilities;
-	let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
-	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
 
 	let loaded: boolean = false; // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
 	let refresh: boolean = false; // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
@@ -77,49 +74,15 @@
 
 	// [ℹ] MAIN WIDGET METHOD
 	async function widget_init(): Promise<void> {
-		// [ℹ] [DEFAULT] [DISABLED] when ALL data PRE-LOADED (buffer)
-		// const sleep = ms => new Promise(r => setTimeout(r, ms));
-		// await sleep(3000);
-
-		if (!$userBetarenaSettings.country_bookmaker) {
-			return;
-		}
-		let userGeo =
-			$userBetarenaSettings.country_bookmaker
-				.toString()
-				.toLowerCase();
-
-		// [ℹ] execute GRAPH-QL request;
-		const VARIABLES = {
-			fixture_id: FIXTURE_INFO?.data?.id
-		};
-		const response: BETARENA_HASURA_votes_query =
-			await initGrapQLClient().request(
-				REDIS_CACHE_FIXTURE_PROBABILITIES_0,
-				VARIABLES
-			);
-		const response_main_sportbook: Cache_Single_SportbookDetails_Data_Response =
-			await get(
-				'/api/cache/tournaments/sportbook?geoPos=' +
-					userGeo
-			);
-		const response_all_spotbooks: Cache_Single_SportbookDetails_Data_Response[] =
-			await get(
-				'/api/cache/tournaments/sportbook?all=true&geoPos=' +
-					userGeo
-			);
 		loaded = true;
-
 		const responses_invalid =
-			FIXTURE_H2H == undefined ||
-			FIXTURE_H2H?.teams_data == undefined ||
-			response == undefined ||
-			response.historic_fixtures[0] ==
-				undefined ||
-			response.historic_fixtures[0]
-				?.probabilities == undefined ||
-			response_main_sportbook == undefined ||
-			response_all_spotbooks == undefined;
+			FIXTURE_H2H == undefined 
+			|| FIXTURE_H2H?.teams_data == undefined 
+			|| FIXTURE_H2H?.teams_data == undefined 
+			|| FIXTURE_H2H?.teams_data == undefined
+			|| SPORTBOOK_INFO == undefined 
+      || SPORTBOOK_DETAILS_LIST == undefined
+    ;
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
       dlog(`${H2H_FW_DEBUG_TAG} ❌ no data available!`, H2H_FW_DEBUG_TOGGLE, H2H_FW_DEBUG_STYLE);
@@ -129,27 +92,15 @@
 			no_widget_data = false;
 		}
 
-		// ~~~~~~~~~~~~~~~~
+		// ----------------
 		// [ℹ] data pre-processing
+		// ----------------
 
-		SPORTBOOK_INFO = response_main_sportbook;
-		SPORTBOOK_DETAILS_LIST =
-			response_all_spotbooks;
 		SPORTBOOK_DETAILS_LIST.sort(
 			(a, b) =>
 				parseInt(a.position) -
 				parseInt(b.position)
 		);
-
-		const HIST_FIXTURE_DATA =
-			response.historic_fixtures[0];
-
-		FIXTURE_PROB_DATA = {};
-		FIXTURE_PROB_DATA.id = HIST_FIXTURE_DATA?.id;
-		FIXTURE_PROB_DATA.probabilites =
-			HIST_FIXTURE_DATA?.probabilities;
-		FIXTURE_PROB_DATA.time =
-			HIST_FIXTURE_DATA?.time;
 
 		// [ℹ] calcuate (%) of 5 matches
 		if (
@@ -183,9 +134,11 @@
 				100;
 		}
 
+    FIXTURE_PROB_DATA = {};
+
 		// [ℹ] regardless of STATUS,
 		// [ℹ] VOTE_DATA is shown until it is erased from "/odds"
-		const fixture_time = HIST_FIXTURE_DATA?.time;
+		const fixture_time = FIXTURE_INFO.data.fixture_time;
 		const fixture_id = FIXTURE_INFO?.data?.id;
 		const firebase_odds = await get_odds(
 			fixture_time,
@@ -197,16 +150,6 @@
 
 		return;
 	}
-
-	/**
-	 * Description
-	 * ---
-	 * submit mutation to Hasura to update votes
-	 * ---
-	 * @param {string} vote_type - type of vote
-	 * @param {string} vote_val - vote value
-	 */
-	// [ℹ] [COMMENT TEMPLATE]
 
 	function trigger_event_google(action: string) {
 		if (
@@ -230,43 +173,25 @@
 		toggleCTA = false;
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let tabletView = 1160;
-	let mobileView = 725;
-	let mobileExclusive: boolean = false;
-	let tabletExclusive: boolean = false;
+	const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 725;
+	let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit =
-			document.documentElement.clientWidth;
-		if (wInit >= tabletView) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		if (wInit <= mobileView) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
 		window.addEventListener(
 			'resize',
 			function () {
-				var w =
-					document.documentElement.clientWidth;
-				if (w >= tabletView) {
-					tabletExclusive = false;
-				} else {
-					tabletExclusive = true;
-				}
-				if (w <= mobileView) {
-					mobileExclusive = true;
-				} else {
-					mobileExclusive = false;
-				}
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
 			}
 		);
 	});
@@ -295,20 +220,17 @@
 	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE LANG SVELTE
-	// [! CRITICAL !]
+	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let server_side_language: string = 'en';
-	$: if ($page.route.id != null && !$page.error) {
-		if ($page.route.id.includes('[lang=lang]')) {
-			server_side_language = $page.params.lang;
-		} else {
-			server_side_language = 'en';
-		}
-	} else {
-		server_side_language = 'en';
-	}
+	let server_side_language = platfrom_lang_ssr(
+		$page?.route.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+	dlog(
+		`server_side_language: ${server_side_language}`
+	);
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// [ADD-ON] FIREBASE
@@ -457,12 +379,8 @@
 	}
 
 	async function listen_real_time_odds(): Promise<void> {
-		// [🐞]
-		if (dev)
-			console.log(
-				'%cTriggered odds listen',
-				'background: green; color: #fffff'
-			);
+
+    dlog(`${H2H_FW_DEBUG_TAG} Triggered odds listen`, H2H_FW_DEBUG_TOGGLE, H2H_FW_DEBUG_STYLE);
 
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
@@ -537,20 +455,17 @@
 
 	// [! CRITICAL !]
 	onDestroy(async () => {
-		// [🐞]
-		if (dev)
-			console.groupCollapsed(
-				'%cclosing firebase connections [DEV]',
-				'background: red; color: #fffff'
-			);
-		// [ℹ] close LISTEN EVENT connection
+    const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
-			// [🐞]
-			if (dev) console.log('closing connection');
+      logsMsg.push('closing connection')
 			iterator();
 		}
-		// [🐞]
-		if (dev) console.groupEnd();
+    dlogv2(
+      `${H2H_FW_DEBUG_TAG} closing firebase connections`,
+      logsMsg,
+      H2H_FW_DEBUG_TOGGLE, 
+      H2H_FW_DEBUG_STYLE
+    )
 	});
 </script>
 

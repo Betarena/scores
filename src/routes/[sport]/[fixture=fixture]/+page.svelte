@@ -69,6 +69,7 @@
 	import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
 	import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 	import SvelteSeo from 'svelte-seo';
 
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
@@ -93,6 +94,8 @@
 	let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
 	let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
 	let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
+	let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
+	let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE OTHER
@@ -134,6 +137,8 @@
 		$page.data.FIXTURE_H2H_TRANSLATION;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
+  $: SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
+	$: SPORTBOOK_ALL = $page.data.SPORTBOOK_ALL;
 
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined
@@ -513,6 +518,8 @@
 			{FIXTURE_SCOREBOARD_TRANSLATION}
 			{FIXTURE_CONTENT}
 			{FIXTURES_ODDS_T}
+      SPORTBOOK_INFO={SPORTBOOK_MAIN}
+      SPORTBOOK_DETAILS_LIST={SPORTBOOK_ALL}
 		/>
 		<!-- 
     [ℹ] "Overview" view selection 
@@ -526,6 +533,8 @@
 				<VoteWidget
 					{FIXTURE_INFO}
 					{FIXTURE_VOTES_TRANSLATION}
+          {SPORTBOOK_MAIN}
+          {SPORTBOOK_ALL}
 				/>
 				<LineupsWidget
 					{FIXTURE_LINEUPS}
@@ -536,6 +545,8 @@
 					{FIXTURE_H2H}
 					{FIXTURE_H2H_TRANSLATION}
 					{FIXTURES_ODDS_T}
+          SPORTBOOK_INFO={SPORTBOOK_MAIN}
+          SPORTBOOK_DETAILS_LIST={SPORTBOOK_ALL}
 				/>
 				<StandingsWidget
 					{STANDINGS_T}
@@ -562,6 +573,8 @@
 				<ProbabilityWidget
 					{FIXTURE_INFO}
 					{FIXTURE_PROBS_TRANSLATION}
+          {SPORTBOOK_MAIN}
+          {SPORTBOOK_ALL}
 				/>
 			</div>
 		</div>

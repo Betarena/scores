@@ -46,10 +46,7 @@
 		REDIS_CACHE_SINGLE_about_translation
 	} from '$lib/models/fixtures/about/types';
 
-	import type {
-		Fixture_Head_2_Head,
-		REDIS_CACHE_SINGLE_h2h_translation
-	} from '$lib/models/fixtures/head-2-head/types';
+	import type { Fixture_Head_2_Head, REDIS_CACHE_SINGLE_h2h_translation } from '$lib/models/fixtures/head-2-head/types';
 	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
 	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
@@ -100,55 +97,35 @@
 
 	$: PAGE_SEO = $page.data.PAGE_SEO;
 	$: FIXTURE_INFO = $page.data.FIXTURE_INFO;
-	$: FIXTURE_SCOREBOARD =
-		$page.data.FIXTURE_SCOREBOARD;
-	$: FIXTURE_SCOREBOARD_TRANSLATION =
-		$page.data.FIXTURE_SCOREBOARD_TRANSLATION;
+	$: FIXTURE_SCOREBOARD = $page.data.FIXTURE_SCOREBOARD;
+	$: FIXTURE_SCOREBOARD_TRANSLATION = $page.data.FIXTURE_SCOREBOARD_TRANSLATION;
 	$: FIXTURE_LINEUPS = $page.data.FIXTURE_LINEUPS;
-	$: FIXTURE_LINEUPS_TRANSLATION =
-		$page.data.FIXTURE_LINEUPS_TRANSLATION;
-	$: FIXTURE_INCIDENTS =
-		$page.data.FIXTURE_INCIDENTS;
-	$: FXITURE_INCIDENTS_TRANSLATION =
-		$page.data.FXITURE_INCIDENTS_TRANSLATION;
-	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =
-		$page.data
-			.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
-	$: FIXTURE_STATISTICS =
-		$page.data.FIXTURE_STATISTICS;
-	$: FIXTURE_STATISTICS_TRANSLATION =
-		$page.data.FIXTURE_STATISTICS_TRANSLATION;
+	$: FIXTURE_LINEUPS_TRANSLATION = $page.data.FIXTURE_LINEUPS_TRANSLATION;
+	$: FIXTURE_INCIDENTS = $page.data.FIXTURE_INCIDENTS;
+	$: FXITURE_INCIDENTS_TRANSLATION = $page.data.FXITURE_INCIDENTS_TRANSLATION;
+	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO = $page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+	$: FIXTURE_STATISTICS = $page.data.FIXTURE_STATISTICS;
+	$: FIXTURE_STATISTICS_TRANSLATION = $page.data.FIXTURE_STATISTICS_TRANSLATION;
 	$: FIXTURE_CONTENT = $page.data.FIXTURE_CONTENT;
-	$: FIXTURE_CONTENT_TRANSLATION =
-		$page.data.FIXTURE_CONTENT_TRANSLATION;
+	$: FIXTURE_CONTENT_TRANSLATION = $page.data.FIXTURE_CONTENT_TRANSLATION;
 	$: FIXTURE_ABOUT = $page.data.FIXTURE_ABOUT;
-	$: FIXTURE_ABOUT_TRANSLATION =
-		$page.data.FIXTURE_ABOUT_TRANSLATION;
-	$: FIXTURE_VOTES_TRANSLATION =
-		$page.data.FIXTURE_VOTES_TRANSLATION;
-	$: FIXTURE_PROBS_TRANSLATION =
-		$page.data.FIXTURE_PROBS_TRANSLATION;
+	$: FIXTURE_ABOUT_TRANSLATION = $page.data.FIXTURE_ABOUT_TRANSLATION;
+	$: FIXTURE_VOTES_TRANSLATION = $page.data.FIXTURE_VOTES_TRANSLATION;
+	$: FIXTURE_PROBS_TRANSLATION = $page.data.FIXTURE_PROBS_TRANSLATION;
 	$: FIXTURES_ODDS_T = $page.data.FIXTURES_ODDS_T;
 	$: FIXTURE_H2H = $page.data.FIXTURE_H2H;
-	$: FIXTURE_H2H_TRANSLATION =
-		$page.data.FIXTURE_H2H_TRANSLATION;
+	$: FIXTURE_H2H_TRANSLATION = $page.data.FIXTURE_H2H_TRANSLATION;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
 
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined
 			? undefined
-			: FIXTURE_INFO?.data?.country
-					.toLowerCase()
-					.replace(/\s/g, '-')
-					.replace(/\./g, '');
+			: FIXTURE_INFO?.data?.country.toLowerCase().replace(/\s/g, '-').replace(/\./g, '');
 	$: league_name_link =
 		FIXTURE_INFO?.data?.league_name == undefined
 			? undefined
-			: FIXTURE_INFO?.data?.league_name
-					.toLowerCase()
-					.replace(/\s/g, '-')
-					.replace(/\./g, '');
+			: FIXTURE_INFO?.data?.league_name.toLowerCase().replace(/\s/g, '-').replace(/\./g, '');
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  PAGE METHODS
@@ -162,8 +139,7 @@
 	let tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit =
-			document.documentElement.clientWidth;
+		var wInit = document.documentElement.clientWidth;
 		// [ℹ] TABLET - VIEW
 		if (wInit >= 1160) {
 			tabletExclusive = false;
@@ -176,25 +152,21 @@
 		} else {
 			mobileExclusive = false;
 		}
-		window.addEventListener(
-			'resize',
-			function () {
-				var w =
-					document.documentElement.clientWidth;
-				// [ℹ] TABLET - VIEW
-				if (w >= 1160) {
-					tabletExclusive = false;
-				} else {
-					tabletExclusive = true;
-				}
-				// [ℹ] MOBILE - VIEW
-				if (w < 475) {
-					mobileExclusive = true;
-				} else {
-					mobileExclusive = false;
-				}
+		window.addEventListener('resize', function () {
+			var w = document.documentElement.clientWidth;
+			// [ℹ] TABLET - VIEW
+			if (w >= 1160) {
+				tabletExclusive = false;
+			} else {
+				tabletExclusive = true;
 			}
-		);
+			// [ℹ] MOBILE - VIEW
+			if (w < 475) {
+				mobileExclusive = true;
+			} else {
+				mobileExclusive = false;
+			}
+		});
 	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -205,22 +177,14 @@
 	// TODO: FIXME: replace into a single __layout.svelte method [?]
 	// TODO: FIXME: using page-stores [?]
 	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
-	let current_lang: string =
-		$userBetarenaSettings.lang;
+	let current_lang: string = $userBetarenaSettings.lang;
 	$: refresh_lang = $userBetarenaSettings.lang;
 
 	// [ℹ] validate LANG change
-	$: if (
-		current_lang != refresh_lang &&
-		browser
-	) {
+	$: if (current_lang != refresh_lang && browser) {
 		current_lang = refresh_lang;
-		let newURL =
-			FIXTURE_INFO.alternate_data[current_lang];
-		newURL = newURL.replace(
-			'https://scores.betarena.com',
-			''
-		);
+		let newURL = FIXTURE_INFO.alternate_data[current_lang];
+		newURL = newURL.replace('https://scores.betarena.com', '');
 
 		// [ℹ] navigate [options];
 		// invalidate('/api/cache/tournaments/cache-data.json');
@@ -241,12 +205,8 @@
 		title={PAGE_SEO?.main_data.title}
 		description={PAGE_SEO?.main_data.description}
 		keywords={PAGE_SEO?.main_data.keywords}
-		noindex={JSON.parse(
-			PAGE_SEO?.main_data.noindex.toString()
-		)}
-		nofollow={JSON.parse(
-			PAGE_SEO?.main_data.nofollow.toString()
-		)}
+		noindex={JSON.parse(PAGE_SEO?.main_data.noindex.toString())}
+		nofollow={JSON.parse(PAGE_SEO?.main_data.nofollow.toString())}
 		canonical={PAGE_SEO?.main_data.canonical}
 		twitter={PAGE_SEO?.twitter_card}
 		openGraph={PAGE_SEO?.opengraph}
@@ -273,26 +233,14 @@
             <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
             <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
           -->
-					<link
-						rel="alternate"
-						hreflang={item.hreflang}
-						href={link}
-					/>
+					<link rel="alternate" hreflang={item.hreflang} href={link} />
 				{/if}
 				{#if item.link == null && lang == 'en'}
 					<!-- 
             [ℹ] EN here
           -->
-					<link
-						rel="alternate"
-						hreflang={item.hreflang}
-						href={link}
-					/>
-					<link
-						rel="alternate"
-						hreflang="en"
-						href={link}
-					/>
+					<link rel="alternate" hreflang={item.hreflang} href={link} />
+					<link rel="alternate" hreflang="en" href={link} />
 				{/if}
 			{/each}
 		{/each}
@@ -317,12 +265,7 @@
 		<!-- 
     [ℹ] sport 
     -->
-		<a
-			
-			href={$page.params.lang != undefined
-				? `/${$page.params.lang}/${$page.params.sport}`
-				: `/${$page.params.sport}`}
-		>
+		<a href={$page.params.lang != undefined ? `/${$page.params.lang}/${$page.params.sport}` : `/${$page.params.sport}`}>
 			<p
 				class="
           s-14 
@@ -337,19 +280,12 @@
 			</p>
 		</a>
 
-		<img
-			src="/assets/svg/tournaments/arrow-right.svg"
-			alt=""
-			class="m-r-10"
-			width="14px"
-			height="14px"
-		/>
+		<img src="/assets/svg/tournaments/arrow-right.svg" alt="" class="m-r-10" width="14px" height="14px" />
 
 		<!-- 
     [ℹ] country 
     -->
 		<a
-			
 			href={$page.params.lang != undefined
 				? `/${$page.params.lang}/${$page.params.sport}/${country_link}`
 				: `/${$page.params.sport}/${country_link}`}
@@ -368,19 +304,12 @@
 			</p>
 		</a>
 
-		<img
-			src="/assets/svg/tournaments/arrow-right.svg"
-			alt=""
-			class="m-r-10"
-			width="14px"
-			height="14px"
-		/>
+		<img src="/assets/svg/tournaments/arrow-right.svg" alt="" class="m-r-10" width="14px" height="14px" />
 
 		<!-- 
     [ℹ] league_name 
     -->
 		<a
-			
 			href={$page.params.lang != undefined
 				? `/${$page.params.lang}/${$page.params.sport}/${country_link}/${league_name_link}`
 				: `/${$page.params.sport}/${country_link}/${league_name_link}`}
@@ -399,13 +328,7 @@
 			</p>
 		</a>
 
-		<img
-			src="/assets/svg/tournaments/arrow-right.svg"
-			alt=""
-			class="m-r-10"
-			width="14px"
-			height="14px"
-		/>
+		<img src="/assets/svg/tournaments/arrow-right.svg" alt="" class="m-r-10" width="14px" height="14px" />
 
 		<!-- 
     [ℹ] fxiture_name 
@@ -440,66 +363,22 @@
 		<div id="widget-grid-display">
 			<!-- 
       [ℹ] "Overview" view selection -->
-			<div
-				class="grid-display-column"
-				class:display-none={$sessionStore.fixture_select_view ==
-					'news'}
-			>
-				<VoteWidget
-					{FIXTURE_INFO}
-					{FIXTURE_VOTES_TRANSLATION}
-				/>
-				<IncidentsWidget
-					{FIXTURE_INCIDENTS}
-					{FXITURE_INCIDENTS_TRANSLATION}
-				/>
-				<FeaturedBettingSitesWidget
-					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-				/>
-				<LineupsWidget
-					{FIXTURE_LINEUPS}
-					{FIXTURE_LINEUPS_TRANSLATION}
-				/>
-				<Head_2HeadWidget
-					{FIXTURE_INFO}
-					{FIXTURE_H2H}
-					{FIXTURE_H2H_TRANSLATION}
-					{FIXTURES_ODDS_T}
-				/>
-				<StandingsWidget
-					{STANDINGS_T}
-					{STANDINGS_DATA}
-					{FIXTURE_INFO}
-				/>
-				<StatisticsWidget
-					{FIXTURE_STATISTICS}
-					{FIXTURE_STATISTICS_TRANSLATION}
-				/>
-				<ProbabilityWidget
-					{FIXTURE_INFO}
-					{FIXTURE_PROBS_TRANSLATION}
-				/>
-				<StandingsWidget
-					{STANDINGS_T}
-					{STANDINGS_DATA}
-					{FIXTURE_INFO}
-				/>
-				<AboutWidget
-					{FIXTURE_ABOUT}
-					{FIXTURE_ABOUT_TRANSLATION}
-				/>
+			<div class="grid-display-column" class:display-none={$sessionStore.fixture_select_view == 'news'}>
+				<VoteWidget {FIXTURE_INFO} {FIXTURE_VOTES_TRANSLATION} />
+				<IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+				<FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+				<LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+				<Head_2HeadWidget {FIXTURE_INFO} {FIXTURE_H2H} {FIXTURE_H2H_TRANSLATION} {FIXTURES_ODDS_T} />
+				<StandingsWidget {STANDINGS_T} {STANDINGS_DATA} {FIXTURE_INFO} />
+				<StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+				<ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
+				<StandingsWidget {STANDINGS_T} {STANDINGS_DATA} {FIXTURE_INFO} />
+				<AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
 			</div>
 			<!-- 
       [ℹ] "News" view selection -->
-			<div
-				id="grid-display-column"
-				class:display-none={$sessionStore.fixture_select_view ==
-					'overview'}
-			>
-				<ContentWidget
-					{FIXTURE_CONTENT}
-					{FIXTURE_CONTENT_TRANSLATION}
-				/>
+			<div id="grid-display-column" class:display-none={$sessionStore.fixture_select_view == 'overview'}>
+				<ContentWidget {FIXTURE_CONTENT} {FIXTURE_CONTENT_TRANSLATION} />
 			</div>
 		</div>
 		<!-- 
@@ -517,66 +396,26 @@
 		<!-- 
     [ℹ] "Overview" view selection 
     -->
-		<div
-			id="widget-grid-display"
-			class:display-none={$sessionStore.fixture_select_view ==
-				'news'}
-		>
+		<div id="widget-grid-display" class:display-none={$sessionStore.fixture_select_view == 'news'}>
 			<div class="grid-display-column">
-				<VoteWidget
-					{FIXTURE_INFO}
-					{FIXTURE_VOTES_TRANSLATION}
-				/>
-				<LineupsWidget
-					{FIXTURE_LINEUPS}
-					{FIXTURE_LINEUPS_TRANSLATION}
-				/>
-				<Head_2HeadWidget
-					{FIXTURE_INFO}
-					{FIXTURE_H2H}
-					{FIXTURE_H2H_TRANSLATION}
-					{FIXTURES_ODDS_T}
-				/>
-				<StandingsWidget
-					{STANDINGS_T}
-					{STANDINGS_DATA}
-					{FIXTURE_INFO}
-				/>
-				<AboutWidget
-					{FIXTURE_ABOUT}
-					{FIXTURE_ABOUT_TRANSLATION}
-				/>
+				<VoteWidget {FIXTURE_INFO} {FIXTURE_VOTES_TRANSLATION} />
+				<LineupsWidget {FIXTURE_LINEUPS} {FIXTURE_LINEUPS_TRANSLATION} />
+				<Head_2HeadWidget {FIXTURE_INFO} {FIXTURE_H2H} {FIXTURE_H2H_TRANSLATION} {FIXTURES_ODDS_T} />
+				<StandingsWidget {STANDINGS_T} {STANDINGS_DATA} {FIXTURE_INFO} />
+				<AboutWidget {FIXTURE_ABOUT} {FIXTURE_ABOUT_TRANSLATION} />
 			</div>
 			<div class="grid-display-column">
-				<FeaturedBettingSitesWidget
-					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-				/>
-				<IncidentsWidget
-					{FIXTURE_INCIDENTS}
-					{FXITURE_INCIDENTS_TRANSLATION}
-				/>
-				<StatisticsWidget
-					{FIXTURE_STATISTICS}
-					{FIXTURE_STATISTICS_TRANSLATION}
-				/>
-				<ProbabilityWidget
-					{FIXTURE_INFO}
-					{FIXTURE_PROBS_TRANSLATION}
-				/>
+				<FeaturedBettingSitesWidget {FEATURED_BETTING_SITES_WIDGET_DATA_SEO} />
+				<IncidentsWidget {FIXTURE_INCIDENTS} {FXITURE_INCIDENTS_TRANSLATION} />
+				<StatisticsWidget {FIXTURE_STATISTICS} {FIXTURE_STATISTICS_TRANSLATION} />
+				<ProbabilityWidget {FIXTURE_INFO} {FIXTURE_PROBS_TRANSLATION} />
 			</div>
 		</div>
 		<!-- 
     [ℹ] "News" view selection 
     -->
-		<div
-			id="widget-grid-display-news"
-			class:display-none={$sessionStore.fixture_select_view ==
-				'overview'}
-		>
-			<ContentWidget
-				{FIXTURE_CONTENT}
-				{FIXTURE_CONTENT_TRANSLATION}
-			/>
+		<div id="widget-grid-display-news" class:display-none={$sessionStore.fixture_select_view == 'overview'}>
+			<ContentWidget {FIXTURE_CONTENT} {FIXTURE_CONTENT_TRANSLATION} />
 		</div>
 	{/if}
 </section>
@@ -660,10 +499,7 @@
 		/* widget layout */
 		div#widget-grid-display {
 			gap: 20px;
-			grid-template-columns: minmax(auto, 850px) minmax(
-					auto,
-					502px
-				);
+			grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
 		}
 	}
 
@@ -675,10 +511,7 @@
 			display: grid;
 			align-items: start;
 			gap: 20px;
-			grid-template-columns: minmax(auto, 850px) minmax(
-					auto,
-					502px
-				);
+			grid-template-columns: minmax(auto, 850px) minmax(auto, 502px);
 		}
 	}
 </style>

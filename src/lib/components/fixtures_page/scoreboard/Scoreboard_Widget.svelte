@@ -6,14 +6,13 @@
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import {
-		dlog, log_info_group,
+		dlog, dlogv2, log_info_group,
 		SCOREBOARD_FW_DEBUG_STYLE,
 		SCOREBOARD_FW_DEBUG_TAG,
 		SCOREBOARD_FW_DEBUG_TOGGLE
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils';
 	import { db_real } from '$lib/firebase/init';
 	import {
 		get_livescores_now,
@@ -62,9 +61,8 @@
 	export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
 	export let FIXTURE_CONTENT: REDIS_CACHE_SINGLE_content_data[];
 	export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
-
-	let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
-	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
+  export let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
+	export let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
 
 	let loaded: boolean = false; // [ℹ] holds boolean for data loaded;
 	let refresh: boolean = false; // [ℹ] refresh value speed of the WIDGET;
@@ -73,7 +71,6 @@
 	let tick_sec_show: boolean = false;
 	let enable_miniature: boolean = false;
 	let lazy_load_data_check: boolean = false;
-
 	let currentSeason: number = undefined;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -84,40 +81,14 @@
 	// [ℹ] In Use
 	// [ℹ] (x2) cache
 	async function widget_init(): Promise<REDIS_CACHE_SINGLE_scoreboard_data> {
-		// [ℹ] get response [lang] [data] [obtained from preload()]
-		// const sleep = ms => new Promise(r => setTimeout(r, ms));
-		// await sleep(3000);
-
-		if (
-			!$userBetarenaSettings.country_bookmaker
-		) {
-			return;
-		}
-		let userGeo =
-			$userBetarenaSettings.country_bookmaker
-				.toString()
-				.toLowerCase();
-
-		// [ℹ] [GET] response sportbook [geo]
-		const response_main_sportbook: Cache_Single_SportbookDetails_Data_Response =
-			await get(
-				'/api/cache/tournaments/sportbook?geoPos=' +
-					userGeo
-			);
-		const response_all_spotbooks: Cache_Single_SportbookDetails_Data_Response[] =
-			await get(
-				'/api/cache/tournaments/sportbook?all=true&geoPos=' +
-					userGeo
-			);
-
 		loaded = true;
-
-		// [ℹ] data validation check
-		if (
-			FIXTURE_SCOREBOARD == undefined ||
-			response_main_sportbook == undefined ||
-			response_all_spotbooks == undefined
-		) {
+    const responses_invalid =
+      FIXTURE_SCOREBOARD == undefined 
+			|| SPORTBOOK_INFO == undefined 
+      || SPORTBOOK_DETAILS_LIST == undefined
+    ;
+		// [ℹ] data validation check [#1]
+		if (responses_invalid) {
       dlog(`${SCOREBOARD_FW_DEBUG_TAG} ❌ no data available!`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
@@ -127,16 +98,12 @@
 			no_widget_data = false;
 		}
 
-		SPORTBOOK_INFO = response_main_sportbook;
-		SPORTBOOK_DETAILS_LIST =
-			response_all_spotbooks;
 		SPORTBOOK_DETAILS_LIST.sort(
 			(a, b) =>
 				parseInt(a.position) -
 				parseInt(b.position)
 		);
 		FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD;
-
 		return FIXTURE_SCOREBOARD;
 	}
 
@@ -479,12 +446,7 @@
 			return;
 		}
 
-		// [🐞]
-		if (dev)
-			console.log(
-				'%cTriggered livescore_now listen',
-				'background: green; color: #fffff'
-			);
+    dlog(`${SCOREBOARD_FW_DEBUG_TAG} Triggered livescores listen`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
 
 		const fixtureRef = ref(
 			db_real,
@@ -601,17 +563,12 @@
 		const fixture_status =
 			FIXTURE_SCOREBOARD?.status;
 		if (FIXTURE_FULL_TIME_OPT.includes(fixture_status)) {
-      dlog(`${VOTES_FW_DEBUG_TAG} fixture is ${fixture_status}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
+      dlog(`${SCOREBOARD_FW_DEBUG_TAG} fixture is ${fixture_status}`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
 			lazy_load_data_check = true;
 			return;
 		}
 
-		// [🐞]
-		if (dev)
-			console.log(
-				'%cTriggered odds listen',
-				'background: green; color: #fffff'
-			);
+    dlog(`${SCOREBOARD_FW_DEBUG_TAG} Triggered odds listen`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
 
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
@@ -722,27 +679,20 @@
 
 	// [! CRITICAL !]
 	onDestroy(async () => {
-		// [🐞]
-		if (dev)
-			console.groupCollapsed(
-				'%cclosing firebase connections [DEV]',
-				'background: red; color: #fffff'
-			);
-		// [ℹ] close LISTEN EVENT connection
+		const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
-			// [🐞]
-			if (dev) console.log('closing connection');
+      logsMsg.push('closing connection')
 			iterator();
 		}
-		// [🐞]
-		if (dev) console.groupEnd();
-
+    dlogv2(
+      `${SCOREBOARD_FW_DEBUG_TAG} closing firebase connections`,
+      logsMsg,
+      SCOREBOARD_FW_DEBUG_TOGGLE, 
+      SCOREBOARD_FW_DEBUG_STYLE
+    )
 		// [ℹ] remove event listeners
 		if (browser) {
-			if (dev)
-				console.log(
-					'removing scroll event listener'
-				);
+      dlog(`${SCOREBOARD_FW_DEBUG_TAG} removing scroll event listener`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
 			window.removeEventListener(
 				'scroll',
 				scroll_listen

@@ -5,7 +5,7 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
-		dlog, log_info_group,
+		dlog, dlogv2, log_info_group,
 		PROB_FW_DEBUG_STYLE,
 		PROB_FW_DEBUG_TAG,
 		PROB_FW_DEBUG_TOGGLE
@@ -13,7 +13,6 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { get } from '$lib/api/utils';
 	import { db_real } from '$lib/firebase/init';
 	import { get_odds } from '$lib/firebase/votes';
 	import { REDIS_CACHE_FIXTURE_PROBABILITIES_0 } from '$lib/graphql/fixtures/probabilities/query';
@@ -48,7 +47,9 @@
 	// NOTE: lazy-loaded component data
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_PROBS_TRANSLATION: REDIS_CACHE_SINGLE_probabilities_translation;
-
+  export let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
+	export let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
+  
 	let FIXTURE_PROB_DATA: Fixture_Probabilities;
 	let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
 	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
@@ -101,14 +102,6 @@
 		// const sleep = ms => new Promise(r => setTimeout(r, ms));
 		// await sleep(3000);
 
-		if (!$userBetarenaSettings.country_bookmaker) {
-			return;
-		}
-		let userGeo =
-			$userBetarenaSettings.country_bookmaker
-				.toString()
-				.toLowerCase();
-
 		// [ℹ] execute GRAPH-QL request;
 		const VARIABLES = {
 			fixture_id: FIXTURE_INFO?.data?.id
@@ -118,16 +111,8 @@
 				REDIS_CACHE_FIXTURE_PROBABILITIES_0,
 				VARIABLES
 			);
-		const response_main_sportbook: Cache_Single_SportbookDetails_Data_Response =
-			await get(
-				'/api/cache/tournaments/sportbook?geoPos=' +
-					userGeo
-			);
-		const response_all_spotbooks: Cache_Single_SportbookDetails_Data_Response[] =
-			await get(
-				'/api/cache/tournaments/sportbook?all=true&geoPos=' +
-					userGeo
-			);
+    SPORTBOOK_INFO = SPORTBOOK_MAIN;
+    SPORTBOOK_DETAILS_LIST = SPORTBOOK_ALL;
 		loaded = true;
 
 		const responses_invalid =
@@ -136,8 +121,8 @@
 				undefined ||
 			response.historic_fixtures[0]
 				?.probabilities == undefined ||
-			response_main_sportbook == undefined ||
-			response_all_spotbooks == undefined;
+        SPORTBOOK_INFO == undefined ||
+        SPORTBOOK_DETAILS_LIST == undefined;
 
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
@@ -151,9 +136,9 @@
 		// ~~~~~~~~~~~~~~~~
 		// [ℹ] data pre-processing
 
-		SPORTBOOK_INFO = response_main_sportbook;
+		SPORTBOOK_INFO = SPORTBOOK_MAIN;
 		SPORTBOOK_DETAILS_LIST =
-			response_all_spotbooks;
+    SPORTBOOK_ALL;
 		SPORTBOOK_DETAILS_LIST.sort(
 			(a, b) =>
 				parseInt(a.position) -
@@ -162,13 +147,6 @@
 
 		const HIST_FIXTURE_DATA =
 			response.historic_fixtures[0];
-
-		// [🐞]
-		if (dev)
-			console.log(
-				'HIST_FIXTURE_DATA',
-				HIST_FIXTURE_DATA
-			);
 
 		FIXTURE_PROB_DATA = {};
 		FIXTURE_PROB_DATA.id = HIST_FIXTURE_DATA?.id;
@@ -454,12 +432,7 @@
 	}
 
 	async function listen_real_time_odds(): Promise<void> {
-		// [🐞]
-		if (dev)
-			console.log(
-				'%cTriggered odds listen',
-				'background: green; color: #fffff'
-			);
+    dlog(`${PROB_FW_DEBUG_TAG} Triggered odds listen`, PROB_FW_DEBUG_TOGGLE, PROB_FW_DEBUG_STYLE);
 
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
@@ -534,20 +507,17 @@
 
 	// [! CRITICAL !]
 	onDestroy(async () => {
-		// [🐞]
-		if (dev)
-			console.groupCollapsed(
-				'%cclosing firebase connections [DEV]',
-				'background: red; color: #fffff'
-			);
-		// [ℹ] close LISTEN EVENT connection
+		const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
-			// [🐞]
-			if (dev) console.log('closing connection');
+      logsMsg.push('closing connection')
 			iterator();
 		}
-		// [🐞]
-		if (dev) console.groupEnd();
+    dlogv2(
+      `${PROB_FW_DEBUG_TAG} closing firebase connections`,
+      logsMsg,
+      PROB_FW_DEBUG_TOGGLE, 
+      PROB_FW_DEBUG_STYLE
+    )
 	});
 </script>
 

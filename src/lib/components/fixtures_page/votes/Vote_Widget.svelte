@@ -14,7 +14,6 @@
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { get } from '$lib/api/utils';
 	import { db_real } from '$lib/firebase/init';
 	import { get_odds } from '$lib/firebase/votes';
 	import {
@@ -58,7 +57,8 @@
 	// NOTE: lazy-loaded component data
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_VOTES_TRANSLATION: REDIS_CACHE_SINGLE_votes_translation;
-
+  export let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
+	export let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
 	let FIXTURE_VOTES_DATA: Fixture_Votes;
 	let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
 	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
@@ -97,14 +97,6 @@
 		// const sleep = ms => new Promise(r => setTimeout(r, ms));
 		// await sleep(3000);
 
-		if (!$userBetarenaSettings.country_bookmaker) {
-			return;
-		}
-		let userGeo =
-			$userBetarenaSettings.country_bookmaker
-				.toString()
-				.toLowerCase();
-
 		// [ℹ] execute GRAPH-QL request;
 		const VARIABLES = {
 			match_id: FIXTURE_INFO?.data?.id,
@@ -115,22 +107,15 @@
 				HASURA_FIXTURE_VOTES_DATA_0,
 				VARIABLES
 			);
-		const response_main_sportbook: Cache_Single_SportbookDetails_Data_Response =
-			await get(
-				'/api/cache/tournaments/sportbook?geoPos=' +
-					userGeo
-			);
-		const response_all_spotbooks: Cache_Single_SportbookDetails_Data_Response[] =
-			await get(
-				'/api/cache/tournaments/sportbook?all=true&geoPos=' +
-					userGeo
-			);
+    SPORTBOOK_INFO = SPORTBOOK_MAIN;
+    SPORTBOOK_DETAILS_LIST = SPORTBOOK_ALL;
+
 		loaded = true;
 
 		const responses_invalid =
 			response == undefined ||
-			response_main_sportbook == undefined ||
-			response_all_spotbooks == undefined;
+			SPORTBOOK_INFO == undefined ||
+			SPORTBOOK_DETAILS_LIST == undefined;
       
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
@@ -160,9 +145,9 @@
 			return;
 		}
 
-		SPORTBOOK_INFO = response_main_sportbook;
+		SPORTBOOK_INFO = SPORTBOOK_INFO;
 		SPORTBOOK_DETAILS_LIST =
-			response_all_spotbooks;
+    SPORTBOOK_DETAILS_LIST;
 		SPORTBOOK_DETAILS_LIST.sort(
 			(a, b) =>
 				parseInt(a.position) -
