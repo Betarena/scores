@@ -327,8 +327,8 @@
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	let server_side_language: string = 'en';
-	$: if ($page.routeId != null && !$page.error) {
-		if ($page.routeId.includes('[lang=lang]')) {
+	$: if ($page.route.id != null && !$page.error) {
+		if ($page.route.id.includes('[lang=lang]')) {
 			server_side_language = $page.params.lang;
 		} else {
 			server_side_language = 'en';
