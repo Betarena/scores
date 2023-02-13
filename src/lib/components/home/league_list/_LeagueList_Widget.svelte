@@ -366,7 +366,7 @@
               -->
 							{#each data.top_geo_leagues as item}
 								<a
-									data-sveltekit-prefetch
+									
 									href={item.urls[
 										LEAGUE_LIST_WIDGET_DATA_SEO
 											.lang
@@ -501,7 +501,7 @@
 												.toString()
 												.toLowerCase() && selectedCountryLeagueId === item.country_id}
 											<a
-												data-sveltekit-prefetch
+												
 												href={league.urls[
 													LEAGUE_LIST_WIDGET_DATA_SEO
 														.lang
@@ -576,7 +576,7 @@
               -->
 							{#each leagueSearchData.slice(0, fullLeagueListDisplayNum) as item}
 								<a
-									data-sveltekit-prefetch
+									
 									href={item.urls[
 										LEAGUE_LIST_WIDGET_DATA_SEO
 											.lang
@@ -715,7 +715,7 @@
 												.toString()
 												.toLowerCase() && selectedCountryLeagueId === item.country_id}
 											<a
-												data-sveltekit-prefetch
+												
 												href={league.urls[
 													LEAGUE_LIST_WIDGET_DATA_SEO
 														.lang

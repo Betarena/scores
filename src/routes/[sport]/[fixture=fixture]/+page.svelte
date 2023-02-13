@@ -318,7 +318,7 @@
     [ℹ] sport 
     -->
 		<a
-			data-sveltekit-prefetch
+			
 			href={$page.params.lang != undefined
 				? `/${$page.params.lang}/${$page.params.sport}`
 				: `/${$page.params.sport}`}
@@ -349,7 +349,7 @@
     [ℹ] country 
     -->
 		<a
-			data-sveltekit-prefetch
+			
 			href={$page.params.lang != undefined
 				? `/${$page.params.lang}/${$page.params.sport}/${country_link}`
 				: `/${$page.params.sport}/${country_link}`}
@@ -380,7 +380,7 @@
     [ℹ] league_name 
     -->
 		<a
-			data-sveltekit-prefetch
+			
 			href={$page.params.lang != undefined
 				? `/${$page.params.lang}/${$page.params.sport}/${country_link}/${league_name_link}`
 				: `/${$page.params.sport}/${country_link}/${league_name_link}`}

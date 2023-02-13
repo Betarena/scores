@@ -8,7 +8,7 @@
 	import { page } from '$app/stores';
 	import { sessionStore } from '$lib/store/session';
 	import { onMount } from 'svelte';
-	// [ℹ] typescript-types;
+// [ℹ] typescript-types;
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
 	// [ℹ] image-assets;
 	import { logDevGroup } from '$lib/utils/debug';
@@ -74,8 +74,8 @@
 	});
 
 	// [ℹ] IMPORTANT! lang selection [SERVER-SIDE-RENDER]
-	$: if ($page.routeId != null && !$page.error) {
-		if ($page.routeId.includes('[lang=lang]')) {
+	$: if ($page.route.id != null && !$page.error) {
+		if ($page.route.id.includes('[lang=lang]')) {
 			server_side_language = $page.params.lang;
 			homepageURL = '/' + $page.params.lang;
 			logoLink =
@@ -190,7 +190,7 @@
 					on:click={() => reloadPage()}
 				>
 					<a
-						data-sveltekit-prefetch
+						
 						href={homepageURL}
 						title={logoLink}
 					>
@@ -474,7 +474,7 @@
 							on:click={() => reloadPage()}
 						>
 							<a
-								data-sveltekit-prefetch
+								
 								href={homepageURL}
 								title={logoLink}
 							>
@@ -735,7 +735,7 @@
 						on:click={() => reloadPage()}
 					>
 						<a
-							data-sveltekit-prefetch
+							
 							href={homepageURL}
 							title={logoLink}
 						>

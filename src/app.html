@@ -103,7 +103,11 @@
 
 		%sveltekit.head%
 	</head>
-	<body class="no-scrollbar">
-		<div id="svelte">%sveltekit.body%</div>
+	<body
+    data-sveltekit-preload-data="hover" 
+    class="no-scrollbar">
+		<div id="svelte">
+      %sveltekit.body%
+    </div>
 	</body>
 </html>

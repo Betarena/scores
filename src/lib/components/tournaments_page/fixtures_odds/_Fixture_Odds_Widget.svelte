@@ -2521,7 +2521,7 @@
 
 											<!-- 
                       [ℹ] fixture-teams with FIXTURE-LINK
-                      FIXME: data-sveltekit-prefetch syntax error
+                      FIXME:  syntax error
                       -->
 											<a
 												href={fixture?.fixture_link ==
@@ -2531,7 +2531,7 @@
 															server_side_language
 													  ]}
 												style="width: inherit;"
-												data-sveltekit-prefetch
+												
 												class:disable-anchor={fixture?.fixture_link ==
 													undefined ||
 													fixture?.fixture_link[
@@ -2716,7 +2716,7 @@
                       -->
 											{#if fixture?.media_link && fixture?.media_link.length != 0 && fixture?.fixture_link && fixture?.fixture_link[server_side_language]}
 												<a
-													data-sveltekit-prefetch
+													
 													href={fixture
 														?.fixture_link[
 														server_side_language
@@ -3039,7 +3039,7 @@
 
 											<!-- 
                       [ℹ] fixture-teams with FIXTURE-LINK
-                      FIXME: data-sveltekit-prefetch syntax error
+                      FIXME:  syntax error
                       -->
 											<a
 												href={fixture?.fixture_link ==
@@ -3049,7 +3049,7 @@
 															server_side_language
 													  ]}
 												style="width: inherit;"
-												data-sveltekit-prefetch
+												
 												class:disable-anchor={fixture?.fixture_link ==
 													undefined ||
 													fixture?.fixture_link[

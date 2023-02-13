@@ -10,7 +10,7 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { removeDiacritics } from '$lib/utils/languages';
-	/*
+/*
     [v1]
     Standard Imports (client-side)
   */
@@ -22,7 +22,7 @@
 	import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
 	import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
 	import SvelteSeo from 'svelte-seo';
-	/*
+/*
     [v2]
     Dynamic Imports (client-side)
   */
@@ -321,7 +321,7 @@
 		class="row-space-start m-b-20"
 	>
 		<a
-			data-sveltekit-prefetch
+			
 			href={$page.params.lang != undefined
 				? `/${$page.params.lang}/${$page.params.sport}`
 				: `/${$page.params.sport}`}
@@ -342,7 +342,7 @@
 		/>
 
 		<a
-			data-sveltekit-prefetch
+			
 			href={$page.params.lang != undefined
 				? `/${$page.params.lang}/${$page.params.sport}/${$page.params.country}`
 				: `/${$page.params.sport}/${$page.params.country}`}
