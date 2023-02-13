@@ -3,19 +3,18 @@
 ==================== -->
 <script lang="ts">
 	// [ℹ] svelte-imports;
-	import { dev } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	// [ℹ] external `exports` imports;
+// [ℹ] external `exports` imports;
 	import { get } from '$lib/api/utils';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 	import type {
 		All_SportBook_Details_Data,
 		Cache_Single_Lang_Featured_Betting_Site_Translation_Response
 	} from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 	// [ℹ] external components import;
-	import { logDevGroup } from '$lib/utils/debug';
+	import { dlog, FEAT_BET_H_DEBUG_STYLE, FEAT_BET_H_DEBUG_TAG, FEAT_BET_H_DEBUG_TOGGLE } from '$lib/utils/debug';
 	import BronzeCup from './assets/_BronzeCup.svelte';
 	import GoldCup from './assets/_GoldCup.svelte';
 	import SilverCup from './assets/_SilverCup.svelte';
@@ -49,33 +48,21 @@
 				.toString()
 				.toLowerCase();
 
-		// [ℹ] GET RESPONSE;
 		const response: All_SportBook_Details_Data =
 			await get(
 				'/api/cache/home/featured_betting_sites?geoPos=' +
 					userGeo
 			);
-		// const response: All_SportBook_Details_Data = FEATURED_BETTING_SITES_WIDGET_DATA;
 
 		// [ℹ] if response is null;
-		if (
-			response == null ||
-			response == undefined
-		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'featured betting sites [DEV]',
-					`❌ no data available!`
-				);
+		if (response == undefined) {
+      dlog(`${FEAT_BET_H_DEBUG_TAG} ❌ no data available!`, FEAT_BET_H_DEBUG_TOGGLE, FEAT_BET_H_DEBUG_STYLE);
 			return;
 		}
 
 		loaded = true;
-
 		// [ℹ] intercept the length of array;
 		trueLengthOfArray = response.data.length;
-
 		// [ℹ] return the FINAL Promise Value;
 		return response;
 	}

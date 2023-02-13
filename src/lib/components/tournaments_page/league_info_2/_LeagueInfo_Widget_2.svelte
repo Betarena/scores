@@ -3,9 +3,9 @@
 =================-->
 <script lang="ts">
 	// [ℹ] svelte-imports;
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { logDevGroup } from '$lib/utils/debug';
+	import { dlog, LEAGUE_INFO_2_T_DEBUG_STYLE, LEAGUE_INFO_2_T_DEBUG_TAG, LEAGUE_INFO_2_T_DEBUG_TOGGLE } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { sessionStore } from '$lib/store/session';
@@ -35,12 +35,6 @@
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 
-	$: if (dev && diasbleDev)
-		logDevGroup(
-			'league info #2 [DEV]',
-			`LEAGUE_INFO_SEO_DATA: ${LEAGUE_INFO_SEO_DATA}`
-		);
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -51,16 +45,8 @@
 			new Promise((r) => setTimeout(r, ms));
 		await sleep(3000);
 
-		if (
-			LEAGUE_INFO_SEO_DATA == null ||
-			LEAGUE_INFO_SEO_DATA == undefined
-		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'league info #2 [DEV]',
-					`❌ no data available!`
-				);
+		if (LEAGUE_INFO_SEO_DATA == undefined) {
+      dlog(`${LEAGUE_INFO_2_T_DEBUG_TAG} ❌ no data available!`, LEAGUE_INFO_2_T_DEBUG_TOGGLE, LEAGUE_INFO_2_T_DEBUG_STYLE);
 			noWidgetData = true;
 			return;
 		}

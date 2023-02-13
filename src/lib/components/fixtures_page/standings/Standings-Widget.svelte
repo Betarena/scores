@@ -2,9 +2,9 @@
 	COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { logDevGroup } from '$lib/utils/debug';
+	import { dlog, STANDINGS_FW_DEBUG_STYLE, STANDINGS_FW_DEBUG_TAG, STANDINGS_FW_DEBUG_TOGGLE } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -52,19 +52,6 @@
 	export let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
 	export let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
 
-	if (dev && diasbleDev)
-		logDevGroup(
-			'tournament standings [DEV]',
-			`STANDINGS_T: ${STANDINGS_T}`
-		);
-	if (dev && diasbleDev)
-		logDevGroup(
-			'tournament standings [DEV]',
-			`dropdownSeasonSelect: ${dropdownSeasonSelect}`
-		);
-	// if (dev) console.log(STANDINGS_T)
-	// if (dev) console.log(STANDINGS_DATA)
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -74,12 +61,7 @@
 	async function widgetInit(): Promise<void> {
 		// [ℹ] data validation check
 		if (STANDINGS_DATA == undefined) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					'tournament standings [DEV]',
-					`❌ no data available!`
-				);
+      dlog(`${STANDINGS_FW_DEBUG_TAG} ❌ no data available!`, STANDINGS_FW_DEBUG_TOGGLE, STANDINGS_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		}

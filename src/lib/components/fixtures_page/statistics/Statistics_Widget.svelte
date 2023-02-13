@@ -5,8 +5,10 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
-		logDevGroup,
-		log_info_group
+		dlog, log_info_group,
+		STATS_FW_DEBUG_STYLE,
+		STATS_FW_DEBUG_TAG,
+		STATS_FW_DEBUG_TOGGLE
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -136,18 +138,6 @@
 		}
 	];
 
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | statistics [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_STATISTICS: ${FIXTURE_STATISTICS}`
-		);
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -167,12 +157,7 @@
 			FIXTURE_STATISTICS == undefined ||
 			FIXTURE_STATISTICS.stats.length == 0
 		) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${STATS_FW_DEBUG_TAG} ❌ no data available!`, STATS_FW_DEBUG_TOGGLE, STATS_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		}
@@ -269,7 +254,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag + ' check_live_fixtures';
+			STATS_FW_DEBUG_TAG + ' check_live_fixtures';
 		const logs: string[] = [];
 		logs.push(`checking livescores_now`);
 

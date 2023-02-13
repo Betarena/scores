@@ -5,8 +5,10 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
-		logDevGroup,
-		log_info_group
+		dlog,
+		INCIDENT_FW_DEBUG_STYLE,
+		INCIDENT_FW_DEBUG_TAG,
+		INCIDENT_FW_DEBUG_TOGGLE, log_info_group
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -53,23 +55,6 @@
 
 	let show_placeholder: boolean = false;
 
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | incidents [DEV]';
-
-	// [🐞]
-	if (dev)
-		console.log(
-			`FIXTURE_INCIDENTS`,
-			FIXTURE_INCIDENTS
-		);
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_INCIDENTS: ${FIXTURE_INCIDENTS}`
-		);
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -86,12 +71,7 @@
 
 		// [ℹ] [standard] data validation check [#1]
 		if (FIXTURE_INCIDENTS == undefined) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${INCIDENT_FW_DEBUG_TAG} ❌ no data available!`, INCIDENT_FW_DEBUG_TOGGLE, INCIDENT_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		} else {
@@ -197,7 +177,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag + ' check_live_fixtures';
+			INCIDENT_FW_DEBUG_TAG + ' check_live_fixtures';
 		const logs: string[] = [];
 		logs.push(`checking livescores_now`);
 

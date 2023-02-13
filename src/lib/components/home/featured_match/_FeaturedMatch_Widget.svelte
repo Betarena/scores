@@ -6,7 +6,7 @@
 	import { browser, dev } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	// [ℹ] external modules imports;
+// [ℹ] external modules imports;
 	import ColorThief from 'colorthief/dist/color-thief.mjs';
 
 	// [ℹ] external components import;
@@ -23,7 +23,7 @@
 		onValue,
 		ref
 	} from 'firebase/database';
-	// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
+// [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 	import { get } from '$lib/api/utils';
 	import type {
 		Cache_Single_Lang_Featured_Match_Translation_Response,
@@ -34,10 +34,12 @@
 		SelectedFixutre
 	} from '$lib/models/home/featured_match/response_models';
 	import type { fixture } from '$lib/store/vote_fixture';
-	// [ℹ] key component assets;
+// [ℹ] key component assets;
 	import {
-		logDevGroup,
-		logErrorGroup
+		dlog,
+		FEAT_MATCH_H_DEBUG_STYLE,
+		FEAT_MATCH_H_DEBUG_TAG,
+		FEAT_MATCH_H_DEBUG_TOGGLE, logErrorGroup
 	} from '$lib/utils/debug';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
@@ -200,13 +202,7 @@
 			_2_vote: fixtureData._2_vote,
 			_X_vote: fixtureData._X_vote
 		};
-		// [ℹ] DEBUGGING;
-		if (dev)
-			logDevGroup(
-				'featured match [DEV]',
-				`handleSubmit() variables: ${variables}`
-			);
-		// [ℹ] [TRY-CATCH]
+    dlog(`${FEAT_MATCH_H_DEBUG_TAG} variables: ${variables}`, FEAT_MATCH_H_DEBUG_TOGGLE, FEAT_MATCH_H_DEBUG_STYLE);
 		try {
 			// [ℹ] push-GRAPH-QL-request;
 			const update_fixture_data: SelectedFixture_VoteUpdate_Response =
@@ -214,12 +210,7 @@
 					UPDATE_MATCH_FIXTURE_VOTES,
 					variables
 				);
-			// [ℹ] DEBUGGING;
-			if (dev)
-				logDevGroup(
-					'featured match [DEV]',
-					`update_fixture_data: ${update_fixture_data}`
-				);
+      dlog(`${FEAT_MATCH_H_DEBUG_TAG} update_fixture_data: ${update_fixture_data}`, FEAT_MATCH_H_DEBUG_TOGGLE, FEAT_MATCH_H_DEBUG_STYLE);
 			// [ℹ] update the existing data on the CASTED-VOTES;
 			FEATURED_MATCH_WIDGET_DATA.match_votes =
 				update_fixture_data.update_widget_featured_match_votes_by_pk;
@@ -312,12 +303,7 @@
 		voteType: string,
 		voteVal: string
 	): void {
-		// [ℹ] DEBUGGING;
-		if (dev)
-			logDevGroup(
-				'featured match [DEV]',
-				`voteVal: ${voteVal}`
-			);
+    dlog(`${FEAT_MATCH_H_DEBUG_TAG} voteVal: ${voteVal}`, FEAT_MATCH_H_DEBUG_TOGGLE, FEAT_MATCH_H_DEBUG_STYLE);
 		// [ℹ] check if a vote has already been casted ?;
 		if (!voteCasted) {
 			// [ℹ] update the showBettingSite Frame;

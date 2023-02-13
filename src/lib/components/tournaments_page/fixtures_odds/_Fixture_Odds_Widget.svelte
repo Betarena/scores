@@ -8,8 +8,8 @@
 	import { get } from '$lib/api/utils';
 	import {
 		dlog,
-		dlogv2,
-		logDevGroup
+		dlogv2, FIXTURE_T_DEBUG_STYLE, FIXTURE_T_DEBUG_TAG,
+		FIXTURE_T_DEBUG_TOGGLE
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -122,21 +122,8 @@
 		Unsubscribe
 	> = new Map<number, Unsubscribe>();
 
-	if (dev && enableLogs)
-		logDevGroup(
-			'fixture odds [DEV]',
-			`FIXTURES_ODDS_T: ${FIXTURES_ODDS_T}`
-		);
-	if (dev && enableLogs)
-		logDevGroup(
-			'fixture odds [DEV]',
-			`FIXTURES_ODDS_DATA: ${FIXTURES_ODDS_DATA}`
-		);
-
-	if (
-		FIXTURES_ODDS_DATA == undefined ||
-		FIXTURES_ODDS_T == undefined
-	) {
+	if (FIXTURES_ODDS_DATA == undefined ||
+		FIXTURES_ODDS_T == undefined) {
 		noWidgetData = true;
 		loaded = true;
 	}
@@ -153,12 +140,8 @@
 	async function checkForLiveFixtures(
 		data: [string, FIREBASE_livescores_now][]
 	) {
-		if (dev && enableLogs)
-			logDevGroup(
-				'fixture odds [DEV]',
-				`checkForLiveFixtures()`
-			);
-
+    dlog(`${FIXTURE_T_DEBUG_TAG} checkForLiveFixtures()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+    
 		// [ℹ] generate map
 		for (const live_fixture of data) {
 			const fixture_id = parseInt(
@@ -247,11 +230,7 @@
 	}
 
 	async function listenRealTimeLivescoresNowChange(): Promise<void> {
-		if (dev && enableLogs)
-			logDevGroup(
-				'fixture odds [DEV]',
-				`listenRealTimeLivescoresNowChange()`
-			);
+    dlog(`${FIXTURE_T_DEBUG_TAG} listenRealTimeLivescoresNowChange()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
 
 		const fixtureRef = ref(
 			db_real,
@@ -606,9 +585,6 @@
 			Unsubscribe
 		>();
 
-		// if (dev && enableLogs) logDevGroup ("fixture odds [DEV]", `listenRealTimeOddsChange()`)
-		// if (dev) console.log("snapshot", fixtures_arr_filter.length)
-
 		// [ℹ] iterate over ALL fixtures
 		// [ℹ] of SELECTED season
 		for (const season_fixture_date_group of fixtures_arr_filter) {
@@ -772,11 +748,7 @@
 				.toString()
 				.toLowerCase();
 
-		if (dev && enableLogs)
-			logDevGroup(
-				'fixture odds [DEV]',
-				`widget_init()`
-			);
+    dlog(`${FIXTURE_T_DEBUG_TAG} widget_init()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
 
 		// [ℹ] get response [lang] [data] [obtained from preload()]
 		const response: Cache_Single_SportbookDetails_Data_Response =
@@ -797,23 +769,14 @@
 			FIXTURES_ODDS_DATA == undefined ||
 			response == undefined
 		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'fixture odds [DEV]',
-					`❌ no data available!`
-				);
+      dlog(`${FIXTURE_T_DEBUG_TAG} ❌ no data available!`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
 			noWidgetData = true;
 			return;
 		} else {
 			noWidgetData = false;
 		}
 
-		if (dev && enableLogs)
-			logDevGroup(
-				'fixture odds [DEV]',
-				`widget_init() cont.`
-			);
+    dlog(`${FIXTURE_T_DEBUG_TAG} widget_init() cont.`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
 
 		// [ℹ] enable when no widget fetch is required, i.e. no const response ...
 		const sleep = (ms) =>
@@ -844,12 +807,7 @@
 			return;
 		}
 
-		// [🐞]
-		if (dev && enableLogs)
-			logDevGroup(
-				'fixture odds [DEV]',
-				`select_fixtures_odds()`
-			);
+    dlog(`${FIXTURE_T_DEBUG_TAG} select_fixtures_odds() cont.`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
 
 		// ~~~~~~~~~~~~~
 		// MAIN
@@ -1260,12 +1218,7 @@
 	async function carusel_fixture_odds_data(
 		opt_view: number
 	) {
-		// [🐞]
-		if (dev && enableLogs)
-			logDevGroup(
-				'fixture odds [DEV]',
-				`carusel_fixture_odds_data()`
-			);
+    dlog(`${FIXTURE_T_DEBUG_TAG} carusel_fixture_odds_data()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
 
 		fixtures_arr_filter = [];
 		let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] =

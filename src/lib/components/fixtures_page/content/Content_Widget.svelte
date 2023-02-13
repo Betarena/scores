@@ -2,9 +2,9 @@
 	  COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { logDevGroup } from '$lib/utils/debug';
+	import { CONTENT_FW_DEBUG_STYLE, CONTENT_FW_DEBUG_TAG, CONTENT_FW_DEBUG_TOGGLE, dlog } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -51,18 +51,6 @@
 		'December'
 	];
 
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | content [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_CONTENT: ${FIXTURE_CONTENT}`
-		);
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -81,12 +69,7 @@
 
 		// [ℹ] data validation check
 		if (FIXTURE_CONTENT == undefined) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${CONTENT_FW_DEBUG_TAG} ❌ no data available!`, CONTENT_FW_DEBUG_TOGGLE, CONTENT_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		}

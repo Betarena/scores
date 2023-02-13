@@ -2,9 +2,9 @@
 	  COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { logDevGroup } from '$lib/utils/debug';
+	import { ABOUT_FW_DEBUG_STYLE, ABOUT_FW_DEBUG_TAG, ABOUT_FW_DEBUG_TOGGLE, dlog } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -30,20 +30,7 @@
 	let refresh: boolean = false; // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
 	let refresh_data: any = undefined; // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
 	let no_widget_data: any = false; // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
-
-	let show_placeholder: boolean = true; // [ℹ] [override] placeholder for "no-widget-data"
-
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | about [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_ABOUT: ${FIXTURE_ABOUT}`
-		);
+	let show_placeholder: boolean = true; // [ℹ] IMPORTANT [override] placeholder for "no-widget-data"
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -61,12 +48,7 @@
 
 		// [ℹ] data validation check
 		if (FIXTURE_ABOUT == undefined) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${ABOUT_FW_DEBUG_TAG} ❌ no data available!`, ABOUT_FW_DEBUG_TOGGLE, ABOUT_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		}

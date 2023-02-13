@@ -3,20 +3,19 @@
 ==================== -->
 <script lang="ts">
 	// [ℹ] svelte-imports;
-	import { dev } from '$app/environment';
 	import { onMount } from 'svelte';
-	// [ℹ] external `exports` imports;
+// [ℹ] external `exports` imports;
 	import { get } from '$lib/api/utils';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	// [ℹ] external components import;
+// [ℹ] external components import;
 	import type {
 		Cache_Single_Geo_GoalScorers_Translation_Response,
 		Cache_Single_Lang_GoalScorers_Translation_Response
 	} from '$lib/models/home/best_goalscorer/types';
 	import BestGoalscorersWidgetContentLoader from './_Best_Goalscorers_Widget_ContentLoader.svelte';
 	import BestGoalscorerRow from './_Best_Goalscorer_Row.svelte';
-	// [ℹ] key component assets;
-	import { logDevGroup } from '$lib/utils/debug';
+// [ℹ] key component assets;
+	import { BEST_GOAL_H_DEBUG_STYLE, BEST_GOAL_H_DEBUG_TAG, BEST_GOAL_H_DEBUG_TOGGLE, dlog } from '$lib/utils/debug';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
@@ -55,16 +54,8 @@
 			);
 
 		// [ℹ] if response is null;
-		if (
-			response == null ||
-			response == undefined
-		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'best goalscorers block [DEV]',
-					`❌ no data available!`
-				);
+		if (response == undefined) {
+      dlog(`${BEST_GOAL_H_DEBUG_TAG} ❌ no data available!`, BEST_GOAL_H_DEBUG_TOGGLE, BEST_GOAL_H_DEBUG_STYLE);
 			noBestPlayers = true;
 			return;
 		}

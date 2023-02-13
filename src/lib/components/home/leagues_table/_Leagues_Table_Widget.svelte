@@ -3,20 +3,19 @@
 =================-->
 <script lang="ts">
 	// [ℹ] svelte-imports;
-	import { dev } from '$app/environment';
 	import { onMount } from 'svelte';
-	// [ℹ] external `exports` imports;
+// [ℹ] external `exports` imports;
 	import { get } from '$lib/api/utils';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	// [ℹ] external components import;
+// [ℹ] external components import;
 	import type {
 		Cache_Single_Geo_Leagues_Table_Translation_Response,
 		Cache_Single_Lang_Leagues_Table_Translation_Response
 	} from '$lib/models/leagues_table/types';
 	import LeagueTableTeamRow from './_League_Table_Team_Row.svelte';
 	import LeagueTableWidgetContentLoader from './_League_Table_Widget_ContentLoader.svelte';
-	// [ℹ] key component assets;
-	import { logDevGroup } from '$lib/utils/debug';
+// [ℹ] key component assets;
+	import { dlog, LEAGUES_H_DEBUG_STYLE, LEAGUES_H_DEBUG_TAG, LEAGUES_H_DEBUG_TOGGLE } from '$lib/utils/debug';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
 	import check_league from './assets/check-league.svg';
@@ -54,16 +53,8 @@
 			);
 
 		// [ℹ] if response is null;
-		if (
-			response == null ||
-			response == undefined
-		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'league table [DEV]',
-					`❌ no data available to email newsletter!`
-				);
+		if (response == undefined) {
+      dlog(`${LEAGUES_H_DEBUG_TAG} ❌ no data available!`, LEAGUES_H_DEBUG_TOGGLE, LEAGUES_H_DEBUG_STYLE);
 			noLeaguesTable = true;
 			return;
 		}

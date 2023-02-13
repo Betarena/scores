@@ -2,7 +2,7 @@
 	  COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import { onMount } from 'svelte';
 
@@ -10,8 +10,9 @@
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
-		dlog,
-		logDevGroup
+		dlog, TOP_PLAY_T_DEBUG_STYLE,
+		TOP_PLAY_T_DEBUG_TAG,
+		TOP_PLAY_T_DEBUG_TOGGLE
 	} from '$lib/utils/debug';
 
 	import type {
@@ -55,43 +56,22 @@
 	export let TOP_PLAYERS_T: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
 	export let TOP_PLAYERS_DATA: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
 
-	dlog(TOP_PLAYERS_DATA, false);
-
-	if (dev && diasbleDev)
-		logDevGroup(
-			'tournament top_players [DEV]',
-			`TOP_PLAYERS_T: ${TOP_PLAYERS_T}`
-		);
-	if (dev && diasbleDev)
-		logDevGroup(
-			'tournament top_players [DEV]',
-			`dropdownPlayerViewSelect: ${dropdownPlayerViewSelect}`
-		);
+	dlog(TOP_PLAYERS_DATA, TOP_PLAY_T_DEBUG_TOGGLE);
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	async function widgetInit(): Promise<REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response> {
-		if (
-			!$userBetarenaSettings.country_bookmaker ||
+		if (!$userBetarenaSettings.country_bookmaker ||
 			$sessionStore?.selectedSeasonID == undefined
 		) {
 			return;
 		}
 
 		// [ℹ] get response [lang] [data] [obtained from preload()]
-
-		if (
-			TOP_PLAYERS_DATA == null ||
-			TOP_PLAYERS_DATA == undefined
-		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'top_players [DEV]',
-					`❌ no data available!`
-				);
+		if (TOP_PLAYERS_DATA == undefined) {
+      dlog(`${TOP_PLAY_T_DEBUG_TAG} ❌ no data available!`, TOP_PLAY_T_DEBUG_TOGGLE, TOP_PLAY_T_DEBUG_STYLE);
 			noTopPlayersBool = true;
 			return;
 		}
@@ -123,12 +103,7 @@
 		}, 50);
 	}
 
-	// [🐛] debug
-	if (dev && diasbleDev)
-		logDevGroup(
-			'top_players [DEV]',
-			`trueLengthOfArray ${trueLengthOfArray}`
-		);
+  dlog(`${TOP_PLAY_T_DEBUG_TAG} trueLengthOfArray ${trueLengthOfArray}`, TOP_PLAY_T_DEBUG_TOGGLE, TOP_PLAY_T_DEBUG_STYLE);
 
 	async function selectPlayerView(opt: string) {
 		dropdownPlayerViewSelect = opt

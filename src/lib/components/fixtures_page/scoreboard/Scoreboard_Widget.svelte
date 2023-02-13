@@ -6,8 +6,10 @@
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import {
-		logDevGroup,
-		log_info_group
+		dlog, log_info_group,
+		SCOREBOARD_FW_DEBUG_STYLE,
+		SCOREBOARD_FW_DEBUG_TAG,
+		SCOREBOARD_FW_DEBUG_TOGGLE
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -74,18 +76,6 @@
 
 	let currentSeason: number = undefined;
 
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | scoreboard [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_SCOREBOARD: ${FIXTURE_SCOREBOARD}`
-		);
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -128,12 +118,7 @@
 			response_main_sportbook == undefined ||
 			response_all_spotbooks == undefined
 		) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${SCOREBOARD_FW_DEBUG_TAG} ❌ no data available!`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		}
@@ -420,7 +405,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag + ' check_live_fixtures';
+			SCOREBOARD_FW_DEBUG_TAG + ' check_live_fixtures';
 		const logs: string[] = [];
 		logs.push(`checking livescores_now`);
 
@@ -489,12 +474,7 @@
 				fixture_status
 			)
 		) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`fixture is ${fixture_status}!`
-				);
+      dlog(`${SCOREBOARD_FW_DEBUG_TAG} fixture is ${fixture_status}!`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
 			lazy_load_data_check = true;
 			return;
 		}
@@ -535,7 +515,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag +
+			SCOREBOARD_FW_DEBUG_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);
@@ -620,17 +600,8 @@
 	async function listen_real_time_odds(): Promise<void> {
 		const fixture_status =
 			FIXTURE_SCOREBOARD?.status;
-		if (
-			FIXTURE_FULL_TIME_OPT.includes(
-				fixture_status
-			)
-		) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`fixture is ${fixture_status}!`
-				);
+		if (FIXTURE_FULL_TIME_OPT.includes(fixture_status)) {
+      dlog(`${VOTES_FW_DEBUG_TAG} fixture is ${fixture_status}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
 			lazy_load_data_check = true;
 			return;
 		}

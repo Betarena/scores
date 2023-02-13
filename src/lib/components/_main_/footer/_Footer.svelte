@@ -3,27 +3,22 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
-	// [ℹ] svelte-imports;
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { sessionStore } from '$lib/store/session';
-	import { onMount } from 'svelte';
-// [ℹ] typescript-types;
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
-	// [ℹ] image-assets;
-	import { logDevGroup } from '$lib/utils/debug';
+	import { sessionStore } from '$lib/store/session';
+	import { dlog, FOOTER_DEBUG_STYLE, FOOTER_DEBUG_TAG, FOOTER_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
+	import { onMount } from 'svelte';
 	import begambleawareorg from './assets/begambleawareorg_black.png';
 	import logo_full from './assets/betarena-logo-full.svg';
 	import legal18icon from './assets/legal-18-action-bet.png';
-	// [ℹ] pre-loaded & ready;
+
+	// ~~~~~~~~~~~~~~~~~~~~~
+	//  COMPONENT VARIABLES
+	// ~~~~~~~~~~~~~~~~~~~~~
 	export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
 
-	/**
-	 * [ℹ] component variables;
-	 */
-
-	let mobileExclusive: boolean = false;
-	let tabletExclusive: boolean = false;
 	let hideSEO: boolean = false;
 	let showEmailForm: boolean = false;
 
@@ -31,95 +26,71 @@
 	let homepageURL: string;
 	let logoLink: string;
 
-	/**
-	 * ~~~~~~~~~~~~~~
-	 * COMPONENT REACTIVIYY METHODS
-	 * ~~~~~~~~~~~~~~
-	 */
+	// ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 560;
+	let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit =
-			document.documentElement.clientWidth;
-		// TABLET - VIEW
-		if (wInit >= 1440) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		// MOBILE - VIEW
-		if (wInit < 475) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
 		window.addEventListener(
 			'resize',
 			function () {
-				var w =
-					document.documentElement.clientWidth;
-				// TABLET - VIEW
-				if (w >= 1440) {
-					tabletExclusive = false;
-				} else {
-					tabletExclusive = true;
-				}
-				// MOBILE - VIEW
-				if (w < 475) {
-					mobileExclusive = true;
-				} else {
-					mobileExclusive = false;
-				}
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
 			}
 		);
 	});
 
-	// [ℹ] IMPORTANT! lang selection [SERVER-SIDE-RENDER]
-	$: if ($page.route.id != null && !$page.error) {
-		if ($page.route.id.includes('[lang=lang]')) {
-			server_side_language = $page.params.lang;
-			homepageURL = '/' + $page.params.lang;
-			logoLink =
-				$page.url.origin +
-				'/' +
-				server_side_language;
-		} else {
-			server_side_language = 'en';
-			homepageURL = '/';
-			logoLink = $page.url.origin;
-		}
-	} else {
-		server_side_language = 'en';
-		homepageURL = '/';
-		logoLink = $page.url.origin;
-	}
+  // ~~~~~~~~~~~~~~~~~~~~~
+	//  COMPONENT METHODS
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: server_side_language = platfrom_lang_ssr(
+    $page.route.id,
+    $page.error,
+    $page.params.lang
+  )
+  $: homepageURL = 
+    server_side_language != 'en'
+      ? `/${$page.params.lang}`
+      : `/`
+  ;
+  $: logoLink =
+    server_side_language != 'en'
+      ? `${$page.url.origin}/${server_side_language}`
+      : $page.url.origin
+  ;
+  $: dlog(`${FOOTER_DEBUG_TAG} server_side_language: ${server_side_language}`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
+  $: dlog(`${FOOTER_DEBUG_TAG} homepageURL: ${homepageURL}`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
+  $: dlog(`${FOOTER_DEBUG_TAG} logoLink: ${logoLink}`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
 
 	$: if (browser) {
 		hideSEO = true;
 	}
 
-	/**
-	 * [ℹ] form SUBMIT method to
-	 * [ℹ] register user on the BETARENA EMAIL LIST
-	 */
+  /**
+   * @description form SUBMIT method to
+   * register user on the BETARENA EMAIL LIST
+  */
 	async function submitEmail() {
-		// [ℹ] DEBUGGING;
-		if (dev)
-			logDevGroup(
-				'footer [DEV]',
-				`subscribing to email newsletter!`
-			);
-		// [ℹ] showEmailForm = true;
+    dlog(`${FOOTER_DEBUG_TAG} subscribing to email newsletter!`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
+		// [ℹ] showEmailForm = true; // FIXME: ?
 		$sessionStore.newsletterPopUpShow = true;
 	}
 
 	/**
-	 * [ℹ] reload current page;
+	 * @description reload current page;
 	 */
 	function reloadPage() {
-		if (
-			$page.url.pathname.split('/').length - 1 ==
-			1
-		) {
+		if ($page.url.pathname.split('/').length - 1 ==	1) {
 			window.location.reload();
 		}
 	}

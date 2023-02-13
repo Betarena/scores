@@ -130,7 +130,7 @@ COMPONENT JS - BASIC
 	 */
 	async function selectLanguage(
     lang: string
-  ): void {
+  ): Promise<void> {
 		// [ℹ] get past instance of LANG;
 		const pastLang: string =
 			$userBetarenaSettings.lang == 'en'
@@ -370,7 +370,6 @@ COMPONENT JS - BASIC
 
   // NOTE: ?
 	// afterNavigate(async() => {
-	//   if (dev) logDevGroup ("navbar [DEV]", `afterNavigate`)
 	//   await invalidateAll()
 	// })
 

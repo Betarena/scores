@@ -3,7 +3,7 @@
 =================-->
 <script lang="ts">
 	// [ℹ] svelte-imports;
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -12,7 +12,6 @@
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief';
-	import { logDevGroup } from '$lib/utils/debug';
 
 	import type {
 		Cache_Single_SportbookDetails_Data_Response,
@@ -22,6 +21,7 @@
 	import World from './assets/_World.svelte';
 	import LeagueInfoWidgetContentLoader from './_LeagueInfo_Widget_ContentLoader.svelte';
 
+	import { dlog, LEAGUE_INFO_T_DEBUG_STYLE, LEAGUE_INFO_T_DEBUG_TAG, LEAGUE_INFO_T_DEBUG_TOGGLE } from '$lib/utils/debug';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
@@ -43,30 +43,16 @@
 
 	let selectedOpt = 0;
 
-	let imageVar: string =
-		'--league-info-bookmaker-bg-';
+	let imageVar: string = '--league-info-bookmaker-bg-';
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
-
-	if (dev)
-		logDevGroup(
-			'league info [DEV]',
-			`LEAGUE_INFO_SEO_DATA: ${LEAGUE_INFO_SEO_DATA}`
-		);
-	if (dev)
-		logDevGroup(
-			'league info [DEV]',
-			`dropdownSeasonSelect: ${dropdownSeasonSelect}`
-		);
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	async function widgetInit(): Promise<Cache_Single_Tournaments_League_Info_Data_Response> {
-		if (
-			!$userBetarenaSettings.country_bookmaker
-		) {
+		if (!$userBetarenaSettings.country_bookmaker) {
 			return;
 		}
 
@@ -87,17 +73,8 @@
 		// await new Promise(resolve => setTimeout(resolve, 5000000000));
 		// const response: Cache_Single_Geo_Leagues_Table_Translation_Response = LEAGUES_TABLE_SCORES_DATA;
 
-		// [ℹ] display NO DATA PLACEHOLDER
-		if (
-			response == null ||
-			response == undefined
-		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'league info [DEV]',
-					`❌ no data available!`
-				);
+		if (response == undefined) {
+      dlog(`${LEAGUE_INFO_T_DEBUG_TAG} ❌ no data available!`, LEAGUE_INFO_T_DEBUG_TOGGLE, LEAGUE_INFO_T_DEBUG_STYLE);
 			noLeagueInfoBool = true;
 			return;
 		}
@@ -197,11 +174,7 @@
 			end_date == undefined
 		) {
 			datePercentageDiff = null;
-			if (dev)
-				logDevGroup(
-					'league info [DEV]',
-					`identified as NULL!`
-				);
+      dlog(`${LEAGUE_INFO_T_DEBUG_TAG} identified as NULL!`, LEAGUE_INFO_T_DEBUG_TOGGLE, LEAGUE_INFO_T_DEBUG_STYLE);
 			return;
 		}
 

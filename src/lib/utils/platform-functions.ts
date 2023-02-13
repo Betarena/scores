@@ -1,3 +1,5 @@
+import { dlog } from "./debug";
+
 /**
  * @description Simple function
  * to determine language (SSR) of platform
@@ -11,18 +13,22 @@ export function platfrom_lang_ssr(
 	page_error?: unknown | undefined,
 	page_params_lang?: string | undefined
 ): string {
+  dlog(`page_route_id: ${page_route_id}`, true)
+  dlog(`page_error: ${page_error}`, true)
+  dlog(`page_params_lang: ${page_params_lang}`, true)
 	// NOTE: default (EN)
 	let server_side_language = 'en';
 	// [ℹ] validation (#1)
 	const validation_1 =
-		page_route_id != null && !page_error;
+		page_route_id != null 
+    && !page_error;
 	if (!validation_1) return server_side_language;
 	// [ℹ] validation (#2)
-	server_side_language = page_route_id.includes(
-		'[lang=lang]'
-	)
-		? page_params_lang
-		: 'en';
+	server_side_language = 
+    page_route_id.includes('[lang=lang]')
+      ? page_params_lang
+      : 'en'
+  ;
 	return server_side_language;
 }
 

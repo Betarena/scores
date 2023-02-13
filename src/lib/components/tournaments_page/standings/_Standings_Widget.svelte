@@ -2,9 +2,9 @@
 	  COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { logDevGroup } from '$lib/utils/debug';
+	import { dlog, STANDINGS_T_DEBUG_STYLE, STANDINGS_T_DEBUG_TAG, STANDINGS_T_DEBUG_TOGGLE } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
@@ -55,17 +55,6 @@
 	export let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
 	export let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
 
-	if (dev && diasbleDev)
-		logDevGroup(
-			'tournament standings [DEV]',
-			`STANDINGS_T: ${STANDINGS_T}`
-		);
-	if (dev && diasbleDev)
-		logDevGroup(
-			'tournament standings [DEV]',
-			`dropdownSeasonSelect: ${dropdownSeasonSelect}`
-		);
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -92,17 +81,9 @@
 			);
 
 		// [ℹ] data validation check
-		if (
-			response == undefined ||
-			STANDINGS_DATA == undefined
-		) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					'tournament standings [DEV]',
-					`❌ no data available!`
-				);
-			console.log('HERE!');
+		if (response == undefined ||
+			STANDINGS_DATA == undefined) {
+      dlog(`${STANDINGS_T_DEBUG_TAG} ❌ no data available!`, STANDINGS_T_DEBUG_TOGGLE, STANDINGS_T_DEBUG_STYLE);
 			noStandingsBool = true;
 			return;
 		}

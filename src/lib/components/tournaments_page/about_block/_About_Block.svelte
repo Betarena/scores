@@ -3,9 +3,9 @@
 =================-->
 <script lang="ts">
 	// [ℹ] svelte-imports;
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { logDevGroup } from '$lib/utils/debug';
+	import { ABOUT_T_DEBUG_STYLE, ABOUT_T_DEBUG_TAG, ABOUT_T_DEBUG_TOGGLE, dlog } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -28,17 +28,10 @@
 	let trueLengthOfArray: number;
 
 	let diasbleDev: boolean = false;
-	let devConsoleTag: string = 'TOP_PLAYER';
 
 	let currentSeason: number = undefined;
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
-
-	$: if (dev && diasbleDev)
-		logDevGroup(
-			'league info #2 [DEV]',
-			`LEAGUE_INFO_SEO_DATA: ${LEAGUE_INFO_SEO_DATA}`
-		);
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -54,15 +47,9 @@
 
 		if (
 			LEAGUE_INFO_SEO_DATA == undefined ||
-			LEAGUE_INFO_SEO_DATA?.data?.seo_content ==
-				undefined
+			LEAGUE_INFO_SEO_DATA?.data?.seo_content == undefined
 		) {
-			// [🐛] debug
-			if (dev)
-				logDevGroup(
-					'league info #2 [DEV]',
-					`❌ no data available!`
-				);
+      dlog(`${ABOUT_T_DEBUG_TAG} ❌ no data available!`, ABOUT_T_DEBUG_TOGGLE, ABOUT_T_DEBUG_STYLE);
 			noWidgetData = true;
 			return;
 		}

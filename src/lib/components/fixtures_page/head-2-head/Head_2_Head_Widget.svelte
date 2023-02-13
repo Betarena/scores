@@ -6,8 +6,10 @@
 	import { afterNavigate } from '$app/navigation';
 	import { page } from '$app/stores';
 	import {
-		logDevGroup,
-		log_info_group
+		dlog,
+		H2H_FW_DEBUG_STYLE,
+		H2H_FW_DEBUG_TAG,
+		H2H_FW_DEBUG_TOGGLE, log_info_group
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -66,23 +68,8 @@
 	let lazy_load_data_check: boolean = false;
 	let team1Percent: number = 0; // [ℹ] the (%) difference progress of season
 	let team2Percent: number = 0; // [ℹ] the (%) difference progress of season
-
 	let show_placeholder: boolean = false; // [ℹ] [override] placeholder for "no-widget-data" for fixtures-page
-
-	let imageVar: string =
-		'--h2h-widget-bookmaker-bg-';
-
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | probabilities [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_PROB_DATA: ${FIXTURE_PROB_DATA}`
-		);
+	let imageVar: string = '--h2h-widget-bookmaker-bg-';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -94,9 +81,7 @@
 		// const sleep = ms => new Promise(r => setTimeout(r, ms));
 		// await sleep(3000);
 
-		if (
-			!$userBetarenaSettings.country_bookmaker
-		) {
+		if (!$userBetarenaSettings.country_bookmaker) {
 			return;
 		}
 		let userGeo =
@@ -137,12 +122,7 @@
 			response_all_spotbooks == undefined;
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${H2H_FW_DEBUG_TAG} ❌ no data available!`, H2H_FW_DEBUG_TOGGLE, H2H_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		} else {
@@ -163,13 +143,6 @@
 
 		const HIST_FIXTURE_DATA =
 			response.historic_fixtures[0];
-
-		// [🐞]
-		if (dev)
-			console.log(
-				'HIST_FIXTURE_DATA',
-				HIST_FIXTURE_DATA
-			);
 
 		FIXTURE_PROB_DATA = {};
 		FIXTURE_PROB_DATA.id = HIST_FIXTURE_DATA?.id;
@@ -348,7 +321,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag +
+			H2H_FW_DEBUG_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);

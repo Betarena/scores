@@ -6,8 +6,9 @@
 	import { afterNavigate } from '$app/navigation';
 	import {
 		dlog,
-		logDevGroup,
-		log_info_group
+		LINEUPS_FW_DEBUG_STYLE,
+		LINEUPS_FW_DEBUG_TAG,
+		LINEUPS_FW_DEBUG_TOGGLE, log_info_group
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -85,18 +86,6 @@
 	let currentSeason: number = undefined;
 	let show_placeholder: boolean = false;
 
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | lineups [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_LINEUPS: ${FIXTURE_LINEUPS}`
-		);
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -113,12 +102,7 @@
 
 		// [ℹ] data validation check
 		if (FIXTURE_LINEUPS == undefined) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${LINEUPS_FW_DEBUG_TAG} ❌ no data available!`, LINEUPS_FW_DEBUG_TOGGLE, LINEUPS_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		}
@@ -192,7 +176,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag + ' check_live_fixtures';
+    LINEUPS_FW_DEBUG_TAG + ' check_live_fixtures';
 		const logs: string[] = [];
 		logs.push(`checking livescores_now`);
 

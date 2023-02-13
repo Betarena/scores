@@ -5,8 +5,10 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
-		logDevGroup,
-		log_info_group
+		dlog, log_info_group,
+		PROB_FW_DEBUG_STYLE,
+		PROB_FW_DEBUG_TAG,
+		PROB_FW_DEBUG_TOGGLE
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -87,20 +89,7 @@
 		'correct_score'
 	];
 
-	let imageVar: string =
-		'--probabilities-info-bookmaker-bg-';
-
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | probabilities [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_PROB_DATA: ${FIXTURE_PROB_DATA}`
-		);
+	let imageVar: string = '--probabilities-info-bookmaker-bg-';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -112,9 +101,7 @@
 		// const sleep = ms => new Promise(r => setTimeout(r, ms));
 		// await sleep(3000);
 
-		if (
-			!$userBetarenaSettings.country_bookmaker
-		) {
+		if (!$userBetarenaSettings.country_bookmaker) {
 			return;
 		}
 		let userGeo =
@@ -151,14 +138,10 @@
 				?.probabilities == undefined ||
 			response_main_sportbook == undefined ||
 			response_all_spotbooks == undefined;
+
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${PROB_FW_DEBUG_TAG} ❌ no data available!`, PROB_FW_DEBUG_TOGGLE, PROB_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		} else {
@@ -335,7 +318,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag +
+			PROB_FW_DEBUG_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);

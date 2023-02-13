@@ -5,9 +5,11 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
-		logDevGroup,
-		logErrorGroup,
-		log_info_group
+		dlog, logErrorGroup,
+		log_info_group,
+		VOTES_FW_DEBUG_STYLE,
+		VOTES_FW_DEBUG_TAG,
+		VOTES_FW_DEBUG_TOGGLE
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -83,20 +85,7 @@
 		_2_vote: undefined
 	};
 
-	let imageVar: string =
-		'--fixture-votes-bookmaker-bg-';
-
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'fixtures | votes [DEV]';
-
-	// [🐞]
-	$: if (dev && enable_logs)
-		logDevGroup(
-			`${dev_console_tag}`,
-			`FIXTURE_VOTES_DATA: ${FIXTURE_VOTES_DATA}`
-		);
+	let imageVar: string = '--fixture-votes-bookmaker-bg-';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -108,9 +97,7 @@
 		// const sleep = ms => new Promise(r => setTimeout(r, ms));
 		// await sleep(3000);
 
-		if (
-			!$userBetarenaSettings.country_bookmaker
-		) {
+		if (!$userBetarenaSettings.country_bookmaker) {
 			return;
 		}
 		let userGeo =
@@ -144,14 +131,10 @@
 			response == undefined ||
 			response_main_sportbook == undefined ||
 			response_all_spotbooks == undefined;
+      
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`❌ no data available!`
-				);
+      dlog(`${VOTES_FW_DEBUG_TAG} ❌ no data available!`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		} else {
@@ -176,13 +159,6 @@
 		if (no_widget_data) {
 			return;
 		}
-
-		// [🐞]
-		if (dev)
-			console.log(
-				'HIST_FIXTURE_DATA',
-				HIST_FIXTURE_DATA
-			);
 
 		SPORTBOOK_INFO = response_main_sportbook;
 		SPORTBOOK_DETAILS_LIST =
@@ -306,12 +282,8 @@
 		vote_type: string,
 		vote_val: string | number
 	): void {
-		// [🐞]
-		if (dev)
-			logDevGroup(
-				`${dev_console_tag}`,
-				`vote_val: ${vote_val}`
-			);
+
+    dlog(`${VOTES_FW_DEBUG_TAG} vote_val: ${vote_val}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
 
 		if (vote_val == undefined) {
 			vote_val = '1.5';
@@ -363,12 +335,7 @@
 			_X_vote: fixtureData._X_vote
 		};
 
-		// [🐞]
-		if (dev)
-			logDevGroup(
-				`${dev_console_tag}`,
-				`handleSubmit() variables: ${VARIABLES}`
-			);
+    dlog(`${VOTES_FW_DEBUG_TAG} variables: ${VARIABLES}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
 
 		// FIXME: need a try..catch ?
 		try {
@@ -379,12 +346,7 @@
 					VARIABLES
 				);
 
-			// [🐞]
-			if (dev)
-				logDevGroup(
-					`${dev_console_tag}`,
-					`update_fixture_data: ${update_fixture_data}`
-				);
+      dlog(`${VOTES_FW_DEBUG_TAG} update_fixture_data: ${update_fixture_data}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
 
 			// [ℹ] update existing data with CASTED-VOTES;
 			FIXTURE_VOTES_DATA.match_votes =
@@ -500,7 +462,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			dev_console_tag +
+			VOTES_FW_DEBUG_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);
