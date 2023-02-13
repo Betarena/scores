@@ -4,8 +4,8 @@ import cookie from 'cookie';
 import { dlog } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 import type {
-	Handle,
-	RequestEvent
+  Handle,
+  RequestEvent
 } from '@sveltejs/kit';
 
 /**
@@ -113,12 +113,10 @@ export function getSession(event) {
  * @returns {string} language
  */
 function get_lang(
-	event: RequestEvent<
-		Partial<Record<string, string>>
-	>
+	event: RequestEvent<Partial<Record<string, string>>>
 ): string {
 	const lang = platfrom_lang_ssr(
-		event?.routeId,
+		event?.route.id,
 		event?.error, // FIXME: event.error does not exist in a hook
 		event?.params?.lang
 	);

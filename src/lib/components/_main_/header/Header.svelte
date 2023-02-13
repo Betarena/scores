@@ -3,7 +3,7 @@ COMPONENT JS - BASIC
 [TypeScript]
 =================== -->
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -15,7 +15,7 @@ COMPONENT JS - BASIC
 		getUserLocation,
 		getUserLocationFromIP
 	} from '$lib/geoJs/init';
-	import { logDevGroup } from '$lib/utils/debug';
+	import { dlog, dlogv2, NAVBAR_DEBUG_STYLE, NAVBAR_DEBUG_TAG } from '$lib/utils/debug';
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
@@ -33,7 +33,7 @@ COMPONENT JS - BASIC
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
 
 	import { sessionStore } from '$lib/store/session';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import AuthWidget from '../auth/Auth_Widget.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -47,8 +47,7 @@ COMPONENT JS - BASIC
 	let dropdown_lang_visible: boolean = false;
 	let dropdown_theme_visible: boolean = false;
 	let dropdown_odds_type_visible: boolean = false;
-	let dropdown_bookmakers_visible: boolean =
-		false;
+	let dropdown_bookmakers_visible: boolean = false;
 	let dropdown_more_sports_menu: boolean = false;
 	let dropdown_user_auth: boolean = false;
 	let selected_sports: string = 'football';
@@ -58,14 +57,20 @@ COMPONENT JS - BASIC
 	let hideSEO: boolean = false;
 	let langSelected: boolean = false;
 
+  const OMIT_URLS: string[] = [
+    '[lang=lang]/[sport]/[country]/[league_name]',
+    '[sport]/[country]/[league_name]',
+    '[sport]/[fixture=fixture]',
+    '[lang=lang]/[sport]/[fixture=fixture]'
+  ]
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 560;
-	let mobileExclusive,
-		tabletExclusive: boolean = false;
+	let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		[tabletExclusive, mobileExclusive] =
@@ -82,31 +87,28 @@ COMPONENT JS - BASIC
 		);
 	});
 
-	/**
-	 * ~~~~~~~~~~~~~~
-	 * COMPONENT REACTIVIYY METHODS
-	 * ~~~~~~~~~~~~~~
-	 */
+	// ~~~~~~~~~~~~~~~~~~~~~
+	//  COMPONENT METHODS
+	// ~~~~~~~~~~~~~~~~~~~~~
 
-	// [ℹ] IMPORTANT - LANG SELECTION [SERVER-SIDE-RENDER]
-	$: if ($page.routeId != null && !$page.error) {
-		if ($page.routeId.includes('[lang=lang]')) {
-			server_side_language = $page.params.lang;
-			homepageURL = '/' + $page.params.lang;
-			logoLink =
-				$page.url.origin +
-				'/' +
-				server_side_language;
-		} else {
-			server_side_language = 'en';
-			homepageURL = '/';
-			logoLink = $page.url.origin;
-		}
-	} else {
-		server_side_language = 'en';
-		homepageURL = '/';
-		logoLink = $page.url.origin;
-	}
+  $: server_side_language = platfrom_lang_ssr(
+    $page.route.id,
+    $page.error,
+    $page.params.lang
+  )
+  $: homepageURL = 
+    server_side_language != 'en'
+      ? `/${$page.params.lang}`
+      : `/`
+  ;
+  $: logoLink =
+    server_side_language != 'en'
+      ? `${$page.url.origin}/${server_side_language}`
+      : $page.url.origin
+  ;
+  $: dlog(`${NAVBAR_DEBUG_TAG} server_side_language: ${server_side_language}`, true, NAVBAR_DEBUG_STYLE);
+  $: dlog(`${NAVBAR_DEBUG_TAG} homepageURL: ${homepageURL}`, true, NAVBAR_DEBUG_STYLE);
+  $: dlog(`${NAVBAR_DEBUG_TAG} logoLink: ${logoLink}`, true, NAVBAR_DEBUG_STYLE);
 
 	$: if (browser) {
 		hideSEO = true;
@@ -120,37 +122,37 @@ COMPONENT JS - BASIC
 		setUserCountryBookmakerLocation();
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
-
 	/**
 	 * @description update user selected lang on
 	 * localStorage; including complex naviational structure;
 	 * holds main platform navigation entry
+   * @param {string} lang
 	 */
-	async function selectLanguage(lang: string) {
+	async function selectLanguage(
+    lang: string
+  ): void {
 		// [ℹ] get past instance of LANG;
 		const pastLang: string =
 			$userBetarenaSettings.lang == 'en'
 				? '/'
-				: '/' + $userBetarenaSettings.lang;
+				: `/${$userBetarenaSettings.lang}`
+    ;
 		// [ℹ] set the user-lang to corresponding value;
 		userBetarenaSettings.setLang(lang);
 
-		// [🐛] debug;
-		if (dev)
-			logDevGroup(
-				'navbar [DEV]',
-				`
-      Inside Select Langauge!
-      $userBetarenaSettings.lang: ${$userBetarenaSettings.lang}
-      lang: ${lang}
-      pastLang: ${pastLang}
-      `
-			);
+    dlogv2(
+      NAVBAR_DEBUG_TAG,
+      [
+        `selectLanguage()`,
+        `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
+        `lang: ${lang}`,
+        `pastLang: ${pastLang}`
+      ],
+      true,
+      NAVBAR_DEBUG_STYLE
+    )
 
-		// [ℹ] hide the LANG DROPDOWN box;
+		// [ℹ] hide lang select dropdown box;
 		dropdown_lang_visible = false;
 
 		// [ℹ] update <html {lang} >
@@ -166,39 +168,21 @@ COMPONENT JS - BASIC
 			);
 		}
 
-		// [ℹ] simply ignore current route
-		// [ℹ] & navigate to the homepage (lang)
+		// [ℹ] onError, navigate back to homepage
 		if ($page.error) {
 			if (lang == 'en') {
-				if (dev)
-					logDevGroup(
-						'navbar [DEV]',
-						`navigating to EN`
-					);
-				goto('/');
+        dlog(`${NAVBAR_DEBUG_TAG} -> EN`, true, NAVBAR_DEBUG_STYLE)
+				await goto('/');
 			} else {
-				if (dev)
-					logDevGroup(
-						'navbar [DEV]',
-						`navigating to ${lang}`
-					);
-				goto(`/${lang}`);
+        dlog(`${NAVBAR_DEBUG_TAG} -> ${lang}`, true, NAVBAR_DEBUG_STYLE)
+				await goto(`/${lang}`);
 			}
 			return;
 		}
 
-		// [ℹ] these routes handle the TRANSLATION REDIRECT ROUTE THEMSELVES;
-		else if (
-			$page.routeId ==
-				'[lang=lang]/[sport]/[country]/[league_name]' ||
-			$page.routeId ==
-				'[sport]/[country]/[league_name]' ||
-			$page.routeId ==
-				'[sport]/[fixture=fixture]' ||
-			$page.routeId ==
-				'[lang=lang]/[sport]/[fixture=fixture]'
-		) {
-			// [ℹ] and do-nothing
+		// [ℹ] on (special) routes, omit intervention;
+		else if (OMIT_URLS.includes($page.route.id)) {
+      dlog(`${NAVBAR_DEBUG_TAG} omitting route: ${$page.route.id}`, true, NAVBAR_DEBUG_STYLE)
 			return;
 		}
 
@@ -207,32 +191,18 @@ COMPONENT JS - BASIC
 
 		// [ℹ] check for EN TRANSLATION;
 		else if (lang == 'en' && pastLang != '/') {
-			// prefetch(`/`); [? - maybe ?]
+
+			// prefetch(`/`); [? - maybe ?] // NOTE:
 
 			// [ℹ] count number of slashes URL;
-			var count =
-				$page.url.pathname.split('/').length - 1;
+			var count =	$page.url.pathname.split('/').length - 1;
 			// [ℹ] replace path-name accordingly for "EN" - first occurance;
 			const newURL: string =
 				count == 1
-					? $page.url.pathname.replace(
-							pastLang,
-							'/'
-					  )
-					: $page.url.pathname.replace(
-							pastLang,
-							''
-					  );
-
-			// [🐛] debug;
-			if (dev)
-				logDevGroup(
-					'navbar [DEV]',
-					`NEW_URL: Inside EN
-        count: ${count}, 
-        newURL: ${newURL}
-      `
-				);
+					? $page.url.pathname.replace(pastLang,'/')
+					: $page.url.pathname.replace(pastLang,'')
+      ;
+      dlog(`${NAVBAR_DEBUG_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -242,29 +212,14 @@ COMPONENT JS - BASIC
 		// [ℹ] & update page URL with CORRECT TRANSLATION;
 		else if (lang != 'en' && pastLang == '/') {
 			// [ℹ] count number of slashes URL;
-			var countSlash =
-				$page.url.pathname.split('/').length - 1;
+			var countSlash = $page.url.pathname.split('/').length - 1;
 			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
 			const newURL: string =
 				countSlash > 1
-					? $page.url.pathname.replace(
-							pastLang,
-							`/${lang}/`
-					  )
-					: $page.url.pathname.replace(
-							pastLang,
-							`/${lang}`
-					  );
-
-			// [🐛] debug;
-			if (dev)
-				logDevGroup(
-					'navbar [DEV]',
-					`NEW_URL: Inside V2 ${lang}
-        countSlash: ${countSlash}, 
-        newURL: ${newURL}
-      `
-				);
+					? $page.url.pathname.replace(pastLang, `/${lang}/`)
+					: $page.url.pathname.replace(pastLang, `/${lang}`)
+      ;
+      dlog(`${NAVBAR_DEBUG_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -274,24 +229,10 @@ COMPONENT JS - BASIC
 		// [ℹ] & update page URL with CORRECT TRANSLATION;
 		else if (lang != 'en' && pastLang != '/') {
 			// [ℹ] count number of slashes URL;
-			var countSlash =
-				$page.url.pathname.split('/').length - 1;
+			var countSlash = $page.url.pathname.split('/').length - 1;
 			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-			const newURL: string =
-				$page.url.pathname.replace(
-					pastLang,
-					`/${lang}`
-				);
-
-			// [🐛] debug;
-			if (dev)
-				logDevGroup(
-					'navbar [DEV]',
-					`NEW_URL: Inside V3 ${lang}
-        countSlash: ${countSlash}, 
-        newURL: ${newURL}
-      `
-				);
+			const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
+      dlog(`${NAVBAR_DEBUG_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -300,25 +241,26 @@ COMPONENT JS - BASIC
 	}
 
 	/**
-	 * [ℹ] udpate the user selected
-	 * [ℹ] THEME `.localStorage()`
+	 * @description updates user selected 
+   * platfrom theme, on localStorage;
+   * @param {string} theme
 	 */
-	function selectedTheme(theme: string) {
-		// [ℹ] hide the theme dropdown [OPTIONAL];
-		// dropdown_theme_visible = false
-		// [ℹ] update the THEME selection user settings
+	function selectedTheme(
+    theme: string
+  ): void {
+		// dropdown_theme_visible = false // FIXME: [OPTIONAL]
 		userBetarenaSettings.setTheme(theme);
 	}
 
 	/**
-	 * [ℹ] update the user selected
-	 * [ℹ] CountryBookmaker `.localStorage()`
+	 * @description updates user selected 
+   * country-bookmaker, on localStorage;
+   * @param {string} theme
 	 */
 	function selectedCountryBookmakers(
 		countryBookemaker: string
-	) {
-		// [ℹ] hide the countryBookmakers selection [OPTIONAL];
-		// dropdown_bookmakers_visible = false
+	): void {
+		// dropdown_bookmakers_visible = false // FIXME: [OPTIONAL]
 		// [ℹ] update the userCountryBookmakerSelection settings;
 		userBetarenaSettings.setCountryBookmaker(
 			countryBookemaker.toLocaleLowerCase()
@@ -326,33 +268,15 @@ COMPONENT JS - BASIC
 	}
 
 	/**
-	 * [ℹ] update the user selected
-	 * [ℹ] Sport `.localStorage()`
+	 * @description get & set user country location;
 	 */
-	// TODO:
-	function selectedSport(sport: string) {}
-
-	/**
-	 * [ℹ] get & set user location;
-	 */
-	async function setUserCountryBookmakerLocation() {
+	async function setUserCountryBookmakerLocation(): Promise<void> {
 		// [ℹ] assign pre-set country-code
-		if (
-			$userBetarenaSettings.country_bookmaker !==
-			undefined
-		) {
+		if ($userBetarenaSettings.country_bookmaker !== undefined) {
 			return;
 		}
-
-		// [ℹ] get user GEO-LOCATION;
-		const userGeoResponse: GeoJsResponse =
-			await getUserLocation();
-
-		if (dev)
-			logDevGroup(
-				'navbar [DEV]',
-				`userGeoResponse: ${userGeoResponse}`
-			);
+		const userGeoResponse: GeoJsResponse = await getUserLocation();
+    dlog(userGeoResponse, true);
 
 		let userGeo =
 			userGeoResponse.country_code === undefined
@@ -361,9 +285,7 @@ COMPONENT JS - BASIC
 
 		if (userGeo !== null) {
 			// [ℹ] store as session;
-			userBetarenaSettings.setGeoJs(
-				userGeoResponse
-			);
+			userBetarenaSettings.setGeoJs(userGeoResponse);
 			// [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
 			const result =
 				HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries.find(
@@ -416,7 +338,9 @@ COMPONENT JS - BASIC
 	}
 
 	/**
-	 * @description simply closes all possible dropdowns open
+	 * @description simply closes all possible 
+   * dropdowns open on the widget
+   * @return void
 	 */
 	function closeAllDropdowns(): void {
 		dropdown_lang_visible = false;
@@ -431,26 +355,27 @@ COMPONENT JS - BASIC
 	 * @description simply reloads the current page
 	 */
 	function reloadPage(): void {
-		if (
-			$page.url.pathname.split('/').length - 1 ==
-			1
-		) {
+		if ($page.url.pathname.split('/').length - 1 == 1) {
 			window.location.reload();
 		}
 	}
 
+  /**
+	 * @description logout user; and additional ui changes
+	 */
+	function logout(): void {
+		dropdown_user_auth = false;
+		userBetarenaSettings.signOutUser();
+	}
+
+  // NOTE: ?
 	// afterNavigate(async() => {
 	//   if (dev) logDevGroup ("navbar [DEV]", `afterNavigate`)
 	//   await invalidateAll()
 	// })
 
-	/**
-	 * @description logout user; and additional ui changes
-	 */
-	function logout() {
-		dropdown_user_auth = false;
-		userBetarenaSettings.signOutUser();
-	}
+  // TODO:
+	// function selectedSport(sport: string) {}
 </script>
 
 <!-- ===================
@@ -481,7 +406,7 @@ TODO:FIXME: not generating for each LANG
       [ℹ] content here
       -->
 			<a
-				data-sveltekit-prefetch
+				
 				href={$page.url.origin + '/' + item}
 			>
 				<p>{$page.url.origin + '/' + item}</p>
@@ -490,7 +415,7 @@ TODO:FIXME: not generating for each LANG
 			<!-- [ℹ] content here 
       -->
 			<a
-				data-sveltekit-prefetch
+				
 				href={$page.url.origin}
 			>
 				<p>{$page.url.origin}</p>
@@ -556,7 +481,7 @@ TODO:FIXME: not generating for each LANG
 						on:click={() => reloadPage()}
 					>
 						<a
-							data-sveltekit-prefetch
+							
 							href={homepageURL}
 							title={logoLink}
 						>
@@ -578,7 +503,7 @@ TODO:FIXME: not generating for each LANG
 						on:click={() => reloadPage()}
 					>
 						<a
-							data-sveltekit-prefetch
+							
 							href={homepageURL}
 							title={logoLink}
 						>
@@ -1194,7 +1119,7 @@ TODO:FIXME: not generating for each LANG
               -->
 							{#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0] == 'football'}
 								<a
-									data-sveltekit-prefetch
+									
 									href={homepageURL}
 									title={logoLink}
 								>
@@ -1705,7 +1630,7 @@ TODO:FIXME: not generating for each LANG
 							<!-- [ℹ] homepage -->
 							<div class="side-nav-row">
 								<a
-									data-sveltekit-prefetch
+									
 									href="/"
 								>
 									<p class="color-white s-14">
