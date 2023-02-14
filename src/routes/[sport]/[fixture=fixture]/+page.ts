@@ -114,7 +114,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 			method: 'GET'
 		}
 	).then((r) => r.json())
-  dlog(GEO_RESPONSE, false);
+  dlog(GEO_RESPONSE, false); 
 
   // FIXME:
   // TEST (^)
