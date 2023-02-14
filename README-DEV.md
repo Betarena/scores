@@ -240,18 +240,18 @@ If you wish to develop new components for the platform, please follow the follow
 
 | Ref. Num. | Sources |
 | ------ | ------ |
-| [1] | 
+| [1] `[AUTH] [Moralis]` | 
   https://moralis.io/create-a-web3-firebase-login-with-metamask/
   https://docs.moralis.io/authentication-api/integrations/firebase-nodejs
   https://moralis.io/web3-firebase-authentication-create-a-web3-sign-in-with-moralis/
   https://moralisweb3.github.io/firebase-extensions/service-account-converter/
   https://moralisweb3.github.io/Moralis-JS-SDK/demos/firebase-auth-ext/
   https://admin.moralis.io/users |
-| [2] |
+| [2] `[R&D]` |
   https://stackoverflow.com/questions/43691808/http-performance-many-small-requests-or-one-big-one
   https://svelte.dev/repl/ec6f6b61329f4f43ae049464d73d8158?version=3.23.1
   https://svelte.dev/repl/16b375da9b39417dae837b5006799cb4?version=3.25.0
-| [3] |
+| [3] `[SVELTEKIT]` `[HOOKS]` |
   https://dev.to/krowemoh/sveltekit-hooks-2bii
   https://dev.to/kudadam/sveltekit-hooks-everything-you-need-to-know-3l39
   https://rodneylab.com/sveltekit-session-cookies/
@@ -259,6 +259,11 @@ If you wish to develop new components for the platform, please follow the follow
   https://github.com/sveltejs/kit/pull/3993
   https://stackoverflow.com/questions/69066169/how-to-implement-cookie-authentication-sveltekit-mongodb
   https://blog.logrocket.com/authentication-svelte-using-cookies/
+| [4] `[AUTH] [DISCORD]` |
+  https://www.reddit.com/r/Firebase/comments/n4uv1o/sign_in_with_discord/
+	https://github.com/luizkc/firebase-discord-oauth2-example
+	https://stackoverflow.com/questions/70171124/discord-oauth2-with-firebase-functions
+	https://stackoverflow.com/questions/53992730/how-would-i-authorize-users-using-discord-oauth2-0-for-firebase-authentication-o
 | 
 
 #### Documenting
