@@ -308,6 +308,11 @@ COMPONENT STYLE
     WIDGET DARK THEME 
   ----------------- */
 
+  div.profile-menu-opt.dark-background-1.selected-opt-active {
+    background: unset;
+		background: rgba(245, 98, 15, 0.1) !important;
+  }
+
   div.profile-menu-opt.dark-background-1 p.menu-opt-not-available {
 		background-color: var(--dark-theme-1-shade) !important;
 	}

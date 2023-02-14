@@ -724,7 +724,7 @@ COMPONENT STYLE
   }
 
   div#account-settings-widget-box.dark-background-1 div#settings-hr-divider {
-    background: var(--dark-theme-1);
+    background-color: var(--dark-theme-1-2-shade);
   }
 
   div#account-settings-widget-box.dark-background-1 p.required-pill-tag {
