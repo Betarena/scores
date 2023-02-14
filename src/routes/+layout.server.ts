@@ -8,20 +8,14 @@ import { error } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types';
 
 /** @type {import('./$types').LayoutServerLoad} */
-export async function load({
-	url,
-	params,
-	fetch,
-	setHeaders,
-  event
-}): Promise<LayoutServerLoad> {
+export async function load(event): Promise<LayoutServerLoad> {
 
-  // --------------
-  // TEST
-  // --------------
-
-  console.log("🔵🔵🔵 event: ", event);
-  console.log("🔵🔵🔵 event.getClientAddress(): ", event.getClientAddress());
+  const {
+    url,
+    fetch,
+    params,
+    setHeaders
+  } = event
 
   // ==================
   // [ℹ] Attempt to Identify the USERS IP from "load()"
@@ -34,9 +28,16 @@ export async function load({
   // }).then((r) => r.json());
   // console.log("🔵🔵🔵 response_IP: ", response_IP);
   
-  // 🤔✅ works ? only on `same-origin-domain-deployment`
-  const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
-  console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
+  try {
+    console.log("🔵🔵🔵 event: ", event);
+    console.log("🔵🔵🔵 event.getClientAddress(): ", event?.getClientAddress());
+    // ✅ works [?] only on `same-origin-domain-deployment`
+    const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+    console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
+  } catch (error) {
+    console.log(`🔴 ${error}`)
+  }
+
 
   // --------------
 	// [ℹ] preload data [1] DOC: REF: [2]
