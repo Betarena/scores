@@ -21,7 +21,7 @@
 		"staging": "npm run dev -- --mode staging",
 		"build": "vite build",
 		"preview": "vite preview --host --port 5000",
-    "quick:preview:local:spin": "vite build && npm run preview",
+		"quick:preview:local:spin": "vite build && npm run preview",
 		"start:docker": "node server-docker.js",
 		"start:heroku": "node server-heroku.js"
 	},

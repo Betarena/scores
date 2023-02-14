@@ -1,3 +1,4 @@
+import { get } from '$lib/api/utils';
 import {
 	ERROR_CODE_PRELOAD,
 	LAYOUT_1_LANG_PAGE_ERROR_MSG
@@ -13,6 +14,32 @@ export async function load({
 	fetch,
 	setHeaders
 }): Promise<PageLoad> {
+
+  // --------------
+  // TEST
+  // --------------
+
+  /**
+   * ==================
+   * [ℹ] Attempt to Identify the USERS IP from "pre-load()"
+   * [ℹ] only works in PROD with deployment of 'my_server.js'
+  */
+
+  // let response_IP_2;
+  // ⚠❌ does not appear to work
+  const response_IP = await fetch(`/getClientIP`, {
+    method: 'GET'
+  }).then((r) => r.json());
+  console.log("🔵🔵🔵 response_IP: ", response_IP);
+  
+  // 🤔✅ works ? only on `same-origin-domain-deployment`
+  const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+  console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
+
+  // --------------
+	// [ℹ] preload data [1] DOC: REF: [2]
+	// --------------
+
 	const response_valid_url = await fetch(
 		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
 		{
@@ -27,7 +54,7 @@ export async function load({
 			: params.lang;
 
 	// --------------
-	// [ℹ] preload data DOC: REF: [2]
+	// [ℹ] preload data [2] DOC: REF: [2]
 	// --------------
 
 	const urls = [

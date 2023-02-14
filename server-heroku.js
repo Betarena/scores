@@ -8,6 +8,7 @@ import { handler } from './build/handler.js';
 import compression from 'compression';
 import * as sslify from 'express-sslify';
 // DOC: https://www.npmjs.com/package/request-ip
+import requestIp from 'request-ip';
 
 const app = express();
 
@@ -22,7 +23,6 @@ const app = express();
  * [ℹ] separate from SvelteKit endpoint in attempts to
  * [ℹ] identify clients (IP - address)
 */
-/**
 app.get('/getClientIP', (req, res, next) => {
 
   const ip = req.headers['x-forwarded-for'] ||
@@ -41,7 +41,7 @@ app.get('/getClientIP', (req, res, next) => {
     const list = ipAddr.split(",");
     ipAddr = list[list.length-1];
   } else {
-    ipAddr = req.connection.remoteAddress;
+    ipAddr = req.socket.remoteAddress;
   }
 
   console.log('ipAddr', ipAddr);
@@ -54,7 +54,6 @@ app.get('/getClientIP', (req, res, next) => {
 
   res.end()
 })
-*/
 
 /**
  * [ℹ] [FORCE] https-redirect
