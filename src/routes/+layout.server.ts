@@ -24,11 +24,12 @@ export async function load(event): Promise<LayoutServerLoad> {
   // ==================
   
   try {
-    // [ℹ] V1 | ❌ does not appear to work
-    const response_IP = await fetch(`/getClientIP`, {
-      method: 'GET'
-    }).then((r) => r.json());
-    console.log("🔵🔵🔵 response_IP: ", response_IP);
+    // [ℹ] V1 | ❌ does not appear to work - breaks platform
+    // const response_IP = await fetch(`/getClientIP`, {
+    //   method: 'GET'
+    // }).then((r) => r.json())
+    // .catch((error) => { console.log(error) });
+    // console.log("🔵🔵🔵 response_IP: ", response_IP);
     // [ℹ] V2 | ❌ using the layout.server.ts w/ load(event)
     console.log("🔵🔵🔵 event: ", event);
     console.log("🔵🔵🔵 event.getClientAddress(): ", event?.getClientAddress());
