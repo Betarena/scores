@@ -485,7 +485,7 @@ TODO:FIXME: not generating for each LANG
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <header 
   class="column-space-center"
-  class:user-active={$userBetarenaSettings?.user != undefined}>
+  class:user-active={PROFILE_URL == $page.route.id}>
 	<!-- 
   [ℹ] area outside to close action (inner header)
   -->
@@ -663,7 +663,7 @@ TODO:FIXME: not generating for each LANG
         [ℹ] betting-tips 
         <-conditional->
         -->
-        {#if $userBetarenaSettings?.user == undefined}
+        {#if PROFILE_URL != $page.route.id}
           {#if !mobileExclusive}
             <!-- 
             [ℹ] latest news 
@@ -733,7 +733,9 @@ TODO:FIXME: not generating for each LANG
 						class="
               dropdown-opt-box 
               row-space-start
+              
             "
+            class:m-r-10={PROFILE_URL == $page.route.id}
 					>
 						<!-- 
             [ℹ] name of the container-opt 
@@ -837,7 +839,7 @@ TODO:FIXME: not generating for each LANG
 					<!-- 
           [ℹ] odds-type box
           -->
-          {#if $userBetarenaSettings?.user == undefined}
+          {#if PROFILE_URL != $page.route.id}
             <div
               id="odds-type-container"
               class="
@@ -923,7 +925,7 @@ TODO:FIXME: not generating for each LANG
 					<!-- 
           [ℹ] bookmakers-type 
           -->
-          {#if $userBetarenaSettings?.user == undefined}
+          {#if PROFILE_URL != $page.route.id}
             <div
               id="bookmakers-type-container"
               class="
@@ -1163,7 +1165,7 @@ TODO:FIXME: not generating for each LANG
     [ℹ] bottom NAV SPORTS navbar values
     <-conditional->
     -->
-    {#if $userBetarenaSettings?.user == undefined}
+    {#if PROFILE_URL != $page.route.id}
       <div id="bottom-header" class="row-space-out">
         <!-- 
         [ℹ] sliding-container 
@@ -2004,7 +2006,7 @@ TODO:FIXME: not generating for each LANG
 		<!-- 
     [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] 
     -->
-    {#if $userBetarenaSettings?.user == undefined}
+    {#if PROFILE_URL != $page.route.id}
       {#if mobileExclusive}
         {#if mobileExclusiveMoreSports}
           <nav
