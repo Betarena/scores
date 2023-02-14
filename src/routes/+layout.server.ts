@@ -18,26 +18,31 @@ export async function load(event): Promise<LayoutServerLoad> {
   } = event
 
   // ==================
+  // NOTE: TEST
   // [ℹ] Attempt to Identify the USERS IP from "load()"
   // [ℹ] only works with deployment using '<node-server>.js'
   // ==================
-
-  // ❌ does not appear to work
-  // const response_IP = await fetch(`/getClientIP`, {
-  //   method: 'GET'
-  // }).then((r) => r.json());
-  // console.log("🔵🔵🔵 response_IP: ", response_IP);
   
   try {
+    // [ℹ] V1 | ❌ does not appear to work
+    const response_IP = await fetch(`/getClientIP`, {
+      method: 'GET'
+    }).then((r) => r.json());
+    console.log("🔵🔵🔵 response_IP: ", response_IP);
+    // [ℹ] V2 | ❌ using the layout.server.ts w/ load(event)
     console.log("🔵🔵🔵 event: ", event);
     console.log("🔵🔵🔵 event.getClientAddress(): ", event?.getClientAddress());
-    // ✅ works [?] only on `same-origin-domain-deployment`
+    // [ℹ] V3 | ✅ works [?] only on `same-origin-domain-deployment`
     const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
     console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
+    // [ℹ] V4 | ✅ works [?] only on `same-origin-domain-deployment`
+    const response_IP_3 = await fetch(`https://betarena-scores-platform.herokuapp.com/getClientIP`, {
+      method: 'GET'
+    }).then((r) => r.json());
+    console.log("🔵🔵🔵 response_IP_3: ", response_IP_3);
   } catch (error) {
     console.log(`🔴 ${error}`)
   }
-
 
   // --------------
 	// [ℹ] preload data [1] DOC: REF: [2]
