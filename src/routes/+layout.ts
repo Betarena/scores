@@ -30,13 +30,18 @@ export async function load(event): Promise<LayoutLoad> {
     // console.log("🔵🔵🔵 response_IP: ", response_IP);
     // [ℹ] V2 | ✅ works [?] but incorrect IP
     // console.log("🔵🔵🔵 event: ", event);
-    console.log("🔵🔵🔵 event.getClientAddress(): ", event?.getClientAddress());
+    // console.log("🔵🔵🔵 event.getClientAddress(): ", event?.getClientAddress());
+    // [ℹ] V3 | ❓ works [?] but incorrect IP
+    // const response_IP_3 = await get(`/getClientIP`)
+    // console.log("🔵🔵🔵 response_IP_3: ", response_IP_3);
+  } catch (error) {
+    console.log(`🔴 ${error}`)
+  }
+
+  try {
     // [ℹ] V3 | ✅ works [?] only on when calling directly URL, not from .server.ts
     const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
     console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
-    // [ℹ] V3 | ❓ works [?] but incorrect IP
-    const response_IP_3 = await get(`/getClientIP`)
-    console.log("🔵🔵🔵 response_IP_3: ", response_IP_3);
   } catch (error) {
     console.log(`🔴 ${error}`)
   }
