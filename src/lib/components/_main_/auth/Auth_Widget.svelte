@@ -18,6 +18,7 @@ COMPONENT JS (w/ TS)
 	import {
 		userBetarenaSettings,
 		type Auth_Type,
+		type Betarena_User,
 		type Scores_User
 	} from '$lib/store/user-settings';
 	import {
@@ -38,6 +39,7 @@ COMPONENT JS (w/ TS)
 	} from 'firebase/auth';
 	import {
 		doc,
+		getDoc,
 		setDoc
 	} from 'firebase/firestore';
 	import { generateUsername } from 'unique-username-generator';
@@ -119,25 +121,33 @@ COMPONENT JS (w/ TS)
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	// [ℹ] MAIN WIDGET METHOD
+  /**
+   * @description TODO:
+  */
 	async function widget_init(): Promise<REDIS_CACHE_SINGLE_auth_translation> {
 		const response_auth: REDIS_CACHE_SINGLE_auth_translation =
-			await get(
-				`/api/hasura/_main_/auth?lang=${server_side_language}`
-			);
+			await get(`/api/hasura/_main_/auth?lang=${server_side_language}`);
 		return response_auth;
 	}
 
+  /**
+   * @description allows user to sign-in/up
+   * through the 3rd-party OAuth2 provider
+   * Google
+   * DOC: https://firebase.google.com/docs/auth/web/google-signin
+   * DOC: read (^) for access to more Google API access upon Auth
+   * @returns void
+  */
 	async function login_with_google() {
-		// DOC: https://firebase.google.com/docs/auth/web/google-signin
-		// DOC: read (^) for access to more Google API access upon Auth
 		try {
+      dlog(`${AUTH_DEBUG_TAG} 🔵 Google Auth Init`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			processing = true;
 			auth_service = 'google';
 			const provider = new GoogleAuthProvider();
 			await signInWithPopup(auth, provider)
 				.then((result) => {
 					// [ℹ] user info
+          dlog(`${AUTH_DEBUG_TAG} 🟢 Google Auth Success`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 					const user = result?.user;
 					success_auth_wrap(
 						user,
@@ -165,17 +175,24 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
+  /**
+   * @description allows user to sign-in/up
+   * through the 3rd-party OAuth2 provider
+   * GitHub
+   * DOC: https://firebase.google.com/docs/auth/web/github-auth
+   * DOC: read (^) for access to more Google API access upon Auth
+   * @returns void
+  */
 	async function login_with_github() {
 		try {
-			auth_service = 'discord';
+      dlog(`${AUTH_DEBUG_TAG} 🔵 GitHub Auth Init`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+			auth_service = 'github';
 			processing = true;
 			const provider = new GithubAuthProvider();
 			await signInWithPopup(auth, provider)
 				.then((result) => {
-					// [ℹ] this gives you a GitHub Access Token.
-					// const credential = GithubAuthProvider.credentialFromResult(result);
-					// const token = credential.accessToken;
 					// [ℹ] user info
+          dlog(`${AUTH_DEBUG_TAG} 🟢 GitHub Auth Success`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 					const user = result.user;
 					success_auth_wrap(
 						user,
@@ -213,8 +230,15 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
+  /**
+   * @description allows user to sign-in/up
+   * using their email (magic-link).
+   * Sends email and reactivity method (below)
+   * completes login/signup through a DeepLink Listen
+   * DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns void
+  */
 	async function login_with_email_link() {
-		// DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
 		try {
 			email_error_format = false;
 			processing = true;
@@ -282,7 +306,7 @@ COMPONENT JS (w/ TS)
 			console.log(e);
 		}
 	}
-	// [ℹ] DeepLink listener EmailLink Cont. [END]
+	// [ℹ] DeepLink (reactivity) listener EmailLink Cont. [END]
 	$: if (browser) {
 		if (
 			isSignInWithEmailLink(
@@ -348,11 +372,16 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
+  /**
+   * @description allows user to sign-in/up
+   * using their Discrod (deep-link).
+   * Sends user over to Discord to complete auth
+   * completes login/signup through a DeepLink Listen
+   * DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns void
+  */
 	async function login_with_discord() {
-		// DOC: https://www.reddit.com/r/Firebase/comments/n4uv1o/sign_in_with_discord/
-		// DOC: https://github.com/luizkc/firebase-discord-oauth2-example
-		// DOC: https://stackoverflow.com/questions/70171124/discord-oauth2-with-firebase-functions
-		// DOC: https://stackoverflow.com/questions/53992730/how-would-i-authorize-users-using-discord-oauth2-0-for-firebase-authentication-o
+    // DOC: REF: [4]
 		try {
 			processing = true;
 			const callback_auth_url =
@@ -368,7 +397,7 @@ COMPONENT JS (w/ TS)
 			processing = false;
 		}
 	}
-	// [ℹ] DeepLink listener Discord Cont. [END]
+	// [ℹ] DeepLink (reactivity) listener Discord Cont. [END]
 	$: if (browser) {
 		dlog('🟠 Looking for Discord DeepLink!');
 		const f_uid =
@@ -405,14 +434,16 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
+  /**
+   * @description allows user to sign-in/up
+   * using their Web3 MetaMask wallet.
+   * Using MoralisAPI.
+   * NOTE: only MetaMask extension exlcusive.
+   * DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns void
+  */
 	async function login_with_metamask() {
-		// DOC: https://moralis.io/create-a-web3-firebase-login-with-metamask/
-		// DOC: https://docs.moralis.io/authentication-api/integrations/firebase-nodejs
-		// DOC: https://moralis.io/web3-firebase-authentication-create-a-web3-sign-in-with-moralis/
-		// DOC: https://moralisweb3.github.io/firebase-extensions/service-account-converter/
-		// DOC: OTHER => https://moralisweb3.github.io/Moralis-JS-SDK/demos/firebase-auth-ext/
-		// DOC: https://admin.moralis.io/users
-		// IMPORTANT: betarena-ios "usage" project-id
+    // DOC: REF: [1]
 		try {
 			processing = true;
 			auth_service = 'wallet';
@@ -461,78 +492,37 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
+  /**
+   * @description main method that bring all
+   * log-in/up's together for completion of
+   * Auth. Stores inside stores + localStoreage().
+   * Updates UI to signal logged in user
+   * @param {User} firebase_user
+   * @param {string} web3_wallet_addr
+   * @param {Auth_Type} auth_provider_type
+   * @returns void
+  */
 	async function success_auth_wrap(
 		firebase_user?: User,
 		web3_wallet_addr?: string,
 		auth_provider_type?: Auth_Type
-	) {
-		// NOTE: complete authetication
+  ): Promise<void> {
+    // [ℹ] create / retrieve target Betarena_User
+    const [BETARENA_USER, EXISTS] = await user_firestore(
+      firebase_user?.uid,
+      firebase_user,
+      web3_wallet_addr
+    );
 		let user_obj: Scores_User = {
 			firebase_user_data: firebase_user,
-			scores_user_data: {
-				lang: server_side_language,
-				registration_type: [],
-				// NOTE: max. length - no separator - no random digits
-				username: generateUsername('', 0, 10),
-				register_date:
-					firebase_user?.metadata?.creationTime,
-				profile_photo: firebase_user?.photoURL,
-				web3_wallet_addr:
-					web3_wallet_addr || undefined
-			}
+			scores_user_data: BETARENA_USER
 		};
-		if (web3_wallet_addr != undefined) {
-			// user_obj = {
-			//   // Google User TYPE
-			//   phoneNumber: undefined,
-			//   photoURL: undefined,
-			//   providerId: undefined,
-			//   uid: undefined,
-			//   reload: undefined,
-			//   toJSON: undefined,
-			//   displayName: undefined,
-			//   email: undefined,
-			//   tenantId: undefined,
-			//   delete: undefined,
-			//   getIdToken: undefined,
-			//   getIdTokenResult: undefined,
-			//   refreshToken: undefined,
-			//   providerData: undefined,
-			//   metadata: undefined,
-			//   isAnonymous: undefined,
-			//   emailVerified: undefined,
-			//   // Betarena User TYPE
-			//   lang: undefined, // TODO:
-			//   profile_photo: undefined, // TODO:
-			//   register_date: undefined, // TODO:
-			//   registration_type: [], // TODO:
-			//   username: undefined,
-			//   web3_wallet_addr: undefined
-			// }
-			// user_obj.web3_wallet_addr = web3_wallet_addr
-		}
 		// [ℹ] populate user data to firestore (DB)
-		try {
-      dlog(`${AUTH_DEBUG_TAG} user_obj?.firebase_user_data.uid): ${user_obj?.firebase_user_data.uid}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      dlog(`${AUTH_DEBUG_TAG} user_obj?.firebase_user_data.uid): ${user_obj?.firebase_user_data.uid}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-			await setDoc(
-				doc(
-					db_firestore,
-					'betarena_users',
-					user_obj?.firebase_user_data?.uid
-				),
-				JSON.parse(
-					JSON.stringify(
-						user_obj.scores_user_data
-					)
-				)
-			);
-		} catch (e) {
-			console.error('Error adding document: ', e);
-		}
-		// [ℹ] continue;
+    if (!EXISTS) {
+      await create_firestore(user_obj)
+    }
+		// [ℹ] continue; default UI/UX triggers
 		userBetarenaSettings.signInUser(user_obj);
-		// [ℹ] default UI/UX triggers
 		$sessionStore.auth_show = false;
 		processing = false;
 		email_input = undefined;
@@ -541,7 +531,70 @@ COMPONENT JS (w/ TS)
 			success_auth = false;
 			auth_type = 'login';
 		}, 1500);
+    return;
 	}
+
+  /**
+   * @description get user info from firestore
+   * if exists - return target user. Otherwise,
+   * create a new instance of user for Firestore.
+   * @returns {Promise<[Betarena_User, boolean]>} [Betarena_User, boolean]
+  */
+  async function user_firestore(
+    uid: string, 
+    firebase_user: User,
+    web3_wallet_addr: string
+  ): Promise<[Betarena_User, boolean]> {
+    const docRef = doc(db_firestore, "betarena_users", uid);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) {
+      // [ℹ] return existing firestore user-instance;
+      dlog(`${AUTH_DEBUG_TAG} 🟢 Target UID exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AUTH_DEBUG_TAG} User Data ${docSnap.data()}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      return [docSnap.data() as Betarena_User, true]
+    } else {
+      // [ℹ] create new user-instance;
+      dlog(`${AUTH_DEBUG_TAG} 🔴 Target UID does not exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AUTH_DEBUG_TAG} 🔵 Creating new Betarena_User instance`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      const scores_user_data: Betarena_User = {
+				lang: server_side_language,
+				registration_type: [],
+				// NOTE: max. length - no separator - no random digits
+				username: generateUsername('', 0, 10),
+				register_date: firebase_user?.metadata?.creationTime, // [ℹ] can be null (wehn using web3)
+				profile_photo: firebase_user?.photoURL, // [ℹ] can be null (wehn using web3)
+				web3_wallet_addr: web3_wallet_addr || undefined
+			}
+      return [scores_user_data, false]
+    }
+  }
+
+  /**
+   * @description stores target user (new) in
+   * firestore DB
+   * @returns {Promise<void>}
+  */
+  async function create_firestore(
+    user: Scores_User
+  ): Promise<void> {
+    try {
+      dlog(`${AUTH_DEBUG_TAG} 🔵 Persisting new user ${user?.firebase_user_data?.uid} to firestore...`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      await setDoc(
+        doc(
+          db_firestore,
+          'betarena_users',
+          user?.firebase_user_data?.uid
+        ),
+        JSON.parse(
+          JSON.stringify(
+            user.scores_user_data
+          )
+        )
+      );
+    } catch (e) {
+      console.error('Error adding document: ', e);
+    }
+  }
 
 	function wrong_email_format() {
 		email_error_format = true;
