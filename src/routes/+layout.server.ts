@@ -5,16 +5,16 @@ import {
 } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
-import type { PageLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 
-/** @type {import('./$types').PageLoad} */
+/** @type {import('./$types').LayoutServerLoad} */
 export async function load({
 	url,
 	params,
 	fetch,
 	setHeaders,
   event
-}): Promise<PageLoad> {
+}): Promise<LayoutServerLoad> {
 
   // --------------
   // TEST
@@ -23,14 +23,12 @@ export async function load({
   console.log("🔵🔵🔵 event: ", event);
   console.log("🔵🔵🔵 event.getClientAddress(): ", event.getClientAddress());
 
-  /**
-   * ==================
-   * [ℹ] Attempt to Identify the USERS IP from "pre-load()"
-   * [ℹ] only works in PROD with deployment of 'my_server.js'
-  */
+  // ==================
+  // [ℹ] Attempt to Identify the USERS IP from "load()"
+  // [ℹ] only works with deployment using '<node-server>.js'
+  // ==================
 
-  // let response_IP_2;
-  // ⚠❌ does not appear to work
+  // ❌ does not appear to work
   // const response_IP = await fetch(`/getClientIP`, {
   //   method: 'GET'
   // }).then((r) => r.json());
