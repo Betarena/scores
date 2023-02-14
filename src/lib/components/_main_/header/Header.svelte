@@ -122,6 +122,36 @@ COMPONENT JS - BASIC
 		setUserCountryBookmakerLocation();
 	}
 
+  let intent_intent_lang: string | undefined = undefined;
+  let timeout_intent: NodeJS.Timeout = undefined;
+  const HOVER_TIMEOUT = 250;
+  function detectIntentBuffer(lang: string): void {
+    // [ℹ] detect a change in hover-over lang
+    if (timeout_intent != undefined 
+    && lang != intent_intent_lang) {
+      // [ℹ] clear timer
+      dlog(`${NAVBAR_DEBUG_TAG} clearning timer!`, true, NAVBAR_DEBUG_STYLE)
+      clearTimeout(timeout_intent)
+      intent_intent_lang = lang;
+      // start new timer - if lang (target) not undefined
+      if (lang == undefined) return
+      dlog(`${NAVBAR_DEBUG_TAG} setting new timer!`, true, NAVBAR_DEBUG_STYLE)
+      timeout_intent = setTimeout(() => {
+        dlog(`${NAVBAR_DEBUG_TAG} intent triggered!`, true, NAVBAR_DEBUG_STYLE)
+        $sessionStore.lang_intent = intent_intent_lang;
+      }, HOVER_TIMEOUT)
+    }
+    // otherwise, first time set lang and timer
+    else if (lang != undefined 
+    && timeout_intent == undefined) {
+      intent_intent_lang = lang
+      timeout_intent = setTimeout(() => {
+        dlog(`${NAVBAR_DEBUG_TAG} intent triggered!`, true, NAVBAR_DEBUG_STYLE)
+        $sessionStore.lang_intent = intent_intent_lang;
+      }, HOVER_TIMEOUT)
+    }
+  }
+
 	/**
 	 * @description update user selected lang on
 	 * localStorage; including complex naviational structure;
@@ -384,6 +414,7 @@ COMPONENT JS - BASIC
 <!-- 
 [ℹ] area outside to close action (outer header)
 -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 {#if dropdown_lang_visible || dropdown_more_sports_menu || dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible || dropdown_user_auth}
 	<div
 		id="background-area-close"
@@ -431,6 +462,7 @@ TODO:FIXME: not generating for each LANG
 <!-- 
 [ℹ] main header INIT
 -->
+<!-- svelte-ignore a11y-click-events-have-key-events -->
 <header class="column-space-center">
 	<!-- 
   [ℹ] area outside to close action (inner header)
@@ -569,11 +601,19 @@ TODO:FIXME: not generating for each LANG
 								transition:fly
 							>
 								{#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
-									{#if lang.toUpperCase() != server_side_language.toUpperCase()}
+									{#if lang.toUpperCase() != server_side_language.toUpperCase() && lang.toUpperCase() != 'FR'}
 										<div
 											id="lang-select"
 											on:click={() =>
 												selectLanguage(lang)}
+                      on:keydown={() =>
+                        selectLanguage(lang)}
+                      on:mouseout={() => 
+                        detectIntentBuffer(undefined)}
+                      on:mouseover={() =>
+                         detectIntentBuffer(lang)}
+                      on:focus={() => 
+                        detectIntentBuffer(lang)}
 										>
 											<p
 												class="

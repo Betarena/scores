@@ -4,7 +4,7 @@
 =================== -->
 <script lang="ts">
 	import { browser } from '$app/environment';
-	import { goto } from '$app/navigation';
+	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
@@ -70,6 +70,7 @@
 	import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+	import { dlog } from '$lib/utils/debug';
 	import SvelteSeo from 'svelte-seo';
 
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
@@ -207,31 +208,54 @@
 	// [! CRITICAL !]
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	// TODO: FIXME: replace into a single __layout.svelte method [?]
+  // TODO: FIXME: replace into a single __layout.svelte method [?]
 	// TODO: FIXME: using page-stores [?]
 	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
-	let current_lang: string =
-		$userBetarenaSettings.lang;
+	let current_lang: string = $userBetarenaSettings.lang;
 	$: refresh_lang = $userBetarenaSettings.lang;
+	$: lang_intent = $sessionStore.lang_intent;
 
 	// [ℹ] validate LANG change
-	$: if (
-		current_lang != refresh_lang &&
-		browser
+	$: if (current_lang != refresh_lang 
+    && browser
 	) {
 		current_lang = refresh_lang;
-		let newURL =
-			FIXTURE_INFO.alternate_data[current_lang];
-		newURL = newURL.replace(
-			'https://scores.betarena.com',
-			''
-		);
+		let newURL = translatedURL(current_lang)
 
 		// [ℹ] navigate [options];
 		// invalidate('/api/cache/tournaments/cache-data.json');
-		// prefetch(newURL);
+		// prefetch(newURL); // depreceated
+    // preloadData(newURL)
+		// goto(newURL, { replaceState: true });
 		goto(newURL, { replaceState: true });
 	}
+
+  function translatedURL(lang: string): string {
+    let newURL: string = FIXTURE_INFO.alternate_data[lang];
+    newURL = newURL.replace('https://scores.betarena.com','');
+    dlog(FIXTURE_INFO.alternate_data, true)
+    if (newURL == undefined) return '/'
+    dlog(`newURL: ${newURL}`, true)
+    return newURL;
+  }
+
+  $: if (lang_intent && browser) {
+    let newURL = translatedURL(lang_intent)
+    dlog(`newURL (lang_intent): ${newURL}`, true)
+    navigateToTranslation(newURL)
+  }
+
+  // onMount(() => {
+  //   for (let [key, value] of Object.entries(FIXTURE_INFO.alternate_data)) {
+	// 	  value = value.replace('https://scores.betarena.com','');
+  //     navigateToTranslation(value)
+  //     dlog(`preloaded: ${value}`, true);
+  //   }
+  // })
+
+  async function navigateToTranslation(newURL: string) {
+    await preloadData(newURL)
+  }
 </script>
 
 <!-- ===================
