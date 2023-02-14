@@ -48,6 +48,14 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!--===============
+SVELTE INJECT TAGS
+=================-->
+
+<svelte:head>
+  <title>Betarena User Profile</title>
+</svelte:head>
+
+<!--===============
 COMPONENT HTML
 =================-->
 
