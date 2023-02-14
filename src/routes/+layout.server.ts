@@ -26,20 +26,16 @@ export async function load(event): Promise<LayoutServerLoad> {
   try {
     // [ℹ] V1 | ❌ does not appear to work - breaks platform
     // const response_IP = await fetch(`/getClientIP`, {
-    //   method: 'GET'
-    // }).then((r) => r.json())
-    // .catch((error) => { console.log(error) });
+    // const response_IP_3 = await fetch(`https://betarena-scores-platform.herokuapp.com/getClientIP`, {
     // console.log("🔵🔵🔵 response_IP: ", response_IP);
-    // [ℹ] V2 | ❌ using the layout.server.ts w/ load(event)
-    console.log("🔵🔵🔵 event: ", event);
+    // [ℹ] V2 | ✅ works [?] but incorrect IP
+    // console.log("🔵🔵🔵 event: ", event);
     console.log("🔵🔵🔵 event.getClientAddress(): ", event?.getClientAddress());
-    // [ℹ] V3 | ✅ works [?] only on `same-origin-domain-deployment`
+    // [ℹ] V3 | ✅ works [?] only on when calling directly URL, not from .server.ts
     const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
     console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
-    // [ℹ] V4 | ✅ works [?] only on `same-origin-domain-deployment`
-    const response_IP_3 = await fetch(`https://betarena-scores-platform.herokuapp.com/getClientIP`, {
-      method: 'GET'
-    }).then((r) => r.json());
+    // [ℹ] V3 | ❓ works [?] but incorrect IP
+    const response_IP_3 = await get(`/getClientIP`)
     console.log("🔵🔵🔵 response_IP_3: ", response_IP_3);
   } catch (error) {
     console.log(`🔴 ${error}`)

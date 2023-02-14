@@ -25,9 +25,9 @@ const app = express();
 */
 app.get('/getClientIP', (req, res, next) => {
 
-  const ip = req.headers['x-forwarded-for'] ||
-    req.socket.remoteAddress ||
-    null;
+  const ip = req.headers['x-forwarded-for']
+    || req.socket.remoteAddress 
+    || null;
   console.log('ip', ip);
 
   const ip2 = req.ip
@@ -37,11 +37,12 @@ app.get('/getClientIP', (req, res, next) => {
   console.log('ip3', ip3);
 
   let ipAddr = req.headers["x-forwarded-for"];
-  if (ipAddr){
+  if (ipAddr) {
     const list = ipAddr.split(",");
+    console.log('list', list);
     ipAddr = list[list.length-1];
   } else {
-    ipAddr = req.socket.remoteAddress;
+    ipAddr = req.connection.remoteAddress;
   }
 
   console.log('ipAddr', ipAddr);
