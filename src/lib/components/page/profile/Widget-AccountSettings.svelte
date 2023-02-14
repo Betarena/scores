@@ -65,9 +65,7 @@ COMPONENT JS (w/ TS)
 			?.web3_wallet_addr == undefined
 			? false
 			: true;
-	$: usernameInput =
-		$userBetarenaSettings?.user?.scores_user_data
-			?.username;
+  usernameInput = $userBetarenaSettings?.user?.scores_user_data?.username;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -96,6 +94,7 @@ COMPONENT JS (w/ TS)
 	 * @description cropped picture upload;
 	 * DOC: https://firebase.google.com/docs/storage/web/upload-files#upload_from_a_string
 	 * @param event
+   * @returns Promise<void>
 	 */
 	async function upload_profile_picture(
 		event
@@ -140,6 +139,7 @@ COMPONENT JS (w/ TS)
 	/**
 	 * @description removes the user's profile picture
 	 * from the loaclstorage, firestore, firebase-storage;
+   * @returns Promise<void>
 	 */
 	async function remove_picture(): Promise<void> {
 		if (!profile_picture_exists) {
@@ -181,7 +181,7 @@ COMPONENT JS (w/ TS)
 	/**
 	 * @description updates user's username on
 	 * firebase services; and localStorage
-	 * @returns
+   * @returns Promise<void>
 	 */
 	async function update_username(): Promise<void> {
 		dlog('🔵 Updating username...');
@@ -217,18 +217,17 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
-	// TODO: save settings (persist changes made to current instance)
-	// -> to localStorage()
-	// -> firestore
+  // -> updates USERNAME
+  // TODO: only save image on CLICK-OF-THIS-BUTTON [?]
 	async function save_settings(): Promise<void> {
-		// empty
+    update_username()
 	}
 
 	/**
 	 * @description removes user's data from all sources:
 	 * firebase services; and clears up localstorage; redirects
 	 * to main page
-	 * @returns
+   * @returns Promise<void>
 	 */
 	async function delete_user(): Promise<void> {
 		dlog('🔵 Deleting user...', true);
@@ -340,7 +339,7 @@ COMPONENT HTML
 		upload_profile_picture(event)}
 />
 
-<!-- 
+<!--
 [ℹ] main (settings) widget component
 -->
 <div id="account-settings-widget-box">
@@ -560,7 +559,7 @@ COMPONENT HTML
   -->
 	<button
 		class="btn-primary-v2"
-		on:click={() => update_username()}
+		on:click={() => save_settings()}
 	>
 		{RESPONSE_PROFILE_DATA?.save}
 	</button>
