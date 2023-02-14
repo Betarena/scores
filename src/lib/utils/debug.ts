@@ -7,9 +7,16 @@ export const LAYOUT_1_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load er
 export const HOME_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/lang)`;
 export const FIXTURE_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/fixture)`;
 
-const MASTER_DEBUG_TOGGLE = true // NOTE: overrides all individual toggles for show/hide logs
-const DEV_OVERRIDE = true // true/false || dev // overrides "dev" state and forces logs even in PROD where dev == false;
+// NOTE: overrides all individual toggles for show/hide logs
+// NOTE: (values) true/false | undefined
+const MASTER_DEBUG_TOGGLE = undefined
 
+// NOTE: overrides "dev" state and forces logs even in PROD where dev == false;
+// NOTE: (values) true/false | dev
+// NOTE: For PROD should always be FALSE
+const DEV_OVERRIDE = true
+
+// [ℹ] MAIN-(page)-(widgets) (debug)
 export const NAVBAR_DEBUG_TAG = 'navbar [DEBUG] |'
 export const NAVBAR_DEBUG_STYLE = 'background: purple; color: #FFFFFF'
 export const FOOTER_DEBUG_TAG = 'footer [DEBUG] |'
@@ -18,6 +25,52 @@ export const FOOTER_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
 export const AUTH_DEBUG_TAG = 'auth [DEBUG] |'
 export const AUTH_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
 export const AUTH_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+// [ℹ] HOMEPAGE-(page)-(widgets) (debug)
+export const BEST_GOAL_H_DEBUG_TAG = 'home (best-goal) [DEBUG] |'
+export const BEST_GOAL_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const BEST_GOAL_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const FEAT_BET_H_DEBUG_TAG = 'home (feat-bet) [DEBUG] |'
+export const FEAT_BET_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const FEAT_BET_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const FEAT_MATCH_H_DEBUG_TAG = 'home (feat-match) [DEBUG] |'
+export const FEAT_MATCH_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const FEAT_MATCH_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const LEAGUE_LIST_H_DEBUG_TAG = 'home (league-list) [DEBUG] |'
+export const LEAGUE_LIST_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const LEAGUE_LIST_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const LEAGUES_H_DEBUG_TAG = 'home (leagues) [DEBUG] |'
+export const LEAGUES_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const LEAGUES_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const SEO_BLOCK_DEBUG_TAG = 'home (seo-block) [DEBUG] |'
+export const SEO_BLOCK_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const SEO_BLOCK_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+// [ℹ] TOURNAMENTS-(page)-(widgets) (debug)
+export const ABOUT_T_DEBUG_TAG = 'tournament (about) [DEBUG] |'
+export const ABOUT_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const ABOUT_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const FIXTURE_T_DEBUG_TAG = 'tournament (fixture) [DEBUG] |'
+export const FIXTURE_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const FIXTURE_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const LEAGUE_INFO_T_DEBUG_TAG = 'tournament (league-info) [DEBUG] |'
+export const LEAGUE_INFO_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const LEAGUE_INFO_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const LEAGUE_INFO_2_T_DEBUG_TAG = 'tournament (league-info-2) [DEBUG] |'
+export const LEAGUE_INFO_2_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const LEAGUE_INFO_2_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const STANDINGS_T_DEBUG_TAG = 'tournament (standings) [DEBUG] |'
+export const STANDINGS_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const STANDINGS_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const TOP_PLAY_T_DEBUG_TAG = 'tournament (top-players) [DEBUG] |'
+export const TOP_PLAY_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const TOP_PLAY_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+// [ℹ] FIREBASE (debug)
+export const FIREBASE_DEBUG_TAG = 'firebase [DEBUG] |'
+export const FIREBASE_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const FIREBASE_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+// [ℹ] FIXTURE-(page)-(widgets) (debug)
+export const F_DEBUG_TAG = 'firebase [DEBUG] |'
+export const F_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const F_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
 export const ABOUT_FW_DEBUG_TAG = 'fixtures (about) [DEBUG] |'
 export const ABOUT_FW_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
 export const ABOUT_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
@@ -48,50 +101,12 @@ export const STATS_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
 export const VOTES_FW_DEBUG_TAG = 'fixtures (vote) [DEBUG] |'
 export const VOTES_FW_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
 export const VOTES_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const BEST_GOAL_H_DEBUG_TAG = 'home (best-goal) [DEBUG] |'
-export const BEST_GOAL_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const BEST_GOAL_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const FEAT_BET_H_DEBUG_TAG = 'home (feat-bet) [DEBUG] |'
-export const FEAT_BET_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const FEAT_BET_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const FEAT_MATCH_H_DEBUG_TAG = 'home (feat-match) [DEBUG] |'
-export const FEAT_MATCH_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const FEAT_MATCH_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUE_LIST_H_DEBUG_TAG = 'home (league-list) [DEBUG] |'
-export const LEAGUE_LIST_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const LEAGUE_LIST_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUES_H_DEBUG_TAG = 'home (leagues) [DEBUG] |'
-export const LEAGUES_H_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const LEAGUES_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const SEO_BLOCK_DEBUG_TAG = 'home (seo-block) [DEBUG] |'
-export const SEO_BLOCK_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const SEO_BLOCK_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const ABOUT_T_DEBUG_TAG = 'tournament (about) [DEBUG] |'
-export const ABOUT_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const ABOUT_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const FIXTURE_T_DEBUG_TAG = 'tournament (fixture) [DEBUG] |'
-export const FIXTURE_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const FIXTURE_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUE_INFO_T_DEBUG_TAG = 'tournament (league-info) [DEBUG] |'
-export const LEAGUE_INFO_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const LEAGUE_INFO_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUE_INFO_2_T_DEBUG_TAG = 'tournament (league-info-2) [DEBUG] |'
-export const LEAGUE_INFO_2_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const LEAGUE_INFO_2_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const STANDINGS_T_DEBUG_TAG = 'tournament (standings) [DEBUG] |'
-export const STANDINGS_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const STANDINGS_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const TOP_PLAY_T_DEBUG_TAG = 'tournament (top-players) [DEBUG] |'
-export const TOP_PLAY_T_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const TOP_PLAY_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const FIREBASE_DEBUG_TAG = 'firebase [DEBUG] |'
-export const FIREBASE_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const FIREBASE_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const F_DEBUG_TAG = 'firebase [DEBUG] |'
-export const F_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
-export const F_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+
+// --------------
+// --------------
 
 /**
+ * @description old logs
  * @param groupName
  * @param msg
  */
@@ -106,6 +121,7 @@ export function logErrorGroup(
 }
 
 /**
+ * @description old logs
  * @param groupName
  * @param msgs
  */
