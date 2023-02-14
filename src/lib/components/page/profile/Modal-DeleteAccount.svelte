@@ -2,6 +2,7 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
@@ -54,7 +55,10 @@ COMPONENT HTML
 <!-- 
 [ℹ] main modal widget
 -->
-<div id="modal-delete-box">
+<div 
+  id="modal-delete-box"
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+>
 	<!-- 
   [ℹ] close modal icon (cross)
   -->
@@ -174,5 +178,14 @@ COMPONENT STYLE
 		top: 30px;
 		right: 15px;
 		z-index: 400000002;
+	}
+
+  /* -----------------
+    WIDGET DARK THEME 
+  ----------------- */
+
+  div#modal-delete-box.dark-background-1 {
+		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
+		background-color: var(--dark-theme-1) !important;
 	}
 </style>

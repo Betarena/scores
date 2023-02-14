@@ -2,6 +2,7 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { createEventDispatcher } from 'svelte';
 
 	import arrow_down from './assets/arrow-down.svg';
@@ -182,7 +183,8 @@ COMPONENT HTML
 			(isHoverMenuOptItem = true)}
 		on:mouseleave={() =>
 			(isHoverMenuOptItem = false)}
-	>
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  >
 		<!-- 
     [ℹ] menu opt row
     <-contents->
@@ -254,6 +256,7 @@ COMPONENT HTML
 				class="
           menu-opt-not-available
           no-wrap
+          color-grey
         "
 			>
 				Available Soon
@@ -291,13 +294,22 @@ COMPONENT STYLE
 		color: var(--dark-theme);
 	}
 
-	/* ====================
+	/* -----------------
     RESPONSIVNESS
-  ==================== */
+  ----------------- */
 
 	@media only screen and (min-width: 725px) {
 		div.mobile-select-menu-opt-box {
 			padding: 0 20px 0 0;
 		}
 	}
+
+  /* -----------------
+    WIDGET DARK THEME 
+  ----------------- */
+
+  div.profile-menu-opt.dark-background-1 p.menu-opt-not-available {
+		background-color: var(--dark-theme-1-shade) !important;
+	}
+
 </style>

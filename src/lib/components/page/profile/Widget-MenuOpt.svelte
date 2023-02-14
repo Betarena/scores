@@ -97,6 +97,7 @@ COMPONENT HTML
 	id="profile-menu-widget-container"
 	class:row-space-out={tabletExclusive &&
 		!mobileExclusive}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 	<!-- 
   <-contents->
@@ -305,9 +306,9 @@ COMPONENT STYLE
 		padding: 12px 0 5px 0;
 	}
 
-	/* ====================
+	/* -----------------
     RESPONSIVNESS
-  ==================== */
+  ----------------- */
 
 	@media screen and (min-width: 768px) {
 		/* tablet styles dropdown */
@@ -327,4 +328,14 @@ COMPONENT STYLE
 			overflow: hidden;
 		}
 	}
+
+	/* -----------------
+    WIDGET DARK THEME 
+  ----------------- */
+
+  div#profile-menu-widget-container.dark-background-1 {
+		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
+		background-color: var(--dark-theme-1) !important;
+	}
+
 </style>

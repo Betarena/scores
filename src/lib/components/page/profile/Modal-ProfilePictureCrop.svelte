@@ -2,6 +2,7 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog } from '$lib/utils/debug';
 
 	import { createEventDispatcher } from 'svelte';
@@ -285,6 +286,7 @@ COMPONENT HTML
 <div
 	id="modal-delete-box"
 	class:display-none={!modal_pic_crop_show}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 	<!-- 
   [ℹ] modal text
@@ -494,5 +496,14 @@ COMPONENT STYLE
 		cursor: grabbing;
 		cursor: -moz-grabbing;
 		cursor: -webkit-grabbing;
+	}
+
+  /* -----------------
+    WIDGET DARK THEME 
+  ----------------- */
+
+  div#modal-delete-box.dark-background-1 {
+		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
+		background-color: var(--dark-theme-1) !important;
 	}
 </style>

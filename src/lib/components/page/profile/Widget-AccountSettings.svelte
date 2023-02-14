@@ -347,7 +347,10 @@ COMPONENT HTML
 [ℹ] main (settings) widget component
 -->
 {#if !no_widget_data}
-  <div id="account-settings-widget-box">
+  <div 
+    id="account-settings-widget-box"
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  >
     <!-- 
     [ℹ] widget title
     -->
@@ -356,6 +359,7 @@ COMPONENT HTML
         w-500
         s-20
         m-b-24
+        color-black-2
       "
       style="margin-top: 0px;"
     >
@@ -381,6 +385,7 @@ COMPONENT HTML
           class="
             s-16
             w-500
+            color-black-2
           "
           class:m-b-6={mobileExclusive}
         >
@@ -404,6 +409,7 @@ COMPONENT HTML
           btn-hollow
           w-500
           s-14
+          color-black-2
         "
         on:click={() => remove_picture()}
       >
@@ -467,10 +473,11 @@ COMPONENT HTML
             -->
             <p
               class="
-                s-16
-                w-500
-                m-r-6
-              "
+              s-16
+              w-500
+              m-r-6
+              color-black-2
+            "
             >
               {RESPONSE_PROFILE_DATA?.username}
             </p>
@@ -529,6 +536,7 @@ COMPONENT HTML
           class="
             s-16
             w-500
+            color-black-2
           "
           class:m-b-6={mobileExclusive}
         >
@@ -551,6 +559,7 @@ COMPONENT HTML
           btn-hollow
           w-500
           s-14
+          color-black-2
         "
         on:click={() => (modal_wallet_show = true)}
       >
@@ -689,13 +698,23 @@ COMPONENT STYLE
 		z-index: -1;
 	}
 
-	/* ====================
+	/* -----------------
     RESPONSIVNESS
-  ==================== */
+  ----------------- */
 
 	@media only screen and (min-width: 575px) {
 		button {
 			width: auto;
 		}
 	}
+
+  /* -----------------
+    WIDGET DARK THEME 
+  ----------------- */
+
+  div#account-settings-widget-box.dark-background-1 {
+		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
+		background-color: var(--dark-theme-1) !important;
+	}
+
 </style>

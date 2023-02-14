@@ -2,11 +2,16 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import home from './assets/home-select.svg';
 	import metamask_percent_ration from './assets/metamask-percent-ration.png';
+	import metamask_percent_ration_dark from './assets/metamask-percent-ration-dark.png';
 	import metamask_volume from './assets/metamask-volume.png';
+	import metamask_volume_dark from './assets/metamask-volume-dark.png';
 	import nft_marketshare_img from './assets/nft-marketshare.png';
+	import nft_marketshare_img_dark from './assets/nft-marketshare-dark.png';
 	import stats_row_img from './assets/total-volume.png';
+	import stats_row_img_dark from './assets/total-volume-dark.png';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -25,7 +30,10 @@ COMPONENT JS (w/ TS)
 COMPONENT HTML 
 =================-->
 
-<div id="dashboard-widget-container">
+<div 
+  id="dashboard-widget-container"
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+>
 	<!-- 
   [ℹ] widget not available
   <-contents->
@@ -69,8 +77,13 @@ COMPONENT HTML
 	<!-- 
   [ℹ] dashboard stats info
   -->
-	<div id="stats-box" class="dashboard-row-info">
-		<img src={stats_row_img} alt="Stats Row" />
+	<div 
+    id="stats-box" 
+    class="dashboard-row-info">
+		<img 
+			src={$userBetarenaSettings.theme == 'Dark' ? stats_row_img_dark : stats_row_img}
+      alt="Stats Row" 
+    />
 	</div>
 	<!-- 
   [ℹ] dashboard metamask info (#1)
@@ -80,7 +93,7 @@ COMPONENT HTML
 		class="dashboard-row-info"
 	>
 		<img
-			src={metamask_volume}
+			src={$userBetarenaSettings.theme == 'Dark' ? metamask_volume_dark : metamask_volume}
 			alt="Metamask Volume"
 		/>
 	</div>
@@ -92,7 +105,7 @@ COMPONENT HTML
 		class="dashboard-row-info"
 	>
 		<img
-			src={nft_marketshare_img}
+			src={$userBetarenaSettings.theme == 'Dark' ? nft_marketshare_img_dark : nft_marketshare_img}
 			alt="Metamask Volume"
 		/>
 	</div>
@@ -104,7 +117,7 @@ COMPONENT HTML
 		class="dashboard-row-info"
 	>
 		<img
-			src={metamask_percent_ration}
+			src={$userBetarenaSettings.theme == 'Dark' ? metamask_percent_ration_dark : metamask_percent_ration}
 			alt="Stats Row"
 		/>
 	</div>
@@ -229,4 +242,18 @@ COMPONENT STYLE
 			grid-column: 1/4;
 		}
 	}
+
+  /* -----------------
+    WIDGET DARK THEME 
+  ----------------- */
+
+  div#dashboard-widget-container.dark-background-1 {
+		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
+		background-color: var(--dark-theme-1) !important;
+	}
+
+  div#dashboard-widget-container.dark-background-1 div#background-modal-blur {
+    background: rgba(75, 75, 75, 0.7);
+    backdrop-filter: blur(4px);
+  }
 </style>
