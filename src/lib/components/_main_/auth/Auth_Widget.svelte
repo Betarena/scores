@@ -25,7 +25,9 @@ COMPONENT JS (w/ TS)
 		platfrom_lang_ssr,
 		viewport_change
 	} from '$lib/utils/platform-functions';
-	import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
+	import { getMoralisAuth
+
+	, type MoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 	import {
 		fetchSignInMethodsForEmail,
 		GithubAuthProvider,
@@ -448,17 +450,16 @@ COMPONENT JS (w/ TS)
 			processing = true;
 			auth_service = 'wallet';
 			// [ℹ] restrict only to MetaMask (original)
-			// if (!provider('isMetaMask')[0]) {
-			//   dlog("🔴 Moralis Auth not found!")
-			//   alert('Please install the MetaMask Wallet Extension!')
-			//   processing = false
-			//   return
-			// }
-
+			if (!providerDetect('isMetaMask')[0]) {
+			  dlog("🔴 Moralis Auth not found!")
+			  alert('Please install the MetaMask Wallet Extension!')
+			  processing = false
+			  return
+			}
 			// [ℹ] create Moralis instance
 			const moralisAuth = getMoralisAuth(app);
 
-			// [ℹ] V2 - Moralis Auth
+			// [ℹ] V2 - Moralis Auth [TEST]
 			// const provider = await EthereumProvider.init({
 			//   projectId: 'a523c408585b0f7c88a7df7a9d70dfe6', // REQUIRED your projectId
 			//   chains: [mainnet.id], // REQUIRED chain ids
@@ -468,6 +469,7 @@ COMPONENT JS (w/ TS)
 			//   provider: new Web3Provider(provider)
 			// });
 
+			// [ℹ] V2 - Moralis Auth [TEST]
 			// FIXME: Create WalletConnect Provider
 			// FIXME: Not Working - WalletConnectProvider error
 			// const provider = new WalletConnectProvider({
@@ -479,13 +481,13 @@ COMPONENT JS (w/ TS)
 			// });
 
 			// NOTE: default sign-in opt. is Metamask
-			// const moralis_auth = await signInWithMoralis(moralisAuth);
+			const moralis_auth = await signInWithMoralis(moralisAuth);
 			dlog('🟢 Moralis Auth');
-			// success_auth_wrap(
-			//   null,
-			//   moralis_auth?.credentials?.user?.displayName,
-			//   auth_service
-			// )
+			success_auth_wrap(
+			  null,
+			  moralis_auth?.credentials?.user?.displayName,
+			  auth_service
+			)
 		} catch (error) {
 			errlog(`Moralis Auth error: ${error}`);
 			processing = false;
@@ -756,6 +758,11 @@ COMPONENT JS (w/ TS)
 			}
 		);
 	});
+
+
+	function signInWithMoralis(moralisAuth: MoralisAuth) {
+		throw new Error('Function not implemented.');
+	}
 </script>
 
 <!-- ===============
