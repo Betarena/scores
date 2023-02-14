@@ -12,12 +12,16 @@ export async function load({
 	url,
 	params,
 	fetch,
-	setHeaders
+	setHeaders,
+  event
 }): Promise<PageLoad> {
 
   // --------------
   // TEST
   // --------------
+
+  console.log("🔵🔵🔵 event: ", event);
+  console.log("🔵🔵🔵 event.getClientAddress(): ", event.getClientAddress());
 
   /**
    * ==================
@@ -27,10 +31,10 @@ export async function load({
 
   // let response_IP_2;
   // ⚠❌ does not appear to work
-  const response_IP = await fetch(`/getClientIP`, {
-    method: 'GET'
-  }).then((r) => r.json());
-  console.log("🔵🔵🔵 response_IP: ", response_IP);
+  // const response_IP = await fetch(`/getClientIP`, {
+  //   method: 'GET'
+  // }).then((r) => r.json());
+  // console.log("🔵🔵🔵 response_IP: ", response_IP);
   
   // 🤔✅ works ? only on `same-origin-domain-deployment`
   const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
