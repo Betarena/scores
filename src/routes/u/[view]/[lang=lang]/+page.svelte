@@ -6,6 +6,7 @@ COMPONENT JS (w/ TS)
 	import AccountSettingsBoard from '$lib/components/page/profile/Widget-AccountSettings.svelte';
 	import DashboardWidget from '$lib/components/page/profile/Widget-Dashboard.svelte';
 	import UserMenu from '$lib/components/page/profile/Widget-MenuOpt.svelte';
+	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
 	import { dlogv2 } from '$lib/utils/debug';
 	import type { PageData } from '../$types';
 
@@ -14,6 +15,11 @@ COMPONENT JS (w/ TS)
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	export let data: PageData;
+
+  let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+
+  RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
+
 	dlogv2(
 		'Profile Page',
 		[data],
@@ -45,7 +51,7 @@ COMPONENT JS (w/ TS)
 COMPONENT HTML
 =================-->
 
-<section>
+<section id="profile-page">
 	<div id="widget-grid-display">
 		<div id="usermenu-widget">
 			<UserMenu />
@@ -57,7 +63,7 @@ COMPONENT HTML
 		<div id="main-profile-page-widget">
 			{#if $page?.url?.pathname.includes('settings')}
 				<AccountSettingsBoard
-					RESPONSE_PROFILE_DATA={data?.RESPONSE_PROFILE_DATA}
+					RESPONSE_PROFILE_DATA={RESPONSE_PROFILE_DATA}
 				/>
 			{:else if $page?.url?.pathname.includes('dashboard')}
 				<DashboardWidget />
@@ -70,6 +76,14 @@ COMPONENT HTML
 COMPONENT STYLE
 =================-->
 <style>
+
+  section#profile-page {
+    display: grid;
+    max-width: 1430px;
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
 	/* page widget layout */
 	div#widget-grid-display {
 		display: grid;

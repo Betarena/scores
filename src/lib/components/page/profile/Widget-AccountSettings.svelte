@@ -40,6 +40,7 @@ COMPONENT JS (w/ TS)
 	// FIXME: missing Upload / Remove - Profile Picture Translation
 	dlog(RESPONSE_PROFILE_DATA, true);
 
+  let no_widget_data: boolean = true;
 	let files: HTMLInputElement['files'];
 	let fileInputElem: HTMLInputElement;
 	let usernameInput: string;
@@ -50,6 +51,9 @@ COMPONENT JS (w/ TS)
 	let modal_wallet_show: boolean = false;
 	let modal_pic_crop_show: boolean = false;
 	let profile_crop_widget: ModalProfilePictureCrop;
+
+  $: if (RESPONSE_PROFILE_DATA != undefined) no_widget_data = false;
+  console.log('no_widget_data', no_widget_data)
 
 	$: if (files) {
 		profile_picture_select();
@@ -342,287 +346,289 @@ COMPONENT HTML
 <!--
 [ℹ] main (settings) widget component
 -->
-<div id="account-settings-widget-box">
-	<!-- 
-  [ℹ] widget title
-  -->
-	<h2
-		class="
-      w-500
-      s-20
-      m-b-24
-    "
-		style="margin-top: 0px;"
-	>
-		{RESPONSE_PROFILE_DATA?.acc_settings}
-	</h2>
-	<!-- 
-  [ℹ] first row
-  <-contents->
-  [ℹ] profile photo text
-  [ℹ] profile photo remove/upload
-  <-conditional->
-  -->
-	<div
-		class={!tabletExclusive
-			? 'row-space-out m-b-24'
-			: 'm-b-24'}
-	>
-		<!-- 
-    [ℹ] profile photo section row
+{#if !no_widget_data}
+  <div id="account-settings-widget-box">
+    <!-- 
+    [ℹ] widget title
     -->
-		<div class:m-b-16={mobileExclusive}>
-			<p
-				class="
-          s-16
-          w-500
-        "
-				class:m-b-6={mobileExclusive}
-			>
-				{RESPONSE_PROFILE_DATA?.profile_photo}
-			</p>
-			<span
-				class="
-          m-t-5
-          s-14
-          color-grey
-        "
-			>
-				{RESPONSE_PROFILE_DATA?.profile_photo_desc}
-			</span>
-		</div>
-		<!-- 
-    [ℹ] profile picture action (btn)
-    -->
-		<button
-			class="
-        btn-hollow
+    <h2
+      class="
         w-500
-        s-14
+        s-20
+        m-b-24
       "
-			on:click={() => remove_picture()}
-		>
-			{!profile_picture_exists
-				? 'Upload'
-				: 'Remove'}
-		</button>
-		<!-- 
-    [ℹ] profile picture input
-    -->
-		{#if !profile_picture_exists}
-			<input
-				accept="image/png, image/jpeg"
-				id="avatar"
-				class="custom-file-input"
-				name="avatar"
-				bind:this={fileInputElem}
-				bind:files
-				type="file"
-				disabled={processing}
-			/>
-		{/if}
-	</div>
-	<!-- 
-  [ℹ] second row
-  <-contents->
-  [ℹ] username text
-  [ℹ] username update
-  -->
-	<div
-		class="
-      m-b-24  
-    "
-	>
-		<!-- 
+      style="margin-top: 0px;"
+    >
+      {RESPONSE_PROFILE_DATA?.acc_settings}
+    </h2>
+    <!-- 
+    [ℹ] first row
     <-contents->
-    [ℹ] username text
-    [ℹ] username "required"
+    [ℹ] profile photo text
+    [ℹ] profile photo remove/upload
+    <-conditional->
     -->
-		<div
-			class="
-        row-space-start
-        m-b-16
-      "
-		>
-			<!-- 
-      <-contents->
-      [ℹ] name "head" text
-      [ℹ] name "required" text
-      [ℹ] (user) text description
+    <div
+      class={!tabletExclusive
+        ? 'row-space-out m-b-24'
+        : 'm-b-24'}
+    >
+      <!-- 
+      [ℹ] profile photo section row
       -->
-			<div>
-				<!--
-        <-contents->
-        [ℹ] name "head" text
-        [ℹ] name "required" text
-        -->
-				<div class="row-space-start">
-					<!-- 
-          [ℹ] name "head" text
-          -->
-					<p
-						class="
-              s-16
-              w-500
-              m-r-6
-            "
-					>
-						{RESPONSE_PROFILE_DATA?.username}
-					</p>
-					<!-- 
-          [ℹ] name "required" text
-          -->
-					<p
-						class="
-              required-pill-tag
-              s-12
-            "
-					>
-						{RESPONSE_PROFILE_DATA?.required_field}
-					</p>
-				</div>
-				<!-- 
-        [ℹ] (user) text description
-        -->
-				<span
-					class="
+      <div class:m-b-16={mobileExclusive}>
+        <p
+          class="
+            s-16
+            w-500
+          "
+          class:m-b-6={mobileExclusive}
+        >
+          {RESPONSE_PROFILE_DATA?.profile_photo}
+        </p>
+        <span
+          class="
+            m-t-5
             s-14
             color-grey
           "
-				>
-					{RESPONSE_PROFILE_DATA?.name_desc}
-				</span>
-			</div>
-		</div>
-		<!-- 
-    [ℹ] name input
-    -->
-		<input
-			type="text"
-			placeholder={RESPONSE_PROFILE_DATA?.username}
-			aria-placeholder="Username input here"
-			aria-label="Username input"
-			bind:value={usernameInput}
-		/>
-	</div>
-	<!-- 
-  [ℹ] third row
-  <-contents->
-  [ℹ] cryptocurrency wallet text
-  [ℹ] cryptocurrency wallet update
-  -->
-	<div
-		class={!tabletExclusive
-			? 'row-space-out m-b-24'
-			: 'm-b-24'}
-	>
-		<!-- 
-    [ℹ] username text (box)
-    -->
-		<div class:m-b-16={mobileExclusive}>
-			<p
-				class="
-          s-16
+        >
+          {RESPONSE_PROFILE_DATA?.profile_photo_desc}
+        </span>
+      </div>
+      <!-- 
+      [ℹ] profile picture action (btn)
+      -->
+      <button
+        class="
+          btn-hollow
           w-500
-        "
-				class:m-b-6={mobileExclusive}
-			>
-				{RESPONSE_PROFILE_DATA?.crypto_title}
-			</p>
-			<span
-				class="
           s-14
-          color-grey
         "
-			>
-				{RESPONSE_PROFILE_DATA?.crypto_desc}
-			</span>
-		</div>
-		<!-- 
-    [ℹ] button action
+        on:click={() => remove_picture()}
+      >
+        {!profile_picture_exists
+          ? 'Upload'
+          : 'Remove'}
+      </button>
+      <!-- 
+      [ℹ] profile picture input
+      -->
+      {#if !profile_picture_exists}
+        <input
+          accept="image/png, image/jpeg"
+          id="avatar"
+          class="custom-file-input"
+          name="avatar"
+          bind:this={fileInputElem}
+          bind:files
+          type="file"
+          disabled={processing}
+        />
+      {/if}
+    </div>
+    <!-- 
+    [ℹ] second row
+    <-contents->
+    [ℹ] username text
+    [ℹ] username update
     -->
-		<button
-			class="
-        btn-hollow
-        w-500
-        s-14
+    <div
+      class="
+        m-b-24  
       "
-			on:click={() => (modal_wallet_show = true)}
-		>
-			{!profile_wallet_connected
-				? RESPONSE_PROFILE_DATA?.connect_wallet_title
-				: RESPONSE_PROFILE_DATA?.disconnect_wallet_title}
-		</button>
-	</div>
-	<!-- 
-  [ℹ] save settings (button)
-  -->
-	<button
-		class="btn-primary-v2"
-		on:click={() => save_settings()}
-	>
-		{RESPONSE_PROFILE_DATA?.save}
-	</button>
-	<!-- 
-  [ℹ] divider
-  -->
-	<div
-		id="settings-hr-divider"
-		class={!mobileExclusive
-			? 'm-t-20  m-b-20'
-			: 'm-t-30 m-b-30'}
-	/>
-	<!-- 
-  [ℹ] fourth row
-  <-contents->
-  [ℹ] delete text / desc
-  [ℹ] delete account (action)
-  -->
-	<div
-		class={!tabletExclusive
-			? 'row-space-out m-b-24'
-			: ''}
-	>
-		<!-- 
+    >
+      <!-- 
+      <-contents->
+      [ℹ] username text
+      [ℹ] username "required"
+      -->
+      <div
+        class="
+          row-space-start
+          m-b-16
+        "
+      >
+        <!-- 
+        <-contents->
+        [ℹ] name "head" text
+        [ℹ] name "required" text
+        [ℹ] (user) text description
+        -->
+        <div>
+          <!--
+          <-contents->
+          [ℹ] name "head" text
+          [ℹ] name "required" text
+          -->
+          <div class="row-space-start">
+            <!-- 
+            [ℹ] name "head" text
+            -->
+            <p
+              class="
+                s-16
+                w-500
+                m-r-6
+              "
+            >
+              {RESPONSE_PROFILE_DATA?.username}
+            </p>
+            <!-- 
+            [ℹ] name "required" text
+            -->
+            <p
+              class="
+                required-pill-tag
+                s-12
+              "
+            >
+              {RESPONSE_PROFILE_DATA?.required_field}
+            </p>
+          </div>
+          <!-- 
+          [ℹ] (user) text description
+          -->
+          <span
+            class="
+              s-14
+              color-grey
+            "
+          >
+            {RESPONSE_PROFILE_DATA?.name_desc}
+          </span>
+        </div>
+      </div>
+      <!-- 
+      [ℹ] name input
+      -->
+      <input
+        type="text"
+        placeholder={RESPONSE_PROFILE_DATA?.username}
+        aria-placeholder="Username input here"
+        aria-label="Username input"
+        bind:value={usernameInput}
+      />
+    </div>
+    <!-- 
+    [ℹ] third row
+    <-contents->
+    [ℹ] cryptocurrency wallet text
+    [ℹ] cryptocurrency wallet update
+    -->
+    <div
+      class={!tabletExclusive
+        ? 'row-space-out m-b-24'
+        : 'm-b-24'}
+    >
+      <!-- 
+      [ℹ] username text (box)
+      -->
+      <div class:m-b-16={mobileExclusive}>
+        <p
+          class="
+            s-16
+            w-500
+          "
+          class:m-b-6={mobileExclusive}
+        >
+          {RESPONSE_PROFILE_DATA?.crypto_title}
+        </p>
+        <span
+          class="
+            s-14
+            color-grey
+          "
+        >
+          {RESPONSE_PROFILE_DATA?.crypto_desc}
+        </span>
+      </div>
+      <!-- 
+      [ℹ] button action
+      -->
+      <button
+        class="
+          btn-hollow
+          w-500
+          s-14
+        "
+        on:click={() => (modal_wallet_show = true)}
+      >
+        {!profile_wallet_connected
+          ? RESPONSE_PROFILE_DATA?.connect_wallet_title
+          : RESPONSE_PROFILE_DATA?.disconnect_wallet_title}
+      </button>
+    </div>
+    <!-- 
+    [ℹ] save settings (button)
+    -->
+    <button
+      class="btn-primary-v2"
+      on:click={() => save_settings()}
+    >
+      {RESPONSE_PROFILE_DATA?.save}
+    </button>
+    <!-- 
+    [ℹ] divider
+    -->
+    <div
+      id="settings-hr-divider"
+      class={!mobileExclusive
+        ? 'm-t-20  m-b-20'
+        : 'm-t-30 m-b-30'}
+    />
+    <!-- 
+    [ℹ] fourth row
+    <-contents->
     [ℹ] delete text / desc
+    [ℹ] delete account (action)
     -->
-		<div class:m-b-16={mobileExclusive}>
-			<p
-				class="
-          s-16
+    <div
+      class={!tabletExclusive
+        ? 'row-space-out m-b-24'
+        : ''}
+    >
+      <!-- 
+      [ℹ] delete text / desc
+      -->
+      <div class:m-b-16={mobileExclusive}>
+        <p
+          class="
+            s-16
+            w-500
+            color-red-bright
+          "
+          class:m-b-6={mobileExclusive}
+        >
+          {RESPONSE_PROFILE_DATA?.delete_account_title}
+        </p>
+        <span
+          class="
+            s-14
+            color-grey
+          "
+        >
+          {RESPONSE_PROFILE_DATA?.delete_desc}
+        </span>
+      </div>
+      <!-- 
+      [ℹ] delete action (btn)
+      -->
+      <button
+        class="
+          btn-hollow
           w-500
-          color-red-bright
-        "
-				class:m-b-6={mobileExclusive}
-			>
-				{RESPONSE_PROFILE_DATA?.delete_account_title}
-			</p>
-			<span
-				class="
           s-14
-          color-grey
+          color-red-bright
+          danger
         "
-			>
-				{RESPONSE_PROFILE_DATA?.delete_desc}
-			</span>
-		</div>
-		<!-- 
-    [ℹ] delete action (btn)
-    -->
-		<button
-			class="
-        btn-hollow
-        w-500
-        s-14
-        color-red-bright
-        danger
-      "
-			on:click={() => (modal_delete_show = true)}
-		>
-			{RESPONSE_PROFILE_DATA?.delete_account_title}
-		</button>
-	</div>
-</div>
+        on:click={() => (modal_delete_show = true)}
+      >
+        {RESPONSE_PROFILE_DATA?.delete_account_title}
+      </button>
+    </div>
+  </div>
+{/if}
 
 <!--===============
 COMPONENT STYLE
