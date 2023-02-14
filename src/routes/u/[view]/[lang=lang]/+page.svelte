@@ -7,7 +7,7 @@ COMPONENT JS (w/ TS)
 	import DashboardWidget from '$lib/components/page/profile/Widget-Dashboard.svelte';
 	import UserMenu from '$lib/components/page/profile/Widget-MenuOpt.svelte';
 	import { dlogv2 } from '$lib/utils/debug';
-	import type { PageData } from './$types';
+	import type { PageData } from '../$types';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// COMPONENT VARIABLES

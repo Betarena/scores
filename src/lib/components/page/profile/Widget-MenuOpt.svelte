@@ -39,11 +39,11 @@ COMPONENT JS (w/ TS)
 		selectedMenuOpt = event?.detail?.opt || event;
 		showDropdown = false;
 		if (selectedMenuOpt == 'Dashboard')
-			goto('/u/dashboard', {
+			goto(`/u/dashboard/${$userBetarenaSettings.lang}`, {
 				replaceState: true
 			});
 		if (selectedMenuOpt == 'Account Settings')
-			goto('/u/settings', { replaceState: true });
+			goto(`/u/settings/${$userBetarenaSettings.lang}`, { replaceState: true });
 	}
 
 	function closeAllDropdowns(): void {
@@ -51,9 +51,9 @@ COMPONENT JS (w/ TS)
 	}
 
 	$: {
-		if ($page?.url?.pathname == '/u/dashboard')
+		if ($page?.url?.pathname.includes('dashboard'))
 			selectedMenuOpt = 'Dashboard';
-		if ($page?.url?.pathname == '/u/settings')
+		if ($page?.url?.pathname.includes('settings'))
 			selectedMenuOpt = 'Account Settings';
 	}
 
