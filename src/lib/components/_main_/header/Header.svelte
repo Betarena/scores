@@ -1100,13 +1100,18 @@ TODO:FIXME: not generating for each LANG
             [ℹ] user avatar img
             -->
 						<img
-							src={profile_avatar}
+              id="user-profile-picture"
+							src={$userBetarenaSettings?.user
+                ?.scores_user_data?.profile_photo ||
+                profile_avatar}
 							alt="Profile Icon"
 							title="Profile Avatar"
 							on:click={() =>
 								(dropdown_user_auth =
 									!dropdown_user_auth)}
 							class="cursor-pointer"
+              width=44
+              height=44
 						/>
 						<!-- 
             [ℹ] dropdown profile
@@ -2373,6 +2378,10 @@ COMPONENT STYLE
 	}
 	button#sign-in-btn:hover p {
 		color: #f5620f;
+	}
+  
+	img#user-profile-picture {
+		border-radius: 50%;
 	}
 
 	button.sports-btn {

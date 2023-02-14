@@ -72,6 +72,7 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	--dark-theme: #292929;
 	--dark-theme-1: #4b4b4b;
   --dark-theme-1-shade: #616161;
+  --dark-theme-1-2-shade: #737373;
 	/* 
   breakpoints */
 	--mobile: 375;

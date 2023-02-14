@@ -717,4 +717,18 @@ COMPONENT STYLE
 		background-color: var(--dark-theme-1) !important;
 	}
 
+  div#account-settings-widget-box.dark-background-1 input[type='text'] {
+    background: var(--dark-theme-1);
+    border: 1px solid var(--dark-theme-1-2-shade);
+    color: var(--white)
+  }
+
+  div#account-settings-widget-box.dark-background-1 div#settings-hr-divider {
+    background: var(--dark-theme-1);
+  }
+
+  div#account-settings-widget-box.dark-background-1 p.required-pill-tag {
+    color: var(--primary-fade)
+  }
+  
 </style>

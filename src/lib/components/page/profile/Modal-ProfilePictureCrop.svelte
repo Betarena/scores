@@ -302,6 +302,7 @@ COMPONENT HTML
         w-500
         s-16
         text-left
+        color-black-2
       "
 		>
 			Profile Picture
@@ -356,6 +357,7 @@ COMPONENT HTML
 			class="
         btn-hollow
         m-r-16
+        color-black-2
       "
 			on:click={() => toggle_modal()}
 		>
@@ -499,6 +501,17 @@ COMPONENT STYLE
 	}
 
   /* -----------------
+    RESPONSIVNESS
+  ----------------- */
+
+	@media only screen and (min-width: 575px) {
+		div#modal-delete-box  {
+			width: 502px;
+			max-width: 502px;
+		}
+	}
+
+  /* -----------------
     WIDGET DARK THEME 
   ----------------- */
 
@@ -506,4 +519,6 @@ COMPONENT STYLE
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
 		background-color: var(--dark-theme-1) !important;
 	}
+
+
 </style>

@@ -84,6 +84,7 @@ COMPONENT HTML
 		class="
       s-16
       m-b-12
+      color-black-2
     "
 	>
 		Delete Account ?
@@ -94,7 +95,7 @@ COMPONENT HTML
 	<p
 		class="
       s-16
-      color-black-2
+      color-grey
       m-b-24
     "
 	>
@@ -118,7 +119,9 @@ COMPONENT HTML
         w-500
         s-14
         color-red-bright
+        m-r-16
       "
+      style="width: 100%"
 			on:click={() => continue_delete_account()}
 		>
 			Delete Account
@@ -127,7 +130,11 @@ COMPONENT HTML
     [ℹ] cancel action (btn)
     -->
 		<button
-			class="btn-hollow"
+			class="
+        btn-hollow
+        color-black-2
+      "
+      style="width: 100%"
 			on:click={() => toggle_modal()}
 		>
 			Cancel
@@ -169,15 +176,26 @@ COMPONENT STYLE
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
 		padding: 20px;
+    padding-top: 45px;
 		text-align: -webkit-center;
 		overflow: hidden;
 	}
 	div#modal-delete-box > img#close-vector {
 		/* position */
 		position: absolute;
-		top: 30px;
-		right: 15px;
+		top: 20px;
+		right: 20px;
 		z-index: 400000002;
+	}
+
+  /* -----------------
+    RESPONSIVNESS
+  ----------------- */
+
+	@media only screen and (min-width: 575px) {
+		div#modal-delete-box  {
+			width: 328px;
+		}
 	}
 
   /* -----------------
@@ -188,4 +206,7 @@ COMPONENT STYLE
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
 		background-color: var(--dark-theme-1) !important;
 	}
+  div#modal-delete-box.dark-background-1 button.btn-hollow {
+		border: 1px solid var(--dark-theme-1-2-shade) !important;
+  }
 </style>
