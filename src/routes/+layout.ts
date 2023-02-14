@@ -5,16 +5,17 @@ import {
 } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
-import type { LayoutLoad } from './$types';
+import type { LayoutLoad, PageLoadEvent } from './$types';
 
 /** @type {import('./$types').LayoutLoad} */
-export async function load(event): Promise<LayoutLoad> {
+export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 
   const {
     url,
     fetch,
     params,
-    setHeaders
+    setHeaders,
+    route
   } = event
 
   // ==================
@@ -40,8 +41,15 @@ export async function load(event): Promise<LayoutLoad> {
 
   try {
     // [ℹ] V3 | ✅ works [?] only on when calling directly URL, not from .server.ts
-    const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
-    console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
+    // NOTE: works when using the non +layout.ts/+page.ts file
+    // const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+    // OR:
+    // const response_IP_2 = await fetch(`http://betarena-scores-platform.herokuapp.com/getClientIP`, {
+		// 	  method: 'GET',
+    //   }
+    // ).then((r) => r.json())
+    // .catch((error) => { console.log(error) });
+    // console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
   } catch (error) {
     console.log(`🔴 ${error}`)
   }
@@ -56,10 +64,10 @@ export async function load(event): Promise<LayoutLoad> {
 			method: 'GET'
 		}
 	).then((r) => r.json());
-
+  
 	const urlLang: string =
-		params.lang == undefined ||
-		!response_valid_url
+		params.lang == undefined 
+    || (!response_valid_url && route?.id != '/u/[view]/[lang=lang]')
 			? 'en'
 			: params.lang;
 

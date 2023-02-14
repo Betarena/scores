@@ -59,10 +59,12 @@ COMPONENT JS - BASIC
 
   const OMIT_URLS: string[] = [
     '[lang=lang]/[sport]/[country]/[league_name]',
+    '[lang=lang]/[sport]/[fixture=fixture]',
     '[sport]/[country]/[league_name]',
     '[sport]/[fixture=fixture]',
-    '[lang=lang]/[sport]/[fixture=fixture]'
   ]
+
+  const PROFILE_URL: string = '/u/[view]/[lang=lang]'
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -106,9 +108,16 @@ COMPONENT JS - BASIC
       ? `${$page.url.origin}/${server_side_language}`
       : $page.url.origin
   ;
-  $: dlog(`${NAVBAR_DEBUG_TAG} server_side_language: ${server_side_language}`, true, NAVBAR_DEBUG_STYLE);
-  $: dlog(`${NAVBAR_DEBUG_TAG} homepageURL: ${homepageURL}`, true, NAVBAR_DEBUG_STYLE);
-  $: dlog(`${NAVBAR_DEBUG_TAG} logoLink: ${logoLink}`, true, NAVBAR_DEBUG_STYLE);
+  $: dlogv2(
+    NAVBAR_DEBUG_TAG,
+    [
+      `server_side_language: ${server_side_language}`,
+      `homepageURL: ${homepageURL}`,
+      `logoLink: ${logoLink}`
+    ],
+    true,
+    NAVBAR_DEBUG_STYLE
+  )
 
 	$: if (browser) {
 		hideSEO = true;
@@ -171,12 +180,12 @@ COMPONENT JS - BASIC
 		userBetarenaSettings.setLang(lang);
 
     dlogv2(
-      NAVBAR_DEBUG_TAG,
+      `${NAVBAR_DEBUG_TAG} selectLanguage()`,
       [
-        `selectLanguage()`,
         `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
         `lang: ${lang}`,
-        `pastLang: ${pastLang}`
+        `pastLang: ${pastLang}`,
+        `$page.route.id: ${$page.route.id}`
       ],
       true,
       NAVBAR_DEBUG_STYLE
@@ -210,11 +219,21 @@ COMPONENT JS - BASIC
 			return;
 		}
 
-		// [ℹ] on (special) routes, omit intervention;
+		// [ℹ] on (special) routes, omit header-intervention;
+    // [ℹ] these routes manage their own transaltions (complex);
 		else if (OMIT_URLS.includes($page.route.id)) {
       dlog(`${NAVBAR_DEBUG_TAG} omitting route: ${$page.route.id}`, true, NAVBAR_DEBUG_STYLE)
 			return;
 		}
+
+    // [ℹ] on profile page route, handle;
+    else if (PROFILE_URL == $page.route.id) {
+      const pastLangV2: string = pastLang == `/` ? `/en` : pastLang
+      let tempUrl: string = $page.url.pathname+'/';
+			const newURL: string = tempUrl.replace(`${pastLangV2}/`, `/${lang}`);
+      dlog(`${NAVBAR_DEBUG_TAG} inside (PROFILE) ${lang}, pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
+			await goto(newURL, { replaceState: true });
+    }
 
 		// [ℹ] otherwise,
 		// [ℹ] switch navigation for appropiate /<lang>
@@ -229,8 +248,8 @@ COMPONENT JS - BASIC
 			// [ℹ] replace path-name accordingly for "EN" - first occurance;
 			const newURL: string =
 				count == 1
-					? $page.url.pathname.replace(pastLang,'/')
-					: $page.url.pathname.replace(pastLang,'')
+					? $page.url.pathname.replace(pastLang, '/')
+					: $page.url.pathname.replace(pastLang, '')
       ;
       dlog(`${NAVBAR_DEBUG_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
 
@@ -396,6 +415,7 @@ COMPONENT JS - BASIC
 	function logout(): void {
 		dropdown_user_auth = false;
 		userBetarenaSettings.signOutUser();
+    goto('/')
 	}
 
   // NOTE: ?
@@ -463,7 +483,9 @@ TODO:FIXME: not generating for each LANG
 [ℹ] main header INIT
 -->
 <!-- svelte-ignore a11y-click-events-have-key-events -->
-<header class="column-space-center">
+<header 
+  class="column-space-center"
+  class:user-active={$userBetarenaSettings?.user != undefined}>
 	<!-- 
   [ℹ] area outside to close action (inner header)
   -->
@@ -478,7 +500,10 @@ TODO:FIXME: not generating for each LANG
 		<!-- 
     [ℹ] header TOP NAVBAR section 
     -->
-		<div id="top-header" class="row-space-out">
+		<div 
+      id="top-header" 
+      class="row-space-out"
+    >
 			<!-- 
       [ℹ] 1st half of the header nav 
       -->
@@ -633,65 +658,76 @@ TODO:FIXME: not generating for each LANG
 
 				<!-- 
         [ℹ] NAV BUTTONS [TABLET] [DESKTOP]
+        <-contents->
+        [ℹ] latest news 
+        [ℹ] betting-tips 
+        <-conditional->
         -->
-				{#if !mobileExclusive}
-					<!-- 
-          [ℹ] latest news 
-          -->
-					<a
-						rel="external"
-						href={HEADER_TRANSLATION_DATA
-							.scores_header_links.latest_news}
-					>
-						<button class="btn-main">
-							<p
-								class="
-                  color-white 
-                  s-14
-                "
-							>
-								{HEADER_TRANSLATION_DATA
-									.scores_header_translations
-									.content_platform_link}
-							</p>
-						</button>
-					</a>
+        {#if $userBetarenaSettings?.user == undefined}
+          {#if !mobileExclusive}
+            <!-- 
+            [ℹ] latest news 
+            -->
+            <a
+              rel="external"
+              href={HEADER_TRANSLATION_DATA
+                .scores_header_links.latest_news}
+            >
+              <button class="btn-main">
+                <p
+                  class="
+                    color-white 
+                    s-14
+                  "
+                >
+                  {HEADER_TRANSLATION_DATA
+                    .scores_header_translations
+                    .content_platform_link}
+                </p>
+              </button>
+            </a>
 
-					<!-- 
-          [ℹ] betting-tips 
-          -->
-					<a
-						rel="external"
-						href={HEADER_TRANSLATION_DATA
-							.scores_header_links.betting_tips}
-					>
-						<button class="btn-main">
-							<p
-								class="
-                  color-white 
-                  s-14
-                "
-							>
-								{HEADER_TRANSLATION_DATA
-									.scores_header_translations
-									.betting_tips_link}
-							</p>
-						</button>
-					</a>
-				{/if}
+            <!-- 
+            [ℹ] betting-tips 
+            -->
+            <a
+              rel="external"
+              href={HEADER_TRANSLATION_DATA
+                .scores_header_links.betting_tips}
+            >
+              <button class="btn-main">
+                <p
+                  class="
+                    color-white 
+                    s-14
+                  "
+                >
+                  {HEADER_TRANSLATION_DATA
+                    .scores_header_translations
+                    .betting_tips_link}
+                </p>
+              </button>
+            </a>
+          {/if}
+        {/if}
 			</div>
 
 			<!-- 
-      [ℹ] 2nd half of the header nav 
+      [ℹ] 2nd half of the header nav
+      <-contents->
+      [ℹ] theme-options box
+      [ℹ] odds-type box
+      [ℹ] bookmakers-type
+      <-conditional->
       -->
 			<div
 				class="row-space-start"
 				style="width: fit-content;"
 			>
-				<!-- 
-        [ℹ] theme-options box
-        -->
 				{#if !tabletExclusive}
+          <!-- 
+          [ℹ] theme-options box
+          -->
 					<div
 						id="theme-opt-container"
 						class="
@@ -801,206 +837,210 @@ TODO:FIXME: not generating for each LANG
 					<!-- 
           [ℹ] odds-type box
           -->
-					<div
-						id="odds-type-container"
-						class="
-              cursor-not-allowed 
-              dropdown-opt-box 
-              row-space-start
-            "
-						on:click={() =>
-							(dropdown_odds_type_visible =
-								!dropdown_odds_type_visible)}
-					>
-						<!-- 
-            [ℹ] name of the container-opt 
-            -->
-						<div class="m-r-10">
-							<p
-								class="
-                  color-grey 
-                  s-12 
-                  m-b-5
-                "
-							>
-								{HEADER_TRANSLATION_DATA
-									.scores_header_translations
-									.odds}
-							</p>
-							<p
-								class="
-                  color-white 
-                  s-14
-                "
-							>
-								{HEADER_TRANSLATION_DATA
-									.scores_header_translations
-									.odds_type[0]}
-							</p>
-						</div>
-						<!-- 
-            [ℹ] arrow down [hidden-menu] 
-            -->
-						<img
-							src={!dropdown_odds_type_visible
-								? arrow_down_fade
-								: arrow_up}
-							alt={!dropdown_odds_type_visible
-								? 'arrow_down_fade'
-								: 'arrow_up'}
-							width="16"
-							height="16"
-						/>
-						<!-- 
-            [ℹ] INIT-HIDDEN-dropdown-odds-type 
-            -->
-						{#if dropdown_odds_type_visible}
-							<!-- 
-              [ℹ] dropdown-menu 
+          {#if $userBetarenaSettings?.user == undefined}
+            <div
+              id="odds-type-container"
+              class="
+                cursor-not-allowed 
+                dropdown-opt-box 
+                row-space-start
+              "
+              on:click={() =>
+                (dropdown_odds_type_visible =
+                  !dropdown_odds_type_visible)}
+            >
+              <!-- 
+              [ℹ] name of the container-opt 
               -->
-							<div
-								id="odds-type-dropdown-menu"
-								transition:fly
-							>
-								{#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
-									<div
-										class="theme-opt-box"
-										on:click={() =>
-											(dropdown_odds_type_visible = false)}
-									>
-										<p
-											class="
-                        color-white 
-                        s-14
-                      "
-										>
-											{odd}
-										</p>
-									</div>
-								{/each}
-							</div>
-						{/if}
-					</div>
+              <div class="m-r-10">
+                <p
+                  class="
+                    color-grey 
+                    s-12 
+                    m-b-5
+                  "
+                >
+                  {HEADER_TRANSLATION_DATA
+                    .scores_header_translations
+                    .odds}
+                </p>
+                <p
+                  class="
+                    color-white 
+                    s-14
+                  "
+                >
+                  {HEADER_TRANSLATION_DATA
+                    .scores_header_translations
+                    .odds_type[0]}
+                </p>
+              </div>
+              <!-- 
+              [ℹ] arrow down [hidden-menu] 
+              -->
+              <img
+                src={!dropdown_odds_type_visible
+                  ? arrow_down_fade
+                  : arrow_up}
+                alt={!dropdown_odds_type_visible
+                  ? 'arrow_down_fade'
+                  : 'arrow_up'}
+                width="16"
+                height="16"
+              />
+              <!-- 
+              [ℹ] INIT-HIDDEN-dropdown-odds-type 
+              -->
+              {#if dropdown_odds_type_visible}
+                <!-- 
+                [ℹ] dropdown-menu 
+                -->
+                <div
+                  id="odds-type-dropdown-menu"
+                  transition:fly
+                >
+                  {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
+                    <div
+                      class="theme-opt-box"
+                      on:click={() =>
+                        (dropdown_odds_type_visible = false)}
+                    >
+                      <p
+                        class="
+                          color-white 
+                          s-14
+                        "
+                      >
+                        {odd}
+                      </p>
+                    </div>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/if}
 
 					<!-- 
           [ℹ] bookmakers-type 
           -->
-					<div
-						id="bookmakers-type-container"
-						class="
-              dropdown-opt-box 
-              row-space-start 
-              m-r-30
-            "
-						on:click={() =>
-							(dropdown_bookmakers_visible =
-								!dropdown_bookmakers_visible)}
-					>
-						<!-- 
-            [ℹ] name of the container-opt 
-            -->
-						<div class="m-r-10">
-							<p
-								class="
-                  color-grey 
-                  s-12 
-                  m-b-5
-                "
-							>
-								{HEADER_TRANSLATION_DATA
-									.scores_header_translations
-									.bookmakers}
-							</p>
-							<div class="row-space-start">
-								{#if $userBetarenaSettings.country_bookmaker != undefined}
-									{#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-										{#if country.includes($userBetarenaSettings.country_bookmaker
-												.toString()
-												.toUpperCase())}
-											<img
-												class="
-                          country-flag 
-                          m-r-5
+          {#if $userBetarenaSettings?.user == undefined}
+            <div
+              id="bookmakers-type-container"
+              class="
+                dropdown-opt-box 
+                row-space-start 
+                m-r-30
+              "
+              on:click={() =>
+                (dropdown_bookmakers_visible =
+                  !dropdown_bookmakers_visible)}
+            >
+              <!-- 
+              [ℹ] name of the container-opt 
+              -->
+              <div class="m-r-10">
+                <p
+                  class="
+                    color-grey 
+                    s-12 
+                    m-b-5
+                  "
+                >
+                  {HEADER_TRANSLATION_DATA
+                    .scores_header_translations
+                    .bookmakers}
+                </p>
+                <div class="row-space-start">
+                  {#if $userBetarenaSettings.country_bookmaker != undefined}
+                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
+                      {#if country.includes($userBetarenaSettings.country_bookmaker
+                          .toString()
+                          .toUpperCase())}
+                        <img
+                          class="
+                            country-flag 
+                            m-r-5
+                          "
+                          src="https://betarena.com/images/flags/{country[0]}.svg"
+                          alt={country[1]}
+                          width="20px"
+                          height="14px"
+                        />
+                        <p
+                          class="
+                            color-white 
+                            s-14
+                          "
+                        >
+                          {country[1]}
+                        </p>
+                      {/if}
+                    {/each}
+                  {/if}
+                </div>
+              </div>
+              <!-- 
+              [ℹ] arrow down [hidden-menu]
+              -->
+              <img
+                src={!dropdown_bookmakers_visible
+                  ? arrow_down_fade
+                  : arrow_up}
+                alt={!dropdown_bookmakers_visible
+                  ? 'arrow_down_fade'
+                  : 'arrow_up'}
+                width="16"
+                height="16"
+              />
+              <!-- 
+              [ℹ] INIT-HIDDEN-dropdown-bookmakers-type 
+              -->
+              {#if dropdown_bookmakers_visible}
+                <div
+                  id="bookmakers-type-dropdown-menu"
+                  transition:fly
+                >
+                  {#if $userBetarenaSettings.country_bookmaker != undefined}
+                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
+                      <div
+                        class="
+                          theme-opt-box 
+                          row-space-start
                         "
-												src="https://betarena.com/images/flags/{country[0]}.svg"
-												alt={country[1]}
-												width="20px"
-												height="14px"
-											/>
-											<p
-												class="
-                          color-white 
-                          s-14
-                        "
-											>
-												{country[1]}
-											</p>
-										{/if}
-									{/each}
-								{/if}
-							</div>
-						</div>
-						<!-- 
-            [ℹ] arrow down [hidden-menu]
-            -->
-						<img
-							src={!dropdown_bookmakers_visible
-								? arrow_down_fade
-								: arrow_up}
-							alt={!dropdown_bookmakers_visible
-								? 'arrow_down_fade'
-								: 'arrow_up'}
-							width="16"
-							height="16"
-						/>
-						<!-- 
-            [ℹ] INIT-HIDDEN-dropdown-bookmakers-type 
-            -->
-						{#if dropdown_bookmakers_visible}
-							<div
-								id="bookmakers-type-dropdown-menu"
-								transition:fly
-							>
-								{#if $userBetarenaSettings.country_bookmaker != undefined}
-									{#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-										<div
-											class="
-                        theme-opt-box 
-                        row-space-start
-                      "
-											class:country-selected={country[0] ===
-												$userBetarenaSettings.country_bookmaker
-													.toString()
-													.toUpperCase()}
-											on:click={() =>
-												selectedCountryBookmakers(
-													country[0]
-												)}
-										>
-											<img
-												class="
-                          country-flag
-                          m-r-10
-                        "
-												src="https://betarena.com/images/flags/{country[0]}.svg"
-												alt={country[1]}
-												width="20px"
-												height="14px"
-											/>
-											<p
-												class="
-                          color-white 
-                          s-14
-                        "
-											>
-												{country[1]}
-											</p>
-										</div>
-									{/each}
-								{/if}
-							</div>
-						{/if}
-					</div>
+                        class:country-selected={country[0] ===
+                          $userBetarenaSettings.country_bookmaker
+                            .toString()
+                            .toUpperCase()}
+                        on:click={() =>
+                          selectedCountryBookmakers(
+                            country[0]
+                          )}
+                      >
+                        <img
+                          class="
+                            country-flag
+                            m-r-10
+                          "
+                          src="https://betarena.com/images/flags/{country[0]}.svg"
+                          alt={country[1]}
+                          width="20px"
+                          height="14px"
+                        />
+                        <p
+                          class="
+                            color-white 
+                            s-14
+                          "
+                        >
+                          {country[1]}
+                        </p>
+                      </div>
+                    {/each}
+                  {/if}
+                </div>
+              {/if}
+            </div>
+          {/if}
 				{/if}
 
 				<!--
@@ -1073,12 +1113,13 @@ TODO:FIXME: not generating for each LANG
 								<!--
                 [ℹ] profile page button
                 -->
-								<a href="/u/dashboard">
+								<a href="/u/dashboard/{$userBetarenaSettings.lang}">
 									<div
 										class="
                       theme-opt-box
                       cursor-pointer
                     "
+                    style="width: 100%;"
 										on:click={() =>
 											(dropdown_odds_type_visible = false)}
 									>
@@ -1119,416 +1160,419 @@ TODO:FIXME: not generating for each LANG
 		</div>
 
 		<!--
-    [ℹ] bottom NAV SPORTS navbar values 
+    [ℹ] bottom NAV SPORTS navbar values
+    <-conditional->
     -->
-		<div id="bottom-header" class="row-space-out">
-			<!-- 
-      [ℹ] sliding-container 
-      FIXME: avoid using in-line styles
-      -->
-			<div
-				id="bottom-header-inner"
-				class="
-          row-space-out 
-          m-r-10
-        "
-				style="width: fit-content;"
-			>
-				<!-- 
-        [ℹ] sports-btn values 
+    {#if $userBetarenaSettings?.user == undefined}
+      <div id="bottom-header" class="row-space-out">
+        <!-- 
+        [ℹ] sliding-container 
         FIXME: avoid using in-line styles
         -->
-				<div
-					class="row-space-out"
-					style="width: fit-content;"
-				>
-					<!-- 
-          [ℹ] show only first 7 sports
+        <div
+          id="bottom-header-inner"
+          class="
+            row-space-out 
+            m-r-10
+          "
+          style="width: fit-content;"
+        >
+          <!-- 
+          [ℹ] sports-btn values 
+          FIXME: avoid using in-line styles
           -->
-					{#each { length: 7 } as _, i}
-						<!-- 
-            [ℹ] check - if "sport" column exists
-            [ℹ] meaning "data" exists
+          <div
+            class="row-space-out"
+            style="width: fit-content;"
+          >
+            <!-- 
+            [ℹ] show only first 7 sports
             -->
-						{#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]
-								.toString()
-								.toLowerCase()] != null}
-							<!-- 
-              [ℹ] check if "sport" == "Football"
+            {#each { length: 7 } as _, i}
+              <!-- 
+              [ℹ] check - if "sport" column exists
+              [ℹ] meaning "data" exists
               -->
-							{#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0] == 'football'}
-								<a
-									
-									href={homepageURL}
-									title={logoLink}
-								>
-									<button
-										class="
-                      sports-btn 
-                      m-r-10
-                    "
-										on:click={() =>
-											(selected_sports =
-												HEADER_TRANSLATION_DATA
-													.scores_header_translations
-													.sports[i][0])}
-										class:selected-sports={selected_sports ==
-											HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.sports[i][0]}
-									>
-										<img
-											class="m-r-10"
-											src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-												i
-											][0].toLocaleLowerCase()}.svg`}
-											alt="${HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.sports[i][0]}-img"
-											width="20px"
-											height="20px"
-										/>
-										<p
-											class="
-                        color-white 
-                        s-14 
-                        m-r-10
-                      "
-										>
-											{HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.sports[i][1]}
-										</p>
-										<p
-											class="
-                        color-white 
-                        s-14 
-                        sport-counter
-                      "
-										>
-											{HEADER_TRANSLATION_DATA
-												.scores_header_fixtures_information[
-												HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-													i
-												][0]
-													.toString()
-													.toLowerCase()
-											]}
-										</p>
-									</button>
-								</a>
-								<!-- 
-              [ℹ] otherwise, standard sport display
-              -->
-							{:else}
-								<button
-									class="
-                    sports-btn 
-                    m-r-10
-                  "
-									on:click={() =>
-										(selected_sports =
-											HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.sports[i][0])}
-									class:selected-sports={selected_sports ==
-										HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.sports[i][0]}
-								>
-									<img
-										class="m-r-10"
-										src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-											i
-										][0].toLocaleLowerCase()}.svg`}
-										alt="${HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.sports[i][0]}-img"
-										width="20px"
-										height="20px"
-									/>
-									<p
-										class="
-                      color-white 
-                      s-14 
-                      m-r-10
-                    "
-									>
-										{HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.sports[i][1]}
-									</p>
-									<p
-										class="
-                      color-white 
-                      s-14 
-                      sport-counter
-                    "
-									>
-										{HEADER_TRANSLATION_DATA
-											.scores_header_fixtures_information[
-											HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-												i
-											][0]
-												.toString()
-												.toLowerCase()
-										]}
-									</p>
-								</button>
-							{/if}
-							<!-- 
-            [ℹ] otherwise, no-data exists
-            [ℹ] and sport should show "soon"
-            -->
-						{:else}
-							{#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
-								{#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]
-									.toString()
-									.toLowerCase() === sport[0]
-										.toString()
-										.toLowerCase()}
-									<button
-										class="
-                      sports-btn 
-                      m-r-10 
-                      cursor-not-allowed
-                    "
-										on:click={() =>
-											(selected_sports =
-												HEADER_TRANSLATION_DATA
-													.scores_header_translations
-													.sports[i][0])}
-										class:selected-sports={selected_sports ==
-											HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.sports[i][0]}
-									>
-										<img
-											class="
-                        m-r-10 
-                        soon-opacitiy
-                      "
-											src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-												i
-											][0].toLocaleLowerCase()}.svg`}
-											alt="${HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.sports[i][0]}-img"
-											width="20px"
-											height="20px"
-										/>
-										<p
-											class="
-                        color-white 
-                        s-14 
-                        m-r-10 
-                        soon-opacitiy
-                      "
-										>
-											{HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.sports[i][1]}
-										</p>
-										<p
-											class="
-                        color-white 
-                        s-14 
-                        sport-counter
-                      "
-										>
-											{sport[1]
-												.toString()
-												.toLowerCase()}
-										</p>
-									</button>
-								{/if}
-							{/each}
-						{/if}
-					{/each}
-				</div>
-			</div>
-
-			<!-- 
-      [ℹ] "more sports" button box -->
-			<div id="more-sports-menu-container">
-				<!-- 
-        [ℹ] menu-more-sports-btn-DESKTOP + TABLET -->
-				{#if !mobileExclusive}
-					<!-- 
-          [ℹ] menu-sports-btn -->
-					<button
-						id="more-sports-menu"
-						on:click={() =>
-							(dropdown_more_sports_menu =
-								!dropdown_more_sports_menu)}
-					>
-						<img
-							class="m-r-10"
-							src={menu_sports_icon}
-							alt="menu_btn"
-							width="20px"
-							height="20px"
-						/>
-						<p
-							class="
-                color-white 
-                s-14 
-                m-r-10
-              "
-						>
-							{HEADER_TRANSLATION_DATA
-								.scores_header_translations
-								.more_sports}
-						</p>
-						<!-- 
-            [ℹ] arrow down [hidden-menu] 
-            -->
-						<img
-							src={!dropdown_more_sports_menu
-								? arrow_down_fade
-								: arrow_up}
-							alt={!dropdown_more_sports_menu
-								? 'arrow_down_fade'
-								: 'arrow_up'}
-							width="20"
-							height="20"
-						/>
-					</button>
-					<!-- 
-          [ℹ] menu-more-sports-btn-mobile -->
-				{:else}
-					<button
-						id="more-sports-menu"
-						on:click={() =>
-							(mobileExclusiveMoreSports =
-								!mobileExclusiveMoreSports)}
-					>
-						<p
-							class="
-                color-white 
-                s-14
-              "
-						>
-							{HEADER_TRANSLATION_DATA
-								.scores_header_translations
-								.more_sports}
-						</p>
-					</button>
-				{/if}
-
-				<!-- 
-        [ℹ] INIT-HIDDEN-dropdown-more-sports-menu -->
-				{#if dropdown_more_sports_menu && !mobileExclusive}
-					<div
-						id="more-sports-dropdown-menu"
-						transition:fly
-					>
-						{#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
-							<!-- 
-              [ℹ] check - if sport is column -->
-							{#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0]
-									.toString()
-									.toLowerCase()] != null}
-								<button
-									class="
-                    sports-btn 
-                    row-space-out
-                  "
-									on:click={() =>
-										(dropdown_more_sports_menu = false)}
-								>
-									<div
-										class="row-space-out"
-										style="width: fit-content;"
-									>
-										<img
-											class="m-r-5"
-											src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-											alt="${sport[0]}-img"
-											width="20px"
-											height="20px"
-										/>
-										<p
-											class="
-                        color-white 
-                        s-14 
-                        m-r-10
-                      "
-										>
-											{sport[1]}
-										</p>
-									</div>
-									<p
-										class="
-                      color-white 
-                      s-14 
-                      sport-counter-dark
-                    "
-									>
-										{HEADER_TRANSLATION_DATA
-											.scores_header_fixtures_information[
-											sport[0].toString()
-										]}
-									</p>
-								</button>
-							{:else}
-								{#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
-									{#if sport[0]
-										.toString()
-										.toLowerCase() === _sport[0]
-											.toString()
-											.toLowerCase()}
-										<button
-											class="
+              {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]
+                  .toString()
+                  .toLowerCase()] != null}
+                <!-- 
+                [ℹ] check if "sport" == "Football"
+                -->
+                {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0] == 'football'}
+                  <a
+                    
+                    href={homepageURL}
+                    title={logoLink}
+                  >
+                    <button
+                      class="
                         sports-btn 
-                        row-space-out 
-                        cursor-not-allowed
+                        m-r-10
                       "
-											on:click={() =>
-												(dropdown_more_sports_menu = false)}
-										>
-											<div
-												class="row-space-out"
-												style="width: fit-content;"
-											>
-												<img
-													class="m-r-5 soon-opacitiy"
-													src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-													alt="${sport[0]}-img"
-													width="20px"
-													height="20px"
-												/>
-												<p
-													class="
-                            color-white 
-                            s-14 
-                            m-r-10 
-                            soon-opacitiy
-                          "
-												>
-													{sport[1]}
-												</p>
-											</div>
-											<p
-												class="
+                      on:click={() =>
+                        (selected_sports =
+                          HEADER_TRANSLATION_DATA
+                            .scores_header_translations
+                            .sports[i][0])}
+                      class:selected-sports={selected_sports ==
+                        HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .sports[i][0]}
+                    >
+                      <img
+                        class="m-r-10"
+                        src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
+                          i
+                        ][0].toLocaleLowerCase()}.svg`}
+                        alt="${HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .sports[i][0]}-img"
+                        width="20px"
+                        height="20px"
+                      />
+                      <p
+                        class="
                           color-white 
                           s-14 
-                          sport-counter-dark
+                          m-r-10
                         "
-											>
-												{_sport[1]
-													.toString()
-													.toLowerCase()}
-											</p>
-										</button>
-									{/if}
-								{/each}
-							{/if}
-						{/each}
-					</div>
-				{/if}
-			</div>
-		</div>
+                      >
+                        {HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .sports[i][1]}
+                      </p>
+                      <p
+                        class="
+                          color-white 
+                          s-14 
+                          sport-counter
+                        "
+                      >
+                        {HEADER_TRANSLATION_DATA
+                          .scores_header_fixtures_information[
+                          HEADER_TRANSLATION_DATA.scores_header_translations.sports[
+                            i
+                          ][0]
+                            .toString()
+                            .toLowerCase()
+                        ]}
+                      </p>
+                    </button>
+                  </a>
+                  <!-- 
+                [ℹ] otherwise, standard sport display
+                -->
+                {:else}
+                  <button
+                    class="
+                      sports-btn 
+                      m-r-10
+                    "
+                    on:click={() =>
+                      (selected_sports =
+                        HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .sports[i][0])}
+                    class:selected-sports={selected_sports ==
+                      HEADER_TRANSLATION_DATA
+                        .scores_header_translations
+                        .sports[i][0]}
+                  >
+                    <img
+                      class="m-r-10"
+                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
+                        i
+                      ][0].toLocaleLowerCase()}.svg`}
+                      alt="${HEADER_TRANSLATION_DATA
+                        .scores_header_translations
+                        .sports[i][0]}-img"
+                      width="20px"
+                      height="20px"
+                    />
+                    <p
+                      class="
+                        color-white 
+                        s-14 
+                        m-r-10
+                      "
+                    >
+                      {HEADER_TRANSLATION_DATA
+                        .scores_header_translations
+                        .sports[i][1]}
+                    </p>
+                    <p
+                      class="
+                        color-white 
+                        s-14 
+                        sport-counter
+                      "
+                    >
+                      {HEADER_TRANSLATION_DATA
+                        .scores_header_fixtures_information[
+                        HEADER_TRANSLATION_DATA.scores_header_translations.sports[
+                          i
+                        ][0]
+                          .toString()
+                          .toLowerCase()
+                      ]}
+                    </p>
+                  </button>
+                {/if}
+                <!-- 
+              [ℹ] otherwise, no-data exists
+              [ℹ] and sport should show "soon"
+              -->
+              {:else}
+                {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
+                  {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]
+                    .toString()
+                    .toLowerCase() === sport[0]
+                      .toString()
+                      .toLowerCase()}
+                    <button
+                      class="
+                        sports-btn 
+                        m-r-10 
+                        cursor-not-allowed
+                      "
+                      on:click={() =>
+                        (selected_sports =
+                          HEADER_TRANSLATION_DATA
+                            .scores_header_translations
+                            .sports[i][0])}
+                      class:selected-sports={selected_sports ==
+                        HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .sports[i][0]}
+                    >
+                      <img
+                        class="
+                          m-r-10 
+                          soon-opacitiy
+                        "
+                        src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
+                          i
+                        ][0].toLocaleLowerCase()}.svg`}
+                        alt="${HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .sports[i][0]}-img"
+                        width="20px"
+                        height="20px"
+                      />
+                      <p
+                        class="
+                          color-white 
+                          s-14 
+                          m-r-10 
+                          soon-opacitiy
+                        "
+                      >
+                        {HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .sports[i][1]}
+                      </p>
+                      <p
+                        class="
+                          color-white 
+                          s-14 
+                          sport-counter
+                        "
+                      >
+                        {sport[1]
+                          .toString()
+                          .toLowerCase()}
+                      </p>
+                    </button>
+                  {/if}
+                {/each}
+              {/if}
+            {/each}
+          </div>
+        </div>
+
+        <!-- 
+        [ℹ] "more sports" button box -->
+        <div id="more-sports-menu-container">
+          <!-- 
+          [ℹ] menu-more-sports-btn-DESKTOP + TABLET -->
+          {#if !mobileExclusive}
+            <!-- 
+            [ℹ] menu-sports-btn -->
+            <button
+              id="more-sports-menu"
+              on:click={() =>
+                (dropdown_more_sports_menu =
+                  !dropdown_more_sports_menu)}
+            >
+              <img
+                class="m-r-10"
+                src={menu_sports_icon}
+                alt="menu_btn"
+                width="20px"
+                height="20px"
+              />
+              <p
+                class="
+                  color-white 
+                  s-14 
+                  m-r-10
+                "
+              >
+                {HEADER_TRANSLATION_DATA
+                  .scores_header_translations
+                  .more_sports}
+              </p>
+              <!-- 
+              [ℹ] arrow down [hidden-menu] 
+              -->
+              <img
+                src={!dropdown_more_sports_menu
+                  ? arrow_down_fade
+                  : arrow_up}
+                alt={!dropdown_more_sports_menu
+                  ? 'arrow_down_fade'
+                  : 'arrow_up'}
+                width="20"
+                height="20"
+              />
+            </button>
+            <!-- 
+            [ℹ] menu-more-sports-btn-mobile -->
+          {:else}
+            <button
+              id="more-sports-menu"
+              on:click={() =>
+                (mobileExclusiveMoreSports =
+                  !mobileExclusiveMoreSports)}
+            >
+              <p
+                class="
+                  color-white 
+                  s-14
+                "
+              >
+                {HEADER_TRANSLATION_DATA
+                  .scores_header_translations
+                  .more_sports}
+              </p>
+            </button>
+          {/if}
+
+          <!-- 
+          [ℹ] INIT-HIDDEN-dropdown-more-sports-menu -->
+          {#if dropdown_more_sports_menu && !mobileExclusive}
+            <div
+              id="more-sports-dropdown-menu"
+              transition:fly
+            >
+              {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
+                <!-- 
+                [ℹ] check - if sport is column -->
+                {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0]
+                    .toString()
+                    .toLowerCase()] != null}
+                  <button
+                    class="
+                      sports-btn 
+                      row-space-out
+                    "
+                    on:click={() =>
+                      (dropdown_more_sports_menu = false)}
+                  >
+                    <div
+                      class="row-space-out"
+                      style="width: fit-content;"
+                    >
+                      <img
+                        class="m-r-5"
+                        src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                        alt="${sport[0]}-img"
+                        width="20px"
+                        height="20px"
+                      />
+                      <p
+                        class="
+                          color-white 
+                          s-14 
+                          m-r-10
+                        "
+                      >
+                        {sport[1]}
+                      </p>
+                    </div>
+                    <p
+                      class="
+                        color-white 
+                        s-14 
+                        sport-counter-dark
+                      "
+                    >
+                      {HEADER_TRANSLATION_DATA
+                        .scores_header_fixtures_information[
+                        sport[0].toString()
+                      ]}
+                    </p>
+                  </button>
+                {:else}
+                  {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
+                    {#if sport[0]
+                      .toString()
+                      .toLowerCase() === _sport[0]
+                        .toString()
+                        .toLowerCase()}
+                      <button
+                        class="
+                          sports-btn 
+                          row-space-out 
+                          cursor-not-allowed
+                        "
+                        on:click={() =>
+                          (dropdown_more_sports_menu = false)}
+                      >
+                        <div
+                          class="row-space-out"
+                          style="width: fit-content;"
+                        >
+                          <img
+                            class="m-r-5 soon-opacitiy"
+                            src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                            alt="${sport[0]}-img"
+                            width="20px"
+                            height="20px"
+                          />
+                          <p
+                            class="
+                              color-white 
+                              s-14 
+                              m-r-10 
+                              soon-opacitiy
+                            "
+                          >
+                            {sport[1]}
+                          </p>
+                        </div>
+                        <p
+                          class="
+                            color-white 
+                            s-14 
+                            sport-counter-dark
+                          "
+                        >
+                          {_sport[1]
+                            .toString()
+                            .toLowerCase()}
+                        </p>
+                      </button>
+                    {/if}
+                  {/each}
+                {/if}
+              {/each}
+            </div>
+          {/if}
+        </div>
+      </div>
+    {/if}
 
 		<!--
     [ℹ] navbar (side) 
@@ -1960,121 +2004,123 @@ TODO:FIXME: not generating for each LANG
 		<!-- 
     [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] 
     -->
-		{#if mobileExclusive}
-			{#if mobileExclusiveMoreSports}
-				<nav
-					id="mobile-exclusive-sports-menu"
-					in:fly={{ x: 200, duration: 500 }}
-					out:fly={{ x: 200, duration: 500 }}
-				>
-					<div>
-						<!-- [ℹ] top-action-row -->
-						<div class="row-space-out">
-							<!-- .. title -->
-							<p class="s-20 color-white">
-								{HEADER_TRANSLATION_DATA
-									.scores_header_translations
-									.sports_list}
-							</p>
+    {#if $userBetarenaSettings?.user == undefined}
+      {#if mobileExclusive}
+        {#if mobileExclusiveMoreSports}
+          <nav
+            id="mobile-exclusive-sports-menu"
+            in:fly={{ x: 200, duration: 500 }}
+            out:fly={{ x: 200, duration: 500 }}
+          >
+            <div>
+              <!-- [ℹ] top-action-row -->
+              <div class="row-space-out">
+                <!-- .. title -->
+                <p class="s-20 color-white">
+                  {HEADER_TRANSLATION_DATA
+                    .scores_header_translations
+                    .sports_list}
+                </p>
 
-							<!-- [ℹ] close-side-nav -->
-							<img
-								src={close}
-								alt="close-icon"
-								width="24px"
-								height="24px"
-								on:click={() =>
-									(mobileExclusiveMoreSports = false)}
-							/>
-						</div>
+                <!-- [ℹ] close-side-nav -->
+                <img
+                  src={close}
+                  alt="close-icon"
+                  width="24px"
+                  height="24px"
+                  on:click={() =>
+                    (mobileExclusiveMoreSports = false)}
+                />
+              </div>
 
-						<!-- [ℹ] sports-list-grid -->
-						<div
-							id="mobile-sports-grid"
-							class="column-start-grid-start m-t-25"
-						>
-							{#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
-								<!-- [ℹ] check - if sport is column -->
-								{#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0]
-										.toString()
-										.toLowerCase()] != null}
-									<button
-										class="sports-btn row-space-out"
-									>
-										<div
-											class="row-space-out"
-											style="width: fit-content;"
-										>
-											<img
-												class="m-r-10"
-												src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-												alt="${sport[0]}-img"
-												width="20px"
-												height="20px"
-											/>
-											<p
-												class="color-white s-14 m-r-10"
-											>
-												{sport[1]}
-											</p>
-										</div>
-										<p
-											class="color-white s-14 sport-counter"
-										>
-											{HEADER_TRANSLATION_DATA
-												.scores_header_fixtures_information[
-												sport[0]
-													.toString()
-													.toLowerCase()
-											]}
-										</p>
-									</button>
-								{:else}
-									<!-- else content here -->
-									{#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
-										<!-- -->
-										{#if sport[0]
-											.toString()
-											.toLowerCase() === _sport[0]
-												.toString()
-												.toLowerCase()}
-											<button
-												class="sports-btn row-space-out"
-											>
-												<div
-													class="row-space-out"
-													style="width: fit-content;"
-												>
-													<img
-														class="m-r-10 soon-opacitiy"
-														src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-														alt="${sport[0]}-img"
-														width="20px"
-														height="20px"
-													/>
-													<p
-														class="color-white s-14 m-r-10 soon-opacitiy"
-													>
-														{sport[1]}
-													</p>
-												</div>
-												<p
-													class="color-white s-14 sport-counter"
-												>
-													{_sport[1]
-														.toString()
-														.toLowerCase()}
-												</p>
-											</button>
-										{/if}
-									{/each}
-								{/if}
-							{/each}
-						</div>
-					</div>
-				</nav>
-			{/if}
-		{/if}
+              <!-- [ℹ] sports-list-grid -->
+              <div
+                id="mobile-sports-grid"
+                class="column-start-grid-start m-t-25"
+              >
+                {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
+                  <!-- [ℹ] check - if sport is column -->
+                  {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0]
+                      .toString()
+                      .toLowerCase()] != null}
+                    <button
+                      class="sports-btn row-space-out"
+                    >
+                      <div
+                        class="row-space-out"
+                        style="width: fit-content;"
+                      >
+                        <img
+                          class="m-r-10"
+                          src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                          alt="${sport[0]}-img"
+                          width="20px"
+                          height="20px"
+                        />
+                        <p
+                          class="color-white s-14 m-r-10"
+                        >
+                          {sport[1]}
+                        </p>
+                      </div>
+                      <p
+                        class="color-white s-14 sport-counter"
+                      >
+                        {HEADER_TRANSLATION_DATA
+                          .scores_header_fixtures_information[
+                          sport[0]
+                            .toString()
+                            .toLowerCase()
+                        ]}
+                      </p>
+                    </button>
+                  {:else}
+                    <!-- else content here -->
+                    {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
+                      <!-- -->
+                      {#if sport[0]
+                        .toString()
+                        .toLowerCase() === _sport[0]
+                          .toString()
+                          .toLowerCase()}
+                        <button
+                          class="sports-btn row-space-out"
+                        >
+                          <div
+                            class="row-space-out"
+                            style="width: fit-content;"
+                          >
+                            <img
+                              class="m-r-10 soon-opacitiy"
+                              src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
+                              alt="${sport[0]}-img"
+                              width="20px"
+                              height="20px"
+                            />
+                            <p
+                              class="color-white s-14 m-r-10 soon-opacitiy"
+                            >
+                              {sport[1]}
+                            </p>
+                          </div>
+                          <p
+                            class="color-white s-14 sport-counter"
+                          >
+                            {_sport[1]
+                              .toString()
+                              .toLowerCase()}
+                          </p>
+                        </button>
+                      {/if}
+                    {/each}
+                  {/if}
+                {/each}
+              </div>
+            </div>
+          </nav>
+        {/if}
+      {/if}
+	  {/if}
 	{/if}
 </header>
 
@@ -2088,7 +2134,9 @@ COMPONENT STYLE
 		height: 128px;
 		position: relative;
 		z-index: 1000;
-	}
+	} header.user-active {
+		height: 72px !important;
+  }
 
 	/* 
 	top-header-betarena-brand & bottom-header 
