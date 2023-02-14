@@ -5,10 +5,10 @@ import {
 } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
-import type { LayoutServerLoad } from './$types';
+import type { LayoutLoad } from './$types';
 
-/** @type {import('./$types').LayoutServerLoad} */
-export async function load(event): Promise<LayoutServerLoad> {
+/** @type {import('./$types').LayoutLoad} */
+export async function load(event): Promise<LayoutLoad> {
 
   const {
     url,
