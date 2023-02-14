@@ -1,4 +1,4 @@
-import { dev } from '$app/environment';
+// import { dev } from '$app/environment';
 
 export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
 export const ERROR_CODE_INVALID = 404;
@@ -7,13 +7,17 @@ export const LAYOUT_1_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load er
 export const HOME_LANG_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/lang)`;
 export const FIXTURE_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/fixture)`;
 
-const MASTER_DEBUG_TOGGLE = true
+const MASTER_DEBUG_TOGGLE = true // NOTE: overrides all individual toggles for show/hide logs
+const DEV_OVERRIDE = true // true/false || dev // overrides "dev" state and forces logs even in PROD where dev == false;
 
 export const NAVBAR_DEBUG_TAG = 'navbar [DEBUG] |'
 export const NAVBAR_DEBUG_STYLE = 'background: purple; color: #FFFFFF'
 export const FOOTER_DEBUG_TAG = 'footer [DEBUG] |'
 export const FOOTER_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
 export const FOOTER_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const AUTH_DEBUG_TAG = 'auth [DEBUG] |'
+export const AUTH_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const AUTH_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
 export const ABOUT_FW_DEBUG_TAG = 'fixtures (about) [DEBUG] |'
 export const ABOUT_FW_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
 export const ABOUT_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
@@ -135,8 +139,8 @@ export function dlog(
 	style?: string
 ) {
 	// [🐞]
-	if (dev && show && !style) console.debug(msg);
-	if (dev && typeof(msg) == 'string' && show && style) console.debug(`%c${msg}`, style);
+	if (DEV_OVERRIDE && show && !style) console.debug(msg);
+	if (DEV_OVERRIDE && typeof(msg) == 'string' && show && style) console.debug(`%c${msg}`, style);
 }
 
 /**
@@ -156,7 +160,7 @@ export function dlogv2(
 	style?: string
 ) {
 	// [🐞]
-	if (dev && show) {
+	if (DEV_OVERRIDE && show) {
 		console.groupCollapsed(
 			`%c${groupName}`,
 			style
@@ -181,5 +185,5 @@ export function errlog(
   msg: string
 ) {
 	// [🐞]
-	if (dev) console.error(`❌ Error: ${msg}`);
+	if (DEV_OVERRIDE) console.error(`❌ Error: ${msg}`);
 }

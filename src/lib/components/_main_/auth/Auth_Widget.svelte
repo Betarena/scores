@@ -41,7 +41,7 @@ COMPONENT JS (w/ TS)
 		setDoc
 	} from 'firebase/firestore';
 	import { generateUsername } from 'unique-username-generator';
-	// import { Web3Provider } from '@ethersproject/providers';
+// import { Web3Provider } from '@ethersproject/providers';
 	// import WalletConnectProvider from "@walletconnect/web3-provider"; FIXME: not working, asked
 	// import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
 	// import { mainnet } from "@wagmi/core/chains";
@@ -49,7 +49,7 @@ COMPONENT JS (w/ TS)
 
 	import type { REDIS_CACHE_SINGLE_auth_translation } from '$lib/models/_main_/auth/types';
 
-	import { dlog, errlog } from '$lib/utils/debug';
+	import { AUTH_DEBUG_STYLE, AUTH_DEBUG_TAG, AUTH_DEBUG_TOGGLE, dlog, errlog } from '$lib/utils/debug';
 	import discord_icon from './assets/discord.svg';
 	import email_verify from './assets/email-verify.svg';
 	import error_icon from './assets/error-alert.svg';
@@ -102,10 +102,6 @@ COMPONENT JS (w/ TS)
 		// },
 	};
 
-	// [🐞]
-	let enable_logs: boolean = true;
-	let dev_console_tag: string =
-		'_main_ | authentication [DEV]';
 	if (dev) email_input = 'migbashdev@gmail.com';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -113,13 +109,11 @@ COMPONENT JS (w/ TS)
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	let server_side_language = platfrom_lang_ssr(
-		$page?.routeId,
+		$page?.route.id,
 		$page?.error,
 		$page?.params?.lang
 	);
-	dlog(
-		`server_side_language: ${server_side_language}`
-	);
+  dlog(`${AUTH_DEBUG_TAG} server_side_language: ${server_side_language}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -204,9 +198,7 @@ COMPONENT JS (w/ TS)
 							error
 						);
 					// [🐞]
-					if (dev)
-						console.log('credential', credential);
-					if (dev) console.log('email', email);
+          dlog(`${AUTH_DEBUG_TAG} credential: ${credential}; email: ${email}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 					// TODO: error user-sign in
 					// signInWithCredential(auth, credential)
 					// .then(user => {
@@ -226,7 +218,7 @@ COMPONENT JS (w/ TS)
 		try {
 			email_error_format = false;
 			processing = true;
-			dlog(email_input);
+      dlog(`${AUTH_DEBUG_TAG} email_input: ${email_input}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			await fetchSignInMethodsForEmail(
 				auth,
 				email_input
@@ -299,7 +291,7 @@ COMPONENT JS (w/ TS)
 			)
 		) {
 			auth_service = 'email';
-			dlog('🔵 EmailLink OAuth2');
+      dlog(`${AUTH_DEBUG_TAG} 🔵 EmailLink OAuth2`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			// NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
 			// NOTE: Additional state parameters can also be passed via URL.
 			// NOTE: This can be used to continue the user's intended action before triggering
@@ -309,7 +301,7 @@ COMPONENT JS (w/ TS)
 			let email = window.localStorage.getItem(
 				'emailForSignIn'
 			);
-			dlog(email);
+      dlog(`${AUTH_DEBUG_TAG} email: ${email}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			if (!email) {
 				// User opened the link on a different device. To prevent session fixation
 				// attacks, ask the user to provide the associated email again. For example:
@@ -328,7 +320,7 @@ COMPONENT JS (w/ TS)
 						?.get('auth_type')
 						?.toString() as 'login' | 'register';
 					const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
-					dlog('🟢 EmailLink Auth');
+          dlog(`${AUTH_DEBUG_TAG} 🟢 EmailLink Auth`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 					window.localStorage.removeItem(
 						'emailForSignIn'
 					);
@@ -337,8 +329,8 @@ COMPONENT JS (w/ TS)
 					// result.additionalUserInfo.profile == null
 					// NOTE: You can check if the user is new or existing:
 					// result.additionalUserInfo.isNewUser
-					dlog(result?.user?.displayName);
-					dlog(result?.user?.email);
+          dlog(`${AUTH_DEBUG_TAG} result?.user?.displayName: ${result?.user?.displayName}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+          dlog(`${AUTH_DEBUG_TAG} result?.user?.email: ${result?.user?.email}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 					success_auth_wrap(
 						result?.user,
 						null,
@@ -365,7 +357,7 @@ COMPONENT JS (w/ TS)
 			processing = true;
 			const callback_auth_url =
 				$page?.url?.origin;
-			dlog(callback_auth_url);
+      dlog(`${AUTH_DEBUG_TAG} callback_auth_url: ${callback_auth_url}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			const discord_outh_url = import.meta.env
 				.VITE_DISCORD_OAUTH_URL;
 			const final_url_nav = `${discord_outh_url}?redirect_url=${callback_auth_url}`;
@@ -387,7 +379,7 @@ COMPONENT JS (w/ TS)
 		// [ℹ] validate user is attempting Discord OAuth2
 		if (oauth2 == 'discord' && f_uid != null) {
 			// [ℹ] success;
-			dlog('🔵 Discord OAuth2');
+      dlog(`${AUTH_DEBUG_TAG} 🔵 Discord OAuth2`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			// [ℹ] clean up url from query
 			goto(revert_url, { replaceState: true });
 			// [ℹ] firebase sign-in
@@ -395,7 +387,7 @@ COMPONENT JS (w/ TS)
 				.then((userCredential) => {
 					// [ℹ] successful sign-in / login
 					auth_service = 'discord';
-					dlog('🟢 Success! Discord OAuth2');
+          dlog(`${AUTH_DEBUG_TAG} 🟢 Success! Discord OAuth2'`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 					const user = userCredential?.user;
 					success_auth_wrap(
 						user,
@@ -521,8 +513,8 @@ COMPONENT JS (w/ TS)
 		}
 		// [ℹ] populate user data to firestore (DB)
 		try {
-			dlog(user_obj?.firebase_user_data.uid);
-			dlog(typeof user_obj);
+      dlog(`${AUTH_DEBUG_TAG} user_obj?.firebase_user_data.uid): ${user_obj?.firebase_user_data.uid}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AUTH_DEBUG_TAG} user_obj?.firebase_user_data.uid): ${user_obj?.firebase_user_data.uid}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			await setDoc(
 				doc(
 					db_firestore,
@@ -609,21 +601,9 @@ COMPONENT JS (w/ TS)
 			// else {
 			//   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
 			// }
-			if (dev)
-				console.log(
-					`🔵 More than 1 provider identified!`,
-					window.ethereum.providers.length
-				);
-			if (dev)
-				console.log(
-					'target_wallet',
-					target_wallet
-				);
-			if (dev)
-				console.log(
-					'window.ethereum.providers',
-					window.ethereum.providers
-				);
+      dlog(`${AUTH_DEBUG_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AUTH_DEBUG_TAG} target_wallet ${target_wallet}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AUTH_DEBUG_TAG} window.ethereum.providers ${window.ethereum.providers}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 		} else {
 			if (
 				walletType == 'isMetaMask' &&
@@ -640,29 +620,14 @@ COMPONENT JS (w/ TS)
 			// else {
 			//   target_wallet = window.ethereum[walletType]
 			// }
-			if (dev)
-				console.log(
-					`🔵 1 provider identified!`,
-					window.ethereum
-				);
-			if (dev)
-				console.log(
-					'target_wallet',
-					target_wallet
-				);
-			if (dev)
-				console.log(
-					'window.ethereum',
-					window.ethereum
-				);
+      dlog(`${AUTH_DEBUG_TAG} 🔵 1 provider identified! ${window.ethereum}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AUTH_DEBUG_TAG} target_wallet ${target_wallet}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AUTH_DEBUG_TAG} window.ethereum ${window.ethereum}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 		}
 
 		// [ℹ] TARGET (THIS) single provider check true
 		if (target_wallet != undefined) {
-			if (dev)
-				console.log(
-					`🟢 ${walletType} identified`
-				);
+      dlog(`${AUTH_DEBUG_TAG} 🟢 ${walletType} identified`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			// DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
 			// DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
 			// DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
@@ -679,9 +644,7 @@ COMPONENT JS (w/ TS)
 			// });
 			return [true, target_wallet];
 		} else {
-			console.log(
-				`🔴 no target wallet (${walletType}) identified`
-			);
+      dlog(`${AUTH_DEBUG_TAG} 🔴 no target wallet (${walletType}) identified`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
 			return [false, null];
 		}
 	}
