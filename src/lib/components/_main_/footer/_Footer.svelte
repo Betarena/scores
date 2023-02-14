@@ -100,7 +100,8 @@
 	COMPONENT HTML
 =================== -->
 
-<!-- [ℹ] FOOTER SEO 
+<!-- 
+[ℹ] FOOTER SEO 
 -->
 {#if FOOTER_TRANSLATION_DATA != undefined && !hideSEO}
 	<!-- [ℹ] betarena-logo-homepage-correct-url 
@@ -143,17 +144,18 @@
 	{/each}
 {/if}
 
-<!-- [ℹ] FOOTER CLIENT COMPONENT 
+<!-- 
+[ℹ] FOOTER CLIENT COMPONENT 
 -->
 <footer>
-	<!-- [ℹ] wait until THIS component recives the required DATA 
-  -->
 	{#if FOOTER_TRANSLATION_DATA != undefined}
-		<!-- [ℹ] mobile - version only 
+		<!-- 
+    [ℹ] mobile - version only 
     -->
 		{#if mobileExclusive && tabletExclusive}
 			<div id="inner-footer">
-				<!-- [ℹ] brand-logo-betarena 
+				<!-- 
+        [ℹ] brand-logo-betarena 
         -->
 				<div
 					id="brand"
@@ -172,8 +174,8 @@
 						/>
 					</a>
 				</div>
-
-				<!-- [ℹ] follow-us-and-social-media 
+				<!-- 
+        [ℹ] follow-us-and-social-media 
         -->
 				<div class="m-b-40">
 					<p
@@ -182,8 +184,8 @@
 						{FOOTER_TRANSLATION_DATA
 							.scores_footer_translations.follow}
 					</p>
-
-					<!-- [ℹ] social media follows 
+					<!-- 
+          [ℹ] social media follows 
           -->
 					<div
 						id="social-media-box"
@@ -218,13 +220,15 @@
 					</div>
 				</div>
 
-				<!-- [ℹ] subscribe-to-newletter 
+				<!-- 
+        [ℹ] subscribe-to-newletter 
         -->
 				<div
 					id="newsletter-container"
 					class="m-b-30"
 				>
-					<!-- [ℹ] title-section 
+					<!-- 
+          [ℹ] title-section 
           -->
 					<p
 						class="color-white s-14 w-normal m-b-8 text-left"
@@ -234,13 +238,15 @@
 							.subscribe_newsletter}
 					</p>
 
-					<!-- [ℹ] form-start 
+					<!-- 
+          [ℹ] form-start 
           -->
 					<form
 						on:submit|preventDefault={() =>
 							submitEmail()}
 					>
-						<!-- [ℹ] input-email-field 
+						<!-- 
+            [ℹ] input-email-field 
             -->
 						<input
 							type="email"
@@ -251,7 +257,8 @@
 								.type_email}
 							class="m-b-12 s-14 w-400 color-grey"
 						/>
-						<!-- [ℹ] button-subscribe-action 
+						<!-- 
+            [ℹ] button-subscribe-action 
             -->
 						<button
 							type="submit"
@@ -267,14 +274,17 @@
 					</form>
 				</div>
 
-				<!-- [ℹ] menu-list num.1 
+				<!-- 
+        [ℹ] menu-list num.1 
         -->
 
-				<!-- [ℹ] generate-translations-for-footer 
+				<!-- 
+        [ℹ] generate-translations-for-footer 
         -->
 				<div id="menu-list" class="m-b-40">
 					<ul>
-						<!-- [ℹ] latest-news 
+						<!-- 
+            [ℹ] latest-news 
             -->
 						<li class="m-r-10">
 							<a
@@ -387,7 +397,9 @@
 					</ul>
 				</div>
 
-				<!-- [ℹ] legal-begambleawareorg -->
+				<!-- 
+        [ℹ] legal-begambleawareorg 
+        -->
 				<div
 					class="row-space-start m-b-30 place-center"
 					style="width: auto;"
@@ -425,7 +437,8 @@
 			</div>
 		{/if}
 
-		<!-- [ℹ] tablet version only 
+		<!-- 
+    [ℹ] tablet - version only 
     -->
 		{#if !mobileExclusive && tabletExclusive}
 			<div
@@ -693,7 +706,8 @@
 			</div>
 		{/if}
 
-		<!-- [ℹ] desktop version only 
+		<!-- 
+    [ℹ] desktop - version only 
     -->
 		{#if !mobileExclusive && !tabletExclusive}
 			<div id="inner-footer">
