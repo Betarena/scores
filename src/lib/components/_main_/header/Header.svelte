@@ -412,10 +412,10 @@ COMPONENT JS - BASIC
   /**
 	 * @description logout user; and additional ui changes
 	 */
-	function logout(): void {
+	async function logout(): Promise<void> {
 		dropdown_user_auth = false;
 		userBetarenaSettings.signOutUser();
-    goto('/')
+    await goto('/', { replaceState: true })
 	}
 
   // NOTE: ?
@@ -718,6 +718,7 @@ TODO:FIXME: not generating for each LANG
       [ℹ] theme-options box
       [ℹ] odds-type box
       [ℹ] bookmakers-type
+      [ℹ] sign-in-btn 
       <-conditional->
       -->
 			<div
@@ -1684,7 +1685,7 @@ TODO:FIXME: not generating for each LANG
 								<!-- 
                 [ℹ] sign-in-btn 
                 -->
-								{#if mobileExclusive}
+								{#if mobileExclusive && PROFILE_URL != $page.route.id}
 									<a
 										rel="external"
 										href={HEADER_TRANSLATION_DATA
@@ -1726,38 +1727,40 @@ TODO:FIXME: not generating for each LANG
 								</a>
 							</div>
 
-							<!-- [ℹ] link-based-redirects -->
-							<!-- [ℹ] latest-news -->
-							<div class="side-nav-row">
-								<a
-									rel="external"
-									href={HEADER_TRANSLATION_DATA
-										.scores_header_links
-										.latest_news}
-								>
-									<p class="color-white s-14">
-										{HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.content_platform_link}
-									</p>
-								</a>
-							</div>
+              {#if PROFILE_URL != $page.route.id}
+                <!-- [ℹ] link-based-redirects -->
+                <!-- [ℹ] latest-news -->
+                <div class="side-nav-row">
+                  <a
+                    rel="external"
+                    href={HEADER_TRANSLATION_DATA
+                      .scores_header_links
+                      .latest_news}
+                  >
+                    <p class="color-white s-14">
+                      {HEADER_TRANSLATION_DATA
+                        .scores_header_translations
+                        .content_platform_link}
+                    </p>
+                  </a>
+                </div>
 
-							<!-- [ℹ] betting-tips -->
-							<div class="side-nav-row">
-								<a
-									rel="external"
-									href={HEADER_TRANSLATION_DATA
-										.scores_header_links
-										.betting_tips}
-								>
-									<p class="color-white s-14">
-										{HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.betting_tips_link}
-									</p>
-								</a>
-							</div>
+                <!-- [ℹ] betting-tips -->
+                <div class="side-nav-row">
+                  <a
+                    rel="external"
+                    href={HEADER_TRANSLATION_DATA
+                      .scores_header_links
+                      .betting_tips}
+                  >
+                    <p class="color-white s-14">
+                      {HEADER_TRANSLATION_DATA
+                        .scores_header_translations
+                        .betting_tips_link}
+                    </p>
+                  </a>
+                </div>
+              {/if}
 
 							<!-- [ℹ] theme-options -->
 							<div
@@ -1842,160 +1845,162 @@ TODO:FIXME: not generating for each LANG
 							</div>
 
 							<!-- [ℹ] odds-type -->
-							<div
-								class="side-nav-dropdown m-b-25"
-								on:click={() =>
-									(dropdown_odds_type_visible =
-										!dropdown_odds_type_visible)}
-							>
-								<!-- [ℹ] name of the container-opt -->
-								<div class="m-b-15">
-									<p
-										class="color-grey s-12 m-b-5"
-									>
-										{HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.odds}
-									</p>
-									<div class="row-space-out">
-										<p class="color-white s-14">
-											{HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.odds_type[0]}
-										</p>
-										<!-- 
-                    [ℹ] arrow down [hidden-menu] 
-                    -->
-										<img
-											src={!dropdown_odds_type_visible
-												? arrow_down_fade
-												: arrow_up_fade}
-											alt={!dropdown_odds_type_visible
-												? 'arrow_down_fade'
-												: 'arrow_up_fade'}
-											width="16"
-											height="16"
-										/>
-									</div>
-								</div>
-								<!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
-								{#if dropdown_odds_type_visible}
-									<div transition:fly>
-										{#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
-											<div
-												class="side-nav-dropdown-opt"
-												on:click={() =>
-													(dropdown_odds_type_visible = false)}
-											>
-												<p
-													class="color-white s-14"
-												>
-													{odd}
-												</p>
-											</div>
-										{/each}
-									</div>
-								{/if}
-							</div>
+              {#if PROFILE_URL != $page.route.id}
+                <div
+                  class="side-nav-dropdown m-b-25"
+                  on:click={() =>
+                    (dropdown_odds_type_visible =
+                      !dropdown_odds_type_visible)}
+                >
+                  <!-- [ℹ] name of the container-opt -->
+                  <div class="m-b-15">
+                    <p
+                      class="color-grey s-12 m-b-5"
+                    >
+                      {HEADER_TRANSLATION_DATA
+                        .scores_header_translations
+                        .odds}
+                    </p>
+                    <div class="row-space-out">
+                      <p class="color-white s-14">
+                        {HEADER_TRANSLATION_DATA
+                          .scores_header_translations
+                          .odds_type[0]}
+                      </p>
+                      <!-- 
+                      [ℹ] arrow down [hidden-menu] 
+                      -->
+                      <img
+                        src={!dropdown_odds_type_visible
+                          ? arrow_down_fade
+                          : arrow_up_fade}
+                        alt={!dropdown_odds_type_visible
+                          ? 'arrow_down_fade'
+                          : 'arrow_up_fade'}
+                        width="16"
+                        height="16"
+                      />
+                    </div>
+                  </div>
+                  <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
+                  {#if dropdown_odds_type_visible}
+                    <div transition:fly>
+                      {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
+                        <div
+                          class="side-nav-dropdown-opt"
+                          on:click={() =>
+                            (dropdown_odds_type_visible = false)}
+                        >
+                          <p
+                            class="color-white s-14"
+                          >
+                            {odd}
+                          </p>
+                        </div>
+                      {/each}
+                    </div>
+                  {/if}
+                </div>
 
-							<!-- [ℹ] bookmakers-type -->
-							<div
-								class="side-nav-dropdown m-b-25"
-								on:click={() =>
-									(dropdown_bookmakers_visible =
-										!dropdown_bookmakers_visible)}
-							>
-								<!-- [ℹ] name of the container-opt -->
-								<div class="m-b-15">
-									<p
-										class="color-grey s-12 m-b-5"
-									>
-										{HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.bookmakers}
-									</p>
-									<div class="row-space-out">
-										<div class="row-space-start">
-											{#if $userBetarenaSettings.country_bookmaker != undefined}
-												{#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-													{#if country.includes($userBetarenaSettings.country_bookmaker
-															.toString()
-															.toUpperCase())}
-														<img
-															class="country-flag m-r-5"
-															src="https://betarena.com/images/flags/{country[0]}.svg"
-															alt={country[1]}
-															width="20px"
-															height="14px"
-														/>
-														<p
-															class="color-white s-14"
-														>
-															{country[1]}
-														</p>
-													{/if}
-												{/each}
-											{/if}
-										</div>
-										<!-- 
-                    [ℹ] arrow down [hidden-menu] 
-                    -->
-										<img
-											src={!dropdown_bookmakers_visible
-												? arrow_down_fade
-												: arrow_up_fade}
-											alt={!dropdown_bookmakers_visible
-												? arrow_down_fade
-												: arrow_up_fade}
-											width="16"
-											height="16"
-										/>
-									</div>
-								</div>
-								<!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
-								{#if dropdown_bookmakers_visible}
-									<div transition:fly>
-										{#if $userBetarenaSettings.country_bookmaker != undefined}
-											{#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-												<div
-													class="side-nav-dropdown-opt row-space-start"
-													on:click={() =>
-														selectedCountryBookmakers(
-															country[0]
-														)}
-												>
-													<div
-														class="row-space-start"
-													>
-														<img
-															class="country-flag m-r-10"
-															src="https://betarena.com/images/flags/${country[0]}.svg"
-															alt="${country[1]}"
-															width="20px"
-															height="14px"
-														/>
-														<p
-															class="color-white s-14"
-														>
-															{country[1]}
-														</p>
-													</div>
-													{#if country.includes($userBetarenaSettings.country_bookmaker
-															.toString()
-															.toUpperCase())}
-														<img
-															src={icon_check}
-															alt={country[0]}
-															width="16px"
-															height="16px"
-														/>
-													{/if}
-												</div>
-											{/each}
-										{/if}
-									</div>
-								{/if}
-							</div>
+                <!-- [ℹ] bookmakers-type -->
+                <div
+                  class="side-nav-dropdown m-b-25"
+                  on:click={() =>
+                    (dropdown_bookmakers_visible =
+                      !dropdown_bookmakers_visible)}
+                >
+                  <!-- [ℹ] name of the container-opt -->
+                  <div class="m-b-15">
+                    <p
+                      class="color-grey s-12 m-b-5"
+                    >
+                      {HEADER_TRANSLATION_DATA
+                        .scores_header_translations
+                        .bookmakers}
+                    </p>
+                    <div class="row-space-out">
+                      <div class="row-space-start">
+                        {#if $userBetarenaSettings.country_bookmaker != undefined}
+                          {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
+                            {#if country.includes($userBetarenaSettings.country_bookmaker
+                                .toString()
+                                .toUpperCase())}
+                              <img
+                                class="country-flag m-r-5"
+                                src="https://betarena.com/images/flags/{country[0]}.svg"
+                                alt={country[1]}
+                                width="20px"
+                                height="14px"
+                              />
+                              <p
+                                class="color-white s-14"
+                              >
+                                {country[1]}
+                              </p>
+                            {/if}
+                          {/each}
+                        {/if}
+                      </div>
+                      <!-- 
+                      [ℹ] arrow down [hidden-menu] 
+                      -->
+                      <img
+                        src={!dropdown_bookmakers_visible
+                          ? arrow_down_fade
+                          : arrow_up_fade}
+                        alt={!dropdown_bookmakers_visible
+                          ? arrow_down_fade
+                          : arrow_up_fade}
+                        width="16"
+                        height="16"
+                      />
+                    </div>
+                  </div>
+                  <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
+                  {#if dropdown_bookmakers_visible}
+                    <div transition:fly>
+                      {#if $userBetarenaSettings.country_bookmaker != undefined}
+                        {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
+                          <div
+                            class="side-nav-dropdown-opt row-space-start"
+                            on:click={() =>
+                              selectedCountryBookmakers(
+                                country[0]
+                              )}
+                          >
+                            <div
+                              class="row-space-start"
+                            >
+                              <img
+                                class="country-flag m-r-10"
+                                src="https://betarena.com/images/flags/${country[0]}.svg"
+                                alt="${country[1]}"
+                                width="20px"
+                                height="14px"
+                              />
+                              <p
+                                class="color-white s-14"
+                              >
+                                {country[1]}
+                              </p>
+                            </div>
+                            {#if country.includes($userBetarenaSettings.country_bookmaker
+                                .toString()
+                                .toUpperCase())}
+                              <img
+                                src={icon_check}
+                                alt={country[0]}
+                                width="16px"
+                                height="16px"
+                              />
+                            {/if}
+                          </div>
+                        {/each}
+                      {/if}
+                    </div>
+                  {/if}
+                </div>
+              {/if}
 							<!-- [ℹ] END OF SIDE-NAV-MENU -->
 						</div>
 					</div>
