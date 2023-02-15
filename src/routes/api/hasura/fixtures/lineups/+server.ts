@@ -2,20 +2,20 @@ import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
 
 import {
-	REDIS_CACHE_LINEUPS_DATA_3,
-	REDIS_CACHE_LINEUPS_DATA_4
+  REDIS_CACHE_LINEUPS_DATA_3,
+  REDIS_CACHE_LINEUPS_DATA_4
 } from '$lib/graphql/fixtures/lineups/query';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
 import type {
-	BETARENA_HASURA_lineups_query,
-	BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
-	BETARENA_HASURA_SURGICAL_JSONB_scores_football_players,
-	Fixture_Lineups,
-	Fixture_Player,
-	REDIS_CACHE_SINGLE_lineups_data,
-	Sub_Player,
-	Team_Lineup
+  BETARENA_HASURA_lineups_query,
+  BETARENA_HASURA_SURGICAL_JSONB_historic_fixtures,
+  BETARENA_HASURA_SURGICAL_JSONB_scores_football_players,
+  Fixture_Lineups,
+  Fixture_Player,
+  REDIS_CACHE_SINGLE_lineups_data,
+  Sub_Player,
+  Team_Lineup
 } from '$lib/models/fixtures/lineups/types';
 
 // [ℹ] debug info
@@ -165,7 +165,8 @@ async function main(
 				}
 				if (
 					event.type == 'goal' ||
-					event.type == 'own-goal'
+					event.type == 'own-goal' ||
+          event.type == 'penalty'
 				) {
 					h_player.events.goals =
 						h_player.events.goals == null
@@ -236,7 +237,8 @@ async function main(
 				}
 				if (
 					event.type == 'goal' ||
-					event.type == 'own-goal'
+					event.type == 'own-goal' ||
+          event.type == 'penalty'
 				) {
 					h_player.events.goals =
 						h_player.events.goals == null
@@ -340,7 +342,8 @@ async function main(
 				}
 				if (
 					event.type == 'goal' ||
-					event.type == 'own-goal'
+					event.type == 'own-goal' ||
+          event.type == 'penalty'
 				) {
 					a_player.events.goals =
 						a_player.events.goals == null
@@ -411,7 +414,8 @@ async function main(
 				}
 				if (
 					event.type == 'goal' ||
-					event.type == 'own-goal'
+					event.type == 'own-goal' ||
+          event.type == 'penalty'
 				) {
 					a_player.events.goals =
 						a_player.events.goals == null
