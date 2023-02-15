@@ -7,7 +7,7 @@ COMPONENT JS (w/ TS)
 	import DashboardWidget from '$lib/components/page/profile/Widget-Dashboard.svelte';
 	import UserMenu from '$lib/components/page/profile/Widget-MenuOpt.svelte';
 	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
-	import { dlogv2 } from '$lib/utils/debug';
+	import { dlogv2, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
 	import type { PageData } from '../$types';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -21,10 +21,10 @@ COMPONENT JS (w/ TS)
   RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
 	dlogv2(
-		'Profile Page',
+		PR_P_TAG,
 		[data],
-		true,
-		'background: black; color: #fffff'
+		PR_P_TOG,
+		PR_P_STY
 	);
 
 	const VALID_PAGE_URL: string[] = [
