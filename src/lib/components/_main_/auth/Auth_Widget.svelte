@@ -25,9 +25,11 @@ COMPONENT JS (w/ TS)
 		platfrom_lang_ssr,
 		viewport_change
 	} from '$lib/utils/platform-functions';
-	import { getMoralisAuth
+	import {
+		getMoralisAuth,
 
-	, type MoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
+		type MoralisAuth
+	} from '@moralisweb3/client-firebase-auth-utils';
 	import {
 		fetchSignInMethodsForEmail,
 		GithubAuthProvider,
@@ -113,7 +115,7 @@ COMPONENT JS (w/ TS)
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	let server_side_language = platfrom_lang_ssr(
-		$page?.route.id,
+		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
 	);

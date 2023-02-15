@@ -224,7 +224,7 @@
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	let server_side_language = platfrom_lang_ssr(
-		$page?.route.id,
+		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
 	);
