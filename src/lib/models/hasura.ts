@@ -6,6 +6,8 @@
  * NOTE: which handles the data generation and QUERIES for CACHING
  */
 
+import type { OpenGraph } from "svelte-seo/types/SvelteSeo";
+
 /**
  * [ℹ] HASURA: [EVENT] update_fixture_sitemap
  */
@@ -1614,16 +1616,7 @@ export interface BETARENA_HASURA_scores_seo_fixtures {
 	opengraph?: OpenGraph;
 	sports_type?: string;
 	twitter_card?: FixturesTwitterCard;
-}
-export interface OpenGraph {
-	url?: string;
-	type?: string;
-	title?: string;
-	images?: FixturesImage[];
-	locale?: string;
-	description?: string;
-}
-export interface FixturesImage {
+} export interface FixturesImage {
 	alt?: string;
 	url?: string;
 	width?: number;
