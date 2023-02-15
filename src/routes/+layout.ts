@@ -1,7 +1,6 @@
-import { get } from '$lib/api/utils';
 import {
-	ERROR_CODE_PRELOAD,
-	LAYOUT_1_LANG_PAGE_ERROR_MSG
+  ERROR_CODE_PRELOAD,
+  LAYOUT_1_LANG_PAGE_ERROR_MSG
 } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
@@ -71,6 +70,8 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 			? 'en'
 			: params.lang;
 
+  console.log('🔴 (+layout.ts) urlLang', urlLang)
+
 	// --------------
 	// [ℹ] preload data [2] DOC: REF: [2]
 	// --------------
@@ -106,9 +107,9 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 		);
 	}
 
-	setHeaders({
-		'cache-control': 'public, max-age=3600'
-	});
+	// setHeaders({
+	// 	'cache-control': 'public, max-age=3600'
+	// });
 	return {
 		HEADER_TRANSLATION_DATA,
 		FOOTER_TRANSLATION_DATA
