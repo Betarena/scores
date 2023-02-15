@@ -106,9 +106,9 @@ export const STANDINGS_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
 export const STATS_FW_DEBUG_TAG = 'fixtures (stats) [DEBUG] |'
 export const STATS_FW_DEBUG_TOGGLE = true
 export const STATS_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const VOTES_FW_DEBUG_TAG = 'fixtures (vote) [DEBUG] |'
-export const VOTES_FW_DEBUG_TOGGLE = true
-export const VOTES_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const VO_W_TAG = 'fixtures (vote) [DEBUG] |'
+export const VO_W_TOG = true
+export const VO_W_STY = 'background: green; color: #000000'
 // [ℹ] PROFILE-(page)-(widgets) (debug)
 export const PR_P_TAG = 'profile (page) [DEBUG] |'
 export const PR_P_TOG =  true

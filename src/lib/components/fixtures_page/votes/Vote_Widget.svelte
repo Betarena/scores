@@ -5,11 +5,9 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
-		dlog, logErrorGroup,
+		dlog, dlogv2, logErrorGroup,
 		log_info_group,
-		VOTES_FW_DEBUG_STYLE,
-		VOTES_FW_DEBUG_TAG,
-		VOTES_FW_DEBUG_TOGGLE
+		VO_W_STY, VO_W_TAG, VO_W_TOG
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -119,7 +117,7 @@
       
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
-      dlog(`${VOTES_FW_DEBUG_TAG} ❌ no data available!`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
+      dlog(`${VO_W_TAG} ❌ no data available!`, VO_W_TOG, VO_W_STY);
 			no_widget_data = true;
 			return;
 		} else {
@@ -268,7 +266,7 @@
 		vote_val: string | number
 	): void {
 
-    dlog(`${VOTES_FW_DEBUG_TAG} vote_val: ${vote_val}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
+    dlog(`${VO_W_TAG} vote_val: ${vote_val}`, VO_W_TOG, VO_W_STY);
 
 		if (vote_val == undefined) {
 			vote_val = '1.5';
@@ -320,7 +318,7 @@
 			_X_vote: fixtureData._X_vote
 		};
 
-    dlog(`${VOTES_FW_DEBUG_TAG} variables: ${VARIABLES}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
+    dlog(`${VO_W_TAG} variables: ${VARIABLES}`, VO_W_TOG, VO_W_STY);
 
 		// FIXME: need a try..catch ?
 		try {
@@ -331,7 +329,7 @@
 					VARIABLES
 				);
 
-      dlog(`${VOTES_FW_DEBUG_TAG} update_fixture_data: ${update_fixture_data}`, VOTES_FW_DEBUG_TOGGLE, VOTES_FW_DEBUG_STYLE);
+      dlog(`${VO_W_TAG} update_fixture_data: ${update_fixture_data}`, VO_W_TOG, VO_W_STY);
 
 			// [ℹ] update existing data with CASTED-VOTES;
 			FIXTURE_VOTES_DATA.match_votes =
@@ -447,7 +445,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			VOTES_FW_DEBUG_TAG +
+			VO_W_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);
@@ -596,6 +594,7 @@
 	}
 
 	// [ℹ] kickstart real-time listen-events
+  // [ℹ] re-run real-time when user navigates back to tab
 	onMount(async () => {
 		listen_real_time_odds();
 		document.addEventListener(
@@ -610,20 +609,17 @@
 
 	// [! CRITICAL !]
 	onDestroy(async () => {
-		// [🐞]
-		if (dev)
-			console.groupCollapsed(
-				'%cclosing firebase connections [DEV]',
-				'background: red; color: #fffff'
-			);
-		// [ℹ] close LISTEN EVENT connection
+    const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
-			// [🐞]
-			if (dev) console.log('closing connection');
+      logsMsg.push('closing connection')
 			iterator();
 		}
-		// [🐞]
-		if (dev) console.groupEnd();
+    dlogv2(
+      `${VO_W_TAG} closing firebase connections`,
+      logsMsg,
+      VO_W_TOG, 
+      VO_W_STY
+    )
 	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~
