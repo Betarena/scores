@@ -120,7 +120,7 @@ COMPONENT JS (w/ TS)
 		const profile_pic = event?.detail?.img;
 		const storageRef = ref(
 			storage,
-			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}.png`
+			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}/profile-pic.png`
 		);
 		// [ℹ] 'files' comes from the Blob or File API
 		uploadString(
@@ -181,7 +181,7 @@ COMPONENT JS (w/ TS)
 		// [ℹ] remove from Firebase - Storage
 		const desertRef = ref(
 			storage,
-			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}.png`
+			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}/profile-pic.png`
 		);
 		deleteObject(desertRef)
 			.then(() => {
@@ -198,12 +198,12 @@ COMPONENT JS (w/ TS)
 	/**
 	 * @description updates user's username on
 	 * firebase services; and localStorage
-   * @returns Promise<void>
+   * @returns {Promise<void>}
 	 */
 	async function update_username(): Promise<void> {
 		dlog('🔵 Updating username...');
     // [ℹ] validation [1]
-    const valid = await username_Update_validation()
+    const valid = await username_update_validation()
     if (!valid) { 
       alert('🔴 Username is invalid')
       return;
@@ -225,7 +225,7 @@ COMPONENT JS (w/ TS)
 		dlog('🟢 Username updated', true);
 	}
 
-  async function username_Update_validation(): Promise<boolean> {
+  async function username_update_validation(): Promise<boolean> {
 		dlog('🔵 Validating username...', true);
     let valid = true;
     // [ℹ] validation [1] - uniqueness
@@ -248,17 +248,54 @@ COMPONENT JS (w/ TS)
     return valid;
   }
 
+	/**
+	 * @description updates user's wallet-web3 address on
+	 * firebase services; and localStorage
+   * @returns {Promise<void>}
+	 */
+  async function update_wallet(
+    event
+  ): Promise<void> {
+		dlog('🔵 Updating wallet Web3...');
+    modal_wallet_show = false;
+		const wallet = 
+      event == null
+        ? null
+        : event?.detail?.wallet_id;
+    // [ℹ] (update)from localStorage()
+		userBetarenaSettings.updateWalletAddr(
+			wallet
+		);
+		// [ℹ] (update)from Firebase - Firestore
+		const userRef = doc(
+			db_firestore,
+			'betarena_users',
+			$userBetarenaSettings?.user
+				?.firebase_user_data?.uid
+		);
+		await updateDoc(userRef, {
+			wallet_id: wallet
+		});
+		dlog('🟢 Wallet address updated', true);
+  }
+
 	// TODO:IMPORTANT update wallet address (+connect/disconnect)
-	// -> connect to MetaMask and retrieve data
-	// -> update Firestore: wallet-id + providers for the target user
-	// -> display on Moralis/Users of request made
+	// -> [🟢] connect to MetaMask and retrieve data
+	// -> [🔵] update Firestore: wallet-id + providers for the target user
+	// -> [❗️] display on Moralis/Users of request made 
 	async function connect_wallet(): Promise<void> {
 		// DOC: REF -> [1]
 		try {
+      // [ℹ] validation [1]
+      if (profile_wallet_connected) {
+        dlog('Removing user wallet web3 connection...')
+        update_wallet(null)
+        return
+      }
 			processing = true;
-			modal_wallet_show = false;
+			modal_wallet_show = true;
 		} catch (error) {
-			errlog(`Moralis Auth error: ${error}`);
+			errlog(`connect_wallet() error: ${error}`);
 			processing = false;
 		}
 	}
@@ -281,7 +318,7 @@ COMPONENT JS (w/ TS)
 		// [ℹ] remove from Firebase - Storage
 		const desertRef = ref(
 			storage,
-			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}.png`
+			`Users_data/${$userBetarenaSettings?.user?.firebase_user_data?.uid}/profile-pic.png`
 		);
 		deleteObject(desertRef)
 			.then(() => {
@@ -367,8 +404,8 @@ COMPONENT HTML
 	<ModalConnectWallet
 		on:toggle_delete_modal={() =>
 			(modal_wallet_show = false)}
-		on:connect_wallet_action={() =>
-			connect_wallet()}
+		on:connect_wallet_action={(event) =>
+			update_wallet(event)}
 	/>
 {/if}
 
@@ -603,7 +640,7 @@ COMPONENT HTML
           s-14
           color-black-2
         "
-        on:click={() => (modal_wallet_show = true)}
+        on:click={() => connect_wallet()}
       >
         {!profile_wallet_connected
           ? RESPONSE_PROFILE_DATA?.connect_wallet_title

@@ -28,11 +28,17 @@ COMPONENT JS (w/ TS)
 	}
 
 	/**
-	 * @description bubbles up to parent event
-	 * to trigger target method
+	 * @description connects the user to the platform using their
+   * MetaMask wallet; Dispatches event to parent to bubble up
+	 * to trigger target method;
+   * @returns {Promise<void>}
 	 */
-	function connect_wallet_action(): void {
-		dispatch('connect_wallet_action');
+	async function connect_wallet_action(): Promise<void> {
+    const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+    const account = accounts[0];
+		dispatch('connect_wallet_action', {
+      wallet_id: account
+    });
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~
