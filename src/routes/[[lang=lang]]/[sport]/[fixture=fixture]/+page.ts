@@ -201,7 +201,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
   dlog(SPORTBOOK_MAIN, false)
   dlog(SPORTBOOK_ALL, false);
 
-    // --------------
+  // --------------
 	// [ℹ] apply regex to morph data
   // --------------
       
