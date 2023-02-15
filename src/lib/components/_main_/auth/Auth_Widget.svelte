@@ -515,7 +515,8 @@ COMPONENT JS (w/ TS)
     const [BETARENA_USER, EXISTS] = await user_firestore(
       firebase_user?.uid,
       firebase_user,
-      web3_wallet_addr
+      web3_wallet_addr,
+      auth_provider_type
     );
 		let user_obj: Scores_User = {
 			firebase_user_data: firebase_user,
@@ -547,29 +548,34 @@ COMPONENT JS (w/ TS)
   async function user_firestore(
     uid: string, 
     firebase_user: User,
-    web3_wallet_addr: string
+    web3_wallet_addr: string,
+    auth_provider_type: Auth_Type
   ): Promise<[Betarena_User, boolean]> {
-    const docRef = doc(db_firestore, "betarena_users", uid);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) {
-      // [ℹ] return existing firestore user-instance;
-      dlog(`${AUTH_DEBUG_TAG} 🟢 Target UID exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      dlog(`${AUTH_DEBUG_TAG} User Data ${docSnap.data()}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      return [docSnap.data() as Betarena_User, true]
-    } else {
-      // [ℹ] create new user-instance;
-      dlog(`${AUTH_DEBUG_TAG} 🔴 Target UID does not exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      dlog(`${AUTH_DEBUG_TAG} 🔵 Creating new Betarena_User instance`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      const scores_user_data: Betarena_User = {
-				lang: server_side_language,
-				registration_type: [],
-				// NOTE: max. length - no separator - no random digits
-				username: generateUsername('', 0, 10),
-				register_date: firebase_user?.metadata?.creationTime, // [ℹ] can be null (wehn using web3)
-				profile_photo: firebase_user?.photoURL, // [ℹ] can be null (wehn using web3)
-				web3_wallet_addr: web3_wallet_addr || undefined
-			}
-      return [scores_user_data, false]
+    try {
+      const docRef = doc(db_firestore, "betarena_users", uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        // [ℹ] return existing firestore user-instance;
+        dlog(`${AUTH_DEBUG_TAG} 🟢 Target UID exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+        dlog(`${AUTH_DEBUG_TAG} User Data ${docSnap.data()}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+        return [docSnap.data() as Betarena_User, true]
+      } else {
+        // [ℹ] create new user-instance;
+        dlog(`${AUTH_DEBUG_TAG} 🔴 Target UID does not exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+        dlog(`${AUTH_DEBUG_TAG} 🔵 Creating new Betarena_User instance`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+        const scores_user_data: Betarena_User = {
+          lang: server_side_language,
+          registration_type: [auth_provider_type],
+          // NOTE: max. length - no separator - no random digits
+          username: generateUsername('', 0, 10),
+          register_date: firebase_user?.metadata?.creationTime, // [ℹ] can be null (wehn using web3)
+          profile_photo: firebase_user?.photoURL, // [ℹ] can be null (wehn using web3)
+          web3_wallet_addr: web3_wallet_addr || undefined
+        }
+        return [scores_user_data, false]
+      }
+    } catch (error) {
+      console.error('Error adding document: ', error);
     }
   }
 

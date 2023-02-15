@@ -91,6 +91,14 @@ COMPONENT JS - BASIC
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
+  let setOnce = false;
+  $: if ($userBetarenaSettings.user != undefined && !setOnce) {
+    setOnce = true
+    let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
+    console.log("🔴🔴🔴🔴 HERE!!!")
+    selectLanguage(userlang)
+  }
+
   $: server_side_language = platfrom_lang_ssr(
     $page.route.id,
     $page.error,

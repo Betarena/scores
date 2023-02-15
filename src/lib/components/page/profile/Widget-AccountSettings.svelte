@@ -26,9 +26,13 @@ COMPONENT JS (w/ TS)
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { deleteUser } from 'firebase/auth';
 	import {
+		collection,
 		deleteDoc,
 		doc,
-		updateDoc
+		getDocs,
+		query,
+		updateDoc,
+		where
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
 
@@ -44,6 +48,7 @@ COMPONENT JS (w/ TS)
 	let files: HTMLInputElement['files'];
 	let fileInputElem: HTMLInputElement;
 	let usernameInput: string;
+  let usernameErrorExist: boolean;
 	let profile_picture_exists: boolean = false;
 	let profile_wallet_connected: boolean = false;
 	let processing: boolean = false;
@@ -55,7 +60,7 @@ COMPONENT JS (w/ TS)
   $: if (RESPONSE_PROFILE_DATA != undefined) no_widget_data = false;
   console.log('no_widget_data', no_widget_data)
 
-	$: if (files) {
+	$: if (files != undefined) {
 		profile_picture_select();
 	}
 
@@ -77,6 +82,7 @@ COMPONENT JS (w/ TS)
 
 	/**
 	 * @description kickstarts the picture crop step;
+   * @returns {Promise<void>}
 	 */
 	async function profile_picture_select(): Promise<void> {
 		// NOTE: `file` is of type `FileList`, not an Array:
@@ -89,8 +95,15 @@ COMPONENT JS (w/ TS)
 				true
 			);
 		}
+    // [ℹ] validation [1]
+    if (files[0].size >= 1000000) {
+      alert("🔴 Uploaded picture is too large. Limit is 1MB.");
+      files = undefined;
+      return;
+    }
 		profile_crop_widget.load_picture(files[0]);
 		modal_pic_crop_show = true;
+    files = undefined;
 		return;
 	}
 
@@ -189,6 +202,12 @@ COMPONENT JS (w/ TS)
 	 */
 	async function update_username(): Promise<void> {
 		dlog('🔵 Updating username...');
+    // [ℹ] validation [1]
+    const valid = await username_Update_validation()
+    if (!valid) { 
+      alert('🔴 Username is invalid')
+      return;
+    }
 		// [ℹ] (update)from localStorage()
 		userBetarenaSettings.updateUsername(
 			usernameInput
@@ -206,7 +225,30 @@ COMPONENT JS (w/ TS)
 		dlog('🟢 Username updated', true);
 	}
 
-	// TODO: update wallet address (+connect/disconnect)
+  async function username_Update_validation(): Promise<boolean> {
+		dlog('🔵 Validating username...', true);
+    let valid = true;
+    // [ℹ] validation [1] - uniqueness
+    const usersDb = collection(db_firestore, "betarena_users");
+    const queryUsername = query(usersDb, where("username", "==", usernameInput));
+    const querySnapshot = await getDocs(queryUsername); // can be access individually;
+    // DOC: https://firebase.google.com/docs/firestore/query-data/queries
+		dlog(querySnapshot, false);
+    if (querySnapshot.docs.length > 0) valid = false;
+    // [ℹ] validation [2] - length
+    if (usernameInput.length < 3) valid = false;
+    // [ℹ] validation [3] - only-numbers
+    if (/^\d+$/.test(usernameInput)) valid = false;
+    // [ℹ] validation [4] - has a space
+    if (/\s/g.test(usernameInput)) valid = false;
+    // [ℹ] validation [5] - has special char
+    let format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    if (format.test(usernameInput)) valid = false;
+    // [ℹ] return;
+    return valid;
+  }
+
+	// TODO:IMPORTANT update wallet address (+connect/disconnect)
 	// -> connect to MetaMask and retrieve data
 	// -> update Firestore: wallet-id + providers for the target user
 	// -> display on Moralis/Users of request made

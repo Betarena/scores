@@ -113,7 +113,6 @@ COMPONENT HTML
       btn-hollow
       w-500
       s-14
-      row-space-out
       color-black-2
     "
 		on:click={() => connect_wallet_action()}
@@ -163,6 +162,7 @@ COMPONENT STYLE
 		padding: 20px;
     padding-top: 45px;
 		text-align: -webkit-center;
+		text-align: -moz-center;
 		overflow: hidden;
 	}
 	div#modal-delete-box > img#close-vector {
@@ -173,7 +173,8 @@ COMPONENT STYLE
 		z-index: 400000002;
 	}
   button#sign-in-metamask-btn {
-    width: auto; 
+    width: -webkit-fill-available; 
+    width: -moz-available; 
     border-radius: 60px;
   }
 
