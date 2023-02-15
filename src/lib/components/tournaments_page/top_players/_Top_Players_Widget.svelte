@@ -1,5 +1,5 @@
 <!-- ===============
-	  COMPONENT JS (w/ TS)
+COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
 	import { browser } from '$app/environment';
@@ -10,10 +10,9 @@
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
-		dlog, TOP_PLAY_T_DEBUG_STYLE,
-		TOP_PLAY_T_DEBUG_TAG,
-		TOP_PLAY_T_DEBUG_TOGGLE
+		dlog, dlogv2, TP_W_STY, TP_W_TAG, TP_W_TOG
 	} from '$lib/utils/debug';
+	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import type {
 		REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response,
@@ -29,6 +28,10 @@
 	import check_league from './assets/check-league.svg';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
+  
+  // ~~~~~~~~~~~~~~~~~~~~~
+	//  COMPONENT VARIABLES
+	// ~~~~~~~~~~~~~~~~~~~~~
 
 	let loaded: boolean = false; // [ℹ] holds boolean for data loaded;
 	let refresh: boolean = false; // [ℹ] refresh value speed of the WIDGET;
@@ -41,22 +44,19 @@
 	let toggleDropdown: boolean = false;
 	let showMore: boolean = false;
 	let displayShowMore: boolean = false;
-	let limitViewRow: number; // [ℹ] holds the actual, `total` limit of the list of featured sites
-	let staticViewRow: number; // [ℹ] holds the `initial` number of featured sites to be displayed
-	let trueLengthOfArray: number;
+	let limitViewRow: number;           // [ℹ] holds the actual, `total` limit of the list of featured sites
+	let staticViewRow: number;          // [ℹ] holds the `initial` number of featured sites to be displayed
+	let trueLengthOfArray: number;      // [ℹ] original array length
 	let lazyLoadingSeasonFixture: boolean = false;
 
 	let diasbleDev: boolean = false;
-	let devConsoleTag: string = 'TOP_PLAYER';
 
 	let refreshRow: boolean = false;
-
-	let currentSeason: number = undefined;
 
 	export let TOP_PLAYERS_T: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
 	export let TOP_PLAYERS_DATA: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
 
-	dlog(TOP_PLAYERS_DATA, TOP_PLAY_T_DEBUG_TOGGLE);
+	dlog(TOP_PLAYERS_DATA, TP_W_TOG);
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -69,9 +69,8 @@
 			return;
 		}
 
-		// [ℹ] get response [lang] [data] [obtained from preload()]
 		if (TOP_PLAYERS_DATA == undefined) {
-      dlog(`${TOP_PLAY_T_DEBUG_TAG} ❌ no data available!`, TOP_PLAY_T_DEBUG_TOGGLE, TOP_PLAY_T_DEBUG_STYLE);
+      dlog(`${TP_W_TAG} ❌ no data available!`, TP_W_TOG, TP_W_STY);
 			noTopPlayersBool = true;
 			return;
 		}
@@ -79,12 +78,6 @@
 		else {
 			noTopPlayersBool = false;
 		}
-
-		// [🐛] debug TEST TOP PLAYERS MISSING DATA
-		// noTopPlayersBool = true;
-		// loaded = false;
-
-		// loaded = true;
 
 		const sleep = (ms) =>
 			new Promise((r) => setTimeout(r, ms));
@@ -103,9 +96,20 @@
 		}, 50);
 	}
 
-  dlog(`${TOP_PLAY_T_DEBUG_TAG} trueLengthOfArray ${trueLengthOfArray}`, TOP_PLAY_T_DEBUG_TOGGLE, TOP_PLAY_T_DEBUG_STYLE);
+  $: dlogv2 (
+    TP_W_TAG,
+    [
+      `trueLengthOfArray: ${trueLengthOfArray}`,
+      `toggleDropdown: ${toggleDropdown}`,
+      `showMore: ${showMore}`,
+    ],
+    TP_W_TOG,
+    TP_W_STY
+  )
 
 	async function selectPlayerView(opt: string) {
+    dlog(`${TP_W_TAG} ➡️ selectPlayerView()`, TP_W_TOG, TP_W_STY);
+
 		dropdownPlayerViewSelect = opt
 			.toLowerCase()
 			.replace(/\s/g, '_');
@@ -197,47 +201,27 @@
 		limitViewRow = trueLengthOfArray;
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
+  // [NOT USED]
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let tabletView = 1000;
-	let mobileView = 725;
-	let mobileExclusive: boolean = false;
-	let tabletExclusive: boolean = false;
+	const TABLET_VIEW = 1000;
+	const MOBILE_VIEW = 725; // 768 - Tablet (start)
+	let mobileExclusive,
+		tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit =
-			document.documentElement.clientWidth;
-		// [ℹ] TABLET - VIEW
-		if (wInit >= tabletView) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		// [ℹ] MOBILE - VIEW
-		if (wInit <= mobileView) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
 		window.addEventListener(
 			'resize',
 			function () {
-				var w =
-					document.documentElement.clientWidth;
-				// [ℹ] TABLET - VIEW
-				if (w >= tabletView) {
-					tabletExclusive = false;
-				} else {
-					tabletExclusive = true;
-				}
-				// [ℹ] MOBILE - VIEW
-				if (w <= mobileView) {
-					mobileExclusive = true;
-				} else {
-					mobileExclusive = false;
-				}
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
 			}
 		);
 	});
@@ -269,24 +253,17 @@
 	// REACTIVE SVELTE OTHER
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let loadedCurrentSeason: boolean = false;
-	$: if (
-		browser &&
-		$sessionStore.selectedSeasonID != undefined &&
-		!loadedCurrentSeason
-	) {
-		currentSeason =
-			$sessionStore.selectedSeasonID;
-		loadedCurrentSeason = true;
+  /**
+   * @description regenerated the top-player widget
+   * on every time the selectedSeasonID updates
+  */
+	$: if (browser &&	$sessionStore.selectedSeasonID != undefined) {
+	  selectPlayerView(dropdownPlayerViewSelect)
 	}
-
-	// $: if (browser && $sessionStore.selectedSeasonID != undefined) {
-	//   selectPlayerView(dropdownPlayerViewSelect)
-	// }
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+COMPONENT HTML 
 =================-->
 
 <!-- [ℹ] area-outside-for-close 
@@ -328,7 +305,8 @@
 			{TOP_PLAYERS_T?.top_players}
 		</h2>
 
-		<!-- [ℹ] no-widget-data-avaiable-placeholder container 
+		<!-- 
+    [ℹ] no-widget-data-avaiable-placeholder container 
     -->
 		<div
 			id="no-widget-box"
@@ -336,27 +314,19 @@
 			class:dark-background-1={$userBetarenaSettings.theme ==
 				'Dark'}
 		>
-			<!-- [ℹ] no-visual-asset
+			<!-- 
+      [ℹ] no-visual-asset
       -->
-			{#if $userBetarenaSettings.theme == 'Dark'}
-				<img
-					src={no_visual_dark}
-					alt="no_visual_dark"
-					width="32px"
-					height="32px"
-					class="m-b-16"
-				/>
-			{:else}
-				<img
-					src={no_visual}
-					alt="no_visual"
-					width="32px"
-					height="32px"
-					class="m-b-16"
-				/>
-			{/if}
+      <img
+        src={$userBetarenaSettings.theme == 'Dark' ? no_visual_dark : no_visual}
+        alt={$userBetarenaSettings.theme == 'Dark' ? "no_visual_dark" : "no_visual"}
+        width="32"
+        height="32"
+        class="m-b-16"
+      />
 
-			<!-- [ℹ] container w/ text 
+			<!-- 
+      [ℹ] container w/ text 
       -->
 			<div>
 				<p
@@ -382,7 +352,7 @@
     -->
 		{#await widgetInit()}
 			<TopPlayersWidgetContentLoader />
-			<!-- 
+    <!-- 
     [ℹ] promise was fulfilled
     -->
 		{:then data}
@@ -423,21 +393,12 @@
 									dropdownPlayerViewSelect
 								]}
 							</p>
-							{#if !toggleDropdown}
-								<img
-									src={arrow_down}
-									alt=""
-									width="20px"
-									height="20px"
-								/>
-							{:else}
-								<img
-									src={arrow_up}
-									alt=""
-									width="20px"
-									height="20px"
-								/>
-							{/if}
+              <img
+                src={!toggleDropdown ? arrow_down : arrow_up}
+                alt={!toggleDropdown ? "arrow_down" : "arrow_up"}
+                width="20"
+                height="20"
+              />
 						</div>
 
 						<!-- [ℹ] show main TOP PLAYERS VIEWS 
@@ -612,7 +573,7 @@
 				</div>
 			{/if}
 
-			<!-- 
+    <!-- 
     [ℹ] promise was rejected
     -->
 		{:catch error}
@@ -622,7 +583,7 @@
 </div>
 
 <!-- ===============
-  COMPONENT STYLE
+COMPONENT STYLE
 =================-->
 <style>
 	/* [ℹ] OTHER STYLE / CSS */
