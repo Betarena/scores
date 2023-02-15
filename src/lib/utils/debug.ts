@@ -101,6 +101,10 @@ export const STATS_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
 export const VOTES_FW_DEBUG_TAG = 'fixtures (vote) [DEBUG] |'
 export const VOTES_FW_DEBUG_TOGGLE = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
 export const VOTES_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+// [ℹ] PROFILE-(page)-(widgets) (debug)
+export const PR_P_TAG = 'profile (page) [DEBUG] |'
+export const PR_P_TOG =  MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : true
+export const PR_P_STY = 'background: yellow; color: #000000'
 
 // --------------
 // --------------
