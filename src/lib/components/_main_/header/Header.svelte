@@ -58,10 +58,8 @@ COMPONENT JS - BASIC
 	let langSelected: boolean = false;
 
   const OMIT_URLS: string[] = [
-    '[lang=lang]/[sport]/[country]/[league_name]',
-    '[lang=lang]/[sport]/[fixture=fixture]',
-    '[sport]/[country]/[league_name]',
-    '[sport]/[fixture=fixture]',
+    '[[lang=lang]]/[sport]/[country]/[league_name]',
+    '[[lang=lang]]/[sport]/[fixture=fixture]'
   ]
 
   const PROFILE_URL: string = '/u/[view]/[lang=lang]'
