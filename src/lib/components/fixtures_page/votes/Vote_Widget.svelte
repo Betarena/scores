@@ -638,11 +638,7 @@
     COMPONENT HTML 
 =================-->
 
-<div
-	id="widget-outer"
-	class:display_none={no_widget_data &&
-		!show_placeholder}
->
+<div id="widget-outer" class:display_none={no_widget_data && !show_placeholder}>
 	<!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
@@ -663,50 +659,28 @@
 		<h2
 			class="s-20 m-b-10 w-500 color-black-2"
 			style="margin-top: 0px;"
-			class:color-white={$userBetarenaSettings.theme ==
-				'Dark'}
+			class:color-white={$userBetarenaSettings.theme == 'Dark'}
 		>
 			{FIXTURE_VOTES_TRANSLATION?.widget_title}
 		</h2>
 
 		<!-- [ℹ] no-widget-data-avaiable-placeholder container 
     -->
-		<div
-			id="no-widget-box"
-			class="column-space-center"
-			class:dark-background-1={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
+		<div id="no-widget-box" class="column-space-center" class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 			<!-- 
       [ℹ] no-visual-asset
       -->
 			{#if $userBetarenaSettings.theme == 'Dark'}
-				<img
-					src={no_visual_dark}
-					alt="no_visual_dark"
-					width="32px"
-					height="32px"
-					class="m-b-16"
-				/>
+				<img src={no_visual_dark} alt="no_visual_dark" width="32px" height="32px" class="m-b-16" />
 			{:else}
-				<img
-					src={no_visual}
-					alt="no_visual"
-					width="32px"
-					height="32px"
-					class="m-b-16"
-				/>
+				<img src={no_visual} alt="no_visual" width="32px" height="32px" class="m-b-16" />
 			{/if}
 
 			<!-- 
       [ℹ] container w/ text 
       -->
 			<div>
-				<p
-					class="s-14 m-b-8 w-500"
-					class:color-white={$userBetarenaSettings.theme ==
-						'Dark'}
-				>
+				<p class="s-14 m-b-8 w-500" class:color-white={$userBetarenaSettings.theme == 'Dark'}>
 					{FIXTURE_VOTES_TRANSLATION?.no_info}
 				</p>
 				<p class="s-14 color-grey w-400">
@@ -734,17 +708,12 @@
 			<h2
 				class="s-20 m-b-10 w-500 color-black-2"
 				style="margin-top: 0px;"
-				class:color-white={$userBetarenaSettings.theme ==
-					'Dark'}
+				class:color-white={$userBetarenaSettings.theme == 'Dark'}
 			>
 				{FIXTURE_VOTES_TRANSLATION?.widget_title}
 			</h2>
 
-			<div
-				id="votes-widget-container"
-				class:dark-background-1={$userBetarenaSettings.theme ==
-					'Dark'}
-			>
+			<div id="votes-widget-container" class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 				<!-- 
         [ℹ] [MOBILE] [TABLET] [DESKTOP]
         [ℹ] (minimal) cross-platform design change
@@ -770,10 +739,7 @@
 				<!-- 
         [ℹ] voting results btn 
         -->
-				<div
-					id="btn-vote-container"
-					class="row-space-out"
-				>
+				<div id="btn-vote-container" class="row-space-out">
 					<!-- 
           [ℹ] ODDS #1 
           -->
@@ -790,17 +756,9 @@
                 cast-vote-btn 
                 m-b-12
               "
-							class:active={fixture_data_vote_obj.fixture_vote ==
-								'1'}
-							disabled={vote_casted ||
-								FIXTURE_NO_VOTES_OPT.includes(
-									FIXTURE_VOTES_DATA?.status
-								)}
-							on:click={() =>
-								cast_vote(
-									'1',
-									FIXTURE_VOTES_DATA._1x2.home
-								)}
+							class:active={fixture_data_vote_obj.fixture_vote == '1'}
+							disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+							on:click={() => cast_vote('1', FIXTURE_VOTES_DATA._1x2.home)}
 						>
 							<p
 								class="
@@ -810,21 +768,11 @@
                   "
 							>
 								{#if mobileExclusive}
-									<span class="color-grey">
-										1
-									</span>
+									<span class="color-grey"> 1 </span>
 								{:else}
-									<img
-										src={FIXTURE_VOTES_DATA?.home_team_logo}
-										alt=""
-										width="28px"
-										height="28px"
-									/>
+									<img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="" width="28px" height="28px" />
 								{/if}
-								<span
-									class:active_p={fixture_data_vote_obj.fixture_vote ==
-										'1'}
-								>
+								<span class:active_p={fixture_data_vote_obj.fixture_vote == '1'}>
 									{#if FIXTURE_VOTES_DATA._1x2.home}
 										{FIXTURE_VOTES_DATA._1x2.home.toString()}
 									{:else}
@@ -849,11 +797,7 @@
 									<br />
 								{/if}
 								{#if FIXTURE_VOTES_DATA?.probabilities?.home != undefined}
-									{Math.round(
-										parseFloat(
-											FIXTURE_VOTES_DATA?.probabilities?.home.toString()
-										)
-									).toFixed(2)}%
+									{Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.home.toString())).toFixed(2)}%
 								{:else}
 									-
 								{/if}
@@ -870,13 +814,7 @@
                     w-500
                   "
 								>
-									{(
-										(FIXTURE_VOTES_DATA
-											?.match_votes
-											.vote_win_local /
-											total_votes) *
-										100
-									).toFixed(0)}%
+									{FIXTURE_VOTES_DATA?.match_votes.vote_win_local == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes.vote_win_local / total_votes) * 100).toFixed(0)}%
 								</span>
 								<span
 									class="
@@ -884,8 +822,7 @@
                     w-400
                   "
 								>
-									({FIXTURE_VOTES_DATA.match_votes
-										.vote_win_local})
+									({FIXTURE_VOTES_DATA.match_votes.vote_win_local})
 								</span>
 							</p>
 						{/if}
@@ -906,17 +843,9 @@
                 cast-vote-btn 
                 m-b-12
               "
-							class:active={fixture_data_vote_obj.fixture_vote ==
-								'X'}
-							disabled={vote_casted ||
-								FIXTURE_NO_VOTES_OPT.includes(
-									FIXTURE_VOTES_DATA?.status
-								)}
-							on:click={() =>
-								cast_vote(
-									'X',
-									FIXTURE_VOTES_DATA._1x2.draw
-								)}
+							class:active={fixture_data_vote_obj.fixture_vote == 'X'}
+							disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+							on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw)}
 						>
 							<p
 								class="
@@ -926,24 +855,14 @@
                   "
 							>
 								{#if mobileExclusive}
-									<span class="color-grey">
-										X
-									</span>
+									<span class="color-grey"> X </span>
 								{:else}
 									<!-- 
                     src="./static/icon/icon-close.svg"
                     -->
-									<img
-										src="/assets/svg/icon/icon-close.svg"
-										alt=""
-										width="28px"
-										height="28px"
-									/>
+									<img src="/assets/svg/icon/icon-close.svg" alt="" width="28px" height="28px" />
 								{/if}
-								<span
-									class:active_p={fixture_data_vote_obj.fixture_vote ==
-										'X'}
-								>
+								<span class:active_p={fixture_data_vote_obj.fixture_vote == 'X'}>
 									{#if FIXTURE_VOTES_DATA._1x2.draw}
 										{FIXTURE_VOTES_DATA._1x2.draw.toString()}
 									{:else}
@@ -968,11 +887,7 @@
 									<br />
 								{/if}
 								{#if FIXTURE_VOTES_DATA?.probabilities?.draw != undefined}
-									{Math.round(
-										parseFloat(
-											FIXTURE_VOTES_DATA?.probabilities?.draw.toString()
-										)
-									).toFixed(2)}%
+									{Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.draw.toString())).toFixed(2)}%
 								{:else}
 									-
 								{/if}
@@ -989,12 +904,7 @@
                     color-dark
                   "
 								>
-									{(
-										(FIXTURE_VOTES_DATA
-											.match_votes.vote_draw_x /
-											total_votes) *
-										100
-									).toFixed(0)}%
+									{FIXTURE_VOTES_DATA.match_votes.vote_draw_x == 0 ? 0 : ((FIXTURE_VOTES_DATA.match_votes.vote_draw_x / total_votes) * 100).toFixed(0)}%
 								</span>
 								<span
 									class="
@@ -1002,8 +912,7 @@
                     color-grey
                   "
 								>
-									({FIXTURE_VOTES_DATA.match_votes
-										.vote_draw_x})
+									({FIXTURE_VOTES_DATA.match_votes.vote_draw_x})
 								</span>
 							</p>
 						{/if}
@@ -1024,17 +933,9 @@
                 cast-vote-btn 
                 m-b-12
               "
-							class:active={fixture_data_vote_obj.fixture_vote ==
-								'2'}
-							disabled={vote_casted ||
-								FIXTURE_NO_VOTES_OPT.includes(
-									FIXTURE_VOTES_DATA?.status
-								)}
-							on:click={() =>
-								cast_vote(
-									'2',
-									FIXTURE_VOTES_DATA._1x2.away
-								)}
+							class:active={fixture_data_vote_obj.fixture_vote == '2'}
+							disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+							on:click={() => cast_vote('2', FIXTURE_VOTES_DATA._1x2.away)}
 						>
 							<p
 								class="
@@ -1044,21 +945,11 @@
                 "
 							>
 								{#if mobileExclusive}
-									<span class="color-grey">
-										2
-									</span>
+									<span class="color-grey"> 2 </span>
 								{:else}
-									<img
-										src={FIXTURE_VOTES_DATA?.away_team_logo}
-										alt=""
-										width="28px"
-										height="28px"
-									/>
+									<img src={FIXTURE_VOTES_DATA?.away_team_logo} alt="" width="28px" height="28px" />
 								{/if}
-								<span
-									class:active_p={fixture_data_vote_obj.fixture_vote ==
-										'2'}
-								>
+								<span class:active_p={fixture_data_vote_obj.fixture_vote == '2'}>
 									{#if FIXTURE_VOTES_DATA._1x2.away}
 										{FIXTURE_VOTES_DATA._1x2.away.toString()}
 									{:else}
@@ -1083,11 +974,7 @@
 									<br />
 								{/if}
 								{#if FIXTURE_VOTES_DATA?.probabilities?.away != undefined}
-									{Math.round(
-										parseFloat(
-											FIXTURE_VOTES_DATA?.probabilities?.away.toString()
-										)
-									).toFixed(2)}%
+									{Math.round(parseFloat(FIXTURE_VOTES_DATA?.probabilities?.away.toString())).toFixed(2)}%
 								{:else}
 									-
 								{/if}
@@ -1104,13 +991,7 @@
                     w-500
                   "
 								>
-									{(
-										(FIXTURE_VOTES_DATA
-											.match_votes
-											.vote_win_visitor /
-											total_votes) *
-										100
-									).toFixed(0)}%
+									{FIXTURE_VOTES_DATA.match_votes.vote_win_visitor == 0 ? 0 : ((FIXTURE_VOTES_DATA.match_votes.vote_win_visitor / total_votes) * 100).toFixed(0)}%
 								</span>
 								<span
 									class="
@@ -1118,8 +999,7 @@
                     w-400
                   "
 								>
-									({FIXTURE_VOTES_DATA.match_votes
-										.vote_win_visitor})
+									({FIXTURE_VOTES_DATA.match_votes.vote_win_visitor})
 								</span>
 							</p>
 						{/if}
@@ -1140,16 +1020,12 @@
 							width="16px"
 							height="16px"
 							style="position: absolute; top: 12px; right: 20px;"
-							on:click={() =>
-								(show_bet_site = false)}
+							on:click={() => (show_bet_site = false)}
 						/>
 						<a
 							rel="nofollow"
 							aria-label="football_fixtures_voting"
-							on:click={() =>
-								triggerGoggleEvents(
-									'football_fixtures_voting'
-								)}
+							on:click={() => triggerGoggleEvents('football_fixtures_voting')}
 							target="_blank"
 							href={SPORTBOOK_INFO.register_link}
 						>
@@ -1219,12 +1095,7 @@
 									>
 										{#if !mobileExclusive}
 											{#if fixture_data_vote_obj.fixture_vote == '1'}
-												<img
-													src={FIXTURE_VOTES_DATA?.home_team_logo}
-													alt=""
-													width="28px"
-													height="28px"
-												/>
+												<img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="" width="28px" height="28px" />
 											{:else if fixture_data_vote_obj.fixture_vote == 'X'}
 												<p
 													class="
@@ -1233,19 +1104,10 @@
                             row-space-out
                           "
 												>
-													<span
-														class="color-grey"
-													>
-														X
-													</span>
+													<span class="color-grey"> X </span>
 												</p>
 											{:else}
-												<img
-													src={FIXTURE_VOTES_DATA?.away_team_logo}
-													alt=""
-													width="28px"
-													height="28px"
-												/>
+												<img src={FIXTURE_VOTES_DATA?.away_team_logo} alt="" width="28px" height="28px" />
 											{/if}
 										{/if}
 
@@ -1344,11 +1206,7 @@
                       text-center
                     "
 										type="number"
-										value={(
-											parseFloat(
-												fixture_data_vote_obj.fixture_vote_val
-											) * user_stake_amount
-										).toFixed(2)}
+										value={(parseFloat(fixture_data_vote_obj.fixture_vote_val) * user_stake_amount).toFixed(2)}
 										disabled
 									/>
 								</div>
@@ -1361,10 +1219,7 @@
 									<a
 										rel="nofollow"
 										aria-label="football_fixtures_voting"
-										on:click={() =>
-											triggerGoggleEvents(
-												'football_fixtures_voting'
-											)}
+										on:click={() => triggerGoggleEvents('football_fixtures_voting')}
 										target="_blank"
 										href={SPORTBOOK_INFO.register_link}
 										class="anchor-bet-box"
@@ -1391,10 +1246,7 @@
 								<a
 									rel="nofollow"
 									aria-label="football_fixtures_voting"
-									on:click={() =>
-										triggerGoggleEvents(
-											'football_fixtures_voting'
-										)}
+									on:click={() => triggerGoggleEvents('football_fixtures_voting')}
 									target="_blank"
 									href={SPORTBOOK_INFO.register_link}
 									class="anchor-bet-box"
@@ -1485,20 +1337,14 @@
 	}
 
 	/* widget vote container */
-	div#votes-widget-container
-		div#btn-vote-container
-		div.odds-vote-box {
+	div#votes-widget-container div#btn-vote-container div.odds-vote-box {
 		width: 100%;
 		margin-right: 20px;
 	}
-	div#votes-widget-container
-		div#btn-vote-container
-		div.odds-vote-box:last-child {
+	div#votes-widget-container div#btn-vote-container div.odds-vote-box:last-child {
 		margin-right: 0;
 	}
-	div#votes-widget-container
-		div#btn-vote-container
-		button.cast-vote-btn {
+	div#votes-widget-container div#btn-vote-container button.cast-vote-btn {
 		background: #f2f2f2;
 		border: 1px solid #cccccc !important;
 		box-sizing: border-box;
@@ -1509,32 +1355,23 @@
 		/* width: 96px; */
 		height: 48px;
 	}
-	div#votes-widget-container
-		div#btn-vote-container
-		button.cast-vote-btn.active {
+	div#votes-widget-container div#btn-vote-container button.cast-vote-btn.active {
 		background: #ffffff !important;
 		border: 1px solid #f5620f !important;
 		box-sizing: border-box;
 		border-radius: 8px;
 		opacity: 1 !important;
 	}
-	div#votes-widget-container
-		div#btn-vote-container
-		button.cast-vote-btn:disabled {
+	div#votes-widget-container div#btn-vote-container button.cast-vote-btn:disabled {
 		opacity: 0.5;
 	}
-	div#votes-widget-container
-		div#btn-vote-container
-		p.probablitiy-text {
+	div#votes-widget-container div#btn-vote-container p.probablitiy-text {
 		text-align: center;
 		color: #8c8c8c;
 		width: min-content;
 		white-space: nowrap;
 	}
-	div#votes-widget-container
-		div#btn-vote-container
-		button.cast-vote-btn
-		.active_p {
+	div#votes-widget-container div#btn-vote-container button.cast-vote-btn .active_p {
 		color: #f5620f !important;
 	}
 
@@ -1560,9 +1397,7 @@
 		overflow: hidden;
 	}
 	div#site-bet-box img#stakesSiteImg {
-		background-color: var(
-			--featured-match-bookmaker-bg-
-		);
+		background-color: var(--featured-match-bookmaker-bg-);
 		object-fit: none;
 		height: 40px;
 	}
@@ -1571,38 +1406,21 @@
 		background: #f2f2f2;
 		border-radius: 8px;
 	}
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		> * {
+	div#site-bet-box div#inner-site-container div#box-row > * {
 		margin-right: 4px;
 	}
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		> *:last-child {
+	div#site-bet-box div#inner-site-container div#box-row > *:last-child {
 		margin-right: 0;
 	}
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		div.stakes-info-box {
+	div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box {
 		width: 100%;
 	}
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		div.stakes-info-box
-		input#win-type {
+	div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input#win-type {
 		border-radius: 5px;
 		border: 0;
 		outline: none;
 	}
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		div.stakes-info-box
-		.input-value {
+	div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value {
 		-moz-appearance: textfield;
 		background: #ffffff;
 		border-radius: 8px;
@@ -1610,47 +1428,25 @@
 		/* width: 76px; */
 		border: none;
 	}
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		div.stakes-info-box
-		input {
+	div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input {
 		background: rgb(255, 255, 255);
 		color: black !important;
 		opacity: 1 !important;
 	}
-	div#site-bet-box
-		div#inner-site-container
-		a.anchor-bet-box
-		button.place-bet-btn {
+	div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn {
 		height: 46px;
 		width: 100%;
 		background-color: #f5620f;
-		box-shadow: 0px 3px 8px
-			rgba(212, 84, 12, 0.32);
+		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
 		margin-top: 0;
 	}
 
 	/* widget bet site container width decalrations */
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		div.stakes-info-box
-		button,
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		div.stakes-info-box
-		input,
-	div#site-bet-box
-		div#inner-site-container
-		div#box-row
-		div.stakes-info-box
-		.input-value,
-	div#site-bet-box
-		div#inner-site-container
-		a.anchor-bet-box {
+	div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box button,
+	div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input,
+	div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value,
+	div#site-bet-box div#inner-site-container a.anchor-bet-box {
 		/* max-width: -webkit-fill-available; */
 		width: inherit;
 	}
@@ -1672,57 +1468,34 @@
   NOTE: TABLET && DESKTOP [SHARED] RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) {
 		/* widget vote container */
-		div#votes-widget-container
-			div#btn-vote-container
-			button.cast-vote-btn {
+		div#votes-widget-container div#btn-vote-container button.cast-vote-btn {
 			min-width: 206px;
 			width: 100%;
 			height: 48px;
 		}
-		div#votes-widget-container
-			div#btn-vote-container
-			button.cast-vote-btn:hover {
+		div#votes-widget-container div#btn-vote-container button.cast-vote-btn:hover {
 			border: 1px solid #f5620f !important;
 		}
-		div#votes-widget-container
-			div#btn-vote-container
-			button.cast-vote-btn:hover
-			span {
+		div#votes-widget-container div#btn-vote-container button.cast-vote-btn:hover span {
 			color: #f5620f !important;
 		}
 
 		/* widget bet site container */
-		div#site-bet-box
-			#inner-site-container
-			button {
+		div#site-bet-box #inner-site-container button {
 			height: 44px;
 		}
-		div#site-bet-box
-			div#inner-site-container
-			div#box-row
-			> * {
+		div#site-bet-box div#inner-site-container div#box-row > * {
 			margin-right: 16px;
 		}
-		div#site-bet-box
-			div#inner-site-container
-			div#box-row
-			> *:last-child {
+		div#site-bet-box div#inner-site-container div#box-row > *:last-child {
 			margin-right: 0;
 		}
-		div#site-bet-box
-			div#inner-site-container
-			div#box-row
-			div.stakes-info-box
-			.input-value {
+		div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value {
 			width: 100%;
 			/* max-width: 160px; */
 			padding: 14px;
 		}
-		div#site-bet-box
-			div#inner-site-container
-			div#box-row
-			div.stakes-info-box
-			input#win-type.desktop-view-winnings {
+		div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box input#win-type.desktop-view-winnings {
 			padding: 0;
 			text-align: end;
 		}
@@ -1736,38 +1509,22 @@
 		}
 
 		/* widget vote container */
-		div#votes-widget-container
-			div#btn-vote-container
-			button.cast-vote-btn {
+		div#votes-widget-container div#btn-vote-container button.cast-vote-btn {
 			min-width: 140px;
 			width: 100%;
 			height: 48px;
 		}
 
 		/* widget bet site container */
-		div#site-bet-box
-			div#inner-site-container
-			div#box-row
-			div.stakes-info-box
-			.input-value,
-		div#site-bet-box
-			div#inner-site-container
-			div#box-row
-			div.stakes-info-box
-			a.anchor-bet-box {
+		div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box .input-value,
+		div#site-bet-box div#inner-site-container div#box-row div.stakes-info-box a.anchor-bet-box {
 			width: 100%;
 			/* max-width: 160px; */
 		}
-		div#site-bet-box
-			div#inner-site-container
-			a.anchor-bet-box
-			button.place-bet-btn {
+		div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn {
 			margin-top: 27px;
 		}
-		div#site-bet-box
-			div#inner-site-container
-			a.anchor-bet-box
-			button.place-bet-btn:hover {
+		div#site-bet-box div#inner-site-container a.anchor-bet-box button.place-bet-btn:hover {
 			background-color: #f77c42;
 		}
 	}
@@ -1776,27 +1533,17 @@
     WIDGET DARK THEME
   ==================== */
 
-	div#votes-widget-container.dark-background-1
-		div#btn-vote-container
-		button.cast-vote-btn {
+	div#votes-widget-container.dark-background-1 div#btn-vote-container button.cast-vote-btn {
 		background-color: #616161 !important;
 		border: 1px solid #999999 !important;
 	}
-	div#votes-widget-container.dark-background-1
-		div#btn-vote-container
-		button.cast-vote-btn:hover {
+	div#votes-widget-container.dark-background-1 div#btn-vote-container button.cast-vote-btn:hover {
 		border: 1px solid #f5620f !important;
 	}
-	div#votes-widget-container.dark-background-1
-		div#btn-vote-container
-		button.cast-vote-btn:hover
-		span {
+	div#votes-widget-container.dark-background-1 div#btn-vote-container button.cast-vote-btn:hover span {
 		color: #f5620f !important;
 	}
-	div#votes-widget-container.dark-background-1
-		div#btn-vote-container
-		button.dark-background-1
-		.cast-vote-btn.active {
+	div#votes-widget-container.dark-background-1 div#btn-vote-container button.dark-background-1 .cast-vote-btn.active {
 		border: 1px solid #f5620f !important;
 	}
 
@@ -1804,16 +1551,12 @@
 		color: #ffffff !important;
 	}
 
-	div#votes-widget-container.dark-background-1
-		.probablitiy-text {
+	div#votes-widget-container.dark-background-1 .probablitiy-text {
 		color: #a8a8a8 !important;
 	}
 
-	div#votes-widget-container.dark-background-1
-		#site-bet-box,
-	div#votes-widget-container.dark-background-1
-		div#site-bet-box
-		div#inner-site-container {
+	div#votes-widget-container.dark-background-1 #site-bet-box,
+	div#votes-widget-container.dark-background-1 div#site-bet-box div#inner-site-container {
 		background-color: #616161 !important;
 	}
 	div#votes-widget-container.dark-background-1
@@ -1833,11 +1576,7 @@
 		input {
 		color: #ffffff !important;
 	}
-	div#votes-widget-container.dark-background-1
-		div#site-bet-box
-		div#box-row
-		div.stakes-info-box
-		input#win-type {
+	div#votes-widget-container.dark-background-1 div#site-bet-box div#box-row div.stakes-info-box input#win-type {
 		background-color: #4b4b4b !important;
 	}
 </style>
