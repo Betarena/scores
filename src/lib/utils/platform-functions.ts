@@ -19,16 +19,20 @@ export function platfrom_lang_ssr(
 	// NOTE: default (EN)
 	let server_side_language = 'en';
 	// [ℹ] validation (#1)
+  // [ℹ] errorPage
 	const validation_1 =
-		page_route_id != null 
-    && !page_error;
-	if (!validation_1) return server_side_language;
+		page_route_id == null 
+    && page_error;
+	if (validation_1) return server_side_language;
 	// [ℹ] validation (#2)
+  // [ℹ] if [[lang=lang]] page
 	server_side_language = 
-    page_route_id.includes('[lang=lang]')
+    page_route_id.includes('[[lang=lang]]')
+    && page_params_lang != undefined
       ? page_params_lang
       : 'en'
   ;
+  dlog(`➡️ ${server_side_language}`, true)
 	return server_side_language;
 }
 
