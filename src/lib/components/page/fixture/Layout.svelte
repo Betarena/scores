@@ -385,11 +385,6 @@
           {SPORTBOOK_MAIN}
           {SPORTBOOK_ALL}
 				/>
-				<StandingsWidget
-					{STANDINGS_T}
-					{STANDINGS_DATA}
-					{FIXTURE_INFO}
-				/>
 				<AboutWidget
 					{FIXTURE_ABOUT}
 					{FIXTURE_ABOUT_TRANSLATION}
