@@ -1009,7 +1009,7 @@
                       team-text
                       no-wrap
                     "
-									class:color-grey={item?.scores?.localteam_score < item?.scores?.visitorteam_score}>
+									class:color-grey={item?.winner_team_id != undefined && item?.winner_team_id != item?.localteam_id}>
 										{#if mobileExclusive}
 											{FIXTURE_H2H?.teams_data?.find(
 												({ team_id }) =>
@@ -1075,7 +1075,7 @@
                       team-text
                       no-wrap
                     "
-									class:color-grey={item?.scores?.visitorteam_score < item?.scores?.localteam_score}>
+									class:color-grey={item?.winner_team_id != undefined && item?.winner_team_id != item?.visitorteam_id}>
 										{#if mobileExclusive}
 											{FIXTURE_H2H?.teams_data?.find(
 												({ team_id }) =>
