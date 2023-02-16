@@ -206,6 +206,39 @@ export function dlogv2(
 }
 
 /**
+ * @description Advanced multi- string / object 
+ * debug logging function for displaying target 
+ * information based on supplied arguments, 
+ * and styling.
+ * @param {string} groupName
+ * @param {unknown[]} msg 
+ * @param {boolean} show 
+ * @param {string} style
+ */
+export function dlogv2open(
+	groupName: string,
+	msgs: unknown[],
+	show?: boolean,
+	style?: string
+) {
+	// [🐞]
+	if (DEV_OVERRIDE && show) {
+		console.group(
+			`%c${groupName}`,
+			style
+		);
+		for (const m of msgs) {
+			const msg =
+				typeof m == 'string'
+					? m.replace(/\t/g, '')
+					: m;
+			console.debug(msg);
+		}
+		console.groupEnd();
+	}
+}
+
+/**
  * @description Main error console log for
  * the platform to easily identify errors;
  * @param {string} msg
