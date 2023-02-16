@@ -8,6 +8,7 @@ import type {
 	BETARENA_HASURA_scores_team_statistics,
 	BETARENA_HASURA_scores_team_statistics_history,
 	BETARENA_HASURA_scores_widget_standings_translations,
+	ScoresTournamentsType,
 	WidgetsNoDataAvailable
 } from '../../../../lib/models/hasura.js';
 
@@ -64,6 +65,7 @@ export interface REDIS_CACHE_SINGLE_tournament_standings_data {
 	url?: string;
 	league_id?: number;
 	seasons?: Tournament_Standing_Season[];
+  comp_typ?: ScoresTournamentsType
 }
 
 /**

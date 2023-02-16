@@ -93,7 +93,7 @@ export interface BETARENA_HASURA_scores_football_standings {
 	league_id?: number;
 	data?: StandingsHistDatum[];
 	name?: string;
-	type?: string;
+	type?: ScoresTournamentsType;
 	season_id?: number;
 	multipart?: boolean;
 }
@@ -105,7 +105,7 @@ export interface BETARENA_HASURA_scores_football_standings_history {
 	league_id?: number;
 	data?: StandingsHistDatum[];
 	name?: string;
-	type?: string;
+	type?: ScoresTournamentsType;
 	season_id?: number;
 	multipart?: boolean;
 }

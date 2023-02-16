@@ -56,28 +56,19 @@
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	// [ℹ] MAIN
-	// [ℹ] [NaN]
 	async function widgetInit(): Promise<void> {
-		// [ℹ] data validation check
-		if (STANDINGS_DATA == undefined) {
+
+    const valdiation = 
+      STANDINGS_DATA?.comp_typ != 'domestic'
+      || STANDINGS_DATA == undefined
+
+		// [ℹ] validation [1]
+		if (valdiation) {
       dlog(`${STANDINGS_FW_DEBUG_TAG} ❌ no data available!`, STANDINGS_FW_DEBUG_TOGGLE, STANDINGS_FW_DEBUG_STYLE);
 			no_widget_data = true;
 			return;
 		}
-		// [ℹ] otherwise, no data
-		else {
-			no_widget_data = false;
-		}
-		// loaded = true;
-		// STANDINGS_T.data.sportbook_detail = response
-
-		// [ℹ] order dates by descending order;
-		// STANDINGS_T.data.seasons.sort((a, b) => parseFloat(b.name.toString().slice(-2)) - parseFloat(a.name.toString().slice(-2)));
-
-		// [ℹ] select same-seaon-as-league-info-widget;
-		// dropdownSeasonSelect = STANDINGS_T.data.seasons[0]
-
+    no_widget_data = false;
 		STANDINGS_T = STANDINGS_T;
 	}
 
