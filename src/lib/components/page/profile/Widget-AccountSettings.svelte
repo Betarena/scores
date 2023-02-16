@@ -58,7 +58,6 @@ COMPONENT JS (w/ TS)
 	let profile_crop_widget: ModalProfilePictureCrop;
 
   $: if (RESPONSE_PROFILE_DATA != undefined) no_widget_data = false;
-  console.log('no_widget_data', no_widget_data)
 
 	$: if (files != undefined) {
 		profile_picture_select();
@@ -355,6 +354,15 @@ COMPONENT JS (w/ TS)
 		goto('/', { replaceState: true });
 	}
 
+  /**
+   * @description closing off picture-crop;
+   * and reset files data;
+   */
+  function close_crop_pic(): void {
+    modal_pic_crop_show = false
+    fileInputElem.value = ""
+  }
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -417,7 +425,7 @@ COMPONENT HTML
 	bind:this={profile_crop_widget}
 	{modal_pic_crop_show}
 	on:toggle_delete_modal={() =>
-		(modal_pic_crop_show = false)}
+		close_crop_pic()}
 	on:upload_selected_img={(event) =>
 		upload_profile_picture(event)}
 />
