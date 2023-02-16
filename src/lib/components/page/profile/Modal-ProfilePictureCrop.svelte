@@ -39,35 +39,24 @@ COMPONENT JS (w/ TS)
 	 */
 	export function load_picture(file: File): void {
 		let image: HTMLImageElement = document.getElementById('profile-image');
-    let imageOuter: HTMLElement = document.getElementById('image-box-in');
+    let resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot')
+    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
 		image.src = URL.createObjectURL(file);
 		image.onload = function () {
-      imageOuter.addEventListener('mouseenter', start_all_listeners, true)
-      imageOuter.addEventListener('mouseout', clear_event_listeners, true)
-			reset_crop = true;
+      reset_crop = true;
       reset_resize = true;
+      imageCropBox.addEventListener('touchstart', mousedown_event, true);
+      window.addEventListener('touchend', mouseup_event, true);
+      window.addEventListener('touchmove', mousemove_event, true);
+      imageCropBox.addEventListener('mousedown', mousedown_event, true);
+      window.addEventListener('mouseup', mouseup_event, true);
+      window.addEventListener('mousemove', mousemove_event, true);
+      for (const element of resize_elemnts) {
+        element.addEventListener('touchstart', mousedown_resize_event, true);
+        element.addEventListener('mousedown', mousedown_resize_event, true);
+      }
 		};
 	}
-
-  /**
-   * @description starts all of the listeners for
-   * the target component;
-   * @returns {void}
-   */
-  function start_all_listeners(): void {
-    let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
-    let resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot')
-    imageCropBox.addEventListener('touchstart', mousedown_event, true);
-    window.addEventListener('touchend', mouseup_event, true);
-    window.addEventListener('touchmove', mousemove_event, true);
-    imageCropBox.addEventListener('mousedown', mousedown_event, true);
-    window.addEventListener('mouseup', mouseup_event, true);
-    window.addEventListener('mousemove', mousemove_event, true);
-    for (const element of resize_elemnts) {
-      element.addEventListener('touchstart', mousedown_resize_event, true);
-      element.addEventListener('mousedown', mousedown_resize_event, true);
-    }
-  }
 
 	/**
 	 * @description bubbles up to parent event
@@ -76,9 +65,6 @@ COMPONENT JS (w/ TS)
    * @returns {void}
 	 */
 	function toggle_modal(): void {
-    let imageOuter: HTMLElement = document.getElementById('image-box-in');
-    imageOuter.removeEventListener('mouseenter', start_all_listeners, true)
-    imageOuter.removeEventListener('mouseout', clear_event_listeners, true)
     clear_event_listeners()
     reset_crop = true;
     reset_resize = true;
@@ -93,9 +79,6 @@ COMPONENT JS (w/ TS)
    * @returns {void}
 	 */
 	function upload_selected_img(): void {
-    let imageOuter: HTMLElement = document.getElementById('image-box-in');
-    imageOuter.removeEventListener('mouseenter', start_all_listeners, true)
-    imageOuter.removeEventListener('mouseout', clear_event_listeners, true)
 		clear_event_listeners()
 		reset_crop = true;
     reset_resize = true;
