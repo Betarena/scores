@@ -632,13 +632,27 @@
 	$: if (condition) {
 		init_vote();
 	}
+
+  //// 
+
+  $: if (
+    (FIXTURE_VOTES_DATA?.match_votes != undefined && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status))
+    && (
+      FIXTURE_VOTES_DATA?.match_votes.vote_win_local == 0 
+      && FIXTURE_VOTES_DATA?.match_votes.vote_draw_x == 0 
+      && FIXTURE_VOTES_DATA?.match_votes.vote_win_visitor == 0
+    )
+  ) {
+    no_widget_data = true;
+  }
 </script>
 
 <!-- ===============
     COMPONENT HTML 
 =================-->
 
-<div id="widget-outer" class:display_none={no_widget_data && !show_placeholder}>
+<div id="widget-outer" 
+  class:display_none={no_widget_data && !show_placeholder}>
 	<!-- 
   [ℹ] SEO-DATA-LOADED 
   -->
