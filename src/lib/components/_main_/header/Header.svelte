@@ -35,6 +35,8 @@ COMPONENT JS - BASIC
 	import { sessionStore } from '$lib/store/session';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import AuthWidget from '../auth/Auth_Widget.svelte';
+	import { doc, updateDoc } from 'firebase/firestore';
+	import { db_firestore } from '$lib/firebase/init';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -91,9 +93,12 @@ COMPONENT JS - BASIC
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-  let setOnce = false;
-  $: if ($userBetarenaSettings.user != undefined && !setOnce) {
-    setOnce = true
+  let setUserLang = false;
+  $: if ($userBetarenaSettings.user != undefined 
+    && !setUserLang 
+    && PROFILE_URL != $page.route.id
+  ) {
+    setUserLang = true
     let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
     console.log("🔴🔴🔴🔴 HERE!!!")
     selectLanguage(userlang)
@@ -127,7 +132,8 @@ COMPONENT JS - BASIC
 
 	$: if (browser) {
 		hideSEO = true;
-		if (!langSelected) {
+		if (!langSelected && $userBetarenaSettings.user == undefined) {
+      console.log("🔴🔴🔴🔴👀 HERE!!!")
 			langSelected = true;
 			userBetarenaSettings.setLang(
 				server_side_language
@@ -415,13 +421,44 @@ COMPONENT JS - BASIC
 		}
 	}
 
+  $: if ($userBetarenaSettings?.lang 
+  && PROFILE_URL == $page.route.id) {
+    update_select_lang()
+  }
+
+  /**
+	 * @description updates user's platform language preferrences
+	 * firebase services;
+   * @returns {Promise<void>}
+	 */
+  async function update_select_lang(): Promise<void> {
+		dlog('🔵 Updating platform lang...');
+		const lang = $userBetarenaSettings?.lang;
+    // [ℹ] (update)from localStorage()
+		userBetarenaSettings.updateLang(
+			lang
+		);
+		// [ℹ] (update)from Firebase - Firestore
+		const userRef = doc(
+			db_firestore,
+			'betarena_users',
+			$userBetarenaSettings?.user
+				?.firebase_user_data?.uid
+		);
+		await updateDoc(userRef, {
+			lang: lang
+		});
+		dlog('🟢 Language has been updated', true);
+  }
+
   /**
 	 * @description logout user; and additional ui changes
 	 */
 	async function logout(): Promise<void> {
 		dropdown_user_auth = false;
+    await goto(`/${$userBetarenaSettings.lang == 'en' ? '' : $userBetarenaSettings.lang}`, { replaceState: true })
 		userBetarenaSettings.signOutUser();
-    await goto('/', { replaceState: true })
+    setUserLang = false
 	}
 
   // NOTE: ?
@@ -1150,22 +1187,22 @@ TODO:FIXME: not generating for each LANG
 								<!--
                 [ℹ] logout page button
                 -->
-								<div
-									class="
+                <div
+                  class="
                     theme-opt-box
                     cursor-pointer
                   "
-									on:click={() => logout()}
-								>
-									<p
-										class="
+                  on:click={() => logout()}
+                >
+                  <p
+                    class="
                       color-white 
                       s-14
                     "
-									>
-										Logout
-									</p>
-								</div>
+                  >
+                    Logout
+                  </p>
+                </div>
 							</div>
 						{/if}
 					</div>

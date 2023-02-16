@@ -8,6 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import wallet from './assets/wallet.svg';
 	import metamask_icon from './assets/metamask.svg';
+	import { dlog, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -34,11 +35,102 @@ COMPONENT JS (w/ TS)
    * @returns {Promise<void>}
 	 */
 	async function connect_wallet_action(): Promise<void> {
+    // [ℹ] restrict only to MetaMask (original)
+    if (!providerDetect('isMetaMask')[0]) {
+      dlog("🔴 Moralis Auth not found!")
+      alert('Please install the MetaMask Wallet Extension!')
+      toggle_modal()
+      return
+    }
     const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
     const account = accounts[0];
 		dispatch('connect_wallet_action', {
       wallet_id: account
     });
+	}
+
+  	/**
+	 * Validates what Web3 wallet extension
+	 * is being used for the platform
+	 * @param walletType
+	 */
+	function providerDetect(
+		walletType:
+			| 'isMetaMask'
+			| 'isCoinbaseWallet'
+			| 'isBraveWallet'
+	): [boolean, any] {
+		// [ℹ] no ethereum wallet present
+		if (!window.ethereum) {
+			return [false, null];
+			// throw new Error("No injected ethereum object.");
+		}
+
+		// [ℹ] default provider (single) assign
+		let target_wallet = undefined;
+
+		// [ℹ] multiple provider(s) check true
+		if (
+			Array.isArray(window.ethereum.providers)
+		) {
+			if (walletType == 'isMetaMask') {
+				target_wallet =
+					window.ethereum.providers.find(
+						(provider) =>
+							provider[walletType] &&
+							provider?.isBraveWallet == undefined
+					);
+			}
+			// [ℹ] alternative
+			// else {
+			//   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
+			// }
+      dlog(`${PR_P_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, PR_P_TOG, PR_P_STY)
+      dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
+      dlog(`${PR_P_TAG} window.ethereum.providers ${window.ethereum.providers}`, PR_P_TOG, PR_P_STY)
+		} else {
+			if (
+				walletType == 'isMetaMask' &&
+				window.ethereum?.isBraveWallet ==
+					undefined &&
+				window.ethereum?.isMetaMask !=
+					undefined &&
+				window.ethereum?.isMetaMask
+			) {
+				target_wallet =
+					window.ethereum[walletType];
+			}
+			// [ℹ] alternative
+			// else {
+			//   target_wallet = window.ethereum[walletType]
+			// }
+      dlog(`${PR_P_TAG} 🔵 1 provider identified! ${window.ethereum}`, PR_P_TOG, PR_P_STY)
+      dlog(`${PR_P_TAG} target_wallet ${target_wallet}`, PR_P_TOG, PR_P_STY)
+      dlog(`${PR_P_TAG} window.ethereum ${window.ethereum}`, PR_P_TOG, PR_P_STY)
+		}
+
+		// [ℹ] TARGET (THIS) single provider check true
+		if (target_wallet != undefined) {
+      dlog(`${PR_P_TAG} 🟢 ${walletType} identified`, PR_P_TOG, PR_P_STY)
+			// DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
+			// DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
+			// DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
+			// DOC: https://github.com/MetaMask/metamask-extension/issues/13622
+			// NOTE: conflicting use of CoinBaseWallet & MetaMask
+			// NOTE: setting MetaMask as main wallet
+			// NOTE: IMPORTANT causes issues with FireFox
+			// target_wallet.request({ method: 'eth_requestAccounts' });
+			// NOTE: Not working
+			// window.ethereum.setSelectedProvider(target_wallet);
+			// window.ethereum.request({
+			//   method: 'wallet_requestPermissions',
+			//   params: [{ eth_accounts: {}}]
+			// });
+			return [true, target_wallet];
+		} else {
+      dlog(`${PR_P_TAG} 🔴 no target wallet (${walletType}) identified`, PR_P_TOG, PR_P_STY)
+			return [false, null];
+		}
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~

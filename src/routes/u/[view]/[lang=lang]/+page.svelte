@@ -2,6 +2,7 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import AccountSettingsBoard from '$lib/components/page/profile/Widget-AccountSettings.svelte';
@@ -40,7 +41,7 @@ COMPONENT JS (w/ TS)
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	// TODO: have this check on the navbar directly
-	$: if ($userBetarenaSettings?.user == undefined) {
+	$: if (browser && $userBetarenaSettings != undefined && $userBetarenaSettings?.user == undefined) {
 	  goto('/')
 	}
 

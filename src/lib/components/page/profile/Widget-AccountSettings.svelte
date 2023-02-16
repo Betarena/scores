@@ -49,6 +49,7 @@ COMPONENT JS (w/ TS)
 	let fileInputElem: HTMLInputElement;
 	let usernameInput: string;
   let usernameErrorExist: boolean;
+  let usernameErrorMsg: string;
 	let profile_picture_exists: boolean = false;
 	let profile_wallet_connected: boolean = false;
 	let processing: boolean = false;
@@ -204,9 +205,10 @@ COMPONENT JS (w/ TS)
     // [ℹ] validation [1]
     const valid = await username_update_validation()
     if (!valid) { 
-      alert('🔴 Username is invalid')
+		  dlog('🔴 Username is invalid...', true);
       return;
     }
+    usernameErrorMsg = undefined;
 		// [ℹ] (update)from localStorage()
 		userBetarenaSettings.updateUsername(
 			usernameInput
@@ -224,6 +226,12 @@ COMPONENT JS (w/ TS)
 		dlog('🟢 Username updated', true);
 	}
 
+  /**
+   * @description a function to validate the user
+   * input; returns boolean true/false; assigns
+   * appropiate error message;
+   * @returns {Promise<boolean>} boolean
+   */
   async function username_update_validation(): Promise<boolean> {
 		dlog('🔵 Validating username...', true);
     let valid = true;
@@ -233,16 +241,36 @@ COMPONENT JS (w/ TS)
     const querySnapshot = await getDocs(queryUsername); // can be access individually;
     // DOC: https://firebase.google.com/docs/firestore/query-data/queries
 		dlog(querySnapshot, false);
-    if (querySnapshot.docs.length > 0) valid = false;
-    // [ℹ] validation [2] - length
-    if (usernameInput.length < 3) valid = false;
-    // [ℹ] validation [3] - only-numbers
-    if (/^\d+$/.test(usernameInput)) valid = false;
-    // [ℹ] validation [4] - has a space
-    if (/\s/g.test(usernameInput)) valid = false;
-    // [ℹ] validation [5] - has special char
-    let format = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-    if (format.test(usernameInput)) valid = false;
+    if (querySnapshot.docs.length > 0) {
+      valid = false
+      usernameErrorMsg = 'Username is already in use';
+    }
+    // [ℹ] validation [2] - length (min)
+    if (usernameInput.length < 3) {
+      valid = false;
+      usernameErrorMsg = 'Username must be greater than 3 characters';
+    }
+    // [ℹ] validation [3] - length (min)
+    if (usernameInput.length > 15) {
+      valid = false;
+      usernameErrorMsg = 'Username must be less than 15 characters';
+    }
+    // [ℹ] validation [4] - only-numbers
+    if (/^\d+$/.test(usernameInput)) {
+      valid = false;
+      usernameErrorMsg = 'Username must not contain only numbers';
+    };
+    // [ℹ] validation [5] - has a space
+    if (/\s/g.test(usernameInput)) {
+      valid = false;
+      usernameErrorMsg = 'Username must not contain spaces'
+    }
+    // [ℹ] validation [6] - has special char
+    let format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
+    if (format.test(usernameInput)) { 
+      valid = false;
+      usernameErrorMsg = 'Username cant have spaces or special characters'
+    }
     // [ℹ] return;
     return valid;
   }
@@ -602,7 +630,21 @@ COMPONENT HTML
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={usernameInput}
+        class:input-error={usernameErrorMsg != undefined}
       />
+      <!-- 
+      <-conditional->
+      [ℹ] error message input
+      -->
+      {#if usernameErrorMsg}
+        <p
+          class="
+            s-14
+            color-error
+          ">
+          {usernameErrorMsg}
+        </p>
+      {/if}
     </div>
     <!-- 
     [ℹ] third row
@@ -760,6 +802,9 @@ COMPONENT STYLE
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
+  input[type='text'].input-error {
+    border: 1px solid var(--red-bright) !important;
+  }
 
 	button {
 		width: -webkit-fill-available;

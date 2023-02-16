@@ -287,6 +287,32 @@ function createLocalStore(key: string) {
 			set(existing_data);
 		},
 
+    /**
+		 * @description updates localStorage for user's platform language;
+		 * and updates the svelte store;
+		 * @param {string | undefined} wallet
+		 */
+		updateLang: (
+			lang: string | undefined
+		) => {
+			// [ℹ] GET DATA FROM LOCALSTORAGE();
+			const existing: string =
+				localStorage.getItem(key);
+			// [ℹ] CONVERT TO JSON;
+			const existing_data: User_Setting =
+				JSON.parse(existing);
+			// [ℹ] UPDATE THE DATA FOR WEB3 WALLET;
+			existing_data.user.scores_user_data.lang =
+				lang;
+			// [ℹ] UPDATE THE LOCALSTORAGE();
+			localStorage.setItem(
+				key,
+				JSON.stringify(existing_data)
+			);
+			// [ℹ] update the `set()` data;
+			set(existing_data);
+		},
+
 		/**
 		 * @description removes user data from localStorage;
 		 * and updates the svelte store;

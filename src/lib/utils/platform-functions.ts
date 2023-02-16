@@ -27,7 +27,7 @@ export function platfrom_lang_ssr(
 	// [ℹ] validation (#2)
   // [ℹ] if [[lang=lang]] page
 	server_side_language = 
-    page_route_id.includes('[[lang=lang]]')
+    (page_route_id.includes('[[lang=lang]]') || page_route_id.includes('[lang=lang]'))
     && page_params_lang != undefined
       ? page_params_lang
       : 'en'
