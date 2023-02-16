@@ -36,9 +36,12 @@ export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEv
     }
 
 		const urlLang: string =
-			params.lang == undefined
+			params.lang == undefined 
+      || params?.lang == 'en'
 				? 'en'
 				: params.lang;
+
+    console.log(`🔵 ${urlLang}`)
 		const promise_urls = [
 			`/api/hasura/profile?lang=${urlLang}` // profile-page translations
 		];

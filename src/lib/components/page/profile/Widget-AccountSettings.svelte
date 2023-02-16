@@ -35,6 +35,7 @@ COMPONENT JS (w/ TS)
 		where
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -42,6 +43,10 @@ COMPONENT JS (w/ TS)
 
 	export let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation;
 	// FIXME: missing Upload / Remove - Profile Picture Translation
+
+  // let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
+
 	dlog(RESPONSE_PROFILE_DATA, true);
 
   let no_widget_data: boolean = true;

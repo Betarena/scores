@@ -2,6 +2,8 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { page } from '$app/stores';
+	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog, dlogv2, dlogv2open, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
 
@@ -11,6 +13,9 @@ COMPONENT JS (w/ TS)
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+  let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
 	const dispatch = createEventDispatcher();
 
@@ -447,7 +452,7 @@ COMPONENT HTML
         color-black-2
       "
 		>
-			Profile Picture
+			{RESPONSE_PROFILE_DATA?.profile_photo}
 		</p>
 		<!-- 
     [ℹ] close modal icon (cross)
@@ -501,7 +506,7 @@ COMPONENT HTML
       "
 			on:click={() => toggle_modal()}
 		>
-			Cancel
+			{RESPONSE_PROFILE_DATA?.cancel_expression}
 		</button>
 		<!-- 
     [ℹ] delete action (btn)
@@ -514,7 +519,7 @@ COMPONENT HTML
       "
 			on:click={() => upload_selected_img()}
 		>
-			Save Photo
+			{RESPONSE_PROFILE_DATA?.save_photo}
 		</button>
 	</div>
   <!-- <canvas id="example" width="150" height="150"></canvas> -->

@@ -2,6 +2,8 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { page } from '$app/stores';
+	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { createEventDispatcher } from 'svelte';
 
@@ -18,6 +20,10 @@ COMPONENT JS (w/ TS)
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+  let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+
+  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
 	type PROFILE_OPT =
 		| 'Dashboard'
@@ -143,7 +149,16 @@ COMPONENT HTML
           no-wrap
         "
 			>
-				{MENU_OPT}
+				<!-- {MENU_OPT} -->
+        {#if MENU_OPT == 'Account Settings'}
+          {RESPONSE_PROFILE_DATA?.acc_settings}
+        {:else if MENU_OPT == 'Dashboard'}
+          {RESPONSE_PROFILE_DATA?.dashboard}
+        {:else if MENU_OPT == 'Author'}
+          {RESPONSE_PROFILE_DATA?.author}
+        {:else if MENU_OPT == 'Scores'}
+          {RESPONSE_PROFILE_DATA?.scores}
+        {/if}
 			</p>
 		</div>
 		<img
@@ -231,7 +246,15 @@ COMPONENT HTML
 					'Author'
 				].includes(MENU_OPT)}
 			>
-				{MENU_OPT}
+        {#if MENU_OPT == 'Account Settings'}
+          {RESPONSE_PROFILE_DATA?.acc_settings}
+        {:else if MENU_OPT == 'Dashboard'}
+          {RESPONSE_PROFILE_DATA?.dashboard}
+        {:else if MENU_OPT == 'Author'}
+          {RESPONSE_PROFILE_DATA?.author}
+        {:else if MENU_OPT == 'Scores'}
+          {RESPONSE_PROFILE_DATA?.scores}
+        {/if}
 			</p>
 		</div>
 		<!-- 
@@ -259,7 +282,7 @@ COMPONENT HTML
           color-grey
         "
 			>
-				Available Soon
+				{RESPONSE_PROFILE_DATA?.soon}
 			</p>
 		{/if}
 	</div>
