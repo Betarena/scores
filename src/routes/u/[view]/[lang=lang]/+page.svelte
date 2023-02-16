@@ -40,10 +40,10 @@ COMPONENT JS (w/ TS)
 	// COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	// TODO: have this check on the navbar directly
-	$: if (browser && $userBetarenaSettings != undefined && $userBetarenaSettings?.user == undefined) {
-	  goto('/')
-	}
+  // TODO: have this check on the navbar directly
+  $: if (browser && $userBetarenaSettings != undefined && $userBetarenaSettings?.user == undefined) {
+    goto('/', {replaceState: true})
+  }
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

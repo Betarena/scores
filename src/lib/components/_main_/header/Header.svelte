@@ -94,7 +94,7 @@ COMPONENT JS - BASIC
 	// ~~~~~~~~~~~~~~~~~~~~~
 
   let setUserLang = false;
-  $: if ($userBetarenaSettings.user != undefined 
+  $: if ($userBetarenaSettings?.user != undefined 
     && !setUserLang 
     && PROFILE_URL != $page.route.id
   ) {
@@ -102,6 +102,19 @@ COMPONENT JS - BASIC
     let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
     console.log("🔴🔴🔴🔴 HERE!!!")
     selectLanguage(userlang)
+  }
+
+  // Set a Cookie
+  function setCookie(cName, cValue, expDays) {
+    let date = new Date();
+    date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
+    const expires = "expires=" + date.toUTCString();
+    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/";
+  }
+
+  $: if (browser && $userBetarenaSettings?.user != undefined) {
+    let username = 'true';
+    setCookie('betarenaCookieLoggedIn', username, 30);
   }
 
   $: server_side_language = platfrom_lang_ssr(
@@ -422,7 +435,8 @@ COMPONENT JS - BASIC
 	}
 
   $: if ($userBetarenaSettings?.lang 
-  && PROFILE_URL == $page.route.id) {
+    && !$page.error
+    && PROFILE_URL == $page.route.id) {
     update_select_lang()
   }
 
@@ -455,6 +469,8 @@ COMPONENT JS - BASIC
 	 * @description logout user; and additional ui changes
 	 */
 	async function logout(): Promise<void> {
+    document.cookie = 'betarenaCookieLoggedIn' + '=; Max-Age=0'
+    document.cookie = "betarenaCookieLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
 		dropdown_user_auth = false;
     await goto(`/${$userBetarenaSettings.lang == 'en' ? '' : $userBetarenaSettings.lang}`, { replaceState: true })
 		userBetarenaSettings.signOutUser();

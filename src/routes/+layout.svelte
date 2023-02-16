@@ -24,6 +24,7 @@
 	import SplashScreen from '$lib/components/_Splash_screen.svelte';
 
 	import '../app.css';
+	import { goto } from '$app/navigation';
 
 	const VALID_PROFILE_PAGE_URL: string[] = [
 		'/u/dashboard',
@@ -78,6 +79,7 @@
 		);
 		offlineMode = !offlineMode;
 	}
+  
 </script>
 
 <!-- ===================

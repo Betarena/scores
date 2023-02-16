@@ -6,15 +6,35 @@
  */
 
 import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
+import cookie from 'cookie';
 import { dlog, errlog } from '$lib/utils/debug';
-import type { PageLoad } from './$types';
+import type { PageData, PageLoad, PageLoadEvent, PageServerLoadEvent } from './$types';
+import { error } from '@sveltejs/kit';
 
-/** @type {import('./$types').PageLoad} */
-export async function load({
-	params,
-	fetch
-}): Promise<PageLoad> {
-	try {
+/** @type {import('./$types').PageServerLoadEvent} */
+export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEvent> {
+
+  const {
+    params,
+    fetch
+  } = event
+
+    // console.log(event)
+
+    const cookies = cookie.parse(
+      event.request.headers.get('cookie') || ''
+    );
+    const loggedInCookie = cookies?.betarenaCookieLoggedIn
+    console.log('👀', cookies?.betarenaCookieLoggedIn)
+
+    // [ℹ] validation [1]
+    if (loggedInCookie == undefined || loggedInCookie == null) {
+      throw error(
+        404,
+        `Uh-oh! Please log in to access the profile page!`
+      );
+    }
+
 		const urlLang: string =
 			params.lang == undefined
 				? 'en'
@@ -37,11 +57,4 @@ export async function load({
 		return {
 			RESPONSE_PROFILE_DATA
 		};
-	} catch (error) {
-		errlog(error);
-		throw error(
-			400,
-			`Uh-oh! There has been an /{__layout} page preloading error`
-		);
-	}
 }

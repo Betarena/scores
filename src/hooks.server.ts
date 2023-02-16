@@ -46,6 +46,11 @@ export const handle: Handle = async ({
 	};
 	dlog(event?.locals?.user);
 
+  // [ℹ] assign "locals" context from "cookie"
+	// [ℹ] or, load defaults
+	event.locals.betarenaUser = cookies.betarenaCookieLoggedIn || null;
+	dlog(event?.locals?.betarenaUser);
+
 	// TODO: https://github.com/sveltejs/kit/issues/1046
 	// if (event.url.searchParams.has('_method')) {
 	// 	event.method = event.url.searchParams.get('_method').toUpperCase();
@@ -104,6 +109,14 @@ export function getSession(event) {
 				}
 		  }
 		: {};
+}
+
+/** @type {import('@sveltejs/kit').GetSession} */
+export function getSignedInUser(event) {
+	return event?.locals?.betarenaUser
+		? true
+		: false
+  ;
 }
 
 /**
