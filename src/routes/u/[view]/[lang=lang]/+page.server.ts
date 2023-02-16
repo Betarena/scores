@@ -9,7 +9,7 @@ import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile
 import cookie from 'cookie';
 import { dlog, errlog } from '$lib/utils/debug';
 import type { PageData, PageLoad, PageLoadEvent, PageServerLoadEvent } from './$types';
-import { error } from '@sveltejs/kit';
+import { error, redirect } from '@sveltejs/kit';
 
 /** @type {import('./$types').PageServerLoadEvent} */
 export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEvent> {
@@ -29,10 +29,10 @@ export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEv
 
     // [ℹ] validation [1]
     if (loggedInCookie == undefined || loggedInCookie == null) {
-      throw error(
-        404,
-        `Uh-oh! Please log in to access the profile page!`
-      );
+      const { lang } = params;
+      const url = lang == undefined || lang == 'en' ? '/' : `/${lang}`
+      // [ℹ] return to HOMEPAGE (w/ correct lang)
+      throw redirect(302, url);
     }
 
 		const urlLang: string =
