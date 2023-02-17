@@ -12,10 +12,16 @@ COMPONENT JS (w/ TS)
 	import nft_marketshare_img_dark from './assets/nft-marketshare-dark.png';
 	import stats_row_img from './assets/total-volume.png';
 	import stats_row_img_dark from './assets/total-volume-dark.png';
+	import { page } from '$app/stores';
+	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+  let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+
+  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -58,7 +64,7 @@ COMPONENT HTML
           s-14
         "
 			>
-				Dashboard content will be available soon
+				{RESPONSE_PROFILE_DATA?.dashboard_title || 'Dashboard content will be available soon'} 
 			</p>
 		</div>
 	</div>
@@ -72,7 +78,7 @@ COMPONENT HTML
       s-20
     "
 	>
-		Dashboard
+    {RESPONSE_PROFILE_DATA?.dashboard || 'Dashboard content will be available soon'} 
 	</h2>
 	<!-- 
   [ℹ] dashboard stats info

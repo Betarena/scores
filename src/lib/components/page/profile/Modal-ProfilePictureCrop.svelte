@@ -30,9 +30,28 @@ COMPONENT JS (w/ TS)
   let selected_corner: 't-right' | 'b-right' | 't-left' | 'b-left';
   let original_touch: any = undefined
 
+  let initial_image_dimensions: [number, number] = [0,0]
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+  // const reader = new FileReader();
+  // const img = new Image();
+
+  // const uploadImage = (file) => {
+  //   const canvas: HTMLCanvasElement = document.getElementById('example3') as HTMLCanvasElement; // test, enable canvas in HTML below to see live results
+  //   reader.onload = () => {
+  //     img.onload = () => {
+  //       canvas.width = img.width;
+  //       canvas.height = img.height;
+  //       const ctx = canvas.getContext("2d");
+  //       ctx.drawImage(img, 0, 0);
+  //     };
+  //     img.src = reader.result;
+  //   };
+  //   reader.readAsDataURL(file);
+  // };
 
   /**
 	 * @description {export} allows for a parent function access;
@@ -43,6 +62,19 @@ COMPONENT JS (w/ TS)
    * @returns {void}
 	 */
 	export function load_picture(file: File): void {
+    // works [1]
+    // uploadImage(file)
+    // works [2]
+    // img.src = URL.createObjectURL(file);
+    // const canvas: HTMLCanvasElement = document.getElementById('example3') as HTMLCanvasElement; // test, enable canvas in HTML below to see live results
+    // img.onload = () => {
+    //   initial_image_dimensions = [img?.width, img?.height]
+    //   canvas.width = 150;
+    //   canvas.height = 150;
+    //   const ctx = canvas.getContext("2d");
+    //   ctx.drawImage(img, 0, 0, 150, 150);
+    // }
+
 		let image: HTMLImageElement = document.getElementById('profile-image');
     let resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot')
     let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
@@ -340,11 +372,18 @@ COMPONENT JS (w/ TS)
 			// DOC: https://stackoverflow.com/questions/4200374/copy-and-crop-images-in-javascript
 			var canvas: HTMLCanvasElement = document.createElement('canvas');
 			// var canvas: HTMLCanvasElement = document.getElementById('example'); // test, enable canvas in HTML below to see live results
-			canvas.width = image.width;
-			canvas.height = image.height;
+      // const widthDiffRatio = initial_image_dimensions[0] / crop_width_a
+      // const heightDiffRatio = initial_image_dimensions[1] / crop_height_a
+      // console.log('widthDiffRatio', widthDiffRatio)
+      // console.log('heightDiffRatio', heightDiffRatio)
+			canvas.width = image.width // image.width; // initial_image_dimensions[0] - requires multiplication of image_left by Diff
+			canvas.height = image.height // image.height; // initial_image_dimensions[1] - requires multiplication of image_left by Diff
 			var ctx = canvas.getContext('2d');
-			ctx.drawImage(image, 0, 0);
+      // [ℹ] draw target image on our canvas (dx, dy, dw, dh)
+			ctx.drawImage(image, 0, 0, image.width, image.height);
+      // [ℹ] get canvas image information: sx / sy / sw / sh
 			var imageData = ctx.getImageData(image_left, image_top, crop_width_a, crop_height_a);
+			// var imageData = ctx.getImageData(image_left * widthDiffRatio, image_top * heightDiffRatio, crop_width_a, crop_height_a);
 			// [ℹ] create destiantion canvas
 			var canvas1: HTMLCanvasElement = document.createElement('canvas');
 			// var canvas1: HTMLCanvasElement = document.getElementById('example2'); // test, enable canvas in HTML below to see live results
@@ -522,8 +561,9 @@ COMPONENT HTML
 			{RESPONSE_PROFILE_DATA?.save_photo}
 		</button>
 	</div>
-  <!-- <canvas id="example" width="150" height="150"></canvas> -->
-  <!-- <canvas id="example2" width="150" height="150"></canvas> -->
+  <!-- <canvas id="example" width="150" height="150"></canvas>
+  <canvas id="example2" width="150" height="150"></canvas>
+  <canvas id="example3" width="150" height="150"></canvas> -->
 </div>
 
 <!-- ===============
