@@ -1196,7 +1196,7 @@ TODO:FIXME: not generating for each LANG
                         s-14
                       "
 										>
-											Profile
+                      {HEADER_TRANSLATION_DATA?.data?.profile || 'Profile'}
 										</p>
 									</div>
 								</a>
@@ -1216,7 +1216,7 @@ TODO:FIXME: not generating for each LANG
                       s-14
                     "
                   >
-                    Logout
+                    {HEADER_TRANSLATION_DATA?.data?.logout || 'Logout'}
                   </p>
                 </div>
 							</div>

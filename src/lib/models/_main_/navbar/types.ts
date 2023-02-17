@@ -8,6 +8,10 @@ export interface Cache_Single_Lang_Header_Translation_Response {
 	scores_header_links: Header_Links;
 	scores_header_fixtures_information: Header_Sports_Info;
 	scores_top_bar_messages: Header_Top_Bar_Messages;
+  data: {
+    profile: string;
+    logout: string;
+  }
 }
 
 /**
