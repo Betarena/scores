@@ -1911,6 +1911,8 @@ export interface BETARENA_HASURA_profile_translations {
 export interface Profile_Translation {
 	name?: string;
 	save?: string;
+  remove?: string;
+  upload?: string;
 	soon?: string;
 	author?: string;
 	scores?: string;
@@ -1935,4 +1937,5 @@ export interface Profile_Translation {
 	connect_wallet_title?: string;
 	delete_account_title?: string;
 	disconnect_wallet_title?: string;
+  userame_update_error_msg?: [string, string, string, string, string]
 }

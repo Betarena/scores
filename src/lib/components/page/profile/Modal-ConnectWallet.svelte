@@ -9,10 +9,15 @@ COMPONENT JS (w/ TS)
 	import wallet from './assets/wallet.svg';
 	import metamask_icon from './assets/metamask.svg';
 	import { dlog, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
+	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
+	import { page } from '$app/stores';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+  export let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation;
+  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
 	const dispatch = createEventDispatcher();
 
@@ -186,7 +191,7 @@ COMPONENT HTML
       color-black-2
     "
 	>
-		Cryptocurrency wallet
+  {RESPONSE_PROFILE_DATA?.crypto_title}
 	</p>
 	<!-- 
   [ℹ] delete account desc. info
@@ -198,9 +203,7 @@ COMPONENT HTML
       color-grey
     "
 	>
-		Connect your crypto wallet to your Paragraph
-		account. This lets you login using your wallet
-		and unlock other web3 functionality.
+    {RESPONSE_PROFILE_DATA?.crypto_desc}
 	</p>
 	<!-- 
   [ℹ] connect wallet action (btn)
@@ -220,7 +223,7 @@ COMPONENT HTML
       alt="metamask icon"
       class="m-r-16"
     />
-		Connect with MetaMask
+		{RESPONSE_PROFILE_DATA?.connect_wallet_title} Metamask
 	</button>
 </div>
 

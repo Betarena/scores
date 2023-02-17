@@ -2,6 +2,8 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+	import { page } from '$app/stores';
+	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -11,6 +13,9 @@ COMPONENT JS (w/ TS)
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+  export let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation;
+  $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
 	const dispatch = createEventDispatcher();
 
@@ -87,7 +92,7 @@ COMPONENT HTML
       color-black-2
     "
 	>
-		Delete Account ?
+    {RESPONSE_PROFILE_DATA?.delete_account_title} ?
 	</p>
 	<!-- 
   [ℹ] delete account desc. info
@@ -99,9 +104,7 @@ COMPONENT HTML
       m-b-24
     "
 	>
-		Are you sure that you want to delete your
-		account? All your data will be removed
-		permanently!
+		{RESPONSE_PROFILE_DATA?.delete_account_desc}
 	</p>
 	<!-- 
   [ℹ] main widget action
@@ -124,7 +127,7 @@ COMPONENT HTML
       style="width: 100%"
 			on:click={() => continue_delete_account()}
 		>
-			Delete Account
+      {RESPONSE_PROFILE_DATA?.delete_button}
 		</button>
 		<!-- 
     [ℹ] cancel action (btn)
@@ -137,7 +140,7 @@ COMPONENT HTML
       style="width: 100%"
 			on:click={() => toggle_modal()}
 		>
-			Cancel
+      {RESPONSE_PROFILE_DATA?.cancel_expression}
 		</button>
 	</div>
 </div>

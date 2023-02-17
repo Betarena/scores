@@ -248,12 +248,12 @@ COMPONENT JS (w/ TS)
 		dlog(querySnapshot, false);
     if (querySnapshot.docs.length > 0) {
       valid = false
-      usernameErrorMsg = 'Username is already in use';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg[0] || 'Username is already in use';
     }
     // [ℹ] validation [2] - length (min)
     if (usernameInput.length < 3) {
       valid = false;
-      usernameErrorMsg = 'Username must be greater than 3 characters';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg[1] || 'Username must be greater than 3 characters';
     }
     // [ℹ] validation [3] - length (min)
     if (usernameInput.length > 15) {
@@ -263,18 +263,18 @@ COMPONENT JS (w/ TS)
     // [ℹ] validation [4] - only-numbers
     if (/^\d+$/.test(usernameInput)) {
       valid = false;
-      usernameErrorMsg = 'Username must not contain only numbers';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg[2] || 'Username must not contain only numbers';
     };
     // [ℹ] validation [5] - has a space
     if (/\s/g.test(usernameInput)) {
       valid = false;
-      usernameErrorMsg = 'Username must not contain spaces'
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg[3] || 'Username must not contain spaces';
     }
     // [ℹ] validation [6] - has special char
     let format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
     if (format.test(usernameInput)) { 
       valid = false;
-      usernameErrorMsg = 'Username cant have spaces or special characters'
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg[4] || 'Username cant have spaces or special characters';
     }
     // [ℹ] return;
     return valid;
@@ -534,8 +534,8 @@ COMPONENT HTML
         on:click={() => remove_picture()}
       >
         {!profile_picture_exists
-          ? 'Upload'
-          : 'Remove'}
+          ? RESPONSE_PROFILE_DATA?.upload
+          : RESPONSE_PROFILE_DATA?.remove}
       </button>
       <!-- 
       [ℹ] profile picture input
