@@ -62,6 +62,7 @@ COMPONENT JS (w/ TS)
    * @returns {void}
 	 */
 	export function load_picture(file: File): void {
+
     // works [1]
     // uploadImage(file)
     // works [2]
@@ -75,13 +76,24 @@ COMPONENT JS (w/ TS)
     //   ctx.drawImage(img, 0, 0, 150, 150);
     // }
 
-		let image: HTMLImageElement = document.getElementById('profile-image');
+		let image: HTMLImageElement = document.getElementById('profile-image') as HTMLImageElement;
     let resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot')
     let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
+    let imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize')
 		image.src = URL.createObjectURL(file);
 		image.onload = function () {
+      // [ℹ] apply reset-class to selectors
       reset_crop = true;
       reset_resize = true;
+      // [ℹ] adjust to image width x height
+      // [ℹ] if image is of lower dimensions
+      if (image.width < 150) { 
+        imageCropBox.style.width = `${image.width-25}px`
+        imageCropBox.style.height = `${image.width-25}px`
+        imageResizeBox.style.width = `${image.width-25}px`
+        imageResizeBox.style.height = `${image.width-25}px`
+      }
+      // [ℹ] initiate eventListeners, after image loaded
       imageCropBox.addEventListener('touchstart', mousedown_event, true);
       window.addEventListener('touchend', mouseup_event, true);
       window.addEventListener('touchmove', mousemove_event, true);
@@ -239,7 +251,7 @@ COMPONENT JS (w/ TS)
    * @returns {void}
    */
 	function mousemove_event(event): void {
-		let image: HTMLImageElement = document.getElementById('profile-image');
+		let image: HTMLImageElement = document.getElementById('profile-image') as HTMLImageElement;
 		let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
     let imageResizeBox: HTMLElement = document.getElementById('profile-cricle-img-crop-resize')
     // [ℹ] validation [1] [main]
@@ -360,6 +372,10 @@ COMPONENT JS (w/ TS)
         // [ℹ] half-it + (add top/left) from circle select
         // [ℹ] to get the actual MASK position on target container
         const doc = document.documentElement;
+        const width = imageCropBox.style.height
+        const height = imageCropBox.style.width
+        doc.style.setProperty('--imageCropBox-mask-width', `${width}`);
+			  doc.style.setProperty('--imageCropBox-mask-height', `${height}`);
         const mask_left = (image_left + crop_width_a / 2) + 5;
         const mask_top = (image_top + crop_height_a / 2) + 5;
         doc.style.setProperty('--imageCropBox-mask-left', `${mask_left}px`);
@@ -624,8 +640,8 @@ COMPONENT STYLE
 		z-index: 0;
 		/* style */
     height: inherit;
-    width: 100%;
-    object-fit: cover;
+    width: auto;
+    /* object-fit: cover; */
 		background-color: var(--white);
 		mask-image: radial-gradient(
 			var(--imageCropBox-mask-width) circle at var(--imageCropBox-mask-left) var(--imageCropBox-mask-top),
@@ -645,6 +661,7 @@ COMPONENT STYLE
     -ms-user-select: none;
     pointer-events: none; */
 	}
+
 	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop {
 		/* position */
 		position: absolute;
@@ -662,7 +679,21 @@ COMPONENT STYLE
 		/* mask-mode: alpha; */
 		/* mask-image: radial-gradient(circle, black 50%, rgba(0, 0, 0, 0.5) 50%); */
 		/* -webkit-mask-image: radial-gradient(circle, black 50%, rgba(0, 0, 0, 0.5) 50%); */
+	} div#image-box-out > div#image-box-in > div#profile-cricle-img-crop.reset-crop {
+    top: 0 !important;
+		bottom: 0 !important;
+		right: 0 !important;
+		left: 0 !important;
+		margin: auto !important;
+    width: 150px;
+    height: 150px;
+	}	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop:active {
+		/* (Optional) Apply a "closed-hand" cursor during drag operation. */
+		cursor: grabbing;
+		cursor: -moz-grabbing;
+		cursor: -webkit-grabbing;
 	}
+
   div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize {
 		/* position */
 		position: absolute;
@@ -671,8 +702,15 @@ COMPONENT STYLE
     width: 150px;
     height: 150px;
     margin: 5px;
-  }
-  div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.resize-dot {
+  } div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize.reset-resize {
+    top: 0 !important;
+		bottom: 0 !important;
+		right: 0 !important;
+		left: 0 !important;
+		margin: auto !important;
+    width: 150px;
+    height: 150px;
+  } div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.resize-dot {
 		position: absolute;
     width: 15px;
 		height: 15px;
@@ -680,50 +718,22 @@ COMPONENT STYLE
 		border-radius: 50%;
 		background: #ffffff;
 		mix-blend-mode: darken;
-  }
-	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.t-right {
+  }	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.t-right {
 		top: 0px;
 		right: 0px;
     cursor: sw-resize;
-	}
-	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.t-left {
+	}	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.t-left {
 		top: 0px;
 		left: -15px;
     cursor: se-resize;
-	}
-	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.b-right {
+	}	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.b-right {
 		bottom: -15px;
 		right: 0px;
     cursor: nw-resize;
-	}
-	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.b-left {
+	}	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize > div.b-left {
 		bottom: -15px;
 		left: -15px;
     cursor: ne-resize;
-	}
-  div#image-box-out > div#image-box-in > div#profile-cricle-img-crop-resize.reset-resize {
-    top: 0 !important;
-		bottom: 0 !important;
-		right: 0 !important;
-		left: 0 !important;
-		margin: auto !important;
-    width: 150px !important;
-    height: 150px !important;
-  }
-	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop.reset-crop {
-    top: 0 !important;
-		bottom: 0 !important;
-		right: 0 !important;
-		left: 0 !important;
-		margin: auto !important;
-    width: 150px !important;
-    height: 150px !important;
-	}
-	div#image-box-out > div#image-box-in > div#profile-cricle-img-crop:active {
-		/* (Optional) Apply a "closed-hand" cursor during drag operation. */
-		cursor: grabbing;
-		cursor: -moz-grabbing;
-		cursor: -webkit-grabbing;
 	}
 
   :global(body.no-touch) {
