@@ -453,6 +453,8 @@ COMPONENT JS (w/ TS)
    * @returns {void}
    */
   function clear_event_listeners(): void {
+    document.documentElement.classList.remove('no-touch'); 
+    document.body.classList.remove('no-touch');
 		let imageCropBox: HTMLElement = document.getElementById('profile-cricle-img-crop');
     let resize_elemnts: HTMLCollectionOf<Element> = document.getElementsByClassName('resize-dot')
     imageCropBox.removeEventListener('touchstart', mousedown_event, true);
@@ -640,7 +642,8 @@ COMPONENT STYLE
 		z-index: 0;
 		/* style */
     height: inherit;
-    width: auto;
+    width: 100%;
+    /* width: auto; */
     /* object-fit: cover; */
 		background-color: var(--white);
 		mask-image: radial-gradient(
