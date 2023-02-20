@@ -88,10 +88,10 @@ COMPONENT JS (w/ TS)
       // [ℹ] adjust to image width x height
       // [ℹ] if image is of lower dimensions
       if (image.width < 150) { 
-        imageCropBox.style.width = `${image.width-25}px`
-        imageCropBox.style.height = `${image.width-25}px`
-        imageResizeBox.style.width = `${image.width-25}px`
-        imageResizeBox.style.height = `${image.width-25}px`
+        imageCropBox.style.width = `${image.width/1.5}px`
+        imageCropBox.style.height = `${image.width/1.5}px`
+        imageResizeBox.style.width = `${image.width/1.5}px`
+        imageResizeBox.style.height = `${image.width/1.5}px`
       }
       // [ℹ] initiate eventListeners, after image loaded
       imageCropBox.addEventListener('touchstart', mousedown_event, true);
@@ -148,6 +148,8 @@ COMPONENT JS (w/ TS)
     event.preventDefault();
     reset_state_position_boxes()
 		crop_selected = true;
+    console.log(`imageCropBox.offsetLeft: ${imageCropBox.offsetLeft}`)
+    console.log(`imageCropBox.offsetTop: ${imageCropBox.offsetTop}`)
 		const left_val = imageCropBox.offsetLeft - (event?.clientX || event?.touches[0].clientX);
 		const right_val = imageCropBox.offsetTop - (event?.clientY || event?.touches[0].clientY);
 		dlogv2(
@@ -285,7 +287,8 @@ COMPONENT JS (w/ TS)
             original_image_dimensions,
             crop_resize_box_wh,
             mousePosition,
-            `${crop_resize_box_wh[1] + event?.movementY}`
+            `imageCropBox.offsetWidth: ${imageCropBox.offsetWidth}`,
+            `imageCropBox.offsetHeight: ${imageCropBox.offsetHeight}`
           ],
           PR_P_TOG,
           PR_P_STY
@@ -629,11 +632,12 @@ COMPONENT STYLE
 		height: 240px;
 		max-height: 240px;
 		width: 100%;
+    overflow: hidden;
 		background-color: var(--dark-theme);
 	}
 	div#image-box-out > div#image-box-in {
 		height: inherit;
-		width: fit-content;
+		width: fit-content; /* was :fit-content */
 		position: relative;
 		overflow: hidden;
 	}
@@ -642,8 +646,8 @@ COMPONENT STYLE
 		z-index: 0;
 		/* style */
     height: inherit;
-    width: 100%;
-    /* width: auto; */
+    /* width: 100%; */
+    width: auto;
     /* object-fit: cover; */
 		background-color: var(--white);
 		mask-image: radial-gradient(
