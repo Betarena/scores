@@ -39,32 +39,12 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	// [ℹ] get pre-pre-load critical data
   // --------------
 
-	const FIXTURE_INFO_ALT: REDIS_CACHE_SINGLE_fixtures_page_info_responsev2 = await fetch(
-		`/api/cache/_main_/pages_and_seo?fixture_id=${fixture_id}&page=fixtures2`,
+	const FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
+		`/api/cache/_main_/pages_and_seo?fixture_id=${fixture_id}&page=fixtures`,
 		{
 			method: 'GET'
 		}
 	).then((r) => r.json());
-
-  dlog(FIXTURE_INFO_ALT, true)
-
-  // TEMP:FIXME:TODO:
-  const FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response = {
-    league_id: FIXTURE_INFO_ALT?.lid,
-    alternate_data: FIXTURE_INFO_ALT?.altd,
-    data: {
-      sport_typ: FIXTURE_INFO_ALT?.data?.spt,
-      country_id: FIXTURE_INFO_ALT?.data?.cid,
-      league_name: FIXTURE_INFO_ALT?.data?.ln,
-      widgets: FIXTURE_INFO_ALT?.data?.w,
-      home_team_name: FIXTURE_INFO_ALT?.data?.htn,
-      away_team_name: FIXTURE_INFO_ALT?.data?.atn,
-      id: FIXTURE_INFO_ALT?.data?.id,
-      fixture_day: FIXTURE_INFO_ALT?.data?.fd,
-      venue_city: FIXTURE_INFO_ALT?.data?.vc,
-      venue_name: FIXTURE_INFO_ALT?.data?.vn
-    }
-  }
 
 	const id =
 		FIXTURE_INFO?.data?.id == undefined ? undefined : FIXTURE_INFO?.data?.id.toString();
