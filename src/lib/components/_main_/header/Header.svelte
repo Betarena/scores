@@ -685,7 +685,7 @@ TODO:FIXME: not generating for each LANG
 								transition:fly
 							>
 								{#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
-									{#if lang.toUpperCase() != server_side_language.toUpperCase() && lang.toUpperCase() != 'FR'}
+									{#if lang.toUpperCase() != server_side_language.toUpperCase()}
 										<div
 											id="lang-select"
 											on:click={() =>
