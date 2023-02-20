@@ -492,7 +492,8 @@ COMPONENT JS (w/ TS)
 
       // NOTE: detect mobile device
       // if (typeof screen.orientation !== 'undefined') {
-      if (navigator?.userAgentData?.mobile) {
+      // if (navigator?.userAgentData?.mobile) {
+        if (/Mobi/i.test(window.navigator.userAgent)) {
         // [ℹ] navigate to MetaMask in-app browser
         // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
         // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
