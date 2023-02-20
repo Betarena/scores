@@ -269,3 +269,24 @@ If you wish to develop new components for the platform, please follow the follow
 #### Documenting
 
 https://stackoverflow.com/questions/63668154/describe-and-hint-what-parameters-a-function-requires
+
+### Configs
+
+#### Prettier
+
+```
+{
+	"useTabs": true,
+	"singleQuote": true,
+	"trailingComma": "none",
+  "singleAttributePerLine": true,
+  "bracketSameLine": false,
+	"printWidth": 120, // best with = 50 or 120
+	"plugins": ["prettier-plugin-svelte"],
+	"pluginSearchDirs": ["."],
+	"overrides": [{ "files": "*.svelte", "options": { "parser": "svelte" } }],
+  "svelteSortOrder" : "scripts-options-markup-styles",
+  "svelteStrictMode": false,
+  "svelteAllowShorthand": true
+}
+```

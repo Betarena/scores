@@ -4,7 +4,13 @@ COMPONENT JS (w/ TS)
 
 <script lang="ts">
 
+  //#region Package Imports
+  // IMPORTS GO HERE
+  //#endregion Package Imports
+
+  //#region Assets Imports
   import profile_avatar from './assets/profile-avatar.svg';
+  //#endregion Assets Imports
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
