@@ -101,8 +101,8 @@ COMPONENT JS (w/ TS)
 			);
 		}
     // [ℹ] validation [1]
-    if (files[0].size >= 1000000) {
-      alert("🔴 Uploaded picture is too large. Limit is 1MB.");
+    if (files[0].size >= 10000000) {
+      alert("🔴 Uploaded picture is too large. Limit is 10MB.");
       files = undefined;
       return;
     }
