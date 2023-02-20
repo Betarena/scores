@@ -2,19 +2,24 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
+
+  //#region Package Imports
+
+  //#region ➤ Svelte/SvelteKit Imports
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
+  //#endregion ➤ Svelte/SvelteKit Imports
 
-	import { get } from '$lib/api/utils';
-	import {
-		app,
-		auth,
-		db_firestore
-	} from '$lib/firebase/init';
-	import { sessionStore } from '$lib/store/session';
+  //#region ➤ Project Custom Imports
+	import { 
+    get 
+  } from '$lib/api/utils';
+	import { 
+    sessionStore 
+  } from '$lib/store/session';
 	import {
 		userBetarenaSettings,
 		type Auth_Type,
@@ -25,11 +30,22 @@ COMPONENT JS (w/ TS)
 		platfrom_lang_ssr,
 		viewport_change
 	} from '$lib/utils/platform-functions';
-	import {
-		getMoralisAuth,
-
-		type MoralisAuth
-	} from '@moralisweb3/client-firebase-auth-utils';
+  import { 
+    AUTH_DEBUG_STYLE, 
+    AUTH_DEBUG_TAG, 
+    AUTH_DEBUG_TOGGLE, 
+    dlog, 
+    dlogv2, 
+    errlog 
+  } from '$lib/utils/debug';
+  //#endregion ➤ Project Custom Imports
+	
+  //#region ➤ Firebase Imports
+  import {
+		app,
+		auth,
+		db_firestore
+	} from '$lib/firebase/init';
 	import {
 		fetchSignInMethodsForEmail,
 		GithubAuthProvider,
@@ -46,16 +62,37 @@ COMPONENT JS (w/ TS)
 		getDoc,
 		setDoc
 	} from 'firebase/firestore';
-	import { generateUsername } from 'unique-username-generator';
-// import { Web3Provider } from '@ethersproject/providers';
-	// import WalletConnectProvider from "@walletconnect/web3-provider"; FIXME: not working, asked
-	// import { signInWithMoralis } from '@moralisweb3/client-firebase-evm-auth';
+  //#endregion ➤ Firebase Imports
+
+	import { 
+    generateUsername 
+  } from 'unique-username-generator';
+
+  //#region ➤ Types Imports
+	import type { 
+    REDIS_CACHE_SINGLE_auth_translation 
+  } from '$lib/models/_main_/auth/types';
+  //#endregion ➤ Types Imports
+
+  //#region ➤ Moralis / WalletConnect Imports
+  import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils'; // NOTE: pacakge firebase should be same as project global
+  import { signInWithMoralis } from "@moralisweb3/client-firebase-evm-auth"; // NOTE: pacakge firebase should be same as project global
+  // import { Web3Provider } from "@ethersproject/providers";
+  // import WalletConnectProvider from "@walletconnect/web3-provider"; // ❌ no work
+  // import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'; // ✅ works
 	// import { mainnet } from "@wagmi/core/chains";
 	// import { EthereumProvider } from "@walletconnect/ethereum-provider";
+  //#endregion ➤ Moralis / WalletConnect Imports
 
-	import type { REDIS_CACHE_SINGLE_auth_translation } from '$lib/models/_main_/auth/types';
+  //#region ➤ MetaMask SDK Imports (Official)
+  import MetaMaskSDK from '@metamask/sdk/dist/browser/cjs/metamask-sdk'; // ✅ works
+  // '@metamask/sdk/dist/browser/es/metamask-sdk'; // ✅ works
+  // '@metamask/sdk/dist/browser/umd/metamask-sdk'; // ❌ not working
+  //#endregion ➤ MetaMask SDK Imports (Official)
 
-	import { AUTH_DEBUG_STYLE, AUTH_DEBUG_TAG, AUTH_DEBUG_TOGGLE, dlog, errlog } from '$lib/utils/debug';
+  //#endregion Package Imports
+
+  //#region Assets Imports
 	import discord_icon from './assets/discord.svg';
 	import email_verify from './assets/email-verify.svg';
 	import error_icon from './assets/error-alert.svg';
@@ -67,6 +104,7 @@ COMPONENT JS (w/ TS)
 	import logo_dark from './assets/logo-dark.svg';
 	import metamask_icon from './assets/metamask.svg';
 	import success_icon from './assets/success-alert.svg';
+  //#endregion Assets Imports
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -451,6 +489,21 @@ COMPONENT JS (w/ TS)
 		try {
 			processing = true;
 			auth_service = 'wallet';
+
+      // NOTE: detect mobile device
+      // if (typeof screen.orientation !== 'undefined') {
+      if (navigator?.userAgentData?.mobile) {
+        // [ℹ] navigate to MetaMask in-app browser
+        // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
+        // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
+        // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // does not work
+        const dappUrl = $page.url.host
+        const metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`;
+        window.open(metamaskAppDeepLink, "_self");
+        processing = false;
+        return;
+      }
+
 			// [ℹ] restrict only to MetaMask (original)
 			if (!providerDetect('isMetaMask')[0]) {
 			  dlog("🔴 Moralis Auth not found!")
@@ -458,35 +511,43 @@ COMPONENT JS (w/ TS)
 			  processing = false
 			  return
 			}
+
 			// [ℹ] create Moralis instance
 			const moralisAuth = getMoralisAuth(app);
 
-			// [ℹ] V2 - Moralis Auth [TEST]
-			// const provider = await EthereumProvider.init({
-			//   projectId: 'a523c408585b0f7c88a7df7a9d70dfe6', // REQUIRED your projectId
-			//   chains: [mainnet.id], // REQUIRED chain ids
-			// });
-			// await provider.enable();
-			// await signInWithMoralis(moralisAuth, {
-			//   provider: new Web3Provider(provider)
-			// });
-
-			// [ℹ] V2 - Moralis Auth [TEST]
-			// FIXME: Create WalletConnect Provider
-			// FIXME: Not Working - WalletConnectProvider error
+      //#region ❌ [V2] - Moralis Auth [TEST]
+      // FIXME: Create WalletConnect Provider
+			// FIXME: ❌ Not Working
+      // FIXME: WalletConnectProvider error DOC: REF: [10]
 			// const provider = new WalletConnectProvider({
 			//   infuraId: "a523c408585b0f7c88a7df7a9d70dfe6",
 			// });
 			// await provider.enable();
-			// await signInWithMoralis(moralisAuth, {
+			// const moralis_auth = await signInWithMoralis(moralisAuth, {
 			//   provider: new Web3Provider(provider)
 			// });
+      //#endregion ❌ [V2] - Moralis Auth [TEST]
+      
+      //#region MetaMask SDK - working [DISABLED]
+      // const MMSDK = new MetaMaskSDK({
+      //   // useDeeplink: false,
+      //   // communicationLayerPreference: "socket",
+      //   // enableDebug: true,
+      //   // shouldShimWeb3: false,
+      //   // showQRCode: true,
+      // })
+      // const ethereum = MMSDK.getProvider() // You can also access via window.ethereum
+      // await ethereum.request({ method: 'eth_requestAccounts', params: [] })
+      // // .then(r => console.log(r));
+      // .then(r => alert(r));
+      // - needs to be redirected back to the APP for 2nd SIGN MESSAGE...
+      //#endregion MetaMask SDK - working [DISABLED]
 
 			// NOTE: default sign-in opt. is Metamask
 			const moralis_auth = await signInWithMoralis(moralisAuth);
-			dlog('🟢 Moralis Auth');
+			dlog('🟢 Moralis Auth', true);
 			success_auth_wrap(
-			  null,
+			  moralis_auth?.credentials?.user,
 			  moralis_auth?.credentials?.user?.displayName,
 			  auth_service
 			)
@@ -495,6 +556,32 @@ COMPONENT JS (w/ TS)
 			processing = false;
 		}
 	}
+  // [ℹ] DeepLink (reactivity) listener Discord Cont. [END]
+	$: if (browser) {
+		dlog('🟠 Looking for MetaMask In-App Browser DeepLink!');
+		const metmaskAuth =	$page.url.searchParams.get('metmaskAuth');
+		const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
+		// [ℹ] validate user is attempting Discord OAuth2
+		if (metmaskAuth == 'true') {
+			// [ℹ] success;
+      dlog(`${AUTH_DEBUG_TAG} 🔵 MetaMask OAuth2`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+			// [ℹ] clean up url from query
+			goto(revert_url, { replaceState: true });
+			moralis_auth()
+		}
+	}
+  async function moralis_auth() {
+    // [ℹ] create Moralis instance
+    const moralisAuth = getMoralisAuth(app);
+    // NOTE: default sign-in opt. is Metamask
+    const moralis_auth = await signInWithMoralis(moralisAuth);
+    dlog('🟢 Moralis Auth', true);
+    success_auth_wrap(
+      moralis_auth?.credentials?.user,
+      moralis_auth?.credentials?.user?.displayName,
+      auth_service
+    )
+  }
 
   /**
    * @description main method that bring all
@@ -511,6 +598,16 @@ COMPONENT JS (w/ TS)
 		web3_wallet_addr?: string,
 		auth_provider_type?: Auth_Type
   ): Promise<void> {
+    dlogv2(
+      `${AUTH_DEBUG_TAG} success_auth_wrap()`,
+      [
+        firebase_user,
+        web3_wallet_addr,
+        auth_provider_type
+      ],
+      AUTH_DEBUG_TOGGLE,
+      AUTH_DEBUG_STYLE
+    )
     // [ℹ] create / retrieve target Betarena_User
     const [BETARENA_USER, EXISTS] = await user_firestore(
       firebase_user?.uid,
@@ -767,10 +864,6 @@ COMPONENT JS (w/ TS)
 		);
 	});
 
-
-	function signInWithMoralis(moralisAuth: MoralisAuth) {
-		throw new Error('Function not implemented.');
-	}
 </script>
 
 <!-- ===============
