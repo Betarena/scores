@@ -232,6 +232,7 @@ COMPONENT HTML
 			<p
 				class="
           w-500
+          s-16
         "
 				class:color-grey={SELECTED_OPT !=
 					MENU_OPT}
@@ -280,6 +281,7 @@ COMPONENT HTML
           menu-opt-not-available
           no-wrap
           color-grey
+          s-12
         "
 			>
 				{RESPONSE_PROFILE_DATA?.soon}

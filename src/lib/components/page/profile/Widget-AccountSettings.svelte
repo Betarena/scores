@@ -506,6 +506,7 @@ COMPONENT HTML
             s-16
             w-500
             color-black-2
+            m-b-5
           "
           class:m-b-6={mobileExclusive}
         >
@@ -587,7 +588,11 @@ COMPONENT HTML
           [ℹ] name "head" text
           [ℹ] name "required" text
           -->
-          <div class="row-space-start">
+          <div 
+            class="
+              row-space-start
+              m-b-5
+            ">
             <!-- 
             [ℹ] name "head" text
             -->
@@ -671,6 +676,7 @@ COMPONENT HTML
             s-16
             w-500
             color-black-2
+            m-b-5
           "
           class:m-b-6={mobileExclusive}
         >
@@ -706,7 +712,11 @@ COMPONENT HTML
     [ℹ] save settings (button)
     -->
     <button
-      class="btn-primary-v2"
+      class="
+        btn-primary-v2
+        w-500
+        s-14
+      "
       on:click={() => save_settings()}
     >
       {RESPONSE_PROFILE_DATA?.save}
@@ -825,6 +835,7 @@ COMPONENT STYLE
 		padding: 3px 8px;
 		height: 24px;
 		background-color: var(--oragne-pale-bg);
+    color: var(--primary-fade);
 		border-radius: 32px;
 	}
 
@@ -866,6 +877,10 @@ COMPONENT STYLE
 
   div#account-settings-widget-box.dark-background-1 p.required-pill-tag {
     color: var(--primary-fade)
+  }
+
+  div#account-settings-widget-box.dark-background-1 button.btn-hollow.danger {
+    border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
   
 </style>

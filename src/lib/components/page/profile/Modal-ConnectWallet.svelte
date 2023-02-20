@@ -188,6 +188,7 @@ COMPONENT HTML
 		class="
       s-16
       m-b-12
+      w-500
       color-black-2
     "
 	>

@@ -89,7 +89,8 @@ COMPONENT HTML
 		class="
       s-16
       m-b-12
-      color-black-2
+      w-500
+      color-red-bright
     "
 	>
     {RESPONSE_PROFILE_DATA?.delete_account_title} ?

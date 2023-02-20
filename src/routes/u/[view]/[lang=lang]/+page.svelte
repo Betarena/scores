@@ -93,13 +93,14 @@ COMPONENT STYLE
     display: grid;
     max-width: 1430px;
     grid-template-columns: 1fr;
+    padding-top: 0 !important;
+    padding-bottom: 72px !important;
     align-items: start;
   }
 
 	/* page widget layout */
 	div#widget-grid-display {
 		display: grid;
-		margin-top: 24px;
 		gap: 20px;
 		align-items: start;
 	}
@@ -107,6 +108,19 @@ COMPONENT STYLE
 	/* ====================
     RESPONSIVNESS
   ==================== */
+
+  /* 
+  RESPONSIVE FOR TABLET ONLY (&+) [768px] 
+  */
+	@media only screen and (min-width: 768px) {
+    section#profile-page {
+      padding-top: unset !important;
+    }
+		/* page widget layout */
+		div#widget-grid-display {
+		  margin-top: 24px;
+		}
+	}
 
 	/* 
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] 

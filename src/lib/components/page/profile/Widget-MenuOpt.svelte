@@ -345,4 +345,8 @@ COMPONENT STYLE
 		background-color: var(--dark-theme-1) !important;
 	}
 
+  div#profile-menu-widget-container.dark-background-1 div#dropdown-menu-opt-mobile {
+    background-color: var(--dark-theme-1);
+  }
+
 </style>
