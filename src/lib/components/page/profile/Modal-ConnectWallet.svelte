@@ -40,6 +40,20 @@ COMPONENT JS (w/ TS)
    * @returns {Promise<void>}
 	 */
 	async function connect_wallet_action(): Promise<void> {
+    // NOTE: detect mobile device
+    // if (typeof screen.orientation !== 'undefined') {
+    // if (navigator?.userAgentData?.mobile) {
+      if (/Mobi/i.test(window.navigator.userAgent)) {
+      // [ℹ] navigate to MetaMask in-app browser
+      // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
+      // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
+      // await goto('https://metamask.app.link/dapp/192.168.0.28:3050/?dappLogin=true') // does not work
+      const dappUrl = $page.url.host
+      const metamaskAppDeepLink = `https://metamask.app.link/dapp/${dappUrl}?metmaskAuth=true`;
+      window.open(metamaskAppDeepLink, "_self");
+      toggle_modal()
+      return
+    }
     // [ℹ] restrict only to MetaMask (original)
     if (!providerDetect('isMetaMask')[0]) {
       dlog("🔴 Moralis Auth not found!")
