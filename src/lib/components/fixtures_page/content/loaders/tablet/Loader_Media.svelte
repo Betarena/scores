@@ -14,5 +14,12 @@
 	fill="none"
 	xmlns="http://www.w3.org/2000/svg"
 >
-  <rect width="144" height="96" rx="8" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
+	<rect
+		width="144"
+		height="96"
+		rx="8"
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
+	/>
 </svg>

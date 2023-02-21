@@ -41,9 +41,19 @@ dev-clean:
 	echo 'Removing Old DEV Logs'
 	rm -r ./datalog/
 
-# from Develop and assuming your master is up to date with origin/master
-# git-post-main-pr:
-# 	git checkout main
-# 	git pull origin main
-# 	git checkout dev
-# 	git reset --hard main
+git-post-main-pr:
+	# from Develop and assuming your master is up to date with origin/master
+	echo 'Checking out to MAIN'
+	git checkout main
+	echo 'Pulling new changes from MAIN'
+	git pull origin main
+	echo 'Checkout to DEV'
+	git checkout dev
+	echo 'Resetting to MAIN'
+	git reset --hard main
+	
+git-del-branches-w-origin:
+	echo 'Deleting branches not present in origin + /dev'
+	# Original command (below) is without \(...\) syntax
+	# git fetch -p ; git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <\(git branch -vv | grep origin\) | awk '{print $$1}' | xargs git branch -D
+	# git branch --merged | grep -v "*" | grep -v "main" | xargs git branch -d

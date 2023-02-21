@@ -1,69 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="%lang%">
 	<head>
 		<meta charset="utf-8" />
-
-		<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0, user-scalable=yes"
+		/>
 		<meta name="theme-color" content="#292929" />
-
-		<!-- [ℹ] Website Icons & Favicons 
+		<!-- 
+    [ℹ] Website Icons & Favicons 
     -->
-		<link rel="icon" type="image/png" href="/assets/img/favicon/48x48.png" sizes="48x48" />
-		<link rel="icon" type="image/png" href="/assets/img/favicon/57x57.png" sizes="57x57" />
-		<link rel="icon" type="image/png" href="/assets/img/favicon/72x72.png" sizes="72x72" />
+		<link
+			rel="icon"
+			type="image/png"
+			href="/assets/img/favicon/48x48.png"
+			sizes="48x48"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href="/assets/img/favicon/57x57.png"
+			sizes="57x57"
+		/>
+		<link
+			rel="icon"
+			type="image/png"
+			href="/assets/img/favicon/72x72.png"
+			sizes="72x72"
+		/>
 		<!-- https://web.dev/codelab-apple-touch-icon/#:~:text=Safari%20for%20iOS%20users%20can,touch%20icon%20to%20a%20PWA. -->
-		<link rel="apple-touch-icon" href="/assets/img/pwa/180x180 (iOS).png" sizes="180x180" />
-
-		<!-- [ℹ] PWA - MANIFEST 
+		<link
+			rel="apple-touch-icon"
+			href="/assets/img/pwa/180x180 (iOS).png"
+			sizes="180x180"
+		/>
+		<!-- 
+    [ℹ] PWA - MANIFEST 
     -->
-		<link rel="manifest" crossorigin="use-credentials" href="/manifest.json" />
-
-		<!-- [ℹ] Website Fonts
+		<link
+			rel="manifest"
+			crossorigin="use-credentials"
+			href="/manifest.json"
+		/>
+		<!-- 
+    [ℹ] Website Fonts
     -->
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-		<link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap" rel="stylesheet">
-
-    <!-- 
+		<link
+			rel="preconnect"
+			href="https://fonts.googleapis.com"
+		/>
+		<link
+			rel="preconnect"
+			href="https://fonts.gstatic.com"
+			crossorigin
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
+			rel="stylesheet"
+		/>
+		<!-- 
     [ℹ] ANALYTICS TAGS
+    <-contents->
+    [ℹ] YANDEX - ORIGINAL
+    [ℹ] GOOGLE V1 - ORIGINAL
+    [ℹ] GOOGLE V2 - NONCE BASED
     -->
-
-    <!-- [ℹ] YANDEX - ORIGINAL 
-    -->
-    <!-- <script>
-      (function(m,e,t,r,i,k,a){m[i]=m[i]||function(){(m[i].a=m[i].a||[]).push(arguments)};m[i].l=1*new Date();k=e.createElement(t),a=e.getElementsByTagName(t)[0],k.async=1,k.src=r,a.parentNode.insertBefore(k,a)})(window,document,"script","https://mc.yandex.ru/metrika/tag.js","ym");ym(86583540,"init",{clickmap:true,trackLinks:true,accurateTrackBounce:true,webvisor:true});
-    </script> -->
-    <!-- <script>
-      (function(w,d,c,n,s){if(w[n]){console.log('Creabl is already installed.');return;}w[n]={v:2,code:c,events:[],attrs:[],q:[],event:function(){this.events.push(arguments);},setAttributes:function(){this.attrs.push(arguments);},exec:function(){this.q.push(arguments);}};s=d.createElement('script');s.async=true;s.src='https://page-script.creabl.com/page-script.js?c='+c;d.head.appendChild(s);})(window,document,'hC9b-GEzNK','Creabl');
-    </script> -->
-    <script type='text/javascript'>
-      window.smartlook||(function(d) {
-        var o=smartlook=function(){ o.api.push(arguments)},h=d.getElementsByTagName('head')[0];
-        var c=d.createElement('script');o.api=new Array();c.async=true;c.type='text/javascript';
-        c.charset='utf-8';c.src='https://web-sdk.smartlook.com/recorder.js';h.appendChild(c);
-        })(document);
-        smartlook('init', 'd532d8ff8750a3614eebabdb41c0964ba3623154', { region: 'eu' });
-    </script>
-
-    <!-- [ℹ] GOOGLE V1 - ORIGINAL
-    -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-60160331-9"></script> 
-    <script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js', new Date());gtag('config', 'UA-60160331-9');</script>
-    
-    <!-- [ℹ] GOOGLE V2 - NONCE BASED
-    -->
-    <!-- 
-      <script>
-        (function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
-        var f=d.getElementsByTagName(s)[0],j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src='https://www.googletagmanager.com/gtm.js?id=UA-60160331-9'+i+dl;
-        var n=d.querySelector('[nonce]');n&&j.setAttribute('nonce',n.nonce||n.getAttribute('nonce'));f.parentNode.insertBefore(j,f);});
-        (window,document,'script','dataLayer','UA-60160331-9');
-      </script> 
-    -->
+		<script type="text/javascript">
+			window.smartlook ||
+				(function (d) {
+					var o = (smartlook = function () {
+							o.api.push(arguments);
+						}),
+						h = d.getElementsByTagName('head')[0];
+					var c = d.createElement('script');
+					o.api = new Array();
+					c.async = true;
+					c.type = 'text/javascript';
+					c.charset = 'utf-8';
+					c.src =
+						'https://web-sdk.smartlook.com/recorder.js';
+					h.appendChild(c);
+				})(document);
+			smartlook(
+				'init',
+				'd532d8ff8750a3614eebabdb41c0964ba3623154',
+				{ region: 'eu' }
+			);
+		</script>
+		<!-- V2 -->
+		<script
+			async
+			src="https://www.googletagmanager.com/gtag/js?id=UA-60160331-9"
+		></script>
+		<script>
+			window.dataLayer = window.dataLayer || [];
+			function gtag() {
+				dataLayer.push(arguments);
+			}
+			gtag('js', new Date());
+			gtag('config', 'UA-60160331-9');
+		</script>
 
 		%sveltekit.head%
 	</head>
-	<body class='no-scrollbar'>
-		<div id="svelte">%sveltekit.body%</div>
+	<body
+    data-sveltekit-preload-data="hover" 
+    class="no-scrollbar">
+		<div id="svelte">
+      %sveltekit.body%
+    </div>
 	</body>
 </html>

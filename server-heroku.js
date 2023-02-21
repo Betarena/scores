@@ -8,6 +8,7 @@ import { handler } from './build/handler.js';
 import compression from 'compression';
 import * as sslify from 'express-sslify';
 // DOC: https://www.npmjs.com/package/request-ip
+import requestIp from 'request-ip';
 
 const app = express();
 
@@ -22,39 +23,36 @@ const app = express();
  * [ℹ] separate from SvelteKit endpoint in attempts to
  * [ℹ] identify clients (IP - address)
 */
-/**
-app.get('/getClientIP', (req, res, next) => {
+app.get('/getClientIP', (req, res) => {
 
-  const ip = req.headers['x-forwarded-for'] ||
-    req.socket.remoteAddress ||
-    null;
-  console.log('ip', ip);
-
-  const ip2 = req.ip
-  console.log('ip2', ip2);
-
+  const ip = req?.headers['x-forwarded-for']
+    || req?.socket?.remoteAddress 
+    || null;
+  const ip2 = req?.ip
   const ip3 = requestIp.getClientIp(req); 
-  console.log('ip3', ip3);
 
   let ipAddr = req.headers["x-forwarded-for"];
-  if (ipAddr){
+  if (ipAddr) {
     const list = ipAddr.split(",");
+    console.log('list', list);
     ipAddr = list[list.length-1];
   } else {
     ipAddr = req.connection.remoteAddress;
   }
 
+  console.log('req', req);
+  console.log('ip', ip);
+  console.log('ip2', ip2);
+  console.log('ip3', ip3);
   console.log('ipAddr', ipAddr);
 
-  res.json(
-    {
+  res.json({
       "ip": ip.toString().replace(/,/g, '')
     }
   );
 
   res.end()
 })
-*/
 
 /**
  * [ℹ] [FORCE] https-redirect

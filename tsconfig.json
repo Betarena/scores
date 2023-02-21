@@ -6,7 +6,11 @@
 		"lib": [
       "es2020", 
       "DOM",
-      "ES2021.String"
+      "ES2021.String",
+      "es5", 
+      "es6", 
+      "dom", 
+      "dom.iterable"
     ],
 		"target": "es2020",
 		/**

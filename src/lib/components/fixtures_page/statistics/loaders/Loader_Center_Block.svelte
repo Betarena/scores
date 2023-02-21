@@ -18,6 +18,8 @@
 		width="109"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 </svg>
