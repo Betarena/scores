@@ -1,4 +1,4 @@
-// import { dev } from '$app/environment';
+import { dev } from '$app/environment';
 
 export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
 export const ERROR_CODE_INVALID = 404;
@@ -13,8 +13,8 @@ const MASTER_DEBUG_TOGGLE = undefined
 
 // NOTE: overrides "dev" state and forces logs even in PROD where dev == false;
 // NOTE: (values) true/false | dev
-// NOTE: For PROD should always be FALSE
-const DEV_OVERRIDE = true
+// NOTE:IMPORTANT For PROD should always be FALSE on PR -> (main)
+const LOGS_SHOW_OVERRIDE = dev
 
 // NOTE: naming of new DEBUG variables is of following structure:
 // NOTE: [2]_W/P_TAG/TOG/STY
@@ -168,8 +168,8 @@ export function dlog(
 ) {
 	// [🐞]
   show = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : show
-	if (DEV_OVERRIDE && show && !style) console.debug(msg);
-	if (DEV_OVERRIDE && typeof(msg) == 'string' && show && style) console.debug(`%c${msg}`, style);
+	if (LOGS_SHOW_OVERRIDE && show && !style) console.debug(msg);
+	if (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style) console.debug(`%c${msg}`, style);
 }
 
 /**
@@ -189,7 +189,7 @@ export function dlogv2(
 	style?: string
 ) {
 	// [🐞]
-	if (DEV_OVERRIDE && show) {
+	if (LOGS_SHOW_OVERRIDE && show) {
 		console.groupCollapsed(
 			`%c${groupName}`,
 			style
@@ -222,7 +222,7 @@ export function dlogv2open(
 	style?: string
 ) {
 	// [🐞]
-	if (DEV_OVERRIDE && show) {
+	if (LOGS_SHOW_OVERRIDE && show) {
 		console.group(
 			`%c${groupName}`,
 			style
@@ -247,5 +247,5 @@ export function errlog(
   msg: string
 ) {
 	// [🐞]
-	if (DEV_OVERRIDE) console.error(`❌ Error: ${msg}`);
+	if (LOGS_SHOW_OVERRIDE) console.error(`❌ Error: ${msg}`);
 }
