@@ -19,9 +19,10 @@ export async function load({
 }): Promise<PageLoad> {
 
 	const urlLang: string =
-		params.lang == undefined ? 'en' : params.lang;
-
-  console.log('🔴 (+page.ts) urlLang', urlLang)
+		params.lang == undefined 
+      ? 'en' 
+      : params.lang
+  ;
 
 	// --------------
 	// [ℹ] preload data DOC: REF: [2]
