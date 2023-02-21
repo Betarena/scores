@@ -48,10 +48,10 @@ export function viewport_change(
 	TABLET_VIEW: number,
 	MOBILE_VIEW: number
 ) {
-	const w = document.documentElement.clientWidth;
+	const width = document.documentElement.clientWidth;
 	const tabletExclusive =
-		w >= TABLET_VIEW ? false : true;
+    width >= TABLET_VIEW ? false : true;
 	const mobileExclusive =
-		w <= MOBILE_VIEW ? true : false;
+    width <= MOBILE_VIEW ? true : false;
 	return [tabletExclusive, mobileExclusive];
 }

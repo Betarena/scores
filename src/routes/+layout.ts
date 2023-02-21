@@ -13,7 +13,7 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
     url,
     fetch,
     params,
-    setHeaders,
+    // setHeaders,
     route
   } = event
 

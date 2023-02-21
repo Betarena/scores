@@ -7,9 +7,9 @@
 
 import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
 import cookie from 'cookie';
-import { dlog, errlog } from '$lib/utils/debug';
-import type { PageData, PageLoad, PageLoadEvent, PageServerLoadEvent } from './$types';
-import { error, redirect } from '@sveltejs/kit';
+import { dlog } from '$lib/utils/debug';
+import type { PageServerLoadEvent } from './$types';
+import { redirect } from '@sveltejs/kit';
 
 /** @type {import('./$types').PageServerLoadEvent} */
 export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEvent> {

@@ -3,8 +3,8 @@ import type { PageLoad } from './$types';
 
 import type { GeoJsResponse } from '$lib/models/geojs-types';
 import type {
-  REDIS_CACHE_SINGLE_fixtures_page_info_response,
-  REDIS_CACHE_SINGLE_fixtures_page_info_responsev2, REDIS_CACHE_SINGLE_general_countries_translation
+  REDIS_CACHE_SINGLE_fixtures_page_info_response, 
+  REDIS_CACHE_SINGLE_general_countries_translation
 } from '$lib/models/_main_/pages_and_seo/types';
 import { dlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
 
@@ -231,7 +231,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	const enItemAlt = FIXTURE_INFO.alternate_data['en'];
 	PAGE_SEO.main_data.canonical = enItemAlt;
 
-	const FORCE_HASURA = false;
+	// const FORCE_HASURA = false;
 
 	// if (FIXTURE_SCOREBOARD == undefined || FORCE_HASURA) {
 	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_SCOREBOARD - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
@@ -282,7 +282,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	// 	}).then((r) => r.json());
 	// }
 
-  FIXTURE_INFO.data.fixture_time = undefined
+  // FIXTURE_INFO.data.fixture_time = undefined
   FIXTURE_INFO.data.fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
 
 	// --------------
