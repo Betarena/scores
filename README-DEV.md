@@ -1,6 +1,6 @@
 ## Live Development Cross-Device Compatibility
 
-To validate for the correct view and interactiveity with the different devices for the users, the use of `browserstack` and `lambdatest` has been incorporated:
+To validate the correct view and interactivity with the different devices for the users, the use of `browserstack` and `lambdatest` has been incorporated:
 
 - [browserstack](https://live.browserstack.com/)
 - [lambdatest](https://accounts.lambdatest.com/billing/plans)
@@ -27,7 +27,7 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 
 *[example-using-node-js](https://medium.com/dsckiit/how-to-cache-json-data-in-redis-75016e4a2100)
 
-*future-correction: deployment on a `docker-image` instance with the application as one sinlge image.
+*future-correction: deployment on a `docker-image` instance with the application as one single image.
 
 *alternative-solution-include the use of `service-workers` and `node-cache`, as per solution example [reddit-thread](https://www.reddit.com/r/sveltejs/comments/p3v280/caching_for_load_function_in_sveltekit/h8vw2l3/)
 
@@ -147,16 +147,16 @@ For more information on `this` can be read [here](https://hasura.io/docs/latest/
 
 **Notes**
 
-`Free` `Hobby` `Standard-x1` dyno's only support up to `1` clustering worker per app. Thus, increasing the scaling of the applciation to `>1` (ie: `web` app) will not be allowed.
-Similarly, the use of the `worker` attachement of the Heroku App will be cahrged depending on the `dyno` type used by the `worker`.
+`Free` `Hobby` `Standard-x1` dyno's only support up to `1` clustering worker per app. Thus, increasing the scaling of the application to `>1` (ie: `web` app) will not be allowed.
+Similarly, the use of the `worker` attachment of the Heroku App will be charged depending on the `dyno` type used by the `worker`.
 
-Higher rank pricing Heroku Apps need to be purchased to enable the use of the appliaction higher `clustering` and `worker` capabilities.
+Higher rank pricing Heroku Apps need to be purchased to enable the use of the application higher `clustering` and `worker` capabilities.
 
 ### JSON to Types
 
 - [quicktype](https://app.quicktype.io/)
 
-### Different Environements
+### Different Environments
 
 - [different environments](https://stackoverflow.com/questions/71901036/how-to-use-different-environments-with-env-files-in-nodejs)
 
@@ -188,7 +188,7 @@ Higher rank pricing Heroku Apps need to be purchased to enable the use of the ap
 ```
 heroku logs --remote heroku-dev --tail --dyno web
 ```
-to view logs of a particualr type in the console, for a particular app
+to view logs of a particular type in the console, for a particular app
 
 
 ### GitHub Flow:
@@ -234,7 +234,7 @@ Invoke-RestMethod -Method "POST" -Uri 'https://betarena-scores-platform.herokuap
 
 If you wish to develop new components for the platform, please follow the following guide of how the components must be structured:
 
-- use the `console.group` to group your `devTool` logs and hafve it working in the `DEV` environment.
+- use the `console.group` to group your `devTool` logs and have it working in the `DEV` environment.
 
 ### References
 
