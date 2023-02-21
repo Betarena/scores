@@ -8,9 +8,7 @@
 	import {
 		dlog,
 		dlogv2,
-		H2H_FW_DEBUG_STYLE,
-		H2H_FW_DEBUG_TAG,
-		H2H_FW_DEBUG_TOGGLE, log_info_group
+		H2H_W_F_STY, H2H_W_F_TAG, H2H_W_F_TOG, log_info_group
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -38,11 +36,11 @@
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
+	import { get } from '$lib/api/utils';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	import { get } from '$lib/api/utils';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -97,7 +95,7 @@
     ;
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
-      dlog(`${H2H_FW_DEBUG_TAG} ❌ no data available!`, H2H_FW_DEBUG_TOGGLE, H2H_FW_DEBUG_STYLE);
+      dlog(`${H2H_W_F_TAG} ❌ no data available!`, H2H_W_F_TOG, H2H_W_F_STY);
 			no_widget_data = true;
 			return;
 		} else {
@@ -210,7 +208,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =
@@ -255,7 +253,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			H2H_FW_DEBUG_TAG +
+			H2H_W_F_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);
@@ -392,7 +390,7 @@
 
 	async function listen_real_time_odds(): Promise<void> {
 
-    dlog(`${H2H_FW_DEBUG_TAG} Triggered odds listen`, H2H_FW_DEBUG_TOGGLE, H2H_FW_DEBUG_STYLE);
+    dlog(`${H2H_W_F_TAG} Triggered odds listen`, H2H_W_F_TOG, H2H_W_F_STY);
 
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
@@ -465,7 +463,7 @@
 		);
 	});
 
-	// [! CRITICAL !]
+	// CRITICAL
 	onDestroy(async () => {
     const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
@@ -473,10 +471,10 @@
 			iterator();
 		}
     dlogv2(
-      `${H2H_FW_DEBUG_TAG} closing firebase connections`,
+      `${H2H_W_F_TAG} closing firebase connections`,
       logsMsg,
-      H2H_FW_DEBUG_TOGGLE, 
-      H2H_FW_DEBUG_STYLE
+      H2H_W_F_TOG, 
+      H2H_W_F_STY
     )
 	});
 </script>

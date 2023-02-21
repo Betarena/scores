@@ -7,9 +7,7 @@
 	import {
 		dlog,
 		dlogv2,
-		INCIDENT_FW_DEBUG_STYLE,
-		INCIDENT_FW_DEBUG_TAG,
-		INCIDENT_FW_DEBUG_TOGGLE, log_info_group
+		IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, log_info_group
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -72,7 +70,7 @@
 
 		// [ℹ] [standard] data validation check [#1]
 		if (FIXTURE_INCIDENTS == undefined) {
-      dlog(`${INCIDENT_FW_DEBUG_TAG} ❌ no data available!`, INCIDENT_FW_DEBUG_TOGGLE, INCIDENT_FW_DEBUG_STYLE);
+      dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
 			no_widget_data = true;
 			return;
 		} else {
@@ -142,7 +140,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =
@@ -178,7 +176,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			INCIDENT_FW_DEBUG_TAG + ' check_live_fixtures';
+			IN_W_F_TAG + ' check_live_fixtures';
 		const logs: string[] = [];
 		logs.push(`checking livescores_now`);
 
@@ -258,7 +256,7 @@
 			return;
 		}
 
-    dlog(`${INCIDENT_FW_DEBUG_TAG} Triggered odds listen`, INCIDENT_FW_DEBUG_TOGGLE, INCIDENT_FW_DEBUG_STYLE);
+    dlog(`${IN_W_F_TAG} Triggered odds listen`, IN_W_F_TOG, IN_W_F_STY);
 
 		const fixtureRef = ref(
 			db_real,
@@ -310,7 +308,7 @@
 		);
 	});
 
-	// [! CRITICAL !]
+	// CRITICAL
 	onDestroy(async () => {
 		const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
@@ -318,10 +316,10 @@
 			iterator();
 		}
     dlogv2(
-      `${INCIDENT_FW_DEBUG_TAG} closing firebase connections`,
+      `${IN_W_F_TAG} closing firebase connections`,
       logsMsg,
-      INCIDENT_FW_DEBUG_TOGGLE, 
-      INCIDENT_FW_DEBUG_STYLE
+      IN_W_F_TOG, 
+      IN_W_F_STY
     )
 	});
 

@@ -7,9 +7,7 @@
 	import { page } from '$app/stores';
 	import {
 		dlog, dlogv2, log_info_group,
-		SCOREBOARD_FW_DEBUG_STYLE,
-		SCOREBOARD_FW_DEBUG_TAG,
-		SCOREBOARD_FW_DEBUG_TOGGLE
+		SC_W_F_STY, SC_W_F_TAG, SC_W_F_TOG
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -45,13 +43,13 @@
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
+	import { get } from '$lib/api/utils';
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_LIVE_TIME_OPT,
 		FIXTURE_NOT_START_OPT
 	} from '$lib/models/sportmonks';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
-	import { get } from '$lib/api/utils';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -102,7 +100,7 @@
     ;
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
-      dlog(`${SCOREBOARD_FW_DEBUG_TAG} ❌ no data available!`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
+      dlog(`${SC_W_F_TAG} ❌ no data available!`, SC_W_F_TOG, SC_W_F_STY);
 			no_widget_data = true;
 			return;
 		}
@@ -260,7 +258,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =
@@ -385,7 +383,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			SCOREBOARD_FW_DEBUG_TAG + ' check_live_fixtures';
+			SC_W_F_TAG + ' check_live_fixtures';
 		const logs: string[] = [];
 		logs.push(`checking livescores_now`);
 
@@ -454,12 +452,12 @@
 				fixture_status
 			)
 		) {
-      dlog(`${SCOREBOARD_FW_DEBUG_TAG} fixture is ${fixture_status}!`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
+      dlog(`${SC_W_F_TAG} fixture is ${fixture_status}!`, SC_W_F_TOG, SC_W_F_STY);
 			lazy_load_data_check = true;
 			return;
 		}
 
-    dlog(`${SCOREBOARD_FW_DEBUG_TAG} Triggered livescores listen`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
+    dlog(`${SC_W_F_TAG} Triggered livescores listen`, SC_W_F_TOG, SC_W_F_STY);
 
 		const fixtureRef = ref(
 			db_real,
@@ -490,7 +488,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			SCOREBOARD_FW_DEBUG_TAG +
+			SC_W_F_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);
@@ -576,12 +574,12 @@
 		const fixture_status =
 			FIXTURE_SCOREBOARD?.status;
 		if (FIXTURE_FULL_TIME_OPT.includes(fixture_status)) {
-      dlog(`${SCOREBOARD_FW_DEBUG_TAG} fixture is ${fixture_status}`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
+      dlog(`${SC_W_F_TAG} fixture is ${fixture_status}`, SC_W_F_TOG, SC_W_F_STY);
 			lazy_load_data_check = true;
 			return;
 		}
 
-    dlog(`${SCOREBOARD_FW_DEBUG_TAG} Triggered odds listen`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
+    dlog(`${SC_W_F_TAG} Triggered odds listen`, SC_W_F_TOG, SC_W_F_STY);
 
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
@@ -690,7 +688,7 @@
 		);
 	});
 
-	// [! CRITICAL !]
+	// CRITICAL
 	onDestroy(async () => {
 		const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
@@ -698,14 +696,14 @@
 			iterator();
 		}
     dlogv2(
-      `${SCOREBOARD_FW_DEBUG_TAG} closing firebase connections`,
+      `${SC_W_F_TAG} closing firebase connections`,
       logsMsg,
-      SCOREBOARD_FW_DEBUG_TOGGLE, 
-      SCOREBOARD_FW_DEBUG_STYLE
+      SC_W_F_TOG, 
+      SC_W_F_STY
     )
 		// [ℹ] remove event listeners
 		if (browser) {
-      dlog(`${SCOREBOARD_FW_DEBUG_TAG} removing scroll event listener`, SCOREBOARD_FW_DEBUG_TOGGLE, SCOREBOARD_FW_DEBUG_STYLE);
+      dlog(`${SC_W_F_TAG} removing scroll event listener`, SC_W_F_TOG, SC_W_F_STY);
 			window.removeEventListener(
 				'scroll',
 				scroll_listen

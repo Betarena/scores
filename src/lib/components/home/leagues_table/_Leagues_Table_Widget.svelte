@@ -15,7 +15,7 @@
 	import LeagueTableTeamRow from './_League_Table_Team_Row.svelte';
 	import LeagueTableWidgetContentLoader from './_League_Table_Widget_ContentLoader.svelte';
 // [ℹ] key component assets;
-	import { dlog, LEAGUES_H_DEBUG_STYLE, LEAGUES_H_DEBUG_TAG, LEAGUES_H_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, LT_W_H_STY, LT_W_H_TAG, LT_W_H_TOG } from '$lib/utils/debug';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
 	import check_league from './assets/check-league.svg';
@@ -54,7 +54,7 @@
 
 		// [ℹ] if response is null;
 		if (response == undefined) {
-      dlog(`${LEAGUES_H_DEBUG_TAG} ❌ no data available!`, LEAGUES_H_DEBUG_TOGGLE, LEAGUES_H_DEBUG_STYLE);
+      dlog(`${LT_W_H_TAG} ❌ no data available!`, LT_W_H_TOG, LT_W_H_STY);
 			noLeaguesTable = true;
 			return;
 		}

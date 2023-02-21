@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { CONTENT_FW_DEBUG_STYLE, CONTENT_FW_DEBUG_TAG, CONTENT_FW_DEBUG_TOGGLE, dlog } from '$lib/utils/debug';
+	import { CO_W_F_STY, CO_W_F_TAG, CO_W_F_TOG, dlog } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -69,7 +69,7 @@
 
 		// [ℹ] data validation check
 		if (FIXTURE_CONTENT == undefined) {
-      dlog(`${CONTENT_FW_DEBUG_TAG} ❌ no data available!`, CONTENT_FW_DEBUG_TOGGLE, CONTENT_FW_DEBUG_STYLE);
+      dlog(`${CO_W_F_TAG} ❌ no data available!`, CO_W_F_TOG, CO_W_F_STY);
 			no_widget_data = true;
 			return;
 		}
@@ -142,7 +142,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =

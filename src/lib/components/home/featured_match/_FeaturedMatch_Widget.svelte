@@ -37,9 +37,7 @@
 // [ℹ] key component assets;
 	import {
 		dlog,
-		FEAT_MATCH_H_DEBUG_STYLE,
-		FEAT_MATCH_H_DEBUG_TAG,
-		FEAT_MATCH_H_DEBUG_TOGGLE, logErrorGroup
+		FM_W_H_STY, FM_W_H_TAG, FM_W_H_TOG, logErrorGroup
 	} from '$lib/utils/debug';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
@@ -202,7 +200,7 @@
 			_2_vote: fixtureData._2_vote,
 			_X_vote: fixtureData._X_vote
 		};
-    dlog(`${FEAT_MATCH_H_DEBUG_TAG} variables: ${variables}`, FEAT_MATCH_H_DEBUG_TOGGLE, FEAT_MATCH_H_DEBUG_STYLE);
+    dlog(`${FM_W_H_TAG} variables: ${variables}`, FM_W_H_TOG, FM_W_H_STY);
 		try {
 			// [ℹ] push-GRAPH-QL-request;
 			const update_fixture_data: SelectedFixture_VoteUpdate_Response =
@@ -210,7 +208,7 @@
 					UPDATE_MATCH_FIXTURE_VOTES,
 					variables
 				);
-      dlog(`${FEAT_MATCH_H_DEBUG_TAG} update_fixture_data: ${update_fixture_data}`, FEAT_MATCH_H_DEBUG_TOGGLE, FEAT_MATCH_H_DEBUG_STYLE);
+      dlog(`${FM_W_H_TAG} update_fixture_data: ${update_fixture_data}`, FM_W_H_TOG, FM_W_H_STY);
 			// [ℹ] update the existing data on the CASTED-VOTES;
 			FEATURED_MATCH_WIDGET_DATA.match_votes =
 				update_fixture_data.update_widget_featured_match_votes_by_pk;
@@ -303,7 +301,7 @@
 		voteType: string,
 		voteVal: string
 	): void {
-    dlog(`${FEAT_MATCH_H_DEBUG_TAG} voteVal: ${voteVal}`, FEAT_MATCH_H_DEBUG_TOGGLE, FEAT_MATCH_H_DEBUG_STYLE);
+    dlog(`${FM_W_H_TAG} voteVal: ${voteVal}`, FM_W_H_TOG, FM_W_H_STY);
 		// [ℹ] check if a vote has already been casted ?;
 		if (!voteCasted) {
 			// [ℹ] update the showBettingSite Frame;

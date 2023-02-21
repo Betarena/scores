@@ -2,41 +2,55 @@
   // DOC: https://stackoverflow.com/questions/64365300/how-can-i-remove-unused-imports-declarations-from-the-entire-project-of-react-ty
   // DOC: https://stackoverflow.com/questions/46722701/is-there-a-way-to-remove-unused-imports-and-declarations-from-angular-2
   "editor.codeActionsOnSave": {
-    // "source.fixAll": true,
-    // "source.organizeImports": true,
-    // "source.sortMembers": true
+    "source.fixAll": true,
+    "source.organizeImports": true,
+    "source.sortMembers": true
   },
-  // NOTE: custom highlighter for data
+  // NOTE: custom highlighter
   "todohighlight.keywords": [
+    // NOTE: for information, that is rather important,
+    // NOTE: as is necessary some attention, but just informative
     {
       "text": "NOTE:",
       "color": "#ffffff",
-      "backgroundColor": "black",
-      "overviewRulerColor": "grey"
+      "backgroundColor": "#131313",
+      "overviewRulerColor": "grey",
+      "borderRadius": "2px"
     },
+    // [🐞] for signalling as a DEBUG step/process
     {
       "text": "[🐞]",
       "color": "#ffffff",
-      "backgroundColor": "black",
-      "overviewRulerColor": "grey"
+      "backgroundColor": "#131313",
+      "overviewRulerColor": "grey",
+      "borderRadius": "2px"
     },
+    // DOC: for indicating a source/link for a target
+    // DOC: process and how-to
     {
       "text": "DOC:",
-      "color": "#ffffff",
-      "backgroundColor": "blue",
-      "overviewRulerColor": "grey"
+      "color": "#000000",
+      "backgroundColor": "#0092FF",
+      "overviewRulerColor": "grey",
+      "borderRadius": "2px"
     },
+    // IMPORTANT for indicating something VERY important,
+    // IMPORTANT such as: careful not to remove/alter target code
     {
       "text": "IMPORTANT",
-      "color": "#ffffff",
-      "backgroundColor": "red",
-      "overviewRulerColor": "grey"
+      "color": "#000000",
+      "backgroundColor": "#F35246",
+      "overviewRulerColor": "red",
+      "isWholeLine": false,
+      "borderRadius": "2px"
     },
     {
-      "text": "[! CRITICAL !]",
-      "color": "#ffffff",
-      "backgroundColor": "red",
-      "overviewRulerColor": "grey"
+      "text": "CRITICAL",
+      "color": "#000000",
+      "backgroundColor": "#F35246",
+      "overviewRulerColor": "grey",
+      "isWholeLine": false,
+      "borderRadius": "2px"
     }
   ],
   // DOC: https://discord.com/channels/457912077277855764/1036919129782878218

@@ -15,7 +15,7 @@
 	import BestGoalscorersWidgetContentLoader from './_Best_Goalscorers_Widget_ContentLoader.svelte';
 	import BestGoalscorerRow from './_Best_Goalscorer_Row.svelte';
 // [ℹ] key component assets;
-	import { BEST_GOAL_H_DEBUG_STYLE, BEST_GOAL_H_DEBUG_TAG, BEST_GOAL_H_DEBUG_TOGGLE, dlog } from '$lib/utils/debug';
+	import { BG_W_H_STY, BG_W_H_TAG, BG_W_H_TOG, dlog } from '$lib/utils/debug';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
@@ -55,7 +55,7 @@
 
 		// [ℹ] if response is null;
 		if (response == undefined) {
-      dlog(`${BEST_GOAL_H_DEBUG_TAG} ❌ no data available!`, BEST_GOAL_H_DEBUG_TOGGLE, BEST_GOAL_H_DEBUG_STYLE);
+      dlog(`${BG_W_H_TAG} ❌ no data available!`, BG_W_H_TOG, BG_W_H_STY);
 			noBestPlayers = true;
 			return;
 		}

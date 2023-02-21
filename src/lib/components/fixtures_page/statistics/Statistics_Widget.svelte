@@ -6,9 +6,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import {
 		dlog, log_info_group,
-		STATS_FW_DEBUG_STYLE,
-		STATS_FW_DEBUG_TAG,
-		STATS_FW_DEBUG_TOGGLE
+		STS_W_F_STY, STS_W_F_TAG, STS_W_F_TOG
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -157,7 +155,7 @@
 			FIXTURE_STATISTICS == undefined ||
 			FIXTURE_STATISTICS.stats.length == 0
 		) {
-      dlog(`${STATS_FW_DEBUG_TAG} ❌ no data available!`, STATS_FW_DEBUG_TOGGLE, STATS_FW_DEBUG_STYLE);
+      dlog(`${STS_W_F_TAG} ❌ no data available!`, STS_W_F_TOG, STS_W_F_STY);
 			no_widget_data = true;
 			return;
 		}
@@ -218,7 +216,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =
@@ -254,7 +252,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			STATS_FW_DEBUG_TAG + ' check_live_fixtures';
+			STS_W_F_TAG + ' check_live_fixtures';
 		const logs: string[] = [];
 		logs.push(`checking livescores_now`);
 
@@ -365,7 +363,7 @@
 		);
 	});
 
-	// [! CRITICAL !]
+	// CRITICAL
 	onDestroy(async () => {
 		// [🐞]
 		if (dev)

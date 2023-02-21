@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { dlog, STANDINGS_T_DEBUG_STYLE, STANDINGS_T_DEBUG_TAG, STANDINGS_T_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, ST_W_T_STY, ST_W_T_TAG, ST_W_T_TOG } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
@@ -83,7 +83,7 @@
 		// [ℹ] data validation check
 		if (response == undefined ||
 			STANDINGS_DATA == undefined) {
-      dlog(`${STANDINGS_T_DEBUG_TAG} ❌ no data available!`, STANDINGS_T_DEBUG_TOGGLE, STANDINGS_T_DEBUG_STYLE);
+      dlog(`${ST_W_T_TAG} ❌ no data available!`, ST_W_T_TOG, ST_W_T_STY);
 			noStandingsBool = true;
 			return;
 		}
@@ -200,7 +200,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =

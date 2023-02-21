@@ -14,7 +14,7 @@
 		Cache_Single_Lang_Featured_Betting_Site_Translation_Response
 	} from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 	// [ℹ] external components import;
-	import { dlog, FEAT_BET_H_DEBUG_STYLE, FEAT_BET_H_DEBUG_TAG, FEAT_BET_H_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, FB_W_H_STY, FB_W_H_TAG, FB_W_H_TOG } from '$lib/utils/debug';
 	import BronzeCup from './assets/_BronzeCup.svelte';
 	import GoldCup from './assets/_GoldCup.svelte';
 	import SilverCup from './assets/_SilverCup.svelte';
@@ -56,7 +56,7 @@
 
 		// [ℹ] if response is null;
 		if (response == undefined) {
-      dlog(`${FEAT_BET_H_DEBUG_TAG} ❌ no data available!`, FEAT_BET_H_DEBUG_TOGGLE, FEAT_BET_H_DEBUG_STYLE);
+      dlog(`${FB_W_H_TAG} ❌ no data available!`, FB_W_H_TOG, FB_W_H_STY);
 			return;
 		}
 

@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
 	import { sessionStore } from '$lib/store/session';
-	import { dlog, FOOTER_DEBUG_STYLE, FOOTER_DEBUG_TAG, FOOTER_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, FT_W_STY, FT_W_TAG, FT_W_TOG } from '$lib/utils/debug';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
 	import begambleawareorg from './assets/begambleawareorg_black.png';
@@ -68,9 +68,9 @@
       ? `${$page.url.origin}/${server_side_language}`
       : $page.url.origin
   ;
-  $: dlog(`${FOOTER_DEBUG_TAG} server_side_language: ${server_side_language}`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
-  $: dlog(`${FOOTER_DEBUG_TAG} homepageURL: ${homepageURL}`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
-  $: dlog(`${FOOTER_DEBUG_TAG} logoLink: ${logoLink}`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
+  $: dlog(`${FT_W_TAG} server_side_language: ${server_side_language}`, FT_W_TOG, FT_W_STY);
+  $: dlog(`${FT_W_TAG} homepageURL: ${homepageURL}`, FT_W_TOG, FT_W_STY);
+  $: dlog(`${FT_W_TAG} logoLink: ${logoLink}`, FT_W_TOG, FT_W_STY);
 
 	$: if (browser) {
 		hideSEO = true;
@@ -81,7 +81,7 @@
    * register user on the BETARENA EMAIL LIST
   */
 	async function submitEmail() {
-    dlog(`${FOOTER_DEBUG_TAG} subscribing to email newsletter!`, FOOTER_DEBUG_TOGGLE, FOOTER_DEBUG_STYLE);
+    dlog(`${FT_W_TAG} subscribing to email newsletter!`, FT_W_TOG, FT_W_STY);
 		// [ℹ] showEmailForm = true; // FIXME: ?
 		$sessionStore.newsletterPopUpShow = true;
 	}

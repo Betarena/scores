@@ -5,7 +5,7 @@
 	// [ℹ] svelte-imports;
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { ABOUT_T_DEBUG_STYLE, ABOUT_T_DEBUG_TAG, ABOUT_T_DEBUG_TOGGLE, dlog } from '$lib/utils/debug';
+	import { AB_W_T_STY, AB_W_T_TAG, AB_W_T_TOG, dlog } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -49,7 +49,7 @@
 			LEAGUE_INFO_SEO_DATA == undefined ||
 			LEAGUE_INFO_SEO_DATA?.data?.seo_content == undefined
 		) {
-      dlog(`${ABOUT_T_DEBUG_TAG} ❌ no data available!`, ABOUT_T_DEBUG_TOGGLE, ABOUT_T_DEBUG_STYLE);
+      dlog(`${AB_W_T_TAG} ❌ no data available!`, AB_W_T_TOG, AB_W_T_STY);
 			noWidgetData = true;
 			return;
 		}
@@ -109,7 +109,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =

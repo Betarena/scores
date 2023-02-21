@@ -4,7 +4,7 @@
 <script lang="ts">
 	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlog, SEO_BLOCK_DEBUG_STYLE, SEO_BLOCK_DEBUG_TAG, SEO_BLOCK_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, SEO_W_H_STY, SEO_W_H_TAG, SEO_W_H_TOG } from '$lib/utils/debug';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 	import SeoBlockContentLoader from './_SEO_Block_ContentLoader.svelte';
@@ -27,7 +27,7 @@
 
 		// [ℹ] ℹ if response is null;
 		if (response == undefined) {
-      dlog(`${SEO_BLOCK_DEBUG_TAG} ❌ no data available!`, SEO_BLOCK_DEBUG_TOGGLE, SEO_BLOCK_DEBUG_STYLE);
+      dlog(`${SEO_W_H_TAG} ❌ no data available!`, SEO_W_H_TOG, SEO_W_H_STY);
 			noSEOBlockData = true;
 			return;
 		}

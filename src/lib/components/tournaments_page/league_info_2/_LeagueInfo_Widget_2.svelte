@@ -5,7 +5,7 @@
 	// [ℹ] svelte-imports;
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
-	import { dlog, LEAGUE_INFO_2_T_DEBUG_STYLE, LEAGUE_INFO_2_T_DEBUG_TAG, LEAGUE_INFO_2_T_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, LI2_W_T_STY, LI2_W_T_TAG, LI2_W_T_TOG } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
 	import { sessionStore } from '$lib/store/session';
@@ -46,7 +46,7 @@
 		await sleep(3000);
 
 		if (LEAGUE_INFO_SEO_DATA == undefined) {
-      dlog(`${LEAGUE_INFO_2_T_DEBUG_TAG} ❌ no data available!`, LEAGUE_INFO_2_T_DEBUG_TOGGLE, LEAGUE_INFO_2_T_DEBUG_STYLE);
+      dlog(`${LI2_W_T_TAG} ❌ no data available!`, LI2_W_T_TOG, LI2_W_T_STY);
 			noWidgetData = true;
 			return;
 		}
@@ -111,7 +111,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =

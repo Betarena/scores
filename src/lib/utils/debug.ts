@@ -1,5 +1,6 @@
 import { dev } from '$app/environment';
 
+// NOTE: page error messages & error codes
 export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
 export const ERROR_CODE_INVALID = 404;
 export const ERROR_CODE_PRELOAD = 500;
@@ -13,60 +14,62 @@ const MASTER_DEBUG_TOGGLE = undefined
 
 // NOTE: overrides "dev" state and forces logs even in PROD where dev == false;
 // NOTE: (values) true/false | dev
-// NOTE:IMPORTANT For PROD should always be FALSE on PR -> (main)
-const LOGS_SHOW_OVERRIDE = dev
+// NOTE:IMPORTANT for PROD should always be FALSE on PR -> (main)
+// NOTE:IMPORTANT using custom ENV for this
+const LOGS_SHOW_OVERRIDE = import.meta.env?.VITE_PROD_LOGS || dev
 
 // NOTE: naming of new DEBUG variables is of following structure:
-// NOTE: [2]_W/P_TAG/TOG/STY
+// NOTE: [2]_W{+T}/P/_TAG/TOG/STY
 // NOTE: where:
 // NOTE: => [2] = any 2 shortcode char for target VAR
-// NOTE: => W/P = (widget) or (page)
+// NOTE: => W/P = (widget + page-type) or (page)
 // NOTE: => TAG/TOG/STY = (tag) - (toggle) - (style)
+// NOTE: => for example: BG_W_H_TAG => BestGoalscore (Widget) (Homepage) (Tag)
 
 // [ℹ] MAIN-(page)-(widgets) (debug)
-export const NAVBAR_DEBUG_TAG = 'navbar [DEBUG] |'
-export const NAVBAR_DEBUG_STYLE = 'background: purple; color: #FFFFFF'
-export const FOOTER_DEBUG_TAG = 'footer [DEBUG] |'
-export const FOOTER_DEBUG_TOGGLE = true
-export const FOOTER_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const AUTH_DEBUG_TAG = 'auth [DEBUG] |'
-export const AUTH_DEBUG_TOGGLE = true
-export const AUTH_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const NB_W_TAG = 'navbar [DEBUG] |'
+export const NB_W_STY = 'background: purple; color: #FFFFFF'
+export const FT_W_TAG = 'footer [DEBUG] |'
+export const FT_W_TOG = true
+export const FT_W_STY = 'background: blue; color: #FFFFFF'
+export const AU_W_TAG = 'auth [DEBUG] |'
+export const AU_W_TOG = true
+export const AU_W_STY = 'background: blue; color: #FFFFFF'
 // [ℹ] HOMEPAGE-(page)-(widgets) (debug)
-export const BEST_GOAL_H_DEBUG_TAG = 'home (best-goal) [DEBUG] |'
-export const BEST_GOAL_H_DEBUG_TOGGLE = true
-export const BEST_GOAL_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const FEAT_BET_H_DEBUG_TAG = 'home (feat-bet) [DEBUG] |'
-export const FEAT_BET_H_DEBUG_TOGGLE = true
-export const FEAT_BET_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const FEAT_MATCH_H_DEBUG_TAG = 'home (feat-match) [DEBUG] |'
-export const FEAT_MATCH_H_DEBUG_TOGGLE = true
-export const FEAT_MATCH_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUE_LIST_H_DEBUG_TAG = 'home (league-list) [DEBUG] |'
-export const LEAGUE_LIST_H_DEBUG_TOGGLE = true
-export const LEAGUE_LIST_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUES_H_DEBUG_TAG = 'home (leagues) [DEBUG] |'
-export const LEAGUES_H_DEBUG_TOGGLE = true
-export const LEAGUES_H_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const SEO_BLOCK_DEBUG_TAG = 'home (seo-block) [DEBUG] |'
-export const SEO_BLOCK_DEBUG_TOGGLE = true
-export const SEO_BLOCK_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const BG_W_H_TAG = 'home (best-goal) [DEBUG] |'
+export const BG_W_H_TOG = true
+export const BG_W_H_STY = 'background: blue; color: #FFFFFF'
+export const FB_W_H_TAG = 'home (feat-bet) [DEBUG] |'
+export const FB_W_H_TOG = true
+export const FB_W_H_STY = 'background: blue; color: #FFFFFF'
+export const FM_W_H_TAG = 'home (feat-match) [DEBUG] |'
+export const FM_W_H_TOG = true
+export const FM_W_H_STY = 'background: blue; color: #FFFFFF'
+export const LL_W_H_TAG = 'home (league-list) [DEBUG] |'
+export const LL_W_H_TOG = true
+export const LL_W_H_STY = 'background: blue; color: #FFFFFF'
+export const LT_W_H_TAG = 'home (leagues) [DEBUG] |'
+export const LT_W_H_TOG = true
+export const LT_W_H_STY = 'background: blue; color: #FFFFFF'
+export const SEO_W_H_TAG = 'home (seo-block) [DEBUG] |'
+export const SEO_W_H_TOG = true
+export const SEO_W_H_STY = 'background: blue; color: #FFFFFF'
 // [ℹ] TOURNAMENTS-(page)-(widgets) (debug)
-export const ABOUT_T_DEBUG_TAG = 'tournament (about) [DEBUG] |'
-export const ABOUT_T_DEBUG_TOGGLE = true
-export const ABOUT_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const FIXTURE_T_DEBUG_TAG = 'tournament (fixture) [DEBUG] |'
-export const FIXTURE_T_DEBUG_TOGGLE = true
-export const FIXTURE_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUE_INFO_T_DEBUG_TAG = 'tournament (league-info) [DEBUG] |'
-export const LEAGUE_INFO_T_DEBUG_TOGGLE = true
-export const LEAGUE_INFO_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LEAGUE_INFO_2_T_DEBUG_TAG = 'tournament (league-info-2) [DEBUG] |'
-export const LEAGUE_INFO_2_T_DEBUG_TOGGLE = true
-export const LEAGUE_INFO_2_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const STANDINGS_T_DEBUG_TAG = 'tournament (standings) [DEBUG] |'
-export const STANDINGS_T_DEBUG_TOGGLE = true
-export const STANDINGS_T_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const AB_W_T_TAG = 'tournament (about) [DEBUG] |'
+export const AB_W_T_TOG = true
+export const AB_W_T_STY = 'background: blue; color: #FFFFFF'
+export const FIX_W_T_TAG = 'tournament (fixture) [DEBUG] |'
+export const FIX_W_T_TOG = true
+export const FIX_W_T_STY = 'background: blue; color: #FFFFFF'
+export const LI_W_T_TAG = 'tournament (league-info) [DEBUG] |'
+export const LI_W_T_TOG = true
+export const LI_W_T_STY = 'background: blue; color: #FFFFFF'
+export const LI2_W_T_TAG = 'tournament (league-info-2) [DEBUG] |'
+export const LI2_W_T_TOG = true
+export const LI2_W_T_STY = 'background: blue; color: #FFFFFF'
+export const ST_W_T_TAG = 'tournament (standings) [DEBUG] |'
+export const ST_W_T_TOG = true
+export const ST_W_T_STY = 'background: blue; color: #FFFFFF'
 // (tournament) (widget) ➤ top-players
 export const TP_W_TOG = true
 export const TP_W_TAG = 'tournament (top-players) [DEBUG] |'
@@ -79,36 +82,36 @@ export const FIREBASE_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
 export const F_DEBUG_TAG = 'firebase [DEBUG] |'
 export const F_DEBUG_TOGGLE = true
 export const F_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const ABOUT_FW_DEBUG_TAG = 'fixtures (about) [DEBUG] |'
-export const ABOUT_FW_DEBUG_TOGGLE = true
-export const ABOUT_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const CONTENT_FW_DEBUG_TAG = 'fixtures (content) [DEBUG] |'
-export const CONTENT_FW_DEBUG_TOGGLE = true
-export const CONTENT_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const H2H_FW_DEBUG_TAG = 'fixtures (h2h) [DEBUG] |'
-export const H2H_FW_DEBUG_TOGGLE = true
-export const H2H_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const INCIDENT_FW_DEBUG_TAG = 'fixtures (incident) [DEBUG] |'
-export const INCIDENT_FW_DEBUG_TOGGLE = true
-export const INCIDENT_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const LINEUPS_FW_DEBUG_TAG = 'fixtures (lineups) [DEBUG] |'
-export const LINEUPS_FW_DEBUG_TOGGLE = true
-export const LINEUPS_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const PROB_FW_DEBUG_TAG = 'fixtures (prob.) [DEBUG] |'
-export const PROB_FW_DEBUG_TOGGLE = true
-export const PROB_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const SCOREBOARD_FW_DEBUG_TAG = 'fixtures (scoreboard) [DEBUG] |'
-export const SCOREBOARD_FW_DEBUG_TOGGLE = true
-export const SCOREBOARD_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const STANDINGS_FW_DEBUG_TAG = 'fixtures (standings) [DEBUG] |'
-export const STANDINGS_FW_DEBUG_TOGGLE = true
-export const STANDINGS_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const STATS_FW_DEBUG_TAG = 'fixtures (stats) [DEBUG] |'
-export const STATS_FW_DEBUG_TOGGLE = true
-export const STATS_FW_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
-export const VO_W_TAG = 'fixtures (vote) [DEBUG] |'
-export const VO_W_TOG = true
-export const VO_W_STY = 'background: green; color: #000000'
+export const AB_W_F_TAG = 'fixtures (about) [DEBUG] |'
+export const AB_W_F_TOG = true
+export const AB_W_F_STY = 'background: blue; color: #FFFFFF'
+export const CO_W_F_TAG = 'fixtures (content) [DEBUG] |'
+export const CO_W_F_TOG = true
+export const CO_W_F_STY = 'background: blue; color: #FFFFFF'
+export const H2H_W_F_TAG = 'fixtures (h2h) [DEBUG] |'
+export const H2H_W_F_TOG = true
+export const H2H_W_F_STY = 'background: blue; color: #FFFFFF'
+export const IN_W_F_TAG = 'fixtures (incident) [DEBUG] |'
+export const IN_W_F_TOG = true
+export const IN_W_F_STY = 'background: blue; color: #FFFFFF'
+export const LI_W_F_TAG = 'fixtures (lineups) [DEBUG] |'
+export const LI_W_F_TOG = true
+export const LI_W_F_STY = 'background: blue; color: #FFFFFF'
+export const PR_W_F_TAG = 'fixtures (prob.) [DEBUG] |'
+export const PR_W_F_TOG = true
+export const PR_W_F_STY = 'background: blue; color: #FFFFFF'
+export const SC_W_F_TAG = 'fixtures (scoreboard) [DEBUG] |'
+export const SC_W_F_TOG = true
+export const SC_W_F_STY = 'background: blue; color: #FFFFFF'
+export const ST_W_F_TAG = 'fixtures (standings) [DEBUG] |'
+export const ST_W_F_TOG = true
+export const ST_W_F_STY = 'background: blue; color: #FFFFFF'
+export const STS_W_F_TAG = 'fixtures (stats) [DEBUG] |'
+export const STS_W_F_TOG = true
+export const STS_W_F_STY = 'background: blue; color: #FFFFFF'
+export const VO_W_F_TAG = 'fixtures (vote) [DEBUG] |'
+export const VO_W_F_TOG = true
+export const VO_W_F_STY = 'background: green; color: #000000'
 // [ℹ] PROFILE-(page)-(widgets) (debug)
 export const PR_P_TAG = 'profile (page) [DEBUG] |'
 export const PR_P_TOG =  true

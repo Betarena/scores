@@ -73,8 +73,6 @@
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
-	import type { GeoJsResponse } from '$lib/models/geojs-types';
-	import { get } from '$lib/api/utils';
 
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
 	let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
@@ -205,7 +203,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
   // TODO: FIXME: replace into a single __layout.svelte method [?]

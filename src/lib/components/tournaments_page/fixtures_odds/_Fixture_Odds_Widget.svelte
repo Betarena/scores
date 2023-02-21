@@ -8,8 +8,7 @@
 	import { get } from '$lib/api/utils';
 	import {
 		dlog,
-		dlogv2, FIXTURE_T_DEBUG_STYLE, FIXTURE_T_DEBUG_TAG,
-		FIXTURE_T_DEBUG_TOGGLE
+		dlogv2, FIX_W_T_STY, FIX_W_T_TAG, FIX_W_T_TOG
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 
@@ -140,7 +139,7 @@
 	async function checkForLiveFixtures(
 		data: [string, FIREBASE_livescores_now][]
 	) {
-    dlog(`${FIXTURE_T_DEBUG_TAG} checkForLiveFixtures()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+    dlog(`${FIX_W_T_TAG} checkForLiveFixtures()`, FIX_W_T_TOG, FIX_W_T_STY);
     
 		// [ℹ] generate map
 		for (const live_fixture of data) {
@@ -230,7 +229,7 @@
 	}
 
 	async function listenRealTimeLivescoresNowChange(): Promise<void> {
-    dlog(`${FIXTURE_T_DEBUG_TAG} listenRealTimeLivescoresNowChange()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+    dlog(`${FIX_W_T_TAG} listenRealTimeLivescoresNowChange()`, FIX_W_T_TOG, FIX_W_T_STY);
 
 		const fixtureRef = ref(
 			db_real,
@@ -748,7 +747,7 @@
 				.toString()
 				.toLowerCase();
 
-    dlog(`${FIXTURE_T_DEBUG_TAG} widget_init()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+    dlog(`${FIX_W_T_TAG} widget_init()`, FIX_W_T_TOG, FIX_W_T_STY);
 
 		// [ℹ] get response [lang] [data] [obtained from preload()]
 		const response: Cache_Single_SportbookDetails_Data_Response =
@@ -769,14 +768,14 @@
 			FIXTURES_ODDS_DATA == undefined ||
 			response == undefined
 		) {
-      dlog(`${FIXTURE_T_DEBUG_TAG} ❌ no data available!`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+      dlog(`${FIX_W_T_TAG} ❌ no data available!`, FIX_W_T_TOG, FIX_W_T_STY);
 			noWidgetData = true;
 			return;
 		} else {
 			noWidgetData = false;
 		}
 
-    dlog(`${FIXTURE_T_DEBUG_TAG} widget_init() cont.`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+    dlog(`${FIX_W_T_TAG} widget_init() cont.`, FIX_W_T_TOG, FIX_W_T_STY);
 
 		// [ℹ] enable when no widget fetch is required, i.e. no const response ...
 		const sleep = (ms) =>
@@ -807,7 +806,7 @@
 			return;
 		}
 
-    dlog(`${FIXTURE_T_DEBUG_TAG} select_fixtures_odds() cont.`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+    dlog(`${FIX_W_T_TAG} select_fixtures_odds() cont.`, FIX_W_T_TOG, FIX_W_T_STY);
 
 		// ~~~~~~~~~~~~~
 		// MAIN
@@ -1218,7 +1217,7 @@
 	async function carusel_fixture_odds_data(
 		opt_view: number
 	) {
-    dlog(`${FIXTURE_T_DEBUG_TAG} carusel_fixture_odds_data()`, FIXTURE_T_DEBUG_TOGGLE, FIXTURE_T_DEBUG_STYLE);
+    dlog(`${FIX_W_T_TAG} carusel_fixture_odds_data()`, FIX_W_T_TOG, FIX_W_T_STY);
 
 		fixtures_arr_filter = [];
 		let temp_fixtures_odds_arr: Tournament_Fixture_Odds[] =
@@ -1416,7 +1415,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE WIDGET METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =

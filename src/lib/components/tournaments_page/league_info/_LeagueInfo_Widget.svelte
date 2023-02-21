@@ -21,7 +21,7 @@
 	import World from './assets/_World.svelte';
 	import LeagueInfoWidgetContentLoader from './_LeagueInfo_Widget_ContentLoader.svelte';
 
-	import { dlog, LEAGUE_INFO_T_DEBUG_STYLE, LEAGUE_INFO_T_DEBUG_TAG, LEAGUE_INFO_T_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, LI_W_T_STY, LI_W_T_TAG, LI_W_T_TOG } from '$lib/utils/debug';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
@@ -74,7 +74,7 @@
 		// const response: Cache_Single_Geo_Leagues_Table_Translation_Response = LEAGUES_TABLE_SCORES_DATA;
 
 		if (response == undefined) {
-      dlog(`${LEAGUE_INFO_T_DEBUG_TAG} ❌ no data available!`, LEAGUE_INFO_T_DEBUG_TOGGLE, LEAGUE_INFO_T_DEBUG_STYLE);
+      dlog(`${LI_W_T_TAG} ❌ no data available!`, LI_W_T_TOG, LI_W_T_STY);
 			noLeagueInfoBool = true;
 			return;
 		}
@@ -174,7 +174,7 @@
 			end_date == undefined
 		) {
 			datePercentageDiff = null;
-      dlog(`${LEAGUE_INFO_T_DEBUG_TAG} identified as NULL!`, LEAGUE_INFO_T_DEBUG_TOGGLE, LEAGUE_INFO_T_DEBUG_STYLE);
+      dlog(`${LI_W_T_TAG} identified as NULL!`, LI_W_T_TOG, LI_W_T_STY);
 			return;
 		}
 

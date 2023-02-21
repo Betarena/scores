@@ -6,9 +6,7 @@
 	import { afterNavigate } from '$app/navigation';
 	import {
 		dlog, dlogv2, log_info_group,
-		PROB_FW_DEBUG_STYLE,
-		PROB_FW_DEBUG_TAG,
-		PROB_FW_DEBUG_TOGGLE
+		PR_W_F_STY, PR_W_F_TAG, PR_W_F_TOG
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
@@ -36,9 +34,9 @@
 
 	import ProbabilityLoader from './Probability_Loader.svelte';
 
+	import { get } from '$lib/api/utils';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	import { get } from '$lib/api/utils';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -136,7 +134,7 @@
 
 		// [ℹ] data validation check [#1]
 		if (responses_invalid) {
-      dlog(`${PROB_FW_DEBUG_TAG} ❌ no data available!`, PROB_FW_DEBUG_TOGGLE, PROB_FW_DEBUG_STYLE);
+      dlog(`${PR_W_F_TAG} ❌ no data available!`, PR_W_F_TOG, PR_W_F_STY);
 			no_widget_data = true;
 			return;
 		} else {
@@ -271,7 +269,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: refresh_data =
@@ -303,7 +301,7 @@
 	) {
 		// [🐞]
 		const logs_name =
-			PROB_FW_DEBUG_TAG +
+			PR_W_F_TAG +
 			' check_fixture_odds_inject';
 		const logs: string[] = [];
 		logs.push(`checking odds`);
@@ -439,7 +437,7 @@
 	}
 
 	async function listen_real_time_odds(): Promise<void> {
-    dlog(`${PROB_FW_DEBUG_TAG} Triggered odds listen`, PROB_FW_DEBUG_TOGGLE, PROB_FW_DEBUG_STYLE);
+    dlog(`${PR_W_F_TAG} Triggered odds listen`, PR_W_F_TOG, PR_W_F_STY);
 
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
@@ -512,7 +510,7 @@
 		);
 	});
 
-	// [! CRITICAL !]
+	// CRITICAL
 	onDestroy(async () => {
 		const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
@@ -520,10 +518,10 @@
 			iterator();
 		}
     dlogv2(
-      `${PROB_FW_DEBUG_TAG} closing firebase connections`,
+      `${PR_W_F_TAG} closing firebase connections`,
       logsMsg,
-      PROB_FW_DEBUG_TOGGLE, 
-      PROB_FW_DEBUG_STYLE
+      PR_W_F_TOG, 
+      PR_W_F_STY
     )
 	});
 </script>

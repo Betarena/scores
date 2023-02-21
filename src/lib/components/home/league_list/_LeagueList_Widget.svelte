@@ -6,7 +6,7 @@
 
 	import { get } from '$lib/api/utils';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlog, LEAGUE_LIST_H_DEBUG_STYLE, LEAGUE_LIST_H_DEBUG_TAG, LEAGUE_LIST_H_DEBUG_TOGGLE } from '$lib/utils/debug';
+	import { dlog, LL_W_H_STY, LL_W_H_TAG, LL_W_H_TOG } from '$lib/utils/debug';
 	import close_white from './assets/close-white.svg';
 	import close from './assets/close.svg';
 	import Africa from './assets/_Africa.svelte';
@@ -69,7 +69,7 @@
 			);
 		// [ℹ] if response is null;
 		if (response == undefined) {
-      dlog(`${LEAGUE_LIST_H_DEBUG_TAG} ❌ no data available!`, LEAGUE_LIST_H_DEBUG_TOGGLE, LEAGUE_LIST_H_DEBUG_STYLE);
+      dlog(`${LL_W_H_TAG} ❌ no data available!`, LL_W_H_TOG, LL_W_H_STY);
 			return;
 		}
 		// [ℹ] intercept the league_list data;

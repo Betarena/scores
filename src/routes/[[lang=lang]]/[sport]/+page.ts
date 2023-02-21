@@ -1,35 +1,44 @@
+import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from '$lib/utils/debug';
 import { error, redirect } from '@sveltejs/kit';
+import type { PageLoad, PageLoadEvent } from '../$types';
 
-/**
- * @type {import('./$types').PageLoad}
- */
+/** @type {import('./$types').PageLoad} */
 export async function load({
 	url,
 	params,
 	fetch
-}) {
-	/**
-	 * [ℹ] Ensure URL Check Existance;
-	 */
+}: PageLoadEvent): Promise < PageLoad > {
 
-	const response_valid_url = await fetch(
-		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
-		{
-			method: 'GET'
-		}
-	).then((r) => r.json());
+  const t0 = performance.now();
 
-	// [ℹ] validate URL existance;
-	if (!response_valid_url) {
-		// [ℹ] otherwise, ERROR;
-		throw error(
-			404,
-			`Uh-oh! This page does not exist!`
-		);
+  //#region IMPORTANT URL (validation)
+
+  // [ℹ] validate [1]
+	const VALID_URL = await fetch(
+    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, 
+    {
+		  method: 'GET'
+	  }
+  ).then((r) => r.json());
+  
+  // [ℹ] exit (condition)
+	if (!VALID_URL) {
+    const t1 = performance.now();
+    dlog(`fixture (load) (exit) complete in: ${(t1 - t0) / 1000} sec`, true)
+		throw error(ERROR_CODE_INVALID, PAGE_INVALID_MSG);
 	}
 
-	const { lang } = params;
+  //#endregion IMPORTANT URL (validation)
 
-	// [ℹ] return to HOMEPAGE (w/ correct lang)
-	throw redirect(302, `/${lang}`);
+	const { 
+    lang 
+  } = params
+
+  const LANG: string =
+    lang == undefined 
+      ? 'en' 
+      : lang
+  ;
+
+	throw redirect(302, `/${LANG}`);
 }
