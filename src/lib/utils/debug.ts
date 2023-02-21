@@ -163,12 +163,13 @@ export function log_info_group(
  * @param {string | object} msg 
  * @param {boolean} show 
  * @param {string} style
+ * @returns {void}
  */
 export function dlog(
 	msg: string | object,
 	show?: boolean,
 	style?: string
-) {
+): void {
 	// [🐞]
   show = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : show
 	if (LOGS_SHOW_OVERRIDE && show && !style) console.debug(msg);
@@ -184,13 +185,14 @@ export function dlog(
  * @param {unknown[]} msg 
  * @param {boolean} show 
  * @param {string} style
+ * @returns {void}
  */
 export function dlogv2(
 	groupName: string,
 	msgs: unknown[],
 	show?: boolean,
 	style?: string
-) {
+): void {
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE && show) {
 		console.groupCollapsed(
@@ -217,13 +219,14 @@ export function dlogv2(
  * @param {unknown[]} msg 
  * @param {boolean} show 
  * @param {string} style
+ * @returns {void}
  */
 export function dlogv2open(
 	groupName: string,
 	msgs: unknown[],
 	show?: boolean,
 	style?: string
-) {
+): void {
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE && show) {
 		console.group(
