@@ -148,8 +148,8 @@ COMPONENT JS (w/ TS)
     event.preventDefault();
     reset_state_position_boxes()
 		crop_selected = true;
-    console.log(`imageCropBox.offsetLeft: ${imageCropBox.offsetLeft}`)
-    console.log(`imageCropBox.offsetTop: ${imageCropBox.offsetTop}`)
+    dlog(`${PR_P_TAG} ℹ imageCropBox.offsetLeft: ${imageCropBox.offsetLeft}`, PR_P_TOG, PR_P_STY)
+    dlog(`${PR_P_TAG} ℹ imageCropBox.offsetTop: ${imageCropBox.offsetTop}`, PR_P_TOG, PR_P_STY)
 		const left_val = imageCropBox.offsetLeft - (event?.clientX || event?.touches[0].clientX);
 		const right_val = imageCropBox.offsetTop - (event?.clientY || event?.touches[0].clientY);
 		dlogv2(
@@ -393,8 +393,8 @@ COMPONENT JS (w/ TS)
 			// var canvas: HTMLCanvasElement = document.getElementById('example'); // test, enable canvas in HTML below to see live results
       // const widthDiffRatio = initial_image_dimensions[0] / crop_width_a
       // const heightDiffRatio = initial_image_dimensions[1] / crop_height_a
-      // console.log('widthDiffRatio', widthDiffRatio)
-      // console.log('heightDiffRatio', heightDiffRatio)
+      // dlog(`${PR_P_TAG} ℹ widthDiffRatio: ${widthDiffRatio}`, PR_P_TOG, PR_P_STY)
+      // dlog(`${PR_P_TAG} ℹ heightDiffRatio: ${heightDiffRatio}`, PR_P_TOG, PR_P_STY)
 			canvas.width = image.width // image.width; // initial_image_dimensions[0] - requires multiplication of image_left by Diff
 			canvas.height = image.height // image.height; // initial_image_dimensions[1] - requires multiplication of image_left by Diff
 			var ctx = canvas.getContext('2d');

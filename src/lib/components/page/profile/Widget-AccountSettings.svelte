@@ -22,6 +22,7 @@ COMPONENT JS (w/ TS)
 	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
 
 	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
 	import { dlog, errlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { deleteUser } from 'firebase/auth';
@@ -35,7 +36,6 @@ COMPONENT JS (w/ TS)
 		where
 	} from 'firebase/firestore';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -136,7 +136,6 @@ COMPONENT JS (w/ TS)
 			dlog('🟢 Uploaded file!');
 			const url = await snapshot.ref.fullPath;
 			dlog(url, true);
-			console.log(url);
 			getDownloadURL(storageRef).then(
 				async (url_) => {
 					dlog(url_, true);

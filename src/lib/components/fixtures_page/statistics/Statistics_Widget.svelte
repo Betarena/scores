@@ -5,7 +5,7 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
-		dlog, log_info_group,
+		dlog, dlogv2, log_info_group,
 		STS_W_F_STY, STS_W_F_TAG, STS_W_F_TOG
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
@@ -305,19 +305,11 @@
 		) {
 			return;
 		}
-
-		// [🐞]
-		if (dev)
-			console.log(
-				'%cTriggered livescore_now listen',
-				'background: green; color: #fffff'
-			);
-
+    dlog(`${STS_W_F_TAG} Triggered livescores listen`, STS_W_F_TOG, STS_W_F_STY);
 		const fixtureRef = ref(
 			db_real,
 			'livescores_now/'
 		);
-
 		const listen_livescore_event_ref = onValue(
 			fixtureRef,
 			(snapshot) => {
@@ -363,22 +355,19 @@
 		);
 	});
 
-	// CRITICAL
+  // CRITICAL
 	onDestroy(async () => {
-		// [🐞]
-		if (dev)
-			console.groupCollapsed(
-				'%cclosing firebase connections [DEV]',
-				'background: red; color: #fffff'
-			);
-		// [ℹ] close LISTEN EVENT connection
+		const logsMsg: string[] = []
 		for (const iterator of real_time_unsubscribe) {
-			// [🐞]
-			if (dev) console.log('closing connection');
+      logsMsg.push('closing connection')
 			iterator();
 		}
-		// [🐞]
-		if (dev) console.groupEnd();
+    dlogv2(
+      `${STS_W_F_TAG} closing firebase connections`,
+      logsMsg,
+      STS_W_F_TOG, 
+      STS_W_F_STY
+    )
 	});
 
 	// FIXME:

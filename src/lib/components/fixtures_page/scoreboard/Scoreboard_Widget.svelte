@@ -145,10 +145,7 @@
 			'scoreboard-widget-container'
 		);
 		if (target_div == undefined) {
-			console.log(
-				'target_div is null!',
-				target_div
-			);
+      dlog(`${SC_W_F_TAG} ❗️ target_div is null!`, SC_W_F_TOG, SC_W_F_STY);
 			return;
 		}
 		if (count == 0) {
@@ -624,11 +621,7 @@
 						sportbook_array
 					);
 				} else {
-					if (dev)
-						console.log(
-							'listen_odds_event_ref | snapshot.val()',
-							snapshot.val()
-						);
+          dlog(`${SC_W_F_TAG} listen_odds_event_ref | snapshot.val(): ${snapshot.val()}`, SC_W_F_TOG, SC_W_F_STY);
 					lazy_load_data_check = true;
 				}
 			}

@@ -100,7 +100,7 @@ COMPONENT JS - BASIC
   ) {
     setUserLang = true
     let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
-    console.log("🔴🔴🔴🔴 HERE!!!")
+    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language!`, NB_W_TOG)
     selectLanguage(userlang)
   }
 
@@ -146,7 +146,7 @@ COMPONENT JS - BASIC
 	$: if (browser) {
 		hideSEO = true;
 		if (!langSelected && $userBetarenaSettings.user == undefined) {
-      console.log("🔴🔴🔴🔴👀 HERE!!!")
+      dlog(`${NB_W_TAG} 🔵 Setting (initial) language!`, NB_W_TOG)
 			langSelected = true;
 			userBetarenaSettings.setLang(
 				server_side_language

@@ -198,9 +198,7 @@ COMPONENT JS (w/ TS)
 					errlog(errorMessage);
 				});
 		} catch (error) {
-			console.log(
-				`❌ Google auth error: ${error}`
-			);
+      errlog(`❌ Google auth error: ${error}`)
 			processing = false;
 		}
 	}
@@ -256,7 +254,7 @@ COMPONENT JS (w/ TS)
 					// .catch(error => log(error))
 				});
 		} catch (e) {
-			console.log(e);
+      errlog(`❌ GitHub Auth error: ${e}`)
 		}
 	}
 
@@ -333,7 +331,7 @@ COMPONENT JS (w/ TS)
 					const errorMessage = error.message;
 				});
 		} catch (e) {
-			console.log(e);
+			errlog(`❌ Email (MagicLink) Auth error: ${e}`)
 		}
 	}
 	// [ℹ] DeepLink (reactivity) listener EmailLink Cont. [END]
@@ -397,7 +395,7 @@ COMPONENT JS (w/ TS)
 				.catch((error) => {
 					// Some error occurred, you can inspect the code: error.code
 					// Common errors could be invalid email and invalid or expired OTPs.
-					console.log(error);
+          errlog(`❌ Email (MagicLink) Auth error: ${e}`)
 				});
 		}
 	}
@@ -660,8 +658,8 @@ COMPONENT JS (w/ TS)
         }
         return [scores_user_data, false]
       }
-    } catch (error) {
-      console.error('Error adding document: ', error);
+    } catch (e) {
+      errlog(`❌ Error adding document: ${e}`)
     }
   }
 
@@ -688,7 +686,7 @@ COMPONENT JS (w/ TS)
         )
       );
     } catch (e) {
-      console.error('Error adding document: ', e);
+      errlog(`❌ Error adding document: ${e}`)
     }
   }
 
