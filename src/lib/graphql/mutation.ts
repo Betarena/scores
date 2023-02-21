@@ -16,7 +16,11 @@ export const UPDATE_MATCH_FIXTURE_VOTES = gql`
 	) {
 		update_widget_featured_match_votes_by_pk(
 			pk_columns: { match_id: $match_id }
-			_inc: { vote_draw_x: $_X_vote, vote_win_local: $_1_vote, vote_win_visitor: $_2_vote }
+			_inc: {
+				vote_draw_x: $_X_vote
+				vote_win_local: $_1_vote
+				vote_win_visitor: $_2_vote
+			}
 		) {
 			match_id
 			vote_draw_x

@@ -5,6 +5,9 @@
 </h1>
 
 ![example workflow](https://github.com/Betarena/scores/actions/workflows/docker-image.yml/badge.svg)
+![example workflow](https://github.com/Betarena/scores/actions/workflows/deploy.yml/badge.svg)
+[![DeepSource](https://deepsource.io/gh/Betarena/scores.svg/?label=active+issues&token=fz7n_ybCLUD7T9tvU2qY6yoU)](https://deepsource.io/gh/Betarena/scores/?ref=repository-badge)
+[![code style: prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat-square)](https://github.com/prettier/prettier)
 
 <details open="open">
 <summary>Table of Contents</summary>

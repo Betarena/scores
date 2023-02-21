@@ -15,13 +15,17 @@ import { GraphQLClient } from 'graphql-request';
  */
 export function initGrapQLClient(): GraphQLClient {
 	// ...
-	const endpoint = import.meta.env.VITE_HASURA_DB_URL.toString();
+	const endpoint =
+		import.meta.env.VITE_HASURA_DB_URL.toString();
 	// ...
-	const graphQLClient = new GraphQLClient(endpoint, {
-		headers: {
-			'x-hasura-admin-secret': `${import.meta.env.VITE_HASURA_DB_TOKEN.toString()}`
+	const graphQLClient = new GraphQLClient(
+		endpoint,
+		{
+			headers: {
+				'x-hasura-admin-secret': `${import.meta.env.VITE_HASURA_DB_TOKEN.toString()}`
+			}
 		}
-	});
+	);
 	// ...
 	return graphQLClient;
 }

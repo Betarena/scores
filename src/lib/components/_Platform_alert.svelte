@@ -3,11 +3,11 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
-  import type { Cache_Single_Lang_Header_Translation_Response } from "$lib/models/navbar/types";
+	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
 
-  export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
+	export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
 
-  let show: boolean = true;
+	let show: boolean = true;
 </script>
 
 <!-- ===================
@@ -15,49 +15,50 @@
 =================== -->
 
 {#if HEADER_TRANSLATION_DATA != undefined}
-  <!-- [ℹ] identify the correct translation via IF 
+	<!-- 
+  [ℹ] identify the correct translation via IF 
   -->
-  {#if HEADER_TRANSLATION_DATA.scores_top_bar_messages.status && show}
-    <!-- [ℹ] 
-    -->
-    <div 
-        id="platform-alert-container">
-      <!-- [ℹ] 
+	{#if HEADER_TRANSLATION_DATA.scores_top_bar_messages.status && show}
+		<div id="platform-alert-container">
+			<p 
+        class="
+          s-12 
+          color-white
+        ">
+				{HEADER_TRANSLATION_DATA
+					.scores_top_bar_messages.message}
+			</p>
+			<!-- 
+      [ℹ] close-cross
       -->
-      <p 
-        class="s-12 color-white">
-        {HEADER_TRANSLATION_DATA.scores_top_bar_messages.message}
-      </p>
-        <!-- [ℹ] close-cross
-        -->
-        <img 
-          id='close-platform-alert-img'
-          src="/assets/svg/alert/close.svg" 
-          alt="close-vector" 
-          width="14px" height="14px"
-          on:click={() => show = false} 
-        />
-    </div>
-  {/if}
+			<img
+				id="close-platform-alert-img"
+				src="/assets/svg/alert/close.svg"
+				alt="close-vector"
+				width="14"
+				height="14"
+				on:click={() => (show = false)}
+			/>
+		</div>
+	{/if}
 {/if}
 
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
-
 <style>
 	#platform-alert-container {
 		position: relative;
 		width: 100%;
 		padding: 8px 27px;
-		background: #8C8C8C;
+		background: #8c8c8c;
 		text-align: center;
 		z-index: 20000;
 	}
-  img#close-platform-alert-img {
-    position: absolute;
-    right: 16px;
-    top: 50%;
-    transform: translate(-50%, -50%);
-  }
+	img#close-platform-alert-img {
+		position: absolute;
+		right: 16px;
+		top: 50%;
+		transform: translate(-50%, -50%);
+	}
 </style>

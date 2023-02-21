@@ -1,83 +1,117 @@
+import {
+  ERROR_CODE_PRELOAD,
+  LAYOUT_1_LANG_PAGE_ERROR_MSG
+} from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
-import type { PageLoad } from './$types';
+import type { LayoutLoad, PageLoadEvent } from './$types';
 
-/** @type {import('./$types').PageLoad} */
-export async function load ({
-  url, 
-  params, 
-  fetch,
-  setHeaders
-}): PageLoad {
+/** @type {import('./$types').LayoutLoad} */
+export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 
-  // [ℹ] critical
-  const response_valid_url = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, 
-    {
-      method: 'GET'
-    }
-  ).then((r) => r.json());
+  const {
+    url,
+    fetch,
+    params,
+    // setHeaders,
+    route
+  } = event
 
-  const urlLang: string = 
-    params.lang == undefined || 
-    !response_valid_url 
-      ? 'en' 
-      : params.lang
-
-  const response_header = await fetch (
-    `/api/cache/_main_/navbar?lang=${urlLang}`, 
-    {
-      method: 'GET'
-    }
-  ).then(r => r.json())
-
-  const response_footer = await fetch (
-    `/api/cache/_main_/footer?lang=${urlLang}`, 
-    {
-      method: 'GET',
-    }
-  ).then(r => r.json())
-
-  /**
-   * [ℹ] =================
-   * [ℹ] further API FETCH enhancing via bundeling requests;
-  */
-
-  /*
-    const urls = [
-      '/api/cache/navbar/cache-data.json?lang='+urlLang,
-      `/api/cache/footer/cache-data.json?lang=`+urlLang
-    ];
-
-    const promises = urls.map((url) =>
-      fetch(url)
-      .then((response) => response.json())
-    );
-
-    const data = await Promise.all(promises);
-
-    if (dev) console.log("pre-load() data: ", data)
-
-    const response_header = data[0]
-    const response_footer = data[1]
-  */
- 
-  if (response_header == undefined) console.log("response_header is undefined")
-  if (response_footer == undefined) console.log("response_footer is undefined") 
-
-  if (
-    response_header &&
-    response_footer) {
-      
-    setHeaders({
-      'cache-control': 'public, max-age=3600'
-    });
-
-    return {
-      HEADER_TRANSLATION_DATA: response_header,
-      FOOTER_TRANSLATION_DATA: response_footer
-    }
-  }
+  // ==================
+  // NOTE: TEST
+  // [ℹ] Attempt to Identify the USERS IP from "load()"
+  // [ℹ] only works with deployment using '<node-server>.js'
+  // ==================
   
-  throw error(400, `Uh-oh! There has been an /{__layout} page preloading error`);
+  try {
+    // [ℹ] V1 | ❌ does not appear to work - breaks platform
+    // const response_IP = await fetch(`/getClientIP`, {
+    // const response_IP_3 = await fetch(`https://betarena-scores-platform.herokuapp.com/getClientIP`, {
+    // console.log("🔵🔵🔵 response_IP: ", response_IP);
+    // [ℹ] V2 | ✅ works [?] but incorrect IP
+    // console.log("🔵🔵🔵 event: ", event);
+    // console.log("🔵🔵🔵 event.getClientAddress(): ", event?.getClientAddress());
+    // [ℹ] V3 | ❓ works [?] but incorrect IP
+    // const response_IP_3 = await get(`/getClientIP`)
+    // console.log("🔵🔵🔵 response_IP_3: ", response_IP_3);
+  } catch (error) {
+    console.log(`🔴 ${error}`)
+  }
+
+  try {
+    // [ℹ] V3 | ✅ works [?] only on when calling directly URL, not from .server.ts
+    // NOTE: works when using the non +layout.ts/+page.ts file
+    // const response_IP_2 = await get(`https://betarena-scores-platform.herokuapp.com/getClientIP`)
+    // OR:
+    // const response_IP_2 = await fetch(`http://betarena-scores-platform.herokuapp.com/getClientIP`, {
+		// 	  method: 'GET',
+    //   }
+    // ).then((r) => r.json())
+    // .catch((error) => { console.log(error) });
+    // console.log("🔵🔵🔵 response_IP_2: ", response_IP_2);
+  } catch (error) {
+    console.log(`🔴 ${error}`)
+  }
+
+  // --------------
+	// [ℹ] preload data [1] DOC: REF: [2]
+	// --------------
+
+	const response_valid_url = await fetch(
+		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
+		{
+			method: 'GET'
+		}
+	).then((r) => r.json());
+  
+	const urlLang: string =
+		params.lang == undefined 
+    || (!response_valid_url && route?.id != '/u/[view]/[lang=lang]')
+			? 'en'
+			: params.lang;
+
+  console.log('🔴 (+layout.ts) urlLang', urlLang)
+
+	// --------------
+	// [ℹ] preload data [2] DOC: REF: [2]
+	// --------------
+
+	const urls = [
+		`/api/cache/_main_/navbar?lang=${urlLang}`,
+		`/api/cache/_main_/footer?lang=${urlLang}`
+	];
+
+	const promises = urls.map((url) =>
+		fetch(url).then((response) => response.json())
+	);
+
+	const data = await Promise.all(promises);
+
+	const [
+		HEADER_TRANSLATION_DATA,
+		FOOTER_TRANSLATION_DATA
+	] = data;
+
+	// --------------
+	// [ℹ] return(s)
+	// --------------
+
+	const INVALID_PAGE_DATA_POINTS: boolean =
+		data.includes(undefined);
+
+	// [ℹ] exit;
+	if (INVALID_PAGE_DATA_POINTS) {
+		throw error(
+			ERROR_CODE_PRELOAD,
+			LAYOUT_1_LANG_PAGE_ERROR_MSG
+		);
+	}
+
+	// setHeaders({
+	// 	'cache-control': 'public, max-age=3600'
+	// });
+	return {
+		HEADER_TRANSLATION_DATA,
+		FOOTER_TRANSLATION_DATA
+	};
 }

@@ -18,11 +18,6 @@ update-scores-web:
 	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
 	# docker-compose -f docker-compose.yml up -d
 	docker-compose -f docker-compose.yml up -d --build
-	# -docker rm $$(docker stop $$(docker ps -a -q --filter="name=scores_scores_web_1" --format="{{.ID}}"))
-	# -docker rmi $$(docker images -q scores_web)
-	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
-	# docker-compose -f docker-compose.yml up -d
-	docker-compose -f docker-compose.yml up -d --build
 
 # ===========
 # DEVELOPMENT
@@ -61,4 +56,4 @@ git-del-branches-w-origin:
 	echo 'Deleting branches not present in origin + /dev'
 	# Original command (below) is without \(...\) syntax
 	# git fetch -p ; git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <\(git branch -vv | grep origin\) | awk '{print $$1}' | xargs git branch -D
-	git branch --merged | grep -v "*" | grep -v "main" | xargs git branch -d
+	# git branch --merged | grep -v "*" | grep -v "main" | xargs git branch -d

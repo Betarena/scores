@@ -1,17 +1,40 @@
 <script lang="ts">
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
 </script>
 
-<svg 
-  class="animation-target"
-  width="311"
-  height="52" 
-  viewBox="0 0 311 52" 
-  fill="none" 
-  xmlns="http://www.w3.org/2000/svg">
-  <rect x="45.75" y="20" width="64" height="20" rx="2" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
-  <path d="M155.5 50H0V54H155.5V50Z" fill="#F5620F" mask="url(#path-1-inside-1_485_7109)"/>
-  <rect x="201.25" y="20" width="64" height="20" rx="2" style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'} />
+<svg
+	class="animation-target"
+	width="311"
+	height="52"
+	viewBox="0 0 311 52"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
+	<rect
+		x="45.75"
+		y="20"
+		width="64"
+		height="20"
+		rx="2"
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
+	/>
+	<path
+		d="M155.5 50H0V54H155.5V50Z"
+		fill="#F5620F"
+		mask="url(#path-1-inside-1_485_7109)"
+	/>
+	<rect
+		x="201.25"
+		y="20"
+		width="64"
+		height="20"
+		rx="2"
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
+	/>
 </svg>
 
 <!-- [v2] Alternative -->

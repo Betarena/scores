@@ -2,28 +2,44 @@
 # ... GITHUB ACIONS CI/CD WORKFLOW ...
 # ....................................
 name: Docker Image CI
-# ... when to trigger this project
+# [ℹ] NOTE:when to trigger this project
 on:
   push:
     branches: [main, dev]
   pull_request:
     branches: [main, dev]
-# ... declaring ENV variables to be used in the project-CI/CD
+# [ℹ] NOTE: declaring ENV variables to be 
+# [ℹ] NOTE: used in the project-CI/CD
 env:
+  # [ℹ] other
+  PORT: ${{secrets.PORT}}
+  # [ℹ] hasura
   VITE_HASURA_DB_URL: ${{secrets.VITE_HASURA_DB_URL}}
   VITE_HASURA_DB_TOKEN: ${{secrets.VITE_HASURA_DB_TOKEN}}
+  # [ℹ] firebase
   VITE_FIREBASE_DB_API_KEY: ${{secrets.VITE_FIREBASE_DB_API_KEY }}
   VITE_FIREBASE_DB_AUTH_DOMAIN: ${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}
   VITE_FIREBASE_DB_PROJECT_ID: ${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}
   VITE_FIREBASE_DB_DATABASE_URL: ${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}
-  VITE_REDIS_CONNECTION_URL: ${{secrets.VITE_REDIS_CONNECTION_URL}}
-# ... JOBS TO DO WITH GITHUB WORFLOWS;
+  VITE_FIREBASE_DB_STORAGE_BUCKET: ${{secrets.VITE_FIREBASE_DB_STORAGE_BUCKET}}
+  VITE_FIREBASE_DB_AUTH_DOMAIN_MAIN: ${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN_MAIN}}
+  VITE_FIREBASE_DB_PROJECT_ID_MAIN: ${{secrets.VITE_FIREBASE_DB_PROJECT_ID_MAIN}}
+  VITE_FIREBASE_DB_DATABASE_URL_MAIN: ${{secrets.VITE_FIREBASE_DB_DATABASE_URL_MAIN}}
+  # [ℹ] redis
+  VITE_REDIS_HOST: ${{secrets.VITE_REDIS_HOST}}
+  VITE_REDIS_PORT: ${{secrets.VITE_REDIS_PORT}}
+  VITE_REDIS_PASS: ${{secrets.VITE_REDIS_PASS}}
+  VITE_REDIS_CACHE_DB: ${{secrets.VITE_REDIS_CACHE_DB}}
+  VITE_REDIS_BULL_DB: ${{secrets.VITE_REDIS_BULL_DB}}
+  # [ℹ] discord
+  VITE_DISCORD_OAUTH_URL: ${{secrets.VITE_DISCORD_OAUTH_URL}}
+# [ℹ] NOTE: JOBS TO DO WITH GITHUB WORFLOWS;
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      # ... instantiate a `.env` file for the JOB to access;
+      # [ℹ] instantiate a `.env` file for the JOB to access;
       - name: create env file
         run: |
           touch .env
@@ -33,8 +49,16 @@ jobs:
           echo VITE_FIREBASE_DB_AUTH_DOMAIN="${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN}}" >> .env
           echo VITE_FIREBASE_DB_PROJECT_ID="${{secrets.VITE_FIREBASE_DB_PROJECT_ID}}" >> .env
           echo VITE_FIREBASE_DB_DATABASE_URL="${{secrets.VITE_FIREBASE_DB_DATABASE_URL}}" >> .env
-          echo VITE_REDIS_CONNECTION_URL="${{secrets.VITE_REDIS_CONNECTION_URL}}" >> .env
-      # ... build the DOCKER IMAGE CONTAINER;
+          echo VITE_FIREBASE_DB_STORAGE_BUCKET="${{secrets.VITE_FIREBASE_DB_STORAGE_BUCKET}}" >> .env
+          echo VITE_FIREBASE_DB_AUTH_DOMAIN_MAIN="${{secrets.VITE_FIREBASE_DB_AUTH_DOMAIN_MAIN}}" >> .env
+          echo VITE_FIREBASE_DB_PROJECT_ID_MAIN="${{secrets.VITE_FIREBASE_DB_PROJECT_ID_MAIN}}" >> .env
+          echo VITE_FIREBASE_DB_DATABASE_URL_MAIN="${{secrets.VITE_FIREBASE_DB_DATABASE_URL_MAIN}}" >> .env
+          echo VITE_REDIS_HOST="${{secrets.VITE_REDIS_HOST}}" >> .env
+          echo VITE_REDIS_PORT="${{secrets.VITE_REDIS_PORT}}" >> .env
+          echo VITE_REDIS_PASS="${{secrets.VITE_REDIS_PASS}}" >> .env
+          echo VITE_REDIS_CACHE_DB="${{secrets.VITE_REDIS_CACHE_DB}}" >> .env
+          echo VITE_REDIS_BULL_DB="${{secrets.VITE_REDIS_BULL_DB}}" >> .env
+      # [ℹ] build the DOCKER IMAGE CONTAINER;
       - name: Build the Docker image
         run: |
           docker build . --file Dockerfile --tag my-image-name:$(date +%s)

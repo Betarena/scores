@@ -2,12 +2,20 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 </script>
 
-<svg width="660" height="260" viewBox="0 0 660 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+<svg
+	width="660"
+	height="260"
+	viewBox="0 0 660 260"
+	fill="none"
+	xmlns="http://www.w3.org/2000/svg"
+>
 	<!-- ... animating-container ... -->
 	<path
 		class="animation-target"
 		d="M227 188C227 183.582 230.582 180 235 180H425C429.418 180 433 183.582 433 188V220C433 224.418 429.418 228 425 228H235C230.582 228 227 224.418 227 220V188Z"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -16,7 +24,9 @@
 		width="206"
 		height="48"
 		rx="8"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -24,7 +34,9 @@
 		width="206"
 		height="48"
 		rx="8"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -33,7 +45,9 @@
 		width="206"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -41,7 +55,9 @@
 		width="206"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -50,7 +66,9 @@
 		width="206"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -59,7 +77,9 @@
 		width="88"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -68,21 +88,27 @@
 		width="134"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<circle
 		class="animation-target"
 		cx="103"
 		cy="44"
 		r="44"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<circle
 		class="animation-target"
 		cx="557"
 		cy="44"
 		r="44"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -91,7 +117,9 @@
 		width="88"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<rect
 		class="animation-target"
@@ -100,20 +128,26 @@
 		width="88"
 		height="20"
 		rx="2"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #616161;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #616161;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<!-- ... non-animating-containers ... -->
 	<circle
 		cx="484"
 		cy="204"
 		r="14"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #4B4B4B;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #4B4B4B;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<circle
 		cx="30"
 		cy="204"
 		r="14"
-		style={$userBetarenaSettings.theme == 'Dark' ? 'fill: #4B4B4B;' : 'fill: #F2F2F2;'}
+		style={$userBetarenaSettings.theme == 'Dark'
+			? 'fill: #4B4B4B;'
+			: 'fill: #F2F2F2;'}
 	/>
 	<path
 		d="M264 197L250 211"

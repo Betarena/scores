@@ -6,7 +6,7 @@ import { gql } from 'graphql-request';
  * ~~~~~~~~~~~~~
  * ... get ALL of the TRANSLATIONS from the DB
  * for the website-platform
-*/
+ */
 export const GET_NAVBAR_DATA = gql`
 	query GET_NAVBAR_DATA @cached(ttl: 300) {
 		scores_header_translations {
@@ -30,19 +30,19 @@ export const GET_NAVBAR_DATA = gql`
 			lang
 			latest_news
 		}
-    scores_header_fixtures_information {
-      football
-      lang
-      other_sports
-    }
-    scores_top_bar_messages {
-      lang
-      status
-      message
-    }
-    scores_hreflang {
-      hreflang
-      link
-    }
+		scores_header_fixtures_information {
+			football
+			lang
+			other_sports
+		}
+		scores_top_bar_messages {
+			lang
+			status
+			message
+		}
+		scores_hreflang {
+			hreflang
+			link
+		}
 	}
 `;
