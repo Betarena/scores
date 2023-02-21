@@ -15,12 +15,12 @@
     Standard Imports (client-side)
   */
 
-	import AboutBlock from '$lib/components/tournaments_page/about_block/_About_Block.svelte';
-	import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
-	import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
-	import LeagueInfoWidget2 from '$lib/components/tournaments_page/league_info_2/_LeagueInfo_Widget_2.svelte';
-	import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
-	import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
+	import AboutBlock from '$lib/components/page/league/about_block/_About_Block.svelte';
+	import FixtureOddsWidget from '$lib/components/page/league/fixtures_odds/_Fixture_Odds_Widget.svelte';
+	import LeagueInfoWidget from '$lib/components/page/league/league_info/_LeagueInfo_Widget.svelte';
+	import LeagueInfoWidget2 from '$lib/components/page/league/league_info_2/_LeagueInfo_Widget_2.svelte';
+	import StandingsWidget from '$lib/components/page/league/standings/_Standings_Widget.svelte';
+	import TopPlayersWidget from '$lib/components/page/league/top_players/_Top_Players_Widget.svelte';
 	import SvelteSeo from 'svelte-seo';
 /*
     [v2]
@@ -32,7 +32,7 @@
     let LeagueInfoWidget;
 
     onMount(async () => {
-      LeagueInfoWidget = (await import('$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte')).default;
+      LeagueInfoWidget = (await import('$lib/components/league/league_info/_LeagueInfo_Widget.svelte')).default;
     });
 
   */

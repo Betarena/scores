@@ -249,6 +249,7 @@ COMPONENT JS (w/ TS)
    * logic and actions to crop / resize & generate a
    * exact copy of a target image selection using Canvas's
    * for respective selection.
+   * DOC: https://stackoverflow.com/questions/32069156/javascript-resize-and-crop-on-mobile-devices
    * @param event
    * @returns {void}
    */

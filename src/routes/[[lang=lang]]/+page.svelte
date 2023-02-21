@@ -7,13 +7,13 @@
 
 	import { viewport_change } from '$lib/utils/platform-functions';
 
-	import BestGoalscorersWidget from '$lib/components/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
-	import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	import FeaturedMatchWidget from '$lib/components/home/featured_match/_FeaturedMatch_Widget.svelte';
-	import LeaguesTableWidget from '$lib/components/home/leagues_table/_Leagues_Table_Widget.svelte';
-	import LeagueListWidget from '$lib/components/home/league_list/_LeagueList_Widget.svelte';
-	import LiveScoresWidget from '$lib/components/home/live_scores_football/_LiveScores_Widget.svelte';
-	import SeoBlock from '$lib/components/home/seo_block_homepage/_SEO_Block.svelte';
+	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	import FeaturedMatchWidget from '$lib/components/page/home/featured_match/_FeaturedMatch_Widget.svelte';
+	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
+	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
+	import LiveScoresWidget from '$lib/components/page/home/live_scores_football/_LiveScores_Widget.svelte';
+	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
 
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
