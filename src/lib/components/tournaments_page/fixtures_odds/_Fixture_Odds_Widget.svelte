@@ -2,66 +2,104 @@
 	COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import { browser, dev } from '$app/environment';
-	import { afterNavigate } from '$app/navigation';
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils';
+
+  //#region ➤ [MAIN] Package Imports
+
+  //#region ➤ Svelte/SvelteKit Imports
+  import { browser, dev } from '$app/environment';
+  import { afterNavigate } from '$app/navigation';
+  import { page } from '$app/stores';
+  import { onDestroy, onMount } from 'svelte';
+//#endregion ➤ Svelte/SvelteKit Imports
+
+  //#region ➤ Project Custom Imports
+	import {
+		get
+	} from '$lib/api/utils';
+	import {
+		sessionStore
+	} from '$lib/store/session';
+	import {
+		userBetarenaSettings
+	} from '$lib/store/user-settings';
 	import {
 		dlog,
-		dlogv2, FIX_W_T_STY, FIX_W_T_TAG, FIX_W_T_TOG
+		dlogv2,
+		FIX_W_T_STY,
+		FIX_W_T_TAG,
+		FIX_W_T_TOG
 	} from '$lib/utils/debug';
-	import { onDestroy, onMount } from 'svelte';
-
-	import {
-		getLivescoresNow,
-		getOdds
-	} from '$lib/firebase/fixtures_odds';
-	import { db_real } from '$lib/firebase/init';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import {
-		onValue,
-		ref,
-		type Unsubscribe
-	} from 'firebase/database';
-
-	import type {
-		FIREBASE_livescores_now,
-		FIREBASE_odds
-	} from '$lib/models/firebase';
-	import type {
-		REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response,
-		REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response,
-		Rounds_Data,
-		Tournament_Fixture_Odds,
-		Tournament_Season_Fixtures_Odds,
-		Weeks_Data
-	} from '$lib/models/tournaments/fixtures_odds/types';
-	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-
-	import FixtureOddsWidgetContentLoader from './_Fixture_Odds_Widget_ContentLoader.svelte';
-
 	import {
 		platfrom_lang_ssr,
 		viewport_change
 	} from '$lib/utils/platform-functions';
-	import one_red_card from './assets/1_red_card.svg';
-	import one_red_card_dark from './assets/1_red_card_dark.svg';
-	import two_red_card from './assets/2_red_cards.svg';
-	import two_red_card_dark from './assets/2_red_cards_dark.svg';
-	import three_red_card from './assets/3_red_cards.svg';
-	import three_red_card_dark from './assets/3_red_cards_dark.svg';
-	import arrow_down from './assets/arrow-down.svg';
-	import arrow_up from './assets/arrow-up.svg';
-	import no_visual from './assets/no_visual.svg';
-	import no_visual_dark from './assets/no_visual_dark.svg';
-	import play_dark from './assets/play-dark.svg';
-	import play from './assets/play.svg';
+//#endregion ➤ Project Custom Imports
 
-	export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
+  //#region ➤ Firebase Imports
+  import {
+  	getLivescoresNow,
+  	getOdds
+  } from '$lib/firebase/fixtures_odds';
+  import {
+  	db_real
+  } from '$lib/firebase/init';
+  import {
+  	onValue,
+  	ref,
+  	type Unsubscribe
+  } from 'firebase/database';
+//#endregion ➤ Firebase Imports
+
+  //#region ➤ Types Imports
+  import type {
+  	FIREBASE_livescores_now,
+  	FIREBASE_odds
+  } from '$lib/models/firebase';
+  import type {
+  	REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response,
+  	REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response,
+  	Rounds_Data,
+  	Tournament_Fixture_Odds,
+  	Tournament_Season_Fixtures_Odds,
+  	Weeks_Data
+  } from '$lib/models/tournaments/fixtures_odds/types';
+  import type {
+  	Cache_Single_SportbookDetails_Data_Response
+  } from '$lib/models/tournaments/league-info/types';
+//#endregion ➤ Types Imports
+
+  //#region ➤ Assets Imports
+  import one_red_card from './assets/1_red_card.svg';
+  import one_red_card_dark from './assets/1_red_card_dark.svg';
+  import two_red_card from './assets/2_red_cards.svg';
+  import two_red_card_dark from './assets/2_red_cards_dark.svg';
+  import three_red_card from './assets/3_red_cards.svg';
+  import three_red_card_dark from './assets/3_red_cards_dark.svg';
+  import arrow_down from './assets/arrow-down.svg';
+  import arrow_up from './assets/arrow-up.svg';
+  import no_visual from './assets/no_visual.svg';
+  import no_visual_dark from './assets/no_visual_dark.svg';
+  import play_dark from './assets/play-dark.svg';
+  import play from './assets/play.svg';
+//#endregion ➤ Assets Imports
+
+	import FixtureOddsWidgetContentLoader from './_Fixture_Odds_Widget_ContentLoader.svelte';
+
+  //#endregion ➤ [MAIN] Package Imports
+
+  //#region ➤ [VARIABLES]
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  COMPONENT VARIABLES
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  // -Variables Go Here
+
+  export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
 	export let FIXTURES_ODDS_DATA: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
-
-	let loaded: boolean = false; // [ℹ] (boolean) signal for widget has gone through "loading" phase
+  
+	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
+  let loaded: boolean = false; // [ℹ] (boolean) signal for widget has gone through "loading" phase
 	let refresh: boolean = false; // [ℹ] (boolean) signal for widget refresh
 	let refresh_data: any = undefined; // [ℹ] (any) variable for declarative refresh-data value lsiten
 	let noWidgetData: boolean = false; // [ℹ] (boolean) signal for widget data totally missing
@@ -83,15 +121,10 @@
 	let total_nav_num: number = weeks_total;
 	let current_round_select: Rounds_Data;
 	let current_rounds_all: Rounds_Data[];
-
 	let currentSeason: number = undefined;
 	let lazyLoadingSeasonFixture: boolean = false;
-
-	let enableLogs: boolean = false;
 	let showWidget: boolean = true;
-	let devConsoleTag: string = 'FIX_ODDS';
-
-	const monthNames = [
+  const monthNames = [
 		'Jan',
 		'Feb',
 		'Mar',
@@ -114,623 +147,18 @@
 		'friday',
 		'saturday'
 	];
-
-	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
-	let realTimeOddsListenMap: Map<
+  let realTimeOddsListenMap: Map<
 		number,
 		Unsubscribe
 	> = new Map<number, Unsubscribe>();
 
-	if (FIXTURES_ODDS_DATA == undefined ||
-		FIXTURES_ODDS_T == undefined) {
-		noWidgetData = true;
-		loaded = true;
-	}
+  //#endregion ➤ [VARIABLES]
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// [ADD-ON] FIREBASE
-	// ~~~~~~~~~~~~~~~~~~~~~
+  //#region ➤ [METHODS]
 
-	const liveFixturesMap = new Map<
-		number,
-		FIREBASE_livescores_now
-	>();
-
-	async function checkForLiveFixtures(
-		data: [string, FIREBASE_livescores_now][]
-	) {
-    dlog(`${FIX_W_T_TAG} checkForLiveFixtures()`, FIX_W_T_TOG, FIX_W_T_STY);
-    
-		// [ℹ] generate map
-		for (const live_fixture of data) {
-			const fixture_id = parseInt(
-				live_fixture[0].toString()
-			);
-			const fixture_data = live_fixture[1];
-			liveFixturesMap.set(
-				fixture_id,
-				fixture_data
-			);
-		}
-
-		// [ℹ] validate against "visible" fixtures
-		const currentDate = new Date();
-		const numFixturesToday =
-			fixtures_arr_filter.find(
-				({ date }) =>
-					new Date(date).getDate() ===
-						currentDate.getDate() &&
-					new Date(date).getMonth() ===
-						currentDate.getMonth() &&
-					new Date(date).getFullYear() ===
-						currentDate.getFullYear()
-			);
-
-		if (numFixturesToday != undefined) {
-			const newFixturesArray = fixtures_arr_filter
-				.find(
-					({ date }) =>
-						new Date(date).getDate() ===
-							currentDate.getDate() &&
-						new Date(date).getMonth() ===
-							currentDate.getMonth() &&
-						new Date(date).getFullYear() ===
-							currentDate.getFullYear()
-				)
-				?.fixtures.map((fixture) => {
-					if (liveFixturesMap.has(fixture.id)) {
-						return {
-							...fixture,
-							minute: liveFixturesMap.get(
-								fixture.id
-							)?.time?.minute,
-							status: liveFixturesMap.get(
-								fixture.id
-							)?.time?.status,
-							teams: {
-								away: {
-									name: fixture?.teams?.away
-										?.name,
-									red_cards: liveFixturesMap.get(
-										fixture.id
-									)?.stats?.data[1]?.redcards,
-									score: liveFixturesMap.get(
-										fixture.id
-									)?.scores?.visitorteam_score
-								},
-								home: {
-									name: fixture?.teams?.home
-										?.name,
-									red_cards: liveFixturesMap.get(
-										fixture.id
-									)?.stats?.data[0]?.redcards,
-									score: liveFixturesMap.get(
-										fixture.id
-									)?.scores?.localteam_score
-								}
-							}
-						};
-					}
-					return fixture;
-				});
-
-			fixtures_arr_filter.find(
-				({ date }) =>
-					new Date(date).getDate() ===
-						currentDate.getDate() &&
-					new Date(date).getMonth() ===
-						currentDate.getMonth() &&
-					new Date(date).getFullYear() ===
-						currentDate.getFullYear()
-			).fixtures = newFixturesArray;
-
-			fixtures_arr_filter = fixtures_arr_filter;
-		}
-	}
-
-	async function listenRealTimeLivescoresNowChange(): Promise<void> {
-    dlog(`${FIX_W_T_TAG} listenRealTimeLivescoresNowChange()`, FIX_W_T_TOG, FIX_W_T_STY);
-
-		const fixtureRef = ref(
-			db_real,
-			'livescores_now/'
-		);
-
-		onValue(fixtureRef, (snapshot) => {
-			// [ℹ] break-down-values
-			if (snapshot.val() != null) {
-				const data: [
-					string,
-					FIREBASE_livescores_now
-				][] = Object.entries(snapshot.val());
-				checkForLiveFixtures(data);
-			}
-		});
-	}
-
-	async function checkForFixtureOddsInject(
-		fixture_id: number,
-		sportbook_list: FIREBASE_odds[]
-	) {
-		// [ℹ] match "data.key" (fixture_id)
-		// [ℹ] with available (fixture_id's)
-		// [ℹ] and populate the SPORTBOOK_DETAILS
-		// [ℹ] based on the "top-3" OR avaialble ODDS
-		// [ℹ] for the selected GEO-POSITION
-		// [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
-
-		if (SPORTBOOK_DETAILS_LIST == undefined) {
-			return;
-		}
-
-		// [ℹ] generate matching sporbook names
-		let sportbook_main_arr: string[] =
-			SPORTBOOK_DETAILS_LIST.map((s) =>
-				s.title.toLowerCase()
-			);
-		let sportbook_main_arr_2: string[] =
-			sportbook_list.map((s) =>
-				s.sportbook.toLowerCase()
-			);
-
-		let intersection: string[] =
-			sportbook_main_arr.filter((x) =>
-				sportbook_main_arr_2.includes(x)
-			);
-		let cross_sportbooks: number =
-			intersection.length;
-		// if (dev) console.log("cross_sportbooks", cross_sportbooks, fixture_id)
-		// if (dev) console.log("intersection", intersection, fixture_id)
-
-		for (const fixtures_group_by_date of fixtures_arr_filter) {
-			for (const fixture of fixtures_group_by_date.fixtures) {
-				if (
-					fixture.id == fixture_id &&
-					cross_sportbooks == 0
-				) {
-					if (dev)
-						console.log(
-							'No Matching Sportbook Details'
-						);
-					fixture.live_odds = undefined;
-					return;
-				}
-
-				// [ℹ] pre-live fixture validation
-				// [ℹ] use TOP-3 betting sites
-				// [ℹ] as odds-display
-				if (
-					fixture.status == 'NS' &&
-					fixture.id == fixture_id
-				) {
-					let sp_count: number = 0;
-					let odds_for: string[] = [
-						'home',
-						'draw',
-						'away'
-					];
-
-					fixture.live_odds = {
-						home: {
-							betting_site_icon_link: undefined,
-							register_link: undefined,
-							value: undefined
-						},
-						draw: {
-							betting_site_icon_link: undefined,
-							register_link: undefined,
-							value: undefined
-						},
-						away: {
-							betting_site_icon_link: undefined,
-							register_link: undefined,
-							value: undefined
-						}
-					};
-
-					// [ℹ] insurance odds #1
-					let main_odds: FIREBASE_odds;
-					let main_sportbook: Cache_Single_SportbookDetails_Data_Response;
-
-					for (const sportbook of SPORTBOOK_DETAILS_LIST) {
-						const sportbook_name_main =
-							sportbook.title;
-						const sportbook_logo =
-							sportbook.image;
-						const sportbook_link =
-							sportbook.register_link;
-
-						for (const sportbook_from_fixture of sportbook_list) {
-							const sportbook_name =
-								sportbook_from_fixture.sportbook;
-
-							if (
-								sportbook_name.toLowerCase() ==
-								sportbook_name_main.toLowerCase()
-							) {
-								if (
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									] == undefined ||
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									]?.data[sp_count]?.value ==
-										undefined
-								) {
-									continue;
-								}
-
-								// [ℹ] assign main odds #1
-								if (sp_count == 0) {
-									main_odds =
-										sportbook_from_fixture;
-									main_sportbook = sportbook;
-								}
-
-								// if (dev) console.log("sportbook_name_main", sportbook_name_main, fixture_id)
-
-								fixture.live_odds[
-									odds_for[sp_count]
-								].value =
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									]?.data[sp_count]?.value;
-								fixture.live_odds[
-									odds_for[sp_count]
-								].betting_site_icon_link = sportbook_logo;
-								fixture.live_odds[
-									odds_for[sp_count]
-								].register_link = sportbook_link;
-
-								// [ℹ] validation instance of 1
-								// [ℹ] intersecting sportbooks
-								// [ℹ] re-use the sportbook #1
-								if (
-									sp_count == 0 &&
-									cross_sportbooks == 1
-								) {
-									fixture.live_odds.draw.value =
-										sportbook_from_fixture?.markets[
-											'1X2FT'
-										]?.data[1]?.value;
-									fixture.live_odds.draw.betting_site_icon_link =
-										sportbook_logo;
-									fixture.live_odds.draw.register_link =
-										sportbook_link;
-
-									fixture.live_odds.away.value =
-										sportbook_from_fixture?.markets[
-											'1X2FT'
-										]?.data[2]?.value;
-									fixture.live_odds.away.betting_site_icon_link =
-										sportbook_logo;
-									fixture.live_odds.away.register_link =
-										sportbook_link;
-
-									sp_count = 3;
-									break;
-								}
-
-								// [ℹ] validation instance of 2
-								// [ℹ] intersecting sportbooks
-								// [ℹ] re-use the sportbook #1
-								if (
-									sp_count == 0 &&
-									cross_sportbooks == 2
-								) {
-									fixture.live_odds.draw.value =
-										sportbook_from_fixture?.markets[
-											'1X2FT'
-										]?.data[1]?.value;
-									fixture.live_odds.draw.betting_site_icon_link =
-										sportbook_logo;
-									fixture.live_odds.draw.register_link =
-										sportbook_link;
-
-									sp_count++;
-								}
-
-								sp_count++;
-
-								if (sp_count == 3) {
-									break;
-								}
-							}
-						}
-
-						if (sp_count == 3) {
-							break;
-						}
-					}
-
-					// [ℹ] extra validation
-					// [ℹ] when there is a missing
-					// [ℹ] last odds "away" in the
-					// [ℹ] case of missing odds
-					// [ℹ] assing #1 ("home") odds
-					if (
-						fixture.live_odds.away.value ==
-							undefined &&
-						main_odds != undefined &&
-						main_sportbook != undefined
-					) {
-						fixture.live_odds.away.value =
-							main_odds?.markets[
-								'1X2FT'
-							]?.data[2]?.value;
-						fixture.live_odds.away.betting_site_icon_link =
-							main_sportbook?.image;
-						fixture.live_odds.away.register_link =
-							main_sportbook?.register_link;
-					}
-				}
-
-				// [ℹ] live fixture validation
-				// [ℹ] use TOP-1 betting sites
-				// [ℹ] as odds-display
-				// [ℹ] main sportbook
-				if (
-					fixture.status != 'NS' &&
-					fixture.id == fixture_id
-				) {
-					let found_odds: boolean = false;
-
-					fixture.live_odds = {
-						home: {
-							betting_site_icon_link: undefined,
-							register_link: undefined,
-							value: undefined
-						},
-						draw: {
-							betting_site_icon_link: undefined,
-							register_link: undefined,
-							value: undefined
-						},
-						away: {
-							betting_site_icon_link: undefined,
-							register_link: undefined,
-							value: undefined
-						}
-					};
-
-					for (const sportbook of SPORTBOOK_DETAILS_LIST) {
-						const sportbook_name_main =
-							sportbook.title;
-						const sportbook_logo =
-							sportbook.image;
-						const sportbook_link =
-							sportbook.register_link;
-
-						for (const sportbook_from_fixture of sportbook_list) {
-							const sportbook_name =
-								sportbook_from_fixture.sportbook;
-
-							if (
-								sportbook_name.toLowerCase() ==
-								sportbook_name_main.toLowerCase()
-							) {
-								if (
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									] == undefined ||
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									]?.data[0]?.value ==
-										undefined ||
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									]?.data[1]?.value ==
-										undefined ||
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									]?.data[2]?.value == undefined
-								) {
-									continue;
-								}
-
-								fixture.live_odds.home.value =
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									].data[0].value;
-								fixture.live_odds.home.betting_site_icon_link =
-									sportbook_logo;
-								fixture.live_odds.home.register_link =
-									sportbook_link;
-
-								fixture.live_odds.draw.value =
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									].data[1].value;
-								fixture.live_odds.draw.betting_site_icon_link =
-									sportbook_logo;
-								fixture.live_odds.draw.register_link =
-									sportbook_link;
-
-								fixture.live_odds.away.value =
-									sportbook_from_fixture?.markets[
-										'1X2FT'
-									].data[2].value;
-								fixture.live_odds.away.betting_site_icon_link =
-									sportbook_logo;
-								fixture.live_odds.away.register_link =
-									sportbook_link;
-
-								found_odds = true;
-								break;
-							}
-						}
-
-						if (found_odds) {
-							break;
-						}
-					}
-
-					// [ℹ] extra validation
-					// [ℹ] no live odds found
-					if (!found_odds) {
-						fixture.live_odds = undefined;
-					}
-				}
-			}
-		}
-
-		// [ℹ] assign changes (persist)
-		fixtures_arr_filter = fixtures_arr_filter;
-	}
-
-	async function listenRealTimeOddsChange(): Promise<void> {
-		realTimeOddsListenMap = new Map<
-			number,
-			Unsubscribe
-		>();
-
-		// [ℹ] iterate over ALL fixtures
-		// [ℹ] of SELECTED season
-		for (const season_fixture_date_group of fixtures_arr_filter) {
-			// [ℹ] convert the datetime to the correct variables to search for the fixture;
-			// [ℹ] FIXME: issue with the use of UTC DATE, for "getUTCDate" giving yesterdays date
-			const year_: string = new Date(
-				season_fixture_date_group.date
-			)
-				.getFullYear()
-				.toString();
-			const month_: number = new Date(
-				season_fixture_date_group.date
-			).getMonth();
-			let new_month_ = (month_ + 1).toString();
-			new_month_ = `0${new_month_}`.slice(-2);
-			let day_ = new Date(
-				season_fixture_date_group.date
-			)
-				.getDate()
-				.toString();
-			day_ = `0${day_}`.slice(-2);
-
-			// [ℹ] iterater over fixtures
-			// [ℹ] [BY DATE GROUP]
-			// [ℹ] assign "onValue" event-listeners
-			for (const season_fixture of season_fixture_date_group.fixtures) {
-				if (
-					['FT', 'FT_PEN', 'AET'].includes(
-						season_fixture.status
-					)
-				) {
-					continue;
-				}
-
-				const fixture_id = season_fixture.id;
-
-				// [ℹ] listen to real-time fixture event changes;
-				const fixtureRef = ref(
-					db_real,
-					`odds/${year_}/${new_month_}/${day_}/${fixture_id}`
-				);
-
-				// if (fixture_id == 18528023) {
-				//   if (dev) console.log("snapshot", `odds/${year_}/${new_month_}/${day_}/${fixture_id}`)
-				// }
-
-				const listenEventRef = onValue(
-					fixtureRef,
-					(snapshot) => {
-						// [ℹ] break-down-values
-						if (snapshot.val() != null) {
-							// if (dev) console.log("snapshot.key", snapshot.key)
-							const sportbook_array: FIREBASE_odds[] =
-								[];
-							const data: [
-								string,
-								FIREBASE_odds
-							][] = Object.entries(
-								snapshot.val()
-							);
-							for (const sportbook of data) {
-								sportbook[1].sportbook =
-									sportbook[0].toString();
-								sportbook_array.push(
-									sportbook[1]
-								);
-							}
-							const fixture_id_: number =
-								parseInt(snapshot.key);
-							checkForFixtureOddsInject(
-								fixture_id_,
-								sportbook_array
-							);
-						}
-					}
-				);
-
-				realTimeOddsListenMap.set(
-					fixture_id,
-					listenEventRef
-				);
-			}
-		}
-	}
-
-	// [ℹ] one-off event read "livescores_now"
-	onMount(async () => {
-		const firebase_real_time =
-			await getLivescoresNow();
-		if (firebase_real_time != null) {
-			const data: [
-				string,
-				FIREBASE_livescores_now
-			][] = Object.entries(firebase_real_time);
-			checkForLiveFixtures(data);
-		}
-		const firebase_odds = await getOdds(
-			fixtures_arr_filter
-		);
-		if (firebase_odds.size != 0) {
-			for (const [
-				key,
-				value
-			] of firebase_odds.entries()) {
-				checkForFixtureOddsInject(key, value);
-			}
-		}
-	});
-
-	// [ℹ] real-time listen-events init.
-	onMount(async () => {
-		listenRealTimeLivescoresNowChange();
-		listenRealTimeOddsChange();
-		setInterval(async () => {
-			tickSecShow = !tickSecShow;
-		}, 500);
-		document.addEventListener(
-			'visibilitychange',
-			function () {
-				if (!document.hidden) {
-					select_fixtures_odds();
-					listenRealTimeLivescoresNowChange();
-					listenRealTimeOddsChange();
-				}
-			}
-		);
-	});
-
-	onDestroy(async () => {
-		// [ℹ] close LISTEN EVENT connection
-		for (const [
-			key,
-			value
-		] of realTimeOddsListenMap.entries()) {
-			if (dev)
-				console.groupCollapsed(
-					'closing connections [DEV]'
-				);
-			if (dev) console.log('closing connection');
-			if (dev) console.groupEnd();
-			value();
-		}
-	});
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  COMPONENT METHODS
+  // ~~~~~~~~~~~~~~~~~~~~~
 
 	// [ℹ] MAIN
 	// [ℹ] SPORTBOOK-DETAILS [GET]
@@ -967,10 +395,7 @@
 						target_season.rounds.length - 1
 					];
 			}
-
-			if (dev)
-				console.log('target_round', target_round);
-
+      dlog(`${FIX_W_T_TAG} target_round: ${target_round}`, FIX_W_T_TOG, FIX_W_T_STY);
 			week_start = new Date(target_round.s_date);
 			week_end = new Date(target_round.e_date);
 			week_name = target_round.value;
@@ -982,16 +407,14 @@
 			// [ℹ] search fixtures by target data
 			// [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
 			// [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
-			// if (dev) console.log("week_end", week_end)
+      dlog(`${FIX_W_T_TAG} week_end: ${week_end}`, FIX_W_T_TOG, FIX_W_T_STY);
 			let mod_end_week = new Date(
 				target_round.e_date
 			);
 			mod_end_week.setHours(
 				mod_end_week.getHours() + 24
 			);
-			// if (dev) console.log("week_end", week_end)
-			// if (dev) console.log("week_start", week_start)
-
+      dlog(`${FIX_W_T_TAG} week_end: ${week_end} | week_start: ${week_start}`, FIX_W_T_TOG, FIX_W_T_STY);
 			// [ℹ] search fixtures by target data
 			temp_fixtures_odds_arr =
 				target_season.fixtures.filter(
@@ -1088,16 +511,14 @@
 			// [ℹ] search fixtures by target data
 			// [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
 			// [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
-			// if (dev) console.log("week_end", week_end)
+      dlog(`${FIX_W_T_TAG} week_end: ${week_end}`, FIX_W_T_TOG, FIX_W_T_STY);
 			let mod_end_week = new Date(
 				target_week.e_date
 			);
 			mod_end_week.setHours(
 				mod_end_week.getHours() + 24
 			);
-			// if (dev) console.log("week_end", week_end)
-			// if (dev) console.log("week_start", week_start)
-
+      dlog(`${FIX_W_T_TAG} week_end: ${week_end} | week_start: ${week_start}`, FIX_W_T_TOG, FIX_W_T_STY);
 			temp_fixtures_odds_arr =
 				target_season.fixtures.filter(
 					({ fixture_time }) =>
@@ -1247,16 +668,14 @@
 			// [ℹ] search fixtures by target data
 			// [ℹ] FIXME: only works with "fixture_time" - not with "fixture_date"
 			// [ℹ] FIXME: happens to be with dates: "2022-09-19T00:00:00" [?]
-			// if (dev) console.log("week_end", week_end)
+      dlog(`${FIX_W_T_TAG} week_end: ${week_end}`, FIX_W_T_TOG, FIX_W_T_STY);
 			let mod_end_week = new Date(
 				target_round.e_date
 			);
 			mod_end_week.setHours(
 				mod_end_week.getHours() + 24
 			);
-			// if (dev) console.log("week_end", week_end)
-			// if (dev) console.log("week_start", week_start)
-
+      dlog(`${FIX_W_T_TAG} week_end: ${week_end} | week_start: ${week_start}`, FIX_W_T_TOG, FIX_W_T_STY);
 			// [ℹ] search fixtures by target data
 			temp_fixtures_odds_arr =
 				target_season.fixtures.filter(
@@ -1286,9 +705,7 @@
 			mod_end_week.setHours(
 				mod_end_week.getHours() + 24
 			);
-			// if (dev) console.log("week_end", week_end)
-			// if (dev) console.log("week_start", week_start)
-
+      dlog(`${FIX_W_T_TAG} week_end: ${week_end} | week_start: ${week_start}`, FIX_W_T_TOG, FIX_W_T_STY);
 			temp_fixtures_odds_arr =
 				target_season.fixtures.filter(
 					({ fixture_time }) =>
@@ -1413,30 +830,646 @@
 		toggleDropdown = false;
 	}
 
+  //#region [ADD-ON] FIREBASE
+
 	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE WIDGET METHODS
-	// CRITICAL
+	// [ADD-ON] FIREBASE
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	$: refresh_data =
-		$userBetarenaSettings.country_bookmaker;
+	const liveFixturesMap = new Map<
+		number,
+		FIREBASE_livescores_now
+	>();
 
-	$: if (browser && refresh_data) {
-		// [ℹ] reset necessary variables;
-		refresh = true;
-		// loaded = false
-		// noWidgetData = false
-		// widget_init()
-		setTimeout(async () => {
-			refresh = false;
-		}, 100);
+	async function checkForLiveFixtures(
+		data: [string, FIREBASE_livescores_now][]
+	) {
+    dlog(`${FIX_W_T_TAG} checkForLiveFixtures()`, FIX_W_T_TOG, FIX_W_T_STY);
+    
+		// [ℹ] generate map
+		for (const live_fixture of data) {
+			const fixture_id = parseInt(
+				live_fixture[0].toString()
+			);
+			const fixture_data = live_fixture[1];
+			liveFixturesMap.set(
+				fixture_id,
+				fixture_data
+			);
+		}
+
+		// [ℹ] validate against "visible" fixtures
+		const currentDate = new Date();
+		const numFixturesToday =
+			fixtures_arr_filter.find(
+				({ date }) =>
+					new Date(date).getDate() ===
+						currentDate.getDate() &&
+					new Date(date).getMonth() ===
+						currentDate.getMonth() &&
+					new Date(date).getFullYear() ===
+						currentDate.getFullYear()
+			);
+
+		if (numFixturesToday != undefined) {
+			const newFixturesArray = fixtures_arr_filter
+				.find(
+					({ date }) =>
+						new Date(date).getDate() ===
+							currentDate.getDate() &&
+						new Date(date).getMonth() ===
+							currentDate.getMonth() &&
+						new Date(date).getFullYear() ===
+							currentDate.getFullYear()
+				)
+				?.fixtures.map((fixture) => {
+					if (liveFixturesMap.has(fixture.id)) {
+						return {
+							...fixture,
+							minute: liveFixturesMap.get(
+								fixture.id
+							)?.time?.minute,
+							status: liveFixturesMap.get(
+								fixture.id
+							)?.time?.status,
+							teams: {
+								away: {
+									name: fixture?.teams?.away
+										?.name,
+									red_cards: liveFixturesMap.get(
+										fixture.id
+									)?.stats?.data[1]?.redcards,
+									score: liveFixturesMap.get(
+										fixture.id
+									)?.scores?.visitorteam_score
+								},
+								home: {
+									name: fixture?.teams?.home
+										?.name,
+									red_cards: liveFixturesMap.get(
+										fixture.id
+									)?.stats?.data[0]?.redcards,
+									score: liveFixturesMap.get(
+										fixture.id
+									)?.scores?.localteam_score
+								}
+							}
+						};
+					}
+					return fixture;
+				});
+
+			fixtures_arr_filter.find(
+				({ date }) =>
+					new Date(date).getDate() ===
+						currentDate.getDate() &&
+					new Date(date).getMonth() ===
+						currentDate.getMonth() &&
+					new Date(date).getFullYear() ===
+						currentDate.getFullYear()
+			).fixtures = newFixturesArray;
+
+			fixtures_arr_filter = fixtures_arr_filter;
+		}
 	}
 
-	afterNavigate(async () => {
-		widget_init();
+	async function listenRealTimeLivescoresNowChange(
+  ): Promise<void> {
+    dlog(`${FIX_W_T_TAG} listenRealTimeLivescoresNowChange()`, FIX_W_T_TOG, FIX_W_T_STY);
+
+		const fixtureRef = ref(
+			db_real,
+			'livescores_now/'
+		);
+
+		onValue(fixtureRef, (snapshot) => {
+			// [ℹ] break-down-values
+			if (snapshot.val() != null) {
+				const data: [
+					string,
+					FIREBASE_livescores_now
+				][] = Object.entries(snapshot.val());
+				checkForLiveFixtures(data);
+			}
+		});
+	}
+
+	async function checkForFixtureOddsInject(
+		fixture_id: number,
+		sportbook_list: FIREBASE_odds[]
+  ): Promise<void> {
+		// [ℹ] match "data.key" (fixture_id)
+		// [ℹ] with available (fixture_id's)
+		// [ℹ] and populate the SPORTBOOK_DETAILS
+		// [ℹ] based on the "top-3" OR avaialble ODDS
+		// [ℹ] for the selected GEO-POSITION
+		// [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
+
+		if (SPORTBOOK_DETAILS_LIST == undefined) {
+			return;
+		}
+
+		// [ℹ] generate matching sporbook names
+		let sportbook_main_arr: string[] =
+			SPORTBOOK_DETAILS_LIST.map((s) =>
+				s.title.toLowerCase()
+			);
+		let sportbook_main_arr_2: string[] =
+			sportbook_list.map((s) =>
+				s.sportbook.toLowerCase()
+			);
+
+		let intersection: string[] =
+			sportbook_main_arr.filter((x) =>
+				sportbook_main_arr_2.includes(x)
+			);
+		let cross_sportbooks: number =
+			intersection.length;
+    dlog(`${FIX_W_T_TAG} cross_sportbooks: ${cross_sportbooks} | fixture_id: ${fixture_id} | intersection: ${intersection}`, FIX_W_T_TOG, FIX_W_T_STY);
+
+		for (const fixtures_group_by_date of fixtures_arr_filter) {
+			for (const fixture of fixtures_group_by_date.fixtures) {
+				if (
+					fixture.id == fixture_id &&
+					cross_sportbooks == 0
+				) {
+					if (dev)
+						console.log(
+							'No Matching Sportbook Details'
+						);
+					fixture.live_odds = undefined;
+					return;
+				}
+
+				// [ℹ] pre-live fixture validation
+				// [ℹ] use TOP-3 betting sites
+				// [ℹ] as odds-display
+				if (
+					fixture.status == 'NS' &&
+					fixture.id == fixture_id
+				) {
+					let sp_count: number = 0;
+					let odds_for: string[] = [
+						'home',
+						'draw',
+						'away'
+					];
+
+					fixture.live_odds = {
+						home: {
+							betting_site_icon_link: undefined,
+							register_link: undefined,
+							value: undefined
+						},
+						draw: {
+							betting_site_icon_link: undefined,
+							register_link: undefined,
+							value: undefined
+						},
+						away: {
+							betting_site_icon_link: undefined,
+							register_link: undefined,
+							value: undefined
+						}
+					};
+
+					// [ℹ] insurance odds #1
+					let main_odds: FIREBASE_odds;
+					let main_sportbook: Cache_Single_SportbookDetails_Data_Response;
+
+					for (const sportbook of SPORTBOOK_DETAILS_LIST) {
+						const sportbook_name_main =
+							sportbook.title;
+						const sportbook_logo =
+							sportbook.image;
+						const sportbook_link =
+							sportbook.register_link;
+
+						for (const sportbook_from_fixture of sportbook_list) {
+							const sportbook_name =
+								sportbook_from_fixture.sportbook;
+
+							if (
+								sportbook_name.toLowerCase() ==
+								sportbook_name_main.toLowerCase()
+							) {
+								if (
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									] == undefined ||
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									]?.data[sp_count]?.value ==
+										undefined
+								) {
+									continue;
+								}
+
+								// [ℹ] assign main odds #1
+								if (sp_count == 0) {
+									main_odds =
+										sportbook_from_fixture;
+									main_sportbook = sportbook;
+								}
+
+                dlog(`${FIX_W_T_TAG} sportbook_name_main: ${sportbook_name_main} | fixture_id: ${fixture_id}`, FIX_W_T_TOG, FIX_W_T_STY);
+
+								fixture.live_odds[
+									odds_for[sp_count]
+								].value =
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									]?.data[sp_count]?.value;
+								fixture.live_odds[
+									odds_for[sp_count]
+								].betting_site_icon_link = sportbook_logo;
+								fixture.live_odds[
+									odds_for[sp_count]
+								].register_link = sportbook_link;
+
+								// [ℹ] validation instance of 1
+								// [ℹ] intersecting sportbooks
+								// [ℹ] re-use the sportbook #1
+								if (
+									sp_count == 0 &&
+									cross_sportbooks == 1
+								) {
+									fixture.live_odds.draw.value =
+										sportbook_from_fixture?.markets[
+											'1X2FT'
+										]?.data[1]?.value;
+									fixture.live_odds.draw.betting_site_icon_link =
+										sportbook_logo;
+									fixture.live_odds.draw.register_link =
+										sportbook_link;
+
+									fixture.live_odds.away.value =
+										sportbook_from_fixture?.markets[
+											'1X2FT'
+										]?.data[2]?.value;
+									fixture.live_odds.away.betting_site_icon_link =
+										sportbook_logo;
+									fixture.live_odds.away.register_link =
+										sportbook_link;
+
+									sp_count = 3;
+									break;
+								}
+
+								// [ℹ] validation instance of 2
+								// [ℹ] intersecting sportbooks
+								// [ℹ] re-use the sportbook #1
+								if (
+									sp_count == 0 &&
+									cross_sportbooks == 2
+								) {
+									fixture.live_odds.draw.value =
+										sportbook_from_fixture?.markets[
+											'1X2FT'
+										]?.data[1]?.value;
+									fixture.live_odds.draw.betting_site_icon_link =
+										sportbook_logo;
+									fixture.live_odds.draw.register_link =
+										sportbook_link;
+
+									sp_count++;
+								}
+
+								sp_count++;
+
+								if (sp_count == 3) {
+									break;
+								}
+							}
+						}
+
+						if (sp_count == 3) {
+							break;
+						}
+					}
+
+					// [ℹ] extra validation
+					// [ℹ] when there is a missing
+					// [ℹ] last odds "away" in the
+					// [ℹ] case of missing odds
+					// [ℹ] assing #1 ("home") odds
+					if (
+						fixture.live_odds.away.value ==
+							undefined &&
+						main_odds != undefined &&
+						main_sportbook != undefined
+					) {
+						fixture.live_odds.away.value =
+							main_odds?.markets[
+								'1X2FT'
+							]?.data[2]?.value;
+						fixture.live_odds.away.betting_site_icon_link =
+							main_sportbook?.image;
+						fixture.live_odds.away.register_link =
+							main_sportbook?.register_link;
+					}
+				}
+
+				// [ℹ] live fixture validation
+				// [ℹ] use TOP-1 betting sites
+				// [ℹ] as odds-display
+				// [ℹ] main sportbook
+				if (
+					fixture.status != 'NS' &&
+					fixture.id == fixture_id
+				) {
+					let found_odds: boolean = false;
+
+					fixture.live_odds = {
+						home: {
+							betting_site_icon_link: undefined,
+							register_link: undefined,
+							value: undefined
+						},
+						draw: {
+							betting_site_icon_link: undefined,
+							register_link: undefined,
+							value: undefined
+						},
+						away: {
+							betting_site_icon_link: undefined,
+							register_link: undefined,
+							value: undefined
+						}
+					};
+
+					for (const sportbook of SPORTBOOK_DETAILS_LIST) {
+						const sportbook_name_main =
+							sportbook.title;
+						const sportbook_logo =
+							sportbook.image;
+						const sportbook_link =
+							sportbook.register_link;
+
+						for (const sportbook_from_fixture of sportbook_list) {
+							const sportbook_name =
+								sportbook_from_fixture.sportbook;
+
+							if (
+								sportbook_name.toLowerCase() ==
+								sportbook_name_main.toLowerCase()
+							) {
+								if (
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									] == undefined ||
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									]?.data[0]?.value ==
+										undefined ||
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									]?.data[1]?.value ==
+										undefined ||
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									]?.data[2]?.value == undefined
+								) {
+									continue;
+								}
+
+								fixture.live_odds.home.value =
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									].data[0].value;
+								fixture.live_odds.home.betting_site_icon_link =
+									sportbook_logo;
+								fixture.live_odds.home.register_link =
+									sportbook_link;
+
+								fixture.live_odds.draw.value =
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									].data[1].value;
+								fixture.live_odds.draw.betting_site_icon_link =
+									sportbook_logo;
+								fixture.live_odds.draw.register_link =
+									sportbook_link;
+
+								fixture.live_odds.away.value =
+									sportbook_from_fixture?.markets[
+										'1X2FT'
+									].data[2].value;
+								fixture.live_odds.away.betting_site_icon_link =
+									sportbook_logo;
+								fixture.live_odds.away.register_link =
+									sportbook_link;
+
+								found_odds = true;
+								break;
+							}
+						}
+
+						if (found_odds) {
+							break;
+						}
+					}
+
+					// [ℹ] extra validation
+					// [ℹ] no live odds found
+					if (!found_odds) {
+						fixture.live_odds = undefined;
+					}
+				}
+			}
+		}
+
+		// [ℹ] assign changes (persist)
+		fixtures_arr_filter = fixtures_arr_filter;
+	}
+
+	async function listenRealTimeOddsChange(
+  ): Promise<void> {
+		realTimeOddsListenMap = new Map<
+			number,
+			Unsubscribe
+		>();
+
+		// [ℹ] iterate over ALL fixtures
+		// [ℹ] of SELECTED season
+		for (const season_fixture_date_group of fixtures_arr_filter) {
+			// [ℹ] convert the datetime to the correct variables to search for the fixture;
+			// [ℹ] FIXME: issue with the use of UTC DATE, for "getUTCDate" giving yesterdays date
+			const year_: string = new Date(
+				season_fixture_date_group.date
+			)
+				.getFullYear()
+				.toString();
+			const month_: number = new Date(
+				season_fixture_date_group.date
+			).getMonth();
+			let new_month_ = (month_ + 1).toString();
+			new_month_ = `0${new_month_}`.slice(-2);
+			let day_ = new Date(
+				season_fixture_date_group.date
+			)
+				.getDate()
+				.toString();
+			day_ = `0${day_}`.slice(-2);
+
+			// [ℹ] iterater over fixtures
+			// [ℹ] [BY DATE GROUP]
+			// [ℹ] assign "onValue" event-listeners
+			for (const season_fixture of season_fixture_date_group.fixtures) {
+				if (
+					['FT', 'FT_PEN', 'AET'].includes(
+						season_fixture.status
+					)
+				) {
+					continue;
+				}
+
+				const fixture_id = season_fixture.id;
+
+				// [ℹ] listen to real-time fixture event changes;
+				const fixtureRef = ref(
+					db_real,
+					`odds/${year_}/${new_month_}/${day_}/${fixture_id}`
+				);
+
+				// if (fixture_id == 18528023) {
+				//   if (dev) console.log("snapshot", `odds/${year_}/${new_month_}/${day_}/${fixture_id}`)
+				// }
+
+				const listenEventRef = onValue(
+					fixtureRef,
+					(snapshot) => {
+						// [ℹ] break-down-values
+						if (snapshot.val() != null) {
+							// if (dev) console.log("snapshot.key", snapshot.key)
+							const sportbook_array: FIREBASE_odds[] =
+								[];
+							const data: [
+								string,
+								FIREBASE_odds
+							][] = Object.entries(
+								snapshot.val()
+							);
+							for (const sportbook of data) {
+								sportbook[1].sportbook =
+									sportbook[0].toString();
+								sportbook_array.push(
+									sportbook[1]
+								);
+							}
+							const fixture_id_: number =
+								parseInt(snapshot.key);
+							checkForFixtureOddsInject(
+								fixture_id_,
+								sportbook_array
+							);
+						}
+					}
+				);
+
+				realTimeOddsListenMap.set(
+					fixture_id,
+					listenEventRef
+				);
+			}
+		}
+	}
+
+	// [ℹ] one-off event read "livescores_now"
+	onMount(async () => {
+		const firebase_real_time =
+			await getLivescoresNow();
+		if (firebase_real_time != null) {
+			const data: [
+				string,
+				FIREBASE_livescores_now
+			][] = Object.entries(firebase_real_time);
+			checkForLiveFixtures(data);
+		}
+		const firebase_odds = await getOdds(
+			fixtures_arr_filter
+		);
+		if (firebase_odds.size != 0) {
+			for (const [
+				key,
+				value
+			] of firebase_odds.entries()) {
+				checkForFixtureOddsInject(key, value);
+			}
+		}
 	});
 
+	// [ℹ] real-time listen-events init.
+	onMount(async () => {
+		listenRealTimeLivescoresNowChange();
+		listenRealTimeOddsChange();
+		setInterval(async () => {
+			tickSecShow = !tickSecShow;
+		}, 500);
+		document.addEventListener(
+			'visibilitychange',
+			function () {
+				if (!document.hidden) {
+					select_fixtures_odds();
+					listenRealTimeLivescoresNowChange();
+					listenRealTimeOddsChange();
+				}
+			}
+		);
+	});
+
+  // CRITICAL
+	onDestroy(async () => {
+		const logsMsg: string[] = []
+		for (const iterator of realTimeOddsListenMap.values()) {
+      logsMsg.push('closing connection')
+			iterator();
+		}
+    dlogv2(
+      `${FIX_W_T_TAG} closing firebase connections`,
+      logsMsg,
+      FIX_W_T_TOG, 
+      FIX_W_T_STY
+    )
+	});
+
+  //#endregion [ADD-ON] FIREBASE
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+	const TABLET_VIEW = 1000;
+	const MOBILE_VIEW = 725;
+	let mobileExclusive,
+		tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
+		window.addEventListener(
+			'resize',
+			function () {
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
+			}
+		);
+	});
+
+  //#endregion ➤ [METHODS]
+
+  //#region ➤ [ONE-OFF] [METHODS] [IF]
+
+  if (FIXTURES_ODDS_DATA == undefined ||
+		FIXTURES_ODDS_T == undefined) {
+		noWidgetData = true;
+		loaded = true;
+	}
+
+  // ~~~~~~~~~~~~~~~~~~~~~
 	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
@@ -1449,11 +1482,11 @@
 		`server_side_language: ${server_side_language}`
 	);
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE OTHER
-	// ~~~~~~~~~~~~~~~~~~~~~
+  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
-	let loadedCurrentSeason: boolean = false;
+  //#region ➤ [REACTIVIY] [METHODS]
+
+  let loadedCurrentSeason: boolean = false;
 	$: if (
 		browser &&
 		$sessionStore.selectedSeasonID != undefined &&
@@ -1481,35 +1514,8 @@
 		total_nav_num = weeks_total;
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	const TABLET_VIEW = 1000;
-	const MOBILE_VIEW = 725;
-	let mobileExclusive,
-		tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// DEBUG
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: if (dev) {
+  // [🐞]
+  $: if (dev) {
 		dlogv2(
 			'FIXTURE ODDS [WIDGET]',
 			[
@@ -1525,6 +1531,36 @@
 			'background: violet; color: #000000'
 		);
 	}
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// REACTIVE SVELTE WIDGET METHODS
+	// CRITICAL
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: refresh_data =
+		$userBetarenaSettings.country_bookmaker;
+
+	$: if (browser && refresh_data) {
+		// [ℹ] reset necessary variables;
+		refresh = true;
+		// loaded = false
+		// noWidgetData = false
+		// widget_init()
+		setTimeout(async () => {
+			refresh = false;
+		}, 100);
+	}
+
+  //#endregion ➤ [REACTIVIY] [METHODS]
+
+  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  afterNavigate(async () => {
+		widget_init();
+	});
+
+  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
 </script>
 
 <!-- ===============
@@ -3371,6 +3407,7 @@
   COMPONENT STYLE
 =================-->
 <style>
+  
 	/* 
     [ℹ] OTHER STYLE / CSS 
   */
