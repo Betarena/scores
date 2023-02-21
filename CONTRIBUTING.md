@@ -39,3 +39,16 @@ Work in Progress pull requests are also welcome to get feedback early on, or if 
 - [How to Contribute to Open Source](https://opensource.guide/how-to-contribute/)
 - [Using Pull Requests](https://help.github.com/articles/about-pull-requests/)
 - [GitHub Help](https://help.github.com)
+
+### GitHub Flow:
+
+```
+//the branch you want to overwrite
+git checkout email 
+
+//reset to the new branch
+git reset --hard origin/staging
+
+// push to remote
+git push -f
+```
