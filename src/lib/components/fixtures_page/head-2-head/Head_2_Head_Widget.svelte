@@ -42,6 +42,7 @@
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
+	import { get } from '$lib/api/utils';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -51,9 +52,11 @@
 	export let FIXTURE_H2H: Fixture_Head_2_Head;
 	export let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
 	export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
-  // TEST:FIXME:
-  export let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
-	export let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
+  // TODO: 
+  // export let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
+	// export let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
+  let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
+	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
 
 	let FIXTURE_PROB_DATA: Fixture_Probabilities;
 
@@ -74,6 +77,15 @@
 
 	// [ℹ] MAIN WIDGET METHOD
 	async function widget_init(): Promise<void> {
+
+    if (!$userBetarenaSettings.country_bookmaker) {
+      return;
+    }
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+
+    SPORTBOOK_INFO = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
+    SPORTBOOK_DETAILS_LIST = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
+
 		loaded = true;
 		const responses_invalid =
 			FIXTURE_H2H == undefined 
@@ -150,10 +162,6 @@
 
 		return;
 	}
-
-  $: if (browser && SPORTBOOK_INFO && SPORTBOOK_DETAILS_LIST) {
-    widget_init()
-  }
 
 	function trigger_event_google(action: string) {
 		if (

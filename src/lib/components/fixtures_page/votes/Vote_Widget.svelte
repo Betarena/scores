@@ -46,6 +46,7 @@
 	import { FIXTURE_NO_VOTES_OPT } from '$lib/models/sportmonks';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
+	import { get } from '$lib/api/utils';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -55,8 +56,8 @@
 	// NOTE: lazy-loaded component data
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_VOTES_TRANSLATION: REDIS_CACHE_SINGLE_votes_translation;
-  export let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
-	export let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
+  // export let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
+	// export let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
 	let FIXTURE_VOTES_DATA: Fixture_Votes;
 	let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
 	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
@@ -94,6 +95,10 @@
 		// [ℹ] [DEFAULT] [DISABLED] when ALL data PRE-LOADED (buffer)
 		// const sleep = ms => new Promise(r => setTimeout(r, ms));
 		// await sleep(3000);
+    if (!$userBetarenaSettings.country_bookmaker) {
+      return;
+    }
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
 
 		// [ℹ] execute GRAPH-QL request;
 		const VARIABLES = {
@@ -105,8 +110,9 @@
 				HASURA_FIXTURE_VOTES_DATA_0,
 				VARIABLES
 			);
-    SPORTBOOK_INFO = SPORTBOOK_MAIN;
-    SPORTBOOK_DETAILS_LIST = SPORTBOOK_ALL;
+
+    SPORTBOOK_INFO = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
+    SPORTBOOK_DETAILS_LIST = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
 
 		loaded = true;
 
@@ -207,10 +213,6 @@
 
 		return;
 	}
-
-  $: if (browser && SPORTBOOK_INFO && SPORTBOOK_DETAILS_LIST) {
-    widget_init()
-  }
 
 	/**
 	 * Description

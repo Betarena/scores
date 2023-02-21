@@ -38,6 +38,7 @@
 
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
+	import { get } from '$lib/api/utils';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -47,10 +48,12 @@
 	// NOTE: lazy-loaded component data
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let FIXTURE_PROBS_TRANSLATION: REDIS_CACHE_SINGLE_probabilities_translation;
-  export let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
-	export let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
-  
+
 	let FIXTURE_PROB_DATA: Fixture_Probabilities;
+
+  // TODO:
+  // export let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
+	// export let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
 	let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
 	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
 
@@ -102,6 +105,11 @@
 		// const sleep = ms => new Promise(r => setTimeout(r, ms));
 		// await sleep(3000);
 
+    if (!$userBetarenaSettings.country_bookmaker) {
+      return;
+    }
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+
 		// [ℹ] execute GRAPH-QL request;
 		const VARIABLES = {
 			fixture_id: FIXTURE_INFO?.data?.id
@@ -111,9 +119,11 @@
 				REDIS_CACHE_FIXTURE_PROBABILITIES_0,
 				VARIABLES
 			);
-    SPORTBOOK_INFO = SPORTBOOK_MAIN;
-    SPORTBOOK_DETAILS_LIST = SPORTBOOK_ALL;
-		loaded = true;
+
+    SPORTBOOK_INFO = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
+    SPORTBOOK_DETAILS_LIST = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
+
+    loaded = true;
 
 		const responses_invalid =
 			response == undefined ||
@@ -136,9 +146,6 @@
 		// ~~~~~~~~~~~~~~~~
 		// [ℹ] data pre-processing
 
-		SPORTBOOK_INFO = SPORTBOOK_MAIN;
-		SPORTBOOK_DETAILS_LIST =
-    SPORTBOOK_ALL;
 		SPORTBOOK_DETAILS_LIST.sort(
 			(a, b) =>
 				parseInt(a.position) -
@@ -169,10 +176,6 @@
 
 		return;
 	}
-
-  $: if (browser && SPORTBOOK_INFO && SPORTBOOK_DETAILS_LIST) {
-    widget_init()
-  }
 
 	/**
 	 * Description

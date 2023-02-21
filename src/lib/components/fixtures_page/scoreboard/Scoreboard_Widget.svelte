@@ -51,6 +51,7 @@
 		FIXTURE_NOT_START_OPT
 	} from '$lib/models/sportmonks';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
+	import { get } from '$lib/api/utils';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -61,8 +62,11 @@
 	export let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
 	export let FIXTURE_CONTENT: REDIS_CACHE_SINGLE_content_data[];
 	export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
-  export let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
-	export let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
+  // TODO: 
+  // export let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
+	// export let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
+  let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
+	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
 
 	let loaded: boolean = false; // [ℹ] holds boolean for data loaded;
 	let refresh: boolean = false; // [ℹ] refresh value speed of the WIDGET;
@@ -81,6 +85,15 @@
 	// [ℹ] In Use
 	// [ℹ] (x2) cache
 	async function widget_init(): Promise<REDIS_CACHE_SINGLE_scoreboard_data> {
+
+    if (!$userBetarenaSettings.country_bookmaker) {
+      return;
+    }
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+
+    SPORTBOOK_INFO = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
+    SPORTBOOK_DETAILS_LIST = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
+
 		loaded = true;
     const responses_invalid =
       FIXTURE_SCOREBOARD == undefined 
@@ -199,10 +212,6 @@
 			});
 		}, 150);
 	}
-
-  $: if (browser && SPORTBOOK_INFO && SPORTBOOK_DETAILS_LIST) {
-    widget_init()
-  }
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES

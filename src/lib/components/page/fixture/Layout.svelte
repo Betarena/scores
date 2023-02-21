@@ -141,8 +141,8 @@
 		$page.data.FIXTURE_H2H_TRANSLATION;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
-  // $: SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
-	// $: SPORTBOOK_ALL = $page.data.SPORTBOOK_ALL;
+  SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
+	SPORTBOOK_ALL = $page.data.SPORTBOOK_ALL;
 
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined
@@ -163,19 +163,22 @@
 	//  PAGE METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
+  // TODO:
+  /*
   $: if (browser && $userBetarenaSettings && $userBetarenaSettings.country_bookmaker != undefined) {
     get_sportbooks()
   }
   async function get_sportbooks() {
     let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
     SPORTBOOK_MAIN = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
-    // console.log('SPORTBOOK_MAIN', SPORTBOOK_MAIN)
+    console.log('SPORTBOOK_MAIN', SPORTBOOK_MAIN)
     SPORTBOOK_MAIN = SPORTBOOK_MAIN
     SPORTBOOK_ALL = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
     SPORTBOOK_ALL = SPORTBOOK_ALL
   }
   $: SPORTBOOK_MAIN = SPORTBOOK_MAIN
   $: SPORTBOOK_ALL = SPORTBOOK_ALL
+  */
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -350,8 +353,6 @@
 			{FIXTURE_SCOREBOARD_TRANSLATION}
 			{FIXTURE_CONTENT}
 			{FIXTURES_ODDS_T}
-      SPORTBOOK_INFO={SPORTBOOK_MAIN}
-      SPORTBOOK_DETAILS_LIST={SPORTBOOK_ALL}
 		/>
 		<div id="widget-grid-display">
 			<!-- 
@@ -364,8 +365,6 @@
 				<VoteWidget
 					{FIXTURE_INFO}
 					{FIXTURE_VOTES_TRANSLATION}
-          {SPORTBOOK_MAIN}
-          {SPORTBOOK_ALL}
 				/>
 				<IncidentsWidget
 					{FIXTURE_INCIDENTS}
@@ -383,8 +382,6 @@
 					{FIXTURE_H2H}
 					{FIXTURE_H2H_TRANSLATION}
 					{FIXTURES_ODDS_T}
-          SPORTBOOK_INFO={SPORTBOOK_MAIN}
-          SPORTBOOK_DETAILS_LIST={SPORTBOOK_ALL}
 				/>
 				<StandingsWidget
 					{STANDINGS_T}
@@ -398,8 +395,6 @@
 				<ProbabilityWidget
 					{FIXTURE_INFO}
 					{FIXTURE_PROBS_TRANSLATION}
-          {SPORTBOOK_MAIN}
-          {SPORTBOOK_ALL}
 				/>
 				<AboutWidget
 					{FIXTURE_ABOUT}
@@ -430,8 +425,6 @@
 			{FIXTURE_SCOREBOARD_TRANSLATION}
 			{FIXTURE_CONTENT}
 			{FIXTURES_ODDS_T}
-      SPORTBOOK_INFO={SPORTBOOK_MAIN}
-      SPORTBOOK_DETAILS_LIST={SPORTBOOK_ALL}
 		/>
 		<!-- 
     [ℹ] "Overview" view selection 
@@ -445,8 +438,6 @@
 				<VoteWidget
 					{FIXTURE_INFO}
 					{FIXTURE_VOTES_TRANSLATION}
-          {SPORTBOOK_MAIN}
-          {SPORTBOOK_ALL}
 				/>
 				<LineupsWidget
 					{FIXTURE_LINEUPS}
@@ -457,8 +448,6 @@
 					{FIXTURE_H2H}
 					{FIXTURE_H2H_TRANSLATION}
 					{FIXTURES_ODDS_T}
-          SPORTBOOK_INFO={SPORTBOOK_MAIN}
-          SPORTBOOK_DETAILS_LIST={SPORTBOOK_ALL}
 				/>
 				<StandingsWidget
 					{STANDINGS_T}
@@ -485,8 +474,6 @@
 				<ProbabilityWidget
 					{FIXTURE_INFO}
 					{FIXTURE_PROBS_TRANSLATION}
-          {SPORTBOOK_MAIN}
-          {SPORTBOOK_ALL}
 				/>
 			</div>
 		</div>
