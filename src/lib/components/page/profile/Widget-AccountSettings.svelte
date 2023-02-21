@@ -700,6 +700,7 @@ COMPONENT HTML
           w-500
           s-14
           color-black-2
+          m-l-24
         "
         on:click={() => connect_wallet()}
       >
