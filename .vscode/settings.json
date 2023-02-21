@@ -2,9 +2,9 @@
   // DOC: https://stackoverflow.com/questions/64365300/how-can-i-remove-unused-imports-declarations-from-the-entire-project-of-react-ty
   // DOC: https://stackoverflow.com/questions/46722701/is-there-a-way-to-remove-unused-imports-and-declarations-from-angular-2
   "editor.codeActionsOnSave": {
-    "source.fixAll": true,
-    "source.organizeImports": true,
-    "source.sortMembers": true
+    // "source.fixAll": true,
+    // "source.organizeImports": true,
+    // "source.sortMembers": true
   },
   // NOTE: custom highlighter for data
   "todohighlight.keywords": [
@@ -38,5 +38,42 @@
       "backgroundColor": "red",
       "overviewRulerColor": "grey"
     }
-  ]
+  ],
+  // DOC: https://discord.com/channels/457912077277855764/1036919129782878218
+  // DOC: https://discord.com/channels/457912077277855764/1036369208721813554
+  "svelte.plugin.svelte.compilerWarnings": {
+    "a11y-click-events-have-key-events":  "ignore",
+    "a11y-aria-attributes": "ignore",
+    "a11y-incorrect-aria-attribute-type": "ignore",
+    "a11y-unknown-aria-attribute": "ignore",
+    "a11y-hidden": "ignore",
+    "a11y-misplaced-role": "ignore",
+    "a11y-unknown-role": "ignore",
+    "a11y-no-abstract-role": "ignore",
+    "a11y-no-redundant-roles": "ignore",
+    "a11y-role-has-required-aria-props": "ignore",
+    "a11y-accesskey": "ignore",
+    "a11y-autofocus": "ignore",
+    "a11y-misplaced-scope": "ignore",
+    "a11y-positive-tabindex": "ignore",
+    "a11y-invalid-attribute": "ignore",
+    "a11y-missing-attribute": "ignore",
+    "a11y-img-redundant-alt": "ignore",
+    "a11y-label-has-associated-control": "ignore",
+    "a11y-media-has-caption": "ignore",
+    "a11y-distracting-elements": "ignore",
+    "a11y-structure": "ignore",
+    "a11y-mouse-events-have-key-events": "ignore",
+    "a11y-missing-content": "ignore",
+  },
+  // DOC: https://stackoverflow.com/a/49777201/8421215
+  "editor.folding": true,
+  "editor.showFoldingControls": "always",
+  "editor.foldingStrategy": "indentation",
+  "editor.foldingImportsByDefault": true,
+  // DOC: https://marketplace.visualstudio.com/items?itemName=maptz.regionfolder
+  "maptz.regionfolder": {
+    "collapseAllRegions": true,
+    "collapseDefaultRegionsOnOpen": true
+  }
 }
