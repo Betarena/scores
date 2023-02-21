@@ -700,8 +700,8 @@ COMPONENT HTML
           w-500
           s-14
           color-black-2
-          m-l-24
         "
+        class:m-l-24={!tabletExclusive}
         on:click={() => connect_wallet()}
       >
         {!profile_wallet_connected
