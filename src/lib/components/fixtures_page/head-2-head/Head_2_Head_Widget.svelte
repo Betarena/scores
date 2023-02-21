@@ -151,6 +151,10 @@
 		return;
 	}
 
+  $: if (browser && SPORTBOOK_INFO && SPORTBOOK_DETAILS_LIST) {
+    widget_init()
+  }
+
 	function trigger_event_google(action: string) {
 		if (
 			action === 'fixtures_football_fixtures_h2h'

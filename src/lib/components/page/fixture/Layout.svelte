@@ -73,6 +73,8 @@
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
+	import type { GeoJsResponse } from '$lib/models/geojs-types';
+	import { get } from '$lib/api/utils';
 
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
 	let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
@@ -139,8 +141,8 @@
 		$page.data.FIXTURE_H2H_TRANSLATION;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
-  $: SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
-	$: SPORTBOOK_ALL = $page.data.SPORTBOOK_ALL;
+  // $: SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
+	// $: SPORTBOOK_ALL = $page.data.SPORTBOOK_ALL;
 
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined
@@ -160,6 +162,20 @@
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  PAGE METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
+
+  $: if (browser && $userBetarenaSettings && $userBetarenaSettings.country_bookmaker != undefined) {
+    get_sportbooks()
+  }
+  async function get_sportbooks() {
+    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+    SPORTBOOK_MAIN = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
+    // console.log('SPORTBOOK_MAIN', SPORTBOOK_MAIN)
+    SPORTBOOK_MAIN = SPORTBOOK_MAIN
+    SPORTBOOK_ALL = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
+    SPORTBOOK_ALL = SPORTBOOK_ALL
+  }
+  $: SPORTBOOK_MAIN = SPORTBOOK_MAIN
+  $: SPORTBOOK_ALL = SPORTBOOK_ALL
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT

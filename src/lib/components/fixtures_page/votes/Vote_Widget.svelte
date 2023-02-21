@@ -208,6 +208,10 @@
 		return;
 	}
 
+  $: if (browser && SPORTBOOK_INFO && SPORTBOOK_DETAILS_LIST) {
+    widget_init()
+  }
+
 	/**
 	 * Description
 	 * ---
