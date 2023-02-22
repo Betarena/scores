@@ -1,6 +1,17 @@
-/* ==========================
-	setting the default website layout
-========================== */
+/*
+==================================
+This is the main (global) css file
+used throughout the project - that
+sets out the general desing language,
+such as: margins/paddings/colors that
+are generally used throughout the project
+in a consistant and repetetive manner.
+==================================
+➤ Version | 0.5
+==================================
+*/
+
+/* #region ➤ [MAIN] Website Layout */
 
 body,
 html {
@@ -40,12 +51,41 @@ body {
 	box-sizing: border-box;
 }
 
-/* ==========================
-  declaring global app CSS variables
-========================== */
+a {
+	text-decoration: none !important;
+	color: inherit;
+	display: flex;
+}
 
-/* to learn more -> 
-https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
+p {
+	font-style: normal;
+	font-weight: 400; /* 400 / 500 */
+	line-height: 150%;
+	margin: 0;
+	color: var(--dark-theme);
+}
+
+/* ... MOBILE VIEW OVERFLOW HIDDEN ... */
+@media only screen and (max-width: 375px) {
+	html,
+	body {
+		overflow-x: hidden;
+	}
+}
+
+/* ... zoom-out-mobiles-input-form ... */
+/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */
+@supports (-webkit-overflow-scrolling: touch) {
+	input:active {
+		font-size: 16px !important;
+	}
+}
+
+/* #endregion ➤ [MAIN] Website Layout */
+
+/* #region ➤ [MAIN] [ROOT] Layout */
+
+/* DOC:  https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 :root {
 	/* 
     dimensions */
@@ -83,27 +123,15 @@ https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 	--oragne-pale-bg: rgba(247, 124, 66, 0.2);
 }
 
-a {
-	text-decoration: none !important;
-	color: inherit;
-	display: flex;
-}
+/* #endregion ➤ [MAIN] [ROOT] Layout */
 
-p {
-	font-style: normal;
-	font-weight: 400; /* 400 / 500 */
-	line-height: 150%;
-	margin: 0;
-	color: var(--dark-theme);
-}
+/* #region ➤ [MAIN] [FONT] [COLORS] [TEXT] Website Layout */
 
-/* ==========================
-  VARIABLE FONT SIZES 
-  & other STYLES for text
-========================== */
-
-/* DEFAULT BETARENA CSS VALUES */
-
+/* 
+~~~~~~~~~~~~
+HEADINGS 
+~~~~~~~~~~~~
+*/
 h1 {
 	font-family: 'Roboto';
 	font-style: normal;
@@ -143,6 +171,7 @@ h5 {
 /* 
 ~~~~~~~~~~~~
 FONT COLOURS 
+~~~~~~~~~~~~
 */
 .color-primary {
 	color: #f5620f !important;
@@ -186,9 +215,11 @@ FONT COLOURS
 .color-success {
 	color: #009406;
 }
+
 /* 
 ~~~~~~~~~~~~
 FONT EXTRA STYLES 
+~~~~~~~~~~~~
 */
 .no-wrap {
 	white-space: nowrap;
@@ -228,9 +259,11 @@ FONT EXTRA STYLES
 .display-none {
 	display: none;
 }
+
 /* 
 ~~~~~~~~~~~~
 FONT WEIGHT 
+~~~~~~~~~~~~
 */
 .w-400 {
 	font-weight: 400;
@@ -241,10 +274,11 @@ FONT WEIGHT
 .w-normal {
 	font-weight: normal;
 }
+
 /* 
 ~~~~~~~~~~~~
-FONT SIZES
-	font-size: calc(100vw / (var(--mobile) / 10));
+FONT SIZE 
+~~~~~~~~~~~~
 */
 .s-10 {
 	font-size: 10px;
@@ -269,6 +303,9 @@ FONT SIZES
 }
 .s-32 {
 	font-size: 32px;
+}
+.s-42 {
+	font-size: 42px;
 }
 
 .x-large,
@@ -295,13 +332,6 @@ p.s_small {
 	font-size: 12px;
 }
 
-/* 
-page titles */
-.s-42 {
-	font-size: 42px;
-	/* margin-bottom: calc(100vw / (var(--mobile) / 26)); */
-}
-
 @media only screen and (min-width: 768px) {
 	.s-t-16 {
 		font-size: 16px;
@@ -314,15 +344,18 @@ page titles */
 	}
 }
 
-/* ##########################
-    DEFAULT MARGIN STYLES
-########################## */
+/* #endregion ➤ [MAIN] [FONT] [COLORS] [TEXT] Website Layout */
+
+/* #region ➤ [MAIN] [MARGINS] Website Layout */
+
 .m-0 {
 	margin: 0;
 }
+
 /* 
 ~~~~~~~~~~
 top-margins 
+~~~~~~~~~~
 */
 .m-t-5 {
 	margin-top: 5px;
@@ -358,6 +391,7 @@ top-margins
 /* 
 ~~~~~~~~~~
 right-margins 
+~~~~~~~~~~
 */
 .m-r-5 {
 	margin-right: 5px;
@@ -396,6 +430,7 @@ right-margins
 /* 
 ~~~~~~~~~~
 bottom-margins 
+~~~~~~~~~~
 */
 .m-b-5 {
 	margin-bottom: 5px;
@@ -443,23 +478,25 @@ bottom-margins
 /* 
 ~~~~~~~~~~
 left-margins 
+~~~~~~~~~~
 */
-
 .m-l-8 {
 	margin-left: 8px;
 }
-
 .m-l-10 {
 	margin-left: 10px;
 }
-
 .m-l-24 {
 	margin-left: 24px;
 }
 
+/* #endregion ➤ [MAIN] [MARGINS] Website Layout */
+
+/* #region ➤ [MAIN] [CONTAINERS] Website Layout */
+
 /*
 ##########################
-    CONTAINER STYLE
+CONTAINER & SECTION STYLES
 ##########################
 */
 
@@ -482,7 +519,9 @@ section {
 	}
 }
 
-/* FLEX DISPLAY */
+/* 
+FLEX DISPLAYS
+*/
 .row-space-out {
 	display: flex;
 	align-items: center;
@@ -540,7 +579,9 @@ section {
 
 /*
 ============
-GRID / COLUMN DISPLAY */
+GRID / COLUMN DISPLAY 
+============
+*/
 .column-space-center {
 	display: flex;
 	align-items: center;
@@ -575,31 +616,23 @@ GRID / COLUMN DISPLAY */
 .column-start-grid-start {
 	display: grid;
 	width: 100%;
-	/* justify-content: start; */
 	justify-items: start;
 }
+/* #endregion ➤ [MAIN] [CONTAINERS] Website Layout */
 
-/* page dividers */
-
-hr {
-	width: 100%;
-	margin: 16.17px 0;
-	opacity: 0.25;
-	border: 1.46983px solid #ff5555;
-	background-color: #ff5555;
-}
+/* #region ➤ [MAIN] [BUTTONS] Website Layout */
 
 /* ==========================
-        BUTTON STYLES 
+BUTTON STYLES 
 ========================== */
 
 button {
 	/* 
-    removing pre-set CSS, */
+  removing pre-set CSS, */
 	outline: none !important;
 	border: none !important;
 	/* 
-    general button design, */
+  general button design, */
 	/* box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25); */
 	/* padding: 5px 10px !important; */
 	/* border-radius: 3.5px; */
@@ -608,22 +641,22 @@ button {
 	transition: all 0.3s ease;
 	align-items: center;
 	/* 
-    fonts */
+  fonts */
 	white-space: nowrap;
 	/* 
-    for the icons separation */
+  for the icons separation */
 	display: flex;
 	justify-content: center;
-}
-button p {
+} button p {
 	/* font-weight: 400; */
-}
-button:disabled {
+} button:disabled {
 	cursor: default;
 }
+
 /* 
 ~~~~~~~~~~~~~
 BUTTON STYLES 
+~~~~~~~~~~~~~
 */
 .btn-primary {
 	background: var(--primary);
@@ -689,6 +722,7 @@ BUTTON STYLES
 /* 
 ~~~~~~~~~~~~~
 BUTTON ICON IMG
+~~~~~~~~~~~~~
 */
 .btn-right-icon {
 	padding: 5px 45px 5px 6px !important;
@@ -703,42 +737,9 @@ BUTTON ICON IMG
 	background-repeat: no-repeat;
 }
 
-/* 
-INPUT FORM CSS STYLE 
-*/
+/* #endregion ➤ [MAIN] [BUTTONS] Website Layout */
 
-form fieldset {
-	outline: none;
-	border: none;
-	padding: 0;
-	margin: 0;
-}
-form input,
-form select {
-	outline: none;
-	border: none;
-	opacity: 1;
-	cursor: text;
-	align-items: center;
-	text-align: start;
-	display: flex;
-	transition: all 0.15s ease;
-	/* background: #ffffff; */
-	/* border: 0.5px solid #37474f; */
-	box-sizing: border-box;
-	border-radius: 7.34914px;
-	padding: 7px;
-}
-input:focus {
-	/* padding: 5px; */
-	/* border: 2.5px solid #ff5555; */
-}
-
-/* 
-=========================
-ANIMATIONS FORM CSS STYLE 
-=========================
-*/
+/* #region ➤ [MAIN] [ANIMATIONS] Website Layout */
 
 @keyframes flickerAnimation {
 	0% {
@@ -792,6 +793,61 @@ ANIMATIONS FORM CSS STYLE
 	animation: flickerAnimation 1.5s infinite;
 }
 
+/* #endregion ➤ [MAIN] [ANIMATIONS] Website Layout */
+
+/* #region ➤ [MAIN] [OTHER STYLES] Website Layout */
+
+/*
+=============
+page dividers 
+=============
+*/
+
+hr {
+	width: 100%;
+	margin: 16.17px 0;
+	opacity: 0.25;
+	border: 1.46983px solid #ff5555;
+	background-color: #ff5555;
+}
+
+/* 
+=============
+INPUT FORM CSS STYLE 
+=============
+*/
+
+form fieldset {
+	outline: none;
+	border: none;
+	padding: 0;
+	margin: 0;
+}
+form input,
+form select {
+	outline: none;
+	border: none;
+	opacity: 1;
+	cursor: text;
+	align-items: center;
+	text-align: start;
+	display: flex;
+	transition: all 0.15s ease;
+	/* background: #ffffff; */
+	/* border: 0.5px solid #37474f; */
+	box-sizing: border-box;
+	border-radius: 7.34914px;
+	padding: 7px;
+}
+input:focus {
+	/* padding: 5px; */
+	/* border: 2.5px solid #ff5555; */
+}
+
+/* #endregion ➤ [MAIN] [OTHER STYLES] Website Layout */
+
+/* #region ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
+
 /* 
 =========================
 DARK-MODE FORM CSS STYLE 
@@ -815,19 +871,4 @@ DARK-MODE FORM CSS STYLE
 	color: #ffffff !important;
 }
 
-/* ... MOBILE VIEW OVERFLOW HIDDEN ... */
-
-@media only screen and (max-width: 375px) {
-	html,
-	body {
-		overflow-x: hidden;
-	}
-}
-
-/* ... zoom-out-mobiles-input-form ... */
-/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */
-@supports (-webkit-overflow-scrolling: touch) {
-	input:active {
-		font-size: 16px !important;
-	}
-}
+/* #endregion ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
