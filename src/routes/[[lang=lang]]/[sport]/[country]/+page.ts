@@ -34,11 +34,11 @@ export async function load({
     lang 
   } = params
 
-  const LANG: string =
+  const URL: string =
     lang == undefined 
-      ? 'en' 
-      : lang
+      ? '/' 
+      : `/${lang}`
   ;
 
-	throw redirect(302, `/${LANG}`);
+	throw redirect(302, `${URL}`);
 }
