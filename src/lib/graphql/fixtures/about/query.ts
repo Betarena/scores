@@ -51,6 +51,8 @@ export const REDIS_CACHE_FIXTURE_ABOUT_DATA_1 = gql`
 			seo_fixtures_es
 			seo_fixtures_ro
 			seo_fixtures_se
+      seo_fixtures_it
+      seo_fixtures_fr
 		}
 	}
 `;
