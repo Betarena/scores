@@ -12,3 +12,13 @@ export const MONTH_NAMES_ABBRV = [
 	'Nov',
 	'Dec'
 ];
+
+export const WEEK_DAYS_ABBRV = [
+  'Sun',
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat'
+];
