@@ -25,8 +25,8 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Types Imports
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import LivescoresLoader from './Livescores_Loader.svelte';
 	import LivescoresMain from './Livescores_Main.svelte';
-	import LoaderLivescores from './loaders/Loader_Livescores.svelte';
 
   //#region ➤ Assets Imports
     //#endregion ➤ Assets Imports
@@ -101,14 +101,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   </p>
 </SeoBox>
 
+<!-- <LivescoresLoader /> -->
+
 <!-- 
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <LoaderLivescores />
   <!-- 
   promise is pending 
   -->
+  <LivescoresLoader />
 {:then data}
   <!-- 
   promise was fulfilled 
