@@ -4,6 +4,7 @@
   "editor.codeActionsOnSave": {
     "source.fixAll": true,
     "source.organizeImports": true,
+    // "source.sortImports": true,
     "source.sortMembers": true
   },
   // NOTE: custom highlighter
@@ -39,6 +40,12 @@
       "overviewRulerColor": "grey",
       "borderRadius": "2px"
     },
+    {
+      "text": "WARNING",
+      "color": "#000000",
+      "backgroundColor": "#FFFF00",
+      "overviewRulerColor": "grey"
+    },
     // DOC: for indicating a source/link for a target
     // DOC: process and how-to
     {
@@ -67,6 +74,7 @@
       "borderRadius": "2px"
     }
   ],
+  // NOTE: SVELTE Specific Extensions (Config)
   // DOC: https://discord.com/channels/457912077277855764/1036919129782878218
   // DOC: https://discord.com/channels/457912077277855764/1036369208721813554
   "svelte.plugin.svelte.compilerWarnings": {
