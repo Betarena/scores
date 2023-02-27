@@ -461,7 +461,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		visibility: hidden;
 	}
 
-  @media only screen and (min-width: 726px) and (max-width: 1000px) {
+  @media only screen
+    and (min-width: 375px) {
+    div.fixture-teams-box p.odds-view {
+      max-width: unset;
+    }
   }
 
 </style>
