@@ -8,7 +8,7 @@ import {
 import {
   LS2_C_D_A,
   LS2_C_T_A
-} from 'betarena-types/redis/config';
+} from 'betarena-types/dist/redis/config.js';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function GET(req): Promise<unknown> {
