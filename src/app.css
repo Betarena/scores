@@ -257,7 +257,7 @@ FONT EXTRA STYLES
 	cursor: not-allowed !important;
 }
 .display-none {
-	display: none;
+	display: none !important;
 }
 
 /* 
@@ -500,6 +500,16 @@ CONTAINER & SECTION STYLES
 ##########################
 */
 
+.widget-component {
+  display: grid;
+  background: #ffffff;
+  box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
+  border-radius: 12px;
+  width: 100%;
+  padding: 20px 0;
+  overflow: hidden;
+}
+
 section {
 	min-height: calc(100vh - 128px);
 	padding: 22px 16px;
@@ -618,6 +628,7 @@ GRID / COLUMN DISPLAY
 	width: 100%;
 	justify-items: start;
 }
+
 /* #endregion ➤ [MAIN] [CONTAINERS] Website Layout */
 
 /* #region ➤ [MAIN] [BUTTONS] Website Layout */
@@ -842,6 +853,10 @@ form select {
 input:focus {
 	/* padding: 5px; */
 	/* border: 2.5px solid #ff5555; */
+}
+
+.width-auto {
+  width: auto;
 }
 
 /* #endregion ➤ [MAIN] [OTHER STYLES] Website Layout */
