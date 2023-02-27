@@ -878,12 +878,18 @@ DARK-MODE FORM CSS STYLE
 	) !important;
 }
 
+.dark-background .color-grey,
 .dark-background-1 .color-grey {
 	color: #a8a8a8 !important;
 }
 
+.dark-background .color-black-2,
 .dark-background-1 .color-black-2 {
 	color: #ffffff !important;
+}
+
+.dark-background .widget-component {
+	background-color: var(--dark-theme-1) !important;
 }
 
 /* #endregion ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
