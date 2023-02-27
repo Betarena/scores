@@ -1,3 +1,14 @@
+<!-- 
+====================
+This is an example .svelte
+component file, to give guidance on
+the structure that is employed across the project
+and how it should be layed-out.
+====================
+<COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>
+====================
+-->
+
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
@@ -98,11 +109,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
+  /* #region ❌ [NOT WORKING] w/ regions */
   div#example {
     color: var(--dark-theme);
     background-color: var();
   } div#example > div#target {
   }
+  /* #endregion ❌ [NOT WORKING] w/ regions */
 
   div#example {
     color: var(--dark-theme);
