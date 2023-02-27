@@ -15,7 +15,7 @@ COMPONENT JS - BASIC
 		getUserLocation,
 		getUserLocationFromIP
 	} from '$lib/geoJs/init';
-	import { dlog, dlogv2, NB_W_STY, NB_W_TAG } from '$lib/utils/debug';
+	import { dlog, dlogv2, NB_W_STY, NB_W_TAG, NB_W_TOG } from '$lib/utils/debug';
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
@@ -100,7 +100,7 @@ COMPONENT JS - BASIC
   ) {
     setUserLang = true
     let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
-    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language!`, NB_W_TOG)
+    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language!`, NB_W_TOG, NB_W_STY)
     selectLanguage(userlang)
   }
 
@@ -146,7 +146,7 @@ COMPONENT JS - BASIC
 	$: if (browser) {
 		hideSEO = true;
 		if (!langSelected && $userBetarenaSettings.user == undefined) {
-      dlog(`${NB_W_TAG} 🔵 Setting (initial) language!`, NB_W_TOG)
+      dlog(`${NB_W_TAG} 🔵 Setting (initial) language!`, NB_W_TOG, NB_W_STY)
 			langSelected = true;
 			userBetarenaSettings.setLang(
 				server_side_language
