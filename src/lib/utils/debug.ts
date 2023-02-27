@@ -28,6 +28,7 @@ const LOGS_SHOW_OVERRIDE = import.meta.env?.VITE_PROD_LOGS || dev
 
 // [ℹ] MAIN-(page)-(widgets) (debug)
 export const NB_W_TAG = 'navbar [DEBUG] |'
+export const NB_W_TOG = true
 export const NB_W_STY = 'background: purple; color: #FFFFFF'
 export const FT_W_TAG = 'footer [DEBUG] |'
 export const FT_W_TOG = true
@@ -54,6 +55,9 @@ export const LT_W_H_STY = 'background: blue; color: #FFFFFF'
 export const SEO_W_H_TAG = 'home (seo-block) [DEBUG] |'
 export const SEO_W_H_TOG = true
 export const SEO_W_H_STY = 'background: blue; color: #FFFFFF'
+export const LV2_W_H_TAG = 'livescores-v2 (home) [DEBUG] |'
+export const LV2_W_H_TOG = true
+export const LV2_W_H_STY = 'background: blue; color: #FFFFFF'
 // [ℹ] TOURNAMENTS-(page)-(widgets) (debug)
 export const AB_W_T_TAG = 'tournament (about) [DEBUG] |'
 export const AB_W_T_TOG = true
@@ -70,6 +74,9 @@ export const LI2_W_T_STY = 'background: blue; color: #FFFFFF'
 export const ST_W_T_TAG = 'tournament (standings) [DEBUG] |'
 export const ST_W_T_TOG = true
 export const ST_W_T_STY = 'background: blue; color: #FFFFFF'
+export const LV2_W_T_TAG = 'tournament (livescores-v2) [DEBUG] |'
+export const LV2_W_T_TOG = true
+export const LV2_W_T_STY = 'background: blue; color: #FFFFFF'
 // (tournament) (widget) ➤ top-players
 export const TP_W_TOG = true
 export const TP_W_TAG = 'tournament (top-players) [DEBUG] |'
@@ -77,7 +84,7 @@ export const TP_W_STY = 'background: green; color: #000000'
 // [ℹ] FIREBASE (debug)
 export const FIREBASE_DEBUG_TAG = 'firebase [DEBUG] |'
 export const FIREBASE_DEBUG_TOGGLE = true
-export const FIREBASE_DEBUG_STYLE = 'background: blue; color: #FFFFFF'
+export const FIREBASE_DEBUG_STYLE = 'background: black; color: yellow; border-radius: 5px;'
 // [ℹ] FIXTURE-(page)-(widgets) (debug)
 export const F_DEBUG_TAG = 'firebase [DEBUG] |'
 export const F_DEBUG_TOGGLE = true
