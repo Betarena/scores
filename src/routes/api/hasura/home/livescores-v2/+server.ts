@@ -1,7 +1,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import { generate_historic_fixtures_day_group_map, generate_leagues_map, get_target_date_fixtures, get_target_leagues } from '@betarena/scores-lib/dist/functions/func.livescores-v2.js';
+import { generate_historic_fixtures_day_group_map, generate_leagues_map, generate_tournaments_map, get_target_date_fixtures, get_target_leagues } from '@betarena/scores-lib/dist/functions/func.livescores-v2.js';
 import type { B_LS2_D, LS2_C_FixtureDateGroup } from '@betarena/scores-lib/types/livescores-v2';
 
 // [ℹ] debug info
@@ -69,13 +69,22 @@ async function main(
 
   // eslint-disable-next-line prefer-const
   let leagues_ids_arr: number[] = current_week_fixtures?.historic_fixtures?.map(a => a.league_id)
-  const leagues_data = await get_target_leagues(
+  const [leagues_data, tournaments_data] = await get_target_leagues(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     graphQlInstance,
     leagues_ids_arr
   )
   const league_map = await generate_leagues_map(leagues_data)
+  const tournaments_map = await generate_tournaments_map(tournaments_data)
+
+  for await (const [id, league] of league_map) {
+    league.urls =
+      tournaments_map.has(league?.id) == true
+        ? tournaments_map.get(league?.id)?.urls
+        : null
+    ;
+  }
   
   /**
    * [ℹ] cache (data) persist
