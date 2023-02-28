@@ -29,7 +29,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Types Imports
   // IMPORTS GO HERE
-  import type { B_LS2_D, B_LS2_T, LS2_C_Fixture, LS2_C_League } from 'betarena-types/types/livescores-v2';
+  import type { B_LS2_D, B_LS2_T, LS2_C_Fixture, LS2_C_League } from '@betarena/scores-lib/types/livescores-v2';
   //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports
@@ -38,7 +38,7 @@ COMPONENT JS (w/ TS)
 
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { FIXTURE_LIVE_TIME_OPT } from 'betarena-types/src/api/sportmonks';
+  import { FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/src/api/sportmonks';
   import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
   import LivescoresTopRow from './Livescores_Top_Row.svelte';
   import LoaderRow from './loaders/Loader_Row.svelte';

@@ -1,15 +1,15 @@
 import { json } from '@sveltejs/kit';
 
 import {
-  get_target_hset_cache_data,
-  get_target_string_cache_data
+    get_target_hset_cache_data,
+    get_target_string_cache_data
 } from '../../std_main';
 
 import {
-  LS2_C_D_A,
-  LS2_C_S_A,
-  LS2_C_T_A
-} from 'betarena-types/dist/redis/config.js';
+    LS2_C_D_A,
+    LS2_C_S_A,
+    LS2_C_T_A
+} from '@betarena/scores-lib/dist/redis/config.js';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function GET(req): Promise<unknown> {

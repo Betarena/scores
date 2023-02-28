@@ -22,7 +22,7 @@ COMPONENT JS (w/ TS)
   // IMPORTS GO HERE
   import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
   import { viewport_change } from '$lib/utils/platform-functions';
-  import type { B_LS2_T } from 'betarena-types/types/livescores-v2';
+  import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import { onMount } from 'svelte';
 //#endregion ➤ Project Custom Imports
 

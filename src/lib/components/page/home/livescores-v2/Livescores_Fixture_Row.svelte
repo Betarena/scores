@@ -26,7 +26,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Types Imports
   // IMPORTS GO HERE
-	import type { LS2_C_Fixture } from "betarena-types/types/livescores-v2";
+	import type { LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
   //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports

@@ -22,7 +22,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Firebase Imports
 
   //#region ➤ Types Imports
-	import type { B_LS2_D, B_LS2_T } from 'betarena-types/types/livescores-v2';
+	import type { B_LS2_D, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   //#endregion ➤ Types Imports
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
