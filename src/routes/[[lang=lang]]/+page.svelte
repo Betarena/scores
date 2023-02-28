@@ -13,7 +13,6 @@
 	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
 	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
 	import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
-	import LiveScoresWidget from '$lib/components/page/home/live_scores_football/_LiveScores_Widget.svelte';
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
 
@@ -207,14 +206,14 @@
     -->
 		<div class="grid-display-column">
       <LivescoresWidget />
-			<div>
+			<!-- <div>
 				<LiveScoresWidget
 					{LIVE_SCORES_DATA_DATA_SEO}
 					{LIVE_SCORES_DATA_LEAGUES}
 					{LIVE_SCORES_FOOTBALL_TRANSLATIONS}
 					{LIVESCORES_FOOTBALL_TOURNAMENTS}
 				/>
-			</div>
+			</div> -->
 			<SeoBlock {SEO_BLOCK_DATA} />
 		</div>
 		<!-- 
@@ -243,12 +242,12 @@
     -->
 		<div class="grid-display-column">
 			<div>
-				<LiveScoresWidget
+				<!-- <LiveScoresWidget
 					{LIVE_SCORES_DATA_DATA_SEO}
 					{LIVE_SCORES_DATA_LEAGUES}
 					{LIVE_SCORES_FOOTBALL_TRANSLATIONS}
 					{LIVESCORES_FOOTBALL_TOURNAMENTS}
-				/>
+				/> -->
 			</div>
 			<FeaturedBettingSitesWidget
 				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
