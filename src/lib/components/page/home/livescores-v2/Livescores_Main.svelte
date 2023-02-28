@@ -376,14 +376,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <!-- 
           [ℹ] fixtures (of league) (box)
           -->
-          {#each fixturesGroupByDateMap.get($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) as fixture}
-            {#if fixture?.league_id == league?.id}
-              <LivescoresFixtureRow 
-                FIXTURE_D={fixture}
-                {server_side_language}
-              />
-            {/if}
-          {/each}
+          {#if fixturesGroupByDateMap.has($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))}
+            {#each fixturesGroupByDateMap.get($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) as fixture}
+              {#if fixture?.league_id == league?.id}
+                <LivescoresFixtureRow 
+                  FIXTURE_D={fixture}
+                  {server_side_language}
+                />
+              {/if}
+            {/each}
+          {/if}
         {/each}
       </div>
 
@@ -425,14 +427,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           [ℹ] fixtures (of league) (box)
           FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 (next day)
           -->
-          {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
-            {#if fixture?.league_id == league?.id && fixture?.status === 'LIVE'}
-              <LivescoresFixtureRow
-                FIXTURE_D={fixture}
-                {server_side_language}
-              />
-            {/if}
-          {/each}
+          {#if fixturesGroupByDateMap.has(today.toISOString().slice(0, 10))}
+            {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
+              {#if fixture?.league_id == league?.id && fixture?.status === 'LIVE'}
+                <LivescoresFixtureRow
+                  FIXTURE_D={fixture}
+                  {server_side_language}
+                />
+              {/if}
+            {/each}
+          {/if}
         {/each}
       </div>
 
@@ -465,6 +469,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 =================-->
 
 <style>
+
+  /* override */
+  div.widget-component {
+    overflow: unset;
+  }
 
   div.league-group {
     padding: 18px 28px 10px 28px;
