@@ -95,10 +95,21 @@
 		);
   }
 
+  
+
   onMount(async() => {
     let connectionRef = await listenRealTimeLivescoresNowChange()
     FIREBASE_CONNECTIONS_SET.add(connectionRef)
     sportbookIdentify()
+    document.addEventListener(
+			'visibilitychange',
+			async function () {
+				if (!document.hidden) {
+					let connectionRef = await listenRealTimeLivescoresNowChange()
+          FIREBASE_CONNECTIONS_SET.add(connectionRef)
+				}
+			}
+		);
   })
 
   // CRITICAL
