@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Project Custom Imports
 	import { get } from '$lib/api/utils';
-	import { dlog, LV2_W_T_TAG } from '$lib/utils/debug';
+	import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
 //#endregion ➤ Project Custom Imports
 
   //#region ➤ Firebase Imports
@@ -64,7 +64,7 @@ COMPONENT JS (w/ TS)
     ;
 		// [ℹ] validation [#1]
 		if (VALID_RESPONSE) {
-      dlog(`${LV2_W_T_TAG} ❌ no data available!`);
+      dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			NO_WIDGET_DATA = true;
 			return;
 		}

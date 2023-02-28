@@ -26,6 +26,8 @@ const LOGS_SHOW_OVERRIDE = import.meta.env?.VITE_PROD_LOGS || dev
 // NOTE: => TAG/TOG/STY = (tag) - (toggle) - (style)
 // NOTE: => for example: BG_W_H_TAG => BestGoalscore (Widget) (Homepage) (Tag)
 
+type DEBUG = [string, boolean, string]
+
 // [ℹ] MAIN-(page)-(widgets) (debug)
 export const NB_W_TAG = 'navbar [DEBUG] |'
 export const NB_W_TOG = true
@@ -37,27 +39,25 @@ export const AU_W_TAG = 'auth [DEBUG] |'
 export const AU_W_TOG = true
 export const AU_W_STY = 'background: blue; color: #FFFFFF'
 // [ℹ] HOMEPAGE-(page)-(widgets) (debug)
-export const BG_W_H_TAG = 'home (best-goal) [DEBUG] |'
+export const BG_W_H_TAG = 'BG [P/T][D] |'
 export const BG_W_H_TOG = true
 export const BG_W_H_STY = 'background: blue; color: #FFFFFF'
-export const FB_W_H_TAG = 'home (feat-bet) [DEBUG] |'
+export const FB_W_H_TAG = 'FB [P/T][D] |'
 export const FB_W_H_TOG = true
 export const FB_W_H_STY = 'background: blue; color: #FFFFFF'
-export const FM_W_H_TAG = 'home (feat-match) [DEBUG] |'
+export const FM_W_H_TAG = 'FM [P/T][D] |'
 export const FM_W_H_TOG = true
 export const FM_W_H_STY = 'background: blue; color: #FFFFFF'
-export const LL_W_H_TAG = 'home (league-list) [DEBUG] |'
+export const LL_W_H_TAG = 'LL [P/T][D] |'
 export const LL_W_H_TOG = true
 export const LL_W_H_STY = 'background: blue; color: #FFFFFF'
-export const LT_W_H_TAG = 'home (leagues) [DEBUG] |'
+export const LT_W_H_TAG = 'LT [P/T][D] |'
 export const LT_W_H_TOG = true
 export const LT_W_H_STY = 'background: blue; color: #FFFFFF'
-export const SEO_W_H_TAG = 'home (seo-block) [DEBUG] |'
+export const SEO_W_H_TAG = 'SEO [P/T][D] |'
 export const SEO_W_H_TOG = true
 export const SEO_W_H_STY = 'background: blue; color: #FFFFFF'
-export const LV2_W_H_TAG = 'livescores-v2 (home) [DEBUG] |'
-export const LV2_W_H_TOG = true
-export const LV2_W_H_STY = 'background: blue; color: #FFFFFF'
+export const LV2_W_H_TAG: DEBUG = ['LV2 [P/H][D] |', true, 'background: #292929; color: white; border-radius: 1.5px;']
 // [ℹ] TOURNAMENTS-(page)-(widgets) (debug)
 export const AB_W_T_TAG = 'tournament (about) [DEBUG] |'
 export const AB_W_T_TOG = true
@@ -71,20 +71,17 @@ export const LI_W_T_STY = 'background: blue; color: #FFFFFF'
 export const LI2_W_T_TAG = 'tournament (league-info-2) [DEBUG] |'
 export const LI2_W_T_TOG = true
 export const LI2_W_T_STY = 'background: blue; color: #FFFFFF'
-export const ST_W_T_TAG = 'tournament (standings) [DEBUG] |'
+export const ST_W_T_TAG = 'ST [P/T][D] |'
 export const ST_W_T_TOG = true
 export const ST_W_T_STY = 'background: blue; color: #FFFFFF'
-export const LV2_W_T_TAG = 'tournament (livescores-v2) [DEBUG] |'
-export const LV2_W_T_TOG = true
-export const LV2_W_T_STY = 'background: pink; color: black; border-radius: 2.5px;'
 // (tournament) (widget) ➤ top-players
 export const TP_W_TOG = true
 export const TP_W_TAG = 'tournament (top-players) [DEBUG] |'
 export const TP_W_STY = 'background: green; color: #000000'
 // [ℹ] FIREBASE (debug)
-export const FIREBASE_DEBUG_TAG = 'firebase [DEBUG] |'
+export const FIREBASE_DEBUG_TAG = 'FB(E) [D] |'
 export const FIREBASE_DEBUG_TOGGLE = true
-export const FIREBASE_DEBUG_STYLE = 'background: black; color: yellow; border-radius: 5px;'
+export const FIREBASE_DEBUG_STYLE = 'background: black; color: yellow; border-radius: 1.5px;'
 // [ℹ] FIXTURE-(page)-(widgets) (debug)
 export const F_DEBUG_TAG = 'firebase [DEBUG] |'
 export const F_DEBUG_TOGGLE = true
@@ -177,8 +174,8 @@ export function dlog(
 	show?: boolean,
 	style?: string
 ): void {
-  if (typeof(msg) == 'string' && msg.includes(LV2_W_T_TAG)) style = LV2_W_T_STY
-  if (typeof(msg) == 'string' && msg.includes(LV2_W_T_TAG)) show = LV2_W_T_TOG
+  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0])) style = LV2_W_H_TAG[2]
+  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0])) show = LV2_W_H_TAG[1]
 	// [🐞]
   show = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : show
 	if (LOGS_SHOW_OVERRIDE && show && !style) console.debug(msg);

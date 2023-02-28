@@ -16,7 +16,7 @@ COMPONENT JS (w/ TS)
   // IMPORTS GO HERE
   import { sessionStore } from '$lib/store/session';
   import { MONTH_NAMES_ABBRV, WEEK_DAYS_ABBRV } from '$lib/utils/dates';
-  import { dlog, LV2_W_T_TAG } from '$lib/utils/debug';
+  import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
 //#endregion ➤ Project Custom Imports
 
   //#region ➤ Firebase Imports
@@ -72,13 +72,13 @@ COMPONENT JS (w/ TS)
     const s_date = new Date(tDate)
     const e_date = new Date(tDate)
     numberOfMonthWeeks = Math.ceil(daysInMonth(month, year) / 7)
-    dlog(`${LV2_W_T_TAG} numberOfMonthWeeks: ${numberOfMonthWeeks}`, true)
+    dlog(`${LV2_W_H_TAG[0]} numberOfMonthWeeks: ${numberOfMonthWeeks}`, true)
     let count = 0
     // [ℹ] start counting from 1st of (selected) month
     s_date.setDate(1);
     e_date.setDate(1);
     monthWeeksArray = []
-    dlog(`${LV2_W_T_TAG} s_date: ${s_date.toISOString()}`, true)
+    dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()}`, true)
     while (true) {
       // [ℹ] exit;
       if (count >= numberOfMonthWeeks) {
@@ -100,7 +100,7 @@ COMPONENT JS (w/ TS)
       })
       s_date.setDate(s_date.getDate() + 7);
       count++
-      dlog(`${LV2_W_T_TAG} s_date: ${s_date.toISOString()} | s_date.getDate(): ${s_date.getDate()} | s_date.getDay(): ${s_date.getDay()} | count: ${count}`, true)
+      dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()} | s_date.getDate(): ${s_date.getDate()} | s_date.getDay(): ${s_date.getDay()} | count: ${count}`, true)
     }
     dlog(monthWeeksArray, true)
   }
@@ -137,7 +137,7 @@ COMPONENT JS (w/ TS)
   function monthChange(
     change: number
   ): void {
-    dlog(`${LV2_W_T_TAG} (in) monthChange`)
+    dlog(`${LV2_W_H_TAG[0]} (in) monthChange`)
     tempDate.setMonth(tempDate.getMonth() + change)
     tempDate = tempDate
     calcThisMonth(tempDate)
@@ -153,7 +153,7 @@ COMPONENT JS (w/ TS)
   function dateChange(
     newDate: Date
   ): void {
-    dlog(`${LV2_W_T_TAG} (in) dateChange`)
+    dlog(`${LV2_W_H_TAG[0]} (in) dateChange`)
     $sessionStore.livescoreNowSelectedDate = new Date(newDate)
     calcThisMonth(newDate)
   }
