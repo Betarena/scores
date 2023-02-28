@@ -17,7 +17,9 @@
 	import SvelteSeo from 'svelte-seo';
 
 	import { get } from '$lib/api/utils';
-	import { listenRealTimeLivescoresNowChange } from '$lib/firebase/common';
+	import { genLiveFixMap, listenRealTimeLivescoresNowChange } from '$lib/firebase/common';
+	import { getLivescoresNow } from '$lib/firebase/fixtures_odds';
+	import type { FIREBASE_livescores_now } from '$lib/models/firebase';
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
 	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 	import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/home/featured_match/interface-fixture';
@@ -95,9 +97,18 @@
 		);
   }
 
-  
-
   onMount(async() => {
+
+    const firebase_real_time =
+			await getLivescoresNow();
+		if (firebase_real_time != null) {
+			const data: [
+				string,
+				FIREBASE_livescores_now
+			][] = Object.entries(firebase_real_time);
+			genLiveFixMap(data);
+		}
+
     let connectionRef = await listenRealTimeLivescoresNowChange()
     FIREBASE_CONNECTIONS_SET.add(connectionRef)
     sportbookIdentify()
@@ -144,6 +155,7 @@
 			}
 		);
 	});
+
 </script>
 
 <!-- ===================

@@ -36,7 +36,7 @@ export async function listenRealTimeLivescoresNowChange(
  * @param {[string, FIREBASE_livescores_now][]} data
  * @returns NaN
  */
-async function genLiveFixMap (
+export async function genLiveFixMap (
   data: [string, FIREBASE_livescores_now][]
 ): Promise < void > {
   dlog(`${FIREBASE_DEBUG_TAG} genLiveFixMap()`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
