@@ -340,6 +340,39 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class="row-space-end"
     style="width: auto;"
   >
+
+    <!-- 
+    [ℹ] tip-link box SHOW/HIDE
+    -->
+    {#if FIXTURE_D?.tips && FIXTURE_D?.tips[server_side_language]}
+      <a
+        rel="nofollow noreferrer"
+        aria-label="tip_link_redirect"
+        href={FIXTURE_D?.tips[
+          server_side_language
+        ]}
+        target="_blank"
+        style="width: inherit;"
+      >
+        <div
+          class="
+            tip-box 
+            m-r-16
+          "
+        >
+          <p
+            class="
+              s-12 
+              w-500
+              color-black
+            "
+          >
+            TIP
+          </p>
+        </div>
+      </a>
+    {/if}
+
     <!-- 
     [ℹ] bet-site SHOW/HIDE
     -->
@@ -448,6 +481,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		max-width: 85px;
+	}
+
+  div.tip-box {
+		padding: 6px 12px;
+		border-radius: 4px;
+		border: 1px solid var(--grey-shade);
+	} div.tip-box:hover {
+		border: 1px solid var(--primary) !important;
+	} div.tip-box:hover p {
+		color: var(--primary);
 	}
 
   span.visibility-none {
