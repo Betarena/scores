@@ -22,7 +22,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Firebase Imports
 
   //#region ➤ Types Imports
-	import type { B_LS2_D, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
+	import type { B_LS2_D, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
   //#endregion ➤ Types Imports
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
@@ -111,23 +111,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
 =================-->
 
 <SeoBox>
-  <p>
-    THIS IS SEO WIDGET CONTENT
-  </p>
+  <!-- 
+  [ℹ] fixtures & betting-tip (links)
+  -->
   <div>
     {#each WIDGET_S_DATA?.fixtures as item1}
       {#if item1?.urls && item1?.urls[server_side_language]}
-        <a href={item1?.urls[server_side_language]}>{item1?.id}</a>
+        <a href={item1?.urls[server_side_language]}>{item1?.urls[server_side_language]}</a>
       {/if}
       {#if item1?.tips && item1?.tips[server_side_language]}
-        <a href={item1?.tips[server_side_language]}>{item1?.id}</a>
+        <a href={item1?.tips[server_side_language]}>{item1?.tips[server_side_language]}</a>
       {/if}
     {/each}
   </div>
+  <!-- 
+  [ℹ] leagues (links)
+  -->
   <div>
     {#each WIDGET_S_DATA?.leagues as item}
       {#if item?.urls && item?.urls[server_side_language]}
-        <a href={item?.urls[server_side_language]}>{item?.id}</a>
+        <a href={item?.urls[server_side_language]}>{item?.urls[server_side_language]}</a>
       {/if}
     {/each}
   </div>
@@ -149,7 +152,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   -->
   <LivescoresMain 
     {WIDGET_DATA}
-    {WIDGET_T_DATA}
   />
 {:catch error}
   <!-- 
