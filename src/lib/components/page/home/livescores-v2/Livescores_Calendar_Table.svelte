@@ -15,9 +15,11 @@ COMPONENT JS (w/ TS)
   //#region ➤ Project Custom Imports
   // IMPORTS GO HERE
   import { sessionStore } from '$lib/store/session';
+  // IMPORTS GO HERE
   import { MONTH_NAMES_ABBRV, WEEK_DAYS_ABBRV } from '$lib/utils/dates';
+  // IMPORTS GO HERE
   import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
-//#endregion ➤ Project Custom Imports
+  //#endregion ➤ Project Custom Imports
 
   //#region ➤ Firebase Imports
   // IMPORTS GO HERE
@@ -64,28 +66,45 @@ COMPONENT JS (w/ TS)
    * dates, weeks and week-days, as well as
    * their start-end days, with overrun into
    * past-and-next month dates respectively;
+   * FIXES: includes for when month has 1-1 start/end
+   * for SUN days;
    * @param {Date} tDate
    */
-  function calcThisMonth(tDate: Date): void {
+  function calcThisMonth (
+    tDate: Date
+  ): void {
     let month = tDate.getMonth()
     let year = tDate.getFullYear()
     const s_date = new Date(tDate)
     const e_date = new Date(tDate)
-    numberOfMonthWeeks = Math.ceil(daysInMonth(month, year) / 7)
-    dlog(`${LV2_W_H_TAG[0]} numberOfMonthWeeks: ${numberOfMonthWeeks}`, true)
+    numberOfMonthWeeks = Math.floor(daysInMonth(month+1, year) / 5) // NOTE: should be / 7
+    dlog(`${LV2_W_H_TAG[0]} daysInMonth(): ${daysInMonth(month, year) }`)
+    dlog(`${LV2_W_H_TAG[0]} numberOfMonthWeeks: ${numberOfMonthWeeks}`)
     let count = 0
     // [ℹ] start counting from 1st of (selected) month
     s_date.setDate(1);
     e_date.setDate(1);
     monthWeeksArray = []
-    dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()}`, true)
+    dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()}`)
+    dlog(`${LV2_W_H_TAG[0]} s_date.getDate() : ${s_date.getDate()}`)
+    dlog(`${LV2_W_H_TAG[0]} s_date.getDay() : ${s_date.getDay()}`)
     while (true) {
       // [ℹ] exit;
       if (count >= numberOfMonthWeeks) {
         break;
       }
-      s_date.setDate(s_date.getDate() - s_date.getDay() + 1);
-      e_date.setDate(s_date.getDate() - s_date.getDay() + 7);
+      const startWeekCalc = 
+        s_date.getDay() == 0
+        && e_date.getDay() == 0
+          ? (s_date.getDate() - 6)
+          : (s_date.getDate() - s_date.getDay() + 1)
+      const endWeekCalc = 
+        s_date.getDay() == 0
+        && e_date.getDay() == 0
+          ? (s_date.getDate() - 0)
+          : (s_date.getDate() - s_date.getDay() + 7)
+      s_date.setDate(startWeekCalc);
+      e_date.setDate(endWeekCalc);
       let times = 8
       let weekDates: Date[] = []
       for (let i = 1; i < times; i++){
@@ -99,6 +118,7 @@ COMPONENT JS (w/ TS)
         weekDates
       })
       s_date.setDate(s_date.getDate() + 7);
+      e_date.setDate(e_date.getDate() + 7);
       count++
       dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()} | s_date.getDate(): ${s_date.getDate()} | s_date.getDay(): ${s_date.getDay()} | count: ${count}`, true)
     }
@@ -155,6 +175,7 @@ COMPONENT JS (w/ TS)
   ): void {
     dlog(`${LV2_W_H_TAG[0]} (in) dateChange`)
     $sessionStore.livescoreNowSelectedDate = new Date(newDate)
+    tempDate = $sessionStore.livescoreNowSelectedDate
     calcThisMonth(newDate)
   }
 
@@ -268,10 +289,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#calendar-inner table {
     padding: 16px;
-  } div#calendar-inner table tr th, 
+  } 
+  div#calendar-inner table tr th, 
   div#calendar-inner table tr td {
     padding: 7px 11px;
-    width: 48px;
+    min-width: 48px;
     height: 32px;
     text-align: center;
   } 
