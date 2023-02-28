@@ -76,7 +76,7 @@ export const ST_W_T_TOG = true
 export const ST_W_T_STY = 'background: blue; color: #FFFFFF'
 export const LV2_W_T_TAG = 'tournament (livescores-v2) [DEBUG] |'
 export const LV2_W_T_TOG = true
-export const LV2_W_T_STY = 'background: blue; color: #FFFFFF'
+export const LV2_W_T_STY = 'background: pink; color: black; border-radius: 2.5px;'
 // (tournament) (widget) ➤ top-players
 export const TP_W_TOG = true
 export const TP_W_TAG = 'tournament (top-players) [DEBUG] |'
@@ -177,6 +177,8 @@ export function dlog(
 	show?: boolean,
 	style?: string
 ): void {
+  if (typeof(msg) == 'string' && msg.includes(LV2_W_T_TAG)) style = LV2_W_T_STY
+  if (typeof(msg) == 'string' && msg.includes(LV2_W_T_TAG)) show = LV2_W_T_TOG
 	// [🐞]
   show = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : show
 	if (LOGS_SHOW_OVERRIDE && show && !style) console.debug(msg);

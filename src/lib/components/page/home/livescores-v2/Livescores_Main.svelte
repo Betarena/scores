@@ -18,7 +18,7 @@ COMPONENT JS (w/ TS)
   // IMPORTS GO HERE
   import { sessionStore } from '$lib/store/session';
   // IMPORTS GO HERE
-  import { dlog, LV2_W_T_STY, LV2_W_T_TAG, LV2_W_T_TOG } from '$lib/utils/debug';
+  import { dlog, LV2_W_T_TAG } from '$lib/utils/debug';
   // IMPORTS GO HERE
   import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
   //#endregion ➤ Project Custom Imports
@@ -137,7 +137,7 @@ COMPONENT JS (w/ TS)
     const liveFixturesMap = $sessionStore?.livescore_now
     // [ℹ] exit;
     if (liveFixturesMap.size == 0 || fixturesGroupByDateMap.size == 0) {
-      console.log('NO LIVE FIXTURES!')
+      dlog(`${LV2_W_T_TAG} ❌ NO LIVE FIXTURES!`)
       return
     }
     // [ℹ] iterate over each LIVE fixture
@@ -184,20 +184,19 @@ COMPONENT JS (w/ TS)
    */
   async function targetFixtureDateData(
   ): Promise < void > {
-    dlog(`${LV2_W_T_TAG} targetFixtureDateData`, LV2_W_T_TOG, LV2_W_T_STY)
+    dlog(`${LV2_W_T_TAG} (in) targetFixtureDateData`)
     let targetDate = $sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)
     // [ℹ] get matching (date) fixtures in "yyyy/MM/dd" string format
     let targetFixturesDateGroupObj = fixturesGroupByDateMap.get(new Date(targetDate).toISOString().slice(0, 10));
-    console.log('🟢', targetDate)
-    console.log('🟢', targetFixturesDateGroupObj)
     // [ℹ] validation;
     if (targetFixturesDateGroupObj == undefined) {
-      dlog(`${LV2_W_T_TAG} 🔵 seeking fixtures ${targetDate}`, LV2_W_T_TOG, LV2_W_T_STY)
+      dlog(`${LV2_W_T_TAG} 🔵 seeking ${targetDate} (date) fixtures`)
       inProcessHistFixFetch = true
       const hasuraFixturesDate: B_LS2_D = await get(`/api/hasura/home/livescores-v2/?date=${targetDate}`) as B_LS2_D
       // WIDGET_DATA.fixtures_by_date = WIDGET_DATA?.fixtures_by_date.concat(hasuraFixturesDate?.fixtures_by_date)
       // WIDGET_DATA.leagues = WIDGET_DATA?.leagues.concat(hasuraFixturesDate?.leagues) // FIXME: possible duplicates ??
       // setData() // NOTE: removes duplicates
+      fixturesGroupByDateMap.set(targetDate, hasuraFixturesDate?.fixtures_by_date[0]?.fixtures)
       targetFixturesDateGroupObj = fixturesGroupByDateMap.get(new Date(targetDate).toISOString().slice(0, 10));
     }
     inProcessHistFixFetch = false
@@ -218,14 +217,13 @@ COMPONENT JS (w/ TS)
    */
   async function updateLiveInfo(
   ): Promise < void > {
-    dlog(`${LV2_W_T_TAG} updateLiveInfo (trigger)`, LV2_W_T_TOG, LV2_W_T_STY)
+    dlog(`${LV2_W_T_TAG} (in) updateLiveInfo`)
     numOfFixturesLive = 0
     liveLeaguesIds = []
     for (let [date, fixturesArr] of fixturesGroupByDateMap) {
-      console.log(fixturesArr.length)
       for (let fixture of fixturesArr) {
         if (fixture?.status == 'LIVE') {
-          dlog(`${LV2_W_T_TAG} updateLiveInfo | fixture?.id ${fixture?.id} - ${numOfFixturesLive}`, LV2_W_T_TOG, LV2_W_T_STY)
+          dlog(`${LV2_W_T_TAG} updateLiveInfo | fixture?.id ${fixture?.id} - ${numOfFixturesLive}`)
           numOfFixturesLive++
           liveLeaguesIds.push(fixture?.league_id)
         }
@@ -235,8 +233,8 @@ COMPONENT JS (w/ TS)
     liveLeagues = WIDGET_DATA.leagues.filter(function(e) {
       return liveLeaguesIds.includes(e?.id)
     });
-    dlog(`${LV2_W_T_TAG} updateLiveInfo | numOfFixturesLive ${numOfFixturesLive}`, LV2_W_T_TOG, LV2_W_T_STY)
-    dlog(`${LV2_W_T_TAG} updateLiveInfo | liveLeaguesIds ${liveLeaguesIds.length}`, LV2_W_T_TOG, LV2_W_T_STY)
+    dlog(`${LV2_W_T_TAG} updateLiveInfo | numOfFixturesLive ${numOfFixturesLive}`)
+    dlog(`${LV2_W_T_TAG} updateLiveInfo | liveLeaguesIds.length ${liveLeaguesIds.length}`)
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -280,18 +278,16 @@ COMPONENT JS (w/ TS)
    * Proceeds to update data accordingly
   */
   $: if ($sessionStore?.livescore_now) {
-    // console.log('CHANGED!')
-    // console.log($sessionStore?.livescore_now)
     injectLivescoreData()
     updateLiveInfo()
   }
 
   // [🐞] [DEV-ONLY]
   $: {
-    // dlog(`${LV2_W_T_TAG} nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`, LV2_W_T_TOG, LV2_W_T_STY)
-    // dlog(`${LV2_W_T_TAG} numOfFixtures: ${nonEmptyLeaguesIds}`, LV2_W_T_TOG, LV2_W_T_STY)
-    // dlog(`${LV2_W_T_TAG} numOfFixturesLive: ${numOfFixturesLive}`, LV2_W_T_TOG, LV2_W_T_STY)
-    // dlog(`${LV2_W_T_TAG} liveLeaguesIds: ${liveLeaguesIds}`, LV2_W_T_TOG, LV2_W_T_STY)
+    // dlog(`${LV2_W_T_TAG} nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`)
+    // dlog(`${LV2_W_T_TAG} numOfFixtures: ${nonEmptyLeaguesIds}`)
+    // dlog(`${LV2_W_T_TAG} numOfFixturesLive: ${numOfFixturesLive}`)
+    // dlog(`${LV2_W_T_TAG} liveLeaguesIds: ${liveLeaguesIds}`)
   }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
