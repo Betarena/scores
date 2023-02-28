@@ -3,21 +3,43 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
-  import type { B_LS2_D, LS2_C_Fixture, LS2_C_League } from 'betarena-types/types/livescores-v2';
 
-	import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
-//#region ➤ [MAIN] Package Imports
+  //#region ➤ [MAIN] Package Imports
+  // IMPORTS GO HERE
 
+  //#region ➤ Svelte/SvelteKit Imports
+  // IMPORTS GO HERE
   import { page } from '$app/stores';
-  import { get } from '$lib/api/utils';
-  import WidgetTitle from '$lib/components/Widget-Title.svelte';
-  import { sessionStore } from '$lib/store/session';
-  import { dlog, LV2_W_T_STY, LV2_W_T_TAG, LV2_W_T_TOG } from '$lib/utils/debug';
-  import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
+  //#endregion ➤ Svelte/SvelteKit Imports
 
-	import LivescoresTopRow from './Livescores_Top_Row.svelte';
-	import LoaderRow from './loaders/Loader_Row.svelte';
+  //#region ➤ Project Custom Imports
+  // IMPORTS GO HERE
+  import { get } from '$lib/api/utils';
+  // IMPORTS GO HERE
+  import { sessionStore } from '$lib/store/session';
+  // IMPORTS GO HERE
+  import { dlog, LV2_W_T_STY, LV2_W_T_TAG, LV2_W_T_TOG } from '$lib/utils/debug';
+  // IMPORTS GO HERE
+  import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
+  //#endregion ➤ Project Custom Imports
+
+  //#region ➤ Firebase Imports
+  // IMPORTS GO HERE
+  //#endregion ➤ Firebase Imports
+
+  //#region ➤ Types Imports
+  // IMPORTS GO HERE
+  import type { B_LS2_D, B_LS2_T, LS2_C_Fixture, LS2_C_League } from 'betarena-types/types/livescores-v2';
+  //#endregion ➤ Types Imports
+
+  //#region ➤ Assets Imports
+  // IMPORTS GO HERE
   //#endregion ➤ Assets Imports
+
+  import WidgetTitle from '$lib/components/Widget-Title.svelte';
+  import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
+  import LivescoresTopRow from './Livescores_Top_Row.svelte';
+  import LoaderRow from './loaders/Loader_Row.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -28,6 +50,7 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   export let WIDGET_DATA: B_LS2_D
+  export let WIDGET_T_DATA: B_LS2_T
 
   const WIDGET_TITLE = 'Livescores'
   const today = new Date()
@@ -198,9 +221,11 @@ COMPONENT JS (w/ TS)
     dlog(`${LV2_W_T_TAG} updateLiveInfo (trigger)`, LV2_W_T_TOG, LV2_W_T_STY)
     numOfFixturesLive = 0
     liveLeaguesIds = []
-    for await (const [date, fixturesArr] of fixturesGroupByDateMap) {
-      for await (const fixture of fixturesArr) {
+    for (let [date, fixturesArr] of fixturesGroupByDateMap) {
+      console.log(fixturesArr.length)
+      for (let fixture of fixturesArr) {
         if (fixture?.status == 'LIVE') {
+          dlog(`${LV2_W_T_TAG} updateLiveInfo | fixture?.id ${fixture?.id} - ${numOfFixturesLive}`, LV2_W_T_TOG, LV2_W_T_STY)
           numOfFixturesLive++
           liveLeaguesIds.push(fixture?.league_id)
         }
@@ -255,13 +280,13 @@ COMPONENT JS (w/ TS)
    * Proceeds to update data accordingly
   */
   $: if ($sessionStore?.livescore_now) {
-    console.log('CHANGED!')
-    console.log($sessionStore?.livescore_now)
+    // console.log('CHANGED!')
+    // console.log($sessionStore?.livescore_now)
     injectLivescoreData()
     updateLiveInfo()
   }
 
-  // [🐞]
+  // [🐞] [DEV-ONLY]
   $: {
     // dlog(`${LV2_W_T_TAG} nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`, LV2_W_T_TOG, LV2_W_T_STY)
     // dlog(`${LV2_W_T_TAG} numOfFixtures: ${nonEmptyLeaguesIds}`, LV2_W_T_TOG, LV2_W_T_STY)
@@ -328,26 +353,29 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <!-- 
           [ℹ] league info (box)
           -->
-          <div
-            class="
-              row-space-start
-              league-group
-            ">
-            <img
-              src="https://betarena.com/images/flags/{league?.iso2}.svg" 
-              alt=""
-              class="m-r-24"
-              width="24"
-              height="18"
-            />
-            <p
+          <a 
+            href="{league?.urls[server_side_language]}">
+            <div
               class="
-                s-16
-                w-500
+                row-space-start
+                league-group
               ">
-              {league?.league_name}
-            </p>
-          </div>
+              <img
+                src="https://betarena.com/images/flags/{league?.iso2}.svg" 
+                alt=""
+                class="m-r-24"
+                width="24"
+                height="18"
+              />
+              <p
+                class="
+                  s-16
+                  w-500
+                ">
+                {league?.league_name}
+              </p>
+            </div>
+          </a>
           <!-- 
           [ℹ] fixtures (of league) (box)
           -->
@@ -372,29 +400,33 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <!-- 
           [ℹ] league info (box)
           -->
-          <div
-            class="
-              row-space-start
-              league-group
-            "
-            class:display-none={$sessionStore.livescoreFixtureView == 'live' && !liveLeaguesIds.includes(league?.id)}>
-            <img
-              src="https://betarena.com/images/flags/{league?.iso2}.svg" 
-              alt=""
-              class="m-r-24"
-              width="24"
-              height="18"
-            />
-            <p
+          <a
+            href="{league?.urls[server_side_language]}">
+            <div
               class="
-                s-16
-                w-500
-              ">
-              {league?.league_name}
-            </p>
-          </div>
+                row-space-start
+                league-group
+              "
+              class:display-none={$sessionStore.livescoreFixtureView == 'live' && !liveLeaguesIds.includes(league?.id)}>
+              <img
+                src="https://betarena.com/images/flags/{league?.iso2}.svg" 
+                alt=""
+                class="m-r-24"
+                width="24"
+                height="18"
+              />
+              <p
+                class="
+                  s-16
+                  w-500
+                ">
+                {league?.league_name}
+              </p>
+            </div>
+          </a>
           <!-- 
           [ℹ] fixtures (of league) (box)
+          FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 (next day)
           -->
           {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
             {#if fixture?.league_id == league?.id && fixture?.status === 'LIVE'}

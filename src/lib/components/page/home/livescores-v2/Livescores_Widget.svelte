@@ -9,6 +9,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Svelte/SvelteKit Imports
   // IMPORTS GO HERE
+	import { page } from '$app/stores';
   //#endregion ➤ Svelte/SvelteKit Imports
 
   //#region ➤ Project Custom Imports
@@ -21,7 +22,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Firebase Imports
 
   //#region ➤ Types Imports
-	import type { B_LS2_D } from 'betarena-types/types/livescores-v2';
+	import type { B_LS2_D, B_LS2_T } from 'betarena-types/types/livescores-v2';
   //#endregion ➤ Types Imports
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
@@ -29,7 +30,7 @@ COMPONENT JS (w/ TS)
 	import LivescoresMain from './Livescores_Main.svelte';
 
   //#region ➤ Assets Imports
-    //#endregion ➤ Assets Imports
+  //#endregion ➤ Assets Imports
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -39,6 +40,7 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
   let WIDGET_DATA: B_LS2_D
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
@@ -117,6 +119,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   -->
   <LivescoresMain 
     {WIDGET_DATA}
+    {WIDGET_T_DATA}
   />
 {:catch error}
   <!-- 

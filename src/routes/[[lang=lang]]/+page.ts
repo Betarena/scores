@@ -37,6 +37,7 @@ export async function load({
 		`/api/cache/home/league_list?lang=${urlLang}`,
 		`/api/cache/home/leagues_table?lang=${urlLang}`,
 		`/api/cache/home/seo_block?lang=${urlLang}`,
+		`/api/cache/home/livescores-v2?lang=${urlLang}`,
 		// [ℹ] page validation check;
 		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
 		// [ℹ] livescores
@@ -63,6 +64,7 @@ export async function load({
 		LEAGUE_LIST_WIDGET_DATA_SEO,
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,
+    LIVESCORES_V2_T_DATA,
 		VALID_URL,
 		LIVE_SCORES_DATA_DATA_SEO,
 		LIVE_SCORES_DATA_LEAGUES,
@@ -118,6 +120,7 @@ export async function load({
 		LEAGUE_LIST_WIDGET_DATA_SEO,
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,
+    LIVESCORES_V2_T_DATA,
 		LIVE_SCORES_DATA_DATA_SEO,
 		LIVE_SCORES_DATA_LEAGUES,
 		LIVE_SCORES_FOOTBALL_TRANSLATIONS,

@@ -1,30 +1,23 @@
-<!-- 
-====================
-This is an example .svelte
-component file, to give guidance on
-the structure that is employed across the project
-and how it should be layed-out.
-====================
-<COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>
-====================
--->
-
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
-	import { sessionStore } from "$lib/store/session";
-	import { userBetarenaSettings } from "$lib/store/user-settings";
-//#region ➤ [MAIN] Package Imports
+
+  //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
+	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "$lib/models/sportmonks";
 
   //#region ➤ Svelte/SvelteKit Imports
   // IMPORTS GO HERE
+	import { onMount } from "svelte";
   //#endregion ➤ Svelte/SvelteKit Imports
 
   //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
+  // (imports here)
+  import { sessionStore } from "$lib/store/session";
+  //
+	import { userBetarenaSettings } from "$lib/store/user-settings";
   //#endregion ➤ Project Custom Imports
 
   //#region ➤ Firebase Imports
@@ -34,8 +27,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ Types Imports
   // IMPORTS GO HERE
 	import type { LS2_C_Fixture } from "betarena-types/types/livescores-v2";
-	import { onMount } from "svelte";
-//#endregion ➤ Types Imports
+  //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports
   import one_red_card from './assets/1_red_card.svg';
@@ -374,7 +366,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!-- 
     [ℹ] fixture scores BOX SHOW/HIDE
     -->
-    {#if (FIXTURE_D?.teams?.away?.score && FIXTURE_D?.teams?.home?.score) || ['FT', 'FT_PEN', 'AET', 'LIVE', 'HT'].includes(FIXTURE_D?.status)}
+    {#if (FIXTURE_D?.teams?.away?.score && FIXTURE_D?.teams?.home?.score) 
+    || [...FIXTURE_FULL_TIME_OPT, ...FIXTURE_LIVE_TIME_OPT].includes(FIXTURE_D?.status)}
       <div
         class="
           column-space-center 
