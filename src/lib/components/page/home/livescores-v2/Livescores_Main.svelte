@@ -237,6 +237,7 @@ COMPONENT JS (w/ TS)
     });
     dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive ${numOfFixturesLive}`)
     dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds.length ${liveLeaguesIds.length}`)
+    dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds ${liveLeaguesIds}`)
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -363,7 +364,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <img
                 src="https://betarena.com/images/flags/{league?.iso2}.svg" 
                 alt=""
-                class="m-r-24"
+                class="m-r-32"
                 width="24"
                 height="18"
               />
@@ -414,7 +415,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <img
                 src="https://betarena.com/images/flags/{league?.iso2}.svg" 
                 alt=""
-                class="m-r-24"
+                class="m-r-32"
                 width="24"
                 height="18"
               />
@@ -434,7 +435,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           {#if fixturesGroupByDateMap.has(today.toISOString().slice(0, 10))}
             {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
-              {#if fixture?.league_id == league?.id && fixture?.status === 'LIVE'}
+              {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
                 <LivescoresFixtureRow
                   FIXTURE_D={fixture}
                   {server_side_language}

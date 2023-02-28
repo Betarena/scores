@@ -470,8 +470,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   div.fixture-time-box {
-		min-width: 37px;
-    max-width: 37px;
+		min-width: 47px;
+    max-width: 47px;
 	}
 
   div.fixture-teams-box {
