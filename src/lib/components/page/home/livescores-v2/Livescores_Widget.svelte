@@ -26,6 +26,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Types Imports
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 	import LivescoresLoader from './Livescores_Loader.svelte';
 	import LivescoresMain from './Livescores_Main.svelte';
 
@@ -41,6 +42,7 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
+  let WIDGET_S_DATA: any = $page.data?.LIVESCORES_V2_SEO
   let WIDGET_DATA: B_LS2_D
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
@@ -80,6 +82,19 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [ONE-OFF] [METHODS] [IF]
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	let server_side_language = platfrom_lang_ssr(
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+	dlog(
+		`server_side_language: ${server_side_language}`
+	);
+
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
@@ -101,6 +116,23 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   <p>
     THIS IS SEO WIDGET CONTENT
   </p>
+  <div>
+    {#each WIDGET_S_DATA?.fixtures as item1}
+      {#if item1?.urls && item1?.urls[server_side_language]}
+        <a href={item1?.urls[server_side_language]}>{item1?.id}</a>
+      {/if}
+      {#if item1?.tips && item1?.tips[server_side_language]}
+        <a href={item1?.tips[server_side_language]}>{item1?.id}</a>
+      {/if}
+    {/each}
+  </div>
+  <div>
+    {#each WIDGET_S_DATA?.leagues as item}
+      {#if item?.urls && item?.urls[server_side_language]}
+        <a href={item?.urls[server_side_language]}>{item?.id}</a>
+      {/if}
+    {/each}
+  </div>
 </SeoBox>
 
 <!-- <LivescoresLoader /> -->
