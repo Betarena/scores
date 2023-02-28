@@ -312,12 +312,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <div>
   <WidgetTitle
     {WIDGET_TITLE}
+    OVERRIDE_COLOR={true}
   />
 
   <div
     class="widget-component">
 
-    <LivescoresTopRow 
+    <LivescoresTopRow
       {numOfFixtures}
       {numOfFixturesLive}
     />

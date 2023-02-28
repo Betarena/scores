@@ -1,14 +1,3 @@
-<!-- 
-====================
-This is an example .svelte
-component file, to give guidance on
-the structure that is employed across the project
-and how it should be layed-out.
-====================
-<COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>
-====================
--->
-
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
@@ -47,9 +36,8 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // -Variables Go Here
-
   export let WIDGET_TITLE: string
+  export let OVERRIDE_COLOR: boolean = false;
 
   //#endregion ➤ [VARIABLES]
 
@@ -96,7 +84,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     color-black-2
   "
   style="margin-top: 0px;"
-  class:color-white={$userBetarenaSettings.theme == 'Dark'}
+  class:color-white={$userBetarenaSettings.theme == 'Dark' || OVERRIDE_COLOR}
 >
   {WIDGET_TITLE}
 </h2>
