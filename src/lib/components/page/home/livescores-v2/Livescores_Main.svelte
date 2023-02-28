@@ -52,7 +52,8 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   export let WIDGET_DATA: B_LS2_D
-  export let WIDGET_T_DATA: B_LS2_T
+
+  let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
 
   const WIDGET_TITLE = 'Livescores'
   const today = new Date()

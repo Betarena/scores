@@ -3,6 +3,7 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
+	import { page } from '$app/stores';
 
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
@@ -14,8 +15,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ Project Custom Imports
   // IMPORTS GO HERE
   import { sessionStore } from '$lib/store/session';
-  import { WEEK_DAYS_ABBRV } from '$lib/utils/dates';
-//#endregion ➤ Project Custom Imports
+  //#endregion ➤ Project Custom Imports
 
   //#region ➤ Firebase Imports
   // IMPORTS GO HERE
@@ -28,6 +28,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ Assets Imports
   // IMPORTS GO HERE
   import { userBetarenaSettings } from '$lib/store/user-settings';
+  import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import vec_calendar_dark from './assets/calendar-dark.svg';
   import vec_calendar_sel from './assets/calendar-select.svg';
   import vec_calendar from './assets/calendar.svg';
@@ -45,6 +46,8 @@ COMPONENT JS (w/ TS)
 
   export let numOfFixtures: number;
   export let numOfFixturesLive: number;
+
+  let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
 
   const today = new Date()
 
@@ -149,7 +152,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           text-center
         "
         class:currentDate={new Date(item).toISOString().slice(0, 10) == today.toISOString().slice(0, 10)}>
-        {WEEK_DAYS_ABBRV[new Date(item).getDay()]}
+        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_2[new Date(item).getDay()]] || ""}
         <br/>
         <span
           class="w-500">
@@ -176,6 +179,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       on:mouseover={(e) => e.currentTarget.src = vec_calendar_sel}
       on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar) e.currentTarget.src = defaultCalendarIcon}}
       class="cursor-pointer"
+      width="24"
+      height="24"
     />
     <!-- 
     [ℹ] calendar (pop-up)
