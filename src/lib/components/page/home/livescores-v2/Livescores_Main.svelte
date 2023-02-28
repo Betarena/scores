@@ -37,6 +37,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Assets Imports
 
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
+  import { FIXTURE_LIVE_TIME_OPT } from 'betarena-types/src/api/sportmonks';
   import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
   import LivescoresTopRow from './Livescores_Top_Row.svelte';
   import LoaderRow from './loaders/Loader_Row.svelte';
@@ -223,7 +224,7 @@ COMPONENT JS (w/ TS)
     // NOTE:DOC: adding for await ... of > for await ... of causes (double) iteration
     for (let [date, fixturesArr] of fixturesGroupByDateMap) {
       for (let fixture of fixturesArr) {
-        if (fixture?.status == 'LIVE') {
+        if (FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)) {
           numOfFixturesLive++
           liveLeaguesIds.push(fixture?.league_id)
         }
