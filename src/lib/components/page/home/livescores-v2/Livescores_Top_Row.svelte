@@ -27,6 +27,8 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Assets Imports
   // IMPORTS GO HERE
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import vec_calendar_dark from './assets/calendar-dark.svg';
   import vec_calendar_sel from './assets/calendar-select.svg';
   import vec_calendar from './assets/calendar.svg';
   import vec_pulse_dot from './assets/live-dot-vector.svg';
@@ -43,8 +45,6 @@ COMPONENT JS (w/ TS)
 
   export let numOfFixtures: number;
   export let numOfFixturesLive: number;
-
-  let showCalendar: boolean = false
 
   const today = new Date()
 
@@ -82,6 +82,8 @@ COMPONENT JS (w/ TS)
     days_3_future
   ]
 
+  let defaultCalendarIcon: string
+
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [METHODS]
@@ -101,6 +103,12 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
+
+  $: if ($userBetarenaSettings.theme == 'Dark') {
+    defaultCalendarIcon = vec_calendar_dark
+  } else {
+    defaultCalendarIcon = vec_calendar
+  }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -162,17 +170,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     [ℹ] calendar (vector)
     -->
     <img 
-      src={showCalendar ? vec_calendar_sel : vec_calendar} 
+      src={$sessionStore.livescoreShowCalendar ? vec_calendar_sel : defaultCalendarIcon} 
       alt=""
-      on:click={() => showCalendar = !showCalendar}
+      on:click={() => $sessionStore.livescoreShowCalendar = !$sessionStore.livescoreShowCalendar}
       on:mouseover={(e) => e.currentTarget.src = vec_calendar_sel}
-      on:mouseleave={(e) => {if (!showCalendar) e.currentTarget.src = vec_calendar}}
+      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar) e.currentTarget.src = defaultCalendarIcon}}
       class="cursor-pointer"
     />
     <!-- 
     [ℹ] calendar (pop-up)
     -->
-    {#if showCalendar}
+    {#if $sessionStore.livescoreShowCalendar}
       <LivescoresCalendarTable />
     {/if}
   </div>
@@ -243,7 +251,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   } div#livescores-dates-box > div.livescore-date-box {
     padding: 7px 13px;
     border-radius: 6px;
-    width: 46px;
+    width: 40px;
   } div#livescores-dates-box > div.livescore-date-box.activeDate {
     background: var(--primary);
   } div#livescores-dates-box > div.livescore-date-box.activeDate > p {
@@ -256,17 +264,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#calendar-out-box {
     position: relative;
-  } :global(div#calendar-out-box div#calendar-popup) {
-    position: absolute;
-    top: 105%;
-    right: 0;
-    background: #FFFFFF;
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-    border-radius: 8px;
-    z-index: 1;
-  } :global(div#calendar-out-box div#calendar-popup div#calendar-date-select) {
-    padding: 16px;
-    border-bottom: 1px solid var(--grey-color);
   }
 
   div#fixture-filter-opt-box-outer {
@@ -288,7 +285,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     right: -50%;
   }
 
-  @media only screen and (min-width: 726px) and (max-width: 1000px) {
+  @media only screen and (min-width: 475px) {
+    div#livescores-dates-box > div.livescore-date-box {
+      width: 46px;
+    }
   }
 
 </style>

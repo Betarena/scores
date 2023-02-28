@@ -17,6 +17,7 @@ export interface Platform_Session {
   sportbook_list: Cache_Single_SportbookDetails_Data_Response[]
   livescoreNowSelectedDate: Date
   livescoreFixtureView: 'all' | 'live'
+  livescoreShowCalendar: boolean
 }
 
 // [ℹ] DEFAULT STORE STATE
@@ -30,7 +31,8 @@ const seassion_store: Platform_Session = {
   sportbook_main: undefined,
   sportbook_list: undefined,
   livescoreNowSelectedDate: new Date(),
-  livescoreFixtureView: 'all'
+  livescoreFixtureView: 'all',
+  livescoreShowCalendar: false
 };
 
 function createLocalStore() {

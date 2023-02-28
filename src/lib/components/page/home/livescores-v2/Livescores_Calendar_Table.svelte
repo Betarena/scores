@@ -10,16 +10,21 @@ COMPONENT JS (w/ TS)
   //#region ➤ Svelte/SvelteKit Imports
   // IMPORTS GO HERE
   import { browser } from '$app/environment';
-  //#endregion ➤ Svelte/SvelteKit Imports
+  import { page } from '$app/stores';
+//#endregion ➤ Svelte/SvelteKit Imports
 
   //#region ➤ Project Custom Imports
   // IMPORTS GO HERE
   import { sessionStore } from '$lib/store/session';
-  // IMPORTS GO HERE
-  import { MONTH_NAMES_ABBRV, WEEK_DAYS_ABBRV } from '$lib/utils/dates';
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+// IMPORTS GO HERE
+  import { monthNames, WEEK_DAYS_ABBRV_2 } from '$lib/utils/dates';
   // IMPORTS GO HERE
   import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
-  //#endregion ➤ Project Custom Imports
+  import { viewport_change } from '$lib/utils/platform-functions';
+  import type { B_LS2_T } from 'betarena-types/types/livescores-v2';
+  import { onMount } from 'svelte';
+//#endregion ➤ Project Custom Imports
 
   //#region ➤ Firebase Imports
   // IMPORTS GO HERE
@@ -31,7 +36,9 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Assets Imports
   // IMPORTS GO HERE
+  import vec_arrow_left_dark from './assets/arrow-left-dark.svg';
   import vec_arrow_left from './assets/arrow-left.svg';
+  import vec_arrow_right_dark from './assets/arrow-right-dark.svg';
   import vec_arrow_right from './assets/arrow-right.svg';
   //#endregion ➤ Assets Imports
 
@@ -52,6 +59,8 @@ COMPONENT JS (w/ TS)
   let monthWeeksArray: monthWeekObject[] = []
   let tempDate = $sessionStore.livescoreNowSelectedDate;
   const _currentDate = new Date()
+
+  let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
 
   //#endregion ➤ [VARIABLES]
 
@@ -126,8 +135,28 @@ COMPONENT JS (w/ TS)
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
-  // ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 475;
+	let mobileExclusive,
+		tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
+		window.addEventListener(
+			'resize',
+			function () {
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
+			}
+		);
+	});
 
   //#endregion ➤ [METHODS]
 
@@ -201,7 +230,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div
-  id="calendar-popup">
+  id="background-area-close-inner"
+  on:click={() => $sessionStore.livescoreShowCalendar = false}
+/>
+
+<div
+  id="calendar-popup"
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
   <!--
   [ℹ] calendar select month (top-row)
   -->
@@ -211,7 +246,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       row-space-out
     ">
     <img 
-      src="{vec_arrow_left}" 
+      src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_left_dark : vec_arrow_left}" 
       alt=""
       on:click={() => monthChange(-1)}
       class="cursor-pointer"
@@ -222,10 +257,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         w-500
         color-black-2
       ">
-      {MONTH_NAMES_ABBRV[tempDate.getMonth()]}
+      {WIDGET_T_DATA?.months?.months[monthNames[tempDate.getMonth()]]}
+      {tempDate.getFullYear()}
     </p>
     <img 
-      src="{vec_arrow_right}" 
+      src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_right_dark : vec_arrow_right}" 
       alt=""
       on:click={() => monthChange(1)}
       class="cursor-pointer"
@@ -241,7 +277,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] week days abbrev
       -->
       <tr>
-        {#each WEEK_DAYS_ABBRV as day}
+        {#each WEEK_DAYS_ABBRV_2 as day}
           <th>
             <p
               class="
@@ -287,6 +323,34 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
+  #background-area-close-inner {
+    position: fixed;
+		top: 0;
+		right: 0;
+		left: 0;
+		z-index: 999998;
+		height: 100%;
+		width: 100%;
+		background: rgba(0, 0, 0, 0.5);
+  }
+
+  div#calendar-popup {
+    /* p */
+    position: fixed;
+    z-index: 999999;
+    bottom: 20px;
+    right: 0;
+    left: 0;
+    /* s */
+    width: fit-content;
+    margin: auto;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+  } div#calendar-popup div#calendar-date-select {
+    padding: 16px;
+    border-bottom: 1px solid var(--grey-color);
+  }
+
   div#calendar-inner table {
     padding: 16px;
   } 
@@ -312,10 +376,44 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--primary);
   }
   td.notViewMonth {
-    color: var(--grey-color);
+    color: var(--grey-color) !important;
   }
 
-  @media only screen and (min-width: 726px) and (max-width: 1000px) {
+  @media only screen and (min-width: 475px) {
+    div#calendar-popup {
+      position: absolute;
+      top: 105%;
+      right: 0;
+      bottom: unset;
+      left: unset;
+      background: #FFFFFF;
+      z-index: 2;
+    }
+    #background-area-close-inner {
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      z-index: 1;
+      background-color: transparent;
+    }
+  }
+
+  div#calendar-popup.dark-background-1 {
+    background-color: var(--dark-theme-1-shade) !important;
+  }
+
+  .dark-background-1 div#calendar-inner table tr td:hover {
+    background-color: var(--dark-theme-1);
+    border-radius: 60px;
+    color: var(--white);
+  }
+
+  .dark-background-1 td.notViewMonth {
+    color: var(--dark-theme-1-2-shade) !important;
   }
 
 </style>

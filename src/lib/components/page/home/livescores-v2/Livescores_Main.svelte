@@ -37,6 +37,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Assets Imports
 
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
+  import { userBetarenaSettings } from '$lib/store/user-settings';
   import { FIXTURE_LIVE_TIME_OPT } from 'betarena-types/src/api/sportmonks';
   import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
   import LivescoresTopRow from './Livescores_Top_Row.svelte';
@@ -313,7 +314,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   />
 
   <div
-    class="widget-component">
+    class="widget-component"
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
     <LivescoresTopRow
       {numOfFixtures}
@@ -369,6 +371,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 class="
                   s-16
                   w-500
+                  color-black-2
                 ">
                 {league?.league_name}
               </p>
@@ -419,6 +422,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 class="
                   s-16
                   w-500
+                  color-black-2
                 ">
                 {league?.league_name}
               </p>
@@ -487,6 +491,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   @media only screen and (min-width: 726px) and (max-width: 1000px) {
+  }
+
+  /* DARK MODE */
+
+  .dark-background-1 div.league-group,
+  .dark-background-1 div#show-more-box {
+    border-top: 1px solid var(--dark-theme-1-shade);
   }
 
 </style>

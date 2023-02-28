@@ -22,3 +22,28 @@ export const WEEK_DAYS_ABBRV = [
   'Fri',
   'Sat'
 ];
+
+export const WEEK_DAYS_ABBRV_2 = [
+  'Mon',
+  'Tue',
+  'Wed',
+  'Thu',
+  'Fri',
+  'Sat',
+  'Sun'
+];
+
+export const monthNames = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+];

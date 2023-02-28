@@ -183,7 +183,7 @@ FONT COLOURS
 	color: var(--secondary);
 }
 .color-grey {
-	color: var(--grey);
+	color: var(--grey) !important;
 }
 .color-red {
 	color: var(--red);

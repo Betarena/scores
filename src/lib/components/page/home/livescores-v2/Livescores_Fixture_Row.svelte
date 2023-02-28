@@ -114,6 +114,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     row-space-out
     fixture-row 
   "
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
   <!-- 
   [ℹ] fixture left-side container 
@@ -170,7 +171,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             no-wrap 
             s-14 
-            color-black
+            color-black-2
           "
           class:color-grey={[
             'FT',
@@ -237,7 +238,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <p
             class="
               s-14 
-              color-black 
+              color-black-2
               w-500 
               m-r-8 
               odds-view
@@ -287,7 +288,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <p
             class="
               s-14 
-              color-black 
+              color-black-2 
               w-500 
               m-r-8 
               odds-view
@@ -364,7 +365,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             class="
               s-12 
               w-500
-              color-black
+              color-black-2
             "
           >
             TIP
@@ -415,7 +416,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             s-14 
             w-500 
-            color-black
+            color-black-2
           "
           class:color-grey={FIXTURE_D
             ?.teams?.home
@@ -437,7 +438,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             s-14 
             w-500 
-            color-black
+            color-black-2
           "
           class:color-grey={FIXTURE_D
             ?.teams?.away
@@ -474,7 +475,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
   div.fixture-teams-box {
-		border-left: 1px #e6e6e6 solid;
+		border-left: 1px var(--grey-color) solid;
 		padding-left: 8px;
 	} div.fixture-teams-box p.odds-view {
 		overflow: hidden;
@@ -502,6 +503,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     div.fixture-teams-box p.odds-view {
       max-width: unset;
     }
+  }
+
+  .dark-background-1 div.fixture-teams-box {
+		border-left: 1px var(--dark-theme-1-shade) solid;
   }
 
 </style>

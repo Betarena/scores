@@ -241,6 +241,7 @@
     [ℹ] 3rd ROW 
     -->
 		<div class="grid-display-column">
+      <LivescoresWidget />
 			<div>
 				<!-- <LiveScoresWidget
 					{LIVE_SCORES_DATA_DATA_SEO}
