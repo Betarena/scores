@@ -484,6 +484,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-width: 85px;
 	}
 
+  img#sportbook-logo-img {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    border-radius: 4px;
+    object-position: left;
+  }
+
   div.tip-box {
 		padding: 6px 12px;
 		border-radius: 4px;
@@ -503,6 +511,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     div.fixture-teams-box p.odds-view {
       max-width: unset;
     }
+
+    img#sportbook-logo-img {
+			width: 30px;
+			height: 30px;
+		}
   }
 
   .dark-background-1 div.fixture-teams-box {
