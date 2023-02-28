@@ -142,7 +142,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             color-red-bright
           "
         >
-          {FIXTURE_D?.minute}
+          {FIXTURE_D?.minute || '0'}
           <span
             class:visibility-none={tickSecShow}
             >'
