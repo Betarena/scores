@@ -284,7 +284,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 s-14
                 color-grey
               ">
-              {day}
+              {WIDGET_T_DATA?.days[day] || ""}
             </p>
           </th>
         {/each}

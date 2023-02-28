@@ -27,7 +27,7 @@ export const WEEK_DAYS_ABBRV_2 = [
   'Mon',
   'Tue',
   'Wed',
-  'Thu',
+  'Thur',
   'Fri',
   'Sat',
   'Sun'
