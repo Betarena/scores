@@ -24,7 +24,8 @@
 		"quick:preview:local:spin": "vite build && npm run preview",
 		"start:docker": "node server-docker.js",
 		"start:heroku": "node server-heroku.js",
-		"@betarena/scores-lib:pull:next": "npm i @betarena/scores-lib"
+		"@betarena/scores-lib:pull:next": "npm i @betarena/scores-lib",
+    "@betarena/scores-lib:link": "npm link @betarena/scores-lib"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^1.2.0",

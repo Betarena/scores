@@ -31,6 +31,7 @@
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { dlog, dlogv2 } from '$lib/utils/debug';
 	import type { Unsubscribe } from 'firebase/database';
 
 	let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
@@ -96,13 +97,13 @@
 				parseInt(b.position)
 		);
   }
-
+  
   $: if ($userBetarenaSettings.country_bookmaker) {
     sportbookIdentify()
   }
 
   onMount(async() => {
-
+    
     const firebase_real_time =
 			await getLivescoresNow();
 		if (firebase_real_time != null) {
@@ -116,10 +117,12 @@
     let connectionRef = await listenRealTimeLivescoresNowChange()
     FIREBASE_CONNECTIONS_SET.add(connectionRef)
     sportbookIdentify()
+
     document.addEventListener(
 			'visibilitychange',
 			async function () {
 				if (!document.hidden) {
+          dlog('🔵 user is active', true)
 					let connectionRef = await listenRealTimeLivescoresNowChange()
           FIREBASE_CONNECTIONS_SET.add(connectionRef)
 				}
@@ -131,9 +134,15 @@
 	onDestroy(async () => {
 		const logsMsg: string[] = []
 		for (const connection of [...FIREBASE_CONNECTIONS_SET]) {
-      logsMsg.push('✅ closing connection')
+      logsMsg.push('🔥 closing connection')
 			connection();
 		}
+    dlogv2(
+      `closing firebase connections`,
+      logsMsg,
+      true, 
+      'background: red; color: black;'
+    )
 	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -142,8 +151,7 @@
 
 	const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 475;
-	let mobileExclusive,
-		tabletExclusive: boolean = false;
+	let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		[tabletExclusive, mobileExclusive] =

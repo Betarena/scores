@@ -74,6 +74,7 @@ COMPONENT JS (w/ TS)
   let liveLeaguesIds: number[] = []
   let liveLeagues: LS2_C_League[] = []
   let limitLeaguesShow = 10;
+  let isShowMore: boolean = false;
 
   let inProcessHistFixFetch: boolean = false
 
@@ -208,6 +209,17 @@ COMPONENT JS (w/ TS)
     numOfFixtures = targetFixturesDateGroupObj?.length || 0
     // [ℹ] filter non-empty leagues with fixtures (for selected-date)
     nonEmptyLeaguesIds = [...new Set(targetFixturesDateGroupObj.map(fixture => fixture?.league_id))];
+
+    // [ℹ] -> 🔵 ORDERED BY COUNTRY (GEO) POSITION 
+    // [ℹ] from those league-ids (non-empty) available
+    let geo_leagueIds_reference_numb_array = get_target_country_leagues_array()
+    
+    nonEmptyLeaguesIds.sort(function(a, b) {
+      return geo_leagueIds_reference_numb_array.indexOf(b) - geo_leagueIds_reference_numb_array.indexOf(a);
+    });
+
+    // [ℹ] -> 🔵 FEATURED [LEAGUES-ID] (Before CHECK-MORE games expand), these should have priority
+
     nonEmptyLeaguesArray = WIDGET_DATA.leagues.filter(function(e) {
       return nonEmptyLeaguesIds.includes(e?.id)
     });
@@ -243,6 +255,10 @@ COMPONENT JS (w/ TS)
     dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds ${liveLeaguesIds}`)
   }
 
+  function toggleShowMore() {
+    isShowMore = !isShowMore
+  }
+
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -264,6 +280,45 @@ COMPONENT JS (w/ TS)
 		`server_side_language: ${server_side_language}`
 	);
 
+  /**
+   * @description returns for the target
+   * country_bookmaker (GEO) leagues-id's
+   * order data as a number[];
+   * @returns {number[]} number[]
+   */
+  function get_target_country_leagues_array(
+  ): number[] {
+    let geo_leagueIds_reference_array = 
+      WIDGET_DATA?.leagues_geo_list
+      .find( ({ lang }) => 
+        lang == $userBetarenaSettings?.country_bookmaker
+      )?.leagues
+    ;
+    if (geo_leagueIds_reference_array == undefined) {
+      alert("❌ No target COUNTRY-GEO found")
+      geo_leagueIds_reference_array = 
+        WIDGET_DATA?.leagues_geo_list
+        .find( ({ lang }) => 
+          lang == 'en'
+        )?.leagues
+      ;
+    }
+    const geo_leagueIds_reference_numb_array = geo_leagueIds_reference_array.map(v => v.league_id)
+    return geo_leagueIds_reference_numb_array;
+  }
+
+  /**
+   * @description converts a target date to an
+   * ISO_string of yyyy-MM-dd format;
+   * @param {Date} date
+   * @returns {string} string
+   */
+  function convert_to_iso(
+    date: Date
+  ): string {
+    return date.toISOString().slice(0, 10)
+  }
+
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
@@ -281,11 +336,20 @@ COMPONENT JS (w/ TS)
   /**
    * @description listens to changes in 
    * livescores_now data session-store;
-   * Proceeds to update data accordingly
+   * Proceeds to update data accordingly;
   */
   $: if ($sessionStore?.livescore_now) {
     injectLivescoreData()
     updateLiveInfo()
+  }
+
+  /**
+   * @description listens to changes in 
+   * user country_bookmaker data session-store;
+   * Proceeds to update data accordingly;
+  */
+  $: if ($userBetarenaSettings?.country_bookmaker) {
+
   }
 
   // [🐞] [DEV-ONLY]
@@ -299,8 +363,6 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [REACTIVIY] [METHODS]
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  
 
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
@@ -349,47 +411,59 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="league-group-all-main"
         class:display-none={$sessionStore.livescoreFixtureView == 'live'}>
-        {#each nonEmptyLeaguesArray.slice(0, limitLeaguesShow) as league}
+        <!-- 
+        [ℹ] iterate over each non-empty-league-id's for selected_date
+        -->
+        {#each nonEmptyLeaguesArray as league}
           <!-- 
-          [ℹ] league info (box)
+          [ℹ] out (main) league-date group (box)
           -->
-          <a 
-            href="{league?.urls[server_side_language]}">
-            <div
-              class="
-                row-space-start
-                league-group
-              ">
-              <img
-                src="https://betarena.com/images/flags/{league?.iso2}.svg" 
-                alt=""
-                class="m-r-32"
-                width="24"
-                height="18"
-              />
-              <p
+          <div
+            class:display-none={!isShowMore && !WIDGET_DATA?.leagues_feat_list.includes(league?.id)}>
+            <!-- 
+            [ℹ] league info (box)
+            -->
+            <a
+              href="{league?.urls[server_side_language]}">
+              <div
                 class="
-                  s-16
-                  w-500
-                  color-black-2
+                  row-space-start
+                  league-group
                 ">
-                {league?.league_name}
-              </p>
-            </div>
-          </a>
-          <!-- 
-          [ℹ] fixtures (of league) (box)
-          -->
-          {#if fixturesGroupByDateMap.has($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))}
-            {#each fixturesGroupByDateMap.get($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) as fixture}
-              {#if fixture?.league_id == league?.id}
-                <LivescoresFixtureRow 
-                  FIXTURE_D={fixture}
-                  {server_side_language}
+                <img
+                  src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
+                  on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
+                  alt=""
+                  class="m-r-32"
+                  width="24"
+                  height="18"
                 />
-              {/if}
-            {/each}
-          {/if}
+                <p
+                  class="
+                    s-16
+                    w-500
+                    color-black-2
+                  ">
+                  {league?.league_name}
+                </p>
+              </div>
+            </a>
+            <!-- 
+            [ℹ] fixtures (box)
+            [ℹ] (filter by) - target-league &&
+            [ℹ] (filter by) - target selected date
+            -->
+            {#if fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))}
+              {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.livescoreNowSelectedDate)) as fixture}
+                {#if fixture?.league_id == league?.id}
+                  <LivescoresFixtureRow 
+                    FIXTURE_D={fixture}
+                    {server_side_language}
+                  />
+                {/if}
+              {/each}
+            {/if}
+          </div>
         {/each}
       </div>
 
@@ -400,7 +474,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="league-group-main"
         class:display-none={$sessionStore.livescoreFixtureView == 'all'}>
-        {#each liveLeagues.slice(0, limitLeaguesShow) as league}
+        {#each liveLeagues as league}
           <!-- 
           [ℹ] league info (box)
           -->
@@ -410,10 +484,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               class="
                 row-space-start
                 league-group
-              "
-              class:display-none={$sessionStore.livescoreFixtureView == 'live' && !liveLeaguesIds.includes(league?.id)}>
+              ">
               <img
-                src="https://betarena.com/images/flags/{league?.iso2}.svg" 
+                src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
+                on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                 alt=""
                 class="m-r-32"
                 width="24"
@@ -431,11 +505,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </a>
           <!-- 
           [ℹ] fixtures (of league) (box)
-          FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 (next day)
+          FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 minutes (next day)
           -->
           {#if fixturesGroupByDateMap.has(today.toISOString().slice(0, 10))}
             {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
               {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
+                <p>{fixture?.id}</p>
                 <LivescoresFixtureRow
                   FIXTURE_D={fixture}
                   {server_side_language}
@@ -447,13 +522,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
 
       <!-- 
-      [ℹ] show more button
+      [ℹ] show more/less (button)
+      <-conditional->
       -->
       {#if $sessionStore.livescoreFixtureView == 'all'}
         <div
           id="show-more-box"
           class="text-center"
-          on:click={() => limitLeaguesShow == 50 ? (limitLeaguesShow = 10) : (limitLeaguesShow = 50)}>
+          on:click={() => isShowMore = !isShowMore}>
           <p
             class="
               s-14
@@ -461,7 +537,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               color-primary
             ">
             <!-- FIXME: transaltion missing for "show-less" -->
-            {limitLeaguesShow == 10 ? (WIDGET_T_DATA?.common_expressions?.show_more || "Check more games") : "Show Less"}
+            {!isShowMore ? (WIDGET_T_DATA?.common_expressions?.show_more || "Check more games") : "Show Less"}
           </p>
         </div>
       {/if}

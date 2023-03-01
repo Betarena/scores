@@ -180,16 +180,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     [ℹ] calendar (vector)
     -->
     <img 
-      src={$sessionStore.livescoreShowCalendar 
+      src={$sessionStore.livescoreShowCalendar && fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) 
         ? vec_calendar_sel 
         : !fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) 
           ? vec_calendar_sel_date
           : defaultCalendarIcon
       } 
       alt=""
+      on:mouseover={(e) => {if (fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))) e.currentTarget.src = vec_calendar_sel}}
+      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) ) e.currentTarget.src = defaultCalendarIcon}}
       on:click={() => $sessionStore.livescoreShowCalendar = !$sessionStore.livescoreShowCalendar}
-      on:mouseover={(e) => e.currentTarget.src = vec_calendar_sel}
-      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar) e.currentTarget.src = defaultCalendarIcon}}
       class="cursor-pointer"
       width="24"
       height="24"
