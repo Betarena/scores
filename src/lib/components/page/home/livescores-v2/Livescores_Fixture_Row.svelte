@@ -204,11 +204,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             no-wrap 
             s-14 
-            color-black
+            color-red-bright
           "
         >
-          <!-- TODO: translations -->
-          HT
+          {WIDGET_T_DATA?.status_abbrev?.HT}
         </p>
       <!-- 
       [ℹ] fixture == FT | show TIME + abbrv show
