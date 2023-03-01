@@ -88,10 +88,12 @@ p {
 /* DOC:  https://developer.mozilla.org/en-US/docs/Web/CSS/Using_CSS_custom_properties */
 :root {
 	/* 
-    dimensions */
+  dimensions 
+  */
 	--app-height: 100%;
 	/* 
-	main app colors */
+	main app colors 
+  */
 	--white: #ffffff;
 	--whitev2: #f2f2f2;
 	--primary: #f5620f;
@@ -104,7 +106,8 @@ p {
 	--grey-color: #e6e6e6;
 	--grey-shade: #cccccc;
 	/* 
-	dark theme colors */
+	dark theme colors 
+  */
 	--black: #000000;
 	--dark: #121212;
 	--grey: #8c8c8c;
@@ -113,13 +116,17 @@ p {
 	--dark-theme-1: #4b4b4b;
   --dark-theme-1-shade: #616161;
   --dark-theme-1-2-shade: #737373;
+  --dark-theme-1-3-shade: #999999;
 	/* 
-  breakpoints */
+  breakpoints
+  NOTE: don't work with @media... 
+  */
 	--mobile: 375;
 	--tablet: 767;
 	--desktop: 1440;
 	/* 
-  other [fades] */
+  other [fades] 
+  */
 	--oragne-pale-bg: rgba(247, 124, 66, 0.2);
 }
 
