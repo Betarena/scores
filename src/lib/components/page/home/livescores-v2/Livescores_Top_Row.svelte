@@ -28,6 +28,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ Assets Imports
   // IMPORTS GO HERE
   import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { WEEK_DAYS_ABBRV_2 } from '$lib/utils/dates';
   import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import vec_calendar_dark from './assets/calendar-dark.svg';
   import vec_calendar_sel from './assets/calendar-select.svg';
