@@ -97,6 +97,10 @@
 		);
   }
 
+  $: if ($userBetarenaSettings.country_bookmaker) {
+    sportbookIdentify()
+  }
+
   onMount(async() => {
 
     const firebase_real_time =

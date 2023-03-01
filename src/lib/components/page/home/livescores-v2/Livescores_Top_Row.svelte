@@ -272,16 +272,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-radius: 6px;
     width: 40px;
     height: 56px;
-  } 
+  }
   div#livescores-dates-box > div.livescore-date-box.activeDate,
   div#calendar-out-box.activeDate {
     background: var(--primary);
   } div#livescores-dates-box > div.livescore-date-box.activeDate > p {
-    color: var(--white);
+    color: var(--white) !important;
   }
 
   .currentDate {
-    color: var(--primary);
+    color: var(--primary) !important;
   }
 
   div#calendar-out-box {
@@ -308,11 +308,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     right: -50%;
   }
 
-  @media only screen and (min-width: 475px) {
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
+  @media only screen 
+    and (min-width: 475px) {
     div#livescores-dates-box > div.livescore-date-box,
     div#calendar-out-box {
       width: 46px;
     }
   }
+
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
 
 </style>

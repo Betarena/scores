@@ -31,6 +31,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Assets Imports
   import { page } from "$app/stores";
+  import { viewport_change } from "$lib/utils/platform-functions";
   import one_red_card from './assets/1_red_card.svg';
   import one_red_card_dark from './assets/1_red_card_dark.svg';
   import two_red_card from './assets/2_red_cards.svg';
@@ -107,8 +108,27 @@ COMPONENT JS (w/ TS)
 	}
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
-  // ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 475;
+	let mobileExclusive, tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
+		window.addEventListener(
+			'resize',
+			function () {
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
+			}
+		);
+	});
 
   //#endregion ➤ [METHODS]
 
@@ -160,7 +180,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       "
     >
       <!-- 
-      [ℹ] fixture LIVE minute show
+      [ℹ] fixture == LIVE | minute show
       -->
       {#if FIXTURE_D?.status === 'LIVE'}
         <p
@@ -177,7 +197,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </span>
         </p>
       <!--
-      [ℹ] fixture HT abbrv show
+      [ℹ] fixture == HT | abbrv show
       -->
       {:else if FIXTURE_D?.status === 'HT'}
         <p
@@ -191,8 +211,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           HT
         </p>
       <!-- 
-      [ℹ] fixture show TIME
-      [ℹ] plus appropiate abbreviations
+      [ℹ] fixture == FT | show TIME + abbrv show
       -->
       {:else}
         <p
@@ -200,40 +219,28 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             no-wrap 
             s-14 
             color-black-2
+            dark-theme-custom-1
           "
-          class:color-grey={[
-            'FT',
-            'FT_PEN',
-            'AET'
-          ].includes(
-            FIXTURE_D?.status
-          )}
+          class:color-grey={['FT','FT_PEN','AET'].includes(FIXTURE_D?.status)}
         >
           {(`0${new Date(FIXTURE_D?.time + 'Z').getHours()}`.slice(-2)
           + ':'
           + `0${new Date(FIXTURE_D?.time + 'Z').getMinutes()}`.slice(-2))
           .split(' ').join('')}
         </p>
-        {#if FIXTURE_D?.status === 'FT_PEN'}
+        <!-- 
+        [ℹ] show full-time status [translated]
+        -->
+        {#if ['FT','FT_PEN','AET'].includes(FIXTURE_D?.status)}
           <p
             class="
-              no-wrap 
+              no-wrap
               s-14 
               color-grey
+              dark-theme-custom-1
             "
           >
-            FT_PEN
-          </p>
-        {/if}
-        {#if FIXTURE_D?.status === 'FT'}
-          <p
-            class="
-              no-wrap 
-              s-14 
-              color-grey
-            "
-          >
-            FT
+            {WIDGET_T_DATA?.status_abbrev[FIXTURE_D?.status] || FIXTURE_D?.status}
           </p>
         {/if}
       {/if}
@@ -245,7 +252,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
     <a
       href={FIXTURE_D?.urls == undefined ? '' : FIXTURE_D?.urls[server_side_language]}
-      style="width: inherit;"
+      class="width-auto"
       class:disable-anchor={FIXTURE_D?.urls == undefined || FIXTURE_D?.urls[server_side_language] == undefined}
       >
       <div
@@ -271,7 +278,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               m-r-8 
               odds-view
             "
-            class:color-grey={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score}
+            class:team-name-txt-mobile={mobileExclusive}
+            class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score}
           >
             {FIXTURE_D?.teams?.home?.name}
           </p>
@@ -321,14 +329,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               m-r-8 
               odds-view
             "
-            class:color-grey={FIXTURE_D
-              ?.teams?.away
-              ?.score <
-              FIXTURE_D?.teams
-                ?.home?.score}
+            class:team-lost-style={FIXTURE_D?.teams?.away?.score < FIXTURE_D?.teams?.home?.score}
+            class:team-name-txt-mobile={mobileExclusive}
           >
-            {FIXTURE_D?.teams
-              ?.away?.name}
+            {FIXTURE_D?.teams?.away?.name}
           </p>
           <!-- 
           [ℹ] fixture-red-cards show/hide
@@ -369,7 +373,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class="row-space-end"
     style="width: auto;"
   >
-
     <!-- 
     [ℹ] tip-link box SHOW/HIDE
     -->
@@ -385,7 +388,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           server_side_language
         ]}
         target="_blank"
-        style="width: inherit;"
+        class="width-auto"
       >
         <div
           class="
@@ -395,7 +398,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         >
           <p
             class="
-              s-12 
+              s-10 
               w-500
               color-black-2
             "
@@ -450,18 +453,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             w-500 
             color-black-2
           "
-          class:color-grey={FIXTURE_D
-            ?.teams?.home
-            ?.score <
-            FIXTURE_D?.teams?.away
-              ?.score &&
-            FIXTURE_D?.status !=
-              'LIVE'}
-          class:color-red-bright={FIXTURE_D?.status ===
-            'LIVE'}
+          class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score && FIXTURE_D?.status !='LIVE'}
+          class:color-red-bright={FIXTURE_D?.status === 'LIVE'}
         >
-          {FIXTURE_D?.teams?.home
-            ?.score}
+          {FIXTURE_D?.teams?.home?.score}
         </p>
         <!-- 
         [ℹ] away score
@@ -472,18 +467,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             w-500 
             color-black-2
           "
-          class:color-grey={FIXTURE_D
-            ?.teams?.away
-            ?.score <
-            FIXTURE_D?.teams?.home
-              ?.score &&
-            FIXTURE_D?.status !=
-              'LIVE'}
-          class:color-red-bright={FIXTURE_D?.status ===
-            'LIVE'}
+          class:team-lost-style={FIXTURE_D?.teams?.away?.score < FIXTURE_D?.teams?.home?.score && FIXTURE_D?.status != 'LIVE'}
+          class:color-red-bright={FIXTURE_D?.status === 'LIVE'}
         >
-          {FIXTURE_D?.teams?.away
-            ?.score}
+          {FIXTURE_D?.teams?.away?.score}
         </p>
       </div>
     {/if}
@@ -516,6 +503,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-width: 85px;
 	}
 
+  .team-lost-style {
+    color: var(--grey) !important;
+  }
+
   img#sportbook-logo-img {
     width: 20px;
     height: 20px;
@@ -525,9 +516,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   div.tip-box {
-		padding: 6px 12px;
+		padding: 2.5px 7px;
 		border-radius: 4px;
-		border: 1px solid var(--grey-shade);
+		border: 1px solid #cccccc;
 	} div.tip-box:hover {
 		border: 1px solid var(--primary) !important;
 	} div.tip-box:hover p {
@@ -537,6 +528,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   span.visibility-none {
 		visibility: hidden;
 	}
+
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
+  .team-name-txt-mobile {
+    font-weight: 400;
+  }
 
   @media only screen
     and (min-width: 375px) {
@@ -550,8 +551,42 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
   }
 
+  @media only screen
+    and (min-width: 475px) {
+    div.tip-box {
+      padding: 6px 12px;
+    } div.tip-box p {
+      font-size: 12px;
+    }
+    div.fixture-teams-box {
+      padding-left: 16px;
+    }
+  }
+
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
+
   .dark-background-1 div.fixture-teams-box {
 		border-left: 1px var(--dark-theme-1-shade) solid;
   }
+  
+  .dark-background-1 .dark-theme-custom-1 {
+    color: var(--dark-theme-1-3-shade) !important;
+  } 
+  
+  .dark-background-1 .team-lost-style {
+    color: var(--dark-theme-1-3-shade) !important;
+  }
+
+  .dark-background-1 .color-red-bright {
+    color: var(--red-bright) !important;
+  }
+
+  .dark-background-1 div.tip-box {
+		border: 1px solid var(--dark-theme-1-2-shade);
+	}
 
 </style>

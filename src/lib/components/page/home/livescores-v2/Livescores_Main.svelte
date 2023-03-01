@@ -331,15 +331,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div>
         {#each { length: 10 } as _, i}
           <div
-            class="m-b-10"
-            style="
-              border-top: 1px solid var(--grey-color);
-              padding-top: 20px;
-              padding-bottom: 10px;
-              /* margin: auto; */
-              padding: 20px;
-              text-align: center;
-            ">
+            class="
+              livescores-fixture-row-loader
+            "
+          >
             <LoaderRow />
           </div>
         {/each}
@@ -352,6 +347,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <-conditional->
       -->
       <div
+        class="league-group-all-main"
         class:display-none={$sessionStore.livescoreFixtureView == 'live'}>
         {#each nonEmptyLeaguesArray.slice(0, limitLeaguesShow) as league}
           <!-- 
@@ -402,6 +398,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <-conditional->
       -->
       <div
+        class="league-group-main"
         class:display-none={$sessionStore.livescoreFixtureView == 'all'}>
         {#each liveLeagues.slice(0, limitLeaguesShow) as league}
           <!-- 
@@ -482,12 +479,18 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  /* override */
+  /* (global) override */
   div.widget-component {
     overflow: unset;
   }
 
+  div.widget-component a:first-child div.league-group,
+  div.widget-component a:first-child div.league-group {
+    margin-top: 0;
+  }
+
   div.league-group {
+    margin-top: 10px;
     padding: 18px 28px 10px 28px;
     border-top: 1px solid var(--grey-color);
   }
@@ -497,10 +500,23 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-top: 1px solid var(--grey-color);
   }
 
-  @media only screen and (min-width: 726px) and (max-width: 1000px) {
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
+  @media only screen 
+    and (min-width: 726px) 
+    and (max-width: 1000px) {
+    /* empty */
   }
 
-  /* DARK MODE */
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
 
   .dark-background-1 div.league-group,
   .dark-background-1 div#show-more-box {

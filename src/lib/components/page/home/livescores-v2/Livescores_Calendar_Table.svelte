@@ -380,7 +380,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--grey-color) !important;
   }
 
-  @media only screen and (min-width: 475px) {
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
+  @media only screen 
+    and (min-width: 475px) {
     div#calendar-popup {
       position: absolute;
       top: 105%;
@@ -403,6 +410,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     }
   }
 
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
+
   div#calendar-popup.dark-background-1 {
     background-color: var(--dark-theme-1-shade) !important;
   }
@@ -415,6 +428,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   .dark-background-1 td.notViewMonth {
     color: var(--dark-theme-1-2-shade) !important;
+  }
+
+  div#calendar-popup.dark-background-1 div#calendar-date-select {
+    border-bottom: 1px solid var(--dark-theme);
   }
 
 </style>

@@ -46,10 +46,6 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // -Methods Go Here
-
-  function do_something() {}
-
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -86,15 +82,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <div>
     {#each { length: 10 } as _, i}
       <div
-        class="m-b-10"
-        style="
-          border-top: 1px solid var(--grey-color);
-          padding-top: 20px;
-          padding-bottom: 10px;
-          /* margin: auto; */
-          padding: 20px;
-          text-align: center;
-        ">
+        class="
+          livescores-fixture-row-loader
+        "
+      >
         <LoaderRow />
       </div>
     {/each}
@@ -108,7 +99,34 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  @media only screen and (min-width: 726px) and (max-width: 1000px) {
+  div.livescores-fixture-row-loader {
+    border-top: 1px solid var(--grey-color);
+    padding-top: 20px;
+    padding-bottom: 10px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
+  @media only screen and (min-width: 768px) {
+		.widget-component {
+			margin-top: 40px;
+		}
+	}
+
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
+
+  :global(.dark-background div.livescores-fixture-row-loader) {
+    border-top: 1px solid var(--dark-theme-1-shade);
   }
 
 </style>
