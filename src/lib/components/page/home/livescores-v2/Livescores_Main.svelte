@@ -54,8 +54,10 @@ COMPONENT JS (w/ TS)
   export let WIDGET_DATA: B_LS2_D
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
 
-  const WIDGET_TITLE = 'Livescores'
+  $: WIDGET_TITLE = WIDGET_T_DATA?.title || 'Livescores'
+  
   const today = new Date()
 
   let fixturesGroupByDateMap = new Map<string, LS2_C_Fixture[]>()
@@ -450,19 +452,22 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <!-- 
       [ℹ] show more button
       -->
-      <div
-        id="show-more-box"
-        class="text-center"
-        on:click={() => limitLeaguesShow == 50 ? (limitLeaguesShow = 10) : (limitLeaguesShow = 50)}>
-        <p
-          class="
-            s-14
-            w-500
-            color-primary
-          ">
-          Check more games
-        </p>
-      </div>
+      {#if $sessionStore.livescoreFixtureView == 'all'}
+        <div
+          id="show-more-box"
+          class="text-center"
+          on:click={() => limitLeaguesShow == 50 ? (limitLeaguesShow = 10) : (limitLeaguesShow = 50)}>
+          <p
+            class="
+              s-14
+              w-500
+              color-primary
+            ">
+            <!-- FIXME: transaltion missing for "show-less" -->
+            {limitLeaguesShow == 10 ? (WIDGET_T_DATA?.common_expressions?.show_more || "Check more games") : "Show Less"}
+          </p>
+        </div>
+      {/if}
 
     {/if}
 

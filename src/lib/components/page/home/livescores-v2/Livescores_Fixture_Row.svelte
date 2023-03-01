@@ -26,10 +26,11 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Types Imports
   // IMPORTS GO HERE
-	import type { LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
+	import type { B_LS2_T, LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
   //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports
+  import { page } from "$app/stores";
   import one_red_card from './assets/1_red_card.svg';
   import one_red_card_dark from './assets/1_red_card_dark.svg';
   import two_red_card from './assets/2_red_cards.svg';
@@ -49,6 +50,9 @@ COMPONENT JS (w/ TS)
   export let FIXTURE_D: LS2_C_Fixture
   export let server_side_language: string
 
+  let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
+
 	let tickSecShow: boolean = false;
   
   //#endregion ➤ [VARIABLES]
@@ -59,17 +63,41 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  function trigger_google_events (action: string) {
+  /**
+   * @description triggers google event(s) for
+   * a target action
+   * @param {string} action
+   * @returns void
+   */
+  function trigger_google_events (
+    action: 'livescore_betting_tips' | 'livescore_betting_sites'
+  ): void {
 		if (
 			action ===
-			'betting_site_logo_football_fixtures_odds_tournament'
+			'livescore_betting_tips'
 		) {
 			window.gtag(
 				'event',
-				'betting_site_logo_football_fixtures_odds_tournament',
+				'livescore_betting_tips',
 				{
 					event_category:
-						'widget_fixture_odds_info',
+						'widget_livescores_v2',
+					event_label: 'click_betting_site_logo',
+					value: 'click'
+				}
+			);
+			return;
+		}
+    if (
+			action ===
+			'livescore_betting_sites'
+		) {
+			window.gtag(
+				'event',
+				'livescore_betting_sites',
+				{
+					event_category:
+						'widget_livescores_v2',
 					event_label: 'click_betting_site_logo',
 					value: 'click'
 				}
@@ -349,6 +377,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <a
         rel="nofollow noreferrer"
         aria-label="tip_link_redirect"
+        on:click={() =>
+        trigger_google_events(
+          'livescore_betting_tips'
+        )}
         href={FIXTURE_D?.tips[
           server_side_language
         ]}
@@ -368,7 +400,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               color-black-2
             "
           >
-            TIP
+            {WIDGET_T_DATA?.tip || 'TIP'}
           </p>
         </div>
       </a>
@@ -379,11 +411,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
     {#if $sessionStore?.sportbook_main}
       <a
-        rel="noreferrer"
-        aria-label="betting_site_logo_football_fixtures_odds_tournament"
+        rel="nofollow noreferrer"
+        aria-label="livescore_betting_sites"
         on:click={() =>
           trigger_google_events(
-            'betting_site_logo_football_fixtures_odds_tournament'
+            'livescore_betting_sites'
           )}
         href={$sessionStore?.sportbook_main?.register_link}
         target="_blank"

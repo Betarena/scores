@@ -42,7 +42,11 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
+
   let WIDGET_S_DATA: any = $page.data?.LIVESCORES_V2_SEO
+  $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
+
   let WIDGET_DATA: B_LS2_D
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 

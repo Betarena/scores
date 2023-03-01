@@ -61,6 +61,7 @@ COMPONENT JS (w/ TS)
   const _currentDate = new Date()
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
 
   //#endregion ➤ [VARIABLES]
 

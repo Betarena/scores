@@ -31,6 +31,7 @@ COMPONENT JS (w/ TS)
   import { WEEK_DAYS_ABBRV_2 } from '$lib/utils/dates';
   import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import vec_calendar_dark from './assets/calendar-dark.svg';
+  import vec_calendar_sel_date from './assets/calendar-date-sel.svg';
   import vec_calendar_sel from './assets/calendar-select.svg';
   import vec_calendar from './assets/calendar.svg';
   import vec_pulse_dot from './assets/live-dot-vector.svg';
@@ -49,6 +50,7 @@ COMPONENT JS (w/ TS)
   export let numOfFixturesLive: number;
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
 
   const today = new Date()
 
@@ -169,12 +171,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   [ℹ] calendar (pop-up)
   -->
   <div
-    id="calendar-out-box">
+    id="calendar-out-box"
+    class="
+      text-center
+    "
+    class:activeDate={!fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))}>
     <!-- 
     [ℹ] calendar (vector)
     -->
     <img 
-      src={$sessionStore.livescoreShowCalendar ? vec_calendar_sel : defaultCalendarIcon} 
+      src={$sessionStore.livescoreShowCalendar 
+        ? vec_calendar_sel 
+        : !fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) 
+          ? vec_calendar_sel_date
+          : defaultCalendarIcon
+      } 
       alt=""
       on:click={() => $sessionStore.livescoreShowCalendar = !$sessionStore.livescoreShowCalendar}
       on:mouseover={(e) => e.currentTarget.src = vec_calendar_sel}
@@ -214,7 +225,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         color-grey
         cursor-pointer
       ">
-      All ({numOfFixtures})
+      {WIDGET_T_DATA?.all || 'All'} ({numOfFixtures || 0})
     </p>
   </div>
   <div
@@ -233,7 +244,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           color-grey
           cursor-pointer
         ">
-        Live ({numOfFixturesLive})
+        {WIDGET_T_DATA?.live || 'Live'} ({numOfFixturesLive || 0})
       </p>
       <img 
         src={vec_pulse_dot}
@@ -254,11 +265,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#livescores-dates-box {
     padding: 0 20px 20px 20px;
-  } div#livescores-dates-box > div.livescore-date-box {
+  } 
+  div#livescores-dates-box > div.livescore-date-box,
+  div#calendar-out-box {
     padding: 7px 13px;
     border-radius: 6px;
     width: 40px;
-  } div#livescores-dates-box > div.livescore-date-box.activeDate {
+    height: 56px;
+  } 
+  div#livescores-dates-box > div.livescore-date-box.activeDate,
+  div#calendar-out-box.activeDate {
     background: var(--primary);
   } div#livescores-dates-box > div.livescore-date-box.activeDate > p {
     color: var(--white);
@@ -270,6 +286,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#calendar-out-box {
     position: relative;
+    padding: 16px 11px;
   }
 
   div#fixture-filter-opt-box-outer {
@@ -280,7 +297,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   } div#fixture-filter-opt-box-outer div.fixture-filter-box.activeOption {
     border-bottom: 1px solid var(--primary);
   } div#fixture-filter-opt-box-outer div.fixture-filter-box.activeOption p {
-    color: var(--primary);
+    color: var(--primary) !important;
   }
   div#fixture-filter-opt-box-outer div.fixture-filter-box div#live-filter-box {
     position: relative;
@@ -292,7 +309,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   @media only screen and (min-width: 475px) {
-    div#livescores-dates-box > div.livescore-date-box {
+    div#livescores-dates-box > div.livescore-date-box,
+    div#calendar-out-box {
       width: 46px;
     }
   }
