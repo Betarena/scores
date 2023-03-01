@@ -23,7 +23,8 @@
 		"preview": "vite preview --host --port 5000",
 		"quick:preview:local:spin": "vite build && npm run preview",
 		"start:docker": "node server-docker.js",
-		"start:heroku": "node server-heroku.js"
+		"start:heroku": "node server-heroku.js",
+		"@betarena/scores-lib:pull:next": "npm i @betarena/scores-lib"
 	},
 	"devDependencies": {
 		"@sveltejs/adapter-node": "^1.2.0",
@@ -48,7 +49,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@betarena/scores-lib": "^0.5.4",
+		"@betarena/scores-lib": "^0.5.6",
 		"@lukeed/uuid": "^2.0.0",
 		"@metamask/sdk": "^0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "^2.14.2",
