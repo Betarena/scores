@@ -2,11 +2,13 @@ import type { FIREBASE_livescores_now } from "$lib/models/firebase";
 import { sessionStore } from "$lib/store/session";
 import { dlog, FIREBASE_DEBUG_STYLE, FIREBASE_DEBUG_TAG, FIREBASE_DEBUG_TOGGLE } from "$lib/utils/debug";
 import { onValue, ref, type Unsubscribe } from "firebase/database";
+import { getLivescoresNow } from "./fixtures_odds";
 import { db_real } from "./init";
 
 /**
- * @description common method that will listen to real-time
- * changes in Livescores_Now Firebase (REAL-DB);
+ * @description common method that will listen to 
+ * real-time changes in Livescores_Now 
+ * Firebase (REAL-DB);
  * @returns {Promise < Unsubscribe >} Promise < Unsubscribe >
  */
 export async function listenRealTimeLivescoresNowChange(
@@ -31,8 +33,8 @@ export async function listenRealTimeLivescoresNowChange(
 }
 
 /**
- * @description checks onValue changes for new Livescores_Now Table
- * data changes;
+ * @description checks onValue changes for new 
+ * Livescores_Now Table data changes;
  * @param {[string, FIREBASE_livescores_now][]} data
  * @returns NaN
  */
@@ -52,5 +54,25 @@ export async function genLiveFixMap (
       fixture_data
     );
   }
+  dlog(liveFixturesMap, true)
   sessionStore.updateLivescores(liveFixturesMap)
+}
+
+/**
+ * @description a one-off call to retrieve the
+ * livescroes_now tabled (db) data for instant
+ * update on limited conditions;
+ * 
+*/
+export async function one_off_livescore_call (
+): Promise < void > {
+  
+  const firebase_real_time = await getLivescoresNow();
+  if (firebase_real_time != null) {
+    const data: [
+      string,
+      FIREBASE_livescores_now
+    ][] = Object.entries(firebase_real_time);
+    genLiveFixMap(data);
+  }
 }

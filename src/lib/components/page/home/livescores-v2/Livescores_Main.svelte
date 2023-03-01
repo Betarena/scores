@@ -73,46 +73,11 @@ COMPONENT JS (w/ TS)
   let numOfFixturesLive: number;
   let liveLeaguesIds: number[] = []
   let liveLeagues: LS2_C_League[] = []
-  let limitLeaguesShow = 10;
   let isShowMore: boolean = false;
 
   let inProcessHistFixFetch: boolean = false
 
   $sessionStore.livescoreNowSelectedDate = today
-
-  const _today = new Date()
-  _today.setDate(_today.getDate() - 3)
-  const days_3_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
-  const days_2_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
-  const days_1_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
-  const days_0 = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
-  const days_1_future = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
-  const days_2_future = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
-  const days_3_future = _today.toISOString().slice(0, 10)
-
-  const fixture_dates: [
-    string,
-    string,
-    string,
-    string,
-    string,
-    string,
-    string
-  ] = [
-    days_3_ago,
-    days_2_ago,
-    days_1_ago,
-    days_0,
-    days_1_future,
-    days_2_future,
-    days_3_future
-  ]
 
   //#endregion ➤ [VARIABLES]
 
@@ -130,6 +95,7 @@ COMPONENT JS (w/ TS)
     for (const league of WIDGET_DATA?.leagues) {
       leagueMap.set(league?.id, league)
     }
+    dlog("🔥 HERE!", true)
   }
 
   /**
@@ -174,10 +140,12 @@ COMPONENT JS (w/ TS)
             }
           };
         }
-        return fixture;
+        return fixture
       })
       fixturesGroupByDateMap.set(targetDate, fixturesArray)
     }
+    // IMPORTANT
+    fixturesGroupByDateMap = fixturesGroupByDateMap 
     // ???
     WIDGET_DATA = WIDGET_DATA;
   }
@@ -339,6 +307,7 @@ COMPONENT JS (w/ TS)
    * Proceeds to update data accordingly;
   */
   $: if ($sessionStore?.livescore_now) {
+    dlog($sessionStore?.livescore_now, true)
     injectLivescoreData()
     updateLiveInfo()
   }
@@ -454,7 +423,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             [ℹ] (filter by) - target selected date
             -->
             {#if fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))}
-              {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.livescoreNowSelectedDate)) as fixture}
+              {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.livescoreNowSelectedDate)).sort((a,b) => new Date(a.time).getTime() - new Date(b.time).getTime()) as fixture}
                 {#if fixture?.league_id == league?.id}
                   <LivescoresFixtureRow 
                     FIXTURE_D={fixture}
@@ -510,7 +479,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {#if fixturesGroupByDateMap.has(today.toISOString().slice(0, 10))}
             {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
               {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
-                <p>{fixture?.id}</p>
+                <!-- [🐞] <p>{fixture?.id}</p> -->
                 <LivescoresFixtureRow
                   FIXTURE_D={fixture}
                   {server_side_language}
