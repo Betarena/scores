@@ -99,7 +99,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  div.livescores-fixture-row-loader {
+  :global(div.livescores-fixture-row-loader) {
     border-top: 1px solid var(--grey-color);
     padding-top: 20px;
     padding-bottom: 10px;
