@@ -122,7 +122,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   } div#example > div#target {
   }
 
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
   @media only screen and (min-width: 726px) and (max-width: 1000px) {
   }
+
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
 
 </style>
