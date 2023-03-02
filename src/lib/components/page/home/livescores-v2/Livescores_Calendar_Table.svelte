@@ -343,6 +343,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     right: 0;
     left: 0;
     /* s */
+    background: #FFFFFF;
     width: fit-content;
     margin: auto;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -394,7 +395,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       right: 0;
       bottom: unset;
       left: unset;
-      background: #FFFFFF;
       z-index: 2;
     }
     #background-area-close-inner {
