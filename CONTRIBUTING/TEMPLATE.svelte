@@ -7,6 +7,7 @@ and how it should be layed-out.
 ====================
 <COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>
 ====================
+<❗️ REMOVE (THIS) COMMENT IN PRODUCTION>
 -->
 
 <!-- ===============
@@ -16,25 +17,28 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // IMPORTS GO HERE
+  // <-imports-go-here->
 
   //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
+  // <-imports-go-here->
+	import { onMount } from 'svelte';
   //#endregion ➤ Svelte/SvelteKit Imports
 
   //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
+  // <-imports-go-here->
+	import { viewport_change } from '$lib/utils/platform-functions';
   //#endregion ➤ Project Custom Imports
 
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
+  //#region ➤ [PLUGIN] Firebase Imports
+  // <-imports-go-here->
+  //#endregion ➤ [PLUGIN] Firebase Imports
 
   //#region ➤ Types Imports
-  // IMPORTS GO HERE
+  // <-imports-go-here->
   //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports
+  // <-imports-go-here->
   import profile_avatar from './assets/profile-avatar.svg';
   //#endregion ➤ Assets Imports
 
@@ -46,31 +50,46 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // -Variables Go Here
-
   export const EXAMPLE_VALUE
   
   const EXAMPLE_VALUE
 
   //#endregion ➤ [VARIABLES]
 
-  //#region ➤ [METHODS]
+  //#region ➤ [MAIN-METHODS]
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // -Methods Go Here
-
   function do_something() {}
 
   // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
-  // ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 475;
+	let mobileExclusive, tabletExclusive: boolean = false;
+
+	onMount(async () => {
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
+		window.addEventListener(
+			'resize',
+			function () {
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
+			}
+		);
+	});
 
   //#endregion ➤ [METHODS]
 
-  //#region ➤ [ONE-OFF] [METHODS] [IF]
+  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
 
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
@@ -83,6 +102,14 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
+
+<!-- ===================
+SVELTE INJECTION TAGS
+=================== -->
+
+<svelte:head>
+  <!-- <add> -->
+</svelte:head>
 
 <!-- ===============
 COMPONENT HTML 
@@ -128,7 +155,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-  @media only screen and (min-width: 726px) and (max-width: 1000px) {
+  @media only screen 
+    and (min-width: 726px) 
+    and (max-width: 1000px) {
   }
 
   /*
