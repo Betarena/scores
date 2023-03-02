@@ -378,7 +378,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <-conditional->
       -->
       <div
-        class="league-group-all-main"
+        class="league-group-main"
         class:display-none={$sessionStore.livescoreFixtureView == 'live'}>
         <!-- 
         [ℹ] iterate over each non-empty-league-id's for selected_date
@@ -388,6 +388,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           [ℹ] out (main) league-date group (box)
           -->
           <div
+            class="outer-league-group"
             class:display-none={!isShowMore && !WIDGET_DATA?.leagues_feat_list.includes(league?.id)}>
             <!-- 
             [ℹ] league info (box)
@@ -441,7 +442,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <-conditional->
       -->
       <div
-        class="league-group-main"
+        class="league-group-live-main"
         class:display-none={$sessionStore.livescoreFixtureView == 'all'}>
         {#each liveLeagues as league}
           <!-- 
@@ -529,8 +530,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     overflow: unset;
   }
 
-  div.widget-component a:first-child div.league-group,
-  div.widget-component a:first-child div.league-group {
+  div.widget-component .league-group-main div:first-child a div.league-group,
+  div.widget-component .league-group-live-main a:first-child div.league-group {
     margin-top: 0;
   }
 

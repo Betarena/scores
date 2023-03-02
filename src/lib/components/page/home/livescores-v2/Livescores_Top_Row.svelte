@@ -28,7 +28,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ Assets Imports
   // IMPORTS GO HERE
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { WEEK_DAYS_ABBRV_2 } from '$lib/utils/dates';
+  import { WEEK_DAYS_ABBRV_1 } from '$lib/utils/dates';
   import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import vec_calendar_dark from './assets/calendar-dark.svg';
   import vec_calendar_sel_date from './assets/calendar-date-sel.svg';
@@ -155,7 +155,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           text-center
         "
         class:currentDate={new Date(item).toISOString().slice(0, 10) == today.toISOString().slice(0, 10)}>
-        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_2[new Date(item).getDay()]] || ""}
+        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item).getDay()]] || ""}
         <br/>
         <span
           class="w-500">

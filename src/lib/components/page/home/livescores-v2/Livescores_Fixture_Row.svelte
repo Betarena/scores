@@ -377,7 +377,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
     {#if FIXTURE_D?.tips && FIXTURE_D?.tips[server_side_language]}
       <a
-        rel="nofollow noreferrer"
+        rel="noreferrer"
         aria-label="tip_link_redirect"
         on:click={() =>
         trigger_google_events(
@@ -413,7 +413,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
     {#if $sessionStore?.sportbook_main}
       <a
-        rel="nofollow noreferrer"
+        rel="noreferrer"
         aria-label="livescore_betting_sites"
         on:click={() =>
           trigger_google_events(
