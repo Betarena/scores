@@ -415,7 +415,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
     {#if $sessionStore?.sportbook_main}
       <a
-        rel="noreferrer"
+        rel="nofollow noreferrer"
         aria-label="livescore_betting_sites"
         on:click={() =>
           trigger_google_events(

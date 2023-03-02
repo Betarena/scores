@@ -177,19 +177,24 @@ COMPONENT JS (w/ TS)
     numOfFixtures = targetFixturesDateGroupObj?.length || 0
     // [ℹ] filter non-empty leagues with fixtures (for selected-date)
     nonEmptyLeaguesIds = [...new Set(targetFixturesDateGroupObj.map(fixture => fixture?.league_id))];
+    dlog(nonEmptyLeaguesIds, true)
 
     // [ℹ] -> 🔵 ORDERED BY COUNTRY (GEO) POSITION 
     // [ℹ] from those league-ids (non-empty) available
     let geo_leagueIds_reference_numb_array = get_target_country_leagues_array()
-    
-    nonEmptyLeaguesIds.sort(function(a, b) {
-      return geo_leagueIds_reference_numb_array.indexOf(b) - geo_leagueIds_reference_numb_array.indexOf(a);
-    });
 
     // [ℹ] -> 🔵 FEATURED [LEAGUES-ID] (Before CHECK-MORE games expand), these should have priority
 
     nonEmptyLeaguesArray = WIDGET_DATA.leagues.filter(function(e) {
       return nonEmptyLeaguesIds.includes(e?.id)
+    });
+
+    nonEmptyLeaguesArray = nonEmptyLeaguesArray.sort((a, b) => {       
+      const index1 = geo_leagueIds_reference_numb_array.indexOf(a?.id);       
+      const index2 = geo_leagueIds_reference_numb_array.indexOf(b?.id);       
+      return (         
+        (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)      
+      );
     });
   }
 
@@ -262,6 +267,7 @@ COMPONENT JS (w/ TS)
         lang == $userBetarenaSettings?.country_bookmaker
       )?.leagues
     ;
+    dlog(`🔥 ${$userBetarenaSettings?.country_bookmaker}`, true)
     if (geo_leagueIds_reference_array == undefined) {
       dlog("❌ No target COUNTRY-GEO found", true)
       geo_leagueIds_reference_array = 
@@ -272,6 +278,7 @@ COMPONENT JS (w/ TS)
       ;
     }
     const geo_leagueIds_reference_numb_array = geo_leagueIds_reference_array.map(v => v.league_id)
+    dlog(geo_leagueIds_reference_numb_array, true)
     return geo_leagueIds_reference_numb_array;
   }
 
@@ -318,7 +325,8 @@ COMPONENT JS (w/ TS)
    * Proceeds to update data accordingly;
   */
   $: if ($userBetarenaSettings?.country_bookmaker) {
-
+    targetFixtureDateData()
+    updateLiveInfo()
   }
 
   // [🐞] [DEV-ONLY]
@@ -498,7 +506,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {#if $sessionStore.livescoreFixtureView == 'all'}
         <div
           id="show-more-box"
-          class="text-center"
+          class="
+            m-t-10
+            text-center
+          "
           on:click={() => isShowMore = !isShowMore}>
           <p
             class="
