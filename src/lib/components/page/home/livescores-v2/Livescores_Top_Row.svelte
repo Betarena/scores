@@ -215,6 +215,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class="
       fixture-filter-box
       text-center
+      cursor-pointer
     "
     class:activeOption={$sessionStore.livescoreFixtureView == 'all'}
     on:click={() => $sessionStore.livescoreFixtureView = 'all'}>
@@ -232,17 +233,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class="
       fixture-filter-box
       text-center
+      cursor-pointer
     "
     class:activeOption={$sessionStore.livescoreFixtureView == 'live'}
     on:click={() => $sessionStore.livescoreFixtureView = 'live'}>
     <div
-      id="live-filter-box">
+      id="live-filter-box"
+    >
       <p
         class="
           s-14
           w-500
           color-grey
-          cursor-pointer
         ">
         {WIDGET_T_DATA?.live || 'Live'} ({numOfFixturesLive || 0})
       </p>

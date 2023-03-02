@@ -509,6 +509,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             m-t-10
             text-center
+            cursor-pointer
           "
           on:click={() => isShowMore = !isShowMore}>
           <p
