@@ -16,7 +16,13 @@ const MASTER_DEBUG_TOGGLE = undefined
 // NOTE: (values) true/false | dev
 // NOTE:IMPORTANT for PROD should always be FALSE on PR -> (main)
 // NOTE:IMPORTANT using custom ENV for this
-const LOGS_SHOW_OVERRIDE = import.meta.env?.VITE_PROD_LOGS || dev
+const LOGS_SHOW_OVERRIDE = 
+  import.meta.env?.VITE_PROD_LOGS == undefined 
+  ? dev 
+  : import.meta.env?.VITE_PROD_LOGS == 'false'
+    ? false
+    : true
+;
 
 // NOTE: naming of new DEBUG variables is of following structure:
 // NOTE: [2]_W{+T}/P/_TAG/TOG/STY
