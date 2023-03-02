@@ -263,7 +263,7 @@ COMPONENT JS (w/ TS)
       )?.leagues
     ;
     if (geo_leagueIds_reference_array == undefined) {
-      alert("❌ No target COUNTRY-GEO found")
+      dlog("❌ No target COUNTRY-GEO found", true)
       geo_leagueIds_reference_array = 
         WIDGET_DATA?.leagues_geo_list
         .find( ({ lang }) => 
