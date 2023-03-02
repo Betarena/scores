@@ -258,6 +258,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         class="
           column-start-grid-start 
           fixture-teams-box
+          cursor-pointer
         "
       >
         <!-- 
@@ -393,6 +394,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             tip-box 
             m-r-16
+            cursor-pointer
           "
         >
           <p
@@ -425,6 +427,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       >
         <img
           id="sportbook-logo-img"
+          class="cursor-pointer"
           src={$sessionStore?.sportbook_main?.image}
           alt={$sessionStore?.sportbook_main?.title}
         />
