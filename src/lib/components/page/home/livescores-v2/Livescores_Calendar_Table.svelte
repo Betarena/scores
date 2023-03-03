@@ -344,7 +344,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     left: 0;
     /* s */
     background: #FFFFFF;
-    width: 343px;
+    width: 92.5%;
     margin: auto;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 8px;

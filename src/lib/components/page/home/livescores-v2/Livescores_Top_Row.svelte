@@ -278,6 +278,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   div#livescores-dates-box > div.livescore-date-box.activeDate,
   div#calendar-out-box.activeDate {
     background: var(--primary);
+    box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
   } div#livescores-dates-box > div.livescore-date-box.activeDate > p {
     color: var(--white) !important;
   }
@@ -315,6 +316,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   RESPONSIVNESS 
   =============
   */
+
+  @media only screen 
+    and (max-width: 388px) {
+    div#livescores-dates-box > div.livescore-date-box,
+    div#calendar-out-box {
+      width: 37px;
+    }
+  }
 
   @media only screen 
     and (min-width: 475px) {

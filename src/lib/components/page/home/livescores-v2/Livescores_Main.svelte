@@ -551,6 +551,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     margin-top: 10px;
     padding: 18px 16px 10px 16px;
     border-top: 1px solid var(--grey-color);
+  } div.league-group img {
+    /* border: 1px solid rgba(0, 0, 0, 0.1); */
+    filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.1));
+    border-radius: 1.5px;
   }
 
   div#show-more-box {
@@ -572,7 +576,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       margin-right: 32px;
       widows: 24px;
       height: 18px;
-    } div.league-group img {
+    } div.league-group p {
       font-size: 16px;
     }
   }

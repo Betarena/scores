@@ -455,6 +455,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             s-12 
             color-black-2
+            m-b-5
           "
           class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score && FIXTURE_D?.status !='LIVE'}
           class:color-red-bright={FIXTURE_D?.status === 'LIVE'}
@@ -487,7 +488,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   div.fixture-row {
-    padding: 5px 8px;
+    padding: 5px 16px 5px 8px;
   }
 
   div.fixture-time-box {
