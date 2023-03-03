@@ -1,3 +1,5 @@
+//#region ➤ Package Imports
+
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 import { json } from '@sveltejs/kit';
 
@@ -10,12 +12,20 @@ import {
   merge_weeks_rounds_to_league
 } from '@betarena/scores-lib/dist/functions/func.fixture-odds.js';
 import { BETARENA_CACHE_FIXTURES_ODDS_DATA_5 } from '@betarena/scores-lib/dist/graphql/query.fixture-odds.js';
-import type { B_H_HF_FO_Q, FO_Season } from '@betarena/scores-lib/types/fixture-odds';
+import type { B_FO_D, B_H_HF_FO_Q } from '@betarena/scores-lib/types/fixture-odds';
 import type { B_H_SFSD } from '@betarena/scores-lib/types/hasura';
+
+//#endregion ➤ Package Imports
+
+//#region ➤ [VARIABLES] Imports
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
 const logs = [];
+
+//#endregion ➤ [VARIABLES] Imports
+
+//#region ➤ [METHODS]
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
@@ -35,8 +45,12 @@ export async function GET(
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @description [MAIN] Method relying on Season Id
- * to get ALL Fixtures, for target SEASON-ID
+ * @description [MAIN] Method relying on LeagueID
+ * to get ALL Fixtures, for target LeagueID! for a 
+ * target => (current) SEASON-ID;
+ * @override in the presence of LeagueId & SeasonId,
+ * the method will return target fixtures for target 
+ * season_id;
  * @param {string} _league_id
  * @param {string} _seasonId
  * @returns Promise<Tournament_Season_Fixtures_Odds | null>
@@ -44,7 +58,7 @@ export async function GET(
 async function main(
   _league_id: string,
   _seasonId: string
-): Promise<FO_Season[] | null> {
+): Promise<B_FO_D | null> {
 
   let SEASON_ID: number
 
@@ -166,3 +180,5 @@ async function get_league_current_seasons(
 
 	return response.scores_football_seasons_details;
 }
+
+//#endregion ➤ [METHODS]
