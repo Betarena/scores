@@ -150,7 +150,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <p
         class="
           s-14
-          w-500
+          w-400
           color-black-2
           text-center
         "
@@ -266,7 +266,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   div#livescores-dates-box {
-    padding: 0 20px 20px 20px;
+    padding: 0 16px 0 16px;
   } 
   div#livescores-dates-box > div.livescore-date-box,
   div#calendar-out-box {
@@ -292,7 +292,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   div#fixture-filter-opt-box-outer {
-    padding: 0 20px;
+    padding: 0 16px;
   } div#fixture-filter-opt-box-outer div.fixture-filter-box {
     width: 100%;
     padding: 19px 0 12px 0;
@@ -318,6 +318,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   @media only screen 
     and (min-width: 475px) {
+    div#livescores-dates-box {
+      padding: 0 20px 0 20px;
+    }
+    div#fixture-filter-opt-box-outer {
+      padding: 0 20px;
+    }
     div#livescores-dates-box > div.livescore-date-box,
     div#calendar-out-box {
       width: 46px;

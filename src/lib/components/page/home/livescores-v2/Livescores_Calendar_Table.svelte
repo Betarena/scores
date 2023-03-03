@@ -344,7 +344,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     left: 0;
     /* s */
     background: #FFFFFF;
-    width: fit-content;
+    width: 343px;
     margin: auto;
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 8px;
@@ -354,12 +354,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   div#calendar-inner table {
-    padding: 16px;
+    padding: 16px 0;
   } 
   div#calendar-inner table tr th, 
   div#calendar-inner table tr td {
     padding: 7px 11px;
-    min-width: 48px;
+    max-width: 48px;
     height: 32px;
     text-align: center;
   } 
@@ -396,6 +396,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       bottom: unset;
       left: unset;
       z-index: 2;
+      width: fit-content;
     }
     #background-area-close-inner {
       position: fixed;
@@ -408,6 +409,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       z-index: 1;
       background-color: transparent;
     }
+    div#calendar-inner table {
+      padding: 16px;
+    } 
   }
 
   /*

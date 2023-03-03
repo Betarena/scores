@@ -174,7 +174,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
     <div
       class="
-        m-r-16 
+        m-r-8
         fixture-time-box 
         text-center
       "
@@ -185,7 +185,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {#if FIXTURE_D?.status === 'LIVE'}
         <p
           class="
-            s-14 
+            s-12 
             no-wrap
             color-red-bright
           "
@@ -203,7 +203,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <p
           class="
             no-wrap 
-            s-14 
+            s-12 
             color-red-bright
           "
         >
@@ -216,7 +216,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <p
           class="
             no-wrap 
-            s-14 
+            s-12 
             color-black-2
             dark-theme-custom-1
           "
@@ -234,7 +234,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <p
             class="
               no-wrap
-              s-14 
+              s-12 
               color-grey
               dark-theme-custom-1
             "
@@ -393,7 +393,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <div
           class="
             tip-box 
-            m-r-16
+            m-r-5
             cursor-pointer
           "
         >
@@ -427,7 +427,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       >
         <img
           id="sportbook-logo-img"
-          class="cursor-pointer"
+          class="
+            cursor-pointer
+            m-r-5
+          "
           src={$sessionStore?.sportbook_main?.image}
           alt={$sessionStore?.sportbook_main?.title}
         />
@@ -442,7 +445,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="
           column-space-center 
-          m-l-24 
           fixtures-scores-box
         "
       >
@@ -451,8 +453,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         -->
         <p
           class="
-            s-14 
-            w-500 
+            s-12 
             color-black-2
           "
           class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score && FIXTURE_D?.status !='LIVE'}
@@ -465,8 +466,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         -->
         <p
           class="
-            s-14 
-            w-500 
+            s-12 
             color-black-2
           "
           class:team-lost-style={FIXTURE_D?.teams?.away?.score < FIXTURE_D?.teams?.home?.score && FIXTURE_D?.status != 'LIVE'}
@@ -487,12 +487,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   div.fixture-row {
-    padding: 5px 16px;
+    padding: 5px 8px;
   }
 
   div.fixture-time-box {
-		min-width: 47px;
-    max-width: 47px;
+		min-width: 37px;
+    max-width: 37px;
 	}
 
   div.fixture-teams-box {
@@ -546,22 +546,37 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     div.fixture-teams-box p.odds-view {
       max-width: unset;
     }
-
-    img#sportbook-logo-img {
-			width: 30px;
-			height: 30px;
-		}
   }
 
   @media only screen
     and (min-width: 475px) {
+    div.fixture-row {
+      padding: 5px 16px;
+    }
     div.tip-box {
       padding: 6px 12px;
+      margin-right: 16px;
     } div.tip-box p {
       font-size: 12px;
     }
+    div.fixture-time-box { 
+      margin-right: 16px;
+      min-width: 47px;
+      max-width: 47px;
+    } div.fixture-time-box p {
+      font-size: 14px;
+    } 
     div.fixture-teams-box {
       padding-left: 16px;
+    }
+    img#sportbook-logo-img {
+			width: 30px;
+			height: 30px;
+      margin-right: 16px;
+		}
+    div.fixtures-scores-box p {
+      font-size: 14px;
+      font-weight: 500;
     }
   }
 

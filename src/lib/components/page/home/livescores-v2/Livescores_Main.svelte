@@ -412,13 +412,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                   on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                   alt=""
-                  class="m-r-32"
-                  width="24"
-                  height="18"
+                  class="m-r-15"
+                  width="21"
+                  height="16"
                 />
                 <p
                   class="
-                    s-16
+                    s-14
                     w-500
                     color-black-2
                   ">
@@ -549,7 +549,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div.league-group {
     margin-top: 10px;
-    padding: 18px 28px 10px 28px;
+    padding: 18px 16px 10px 16px;
     border-top: 1px solid var(--grey-color);
   }
 
@@ -563,6 +563,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   RESPONSIVNESS 
   =============
   */
+
+  @media only screen 
+    and (min-width: 475px) {
+    div.league-group {
+      padding: 18px 28px 10px 28px;
+    } div.league-group img {
+      margin-right: 32px;
+      widows: 24px;
+      height: 18px;
+    } div.league-group img {
+      font-size: 16px;
+    }
+  }
 
   @media only screen 
     and (min-width: 726px) 
