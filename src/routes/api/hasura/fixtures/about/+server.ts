@@ -1,26 +1,30 @@
+//#region ➤ Package Imports
+
 import { json } from '@sveltejs/kit';
-import { performance } from 'perf_hooks';
 
-import { REDIS_CACHE_FIXTURE_ABOUT_DATA_3 } from '$lib/graphql/fixtures/about/query';
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
-import type {
-	BETARENA_HASURA_about_query,
-	REDIS_CACHE_SINGLE_about_data
-} from '$lib/models/fixtures/about/types';
-import type { BETARENA_HASURA_historic_fixtures } from '$lib/models/hasura';
+import { ABT_F_get_target_fixture } from '@betarena/scores-lib/dist/functions/func.about.js';
+import type { B_ABT_D } from '@betarena/scores-lib/types/about';
 
+//#endregion ➤ Package Imports
+
+//#region ➤ [VARIABLES] Imports
+
+const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
 const logs = [];
+
+//#endregion ➤ [VARIABLES] Imports
+
+//#region ➤ [METHODS]
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 export async function GET(req): Promise<unknown> {
-	const lang: string =
-		req.url['searchParams'].get('lang');
-	const fixture_id: string =
-		req.url['searchParams'].get('fixture_id');
+	const lang: string = req.url['searchParams'].get('lang');
+	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 	const target_season_fixtures = await main(
 		fixture_id,
 		lang
@@ -35,18 +39,13 @@ export async function GET(req): Promise<unknown> {
 async function main(
 	_fixture_id: string,
 	_lang: string
-): Promise<REDIS_CACHE_SINGLE_about_data | null> {
-	// [ℹ] relying on Fixture Id & Lang
-	// [ℹ] to get Target Content
+): Promise<unknown | null> {
 
 	const FIXTURE_ID = parseInt(_fixture_id);
 	const LANG = _lang;
 
-	/**
-	 * [ℹ] obtain target historic_fixtures [fixture_id]
-	 */
-
-	const fixture = await get_target_fixture(
+	const fixture = await ABT_F_get_target_fixture(
+    graphQlInstance,
 		FIXTURE_ID
 	);
 	// [ℹ] exit
@@ -55,10 +54,6 @@ async function main(
 	}
 
 	const fixture_data = fixture[0];
-
-	/**
-	 * [ℹ] generate FIXTURE data
-	 */
 
 	const data_point_root =
 		LANG == 'en'
@@ -73,7 +68,7 @@ async function main(
 	}
 
 	// [ℹ] generate [final] fixture object
-	const fixture_object: REDIS_CACHE_SINGLE_about_data =
+	const fixture_object: B_ABT_D =
 		{
 			seo_data: fixture_data[data_point_root]
 		};
@@ -85,27 +80,4 @@ async function main(
 //  [HELPER] OTHER METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function get_target_fixture(
-	fixture_id: number
-): Promise<BETARENA_HASURA_historic_fixtures[]> {
-	// [ℹ] obtain target external_content [fixture_id based]
-	const queryName =
-		'REDIS_CACHE_FIXTURE_ABOUT_DATA_3';
-	const t0 = performance.now();
-	const VARIABLES = {
-		fixture_id
-	};
-	const response: BETARENA_HASURA_about_query =
-		await initGrapQLClient().request(
-			REDIS_CACHE_FIXTURE_ABOUT_DATA_3,
-			VARIABLES
-		);
-	const t1 = performance.now();
-	logs.push(
-		`${queryName} completed in: ${
-			(t1 - t0) / 1000
-		} sec`
-	);
-
-	return response.historic_fixtures;
-}
+//#endregion ➤ [METHODS]
