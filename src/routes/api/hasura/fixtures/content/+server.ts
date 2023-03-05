@@ -1,27 +1,30 @@
-import { json } from '@sveltejs/kit';
-import { performance } from 'perf_hooks';
+//#region ➤ Package Imports
 
-import { REDIS_CACHE_FIXTURE_CONTENT_DATA_3 } from '$lib/graphql/fixtures/content/query';
+import { json } from '@sveltejs/kit';
+
 import { initGrapQLClient } from '$lib/graphql/init_graphQL';
 
-import type {
-	BETARENA_HASURA_content_query,
-	REDIS_CACHE_SINGLE_content_data
-} from '$lib/models/fixtures/content/types';
-import type { BETARENA_HASURA_external_content } from '$lib/models/hasura';
+import { CONT_F_get_target_fixture } from '@betarena/scores-lib/dist/functions/func.content.js';
 
+//#endregion ➤ Package Imports
+
+//#region ➤ [VARIABLES] Imports
+
+const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
 const logs = [];
+
+//#endregion ➤ [VARIABLES] Imports
+
+//#region ➤ [METHODS]
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 export async function GET(req): Promise<unknown> {
-	const lang: string =
-		req.url['searchParams'].get('lang');
-	const fixture_id: string =
-		req.url['searchParams'].get('fixture_id');
+	const lang: string = req.url['searchParams'].get('lang');
+	const fixture_id: string = req.url['searchParams'].get('fixture_id');
 	const target_season_fixtures = await main(
 		fixture_id,
 		lang
@@ -36,20 +39,13 @@ export async function GET(req): Promise<unknown> {
 async function main(
 	_fixture_id: string,
 	_lang: string
-): Promise<
-	REDIS_CACHE_SINGLE_content_data[] | null
-> {
-	// [ℹ] relying on Fixture Id & Lang
-	// [ℹ] to get Target Content
+): Promise< unknown[] | null> {
 
 	const FIXTURE_ID = parseInt(_fixture_id);
 	const LANG = _lang;
 
-	/**
-	 * [ℹ] obtain target historic_fixtures [fixture_id]
-	 */
-
-	const fixture = await get_target_content(
+	const fixture = await CONT_F_get_target_fixture(
+    graphQlInstance,
 		FIXTURE_ID,
 		LANG
 	);
@@ -58,11 +54,6 @@ async function main(
 		return null;
 	}
 
-	/**
-	 * [ℹ] generate CONTENT data
-	 * [ℹ] return FIXTURE-CONTENT
-	 */
-
 	return fixture;
 }
 
@@ -70,29 +61,4 @@ async function main(
 //  [HELPER] OTHER METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-async function get_target_content(
-	fixture_id: number,
-	lang: string
-): Promise<BETARENA_HASURA_external_content[]> {
-	// [ℹ] obtain target external_content [fixture_id based]
-	const queryName =
-		'REDIS_CACHE_FIXTURE_CONTENT_DATA_3';
-	const t0 = performance.now();
-	const VARIABLES = {
-		gameId: fixture_id,
-		lang
-	};
-	const response: BETARENA_HASURA_content_query =
-		await initGrapQLClient().request(
-			REDIS_CACHE_FIXTURE_CONTENT_DATA_3,
-			VARIABLES
-		);
-	const t1 = performance.now();
-	logs.push(
-		`${queryName} completed in: ${
-			(t1 - t0) / 1000
-		} sec`
-	);
-
-	return response.external_content;
-}
+//#endregion ➤ [METHODS]
