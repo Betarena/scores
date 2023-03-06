@@ -1,7 +1,7 @@
 import type { BETARENA_HASURA_scores_tournaments } from '../../hasura';
 import type {
-	FixtureResponse,
-	MatchVotes
+  FixtureResponse,
+  MatchVotes
 } from './interface-fixture';
 
 /**
