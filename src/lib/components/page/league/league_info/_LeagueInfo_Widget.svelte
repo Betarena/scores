@@ -21,6 +21,8 @@
 	import World from './assets/_World.svelte';
 	import LeagueInfoWidgetContentLoader from './_LeagueInfo_Widget_ContentLoader.svelte';
 
+	import { page } from '$app/stores';
+	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import { dlog, LI_W_T_STY, LI_W_T_TAG, LI_W_T_TOG } from '$lib/utils/debug';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
@@ -46,6 +48,9 @@
 	let imageVar: string = '--league-info-bookmaker-bg-';
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
+
+  let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = $page.data?.FIXTURES_ODDS_T
+  $: FIXTURES_ODDS_T = $page.data?.FIXTURES_ODDS_T
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -189,15 +194,21 @@
 				.getUTCDate()
 				.toString() +
 			' ' +
-			monthNames[
-				new Date(start_end).getMonth().toString()
-			];
+      FIXTURES_ODDS_T
+        ?.months_abbreviation[
+        monthNames[
+          new Date(start_end).getMonth().toString()
+        ]
+      ];
 		dateDateEndDisplay =
 			new Date(end_date).getUTCDate().toString() +
 			' ' +
-			monthNames[
-				new Date(end_date).getMonth().toString()
-			];
+			FIXTURES_ODDS_T
+        ?.months_abbreviation[
+          monthNames[
+          new Date(end_date).getMonth().toString()
+        ]
+      ];
 
 		if (
 			currentDate > startDate &&
