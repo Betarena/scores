@@ -6,9 +6,9 @@ import { getLivescoresNow } from "./fixtures_odds";
 import { db_real } from "./init";
 
 /**
- * @description common method that will listen to 
- * real-time changes in Livescores_Now 
- * Firebase (REAL-DB);
+ * @description [LISTEN-DATA-FETCH] method
+ * listens to eal-time changes in 
+ * Livescores_Now Table on Firebase (REAL-DB);
  * @returns {Promise < Unsubscribe >} Promise < Unsubscribe >
  */
 export async function listenRealTimeLivescoresNowChange(
@@ -36,7 +36,7 @@ export async function listenRealTimeLivescoresNowChange(
  * @description checks onValue changes for new 
  * Livescores_Now Table data changes;
  * @param {[string, FIREBASE_livescores_now][]} data
- * @returns NaN
+ * @returns {Promise < void >} Promise < void >
  */
 export async function genLiveFixMap (
   data: [string, FIREBASE_livescores_now][]
@@ -62,7 +62,7 @@ export async function genLiveFixMap (
  * @description a one-off call to retrieve the
  * livescroes_now tabled (db) data for instant
  * update on limited conditions;
- * 
+ * @returns {Promise < void >} Promise < void >
 */
 export async function one_off_livescore_call (
 ): Promise < void > {
