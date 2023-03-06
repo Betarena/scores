@@ -1869,6 +1869,7 @@ export interface h2h_Translations {
 	over_3_5?: string;
 	widget_title?: string;
 	yellow_cards?: string;
+  follow_bet?: string;
 }
 
 /**
