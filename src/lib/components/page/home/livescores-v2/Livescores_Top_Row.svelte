@@ -222,7 +222,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <p
       class="
         s-14
-        w-500
+        w-400
         color-grey
         cursor-pointer
       ">
@@ -243,17 +243,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <p
         class="
           s-14
-          w-500
+          w-400
           color-grey
         ">
         {WIDGET_T_DATA?.live || 'Live'} ({numOfFixturesLive || 0})
       </p>
-      <img 
-        src={vec_pulse_dot}
-        alt='pulsating-dot'
-        width="16"
-        height="16"
-      />
+      {#if numOfFixturesLive != undefined || numOfFixturesLive != 0}
+        <img 
+          src={vec_pulse_dot}
+          alt='pulsating-dot'
+          width="16"
+          height="16"
+        />
+      {/if}
     </div>
   </div>
 </div>
@@ -332,6 +334,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     }
     div#fixture-filter-opt-box-outer {
       padding: 0 20px;
+    } div#fixture-filter-opt-box-outer div.fixture-filter-box p {
+      font-weight: 500;
     }
     div#livescores-dates-box > div.livescore-date-box,
     div#calendar-out-box {

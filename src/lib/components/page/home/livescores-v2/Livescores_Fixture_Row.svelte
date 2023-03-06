@@ -506,6 +506,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-width: 85px;
 	}
 
+  div.fixtures-scores-box {
+    width: 14px;
+  }
+
   .team-lost-style {
     color: var(--grey) !important;
   }
@@ -539,7 +543,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   .team-name-txt-mobile {
-    font-weight: 400;
+    /* font-weight: 400; */
   }
 
   @media only screen
