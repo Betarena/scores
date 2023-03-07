@@ -438,7 +438,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {#if fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))}
               {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.livescoreNowSelectedDate)).sort((a,b) => new Date(a.time).getTime() - new Date(b.time).getTime()) as fixture}
                 {#if fixture?.league_id == league?.id}
-                  <p>[🐞] {fixture?.id}</p>
+                  <!-- <p>[🐞] {fixture?.id}</p> -->
                   <LivescoresFixtureRow 
                     FIXTURE_D={fixture}
                     {server_side_language}
