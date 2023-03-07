@@ -174,6 +174,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     id="calendar-out-box"
     class="
       text-center
+      column-space-center
     "
     class:activeDate={!fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))}>
     <!-- 
