@@ -273,7 +273,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   } 
   div#livescores-dates-box > div.livescore-date-box,
   div#calendar-out-box {
-    padding: 7px 13px;
+    /* padding: 7px 13px; */
     border-radius: 6px;
     width: 40px;
     height: 56px;
@@ -292,7 +292,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#calendar-out-box {
     position: relative;
-    padding: 16px 11px;
+    /* padding: 16px 11px; */
   }
 
   div#fixture-filter-opt-box-outer {
