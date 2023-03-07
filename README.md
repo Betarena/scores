@@ -28,11 +28,11 @@
 
 ### About
 
-We are building the first open-source live results and statistics platform with community involvement features for data insertion. The project includes a blockchain component that will allow participants to receive rewards based on their participation and also to stake the future Token of the platform.
+> We are building the first open-source live results and statistics platform with community involvement features for data insertion. The project includes a blockchain component that will allow participants to receive rewards based on their participation and also to stake the future Token of the platform.
 
 ## ⚙ Development
 
-Check for the `origin/dev` environmnet version live on `Heroku` -> [betarena-scores-platform.herokuapp.com](https://betarena-scores-platform.herokuapp.com/).
+Check for the `origin/dev` environment version live on `Heroku` -> [betarena-scores-platform.herokuapp.com](https://betarena-scores-platform.herokuapp.com/).
 A more rigorous development link and `application` is being utilized for the development of the platform on a separate `Heroku` instance -> [scores-testing-app.herokuapp.com](https://scores-testing-app.herokuapp.com/).
 
 ### Built With
@@ -89,10 +89,10 @@ npm run dev -- --open
 
 If you do not have the supported/defined `node` and `npm` versions
 installed on your local machine, you can opt to use the configured `Docker`
-DEV environemnt.
+DEV environment.
 
 For this you will need:
-  - `Docker Desktop` downloded on your local machine,
+  - `Docker Desktop` downloaded on your local machine,
   - `Makefile` (or `Node`)
 
 ```bash
@@ -118,7 +118,7 @@ npm run build
 
 **First time working on a `SvelteKit` Project ?**
 
-View our guide to `sveltekit` project and how to get started with a few links and recommendadions:
+View our guide to `sveltekit` project and how to get started with a few links and recommendations:
 
 - [a-beginners-guide-to-sveltekit](https://www.sitepoint.com/a-beginners-guide-to-sveltekit/)
 - [using .env with sveltekit-vite](https://dev.to/danawoodman/storing-environment-variables-in-sveltekit-2of3)

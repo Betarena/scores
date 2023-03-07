@@ -15,7 +15,7 @@ COMPONENT JS - BASIC
 		getUserLocation,
 		getUserLocationFromIP
 	} from '$lib/geoJs/init';
-	import { dlog, dlogv2, NAVBAR_DEBUG_STYLE, NAVBAR_DEBUG_TAG } from '$lib/utils/debug';
+	import { dlog, dlogv2, NB_W_STY, NB_W_TAG, NB_W_TOG } from '$lib/utils/debug';
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
@@ -32,11 +32,11 @@ COMPONENT JS - BASIC
 	import type { GeoJsResponse } from '$lib/models/geojs-types';
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
 
+	import { db_firestore } from '$lib/firebase/init';
 	import { sessionStore } from '$lib/store/session';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-	import AuthWidget from '../auth/Auth_Widget.svelte';
 	import { doc, updateDoc } from 'firebase/firestore';
-	import { db_firestore } from '$lib/firebase/init';
+	import AuthWidget from '../auth/Auth_Widget.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -100,7 +100,7 @@ COMPONENT JS - BASIC
   ) {
     setUserLang = true
     let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
-    console.log("🔴🔴🔴🔴 HERE!!!")
+    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language!`, NB_W_TOG, NB_W_STY)
     selectLanguage(userlang)
   }
 
@@ -133,20 +133,20 @@ COMPONENT JS - BASIC
       : $page.url.origin
   ;
   $: dlogv2(
-    NAVBAR_DEBUG_TAG,
+    NB_W_TAG,
     [
       `server_side_language: ${server_side_language}`,
       `homepageURL: ${homepageURL}`,
       `logoLink: ${logoLink}`
     ],
     true,
-    NAVBAR_DEBUG_STYLE
+    NB_W_STY
   )
 
 	$: if (browser) {
 		hideSEO = true;
 		if (!langSelected && $userBetarenaSettings.user == undefined) {
-      console.log("🔴🔴🔴🔴👀 HERE!!!")
+      dlog(`${NB_W_TAG} 🔵 Setting (initial) language!`, NB_W_TOG, NB_W_STY)
 			langSelected = true;
 			userBetarenaSettings.setLang(
 				server_side_language
@@ -164,14 +164,14 @@ COMPONENT JS - BASIC
     if (timeout_intent != undefined 
     && lang != intent_intent_lang) {
       // [ℹ] clear timer
-      dlog(`${NAVBAR_DEBUG_TAG} clearning timer!`, true, NAVBAR_DEBUG_STYLE)
+      dlog(`${NB_W_TAG} clearning timer!`, true, NB_W_STY)
       clearTimeout(timeout_intent)
       intent_intent_lang = lang;
       // start new timer - if lang (target) not undefined
       if (lang == undefined) return
-      dlog(`${NAVBAR_DEBUG_TAG} setting new timer!`, true, NAVBAR_DEBUG_STYLE)
+      dlog(`${NB_W_TAG} setting new timer!`, true, NB_W_STY)
       timeout_intent = setTimeout(() => {
-        dlog(`${NAVBAR_DEBUG_TAG} intent triggered!`, true, NAVBAR_DEBUG_STYLE)
+        dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
         $sessionStore.lang_intent = intent_intent_lang;
       }, HOVER_TIMEOUT)
     }
@@ -180,7 +180,7 @@ COMPONENT JS - BASIC
     && timeout_intent == undefined) {
       intent_intent_lang = lang
       timeout_intent = setTimeout(() => {
-        dlog(`${NAVBAR_DEBUG_TAG} intent triggered!`, true, NAVBAR_DEBUG_STYLE)
+        dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
         $sessionStore.lang_intent = intent_intent_lang;
       }, HOVER_TIMEOUT)
     }
@@ -205,7 +205,7 @@ COMPONENT JS - BASIC
 		userBetarenaSettings.setLang(lang);
 
     dlogv2(
-      `${NAVBAR_DEBUG_TAG} selectLanguage()`,
+      `${NB_W_TAG} selectLanguage()`,
       [
         `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
         `lang: ${lang}`,
@@ -213,7 +213,7 @@ COMPONENT JS - BASIC
         `$page.route.id: ${$page.route.id}`
       ],
       true,
-      NAVBAR_DEBUG_STYLE
+      NB_W_STY
     )
 
 		// [ℹ] hide lang select dropdown box;
@@ -235,10 +235,10 @@ COMPONENT JS - BASIC
 		// [ℹ] onError, navigate back to homepage
 		if ($page.error) {
 			if (lang == 'en') {
-        dlog(`${NAVBAR_DEBUG_TAG} -> EN`, true, NAVBAR_DEBUG_STYLE)
+        dlog(`${NB_W_TAG} -> EN`, true, NB_W_STY)
 				await goto('/');
 			} else {
-        dlog(`${NAVBAR_DEBUG_TAG} -> ${lang}`, true, NAVBAR_DEBUG_STYLE)
+        dlog(`${NB_W_TAG} -> ${lang}`, true, NB_W_STY)
 				await goto(`/${lang}`);
 			}
 			return;
@@ -247,7 +247,7 @@ COMPONENT JS - BASIC
 		// [ℹ] on (special) routes, omit header-intervention;
     // [ℹ] these routes manage their own transaltions (complex);
 		else if (OMIT_URLS.includes($page.route.id)) {
-      dlog(`${NAVBAR_DEBUG_TAG} omitting route: ${$page.route.id}`, true, NAVBAR_DEBUG_STYLE)
+      dlog(`${NB_W_TAG} omitting route: ${$page.route.id}`, true, NB_W_STY)
 			return;
 		}
 
@@ -256,7 +256,7 @@ COMPONENT JS - BASIC
       const pastLangV2: string = pastLang == `/` ? `/en` : pastLang
       let tempUrl: string = $page.url.pathname+'/';
 			const newURL: string = tempUrl.replace(`${pastLangV2}/`, `/${lang}`);
-      dlog(`${NAVBAR_DEBUG_TAG} inside (PROFILE) ${lang}, pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
+      dlog(`${NB_W_TAG} inside (PROFILE) ${lang}, pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`, true, NB_W_STY)
 			await goto(newURL, { replaceState: true });
     }
 
@@ -276,7 +276,7 @@ COMPONENT JS - BASIC
 					? $page.url.pathname.replace(pastLang, '/')
 					: $page.url.pathname.replace(pastLang, '')
       ;
-      dlog(`${NAVBAR_DEBUG_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
+      dlog(`${NB_W_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -293,7 +293,7 @@ COMPONENT JS - BASIC
 					? $page.url.pathname.replace(pastLang, `/${lang}/`)
 					: $page.url.pathname.replace(pastLang, `/${lang}`)
       ;
-      dlog(`${NAVBAR_DEBUG_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
+      dlog(`${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -306,7 +306,7 @@ COMPONENT JS - BASIC
 			var countSlash = $page.url.pathname.split('/').length - 1;
 			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
 			const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
-      dlog(`${NAVBAR_DEBUG_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NAVBAR_DEBUG_STYLE)
+      dlog(`${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -544,7 +544,8 @@ TODO:FIXME: not generating for each LANG
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <header 
   class="column-space-center"
-  class:user-active={PROFILE_URL == $page.route.id}>
+  class:user-active={PROFILE_URL == $page.route.id}
+  class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}>
 	<!-- 
   [ℹ] area outside to close action (inner header)
   -->
@@ -2222,6 +2223,10 @@ COMPONENT STYLE
     height: 100%;
     width: 100%;
     z-index: 1000;
+  }
+
+  .update-z-index {
+		z-index: unset;
   }
 
 	header {

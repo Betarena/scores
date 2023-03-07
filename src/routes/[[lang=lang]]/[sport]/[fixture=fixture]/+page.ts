@@ -3,10 +3,10 @@ import type { PageLoad } from './$types';
 
 import type { GeoJsResponse } from '$lib/models/geojs-types';
 import type {
-  REDIS_CACHE_SINGLE_fixtures_page_info_response, 
+  REDIS_CACHE_SINGLE_fixtures_page_info_response,
   REDIS_CACHE_SINGLE_general_countries_translation
 } from '$lib/models/_main_/pages_and_seo/types';
-import { dlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
+import { dlog, errlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
 
 /** @type {import('./$types').PageLoad} */
 export async function load({ url, params, fetch }): Promise<PageLoad> {
@@ -94,7 +94,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 			method: 'GET'
 		}
 	).then((r) => r.json())
-  .catch((error) => { console.log(error) });
+  .catch((error) => { errlog(error) });
   dlog(GEO_RESPONSE, true); 
 
   // FIXME:

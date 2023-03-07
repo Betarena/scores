@@ -11,15 +11,15 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-  //#endregion ➤ Svelte/SvelteKit Imports
+//#endregion ➤ Svelte/SvelteKit Imports
 
   //#region ➤ Project Custom Imports
-	import { 
-    get 
-  } from '$lib/api/utils';
-	import { 
-    sessionStore 
-  } from '$lib/store/session';
+	import {
+		get
+	} from '$lib/api/utils';
+	import {
+		sessionStore
+	} from '$lib/store/session';
 	import {
 		userBetarenaSettings,
 		type Auth_Type,
@@ -27,65 +27,53 @@ COMPONENT JS (w/ TS)
 		type Scores_User
 	} from '$lib/store/user-settings';
 	import {
+		AU_W_STY, AU_W_TAG, AU_W_TOG, dlog,
+		dlogv2,
+		errlog
+	} from '$lib/utils/debug';
+	import {
 		platfrom_lang_ssr,
 		viewport_change
 	} from '$lib/utils/platform-functions';
-  import { 
-    AUTH_DEBUG_STYLE, 
-    AUTH_DEBUG_TAG, 
-    AUTH_DEBUG_TOGGLE, 
-    dlog, 
-    dlogv2, 
-    errlog 
-  } from '$lib/utils/debug';
-  //#endregion ➤ Project Custom Imports
+//#endregion ➤ Project Custom Imports
 	
   //#region ➤ Firebase Imports
   import {
-		app,
-		auth,
-		db_firestore
-	} from '$lib/firebase/init';
-	import {
-		fetchSignInMethodsForEmail,
-		GithubAuthProvider,
-		GoogleAuthProvider,
-		isSignInWithEmailLink,
-		sendSignInLinkToEmail,
-		signInWithCustomToken,
-		signInWithEmailLink,
-		signInWithPopup,
-		type User
-	} from 'firebase/auth';
-	import {
-		doc,
-		getDoc,
-		setDoc
-	} from 'firebase/firestore';
-  //#endregion ➤ Firebase Imports
+  	app,
+  	auth,
+  	db_firestore
+  } from '$lib/firebase/init';
+  import {
+  	fetchSignInMethodsForEmail,
+  	GithubAuthProvider,
+  	GoogleAuthProvider,
+  	isSignInWithEmailLink,
+  	sendSignInLinkToEmail,
+  	signInWithCustomToken,
+  	signInWithEmailLink,
+  	signInWithPopup,
+  	type User
+  } from 'firebase/auth';
+  import {
+  	doc,
+  	getDoc,
+  	setDoc
+  } from 'firebase/firestore';
+//#endregion ➤ Firebase Imports
 
-	import { 
-    generateUsername 
-  } from 'unique-username-generator';
-
+	import {
+		generateUsername
+	} from 'unique-username-generator';
   //#region ➤ Types Imports
-	import type { 
-    REDIS_CACHE_SINGLE_auth_translation 
-  } from '$lib/models/_main_/auth/types';
+	import type {
+		REDIS_CACHE_SINGLE_auth_translation
+	} from '$lib/models/_main_/auth/types';
   //#endregion ➤ Types Imports
 
   //#region ➤ Moralis / WalletConnect Imports
   import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils'; // NOTE: pacakge firebase should be same as project global
   import { signInWithMoralis } from "@moralisweb3/client-firebase-evm-auth"; // NOTE: pacakge firebase should be same as project global
-  // import { Web3Provider } from "@ethersproject/providers";
-  // import WalletConnectProvider from "@walletconnect/web3-provider"; // ❌ no work
-  // import WalletConnectProvider from '@walletconnect/web3-provider/dist/umd/index.min.js'; // ✅ works
-	// import { mainnet } from "@wagmi/core/chains";
-	// import { EthereumProvider } from "@walletconnect/ethereum-provider";
-  //#endregion ➤ Moralis / WalletConnect Imports
-
-  //#region ➤ MetaMask SDK Imports (Official)
-  import MetaMaskSDK from '@metamask/sdk/dist/browser/cjs/metamask-sdk'; // ✅ works
+  // ✅ works
   // '@metamask/sdk/dist/browser/es/metamask-sdk'; // ✅ works
   // '@metamask/sdk/dist/browser/umd/metamask-sdk'; // ❌ not working
   //#endregion ➤ MetaMask SDK Imports (Official)
@@ -157,7 +145,7 @@ COMPONENT JS (w/ TS)
 		$page?.error,
 		$page?.params?.lang
 	);
-  dlog(`${AUTH_DEBUG_TAG} server_side_language: ${server_side_language}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+  dlog(`${AU_W_TAG} server_side_language: ${server_side_language}`, AU_W_TOG, AU_W_STY)
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -182,14 +170,14 @@ COMPONENT JS (w/ TS)
   */
 	async function login_with_google() {
 		try {
-      dlog(`${AUTH_DEBUG_TAG} 🔵 Google Auth Init`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 Google Auth Init`, AU_W_TOG, AU_W_STY)
 			processing = true;
 			auth_service = 'google';
 			const provider = new GoogleAuthProvider();
 			await signInWithPopup(auth, provider)
 				.then((result) => {
 					// [ℹ] user info
-          dlog(`${AUTH_DEBUG_TAG} 🟢 Google Auth Success`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+          dlog(`${AU_W_TAG} 🟢 Google Auth Success`, AU_W_TOG, AU_W_STY)
 					const user = result?.user;
 					success_auth_wrap(
 						user,
@@ -210,9 +198,7 @@ COMPONENT JS (w/ TS)
 					errlog(errorMessage);
 				});
 		} catch (error) {
-			console.log(
-				`❌ Google auth error: ${error}`
-			);
+      errlog(`❌ Google auth error: ${error}`)
 			processing = false;
 		}
 	}
@@ -227,14 +213,14 @@ COMPONENT JS (w/ TS)
   */
 	async function login_with_github() {
 		try {
-      dlog(`${AUTH_DEBUG_TAG} 🔵 GitHub Auth Init`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 GitHub Auth Init`, AU_W_TOG, AU_W_STY)
 			auth_service = 'github';
 			processing = true;
 			const provider = new GithubAuthProvider();
 			await signInWithPopup(auth, provider)
 				.then((result) => {
 					// [ℹ] user info
-          dlog(`${AUTH_DEBUG_TAG} 🟢 GitHub Auth Success`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+          dlog(`${AU_W_TAG} 🟢 GitHub Auth Success`, AU_W_TOG, AU_W_STY)
 					const user = result.user;
 					success_auth_wrap(
 						user,
@@ -257,7 +243,7 @@ COMPONENT JS (w/ TS)
 							error
 						);
 					// [🐞]
-          dlog(`${AUTH_DEBUG_TAG} credential: ${credential}; email: ${email}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+          dlog(`${AU_W_TAG} credential: ${credential}; email: ${email}`, AU_W_TOG, AU_W_STY)
 					// TODO: error user-sign in
 					// signInWithCredential(auth, credential)
 					// .then(user => {
@@ -268,7 +254,7 @@ COMPONENT JS (w/ TS)
 					// .catch(error => log(error))
 				});
 		} catch (e) {
-			console.log(e);
+      errlog(`❌ GitHub Auth error: ${e}`)
 		}
 	}
 
@@ -284,7 +270,7 @@ COMPONENT JS (w/ TS)
 		try {
 			email_error_format = false;
 			processing = true;
-      dlog(`${AUTH_DEBUG_TAG} email_input: ${email_input}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} email_input: ${email_input}`, AU_W_TOG, AU_W_STY)
 			await fetchSignInMethodsForEmail(
 				auth,
 				email_input
@@ -345,7 +331,7 @@ COMPONENT JS (w/ TS)
 					const errorMessage = error.message;
 				});
 		} catch (e) {
-			console.log(e);
+			errlog(`❌ Email (MagicLink) Auth error: ${e}`)
 		}
 	}
 	// [ℹ] DeepLink (reactivity) listener EmailLink Cont. [END]
@@ -357,7 +343,7 @@ COMPONENT JS (w/ TS)
 			)
 		) {
 			auth_service = 'email';
-      dlog(`${AUTH_DEBUG_TAG} 🔵 EmailLink OAuth2`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 EmailLink OAuth2`, AU_W_TOG, AU_W_STY)
 			// NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
 			// NOTE: Additional state parameters can also be passed via URL.
 			// NOTE: This can be used to continue the user's intended action before triggering
@@ -367,7 +353,7 @@ COMPONENT JS (w/ TS)
 			let email = window.localStorage.getItem(
 				'emailForSignIn'
 			);
-      dlog(`${AUTH_DEBUG_TAG} email: ${email}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} email: ${email}`, AU_W_TOG, AU_W_STY)
 			if (!email) {
 				// User opened the link on a different device. To prevent session fixation
 				// attacks, ask the user to provide the associated email again. For example:
@@ -386,7 +372,7 @@ COMPONENT JS (w/ TS)
 						?.get('auth_type')
 						?.toString() as 'login' | 'register';
 					const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
-          dlog(`${AUTH_DEBUG_TAG} 🟢 EmailLink Auth`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+          dlog(`${AU_W_TAG} 🟢 EmailLink Auth`, AU_W_TOG, AU_W_STY)
 					window.localStorage.removeItem(
 						'emailForSignIn'
 					);
@@ -395,8 +381,8 @@ COMPONENT JS (w/ TS)
 					// result.additionalUserInfo.profile == null
 					// NOTE: You can check if the user is new or existing:
 					// result.additionalUserInfo.isNewUser
-          dlog(`${AUTH_DEBUG_TAG} result?.user?.displayName: ${result?.user?.displayName}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-          dlog(`${AUTH_DEBUG_TAG} result?.user?.email: ${result?.user?.email}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+          dlog(`${AU_W_TAG} result?.user?.displayName: ${result?.user?.displayName}`, AU_W_TOG, AU_W_STY)
+          dlog(`${AU_W_TAG} result?.user?.email: ${result?.user?.email}`, AU_W_TOG, AU_W_STY)
 					success_auth_wrap(
 						result?.user,
 						null,
@@ -409,7 +395,7 @@ COMPONENT JS (w/ TS)
 				.catch((error) => {
 					// Some error occurred, you can inspect the code: error.code
 					// Common errors could be invalid email and invalid or expired OTPs.
-					console.log(error);
+          errlog(`❌ Email (MagicLink) Auth error: ${e}`)
 				});
 		}
 	}
@@ -428,7 +414,7 @@ COMPONENT JS (w/ TS)
 			processing = true;
 			const callback_auth_url =
 				$page?.url?.origin;
-      dlog(`${AUTH_DEBUG_TAG} callback_auth_url: ${callback_auth_url}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} callback_auth_url: ${callback_auth_url}`, AU_W_TOG, AU_W_STY)
 			const discord_outh_url = import.meta.env
 				.VITE_DISCORD_OAUTH_URL;
 			const final_url_nav = `${discord_outh_url}?redirect_url=${callback_auth_url}`;
@@ -450,7 +436,7 @@ COMPONENT JS (w/ TS)
 		// [ℹ] validate user is attempting Discord OAuth2
 		if (oauth2 == 'discord' && f_uid != null) {
 			// [ℹ] success;
-      dlog(`${AUTH_DEBUG_TAG} 🔵 Discord OAuth2`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 Discord OAuth2`, AU_W_TOG, AU_W_STY)
 			// [ℹ] clean up url from query
 			goto(revert_url, { replaceState: true });
 			// [ℹ] firebase sign-in
@@ -458,7 +444,7 @@ COMPONENT JS (w/ TS)
 				.then((userCredential) => {
 					// [ℹ] successful sign-in / login
 					auth_service = 'discord';
-          dlog(`${AUTH_DEBUG_TAG} 🟢 Success! Discord OAuth2'`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+          dlog(`${AU_W_TAG} 🟢 Success! Discord OAuth2'`, AU_W_TOG, AU_W_STY)
 					const user = userCredential?.user;
 					success_auth_wrap(
 						user,
@@ -565,7 +551,7 @@ COMPONENT JS (w/ TS)
 		// [ℹ] validate user is attempting Discord OAuth2
 		if (metmaskAuth == 'true') {
 			// [ℹ] success;
-      dlog(`${AUTH_DEBUG_TAG} 🔵 MetaMask OAuth2`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 MetaMask OAuth2`, AU_W_TOG, AU_W_STY)
 			// [ℹ] clean up url from query
 			goto(revert_url, { replaceState: true });
 			moralis_auth()
@@ -600,14 +586,14 @@ COMPONENT JS (w/ TS)
 		auth_provider_type?: Auth_Type
   ): Promise<void> {
     dlogv2(
-      `${AUTH_DEBUG_TAG} success_auth_wrap()`,
+      `${AU_W_TAG} success_auth_wrap()`,
       [
         firebase_user,
         web3_wallet_addr,
         auth_provider_type
       ],
-      AUTH_DEBUG_TOGGLE,
-      AUTH_DEBUG_STYLE
+      AU_W_TOG,
+      AU_W_STY
     )
     // [ℹ] create / retrieve target Betarena_User
     const [BETARENA_USER, EXISTS] = await user_firestore(
@@ -654,13 +640,13 @@ COMPONENT JS (w/ TS)
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
         // [ℹ] return existing firestore user-instance;
-        dlog(`${AUTH_DEBUG_TAG} 🟢 Target UID exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-        dlog(`${AUTH_DEBUG_TAG} User Data ${docSnap.data()}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+        dlog(`${AU_W_TAG} 🟢 Target UID exists`, AU_W_TOG, AU_W_STY)
+        dlog(`${AU_W_TAG} User Data ${docSnap.data()}`, AU_W_TOG, AU_W_STY)
         return [docSnap.data() as Betarena_User, true]
       } else {
         // [ℹ] create new user-instance;
-        dlog(`${AUTH_DEBUG_TAG} 🔴 Target UID does not exists`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-        dlog(`${AUTH_DEBUG_TAG} 🔵 Creating new Betarena_User instance`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+        dlog(`${AU_W_TAG} 🔴 Target UID does not exists`, AU_W_TOG, AU_W_STY)
+        dlog(`${AU_W_TAG} 🔵 Creating new Betarena_User instance`, AU_W_TOG, AU_W_STY)
         const scores_user_data: Betarena_User = {
           lang: server_side_language,
           registration_type: [auth_provider_type],
@@ -672,8 +658,8 @@ COMPONENT JS (w/ TS)
         }
         return [scores_user_data, false]
       }
-    } catch (error) {
-      console.error('Error adding document: ', error);
+    } catch (e) {
+      errlog(`❌ Error adding document: ${e}`)
     }
   }
 
@@ -686,7 +672,7 @@ COMPONENT JS (w/ TS)
     user: Scores_User
   ): Promise<void> {
     try {
-      dlog(`${AUTH_DEBUG_TAG} 🔵 Persisting new user ${user?.firebase_user_data?.uid} to firestore...`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 Persisting new user ${user?.firebase_user_data?.uid} to firestore...`, AU_W_TOG, AU_W_STY)
       await setDoc(
         doc(
           db_firestore,
@@ -700,7 +686,7 @@ COMPONENT JS (w/ TS)
         )
       );
     } catch (e) {
-      console.error('Error adding document: ', e);
+      errlog(`❌ Error adding document: ${e}`)
     }
   }
 
@@ -762,9 +748,9 @@ COMPONENT JS (w/ TS)
 			// else {
 			//   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
 			// }
-      dlog(`${AUTH_DEBUG_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      dlog(`${AUTH_DEBUG_TAG} target_wallet ${target_wallet}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      dlog(`${AUTH_DEBUG_TAG} window.ethereum.providers ${window.ethereum.providers}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, AU_W_TOG, AU_W_STY)
+      dlog(`${AU_W_TAG} target_wallet ${target_wallet}`, AU_W_TOG, AU_W_STY)
+      dlog(`${AU_W_TAG} window.ethereum.providers ${window.ethereum.providers}`, AU_W_TOG, AU_W_STY)
 		} else {
 			if (
 				walletType == 'isMetaMask' &&
@@ -781,14 +767,14 @@ COMPONENT JS (w/ TS)
 			// else {
 			//   target_wallet = window.ethereum[walletType]
 			// }
-      dlog(`${AUTH_DEBUG_TAG} 🔵 1 provider identified! ${window.ethereum}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      dlog(`${AUTH_DEBUG_TAG} target_wallet ${target_wallet}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
-      dlog(`${AUTH_DEBUG_TAG} window.ethereum ${window.ethereum}`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔵 1 provider identified! ${window.ethereum}`, AU_W_TOG, AU_W_STY)
+      dlog(`${AU_W_TAG} target_wallet ${target_wallet}`, AU_W_TOG, AU_W_STY)
+      dlog(`${AU_W_TAG} window.ethereum ${window.ethereum}`, AU_W_TOG, AU_W_STY)
 		}
 
 		// [ℹ] TARGET (THIS) single provider check true
 		if (target_wallet != undefined) {
-      dlog(`${AUTH_DEBUG_TAG} 🟢 ${walletType} identified`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🟢 ${walletType} identified`, AU_W_TOG, AU_W_STY)
 			// DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
 			// DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
 			// DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
@@ -805,7 +791,7 @@ COMPONENT JS (w/ TS)
 			// });
 			return [true, target_wallet];
 		} else {
-      dlog(`${AUTH_DEBUG_TAG} 🔴 no target wallet (${walletType}) identified`, AUTH_DEBUG_TOGGLE, AUTH_DEBUG_STYLE)
+      dlog(`${AU_W_TAG} 🔴 no target wallet (${walletType}) identified`, AU_W_TOG, AU_W_STY)
 			return [false, null];
 		}
 	}

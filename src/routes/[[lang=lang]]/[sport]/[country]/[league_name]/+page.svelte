@@ -10,32 +10,14 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { removeDiacritics } from '$lib/utils/languages';
-/*
-    [v1]
-    Standard Imports (client-side)
-  */
 
-	import AboutBlock from '$lib/components/tournaments_page/about_block/_About_Block.svelte';
-	import FixtureOddsWidget from '$lib/components/tournaments_page/fixtures_odds/_Fixture_Odds_Widget.svelte';
-	import LeagueInfoWidget from '$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte';
-	import LeagueInfoWidget2 from '$lib/components/tournaments_page/league_info_2/_LeagueInfo_Widget_2.svelte';
-	import StandingsWidget from '$lib/components/tournaments_page/standings/_Standings_Widget.svelte';
-	import TopPlayersWidget from '$lib/components/tournaments_page/top_players/_Top_Players_Widget.svelte';
+	import AboutBlock from '$lib/components/page/league/about_block/_About_Block.svelte';
+	import FixtureOddsWidget from '$lib/components/page/league/fixtures_odds/_Fixture_Odds_Widget.svelte';
+	import LeagueInfoWidget from '$lib/components/page/league/league_info/_LeagueInfo_Widget.svelte';
+	import LeagueInfoWidget2 from '$lib/components/page/league/league_info_2/_LeagueInfo_Widget_2.svelte';
+	import StandingsWidget from '$lib/components/page/league/standings/_Standings_Widget.svelte';
+	import TopPlayersWidget from '$lib/components/page/league/top_players/_Top_Players_Widget.svelte';
 	import SvelteSeo from 'svelte-seo';
-/*
-    [v2]
-    Dynamic Imports (client-side)
-  */
-
-	/*
-
-    let LeagueInfoWidget;
-
-    onMount(async () => {
-      LeagueInfoWidget = (await import('$lib/components/tournaments_page/league_info/_LeagueInfo_Widget.svelte')).default;
-    });
-
-  */
 
 	import type { Cache_Single_Tournaments_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 
@@ -57,6 +39,8 @@
 	} from '$lib/models/tournaments/fixtures_odds/types';
 
 	import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura';
+	import { dlog } from '$lib/utils/debug';
+	import { viewport_change } from '$lib/utils/platform-functions';
 
 	let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
 	let TOURNAMENT_DATA_TRANSLATED_COPIES: BETARENA_HASURA_scores_tournaments[];
@@ -83,6 +67,8 @@
 	$: FIXTURES_ODDS_T = $page.data.FIXTURES_ODDS_T;
 	$: FIXTURES_ODDS_DATA =
 		$page.data.FIXTURES_ODDS_DATA;
+
+  $: dlog(`TOURNAMENT_DATA?.tournament_id: ${TOURNAMENT_DATA?.tournament_id}`, true)
 
 	// TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
@@ -147,48 +133,29 @@
 		goto(newURL, { replaceState: true });
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// [ℹ] VIEWPORT CHANGES
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let mobileExclusive: boolean = false;
-	let tabletExclusive: boolean = false;
+	const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 475;
+	let mobileExclusive, tabletExclusive: boolean = false;
 
 	onMount(async () => {
-		var wInit =
-			document.documentElement.clientWidth;
-		// [ℹ] TABLET - VIEW
-		if (wInit >= 1160) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		// [ℹ] MOBILE - VIEW
-		if (wInit < 475) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
+		[tabletExclusive, mobileExclusive] =
+			viewport_change(TABLET_VIEW, MOBILE_VIEW);
 		window.addEventListener(
 			'resize',
 			function () {
-				var w =
-					document.documentElement.clientWidth;
-				// [ℹ] TABLET - VIEW
-				if (w >= 1160) {
-					tabletExclusive = false;
-				} else {
-					tabletExclusive = true;
-				}
-				// [ℹ] MOBILE - VIEW
-				if (w < 475) {
-					mobileExclusive = true;
-				} else {
-					mobileExclusive = false;
-				}
+				[tabletExclusive, mobileExclusive] =
+					viewport_change(
+						TABLET_VIEW,
+						MOBILE_VIEW
+					);
 			}
 		);
 	});
+
 </script>
 
 <!-- ===================
@@ -292,30 +259,16 @@
 	{/if}
 </svelte:head>
 
-<!-- [ℹ] SEO-DATA-LOADED [ALTERNATIVE]
-{#if !browser}
-  
-  <div 
-    id="seo-widget-container">
-
-    <div 
-      id="seo-league-table-site-box">
-      <h2>{LEAGUE_INFO_DATA.data.country}</h2>
-      <h2>{LEAGUE_INFO_DATA.data.name}</h2>
-    </div>
-
-  </div>
-
-{/if}
--->
-
 <!-- ===================
 	COMPONENT HTML
+  TODO:
+    -> missing use of the WIDGET-LIST to HIDE/SHOW widgets
 =================== -->
 
 <section id="tournaments-page">
 	<!-- 
-  [ℹ] breadcrumbs URL -->
+  [ℹ] breadcrumbs URL 
+  -->
 	<div
 		id="tournaments-page-breadcrumbs"
 		class="row-space-start m-b-20"
@@ -439,26 +392,12 @@
 			</div>
 		</div>
 	{/if}
-
-	<!-- 
-  [ℹ] widgets displayed -->
-	<!-- <div> -->
-	<!-- {TOURNAMENT_DATA.widgets} -->
-	<!-- </div> -->
 </section>
 
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
 <style>
-	/* SEO ALT. WIDGET PAGE */
-	#seo-widget-container {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
-
 	section#tournaments-page {
 		/* display: grid; */
 		max-width: 1430px;

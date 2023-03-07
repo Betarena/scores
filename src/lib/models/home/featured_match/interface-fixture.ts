@@ -1,9 +1,9 @@
-import type { ScoresTournamentsUrls } from '../../hasura';
+import type { ScoresTournamentsUrls, Urls } from '../../hasura';
 import type { SelectedFixture_LiveOdds_Response } from './firebase-real-db-interface';
 import type {
-	BestPlayers_Data,
-	SelectedFixutre,
-	TranslationsResponse
+  BestPlayers_Data,
+  SelectedFixutre,
+  TranslationsResponse
 } from './response_models';
 
 /**
@@ -81,6 +81,7 @@ export interface FixtureResponse {
 	selected_data: SelectedFixutre;
 	league_id: number;
 	urls?: ScoresTournamentsUrls;
+  fix_urls?: Urls;
 }
 
 /**
