@@ -4,6 +4,7 @@
 =================== -->
 <script lang="ts">
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
+	import { sessionStore } from '$lib/store/session';
 
 	export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
 
@@ -19,7 +20,9 @@
   [ℹ] identify the correct translation via IF 
   -->
 	{#if HEADER_TRANSLATION_DATA.scores_top_bar_messages.status && show}
-		<div id="platform-alert-container">
+		<div 
+      id="platform-alert-container"
+      class:update-z-index={$sessionStore.livescoreShowCalendar}>
 			<p 
         class="
           s-12 
@@ -55,6 +58,11 @@
 		text-align: center;
 		z-index: 20000;
 	}
+
+  .update-z-index {
+		z-index: unset !important;
+  }
+
 	img#close-platform-alert-img {
 		position: absolute;
 		right: 16px;

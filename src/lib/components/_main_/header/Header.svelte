@@ -544,7 +544,8 @@ TODO:FIXME: not generating for each LANG
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <header 
   class="column-space-center"
-  class:user-active={PROFILE_URL == $page.route.id}>
+  class:user-active={PROFILE_URL == $page.route.id}
+  class:update-z-index={$sessionStore.livescoreShowCalendar}>
 	<!-- 
   [ℹ] area outside to close action (inner header)
   -->
@@ -2222,6 +2223,10 @@ COMPONENT STYLE
     height: 100%;
     width: 100%;
     z-index: 1000;
+  }
+
+  .update-z-index {
+		z-index: unset;
   }
 
 	header {
