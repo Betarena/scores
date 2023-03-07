@@ -6,11 +6,11 @@ node_modules
 /gif
 certs/*
 
-# [CRITICAL TO BE UN-TRACKED]
+# CRITICAL - do not uncomment
 .env
 
 WEBSITE-DEV-README.md
 datalog/
 
 # [PERSONAL]
-.vscode/
+# .vscode/

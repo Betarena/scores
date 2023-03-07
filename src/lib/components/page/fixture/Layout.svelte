@@ -57,24 +57,22 @@
 		REDIS_CACHE_SINGLE_tournament_standings_translation
 	} from '$lib/models/tournaments/standings/types';
 
-	import AboutWidget from '$lib/components/fixtures_page/about/About_Widget.svelte';
-	import ContentWidget from '$lib/components/fixtures_page/content/Content_Widget.svelte';
-	import Head_2HeadWidget from '$lib/components/fixtures_page/head-2-head/Head_2_Head_Widget.svelte';
-	import IncidentsWidget from '$lib/components/fixtures_page/incidents/Incidents_Widget.svelte';
-	import LineupsWidget from '$lib/components/fixtures_page/lineups/Lineups_Widget.svelte';
-	import ProbabilityWidget from '$lib/components/fixtures_page/probabilities/Probability_Widget.svelte';
-	import ScoreboardWidget from '$lib/components/fixtures_page/scoreboard/Scoreboard_Widget.svelte';
-	import StandingsWidget from '$lib/components/fixtures_page/standings/Standings-Widget.svelte';
-	import StatisticsWidget from '$lib/components/fixtures_page/statistics/Statistics_Widget.svelte';
-	import VoteWidget from '$lib/components/fixtures_page/votes/Vote_Widget.svelte';
-	import FeaturedBettingSitesWidget from '$lib/components/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
+	import AboutWidget from '$lib/components/page/fixture/about/About_Widget.svelte';
+	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
+	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head_2_Head_Widget.svelte';
+	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents_Widget.svelte';
+	import LineupsWidget from '$lib/components/page/fixture/lineups/Lineups_Widget.svelte';
+	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability_Widget.svelte';
+	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard_Widget.svelte';
+	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
+	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics_Widget.svelte';
+	import VoteWidget from '$lib/components/page/fixture/votes/Vote_Widget.svelte';
+	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
-	import type { GeoJsResponse } from '$lib/models/geojs-types';
-	import { get } from '$lib/api/utils';
 
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
 	let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
@@ -205,7 +203,7 @@
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
-	// [! CRITICAL !]
+	// CRITICAL
 	// ~~~~~~~~~~~~~~~~~~~~~
 
   // TODO: FIXME: replace into a single __layout.svelte method [?]

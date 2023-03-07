@@ -6,10 +6,10 @@
  */
 
 import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
-import cookie from 'cookie';
 import { dlog } from '$lib/utils/debug';
-import type { PageServerLoadEvent } from './$types';
 import { redirect } from '@sveltejs/kit';
+import cookie from 'cookie';
+import type { PageServerLoadEvent } from './$types';
 
 /** @type {import('./$types').PageServerLoadEvent} */
 export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEvent> {
@@ -19,13 +19,13 @@ export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEv
     fetch
   } = event
 
-    // console.log(event)
+    // [🐞] console.log(event)
 
     const cookies = cookie.parse(
       event.request.headers.get('cookie') || ''
     );
     const loggedInCookie = cookies?.betarenaCookieLoggedIn
-    console.log('👀', cookies?.betarenaCookieLoggedIn)
+     // [🐞] console.log('👀', cookies?.betarenaCookieLoggedIn)
 
     // [ℹ] validation [1]
     if (loggedInCookie == undefined || loggedInCookie == null) {
@@ -41,7 +41,7 @@ export async function load(event: PageServerLoadEvent): Promise<PageServerLoadEv
 				? 'en'
 				: params.lang;
 
-    console.log(`🔵 ${urlLang}`)
+     // [🐞] console.log(`🔵 ${urlLang}`)
 		const promise_urls = [
 			`/api/hasura/profile?lang=${urlLang}` // profile-page translations
 		];

@@ -42,7 +42,7 @@ dev-clean:
 	rm -r ./datalog/
 
 git-post-main-pr:
-	# from Develop and assuming your master is up to date with origin/master
+	# After PR -> (main) - run (this) to get local/dev in pair with (main)
 	echo 'Checking out to MAIN'
 	git checkout main
 	echo 'Pulling new changes from MAIN'
