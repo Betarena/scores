@@ -602,9 +602,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     img#sportbook-logo-img {
 			width: 30px;
 			height: 30px;
-      margin-right: 16px;
 		}
-    div.fixtures-scores-box p {
+    div.fixtures-scores-box {
+      margin-left: 16px;
+    } div.fixtures-scores-box p {
       font-size: 14px;
       font-weight: 500;
     }
