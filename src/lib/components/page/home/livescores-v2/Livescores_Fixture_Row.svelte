@@ -429,7 +429,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           id="sportbook-logo-img"
           class="
             cursor-pointer
-            m-r-5
           "
           src={$sessionStore?.sportbook_main?.image}
           alt={$sessionStore?.sportbook_main?.title}
@@ -446,6 +445,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         class="
           column-space-center 
           fixtures-scores-box
+          m-l-5
         "
       >
         <!-- 
@@ -455,7 +455,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             s-12 
             color-black-2
-            m-b-5
           "
           class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score && FIXTURE_D?.status !='LIVE'}
           class:color-red-bright={FIXTURE_D?.status === 'LIVE'}
