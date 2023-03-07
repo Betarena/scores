@@ -269,7 +269,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   div#livescores-dates-box {
-    padding: 0 16px 0 16px;
+    padding: 0 7px 0 16px;
   } 
   div#livescores-dates-box > div.livescore-date-box,
   div#calendar-out-box {
@@ -331,7 +331,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   @media only screen 
     and (min-width: 475px) {
     div#livescores-dates-box {
-      padding: 0 20px 0 20px;
+      padding: 0 9px 0 20px;
     }
     div#fixture-filter-opt-box-outer {
       padding: 0 20px;
