@@ -545,7 +545,7 @@ TODO:FIXME: not generating for each LANG
 <header 
   class="column-space-center"
   class:user-active={PROFILE_URL == $page.route.id}
-  class:update-z-index={$sessionStore.livescoreShowCalendar}>
+  class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}>
 	<!-- 
   [ℹ] area outside to close action (inner header)
   -->
