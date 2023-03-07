@@ -248,7 +248,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         ">
         {WIDGET_T_DATA?.live || 'Live'} ({numOfFixturesLive || 0})
       </p>
-      {#if numOfFixturesLive != undefined || numOfFixturesLive != 0}
+      {#if numOfFixturesLive != 0}
         <img 
           src={vec_pulse_dot}
           alt='pulsating-dot'

@@ -48,6 +48,8 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  const today = new Date()
+
   export let FIXTURE_D: LS2_C_Fixture
   export let server_side_language: string
 
@@ -106,6 +108,18 @@ COMPONENT JS (w/ TS)
 			return;
 		}
 	}
+
+  /**
+   * @description converts a target date to an
+   * ISO_string of yyyy-MM-dd format;
+   * @param {Date} date
+   * @returns {string} string
+   */
+   function convert_to_iso(
+    date: Date
+  ): string {
+    return date.toISOString().slice(0, 10)
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -183,6 +197,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if FIXTURE_D?.status === 'LIVE'}
+        {#if convert_to_iso(today) != convert_to_iso(new Date(FIXTURE_D?.fixture_day))}
+          <p
+            class="
+              no-wrap
+              s-12 
+              color-grey
+              dark-theme-custom-1
+            "
+          >
+            {new Date(FIXTURE_D?.fixture_day).getDate()/new Date(FIXTURE_D?.fixture_day).getMonth()}
+          </p>
+        {/if}
         <p
           class="
             s-12 

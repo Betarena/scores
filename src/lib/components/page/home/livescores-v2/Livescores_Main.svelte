@@ -59,6 +59,10 @@ COMPONENT JS (w/ TS)
   $: WIDGET_TITLE = WIDGET_T_DATA?.title || 'Livescores'
   
   const today = new Date()
+  let yesterday = new Date()
+
+  yesterday.setDate(yesterday.getDate() - 1)
+  $: yesterday = yesterday
 
   let fixturesGroupByDateMap = new Map<string, LS2_C_Fixture[]>()
   let leagueMap = new Map<number, LS2_C_League>()
@@ -434,6 +438,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {#if fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))}
               {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.livescoreNowSelectedDate)).sort((a,b) => new Date(a.time).getTime() - new Date(b.time).getTime()) as fixture}
                 {#if fixture?.league_id == league?.id}
+                  <p>[🐞] {fixture?.id}</p>
                   <LivescoresFixtureRow 
                     FIXTURE_D={fixture}
                     {server_side_language}
@@ -486,6 +491,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 minutes (next day)
           -->
           {#if fixturesGroupByDateMap.has(today.toISOString().slice(0, 10))}
+            {#each fixturesGroupByDateMap.get(yesterday.toISOString().slice(0, 10)) as fixture}
+              {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
+                <!-- [🐞] <p>{fixture?.id}</p> -->
+                <LivescoresFixtureRow
+                  FIXTURE_D={fixture}
+                  {server_side_language}
+                />
+              {/if}
+            {/each}
             {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
               {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
                 <!-- [🐞] <p>{fixture?.id}</p> -->
