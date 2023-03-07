@@ -5,7 +5,7 @@ import { generate_historic_fixtures_day_group_map, generate_leagues_map, generat
 import type { B_LS2_D, LS2_C_FixtureDateGroup } from '@betarena/scores-lib/types/livescores-v2';
 
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
@@ -68,7 +68,7 @@ async function main(
   fixtures_by_date = fixtures_by_date.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
   // eslint-disable-next-line prefer-const
-  let leagues_ids_arr: number[] = current_week_fixtures?.historic_fixtures?.map(a => a.league_id)
+  const leagues_ids_arr: number[] = current_week_fixtures?.historic_fixtures?.map(a => a.league_id)
   const [leagues_data, tournaments_data] = await get_target_leagues(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -78,7 +78,7 @@ async function main(
   const league_map = await generate_leagues_map(leagues_data)
   const tournaments_map = await generate_tournaments_map(tournaments_data)
 
-  for await (const [id, league] of league_map) {
+  for await (const [, league] of league_map) {
     league.urls =
       tournaments_map.has(league?.id) == true
         ? tournaments_map.get(league?.id)?.urls

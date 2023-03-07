@@ -104,7 +104,7 @@
     
     await one_off_livescore_call()
 
-    let connectionRef = await listenRealTimeLivescoresNowChange()
+    let connectionRef = listenRealTimeLivescoresNowChange()
     FIREBASE_CONNECTIONS_SET.add(connectionRef)
     sportbookIdentify()
 
@@ -114,7 +114,7 @@
 				if (!document.hidden) {
           dlog('🔵 user is active', true)
           await one_off_livescore_call()
-					let connectionRef = await listenRealTimeLivescoresNowChange()
+					let connectionRef = listenRealTimeLivescoresNowChange()
           FIREBASE_CONNECTIONS_SET.add(connectionRef)
 				}
 			}
