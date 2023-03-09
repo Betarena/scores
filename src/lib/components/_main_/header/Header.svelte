@@ -14,7 +14,7 @@ COMPONENT JS - BASIC
 	import {
 		getUserLocation,
 		getUserLocationFromIP
-	} from '$lib/geoJs/init';
+	} from '$lib/geo-js/init';
 	import { dlog, dlogv2, NB_W_STY, NB_W_TAG, NB_W_TOG } from '$lib/utils/debug';
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
@@ -29,8 +29,8 @@ COMPONENT JS - BASIC
 	import profile_avatar from './assets/profile-avatar.svg';
 	import light_icon_theme from './assets/theme-light-icon.svg';
 
-	import type { GeoJsResponse } from '$lib/models/geojs-types';
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
+	import type { GeoJsResponse } from '$lib/types/geojs-types';
 
 	import { db_firestore } from '$lib/firebase/init';
 	import { sessionStore } from '$lib/store/session';

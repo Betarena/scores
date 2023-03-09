@@ -1,6 +1,6 @@
 //#region ➤ Package Imports
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 import { json } from '@sveltejs/kit';
 
 import {

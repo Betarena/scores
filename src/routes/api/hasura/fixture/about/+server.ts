@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 import { ABT_F_get_target_fixture } from '@betarena/scores-lib/dist/functions/func.about.js';
 import type { B_ABT_D } from '@betarena/scores-lib/types/about';
 

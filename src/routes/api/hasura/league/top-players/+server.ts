@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 import { extract_playerId_and_teamId, generateTeamsAndPlayersMap, generate_top_players_data, getTargetSeasonPlayersInfo, get_target_teams_players_data } from '@betarena/scores-lib/dist/functions/func.top-players.js';
 import type { TP_Season_Top_Player } from '@betarena/scores-lib/types/top-players';
 

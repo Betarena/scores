@@ -1,13 +1,13 @@
 import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 
 import { BETARENA_SCORES_AUTH_TRANSLATION } from '$lib/graphql/_main_/auth/query';
 import type { BETARENA_HASURA_auth_translations } from '$lib/models/hasura';
 import type {
-	BETARENA_HASURA_auth_query,
-	REDIS_CACHE_SINGLE_auth_translation
+  BETARENA_HASURA_auth_query,
+  REDIS_CACHE_SINGLE_auth_translation
 } from '$lib/models/_main_/auth/types';
 
 // [ℹ] debug info

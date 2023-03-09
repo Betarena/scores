@@ -1,11 +1,11 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
-import type { GeoJsResponse } from '$lib/models/geojs-types';
 import type {
   REDIS_CACHE_SINGLE_fixtures_page_info_response,
   REDIS_CACHE_SINGLE_general_countries_translation
 } from '$lib/models/_main_/pages_and_seo/types';
+import type { GeoJsResponse } from '$lib/types/types.geojs';
 import { dlog, errlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
 
 /** @type {import('./$types').PageLoad} */

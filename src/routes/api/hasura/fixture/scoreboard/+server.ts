@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 
 
 import { B_FS_compile_data, B_FS_generate_historic_fixtures_map, B_FS_generate_leagues_tournaments_map, B_FS_get_target_leagues, B_SF_get_target_fixture } from '@betarena/scores-lib/dist/functions/func.scoreboard.js';

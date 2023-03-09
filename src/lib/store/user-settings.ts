@@ -2,7 +2,7 @@
 // ... contains the TRANSLATION LANG SELECTED by the USER;
 // ... ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-import type { GeoJsResponse } from '$lib/models/geojs-types';
+import type { GeoJsResponse } from '$lib/types/types.geojs';
 import type { User } from 'firebase/auth';
 import { writable } from 'svelte/store';
 

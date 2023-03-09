@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 
 import { INC_F_data_main, INC_F_generate_historic_fixtures_map, INC_F_get_target_fixture } from '@betarena/scores-lib/dist/functions/func.incidents.js';
 

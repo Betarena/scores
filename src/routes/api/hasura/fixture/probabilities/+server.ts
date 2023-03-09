@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 
 import { PR_F_get_target_fixture, PR_F_get_widget_translations, PR_F_translations_main } from '@betarena/scores-lib/dist/functions/func.probabilities.js';
 import type { B_PR_T, PR_Fixture } from '@betarena/scores-lib/types/probabilities';

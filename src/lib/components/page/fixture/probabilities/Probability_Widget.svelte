@@ -14,7 +14,7 @@
 	import { db_real } from '$lib/firebase/init';
 	import { get_odds } from '$lib/firebase/votes';
 	import { REDIS_CACHE_FIXTURE_PROBABILITIES_0 } from '$lib/graphql/fixtures/probabilities/query';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { initGrapQLClient } from '$lib/graphql/init';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import {

@@ -11,7 +11,7 @@
 
 //#region ➤ Package Imports
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 
 //#endregion ➤ Package Imports
 

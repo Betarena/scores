@@ -38,7 +38,7 @@
 	import LineupVectorTablet from './Lineup_Vector_Tablet.svelte';
 
 	import { REDIS_CACHE_LINEUPS_DATA_4 } from '$lib/graphql/fixtures/lineups/query';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { initGrapQLClient } from '$lib/graphql/init';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';

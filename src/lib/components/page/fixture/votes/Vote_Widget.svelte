@@ -17,7 +17,7 @@
 		HASURA_FIXTURE_VOTES_DATA_0,
 		HASURA_FIXTURE_VOTES_INIT_UPDATE
 	} from '$lib/graphql/fixtures/votes/query';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { initGrapQLClient } from '$lib/graphql/init';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
 		fixtureVote,

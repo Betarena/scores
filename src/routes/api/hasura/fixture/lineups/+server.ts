@@ -2,7 +2,7 @@
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 
 import { LIN_F_data_main, LIN_F_generate_historic_fixtures_map, LIN_F_generate_players_map, LIN_F_get_target_fixture, LIN_F_get_target_player_data } from '@betarena/scores-lib/dist/functions/func.lineups.js';
 

@@ -1,11 +1,11 @@
 import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 import { SCORES_PROFILE_TRANSLATIONS_DATA_1 } from '$lib/graphql/profile/query';
 import type {
-	BETARENA_HASURA_profile_query,
-	REDIS_CACHE_SINGLE_profile_translation
+  BETARENA_HASURA_profile_query,
+  REDIS_CACHE_SINGLE_profile_translation
 } from '$lib/models/profile/account-setting/types';
 
 // [ℹ] debug info

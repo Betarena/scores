@@ -15,7 +15,7 @@
 	// [ℹ] external `exports` imports;
 	import { getTargetFixtureOdds } from '$lib/firebase/index';
 	import { db_real } from '$lib/firebase/init';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { initGrapQLClient } from '$lib/graphql/init';
 	import { UPDATE_MATCH_FIXTURE_VOTES } from '$lib/graphql/mutation';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { fixtureVote } from '$lib/store/vote_fixture';
