@@ -2,11 +2,11 @@ import { json } from '@sveltejs/kit';
 import { performance } from 'perf_hooks';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { SCORES_PROFILE_TRANSLATIONS_DATA_1 } from '$lib/graphql/profile/query';
 import type {
   BETARENA_HASURA_profile_query,
   REDIS_CACHE_SINGLE_profile_translation
 } from '$lib/models/profile/account-setting/types';
+import { B_C_PROF_M_Q_T } from "@betarena/scores-lib/dist/graphql/query.profile.js";
 
 // [ℹ] debug info
 const logs = [];
@@ -64,11 +64,11 @@ async function get_target_fixture(
 		'SCORES_PROFILE_TRANSLATIONS_DATA_1';
 	const t0 = performance.now();
 	const VARIABLES = {
-		lang
+		langArray: [lang]
 	};
 	const response: BETARENA_HASURA_profile_query =
 		await initGrapQLClient().request(
-			SCORES_PROFILE_TRANSLATIONS_DATA_1,
+			B_C_PROF_M_Q_T,
 			VARIABLES
 		);
 	const t1 = performance.now();

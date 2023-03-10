@@ -13,16 +13,16 @@
 	import FeaturedMatchContentLoading from './_FeaturedMatch_ContentLoading.svelte';
 
 	// [ℹ] external `exports` imports;
-	import { getTargetFixtureOdds } from '$lib/firebase/index';
-	import { db_real } from '$lib/firebase/init';
-	import { initGrapQLClient } from '$lib/graphql/init';
-	import { UPDATE_MATCH_FIXTURE_VOTES } from '$lib/graphql/mutation';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { fixtureVote } from '$lib/store/vote_fixture';
-	import {
-		onValue,
-		ref
-	} from 'firebase/database';
+  import { db_real } from '$lib/firebase/init';
+  import { initGrapQLClient } from '$lib/graphql/init';
+  import { UPDATE_MATCH_FIXTURE_VOTES } from '$lib/graphql/mutation';
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { fixtureVote } from '$lib/store/vote_fixture';
+  import { FIREBASE_getTargetFixtureOdds } from '@betarena/scores-lib/dist/firebase/firebase.common.js';
+  import {
+  	onValue,
+  	ref
+  } from 'firebase/database';
 // [ℹ] DECLARING TYPESCRIPT-TYPES imports;
 	import { get } from '$lib/api/utils';
 	import type {
@@ -64,7 +64,8 @@
 		selectedFixutreData: SelectedFixutre
 	): Promise<void> {
 		// [ℹ] get the list of the odds for the;
-		const response = await getTargetFixtureOdds(
+		const response = await FIREBASE_getTargetFixtureOdds(
+      db_real,
 			selectedFixutreData
 		);
 		// [ℹ] assign real-time-odds,

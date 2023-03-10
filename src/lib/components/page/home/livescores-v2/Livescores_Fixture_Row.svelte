@@ -6,7 +6,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
-	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "$lib/models/sportmonks";
+	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 
   //#region ➤ Svelte/SvelteKit Imports
   // IMPORTS GO HERE
