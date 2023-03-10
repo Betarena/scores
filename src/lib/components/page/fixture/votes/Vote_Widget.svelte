@@ -533,7 +533,7 @@
 	}
 
 	async function listen_real_time_odds(): Promise<void> {
-    dlog(`${STS_W_F_TAG} Triggered odds listen`, STS_W_F_TOG, STS_W_F_STY);
+    dlog(`${VO_W_F_TAG} Triggered odds listen`, VO_W_F_TOG, VO_W_F_STY);
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
 			FIXTURE_VOTES_DATA?.time + 'Z';
