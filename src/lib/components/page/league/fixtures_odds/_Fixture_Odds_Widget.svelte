@@ -1584,7 +1584,7 @@
 	<!-- {#if !loaded && !noWidgetData} -->
 	<div id="seo-widget-box">
 		<h2>{FIXTURES_ODDS_T?.matches}</h2>
-		{#if FIXTURES_ODDS_DATA != undefined && FIXTURES_ODDS_DATA?.seasons.length != 0}
+		{#if FIXTURES_ODDS_DATA != undefined && FIXTURES_ODDS_DATA?.seasons?.length != 0}
 			<!-- 
         [ℹ] fixtures text loop
         -->

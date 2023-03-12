@@ -282,7 +282,7 @@
   -->
 	<!-- {#if !loaded} -->
 	<div id="seo-widget-box">
-		<h2>{STANDINGS_T.translations.standings}</h2>
+		<h2>{STANDINGS_T?.translations?.standings}</h2>
 		{#if STANDINGS_DATA != undefined && STANDINGS_DATA?.seasons.length != 0}
 			{#if !STANDINGS_DATA.seasons[0].group}
 				{#each STANDINGS_DATA.seasons[0].total as team}

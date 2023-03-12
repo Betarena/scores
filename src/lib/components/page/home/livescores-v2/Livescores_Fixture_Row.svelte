@@ -250,7 +250,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     FIXME: syntax error
     -->
     <a
-      href={FIXTURE_D?.urls == undefined ? '' : FIXTURE_D?.urls[server_side_language]}
+      href={FIXTURE_D?.urls == undefined ? '' : FIXTURE_D?.urls[server_side_language].replace('https://scores.betarena.com','')}
       class="width-auto"
       class:disable-anchor={FIXTURE_D?.urls == undefined || FIXTURE_D?.urls[server_side_language] == undefined}
       >

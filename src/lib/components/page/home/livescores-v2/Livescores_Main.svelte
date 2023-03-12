@@ -402,7 +402,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             [ℹ] league info (box)
             -->
             <a
-              href="{league?.urls[server_side_language]}">
+              href="{league?.urls[server_side_language].replace('https://scores.betarena.com','')}">
               <div
                 class="
                   row-space-start
@@ -457,7 +457,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           [ℹ] league info (box)
           -->
           <a
-            href="{league?.urls[server_side_language]}">
+            href="{league?.urls[server_side_language].replace('https://scores.betarena.com','')}">
             <div
               class="
                 row-space-start
