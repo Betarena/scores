@@ -13,7 +13,6 @@
 
 	import { db_real } from '$lib/firebase/init';
 	import { get_odds } from '$lib/firebase/votes';
-	import { REDIS_CACHE_FIXTURE_PROBABILITIES_0 } from '$lib/graphql/fixtures/probabilities/query';
 	import { initGrapQLClient } from '$lib/graphql/init';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief';
@@ -23,6 +22,7 @@
 		type Unsubscribe
 	} from 'firebase/database';
 
+  
 	import type { FIREBASE_odds } from '$lib/models/firebase';
 	import type {
 		Fixture_Probabilities,
@@ -35,6 +35,7 @@
 	import ProbabilityLoader from './Probability_Loader.svelte';
 
 	import { get } from '$lib/api/utils';
+	import { B_C_PROB_F_Q_D0 } from '@betarena/scores-lib/dist/graphql/query.probabilities';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -114,7 +115,7 @@
 		};
 		const response: BETARENA_HASURA_votes_query =
 			await initGrapQLClient().request(
-				REDIS_CACHE_FIXTURE_PROBABILITIES_0,
+				B_C_PROB_F_Q_D0,
 				VARIABLES
 			);
 

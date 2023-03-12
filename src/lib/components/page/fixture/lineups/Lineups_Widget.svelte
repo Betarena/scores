@@ -20,6 +20,8 @@
 		type Unsubscribe
 	} from 'firebase/database';
 
+  import { B_C_LIN_F_Q_D1 } from "@betarena/scores-lib/dist/graphql/query.lineups.js";
+
 	import type {
 		BETARENA_HASURA_lineups_query,
 		BETARENA_HASURA_SURGICAL_JSONB_scores_football_players,
@@ -37,7 +39,6 @@
 	import LineupVectorMobileAway from './Lineup_Vector_Mobile_Away.svelte';
 	import LineupVectorTablet from './Lineup_Vector_Tablet.svelte';
 
-	import { REDIS_CACHE_LINEUPS_DATA_4 } from '$lib/graphql/fixtures/lineups/query';
 	import { initGrapQLClient } from '$lib/graphql/init';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
@@ -1029,7 +1030,7 @@
 		});
 
 		const VARIABLES = {
-			playerIds: playerIdsArr
+			playerIdsArr
 		};
 
 		const t0 = performance.now();
@@ -1037,7 +1038,7 @@
 			'REDIS_CACHE_LINEUPS_DATA_4';
 		const response: BETARENA_HASURA_lineups_query =
 			await initGrapQLClient().request(
-				REDIS_CACHE_LINEUPS_DATA_4,
+				B_C_LIN_F_Q_D1,
 				VARIABLES
 			);
 		const t1 = performance.now();

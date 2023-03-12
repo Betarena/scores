@@ -44,12 +44,12 @@
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
 	import { get } from '$lib/api/utils';
+	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_LIVE_TIME_OPT,
 		FIXTURE_NOT_START_OPT
-	} from '$lib/models/sportmonks';
-	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
+	} from "@betarena/scores-lib/dist/api/sportmonks.js";
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES

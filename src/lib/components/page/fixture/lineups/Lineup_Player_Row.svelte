@@ -14,7 +14,7 @@
 	import {
 		FIXTURE_LIVE_TIME_OPT,
 		type FIXTURE_STATUS_TYPES
-	} from '$lib/models/sportmonks';
+	} from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import substitution from './assets/corner-up-right.svg';
 	import football from './assets/football.svg';
 	import injured from './assets/injured.svg';

@@ -13,10 +13,6 @@
 
 	import { db_real } from '$lib/firebase/init';
 	import { get_odds } from '$lib/firebase/votes';
-	import {
-		HASURA_FIXTURE_VOTES_DATA_0,
-		HASURA_FIXTURE_VOTES_INIT_UPDATE
-	} from '$lib/graphql/fixtures/votes/query';
 	import { initGrapQLClient } from '$lib/graphql/init';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
@@ -24,6 +20,10 @@
 		type fixture
 	} from '$lib/store/vote_fixture';
 	import { getImageBgColor } from '$lib/utils/color_thief';
+	import {
+		HASURA_FIXTURE_VOTES_DATA_0,
+		HASURA_FIXTURE_VOTES_INIT_UPDATE
+	} from '@betarena/scores-lib/dist/graphql/query.votes.js';
 	import {
 		onValue,
 		ref,
@@ -43,7 +43,7 @@
 	import VoteLoader from './Vote_Loader.svelte';
 
 	import { get } from '$lib/api/utils';
-	import { FIXTURE_NO_VOTES_OPT } from '$lib/models/sportmonks';
+	import { FIXTURE_NO_VOTES_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -533,7 +533,7 @@
 	}
 
 	async function listen_real_time_odds(): Promise<void> {
-    dlog(`${STS_W_F_TAG} Triggered odds listen`, STS_W_F_TOG, STS_W_F_STY);
+    dlog(`${VO_W_F_TAG} Triggered odds listen`, VO_W_F_TOG, VO_W_F_STY);
 		const sportbook_array: FIREBASE_odds[] = [];
 		const fixture_time =
 			FIXTURE_VOTES_DATA?.time + 'Z';

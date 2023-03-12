@@ -35,7 +35,7 @@
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_NOT_START_OPT
-	} from '$lib/models/sportmonks';
+	} from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
