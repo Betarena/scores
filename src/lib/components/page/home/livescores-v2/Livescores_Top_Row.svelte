@@ -229,7 +229,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {WIDGET_T_DATA?.all || 'All'} ({numOfFixtures || 0})
     </p>
   </div>
-  <div
+  <div 
     class="
       fixture-filter-box
       text-center
