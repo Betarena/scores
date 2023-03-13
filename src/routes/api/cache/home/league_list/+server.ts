@@ -2,8 +2,7 @@ import { LEGL_C_D_A, LEGL_C_T_A } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-  get_target_hset_cache_data,
-  league_list_cache_data_addr
+  get_target_hset_cache_data
 } from '../../std_main';
 
 /**
@@ -30,7 +29,7 @@ export async function GET(req): Promise<unknown> {
 		// [ℹ] otherwise, return the "EN" version - default;
 		const response_en =
 			await get_target_hset_cache_data(
-				league_list_cache_data_addr,
+				LEGL_C_D_A,
 				'en'
 			);
 		if (response_en) {

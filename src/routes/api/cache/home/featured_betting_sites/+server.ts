@@ -2,7 +2,6 @@ import { FEATB_C_D_A, FEATB_C_T_A } from '@betarena/scores-lib/dist/redis/config
 import { json } from '@sveltejs/kit';
 
 import {
-  featured_bet_site_cache_trans_addr,
   get_target_hset_cache_data
 } from '../../std_main';
 
@@ -30,7 +29,7 @@ export async function GET(req): Promise<unknown> {
 		// [ℹ] otherwise, return the "EN" version - default;
 		const response_en =
 			await get_target_hset_cache_data(
-				FEATB_C_T_A,
+				FEATB_C_D_A,
 				'en'
 			);
 		if (response_en) {
@@ -45,7 +44,7 @@ export async function GET(req): Promise<unknown> {
 	if (lang) {
 		const response_cache =
 			await get_target_hset_cache_data(
-				featured_bet_site_cache_trans_addr,
+				FEATB_C_T_A,
 				lang
 			);
 		if (response_cache) {

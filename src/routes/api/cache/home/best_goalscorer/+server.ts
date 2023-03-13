@@ -2,7 +2,6 @@ import { TGOL_C_D_A, TGOL_C_T_A } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-  best_goalscorer_cache_trans_addr,
   get_target_hset_cache_data
 } from '../../std_main';
 
@@ -30,7 +29,7 @@ export async function GET(req): Promise<unknown> {
 		// [ℹ] otherwise, return the "EN" version - default;
 		const response_en =
 			await get_target_hset_cache_data(
-				TGOL_C_T_A,
+				TGOL_C_D_A,
 				'en'
 			);
 		if (response_en) {
@@ -45,7 +44,7 @@ export async function GET(req): Promise<unknown> {
 	if (lang) {
 		const response_cache =
 			await get_target_hset_cache_data(
-				best_goalscorer_cache_trans_addr,
+				TGOL_C_T_A,
 				lang
 			);
 		if (response_cache) {
