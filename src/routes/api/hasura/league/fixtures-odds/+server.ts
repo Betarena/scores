@@ -143,6 +143,10 @@ async function main(
     season_week_round_ranges_map
   )
 
+  if (_league_id == undefined) {
+    _league_id = historic_fixtures_by_league.keys().next().value
+  }
+
 	return historic_fixtures_by_league.get(parseInt(_league_id));
 
   // IF (LEAGUE_ID) returns:

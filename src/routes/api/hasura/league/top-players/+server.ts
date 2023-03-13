@@ -82,14 +82,16 @@ async function main(
     players_teams_data
   )
 
-  const final_obj_array = await generate_top_players_data(
+  const map = await generate_top_players_data(
     season_details_map,
     players_map, 
     teams_map
   )
 
+  const target_league = map.keys().next().value
+
 	// [ℹ] return top-players data for (THIS) target season
-	return final_obj_array[0];
+	return map.get(target_league).seasons[0];
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
