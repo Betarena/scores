@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	// ... external modules imports;
+// ... external modules imports;
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import type {
@@ -79,12 +79,12 @@
 					<img
 						id="player-img"
 						src={data.image_path}
-						alt=""
+						alt="default alt text"
 					/>
 					<img
 						id="team-img"
 						src={data.logo_path}
-						alt=""
+						alt="default alt text"
 					/>
 				</div>
 
@@ -135,12 +135,12 @@
 					<img
 						id="player-img"
 						src={data.image_path}
-						alt=""
+						alt="default alt text"
 					/>
 					<img
 						id="team-img"
 						src={data.logo_path}
-						alt=""
+						alt="default alt text"
 					/>
 				</div>
 

@@ -1247,7 +1247,7 @@
 							<img
 								src={FIXTURE_LINEUPS?.home
 									?.team_logo}
-								alt=""
+								alt="default alt text"
 								width="20px"
 								height="20px"
 								class="sel-team-img"
@@ -1287,7 +1287,7 @@
 							<img
 								src={FIXTURE_LINEUPS?.away
 									?.team_logo}
-								alt=""
+								alt="default alt text"
 								width="20px"
 								height="20px"
 								class="sel-team-img"
@@ -1361,7 +1361,7 @@
 								src={FIXTURE_LINEUPS[
 									selected_view
 								]?.team_logo}
-								alt=""
+								alt="default alt text"
 								width="40"
 								height="40"
 								class="main-team-img"
@@ -1447,7 +1447,7 @@
 								src={FIXTURE_LINEUPS[
 									selected_view
 								]?.coach_avatar}
-								alt=""
+								alt="default alt text"
 								width="40"
 								height="40"
 								class="lineup-img"
@@ -1583,7 +1583,7 @@
 								<img
 									src={FIXTURE_LINEUPS?.home
 										?.team_logo}
-									alt=""
+									alt="default alt text"
 									width="40"
 									height="40"
 									class="main-team-img"
@@ -1715,7 +1715,7 @@
 								<img
 									src={FIXTURE_LINEUPS?.away
 										?.team_logo}
-									alt=""
+									alt="default alt text"
 									width="40px"
 									height="40px"
 									class="main-team-img"
@@ -1746,7 +1746,7 @@
 								<img
 									src={FIXTURE_LINEUPS.home
 										?.coach_avatar}
-									alt=""
+									alt="default alt text"
 									width="40px"
 									height="40px"
 									class="lineup-img"
@@ -1833,7 +1833,7 @@
 								<img
 									src={FIXTURE_LINEUPS?.away
 										?.coach_avatar}
-									alt=""
+									alt="default alt text"
 									width="40px"
 									height="40px"
 									class="lineup-img"

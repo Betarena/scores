@@ -255,14 +255,14 @@
 								{#if !toggleDropdown}
 									<img
 										src={arrow_down}
-										alt=""
+										alt="default alt text"
 										width="20px"
 										height="20px"
 									/>
 								{:else}
 									<img
 										src={arrow_up}
-										alt=""
+										alt="default alt text"
 										width="20px"
 										height="20px"
 									/>
@@ -314,7 +314,7 @@
 										{#if item.season_league_id === dropdownSelect}
 											<img
 												src={check_league}
-												alt=""
+												alt="default alt text"
 												width="20px"
 												height="20px"
 											/>

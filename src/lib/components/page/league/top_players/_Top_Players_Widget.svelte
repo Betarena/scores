@@ -449,7 +449,7 @@ COMPONENT HTML
 													.replace(/\s/g, '_')}
 												<img
 													src={check_league}
-													alt=""
+													alt="default alt text"
 													width="20px"
 													height="20px"
 												/>

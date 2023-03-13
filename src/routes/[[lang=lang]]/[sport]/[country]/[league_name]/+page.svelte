@@ -288,7 +288,7 @@
 
 		<img
 			src="/assets/svg/tournaments/arrow-right.svg"
-			alt=""
+			alt="default alt text"
 			class="m-r-10"
 			width="14px"
 			height="14px"
@@ -309,7 +309,7 @@
 
 		<img
 			src="/assets/svg/tournaments/arrow-right.svg"
-			alt=""
+			alt="default alt text"
 			class="m-r-10"
 			width="14px"
 			height="14px"

@@ -488,9 +488,9 @@
 						<img
 							src={FIXTURE_INCIDENTS?.home
 								?.team_logo}
-							alt=""
-							width="24px"
-							height="24px"
+							alt="Team image"
+							width="24"
+							height="24"
 						/>
 						<p
 							class="
@@ -521,9 +521,9 @@
 						<img
 							src={FIXTURE_INCIDENTS?.away
 								?.team_logo}
-							alt=""
-							width="24px"
-							height="24px"
+							alt="Team image"
+							width="24"
+							height="24"
 						/>
 					</div>
 				</div>

@@ -686,7 +686,7 @@
 						<img
 							class="img-flag"
 							src={FEATURED_MATCH_WIDGET_DATA.country_flag}
-							alt=""
+							alt="default alt text"
 						/>
 						<!-- [ℹ] league-name-title 
               -->
@@ -717,7 +717,7 @@
 								<img
 									class="m-b-12"
 									src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-									alt=""
+									alt="default alt text"
 									width="72px"
 									height="72px"
 								/>
@@ -769,7 +769,7 @@
 								<img
 									class="m-b-12"
 									src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-									alt=""
+									alt="default alt text"
 									width="72px"
 									height="72px"
 								/>
@@ -825,7 +825,7 @@
 										{:else}
 											<img
 												src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-												alt=""
+												alt="default alt text"
 												width="28px"
 												height="28px"
 											/>
@@ -913,7 +913,7 @@
                         -->
 											<img
 												src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
-												alt=""
+												alt="default alt text"
 												width="28px"
 												height="28px"
 											/>
@@ -997,7 +997,7 @@
 										{:else}
 											<img
 												src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-												alt=""
+												alt="default alt text"
 												width="28px"
 												height="28px"
 											/>
@@ -1060,7 +1060,7 @@
 
 								<img
 									src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
-									alt=""
+									alt="default alt text"
 									width="16px"
 									height="16px"
 									style="position: absolute; top: 12px; right: 20px;"
@@ -1077,7 +1077,7 @@
 										src={FEATURED_MATCH_WIDGET_DATA
 											.live_odds.fixture_odds_info
 											.image}
-										alt=""
+										alt="default alt text"
 										width="100%"
 										height="40px"
 									/>
@@ -1118,7 +1118,7 @@
 													{#if fixtureDataVote.fixture_vote == '1'}
 														<img
 															src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-															alt=""
+															alt="default alt text"
 															width="28px"
 															height="28px"
 														/>
@@ -1135,7 +1135,7 @@
 													{:else}
 														<img
 															src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-															alt=""
+															alt="default alt text"
 															width="28px"
 															height="28px"
 														/>
@@ -1294,7 +1294,7 @@
 								<img
 									class="m-r-16"
 									src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
-									alt=""
+									alt="default alt text"
 									width="32px"
 									height="32px"
 								/>
@@ -1388,7 +1388,7 @@
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.local_team_player_1_image_path}
-											alt=""
+											alt="default alt text"
 											width="32px"
 											height="32px"
 											class="player-img"
@@ -1474,7 +1474,7 @@
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.local_team_player_2_image_path}
-											alt=""
+											alt="default alt text"
 											width="32px"
 											height="32px"
 											class="player-img"
@@ -1528,7 +1528,7 @@
 								<img
 									class="m-r-16"
 									src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
-									alt=""
+									alt="default alt text"
 									width="32px"
 									height="32px"
 								/>
@@ -1621,7 +1621,7 @@
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.visitor_team_player_1_image_path}
-											alt=""
+											alt="default alt text"
 											width="32px"
 											height="32px"
 											class="player-img"
@@ -1707,7 +1707,7 @@
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.visitor_team_player_2_image_path}
-											alt=""
+											alt="default alt text"
 											width="32px"
 											height="32px"
 											class="player-img"

@@ -49,10 +49,10 @@
 
   <img
     src="/assets/svg/tournaments/arrow-right.svg"
-    alt=""
+    alt="Arrow Right Icon"
     class="m-r-10"
-    width="14px"
-    height="14px"
+    width="14"
+    height="14"
   />
 
   <!-- 
@@ -80,10 +80,10 @@
 
   <img
     src="/assets/svg/tournaments/arrow-right.svg"
-    alt=""
+    alt="Arrow Right Icon"
     class="m-r-10"
-    width="14px"
-    height="14px"
+    width="14"
+    height="14"
   />
 
   <!-- 
@@ -111,10 +111,10 @@
 
   <img
     src="/assets/svg/tournaments/arrow-right.svg"
-    alt=""
+    alt="Arrow Right Icon"
     class="m-r-10"
-    width="14px"
-    height="14px"
+    width="14"
+    height="14"
   />
 
   <!-- 

@@ -2564,14 +2564,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={one_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
 																{:else}
 																	<img
 																		src={one_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
@@ -2580,14 +2580,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={two_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
 																{:else}
 																	<img
 																		src={two_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
@@ -2595,14 +2595,14 @@
 															{:else if $userBetarenaSettings.theme == 'Dark'}
 																<img
 																	src={three_red_card_dark}
-																	alt=""
+																	alt="default alt text"
 																	width="15px"
 																	height="19px"
 																/>
 															{:else}
 																<img
 																	src={three_red_card}
-																	alt=""
+																	alt="default alt text"
 																	width="18px"
 																	height="22px"
 																/>
@@ -2642,14 +2642,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={one_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
 																{:else}
 																	<img
 																		src={one_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
@@ -2658,14 +2658,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={two_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
 																{:else}
 																	<img
 																		src={two_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
@@ -2673,14 +2673,14 @@
 															{:else if $userBetarenaSettings.theme == 'Dark'}
 																<img
 																	src={three_red_card_dark}
-																	alt=""
+																	alt="default alt text"
 																	width="15px"
 																	height="19px"
 																/>
 															{:else}
 																<img
 																	src={three_red_card}
-																	alt=""
+																	alt="default alt text"
 																	width="18px"
 																	height="22px"
 																/>
@@ -2720,14 +2720,14 @@
 														{#if $userBetarenaSettings.theme == 'Dark'}
 															<img
 																src={play_dark}
-																alt=""
+																alt="default alt text"
 																width="14px"
 																height="14px"
 															/>
 														{:else}
 															<img
 																src={play}
-																alt=""
+																alt="default alt text"
 																width="14px"
 																height="14px"
 															/>
@@ -3083,14 +3083,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={one_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
 																{:else}
 																	<img
 																		src={one_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
@@ -3099,14 +3099,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={two_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
 																{:else}
 																	<img
 																		src={two_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
@@ -3114,14 +3114,14 @@
 															{:else if $userBetarenaSettings.theme == 'Dark'}
 																<img
 																	src={three_red_card_dark}
-																	alt=""
+																	alt="default alt text"
 																	width="15px"
 																	height="19px"
 																/>
 															{:else}
 																<img
 																	src={three_red_card}
-																	alt=""
+																	alt="default alt text"
 																	width="18px"
 																	height="22px"
 																/>
@@ -3162,14 +3162,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={one_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
 																{:else}
 																	<img
 																		src={one_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="12px"
 																		height="16px"
 																	/>
@@ -3178,14 +3178,14 @@
 																{#if $userBetarenaSettings.theme == 'Dark'}
 																	<img
 																		src={two_red_card_dark}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
 																{:else}
 																	<img
 																		src={two_red_card}
-																		alt=""
+																		alt="default alt text"
 																		width="15px"
 																		height="19px"
 																	/>
@@ -3193,14 +3193,14 @@
 															{:else if $userBetarenaSettings.theme == 'Dark'}
 																<img
 																	src={three_red_card_dark}
-																	alt=""
+																	alt="default alt text"
 																	width="15px"
 																	height="19px"
 																/>
 															{:else}
 																<img
 																	src={three_red_card}
-																	alt=""
+																	alt="default alt text"
 																	width="18px"
 																	height="22px"
 																/>
@@ -3296,7 +3296,7 @@
 																	?.live_odds
 																	?.home
 																	.betting_site_icon_link}
-																alt=""
+																alt="default alt text"
 															/>
 														</div>
 													</a>
@@ -3332,7 +3332,7 @@
 																	?.live_odds
 																	?.draw
 																	.betting_site_icon_link}
-																alt=""
+																alt="default alt text"
 															/>
 														</div>
 													</a>
@@ -3368,7 +3368,7 @@
 																	?.live_odds
 																	?.away
 																	.betting_site_icon_link}
-																alt=""
+																alt="default alt text"
 															/>
 														</div>
 													</a>

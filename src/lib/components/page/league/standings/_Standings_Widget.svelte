@@ -1227,10 +1227,10 @@
 							{#if $userBetarenaSettings.theme == 'Dark'}
 								<img
 									src={slider_left_dark}
-									alt=""
+									alt="default alt text"
 								/>
 							{:else}
-								<img src={slider_left} alt="" />
+								<img src={slider_left} alt="default alt text" />
 							{/if}
 						</button>
 
@@ -1251,10 +1251,10 @@
 							{#if $userBetarenaSettings.theme == 'Dark'}
 								<img
 									src={slider_right_dark}
-									alt=""
+									alt="default alt text"
 								/>
 							{:else}
-								<img src={slider_right} alt="" />
+								<img src={slider_right} alt="default alt text" />
 							{/if}
 						</button>
 					</div>

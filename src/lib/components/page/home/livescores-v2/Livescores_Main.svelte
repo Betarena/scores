@@ -411,7 +411,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 <img
                   src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                   on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
-                  alt=""
+                  alt="default alt text"
                   class="m-r-15"
                   width="21"
                   height="16"
@@ -466,7 +466,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <img
                 src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                 on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
-                alt=""
+                alt="default alt text"
                 class="m-r-32"
                 width="24"
                 height="18"

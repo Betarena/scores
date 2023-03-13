@@ -136,7 +136,7 @@ COMPONENT HTML
 		>
 			<img
 				src={selectedMenuOptIcon}
-				alt=""
+				alt="default alt text"
 				width="20"
 				height="20"
 				class="m-r-12"
@@ -264,7 +264,7 @@ COMPONENT HTML
 		{#if SELECTED_OPT == MENU_OPT && tabletExclusive}
 			<img
 				src={check}
-				alt=""
+				alt="default alt text"
 				width="20"
 				height="20"
 				class:display-none={SELECTED_OPT !=
