@@ -1,9 +1,8 @@
+import { TP_C_D_A, TP_C_T_A } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	tour_top_play_cache_data_addr,
-	tour_top_play_cache_trans_addr
+  get_target_hset_cache_data
 } from '../../std_main';
 
 /**
@@ -18,7 +17,7 @@ export async function GET(req): Promise<unknown> {
 	if (lang) {
 		const response_cache =
 			await get_target_hset_cache_data(
-				tour_top_play_cache_trans_addr,
+				TP_C_T_A,
 				lang
 			);
 		if (response_cache) {
@@ -29,7 +28,7 @@ export async function GET(req): Promise<unknown> {
 	if (league_id) {
 		const response_cache =
 			await get_target_hset_cache_data(
-				tour_top_play_cache_data_addr,
+				TP_C_D_A,
 				league_id
 			);
 		if (response_cache) {

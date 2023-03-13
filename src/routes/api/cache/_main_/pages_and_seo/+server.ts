@@ -1,15 +1,7 @@
+import { SAP_C_D_A0, SAP_C_D_A1, SAP_C_D_A2, SAP_C_D_A3, SAP_C_D_A4, SAP_C_D_A5, SAP_C_D_A6, SAP_C_D_A7 } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-  cache_country_translations,
-  cache_fixtures_infov2_key,
-  cache_fixtures_info_key,
-  cache_fixtures_seo_key,
-  cache_homepage_seo_key,
-  cache_sitemap_urls_key,
-  cache_sport_translations,
-  cache_tournaments_info_key,
-  cache_tournaments_seo_key,
   get_target_hset_cache_data,
   get_target_set_cache_data
 } from '../../std_main';
@@ -37,7 +29,7 @@ export async function GET(req): Promise<unknown> {
 	if (url && !page && !lang) {
 		const response_cache =
 			await get_target_set_cache_data(
-				cache_sitemap_urls_key,
+				SAP_C_D_A0,
 				url
 			);
 		if (response_cache == 1) {
@@ -50,7 +42,7 @@ export async function GET(req): Promise<unknown> {
 	if (lang && page === 'homepage') {
 		const response_cache =
 			await get_target_hset_cache_data(
-				cache_homepage_seo_key,
+				SAP_C_D_A1,
 				lang
 			);
 		if (response_cache) {
@@ -62,7 +54,7 @@ export async function GET(req): Promise<unknown> {
 	if (url && page === 'tournaments') {
 		const response_cache =
 			await get_target_hset_cache_data(
-				cache_tournaments_info_key,
+				SAP_C_D_A3,
 				url
 			);
 		if (response_cache) {
@@ -74,20 +66,8 @@ export async function GET(req): Promise<unknown> {
 	if (lang && page === 'tournaments') {
 		const response_cache =
 			await get_target_hset_cache_data(
-				cache_tournaments_seo_key,
+				SAP_C_D_A2,
 				lang
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
-	}
-
-  	// [fixture-page-INFO-GET]
-	if (fixture_id && page === 'fixtures2') {
-		const response_cache =
-			await get_target_hset_cache_data(
-				cache_fixtures_infov2_key,
-				fixture_id
 			);
 		if (response_cache) {
 			return json(response_cache);
@@ -98,7 +78,7 @@ export async function GET(req): Promise<unknown> {
 	if (fixture_id && page === 'fixtures') {
 		const response_cache =
 			await get_target_hset_cache_data(
-				cache_fixtures_info_key,
+				SAP_C_D_A5,
 				fixture_id
 			);
 		if (response_cache) {
@@ -110,7 +90,7 @@ export async function GET(req): Promise<unknown> {
 	if (lang && page === 'fixtures') {
 		const response_cache =
 			await get_target_hset_cache_data(
-				cache_fixtures_seo_key,
+				SAP_C_D_A4,
 				lang
 			);
 		if (response_cache) {
@@ -122,7 +102,7 @@ export async function GET(req): Promise<unknown> {
 	if (country_id) {
 		const response_cache =
 			await get_target_hset_cache_data(
-				cache_country_translations,
+				SAP_C_D_A7,
 				country_id
 			);
 		if (response_cache) {
@@ -134,7 +114,7 @@ export async function GET(req): Promise<unknown> {
 	if (sport) {
 		const response_cache =
 			await get_target_hset_cache_data(
-				cache_sport_translations,
+				SAP_C_D_A6,
 				sport
 			);
 		if (response_cache) {
