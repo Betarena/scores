@@ -24,8 +24,7 @@
 	import SplashScreen from '$lib/components/_Splash_screen.svelte';
 
 	import '../app.css';
-	import { goto } from '$app/navigation';
-
+	
 	const VALID_PROFILE_PAGE_URL: string[] = [
 		'/u/dashboard',
 		'/u/settings'
@@ -44,12 +43,26 @@
 		if (!dev) {
 			Sentry.init({
 				dsn: 'https://847e94f5884c4185809a4cee44769d8b@o1009217.ingest.sentry.io/6275655',
-				integrations: [new BrowserTracing()],
+				integrations: [
+          new BrowserTracing(),
+          new Sentry.Replay()
+        ],
+
+        // NOTE: browser-tracing;
 
 				// Set tracesSampleRate to 1.0 to capture 100%
 				// of transactions for performance monitoring.
 				// We recommend adjusting this value in production
-				tracesSampleRate: 1.0
+				tracesSampleRate: 1.0,
+        
+        // NOTE: replay-session;
+        
+        // This sets the sample rate to be 10%. You may want this to be 100% while
+        // in development and sample at a lower rate in production
+        replaysSessionSampleRate: 0.1,
+        // If the entire session is not sampled, use the below sample rate to sample
+        // sessions when an error occurs.
+        replaysOnErrorSampleRate: 1.0,
 			});
 		}
 	});
