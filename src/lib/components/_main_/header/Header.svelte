@@ -3,7 +3,7 @@ COMPONENT JS - BASIC
 [TypeScript]
 =================== -->
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -233,7 +233,7 @@ COMPONENT JS - BASIC
 		}
 
 		// [ℹ] onError, navigate back to homepage
-		if ($page.error) {
+		if ($page.error && !dev) {
 			if (lang == 'en') {
         dlog(`${NB_W_TAG} -> EN`, true, NB_W_STY)
 				await goto('/');
@@ -434,9 +434,11 @@ COMPONENT JS - BASIC
 		}
 	}
 
+  // [ℹ] (archive) -> && PROFILE_URL == $page.route.id
   $: if ($userBetarenaSettings?.lang 
     && !$page.error
-    && PROFILE_URL == $page.route.id) {
+    && $page.route.id
+    && $userBetarenaSettings?.user != undefined) {
     update_select_lang()
   }
 
