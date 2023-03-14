@@ -155,11 +155,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           text-center
         "
         class:currentDate={new Date(item).toISOString().slice(0, 10) == today.toISOString().slice(0, 10)}>
-        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item).getDay()]] || ""}
+        <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
+        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item.replace('-', '/')).getDay()]] || ""}
         <br/>
         <span
           class="w-500">
-          {new Date(item).getDate()}
+          <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
+          {new Date(item.replace('-', '/')).getDate()}
         </span>
       </p>
     </div>
