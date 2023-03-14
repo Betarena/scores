@@ -67,15 +67,17 @@ async function main(
     const target_current_season_arr = await get_league_current_seasons(LEAGUE_ID);
     // [ℹ] exit
     if (target_current_season_arr == undefined || target_current_season_arr.length == 0) {
-      return null;
+      // return null;
+      return {
+      	league_id: LEAGUE_ID,
+      	seasons: []
+      };
     }
 	  SEASON_ID = target_current_season_arr[0].id;
   }
   else {
     SEASON_ID = parseInt(_seasonId);
   }
-
-  console.log('SEASON_ID', SEASON_ID)
 
 	const h_fixtures_arr = await get_target_historic_fixtures(
     graphQlInstance, 
@@ -84,7 +86,11 @@ async function main(
 	// [ℹ] exit;
 	if (h_fixtures_arr == undefined
     || h_fixtures_arr.length == 0) {
-		return null;
+		// return null;
+    return {
+      league_id: parseInt(_league_id),
+      seasons: []
+    };
 	}
 
 	const season_details_data = await get_target_season_details(
@@ -131,7 +137,11 @@ async function main(
 	);
 	// [ℹ] exit;
 	if (season_week_round_ranges_map == undefined) {
-		return null;
+		// return null;
+    return {
+      league_id: parseInt(_league_id),
+      seasons: []
+    };
 	}
 
   let historic_fixtures_by_league = await fixturesGroupByLeague(
