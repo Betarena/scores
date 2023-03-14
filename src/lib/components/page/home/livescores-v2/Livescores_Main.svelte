@@ -473,7 +473,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
               <p
                 class="
-                  s-16
+                  s-14
                   w-500
                   color-black-2
                 ">
