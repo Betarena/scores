@@ -4,6 +4,12 @@
  */
 import redis from '$lib/redis/init';
 
+// [🗃️] archive
+export const live_scores_leagues = 'live_scores_leagues';
+export const live_scores = 'live_scores';
+export const live_scores_football_translations = 'live_scores_football_translations';
+export const live_scores_football_tournaments = 'live_scores_football_tournaments';
+
 /**
  * [HSET] [GET] Method
  * @param key

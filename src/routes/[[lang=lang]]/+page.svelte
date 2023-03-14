@@ -23,7 +23,6 @@
 	import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/home/featured_match/interface-fixture';
 	import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
 	import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
-	import type { LiveScores_Football_Translation } from '$lib/models/home/live_scores_football/types';
 	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
@@ -39,8 +38,6 @@
 	let LEAGUE_LIST_WIDGET_DATA_SEO: REDIS_CACHE_SINGLE_league_list_seo_t_response;
 	let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
 	let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
-	let LIVE_SCORES_FOOTBALL_TRANSLATIONS: LiveScores_Football_Translation[];
-	let LIVESCORES_FOOTBALL_TOURNAMENTS: any;
 
 	$: PAGE_DATA_SEO = $page.data?.PAGE_DATA_SEO;
 	$: FEATURED_MATCH_WIDGET_DATA_SEO =
@@ -55,14 +52,6 @@
 	$: LEAGUES_TABLE_SCORES_SEO_DATA =
 		$page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
 	$: SEO_BLOCK_DATA = $page.data?.SEO_BLOCK_DATA;
-	$: LIVE_SCORES_DATA_DATA_SEO =
-		$page.data?.LIVE_SCORES_DATA_DATA_SEO;
-	$: LIVE_SCORES_DATA_LEAGUES =
-		$page.data?.LIVE_SCORES_DATA_LEAGUES;
-	$: LIVE_SCORES_FOOTBALL_TRANSLATIONS =
-		$page.data?.LIVE_SCORES_FOOTBALL_TRANSLATIONS;
-	$: LIVESCORES_FOOTBALL_TOURNAMENTS =
-		$page.data?.LIVESCORES_FOOTBALL_TOURNAMENTS;
 
   // ~~~~~~~~~~~~~~~~~~~~~
   //  PAGE METHODS
@@ -232,14 +221,6 @@
     -->
 		<div class="grid-display-column">
       <LivescoresWidget />
-			<!-- <div>
-				<LiveScoresWidget
-					{LIVE_SCORES_DATA_DATA_SEO}
-					{LIVE_SCORES_DATA_LEAGUES}
-					{LIVE_SCORES_FOOTBALL_TRANSLATIONS}
-					{LIVESCORES_FOOTBALL_TOURNAMENTS}
-				/>
-			</div> -->
 			<SeoBlock {SEO_BLOCK_DATA} />
 		</div>
 		<!-- 
@@ -268,14 +249,6 @@
     -->
 		<div class="grid-display-column">
       <LivescoresWidget />
-			<div>
-				<!-- <LiveScoresWidget
-					{LIVE_SCORES_DATA_DATA_SEO}
-					{LIVE_SCORES_DATA_LEAGUES}
-					{LIVE_SCORES_FOOTBALL_TRANSLATIONS}
-					{LIVESCORES_FOOTBALL_TOURNAMENTS}
-				/> -->
-			</div>
 			<FeaturedBettingSitesWidget
 				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 			/>
