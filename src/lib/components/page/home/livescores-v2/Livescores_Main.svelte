@@ -38,7 +38,7 @@ COMPONENT JS (w/ TS)
 
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/src/api/sportmonks';
+  import { FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks';
   import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
   import LivescoresTopRow from './Livescores_Top_Row.svelte';
   import LoaderRow from './loaders/Loader_Row.svelte';
