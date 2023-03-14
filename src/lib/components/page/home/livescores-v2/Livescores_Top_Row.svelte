@@ -55,19 +55,19 @@ COMPONENT JS (w/ TS)
   const today = new Date()
 
   const _today = new Date()
-  _today.setDate(_today.getDate() - 3)
+  _today.setDate(_today.getUTCDate() - 3)
   const days_3_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
+  _today.setDate(_today.getUTCDate() + 1)
   const days_2_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
+  _today.setDate(_today.getUTCDate() + 1)
   const days_1_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
+  _today.setDate(_today.getUTCDate() + 1)
   const days_0 = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
+  _today.setDate(_today.getUTCDate() + 1)
   const days_1_future = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
+  _today.setDate(_today.getUTCDate() + 1)
   const days_2_future = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getDate() + 1)
+  _today.setDate(_today.getUTCDate() + 1)
   const days_3_future = _today.toISOString().slice(0, 10)
 
   const fixture_dates: [
@@ -156,12 +156,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         "
         class:currentDate={new Date(item).toISOString().slice(0, 10) == today.toISOString().slice(0, 10)}>
         <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
-        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item.replace('-', '/')).getDay()]] || ""}
+        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item).getUTCDay()]] || ""}
         <br/>
         <span
           class="w-500">
           <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
-          {new Date(item.replace('-', '/')).getDate()}
+          {new Date(item).getUTCDate()}
         </span>
       </p>
     </div>

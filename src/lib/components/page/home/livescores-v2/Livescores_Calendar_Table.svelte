@@ -96,41 +96,41 @@ COMPONENT JS (w/ TS)
     e_date.setDate(1);
     monthWeeksArray = []
     dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()}`)
-    dlog(`${LV2_W_H_TAG[0]} s_date.getDate() : ${s_date.getDate()}`)
-    dlog(`${LV2_W_H_TAG[0]} s_date.getDay() : ${s_date.getDay()}`)
+    dlog(`${LV2_W_H_TAG[0]} s_date.getUTCDate() : ${s_date.getUTCDate()}`)
+    dlog(`${LV2_W_H_TAG[0]} s_date.getUTCDay() : ${s_date.getUTCDay()}`)
     while (true) {
       // [ℹ] exit;
       if (count >= numberOfMonthWeeks) {
         break;
       }
       const startWeekCalc = 
-        s_date.getDay() == 0
-        && e_date.getDay() == 0
-          ? (s_date.getDate() - 6)
-          : (s_date.getDate() - s_date.getDay() + 1)
+        s_date.getUTCDay() == 0
+        && e_date.getUTCDay() == 0
+          ? (s_date.getUTCDate() - 6)
+          : (s_date.getUTCDate() - s_date.getUTCDay() + 1)
       const endWeekCalc = 
-        s_date.getDay() == 0
-        && e_date.getDay() == 0
-          ? (s_date.getDate() - 0)
-          : (s_date.getDate() - s_date.getDay() + 7)
+        s_date.getUTCDay() == 0
+        && e_date.getUTCDay() == 0
+          ? (s_date.getUTCDate() - 0)
+          : (s_date.getUTCDate() - s_date.getUTCDay() + 7)
       s_date.setDate(startWeekCalc);
       e_date.setDate(endWeekCalc);
       let times = 8
       let weekDates: Date[] = []
       for (let i = 1; i < times; i++){
         let weekStart = new Date(s_date)
-        weekStart.setDate(s_date.getDate() - s_date.getDay() + i)
+        weekStart.setDate(s_date.getUTCDate() - s_date.getUTCDay() + i)
         weekDates.push(new Date(weekStart))
       }
       monthWeeksArray.push({
-        weekStart: s_date.getDate(),
-        weekEnd: e_date.getDate(),
+        weekStart: s_date.getUTCDate(),
+        weekEnd: e_date.getUTCDate(),
         weekDates
       })
-      s_date.setDate(s_date.getDate() + 7);
-      e_date.setDate(e_date.getDate() + 7);
+      s_date.setDate(s_date.getUTCDate() + 7);
+      e_date.setDate(e_date.getUTCDate() + 7);
       count++
-      dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()} | s_date.getDate(): ${s_date.getDate()} | s_date.getDay(): ${s_date.getDay()} | count: ${count}`, true)
+      dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()} | s_date.getUTCDate(): ${s_date.getUTCDate()} | s_date.getUTCDay(): ${s_date.getUTCDay()} | count: ${count}`, true)
     }
     dlog(monthWeeksArray, true)
   }
@@ -173,7 +173,7 @@ COMPONENT JS (w/ TS)
     month: number, 
     year: number
   ): number {
-    return new Date(year, month, 0).getDate();
+    return new Date(year, month, 0).getUTCDate();
   }
   
   /**
@@ -307,7 +307,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 class:currentDate={item.toISOString().slice(0, 10) == _currentDate.toISOString().slice(0, 10)}
                 class:notViewMonth={item.getMonth() != tempDate.getMonth()}
                 on:click={() => dateChange(item)}>
-                {item.getDate()}
+                {item.getUTCDate()}
               </td>
             {/each}
           </tr>
