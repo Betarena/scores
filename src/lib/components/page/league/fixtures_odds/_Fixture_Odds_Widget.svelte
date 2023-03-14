@@ -1472,7 +1472,7 @@
 	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let server_side_language = platfrom_lang_ssr(
+	$: server_side_language = platfrom_lang_ssr(
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
