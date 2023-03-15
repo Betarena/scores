@@ -21,6 +21,7 @@
 	import World from './assets/_World.svelte';
 	import LeagueInfoWidgetContentLoader from './_LeagueInfo_Widget_ContentLoader.svelte';
 
+	import { page } from '$app/stores';
 	import { dlog, LI_W_T_STY, LI_W_T_TAG, LI_W_T_TOG } from '$lib/utils/debug';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
