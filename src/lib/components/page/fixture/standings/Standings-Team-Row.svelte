@@ -234,17 +234,19 @@
 				class="row-space-end"
 				style="width: auto;"
 			>
-				{#each recent_form as form}
-					<div
-						class="
-              recent-form-dot 
-              m-r-5
-            "
-						class:win={form == 'W'}
-						class:draw={form == 'D'}
-						class:lost={form == 'L'}
-					/>
-				{/each}
+        {#if recent_form}
+          {#each recent_form.reverse() as form}
+            <div
+              class="
+                recent-form-dot 
+                m-r-5
+              "
+              class:win={form == 'W'}
+              class:draw={form == 'D'}
+              class:lost={form == 'L'}
+            />
+          {/each}
+        {/if}
 			</div>
 		</td>
 	{/if}

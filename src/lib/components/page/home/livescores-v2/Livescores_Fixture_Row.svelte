@@ -48,6 +48,8 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
+  const today = new Date()
+
   export let FIXTURE_D: LS2_C_Fixture
   export let server_side_language: string
 
@@ -106,6 +108,18 @@ COMPONENT JS (w/ TS)
 			return;
 		}
 	}
+
+  /**
+   * @description converts a target date to an
+   * ISO_string of yyyy-MM-dd format;
+   * @param {Date} date
+   * @returns {string} string
+   */
+   function convert_to_iso(
+    date: Date
+  ): string {
+    return date.toISOString().slice(0, 10)
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -183,6 +197,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if FIXTURE_D?.status === 'LIVE'}
+        {#if convert_to_iso(today) != convert_to_iso(new Date(FIXTURE_D?.fixture_day))}
+          <p
+            class="
+              no-wrap
+              s-12 
+              color-grey
+              dark-theme-custom-1
+            "
+          >
+            {new Date(FIXTURE_D?.fixture_day).getDate()/new Date(FIXTURE_D?.fixture_day).getMonth()}
+          </p>
+        {/if}
         <p
           class="
             s-12 
@@ -429,7 +455,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           id="sportbook-logo-img"
           class="
             cursor-pointer
-            m-r-5
           "
           src={$sessionStore?.sportbook_main?.image}
           alt={$sessionStore?.sportbook_main?.title}
@@ -446,6 +471,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         class="
           column-space-center 
           fixtures-scores-box
+          m-l-5
         "
       >
         <!-- 
@@ -455,7 +481,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             s-12 
             color-black-2
-            m-b-5
           "
           class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score && FIXTURE_D?.status !='LIVE'}
           class:color-red-bright={FIXTURE_D?.status === 'LIVE'}
@@ -506,6 +531,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-width: 85px;
 	}
 
+  div.fixtures-scores-box {
+    width: 14px;
+  }
+
   .team-lost-style {
     color: var(--grey) !important;
   }
@@ -539,7 +568,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   .team-name-txt-mobile {
-    font-weight: 400;
+    /* font-weight: 400; */
   }
 
   @media only screen
@@ -573,9 +602,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     img#sportbook-logo-img {
 			width: 30px;
 			height: 30px;
-      margin-right: 16px;
 		}
-    div.fixtures-scores-box p {
+    div.fixtures-scores-box {
+      margin-left: 16px;
+    } div.fixtures-scores-box p {
       font-size: 14px;
       font-weight: 500;
     }

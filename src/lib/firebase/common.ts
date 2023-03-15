@@ -6,13 +6,13 @@ import { getLivescoresNow } from "./fixtures_odds";
 import { db_real } from "./init";
 
 /**
- * @description [LISTEN-DATA-FETCH] method
- * listens to eal-time changes in 
- * Livescores_Now Table on Firebase (REAL-DB);
- * @returns {Promise < Unsubscribe >} Promise < Unsubscribe >
+ * @description common method that will listen to 
+ * real-time changes in Livescores_Now 
+ * Firebase (REAL-DB);
+ * @returns {Unsubscribe} Unsubscribe
  */
-export async function listenRealTimeLivescoresNowChange(
-): Promise < Unsubscribe > {
+export function listenRealTimeLivescoresNowChange(
+): Unsubscribe {
 
   dlog(`${FIREBASE_DEBUG_TAG} listenRealTimeLivescoresNowChange()`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
   const fixtureRef = ref(
@@ -44,7 +44,7 @@ export async function genLiveFixMap (
   dlog(`${FIREBASE_DEBUG_TAG} genLiveFixMap()`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
   const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
   // [ℹ] generate live-fixtures map
-  for (const live_fixture of data) {
+  for await (const live_fixture of data) {
     const fixture_id = parseInt(
       live_fixture[0].toString()
     );

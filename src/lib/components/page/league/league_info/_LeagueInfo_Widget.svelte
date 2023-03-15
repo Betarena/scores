@@ -47,6 +47,9 @@
 
 	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 
+  let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = $page.data?.FIXTURES_ODDS_T
+  $: FIXTURES_ODDS_T = $page.data?.FIXTURES_ODDS_T
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -189,15 +192,21 @@
 				.getUTCDate()
 				.toString() +
 			' ' +
-			monthNames[
-				new Date(start_end).getMonth().toString()
-			];
+      FIXTURES_ODDS_T
+        ?.months_abbreviation[
+        monthNames[
+          new Date(start_end).getMonth().toString()
+        ]
+      ];
 		dateDateEndDisplay =
 			new Date(end_date).getUTCDate().toString() +
 			' ' +
-			monthNames[
-				new Date(end_date).getMonth().toString()
-			];
+			FIXTURES_ODDS_T
+        ?.months_abbreviation[
+          monthNames[
+          new Date(end_date).getMonth().toString()
+        ]
+      ];
 
 		if (
 			currentDate > startDate &&

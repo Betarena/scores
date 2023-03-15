@@ -125,6 +125,78 @@
     )
 	});
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+  //  PAGE METHODS
+  // ~~~~~~~~~~~~~~~~~~~~~
+
+  let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
+
+  /**
+   * @description obtains the target sportbook data 
+   * information based on users geo-location;
+   * data gathered at page-level and set to svelte-stores
+   * to be used by (this) page components;
+   * NOTE: best approach
+   * TODO: can be moved to a layout-level [?]
+   * TODO: can be moved to a header-level [?]
+   * TODO: can be moved to a +server-level [⚠️]
+   * @returns {Promise<void>} void
+   */
+  async function sportbookIdentify(
+  ): Promise < void > {
+    if (!$userBetarenaSettings.country_bookmaker) {
+      return;
+    }
+    const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
+    $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response;
+    $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response[];
+    $sessionStore.sportbook_list = $sessionStore.sportbook_list.sort(
+			(a, b) =>
+				parseInt(a.position) -
+				parseInt(b.position)
+		);
+  }
+  
+  $: if ($userBetarenaSettings.country_bookmaker) {
+    sportbookIdentify()
+  }
+
+  onMount(async() => {
+    
+    await one_off_livescore_call()
+
+    let connectionRef = listenRealTimeLivescoresNowChange()
+    FIREBASE_CONNECTIONS_SET.add(connectionRef)
+    sportbookIdentify()
+
+    document.addEventListener(
+			'visibilitychange',
+			async function () {
+				if (!document.hidden) {
+          dlog('🔵 user is active', true)
+          await one_off_livescore_call()
+					let connectionRef = listenRealTimeLivescoresNowChange()
+          FIREBASE_CONNECTIONS_SET.add(connectionRef)
+				}
+			}
+		);
+  })
+
+  // CRITICAL
+	onDestroy(async () => {
+		const logsMsg: string[] = []
+		for (const connection of [...FIREBASE_CONNECTIONS_SET]) {
+      logsMsg.push('🔥 closing connection')
+			connection();
+		}
+    dlogv2(
+      `closing firebase connections`,
+      logsMsg,
+      true, 
+      'background: red; color: black;'
+    )
+	});
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~

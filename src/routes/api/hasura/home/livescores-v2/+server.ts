@@ -78,7 +78,7 @@ async function main(
   const league_map = await generate_leagues_map(leagues_data)
   const tournaments_map = await generate_tournaments_map(tournaments_data)
 
-  for await (const [id, league] of league_map) {
+  for await (const [, league] of league_map) {
     league.urls =
       tournaments_map.has(league?.id) == true
         ? tournaments_map.get(league?.id)?.urls

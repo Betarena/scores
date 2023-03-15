@@ -174,6 +174,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     id="calendar-out-box"
     class="
       text-center
+      column-space-center
     "
     class:activeDate={!fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))}>
     <!-- 
@@ -248,12 +249,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         ">
         {WIDGET_T_DATA?.live || 'Live'} ({numOfFixturesLive || 0})
       </p>
-      <img 
-        src={vec_pulse_dot}
-        alt='pulsating-dot'
-        width="16"
-        height="16"
-      />
+      {#if numOfFixturesLive != 0}
+        <img 
+          src={vec_pulse_dot}
+          alt='pulsating-dot'
+          width="16"
+          height="16"
+        />
+      {/if}
     </div>
   </div>
 </div>
@@ -266,11 +269,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   div#livescores-dates-box {
-    padding: 0 16px 0 16px;
+    padding: 0 7px 0 16px;
   } 
   div#livescores-dates-box > div.livescore-date-box,
   div#calendar-out-box {
-    padding: 7px 13px;
+    /* padding: 7px 13px; */
     border-radius: 6px;
     width: 40px;
     height: 56px;
@@ -289,7 +292,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#calendar-out-box {
     position: relative;
-    padding: 16px 11px;
+    /* padding: 16px 11px; */
   }
 
   div#fixture-filter-opt-box-outer {
@@ -328,10 +331,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   @media only screen 
     and (min-width: 475px) {
     div#livescores-dates-box {
-      padding: 0 20px 0 20px;
+      padding: 0 9px 0 20px;
     }
     div#fixture-filter-opt-box-outer {
       padding: 0 20px;
+    } div#fixture-filter-opt-box-outer div.fixture-filter-box p {
+      font-weight: 500;
     }
     div#livescores-dates-box > div.livescore-date-box,
     div#calendar-out-box {

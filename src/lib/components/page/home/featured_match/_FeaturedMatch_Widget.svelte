@@ -35,10 +35,12 @@
 	} from '$lib/models/home/featured_match/response_models';
 	import type { fixture } from '$lib/store/vote_fixture';
 // [ℹ] key component assets;
+	import { page } from '$app/stores';
 	import {
 		dlog,
 		FM_W_H_STY, FM_W_H_TAG, FM_W_H_TOG, logErrorGroup
 	} from '$lib/utils/debug';
+	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
 	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
@@ -358,6 +360,19 @@
 		);
 	});
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	let server_side_language = platfrom_lang_ssr(
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+	dlog(
+		`server_side_language: ${server_side_language}`
+	);
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// COMPONENT TIMER CLOCK
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -455,6 +470,14 @@
 	).toString();
 	$: if (parseInt(countD_h) < 10) {
 		countD_h = '0' + countD_h;
+	}
+
+  let show_countdown: boolean = true;
+
+  $: if (countD_sec.includes('-')) {
+		show_countdown = false;
+	} else {
+		show_countdown = true;
 	}
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -731,36 +754,52 @@
 							<!-- [ℹ] fixture-timer-clock 
               -->
 							<div style="align-self: center;">
-								<p
-									class="w-500 x-large desktop-x-large"
-								>
-									{countD_h}:{countD_min}:{countD_sec}
-								</p>
-								<p
-									class="w-400 small color-grey desktop-medium"
-									style="white-space: nowrap;"
-								>
-									{getOrdinalNum(
-										FEATURED_MATCH_WIDGET_DATA.time.getDate()
-									)}
-									{monthNames[
-										FEATURED_MATCH_WIDGET_DATA.time
-											.getMonth()
-											.toString()
-									]}
-									{FEATURED_MATCH_WIDGET_DATA.time
-										.getFullYear()
-										.toString()
-										.substr(-2)},
-									{FEATURED_MATCH_WIDGET_DATA.time
-										.getHours()
-										.toString()}:{(
-										'0' +
-										FEATURED_MATCH_WIDGET_DATA.time
-											.getMinutes()
-											.toString()
-									).slice(-2)}h
-								</p>
+                {#if show_countdown}
+                  <p
+                    class="w-500 x-large desktop-x-large"
+                  >
+                    {countD_h}:{countD_min}:{countD_sec}
+                  </p>
+                  <p
+                    class="w-400 small color-grey desktop-medium"
+                    style="white-space: nowrap;"
+                  >
+                    {getOrdinalNum(
+                      FEATURED_MATCH_WIDGET_DATA.time.getDate()
+                    )}
+                    {monthNames[
+                      FEATURED_MATCH_WIDGET_DATA.time
+                        .getMonth()
+                        .toString()
+                    ]}
+                    {FEATURED_MATCH_WIDGET_DATA.time
+                      .getFullYear()
+                      .toString()
+                      .substr(-2)},
+                    {FEATURED_MATCH_WIDGET_DATA.time
+                      .getHours()
+                      .toString()}:{(
+                      '0' +
+                      FEATURED_MATCH_WIDGET_DATA.time
+                        .getMinutes()
+                        .toString()
+                    ).slice(-2)}h
+                  </p>
+                {:else}
+                  <a
+                    href="{
+                      FEATURED_MATCH_WIDGET_DATA?.fix_urls != null 
+                        ? FEATURED_MATCH_WIDGET_DATA?.fix_urls[server_side_language] 
+                        : ''}
+                    ">
+                    <button
+                      id="watch-match-btn"
+                      class="btn-primary-v2">
+                      Watch the Match
+                    </button>
+                  </a>
+                {/if}
+                
 							</div>
 
 							<!-- [ℹ] second-team 
@@ -2045,6 +2084,14 @@
   COMPONENT STYLE
 =================-->
 <style>
+
+  button#watch-match-btn {
+    padding: 10px 16px;
+    font-size: 14px;
+    box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
+    border-radius: 8px;
+  }
+
 	#featured-no-match-box {
 		padding: 20px;
 		background: #ffffff;

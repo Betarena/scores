@@ -94,7 +94,6 @@ COMPONENT JS - BASIC
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 
-
   // Set a Cookie
   function setCookie(cName, cValue, expDays) {
     let date = new Date();
@@ -155,14 +154,14 @@ COMPONENT JS - BASIC
     if (timeout_intent != undefined 
     && lang != intent_intent_lang) {
       // [ℹ] clear timer
-      dlog(`${NB_W_TAG} clearning timer!`, false, NB_W_STY)
+      dlog(`${NB_W_TAG} clearning timer!`, true, NB_W_STY)
       clearTimeout(timeout_intent)
       intent_intent_lang = lang;
       // start new timer - if lang (target) not undefined
       if (lang == undefined) return
-      dlog(`${NB_W_TAG} setting new timer!`, false, NB_W_STY)
+      dlog(`${NB_W_TAG} setting new timer!`, true, NB_W_STY)
       timeout_intent = setTimeout(() => {
-        dlog(`${NB_W_TAG} intent triggered!`, false, NB_W_STY)
+        dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
         $sessionStore.lang_intent = intent_intent_lang;
       }, HOVER_TIMEOUT)
     }
@@ -171,7 +170,7 @@ COMPONENT JS - BASIC
     && timeout_intent == undefined) {
       intent_intent_lang = lang
       timeout_intent = setTimeout(() => {
-        dlog(`${NB_W_TAG} intent triggered!`, false, NB_W_STY)
+        dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
         $sessionStore.lang_intent = intent_intent_lang;
       }, HOVER_TIMEOUT)
     }
@@ -556,7 +555,8 @@ TODO:FIXME: not generating for each LANG
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <header 
   class="column-space-center"
-  class:user-active={PROFILE_URL == $page.route.id}>
+  class:user-active={PROFILE_URL == $page.route.id}
+  class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}>
 	<!-- 
   [ℹ] area outside to close action (inner header)
   -->
@@ -2234,6 +2234,10 @@ COMPONENT STYLE
     height: 100%;
     width: 100%;
     z-index: 1000;
+  }
+
+  .update-z-index {
+		z-index: unset;
   }
 
 	header {

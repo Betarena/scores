@@ -156,7 +156,7 @@
             w-500
           "
 				>
-					Follow Bet
+					{FIXTURE_H2H_TRANSLATION?.follow_bet || 'Follow Bet'}
 				</p>
 			</button>
 

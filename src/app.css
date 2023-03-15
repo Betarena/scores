@@ -487,6 +487,9 @@ bottom-margins
 left-margins 
 ~~~~~~~~~~
 */
+.m-l-5 {
+	margin-left: 5px;
+}
 .m-l-8 {
 	margin-left: 8px;
 }
