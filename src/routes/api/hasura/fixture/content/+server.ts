@@ -12,7 +12,7 @@ import { CONT_F_get_target_fixture } from '@betarena/scores-lib/dist/functions/f
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

@@ -12,7 +12,7 @@ import { LIN_F_data_main, LIN_F_generate_historic_fixtures_map, LIN_F_generate_p
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

@@ -13,7 +13,7 @@ import type { B_PR_T, PR_Fixture } from '@betarena/scores-lib/types/probabilitie
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

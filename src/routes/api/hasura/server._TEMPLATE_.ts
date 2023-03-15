@@ -11,15 +11,15 @@
 
 //#region ➤ Package Imports
 
-import { initGrapQLClient } from '$lib/graphql/init';
+// import { initGrapQLClient } from '$lib/graphql/init';
 
 //#endregion ➤ Package Imports
 
 //#region ➤ [VARIABLES] Imports
 
-const graphQlInstance = initGrapQLClient()
+// const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 
@@ -30,7 +30,7 @@ const logs = [];
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 export async function GET(
-  req
+  // req
 ): Promise<void> {
   // const X: string = req.url['searchParams'].get('X');
 	// const target_season_fixtures = await main(LEAGUE_ID, SEASON_ID);

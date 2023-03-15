@@ -12,7 +12,7 @@ import { INC_F_data_main, INC_F_generate_historic_fixtures_map, INC_F_get_target
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

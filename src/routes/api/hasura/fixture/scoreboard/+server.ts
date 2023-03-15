@@ -14,7 +14,7 @@ import type { SF_Info } from '@betarena/scores-lib/types/scoreboard';
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

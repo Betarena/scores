@@ -11,7 +11,7 @@ import { ST_F_data_main, ST_F_generate_historic_fixtures_map, ST_F_get_target_fi
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

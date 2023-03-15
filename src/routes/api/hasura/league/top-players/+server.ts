@@ -12,7 +12,7 @@ import type { TP_Season_Top_Player } from '@betarena/scores-lib/types/top-player
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

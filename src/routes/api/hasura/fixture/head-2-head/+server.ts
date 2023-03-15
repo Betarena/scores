@@ -21,7 +21,7 @@ import type { H2H_Fixture } from '@betarena/scores-lib/types/head-2-head';
 
 const graphQlInstance = initGrapQLClient();
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 

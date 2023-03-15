@@ -12,7 +12,7 @@ import type { B_ABT_D } from '@betarena/scores-lib/types/about';
 
 const graphQlInstance = initGrapQLClient()
 // [ℹ] debug info
-const logs = [];
+// const logs = [];
 
 //#endregion ➤ [VARIABLES] Imports
 
