@@ -38,7 +38,7 @@ COMPONENT JS (w/ TS)
 
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/src/api/sportmonks';
+  import { FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks';
   import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
   import LivescoresTopRow from './Livescores_Top_Row.svelte';
   import LoaderRow from './loaders/Loader_Row.svelte';
@@ -248,7 +248,7 @@ COMPONENT JS (w/ TS)
 	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let server_side_language = platfrom_lang_ssr(
+	$: server_side_language = platfrom_lang_ssr(
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
@@ -406,7 +406,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             [ℹ] league info (box)
             -->
             <a
-              href="{league?.urls[server_side_language]}">
+              href="{league?.urls[server_side_language].replace('https://scores.betarena.com','')}">
               <div
                 class="
                   row-space-start
@@ -415,7 +415,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 <img
                   src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                   on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
-                  alt=""
+                  alt="default alt text"
                   class="m-r-15"
                   width="21"
                   height="16"
@@ -462,7 +462,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           [ℹ] league info (box)
           -->
           <a
-            href="{league?.urls[server_side_language]}">
+            href="{league?.urls[server_side_language].replace('https://scores.betarena.com','')}">
             <div
               class="
                 row-space-start
@@ -471,14 +471,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <img
                 src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                 on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
-                alt=""
+                alt="default alt text"
                 class="m-r-15"
                 width="21"
                 height="16"
               />
               <p
                 class="
-                  s-16
+                  s-14
                   w-500
                   color-black-2
                 ">

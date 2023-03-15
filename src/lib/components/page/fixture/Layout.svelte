@@ -70,7 +70,7 @@
 	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 	import { dlog } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
 
@@ -201,6 +201,16 @@
 		);
 	});
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: server_side_language = platfrom_lang_ssr(
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE METHODS
 	// CRITICAL
@@ -209,7 +219,7 @@
   // TODO: FIXME: replace into a single __layout.svelte method [?]
 	// TODO: FIXME: using page-stores [?]
 	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
-	let current_lang: string = $userBetarenaSettings.lang;
+	let current_lang: string = server_side_language;
 	$: refresh_lang = $userBetarenaSettings.lang;
 	$: lang_intent = $sessionStore.lang_intent;
 

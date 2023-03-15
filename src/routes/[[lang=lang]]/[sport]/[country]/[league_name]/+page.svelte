@@ -40,7 +40,7 @@
 
 	import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura';
 	import { dlog } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 
 	let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
 	let TOURNAMENT_DATA_TRANSLATED_COPIES: BETARENA_HASURA_scores_tournaments[];
@@ -72,9 +72,18 @@
 
 	// TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: server_side_language = platfrom_lang_ssr(
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+
 	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
-	let current_lang: string =
-		$userBetarenaSettings.lang;
+	let current_lang: string = server_side_language;
 	$: refresh_lang = $userBetarenaSettings.lang;
 
 	// [ℹ] validate LANG change
@@ -288,7 +297,7 @@
 
 		<img
 			src="/assets/svg/tournaments/arrow-right.svg"
-			alt=""
+			alt="default alt text"
 			class="m-r-10"
 			width="14px"
 			height="14px"
@@ -309,7 +318,7 @@
 
 		<img
 			src="/assets/svg/tournaments/arrow-right.svg"
-			alt=""
+			alt="default alt text"
 			class="m-r-10"
 			width="14px"
 			height="14px"

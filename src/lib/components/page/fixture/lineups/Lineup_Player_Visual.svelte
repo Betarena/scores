@@ -61,7 +61,7 @@
 			<img
 				src={PLAYER_INFO?.player_avatar ||
 					'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
-				alt=""
+				alt="default alt text"
 				width="32px"
 				height="32px"
 				class="lineup-img"
@@ -92,7 +92,7 @@
 			{#if PLAYER_INFO?.events?.injured}
 				<img
 					src={injured}
-					alt=""
+					alt="default alt text"
 					class="injured-box"
 					width="12px"
 					height="12px"
@@ -103,7 +103,7 @@
 			{:else if PLAYER_INFO?.events?.substitution}
 				<img
 					src={substitution}
-					alt=""
+					alt="default alt text"
 					class="substituion-box"
 					width="12px"
 					height="12px"
@@ -115,7 +115,7 @@
 			{#if PLAYER_INFO?.events?.red_card}
 				<img
 					src={red_card}
-					alt=""
+					alt="default alt text"
 					class="yellow-card-box"
 					width="14px"
 					height="14px"
@@ -126,7 +126,7 @@
 			{:else if PLAYER_INFO?.events?.yeallow_card}
 				<img
 					src={yellow_card}
-					alt=""
+					alt="default alt text"
 					class="yellow-card-box"
 					width="14px"
 					height="14px"
@@ -141,7 +141,7 @@
 			{#if PLAYER_INFO?.events?.goals}
 				<img
 					src={football}
-					alt=""
+					alt="default alt text"
 					class="goal-box"
 					width="12px"
 					height="12px"

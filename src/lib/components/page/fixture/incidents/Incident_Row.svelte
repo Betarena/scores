@@ -118,10 +118,10 @@
       [ℹ] event minute -->
 			<img
 				src={icon}
-				alt=""
+				alt="Incident Icon"
 				class="event-icon"
-				width="18px"
-				height="18px"
+				width="18"
+				height="18"
 			/>
 			<p
 				class="
@@ -434,10 +434,10 @@
       -->
 			<img
 				src={icon}
-				alt=""
+				alt="Incident Icon"
 				class="event-icon"
-				width="18px"
-				height="18px"
+				width="18"
+				height="18"
 			/>
 		{/if}
 	</div>

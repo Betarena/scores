@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+import { initGrapQLClient } from '$lib/graphql/init';
 import { generate_historic_fixtures_day_group_map, generate_leagues_map, generate_tournaments_map, get_target_date_fixtures, get_target_leagues } from '@betarena/scores-lib/dist/functions/func.livescores-v2.js';
 import type { B_LS2_D, LS2_C_FixtureDateGroup } from '@betarena/scores-lib/types/livescores-v2';
 

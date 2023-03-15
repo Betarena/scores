@@ -311,7 +311,7 @@
 								'Dark'
 									? close_white
 									: close}
-								alt=""
+								alt="default alt text"
 								width="20px"
 								height="20px"
 								on:click={() =>
@@ -456,7 +456,7 @@
 										{:else}
 											<img
 												src={item.image_path}
-												alt=""
+												alt="default alt text"
 												title={item.country_name +
 													'-image'}
 												width="20px"
@@ -675,7 +675,7 @@
 									>
 										<img
 											src={item.image_path}
-											alt=""
+											alt="default alt text"
 											title={item.country_name +
 												'-image'}
 											width="20"

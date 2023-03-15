@@ -36,7 +36,7 @@ export function listenRealTimeLivescoresNowChange(
  * @description checks onValue changes for new 
  * Livescores_Now Table data changes;
  * @param {[string, FIREBASE_livescores_now][]} data
- * @returns NaN
+ * @returns {Promise < void >} Promise < void >
  */
 export async function genLiveFixMap (
   data: [string, FIREBASE_livescores_now][]
@@ -62,7 +62,7 @@ export async function genLiveFixMap (
  * @description a one-off call to retrieve the
  * livescroes_now tabled (db) data for instant
  * update on limited conditions;
- * 
+ * @returns {Promise < void >} Promise < void >
 */
 export async function one_off_livescore_call (
 ): Promise < void > {

@@ -82,9 +82,9 @@
 					>
 						<img
 							src="/assets/svg/chevron-down.svg"
-							alt=""
-							width="20px"
-							height="20px"
+							alt="Arrow down icon"
+							width="20"
+							height="20"
 						/>
 					</div>
 				</div>

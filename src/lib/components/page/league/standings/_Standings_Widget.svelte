@@ -282,7 +282,7 @@
   -->
 	<!-- {#if !loaded} -->
 	<div id="seo-widget-box">
-		<h2>{STANDINGS_T.translations.standings}</h2>
+		<h2>{STANDINGS_T?.translations?.standings}</h2>
 		{#if STANDINGS_DATA != undefined && STANDINGS_DATA?.seasons.length != 0}
 			{#if !STANDINGS_DATA.seasons[0].group}
 				{#each STANDINGS_DATA.seasons[0].total as team}
@@ -1227,10 +1227,10 @@
 							{#if $userBetarenaSettings.theme == 'Dark'}
 								<img
 									src={slider_left_dark}
-									alt=""
+									alt="default alt text"
 								/>
 							{:else}
-								<img src={slider_left} alt="" />
+								<img src={slider_left} alt="default alt text" />
 							{/if}
 						</button>
 
@@ -1251,10 +1251,10 @@
 							{#if $userBetarenaSettings.theme == 'Dark'}
 								<img
 									src={slider_right_dark}
-									alt=""
+									alt="default alt text"
 								/>
 							{:else}
-								<img src={slider_right} alt="" />
+								<img src={slider_right} alt="default alt text" />
 							{/if}
 						</button>
 					</div>

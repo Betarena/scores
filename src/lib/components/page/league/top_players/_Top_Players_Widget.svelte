@@ -130,7 +130,7 @@ COMPONENT JS (w/ TS)
 			// TODO: create endpoint accordingly
 			const response: Tournament_Season_Top_Player =
 				await get(
-					`/api/hasura/tournaments/top_players?seasonId=` +
+					`/api/hasura/league/top-players?seasonId=` +
 						$sessionStore.selectedSeasonID
 				);
 			if (response == undefined) {
@@ -449,7 +449,7 @@ COMPONENT HTML
 													.replace(/\s/g, '_')}
 												<img
 													src={check_league}
-													alt=""
+													alt="default alt text"
 													width="20px"
 													height="20px"
 												/>

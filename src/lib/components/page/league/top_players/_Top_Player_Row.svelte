@@ -61,13 +61,13 @@
 				<img
 					id="player-img"
 					src={data.avatar}
-					alt=""
+					alt="default alt text"
 				/>
 				{#if data.team_logo !== null}
 					<img
 						id="team-img"
 						src={data.team_logo}
-						alt=""
+						alt="default alt text"
 					/>
 				{/if}
 			</div>

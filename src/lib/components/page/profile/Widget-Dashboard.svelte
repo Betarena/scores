@@ -2,18 +2,18 @@
 COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import home from './assets/home-select.svg';
-	import metamask_percent_ration from './assets/metamask-percent-ration.png';
-	import metamask_percent_ration_dark from './assets/metamask-percent-ration-dark.png';
-	import metamask_volume from './assets/metamask-volume.png';
-	import metamask_volume_dark from './assets/metamask-volume-dark.png';
-	import nft_marketshare_img from './assets/nft-marketshare.png';
-	import nft_marketshare_img_dark from './assets/nft-marketshare-dark.png';
-	import stats_row_img from './assets/total-volume.png';
-	import stats_row_img_dark from './assets/total-volume-dark.png';
 	import { page } from '$app/stores';
 	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import home from './assets/home-select.svg';
+	import metamask_percent_ration_dark from './assets/metamask-percent-ration-dark.png';
+	import metamask_percent_ration from './assets/metamask-percent-ration.png';
+	import metamask_volume_dark from './assets/metamask-volume-dark.png';
+	import metamask_volume from './assets/metamask-volume.png';
+	import nft_marketshare_img_dark from './assets/nft-marketshare-dark.png';
+	import nft_marketshare_img from './assets/nft-marketshare.png';
+	import stats_row_img_dark from './assets/total-volume-dark.png';
+	import stats_row_img from './assets/total-volume.png';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -53,7 +53,7 @@ COMPONENT HTML
 		>
 			<img
 				src={home}
-				alt=""
+				alt="default alt text"
 				width="40"
 				height="40"
 				class="m-b-16"

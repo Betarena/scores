@@ -20,6 +20,8 @@
 		type Unsubscribe
 	} from 'firebase/database';
 
+  import { B_C_LIN_F_Q_D1 } from "@betarena/scores-lib/dist/graphql/query.lineups.js";
+
 	import type {
 		BETARENA_HASURA_lineups_query,
 		BETARENA_HASURA_SURGICAL_JSONB_scores_football_players,
@@ -37,8 +39,7 @@
 	import LineupVectorMobileAway from './Lineup_Vector_Mobile_Away.svelte';
 	import LineupVectorTablet from './Lineup_Vector_Tablet.svelte';
 
-	import { REDIS_CACHE_LINEUPS_DATA_4 } from '$lib/graphql/fixtures/lineups/query';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { initGrapQLClient } from '$lib/graphql/init';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
@@ -1029,7 +1030,7 @@
 		});
 
 		const VARIABLES = {
-			playerIds: playerIdsArr
+			playerIdsArr
 		};
 
 		const t0 = performance.now();
@@ -1037,7 +1038,7 @@
 			'REDIS_CACHE_LINEUPS_DATA_4';
 		const response: BETARENA_HASURA_lineups_query =
 			await initGrapQLClient().request(
-				REDIS_CACHE_LINEUPS_DATA_4,
+				B_C_LIN_F_Q_D1,
 				VARIABLES
 			);
 		const t1 = performance.now();
@@ -1246,7 +1247,7 @@
 							<img
 								src={FIXTURE_LINEUPS?.home
 									?.team_logo}
-								alt=""
+								alt="default alt text"
 								width="20px"
 								height="20px"
 								class="sel-team-img"
@@ -1286,7 +1287,7 @@
 							<img
 								src={FIXTURE_LINEUPS?.away
 									?.team_logo}
-								alt=""
+								alt="default alt text"
 								width="20px"
 								height="20px"
 								class="sel-team-img"
@@ -1360,7 +1361,7 @@
 								src={FIXTURE_LINEUPS[
 									selected_view
 								]?.team_logo}
-								alt=""
+								alt="default alt text"
 								width="40"
 								height="40"
 								class="main-team-img"
@@ -1446,7 +1447,7 @@
 								src={FIXTURE_LINEUPS[
 									selected_view
 								]?.coach_avatar}
-								alt=""
+								alt="default alt text"
 								width="40"
 								height="40"
 								class="lineup-img"
@@ -1582,7 +1583,7 @@
 								<img
 									src={FIXTURE_LINEUPS?.home
 										?.team_logo}
-									alt=""
+									alt="default alt text"
 									width="40"
 									height="40"
 									class="main-team-img"
@@ -1714,7 +1715,7 @@
 								<img
 									src={FIXTURE_LINEUPS?.away
 										?.team_logo}
-									alt=""
+									alt="default alt text"
 									width="40px"
 									height="40px"
 									class="main-team-img"
@@ -1745,7 +1746,7 @@
 								<img
 									src={FIXTURE_LINEUPS.home
 										?.coach_avatar}
-									alt=""
+									alt="default alt text"
 									width="40px"
 									height="40px"
 									class="lineup-img"
@@ -1832,7 +1833,7 @@
 								<img
 									src={FIXTURE_LINEUPS?.away
 										?.coach_avatar}
-									alt=""
+									alt="default alt text"
 									width="40px"
 									height="40px"
 									class="lineup-img"

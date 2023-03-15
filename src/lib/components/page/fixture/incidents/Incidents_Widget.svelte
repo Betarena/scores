@@ -35,7 +35,7 @@
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_NOT_START_OPT
-	} from '$lib/models/sportmonks';
+	} from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -488,9 +488,9 @@
 						<img
 							src={FIXTURE_INCIDENTS?.home
 								?.team_logo}
-							alt=""
-							width="24px"
-							height="24px"
+							alt="Team image"
+							width="24"
+							height="24"
 						/>
 						<p
 							class="
@@ -521,9 +521,9 @@
 						<img
 							src={FIXTURE_INCIDENTS?.away
 								?.team_logo}
-							alt=""
-							width="24px"
-							height="24px"
+							alt="Team image"
+							width="24"
+							height="24"
 						/>
 					</div>
 				</div>

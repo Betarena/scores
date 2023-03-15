@@ -14,7 +14,7 @@
 	import {
 		FIXTURE_LIVE_TIME_OPT,
 		type FIXTURE_STATUS_TYPES
-	} from '$lib/models/sportmonks';
+	} from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import substitution from './assets/corner-up-right.svg';
 	import football from './assets/football.svg';
 	import injured from './assets/injured.svg';
@@ -87,9 +87,9 @@
 				<img
 					src={PLAYER_INFO?.player_avatar ||
 						'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
-					alt=""
-					width="40px"
-					height="40px"
+					alt="player avatar"
+					width="40"
+					height="40"
 					class="lineup-img"
 					on:error={(e) =>
 						(e.target.src =
@@ -119,13 +119,19 @@
               [ℹ] injured-player 
               -->
 						{#if PLAYER_INFO?.events?.injured}
-							<img src={injured} alt="" />
+							<img 
+                src={injured} 
+                alt="injured icon" 
+              />
 						{/if}
 						<!--
               [ℹ] yellowcard-player 
               -->
 						{#if PLAYER_INFO?.events?.yeallow_card}
-							<img src={yellow_card} alt="" />
+							<img 
+                src={yellow_card} 
+                alt="yellow card" 
+              />
 							{#if PLAYER_INFO?.events?.yeallow_card > 1}
 								<p>2</p>
 							{/if}
@@ -134,13 +140,19 @@
               [ℹ] goals-player (inc. own-goals) 
               -->
 						{#if PLAYER_INFO?.events?.goals}
-							<img src={football} alt="" />
+							<img 
+                src={football} 
+                alt="football icon" 
+              />
 						{/if}
 						<!--
               [ℹ] red-card-player 
               -->
 						{#if PLAYER_INFO?.events?.red_card}
-							<img src={red_card} alt="" />
+							<img 
+                src={red_card} 
+                alt="red_card icon" 
+              />
 							{#if PLAYER_INFO?.events?.red_card > 1}
 								<p>2</p>
 							{/if}
@@ -157,9 +169,9 @@
 						>
 							<img
 								src={substitution}
-								alt=""
-								width="16px"
-								height="16px"
+								alt="substitution icon"
+								width="16"
+								height="16"
 								class="m-r-5"
 							/>
 							<p
@@ -264,13 +276,19 @@
               [ℹ] injured-player 
               -->
 						{#if PLAYER_INFO?.events?.injured}
-							<img src={injured} alt="" />
+							<img 
+                src={injured} 
+                alt="injured icon" 
+              />
 						{/if}
 						<!--
               [ℹ] yellowcard-player 
               -->
 						{#if PLAYER_INFO?.events?.yeallow_card}
-							<img src={yellow_card} alt="" />
+							<img 
+                src={yellow_card} 
+                alt="yellow card" 
+              />
 							{#if PLAYER_INFO?.events?.yeallow_card > 1}
 								<p>2</p>
 							{/if}
@@ -279,13 +297,19 @@
               [ℹ] goals-player (inc. own-goals) 
               -->
 						{#if PLAYER_INFO?.events?.goals}
-							<img src={football} alt="" />
+							<img 
+                src={football} 
+                alt="football icon" 
+              />
 						{/if}
 						<!--
               [ℹ] red-card-player 
               -->
 						{#if PLAYER_INFO?.events?.red_card}
-							<img src={red_card} alt="" />
+							<img 
+                src={red_card}
+                alt="red_card icon" 
+              />
 							{#if PLAYER_INFO?.events?.red_card > 1}
 								<p>2</p>
 							{/if}
@@ -315,9 +339,9 @@
 						>
 							<img
 								src={substitution}
-								alt=""
-								width="16px"
-								height="16px"
+								alt="substitution icon"
+								width="16"
+								height="16"
 								class="m-r-5"
 							/>
 							<p
@@ -353,9 +377,9 @@
 				<img
 					src={PLAYER_INFO?.player_avatar ||
 						'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
-					alt=""
-					width="40px"
-					height="40px"
+					alt="player_avatar icon"
+					width="40"
+					height="40"
 					class="lineup-img"
 					on:error={(e) =>
 						(e.target.src =

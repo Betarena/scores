@@ -1,9 +1,8 @@
+import { SPD_C_D_A, SPD_C_D_A1 } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	sportbook_details,
-	sportbook_details_all
+  get_target_hset_cache_data
 } from '../../std_main';
 
 /**
@@ -18,7 +17,7 @@ export async function GET(req): Promise<unknown> {
 	if (all && geoPos) {
 		let response_cache =
 			await get_target_hset_cache_data(
-				sportbook_details_all,
+				SPD_C_D_A1,
 				geoPos
 			);
 		if (response_cache) {
@@ -26,7 +25,7 @@ export async function GET(req): Promise<unknown> {
 		} else {
 			response_cache =
 				await get_target_hset_cache_data(
-					sportbook_details_all,
+					SPD_C_D_A1,
 					'en'
 				);
 			return json(response_cache);
@@ -36,7 +35,7 @@ export async function GET(req): Promise<unknown> {
 	if (!all) {
 		let response_cache =
 			await get_target_hset_cache_data(
-				sportbook_details,
+				SPD_C_D_A,
 				geoPos
 			);
 		if (response_cache) {
@@ -44,7 +43,7 @@ export async function GET(req): Promise<unknown> {
 		} else {
 			response_cache =
 				await get_target_hset_cache_data(
-					sportbook_details,
+					SPD_C_D_A,
 					'en'
 				);
 			return json(response_cache);

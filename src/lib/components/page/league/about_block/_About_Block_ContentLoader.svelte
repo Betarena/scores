@@ -82,7 +82,7 @@
 					>
 						<img
 							src="/assets/svg/chevron-down.svg"
-							alt=""
+							alt="default alt text"
 							width="20px"
 							height="20px"
 						/>

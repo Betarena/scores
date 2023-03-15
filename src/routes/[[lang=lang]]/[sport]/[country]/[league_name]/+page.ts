@@ -70,7 +70,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     `/api/cache/tournaments/top_players?league_id=${league_id}`,
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
     // `/api/cache/tournaments/fixtures_odds?league_id=${league_id}` // [?] alt.1
-    `/api/hasura/tournaments/fixture_odds/league?leagueId=${league_id}` // [?] alt.2 // [ℹ] NOTE: can be "null"
+    `/api/hasura/league/fixtures-odds?league_id=${league_id}` // [?] alt.2 // [ℹ] NOTE: can be "null"
   ];
 
 	const promises = urls.map((_url) =>

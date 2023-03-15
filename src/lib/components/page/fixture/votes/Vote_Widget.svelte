@@ -13,17 +13,17 @@
 
 	import { db_real } from '$lib/firebase/init';
 	import { get_odds } from '$lib/firebase/votes';
-	import {
-		HASURA_FIXTURE_VOTES_DATA_0,
-		HASURA_FIXTURE_VOTES_INIT_UPDATE
-	} from '$lib/graphql/fixtures/votes/query';
-	import { initGrapQLClient } from '$lib/graphql/init_graphQL';
+	import { initGrapQLClient } from '$lib/graphql/init';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
 		fixtureVote,
 		type fixture
 	} from '$lib/store/vote_fixture';
 	import { getImageBgColor } from '$lib/utils/color_thief';
+	import {
+		HASURA_FIXTURE_VOTES_DATA_0,
+		HASURA_FIXTURE_VOTES_INIT_UPDATE
+	} from '@betarena/scores-lib/dist/graphql/query.votes.js';
 	import {
 		onValue,
 		ref,
@@ -43,7 +43,7 @@
 	import VoteLoader from './Vote_Loader.svelte';
 
 	import { get } from '$lib/api/utils';
-	import { FIXTURE_NO_VOTES_OPT } from '$lib/models/sportmonks';
+	import { FIXTURE_NO_VOTES_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -783,7 +783,7 @@
 								{#if mobileExclusive}
 									<span class="color-grey"> 1 </span>
 								{:else}
-									<img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="" width="28px" height="28px" />
+									<img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="default alt text" width="28px" height="28px" />
 								{/if}
 								<span class:active_p={fixture_data_vote_obj.fixture_vote == '1'}>
 									{#if FIXTURE_VOTES_DATA._1x2.home}
@@ -873,7 +873,7 @@
 									<!-- 
                     src="./static/icon/icon-close.svg"
                     -->
-									<img src="/assets/svg/icon/icon-close.svg" alt="" width="28px" height="28px" />
+									<img src="/assets/svg/icon/icon-close.svg" alt="default alt text" width="28px" height="28px" />
 								{/if}
 								<span class:active_p={fixture_data_vote_obj.fixture_vote == 'X'}>
 									{#if FIXTURE_VOTES_DATA._1x2.draw}
@@ -960,7 +960,7 @@
 								{#if mobileExclusive}
 									<span class="color-grey"> 2 </span>
 								{:else}
-									<img src={FIXTURE_VOTES_DATA?.away_team_logo} alt="" width="28px" height="28px" />
+									<img src={FIXTURE_VOTES_DATA?.away_team_logo} alt="default alt text" width="28px" height="28px" />
 								{/if}
 								<span class:active_p={fixture_data_vote_obj.fixture_vote == '2'}>
 									{#if FIXTURE_VOTES_DATA._1x2.away}
@@ -1029,7 +1029,7 @@
             -->
 						<img
 							src="/assets/svg/icon/white-close.svg"
-							alt=""
+							alt="default alt text"
 							width="16px"
 							height="16px"
 							style="position: absolute; top: 12px; right: 20px;"
@@ -1045,7 +1045,7 @@
 							<img
 								id="stakesSiteImg"
 								src={SPORTBOOK_INFO.image}
-								alt=""
+								alt="default alt text"
 								style="background-color: var({imageVar});"
 								width="100%"
 								height="40px"
@@ -1108,7 +1108,7 @@
 									>
 										{#if !mobileExclusive}
 											{#if fixture_data_vote_obj.fixture_vote == '1'}
-												<img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="" width="28px" height="28px" />
+												<img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="default alt text" width="28px" height="28px" />
 											{:else if fixture_data_vote_obj.fixture_vote == 'X'}
 												<p
 													class="
@@ -1120,7 +1120,7 @@
 													<span class="color-grey"> X </span>
 												</p>
 											{:else}
-												<img src={FIXTURE_VOTES_DATA?.away_team_logo} alt="" width="28px" height="28px" />
+												<img src={FIXTURE_VOTES_DATA?.away_team_logo} alt="default alt text" width="28px" height="28px" />
 											{/if}
 										{/if}
 

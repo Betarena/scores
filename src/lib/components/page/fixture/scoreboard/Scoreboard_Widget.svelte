@@ -44,12 +44,12 @@
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
 	import { get } from '$lib/api/utils';
+	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_LIVE_TIME_OPT,
 		FIXTURE_NOT_START_OPT
-	} from '$lib/models/sportmonks';
-	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
+	} from "@betarena/scores-lib/dist/api/sportmonks.js";
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -880,7 +880,7 @@
 										>
 											<img
 												src={FIXTURE_SCOREBOARD?.league_logo}
-												alt=""
+												alt="default alt text"
 												width="14"
 												height="14"
 											/>
@@ -915,7 +915,7 @@
 									>
 										<img
 											src={FIXTURE_SCOREBOARD?.home_team_logo}
-											alt=""
+											alt="default alt text"
 											class="m-b-12"
 											width="72"
 											height="72"
@@ -1137,7 +1137,7 @@
 									>
 										<img
 											src={FIXTURE_SCOREBOARD.away_team_logo}
-											alt=""
+											alt="default alt text"
 											class="m-b-12"
 											width="72"
 											height="72"
@@ -1375,7 +1375,7 @@
 										>
 											<img
 												src={FIXTURE_SCOREBOARD?.league_logo}
-												alt=""
+												alt="default alt text"
 												width="14"
 												height="14"
 											/>
@@ -1410,7 +1410,7 @@
 									>
 										<img
 											src={FIXTURE_SCOREBOARD.home_team_logo}
-											alt=""
+											alt="default alt text"
 											class="m-b-12"
 											width="72"
 											height="72"
@@ -1632,7 +1632,7 @@
 									>
 										<img
 											src={FIXTURE_SCOREBOARD.away_team_logo}
-											alt=""
+											alt="default alt text"
 											class="m-b-12"
 											width="72"
 											height="72"
@@ -1852,7 +1852,7 @@
 										<div class="inner-team-box-1">
 											<img
 												src={FIXTURE_SCOREBOARD.home_team_logo}
-												alt=""
+												alt="default alt text"
 												class="m-b-12"
 												width="88"
 												height="88"
@@ -1898,7 +1898,7 @@
 												>
 													<img
 														src={FIXTURE_SCOREBOARD?.league_logo}
-														alt=""
+														alt="default alt text"
 														width="14"
 														height="14"
 													/>
@@ -2312,7 +2312,7 @@
 										<div class="inner-team-box-2">
 											<img
 												src={FIXTURE_SCOREBOARD.away_team_logo}
-												alt=""
+												alt="default alt text"
 												class="m-b-12"
 												width="88"
 												height="88"
@@ -2429,7 +2429,7 @@
 									</p>
 									<img
 										src={FIXTURE_SCOREBOARD?.home_team_logo}
-										alt=""
+										alt="default alt text"
 										width="40"
 										height="40"
 									/>
@@ -2645,7 +2645,7 @@
 								>
 									<img
 										src={FIXTURE_SCOREBOARD?.away_team_logo}
-										alt=""
+										alt="default alt text"
 										width="40"
 										height="40"
 									/>
@@ -2751,7 +2751,7 @@
 										</p>
 										<img
 											src={FIXTURE_SCOREBOARD.home_team_logo}
-											alt=""
+											alt="default alt text"
 											width="56px"
 											height="56px"
 										/>
@@ -2979,7 +2979,7 @@
 									>
 										<img
 											src={FIXTURE_SCOREBOARD.away_team_logo}
-											alt=""
+											alt="default alt text"
 											width="56px"
 											height="56px"
 										/>
