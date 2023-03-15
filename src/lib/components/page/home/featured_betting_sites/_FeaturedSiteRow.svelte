@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	// ... external modules imports;
+// ... external modules imports;
 	import ColorThief from 'colorthief/dist/color-thief.mjs';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -165,7 +165,7 @@
 			<img
 				style="background-color: var({imageVar}); border-radius: 4px;"
 				src={data.image}
-				alt=""
+				alt="default alt text"
 			/>
 		</a>
 
@@ -204,31 +204,31 @@
 				<img
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star5.svg"
-					alt=""
+					alt="default alt text"
 				/>
 			{:else if data.stars === '4'}
 				<img
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star4.svg"
-					alt=""
+					alt="default alt text"
 				/>
 			{:else if data.stars === '3'}
 				<img
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star3.svg"
-					alt=""
+					alt="default alt text"
 				/>
 			{:else if data.stars === '2'}
 				<img
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star2.svg"
-					alt=""
+					alt="default alt text"
 				/>
 			{:else}
 				<img
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star1.svg"
-					alt=""
+					alt="default alt text"
 				/>
 			{/if}
 		{/if}
@@ -254,7 +254,7 @@
 						style="background-color: var({imageVar});"
 						class="extra-info-img"
 						src={data.image}
-						alt=""
+						alt="default alt text"
 					/>
 					<!-- ... extra-site info ... -->
 					<div class="extra-info-container">

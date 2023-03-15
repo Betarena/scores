@@ -1,8 +1,8 @@
+import { LEG_C_D_A } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	league_info_cache_data_addr
+  get_target_hset_cache_data
 } from '../../std_main';
 
 /**
@@ -14,7 +14,7 @@ export async function GET(req): Promise<unknown> {
 
 	const response_cache =
 		await get_target_hset_cache_data(
-			league_info_cache_data_addr,
+			LEG_C_D_A,
 			url
 		);
 	if (response_cache) {

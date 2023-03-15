@@ -6,7 +6,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
-	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "$lib/models/sportmonks";
+	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 
   //#region ➤ Svelte/SvelteKit Imports
   // IMPORTS GO HERE
@@ -276,7 +276,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     FIXME: syntax error
     -->
     <a
-      href={FIXTURE_D?.urls == undefined ? '' : FIXTURE_D?.urls[server_side_language]}
+      href={FIXTURE_D?.urls == undefined ? '' : FIXTURE_D?.urls[server_side_language].replace('https://scores.betarena.com','')}
       class="width-auto"
       class:disable-anchor={FIXTURE_D?.urls == undefined || FIXTURE_D?.urls[server_side_language] == undefined}
       >
@@ -317,21 +317,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {#if FIXTURE_D.teams?.home?.red_cards == 1}
               <img
                 src={$userBetarenaSettings.theme == 'Dark' ? one_red_card_dark : one_red_card}
-                alt=""
+                alt="default alt text"
                 width="12"
                 height="16"
               />
             {:else if FIXTURE_D?.teams?.home?.red_cards == 2}
               <img
                 src={$userBetarenaSettings.theme == 'Dark' ? two_red_card_dark : two_red_card}
-                alt=""
+                alt="default alt text"
                 width="15"
                 height="19"
               />
             {:else}
               <img
                 src={$userBetarenaSettings.theme == 'Dark' ? three_red_card_dark : three_red_card}
-                alt=""
+                alt="default alt text"
                 width="15px"
                 height="19px"
               />
@@ -368,21 +368,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {#if FIXTURE_D.teams?.away?.red_cards == 1}
               <img
                 src={$userBetarenaSettings.theme == 'Dark' ? one_red_card_dark : one_red_card}
-                alt=""
+                alt="default alt text"
                 width="12"
                 height="16"
               />
             {:else if FIXTURE_D?.teams?.away?.red_cards == 2}
               <img
                 src={$userBetarenaSettings.theme == 'Dark' ? two_red_card_dark : two_red_card}
-                alt=""
+                alt="default alt text"
                 width="15"
                 height="19"
               />
             {:else}
               <img
                 src={$userBetarenaSettings.theme == 'Dark' ? three_red_card_dark : three_red_card}
-                alt=""
+                alt="default alt text"
                 width="15px"
                 height="19px"
               />

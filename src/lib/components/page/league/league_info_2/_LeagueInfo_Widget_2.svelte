@@ -272,7 +272,7 @@
 						class="m-r-10"
 						src={LEAGUE_INFO_SEO_DATA?.data
 							?.image_path}
-						alt=""
+						alt="default alt text"
 						width="24px"
 						height="24px"
 						style="object-fit: contain;"

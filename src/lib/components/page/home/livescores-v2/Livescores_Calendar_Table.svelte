@@ -248,7 +248,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     ">
     <img 
       src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_left_dark : vec_arrow_left}" 
-      alt=""
+      alt="default alt text"
       on:click={() => monthChange(-1)}
       class="cursor-pointer"
     />
@@ -263,7 +263,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     </p>
     <img 
       src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_right_dark : vec_arrow_right}" 
-      alt=""
+      alt="default alt text"
       on:click={() => monthChange(1)}
       class="cursor-pointer"
     />

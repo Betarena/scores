@@ -162,7 +162,7 @@
           <img
             class='team-img'
             src={TEAM_DATA.team_logo}
-            alt=""
+            alt="default alt text"
           />
         </div>
 
@@ -300,7 +300,7 @@
 					<img
 						class="team-img"
 						src={TEAM_DATA.team_logo}
-						alt=""
+						alt="default alt text"
 					/>
 				</div>
 

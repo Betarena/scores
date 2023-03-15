@@ -40,12 +40,7 @@ export async function load({
 		`/api/cache/home/livescores-v2?lang=${urlLang}`,
 		`/api/cache/home/livescores-v2?seo=true`,
 		// [ℹ] page validation check;
-		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
-		// [ℹ] livescores
-		`/api/cache/home/live_scores?lang=${urlLang}`,
-		`/api/cache/home/live_scores?type=geo`,
-		`/api/cache/home/live_scores?type=translations`,
-		`/api/cache/home/live_scores?type=tournaments`
+		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`
 	];
 
 	const promises = urls.map((_url) =>
@@ -67,11 +62,7 @@ export async function load({
 		SEO_BLOCK_DATA,
     LIVESCORES_V2_T_DATA,
     LIVESCORES_V2_SEO,
-		VALID_URL,
-		LIVE_SCORES_DATA_DATA_SEO,
-		LIVE_SCORES_DATA_LEAGUES,
-		LIVE_SCORES_FOOTBALL_TRANSLATIONS,
-		LIVESCORES_FOOTBALL_TOURNAMENTS
+		VALID_URL
 	] = data;
 
 	// --------------
@@ -123,10 +114,6 @@ export async function load({
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,
     LIVESCORES_V2_T_DATA,
-    LIVESCORES_V2_SEO,
-		LIVE_SCORES_DATA_DATA_SEO,
-		LIVE_SCORES_DATA_LEAGUES,
-		LIVE_SCORES_FOOTBALL_TRANSLATIONS,
-		LIVESCORES_FOOTBALL_TOURNAMENTS
+    LIVESCORES_V2_SEO
 	};
 }

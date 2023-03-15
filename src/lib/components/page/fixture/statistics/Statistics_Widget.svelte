@@ -565,7 +565,7 @@
 					<img
 						src={FIXTURE_STATISTICS?.home
 							?.team_logo}
-						alt=""
+						alt="default alt text"
 						width="24px"
 						height="24px"
 					/>
@@ -575,7 +575,7 @@
 					<img
 						src={FIXTURE_STATISTICS?.away
 							?.team_logo}
-						alt=""
+						alt="default alt text"
 						width="24px"
 						height="24px"
 					/>

@@ -546,7 +546,7 @@ COMPONENT HTML
 			<!-- on:mousedown={(event) => mousedown_event(event)}
       on:mouseup={() => mouseup_event()}
       on:mousemove={(event) => mousemove_event(event)} -->
-			<img id="profile-image" src="" alt="" width="50" height="50" draggable="false" />
+			<img id="profile-image" src="" alt="default alt text" width="50" height="50" draggable="false" />
 		</div>
 	</div>
 	<!-- 

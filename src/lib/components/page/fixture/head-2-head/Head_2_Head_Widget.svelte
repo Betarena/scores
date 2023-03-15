@@ -154,7 +154,7 @@
 			fixture_time,
 			fixture_id
 		);
-		if (firebase_odds.length != 0) {
+		if (firebase_odds && firebase_odds?.length != 0) {
 			check_fixture_odds_inject(firebase_odds);
 		}
 
@@ -233,7 +233,7 @@
 	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let server_side_language = platfrom_lang_ssr(
+	$: server_side_language = platfrom_lang_ssr(
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang

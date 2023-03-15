@@ -187,7 +187,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           ? vec_calendar_sel_date
           : defaultCalendarIcon
       } 
-      alt=""
+      alt="default alt text"
       on:mouseover={(e) => {if (fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))) e.currentTarget.src = vec_calendar_sel}}
       on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) ) e.currentTarget.src = defaultCalendarIcon}}
       on:click={() => $sessionStore.livescoreShowCalendar = !$sessionStore.livescoreShowCalendar}
@@ -223,14 +223,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <p
       class="
         s-14
-        w-400
+        w-500
         color-grey
         cursor-pointer
       ">
       {WIDGET_T_DATA?.all || 'All'} ({numOfFixtures || 0})
     </p>
   </div>
-  <div
+  <div 
     class="
       fixture-filter-box
       text-center
@@ -244,7 +244,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <p
         class="
           s-14
-          w-400
+          w-500
           color-grey
         ">
         {WIDGET_T_DATA?.live || 'Live'} ({numOfFixturesLive || 0})

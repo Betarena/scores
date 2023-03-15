@@ -320,9 +320,9 @@
                 [ℹ] featured-media -->
 								<img
 									src={item?.featured_media}
-									alt=""
-									width="80px"
-									height="80px"
+									alt="Featured Media"
+									width="80"
+									height="80"
 								/>
 								<!-- 
                 [ℹ] media-title + post-info -->

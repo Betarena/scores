@@ -3,7 +3,7 @@ COMPONENT JS - BASIC
 [TypeScript]
 =================== -->
 <script lang="ts">
-	import { browser } from '$app/environment';
+	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
@@ -14,7 +14,7 @@ COMPONENT JS - BASIC
 	import {
 		getUserLocation,
 		getUserLocationFromIP
-	} from '$lib/geoJs/init';
+	} from '$lib/geo-js/init';
 	import { dlog, dlogv2, NB_W_STY, NB_W_TAG, NB_W_TOG } from '$lib/utils/debug';
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
@@ -29,8 +29,8 @@ COMPONENT JS - BASIC
 	import profile_avatar from './assets/profile-avatar.svg';
 	import light_icon_theme from './assets/theme-light-icon.svg';
 
-	import type { GeoJsResponse } from '$lib/models/geojs-types';
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
+	import type { GeoJsResponse } from '$lib/types/geojs-types';
 
 	import { db_firestore } from '$lib/firebase/init';
 	import { sessionStore } from '$lib/store/session';
@@ -60,8 +60,8 @@ COMPONENT JS - BASIC
 	let langSelected: boolean = false;
 
   const OMIT_URLS: string[] = [
-    '[[lang=lang]]/[sport]/[country]/[league_name]',
-    '[[lang=lang]]/[sport]/[fixture=fixture]'
+    '/[[lang=lang]]/[sport]/[country]/[league_name]',
+    '/[[lang=lang]]/[sport]/[fixture=fixture]'
   ]
 
   const PROFILE_URL: string = '/u/[view]/[lang=lang]'
@@ -93,16 +93,6 @@ COMPONENT JS - BASIC
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-  let setUserLang = false;
-  $: if ($userBetarenaSettings?.user != undefined 
-    && !setUserLang 
-    && PROFILE_URL != $page.route.id
-  ) {
-    setUserLang = true
-    let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
-    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language!`, NB_W_TOG, NB_W_STY)
-    selectLanguage(userlang)
-  }
 
   // Set a Cookie
   function setCookie(cName, cValue, expDays) {
@@ -195,11 +185,17 @@ COMPONENT JS - BASIC
 	async function selectLanguage(
     lang: string
   ): Promise<void> {
+
+    // [ℹ] validation (exit);
+    if (server_side_language == lang) {
+      return;
+    }
+
 		// [ℹ] get past instance of LANG;
 		const pastLang: string =
-			$userBetarenaSettings.lang == 'en'
+      server_side_language == 'en'
 				? '/'
-				: `/${$userBetarenaSettings.lang}`
+				: `/${server_side_language}`
     ;
 		// [ℹ] set the user-lang to corresponding value;
 		userBetarenaSettings.setLang(lang);
@@ -208,6 +204,7 @@ COMPONENT JS - BASIC
       `${NB_W_TAG} selectLanguage()`,
       [
         `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
+        `server_side_language: ${server_side_language}`,
         `lang: ${lang}`,
         `pastLang: ${pastLang}`,
         `$page.route.id: ${$page.route.id}`
@@ -233,7 +230,7 @@ COMPONENT JS - BASIC
 		}
 
 		// [ℹ] onError, navigate back to homepage
-		if ($page.error) {
+		if ($page.error && !dev) {
 			if (lang == 'en') {
         dlog(`${NB_W_TAG} -> EN`, true, NB_W_STY)
 				await goto('/');
@@ -350,7 +347,7 @@ COMPONENT JS - BASIC
 			return;
 		}
 		const userGeoResponse: GeoJsResponse = await getUserLocation();
-    dlog(userGeoResponse, true);
+    dlog(`${NB_W_TAG} ${userGeoResponse}`, true);
 
 		let userGeo =
 			userGeoResponse.country_code === undefined
@@ -434,9 +431,23 @@ COMPONENT JS - BASIC
 		}
 	}
 
+  let setUserLang = false;
+  $: if ($userBetarenaSettings?.user != undefined 
+    && !setUserLang 
+    && PROFILE_URL != $page.route.id
+  ) {
+    setUserLang = true
+    let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
+    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language! ${userlang}`, NB_W_TOG, NB_W_STY)
+    selectLanguage(userlang)
+  }
+
+  // [ℹ] (archive) -> && PROFILE_URL == $page.route.id
   $: if ($userBetarenaSettings?.lang 
     && !$page.error
-    && PROFILE_URL == $page.route.id) {
+    && $page.route.id
+    && $userBetarenaSettings?.user != undefined
+    && setUserLang) {
     update_select_lang()
   }
 
@@ -446,8 +457,8 @@ COMPONENT JS - BASIC
    * @returns {Promise<void>}
 	 */
   async function update_select_lang(): Promise<void> {
-		dlog('🔵 Updating platform lang...');
 		const lang = $userBetarenaSettings?.lang;
+		dlog(`${NB_W_TAG} 🔵 Updating platform user lang ${lang}`, true);
     // [ℹ] (update)from localStorage()
 		userBetarenaSettings.updateLang(
 			lang
@@ -462,7 +473,7 @@ COMPONENT JS - BASIC
 		await updateDoc(userRef, {
 			lang: lang
 		});
-		dlog('🟢 Language has been updated', true);
+		dlog(`${NB_W_TAG} 🟢 User language has been updated`, true);
   }
 
   /**

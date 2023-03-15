@@ -1,4 +1,4 @@
-import { dlog } from "./debug";
+import { dlog, dlogv2, NB_W_TAG } from "./debug";
 
 /**
  * @description Simple function
@@ -13,9 +13,15 @@ export function platfrom_lang_ssr(
 	page_error?: unknown | undefined,
 	page_params_lang?: string | undefined
 ): string {
-  dlog(`page_route_id: ${page_route_id}`, true)
-  dlog(`page_error: ${page_error}`, true)
-  dlog(`page_params_lang: ${page_params_lang}`, true)
+  dlogv2(
+    NB_W_TAG,
+    [
+      `page_route_id: ${page_route_id}`,
+      `page_error: ${page_error}`,
+      `page_params_lang: ${page_params_lang}`
+    ],
+    true
+  )
 	// NOTE: default (EN)
 	let server_side_language = 'en';
 	// [ℹ] validation (#1)
@@ -32,7 +38,7 @@ export function platfrom_lang_ssr(
       ? page_params_lang
       : 'en'
   ;
-  dlog(`➡️ ${server_side_language}`, true)
+  dlog(`${NB_W_TAG} server_side_language ➡️ ${server_side_language}`, true)
 	return server_side_language;
 }
 

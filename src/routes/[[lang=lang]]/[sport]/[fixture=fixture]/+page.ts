@@ -1,11 +1,11 @@
 import { error } from '@sveltejs/kit';
 import type { PageLoad } from './$types';
 
-import type { GeoJsResponse } from '$lib/models/geojs-types';
 import type {
   REDIS_CACHE_SINGLE_fixtures_page_info_response,
   REDIS_CACHE_SINGLE_general_countries_translation
 } from '$lib/models/_main_/pages_and_seo/types';
+import type { GeoJsResponse } from '$lib/types/types.geojs';
 import { dlog, errlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
 
 /** @type {import('./$types').PageLoad} */
@@ -108,35 +108,35 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     // TODO:NOTE:IMPORTANT: can be null (non-current season fixture) - load from hasura
     // working, setup to get (old) data if not in cache;
 		// `/api/cache/fixtures/scoreboard?fixture_id=${fixture_id}`, // ALT-1
-    `/api/hasura/fixtures/scoreboard?fixture_id=${fixture_id}`, // ALT-2
+    `/api/hasura/fixture/scoreboard?fixture_id=${fixture_id}`, // ALT-2
     `/api/cache/fixtures/scoreboard?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null (non-current season fixture) - load from hasura
     // `/api/cache/fixtures/lineups?fixture_id=${fixture_id}`, // ALT-1
-    `/api/hasura/fixtures/lineups?fixture_id=${fixture_id}`, // ALT-2
+    `/api/hasura/fixture/lineups?fixture_id=${fixture_id}`, // ALT-2
     `/api/cache/fixtures/lineups?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
     // `/api/cache/fixtures/incidents?fixture_id=${fixture_id}`, // ALT-1
-    `/api/hasura/fixtures/incidents?fixture_id=${fixture_id}`, // ALT-2
+    `/api/hasura/fixture/incidents?fixture_id=${fixture_id}`, // ALT-2
     `/api/cache/fixtures/incidents?lang=${urlLang}`,
     `/api/cache/home/featured_betting_sites?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
-    // `/api/hasura/fixtures/statistics?fixture_id=${fixture_id}`, // ALT-1
+    // `/api/hasura/fixture/statistics?fixture_id=${fixture_id}`, // ALT-1
     `/api/cache/fixtures/statistics?fixture_id=${fixture_id}`,  // ALT-2
     `/api/cache/fixtures/statistics?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
     // `/api/cache/fixtures/content?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-1
-    `/api/hasura/fixtures/content?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-2
+    `/api/hasura/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-2
     `/api/cache/fixtures/content?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
     // `/api/cache/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-1
-    `/api/hasura/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-2
+    `/api/hasura/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-2
     `/api/cache/fixtures/about?lang=${urlLang}`,
     `/api/cache/fixtures/votes?lang=${urlLang}`,
     `/api/cache/fixtures/probabilities?lang=${urlLang}`,
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
     // `/api/cache/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-1
-    `/api/hasura/fixtures/head-2-head?fixture_id=${fixture_id}`, // ALT-2
+    `/api/hasura/fixture/head-2-head?fixture_id=${fixture_id}`, // ALT-2
     `/api/cache/fixtures/head-2-head?lang=${urlLang}`,
     `/api/cache/tournaments/standings?lang=${urlLang}`,
     `/api/cache/tournaments/standings?league_id=${league_id}` // TODO:FIXME: dependant on league-id - leaking space;

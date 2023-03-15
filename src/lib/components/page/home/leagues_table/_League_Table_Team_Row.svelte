@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-	// ... external modules imports;
+// ... external modules imports;
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import type { Single_Team_Object_Data } from '$lib/models/leagues_table/types';
@@ -79,7 +79,7 @@
 					<img
 						class="team-img"
 						src={data.team_logo}
-						alt=""
+						alt="default alt text"
 					/>
 				</div>
 				<!-- ... ℹ team name
