@@ -60,7 +60,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	);
 
   type PP_PROMISE = [
-    B_SAP_PP_T
+    B_SAP_PP_T | undefined
   ]
 
 	const data: PP_PROMISE = await Promise.all(promises) as PP_PROMISE;
@@ -86,6 +86,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     // @ts-ignore
     // NOTE: issues with setting correct <PageLoad> types, 
     // NOTE: not being applied to return;
+    // NOTE: not critical - can be silenced;
     PAGE_DATA,
     PAGE_SEO
   }
