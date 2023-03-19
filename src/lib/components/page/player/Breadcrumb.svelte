@@ -4,14 +4,34 @@
 <script lang="ts">
 
 	import { page } from "$app/stores";
+	import { platfrom_lang_ssr } from "$lib/utils/platform-functions";
+
+	import type { B_SAP_PP_D } from "@betarena/scores-lib/types/seo-pages";
 
   // IMPORTANT
   // (this) widget has access to the following PAGE data:
   // [...]
+  // $page.data.PAGE_DATA: B_SAP_PP_D
+  // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
 
-  export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
-  export let country_link: string;
-  export let league_name_link: string;
+  let data: B_SAP_PP_D = $page.data.PAGE_DATA
+  $: data = $page.data.PAGE_DATA
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: server_side_language = platfrom_lang_ssr(
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+  $: breadcrumb_lang_prefix = 
+    server_side_language == 'en'
+      ? `/`
+      : `/${server_side_language}/`
+  ;
+
 </script>
 
 <!-- ===================
@@ -19,7 +39,7 @@
 =================== -->
 
 <!-- 
-[ℹ] breadcrumbs URL
+[ℹ] breadcrumbs component URL
 -->
 <div
   id="fixture-page-breadcrumbs"
@@ -29,14 +49,10 @@
   "
 >
   <!-- 
-  [ℹ] sport 
+  [ℹ] sport
   -->
   <a
-    href={
-      $page.params.lang != undefined
-        ? `/${$page.params.lang}/${$page.params.sport}`
-        : `/${$page.params.sport}`
-    }
+    href={`${breadcrumb_lang_prefix}${data?.data?.sport_typ}`}
   >
     <p
       class="
@@ -48,7 +64,7 @@
         no-wrap
       "
     >
-      {FIXTURE_INFO?.data?.sport}
+      {data?.data?.sport_typ}
     </p>
   </a>
 
@@ -64,10 +80,7 @@
   [ℹ] country 
   -->
   <a
-    
-    href={$page.params.lang != undefined
-      ? `/${$page.params.lang}/${$page.params.sport}/${country_link}`
-      : `/${$page.params.sport}/${country_link}`}
+    href={`${breadcrumb_lang_prefix}${data?.data?.country_id}`}
   >
     <p
       class="
@@ -79,7 +92,7 @@
         no-wrap
       "
     >
-      {FIXTURE_INFO?.data?.country}
+      {data?.data?.country_id}
     </p>
   </a>
 
@@ -95,10 +108,7 @@
   [ℹ] league_name 
   -->
   <a
-    
-    href={$page.params.lang != undefined
-      ? `/${$page.params.lang}/${$page.params.sport}/${country_link}/${league_name_link}`
-      : `/${$page.params.sport}/${country_link}/${league_name_link}`}
+    href={`${breadcrumb_lang_prefix}${data?.data?.league_name}`}
   >
     <p
       class="
@@ -110,7 +120,7 @@
         no-wrap
       "
     >
-      {FIXTURE_INFO?.data?.league_name}
+      {data?.data?.league_name}
     </p>
   </a>
 
@@ -123,7 +133,7 @@
   />
 
   <!-- 
-  [ℹ] fxiture_name 
+  [ℹ] player_name && team_name 
   -->
   <p
     class="
@@ -134,8 +144,8 @@
       fixture-name
     "
   >
-    {FIXTURE_INFO?.data?.home_team_name}
-    vs
-    {FIXTURE_INFO?.data?.away_team_name}
+    {data?.data?.player_name}
+    {data?.data?.team_name}
+    videos, transfer history and stats
   </p>
 </div>
