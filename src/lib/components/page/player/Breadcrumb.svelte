@@ -12,7 +12,8 @@ COMPONENT JS (w/ TS)
 
 	import type {
 		B_SAP_D1,
-		B_SAP_PP_D
+		B_SAP_PP_D,
+		B_SAP_PP_T
 	} from "@betarena/scores-lib/types/seo-pages";
 
 	import BreadcrumbSingle from "./Breadcrumb-Single.svelte";
@@ -30,10 +31,12 @@ COMPONENT JS (w/ TS)
   // [...]
   // $page.data.PAGE_DATA: B_SAP_PP_D
   // $page.data.B_SAP_D1: B_SAP_D1
+  // $page.data.PAGE_SEO: B_SAP_PP_T
   // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
 
   let data: B_SAP_PP_D = $page.data.PAGE_DATA
   let data_0: B_SAP_D1 = $page.data.B_SAP_D1
+  let data_1: B_SAP_PP_T = $page.data.PAGE_SEO
   let league_url_split: [
     /** sport target link */
     string,
@@ -55,6 +58,7 @@ COMPONENT JS (w/ TS)
 
   $: data = $page.data.PAGE_DATA
   $: data_0 = $page.data.B_SAP_D1
+  $: data_1 = $page.data.PAGE_SEO
 
   $: breadcrumb_lang_prefix = 
     server_side_language == 'en'
@@ -93,7 +97,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- TODO: correct transaltion -->
   <BreadcrumbSingle 
     href={`${breadcrumb_lang_prefix}${league_url_split[0]}`}
-    name={data?.data?.sport_typ}
+    name={data_1?.football}
   />
   <!-- 
   [ℹ] country 

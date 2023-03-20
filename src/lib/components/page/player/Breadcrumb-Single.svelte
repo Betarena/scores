@@ -57,15 +57,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   a.disabled {
     pointer-events: none;
     cursor: default;
+  } a.disabled > p.breadcrumb {
+    color: var(--grey);
   }
 
-  p.breadcrumb {
+  a > p.breadcrumb {
     font-size: 14px;
     color: var(--white);
     margin-right: 10px;
     text-transform: capitalize;
 		overflow: hidden;
     white-space: nowrap;
-  }
+  } a > p.breadcrumb:hover {
+    color: var(--primary);
+  } 
 
 </style>
