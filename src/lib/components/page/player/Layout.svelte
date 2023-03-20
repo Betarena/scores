@@ -9,15 +9,29 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Svelte/SvelteKit Imports
   // <-imports-go-here->
+  // -
+	import { goto, preloadData } from '$app/navigation';
+  // -
+	import { browser } from '$app/environment';
+  // -
 	import { page } from '$app/stores';
-  // ---
+  // -
 	import { onMount } from 'svelte';
+  // -
   //#endregion ➤ Svelte/SvelteKit Imports
 
   //#region ➤ Project Custom Imports
   // <-imports-go-here->
-	import { viewport_change } from '$lib/utils/platform-functions';
-//#endregion ➤ Project Custom Imports
+  // -
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
+  // -
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+  // -
+	import { sessionStore } from '$lib/store/session';
+  // -
+	import { dlog } from '$lib/utils/debug';
+  // -
+  //#endregion ➤ Project Custom Imports
 
   //#region ➤ [PLUGIN] Firebase Imports
   // <-imports-go-here->
@@ -25,6 +39,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Types Imports
   // <-imports-go-here->
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
   //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports
@@ -43,9 +58,29 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // export const EXAMPLE_VALUE
-  
-  // const EXAMPLE_VALUE
+  // IMPORTANT
+  // (this) widget has access to the following PAGE data:
+  // [...]
+  // $page.data.PAGE_DATA: B_SAP_PP_D
+  // $page.data.B_SAP_D1: B_SAP_D1
+  // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
+
+  let data: B_SAP_PP_D = $page.data.PAGE_DATA
+  $: data = $page.data.PAGE_DATA
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: server_side_language = platfrom_lang_ssr(
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+
+  let current_lang: string = server_side_language;
+	$: refresh_lang = $userBetarenaSettings.lang;
+	$: lang_intent = $sessionStore.lang_intent;
 
   //#endregion ➤ [VARIABLES]
 
@@ -55,7 +90,34 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  function do_something() {}
+  /**
+   * @description [HELPER] method
+   * identifies the target translated URL;
+   * @param {string} lang
+   * @returns string
+   */
+  function translated_url (
+    lang: string
+  ): string {
+    let new_url: string = data.alternate_data[lang];
+    // new_url = new_url.replace('https://scores.betarena.com','');
+    dlog(data.alternate_data, true)
+    if (new_url == undefined) return '/'
+    dlog(`new_url: /${new_url}`, true)
+    return `/${new_url}`;
+  }
+
+  /**
+   * @description [HELPER] method
+   * preload target URL;
+   * @param {string} new_url
+   * @returns void
+   */
+  async function preload_target_url (
+    new_url: string
+  ): Promise < void > {
+    await preloadData(new_url)
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -87,6 +149,25 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
+
+  // [ℹ] (event-listen)
+  // [ℹ] lang (intent) change;
+  $: if (browser && lang_intent) {
+    let newURL = translated_url(lang_intent)
+    dlog(`newURL (lang_intent): ${newURL}`, true)
+    preload_target_url(newURL)
+  }
+
+  // [ℹ] (event-listen)
+  // [ℹ] lang change;
+	$: if (
+    browser
+    && current_lang != refresh_lang 
+	) {
+		current_lang = refresh_lang;
+		let new_url = translated_url(current_lang)
+		goto(new_url, { replaceState: true });
+	}
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
