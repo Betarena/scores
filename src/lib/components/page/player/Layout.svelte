@@ -181,10 +181,6 @@ COMPONENT JS (w/ TS)
 SVELTE INJECTION TAGS
 =================== -->
 
-<svelte:head>
-  <!-- <add> -->
-</svelte:head>
-
 <!-- 
 [ℹ] Meta (SEO)
 -->
@@ -200,6 +196,45 @@ SVELTE INJECTION TAGS
 		openGraph={$page.data?.PAGE_SEO?.opengraph}
 	/>
 {/if}
+
+<!-- 
+[ℹ] Meta <link hreflang={...}>
+[ℹ] example:
+[ℹ] <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+[ℹ] <link rel="alternate" hrefLang="es" href="https://scores.betarena.com/es/futbol/aston-villa-southampton-50977>
+[ℹ] <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+[ℹ] <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+-->
+<svelte:head>
+  {#if $page.data?.PAGE_SEO}
+    {#each $page.data?.PAGE_SEO?.hreflang as item}
+      {#each Object.entries($page.data?.PAGE_DATA?.alternate_data) as [lang, link]}
+        {#if item.link == lang}
+          <link
+            rel="alternate"
+            hreflang={item.hreflang}
+            href={link}
+          />
+        {/if}
+        {#if item.link == null && lang == 'en'}
+          <!-- 
+          [ℹ] EN (unique)
+          -->
+          <link
+            rel="alternate"
+            hreflang={item.hreflang}
+            href={link}
+          />
+          <link
+            rel="alternate"
+            hreflang="en"
+            href={link}
+          />
+        {/if}
+      {/each}
+    {/each}
+  {/if}
+</svelte:head>
 
 <!-- ===============
 COMPONENT HTML 
