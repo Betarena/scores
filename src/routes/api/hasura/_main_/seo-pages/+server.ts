@@ -123,8 +123,11 @@ async function main_player_page_data (
   // [ℹ] map of scores_tournaments
   const tournament_map = new Map < number, B_H_ST > ()
   for (const item of tournaments_array) {
-    tournament_map.set(item?.id, item)
+    tournament_map.set(item?.tournament_id, item)
   }
+
+  // const DATA2 = JSON.stringify(Array.from(tournament_map.values()), null, 4)
+  // console.log('DATA', DATA2)
   
   // [ℹ] map of player data generation;
   const map = await SAP_GL_generate_page_players (
