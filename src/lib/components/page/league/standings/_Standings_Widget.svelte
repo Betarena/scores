@@ -15,11 +15,7 @@
 
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 
-	import type {
-		REDIS_CACHE_SINGLE_tournament_standings_translation
-	} from '$lib/models/tournaments/standings/types';
-
-  import type { B_STA_D } from '@betarena/scores-lib/types/standings';
+  import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings';
 
 	import StandingsTeamRow from './_Standings_Team_Row.svelte';
 	import StandingsWidgetContentLoader from './_Standings_Widget_ContentLoader.svelte';
@@ -32,6 +28,8 @@
 	import slider_left from './assets/slider-left.svg';
 	import slider_right_dark from './assets/slider-right-dark.svg';
 	import slider_right from './assets/slider-right.svg';
+  import arrow_down from './assets/arrow-down.svg';
+	import arrow_up from './assets/arrow-up.svg';
 
 	let loaded: boolean = false; // [ℹ] holds boolean for data loaded;
 	let refresh: boolean = false; // [ℹ] refresh value speed of the WIDGET;
@@ -55,7 +53,7 @@
 		732 // [ℹ] World Cup
 	];
 
-	export let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
+	export let STANDINGS_T: B_STA_T;
 	export let STANDINGS_DATA: B_STA_D;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -265,9 +263,11 @@
 
   let stage_opt: string[] = []
   let select_stage_opt: string = ''
+  let select_stage_dropdown: boolean = false;
   $: if (STANDINGS_DATA
     && $sessionStore.selectedSeasonID
   ) {
+    stage_opt = []
     let target_stage = STANDINGS_DATA.seasons
       .find( ({ season_id }) =>
 				season_id ===
@@ -450,93 +450,141 @@
 					<div
 						id="standings-view-box"
 						class="
-                row-space-start 
+                row-space-out
                 m-b-15
               "
 					>
-						<div
-							class="
-                  stand-view-opt-box 
-                  cursor-pointer
-                "
-							on:click={() =>
-								selectTableView('total')}
-							class:activeOpt={selectedOpt ==
-								'total'}
-							class:total_view_only={only_total_view_league_ids.includes(
-								STANDINGS_DATA?.league_id
-							)}
-						>
-							<p
-								class=" 
-                    s-14 
-                    w-500 
-                    color-grey
-                  "
-							>
-								{STANDINGS_T.translations.total}
-							</p>
-						</div>
-
-						<!-- 
-            [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
-            -->
-						{#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
-							<div
-								class="
+            <div
+              class="
+                row-space-start
+              "
+            >
+              <div
+                class="
                     stand-view-opt-box 
                     cursor-pointer
                   "
-								on:click={() =>
-									selectTableView('home')}
-								class:activeOpt={selectedOpt ==
-									'home'}
-							>
-								<p
-									class="
+                on:click={() =>
+                  selectTableView('total')}
+                class:activeOpt={selectedOpt ==
+                  'total'}
+                class:total_view_only={only_total_view_league_ids.includes(
+                  STANDINGS_DATA?.league_id
+                )}
+              >
+                <p
+                  class=" 
                       s-14 
                       w-500 
                       color-grey
                     "
-								>
-									{STANDINGS_T.translations.home}
-								</p>
-							</div>
+                >
+                  {STANDINGS_T.translations.total}
+                </p>
+              </div>
 
-							<div
-								class="
-                    stand-view-opt-box 
-                    cursor-pointer
-                  "
-								on:click={() =>
-									selectTableView('away')}
-								class:activeOpt={selectedOpt ==
-									'away'}
-							>
-								<p
-									class="
-                      s-14 
-                      w-500 
-                      color-grey
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
+                <div
+                  class="
+                      stand-view-opt-box 
+                      cursor-pointer
                     "
-								>
-									{STANDINGS_T.translations.away}
-								</p>
-							</div>
-						{/if}
+                  on:click={() =>
+                    selectTableView('home')}
+                  class:activeOpt={selectedOpt ==
+                    'home'}
+                >
+                  <p
+                    class="
+                        s-14 
+                        w-500 
+                        color-grey
+                      "
+                  >
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
+
+                <div
+                  class="
+                      stand-view-opt-box 
+                      cursor-pointer
+                    "
+                  on:click={() =>
+                    selectTableView('away')}
+                  class:activeOpt={selectedOpt ==
+                    'away'}
+                >
+                  <p
+                    class="
+                        s-14 
+                        w-500 
+                        color-grey
+                      "
+                  >
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+              {/if}
+            </div>
 
             <!-- 
-            [ℹ] standings view
+            [ℹ] standings (stage/phase) select view
             -->
             {#if stage_opt.length > 1}
-              {#each stage_opt as item}
-                <p
-                  on:click={() => select_stage_opt = item}>
-                  {item}
-                </p>
-              {/each}
+              <div
+                id="ss-box">
+                <div
+                  class="
+                    row-space-out
+                  "
+                  on:click={() => select_stage_dropdown = !select_stage_dropdown}>
+                  <p
+                    class="
+                      color-black-2
+                      w-400
+                      no-wrap
+                      m-r-10
+                    ">
+                    {select_stage_opt}
+                  </p>
+                  <img
+                    src={select_stage_dropdown ? arrow_up : arrow_down}
+                    alt="default alt"
+                    width=20
+                    height=20
+                  />
+                </div>
+                {#if select_stage_dropdown}
+                  <div
+                    id="ssdb-main"
+                  >
+                    <div
+                      id="ssdb-inner"
+                    >
+                      {#each stage_opt as item}
+                        <p
+                          class="
+                            s-14
+                            w-500
+                            color-black-2
+                            stage-opt
+                            no-wrap
+                          "
+                          class:color-primary={item === select_stage_opt}
+                          on:click={() => select_stage_opt = item}>
+                          {item}
+                        </p>
+                      {/each}
+                    </div>
+                  </div>
+                {/if}
+              </div>
             {/if}
-					</div>
+          </div>
 
 					<!-- 
             [ℹ] [STASHED] [V1] [ALTERNATIVE TABLE]
@@ -1651,13 +1699,57 @@
 		text-align: center;
 	}
 
-	/* [ℹ] SEO WIDGET DATA */
-
-	#seo-widget-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
+  div#ss-box {
+    /* p */
+		position: relative;
+    /* s */
+    min-width: 171px;
+    height: 40px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    padding: 10px 20px;
+		cursor: pointer;
+  } div#ss-box div#ssdb-main {
+    /* p */
+    position: absolute;
+		top: 115%;
+		right: 0;
+		z-index: 10000;
+		width: 100%;
+    /* s */
+		background-color: var(--white);
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 4px;
+		/* height: 308px; */
+		max-height: 308px;
+		overflow-y: scroll;
+		padding-right: 6px;
+  } div#ss-box div#ssdb-main::-webkit-scrollbar {
+		/* Hide scrollbar for Chrome, Safari and Opera */
+		display: none;
+	} div#ss-box div#ssdb-main::-webkit-scrollbar {
+		/* Hide scrollbar for IE, Edge and Firefox */
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
+  
+  div#ss-box div#ssdb-main div#ssdb-inner {
+    max-height: 308px;
+		overflow-y: scroll;
+  } div#ss-box div#ssdb-main div#ssdb-inner p.stage-opt {
+    padding: 11px 20px;
+  } div#ss-box div#ssdb-main div#ssdb-inner p.stage-opt:hover {
+    cursor: pointer;
+		color: #f5620f !important;
+  } div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar {
+		width: 4px;
+	} div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-track {
+		background: #f2f2f2;
+		border-radius: 12px;
+		margin: 8px;
+	} div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-thumb {
+		background: #cccccc;
+		border-radius: 12px;
 	}
 
 	#standings-table-container {
@@ -2016,4 +2108,18 @@
 		width: 100%;
 		background: #616161;
 	}
+
+  .dark-background-1 div#ss-box div#ssdb-main {
+		background: #616161;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
+  }
+
+  .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar {
+		width: 4px;
+	} .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-track {
+		background: var(--dark-theme-1) !important;
+	} .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-thumb {
+		background: var(--dark-theme-1-3-shade) !important;
+	}
+
 </style>
