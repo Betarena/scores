@@ -16,13 +16,16 @@
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 
 	import type {
-		REDIS_CACHE_SINGLE_tournament_standings_data,
 		REDIS_CACHE_SINGLE_tournament_standings_translation
 	} from '$lib/models/tournaments/standings/types';
+
+  import type { B_STA_D } from '@betarena/scores-lib/types/standings';
 
 	import StandingsTeamRow from './_Standings_Team_Row.svelte';
 	import StandingsWidgetContentLoader from './_Standings_Widget_ContentLoader.svelte';
 
+	import { page } from '$app/stores';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 	import slider_left_dark from './assets/slider-left-dark.svg';
@@ -53,7 +56,7 @@
 	];
 
 	export let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
-	export let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
+	export let STANDINGS_DATA: B_STA_D;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -238,18 +241,17 @@
 
 	let seasonCheck: boolean = false;
 	$: if (STANDINGS_DATA != undefined) {
-		// [ℹ] check season exists / contains data
+		// [ℹ] (validation) check season exists;
 		let season = STANDINGS_DATA.seasons.find(
 			({ season_id }) =>
 				season_id ===
 				$sessionStore.selectedSeasonID
 		);
+		// [ℹ] (validation) check contains data;
+
 		let seasonCheckLength = 0;
 		if (season != undefined) {
-			seasonCheckLength =
-				season.group == false
-					? season?.total.length
-					: season?.group_standings.length;
+			seasonCheckLength = season.standings.length;
 		}
 		noStandingsBool =
 			seasonCheckLength == 0 ||
@@ -260,6 +262,34 @@
 	} else {
 		seasonCheck = true;
 	}
+
+  let stage_opt: string[] = []
+  let select_stage_opt: string = ''
+  $: if (STANDINGS_DATA
+    && $sessionStore.selectedSeasonID
+  ) {
+    let target_stage = STANDINGS_DATA.seasons
+      .find( ({ season_id }) =>
+				season_id ===
+				$sessionStore.selectedSeasonID
+		  )
+    ;
+    let number_stages = target_stage?.standings.length
+    dlog(`number_stages: ${number_stages}`, true)
+    if (number_stages > 1) {
+      dlog(`number_stages: ${number_stages}`, true)
+      stage_opt = target_stage?.standings
+        .map(a => a?.stage_name); 
+      dlog(`stage_opt ${stage_opt}`, true)
+      select_stage_opt = stage_opt[0];
+    }
+    else {
+      select_stage_opt = target_stage?.standings[0]?.stage_name
+    }
+  }
+
+  console.log('$page.data', $page.data)
+
 </script>
 
 <!-- ===============
@@ -276,30 +306,32 @@
 	/>
 {/if}
 
-<div>
-	<!-- 
-  [ℹ] SEO-DATA-LOADED 
-  -->
-	<!-- {#if !loaded} -->
-	<div id="seo-widget-box">
-		<h2>{STANDINGS_T?.translations?.standings}</h2>
-		{#if STANDINGS_DATA != undefined && STANDINGS_DATA?.seasons.length != 0}
-			{#if !STANDINGS_DATA.seasons[0].group}
-				{#each STANDINGS_DATA.seasons[0].total as team}
-					<p>{team.team_name}</p>
-				{/each}
-			{:else}
-				{#each STANDINGS_DATA.seasons[0].group_standings as group}
-					<p>{group.group_name}</p>
-					{#each group.total as team}
-						<p>{team.team_name}</p>
-					{/each}
-				{/each}
-			{/if}
-		{/if}
-	</div>
-	<!-- {/if} -->
+<SeoBox>
+  <h2>{STANDINGS_T?.translations?.standings}</h2>
+  {#if STANDINGS_DATA != undefined 
+    && STANDINGS_DATA?.seasons.length != 0}
+    <!-- 
+    [ℹ] stage standings (regular)
+    -->
+    {#if !STANDINGS_DATA.seasons[0].standings[0].group_based}
+      {#each STANDINGS_DATA.seasons[0].standings[0].total as team}
+        <p>{team.team_name}</p>
+      {/each}
+    <!-- 
+    [ℹ] stage standings (groups)
+    -->
+    {:else}
+      {#each STANDINGS_DATA.seasons[0].standings[0].group_standings as group}
+        <p>{group.group_name}</p>
+        {#each group.total as team}
+          <p>{team.team_name}</p>
+        {/each}
+      {/each}
+    {/if}
+  {/if}
+</SeoBox>
 
+<div>
 	<!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
@@ -447,8 +479,8 @@
 						</div>
 
 						<!-- 
-              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
-              -->
+            [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+            -->
 						{#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
 							<div
 								class="
@@ -492,6 +524,18 @@
 								</p>
 							</div>
 						{/if}
+
+            <!-- 
+            [ℹ] standings view
+            -->
+            {#if stage_opt.length > 1}
+              {#each stage_opt as item}
+                <p
+                  on:click={() => select_stage_opt = item}>
+                  {item}
+                </p>
+              {/each}
+            {/if}
 					</div>
 
 					<!-- 
@@ -935,61 +979,68 @@
 						</tr>
 
 						<!-- 
-              [ℹ] widget-team-standing-row-table-standings [DESKTOP]
-              -->
+            [ℹ] widget-team-standing-row-table-standings [DESKTOP]
+            -->
 						{#each STANDINGS_DATA.seasons as season}
 							{#if season.season_id === $sessionStore.selectedSeasonID}
-								<!-- 
-                  [ℹ] STANDINGS IS A REGUALR-TYPE
-                  -->
-								{#if !season.group}
-									{#each season[selectedOpt] as team}
-										<StandingsTeamRow
-											TEAM_DATA={team}
-											{currentSeason}
-										/>
-									{/each}
-									<!-- 
-                  [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
-                  -->
-								{:else}
-									{#each season.group_standings as group}
-										<tr class="group-row-head">
-											<td colspan="20">
-												<div
-													class="table-divider"
-												/>
-												<p
-													class="
-                              w-500
-                              color-black-2
-                              group-head-text
-                              text-center
-                            "
-												>
-													{STANDINGS_T
-														?.translations?.group}
-													{group.group_name.split(
-														' '
-													)[1]}
-												</p>
-											</td>
-										</tr>
-										{#each group[selectedOpt] as team}
-											<StandingsTeamRow
-												TEAM_DATA={team}
-												{currentSeason}
-											/>
-										{/each}
-									{/each}
-									<tr class="row-divider">
-										<td colspan="20">
-											<div
-												class="table-divider"
-											/>
-										</td>
-									</tr>
-								{/if}
+                <!-- 
+                [ℹ] iterate over each stage (phase) available 
+                -->
+                {#each season.standings as standing}
+                  {#if standing?.stage_name == select_stage_opt}
+                    <!-- 
+                    [ℹ] STANDINGS IS A REGUALR-TYPE
+                    -->
+                    {#if !standing.group_based}
+                      {#each standing[selectedOpt] as team}
+                        <StandingsTeamRow
+                          TEAM_DATA={team}
+                          {currentSeason}
+                        />
+                      {/each}
+                    <!-- 
+                    [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
+                    -->
+                    {:else}
+                      {#each standing.group_standings as group}
+                        <tr class="group-row-head">
+                          <td colspan="20">
+                            <div
+                              class="table-divider"
+                            />
+                            <p
+                              class="
+                                  w-500
+                                  color-black-2
+                                  group-head-text
+                                  text-center
+                                "
+                            >
+                              {STANDINGS_T
+                                ?.translations?.group}
+                              {group.group_name.split(
+                                ' '
+                              )[1]}
+                            </p>
+                          </td>
+                        </tr>
+                        {#each group[selectedOpt] as team}
+                          <StandingsTeamRow
+                            TEAM_DATA={team}
+                            {currentSeason}
+                          />
+                        {/each}
+                      {/each}
+                      <tr class="row-divider">
+                        <td colspan="20">
+                          <div
+                            class="table-divider"
+                          />
+                        </td>
+                      </tr>
+                    {/if}
+                  {/if}
+                {/each}
 							{/if}
 						{/each}
 					</table>
