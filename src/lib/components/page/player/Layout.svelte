@@ -255,6 +255,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
+  section#section-player-page {
+    max-width: 1430px;
+		grid-template-columns: 1fr;
+		padding-top: 12px !important;
+		align-items: start;
+  }
+
   /* #region ❌ [NOT WORKING] w/ regions */
   div#example {
     color: var(--dark-theme);
