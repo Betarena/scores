@@ -4,7 +4,7 @@ import type { B_SAP_D1, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/type
 import type { PageLoad } from "../$types";
 
 /** @type {import('./$types').PageLoad} */
-export async function load({ url, params, fetch }): Promise<PageLoad> {
+export async function load({ params, fetch }): Promise<PageLoad> {
 
   const t0 = performance.now();
 
@@ -111,7 +111,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
  
   //#region [3] IMPORTANT RETURN
 
-  const INVALID_PAGE_DATA: boolean = data.includes(undefined);
+  // const INVALID_PAGE_DATA: boolean = data.includes(undefined);
 
   PRELOAD_invalid_data(data)
 
