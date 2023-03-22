@@ -65,13 +65,20 @@ async function main_player_page_data (
   player_id: number
 ): Promise < B_SAP_PP_D > {
 
+
   // [ℹ] get target player & the team-id;
   const res = await SAP_GL_get_target_player_page_data (
     graphQlInstance, 
     player_id
   )
   res?.scores_football_players_v2[0]?.teams_j.sort((a,b) => b?.id - a?.id)
-  const team_id = res?.scores_football_players_v2[0]?.teams_j[0]?.team_id
+  const today = new Date();
+  const team_id = res?.scores_football_players_v2[0]?.teams_j
+    ?.find(({ end, start }) => 
+      new Date(end).getTime() > today.getTime()
+      && new Date(start).getTime() < today.getTime()
+    )?.team_id
+  ;
 
   console.log('team_id', team_id)
 
@@ -126,8 +133,8 @@ async function main_player_page_data (
     tournament_map.set(item?.tournament_id, item)
   }
 
-  // const DATA2 = JSON.stringify(Array.from(tournament_map.values()), null, 4)
-  // console.log('DATA', DATA2)
+  const DATA2 = JSON.stringify(Array.from(tournament_map.values()), null, 4)
+  console.log('DATA2DATA', DATA2)
   
   // [ℹ] map of player data generation;
   const map = await SAP_GL_generate_page_players (
