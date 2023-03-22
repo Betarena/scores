@@ -50,7 +50,7 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@betarena/scores-lib": "^0.7.1",
+		"@betarena/scores-lib": "^0.9.3",
 		"@lukeed/uuid": "^2.0.0",
 		"@metamask/sdk": "^0.1.0",
 		"@moralisweb3/client-firebase-auth-utils": "^2.14.2",
