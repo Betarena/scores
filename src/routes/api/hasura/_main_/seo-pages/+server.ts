@@ -138,9 +138,13 @@ async function main_player_page_data (
     tournament_map
   )
 
-  // const DATA = JSON.stringify(Array.from(map.values()), null, 4)
-  // console.log('DATA', DATA)
+  const DATA = JSON.stringify(Array.from(map.values()), null, 4)
+  console.log('DATA', DATA)
 
+  if (map.size == 0) {
+    return null
+  }
+  
 	return map.get(player_id);
 }
 

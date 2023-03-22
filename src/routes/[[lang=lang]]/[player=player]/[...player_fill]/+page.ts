@@ -1,6 +1,7 @@
-import { dlog } from "$lib/utils/debug";
+import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from "$lib/utils/debug";
 import { PRELOAD_invalid_data } from "$lib/utils/platform-functions";
 import type { B_SAP_D1, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
+import { error } from "@sveltejs/kit";
 import type { PageLoad } from "../$types";
 
 /** @type {import('./$types').PageLoad} */
@@ -42,6 +43,15 @@ export async function load({ params, fetch }): Promise<PageLoad> {
 			method: 'GET'
 		}
 	).then((r) => r.json());
+
+  // TEMP VALIDATE
+  console.log('PAGE_DATA', PAGE_DATA)
+  // [ℹ] exit;
+	if (!PAGE_DATA) {
+    const t1 = performance.now();
+    dlog(`fixture (load) (exit) complete in: ${(t1 - t0) / 1000} sec`, true)
+		throw error(ERROR_CODE_INVALID, PAGE_INVALID_MSG);
+	}
 
   const country_id = PAGE_DATA?.data?.country_id;
 
