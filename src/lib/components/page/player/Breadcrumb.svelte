@@ -85,7 +85,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 [ℹ] breadcrumbs component URL
 -->
 <div
-  id="fixture-page-breadcrumbs"
+  id="fpp-breadcrumb"
   class="
     row-space-start 
     m-b-20
@@ -131,13 +131,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  p.breadcrumb {
-    font-size: 14px;
-    color: var(--white);
-    margin-right: 10px;
-    text-transform: capitalize;
-		overflow: hidden;
-    white-space: nowrap;
+  #fpp-breadcrumb {
+    overflow: hidden;
   }
 
 </style>

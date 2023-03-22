@@ -39,7 +39,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Types Imports
   // <-imports-go-here->
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
+	import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
   //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports
@@ -66,7 +66,10 @@ COMPONENT JS (w/ TS)
   // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
 
   let data: B_SAP_PP_D = $page.data.PAGE_DATA
+  let data_0: B_SAP_PP_T = $page.data.PAGE_SEO
+
   $: data = $page.data.PAGE_DATA
+  $: data_0 = $page.data.PAGE_SEO
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// (SSR) LANG SVELTE | IMPORTANT
@@ -81,6 +84,8 @@ COMPONENT JS (w/ TS)
   let current_lang: string = server_side_language;
 	$: refresh_lang = $userBetarenaSettings.lang;
 	$: lang_intent = $sessionStore.lang_intent;
+
+  $: console.log($page.data)
 
   //#endregion ➤ [VARIABLES]
 
@@ -184,16 +189,16 @@ SVELTE INJECTION TAGS
 <!-- 
 [ℹ] Meta (SEO)
 -->
-{#if $page.data?.PAGE_SEO}
+{#if data_0}
 	<SvelteSeo
-		title={$page.data?.PAGE_SEO?.main_data.title}
-		description={$page.data?.PAGE_SEO?.main_data.description}
-		keywords={$page.data?.PAGE_SEO?.main_data.keywords}
-		noindex={JSON.parse($page.data?.PAGE_SEO?.main_data.noindex.toString())}
-		nofollow={JSON.parse($page.data?.PAGE_SEO?.main_data.nofollow.toString())}
-		canonical={$page.data?.PAGE_SEO?.main_data.canonical}
-		twitter={$page.data?.PAGE_SEO?.twitter_card}
-		openGraph={$page.data?.PAGE_SEO?.opengraph}
+		title={data_0?.main_data?.title}
+		description={data_0?.main_data?.description}
+		keywords={data_0?.main_data?.keywords}
+		noindex={JSON.parse(data_0?.main_data?.noindex.toString())}
+		nofollow={JSON.parse(data_0?.main_data?.nofollow.toString())}
+		canonical={data_0?.main_data?.canonical}
+		twitter={data_0?.twitter_card}
+		openGraph={data_0?.opengraph}
 	/>
 {/if}
 
@@ -206,14 +211,14 @@ SVELTE INJECTION TAGS
 [ℹ] <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
 -->
 <svelte:head>
-  {#if $page.data?.PAGE_SEO}
-    {#each $page.data?.PAGE_SEO?.hreflang as item}
-      {#each Object.entries($page.data?.PAGE_DATA?.alternate_data) as [lang, link]}
+  {#if data_0}
+    {#each data_0?.hreflang as item}
+      {#each Object.entries(data?.alternate_data) as [lang, link]}
         {#if item.link == lang}
           <link
             rel="alternate"
             hreflang={item.hreflang}
-            href={link}
+            href={`${$page.url.origin}/${link}`}
           />
         {/if}
         {#if item.link == null && lang == 'en'}
@@ -223,12 +228,12 @@ SVELTE INJECTION TAGS
           <link
             rel="alternate"
             hreflang={item.hreflang}
-            href={link}
+            href={`${$page.url.origin}/${link}`}
           />
           <link
             rel="alternate"
             hreflang="en"
-            href={link}
+            href={`${$page.url.origin}/${link}`}
           />
         {/if}
       {/each}

@@ -65,8 +65,10 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 	).then((r) => r.json());
   
 	const urlLang: string =
-		params.lang == undefined 
-    || (!response_valid_url && route?.id != '/u/[view]/[lang=lang]')
+		params.lang == undefined
+    // FIXME: interferes with [player=player] route;
+    // || (!response_valid_url && route?.id != '/u/[view]/[lang=lang]')
+    // || (route?.id != '/u/[view]/[lang=lang]')
 			? 'en'
 			: params.lang;
 

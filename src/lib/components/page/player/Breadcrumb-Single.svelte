@@ -59,6 +59,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     cursor: default;
   } a.disabled > p.breadcrumb {
     color: var(--grey);
+    max-width: 50px;
   }
 
   a > p.breadcrumb {
@@ -68,8 +69,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     text-transform: capitalize;
 		overflow: hidden;
     white-space: nowrap;
+    text-overflow: ellipsis;
+    max-width: 100px;
   } a > p.breadcrumb:hover {
     color: var(--primary);
-  } 
+  }
+
+  @media only screen and (min-width: 450px) {
+    a > p.breadcrumb,
+    a.disabled > p.breadcrumb {
+      max-width: unset;
+    }
+  }
 
 </style>

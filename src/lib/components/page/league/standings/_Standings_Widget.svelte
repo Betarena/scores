@@ -122,6 +122,7 @@
 
 	function closeAllDropdowns() {
 		toggleCTA = false;
+    select_stage_dropdown = false;
 	}
 
 	function triggerGoggleEvents(action: string) {
@@ -299,7 +300,7 @@
 <!-- 
 [ℹ] area-outside-for-close 
 -->
-{#if toggleCTA}
+{#if toggleCTA || select_stage_dropdown}
 	<div
 		id="background-area-close"
 		on:click={() => closeAllDropdowns()}
