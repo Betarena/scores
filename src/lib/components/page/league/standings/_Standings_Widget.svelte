@@ -468,8 +468,8 @@
                   selectTableView('total')}
                 class:activeOpt={selectedOpt ==
                   'total'}
-                class:total_view_only={only_total_view_league_ids.includes(
-                  STANDINGS_DATA?.league_id
+                class:total_view_only={(only_total_view_league_ids.includes(
+                  STANDINGS_DATA?.league_id) || stage_opt.length != 0
                 )}
               >
                 <p
@@ -487,7 +487,7 @@
               [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
               -->
               {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)
-                && stage_opt.length == 1}
+                && stage_opt.length == 0}
                 <div
                   class="
                       stand-view-opt-box 
@@ -1264,8 +1264,8 @@
 								selectTableView('total')}
 							class:activeOpt={selectedOpt ==
 								'total'}
-							class:total_view_only={only_total_view_league_ids.includes(
-								STANDINGS_DATA?.league_id
+							class:total_view_only={(only_total_view_league_ids.includes(
+								STANDINGS_DATA?.league_id) || stage_opt.length != 0
 							)}
 						>
 							<p
@@ -1283,7 +1283,7 @@
               [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
               -->
 						{#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)
-              && stage_opt.length == 1}
+              && stage_opt.length == 0}
 							<div
 								class="stand-view-opt-box cursor-pointer"
 								on:click={() =>
