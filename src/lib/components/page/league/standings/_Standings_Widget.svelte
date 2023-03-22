@@ -22,14 +22,14 @@
 
 	import { page } from '$app/stores';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import arrow_down from './assets/arrow-down.svg';
+	import arrow_up from './assets/arrow-up.svg';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 	import slider_left_dark from './assets/slider-left-dark.svg';
 	import slider_left from './assets/slider-left.svg';
 	import slider_right_dark from './assets/slider-right-dark.svg';
 	import slider_right from './assets/slider-right.svg';
-  import arrow_down from './assets/arrow-down.svg';
-	import arrow_up from './assets/arrow-up.svg';
 
 	let loaded: boolean = false; // [ℹ] holds boolean for data loaded;
 	let refresh: boolean = false; // [ℹ] refresh value speed of the WIDGET;
@@ -486,7 +486,8 @@
               <!-- 
               [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
               -->
-              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)
+                && stage_opt.length == 1}
                 <div
                   class="
                       stand-view-opt-box 
@@ -1281,7 +1282,8 @@
 						<!-- 
               [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
               -->
-						{#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
+						{#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)
+              && stage_opt.length == 1}
 							<div
 								class="stand-view-opt-box cursor-pointer"
 								on:click={() =>
@@ -1358,9 +1360,63 @@
 						</button>
 					</div>
 
+          <!-- 
+          [ℹ] standings (stage/phase) select view
+          -->
+          {#if stage_opt.length > 1}
+            <div
+              id="ss-box">
+              <div
+                class="
+                  row-space-out
+                "
+                on:click={() => select_stage_dropdown = !select_stage_dropdown}>
+                <p
+                  class="
+                    color-black-2
+                    w-400
+                    no-wrap
+                    m-r-10
+                  ">
+                  {select_stage_opt}
+                </p>
+                <img
+                  src={select_stage_dropdown ? arrow_up : arrow_down}
+                  alt="default alt"
+                  width=20
+                  height=20
+                />
+              </div>
+              {#if select_stage_dropdown}
+                <div
+                  id="ssdb-main"
+                >
+                  <div
+                    id="ssdb-inner"
+                  >
+                    {#each stage_opt as item}
+                      <p
+                        class="
+                          s-14
+                          w-500
+                          color-black-2
+                          stage-opt
+                          no-wrap
+                        "
+                        class:color-primary={item === select_stage_opt}
+                        on:click={() => select_stage_opt = item}>
+                        {item}
+                      </p>
+                    {/each}
+                  </div>
+                </div>
+              {/if}
+            </div>
+          {/if}
+
 					<!-- 
-            [ℹ] STANDINGS TABLE
-            -->
+          [ℹ] STANDINGS TABLE
+          -->
 					<table class="standings_table">
 						<!-- [ℹ] widget-top-row-table-standings [DESKTOP]
               -->
@@ -1488,61 +1544,68 @@
 						<!-- 
               [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
-						{#each STANDINGS_DATA.seasons as season}
+            {#each STANDINGS_DATA.seasons as season}
 							{#if season.season_id === $sessionStore.selectedSeasonID}
-								<!-- 
-                  [ℹ] STANDINGS IS A REGUALR-TYPE
-                  -->
-								{#if !season.group}
-									{#each season[selectedOpt] as team}
-										<StandingsTeamRow
-											TEAM_DATA={team}
-											TABLEMOBILEVIEW={selectedOptTableMobile}
-											{currentSeason}
-										/>
-									{/each}
-									<!-- 
-                  [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
-                  -->
-								{:else}
-									{#each season.group_standings as group}
-										<tr class="group-row-head">
-											<td colspan="20">
-												<div
-													class="table-divider"
-												/>
-												<p
-													class="
-                              w-500
-                              color-black-2
-                              group-head-text
-                              text-center
-                            "
-												>
-													{STANDINGS_T
-														?.translations?.group}
-													{group.group_name.split(
-														' '
-													)[1]}
-												</p>
-											</td>
-										</tr>
-										{#each group[selectedOpt] as team}
-											<StandingsTeamRow
-												TEAM_DATA={team}
-												TABLEMOBILEVIEW={selectedOptTableMobile}
-												{currentSeason}
-											/>
-										{/each}
-									{/each}
-									<tr class="row-divider">
-										<td colspan="20">
-											<div
-												class="table-divider"
-											/>
-										</td>
-									</tr>
-								{/if}
+                <!-- 
+                [ℹ] iterate over each stage (phase) available 
+                -->
+                {#each season.standings as standing}
+                  {#if standing?.stage_name == select_stage_opt}
+                    <!-- 
+                    [ℹ] STANDINGS IS A REGUALR-TYPE
+                    -->
+                    {#if !standing.group_based}
+                      {#each standing[selectedOpt] as team}
+                        <StandingsTeamRow
+                          TEAM_DATA={team}
+                          TABLEMOBILEVIEW={selectedOptTableMobile}
+                          {currentSeason}
+                        />
+                      {/each}
+                    <!-- 
+                    [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
+                    -->
+                    {:else}
+                      {#each standing.group_standings as group}
+                        <tr class="group-row-head">
+                          <td colspan="20">
+                            <div
+                              class="table-divider"
+                            />
+                            <p
+                              class="
+                                  w-500
+                                  color-black-2
+                                  group-head-text
+                                  text-center
+                                "
+                            >
+                              {STANDINGS_T
+                                ?.translations?.group}
+                              {group.group_name.split(
+                                ' '
+                              )[1]}
+                            </p>
+                          </td>
+                        </tr>
+                        {#each group[selectedOpt] as team}
+                          <StandingsTeamRow
+                            TEAM_DATA={team}
+                            TABLEMOBILEVIEW={selectedOptTableMobile}
+                            {currentSeason}
+                          />
+                        {/each}
+                      {/each}
+                      <tr class="row-divider">
+                        <td colspan="20">
+                          <div
+                            class="table-divider"
+                          />
+                        </td>
+                      </tr>
+								    {/if}
+                  {/if}
+                {/each}
 							{/if}
 						{/each}
 					</table>
@@ -1709,6 +1772,7 @@
     border-radius: 8px;
     padding: 10px 20px;
 		cursor: pointer;
+    margin: 20px;
   } div#ss-box div#ssdb-main {
     /* p */
     position: absolute;
@@ -2042,6 +2106,9 @@
 			padding-left: 0;
 			padding-right: 0;
 		}
+    div#ss-box {
+      margin: unset;
+    }
 	}
 
 	/* 
