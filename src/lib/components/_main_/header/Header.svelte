@@ -496,6 +496,11 @@ COMPONENT JS - BASIC
 
   // TODO:
 	// function selectedSport(sport: string) {}
+
+  $: if (HEADER_TRANSLATION_DATA?.scores_header_fixtures_information) {
+    $sessionStore.fixturesTodayNum = parseInt(HEADER_TRANSLATION_DATA?.scores_header_fixtures_information?.football)
+  }
+
 </script>
 
 <!-- ===================

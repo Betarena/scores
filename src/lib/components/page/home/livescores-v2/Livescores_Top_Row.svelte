@@ -229,7 +229,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         color-grey
         cursor-pointer
       ">
-      {WIDGET_T_DATA?.all || 'All'} ({numOfFixtures || 0})
+      {WIDGET_T_DATA?.all || 'All'} 
+      {#if $sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10) == today.toISOString().slice(0, 10)}
+        ({$sessionStore.fixturesTodayNum || 0})
+      {:else}
+        ({numOfFixtures || 0})
+      {/if}
     </p>
   </div>
   <div 
