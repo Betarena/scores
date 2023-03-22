@@ -1231,8 +1231,8 @@
         -->
 			{:else}
 				<!-- 
-          [ℹ] promise was fulfilled 
-          -->
+        [ℹ] promise was fulfilled 
+        -->
 				<h1
 					class="s-20 m-b-10 w-500 color-black-2"
 					style="margin-top: 0px;"
@@ -1311,56 +1311,6 @@
 						{/if}
 					</div>
 
-					<!-- [ℹ] widget table view mobile select
-            -->
-					<div
-						id="mobile-table-box"
-						class="row-space-out m-b-12"
-					>
-						<button
-							class="table-nav-btn"
-							aria-label="selectedOptionTableMobile"
-							disabled={selectedOptTableMobile ==
-								1}
-							on:click={() =>
-								(selectedOptTableMobile =
-									selectedOptTableMobile - 1)}
-						>
-							{#if $userBetarenaSettings.theme == 'Dark'}
-								<img
-									src={slider_left_dark}
-									alt="default alt text"
-								/>
-							{:else}
-								<img src={slider_left} alt="default alt text" />
-							{/if}
-						</button>
-
-						<p class="s-14 w-500 color-black">
-							{STANDINGS_T.translations.table}
-							{selectedOptTableMobile}
-						</p>
-
-						<button
-							class="table-nav-btn"
-							aria-label="selectedOptionTableMobile"
-							disabled={selectedOptTableMobile ==
-								3}
-							on:click={() =>
-								(selectedOptTableMobile =
-									selectedOptTableMobile + 1)}
-						>
-							{#if $userBetarenaSettings.theme == 'Dark'}
-								<img
-									src={slider_right_dark}
-									alt="default alt text"
-								/>
-							{:else}
-								<img src={slider_right} alt="default alt text" />
-							{/if}
-						</button>
-					</div>
-
           <!-- 
           [ℹ] standings (stage/phase) select view
           -->
@@ -1414,6 +1364,56 @@
               {/if}
             </div>
           {/if}
+
+					<!-- [ℹ] widget table view mobile select
+            -->
+					<div
+						id="mobile-table-box"
+						class="row-space-out m-b-12"
+					>
+						<button
+							class="table-nav-btn"
+							aria-label="selectedOptionTableMobile"
+							disabled={selectedOptTableMobile ==
+								1}
+							on:click={() =>
+								(selectedOptTableMobile =
+									selectedOptTableMobile - 1)}
+						>
+							{#if $userBetarenaSettings.theme == 'Dark'}
+								<img
+									src={slider_left_dark}
+									alt="default alt text"
+								/>
+							{:else}
+								<img src={slider_left} alt="default alt text" />
+							{/if}
+						</button>
+
+						<p class="s-14 w-500 color-black">
+							{STANDINGS_T.translations.table}
+							{selectedOptTableMobile}
+						</p>
+
+						<button
+							class="table-nav-btn"
+							aria-label="selectedOptionTableMobile"
+							disabled={selectedOptTableMobile ==
+								3}
+							on:click={() =>
+								(selectedOptTableMobile =
+									selectedOptTableMobile + 1)}
+						>
+							{#if $userBetarenaSettings.theme == 'Dark'}
+								<img
+									src={slider_right_dark}
+									alt="default alt text"
+								/>
+							{:else}
+								<img src={slider_right} alt="default alt text" />
+							{/if}
+						</button>
+					</div>
 
 					<!-- 
           [ℹ] STANDINGS TABLE
