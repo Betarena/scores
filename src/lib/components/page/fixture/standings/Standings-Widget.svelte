@@ -9,17 +9,14 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import type {
-		REDIS_CACHE_SINGLE_tournament_standings_data,
-		REDIS_CACHE_SINGLE_tournament_standings_translation,
-		Tournament_Standing_Season
-	} from '$lib/models/tournaments/standings/types';
-
+	
 	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import StandingsWidgetContentLoader from './Standings-Loader.svelte';
 	import StandingsTeamRow from './Standings-Team-Row.svelte';
 
+	import type { B_STA_D, B_STA_T, STA_Season } from '@betarena/scores-lib/types/standings';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
@@ -49,8 +46,8 @@
 	];
 
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
-	export let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
-	export let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
+	export let STANDINGS_T: B_STA_T;
+	export let STANDINGS_DATA: B_STA_D;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -150,7 +147,10 @@
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	let seasonCheck: boolean = false;
-	let season: Tournament_Standing_Season;
+	let season: STA_Season;
+  let stage_opt: string[] = []
+  let select_stage_opt: string = ''
+  let select_stage_dropdown: boolean = false;
 	$: if (STANDINGS_DATA != undefined) {
 		// [ℹ] sort seasons by season-id (leargest is latest == current season)
 		STANDINGS_DATA.seasons.sort(
@@ -159,11 +159,25 @@
 		// [ℹ] check season exists / contains data
 		season = STANDINGS_DATA.seasons[0];
 		let seasonCheckLength = 0;
+    stage_opt = []
 		if (season != undefined) {
 			seasonCheckLength =
 				season.group == false
 					? season?.total.length
 					: season?.group_standings.length;
+      stage_opt = []
+      let number_stages = season?.standings.length
+      dlog(`number_stages: ${number_stages}`, true)
+      if (number_stages > 1) {
+        dlog(`number_stages: ${number_stages}`, true)
+        stage_opt = season?.standings
+          .map(a => a?.stage_name); 
+        dlog(`stage_opt ${stage_opt}`, true)
+        select_stage_opt = stage_opt[0];
+      }
+      else {
+        select_stage_opt = season?.standings[0]?.stage_name
+      }
 		}
 		no_widget_data =
 			seasonCheckLength == 0 ||
@@ -174,6 +188,7 @@
 	} else {
 		seasonCheck = true;
 	}
+
 </script>
 
 <!-- ===============
@@ -190,32 +205,35 @@
 	/>
 {/if}
 
+<SeoBox>
+  <h2>{STANDINGS_T?.translations?.standings}</h2>
+  {#if STANDINGS_DATA != undefined 
+    && STANDINGS_DATA?.seasons.length != 0}
+    <!-- 
+    [ℹ] stage standings (regular)
+    -->
+    {#if !STANDINGS_DATA.seasons[0].standings[0].group_based}
+      {#each STANDINGS_DATA.seasons[0].standings[0].total as team}
+        <p>{team.team_name}</p>
+      {/each}
+    <!-- 
+    [ℹ] stage standings (groups)
+    -->
+    {:else}
+      {#each STANDINGS_DATA.seasons[0].standings[0].group_standings as group}
+        <p>{group.group_name}</p>
+        {#each group.total as team}
+          <p>{team.team_name}</p>
+        {/each}
+      {/each}
+    {/if}
+  {/if}
+</SeoBox>
+
 <div
 	class:display_none={no_widget_data &&
 		!show_placeholder}
->
-	<!-- 
-  [ℹ] SEO-DATA-LOADED 
-  -->
-	<!-- {#if !loaded} -->
-	<div id="seo-widget-box">
-		<h2>{STANDINGS_T.translations.standings}</h2>
-		{#if STANDINGS_DATA != undefined && STANDINGS_DATA?.seasons.length != 0}
-			{#if !STANDINGS_DATA.seasons[0].group}
-				{#each STANDINGS_DATA.seasons[0].total as team}
-					<p>{team.team_name}</p>
-				{/each}
-			{:else}
-				{#each STANDINGS_DATA.seasons[0].group_standings as group}
-					<p>{group.group_name}</p>
-					{#each group.total as team}
-						<p>{team.team_name}</p>
-					{/each}
-				{/each}
-			{/if}
-		{/if}
-	</div>
-	<!-- {/if} -->
+  >
 
 	<!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
@@ -657,60 +675,67 @@
           [ℹ] STANDINGS 
           [REGUALR-TYPE]
           -->
-					{#if !season.group}
-						{#each season[selectedOpt] as team}
-							{#if !showMore && (team?.team_name == FIXTURE_INFO?.data?.away_team_name || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
-								<StandingsTeamRow
-									TEAM_DATA={team}
-									TABLEMOBILEVIEW={selectedOptTableMobile}
-									{currentSeason}
-								/>
-							{:else if showMore}
-								<StandingsTeamRow
-									TEAM_DATA={team}
-									TABLEMOBILEVIEW={selectedOptTableMobile}
-									{currentSeason}
-								/>
-							{/if}
-						{/each}
-						<!-- 
-          [ℹ] STANDINGS
-          [GROUP-STAGE-TYPE]
-          -->
-					{:else}
-						{#each season.group_standings as group}
-							<tr class="group-row-head">
-								<td colspan="20">
-									<div class="table-divider" />
-									<p
-										class="
-                      w-500
-                      color-black-2
-                      group-head-text
-                      text-center
-                    "
-									>
-										{STANDINGS_T?.translations
-											?.group}
-										{group.group_name.split(
-											' '
-										)[1]}
-									</p>
-								</td>
-							</tr>
-							{#each group[selectedOpt] as team}
-								<StandingsTeamRow
-									TEAM_DATA={team}
-									{currentSeason}
-								/>
-							{/each}
-						{/each}
-						<tr class="row-divider">
-							<td colspan="20">
-								<div class="table-divider" />
-							</td>
-						</tr>
-					{/if}
+          {#each season.standings as standing}
+            {#if standing?.stage_name == select_stage_opt}
+              <!-- 
+              [ℹ] STANDINGS IS A REGUALR-TYPE
+              -->
+              {#if !standing.group_based}
+                {#each standing[selectedOpt] as team}
+                  {#if !showMore && (team?.team_name == FIXTURE_INFO?.data?.away_team_name || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
+                    <StandingsTeamRow
+                      TEAM_DATA={team}
+                      TABLEMOBILEVIEW={selectedOptTableMobile}
+                      {currentSeason}
+                    />
+                  {:else if showMore}
+                    <StandingsTeamRow
+                      TEAM_DATA={team}
+                      TABLEMOBILEVIEW={selectedOptTableMobile}
+                      {currentSeason}
+                    />
+                  {/if}
+						    {/each}
+              <!-- 
+              [ℹ] STANDINGS
+              [GROUP-STAGE-TYPE]
+              -->
+              {:else}
+                {#each standing.group_standings as group}
+                  <tr class="group-row-head">
+                    <td colspan="20">
+                      <div class="table-divider" />
+                      <p
+                        class="
+                          w-500
+                          color-black-2
+                          group-head-text
+                          text-center
+                        "
+                      >
+                        {STANDINGS_T?.translations
+                          ?.group}
+                        {group.group_name.split(
+                          ' '
+                        )[1]}
+                      </p>
+                    </td>
+                  </tr>
+                  {#each group[selectedOpt] as team}
+                    <StandingsTeamRow
+                      TEAM_DATA={team}
+                      {currentSeason}
+                    />
+                  {/each}
+                {/each}
+                <tr class="row-divider">
+                  <td colspan="20">
+                    <div class="table-divider" />
+                  </td>
+                </tr>
+              {/if}
+            {/if}
+          {/each}
 				</table>
 				<!-- 
         [ℹ] toggle full standings table
