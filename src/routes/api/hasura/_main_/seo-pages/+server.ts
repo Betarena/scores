@@ -80,7 +80,7 @@ async function main_player_page_data (
     )?.team_id
   ;
 
-  console.log('team_id', team_id)
+  // console.log('team_id', team_id)
 
   // [ℹ] obtain target team & the current-season-id;
   const res_0 = await SAP_GL_get_target_player_page_data_0 (
@@ -89,7 +89,7 @@ async function main_player_page_data (
   )
   const season_id = res_0[0]?.current_season_id_j
 
-  console.log('season_id', season_id)
+  // console.log('season_id', season_id)
   
   // [ℹ] obtain target season & the league-id;
   const res_1 = await SAP_GL_get_target_player_page_data_1 (
@@ -98,7 +98,7 @@ async function main_player_page_data (
   )
   const league_id = res_1[0]?.league_id
 
-  console.log('league_id', league_id)
+  // console.log('league_id', league_id)
     
   // [ℹ] obtain target league;
   const [
@@ -133,8 +133,8 @@ async function main_player_page_data (
     tournament_map.set(item?.tournament_id, item)
   }
 
-  const DATA2 = JSON.stringify(Array.from(tournament_map.values()), null, 4)
-  console.log('DATA2DATA', DATA2)
+  // const DATA2 = JSON.stringify(Array.from(tournament_map.values()), null, 4)
+  // console.log('DATA2DATA', DATA2)
   
   // [ℹ] map of player data generation;
   const map = await SAP_GL_generate_page_players (
@@ -145,8 +145,8 @@ async function main_player_page_data (
     tournament_map
   )
 
-  const DATA = JSON.stringify(Array.from(map.values()), null, 4)
-  console.log('DATA', DATA)
+  // const DATA = JSON.stringify(Array.from(map.values()), null, 4)
+  // console.log('DATA', DATA)
 
   if (map.size == 0) {
     return null

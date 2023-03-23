@@ -140,7 +140,7 @@
     }
     target_stages_with_teams = [...new Set(target_stages_with_teams)]
   }
-  $: console.log('target_stages_with_teams', target_stages_with_teams)
+  // $: console.log('target_stages_with_teams', target_stages_with_teams)
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -237,7 +237,7 @@
   // [ℹ] identify target groups, target teams part of
   // [ℹ] on selct_stage view change;
   $: if (select_stage_opt) {
-    console.log('Stage/Phase Changed!')
+    // console.log('Stage/Phase Changed!')
     for (const standing of season?.standings) {
       if (standing.group_based) {
         for (const g_standing of standing?.group_standings) {

@@ -85,8 +85,6 @@ COMPONENT JS (w/ TS)
 	$: refresh_lang = $userBetarenaSettings.lang;
 	$: lang_intent = $sessionStore.lang_intent;
 
-  $: console.log($page.data)
-
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]

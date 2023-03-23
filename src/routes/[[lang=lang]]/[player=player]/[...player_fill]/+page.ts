@@ -16,7 +16,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     // (example) -> teddy-teuma/829643 | harry-kane/997
     player_fill
   } = params;
-  console.log(params)
+  // console.log(params)
 
   // TODO:
   // missing VALID_URL check;
@@ -31,7 +31,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
       : lang;
 
   const player_id = player_fill.match(/\d+$/);
-  console.log(player_id.toString())
+  // console.log(player_id.toString())
 
   //#endregion [0] IMPORTANT EXTRACT URL DATA
 
@@ -45,7 +45,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	).then((r) => r.json());
 
   // TEMP VALIDATE
-  console.log('PAGE_DATA', PAGE_DATA)
+  // console.log('PAGE_DATA', PAGE_DATA)
   // [ℹ] exit;
 	if (!PAGE_DATA) {
     const t1 = performance.now();

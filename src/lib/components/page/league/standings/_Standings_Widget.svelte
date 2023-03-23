@@ -20,7 +20,6 @@
 	import StandingsTeamRow from './_Standings_Team_Row.svelte';
 	import StandingsWidgetContentLoader from './_Standings_Widget_ContentLoader.svelte';
 
-	import { page } from '$app/stores';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
@@ -288,8 +287,6 @@
       select_stage_opt = target_stage?.standings[0]?.stage_name
     }
   }
-
-  console.log('$page.data', $page.data)
 
 </script>
 
