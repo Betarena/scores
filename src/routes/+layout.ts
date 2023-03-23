@@ -10,7 +10,7 @@ import type { LayoutLoad, PageLoadEvent } from './$types';
 export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 
   const {
-    url,
+    // url,
     fetch,
     params,
     // setHeaders,
