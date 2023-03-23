@@ -64,12 +64,14 @@ async function main(
   // [ℹ] obtain target football_players ID's
   let football_player_ids: number[] = []
   for (const fixture of historic_fixtures_map.values()) {
-    const lineup_ids = fixture?.lineup_j.map(p => p?.player_id)
-    const bench_ids = fixture?.bench_j.map(p => p?.player_id)
-    // const subs_ids = [
-    //   ...fixture.substitutions_j.map(p => p.player_in_id),
-    //   ...fixture.substitutions_j.map(p => p.player_out_id)
-    // ]
+    // FIX: #1163
+    // NOTE: sometimes, can have players with "player_id":"null"
+    const lineup_ids = fixture?.lineup_j
+      .filter(p => p?.player_id != undefined)
+      .map(p => p?.player_id)
+    const bench_ids = fixture?.bench_j
+      .filter(p => p?.player_id != undefined)
+      .map(p => p?.player_id)
     football_player_ids = [
       ...new Set(football_player_ids.concat(lineup_ids.concat(bench_ids)))
     ]
