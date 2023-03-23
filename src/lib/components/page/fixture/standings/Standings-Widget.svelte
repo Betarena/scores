@@ -47,6 +47,14 @@
 		732 // [ℹ] World Cup
 	];
 
+  let seasonCheck: boolean = false;
+	let season: STA_Season;
+  let stage_opt: string[] = []
+  let select_stage_opt: string = ''
+  let select_stage_dropdown: boolean = false;
+
+  let target_stages_with_teams: string[] = []
+
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	export let STANDINGS_T: B_STA_T;
 	export let STANDINGS_DATA: B_STA_D;
@@ -94,6 +102,45 @@
 		selectedOptTableMobile =
 			selectedOptTableMobile == 1 ? 2 : 1;
 	}
+
+  /**
+   * @summary [HELPER] method
+   * @description identifies and populates a target
+   * string[] variable with stages/phases that contain
+   * the two target teams of (this) fixtures; This
+   * allows for the hiding of those stages/phases that
+   * do not contain target teams from UI
+   * @returns void
+  */
+  function identify_stages_with_target_teams (
+  ): void {
+    const target_teams: string[] = [
+      FIXTURE_INFO?.data?.away_team_name,
+      FIXTURE_INFO?.data?.home_team_name
+    ]
+    for (const standing of season?.standings) {
+      // [ℹ] (validation) group-standings;
+      if (standing.group_based) {
+        for (const g_standing of standing?.group_standings) {
+          for (const g_total of g_standing?.total) {
+            if (target_teams.includes(g_total?.team_name)) {
+              target_stages_with_teams.push(standing?.stage_name)
+            }
+          }
+        }
+      }
+      // [ℹ] else, regular-standing;
+      else {
+        for (const r_total of standing?.total) {
+          if (target_teams.includes(r_total?.team_name)) {
+            target_stages_with_teams.push(standing?.stage_name)
+          }
+        }
+      }
+    }
+    target_stages_with_teams = [...new Set(target_stages_with_teams)]
+  }
+  $: console.log('target_stages_with_teams', target_stages_with_teams)
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -149,34 +196,31 @@
 	// REACTIVE SVELTE OTHER
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let seasonCheck: boolean = false;
-	let season: STA_Season;
-  let stage_opt: string[] = []
-  let select_stage_opt: string = ''
-  let select_stage_dropdown: boolean = false;
+
 	$: if (STANDINGS_DATA != undefined) {
-		// [ℹ] sort seasons by season-id (leargest is latest == current season)
-		STANDINGS_DATA.seasons.sort(
-			(a, b) => b.season_id - a.season_id
+		// [ℹ] sort seasons by season-id (desc)
+    // [ℹ] using the largest (id), as the latest === current season
+		STANDINGS_DATA?.seasons.sort(
+			(a, b) => b?.season_id - a?.season_id
 		);
+		season = STANDINGS_DATA?.seasons[0];
 		// [ℹ] check season exists / contains data
-		season = STANDINGS_DATA.seasons[0];
 		let seasonCheckLength = 0;
     stage_opt = []
 		if (season != undefined) {
 			seasonCheckLength = season.standings.length
-      stage_opt = []
-      let number_stages = season?.standings.length
+      identify_stages_with_target_teams()
+      let number_stages = target_stages_with_teams?.length
       dlog(`number_stages: ${number_stages}`, true)
       if (number_stages > 1) {
-        dlog(`number_stages: ${number_stages}`, true)
         stage_opt = season?.standings
-          .map(a => a?.stage_name); 
+          .map(a => a?.stage_name);
         dlog(`stage_opt ${stage_opt}`, true)
+        // [ℹ] select first on list;
         select_stage_opt = stage_opt[0];
       }
       else {
-        select_stage_opt = season?.standings[0]?.stage_name
+        select_stage_opt = target_stages_with_teams[0]
       }
 		}
 		no_widget_data =
@@ -190,7 +234,10 @@
 	}
 
   let targetGroupsNamesArray: string[] = []
+  // [ℹ] identify target groups, target teams part of
+  // [ℹ] on selct_stage view change;
   $: if (select_stage_opt) {
+    console.log('Stage/Phase Changed!')
     for (const standing of season?.standings) {
       if (standing.group_based) {
         for (const g_standing of standing?.group_standings) {
@@ -207,7 +254,7 @@
       }
     }
   }
-  $: console.log('targetGroupsNamesArray', targetGroupsNamesArray)
+  // $: console.log('targetGroupsNamesArray', targetGroupsNamesArray)
 
 </script>
 
