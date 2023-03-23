@@ -717,9 +717,15 @@
 							class="w-500 large color-dark m-r-8"
 						>
 							{data.league_name}
-							<span class="w-400 color-grey">
-								(Round {FEATURED_MATCH_WIDGET_DATA.round_name})
-							</span>
+              {#if FEATURED_MATCH_WIDGET_DATA?.round_name != undefined}
+                <span 
+                  class="
+                    w-400 
+                    color-grey
+                  ">
+                  (Round {FEATURED_MATCH_WIDGET_DATA?.round_name})
+                </span>
+              {/if}
 						</p>
 					</div>
 				</a>

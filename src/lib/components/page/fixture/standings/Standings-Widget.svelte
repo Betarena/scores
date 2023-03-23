@@ -9,20 +9,19 @@
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import type {
-		REDIS_CACHE_SINGLE_tournament_standings_data,
-		REDIS_CACHE_SINGLE_tournament_standings_translation,
-		Tournament_Standing_Season
-	} from '$lib/models/tournaments/standings/types';
-
+	
 	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import StandingsWidgetContentLoader from './Standings-Loader.svelte';
 	import StandingsTeamRow from './Standings-Team-Row.svelte';
 
+	import type { B_STA_D, B_STA_T, STA_Season } from '@betarena/scores-lib/types/standings';
+	import arrow_down from './assets/arrow-down.svg';
+	import arrow_up from './assets/arrow-up.svg';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-
+  
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -48,9 +47,17 @@
 		732 // [ℹ] World Cup
 	];
 
+  let seasonCheck: boolean = false;
+	let season: STA_Season;
+  let stage_opt: string[] = []
+  let select_stage_opt: string = ''
+  let select_stage_dropdown: boolean = false;
+
+  let target_stages_with_teams: string[] = []
+
 	export let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
-	export let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
-	export let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
+	export let STANDINGS_T: B_STA_T;
+	export let STANDINGS_DATA: B_STA_D;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
@@ -84,6 +91,7 @@
 
 	function closeAllDropdowns() {
 		toggleCTA = false;
+    select_stage_dropdown = false;
 	}
 
 	function toggle_full_list() {
@@ -94,6 +102,45 @@
 		selectedOptTableMobile =
 			selectedOptTableMobile == 1 ? 2 : 1;
 	}
+
+  /**
+   * @summary [HELPER] method
+   * @description identifies and populates a target
+   * string[] variable with stages/phases that contain
+   * the two target teams of (this) fixtures; This
+   * allows for the hiding of those stages/phases that
+   * do not contain target teams from UI
+   * @returns void
+  */
+  function identify_stages_with_target_teams (
+  ): void {
+    const target_teams: string[] = [
+      FIXTURE_INFO?.data?.away_team_name,
+      FIXTURE_INFO?.data?.home_team_name
+    ]
+    for (const standing of season?.standings) {
+      // [ℹ] (validation) group-standings;
+      if (standing.group_based) {
+        for (const g_standing of standing?.group_standings) {
+          for (const g_total of g_standing?.total) {
+            if (target_teams.includes(g_total?.team_name)) {
+              target_stages_with_teams.push(standing?.stage_name)
+            }
+          }
+        }
+      }
+      // [ℹ] else, regular-standing;
+      else {
+        for (const r_total of standing?.total) {
+          if (target_teams.includes(r_total?.team_name)) {
+            target_stages_with_teams.push(standing?.stage_name)
+          }
+        }
+      }
+    }
+    target_stages_with_teams = [...new Set(target_stages_with_teams)]
+  }
+  // $: console.log('target_stages_with_teams', target_stages_with_teams)
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -149,21 +196,32 @@
 	// REACTIVE SVELTE OTHER
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	let seasonCheck: boolean = false;
-	let season: Tournament_Standing_Season;
+
 	$: if (STANDINGS_DATA != undefined) {
-		// [ℹ] sort seasons by season-id (leargest is latest == current season)
-		STANDINGS_DATA.seasons.sort(
-			(a, b) => b.season_id - a.season_id
+		// [ℹ] sort seasons by season-id (desc)
+    // [ℹ] using the largest (id), as the latest === current season
+		STANDINGS_DATA?.seasons.sort(
+			(a, b) => b?.season_id - a?.season_id
 		);
+		season = STANDINGS_DATA?.seasons[0];
 		// [ℹ] check season exists / contains data
-		season = STANDINGS_DATA.seasons[0];
 		let seasonCheckLength = 0;
+    stage_opt = []
 		if (season != undefined) {
-			seasonCheckLength =
-				season.group == false
-					? season?.total.length
-					: season?.group_standings.length;
+			seasonCheckLength = season.standings.length
+      identify_stages_with_target_teams()
+      let number_stages = target_stages_with_teams?.length
+      dlog(`number_stages: ${number_stages}`, true)
+      if (number_stages > 1) {
+        stage_opt = season?.standings
+          .map(a => a?.stage_name);
+        dlog(`stage_opt ${stage_opt}`, true)
+        // [ℹ] select first on list;
+        select_stage_opt = stage_opt[0];
+      }
+      else {
+        select_stage_opt = target_stages_with_teams[0]
+      }
 		}
 		no_widget_data =
 			seasonCheckLength == 0 ||
@@ -174,6 +232,30 @@
 	} else {
 		seasonCheck = true;
 	}
+
+  let targetGroupsNamesArray: string[] = []
+  // [ℹ] identify target groups, target teams part of
+  // [ℹ] on selct_stage view change;
+  $: if (select_stage_opt) {
+    // console.log('Stage/Phase Changed!')
+    for (const standing of season?.standings) {
+      if (standing.group_based) {
+        for (const g_standing of standing?.group_standings) {
+          for (const g_total of g_standing?.total) {
+            const target_teams: string[] = [
+              FIXTURE_INFO?.data?.away_team_name,
+              FIXTURE_INFO?.data?.home_team_name
+            ]
+            if (target_teams.includes(g_total?.team_name)) {
+              targetGroupsNamesArray.push(g_standing?.group_name)
+            }
+          }
+        }
+      }
+    }
+  }
+  // $: console.log('targetGroupsNamesArray', targetGroupsNamesArray)
+
 </script>
 
 <!-- ===============
@@ -183,39 +265,42 @@
 <!-- 
 [ℹ] area-outside-for-close 
 -->
-{#if toggleCTA}
+{#if toggleCTA || select_stage_dropdown}
 	<div
 		id="background-area-close"
 		on:click={() => closeAllDropdowns()}
 	/>
 {/if}
 
+<SeoBox>
+  <h2>{STANDINGS_T?.translations?.standings}</h2>
+  {#if STANDINGS_DATA != undefined 
+    && STANDINGS_DATA?.seasons.length != 0}
+    <!-- 
+    [ℹ] stage standings (regular)
+    -->
+    {#if !STANDINGS_DATA.seasons[0].standings[0].group_based}
+      {#each STANDINGS_DATA.seasons[0].standings[0].total as team}
+        <p>{team.team_name}</p>
+      {/each}
+    <!-- 
+    [ℹ] stage standings (groups)
+    -->
+    {:else}
+      {#each STANDINGS_DATA.seasons[0].standings[0].group_standings as group}
+        <p>{group.group_name}</p>
+        {#each group.total as team}
+          <p>{team.team_name}</p>
+        {/each}
+      {/each}
+    {/if}
+  {/if}
+</SeoBox>
+
 <div
 	class:display_none={no_widget_data &&
 		!show_placeholder}
->
-	<!-- 
-  [ℹ] SEO-DATA-LOADED 
-  -->
-	<!-- {#if !loaded} -->
-	<div id="seo-widget-box">
-		<h2>{STANDINGS_T.translations.standings}</h2>
-		{#if STANDINGS_DATA != undefined && STANDINGS_DATA?.seasons.length != 0}
-			{#if !STANDINGS_DATA.seasons[0].group}
-				{#each STANDINGS_DATA.seasons[0].total as team}
-					<p>{team.team_name}</p>
-				{/each}
-			{:else}
-				{#each STANDINGS_DATA.seasons[0].group_standings as group}
-					<p>{group.group_name}</p>
-					{#each group.total as team}
-						<p>{team.team_name}</p>
-					{/each}
-				{/each}
-			{/if}
-		{/if}
-	</div>
-	<!-- {/if} -->
+  >
 
 	<!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
@@ -333,79 +418,141 @@
 					<div
 						id="standings-view-box"
 						class="
-              row-space-start 
+              row-space-out
+              m-b-15
             "
 					>
-						<div
-							class="
-                stand-view-opt-box 
-                cursor-pointer
+            <div
+              class="
+                row-space-start
               "
-							on:click={() =>
-								selectTableView('total')}
-							class:activeOpt={selectedOpt ==
-								'total'}
-							class:total_view_only={only_total_view_league_ids.includes(
-								STANDINGS_DATA?.league_id
-							)}
-						>
-							<p
-								class=" 
-                  s-14 
-                  w-500 
-                  color-grey
-                "
-							>
-								{STANDINGS_T.translations.total}
-							</p>
-						</div>
-						<!-- 
-            [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
-            -->
-						{#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
-							<div
-								class="
+            >
+              <div
+                class="
                   stand-view-opt-box 
                   cursor-pointer
                 "
-								on:click={() =>
-									selectTableView('home')}
-								class:activeOpt={selectedOpt ==
-									'home'}
-							>
-								<p
-									class="
+                on:click={() =>
+                  selectTableView('total')}
+                class:activeOpt={selectedOpt ==
+                  'total'}
+                class:total_view_only={only_total_view_league_ids.includes(
+                  STANDINGS_DATA?.league_id
+                )}
+              >
+                <p
+                  class=" 
                     s-14 
                     w-500 
                     color-grey
                   "
-								>
-									{STANDINGS_T.translations.home}
-								</p>
-							</div>
+                >
+                  {STANDINGS_T.translations.total}
+                </p>
+              </div>
+              <!-- 
+              [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
+              -->
+              {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
+                <div
+                  class="
+                    stand-view-opt-box 
+                    cursor-pointer
+                  "
+                  on:click={() =>
+                    selectTableView('home')}
+                  class:activeOpt={selectedOpt ==
+                    'home'}
+                >
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    "
+                  >
+                    {STANDINGS_T.translations.home}
+                  </p>
+                </div>
 
-							<div
-								class="
-                  stand-view-opt-box 
-                  cursor-pointer
-                "
-								on:click={() =>
-									selectTableView('away')}
-								class:activeOpt={selectedOpt ==
-									'away'}
-							>
-								<p
-									class="
-                    s-14 
-                    w-500 
-                    color-grey
+                <div
+                  class="
+                    stand-view-opt-box 
+                    cursor-pointer
                   "
-								>
-									{STANDINGS_T.translations.away}
-								</p>
-							</div>
-						{/if}
-					</div>
+                  on:click={() =>
+                    selectTableView('away')}
+                  class:activeOpt={selectedOpt ==
+                    'away'}
+                >
+                  <p
+                    class="
+                      s-14 
+                      w-500 
+                      color-grey
+                    "
+                  >
+                    {STANDINGS_T.translations.away}
+                  </p>
+                </div>
+              {/if}
+					  </div>
+
+            <!-- 
+            [ℹ] standings (stage/phase) select view
+            -->
+            {#if stage_opt.length > 1}
+              <div
+                id="ss-box">
+                <div
+                  class="
+                    row-space-out
+                  "
+                  on:click={() => select_stage_dropdown = !select_stage_dropdown}>
+                  <p
+                    class="
+                      color-black-2
+                      w-400
+                      no-wrap
+                      m-r-10
+                    ">
+                    {select_stage_opt}
+                  </p>
+                  <img
+                    src={select_stage_dropdown ? arrow_up : arrow_down}
+                    alt="default alt"
+                    width=20
+                    height=20
+                  />
+                </div>
+                {#if select_stage_dropdown}
+                  <div
+                    id="ssdb-main"
+                  >
+                    <div
+                      id="ssdb-inner"
+                    >
+                      {#each stage_opt as item}
+                        <p
+                          class="
+                            s-14
+                            w-500
+                            color-black-2
+                            stage-opt
+                            no-wrap
+                          "
+                          class:color-primary={item === select_stage_opt}
+                          on:click={() => select_stage_opt = item}>
+                          {item}
+                        </p>
+                      {/each}
+                    </div>
+                  </div>
+                {/if}
+              </div>
+            {/if}
+          </div>
+
 					<!-- 
           [ℹ] recent form button box
           -->
@@ -657,60 +804,98 @@
           [ℹ] STANDINGS 
           [REGUALR-TYPE]
           -->
-					{#if !season.group}
-						{#each season[selectedOpt] as team}
-							{#if !showMore && (team?.team_name == FIXTURE_INFO?.data?.away_team_name || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
-								<StandingsTeamRow
-									TEAM_DATA={team}
-									TABLEMOBILEVIEW={selectedOptTableMobile}
-									{currentSeason}
-								/>
-							{:else if showMore}
-								<StandingsTeamRow
-									TEAM_DATA={team}
-									TABLEMOBILEVIEW={selectedOptTableMobile}
-									{currentSeason}
-								/>
-							{/if}
-						{/each}
-						<!-- 
-          [ℹ] STANDINGS
-          [GROUP-STAGE-TYPE]
-          -->
-					{:else}
-						{#each season.group_standings as group}
-							<tr class="group-row-head">
-								<td colspan="20">
-									<div class="table-divider" />
-									<p
-										class="
-                      w-500
-                      color-black-2
-                      group-head-text
-                      text-center
-                    "
-									>
-										{STANDINGS_T?.translations
-											?.group}
-										{group.group_name.split(
-											' '
-										)[1]}
-									</p>
-								</td>
-							</tr>
-							{#each group[selectedOpt] as team}
-								<StandingsTeamRow
-									TEAM_DATA={team}
-									{currentSeason}
-								/>
-							{/each}
-						{/each}
-						<tr class="row-divider">
-							<td colspan="20">
-								<div class="table-divider" />
-							</td>
-						</tr>
-					{/if}
+          {#each season.standings as standing}
+            {#if standing?.stage_name == select_stage_opt}
+              <!-- 
+              [ℹ] STANDINGS IS A REGUALR-TYPE
+              -->
+              {#if !standing.group_based}
+                {#each standing[selectedOpt] as team}
+                  {#if !showMore 
+                    && (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
+                      || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
+                    <StandingsTeamRow
+                      TEAM_DATA={team}
+                      TABLEMOBILEVIEW={selectedOptTableMobile}
+                      {currentSeason}
+                    />
+                  {:else if showMore}
+                    <StandingsTeamRow
+                      TEAM_DATA={team}
+                      TABLEMOBILEVIEW={selectedOptTableMobile}
+                      {currentSeason}
+                    />
+                  {/if}
+						    {/each}
+              <!-- 
+              [ℹ] STANDINGS
+              [GROUP-STAGE-TYPE]
+              -->
+              {:else}
+                {#if !showMore}
+                  {#each standing.group_standings as group}
+                    {#if targetGroupsNamesArray.includes(group?.group_name)}
+                      <tr class="group-row-head">
+                        <td colspan="20">
+                          <div class="table-divider" />
+                          <p
+                            class="
+                              w-500
+                              color-black-2
+                              group-head-text
+                              text-center
+                            "
+                          >
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
+                          </p>
+                        </td>
+                      </tr>
+                      {#each group[selectedOpt] as team}
+                        {#if (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
+                            || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
+                          <StandingsTeamRow
+                            TEAM_DATA={team}
+                            {currentSeason}
+                          />
+                        {/if}
+                      {/each}
+                    {/if}
+                  {/each}
+                {:else}
+                  {#each standing.group_standings as group}
+                    <tr class="group-row-head">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                        <p
+                          class="
+                            w-500
+                            color-black-2
+                            group-head-text
+                            text-center
+                          "
+                        >
+                          {STANDINGS_T?.translations?.group}
+                          {group.group_name.split(' ')[1]}
+                        </p>
+                      </td>
+                    </tr>
+                    {#each group[selectedOpt] as team}
+                      <StandingsTeamRow
+                        TEAM_DATA={team}
+                        {currentSeason}
+                      />
+                    {/each}
+                  {/each}
+                {/if}
+                <tr class="row-divider">
+                  <td colspan="20">
+                    <div class="table-divider" />
+                  </td>
+                </tr>
+              {/if}
+            {/if}
+          {/each}
 				</table>
 				<!-- 
         [ℹ] toggle full standings table
@@ -766,13 +951,58 @@
 		text-align: center;
 	}
 
-	/* [ℹ] SEO WIDGET DATA */
-
-	#seo-widget-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
+  div#ss-box {
+    /* p */
+		position: relative;
+    /* s */
+    min-width: 171px;
+    height: 40px;
+    border: 1px solid var(--grey);
+    border-radius: 8px;
+    padding: 10px 20px;
+		cursor: pointer;
+    margin: 20px;
+  } div#ss-box div#ssdb-main {
+    /* p */
+    position: absolute;
+		top: 115%;
+		right: 0;
+		z-index: 10000;
+		width: 100%;
+    /* s */
+		background-color: var(--white);
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 4px;
+		/* height: 308px; */
+		max-height: 308px;
+		overflow-y: scroll;
+		padding-right: 6px;
+  } div#ss-box div#ssdb-main::-webkit-scrollbar {
+		/* Hide scrollbar for Chrome, Safari and Opera */
+		display: none;
+	} div#ss-box div#ssdb-main::-webkit-scrollbar {
+		/* Hide scrollbar for IE, Edge and Firefox */
+		-ms-overflow-style: none; /* IE and Edge */
+		scrollbar-width: none; /* Firefox */
+	}
+  
+  div#ss-box div#ssdb-main div#ssdb-inner {
+    max-height: 308px;
+		overflow-y: scroll;
+  } div#ss-box div#ssdb-main div#ssdb-inner p.stage-opt {
+    padding: 11px 20px;
+  } div#ss-box div#ssdb-main div#ssdb-inner p.stage-opt:hover {
+    cursor: pointer;
+		color: #f5620f !important;
+  } div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar {
+		width: 4px;
+	} div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-track {
+		background: #f2f2f2;
+		border-radius: 12px;
+		margin: 8px;
+	} div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-thumb {
+		background: #cccccc;
+		border-radius: 12px;
 	}
 
 	#standings-table-container {
@@ -994,7 +1224,7 @@
 		}
 
 		div#standings-view-box {
-			width: auto;
+			/* width: auto; */
 			margin-bottom: 0;
 		}
 		div.stand-view-opt-box {
@@ -1073,4 +1303,18 @@
 	.dark-background-1 #show-more-box {
 		border-top: 1px solid #616161;
 	}
+
+  .dark-background-1 div#ss-box div#ssdb-main {
+		background: #616161;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
+  }
+
+  .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar {
+		width: 4px;
+	} .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-track {
+		background: var(--dark-theme-1) !important;
+	} .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-thumb {
+		background: var(--dark-theme-1-3-shade) !important;
+	}
+  
 </style>

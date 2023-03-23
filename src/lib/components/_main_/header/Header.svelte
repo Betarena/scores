@@ -61,7 +61,8 @@ COMPONENT JS - BASIC
 
   const OMIT_URLS: string[] = [
     '/[[lang=lang]]/[sport]/[country]/[league_name]',
-    '/[[lang=lang]]/[sport]/[fixture=fixture]'
+    '/[[lang=lang]]/[sport]/[fixture=fixture]',
+    '/[[lang=lang]]/[player=player]/[...player_fill]'
   ]
 
   const PROFILE_URL: string = '/u/[view]/[lang=lang]'
@@ -495,6 +496,11 @@ COMPONENT JS - BASIC
 
   // TODO:
 	// function selectedSport(sport: string) {}
+
+  $: if (HEADER_TRANSLATION_DATA?.scores_header_fixtures_information) {
+    $sessionStore.fixturesTodayNum = parseInt(HEADER_TRANSLATION_DATA?.scores_header_fixtures_information?.football)
+  }
+
 </script>
 
 <!-- ===================

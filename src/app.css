@@ -898,6 +898,11 @@ DARK-MODE FORM CSS STYLE
 	color: #ffffff !important;
 }
 
+.dark-background .color-primary,
+.dark-background-1 .color-primary {
+	color: var(--primary) !important;
+}
+
 .dark-background .widget-component {
 	background-color: var(--dark-theme-1) !important;
 }

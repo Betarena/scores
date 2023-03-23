@@ -17,7 +17,7 @@ export function platfrom_lang_ssr(
     NB_W_TAG,
     [
       `page_route_id: ${page_route_id}`,
-      `page_error: ${page_error}`,
+      `page_error: ${JSON.stringify(page_error, null, 2)}`,
       `page_params_lang: ${page_params_lang}`
     ],
     true
@@ -60,4 +60,15 @@ export function viewport_change(
 	const mobileExclusive =
     width <= MOBILE_VIEW ? true : false;
 	return [tabletExclusive, mobileExclusive];
+}
+
+export function PRELOAD_invalid_data (
+  data: unknown[]
+): void {
+  const indexesOf = (arr, item) =>
+		arr.reduce(
+			(acc, v, i) => (
+				v === item && acc.push(i), acc
+  ),[]);
+	dlog(`null (preload): ${indexesOf(data, null)}`, true);
 }
