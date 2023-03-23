@@ -83,6 +83,7 @@
 
 	function closeAllDropdowns() {
 		toggleCTA = false;
+    select_stage_dropdown = false;
 	}
 
 	function toggle_full_list() {
@@ -188,6 +189,26 @@
 		seasonCheck = true;
 	}
 
+  let targetGroupsNamesArray: string[] = []
+  $: if (select_stage_opt) {
+    for (const standing of season?.standings) {
+      if (standing.group_based) {
+        for (const g_standing of standing?.group_standings) {
+          for (const g_total of g_standing?.total) {
+            const target_teams: string[] = [
+              FIXTURE_INFO?.data?.away_team_name,
+              FIXTURE_INFO?.data?.home_team_name
+            ]
+            if (target_teams.includes(g_total?.team_name)) {
+              targetGroupsNamesArray.push(g_standing?.group_name)
+            }
+          }
+        }
+      }
+    }
+  }
+  $: console.log('targetGroupsNamesArray', targetGroupsNamesArray)
+
 </script>
 
 <!-- ===============
@@ -197,7 +218,7 @@
 <!-- 
 [ℹ] area-outside-for-close 
 -->
-{#if toggleCTA}
+{#if toggleCTA || select_stage_dropdown}
 	<div
 		id="background-area-close"
 		on:click={() => closeAllDropdowns()}
@@ -743,7 +764,9 @@
               -->
               {#if !standing.group_based}
                 {#each standing[selectedOpt] as team}
-                  {#if !showMore && (team?.team_name == FIXTURE_INFO?.data?.away_team_name || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
+                  {#if !showMore 
+                    && (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
+                      || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
                     <StandingsTeamRow
                       TEAM_DATA={team}
                       TABLEMOBILEVIEW={selectedOptTableMobile}
@@ -762,33 +785,62 @@
               [GROUP-STAGE-TYPE]
               -->
               {:else}
-                {#each standing.group_standings as group}
-                  <tr class="group-row-head">
-                    <td colspan="20">
-                      <div class="table-divider" />
-                      <p
-                        class="
-                          w-500
-                          color-black-2
-                          group-head-text
-                          text-center
-                        "
-                      >
-                        {STANDINGS_T?.translations
-                          ?.group}
-                        {group.group_name.split(
-                          ' '
-                        )[1]}
-                      </p>
-                    </td>
-                  </tr>
-                  {#each group[selectedOpt] as team}
-                    <StandingsTeamRow
-                      TEAM_DATA={team}
-                      {currentSeason}
-                    />
+                {#if !showMore}
+                  {#each standing.group_standings as group}
+                    {#if targetGroupsNamesArray.includes(group?.group_name)}
+                      <tr class="group-row-head">
+                        <td colspan="20">
+                          <div class="table-divider" />
+                          <p
+                            class="
+                              w-500
+                              color-black-2
+                              group-head-text
+                              text-center
+                            "
+                          >
+                            {STANDINGS_T?.translations?.group}
+                            {group.group_name.split(' ')[1]}
+                          </p>
+                        </td>
+                      </tr>
+                      {#each group[selectedOpt] as team}
+                        {#if (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
+                            || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
+                          <StandingsTeamRow
+                            TEAM_DATA={team}
+                            {currentSeason}
+                          />
+                        {/if}
+                      {/each}
+                    {/if}
                   {/each}
-                {/each}
+                {:else}
+                  {#each standing.group_standings as group}
+                    <tr class="group-row-head">
+                      <td colspan="20">
+                        <div class="table-divider" />
+                        <p
+                          class="
+                            w-500
+                            color-black-2
+                            group-head-text
+                            text-center
+                          "
+                        >
+                          {STANDINGS_T?.translations?.group}
+                          {group.group_name.split(' ')[1]}
+                        </p>
+                      </td>
+                    </tr>
+                    {#each group[selectedOpt] as team}
+                      <StandingsTeamRow
+                        TEAM_DATA={team}
+                        {currentSeason}
+                      />
+                    {/each}
+                  {/each}
+                {/if}
                 <tr class="row-divider">
                   <td colspan="20">
                     <div class="table-divider" />
