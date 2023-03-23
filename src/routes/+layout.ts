@@ -14,7 +14,7 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
     fetch,
     params,
     // setHeaders,
-    route
+    // route
   } = event
 
   // ==================
@@ -57,12 +57,12 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 	// [ℹ] preload data [1] DOC: REF: [2]
 	// --------------
 
-	const response_valid_url = await fetch(
-		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
-		{
-			method: 'GET'
-		}
-	).then((r) => r.json());
+	// const response_valid_url = await fetch(
+	// 	`/api/cache/_main_/pages_and_seo?url=${url.pathname}`,
+	// 	{
+	// 		method: 'GET'
+	// 	}
+	// ).then((r) => r.json());
   
 	const urlLang: string =
 		params.lang == undefined
