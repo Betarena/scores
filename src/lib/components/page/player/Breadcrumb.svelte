@@ -71,6 +71,10 @@ COMPONENT JS (w/ TS)
     .split('/')
     .filter(a => a.length != 2)
   // $: console.log(league_url_split)
+  $: player_breadcrumb = data_1?.main_data?.title
+    .replace(/{name}/g, data?.data?.player_name)
+    .replace(/{team}/g, data?.data?.team_name)
+  ;
 
   //#endregion ➤ [VARIABLES]
 
@@ -117,8 +121,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   [ℹ] player_name && team_name 
   -->
   <BreadcrumbSingle 
-    href={`${breadcrumb_lang_prefix}${league_url_split[0]}/${league_url_split[1]}/${league_url_split[2]}`}
-    name={`${data?.data?.player_name} ${data?.data?.team_name} videos, transfer history and stats`}
+    name={`${player_breadcrumb}`}
     end={true}
     disable={true}
   />

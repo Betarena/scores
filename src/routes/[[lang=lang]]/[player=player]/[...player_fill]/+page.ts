@@ -5,7 +5,7 @@ import { error } from "@sveltejs/kit";
 import type { PageLoad } from "../$types";
 
 /** @type {import('./$types').PageLoad} */
-export async function load({ params, fetch }): Promise<PageLoad> {
+export async function load({ url, params, fetch }): Promise<PageLoad> {
 
   const t0 = performance.now();
 
@@ -96,25 +96,39 @@ export async function load({ params, fetch }): Promise<PageLoad> {
 
   //#region [2] IMPORTANT REGEX
 
+  const player_trans = PAGE_SEO?.player
+
 	PAGE_SEO.main_data = JSON.parse(
 		JSON.stringify(PAGE_SEO.main_data)
+      .replace('/{lang}/{type}/{name}/{id}', url?.pathname)
+      .replace('/{type}/{name}/{id}', url?.pathname)
 			.replace(/{id}/g, player_id_str)
-			.replace(/{name}/g, PAGE_DATA?.data?.player_name)
-			.replace(/{team}/g, PAGE_DATA?.data?.team_name)
+      .replace(/{name}/g, PAGE_DATA?.data?.player_name)
+      .replace(/{team}/g, PAGE_DATA?.data?.team_name)
+      .replace(/{lang}/g, _lang)
+      .replace(/{type}/g, player_trans)
 	);
 
 	PAGE_SEO.twitter_card = JSON.parse(
 		JSON.stringify(PAGE_SEO.twitter_card)
+    .replace('/{lang}/{type}/{name}/{id}', url?.pathname)
+    .replace('/{type}/{name}/{id}', url?.pathname)
     .replace(/{id}/g, player_id_str)
     .replace(/{name}/g, PAGE_DATA?.data?.player_name)
     .replace(/{team}/g, PAGE_DATA?.data?.team_name)
+    .replace(/{lang}/g, _lang)
+    .replace(/{type}/g, player_trans)
 	);
 
 	PAGE_SEO.opengraph = JSON.parse(
 		JSON.stringify(PAGE_SEO.opengraph)
+    .replace('/{lang}/{type}/{name}/{id}', url?.pathname)
+    .replace('/{type}/{name}/{id}', url?.pathname)
     .replace(/{id}/g, player_id_str)
     .replace(/{name}/g, PAGE_DATA?.data?.player_name)
     .replace(/{team}/g, PAGE_DATA?.data?.team_name)
+    .replace(/{lang}/g, _lang)
+    .replace(/{type}/g, player_trans)
 	);
 
   //#endregion [2] REGEX
