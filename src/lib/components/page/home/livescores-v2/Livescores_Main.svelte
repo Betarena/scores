@@ -94,12 +94,13 @@ COMPONENT JS (w/ TS)
   async function setData() {
     // [ℹ] convert data to a Map;
     for await (const fixtureDateObj of WIDGET_DATA?.fixtures_by_date) {
-      fixturesGroupByDateMap.set(new Date(fixtureDateObj?.date).toISOString().slice(0, 10), fixtureDateObj?.fixtures)
+      // console.log(fixtureDateObj?.date, new Date(fixtureDateObj?.date + 'Z').toISOString().slice(0, 10))
+      fixturesGroupByDateMap.set(new Date(fixtureDateObj?.date + 'Z').toISOString().slice(0, 10), fixtureDateObj?.fixtures)
     }
     for await (const league of WIDGET_DATA?.leagues) {
       leagueMap.set(league?.id, league)
     }
-    dlog("🔥 HERE!", true)
+    // dlog("🔥 HERE!", true)
     // console.log('fixturesGroupByDateMap', fixturesGroupByDateMap)
   }
 
