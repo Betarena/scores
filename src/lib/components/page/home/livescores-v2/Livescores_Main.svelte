@@ -91,15 +91,16 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  function setData() {
+  async function setData() {
     // [ℹ] convert data to a Map;
-    for (const fixtureDateObj of WIDGET_DATA?.fixtures_by_date) {
+    for await (const fixtureDateObj of WIDGET_DATA?.fixtures_by_date) {
       fixturesGroupByDateMap.set(new Date(fixtureDateObj?.date).toISOString().slice(0, 10), fixtureDateObj?.fixtures)
     }
-    for (const league of WIDGET_DATA?.leagues) {
+    for await (const league of WIDGET_DATA?.leagues) {
       leagueMap.set(league?.id, league)
     }
     dlog("🔥 HERE!", true)
+    // console.log('fixturesGroupByDateMap', fixturesGroupByDateMap)
   }
 
   /**
