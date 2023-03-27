@@ -175,6 +175,9 @@ COMPONENT JS (w/ TS)
       const hasuraFixturesDate: B_LS2_D = await get(`/api/hasura/home/livescores-v2/?date=${targetDate}`) as B_LS2_D
       // WIDGET_DATA.fixtures_by_date = WIDGET_DATA?.fixtures_by_date.concat(hasuraFixturesDate?.fixtures_by_date)
       // WIDGET_DATA.leagues = WIDGET_DATA?.leagues.concat(hasuraFixturesDate?.leagues) // FIXME: possible duplicates ??
+      for await (const league of hasuraFixturesDate?.leagues) {
+        leagueMap.set(league?.id, league)
+      }
       // setData() // NOTE: removes duplicates
       fixturesGroupByDateMap.set(targetDate, hasuraFixturesDate?.fixtures_by_date[0]?.fixtures)
       targetFixturesDateGroupObj = fixturesGroupByDateMap.get(new Date(targetDate).toISOString().slice(0, 10));
@@ -185,23 +188,29 @@ COMPONENT JS (w/ TS)
     nonEmptyLeaguesIds = [...new Set(targetFixturesDateGroupObj.map(fixture => fixture?.league_id))];
     dlog(nonEmptyLeaguesIds, true)
 
-    // [ℹ] -> 🔵 ORDERED BY COUNTRY (GEO) POSITION 
     // [ℹ] from those league-ids (non-empty) available
     let geo_leagueIds_reference_numb_array = get_target_country_leagues_array()
 
-    // [ℹ] -> 🔵 FEATURED [LEAGUES-ID] (Before CHECK-MORE games expand), these should have priority
+    // [ℹ] extract non-empty league (objects)
+    nonEmptyLeaguesArray = []
+    for await (const league_id of nonEmptyLeaguesIds) {
+      if (!leagueMap.has(league_id)) { 
+        continue
+      }
+      const league = leagueMap.get(league_id)
+      nonEmptyLeaguesArray.push(league)
+    }
 
-    nonEmptyLeaguesArray = WIDGET_DATA.leagues.filter(function(e) {
-      return nonEmptyLeaguesIds.includes(e?.id)
-    });
-
-    nonEmptyLeaguesArray = nonEmptyLeaguesArray.sort((a, b) => {       
-      const index1 = geo_leagueIds_reference_numb_array.indexOf(a?.id);       
-      const index2 = geo_leagueIds_reference_numb_array.indexOf(b?.id);       
-      return (         
-        (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)      
-      );
-    });
+    // [ℹ] order league-id's by their geo-array counterpart;
+    nonEmptyLeaguesArray = nonEmptyLeaguesArray
+      .sort((a, b) => {       
+        const index1 = geo_leagueIds_reference_numb_array.indexOf(a?.id);       
+        const index2 = geo_leagueIds_reference_numb_array.indexOf(b?.id);       
+        return (         
+          (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)      
+        );
+      })
+    ;
   }
 
   /**
@@ -226,6 +235,8 @@ COMPONENT JS (w/ TS)
       }
     }
     liveLeaguesIds = [...new Set(liveLeaguesIds)]
+    // TODO:FIXME:
+    // can be updated to use leagueMap()
     liveLeagues = WIDGET_DATA.leagues.filter(function(e) {
       return liveLeaguesIds.includes(e?.id)
     });
