@@ -137,9 +137,7 @@
   -->
 	{#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
 		<p>
-			{social_network[1]
-				.toString()
-				.toLocaleLowerCase()}
+			{social_network[1]}
 		</p>
 	{/each}
 {/if}
@@ -198,9 +196,7 @@
               -->
 							<a
 								rel="external"
-								href={social_network[1]
-									.toString()
-									.toLocaleLowerCase()}
+								href={social_network[1]}
 							>
 								<img
 									src="/assets/svg/footer/icon/{social_network[0]
@@ -490,9 +486,7 @@
 									<!-- [ℹ] social-network-component -->
 									<a
 										rel="external"
-										href={social_network[1]
-											.toString()
-											.toLocaleLowerCase()}
+										href={social_network[1]}
 									>
 										<img
 											src="/assets/svg/footer/icon/{social_network[0]
@@ -922,9 +916,7 @@
 								<!-- [ℹ] social-network-component -->
 								<a
 									rel="external"
-									href={social_network[1]
-										.toString()
-										.toLocaleLowerCase()}
+									href={social_network[1]}
 								>
 									<img
 										src="/assets/svg/footer/icon/{social_network[0]
