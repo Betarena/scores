@@ -193,7 +193,7 @@ COMPONENT JS (w/ TS)
 
     // [ℹ] extract non-empty league (objects)
     nonEmptyLeaguesArray = []
-    for await (const league_id of nonEmptyLeaguesIds) {
+    for (const league_id of nonEmptyLeaguesIds) {
       if (!leagueMap.has(league_id)) { 
         continue
       }
