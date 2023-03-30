@@ -13,16 +13,18 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 
-	import type {
-		Cache_Single_SportbookDetails_Data_Response,
-		Cache_Single_Tournaments_League_Info_Data_Response
-	} from '$lib/models/tournaments/league-info/types';
+	
+  import type {
+  	B_LEG_D
+  } from '@betarena/scores-lib/types/league-info';
 
 	import World from './assets/_World.svelte';
 	import LeagueInfoWidgetContentLoader from './_LeagueInfo_Widget_ContentLoader.svelte';
 
 	import { page } from '$app/stores';
 	import { dlog, LI_W_T_STY, LI_W_T_TAG, LI_W_T_TOG } from '$lib/utils/debug';
+	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
 	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
@@ -46,16 +48,16 @@
 
 	let imageVar: string = '--league-info-bookmaker-bg-';
 
-	export let LEAGUE_INFO_SEO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
+	export let LEAGUE_INFO_SEO_DATA: B_LEG_D;
 
-  let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response = $page.data?.FIXTURES_ODDS_T
+  let FIXTURES_ODDS_T: B_FO_T = $page.data?.FIXTURES_ODDS_T
   $: FIXTURES_ODDS_T = $page.data?.FIXTURES_ODDS_T
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	async function widgetInit(): Promise<Cache_Single_Tournaments_League_Info_Data_Response> {
+	async function widgetInit(): Promise<B_LEG_D> {
 		if (!$userBetarenaSettings.country_bookmaker) {
 			return;
 		}
@@ -68,7 +70,7 @@
 
 		// [ℹ] get response [lang] [obtained from preload()]
 		// [ℹ] get response [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response =
+		const response: B_SPT_D =
 			await get(
 				'/api/cache/tournaments/sportbook?geoPos=' +
 					userGeo
@@ -106,16 +108,20 @@
 		);
 
 		// [ℹ] 2021/2022 => 21/22 (date) conversion
-		for (const season of LEAGUE_INFO_SEO_DATA.data
-			.seasons) {
+		for (const season of LEAGUE_INFO_SEO_DATA?.data?.seasons) {
 			// [ℹ] check if already processed
 			if (season.name.length > 5) {
+        if (season.name == '2024 Germany') {
+          // do nothing;
+          continue;
+        }
 				if (!season.name.includes('2020')) {
 					season.name = season.name.replace(
 						/20/g,
 						''
 					);
-				} else {
+				}
+        else {
 					season.name = season.name.replace(
 						'2020',
 						'-'
@@ -132,15 +138,18 @@
 			}
 		}
 
+    LEAGUE_INFO_SEO_DATA?.data?.seasons
+      .sort((a,b) => 
+        new Date(b?.end_date).getTime() - new Date(a?.end_date).getTime()
+      )
+    ;
+
 		// [ℹ] select 1st league/season
-		dropdownSeasonSelect =
-			LEAGUE_INFO_SEO_DATA.data.seasons[0];
-		$sessionStore.selectedSeasonID =
-			dropdownSeasonSelect.id;
+		dropdownSeasonSelect = LEAGUE_INFO_SEO_DATA?.data?.seasons[0];
+		$sessionStore.selectedSeasonID = dropdownSeasonSelect.id;
 
 		// [ℹ] number of clubs check;
-		for (const season of LEAGUE_INFO_SEO_DATA.data
-			.seasons) {
+		for (const season of LEAGUE_INFO_SEO_DATA?.data?.seasons) {
 			if (
 				season.number_of_clubs === null ||
 				season.number_of_clubs === undefined
@@ -150,12 +159,8 @@
 		}
 
 		// [ℹ] intercept date-league-calculation
-		const startDate =
-			LEAGUE_INFO_SEO_DATA.data.seasons[0]
-				.start_date;
-		const endDate =
-			LEAGUE_INFO_SEO_DATA.data.seasons[0]
-				.end_date;
+		const startDate =	LEAGUE_INFO_SEO_DATA.data.seasons[0].start_date;
+		const endDate =	LEAGUE_INFO_SEO_DATA.data.seasons[0].end_date;
 		validateSeasonProgressDate(
 			startDate,
 			endDate
@@ -593,7 +598,12 @@
 											{#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
 												{#if dropdownSeasonSelect.name === item.name}
 													<p
-														class="s-14 m-r-5 color-primary"
+														class="
+                              s-14 
+                              m-r-5 
+                              color-primary
+                              no-wrap
+                            "
 													>
 														{item.name}
 													</p>
@@ -629,7 +639,7 @@
 												>
 													{#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
 														<p
-															class="s-14 w-500 row-season"
+															class="s-14 w-500 row-season no-wrap"
 															class:color-primary={item.name ===
 																dropdownSeasonSelect.name}
 															on:click={() =>
@@ -1013,7 +1023,12 @@
 											{#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
 												{#if dropdownSeasonSelect.name === item.name}
 													<p
-														class="s-14 m-r-5 color-primary"
+														class="
+                              s-14 
+                              m-r-5
+                              color-primary
+                              no-wrap
+                            "
 													>
 														{item.name}
 													</p>
@@ -1049,7 +1064,7 @@
 												>
 													{#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
 														<p
-															class="s-14 w-500 row-season"
+															class="s-14 w-500 row-season no-wrap"
 															class:color-primary={item.name ===
 																dropdownSeasonSelect.name}
 															on:click={() =>
@@ -1377,7 +1392,12 @@
 								{#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
 									{#if dropdownSeasonSelect.name === item.name}
 										<p
-											class="s-14 m-r-5 color-primary"
+											class="
+                        s-14 
+                        m-r-5 
+                        color-primary
+                        no-wrap
+                      "
 										>
 											{item.name}
 										</p>
@@ -1413,7 +1433,7 @@
 									>
 										{#each LEAGUE_INFO_SEO_DATA.data.seasons as item}
 											<p
-												class="s-14 w-500 row-season"
+												class="s-14 w-500 row-season no-wrap"
 												class:color-primary={item.name ===
 													dropdownSeasonSelect.name}
 												on:click={() =>
@@ -1772,7 +1792,7 @@
 		div#dropdown-list-main-container {
 		position: absolute;
 		top: 115%;
-		width: 100%;
+		/* width: 100%; */
 		/* background-color: #F2F2F2; */
 		background-color: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -1782,7 +1802,8 @@
 		max-height: 308px;
 		overflow-y: scroll;
 		padding-right: 6px;
-		right: 0;
+		/* right: 0; */
+		left: 0;
 	}
 	div#dropdown-seasons
 		div#dropdown-list-main-container::-webkit-scrollbar {
