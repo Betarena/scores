@@ -46,6 +46,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ Assets Imports
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import ProfileLoader from './Profile-Loader.svelte';
 	import ProfileMain from './Profile-Main.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -145,6 +146,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <SeoBox>
 </SeoBox>
+
+<ProfileLoader />
 
 <!-- 
 [ℹ] main widget

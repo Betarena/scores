@@ -108,7 +108,8 @@ IMPORTANT Mobile First
 <div>
   <div
     class="widget-component"
-    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  >
 
     <!-- 
     player avatar / name
