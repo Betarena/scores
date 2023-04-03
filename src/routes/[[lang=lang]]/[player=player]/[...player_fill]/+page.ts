@@ -2,6 +2,7 @@ import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from "$lib/utils/debug";
 import { PRELOAD_invalid_data } from "$lib/utils/platform-functions";
 import type { B_SAP_D1, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
 import { error } from "@sveltejs/kit";
+import type { B_PPRO_T } from "node_modules/@betarena/scores-lib/types/player-profile";
 import type { PageLoad } from "../$types";
 
 /** @type {import('./$types').PageLoad} */
@@ -71,7 +72,8 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
   
   const urls: string[] = [
     `/api/hasura/_main_/seo-pages?lang=${_lang}&page=player`,
-    `/api/cache/_main_/pages_and_seo?country_id=${country_id}`
+    `/api/cache/_main_/pages_and_seo?country_id=${country_id}`,
+    `/api/hasura/player/profile?lang=${_lang}`
   ]
 
   const promises = urls.map((_url) =>
@@ -82,14 +84,16 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 
   type PP_PROMISE = [
     B_SAP_PP_T | undefined,
-    B_SAP_D1 | undefined
+    B_SAP_D1 | undefined,
+    B_PPRO_T | undefined
   ]
 
 	const data: PP_PROMISE = await Promise.all(promises) as PP_PROMISE;
 
   const [
     PAGE_SEO,
-    B_SAP_D1
+    B_SAP_D1,
+    B_PPRO_T
   ] = data
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA
@@ -150,7 +154,8 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     // NOTE: not critical - can be silenced;
     PAGE_DATA,
     PAGE_SEO,
-    B_SAP_D1
+    B_SAP_D1,
+    B_PPRO_T
   }
 
   //#endregion [3] RETURN

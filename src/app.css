@@ -278,6 +278,9 @@ FONT WEIGHT
 .w-500 {
 	font-weight: 500;
 }
+.w-700 {
+	font-weight: 700;
+}
 .w-normal {
 	font-weight: normal;
 }
@@ -432,6 +435,9 @@ right-margins
 }
 .m-r-32 {
 	margin-right: 32px;
+}
+.m-r-64 {
+	margin-right: 64px;
 }
 
 /* 
@@ -736,8 +742,16 @@ BUTTON STYLES
 	border: 1px solid var(--primary) !important;
 	color: var(--primary);
 }
+/* variant (2) */
 .btn-hollow.danger {
 	border: 1px solid var(--red) !important;
+}
+/* variant (3) */
+.btn-hollow.cta {
+	border: 1px solid var(--primary) !important;
+} .btn-hollow.cta:hover {
+  background-color: var(--primary);
+	color: var(--white) !important;
 }
 
 /* 
