@@ -24,12 +24,12 @@ COMPONENT JS (w/ TS)
   // IMPORTS GO HERE
   //#endregion ➤ Assets Imports
 
-	import MobileLoaderBottom from "./loader/mobile/Loader-Bottom.svelte";
-	import MobileLoaderTop from "./loader/mobile/Loader-Top.svelte";
-	import LoaderStatBox_1 from "./loader/shared/Loader-StatBox-1.svelte";
-	import LoaderStatBox_2 from "./loader/shared/Loader-StatBox-2.svelte";
-	import TabletLoaderButton from "./loader/tablet/Loader-Button.svelte";
-	import TabletLoaderTop from "./loader/tablet/Loader-Top.svelte";
+	import MobileLoaderBottom from "./loaders/mobile/Loader-Bottom.svelte";
+	import MobileLoaderTop from "./loaders/mobile/Loader-Top.svelte";
+	import LoaderStatBox_1 from "./loaders/shared/Loader-StatBox-1.svelte";
+	import LoaderStatBox_2 from "./loaders/shared/Loader-StatBox-2.svelte";
+	import TabletLoaderButton from "./loaders/tablet/Loader-Button.svelte";
+	import TabletLoaderTop from "./loaders/tablet/Loader-Top.svelte";
 
   //#endregion ➤ [MAIN] Package Imports
 
