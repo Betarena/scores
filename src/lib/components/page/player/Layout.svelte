@@ -49,6 +49,7 @@ COMPONENT JS (w/ TS)
 
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
+	import FixturesWidget from './fixtures/Fixtures-Widget.svelte';
 	import ProfileWidget from './profile/Profile-Widget.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -250,6 +251,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <Breadcrumb />
   <ProfileWidget/>
+  <FixturesWidget />
 
 </section>
 
