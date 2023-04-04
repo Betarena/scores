@@ -1,15 +1,3 @@
-<!-- 
-====================
-This is an example .svelte
-component file, to give guidance on
-the structure that is employed across the project
-and how it should be layed-out.
-====================
-<COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>
-====================
-<❗️ REMOVE (THIS) COMMENT IN PRODUCTION>
--->
-
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
@@ -147,7 +135,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <SeoBox>
 </SeoBox>
 
-<ProfileLoader />
+<!-- <ProfileLoader /> -->
 
 <!-- 
 [ℹ] main widget
@@ -156,7 +144,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise is pending 
   -->
-  <!-- <LivescoresLoader /> -->
+  <ProfileLoader />
 {:then data}
   <!-- 
   promise was fulfilled 

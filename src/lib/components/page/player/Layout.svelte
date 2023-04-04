@@ -251,7 +251,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <Breadcrumb />
   <ProfileWidget/>
-  <FixturesWidget />
+
+  <div id="widget-grid-display">
+    <div
+      class="grid-display-column">
+      <FixturesWidget />
+    </div>
+  </div>
 
 </section>
 
@@ -269,18 +275,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		align-items: start;
   }
 
-  /* #region ❌ [NOT WORKING] w/ regions */
-  div#example {
-    color: var(--dark-theme);
-    /* background-color: var(); */
-  } div#example > div#target {
-  }
-  /* #endregion ❌ [NOT WORKING] w/ regions */
+  /* widget layout */
+	div#widget-grid-display {
+		display: grid;
+		margin-top: 24px;
+		align-items: start;
+	}
 
-  div#example {
-    color: var(--dark-theme);
-  } div#example > div#target {
-  }
+	/* widget layout-inner */
+	div.grid-display-column {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
 
   /*
   =============
@@ -292,6 +299,37 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     and (min-width: 726px) 
     and (max-width: 1000px) {
   }
+
+	@media only screen and (min-width: 768px) {
+		/* widget layout */
+		div#widget-grid-display {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media only screen and (min-width: 1160px) {
+		/* widget layout */
+		div#widget-grid-display {
+			gap: 20px;
+			grid-template-columns: minmax(auto, 850px) minmax(
+					auto,
+					502px
+				);
+		}
+	}
+
+	@media only screen and (min-width: 1320px) {
+		/* widget layout */
+		div#widget-grid-display {
+			display: grid;
+			align-items: start;
+			gap: 20px;
+			grid-template-columns: minmax(auto, 850px) minmax(
+					auto,
+					502px
+				);
+		}
+	}
 
   /*
   =============

@@ -23,8 +23,9 @@ COMPONENT JS (w/ TS)
   // IMPORTS GO HERE
   //#endregion ➤ Assets Imports
 
-	import LoaderMain from "./loaders/shared/Loader-Main.svelte";
-	import LoaderTopButton from "./loaders/shared/Loader-Top-Button.svelte";
+	import LoaderRow2 from "./Loader-Row-2.svelte";
+	import LoaderRow from "./Loader-Row.svelte";
+	import LoaderTop from "./Loader-Top.svelte";
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -67,12 +68,35 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<div
-  id="player-fixture-loader"
-  class="widget-component">
-  <LoaderTopButton />
-  <LoaderMain />
+<div>
+  {#each { length: 4 } as _, i}
+    <div
+      class="
+        loader-box
+      ">
+      <LoaderTop />
+    </div>
+    {#each { length: 3 } as _, i}
+      <div
+        class="
+          m-b-12
+          row-space-start
+        ">
+        <div
+          class="
+            m-r-15
+          ">
+          <LoaderRow />
+        </div>
+        <div
+          class="fixture-row">
+          <LoaderRow2 />
+        </div>
+      </div>
+    {/each}
+  {/each}
 </div>
+
 
 <!-- ===============
 COMPONENT STYLE
@@ -81,8 +105,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  .widget-component {
-    padding: 20px;
+  .loader-box {
+    margin: 0 0 22px 0;
+  }
+
+  .fixture-row {
+    width: 100%;
+  } :global(.fixture-row svg) {
+    width: 100%;
   }
 
   :global(div.livescores-fixture-row-loader) {
@@ -98,12 +128,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   RESPONSIVNESS 
   =============
   */
-
-  @media only screen and (min-width: 768px) {
-		.widget-component {
-			margin-top: 40px;
-		}
-	}
 
   /*
   =============

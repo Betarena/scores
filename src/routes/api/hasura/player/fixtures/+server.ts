@@ -105,13 +105,17 @@ async function main_player_page_data (
 		...dataRes1,
 		...dataRes2
 	}
+  let playerIds = [_player_id]
+  playerIds = [...new Set(playerIds)]
+  console.log('leagueIds', playerIds)
 
 	// [ℹ] map of player data generation;
   const [
     map,
     map2
   ] = await PFIX_PP_generate_players_main (
-    mergeData
+    mergeData,
+    playerIds
   )
   
   const validation_0 =

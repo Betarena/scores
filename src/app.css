@@ -105,6 +105,7 @@ p {
 	--theme-color: #e3e3e3;
 	--grey-color: #e6e6e6;
 	--grey-shade: #cccccc;
+  --yellow-gold: #FFB904;
 	/* 
 	dark theme colors 
   */
@@ -221,6 +222,9 @@ FONT COLOURS
 }
 .color-success {
 	color: #009406;
+}
+.color-yellow {
+	color: var(--yellow-gold);
 }
 
 /* 

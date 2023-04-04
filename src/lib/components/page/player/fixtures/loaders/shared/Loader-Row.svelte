@@ -3,6 +3,7 @@
 </script>
 
 <svg 
+  class="animation-target"
   width="64" 
   height="49" 
   viewBox="0 0 64 49" 

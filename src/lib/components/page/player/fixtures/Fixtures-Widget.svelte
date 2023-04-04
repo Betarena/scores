@@ -78,7 +78,7 @@ COMPONENT JS (w/ TS)
     // empty
   ): Promise < B_PFIX_D > {
     // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/hasura/player/fixtures/?player_id=296&limit=5&offset=0`) as B_PFIX_D;
+    WIDGET_DATA = await get(`/api/hasura/player/fixtures/?player_id=580&limit=10&offset=0`) as B_PFIX_D;
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;
@@ -147,7 +147,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <SeoBox>
 </SeoBox>
 
-<FixturesLoader />
+<!-- <FixturesLoader /> -->
 
 <!-- 
 [ℹ] main widget
@@ -156,7 +156,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise is pending 
   -->
-  <!-- <LivescoresLoader /> -->
+  <FixturesLoader />
 {:then data}
   <!-- 
   promise was fulfilled 
