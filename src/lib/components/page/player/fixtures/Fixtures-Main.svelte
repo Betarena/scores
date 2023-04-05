@@ -33,14 +33,17 @@ COMPONENT JS (w/ TS)
   //#region ➤ Assets Imports
   // <-imports-go-here->
   // import profile_avatar from './assets/profile-avatar.svg';
+  import arrow_left_dark from './assets/arrow-left-dark.svg';
   import arrow_left_hover from './assets/arrow-left-hover.svg';
   import arrow_left from './assets/arrow-left.svg';
+  import arrow_right_dark from './assets/arrow-right-dark.svg';
   import arrow_right_hover from './assets/arrow-right-hover.svg';
   import arrow_right from './assets/arrow-right.svg';
 //#endregion ➤ Assets Imports
-
-  import FixturesRow from './Fixtures-Row.svelte';
-  import LoaderMain from './loaders/shared/Loader-Main.svelte';
+  
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
+	import FixturesRow from './Fixtures-Row.svelte';
+	import LoaderMain from './loaders/shared/Loader-Main.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -52,12 +55,14 @@ COMPONENT JS (w/ TS)
 
   export let WIDGET_DATA: B_PFIX_D
 
+  let WIDGET_TITLE = 'Fixtures'
+
   // let WIDGET_T_DATA: FPPT_Data = $view_page.data?.B_PPRO_T
   // $: WIDGET_T_DATA = $view_page.data?.B_PPRO_T
 
   let pageFixtureMap: Map <number, Map <string, PFIX_C_Fixture[]>> = new Map();
   const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
-  const leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
+  let leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
 
   pageFixtureMap.set(0, fixtureMap)
 
@@ -89,14 +94,16 @@ COMPONENT JS (w/ TS)
       `/api/hasura/player/fixtures/?player_id=580&limit=${limit}&offset=${offset}`
     ) as B_PFIX_D;
     const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
+    const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
     loadingPrev = false;
     pageFixtureMap.set(view_page, _fixtureMap)
     pageFixtureMap = pageFixtureMap
+    leagueMap = new Map([...leagueMap, ..._leagueMap])
+    leagueMap = leagueMap
   }
 
   $: console.log(pageFixtureMap)
-
-  
+  $: console.log(leagueMap)
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -164,6 +171,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 [ℹ] example comment
 -->
 <div>
+
+  <WidgetTitle
+    {WIDGET_TITLE}
+    OVERRIDE_COLOR={true}
+  />
+  
   <div
     class="widget-component"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
@@ -193,7 +206,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         disabled={loadingPrev}
       >
         <img 
-          src={hoverBtn1 == true ? arrow_left_hover : arrow_left}
+          src={hoverBtn1 == true ? arrow_left_hover : $userBetarenaSettings?.theme == "Dark" ? arrow_left_dark : arrow_left}
           alt="arrow_left"
           class="m-r-8"
         />
@@ -216,7 +229,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         >
           Next
           <img 
-            src={hoverBtn2 == true ? arrow_right_hover : arrow_right}
+            src={hoverBtn2 == true ? arrow_right_hover : $userBetarenaSettings?.theme == "Dark" ? arrow_right_dark : arrow_right}
             alt="arrow_right"
             class="m-l-8"
           />
@@ -238,7 +251,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     Fixtures List
     -->
     {#if !loadingPrev}
-      <div>
+      <div
+        id="fixtures-list-box">
         {#each [...pageFixtureMap.entries()] as [key, page_data]}
           {#if key == view_page}
             <!-- [🐞] 
@@ -255,6 +269,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 <div
                   class="
                     row-space-start
+                    m-t-15
                     m-b-15
                     league-group-box
                   ">
@@ -311,11 +326,21 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   button.btn-hollow.left {
     padding: 12px 16px 12px 10px ;
   }
-
   /* o */
   button.btn-hollow.right {
     padding: 12px 10px 12px 16px ;
   }
+
+  div#fixtures-list-box {
+
+  } div#fixtures-list-box a:first-child div.league-group-box {
+    border: none;
+    padding-top: 0;
+    margin-top: 0;
+  } div#fixtures-list-box a div.league-group-box {
+    border-top: 1px solid var(--grey-shade);
+    padding-top: 18px;
+  } 
 
 
   /*
@@ -334,5 +359,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   DARK-THEME
   =============
   */
+
+  div.dark-background-1 div#fixtures-list-box a:first-child div.league-group-box {
+    border: none;
+  } div.dark-background-1 div#fixtures-list-box a div.league-group-box {
+    border-top: 1px solid var(--dark-theme-1-shade);
+  }
+
+  div.dark-background-1 button.btn-hollow {
+    border: 1px solid var(--dark-theme-1-2-shade) !important;
+  }
 
 </style>

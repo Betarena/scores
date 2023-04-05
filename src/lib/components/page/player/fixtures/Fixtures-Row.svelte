@@ -213,6 +213,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     style="width: auto;"
   >
     <!-- 
+    fixture (player) captain
+    -->
+    {#if fixture?.player?.captain}
+      <FixturesRowEvent 
+        event={"captain"}
+        eventNum={0}
+      />
+    {/if}
+    <!-- 
     fixture (player) yellowcards
     -->
     {#if fixture?.player?.events?.yeallow_card}

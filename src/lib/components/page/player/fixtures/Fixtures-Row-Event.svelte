@@ -10,6 +10,7 @@
   import penalty from './assets/penalty.svg';
   import yellow_card from './assets/yellow-card.svg';
   import yellowred_card from './assets/yellowred.svg';
+  import captain from './assets/captain.svg';
   
   export let event: string;
   export let eventNum: number;
@@ -21,6 +22,9 @@
 	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: if (event != undefined) {
+    if (event == 'captain') {
+			icon = captain;
+		}
 		if (event == 'goal') {
 			icon = football;
 		}
