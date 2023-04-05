@@ -501,7 +501,7 @@
             <!-- 
             [ℹ] standings (stage/phase) select view
             -->
-            {#if stage_opt.length > 1}
+            {#if stage_opt.length > 1 && !mobileExclusive}
               <div
                 id="ss-box">
                 <div
@@ -579,6 +579,61 @@
 						</div>
 					{/if}
 				</div>
+
+        <!-- 
+        [ℹ] standings (stage/phase) select view
+        -->
+        {#if stage_opt.length > 1 && mobileExclusive}
+          <div
+            id="ss-box">
+            <div
+              class="
+                row-space-out
+              "
+              on:click={() => select_stage_dropdown = !select_stage_dropdown}>
+              <p
+                class="
+                  color-black-2
+                  w-400
+                  no-wrap
+                  m-r-10
+                ">
+                {select_stage_opt}
+              </p>
+              <img
+                src={select_stage_dropdown ? arrow_up : arrow_down}
+                alt="default alt"
+                width=20
+                height=20
+              />
+            </div>
+            {#if select_stage_dropdown}
+              <div
+                id="ssdb-main"
+              >
+                <div
+                  id="ssdb-inner"
+                >
+                  {#each stage_opt as item}
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-black-2
+                        stage-opt
+                        no-wrap
+                      "
+                      class:color-primary={item === select_stage_opt}
+                      on:click={() => select_stage_opt = item}>
+                      {item}
+                    </p>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+          </div>
+        {/if}
+
 				<!-- 
         [ℹ] standings table
         -->
@@ -961,7 +1016,7 @@
     border-radius: 8px;
     padding: 10px 20px;
 		cursor: pointer;
-    margin: 20px;
+    margin: 0 20px 20px 20px;
   } div#ss-box div#ssdb-main {
     /* p */
     position: absolute;
@@ -1243,6 +1298,10 @@
 			padding-left: 0;
 			padding-right: 0;
 		}
+
+    div#ss-box {
+      margin: 20px;
+    }
 	}
 
 	/* 
