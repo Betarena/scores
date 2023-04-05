@@ -7,75 +7,6 @@
     // "source.sortImports": true,
     "source.sortMembers": true
   },
-  // NOTE: custom highlighter
-  "todohighlight.keywords": [
-    // NOTE: for information, that is rather important,
-    // NOTE: as is necessary some attention, but just informative
-    {
-      "text": "NOTE:",
-      "color": "#ffffff",
-      "backgroundColor": "#131313",
-      "overviewRulerColor": "grey",
-      "borderRadius": "2px"
-    },
-    // [🐞] for signalling as a DEBUG step/process
-    {
-      "text": "[🐞]",
-      "color": "#ffffff",
-      "backgroundColor": "#131313",
-      "overviewRulerColor": "grey",
-      "borderRadius": "2px"
-    },
-    {
-      "text": "//#region",
-      "color": "#ffffff",
-      "backgroundColor": "#131313",
-      "overviewRulerColor": "grey",
-      "isWholeLine": true,
-      "borderRadius": "2px"
-    },
-    {
-      "text": "//#endregion",
-      "color": "#000000",
-      "backgroundColor": "orange",
-      "overviewRulerColor": "grey",
-      "isWholeLine": true,
-      "borderRadius": "2px"
-    },
-    {
-      "text": "WARNING",
-      "color": "#000000",
-      "backgroundColor": "#FFFF00",
-      "overviewRulerColor": "grey"
-    },
-    // DOC: for indicating a source/link for a target
-    // DOC: process and how-to
-    {
-      "text": "DOC:",
-      "color": "#000000",
-      "backgroundColor": "#0092FF",
-      "overviewRulerColor": "grey",
-      "borderRadius": "2px"
-    },
-    // IMPORTANT for indicating something VERY important,
-    // IMPORTANT such as: careful not to remove/alter target code
-    {
-      "text": "IMPORTANT",
-      "color": "#000000",
-      "backgroundColor": "#F35246",
-      "overviewRulerColor": "red",
-      "isWholeLine": false,
-      "borderRadius": "2px"
-    },
-    {
-      "text": "CRITICAL",
-      "color": "#000000",
-      "backgroundColor": "#F35246",
-      "overviewRulerColor": "grey",
-      "isWholeLine": false,
-      "borderRadius": "2px"
-    }
-  ],
   // -----------
   // NOTE: [BELOW] SVELTE development specific extensions (Config)
   // -----------
@@ -140,6 +71,8 @@
     "fixture": "Layout",
     "home": "Layout",
     "league": "Layout",
-    "profile": "Layout"
+    "profile": "Layout",
+    "tablet": "Mobile",
+    "loaders": "Theme"
   }
 }
