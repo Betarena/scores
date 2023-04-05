@@ -27,7 +27,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ Types Imports
   // <-imports-go-here->
 	import type { B_H_HF } from '@betarena/scores-lib/types/hasura';
-	import type { B_PFIX_D, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+	import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
 //#endregion ➤ Types Imports
 
   //#region ➤ Assets Imports
@@ -55,10 +55,10 @@ COMPONENT JS (w/ TS)
 
   export let WIDGET_DATA: B_PFIX_D
 
-  let WIDGET_TITLE = 'Fixtures'
+  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
+  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
 
-  // let WIDGET_T_DATA: FPPT_Data = $view_page.data?.B_PPRO_T
-  // $: WIDGET_T_DATA = $view_page.data?.B_PPRO_T
+  let WIDGET_TITLE = 'Fixtures'
 
   let pageFixtureMap: Map <number, Map <string, PFIX_C_Fixture[]>> = new Map();
   const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
@@ -210,7 +210,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           alt="arrow_left"
           class="m-r-8"
         />
-        Previous
+        {WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.previous || 'Previous' : 'Previous'}
       </button>
       <!-- 
       Next
@@ -227,7 +227,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           on:mouseout={() => hoverBtn2 = false}
           disabled={view_page == 0}
         >
-          Next
+          {WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.next || 'Next' : 'Next'}
           <img 
             src={hoverBtn2 == true ? arrow_right_hover : $userBetarenaSettings?.theme == "Dark" ? arrow_right_dark : arrow_right}
             alt="arrow_right"
