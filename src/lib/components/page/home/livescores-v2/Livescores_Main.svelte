@@ -68,9 +68,6 @@ COMPONENT JS (w/ TS)
     setData(WIDGET_DATA)
   }
 
-  console.log('fixturesGroupByDateMap', fixturesGroupByDateMap)
-  console.log('leagueMap', leagueMap)
-
   let nonEmptyLeaguesIds: number[] = []
   let nonEmptyLeaguesArray: LS2_C_League[] = []
   let numOfFixtures: number;
@@ -101,7 +98,7 @@ COMPONENT JS (w/ TS)
     const liveFixturesMap = $sessionStore?.livescore_now
     // [ℹ] exit;
     if (liveFixturesMap.size == 0 || fixturesGroupByDateMap.size == 0) {
-      dlog(`${LV2_W_H_TAG[0]} ❌ NO LIVE FIXTURES!`)
+      dlog(`${LV2_W_H_TAG[0]} ❌ NO LIVE FIXTURES!`, LV2_W_H_TAG[1])
       return
     }
     // [ℹ] iterate over each LIVE fixture
@@ -150,7 +147,7 @@ COMPONENT JS (w/ TS)
    */
   async function targetFixtureDateData(
   ): Promise < void > {
-    dlog(`${LV2_W_H_TAG[0]} (in) targetFixtureDateData`)
+    dlog(`${LV2_W_H_TAG[0]} (in) targetFixtureDateData`, LV2_W_H_TAG[1])
 
     // new updated date;
     let targetDate = convert_to_iso(
@@ -161,7 +158,7 @@ COMPONENT JS (w/ TS)
     
     // [ℹ] validation;
     if (targetFixturesDateGroupObj == undefined) {
-      dlog(`${LV2_W_H_TAG[0]} 🔵 seeking ${targetDate} (date) fixtures`)
+      dlog(`${LV2_W_H_TAG[0]} 🔵 seeking ${targetDate} (date) fixtures`, LV2_W_H_TAG[1])
       inProcessHistFixFetch = true
       // get target date fixtures;
       const hasuraFixturesDate: B_LS2_D = await get(
@@ -180,7 +177,7 @@ COMPONENT JS (w/ TS)
     nonEmptyLeaguesIds = [...new Set(targetFixturesDateGroupObj
       ?.map(fixture => fixture?.league_id))
     ];
-    dlog(`nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`, true)
+    dlog(`nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`, LV2_W_H_TAG[1])
 
     // get "this" country "geo" data;
     let geo_leagueIds_reference_numb_array = get_target_country_leagues_array()
@@ -212,7 +209,7 @@ COMPONENT JS (w/ TS)
    */
   async function updateLiveInfo(
   ): Promise < void > {
-    dlog(`${LV2_W_H_TAG[0]} (in) updateLiveInfo`)
+    dlog(`${LV2_W_H_TAG[0]} (in) updateLiveInfo`, LV2_W_H_TAG[1])
     numOfFixturesLive = 0
     liveLeaguesIds = []
     // NOTE:DOC: adding for await ... of > for await ... of causes (double) iteration
@@ -229,9 +226,9 @@ COMPONENT JS (w/ TS)
       ?.filter(function(x) {
       return liveLeaguesIds.includes(x?.id)
     });
-    dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive ${numOfFixturesLive}`)
-    dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds.length ${liveLeaguesIds.length}`)
-    dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds ${liveLeaguesIds}`)
+    dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive ${numOfFixturesLive}`, LV2_W_H_TAG[1])
+    dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds.length ${liveLeaguesIds.length}`, LV2_W_H_TAG[1])
+    dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds ${liveLeaguesIds}`, LV2_W_H_TAG[1])
   }
 
   function toggleShowMore() {
@@ -246,9 +243,7 @@ COMPONENT JS (w/ TS)
       fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))
     ;
     if (validation_0) {
-      console.log('X - Here!')
       const leagueIds = nonEmptyLeaguesArray?.map(x => x?.id)
-      console.log('X - leagueIds:', leagueIds.length)
       let fixturesList = fixturesGroupByDateMap.get(
         convert_to_iso(
           $sessionStore.livescoreNowSelectedDate))
@@ -264,7 +259,6 @@ COMPONENT JS (w/ TS)
                 x?.league_id
               )
             )
-      console.log('X - fixturesList:', fixturesList.length)
       // filter by featured leagues only;
       const validation_1 =
         !isShowMore
@@ -278,7 +272,6 @@ COMPONENT JS (w/ TS)
             )
           )
       }
-      console.log('X - fixturesList:', fixturesList.length)
       // group fixtures for "this" date, by league
       for (const item of nonEmptyLeaguesArray) {
         const leagueFixtures = fixturesList
@@ -294,7 +287,6 @@ COMPONENT JS (w/ TS)
         fixturesGroupByDateLeagueMap.set(item?.id, leagueFixtures)
       }
     }
-    console.log('X - fixturesGroupByDateLeagueMap:', fixturesGroupByDateLeagueMap.size)
     fixturesGroupByDateLeagueMap = fixturesGroupByDateLeagueMap
   }
 
@@ -314,9 +306,6 @@ COMPONENT JS (w/ TS)
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
-	);
-	dlog(
-		`server_side_language: ${server_side_language}`
 	);
 
   /**
