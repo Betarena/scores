@@ -7,31 +7,16 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
 	import { page } from '$app/stores';
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
 	import { get } from '$lib/api/utils';
 	import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
-//#endregion ➤ Project Custom Imports
 
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
-
-  //#region ➤ Types Imports
 	import type { B_LS2_D, B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
-  //#endregion ➤ Types Imports
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 	import LivescoresLoader from './Livescores_Loader.svelte';
 	import LivescoresMain from './Livescores_Main.svelte';
-
-  //#region ➤ Assets Imports
-  //#endregion ➤ Assets Imports
 
   //#endregion ➤ [MAIN] Package Imports
 

@@ -7,26 +7,6 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
-
-  //#region ➤ Types Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Assets Imports
-
 	import LivescoresTopRow from './Livescores_Top_Row.svelte';
 	import LoaderRow from './loaders/Loader_Row.svelte';
 
@@ -63,8 +43,6 @@ COMPONENT JS (w/ TS)
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  LoaderRow
 
 </script>
 

@@ -7,40 +7,20 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
   
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-//#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-// IMPORTS GO HERE
-  import { monthNames, WEEK_DAYS_ABBRV_2 } from '$lib/utils/dates';
-  // IMPORTS GO HERE
+  import { convert_to_iso, monthNames, WEEK_DAYS_ABBRV_2 } from '$lib/utils/dates';
   import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
   import { viewport_change } from '$lib/utils/platform-functions';
   import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import { onMount } from 'svelte';
-//#endregion ➤ Project Custom Imports
 
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
-
-  //#region ➤ Types Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // IMPORTS GO HERE
   import vec_arrow_left_dark from './assets/arrow-left-dark.svg';
   import vec_arrow_left from './assets/arrow-left.svg';
   import vec_arrow_right_dark from './assets/arrow-right-dark.svg';
   import vec_arrow_right from './assets/arrow-right.svg';
-  //#endregion ➤ Assets Imports
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -58,7 +38,6 @@ COMPONENT JS (w/ TS)
   }
   let monthWeeksArray: monthWeekObject[] = []
   let tempDate = $sessionStore.livescoreNowSelectedDate;
-  const _currentDate = new Date()
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
@@ -303,10 +282,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   color-black-2
                   cursor-pointer
                 "
-                class:activeDate={item.toISOString().slice(0, 10) == $sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)}
-                class:currentDate={item.toISOString().slice(0, 10) == _currentDate.toISOString().slice(0, 10)}
+                class:activeDate={convert_to_iso(item) == convert_to_iso($sessionStore.livescoreNowSelectedDate)}
+                class:currentDate={convert_to_iso(item) == convert_to_iso($sessionStore.userDate)}
                 class:notViewMonth={item.getMonth() != tempDate.getMonth()}
-                on:click={() => dateChange(item)}>
+                on:click={() => dateChange(item)}
+              >
                 {item.getUTCDate()}
               </td>
             {/each}

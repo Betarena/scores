@@ -69,7 +69,10 @@ async function main(
 
   // eslint-disable-next-line prefer-const
   const leagues_ids_arr: number[] = current_week_fixtures?.historic_fixtures?.map(a => a.league_id)
-  const [leagues_data, tournaments_data] = await get_target_leagues(
+  const [
+    leagues_data, 
+    tournaments_data
+  ] = await get_target_leagues(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     graphQlInstance,
@@ -78,6 +81,7 @@ async function main(
   const league_map = await generate_leagues_map(leagues_data)
   const tournaments_map = await generate_tournaments_map(tournaments_data)
 
+  // inject league-urls;
   for await (const [, league] of league_map) {
     league.urls =
       tournaments_map.has(league?.id) == true
@@ -86,9 +90,6 @@ async function main(
     ;
   }
   
-  /**
-   * [ℹ] cache (data) persist
-  */
   const data: B_LS2_D = {
     fixtures_by_date,
     leagues: Array.from(league_map.values())

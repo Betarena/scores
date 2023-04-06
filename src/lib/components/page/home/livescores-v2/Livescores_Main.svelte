@@ -6,39 +6,18 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
+  import { FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks';
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
   import { page } from '$app/stores';
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
   import { get } from '$lib/api/utils';
-  // IMPORTS GO HERE
   import { sessionStore } from '$lib/store/session';
-  // IMPORTS GO HERE
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { convert_to_iso } from '$lib/utils/dates.js';
   import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
-  // IMPORTS GO HERE
   import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
-
-  //#region ➤ Types Imports
-  // IMPORTS GO HERE
   import type { B_LS2_D, B_LS2_T, LS2_C_Fixture, LS2_C_League } from '@betarena/scores-lib/types/livescores-v2';
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Assets Imports
 
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks';
   import LivescoresFixtureRow from './Livescores_Fixture_Row.svelte';
   import LivescoresTopRow from './Livescores_Top_Row.svelte';
   import LoaderRow from './loaders/Loader_Row.svelte';
@@ -58,18 +37,39 @@ COMPONENT JS (w/ TS)
 
   $: WIDGET_TITLE = WIDGET_T_DATA?.title || 'Livescores'
   
-  const today = new Date()
   let yesterday = new Date()
 
   yesterday.setDate(yesterday.getDate() - 1)
   $: yesterday = yesterday
 
-  let fixturesGroupByDateMap = new Map<string, LS2_C_Fixture[]>()
-  let leagueMap = new Map<number, LS2_C_League>()
+  let fixturesGroupByDateMap: Map <string, LS2_C_Fixture[]> = new Map();
+  let fixturesGroupByDateLeagueMap: Map <number, LS2_C_Fixture[]> = new Map();
+  let leagueMap: Map <number, LS2_C_League> = new Map();
 
-  if (WIDGET_DATA) {
-    setData()
+  // let fixturesGroupByDateMap: Map <string, LS2_C_Fixture[]> = new Map(
+  //   Object.entries(WIDGET_DATA?.fixtures_by_date)
+  // ) as Map <string, LS2_C_Fixture[]>;
+
+  // let leagueMap: Map <string, LS2_C_League> = new Map(
+  //   Object.entries(WIDGET_DATA?.leagues)
+  // ) as Map <string, LS2_C_League>;
+
+  // TEMPORARY
+  // FIXME:TODO: update cache to [...V3] to use map json objects;
+  async function setData(data: B_LS2_D) {
+    for await (const fixtureDateObj of data?.fixtures_by_date) {
+      fixturesGroupByDateMap.set(convert_to_iso(new Date(fixtureDateObj?.date + 'Z')), fixtureDateObj?.fixtures)
+    }
+    for await (const league of data?.leagues) {
+      leagueMap.set(league?.id, league)
+    }
   }
+  if (WIDGET_DATA) {
+    setData(WIDGET_DATA)
+  }
+
+  console.log('fixturesGroupByDateMap', fixturesGroupByDateMap)
+  console.log('leagueMap', leagueMap)
 
   let nonEmptyLeaguesIds: number[] = []
   let nonEmptyLeaguesArray: LS2_C_League[] = []
@@ -78,10 +78,7 @@ COMPONENT JS (w/ TS)
   let liveLeaguesIds: number[] = []
   let liveLeagues: LS2_C_League[] = []
   let isShowMore: boolean = false;
-
-  let inProcessHistFixFetch: boolean = false
-
-  $sessionStore.livescoreNowSelectedDate = today
+  let inProcessHistFixFetch: boolean = true
 
   //#endregion ➤ [VARIABLES]
 
@@ -91,18 +88,7 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  async function setData() {
-    // [ℹ] convert data to a Map;
-    for await (const fixtureDateObj of WIDGET_DATA?.fixtures_by_date) {
-      // console.log(fixtureDateObj?.date, new Date(fixtureDateObj?.date + 'Z').toISOString().slice(0, 10))
-      fixturesGroupByDateMap.set(new Date(fixtureDateObj?.date + 'Z').toISOString().slice(0, 10), fixtureDateObj?.fixtures)
-    }
-    for await (const league of WIDGET_DATA?.leagues) {
-      leagueMap.set(league?.id, league)
-    }
-    // dlog("🔥 HERE!", true)
-    // console.log('fixturesGroupByDateMap', fixturesGroupByDateMap)
-  }
+  // map key -> new Date(fixtureDateObj?.date + 'Z').toISOString().slice(0, 10)
 
   /**
    * @description updates the information
@@ -165,36 +151,47 @@ COMPONENT JS (w/ TS)
   async function targetFixtureDateData(
   ): Promise < void > {
     dlog(`${LV2_W_H_TAG[0]} (in) targetFixtureDateData`)
-    let targetDate = $sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)
+
+    // new updated date;
+    let targetDate = convert_to_iso(
+      $sessionStore.livescoreNowSelectedDate
+    )
     // [ℹ] get matching (date) fixtures in "yyyy/MM/dd" string format
-    let targetFixturesDateGroupObj = fixturesGroupByDateMap.get(new Date(targetDate).toISOString().slice(0, 10));
+    let targetFixturesDateGroupObj = fixturesGroupByDateMap.get(targetDate);
+    
     // [ℹ] validation;
     if (targetFixturesDateGroupObj == undefined) {
       dlog(`${LV2_W_H_TAG[0]} 🔵 seeking ${targetDate} (date) fixtures`)
       inProcessHistFixFetch = true
-      const hasuraFixturesDate: B_LS2_D = await get(`/api/hasura/home/livescores-v2/?date=${targetDate}`) as B_LS2_D
-      // WIDGET_DATA.fixtures_by_date = WIDGET_DATA?.fixtures_by_date.concat(hasuraFixturesDate?.fixtures_by_date)
-      // WIDGET_DATA.leagues = WIDGET_DATA?.leagues.concat(hasuraFixturesDate?.leagues) // FIXME: possible duplicates ??
-      // setData() // NOTE: removes duplicates
-      fixturesGroupByDateMap.set(targetDate, hasuraFixturesDate?.fixtures_by_date[0]?.fixtures)
-      targetFixturesDateGroupObj = fixturesGroupByDateMap.get(new Date(targetDate).toISOString().slice(0, 10));
+      // get target date fixtures;
+      const hasuraFixturesDate: B_LS2_D = await get(
+        `/api/hasura/home/livescores-v2/?date=${targetDate}`
+      ) as B_LS2_D
+      // merge maps;
+      await setData(hasuraFixturesDate)
+      // extract "this" date data;
+      targetFixturesDateGroupObj = fixturesGroupByDateMap.get(targetDate);
     }
+    
     inProcessHistFixFetch = false
     numOfFixtures = targetFixturesDateGroupObj?.length || 0
-    // [ℹ] filter non-empty leagues with fixtures (for selected-date)
-    nonEmptyLeaguesIds = [...new Set(targetFixturesDateGroupObj.map(fixture => fixture?.league_id))];
-    dlog(nonEmptyLeaguesIds, true)
 
-    // [ℹ] -> 🔵 ORDERED BY COUNTRY (GEO) POSITION 
-    // [ℹ] from those league-ids (non-empty) available
+    // extract "this" date data, league-id's;
+    nonEmptyLeaguesIds = [...new Set(targetFixturesDateGroupObj
+      ?.map(fixture => fixture?.league_id))
+    ];
+    dlog(`nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`, true)
+
+    // get "this" country "geo" data;
     let geo_leagueIds_reference_numb_array = get_target_country_leagues_array()
-
-    // [ℹ] -> 🔵 FEATURED [LEAGUES-ID] (Before CHECK-MORE games expand), these should have priority
-
-    nonEmptyLeaguesArray = WIDGET_DATA.leagues.filter(function(e) {
+    
+    // keep only "this" date league-id's;
+    nonEmptyLeaguesArray = [...leagueMap.values()]
+      ?.filter(function(e) {
       return nonEmptyLeaguesIds.includes(e?.id)
     });
 
+    // keep only "league-id's", present in target "geo" list;
     nonEmptyLeaguesArray = nonEmptyLeaguesArray.sort((a, b) => {       
       const index1 = geo_leagueIds_reference_numb_array.indexOf(a?.id);       
       const index2 = geo_leagueIds_reference_numb_array.indexOf(b?.id);       
@@ -202,6 +199,8 @@ COMPONENT JS (w/ TS)
         (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)      
       );
     });
+
+    generateLeagueFixtures()
   }
 
   /**
@@ -226,8 +225,9 @@ COMPONENT JS (w/ TS)
       }
     }
     liveLeaguesIds = [...new Set(liveLeaguesIds)]
-    liveLeagues = WIDGET_DATA.leagues.filter(function(e) {
-      return liveLeaguesIds.includes(e?.id)
+    liveLeagues = [...leagueMap.values()]
+      ?.filter(function(x) {
+      return liveLeaguesIds.includes(x?.id)
     });
     dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive ${numOfFixturesLive}`)
     dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds.length ${liveLeaguesIds.length}`)
@@ -236,6 +236,66 @@ COMPONENT JS (w/ TS)
 
   function toggleShowMore() {
     isShowMore = !isShowMore
+    generateLeagueFixtures()
+  }
+
+  function generateLeagueFixtures() {
+    fixturesGroupByDateLeagueMap = new Map();
+    // generate "target" date fixtures;
+    const validation_0 =
+      fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))
+    ;
+    if (validation_0) {
+      console.log('X - Here!')
+      const leagueIds = nonEmptyLeaguesArray?.map(x => x?.id)
+      console.log('X - leagueIds:', leagueIds.length)
+      let fixturesList = fixturesGroupByDateMap.get(
+        convert_to_iso(
+          $sessionStore.livescoreNowSelectedDate))
+          ?.sort((
+              a,
+              b
+            ) => 
+              new Date(a.time).getTime() - new Date(b.time).getTime()
+            )
+          ?.filter(
+              x => 
+              leagueIds.includes(
+                x?.league_id
+              )
+            )
+      console.log('X - fixturesList:', fixturesList.length)
+      // filter by featured leagues only;
+      const validation_1 =
+        !isShowMore
+      ;
+      if (validation_1) {
+        fixturesList = fixturesList
+          ?.filter(
+            x => 
+            WIDGET_DATA?.leagues_feat_list.includes(
+              x?.league_id
+            )
+          )
+      }
+      console.log('X - fixturesList:', fixturesList.length)
+      // group fixtures for "this" date, by league
+      for (const item of nonEmptyLeaguesArray) {
+        const leagueFixtures = fixturesList
+          ?.filter(
+            x => 
+            x?.league_id == item?.id
+          )
+        ;
+        const validation_01 =
+          leagueFixtures?.length == 0
+        ;
+        if (validation_01) continue;
+        fixturesGroupByDateLeagueMap.set(item?.id, leagueFixtures)
+      }
+    }
+    console.log('X - fixturesGroupByDateLeagueMap:', fixturesGroupByDateLeagueMap.size)
+    fixturesGroupByDateLeagueMap = fixturesGroupByDateLeagueMap
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -288,18 +348,6 @@ COMPONENT JS (w/ TS)
     return geo_leagueIds_reference_numb_array;
   }
 
-  /**
-   * @description converts a target date to an
-   * ISO_string of yyyy-MM-dd format;
-   * @param {Date} date
-   * @returns {string} string
-   */
-  function convert_to_iso(
-    date: Date
-  ): string {
-    return date.toISOString().slice(0, 10)
-  }
-
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
@@ -310,6 +358,7 @@ COMPONENT JS (w/ TS)
    * Proceeds to update data accordingly;
   */
   $: if ($sessionStore.livescoreNowSelectedDate) {
+    isShowMore = false
     targetFixtureDateData()
     updateLiveInfo()
   }
@@ -329,8 +378,10 @@ COMPONENT JS (w/ TS)
    * @description listens to changes in 
    * user country_bookmaker data session-store;
    * Proceeds to update data accordingly;
+   * NOTE: copy of if ($sessionStore.livescoreNowSelectedDate) [...]
   */
   $: if ($userBetarenaSettings?.country_bookmaker) {
+    isShowMore = false
     targetFixtureDateData()
     updateLiveInfo()
   }
@@ -371,8 +422,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {numOfFixturesLive}
     />
 
+    <!-- 
+    Loader
+    -->
     {#if inProcessHistFixFetch}
-
       <div>
         {#each { length: 10 } as _, i}
           <div
@@ -384,12 +437,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </div>
         {/each}
       </div>
-      
-    {:else}
+    {/if}
+    
+    <!-- 
+    Main Fixtures Show
+    -->
+    {#if !inProcessHistFixFetch}
 
       <!-- 
       [ℹ] all-fixtures (view)
-      <-conditional->
       -->
       <div
         class="league-group-main"
@@ -397,25 +453,25 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- 
         [ℹ] iterate over each non-empty-league-id's for selected_date
         -->
-        {#each nonEmptyLeaguesArray as league}
+        {#each [...fixturesGroupByDateLeagueMap.entries()] as [leagueId, fixturesList]}
           <!-- 
           [ℹ] out (main) league-date group (box)
           -->
           <div
             class="outer-league-group"
-            class:display-none={!isShowMore && !WIDGET_DATA?.leagues_feat_list.includes(league?.id)}>
+          >
             <!-- 
             [ℹ] league info (box)
             -->
             <a
-              href="{league?.urls[server_side_language].replace('https://scores.betarena.com','')}">
+              href="{leagueMap.get(leagueId)?.urls[server_side_language].replace('https://scores.betarena.com','')}">
               <div
                 class="
                   row-space-start
                   league-group
                 ">
                 <img
-                  src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
+                  src="{leagueMap.get(leagueId)?.iso2 ? `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                   on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                   alt="default alt text"
                   class="m-r-15"
@@ -428,7 +484,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     w-500
                     color-black-2
                   ">
-                  {league?.league_name}
+                  {leagueMap.get(leagueId)?.league_name}
                 </p>
               </div>
             </a>
@@ -437,24 +493,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             [ℹ] (filter by) - target-league &&
             [ℹ] (filter by) - target selected date
             -->
-            {#if fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))}
-              {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.livescoreNowSelectedDate)).sort((a,b) => new Date(a.time).getTime() - new Date(b.time).getTime()) as fixture}
-                {#if fixture?.league_id == league?.id}
-                  <!-- <p>[🐞] {fixture?.id}</p> -->
-                  <LivescoresFixtureRow 
-                    FIXTURE_D={fixture}
-                    {server_side_language}
-                  />
-                {/if}
-              {/each}
-            {/if}
+            {#each fixturesList as fixture}
+              <!-- <p>[🐞] {fixture?.id}</p> -->
+              <LivescoresFixtureRow 
+                FIXTURE_D={fixture}
+                {server_side_language}
+              />
+            {/each}
           </div>
         {/each}
       </div>
 
       <!-- 
       [ℹ] live-fixtures (view)
-      <-conditional->
       -->
       <div
         class="league-group-live-main"
@@ -491,9 +542,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <!-- 
           [ℹ] fixtures (of league) (box)
           FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 minutes (next day)
+          SOLVED adding a check for games still happening yesterday;
           -->
-          {#if fixturesGroupByDateMap.has(today.toISOString().slice(0, 10))}
-            {#each fixturesGroupByDateMap.get(yesterday.toISOString().slice(0, 10)) as fixture}
+          {#if fixturesGroupByDateMap.has(convert_to_iso(yesterday))}
+            {#each fixturesGroupByDateMap.get(convert_to_iso(yesterday)) as fixture}
               {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
                 <!-- [🐞] <p>{fixture?.id}</p> -->
                 <LivescoresFixtureRow
@@ -502,7 +554,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
             {/each}
-            {#each fixturesGroupByDateMap.get(today.toISOString().slice(0, 10)) as fixture}
+            {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.userDate)) as fixture}
               {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
                 <!-- [🐞] <p>{fixture?.id}</p> -->
                 <LivescoresFixtureRow
@@ -517,7 +569,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
       <!-- 
       [ℹ] show more/less (button)
-      <-conditional->
       -->
       {#if $sessionStore.livescoreFixtureView == 'all'}
         <div
@@ -527,7 +578,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             text-center
             cursor-pointer
           "
-          on:click={() => isShowMore = !isShowMore}>
+          on:click={() => toggleShowMore()}
+        >
           <p
             class="
               s-14
