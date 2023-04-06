@@ -44,9 +44,9 @@ COMPONENT JS (w/ TS)
   	db_firestore
   } from '$lib/firebase/init';
   import {
-  	fetchSignInMethodsForEmail,
   	GithubAuthProvider,
   	GoogleAuthProvider,
+  	fetchSignInMethodsForEmail,
   	isSignInWithEmailLink,
   	sendSignInLinkToEmail,
   	signInWithCustomToken,

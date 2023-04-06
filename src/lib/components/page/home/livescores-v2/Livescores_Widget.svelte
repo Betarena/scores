@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { get } from '$lib/api/utils';
 	import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
 
-	import type { B_LS2_D, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
+	import type { B_LS2_D, B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
@@ -29,7 +29,7 @@ COMPONENT JS (w/ TS)
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
 
-  let WIDGET_S_DATA: any = $page.data?.LIVESCORES_V2_SEO
+  let WIDGET_S_DATA: B_LS2_S = $page.data?.LIVESCORES_V2_SEO
   $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
 
   let WIDGET_DATA: B_LS2_D
@@ -105,11 +105,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   -->
   <div>
     {#each WIDGET_S_DATA?.fixtures as item1}
-      {#if item1?.urls && item1?.urls[server_side_language]}
-        <a href={item1?.urls[server_side_language]}>{item1?.urls[server_side_language]}</a>
+      {#if item1?.fixture_url}
+        <a href={item1?.fixture_url}>{item1?.fixture_url}</a>
       {/if}
-      {#if item1?.tips && item1?.tips[server_side_language]}
-        <a href={item1?.tips[server_side_language]}>{item1?.tips[server_side_language]}</a>
+      {#if item1?.tip_url}
+        <a href={item1?.tip_url}>{item1?.tip_url}</a>
       {/if}
     {/each}
   </div>
@@ -118,8 +118,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   -->
   <div>
     {#each WIDGET_S_DATA?.leagues as item}
-      {#if item?.urls && item?.urls[server_side_language]}
-        <a href={item?.urls[server_side_language]}>{item?.urls[server_side_language]}</a>
+      {#if item?.league_url}
+        <a href={item?.league_url}>{item?.league_url}</a>
       {/if}
     {/each}
   </div>

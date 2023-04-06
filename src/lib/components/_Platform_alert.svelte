@@ -67,6 +67,7 @@
 				width="14"
 				height="14"
 				on:click={() => (show = false)}
+        on:keypress={(e) => { if (e.key === 'Enter') (show = false) }}
 			/>
 		</div>
 	{/if}
