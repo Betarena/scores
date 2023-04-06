@@ -3,40 +3,20 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
-	import { page } from '$app/stores';
 
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
-
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
-  import { sessionStore } from '$lib/store/session';
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
-
-  //#region ➤ Types Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // IMPORTS GO HERE
-  import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { WEEK_DAYS_ABBRV_1 } from '$lib/utils/dates';
-  import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
-  import vec_calendar_dark from './assets/calendar-dark.svg';
-  import vec_calendar_sel_date from './assets/calendar-date-sel.svg';
-  import vec_calendar_sel from './assets/calendar-select.svg';
-  import vec_calendar from './assets/calendar.svg';
-  import vec_pulse_dot from './assets/live-dot-vector.svg';
-  import LivescoresCalendarTable from './Livescores_Calendar_Table.svelte';
-  //#endregion ➤ Assets Imports
+	import { page } from '$app/stores';
+	import { sessionStore } from '$lib/store/session';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { WEEK_DAYS_ABBRV_1, convert_to_iso } from '$lib/utils/dates';
+	import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
+	import LivescoresCalendarTable from './Livescores_Calendar_Table.svelte';
+	import vec_calendar_dark from './assets/calendar-dark.svg';
+	import vec_calendar_sel_date from './assets/calendar-date-sel.svg';
+	import vec_calendar_sel from './assets/calendar-select.svg';
+	import vec_calendar from './assets/calendar.svg';
+	import vec_pulse_dot from './assets/live-dot-vector.svg';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -52,25 +32,7 @@ COMPONENT JS (w/ TS)
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
 
-  const today = new Date()
-
-  const _today = new Date()
-  _today.setDate(_today.getUTCDate() - 3)
-  const days_3_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getUTCDate() + 1)
-  const days_2_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getUTCDate() + 1)
-  const days_1_ago = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getUTCDate() + 1)
-  const days_0 = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getUTCDate() + 1)
-  const days_1_future = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getUTCDate() + 1)
-  const days_2_future = _today.toISOString().slice(0, 10)
-  _today.setDate(_today.getUTCDate() + 1)
-  const days_3_future = _today.toISOString().slice(0, 10)
-
-  const fixture_dates: [
+  let fixture_dates: [
     string,
     string,
     string,
@@ -78,14 +40,6 @@ COMPONENT JS (w/ TS)
     string,
     string,
     string
-  ] = [
-    days_3_ago,
-    days_2_ago,
-    days_1_ago,
-    days_0,
-    days_1_future,
-    days_2_future,
-    days_3_future
   ]
 
   let defaultCalendarIcon: string
@@ -97,6 +51,37 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
+
+  function generateThisWeekDates() {
+
+    const _today = new Date()
+    _today.setDate(_today.getUTCDate() - 3)
+    const days_3_ago = convert_to_iso(_today)
+    _today.setDate(_today.getUTCDate() + 1)
+    const days_2_ago = convert_to_iso(_today)
+    _today.setDate(_today.getUTCDate() + 1)
+    const days_1_ago = convert_to_iso(_today)
+    _today.setDate(_today.getUTCDate() + 1)
+    const days_0 = convert_to_iso(_today)
+    _today.setDate(_today.getUTCDate() + 1)
+    const days_1_future = convert_to_iso(_today)
+    _today.setDate(_today.getUTCDate() + 1)
+    const days_2_future = convert_to_iso(_today)
+    _today.setDate(_today.getUTCDate() + 1)
+    const days_3_future = convert_to_iso(_today)
+
+    fixture_dates = [
+      days_3_ago,
+      days_2_ago,
+      days_1_ago,
+      days_0,
+      days_1_future,
+      days_2_future,
+      days_3_future
+    ]
+  }
+
+  generateThisWeekDates()
 
   // ~~~~~~~~~~~~~~~~~~~~~
   // VIEWPORT CHANGES
@@ -145,7 +130,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         width-auto
         cursor-pointer
       "
-      class:activeDate={new Date(item).toISOString().slice(0, 10) == $sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)}
+      class:activeDate={convert_to_iso(new Date(item)) == convert_to_iso($sessionStore.livescoreNowSelectedDate)}
       on:click={() => $sessionStore.livescoreNowSelectedDate = new Date(item)}>
       <p
         class="
@@ -154,7 +139,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           color-black-2
           text-center
         "
-        class:currentDate={new Date(item).toISOString().slice(0, 10) == today.toISOString().slice(0, 10)}>
+        class:currentDate={convert_to_iso(new Date(item)) == convert_to_iso($sessionStore.userDate)}>
         <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
         {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item).getUTCDay()]] || ""}
         <br/>
@@ -178,20 +163,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       text-center
       column-space-center
     "
-    class:activeDate={!fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))}>
+    class:activeDate={!fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate))}>
     <!-- 
     [ℹ] calendar (vector)
     -->
     <img 
-      src={$sessionStore.livescoreShowCalendar && fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) 
+      src={$sessionStore.livescoreShowCalendar && fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate)) 
         ? vec_calendar_sel 
-        : !fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) 
+        : !fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate)) 
           ? vec_calendar_sel_date
           : defaultCalendarIcon
       } 
       alt="default alt text"
-      on:mouseover={(e) => {if (fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10))) e.currentTarget.src = vec_calendar_sel}}
-      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes($sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10)) ) e.currentTarget.src = defaultCalendarIcon}}
+      on:mouseover={(e) => {if (fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate))) e.currentTarget.src = vec_calendar_sel}}
+      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate)) ) e.currentTarget.src = defaultCalendarIcon}}
       on:click={() => $sessionStore.livescoreShowCalendar = !$sessionStore.livescoreShowCalendar}
       class="cursor-pointer"
       width="24"
@@ -230,7 +215,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         cursor-pointer
       ">
       {WIDGET_T_DATA?.all || 'All'} 
-      {#if $sessionStore.livescoreNowSelectedDate.toISOString().slice(0, 10) == today.toISOString().slice(0, 10)}
+      {#if convert_to_iso($sessionStore.livescoreNowSelectedDate) == convert_to_iso($sessionStore.userDate)}
         ({$sessionStore.fixturesTodayNum || 0})
       {:else}
         ({numOfFixtures || 0})

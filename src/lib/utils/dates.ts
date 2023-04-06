@@ -57,3 +57,15 @@ export const monthNames = [
   'November',
   'December'
 ];
+
+/**
+ * @description converts a target date to an
+ * ISO_string of yyyy-MM-dd format;
+ * @param {Date} date
+ * @returns {string} string
+ */
+export function convert_to_iso(
+  date: Date
+): string {
+  return date.toISOString().slice(0, 10)
+}
