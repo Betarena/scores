@@ -7,32 +7,12 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // <-imports-go-here->
-	import { onMount } from 'svelte';
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // <-imports-go-here->
-	import { viewport_change } from '$lib/utils/platform-functions';
-  // 
 	import { get } from '$lib/api/utils';
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ [PLUGIN] Firebase Imports
-  // <-imports-go-here->
-  //#endregion ➤ [PLUGIN] Firebase Imports
-
-  //#region ➤ Types Imports
-  // <-imports-go-here->
+	import { viewport_change } from '$lib/utils/platform-functions';
 	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
-  //#endregion ➤ Types Imports
+	import { onMount } from 'svelte';
 
-  //#region ➤ Assets Imports
-  // <-imports-go-here->
-  // import profile_avatar from './assets/profile-avatar.svg';
-  //#endregion ➤ Assets Imports
-
+	import { page } from '$app/stores';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import ProfileLoader from './Profile-Loader.svelte';
@@ -46,14 +26,16 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
-  // $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
+  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
+  $: PAGE_DATA = $page.data?.PAGE_DATA
 
   // let WIDGET_S_DATA: any = $page.data?.LIVESCORES_V2_SEO
   // $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
 
   let WIDGET_DATA: B_PPRO_D
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+  
+  console.log($page.data)
 
   //#endregion ➤ [VARIABLES]
 
@@ -67,7 +49,7 @@ COMPONENT JS (w/ TS)
     // empty
   ): Promise < B_PPRO_D > {
     // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/hasura/player/profile/?player_id=580`) as B_PPRO_D;
+    WIDGET_DATA = await get(`/api/hasura/player/profile/?player_id=${PAGE_DATA?.data?.player_id}`) as B_PPRO_D;
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;
