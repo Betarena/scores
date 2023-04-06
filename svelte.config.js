@@ -109,6 +109,9 @@ const config = {
           // [ℹ] origin/self;
           'self',
           'data:',
+          'blob:',
+          'filesystem:',
+          'mediastream:',
           'https://betarena.com',
           'https://*.betarena.com',
           // [ℹ] yandex;
@@ -118,7 +121,9 @@ const config = {
           'https://images1-focus-opensocial.googleusercontent.com',
           // [ℹ] google;
           'https://www.google-analytics.com',
-          'https://www.google.com'
+          'https://www.google.com',
+          'https://firebasestorage.googleapis.com',
+          'https://lh3.googleusercontent.com/',
         ],
 
         'frame-src': [
@@ -159,6 +164,8 @@ const config = {
           'https://firestore.googleapis.com',
           'https://stats.g.doubleclick.net',
           'https://securetoken.googleapis.com',
+          'https://firebasestorage.googleapis.com',
+          'https://lh3.googleusercontent.com/',
           // [ℹ] smartlook;
           'https://manager.eu.smartlook.cloud', // (safari-only)
           // [ℹ] yandex;
