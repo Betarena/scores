@@ -1,14 +1,14 @@
 import { json } from '@sveltejs/kit';
 
 import {
-    get_target_hset_cache_data,
-    get_target_string_cache_data
+  get_target_hset_cache_data,
+  get_target_string_cache_data
 } from '../../std_main';
 
 import {
-    LS2_C_D_A,
-    LS2_C_S_A,
-    LS2_C_T_A
+  LS2_C_D_A_2,
+  LS2_C_S_A_2,
+  LS2_C_T_A
 } from '@betarena/scores-lib/dist/redis/config.js';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
@@ -22,7 +22,7 @@ export async function GET(req): Promise<unknown> {
 	if (!lang && !seo) {
 		const response =
 			await get_target_string_cache_data(
-				LS2_C_D_A
+				LS2_C_D_A_2
 			);
 		if (response) {
 			return json(response);
@@ -44,10 +44,11 @@ export async function GET(req): Promise<unknown> {
 	}
 
   // [ℹ] (data)
-	if (seo) {
+	if (seo && lang) {
 		const response =
-			await get_target_string_cache_data(
-				LS2_C_S_A
+			await get_target_hset_cache_data(
+				LS2_C_S_A_2,
+				lang
 			);
 		if (response) {
 			return json(response);
