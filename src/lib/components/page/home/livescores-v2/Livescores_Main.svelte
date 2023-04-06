@@ -322,9 +322,9 @@ COMPONENT JS (w/ TS)
         lang == $userBetarenaSettings?.country_bookmaker
       )?.leagues
     ;
-    dlog(`🔥 ${$userBetarenaSettings?.country_bookmaker}`, true)
+    dlog(`🔥 ${$userBetarenaSettings?.country_bookmaker}`, LV2_W_H_TAG[1])
     if (geo_leagueIds_reference_array == undefined) {
-      dlog("❌ No target COUNTRY-GEO found", true)
+      dlog("❌ No target COUNTRY-GEO found", LV2_W_H_TAG[1])
       geo_leagueIds_reference_array = 
         WIDGET_DATA?.leagues_geo_list
         .find( ({ lang }) => 
@@ -333,7 +333,7 @@ COMPONENT JS (w/ TS)
       ;
     }
     const geo_leagueIds_reference_numb_array = geo_leagueIds_reference_array.map(v => v.league_id)
-    dlog(geo_leagueIds_reference_numb_array, true)
+    dlog(geo_leagueIds_reference_numb_array, LV2_W_H_TAG[1])
     return geo_leagueIds_reference_numb_array;
   }
 
@@ -358,7 +358,7 @@ COMPONENT JS (w/ TS)
    * Proceeds to update data accordingly;
   */
   $: if ($sessionStore?.livescore_now) {
-    dlog($sessionStore?.livescore_now, true)
+    dlog($sessionStore?.livescore_now, LV2_W_H_TAG[1])
     injectLivescoreData()
     updateLiveInfo()
   }
