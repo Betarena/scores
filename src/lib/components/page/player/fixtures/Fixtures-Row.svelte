@@ -1,11 +1,11 @@
 <script lang="ts">
 	import { page } from "$app/stores";
+	import { toCorrectDate, toCorrectISO } from "$lib/utils/dates.js";
 	import { platfrom_lang_ssr } from "$lib/utils/platform-functions";
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks";
 	import type { PFIX_C_Fixture } from "@betarena/scores-lib/types/player-fixtures";
 	import { onMount } from "svelte";
 	import FixturesRowEvent from "./Fixtures-Row-Event.svelte";
-	import { toCorrectDate, toCorrectISO } from "$lib/utils/dates.js";
 
   export let fixture: PFIX_C_Fixture;
   
@@ -38,7 +38,7 @@
     if (parseFloat(fixture?.player?.rating) >= 9) ratingColorCode = 'G';
     if (parseFloat(fixture?.player?.rating) >= 7) ratingColorCode = 'Y';
 	} else {
-		ratingColorCode = undefined;
+    ratingColorCode = 'F';
 	}
 
 </script>
@@ -172,7 +172,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               color-black-2
               w-500 
               m-r-8 
-              odds-view
+              teams-text
             "
             class:team-name-txt-mobile={mobileExclusive}
             class:team-lost-style={fixture?.teams?.home?.score < fixture?.teams?.away?.score}
@@ -195,7 +195,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               color-black-2 
               w-500 
               m-r-8 
-              odds-view
+              teams-text
             "
             class:team-lost-style={fixture?.teams?.away?.score < fixture?.teams?.home?.score}
             class:team-name-txt-mobile={mobileExclusive}
@@ -213,42 +213,58 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class="row-space-end"
     style="width: auto;"
   >
-    <!-- 
-    fixture (player) captain
-    -->
-    {#if fixture?.player?.captain}
-      <FixturesRowEvent 
-        event={"captain"}
-        eventNum={0}
-      />
-    {/if}
-    <!-- 
-    fixture (player) yellowcards
-    -->
-    {#if fixture?.player?.events?.yeallow_card}
-      <FixturesRowEvent 
-        event={"yellowcard"}
-        eventNum={fixture?.player?.events?.yeallow_card}
-      />
-    {/if}
-    <!-- 
-    fixture (player) goals
-    -->
-    {#if fixture?.player?.events?.goals}
-      <FixturesRowEvent 
-        event={"goal"}
-        eventNum={fixture?.player?.events?.goals}
-      />
-    {/if}
-    <!-- 
-    fixture (player) redcards
-    -->
-    {#if fixture?.player?.events?.red_card}
-      <FixturesRowEvent 
-        event={"redcard"}
-        eventNum={fixture?.player?.events?.red_card}
-      />
-    {/if}
+    <!-- 📱 MOBILE & 💻 TABLET  -->
+    <div
+      class="
+        events-grid
+      ">
+      <!-- 
+      fixture (player) redcards
+      -->
+      {#if fixture?.player?.events?.red_card}
+        <FixturesRowEvent 
+          event={"redcard"}
+          eventNum={fixture?.player?.events?.red_card}
+        />
+      {/if}
+      <!-- 
+      fixture (player) yellowcards
+      -->
+      {#if fixture?.player?.events?.yeallow_card}
+        <FixturesRowEvent 
+          event={"yellowcard"}
+          eventNum={fixture?.player?.events?.yeallow_card}
+        />
+      {/if}
+      <!-- 
+      fixture (player) penalty
+      -->
+      {#if fixture?.player?.events?.penalty}
+        <FixturesRowEvent 
+          event={"penalty"}
+          eventNum={fixture?.player?.events?.penalty}
+        />
+      {/if}
+      <!-- 
+      fixture (player) goals
+      -->
+      {#if fixture?.player?.events?.goals}
+        <FixturesRowEvent 
+          event={"goal"}
+          eventNum={fixture?.player?.events?.goals}
+        />
+      {/if}
+      <!-- 
+      fixture (player) captain
+      -->
+      {#if fixture?.player?.captain}
+        <FixturesRowEvent 
+          event={"captain"}
+          eventNum={0}
+        />
+      {/if}
+    </div>
+
     <!-- 
     [ℹ] fixture scores BOX SHOW/HIDE
     -->
@@ -265,7 +281,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         -->
         <p
           class="
-            s-12 
+            s-14 
             color-black-2
           "
           class:team-lost-style={fixture?.teams?.home?.score < fixture?.teams?.away?.score && fixture?.status !='LIVE'}
@@ -278,7 +294,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         -->
         <p
           class="
-            s-12 
+            s-14 
             color-black-2
           "
           class:team-lost-style={fixture?.teams?.away?.score < fixture?.teams?.home?.score && fixture?.status != 'LIVE'}
@@ -291,7 +307,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!-- 
     fixture (player) rating
     -->
-    {#if fixture?.player?.rating != undefined && parseInt(fixture?.player?.rating) != 0}
       <p
         id="box-goals"
         class="
@@ -302,10 +317,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         class:rating_golden={ratingColorCode === 'G'}
         class:rating_silver={ratingColorCode === 'Y'}
         class:rating_bronze={ratingColorCode === 'T'}
+        class:rating_nan={ratingColorCode === 'F'}
       >
+      {#if fixture?.player?.rating == undefined || parseInt(fixture?.player?.rating) == 0}
+        N/A
+      {:else}
         {fixture?.player?.rating}
-      </p>
-    {/if}
+      {/if}
+    </p>
   </div>
 
 </div>
@@ -321,24 +340,29 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     padding: 5px 16px 5px 8px;
   }
 
-  div.fixture-time-box {
-		min-width: 37px;
-    max-width: 37px;
-	}
-
   div.fixture-teams-box {
 		border-left: 1px var(--grey-color) solid;
 		padding-left: 8px;
-	} div.fixture-teams-box p.odds-view {
+	} div.fixture-teams-box p.teams-text{
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		max-width: 85px;
-	}
+	} div.fixture-teams-box:hover p.teams-text{
+    color: var(--primary) !important;
+  }
+
+  div.events-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    direction: rtl;
+    gap: 8px 0;
+  }
 
   div.fixtures-scores-box {
-    width: 14px;
-    padding: 0 20px;
+    min-width: 29px;
+    max-width: 29px;
+    padding: 0 11px;
     border-left: 1px solid var(--grey-shade);
     border-right: 1px solid var(--grey-shade);
   }
@@ -357,6 +381,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-radius: 12px;
 		padding: 1.5px 8px;
 		max-height: 24px;
+    min-width: 44px;
 		width: auto;
 		color: var(--white);
 	}
@@ -369,6 +394,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	div.fixture-row p#box-goals.rating_bronze {
 		background-color: #dbb884 !important;
 	}
+  div.fixture-row p#box-goals.rating_nan {
+		background-color: var(--dark-theme-1-shade) !important;
+    color: var(--grey);
+  }
 
   /*
   =============
@@ -378,13 +407,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   @media only screen
     and (min-width: 375px) {
-    div.fixture-teams-box p.odds-view {
+    div.fixture-teams-box p.teams-text{
       max-width: unset;
     }
   }
 
   @media only screen
     and (min-width: 475px) {
+
     div.fixture-row {
       padding: 5px 16px;
     }
@@ -398,10 +428,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     div.fixture-teams-box {
       padding-left: 16px;
     }
-    div.fixtures-scores-box p {
+    div.fixtures-scores-box {
+      min-width: 37px;
+      max-width: 37px;
+    } div.fixtures-scores-box p {
       font-size: 14px;
       font-weight: 500;
     }
+
   }
 
   /*
@@ -421,9 +455,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-left: 1px var(--dark-theme-1-shade) solid !important;
 	}
 
-  :global(.dark-background div.fixture-row p#box-goals) {
+  :global(.dark-background div.fixture-row p#box-goals.rating_nan) {
 		color: var(--dark-theme-1) !important;
+    color: var(--dark-theme-1-3-shade);
   }
-
 
 </style>

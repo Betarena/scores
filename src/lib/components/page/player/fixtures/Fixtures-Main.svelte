@@ -8,12 +8,12 @@ COMPONENT JS (w/ TS)
   // <-imports-go-here->
 	
   import { page } from '$app/stores';
-	import { onMount } from 'svelte';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { get } from '$lib/api/utils';
-	import type { B_H_HF } from '@betarena/scores-lib/types/hasura';
-	import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+  import { get } from '$lib/api/utils';
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
+  import type { B_H_HF } from '@betarena/scores-lib/types/hasura';
+  import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+  import { onMount } from 'svelte';
   import arrow_left_dark from './assets/arrow-left-dark.svg';
   import arrow_left_hover from './assets/arrow-left-hover.svg';
   import arrow_left from './assets/arrow-left.svg';
@@ -22,9 +22,9 @@ COMPONENT JS (w/ TS)
   import arrow_right from './assets/arrow-right.svg';
   
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import FixturesRow from './Fixtures-Row.svelte';
 	import LoaderMain from './loaders/shared/Loader-Main.svelte';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -244,7 +244,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               Page {key}
             </p>
             -->
-            {#each [...page_data.entries()] as [key, fixtures]}
+            {#each [...page_data.entries()].reverse() as [key, fixtures]}
               <!-- 
               League (group)
               -->

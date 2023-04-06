@@ -4,13 +4,13 @@
 	
   import one_red_card from './assets/1_red_card.svg';
   import one_red_card_dark from './assets/1_red_card_dark.svg';
+  import captain from './assets/captain.svg';
   import football_red from './assets/football-red.svg';
   import football from './assets/football.svg';
   import penalty_miss from './assets/miss-penalty.svg';
   import penalty from './assets/penalty.svg';
   import yellow_card from './assets/yellow-card.svg';
   import yellowred_card from './assets/yellowred.svg';
-  import captain from './assets/captain.svg';
   
   export let event: string;
   export let eventNum: number;
@@ -72,21 +72,47 @@
   class="
     row-space-start
     width-auto
-    m-r-16
+    m-r-12
+    event-box
   ">
   <img
+    class="event-icon"
     src={icon}
     alt="default alt text"
-    width="20"
-    height="20"
+    width="16"
+    height="16"
   />
   {#if eventNum > 1}
     <p
       class="
-        m-l-8
+        m-l-5
         color-success
+        s-12
       ">
       {eventNum}
     </p>
   {/if}
 </div>
+
+<style>
+
+  .event-box {
+    direction: ltr;
+  }
+  
+  @media only screen
+    and (min-width: 475px) {
+
+    .event-box {
+      margin-right: 16px;
+    } .event-box img.event-icon {
+      width: 20px;
+      height: 20px;
+    } .event-box p {
+      margin-left: 8px;
+      font-size: 14px;
+    }
+
+  }
+
+</style>
