@@ -24,8 +24,8 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import { viewport_change } from '$lib/utils/platform-functions';
-	import type { B_PFIX_D } from '@betarena/scores-lib/types/player-fixtures';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
+	import type { B_PFIX_D, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import { onMount } from 'svelte';
 	import FixturesLoader from './Fixtures-Loader.svelte';
@@ -45,8 +45,12 @@ COMPONENT JS (w/ TS)
   // let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
   // $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
 
-  // let WIDGET_S_DATA: any = $page.data?.LIVESCORES_V2_SEO
-  // $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
+  let WIDGET_S_DATA: B_PFIX_D = $page.data?.B_PFIX_D
+  $: WIDGET_S_DATA = $page.data?.B_PFIX_D
+
+  const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_S_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
+  const leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_S_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
+
 
   let WIDGET_DATA: B_PFIX_D
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
@@ -76,6 +80,16 @@ COMPONENT JS (w/ TS)
     NO_WIDGET_DATA = false;
     return WIDGET_DATA
   }
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: server_side_language = platfrom_lang_ssr(
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -130,6 +144,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
+  <!-- 
+  [] Fixture Links
+  -->
+  {#if fixtureMap.size != 0}
+    {#each [...fixtureMap.entries()] as [, fixtures]}
+      {#each fixtures as item}
+        <a href={item?.urls[server_side_language]}>{item?.urls[server_side_language]}</a>
+      {/each}
+    {/each}
+  {/if}
+  <!-- 
+  [] League Links
+  -->
+  {#if leagueMap.size != 0}
+    {#each [...leagueMap.entries()] as [key, league]}
+      <a href='https://scores.betarena.com/{league?.urls[server_side_language]}'>
+        {`https://scores.betarena.com/${league?.urls[server_side_language]}`}
+      </a>
+    {/each}
+  {/if}
 </SeoBox>
 
 <!-- <FixturesLoader /> -->

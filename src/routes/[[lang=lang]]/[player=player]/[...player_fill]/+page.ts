@@ -2,7 +2,7 @@ import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from "$lib/utils/debug";
 import { PRELOAD_invalid_data } from "$lib/utils/platform-functions";
 import type { B_SAP_D1, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
 import { error } from "@sveltejs/kit";
-import type { B_PFIX_T } from "node_modules/@betarena/scores-lib/types/player-fixtures";
+import type { B_PFIX_D, B_PFIX_T } from "node_modules/@betarena/scores-lib/types/player-fixtures";
 import type { B_PPRO_T } from "node_modules/@betarena/scores-lib/types/player-profile";
 import type { PageLoad } from "../$types";
 
@@ -75,7 +75,9 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     `/api/hasura/_main_/seo-pages?lang=${_lang}&page=player`,
     `/api/cache/_main_/pages_and_seo?country_id=${country_id}`,
     `/api/hasura/player/profile?lang=${_lang}`,
-    `/api/hasura/player/fixtures?lang=${_lang}`
+    `/api/hasura/player/fixtures?lang=${_lang}`,
+    // NOTE:WARNING:TODO: remove for a cache solution
+    `/api/hasura/player/fixtures?player_id=${player_id}&limit=10&offset=0`
   ]
 
   const promises = urls.map((_url) =>
@@ -88,7 +90,8 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     B_SAP_PP_T | undefined,
     B_SAP_D1 | undefined,
     B_PPRO_T | undefined,
-    B_PFIX_T | undefined
+    B_PFIX_T | undefined,
+    B_PFIX_D | undefined
   ]
 
 	const data: PP_PROMISE = await Promise.all(promises) as PP_PROMISE;
@@ -97,7 +100,8 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     PAGE_SEO,
     B_SAP_D1,
     B_PPRO_T,
-    B_PFIX_T
+    B_PFIX_T,
+    B_PFIX_D
   ] = data
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA
@@ -160,7 +164,8 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     PAGE_SEO,
     B_SAP_D1,
     B_PPRO_T,
-    B_PFIX_T
+    B_PFIX_T,
+    B_PFIX_D
   }
 
   //#endregion [3] RETURN
