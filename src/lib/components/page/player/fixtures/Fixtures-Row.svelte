@@ -8,6 +8,7 @@
 
   export let fixture: PFIX_C_Fixture;
   
+	let ratingColorCode: string;
 	let tickSecShow: boolean = false;
   const today = new Date()
   const mobileExclusive: boolean = false;
@@ -39,6 +40,17 @@
       tickSecShow = !tickSecShow;
     }, 500);
   })
+
+  $: if (
+		fixture != undefined &&
+		fixture?.player?.rating != undefined
+	) {
+    ratingColorCode = 'T';
+    if (parseFloat(fixture?.player?.rating) >= 9) ratingColorCode = 'G';
+    if (parseFloat(fixture?.player?.rating) >= 7) ratingColorCode = 'Y';
+	} else {
+		ratingColorCode = undefined;
+	}
 
 </script>
 
@@ -290,8 +302,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!-- 
     fixture (player) rating
     -->
-    {#if fixture?.player?.rating}
-      <p>
+    {#if fixture?.player?.rating != undefined && parseInt(fixture?.player?.rating) != 0}
+      <p
+        id="box-goals"
+        class="
+          s-14 
+          w-500
+          m-l-10
+        "
+        class:rating_golden={ratingColorCode === 'G'}
+        class:rating_silver={ratingColorCode === 'Y'}
+        class:rating_bronze={ratingColorCode === 'T'}
+      >
         {fixture?.player?.rating}
       </p>
     {/if}
@@ -338,6 +360,25 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   span.visibility-none {
 		visibility: hidden;
+	}
+
+  div.fixture-row p#box-goals {
+		box-sizing: border-box;
+		text-align: center;
+		border-radius: 12px;
+		padding: 1.5px 8px;
+		max-height: 24px;
+		width: auto;
+		color: var(--white);
+	}
+	div.fixture-row p#box-goals.rating_golden {
+		background-color: #ffb904 !important;
+	}
+	div.fixture-row p#box-goals.rating_silver {
+		background-color: #8c8c8c !important;
+	}
+	div.fixture-row p#box-goals.rating_bronze {
+		background-color: #dbb884 !important;
 	}
 
   /*
@@ -390,5 +431,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   :global(.dark-background div.fixture-teams-box) {
 		border-left: 1px var(--dark-theme-1-shade) solid !important;
 	}
+
+  :global(.dark-background div.fixture-row p#box-goals) {
+		color: var(--dark-theme-1) !important;
+  }
+
 
 </style>
