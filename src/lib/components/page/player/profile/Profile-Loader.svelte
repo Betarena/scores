@@ -3,27 +3,12 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
+  
+  //#region ➤ [MAIN] Package Imports
+  // IMPORTS GO HERE
+
 	import { viewport_change } from "$lib/utils/platform-functions";
 	import { onMount } from "svelte";
-//#region ➤ [MAIN] Package Imports
-  // IMPORTS GO HERE
-
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ Types Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Assets Imports
-
 	import MobileLoaderBottom from "./loaders/mobile/Loader-Bottom.svelte";
 	import MobileLoaderTop from "./loaders/mobile/Loader-Top.svelte";
 	import LoaderStatBox_1 from "./loaders/shared/Loader-StatBox-1.svelte";

@@ -7,34 +7,12 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // <-imports-go-here->
-	import { onMount } from 'svelte';
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // <-imports-go-here->
-	import { viewport_change } from '$lib/utils/platform-functions';
-  // 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ [PLUGIN] Firebase Imports
-  // <-imports-go-here->
-  //#endregion ➤ [PLUGIN] Firebase Imports
-
-  //#region ➤ Types Imports
-  // <-imports-go-here->
-	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // <-imports-go-here->
-  // import profile_avatar from './assets/profile-avatar.svg';
-  //#endregion ➤ Assets Imports
-
 	import { page } from '$app/stores';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { viewport_change } from '$lib/utils/platform-functions';
 	import type { FPPT_Data } from '@betarena/scores-lib/types/hasura';
+	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
+	import { onMount } from 'svelte';
 	import ProfileStat from './Profile-Stat.svelte';
 
   //#endregion ➤ [MAIN] Package Imports

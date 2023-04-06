@@ -21,31 +21,13 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ Svelte/SvelteKit Imports
   // <-imports-go-here->
-	import { onMount } from 'svelte';
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // <-imports-go-here->
-	import { viewport_change } from '$lib/utils/platform-functions';
-  // 
+	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils';
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ [PLUGIN] Firebase Imports
-  // <-imports-go-here->
-  //#endregion ➤ [PLUGIN] Firebase Imports
-
-  //#region ➤ Types Imports
-  // <-imports-go-here->
-	import type { B_PFIX_D } from '@betarena/scores-lib/types/player-fixtures';
-//#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // <-imports-go-here->
-  // import profile_avatar from './assets/profile-avatar.svg';
-  //#endregion ➤ Assets Imports
-
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import { viewport_change } from '$lib/utils/platform-functions';
+	import type { B_PFIX_D } from '@betarena/scores-lib/types/player-fixtures';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import { onMount } from 'svelte';
 	import FixturesLoader from './Fixtures-Loader.svelte';
 	import FixturesMain from './Fixtures-Main.svelte';
 
@@ -56,6 +38,9 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
+
+  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
+  $: PAGE_DATA = $page.data?.PAGE_DATA
 
   // let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
   // $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
@@ -78,7 +63,7 @@ COMPONENT JS (w/ TS)
     // empty
   ): Promise < B_PFIX_D > {
     // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/hasura/player/fixtures/?player_id=580&limit=10&offset=0`) as B_PFIX_D;
+    WIDGET_DATA = await get(`/api/hasura/player/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=10&offset=0`) as B_PFIX_D;
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;
