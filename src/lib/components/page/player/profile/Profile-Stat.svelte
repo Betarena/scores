@@ -83,7 +83,9 @@
 
   img#country-icon {
     border-radius: 40px;
-    border: 1px solid var(--grey-shade)
+    border: 1px solid var(--grey-shade);
+    width: auto;
+    max-height: 100%;
   }
 
   /*

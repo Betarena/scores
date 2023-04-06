@@ -368,7 +368,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   img#country-icon {
     border-radius: 40px;
-    border: 1px solid var(--grey-shade)
+    border: 1px solid var(--grey-shade);
+    width: auto;
+    max-height: 100%;
   }
 
   p#player-name {
