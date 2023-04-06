@@ -223,9 +223,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   @media only screen and (min-width: 768px) {
-		.widget-component {
-			margin-top: 40px;
-		}
+		/* NaN */
 	}
 
   /*

@@ -9,6 +9,7 @@ COMPONENT JS (w/ TS)
 
 	import { page } from '$app/stores';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import type { FPPT_Data } from '@betarena/scores-lib/types/hasura';
 	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
@@ -27,6 +28,8 @@ COMPONENT JS (w/ TS)
 
   let WIDGET_T_DATA: FPPT_Data = $page.data?.B_PPRO_T
   $: WIDGET_T_DATA = $page.data?.B_PPRO_T
+
+  let birthdayStr = ""
   
   //#endregion ➤ [VARIABLES]
 
@@ -64,6 +67,11 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [METHODS]
 
   //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+
+  if (WIDGET_DATA?.data?.birthdate != undefined) {
+    const date = new Date(WIDGET_DATA?.data?.birthdate)
+    birthdayStr = `${date.getDate()} ${MONTH_NAMES_ABBRV[date.getMonth()]} ${date.getFullYear()}`
+  }
 
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
@@ -231,8 +239,9 @@ IMPORTANT Mobile First
           >
 
             <ProfileStat 
-              profileStatTitle={WIDGET_DATA?.data?.birthdate}
+              profileStatTitle={birthdayStr}
               statVal={`${WIDGET_DATA?.data?.age} yrs`}
+              widthFirst={true}
             />
 
             <ProfileStat 
@@ -250,7 +259,8 @@ IMPORTANT Mobile First
         <!-- 
         📱 MOBILE 
         -->
-        {#if !mobileExclusive}
+        <!-- {#if !mobileExclusive} -->
+        {#if false}
           <button
             id="follow-btn"
             class="
@@ -271,7 +281,7 @@ IMPORTANT Mobile First
       <div
         class="
           row-space-start
-          m-b-12
+          m-b-16
         "
       >
 
@@ -280,6 +290,7 @@ IMPORTANT Mobile First
           statVal={WIDGET_DATA?.data?.country_id}
           countryImg={WIDGET_DATA?.data?.country_img}
           countryIso3={WIDGET_DATA?.data?.country_iso3}
+          widthFirst={true}
         />
 
         <ProfileStat 
@@ -303,6 +314,7 @@ IMPORTANT Mobile First
         <ProfileStat 
           profileStatTitle={WIDGET_DATA?.data?.birthdate}
           statVal={`${WIDGET_DATA?.data?.age} yrs`}
+          widthFirst={true}
         />
 
         <ProfileStat 
@@ -321,7 +333,8 @@ IMPORTANT Mobile First
     <!-- 
     [📱 MOBILE] Follow Btn
     -->
-    {#if mobileExclusive}
+    <!-- {#if mobileExclusive} -->
+    {#if false}
       <button
         id="follow-btn"
         class="
@@ -355,7 +368,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   img#country-icon {
     border-radius: 40px;
-    border: 1px solid var(--grey-shade)
+    border: 1px solid var(--grey-shade);
+    width: auto;
+    max-height: 100%;
   }
 
   p#player-name {
@@ -380,6 +395,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   @media only screen 
     and (min-width: 767px) {
+
+    img#country-icon {
+      width: 20px;
+      height: 20px;
+    }
 
     img#player-avatar {
       margin-right: 20px;

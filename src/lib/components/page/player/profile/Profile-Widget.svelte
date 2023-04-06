@@ -14,6 +14,7 @@ COMPONENT JS (w/ TS)
 
 	import { page } from '$app/stores';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import ProfileLoader from './Profile-Loader.svelte';
 	import ProfileMain from './Profile-Main.svelte';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
@@ -116,6 +117,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
+  <!-- 
+  player name
+  -->
+  <h1>
+    {PAGE_DATA?.data?.player_name}
+  </h1>
 </SeoBox>
 
 <!-- <ProfileLoader /> -->

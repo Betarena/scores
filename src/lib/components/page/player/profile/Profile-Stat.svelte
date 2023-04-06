@@ -2,6 +2,7 @@
   export let profileStatTitle: string;
   export let statVal: string | number;
   // (optional)
+  export let widthFirst: boolean = false;
   export let countryIso3: string = null;
   export let countryImg: string = null;
 </script>
@@ -9,8 +10,9 @@
 <div
   class="
     status-box
-    m-r-15
-  ">
+    m-r-40
+  "
+  class:first-box={widthFirst}>
   <!-- 
   player stat box
   -->
@@ -19,6 +21,7 @@
       s-14
       color-grey
       w-400
+      no-wrap
     ">
     {profileStatTitle}
   </p>
@@ -55,6 +58,7 @@
         s-14
         color-black-2
         w-500
+        no-wrap
       ">
       {statVal}
     </p>
@@ -65,14 +69,33 @@
 
   div.status-box {
     /* s */
-    padding-left: 12px;
+    padding-left: 16px;
     /* width: 110px; */
     border-left: 1px solid var(--grey-shade);
+    max-width: 63px;
+    min-width: 63px;
+  }
+
+  div.first-box {
+    max-width: 87px;
+    min-width: 87px;
   }
 
   img#country-icon {
     border-radius: 40px;
-    border: 1px solid var(--grey-shade)
+    border: 1px solid var(--grey-shade);
+    width: auto;
+    max-height: 100%;
+  }
+
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
+
+  :global(.dark-background div.status-box) {
+    border-left: 1px solid var(--dark-theme-1-shade) !important;
   }
 
 </style>
