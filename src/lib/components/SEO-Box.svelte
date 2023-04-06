@@ -3,11 +3,11 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
+	import { browser } from "$app/environment";
+
 
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
-
-    //#endregion ➤ Assets Imports
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -54,11 +54,13 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<div
-  id="seo-widget-box">
-  <slot>
-  </slot>
-</div>
+{#if !browser}
+  <div
+    id="seo-widget-box">
+    <slot>
+    </slot>
+  </div>
+{/if}
 
 <!-- ===============
 COMPONENT STYLE
