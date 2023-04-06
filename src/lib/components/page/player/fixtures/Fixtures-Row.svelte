@@ -5,6 +5,7 @@
 	import type { PFIX_C_Fixture } from "@betarena/scores-lib/types/player-fixtures";
 	import { onMount } from "svelte";
 	import FixturesRowEvent from "./Fixtures-Row-Event.svelte";
+	import { toCorrectDate, toCorrectISO } from "$lib/utils/dates.js";
 
   export let fixture: PFIX_C_Fixture;
   
@@ -22,18 +23,6 @@
 		$page?.error,
 		$page?.params?.lang
 	);
-
-  /**
-   * @description converts a target date to an
-   * ISO_string of yyyy-MM-dd format;
-   * @param {Date} date
-   * @returns {string} string
-   */
-   function convert_to_iso(
-    date: Date
-  ): string {
-    return date.toISOString().slice(0, 10)
-  }
 
   onMount(() => {
     setInterval(async () => {
@@ -85,7 +74,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if fixture?.status === 'LIVE'}
-        {#if convert_to_iso(today) != convert_to_iso(new Date(fixture?.fixture_day))}
+        {#if toCorrectISO(today) != toCorrectISO(fixture?.fixture_day)}
           <p
             class="
               no-wrap
@@ -94,7 +83,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               dark-theme-custom-1
             "
           >
-            {new Date(fixture?.fixture_day).getDate()/new Date(fixture?.fixture_day).getMonth()}
+            {toCorrectDate(fixture?.fixture_day).getDate()/toCorrectDate(fixture?.fixture_day).getMonth()}
           </p>
         {/if}
         <p

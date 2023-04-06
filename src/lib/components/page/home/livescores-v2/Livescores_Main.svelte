@@ -12,7 +12,7 @@ COMPONENT JS (w/ TS)
   import { get } from '$lib/api/utils';
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { convert_to_iso } from '$lib/utils/dates.js';
+  import { toCorrectISO } from '$lib/utils/dates.js';
   import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
   import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
   import type { B_LS2_D, B_LS2_T, LS2_C_Fixture, LS2_C_League } from '@betarena/scores-lib/types/livescores-v2';
@@ -58,7 +58,7 @@ COMPONENT JS (w/ TS)
   // FIXME:TODO: update cache to [...V3] to use map json objects;
   async function setData(data: B_LS2_D) {
     for await (const fixtureDateObj of data?.fixtures_by_date) {
-      fixturesGroupByDateMap.set(convert_to_iso(new Date(fixtureDateObj?.date + 'Z')), fixtureDateObj?.fixtures)
+      fixturesGroupByDateMap.set(toCorrectISO(fixtureDateObj?.date), fixtureDateObj?.fixtures)
     }
     for await (const league of data?.leagues) {
       leagueMap.set(league?.id, league)
@@ -150,7 +150,7 @@ COMPONENT JS (w/ TS)
     dlog(`${LV2_W_H_TAG[0]} (in) targetFixtureDateData`, LV2_W_H_TAG[1])
 
     // new updated date;
-    let targetDate = convert_to_iso(
+    let targetDate = toCorrectISO(
       $sessionStore.livescoreNowSelectedDate
     )
     // [ℹ] get matching (date) fixtures in "yyyy/MM/dd" string format
@@ -221,8 +221,8 @@ COMPONENT JS (w/ TS)
         // -> causing status to be delayed
         const validation_0 =
           FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)
-          && (convert_to_iso($sessionStore.userDate) == date
-            || convert_to_iso(yesterday) == date)
+          && (toCorrectISO($sessionStore.userDate) == date
+            || toCorrectISO(yesterday) == date)
         ;
         if (validation_0) {
           numOfFixturesLive++
@@ -249,12 +249,12 @@ COMPONENT JS (w/ TS)
     fixturesGroupByDateLeagueMap = new Map();
     // generate "target" date fixtures;
     const validation_0 =
-      fixturesGroupByDateMap.has(convert_to_iso($sessionStore.livescoreNowSelectedDate))
+      fixturesGroupByDateMap.has(toCorrectISO($sessionStore.livescoreNowSelectedDate))
     ;
     if (validation_0) {
       const leagueIds = nonEmptyLeaguesArray?.map(x => x?.id)
       let fixturesList = fixturesGroupByDateMap.get(
-        convert_to_iso(
+        toCorrectISO(
           $sessionStore.livescoreNowSelectedDate))
           ?.sort((
               a,
@@ -542,8 +542,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 minutes (next day)
           SOLVED adding a check for games still happening yesterday;
           -->
-          {#if fixturesGroupByDateMap.has(convert_to_iso(yesterday))}
-            {#each fixturesGroupByDateMap.get(convert_to_iso(yesterday)) as fixture}
+          {#if fixturesGroupByDateMap.has(toCorrectISO(yesterday))}
+            {#each fixturesGroupByDateMap.get(toCorrectISO(yesterday)) as fixture}
               {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
                 <!-- [🐞] <p>{fixture?.id}</p> -->
                 <LivescoresFixtureRow
@@ -552,7 +552,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
             {/each}
-            {#each fixturesGroupByDateMap.get(convert_to_iso($sessionStore.userDate)) as fixture}
+            {#each fixturesGroupByDateMap.get(toCorrectISO($sessionStore.userDate)) as fixture}
               {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
                 <!-- [🐞] <p>{fixture?.id}</p> -->
                 <LivescoresFixtureRow

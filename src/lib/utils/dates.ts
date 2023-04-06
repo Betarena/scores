@@ -59,13 +59,55 @@ export const monthNames = [
 ];
 
 /**
- * @description converts a target date to an
+ * @summary converts a target date to an
  * ISO_string of yyyy-MM-dd format;
- * @param {Date} date
+ * @description handles target date to ISO conversion,
+ * plus identifies dates of "T00:00:00" Dates;
+ * @param {Date | string} date
  * @returns {string} string
  */
-export function convert_to_iso(
-  date: Date
+export function toCorrectISO(
+  date: Date | string
 ): string {
+  // check for 'string'
+  if (typeof(date) == 'string') {
+    // check for 'T00:00:00'
+    const validation_0 =
+      date.includes('T00:00:00') 
+      && !date.includes('T00:00:00Z')
+    ;
+    // add, if necessary
+    if (validation_0) {
+      date = `${date}Z`
+    }
+    date = new Date(date)
+  }
+  // return yyyy-MM-dd
   return date.toISOString().slice(0, 10)
+}
+
+/**
+ * @summary [HELPER method
+ * @description converts a target date/string
+ * argument to a proper, handeled user Date Object;
+ * @param {Date | string} date
+ * @returns {Date} string
+ */
+export function toCorrectDate(
+  date: Date | string
+): Date {
+  if (typeof(date) == 'string') {
+    // check for 'T00:00:00'
+    const validation_0 =
+      date.includes('T00:00:00') 
+      && !date.includes('T00:00:00Z')
+    ;
+    // add, if necessary
+    if (validation_0) {
+      date = `${date}Z`
+    }
+    date = new Date(date)
+  }
+  // return Date Object
+  return date;
 }

@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { WEEK_DAYS_ABBRV_1, convert_to_iso } from '$lib/utils/dates';
+	import { WEEK_DAYS_ABBRV_1, toCorrectISO } from '$lib/utils/dates';
 	import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
 	import LivescoresCalendarTable from './Livescores_Calendar_Table.svelte';
 	import vec_calendar_dark from './assets/calendar-dark.svg';
@@ -56,19 +56,19 @@ COMPONENT JS (w/ TS)
 
     const _today = new Date()
     _today.setDate(_today.getUTCDate() - 3)
-    const days_3_ago = convert_to_iso(_today)
+    const days_3_ago = toCorrectISO(_today)
     _today.setDate(_today.getUTCDate() + 1)
-    const days_2_ago = convert_to_iso(_today)
+    const days_2_ago = toCorrectISO(_today)
     _today.setDate(_today.getUTCDate() + 1)
-    const days_1_ago = convert_to_iso(_today)
+    const days_1_ago = toCorrectISO(_today)
     _today.setDate(_today.getUTCDate() + 1)
-    const days_0 = convert_to_iso(_today)
+    const days_0 = toCorrectISO(_today)
     _today.setDate(_today.getUTCDate() + 1)
-    const days_1_future = convert_to_iso(_today)
+    const days_1_future = toCorrectISO(_today)
     _today.setDate(_today.getUTCDate() + 1)
-    const days_2_future = convert_to_iso(_today)
+    const days_2_future = toCorrectISO(_today)
     _today.setDate(_today.getUTCDate() + 1)
-    const days_3_future = convert_to_iso(_today)
+    const days_3_future = toCorrectISO(_today)
 
     fixture_dates = [
       days_3_ago,
@@ -130,7 +130,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         width-auto
         cursor-pointer
       "
-      class:activeDate={convert_to_iso(new Date(item)) == convert_to_iso($sessionStore.livescoreNowSelectedDate)}
+      class:activeDate={toCorrectISO(item) == toCorrectISO($sessionStore.livescoreNowSelectedDate)}
       on:click={() => $sessionStore.livescoreNowSelectedDate = new Date(item)}>
       <p
         class="
@@ -139,7 +139,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           color-black-2
           text-center
         "
-        class:currentDate={convert_to_iso(new Date(item)) == convert_to_iso($sessionStore.userDate)}>
+        class:currentDate={toCorrectISO(item) == toCorrectISO($sessionStore.userDate)}>
         <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
         {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item).getUTCDay()]] || ""}
         <br/>
@@ -163,20 +163,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       text-center
       column-space-center
     "
-    class:activeDate={!fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate))}>
+    class:activeDate={!fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate))}>
     <!-- 
     [ℹ] calendar (vector)
     -->
     <img 
-      src={$sessionStore.livescoreShowCalendar && fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate)) 
+      src={$sessionStore.livescoreShowCalendar && fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate)) 
         ? vec_calendar_sel 
-        : !fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate)) 
+        : !fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate)) 
           ? vec_calendar_sel_date
           : defaultCalendarIcon
       } 
       alt="default alt text"
-      on:mouseover={(e) => {if (fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate))) e.currentTarget.src = vec_calendar_sel}}
-      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes(convert_to_iso($sessionStore.livescoreNowSelectedDate)) ) e.currentTarget.src = defaultCalendarIcon}}
+      on:mouseover={(e) => {if (fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate))) e.currentTarget.src = vec_calendar_sel}}
+      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate)) ) e.currentTarget.src = defaultCalendarIcon}}
       on:click={() => $sessionStore.livescoreShowCalendar = !$sessionStore.livescoreShowCalendar}
       class="cursor-pointer"
       width="24"
@@ -215,7 +215,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         cursor-pointer
       ">
       {WIDGET_T_DATA?.all || 'All'} 
-      {#if convert_to_iso($sessionStore.livescoreNowSelectedDate) == convert_to_iso($sessionStore.userDate)}
+      {#if toCorrectISO($sessionStore.livescoreNowSelectedDate) == toCorrectISO($sessionStore.userDate)}
         ({$sessionStore.fixturesTodayNum || 0})
       {:else}
         ({numOfFixtures || 0})

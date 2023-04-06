@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { page } from "$app/stores";
 	import { sessionStore } from "$lib/store/session";
 	import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { convert_to_iso } from "$lib/utils/dates.js";
+	import { toCorrectISO } from "$lib/utils/dates.js";
 	import { viewport_change } from "$lib/utils/platform-functions";
 	import type { B_LS2_T, LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
 	import { onMount } from "svelte";
@@ -29,8 +29,6 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
-
-  const today = new Date()
 
   export let FIXTURE_D: LS2_C_Fixture
   export let server_side_language: string
@@ -167,7 +165,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if FIXTURE_D?.status === 'LIVE'}
-        {#if convert_to_iso(today) != convert_to_iso(new Date(FIXTURE_D?.fixture_day))}
+        {#if toCorrectISO($sessionStore.userDate) != toCorrectISO(new Date(FIXTURE_D?.fixture_day))}
           <p
             class="
               no-wrap

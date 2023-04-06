@@ -11,8 +11,8 @@ COMPONENT JS (w/ TS)
   import { page } from '$app/stores';
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { convert_to_iso, monthNames, WEEK_DAYS_ABBRV_2 } from '$lib/utils/dates';
-  import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
+  import { WEEK_DAYS_ABBRV_2, monthNames, toCorrectISO } from '$lib/utils/dates';
+  import { LV2_W_H_TAG, dlog } from '$lib/utils/debug';
   import { viewport_change } from '$lib/utils/platform-functions';
   import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import { onMount } from 'svelte';
@@ -282,8 +282,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   color-black-2
                   cursor-pointer
                 "
-                class:activeDate={convert_to_iso(item) == convert_to_iso($sessionStore.livescoreNowSelectedDate)}
-                class:currentDate={convert_to_iso(item) == convert_to_iso($sessionStore.userDate)}
+                class:activeDate={toCorrectISO(item) == toCorrectISO($sessionStore.livescoreNowSelectedDate)}
+                class:currentDate={toCorrectISO(item) == toCorrectISO($sessionStore.userDate)}
                 class:notViewMonth={item.getMonth() != tempDate.getMonth()}
                 on:click={() => dateChange(item)}
               >
