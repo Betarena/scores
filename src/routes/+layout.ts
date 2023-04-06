@@ -72,7 +72,7 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 			? 'en'
 			: params.lang;
 
-  console.log('🔴 (+layout.ts) urlLang', urlLang)
+  // console.log('🔴 (+layout.ts) urlLang', urlLang)
 
 	// --------------
 	// [ℹ] preload data [2] DOC: REF: [2]
