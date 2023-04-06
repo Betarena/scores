@@ -161,6 +161,7 @@
 					id="brand"
 					class="m-b-16"
 					on:click={() => reloadPage()}
+          on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
 				>
 					<a
 						
@@ -456,6 +457,7 @@
 							id="brand"
 							class="m-b-25"
 							on:click={() => reloadPage()}
+              on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
 						>
 							<a
 								
