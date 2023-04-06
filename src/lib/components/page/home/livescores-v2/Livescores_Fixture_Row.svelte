@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { page } from "$app/stores";
 	import { sessionStore } from "$lib/store/session";
 	import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { toCorrectISO } from "$lib/utils/dates.js";
+	import { toCorrectDate, toCorrectISO } from "$lib/utils/dates.js";
 	import { viewport_change } from "$lib/utils/platform-functions";
 	import type { B_LS2_T, LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
 	import { onMount } from "svelte";
@@ -165,7 +165,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if FIXTURE_D?.status === 'LIVE'}
-        {#if toCorrectISO($sessionStore.userDate) != toCorrectISO(new Date(FIXTURE_D?.fixture_day))}
+        {#if toCorrectISO($sessionStore.userDate) != toCorrectISO(FIXTURE_D?.fixture_day)}
           <p
             class="
               no-wrap
@@ -174,7 +174,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               dark-theme-custom-1
             "
           >
-            {new Date(FIXTURE_D?.fixture_day).getDate()/new Date(FIXTURE_D?.fixture_day).getMonth()}
+            {toCorrectDate(FIXTURE_D?.fixture_day).getDate()/toCorrectDate(FIXTURE_D?.fixture_day).getMonth()}
           </p>
         {/if}
         <p
@@ -216,9 +216,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           "
           class:color-grey={['FT','FT_PEN','AET'].includes(FIXTURE_D?.status)}
         >
-          {(`0${new Date(FIXTURE_D?.time + 'Z').getHours()}`.slice(-2)
+          {(`0${toCorrectDate(FIXTURE_D?.time).getHours()}`.slice(-2)
           + ':'
-          + `0${new Date(FIXTURE_D?.time + 'Z').getMinutes()}`.slice(-2))
+          + `0${toCorrectDate(FIXTURE_D?.time).getMinutes()}`.slice(-2))
           .split(' ').join('')}
         </p>
         <!-- 

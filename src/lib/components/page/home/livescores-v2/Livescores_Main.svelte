@@ -12,8 +12,8 @@ COMPONENT JS (w/ TS)
   import { get } from '$lib/api/utils';
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { toCorrectISO } from '$lib/utils/dates.js';
-  import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
+  import { toCorrectDate, toCorrectISO } from '$lib/utils/dates.js';
+  import { LV2_W_H_TAG, dlog } from '$lib/utils/debug';
   import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
   import type { B_LS2_D, B_LS2_T, LS2_C_Fixture, LS2_C_League } from '@betarena/scores-lib/types/livescores-v2';
 
@@ -44,6 +44,7 @@ COMPONENT JS (w/ TS)
 
   let fixturesGroupByDateMap: Map <string, LS2_C_Fixture[]> = new Map();
   let fixturesGroupByDateLeagueMap: Map <number, LS2_C_Fixture[]> = new Map();
+  let fixturesGroupByDateLiveLeagueMap: Map <number, LS2_C_Fixture[]> = new Map();
   let leagueMap: Map <number, LS2_C_League> = new Map();
 
   // let fixturesGroupByDateMap: Map <string, LS2_C_Fixture[]> = new Map(
@@ -85,12 +86,12 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  // map key -> new Date(fixtureDateObj?.date + 'Z').toISOString().slice(0, 10)
-
   /**
+   * @summary [MAIN] method inject livscores;
    * @description updates the information
    * for the fixtures of current-date with
    * real-time information;
+   * @returns Promise < void >
    */
   function injectLivescoreData(
   ): Promise < void > {
@@ -104,7 +105,7 @@ COMPONENT JS (w/ TS)
     // [ℹ] iterate over each LIVE fixture
     // [ℹ] and modify data of existing;
     for (const [liveId, _fixture] of liveFixturesMap) {
-      const targetDate = new Date(_fixture?.time?.starting_at?.date).toISOString().slice(0, 10)
+      const targetDate = toCorrectISO(_fixture?.time?.starting_at?.date)
       // [ℹ] obtain target date-group fixtures[]
       let fixturesArray = fixturesGroupByDateMap.get(targetDate)
       // [ℹ] re-assign the modified version back to original
@@ -209,32 +210,58 @@ COMPONENT JS (w/ TS)
    */
   async function updateLiveInfo(
   ): Promise < void > {
+
     dlog(`${LV2_W_H_TAG[0]} (in) updateLiveInfo`, LV2_W_H_TAG[1])
+
     numOfFixturesLive = 0
-    liveLeaguesIds = []
-    // NOTE:DOC: adding for await ... of > for await ... of causes (double) iteration
-    console.log('fixturesGroupByDateMap', fixturesGroupByDateMap)
-    for (let [date, fixturesArr] of fixturesGroupByDateMap) {
-      for (let fixture of fixturesArr) {
-        // FIXME:
-        // -> sometimes, fixtures from backend are not updated correclty
-        // -> causing status to be delayed
-        const validation_0 =
-          FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)
-          && (toCorrectISO($sessionStore.userDate) == date
-            || toCorrectISO(yesterday) == date)
-        ;
-        if (validation_0) {
-          numOfFixturesLive++
-          liveLeaguesIds.push(fixture?.league_id)
-        }
-      }
+    fixturesGroupByDateLiveLeagueMap = new Map()
+    
+    // FIXME:TODO:NOTE:DOC: adding for await ... of > for await ... of causes (double) iteration
+
+    // FIXME:SOLVED
+      // -> sometimes, fixtures from backend are not updated correclty
+      // -> causing status to be delayed
+      // -> need check why some ddn't update (etc.)
+    // for today/yesterday, get fixtures;
+    let fixturesList = []
+    if (fixturesGroupByDateMap.has(toCorrectISO($sessionStore.userDate))) {
+      fixturesList = [
+        ...fixturesList,
+        ...fixturesGroupByDateMap.get(toCorrectISO($sessionStore.userDate))
+      ]
     }
+    if (fixturesGroupByDateMap.has(toCorrectISO(yesterday))) {
+      fixturesList = [
+        ...fixturesList,
+        ...fixturesGroupByDateMap.get(toCorrectISO(yesterday))
+      ]
+    }
+
+    const liveFixturesList = fixturesList
+      ?.filter(
+        x => 
+          FIXTURE_LIVE_TIME_OPT.includes(x?.status)
+      )
+    ;
+    numOfFixturesLive = liveFixturesList.length
+    liveLeaguesIds = liveFixturesList
+      ?.map(
+          x => 
+            x?.league_id
+        )
+    ;
     liveLeaguesIds = [...new Set(liveLeaguesIds)]
-    liveLeagues = [...leagueMap.values()]
-      ?.filter(function(x) {
-      return liveLeaguesIds.includes(x?.id)
-    });
+
+    for (const id of liveLeaguesIds) {
+      const leagueFixtures = liveFixturesList
+        ?.filter(
+          x => 
+          x?.league_id == id
+        )
+      ;
+      fixturesGroupByDateLiveLeagueMap.set(id, leagueFixtures)
+    }
+
     dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive ${numOfFixturesLive}`, LV2_W_H_TAG[1])
     dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds.length ${liveLeaguesIds.length}`, LV2_W_H_TAG[1])
     dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds ${liveLeaguesIds}`, LV2_W_H_TAG[1])
@@ -245,6 +272,13 @@ COMPONENT JS (w/ TS)
     generateLeagueFixtures()
   }
 
+  /**
+   * @summary [MAIN] method data process;
+   * @description generates target "selected_date"
+   * fixtures, and groups by leagues; Handles for
+   * "showMore" toggle with extra filtering;
+   * @returns void
+   */
   function generateLeagueFixtures() {
     fixturesGroupByDateLeagueMap = new Map();
     // generate "target" date fixtures;
@@ -260,7 +294,7 @@ COMPONENT JS (w/ TS)
               a,
               b
             ) => 
-              new Date(a.time).getTime() - new Date(b.time).getTime()
+              toCorrectDate(a.time).getTime() - toCorrectDate(b.time).getTime()
             )
           ?.filter(
               x => 
@@ -508,19 +542,22 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="league-group-live-main"
         class:display-none={$sessionStore.livescoreFixtureView == 'all'}>
-        {#each liveLeagues as league}
+        <!-- 
+        [ℹ] iterate over each non-empty-league-id's for selected_date
+        -->
+        {#each [...fixturesGroupByDateLiveLeagueMap.entries()] as [leagueId, fixturesList]}
           <!-- 
           [ℹ] league info (box)
           -->
           <a
-            href="{league?.urls[server_side_language].replace('https://scores.betarena.com','')}">
+            href="{leagueMap.get(leagueId)?.urls[server_side_language].replace('https://scores.betarena.com','')}">
             <div
               class="
                 row-space-start
                 league-group
               ">
               <img
-                src="{league?.iso2 ? `https://betarena.com/images/flags/${league?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
+                src="{leagueMap.get(leagueId)?.iso2 ? `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                 on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                 alt="default alt text"
                 class="m-r-15"
@@ -533,35 +570,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                   color-black-2
                 ">
-                {league?.league_name}
+                {leagueMap.get(leagueId)?.league_name}
               </p>
             </div>
           </a>
           <!-- 
           [ℹ] fixtures (of league) (box)
-          FIXME: using "today" does not work, as fixtures at 23:45 (start) won't show in 15 minutes (next day)
-          SOLVED adding a check for games still happening yesterday;
           -->
-          {#if fixturesGroupByDateMap.has(toCorrectISO(yesterday))}
-            {#each fixturesGroupByDateMap.get(toCorrectISO(yesterday)) as fixture}
-              {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
-                <!-- [🐞] <p>{fixture?.id}</p> -->
-                <LivescoresFixtureRow
-                  FIXTURE_D={fixture}
-                  {server_side_language}
-                />
-              {/if}
-            {/each}
-            {#each fixturesGroupByDateMap.get(toCorrectISO($sessionStore.userDate)) as fixture}
-              {#if fixture?.league_id == league?.id && FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)}
-                <!-- [🐞] <p>{fixture?.id}</p> -->
-                <LivescoresFixtureRow
-                  FIXTURE_D={fixture}
-                  {server_side_language}
-                />
-              {/if}
-            {/each}
-          {/if}
+          {#each fixturesList as fixture}
+              <!-- <p>[🐞] {fixture?.id}</p> -->
+              <LivescoresFixtureRow 
+                FIXTURE_D={fixture}
+                {server_side_language}
+              />
+          {/each}
+
         {/each}
       </div>
 
