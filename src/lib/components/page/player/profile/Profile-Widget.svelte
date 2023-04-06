@@ -17,6 +17,7 @@ COMPONENT JS (w/ TS)
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import ProfileLoader from './Profile-Loader.svelte';
 	import ProfileMain from './Profile-Main.svelte';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 

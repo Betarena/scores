@@ -6,44 +6,25 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
-	import { page } from '$app/stores';
-  // 
+	
+  import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // <-imports-go-here->
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-  // 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-  // 
 	import { get } from '$lib/api/utils';
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ [PLUGIN] Firebase Imports
-  // <-imports-go-here->
-  //#endregion ➤ [PLUGIN] Firebase Imports
-
-  //#region ➤ Types Imports
-  // <-imports-go-here->
 	import type { B_H_HF } from '@betarena/scores-lib/types/hasura';
 	import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
-//#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // <-imports-go-here->
-  // import profile_avatar from './assets/profile-avatar.svg';
   import arrow_left_dark from './assets/arrow-left-dark.svg';
   import arrow_left_hover from './assets/arrow-left-hover.svg';
   import arrow_left from './assets/arrow-left.svg';
   import arrow_right_dark from './assets/arrow-right-dark.svg';
   import arrow_right_hover from './assets/arrow-right-hover.svg';
   import arrow_right from './assets/arrow-right.svg';
-//#endregion ➤ Assets Imports
   
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import FixturesRow from './Fixtures-Row.svelte';
 	import LoaderMain from './loaders/shared/Loader-Main.svelte';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -57,6 +38,9 @@ COMPONENT JS (w/ TS)
 
   let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
   $: WIDGET_T_DATA = $page.data?.B_PFIX_T
+
+  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
+  $: PAGE_DATA = $page.data?.PAGE_DATA
 
   let WIDGET_TITLE = 'Fixtures'
 
@@ -91,7 +75,7 @@ COMPONENT JS (w/ TS)
     offset = offset + 10;
     loadingPrev = true;
     const response = await get(
-      `/api/hasura/player/fixtures/?player_id=580&limit=${limit}&offset=${offset}`
+      `/api/hasura/player/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${limit}&offset=${offset}`
     ) as B_PFIX_D;
     const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
     const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
