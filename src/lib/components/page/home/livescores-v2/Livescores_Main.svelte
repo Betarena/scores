@@ -213,9 +213,18 @@ COMPONENT JS (w/ TS)
     numOfFixturesLive = 0
     liveLeaguesIds = []
     // NOTE:DOC: adding for await ... of > for await ... of causes (double) iteration
+    console.log('fixturesGroupByDateMap', fixturesGroupByDateMap)
     for (let [date, fixturesArr] of fixturesGroupByDateMap) {
       for (let fixture of fixturesArr) {
-        if (FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)) {
+        // FIXME:
+        // -> sometimes, fixtures from backend are not updated correclty
+        // -> causing status to be delayed
+        const validation_0 =
+          FIXTURE_LIVE_TIME_OPT.includes(fixture?.status)
+          && (convert_to_iso($sessionStore.userDate) == date
+            || convert_to_iso(yesterday) == date)
+        ;
+        if (validation_0) {
           numOfFixturesLive++
           liveLeaguesIds.push(fixture?.league_id)
         }
