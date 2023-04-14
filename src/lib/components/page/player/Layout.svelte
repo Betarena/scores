@@ -7,45 +7,17 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // <-imports-go-here->
-  // -
 	import { goto, preloadData } from '$app/navigation';
-  // -
 	import { browser } from '$app/environment';
-  // -
 	import { page } from '$app/stores';
-  // -
 	import { onMount } from 'svelte';
-  // -
-  //#endregion ➤ Svelte/SvelteKit Imports
 
-  //#region ➤ Project Custom Imports
-  // <-imports-go-here->
-  // -
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-  // -
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-  // -
 	import { sessionStore } from '$lib/store/session';
-  // -
 	import { dlog } from '$lib/utils/debug';
-  // -
-  //#endregion ➤ Project Custom Imports
 
-  //#region ➤ [PLUGIN] Firebase Imports
-  // <-imports-go-here->
-  //#endregion ➤ [PLUGIN] Firebase Imports
-
-  //#region ➤ Types Imports
-  // <-imports-go-here->
 	import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // <-imports-go-here->
-  // import profile_avatar from './assets/profile-avatar.svg';
-  //#endregion ➤ Assets Imports
 
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
