@@ -168,6 +168,7 @@ const config = {
           'https://lh3.googleusercontent.com/',
           // [ℹ] smartlook;
           'https://manager.eu.smartlook.cloud', // (safari-only)
+          'https://web-writer.eu.smartlook.cloud',
           // [ℹ] yandex;
           'https://mc.yandex.ru',
         ],
