@@ -436,6 +436,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
       font-weight: 500;
     }
 
+    div.events-grid {
+      grid-auto-flow: column;
+    }
+
   }
 
   /*

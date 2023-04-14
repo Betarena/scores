@@ -307,6 +307,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   /* o */
+  button.btn-hollow:hover {
+    border: 1px solid var(--primary) !important;
+  }
+
+  /* o */
   button.btn-hollow.left {
     padding: 12px 16px 12px 10px ;
   }
@@ -352,6 +357,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div.dark-background-1 button.btn-hollow {
     border: 1px solid var(--dark-theme-1-2-shade) !important;
+  }
+  /* o */
+  div.dark-background-1 button.btn-hollow:hover {
+    border: 1px solid var(--primary) !important;
+    color: var(--primary) !important;
   }
 
 </style>

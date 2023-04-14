@@ -1,4 +1,4 @@
-import { SAP_C_D_A0, SAP_C_D_A1, SAP_C_D_A2, SAP_C_D_A3, SAP_C_D_A4, SAP_C_D_A5, SAP_C_D_A6, SAP_C_D_A7 } from '@betarena/scores-lib/dist/redis/config';
+import { SAP_C_D_A0, SAP_C_D_A1, SAP_C_D_A2, SAP_C_D_A3, SAP_C_D_A4, SAP_C_D_A5, SAP_C_D_A6, SAP_C_D_A7, SAP_C_D_A8 } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
@@ -24,6 +24,8 @@ export async function GET(req): Promise<unknown> {
 		req.url['searchParams'].get('country_id');
 	const sport: string =
 		req.url['searchParams'].get('sport');
+  const months: string =
+		req.url['searchParams'].get('months');
 
 	// [sitemap-check V2]
 	if (url && !page && !lang) {
@@ -116,6 +118,18 @@ export async function GET(req): Promise<unknown> {
 			await get_target_hset_cache_data(
 				SAP_C_D_A6,
 				sport
+			);
+		if (response_cache) {
+			return json(response_cache);
+		}
+	}
+
+  // [general-translation-months-INFO-GET]
+	if (months && lang) {
+		const response_cache =
+			await get_target_hset_cache_data(
+				SAP_C_D_A8,
+				lang
 			);
 		if (response_cache) {
 			return json(response_cache);

@@ -13,6 +13,7 @@ COMPONENT JS (w/ TS)
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import type { FPPT_Data } from '@betarena/scores-lib/types/hasura';
 	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
+	import type { B_SAP_D2 } from "@betarena/scores-lib/types/seo-pages";
 	import { onMount } from 'svelte';
 	import ProfileStat from './Profile-Stat.svelte';
 
@@ -27,7 +28,10 @@ COMPONENT JS (w/ TS)
   export let WIDGET_DATA: B_PPRO_D
 
   let WIDGET_T_DATA: FPPT_Data = $page.data?.B_PPRO_T
+  let B_SAP_D2: B_SAP_D2 = $page.data?.B_SAP_D2
+
   $: WIDGET_T_DATA = $page.data?.B_PPRO_T
+  $: B_SAP_D2 = $page.data?.B_SAP_D2
 
   let birthdayStr = ""
   
@@ -67,15 +71,16 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [METHODS]
 
   //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  if (WIDGET_DATA?.data?.birthdate != undefined) {
-    const date = new Date(WIDGET_DATA?.data?.birthdate)
-    birthdayStr = `${date.getDate()} ${MONTH_NAMES_ABBRV[date.getMonth()]} ${date.getFullYear()}`
-  }
+ 
 
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
+
+  $: if (WIDGET_DATA?.data?.birthdate != undefined) {
+    const date = new Date(WIDGET_DATA?.data?.birthdate)
+    birthdayStr = `${date.getDate()} ${B_SAP_D2.months_abbreviation[MONTH_NAMES_ABBRV[date.getMonth()]]} ${date.getFullYear()}`
+  }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -312,7 +317,7 @@ IMPORTANT Mobile First
       >
 
         <ProfileStat 
-          profileStatTitle={WIDGET_DATA?.data?.birthdate}
+          profileStatTitle={birthdayStr}
           statVal={`${WIDGET_DATA?.data?.age} yrs`}
           widthFirst={true}
         />

@@ -17,7 +17,6 @@ COMPONENT JS (w/ TS)
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import ProfileLoader from './Profile-Loader.svelte';
 	import ProfileMain from './Profile-Main.svelte';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -36,8 +35,6 @@ COMPONENT JS (w/ TS)
   let WIDGET_DATA: B_PPRO_D
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
   
-  console.log($page.data)
-
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
