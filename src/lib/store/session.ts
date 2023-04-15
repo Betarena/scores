@@ -48,6 +48,9 @@ const seassion_store: Platform_Session = {
   userDate: new Date()
 };
 
+// useful [?]
+// var timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
+
 function createLocalStore() {
 	const { subscribe, set, update } = writable(
 		seassion_store

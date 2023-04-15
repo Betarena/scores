@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { WEEK_DAYS_ABBRV_1, toCorrectISO } from '$lib/utils/dates';
+	import { WEEK_DAYS_ABBRV_1, toCorrectDate, toCorrectISO } from '$lib/utils/dates';
 	import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
 	import LivescoresCalendarTable from './Livescores_Calendar_Table.svelte';
 	import vec_calendar_dark from './assets/calendar-dark.svg';
@@ -54,20 +54,20 @@ COMPONENT JS (w/ TS)
 
   function generateThisWeekDates() {
 
-    const _today = new Date()
-    _today.setDate(_today.getUTCDate() - 3)
+    const _today = new Date($sessionStore.userDate.getTime())
+    _today.setDate(_today.getDate() - 3)
     const days_3_ago = toCorrectISO(_today)
-    _today.setDate(_today.getUTCDate() + 1)
+    _today.setDate(_today.getDate() + 1)
     const days_2_ago = toCorrectISO(_today)
-    _today.setDate(_today.getUTCDate() + 1)
+    _today.setDate(_today.getDate() + 1)
     const days_1_ago = toCorrectISO(_today)
-    _today.setDate(_today.getUTCDate() + 1)
+    _today.setDate(_today.getDate() + 1)
     const days_0 = toCorrectISO(_today)
-    _today.setDate(_today.getUTCDate() + 1)
+    _today.setDate(_today.getDate() + 1)
     const days_1_future = toCorrectISO(_today)
-    _today.setDate(_today.getUTCDate() + 1)
+    _today.setDate(_today.getDate() + 1)
     const days_2_future = toCorrectISO(_today)
-    _today.setDate(_today.getUTCDate() + 1)
+    _today.setDate(_today.getDate() + 1)
     const days_3_future = toCorrectISO(_today)
 
     fixture_dates = [
@@ -79,6 +79,7 @@ COMPONENT JS (w/ TS)
       days_2_future,
       days_3_future
     ]
+
   }
 
   generateThisWeekDates()
@@ -130,8 +131,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         width-auto
         cursor-pointer
       "
-      class:activeDate={toCorrectISO(item) == toCorrectISO($sessionStore.livescoreNowSelectedDate)}
-      on:click={() => $sessionStore.livescoreNowSelectedDate = new Date(item)}>
+      class:activeDate={item == toCorrectISO($sessionStore.livescoreNowSelectedDate)}
+      on:click={() => $sessionStore.livescoreNowSelectedDate = toCorrectDate(item)}>
       <p
         class="
           s-14
@@ -139,14 +140,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           color-black-2
           text-center
         "
-        class:currentDate={toCorrectISO(item) == toCorrectISO($sessionStore.userDate)}>
+        class:currentDate={item == toCorrectISO($sessionStore.userDate)}>
         <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
-        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[new Date(item).getUTCDay()]] || ""}
+        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[toCorrectDate(item).getUTCDay()]] || ""}
         <br/>
         <span
           class="w-500">
           <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
-          {new Date(item).getUTCDate()}
+          {toCorrectDate(item).getUTCDate()}
         </span>
       </p>
     </div>
