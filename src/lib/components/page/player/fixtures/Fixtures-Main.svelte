@@ -262,7 +262,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     alt=""
                     width="24"
                     height="24"
-                    class="m-r-24"
+                    class="
+                      m-r-24
+                      league-img
+                    "
                   />
                   <p
                     class="
@@ -318,6 +321,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   /* o */
   button.btn-hollow.right {
     padding: 12px 10px 12px 16px ;
+  }
+
+  img.league-img {
+    width: auto;
+    max-height: 100%;
+    object-fit: fill;
   }
 
   div#fixtures-list-box {

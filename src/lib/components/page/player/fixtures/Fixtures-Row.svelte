@@ -395,7 +395,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #dbb884 !important;
 	}
   div.fixture-row p#box-goals.rating_nan {
-		background-color: var(--dark-theme-1-shade) !important;
+		background-color: var(--whitev2);
     color: var(--grey);
   }
 
@@ -459,9 +459,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-left: 1px var(--dark-theme-1-shade) solid !important;
 	}
 
+  :global(.dark-background div.fixture-row p#box-goals) {
+    color: var(--dark-theme-1) !important;
+  }
+
   :global(.dark-background div.fixture-row p#box-goals.rating_nan) {
-		color: var(--dark-theme-1) !important;
-    color: var(--dark-theme-1-3-shade);
+		background-color: var(--dark-theme-1-shade) !important;
+    color: var(--dark-theme-1-3-shade) !important;
   }
 
 </style>

@@ -376,6 +376,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border: 1px solid var(--grey-shade);
     width: auto;
     max-height: 100%;
+    object-fit: fill;
   }
 
   p#player-name {
