@@ -47,7 +47,7 @@ COMPONENT JS (w/ TS)
     // empty
   ): Promise < B_PPRO_D > {
     // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/hasura/player/profile/?player_id=${PAGE_DATA?.data?.player_id}`) as B_PPRO_D;
+    WIDGET_DATA = await get(`/api/data/players/profile/?player_id=${PAGE_DATA?.data?.player_id}`) as B_PPRO_D;
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;

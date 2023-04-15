@@ -75,10 +75,12 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     `/api/hasura/_main_/seo-pages?lang=${_lang}&page=player`,
     `/api/cache/_main_/pages_and_seo?country_id=${country_id}`,
     `/api/cache/_main_/pages_and_seo?months=true&lang=${_lang}`,
-    `/api/hasura/player/profile?lang=${_lang}`,
-    `/api/hasura/player/fixtures?lang=${_lang}`,
     // NOTE:WARNING:TODO: remove for a cache solution
-    `/api/hasura/player/fixtures?player_id=${player_id}&limit=10&offset=0`
+    `/api/data/players/profile?lang=${_lang}`,
+    // NOTE:WARNING:TODO: remove for a cache solution
+    `/api/data/players/fixtures?lang=${_lang}`,
+    // NOTE:WARNING:TODO: remove for a cache solution
+    `/api/data/players/fixtures?player_id=${player_id}&limit=10&offset=0`
   ]
 
   const promises = urls.map((_url) =>
@@ -152,10 +154,12 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 
   // const INVALID_PAGE_DATA: boolean = data.includes(undefined);
 
+  console.log(data)
+
   PRELOAD_invalid_data(data)
 
   const t1 = performance.now();
-  dlog(`⏳ page pre-load ${(t1 - t0) / 1000} sec`, true)
+  dlog(`⏳ [PLAYERS] (pre-load) ${(t1 - t0) / 1000} sec`, true)
 
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -67,7 +67,7 @@ COMPONENT JS (w/ TS)
     // empty
   ): Promise < B_PFIX_D > {
     // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/hasura/player/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=10&offset=0`) as B_PFIX_D;
+    WIDGET_DATA = await get(`/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=10&offset=0`) as B_PFIX_D;
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;
