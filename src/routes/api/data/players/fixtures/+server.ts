@@ -32,6 +32,7 @@ export async function GET(
 	const lang: string = req?.url?.searchParams?.get('lang');
 	const player_id: string = req?.url?.searchParams?.get('player_id');
 	const offset: string = req?.url?.searchParams?.get('offset');
+  const hasura: string = req?.url?.searchParams?.get('hasura');
 	// const limit: string = req?.url?.searchParams?.get('limit');
 
   // NOTE: player (page) data;
@@ -40,18 +41,21 @@ export async function GET(
 
     const _player_id: number = parseInt(player_id)
     const _offset = parseInt(offset)
+    let data;
     let loadType = "cache";
 
     // NOTE: check in cache;
-    let data =
-			await get_target_hset_cache_data(
-				PFIX_C_D_A,
-				lang
-			)
-    ;
+    if (!hasura) {
+      data =
+        await get_target_hset_cache_data(
+          PFIX_C_D_A,
+          player_id
+        )
+      ;
+    }
 
     // NOTE: (default) fallback;
-		if (!data) {
+		if (!data || hasura) {
       data = await fallbackMainData(
         _player_id,
         _offset
@@ -59,7 +63,7 @@ export async function GET(
       loadType = 'HASURA'
 		}
 
-    console.log(`📌 loaded with: ${loadType}`)
+    console.log(`📌 loaded [PFIX] with: ${loadType}`)
 
     return json(data);
   }

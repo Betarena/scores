@@ -75,7 +75,7 @@ COMPONENT JS (w/ TS)
     offset = offset + 10;
     loadingPrev = true;
     const response = await get(
-      `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${limit}&offset=${offset}`
+      `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${limit}&offset=${offset}&hasura=true`
     ) as B_PFIX_D;
     const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
     const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;

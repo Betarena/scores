@@ -42,7 +42,7 @@ export async function GET(
     let data =
 			await get_target_hset_cache_data(
 				PP_C_D_A,
-				lang
+				player_id
 			)
     ;
 
@@ -54,7 +54,7 @@ export async function GET(
       loadType = 'HASURA'
 		}
 
-    console.log(`📌 loaded with: ${loadType}`)
+    console.log(`📌 loaded [PPRO] with: ${loadType}`)
 
     return json(data);
   }

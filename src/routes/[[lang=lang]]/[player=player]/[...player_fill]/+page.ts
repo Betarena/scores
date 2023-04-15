@@ -154,7 +154,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 
   // const INVALID_PAGE_DATA: boolean = data.includes(undefined);
 
-  console.log(data)
+  // console.log(data)
 
   PRELOAD_invalid_data(data)
 
