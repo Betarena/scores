@@ -121,6 +121,7 @@ const config = {
           'https://images1-focus-opensocial.googleusercontent.com',
           // [ℹ] google;
           'https://www.google-analytics.com',
+          'https://www.googletagmanager.com',
           'https://www.google.com',
           'https://firebasestorage.googleapis.com',
           'https://lh3.googleusercontent.com/',
