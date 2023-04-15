@@ -72,6 +72,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	// --------------
   
   const urls: string[] = [
+    // NOTE:WARNING:TODO: remove for a cache solution
     `/api/hasura/_main_/seo-pages?lang=${_lang}&page=player`,
     `/api/cache/_main_/pages_and_seo?country_id=${country_id}`,
     `/api/cache/_main_/pages_and_seo?months=true&lang=${_lang}`,
