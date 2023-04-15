@@ -15,7 +15,7 @@ COMPONENT JS - BASIC
 		getUserLocation,
 		getUserLocationFromIP
 	} from '$lib/geo-js/init';
-	import { dlog, dlogv2, NB_W_STY, NB_W_TAG, NB_W_TOG } from '$lib/utils/debug';
+	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
@@ -130,7 +130,7 @@ COMPONENT JS - BASIC
       `homepageURL: ${homepageURL}`,
       `logoLink: ${logoLink}`
     ],
-    true,
+    NB_W_TOG,
     NB_W_STY
   )
 
