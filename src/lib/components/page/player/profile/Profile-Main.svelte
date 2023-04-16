@@ -175,14 +175,18 @@ IMPORTANT Mobile First
                   ">
                   {`${WIDGET_T_DATA?.nationality}:` || 'Nationality:'}
                 </p>
-                <img
-                  src={WIDGET_DATA?.data?.country_img}
-                  alt="country-logo"
-                  width="18"
-                  height="18"
-                  id="country-icon"
+                <div
+                  id="country-icon-box"
                   class="m-r-8"
-                />
+                >
+                  <img
+                    src={WIDGET_DATA?.data?.country_img}
+                    alt="country-logo"
+                    width="18"
+                    height="18"
+                    id="country-icon"
+                  />
+                </div>
                 <p
                   class="
                     s-16
@@ -371,12 +375,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-radius: 80px;
   }
 
-  img#country-icon {
-    border-radius: 40px;
+  div#country-icon-box {
+    overflow: hidden;
     border: 1px solid var(--grey-shade);
+    border-radius: 40px;
+    width: 18px;
+    height: 18px;
+  } img#country-icon {
     width: auto;
     max-height: 100%;
-    object-fit: fill;
+    object-fit: contain;
+    scale: 1.4;
   }
 
   p#player-name {
@@ -402,6 +411,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   @media only screen 
     and (min-width: 767px) {
 
+    div#country-icon-box {
+      height: 20px;
+      width: 20px;
+    }
     img#country-icon {
       width: 20px;
       height: 20px;
