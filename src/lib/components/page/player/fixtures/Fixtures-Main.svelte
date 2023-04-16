@@ -12,7 +12,7 @@ COMPONENT JS (w/ TS)
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
   import type { B_H_HF } from '@betarena/scores-lib/types/hasura';
-  import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+  import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League, PFIX_Player } from '@betarena/scores-lib/types/player-fixtures';
   import { onMount } from 'svelte';
   import arrow_left_dark from './assets/arrow-left-dark.svg';
   import arrow_left_hover from './assets/arrow-left-hover.svg';
@@ -22,6 +22,7 @@ COMPONENT JS (w/ TS)
   import arrow_right from './assets/arrow-right.svg';
   
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
+	import { sessionStore } from '$lib/store/session.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import FixturesRow from './Fixtures-Row.svelte';
 	import LoaderMain from './loaders/shared/Loader-Main.svelte';
@@ -54,6 +55,8 @@ COMPONENT JS (w/ TS)
   let limit: number = 10;
   let offset: number = 10;
   let loadingPrev: boolean = false;
+  let liveFixtureId: number;
+  let liveTriggerMade: boolean = false;
 
   let hoverBtn1: boolean = false;
   let hoverBtn2: boolean = false;
@@ -84,6 +87,231 @@ COMPONENT JS (w/ TS)
     pageFixtureMap = pageFixtureMap
     leagueMap = new Map([...leagueMap, ..._leagueMap])
     leagueMap = leagueMap
+  }
+
+  async function resetFixturesData() {
+    pageFixtureMap = new Map();
+    loadingPrev = true;
+    const response = await get(
+      `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${10}&offset=${0}&hasura=true`
+    ) as B_PFIX_D;
+    const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
+    const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
+    loadingPrev = false;
+    pageFixtureMap.set(0, _fixtureMap)
+    pageFixtureMap = pageFixtureMap
+    leagueMap = new Map([...leagueMap, ..._leagueMap])
+    leagueMap = leagueMap
+  }
+
+  /**
+   * @summary [HELPER] method
+   * @description checks wether player is currently
+   * playing in any of the live fixtures;
+   * @returns NaN
+   */
+  function validatePlayerInLineupLive () {
+
+    const liveFixturesMap = $sessionStore?.livescore_now
+
+    // iterate over livescores map fixtures
+    // looking for one where target player is playing;
+    for (const [liveId, fixtureData] of liveFixturesMap) {
+      // validate player in lineup (exist)
+      const validation_00 =
+         fixtureData?.lineup?.data == undefined
+      ;
+      if (validation_00) continue;
+      // get lineup ids of players in lineup
+      const lineupIdsList = fixtureData?.lineup?.data
+        ?.map(x => x?.player_id)
+      ;
+      const validation_0 =
+        lineupIdsList.includes(PAGE_DATA?.data?.player_id)
+      ;
+      if (validation_0) {
+
+        console.log('🔵 Player is Playing!');
+        liveFixtureId = liveId;
+        let fixtureNotExists: boolean = true;
+
+        // iterate over 1st page (map) (latest) fixtures
+        for (const [leagueId, fixtureList] of pageFixtureMap.get(0)) {
+          // obtain target fixture in
+          const targetFixture = fixtureList
+            ?.find(
+                x => 
+                x?.id == liveId
+              )
+          ;
+          const validation_1 =
+            targetFixture != undefined
+          ;
+          if (validation_1) {
+            console.log("🔴 Fixture is present")
+            fixtureNotExists = false;
+          }
+        }
+        
+        // -> if fixture is not found inside the Map-Object, inject it (somehow);
+        // -> to prevent constant infinite requests, have a single onMount toggle to stop more reuests and nullification;
+        // -> best to just call the PAGE1 fixtures endpoint again and nullify all previous MapData;
+        const validation_2 =
+          !fixtureNotExists
+          && !liveTriggerMade
+        ;
+        if (validation_2) {
+          console.log("🔴 Re-populating Fixtures for Player from Hasura")
+          // TODO:
+          resetFixturesData()
+          // Re-populate data;
+          liveTriggerMade = true;
+        }
+
+        // otherwise, inject livescores data
+        const validation_3 =
+          !fixtureNotExists
+          && liveTriggerMade
+        ;
+        if (validation_3) {
+          console.log("🔵 Injecting data!");
+          injectLivescoreData()
+        }
+
+      }
+    }
+
+  }
+
+  /**
+   * @summary [MAIN] method
+   * @description updates the information
+   * for the fixtures of current-player with
+   * real-time information in those he 
+   * is active/playing;
+   * @returns Promise < void >
+   */
+   function injectLivescoreData(
+  ) {
+
+    const liveFixture = $sessionStore?.livescore_now.get(liveFixtureId)
+    const pageViewMap = pageFixtureMap.get(0)
+
+    const validation_0 =
+      liveFixture == undefined
+      || pageViewMap == undefined
+    ;
+    if (validation_0) return;
+
+    // iterate over 1st page (map) (latest) fixtures
+    for (let [leagueId, fixtureList] of pageViewMap) {
+      // -> update target fixture data periodically with target player ID data events and what not;
+
+      fixtureList = fixtureList.map(
+        (fixture) => {
+        if (fixture?.id == liveFixtureId) {
+
+          const player_data: PFIX_Player =
+            liveFixture?.lineup?.data == null 
+            || liveFixture?.lineup?.data.length == 0
+            ? null
+            : liveFixture?.lineup?.data
+              /* find target HOME_TEAM_ID */
+              ?.filter(
+                x => 
+                x.player_id == PAGE_DATA?.data?.player_id
+              )
+              /* extract target players */
+              ?.map(
+                p => 
+                ({
+                  player_id: p.player_id,
+                  player_name: p.player_name || null,
+                  rating: p?.stats?.rating || null,
+                  captain: p?.captain || false,
+                  events: undefined
+                })
+              )[0]
+          ;
+          // reset default player.events;
+          player_data.events = {
+            injured: false,
+            yeallow_card: null,
+            red_card: null,
+            goals: null,
+            penalty: null,
+            substitution: null
+          }
+          // loop through player events;
+          for (const event of liveFixture?.events?.data) {
+            if (player_data.player_id == event.player_id) {
+              if (event.type == 'yellowcard') {
+                player_data.events.yeallow_card =
+                  player_data.events.yeallow_card == null
+                    ? 1
+                    : player_data.events.yeallow_card + 1
+                ;
+              }
+              if (event.type == 'redcard') {
+                player_data.events.red_card = 1;
+              }
+              if (event.type == 'goal') {
+                player_data.events.goals =
+                  player_data.events.goals == null
+                    ? 1
+                    : player_data.events.goals + 1
+                ;
+              }
+              if (event.type == 'penalty') {
+                player_data.events.penalty =
+                  player_data.events.penalty == null
+                    ? 1
+                    : player_data.events.penalty + 1
+                ;
+              }
+            }
+            if (player_data.player_id == event.related_player_id) {
+              if (event.injuried) {
+                player_data.events.injured = true;
+              }
+              if (event.type == 'substitution') {
+                player_data.events.substitution = event;
+              }
+            }
+          }
+
+          return {
+            // id
+            // league_id
+            // time
+            // fixture_day
+            // urls
+            // tips
+            ...fixture,
+            minute: liveFixture?.time?.minute,
+            status: liveFixture?.time?.status,
+            teams: {
+              away: {
+                name: fixture?.teams?.away?.name,
+                score: liveFixture?.scores?.visitorteam_score
+              },
+              home: {
+                name: fixture?.teams?.home?.name,
+                score: liveFixture?.scores?.localteam_score
+              }
+            },
+            player: player_data
+          };
+        }
+        return fixture
+      })
+      pageViewMap.set(
+        leagueId, 
+        fixtureList
+      )
+    }
+    pageFixtureMap.set(0, pageViewMap)
+    pageFixtureMap = pageFixtureMap;
   }
 
   $: console.log(pageFixtureMap)
@@ -129,6 +357,16 @@ COMPONENT JS (w/ TS)
 		$page?.error,
 		$page?.params?.lang
 	);
+
+  /**
+   * @description listens to changes in 
+   * livescores_now data session-store;
+   * Proceeds to update data accordingly;
+  */
+  $: if ($sessionStore?.livescore_now) {
+    // dlog($sessionStore?.livescore_now, LV2_W_H_TAG[1])
+    validatePlayerInLineupLive()
+  }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 

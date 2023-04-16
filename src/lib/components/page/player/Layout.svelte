@@ -10,14 +10,16 @@ COMPONENT JS (w/ TS)
 	import { goto, preloadData } from '$app/navigation';
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { sessionStore } from '$lib/store/session';
-	import { dlog } from '$lib/utils/debug';
+	import { dlog, dlogv2 } from '$lib/utils/debug';
+	import { listenRealTimeLivescoresNowChange, one_off_livescore_call } from '$lib/firebase/common';
 
 	import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
+	import type { Unsubscribe } from 'firebase/database';
 
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
@@ -38,6 +40,8 @@ COMPONENT JS (w/ TS)
   // $page.data.PAGE_DATA: B_SAP_PP_D
   // $page.data.B_SAP_D1: B_SAP_D1
   // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
+
+  let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
 
   let data: B_SAP_PP_D = $page.data.PAGE_DATA
   let data_0: B_SAP_PP_T = $page.data.PAGE_SEO
@@ -149,6 +153,42 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [REACTIVIY] [METHODS]
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  onMount(
+    async() => {
+    
+    await one_off_livescore_call()
+
+    let connectionRef = listenRealTimeLivescoresNowChange()
+    FIREBASE_CONNECTIONS_SET.add(connectionRef)
+
+    document.addEventListener(
+			'visibilitychange',
+			async function () {
+				if (!document.hidden) {
+          dlog('🔵 user is active', true)
+          await one_off_livescore_call()
+					let connectionRef = listenRealTimeLivescoresNowChange()
+          FIREBASE_CONNECTIONS_SET.add(connectionRef)
+				}
+			}
+		);
+  })
+
+  // CRITICAL
+	onDestroy(async () => {
+		const logsMsg: string[] = []
+		for (const connection of [...FIREBASE_CONNECTIONS_SET]) {
+      logsMsg.push('🔥 closing connection')
+			connection();
+		}
+    dlogv2(
+      `closing firebase connections`,
+      logsMsg,
+      true, 
+      'background: red; color: black;'
+    )
+	});
 
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
