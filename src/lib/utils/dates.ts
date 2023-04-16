@@ -87,7 +87,7 @@ export function toCorrectISO(
 }
 
 /**
- * @summary [HELPER method
+ * @summary [HELPER] method
  * @description converts a target date/string
  * argument to a proper, handeled user Date Object;
  * @param {Date | string} date
@@ -110,4 +110,22 @@ export function toCorrectDate(
   }
   // return Date Object
   return date;
+}
+
+/**
+ * @summary [HELPER] method
+ * @description converts a target string
+ * arugment to a leading/prefix based "0[...]" string
+ * @param {string} dateStr
+ * @returns {string} string
+ */
+export function toZeroPrefixDateStr(
+  dateStr: string | number
+): string {
+  dateStr = `0${dateStr}`
+  return dateStr
+    .slice(-2)
+    .split(' ')
+    .join('')
+  ;
 }

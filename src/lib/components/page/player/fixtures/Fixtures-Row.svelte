@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { toCorrectDate, toCorrectISO } from "$lib/utils/dates.js";
+	import { toCorrectDate, toCorrectISO, toZeroPrefixDateStr } from "$lib/utils/dates.js";
 	import { platfrom_lang_ssr } from "$lib/utils/platform-functions";
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks";
 	import type { PFIX_C_Fixture } from "@betarena/scores-lib/types/player-fixtures";
@@ -128,14 +128,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         >
           <!-- DD/MM -->
           {
-            (`0${new Date(fixture?.time + 'Z').getDate()}`.slice(-2)
+            toZeroPrefixDateStr(toCorrectDate(fixture?.time).getDate())
             + '/'
-            + `0${new Date(fixture?.time + 'Z').getMonth()}`.slice(-2)).split(' ').join('')
+            + toZeroPrefixDateStr(toCorrectDate(fixture?.time).getMonth() + 1)
           }
           <br/>
           <!-- yyyy -->
           {
-            `${new Date(fixture?.time + 'Z').getFullYear()}`
+            toCorrectDate(fixture?.time).getFullYear()
           }
         </p>
       {/if}
