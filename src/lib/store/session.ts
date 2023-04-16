@@ -1,5 +1,5 @@
-import type { FIREBASE_livescores_now } from '$lib/models/firebase';
-import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+import type { FIREBASE_livescores_now } from '@betarena/scores-lib/types/firebase.js';
+import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import { writable } from 'svelte/store';
 
 export interface Platform_Session {
@@ -16,9 +16,9 @@ export interface Platform_Session {
   /** session data on the Firebase Livescore */
   livescore_now: Map<number, FIREBASE_livescores_now>
   /** session data on the Sportbook Data */
-  sportbook_main: Cache_Single_SportbookDetails_Data_Response
+  sportbook_main: B_SPT_D
   /** session data on the Sportbook Data (List) */
-  sportbook_list: Cache_Single_SportbookDetails_Data_Response[]
+  sportbook_list: B_SPT_D[]
   /** session data on the LivescoreNow Selected Date (View) */
   livescoreNowSelectedDate: Date
   /** session data on the LivescoreNow View Type Date (View) */
