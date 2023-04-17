@@ -174,7 +174,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               dark-theme-custom-1
             "
           >
-            {toCorrectDate(FIXTURE_D?.fixture_day).getDate()/toCorrectDate(FIXTURE_D?.fixture_day).getMonth()}
+            {
+              toCorrectDate(FIXTURE_D?.fixture_day).getDate()
+              + '/'
+              + toCorrectDate(FIXTURE_D?.fixture_day).getMonth()}
           </p>
         {/if}
         <p
