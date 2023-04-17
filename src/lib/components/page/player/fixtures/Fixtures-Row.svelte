@@ -340,6 +340,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     padding: 5px 16px 5px 8px;
   }
 
+  div.fixture-time-box { 
+    min-width: 37px;
+    max-width: 37px;
+  }
+
   div.fixture-teams-box {
 		border-left: 1px var(--grey-color) solid;
 		padding-left: 8px;

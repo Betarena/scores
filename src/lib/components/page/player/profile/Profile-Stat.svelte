@@ -60,7 +60,7 @@
         w-500
         no-wrap
       ">
-      {statVal}
+      {statVal?.toString()?.replace('null', '-')}
     </p>
   {/if}
 </div>
