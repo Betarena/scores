@@ -80,6 +80,15 @@ COMPONENT JS (w/ TS)
     const response = await get(
       `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${limit}&offset=${offset}&hasura=true`
     ) as B_PFIX_D;
+    // validate: end of fixtures;
+    const validation_0 =
+      response == undefined
+    ;
+    if (validation_0) {
+      view_page = view_page - 1;
+      loadingPrev = false;
+      return;
+    }
     const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
     const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
     loadingPrev = false;
