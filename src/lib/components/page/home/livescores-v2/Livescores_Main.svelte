@@ -108,6 +108,11 @@ COMPONENT JS (w/ TS)
       const targetDate = toCorrectISO(_fixture?.time?.starting_at?.date)
       // [ℹ] obtain target date-group fixtures[]
       let fixturesArray = fixturesGroupByDateMap.get(targetDate)
+      // validate; for non-valid livefixtures;
+      const validation_0 =
+        fixturesArray == undefined
+      ;
+      if (validation_0) continue;
       // [ℹ] re-assign the modified version back to original
       // [ℹ] & persist to Map
       fixturesArray = fixturesArray.map((fixture) => {
