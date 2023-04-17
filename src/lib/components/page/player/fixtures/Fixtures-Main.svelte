@@ -141,6 +141,7 @@ COMPONENT JS (w/ TS)
       ;
       const validation_0 =
         lineupIdsList.includes(PAGE_DATA?.data?.player_id)
+        && pageFixtureMap.get(0) != undefined
       ;
       if (validation_0) {
 
