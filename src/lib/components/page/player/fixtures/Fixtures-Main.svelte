@@ -440,6 +440,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           src={hoverBtn1 == true ? arrow_left_hover : $userBetarenaSettings?.theme == "Dark" ? arrow_left_dark : arrow_left}
           alt="arrow_left"
           class="m-r-8"
+          style="object-fit: contain;"
         />
         {WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.previous || 'Previous' : 'Previous'}
       </button>
@@ -463,6 +464,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             src={hoverBtn2 == true ? arrow_right_hover : $userBetarenaSettings?.theme == "Dark" ? arrow_right_dark : arrow_right}
             alt="arrow_right"
             class="m-l-8"
+            style="object-fit: contain;"
           />
         </button>
       {/if}
