@@ -132,7 +132,11 @@ COMPONENT JS (w/ TS)
       ;
       if (validation_00) continue;
       // get lineup ids of players in lineup
-      const lineupIdsList = fixtureData?.lineup?.data
+      const mergeLineupBench = [
+        ...fixtureData?.lineup?.data,
+        ...fixtureData?.bench?.data
+      ]
+      const lineupIdsList = mergeLineupBench
         ?.map(x => x?.player_id)
       ;
       const validation_0 =
@@ -200,7 +204,7 @@ COMPONENT JS (w/ TS)
    * is active/playing;
    * @returns Promise < void >
    */
-   function injectLivescoreData(
+  function injectLivescoreData(
   ) {
 
     const liveFixture = $sessionStore?.livescore_now.get(liveFixtureId)
@@ -220,20 +224,20 @@ COMPONENT JS (w/ TS)
         (fixture) => {
         if (fixture?.id == liveFixtureId) {
 
+          const mergeLineupBench = [
+            ...liveFixture?.lineup?.data,
+            ...liveFixture?.bench?.data
+          ]
+
           const player_data: PFIX_Player =
-            liveFixture?.lineup?.data == null 
-            || liveFixture?.lineup?.data.length == 0
-            ? null
-            : liveFixture?.lineup?.data
-              /* find target HOME_TEAM_ID */
-              ?.filter(
-                x => 
-                x.player_id == PAGE_DATA?.data?.player_id
-              )
-              /* extract target players */
-              ?.map(
-                p => 
-                ({
+            mergeLineupBench == null 
+            || mergeLineupBench.length == 0
+              ? null
+              : mergeLineupBench
+                /* find target PLAYER_ID [lineups] */
+                ?.filter(x => x.player_id == PAGE_DATA?.data?.player_id)
+                /* extract target player, with target data */
+                ?.map(p => ({
                   player_id: p.player_id,
                   player_name: p.player_name || null,
                   rating: p?.stats?.rating || null,
