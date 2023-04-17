@@ -35,14 +35,18 @@
       class="
         row-space-start
       ">
-      <img 
-        src={countryImg}
-        alt='country-logo'
-        width="18"
-        height="18"
-        id="country-icon"
+      <div
+        id="country-icon-box"
         class="m-r-8"
-      />
+      >
+        <img
+          src={countryImg}
+          alt="country-logo"
+          width="18"
+          height="18"
+          id="country-icon"
+        />
+      </div>
       <p
         class="
           s-14
@@ -81,11 +85,17 @@
     min-width: 87px;
   }
 
-  img#country-icon {
-    border-radius: 40px;
+  div#country-icon-box {
+    overflow: hidden;
     border: 1px solid var(--grey-shade);
+    border-radius: 40px;
+    width: 18px;
+    height: 18px;
+  } img#country-icon {
     width: auto;
     max-height: 100%;
+    object-fit: contain;
+    scale: 1.4;
   }
 
   /*
