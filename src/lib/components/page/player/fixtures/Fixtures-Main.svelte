@@ -123,24 +123,30 @@ COMPONENT JS (w/ TS)
 
     const liveFixturesMap = $sessionStore?.livescore_now
 
+    if (liveFixturesMap == undefined) return
+
     // iterate over livescores map fixtures
     // looking for one where target player is playing;
     for (const [liveId, fixtureData] of liveFixturesMap) {
       // validate player in lineup (exist)
       const validation_00 =
-         fixtureData?.lineup?.data == undefined
+        (fixtureData?.lineup?.data == undefined
+        || fixtureData?.lineup?.data.length == 0)
+        && (fixtureData?.bench?.data == undefined
+        || fixtureData?.bench?.data.length == 0)
       ;
       if (validation_00) continue;
       // get lineup ids of players in lineup
       const mergeLineupBench = [
-        ...fixtureData?.lineup?.data,
-        ...fixtureData?.bench?.data
+        ...fixtureData?.lineup?.data || [],
+        ...fixtureData?.bench?.data || []
       ]
-      const lineupIdsList = mergeLineupBench
+      const lineupBenchIdsList = mergeLineupBench
         ?.map(x => x?.player_id)
       ;
       const validation_0 =
-        lineupIdsList.includes(PAGE_DATA?.data?.player_id)
+        lineupBenchIdsList.includes(PAGE_DATA?.data?.player_id)
+        && pageFixtureMap != undefined
         && pageFixtureMap.get(0) != undefined
       ;
       if (validation_0) {

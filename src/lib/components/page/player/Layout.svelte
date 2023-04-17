@@ -7,16 +7,16 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-	import { goto, preloadData } from '$app/navigation';
 	import { browser } from '$app/environment';
+	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { sessionStore } from '$lib/store/session';
-	import { dlog, dlogv2 } from '$lib/utils/debug';
 	import { listenRealTimeLivescoresNowChange, one_off_livescore_call } from '$lib/firebase/common';
+	import { sessionStore } from '$lib/store/session';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { dlog, dlogv2 } from '$lib/utils/debug';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 
 	import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
 	import type { Unsubscribe } from 'firebase/database';
@@ -323,10 +323,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		/* widget layout */
 		div#widget-grid-display {
 			gap: 20px;
-			grid-template-columns: minmax(auto, 850px) minmax(
-					auto,
-					502px
-				);
+			grid-template-columns: 
+        minmax(850px, 850px) 
+        minmax(auto, 502px)
+      ;
 		}
 	}
 
@@ -336,10 +336,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			display: grid;
 			align-items: start;
 			gap: 20px;
-			grid-template-columns: minmax(auto, 850px) minmax(
-					auto,
-					502px
-				);
+			grid-template-columns: 
+        minmax(850px, 850px) 
+        minmax(auto, 502px)
+      ;
 		}
 	}
 
