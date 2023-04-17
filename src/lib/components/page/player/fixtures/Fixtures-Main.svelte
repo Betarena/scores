@@ -53,7 +53,7 @@ COMPONENT JS (w/ TS)
 
   let view_page: number = 0;
   let limit: number = 10;
-  let offset: number = 10;
+  let offset: number = 0;
   let loadingPrev: boolean = false;
   let liveFixtureId: number;
   let liveTriggerMade: boolean = false;
