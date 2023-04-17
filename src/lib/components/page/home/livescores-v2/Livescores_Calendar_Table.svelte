@@ -12,7 +12,7 @@ COMPONENT JS (w/ TS)
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { WEEK_DAYS_ABBRV_2, monthNames, toCorrectISO } from '$lib/utils/dates';
-  import { LV2_W_H_TAG, dlog } from '$lib/utils/debug';
+  import { LV2_W_H_TAG, dlog, dlogv2 } from '$lib/utils/debug';
   import { viewport_change } from '$lib/utils/platform-functions';
   import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import { onMount } from 'svelte';
@@ -67,49 +67,66 @@ COMPONENT JS (w/ TS)
     const s_date = new Date(tDate)
     const e_date = new Date(tDate)
     numberOfMonthWeeks = Math.floor(daysInMonth(month+1, year) / 5) // NOTE: should be / 7
-    dlog(`${LV2_W_H_TAG[0]} daysInMonth(): ${daysInMonth(month, year) }`)
-    dlog(`${LV2_W_H_TAG[0]} numberOfMonthWeeks: ${numberOfMonthWeeks}`)
     let count = 0
     // [ℹ] start counting from 1st of (selected) month
     s_date.setDate(1);
     e_date.setDate(1);
     monthWeeksArray = []
-    dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()}`)
-    dlog(`${LV2_W_H_TAG[0]} s_date.getUTCDate() : ${s_date.getUTCDate()}`)
-    dlog(`${LV2_W_H_TAG[0]} s_date.getUTCDay() : ${s_date.getUTCDay()}`)
+    dlogv2(
+			LV2_W_H_TAG[0],
+			[
+				`daysInMonth(): ${daysInMonth(month, year) }`,
+				`numberOfMonthWeeks: ${numberOfMonthWeeks}`,
+				`s_date: ${s_date.toISOString()}`,
+				`s_date.getDate() : ${s_date.getDate()}`,
+        `s_date.getDay() : ${s_date.getDay()}`
+			],
+			LV2_W_H_TAG[1],
+			LV2_W_H_TAG[2]
+		);
     while (true) {
       // [ℹ] exit;
       if (count >= numberOfMonthWeeks) {
         break;
       }
       const startWeekCalc = 
-        s_date.getUTCDay() == 0
-        && e_date.getUTCDay() == 0
-          ? (s_date.getUTCDate() - 6)
-          : (s_date.getUTCDate() - s_date.getUTCDay() + 1)
+        s_date.getDay() == 0
+        && e_date.getDay() == 0
+          ? (s_date.getDate() - 6)
+          : (s_date.getDate() - s_date.getDay() + 1)
       const endWeekCalc = 
-        s_date.getUTCDay() == 0
-        && e_date.getUTCDay() == 0
-          ? (s_date.getUTCDate() - 0)
-          : (s_date.getUTCDate() - s_date.getUTCDay() + 7)
+        s_date.getDay() == 0
+        && e_date.getDay() == 0
+          ? (s_date.getDate() - 0)
+          : (s_date.getDate() - s_date.getDay() + 7)
       s_date.setDate(startWeekCalc);
       e_date.setDate(endWeekCalc);
       let times = 8
       let weekDates: Date[] = []
       for (let i = 1; i < times; i++){
         let weekStart = new Date(s_date)
-        weekStart.setDate(s_date.getUTCDate() - s_date.getUTCDay() + i)
+        weekStart.setDate(s_date.getDate() - s_date.getDay() + i)
         weekDates.push(new Date(weekStart))
       }
       monthWeeksArray.push({
-        weekStart: s_date.getUTCDate(),
-        weekEnd: e_date.getUTCDate(),
+        weekStart: s_date.getDate(),
+        weekEnd: e_date.getDate(),
         weekDates
       })
-      s_date.setDate(s_date.getUTCDate() + 7);
-      e_date.setDate(e_date.getUTCDate() + 7);
+      s_date.setDate(s_date.getDate() + 7);
+      e_date.setDate(e_date.getDate() + 7);
       count++
-      dlog(`${LV2_W_H_TAG[0]} s_date: ${s_date.toISOString()} | s_date.getUTCDate(): ${s_date.getUTCDate()} | s_date.getUTCDay(): ${s_date.getUTCDay()} | count: ${count}`, true)
+      dlogv2(
+        LV2_W_H_TAG[0],
+        [
+          `s_date: ${s_date.toISOString()}`,
+          `s_date.getDate() : ${s_date.getDate()}`,
+          `s_date.getDay() : ${s_date.getDay()}`,
+          `count: ${count}`
+        ],
+        LV2_W_H_TAG[1],
+        LV2_W_H_TAG[2]
+      );
     }
     dlog(monthWeeksArray, true)
   }
@@ -152,7 +169,7 @@ COMPONENT JS (w/ TS)
     month: number, 
     year: number
   ): number {
-    return new Date(year, month, 0).getUTCDate();
+    return new Date(year, month, 0).getDate();
   }
   
   /**
@@ -287,7 +304,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 class:notViewMonth={item.getMonth() != tempDate.getMonth()}
                 on:click={() => dateChange(item)}
               >
-                {item.getUTCDate()}
+                {item.getDate()}
               </td>
             {/each}
           </tr>
