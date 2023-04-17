@@ -43,7 +43,7 @@ COMPONENT JS (w/ TS)
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
   $: PAGE_DATA = $page.data?.PAGE_DATA
 
-  let WIDGET_TITLE = 'Fixtures'
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
 
   let pageFixtureMap: Map <number, Map <string, PFIX_C_Fixture[]>> = new Map();
   const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
@@ -335,9 +335,10 @@ COMPONENT JS (w/ TS)
 	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	const TABLET_VIEW = 1160;
+	const TABLET_VIEW = 1024;
 	const MOBILE_VIEW = 475;
-	let mobileExclusive, tabletExclusive: boolean = false;
+	let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		[tabletExclusive, mobileExclusive] =
@@ -410,7 +411,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
-    OVERRIDE_COLOR={false}
+    OVERRIDE_COLOR={mobileExclusive || tabletExclusive}
   />
   
   <div
@@ -594,7 +595,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     padding-top: 0;
     margin-top: 0;
   } div#fixtures-list-box a div.league-group-box {
-    border-top: 1px solid var(--grey-shade);
+    border-top: 1px solid var(--grey-color);
     padding-top: 18px;
   } 
 

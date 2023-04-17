@@ -5,28 +5,8 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // IMPORTS GO HERE
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // IMPORTS GO HERE
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
-
-  //#region ➤ Types Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Assets Imports
 
   //#endregion ➤ [MAIN] Package Imports
 

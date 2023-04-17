@@ -368,8 +368,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     min-width: 29px;
     max-width: 29px;
     padding: 0 11px;
-    border-left: 1px solid var(--grey-shade);
-    border-right: 1px solid var(--grey-shade);
+    border-left: 1px solid var(--grey-color);
+    border-right: 1px solid var(--grey-color);
   }
 
   .team-lost-style {
@@ -382,13 +382,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div.fixture-row p#box-goals {
 		box-sizing: border-box;
-		text-align: center;
-		border-radius: 12px;
-		padding: 1.5px 8px;
-		max-height: 24px;
+    text-align: center;
+    border-radius: 12px;
+    padding: 1.5px 0px;
+    max-height: 24px;
     min-width: 44px;
-		width: auto;
-		color: var(--white);
+    max-width: 44px;
+    width: auto;
+    color: var(--white);
 	}
 	div.fixture-row p#box-goals.rating_golden {
 		background-color: #ffb904 !important;
