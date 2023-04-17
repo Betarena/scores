@@ -80,6 +80,8 @@ COMPONENT JS (w/ TS)
       days_3_future
     ]
 
+    console.log(fixture_dates)
+
   }
 
   generateThisWeekDates()

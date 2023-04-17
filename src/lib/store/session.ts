@@ -1,3 +1,4 @@
+import { clientTimezoneDate } from '$lib/utils/dates.js';
 import type { FIREBASE_livescores_now } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import { writable } from 'svelte/store';
@@ -41,15 +42,12 @@ const seassion_store: Platform_Session = {
   livescore_now: undefined,
   sportbook_main: undefined,
   sportbook_list: undefined,
-  livescoreNowSelectedDate: new Date(),
+  livescoreNowSelectedDate: clientTimezoneDate(),
   livescoreFixtureView: 'all',
   livescoreShowCalendar: false,
   fixturesTodayNum: 0,
-  userDate: new Date()
+  userDate: clientTimezoneDate()
 };
-
-// useful [?]
-// var timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
 
 function createLocalStore() {
 	const { subscribe, set, update } = writable(
