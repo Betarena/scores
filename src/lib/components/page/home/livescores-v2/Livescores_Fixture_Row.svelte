@@ -8,37 +8,19 @@ COMPONENT JS (w/ TS)
   // IMPORTS GO HERE
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // IMPORTS GO HERE
-	import { onMount } from "svelte";
-  //#endregion ➤ Svelte/SvelteKit Imports
-
-  //#region ➤ Project Custom Imports
-  // (imports here)
-  import { sessionStore } from "$lib/store/session";
-  //
+	import { page } from "$app/stores";
+	import { sessionStore } from "$lib/store/session";
 	import { userBetarenaSettings } from "$lib/store/user-settings";
-  //#endregion ➤ Project Custom Imports
-
-  //#region ➤ Firebase Imports
-  // IMPORTS GO HERE
-  //#endregion ➤ Firebase Imports
-
-  //#region ➤ Types Imports
-  // IMPORTS GO HERE
+	import { toCorrectDate, toCorrectISO } from "$lib/utils/dates.js";
+	import { viewport_change } from "$lib/utils/platform-functions";
 	import type { B_LS2_T, LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  import { page } from "$app/stores";
-  import { viewport_change } from "$lib/utils/platform-functions";
-  import one_red_card from './assets/1_red_card.svg';
-  import one_red_card_dark from './assets/1_red_card_dark.svg';
-  import two_red_card from './assets/2_red_cards.svg';
-  import two_red_card_dark from './assets/2_red_cards_dark.svg';
-  import three_red_card from './assets/3_red_cards.svg';
-  import three_red_card_dark from './assets/3_red_cards_dark.svg';
-  //#endregion ➤ Assets Imports
+	import { onMount } from "svelte";
+	import one_red_card from './assets/1_red_card.svg';
+	import one_red_card_dark from './assets/1_red_card_dark.svg';
+	import two_red_card from './assets/2_red_cards.svg';
+	import two_red_card_dark from './assets/2_red_cards_dark.svg';
+	import three_red_card from './assets/3_red_cards.svg';
+	import three_red_card_dark from './assets/3_red_cards_dark.svg';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -47,8 +29,6 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
-
-  const today = new Date()
 
   export let FIXTURE_D: LS2_C_Fixture
   export let server_side_language: string
@@ -82,7 +62,7 @@ COMPONENT JS (w/ TS)
 			window.gtag(
 				'event',
 				'livescore_betting_tips',
-				{
+				{ 
 					event_category:
 						'widget_livescores_v2',
 					event_label: 'click_betting_site_logo',
@@ -108,18 +88,6 @@ COMPONENT JS (w/ TS)
 			return;
 		}
 	}
-
-  /**
-   * @description converts a target date to an
-   * ISO_string of yyyy-MM-dd format;
-   * @param {Date} date
-   * @returns {string} string
-   */
-   function convert_to_iso(
-    date: Date
-  ): string {
-    return date.toISOString().slice(0, 10)
-  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -197,7 +165,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if FIXTURE_D?.status === 'LIVE'}
-        {#if convert_to_iso(today) != convert_to_iso(new Date(FIXTURE_D?.fixture_day))}
+        {#if toCorrectISO($sessionStore.userDate) != toCorrectISO(FIXTURE_D?.fixture_day)}
           <p
             class="
               no-wrap
@@ -206,7 +174,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               dark-theme-custom-1
             "
           >
-            {new Date(FIXTURE_D?.fixture_day).getDate()/new Date(FIXTURE_D?.fixture_day).getMonth()}
+            {
+              toCorrectDate(FIXTURE_D?.fixture_day).getDate()
+              + '/'
+              + toCorrectDate(FIXTURE_D?.fixture_day).getMonth()}
           </p>
         {/if}
         <p
@@ -248,9 +219,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           "
           class:color-grey={['FT','FT_PEN','AET'].includes(FIXTURE_D?.status)}
         >
-          {(`0${new Date(FIXTURE_D?.time + 'Z').getHours()}`.slice(-2)
+          {(`0${toCorrectDate(FIXTURE_D?.time).getHours()}`.slice(-2)
           + ':'
-          + `0${new Date(FIXTURE_D?.time + 'Z').getMinutes()}`.slice(-2))
+          + `0${toCorrectDate(FIXTURE_D?.time).getMinutes()}`.slice(-2))
           .split(' ').join('')}
         </p>
         <!-- 

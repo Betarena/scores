@@ -1,0 +1,49 @@
+# ....................................
+# ... GITHUB ACIONS CI/CD WORKFLOW ...
+# ....................................
+
+name: Main (PR) Build CI
+
+'on':
+  pull_request:
+    types:
+      - opened
+      - synchronize
+    branches:
+      - main
+      - dev
+  push:
+    branches:
+      - dev
+
+env:
+  DOCKER_IMAGE: 'scores_web'
+
+jobs:
+
+  npm-build-check:
+    name: NPM Build Check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: dev
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16.17.0
+      - run: npm install -g npm@8.19.1
+      - name: 'Build npm'
+        run: |
+          npm ci
+          npm install
+          npm run build
+
+  docker-image-build:
+    needs: npm-build-check
+    name: Docker Image Build
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Build docker image
+        run: |
+          docker build . --file Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)

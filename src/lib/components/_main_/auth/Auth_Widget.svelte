@@ -44,9 +44,9 @@ COMPONENT JS (w/ TS)
   	db_firestore
   } from '$lib/firebase/init';
   import {
-  	fetchSignInMethodsForEmail,
   	GithubAuthProvider,
   	GoogleAuthProvider,
+  	fetchSignInMethodsForEmail,
   	isSignInWithEmailLink,
   	sendSignInLinkToEmail,
   	signInWithCustomToken,
@@ -415,8 +415,7 @@ COMPONENT JS (w/ TS)
 			const callback_auth_url =
 				$page?.url?.origin;
       dlog(`${AU_W_TAG} callback_auth_url: ${callback_auth_url}`, AU_W_TOG, AU_W_STY)
-			const discord_outh_url = import.meta.env
-				.VITE_DISCORD_OAUTH_URL;
+			const discord_outh_url = import.meta.env?.VITE_DISCORD_OAUTH_URL;
 			const final_url_nav = `${discord_outh_url}?redirect_url=${callback_auth_url}`;
 			// [ℹ] initiate discord OAuth2
 			goto(final_url_nav);

@@ -1,4 +1,4 @@
-import { dlog, dlogv2, NB_W_TAG } from "./debug";
+import { dlog, dlogv2, NB_W_TAG, NB_W_TOG } from "./debug";
 
 /**
  * @description Simple function
@@ -20,7 +20,7 @@ export function platfrom_lang_ssr(
       `page_error: ${JSON.stringify(page_error, null, 2)}`,
       `page_params_lang: ${page_params_lang}`
     ],
-    true
+    NB_W_TOG
   )
 	// NOTE: default (EN)
 	let server_side_language = 'en';
@@ -38,7 +38,7 @@ export function platfrom_lang_ssr(
       ? page_params_lang
       : 'en'
   ;
-  dlog(`${NB_W_TAG} server_side_language ➡️ ${server_side_language}`, true)
+  dlog(`${NB_W_TAG} server_side_language ➡️ ${server_side_language}`, NB_W_TOG)
 	return server_side_language;
 }
 

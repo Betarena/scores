@@ -14,18 +14,14 @@ import { GraphQLClient } from 'graphql-request';
  * @returns
  */
 export function initGrapQLClient(): GraphQLClient {
-	// ...
-	const endpoint =
-		import.meta.env.VITE_HASURA_DB_URL.toString();
-	// ...
+	const endpoint = import.meta.env?.VITE_HASURA_DB_URL as string;
 	const graphQLClient = new GraphQLClient(
 		endpoint,
 		{
 			headers: {
-				'x-hasura-admin-secret': `${import.meta.env.VITE_HASURA_DB_TOKEN.toString()}`
+				'x-hasura-admin-secret': `${import.meta.env?.VITE_HASURA_DB_TOKEN as string}`
 			}
 		}
 	);
-	// ...
 	return graphQLClient;
 }

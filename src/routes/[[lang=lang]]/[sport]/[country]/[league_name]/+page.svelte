@@ -94,49 +94,10 @@
 		let newURL: string;
 
 		// [ℹ] identify new transaltion change;
-		for (const tournament_t of TOURNAMENT_DATA_TRANSLATED_COPIES) {
-			if (
-				tournament_t.lang ==
-				$userBetarenaSettings.lang
-			) {
-				// [ℹ] formatting;
-				let lang: string = removeDiacritics(
-					tournament_t.lang
-						.toLowerCase()
-						.replace(/\s+/g, '-')
-						.replace(/\./g, '')
-				);
-				let sport: string = removeDiacritics(
-					tournament_t.sport
-						.toLowerCase()
-						.replace(/\s+/g, '-')
-						.replace(/\./g, '')
-				);
-				let country: string = removeDiacritics(
-					tournament_t.country
-						.toLowerCase()
-						.replace(/\s+/g, '-')
-						.replace(/\./g, '')
-				);
-				let name: string = removeDiacritics(
-					tournament_t.name
-						.toLowerCase()
-						.replace(/\s+/g, '-')
-						.replace(/\./g, '')
-				);
+    newURL = TOURNAMENT_DATA?.urls[refresh_lang]?.replace('https://scores.betarena.com', '')
+    current_lang = refresh_lang;
 
-				// [ℹ] URL generation;
-				newURL =
-					tournament_t.lang == 'en'
-						? `/${sport}/${country}/${name}`
-						: `/${lang}/${sport}/${country}/${name}`;
-
-				// [ℹ] update lang;
-				current_lang = refresh_lang;
-			}
-		}
-
-		// [ℹ] navigate [options];
+		// [ℹ] navigate [alternatives];
 		// invalidate('/api/cache/tournaments/cache-data.json');
 		// prefetch(newURL);
 		goto(newURL, { replaceState: true });

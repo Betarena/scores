@@ -1,7 +1,8 @@
 import {
   getApp,
   getApps,
-  initializeApp
+  initializeApp,
+  type FirebaseOptions
 } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getDatabase } from 'firebase/database';
@@ -9,12 +10,12 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // NOTE: firebase config with non-auth properties skipped;
-const firebaseConfig = {
-	apiKey:	import.meta.env.VITE_FIREBASE_DB_API_KEY.toString(),
-	authDomain:	import.meta.env.VITE_FIREBASE_DB_AUTH_DOMAIN_MAIN.toString(),
-	projectId: import.meta.env.VITE_FIREBASE_DB_PROJECT_ID_MAIN.toString(),
-	databaseURL: import.meta.env.VITE_FIREBASE_DB_DATABASE_URL.toString(),
-	storageBucket: import.meta.env.VITE_FIREBASE_DB_STORAGE_BUCKET.toString()
+const firebaseConfig: FirebaseOptions = {
+	apiKey:	import.meta.env?.VITE_FIREBASE_DB_API_KEY as string,
+	authDomain:	import.meta.env?.VITE_FIREBASE_DB_AUTH_DOMAIN_MAIN as string,
+	projectId: import.meta.env?.VITE_FIREBASE_DB_PROJECT_ID_MAIN as string,
+	databaseURL: import.meta.env?.VITE_FIREBASE_DB_DATABASE_URL as string,
+	storageBucket: import.meta.env?.VITE_FIREBASE_DB_STORAGE_BUCKET as string
 };
 
 // DOC: https://stackoverflow.com/questions/37652328/how-to-check-if-a-firebase-app-is-already-initialized-on-android/41005100#41005100

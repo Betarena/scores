@@ -7,48 +7,24 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // <-imports-go-here->
-  // -
-	import { goto, preloadData } from '$app/navigation';
-  // -
 	import { browser } from '$app/environment';
-  // -
+	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
-  // -
-	import { onMount } from 'svelte';
-  // -
-  //#endregion ➤ Svelte/SvelteKit Imports
+	import { onDestroy, onMount } from 'svelte';
 
-  //#region ➤ Project Custom Imports
-  // <-imports-go-here->
-  // -
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-  // -
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-  // -
+	import { listenRealTimeLivescoresNowChange, one_off_livescore_call } from '$lib/firebase/common';
 	import { sessionStore } from '$lib/store/session';
-  // -
-	import { dlog } from '$lib/utils/debug';
-  // -
-  //#endregion ➤ Project Custom Imports
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { dlog, dlogv2 } from '$lib/utils/debug';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 
-  //#region ➤ [PLUGIN] Firebase Imports
-  // <-imports-go-here->
-  //#endregion ➤ [PLUGIN] Firebase Imports
-
-  //#region ➤ Types Imports
-  // <-imports-go-here->
 	import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Assets Imports
-  // <-imports-go-here->
-  // import profile_avatar from './assets/profile-avatar.svg';
-  //#endregion ➤ Assets Imports
+	import type { Unsubscribe } from 'firebase/database';
 
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
+	import FixturesWidget from './fixtures/Fixtures-Widget.svelte';
+	import ProfileWidget from './profile/Profile-Widget.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -64,6 +40,8 @@ COMPONENT JS (w/ TS)
   // $page.data.PAGE_DATA: B_SAP_PP_D
   // $page.data.B_SAP_D1: B_SAP_D1
   // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
+
+  let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
 
   let data: B_SAP_PP_D = $page.data.PAGE_DATA
   let data_0: B_SAP_PP_T = $page.data.PAGE_SEO
@@ -176,6 +154,42 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
+  onMount(
+    async() => {
+    
+    await one_off_livescore_call()
+
+    let connectionRef = listenRealTimeLivescoresNowChange()
+    FIREBASE_CONNECTIONS_SET.add(connectionRef)
+
+    document.addEventListener(
+			'visibilitychange',
+			async function () {
+				if (!document.hidden) {
+          dlog('🔵 user is active', true)
+          await one_off_livescore_call()
+					let connectionRef = listenRealTimeLivescoresNowChange()
+          FIREBASE_CONNECTIONS_SET.add(connectionRef)
+				}
+			}
+		);
+  })
+
+  // CRITICAL
+	onDestroy(async () => {
+		const logsMsg: string[] = []
+		for (const connection of [...FIREBASE_CONNECTIONS_SET]) {
+      logsMsg.push('🔥 closing connection')
+			connection();
+		}
+    dlogv2(
+      `closing firebase connections`,
+      logsMsg,
+      true, 
+      'background: red; color: black;'
+    )
+	});
+
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
@@ -248,6 +262,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   id="section-player-page">
 
   <Breadcrumb />
+  <ProfileWidget/>
+
+  <div id="widget-grid-display">
+    <div
+      class="grid-display-column">
+      <FixturesWidget />
+    </div>
+  </div>
 
 </section>
 
@@ -265,18 +287,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		align-items: start;
   }
 
-  /* #region ❌ [NOT WORKING] w/ regions */
-  div#example {
-    color: var(--dark-theme);
-    /* background-color: var(); */
-  } div#example > div#target {
-  }
-  /* #endregion ❌ [NOT WORKING] w/ regions */
+  /* widget layout */
+	div#widget-grid-display {
+		display: grid;
+		margin-top: 24px;
+		align-items: start;
+	}
 
-  div#example {
-    color: var(--dark-theme);
-  } div#example > div#target {
-  }
+	/* widget layout-inner */
+	div.grid-display-column {
+		display: grid;
+		grid-template-columns: 1fr;
+		gap: 24px;
+	}
 
   /*
   =============
@@ -288,6 +311,37 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     and (min-width: 726px) 
     and (max-width: 1000px) {
   }
+
+	@media only screen and (min-width: 768px) {
+		/* widget layout */
+		div#widget-grid-display {
+			grid-template-columns: 1fr;
+		}
+	}
+
+	@media only screen and (min-width: 1160px) {
+		/* widget layout */
+		div#widget-grid-display {
+			gap: 20px;
+			grid-template-columns: 
+        minmax(850px, 850px) 
+        minmax(auto, 502px)
+      ;
+		}
+	}
+
+	@media only screen and (min-width: 1320px) {
+		/* widget layout */
+		div#widget-grid-display {
+			display: grid;
+			align-items: start;
+			gap: 20px;
+			grid-template-columns: 
+        minmax(850px, 850px) 
+        minmax(auto, 502px)
+      ;
+		}
+	}
 
   /*
   =============

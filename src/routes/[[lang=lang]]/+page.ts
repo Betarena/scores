@@ -18,6 +18,8 @@ export async function load({
 	fetch
 }): Promise<PageLoad> {
 
+  const t0 = performance.now();
+
 	const urlLang: string =
 		params.lang == undefined 
       ? 'en' 
@@ -38,7 +40,7 @@ export async function load({
 		`/api/cache/home/leagues_table?lang=${urlLang}`,
 		`/api/cache/home/seo_block?lang=${urlLang}`,
 		`/api/cache/home/livescores-v2?lang=${urlLang}`,
-		`/api/cache/home/livescores-v2?seo=true`,
+		`/api/cache/home/livescores-v2?seo=true&lang=${urlLang}`,
 		// [ℹ] page validation check;
 		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`
 	];
@@ -103,6 +105,9 @@ export async function load({
 			HOME_LANG_PAGE_ERROR_MSG
 		);
 	}
+
+  const t1 = performance.now();
+  dlog(`⏳ [HOME] preload ${(t1 - t0) / 1000} sec`, true)
 
 	// FIXME: types not working
 	return {

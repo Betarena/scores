@@ -6,20 +6,13 @@
 
 import Redis from 'ioredis';
 
-// [ℹ] declare the REDIS connection URL;
-const connectionString =
-	import.meta.env.VITE_REDIS_HOST.toString();
+const connectionString = import.meta.env?.VITE_REDIS_HOST as string;
 
-// [ℹ] return EXPORT of RADIS instance;
 export default connectionString
 	? new Redis({
-			host: import.meta.env.VITE_REDIS_HOST,
-			port: parseInt(
-				import.meta.env.VITE_REDIS_PORT
-			),
-			password: import.meta.env.VITE_REDIS_PASS,
-			db: parseInt(
-				import.meta.env.VITE_REDIS_CACHE_DB
-			)
+			host: import.meta.env?.VITE_REDIS_HOST as string,
+			port: import.meta.env?.VITE_REDIS_PORT as number,
+			password: import.meta.env?.VITE_REDIS_PASS as string,
+			db: import.meta.env?.VITE_REDIS_CACHE_DB as number
 	  })
 	: new Redis();

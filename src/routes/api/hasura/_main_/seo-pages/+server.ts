@@ -73,12 +73,14 @@ async function main_player_page_data (
   )
   res?.scores_football_players_v2[0]?.teams_j.sort((a,b) => b?.id - a?.id)
   const today = new Date();
-  const team_id = res?.scores_football_players_v2[0]?.teams_j
+  let team_id = res?.scores_football_players_v2[0]?.teams_j
     ?.find(({ end, start }) => 
       new Date(end).getTime() > today.getTime()
       && new Date(start).getTime() < today.getTime()
     )?.team_id
   ;
+  // default (fallback) to first-available team-id
+  if (team_id == undefined) team_id = res?.scores_football_players_v2[0]?.teams_j[0].team_id
 
   // console.log('team_id', team_id)
 
