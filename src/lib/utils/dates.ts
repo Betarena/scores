@@ -66,13 +66,13 @@ export const monthNames = [
  * @returns Date
  */
 export function clientTimezoneDate() {
-  const d = new Date();
+  const date = new Date();
   // const timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
-  // d.setHours(d.getHours() + timeOffsetInHours)
-  console.log('Client Date', d)
+  // date.setHours(date.getHours() + timeOffsetInHours)
+  console.log('Client Date', date)
   // alternative (option);
-  // d.setTime( d.getTime() - new Date().getTimezoneOffset()*60*1000 );
-  return d
+  // date.setTime( date.getTime() - new Date().getTimezoneOffset()*60*1000 );
+  return date
 }
 
 /**
