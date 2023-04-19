@@ -145,7 +145,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         cursor-pointer
       "
       class:activeDate={item == toISOMod($sessionStore.livescoreNowSelectedDate, true)}
-      on:click={() => $sessionStore.livescoreNowSelectedDate = toCorrectDate(item)}>
+      on:click={() => $sessionStore.livescoreNowSelectedDate = toCorrectDate(item, false)}>
       <p
         class="
           s-14
