@@ -186,7 +186,7 @@ COMPONENT JS (w/ TS)
     dlog(`nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`, LV2_W_H_TAG[1])
 
     // get "this" country "geo" data;
-    let geo_leagueIds_reference_numb_array = get_target_country_leagues_array()
+    let geo_leagueIds_reference_numb_array = getRefLeagueIdList()
     
     // keep only "this" date league-id's;
     nonEmptyLeaguesArray = [...leagueMap.values()]
@@ -256,6 +256,20 @@ COMPONENT JS (w/ TS)
         )
     ;
     liveLeaguesIds = [...new Set(liveLeaguesIds)]
+
+    let geoRefIdList = getRefLeagueIdList()
+
+    liveLeaguesIds = liveLeaguesIds.sort(
+      (
+        a, 
+        b
+      ) => {       
+      const index1 = geoRefIdList.indexOf(a);       
+      const index2 = geoRefIdList.indexOf(b);       
+      return (         
+        (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)      
+      );
+    });
 
     for (const id of liveLeaguesIds) {
       const leagueFixtures = liveFixturesList
@@ -362,7 +376,7 @@ COMPONENT JS (w/ TS)
    * order data as a number[];
    * @returns {number[]} number[]
    */
-  function get_target_country_leagues_array(
+  function getRefLeagueIdList(
   ): number[] {
     let geo_leagueIds_reference_array = 
       WIDGET_DATA?.leagues_geo_list
@@ -407,7 +421,6 @@ COMPONENT JS (w/ TS)
   */
   $: if ($sessionStore?.livescore_now_scoreboard) {
     dlog($sessionStore?.livescore_now_scoreboard, LV2_W_H_TAG[1])
-    console.log("🔥 HOT_SWAP")
     injectLivescoreData()
     updateLiveInfo()
   }
