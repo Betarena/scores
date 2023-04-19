@@ -166,7 +166,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <!-- 
       [ℹ] fixture == LIVE | minute show
       -->
-      {#if FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_D?.status)}
+      {#if FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_D?.status) && FIXTURE_D?.status != "HT"}
         {#if toISOMod($sessionStore.userDate) != toISOMod(FIXTURE_D?.fixture_day)}
           <p
             class="
