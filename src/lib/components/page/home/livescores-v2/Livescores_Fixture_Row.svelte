@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { page } from "$app/stores";
 	import { sessionStore } from "$lib/store/session";
 	import { userBetarenaSettings } from "$lib/store/user-settings";
-	import { toCorrectDate, toCorrectISO } from "$lib/utils/dates.js";
+	import { toCorrectDate, toISOMod, toZeroPrefixDateStr } from "$lib/utils/dates.js";
 	import { viewport_change } from "$lib/utils/platform-functions";
 	import type { B_LS2_T, LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
 	import { onMount } from "svelte";
@@ -165,7 +165,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if FIXTURE_D?.status === 'LIVE'}
-        {#if toCorrectISO($sessionStore.userDate) != toCorrectISO(FIXTURE_D?.fixture_day)}
+        {#if toISOMod($sessionStore.userDate, true) != toISOMod(FIXTURE_D?.fixture_day, false)}
           <p
             class="
               no-wrap
@@ -174,10 +174,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               dark-theme-custom-1
             "
           >
+            <!-- user-client date/time -->
             {
-              toCorrectDate(FIXTURE_D?.fixture_day).getDate()
+              toCorrectDate(FIXTURE_D?.fixture_day, false).getDate()
               + '/'
-              + toCorrectDate(FIXTURE_D?.fixture_day).getMonth()}
+              + (toCorrectDate(FIXTURE_D?.fixture_day, false).getMonth() + 1)
+            }
           </p>
         {/if}
         <p
@@ -219,10 +221,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           "
           class:color-grey={['FT','FT_PEN','AET'].includes(FIXTURE_D?.status)}
         >
-          {(`0${toCorrectDate(FIXTURE_D?.time).getHours()}`.slice(-2)
-          + ':'
-          + `0${toCorrectDate(FIXTURE_D?.time).getMinutes()}`.slice(-2))
-          .split(' ').join('')}
+          <!-- HH/mm -->
+          <!-- user-client date/time -->
+          {
+            toZeroPrefixDateStr(toCorrectDate(FIXTURE_D?.time, false).getHours())
+            + ':'
+            + toZeroPrefixDateStr(toCorrectDate(FIXTURE_D?.time, false).getMinutes())
+          }
         </p>
         <!-- 
         [ℹ] show full-time status [translated]

@@ -12,7 +12,7 @@ COMPONENT JS (w/ TS)
   import { get } from '$lib/api/utils';
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { toCorrectDate, toCorrectISO } from '$lib/utils/dates.js';
+  import { toCorrectDate, toISOMod } from '$lib/utils/dates.js';
   import { LV2_W_H_TAG, dlog } from '$lib/utils/debug';
   import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
   import type { B_LS2_D, B_LS2_T, LS2_C_Fixture, LS2_C_League } from '@betarena/scores-lib/types/livescores-v2';
@@ -59,7 +59,8 @@ COMPONENT JS (w/ TS)
   // FIXME:TODO: update cache to [...V3] to use map json objects;
   async function setData(data: B_LS2_D) {
     for await (const fixtureDateObj of data?.fixtures_by_date) {
-      fixturesGroupByDateMap.set(toCorrectISO(fixtureDateObj?.date), fixtureDateObj?.fixtures)
+      // NOTE: key => ISO/UTC date
+      fixturesGroupByDateMap.set(toISOMod(fixtureDateObj?.date), fixtureDateObj?.fixtures)
     }
     for await (const league of data?.leagues) {
       leagueMap.set(league?.id, league)
@@ -105,7 +106,7 @@ COMPONENT JS (w/ TS)
     // [ℹ] iterate over each LIVE fixture
     // [ℹ] and modify data of existing;
     for (const [liveId, _fixture] of liveFixturesMap) {
-      const targetDate = toCorrectISO(_fixture?.time?.starting_at?.date)
+      const targetDate = toISOMod(_fixture?.time?.starting_at?.date)
       // [ℹ] obtain target date-group fixtures[]
       let fixturesArray = fixturesGroupByDateMap.get(targetDate)
       // validate; for non-valid livefixtures;
@@ -153,15 +154,13 @@ COMPONENT JS (w/ TS)
    */
   async function targetFixtureDateData(
   ): Promise < void > {
-    dlog(`${LV2_W_H_TAG[0]} (in) targetFixtureDateData`, LV2_W_H_TAG[1])
 
     // new updated date;
-    let targetDate = toCorrectISO(
+    let targetDate = toISOMod(
       $sessionStore.livescoreNowSelectedDate
     )
     // [ℹ] get matching (date) fixtures in "yyyy/MM/dd" string format
     let targetFixturesDateGroupObj = fixturesGroupByDateMap.get(targetDate);
-    
     // [ℹ] validation;
     if (targetFixturesDateGroupObj == undefined) {
       dlog(`${LV2_W_H_TAG[0]} 🔵 seeking ${targetDate} (date) fixtures`, LV2_W_H_TAG[1])
@@ -229,16 +228,16 @@ COMPONENT JS (w/ TS)
       // -> need check why some ddn't update (etc.)
     // for today/yesterday, get fixtures;
     let fixturesList = []
-    if (fixturesGroupByDateMap.has(toCorrectISO($sessionStore.userDate))) {
+    if (fixturesGroupByDateMap.has(toISOMod($sessionStore.userDate))) {
       fixturesList = [
         ...fixturesList,
-        ...fixturesGroupByDateMap.get(toCorrectISO($sessionStore.userDate))
+        ...fixturesGroupByDateMap.get(toISOMod($sessionStore.userDate))
       ]
     }
-    if (fixturesGroupByDateMap.has(toCorrectISO(yesterday))) {
+    if (fixturesGroupByDateMap.has(toISOMod(yesterday))) {
       fixturesList = [
         ...fixturesList,
-        ...fixturesGroupByDateMap.get(toCorrectISO(yesterday))
+        ...fixturesGroupByDateMap.get(toISOMod(yesterday))
       ]
     }
 
@@ -288,12 +287,12 @@ COMPONENT JS (w/ TS)
     fixturesGroupByDateLeagueMap = new Map();
     // generate "target" date fixtures;
     const validation_0 =
-      fixturesGroupByDateMap.has(toCorrectISO($sessionStore.livescoreNowSelectedDate))
+      fixturesGroupByDateMap.has(toISOMod($sessionStore.livescoreNowSelectedDate))
     ;
     if (validation_0) {
       const leagueIds = nonEmptyLeaguesArray?.map(x => x?.id)
       let fixturesList = fixturesGroupByDateMap.get(
-        toCorrectISO(
+        toISOMod(
           $sessionStore.livescoreNowSelectedDate))
           ?.sort((
               a,
