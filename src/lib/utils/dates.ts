@@ -85,30 +85,61 @@ export function clientTimezoneDate() {
  * @param {Date | string} date
  * @returns {string} string
  */
-export function toCorrectISO(
-  date: Date | string
+export function toISOMod
+(
+  date: Date | string,
+  adjustClientTZ = false,
+  showConversion = false
 ): string {
+
+  if (showConversion) console.log("CONVERSION [FROM]: ", date)
+
   // check for 'string'
   if (typeof(date) == 'string') {
     // check for 'T00:00:00'
     const validation_0 =
-      date.includes('T00:00:00') 
-      && !date.includes('T00:00:00Z')
+      date.includes('T') 
+      && !date.includes('Z')
     ;
     // add, if necessary
     if (validation_0) {
       date = `${date}Z`
     }
+    if (showConversion) console.log("CONVERSION [STR]: ", date)
     date = new Date(date)
   }
-  // return yyyy-MM-dd
-  // 18/04/2023, 00:34:15
-  // Get year, month, and day part from the date
-  const year = date.toLocaleString("default", { year: "numeric" });
-  const month = date.toLocaleString("default", { month: "2-digit" });
-  const day = date.toLocaleString("default", { day: "2-digit" });
-  // Generate yyyy-mm-dd date string
-  const formattedDate = `${year}-${month}-${day}`;
+
+  if (showConversion) console.log("CONVERSION [TO]: ", date)
+
+  let formattedDate: string;
+
+  // alternative (option)
+  // NOTE: simply converts toIsoString(),
+  // NOTE: with disregard for user's timezone;
+  formattedDate = date.toISOString().substring(0, 10);
+
+  // alternative (option)
+  // NOTE:WARNING: issues with locales (JP) and anomalies;
+  // NOTE:WARNING: converting the target date-object to local date structure;
+  // const year = date.toLocaleString("default", { year: "numeric" });
+  // const month = date.toLocaleString("default", { month: "2-digit" });
+  // const day = date.toLocaleString("default", { day: "2-digit" });
+  // const formattedDate = `${year}-${month}-${day}`;
+
+  // alternative (option)
+  // NOTE:WARNING: issues with date adjustedf for user timezone;
+  // NOTE:WARNING: when converting a T00:00:00Z string to BRAZIL new Date()
+  if (adjustClientTZ)
+  {
+    const year = date.getFullYear();
+    const month = toZeroPrefixDateStr(date.getMonth() + 1);
+    const day = toZeroPrefixDateStr(date.getDate());
+    formattedDate = `${year}-${month}-${day}`;
+  }
+
+  if (showConversion) console.log("CONVERSION [ISO]: ", formattedDate)
+
+  // IMPORTANT yyyy-MM-dd
   return formattedDate;
 }
 
@@ -116,17 +147,27 @@ export function toCorrectISO(
  * @summary [HELPER] method
  * @description converts a target Date/string
  * arg. to a proper, handeled user Date Object;
+ * adjusting for missing "Z" string, if necessary;
+ * and offsetting for user's current timezone,
+ * generating a UTC Date object;
+ * @example "2023-12-12", locale: ja-JP => 2023-12-12
  * @param {Date | string} date
  * @returns {Date} string
  */
-export function toCorrectDate(
-  date: Date | string
-): Date {
+export function toCorrectDate
+(
+  date: Date | string,
+  offset = true,
+  showConversion = false
+): Date 
+{
+  if (showConversion) console.log("CONVERSION toCorrectDate [FROM]: ", date)
+
   if (typeof(date) == 'string') {
     // check for 'T00:00:00'
     const validation_0 =
-      date.includes('T00:00:00') 
-      && !date.includes('T00:00:00Z')
+      date.includes('T') 
+      && !date.includes('Z')
     ;
     // add, if necessary
     if (validation_0) {
@@ -134,7 +175,17 @@ export function toCorrectDate(
     }
     date = new Date(date)
   }
-  // return Date Object
+
+  // ignore user's local/machine Timezone;
+  // creating essentially a UTC Date object;
+  if (offset) 
+  {
+    const timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
+    date.setHours(date.getHours() - timeOffsetInHours)
+  }
+
+  if (showConversion) console.log("CONVERSION toCorrectDate [TO]: ", date)
+
   return date;
 }
 

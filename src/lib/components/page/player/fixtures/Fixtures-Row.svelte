@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { page } from "$app/stores";
-	import { toCorrectDate, toCorrectISO, toZeroPrefixDateStr } from "$lib/utils/dates.js";
+	import { toCorrectDate, toISOMod, toZeroPrefixDateStr } from "$lib/utils/dates.js";
 	import { platfrom_lang_ssr } from "$lib/utils/platform-functions";
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks";
 	import type { PFIX_C_Fixture } from "@betarena/scores-lib/types/player-fixtures";
@@ -74,7 +74,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       [ℹ] fixture == LIVE | minute show
       -->
       {#if fixture?.status === 'LIVE'}
-        {#if toCorrectISO(today) != toCorrectISO(fixture?.fixture_day)}
+        {#if toISOMod(today) != toISOMod(fixture?.fixture_day)}
           <p
             class="
               no-wrap
