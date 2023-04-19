@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { WEEK_DAYS_ABBRV_1, toCorrectDate, toCorrectISO } from '$lib/utils/dates';
+	import { WEEK_DAYS_ABBRV_1, toCorrectDate, toISOMod } from '$lib/utils/dates';
 	import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
 	import LivescoresCalendarTable from './Livescores_Calendar_Table.svelte';
 	import vec_calendar_dark from './assets/calendar-dark.svg';
@@ -52,23 +52,35 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  function generateThisWeekDates() {
+  /**
+   * @summary [MAIN] method
+   * @description generates the
+   * dates for the -3/+3 dates
+   * from CLIENTs current timezone
+   * adjusted Date object;
+   * @returns NaN
+   */
+  function generateThisWeekDates
+  (
+  ) 
+  {
 
+    // NOTE: clone-copy user date correctly, without deepcopy;
     const _today = new Date($sessionStore.userDate.getTime())
     _today.setDate(_today.getDate() - 3)
-    const days_3_ago = toCorrectISO(_today)
+    const days_3_ago = toISOMod(_today, true)
     _today.setDate(_today.getDate() + 1)
-    const days_2_ago = toCorrectISO(_today)
+    const days_2_ago = toISOMod(_today, true)
     _today.setDate(_today.getDate() + 1)
-    const days_1_ago = toCorrectISO(_today)
+    const days_1_ago = toISOMod(_today, true)
     _today.setDate(_today.getDate() + 1)
-    const days_0 = toCorrectISO(_today)
+    const days_0 = toISOMod(_today, true)
     _today.setDate(_today.getDate() + 1)
-    const days_1_future = toCorrectISO(_today)
+    const days_1_future = toISOMod(_today, true)
     _today.setDate(_today.getDate() + 1)
-    const days_2_future = toCorrectISO(_today)
+    const days_2_future = toISOMod(_today, true)
     _today.setDate(_today.getDate() + 1)
-    const days_3_future = toCorrectISO(_today)
+    const days_3_future = toISOMod(_today, true)
 
     fixture_dates = [
       days_3_ago,
@@ -80,8 +92,7 @@ COMPONENT JS (w/ TS)
       days_3_future
     ]
 
-    console.log(fixture_dates)
-
+    // console.log(fixture_dates)
   }
 
   generateThisWeekDates()
@@ -133,7 +144,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         width-auto
         cursor-pointer
       "
-      class:activeDate={item == toCorrectISO($sessionStore.livescoreNowSelectedDate)}
+      class:activeDate={item == toISOMod($sessionStore.livescoreNowSelectedDate, true)}
       on:click={() => $sessionStore.livescoreNowSelectedDate = toCorrectDate(item)}>
       <p
         class="
@@ -142,14 +153,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           color-black-2
           text-center
         "
-        class:currentDate={item == toCorrectISO($sessionStore.userDate)}>
+        class:currentDate={item == toISOMod($sessionStore.userDate, true)}>
         <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
-        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[toCorrectDate(item).getUTCDay()]] || ""}
+        {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[toCorrectDate(item).getDay()]] || ""}
         <br/>
         <span
           class="w-500">
           <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
-          {toCorrectDate(item).getUTCDate()}
+          {toCorrectDate(item, true).getDate()}
         </span>
       </p>
     </div>
@@ -166,20 +177,22 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       text-center
       column-space-center
     "
-    class:activeDate={!fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate))}>
+    class:activeDate={!fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate))}>
     <!-- 
     [ℹ] calendar (vector)
     -->
     <img 
-      src={$sessionStore.livescoreShowCalendar && fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate)) 
+      src={
+        $sessionStore.livescoreShowCalendar 
+        && fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate)) 
         ? vec_calendar_sel 
-        : !fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate)) 
+        : !fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate)) 
           ? vec_calendar_sel_date
           : defaultCalendarIcon
       } 
       alt="default alt text"
-      on:mouseover={(e) => {if (fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate))) e.currentTarget.src = vec_calendar_sel}}
-      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes(toCorrectISO($sessionStore.livescoreNowSelectedDate)) ) e.currentTarget.src = defaultCalendarIcon}}
+      on:mouseover={(e) => {if (fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate))) e.currentTarget.src = vec_calendar_sel}}
+      on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate)) ) e.currentTarget.src = defaultCalendarIcon}}
       on:click={() => $sessionStore.livescoreShowCalendar = !$sessionStore.livescoreShowCalendar}
       class="cursor-pointer"
       width="24"
@@ -218,7 +231,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         cursor-pointer
       ">
       {WIDGET_T_DATA?.all || 'All'} 
-      {#if toCorrectISO($sessionStore.livescoreNowSelectedDate) == toCorrectISO($sessionStore.userDate)}
+      {#if toISOMod($sessionStore.livescoreNowSelectedDate) == toISOMod($sessionStore.userDate)}
         ({$sessionStore.fixturesTodayNum || 0})
       {:else}
         ({numOfFixtures || 0})
