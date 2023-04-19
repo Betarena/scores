@@ -1,5 +1,5 @@
 import { clientTimezoneDate } from '$lib/utils/dates.js';
-import type { FIREBASE_livescores_now } from '@betarena/scores-lib/types/firebase.js';
+import type { FIREBASE_livescores_now, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import { writable } from 'svelte/store';
 
@@ -14,8 +14,10 @@ export interface Platform_Session {
 	auth_show: boolean;
   /** NOTE: used for detecting and pre-loading the data for a TARGET page translation of the current one, programatically */
   lang_intent: string | undefined;
-  /** session data on the Firebase Livescore */
+  /** session data on the Firebase Livescore [V1] */
   livescore_now: Map<number, FIREBASE_livescores_now>
+  /** session data on the Firebase Livescore (Scoreboard) [V2] */
+  livescore_now_scoreboard: Map<number, FIRE_LNNS>
   /** session data on the Sportbook Data */
   sportbook_main: B_SPT_D
   /** session data on the Sportbook Data (List) */
@@ -40,6 +42,7 @@ const seassion_store: Platform_Session = {
 	auth_show: false,
   lang_intent: undefined,
   livescore_now: undefined,
+  livescore_now_scoreboard: new Map(),
   sportbook_main: undefined,
   sportbook_list: undefined,
   livescoreNowSelectedDate: clientTimezoneDate(),
@@ -72,7 +75,17 @@ function createLocalStore() {
     updateLivescores: (data: Map<number, FIREBASE_livescores_now>) => {
       seassion_store.livescore_now = data
       set(seassion_store)
-    }
+    },
+
+    /**
+     * @summary [METHOD] [MAIN] method
+     * @description updates storesJs on Livescores (scoreboard) data;
+     * @param {Map<number, FIREBASE_livescores_now>} data 
+     */
+    updateLivescoreScoreboard: (data: Map<number, FIRE_LNNS>) => {
+      seassion_store.livescore_now_scoreboard = data
+      set(seassion_store)
+    },
 	};
 }
 

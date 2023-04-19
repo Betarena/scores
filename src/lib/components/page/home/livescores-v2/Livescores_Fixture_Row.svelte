@@ -59,6 +59,7 @@ COMPONENT JS (w/ TS)
 			action ===
 			'livescore_betting_tips'
 		) {
+      // @ts-ignore
 			window.gtag(
 				'event',
 				'livescore_betting_tips',
@@ -75,6 +76,7 @@ COMPONENT JS (w/ TS)
 			action ===
 			'livescore_betting_sites'
 		) {
+      // @ts-ignore
 			window.gtag(
 				'event',
 				'livescore_betting_sites',
@@ -164,8 +166,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <!-- 
       [ℹ] fixture == LIVE | minute show
       -->
-      {#if FIXTURE_D?.status === 'LIVE'}
-        {#if toCorrectISO($sessionStore.userDate) != toCorrectISO(FIXTURE_D?.fixture_day)}
+      {#if FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_D?.status)}
+        {#if toISOMod($sessionStore.userDate) != toISOMod(FIXTURE_D?.fixture_day)}
           <p
             class="
               no-wrap
@@ -217,7 +219,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             color-black-2
             dark-theme-custom-1
           "
-          class:color-grey={['FT','FT_PEN','AET'].includes(FIXTURE_D?.status)}
+          class:color-grey={FIXTURE_FULL_TIME_OPT.includes(FIXTURE_D?.status)}
         >
           {(`0${toCorrectDate(FIXTURE_D?.time).getHours()}`.slice(-2)
           + ':'
@@ -227,7 +229,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- 
         [ℹ] show full-time status [translated]
         -->
-        {#if ['FT','FT_PEN','AET'].includes(FIXTURE_D?.status)}
+        {#if FIXTURE_FULL_TIME_OPT.includes(FIXTURE_D?.status)}
           <p
             class="
               no-wrap
@@ -453,8 +455,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             s-12 
             color-black-2
           "
-          class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score && FIXTURE_D?.status !='LIVE'}
-          class:color-red-bright={FIXTURE_D?.status === 'LIVE'}
+          class:team-lost-style={FIXTURE_D?.teams?.home?.score < FIXTURE_D?.teams?.away?.score && !FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_D?.status)}
+          class:color-red-bright={FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_D?.status)}
         >
           {FIXTURE_D?.teams?.home?.score}
         </p>
@@ -466,8 +468,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             s-12 
             color-black-2
           "
-          class:team-lost-style={FIXTURE_D?.teams?.away?.score < FIXTURE_D?.teams?.home?.score && FIXTURE_D?.status != 'LIVE'}
-          class:color-red-bright={FIXTURE_D?.status === 'LIVE'}
+          class:team-lost-style={FIXTURE_D?.teams?.away?.score < FIXTURE_D?.teams?.home?.score && !FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_D?.status)}
+          class:color-red-bright={FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_D?.status)}
         >
           {FIXTURE_D?.teams?.away?.score}
         </p>

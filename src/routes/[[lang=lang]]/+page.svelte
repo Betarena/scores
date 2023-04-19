@@ -10,22 +10,22 @@
 	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import FeaturedMatchWidget from '$lib/components/page/home/featured_match/_FeaturedMatch_Widget.svelte';
-	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
 	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
+	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
 	import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
 
 	import { get } from '$lib/api/utils';
-	import { listenRealTimeLivescoresNowChange, one_off_livescore_call } from '$lib/firebase/common';
+	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
+	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
 	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 	import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/home/featured_match/interface-fixture';
-	import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
 	import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
+	import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
 	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog, dlogv2 } from '$lib/utils/debug';
@@ -91,19 +91,19 @@
 
   onMount(async() => {
     
-    await one_off_livescore_call()
+    await onceRealTimeLiveScoreboard()
 
-    let connectionRef = listenRealTimeLivescoresNowChange()
+    let connectionRef = listenRealTimeScoreboardAll()
     FIREBASE_CONNECTIONS_SET.add(connectionRef)
     sportbookIdentify()
 
     document.addEventListener(
 			'visibilitychange',
-			async function () {
+			async function() {
 				if (!document.hidden) {
           dlog('🔵 user is active', true)
-          await one_off_livescore_call()
-					let connectionRef = listenRealTimeLivescoresNowChange()
+          await onceRealTimeLiveScoreboard()
+					let connectionRef = listenRealTimeScoreboardAll()
           FIREBASE_CONNECTIONS_SET.add(connectionRef)
 				}
 			}
@@ -147,6 +147,7 @@
 			}
 		);
 	});
+
 
 </script>
 

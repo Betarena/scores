@@ -96,7 +96,7 @@ COMPONENT JS (w/ TS)
   function injectLivescoreData(
   ): Promise < void > {
     
-    const liveFixturesMap = $sessionStore?.livescore_now
+    const liveFixturesMap = $sessionStore?.livescore_now_scoreboard
     // [ℹ] exit;
     if (liveFixturesMap.size == 0 || fixturesGroupByDateMap.size == 0) {
       dlog(`${LV2_W_H_TAG[0]} ❌ NO LIVE FIXTURES!`, LV2_W_H_TAG[1])
@@ -105,7 +105,7 @@ COMPONENT JS (w/ TS)
     // [ℹ] iterate over each LIVE fixture
     // [ℹ] and modify data of existing;
     for (const [liveId, _fixture] of liveFixturesMap) {
-      const targetDate = toCorrectISO(_fixture?.time?.starting_at?.date)
+      const targetDate = toISOMod(_fixture?.time)
       // [ℹ] obtain target date-group fixtures[]
       let fixturesArray = fixturesGroupByDateMap.get(targetDate)
       // validate; for non-valid livefixtures;
@@ -115,22 +115,23 @@ COMPONENT JS (w/ TS)
       if (validation_0) continue;
       // [ℹ] re-assign the modified version back to original
       // [ℹ] & persist to Map
+      // @ts-ignore
       fixturesArray = fixturesArray.map((fixture) => {
         if (liveFixturesMap.has(fixture.id)) {
           return {
             ...fixture,
-            minute: liveFixturesMap.get(fixture.id)?.time?.minute,
-            status: liveFixturesMap.get(fixture.id)?.time?.status,
+            minute: liveFixturesMap.get(fixture.id)?.minute,
+            status: liveFixturesMap.get(fixture.id)?.status,
             teams: {
               away: {
                 name: fixture?.teams?.away?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[1]?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.scores?.visitorteam_score
+                red_cards: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "away")?.redcards,
+                score: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "away")?.score,
               },
               home: {
                 name: fixture?.teams?.home?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.stats?.data[0]?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.scores?.localteam_score
+                red_cards: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "home")?.redcards,
+                score: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "home")?.score,
               }
             }
           };
@@ -405,8 +406,9 @@ COMPONENT JS (w/ TS)
    * livescores_now data session-store;
    * Proceeds to update data accordingly;
   */
-  $: if ($sessionStore?.livescore_now) {
-    dlog($sessionStore?.livescore_now, LV2_W_H_TAG[1])
+  $: if ($sessionStore?.livescore_now_scoreboard) {
+    dlog($sessionStore?.livescore_now_scoreboard, LV2_W_H_TAG[1])
+    console.log("🔥 HOT_SWAP")
     injectLivescoreData()
     updateLiveInfo()
   }

@@ -2,9 +2,9 @@ import { db_real } from '$lib/firebase/init';
 import type { FIREBASE_odds } from '$lib/models/firebase';
 import type { Tournament_Fixture_Odds } from '$lib/models/tournaments/fixtures_odds/types';
 import {
-	child,
-	get,
-	ref
+  child,
+  get,
+  ref
 } from 'firebase/database';
 
 export async function getLivescoresNow(): Promise<unknown> {
@@ -87,4 +87,30 @@ export async function getOdds(
 	}
 
 	return realTimeOddsListenMap;
+}
+
+/**
+ * 
+ * @returns 
+ */
+export async function getTargetRealDbData
+(
+  path: string
+): Promise<unknown> 
+{
+	return await get(
+		child(
+      ref(db_real), 
+      path
+    )
+	).then(
+    (
+      snapshot
+    ) => {
+		if (snapshot.exists()) {
+			return snapshot.val();
+		} else {
+			return null;
+		}
+	});
 }
