@@ -57,12 +57,12 @@ COMPONENT JS (w/ TS)
 
   // TEMPORARY
   // FIXME:TODO: update cache to [...V3] to use map json objects;
-  async function setData(data: B_LS2_D) {
-    for await (const fixtureDateObj of data?.fixtures_by_date) {
+  function setData(data: B_LS2_D) {
+    for (const fixtureDateObj of data?.fixtures_by_date) {
       // NOTE: key => ISO/UTC date
       fixturesGroupByDateMap.set(toISOMod(fixtureDateObj?.date), fixtureDateObj?.fixtures)
     }
-    for await (const league of data?.leagues) {
+    for (const league of data?.leagues) {
       leagueMap.set(league?.id, league)
     }
   }
