@@ -8,7 +8,7 @@ import {
 } from 'firebase/database';
 
 export async function getLivescoresNow(): Promise<unknown> {
-	return get(
+  const x = await get(
 		child(ref(db_real), `livescores_now`)
 	).then((snapshot) => {
 		if (snapshot.exists()) {
@@ -17,6 +17,7 @@ export async function getLivescoresNow(): Promise<unknown> {
 			return;
 		}
 	});
+  return x;
 }
 
 export async function getOdds(
@@ -98,7 +99,7 @@ export async function getTargetRealDbData
   path: string
 ): Promise<unknown> 
 {
-	return get(
+  const x = await get(
 		child(
       ref(db_real), 
       path
@@ -113,4 +114,5 @@ export async function getTargetRealDbData
 			return null;
 		}
 	});
+  return x;
 }
