@@ -22,7 +22,11 @@ export interface Platform_Session {
   sportbook_main: B_SPT_D
   /** session data on the Sportbook Data (List) */
   sportbook_list: B_SPT_D[]
-  /** session data on the LivescoreNow Selected Date (View) */
+  /** 
+   * session data | Livescore Now Selected Date (View). 
+   * IMPORTANT
+   * Must be in ISO/UTC timezone;
+  */
   livescoreNowSelectedDate: Date
   /** session data on the LivescoreNow View Type Date (View) */
   livescoreFixtureView: 'all' | 'live'
@@ -30,7 +34,10 @@ export interface Platform_Session {
   livescoreShowCalendar: boolean
   /** session data on the LivescoreNow Show/Hide Fixture NUmber */
   fixturesTodayNum: number
-  /** session data on users current date */
+  /** session data on users current date 
+   * IMPORTANT
+   * Must be in user adjusted (TZ) timezone;
+  */
   userDate: Date
 }
 

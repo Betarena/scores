@@ -158,7 +158,8 @@ COMPONENT JS (w/ TS)
 
     // new updated date;
     let targetDate = toISOMod(
-      $sessionStore.livescoreNowSelectedDate
+      $sessionStore.livescoreNowSelectedDate,
+      true
     )
     // [ℹ] get matching (date) fixtures in "yyyy/MM/dd" string format
     let targetFixturesDateGroupObj = fixturesGroupByDateMap.get(targetDate);
@@ -302,13 +303,13 @@ COMPONENT JS (w/ TS)
     fixturesGroupByDateLeagueMap = new Map();
     // generate "target" date fixtures;
     const validation_0 =
-      fixturesGroupByDateMap.has(toISOMod($sessionStore.livescoreNowSelectedDate))
+      fixturesGroupByDateMap.has(toISOMod($sessionStore.livescoreNowSelectedDate, true))
     ;
     if (validation_0) {
       const leagueIds = nonEmptyLeaguesArray?.map(x => x?.id)
       let fixturesList = fixturesGroupByDateMap.get(
         toISOMod(
-          $sessionStore.livescoreNowSelectedDate))
+          $sessionStore.livescoreNowSelectedDate, true))
           ?.sort((
               a,
               b

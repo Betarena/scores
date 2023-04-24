@@ -82,7 +82,12 @@ export function clientTimezoneDate() {
  * handles target date to ISO conversion,
  * plus identifies dates of "T00:00:00" 
  * Dates and Adds Z;
+ * @overload adjustClientTZ = false (default) -> 
+ * converts Date to userClient Timezone;
+ * @overload showConversion = false (default)
  * @param {Date | string} date
+ * @param {boolean} adjustClientTZ
+ * @param {boolean} showConversion
  * @returns {string} string
  */
 export function toISOMod
@@ -127,6 +132,7 @@ export function toISOMod
   // const formattedDate = `${year}-${month}-${day}`;
 
   // alternative (option)
+  // uses client TZ to construct ISO string;
   // NOTE:WARNING: issues with date adjustedf for user timezone;
   // NOTE:WARNING: when converting a T00:00:00Z string to BRAZIL new Date()
   if (adjustClientTZ)
@@ -150,8 +156,14 @@ export function toISOMod
  * adjusting for missing "Z" string, if necessary;
  * and offsetting for user's current timezone,
  * generating a UTC Date object;
+ * @overload offset = true (default) -> 
+ * converts Date to userClient Timezone;
+ * @overload showConversion = false (default)
+ * @example "2023-12-12", locale: ja-JP => 2023-12-12
  * @example "2023-12-12", locale: ja-JP => 2023-12-12
  * @param {Date | string} date
+ * @param {boolean} offset
+ * @param {boolean} showConversion
  * @returns {Date} string
  */
 export function toCorrectDate
@@ -164,12 +176,12 @@ export function toCorrectDate
   if (showConversion) console.log("CONVERSION toCorrectDate [FROM]: ", date)
 
   if (typeof(date) == 'string') {
-    // check for 'T00:00:00'
+    // check for 'TXX:YY:SS'
     const validation_0 =
       date.includes('T') 
       && !date.includes('Z')
     ;
-    // add, if necessary
+    // add, if necessary the Z
     if (validation_0) {
       date = `${date}Z`
     }
@@ -178,7 +190,8 @@ export function toCorrectDate
 
   // ignore user's local/machine Timezone;
   // creating essentially a UTC Date object;
-  if (offset) 
+  // by reverting the client timezone offset value;
+  if (offset)
   {
     const timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
     date.setHours(date.getHours() - timeOffsetInHours)

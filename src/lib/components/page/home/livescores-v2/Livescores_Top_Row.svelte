@@ -62,7 +62,7 @@ COMPONENT JS (w/ TS)
    */
   function generateThisWeekDates
   (
-  ) 
+  ): void 
   {
 
     // NOTE: clone-copy user date correctly, without deepcopy;
@@ -144,8 +144,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         width-auto
         cursor-pointer
       "
-      class:activeDate={item == toISOMod($sessionStore.livescoreNowSelectedDate, true)}
-      on:click={() => $sessionStore.livescoreNowSelectedDate = toCorrectDate(item, false)}>
+      class:activeDate={
+        item == toISOMod($sessionStore.livescoreNowSelectedDate, true)
+      }
+      on:click={() => 
+        // IMPORTANT
+        // -> yyyy/mm/DD to date object (adjust TZ offset)
+        // -> because, date-string already in TZ applied format
+        $sessionStore.livescoreNowSelectedDate = toCorrectDate(item, true, true)
+      }>
       <p
         class="
           s-14
@@ -153,7 +160,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           color-black-2
           text-center
         "
-        class:currentDate={item == toISOMod($sessionStore.userDate, true)}>
+        class:currentDate={
+          item == toISOMod($sessionStore.userDate, true)
+        }>
         <!-- SEE: https://stackoverflow.com/questions/7556591/is-the-javascript-date-object-always-one-day-off -->
         {WIDGET_T_DATA?.days[WEEK_DAYS_ABBRV_1[toCorrectDate(item).getDay()]] || ""}
         <br/>
@@ -230,7 +239,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         color-grey
         cursor-pointer
       ">
-      {WIDGET_T_DATA?.all || 'All'} 
+      {WIDGET_T_DATA?.all || 'All'}
       {#if toISOMod($sessionStore.livescoreNowSelectedDate) == toISOMod($sessionStore.userDate)}
         ({$sessionStore.fixturesTodayNum || 0})
       {:else}
