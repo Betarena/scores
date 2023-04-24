@@ -416,7 +416,7 @@ COMPONENT JS (w/ TS)
 
   /**
    * @description listens to changes in 
-   * livescores_now data session-store;
+   * livescore_now_scoreboard data session-store;
    * Proceeds to update data accordingly;
   */
   $: if ($sessionStore?.livescore_now_scoreboard) {
