@@ -16,6 +16,7 @@
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
 
+	import { browser } from '$app/environment';
 	import { get } from '$lib/api/utils';
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
@@ -89,9 +90,15 @@
     sportbookIdentify()
   }
 
+  if (browser) {
+    onceRealTimeLiveScoreboard()
+  }
+
   onMount(async() => {
     
-    await onceRealTimeLiveScoreboard()
+    // NOTE: causes a potential delay in data retrieval,
+    // as waits for onMount of Page & components;
+    // await onceRealTimeLiveScoreboard()
 
     let connectionRef = listenRealTimeScoreboardAll()
     FIREBASE_CONNECTIONS_SET.add(connectionRef)
