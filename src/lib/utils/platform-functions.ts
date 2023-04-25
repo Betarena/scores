@@ -62,6 +62,15 @@ export function viewport_change(
 	return [tabletExclusive, mobileExclusive];
 }
 
+/**
+ * @summary [HELPER] method
+ * @description validates for number of
+ * null || undefined data points in target
+ * data Array[];
+ * @example [[object Object], [object Object], undefined] => null:
+ * @param {unknown[]} data 
+ * @returns NaN
+ */
 export function PRELOAD_invalid_data (
   data: unknown[]
 ): void {

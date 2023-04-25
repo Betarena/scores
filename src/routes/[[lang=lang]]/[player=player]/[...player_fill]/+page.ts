@@ -160,7 +160,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
   PRELOAD_invalid_data(data)
 
   const t1 = performance.now();
-  dlog(`⏳ [PLAYERS] (pre-load) ${(t1 - t0) / 1000} sec`, true)
+  dlog(`⏳ [PLAYERS] (pre-load) ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
 
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
