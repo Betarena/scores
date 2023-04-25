@@ -99,7 +99,9 @@ const config = {
         'style-src': [
           'self',
           'unsafe-inline',
-          'https://fonts.googleapis.com'
+          // [ℹ] google/firebase;
+          'https://fonts.googleapis.com',
+          'https://fonts.gstatic.com'
         ],
 
         // NOTE: specifies the URLs that 
@@ -172,6 +174,9 @@ const config = {
           'https://web-writer.eu.smartlook.cloud',
           'https://assets-proxy.smartlook.cloud',
           'https://*.smartlook.cloud',
+          // [ℹ] sentry
+          'https://o1009217.ingest.sentry.io/',
+          'https://*.sentry.io/',
           // [ℹ] yandex;
           'https://mc.yandex.ru',
         ],
@@ -186,7 +191,8 @@ const config = {
         ],
         // [ℹ] ???
         'worker-src': [
-          'self'
+          'self',
+          'blob:'
         ],
         // [ℹ] ???
         'manifest-src': [
