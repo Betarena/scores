@@ -458,6 +458,15 @@ COMPONENT JS - BASIC
    * @returns {Promise<void>}
 	 */
   async function update_select_lang(): Promise<void> {
+
+    if (!$userBetarenaSettings?.lang 
+      || $page.error
+      || !$page.route.id
+      || $userBetarenaSettings?.user == undefined
+      || !setUserLang) {
+      return
+    }
+
 		const lang = $userBetarenaSettings?.lang;
 		dlog(`${NB_W_TAG} 🔵 Updating platform user lang ${lang}`, true);
     // [ℹ] (update)from localStorage()

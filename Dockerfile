@@ -15,6 +15,7 @@ RUN apk add --no-cache \
   python3=3.10.11-r0 \
   make=4.3-r0 \
   g++=11.2.1_git20220219-r2 \
+  && npm install -g npm@8.19.1 \
   && npm i --omit=optional
 
 # [ℹ] Builds node application
