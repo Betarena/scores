@@ -228,7 +228,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	);
 
 	// [ℹ] canonical exclusive SET - [EN];
-	const enItemAlt = FIXTURE_INFO.alternate_data['en'];
+	const enItemAlt = FIXTURE_INFO?.alternate_data?.en;
 	PAGE_SEO.main_data.canonical = enItemAlt;
 
 	// const FORCE_HASURA = false;

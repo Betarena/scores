@@ -26,9 +26,9 @@ export async function GET(
   req
 ): Promise<unknown> {
 
-	const lang: string = req.url['searchParams'].get('lang');
-  const page: 'player' | string = req.url['searchParams'].get('page');
-	const player_id: string = req.url['searchParams'].get('player_id');
+	const lang: string = req?.url?.searchParams?.get('lang');
+  const page: 'player' | string = req?.url?.searchParams?.get('page');
+	const player_id: string = req?.url?.searchParams?.get('player_id');
 
   // NOTE: player (page) data;
   if (player_id) {

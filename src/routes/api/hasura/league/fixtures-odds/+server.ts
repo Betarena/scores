@@ -4,12 +4,12 @@ import { initGrapQLClient } from '$lib/graphql/init';
 import { json } from '@sveltejs/kit';
 
 import {
-  breakdownWeeksAndRounds,
-  fixturesGroupByLeague,
-  generate_historic_fixtures_map,
-  get_target_historic_fixtures,
-  get_target_season_details,
-  merge_weeks_rounds_to_league
+    breakdownWeeksAndRounds,
+    fixturesGroupByLeague,
+    generate_historic_fixtures_map,
+    get_target_historic_fixtures,
+    get_target_season_details,
+    merge_weeks_rounds_to_league
 } from '@betarena/scores-lib/dist/functions/func.fixture-odds.js';
 import { BETARENA_CACHE_FIXTURES_ODDS_DATA_5 } from '@betarena/scores-lib/dist/graphql/query.fixture-odds.js';
 import type { B_FO_D, B_H_HF_FO_Q } from '@betarena/scores-lib/types/fixture-odds';
@@ -34,8 +34,8 @@ const logs = [];
 export async function GET(
   req
 ): Promise<unknown> {
-  const LEAGUE_ID: string = req.url['searchParams'].get('league_id');
-  const SEASON_ID: string = req.url['searchParams'].get('season_id');
+  const LEAGUE_ID: string = req?.url?.searchParams?.get('league_id');
+  const SEASON_ID: string = req?.url?.searchParams?.get('season_id');
 	const target_season_fixtures = await main(LEAGUE_ID, SEASON_ID);
 	return json(target_season_fixtures);
 }

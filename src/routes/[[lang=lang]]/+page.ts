@@ -103,7 +103,7 @@ export async function load({
 	// FIXME: types not working
 	return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    // @ts-expect-error
     // NOTE: issues with setting correct <PageLoad> types, 
     // NOTE: not being applied to return;
     // NOTE: not critical - can be silenced;

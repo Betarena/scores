@@ -163,11 +163,6 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
   dlog(`⏳ [PLAYERS] (pre-load) ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
 
   return {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    // NOTE: issues with setting correct <PageLoad> types, 
-    // NOTE: not being applied to return;
-    // NOTE: not critical - can be silenced;
     PAGE_DATA,
     PAGE_SEO,
     B_SAP_D1,

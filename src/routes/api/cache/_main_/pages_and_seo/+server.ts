@@ -2,30 +2,30 @@ import { SAP_C_D_A0, SAP_C_D_A1, SAP_C_D_A2, SAP_C_D_A3, SAP_C_D_A4, SAP_C_D_A5,
 import { json } from '@sveltejs/kit';
 
 import {
-  get_target_hset_cache_data,
-  get_target_set_cache_data
+    get_target_hset_cache_data,
+    get_target_set_cache_data
 } from '../../std_main';
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET(req): Promise<unknown> {
 	const url: string =
-		req.url['searchParams'].get('url');
+		req?.url?.searchParams?.get('url');
 	const lang: string =
-		req.url['searchParams'].get('lang');
+		req?.url?.searchParams?.get('lang');
 	const page:
 		| 'homepage'
 		| 'tournaments'
 		| 'fixtures'
     | 'fixtures2' =
-		req.url['searchParams'].get('page');
+		req?.url?.searchParams?.get('page');
 	const fixture_id: string =
-		req.url['searchParams'].get('fixture_id');
+		req?.url?.searchParams?.get('fixture_id');
 	const country_id: string =
-		req.url['searchParams'].get('country_id');
+		req?.url?.searchParams?.get('country_id');
 	const sport: string =
-		req.url['searchParams'].get('sport');
+		req?.url?.searchParams?.get('sport');
   const months: string =
-		req.url['searchParams'].get('months');
+		req?.url?.searchParams?.get('months');
 
 	// [sitemap-check V2]
 	if (url && !page && !lang) {

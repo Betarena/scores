@@ -1,22 +1,22 @@
 import { json } from '@sveltejs/kit';
 
 import {
-  get_target_hset_cache_data,
-  get_target_string_cache_data
+    get_target_hset_cache_data,
+    get_target_string_cache_data
 } from '../../std_main';
 
 import {
-  LS2_C_D_A_2,
-  LS2_C_S_A_2,
-  LS2_C_T_A
+    LS2_C_D_A_2,
+    LS2_C_S_A_2,
+    LS2_C_T_A
 } from '@betarena/scores-lib/dist/redis/config.js';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function GET(req): Promise<unknown> {
 	const lang: string =
-		req.url['searchParams'].get('lang');
+		req?.url?.searchParams?.get('lang');
   const seo: string =
-		req.url['searchParams'].get('seo');
+		req?.url?.searchParams?.get('seo');
 
 	// [ℹ] (data)
 	if (!lang && !seo) {
