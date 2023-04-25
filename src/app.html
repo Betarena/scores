@@ -4,7 +4,11 @@
 		<meta charset="utf-8" />
 		<meta
 			name="viewport"
-			content="width=device-width, initial-scale=1.0, user-scalable=yes"
+			content="
+        width=device-width, 
+        initial-scale=1.0, 
+        user-scalable=yes
+      "
 		/>
 		<meta name="theme-color" content="#292929" />
 		<!-- 
@@ -64,11 +68,12 @@
 		<!-- 
     [ℹ] ANALYTICS TAGS
     <-contents->
-    [ℹ] YANDEX - ORIGINAL
-    [ℹ] GOOGLE V1 - ORIGINAL
-    [ℹ] GOOGLE V2 - NONCE BASED
+    [ℹ] 1. SMARTLOOK
+    [ℹ] 2. GOOGLE ANALYTICS
     -->
-		<script type="text/javascript">
+		<script 
+      type="text/javascript"
+    >
 			window.smartlook ||
 				(function (d) {
 					var o = (smartlook = function () {
@@ -94,7 +99,8 @@
 		<script
 			async
 			src="https://www.googletagmanager.com/gtag/js?id=UA-60160331-9"
-		></script>
+		>
+    </script>
 		<script>
 			window.dataLayer = window.dataLayer || [];
 			function gtag() {
@@ -103,7 +109,6 @@
 			gtag('js', new Date());
 			gtag('config', 'UA-60160331-9');
 		</script>
-
 		%sveltekit.head%
 	</head>
 	<body
