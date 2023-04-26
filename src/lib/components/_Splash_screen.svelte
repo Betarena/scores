@@ -3,28 +3,37 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
-	import { onMount } from 'svelte';
+  import { browser } from '$app/environment';
+  import { onMount } from 'svelte';
 
-	/**
-	 * Description:
-	 * ~~~~~~~~~~~~
-	 * Set a Timer To Show/Hide the
-	 * Elements of the HTML Page
-	 */
-	let show: boolean = true;
-	onMount(async () => {
-		// ... itialiazing timer,
-		// ... reset all of the values to its initial state;
-		setTimeout(async () => {
-			show = false;
-			document.documentElement.classList.remove(
-				'no-scrollbar'
-			);
-			document.body.classList.remove(
-				'no-scrollbar'
-			);
-		}, 500);
-	});
+  let show: boolean = true;
+
+  $: if (browser) 
+  {
+    document.documentElement.classList.remove(
+        'googlebot-override'
+    );
+    document.body.classList.remove(
+      'googlebot-override'
+    );
+  }
+
+  /**
+   * @summary [LIFECYCLE]
+   * @description triggers events onLoad of the
+   * page/component;
+  */
+  onMount(async () => {
+    setTimeout(async () => {
+      show = false;
+      document.documentElement.classList.remove(
+        'no-scrollbar'
+      );
+      document.body.classList.remove(
+        'no-scrollbar'
+      );
+    }, 500);
+  });
 </script>
 
 <!-- ===================
@@ -32,7 +41,8 @@
 =================== -->
 
 {#if show}
-	<div>
+	<div
+    id="splash-screen">
     <!-- FIXME: need width & height -->
 		<img
 			id="brand-svg"
