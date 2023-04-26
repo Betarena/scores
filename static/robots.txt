@@ -1,5 +1,6 @@
 User-agent: *
 Allow: /*.js
 Allow: /*.css
+Allow: /
 
 Sitemap: http://65.109.14.126:8500/static/sitemap-index.xml
