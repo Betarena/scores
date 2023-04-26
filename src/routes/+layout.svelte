@@ -15,15 +15,15 @@
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
 
-	import Navbar from '$lib/components/page/profile/Navbar.svelte';
 	import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
-	import Footer from '$lib/components/_main_/footer/_Footer.svelte';
-	import Header from '$lib/components/_main_/header/Header.svelte';
 	import OfflineAlert from '$lib/components/_Offline_alert.svelte';
 	import PlatformAlert from '$lib/components/_Platform_alert.svelte';
 	import SplashScreen from '$lib/components/_Splash_screen.svelte';
+	import Footer from '$lib/components/_main_/footer/_Footer.svelte';
+	import Header from '$lib/components/_main_/header/Header.svelte';
+	import Navbar from '$lib/components/page/profile/Navbar.svelte';
 
-	import '../app.css';
+	// import '../app.css';
 	
 	const VALID_PROFILE_PAGE_URL: string[] = [
 		'/u/dashboard',
