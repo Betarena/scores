@@ -3,20 +3,9 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
-  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
 
   let show: boolean = true;
-
-  $: if (browser) 
-  {
-    document.documentElement.classList.remove(
-        'googlebot-override'
-    );
-    document.body.classList.remove(
-      'googlebot-override'
-    );
-  }
 
   /**
    * @summary [LIFECYCLE]
@@ -26,6 +15,12 @@
   onMount(async () => {
     setTimeout(async () => {
       show = false;
+      document.documentElement.classList.remove(
+          'googlebot-override'
+      );
+      document.body.classList.remove(
+        'googlebot-override'
+      );
       document.documentElement.classList.remove(
         'no-scrollbar'
       );
