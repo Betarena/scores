@@ -32,6 +32,7 @@ COMPONENT JS - BASIC
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
 	import type { GeoJsResponse } from '$lib/types/geojs-types';
 
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import { db_firestore } from '$lib/firebase/init';
 	import { sessionStore } from '$lib/store/session';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
@@ -532,31 +533,33 @@ COMPONENT JS - BASIC
 TODO:FIXME: not generating for each LANG
 -->
 {#if HEADER_TRANSLATION_DATA != undefined && !hideSEO}
-	<!-- 
-  [ℹ] main-homepage-link-in-all-avaialble-languages
-  -->
-	{#each HEADER_TRANSLATION_DATA.langArray as item}
-		{#if item != 'en'}
-			<!-- 
-      [ℹ] content here
-      -->
-			<a
-				
-				href={$page.url.origin + '/' + item}
-			>
-				<p>{$page.url.origin + '/' + item}</p>
-			</a>
-		{:else}
-			<!-- [ℹ] content here 
-      -->
-			<a
-				
-				href={$page.url.origin}
-			>
-				<p>{$page.url.origin}</p>
-			</a>
-		{/if}
-	{/each}
+  <SeoBox>
+    <!-- 
+    [ℹ] main-homepage-link-in-all-avaialble-languages
+    -->
+    {#each HEADER_TRANSLATION_DATA.langArray as item}
+      {#if item != 'en'}
+        <!-- 
+        [ℹ] content here
+        -->
+        <a
+          
+          href={$page.url.origin + '/' + item}
+        >
+          <p>{$page.url.origin + '/' + item}</p>
+        </a>
+      {:else}
+        <!-- [ℹ] content here 
+        -->
+        <a
+          
+          href={$page.url.origin}
+        >
+          <p>{$page.url.origin}</p>
+        </a>
+      {/if}
+    {/each}
+  </SeoBox>
 {/if}
 
 <!-- 

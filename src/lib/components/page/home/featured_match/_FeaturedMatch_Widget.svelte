@@ -36,13 +36,14 @@
 	import type { fixture } from '$lib/store/vote_fixture';
 // [ℹ] key component assets;
 	import { page } from '$app/stores';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import {
 		dlog,
 		FM_W_H_STY, FM_W_H_TAG, FM_W_H_TOG, logErrorGroup
 	} from '$lib/utils/debug';
 	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
 	// [ℹ] main component variables;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
@@ -568,101 +569,45 @@
   COMPONENT HTML 
 =================-->
 
-<div>
-	<!-- 
-  [ℹ] SEO-DATA-LOADED 
-  -->
+<SeoBox>
+  <!-- used, 
 	{#if !loaded && !nomatches}
-		<div id="seo-featured-match-box">
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.vote}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.assists}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.rating}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.player}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.matches}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.goals}
-			</p>
-		</div>
-	{/if}
+  -->
+  <div>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.vote}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.assists}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.rating}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.player}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.matches}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.goals}
+    </p>
+  </div>
+</SeoBox>
 
+<div>
 	<!-- 
   [ℹ] NO FEATURED MATCHES AVAILABLE PLACEHOLDER 
   -->
 	{#if nomatches && !loaded}
-		<!-- 
-    [ℹ] title of the widget 
-    -->
-		<h2
-			class="
-        s-20 
-        m-b-10 
-        w-500 
-        color-white
-      "
-			style="margin-top: 0px;"
-		>
-			{FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
-		</h2>
-		<!-- 
-    [ℹ] no-matches-avaiable-placeholder container 
-    -->
-		<div
-			id="featured-no-match-box"
-			class="row-space-start"
-			class:dark-background-1={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			<!-- 
-      [ℹ] no-matches-visual 
-      -->
-			<img
-				src={$userBetarenaSettings.theme == 'Dark'
-					? no_featured_match_visual_dark
-					: no_featured_match_visual}
-				alt="No widget visual icon"
-				width="80"
-				height="80"
-				class="m-r-20"
-			/>
-			<!-- 
-      [ℹ] container w/ text 
-      -->
-			<div>
-				<p
-					class="
-            s-16 
-            m-b-8 
-            w-500
-          "
-				>
-					{FEATURED_MATCH_WIDGET_DATA_SEO
-						?.place_holder?.info}
-				</p>
-				<p
-					class="
-            s-16 
-            color-grey 
-            w-400
-          "
-				>
-					{FEATURED_MATCH_WIDGET_DATA_SEO
-						?.place_holder?.no_matches}
-				</p>
-			</div>
-		</div>
+		<WidgetNoData 
+      WIDGET_TITLE={FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}
+      NO_DATA_TITLE={FEATURED_MATCH_WIDGET_DATA_SEO?.place_holder?.info}
+      NO_DATA_DESC={FEATURED_MATCH_WIDGET_DATA_SEO?.place_holder?.no_matches}
+    />
 	{/if}
 
 	<!-- 
@@ -672,18 +617,19 @@
 		<!-- [ℹ] widget loading 
     -->
 		{#await get_FeaturedMatchData()}
-			<!-- [ℹ] promise is pending 
+			<!-- 
+      [ℹ] promise is pending 
       -->
 			<FeaturedMatchContentLoading />
 		{:then data}
-			<!-- [ℹ] promise was fulfilled 
+			<!-- 
+      [ℹ] promise was fulfilled 
       -->
-			<h2
-				class="s-20 m-b-10 w-500 color-white"
-				style="margin-top: 0px;"
-			>
-				{FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
-			</h2>
+
+      <WidgetTitle
+        WIDGET_TITLE={FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
+        OVERRIDE_COLOR={true}
+      />
 
 			<div
 				id="live-score-container"
@@ -2097,20 +2043,6 @@
     box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
     border-radius: 8px;
   }
-
-	#featured-no-match-box {
-		padding: 20px;
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-	}
-
-	#seo-featured-match-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
 	#live-score-container {
 		display: grid;

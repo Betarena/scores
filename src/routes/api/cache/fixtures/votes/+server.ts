@@ -2,13 +2,13 @@ import { VOT_C_T_A } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-  get_target_hset_cache_data
+    get_target_hset_cache_data
 } from '../../std_main';
 
 /** @type {import('@sveltejs/kit').RequestHandler} */
 export async function GET(req): Promise<unknown> {
 	const lang: string =
-		req.url['searchParams'].get('lang');
+		req?.url?.searchParams?.get('lang');
 
 	if (lang) {
 		const response_cache =

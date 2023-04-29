@@ -12,7 +12,7 @@ import {
  */
 
 export async function get_livescores_now(): Promise<unknown> {
-	return await get(
+	const response = await get(
 		child(ref(db_real), `livescores_now`)
 	).then((snapshot) => {
 		if (snapshot.exists()) {
@@ -21,4 +21,5 @@ export async function get_livescores_now(): Promise<unknown> {
 			return;
 		}
 	});
+  return response
 }

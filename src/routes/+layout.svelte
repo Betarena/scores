@@ -33,10 +33,8 @@
 	let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
 	let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
 
-	$: HEADER_TRANSLATION_DATA =
-		$page.data.HEADER_TRANSLATION_DATA;
-	$: FOOTER_TRANSLATION_DATA =
-		$page.data.FOOTER_TRANSLATION_DATA;
+	$: HEADER_TRANSLATION_DATA = $page.data.HEADER_TRANSLATION_DATA;
+	$: FOOTER_TRANSLATION_DATA = $page.data.FOOTER_TRANSLATION_DATA;
 
 	// [ℹ] SENTRY CODE-SNIPPET; [PRODUCTION-ONLY]
 	onMount(async () => {
@@ -112,8 +110,7 @@
 {/if}
 
 <main
-	class:dark-background={$userBetarenaSettings.theme ==
-		'Dark'}
+	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
 >
 	{#if VALID_PROFILE_PAGE_URL.includes($page?.url?.pathname)}
 		<Navbar />

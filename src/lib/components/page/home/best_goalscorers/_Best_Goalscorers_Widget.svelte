@@ -1,23 +1,20 @@
 <!-- ===============
-	  COMPONENT JS (w/ TS)
+	COMPONENT JS (w/ TS)
 ==================== -->
 <script lang="ts">
-	// [ℹ] svelte-imports;
-	import { onMount } from 'svelte';
-// [ℹ] external `exports` imports;
 	import { get } from '$lib/api/utils';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-// [ℹ] external components import;
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import type {
 		Cache_Single_Geo_GoalScorers_Translation_Response,
 		Cache_Single_Lang_GoalScorers_Translation_Response
 	} from '$lib/models/home/best_goalscorer/types';
-	import BestGoalscorersWidgetContentLoader from './_Best_Goalscorers_Widget_ContentLoader.svelte';
-	import BestGoalscorerRow from './_Best_Goalscorer_Row.svelte';
-// [ℹ] key component assets;
+	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { BG_W_H_STY, BG_W_H_TAG, BG_W_H_TOG, dlog } from '$lib/utils/debug';
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
+	import { onMount } from 'svelte';
+	import BestGoalscorerRow from './_Best_Goalscorer_Row.svelte';
+	import BestGoalscorersWidgetContentLoader from './_Best_Goalscorers_Widget_ContentLoader.svelte';
 
 	// [ℹ] main component variables;
 	export let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
@@ -144,122 +141,74 @@
     COMPONENT HTML 
 ==================== -->
 
-<div>
-	<!-- [ℹ] SEO-DATA-LOADED 
-  -->
+<SeoBox>
+  <!-- used, 
 	{#if !loaded}
-		<!-- [ℹ] SEO-BOX 
+  -->
+  <div>
+    <h2>
+      {BEST_GOAL_SCORERS_DATA_SEO.translations
+        .widget_translations.best_goal_scorers}
+    </h2>
+    <p>
+      {BEST_GOAL_SCORERS_DATA_SEO.translations
+        .widget_translations.goals}
+    </p>
+    <p>
+      {BEST_GOAL_SCORERS_DATA_SEO.translations
+        .widget_translations.odds}
+    </p>
+    <p>
+      {BEST_GOAL_SCORERS_DATA_SEO.translations
+        .widget_translations.player}
+    </p>
+    <p>
+      {BEST_GOAL_SCORERS_DATA_SEO.translations
+        .widget_translations.show_more_players}
+    </p>
+    <!-- [ℹ] list all of the players in the DB 
     -->
-		<div id="seo-featured-betting-site-box">
-			<h2>
-				{BEST_GOAL_SCORERS_DATA_SEO.translations
-					.widget_translations.best_goal_scorers}
-			</h2>
-			<p>
-				{BEST_GOAL_SCORERS_DATA_SEO.translations
-					.widget_translations.goals}
-			</p>
-			<p>
-				{BEST_GOAL_SCORERS_DATA_SEO.translations
-					.widget_translations.odds}
-			</p>
-			<p>
-				{BEST_GOAL_SCORERS_DATA_SEO.translations
-					.widget_translations.player}
-			</p>
-			<p>
-				{BEST_GOAL_SCORERS_DATA_SEO.translations
-					.widget_translations.show_more_players}
-			</p>
-			<!-- [ℹ] list all of the players in the DB 
-      -->
-			{#each BEST_GOAL_SCORERS_DATA_SEO.top_geo_goalscorer_players as WIDGET_BEST_PLAYER}
-				<p>{WIDGET_BEST_PLAYER.common_name}</p>
-			{/each}
-		</div>
-	{/if}
+    {#each BEST_GOAL_SCORERS_DATA_SEO.top_geo_goalscorer_players as WIDGET_BEST_PLAYER}
+      <p>{WIDGET_BEST_PLAYER.common_name}</p>
+    {/each}
+  </div>
+</SeoBox>
 
-	<!-- [ℹ] NO BEST PLAYERS AVAILABLE PLACEHOLDER
+<div>
+	<!-- 
+  [ℹ] NO BEST PLAYERS AVAILABLE PLACEHOLDER
   -->
 	{#if noBestPlayers && !loaded}
-		<!-- [ℹ] title of the widget 
-    -->
-		<h2
-			class="s-20 m-b-10 w-500 color-black-2"
-			style="margin-top: 0;"
-			class:color-white={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			{BEST_GOAL_SCORERS_DATA_SEO.translations
-				.widget_translations.best_goal_scorers}
-		</h2>
-
-		<!-- [ℹ] no-matches-avaiable-placeholder container 
-    -->
-		<div
-			id="no-best-players-box"
-			class="row-space-start"
-			class:dark-background-1={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			<!-- [ℹ] no-matches-visual 
-      -->
-			{#if $userBetarenaSettings.theme == 'Dark'}
-				<img
-					src={no_featured_match_visual_dark}
-					alt="no-featured-match-visual_dark"
-					width="80px"
-					height="80px"
-					class="m-r-20"
-				/>
-			{:else}
-				<img
-					src={no_featured_match_visual}
-					alt="no-featured-match-visual"
-					width="80px"
-					height="80px"
-					class="m-r-20"
-				/>
-			{/if}
-
-			<!-- [ℹ] container w/ text 
-      -->
-			<div>
-				<p class="s-16 m-b-8 w-500">
-					No Best Players Available
-				</p>
-				<p class="s-16 color-grey w-400">
-					Sorry, at this time there is no best
-					players available!
-				</p>
-			</div>
-		</div>
+    <WidgetNoData 
+      WIDGET_TITLE={BEST_GOAL_SCORERS_DATA_SEO?.translations?.widget_translations?.best_goal_scorers}}
+      NO_DATA_TITLE={"No Best Players Available"}
+      NO_DATA_DESC={"Sorry, at this time there is no best players available!"}
+    />
 	{/if}
 
-	<!-- [ℹ] BEST GOALSCORERS WIDGET DATA 
+	<!-- 
+  [ℹ] BEST GOALSCORERS WIDGET DATA 
   -->
 	{#if !noBestPlayers && !refresh}
-		<!-- [ℹ] promise is pending 
+		<!-- 
+    [ℹ] promise is pending 
     -->
 		{#await widgetInit()}
 			<BestGoalscorersWidgetContentLoader />
 
-			<!-- [ℹ] promise was fulfilled 
+    <!-- 
+    [ℹ] promise was fulfilled 
     -->
 		{:then data}
-			<!-- [ℹ] wiget-title -->
-			<h2
-				id="widget-title"
-				class="s-20 m-b-10 w-500 color-black-2"
-				style="margin-top: 0;"
-				class:color-white={$userBetarenaSettings.theme ==
-					'Dark'}
-			>
-				{BEST_GOAL_SCORERS_DATA_SEO.translations
-					.widget_translations.best_goal_scorers}
-			</h2>
 
-			<!-- [ℹ] widget-component -->
+      <WidgetTitle
+        WIDGET_TITLE={BEST_GOAL_SCORERS_DATA_SEO?.translations?.widget_translations?.best_goal_scorers}
+        OVERRIDE_COLOR={true}
+      />
+
+			<!-- 
+      [ℹ] widget-component 
+      -->
 			<div
 				id="featured-list-container"
 				class:dark-background-1={$userBetarenaSettings.theme ==
@@ -350,19 +299,6 @@
     COMPONENT STYLE
 ==================== -->
 <style>
-	#no-best-players-box {
-		padding: 20px;
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-	}
-
-	#seo-featured-betting-site-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
 	#featured-list-container {
 		display: grid;

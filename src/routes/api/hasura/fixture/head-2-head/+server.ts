@@ -32,8 +32,8 @@ const graphQlInstance = initGrapQLClient();
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 export async function GET(req): Promise<unknown> {
-	const lang: string = req.url['searchParams'].get('lang');
-	const fixture_id: string = req.url['searchParams'].get('fixture_id');
+	const lang: string = req?.url?.searchParams?.get('lang');
+	const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
 
 	// [ℹ] target widget [data]
 	if (fixture_id) {
@@ -94,7 +94,12 @@ async function main(
 	// NOTE: an "team_1,team_2" string
 	const team_ids = team_1 > team_2 ? `${team_2},${team_1}` : `${team_1},${team_2}`;
 	const team_ids_arr = [team_1, team_2];
-	team_ids_arr.sort().reverse();
+	team_ids_arr.sort(
+    (
+      a, 
+      b
+    ) => a - b
+  ).reverse();
 	// [🐞]
 	if (dev) console.log('team_ids_arr', team_ids_arr);
 

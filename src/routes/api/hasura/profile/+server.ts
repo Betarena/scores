@@ -3,8 +3,8 @@ import { performance } from 'perf_hooks';
 
 import { initGrapQLClient } from '$lib/graphql/init';
 import type {
-  BETARENA_HASURA_profile_query,
-  REDIS_CACHE_SINGLE_profile_translation
+    BETARENA_HASURA_profile_query,
+    REDIS_CACHE_SINGLE_profile_translation
 } from '$lib/models/profile/account-setting/types';
 import { B_C_PROF_M_Q_T } from "@betarena/scores-lib/dist/graphql/query.profile.js";
 
@@ -17,7 +17,7 @@ const logs = [];
 
 export async function GET(req): Promise<unknown> {
 	const lang: string =
-		req.url['searchParams'].get('lang');
+		req?.url?.searchParams?.get('lang');
 	const response = await main(lang);
 	return json(response);
 }

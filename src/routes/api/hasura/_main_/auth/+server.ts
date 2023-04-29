@@ -3,11 +3,11 @@ import { performance } from 'perf_hooks';
 
 import { initGrapQLClient } from '$lib/graphql/init';
 
-import type { BETARENA_HASURA_auth_translations } from '$lib/models/hasura';
 import type {
-  BETARENA_HASURA_auth_query,
-  REDIS_CACHE_SINGLE_auth_translation
+    BETARENA_HASURA_auth_query,
+    REDIS_CACHE_SINGLE_auth_translation
 } from '$lib/models/_main_/auth/types';
+import type { BETARENA_HASURA_auth_translations } from '$lib/models/hasura';
 import { B_C_AUTH_M_Q_T } from '@betarena/scores-lib/dist/graphql/query.auth.js';
 
 // [ℹ] debug info
@@ -19,7 +19,7 @@ const logs = [];
 
 export async function GET(req): Promise<unknown> {
 	const lang: string =
-		req.url['searchParams'].get('lang');
+		req?.url?.searchParams?.get('lang');
 	const target_translations = await main(lang);
 	return json(target_translations);
 }

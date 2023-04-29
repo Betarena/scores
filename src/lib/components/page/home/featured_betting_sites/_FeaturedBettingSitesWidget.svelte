@@ -20,6 +20,8 @@
 	import SilverCup from './assets/_SilverCup.svelte';
 	import FeaturedBettingSitesWidgetContentLoading from './_FeaturedBettingSitesWidget_ContentLoading.svelte';
 	import FeaturedSiteRow from './_FeaturedSiteRow.svelte';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 
 	// [ℹ] main component variables;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
@@ -141,25 +143,23 @@
     COMPONENT HTML 
 ==================== -->
 
-<div>
-	<!-- [ℹ] SEO-DATA-LOADED 
+<SeoBox>
+  <!-- used, 
+	{#if !loaded}
   -->
-	<!-- {#if !loaded} -->
-	<!-- [ℹ] SEO-BOX 
-    -->
-	<div id="seo-featured-betting-site-box">
+  <div>
 		<h2>
-			{FEATURED_BETTING_SITES_WIDGET_DATA_SEO
-				.translations.widget_title}
+			{FEATURED_BETTING_SITES_WIDGET_DATA_SEO?.translations?.widget_title}
 		</h2>
 		<p>
-			{FEATURED_BETTING_SITES_WIDGET_DATA_SEO
-				.translations.title}
+			{FEATURED_BETTING_SITES_WIDGET_DATA_SEO?.translations?.title}
 		</p>
 	</div>
-	<!-- {/if} -->
+</SeoBox>
 
-	<!-- [ℹ] FEATURED BETTING SITES WIDGET
+<div>
+	<!-- 
+  [ℹ] FEATURED BETTING SITES WIDGET
   -->
 	{#if !refresh}
 		{#await widgetInit()}
@@ -167,19 +167,15 @@
       -->
 			<FeaturedBettingSitesWidgetContentLoading />
 		{:then data}
-			<!-- [ℹ] promise was fulfilled 
-    -->
+			
+      <!-- 
+      [ℹ] promise was fulfilled 
+      -->
 
-			<!-- [ℹ] wiget-title -->
-			<p
-				id="widget-title"
-				class="s-20 m-b-10 color-black w-500"
-				class:color-white={$userBetarenaSettings.theme ==
-					'Dark'}
-			>
-				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO
-					.translations.widget_title}
-			</p>
+      <WidgetTitle
+        WIDGET_TITLE={FEATURED_BETTING_SITES_WIDGET_DATA_SEO?.translations?.widget_title}
+        OVERRIDE_COLOR={true}
+      />
 
 			<!-- [ℹ] widget-component 
       -->
@@ -338,12 +334,6 @@
     COMPONENT STYLE
 ==================== -->
 <style>
-	#seo-featured-betting-site-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
 	#featured-list-container {
 		display: grid;

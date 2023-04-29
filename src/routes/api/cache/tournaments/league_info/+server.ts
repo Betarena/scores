@@ -10,7 +10,7 @@ import {
  */
 export async function GET(req): Promise<unknown> {
 	const url: string =
-		req.url['searchParams'].get('url');
+		req?.url?.searchParams?.get('url');
 
 	const response_cache =
 		await get_target_hset_cache_data(
