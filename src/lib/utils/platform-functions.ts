@@ -82,6 +82,14 @@ export function PRELOAD_invalid_data (
 	dlog(`null (preload): ${indexesOf(data, null)}`, true);
 }
 
+/**
+ * @summary [HELPER] method
+ * @description gethers data from target
+ * url list, and returns;
+ * @param {string[]} endpoints 
+ * @param {fetch} fetch 
+ * @returns Promise<any[]>
+ */
 export async function promiseUrlsPreload
 (
   endpoints: string[],
