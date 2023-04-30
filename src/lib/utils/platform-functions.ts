@@ -81,3 +81,18 @@ export function PRELOAD_invalid_data (
   ),[]);
 	dlog(`null (preload): ${indexesOf(data, null)}`, true);
 }
+
+export async function promiseUrlsPreload
+(
+  endpoints: string[],
+  fetch: any
+)
+{
+  const promises = endpoints.map((_url) =>
+		fetch(_url).then((response) =>
+			response.json()
+		)
+	);
+	const data = await Promise.all(promises);
+  return data;
+}
