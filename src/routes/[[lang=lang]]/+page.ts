@@ -14,11 +14,11 @@ import type { PageLoad } from './$types';
 export async function load
 (
   {
-	  url,
+	  // url,
 	  params,
 	  fetch
   }
-): Promise<PageLoad> 
+): Promise < PageLoad > 
 {
 
   const t0 = performance.now();

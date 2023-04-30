@@ -32,6 +32,8 @@ export async function GET
 	const sport: string = req?.url?.searchParams?.get('sport');
   const months: string = req?.url?.searchParams?.get('months');
 
+  // TODO: add (hasura/postgresql) fallback for all METHODS below;
+
   // [1] valid url;
   const validation_0 =
     langUrl

@@ -132,12 +132,18 @@ export async function promiseValidUrlCheck
 ): Promise < boolean >
 {
   const validation_0 =
-    (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl)
-    || (langUrl && sportUrl && !countryUrl && !leagueUrl && !fixtureUrl)
-    || (langUrl && sportUrl && countryUrl && !leagueUrl && !fixtureUrl)
-    || (langUrl && sportUrl && countryUrl && leagueUrl && !fixtureUrl)
-    || (langUrl && sportUrl && !countryUrl && !leagueUrl && fixtureUrl)
-    // TODO: playerUrl
+    // lang
+    (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
+    // sport
+    || (langUrl && sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
+    // country
+    || (langUrl && sportUrl && countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
+    // tournament/league
+    || (langUrl && sportUrl && countryUrl && leagueUrl && !fixtureUrl && !playerUrl)
+    // fixture
+    || (langUrl && sportUrl && !countryUrl && !leagueUrl && fixtureUrl && !playerUrl)
+    // player
+    || (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && playerUrl)
   ;
 
   console.log('validation_0', validation_0)
@@ -150,6 +156,7 @@ export async function promiseValidUrlCheck
   if (countryUrl) queryStr += `&countryUrl=${countryUrl}`
   if (leagueUrl) queryStr += `&leagueUrl=${leagueUrl}`
   if (fixtureUrl) queryStr += `&fixtureUrl=${fixtureUrl}`
+  if (playerUrl) queryStr += `&playerUrl=${playerUrl}`
 
   console.log('queryStr', queryStr)
 

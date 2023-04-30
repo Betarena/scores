@@ -7,7 +7,7 @@ import type { PageLoad, PageLoadEvent } from '../$types';
 export async function load
 (
   {
-    url,
+    // url,
     params,
     fetch
   }: PageLoadEvent

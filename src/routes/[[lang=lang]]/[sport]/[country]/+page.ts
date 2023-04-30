@@ -4,11 +4,14 @@ import { error, redirect } from '@sveltejs/kit';
 import type { PageLoad, PageLoadEvent } from '../$types';
 
 /** @type {import('./$types').PageLoad} */
-export async function load({
-	url,
-	params,
-	fetch
-}: PageLoadEvent): Promise < PageLoad > {
+export async function load
+(
+  {
+    // url,
+    params,
+    fetch
+  }: PageLoadEvent
+): Promise < PageLoad > {
 
   const t0 = performance.now();
 
