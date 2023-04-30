@@ -7,7 +7,7 @@ import {
 } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
-import { PRELOAD_invalid_data, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
+import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 import type { PageLoad } from './$types';
 
 /** @type {import('./$types').PageLoad} */
@@ -35,12 +35,11 @@ export async function load
 
   //#region [0] IMPORTANT VALID URL CHECK
 
-  const validUrlCheck = await fetch(
-		`/api/data/main/seo-pages?langUrl=${urlLang}`,
-		{
-			method: 'GET'
-		}
-	).then((r) => r.json());
+  const validUrlCheck = await promiseValidUrlCheck
+  (
+    fetch,
+    urlLang
+  )
 
   // [ℹ] exit;
 	if (!validUrlCheck) {
