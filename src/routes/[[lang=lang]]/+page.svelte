@@ -1,10 +1,21 @@
 <!-- ===================
 	COMPONENT JS - BASIC 
 =================== -->
+
 <script lang="ts">
+
+  //#region ➤ [MAIN] Package Imports
+  // <-imports-go-here->
+
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
+	import { get } from '$lib/api/utils';
+	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
+	import { sessionStore } from '$lib/store/session';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { dlog, dlogv2 } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
@@ -16,9 +27,6 @@
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
 
-	import { browser } from '$app/environment';
-	import { get } from '$lib/api/utils';
-	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
 	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
@@ -27,10 +35,11 @@
 	import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
 	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlog, dlogv2 } from '$lib/utils/debug';
 	import type { Unsubscribe } from 'firebase/database';
+
+  //#endregion ➤ [MAIN] Package Imports
+
+  //#region ➤ [VARIABLES]
 
 	let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
 	let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
@@ -40,32 +49,26 @@
 	let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
 	let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
 
+  let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
+
 	$: PAGE_DATA_SEO = $page.data?.PAGE_DATA_SEO;
-	$: FEATURED_MATCH_WIDGET_DATA_SEO =
-		$page.data?.FEATURED_MATCH_WIDGET_DATA_SEO;
-	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =
-		$page.data
-			?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
-	$: BEST_GOAL_SCORERS_DATA_SEO =
-		$page.data?.BEST_GOAL_SCORERS_DATA_SEO;
-	$: LEAGUE_LIST_WIDGET_DATA_SEO =
-		$page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
-	$: LEAGUES_TABLE_SCORES_SEO_DATA =
-		$page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
+	$: FEATURED_MATCH_WIDGET_DATA_SEO =	$page.data?.FEATURED_MATCH_WIDGET_DATA_SEO;
+	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+	$: BEST_GOAL_SCORERS_DATA_SEO =	$page.data?.BEST_GOAL_SCORERS_DATA_SEO;
+	$: LEAGUE_LIST_WIDGET_DATA_SEO = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
+	$: LEAGUES_TABLE_SCORES_SEO_DATA = $page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
 	$: SEO_BLOCK_DATA = $page.data?.SEO_BLOCK_DATA;
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  PAGE METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
+  //#endregion ➤ [VARIABLES]
+  
+  //#region ➤ [MAIN-METHODS]
 
   /**
    * @description obtains the target sportbook data 
    * information based on users geo-location;
    * data gathered at page-level and set to svelte-stores
    * to be used by (this) page components;
-   * NOTE: best approach
+   * NOTE: (*) best approach
    * TODO: can be moved to a layout-level [?]
    * TODO: can be moved to a header-level [?]
    * TODO: can be moved to a +server-level [⚠️]
@@ -85,14 +88,26 @@
 				parseInt(b.position)
 		);
   }
-  
-  $: if ($userBetarenaSettings.country_bookmaker) {
-    sportbookIdentify()
-  }
+
+  //#endregion ➤ [MAIN-METHODS]
+
+  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
 
   if (browser) {
     onceRealTimeLiveScoreboard()
   }
+  
+  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
+
+  //#region ➤ [REACTIVIY] [METHODS]
+
+  $: if ($userBetarenaSettings.country_bookmaker) {
+    sportbookIdentify()
+  }
+
+  //#endregion ➤ [REACTIVIY] [METHODS]
+
+  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
   onMount(async() => {
     
@@ -155,6 +170,8 @@
 			}
 		);
 	});
+
+  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
 
@@ -243,7 +260,7 @@
 				{LEAGUES_TABLE_SCORES_SEO_DATA}
 			/>
 		</div>
-		<!-- 
+  <!-- 
   [ℹ] MOBILE VIEW ONLY 
   -->
 	{:else}
@@ -274,6 +291,7 @@
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
+
 <style>
 	section#home-page {
 		display: grid;
