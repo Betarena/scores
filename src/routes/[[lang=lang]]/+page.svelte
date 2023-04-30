@@ -200,7 +200,7 @@
 -->
 <svelte:head>
 	{#if PAGE_DATA_SEO}
-		{#each PAGE_DATA_SEO.hreflang as item}
+		{#each PAGE_DATA_SEO?.hreflang || [] as item}
 			{#if item.link == null}
 				<link
 					rel="alternate"
@@ -222,7 +222,7 @@
 	COMPONENT HTML
 =================== -->
 
-<section 
+<section
   id="home-page">
 	<!-- 
   [ℹ] DESKTOP & TABLET VIEW ONLY

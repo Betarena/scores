@@ -23,15 +23,17 @@ export async function load
 
   const t0 = performance.now();
 
+  //#region [0] IMPORTANT EXTRACT URL DATA
+
 	const urlLang: string =
 		params?.lang == undefined 
       ? 'en' 
       : params?.lang
   ;
 
-	// --------------
-  // [1] IMPORTANT validate url check 
-	// --------------
+  //#endregion [0] IMPORTANT EXTRACT URL DATA
+
+  //#region [0] IMPORTANT VALID URL CHECK
 
   const validUrlCheck = await fetch(
 		`/api/data/main/seo-pages?langUrl=${urlLang}`,
@@ -48,9 +50,9 @@ export async function load
 		);
 	}
 
-	// --------------
-	// [ℹ] preload data DOC: REF: [2]
-	// --------------
+  //#endregion [0] IMPORTANT EXTRACT URL DATA
+
+  //#region [0] IMPORTANT (PRE) PRE-LOAD DATA DOC: REF: [2]
 
 	const urls = [
 		// [ℹ] home (page)
@@ -83,12 +85,12 @@ export async function load
     LIVESCORES_V2_T_DATA,
     LIVESCORES_V2_SEO
 	] = data;
-  
+
 	dlog(data, false);
 
-	// --------------
-	// [ℹ] return(s)
-	// --------------
+  //#endregion [0] IMPORTANT (PRE) PRE-LOAD DATA DOC: REF: [2]
+  
+  //#region [3] IMPORTANT RETURN
 
 	// [ℹ] FIXME: valid-page does not count data[7] - already checked
 	const INVALID_PAGE_DATA_POINTS: boolean = data.includes(undefined);
@@ -127,4 +129,7 @@ export async function load
     LIVESCORES_V2_T_DATA,
     LIVESCORES_V2_SEO
 	};
+
+  //#endregion [3] IMPORTANT RETURN
+
 }
