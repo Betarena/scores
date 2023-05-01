@@ -1,87 +1,126 @@
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from './$types';
+
+import { ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG, dlog, errlog } from '$lib/utils/debug';
+import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 import type {
   REDIS_CACHE_SINGLE_fixtures_page_info_response,
   REDIS_CACHE_SINGLE_general_countries_translation
 } from '$lib/models/_main_/pages_and_seo/types';
 import type { GeoJsResponse } from '$lib/types/types.geojs';
-import { dlog, errlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
+import type { PageLoad } from './$types';
 
 /** @type {import('./$types').PageLoad} */
-export async function load({ url, params, fetch }): Promise<PageLoad> {
+export async function load
+(
+  { 
+    url, 
+    params, 
+    fetch 
+  }
+): Promise < PageLoad >
+{
 
   const t0 = performance.now();
 
-	const { lang, sport } = params;
+  //#region [0] IMPORTANT EXTRACT URL DATA
 
-  // IMPORTANT
-	const VALID_URL = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, {
-		method: 'GET'
-	}).then((r) => r.json());
+	const { 
+    lang, 
+    sport,
+    fixture
+  } = params;
 
-	// [ℹ] exit;
-	if (!VALID_URL) {
-    const t1 = performance.now();
-    dlog(`fixture (load) (exit) complete in: ${(t1 - t0) / 1000} sec`, true)
-		throw error(ERROR_CODE_INVALID, PAGE_INVALID_MSG);
-	}
+  const urlLang: string =
+    params?.lang == undefined 
+      ? 'en' 
+      : params?.lang
+  ;
 
-  // --------------
-	// [ℹ] extract critical data from URL
-  // --------------
-
-	const urlLang: string = params.lang == undefined ? 'en' : params.lang;
 	const fixture_id = url.pathname.match(/\d+$/);
 
-  // --------------
-	// [ℹ] get pre-pre-load critical data
-  // --------------
+  //#endregion [0] IMPORTANT EXTRACT URL DATA
 
-	const FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response = await fetch(
-		`/api/cache/_main_/pages_and_seo?fixture_id=${fixture_id}&page=fixtures`,
-		{
-			method: 'GET'
-		}
-	).then((r) => r.json());
+  //#region [0] IMPORTANT VALID URL CHECK
 
-	const id =
-		FIXTURE_INFO?.data?.id == undefined ? undefined : FIXTURE_INFO?.data?.id.toString();
+  const validUrlCheck = await promiseValidUrlCheck
+  (
+    fetch,
+    urlLang,
+    sport,
+    null,
+    null,
+    fixture
+  )
+
+  // [ℹ] exit;
+	if (!validUrlCheck) {
+    // [🐞]
+    const t1 = performance.now();
+    dlog(`⏳ [FIXTURE] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
+		throw error(
+			ERROR_CODE_INVALID,
+			PAGE_INVALID_MSG
+		);
+	}
+
+  //#endregion [0] IMPORTANT VALID URL CHECK
+
+  //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
+
+  // [1] FIXTURE (CRITICAL) page data;
+
+  type PP_PROMISE_0 = [
+    REDIS_CACHE_SINGLE_fixtures_page_info_response | undefined
+  ]
+
+  const data_0: PP_PROMISE_0 = await promiseUrlsPreload
+  (
+    [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures`],
+    fetch
+  ) as PP_PROMISE_0;
+
+	const [
+		FIXTURE_INFO
+	] = data_0;
+
+	const id =	FIXTURE_INFO?.data?.id == undefined ? undefined : FIXTURE_INFO?.data?.id.toString();
 	const league_id = FIXTURE_INFO?.league_id;
 	const league_name = FIXTURE_INFO?.data?.league_name;
 	const country_id = FIXTURE_INFO?.data?.country_id;
 	const home_team_name = FIXTURE_INFO?.data?.home_team_name;
 	const away_team_name = FIXTURE_INFO?.data?.away_team_name;
-	const fixture_day =
-		FIXTURE_INFO?.data?.fixture_day == undefined
-			? undefined
-			: FIXTURE_INFO?.data?.fixture_day.replace('T00:00:00', '');
+	const fixture_day = FIXTURE_INFO?.data?.fixture_day == undefined ? undefined : FIXTURE_INFO?.data?.fixture_day.replace('T00:00:00', '');
 	const venue_name = FIXTURE_INFO?.data?.venue_name;
 	const venue_city = FIXTURE_INFO?.data?.venue_city;
 
-	const response_country_translation: REDIS_CACHE_SINGLE_general_countries_translation = await fetch(
-		`/api/cache/_main_/pages_and_seo?country_id=${country_id}`,
-		{
-			method: 'GET'
-		}
-	).then((r) => r.json());
+  // [2] FIXTURE (CRITICAL) page data;
 
-	const country = response_country_translation?.translations[urlLang];
+  type PP_PROMISE_1 = [
+    REDIS_CACHE_SINGLE_general_countries_translation | undefined
+  ]
+
+  const data_1: PP_PROMISE_1 = await promiseUrlsPreload
+  (
+    [`/api/data/main/seo-pages?country_id=${country_id}`],
+    fetch
+  ) as PP_PROMISE_0;
+
+	const [
+		COUNTRY_TRANSLATION
+	] = data_1;
+
+	const country = COUNTRY_TRANSLATION?.translations[urlLang];
 
 	FIXTURE_INFO.data.country = country;
 	FIXTURE_INFO.data.sport = 'football';
 
-  // TODO: future sports translation get
-  /*
-      const response_sport_translation: REDIS_CACHE_SINGLE_general_sport_translation = await fetch(
-      `/api/cache/_main_/pages_and_seo?sport=` + country_id,
-      {
-        method: 'GET'
-      }
-    ).then((r) => r.json());
-    const sport_typ = response_sport_translation[lang]
-  */
+  // TODO: add sports translation (get)
+  // TODO: similar to that of country (above)
+
+  //#endregion [0] IMPORTANT (PRE) PRE-LOAD DATA
+
+  //#region [1] IMPORTANT PRE-LOAD DATA
 
   // --------------
 	// [ℹ] preload data DOC: REF: [2]
@@ -101,7 +140,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
   // TEST (^)
 
 	const urls = [
-    `/api/cache/_main_/pages_and_seo?lang=${urlLang}&page=fixtures`,
+    `/api/data/main/seo-pages?lang=${urlLang}&page=fixtures`,
     // TODO:FIXME: TES: (below 2 instnaces)
     `/api/cache/tournaments/sportbook?geoPos=${GEO_RESPONSE?.country_code.toLowerCase()}`,
     `/api/cache/tournaments/sportbook?all=true&geoPos=${GEO_RESPONSE?.country_code.toLowerCase()}`,
@@ -142,14 +181,11 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     `/api/cache/tournaments/standings?league_id=${league_id}` // TODO:FIXME: dependant on league-id - leaking space;
   ];
 
-	const promises = urls.map((_url) =>
-		fetch(_url).then((response) =>
-			response.json()
-		)
-	);
-
-	const data = await Promise.all(promises);
-	dlog(data, false);
+  const data = await promiseUrlsPreload
+  (
+    urls,
+    fetch
+  );
 
 	const [
     PAGE_SEO,
@@ -177,13 +213,14 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     STANDINGS_DATA
 	] = data;
 
+	dlog(data, false);
   dlog(PAGE_SEO, false)
   dlog(SPORTBOOK_MAIN, false)
   dlog(SPORTBOOK_ALL, false);
 
-  // --------------
-	// [ℹ] apply regex to morph data
-  // --------------
+  //#endregion [1] IMPORTANT PRE-LOAD DATA
+
+  //#region [2] IMPORTANT REGEX
       
 	PAGE_SEO.main_data = JSON.parse(
 		JSON.stringify(PAGE_SEO.main_data)
@@ -227,78 +264,17 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 			.replace(/{data.venue.data.city}/g, venue_city)
 	);
 
+  //#endregion [2] IMPORTANT REGEX
+
 	// [ℹ] canonical exclusive SET - [EN];
 	const enItemAlt = FIXTURE_INFO?.alternate_data?.en;
 	PAGE_SEO.main_data.canonical = enItemAlt;
-
-	// const FORCE_HASURA = false;
-
-	// if (FIXTURE_SCOREBOARD == undefined || FORCE_HASURA) {
-	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_SCOREBOARD - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
-	// 	FIXTURE_SCOREBOARD = await fetch(`/api/hasura/fixtures/scoreboard?fixture_id=${fixture_id}`, {
-	// 		method: 'GET'
-	// 	}).then((r) => r.json());
-	// }
-
-	// if (FIXTURE_LINEUPS == undefined || FORCE_HASURA) {
-	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_LINEUPS - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
-	// 	FIXTURE_LINEUPS = await fetch(`/api/hasura/fixtures/lineups?fixture_id=${fixture_id}`, {
-	// 		method: 'GET'
-	// 	}).then((r) => r.json());
-	// }
-
-	// if (FIXTURE_INCIDENTS == undefined || FORCE_HASURA) {
-	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_INCIDENTS - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
-	// 	FIXTURE_INCIDENTS = await fetch(`/api/hasura/fixtures/incidents?fixture_id=${fixture_id}`, {
-	// 		method: 'GET'
-	// 	}).then((r) => r.json());
-	// }
-
-	// if (FIXTURE_STATISTICS == undefined || FORCE_HASURA) {
-	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_STATISTICS - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
-	// 	FIXTURE_STATISTICS = await fetch(`/api/hasura/fixtures/statistics?fixture_id=${fixture_id}`, {
-	// 		method: 'GET'
-	// 	}).then((r) => r.json());
-	// }
-
-	// if (FIXTURE_CONTENT == undefined || FORCE_HASURA) {
-	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_CONTENT - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
-	// 	FIXTURE_CONTENT = await fetch(`/api/hasura/fixtures/content?fixture_id=${fixture_id}&lang=${urlLang}`, {
-	// 		method: 'GET'
-	// 	}).then((r) => r.json());
-	// }
-
-	// if (FIXTURE_ABOUT == undefined || FORCE_HASURA) {
-	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_ABOUT - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
-	// 	FIXTURE_ABOUT = await fetch(`/api/hasura/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, {
-	// 		method: 'GET'
-	// 	}).then((r) => r.json());
-	// }
-
-	// if (FIXTURE_H2H == undefined || FORCE_HASURA) {
-	// 	dlog(`${F_DEBUG_TAG} non current_season fixture ${fixture_id} FIXTURE_H2H - Hasura Direct`, F_DEBUG_TOGGLE, F_DEBUG_STYLE);
-	// 	FIXTURE_H2H = await fetch(`/api/hasura/fixtures/head-2-head?fixture_id=${fixture_id}`, {
-	// 		method: 'GET'
-	// 	}).then((r) => r.json());
-	// }
-
-  // FIXTURE_INFO.data.fixture_time = undefined
   FIXTURE_INFO.data.fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
 
-	// --------------
-	// [ℹ] return(s)
-	// --------------
+  //#region [3] IMPORTANT RETURN
 
 	// [ℹ] FIXME: valid-page does not count data[7] - already checked
-	const INVALID_PAGE_DATA_POINTS: boolean =
-		data.includes(undefined);
-
-	const indexesOf = (arr, item) =>
-		arr.reduce(
-			(acc, v, i) => (
-				v === item && acc.push(i), acc
-  ),[]);
-	dlog(`null (preload): ${indexesOf(data, null)}`, true);
+	const INVALID_PAGE_DATA_POINTS: boolean =	data.includes(undefined);
 
   // FIXME:  && response_about // IMPORTANT can be "NULL"
   // FIXME:  && response_h2h // IMPORTANT can be "NULL"
@@ -311,10 +287,17 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 		);
 	}
 
+  PRELOAD_invalid_data(data)
+
   const t1 = performance.now();
   dlog(`fixture (load) (end) complete in: ${(t1 - t0) / 1000} sec`, true)
 
   return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    // NOTE: issues with setting correct <PageLoad> types, 
+    // NOTE: not being applied to return;
+    // NOTE: not critical - can be silenced;
     PAGE_SEO,
     FIXTURE_INFO,
     FIXTURE_SCOREBOARD,
@@ -342,4 +325,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     SPORTBOOK_MAIN,
     SPORTBOOK_ALL
   };
+
+  //#endregion [3] IMPORTANT RETURN
+
 }

@@ -170,6 +170,7 @@
 						title={logoLink}
 					>
 						<img
+              loading="lazy"
 							src={logo_full}
 							alt="betarena-logo"
 							title={logoLink}
@@ -203,6 +204,7 @@
 								href={social_network[1]}
 							>
 								<img
+                  loading="lazy"
 									src="/assets/svg/footer/icon/{social_network[0]
 										.toString()
 										.toLocaleLowerCase()}.svg"
@@ -405,6 +407,7 @@
 					style="width: auto;"
 				>
 					<img
+            loading="lazy"
 						src={legal18icon}
 						alt="legal18icon"
 						title="legal18icon"
@@ -413,6 +416,7 @@
 						class="m-r-24"
 					/>
 					<img
+            loading="lazy"
 						src={begambleawareorg}
 						alt="begambleawareorg"
 						title="begambleawareorg"
@@ -464,6 +468,7 @@
 								title={logoLink}
 							>
 								<img
+                  loading="lazy"
 									src={logo_full}
 									alt="betarena-logo"
 									title={logoLink}
@@ -494,6 +499,7 @@
 										href={social_network[1]}
 									>
 										<img
+                      loading="lazy"
 											src="/assets/svg/footer/icon/{social_network[0]
 												.toString()
 												.toLocaleLowerCase()}.svg"
@@ -686,6 +692,7 @@
 						style="width: auto;"
 					>
 						<img
+              loading="lazy"
 							src={legal18icon}
 							alt="legal18icon"
 							title="legal18icon"
@@ -694,6 +701,7 @@
 							class="m-r-24"
 						/>
 						<img
+              loading="lazy"
 							src={begambleawareorg}
 							alt="begambleawareorg"
 							title="begambleawareorg"
@@ -724,6 +732,7 @@
 							title={logoLink}
 						>
 							<img
+                loading="lazy"
 								src={logo_full}
 								alt="betarena-logo"
 								title={logoLink}
@@ -924,6 +933,7 @@
 									href={social_network[1]}
 								>
 									<img
+                    loading="lazy"
 										src="/assets/svg/footer/icon/{social_network[0]
 											.toString()
 											.toLocaleLowerCase()}.svg"
@@ -947,6 +957,7 @@
 						style="width: auto;"
 					>
 						<img
+              loading="lazy"
 							src={legal18icon}
 							alt="legal18icon"
 							title="legal18icon"
@@ -955,6 +966,7 @@
 							class="m-r-24"
 						/>
 						<img
+              loading="lazy"
 							src={begambleawareorg}
 							alt="begambleawareorg"
 							title="begambleawareorg"

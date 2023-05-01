@@ -77,6 +77,7 @@
           -->
 				<div id="image-contaier">
 					<img
+            loading="lazy"
 						class="team-img"
 						src={data.team_logo}
 						alt="default alt text"

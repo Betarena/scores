@@ -163,6 +163,7 @@
 			aria-label={data.title}
 		>
 			<img
+        loading="lazy"
 				style="background-color: var({imageVar}); border-radius: 4px;"
 				src={data.image}
 				alt="default alt text"
@@ -202,30 +203,35 @@
 		{#if viewportDesktop}
 			{#if data.stars === '5'}
 				<img
+          loading="lazy"
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star5.svg"
 					alt="default alt text"
 				/>
 			{:else if data.stars === '4'}
-				<img
+				<img  
+          loading="lazy"
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star4.svg"
 					alt="default alt text"
 				/>
 			{:else if data.stars === '3'}
 				<img
+          loading="lazy"
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star3.svg"
 					alt="default alt text"
 				/>
 			{:else if data.stars === '2'}
 				<img
+          loading="lazy"
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star2.svg"
 					alt="default alt text"
 				/>
 			{:else}
 				<img
+          loading="lazy"
 					class="rating-img"
 					src="https://www.betarena.com/widgets/featured_betting_sites/static/star1.svg"
 					alt="default alt text"
@@ -251,6 +257,7 @@
 				<div class="extra-info" in:fade>
 					<!-- ... site-image ... -->
 					<img
+            loading="lazy"
 						style="background-color: var({imageVar});"
 						class="extra-info-img"
 						src={data.image}

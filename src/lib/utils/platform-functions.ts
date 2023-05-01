@@ -81,3 +81,94 @@ export function PRELOAD_invalid_data (
   ),[]);
 	dlog(`null (preload): ${indexesOf(data, null)}`, true);
 }
+
+/**
+ * @summary [HELPER] method
+ * @description gethers data from target
+ * url list, and returns;
+ * @param {string[]} endpoints 
+ * @param {fetch} fetch 
+ * @returns Promise<any[]>
+ */
+export async function promiseUrlsPreload
+(
+  endpoints: string[],
+  fetch: any
+)
+{
+  const promises = endpoints.map((_url) =>
+		fetch(_url).then((response) =>
+			response.json()
+		)
+	);
+	const data = await Promise.all(promises);
+  return data;
+}
+
+/**
+ * @summary [HELPER] method
+ * @description validates the target
+ * url properties for its validity in
+ * the +page.ts/+page.server.ts (preload);
+ * IMPORTANT used by PRE-LOAD ONLY;
+ * @param {fetch} fetch 
+ * @param {string} langUrl 
+ * @param {string} sportUrl 
+ * @param {string} countryUrl 
+ * @param {string} leagueUrl 
+ * @param {string} fixtureUrl 
+ * @param {string} playerUrl 
+ * @returns NaN
+ */
+export async function promiseValidUrlCheck
+(
+  fetch: any,
+  langUrl: string = null,
+  sportUrl: string = null,
+  countryUrl: string = null,
+  leagueUrl: string = null,
+  fixtureUrl: string = null,
+  playerUrl: string = null
+): Promise < boolean >
+{
+  const validation_0 =
+    // lang
+    (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
+    // sport
+    || (langUrl && sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
+    // country
+    || (langUrl && sportUrl && countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
+    // tournament/league
+    || (langUrl && sportUrl && countryUrl && leagueUrl && !fixtureUrl && !playerUrl)
+    // fixture
+    || (langUrl && sportUrl && !countryUrl && !leagueUrl && fixtureUrl && !playerUrl)
+    // player
+    || (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && playerUrl)
+  ;
+
+  console.log('validation_0', validation_0)
+
+  if (!validation_0) return false;
+
+  let queryStr = "";
+  if (langUrl) queryStr += `?langUrl=${langUrl}`
+  if (sportUrl) queryStr += `&sportUrl=${sportUrl}`
+  if (countryUrl) queryStr += `&countryUrl=${countryUrl}`
+  if (leagueUrl) queryStr += `&leagueUrl=${leagueUrl}`
+  if (fixtureUrl) queryStr += `&fixtureUrl=${fixtureUrl}`
+  if (playerUrl) queryStr += `&playerUrl=${playerUrl}`
+
+  console.log('queryStr', queryStr)
+
+  const response = await fetch
+  (
+    `/api/data/main/seo-pages${queryStr}`,
+    {
+      method: 'GET'
+    }
+  )
+  .then((r) => r.json())
+  ;
+
+  return response;
+}

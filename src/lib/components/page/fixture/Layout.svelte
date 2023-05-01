@@ -11,6 +11,10 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import type {
+		REDIS_CACHE_SINGLE_fixtures_page_info_response,
+		REDIS_CACHE_SINGLE_fixtures_seo_response
+	} from '$lib/models/_main_/pages_and_seo/types';
+	import type {
 		REDIS_CACHE_SINGLE_lineups_data,
 		REDIS_CACHE_SINGLE_lineups_translation
 	} from '$lib/models/fixtures/lineups/types';
@@ -18,10 +22,6 @@
 		REDIS_CACHE_SINGLE_scoreboard_data,
 		REDIS_CACHE_SINGLE_scoreboard_translation
 	} from '$lib/models/fixtures/scoreboard/types';
-	import type {
-		REDIS_CACHE_SINGLE_fixtures_page_info_response,
-		REDIS_CACHE_SINGLE_fixtures_seo_response
-	} from '$lib/models/_main_/pages_and_seo/types';
 
 	import type {
 		REDIS_CACHE_SINGLE_incidents_data,
@@ -105,38 +105,24 @@
 
 	$: PAGE_SEO = $page.data.PAGE_SEO;
 	$: FIXTURE_INFO = $page.data.FIXTURE_INFO;
-	$: FIXTURE_SCOREBOARD =
-		$page.data.FIXTURE_SCOREBOARD;
-	$: FIXTURE_SCOREBOARD_TRANSLATION =
-		$page.data.FIXTURE_SCOREBOARD_TRANSLATION;
+	$: FIXTURE_SCOREBOARD =	$page.data.FIXTURE_SCOREBOARD;
+	$: FIXTURE_SCOREBOARD_TRANSLATION =	$page.data.FIXTURE_SCOREBOARD_TRANSLATION;
 	$: FIXTURE_LINEUPS = $page.data.FIXTURE_LINEUPS;
-	$: FIXTURE_LINEUPS_TRANSLATION =
-		$page.data.FIXTURE_LINEUPS_TRANSLATION;
-	$: FIXTURE_INCIDENTS =
-		$page.data.FIXTURE_INCIDENTS;
-	$: FXITURE_INCIDENTS_TRANSLATION =
-		$page.data.FXITURE_INCIDENTS_TRANSLATION;
-	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =
-		$page.data
-			.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
-	$: FIXTURE_STATISTICS =
-		$page.data.FIXTURE_STATISTICS;
-	$: FIXTURE_STATISTICS_TRANSLATION =
-		$page.data.FIXTURE_STATISTICS_TRANSLATION;
+	$: FIXTURE_LINEUPS_TRANSLATION = $page.data.FIXTURE_LINEUPS_TRANSLATION;
+	$: FIXTURE_INCIDENTS = $page.data.FIXTURE_INCIDENTS;
+	$: FXITURE_INCIDENTS_TRANSLATION = $page.data.FXITURE_INCIDENTS_TRANSLATION;
+	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+	$: FIXTURE_STATISTICS =	$page.data.FIXTURE_STATISTICS;
+	$: FIXTURE_STATISTICS_TRANSLATION =	$page.data.FIXTURE_STATISTICS_TRANSLATION;
 	$: FIXTURE_CONTENT = $page.data.FIXTURE_CONTENT;
-	$: FIXTURE_CONTENT_TRANSLATION =
-		$page.data.FIXTURE_CONTENT_TRANSLATION;
+	$: FIXTURE_CONTENT_TRANSLATION = $page.data.FIXTURE_CONTENT_TRANSLATION;
 	$: FIXTURE_ABOUT = $page.data.FIXTURE_ABOUT;
-	$: FIXTURE_ABOUT_TRANSLATION =
-		$page.data.FIXTURE_ABOUT_TRANSLATION;
-	$: FIXTURE_VOTES_TRANSLATION =
-		$page.data.FIXTURE_VOTES_TRANSLATION;
-	$: FIXTURE_PROBS_TRANSLATION =
-		$page.data.FIXTURE_PROBS_TRANSLATION;
+	$: FIXTURE_ABOUT_TRANSLATION = $page.data.FIXTURE_ABOUT_TRANSLATION;
+	$: FIXTURE_VOTES_TRANSLATION = $page.data.FIXTURE_VOTES_TRANSLATION;
+	$: FIXTURE_PROBS_TRANSLATION = $page.data.FIXTURE_PROBS_TRANSLATION;
 	$: FIXTURES_ODDS_T = $page.data.FIXTURES_ODDS_T;
 	$: FIXTURE_H2H = $page.data.FIXTURE_H2H;
-	$: FIXTURE_H2H_TRANSLATION =
-		$page.data.FIXTURE_H2H_TRANSLATION;
+	$: FIXTURE_H2H_TRANSLATION = $page.data.FIXTURE_H2H_TRANSLATION;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
   SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
@@ -163,19 +149,19 @@
 
   // TODO:
   /*
-  $: if (browser && $userBetarenaSettings && $userBetarenaSettings.country_bookmaker != undefined) {
-    get_sportbooks()
-  }
-  async function get_sportbooks() {
-    let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
-    SPORTBOOK_MAIN = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
-    console.log('SPORTBOOK_MAIN', SPORTBOOK_MAIN)
-    SPORTBOOK_MAIN = SPORTBOOK_MAIN
-    SPORTBOOK_ALL = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
-    SPORTBOOK_ALL = SPORTBOOK_ALL
-  }
-  $: SPORTBOOK_MAIN = SPORTBOOK_MAIN
-  $: SPORTBOOK_ALL = SPORTBOOK_ALL
+    $: if (browser && $userBetarenaSettings && $userBetarenaSettings.country_bookmaker != undefined) {
+      get_sportbooks()
+    }
+    async function get_sportbooks() {
+      let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
+      SPORTBOOK_MAIN = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
+      console.log('SPORTBOOK_MAIN', SPORTBOOK_MAIN)
+      SPORTBOOK_MAIN = SPORTBOOK_MAIN
+      SPORTBOOK_ALL = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
+      SPORTBOOK_ALL = SPORTBOOK_ALL
+    }
+    $: SPORTBOOK_MAIN = SPORTBOOK_MAIN
+    $: SPORTBOOK_ALL = SPORTBOOK_ALL
   */
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -278,12 +264,8 @@
 		title={PAGE_SEO?.main_data.title}
 		description={PAGE_SEO?.main_data.description}
 		keywords={PAGE_SEO?.main_data.keywords}
-		noindex={JSON.parse(
-			PAGE_SEO?.main_data.noindex.toString()
-		)}
-		nofollow={JSON.parse(
-			PAGE_SEO?.main_data.nofollow.toString()
-		)}
+		noindex={JSON.parse(PAGE_SEO?.main_data.noindex.toString())}
+		nofollow={JSON.parse(PAGE_SEO?.main_data.nofollow.toString())}
 		canonical={PAGE_SEO?.main_data.canonical}
 		twitter={PAGE_SEO?.twitter_card}
 		openGraph={PAGE_SEO?.opengraph}
@@ -295,8 +277,8 @@
 -->
 <svelte:head>
 	{#if PAGE_SEO}
-		{#each PAGE_SEO.hreflang as item}
-			{#each Object.entries(FIXTURE_INFO.alternate_data) as [lang, link]}
+		{#each PAGE_SEO?.hreflang || [] as item}
+			{#each Object.entries(FIXTURE_INFO?.alternate_data) as [lang, link]}
 				{#if item.link == lang}
 					<!-- 
             [ℹ] expected alternate example
