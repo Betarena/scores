@@ -368,6 +368,7 @@
 									>
 										<img
 											src={item.logo_path}
+                      loading="lazy"
 											alt={item.league_name.toString() +
 												'-image'}
 											width="20px"
@@ -457,6 +458,7 @@
 										{:else}
 											<img
 												src={item.image_path}
+                        loading="lazy"
 												alt="default alt text"
 												title={item.country_name +
 													'-image'}
@@ -578,6 +580,7 @@
 									>
 										<img
 											src={item.logo_path}
+                      loading="lazy"
 											alt={item.league_name.toString() +
 												'-image'}
 											width="20"
@@ -676,6 +679,7 @@
 									>
 										<img
 											src={item.image_path}
+                      loading="lazy"
 											alt="default alt text"
 											title={item.country_name +
 												'-image'}
