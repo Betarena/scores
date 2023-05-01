@@ -1,12 +1,29 @@
-import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
+  //#region ➤ Package Imports
+
 import { json } from '@sveltejs/kit';
+
+import { initGrapQLClient } from '$lib/graphql/init';
+
+import { SAP_GL_generate_seo_players, SAP_GL_get_target_player_page_seo, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.seo-pages.js';
+import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
+import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
 
 import {
   get_target_hset_cache_data,
   get_target_set_cache_data
 } from '../../../cache/std_main';
 
-type PAGE_TYPE = 'homepage' | 'tournaments' | 'fixtures' | 'fixtures2'
+  //#endregion ➤ Package Imports
+
+  //#region ➤ [VARIABLES] Imports
+
+type PAGE_TYPE = 'homepage' | 'tournaments' | 'fixtures' | 'fixtures2' | 'player'
+
+const graphQlInstance = initGrapQLClient()
+
+  //#endregion ➤ [VARIABLES] Imports
+
+  //#region ➤ [METHODS]
 
 /** @type {import('./$types').RequestHandler} */
 export async function GET
@@ -29,10 +46,13 @@ export async function GET
 	const page: PAGE_TYPE =	req?.url?.searchParams?.get('page') as PAGE_TYPE;
 	const country_id: string = req?.url?.searchParams?.get('country_id');
 	const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
+	const player_id: string = req?.url?.searchParams?.get('player_id');
 	const sport: string = req?.url?.searchParams?.get('sport');
   const months: string = req?.url?.searchParams?.get('months');
+  const hasura: string = req?.url?.searchParams?.get('hasura');
 
   // TODO: add (hasura/postgresql) fallback for all METHODS below;
+  // TODO: add player (page) sections into the mix of METHODS below;
 
   // [1] valid url;
   const validation_0 =
@@ -135,7 +155,54 @@ export async function GET
 		}
 	}
 
-  // [7] page (country) TRANSLATION(s)
+  // [7] page (player) DATA
+  const validation_6 =
+    player_id 
+    && page === 'player'
+  ;
+  if (validation_6) {
+
+    const _player_id: number = parseInt(player_id)
+    let data;
+    let loadType = "cache";
+
+    // NOTE: check in cache;
+    if (!hasura) {
+      data = await get_target_hset_cache_data
+      (
+        RedisKeys.SAP_C_D_A15,
+        player_id
+      );
+    }
+
+    // NOTE: (default) fallback;
+		if (!data || hasura) {
+      data = await fallbackMainData_0
+      (
+        _player_id
+      );
+      loadType = 'HASURA'
+		}
+
+    console.log(`📌 loaded [PFIX] with: ${loadType}`)
+
+    return json(data);
+  }
+
+  // [8] page (player) SEO
+  const validation_7 =
+    lang 
+    && page === 'player'
+  ;
+  if (validation_7) {
+    const data = await fallbackMainData_1
+    (
+      lang
+    );
+    return json(data);
+  }
+
+  // [9] page (country) TRANSLATION(s)
 	if (country_id) {
 		const response_cache =
 			await get_target_hset_cache_data(
@@ -147,7 +214,7 @@ export async function GET
 		}
 	}
 
-  // [8] page (sport) TRANSLATION(s)
+  // [10] page (sport) TRANSLATION(s)
 	if (sport) {
 		const response_cache =
 			await get_target_hset_cache_data(
@@ -159,7 +226,7 @@ export async function GET
 		}
 	}
 
-  // [9] page (months) TRANSLATION(s)
+  // [11] page (months) TRANSLATION(s)
 	if (months && lang) {
 		const response_cache =
 			await get_target_hset_cache_data(
@@ -201,3 +268,60 @@ async function validUrlCheck
   if (validation_0) return json(false);
   return json(true);
 }
+
+// ============
+//  [MAIN] METHOD
+// ============
+
+/**
+ * @summary [MAIN] [FALLBACK] [#0] method
+ * @todo [TODO:] 1. offset map-gen. to "scores-lib"
+ * @param {number} player_id
+ * @returns Promise < B_SAP_PP_D >
+ */
+async function fallbackMainData_0 
+(
+  player_id: number
+): Promise < B_SAP_PP_D > 
+{
+
+  const map = await SEO_PS_ENTRY
+  (
+    graphQlInstance,
+    [player_id]
+  )
+
+  if (map.size == 0) {
+    return null
+  }
+  
+	return map.get(player_id);
+}
+
+/**
+ * @summary [MAIN] [FALLBACK] [#0] method
+ * @param {string} lang 
+ * @returns Promise < B_SAP_PP_T >
+ */
+async function fallbackMainData_1 
+(
+  lang: string
+): Promise < B_SAP_PP_T > 
+{
+
+  const res = await SAP_GL_get_target_player_page_seo
+  (
+    graphQlInstance, 
+    [lang]
+  );
+
+  const map = await SAP_GL_generate_seo_players
+  (
+    res,
+    [lang]
+  );
+
+	return map.get(lang);
+}
+
+  //#endregion ➤ [METHODS]

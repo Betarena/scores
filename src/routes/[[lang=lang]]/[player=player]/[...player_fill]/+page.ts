@@ -1,5 +1,5 @@
 import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from "$lib/utils/debug";
-import { PRELOAD_invalid_data } from "$lib/utils/platform-functions";
+import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from "$lib/utils/platform-functions";
 import type { B_SAP_D1, B_SAP_D2, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
 import { error } from "@sveltejs/kit";
 import type { B_PFIX_D, B_PFIX_T } from "node_modules/@betarena/scores-lib/types/player-fixtures";
@@ -7,25 +7,28 @@ import type { B_PPRO_T } from "node_modules/@betarena/scores-lib/types/player-pr
 import type { PageLoad } from "../$types";
 
 /** @type {import('./$types').PageLoad} */
-export async function load({ url, params, fetch }): Promise<PageLoad> {
+export async function load
+(
+  { 
+    url, 
+    params, 
+    fetch 
+  }
+): Promise < PageLoad > 
+{
 
   const t0 = performance.now();
 
-	const {
+  //#region [0] IMPORTANT EXTRACT URL DATA
+
+  const {
     lang, 
-    // (example) -> player | jugador
+    // (example) -> player | jugador (translation)
     // player,
     // (example) -> teddy-teuma/829643 | harry-kane/997
     player_fill
   } = params;
   // console.log(params)
-
-  // TODO:
-  // missing VALID_URL check;
-  // & redirect;
-  // IMPORTANT
-
-  //#region [0] IMPORTANT EXTRACT URL DATA
 
   const _lang =
     lang == undefined 
@@ -33,27 +36,52 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
       : lang;
 
   const player_id = player_fill.match(/\d+$/);
-  // console.log(player_id.toString())
 
   //#endregion [0] IMPORTANT EXTRACT URL DATA
 
+    //#region [0] IMPORTANT VALID URL CHECK
+
+    const validUrlCheck = await promiseValidUrlCheck
+    (
+      fetch,
+      _lang,
+      null,
+      null,
+      null,
+      null,
+      player_fill
+    )
+  
+    // [ℹ] exit;
+    if (!validUrlCheck) {
+      // [🐞]
+      const t1 = performance.now();
+      dlog(`⏳ [PLAYER] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
+      throw error(
+        ERROR_CODE_INVALID,
+        PAGE_INVALID_MSG
+      );
+    }
+  
+    //#endregion [0] IMPORTANT VALID URL CHECK
+
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
 
-  const PAGE_DATA: B_SAP_PP_D = await fetch(
-		`/api/hasura/_main_/seo-pages?player_id=${player_id}`,
-		{
-			method: 'GET'
-		}
-	).then((r) => r.json());
+  // [1] FIXTURE (CRITICAL) page data;
 
-  // TEMP VALIDATE
-  // console.log('PAGE_DATA', PAGE_DATA)
-  // [ℹ] exit;
-	if (!PAGE_DATA) {
-    const t1 = performance.now();
-    dlog(`fixture (load) (exit) complete in: ${(t1 - t0) / 1000} sec`, true)
-		throw error(ERROR_CODE_INVALID, PAGE_INVALID_MSG);
-	}
+  type PP_PROMISE_0 = [
+    B_SAP_PP_D | undefined
+  ]
+
+  const data_0: PP_PROMISE_0 = await promiseUrlsPreload
+  (
+    [`/api/data/main/seo-pages?player_id=${player_id}&page=player`],
+    fetch
+  ) as PP_PROMISE_0;
+
+	const [
+		PAGE_DATA
+	] = data_0;
 
   const country_id = PAGE_DATA?.data?.country_id;
 
@@ -67,15 +95,11 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 
   //#region [1] IMPORTANT PRE-LOAD DATA
 
-  // --------------
-	// [ℹ] preload data DOC: REF: [2]
-	// --------------
-  
   const urls: string[] = [
     // NOTE:WARNING:TODO: remove for a cache solution
-    `/api/hasura/_main_/seo-pages?lang=${_lang}&page=player`,
-    `/api/cache/_main_/pages_and_seo?country_id=${country_id}`,
-    `/api/cache/_main_/pages_and_seo?months=true&lang=${_lang}`,
+    `/api/data/main/seo-pages?lang=${_lang}&page=player`,
+    `/api/data/main/seo-pages?country_id=${country_id}`,
+    `/api/data/main/seo-pages?months=true&lang=${_lang}`,
     // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/profile?lang=${_lang}`,
     // NOTE:WARNING:TODO: remove for a cache solution
@@ -83,12 +107,6 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/fixtures?player_id=${player_id}&limit=10&offset=0`
   ]
-
-  const promises = urls.map((_url) =>
-		fetch(_url).then((response) =>
-			response.json()
-		)
-	);
 
   type PP_PROMISE = [
     B_SAP_PP_T | undefined,
@@ -99,7 +117,11 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     B_PFIX_D | undefined
   ]
 
-	const data: PP_PROMISE = await Promise.all(promises) as PP_PROMISE;
+  const data = await promiseUrlsPreload
+  (
+    urls,
+    fetch
+  ) as PP_PROMISE;
 
   const [
     PAGE_SEO,
@@ -154,8 +176,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
   //#region [3] IMPORTANT RETURN
 
   // const INVALID_PAGE_DATA: boolean = data.includes(undefined);
-
-  // console.log(data)
+  console.log(data)
 
   PRELOAD_invalid_data(data)
 
