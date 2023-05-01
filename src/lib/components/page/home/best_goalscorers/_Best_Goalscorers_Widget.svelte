@@ -203,7 +203,6 @@
 
       <WidgetTitle
         WIDGET_TITLE={BEST_GOAL_SCORERS_DATA_SEO?.translations?.widget_translations?.best_goal_scorers}
-        OVERRIDE_COLOR={true}
       />
 
 			<!-- 

@@ -216,37 +216,32 @@
 		<!-- 
     [ℹ] translation-expressions 
     -->
+		<h2>
+			{LEAGUE_LIST_WIDGET_DATA_SEO?.translations?.widget_title}
+		</h2>
 		<p>
-			{LEAGUE_LIST_WIDGET_DATA_SEO.translations
-				.widget_title}
+			{LEAGUE_LIST_WIDGET_DATA_SEO?.translations?.top_leagues}
 		</p>
 		<p>
-			{LEAGUE_LIST_WIDGET_DATA_SEO.translations
-				.top_leagues}
-		</p>
-		<p>
-			{LEAGUE_LIST_WIDGET_DATA_SEO.translations
-				.leagues_by_country}
+			{LEAGUE_LIST_WIDGET_DATA_SEO?.translations?.leagues_by_country}
 		</p>
 		<!-- 
     [ℹ] all platform leagues
     <-list->
     [ℹ] links to target leagues/tournaments
     -->
-		{#each LEAGUE_LIST_WIDGET_DATA_SEO.all_leagues_list as league}
+		{#each LEAGUE_LIST_WIDGET_DATA_SEO?.all_leagues_list || [] as league}
 			<a
-				href={league?.urls[
-					LEAGUE_LIST_WIDGET_DATA_SEO.lang
-				]}
+				href={league?.urls[LEAGUE_LIST_WIDGET_DATA_SEO.lang]}
 			>
-				{league.league_name}
+				{league?.league_name}
 			</a>
 		{/each}
 		<!-- 
     [ℹ] all-unique-country-expressions 
     -->
-		{#each LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list as country}
-			<p>{country.country_name}</p>
+		{#each LEAGUE_LIST_WIDGET_DATA_SEO?.unique_county_list || [] as country}
+			<p>{country?.country_name}</p>
 		{/each}
 	</div>
 </SeoBox>

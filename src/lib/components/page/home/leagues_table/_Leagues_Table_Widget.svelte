@@ -124,19 +124,18 @@
   -->
   <div>
     <h2>
-      {LEAGUES_TABLE_SCORES_SEO_DATA
-        .translations.title}
+      {LEAGUES_TABLE_SCORES_SEO_DATA?.translations?.title}
     </h2>
     <!-- [ℹ] list all of the seasons & leagues in the DB 
     -->
-    {#each LEAGUES_TABLE_SCORES_SEO_DATA.top_leagues_table_data as WIDGET_SEASON_LEAGUE}
+    {#each LEAGUES_TABLE_SCORES_SEO_DATA?.top_leagues_table_data || [] as item}
       <p>
-        {WIDGET_SEASON_LEAGUE.season_league_name}
+        {item?.season_league_name}
       </p>
       <!-- [ℹ] list all of the seasons & leagues -> TEAMS in the DB 
       -->
-      {#each WIDGET_SEASON_LEAGUE.season_league_teams as WIDGET_TEAM_LEAGUE}
-        <p>{WIDGET_TEAM_LEAGUE.team_name}</p>
+      {#each item?.season_league_teams || [] as itemL}
+        <p>{itemL?.team_name}</p>
       {/each}
     {/each}
   </div>
@@ -170,7 +169,6 @@
 
       <WidgetTitle
         WIDGET_TITLE={LEAGUES_TABLE_SCORES_SEO_DATA.translations.title}
-        OVERRIDE_COLOR={true}
       />
 
 			<!-- 

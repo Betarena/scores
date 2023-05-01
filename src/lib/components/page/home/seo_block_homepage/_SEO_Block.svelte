@@ -95,7 +95,6 @@
 
       <WidgetTitle
         WIDGET_TITLE={SEO_BLOCK_DATA?.title}
-        OVERRIDE_COLOR={true}
       />
 
 			<!-- 

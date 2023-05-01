@@ -4,9 +4,9 @@ import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
 
-import { SAP_GL_generate_seo_players, SAP_GL_get_target_player_page_seo, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.seo-pages.js';
+import { SAP_GL_generate_page_fixtures, SAP_GL_generate_seo_players, SAP_GL_get_published_fixtures, SAP_GL_get_target_player_page_seo, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.seo-pages.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
-import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
+import type { B_SAP_FP_D, B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
 
 import {
   get_target_hset_cache_data,
@@ -129,14 +129,33 @@ export async function GET
     && page === 'fixtures'
   ;
 	if (validation_4) {
-		const response_cache =
-			await get_target_hset_cache_data(
-				RedisKeys.SAP_C_D_A5,
-				fixture_id
-			);
-		if (response_cache) {
-			return json(response_cache);
+    
+    const _fixture_id: number = parseInt(fixture_id)
+    let data;
+    let loadType = "cache";
+
+    // NOTE: check in cache;
+    if (!hasura) {
+      data = await get_target_hset_cache_data
+      (
+        RedisKeys.SAP_C_D_A5,
+        fixture_id
+      );
+    }
+
+    // NOTE: (default) fallback;
+		if (!data || hasura) {
+      data = await fallbackMainData_2
+      (
+        _fixture_id
+      );
+      loadType = 'HASURA'
 		}
+
+    console.log(`📌 loaded [PFIX] with: ${loadType}`)
+
+    return json(data);
+
 	}
 
   // [6] page (fixture) SEO
@@ -274,7 +293,7 @@ async function validUrlCheck
 // ============
 
 /**
- * @summary [MAIN] [FALLBACK] [#0] method
+ * @summary [MAIN] [FALLBACK] [0] method
  * @todo [TODO:] 1. offset map-gen. to "scores-lib"
  * @param {number} player_id
  * @returns Promise < B_SAP_PP_D >
@@ -299,7 +318,9 @@ async function fallbackMainData_0
 }
 
 /**
- * @summary [MAIN] [FALLBACK] [#0] method
+ * @summary [MAIN] [FALLBACK] [1] method
+ * @description obtain page (player) translation
+ * + SEO data;
  * @param {string} lang 
  * @returns Promise < B_SAP_PP_T >
  */
@@ -324,4 +345,33 @@ async function fallbackMainData_1
 	return map.get(lang);
 }
 
+/**
+ * @summary [MAIN] [FALLBACK] [2] method
+ * @description obtain target fixture (page)
+ * critical operational data;
+ * @param {number} fixtureId 
+ * @returns Promise < B_SAP_FP_D >
+ */
+async function fallbackMainData_2
+(
+  fixtureId: number
+) : Promise < B_SAP_FP_D >
+{
+  const dataFixtures = await SAP_GL_get_published_fixtures
+  (
+    graphQlInstance,
+    [fixtureId]
+  )
+
+  const map = await SAP_GL_generate_page_fixtures 
+  (
+    dataFixtures
+  )
+
+  if (map.size == 0) {
+    return null
+  }
+
+  return map.get(fixtureId)
+}
   //#endregion ➤ [METHODS]

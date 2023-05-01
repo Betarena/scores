@@ -574,9 +574,9 @@
 	{#if !loaded && !nomatches}
   -->
   <div>
-    <p>
+    <h2>
       {FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}
-    </p>
+    </h2>
     <p>
       {FEATURED_MATCH_WIDGET_DATA_SEO?.vote}
     </p>

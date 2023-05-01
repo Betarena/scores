@@ -101,10 +101,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
 
 <SeoBox>
   <!-- 
+  [ℹ] widget title
+  -->
+  <h2>
+    {WIDGET_T_DATA?.title}
+  </h2>
+  <!-- 
   [ℹ] fixtures & betting-tip (links)
   -->
   <div>
-    {#each WIDGET_S_DATA?.fixtures as item1}
+    {#each WIDGET_S_DATA?.fixtures || [] as item1}
       {#if item1?.fixture_url}
         <a href={item1?.fixture_url}>{item1?.fixture_url}</a>
       {/if}
@@ -117,7 +123,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   [ℹ] leagues (links)
   -->
   <div>
-    {#each WIDGET_S_DATA?.leagues as item}
+    {#each WIDGET_S_DATA?.leagues || [] as item}
       {#if item?.league_url}
         <a href={item?.league_url}>{item?.league_url}</a>
       {/if}
