@@ -13,21 +13,23 @@
    * page/component;
   */
   onMount(async () => {
-    document.documentElement.classList.remove(
+    setTimeout(async () => {
+      document.documentElement.classList.remove(
+          'googlebot-override'
+      );
+      document.body.classList.remove(
         'googlebot-override'
-    );
-    document.body.classList.remove(
-      'googlebot-override'
-    );
-    document.documentElement.classList.remove(
-      'no-scrollbar'
-    );
-    document.body.classList.remove(
-      'no-scrollbar'
-    );
+      );
+      document.documentElement.classList.remove(
+        'no-scrollbar'
+      );
+      document.body.classList.remove(
+        'no-scrollbar'
+      );
+    }, 500);
     setTimeout(async () => {
       show = false;
-    }, 500);
+    }, 850);
   });
 </script>
 
