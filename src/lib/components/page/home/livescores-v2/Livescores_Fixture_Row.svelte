@@ -294,6 +294,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {#if FIXTURE_D.teams?.home?.red_cards}
             {#if FIXTURE_D.teams?.home?.red_cards == 1}
               <img
+                loading="lazy"
                 src={$userBetarenaSettings.theme == 'Dark' ? one_red_card_dark : one_red_card}
                 alt="default alt text"
                 width="12"
@@ -301,6 +302,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
             {:else if FIXTURE_D?.teams?.home?.red_cards == 2}
               <img
+                loading="lazy"
                 src={$userBetarenaSettings.theme == 'Dark' ? two_red_card_dark : two_red_card}
                 alt="default alt text"
                 width="15"
@@ -308,6 +310,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
             {:else}
               <img
+                loading="lazy"
                 src={$userBetarenaSettings.theme == 'Dark' ? three_red_card_dark : three_red_card}
                 alt="default alt text"
                 width="15px"
@@ -345,6 +348,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {#if FIXTURE_D.teams?.away?.red_cards}
             {#if FIXTURE_D.teams?.away?.red_cards == 1}
               <img
+                loading="lazy"
                 src={$userBetarenaSettings.theme == 'Dark' ? one_red_card_dark : one_red_card}
                 alt="default alt text"
                 width="12"
@@ -352,6 +356,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
             {:else if FIXTURE_D?.teams?.away?.red_cards == 2}
               <img
+                loading="lazy"
                 src={$userBetarenaSettings.theme == 'Dark' ? two_red_card_dark : two_red_card}
                 alt="default alt text"
                 width="15"
@@ -359,6 +364,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
             {:else}
               <img
+                loading="lazy"
                 src={$userBetarenaSettings.theme == 'Dark' ? three_red_card_dark : three_red_card}
                 alt="default alt text"
                 width="15px"
@@ -430,6 +436,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         style="width: inherit;"
       >
         <img
+          loading="lazy"
           id="sportbook-logo-img"
           class="
             cursor-pointer
