@@ -653,6 +653,7 @@
 						<!-- [ℹ] league-icon 
             -->
 						<img
+              loading="lazy"
 							class="img-flag"
 							src={FEATURED_MATCH_WIDGET_DATA.country_flag}
 							alt="default alt text"
@@ -690,6 +691,7 @@
               -->
 							<div class="fixture-team">
 								<img
+                  loading="lazy"
 									class="m-b-12"
 									src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 									alt="default alt text"
@@ -758,6 +760,7 @@
               -->
 							<div class="fixture-team">
 								<img
+                  loading="lazy"
 									class="m-b-12"
 									src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 									alt="default alt text"
@@ -815,6 +818,7 @@
 											</span>
 										{:else}
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 												alt="default alt text"
 												width="28px"
@@ -903,6 +907,7 @@
                         src="./static/icon/icon-close.svg"
                         -->
 											<img
+                        loading="lazy"
 												src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
 												alt="default alt text"
 												width="28px"
@@ -987,6 +992,7 @@
 											</span>
 										{:else}
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 												alt="default alt text"
 												width="28px"
@@ -1050,6 +1056,7 @@
 								<!-- close-btn src="./static/icon/white-close.svg" -->
 
 								<img
+                  loading="lazy"
 									src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
 									alt="default alt text"
 									width="16px"
@@ -1064,6 +1071,7 @@
 										.register_link}
 								>
 									<img
+                    loading="lazy"
 										id="stakesSiteImg"
 										src={FEATURED_MATCH_WIDGET_DATA
 											.live_odds.fixture_odds_info
@@ -1108,6 +1116,7 @@
 												{#if viewportDesktop}
 													{#if fixtureDataVote.fixture_vote == '1'}
 														<img
+                              loading="lazy"
 															src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 															alt="default alt text"
 															width="28px"
@@ -1125,6 +1134,7 @@
 														</p>
 													{:else}
 														<img
+                              loading="lazy"
 															src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 															alt="default alt text"
 															width="28px"
@@ -1145,6 +1155,7 @@
 										<!-- [ℹ] MULTIPLY SIGN 
                     -->
 										<img
+                      loading="lazy"
 											src="/assets/svg/icon/icon-close.svg"
 											alt="multiply-icon"
 											width="16px"
@@ -1170,6 +1181,7 @@
 										<!-- [ℹ]  EQUALS SIGN 
                     -->
 										<img
+                      loading="lazy"
 											src="/assets/svg/icon/icon-equally.svg"
 											alt="icon-equlaity"
 											width="16px"
@@ -1255,6 +1267,7 @@
 											class="live-stream-btn"
 										>
 											<img
+                        loading="lazy"
 												src={tv_item.img}
 												alt={tv_item.alt}
 												title={tv_item.Name}
@@ -1283,6 +1296,7 @@
 						<div class="best-players-box">
 							<div class="row-space-start m-b-16">
 								<img
+                  loading="lazy"
 									class="m-r-16"
 									src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 									alt="default alt text"
@@ -1376,6 +1390,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.local_team_player_1_image_path}
@@ -1462,6 +1477,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.local_team_player_2_image_path}
@@ -1517,6 +1533,7 @@
 						<div class="best-players-box">
 							<div class="row-space-start m-b-16">
 								<img
+                  loading="lazy"
 									class="m-r-16"
 									src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 									alt="default alt text"
@@ -1609,6 +1626,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.visitor_team_player_1_image_path}
@@ -1695,6 +1713,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.visitor_team_player_2_image_path}
@@ -1773,6 +1792,7 @@
 												.valuebets.link}
 										>
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA
 													.valuebets.image}
 												alt={FEATURED_MATCH_WIDGET_DATA
@@ -1941,6 +1961,7 @@
 											style="height: 30px;"
 										>
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA
 													.valuebets.image}
 												alt={FEATURED_MATCH_WIDGET_DATA
