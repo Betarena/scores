@@ -11,7 +11,8 @@ export async function load
     params,
     fetch
   }: PageLoadEvent
-): Promise < PageLoad > {
+): Promise < PageLoad > 
+{
 
   const t0 = performance.now();
 

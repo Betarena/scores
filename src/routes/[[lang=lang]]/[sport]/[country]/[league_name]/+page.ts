@@ -63,7 +63,7 @@ export async function load(
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
 
 	const response_tournaments_page_info: Cache_Single_Tournaments_Data_Page_Translation_Response = await fetch(
-		`/api/cache/_main_/pages_and_seo?url=${url.pathname}&page=tournaments`, {
+		`/api/data/main/seo-pages?url=${url.pathname}&page=tournaments`, {
 			method: 'GET'
 		}
 	).then((r) => r.json());
@@ -75,7 +75,7 @@ export async function load(
   //#region [1] IMPORTANT PRE-LOAD DATA DOC: REF: [2]
 
   const urls = [
-    `/api/cache/_main_/pages_and_seo?lang=${urlLang}&page=tournaments`,
+    `/api/data/main/seo-pages?lang=${urlLang}&page=tournaments`,
     `/api/cache/tournaments/league_info?url=${url.pathname}`,
     `/api/cache/tournaments/standings?lang=${urlLang}`,
     // [ℹ] NOTE: can be "null"
@@ -105,7 +105,7 @@ export async function load(
     FIXTURES_ODDS_DATA // (type) REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
 	] = data;
 
-	dlog(data, false);
+	dlog(data, true);
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA DOC: REF: [2]
 

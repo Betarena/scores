@@ -115,16 +115,8 @@ export async function load
 	FIXTURE_INFO.data.country = country;
 	FIXTURE_INFO.data.sport = 'football';
 
-  // TODO: future sports translation get
-  /*
-      const response_sport_translation: REDIS_CACHE_SINGLE_general_sport_translation = await fetch(
-      `/api/cache/_main_/pages_and_seo?sport=` + country_id,
-      {
-        method: 'GET'
-      }
-    ).then((r) => r.json());
-    const sport_typ = response_sport_translation[lang]
-  */
+  // TODO: add sports translation (get)
+  // TODO: similar to that of country (above)
 
   //#endregion [0] IMPORTANT (PRE) PRE-LOAD DATA
 
