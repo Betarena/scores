@@ -2,7 +2,7 @@ import { FO_C_D_A, FO_C_T_A } from '@betarena/scores-lib/dist/redis/config';
 import { json } from '@sveltejs/kit';
 
 import {
-  get_target_hset_cache_data
+    get_target_hset_cache_data
 } from '../../std_main';
 
 /**
@@ -10,9 +10,9 @@ import {
  */
 export async function GET(req): Promise<unknown> {
 	const lang: string =
-		req.url['searchParams'].get('lang');
+		req?.url?.searchParams?.get('lang');
 	const league_id: string =
-		req.url['searchParams'].get('league_id');
+		req?.url?.searchParams?.get('league_id');
 
 	if (lang) {
 		const response_cache =

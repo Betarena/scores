@@ -1,17 +1,28 @@
 import { error } from '@sveltejs/kit';
-import type { PageLoad } from './$types';
+
+import { dlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
+import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 import type {
   Cache_Single_Tournaments_Data_Page_Translation_Response
 } from '$lib/models/_main_/pages_and_seo/types';
-import { dlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
+import type { PageLoad } from './$types';
 
 /**
  * @type {import('./$types').PageLoad}
  */
-export async function load({ url, params, fetch }): Promise<PageLoad> {
+export async function load(
+  { 
+    url, 
+    params, 
+    fetch 
+  }
+): Promise < PageLoad > 
+{
 
   const t0 = performance.now();
+
+  //#region [0] IMPORTANT EXTRACT URL DATA
 
 	const {
 		// lang,
@@ -21,66 +32,67 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 	} = params;
 
 	const _lang = params?.lang;
-  
-  // --------------
-	// [ℹ] valdiation [1]
-  // --------------
-
-  // IMPORTANT
-	const VALID_URL = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, {
-		method: 'GET'
-	}).then((r) => r.json());
-
-	// [ℹ] exit;
-	if (!VALID_URL) {
-    const t1 = performance.now();
-    dlog(`fixture (load) (exit) complete in: ${(t1 - t0) / 1000} sec`, true)
-		throw error(ERROR_CODE_INVALID, PAGE_INVALID_MSG);
-  }
-
-  // --------------
-	// [ℹ] extract critical data from URL
-  // --------------
-
 	const urlLang: string = params.lang == undefined ? 'en' : params.lang;
 
-  // --------------
-	// [ℹ] get pre-pre-load critical data
-  // --------------
+  //#endregion [0] IMPORTANT EXTRACT URL DATA
+
+  //#region [0] IMPORTANT VALID URL CHECK
+
+  const validUrlCheck = await promiseValidUrlCheck
+  (
+    fetch,
+    urlLang,
+    sport,
+    country,
+    league_name
+  )
+
+  // [ℹ] exit;
+	if (!validUrlCheck) {
+    // [🐞]
+    const t1 = performance.now();
+    dlog(`⏳ [SPORT] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
+		throw error(
+			ERROR_CODE_INVALID,
+			PAGE_INVALID_MSG
+		);
+	}
+  
+  //#endregion [0] IMPORTANT VALID URL CHECK
+
+  //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
 
 	const response_tournaments_page_info: Cache_Single_Tournaments_Data_Page_Translation_Response = await fetch(
-		`/api/cache/_main_/pages_and_seo?url=${url.pathname}&page=tournaments`, {
+		`/api/data/main/seo-pages?url=${url.pathname}&page=tournaments`, {
 			method: 'GET'
 		}
 	).then((r) => r.json());
 
-  // --------------
-	// [ℹ] preload data DOC: REF: [2]
-	// --------------
-
 	const league_id = response_tournaments_page_info.data.tournament_id;
 
+  //#endregion [0] IMPORTANT (PRE) PRE-LOAD DATA
+
+  //#region [1] IMPORTANT PRE-LOAD DATA DOC: REF: [2]
+
   const urls = [
-    `/api/cache/_main_/pages_and_seo?lang=${urlLang}&page=tournaments`,
+    `/api/data/main/seo-pages?lang=${urlLang}&page=tournaments`,
     `/api/cache/tournaments/league_info?url=${url.pathname}`,
     `/api/cache/tournaments/standings?lang=${urlLang}`,
-    `/api/cache/tournaments/standings?league_id=${league_id}`, // [ℹ] NOTE: can be "null"
+    // [ℹ] NOTE: can be "null"
+    `/api/cache/tournaments/standings?league_id=${league_id}`,
     `/api/cache/tournaments/top_players?lang=${urlLang}`,
     `/api/cache/tournaments/top_players?league_id=${league_id}`,
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
+    // [ℹ] NOTE: can be "null"
     // `/api/cache/tournaments/fixtures_odds?league_id=${league_id}` // [?] alt.1
-    `/api/hasura/league/fixtures-odds?league_id=${league_id}` // [?] alt.2 // [ℹ] NOTE: can be "null"
+    `/api/hasura/league/fixtures-odds?league_id=${league_id}` // [?] alt.2
   ];
 
-	const promises = urls.map((_url) =>
-		fetch(_url).then((response) =>
-			response.json()
-		)
-	);
-
-	const data = await Promise.all(promises);
-	dlog(data, false);
+  const data = await promiseUrlsPreload
+  (
+    urls,
+    fetch
+  );
 
 	const [
     PAGE_DATA_SEO,  // (type) Cache_Single_Tournaments_SEO_Translation_Response
@@ -93,9 +105,11 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     FIXTURES_ODDS_DATA // (type) REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
 	] = data;
 
-  // --------------
-	// [ℹ] apply regex to morph data
-  // --------------
+	dlog(data, true);
+
+  //#endregion [1] IMPORTANT PRE-LOAD DATA DOC: REF: [2]
+
+  //#region [2] IMPORTANT REGEX
 
   PAGE_DATA_SEO.main_data = JSON.parse(
 		JSON.stringify(PAGE_DATA_SEO.main_data)
@@ -121,6 +135,8 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 			.replace(/{name}/g, league_name)
 	);
 
+  //#endregion [2] IMPORTANT REGEX
+
   // [ℹ] canonical exclusive - [LANG];
 	const enItemAlt = response_tournaments_page_info.alternate_data.find(({ lang }) => lang === urlLang);
 	PAGE_DATA_SEO.main_data.canonical =
@@ -130,23 +146,13 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
 					.toLowerCase()}`
 			: `https://scores.betarena.com/${urlLang}/${enItemAlt.sport.toLowerCase()}/${enItemAlt.country.toLowerCase()}/${enItemAlt.name
 					.replace(/\s/g, '-')
-					.toLowerCase()}`;
+					.toLowerCase()}`
+  ;
 
-
-  // --------------
-	// [ℹ] return(s)
-	// --------------
+  //#region [3] IMPORTANT RETURN
 
 	// [ℹ] FIXME: valid-page does not count data[7] - already checked
-	const INVALID_PAGE_DATA_POINTS: boolean =
-  data.includes(undefined);
-
-  const indexesOf = (arr, item) =>
-    arr.reduce(
-      (acc, v, i) => (
-        v === item && acc.push(i), acc
-  ),[]);
-  dlog(`null (preload): ${indexesOf(data, null)}`, true);
+	const INVALID_PAGE_DATA_POINTS: boolean = data.includes(undefined);
 
   // FIXME:  && STANDINGS_DATA // IMPORTANT can be "NULL"
   // FIXME:  && FIXTURES_ODDS_DATA // IMPORTANT can be "NULL"
@@ -159,10 +165,17 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     );
   }
 
+  PRELOAD_invalid_data(data)
+
   const t1 = performance.now();
   dlog(`fixture (load) (end) complete in: ${(t1 - t0) / 1000} sec`, true)
 
   return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    // NOTE: issues with setting correct <PageLoad> types, 
+    // NOTE: not being applied to return;
+    // NOTE: not critical - can be silenced;
     PAGE_DATA_SEO,
     TOURNAMENT_DATA_TRANSLATED_COPIES: response_tournaments_page_info.alternate_data,
     TOURNAMENT_DATA: response_tournaments_page_info.data,
@@ -174,4 +187,7 @@ export async function load({ url, params, fetch }): Promise<PageLoad> {
     FIXTURES_ODDS_T,
     FIXTURES_ODDS_DATA
   };
+
+  //#endregion [3] IMPORTANT RETURN
+
 }

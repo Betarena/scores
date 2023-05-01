@@ -17,7 +17,7 @@ export async function get(
 	// curcanavigate CORS issues
 	// endpoint = 'https://cors-anywhere.herokuapp.com/' + endpoint // comment this out before subemission,
 	// ...
-	return await fetch(endpoint, {
+  const response = await fetch(endpoint, {
 		method: 'GET'
 	}).then((response) => {
 		// ... verify if the response is error-free
@@ -25,7 +25,7 @@ export async function get(
 			if (dev)
 				logErrorGroup(
 					'utils [DEV]',
-					`response: ${response}`
+					`response: ${JSON.stringify(response)}`
 				);
 			throw new Error(
 				'Network response was not ok'
@@ -34,6 +34,7 @@ export async function get(
 		// ... return the data
 		return response.json();
 	});
+  return response;
 }
 
 /**
@@ -54,7 +55,7 @@ export async function post(
 	data
 ): Promise<unknown> {
 	// ...
-	return await fetch(path, {
+  const response = await fetch(path, {
 		method: 'POST',
 		credentials: 'include',
 		body: JSON.stringify(data),
@@ -69,7 +70,7 @@ export async function post(
 			if (dev)
 				logErrorGroup(
 					'utils [DEV]',
-					`response: ${response}`
+					`response: ${JSON.stringify(response)}`
 				);
 			throw new Error(
 				'Network response was not ok'
@@ -78,4 +79,5 @@ export async function post(
 		// ... return the data
 		return response.json();
 	});
+  return response;
 }

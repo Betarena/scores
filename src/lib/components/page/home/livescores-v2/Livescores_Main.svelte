@@ -523,6 +523,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   league-group
                 ">
                 <img
+                  loading="lazy"
                   src="{leagueMap.get(leagueId)?.iso2 ? `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                   on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                   alt="default alt text"
@@ -577,6 +578,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 league-group
               ">
               <img
+                loading="lazy"
                 src="{leagueMap.get(leagueId)?.iso2 ? `https://betarena.com/images/flags/${leagueMap.get(leagueId)?.iso2}.svg` : `https://www.betarena.com/images/flags/EN.svg`}"
                 on:error={(e) => (e.currentTarget.src = 'https://www.betarena.com/images/flags/EN.svg')}
                 alt="default alt text"

@@ -1,5 +1,5 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-// import viteCompression from 'vite-plugin-compression';
+import viteCompression from 'vite-plugin-compression';
 
 /** @type {import('vite').UserConfig} */
 const config = {
@@ -8,16 +8,16 @@ const config = {
     // chunkSplitPlugin({ strategy: 'all-in-one' }), // DOC: vite-plugin-chunk-split
     // progress(), // DOC: vite-plugin-compress
     // c.compress() // DOC: vite-plugin-progress
-    // viteCompression(),
+    viteCompression(),
     sveltekit()
   ],
   // DOC: REF: [6]
-  // build: {
-  //   rollupOptions: {
-  //     output: {
-  //       manualChunks: undefined
-  //     }
-  //   }
-  // }
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined
+      }
+    }
+  }
 };
 export default config;

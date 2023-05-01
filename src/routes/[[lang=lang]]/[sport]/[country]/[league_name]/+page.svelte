@@ -39,7 +39,6 @@
 	} from '$lib/models/tournaments/fixtures_odds/types';
 
 	import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura';
-	import { dlog } from '$lib/utils/debug';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 
 	let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
@@ -54,21 +53,15 @@
 	let FIXTURES_ODDS_DATA: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
 
 	$: PAGE_DATA_SEO = $page.data.PAGE_DATA_SEO;
-	$: TOURNAMENT_DATA_TRANSLATED_COPIES =
-		$page.data.TOURNAMENT_DATA_TRANSLATED_COPIES;
+	$: TOURNAMENT_DATA_TRANSLATED_COPIES = $page.data.TOURNAMENT_DATA_TRANSLATED_COPIES;
 	$: TOURNAMENT_DATA = $page.data.TOURNAMENT_DATA;
-	$: LEAGUE_INFO_DATA =
-		$page.data.LEAGUE_INFO_DATA;
+	$: LEAGUE_INFO_DATA =	$page.data.LEAGUE_INFO_DATA;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
 	$: TOP_PLAYERS_T = $page.data.TOP_PLAYERS_T;
-	$: TOP_PLAYERS_DATA =
-		$page.data.TOP_PLAYERS_DATA;
+	$: TOP_PLAYERS_DATA =	$page.data.TOP_PLAYERS_DATA;
 	$: FIXTURES_ODDS_T = $page.data.FIXTURES_ODDS_T;
-	$: FIXTURES_ODDS_DATA =
-		$page.data.FIXTURES_ODDS_DATA;
-
-  $: dlog(`TOURNAMENT_DATA?.tournament_id: ${TOURNAMENT_DATA?.tournament_id}`, true)
+	$: FIXTURES_ODDS_DATA =	$page.data.FIXTURES_ODDS_DATA;
 
 	// TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
@@ -132,31 +125,28 @@
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- [ℹ] adding SEO-META-TAGS for (this) PAGE 
+<!-- 
+[ℹ] adding SEO-META-TAGS for (this) PAGE 
 -->
 {#if PAGE_DATA_SEO}
 	<SvelteSeo
-		title={PAGE_DATA_SEO.main_data.title}
-		description={PAGE_DATA_SEO.main_data
-			.description}
-		keywords={PAGE_DATA_SEO.main_data.keywords}
-		noindex={JSON.parse(
-			PAGE_DATA_SEO.main_data.noindex.toString()
-		)}
-		nofollow={JSON.parse(
-			PAGE_DATA_SEO.main_data.nofollow.toString()
-		)}
-		canonical={PAGE_DATA_SEO.main_data.canonical}
-		twitter={PAGE_DATA_SEO.twitter_card}
-		openGraph={PAGE_DATA_SEO.opengraph}
+		title={PAGE_DATA_SEO?.main_data?.title}
+		description={PAGE_DATA_SEO?.main_data?.description}
+		keywords={PAGE_DATA_SEO?.main_data?.keywords}
+		noindex={JSON.parse(PAGE_DATA_SEO?.main_data?.noindex?.toString())}
+		nofollow={JSON.parse(PAGE_DATA_SEO?.main_data?.nofollow?.toString())}
+		canonical={PAGE_DATA_SEO?.main_data?.canonical}
+		twitter={PAGE_DATA_SEO?.twitter_card}
+		openGraph={PAGE_DATA_SEO?.opengraph}
 	/>
 {/if}
 
-<!-- [ℹ] adding HREF-LANG-META-TAGS for (this) PAGE 
+<!-- 
+[ℹ] adding HREF-LANG-META-TAGS for (this) PAGE 
 -->
 <svelte:head>
 	{#if PAGE_DATA_SEO}
-		{#each PAGE_DATA_SEO.hreflang as item}
+		{#each PAGE_DATA_SEO?.hreflang || [] as item}
 			{#each TOURNAMENT_DATA_TRANSLATED_COPIES as item_}
 				{#if item.link == item_.lang}
 					<!-- [ℹ] content here 

@@ -299,14 +299,10 @@ export function removeDiacritics(
 		}
 	];
 
-	for (
-		let i = 0;
-		i < defaultDiacriticsRemovalMap.length;
-		i++
-	) {
+  for (const item of defaultDiacriticsRemovalMap) {
 		str = str.replace(
-			defaultDiacriticsRemovalMap[i].letters,
-			defaultDiacriticsRemovalMap[i].base
+			item?.letters,
+			item?.base
 		);
 	}
 

@@ -77,11 +77,13 @@
 				<!-- ... ℹ player logo-img & team logo ... -->
 				<div id="image-contaier">
 					<img
+            loading="lazy"
 						id="player-img"
 						src={data.image_path}
 						alt="default alt text"
 					/>
 					<img
+            loading="lazy"
 						id="team-img"
 						src={data.logo_path}
 						alt="default alt text"
@@ -133,11 +135,13 @@
 				<!-- ... ℹ player logo-img & team logo ... -->
 				<div id="image-contaier">
 					<img
+            loading="lazy"
 						id="player-img"
 						src={data.image_path}
 						alt="default alt text"
 					/>
 					<img
+            loading="lazy"
 						id="team-img"
 						src={data.logo_path}
 						alt="default alt text"

@@ -36,13 +36,14 @@
 	import type { fixture } from '$lib/store/vote_fixture';
 // [ℹ] key component assets;
 	import { page } from '$app/stores';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import {
 		dlog,
 		FM_W_H_STY, FM_W_H_TAG, FM_W_H_TOG, logErrorGroup
 	} from '$lib/utils/debug';
 	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
 
 	// [ℹ] main component variables;
 	export let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
@@ -568,101 +569,45 @@
   COMPONENT HTML 
 =================-->
 
-<div>
-	<!-- 
-  [ℹ] SEO-DATA-LOADED 
-  -->
+<SeoBox>
+  <!-- used, 
 	{#if !loaded && !nomatches}
-		<div id="seo-featured-match-box">
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.vote}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.assists}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.rating}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.player}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.matches}
-			</p>
-			<p>
-				{FEATURED_MATCH_WIDGET_DATA_SEO?.goals}
-			</p>
-		</div>
-	{/if}
+  -->
+  <div>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.vote}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.assists}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.rating}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.player}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.matches}
+    </p>
+    <p>
+      {FEATURED_MATCH_WIDGET_DATA_SEO?.goals}
+    </p>
+  </div>
+</SeoBox>
 
+<div>
 	<!-- 
   [ℹ] NO FEATURED MATCHES AVAILABLE PLACEHOLDER 
   -->
 	{#if nomatches && !loaded}
-		<!-- 
-    [ℹ] title of the widget 
-    -->
-		<h2
-			class="
-        s-20 
-        m-b-10 
-        w-500 
-        color-white
-      "
-			style="margin-top: 0px;"
-		>
-			{FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
-		</h2>
-		<!-- 
-    [ℹ] no-matches-avaiable-placeholder container 
-    -->
-		<div
-			id="featured-no-match-box"
-			class="row-space-start"
-			class:dark-background-1={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			<!-- 
-      [ℹ] no-matches-visual 
-      -->
-			<img
-				src={$userBetarenaSettings.theme == 'Dark'
-					? no_featured_match_visual_dark
-					: no_featured_match_visual}
-				alt="No widget visual icon"
-				width="80"
-				height="80"
-				class="m-r-20"
-			/>
-			<!-- 
-      [ℹ] container w/ text 
-      -->
-			<div>
-				<p
-					class="
-            s-16 
-            m-b-8 
-            w-500
-          "
-				>
-					{FEATURED_MATCH_WIDGET_DATA_SEO
-						?.place_holder?.info}
-				</p>
-				<p
-					class="
-            s-16 
-            color-grey 
-            w-400
-          "
-				>
-					{FEATURED_MATCH_WIDGET_DATA_SEO
-						?.place_holder?.no_matches}
-				</p>
-			</div>
-		</div>
+		<WidgetNoData 
+      WIDGET_TITLE={FEATURED_MATCH_WIDGET_DATA_SEO?.widget_title}
+      NO_DATA_TITLE={FEATURED_MATCH_WIDGET_DATA_SEO?.place_holder?.info}
+      NO_DATA_DESC={FEATURED_MATCH_WIDGET_DATA_SEO?.place_holder?.no_matches}
+    />
 	{/if}
 
 	<!-- 
@@ -672,18 +617,19 @@
 		<!-- [ℹ] widget loading 
     -->
 		{#await get_FeaturedMatchData()}
-			<!-- [ℹ] promise is pending 
+			<!-- 
+      [ℹ] promise is pending 
       -->
 			<FeaturedMatchContentLoading />
 		{:then data}
-			<!-- [ℹ] promise was fulfilled 
+			<!-- 
+      [ℹ] promise was fulfilled 
       -->
-			<h2
-				class="s-20 m-b-10 w-500 color-white"
-				style="margin-top: 0px;"
-			>
-				{FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
-			</h2>
+
+      <WidgetTitle
+        WIDGET_TITLE={FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
+        OVERRIDE_COLOR={true}
+      />
 
 			<div
 				id="live-score-container"
@@ -707,6 +653,7 @@
 						<!-- [ℹ] league-icon 
             -->
 						<img
+              loading="lazy"
 							class="img-flag"
 							src={FEATURED_MATCH_WIDGET_DATA.country_flag}
 							alt="default alt text"
@@ -744,6 +691,7 @@
               -->
 							<div class="fixture-team">
 								<img
+                  loading="lazy"
 									class="m-b-12"
 									src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 									alt="default alt text"
@@ -812,6 +760,7 @@
               -->
 							<div class="fixture-team">
 								<img
+                  loading="lazy"
 									class="m-b-12"
 									src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 									alt="default alt text"
@@ -869,6 +818,7 @@
 											</span>
 										{:else}
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 												alt="default alt text"
 												width="28px"
@@ -957,6 +907,7 @@
                         src="./static/icon/icon-close.svg"
                         -->
 											<img
+                        loading="lazy"
 												src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
 												alt="default alt text"
 												width="28px"
@@ -1041,6 +992,7 @@
 											</span>
 										{:else}
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 												alt="default alt text"
 												width="28px"
@@ -1104,6 +1056,7 @@
 								<!-- close-btn src="./static/icon/white-close.svg" -->
 
 								<img
+                  loading="lazy"
 									src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
 									alt="default alt text"
 									width="16px"
@@ -1118,6 +1071,7 @@
 										.register_link}
 								>
 									<img
+                    loading="lazy"
 										id="stakesSiteImg"
 										src={FEATURED_MATCH_WIDGET_DATA
 											.live_odds.fixture_odds_info
@@ -1162,6 +1116,7 @@
 												{#if viewportDesktop}
 													{#if fixtureDataVote.fixture_vote == '1'}
 														<img
+                              loading="lazy"
 															src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 															alt="default alt text"
 															width="28px"
@@ -1179,6 +1134,7 @@
 														</p>
 													{:else}
 														<img
+                              loading="lazy"
 															src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 															alt="default alt text"
 															width="28px"
@@ -1199,6 +1155,7 @@
 										<!-- [ℹ] MULTIPLY SIGN 
                     -->
 										<img
+                      loading="lazy"
 											src="/assets/svg/icon/icon-close.svg"
 											alt="multiply-icon"
 											width="16px"
@@ -1224,6 +1181,7 @@
 										<!-- [ℹ]  EQUALS SIGN 
                     -->
 										<img
+                      loading="lazy"
 											src="/assets/svg/icon/icon-equally.svg"
 											alt="icon-equlaity"
 											width="16px"
@@ -1309,6 +1267,7 @@
 											class="live-stream-btn"
 										>
 											<img
+                        loading="lazy"
 												src={tv_item.img}
 												alt={tv_item.alt}
 												title={tv_item.Name}
@@ -1337,6 +1296,7 @@
 						<div class="best-players-box">
 							<div class="row-space-start m-b-16">
 								<img
+                  loading="lazy"
 									class="m-r-16"
 									src={FEATURED_MATCH_WIDGET_DATA.home_team_logo}
 									alt="default alt text"
@@ -1430,6 +1390,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.local_team_player_1_image_path}
@@ -1516,6 +1477,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.local_team_player_2_image_path}
@@ -1571,6 +1533,7 @@
 						<div class="best-players-box">
 							<div class="row-space-start m-b-16">
 								<img
+                  loading="lazy"
 									class="m-r-16"
 									src={FEATURED_MATCH_WIDGET_DATA.away_team_logo}
 									alt="default alt text"
@@ -1663,6 +1626,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.visitor_team_player_1_image_path}
@@ -1749,6 +1713,7 @@
 
 									<td class="row-space-start">
 										<img
+                      loading="lazy"
 											src={FEATURED_MATCH_WIDGET_DATA
 												.best_players
 												.visitor_team_player_2_image_path}
@@ -1827,6 +1792,7 @@
 												.valuebets.link}
 										>
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA
 													.valuebets.image}
 												alt={FEATURED_MATCH_WIDGET_DATA
@@ -1995,6 +1961,7 @@
 											style="height: 30px;"
 										>
 											<img
+                        loading="lazy"
 												src={FEATURED_MATCH_WIDGET_DATA
 													.valuebets.image}
 												alt={FEATURED_MATCH_WIDGET_DATA
@@ -2097,20 +2064,6 @@
     box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
     border-radius: 8px;
   }
-
-	#featured-no-match-box {
-		padding: 20px;
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-	}
-
-	#seo-featured-match-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
 	#live-score-container {
 		display: grid;

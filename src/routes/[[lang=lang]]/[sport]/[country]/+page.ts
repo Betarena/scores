@@ -1,38 +1,60 @@
 import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from '$lib/utils/debug';
+import { promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageLoad, PageLoadEvent } from '../$types';
 
 /** @type {import('./$types').PageLoad} */
-export async function load({
-	url,
-	params,
-	fetch
-}: PageLoadEvent): Promise < PageLoad > {
+export async function load
+(
+  {
+    // url,
+    params,
+    fetch
+  }: PageLoadEvent
+): Promise < PageLoad > 
+{
 
   const t0 = performance.now();
 
+  //#region [0] IMPORTANT EXTRACT URL DATA
+
+  const { 
+    lang,
+    sport,
+    // @ts-expect-error unknown RouteParam, that exists
+    country
+  } = params
+
+  const urlLang: string =
+    params?.lang == undefined 
+      ? 'en' 
+      : params?.lang
+  ;
+
+  //#endregion [0] IMPORTANT EXTRACT URL DATA
+
   //#region IMPORTANT URL (validation)
 
-  // [ℹ] validate [1]
-	const VALID_URL = await fetch(
-    `/api/cache/_main_/pages_and_seo?url=${url.pathname}`, 
-    {
-		  method: 'GET'
-	  }
-  ).then((r) => r.json());
+    const validUrlCheck = await promiseValidUrlCheck
+    (
+      fetch,
+      urlLang,
+      sport,
+      country
+    )
   
-  // [ℹ] exit (condition)
-	if (!VALID_URL) {
-    const t1 = performance.now();
-    dlog(`fixture (load) (exit) complete in: ${(t1 - t0) / 1000} sec`, true)
-		throw error(ERROR_CODE_INVALID, PAGE_INVALID_MSG);
-	}
-
-  //#endregion IMPORTANT URL (validation)
-
-	const { 
-    lang 
-  } = params
+    // [ℹ] exit;
+    if (!validUrlCheck) {
+      // [🐞]
+      const t1 = performance.now();
+      dlog(`⏳ [SPORT] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
+      throw error(
+        ERROR_CODE_INVALID,
+        PAGE_INVALID_MSG
+      );
+    }
+  
+    //#endregion IMPORTANT URL (validation)
 
   const URL: string =
     lang == undefined 

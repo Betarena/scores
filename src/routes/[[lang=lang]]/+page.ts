@@ -7,32 +7,56 @@ import {
 } from '$lib/utils/debug';
 import { error } from '@sveltejs/kit';
 
+import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 import type { PageLoad } from './$types';
 
-/**
- * @type {import('./$types').PageLoad}
- */
-export async function load({
-	url,
-	params,
-	fetch
-}): Promise<PageLoad> {
+/** @type {import('./$types').PageLoad} */
+export async function load
+(
+  {
+	  // url,
+	  params,
+	  fetch
+  }
+): Promise < PageLoad > 
+{
 
   const t0 = performance.now();
 
+  //#region [0] IMPORTANT EXTRACT URL DATA
+
 	const urlLang: string =
-		params.lang == undefined 
+		params?.lang == undefined 
       ? 'en' 
-      : params.lang
+      : params?.lang
   ;
 
-	// --------------
-	// [ℹ] preload data DOC: REF: [2]
-	// --------------
+  //#endregion [0] IMPORTANT EXTRACT URL DATA
+
+  //#region [0] IMPORTANT VALID URL CHECK
+
+  const validUrlCheck = await promiseValidUrlCheck
+  (
+    fetch,
+    urlLang
+  )
+
+  // [ℹ] exit;
+	if (!validUrlCheck) {
+		throw error(
+			ERROR_CODE_INVALID,
+			PAGE_INVALID_MSG
+		);
+	}
+
+  //#endregion [0] IMPORTANT EXTRACT URL DATA
+
+  //#region [0] IMPORTANT (PRE) PRE-LOAD DATA DOC: REF: [2]
 
 	const urls = [
-		`/api/cache/_main_/pages_and_seo?lang=${urlLang}&page=homepage`,
-		// [ℹ] home
+		// [ℹ] home (page)
+		`/api/data/main/seo-pages?lang=${urlLang}&page=homepage`,
+		// [ℹ] home (widgets)
 		`/api/cache/home/featured_match?lang=${urlLang}`,
 		`/api/cache/home/featured_betting_sites?lang=${urlLang}`,
 		`/api/cache/home/best_goalscorer?lang=${urlLang}`,
@@ -41,18 +65,13 @@ export async function load({
 		`/api/cache/home/seo_block?lang=${urlLang}`,
 		`/api/cache/home/livescores-v2?lang=${urlLang}`,
 		`/api/cache/home/livescores-v2?seo=true&lang=${urlLang}`,
-		// [ℹ] page validation check;
-		`/api/cache/_main_/pages_and_seo?url=${url.pathname}`
 	];
 
-	const promises = urls.map((_url) =>
-		fetch(_url).then((response) =>
-			response.json()
-		)
-	);
-
-	const data = await Promise.all(promises);
-	dlog(data, false);
+  const data = await promiseUrlsPreload
+  (
+    urls,
+    fetch
+  );
 
 	const [
 		PAGE_DATA_SEO,
@@ -63,37 +82,17 @@ export async function load({
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,
     LIVESCORES_V2_T_DATA,
-    LIVESCORES_V2_SEO,
-		VALID_URL
+    LIVESCORES_V2_SEO
 	] = data;
 
-	// --------------
-	// [ℹ] return(s)
-	// --------------
+	dlog(data, false);
 
-	// [ℹ] exit;
-	if (!VALID_URL) {
-		throw error(
-			ERROR_CODE_INVALID,
-			PAGE_INVALID_MSG
-		);
-	}
+  //#endregion [0] IMPORTANT (PRE) PRE-LOAD DATA DOC: REF: [2]
+  
+  //#region [3] IMPORTANT RETURN
 
 	// [ℹ] FIXME: valid-page does not count data[7] - already checked
-	const INVALID_PAGE_DATA_POINTS: boolean =
-		data.includes(undefined);
-
-	const indexesOf = (arr, item) =>
-		arr.reduce(
-			(acc, v, i) => (
-				v === item && acc.push(i), acc
-			),
-			[]
-		);
-	dlog(
-		`null (preload): ${indexesOf(data, null)}`,
-		true
-	);
+	const INVALID_PAGE_DATA_POINTS: boolean = data.includes(undefined);
 
 	// FIXME: currently based on checking for any NULL/UNDEFINED data points
 	// FIXME: should still allow for page access if page is VALID but widget data or
@@ -106,11 +105,19 @@ export async function load({
 		);
 	}
 
+  PRELOAD_invalid_data(data)
+
+  // [🐞]
   const t1 = performance.now();
-  dlog(`⏳ [HOME] preload ${(t1 - t0) / 1000} sec`, true)
+  dlog(`⏳ [HOME] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
 
 	// FIXME: types not working
 	return {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    // NOTE: issues with setting correct <PageLoad> types, 
+    // NOTE: not being applied to return;
+    // NOTE: not critical - can be silenced;
 		PAGE_DATA_SEO,
 		FEATURED_MATCH_WIDGET_DATA_SEO,
 		FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
@@ -121,4 +128,7 @@ export async function load({
     LIVESCORES_V2_T_DATA,
     LIVESCORES_V2_SEO
 	};
+
+  //#endregion [3] IMPORTANT RETURN
+
 }

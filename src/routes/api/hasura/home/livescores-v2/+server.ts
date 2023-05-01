@@ -13,7 +13,7 @@ import type { B_LS2_D, LS2_C_FixtureDateGroup } from '@betarena/scores-lib/types
 
 export async function GET(req): Promise<unknown> {
 	const date: string =
-		req.url['searchParams'].get('date');
+		req?.url?.searchParams?.get('date');
 	const targetData = await main(
 		date
 	);
@@ -43,7 +43,6 @@ async function main(
 
   const current_week_fixtures = await get_target_date_fixtures(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     graphQlInstance,
     fixture_dates
   )
@@ -74,7 +73,6 @@ async function main(
     tournaments_data
   ] = await get_target_leagues(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
     graphQlInstance,
     leagues_ids_arr
   )

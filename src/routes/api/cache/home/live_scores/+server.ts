@@ -1,12 +1,12 @@
 import { json } from '@sveltejs/kit';
 
 import {
-	get_target_hset_cache_data,
-	get_target_string_cache_data,
-	live_scores,
-	live_scores_football_tournaments,
-	live_scores_football_translations,
-	live_scores_leagues
+    get_target_hset_cache_data,
+    get_target_string_cache_data,
+    live_scores,
+    live_scores_football_tournaments,
+    live_scores_football_translations,
+    live_scores_leagues
 } from '../../std_main';
 
 /**
@@ -14,12 +14,12 @@ import {
  */
 export async function GET(req): Promise<unknown> {
 	const lang =
-		req.url['searchParams'].get('lang');
+		req?.url?.searchParams?.get('lang');
 	const type:
 		| 'translations'
 		| 'geo'
 		| 'tournaments' =
-		req.url['searchParams'].get('type');
+		req?.url?.searchParams?.get('type');
 
 	if (lang) {
 		const response_seo =

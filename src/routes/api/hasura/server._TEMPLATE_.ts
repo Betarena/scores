@@ -32,7 +32,7 @@
 export async function GET(
   // req
 ): Promise<void> {
-  // const X: string = req.url['searchParams'].get('X');
+  // const X: string = req?.url?.searchParams?.get('X');
 	// const target_season_fixtures = await main(LEAGUE_ID, SEASON_ID);
 	// return json(target_season_fixtures);
 }

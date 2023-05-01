@@ -119,8 +119,7 @@ export async function onceRealTimeLiveScoreboard
 (
 ): Promise < void > 
 {
-  const firebaseData = await getTargetRealDbData
-  (
+  const firebaseData = await getTargetRealDbData(
     `livescores_now_scoreboard`
   );
   if (firebaseData != null) 

@@ -19,9 +19,10 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-	import { onMount } from 'svelte';
+	import { userBetarenaSettings } from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
-  import profile_avatar from './assets/profile-avatar.svg';
+	import { onMount } from 'svelte';
+	import WidgetTitle from './Widget-Title.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -31,9 +32,9 @@ COMPONENT JS (w/ TS)
   //  COMPONENT VARIABLES
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  export const EXAMPLE_VALUE
-  
-  const EXAMPLE_VALUE
+  export let WIDGET_TITLE: string
+  export let NO_DATA_TITLE: string
+  export let NO_DATA_DESC: string
 
   //#endregion ➤ [VARIABLES]
 
@@ -98,16 +99,60 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <!-- 
-[ℹ] example comment
+[ℹ] title of the widget 
 -->
-<img 
-  src={profile_avatar}
-  alt='Profile Avatar Icon'
-  title='Profile Avatar Icon'
+<WidgetTitle
+  {WIDGET_TITLE}
+  OVERRIDE_COLOR={true}
 />
 
+<!-- 
+[ℹ] no-matches-avaiable-placeholder container 
+-->
 <div
-  class="m-b-12">
+  class="
+    no-widget-box
+    row-space-start
+  "
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+>
+  <!-- 
+  [ℹ] no-matches-visual 
+  -->
+  <img
+    src={
+      $userBetarenaSettings.theme == 'Dark'
+        ? '/assets/svg/noWidgetDataDark.svg'
+        : '/assets/svg/noWidgetData.svg'
+    }
+    alt="No widget visual icon"
+    width="80"
+    height="80"
+    class="m-r-20"
+  />
+  <!-- 
+  [ℹ] container w/ text 
+  -->
+  <div>
+    <p
+      class="
+        s-16 
+        m-b-8 
+        w-500
+      "
+    >
+      {NO_DATA_TITLE}
+    </p>
+    <p
+      class="
+        s-16 
+        color-grey 
+        w-400
+      "
+    >
+      {NO_DATA_DESC}
+    </p>
+  </div>
 </div>
 
 <!-- ===============
@@ -118,17 +163,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   /* #region ❌ [NOT WORKING] w/ regions */
-  div#example {
+  /* div#example {
     color: var(--dark-theme);
     background-color: var();
   } div#example > div#target {
-  }
+  } */
   /* #endregion ❌ [NOT WORKING] w/ regions */
 
-  div#example {
-    color: var(--dark-theme);
-  } div#example > div#target {
-  }
+  .no-widget-box {
+		padding: 20px;
+		background: #ffffff;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 12px;
+	}
 
   /*
   =============

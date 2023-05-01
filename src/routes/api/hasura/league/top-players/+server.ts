@@ -25,7 +25,7 @@ const graphQlInstance = initGrapQLClient()
 export async function GET(
   req
 ): Promise<unknown> {
-	const seasonId: string = req.url['searchParams'].get('seasonId');
+	const seasonId: string = req?.url?.searchParams?.get('seasonId');
 	const target_season_top_players = await main(
 		seasonId
 	);

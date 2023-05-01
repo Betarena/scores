@@ -1,13 +1,18 @@
 <!-- ===============
-	  COMPONENT JS (w/ TS)
+  COMPONENT JS (w/ TS)
 ==================== -->
 <script lang="ts">
+
 	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
+
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog, SEO_W_H_STY, SEO_W_H_TAG, SEO_W_H_TOG } from '$lib/utils/debug';
-	import no_featured_match_visual from './assets/no_featured_match_visual.svg';
-	import no_featured_match_visual_dark from './assets/no_featured_match_visual_dark.svg';
+
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import SeoBlockContentLoader from './_SEO_Block_ContentLoader.svelte';
+  
 	export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
 
 	let loaded: boolean = false; // [ℹ] holds boolean for data loaded;
@@ -51,72 +56,30 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+  COMPONENT HTML 
 ==================== -->
 
-<div>
-	<!-- [ℹ] SEO-DATA-LOADED 
-  -->
+<SeoBox>
+  <!-- used, 
 	{#if !loaded}
-		<!-- [ℹ] SEO-BOX 
-    -->
-		<div id="seo-featured-betting-site-box">
-			<h2>{SEO_BLOCK_DATA.title}</h2>
-			{@html SEO_BLOCK_DATA.html}
-		</div>
-	{/if}
+  -->
+  <div>
+    <h2>{SEO_BLOCK_DATA.title}</h2>
+    {@html SEO_BLOCK_DATA.html}
+  </div>
+</SeoBox>
 
-	<!-- [ℹ] NO BEST PLAYERS AVAILABLE PLACEHOLDER 
+<div>
+
+	<!-- 
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER 
   -->
 	{#if noSEOBlockData && !loaded}
-		<!-- [ℹ] title of the widget 
-    -->
-		<h2
-			class="s-20 m-b-10 w-500 color-black-2"
-			style="margin-top: 0;"
-			class:color-white={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			{SEO_BLOCK_DATA.title}
-		</h2>
-
-		<!-- [ℹ] no-matches-avaiable-placeholder container 
-    -->
-		<div
-			id="no-best-players-box"
-			class="row-space-start"
-			class:dark-background-1={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			{#if $userBetarenaSettings.theme == 'Dark'}
-				<img
-					src={no_featured_match_visual_dark}
-					alt="no-featured-match-visual_dark"
-					width="80px"
-					height="80px"
-					class="m-r-20"
-				/>
-			{:else}
-				<img
-					src={no_featured_match_visual}
-					alt="no-featured-match-visual"
-					width="80px"
-					height="80px"
-					class="m-r-20"
-				/>
-			{/if}
-
-			<!-- container w/ text -->
-			<div>
-				<p class="s-16 m-b-8 w-500">
-					No SEO Block Available
-				</p>
-				<p class="s-16 color-grey w-400">
-					Sorry, at this time there is no SEO data
-					available!
-				</p>
-			</div>
-		</div>
+    <WidgetNoData 
+      WIDGET_TITLE={SEO_BLOCK_DATA.title}
+      NO_DATA_TITLE={"No SEO Block Available"}
+      NO_DATA_DESC={"Sorry, at this time there is no SEO data available!"}
+    />
 	{/if}
 
 	<!-- [ℹ] promise is pending 
@@ -125,21 +88,18 @@
 		{#await widgetInit()}
 			<SeoBlockContentLoader />
 
-			<!-- [ℹ] promise was fulfilled 
+    <!-- 
+    [ℹ] promise was fulfilled 
     -->
 		{:then data}
-			<!-- wiget-title -->
-			<h2
-				id="widget-title"
-				class="s-20 m-b-10 w-500 color-black-2"
-				style="margin-top: 0;"
-				class:color-white={$userBetarenaSettings.theme ==
-					'Dark'}
-			>
-				{SEO_BLOCK_DATA.title}
-			</h2>
 
-			<!-- [ℹ] widget-component 
+      <WidgetTitle
+        WIDGET_TITLE={SEO_BLOCK_DATA?.title}
+        OVERRIDE_COLOR={true}
+      />
+
+			<!-- 
+      [ℹ] widget-component 
       -->
 			<div
 				id="seo-block-widget-container"
@@ -150,8 +110,9 @@
 				{@html SEO_BLOCK_DATA.html}
 			</div>
 
-			<!-- [ℹ] promise was rejected 
-    -->
+			<!-- 
+      [ℹ] promise was rejected 
+      -->
 		{:catch error}
 			{error}
 		{/await}
@@ -162,19 +123,6 @@
     COMPONENT STYLE
 ==================== -->
 <style>
-	#no-best-players-box {
-		padding: 20px;
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-	}
-
-	#seo-featured-betting-site-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
 	#seo-block-widget-container {
 		display: grid;

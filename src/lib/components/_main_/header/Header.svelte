@@ -32,6 +32,7 @@ COMPONENT JS - BASIC
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
 	import type { GeoJsResponse } from '$lib/types/geojs-types';
 
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import { db_firestore } from '$lib/firebase/init';
 	import { sessionStore } from '$lib/store/session';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
@@ -532,31 +533,33 @@ COMPONENT JS - BASIC
 TODO:FIXME: not generating for each LANG
 -->
 {#if HEADER_TRANSLATION_DATA != undefined && !hideSEO}
-	<!-- 
-  [ℹ] main-homepage-link-in-all-avaialble-languages
-  -->
-	{#each HEADER_TRANSLATION_DATA.langArray as item}
-		{#if item != 'en'}
-			<!-- 
-      [ℹ] content here
-      -->
-			<a
-				
-				href={$page.url.origin + '/' + item}
-			>
-				<p>{$page.url.origin + '/' + item}</p>
-			</a>
-		{:else}
-			<!-- [ℹ] content here 
-      -->
-			<a
-				
-				href={$page.url.origin}
-			>
-				<p>{$page.url.origin}</p>
-			</a>
-		{/if}
-	{/each}
+  <SeoBox>
+    <!-- 
+    [ℹ] main-homepage-link-in-all-avaialble-languages
+    -->
+    {#each HEADER_TRANSLATION_DATA.langArray as item}
+      {#if item != 'en'}
+        <!-- 
+        [ℹ] content here
+        -->
+        <a
+          
+          href={$page.url.origin + '/' + item}
+        >
+          <p>{$page.url.origin + '/' + item}</p>
+        </a>
+      {:else}
+        <!-- [ℹ] content here 
+        -->
+        <a
+          
+          href={$page.url.origin}
+        >
+          <p>{$page.url.origin}</p>
+        </a>
+      {/if}
+    {/each}
+  </SeoBox>
 {/if}
 
 <!-- 
@@ -603,6 +606,7 @@ TODO:FIXME: not generating for each LANG
         -->
 				{#if tabletExclusive}
 					<img
+            loading="lazy"
 						id="burger-menu"
 						src={menu_burger_bar}
 						alt="betarena-logo"
@@ -628,6 +632,7 @@ TODO:FIXME: not generating for each LANG
 							title={logoLink}
 						>
 							<img
+                loading="lazy"
 								src={logo_mini}
 								alt="betarena-logo"
 								width="103px"
@@ -650,6 +655,7 @@ TODO:FIXME: not generating for each LANG
 							title={logoLink}
 						>
 							<img
+                loading="lazy"
 								class="m-r-30"
 								src={logo_full}
 								alt="betarena-logo"
@@ -693,6 +699,7 @@ TODO:FIXME: not generating for each LANG
               [ℹ] arrow down [hidden-menu] 
               -->
 							<img
+                loading="lazy"
 								src={!dropdown_lang_visible
 									? arrow_down
 									: arrow_up}
@@ -846,6 +853,7 @@ TODO:FIXME: not generating for each LANG
 							</p>
 							<div class="row-space-start">
 								<img
+                  loading="lazy"
 									class="m-r-5"
 									src={light_icon_theme}
 									alt="${HEADER_TRANSLATION_DATA
@@ -872,6 +880,7 @@ TODO:FIXME: not generating for each LANG
             [ℹ] arrow down [hidden-menu] 
             -->
 						<img
+              loading="lazy"
 							src={!dropdown_theme_visible
 								? arrow_down_fade
 								: arrow_up}
@@ -911,6 +920,7 @@ TODO:FIXME: not generating for each LANG
 										</p>
 										{#if theme.includes($userBetarenaSettings.theme)}
 											<img
+                        loading="lazy"
 												src={icon_check}
 												alt={theme[0]}
 												width="16px"
@@ -968,6 +978,7 @@ TODO:FIXME: not generating for each LANG
               [ℹ] arrow down [hidden-menu] 
               -->
               <img
+                loading="lazy"
                 src={!dropdown_odds_type_visible
                   ? arrow_down_fade
                   : arrow_up}
@@ -1046,6 +1057,7 @@ TODO:FIXME: not generating for each LANG
                           .toString()
                           .toUpperCase())}
                         <img
+                          loading="lazy"
                           class="
                             country-flag 
                             m-r-5
@@ -1072,6 +1084,7 @@ TODO:FIXME: not generating for each LANG
               [ℹ] arrow down [hidden-menu]
               -->
               <img
+                loading="lazy"
                 src={!dropdown_bookmakers_visible
                   ? arrow_down_fade
                   : arrow_up}
@@ -1106,6 +1119,7 @@ TODO:FIXME: not generating for each LANG
                           )}
                       >
                         <img
+                          loading="lazy"
                           class="
                             country-flag
                             m-r-10
@@ -1186,6 +1200,7 @@ TODO:FIXME: not generating for each LANG
             [ℹ] user avatar img
             -->
 						<img
+              loading="lazy"
               id="user-profile-picture"
 							src={$userBetarenaSettings?.user
                 ?.scores_user_data?.profile_photo ||
@@ -1315,6 +1330,7 @@ TODO:FIXME: not generating for each LANG
                           .sports[i][0]}
                     >
                       <img
+                        loading="lazy"
                         class="m-r-10"
                         src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
                           i
@@ -1374,6 +1390,7 @@ TODO:FIXME: not generating for each LANG
                         .sports[i][0]}
                   >
                     <img
+                      loading="lazy"
                       class="m-r-10"
                       src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
                         i
@@ -1441,6 +1458,7 @@ TODO:FIXME: not generating for each LANG
                           .sports[i][0]}
                     >
                       <img
+                        loading="lazy"
                         class="
                           m-r-10 
                           soon-opacitiy
@@ -1500,6 +1518,7 @@ TODO:FIXME: not generating for each LANG
                   !dropdown_more_sports_menu)}
             >
               <img
+                loading="lazy"
                 class="m-r-10"
                 src={menu_sports_icon}
                 alt="menu_btn"
@@ -1521,6 +1540,7 @@ TODO:FIXME: not generating for each LANG
               [ℹ] arrow down [hidden-menu] 
               -->
               <img
+                loading="lazy"
                 src={!dropdown_more_sports_menu
                   ? arrow_down_fade
                   : arrow_up}
@@ -1579,6 +1599,7 @@ TODO:FIXME: not generating for each LANG
                       style="width: fit-content;"
                     >
                       <img
+                        loading="lazy"
                         class="m-r-5"
                         src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
                         alt="${sport[0]}-img"
@@ -1629,6 +1650,7 @@ TODO:FIXME: not generating for each LANG
                           style="width: fit-content;"
                         >
                           <img
+                            loading="lazy"
                             class="m-r-5 soon-opacitiy"
                             src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
                             alt="${sport[0]}-img"
@@ -1690,6 +1712,7 @@ TODO:FIXME: not generating for each LANG
               [ℹ] close-side-nav 
               -->
 							<img
+                loading="lazy"
 								src={close}
 								alt="close-icon"
 								width="24px"
@@ -1734,6 +1757,7 @@ TODO:FIXME: not generating for each LANG
                     [ℹ] arrow down [hidden-menu] 
                     -->
 										<img
+                      loading="lazy"
 											src={!dropdown_lang_visible
 												? arrow_down
 												: arrow_up}
@@ -1874,6 +1898,7 @@ TODO:FIXME: not generating for each LANG
 									<div class="row-space-out">
 										<div class="row-space-start">
 											<img
+                        loading="lazy"
 												class="m-r-5"
 												src={light_icon_theme}
 												alt={HEADER_TRANSLATION_DATA
@@ -1896,6 +1921,7 @@ TODO:FIXME: not generating for each LANG
                     [ℹ] arrow down [hidden-menu] 
                     -->
 										<img
+                      loading="lazy"
 											src={!dropdown_theme_visible
 												? arrow_down_fade
 												: arrow_up_fade}
@@ -1923,6 +1949,7 @@ TODO:FIXME: not generating for each LANG
 												</p>
 												{#if theme.includes($userBetarenaSettings.theme)}
 													<img
+                            loading="lazy"
 														src={icon_check}
 														alt={theme[0]}
 														width="16px"
@@ -1962,6 +1989,7 @@ TODO:FIXME: not generating for each LANG
                       [ℹ] arrow down [hidden-menu] 
                       -->
                       <img
+                        loading="lazy"
                         src={!dropdown_odds_type_visible
                           ? arrow_down_fade
                           : arrow_up_fade}
@@ -2017,6 +2045,7 @@ TODO:FIXME: not generating for each LANG
                                 .toString()
                                 .toUpperCase())}
                               <img
+                                loading="lazy"
                                 class="country-flag m-r-5"
                                 src="https://betarena.com/images/flags/{country[0]}.svg"
                                 alt={country[1]}
@@ -2036,6 +2065,7 @@ TODO:FIXME: not generating for each LANG
                       [ℹ] arrow down [hidden-menu] 
                       -->
                       <img
+                        loading="lazy"
                         src={!dropdown_bookmakers_visible
                           ? arrow_down_fade
                           : arrow_up_fade}
@@ -2063,6 +2093,7 @@ TODO:FIXME: not generating for each LANG
                               class="row-space-start"
                             >
                               <img
+                                loading="lazy"
                                 class="country-flag m-r-10"
                                 src="https://betarena.com/images/flags/${country[0]}.svg"
                                 alt="${country[1]}"
@@ -2079,6 +2110,7 @@ TODO:FIXME: not generating for each LANG
                                 .toString()
                                 .toUpperCase())}
                               <img
+                                loading="lazy"
                                 src={icon_check}
                                 alt={country[0]}
                                 width="16px"
@@ -2122,6 +2154,7 @@ TODO:FIXME: not generating for each LANG
 
                 <!-- [ℹ] close-side-nav -->
                 <img
+                  loading="lazy"
                   src={close}
                   alt="close-icon"
                   width="24px"
@@ -2149,6 +2182,7 @@ TODO:FIXME: not generating for each LANG
                         style="width: fit-content;"
                       >
                         <img
+                          loading="lazy"
                           class="m-r-10"
                           src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
                           alt="${sport[0]}-img"
@@ -2189,6 +2223,7 @@ TODO:FIXME: not generating for each LANG
                             style="width: fit-content;"
                           >
                             <img
+                              loading="lazy"
                               class="m-r-10 soon-opacitiy"
                               src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
                               alt="${sport[0]}-img"

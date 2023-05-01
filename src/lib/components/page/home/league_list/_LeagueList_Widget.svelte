@@ -23,6 +23,7 @@
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import LeagueListLoader from './LeagueList_Loader.svelte';
 	import NoResults from './_NoResults.svelte';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -207,11 +208,11 @@
   COMPONENT HTML 
 ==================== -->
 
-<!-- 
-[ℹ] SEO-DATA-LOADED 
--->
-{#if !loaded}
-	<div id="seo-league-list-box">
+<SeoBox>
+  <!-- used, 
+	{#if !loaded}
+  -->
+  <div>
 		<!-- 
     [ℹ] translation-expressions 
     -->
@@ -248,7 +249,7 @@
 			<p>{country.country_name}</p>
 		{/each}
 	</div>
-{/if}
+</SeoBox>
 
 <!-- 
 [ℹ] LEAGUE LIST WIDGET [DESKTOP-ONLY]
@@ -263,7 +264,7 @@
     -->
 		{#await widgetInit()}
 			<LeagueListLoader />
-			<!-- 
+    <!-- 
     [ℹ] promise was fulfilled 
     -->
 		{:then data}
@@ -367,6 +368,7 @@
 									>
 										<img
 											src={item.logo_path}
+                      loading="lazy"
 											alt={item.league_name.toString() +
 												'-image'}
 											width="20px"
@@ -456,6 +458,7 @@
 										{:else}
 											<img
 												src={item.image_path}
+                        loading="lazy"
 												alt="default alt text"
 												title={item.country_name +
 													'-image'}
@@ -577,6 +580,7 @@
 									>
 										<img
 											src={item.logo_path}
+                      loading="lazy"
 											alt={item.league_name.toString() +
 												'-image'}
 											width="20"
@@ -675,6 +679,7 @@
 									>
 										<img
 											src={item.image_path}
+                      loading="lazy"
 											alt="default alt text"
 											title={item.country_name +
 												'-image'}
@@ -771,13 +776,6 @@
 ==================== -->
 <style>
 	/* DESKTOP ONLY WIDGET */
-
-	#seo-league-list-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
 	#league-list {
 		display: grid;

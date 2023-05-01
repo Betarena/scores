@@ -5,6 +5,7 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
 	import { sessionStore } from '$lib/store/session';
 	import { dlog, FT_W_STY, FT_W_TAG, FT_W_TOG } from '$lib/utils/debug';
@@ -104,42 +105,44 @@
 [ℹ] FOOTER SEO 
 -->
 {#if FOOTER_TRANSLATION_DATA != undefined && !hideSEO}
-	<!-- [ℹ] betarena-logo-homepage-correct-url 
-  -->
-	<p>{logoLink}</p>
-	<!-- [ℹ] nav-links-SEO 
-  -->
-	<p>
-		{FOOTER_TRANSLATION_DATA.scores_footer_links
-			.latest_news}
-	</p>
-	<p>
-		{FOOTER_TRANSLATION_DATA.scores_footer_links
-			.about_us}
-	</p>
-	<p>
-		{FOOTER_TRANSLATION_DATA.scores_footer_links
-			.betting_tips}
-	</p>
-	<p>
-		{FOOTER_TRANSLATION_DATA.scores_footer_links
-			.privacy}
-	</p>
-	<p>
-		{FOOTER_TRANSLATION_DATA.scores_footer_links
-			.social_networks}
-	</p>
-	<p>
-		{FOOTER_TRANSLATION_DATA.scores_footer_links
-			.terms}
-	</p>
-	<!-- [ℹ] nav-links-social-links
-  -->
-	{#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
-		<p>
-			{social_network[1]}
-		</p>
-	{/each}
+  <SeoBox>
+    <!-- [ℹ] betarena-logo-homepage-correct-url 
+    -->
+    <p>{logoLink}</p>
+    <!-- [ℹ] nav-links-SEO 
+    -->
+    <p>
+      {FOOTER_TRANSLATION_DATA.scores_footer_links
+        .latest_news}
+    </p>
+    <p>
+      {FOOTER_TRANSLATION_DATA.scores_footer_links
+        .about_us}
+    </p>
+    <p>
+      {FOOTER_TRANSLATION_DATA.scores_footer_links
+        .betting_tips}
+    </p>
+    <p>
+      {FOOTER_TRANSLATION_DATA.scores_footer_links
+        .privacy}
+    </p>
+    <p>
+      {FOOTER_TRANSLATION_DATA.scores_footer_links
+        .social_networks}
+    </p>
+    <p>
+      {FOOTER_TRANSLATION_DATA.scores_footer_links
+        .terms}
+    </p>
+    <!-- [ℹ] nav-links-social-links
+    -->
+    {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
+      <p>
+        {social_network[1]}
+      </p>
+    {/each}
+  </SeoBox>
 {/if}
 
 <!-- 
@@ -167,6 +170,7 @@
 						title={logoLink}
 					>
 						<img
+              loading="lazy"
 							src={logo_full}
 							alt="betarena-logo"
 							title={logoLink}
@@ -200,6 +204,7 @@
 								href={social_network[1]}
 							>
 								<img
+                  loading="lazy"
 									src="/assets/svg/footer/icon/{social_network[0]
 										.toString()
 										.toLocaleLowerCase()}.svg"
@@ -402,6 +407,7 @@
 					style="width: auto;"
 				>
 					<img
+            loading="lazy"
 						src={legal18icon}
 						alt="legal18icon"
 						title="legal18icon"
@@ -410,6 +416,7 @@
 						class="m-r-24"
 					/>
 					<img
+            loading="lazy"
 						src={begambleawareorg}
 						alt="begambleawareorg"
 						title="begambleawareorg"
@@ -461,6 +468,7 @@
 								title={logoLink}
 							>
 								<img
+                  loading="lazy"
 									src={logo_full}
 									alt="betarena-logo"
 									title={logoLink}
@@ -491,6 +499,7 @@
 										href={social_network[1]}
 									>
 										<img
+                      loading="lazy"
 											src="/assets/svg/footer/icon/{social_network[0]
 												.toString()
 												.toLocaleLowerCase()}.svg"
@@ -683,6 +692,7 @@
 						style="width: auto;"
 					>
 						<img
+              loading="lazy"
 							src={legal18icon}
 							alt="legal18icon"
 							title="legal18icon"
@@ -691,6 +701,7 @@
 							class="m-r-24"
 						/>
 						<img
+              loading="lazy"
 							src={begambleawareorg}
 							alt="begambleawareorg"
 							title="begambleawareorg"
@@ -721,6 +732,7 @@
 							title={logoLink}
 						>
 							<img
+                loading="lazy"
 								src={logo_full}
 								alt="betarena-logo"
 								title={logoLink}
@@ -921,6 +933,7 @@
 									href={social_network[1]}
 								>
 									<img
+                    loading="lazy"
 										src="/assets/svg/footer/icon/{social_network[0]
 											.toString()
 											.toLocaleLowerCase()}.svg"
@@ -944,6 +957,7 @@
 						style="width: auto;"
 					>
 						<img
+              loading="lazy"
 							src={legal18icon}
 							alt="legal18icon"
 							title="legal18icon"
@@ -952,6 +966,7 @@
 							class="m-r-24"
 						/>
 						<img
+              loading="lazy"
 							src={begambleawareorg}
 							alt="begambleawareorg"
 							title="begambleawareorg"
