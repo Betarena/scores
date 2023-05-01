@@ -14,14 +14,14 @@
 		Cache_Single_Lang_Featured_Betting_Site_Translation_Response
 	} from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 	// [ℹ] external components import;
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import { dlog, FB_W_H_STY, FB_W_H_TAG, FB_W_H_TOG } from '$lib/utils/debug';
+	import FeaturedBettingSitesWidgetContentLoading from './_FeaturedBettingSitesWidget_ContentLoading.svelte';
+	import FeaturedSiteRow from './_FeaturedSiteRow.svelte';
 	import BronzeCup from './assets/_BronzeCup.svelte';
 	import GoldCup from './assets/_GoldCup.svelte';
 	import SilverCup from './assets/_SilverCup.svelte';
-	import FeaturedBettingSitesWidgetContentLoading from './_FeaturedBettingSitesWidget_ContentLoading.svelte';
-	import FeaturedSiteRow from './_FeaturedSiteRow.svelte';
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 
 	// [ℹ] main component variables;
 	export let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
@@ -174,7 +174,6 @@
 
       <WidgetTitle
         WIDGET_TITLE={FEATURED_BETTING_SITES_WIDGET_DATA_SEO?.translations?.widget_title}
-        OVERRIDE_COLOR={true}
       />
 
 			<!-- [ℹ] widget-component 
