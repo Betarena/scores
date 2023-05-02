@@ -23,7 +23,7 @@
     <style>
       body.googlebot-override,
       body.googlebot-override main {
-        overflow: hidden;
+        overflow-y: hidden;
       }
       body.googlebot-override p,
       body.googlebot-override span,
@@ -37,14 +37,15 @@
       body.googlebot-override img,
       body.googlebot-override td { */
       body.googlebot-override * {
-        margin: 20px;
+        margin: 15px;
         display: grid !important;
+        gap: 15px;
         grid-template-columns: 1fr !important;
       } 
       body.googlebot-override div#splash-screen {
         margin: 0;
       }
-      section#home-page {
+      body.googlebot-override section#home-page {
         grid-template-columns: 1fr !important;
       }
     </style>
