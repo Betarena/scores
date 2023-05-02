@@ -628,7 +628,7 @@
 
       <WidgetTitle
         WIDGET_TITLE={FEATURED_MATCH_WIDGET_DATA_SEO.widget_title}
-        OVERRIDE_COLOR={true}
+        OVERRIDE_COLOR={viewportDesktop ? true : false}
       />
 
 			<div
