@@ -22,17 +22,17 @@
     -->
     <style>
       html {
-        overflow-y: hidden;
+        overflow-x: hidden !important;
       }
       body.googlebot-override,
       body.googlebot-override main {
-        overflow-y: hidden;
+        overflow-x: hidden !important;
       }
       body.googlebot-override p,
       body.googlebot-override span,
       body.googlebot-override h1,
       body.googlebot-override h2 {
-        font-size: 7vw;
+        font-size: 20px;
         text-overflow: ellipsis;
       }
       /* body.googlebot-override div,
@@ -41,11 +41,11 @@
       body.googlebot-override img,
       body.googlebot-override td { */
       body.googlebot-override * {
-        margin: 5vw;
-        display: grid !important;
-        gap: 5vw;
+        all: initial;
+        display: grid;
         grid-template-columns: 1fr !important;
-        position: absolute;
+        gap: 10px;
+        margin: 5px;
       } 
       body.googlebot-override div#splash-screen {
         margin: 0;

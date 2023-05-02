@@ -20,12 +20,12 @@
       // document.body.classList.remove(
       //   'googlebot-override'
       // );
-      // document.documentElement.classList.remove(
-      //   'no-scrollbar'
-      // );
-      // document.body.classList.remove(
-      //   'no-scrollbar'
-      // );
+      document.documentElement.classList.remove(
+        'no-scrollbar'
+      );
+      document.body.classList.remove(
+        'no-scrollbar'
+      );
     }, 500);
     setTimeout(async () => {
       show = false;
