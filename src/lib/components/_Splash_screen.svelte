@@ -7,15 +7,12 @@
 	import { onMount } from 'svelte';
 
   let show: boolean = true;
+  let isGoogleBot: boolean = false;
 
   if (browser)
   {
-    const isGoogleBot = /bot|google/i.test(navigator.userAgent)
+    isGoogleBot = /bot|google/i.test(navigator.userAgent)
     show = !isGoogleBot
-    if (isGoogleBot)
-    {
-      alert("IS GOOGLE");
-    }
   }
 
   /**
@@ -47,6 +44,10 @@
 <!-- ===================
 	COMPONENT HTML
 =================== -->
+
+<h1>
+  {isGoogleBot}
+</h1>
 
 {#if show}
 	<div
