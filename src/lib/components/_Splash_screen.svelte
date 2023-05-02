@@ -3,9 +3,20 @@
     [TypeScript Written]
 =================== -->
 <script lang="ts">
-  import { onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
   let show: boolean = true;
+
+  if (browser)
+  {
+    const isGoogleBot = /bot|google/i.test(navigator.userAgent)
+    show = !isGoogleBot
+    if (isGoogleBot)
+    {
+      alert("IS GOOGLE");
+    }
+  }
 
   /**
    * @summary [LIFECYCLE]
