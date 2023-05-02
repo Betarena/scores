@@ -14,12 +14,12 @@
   */
   onMount(async () => {
     setTimeout(async () => {
-      // document.documentElement.classList.remove(
-      //     'googlebot-override'
-      // );
-      // document.body.classList.remove(
-      //   'googlebot-override'
-      // );
+      document.documentElement.classList.remove(
+          'googlebot-override'
+      );
+      document.body.classList.remove(
+        'googlebot-override'
+      );
       document.documentElement.classList.remove(
         'no-scrollbar'
       );
