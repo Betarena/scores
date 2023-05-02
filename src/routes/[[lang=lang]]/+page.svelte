@@ -153,8 +153,8 @@
 
 	const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 475;
-	let mobileExclusive: boolean = true;
-  let tabletExclusive: boolean = true;
+	let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		[tabletExclusive, mobileExclusive] =
