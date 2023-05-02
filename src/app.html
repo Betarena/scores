@@ -35,8 +35,7 @@
       body.googlebot-override span,
       body.googlebot-override h1,
       body.googlebot-override h2 {
-        font-size: 20px;
-        text-overflow: ellipsis;
+        font-size: 14px;
       }
       /* body.googlebot-override div,
       body.googlebot-override button,
@@ -47,6 +46,9 @@
         margin: 10px;
         display: grid;
         overflow-x: hidden !important;
+        max-width: inherit;
+        text-overflow: ellipsis;
+        flex-wrap: wrap;
       } 
       body.googlebot-override div#splash-screen {
         margin: 0;
