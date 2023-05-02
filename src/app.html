@@ -21,6 +21,9 @@
     [GOOGLEBOT] mobile usability override/hack
     -->
     <style>
+      html {
+        overflow-y: hidden;
+      }
       body.googlebot-override,
       body.googlebot-override main {
         overflow: hidden;
@@ -29,7 +32,8 @@
       body.googlebot-override span,
       body.googlebot-override h1,
       body.googlebot-override h2 {
-        font-size: 15vw;
+        font-size: 5vw;
+        text-overflow: ellipsis;
       }
       /* body.googlebot-override div,
       body.googlebot-override button,
@@ -37,9 +41,9 @@
       body.googlebot-override img,
       body.googlebot-override td { */
       body.googlebot-override * {
-        margin: 2vw;
+        margin: 5vw;
         display: grid !important;
-        gap: 2vw;
+        gap: 5vw;
         grid-template-columns: 1fr !important;
       } 
       body.googlebot-override div#splash-screen {
