@@ -5,7 +5,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
 
-  let show: boolean = true;
+  let show: boolean = false;
 
   /**
    * @summary [LIFECYCLE]

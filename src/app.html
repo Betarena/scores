@@ -11,14 +11,14 @@
       "
 		/>
 		<meta name="theme-color" content="#292929" />
-    <link 
+    <!-- <link 
       rel="stylesheet" 
       type="text/css"
       href="/app.css"
-    />
+    /> -->
     <!-- 
     IMPORTANT 
-    mobile usability override
+    [GOOGLEBOT] mobile usability override/hack
     -->
     <style>
       body.googlebot-override,
@@ -41,6 +41,9 @@
       } 
       body.googlebot-override div#splash-screen {
         margin: 0;
+      }
+      section#home-page {
+        grid-template-columns: 1fr !important;
       }
     </style>
 		<!-- 
