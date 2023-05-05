@@ -25,6 +25,7 @@ COMPONENT JS (w/ TS)
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixturesWidget from './fixtures/Fixtures-Widget.svelte';
 	import ProfileWidget from './profile/Profile-Widget.svelte';
+	import StatisticsWidget from './statistics/Statistics-Widget.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -264,10 +265,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <Breadcrumb />
   <ProfileWidget/>
 
-  <div id="widget-grid-display">
+  <div 
+    id="widget-grid-display"
+  >
+    <!-- 
+    Column Num.1
+    -->
     <div
-      class="grid-display-column">
+      class="grid-display-column"
+    >
       <FixturesWidget />
+    </div>
+    <!-- 
+    Column Num.2 
+    -->
+    <div
+      class="grid-display-column"
+    >
+      <StatisticsWidget />
     </div>
   </div>
 
