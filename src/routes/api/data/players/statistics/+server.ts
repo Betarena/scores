@@ -3,9 +3,9 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { PSTAT_PP_ENTRY, PSTAT_PP_generateTranslationMain, PSTAT_PP_getPlayerStatTranslations } from "@betarena/scores-lib/dist/functions/func.player-statistics.js";
+import { PSTAT_PP_ENTRY, PSTAT_PP_ENTRY_1, PSTAT_PP_generateTranslationMain, PSTAT_PP_getPlayerStatTranslations } from "@betarena/scores-lib/dist/functions/func.player-statistics.js";
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
-import type { B_PSTAT_D, B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
+import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture } from '@betarena/scores-lib/types/player-statistics.js';
 import { get_target_hset_cache_data } from '../../../cache/std_main';
 
 //#endregion ➤ Package Imports
@@ -33,16 +33,22 @@ export async function GET
   // query (url) data
 	const lang: string = req?.url?.searchParams?.get('lang');
 	const player_id: string = req?.url?.searchParams?.get('player_id');
+	const league_id: string = req?.url?.searchParams?.get('league_id');
+	const season_id: string = req?.url?.searchParams?.get('season_id');
   const hasura: string = req?.url?.searchParams?.get('hasura');
 
-  // NOTE: player (page) data;
-  // IMPORTANT CACHE + FALLBACK (HASURA)
-  if (player_id) {
-
+  // NOTE: player (statistics) data; [fallback]
+  const validation_0 =
+    player_id
+    && !league_id
+    && !season_id
+    && !lang
+  ;
+  if (validation_0) 
+  {
     const _player_id: number = parseInt(player_id)
     let data;
     let loadType = "cache";
-
     // NOTE: check in cache;
     if (!hasura) 
     {
@@ -54,17 +60,45 @@ export async function GET
         )
       ;
     }
-
     // NOTE: (default) fallback;
-		if (!data || hasura) {
-      data = await fallbackMainData(
+		if (!data || hasura) 
+    {
+      data = await fallbackMainData
+      (
         _player_id
       )
       loadType = 'HASURA'
 		}
-
     console.log(`📌 loaded [PFIX] with: ${loadType}`)
+    return json(data);
+  }
 
+  // NOTE: player (statistics) target season fixtures; [fallback]
+  const validation_1 = 
+    player_id
+    && league_id
+    && season_id
+    && !lang
+  ;
+  if (validation_1)
+  {
+    const _player_id: number = parseInt(player_id)
+    const _league_id: number = parseInt(league_id)
+    const _season_id: number = parseInt(season_id)
+    let data;
+    let loadType = "cache";
+    // NOTE: (default) fallback;
+		if (!data || hasura) 
+    {
+      data = await fallbackMainData_2
+      (
+        _player_id,
+        _league_id,
+        _season_id
+      )
+      loadType = 'HASURA'
+		}
+    console.log(`📌 loaded [PFIX] with: ${loadType}`)
     return json(data);
   }
 
@@ -138,6 +172,39 @@ async function fallbackMainData_1
   )
 
 	return translationMap.get(LANG);
+}
+
+/**
+ * @summary [MAIN] [FALLBACK] [#0] method
+ * page main initial data gather;
+ * @todo [TODO:] 1. offset map-gen. to "scores-lib"
+ * @param {number} player_id
+ * @param {number} league_id
+ * @param {number} season_id
+ * @returns Promise < B_PSTAT_D >
+ */
+async function fallbackMainData_2 
+(
+  playerId: number,
+  leagueId: number,
+  seasonId: number
+): Promise < PSTAT_C_Fixture[] > 
+{
+
+  const data = await PSTAT_PP_ENTRY_1
+  (
+    graphQlInstance,
+    leagueId,
+    seasonId,
+    playerId
+  )
+
+  if (data.length == 0) 
+  {
+    return null
+  }
+  
+	return data;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
