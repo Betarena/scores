@@ -17,6 +17,7 @@ COMPONENT JS (w/ TS)
   
 	import { get } from '$lib/api/utils.js';
 	import { MONTH_NAMES_ABBRV, toCorrectDate } from '$lib/utils/dates.js';
+	import { shortenSeasonName } from '$lib/utils/languages.js';
 	import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture, PSTAT_C_League, PSTAT_C_Season } from '@betarena/scores-lib/types/player-statistics.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
@@ -45,6 +46,9 @@ COMPONENT JS (w/ TS)
   let selectedStatsOpt: string[] = []
   let toggleDropdownLeague: boolean = false
   let toggleDropdownSeason: boolean = false
+  let activeAverageRating: number;
+  let ratingColorCode: string;
+  let selectedSeasonName: string;
 
   // $: console.log('selectedLeague: ', selectedLeague)
   // $: console.log('selectedSeason: ', selectedSeason)
@@ -174,6 +178,35 @@ COMPONENT JS (w/ TS)
     selectedStatsOpt = selectedStatsOpt;
   }
 
+  function selectFirstAvailableSeason
+  (
+  )
+  {
+    const valiation_0 =
+      leagueMap.get(selectedLeague)?.seasons?.length == 0
+    ;
+    if (valiation_0) return;
+    selectedSeason = 
+      leagueMap.get(selectedLeague)?.seasons?.[0]?.seasond_id.toString()
+    ;
+  }
+
+  function obtainTargetSelectedSeaconName
+  (
+  )
+  {
+    selectedSeasonName = shortenSeasonName
+    (
+      leagueMap.get(selectedLeague)
+        ?.seasons
+          ?.find
+          (
+            x => x?.seasond_id?.toString() == selectedSeason
+          )
+          ?.name
+    );
+  }
+
   async function getLast5SeasonFixtures
   (
   ) 
@@ -204,11 +237,6 @@ COMPONENT JS (w/ TS)
     playerSeasonStatMap.set(selectedSeason, seasonStatObj)
     playerSeasonStatMap = playerSeasonStatMap;
     loadingPrev = false;
-  }
-
-  $: if (selectedSeason)
-  {
-    getLast5SeasonFixtures()
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -242,6 +270,31 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
+
+   /**
+   * @description listens to when 
+   * selected-league has changed;
+  */
+  $: if (selectedLeague) 
+  {
+    selectFirstAvailableSeason()
+    obtainTargetSelectedSeaconName()
+  }
+
+  /**
+   * @description listens to when 
+   * selected-season has changed;
+  */
+  $: if (selectedSeason)
+  {
+    getLast5SeasonFixtures()
+    obtainTargetSelectedSeaconName()
+    // TODO:
+    activeAverageRating = playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures_avg_rating
+    ratingColorCode = 'T';
+    if (parseFloat(activeAverageRating) >= 9) ratingColorCode = 'G';
+    if (parseFloat(activeAverageRating) >= 7) ratingColorCode = 'Y';
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// (SSR) LANG SVELTE | IMPORTANT
@@ -385,7 +438,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               color-black-2
             "
           >
-            {leagueMap.get(selectedLeague)?.seasons?.find(x => x?.seasond_id?.toString() == selectedSeason)?.name}
+            {selectedSeasonName}
           </p>
           <img
             src={!toggleDropdownSeason ? "/assets/svg/arrow-down.svg" : "/assets/svg/arrow-up.svg"}
@@ -416,7 +469,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       color-black-2
                     "
                   >
-                    {season?.name}
+                    {
+                      shortenSeasonName
+                      (
+                        season?.name
+                      )
+                    }
                   </p>
                 </div>
               {/each}
@@ -430,26 +488,72 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
     <!-- 
     Average Rating
-    Last 5 (by season) fixtures
     -->
     <div
       class="
         row-space-out
       ">
-      <p>
+      <p
+        class="
+          s-16
+          w-500
+        "
+      >
         {`${WIDGET_T_DATA?.average_rating}:` || 'Average Rating:'}
+      </p>
+      <p
+        id="pstat-average-rating-main"
+        class="
+          s-14 
+          w-500
+        "
+        class:rating_golden={ratingColorCode === 'G'}
+        class:rating_silver={ratingColorCode === 'Y'}
+        class:rating_bronze={ratingColorCode === 'T'}
+        class:rating_nan={ratingColorCode === 'F'}
+      >
+        {activeAverageRating}
       </p>
     </div>
     
+    <!-- 
+    Last 5 (by season) fixtures
+    -->
     <div
+      id="pstat-last-fixtures-box"
       class="
         row-space-out
+        m-b-25
       ">
+
+      <!-- 
+      overlay grid box
+      -->
+      <div
+        id="pstat-overlay-rating-box">
+        <!-- 
+        average hr line (dotted)
+        -->
+        <hr id="pstat-average"/>
+        <hr/>
+        <hr/>
+        <hr/>
+        <hr/>
+        <hr/>
+      </div>
+
+      <!-- 
+      main data
+      -->
       {#each playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures?.reverse() || [] as fixture}
         <div
           class="
             column-space-center
+            width-auto
           ">
+          <!-- 
+          Rival Team Icon
+          -->
           <img 
             src="{fixture?.rival_team?.icon}"
             alt="{fixture?.rival_team?.name}"
@@ -457,13 +561,43 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             width="32"
             height="32"
           />
-          <p>
+          <!-- 
+          Fixture Date
+          -->
+          <p
+            class="
+              s-12
+              color-grey
+              m-t-10
+              no-wrap
+            ">
             {toCorrectDate(fixture?.fixture_day).getDate()}
             {MONTH_NAMES_ABBRV[toCorrectDate(fixture?.fixture_day).getMonth()]}
           </p>
-          <p>
-            {fixture?.player_rating}
-          </p>
+          <!-- 
+          Rating
+          -->
+          <div
+            class="
+              m-t-15
+              pstat-fix-rating-box
+            ">
+            <p
+              id="pstat-average-rating-main"
+              class="
+                s-14 
+                w-500
+                pstat-fixture-rating
+              "
+              class:rating_golden={ratingColorCode === 'G'}
+              class:rating_silver={ratingColorCode === 'Y'}
+              class:rating_bronze={ratingColorCode === 'T'}
+              class:rating_nan={ratingColorCode === 'F'}
+              style="bottom: {((fixture?.player_rating || 0) * 10)}px"
+            >
+              {fixture?.player_rating}
+            </p>
+          </div>
         </div>
       {/each}
     </div>
@@ -477,6 +611,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
           <div
             class="
+              cursor-pointer
               row-space-out
               pstat-group-opt
             "
@@ -526,6 +661,96 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   div.widget-component {
     overflow: unset;
   }
+
+  /* average rating row */
+  p#pstat-average-rating-main 
+  {
+		box-sizing: border-box;
+    text-align: center;
+    border-radius: 12px;
+    padding: 1.5px 0px;
+    max-height: 24px;
+    min-width: 44px;
+    max-width: 44px;
+    width: auto;
+    color: var(--white);
+	}
+	p#pstat-average-rating-main.rating_golden 
+  {
+		background-color: #ffb904 !important;
+	}
+	p#pstat-average-rating-main.rating_silver 
+  {
+		background-color: #8c8c8c !important;
+	}
+	p#pstat-average-rating-main.rating_bronze 
+  {
+		background-color: #dbb884 !important;
+	}
+  p#pstat-average-rating-main.rating_nan 
+  {
+		background-color: var(--whitev2);
+    color: var(--grey);
+  }
+
+  /* last 5 season fixtures */
+  div#pstat-last-fixtures-box
+  {
+    position: relative;
+    z-index: 1;
+    /* s */
+    margin: 20px;
+    width: auto;
+    padding: 0 20px;
+  }
+  div#pstat-last-fixtures-box
+  div#pstat-overlay-rating-box
+  {
+    /* p */
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    z-index: -1;
+    /* s */
+    /* height: 140px; */
+    width: 100%;
+    display: grid;
+  }
+  div#pstat-last-fixtures-box
+  div#pstat-overlay-rating-box
+  hr#pstat-average
+  {
+    /* o */
+    position: absolute;
+    top: 50%;
+    /* s */
+    border-color: var(--grey) !important;
+    background-color: var(--grey) !important;
+  }
+  div#pstat-last-fixtures-box
+  div#pstat-overlay-rating-box
+  hr
+  {
+    /* s */
+    margin: 13px 0;
+    border-color: var(--grey-color) !important;
+    background-color: var(--grey-color) !important;
+  }
+
+  div.pstat-fix-rating-box
+  {
+    position: relative;
+    min-height: 140px;
+    max-height: 140px;
+    width: -webkit-fill-available;
+  }
+  div.pstat-fix-rating-box
+  p.pstat-fixture-rating
+  {
+    position: absolute;
+  }
+
 
   /* dropdown box styles */
   div#pstat-drop-main
