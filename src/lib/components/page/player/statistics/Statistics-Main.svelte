@@ -290,11 +290,7 @@ COMPONENT JS (w/ TS)
   {
     getLast5SeasonFixtures()
     obtainTargetSelectedSeaconName()
-    // TODO:
     activeAverageRating = playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures_avg_rating
-    ratingColorCode = 'T';
-    if (parseFloat(activeAverageRating) >= 9) ratingColorCode = 'G';
-    if (parseFloat(activeAverageRating) >= 7) ratingColorCode = 'Y';
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -336,7 +332,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
-    OVERRIDE_COLOR={true}
+    OVERRIDE_COLOR={mobileExclusive ? false : true}
   />
   
   <div
@@ -491,6 +487,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     Average Rating
     -->
     <div
+      id="pstat-avg-rating-box"
       class="
         row-space-out
       ">
@@ -508,12 +505,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           s-14 
           w-500
         "
-        class:rating_golden={ratingColorCode === 'G'}
-        class:rating_silver={ratingColorCode === 'Y'}
-        class:rating_bronze={ratingColorCode === 'T'}
-        class:rating_nan={ratingColorCode === 'F'}
+        class:rating_nan={activeAverageRating == undefined}
+        class:rating_bronze={activeAverageRating >= 5 && activeAverageRating < 7}
+        class:rating_silver={activeAverageRating >= 7 && activeAverageRating < 9}
+        class:rating_golden={activeAverageRating >= 9}
       >
-        {activeAverageRating}
+        {activeAverageRating || 'N/A'}
       </p>
     </div>
     
@@ -523,7 +520,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <div
       id="pstat-last-fixtures-box"
       class="
-        row-space-out
         m-b-25
       ">
 
@@ -593,13 +589,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 w-500
                 pstat-fixture-rating
               "
-              class:rating_golden={ratingColorCode === 'G'}
-              class:rating_silver={ratingColorCode === 'Y'}
-              class:rating_bronze={ratingColorCode === 'T'}
-              class:rating_nan={ratingColorCode === 'F'}
+              class:rating_nan={fixture?.player_rating == undefined}
+              class:rating_bronze={fixture?.player_rating >= 5 && fixture?.player_rating < 7}
+              class:rating_silver={fixture?.player_rating >= 7 && fixture?.player_rating < 9}
+              class:rating_golden={fixture?.player_rating >= 9}
               style="bottom: {((fixture?.player_rating || 0) * 10)}px"
             >
-              {fixture?.player_rating}
+              {fixture?.player_rating || 'N/A'}
             </p>
           </div>
         </div>
@@ -666,6 +662,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     overflow: unset;
   }
 
+  div#pstat-avg-rating-box
+  {
+    padding: 0 20px;
+  }
+
   /* average rating row */
   p#pstat-average-rating-main 
   {
@@ -705,7 +706,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* s */
     margin: 20px;
     width: auto;
-    padding: 0 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+    justify-items: center;
+    direction: ltr;
+    gap: 5vw;
+    /* padding: 0 20px; */
   }
   div#pstat-last-fixtures-box
   div#pstat-overlay-rating-box
@@ -730,7 +736,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* top: 50%; */
     /* s */
     border-color: var(--grey) !important;
-    background-color: var(--grey) !important;
+    border: none;
+    border-bottom: dashed 1px;
   }
   div#pstat-last-fixtures-box
   div#pstat-overlay-rating-box
@@ -747,7 +754,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     position: relative;
     min-height: 140px;
     max-height: 140px;
-    width: -webkit-fill-available;
+    width: 45px;
   }
   div.pstat-fix-rating-box
   p.pstat-fixture-rating
@@ -868,6 +875,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   RESPONSIVNESS 
   =============
   */
+
+  @media only screen 
+    and (min-width: 425px) {
+    div#pstat-last-fixtures-box
+    {
+      gap: 32.5px;
+    }
+
+  }
 
   @media only screen 
     and (min-width: 726px) 
