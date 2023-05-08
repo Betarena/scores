@@ -42,7 +42,7 @@ COMPONENT JS (w/ TS)
   let playerSeasonStatMap: Map <string, PSTAT_C_Season> = new Map(Object.entries(WIDGET_DATA?.data?.seasons_stats)) as Map <string, PSTAT_C_Season>;
   let leagueMap: Map <string, PSTAT_C_League> = new Map(Object.entries(WIDGET_DATA?.data?.leagues)) as unknown as Map <string, PSTAT_C_League>;
 
-  let selectedLeague: string = leagueMap.keys().next().value;
+  let selectedLeague: string = WIDGET_DATA?.data?.leaguesOrder[0]?.toString();
   let selectedSeason: string = ""
   let selectedStatsOpt: string[] = []
   let queriedSeasons: string[] = []
@@ -443,12 +443,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             <div
               id="more-top-leagues-list-container"
             >
-              {#each [...leagueMap.entries()] || [] as [league_id, league_data]}
+              {#each WIDGET_DATA?.data?.leaguesOrder || [] as l_id}
                 <div
                   class="
                     pstat-dropdown-row
                   "
-                  on:click={() => selectedLeague = league_id}
+                  on:click={() => selectedLeague = l_id?.toString()}
                 >
                   <p
                     class="
@@ -457,7 +457,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       color-black-2
                     "
                   >
-                    {league_data?.name}
+                    {leagueMap.get(l_id?.toString())?.name}
                   </p>
                 </div>
               {/each}
