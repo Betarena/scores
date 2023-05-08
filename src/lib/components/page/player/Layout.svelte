@@ -281,8 +281,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="grid-display-column"
       >
-        <FixturesWidget />
         <StatisticsWidget />
+        <FixturesWidget />
       </div>
     </div>
 

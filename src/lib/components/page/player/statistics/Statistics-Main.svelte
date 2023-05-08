@@ -361,7 +361,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
-    OVERRIDE_COLOR={mobileExclusive ? false : true}
+    OVERRIDE_COLOR={true}
   />
   
   <div
@@ -523,6 +523,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             s-16
             w-500
+            color-black-2
           "
         >
           {`${WIDGET_T_DATA?.average_rating}:` || 'Average Rating:'}
@@ -874,16 +875,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 4px;
 	} 
   /* track */
-	div#pstat-drop-main div#pstat-drop-league-main::-webkit-scrollbar-track,
-	div#pstat-drop-main div#pstat-drop-season-main::-webkit-scrollbar-track 
+	div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-track,
+	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-track 
   {
 		background: #f2f2f2;
 		border-radius: 12px;
 		margin: 8px;
 	} 
   /* handle */
-	div#pstat-drop-main	div#pstat-drop-league-main::-webkit-scrollbar-thumb,
-	div#pstat-drop-main	div#pstat-drop-season-main::-webkit-scrollbar-thumb 
+	div#pstat-drop-main	div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb,
+	div#pstat-drop-main	div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb 
   {
 		background: #cccccc;
 		border-radius: 12px;
@@ -935,19 +936,69 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-  div.dark-background-1 div#fixtures-list-box a:first-child div.league-group-box {
-    border: none;
-  } div.dark-background-1 div#fixtures-list-box a div.league-group-box {
+  .dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-outer,
+  .dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-outer 
+  {
+		/* dark theme/dark-gray */
+		background: #616161;
+		/* shadow/black */
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.24);
+		border-radius: 4px;
+	}
+
+	/* handle */
+  .dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb,
+	.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb  
+  {
+		background: #999999 !important;
+	}
+	/* track */
+	.dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-track,
+	.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-track  
+  {
+		background: #4b4b4b !important;
+	}
+
+  .dark-background-1
+  div#pstat-last-fixtures-box
+  div#pstat-overlay-rating-box
+  hr#pstat-average
+  {
+    border-color: #A8A8A8 !important;
+  }
+
+  div.dark-background-1 
+  div#pstat-last-fixtures-box
+  div#pstat-overlay-rating-box
+  hr
+  {
+    border-color: var(--dark-theme-1-shade) !important;
+    background-color: var(--dark-theme-1-shade) !important;
+  }
+
+  div.dark-background-1 
+  div.pstat-group-opt
+  {
     border-top: 1px solid var(--dark-theme-1-shade);
   }
 
-  div.dark-background-1 button.btn-hollow {
-    border: 1px solid var(--dark-theme-1-2-shade) !important;
+  div.dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div.pstat-drop-btn,
+  div.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn 
+  {
+		border: 1px solid var(--dark-theme-1-2-shade);
+	}
+
+  div.dark-background-1
+  p#pstat-average-rating-main 
+  {
+    color: var(--dark-theme-1) !important;
   }
-  /* o */
-  div.dark-background-1 button.btn-hollow:hover {
-    border: 1px solid var(--primary) !important;
-    color: var(--primary) !important;
+
+  div.dark-background-1
+  p#pstat-average-rating-main.rating_nan
+  {
+		background-color: var(--dark-theme-1-shade) !important;
+    color: var(--dark-theme-1-3-shade) !important;
   }
 
 </style>
