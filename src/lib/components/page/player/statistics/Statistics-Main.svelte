@@ -47,7 +47,6 @@ COMPONENT JS (w/ TS)
   let toggleDropdownLeague: boolean = false
   let toggleDropdownSeason: boolean = false
   let activeAverageRating: number;
-  let ratingColorCode: string;
   let selectedSeasonName: string;
 
   // $: console.log('selectedLeague: ', selectedLeague)
@@ -60,7 +59,7 @@ COMPONENT JS (w/ TS)
 			| 'matches'
 			| 'defend'
 			| 'attack'
-			| 'passes'
+			| 'passing'
       | 'cards'
       | 'other'
     ;
@@ -74,7 +73,7 @@ COMPONENT JS (w/ TS)
 				'minutes_played',
 				'bench',
 				'appearances',
-        ''
+        'lineups'
 			],
 			loc_trans: [
 				'Minutes Played',
@@ -91,9 +90,25 @@ COMPONENT JS (w/ TS)
 				'hit_woodwork',
         'shots_on_target',
         'shots_off_target',
-        'big_changes_created',
-        'big_changes_missed',
+        'big_chances_created',
+        'big_chances_missed',
         'dribbled_past'
+			],
+			loc_trans: [
+				'Minutes Played',
+				'Bench',
+				'Appearances'
+			]
+    },
+    // (stats) passes
+    {
+      key: 'passing',
+      loc_arr: [
+				'passes',
+				'accurate_passes',
+				'accurate_passes_percentage',
+        'key_passes',
+        'assists'
 			],
 			loc_trans: [
 				'Minutes Played',
@@ -121,9 +136,9 @@ COMPONENT JS (w/ TS)
     {
       key: 'cards',
       loc_arr: [
-        'yellow_cards',
-        'yellow_red_cards',
-        'red_cards',
+        'yellowcards',
+        'yellowred_cards',
+        'redcards'
       ],
       loc_trans: []
     },
@@ -142,7 +157,7 @@ COMPONENT JS (w/ TS)
         'fouls_drawn',
         'total_duels',
         'duels_won',
-        'own_goals',
+        'owngoals',
         'offsides',
       ],
       loc_trans: []
@@ -205,6 +220,20 @@ COMPONENT JS (w/ TS)
           )
           ?.name
     );
+  }
+
+  function modifierTranslation
+  (
+    target_prop: string
+  )
+  {
+    let appliedTranslation = WIDGET_T_DATA[target_prop]
+    if (target_prop == "attack") appliedTranslation = WIDGET_T_DATA?.attacking
+    if (target_prop == "defend") appliedTranslation = WIDGET_T_DATA?.defending
+    if (target_prop == "intercepts") appliedTranslation = WIDGET_T_DATA?.interceptions
+    if (target_prop == "clearance") appliedTranslation = WIDGET_T_DATA?.clearances;
+    if (target_prop == "fouls_drawn") appliedTranslation = WIDGET_T_DATA?.foulds_drawn;
+    return appliedTranslation
   }
 
   async function getLast5SeasonFixtures
@@ -369,7 +398,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <p
             class="
               s-14 
-              w-500 
               color-black-2
             "
           >
@@ -431,7 +459,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <p
             class="
               s-14 
-              w-500 
               color-black-2
             "
           >
@@ -624,7 +651,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 color-black-2
               "
             >
-              {WIDGET_T_DATA[item?.key]}
+              {modifierTranslation(item?.key)}
             </p>
             <img
               src={!selectedStatsOpt.includes(item?.key) ? "/assets/svg/arrow-up.svg" : "/assets/svg/arrow-down.svg"}
@@ -637,7 +664,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {#if !selectedStatsOpt.includes(item?.key)}
             {#each item?.loc_arr || [] as sub_nav, i}
               <StatisticsRow
-                STAT_NAME={WIDGET_T_DATA[sub_nav]}
+                STAT_NAME={modifierTranslation(sub_nav)}
                 STAT_VALUE={playerSeasonStatMap.get(selectedSeason)?.player_stats?.[item.key]?.[sub_nav] || '-'}
               />
             {/each}
@@ -660,6 +687,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   /* o */
   div.widget-component {
     overflow: unset;
+    padding-bottom: unset;
   }
 
   div#pstat-avg-rating-box
@@ -781,12 +809,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   div#pstat-drop-main div#pstat-drop-league-main div.pstat-drop-btn,
   div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn 
   {
-		padding: 9px 20px;
+		padding: 9px 16px 9px 20px;
 		border: 1px solid #cccccc;
 		box-sizing: border-box;
 		border-radius: 8px;
 		position: relative;
-		height: 40px;
+		height: 44px;
 	}
   div#pstat-drop-main div#pstat-drop-league-main div.pstat-drop-btn:hover
   div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn:hover 

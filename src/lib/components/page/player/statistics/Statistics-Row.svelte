@@ -25,7 +25,6 @@
   <p
     class="
       s-14 
-      w-500 
       color-black-2
     "
   >
