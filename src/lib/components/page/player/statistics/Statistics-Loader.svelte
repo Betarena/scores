@@ -69,7 +69,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       row-space-out
       m-b-20
     ">
-    <PstatLoaderLeftMainBox />
+    <div
+      class="
+        m-r-16
+      "
+    >
+      <PstatLoaderLeftMainBox />
+    </div>
     <PstatLoaderRightMainBox />
   </div>
   <!-- 

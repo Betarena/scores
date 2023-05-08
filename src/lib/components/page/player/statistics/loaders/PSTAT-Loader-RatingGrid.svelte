@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-</script>
+	</script>
 
 <svg 
   class="animation-target"
@@ -18,3 +17,10 @@
   <rect y="111.2" width="462" height="1" fill="#E6E6E6"/>
   <rect y="139" width="462" height="1" fill="#E6E6E6"/>
 </svg>
+
+<style>
+  svg 
+  {
+    width: 100% !important;
+  }
+</style>
