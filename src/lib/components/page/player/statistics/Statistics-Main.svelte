@@ -20,6 +20,7 @@ COMPONENT JS (w/ TS)
 	import { shortenSeasonName } from '$lib/utils/languages.js';
 	import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture, PSTAT_C_League, PSTAT_C_Season } from '@betarena/scores-lib/types/player-statistics.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import PstatBLoaderRatingGrid from './loaders/PSTAT-BLoader-RatingGrid.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -48,6 +49,7 @@ COMPONENT JS (w/ TS)
   let toggleDropdownSeason: boolean = false
   let activeAverageRating: number;
   let selectedSeasonName: string;
+  let loadingPrev: boolean = false;
 
   // $: console.log('selectedLeague: ', selectedLeague)
   // $: console.log('selectedSeason: ', selectedSeason)
@@ -163,8 +165,6 @@ COMPONENT JS (w/ TS)
       loc_trans: []
     }
 	];
-
-  let loadingPrev: boolean = false;
 
   //#endregion ➤ [VARIABLES]
 
@@ -513,33 +513,45 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!-- 
     Average Rating
     -->
-    <div
-      id="pstat-avg-rating-box"
-      class="
-        row-space-out
-      ">
-      <p
+    {#if !loadingPrev}
+      <div
+        id="pstat-avg-rating-box"
         class="
-          s-16
-          w-500
-        "
-      >
-        {`${WIDGET_T_DATA?.average_rating}:` || 'Average Rating:'}
-      </p>
-      <p
-        id="pstat-average-rating-main"
+          row-space-out
+        ">
+        <p
+          class="
+            s-16
+            w-500
+          "
+        >
+          {`${WIDGET_T_DATA?.average_rating}:` || 'Average Rating:'}
+        </p>
+        <p
+          id="pstat-average-rating-main"
+          class="
+            s-14 
+            w-500
+          "
+          class:rating_nan={activeAverageRating == undefined}
+          class:rating_bronze={activeAverageRating >= 5 && activeAverageRating < 7}
+          class:rating_silver={activeAverageRating >= 7 && activeAverageRating < 9}
+          class:rating_golden={activeAverageRating >= 9}
+        >
+          {activeAverageRating || 'N/A'}
+        </p>
+      </div>
+    {/if}
+
+    {#if loadingPrev}
+      <div
         class="
-          s-14 
-          w-500
+          m-b-25
         "
-        class:rating_nan={activeAverageRating == undefined}
-        class:rating_bronze={activeAverageRating >= 5 && activeAverageRating < 7}
-        class:rating_silver={activeAverageRating >= 7 && activeAverageRating < 9}
-        class:rating_golden={activeAverageRating >= 9}
-      >
-        {activeAverageRating || 'N/A'}
-      </p>
-    </div>
+        style="margin: 20px;">
+        <PstatBLoaderRatingGrid />
+      </div>
+    {/if}
     
     <!-- 
     Last 5 (by season) fixtures
@@ -908,9 +920,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     and (min-width: 425px) {
     div#pstat-last-fixtures-box
     {
-      gap: 32.5px;
+      gap: 3.5vw;
     }
-
   }
 
   @media only screen 

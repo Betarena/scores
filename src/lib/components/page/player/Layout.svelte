@@ -364,7 +364,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		div#widget-grid-display {
 			gap: 20px;
 			grid-template-columns: 
-        minmax(850px, 850px) 
+        minmax(auto, 850px) 
         minmax(auto, 502px)
       ;
 		}
@@ -377,7 +377,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			align-items: start;
 			gap: 20px;
 			grid-template-columns: 
-        minmax(850px, 850px) 
+        minmax(auto, 850px) 
         minmax(auto, 502px)
       ;
 		}

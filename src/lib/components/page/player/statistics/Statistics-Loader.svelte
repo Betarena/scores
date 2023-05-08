@@ -7,15 +7,13 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
 
+  import PstatBLoaderRatingGrid from "./loaders/PSTAT-BLoader-RatingGrid.svelte";
   import PstatLoaderLeftMBoxRow from "./loaders/PSTAT-Loader-Left-M-Box-Row.svelte";
   import PstatLoaderLeftTBoxRow from "./loaders/PSTAT-Loader-Left-T-Box-Row.svelte";
   import PstatLoaderLeftMainBox from "./loaders/PSTAT-Loader-LeftMainBox.svelte";
-  import PstatLoaderRatingGrid from "./loaders/PSTAT-Loader-RatingGrid.svelte";
   import PstatLoaderRightMBoxRow from "./loaders/PSTAT-Loader-Right-M-Box-Row.svelte";
   import PstatLoaderRightTBoxRow from "./loaders/PSTAT-Loader-Right-T-Box-Row.svelte";
   import PstatLoaderRightMainBox from "./loaders/PSTAT-Loader-RightMainBox.svelte";
-  import PstatLoaderTtRightOvalBox from "./loaders/PSTAT-Loader-TT-RightOvalBox.svelte";
-  import PstatLoaderTeamBox from "./loaders/PSTAT-Loader-TeamBox.svelte";
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -87,25 +85,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class="
       m-b-25
     ">
-    <div
-      class="
-        m-b-16
-        row-space-out
-      "
-    >
-      <PstatLoaderLeftTBoxRow />
-      <PstatLoaderTtRightOvalBox />
-    </div>
-    <div
-      class="
-        row-space-out
-        m-b-15
-      ">
-      {#each { length: 5 } as _, i}
-        <PstatLoaderTeamBox/>
-      {/each}
-    </div>
-    <PstatLoaderRatingGrid/>
+    <PstatBLoaderRatingGrid/>
   </div>
   <!-- 
   Rows loaders
