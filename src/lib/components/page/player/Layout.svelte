@@ -265,26 +265,51 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <Breadcrumb />
   <ProfileWidget/>
 
-  <div 
-    id="widget-grid-display"
-  >
-    <!-- 
-    Column Num.1
-    -->
-    <div
-      class="grid-display-column"
+  <!-- 
+  [ℹ] widgets 
+  [ℹ] MOBILE
+  FIXME: update to have a single dynamic layout
+  -->
+	{#if mobileExclusive || tabletExclusive}
+
+    <div 
+      id="widget-grid-display"
     >
-      <FixturesWidget />
+      <!-- 
+      Column Num.1
+      -->
+      <div
+        class="grid-display-column"
+      >
+        <FixturesWidget />
+        <StatisticsWidget />
+      </div>
     </div>
-    <!-- 
-    Column Num.2 
-    -->
-    <div
-      class="grid-display-column"
+
+  {:else}
+
+    <div 
+      id="widget-grid-display"
     >
-      <StatisticsWidget />
+      <!-- 
+      Column Num.1
+      -->
+      <div
+        class="grid-display-column"
+      >
+        <FixturesWidget />
+      </div>
+      <!-- 
+      Column Num.2 
+      -->
+      <div
+        class="grid-display-column"
+      >
+        <StatisticsWidget />
+      </div>
     </div>
-  </div>
+    
+  {/if}
 
 </section>
 

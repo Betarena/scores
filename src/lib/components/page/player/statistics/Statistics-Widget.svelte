@@ -135,7 +135,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- NaN -->
 </SeoBox>
 
-<StatisticsLoader />
+<!-- <StatisticsLoader /> -->
 
 <!-- 
 [ℹ] main widget
@@ -144,7 +144,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise is pending 
   -->
-  <!-- <StatisticsLoader /> -->
+  <StatisticsLoader />
 {:then data}
   <!-- 
   promise was fulfilled 
