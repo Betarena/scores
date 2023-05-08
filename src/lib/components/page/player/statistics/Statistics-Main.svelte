@@ -222,7 +222,7 @@ COMPONENT JS (w/ TS)
     const response = await get
     (
       `/api/data/players/statistics?player_id=${PAGE_DATA?.data?.player_id}&league_id=${selectedLeague}&season_id=${selectedSeason}&hasura=true`
-    ) as PSTAT_C_Fixture[];
+    ) as [PSTAT_C_Fixture[], number];
     // validate: end of fixtures;
     const validation_1 =
       response == undefined
@@ -233,7 +233,8 @@ COMPONENT JS (w/ TS)
       return;
     }
     const seasonStatObj = playerSeasonStatMap.get(selectedSeason);
-    seasonStatObj.last_5_fixtures = response;
+    seasonStatObj.last_5_fixtures = response[0];
+    seasonStatObj.last_5_fixtures_avg_rating = response[1];
     playerSeasonStatMap.set(selectedSeason, seasonStatObj)
     playerSeasonStatMap = playerSeasonStatMap;
     loadingPrev = false;
@@ -534,7 +535,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- 
         average hr line (dotted)
         -->
-        <hr id="pstat-average"/>
+        <hr 
+          id="pstat-average"
+          style="bottom: {((activeAverageRating || 0) * 10)}px"
+        />
         <hr/>
         <hr/>
         <hr/>
@@ -545,7 +549,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <!-- 
       main data
       -->
-      {#each playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures?.reverse() || [] as fixture}
+      {#each playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures || [] as fixture}
         <div
           class="
             column-space-center
@@ -723,7 +727,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     /* o */
     position: absolute;
-    top: 50%;
+    /* top: 50%; */
     /* s */
     border-color: var(--grey) !important;
     background-color: var(--grey) !important;

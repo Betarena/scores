@@ -188,10 +188,13 @@ async function fallbackMainData_2
   playerId: number,
   leagueId: number,
   seasonId: number
-): Promise < PSTAT_C_Fixture[] > 
+): Promise < [ PSTAT_C_Fixture[], number ] > 
 {
 
-  const data = await PSTAT_PP_ENTRY_1
+  const [
+    dataFixturesList,
+    averageRatingFixtures
+  ] = await PSTAT_PP_ENTRY_1
   (
     graphQlInstance,
     leagueId,
@@ -199,12 +202,15 @@ async function fallbackMainData_2
     playerId
   )
 
-  if (data.length == 0) 
-  {
-    return null
-  }
+  // if (data.length == 0) 
+  // {
+  //   return null
+  // }
   
-	return data;
+	return [
+    dataFixturesList,
+    averageRatingFixtures
+  ];
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
