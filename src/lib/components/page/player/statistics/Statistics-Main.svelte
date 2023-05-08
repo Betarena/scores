@@ -465,6 +465,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       w-500 
                       color-black-2
                     "
+                    class:activeLeague={selectedLeague == l_id?.toString()}
                   >
                     {leagueMap.get(l_id?.toString())?.name}
                   </p>
@@ -527,6 +528,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       w-500 
                       color-black-2
                     "
+                    class:activeSeason={selectedSeason == season?.seasond_id?.toString()}
                   >
                     {
                       shortenSeasonName
@@ -601,11 +603,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             id="pstat-average"
             style="bottom: {((activeAverageRating || 0) * 10)}px"
           />
-          <hr/>
-          <hr/>
-          <hr/>
-          <hr/>
-          <hr/>
+          <hr class="pstat-grid-line" />
+          <hr class="pstat-grid-line" />
+          <hr class="pstat-grid-line" />
+          <hr class="pstat-grid-line" />
+          <hr class="pstat-grid-line" />
+          <hr class="pstat-grid-line" />
         </div>
 
         <!-- 
@@ -679,7 +682,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!-- 
     Season Stats
     -->
-    <div>
+    <div
+      id="pstat-season-box"
+    >
       {#if selectedSeason != '' && playerSeasonStatMap.get(selectedSeason) != undefined}
         {#each statsMenu as item}
 
@@ -693,7 +698,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           >
             <p
               class="
-                s-14 
+                s-16
                 w-500 
                 color-black-2
               "
@@ -823,17 +828,33 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* top: 50%; */
     /* s */
     border-color: var(--grey) !important;
+    background-color: var(--grey-color) !important;
     border: none;
+    margin: unset;
     border-bottom: dashed 1px;
   }
   div#pstat-last-fixtures-box
   div#pstat-overlay-rating-box
-  hr
+  hr.pstat-grid-line
   {
     /* s */
     margin: 13px 0;
     border-color: var(--grey-color) !important;
     background-color: var(--grey-color) !important;
+  }
+  div#pstat-last-fixtures-box
+  div#pstat-overlay-rating-box
+  hr.pstat-grid-line:first-child
+  {
+    /* s */
+    margin-top: unset;
+  }
+  div#pstat-last-fixtures-box
+  div#pstat-overlay-rating-box
+  hr.pstat-grid-line:last-child
+  {
+    /* s */
+    margin-bottom: unset;
   }
 
   div.pstat-fix-rating-box
@@ -949,10 +970,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container .pstat-dropdown-row:hover p
   {
 		color: #f5620f !important;
-	} 
+	}
 
+  p.activeLeague,
+  p.activeSeason
+  {
+    color: var(--primary);
+  }
+
+  div#pstat-season-box
+  div.pstat-group-opt:first-child
+  {
+    border: unset;
+  }
+  
+  div#pstat-season-box
   div.pstat-group-opt
   {
+    margin-top: 10px;
     border-top: 1px solid var(--grey-color);
     padding: 14px 20px;
   }
@@ -967,7 +1002,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     and (min-width: 425px) {
     div#pstat-last-fixtures-box
     {
-      gap: 3.5vw;
+      gap: 5%;
     }
   }
 
