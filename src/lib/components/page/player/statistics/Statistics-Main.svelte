@@ -59,7 +59,8 @@ COMPONENT JS (w/ TS)
   // $: console.log('playerSeasonStatMap.get(selectedSeason)?.player_stats: ', playerSeasonStatMap.get(selectedSeason)?.player_stats)
   // $: console.log('selectedStatsOpt: ', selectedStatsOpt)
 
-  const statsMenu: {
+  const statsMenu: 
+  {
 		key:
 			| 'matches'
 			| 'defend'
@@ -70,7 +71,8 @@ COMPONENT JS (w/ TS)
     ;
 		loc_arr: string[];
 		loc_trans: string[];
-	}[] = [
+	}[] = 
+  [
     // (stats) matches 
 		{
 			key: 'matches',
@@ -711,6 +713,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <StatisticsRow
                 STAT_NAME={modifierTranslation(sub_nav)}
                 STAT_VALUE={playerSeasonStatMap.get(selectedSeason)?.player_stats?.[item.key]?.[sub_nav] || '-'}
+                PROP_VALUE={sub_nav}
               />
             {/each}
           {/if}

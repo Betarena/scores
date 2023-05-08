@@ -9,6 +9,7 @@
 
   export let STAT_NAME: string;
   export let STAT_VALUE: string;
+  export let PROP_VALUE: string;
 
 </script>
 
@@ -39,6 +40,9 @@
       "
     >
       {STAT_VALUE}
+      {#if PROP_VALUE == 'accurate_passes_percentage'}
+				<span> % </span>
+			{/if}
     </p>
   </div>
 {/if}
