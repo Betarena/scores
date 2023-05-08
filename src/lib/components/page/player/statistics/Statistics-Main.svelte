@@ -238,6 +238,14 @@ COMPONENT JS (w/ TS)
     return appliedTranslation
   }
 
+  function closeAllDropdowns
+  (
+  )
+   {
+		toggleDropdownLeague = false;
+    toggleDropdownSeason = false;
+	}
+
   async function getLast5SeasonFixtures
   (
   ) 
@@ -361,6 +369,16 @@ SVELTE INJECTION TAGS
 COMPONENT HTML 
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
+
+<!-- 
+[ℹ] area-outside-for-close 
+-->
+{#if toggleDropdownLeague || toggleDropdownSeason}
+	<div
+		id="background-area-close"
+		on:click={() => closeAllDropdowns()}
+	/>
+{/if}
 
 <!-- 
 [ℹ] example comment
@@ -709,6 +727,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     overflow: unset;
     padding-bottom: unset;
   }
+
+  #background-area-close {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		height: 100%;
+		width: 100%;
+		z-index: 1000;
+	}
 
   div#pstat-avg-rating-box
   {
