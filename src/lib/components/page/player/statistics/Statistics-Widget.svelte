@@ -14,6 +14,7 @@ COMPONENT JS (w/ TS)
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import StatisticsLoader from './Statistics-Loader.svelte';
 	import StatisticsMain from './Statistics-Main.svelte';
   
 	import type { B_PSTAT_D } from '@betarena/scores-lib/types/player-statistics.js';
@@ -134,7 +135,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- NaN -->
 </SeoBox>
 
-<!-- <FixturesLoader /> -->
+<StatisticsLoader />
 
 <!-- 
 [ℹ] main widget
@@ -143,7 +144,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise is pending 
   -->
-  <!-- <FixturesLoader /> -->
+  <!-- <StatisticsLoader /> -->
 {:then data}
   <!-- 
   promise was fulfilled 
