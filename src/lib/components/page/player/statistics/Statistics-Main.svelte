@@ -8,19 +8,20 @@ COMPONENT JS (w/ TS)
   // <-imports-go-here->
 	
   import { page } from '$app/stores';
+  import { get } from '$lib/api/utils.js';
   import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { MONTH_NAMES_ABBRV, toCorrectDate } from '$lib/utils/dates.js';
+  import { shortenSeasonName } from '$lib/utils/languages.js';
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
   import { onMount } from 'svelte';
   
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import StatisticsRow from './Statistics-Row.svelte';
-  
-	import { get } from '$lib/api/utils.js';
-	import { MONTH_NAMES_ABBRV, toCorrectDate } from '$lib/utils/dates.js';
-	import { shortenSeasonName } from '$lib/utils/languages.js';
+	import PstatBLoaderRatingGrid from './loaders/PSTAT-BLoader-RatingGrid.svelte';
+
 	import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture, PSTAT_C_League, PSTAT_C_Season } from '@betarena/scores-lib/types/player-statistics.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import PstatBLoaderRatingGrid from './loaders/PSTAT-BLoader-RatingGrid.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -369,6 +370,12 @@ SVELTE INJECTION TAGS
 COMPONENT HTML 
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
+
+<SeoBox>
+  <h2>
+    {WIDGET_TITLE}
+  </h2>
+</SeoBox>
 
 <!-- 
 [ℹ] area-outside-for-close 

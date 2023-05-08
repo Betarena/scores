@@ -26,6 +26,7 @@ COMPONENT JS (w/ TS)
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import FixturesRow from './Fixtures-Row.svelte';
 	import LoaderMain from './loaders/shared/Loader-Main.svelte';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -409,6 +410,12 @@ SVELTE INJECTION TAGS
 COMPONENT HTML 
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
+
+<SeoBox>
+  <h2>
+    {WIDGET_TITLE}
+  </h2>
+</SeoBox>
 
 <!-- 
 [ℹ] example comment
