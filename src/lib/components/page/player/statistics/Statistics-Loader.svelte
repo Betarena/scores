@@ -115,8 +115,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="
           loader-box
+          m-t-15
           m-b-16
           row-space-out
+        "
+        style="
+          border-top: 1px solid #E6E6E6;
+          padding-top: 14px;
         "
       >
         <PstatLoaderLeftTBoxRow />
@@ -127,7 +132,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="
             m-b-16
             row-space-out
-          ">
+          "
+        >
           <PstatLoaderLeftMBoxRow />
           <PstatLoaderRightMBoxRow />
         </div>
