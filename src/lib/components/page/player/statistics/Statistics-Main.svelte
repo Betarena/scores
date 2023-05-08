@@ -45,11 +45,13 @@ COMPONENT JS (w/ TS)
   let selectedLeague: string = leagueMap.keys().next().value;
   let selectedSeason: string = ""
   let selectedStatsOpt: string[] = []
+  let queriedSeasons: string[] = []
   let toggleDropdownLeague: boolean = false
   let toggleDropdownSeason: boolean = false
   let activeAverageRating: number;
   let selectedSeasonName: string;
   let loadingPrev: boolean = false;
+  let noFixturesData: boolean = false;
 
   // $: console.log('selectedLeague: ', selectedLeague)
   // $: console.log('selectedSeason: ', selectedSeason)
@@ -240,12 +242,14 @@ COMPONENT JS (w/ TS)
   (
   ) 
   {
-    const validation_0 =
+    const if_0 =
       !playerSeasonStatMap.has(selectedSeason)
       || playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures == undefined
       || playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures.length != 0
+      || queriedSeasons.includes(selectedSeason)
     ;
-    if (validation_0) return
+    noFixturesData = false;
+    if (if_0) return
     // continue, load;
     loadingPrev = true;
     const response = await get
@@ -253,11 +257,13 @@ COMPONENT JS (w/ TS)
       `/api/data/players/statistics?player_id=${PAGE_DATA?.data?.player_id}&league_id=${selectedLeague}&season_id=${selectedSeason}&hasura=true`
     ) as [PSTAT_C_Fixture[], number];
     // validate: end of fixtures;
-    const validation_1 =
+    const if_1 =
       response == undefined
+      || (response[0]?.length == 0 && response[1] == undefined)
     ;
-    if (validation_1) 
+    if (if_1) 
     {
+      noFixturesData = true;
       loadingPrev = false;
       return;
     }
@@ -266,6 +272,8 @@ COMPONENT JS (w/ TS)
     seasonStatObj.last_5_fixtures_avg_rating = response[1];
     playerSeasonStatMap.set(selectedSeason, seasonStatObj)
     playerSeasonStatMap = playerSeasonStatMap;
+    queriedSeasons.push(selectedSeason)
+    noFixturesData = false;
     loadingPrev = false;
   }
 
@@ -513,7 +521,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!-- 
     Average Rating
     -->
-    {#if !loadingPrev}
+    {#if !loadingPrev && !noFixturesData}
       <div
         id="pstat-avg-rating-box"
         class="
@@ -544,103 +552,102 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
     {/if}
 
-    {#if loadingPrev}
-      <div
-        class="
-          m-b-25
-        "
-        style="margin: 20px;">
-        <PstatBLoaderRatingGrid />
-      </div>
-    {/if}
-    
     <!-- 
     Last 5 (by season) fixtures
     -->
-    <div
-      id="pstat-last-fixtures-box"
-      class="
-        m-b-25
-      ">
-
-      <!-- 
-      overlay grid box
-      -->
+    {#if !loadingPrev && !noFixturesData}
       <div
-        id="pstat-overlay-rating-box">
-        <!-- 
-        average hr line (dotted)
-        -->
-        <hr 
-          id="pstat-average"
-          style="bottom: {((activeAverageRating || 0) * 10)}px"
-        />
-        <hr/>
-        <hr/>
-        <hr/>
-        <hr/>
-        <hr/>
-      </div>
+        id="pstat-last-fixtures-box"
+        class="
+          m-b-25
+        ">
 
-      <!-- 
-      main data
-      -->
-      {#each playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures || [] as fixture}
+        <!-- 
+        overlay grid box
+        -->
         <div
-          class="
-            column-space-center
-            width-auto
-          ">
+          id="pstat-overlay-rating-box">
           <!-- 
-          Rival Team Icon
+          average hr line (dotted)
           -->
-          <img 
-            src="{fixture?.rival_team?.icon}"
-            alt="{fixture?.rival_team?.name}"
-            title="{fixture?.rival_team?.name}"
-            width="32"
-            height="32"
+          <hr 
+            id="pstat-average"
+            style="bottom: {((activeAverageRating || 0) * 10)}px"
           />
-          <!-- 
-          Fixture Date
-          -->
-          <p
-            class="
-              s-12
-              color-grey
-              m-t-10
-              no-wrap
-            ">
-            {toCorrectDate(fixture?.fixture_day).getDate()}
-            {MONTH_NAMES_ABBRV[toCorrectDate(fixture?.fixture_day).getMonth()]}
-          </p>
-          <!-- 
-          Rating
-          -->
+          <hr/>
+          <hr/>
+          <hr/>
+          <hr/>
+          <hr/>
+        </div>
+
+        <!-- 
+        main data
+        -->
+        {#each playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures || [] as fixture}
           <div
             class="
-              m-t-15
-              pstat-fix-rating-box
+              column-space-center
+              width-auto
             ">
+            <!-- 
+            Rival Team Icon
+            -->
+            <img 
+              src="{fixture?.rival_team?.icon}"
+              alt="{fixture?.rival_team?.name}"
+              title="{fixture?.rival_team?.name}"
+              width="32"
+              height="32"
+            />
+            <!-- 
+            Fixture Date
+            -->
             <p
-              id="pstat-average-rating-main"
               class="
-                s-14 
-                w-500
-                pstat-fixture-rating
-              "
-              class:rating_nan={fixture?.player_rating == undefined}
-              class:rating_bronze={fixture?.player_rating >= 5 && fixture?.player_rating < 7}
-              class:rating_silver={fixture?.player_rating >= 7 && fixture?.player_rating < 9}
-              class:rating_golden={fixture?.player_rating >= 9}
-              style="bottom: {((fixture?.player_rating || 0) * 10)}px"
-            >
-              {fixture?.player_rating || 'N/A'}
+                s-12
+                color-grey
+                m-t-10
+                no-wrap
+              ">
+              {toCorrectDate(fixture?.fixture_day).getDate()}
+              {MONTH_NAMES_ABBRV[toCorrectDate(fixture?.fixture_day).getMonth()]}
             </p>
+            <!-- 
+            Rating
+            -->
+            <div
+              class="
+                m-t-15
+                pstat-fix-rating-box
+              ">
+              <p
+                id="pstat-average-rating-main"
+                class="
+                  s-14 
+                  w-500
+                  pstat-fixture-rating
+                "
+                class:rating_nan={fixture?.player_rating == undefined}
+                class:rating_bronze={fixture?.player_rating >= 5 && fixture?.player_rating < 7}
+                class:rating_silver={fixture?.player_rating >= 7 && fixture?.player_rating < 9}
+                class:rating_golden={fixture?.player_rating >= 9}
+                style="bottom: {((fixture?.player_rating || 0) * 10)}px"
+              >
+                {fixture?.player_rating || 'N/A'}
+              </p>
+            </div>
           </div>
-        </div>
-      {/each}
-    </div>
+        {/each}
+      </div>
+    {/if}
+
+    {#if loadingPrev}
+      <div
+        style="margin: 20px 20px 0 20px;">
+        <PstatBLoaderRatingGrid />
+      </div>
+    {/if}
 
     <!-- 
     Season Stats
