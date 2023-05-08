@@ -16,30 +16,32 @@
   COMPONENT HTML 
 ==================== -->
 
-<div
-  class="
-    row-space-out
-    pstat-row
-  "
->
-  <p
+{#if STAT_VALUE != '-'}
+  <div
     class="
-      s-14 
-      color-black-2
+      row-space-out
+      pstat-row
     "
   >
-    {STAT_NAME}
-  </p>
-  <p
-    class="
-      s-14 
-      w-500 
-      color-black-2
-    "
-  >
-    {STAT_VALUE}
-  </p>
-</div>
+    <p
+      class="
+        s-14 
+        color-black-2
+      "
+    >
+      {STAT_NAME}
+    </p>
+    <p
+      class="
+        s-14 
+        w-500 
+        color-black-2
+      "
+    >
+      {STAT_VALUE}
+    </p>
+  </div>
+{/if}
 
 <!-- ===============
   COMPONENT STYLE
