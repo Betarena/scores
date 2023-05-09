@@ -689,42 +689,44 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     >
       {#if selectedSeason != '' && playerSeasonStatMap.get(selectedSeason) != undefined}
         {#each statsMenu as item}
+          {#if Object.keys(playerSeasonStatMap.get(selectedSeason)?.player_stats?.[item.key])?.length != 0}
 
-          <div
-            class="
-              cursor-pointer
-              row-space-out
-              pstat-group-opt
-            "
-            on:click={() => toggleStatOptList(item?.key)}
-          >
-            <p
+            <div
               class="
-                s-16
-                w-500 
-                color-black-2
+                cursor-pointer
+                row-space-out
+                pstat-group-opt
               "
+              on:click={() => toggleStatOptList(item?.key)}
             >
-              {WIDGET_T_DATA[item?.key]}
-            </p>
-            <img
-              src={!selectedStatsOpt.includes(item?.key) ? "/assets/svg/arrow-up.svg" : "/assets/svg/arrow-down.svg"}
-              alt={!selectedStatsOpt.includes(item?.key) ? "arrow_up" : "arrow_down"}
-              width="20"
-              height="20"
-            />
-          </div>
-          
-          {#if !selectedStatsOpt.includes(item?.key)}
-            {#each item?.loc_arr || [] as sub_nav, i}
-              <StatisticsRow
-                STAT_NAME={WIDGET_T_DATA[sub_nav]}
-                STAT_VALUE={playerSeasonStatMap.get(selectedSeason)?.player_stats?.[item.key]?.[sub_nav] || '-'}
-                PROP_VALUE={sub_nav}
+              <p
+                class="
+                  s-16
+                  w-500 
+                  color-black-2
+                "
+              >
+                {WIDGET_T_DATA[item?.key]}
+              </p>
+              <img
+                src={!selectedStatsOpt.includes(item?.key) ? "/assets/svg/arrow-up.svg" : "/assets/svg/arrow-down.svg"}
+                alt={!selectedStatsOpt.includes(item?.key) ? "arrow_up" : "arrow_down"}
+                width="20"
+                height="20"
               />
-            {/each}
-          {/if}
+            </div>
+            
+            {#if !selectedStatsOpt.includes(item?.key)}
+              {#each item?.loc_arr || [] as sub_nav, i}
+                <StatisticsRow
+                  STAT_NAME={WIDGET_T_DATA[sub_nav]}
+                  STAT_VALUE={playerSeasonStatMap.get(selectedSeason)?.player_stats?.[item.key]?.[sub_nav] || '-'}
+                  PROP_VALUE={sub_nav}
+                />
+              {/each}
+            {/if}
           
+          {/if}
         {/each}
       {/if}
     </div>
