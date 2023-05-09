@@ -25,7 +25,7 @@ COMPONENT JS (w/ TS)
 	import { get } from '$lib/api/utils';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-	import type { B_PFIX_D, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+	import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import { onMount } from 'svelte';
 	import FixturesLoader from './Fixtures-Loader.svelte';
@@ -40,13 +40,13 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  $: PAGE_DATA = $page.data?.PAGE_DATA
-
-  // let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
-  // $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
-
+  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
   let WIDGET_S_DATA: B_PFIX_D = $page.data?.B_PFIX_D
+
+  $: PAGE_DATA = $page.data?.PAGE_DATA
+  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
   $: WIDGET_S_DATA = $page.data?.B_PFIX_D
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
 
   const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_S_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
   const leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_S_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
@@ -144,6 +144,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
+  <h2>
+    {WIDGET_TITLE}
+  </h2>
   <!-- 
   [] Fixture Links
   -->

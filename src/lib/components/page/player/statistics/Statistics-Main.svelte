@@ -373,12 +373,6 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<SeoBox>
-  <h2>
-    {WIDGET_TITLE}
-  </h2>
-</SeoBox>
-
 <!-- 
 [ℹ] area-outside-for-close 
 -->

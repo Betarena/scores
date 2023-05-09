@@ -21,7 +21,6 @@ COMPONENT JS (w/ TS)
   import arrow_right_hover from './assets/arrow-right-hover.svg';
   import arrow_right from './assets/arrow-right.svg';
   
-	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import { sessionStore } from '$lib/store/session.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
@@ -38,12 +37,11 @@ COMPONENT JS (w/ TS)
 
   export let WIDGET_DATA: B_PFIX_D
 
-  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
-  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
-
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  $: PAGE_DATA = $page.data?.PAGE_DATA
+  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
 
+  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
+  $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
 
   let pageFixtureMap: Map <number, Map <string, PFIX_C_Fixture[]>> = new Map();
@@ -410,12 +408,6 @@ SVELTE INJECTION TAGS
 COMPONENT HTML 
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
-
-<SeoBox>
-  <h2>
-    {WIDGET_TITLE}
-  </h2>
-</SeoBox>
 
 <!-- 
 [ℹ] example comment

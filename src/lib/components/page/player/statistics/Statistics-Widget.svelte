@@ -17,7 +17,7 @@ COMPONENT JS (w/ TS)
 	import StatisticsLoader from './Statistics-Loader.svelte';
 	import StatisticsMain from './Statistics-Main.svelte';
   
-	import type { B_PSTAT_D } from '@betarena/scores-lib/types/player-statistics.js';
+	import type { B_PSTAT_D, B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -32,10 +32,10 @@ COMPONENT JS (w/ TS)
   $: PAGE_DATA = $page.data?.PAGE_DATA
 
   let WIDGET_DATA: B_PSTAT_D
-  // Translation - NaN
-  // SEO - NaN
-
+  let WIDGET_T_DATA: B_PSTAT_T = $page.data?.B_PSTAT_T
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.statistics || 'Statistics' : 'Statistics'
 
   //#endregion ➤ [VARIABLES]
 
@@ -132,7 +132,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <!-- NaN -->
+  <h2>
+    {WIDGET_TITLE}
+  </h2>
 </SeoBox>
 
 <!-- <StatisticsLoader /> -->
