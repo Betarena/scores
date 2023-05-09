@@ -800,7 +800,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     position: relative;
     z-index: 1;
     /* s */
-    margin: 20px;
+    margin: 20px 20px 0 20px;
     width: auto;
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
