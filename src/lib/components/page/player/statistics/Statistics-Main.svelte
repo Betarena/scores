@@ -15,7 +15,6 @@ COMPONENT JS (w/ TS)
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
   import { onMount } from 'svelte';
   
-	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import StatisticsRow from './Statistics-Row.svelte';
 	import PstatBLoaderRatingGrid from './loaders/PSTAT-BLoader-RatingGrid.svelte';
@@ -294,23 +293,44 @@ COMPONENT JS (w/ TS)
 
 	const TABLET_VIEW = 1024;
 	const MOBILE_VIEW = 475;
-	let mobileExclusive: boolean = false;
+	const OTHER_VIEW = 1900;
   let tabletExclusive: boolean = false;
+	let mobileExclusive: boolean = false;
+  let largeDesktop: boolean = false;
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+	onMount
+  (
+    async () => 
+    {
+      [
+        tabletExclusive, 
+        mobileExclusive,
+        largeDesktop
+      ] = viewport_change
+      (
+        TABLET_VIEW, 
+        MOBILE_VIEW,
+        OTHER_VIEW
+      );
+      window.addEventListener
+      (
+        'resize',
+        function () {
+          [
+            tabletExclusive, 
+            mobileExclusive,
+            largeDesktop
+          ] =
+          viewport_change
+          (
+            TABLET_VIEW,
+            MOBILE_VIEW,
+            OTHER_VIEW
+          );
+        }
+      );
+	  }
+  );
 
   //#endregion ➤ [METHODS]
 
@@ -390,7 +410,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
-    OVERRIDE_COLOR={!mobileExclusive && !tabletExclusive ? false : true}
+    OVERRIDE_COLOR={!tabletExclusive && largeDesktop ? false : true}
   />
   
   <div

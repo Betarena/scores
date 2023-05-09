@@ -55,15 +55,31 @@ export function platfrom_lang_ssr
 export function viewport_change
 (
 	TABLET_VIEW: number,
-	MOBILE_VIEW: number
+	MOBILE_VIEW: number,
+  OTHER_VIEW?: number
 ) 
 {
 	const width = document.documentElement.clientWidth;
 	const tabletExclusive =
-    width >= TABLET_VIEW ? false : true;
+    width >= TABLET_VIEW 
+      ? false 
+      : true
+  ;
 	const mobileExclusive =
-    width <= MOBILE_VIEW ? true : false;
-	return [tabletExclusive, mobileExclusive];
+    width <= MOBILE_VIEW 
+      ? true 
+      : false
+  ;
+  const otherExclusive =
+    width <= OTHER_VIEW 
+      ? true 
+      : false
+  ;
+	return [
+    tabletExclusive, 
+    mobileExclusive,
+    otherExclusive
+  ];
 }
 
 /**
