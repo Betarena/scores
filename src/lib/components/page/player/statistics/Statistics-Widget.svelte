@@ -29,12 +29,11 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  $: PAGE_DATA = $page.data?.PAGE_DATA
-
-  let WIDGET_DATA: B_PSTAT_D
   let WIDGET_T_DATA: B_PSTAT_T = $page.data?.B_PSTAT_T
+  let WIDGET_DATA: B_PSTAT_D
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
+  $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.statistics || 'Statistics' : 'Statistics'
 
   //#endregion ➤ [VARIABLES]

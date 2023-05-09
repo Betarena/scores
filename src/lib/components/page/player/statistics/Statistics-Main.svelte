@@ -62,8 +62,8 @@ COMPONENT JS (w/ TS)
   {
 		key:
 			| 'matches'
-			| 'defend'
-			| 'attack'
+			| 'defending'
+			| 'attacking'
 			| 'passing'
       | 'cards'
       | 'other'
@@ -89,7 +89,7 @@ COMPONENT JS (w/ TS)
 		},
     // (stats) attacks
     {
-      key: 'attack',
+      key: 'attacking',
       loc_arr: [
 				'goals',
 				'shots_total',
@@ -124,12 +124,12 @@ COMPONENT JS (w/ TS)
     },
     // (stats) defend
     {
-      key: 'defend',
+      key: 'defending',
       loc_arr: [
         'tackles',
-        'intercepts',
+        'interceptions',
         'blocks',
-        'clearance',
+        'clearances',
         'aerials_won',
         'goals_conceded',
         'saves',
@@ -160,7 +160,7 @@ COMPONENT JS (w/ TS)
         'substitute_on_bench',
         'injuries',
         'dispossessed',
-        'fouls_drawn',
+        'foulds_drawn',
         'total_duels',
         'duels_won',
         'owngoals',
@@ -224,20 +224,6 @@ COMPONENT JS (w/ TS)
           )
           ?.name
     );
-  }
-
-  function modifierTranslation
-  (
-    target_prop: string
-  )
-  {
-    let appliedTranslation = WIDGET_T_DATA[target_prop]
-    if (target_prop == "attack") appliedTranslation = WIDGET_T_DATA?.attacking
-    if (target_prop == "defend") appliedTranslation = WIDGET_T_DATA?.defending
-    if (target_prop == "intercepts") appliedTranslation = WIDGET_T_DATA?.interceptions
-    if (target_prop == "clearance") appliedTranslation = WIDGET_T_DATA?.clearances;
-    if (target_prop == "fouls_drawn") appliedTranslation = WIDGET_T_DATA?.foulds_drawn;
-    return appliedTranslation
   }
 
   function closeAllDropdowns
@@ -717,7 +703,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 color-black-2
               "
             >
-              {modifierTranslation(item?.key)}
+              {WIDGET_T_DATA[item?.key]}
             </p>
             <img
               src={!selectedStatsOpt.includes(item?.key) ? "/assets/svg/arrow-up.svg" : "/assets/svg/arrow-down.svg"}
@@ -730,7 +716,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {#if !selectedStatsOpt.includes(item?.key)}
             {#each item?.loc_arr || [] as sub_nav, i}
               <StatisticsRow
-                STAT_NAME={modifierTranslation(sub_nav)}
+                STAT_NAME={WIDGET_T_DATA[sub_nav]}
                 STAT_VALUE={playerSeasonStatMap.get(selectedSeason)?.player_stats?.[item.key]?.[sub_nav] || '-'}
                 PROP_VALUE={sub_nav}
               />
@@ -754,7 +740,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   /* o */
   div.widget-component {
     overflow: unset;
-    padding-bottom: unset;
+    padding-bottom: 10px;
   }
 
   #background-area-close {
@@ -989,13 +975,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   p.activeLeague,
   p.activeSeason
   {
-    color: var(--primary);
+    color: var(--primary) !important;
   }
 
   div#pstat-season-box
   div.pstat-group-opt:first-child
   {
-    border: unset;
+    border: unset !important;
   }
   
   div#pstat-season-box
@@ -1074,7 +1060,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   div.dark-background-1 
   div.pstat-group-opt
   {
-    border-top: 1px solid var(--dark-theme-1-shade);
+    border-top: 1px solid var(--dark-theme-1-shade) !important;
   }
 
   div.dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div.pstat-drop-btn,
