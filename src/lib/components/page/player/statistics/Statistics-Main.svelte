@@ -20,7 +20,7 @@ COMPONENT JS (w/ TS)
 	import PstatBLoaderRatingGrid from './loaders/PSTAT-BLoader-RatingGrid.svelte';
 
 	import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture, PSTAT_C_League, PSTAT_C_Season } from '@betarena/scores-lib/types/player-statistics.js';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_SAP_D2, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -34,10 +34,12 @@ COMPONENT JS (w/ TS)
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
   let WIDGET_T_DATA: B_PSTAT_T = $page.data?.B_PSTAT_T
+  let B_SAP_D2: B_SAP_D2 = $page.data?.B_SAP_D2
 
   $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_T_DATA = $page.data?.B_PSTAT_T
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.statistics || 'Statistics' : 'Statistics'
+  $: B_SAP_D2 = $page.data?.B_SAP_D2
 
   let playerSeasonStatMap: Map <string, PSTAT_C_Season> = new Map(Object.entries(WIDGET_DATA?.data?.seasons_stats)) as Map <string, PSTAT_C_Season>;
   let leagueMap: Map <string, PSTAT_C_League> = new Map(Object.entries(WIDGET_DATA?.data?.leagues)) as unknown as Map <string, PSTAT_C_League>;
@@ -641,7 +643,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 no-wrap
               ">
               {toCorrectDate(fixture?.fixture_day).getDate()}
-              {MONTH_NAMES_ABBRV[toCorrectDate(fixture?.fixture_day).getMonth()]}
+              {B_SAP_D2.months_abbreviation[MONTH_NAMES_ABBRV[toCorrectDate(fixture?.fixture_day).getMonth()]]}
             </p>
             <!-- 
             Rating
