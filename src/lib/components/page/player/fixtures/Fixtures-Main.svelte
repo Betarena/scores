@@ -416,7 +416,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
-    OVERRIDE_COLOR={mobileExclusive || tabletExclusive ? false : true}
   />
   
   <div
