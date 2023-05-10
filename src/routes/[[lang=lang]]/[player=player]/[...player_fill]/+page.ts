@@ -1,5 +1,6 @@
 import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from "$lib/utils/debug";
 import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from "$lib/utils/platform-functions";
+import type { B_PSTAT_T } from "@betarena/scores-lib/types/player-statistics.js";
 import type { B_SAP_D1, B_SAP_D2, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
 import { error } from "@sveltejs/kit";
 import type { B_PFIX_D, B_PFIX_T } from "node_modules/@betarena/scores-lib/types/player-fixtures";
@@ -50,10 +51,11 @@ export async function load
       null,
       null,
       player_fill
-    )
+    );
   
     // [ℹ] exit;
-    if (!validUrlCheck) {
+    if (!validUrlCheck) 
+    {
       // [🐞]
       const t1 = performance.now();
       dlog(`⏳ [PLAYER] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
@@ -61,7 +63,7 @@ export async function load
         ERROR_CODE_INVALID,
         PAGE_INVALID_MSG
       );
-    }
+    };
   
     //#endregion [0] IMPORTANT VALID URL CHECK
 
@@ -105,7 +107,9 @@ export async function load
     // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/fixtures?lang=${_lang}`,
     // NOTE:WARNING:TODO: remove for a cache solution
-    `/api/data/players/fixtures?player_id=${player_id}&limit=10&offset=0`
+    `/api/data/players/fixtures?player_id=${player_id}&limit=10&offset=0`,
+    // NOTE:WARNING:TODO: remove for a cache solution
+    `/api/data/players/statistics?lang=${_lang}`
   ]
 
   type PP_PROMISE = [
@@ -114,7 +118,8 @@ export async function load
     B_SAP_D2 | undefined,
     B_PPRO_T | undefined,
     B_PFIX_T | undefined,
-    B_PFIX_D | undefined
+    B_PFIX_D | undefined,
+    B_PSTAT_T | undefined
   ]
 
   const data = await promiseUrlsPreload
@@ -129,7 +134,8 @@ export async function load
     B_SAP_D2,
     B_PPRO_T,
     B_PFIX_T,
-    B_PFIX_D
+    B_PFIX_D,
+    B_PSTAT_T
   ] = data
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA
@@ -190,7 +196,8 @@ export async function load
     B_SAP_D2,
     B_PPRO_T,
     B_PFIX_T,
-    B_PFIX_D
+    B_PFIX_D,
+    B_PSTAT_T
   }
 
   //#endregion [3] RETURN

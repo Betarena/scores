@@ -25,6 +25,7 @@ COMPONENT JS (w/ TS)
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixturesWidget from './fixtures/Fixtures-Widget.svelte';
 	import ProfileWidget from './profile/Profile-Widget.svelte';
+	import StatisticsWidget from './statistics/Statistics-Widget.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -264,12 +265,51 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <Breadcrumb />
   <ProfileWidget/>
 
-  <div id="widget-grid-display">
-    <div
-      class="grid-display-column">
-      <FixturesWidget />
+  <!-- 
+  [ℹ] widgets 
+  [ℹ] MOBILE
+  FIXME: update to have a single dynamic layout
+  -->
+	{#if mobileExclusive || tabletExclusive}
+
+    <div 
+      id="widget-grid-display"
+    >
+      <!-- 
+      Column Num.1
+      -->
+      <div
+        class="grid-display-column"
+      >
+        <StatisticsWidget />
+        <FixturesWidget />
+      </div>
     </div>
-  </div>
+
+  {:else}
+
+    <div 
+      id="widget-grid-display"
+    >
+      <!-- 
+      Column Num.1
+      -->
+      <div
+        class="grid-display-column"
+      >
+        <FixturesWidget />
+      </div>
+      <!-- 
+      Column Num.2 
+      -->
+      <div
+        class="grid-display-column"
+      >
+        <StatisticsWidget />
+      </div>
+    </div>
+    
+  {/if}
 
 </section>
 
@@ -324,7 +364,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		div#widget-grid-display {
 			gap: 20px;
 			grid-template-columns: 
-        minmax(850px, 850px) 
+        minmax(auto, 850px) 
         minmax(auto, 502px)
       ;
 		}
@@ -337,7 +377,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			align-items: start;
 			gap: 20px;
 			grid-template-columns: 
-        minmax(850px, 850px) 
+        minmax(auto, 850px) 
         minmax(auto, 502px)
       ;
 		}

@@ -8,11 +8,13 @@ import { dlog, dlogv2, NB_W_TAG, NB_W_TOG } from "./debug";
  * @param {string | undefined} page_params_lang
  * @returns string (language)
  */
-export function platfrom_lang_ssr(
+export function platfrom_lang_ssr
+(
 	page_route_id?: string | undefined,
 	page_error?: unknown | undefined,
 	page_params_lang?: string | undefined
-): string {
+): string 
+{
   dlogv2(
     NB_W_TAG,
     [
@@ -50,16 +52,34 @@ export function platfrom_lang_ssr(
  * @param {number}MOBILE_VIEW
  * @returns boolean (true/false)
  */
-export function viewport_change(
+export function viewport_change
+(
 	TABLET_VIEW: number,
-	MOBILE_VIEW: number
-) {
+	MOBILE_VIEW: number,
+  OTHER_VIEW?: number
+) 
+{
 	const width = document.documentElement.clientWidth;
 	const tabletExclusive =
-    width >= TABLET_VIEW ? false : true;
+    width >= TABLET_VIEW 
+      ? false 
+      : true
+  ;
 	const mobileExclusive =
-    width <= MOBILE_VIEW ? true : false;
-	return [tabletExclusive, mobileExclusive];
+    width <= MOBILE_VIEW 
+      ? true 
+      : false
+  ;
+  const otherExclusive =
+    width <= OTHER_VIEW 
+      ? true 
+      : false
+  ;
+	return [
+    tabletExclusive, 
+    mobileExclusive,
+    otherExclusive
+  ];
 }
 
 /**
@@ -71,9 +91,11 @@ export function viewport_change(
  * @param {unknown[]} data 
  * @returns NaN
  */
-export function PRELOAD_invalid_data (
+export function PRELOAD_invalid_data 
+(
   data: unknown[]
-): void {
+): void 
+{
   const indexesOf = (arr, item) =>
 		arr.reduce(
 			(acc, v, i) => (

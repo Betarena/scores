@@ -37,12 +37,11 @@ COMPONENT JS (w/ TS)
 
   export let WIDGET_DATA: B_PFIX_D
 
-  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
-  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
-
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  $: PAGE_DATA = $page.data?.PAGE_DATA
+  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
 
+  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
+  $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
 
   let pageFixtureMap: Map <number, Map <string, PFIX_C_Fixture[]>> = new Map();
@@ -417,7 +416,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
-    OVERRIDE_COLOR={mobileExclusive || tabletExclusive}
   />
   
   <div
