@@ -133,7 +133,8 @@ const config = {
           'self',
           // [ℹ] google/firebase;
           'https://betarena-ios.firebaseapp.com',
-          'https://*.firebaseio.com' // (catch-all)
+          'https://*.firebaseio.com', // (catch-all)
+          'https://www.youtube.com/'
           // [ℹ] yandex;
           // 'blob: https://mc.yandex.ru'
         ],
