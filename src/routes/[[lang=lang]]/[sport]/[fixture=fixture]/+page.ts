@@ -267,7 +267,7 @@ export async function load
   //#endregion [2] IMPORTANT REGEX
 
 	// [ℹ] canonical exclusive SET - [EN];
-	const enItemAlt = FIXTURE_INFO?.alternate_data?.en;
+	const enItemAlt = FIXTURE_INFO?.alternate_data?.[lang];
 	PAGE_SEO.main_data.canonical = enItemAlt;
   FIXTURE_INFO.data.fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
 

@@ -18,12 +18,18 @@
     />
     <!-- 
     IMPORTANT 
-    mobile usability override
+    [GOOGLEBOT] mobile usability override/hack
     -->
     <style>
+      body.googlebot-override * {
+        all: unset;
+      }
+      html {
+        overflow-x: hidden !important;
+      }
       body.googlebot-override,
       body.googlebot-override main {
-        overflow: hidden;
+        overflow-x: hidden !important;
       }
       body.googlebot-override p,
       body.googlebot-override span,
@@ -37,10 +43,18 @@
       body.googlebot-override img,
       body.googlebot-override td { */
       body.googlebot-override * {
-        margin: 12px;
+        margin: 10px;
+        display: grid;
+        overflow-x: hidden !important;
+        max-width: inherit;
+        text-overflow: ellipsis;
+        flex-wrap: wrap;
       } 
       body.googlebot-override div#splash-screen {
         margin: 0;
+      }
+      body.googlebot-override section#home-page {
+        grid-template-columns: 1fr !important;
       }
     </style>
 		<!-- 

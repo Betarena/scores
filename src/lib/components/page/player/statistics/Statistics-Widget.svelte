@@ -1,15 +1,3 @@
-<!-- 
-====================
-This is an example .svelte
-component file, to give guidance on
-the structure that is employed across the project
-and how it should be layed-out.
-====================
-<COPY-THIS-FILE-INTO-YOUR-NEXT-COMPONENT>
-====================
-<❗️ REMOVE (THIS) COMMENT IN PRODUCTION>
--->
-
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
@@ -19,17 +7,18 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // <-imports-go-here->
 	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils';
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-	import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import { onMount } from 'svelte';
-	import FixturesLoader from './Fixtures-Loader.svelte';
-	import FixturesMain from './Fixtures-Main.svelte';
+	
+  import { get } from '$lib/api/utils';
+  import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
+
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import StatisticsLoader from './Statistics-Loader.svelte';
+	import StatisticsMain from './Statistics-Main.svelte';
+  
+	import type { B_PSTAT_D, B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -40,20 +29,12 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  let WIDGET_T_DATA: B_PFIX_T = $page.data?.B_PFIX_T
-  let WIDGET_S_DATA: B_PFIX_D = $page.data?.B_PFIX_D
+  let WIDGET_T_DATA: B_PSTAT_T = $page.data?.B_PSTAT_T
+  let WIDGET_DATA: B_PSTAT_D
+  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_T_DATA = $page.data?.B_PFIX_T
-  $: WIDGET_S_DATA = $page.data?.B_PFIX_D
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
-
-  const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_S_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
-  const leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_S_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
-
-
-  let WIDGET_DATA: B_PFIX_D
-  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.statistics || 'Statistics' : 'Statistics'
 
   //#endregion ➤ [VARIABLES]
 
@@ -63,16 +44,20 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  async function widgetInit(
-    // empty
-  ): Promise < B_PFIX_D > {
-    // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=10&offset=0&hasura=true`) as B_PFIX_D;
-    const VALID_RESPONSE =
+  async function widgetInit
+  (
+  ): Promise < B_PSTAT_D > 
+  {
+    // widget data
+    WIDGET_DATA = await get
+    (
+      `/api/data/players/statistics/?player_id=${PAGE_DATA?.data?.player_id}`
+    ) as B_PSTAT_D;
+    const validation_0 =
       WIDGET_DATA == undefined
     ;
-		// [ℹ] validation [#1]
-		if (VALID_RESPONSE) {
+		if (validation_0) 
+    {
       // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			NO_WIDGET_DATA = true;
 			return;
@@ -85,7 +70,8 @@ COMPONENT JS (w/ TS)
 	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	$: server_side_language = platfrom_lang_ssr(
+	$: server_side_language = platfrom_lang_ssr
+  (
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
@@ -97,7 +83,8 @@ COMPONENT JS (w/ TS)
 
 	const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 475;
-	let mobileExclusive, tabletExclusive: boolean = false;
+	let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
 
 	onMount(async () => {
 		[tabletExclusive, mobileExclusive] =
@@ -147,29 +134,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <h2>
     {WIDGET_TITLE}
   </h2>
-  <!-- 
-  [] Fixture Links
-  -->
-  {#if fixtureMap.size != 0}
-    {#each [...fixtureMap.entries()] as [, fixtures]}
-      {#each fixtures as item}
-        <a href={item?.urls[server_side_language]}>{item?.urls[server_side_language]}</a>
-      {/each}
-    {/each}
-  {/if}
-  <!-- 
-  [] League Links
-  -->
-  {#if leagueMap.size != 0}
-    {#each [...leagueMap.entries()] as [key, league]}
-      <a href='https://scores.betarena.com/{league?.urls[server_side_language]}'>
-        {`https://scores.betarena.com/${league?.urls[server_side_language]}`}
-      </a>
-    {/each}
-  {/if}
 </SeoBox>
 
-<!-- <FixturesLoader /> -->
+<!-- <StatisticsLoader /> -->
 
 <!-- 
 [ℹ] main widget
@@ -178,12 +145,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise is pending 
   -->
-  <FixturesLoader />
+  <StatisticsLoader />
 {:then data}
   <!-- 
   promise was fulfilled 
   -->
-  <FixturesMain 
+  <StatisticsMain 
     {WIDGET_DATA}
   />
 {:catch error}
