@@ -97,12 +97,13 @@
   COMPONENT HTML
 =================== -->
 
+<SplashScreen />
+
 {#if offlineMode}
 	<OfflineAlert />
 {/if}
 
 <PlatformAlert {HEADER_TRANSLATION_DATA} />
-<SplashScreen />
 <EmailSubscribe />
 
 {#if !VALID_PROFILE_PAGE_URL.includes($page?.url?.pathname)}
