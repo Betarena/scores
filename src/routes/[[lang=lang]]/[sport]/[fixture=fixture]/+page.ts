@@ -159,8 +159,8 @@ export async function load
     `/api/cache/fixtures/incidents?lang=${urlLang}`,
     `/api/cache/home/featured_betting_sites?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
-    // `/api/hasura/fixture/statistics?fixture_id=${fixture_id}`, // ALT-1
-    `/api/cache/fixtures/statistics?fixture_id=${fixture_id}`,  // ALT-2
+    `/api/hasura/fixture/statistics?fixture_id=${fixture_id}`, // ALT-1
+    // `/api/cache/fixtures/statistics?fixture_id=${fixture_id}`,  // ALT-2
     `/api/cache/fixtures/statistics?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
     // `/api/cache/fixtures/content?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-1
