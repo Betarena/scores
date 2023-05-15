@@ -282,6 +282,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="grid-display-column"
       >
+        <TeamWidget />
         <StatisticsWidget />
         <FixturesWidget />
       </div>

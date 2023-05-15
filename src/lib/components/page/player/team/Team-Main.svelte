@@ -32,6 +32,12 @@ COMPONENT JS (w/ TS)
   $: WIDGET_T_DATA = $page.data?.B_PTEAM_T
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.widget_title || 'Current Team' : 'Current Team'
 
+  let teamPitchFormation = new Map<string, string[]>();
+  teamPitchFormation.set('G', ['GK'])
+  teamPitchFormation.set('D', ['LB', 'CB', 'RB'])
+  teamPitchFormation.set('M', ['LM', 'CM', 'RM'])
+  teamPitchFormation.set('A', ['LW', 'CF', 'RW'])
+
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
@@ -143,19 +149,57 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <!-- 
     PITCH VIEW POSITION
     -->
-    <div>
-      <div id="lineup-vector">
+    <div
+      id="lineup-vector-box"
+    >
+      <!-- 
+      [ℹ] PITCH VECTOR 
+      -->
+      <div
+        id="lineup-vector"
+      >
         <TeamPitchVector />
       </div>
+      <!-- 
+      [ℹ] lineup positions - absolute box 
+      -->
+      <div
+        id="overlay-player-pos-box"
+      >
+        {#each [...teamPitchFormation.entries()] as [pos, pos_d]}
+          <div 
+            id="overlay-column"
+          >
+            {#each pos_d as pos_d_val,i}
+              <div
+                class="
+                  s-16
+                  bold
+                  team-pos-box
+                  color-primary
+                "
+                class:m-l-24={i == 1}
+                class:invisible={pos_d_val != WIDGET_DATA?.data?.player_position}
+              >
+                {pos_d_val}
+              </div>
+            {/each}
+          </div>
+        {/each}
+      </div>
+
     </div>
 
     <!-- 
-    BOTTOM DATA ROW
+    💻 TABLET + 📱 MOBILE BOTTOM DATA ROW
     -->
     <div
+      id="pteam-bottom-data"
       class="
-        row-space-out
-      ">
+        row-space-start
+      "
+      class:column-start-grid-start={mobileExclusive}
+    >
 
       <!-- 
       CURRENT TEAM BOX
@@ -163,19 +207,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="
           row-space-start
-        ">
+          width-auto
+          m-r-40
+        "
+        class:m-b-20={mobileExclusive}
+      >
         <img 
           loading="lazy"
           src={WIDGET_DATA?.data?.team_icon}
           alt={WIDGET_DATA?.data?.team_name}
           width="40"
           height="40"
+          class="
+            m-r-16
+          "
         />
         <div>
           <p
             class="
-              color-grey
               s-14
+              color-grey
+              no-wrap
             ">
             {WIDGET_T_DATA?.current_team || 'Current Team'}:
           </p>
@@ -189,47 +241,67 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </p>
         </div>
       </div>
-
+      
       <!-- 
-      JERSEY NUMBER
+      📱 MOBILE BOTTOM BOX
       -->
-      <div>
-        <p
-          class="
-            color-grey
-            s-14
-          ">
-          {WIDGET_T_DATA?.jersey_number || 'Jersey Number'}:
-        </p>
-        <p
-          class="
-            color-black-2
-            s-14
-            bold
-          ">
-          {WIDGET_DATA?.data?.player_jersey_num}
-        </p>
-      </div>
+      <div
+        class="
+          row-space-start
+        "
+      >
 
-      <!-- 
-      POSITION
-      -->
-      <div>
-        <p
+        <!-- 
+        JERSEY NUMBER
+        -->
+        <div
           class="
-            color-grey
-            s-14
-          ">
-          {WIDGET_T_DATA?.position || 'Position'}:
-        </p>
-        <p
+            m-r-12
+            pteam-box-stat
+          "
+          class:m-r-40={mobileExclusive}
+        >
+          <p
+            class="
+              color-grey
+              s-14
+            ">
+            {WIDGET_T_DATA?.jersey_number || 'Jersey Number'}:
+          </p>
+          <p
+            class="
+              color-black-2
+              s-14
+              bold
+            ">
+            {WIDGET_DATA?.data?.player_jersey_num}
+          </p>
+        </div>
+
+        <!-- 
+        POSITION
+        -->
+        <div
           class="
-            color-black-2
-            s-14
-            bold
+            pteam-box-stat
           ">
-          {WIDGET_DATA?.data?.player_position}
-        </p>
+          <p
+            class="
+              color-grey
+              s-14
+            ">
+            {WIDGET_T_DATA?.position || 'Position'}:
+          </p>
+          <p
+            class="
+              color-black-2
+              s-14
+              bold
+            ">
+            {WIDGET_DATA?.data?.player_position}
+          </p>
+        </div>
+
       </div>
 
     </div>
@@ -245,9 +317,77 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   /* o */
-  div.widget-component {
+  div.widget-component 
+  {
     overflow: unset;
-    padding-bottom: 10px;
+    padding-bottom: unset;
+  }
+
+  /* lineup-vector box */
+	div#lineup-vector-box 
+  {
+		position: relative;
+		padding: 0 20px;
+	}
+	div#lineup-vector-box div#lineup-vector 
+  {
+		position: absolute;
+		z-index: 0;
+		top: 0;
+		bottom: 0;
+		right: 0;
+		left: 0;
+		margin: 8px 20px;
+	}
+	div#lineup-vector-box div#overlay-player-pos-box 
+  {
+		display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+		grid-template-rows: 1fr;
+		grid-auto-flow: column;
+		align-items: center;
+		align-content: center;
+		z-index: 1;
+		position: relative;
+		padding: 15px;
+    min-height: 168px;
+    height: 168px;
+    max-height: 168px;
+	}
+	div#lineup-vector-box	div#overlay-player-pos-box div#overlay-column 
+  {
+		display: grid;
+    gap: 8px;
+    height: -webkit-fill-available;
+    height: -moz-available;
+    align-items: center;
+    justify-items: center;
+	}
+
+  .team-pos-box
+  {
+    width: 40px;
+    height: 40px;
+    background: #FFFFFF;
+    border: 1px solid #F5620F;
+    border-radius: 90px;
+    text-align: center;
+    padding: 7.5px;
+  }
+  .team-pos-box.invisible
+  {
+    visibility: hidden;
+  }
+
+  div#pteam-bottom-data
+  {
+    padding: 20px;
+  }
+
+  div.pteam-box-stat
+  {
+    border-left: 1px solid var(--grey-color);
+    padding-left: 16px;
   }
 
   /*
@@ -257,12 +397,31 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   @media only screen 
-    and (min-width: 425px) {
+    and (min-width: 475px) 
+  {
+    div#lineup-vector-box div#overlay-player-pos-box 
+    {
+      min-height: 365px;
+      height: 365px;
+      max-height: 365px;
+    }
+  }
+
+  @media only screen 
+    and (min-width: 768px) 
+  {
+    div#lineup-vector-box div#overlay-player-pos-box 
+    {
+      min-height: 256px;
+      height: 256px;
+      max-height: 256px;
+    }
   }
 
   @media only screen 
     and (min-width: 726px) 
-    and (max-width: 1000px) {
+    and (max-width: 1000px) 
+  {
   }
 
   /*
@@ -270,5 +429,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   DARK-THEME
   =============
   */
+
+  .dark-background-1 div.team-pos-box
+  {
+    background-color: var(--dark-theme-1);
+  }
+
+  .dark-background-1 div.pteam-box-stat
+  {
+    border-color: var(--dark-theme-1-shade);
+  }
 
 </style>
