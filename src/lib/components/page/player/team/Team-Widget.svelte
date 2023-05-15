@@ -14,6 +14,7 @@ COMPONENT JS (w/ TS)
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import TeamLoader from './Team-Loader.svelte';
 	import TeamMain from './Team-Main.svelte';
   
 	import type { B_PTEAM_D, B_PTEAM_T } from '@betarena/scores-lib/types/player-team.js';
@@ -135,7 +136,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   </h2>
 </SeoBox>
 
-<!-- <StatisticsLoader /> -->
+<!-- <TeamLoader /> -->
 
 <!-- 
 [ℹ] main widget
@@ -144,7 +145,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise is pending 
   -->
-  <!-- <StatisticsLoader /> -->
+  <TeamLoader />
 {:then data}
   <!-- 
   promise was fulfilled 
