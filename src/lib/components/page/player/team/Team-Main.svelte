@@ -236,6 +236,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               color-black-2
               s-14
               bold
+              no-wrap
             ">
             {WIDGET_DATA?.data?.team_name}
           </p>
