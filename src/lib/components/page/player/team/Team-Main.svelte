@@ -331,28 +331,25 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 	div#lineup-vector-box div#lineup-vector 
   {
-		position: absolute;
-		z-index: 0;
+		
+	}
+	div#lineup-vector-box div#overlay-player-pos-box 
+  {
+    /* p */
+    position: absolute;
 		top: 0;
 		bottom: 0;
 		right: 0;
 		left: 0;
 		margin: 8px 20px;
-	}
-	div#lineup-vector-box div#overlay-player-pos-box 
-  {
+    /* s */
 		display: grid;
     grid-auto-columns: minmax(0, 1fr);
 		grid-template-rows: 1fr;
 		grid-auto-flow: column;
 		align-items: center;
 		align-content: center;
-		z-index: 1;
-		position: relative;
 		padding: 15px;
-    min-height: 168px;
-    height: 168px;
-    max-height: 168px;
 	}
 	div#lineup-vector-box	div#overlay-player-pos-box div#overlay-column 
   {
@@ -399,23 +396,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   @media only screen 
     and (min-width: 475px) 
   {
-    div#lineup-vector-box div#overlay-player-pos-box 
-    {
-      min-height: 365px;
-      height: 365px;
-      max-height: 365px;
-    }
   }
 
   @media only screen 
     and (min-width: 768px) 
   {
-    div#lineup-vector-box div#overlay-player-pos-box 
-    {
-      min-height: 256px;
-      height: 256px;
-      max-height: 256px;
-    }
   }
 
   @media only screen 
