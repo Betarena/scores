@@ -26,6 +26,7 @@ COMPONENT JS (w/ TS)
 	import FixturesWidget from './fixtures/Fixtures-Widget.svelte';
 	import ProfileWidget from './profile/Profile-Widget.svelte';
 	import StatisticsWidget from './statistics/Statistics-Widget.svelte';
+	import TeamWidget from './team/Team-Widget.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -305,6 +306,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="grid-display-column"
       >
+        <TeamWidget />
         <StatisticsWidget />
       </div>
     </div>
