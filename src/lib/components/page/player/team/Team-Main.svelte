@@ -52,8 +52,10 @@ COMPONENT JS (w/ TS)
 
 	const TABLET_VIEW = 1024;
 	const MOBILE_VIEW = 475;
+	const OTHER_VIEW = 1900;
   let tabletExclusive: boolean = false;
 	let mobileExclusive: boolean = false;
+  let largeDesktop: boolean = false;
 
 	onMount
   (
@@ -62,10 +64,12 @@ COMPONENT JS (w/ TS)
       [
         tabletExclusive, 
         mobileExclusive,
+        largeDesktop
       ] = viewport_change
       (
         TABLET_VIEW, 
-        MOBILE_VIEW
+        MOBILE_VIEW,
+        OTHER_VIEW
       );
       window.addEventListener
       (
@@ -73,12 +77,14 @@ COMPONENT JS (w/ TS)
         function () {
           [
             tabletExclusive, 
-            mobileExclusive
+            mobileExclusive,
+            largeDesktop
           ] =
           viewport_change
           (
             TABLET_VIEW,
-            MOBILE_VIEW
+            MOBILE_VIEW,
+            OTHER_VIEW
           );
         }
       );
@@ -132,6 +138,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
+    OVERRIDE_COLOR={!tabletExclusive && largeDesktop ? false : true}
   />
   
   <div
