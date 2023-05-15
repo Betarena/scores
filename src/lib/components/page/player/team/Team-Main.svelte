@@ -35,8 +35,9 @@ COMPONENT JS (w/ TS)
   let teamPitchFormation = new Map<string, string[]>();
   teamPitchFormation.set('G', ['GK'])
   teamPitchFormation.set('D', ['LB', 'CB', 'RB'])
-  teamPitchFormation.set('M', ['LM', 'CM', 'RM'])
+  teamPitchFormation.set('M', ['LM', 'MM', 'RM'])
   teamPitchFormation.set('A', ['LW', 'CF', 'RW'])
+  const MM = ['DM', 'CM', 'AM'];
 
   //#endregion ➤ [VARIABLES]
 
@@ -171,18 +172,45 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             id="overlay-column"
           >
             {#each pos_d as pos_d_val,i}
-              <div
-                class="
-                  s-16
-                  bold
-                  team-pos-box
-                  color-primary
-                "
-                class:m-l-24={i == 1}
-                class:invisible={pos_d_val != WIDGET_DATA?.data?.player_position}
-              >
-                {pos_d_val}
-              </div>
+
+              {#if pos_d_val == 'MM'}
+                <div
+                  class="
+                    row-space-out
+                  ">
+                  {#each MM as item}
+                    <div
+                      class="
+                        s-16
+                        bold
+                        team-pos-box
+                        color-primary
+                      "
+                      title={WIDGET_T_DATA?.positions?.[WIDGET_DATA?.data?.player_position?.toString()]}
+                      class:display-none={item != WIDGET_DATA?.data?.player_position_code}
+                    >
+                      {WIDGET_T_DATA?.position_abbreviation?.[WIDGET_DATA?.data?.player_position?.toString()]}
+                    </div>
+                  {/each}
+                </div>
+              {:else}
+                <div
+                  class="
+                    s-16
+                    bold
+                    team-pos-box
+                    color-primary
+                    m-r
+                  "
+                  title={WIDGET_T_DATA?.positions?.[WIDGET_DATA?.data?.player_position?.toString()]}
+                  class:m-l-70={i == 1 && pos_d_val != 'CB'}
+                  class:m-r-24={i == 1 && pos_d_val == 'CB'}
+                  class:invisible={pos_d_val != WIDGET_DATA?.data?.player_position_code}
+                >
+                  {WIDGET_T_DATA?.position_abbreviation?.[WIDGET_DATA?.data?.player_position?.toString()]}
+                </div>
+              {/if}
+
             {/each}
           </div>
         {/each}
@@ -345,7 +373,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin: 8px 20px;
     /* s */
 		display: grid;
-    grid-auto-columns: minmax(0, 1fr);
+    /* grid-auto-columns: minmax(0, 1fr); */
+    grid-template-columns: auto 1fr 1fr 1fr;
 		grid-template-rows: 1fr;
 		grid-auto-flow: column;
 		align-items: center;
