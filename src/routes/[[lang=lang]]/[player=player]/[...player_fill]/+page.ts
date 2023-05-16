@@ -1,6 +1,7 @@
 import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from "$lib/utils/debug";
 import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from "$lib/utils/platform-functions";
 import type { B_PSTAT_T } from "@betarena/scores-lib/types/player-statistics.js";
+import type { B_PTEAM_D, B_PTEAM_T } from "@betarena/scores-lib/types/player-team.js";
 import type { B_SAP_D1, B_SAP_D2, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
 import { error } from "@sveltejs/kit";
 import type { B_PFIX_D, B_PFIX_T } from "node_modules/@betarena/scores-lib/types/player-fixtures";
@@ -109,7 +110,11 @@ export async function load
     // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/fixtures?player_id=${player_id}&limit=10&offset=0`,
     // NOTE:WARNING:TODO: remove for a cache solution
-    `/api/data/players/statistics?lang=${_lang}`
+    `/api/data/players/statistics?lang=${_lang}`,
+    // NOTE:WARNING:TODO: remove for a cache solution
+    `/api/data/players/team?lang=${_lang}`,
+    // NOTE:WARNING:TODO: remove for a cache solution
+    `/api/data/players/team?player_id=${player_id}`
   ]
 
   type PP_PROMISE = [
@@ -119,7 +124,9 @@ export async function load
     B_PPRO_T | undefined,
     B_PFIX_T | undefined,
     B_PFIX_D | undefined,
-    B_PSTAT_T | undefined
+    B_PSTAT_T | undefined,
+    B_PTEAM_T | undefined,
+    B_PTEAM_D | undefined
   ]
 
   const data = await promiseUrlsPreload
@@ -135,7 +142,9 @@ export async function load
     B_PPRO_T,
     B_PFIX_T,
     B_PFIX_D,
-    B_PSTAT_T
+    B_PSTAT_T,
+    B_PTEAM_T,
+    B_PTEAM_D
   ] = data
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA
@@ -182,7 +191,7 @@ export async function load
   //#region [3] IMPORTANT RETURN
 
   // const INVALID_PAGE_DATA: boolean = data.includes(undefined);
-  console.log(data)
+  // if (dev) console.log(data)
 
   PRELOAD_invalid_data(data)
 
@@ -197,7 +206,9 @@ export async function load
     B_PPRO_T,
     B_PFIX_T,
     B_PFIX_D,
-    B_PSTAT_T
+    B_PSTAT_T,
+    B_PTEAM_T,
+    B_PTEAM_D
   }
 
   //#endregion [3] RETURN
