@@ -474,7 +474,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-  .dark-background-1 div.team-pos-box
+  .dark-background-1 div#lineup-vector-box div#overlay-player-pos-box .team-pos-box
   {
     background-color: var(--dark-theme-1);
   }
