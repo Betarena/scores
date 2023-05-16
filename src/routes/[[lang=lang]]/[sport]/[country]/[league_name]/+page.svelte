@@ -185,7 +185,7 @@
 				{#if item.link == null && item_.lang == 'en'}
 					<!-- [ℹ] content here
           -->
-					<link
+					<!-- <link
 						rel="alternate"
 						hreflang={item.hreflang}
 						href="https://scores.betarena.com/{item_.sport
@@ -198,7 +198,7 @@
 							.replace(/\s/g, '-')
 							.replace(/\./g, '')
 							.toLowerCase()}"
-					/>
+					/> -->
 					<link
 						rel="alternate"
 						hreflang="en"
