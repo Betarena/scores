@@ -283,7 +283,6 @@
 					<!-- 
           [ℹ] expected alternate example
           <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
-          <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
           <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
           <link rel="alternate" hrefLang="se" href="https://scores.betarena.com/se/fotboll/aston-villa-southampton-50977>
           [...]
