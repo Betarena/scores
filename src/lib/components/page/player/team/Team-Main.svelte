@@ -366,19 +366,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   .LB
   {
     top: 15px;
-    left: 15%;
+    left: 10%;
   }
   .CB
   {
     top: 0;
     bottom: 0;
-    left: 15%;
+    left: 10%;
     margin: auto;
   }
   .RB
   {
     bottom: 15px;
-    left: 15%;
+    left: 10%;
   }
   .DM
   {
