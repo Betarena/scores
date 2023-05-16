@@ -281,16 +281,12 @@
 			{#each Object.entries(FIXTURE_INFO?.alternate_data) as [lang, link]}
 				{#if item.link == lang}
 					<!-- 
-            [ℹ] expected alternate example
-            <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
-            <link rel="alternate" hrefLang="it" href="https://scores.betarena.com/it/calcio/aston-villa-southampton-50977>
-            <link rel="alternate" hrefLang="es" href="https://scores.betarena.com/es/futbol/aston-villa-southampton-50977>
-            <link rel="alternate" hrefLang="pt" href="https://scores.betarena.com/pt/futebol/aston-villa-southampton-50977>
-            <link rel="alternate" hrefLang=""pt-BR" href="https://scores.betarena.com/br/futebol/aston-villa-southampton-50977>
-            <link rel="alternate" hrefLang="ro" href="https://scores.betarena.com/ro/fotbal/aston-villa-southampton-50977>
-            <link rel="alternate" hrefLang="se" href="https://scores.betarena.com/se/fotboll/aston-villa-southampton-50977>
-            <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
-            <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          [ℹ] expected alternate example
+          <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          <link rel="alternate" hrefLang="se" href="https://scores.betarena.com/se/fotboll/aston-villa-southampton-50977>
+          [...]
           -->
 					<link
 						rel="alternate"
@@ -300,13 +296,13 @@
 				{/if}
 				{#if item.link == null && lang == 'en'}
 					<!-- 
-            [ℹ] EN here
+          [ℹ] EN here
           -->
-					<link
+					<!-- <link
 						rel="alternate"
 						hreflang={item.hreflang}
 						href={link}
-					/>
+					/> -->
 					<link
 						rel="alternate"
 						hreflang="en"
