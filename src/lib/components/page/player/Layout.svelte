@@ -26,6 +26,7 @@ COMPONENT JS (w/ TS)
 	import FixturesWidget from './fixtures/Fixtures-Widget.svelte';
 	import ProfileWidget from './profile/Profile-Widget.svelte';
 	import StatisticsWidget from './statistics/Statistics-Widget.svelte';
+	import TeamWidget from './team/Team-Widget.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -215,19 +216,20 @@ SVELTE INJECTION TAGS
 	/>
 {/if}
 
-<!-- 
-[ℹ] Meta <link hreflang={...}>
-[ℹ] example:
-[ℹ] <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
-[ℹ] <link rel="alternate" hrefLang="es" href="https://scores.betarena.com/es/futbol/aston-villa-southampton-50977>
-[ℹ] <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
-[ℹ] <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
--->
+
 <svelte:head>
   {#if data_0}
     {#each data_0?.hreflang as item}
       {#each Object.entries(data?.alternate_data) as [lang, link]}
         {#if item.link == lang}
+          <!-- 
+          [ℹ] Meta <link hreflang={...}>
+          [ℹ] example:
+          [ℹ] <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          [ℹ] <link rel="alternate" hrefLang="es" href="https://scores.betarena.com/es/futbol/aston-villa-southampton-50977>
+          [ℹ] <link rel="alternate" hrefLang="x-default" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          [ℹ] <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
+          -->
           <link
             rel="alternate"
             hreflang={item.hreflang}
@@ -238,11 +240,11 @@ SVELTE INJECTION TAGS
           <!-- 
           [ℹ] EN (unique)
           -->
-          <link
+          <!-- <link
             rel="alternate"
             hreflang={item.hreflang}
             href={`${$page.url.origin}/${link}`}
-          />
+          /> -->
           <link
             rel="alternate"
             hreflang="en"
@@ -281,6 +283,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="grid-display-column"
       >
+        <TeamWidget />
         <StatisticsWidget />
         <FixturesWidget />
       </div>
@@ -305,6 +308,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div
         class="grid-display-column"
       >
+        <TeamWidget />
         <StatisticsWidget />
       </div>
     </div>
