@@ -35,9 +35,8 @@ COMPONENT JS (w/ TS)
   let teamPitchFormation = new Map<string, string[]>();
   teamPitchFormation.set('G', ['GK'])
   teamPitchFormation.set('D', ['LB', 'CB', 'RB'])
-  teamPitchFormation.set('M', ['LM', 'MM', 'RM'])
+  teamPitchFormation.set('M', ['LM', 'DM', 'CM', 'AM', 'RM'])
   teamPitchFormation.set('A', ['LW', 'CF', 'RW'])
-  const MM = ['DM', 'CM', 'AM'];
 
   //#endregion ➤ [VARIABLES]
 
@@ -168,51 +167,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         id="overlay-player-pos-box"
       >
         {#each [...teamPitchFormation.entries()] as [pos, pos_d]}
-          <div 
-            id="overlay-column"
-          >
-            {#each pos_d as pos_d_val,i}
-
-              {#if pos_d_val == 'MM'}
-                <div
-                  class="
-                    row-space-out
-                  ">
-                  {#each MM as item}
-                    <div
-                      class="
-                        s-16
-                        bold
-                        team-pos-box
-                        color-primary
-                      "
-                      title={WIDGET_T_DATA?.positions?.[WIDGET_DATA?.data?.player_position?.toString()]}
-                      class:display-none={item != WIDGET_DATA?.data?.player_position_code}
-                    >
-                      {WIDGET_T_DATA?.position_abbreviation?.[WIDGET_DATA?.data?.player_position?.toString()]}
-                    </div>
-                  {/each}
-                </div>
-              {:else}
-                <div
-                  class="
-                    s-16
-                    bold
-                    team-pos-box
-                    color-primary
-                    m-r
-                  "
-                  title={WIDGET_T_DATA?.positions?.[WIDGET_DATA?.data?.player_position?.toString()]}
-                  class:m-l-70={i == 1 && pos_d_val != 'CB'}
-                  class:m-r-24={i == 1 && pos_d_val == 'CB'}
-                  class:invisible={pos_d_val != WIDGET_DATA?.data?.player_position_code}
-                >
-                  {WIDGET_T_DATA?.position_abbreviation?.[WIDGET_DATA?.data?.player_position?.toString()]}
-                </div>
-              {/if}
-
-            {/each}
-          </div>
+          {#each pos_d as pos_d_val,i}
+            <div
+              class="
+                s-16
+                bold
+                team-pos-box
+                {pos_d_val}
+                color-primary
+              "
+              title={WIDGET_T_DATA?.positions?.[WIDGET_DATA?.data?.player_position?.toString()]}
+              class:invisible={pos_d_val != WIDGET_DATA?.data?.player_position_code}
+            >
+              {WIDGET_T_DATA?.position_abbreviation?.[WIDGET_DATA?.data?.player_position?.toString()]}
+            </div>
+          {/each}
         {/each}
       </div>
 
@@ -327,7 +296,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               s-14
               bold
             ">
-            {WIDGET_DATA?.data?.player_position}
+            {WIDGET_T_DATA?.position_abbreviation?.[WIDGET_DATA?.data?.player_position?.toString()]}
           </p>
         </div>
 
@@ -372,27 +341,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		left: 0;
 		margin: 8px 20px;
     /* s */
-		display: grid;
-    /* grid-auto-columns: minmax(0, 1fr); */
-    grid-template-columns: auto 1fr 1fr 1fr;
-		grid-template-rows: 1fr;
-		grid-auto-flow: column;
-		align-items: center;
-		align-content: center;
 		padding: 15px;
 	}
-	div#lineup-vector-box	div#overlay-player-pos-box div#overlay-column 
+	div#lineup-vector-box div#overlay-player-pos-box .team-pos-box
   {
-		display: grid;
-    gap: 8px;
-    height: -webkit-fill-available;
-    height: -moz-available;
-    align-items: center;
-    justify-items: center;
-	}
-
-  .team-pos-box
-  {
+    /* p */
+    position: absolute;
+    /* s */
     width: 40px;
     height: 40px;
     background: #FFFFFF;
@@ -401,10 +356,84 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     text-align: center;
     padding: 7.5px;
   }
+  .GK
+  {
+    left: 15px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+  }
+  .LB
+  {
+    top: 15px;
+    left: 15%;
+  }
+  .CB
+  {
+    top: 0;
+    bottom: 0;
+    left: 15%;
+    margin: auto;
+  }
+  .RB
+  {
+    bottom: 15px;
+    left: 15%;
+  }
+  .DM
+  {
+    top: 0;
+    bottom: 0;
+    left: 35%;
+    margin: auto;
+  }
+  .RM
+  {
+    bottom: 40px;
+    left: 65%;
+  }
+  .LM
+  {
+    top: 40px;
+    left: 65%;
+  }
+  .CM
+  {
+    top: 0;
+    bottom: 0;
+    left: 55%;
+    margin: auto;
+  }
+  .AM
+  {
+    top: 0;
+    bottom: 0;
+    left: 75%;
+    margin: auto;
+  }
+  .CF
+  {
+    top: 0;
+    bottom: 0;
+    right: 15px;
+    margin: auto;
+  }
+  .RW
+  {
+    bottom: 15px;
+    left: 75%;
+  }
+  .LW
+  {
+    top: 15px;
+    left: 75%;
+  }
+
   .team-pos-box.invisible
   {
     visibility: hidden;
   }
+
 
   div#pteam-bottom-data
   {
