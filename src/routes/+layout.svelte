@@ -25,7 +25,8 @@ COMPONENT JS (w/ TS)
 
 	// import '../app.css';
 	
-	const VALID_PROFILE_PAGE_URL: string[] = [
+	const VALID_PROFILE_PAGE_URL: string[] = 
+  [
 		'/u/dashboard',
 		'/u/settings'
 	];
