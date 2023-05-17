@@ -296,7 +296,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               s-14
               bold
             ">
-            {WIDGET_T_DATA?.position_abbreviation?.[WIDGET_DATA?.data?.player_position?.toString()]}
+            {WIDGET_T_DATA?.positions?.[WIDGET_DATA?.data?.player_position?.toString()]}
           </p>
         </div>
 
