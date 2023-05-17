@@ -26,7 +26,7 @@
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
   import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
-  
+
   // TODO:
   // -> update to @scores-lib package types;
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
@@ -137,7 +137,6 @@
         {
           if (!document.hidden) {
             dlog('🔵 user is active', true)
-            alert('🔵 user is active')
             await onceRealTimeLiveScoreboard()
             let connectionRef = listenRealTimeScoreboardAll()
             FIREBASE_CONNECTIONS_SET.add(connectionRef)
