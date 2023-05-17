@@ -1,4 +1,8 @@
-import { dlog, dlogv2, NB_W_TAG, NB_W_TOG } from "./debug";
+import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
+import { userBetarenaSettings } from '$lib/store/user-settings';
+import { NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from "./debug";
+
+import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 
 /**
  * @description Simple function
@@ -80,6 +84,72 @@ export function viewport_change
     mobileExclusive,
     otherExclusive
   ];
+}
+
+/**
+ * @summary [MAIN]
+ * @description gets and sets user target geo-country
+ * location using geoJs;
+ * @returns NaN
+ */
+export async function setUserGeoLocation
+(
+  HEADER_TRANSLATION_DATA: any
+): Promise < void > 
+{
+
+  const if_0 =
+    userBetarenaSettings.getCountryBookmaker() !== undefined
+  ;
+  if (if_0) return;
+
+  let geoRes: GeoJsResponse = await getUserLocation();
+
+  let userGeo =
+    geoRes?.country_code === undefined
+      ? null
+      : geoRes.country_code.toLowerCase()
+  ;
+
+  const if_1 =
+    userGeo == null
+  ;
+  if (if_1) 
+  {
+    geoRes = await getUserLocationFromIP
+    (
+      '107.189.0.0'
+    );
+    userGeo = geoRes.country_code.toLowerCase();
+  }
+    
+  userBetarenaSettings.setGeoJs
+  (
+    geoRes
+  );
+
+  // [V] check for existance of GEO in available translations/country list;
+  const data_0 =	HEADER_TRANSLATION_DATA?.scores_header_translations?.bookmakers_countries
+  ?.find
+  (
+    function 
+    (
+      item
+    ) 
+    {
+      return (
+        item[0].toString().toLowerCase() === userGeo.toString().toLowerCase()
+      );
+    }
+  );
+
+  if (data_0 == undefined) userGeo = 'en'
+    
+  userBetarenaSettings.setCountryBookmaker
+  (
+    userGeo.toLocaleLowerCase()
+  );
+
 }
 
 /**
