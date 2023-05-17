@@ -1,5 +1,7 @@
 /**
- * 
+ * @summary [HELPER]
+ * @description sets target cookie
+ * with specified values;
  * @param {string} cName 
  * @param {string} cValue 
  * @param {number} expDays 
