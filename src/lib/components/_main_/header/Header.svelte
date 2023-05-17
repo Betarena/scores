@@ -4,7 +4,7 @@ COMPONENT JS - BASIC
 =================== -->
 <script lang="ts">
 
-    //#region ➤ [MAIN] Package Imports
+  //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
 	import { browser, dev } from '$app/environment';
@@ -13,13 +13,13 @@ COMPONENT JS - BASIC
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { setCookie } from '$lib/store/cookie.js';
 	import { db_firestore } from '$lib/firebase/init';
+	import { setCookie } from '$lib/store/cookie.js';
 	import { sessionStore } from '$lib/store/session';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import { doc, updateDoc } from 'firebase/firestore';
-	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
 
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
@@ -591,7 +591,7 @@ TODO: FIXME:
 -->
 <SeoBox>
   <!-- 
-  [ℹ] main-homepage-link-in-all-avaialble-languages
+  [ℹ] HOMEPAGE LINKS
   -->
   {#each HEADER_TRANSLATION_DATA?.langArray || [] as item}
     {#if item != 'en'}
@@ -651,9 +651,8 @@ NAVBAR MAIN
 				style="width: fit-content;"
 			>
 				<!--
-        📱 MOBILE
-        💻 TABLET
-        [ℹ] menu-burger-bar 
+        📱 MOBILE 💻 TABLET
+        [ℹ] MENU BURGER
         -->
 				{#if tabletExclusive}
 					<img
@@ -669,9 +668,7 @@ NAVBAR MAIN
 				{/if}
 
 				<!--
-        📱 MOBILE
-        💻 TABLET
-        🖥️ LAPTOP
+        📱 MOBILE 💻 TABLET
         [ℹ] BETARENA BRAND LOGO
         -->
         <div
@@ -695,24 +692,23 @@ NAVBAR MAIN
         </div>
 
 				<!-- 
-        [ℹ] LANGUAGE SELECTION [DESKTOP]
+        🖥️ LAPTOP
+        [ℹ] LANGUAGE SELECTION
         -->
 				{#if !tabletExclusive}
-					<!-- 
-          [ℹ] language-change-dropdown-select 
-          -->
-					<div id="lang-container" class="m-r-30">
+					<div
+            id="lang-container" 
+            class="m-r-30"
+          >
+
 						<!-- 
-            [ℹ] INIT-selected-lang 
+            [ℹ] SELECTED LANG
             -->
 						<div
 							id="selected-language-btn"
-							class:active-lang-select={dropdown_lang_visible ==
-								true}
+							class:active-lang-select={dropdown_lang_visible == true}
 							class="row-space-out"
-							on:click={() =>
-								(dropdown_lang_visible =
-									!dropdown_lang_visible)}
+							on:click={() =>	(dropdown_lang_visible = !dropdown_lang_visible)}
 						>
 							<p
 								class="
@@ -723,23 +719,21 @@ NAVBAR MAIN
 							>
 								{server_side_language.toUpperCase()}
 							</p>
+
 							<!-- 
-              [ℹ] arrow down [hidden-menu] 
+              ARROW DOWN
               -->
 							<img
                 loading="lazy"
-								src={!dropdown_lang_visible
-									? arrow_down
-									: arrow_up}
-								alt={!dropdown_lang_visible
-									? 'arrow_down'
-									: 'arrow_up'}
+								src={!dropdown_lang_visible ? arrow_down : arrow_up}
+								alt={!dropdown_lang_visible	? 'arrow_down' : 'arrow_up'}
 								width="16"
 								height="16"
 							/>
 						</div>
+
 						<!-- 
-            [ℹ] INITIALLY-HIDDEN drop-down menu 
+            [ℹ] DROPDOWN (LANG)
             -->
 						{#if dropdown_lang_visible}
 							<div
@@ -750,16 +744,11 @@ NAVBAR MAIN
 									{#if lang.toUpperCase() != server_side_language.toUpperCase()}
 										<div
 											id="lang-select"
-											on:click={() =>
-												selectLanguage(lang)}
-                      on:keydown={() =>
-                        selectLanguage(lang)}
-                      on:mouseout={() => 
-                        detectIntentBuffer(undefined)}
-                      on:mouseover={() =>
-                         detectIntentBuffer(lang)}
-                      on:focus={() => 
-                        detectIntentBuffer(lang)}
+											on:click={() =>	selectLanguage(lang)}
+                      on:keydown={() => selectLanguage(lang)}
+                      on:mouseout={() => detectIntentBuffer(undefined)}
+                      on:mouseover={() => detectIntentBuffer(lang)}
+                      on:focus={() => detectIntentBuffer(lang)}
 										>
 											<p
 												class="
@@ -774,61 +763,58 @@ NAVBAR MAIN
 								{/each}
 							</div>
 						{/if}
+
 					</div>
 				{/if}
 
 				<!-- 
-        [ℹ] NAV BUTTONS [TABLET] [DESKTOP]
-        <-contents->
-        [ℹ] latest news 
-        [ℹ] betting-tips 
-        <-conditional->
+        💻 TABLET 🖥️ LAPTOP
+        EXTERNAL BUTTONS
         -->
         {#if PROFILE_URL != $page.route.id}
           {#if !mobileExclusive}
+
             <!-- 
-            [ℹ] latest news 
+            LATEST NEWS
             -->
             <a
               rel="external"
-              href={HEADER_TRANSLATION_DATA
-                .scores_header_links.latest_news}
+              href={HEADER_TRANSLATION_DATA?.scores_header_links?.latest_news}
             >
-              <button class="btn-main">
+              <button 
+                class="btn-main">
                 <p
                   class="
                     color-white 
                     s-14
                   "
                 >
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .content_platform_link}
+                  {HEADER_TRANSLATION_DATA?.scores_header_translations?.content_platform_link}
                 </p>
               </button>
             </a>
 
             <!-- 
-            [ℹ] betting-tips 
+            BETTING TIPS
             -->
             <a
               rel="external"
-              href={HEADER_TRANSLATION_DATA
-                .scores_header_links.betting_tips}
+              href={HEADER_TRANSLATION_DATA?.scores_header_links?.betting_tips}
             >
-              <button class="btn-main">
+              <button 
+                class="btn-main"
+              >
                 <p
                   class="
                     color-white 
                     s-14
                   "
                 >
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .betting_tips_link}
+                  {HEADER_TRANSLATION_DATA?.scores_header_translations?.betting_tips_link}
                 </p>
               </button>
             </a>
+
           {/if}
         {/if}
 			</div>
@@ -2115,12 +2101,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/*
-	LANG SELECT CONTAINER 
+	=> LANG BOX 
   */
-	#lang-container {
+	#lang-container
+  {
 		position: relative;
 	}
-	#selected-language-btn {
+	#selected-language-btn
+  {
 		color: #ffffff;
 		outline: none;
 		width: 62px;
@@ -2130,11 +2118,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: transparent;
 	}
 	#selected-language-btn:hover,
-	#selected-language-btn.active-lang-select {
+	#selected-language-btn.active-lang-select
+  {
 		background-color: rgba(255, 255, 255, 0.1);
 		border-radius: 4px;
 	}
-	#dropdown-menu {
+	#dropdown-menu
+  {
 		position: absolute;
 		top: 100%;
 		width: 88px;
@@ -2146,14 +2136,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		overflow: hidden;
 		z-index: 1000;
 	}
-	#lang-select {
+	#lang-select
+  {
 		padding: 10px 0;
 		text-align: center;
 		background: #4b4b4b;
 		cursor: pointer;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 	}
-	#lang-select:hover {
+	#lang-select:hover
+  {
 		background: #292929;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 	}
@@ -2246,9 +2238,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* 
-	OPT-BOX 
+	=> OPT-BOX 
   */
-	.dropdown-opt-box {
+	.dropdown-opt-box 
+  {
 		border-left: 1px solid #4b4b4b;
 		height: 44px;
 		padding: 0 16px;
@@ -2256,7 +2249,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		cursor: pointer;
 	}
 
-	img.country-flag {
+	img.country-flag 
+  {
 		background: linear-gradient(
 			180deg,
 			rgba(255, 255, 255, 0.7) 0%,
