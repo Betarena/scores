@@ -22,9 +22,6 @@ COMPONENT JS (w/ TS)
 	} from '$lib/store/session';
 	import {
 		userBetarenaSettings,
-		type Auth_Type,
-		type Betarena_User,
-		type Scores_User
 	} from '$lib/store/user-settings';
 	import {
 		AU_W_STY, AU_W_TAG, AU_W_TOG, dlog,
@@ -92,6 +89,7 @@ COMPONENT JS (w/ TS)
 	import logo_dark from './assets/logo-dark.svg';
 	import metamask_icon from './assets/metamask.svg';
 	import success_icon from './assets/success-alert.svg';
+	import type { Auth_Type, Betarena_User, Scores_User } from '$lib/types/types.scores.js';
   //#endregion Assets Imports
 
 	// ~~~~~~~~~~~~~~~~~~~~~
