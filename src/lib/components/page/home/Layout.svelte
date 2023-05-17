@@ -9,13 +9,13 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils';
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlog, dlogv2 } from '$lib/utils/debug';
+	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
@@ -25,8 +25,8 @@
 	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
-
-  // TODO:
+	import LivescoresWidget from './livescores-v2/Livescores_Widget.svelte';
+// TODO:
   // -> update to @scores-lib package types;
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
@@ -75,18 +75,22 @@
    * TODO: can be moved to a +server-level [⚠️]
    * @returns {Promise<void>} void
    */
-  async function sportbookIdentify(
-  ): Promise < void > {
-    if (!$userBetarenaSettings.country_bookmaker) {
-      return;
-    }
+  async function sportbookIdentify
+  (
+  ): Promise < void > 
+  {
+    if (!$userBetarenaSettings.country_bookmaker) return;
     const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
     $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response;
     $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response[];
-    $sessionStore.sportbook_list = $sessionStore.sportbook_list.sort(
-			(a, b) =>
-				parseInt(a.position) -
-				parseInt(b.position)
+    $sessionStore.sportbook_list = $sessionStore.sportbook_list
+    .sort
+    (
+			(
+        a, 
+        b
+      ) =>
+      parseInt(a.position) - parseInt(b.position)
 		);
   }
 
@@ -132,6 +136,7 @@
         {
           if (!document.hidden) {
             dlog('🔵 user is active', true)
+            alert('🔵 user is active')
             await onceRealTimeLiveScoreboard()
             let connectionRef = listenRealTimeScoreboardAll()
             FIREBASE_CONNECTIONS_SET.add(connectionRef)
@@ -142,25 +147,25 @@
   );
 
   // CRITICAL
-	onDestroy
-  (
-    async () => 
-    {
-      const logsMsg: string[] = []
-      for (const connection of [...FIREBASE_CONNECTIONS_SET]) 
-      {
-        logsMsg.push('🔥 closing connection')
-        connection();
-      }
-      dlogv2
-      (
-        `closing firebase connections`,
-        logsMsg,
-        true, 
-        'background: red; color: black;'
-      )
-    }
-  );
+	// onDestroy
+  // (
+  //   async () => 
+  //   {
+  //     const logsMsg: string[] = []
+  //     for (const connection of [...FIREBASE_CONNECTIONS_SET]) 
+  //     {
+  //       logsMsg.push('🔥 closing connection')
+  //       connection();
+  //     }
+  //     dlogv2
+  //     (
+  //       `closing firebase connections`,
+  //       logsMsg,
+  //       true, 
+  //       'background: red; color: black;'
+  //     )
+  //   }
+  // );
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -270,7 +275,7 @@
     [ℹ] 2nd COLUMN 
     -->
 		<div class="grid-display-column">
-      <!-- <LivescoresWidget /> -->
+      <LivescoresWidget />
 			<SeoBlock {SEO_BLOCK_DATA} />
 		</div>
 		<!-- 
@@ -297,7 +302,7 @@
 		<div 
       class="grid-display-column"
     >
-      <!-- <LivescoresWidget /> -->
+      <LivescoresWidget />
 			<FeaturedBettingSitesWidget
 				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 			/>
