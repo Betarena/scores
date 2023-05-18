@@ -33,19 +33,24 @@ COMPONENT JS (w/ TS)
   export let WIDGET_DATA: B_LS2_D
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
-  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
-
-  $: WIDGET_TITLE = WIDGET_T_DATA?.title || 'Livescores'
-  
   let yesterday = new Date()
-
-  yesterday.setDate(yesterday.getDate() - 1)
-  $: yesterday = yesterday
-
   let fixturesGroupByDateMap: Map <string, LS2_C_Fixture[]> = new Map();
   let fixturesGroupByDateLeagueMap: Map <number, LS2_C_Fixture[]> = new Map();
   let fixturesGroupByDateLiveLeagueMap: Map <number, LS2_C_Fixture[]> = new Map();
   let leagueMap: Map <number, LS2_C_League> = new Map();
+  let nonEmptyLeaguesIds: number[] = []
+  let nonEmptyLeaguesArray: LS2_C_League[] = []
+  let numOfFixtures: number;
+  let numOfFixturesLive: number;
+  let liveLeaguesIds: number[] = []
+  let isShowMore: boolean = false;
+  let inProcessHistFixFetch: boolean = true
+
+  yesterday.setDate(yesterday.getDate() - 1)
+
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
+  $: WIDGET_TITLE = WIDGET_T_DATA?.title || 'Livescores'
+  $: yesterday = yesterday
 
   // let fixturesGroupByDateMap: Map <string, LS2_C_Fixture[]> = new Map(
   //   Object.entries(WIDGET_DATA?.fixtures_by_date)
@@ -55,29 +60,28 @@ COMPONENT JS (w/ TS)
   //   Object.entries(WIDGET_DATA?.leagues)
   // ) as Map <string, LS2_C_League>;
 
-  // TEMPORARY
-  // FIXME:TODO: update cache to [...V3] to use map json objects;
-  function setData(data: B_LS2_D) {
-    for (const fixtureDateObj of data?.fixtures_by_date) {
+  // FIXME: TODO: 
+  // update cache to [...V3] to use map json objects;
+  function setData
+  (
+    data: B_LS2_D
+  ) 
+  {
+    console.log('setData')
+    for (const fixtureDateObj of data?.fixtures_by_date) 
+    {
       // NOTE: key => ISO/UTC date
       fixturesGroupByDateMap.set(toISOMod(fixtureDateObj?.date), fixtureDateObj?.fixtures)
     }
-    for (const league of data?.leagues) {
+    for (const league of data?.leagues) 
+    {
       leagueMap.set(league?.id, league)
     }
   }
+
   if (WIDGET_DATA) {
     setData(WIDGET_DATA)
   }
-
-  let nonEmptyLeaguesIds: number[] = []
-  let nonEmptyLeaguesArray: LS2_C_League[] = []
-  let numOfFixtures: number;
-  let numOfFixturesLive: number;
-  let liveLeaguesIds: number[] = []
-  let liveLeagues: LS2_C_League[] = []
-  let isShowMore: boolean = false;
-  let inProcessHistFixFetch: boolean = true
 
   //#endregion ➤ [VARIABLES]
 
@@ -88,92 +92,134 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   /**
-   * @summary [MAIN] method inject livscores;
-   * @description updates the information
+   * @summary [MAIN] 
+   * @description method inject livscores; 
+   * updates the information
    * for the fixtures of current-date with
    * real-time information;
    * @returns Promise < void >
    */
-  function injectLivescoreData(
-  ): Promise < void > {
+  function injectLivescoreData
+  (
+  ): Promise < void > 
+  {
     
     const liveFixturesMap = $sessionStore?.livescore_now_scoreboard
-    // [ℹ] exit;
-    if (liveFixturesMap.size == 0 || fixturesGroupByDateMap.size == 0) {
-      dlog(`${LV2_W_H_TAG[0]} ❌ NO LIVE FIXTURES!`, LV2_W_H_TAG[1])
+
+    const if_0 =
+      liveFixturesMap.size == 0 
+      || fixturesGroupByDateMap.size == 0
+    ;
+    if (if_0) 
+    {
+      // [🐞]
+      dlog
+      (
+        `${LV2_W_H_TAG[0]} ❌ NO LIVE FIXTURES!`, 
+        LV2_W_H_TAG[1]
+      );
       return
     }
-    // [ℹ] iterate over each LIVE fixture
-    // [ℹ] and modify data of existing;
-    for (const [liveId, _fixture] of liveFixturesMap) {
+
+    // loop each LIVE fixture and modify new data;
+    for (const [liveId, _fixture] of liveFixturesMap) 
+    {
       const targetDate = toISOMod(_fixture?.time)
-      // [ℹ] obtain target date-group fixtures[]
       let fixturesArray = fixturesGroupByDateMap.get(targetDate)
-      // validate; for non-valid livefixtures;
-      const validation_0 =
+
+      const if_0 =
         fixturesArray == undefined
       ;
-      if (validation_0) continue;
-      // [ℹ] re-assign the modified version back to original
-      // [ℹ] & persist to Map
+      if (if_0) continue;
+
+      // [ℹ] re-assign the modified version back to original;
+      
       // @ts-ignore
-      fixturesArray = fixturesArray.map((fixture) => {
-        if (liveFixturesMap.has(fixture.id)) {
-          return {
-            ...fixture,
-            minute: liveFixturesMap.get(fixture.id)?.minute,
-            status: liveFixturesMap.get(fixture.id)?.status,
-            teams: {
-              away: {
-                name: fixture?.teams?.away?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "away")?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "away")?.score,
-              },
-              home: {
-                name: fixture?.teams?.home?.name,
-                red_cards: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "home")?.redcards,
-                score: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "home")?.score,
+      fixturesArray = fixturesArray
+      ?.map
+      (
+        (
+          fixture
+        ) => 
+        {
+          if (liveFixturesMap.has(fixture.id)) 
+          {
+            return {
+              ...fixture,
+              minute: liveFixturesMap.get(fixture.id)?.minute,
+              status: liveFixturesMap.get(fixture.id)?.status,
+              teams: 
+              {
+                away: {
+                  name: fixture?.teams?.away?.name,
+                  red_cards: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "away")?.redcards,
+                  score: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "away")?.score,
+                },
+                home: {
+                  name: fixture?.teams?.home?.name,
+                  red_cards: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "home")?.redcards,
+                  score: liveFixturesMap.get(fixture.id)?.teams?.find(x => x?.type == "home")?.score,
+                }
               }
-            }
-          };
+            };
+          }
+          return fixture
         }
-        return fixture
-      })
-      fixturesGroupByDateMap.set(targetDate, fixturesArray)
+      );
+
+      fixturesGroupByDateMap.set
+      (
+        targetDate, 
+        fixturesArray
+      );
     }
-    // IMPORTANT
+
     fixturesGroupByDateMap = fixturesGroupByDateMap 
-    // ???
-    WIDGET_DATA = WIDGET_DATA;
+    // WIDGET_DATA = WIDGET_DATA;
   }
 
   /**
+   * @summary [MAIN] 
    * @description updates information on target
    * fixtures, depending on selected-date;
    * (IF) no matching date in (cache) - seek
    * from (hasura) directly;
    */
-  async function targetFixtureDateData(
-  ): Promise < void > {
+  async function targetFixtureDateData
+  (
+  ): Promise < void > 
+  {
 
-    // new updated date;
-    let targetDate = toISOMod(
+    let targetDate = toISOMod
+    (
       $sessionStore.livescoreNowSelectedDate,
       true
-    )
-    // [ℹ] get matching (date) fixtures in "yyyy/MM/dd" string format
+    );
+
     let targetFixturesDateGroupObj = fixturesGroupByDateMap.get(targetDate);
-    // [ℹ] validation;
-    if (targetFixturesDateGroupObj == undefined) {
-      dlog(`${LV2_W_H_TAG[0]} 🔵 seeking ${targetDate} (date) fixtures`, LV2_W_H_TAG[1])
+
+    const if_0 =
+      targetFixturesDateGroupObj == undefined
+    ;
+    if (if_0) 
+    {
+
+      // [🐞]
+      dlog
+      (
+        `${LV2_W_H_TAG[0]} 🔵 seeking ${targetDate} (date) fixtures`, 
+        LV2_W_H_TAG[1]
+      );
+
       inProcessHistFixFetch = true
-      // get target date fixtures;
-      const hasuraFixturesDate: B_LS2_D = await get(
+
+      const hasuraFixturesDate: B_LS2_D = await get
+      (
         `/api/hasura/home/livescores-v2/?date=${targetDate}`
-      ) as B_LS2_D
-      // merge maps;
-      await setData(hasuraFixturesDate)
-      // extract "this" date data;
+      ) as B_LS2_D;
+
+      setData(hasuraFixturesDate)
+
       targetFixturesDateGroupObj = fixturesGroupByDateMap.get(targetDate);
     }
     
@@ -181,8 +227,14 @@ COMPONENT JS (w/ TS)
     numOfFixtures = targetFixturesDateGroupObj?.length || 0
 
     // extract "this" date data, league-id's;
-    nonEmptyLeaguesIds = [...new Set(targetFixturesDateGroupObj
-      ?.map(fixture => fixture?.league_id))
+    nonEmptyLeaguesIds = [...new Set
+      (
+        targetFixturesDateGroupObj
+        ?.map
+        (
+          fixture => fixture?.league_id
+        )
+      )
     ];
     dlog(`nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`, LV2_W_H_TAG[1])
 
@@ -208,77 +260,98 @@ COMPONENT JS (w/ TS)
   }
 
   /**
+   * @summary [MAIN]
    * @description updates the information 
    * for the live-fixtures - based 
    * on users (today's) local time;
    * FIXME: potential issue as we only check for TODAY's date, fixtures 
    * starting late night might disappear at the ealry morning from LIVE
+   * SOLVED: by check for yesterdays games also;
    */
-  async function updateLiveInfo(
-  ): Promise < void > {
+  async function updateLiveInfo
+  (
+  ): Promise < void > 
+  {
 
-    dlog(`${LV2_W_H_TAG[0]} (in) updateLiveInfo`, LV2_W_H_TAG[1])
+    // [🐞]
+    dlog
+    (
+      `${LV2_W_H_TAG[0]} (in) updateLiveInfo`, 
+      LV2_W_H_TAG[1]
+    );
 
     numOfFixturesLive = 0
     fixturesGroupByDateLiveLeagueMap = new Map()
     
-    // FIXME:TODO:NOTE:DOC: adding for await ... of > for await ... of causes (double) iteration
+    // FIXME: DOC: adding for await ... of > for await ... of causes (double) iteration
 
-    // FIXME:SOLVED
+    // FIXME: SOLVED
       // -> sometimes, fixtures from backend are not updated correclty
       // -> causing status to be delayed
-      // -> need check why some ddn't update (etc.)
+      // -> need check why some dont't update (etc.)
+
     // for today/yesterday, get fixtures;
     let fixturesList = []
-    if (fixturesGroupByDateMap.has(toISOMod($sessionStore.userDate))) {
-      fixturesList = [
+    if (fixturesGroupByDateMap.has(toISOMod($sessionStore.userDate))) 
+    {
+      fixturesList = 
+      [
         ...fixturesList,
         ...fixturesGroupByDateMap.get(toISOMod($sessionStore.userDate))
       ]
     }
-    if (fixturesGroupByDateMap.has(toISOMod(yesterday))) {
-      fixturesList = [
+    if (fixturesGroupByDateMap.has(toISOMod(yesterday))) 
+    {
+      fixturesList = 
+      [
         ...fixturesList,
         ...fixturesGroupByDateMap.get(toISOMod(yesterday))
       ]
     }
 
     const liveFixturesList = fixturesList
-      ?.filter(
-        x => 
-          FIXTURE_LIVE_TIME_OPT.includes(x?.status)
-      )
-    ;
+    ?.filter
+    (
+      x => 
+        FIXTURE_LIVE_TIME_OPT.includes(x?.status)
+    );
+
     numOfFixturesLive = liveFixturesList.length
     liveLeaguesIds = liveFixturesList
-      ?.map(
-          x => 
-            x?.league_id
-        )
+    ?.map
+    (
+      x => 
+        x?.league_id
+    )
     ;
     liveLeaguesIds = [...new Set(liveLeaguesIds)]
 
     let geoRefIdList = getRefLeagueIdList()
 
-    liveLeaguesIds = liveLeaguesIds.sort(
+    liveLeaguesIds = liveLeaguesIds
+    ?.sort
+    (
       (
         a, 
         b
-      ) => {       
-      const index1 = geoRefIdList.indexOf(a);       
-      const index2 = geoRefIdList.indexOf(b);       
-      return (         
-        (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)      
-      );
-    });
+      ) => 
+      {       
+        const index1 = geoRefIdList.indexOf(a);       
+        const index2 = geoRefIdList.indexOf(b);       
+        return (         
+          (index1 > -1 ? index1 : Infinity) - (index2 > -1 ? index2 : Infinity)      
+        );
+      }
+    );
 
-    for (const id of liveLeaguesIds) {
+    for (const id of liveLeaguesIds) 
+    {
       const leagueFixtures = liveFixturesList
-        ?.filter(
-          x => 
-          x?.league_id == id
-        )
-      ;
+      ?.filter
+      (
+        x => 
+        x?.league_id == id
+      );
       fixturesGroupByDateLiveLeagueMap.set(id, leagueFixtures)
     }
 
@@ -287,19 +360,30 @@ COMPONENT JS (w/ TS)
     dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds ${liveLeaguesIds}`, LV2_W_H_TAG[1])
   }
 
-  function toggleShowMore() {
+  /**
+   * @summary [MAIN]
+   * @description simple toggle for
+   * show more data;
+   */
+  function toggleShowMore
+  (
+  )
+  {
     isShowMore = !isShowMore
     generateLeagueFixtures()
   }
 
   /**
-   * @summary [MAIN] method data process;
+   * @summary [MAIN]
    * @description generates target "selected_date"
    * fixtures, and groups by leagues; Handles for
    * "showMore" toggle with extra filtering;
    * @returns void
    */
-  function generateLeagueFixtures() {
+  function generateLeagueFixtures
+  (
+  ) 
+  {
     fixturesGroupByDateLeagueMap = new Map();
     // generate "target" date fixtures;
     const validation_0 =
@@ -365,7 +449,8 @@ COMPONENT JS (w/ TS)
 	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	$: server_side_language = platfrom_lang_ssr(
+	$: server_side_language = platfrom_lang_ssr
+  (
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
@@ -377,26 +462,57 @@ COMPONENT JS (w/ TS)
    * order data as a number[];
    * @returns {number[]} number[]
    */
-  function getRefLeagueIdList(
-  ): number[] {
-    let geo_leagueIds_reference_array = 
-      WIDGET_DATA?.leagues_geo_list
-      .find( ({ lang }) => 
-        lang == $userBetarenaSettings?.country_bookmaker
-      )?.leagues
+  function getRefLeagueIdList
+  (
+  ): number[] 
+  {
+
+    let geo_leagueIds_reference_array = WIDGET_DATA?.leagues_geo_list
+    ?.find
+    ( 
+      (
+        { lang }
+      ) => 
+      lang == $userBetarenaSettings?.country_bookmaker
+    )
+    ?.leagues;
+
+    // [🐞]
+    dlog
+    (
+      `🔥 ${$userBetarenaSettings?.country_bookmaker}`, 
+      LV2_W_H_TAG[1]
+    );
+
+    const if_0 =
+      geo_leagueIds_reference_array == undefined
     ;
-    dlog(`🔥 ${$userBetarenaSettings?.country_bookmaker}`, LV2_W_H_TAG[1])
-    if (geo_leagueIds_reference_array == undefined) {
+    if (if_0) 
+    {
       dlog("❌ No target COUNTRY-GEO found", LV2_W_H_TAG[1])
-      geo_leagueIds_reference_array = 
-        WIDGET_DATA?.leagues_geo_list
-        .find( ({ lang }) => 
-          lang == 'en'
-        )?.leagues
-      ;
+      geo_leagueIds_reference_array = WIDGET_DATA?.leagues_geo_list
+      ?.find
+      (
+        (
+          { lang }
+        ) => 
+        lang == 'en'
+      )?.leagues;
     }
-    const geo_leagueIds_reference_numb_array = geo_leagueIds_reference_array.map(v => v.league_id)
-    dlog(geo_leagueIds_reference_numb_array, LV2_W_H_TAG[1])
+
+    const geo_leagueIds_reference_numb_array = geo_leagueIds_reference_array
+    ?.map
+    (
+      v => v.league_id
+    );
+
+    // [🐞]
+    dlog
+    (
+      geo_leagueIds_reference_numb_array, 
+      LV2_W_H_TAG[1]
+    )
+
     return geo_leagueIds_reference_numb_array;
   }
 
@@ -409,7 +525,8 @@ COMPONENT JS (w/ TS)
    * selected date of fixture display;
    * Proceeds to update data accordingly;
   */
-  $: if ($sessionStore.livescoreNowSelectedDate) {
+  $: if ($sessionStore.livescoreNowSelectedDate) 
+  {
     isShowMore = false
     targetFixtureDateData()
     updateLiveInfo()
@@ -420,7 +537,8 @@ COMPONENT JS (w/ TS)
    * livescore_now_scoreboard data session-store;
    * Proceeds to update data accordingly;
   */
-  $: if ($sessionStore?.livescore_now_scoreboard) {
+  $: if ($sessionStore?.livescore_now_scoreboard) 
+  {
     dlog($sessionStore?.livescore_now_scoreboard, LV2_W_H_TAG[1])
     injectLivescoreData()
     updateLiveInfo()
@@ -432,7 +550,8 @@ COMPONENT JS (w/ TS)
    * Proceeds to update data accordingly;
    * NOTE: copy of if ($sessionStore.livescoreNowSelectedDate) [...]
   */
-  $: if ($userBetarenaSettings?.country_bookmaker) {
+  $: if ($userBetarenaSettings?.country_bookmaker) 
+  {
     isShowMore = false
     targetFixtureDateData()
     updateLiveInfo()
@@ -444,6 +563,7 @@ COMPONENT JS (w/ TS)
     // dlog(`${LV2_W_H_TAG[0]} numOfFixtures: ${nonEmptyLeaguesIds}`)
     // dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive: ${numOfFixturesLive}`)
     // dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds: ${liveLeaguesIds}`)
+    console.log('UPDATED! fixturesGroupByDateMap', fixturesGroupByDateMap)
   }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
