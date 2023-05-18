@@ -12,7 +12,6 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import { db_real } from '$lib/firebase/init';
-	import { get_livescores_now } from '$lib/firebase/scoreboard';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
 		onValue,
@@ -43,6 +42,7 @@
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
+	import { getTargetRealDbData } from '$lib/firebase/fixtures_odds/index.js';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -721,8 +721,11 @@
 
 	// [ℹ] one-off real-time "read" init.
 	onMount(async () => {
-		const firebase_real_time =
-			await get_livescores_now();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+
 		if (firebase_real_time != null) {
 			const data: [
 				string,

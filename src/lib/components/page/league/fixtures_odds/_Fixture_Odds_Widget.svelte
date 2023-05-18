@@ -37,8 +37,9 @@
 
   //#region ➤ Firebase Imports
   import {
-  	getLivescoresNow,
-  	getOdds
+  	getOdds,
+
+  	getTargetRealDbData
   } from '$lib/firebase/fixtures_odds';
   import {
   	db_real
@@ -602,9 +603,12 @@
 		// [ℹ] break-down-values
 		// [ℹ] kickstart Fireabse calls
 		if (loaded) {
-			// [ℹ] livescores
-			const firebase_real_time =
-				await getLivescoresNow();
+      
+			const firebase_real_time = await getTargetRealDbData
+      (
+        `livescores_now`
+      );
+
 			if (firebase_real_time != null) {
 				const data: [
 					string,
@@ -770,8 +774,11 @@
 
 		// [ℹ] break-down-values
 		if (loaded) {
-			const firebase_real_time =
-				await getLivescoresNow();
+			const firebase_real_time = await getTargetRealDbData
+      (
+        `livescores_now`
+      );
+
 			if (firebase_real_time != null) {
 				const data: [
 					string,
@@ -1376,8 +1383,11 @@
 
 	// [ℹ] one-off event read "livescores_now"
 	onMount(async () => {
-		const firebase_real_time =
-			await getLivescoresNow();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+
 		if (firebase_real_time != null) {
 			const data: [
 				string,

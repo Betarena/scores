@@ -13,7 +13,6 @@
 
 	import { db_real } from '$lib/firebase/init';
 	import {
-		get_livescores_now,
 		get_odds
 	} from '$lib/firebase/scoreboard';
 	import { sessionStore } from '$lib/store/session';
@@ -50,6 +49,7 @@
 		FIXTURE_LIVE_TIME_OPT,
 		FIXTURE_NOT_START_OPT
 	} from "@betarena/scores-lib/dist/api/sportmonks.js";
+	import { getTargetRealDbData } from '$lib/firebase/fixtures_odds/index.js';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -634,8 +634,11 @@
 
 	// [ℹ] one-off real-time "read" init.
 	onMount(async () => {
-		const firebase_real_time =
-			await get_livescores_now();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+
 		if (firebase_real_time != null) {
 			const data: [
 				string,
@@ -705,8 +708,11 @@
 	});
 
 	async function kickstart_one_off_data() {
-		const firebase_real_time =
-			await get_livescores_now();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+    
 		if (firebase_real_time != null) {
 			const data: [
 				string,
