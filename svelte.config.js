@@ -23,23 +23,24 @@ const config = {
       mode: 'hash',
       directives: {
 
-        // NOTE: is a fallback directive for 
-        // the other fetch directives. 
-        // Directives that are specified have no 
-        // inheritance, yet directives that 
-        // are not specified will fall
-        // back to the value of default-src.
-        'default-src': [
+        /**
+         * @description is a fallback directive for 
+         */
+        'default-src': 
+        [
           'self'
         ],
 
-        // NOTE: specifies the locations 
-        // from which a script can be 
-        // executed from. It is a 
-        // fallback directive for other 
-        // script-like directives.
-        // NOTE: (fallback) -> "default-src"
-        'script-src': [
+        /**
+         * @description specifies the locations 
+         * from which a script can be 
+         * executed from. It is a 
+         * fallback directive for other 
+         *  script-like directives.
+         * @fallback "default-src"
+         */
+        'script-src': 
+        [
           // [ℹ] development [?];
           // 'https://localhost:3050',
           // 'localhost:*',
@@ -85,18 +86,17 @@ const config = {
           'https://mc.webvisor.org',
           'https://yastatic.net'
         ],
-        // 'script-src-elem': [
-        //   'self', 
-        //   'https://betarena-rv-6b382.firebaseio.com/'
-        // ],
 
-        // NOTE: controls from where styles get 
-        // applied to a document. This includes 
-        // <link> elements, @import rules, 
-        // and requests originating from 
-        // a Link HTTP response header field.
-        // NOTE: (fallback) -> "default-src"
-        'style-src': [
+        /**
+         * @description controls from where styles get 
+         * applied to a document. This includes 
+         * <link> elements, @import rules, 
+         * and requests originating from 
+         * a Link HTTP response header field.
+         * @fallback "default-src"
+         */
+        'style-src': 
+        [
           'self',
           'unsafe-inline',
           // [ℹ] google/firebase;
@@ -104,11 +104,13 @@ const config = {
           'https://fonts.gstatic.com'
         ],
 
-        // NOTE: specifies the URLs that 
-        // images can be loaded from;
-        // [ℹ] (fallback) -> "default-src"
-        'img-src': [
-          // [ℹ] origin/self;
+        /**
+         * @description specifies the URLs that 
+         * images can be loaded from;
+         * @fallback "default-src"
+         */
+        'img-src': 
+        [
           'self',
           'data:',
           'blob:',
@@ -129,40 +131,49 @@ const config = {
           'https://lh3.googleusercontent.com/',
         ],
 
-        'frame-src': [
+        /**
+         * @description provides control over
+         * frames that can be loaded;
+         */
+        'frame-src': 
+        [
           'self',
-          // [ℹ] google/firebase;
+          // GOOGLE/FIREBASE
           'https://betarena-ios.firebaseapp.com',
-          'https://*.firebaseio.com', // (catch-all)
+          'https://*.firebaseio.com',
           'https://www.youtube.com/'
-          // [ℹ] yandex;
-          // 'blob: https://mc.yandex.ru'
         ],
 
-        // NOTE: specifies which URLs to 
-        // load fonts from;
-        'font-src': [
+        /**
+         * @description specifies which URLs to 
+         * load fonts from;
+         */
+        'font-src': 
+        [
           'self', 
-          // 'data:',
-          // [ℹ] google/firebase;
+          // GOOGLE/FIREBASE
           'https://fonts.googleapis.com',
           'https://fonts.gstatic.com'
         ],
 
-        // NOTE: provides control over 
-        // fetch requests, XHR, 
-        // eventsource, beacon and 
-        // websockets connections;
-        'connect-src': [
+        /**
+         * @description provides control over
+         * fetch requests, XHR, eventsource, beacon and 
+         * websockets connections;
+         */
+        'connect-src': 
+        [
           'self',
-          // [ℹ] geo-js;
+          // GEO-JS
           'https://get.geojs.io',
-          // [ℹ] hasura;
+          // HASURA
           'https://betarena.hasura.app', 
-          // [ℹ] google/firebase;
+          // GOOGLE/FIREBASE
           'https://betarena-rv-6b382.firebaseio.com',
-          'wss://*.firebaseio.com', // NOTE: (catch-all)
-          'https://*.firebaseio.com', // NOTE: (catch-all)
+          'ws:',
+          'wss://*.firebaseio.com', 
+          'wss://s-usc1a-nss-2062.firebaseio.com',
+          'https://*.firebaseio.com',
           'https://www.google-analytics.com',
           'https://identitytoolkit.googleapis.com',
           'https://firestore.googleapis.com',
@@ -170,15 +181,15 @@ const config = {
           'https://securetoken.googleapis.com',
           'https://firebasestorage.googleapis.com',
           'https://lh3.googleusercontent.com/',
-          // [ℹ] smartlook;
-          'https://manager.eu.smartlook.cloud', // (safari-only)
+          // SMARTLOOK;
+          'https://manager.eu.smartlook.cloud', 
           'https://web-writer.eu.smartlook.cloud',
           'https://assets-proxy.smartlook.cloud',
           'https://*.smartlook.cloud',
-          // [ℹ] sentry
+          // SENTRY
           'https://o1009217.ingest.sentry.io/',
           'https://*.sentry.io/',
-          // [ℹ] yandex;
+          // YANDEX
           'https://mc.yandex.ru',
         ],
 
