@@ -240,16 +240,16 @@ SVELTE INJECTION TAGS
           <!-- 
           [ℹ] EN (unique)
           -->
-          <!-- <link
+          <link
             rel="alternate"
             hreflang={item.hreflang}
             href={`${$page.url.origin}/${link}`}
-          /> -->
-          <link
+          />
+          <!-- <link
             rel="alternate"
             hreflang="en"
             href={`${$page.url.origin}/${link}`}
-          />
+          /> -->
         {/if}
       {/each}
     {/each}
