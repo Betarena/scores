@@ -13,19 +13,6 @@ import type { FIREBASE_odds } from '$lib/models/firebase';
  * ==================================
  */
 
-export async function get_livescores_now(): Promise<unknown> {
-  const response = await get(
-		child(ref(db_real), `livescores_now`)
-	).then((snapshot) => {
-		if (snapshot.exists()) {
-			return snapshot.val();
-		} else {
-			return;
-		}
-	});
-  return response;
-}
-
 export async function get_odds(
 	fixture_time: string,
 	fixture_id: number

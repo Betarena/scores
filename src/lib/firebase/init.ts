@@ -10,7 +10,8 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // NOTE: firebase config with non-auth properties skipped;
-const firebaseConfig: FirebaseOptions = {
+const firebaseConfig: FirebaseOptions = 
+{
 	apiKey:	import.meta.env?.VITE_FIREBASE_DB_API_KEY as string,
 	authDomain:	import.meta.env?.VITE_FIREBASE_DB_AUTH_DOMAIN_MAIN as string,
 	projectId: import.meta.env?.VITE_FIREBASE_DB_PROJECT_ID_MAIN as string,
@@ -23,7 +24,8 @@ const firebaseConfig: FirebaseOptions = {
 export const app =
 	getApps().length === 0
 		? initializeApp(firebaseConfig)
-		: getApp();
+		: getApp()
+;
 
 // NOTE: Initialize Real-Time-DB and get a reference to the service;
 export const db_real = getDatabase(app);

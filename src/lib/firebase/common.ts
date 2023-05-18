@@ -1,84 +1,132 @@
-import type { FIREBASE_livescores_now } from "$lib/models/firebase";
 import { sessionStore } from "$lib/store/session";
 import { dlog, FIREBASE_DEBUG_STYLE, FIREBASE_DEBUG_TAG, FIREBASE_DEBUG_TOGGLE } from "$lib/utils/debug";
-import type { FIRE_LNNS } from "@betarena/scores-lib/types/firebase.js";
+import type { FIRE_LNNS, FIREBASE_livescores_now } from "@betarena/scores-lib/types/firebase.js";
 import { onValue, ref, type Unsubscribe } from "firebase/database";
-import { getLivescoresNow, getTargetRealDbData } from "./fixtures_odds";
+import { getTargetRealDbData } from "./fixtures_odds";
 import { db_real } from "./init";
 
+// #region LIVESCORES_NOW
+
 /**
- * @description common method that will listen to 
- * real-time changes in Livescores_Now 
+ * @summary [MAIN]
+ * @description common method that listens to 
+ * real-time changes in "livescores_now" 
  * Firebase (REAL-DB);
- * @returns {Unsubscribe} Unsubscribe
+ * @returns {Unsubscribe}
  */
-export function listenRealTimeLivescoresNowChange(
-): Unsubscribe {
+export function listenRealTimeLivescoresNowChange
+(
+): Unsubscribe 
+{
 
   dlog(`${FIREBASE_DEBUG_TAG} listenRealTimeLivescoresNowChange()`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
-  const fixtureRef = ref(
+
+  const dataRef = ref
+  (
     db_real,
     'livescores_now/'
   );
-  const listenEventRef = onValue(fixtureRef, (snapshot) => {
-    // [ℹ] break-down-values
-    if (snapshot.val() != null) {
-      const data: [
-        string,
-        FIREBASE_livescores_now
-      ][] = Object.entries(snapshot.val());
-      genLiveFixMap(data);
+
+  const listenEventRef = onValue
+  (
+    dataRef, 
+    (
+      snapshot
+    ) => 
+    {
+      if (snapshot.val() != null) 
+      {
+        const data: [
+          string,
+          FIREBASE_livescores_now
+        ][] = Object.entries(snapshot.val());
+        genLiveFixMap(data);
+      }
     }
-  });
+  );
+
   return listenEventRef
 }
 
 /**
- * @description checks onValue changes for new 
- * Livescores_Now Table data changes;
- * @param {[string, FIREBASE_livescores_now][]} data
- * @returns {Promise < void >} Promise < void >
- */
-export async function genLiveFixMap (
-  data: [string, FIREBASE_livescores_now][]
-): Promise < void > {
-  dlog(`${FIREBASE_DEBUG_TAG} genLiveFixMap()`, FIREBASE_DEBUG_TOGGLE, FIREBASE_DEBUG_STYLE);
-  const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
-  // [ℹ] generate live-fixtures map
-  for await (const live_fixture of data) {
-    const fixture_id = parseInt(
-      live_fixture[0].toString()
-    );
-    const fixture_data = live_fixture[1];
-    liveFixturesMap.set(
-      fixture_id,
-      fixture_data
-    );
-  }
-  dlog(liveFixturesMap, true)
-  sessionStore.updateLivescores(liveFixturesMap)
-}
-
-/**
- * @description a one-off call to retrieve the
- * livescroes_now tabled (db) data for instant
- * update on limited conditions;
- * @returns {Promise < void >} Promise < void >
+ * @summary [MAIN]
+ * @description a one-off call to instantly
+ * retrieve the "livescroes_now" (db) data;
+ * @returns {Promise < void >}
 */
-export async function one_off_livescore_call (
-): Promise < void > {
-  const firebase_real_time = await getLivescoresNow();
-  if (firebase_real_time != null) {
-    const data: [
+export async function one_off_livescore_call
+(
+): Promise < void > 
+{
+  const firebase_real_time = await getTargetRealDbData
+  (
+    `livescores_now`
+  );
+
+  if (firebase_real_time != null) 
+  {
+    const data: 
+    [
       string,
       FIREBASE_livescores_now
     ][] = Object.entries(firebase_real_time);
     genLiveFixMap(data);
   }
+
 }
 
 /**
- * @summary [MAIN] method
+ * @summary [MAIN]
+ * @description checks onValue changes for new 
+ * "livescores_now" data changes;
+ * @param {[string, FIREBASE_livescores_now][]} data
+ * @returns {Promise < void >}
+ */
+export async function genLiveFixMap
+(
+  data: [string, FIREBASE_livescores_now][]
+): Promise < void > 
+{
+  // [🐞]
+  dlog
+  (
+    `${FIREBASE_DEBUG_TAG} genLiveFixMap()`, 
+    FIREBASE_DEBUG_TOGGLE, 
+    FIREBASE_DEBUG_STYLE
+  );
+
+  const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
+
+  for await (const live_fixture of data) 
+  {
+    const fixture_id = parseInt
+    (
+      live_fixture[0].toString()
+    );
+
+    const fixture_data = live_fixture[1];
+
+    liveFixturesMap.set
+    (
+      fixture_id,
+      fixture_data
+    );
+  }
+
+  dlog(liveFixturesMap, true)
+
+  sessionStore.updateLivescores
+  (
+    liveFixturesMap
+  )
+}
+
+// #endregion LIVESCORES_NOW
+
+// #region LIVESCORES_NOW_SCOREBOARD
+
+/**
+ * @summary [MAIN]
  * @description common method that will listen to 
  * real-time changes in "livescores_now_scoreboard" 
  * Firebase (REAL-DB);
@@ -88,47 +136,56 @@ export function listenRealTimeScoreboardAll
 (
 ): Unsubscribe 
 {
-  const fixtureRef = ref(
+  const dbRef = ref
+  (
     db_real,
-    'livescores_now_scoreboard/'
+    'livescores_now_scoreboard'
   );
-  const listenEventRef = onValue(
-    fixtureRef, 
+
+  const listenEventRef = onValue
+  (
+    dbRef, 
     (
       snapshot
-    ) => {
-    if (snapshot.val() != null) {
-      const data: [
-        string,
-        FIRE_LNNS
-      ][] = Object.entries(snapshot.val());
-      generateLiveScoreboardList(data);
+    ) => 
+    {
+      if (snapshot.val() != null) 
+      {
+        const data: 
+        [
+          string,
+          FIRE_LNNS
+        ][] = Object.entries(snapshot.val());
+        generateLiveScoreboardList(data);
+      }
     }
-  });
+  );
+
   return listenEventRef
 }
 
 /**
  * @summary [MAIN] method
  * @description a one-off call to retrieve the
- * "livescroes_now_fixture_ids" table (db) data;
+ * "livescores_now_scoreboard" (db) data;
  * @version 1.0 - init [19/04/2023]
- * @returns {Promise < void >} NaN
+ * @returns {Promise < void >}
 */
 export async function onceRealTimeLiveScoreboard 
 (
 ): Promise < void > 
 {
-  const firebaseData = await getTargetRealDbData(
+  const firebaseData = await getTargetRealDbData
+  (
     `livescores_now_scoreboard`
   );
   if (firebaseData != null) 
   {
+    console.log('firebaseData', firebaseData)
     const data: [
       string,
       FIRE_LNNS
     ][] = Object.entries(firebaseData);
-    console.log("🔥", data);
     generateLiveScoreboardList(data);
   }
 }
@@ -144,17 +201,40 @@ function generateLiveScoreboardList
   data: [string, FIRE_LNNS][]
 ): void
 {
+
+  console.log("🔥 REAL-TIME (source)", data);
+
   const liveFixturesMap = new Map<number, FIRE_LNNS>();
-  for (const liveFixture of data) {
-    const fixtureId = parseInt(
+
+  for (const liveFixture of data) 
+  {
+    const fixtureId = parseInt
+    (
       liveFixture[0].toString()
     );
+
     const fixtureData = liveFixture[1];
-    liveFixturesMap.set(
+
+    liveFixturesMap.set
+    (
       fixtureId,
       fixtureData
     );
   }
-  dlog(liveFixturesMap, true)
-  sessionStore.updateLivescoreScoreboard(liveFixturesMap)
+
+  console.log("🔥 REAL-TIME", liveFixturesMap);
+
+  // [🐞]
+  dlog
+  (
+    liveFixturesMap, 
+    true
+  )
+
+  sessionStore.updateLivescoreScoreboard
+  (
+    liveFixturesMap
+  )
 }
+
+// #endregion LIVESCORES_NOW_SCOREBOARD
