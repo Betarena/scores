@@ -9,13 +9,13 @@
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils';
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlog, dlogv2 } from '$lib/utils/debug';
+	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
@@ -23,10 +23,12 @@
 	import FeaturedMatchWidget from '$lib/components/page/home/featured_match/_FeaturedMatch_Widget.svelte';
 	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
 	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
-	import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
+  import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
 
+  // TODO:
+  // -> update to @scores-lib package types;
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
 	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
@@ -74,18 +76,22 @@
    * TODO: can be moved to a +server-level [⚠️]
    * @returns {Promise<void>} void
    */
-  async function sportbookIdentify(
-  ): Promise < void > {
-    if (!$userBetarenaSettings.country_bookmaker) {
-      return;
-    }
+  async function sportbookIdentify
+  (
+  ): Promise < void > 
+  {
+    if (!$userBetarenaSettings.country_bookmaker) return;
     const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
     $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response;
     $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response[];
-    $sessionStore.sportbook_list = $sessionStore.sportbook_list.sort(
-			(a, b) =>
-				parseInt(a.position) -
-				parseInt(b.position)
+    $sessionStore.sportbook_list = $sessionStore.sportbook_list
+    .sort
+    (
+			(
+        a, 
+        b
+      ) =>
+      parseInt(a.position) - parseInt(b.position)
 		);
   }
 
@@ -109,67 +115,95 @@
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
-  onMount(async() => {
+  onMount
+  (
+    async() => 
+    {
     
-    // NOTE: causes a potential delay in data retrieval,
-    // as waits for onMount of Page & components;
-    // await onceRealTimeLiveScoreboard()
+      // NOTE: causes a potential delay in data retrieval,
+      // as waits for onMount of Page & components;
+      // await onceRealTimeLiveScoreboard()
 
-    let connectionRef = listenRealTimeScoreboardAll()
-    FIREBASE_CONNECTIONS_SET.add(connectionRef)
-    sportbookIdentify()
+      let connectionRef = listenRealTimeScoreboardAll()
+      FIREBASE_CONNECTIONS_SET.add(connectionRef)
+      sportbookIdentify()
 
-    document.addEventListener(
-			'visibilitychange',
-			async function() {
-				if (!document.hidden) {
-          dlog('🔵 user is active', true)
-          await onceRealTimeLiveScoreboard()
-					let connectionRef = listenRealTimeScoreboardAll()
-          FIREBASE_CONNECTIONS_SET.add(connectionRef)
-				}
-			}
-		);
-  })
+      document.addEventListener
+      (
+        'visibilitychange',
+        async function
+        (
+        ) 
+        {
+          if (!document.hidden) {
+            dlog('🔵 user is active', true)
+            await onceRealTimeLiveScoreboard()
+            let connectionRef = listenRealTimeScoreboardAll()
+            FIREBASE_CONNECTIONS_SET.add(connectionRef)
+          }
+        }
+      );
+    }
+  );
 
   // CRITICAL
-	onDestroy(async () => {
-		const logsMsg: string[] = []
-		for (const connection of [...FIREBASE_CONNECTIONS_SET]) {
-      logsMsg.push('🔥 closing connection')
-			connection();
-		}
-    dlogv2(
-      `closing firebase connections`,
-      logsMsg,
-      true, 
-      'background: red; color: black;'
-    )
-	});
+	// onDestroy
+  // (
+  //   async () => 
+  //   {
+  //     const logsMsg: string[] = []
+  //     for (const connection of [...FIREBASE_CONNECTIONS_SET]) 
+  //     {
+  //       logsMsg.push('🔥 closing connection')
+  //       connection();
+  //     }
+  //     dlogv2
+  //     (
+  //       `closing firebase connections`,
+  //       logsMsg,
+  //       true, 
+  //       'background: red; color: black;'
+  //     )
+  //   }
+  // );
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 475;
+	const TABLET_VIEW = 1160;
 	let mobileExclusive: boolean = false;
   let tabletExclusive: boolean = false;
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+	onMount
+  (
+    async () => 
+    {
+      [
+        tabletExclusive,
+        mobileExclusive
+      ] = viewport_change
+      (
+        TABLET_VIEW, 
+        MOBILE_VIEW
+      );
+      window.addEventListener
+      (
+        'resize',
+        function () {
+          [
+            tabletExclusive,
+            mobileExclusive
+          ] = viewport_change
+          (
+            TABLET_VIEW,
+            MOBILE_VIEW
+          );
+        }
+      );
+    }
+  );
 
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
@@ -223,13 +257,14 @@
 =================== -->
 
 <section
-  id="home-page">
+  id="home-page"
+>
 	<!-- 
-  [ℹ] DESKTOP & TABLET VIEW ONLY
+  🖥️ LAPTOP 💻 TABLET 
   -->
 	{#if !tabletExclusive && !mobileExclusive}
 		<!-- 
-    [ℹ] 1st ROW 
+    [ℹ] 1st COLUMN 
     -->
 		<div>
 			<LeagueListWidget
@@ -237,14 +272,14 @@
 			/>
 		</div>
 		<!--
-    [ℹ] 2nd ROW 
+    [ℹ] 2nd COLUMN 
     -->
 		<div class="grid-display-column">
       <LivescoresWidget />
 			<SeoBlock {SEO_BLOCK_DATA} />
 		</div>
 		<!-- 
-    [ℹ] 3rd ROW 
+    [ℹ] 3rd COLUMN 
     -->
 		<div class="grid-display-column">
 			<FeaturedMatchWidget
@@ -261,13 +296,12 @@
 			/>
 		</div>
   <!-- 
-  [ℹ] MOBILE VIEW ONLY 
+  📱 MOBILE
   -->
 	{:else}
-		<!-- 
-    [ℹ] 3rd ROW 
-    -->
-		<div class="grid-display-column">
+		<div 
+      class="grid-display-column"
+    >
       <LivescoresWidget />
 			<FeaturedBettingSitesWidget
 				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
@@ -293,14 +327,17 @@
 =================== -->
 
 <style>
-	section#home-page {
+
+	section#home-page 
+  {
 		display: grid;
 		max-width: 1430px;
 		grid-template-columns: 1fr;
 		align-items: start;
 	}
 
-	div.grid-display-column {
+	div.grid-display-column 
+  {
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 24px;
@@ -310,14 +347,20 @@
     RESPONSIVNESS
   ==================== */
 
-	@media only screen and (min-width: 768px) {
-		section#home-page {
+	@media only screen 
+    and (min-width: 768px) 
+  {
+		section#home-page
+    {
 			grid-template-columns: 1fr;
 		}
 	}
 
-	@media only screen and (min-width: 1160px) {
-		section#home-page {
+	@media only screen 
+    and (min-width: 1160px) 
+  {
+		section#home-page
+    {
 			gap: 20px;
 			grid-template-columns:
 				minmax(auto, 275px) minmax(auto, 502px)
@@ -325,8 +368,11 @@
 		}
 	}
 
-	@media only screen and (min-width: 1320px) {
-		section#home-page {
+	@media only screen 
+    and (min-width: 1320px) 
+  {
+		section#home-page 
+    {
 			gap: 20px;
 			grid-template-columns:
 				minmax(auto, 328px) minmax(502px, 502px)

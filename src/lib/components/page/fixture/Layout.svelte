@@ -297,16 +297,16 @@
 					<!-- 
           [ℹ] EN here
           -->
-					<!-- <link
+					<link
 						rel="alternate"
 						hreflang={item.hreflang}
 						href={link}
-					/> -->
-					<link
+					/>
+					<!-- <link
 						rel="alternate"
 						hreflang="en"
 						href={link}
-					/>
+					/> -->
 				{/if}
 			{/each}
 		{/each}
