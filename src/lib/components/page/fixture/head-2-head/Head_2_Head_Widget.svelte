@@ -13,7 +13,6 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import { db_real } from '$lib/firebase/init';
-	import { get_odds } from '$lib/firebase/votes';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
 	import {
@@ -29,14 +28,15 @@
 	import FixtureStatsBox from './Fixture_Stats_Box.svelte';
 	import H2H_Loader from './Head_2_Head_Loader.svelte';
 
+	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 	import type {
 		Fixture_Head_2_Head,
 		REDIS_CACHE_SINGLE_h2h_translation
 	} from '$lib/models/fixtures/head-2-head/types';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
-	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
 	import { get } from '$lib/api/utils';
+	import { getOdds_2 } from '$lib/firebase/firebase.actions.js';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
@@ -150,7 +150,8 @@
 		// [ℹ] VOTE_DATA is shown until it is erased from "/odds"
 		const fixture_time = FIXTURE_INFO.data.fixture_time;
 		const fixture_id = FIXTURE_INFO?.data?.id;
-		const firebase_odds = await get_odds(
+		const firebase_odds = await getOdds_2
+    (
 			fixture_time,
 			fixture_id
 		);

@@ -12,9 +12,6 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import { db_real } from '$lib/firebase/init';
-	import {
-		get_odds
-	} from '$lib/firebase/scoreboard';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
@@ -23,6 +20,7 @@
 		type Unsubscribe
 	} from 'firebase/database';
 
+	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 	import type {
 		FIREBASE_livescores_now,
 		FIREBASE_odds
@@ -33,7 +31,6 @@
 		REDIS_CACHE_SINGLE_scoreboard_translation
 	} from '$lib/models/fixtures/scoreboard/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
 	import ScoreboardLoader from './Scoreboard_Loader.svelte';
 
@@ -43,13 +40,13 @@
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
 	import { get } from '$lib/api/utils';
+	import { getOdds_2, getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_LIVE_TIME_OPT,
 		FIXTURE_NOT_START_OPT
 	} from "@betarena/scores-lib/dist/api/sportmonks.js";
-	import { getTargetRealDbData } from '$lib/firebase/fixtures_odds/index.js';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -656,7 +653,8 @@
 			const fixture_time =
 				FIXTURE_SCOREBOARD?.fixture_time;
 			const fixture_id = FIXTURE_SCOREBOARD?.id;
-			const firebase_odds = await get_odds(
+			const firebase_odds = await getOdds_2
+      (
 				fixture_time,
 				fixture_id
 			);
@@ -730,7 +728,8 @@
 			const fixture_time =
 				FIXTURE_SCOREBOARD?.fixture_time;
 			const fixture_id = FIXTURE_SCOREBOARD?.id;
-			const firebase_odds = await get_odds(
+			const firebase_odds = await getOdds_2
+      (
 				fixture_time,
 				fixture_id
 			);

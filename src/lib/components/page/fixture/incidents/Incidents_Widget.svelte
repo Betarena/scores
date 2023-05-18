@@ -28,16 +28,16 @@
 		REDIS_CACHE_SINGLE_incidents_translation
 	} from '$lib/models/fixtures/incidents/types';
 
-	import IncidentsLoader from './Incidents_Loader.svelte';
 	import IncidentRow from './Incident_Row.svelte';
+	import IncidentsLoader from './Incidents_Loader.svelte';
 
+	import { getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_NOT_START_OPT
 	} from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	import { getTargetRealDbData } from '$lib/firebase/fixtures_odds/index.js';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES

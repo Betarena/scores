@@ -5,14 +5,14 @@
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
+		VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG,
 		dlog, dlogv2, logErrorGroup,
-		log_info_group, VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG
+		log_info_group
 	} from '$lib/utils/debug';
 	import { onDestroy, onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { db_real } from '$lib/firebase/init';
-	import { get_odds } from '$lib/firebase/votes';
 	import { initGrapQLClient } from '$lib/graphql/init';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
@@ -30,6 +30,7 @@
 		type Unsubscribe
 	} from 'firebase/database';
 
+	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { FIREBASE_odds } from '$lib/models/firebase';
 	import type {
 		BETARENA_HASURA_votes_mutation,
@@ -38,11 +39,11 @@
 		REDIS_CACHE_SINGLE_votes_translation
 	} from '$lib/models/fixtures/votes/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
 	import VoteLoader from './Vote_Loader.svelte';
 
 	import { get } from '$lib/api/utils';
+	import { getOdds_2 } from '$lib/firebase/firebase.actions.js';
 	import { FIXTURE_NO_VOTES_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
@@ -202,7 +203,8 @@
 		// [ℹ] VOTE_DATA is shown until it is erased from "/odds"
 		const fixture_time = HIST_FIXTURE_DATA?.time;
 		const fixture_id = FIXTURE_INFO?.data?.id;
-		const firebase_odds = await get_odds(
+		const firebase_odds = await getOdds_2
+    (
 			fixture_time,
 			fixture_id
 		);

@@ -28,9 +28,9 @@
 	import StatisticsLoader from './Statistics_Loader.svelte';
 	import StatisticsRow from './Statistics_Row.svelte';
 
+	import { getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	import { getTargetRealDbData } from '$lib/firebase/fixtures_odds/index.js';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES

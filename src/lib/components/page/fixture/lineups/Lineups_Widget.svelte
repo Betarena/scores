@@ -31,18 +31,18 @@
 
 	import type { FIREBASE_livescores_now } from '$lib/models/firebase';
 
-	import LineupsLoader from './Lineups_Loader.svelte';
 	import LineupPlayerRow from './Lineup_Player_Row.svelte';
 	import LineupPlayerVisual from './Lineup_Player_Visual.svelte';
 	import LineupVectorMobile from './Lineup_Vector_Mobile.svelte';
 	import LineupVectorMobileAway from './Lineup_Vector_Mobile_Away.svelte';
 	import LineupVectorTablet from './Lineup_Vector_Tablet.svelte';
+	import LineupsLoader from './Lineups_Loader.svelte';
 
+	import { getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import { initGrapQLClient } from '$lib/graphql/init';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
-	import { getTargetRealDbData } from '$lib/firebase/fixtures_odds/index.js';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES

@@ -2,7 +2,7 @@ import { sessionStore } from "$lib/store/session";
 import { dlog, FIREBASE_DEBUG_STYLE, FIREBASE_DEBUG_TAG, FIREBASE_DEBUG_TOGGLE } from "$lib/utils/debug";
 import type { FIRE_LNNS, FIREBASE_livescores_now } from "@betarena/scores-lib/types/firebase.js";
 import { onValue, ref, type Unsubscribe } from "firebase/database";
-import { getTargetRealDbData } from "./fixtures_odds";
+import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_real } from "./init";
 
 // #region LIVESCORES_NOW
@@ -136,6 +136,8 @@ export function listenRealTimeScoreboardAll
 (
 ): Unsubscribe 
 {
+  console.log('listenRealTimeScoreboardAll | START')
+  
   const dbRef = ref
   (
     db_real,
@@ -161,7 +163,9 @@ export function listenRealTimeScoreboardAll
     }
   );
 
-  return listenEventRef
+  console.log('listenRealTimeScoreboardAll | END')
+
+  return listenEventRef 
 }
 
 /**

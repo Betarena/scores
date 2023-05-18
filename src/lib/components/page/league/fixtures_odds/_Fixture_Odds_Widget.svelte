@@ -37,11 +37,6 @@
 
   //#region ➤ Firebase Imports
   import {
-  	getOdds,
-
-  	getTargetRealDbData
-  } from '$lib/firebase/fixtures_odds';
-  import {
   	db_real
   } from '$lib/firebase/init';
   import {
@@ -84,6 +79,7 @@
 
 	import type { B_FO_D } from '@betarena/scores-lib/types/fixture-odds';
 	import FixtureOddsWidgetContentLoader from './_Fixture_Odds_Widget_ContentLoader.svelte';
+	import { getOdds_1, getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -618,7 +614,8 @@
 			}
 			listenRealTimeLivescoresNowChange();
 			// [ℹ] odds init
-			const firebase_odds = await getOdds(
+			const firebase_odds = await getOdds_1
+      (
 				fixtures_arr_filter
 			);
 			if (firebase_odds.size != 0) {
@@ -1395,7 +1392,8 @@
 			][] = Object.entries(firebase_real_time);
 			checkForLiveFixtures(data);
 		}
-		const firebase_odds = await getOdds(
+		const firebase_odds = await getOdds_1
+    (
 			fixtures_arr_filter
 		);
 		if (firebase_odds.size != 0) {
