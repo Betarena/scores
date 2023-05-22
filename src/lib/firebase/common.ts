@@ -141,7 +141,7 @@ export function listenRealTimeScoreboardAll
   const dbRef = ref
   (
     realDb(),
-    'livescores_now_scoreboard_test'
+    'livescores_now_scoreboard'
   );
 
   const listenEventRef = onValue
@@ -183,7 +183,7 @@ export async function onceRealTimeLiveScoreboard
   
   const firebaseData = await getTargetRealDbData
   (
-    `livescores_now_scoreboard_test`
+    `livescores_now_scoreboard`
   );
 
   console.log('firebaseData', firebaseData)
