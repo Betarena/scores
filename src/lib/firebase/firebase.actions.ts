@@ -1,5 +1,5 @@
-import { db_real } from '$lib/firebase/init';
-import { child, get, ref } from 'firebase/database';
+import { realDb } from '$lib/firebase/init';
+import { child, get, onValue, ref } from 'firebase/database';
 
 import type { Tournament_Fixture_Odds } from '$lib/models/tournaments/fixtures_odds/types';
 import type { FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
@@ -45,7 +45,7 @@ export async function getOdds_1
         (
 					ref
           (
-            db_real
+            realDb()
           ),
 					`odds/${year_}/${new_month_}/${day_}/${fixture_id}`
 				)
@@ -108,7 +108,7 @@ export async function getOdds_2
     (
 			ref
       (
-        db_real
+        realDb()
       ),
 			`odds/${year_}/${new_month_}/${day_}/${fixture_id}`
 		)
@@ -145,37 +145,51 @@ export async function getOdds_2
 export async function getTargetRealDbData
 (
   path: string
-): Promise < unknown > 
+) 
 {
-  const data = await get
+  console.log('getTargetRealDbData | START')
+
+  const connectRef = ref
+  (
+    realDb()
+  );
+
+  const snapshot = await get
   (
 		child
     (
-      ref
-      (
-        db_real
-      ), 
+      connectRef, 
       path
     )
-	)
-  .then
+	);
+  
+  console.log('DATA OBTAINED!');
+  if (snapshot.exists()) return snapshot.val();
+  return null;
+}
+
+// TEMP
+export async function realDbHeartBeat
+(
+)
+{
+  const connectedRef = ref
   (
+    realDb(), 
+    ".info/connected"
+  );
+  onValue
+  (
+    connectedRef, 
     (
-      snapshot
+      snap
     ) => 
     {
-      if (snapshot.exists()) return snapshot.val();
-      return null;
-    }
-  )
-  .catch
-  (
-    (
-      error
-    ) => 
-    {
-      console.error(error);
+      if (snap.val() === true) {
+        console.log("connected");
+      } else {
+        console.log("not connected");
+      }
     }
   );
-  return data;
 }

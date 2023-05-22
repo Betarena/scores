@@ -3,7 +3,7 @@ import { dlog, FIREBASE_DEBUG_STYLE, FIREBASE_DEBUG_TAG, FIREBASE_DEBUG_TOGGLE }
 import type { FIRE_LNNS, FIREBASE_livescores_now } from "@betarena/scores-lib/types/firebase.js";
 import { onValue, ref, type Unsubscribe } from "firebase/database";
 import { getTargetRealDbData } from "./firebase.actions.js";
-import { db_real } from "./init";
+import { realDb } from "./init";
 
 // #region LIVESCORES_NOW
 
@@ -23,7 +23,7 @@ export function listenRealTimeLivescoresNowChange
 
   const dataRef = ref
   (
-    db_real,
+    realDb(),
     'livescores_now/'
   );
 
@@ -140,8 +140,8 @@ export function listenRealTimeScoreboardAll
   
   const dbRef = ref
   (
-    db_real,
-    'livescores_now_scoreboard'
+    realDb(),
+    'livescores_now_scoreboard_test'
   );
 
   const listenEventRef = onValue
@@ -179,19 +179,22 @@ export async function onceRealTimeLiveScoreboard
 (
 ): Promise < void > 
 {
+  console.log('onceRealTimeLiveScoreboard | START')
+  
   const firebaseData = await getTargetRealDbData
   (
-    `livescores_now_scoreboard`
+    `livescores_now_scoreboard_test`
   );
-  if (firebaseData != null) 
-  {
-    console.log('firebaseData', firebaseData)
-    const data: [
-      string,
-      FIRE_LNNS
-    ][] = Object.entries(firebaseData);
-    generateLiveScoreboardList(data);
-  }
+
+  console.log('firebaseData', firebaseData)
+  const data: [string, FIRE_LNNS][] = 
+    firebaseData != null
+      ? Object.entries(firebaseData)
+      : []
+  ;
+  generateLiveScoreboardList(data);
+
+  console.log('onceRealTimeLiveScoreboard | END')
 }
 
 /**
