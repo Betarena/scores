@@ -38,7 +38,6 @@
 	import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
 	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import { getApp } from 'firebase/app';
 	import type { Unsubscribe } from 'firebase/database';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -137,7 +136,7 @@
             console.clear()
             dlog('🔵 user is active', true)
             await firebaseAppInit()
-            console.log(getApp())
+            // console.log(getApp())
             await realDbHeartBeat()
             await onceRealTimeLiveScoreboard()
             let connectionRef = listenRealTimeScoreboardAll()
