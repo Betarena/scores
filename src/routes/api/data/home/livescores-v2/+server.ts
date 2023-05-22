@@ -56,7 +56,7 @@ export async function GET
       data =
         await get_target_string_cache_data
         (
-          RedisKeys.LS2_C_D_A_2
+          RedisKeys.LS2_C_D_A
         )
       ;
     }
@@ -152,7 +152,7 @@ export async function GET
       data =
         await get_target_hset_cache_data
         (
-          RedisKeys.LS2_C_S_A_2,
+          RedisKeys.LS2_C_S_A,
           lang
         )
       ;
