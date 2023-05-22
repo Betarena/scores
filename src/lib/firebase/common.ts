@@ -3,7 +3,7 @@ import { dlog, FIREBASE_DEBUG_STYLE, FIREBASE_DEBUG_TAG, FIREBASE_DEBUG_TOGGLE }
 import type { FIRE_LNNS, FIREBASE_livescores_now } from "@betarena/scores-lib/types/firebase.js";
 import { onValue, ref, type Unsubscribe } from "firebase/database";
 import { getTargetRealDbData } from "./firebase.actions.js";
-import { realDb } from "./init";
+import { db_real } from "./init";
 
 // #region LIVESCORES_NOW
 
@@ -23,7 +23,7 @@ export function listenRealTimeLivescoresNowChange
 
   const dataRef = ref
   (
-    realDb(),
+    db_real,
     'livescores_now/'
   );
 
@@ -140,7 +140,7 @@ export function listenRealTimeScoreboardAll
   
   const dbRef = ref
   (
-    realDb(),
+    db_real,
     'livescores_now_scoreboard'
   );
 

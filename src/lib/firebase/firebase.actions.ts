@@ -1,4 +1,4 @@
-import { realDb } from '$lib/firebase/init';
+import { db_real } from '$lib/firebase/init';
 import { child, get, onValue, ref } from 'firebase/database';
 
 import type { Tournament_Fixture_Odds } from '$lib/models/tournaments/fixtures_odds/types';
@@ -45,7 +45,7 @@ export async function getOdds_1
         (
 					ref
           (
-            realDb()
+            db_real
           ),
 					`odds/${year_}/${new_month_}/${day_}/${fixture_id}`
 				)
@@ -108,7 +108,7 @@ export async function getOdds_2
     (
 			ref
       (
-        realDb()
+        db_real
       ),
 			`odds/${year_}/${new_month_}/${day_}/${fixture_id}`
 		)
@@ -151,7 +151,7 @@ export async function getTargetRealDbData
 
   const connectRef = ref
   (
-    realDb()
+    db_real
   );
 
   const snapshot = await get
@@ -175,7 +175,7 @@ export async function realDbHeartBeat
 {
   const connectedRef = ref
   (
-    realDb(), 
+    db_real, 
     ".info/connected"
   );
   onValue

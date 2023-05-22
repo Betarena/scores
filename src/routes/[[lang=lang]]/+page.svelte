@@ -28,8 +28,6 @@
 	import SvelteSeo from 'svelte-seo';
 // TODO:
   // -> update to @scores-lib package types;
-	import { realDbHeartBeat } from '$lib/firebase/firebase.actions.js';
-	import { firebaseAppDelete, firebaseAppInit } from '$lib/firebase/init.js';
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
 	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
@@ -120,9 +118,14 @@
   (
     async() => 
     {
+    
+      // NOTE: causes a potential delay in data retrieval,
+      // as waits for onMount of Page & components;
       await onceRealTimeLiveScoreboard()
+
       let connectionRef = listenRealTimeScoreboardAll()
       FIREBASE_CONNECTIONS_SET.add(connectionRef)
+      sportbookIdentify()
 
       document.addEventListener
       (
@@ -131,21 +134,11 @@
         (
         ) 
         {
-          if (!document.hidden) 
-          {
-            console.clear()
+          if (!document.hidden) {
             dlog('🔵 user is active', true)
-            await firebaseAppInit()
-            // console.log(getApp())
-            await realDbHeartBeat()
             await onceRealTimeLiveScoreboard()
             let connectionRef = listenRealTimeScoreboardAll()
             FIREBASE_CONNECTIONS_SET.add(connectionRef)
-          }
-          if (document.hidden) 
-          {
-            dlog('❌ user is inactive', true)
-            await firebaseAppDelete()
           }
         }
       );
