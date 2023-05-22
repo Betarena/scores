@@ -106,12 +106,13 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < void > 
   {
+
+    console.log('injectLivescoreData')
     
     const liveFixturesMap = $sessionStore?.livescore_now_scoreboard
 
     const if_0 =
-      liveFixturesMap.size == 0 
-      || fixturesGroupByDateMap.size == 0
+      fixturesGroupByDateMap.size == 0
     ;
     if (if_0) 
     {
@@ -130,6 +131,10 @@ COMPONENT JS (w/ TS)
       toISOMod(yesterday)
     ];
     let fixtureOrphanId: number[] = []
+
+    console.log('fixtureDates', fixtureDates)
+    console.log('fixturesGroupByDateLiveLeagueMap', fixturesGroupByDateLiveLeagueMap)
+    console.log('liveFixturesMap', liveFixturesMap)
 
     // for each "target-date" expected to have,
     // LIVE fixtures, loop;
@@ -201,6 +206,8 @@ COMPONENT JS (w/ TS)
       );
     }
 
+    console.log('fixtureOrphanId', fixtureOrphanId)
+
     // handle ORPHAN (past-LIVE) fixtures;
     const if_2 =
       fixtureOrphanId.length != 0
@@ -244,8 +251,26 @@ COMPONENT JS (w/ TS)
             if (fixtureOrphanId.includes(fixture.id)) 
             {
               console.log('orphan', fixture?.id)
+              const newOrphanData = _fixtureMap.get(fixture?.id?.toString())
+              console.log('newOrphanData', newOrphanData)
+              
               return {
-                ..._fixtureMap.get(fixture?.id?.toString())
+                ...fixture,
+                minute: newOrphanData?.minute,
+                status: newOrphanData?.status,
+                teams: 
+                {
+                  away: {
+                    name: fixture?.teams?.away?.name,
+                    red_cards: newOrphanData?.teams?.away?.red_cards,
+                    score: newOrphanData?.teams?.away?.score,
+                  },
+                  home: {
+                    name: fixture?.teams?.home?.name,
+                    red_cards: newOrphanData?.teams?.home?.red_cards,
+                    score: newOrphanData?.teams?.home?.score,
+                  }
+                }
               };
             }
 
@@ -263,6 +288,11 @@ COMPONENT JS (w/ TS)
 
     // IMPORTANT
     fixturesGroupByDateMap = fixturesGroupByDateMap 
+
+    // IMPORTANT
+    updateLiveInfo()
+
+    // ???
     // WIDGET_DATA = WIDGET_DATA;
   }
 
@@ -367,6 +397,7 @@ COMPONENT JS (w/ TS)
       `${LV2_W_H_TAG[0]} (in) updateLiveInfo`, 
       LV2_W_H_TAG[1]
     );
+    console.log("(in) updateLiveInfo")
 
     numOfFixturesLive = 0
     fixturesGroupByDateLiveLeagueMap = new Map()
@@ -455,6 +486,8 @@ COMPONENT JS (w/ TS)
         leagueFixturesMap
       )
     }
+
+    fixturesGroupByDateLiveLeagueMap = fixturesGroupByDateLiveLeagueMap
 
     dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive ${numOfFixturesLive}`, LV2_W_H_TAG[1])
     dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds.length ${liveLeaguesIds.length}`, LV2_W_H_TAG[1])
@@ -623,10 +656,15 @@ COMPONENT JS (w/ TS)
 
   /**
    * @description listens to changes in
-   * selected date of fixture display;
+   * selected date (and/or country-bookmaker)
+   * of fixture display;
    * Proceeds to update data accordingly;
   */
-  $: if ($sessionStore.livescoreNowSelectedDate) 
+  $: if 
+  (
+    $sessionStore.livescoreNowSelectedDate
+    || $userBetarenaSettings?.country_bookmaker
+  ) 
   {
     isShowMore = false
     targetFixtureDateData()
@@ -640,22 +678,7 @@ COMPONENT JS (w/ TS)
   */
   $: if ($sessionStore?.livescore_now_scoreboard) 
   {
-    dlog($sessionStore?.livescore_now_scoreboard, LV2_W_H_TAG[1])
     injectLivescoreData()
-    updateLiveInfo()
-  }
-
-  /**
-   * @description listens to changes in 
-   * user country_bookmaker data session-store;
-   * Proceeds to update data accordingly;
-   * NOTE: copy of if ($sessionStore.livescoreNowSelectedDate) [...]
-  */
-  $: if ($userBetarenaSettings?.country_bookmaker) 
-  {
-    isShowMore = false
-    targetFixtureDateData()
-    updateLiveInfo()
   }
 
   // [🐞] [DEV-ONLY]
