@@ -14,6 +14,8 @@ const firebaseConfig: FirebaseOptions =
 	storageBucket: import.meta.env?.VITE_FIREBASE_DB_STORAGE_BUCKET as string
 };
 
+// #region version-1 (init)
+
 // DOC: https://stackoverflow.com/questions/37652328/how-to-check-if-a-firebase-app-is-already-initialized-on-android/41005100#41005100
 // NOTE: initialize the Firebase APP;
 export const app = 
@@ -21,8 +23,6 @@ export const app =
 		? initializeApp(firebaseConfig)
 		: getApp()
 ;
-
-// version-1
 
 // NOTE: Initialize Real-Time-DB and get a reference to the service;
 export const db_real = getDatabase(app);
@@ -33,7 +33,9 @@ export const storage = getStorage(app);
 // NOTE: Initialize Cloud Firestore and get a reference to the service
 export const db_firestore = getFirestore(app);
 
-// version-2
+// #endregion version-1 (init)
+
+// #region version-2 (init)
 
 export async function firebaseAppDelete
 (
@@ -71,3 +73,5 @@ export function realDb
     getApp()
   );
 }
+
+// #endregion version-2 (init)
