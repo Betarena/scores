@@ -69,7 +69,7 @@ export async function GET
       )
       loadType = 'HASURA'
 		}
-    console.log(`📌 loaded [HLSV2] with: ${loadType}`)
+    console.log(`📌 loaded [HLSV2] [D] with: ${loadType}`)
     return json(data);
   }
 
@@ -90,7 +90,7 @@ export async function GET
     (
       fixtureIds
     );
-    console.log(`📌 loaded [HLSV2] with: HASURA`)
+    console.log(`📌 loaded [HLSV2] [DT] with: HASURA`)
     return json(res);
   }
 
@@ -128,7 +128,7 @@ export async function GET
       )
       loadType = 'HASURA'
 		}
-    console.log(`📌 loaded [HLSV2] with: ${loadType}`)
+    console.log(`📌 loaded [HLSV2] [T] with: ${loadType}`)
     return json(data);
 	}
 
@@ -166,7 +166,7 @@ export async function GET
       // )
       loadType = 'HASURA'
 		}
-    console.log(`📌 loaded [HLSV2] with: ${loadType}`)
+    console.log(`📌 loaded [HLSV2] [S] with: ${loadType}`)
     return json(data);
   }
 
