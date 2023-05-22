@@ -6,7 +6,14 @@ declare global {
 		// interface Locals {}
 		// interface PageData {}
 		// interface Platform {}
-	}
+
+    interface Locals 
+    {
+			user: any;
+      betarenaUser: any
+		}
+
+  }
 }
 
 export { };
