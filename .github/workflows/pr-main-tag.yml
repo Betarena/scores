@@ -1,0 +1,279 @@
+# -----------------------
+# NOTE:
+# This Github Action is used to:
+# - Increase (Bump) NPM project version (0.0.1 -> 0.0.2)
+# - Reset origin/dev branch to be in-line with main after PR
+# - Create a Release of new TAG
+# TODO:
+# - https://stackoverflow.com/questions/39206082/npm-version-to-add-alpha-postfix
+# -----------------------
+
+name: NPM - Bump, publish, reset, release
+
+env:
+  # MINOR_ARRAY: '["Minor", "MINOR"]' # TEST with arrays
+  PATCH_WORDING: 'PATCH,patch,fix,hotfix,add'
+  MINOR_WORDING: 'MINOR,minor,feat'
+  MAJOR_WORDING: 'MAJOR,major,BREAKING'
+
+'on':
+  pull_request:
+    types:
+      - closed
+    branches:
+      - main
+      
+jobs:
+
+  # npm-version-bump-test:
+    # if: github.event.pull_request.merged == true
+    # runs-on: ubuntu-22.04
+    # steps:
+
+    # NOTE: anothrNick/github-tag-action
+    # NOTE: -> creates and bumps TAG version of the REPO
+    # NOTE: -> in PR, the SQUASH MERGE needs the #patch/#major/#minor to be in the "commit-merge" message
+    # NOTE: -> ✅ works!, 
+    # NOTE: -> ❌ but does not update the `package.json` according to <version-type>
+    # region #1
+    # - uses: actions/checkout@v3
+    #   with:
+    #     ref: ${{ github.sha }}
+    #     fetch-depth: '0'
+    # - name: Bump version and push tag
+    #   # Don't use @master unless you're happy to test the latest version
+    #   uses: anothrNick/github-tag-action@1.61.0
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     # (optional) - Tag version with v character.
+    #     WITH_V: true
+    #     # (optional) - Set initial version before bump. Default 0.0.0.
+    #     INITIAL_VERSION: 0.7.1
+    # endregion #1
+      
+    # NOTE: phips28/gh-action-bump-version
+    # NOTE: [DESC] This Action bumps the version in package.json and pushes it back to the repo. 
+    # NOTE: [DESC] It is meant to be used on every successful merge to master but you'll need to configure that workflow yourself.
+    # NOTE: -> uses version: that of the package.json for bump/update
+    # NOTE: -> ✅ & updates the package.json itself!;
+    # NOTE: -> ❌ but does not work on PR (closed) - cannot identify commit / messages from PR closed
+    # NOTE: -> ✅ works!
+    # region #2
+    # - name: 'Checkout source code'
+    #   uses: 'actions/checkout@v3'
+    #   with:
+    #     # ref: ${{ github.ref }}
+    #     # (add) ❌ not-working, no commit-messages detected
+    #     # fetch-depth: 0
+    #     # ref: ${{ github.sha }}
+    #     fetch-depth: 2
+    # - run: git checkout HEAD^
+    # - run: echo "GITHUB_EVENT_PATH - $GITHUB_EVENT_PATH"
+    # - run: cat $GITHUB_EVENT_PATH
+    # - name: 'cat package.json'
+    #   run: cat ./package.json
+    # - name: 'Automated Version Bump'
+    #   id: version-bump
+    #   uses: 'phips28/gh-action-bump-version@v9.1.0'
+    #   with:
+    #     tag-prefix: 'v'
+    #     target-branch: 'dev'
+    #     commit-message: 'CI: bumps version to {{version}} [skip ci] #minor'
+    #     major-wording:  'MAJOR,major'
+    #     minor-wording:  'MINOR,#minor,add,feat'
+    #     patch-wording:  'PATCH,patch,fixes,fix,chore,doc'
+    #   env:
+    #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    #     GITHUB_EVENT_PATH: $GITHUB_EVENT_PATH
+    # - name: 'cat package.json'
+    #   run: cat ./package.json
+    # - name: 'Output Step'
+    #   env:
+    #     NEW_TAG: ${{ steps.version-bump.outputs.newTag }}
+    #   run: echo "new tag $NEW_TAG"
+    # endregion #2
+
+    # NOTE: jpb06/bump-package
+    # NOTE: -> tested with @v3 ❌ (not working)
+    # region #3
+    # - name: Check out repository code
+    #   uses: actions/checkout@v3
+    #   with:
+    #     # Disabling shallow clone is recommended for improving relevancy of reporting
+    #     fetch-depth: 0
+    # - name: Bump package version
+    #   id: bumping-version
+    #   uses: jpb06/bump-package@latest
+    #   with:
+    #     minor-keywords: feat,minor
+    #     patch-keywords: fix,chore,patch
+    #     should-default-to-patch: true
+    # endregion #3
+
+    # NOTE: maks-stupak/gh-action-bump-version
+    # NOTE: -> package.json version update;
+    # NOTE: -> tested with checkout@v2 & checkout@v3 ❌ (not working)
+    # region #4
+    # - name: 'Checkout source code'
+    #   uses: 'actions/checkout@v2'
+    # - name: Update version in package.json
+    #   uses: maks-stupak/gh-action-bump-version@v7.1.5
+    # endregion #4
+    
+    # NOTE: ALTERNATIVE (#4)
+    # NOTE: -> exact copy of SAMPLE-EXAMPLE worklfow provided;
+    # NOTE: -> https://github.com/maks-stupak/gh-action-bump-version/blob/v7.1.5/.github/workflows/push.yml
+    # NOTE: -> ✅ works!, but does not update package.json of dev/main (target PR) only origin branch
+    # NOTE: -> ❌ limited in variables (custom-fork) - not what is needed;
+
+  # -----------------------
+  # NOTE:
+  # -> test for correct project compile
+  # -> checking for possible deployment build errors
+  # -----------------------
+  npm-build-check:
+    name: NPM Build Check
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          ref: dev
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: 'build check'
+        run: | 
+          npm ci
+          npm install
+          npm run build
+
+  # -----------------------
+  # NOTE:
+  # -> (on valid) bumps npm version
+  # -> of (this) repository to 
+  # -> a specified target;
+  # -----------------------
+  npm-version-bump:
+    name: NPM Version Bump
+    needs: npm-build-check
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-22.04
+    # [ℹ] map a step output to a job output
+    # SEE: https://docs.github.com/en/actions/using-jobs/defining-outputs-for-jobs
+    outputs:
+      output1: ${{ steps.step1.outputs.bump_version_bool }}
+      output2: ${{ steps.set-version.outputs.release_tag }}
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v3
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      - name: node config
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16 
+      - name: git config
+        run: |
+          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
+      - name: PATCH - check
+        # if: contains(github.event.pull_request.labels.*.name, 'patch')
+        if: '${{ contains(env.PATCH_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Patch Bump Detected"
+          npm version patch
+      - name: MINOR - check
+        # if: contains(github.event.pull_request.labels.*.name, 'minor')
+        if: '${{ contains(env.MINOR_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Minor Bump Detected"
+          npm version minor
+      - name: MAJOR - check
+        # if: contains(github.event.pull_request.labels.*.name, 'major')
+        if: '${{ contains(env.MAJOR_WORDING, github.event.pull_request.title) }}'
+        run: |
+          echo "Major Bump Detected"
+          npm version major
+      - id: step1
+        name: BUMP - check
+        # if: contains(github.event.pull_request.labels.*.name, 'major')
+        if: '${{ 
+            contains(env.PATCH_WORDING, github.event.pull_request.title) 
+            || contains(env.MINOR_WORDING, github.event.pull_request.title) 
+            || contains(env.MAJOR_WORDING, github.event.pull_request.title) 
+          }}'
+        # see: https://michaelcurrin.github.io/dev-cheatsheets/cheatsheets/ci-cd/github-actions/persist.html
+        # see: https://stackoverflow.com/questions/58177786/get-the-current-pushed-tag-in-github-actions
+        run: |
+          echo "bump_version_bool=true" >> "$GITHUB_OUTPUT"
+      - name: git push version bump
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: git push origin main --follow-tags --force
+      - id: set-version
+        name: output/set version change
+        run: | 
+          npm pkg get version
+          echo "release_tag=$(npm pkg get version --workspaces=false | tr -d \") ">> $GITHUB_OUTPUT
+      - name: check output/set version
+        env:
+          RELEASE_VERSION: ${{ steps.set-version.outputs.release_tag }}
+        run: |
+          echo $RELEASE_VERSION
+          echo ${{ steps.set-version.outputs.release_tag }}
+
+  # -----------------------
+  # NOTE:
+  # -> "hard" reset of origin/main repository
+  # -> after successfull PR to (->) main;
+  # -----------------------
+  dev-branch-reset:
+    name: Git Reset Dev
+    needs: npm-version-bump
+    runs-on: ubuntu-22.04
+    steps:
+      - name: checkout source code
+        uses: actions/checkout@v3
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+      - name: node config
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16 
+      - name: git config
+        run: |
+          git config --global user.email "${{ secrets.GH_ORG_EMAIL }}"
+          git config --global user.name "${{ secrets.GH_ORG_NAME }}"
+      - name: git reset origin/dev branch
+        env:
+          GITHUB_TOKEN: '${{ secrets.GITHUB_TOKEN }}'
+        run: |
+          # IMPORTANT
+          git fetch
+          git checkout main
+          git pull origin main
+          git checkout dev
+          git reset --hard main
+          git push --force origin dev
+
+  # -----------------------
+  # NOTE:
+  # -> creates a release for (this) repository
+  # -> after successfull bump;
+  # -> dependent on "npm-version-bump"
+  # -----------------------
+  create-release:
+    name: Git Create Release
+    needs: npm-version-bump
+    if: needs.npm-version-bump.outputs.output1 == 'true'
+    # (alternative) [#1]
+    env:
+      RELEASE_TAG: ${{ needs.npm-version-bump.outputs.output2 }}
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: "marvinpinto/action-automatic-releases@latest"
+        # see: https://github.com/marketplace/actions/automatic-releases
+        with:
+          automatic_release_tag: "v${{ env.RELEASE_TAG }}"
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          prerelease: false

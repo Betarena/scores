@@ -30,10 +30,9 @@ jobs:
           ref: dev
       - uses: actions/setup-node@v3
         with:
-          node-version: 16.17.0
-      - run: npm install -g npm@8.19.1
+          node-version: 16
       - name: 'Build npm'
-        run: |
+        run: | 
           npm ci
           npm install
           npm run build

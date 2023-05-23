@@ -1,0 +1,16 @@
+name: 'Dev - (PR) Open'
+on:
+  pull_request:
+    types:
+      - opened
+    branches:
+      - main
+jobs:
+  add_comment:
+    name: 'Add (PR) Comment'
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: mshick/add-pr-comment@v1
+        with:
+          message: Please set the **Pull-Request** `title` to either that of either `major`, `minor`, or `patch`.
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
