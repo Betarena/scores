@@ -63,8 +63,8 @@ export async function load
 		`/api/cache/home/league_list?lang=${urlLang}`,
 		`/api/cache/home/leagues_table?lang=${urlLang}`,
 		`/api/cache/home/seo_block?lang=${urlLang}`,
-		`/api/cache/home/livescores-v2?lang=${urlLang}`,
-		`/api/cache/home/livescores-v2?seo=true&lang=${urlLang}`,
+		`/api/data/home/livescores-v2?lang=${urlLang}`,
+		`/api/data/home/livescores-v2?seo=true&lang=${urlLang}`,
 	];
 
   const data = await promiseUrlsPreload

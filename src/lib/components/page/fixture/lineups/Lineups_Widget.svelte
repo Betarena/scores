@@ -12,7 +12,6 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import { db_real } from '$lib/firebase/init';
-	import { get_livescores_now } from '$lib/firebase/scoreboard';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
 		onValue,
@@ -32,13 +31,14 @@
 
 	import type { FIREBASE_livescores_now } from '$lib/models/firebase';
 
-	import LineupsLoader from './Lineups_Loader.svelte';
 	import LineupPlayerRow from './Lineup_Player_Row.svelte';
 	import LineupPlayerVisual from './Lineup_Player_Visual.svelte';
 	import LineupVectorMobile from './Lineup_Vector_Mobile.svelte';
 	import LineupVectorMobileAway from './Lineup_Vector_Mobile_Away.svelte';
 	import LineupVectorTablet from './Lineup_Vector_Tablet.svelte';
+	import LineupsLoader from './Lineups_Loader.svelte';
 
+	import { getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import { initGrapQLClient } from '$lib/graphql/init';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import no_visual from './assets/no_visual.svg';
@@ -721,8 +721,11 @@
 
 	// [ℹ] one-off real-time "read" init.
 	onMount(async () => {
-		const firebase_real_time =
-			await get_livescores_now();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+
 		if (firebase_real_time != null) {
 			const data: [
 				string,

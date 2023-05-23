@@ -10,11 +10,11 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils';
 	import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
+	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 
 	import type { B_LS2_D, B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
 	import LivescoresLoader from './Livescores_Loader.svelte';
 	import LivescoresMain from './Livescores_Main.svelte';
 
@@ -27,13 +27,13 @@ COMPONENT JS (w/ TS)
   // ~~~~~~~~~~~~~~~~~~~~~
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
-  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
-
   let WIDGET_S_DATA: B_LS2_S = $page.data?.LIVESCORES_V2_SEO
-  $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
 
   let WIDGET_DATA: B_LS2_D
-  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+  let NO_WIDGET_DATA: boolean = true
+
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
+  $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
 
   //#endregion ➤ [VARIABLES]
 
@@ -43,20 +43,28 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  async function widgetInit(
-    // empty
-  ): Promise < B_LS2_D > {
-    // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/cache/home/livescores-v2`) as B_LS2_D;
-    const VALID_RESPONSE =
+  async function widgetInit
+  (
+  ): Promise < B_LS2_D > 
+  {
+    WIDGET_DATA = await get
+    (
+      `/api/data/home/livescores-v2`
+    ) as B_LS2_D;
+
+    const if_0 =
       WIDGET_DATA == undefined
     ;
-		// [ℹ] validation [#1]
-		if (VALID_RESPONSE) {
-      dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
+		if (if_0) 
+    {
+      dlog
+      (
+        `${LV2_W_H_TAG[0]} ❌ no data available!`
+      );
 			NO_WIDGET_DATA = true;
-			return;
+      throw new Error();
 		}
+
     NO_WIDGET_DATA = false;
     return WIDGET_DATA
   }
@@ -73,13 +81,11 @@ COMPONENT JS (w/ TS)
 	// (SSR) LANG SVELTE | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	$: server_side_language = platfrom_lang_ssr(
+	$: server_side_language = platfrom_lang_ssr
+  (
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
-	);
-	dlog(
-		`server_side_language: ${server_side_language}`
 	);
 
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
@@ -151,6 +157,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
 {:catch error}
   <!-- 
   promise was rejected 
+  TODO:
   -->
 {/await}
 

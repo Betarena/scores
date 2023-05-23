@@ -12,7 +12,6 @@
 	import { fade } from 'svelte/transition';
 
 	import { db_real } from '$lib/firebase/init';
-	import { get_odds } from '$lib/firebase/votes';
 	import { initGrapQLClient } from '$lib/graphql/init';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief';
@@ -23,6 +22,7 @@
 	} from 'firebase/database';
 
   
+	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { FIREBASE_odds } from '$lib/models/firebase';
 	import type {
 		Fixture_Probabilities,
@@ -30,11 +30,11 @@
 	} from '$lib/models/fixtures/probabilities/types';
 	import type { BETARENA_HASURA_votes_query } from '$lib/models/fixtures/votes/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
 	import ProbabilityLoader from './Probability_Loader.svelte';
 
 	import { get } from '$lib/api/utils';
+	import { getOdds_2 } from '$lib/firebase/firebase.actions.js';
 	import { B_C_PROB_F_Q_D0 } from '@betarena/scores-lib/dist/graphql/query.probabilities';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
@@ -165,7 +165,8 @@
 		// [ℹ] VOTE_DATA is shown until it is erased from "/odds"
 		const fixture_time = HIST_FIXTURE_DATA?.time;
 		const fixture_id = FIXTURE_INFO?.data?.id;
-		const firebase_odds = await get_odds(
+		const firebase_odds = await getOdds_2
+    (
 			fixture_time,
 			fixture_id
 		);
