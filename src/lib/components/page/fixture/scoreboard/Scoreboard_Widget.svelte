@@ -12,10 +12,6 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import { db_real } from '$lib/firebase/init';
-	import {
-		get_livescores_now,
-		get_odds
-	} from '$lib/firebase/scoreboard';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
@@ -24,6 +20,7 @@
 		type Unsubscribe
 	} from 'firebase/database';
 
+	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 	import type {
 		FIREBASE_livescores_now,
 		FIREBASE_odds
@@ -34,7 +31,6 @@
 		REDIS_CACHE_SINGLE_scoreboard_translation
 	} from '$lib/models/fixtures/scoreboard/types';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import type { REDIS_CACHE_SINGLE_fixtures_page_info_response } from '$lib/models/_main_/pages_and_seo/types';
 
 	import ScoreboardLoader from './Scoreboard_Loader.svelte';
 
@@ -44,6 +40,7 @@
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
 	import { get } from '$lib/api/utils';
+	import { getOdds_2, getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
 	import {
 		FIXTURE_FULL_TIME_OPT,
@@ -634,8 +631,11 @@
 
 	// [ℹ] one-off real-time "read" init.
 	onMount(async () => {
-		const firebase_real_time =
-			await get_livescores_now();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+
 		if (firebase_real_time != null) {
 			const data: [
 				string,
@@ -653,7 +653,8 @@
 			const fixture_time =
 				FIXTURE_SCOREBOARD?.fixture_time;
 			const fixture_id = FIXTURE_SCOREBOARD?.id;
-			const firebase_odds = await get_odds(
+			const firebase_odds = await getOdds_2
+      (
 				fixture_time,
 				fixture_id
 			);
@@ -705,8 +706,11 @@
 	});
 
 	async function kickstart_one_off_data() {
-		const firebase_real_time =
-			await get_livescores_now();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+    
 		if (firebase_real_time != null) {
 			const data: [
 				string,
@@ -724,7 +728,8 @@
 			const fixture_time =
 				FIXTURE_SCOREBOARD?.fixture_time;
 			const fixture_id = FIXTURE_SCOREBOARD?.id;
-			const firebase_odds = await get_odds(
+			const firebase_odds = await getOdds_2
+      (
 				fixture_time,
 				fixture_id
 			);

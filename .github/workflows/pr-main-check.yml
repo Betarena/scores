@@ -31,9 +31,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: 16.17.0
-      - run: npm install -g npm@8.19.1
-      - name: 'Build npm'
+      - name: '🏗️ Set npm version'
         run: |
+          npm install -g npm@8.19.1
+      - name: '🟩 Build npm'
+        run: | 
           npm ci
           npm install
           npm run build

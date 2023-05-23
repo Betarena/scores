@@ -37,10 +37,6 @@
 
   //#region ➤ Firebase Imports
   import {
-  	getLivescoresNow,
-  	getOdds
-  } from '$lib/firebase/fixtures_odds';
-  import {
   	db_real
   } from '$lib/firebase/init';
   import {
@@ -83,6 +79,7 @@
 
 	import type { B_FO_D } from '@betarena/scores-lib/types/fixture-odds';
 	import FixtureOddsWidgetContentLoader from './_Fixture_Odds_Widget_ContentLoader.svelte';
+	import { getOdds_1, getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -602,9 +599,12 @@
 		// [ℹ] break-down-values
 		// [ℹ] kickstart Fireabse calls
 		if (loaded) {
-			// [ℹ] livescores
-			const firebase_real_time =
-				await getLivescoresNow();
+      
+			const firebase_real_time = await getTargetRealDbData
+      (
+        `livescores_now`
+      );
+
 			if (firebase_real_time != null) {
 				const data: [
 					string,
@@ -614,7 +614,8 @@
 			}
 			listenRealTimeLivescoresNowChange();
 			// [ℹ] odds init
-			const firebase_odds = await getOdds(
+			const firebase_odds = await getOdds_1
+      (
 				fixtures_arr_filter
 			);
 			if (firebase_odds.size != 0) {
@@ -770,8 +771,11 @@
 
 		// [ℹ] break-down-values
 		if (loaded) {
-			const firebase_real_time =
-				await getLivescoresNow();
+			const firebase_real_time = await getTargetRealDbData
+      (
+        `livescores_now`
+      );
+
 			if (firebase_real_time != null) {
 				const data: [
 					string,
@@ -1376,8 +1380,11 @@
 
 	// [ℹ] one-off event read "livescores_now"
 	onMount(async () => {
-		const firebase_real_time =
-			await getLivescoresNow();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+
 		if (firebase_real_time != null) {
 			const data: [
 				string,
@@ -1385,7 +1392,8 @@
 			][] = Object.entries(firebase_real_time);
 			checkForLiveFixtures(data);
 		}
-		const firebase_odds = await getOdds(
+		const firebase_odds = await getOdds_1
+    (
 			fixtures_arr_filter
 		);
 		if (firebase_odds.size != 0) {

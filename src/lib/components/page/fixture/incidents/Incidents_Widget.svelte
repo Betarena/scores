@@ -12,7 +12,6 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import { db_real } from '$lib/firebase/init';
-	import { get_livescores_now } from '$lib/firebase/scoreboard';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import {
 		onValue,
@@ -29,9 +28,10 @@
 		REDIS_CACHE_SINGLE_incidents_translation
 	} from '$lib/models/fixtures/incidents/types';
 
-	import IncidentsLoader from './Incidents_Loader.svelte';
 	import IncidentRow from './Incident_Row.svelte';
+	import IncidentsLoader from './Incidents_Loader.svelte';
 
+	import { getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import {
 		FIXTURE_FULL_TIME_OPT,
 		FIXTURE_NOT_START_OPT
@@ -284,8 +284,11 @@
 
 	// [ℹ] one-off real-time "read" init.
 	onMount(async () => {
-		const firebase_real_time =
-			await get_livescores_now();
+		const firebase_real_time = await getTargetRealDbData
+    (
+      `livescores_now`
+    );
+
 		if (firebase_real_time != null) {
 			const data: [
 				string,

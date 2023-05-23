@@ -23,11 +23,10 @@
 	import FeaturedMatchWidget from '$lib/components/page/home/featured_match/_FeaturedMatch_Widget.svelte';
 	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
 	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
+	import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
-  import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
-
-  // TODO:
+// TODO:
   // -> update to @scores-lib package types;
 	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
 	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
@@ -122,7 +121,7 @@
     
       // NOTE: causes a potential delay in data retrieval,
       // as waits for onMount of Page & components;
-      // await onceRealTimeLiveScoreboard()
+      await onceRealTimeLiveScoreboard()
 
       let connectionRef = listenRealTimeScoreboardAll()
       FIREBASE_CONNECTIONS_SET.add(connectionRef)
