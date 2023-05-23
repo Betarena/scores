@@ -98,22 +98,17 @@ export async function load
 
   //#region [1] IMPORTANT PRE-LOAD DATA
 
-  const urls: string[] = [
-    // NOTE:WARNING:TODO: remove for a cache solution
+  // NOTE: WARNING: TODO: remove for a cache solution
+  const urls: string[] = 
+  [
     `/api/data/main/seo-pages?lang=${_lang}&page=player`,
     `/api/data/main/seo-pages?country_id=${country_id}`,
     `/api/data/main/seo-pages?months=true&lang=${_lang}`,
-    // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/profile?lang=${_lang}`,
-    // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/fixtures?lang=${_lang}`,
-    // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/fixtures?player_id=${player_id}&limit=10&offset=0`,
-    // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/statistics?lang=${_lang}`,
-    // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/team?lang=${_lang}`,
-    // NOTE:WARNING:TODO: remove for a cache solution
     `/api/data/players/team?player_id=${player_id}`
   ]
 
