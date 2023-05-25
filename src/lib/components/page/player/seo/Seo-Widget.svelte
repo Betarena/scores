@@ -17,6 +17,7 @@ COMPONENT JS (w/ TS)
 	import SeoLoader from './Seo-Loader.svelte';
 	import SeoMain from './Seo-Main.svelte';
   
+	import { browser } from '$app/environment';
 	import type { B_PSEO_D, B_PSEO_T } from '@betarena/scores-lib/types/player-seo.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
@@ -82,7 +83,7 @@ COMPONENT JS (w/ TS)
 		$page?.params?.lang
 	);
 
-  $: if (serverSideLang)
+  $: if (browser && serverSideLang)
   {
     widgetInit()
   }
