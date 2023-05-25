@@ -36,7 +36,8 @@ COMPONENT JS (w/ TS)
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_S_DATA = $page.data?.B_PTEAM_D
+  $: WIDGET_S_DATA = $page.data?.B_PSEO_D
+  $: WIDGET_T_DATA = $page.data?.B_PSEO_T
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'About The Player' : 'About The Player'
 
   //#endregion ➤ [VARIABLES]
@@ -145,9 +146,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <h2>
     {WIDGET_TITLE}
   </h2>
-  <div>
-    {WIDGET_S_DATA?.seo?.['en']}
-  </div>
+  {@html WIDGET_S_DATA?.seo?.[serverSideLang]}
 </SeoBox>
 
 <!-- [🐞] -->
