@@ -51,8 +51,6 @@ git-post-main-pr:
 	git checkout dev
 	echo 'Resetting to MAIN'
 	git reset --hard main
-	echo 'Resetiing origin/dev'
-	git push --force origin dev
 	
 git-del-branches-w-origin:
 	echo 'Deleting branches not present in origin + /dev'
