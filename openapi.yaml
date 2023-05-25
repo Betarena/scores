@@ -1,0 +1,59 @@
+openapi: 3.0.0
+
+info:
+  title: Betarena | Scores Platform Endpoints
+  description: 
+    "These endpoints are avaialble on the <b>Betarena | Scores Platform</b> for consumption
+    as an internal API endpoints, for a means to communicate with linked data endpoints
+    with this application."
+  version: 0.1.0
+
+servers:
+  # LOCAL (ENV)
+  - url: http://localhost:3050
+    description: Server [LOCAL] environment
+  # DEV (ENV)
+  - url: https://betarena-scores-platform.herokuapp.com/
+    description: Server [DEV] environment
+  # PROD (ENV)
+  - url: https://scores.betarena.com/
+    description: Server [PROD] environment
+
+paths:
+  
+  # SEO (PP) Widget
+  /api/data/players/seo:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target player (main) SEO widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?player_id=[...]
+              player_id:
+                type: number
+                example: 580
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              - required: [player_id, lang]
+              - required: [lang]
+      summary:
+        Returns a targets' player main SEO widget (data).
+      description: 
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - Player Page
+      responses:
+        200:
+          description: 
+            Target player SEO widget data
