@@ -145,7 +145,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <h2>
     {WIDGET_TITLE}
   </h2>
-  {@html WIDGET_S_DATA?.seo?.[serverSideLang]}
+  {WIDGET_S_DATA?.seo?.[serverSideLang]}
 </SeoBox>
 
 <!-- [🐞] -->
