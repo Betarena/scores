@@ -25,6 +25,7 @@ COMPONENT JS (w/ TS)
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixturesWidget from './fixtures/Fixtures-Widget.svelte';
 	import ProfileWidget from './profile/Profile-Widget.svelte';
+	import SeoWidget from './seo/Seo-Widget.svelte';
 	import StatisticsWidget from './statistics/Statistics-Widget.svelte';
 	import TeamWidget from './team/Team-Widget.svelte';
 
@@ -286,6 +287,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <TeamWidget />
         <StatisticsWidget />
         <FixturesWidget />
+        <SeoWidget />
       </div>
     </div>
 
@@ -301,6 +303,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         class="grid-display-column"
       >
         <FixturesWidget />
+        <SeoWidget />
       </div>
       <!-- 
       Column Num.2 
