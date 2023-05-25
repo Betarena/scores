@@ -268,15 +268,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   :global(
-    #pseo-main.dark-background-1	h1, 
+    #pseo-main.dark-background-1 h1, 
     #pseo-main.dark-background-1 h2, 
     #pseo-main.dark-background-1 h3, 
-    #pseo-main.dark-background-1	h4
+    #pseo-main.dark-background-1 h4
   ) {
 		color: #ffffff !important;
 	}
-	:global(#pseo-main.dark-background-1 p) {
+
+	:global(
+    #pseo-main.dark-background-1 p,
+    #pseo-main.dark-background-1 section div.faq-body
+  ) {
 		color: #a8a8a8 !important;
+	}
+
+	:global(#pseo-main.dark-background-1 section > div) 
+  {
+		border: 1px solid #616161 !important;
 	}
 
 </style>
