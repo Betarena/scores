@@ -50,6 +50,7 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < B_PSEO_D > 
   {
+    
     WIDGET_DATA = await get
     (
       `/api/data/players/seo/?player_id=${PAGE_DATA?.data?.player_id}&lang=${serverSideLang}`
@@ -57,6 +58,7 @@ COMPONENT JS (w/ TS)
 
     const if_0 =
       WIDGET_DATA == undefined
+      || WIDGET_DATA?.seo?.[serverSideLang] == undefined
     ;
 		if (if_0) 
     {
@@ -79,6 +81,11 @@ COMPONENT JS (w/ TS)
 		$page?.error,
 		$page?.params?.lang
 	);
+
+  $: if (serverSideLang)
+  {
+    widgetInit()
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -155,9 +162,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise was fulfilled 
   -->
-  <SeoMain 
-    {WIDGET_DATA}
-  />
+  {#if !NO_WIDGET_DATA}
+    <SeoMain 
+      {WIDGET_DATA}
+    />
+  {/if}
 {:catch error}
   <!-- 
   promise was rejected 
