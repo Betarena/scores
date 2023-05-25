@@ -131,7 +131,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <WidgetTitle
     {WIDGET_TITLE}
-    OVERRIDE_COLOR={!tabletExclusive && largeDesktop ? false : true}
   />
   
   <div
@@ -158,6 +157,87 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     overflow: unset;
     padding: 20px;
   }
+
+  /* widget injected HTML style override */
+	:global(#pseo-main a) 
+  {
+		color: #f5620f !important;
+		width: fit-content !important;
+		margin: 0;
+		display: initial;
+	}
+	:global(#pseo-main section) 
+  {
+		padding: 0 !important;
+		padding-bottom: 0 !important;
+		min-height: fit-content;
+	}
+	:global(#pseo-main section div:first-child) 
+  {
+		border: 1px solid #e6e6e6;
+		border-radius: 12px 12px 0 0 !important;
+	}
+	:global(#pseo-main section > div) 
+  {
+		border: 1px solid #e6e6e6;
+		padding: 20px;
+	}
+	:global(#pseo-main section > div > h4) 
+  {
+		margin: 0 !important;
+		margin-bottom: 8px;
+	}
+	:global(#pseo-main section div.faq-body) 
+  {
+		border: none !important;
+	}
+	:global(#pseo-main section hr) 
+  {
+		display: none;
+	}
+	:global(#pseo-main section div:last-child) 
+  {
+		border: 1px solid #e6e6e6;
+		border-radius: 0 0 12px 12px !important;
+	}
+	:global(#pseo-main h3) 
+  {
+		font-size: 20px;
+	}
+	:global(#pseo-main h4, #pseo-main p) 
+  {
+		font-size: 16px;
+	}
+	:global(#pseo-main section div.faq-body) 
+  {
+		font-size: 14px;
+	}
+	:global(
+    #pseo-main h1, 
+    #pseo-main h2, 
+    #pseo-main h3,
+    #pseo-main h4) 
+  {
+		color: #292929 !important;
+	}
+	:global(#pseo-main p, 
+    #pseo-main section div.faq-body
+  ) {
+		color: #8c8c8c !important;
+	}
+	:global(#pseo-main h3) 
+  {
+		margin: 20px 0 12px 0;
+	}
+	:global(#pseo-main section > div) 
+  {
+		border: 1px solid #e6e6e6 !important;
+	}
+
+	:global(#pseo-main p) 
+  {
+		margin-bottom: 14px;
+	}
 
   /*
   =============
