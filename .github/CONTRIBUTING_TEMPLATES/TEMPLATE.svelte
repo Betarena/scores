@@ -19,9 +19,11 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-	import { onMount } from 'svelte';
 	import { viewport_change } from '$lib/utils/platform-functions';
-  import profile_avatar from './assets/profile-avatar.svg';
+	import { onMount } from 'svelte';
+
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import profile_avatar from './assets/profile-avatar.svg';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -43,7 +45,13 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  function do_something() {}
+  function do_something
+  (
+
+  )
+  {
+
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -96,6 +104,12 @@ SVELTE INJECTION TAGS
 COMPONENT HTML 
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
+
+<SeoBox>
+  <!-- 
+  SEO CONTENT GOES HERE
+  -->
+</SeoBox>
 
 <!-- 
 [ℹ] example comment
