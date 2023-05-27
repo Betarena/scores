@@ -83,6 +83,31 @@ export function viewport_change
 }
 
 /**
+ * @summary [HELPER]
+ * @description simple method to "pause"
+ * JavaScript execution for X milliseconds;
+ * @param {number} ms
+ * @returns void
+ */
+export async function sleep 
+(
+  ms: number
+)
+{
+  new Promise
+  (
+    (
+      r
+    ) => 
+    setTimeout
+    (
+      r, 
+      ms
+    )
+  );
+}
+
+/**
  * @summary [HELPER] method
  * @description validates for number of
  * null || undefined data points in target
