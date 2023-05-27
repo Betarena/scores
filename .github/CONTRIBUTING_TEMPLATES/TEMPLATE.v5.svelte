@@ -17,13 +17,13 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import profile_avatar from './assets/profile-avatar.svg';
+
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -47,10 +47,10 @@ COMPONENT JS (w/ TS)
 
   function do_something
   (
-
+    // arg
   )
   {
-
+    // logic
   }
 
   // ~~~~~~~~~~~~~~~~~~~~~
@@ -132,16 +132,22 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   /* #region ❌ [NOT WORKING] w/ regions */
-  div#example {
+  div#example 
+  {
     color: var(--dark-theme);
     background-color: var();
-  } div#example > div#target {
+  } 
+  div#example > div#target 
+  {
   }
   /* #endregion ❌ [NOT WORKING] w/ regions */
 
-  div#example {
+  div#example 
+  {
     color: var(--dark-theme);
-  } div#example > div#target {
+  } 
+  div#example > div#target 
+  {
   }
 
   /*
@@ -151,8 +157,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   @media only screen 
-    and (min-width: 726px) 
-    and (max-width: 1000px) {
+  and (min-width: 726px) 
+  and (max-width: 1000px) 
+  {
   }
 
   /*
