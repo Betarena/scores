@@ -149,10 +149,8 @@ export async function load
 		// `/api/cache/fixtures/scoreboard?fixture_id=${fixture_id}`, // ALT-1
     `/api/hasura/fixture/scoreboard?fixture_id=${fixture_id}`, // ALT-2
     `/api/cache/fixtures/scoreboard?lang=${urlLang}`,
-    // TODO:NOTE:IMPORTANT: can be null (non-current season fixture) - load from hasura
-    // `/api/cache/fixtures/lineups?fixture_id=${fixture_id}`, // ALT-1
-    `/api/hasura/fixture/lineups?fixture_id=${fixture_id}`, // ALT-2
-    `/api/cache/fixtures/lineups?lang=${urlLang}`,
+    `/api/data/fixture/lineups?fixture_id=${fixture_id}`,
+    `/api/data/fixture/lineups?lang=${urlLang}`,
     // TODO:NOTE:IMPORTANT: can be null -load from hasura
     // `/api/cache/fixtures/incidents?fixture_id=${fixture_id}`, // ALT-1
     `/api/hasura/fixture/incidents?fixture_id=${fixture_id}`, // ALT-2
