@@ -54,7 +54,7 @@ export async function GET
         data =
           await get_target_hset_cache_data
           (
-            RedisKeys.INC_C_D_A,
+            RedisKeys.LIN_C_D_A,
             fixture_id
           )
         ;
@@ -154,20 +154,20 @@ export async function GET
 async function fallbackMainData 
 (
   _fixture_id: number
-): Promise < LIN_Fixture[] > 
+): Promise < LIN_Fixture > 
 {
-  const array = await FLIN_FP_ENTRY
+  const map = await FLIN_FP_ENTRY
   (
     graphQlInstance,
     _fixture_id
   )
 
-  if (array.length == 0) 
+  if (map.size == 0) 
   {
     return null
   }
   
-	return array;
+	return map.get(_fixture_id);
 }
 
 /**
