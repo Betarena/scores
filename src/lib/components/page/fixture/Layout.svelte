@@ -9,15 +9,13 @@
 
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { dlog } from '$lib/utils/debug';
+	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 
 	import type {
 		REDIS_CACHE_SINGLE_fixtures_page_info_response,
 		REDIS_CACHE_SINGLE_fixtures_seo_response
 	} from '$lib/models/_main_/pages_and_seo/types';
-	import type {
-		REDIS_CACHE_SINGLE_lineups_data,
-		REDIS_CACHE_SINGLE_lineups_translation
-	} from '$lib/models/fixtures/lineups/types';
 	import type {
 		REDIS_CACHE_SINGLE_scoreboard_data,
 		REDIS_CACHE_SINGLE_scoreboard_translation
@@ -61,25 +59,22 @@
 	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
 	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head_2_Head_Widget.svelte';
 	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents_Widget.svelte';
-	import LineupsWidget from '$lib/components/page/fixture/lineups/Lineups_Widget.svelte';
 	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability_Widget.svelte';
 	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard_Widget.svelte';
 	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
 	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics_Widget.svelte';
 	import VoteWidget from '$lib/components/page/fixture/votes/Vote_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import { dlog } from '$lib/utils/debug';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
+	import LineupsWidget from './lineups/Lineups-Widget.svelte';
+
+	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
 
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
 	let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
 	let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
-	let FIXTURE_LINEUPS: REDIS_CACHE_SINGLE_lineups_data;
-	let FIXTURE_LINEUPS_TRANSLATION: REDIS_CACHE_SINGLE_lineups_translation;
 	let FIXTURE_INCIDENTS: REDIS_CACHE_SINGLE_incidents_data;
 	let FXITURE_INCIDENTS_TRANSLATION: REDIS_CACHE_SINGLE_incidents_translation;
 	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
@@ -107,8 +102,6 @@
 	$: FIXTURE_INFO = $page.data.FIXTURE_INFO;
 	$: FIXTURE_SCOREBOARD =	$page.data.FIXTURE_SCOREBOARD;
 	$: FIXTURE_SCOREBOARD_TRANSLATION =	$page.data.FIXTURE_SCOREBOARD_TRANSLATION;
-	$: FIXTURE_LINEUPS = $page.data.FIXTURE_LINEUPS;
-	$: FIXTURE_LINEUPS_TRANSLATION = $page.data.FIXTURE_LINEUPS_TRANSLATION;
 	$: FIXTURE_INCIDENTS = $page.data.FIXTURE_INCIDENTS;
 	$: FXITURE_INCIDENTS_TRANSLATION = $page.data.FXITURE_INCIDENTS_TRANSLATION;
 	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
@@ -358,10 +351,7 @@
 				<FeaturedBettingSitesWidget
 					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 				/>
-				<LineupsWidget
-					{FIXTURE_LINEUPS}
-					{FIXTURE_LINEUPS_TRANSLATION}
-				/>
+				<LineupsWidget />
 				<Head_2HeadWidget
 					{FIXTURE_INFO}
 					{FIXTURE_H2H}
@@ -424,10 +414,7 @@
 					{FIXTURE_INFO}
 					{FIXTURE_VOTES_TRANSLATION}
 				/>
-				<LineupsWidget
-					{FIXTURE_LINEUPS}
-					{FIXTURE_LINEUPS_TRANSLATION}
-				/>
+				<LineupsWidget />
 				<Head_2HeadWidget
 					{FIXTURE_INFO}
 					{FIXTURE_H2H}

@@ -1,8 +1,9 @@
 <!-- ===============
 	COMPONENT JS (w/ TS)
 ==================== -->
+
 <script lang="ts">
-	import type { Fixture_Player } from '$lib/models/fixtures/lineups/types';
+	import type { LIN_Player } from '@betarena/scores-lib/types/lineups.js';
 
 	import substitution from './assets/corner-up-left.svg';
 	import football from './assets/football.svg';
@@ -14,7 +15,7 @@
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	export let PLAYER_INFO: Fixture_Player;
+	export let PLAYER_INFO: LIN_Player;
 	export let STATUS: string;
 
 	let ratingColorCode: string;

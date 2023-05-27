@@ -5,28 +5,23 @@
 	import { fade } from 'svelte/transition';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-
-	import type {
-		Fixture_Player,
-		REDIS_CACHE_SINGLE_lineups_translation
-	} from '$lib/models/fixtures/lineups/types';
-
-	import {
-		FIXTURE_LIVE_TIME_OPT,
-		type FIXTURE_STATUS_TYPES
-	} from "@betarena/scores-lib/dist/api/sportmonks.js";
+	import { FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
+  
 	import substitution from './assets/corner-up-right.svg';
 	import football from './assets/football.svg';
 	import injured from './assets/injured.svg';
 	import red_card from './assets/red-card.svg';
 	import yellow_card from './assets/yellow-card.svg';
 
+	import type { B_LIN_T, LIN_Player } from '@betarena/scores-lib/types/lineups.js';
+	import type { FIXTURE_STATUS_TYPES } from '@betarena/scores-lib/types/sportmonks.js';
+
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	export let PLAYER_INFO: Fixture_Player;
-	export let FIXTURE_LINEUPS_TRANSLATION: REDIS_CACHE_SINGLE_lineups_translation;
+	export let PLAYER_INFO: LIN_Player;
+	export let FIXTURE_LINEUPS_TRANSLATION: B_LIN_T;
 	export let STATUS: FIXTURE_STATUS_TYPES;
 	export let TYPE: 'R' | 'L';
 
