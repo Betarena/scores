@@ -1,8 +1,11 @@
 <!-- ===============
-	  COMPONENT JS (w/ TS)
+	COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
+
+  // #region ➤ [MAIN] Package Imports
+
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
@@ -15,36 +18,27 @@
 	import { LIN_F_dataInject, LIN_F_obtainPlayerIdList } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 	
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
-	import LineupPlayerRow from './Lineup_Player_Row.svelte';
-	import LineupPlayerVisual from './Lineup_Player_Visual.svelte';
-	import LineupVectorMobile from './Lineup_Vector_Mobile.svelte';
-	import LineupVectorMobileAway from './Lineup_Vector_Mobile_Away.svelte';
-	import LineupVectorTablet from './Lineup_Vector_Tablet.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
+	import LineupPlayerRow from './Lineups-Player-Row.svelte';
+	import LineupPlayerVisual from './Lineups-Player-Visual.svelte';
+	import LineupVectorMobileAway from './Lineups-Vector-Mobile-Away.svelte';
+	import LineupVectorMobile from './Lineups-Vector-Mobile.svelte';
+	import LineupVectorTablet from './Lineups-Vector-Tablet.svelte';
 
   import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
   import type { B_LIN_D, B_LIN_T, LIN_Player } from '@betarena/scores-lib/types/lineups.js';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [MAIN] Package Imports
 
-	// export let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response;
+  // #region ➤ [VARIABLES]
+
 	export let FIXTURE_LINEUPS: B_LIN_D;
 	export let FIXTURE_LINEUPS_TRANSLATION: B_LIN_T;
 
-	const formation_pos_arr = ['G', 'D', 'M', 'A'];
+  console.log('⭐️ FIXTURE_LINEUPS', FIXTURE_LINEUPS)
+  console.log('⭐️ FIXTURE_LINEUPS_TRANSLATION', FIXTURE_LINEUPS_TRANSLATION)
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let refresh_data: any = undefined;
-	let no_widget_data: any = false;
-	let selected_view: 'home' | 'away' = 'home';
-	let home_team_formation_map = new Map< string, LIN_Player[] >();
-	let away_team_formation_map = new Map< string, LIN_Player[]	>();
-	let show_placeholder: boolean = false;
-  let playerMap = new Map <number, B_H_SFPV2>();
-
-	// NOTE: [Sportmonks]
+  // NOTE: [Sportmonks]
 	// NOTE: Formation Number | Outcome
 	// 1 - Keeper [G]
 	// 2 - Right-back [D]
@@ -58,60 +52,35 @@
 	// 10 - Central forward [A]
 	// 11 - Left-winger [A]
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+	const formation_pos_arr = ['G', 'D', 'M', 'A'];
+  const livescorePath = `livescores_now/${FIXTURE_LINEUPS?.id}`
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
+  const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
-	const MOBILE_VIEW = 725;
-	let mobileExclusive,
-		tabletExclusive: boolean = false;
+  
+	let mobileExclusive = false;
+  let tabletExclusive = false;
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+	let loaded: boolean = false;
+	let no_widget_data: any = false;
+	let selected_view: 'home' | 'away' = 'home';
+	let home_team_formation_map = new Map< string, LIN_Player[] >();
+	let away_team_formation_map = new Map< string, LIN_Player[]	>();
+	let show_placeholder: boolean = false;
+  let playerMap = new Map <number, B_H_SFPV2>();
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE METHODS
-	// CRITICAL
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [VARIABLES]
 
-	$: refresh_data =	$userBetarenaSettings.country_bookmaker;
-
-	$: if (browser && refresh_data) 
-  {
-		// [ℹ] reset necessary variables;
-		refresh = true;
-		loaded = false;
-		no_widget_data = false;
-		// widget_init()
-		setTimeout(async () => {
-			refresh = false;
-		}, 100);
-	}
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// [ADD-ON] FIREBASE
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ [MAIN-METHODS]
 
   /**
    * @summary
    * [MAIN]
+   * @description
+   * ➨ handles data generation (first-time)
+   * ➨ updating against "live" firebase data;
+   * @returns
+   * void
   */
 	async function injectLiveData
   (
@@ -209,90 +178,151 @@
     FIXTURE_LINEUPS = FIXTURE_LINEUPS;
   }
 
-  onMount
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ get target livescore fixture (data)
+   * ➨ instantiate livescore fixture (data) listener
+   * @returns
+   * void
+   */
+  async function kickstartLivescore
   (
-    async() => 
-    {
+  )
+  {
+    const if_M_0 = 
+      ['FT', 'FT_PEN'].includes(FIXTURE_LINEUPS?.status)
+    ;
+    if (if_M_0) return;
+    await onceTargetLivescoreNowFixtureGet
+    (
+      livescorePath
+    );
+    let connectionRef = targetLivescoreNowFixtureListen
+    (
+      livescorePath
+    );
+    // TODO: handle "unsubscribe" events for "onValue"
+    // FIREBASE_CONNECTIONS_SET.add(connectionRef)
+  }
 
-      if (['FT', 'FT_PEN'].includes(FIXTURE_LINEUPS?.status)) return;
-    
-      // NOTE: causes a potential delay in data retrieval,
-      // as waits for onMount of Page & components;
-      await onceTargetLivescoreNowFixtureGet
-      (
-        `livescores_now/${FIXTURE_LINEUPS?.id}`
-      );
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  )
+  {
+    [
+      tabletExclusive, 
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+  }
 
-      let connectionRef = targetLivescoreNowFixtureListen
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ document (visibility-change) event listener;
+   * @returns
+   * void
+   */
+  function addEventListeners
+  (
+  )
+  {
+    // NOTE: (on-visibility-change)
+    document.addEventListener
+    (
+      'visibilitychange',
+      async function
       (
-        `livescores_now/${FIXTURE_LINEUPS?.id}`
-      );
-      // FIREBASE_CONNECTIONS_SET.add(connectionRef)
-
-      document.addEventListener
-      (
-        'visibilitychange',
-        async function
-        (
-        ) 
+      ) 
+      {
+        if (!document.hidden) 
         {
-          if (!document.hidden) {
-            dlog('🔵 user is active', true)
-            await onceTargetLivescoreNowFixtureGet
-            (
-              `livescores_now/${FIXTURE_LINEUPS?.id}`
-            );
-            let connectionRef = targetLivescoreNowFixtureListen
-            (
-              `livescores_now/${FIXTURE_LINEUPS?.id}`
-            );
-            // FIREBASE_CONNECTIONS_SET.add(connectionRef)
-          }
+          dlog('🔵 user is active', true)
+          await kickstartLivescore()
         }
-      );
-    }
-  );
+      }
+    );
+    // NOTE: (on-resize)
+    window.addEventListener
+    (
+			'resize',
+			function () 
+      {
+				resizeAction();
+			}
+		);
+  }
+  
+  // #endregion ➤ [METHODS]
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
 
+  // #endregion ➤ [ONE-OFF] [METHODS] [IF]
+
+  // #region ➤ [REACTIVIY] [METHODS]
+
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description 
+   * listens to target "fixture" in "livescores_now" data;
+  */
+  $: if ($sessionStore?.livescore_now_fixture_target)
+  {
+    console.log('⭐️ livescore_now_fixture_target', $sessionStore?.livescore_now_fixture_target)
+    injectLiveData()
+  }
+
+  // TODO:
   $: if_R_0 = 
     FIXTURE_LINEUPS
 		&& browser
 		&& FIXTURE_LINEUPS?.away?.formation ==	undefined 
     && FIXTURE_LINEUPS?.home?.formation ==	undefined 
-    && 
-    (FIXTURE_LINEUPS?.away?.lineup == undefined 
-    || FIXTURE_LINEUPS?.away?.lineup.length == 0) 
-    && 
-    (FIXTURE_LINEUPS?.home?.lineup == undefined 
-    || FIXTURE_LINEUPS?.home?.lineup.length == 0)
+    && FIXTURE_LINEUPS?.away?.lineup?.length == 0
+    && FIXTURE_LINEUPS?.home?.lineup?.length == 0
   ;
 	$: if (if_R_0) 
   {
+    console.log
+    (
+      '⭐️ NO WIDGET DATA [TRUE]'
+    );
 		no_widget_data = true;
 		loaded = true;
 	} 
   else 
   {
+    console.log
+    (
+      '⭐️ NO WIDGET DATA [FALSE]'
+    );
 		no_widget_data = false;
 	}
 
+  // TODO:
   $: if_R_1 =
     FIXTURE_LINEUPS
 		&& browser
 		&& FIXTURE_LINEUPS?.away?.formation
 		&& FIXTURE_LINEUPS?.home?.formation
-		&& 
-      (FIXTURE_LINEUPS?.away?.lineup != undefined 
-      || FIXTURE_LINEUPS?.away?.lineup.length != 0) 
-    &&
-		  (FIXTURE_LINEUPS?.home?.lineup != undefined
-			|| FIXTURE_LINEUPS?.home?.lineup.length != 0)
+		&& FIXTURE_LINEUPS?.away?.lineup?.length != 0
+    && FIXTURE_LINEUPS?.home?.lineup?.length != 0
   ;
 	$: if (if_R_1) 
   {
+
+    console.log
+    (
+      '⭐️ if_R_1'
+    );
 
 		// NOTE: HOME TEAM
 		let rt_home_count = 0;
@@ -427,11 +457,11 @@
 			rt_home_count =
 				rt_home_count + form_pos_num;
 		}
-		away_team_formation_map =
-			away_team_formation_map;
+		away_team_formation_map =	away_team_formation_map;
 	}
 	// [ℹ] only-lineup available
-	else if (
+	else if 
+  (
 		FIXTURE_LINEUPS &&
 		browser &&
 		(FIXTURE_LINEUPS?.away?.lineup != undefined ||
@@ -439,32 +469,39 @@
 				0) &&
 		(FIXTURE_LINEUPS?.home?.lineup != undefined ||
 			FIXTURE_LINEUPS?.home?.lineup.length != 0)
-	) {
-		// NOTE: home-team
-		home_team_formation_map = new Map<
-			string,
-			LIN_Player[]
-		>(); // [ℹ] reset player-list
-		for (const form_pos of formation_pos_arr) {
-			for (const player of FIXTURE_LINEUPS?.home
-				?.lineup) {
-				if (form_pos == player?.position) {
-					if (
-						home_team_formation_map.has(form_pos)
-					) {
-						let exist_lineup_list =
-							home_team_formation_map.get(
-								form_pos
-							);
+	) 
+  {
+
+    console.log
+    (
+      '⭐️ if_R_1_2'
+    );
+
+		// NOTE: HOME TEAM
+		home_team_formation_map = new Map< string, LIN_Player[]	>(); // [ℹ] reset player-list
+
+		for (const form_pos of formation_pos_arr || []) 
+    {
+			for (const player of FIXTURE_LINEUPS?.home?.lineup || []) 
+      {
+				if (form_pos == player?.position) 
+        {
+					if (home_team_formation_map.has(form_pos))
+          {
+						let exist_lineup_list = home_team_formation_map.get(form_pos);
 						exist_lineup_list.push(player);
-						home_team_formation_map.set(
+						home_team_formation_map.set
+            (
 							form_pos,
 							exist_lineup_list
 						);
-					} else {
+					} 
+          else 
+          {
 						const lineup_list = [];
 						lineup_list.push(player);
-						home_team_formation_map.set(
+						home_team_formation_map.set
+            (
 							form_pos,
 							lineup_list
 						);
@@ -472,33 +509,31 @@
 				}
 			}
 		}
-		home_team_formation_map =
-			home_team_formation_map;
-		// NOTE: away-team
-		away_team_formation_map = new Map<
-			string,
-			LIN_Player[]
-		>(); // [ℹ] reset player-list
-		for (const form_pos of formation_pos_arr) {
-			for (const player of FIXTURE_LINEUPS?.away
-				?.lineup) {
+		home_team_formation_map =	home_team_formation_map;
+
+		// NOTE: AWAY TEAM
+		away_team_formation_map = new Map<string,	LIN_Player[] >(); // [ℹ] reset player-list
+		for (const form_pos of formation_pos_arr || []) 
+    {
+			for (const player of FIXTURE_LINEUPS?.away?.lineup || []) 
+      {
 				if (form_pos == player?.position) {
-					if (
-						away_team_formation_map.has(form_pos)
-					) {
-						let exist_lineup_list =
-							away_team_formation_map.get(
-								form_pos
-							);
+					if (away_team_formation_map.has(form_pos)) 
+          {
+						let exist_lineup_list = away_team_formation_map.get(form_pos);
 						exist_lineup_list.push(player);
-						away_team_formation_map.set(
+						away_team_formation_map.set
+            (
 							form_pos,
 							exist_lineup_list
 						);
-					} else {
+					} 
+          else 
+          {
 						const lineup_list = [];
 						lineup_list.push(player);
-						away_team_formation_map.set(
+						away_team_formation_map.set
+            (
 							form_pos,
 							lineup_list
 						);
@@ -506,30 +541,52 @@
 				}
 			}
 		}
-		away_team_formation_map =
-			away_team_formation_map;
+		away_team_formation_map =	away_team_formation_map;
 	}
 	// [ℹ] no-lineups && no-formations
 	else 
   {
+    console.log
+    (
+      '⭐️ NO WIDGET DATA [TRUE]'
+    );
 		no_widget_data = true;
 		loaded = true;
 	}
 
-  $: if ($sessionStore?.livescore_now_fixture_target)
-  {
-    injectLiveData()
-  }
+  //#endregion ➤ [REACTIVIY] [METHODS]
+
+  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  /**
+   * @summary
+   * [MAIN] [LIFECYCLE]
+   * @description
+   * ➨ kickstart livescore data GET + LISTEN;
+   * ➨ kickstart resize-action;
+   * ➨ kickstart (bundle) event-listeners;
+  */
+  onMount
+  (
+    async() => 
+    {
+      await kickstartLivescore();
+      resizeAction();
+      addEventListeners();
+    }
+  );
+
+  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+COMPONENT HTML 
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div
-	id="widget-outer"
-	class:display_none={no_widget_data &&	!show_placeholder}
+	class:display-none={no_widget_data &&	!show_placeholder}
 >
 
 	<!-- 
@@ -549,29 +606,21 @@
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
-    <h2
-      class="
-        s-20 
-        m-b-10 
-        w-500 
-        color-black-2
-      "
-      style="margin-top: 0px;"
-      class:color-white={$userBetarenaSettings.theme ==
-        'Dark'}
-    >
-      {FIXTURE_LINEUPS_TRANSLATION?.title}
-    </h2>
+	{#if !no_widget_data && browser && $userBetarenaSettings.country_bookmaker}
+
+    <WidgetTitle
+      WIDGET_TITLE={FIXTURE_LINEUPS_TRANSLATION?.title}
+    />
 
     <div
-      id="lineup-widget-container"
+      class="widget-component"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
       <!-- 
-      [ℹ] [MOBILE]
+      📱 MOBILE
       -->
       {#if mobileExclusive}
+
         <!-- 
         [ℹ] toggle lineup team
         -->
@@ -644,6 +693,7 @@
             />
           </button>
         </div>
+
         <!-- 
         [ℹ] team visiualization 
         -->
@@ -663,9 +713,9 @@
             [ℹ] home 
             -->
             {#if selected_view == 'home' && home_team_formation_map.size != 0}
-              {#each Array.from(home_team_formation_map.values()) as players_list}
+              {#each Array.from(home_team_formation_map.values()) || [] as players_list}
                 <div id="overlay-column">
-                  {#each Array.from(players_list) as player}
+                  {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
                       PLAYER_INFO={player}
                       STATUS={FIXTURE_LINEUPS?.status}
@@ -677,9 +727,9 @@
             [ℹ] away 
             -->
             {:else}
-              {#each Array.from(away_team_formation_map.values()) as players_list}
+              {#each Array.from(away_team_formation_map.values()) || [] as players_list}
                 <div id="overlay-column">
-                  {#each Array.from(players_list) as player}
+                  {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
                       PLAYER_INFO={player}
                       STATUS={FIXTURE_LINEUPS?.status}
@@ -690,6 +740,7 @@
             {/if}
           </div>
         </div>
+
         <!-- 
         [ℹ] selected lineup - home / away (logo) 
         -->
@@ -777,6 +828,7 @@
             </p>
           {/if}
         </div>
+
         <!-- 
         [ℹ] selected lineup - home / away 
         -->
@@ -833,7 +885,7 @@
           <!-- 
           [ℹ] rest of lineup-team 
           -->
-          {#each FIXTURE_LINEUPS[selected_view].bench as player}
+          {#each FIXTURE_LINEUPS?.[selected_view]?.bench || [] as player}
             <LineupPlayerRow
               TYPE="R"
               PLAYER_INFO={player}
@@ -842,11 +894,12 @@
             />
           {/each}
         </div>
-        <!-- 
-      [ℹ] [TABLET] && [DESKTOP]
-      [ℹ] drastic layout change
+
+      <!-- 
+      💻 TABLET 🖥️ LAPTOP
       -->
       {:else}
+
         <!-- 
         [ℹ] team visiualization 
         -->
@@ -870,9 +923,9 @@
               class="overlay-grid"
               style="width: 100%;"
             >
-              {#each Array.from(home_team_formation_map.values()) as players_list}
+              {#each Array.from(home_team_formation_map.values()) || [] as players_list}
                 <div id="overlay-column">
-                  {#each Array.from(players_list) as player}
+                  {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
                       PLAYER_INFO={player}
                       STATUS={FIXTURE_LINEUPS?.status}
@@ -888,9 +941,9 @@
               class="overlay-grid"
               style="width: 100%;"
             >
-              {#each Array.from(away_team_formation_map.values()) as players_list}
+              {#each Array.from(away_team_formation_map.values()) || [] as players_list}
                 <div id="overlay-column">
-                  {#each Array.from(players_list) as player}
+                  {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
                       PLAYER_INFO={player}
                       STATUS={FIXTURE_LINEUPS?.status}
@@ -1075,7 +1128,8 @@
         </div>
 
         <!-- 
-        [ℹ] team lineup ROW -->
+        [ℹ] team lineup ROW 
+        -->
         <div
           id="team-lineup-box"
           class="row-space-out"
@@ -1130,7 +1184,7 @@
             </div>
             <!-- 
             [ℹ] rest of lineup-team -->
-            {#each FIXTURE_LINEUPS.home.bench as player}
+            {#each FIXTURE_LINEUPS?.home?.bench || [] as player}
               <LineupPlayerRow
                 TYPE="R"
                 PLAYER_INFO={player}
@@ -1194,7 +1248,7 @@
             </div>
             <!-- 
             [ℹ] rest of lineup-team -->
-            {#each FIXTURE_LINEUPS.away.bench as player}
+            {#each FIXTURE_LINEUPS?.away?.bench || [] as player}
               <LineupPlayerRow
                 TYPE="L"
                 PLAYER_INFO={player}
@@ -1204,90 +1258,74 @@
             {/each}
           </div>
         </div>
+        
       {/if}
     </div>
+    
 	{/if}
 </div>
 
 <!-- ===============
-  COMPONENT STYLE
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
 
 <style>
-  
-	/* [ℹ] OTHER STYLE / CSS */
-	.display_none {
-		display: none;
-	}
 
-	/*
-    [ℹ] WIDGET MAIN STYLE / CSS 
-    [ℹ] NOTE: [MOBILE-FIRST]
+	/* 
+  top-box btn view select 
   */
-
-	/* lineups-main */
-	#lineup-widget-container {
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-		overflow: hidden;
-		width: 100%;
-		position: relative;
-		padding: none;
-		/* override */
-		padding-bottom: 7px;
-	}
-
-	/* top-box btn view select */
-	div#lineup-top-view-box-select {
+	div#lineup-top-view-box-select 
+  {
 		margin: 20px 20px 0 20px;
-		/* override */
+		/* o */
 		width: auto;
 	}
-	div#lineup-top-view-box-select
-		button.team-select-btn {
+	div#lineup-top-view-box-select button.team-select-btn 
+  {
 		background-color: transparent;
 		border: 1px solid #cccccc !important;
 		width: 100%;
 		padding: 10px;
 		max-height: 40px;
 	}
-	div#lineup-top-view-box-select
-		button.team-select-btn
-		p {
+	div#lineup-top-view-box-select button.team-select-btn	p 
+  {
 		font-size: 14px;
 	}
-	div#lineup-top-view-box-select
-		button.team-select-btn:hover:active,
-	div#lineup-top-view-box-select
-		button.team-select-btn.activeOpt {
+	div#lineup-top-view-box-select button.team-select-btn:hover:active,
+	div#lineup-top-view-box-select button.team-select-btn.activeOpt 
+  {
 		border: 1px solid #f5620f !important;
 	}
-	div#lineup-top-view-box-select
-		button.team-select-btn:first-child {
+	div#lineup-top-view-box-select button.team-select-btn:first-child 
+  {
 		border-radius: 8px 0px 0px 8px;
 	}
-	div#lineup-top-view-box-select
-		button.team-select-btn:first-child
-		img.sel-team-img {
+	div#lineup-top-view-box-select button.team-select-btn:first-child	img.sel-team-img 
+  {
 		margin-right: 8px;
 	}
-	div#lineup-top-view-box-select
-		button.team-select-btn:last-child {
+	div#lineup-top-view-box-select button.team-select-btn:last-child 
+  {
 		border-radius: 0px 8px 8px 0px;
 	}
-	div#lineup-top-view-box-select
-		button.team-select-btn:last-child
-		img.sel-team-img {
+	div#lineup-top-view-box-select button.team-select-btn:last-child img.sel-team-img 
+  {
 		margin-left: 8px;
 	}
 
-	/* lineup-vector box */
-	div#lineup-vector-box {
+	/* 
+  lineup-vector box 
+  */
+	div#lineup-vector-box 
+  {
 		position: relative;
 		padding: 8px 20px;
 	}
-	div#lineup-vector-box div#lineup-vector {
+	div#lineup-vector-box div#lineup-vector 
+  {
+    /* p */
 		position: absolute;
 		z-index: 0;
 		top: 0;
@@ -1296,8 +1334,8 @@
 		left: 0;
 		margin: 8px 20px;
 	}
-	div#lineup-vector-box
-		div#overlay-player-pos-box {
+	div#lineup-vector-box	div#overlay-player-pos-box 
+  {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, 1fr);
 		grid-template-rows: 1fr;
@@ -1312,31 +1350,36 @@
 		height: 400px;
 		max-height: 400px;
 	}
-	div#lineup-vector-box
-		div#overlay-player-pos-box
-		div#overlay-column {
+	div#lineup-vector-box	div#overlay-player-pos-box div#overlay-column 
+  {
 		display: grid;
 		gap: 8px;
 		height: -webkit-fill-available;
 		height: -moz-available;
 	}
 
-	/* main team select */
-	div.team-main-select {
+	/* 
+  main team select 
+  */
+	div.team-main-select 
+  {
 		padding: 15px 0;
 		margin: 0 20px 8px 20px;
 		border-bottom: 1px solid #e6e6e6;
 		width: auto;
 	}
-	div.team-main-select img.main-team-img {
+	div.team-main-select img.main-team-img 
+  {
 		/* dynamic */
 		margin-right: 16px;
 	}
-	div.team-main-select p {
+	div.team-main-select p 
+  {
 		/* dynamic */
 		font-size: 14px;
 	}
-	div.team-main-select p#box-goals {
+	div.team-main-select p#box-goals 
+  {
 		box-sizing: border-box;
 		text-align: center;
 		border-radius: 30px;
@@ -1345,74 +1388,81 @@
 		width: auto;
 		color: white;
 	}
-	div.team-main-select p#box-goals.rating_bronze {
+	div.team-main-select p#box-goals.rating_bronze 
+  {
 		background-color: #dbb884 !important;
 	}
-	div.team-main-select p#box-goals.rating_silver {
+	div.team-main-select p#box-goals.rating_silver 
+  {
 		background-color: #8c8c8c !important;
 	}
-	div.team-main-select p#box-goals.rating_golden {
+	div.team-main-select p#box-goals.rating_golden 
+  {
 		background-color: #ffb904 !important;
 	}
 
-	/* lineup-box - coach-only */
-	div.lineup-box div.player-row {
+	/* 
+  lineup-box - coach-only 
+  */
+	div.lineup-box div.player-row 
+  {
 		padding: 8px 20px;
 	}
-	div.lineup-box div.player-row img.lineup-img {
+	div.lineup-box div.player-row img.lineup-img 
+  {
 		object-fit: contain;
 		border-radius: 50%;
 		border: 1px solid #e6e6e6;
 		margin-right: 16px;
 	}
-	div.lineup-box
-		div.player-row
-		p.lineup-player-name {
+	div.lineup-box div.player-row	p.lineup-player-name 
+  {
 		font-size: 14px;
 	}
-	div.lineup-box:last-child
-		div.player-row
-		img.lineup-img {
+	div.lineup-box:last-child	div.player-row img.lineup-img 
+  {
 		margin-right: 16px;
 	}
-	div.lineup-box:last-child
-		div.player-row
-		p.lineup-player-name {
+	div.lineup-box:last-child	div.player-row p.lineup-player-name 
+  {
 		text-align: start;
 	}
 
-	/* ====================
-    RESPONSIVNESS [TABLET] [DESKTOP]
-  ==================== */
+	/*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
 
-	/* 
-  TABLET RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) and (max-width: 1000px) {
-		#lineup-widget-container {
-			min-width: 100%;
-			/* max-width: 700px; */
-		}
-	}
+	@media only screen 
+  and (min-width: 726px) 
+  and (max-width: 1000px) 
+  {
+    /* NaN */
+  }
 
-	/* 
-  TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) {
-		/* lineup-vector box */
-		div#lineup-vector-box {
+	@media only screen 
+  and (min-width: 726px) 
+  {
+		/* 
+    lineup-vector box 
+    */
+		div#lineup-vector-box 
+    {
 			padding: 20px 20px 8px 20px;
 		}
-		div#lineup-vector-box div#lineup-vector {
-			margin: 20px 20px 8px 20px;
+		div#lineup-vector-box div#lineup-vector 
+    {
+        margin: 20px 20px 8px 20px;
 		}
-		div#lineup-vector-box
-			div#overlay-player-pos-box {
+		div#lineup-vector-box	div#overlay-player-pos-box 
+    {
 			display: flex !important;
 			/* min-height: unset; */
 			/* max-height: unset; */
 		}
-		div#lineup-vector-box
-			div#overlay-player-pos-box
-			div.overlay-grid {
+		div#lineup-vector-box	div#overlay-player-pos-box div.overlay-grid 
+    {
 			display: grid;
 			grid-template-columns: repeat(
 				auto-fill,
@@ -1426,52 +1476,48 @@
 			/* height: -moz-available; */
 			height: inherit;
 		}
-		div#lineup-vector-box
-			div#overlay-player-pos-box
-			div.overlay-grid
-			div#overlay-column {
+		div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid	div#overlay-column 
+    {
 			height: -webkit-fill-available;
 			/* height: -moz-available; */
 			height: inherit;
 		}
 
-		/* main team select */
-		div#team-info-box div.team-main-select {
+		/* 
+    main team select 
+    */
+		div#team-info-box div.team-main-select 
+    {
 			padding: 15px 0;
 			border-bottom: 1px solid #e6e6e6;
 			width: 100%;
 		}
-		div#team-info-box
-			div.team-main-select:first-child {
+		div#team-info-box	div.team-main-select:first-child 
+    {
 			margin: 0 0 8px 20px;
 		}
-		div#team-info-box
-			div.team-main-select:last-child {
+		div#team-info-box	div.team-main-select:last-child 
+    {
 			margin: 0 20px 8px 0;
 		}
-		div#team-info-box
-			div.team-main-select:first-child
-			img.main-team-img {
+		div#team-info-box	div.team-main-select:first-child img.main-team-img 
+    {
 			margin-right: 16px;
 		}
-		div#team-info-box
-			div.team-main-select:last-child
-			img.main-team-img {
+		div#team-info-box	div.team-main-select:last-child	img.main-team-img 
+    {
 			margin-left: 16px;
 		}
-		div#team-info-box
-			div.team-main-select:first-child
-			p.team-name {
+		div#team-info-box	div.team-main-select:first-child p.team-name 
+    {
 			margin-right: 16px;
 		}
-		div#team-info-box
-			div.team-main-select:last-child
-			p.team-name {
+		div#team-info-box div.team-main-select:last-child	p.team-name 
+    {
 			margin-left: 16px;
 		}
-		div#team-info-box
-			div.team-main-select
-			p#box-goals {
+		div#team-info-box	div.team-main-select p#box-goals 
+    {
 			box-sizing: border-box;
 			text-align: center;
 			border-radius: 30px;
@@ -1480,45 +1526,45 @@
 			width: auto;
 			color: white;
 		}
-		div#team-info-box
-			div.team-main-select
-			p#box-goals.rating_golden {
+		div#team-info-box	div.team-main-select p#box-goals.rating_golden 
+    {
 			background-color: #ffb904 !important;
 		}
-		div#team-info-box
-			div.team-main-select
-			p#box-goals.rating_silver {
+		div#team-info-box div.team-main-select p#box-goals.rating_silver 
+    {
 			background-color: #8c8c8c !important;
 		}
-		div#team-info-box
-			div.team-main-select
-			p#box-goals.rating_bronze {
+		div#team-info-box	div.team-main-select p#box-goals.rating_bronze 
+    {
 			background-color: #dbb884 !important;
 		}
 
-		/* main team lineup */
-		div#team-lineup-box {
+		/* 
+    main team lineup 
+    */
+		div#team-lineup-box 
+    {
 			align-items: flex-start;
 			position: relative;
 		}
-		div#team-lineup-box div.lineup-box {
+		div#team-lineup-box div.lineup-box 
+    {
 			width: 100%;
 		}
-		div#team-lineup-box
-			div.lineup-box:last-child
-			div.player-row
-			img.lineup-img {
+		div#team-lineup-box	div.lineup-box:last-child	div.player-row img.lineup-img 
+    {
 			margin-left: 16px;
 		}
-		div#team-lineup-box
-			div.lineup-box:last-child
-			div.player-row
-			p.lineup-player-name {
+		div#team-lineup-box	div.lineup-box:last-child div.player-row p.lineup-player-name 
+    {
 			text-align: end;
 		}
 
-		/* lineup divider */
-		div#divider {
+		/* 
+    lineup divider 
+    */
+		div#divider 
+    {
 			background-color: #e6e6e6;
 			width: 1px;
 			position: absolute;
@@ -1530,35 +1576,35 @@
 		}
 	}
 
-	/* 
-  DESKTOP [M-L] RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 1000px) {
-		#lineup-widget-container {
-			min-width: 100%;
-		}
+	@media only screen 
+  and (min-width: 1000px) 
+  {
+    /* NaN */
 	}
 
-	/* 
-  DESKTOP [L] RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 1160px) {
-		/* EMPTY */
+	@media only screen 
+  and (min-width: 1160px) 
+  {
+    /* NaN */
 	}
 
-	/* ====================
-    WIDGET DARK THEME
-  ==================== */
+	/*
+  =============
+  DARK-THEME
+  =============
+  */
 
-	:global(div#lineup-widget-container.dark-background-1
-			div#team-info-box
-			div.team-main-select) {
+	:global(div#lineup-widget-container.dark-background-1	div#team-info-box	div.team-main-select) 
+  {
 		border-bottom: 1px solid #616161;
 	}
-	div#lineup-widget-container.dark-background-1
-		div#divider {
+	div#lineup-widget-container.dark-background-1	div#divider 
+  {
 		background-color: #616161;
 	}
-	div#lineup-widget-container.dark-background-1
-		div.team-main-select {
+	div#lineup-widget-container.dark-background-1	div.team-main-select 
+  {
 		border-bottom: 1px solid #616161;
 	}
+  
 </style>

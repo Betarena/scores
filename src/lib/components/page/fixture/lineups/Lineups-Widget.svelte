@@ -5,13 +5,11 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	import { onMount } from 'svelte';
 	
-  import { platfrom_lang_ssr, sleep, viewport_change } from '$lib/utils/platform-functions';
+  import { platfrom_lang_ssr, sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import LineupsLoader from './Lineups-Loader.svelte';
@@ -23,10 +21,6 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
   let WIDGET_S_DATA: B_LIN_D = $page.data?.FIXTURE_LINEUPS
@@ -43,10 +37,14 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN-METHODS]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
-
+  /**
+   * @summary
+   * [MAIN] [INIT]
+   * @description
+   * main widget data loader, 
+   * (and) try..catch (error) handler
+   * (and) placeholder handler
+   */
   async function widgetInit
   (
   ): Promise < B_LIN_D > 
@@ -84,30 +82,6 @@ COMPONENT JS (w/ TS)
   {
     widgetInit()
   }
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 475;
-	let mobileExclusive: boolean = false;
-  let tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
 
   //#endregion ➤ [METHODS]
 
