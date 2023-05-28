@@ -15,6 +15,7 @@ COMPONENT JS (w/ TS)
 	import LineupsLoader from './Lineups-Loader.svelte';
 	import LineupsMain from './Lineups-Main.svelte';
   
+	import { LI_W_F_STY, LI_W_F_TAG, LI_W_F_TOG, dlog } from '$lib/utils/debug.js';
 	import type { B_LIN_D, B_LIN_T } from '@betarena/scores-lib/types/lineups.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
@@ -58,7 +59,7 @@ COMPONENT JS (w/ TS)
     ;
 		if (if_0) 
     {
-      // dlog(`${LI_W_F_TAG} ❌ no data available!`, LI_W_F_TOG, LI_W_F_STY);
+      dlog(`${LI_W_F_TAG} ❌ no data available!`, LI_W_F_TOG, LI_W_F_STY);
 			NO_WIDGET_DATA = true;
 			return;
 		}

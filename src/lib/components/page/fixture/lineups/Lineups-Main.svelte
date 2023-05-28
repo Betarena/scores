@@ -105,6 +105,9 @@
     const FIREBASE_LINEUPS_DATA = liveFixtureData?.lineup?.data;
     const FIREBASE_BENCH_DATA = liveFixtureData?.bench?.data;
 
+    // reset, to prevent first-time data generation re-trigger;
+    playerMap = new Map();
+
     // NOTE: check if the "cache/hasura" data is "invalid"
     // NOTE: requiring an "auto-lineup" live-data generation
     // NOTE: on the spot, by the widget, using "livescores" data;
@@ -142,9 +145,6 @@
         response
       ) as Map <number, B_H_SFPV2>;
     }
-
-    // reset, to prevent first-time data generation re-trigger;
-    playerMap = new Map();
 
     // NOTE: firebase live-data inject;
     const home_team_id = liveFixtureData?.localteam_id;
@@ -322,12 +322,12 @@
       if (teamT == 'home') homeTeamFormMap = new Map < string, LIN_Player[]	>();
       if (teamT == 'away') awayTeamFormMap = new Map < string, LIN_Player[]	>();
 
-      // FIXME:
-      // applied to 'away' only;
-      /*
-        // NOTE: sometimes formation_position can been "null" 
-        // ISSUE: #905
-        let null_formation = FIXTURE_LINEUPS?.away?.lineup
+      // NOTE: sometimes formation_position can been "null" 
+      // applied to "AWAY" only;
+      // ISSUE: #905
+      if (teamT == 'away')
+      {
+        const if_M_0 = FIXTURE_LINEUPS?.away?.lineup
         .filter
         (
           (
@@ -336,12 +336,9 @@
             }
           ) =>
             formation_position == undefined
-        ).length > 0
-          ? true
-          : false
-        ;
+        ).length == 0;
 
-        if (!null_formation) 
+        if (if_M_0) 
         {
           FIXTURE_LINEUPS?.away?.lineup
           .sort
@@ -360,7 +357,7 @@
               )
           );
         }
-      */
+      }
 
       const teamFormMap = new Map < string, LIN_Player[]	>();
 
@@ -513,8 +510,8 @@
 		&& browser
 		&& FIXTURE_LINEUPS?.away?.formation != undefined
 		&& FIXTURE_LINEUPS?.home?.formation != undefined
-		&& FIXTURE_LINEUPS?.away?.lineup?.length != 0
-    && FIXTURE_LINEUPS?.home?.lineup?.length != 0
+		&& FIXTURE_LINEUPS?.away?.lineup?.length > 0
+    && FIXTURE_LINEUPS?.home?.lineup?.length > 0
   ;
 
   /**
@@ -530,8 +527,8 @@
 		&& browser
 		&& FIXTURE_LINEUPS?.away?.formation == undefined
 		&& FIXTURE_LINEUPS?.home?.formation == undefined
-		&& FIXTURE_LINEUPS?.away?.lineup?.length != 0
-    && FIXTURE_LINEUPS?.home?.lineup?.length != 0
+		&& FIXTURE_LINEUPS?.away?.lineup?.length > 0
+    && FIXTURE_LINEUPS?.home?.lineup?.length > 0
   ;
 
 	$: if (if_R_1 && FIXTURE_LINEUPS) 
