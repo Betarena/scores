@@ -29,10 +29,6 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [VARIABLES]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
-
   export const EXAMPLE_VALUE
   
   const EXAMPLE_VALUE
@@ -131,23 +127,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  /* #region ❌ [NOT WORKING] w/ regions */
-  div#example 
-  {
-    color: var(--dark-theme);
-    background-color: var();
-  } 
-  div#example > div#target 
-  {
-  }
-  /* #endregion ❌ [NOT WORKING] w/ regions */
-
   div#example 
   {
     color: var(--dark-theme);
   } 
   div#example > div#target 
   {
+    
   }
 
   /*
