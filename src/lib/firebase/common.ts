@@ -1,5 +1,4 @@
 import { sessionStore } from "$lib/store/session";
-import { dlog, FIREBASE_DEBUG_STYLE, FIREBASE_DEBUG_TAG, FIREBASE_DEBUG_TOGGLE } from "$lib/utils/debug";
 import { onValue, ref, type Unsubscribe } from "firebase/database";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_real } from "./init";
@@ -20,15 +19,6 @@ export function listenRealTimeLivescoresNowChange
 (
 ): Unsubscribe 
 {
-
-  // [🐞]
-  dlog
-  (
-    `${FIREBASE_DEBUG_TAG} listenRealTimeLivescoresNowChange()`, 
-    FIREBASE_DEBUG_TOGGLE, 
-    FIREBASE_DEBUG_STYLE
-  );
-
   const dataRef = ref
   (
     db_real,
@@ -59,6 +49,43 @@ export function listenRealTimeLivescoresNowChange
 /**
  * @summary 
  * [MAIN]
+ * @description common method that will listen to 
+ * real-time changes in "livescores_now_scoreboard" 
+ * Firebase (REAL-DB);
+ * @returns {Unsubscribe} Unsubscribe
+ */
+export function targetLivescoreNowFixtureListen
+(
+  path: string
+): Unsubscribe 
+{
+  const dbRef = ref
+  (
+    db_real,
+    path
+  );
+
+  const listenEventRef = onValue
+  (
+    dbRef, 
+    (
+      snapshot
+    ) => 
+    {
+      const firebaseData: FIREBASE_livescores_now = snapshot.val();
+      sessionStore.updateLivescoresTarget
+      (
+        firebaseData
+      );
+    }
+  );
+
+  return listenEventRef 
+}
+
+/**
+ * @summary 
+ * [MAIN]
  * @description
  * ➨ one-off request "livescores_now" (db) data;
  * ➨ kickstarts liveMap generation;
@@ -82,7 +109,6 @@ export async function one_off_livescore_call
 
   genLiveFixMap(data);
 }
-
 
 /**
  * @summary 
@@ -111,47 +137,6 @@ export async function onceTargetLivescoreNowFixtureGet
 /**
  * @summary 
  * [MAIN]
- * @description common method that will listen to 
- * real-time changes in "livescores_now_scoreboard" 
- * Firebase (REAL-DB);
- * @returns {Unsubscribe} Unsubscribe
- */
-export function targetLivescoreNowFixtureListen
-(
-  path: string
-): Unsubscribe 
-{
-  console.log('targetLivescoreNowFixtureListen | START')
-  
-  const dbRef = ref
-  (
-    db_real,
-    path
-  );
-
-  const listenEventRef = onValue
-  (
-    dbRef, 
-    (
-      snapshot
-    ) => 
-    {
-      const firebaseData: FIREBASE_livescores_now = snapshot.val();
-      sessionStore.updateLivescoresTarget
-      (
-        firebaseData
-      );
-    }
-  );
-
-  console.log('targetLivescoreNowFixtureListen | END')
-
-  return listenEventRef 
-}
-
-/**
- * @summary 
- * [MAIN]
  * @description
  * ➨ generates a liveMap and stores in svelte-store (session);
  * @param 
@@ -164,14 +149,6 @@ export async function genLiveFixMap
   data: [string, FIREBASE_livescores_now][]
 ): Promise < void > 
 {
-  // [🐞]
-  dlog
-  (
-    `${FIREBASE_DEBUG_TAG} genLiveFixMap()`, 
-    FIREBASE_DEBUG_TOGGLE, 
-    FIREBASE_DEBUG_STYLE
-  );
-
   const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
 
   for await (const live_fixture of data) 
@@ -189,13 +166,6 @@ export async function genLiveFixMap
       fixture_data
     );
   }
-
-  // [🐞]
-  dlog
-  (
-    liveFixturesMap, 
-    true
-  );
 
   sessionStore.updateLivescores
   (
@@ -219,8 +189,6 @@ export function listenRealTimeScoreboardAll
 (
 ): Unsubscribe 
 {
-  console.log('listenRealTimeScoreboardAll | START')
-  
   const dbRef = ref
   (
     db_real,
@@ -246,8 +214,6 @@ export function listenRealTimeScoreboardAll
     }
   );
 
-  console.log('listenRealTimeScoreboardAll | END')
-
   return listenEventRef 
 }
 
@@ -265,22 +231,17 @@ export async function onceRealTimeLiveScoreboard
 (
 ): Promise < void > 
 {
-  console.log('onceRealTimeLiveScoreboard | START')
-  
   const firebaseData = await getTargetRealDbData
   (
     `livescores_now_scoreboard`
   );
 
-  console.log('firebaseData', firebaseData)
   const data: [string, FIRE_LNNS][] = 
     firebaseData != null
       ? Object.entries(firebaseData)
       : []
   ;
   generateLiveScoreboardList(data);
-
-  console.log('onceRealTimeLiveScoreboard | END')
 }
 
 /**
@@ -295,9 +256,6 @@ function generateLiveScoreboardList
   data: [string, FIRE_LNNS][]
 ): void
 {
-
-  console.log("🔥 REAL-TIME (source)", data);
-
   const liveFixturesMap = new Map<number, FIRE_LNNS>();
 
   for (const liveFixture of data) 
@@ -315,15 +273,6 @@ function generateLiveScoreboardList
       fixtureData
     );
   }
-
-  console.log("🔥 REAL-TIME", liveFixturesMap);
-
-  // [🐞]
-  dlog
-  (
-    liveFixturesMap, 
-    true
-  )
 
   sessionStore.updateLivescoreScoreboard
   (
