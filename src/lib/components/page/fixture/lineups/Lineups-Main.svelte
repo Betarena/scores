@@ -64,8 +64,8 @@
 	let loaded: boolean = false;
 	let no_widget_data: any = false;
 	let selected_view: 'home' | 'away' = 'home';
-	let home_team_formation_map = new Map< string, LIN_Player[] >();
-	let away_team_formation_map = new Map< string, LIN_Player[]	>();
+	let homeTeamFormMap = new Map< string, LIN_Player[] >();
+	let awayTeamFormMap = new Map< string, LIN_Player[]	>();
 	let show_placeholder: boolean = false;
   let playerMap = new Map <number, B_H_SFPV2>();
 
@@ -259,6 +259,209 @@
 			}
 		);
   }
+
+  /**
+   * @summary
+   * [HELPER]
+   * @description
+   * ➨ generates a player map, by team pitch positions (V1);
+   * @returns
+   * void
+   */
+  async function generateTeamFormMap
+  (
+  ): Promise < void >
+  {
+    const teamTypes: ['home', 'away'] = ['home', 'away'];
+
+    for (const teamT of teamTypes) 
+    {
+      const teamFormation = 
+        teamT == 'home'
+          ? FIXTURE_LINEUPS?.home?.formation
+          : FIXTURE_LINEUPS?.away?.formation
+      ;
+      
+      let runTotalCount = 0;
+      let countPosDiff = 0;
+
+      let _teamFormList = teamFormation
+      ?.split
+      (
+        '-'
+      );
+
+      // add goalkeeper pos
+      _teamFormList
+      ?.unshift
+      (
+        '1'
+      );
+
+      if (teamT == 'away') _teamFormList.reverse();
+
+      // reset player-list
+      if (teamT == 'home') homeTeamFormMap = new Map < string, LIN_Player[]	>();
+      if (teamT == 'away') awayTeamFormMap = new Map < string, LIN_Player[]	>();
+
+      // FIXME:
+      // applied to 'away' only;
+      /*
+        // NOTE: sometimes formation_position can been "null" 
+        // ISSUE: #905
+        let null_formation = FIXTURE_LINEUPS?.away?.lineup
+        .filter
+        (
+          (
+            { 
+              formation_position 
+            }
+          ) =>
+            formation_position == undefined
+        ).length > 0
+          ? true
+          : false
+        ;
+
+        if (!null_formation) 
+        {
+          FIXTURE_LINEUPS?.away?.lineup
+          .sort
+          (
+            (
+              a, 
+              b
+            ) =>
+              parseFloat
+              (
+                b.formation_position.toString()
+              ) -
+              parseFloat
+              (
+                a.formation_position.toString()
+              )
+          );
+        }
+      */
+
+      const teamFormMap = new Map < string, LIN_Player[]	>();
+
+      // loop over each, position digit-string;
+      for (const f_pos of _teamFormList) 
+      {
+        let formPosNum = parseInt
+        (
+          f_pos
+        );
+        let formationPosCode = f_pos + countPosDiff.toString();
+
+        for (let i = runTotalCount; i < runTotalCount + formPosNum;	i++)
+        {
+
+          const player =
+            teamT == 'home'
+              ? FIXTURE_LINEUPS?.home?.lineup[i]
+              : FIXTURE_LINEUPS?.away?.lineup[i]    
+          ;
+
+          const if_M_0 = 
+            teamFormMap.has(formationPosCode)
+          ;
+
+          if (if_M_0) 
+          {
+            let exist_lineup_list = teamFormMap.get(formationPosCode);
+            exist_lineup_list.unshift(player);
+            teamFormMap.set
+            (
+              formationPosCode,
+              exist_lineup_list
+            );
+          } 
+          else 
+          {
+            const lineup_list = [];
+            lineup_list.push(player);
+            teamFormMap.set
+            (
+              formationPosCode,
+              lineup_list
+            );
+          }
+        }
+
+        countPosDiff++;
+        runTotalCount += formPosNum;
+      }
+
+      if (teamT == 'home') homeTeamFormMap = teamFormMap;
+      if (teamT == 'away') awayTeamFormMap = teamFormMap;
+    }
+  }
+
+  /**
+   * @summary
+   * [HELPER]
+   * @description
+   * ➨ generates a player map, by team pitch positions (V1);
+   * @returns
+   * void
+   */
+  async function generateTeamFormMap_2
+  (
+  ): Promise < void >
+  {
+    const teamTypes: ['home', 'away'] = ['home', 'away'];
+
+    for (const teamT of teamTypes) 
+    {
+
+      const lineupList =
+        teamT == 'home'
+          ? FIXTURE_LINEUPS?.home?.lineup
+          : FIXTURE_LINEUPS?.away?.lineup 
+      ;
+
+      // reset player-list
+      if (teamT == 'home') homeTeamFormMap = new Map < string, LIN_Player[]	>();
+      if (teamT == 'away') awayTeamFormMap = new Map < string, LIN_Player[]	>();
+
+      const teamFormMap = new Map < string, LIN_Player[]	>();
+
+      for (const form_pos of formation_pos_arr || []) 
+      {
+        for (const player of lineupList || []) 
+        {
+          if (form_pos == player?.position) 
+          {
+            if (teamFormMap.has(form_pos))
+            {
+              let exist_lineup_list = teamFormMap.get(form_pos);
+              exist_lineup_list.push(player);
+              teamFormMap.set
+              (
+                form_pos,
+                exist_lineup_list
+              );
+            } 
+            else 
+            {
+              const lineup_list = [];
+              lineup_list.push(player);
+              teamFormMap.set
+              (
+                form_pos,
+                lineup_list
+              );
+            }
+          }
+        }
+      }
+
+      if (teamT == 'home') homeTeamFormMap = teamFormMap;
+      if (teamT == 'away') awayTeamFormMap = teamFormMap;
+    }
+  }
   
   // #endregion ➤ [METHODS]
 
@@ -280,34 +483,14 @@
     injectLiveData()
   }
 
-  // TODO:
-  $: if_R_0 = 
-    FIXTURE_LINEUPS
-		&& browser
-		&& FIXTURE_LINEUPS?.away?.formation ==	undefined 
-    && FIXTURE_LINEUPS?.home?.formation ==	undefined 
-    && FIXTURE_LINEUPS?.away?.lineup?.length == 0
-    && FIXTURE_LINEUPS?.home?.lineup?.length == 0
-  ;
-	$: if (if_R_0) 
-  {
-    console.log
-    (
-      '⭐️ NO WIDGET DATA [TRUE]'
-    );
-		no_widget_data = true;
-		loaded = true;
-	} 
-  else 
-  {
-    console.log
-    (
-      '⭐️ NO WIDGET DATA [FALSE]'
-    );
-		no_widget_data = false;
-	}
-
-  // TODO:
+  /**
+   * @summary
+   * [REACTIVE]
+   * @description
+   * listens to valid fixture (lineups)
+   * when, formation + lineups exist;
+   * version 1;
+  */
   $: if_R_1 =
     FIXTURE_LINEUPS
 		&& browser
@@ -316,234 +499,44 @@
 		&& FIXTURE_LINEUPS?.away?.lineup?.length != 0
     && FIXTURE_LINEUPS?.home?.lineup?.length != 0
   ;
+
+  /**
+   * @summary
+   * [REACTIVE]
+   * @description
+   * listens to valid fixture (lineups)
+   * when, NO formation, but lineups exist;
+   * version 2;
+  */
+  $: if_R_2 =
+    FIXTURE_LINEUPS
+		&& browser
+		&& FIXTURE_LINEUPS?.away?.formation == undefined
+		&& FIXTURE_LINEUPS?.home?.formation == undefined
+		&& FIXTURE_LINEUPS?.away?.lineup?.length != 0
+    && FIXTURE_LINEUPS?.home?.lineup?.length != 0
+  ;
+
 	$: if (if_R_1) 
   {
-
+    // [🐞]
     console.log
     (
       '⭐️ if_R_1'
     );
-
-		// NOTE: HOME TEAM
-		let rt_home_count = 0;
-		let count_pos_diff = 0;
-		let home_team_formation_arr_temp = FIXTURE_LINEUPS?.home?.formation.split('-');
-    // add goalkeeper pos
-		home_team_formation_arr_temp.unshift('1');
-    // reset player-list
-		home_team_formation_map = new Map< string, LIN_Player[]	>();
-
-		for (const form_pos of home_team_formation_arr_temp) 
-    {
-			let form_pos_num = parseInt(form_pos);
-			let form_pos_code = form_pos + count_pos_diff.toString();
-
-			for (let i = rt_home_count; i < rt_home_count + form_pos_num;	i++)
-      {
-				const player = FIXTURE_LINEUPS?.home?.lineup[i];
-
-        const if_M_0 = 
-          home_team_formation_map.has(form_pos_code)
-        ;
-
-				if (if_M_0) 
-        {
-					let exist_lineup_list = home_team_formation_map.get(form_pos_code);
-					exist_lineup_list.unshift(player);
-					home_team_formation_map.set
-          (
-						form_pos_code,
-						exist_lineup_list
-					);
-				} 
-        else 
-        {
-					const lineup_list = [];
-					lineup_list.push(player);
-					home_team_formation_map.set
-          (
-						form_pos_code,
-						lineup_list
-					);
-				}
-
-			}
-
-			count_pos_diff++;
-			rt_home_count +=	form_pos_num;
-		}
-
-		home_team_formation_map =	home_team_formation_map;
-
-		// NOTE: AWAY TEAM
-		rt_home_count = 0;
-		count_pos_diff = 0;
-		let away_team_formation_arr_temp = FIXTURE_LINEUPS?.away?.formation.split('-');
-    // add goalkeeper pos
-		away_team_formation_arr_temp.unshift('1');
-		away_team_formation_arr_temp.reverse();
-
-		// NOTE: sometimes formation_position can been "null" 
-    // ISSUE: #905
-		let null_formation = FIXTURE_LINEUPS?.away?.lineup
-    .filter
-    (
-      (
-        { 
-          formation_position 
-        }
-      ) =>
-        formation_position == undefined
-    ).length > 0
-      ? true
-      : false
-    ;
-
-		if (!null_formation) 
-    {
-			FIXTURE_LINEUPS?.away?.lineup
-      .sort
-      (
-				(
-          a, 
-          b
-        ) =>
-					parseFloat
-          (
-						b.formation_position.toString()
-					) -
-					parseFloat
-          (
-						a.formation_position.toString()
-					)
-			);
-		}
-
-    // reset player-list
-		away_team_formation_map = new Map< string, LIN_Player[]	>();
-
-		for (const form_pos of away_team_formation_arr_temp) 
-    {
-			let form_pos_num = parseInt(form_pos);
-			let form_pos_code = form_pos + count_pos_diff.toString();
-			for (let i = rt_home_count;	i < rt_home_count + form_pos_num; i++)
-      {
-				const player = FIXTURE_LINEUPS?.away?.lineup[i];
-
-				if (
-					away_team_formation_map.has(
-						form_pos_code
-					)
-				) {
-					let exist_lineup_list =
-						away_team_formation_map.get(
-							form_pos_code
-						);
-					exist_lineup_list.unshift(player);
-					away_team_formation_map.set(
-						form_pos_code,
-						exist_lineup_list
-					);
-				} else {
-					const lineup_list = [];
-					lineup_list.push(player);
-					away_team_formation_map.set(
-						form_pos_code,
-						lineup_list
-					);
-				}
-			}
-			count_pos_diff++;
-			rt_home_count =
-				rt_home_count + form_pos_num;
-		}
-		away_team_formation_map =	away_team_formation_map;
+		no_widget_data = false;
+    generateTeamFormMap()
 	}
-	// [ℹ] only-lineup available
-	else if 
-  (
-		FIXTURE_LINEUPS &&
-		browser &&
-		(FIXTURE_LINEUPS?.away?.lineup != undefined ||
-			FIXTURE_LINEUPS?.away?.lineup.length !=
-				0) &&
-		(FIXTURE_LINEUPS?.home?.lineup != undefined ||
-			FIXTURE_LINEUPS?.home?.lineup.length != 0)
-	) 
+  else if (if_R_2) 
   {
-
+    // [🐞]
     console.log
     (
       '⭐️ if_R_1_2'
     );
-
-		// NOTE: HOME TEAM
-		home_team_formation_map = new Map< string, LIN_Player[]	>(); // [ℹ] reset player-list
-
-		for (const form_pos of formation_pos_arr || []) 
-    {
-			for (const player of FIXTURE_LINEUPS?.home?.lineup || []) 
-      {
-				if (form_pos == player?.position) 
-        {
-					if (home_team_formation_map.has(form_pos))
-          {
-						let exist_lineup_list = home_team_formation_map.get(form_pos);
-						exist_lineup_list.push(player);
-						home_team_formation_map.set
-            (
-							form_pos,
-							exist_lineup_list
-						);
-					} 
-          else 
-          {
-						const lineup_list = [];
-						lineup_list.push(player);
-						home_team_formation_map.set
-            (
-							form_pos,
-							lineup_list
-						);
-					}
-				}
-			}
-		}
-		home_team_formation_map =	home_team_formation_map;
-
-		// NOTE: AWAY TEAM
-		away_team_formation_map = new Map<string,	LIN_Player[] >(); // [ℹ] reset player-list
-		for (const form_pos of formation_pos_arr || []) 
-    {
-			for (const player of FIXTURE_LINEUPS?.away?.lineup || []) 
-      {
-				if (form_pos == player?.position) {
-					if (away_team_formation_map.has(form_pos)) 
-          {
-						let exist_lineup_list = away_team_formation_map.get(form_pos);
-						exist_lineup_list.push(player);
-						away_team_formation_map.set
-            (
-							form_pos,
-							exist_lineup_list
-						);
-					} 
-          else 
-          {
-						const lineup_list = [];
-						lineup_list.push(player);
-						away_team_formation_map.set
-            (
-							form_pos,
-							lineup_list
-						);
-					}
-				}
-			}
-		}
-		away_team_formation_map =	away_team_formation_map;
+		no_widget_data = false;
+		generateTeamFormMap_2()
 	}
-	// [ℹ] no-lineups && no-formations
 	else 
   {
     console.log
@@ -712,8 +705,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             <!-- 
             [ℹ] home 
             -->
-            {#if selected_view == 'home' && home_team_formation_map.size != 0}
-              {#each Array.from(home_team_formation_map.values()) || [] as players_list}
+            {#if selected_view == 'home' && homeTeamFormMap.size != 0}
+              {#each Array.from(homeTeamFormMap.values()) || [] as players_list}
                 <div id="overlay-column">
                   {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
@@ -727,7 +720,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             [ℹ] away 
             -->
             {:else}
-              {#each Array.from(away_team_formation_map.values()) || [] as players_list}
+              {#each Array.from(awayTeamFormMap.values()) || [] as players_list}
                 <div id="overlay-column">
                   {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
@@ -903,28 +896,31 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- 
         [ℹ] team visiualization 
         -->
-        <div id="lineup-vector-box">
-          <div id="lineup-vector">
+        <div
+          id="lineup-vector-box">
+
+          <div
+            id="lineup-vector">
             <LineupVectorTablet />
           </div>
+
           <!-- 
           [ℹ] lineup - absolute box 
-          [ℹ] home team 
-          [ℹ] away team 
           -->
           <div
             id="overlay-player-pos-box"
             class="row-space-out"
           >
-            <!-- 
-            [ℹ] home 
+            <!--
+            HOME TEAM
             -->
             <div
               class="overlay-grid"
               style="width: 100%;"
             >
-              {#each Array.from(home_team_formation_map.values()) || [] as players_list}
-                <div id="overlay-column">
+              {#each Array.from(homeTeamFormMap.values()) || [] as players_list}
+                <div 
+                  id="overlay-column">
                   {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
                       PLAYER_INFO={player}
@@ -934,15 +930,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </div>
               {/each}
             </div>
+
             <!-- 
-            [ℹ] away 
+            AWAY TEAM 
             -->
             <div
               class="overlay-grid"
               style="width: 100%;"
             >
-              {#each Array.from(away_team_formation_map.values()) || [] as players_list}
-                <div id="overlay-column">
+              {#each Array.from(awayTeamFormMap.values()) || [] as players_list}
+                <div 
+                  id="overlay-column">
                   {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
                       PLAYER_INFO={player}
@@ -952,7 +950,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </div>
               {/each}
             </div>
+
           </div>
+
         </div>
 
         <!-- 
@@ -963,7 +963,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class="row-space-out"
         >
           <!-- 
-          [ℹ] home team info 
+          home team info 
           -->
           <div
             class="
@@ -984,8 +984,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               [ℹ] team icon 
               -->
               <img
-                src={FIXTURE_LINEUPS?.home
-                  ?.team_logo}
+                src={FIXTURE_LINEUPS?.home?.team_logo}
                 alt="default alt text"
                 width="40"
                 height="40"
@@ -1001,8 +1000,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   team-name
                 "
               >
-                {FIXTURE_LINEUPS?.home
-                  ?.team_name}
+                {FIXTURE_LINEUPS?.home?.team_name}
                 <br />
                 <span
                   class="
@@ -1010,11 +1008,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     color-grey
                   "
                 >
-                  {FIXTURE_LINEUPS?.home
-                    ?.formation || ''}
+                  {FIXTURE_LINEUPS?.home?.formation || ''}
                 </span>
               </p>
             </div>
+            
             <!-- 
             [ℹ] team-rating 
             -->
