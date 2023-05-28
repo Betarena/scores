@@ -2,8 +2,12 @@
 	COMPONENT JS (w/ TS)
 ==================== -->
 <script lang="ts">
+
+  // #region ➤ [MAIN] Package Imports
+
 	import { fade } from 'svelte/transition';
 
+	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
   
@@ -16,9 +20,9 @@
 	import type { B_LIN_T, LIN_Player } from '@betarena/scores-lib/types/lineups.js';
 	import type { FIXTURE_STATUS_TYPES } from '@betarena/scores-lib/types/sportmonks.js';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [MAIN] Package Imports
+
+  // #region ➤ [VARIABLES]
 
 	export let PLAYER_INFO: LIN_Player;
 	export let FIXTURE_LINEUPS_TRANSLATION: B_LIN_T;
@@ -27,10 +31,24 @@
 
 	let ratingColorCode: string;
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE OTHER
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [VARIABLES]
 
+  // #region ➤ [MAIN-METHODS]
+
+  // #endregion ➤ [MAIN-METHODS]
+
+  // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+
+  // #endregion ➤ [ONE-OFF] [METHODS] [IF]
+
+  // #region ➤ [REACTIVIY] [METHODS]
+
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description 
+   * listens to target "player.rating" change, assigns color-code;
+  */
   $: if_R_0 = 
     PLAYER_INFO != undefined
 		&& PLAYER_INFO?.rating != undefined
@@ -46,6 +64,12 @@
 		ratingColorCode = undefined;
 	}
 
+  // #endregion ➤ [REACTIVIY] [METHODS]
+
+  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
 </script>
 
 <!-- ===============
@@ -55,7 +79,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 {#if PLAYER_INFO != undefined && FIXTURE_LINEUPS_TRANSLATION != undefined}
   <a
-    href="/{PLAYER_INFO?.urls?.['en']}"
+    href="/{PLAYER_INFO?.urls?.[$sessionStore?.serverLang]}"
     class="
       cursor-pointer
     "
@@ -66,8 +90,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         row-space-out
       "
       class:type-L={TYPE == 'L'}
-      class:dark-background-1={$userBetarenaSettings.theme ==
-        'Dark'}
+      class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
       in:fade
     >
       {#if TYPE == 'R'}

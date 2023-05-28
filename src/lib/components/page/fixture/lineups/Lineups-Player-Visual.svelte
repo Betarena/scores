@@ -4,6 +4,10 @@
 
 <script lang="ts">
 
+  // #region ➤ [MAIN] Package Imports
+
+	import { sessionStore } from '$lib/store/session.js';
+
 	import substitution from './assets/corner-up-left.svg';
 	import football from './assets/football.svg';
 	import injured from './assets/injured.svg';
@@ -12,9 +16,9 @@
   
 	import type { LIN_Player } from '@betarena/scores-lib/types/lineups.js';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [MAIN] Package Imports
+
+  // #region ➤ [VARIABLES]
 
 	export let PLAYER_INFO: LIN_Player;
 	export let STATUS: string;
@@ -41,10 +45,24 @@
       )[0]
   ;
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE OTHER
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [VARIABLES]
 
+  // #region ➤ [MAIN-METHODS]
+
+  // #endregion ➤ [MAIN-METHODS]
+
+  // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+
+  // #endregion ➤ [ONE-OFF] [METHODS] [IF]
+
+  // #region ➤ [REACTIVIY] [METHODS]
+
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description 
+   * listens to target "player.rating" change, assigns color-code;
+  */
   $: if_R_0 = 
     PLAYER_INFO != undefined
 		&& PLAYER_INFO?.rating != undefined
@@ -59,7 +77,13 @@
   {
 		ratingColorCode = undefined;
 	}
-  
+
+  // #endregion ➤ [REACTIVIY] [METHODS]
+
+  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
 </script>
 
 <!-- ===============
@@ -69,7 +93,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 {#if PLAYER_INFO != undefined}
   <a
-    href="/{PLAYER_INFO?.urls?.['en']}"
+    href="/{PLAYER_INFO?.urls?.[$sessionStore?.serverLang]}"
     class="
       cursor-pointer
     "

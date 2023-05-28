@@ -14,6 +14,8 @@ export interface Platform_Session {
 	auth_show: boolean;
   /** NOTE: used for detecting and pre-loading the data for a TARGET page translation of the current one, programatically */
   lang_intent: string | undefined;
+  /** NOTE: instant page lang */
+  serverLang: string | undefined;
   /** session data on the Firebase Livescore [V1] */
   livescore_now: Map<number, FIREBASE_livescores_now>
   /** session data on the Firebase Livescore (Scoreboard) [V2] */
@@ -49,6 +51,7 @@ const seassion_store: Platform_Session = {
 	fixture_select_view: 'overview',
 	auth_show: false,
   lang_intent: undefined,
+  serverLang: undefined,
   livescore_now: undefined,
   livescore_now_scoreboard: new Map(),
   sportbook_main: undefined,
@@ -75,6 +78,11 @@ function createLocalStore() {
 			seassion_store.newsletterPopUpShow =
 				!seassion_store.newsletterPopUpShow;
 		},
+
+    updateServerLang: (lang: string) => {
+      seassion_store.serverLang = lang;
+      set(seassion_store);
+    },
 
     /**
      * @summary [METHOD] update stores

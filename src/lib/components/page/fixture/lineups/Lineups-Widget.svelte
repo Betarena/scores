@@ -9,13 +9,14 @@ COMPONENT JS (w/ TS)
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	
-  import { platfrom_lang_ssr, sleep } from '$lib/utils/platform-functions';
+  import { sessionStore } from '$lib/store/session.js';
+  import { LI_W_F_STY, LI_W_F_TAG, LI_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import LineupsLoader from './Lineups-Loader.svelte';
 	import LineupsMain from './Lineups-Main.svelte';
   
-	import { LI_W_F_STY, LI_W_F_TAG, LI_W_F_TOG, dlog } from '$lib/utils/debug.js';
 	import type { B_LIN_D, B_LIN_T } from '@betarena/scores-lib/types/lineups.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
@@ -68,22 +69,6 @@ COMPONENT JS (w/ TS)
     return WIDGET_DATA
   }
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: serverSideLang = platfrom_lang_ssr
-  (
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-
-  $: if (browser && serverSideLang)
-  {
-    widgetInit()
-  }
-
   //#endregion ➤ [METHODS]
 
   //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
@@ -91,6 +76,21 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
+
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description 
+   * listens to target "language" change;
+  */
+  $: if_R_0 =
+    browser 
+    && $sessionStore?.serverLang != undefined
+  ;
+  $: if (if_R_0)
+  {
+    widgetInit()
+  }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
