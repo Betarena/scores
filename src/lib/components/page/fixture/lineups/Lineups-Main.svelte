@@ -109,15 +109,18 @@
     // NOTE: requiring an "auto-lineup" live-data generation
     // NOTE: on the spot, by the widget, using "livescores" data;
     const if_M_0 =
-      FIXTURE_LINEUPS.home.lineup.length == 0 
-      && FIXTURE_LINEUPS.away.lineup.length == 0 
-      && FIXTURE_LINEUPS.home.bench.length == 0 
-      && FIXTURE_LINEUPS.away.bench.length == 0 
+      FIXTURE_LINEUPS?.home?.lineup?.length == 0 
+      && FIXTURE_LINEUPS?.away?.lineup?.length == 0 
+      && FIXTURE_LINEUPS?.home?.bench?.length == 0 
+      && FIXTURE_LINEUPS?.away?.bench?.length == 0 
       && FIREBASE_LINEUPS_DATA != undefined 
       && FIREBASE_BENCH_DATA != undefined
     ;
     if (if_M_0) 
     {
+
+      console.log('⭐️ injectLiveData() if_M_0')
+
       const _playerIds = await LIN_F_obtainPlayerIdList
       (
         FIREBASE_LINEUPS_DATA,
@@ -140,6 +143,9 @@
       ) as Map <number, B_H_SFPV2>;
     }
 
+    // reset, to prevent first-time data generation re-trigger;
+    playerMap = new Map();
+
     // NOTE: firebase live-data inject;
     const home_team_id = liveFixtureData?.localteam_id;
     const away_team_id =	liveFixtureData?.visitorteam_id;
@@ -150,10 +156,16 @@
     ] = await LIN_F_dataInject
     (
       home_team_id,
-      FIREBASE_LINEUPS_DATA,
-      FIREBASE_BENCH_DATA,
       FIXTURE_LINEUPS.events,
-      playerMap
+      { 
+        lineupList: FIREBASE_LINEUPS_DATA,
+        benchList: FIREBASE_BENCH_DATA,
+        playerMap
+      },
+      {
+        lineupList: FIXTURE_LINEUPS?.home?.lineup,
+        benchList: FIXTURE_LINEUPS?.home?.bench
+      }
     );
 
     const [
@@ -162,10 +174,16 @@
     ] = await LIN_F_dataInject
     (
       away_team_id,
-      FIREBASE_LINEUPS_DATA,
-      FIREBASE_BENCH_DATA,
       FIXTURE_LINEUPS.events,
-      playerMap
+      { 
+        lineupList: FIREBASE_LINEUPS_DATA,
+        benchList: FIREBASE_BENCH_DATA,
+        playerMap
+      },
+      {
+        lineupList: FIXTURE_LINEUPS?.away?.lineup,
+        benchList: FIXTURE_LINEUPS?.away?.bench
+      }
     );
 
     FIXTURE_LINEUPS.home.lineup =	homeTeamLineup;
@@ -479,7 +497,6 @@
   */
   $: if ($sessionStore?.livescore_now_fixture_target)
   {
-    console.log('⭐️ livescore_now_fixture_target', $sessionStore?.livescore_now_fixture_target)
     injectLiveData()
   }
 
@@ -494,8 +511,8 @@
   $: if_R_1 =
     FIXTURE_LINEUPS
 		&& browser
-		&& FIXTURE_LINEUPS?.away?.formation
-		&& FIXTURE_LINEUPS?.home?.formation
+		&& FIXTURE_LINEUPS?.away?.formation != undefined
+		&& FIXTURE_LINEUPS?.home?.formation != undefined
 		&& FIXTURE_LINEUPS?.away?.lineup?.length != 0
     && FIXTURE_LINEUPS?.home?.lineup?.length != 0
   ;
@@ -517,7 +534,7 @@
     && FIXTURE_LINEUPS?.home?.lineup?.length != 0
   ;
 
-	$: if (if_R_1) 
+	$: if (if_R_1 && FIXTURE_LINEUPS) 
   {
     // [🐞]
     console.log
@@ -527,12 +544,12 @@
 		no_widget_data = false;
     generateTeamFormMap()
 	}
-  else if (if_R_2) 
+  else if (if_R_2 && FIXTURE_LINEUPS) 
   {
     // [🐞]
     console.log
     (
-      '⭐️ if_R_1_2'
+      '⭐️ if_R_2'
     );
 		no_widget_data = false;
 		generateTeamFormMap_2()
@@ -546,6 +563,12 @@
 		no_widget_data = true;
 		loaded = true;
 	}
+
+  // [🐞]
+  // $: if (FIXTURE_LINEUPS)
+  // {
+  //   console.log('⭐️ FIXTURE_LINEUPS', FIXTURE_LINEUPS)
+  // }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -1165,8 +1188,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   lineup-player-name
                 "
               >
-                {FIXTURE_LINEUPS.home
-                  ?.coach_name}
+                {FIXTURE_LINEUPS.home?.coach_name}
                 <br />
                 <span
                   class="
