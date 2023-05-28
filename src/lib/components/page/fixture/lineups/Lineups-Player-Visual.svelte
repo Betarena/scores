@@ -63,12 +63,17 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
-==================== -->
+COMPONENT HTML 
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
 
 {#if PLAYER_INFO != undefined}
   <a
-    href="/{PLAYER_INFO?.urls['en']}">
+    href="/{PLAYER_INFO?.urls?.['en']}"
+    class="
+      cursor-pointer
+    "
+  >
     <div
       id="main-player-box"
       class="column-space-center"
@@ -196,8 +201,9 @@
 {/if}
 
 <!-- ===============
-  COMPONENT STYLE
-==================== -->
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
 
 <style>
 
@@ -281,8 +287,12 @@
 		font-size: 10px;
 	}
 
-	/* 
-  MOBILE RESPONSIVNESS (&+) */
+	/*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
 	@media only screen 
   and (max-width: 425px) 
   {
@@ -310,10 +320,10 @@
 		/* EMPTY */
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
-	................. */
-
-  
+	/*
+  =============
+  DARK-THEME
+  =============
+  */
 
 </style>
