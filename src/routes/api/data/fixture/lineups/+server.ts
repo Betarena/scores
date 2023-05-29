@@ -3,14 +3,12 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { FLIN_FP_ENTRY, FLIN_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
-import { PSEO_PP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.player-seo.js';
+import { FLIN_FP_ENTRY, FLIN_FP_ENTRY_1, FLIN_FP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../cache/std_main';
 
 import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
-import type { LIN_Fixture } from '@betarena/scores-lib/types/lineups.js';
-import type { B_PSEO_T } from '@betarena/scores-lib/types/player-seo.js';
+import type { B_LIN_T, LIN_Fixture } from '@betarena/scores-lib/types/lineups.js';
 
 //#endregion ➤ Package Imports
 
@@ -39,7 +37,7 @@ export async function GET
 	  const player_ids: string = req?.url?.searchParams?.get('player_ids');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // NOTE: fixture (lineup) data; [fallback]
+    // NOTE: fixture (lineup) data; (MAIN) [w/fallback]
     const if_0 =
       fixture_id != undefined
     ;
@@ -72,7 +70,7 @@ export async function GET
       return json(data);
     }
 
-    // NOTE: fixture (lineup) players data;
+    // NOTE: fixture (lineup) data; (PLAYERS) [w/fallback]
     const if_1 =
       player_ids != undefined
     ;
@@ -99,7 +97,7 @@ export async function GET
       return json(data);
     }
 
-    // NOTE: target widget [translation]
+    // NOTE: fixture (lineup) data; (TRANSLATION) [w/fallback]
     if (lang) 
     {
       // TODO: LIN_C_T_A
@@ -183,9 +181,9 @@ async function fallbackMainData
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_PSEO_T > 
+): Promise < B_LIN_T > 
 {
-  const map = await PSEO_PP_ENTRY_1
+  const map = await FLIN_FP_ENTRY_2
   (
     graphQlInstance,
     [lang]
