@@ -1,23 +1,18 @@
   //#region ➤ Package Imports
 
-import { json } from '@sveltejs/kit';
-
 import { initGrapQLClient } from '$lib/graphql/init';
-
-import { SAP_GL_generate_page_fixtures, SAP_GL_generate_seo_players, SAP_GL_get_published_fixtures, SAP_GL_get_target_player_page_seo, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.seo-pages.js';
+import { SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.seo-pages.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
-import type { B_SAP_FP_D, B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
+import { json } from '@sveltejs/kit';
+import { get_target_hset_cache_data, get_target_set_cache_data } from '../../../cache/std_main';
 
-import {
-  get_target_hset_cache_data,
-  get_target_set_cache_data
-} from '../../../cache/std_main';
+import type { B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
 
   //#endregion ➤ Package Imports
 
   //#region ➤ [VARIABLES] Imports
 
-type PAGE_TYPE = 'homepage' | 'tournaments' | 'fixtures' | 'fixtures2' | 'player'
+type PAGE_TYPE = 'homepage' | 'tournaments' | 'fixtures' | 'player';
 
 const graphQlInstance = initGrapQLClient()
 
@@ -47,7 +42,7 @@ export async function GET
 	const country_id: string = req?.url?.searchParams?.get('country_id');
 	const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
 	const player_id: string = req?.url?.searchParams?.get('player_id');
-	const sport: string = req?.url?.searchParams?.get('sport');
+	const term: string = req?.url?.searchParams?.get('term');
   const months: string = req?.url?.searchParams?.get('months');
   const hasura: string = req?.url?.searchParams?.get('hasura');
 
@@ -55,7 +50,7 @@ export async function GET
   // TODO: add player (page) sections into the mix of METHODS below;
 
   // [1] valid url;
-  const validation_0 =
+  const if_M_0 =
     langUrl
     || sportUrl
     || countryUrl
@@ -63,7 +58,8 @@ export async function GET
     || fixtureUrl
     || playerUrl
   ;
-	if (validation_0) {
+	if (if_M_0) 
+  {
 		return validUrlCheck
     (
       langUrl,
@@ -76,66 +72,66 @@ export async function GET
 	}
 
   // [2] page (home) SEO
-  const validation_1 =
+  const if_M_1 =
     lang
     && page === 'homepage'
   ;
-	if (validation_1) {
-		const response_cache =
-			await get_target_hset_cache_data(
-				RedisKeys.SAP_C_D_A1,
-				lang
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
+	if (if_M_1) 
+  {
+		const data = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A1,
+      lang
+    );
+		if (data) return json(data);
 	}
 
   // [3] page (tournament) DATA
-  const validation_2 =
+  const if_M_2 =
     url 
     && page === 'tournaments'
   ;
-	if (validation_2) {
-		const response_cache =
-			await get_target_hset_cache_data(
-				RedisKeys.SAP_C_D_A3,
-				url
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
+	if (if_M_2) 
+  {
+		const data = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A3,
+      url
+    );
+		if (data)	return json(data);
 	}
 
   // [4] page (tournament) SEO
-  const validation_3 =
+  const if_M_3 =
     lang 
     && page === 'tournaments'
   ;
-	if (validation_3) {
-		const response_cache =
-			await get_target_hset_cache_data(
+	if (if_M_3) 
+  {
+		const data = await get_target_hset_cache_data
+    (
 			RedisKeys.SAP_C_D_A2,
-				lang
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
+      lang
+    );
+		if (data) return json(data);
 	}
 
-  // [5] page (fixture) DATA
-  const validation_4 =
+  // [5] page (fixture) DATA 
+  // NOTE: (w/fallback)
+  const if_M_4 =
     fixture_id 
     && page === 'fixtures'
   ;
-	if (validation_4) {
+	if (if_M_4) 
+  {
     
     const _fixture_id: number = parseInt(fixture_id)
     let data;
     let loadType = "cache";
 
     // NOTE: check in cache;
-    if (!hasura) {
+    if (!hasura) 
+    {
       data = await get_target_hset_cache_data
       (
         RedisKeys.SAP_C_D_A5,
@@ -144,7 +140,8 @@ export async function GET
     }
 
     // NOTE: (default) fallback;
-		if (!data || hasura) {
+		if (!data || hasura) 
+    {
       data = await fallbackMainData_2
       (
         _fixture_id
@@ -159,43 +156,46 @@ export async function GET
 	}
 
   // [6] page (fixture) SEO
-  const validation_5 =
+  const if_M_5 =
     lang 
     && page === 'fixtures'
   ;
-	if (validation_5) {
-		const response_cache =
-			await get_target_hset_cache_data(
-				RedisKeys.SAP_C_D_A4,
-				lang
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
+	if (if_M_5) 
+  {
+		const data = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A4,
+      lang
+    );
+		if (data)	return json(data);
 	}
 
-  // [7] page (player) DATA
-  const validation_6 =
+  // [7] page (player) DATA 
+  // NOTE: (w/fallback)
+  const if_M_6 =
     player_id 
     && page === 'player'
   ;
-  if (validation_6) {
+  if (if_M_6) 
+  {
 
     const _player_id: number = parseInt(player_id)
     let data;
     let loadType = "cache";
 
     // NOTE: check in cache;
-    if (!hasura) {
+    if (!hasura) 
+    {
       data = await get_target_hset_cache_data
       (
-        RedisKeys.SAP_C_D_A15,
+        RedisKeys.SAP_C_D_A16,
         player_id
       );
     }
 
     // NOTE: (default) fallback;
-		if (!data || hasura) {
+		if (!data || hasura) 
+    {
       data = await fallbackMainData_0
       (
         _player_id
@@ -203,58 +203,57 @@ export async function GET
       loadType = 'HASURA'
 		}
 
-    console.log(`📌 loaded [PFIX] with: ${loadType}`)
+    console.log(`📌 loaded [PPLAY] with: ${loadType}`)
 
     return json(data);
   }
 
   // [8] page (player) SEO
-  const validation_7 =
+  const if_M_7 =
     lang 
     && page === 'player'
   ;
-  if (validation_7) {
-    const data = await fallbackMainData_1
+  if (if_M_7) 
+  {
+    const data = await get_target_hset_cache_data
     (
+      RedisKeys.SAP_C_D_A15,
       lang
     );
     return json(data);
   }
 
   // [9] page (country) TRANSLATION(s)
-	if (country_id) {
-		const response_cache =
-			await get_target_hset_cache_data(
-				RedisKeys.SAP_C_D_A7,
-				country_id
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
+	if (country_id) 
+  {
+		const data = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A7,
+      country_id
+    );
+		if (data) return json(data);
 	}
 
-  // [10] page (sport) TRANSLATION(s)
-	if (sport) {
-		const response_cache =
-			await get_target_hset_cache_data(
-				RedisKeys.SAP_C_D_A6,
-				sport
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
+  // [10] page (term) TRANSLATION(s)
+	if (term) 
+  {
+		const data = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A6,
+      term
+    );
+		if (data) return json(data);
 	}
 
   // [11] page (months) TRANSLATION(s)
-	if (months && lang) {
-		const response_cache =
-			await get_target_hset_cache_data(
-				RedisKeys.SAP_C_D_A8,
-				lang
-			);
-		if (response_cache) {
-			return json(response_cache);
-		}
+	if (months && lang) 
+  {
+		const data = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A8,
+      lang
+    );
+		if (data) return json(data);
 	}
 
 	return json(null);
@@ -292,12 +291,8 @@ async function validUrlCheck
 //  [MAIN] METHOD
 // ============
 
-/**
- * @summary [MAIN] [FALLBACK] [0] method
- * @todo [TODO:] 1. offset map-gen. to "scores-lib"
- * @param {number} player_id
- * @returns Promise < B_SAP_PP_D >
- */
+// TODO: fallback for league/tournament page DATA (critical)
+
 async function fallbackMainData_0 
 (
   player_id: number
@@ -317,61 +312,23 @@ async function fallbackMainData_0
 	return map.get(player_id);
 }
 
-/**
- * @summary [MAIN] [FALLBACK] [1] method
- * @description obtain page (player) translation
- * + SEO data;
- * @param {string} lang 
- * @returns Promise < B_SAP_PP_T >
- */
-async function fallbackMainData_1 
-(
-  lang: string
-): Promise < B_SAP_PP_T > 
-{
-
-  const res = await SAP_GL_get_target_player_page_seo
-  (
-    graphQlInstance, 
-    [lang]
-  );
-
-  const map = await SAP_GL_generate_seo_players
-  (
-    res,
-    [lang]
-  );
-
-	return map.get(lang);
-}
-
-/**
- * @summary [MAIN] [FALLBACK] [2] method
- * @description obtain target fixture (page)
- * critical operational data;
- * @param {number} fixtureId 
- * @returns Promise < B_SAP_FP_D >
- */
 async function fallbackMainData_2
 (
   fixtureId: number
 ) : Promise < B_SAP_FP_D >
 {
-  const dataFixtures = await SAP_GL_get_published_fixtures
+  const map = await SEO_FS_ENTRY 
   (
     graphQlInstance,
     [fixtureId]
   )
 
-  const map = await SAP_GL_generate_page_fixtures 
-  (
-    dataFixtures
-  )
-
-  if (map.size == 0) {
-    return null
+  if (map.size == 0) 
+  {
+    return null;
   }
 
   return map.get(fixtureId)
 }
+
   //#endregion ➤ [METHODS]
