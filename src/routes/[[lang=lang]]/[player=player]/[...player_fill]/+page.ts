@@ -71,21 +71,34 @@ export async function load
 
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
 
-  // [1] FIXTURE (CRITICAL) page data;
+  // [1] CRITICAL
 
-  type PP_PROMISE_0 = [
+  type PP_PROMISE_0 = 
+  [
     B_SAP_PP_D | undefined
-  ]
+  ];
+
+  const urls_0 = 
+  [
+    `/api/data/main/seo-pages?player_id=${player_id}&page=player`
+  ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
   (
-    [`/api/data/main/seo-pages?player_id=${player_id}&page=player`],
+    urls_0,
     fetch
   ) as PP_PROMISE_0;
 
-	const [
+	const 
+  [
 		PAGE_DATA
 	] = data_0;
+
+  PRELOAD_invalid_data
+  (
+    data_0,
+    urls_0
+  );
 
   const country_id = PAGE_DATA?.data?.country_id;
 
@@ -113,7 +126,7 @@ export async function load
     `/api/data/players/team?player_id=${player_id}`,
     `/api/data/players/seo?lang=${_lang}`,
     `/api/data/players/seo?player_id=${player_id}&lang=${_lang}`
-  ]
+  ];
 
   type PP_PROMISE = [
     B_SAP_PP_T | undefined,
@@ -127,7 +140,7 @@ export async function load
     B_PTEAM_D | undefined,
     B_PSEO_T | undefined,
     B_PSEO_D | undefined
-  ]
+  ];
 
   const data = await promiseUrlsPreload
   (
@@ -195,10 +208,20 @@ export async function load
   // const INVALID_PAGE_DATA: boolean = data.includes(undefined);
   // if (dev) console.log(data)
 
-  PRELOAD_invalid_data(data)
+  PRELOAD_invalid_data
+  (
+    data,
+    urls
+  );
 
   const t1 = performance.now();
-  dlog(`⏳ [PLAYERS] (pre-load) ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
+
+  // [🐞]
+  dlog
+  (
+    `⏳ [PLAYERS] PRELOAD ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
 
   return {
     PAGE_DATA,
