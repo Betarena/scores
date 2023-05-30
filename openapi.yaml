@@ -21,6 +21,45 @@ servers:
 
 paths:
 
+  # SEO-PAGES (L) Main:
+  /api/data/main/seo-pages:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target player (main) SEO widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?player_id=[...]
+              player_id:
+                type: number
+                example: 205881
+              # ?page=[...]
+              page:
+                type: string
+                enum:
+                  - player
+                example: player
+            additionalProperties: false
+            oneOf:
+              # data (main) [player]
+              - required: [player_id, page]
+      summary:
+        Returns a targets' player main SEO widget (data).
+      description: 
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - Player Page
+      responses:
+        200:
+          description: 
+            Target player SEO widget data
+
   # LINEUP (FP) Widget
   /api/data/fixture/lineups:
     parameters:
