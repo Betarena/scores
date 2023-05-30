@@ -15,7 +15,7 @@ import type { PageLoad } from "../$types";
 
 // #endregion ➤ [MAIN] Package Imports
 
-const PAGE_LOG = '⏳ [PLAYERS] PRELOAD'
+const PAGE_LOG = '⏳ [PLAYERS] PRELOAD';
 
 /** @type {import('./$types').PageLoad} */
 export async function load
@@ -107,14 +107,16 @@ export async function load
   );
 
   // EXIT;
-  const if_1 =
+  const if_M_0 =
     PAGE_DATA == null
+    || PAGE_DATA?.error != undefined
   ;
-  if (if_1) 
+  if (if_M_0) 
   {
     exitPage
     (
-      t0
+      t0,
+      PAGE_DATA?.error?.reason
     );
   }
 
@@ -254,11 +256,14 @@ export async function load
   }
 
   //#endregion [3] RETURN
+
 }
 
 function exitPage
 (
-  t0: number
+  t0: number,
+  // (optional)
+  reason?: string
 ): void
 {
   // [🐞]
@@ -271,6 +276,6 @@ function exitPage
   throw error
   (
     ERROR_CODE_INVALID,
-    PAGE_INVALID_MSG
+    reason || PAGE_INVALID_MSG
   );
 }
