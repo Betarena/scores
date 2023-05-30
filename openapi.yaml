@@ -101,6 +101,62 @@ paths:
           description: 
             Target fixture LINEUP widget data
   
+  # STATS (PP) Widget
+  /api/data/players/statistics:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target player (main) STATS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?player_id=[...]
+              player_id:
+                type: number
+                example: 580
+              # ?league_id=[...]
+              league_id:
+                type: number
+                example: 580
+              # ?season_id=[...]
+              season_id:
+                type: number
+                example: 580
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main)
+              - required: [player_id]
+              - required: [player_id, hasura]
+              # data (main) (complement)
+              - required: [player_id, league_id, season_id]
+              - required: [player_id, league_id, season_id, hasura]
+
+      summary:
+        Returns a targets' player main STATS widget (data).
+      description: 
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - Player Page
+      responses:
+        200:
+          description: 
+            Target player STATS widget data
+
   # SEO (PP) Widget
   /api/data/players/seo:
     get:
