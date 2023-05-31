@@ -35,6 +35,10 @@ paths:
           schema:
             type: object
             properties:
+              # ?term=[...]
+              term:
+                type: string
+                example: football
               # ?player_id=[...]
               player_id:
                 type: number
@@ -49,6 +53,8 @@ paths:
             oneOf:
               # data (main) [player]
               - required: [player_id, page]
+              # data (translations) terms
+              - required: [term]
       summary:
         Returns a targets' player main SEO widget (data).
       description: 
