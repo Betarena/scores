@@ -53,7 +53,7 @@ COMPONENT JS (w/ TS)
   let activeAverageRating: number;
   let selectedSeasonName: string;
   let loadingPrev: boolean = false;
-  let noFixturesData: boolean = false;
+  let noFixturesData: boolean = true;
 
   // $: console.log('selectedLeague: ', selectedLeague)
   // $: console.log('selectedSeason: ', selectedSeason)
@@ -240,14 +240,21 @@ COMPONENT JS (w/ TS)
   (
   ) 
   {
-    const if_0 =
+    const if_M_0 = 
       !playerSeasonStatMap.has(selectedSeason)
-      || playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures == undefined
-      || playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures.length != 0
+    ;
+    if (if_M_0)
+    {
+      noFixturesData = true;
+      return;
+    }
+    const if_M_1 =
+      playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures == undefined
+      || playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures.length > 0
       || queriedSeasons.includes(selectedSeason)
     ;
     noFixturesData = false;
-    if (if_0) return
+    if (if_M_1) return;
     // continue, load;
     loadingPrev = true;
     const response = await get
@@ -255,11 +262,11 @@ COMPONENT JS (w/ TS)
       `/api/data/players/statistics?player_id=${PAGE_DATA?.data?.player_id}&league_id=${selectedLeague}&season_id=${selectedSeason}&hasura=true`
     ) as [PSTAT_C_Fixture[], number];
     // validate: end of fixtures;
-    const if_1 =
+    const if_M_2 =
       response == undefined
       || (response[0]?.length == 0 && response[1] == undefined)
     ;
-    if (if_1) 
+    if (if_M_2) 
     {
       noFixturesData = true;
       loadingPrev = false;

@@ -20,7 +20,185 @@ servers:
     description: Server [PROD] environment
 
 paths:
+
+  # FEATURED MATCH (H) Widget
+  # TODO: move to /api/data/[...]
+  /api/cache/home/featured_match:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-MATCH widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?geoPos=[...]
+              geoPos:
+                type: string
+                example: es
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [geo]
+              - required: [geoPos]
+      summary: 
+        Returns a targets' homa (id) main Featured Match widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture FEAT-MATCH widget data
+
+  # SEO-PAGES (L) Main:
+  /api/data/main/seo-pages:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target player (main) SEO widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?term=[...]
+              term:
+                type: string
+                example: football
+              # ?player_id=[...]
+              player_id:
+                type: number
+                example: 205881
+              # ?page=[...]
+              page:
+                type: string
+                enum:
+                  - player
+                example: player
+            additionalProperties: false
+            oneOf:
+              # data (main) [player]
+              - required: [player_id, page]
+              # data (translations) terms
+              - required: [term]
+      summary:
+        Returns a targets' player main SEO widget (data).
+      description: 
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - Player Page
+      responses:
+        200:
+          description: 
+            Target player SEO widget data
+
+  # LINEUP (FP) Widget
+  /api/data/fixture/lineups:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) LINEUP widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?player_ids=[...]
+              player_ids:
+                type: string
+                example: 580
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [lineup]
+              - required: [fixture_id]
+              # data (main) [players]
+              - required: [player_ids]
+      summary: 
+        Returns a targets' fixture (id) main Lineup widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture LINEUP widget data
   
+  # STATS (PP) Widget
+  /api/data/players/statistics:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target player (main) STATS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?player_id=[...]
+              player_id:
+                type: number
+                example: 580
+              # ?league_id=[...]
+              league_id:
+                type: number
+                example: 580
+              # ?season_id=[...]
+              season_id:
+                type: number
+                example: 580
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main)
+              - required: [player_id]
+              - required: [player_id, hasura]
+              # data (main) (complement)
+              - required: [player_id, league_id, season_id]
+              - required: [player_id, league_id, season_id, hasura]
+
+      summary:
+        Returns a targets' player main STATS widget (data).
+      description: 
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - Player Page
+      responses:
+        200:
+          description: 
+            Target player STATS widget data
+
   # SEO (PP) Widget
   /api/data/players/seo:
     get:
@@ -45,8 +223,10 @@ paths:
                 example: es
             additionalProperties: false
             oneOf:
-              - required: [player_id, lang]
+              # translation
               - required: [lang]
+              # data (main)
+              - required: [player_id, lang]
       summary:
         Returns a targets' player main SEO widget (data).
       description: 

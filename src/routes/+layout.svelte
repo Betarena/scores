@@ -11,9 +11,8 @@
 	import { dlog } from '$lib/utils/debug';
 	import * as Sentry from '@sentry/browser';
 	import { BrowserTracing } from '@sentry/tracing';
-
-	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
-	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
+	import { sessionStore } from '$lib/store/session.js';
+	import { platfrom_lang_ssr } from '$lib/utils/platform-functions.js';
 
 	import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
 	import OfflineAlert from '$lib/components/_Offline_alert.svelte';
@@ -22,6 +21,9 @@
 	import Footer from '$lib/components/_main_/footer/_Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
 	import Navbar from '$lib/components/page/profile/Navbar.svelte';
+
+	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
+	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
 
 	// import '../app.css';
 	
@@ -90,6 +92,24 @@
 		);
 		offlineMode = !offlineMode;
 	}
+
+  // ~~~~~~~~~~~~~~~~~~~~~
+	// (SSR) LANG SVELTE | IMPORTANT
+	// ~~~~~~~~~~~~~~~~~~~~~
+
+	$: serverSideLang = platfrom_lang_ssr
+  (
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+  $: if (serverSideLang)
+  {
+    sessionStore.updateServerLang
+    (
+      serverSideLang
+    )
+  }
   
 </script>
 

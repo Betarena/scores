@@ -14,6 +14,8 @@ export interface Platform_Session {
 	auth_show: boolean;
   /** NOTE: used for detecting and pre-loading the data for a TARGET page translation of the current one, programatically */
   lang_intent: string | undefined;
+  /** NOTE: instant page lang */
+  serverLang: string | undefined;
   /** session data on the Firebase Livescore [V1] */
   livescore_now: Map<number, FIREBASE_livescores_now>
   /** session data on the Firebase Livescore (Scoreboard) [V2] */
@@ -38,7 +40,8 @@ export interface Platform_Session {
    * IMPORTANT
    * Must be in user adjusted (TZ) timezone;
   */
-  userDate: Date
+  userDate: Date,
+  livescore_now_fixture_target: FIREBASE_livescores_now
 }
 
 // [ℹ] DEFAULT STORE STATE
@@ -48,6 +51,7 @@ const seassion_store: Platform_Session = {
 	fixture_select_view: 'overview',
 	auth_show: false,
   lang_intent: undefined,
+  serverLang: undefined,
   livescore_now: undefined,
   livescore_now_scoreboard: new Map(),
   sportbook_main: undefined,
@@ -56,7 +60,8 @@ const seassion_store: Platform_Session = {
   livescoreFixtureView: 'all',
   livescoreShowCalendar: false,
   fixturesTodayNum: 0,
-  userDate: clientTimezoneDate()
+  userDate: clientTimezoneDate(),
+  livescore_now_fixture_target: undefined
 };
 
 function createLocalStore() {
@@ -74,6 +79,11 @@ function createLocalStore() {
 				!seassion_store.newsletterPopUpShow;
 		},
 
+    updateServerLang: (lang: string) => {
+      seassion_store.serverLang = lang;
+      set(seassion_store);
+    },
+
     /**
      * @summary [METHOD] update stores
      * @description updates storesJs on Livescores Data;
@@ -81,6 +91,16 @@ function createLocalStore() {
      */
     updateLivescores: (data: Map<number, FIREBASE_livescores_now>) => {
       seassion_store.livescore_now = data
+      set(seassion_store)
+    },
+
+    /**
+     * @summary [METHOD] update stores
+     * @description updates storesJs on Livescores Data;
+     * @param {Map<number, FIREBASE_livescores_now>} data 
+     */
+    updateLivescoresTarget: (data: FIREBASE_livescores_now) => {
+      seassion_store.livescore_now_fixture_target = data
       set(seassion_store)
     },
 

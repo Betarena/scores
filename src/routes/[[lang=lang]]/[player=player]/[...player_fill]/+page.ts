@@ -1,13 +1,21 @@
+// #region ➤ [MAIN] Package Imports
+
+import { error } from "@sveltejs/kit";
+
 import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from "$lib/utils/debug";
 import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from "$lib/utils/platform-functions";
+
 import type { B_PSEO_D, B_PSEO_T } from "@betarena/scores-lib/types/player-seo.js";
 import type { B_PSTAT_T } from "@betarena/scores-lib/types/player-statistics.js";
 import type { B_PTEAM_D, B_PTEAM_T } from "@betarena/scores-lib/types/player-team.js";
 import type { B_SAP_D1, B_SAP_D2, B_SAP_PP_D, B_SAP_PP_T } from "@betarena/scores-lib/types/seo-pages";
-import { error } from "@sveltejs/kit";
 import type { B_PFIX_D, B_PFIX_T } from "node_modules/@betarena/scores-lib/types/player-fixtures";
 import type { B_PPRO_T } from "node_modules/@betarena/scores-lib/types/player-profile";
 import type { PageLoad } from "../$types";
+
+// #endregion ➤ [MAIN] Package Imports
+
+const PAGE_LOG = '⏳ [PLAYERS] PRELOAD';
 
 /** @type {import('./$types').PageLoad} */
 export async function load
@@ -24,25 +32,26 @@ export async function load
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
-  const {
+  const 
+  {
     lang, 
     // (example) -> player | jugador (translation)
     // player,
     // (example) -> teddy-teuma/829643 | harry-kane/997
     player_fill
   } = params;
-  // console.log(params)
 
   const _lang =
     lang == undefined 
       ? 'en' 
-      : lang;
+      : lang
+  ;
 
   const player_id = player_fill.match(/\d+$/);
 
   //#endregion [0] IMPORTANT EXTRACT URL DATA
 
-    //#region [0] IMPORTANT VALID URL CHECK
+  //#region [0] IMPORTANT VALID URL CHECK
 
     const validUrlCheck = await promiseValidUrlCheck
     (
@@ -54,38 +63,62 @@ export async function load
       null,
       player_fill
     );
-  
-    // [ℹ] exit;
+
+    // EXIT;
     if (!validUrlCheck) 
     {
-      // [🐞]
-      const t1 = performance.now();
-      dlog(`⏳ [PLAYER] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
-      throw error(
-        ERROR_CODE_INVALID,
-        PAGE_INVALID_MSG
+      exitPage
+      (
+        t0
       );
-    };
+    }
   
-    //#endregion [0] IMPORTANT VALID URL CHECK
+  //#endregion [0] IMPORTANT VALID URL CHECK
 
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
 
-  // [1] FIXTURE (CRITICAL) page data;
+  // [1] CRITICAL, causes Error Page;
 
-  type PP_PROMISE_0 = [
+  type PP_PROMISE_0 = 
+  [
     B_SAP_PP_D | undefined
-  ]
+  ];
+
+  const urls_0 = 
+  [
+    `/api/data/main/seo-pages?player_id=${player_id}&page=player`
+  ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
   (
-    [`/api/data/main/seo-pages?player_id=${player_id}&page=player`],
+    urls_0,
     fetch
   ) as PP_PROMISE_0;
 
-	const [
+	const 
+  [
 		PAGE_DATA
 	] = data_0;
+
+  PRELOAD_invalid_data
+  (
+    data_0,
+    urls_0
+  );
+
+  // EXIT;
+  const if_M_0 =
+    PAGE_DATA == null
+    || PAGE_DATA?.error != undefined
+  ;
+  if (if_M_0) 
+  {
+    exitPage
+    (
+      t0,
+      PAGE_DATA?.error?.reason
+    );
+  }
 
   const country_id = PAGE_DATA?.data?.country_id;
 
@@ -113,7 +146,7 @@ export async function load
     `/api/data/players/team?player_id=${player_id}`,
     `/api/data/players/seo?lang=${_lang}`,
     `/api/data/players/seo?player_id=${player_id}&lang=${_lang}`
-  ]
+  ];
 
   type PP_PROMISE = [
     B_SAP_PP_T | undefined,
@@ -127,7 +160,7 @@ export async function load
     B_PTEAM_D | undefined,
     B_PSEO_T | undefined,
     B_PSEO_D | undefined
-  ]
+  ];
 
   const data = await promiseUrlsPreload
   (
@@ -192,13 +225,20 @@ export async function load
  
   //#region [3] IMPORTANT RETURN
 
-  // const INVALID_PAGE_DATA: boolean = data.includes(undefined);
-  // if (dev) console.log(data)
-
-  PRELOAD_invalid_data(data)
+  PRELOAD_invalid_data
+  (
+    data,
+    urls
+  );
 
   const t1 = performance.now();
-  dlog(`⏳ [PLAYERS] (pre-load) ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
+
+  // [🐞]
+  dlog
+  (
+    `⏳ [PLAYERS] PRELOAD ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
 
   return {
     PAGE_DATA,
@@ -216,4 +256,26 @@ export async function load
   }
 
   //#endregion [3] RETURN
+
+}
+
+function exitPage
+(
+  t0: number,
+  // (optional)
+  reason?: string
+): void
+{
+  // [🐞]
+  const t1 = performance.now();
+  dlog
+  (
+    `${PAGE_LOG} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
+  throw error
+  (
+    ERROR_CODE_INVALID,
+    reason || PAGE_INVALID_MSG
+  );
 }

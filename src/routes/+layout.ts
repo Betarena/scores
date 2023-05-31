@@ -117,7 +117,11 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 		);
 	}
 
-  PRELOAD_invalid_data(data)
+  PRELOAD_invalid_data
+  (
+    data,
+    urls
+  )
 
   const t1 = performance.now();
   dlog(`⏳ [LAYOUT] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
