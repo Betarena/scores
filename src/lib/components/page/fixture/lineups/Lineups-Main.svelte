@@ -383,6 +383,7 @@
             teamFormMap.has(formationPosCode)
           ;
 
+          // CHECK: Already has target position;
           if (if_M_0) 
           {
             let exist_lineup_list = teamFormMap.get(formationPosCode);
@@ -392,17 +393,16 @@
               formationPosCode,
               exist_lineup_list
             );
+            continue;
           } 
-          else 
-          {
-            const lineup_list = [];
-            lineup_list.push(player);
-            teamFormMap.set
-            (
-              formationPosCode,
-              lineup_list
-            );
-          }
+          
+          const lineup_list = [];
+          lineup_list.push(player);
+          teamFormMap.set
+          (
+            formationPosCode,
+            lineup_list
+          );
         }
 
         countPosDiff++;
@@ -441,34 +441,38 @@
       if (teamT == 'home') homeTeamFormMap = new Map < string, LIN_Player[]	>();
       if (teamT == 'away') awayTeamFormMap = new Map < string, LIN_Player[]	>();
 
+      const formationArr = formation_pos_arr;
+
+      if (teamT == 'away') formationArr.reverse();
+
       const teamFormMap = new Map < string, LIN_Player[]	>();
 
-      for (const form_pos of formation_pos_arr || []) 
+      for (const form_pos of formationArr || []) 
       {
         for (const player of lineupList || []) 
         {
           if (form_pos == player?.position) 
           {
+            // CHECK: Already has target position;
             if (teamFormMap.has(form_pos))
             {
-              let exist_lineup_list = teamFormMap.get(form_pos);
-              exist_lineup_list.push(player);
+              let existLineupList = teamFormMap.get(form_pos);
+              existLineupList.push(player);
               teamFormMap.set
               (
                 form_pos,
-                exist_lineup_list
+                existLineupList
               );
-            } 
-            else 
-            {
-              const lineup_list = [];
-              lineup_list.push(player);
-              teamFormMap.set
-              (
-                form_pos,
-                lineup_list
-              );
+              continue;
             }
+
+            const initLineUpList = [];
+            initLineUpList.push(player);
+            teamFormMap.set
+            (
+              form_pos,
+              initLineUpList
+            );
           }
         }
       }
@@ -626,6 +630,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     />
 
     <div
+      id='lineup-widget-container'
       class="widget-component"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
