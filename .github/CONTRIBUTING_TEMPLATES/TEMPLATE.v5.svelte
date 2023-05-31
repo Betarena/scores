@@ -17,19 +17,17 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
-	import { onMount } from 'svelte';
 	import { viewport_change } from '$lib/utils/platform-functions';
-  import profile_avatar from './assets/profile-avatar.svg';
+	import { onMount } from 'svelte';
+
+	import profile_avatar from './assets/profile-avatar.svg';
+
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
 
   export const EXAMPLE_VALUE
   
@@ -43,7 +41,13 @@ COMPONENT JS (w/ TS)
   //  COMPONENT METHODS
   // ~~~~~~~~~~~~~~~~~~~~~
 
-  function do_something() {}
+  function do_something
+  (
+    // arg
+  )
+  {
+    // logic
+  }
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -97,6 +101,12 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
+<SeoBox>
+  <!-- 
+  SEO CONTENT GOES HERE
+  -->
+</SeoBox>
+
 <!-- 
 [ℹ] example comment
 -->
@@ -117,17 +127,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  /* #region ❌ [NOT WORKING] w/ regions */
-  div#example {
+  div#example 
+  {
     color: var(--dark-theme);
-    background-color: var();
-  } div#example > div#target {
-  }
-  /* #endregion ❌ [NOT WORKING] w/ regions */
-
-  div#example {
-    color: var(--dark-theme);
-  } div#example > div#target {
+  } 
+  div#example > div#target 
+  {
+    
   }
 
   /*
@@ -137,8 +143,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   @media only screen 
-    and (min-width: 726px) 
-    and (max-width: 1000px) {
+  and (min-width: 726px) 
+  and (max-width: 1000px) 
+  {
   }
 
   /*

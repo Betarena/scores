@@ -1,14 +1,28 @@
+// #region ➤ [MAIN] Package Imports
+
 import { error } from '@sveltejs/kit';
 
-import { ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, FIXTURE_PAGE_ERROR_MSG, PAGE_INVALID_MSG, dlog, errlog } from '$lib/utils/debug';
+import { ERROR_CODE_INVALID, FIXTURE_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
 import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
-import type {
-  REDIS_CACHE_SINGLE_fixtures_page_info_response,
-  REDIS_CACHE_SINGLE_general_countries_translation
-} from '$lib/models/_main_/pages_and_seo/types';
-import type { GeoJsResponse } from '$lib/types/types.geojs';
+import type { B_ABT_D, B_ABT_T } from '@betarena/scores-lib/types/about.js';
+import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
+import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
+import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
+import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
+import type { B_LIN_D, B_LIN_T } from '@betarena/scores-lib/types/lineups.js';
+import type { B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
+import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
+import type { B_SAP_D1, B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings.js';
+import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
+import type { B_VOT_T } from '@betarena/scores-lib/types/votes.js';
 import type { PageLoad } from './$types';
+
+// #endregion ➤ [MAIN] Package Imports
+
+const PAGE_LOG = '⏳ [FIXTURE] PRELOAD';
 
 /** @type {import('./$types').PageLoad} */
 export async function load
@@ -25,7 +39,8 @@ export async function load
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
-	const { 
+	const 
+  { 
     lang, 
     sport,
     fixture
@@ -53,16 +68,14 @@ export async function load
     fixture
   )
 
-  // [ℹ] exit;
-	if (!validUrlCheck) {
-    // [🐞]
-    const t1 = performance.now();
-    dlog(`⏳ [FIXTURE] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
-		throw error(
-			ERROR_CODE_INVALID,
-			PAGE_INVALID_MSG
-		);
-	}
+  // EXIT;
+  if (!validUrlCheck) 
+  {
+    exitPage
+    (
+      t0
+    );
+  }
 
   //#endregion [0] IMPORTANT VALID URL CHECK
 
@@ -70,17 +83,19 @@ export async function load
 
   // [1] FIXTURE (CRITICAL) page data;
 
-  type PP_PROMISE_0 = [
-    REDIS_CACHE_SINGLE_fixtures_page_info_response | undefined
+  type PP_PROMISE_0 = 
+  [
+    B_SAP_FP_D | undefined
   ]
 
-  const data_0: PP_PROMISE_0 = await promiseUrlsPreload
+  const data_0 = await promiseUrlsPreload
   (
     [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures`],
     fetch
   ) as PP_PROMISE_0;
 
-	const [
+	const 
+  [
 		FIXTURE_INFO
 	] = data_0;
 
@@ -96,17 +111,19 @@ export async function load
 
   // [2] FIXTURE (CRITICAL) page data;
 
-  type PP_PROMISE_1 = [
-    REDIS_CACHE_SINGLE_general_countries_translation | undefined
+  type PP_PROMISE_1 = 
+  [
+    B_SAP_D1 | undefined
   ]
 
-  const data_1: PP_PROMISE_1 = await promiseUrlsPreload
+  const data_1 = await promiseUrlsPreload
   (
     [`/api/data/main/seo-pages?country_id=${country_id}`],
     fetch
-  ) as PP_PROMISE_0;
+  ) as PP_PROMISE_1;
 
-	const [
+	const 
+  [
 		COUNTRY_TRANSLATION
 	] = data_1;
 
@@ -122,75 +139,65 @@ export async function load
 
   //#region [1] IMPORTANT PRE-LOAD DATA
 
-  // --------------
-	// [ℹ] preload data DOC: REF: [2]
-	// --------------
+  type PP_PROMISE_2 = 
+  [
+    B_SAP_FP_T | undefined,
+    B_FS_D | undefined,
+    B_FS_T | undefined,
+    B_LIN_D | undefined,
+    B_LIN_T | undefined,
+    B_INC_D | undefined,
+    B_INC_T | undefined,
+    B_FEATB_T | undefined,
+    B_ST_D | undefined,
+    B_ST_T | undefined,
+    B_CONT_D | undefined,
+    B_CONT_T | undefined,
+    B_ABT_D | undefined,
+    B_ABT_T | undefined,
+    B_VOT_T | undefined,
+    B_PR_T | undefined,
+    B_FO_T | undefined,
+    undefined, // B_H2H_D
+    B_H2H_T | undefined,
+    B_STA_T | undefined,
+    B_STA_D | undefined
+  ]
 
-  // const userGeoResponse: GeoJsResponse = await getUserLocation();
-  const GEO_RESPONSE: GeoJsResponse = await fetch(
-		`https://get.geojs.io/v1/ip/geo.json`,
-		{
-			method: 'GET'
-		}
-	).then((r) => r.json())
-  .catch((error) => { errlog(error) });
-  dlog(GEO_RESPONSE, true); 
-
-  // FIXME:
-  // TEST (^)
-
-	const urls = [
+	const urls: string[] = 
+  [
     `/api/data/main/seo-pages?lang=${urlLang}&page=fixtures`,
-    // TODO:FIXME: TES: (below 2 instnaces)
-    `/api/cache/tournaments/sportbook?geoPos=${GEO_RESPONSE?.country_code.toLowerCase()}`,
-    `/api/cache/tournaments/sportbook?all=true&geoPos=${GEO_RESPONSE?.country_code.toLowerCase()}`,
-    // TODO:NOTE:IMPORTANT: can be null (non-current season fixture) - load from hasura
-    // working, setup to get (old) data if not in cache;
-		// `/api/cache/fixtures/scoreboard?fixture_id=${fixture_id}`, // ALT-1
-    `/api/hasura/fixture/scoreboard?fixture_id=${fixture_id}`, // ALT-2
+    `/api/hasura/fixture/scoreboard?fixture_id=${fixture_id}`,
     `/api/cache/fixtures/scoreboard?lang=${urlLang}`,
-    // TODO:NOTE:IMPORTANT: can be null (non-current season fixture) - load from hasura
-    // `/api/cache/fixtures/lineups?fixture_id=${fixture_id}`, // ALT-1
-    `/api/hasura/fixture/lineups?fixture_id=${fixture_id}`, // ALT-2
-    `/api/cache/fixtures/lineups?lang=${urlLang}`,
-    // TODO:NOTE:IMPORTANT: can be null -load from hasura
-    // `/api/cache/fixtures/incidents?fixture_id=${fixture_id}`, // ALT-1
-    `/api/hasura/fixture/incidents?fixture_id=${fixture_id}`, // ALT-2
+    `/api/data/fixture/lineups?fixture_id=${fixture_id}`,
+    `/api/data/fixture/lineups?lang=${urlLang}`,
+    `/api/hasura/fixture/incidents?fixture_id=${fixture_id}`,
     `/api/cache/fixtures/incidents?lang=${urlLang}`,
     `/api/cache/home/featured_betting_sites?lang=${urlLang}`,
-    // TODO:NOTE:IMPORTANT: can be null -load from hasura
-    `/api/hasura/fixture/statistics?fixture_id=${fixture_id}`, // ALT-1
-    // `/api/cache/fixtures/statistics?fixture_id=${fixture_id}`,  // ALT-2
+    `/api/hasura/fixture/statistics?fixture_id=${fixture_id}`,
     `/api/cache/fixtures/statistics?lang=${urlLang}`,
-    // TODO:NOTE:IMPORTANT: can be null -load from hasura
-    // `/api/cache/fixtures/content?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-1
-    `/api/hasura/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-2
+    `/api/hasura/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`,
     `/api/cache/fixtures/content?lang=${urlLang}`,
-    // TODO:NOTE:IMPORTANT: can be null -load from hasura
-    // `/api/cache/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-1
-    `/api/hasura/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-2
+    `/api/hasura/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`,
     `/api/cache/fixtures/about?lang=${urlLang}`,
     `/api/cache/fixtures/votes?lang=${urlLang}`,
     `/api/cache/fixtures/probabilities?lang=${urlLang}`,
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
-    // TODO:NOTE:IMPORTANT: can be null -load from hasura
-    // `/api/cache/fixtures/about?fixture_id=${fixture_id}&lang=${urlLang}`, // ALT-1
-    `/api/hasura/fixture/head-2-head?fixture_id=${fixture_id}`, // ALT-2
+    `/api/hasura/fixture/head-2-head?fixture_id=${fixture_id}`,
     `/api/cache/fixtures/head-2-head?lang=${urlLang}`,
     `/api/cache/tournaments/standings?lang=${urlLang}`,
-    `/api/cache/tournaments/standings?league_id=${league_id}` // TODO:FIXME: dependant on league-id - leaking space;
+    `/api/cache/tournaments/standings?league_id=${league_id}`
   ];
 
   const data = await promiseUrlsPreload
   (
     urls,
     fetch
-  );
+  ) as PP_PROMISE_2;
 
-	const [
+	const 
+  [
     PAGE_SEO,
-    SPORTBOOK_MAIN,
-    SPORTBOOK_ALL,
 		FIXTURE_SCOREBOARD,
 		FIXTURE_SCOREBOARD_TRANSLATION,
 		FIXTURE_LINEUPS,
@@ -212,11 +219,6 @@ export async function load
     STANDINGS_T,
     STANDINGS_DATA
 	] = data;
-
-	dlog(data, false);
-  dlog(PAGE_SEO, false)
-  dlog(SPORTBOOK_MAIN, false)
-  dlog(SPORTBOOK_ALL, false);
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA
 
@@ -273,24 +275,31 @@ export async function load
 
   //#region [3] IMPORTANT RETURN
 
-	// [ℹ] FIXME: valid-page does not count data[7] - already checked
 	const INVALID_PAGE_DATA_POINTS: boolean =	data.includes(undefined);
 
-  // FIXME:  && response_about // IMPORTANT can be "NULL"
-  // FIXME:  && response_h2h // IMPORTANT can be "NULL"
-  if (INVALID_PAGE_DATA_POINTS) {
-    const t1 = performance.now();
-    dlog(`fixture (load) (exit) complete in: ${(t1 - t0) / 1000} sec`, true)
-		throw error(
-			ERROR_CODE_PRELOAD,
-			FIXTURE_PAGE_ERROR_MSG
-		);
-	}
+  // EXIT;
+  if (INVALID_PAGE_DATA_POINTS) 
+  {
+    exitPage
+    (
+      t0
+    );
+  }
 
-  PRELOAD_invalid_data(data)
+  PRELOAD_invalid_data
+  (
+    data,
+    urls
+  );
 
   const t1 = performance.now();
-  dlog(`fixture (load) (end) complete in: ${(t1 - t0) / 1000} sec`, true)
+
+  // [🐞]
+  dlog
+  (
+    `⏳ ${PAGE_LOG} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
 
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -320,12 +329,30 @@ export async function load
     // extra
     FIXTURES_ODDS_T,
     STANDINGS_T,
-    STANDINGS_DATA,
-    GEO_RESPONSE,
-    SPORTBOOK_MAIN,
-    SPORTBOOK_ALL
+    STANDINGS_DATA
   };
 
   //#endregion [3] IMPORTANT RETURN
 
+}
+
+function exitPage
+(
+  t0: number,
+  // (optional)
+  reason?: string
+): void
+{
+  // [🐞]
+  const t1 = performance.now();
+  dlog
+  (
+    `${PAGE_LOG} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
+  throw error
+  (
+    ERROR_CODE_INVALID,
+    reason || FIXTURE_PAGE_ERROR_MSG
+  );
 }

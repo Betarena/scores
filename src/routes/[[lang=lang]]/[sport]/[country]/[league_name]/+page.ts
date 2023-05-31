@@ -232,7 +232,11 @@ export async function load
     );
   }
 
-  PRELOAD_invalid_data(data)
+  PRELOAD_invalid_data
+  (
+    data,
+    urls
+  )
 
   const t1 = performance.now();
   dlog(`fixture (load) (end) complete in: ${(t1 - t0) / 1000} sec`, true)

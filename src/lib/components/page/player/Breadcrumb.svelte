@@ -8,7 +8,7 @@ COMPONENT JS (w/ TS)
   // <-imports-go-here->
 
 	import { page } from "$app/stores";
-	import { platfrom_lang_ssr } from "$lib/utils/platform-functions";
+	import { sessionStore } from "$lib/store/session.js";
 
 	import type {
 		B_SAP_D1,
@@ -21,10 +21,6 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
 
   // IMPORTANT
   // (this) widget has access to the following PAGE data:
@@ -46,31 +42,32 @@ COMPONENT JS (w/ TS)
     string
   ]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: server_side_language = platfrom_lang_ssr(
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-
   $: data = $page.data.PAGE_DATA
   $: data_0 = $page.data.B_SAP_D1
   $: data_1 = $page.data.PAGE_SEO
 
   $: breadcrumb_lang_prefix = 
-    server_side_language == 'en'
+    $sessionStore?.serverLang == 'en'
       ? `/`
-      : `/${server_side_language}/`
+      : `/${$sessionStore?.serverLang}/`
   ;
-  $: country = data_0?.translations[server_side_language];
-  $: league_url_split = 
-    data?.alternate_data_2[server_side_language]
-    .split('/')
-    .filter(a => a.length != 2)
-  // $: console.log(league_url_split)
+
+  $: country = data_0?.translations[$sessionStore?.serverLang];
+
+  // @ts-expect-error - it does return a 3 string array;
+  $: league_url_split = data?.alternate_data_2?.[$sessionStore?.serverLang]
+    ?.split
+    (
+      '/'
+    )
+    ?.filter
+    (
+      a =>
+        // remove {lang} string from URL;
+        a.length != 2
+    )
+  ;
+
   $: player_breadcrumb = data_1?.main_data?.title
     .replace(/{name}/g, data?.data?.player_name)
     .replace(/{team}/g, data?.data?.team_name)

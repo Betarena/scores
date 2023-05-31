@@ -127,10 +127,14 @@ IMPORTANT Mobile First
         <img
           id="player-avatar"
           class="m-r-12"
-          src={WIDGET_DATA?.data?.avatar}
+          src={WIDGET_DATA?.data?.avatar || 'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
           alt=""
           width="40"
           height="40"
+          on:error={
+            (e) =>
+              (e.target.src = 'https://cdn.sportmonks.com/images/soccer/placeholder.png')
+          }
         />
         <!-- 
         player data

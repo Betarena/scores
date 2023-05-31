@@ -83,25 +83,109 @@ export function viewport_change
 }
 
 /**
- * @summary [HELPER] method
- * @description validates for number of
- * null || undefined data points in target
- * data Array[];
- * @example [[object Object], [object Object], undefined] => null:
- * @param {unknown[]} data 
- * @returns NaN
+ * @summary [HELPER]
+ * @description simple method to "pause"
+ * JavaScript execution for X milliseconds;
+ * @param {number} ms
+ * @returns void
+ */
+export async function sleep 
+(
+  ms: number
+)
+{
+  new Promise
+  (
+    (
+      r
+    ) => 
+    setTimeout
+    (
+      r, 
+      ms
+    )
+  );
+}
+
+/**
+ * @summary 
+ * [HELPER]
+ * @description 
+ * ➨ identified "NULL" data points, in data array;
+ * @example 
+ * [[object Object], [object Object], undefined, null] => [2,3]:
+ * @param 
+ * {unknown[]} data 
+ * @returns 
+ * ➨ NaN
  */
 export function PRELOAD_invalid_data 
 (
-  data: unknown[]
-): void 
+  data: unknown[],
+  urls: string[]
+) 
 {
-  const indexesOf = (arr, item) =>
-		arr.reduce(
-			(acc, v, i) => (
-				v === item && acc.push(i), acc
-  ),[]);
-	dlog(`null (preload): ${indexesOf(data, null)}`, true);
+  try {
+    const indexesOf: (arr: any[], item: unknown) => number[] = 
+    (
+      arr: any[], 
+      item: unknown
+    ) =>
+      arr.reduce
+      (
+        (
+          accumulator,
+          currentVal,
+          currentIndex
+        ) => 
+        (
+          currentVal === item 
+          && accumulator.push(currentIndex), 
+          accumulator
+        ),
+        []
+      )
+    ;
+
+    const nullList = indexesOf
+    (
+      data, 
+      null
+    );
+
+    if (nullList?.length == 0) 
+      dlog
+      (
+        '🟩 Preload Successfull!',
+        true
+      );
+    ;
+    if (nullList?.length > 0) 
+      dlog
+      (
+        `🟥 Preload has null (position): ${nullList}`,
+        true
+      );
+      // list URLs responsible for NULL data points;
+      for (const i of nullList) 
+      {
+        console.log
+        (
+          `\t🚩 ${urls[i]}`
+        );
+      }
+    ;
+
+    return;
+  } 
+  catch (ex) 
+  {
+    console.debug
+    (
+      '❌ Err:',
+      ex
+    )
+  }
 }
 
 /**

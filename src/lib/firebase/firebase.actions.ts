@@ -5,12 +5,13 @@ import type { Tournament_Fixture_Odds } from '$lib/models/tournaments/fixtures_o
 import type { FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 
 /**
- * @summary [MAIN]
- * @description generates a MAP
- * of fixtures with their ODDS
- * from real-time DB;
- * @param {object} fixtures_arr_filter 
- * @returns 
+ * @summary 
+ * [MAIN]
+ * @description 
+ * generates a MAP of fixtures with their ODDS from real-time DB;
+ * @param 
+ * {object} fixtures_arr_filter 
+ * @returns
  */
 export async function getOdds_1
 (
@@ -80,12 +81,15 @@ export async function getOdds_1
 }
 
 /**
- * @summary [MAIN]
- * @description obtains array of 
- * target FIXTURE odds;
- * @param {string} fixture_time 
- * @param {number} fixture_id 
- * @returns 
+ * @summary 
+ * [MAIN]
+ * @description 
+ * obtains array of target FIXTURE odds;
+ * @param 
+ * {string} fixture_time 
+ * @param 
+ * {number} fixture_id 
+ * @returns
  */
 export async function getOdds_2
 (
@@ -135,12 +139,14 @@ export async function getOdds_2
 }
 
 /**
- * @summary [MAIN]
- * @description simple one-off GET
- * query for the target real DB data
- * path retrieval;
- * @param {string} path
- * @returns an unknown object
+ * @summary 
+ * [MAIN]
+ * @description 
+ * simple one-off GET query for the target real DB data path retrieval;
+ * @param 
+ * {string} path
+ * @returns 
+ * an unknown object
  */
 export async function getTargetRealDbData
 (
