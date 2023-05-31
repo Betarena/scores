@@ -10,7 +10,7 @@
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog } from '$lib/utils/debug';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import type {
 		REDIS_CACHE_SINGLE_fixtures_page_info_response,
@@ -20,11 +20,6 @@
 		REDIS_CACHE_SINGLE_scoreboard_data,
 		REDIS_CACHE_SINGLE_scoreboard_translation
 	} from '$lib/models/fixtures/scoreboard/types';
-
-	import type {
-		REDIS_CACHE_SINGLE_incidents_data,
-		REDIS_CACHE_SINGLE_incidents_translation
-	} from '$lib/models/fixtures/incidents/types';
 
 	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 
@@ -47,6 +42,7 @@
 		Fixture_Head_2_Head,
 		REDIS_CACHE_SINGLE_h2h_translation
 	} from '$lib/models/fixtures/head-2-head/types';
+
 	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
 	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
 	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
@@ -58,7 +54,7 @@
 	import AboutWidget from '$lib/components/page/fixture/about/About_Widget.svelte';
 	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
 	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head_2_Head_Widget.svelte';
-	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents_Widget.svelte';
+	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents-Widget.svelte';
 	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability_Widget.svelte';
 	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard_Widget.svelte';
 	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
@@ -69,14 +65,24 @@
 	import Breadcrumb from './Breadcrumb.svelte';
 	import LineupsWidget from './lineups/Lineups-Widget.svelte';
 
+	import { onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen } from '$lib/firebase/common.js';
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+
+  //#region ➤ [VARIABLES]
+
+  const livescorePath = `livescores_now/${$page.data?.FIXTURE_INFO?.id}`
+  
+  const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 475;
+
+  let mobileExclusive = false;
+  let tabletExclusive = false;
+	let current_lang: string = $sessionStore?.serverLang;
 
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
 	let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
 	let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
-	let FIXTURE_INCIDENTS: REDIS_CACHE_SINGLE_incidents_data;
-	let FXITURE_INCIDENTS_TRANSLATION: REDIS_CACHE_SINGLE_incidents_translation;
 	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
 	let FIXTURE_STATISTICS: REDIS_CACHE_SINGLE_statistics_data;
 	let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation;
@@ -94,16 +100,10 @@
 	let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
 	let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE OTHER
-	// ~~~~~~~~~~~~~~~~~~~~~
-
 	$: PAGE_SEO = $page.data.PAGE_SEO;
 	$: FIXTURE_INFO = $page.data.FIXTURE_INFO;
 	$: FIXTURE_SCOREBOARD =	$page.data.FIXTURE_SCOREBOARD;
 	$: FIXTURE_SCOREBOARD_TRANSLATION =	$page.data.FIXTURE_SCOREBOARD_TRANSLATION;
-	$: FIXTURE_INCIDENTS = $page.data.FIXTURE_INCIDENTS;
-	$: FXITURE_INCIDENTS_TRANSLATION = $page.data.FXITURE_INCIDENTS_TRANSLATION;
 	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	$: FIXTURE_STATISTICS =	$page.data.FIXTURE_STATISTICS;
 	$: FIXTURE_STATISTICS_TRANSLATION =	$page.data.FIXTURE_STATISTICS_TRANSLATION;
@@ -127,18 +127,142 @@
 			: FIXTURE_INFO?.data?.country
 					.toLowerCase()
 					.replace(/\s/g, '-')
-					.replace(/\./g, '');
+					.replace(/\./g, '')
+  ;
+  
 	$: league_name_link =
 		FIXTURE_INFO?.data?.league_name == undefined
 			? undefined
 			: FIXTURE_INFO?.data?.league_name
 					.toLowerCase()
 					.replace(/\s/g, '-')
-					.replace(/\./g, '');
+					.replace(/\./g, '')
+  ;
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  PAGE METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // TODO: FIXME: replace into a single __layout.svelte method [?]
+	// TODO: FIXME: using page-stores [?]
+	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
+	$: refresh_lang = $userBetarenaSettings.lang;
+	$: lang_intent = $sessionStore.lang_intent;
+
+  //#endregion ➤ [VARIABLES]
+
+  //#region ➤ [METHODS]
+
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ get target livescore fixture (data)
+   * ➨ instantiate livescore fixture (data) listener
+   * @returns
+   * void
+   */
+  async function kickstartLivescore
+  (
+  )
+  {
+    const if_M_0 = 
+      ['FT', 'FT_PEN'].includes($page.data?.FIXTURE_INFO?.status)
+    ;
+    if (if_M_0) return;
+    await onceTargetLivescoreNowFixtureGet
+    (
+      livescorePath
+    );
+    let connectionRef = targetLivescoreNowFixtureListen
+    (
+      livescorePath
+    );
+    // TODO: handle "unsubscribe" events for "onValue"
+    // FIREBASE_CONNECTIONS_SET.add(connectionRef)
+  }
+
+  /**
+   * @summary
+   * [HELPER]
+   * @param 
+   * {string} newURL
+   */
+  async function navigateToTranslation
+  (
+    newURL: string
+  ): Promise < void > 
+  {
+    await preloadData(newURL)
+  }
+
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  )
+  {
+    [
+      tabletExclusive, 
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+  }
+
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ document (visibility-change) event listener;
+   * @returns
+   * void
+   */
+  function addEventListeners
+  (
+  )
+  {
+    // NOTE: (on-visibility-change)
+    document.addEventListener
+    (
+      'visibilitychange',
+      async function
+      (
+      ) 
+      {
+        if (!document.hidden) 
+        {
+          dlog('🔵 user is active', true)
+          await kickstartLivescore()
+        }
+      }
+    );
+    // NOTE: (on-resize)
+    window.addEventListener
+    (
+			'resize',
+			function () 
+      {
+				resizeAction();
+			}
+		);
+  }
+
+  /**
+   * @summary
+   * [MAIN]
+   * @param 
+   * {string} lang
+   */
+  function translatedURL
+  (
+    lang: string
+  ): string 
+  {
+    let newURL: string = FIXTURE_INFO.alternate_data[lang];
+    newURL = newURL.replace('https://scores.betarena.com','');
+    dlog(FIXTURE_INFO.alternate_data, true)
+    if (newURL == undefined) return '/'
+    dlog(`newURL: ${newURL}`, true)
+    return newURL;
+  }
 
   // TODO:
   /*
@@ -157,55 +281,17 @@
     $: SPORTBOOK_ALL = SPORTBOOK_ALL
   */
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
+  //#endregion ➤ [METHODS]
 
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 475;
-	let mobileExclusive, tabletExclusive: boolean = false;
+  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
+  //#region ➤ [REACTIVIY] [METHODS]
 
-	$: server_side_language = platfrom_lang_ssr(
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE METHODS
-	// CRITICAL
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-  // TODO: FIXME: replace into a single __layout.svelte method [?]
-	// TODO: FIXME: using page-stores [?]
-	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
-	let current_lang: string = server_side_language;
-	$: refresh_lang = $userBetarenaSettings.lang;
-	$: lang_intent = $sessionStore.lang_intent;
-
-	// [ℹ] validate LANG change
-	$: if (current_lang != refresh_lang 
-    && browser
-	) {
+  // [ℹ] validate LANG change
+	$: if (current_lang != refresh_lang && browser) 
+  {
 		current_lang = refresh_lang;
 		let newURL = translatedURL(current_lang)
 
@@ -217,32 +303,37 @@
 		goto(newURL, { replaceState: true });
 	}
 
-  function translatedURL(lang: string): string {
-    let newURL: string = FIXTURE_INFO.alternate_data[lang];
-    newURL = newURL.replace('https://scores.betarena.com','');
-    dlog(FIXTURE_INFO.alternate_data, true)
-    if (newURL == undefined) return '/'
-    dlog(`newURL: ${newURL}`, true)
-    return newURL;
-  }
-
-  $: if (lang_intent && browser) {
+  $: if (lang_intent && browser) 
+  {
     let newURL = translatedURL(lang_intent)
     dlog(`newURL (lang_intent): ${newURL}`, true)
     navigateToTranslation(newURL)
   }
 
-  // onMount(() => {
-  //   for (let [key, value] of Object.entries(FIXTURE_INFO.alternate_data)) {
-	// 	  value = value.replace('https://scores.betarena.com','');
-  //     navigateToTranslation(value)
-  //     dlog(`preloaded: ${value}`, true);
-  //   }
-  // })
+  //#endregion ➤ [REACTIVIY] [METHODS]
 
-  async function navigateToTranslation(newURL: string) {
-    await preloadData(newURL)
-  }
+  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  /**
+   * @summary
+   * [MAIN] [LIFECYCLE]
+   * @description
+   * ➨ kickstart livescore data GET + LISTEN;
+   * ➨ kickstart resize-action;
+   * ➨ kickstart (bundle) event-listeners;
+  */
+  onMount
+  (
+    async() => 
+    {
+      await kickstartLivescore();
+      resizeAction();
+      addEventListeners();
+    }
+  );
+
+  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
 </script>
 
 <!-- ===================
@@ -306,10 +397,14 @@
 	{/if}
 </svelte:head>
 
-<!-- ===================
-	COMPONENT HTML
-=================== -->
-<section id="fixture-page">
+<!-- ===============
+COMPONENT HTML 
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
+
+<section
+  id="fixture-page">
+
 	<!-- 
   [ℹ] breadcrumbs URL 
   -->
@@ -319,10 +414,12 @@
     {league_name_link}
   />
 
+  <!-- 
+  FIXME: TODO: update to have a single dynamic layout
+  -->
+
 	<!-- 
-  [ℹ] widgets 
-  [ℹ] MOBILE
-  FIXME: update to have a single dynamic layout
+  📱 MOBILE
   -->
 	{#if mobileExclusive || tabletExclusive}
 		<ScoreboardWidget
@@ -334,7 +431,8 @@
 		/>
 		<div id="widget-grid-display">
 			<!-- 
-      [ℹ] "Overview" view selection -->
+      [ℹ] "Overview" view selection 
+      -->
 			<div
 				class="grid-display-column"
 				class:display-none={$sessionStore.fixture_select_view ==
@@ -344,10 +442,7 @@
 					{FIXTURE_INFO}
 					{FIXTURE_VOTES_TRANSLATION}
 				/>
-				<IncidentsWidget
-					{FIXTURE_INCIDENTS}
-					{FXITURE_INCIDENTS_TRANSLATION}
-				/>
+				<IncidentsWidget />
 				<FeaturedBettingSitesWidget
 					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 				/>
@@ -377,7 +472,8 @@
 				/>
 			</div>
 			<!-- 
-      [ℹ] "News" view selection -->
+      [ℹ] "News" view selection 
+      -->
 			<div
 				id="grid-display-column"
 				class:display-none={$sessionStore.fixture_select_view ==
@@ -389,9 +485,8 @@
 				/>
 			</div>
 		</div>
-		<!-- 
-  [ℹ] widgets 
-  [ℹ] TABLET && DESKTOP 
+  <!-- 
+  💻 TABLET 🖥️ LAPTOP 
   -->
 	{:else}
 		<ScoreboardWidget
@@ -435,10 +530,7 @@
 				<FeaturedBettingSitesWidget
 					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 				/>
-				<IncidentsWidget
-					{FIXTURE_INCIDENTS}
-					{FXITURE_INCIDENTS_TRANSLATION}
-				/>
+				<IncidentsWidget />
 				<StatisticsWidget
 					{FIXTURE_STATISTICS}
 					{FIXTURE_STATISTICS_TRANSLATION}
@@ -466,12 +558,15 @@
 
 </section>
 
-<!-- ===================
-	COMPONENT STYLE
-=================== -->
+<!-- ===============
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
+
 <style>
-	section#fixture-page {
-		/* display: grid; */
+
+	section#fixture-page 
+  {
 		max-width: 1430px;
 		grid-template-columns: 1fr;
 		padding-top: 12px !important;
@@ -479,48 +574,52 @@
 	}
 
 	/* page breadcrumbs */
-	:global(div#fixture-page-breadcrumbs p.capitalize) {
+	:global(div#fixture-page-breadcrumbs p.capitalize) 
+  {
 		text-transform: capitalize;
 		overflow: hidden;
 	}
-	:global(div#fixture-page-breadcrumbs > p) {
+	:global(div#fixture-page-breadcrumbs > p) 
+  {
 		color: #8c8c8c !important;
 	}
-	:global(div#fixture-page-breadcrumbs a > p:hover) {
+	:global(div#fixture-page-breadcrumbs a > p:hover) 
+  {
 		color: #f5620f !important;
 	}
 
 	/* widget layout */
-	div#widget-grid-display {
+	div#widget-grid-display
+  {
 		display: grid;
 		margin-top: 24px;
 		align-items: start;
 	}
 
 	/* widget layout-inner */
-	div.grid-display-column {
+	div.grid-display-column 
+  {
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 24px;
 	}
 
-	div#widget-grid-display-news {
+	div#widget-grid-display-news 
+  {
 		display: grid;
 		margin-top: 24px;
 		align-items: start;
 	}
 
-	.display-none {
-		display: none !important;
-	}
+	/*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
 
-	/* ====================
-    RESPONSIVNESS
-  ==================== */
-
-	/* 
-  MOBILE ONLY RESPONSIVNESS (&+) */
-	@media only screen and (max-width: 450px) {
+  @media only screen 
+  and (max-width: 450px) 
+  {
 		/* page breadcrumbs */
 		:global(div#fixture-page-breadcrumbs p.fixture-name) {
 			overflow: hidden;
@@ -530,18 +629,18 @@
 		}
 	}
 
-	/* 
-  RESPONSIVE FOR TABLET (&+) [768px] */
-	@media only screen and (min-width: 768px) {
+	@media only screen 
+  and (min-width: 768px) 
+  {
 		/* widget layout */
 		div#widget-grid-display {
 			grid-template-columns: 1fr;
 		}
 	}
 
-	/* 
-  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
-	@media only screen and (min-width: 1160px) {
+	@media only screen 
+  and (min-width: 1160px) 
+  {
 		/* widget layout */
 		div#widget-grid-display {
 			gap: 20px;
@@ -552,9 +651,9 @@
 		}
 	}
 
-	/* 
-  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
-	@media only screen and (min-width: 1320px) {
+	@media only screen 
+  and (min-width: 1320px) 
+  {
 		/* widget layout */
 		div#widget-grid-display {
 			display: grid;
@@ -566,4 +665,5 @@
 				);
 		}
 	}
+
 </style>

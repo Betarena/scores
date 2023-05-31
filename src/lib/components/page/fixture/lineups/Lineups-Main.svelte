@@ -10,10 +10,8 @@
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
-	import { onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen } from '$lib/firebase/common.js';
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { LIN_F_dataInject, LIN_F_obtainPlayerIdList } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 	
@@ -53,7 +51,6 @@
 	// 11 - Left-winger [A]
 
 	const formation_pos_arr = ['G', 'D', 'M', 'A'];
-  const livescorePath = `livescores_now/${FIXTURE_LINEUPS?.id}`
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
@@ -196,35 +193,6 @@
     FIXTURE_LINEUPS = FIXTURE_LINEUPS;
   }
 
-  /**
-   * @summary
-   * [MAIN]
-   * @description
-   * ➨ get target livescore fixture (data)
-   * ➨ instantiate livescore fixture (data) listener
-   * @returns
-   * void
-   */
-  async function kickstartLivescore
-  (
-  )
-  {
-    const if_M_0 = 
-      ['FT', 'FT_PEN'].includes(FIXTURE_LINEUPS?.status)
-    ;
-    if (if_M_0) return;
-    await onceTargetLivescoreNowFixtureGet
-    (
-      livescorePath
-    );
-    let connectionRef = targetLivescoreNowFixtureListen
-    (
-      livescorePath
-    );
-    // TODO: handle "unsubscribe" events for "onValue"
-    // FIREBASE_CONNECTIONS_SET.add(connectionRef)
-  }
-
   // VIEWPORT CHANGES | IMPORTANT
   function resizeAction
   (
@@ -252,21 +220,6 @@
   (
   )
   {
-    // NOTE: (on-visibility-change)
-    document.addEventListener
-    (
-      'visibilitychange',
-      async function
-      (
-      ) 
-      {
-        if (!document.hidden) 
-        {
-          dlog('🔵 user is active', true)
-          await kickstartLivescore()
-        }
-      }
-    );
     // NOTE: (on-resize)
     window.addEventListener
     (
@@ -575,7 +528,6 @@
    * @summary
    * [MAIN] [LIFECYCLE]
    * @description
-   * ➨ kickstart livescore data GET + LISTEN;
    * ➨ kickstart resize-action;
    * ➨ kickstart (bundle) event-listeners;
   */
@@ -583,7 +535,6 @@
   (
     async() => 
     {
-      await kickstartLivescore();
       resizeAction();
       addEventListeners();
     }
