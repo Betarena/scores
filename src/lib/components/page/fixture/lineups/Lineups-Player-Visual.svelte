@@ -304,12 +304,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	div#main-player-box p.lineup-player-name 
   {
 		white-space: nowrap;
-		/* overflow: hidden; */
-		/* text-overflow: ellipsis; */
-		/* max-width: 60px; */
-		/* dynamic */
 		font-size: 10px;
 	}
+	div#main-player-box:hover p.lineup-player-name 
+  {
+    color: var(--primary) !important;
+  }
 
 	/*
   =============

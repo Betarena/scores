@@ -95,53 +95,53 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     >
       {#if TYPE == 'R'}
         <!-- 
-          [ℹ] right-container
-          [ℹ] player avatar
-          [ℹ] player name
-          [ℹ] player visual icons 
-          -->
+        [ℹ] right-container
+        [ℹ] player avatar
+        [ℹ] player name
+        [ℹ] player visual icons 
+        -->
         <div
           class="
-              row-space-start
-            "
+            row-space-start
+          "
         >
           <!-- 
-            [ℹ] player avatar 
-            -->
+          [ℹ] player avatar 
+          -->
           <img
-            src={PLAYER_INFO?.player_avatar ||
-              'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
+            src={PLAYER_INFO?.player_avatar || 'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
             alt="player avatar"
             width="40"
             height="40"
             class="lineup-img"
-            on:error={(e) =>
-              (e.target.src =
-                'https://cdn.sportmonks.com/images/soccer/placeholder.png')}
+            on:error={
+              (e) =>
+                (e.target.src = 'https://cdn.sportmonks.com/images/soccer/placeholder.png')
+            }
           />
           <!-- 
-            [ℹ] player main box 
-            -->
+          [ℹ] player main box 
+          -->
           <div>
             <div
               class="
-                  row-space-start
-                  player-info-row
-                "
+                row-space-start
+                player-info-row
+              "
             >
               <p
                 class="
-                    w-500
-                    color-black-2
-                    lineup-player-name
-                  "
+                  w-500
+                  color-black-2
+                  lineup-player-name
+                "
               >
                 {PLAYER_INFO?.number}
                 {PLAYER_INFO?.player_name}
               </p>
               <!--
-                [ℹ] injured-player 
-                -->
+              [ℹ] injured-player 
+              -->
               {#if PLAYER_INFO?.events?.injured}
                 <img 
                   src={injured} 
@@ -149,8 +149,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
               <!--
-                [ℹ] yellowcard-player 
-                -->
+              [ℹ] yellowcard-player 
+              -->
               {#if PLAYER_INFO?.events?.yeallow_card}
                 <img 
                   src={yellow_card} 
@@ -161,8 +161,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {/if}
               {/if}
               <!--
-                [ℹ] goals-player (inc. own-goals) 
-                -->
+              [ℹ] goals-player (inc. own-goals) 
+              -->
               {#if PLAYER_INFO?.events?.goals}
                 <img 
                   src={football} 
@@ -170,8 +170,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
               <!--
-                [ℹ] red-card-player 
-                -->
+              [ℹ] red-card-player 
+              -->
               {#if PLAYER_INFO?.events?.red_card}
                 <img 
                   src={red_card} 
@@ -183,13 +183,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               {/if}
             </div>
             <!--
-              [ℹ] substitution / position[T]
-              -->
+            [ℹ] substitution / position[T]
+            -->
             {#if PLAYER_INFO?.events?.substitution}
               <div
                 class="
-                    row-space-start
-                  "
+                  row-space-start
+                "
               >
                 <img
                   src={substitution}
@@ -200,10 +200,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
                 <p
                   class="
-                      w-400
-                      color-grey
-                      lineup-player-name
-                    "
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  "
                 >
                   {PLAYER_INFO?.events?.substitution
                     ?.minute}' Out: {PLAYER_INFO
@@ -214,23 +214,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {:else if PLAYER_INFO?.position}
               <p
                 class="
-                      w-400
-                      color-grey
-                      lineup-player-name
-                    "
+                  w-400
+                  color-grey
+                  lineup-player-name
+                "
               >
-                {FIXTURE_LINEUPS_TRANSLATION[
-                  PLAYER_INFO?.position.toLowerCase()
-                ]}
+                {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
               </p>
             {/if}
           </div>
         </div>
 
         <!-- 
-          [ℹ] left-container
-          [ℹ] player rating
-          -->
+        [ℹ] left-container
+        [ℹ] player rating
+        -->
         <div
           class="row-space-end"
           style="width: auto;"
@@ -239,12 +237,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             <p
               id="box-goals"
               class="medium w-500"
-              class:rating_golden={ratingColorCode ===
-                'G'}
-              class:rating_silver={ratingColorCode ===
-                'Y'}
-              class:rating_bronze={ratingColorCode ===
-                'T'}
+              class:rating_golden={ratingColorCode === 'G'}
+              class:rating_silver={ratingColorCode === 'Y'}
+              class:rating_bronze={ratingColorCode === 'T'}
             >
               {PLAYER_INFO?.rating}
             </p>
@@ -252,9 +247,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
       {:else}
         <!-- 
-          [ℹ] right-container
-          [ℹ] player rating
-          -->
+        [ℹ] right-container
+        [ℹ] player rating
+        -->
         <div
           class="row-space-start"
           style="width: auto;"
@@ -263,12 +258,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             <p
               id="box-goals"
               class="medium w-500"
-              class:rating_golden={ratingColorCode ===
-                'G'}
-              class:rating_silver={ratingColorCode ===
-                'Y'}
-              class:rating_bronze={ratingColorCode ===
-                'T'}
+              class:rating_golden={ratingColorCode === 'G'}
+              class:rating_silver={ratingColorCode === 'Y'}
+              class:rating_bronze={ratingColorCode === 'T'}
             >
               {PLAYER_INFO?.rating}
             </p>
@@ -276,29 +268,29 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
 
         <!-- 
-          [ℹ] left-container
-          [ℹ] player avatar
-          [ℹ] player name
-          [ℹ] player visual icons 
-          -->
+        [ℹ] left-container
+        [ℹ] player avatar
+        [ℹ] player name
+        [ℹ] player visual icons 
+        -->
         <div
           class="
-              row-space-end
-            "
+            row-space-end
+          "
         >
           <!-- 
-            [ℹ] player main box 
-            -->
+          [ℹ] player main box 
+          -->
           <div>
             <div
               class="
-                  row-space-end
-                  player-info-row
-                "
+                row-space-end
+                player-info-row
+              "
             >
               <!--
-                [ℹ] injured-player 
-                -->
+              [ℹ] injured-player 
+              -->
               {#if PLAYER_INFO?.events?.injured}
                 <img 
                   src={injured} 
@@ -306,8 +298,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
               <!--
-                [ℹ] yellowcard-player 
-                -->
+              [ℹ] yellowcard-player 
+              -->
               {#if PLAYER_INFO?.events?.yeallow_card}
                 <img 
                   src={yellow_card} 
@@ -318,8 +310,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {/if}
               {/if}
               <!--
-                [ℹ] goals-player (inc. own-goals) 
-                -->
+              [ℹ] goals-player (inc. own-goals) 
+              -->
               {#if PLAYER_INFO?.events?.goals}
                 <img 
                   src={football} 
@@ -327,8 +319,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
               <!--
-                [ℹ] red-card-player 
-                -->
+              [ℹ] red-card-player 
+              -->
               {#if PLAYER_INFO?.events?.red_card}
                 <img 
                   src={red_card}
@@ -339,8 +331,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {/if}
               {/if}
               <!-- 
-                [ℹ] player name 
-                -->
+              [ℹ] player name 
+              -->
               <p
                 class="
                     w-500
@@ -353,13 +345,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
             </div>
             <!--
-              [ℹ] player positon 
-              -->
+            [ℹ] player positon 
+            -->
             {#if PLAYER_INFO?.events?.substitution}
               <div
                 class="
-                    row-space-end
-                  "
+                  row-space-end
+                "
               >
                 <img
                   src={substitution}
@@ -370,10 +362,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
                 <p
                   class="
-                      w-400
-                      color-grey
-                      lineup-player-name
-                    "
+                    w-400
+                    color-grey
+                    lineup-player-name
+                  "
                 >
                   {PLAYER_INFO?.events?.substitution
                     ?.minute}' Out: {PLAYER_INFO
@@ -384,30 +376,29 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {:else if PLAYER_INFO?.position}
               <p
                 class="
-                      w-400
-                      color-grey
-                      lineup-player-name
-                    "
+                  w-400
+                  color-grey
+                  lineup-player-name
+                "
               >
-                {FIXTURE_LINEUPS_TRANSLATION[
-                  PLAYER_INFO?.position.toLowerCase()
-                ]}
+                {FIXTURE_LINEUPS_TRANSLATION[PLAYER_INFO?.position.toLowerCase()]}
               </p>
             {/if}
           </div>
           <!-- 
-            [ℹ] player avatar 
-            -->
+          [ℹ] player avatar 
+          -->
           <img
-            src={PLAYER_INFO?.player_avatar ||
-              'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
+            src={PLAYER_INFO?.player_avatar || 'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
             alt="player_avatar icon"
             width="40"
             height="40"
             class="lineup-img"
-            on:error={(e) =>
-              (e.target.src =
-                'https://cdn.sportmonks.com/images/soccer/placeholder.png')}
+            on:error={
+              (e) =>
+                (e.target.src =
+                  'https://cdn.sportmonks.com/images/soccer/placeholder.png')
+            }
           />
         </div>
       {/if}
@@ -465,7 +456,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #dbb884 !important;
 	}
 
-	/* TYPE "L" */
+	/* TYPE "LEFT" (L) */
 	div.player-row.type-L img.lineup-img 
   {
 		margin-left: 16px;
@@ -477,6 +468,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	div.player-row div.player-info-row img 
   {
 		margin-right: 8px;
+	}
+
+  div.player-row:hover div.player-info-row p.lineup-player-name 
+  {
+    color: var(--primary) !important;
 	}
 
   /*
