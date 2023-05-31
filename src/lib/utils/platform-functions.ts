@@ -125,57 +125,67 @@ export function PRELOAD_invalid_data
   urls: string[]
 ) 
 {
-  const indexesOf: (arr: any[], item: unknown) => number[] = 
-  (
-    arr: any[], 
-    item: unknown
-  ) =>
-		arr.reduce
+  try {
+    const indexesOf: (arr: any[], item: unknown) => number[] = 
     (
-			(
-        accumulator,
-        currentVal,
-        currentIndex
-      ) => 
+      arr: any[], 
+      item: unknown
+    ) =>
+      arr.reduce
       (
-				currentVal === item 
-        && accumulator.push(currentIndex), 
-        accumulator
-      ),
-      []
-    )
-  ;
+        (
+          accumulator,
+          currentVal,
+          currentIndex
+        ) => 
+        (
+          currentVal === item 
+          && accumulator.push(currentIndex), 
+          accumulator
+        ),
+        []
+      )
+    ;
 
-  const nullList = indexesOf
-  (
-    data, 
-    null
-  );
+    const nullList = indexesOf
+    (
+      data, 
+      null
+    );
 
-  if (nullList?.length == 0) 
-    dlog
-    (
-      '🟩 Preload Successfull!',
-      true
-    );
-  ;
-  if (nullList?.length > 0) 
-    dlog
-    (
-      `🟥 Preload has null (position): ${nullList}`,
-      true
-    );
-    // list URLs responsible for NULL data points;
-    for (const i of nullList) 
-    {
-      console.log
+    if (nullList?.length == 0) 
+      dlog
       (
-        `\t🚩 ${urls[i]}`
+        '🟩 Preload Successfull!',
+        true
       );
-    }
-  ;
+    ;
+    if (nullList?.length > 0) 
+      dlog
+      (
+        `🟥 Preload has null (position): ${nullList}`,
+        true
+      );
+      // list URLs responsible for NULL data points;
+      for (const i of nullList) 
+      {
+        console.log
+        (
+          `\t🚩 ${urls[i]}`
+        );
+      }
+    ;
 
-  return;
+    return;
+  } 
+  catch (ex) 
+  {
+    console.debug
+    (
+      '❌ Err:',
+      ex
+    )
+  }
 }
 
 /**

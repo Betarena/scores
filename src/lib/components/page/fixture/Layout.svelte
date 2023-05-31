@@ -68,9 +68,7 @@
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
 	import LineupsWidget from './lineups/Lineups-Widget.svelte';
-
-	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-
+	
 	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
 	let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
 	let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
@@ -91,8 +89,6 @@
 	let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
 	let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
 	let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
-	let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
-	let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// REACTIVE SVELTE OTHER
@@ -118,8 +114,6 @@
 	$: FIXTURE_H2H_TRANSLATION = $page.data.FIXTURE_H2H_TRANSLATION;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
-  SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
-	SPORTBOOK_ALL = $page.data.SPORTBOOK_ALL;
 
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined

@@ -53,7 +53,8 @@ export async function load
 
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA DOC: REF: [2]
 
-	const urls = [
+	const urls = 
+  [
 		// [ℹ] home (page)
 		`/api/data/main/seo-pages?lang=${urlLang}&page=homepage`,
 		// [ℹ] home (widgets)
@@ -73,7 +74,8 @@ export async function load
     fetch
   );
 
-	const [
+	const 
+  [
 		PAGE_DATA_SEO,
 		FEATURED_MATCH_WIDGET_DATA_SEO,
 		FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
@@ -105,7 +107,11 @@ export async function load
 		);
 	}
 
-  PRELOAD_invalid_data(data)
+  PRELOAD_invalid_data
+  (
+    data,
+    urls
+  )
 
   // [🐞]
   const t1 = performance.now();
