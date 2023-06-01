@@ -124,10 +124,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
   <p>{WIDGET_S_DATA?.home?.team_name}</p>
   {#each WIDGET_S_DATA?.home?.lineup || [] as player}
-    <p>{player?.player_name}</p>
+    <a href="/{player?.urls?.[$sessionStore?.serverLang]}">
+      <p>{player?.player_name}</p>
+    </a>
   {/each}
   {#each WIDGET_S_DATA?.home?.bench || [] as player}
-    <p>{player?.player_name}</p>
+    <a href="/{player?.urls?.[$sessionStore?.serverLang]}">
+      <p>{player?.player_name}</p>
+    </a>
   {/each}
   <!--
   away-team
@@ -135,10 +139,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
   <p>{WIDGET_S_DATA?.away?.team_name}</p>
   {#each WIDGET_S_DATA?.away?.lineup || [] as player}
-    <p>{player?.player_name}</p>
+    <a href="/{player?.urls?.[$sessionStore?.serverLang]}">
+      <p>{player?.player_name}</p>
+    </a>
   {/each}
   {#each WIDGET_S_DATA?.away?.bench || [] as player}
-    <p>{player?.player_name}</p>
+    <a href="/{player?.urls?.[$sessionStore?.serverLang]}">
+      <p>{player?.player_name}</p>
+    </a>
   {/each}
 </SeoBox>
 

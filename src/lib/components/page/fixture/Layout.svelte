@@ -91,8 +91,6 @@
 	let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
 	let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
 	let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
-	let SPORTBOOK_MAIN: Cache_Single_SportbookDetails_Data_Response;
-	let SPORTBOOK_ALL: Cache_Single_SportbookDetails_Data_Response[];
 
 	$: PAGE_SEO = $page.data.PAGE_SEO;
 	$: FIXTURE_INFO = $page.data.FIXTURE_INFO;
@@ -110,8 +108,6 @@
 	$: FIXTURE_H2H_TRANSLATION = $page.data.FIXTURE_H2H_TRANSLATION;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
-  SPORTBOOK_MAIN = $page.data.SPORTBOOK_MAIN;
-	SPORTBOOK_ALL = $page.data.SPORTBOOK_ALL;
 
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined
