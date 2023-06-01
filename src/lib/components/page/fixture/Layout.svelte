@@ -23,11 +23,7 @@
 
 	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
 
-	import type {
-		REDIS_CACHE_SINGLE_statistics_data,
-		REDIS_CACHE_SINGLE_statistics_translation
-	} from '$lib/models/fixtures/statistics/types';
-
+	
 	import type {
 		REDIS_CACHE_SINGLE_content_data,
 		REDIS_CACHE_SINGLE_content_translation
@@ -58,7 +54,7 @@
 	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability_Widget.svelte';
 	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard_Widget.svelte';
 	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
-	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics_Widget.svelte';
+	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics-Widget.svelte';
 	import VoteWidget from '$lib/components/page/fixture/votes/Vote_Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import SvelteSeo from 'svelte-seo';
@@ -84,8 +80,6 @@
 	let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
 	let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
 	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
-	let FIXTURE_STATISTICS: REDIS_CACHE_SINGLE_statistics_data;
-	let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation;
 	let FIXTURE_CONTENT: REDIS_CACHE_SINGLE_content_data[];
 	let FIXTURE_CONTENT_TRANSLATION: REDIS_CACHE_SINGLE_content_translation;
 	let FIXTURE_ABOUT: REDIS_CACHE_SINGLE_about_data;
@@ -105,8 +99,6 @@
 	$: FIXTURE_SCOREBOARD =	$page.data.FIXTURE_SCOREBOARD;
 	$: FIXTURE_SCOREBOARD_TRANSLATION =	$page.data.FIXTURE_SCOREBOARD_TRANSLATION;
 	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
-	$: FIXTURE_STATISTICS =	$page.data.FIXTURE_STATISTICS;
-	$: FIXTURE_STATISTICS_TRANSLATION =	$page.data.FIXTURE_STATISTICS_TRANSLATION;
 	$: FIXTURE_CONTENT = $page.data.FIXTURE_CONTENT;
 	$: FIXTURE_CONTENT_TRANSLATION = $page.data.FIXTURE_CONTENT_TRANSLATION;
 	$: FIXTURE_ABOUT = $page.data.FIXTURE_ABOUT;
@@ -458,10 +450,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					{STANDINGS_DATA}
 					{FIXTURE_INFO}
 				/>
-				<StatisticsWidget
-					{FIXTURE_STATISTICS}
-					{FIXTURE_STATISTICS_TRANSLATION}
-				/>
+				<StatisticsWidget	/>
 				<ProbabilityWidget
 					{FIXTURE_INFO}
 					{FIXTURE_PROBS_TRANSLATION}
@@ -531,10 +520,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 				/>
 				<IncidentsWidget />
-				<StatisticsWidget
-					{FIXTURE_STATISTICS}
-					{FIXTURE_STATISTICS_TRANSLATION}
-				/>
+				<StatisticsWidget	/>
 				<ProbabilityWidget
 					{FIXTURE_INFO}
 					{FIXTURE_PROBS_TRANSLATION}

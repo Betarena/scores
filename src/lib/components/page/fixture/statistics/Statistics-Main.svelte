@@ -1,7 +1,11 @@
 <!-- ===============
 	  COMPONENT JS (w/ TS)
 =================-->
+
 <script lang="ts">
+
+  //#region ➤ [MAIN] Package Imports
+
 	import { browser, dev } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
 	import {
@@ -25,29 +29,28 @@
 		REDIS_CACHE_SINGLE_statistics_translation
 	} from '$lib/models/fixtures/statistics/types';
 
-	import StatisticsLoader from './Statistics_Loader.svelte';
-	import StatisticsRow from './Statistics_Row.svelte';
+	import StatisticsLoader from './Statistics-Loader.svelte';
+	import StatisticsRow from './Statistics-Row.svelte';
 
 	import { getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  //#endregion ➤ [MAIN] Package Imports
 
-	// export let FIXTURE_INFO:                 REDIS_CACHE_SINGLE_fixtures_page_info_response;
+  //#region ➤ [VARIABLES]
+
 	export let FIXTURE_STATISTICS: REDIS_CACHE_SINGLE_statistics_data;
 	export let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation;
 
-	let loaded: boolean = false; // [ℹ] NOTE: [DEFAULT] holds boolean for data loaded;
-	let refresh: boolean = false; // [ℹ] NOTE: [DEFAULT] refresh value speed of the WIDGET;
-	let refresh_data: any = undefined; // [ℹ] NOTE: [DEFAULT] refresh-data value speed;
-	let no_widget_data: any = false; // [ℹ] NOTE: [DEFAULT] identifies the no_widget_data boolean;
-
+	let loaded: boolean = false;
+	let refresh: boolean = false;
+	let no_widget_data: any = false;
 	let show_placeholder: boolean = false;
+  let null_groups: string[] = [];
 
-	const stats_menu: {
+	const stats_menu: 
+  {
 		key:
 			| 'shots_title'
 			| 'passes_title'
@@ -55,7 +58,8 @@
 			| 'other';
 		loc_arr: string[];
 		loc_trans: string[];
-	}[] = [
+	}[] = 
+  [
 		{
 			key: 'shots_title',
 			loc_arr: [
@@ -136,42 +140,7 @@
 		}
 	];
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	// [ℹ] MAIN
-	// [ℹ] Not In Use
-	async function widget_init(): Promise<REDIS_CACHE_SINGLE_statistics_data> {
-		// [ℹ] get response [lang] [data] [obtained from preload()]
-		const sleep = (ms) =>
-			new Promise((r) => setTimeout(r, ms));
-		await sleep(3000);
-
-		loaded = true;
-
-		// [ℹ] data validation check
-		if (
-			FIXTURE_STATISTICS == undefined ||
-			FIXTURE_STATISTICS.stats.length == 0
-		) {
-      dlog(`${STS_W_F_TAG} ❌ no data available!`, STS_W_F_TOG, STS_W_F_STY);
-			no_widget_data = true;
-			return;
-		}
-		// [ℹ] otherwise, no data
-		else {
-			no_widget_data = false;
-		}
-
-		FIXTURE_STATISTICS = FIXTURE_STATISTICS;
-
-		return FIXTURE_STATISTICS;
-	}
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  //#endregion ➤ [VARIABLES]
 
 	let tabletView = 1000;
 	let mobileView = 725;
@@ -215,37 +184,8 @@
 	});
 
 	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE METHODS
-	// CRITICAL
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: refresh_data =
-		$userBetarenaSettings.country_bookmaker;
-
-	$: if (browser && refresh_data) {
-		// [ℹ] reset necessary variables;
-		refresh = true;
-		loaded = false;
-		no_widget_data = false;
-		// widget_init()
-		setTimeout(async () => {
-			refresh = false;
-		}, 100);
-	}
-
-	afterNavigate(async () => {
-		widget_init();
-	});
-
-	// ~~~~~~~~~~~~~~~~~~~~~
 	// [ADD-ON] FIREBASE
 	// ~~~~~~~~~~~~~~~~~~~~~
-
-	let real_time_unsubscribe: Unsubscribe[] = [];
-	const live_fixtures_map = new Map<
-		number,
-		FIREBASE_livescores_now
-	>();
 
 	async function check_live_fixtures(
 		data: [string, FIREBASE_livescores_now][]
@@ -297,101 +237,19 @@
 		if (dev) log_info_group(logs_name, logs);
 	}
 
-	async function listen_real_time_livescores_now(): Promise<void> {
-		const fixture_status =
-			FIXTURE_STATISTICS?.status;
-		if (
-			['FT', 'FT_PEN'].includes(fixture_status)
-		) {
-			return;
-		}
-    dlog(`${STS_W_F_TAG} Triggered livescores listen`, STS_W_F_TOG, STS_W_F_STY);
-		const fixtureRef = ref(
-			db_real,
-			'livescores_now/'
-		);
-		const listen_livescore_event_ref = onValue(
-			fixtureRef,
-			(snapshot) => {
-				// [ℹ] break-down-values
-				if (snapshot.val() != null) {
-					const data: [
-						string,
-						FIREBASE_livescores_now
-					][] = Object.entries(snapshot.val());
-					check_live_fixtures(data);
-				}
-			}
-		);
+  //#endregion ➤ [METHODS]
 
-		real_time_unsubscribe.push(
-			listen_livescore_event_ref
-		);
-	}
+  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
 
-	// [ℹ] one-off real-time "read" init.
-	onMount(async () => {
-		const firebase_real_time = await getTargetRealDbData
-    (
-      `livescores_now`
-    );
+  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
-		if (firebase_real_time != null) {
-			const data: [
-				string,
-				FIREBASE_livescores_now
-			][] = Object.entries(firebase_real_time);
-			check_live_fixtures(data);
-		}
-	});
+  //#region ➤ [REACTIVIY] [METHODS]
 
-	// [ℹ] real-time listen-events init.
-	onMount(async () => {
-		listen_real_time_livescores_now();
-		document.addEventListener(
-			'visibilitychange',
-			function () {
-				if (!document.hidden) {
-					listen_real_time_livescores_now();
-				}
-			}
-		);
-	});
+  //#endregion ➤ [REACTIVIY] [METHODS]
 
-  // CRITICAL
-	onDestroy(async () => {
-		const logsMsg: string[] = []
-		for (const iterator of real_time_unsubscribe) {
-      logsMsg.push('closing connection')
-			iterator();
-		}
-    dlogv2(
-      `${STS_W_F_TAG} closing firebase connections`,
-      logsMsg,
-      STS_W_F_TOG, 
-      STS_W_F_STY
-    )
-	});
+  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
-	// FIXME:
-	// async function kickstart_one_off_data (
-	// ) {
-	//   const firebase_real_time = await get_livescores_now()
-	//   if (firebase_real_time != null) {
-	//     const data: [string, FIREBASE_livescores_now][] = Object.entries(firebase_real_time)
-	//     check_live_fixtures(data)
-	//   }
-	// }
-
-	// $: if (FIXTURE_STATISTICS != undefined) {
-	//   kickstart_one_off_data()
-	// }
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: if (
+  $: if (
 		FIXTURE_STATISTICS &&
 		browser &&
 		['NS', 'TBA', 'POSTP'].includes(
@@ -406,9 +264,8 @@
 		no_widget_data = false;
 	}
 
-	let null_groups: string[] = [];
-
-	$: if (FIXTURE_STATISTICS && browser) {
+  $: if (FIXTURE_STATISTICS && browser) 
+  {
 		null_groups = [];
 
 		// [ℹ] check for "stats.shots" EMPTY
@@ -439,29 +296,21 @@
 			null_groups.push('attacks_title');
 		}
 	}
+
+  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+COMPONENT HTML 
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div
 	id="widget-outer"
-	class:display_none={no_widget_data &&
+	class:display-none={no_widget_data &&
 		!show_placeholder}
 >
-	<!-- 
-  [ℹ] SEO-DATA-LOADED 
-  -->
-	<!-- {#if !loaded} -->
-	<div id="seo-widget-box">
-		<!-- 
-      [ℹ] widget-title -->
-		<h2>
-			{FIXTURE_STATISTICS_TRANSLATION?.title}
-		</h2>
-	</div>
-	<!-- {/if} -->
 
 	<!-- 
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
@@ -683,23 +532,11 @@
 </div>
 
 <!-- ===============
-  COMPONENT STYLE
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
-	/* [ℹ] OTHER STYLE / CSS */
-
-	.display_none {
-		display: none;
-	}
-
-	/* [ℹ] SEO WIDGET DATA */
-
-	#seo-widget-box {
-		position: absolute;
-		z-index: -100;
-		top: -9999px;
-		left: -9999px;
-	}
 
 	/* [ℹ] NO DATA WIDGET STYLE / CSS */
 
@@ -716,7 +553,9 @@
     [ℹ] NOTE: [MOBILE-FIRST]
   */
 
-	/* lineups-main */
+	/* 
+  lineups-main 
+  */
 	div#statistics-widget-container {
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -729,68 +568,78 @@
 		padding-bottom: 20px;
 	}
 
-	/* team info box */
+	/* 
+  team info box 
+  */
 	div#statistics-widget-container
 		div#team-info-box {
 		padding: 20px 20px 0 20px;
 		position: absolute;
 	}
 
-	/* statistics table box */
-	div#statistics-widget-container
-		div#statistics-box
-		p.text-group-stats {
+	/* 
+  statistics table box 
+  */
+	div#statistics-widget-container	div#statistics-box p.text-group-stats 
+  {
 		text-align: center;
 		font-size: 16px;
 		padding: 20px 0 0 0;
 	}
-	:global(div#statistics-widget-container
-			div#statistics-box
-			div.stats-row:last-child) {
+	:global(div#statistics-widget-container	div#statistics-box div.stats-row:last-child) 
+  {
 		border-bottom: 0 !important;
 	}
 
-	/* ====================
-    RESPONSIVNESS [TABLET] [DESKTOP]
-  ==================== */
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
 
-	/* 
-  TABLET RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) and (max-width: 1000px) {
-		#statistics-widget-container {
-			min-width: 100%;
-			/* max-width: 700px; */
-		}
-	}
-
-	/* 
-  TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) {
-		/* EMPTY */
-	}
-
-	/* 
-  DESKTOP [M-L] RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 1000px) {
-		#statistics-widget-container {
+	@media only screen 
+  and (min-width: 726px) 
+  and (max-width: 1000px) 
+  {
+		#statistics-widget-container 
+    {
 			min-width: 100%;
 		}
 	}
 
-	/* 
-  DESKTOP [L] RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 1160px) {
+	@media only screen 
+  and (min-width: 726px) 
+  {
 		/* EMPTY */
 	}
 
-	/* ====================
-    WIDGET DARK THEME
-  ==================== */
+	@media only screen 
+  and (min-width: 1000px) 
+  {
+		#statistics-widget-container 
+    {
+			min-width: 100%;
+		}
+	}
 
-	/* events table box */
-	:global(div#statistics-widget-container.dark-background-1
-			div#statistics-box
-			div.stats-row) {
+	@media only screen 
+  and (min-width: 1160px) 
+  {
+		/* EMPTY */
+	}
+
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
+
+	/* 
+  events table box 
+  */
+	:global(div#statistics-widget-container.dark-background-1 div#statistics-box div.stats-row) 
+  {
 		border-bottom: 1px solid #616161;
 	}
+  
 </style>
