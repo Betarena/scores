@@ -3,7 +3,78 @@ import { onValue, ref, type Unsubscribe } from "firebase/database";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_real } from "./init";
 
-import type { FIRE_LNNS, FIREBASE_livescores_now } from "@betarena/scores-lib/types/firebase.js";
+import type { FIRE_LNNS, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+
+// #region ODDS
+
+export function createFixtureOddsPath
+(
+  fixtureId: number,
+  fixtureTime: string
+)
+{
+
+  const year_: string = new Date(fixtureTime).getFullYear().toString();
+  const month_: number = new Date(fixtureTime).getMonth();
+  let new_month_ = (month_ + 1).toString();
+  new_month_ = `0${new_month_}`.slice(-2);
+  let day = new Date(fixtureTime).getDate().toString();
+  day = `0${day}`.slice(-2);
+
+  return `odds/${year_}/${new_month_}/${day}/${fixtureId}`;
+}
+
+/**
+ * @summary 
+ * [MAIN]
+ * @description 
+ * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
+ * @returns 
+ * {Unsubscribe} Unsubscribe
+ */
+export function targetLivescoreNowFixtureOddsListen
+(
+  path: string
+): Unsubscribe 
+{
+  const dbRef = ref
+  (
+    db_real,
+    path
+  );
+
+  const listenEventRef = onValue
+  (
+    dbRef, 
+    (
+      snapshot
+    ) => 
+    {
+      const sportbookArray: FIREBASE_odds[] = []
+
+      const data: [string, FIREBASE_odds][] = 
+        snapshot.exists()
+          ? Object.entries(snapshot.val())
+          : []
+      ;
+
+      for (const sportbook of data) 
+      {
+        sportbook[1].sportbook = sportbook[0].toString();
+        sportbookArray.push(sportbook[1]);
+      }
+
+      sessionStore.updateLiveOdds
+      (
+        sportbookArray
+      );
+    }
+  );
+
+  return listenEventRef 
+}
+
+// #endregion ODDS
 
 // #region LIVESCORES_NOW
 
@@ -49,10 +120,10 @@ export function listenRealTimeLivescoresNowChange
 /**
  * @summary 
  * [MAIN]
- * @description common method that will listen to 
- * real-time changes in "livescores_now_scoreboard" 
- * Firebase (REAL-DB);
- * @returns {Unsubscribe} Unsubscribe
+ * @description 
+ * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
+ * @returns 
+ * {Unsubscribe} Unsubscribe
  */
 export function targetLivescoreNowFixtureListen
 (

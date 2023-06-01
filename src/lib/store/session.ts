@@ -1,5 +1,5 @@
 import { clientTimezoneDate } from '$lib/utils/dates.js';
-import type { FIREBASE_livescores_now, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import { writable } from 'svelte/store';
 
@@ -41,7 +41,8 @@ export interface Platform_Session {
    * Must be in user adjusted (TZ) timezone;
   */
   userDate: Date,
-  livescore_now_fixture_target: FIREBASE_livescores_now
+  livescore_now_fixture_target: FIREBASE_livescores_now;
+  live_odds_fixture_target: FIREBASE_odds[];
 }
 
 // [ℹ] DEFAULT STORE STATE
@@ -61,7 +62,8 @@ const seassion_store: Platform_Session = {
   livescoreShowCalendar: false,
   fixturesTodayNum: 0,
   userDate: clientTimezoneDate(),
-  livescore_now_fixture_target: undefined
+  livescore_now_fixture_target: undefined,
+  live_odds_fixture_target: []
 };
 
 function createLocalStore() {
@@ -81,6 +83,11 @@ function createLocalStore() {
 
     updateServerLang: (lang: string) => {
       seassion_store.serverLang = lang;
+      set(seassion_store);
+    },
+
+    updateLiveOdds: (data: FIREBASE_odds[]) => {
+      seassion_store.live_odds_fixture_target = data;
       set(seassion_store);
     },
 
