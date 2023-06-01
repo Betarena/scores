@@ -21,7 +21,7 @@
 	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
 	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head_2_Head_Widget.svelte';
 	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents-Widget.svelte';
-	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability_Widget.svelte';
+	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability-Widget.svelte';
 	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard-Widget.svelte';
 	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
 	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics-Widget.svelte';
@@ -400,10 +400,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					{FIXTURE_INFO}
 				/>
 				<StatisticsWidget	/>
-				<ProbabilityWidget
-					{FIXTURE_INFO}
-					{FIXTURE_PROBS_TRANSLATION}
-				/>
+				<ProbabilityWidget />
 				<AboutWidget
 					{FIXTURE_ABOUT}
 					{FIXTURE_ABOUT_TRANSLATION}
@@ -464,10 +461,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				/>
 				<IncidentsWidget />
 				<StatisticsWidget	/>
-				<ProbabilityWidget
-					{FIXTURE_INFO}
-					{FIXTURE_PROBS_TRANSLATION}
-				/>
+				<ProbabilityWidget />
 			</div>
 		</div>
 		<!-- 
