@@ -1,58 +1,28 @@
 <!-- ===================
 	COMPONENT JS - BASIC 
 =================== -->
+
 <script lang="ts">
+
+  //#region ➤ [MAIN] Package Imports
+
 	import { browser } from '$app/environment';
 	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { createFixtureOddsPath, onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-
-	import type {
-		REDIS_CACHE_SINGLE_fixtures_page_info_response,
-		REDIS_CACHE_SINGLE_fixtures_seo_response
-	} from '$lib/models/_main_/pages_and_seo/types';
-	import type {
-		REDIS_CACHE_SINGLE_scoreboard_data,
-		REDIS_CACHE_SINGLE_scoreboard_translation
-	} from '$lib/models/fixtures/scoreboard/types';
-
-	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
-
-	
-	import type {
-		REDIS_CACHE_SINGLE_content_data,
-		REDIS_CACHE_SINGLE_content_translation
-	} from '$lib/models/fixtures/content/types';
-
-	import type {
-		REDIS_CACHE_SINGLE_about_data,
-		REDIS_CACHE_SINGLE_about_translation
-	} from '$lib/models/fixtures/about/types';
-
-	import type {
-		Fixture_Head_2_Head,
-		REDIS_CACHE_SINGLE_h2h_translation
-	} from '$lib/models/fixtures/head-2-head/types';
-
-	import type { REDIS_CACHE_SINGLE_probabilities_translation } from '$lib/models/fixtures/probabilities/types';
-	import type { REDIS_CACHE_SINGLE_votes_translation } from '$lib/models/fixtures/votes/types';
-	import type { REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response } from '$lib/models/tournaments/fixtures_odds/types';
-	import type {
-		REDIS_CACHE_SINGLE_tournament_standings_data,
-		REDIS_CACHE_SINGLE_tournament_standings_translation
-	} from '$lib/models/tournaments/standings/types';
 
 	import AboutWidget from '$lib/components/page/fixture/about/About_Widget.svelte';
 	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
 	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head_2_Head_Widget.svelte';
 	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents-Widget.svelte';
 	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability_Widget.svelte';
-	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard_Widget.svelte';
+	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard-Widget.svelte';
 	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
 	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics-Widget.svelte';
 	import VoteWidget from '$lib/components/page/fixture/votes/Vote_Widget.svelte';
@@ -61,13 +31,25 @@
 	import Breadcrumb from './Breadcrumb.svelte';
 	import LineupsWidget from './lineups/Lineups-Widget.svelte';
 
-	import { onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen } from '$lib/firebase/common.js';
-	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+  import type { B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
+
+  //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
+	let PAGE_SEO: B_SAP_FP_T = $page.data.PAGE_SEO;
+	let FIXTURE_INFO: B_SAP_FP_D = $page.data.FIXTURE_INFO;
+
+  const fixtureId = FIXTURE_INFO?.data?.id;
+  const fixtureTime =	FIXTURE_INFO?.data?.fixture_time + 'Z';
+
   const livescorePath = `livescores_now/${$page.data?.FIXTURE_INFO?.id}`
-  
+  const livesOddsPath = createFixtureOddsPath
+  (
+    fixtureId,
+    fixtureTime
+  );
+
   const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 475;
 
@@ -75,39 +57,8 @@
   let tabletExclusive = false;
 	let current_lang: string = $sessionStore?.serverLang;
 
-	let PAGE_SEO: REDIS_CACHE_SINGLE_fixtures_seo_response;
-	let FIXTURE_INFO: REDIS_CACHE_SINGLE_fixtures_page_info_response;
-	let FIXTURE_SCOREBOARD: REDIS_CACHE_SINGLE_scoreboard_data;
-	let FIXTURE_SCOREBOARD_TRANSLATION: REDIS_CACHE_SINGLE_scoreboard_translation;
-	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
-	let FIXTURE_CONTENT: REDIS_CACHE_SINGLE_content_data[];
-	let FIXTURE_CONTENT_TRANSLATION: REDIS_CACHE_SINGLE_content_translation;
-	let FIXTURE_ABOUT: REDIS_CACHE_SINGLE_about_data;
-	let FIXTURE_ABOUT_TRANSLATION: REDIS_CACHE_SINGLE_about_translation;
-	let FIXTURE_VOTES_TRANSLATION: REDIS_CACHE_SINGLE_votes_translation;
-	let FIXTURE_PROBS_TRANSLATION: REDIS_CACHE_SINGLE_probabilities_translation;
-	let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
-	let FIXTURE_H2H: Fixture_Head_2_Head;
-	let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
-	let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
-	let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
-
-	$: PAGE_SEO = $page.data.PAGE_SEO;
-	$: FIXTURE_INFO = $page.data.FIXTURE_INFO;
-	$: FIXTURE_SCOREBOARD =	$page.data.FIXTURE_SCOREBOARD;
-	$: FIXTURE_SCOREBOARD_TRANSLATION =	$page.data.FIXTURE_SCOREBOARD_TRANSLATION;
-	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
-	$: FIXTURE_CONTENT = $page.data.FIXTURE_CONTENT;
-	$: FIXTURE_CONTENT_TRANSLATION = $page.data.FIXTURE_CONTENT_TRANSLATION;
-	$: FIXTURE_ABOUT = $page.data.FIXTURE_ABOUT;
-	$: FIXTURE_ABOUT_TRANSLATION = $page.data.FIXTURE_ABOUT_TRANSLATION;
-	$: FIXTURE_VOTES_TRANSLATION = $page.data.FIXTURE_VOTES_TRANSLATION;
-	$: FIXTURE_PROBS_TRANSLATION = $page.data.FIXTURE_PROBS_TRANSLATION;
-	$: FIXTURES_ODDS_T = $page.data.FIXTURES_ODDS_T;
-	$: FIXTURE_H2H = $page.data.FIXTURE_H2H;
-	$: FIXTURE_H2H_TRANSLATION = $page.data.FIXTURE_H2H_TRANSLATION;
-	$: STANDINGS_T = $page.data.STANDINGS_T;
-	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
+  $: PAGE_SEO = $page.data.PAGE_SEO;
+  $: FIXTURE_INFO = $page.data.FIXTURE_INFO;
 
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined
@@ -168,6 +119,29 @@
 
   /**
    * @summary
+   * [MAIN]
+   * @description
+   * ➨ instantiate livescore fixture odds (data) listener
+   * @returns
+   * void
+   */
+  async function kickstartLiveOdds
+  (
+  ): Promise < void > 
+  {
+
+    const if_M_0 = 
+      ['FT', 'FT_PEN'].includes($page.data?.FIXTURE_INFO?.status)
+    ;
+    if (if_M_0) return;
+    let connectionRef = targetLivescoreNowFixtureOddsListen
+    (
+      livesOddsPath
+    );
+	}
+
+  /**
+   * @summary
    * [HELPER]
    * @param 
    * {string} newURL
@@ -218,7 +192,8 @@
         if (!document.hidden) 
         {
           dlog('🔵 user is active', true)
-          await kickstartLivescore()
+          await kickstartLivescore();
+          await kickstartLiveOdds();
         }
       }
     );
@@ -251,23 +226,6 @@
     dlog(`newURL: ${newURL}`, true)
     return newURL;
   }
-
-  // TODO:
-  /*
-    $: if (browser && $userBetarenaSettings && $userBetarenaSettings.country_bookmaker != undefined) {
-      get_sportbooks()
-    }
-    async function get_sportbooks() {
-      let userGeo = $userBetarenaSettings.country_bookmaker.toString().toLowerCase()
-      SPORTBOOK_MAIN = await get("/api/cache/tournaments/sportbook?geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response;
-      console.log('SPORTBOOK_MAIN', SPORTBOOK_MAIN)
-      SPORTBOOK_MAIN = SPORTBOOK_MAIN
-      SPORTBOOK_ALL = await get("/api/cache/tournaments/sportbook?all=true&geoPos="+userGeo) as Cache_Single_SportbookDetails_Data_Response[];
-      SPORTBOOK_ALL = SPORTBOOK_ALL
-    }
-    $: SPORTBOOK_MAIN = SPORTBOOK_MAIN
-    $: SPORTBOOK_ALL = SPORTBOOK_ALL
-  */
 
   //#endregion ➤ [METHODS]
 
@@ -315,6 +273,7 @@
     async() => 
     {
       await kickstartLivescore();
+      await kickstartLiveOdds();
       resizeAction();
       addEventListeners();
     }
@@ -410,13 +369,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   📱 MOBILE
   -->
 	{#if mobileExclusive || tabletExclusive}
-		<ScoreboardWidget
-			{FIXTURE_SCOREBOARD}
-			{FIXTURE_INFO}
-			{FIXTURE_SCOREBOARD_TRANSLATION}
-			{FIXTURE_CONTENT}
-			{FIXTURES_ODDS_T}
-		/>
+		<ScoreboardWidget />
 		<div id="widget-grid-display">
 			<!-- 
       [ℹ] "Overview" view selection 
@@ -474,13 +427,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   💻 TABLET 🖥️ LAPTOP 
   -->
 	{:else}
-		<ScoreboardWidget
-			{FIXTURE_SCOREBOARD}
-			{FIXTURE_INFO}
-			{FIXTURE_SCOREBOARD_TRANSLATION}
-			{FIXTURE_CONTENT}
-			{FIXTURES_ODDS_T}
-		/>
+		<ScoreboardWidget />
 		<!-- 
     [ℹ] "Overview" view selection 
     -->
