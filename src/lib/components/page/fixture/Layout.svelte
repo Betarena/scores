@@ -377,8 +377,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       -->
 			<div
 				class="grid-display-column"
-				class:display-none={$sessionStore.fixture_select_view ==
-					'news'}
+				class:display-none={$sessionStore.fixture_select_view == 'news'}
 			>
 				<VoteWidget />
 				<IncidentsWidget />
@@ -386,12 +385,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 				/>
 				<LineupsWidget />
-				<Head_2HeadWidget
-					{FIXTURE_INFO}
-					{FIXTURE_H2H}
-					{FIXTURE_H2H_TRANSLATION}
-					{FIXTURES_ODDS_T}
-				/>
+				<Head_2HeadWidget />
 				<StandingsWidget
 					{STANDINGS_T}
 					{STANDINGS_DATA}
@@ -409,8 +403,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       -->
 			<div
 				id="grid-display-column"
-				class:display-none={$sessionStore.fixture_select_view ==
-					'overview'}
+				class:display-none={$sessionStore.fixture_select_view == 'overview'}
 			>
 				<ContentWidget
 					{FIXTURE_CONTENT}
@@ -430,15 +423,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 			id="widget-grid-display"
 			class:display-none={$sessionStore.fixture_select_view == 'news'}
 		>
-			<div class="grid-display-column">
+			<div 
+        class="grid-display-column">
 				<VoteWidget />
 				<LineupsWidget />
-				<Head_2HeadWidget
-					{FIXTURE_INFO}
-					{FIXTURE_H2H}
-					{FIXTURE_H2H_TRANSLATION}
-					{FIXTURES_ODDS_T}
-				/>
+				<Head_2HeadWidget	/>
 				<StandingsWidget
 					{STANDINGS_T}
 					{STANDINGS_DATA}
@@ -449,7 +438,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					{FIXTURE_ABOUT_TRANSLATION}
 				/>
 			</div>
-			<div class="grid-display-column">
+			<div 
+        class="grid-display-column">
 				<FeaturedBettingSitesWidget
 					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
 				/>
