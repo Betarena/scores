@@ -107,6 +107,31 @@ export async function sleep
   );
 }
 
+export function googleEventLog
+(
+  action: string
+)
+{
+
+  if ( action === 'fixture_football_fixtures_probabilities') 
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'fixture_football_fixtures_probabilities',
+      {
+        event_category:
+          'fixture_football_fixtures_probabilities',
+        event_label: 'click_betting_site_logo',
+        value: 'click'
+      }
+    );
+  }
+
+  return;
+}
+
 /**
  * @summary 
  * [HELPER]
