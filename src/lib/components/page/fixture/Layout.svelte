@@ -25,7 +25,7 @@
 	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard-Widget.svelte';
 	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
 	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics-Widget.svelte';
-	import VoteWidget from '$lib/components/page/fixture/votes/Vote_Widget.svelte';
+	import VoteWidget from '$lib/components/page/fixture/votes/Votes-Widget.svelte';
 	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
@@ -113,7 +113,6 @@
     (
       livescorePath
     );
-    // TODO: handle "unsubscribe" events for "onValue"
     // FIREBASE_CONNECTIONS_SET.add(connectionRef)
   }
 
@@ -370,7 +369,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
 	{#if mobileExclusive || tabletExclusive}
 		<ScoreboardWidget />
-		<div id="widget-grid-display">
+		<div
+      id="widget-grid-display"
+    >
 			<!-- 
       [ℹ] "Overview" view selection 
       -->
@@ -379,10 +380,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				class:display-none={$sessionStore.fixture_select_view ==
 					'news'}
 			>
-				<VoteWidget
-					{FIXTURE_INFO}
-					{FIXTURE_VOTES_TRANSLATION}
-				/>
+				<VoteWidget />
 				<IncidentsWidget />
 				<FeaturedBettingSitesWidget
 					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
@@ -430,14 +428,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
 		<div
 			id="widget-grid-display"
-			class:display-none={$sessionStore.fixture_select_view ==
-				'news'}
+			class:display-none={$sessionStore.fixture_select_view == 'news'}
 		>
 			<div class="grid-display-column">
-				<VoteWidget
-					{FIXTURE_INFO}
-					{FIXTURE_VOTES_TRANSLATION}
-				/>
+				<VoteWidget />
 				<LineupsWidget />
 				<Head_2HeadWidget
 					{FIXTURE_INFO}
@@ -469,8 +463,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     -->
 		<div
 			id="widget-grid-display-news"
-			class:display-none={$sessionStore.fixture_select_view ==
-				'overview'}
+			class:display-none={$sessionStore.fixture_select_view == 'overview'}
 		>
 			<ContentWidget
 				{FIXTURE_CONTENT}
