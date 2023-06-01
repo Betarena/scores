@@ -19,7 +19,7 @@
 
 	import AboutWidget from '$lib/components/page/fixture/about/About_Widget.svelte';
 	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
-	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head_2_Head_Widget.svelte';
+	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head2Head-Widget.svelte';
 	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents-Widget.svelte';
 	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability-Widget.svelte';
 	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard-Widget.svelte';
