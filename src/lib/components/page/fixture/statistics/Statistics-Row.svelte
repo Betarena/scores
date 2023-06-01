@@ -1,10 +1,8 @@
 <!-- ===============
 	COMPONENT JS (w/ TS)
 ==================== -->
+
 <script lang="ts">
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
 
 	export let TEAM_HOME_STAT: string;
 	export let TEAM_AWAY_STAT: string;
@@ -12,10 +10,6 @@
 	export let OPT: string;
 
 	let greaterClass: string;
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// REACTIVE SVELTE OTHER
-	// ~~~~~~~~~~~~~~~~~~~~~
 
 	$: if (
 		TEAM_HOME_STAT != undefined &&
@@ -37,8 +31,9 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
-==================== -->
+COMPONENT HTML 
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
 
 {#if TEAM_HOME_STAT != undefined && TEAM_AWAY_STAT != undefined && STAT_TRANSLATION != undefined}
 	<div
@@ -84,11 +79,17 @@
 {/if}
 
 <!-- ===============
-  COMPONENT STYLE
-==================== -->
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
+
 <style>
-	/* statistics row */
-	div.stats-row {
+
+	/* 
+  statistics row 
+  */
+	div.stats-row 
+  {
 		padding: 14px 0 4px 0;
 		margin: 0 20px;
 		border-bottom: 1px solid #e6e6e6;
@@ -96,14 +97,17 @@
 		width: -moz-available;
 		position: relative;
 	}
-	div.stats-row p {
+	div.stats-row p 
+  {
 		font-size: 14px;
 		display: flex;
 	}
-	div.stats-row p.greaterClass {
+	div.stats-row p.greaterClass 
+  {
 		color: #f5620f !important;
 	}
-	div.stats-row p.text-translate {
+	div.stats-row p.text-translate 
+  {
 		position: absolute;
 		margin: auto;
 		left: 0;
@@ -111,27 +115,41 @@
 		width: fit-content;
 	}
 
-	/* 
-  MOBILE RESPONSIVNESS (&+) */
-	@media only screen and (max-width: 425px) {
+  /*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
+
+	@media only screen 
+  and (max-width: 425px) 
+  {
 		/* EMPTY */
 	}
 
-	@media only screen and (max-width: 475px) {
+	@media only screen 
+  and (max-width: 475px) 
+  {
 		/* EMPTY */
 	}
 
-	/* 
-  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
-	@media only screen and (min-width: 1160px) and (max-width: 1240px) {
+	@media only screen 
+  and (min-width: 1160px) 
+  and (max-width: 1240px) 
+  {
 		/* EMPTY */
 	}
 
-	@media only screen and (min-width: 1240px) {
+	@media only screen 
+  and (min-width: 1240px) 
+  {
 		/* EMPTY */
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
-	................. */
+	/*
+  =============
+  DARK-THEME
+  =============
+  */
+
 </style>

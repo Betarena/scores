@@ -10,30 +10,31 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	
   import { sessionStore } from '$lib/store/session.js';
-  import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { STS_W_F_STY, STS_W_F_TAG, STS_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 
-  import SeoBox from '$lib/components/SEO-Box.svelte';
-  import IncidentsLoader from './Incidents-Loader.svelte';
-  import IncidentsMain from './Incidents-Main.svelte';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import StatisticsLoader from './Statistics-Loader.svelte';
+	import StatisticsMain from './Statistics-Main.svelte';
   
-	import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
+	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  let WIDGET_S_DATA: B_INC_D = $page.data?.FIXTURE_INCIDENTS
-  let WIDGET_T_DATA: B_INC_T = $page.data?.FXITURE_INCIDENTS_TRANSLATION
-  let WIDGET_DATA: B_INC_D;
+  let WIDGET_S_DATA: B_ST_D = $page.data?.FIXTURE_STATISTICS
+  let WIDGET_T_DATA: B_ST_T = $page.data?.FIXTURE_STATISTICS_TRANSLATION
+  let WIDGET_DATA: B_ST_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_S_DATA = $page.data?.FIXTURE_INCIDENTS
-  $: WIDGET_T_DATA = $page.data?.FXITURE_INCIDENTS_TRANSLATION
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Incidents' : 'Incidents'
+  $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
+  $: WIDGET_T_DATA = $page.data?.FIXTURE_STATISTICS_TRANSLATION
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Statistics' : 'Statistics'
 
   //#endregion ➤ [VARIABLES]
 
@@ -120,15 +121,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <h2>
     {WIDGET_TITLE}
   </h2>
-  <!-- 
-  team-names 
-  -->
-  <p>{WIDGET_S_DATA?.home?.team_name}</p>
-  <p>{WIDGET_S_DATA?.away?.team_name}</p>
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <IncidentsLoader /> -->
+<!-- <StatisticsLoader /> -->
 
 <!-- 
 [ℹ] main widget
@@ -137,15 +133,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise is pending 
   -->
-  <IncidentsLoader />
+  <StatisticsLoader />
 {:then data}
   <!-- 
   promise was fulfilled 
   -->
   {#if !NO_WIDGET_DATA}
-    <IncidentsMain 
-      FIXTURE_INCIDENTS={WIDGET_DATA}
-      FXITURE_INCIDENTS_TRANSLATION={WIDGET_T_DATA}
+    <StatisticsMain 
+      FIXTURE_STATISTICS={WIDGET_DATA}
+      FIXTURE_STATISTICS_TRANSLATION={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}

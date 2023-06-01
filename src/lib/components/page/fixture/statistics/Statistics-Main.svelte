@@ -6,50 +6,33 @@
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser, dev } from '$app/environment';
-	import { afterNavigate } from '$app/navigation';
-	import {
-		dlog, dlogv2, log_info_group,
-		STS_W_F_STY, STS_W_F_TAG, STS_W_F_TOG
-	} from '$lib/utils/debug';
-	import { onDestroy, onMount } from 'svelte';
+	import { browser } from '$app/environment';
+	import { onMount } from 'svelte';
 
-	import { db_real } from '$lib/firebase/init';
+	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import {
-		onValue,
-		ref,
-		type Unsubscribe
-	} from 'firebase/database';
-
-	import type { FIREBASE_livescores_now } from '$lib/models/firebase';
-
-	import type {
-		REDIS_CACHE_SINGLE_statistics_data,
-		REDIS_CACHE_SINGLE_statistics_translation
-	} from '$lib/models/fixtures/statistics/types';
-
-	import StatisticsLoader from './Statistics-Loader.svelte';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+	
+	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import StatisticsRow from './Statistics-Row.svelte';
 
-	import { getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
-	import no_visual from './assets/no_visual.svg';
-	import no_visual_dark from './assets/no_visual_dark.svg';
+  import WidgetTitle from '$lib/components/Widget-Title.svelte';
+  import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
-	export let FIXTURE_STATISTICS: REDIS_CACHE_SINGLE_statistics_data;
-	export let FIXTURE_STATISTICS_TRANSLATION: REDIS_CACHE_SINGLE_statistics_translation;
+	export let FIXTURE_STATISTICS: B_ST_D;
+	export let FIXTURE_STATISTICS_TRANSLATION: B_ST_T;
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
-	let show_placeholder: boolean = false;
-  let null_groups: string[] = [];
+  const MOBILE_VIEW = 725;
+	const TABLET_VIEW = 1000;
+  
+	let mobileExclusive = false;
+  let tabletExclusive = false;
 
-	const stats_menu: 
+  const stats_menu: 
   {
 		key:
 			| 'shots_title'
@@ -140,102 +123,81 @@
 		}
 	];
 
+	let loaded: boolean = false;
+	let refresh: boolean = false;
+	let no_widget_data: any = false;
+	let show_placeholder: boolean = false;
+  let null_groups: string[] = [];
+
   //#endregion ➤ [VARIABLES]
 
-	let tabletView = 1000;
-	let mobileView = 725;
-	let mobileExclusive: boolean = false;
-	let tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		var wInit =
-			document.documentElement.clientWidth;
-		// [ℹ] TABLET - VIEW
-		if (wInit >= tabletView) {
-			tabletExclusive = false;
-		} else {
-			tabletExclusive = true;
-		}
-		// [ℹ] MOBILE - VIEW
-		if (wInit <= mobileView) {
-			mobileExclusive = true;
-		} else {
-			mobileExclusive = false;
-		}
-		window.addEventListener(
-			'resize',
-			function () {
-				var w =
-					document.documentElement.clientWidth;
-				// [ℹ] TABLET - VIEW
-				if (w >= tabletView) {
-					tabletExclusive = false;
-				} else {
-					tabletExclusive = true;
-				}
-				// [ℹ] MOBILE - VIEW
-				if (w <= mobileView) {
-					mobileExclusive = true;
-				} else {
-					mobileExclusive = false;
-				}
-			}
-		);
-	});
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// [ADD-ON] FIREBASE
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	async function check_live_fixtures(
-		data: [string, FIREBASE_livescores_now][]
-	) {
-		// [🐞]
-		const logs_name =
-			STS_W_F_TAG + ' check_live_fixtures';
-		const logs: string[] = [];
-		logs.push(`checking livescores_now`);
-
-		// [ℹ] generate FIREBASE fixtures-map
-		for (const live_fixture of data) {
-			const fixture_id = parseInt(
-				live_fixture[0].toString()
-			);
-			const fixture_data = live_fixture[1];
-			live_fixtures_map.set(
-				fixture_id,
-				fixture_data
-			);
-		}
-
-		// [ℹ] validate against [this] fixture_id
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ handles data generation (first-time)
+   * ➨ updating against "live" firebase data;
+   * @returns
+   * void
+  */
+	async function injectLiveData
+  (
+	) 
+  {
 		const fixture_id = FIXTURE_STATISTICS?.id;
 
-		if (live_fixtures_map.has(fixture_id)) {
-			// [🐞]
-			logs.push(
-				`fixture ${fixture_id} livescore_now exists!`
-			);
-			// [ℹ] update fixture data;
-			FIXTURE_STATISTICS.status =
-				live_fixtures_map.get(
-					fixture_id
-				)?.time?.status;
-			// FIXME: make compatible TYPES for hasura/stats && firebase/stats
-			FIXTURE_STATISTICS.stats =
-				live_fixtures_map.get(
-					fixture_id
-				)?.stats?.data;
+    const if_M_0 =
+      $sessionStore?.livescore_now_fixture_target?.id != fixture_id
+    ;
+    if (if_M_0) return;
 
-			// [ℹ] reactiveity on-set main
-			FIXTURE_STATISTICS = FIXTURE_STATISTICS;
-		}
+    const liveFixtureData = $sessionStore?.livescore_now_fixture_target;
 
-		// TODO: lazy_load_data_check = true
+    // update fixture data w/live;
+    FIXTURE_STATISTICS.status = liveFixtureData?.time?.status;
+    FIXTURE_STATISTICS.stats = liveFixtureData?.stats?.data;
 
-		// [🐞]
-		if (dev) log_info_group(logs_name, logs);
-	}
+    // IMPORTANT
+    FIXTURE_STATISTICS = FIXTURE_STATISTICS;
+  }
+
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  )
+  {
+    [
+      tabletExclusive, 
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+  }
+
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ document (visibility-change) event listener;
+   * @returns
+   * void
+   */
+  function addEventListeners
+  (
+  )
+  {
+    // NOTE: (on-resize)
+    window.addEventListener
+    (
+			'resize',
+			function () 
+      {
+				resizeAction();
+			}
+		);
+  }
 
   //#endregion ➤ [METHODS]
 
@@ -245,10 +207,19 @@
 
   //#region ➤ [REACTIVIY] [METHODS]
 
-  //#endregion ➤ [REACTIVIY] [METHODS]
+  /**
+   * @summary
+   * [MAIN] 
+   * [REACTIVE]
+   * @description 
+   * listens to target "fixture" in "livescores_now" data;
+  */
+  $: if ($sessionStore?.livescore_now_fixture_target)
+  {
+    injectLiveData()
+  }
 
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
+  // TODO:
   $: if (
 		FIXTURE_STATISTICS &&
 		browser &&
@@ -264,6 +235,7 @@
 		no_widget_data = false;
 	}
 
+  // TODO:
   $: if (FIXTURE_STATISTICS && browser) 
   {
 		null_groups = [];
@@ -297,6 +269,26 @@
 		}
 	}
 
+  //#endregion ➤ [REACTIVIY] [METHODS]
+
+  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  /**
+   * @summary
+   * [MAIN] [LIFECYCLE]
+   * @description
+   * ➨ kickstart resize-action;
+   * ➨ kickstart (bundle) event-listeners;
+  */
+  onMount
+  (
+    async() => 
+    {
+      resizeAction();
+      addEventListeners();
+    }
+  );
+
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
@@ -308,227 +300,140 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div
 	id="widget-outer"
-	class:display-none={no_widget_data &&
-		!show_placeholder}
+	class:display-none={no_widget_data && !show_placeholder}
 >
 
 	<!-- 
-  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
+  NO WIDGET DATA PLACEHOLDER
   -->
 	{#if no_widget_data && loaded && show_placeholder}
-		<h2
-			class="s-20 m-b-10 w-500 color-black-2"
-			style="margin-top: 0px;"
-			class:color-white={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			{FIXTURE_STATISTICS_TRANSLATION?.title}
-		</h2>
-
-		<!-- [ℹ] no-widget-data-avaiable-placeholder container 
-    -->
-		<div
-			id="no-widget-box"
-			class="column-space-center"
-			class:dark-background-1={$userBetarenaSettings.theme ==
-				'Dark'}
-		>
-			<!-- 
-      [ℹ] no-visual-asset
-      -->
-			{#if $userBetarenaSettings.theme == 'Dark'}
-				<img
-					src={no_visual_dark}
-					alt="no_visual_dark"
-					width="32px"
-					height="32px"
-					class="m-b-16"
-				/>
-			{:else}
-				<img
-					src={no_visual}
-					alt="no_visual"
-					width="32px"
-					height="32px"
-					class="m-b-16"
-				/>
-			{/if}
-
-			<!-- 
-      [ℹ] container w/ text 
-      -->
-			<div>
-				<p
-					class="s-14 m-b-8 w-500"
-					class:color-white={$userBetarenaSettings.theme ==
-						'Dark'}
-				>
-					{FIXTURE_STATISTICS_TRANSLATION?.no_info}
-				</p>
-				<p class="s-14 color-grey w-400">
-					{FIXTURE_STATISTICS_TRANSLATION?.no_info_desc}
-				</p>
-			</div>
-		</div>
+    <WidgetNoData 
+      WIDGET_TITLE={FIXTURE_STATISTICS_TRANSLATION?.title}
+      NO_DATA_TITLE={FIXTURE_STATISTICS_TRANSLATION?.no_info}
+      NO_DATA_DESC={FIXTURE_STATISTICS_TRANSLATION?.no_info_desc}
+    />
 	{/if}
 
 	<!-- 
-  [ℹ] MAIN WIDGET COMPONENT
+  MAIN WIDGET COMPONENT
   -->
 	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
-		<!-- <StatisticsLoader /> -->
 
-		<!-- 
-    [ℹ] promise is pending 
-    -->
-		{#await widget_init()}
-			<StatisticsLoader />
-			<!-- 
-    [ℹ] promise was fulfilled
-    -->
-		{:then data}
-			<h2
-				class="s-20 m-b-10 w-500 color-black-2"
-				style="margin-top: 0px;"
-				class:color-white={$userBetarenaSettings.theme ==
-					'Dark'}
-			>
-				{FIXTURE_STATISTICS_TRANSLATION?.title}
-			</h2>
+    <WidgetTitle
+      WIDGET_TITLE={FIXTURE_STATISTICS_TRANSLATION?.title}
+    />
 
-			<div
-				id="statistics-widget-container"
-				class:dark-background-1={$userBetarenaSettings.theme ==
-					'Dark'}
-			>
-				<!-- 
-        [ℹ] [MOBILE] [TABLET] [DESKTOP]
-        [ℹ] no cross-platform design change
+    <div
+      id="statistics-widget-container"
+      class="widget-component"
+      class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
+    >
+
+      <!-- 
+      [ℹ] team info 
+      -->
+      <div
+        id="team-info-box"
+        class="row-space-out"
+      >
+        <!-- 
+        [ℹ] home team 
         -->
+        <img
+          src={FIXTURE_STATISTICS?.home?.team_logo}
+          alt="default alt text"
+          width="24"
+          height="24"
+        />
 
-				<!-- 
-        [ℹ] team info -->
-				<div
-					id="team-info-box"
-					class="row-space-out"
-				>
-					<!-- 
-          [ℹ] home team -->
-					<img
-						src={FIXTURE_STATISTICS?.home
-							?.team_logo}
-						alt="default alt text"
-						width="24px"
-						height="24px"
-					/>
+        <!-- 
+        [ℹ] away team 
+        -->
+        <img
+          src={FIXTURE_STATISTICS?.away?.team_logo}
+          alt="default alt text"
+          width="24"
+          height="24"
+        />
+      </div>
 
-					<!-- 
-          [ℹ] away team -->
-					<img
-						src={FIXTURE_STATISTICS?.away
-							?.team_logo}
-						alt="default alt text"
-						width="24px"
-						height="24px"
-					/>
-				</div>
+      <!-- 
+      [ℹ] statistics table 
+      -->
+      <div 
+        id="statistics-box"
+      >
+        {#if FIXTURE_STATISTICS?.stats && FIXTURE_STATISTICS?.stats.length == 2}
+          <!-- 
+          [ℹ] shots-section 
+          [ℹ] passes-section
+          [ℹ] attacks-section 
+          [ℹ] other-stats-section 
+          -->
+          {#each stats_menu as item}
+            <!-- 
+            [ℹ] group-statistics-name 
+            -->
+            {#if !null_groups.includes(item.key)}
+              <p
+                class="
+                  w-500
+                  color-black-2
+                  text-group-stats
+                "
+              >
+                {FIXTURE_STATISTICS_TRANSLATION?.[item?.key]}
+              </p>
+            {/if}
 
-				<!-- 
-        [ℹ] statistics table -->
-				<div id="statistics-box">
-					{#if FIXTURE_STATISTICS?.stats && FIXTURE_STATISTICS?.stats.length == 2}
-						<!-- 
-            [ℹ] shots-section 
-            [ℹ] passes-section
-            [ℹ] attacks-section 
-            [ℹ] other-stats-section -->
-						{#each stats_menu as item}
-							<!-- 
-              [ℹ] group-statistics-name -->
-							{#if !null_groups.includes(item.key)}
-								<p
-									class="
-                    w-500
-                    color-black-2
-                    text-group-stats
-                  "
-								>
-									{FIXTURE_STATISTICS_TRANSLATION[
-										item.key
-									]}
-								</p>
-							{/if}
-							<!-- 
-              [ℹ] group-statistics-data -->
-							{#each item.loc_arr as sub_nav, i}
-								{#if item.key == 'shots_title' && FIXTURE_STATISTICS?.stats[0]?.shots && FIXTURE_STATISTICS?.stats[1]?.shots}
-									<StatisticsRow
-										TEAM_HOME_STAT={FIXTURE_STATISTICS
-											?.stats[0]?.shots[sub_nav]}
-										TEAM_AWAY_STAT={FIXTURE_STATISTICS
-											?.stats[1]?.shots[sub_nav]}
-										STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[
-											sub_nav
-										]}
-										OPT={sub_nav}
-									/>
-								{/if}
+            <!-- 
+            [ℹ] group-statistics-data 
+            -->
+            {#each item.loc_arr as sub_nav, i}
+              {#if item.key == 'shots_title' && FIXTURE_STATISTICS?.stats[0]?.shots && FIXTURE_STATISTICS?.stats[1]?.shots}
+                <StatisticsRow
+                  TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.shots?.[sub_nav]}
+                  TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.shots?.[sub_nav]}
+                  STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION?.[sub_nav]}
+                  OPT={sub_nav}
+                />
+              {/if}
 
-								{#if item.key == 'passes_title' && FIXTURE_STATISTICS?.stats[0]?.passes && FIXTURE_STATISTICS?.stats[1]?.passes}
-									<StatisticsRow
-										TEAM_HOME_STAT={FIXTURE_STATISTICS
-											?.stats[0]?.passes[sub_nav]}
-										TEAM_AWAY_STAT={FIXTURE_STATISTICS
-											?.stats[1]?.passes[sub_nav]}
-										STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[
-											sub_nav
-										]}
-										OPT={sub_nav}
-									/>
-								{/if}
+              {#if item.key == 'passes_title' && FIXTURE_STATISTICS?.stats[0]?.passes && FIXTURE_STATISTICS?.stats[1]?.passes}
+                <StatisticsRow
+                  TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.passes?.[sub_nav]}
+                  TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.passes?.[sub_nav]}
+                  STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION?.[sub_nav]}
+                  OPT={sub_nav}
+                />
+              {/if}
 
-								{#if item.key == 'attacks_title' && FIXTURE_STATISTICS?.stats[0]?.attacks && FIXTURE_STATISTICS?.stats[1]?.attacks}
-									<StatisticsRow
-										TEAM_HOME_STAT={FIXTURE_STATISTICS
-											?.stats[0]?.attacks[
-											sub_nav
-										]}
-										TEAM_AWAY_STAT={FIXTURE_STATISTICS
-											?.stats[1]?.attacks[
-											sub_nav
-										]}
-										STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[
-											sub_nav
-										]}
-										OPT={sub_nav}
-									/>
-								{/if}
+              {#if item.key == 'attacks_title' && FIXTURE_STATISTICS?.stats[0]?.attacks && FIXTURE_STATISTICS?.stats[1]?.attacks}
+                <StatisticsRow
+                  TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.attacks?.[sub_nav]}
+                  TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.attacks?.[sub_nav]}
+                  STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION?.[sub_nav]}
+                  OPT={sub_nav}
+                />
+              {/if}
 
-								{#if item.key == 'other' && FIXTURE_STATISTICS?.stats[0][sub_nav] && FIXTURE_STATISTICS?.stats[1][sub_nav]}
-									<StatisticsRow
-										TEAM_HOME_STAT={FIXTURE_STATISTICS
-											?.stats[0][sub_nav]}
-										TEAM_AWAY_STAT={FIXTURE_STATISTICS
-											?.stats[1][sub_nav]}
-										STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION[
-											sub_nav
-										]}
-										OPT={sub_nav}
-									/>
-								{/if}
-							{/each}
-						{/each}
-					{/if}
-				</div>
-			</div>
+              {#if item.key == 'other' && FIXTURE_STATISTICS?.stats[0][sub_nav] && FIXTURE_STATISTICS?.stats[1][sub_nav]}
+                <StatisticsRow
+                  TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.[sub_nav]}
+                  TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.[sub_nav]}
+                  STAT_TRANSLATION={FIXTURE_STATISTICS_TRANSLATION?.[sub_nav]}
+                  OPT={sub_nav}
+                />
+              {/if}
+            {/each}
 
-			<!-- 
-    [ℹ] promise was rejected
-    -->
-		{:catch error}
-			{error}
-		{/await}
+          {/each}
+        {/if}
+      </div>
+    </div>
+
 	{/if}
+  
 </div>
 
 <!-- ===============
@@ -538,41 +443,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	/* [ℹ] NO DATA WIDGET STYLE / CSS */
-
-	#no-widget-box {
-		padding: 20px;
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-		text-align: center;
-	}
-
-	/*
-    [ℹ] WIDGET MAIN STYLE / CSS 
-    [ℹ] NOTE: [MOBILE-FIRST]
-  */
-
-	/* 
-  lineups-main 
-  */
-	div#statistics-widget-container {
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-		overflow: hidden;
-		width: 100%;
-		position: relative;
-		padding: none;
-		/* override */
-		padding-bottom: 20px;
-	}
-
 	/* 
   team info box 
   */
-	div#statistics-widget-container
-		div#team-info-box {
+	div#statistics-widget-container	div#team-info-box 
+  {
 		padding: 20px 20px 0 20px;
 		position: absolute;
 	}
