@@ -54,6 +54,7 @@
 
   //#region ➤ [MAIN-METHODS]
 
+  // TODO:
   async function injectLiveOddsData
   (
   )
@@ -92,27 +93,18 @@
 		}
   }
 
+  /**
+   * @summary
+   * [HELPER]
+   * @description
+   * ➨ closes all dropdowns;
+   */
 	function closeAllDropdowns
   (
-  ) 
+  ) : void
   {
 		toggleCTA = false;
 	}
-
-  // VIEWPORT CHANGES | IMPORTANT
-  function resizeAction
-  (
-  )
-  {
-    [
-      tabletExclusive, 
-      mobileExclusive
-    ] =	viewport_change
-    (
-      TABLET_VIEW,
-      MOBILE_VIEW
-    );
-  }
 
   /**
    * @summary
@@ -124,7 +116,7 @@
    */
   function addEventListeners
   (
-  )
+  ): void
   {
     // NOTE: (on-resize)
     window.addEventListener
@@ -135,6 +127,21 @@
 				resizeAction();
 			}
 		);
+  }
+
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  ): void
+  {
+    [
+      tabletExclusive, 
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
   }
 
   //#endregion ➤ [METHODS]
@@ -150,7 +157,7 @@
    * [MAIN] 
    * [REACTIVE]
    * @description 
-   * listens to target "fixture" in "odds" data;
+   * ➨ listens to target "fixture" in "odds" data;
   */
   $: if ($sessionStore?.live_odds_fixture_target)
   {
