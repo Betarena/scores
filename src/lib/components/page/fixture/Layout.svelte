@@ -18,7 +18,7 @@
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import AboutWidget from '$lib/components/page/fixture/about/About-Widget.svelte';
-	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
+	import ContentWidget from '$lib/components/page/fixture/content/Content-Widget.svelte';
 	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head2Head-Widget.svelte';
 	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents-Widget.svelte';
 	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability-Widget.svelte';
@@ -402,10 +402,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				id="grid-display-column"
 				class:display-none={$sessionStore.fixture_select_view == 'overview'}
 			>
-				<ContentWidget
-					{FIXTURE_CONTENT}
-					{FIXTURE_CONTENT_TRANSLATION}
-				/>
+				<ContentWidget />
 			</div>
 		</div>
   <!-- 
@@ -449,10 +446,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 			id="widget-grid-display-news"
 			class:display-none={$sessionStore.fixture_select_view == 'overview'}
 		>
-			<ContentWidget
-				{FIXTURE_CONTENT}
-				{FIXTURE_CONTENT_TRANSLATION}
-			/>
+			<ContentWidget />
 		</div>
 	{/if}
 
