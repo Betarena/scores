@@ -109,6 +109,41 @@ paths:
           description: 
             Target player SEO widget data
 
+  # [FP] - VOTES Widget
+  /api/data/fixture/votes:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) VOTES widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [lineup]
+              - required: [fixture_id]
+      summary: 
+        Returns a targets' fixture (id) main Votes widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture VOTES widget data
+  
   # [FP] - LINEUP Widget
   /api/data/fixture/lineups:
     get:
