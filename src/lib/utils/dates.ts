@@ -96,7 +96,9 @@ export const getOrdinalNum =
  * @returns 
  * a JavaScript Date object;
  */
-export function clientTimezoneDate() 
+export function clientTimezoneDate
+(
+) 
 {
   const date = new Date();
   // [STASH]
