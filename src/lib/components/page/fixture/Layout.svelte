@@ -17,7 +17,7 @@
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
-	import AboutWidget from '$lib/components/page/fixture/about/About_Widget.svelte';
+	import AboutWidget from '$lib/components/page/fixture/about/About-Widget.svelte';
 	import ContentWidget from '$lib/components/page/fixture/content/Content_Widget.svelte';
 	import Head_2HeadWidget from '$lib/components/page/fixture/head-2-head/Head2Head-Widget.svelte';
 	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents-Widget.svelte';
@@ -393,10 +393,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				/>
 				<StatisticsWidget	/>
 				<ProbabilityWidget />
-				<AboutWidget
-					{FIXTURE_ABOUT}
-					{FIXTURE_ABOUT_TRANSLATION}
-				/>
+				<AboutWidget />
 			</div>
 			<!-- 
       [ℹ] "News" view selection 
@@ -433,10 +430,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					{STANDINGS_DATA}
 					{FIXTURE_INFO}
 				/>
-				<AboutWidget
-					{FIXTURE_ABOUT}
-					{FIXTURE_ABOUT_TRANSLATION}
-				/>
+				<AboutWidget />
 			</div>
 			<div 
         class="grid-display-column">
