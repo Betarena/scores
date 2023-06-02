@@ -82,7 +82,7 @@ paths:
               # ?fixture_id=[...]
               fixture_id:
                 type: number
-                example: 18804442
+                example: 18548156
               # ?page=[...]
               page:
                 type: string
@@ -90,12 +90,18 @@ paths:
                   - fixtures
                   - player
                 example: player
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
             additionalProperties: false
             oneOf:
               # data (main) [fixture]
               - required: [fixture_id, page]
+              - required: [fixture_id, page, hasura]
               # data (main) [player]
               - required: [player_id, page]
+              - required: [player_id, page, hasura]
               # data (translations) terms
               - required: [term]
       summary:
@@ -127,6 +133,10 @@ paths:
               fixture_id:
                 type: number
                 example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
               # ?lang=[...]
               lang:
                 type: string
@@ -137,6 +147,7 @@ paths:
               - required: [lang]
               # data (main) [lineup]
               - required: [fixture_id]
+              - required: [fixture_id, hasura]
       summary: 
         Returns a targets' fixture (id) main Votes widget (data).
       responses:
