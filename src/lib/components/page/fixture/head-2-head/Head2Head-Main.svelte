@@ -20,7 +20,6 @@
   import Head2HeadStatsBox from './Head2Head-Stats-Box.svelte';
 
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
-	import type { Probabilities } from '@betarena/scores-lib/types/hasura.js';
 	import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
@@ -37,7 +36,6 @@
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1160;
 
-	let FIXTURE_PROB_DATA: Probabilities;
   let SPORTBOOK_INFO: B_SPT_D;
 
 	let mobileExclusive = false;
@@ -79,12 +77,6 @@
         ;
         if (if_M_0)
         {
-					FIXTURE_PROB_DATA.odds._1x2.home = firebaseSportbook?.markets['1X2FT']?.data[0]?.value?.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.draw = firebaseSportbook?.markets['1X2FT']?.data[1]?.value?.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.away = firebaseSportbook?.markets['1X2FT']?.data[2]?.value?.toFixed(2);
-          FIXTURE_PROB_DATA.odds.btts =	firebaseSportbook?.markets?.['BTSC']?.data?.[0]?.value?.toFixed(2);
-          FIXTURE_PROB_DATA.odds.over_2_5 = firebaseSportbook?.markets?.['HCTG3']?.data?.[0]?.value?.toFixed(2);
-
 					SPORTBOOK_INFO = m_sportBook;
 
 					const imageURL: string = SPORTBOOK_INFO?.image;
@@ -98,8 +90,6 @@
 				}
 			}
 		}
-
-		FIXTURE_PROB_DATA = FIXTURE_PROB_DATA;
   }
 
 	function closeAllDropdowns

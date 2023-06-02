@@ -2,10 +2,12 @@
 	COMPONENT JS (w/ TS)
 =================-->
 <script lang="ts">
-	import type { REDIS_CACHE_SINGLE_h2h_translation } from '$lib/models/fixtures/head-2-head/types';
-	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+
 	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
+
+	import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -13,10 +15,10 @@
 
 	const dispatch = createEventDispatcher();
 
-	export let FIXTURE_H2H_TRANSLATION: REDIS_CACHE_SINGLE_h2h_translation;
+	export let FIXTURE_H2H_TRANSLATION: B_H2H_T;
 	export let key: string;
 	export let value: number;
-	export let SPORTBOOK_INFO: Cache_Single_SportbookDetails_Data_Response;
+	export let SPORTBOOK_INFO: B_SPT_D;
 	export let type:
 		| 'overs'
 		| 'ycavg'
@@ -36,21 +38,25 @@
 	//  COMPONENT METHODS
 	// ~~~~~~~~~~~~~~~~~~~~~
 
-	function trigger_google() {
+	function trigger_google() 
+  {
 		dispatch('google_click');
 	}
 
-	function toggle_cta() {
+	function toggle_cta() 
+  {
 		toggleCTA = !toggleCTA;
 	}
 
-	function closeAllDropdowns() {
+	function closeAllDropdowns() 
+  {
 		toggleCTA = false;
 	}
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+COMPONENT HTML 
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <!-- 
@@ -99,7 +105,7 @@
         "
 			>
 				{#if type == 'overs' || type == 'btts'}
-					{(parseInt(value) / 5) * 100}%
+					{(value / 5) * 100}%
 				{:else if type == 'ycavg' || type == 'corners'}
 					{(value / 5).toPrecision(2)}
 				{/if}
@@ -230,11 +236,14 @@
 </div>
 
 <!-- ===============
-  COMPONENT STYLE
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
-	/* [ℹ] OTHER STYLE / CSS */
-	#background-area-close {
+
+	#background-area-close 
+  {
 		position: absolute;
 		top: 0;
 		bottom: 0;
@@ -246,21 +255,25 @@
 	}
 
 	/* fixture bet info */
-	div.bet-info-box {
+	div.bet-info-box 
+  {
 		border-bottom: 1px solid #e6e6e6;
 		padding: 12px 20px;
 		margin: 0 -20px;
 		width: -webkit-fill-available;
 	}
-	div.bet-info-box p.sub-stat-info {
+	div.bet-info-box p.sub-stat-info 
+  {
 		margin-left: 6px;
 	}
-	div.bet-info-box img.bet-site-logo {
+	div.bet-info-box img.bet-site-logo 
+  {
 		width: 40px;
 		height: 40px;
 		border-radius: 8px;
 	}
-	div.bet-info-box button.place-bet-btn {
+	div.bet-info-box button.place-bet-btn 
+  {
 		height: 40px;
 		width: 100%;
 		background-color: #f5620f;
@@ -270,19 +283,25 @@
 		margin-left: 5px;
 		padding: 10px 24px;
 	}
-	div.bet-info-box button.place-bet-btn p {
+	div.bet-info-box button.place-bet-btn p 
+  {
 		font-size: 14px;
 	}
-	div.bet-info-box button.place-bet-btn:hover {
+	div.bet-info-box button.place-bet-btn:hover 
+  {
 		background: #f77c42 !important;
 	}
 
-	/* extra bet info button */
-	#button-extra-info-container {
+	/* 
+  extra bet info button 
+  */
+	#button-extra-info-container 
+  {
 		position: relative;
 		width: 100%;
 	}
-	.extra-info-container {
+	.extra-info-container 
+  {
 		padding: 20px;
 		display: grid;
 		justify-items: stretch;
@@ -291,10 +310,12 @@
 		align-content: center;
 		text-align: center;
 	}
-	.extra-info-container p {
+	.extra-info-container p 
+  {
 		color: white;
 	}
-	.extra-info {
+	.extra-info 
+  {
 		background: #4b4b4b;
 		box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
 		border-radius: 8px;
@@ -309,16 +330,19 @@
 		left: 50%;
 		transform: translate(-50%, 0);
 	}
-	.extra-info-img {
+	.extra-info-img 
+  {
 		width: 100%;
 		object-fit: contain;
 		height: 40px;
 	}
-	.btn-cta {
+	.btn-cta 
+  {
 		border-radius: 8px !important;
 		margin-top: 32px;
 		margin-bottom: 16px;
 		padding: 11.5px !important;
 		width: -webkit-fill-available;
 	}
+
 </style>
