@@ -20,6 +20,7 @@
   
 	import type { B_PR_T, PR_Fixture } from '@betarena/scores-lib/types/probabilities.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	
   //#endregion ➤ [MAIN] Package Imports
 
@@ -45,6 +46,7 @@
 	let toggleCTA_Key: string = undefined;
 	let show_placeholder: boolean = false;
 	let imageVar: string = '--probabilities-info-bookmaker-bg-';
+  let SPORTBOOK_INFO: B_SPT_D;
 
 	let exclude_prob_list = 
   [
@@ -109,26 +111,9 @@
   (
   )
   {
-		// [ℹ] match "data.key" (fixture_id)
-		// [ℹ] with available (fixture_id's)
-		// [ℹ] and populate the SPORTBOOK_DETAILS
-		// [ℹ] based on the "top-1" OR avaialble ODDS
-		// [ℹ] for the selected GEO-POSITION
-		// [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
-
-		if (SPORTBOOK_DETAILS_LIST == undefined) {
-			// [🐞]
-			logs.push(
-				`SPORTBOOK_DETAILS_LIST is undefined`
-			);
-			lazy_load_data_check = true;
-			return;
-		}
-
-		let count = 0;
-
 		FIXTURE_PROB_DATA.odds = undefined;
-		FIXTURE_PROB_DATA.odds = {
+		FIXTURE_PROB_DATA.odds = 
+    {
 			_1x2: {
 				home: undefined,
 				away: undefined,
@@ -138,97 +123,43 @@
 			over_2_5: undefined
 		};
 
-		for (const main_sportbook of SPORTBOOK_DETAILS_LIST) {
-			const main_sportbook_title =
-				main_sportbook?.title;
-			for (const firebase_sportbook of sportbook_list) {
-				const firebase_sportbook_title =
-					firebase_sportbook?.sportbook;
+		let count = 0;
 
-				if (
-					main_sportbook_title.toLowerCase() ==
-						firebase_sportbook_title.toLowerCase() &&
-					firebase_sportbook.markets != null &&
-					firebase_sportbook.markets['1X2FT'] !=
-						null &&
-					firebase_sportbook.markets['1X2FT']
-						.data[0].value != null &&
-					firebase_sportbook.markets['1X2FT']
-						.data[1].value != null &&
-					firebase_sportbook.markets['1X2FT']
-						.data[2].value != null &&
-					count != 1
-				) {
-					// [🐞]
-					logs.push(
-						`main_sportbook_title: ${main_sportbook_title}`
-					);
-					logs.push(
-						`firebase_sportbook: ${firebase_sportbook}`
-					);
+		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
+    {
+			const m_sportBookTitle =	m_sportBook?.title;
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || []) 
+      {
+				const firebase_sportbook_title = firebaseSportbook?.sportbook;
+        const if_M_0 =
+          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
+          && firebaseSportbook.markets != null 
+          && firebaseSportbook.markets['1X2FT'] !=	null 
+          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          && count != 1
+        ;
+        if (if_M_0)
+        {
+					FIXTURE_PROB_DATA.odds._1x2.home = firebaseSportbook?.markets['1X2FT']?.data[0]?.value?.toFixed(2);
+					FIXTURE_PROB_DATA.odds._1x2.draw = firebaseSportbook?.markets['1X2FT']?.data[1]?.value?.toFixed(2);
+					FIXTURE_PROB_DATA.odds._1x2.away = firebaseSportbook?.markets['1X2FT']?.data[2]?.value?.toFixed(2);
+          FIXTURE_PROB_DATA.odds.btts =	firebaseSportbook?.markets?.['BTSC']?.data?.[0]?.value?.toFixed(2);
+          FIXTURE_PROB_DATA.odds.over_2_5 = firebaseSportbook?.markets?.['HCTG3']?.data?.[0]?.value?.toFixed(2);
 
-					// [ℹ] 1X2FT [ODDS]
-					FIXTURE_PROB_DATA.odds._1x2.home =
-						firebase_sportbook.markets[
-							'1X2FT'
-						].data[0].value.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.draw =
-						firebase_sportbook.markets[
-							'1X2FT'
-						].data[1].value.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.away =
-						firebase_sportbook.markets[
-							'1X2FT'
-						].data[2].value.toFixed(2);
+					SPORTBOOK_INFO = m_sportBook;
 
-					// [ℹ] BTSC [ODDS]
-					if (
-						firebase_sportbook.markets['BTSC'] !=
-							null &&
-						firebase_sportbook.markets['BTSC']
-							.data[0].value != null &&
-						firebase_sportbook.markets['BTSC']
-							.data[1].value != null
-					) {
-						FIXTURE_PROB_DATA.odds.btts =
-							firebase_sportbook.markets[
-								'BTSC'
-							].data[0].value.toFixed(2);
-					}
-
-					// [ℹ] HCTG3 [ODDS]
-					if (
-						firebase_sportbook.markets['HCTG3'] !=
-							null &&
-						firebase_sportbook.markets['HCTG3']
-							.data[0].value != null &&
-						firebase_sportbook.markets['HCTG3']
-							.data[1].value != null
-					) {
-						FIXTURE_PROB_DATA.odds.over_2_5 =
-							firebase_sportbook.markets[
-								'HCTG3'
-							].data[0].value.toFixed(2);
-					}
-
-					SPORTBOOK_INFO = main_sportbook;
-
-					// [ℹ] distorted "sportmonks" image color-thief application
-					const imageURL: string =
-						SPORTBOOK_INFO?.image;
-					getImageBgColor(imageURL, imageVar);
+					const imageURL: string = SPORTBOOK_INFO?.image;
+					getImageBgColor
+          (
+            imageURL, 
+            imageVar
+          );
 
 					count = 1;
 				}
 			}
-		}
-
-		// [ℹ] no sportbook is present
-		if (count == 0) {
-			// [ℹ] distorted "sportmonks" image color-thief application
-			const imageURL: string =
-				SPORTBOOK_INFO?.image;
-			getImageBgColor(imageURL, imageVar);
 		}
 
 		FIXTURE_PROB_DATA = FIXTURE_PROB_DATA;
@@ -463,8 +394,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 <a
                   rel="nofollow"
                   aria-label="fixture_football_fixtures_probabilities"
-                  on:click={() =>
-                    triggerGoggleEvents(
+                  on:click={() => googleEventLog(
                       'fixture_football_fixtures_probabilities'
                     )}
                   href={SPORTBOOK_INFO?.register_link}
@@ -497,7 +427,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     rel="nofollow"
                     aria-label="fixture_football_fixtures_probabilities"
                     on:click={() =>
-                      triggerGoggleEvents(
+                      googleEventLog(
                         'fixture_football_fixtures_probabilities'
                       )}
                     href={SPORTBOOK_INFO?.register_link}
@@ -598,7 +528,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   rel="nofollow"
                   aria-label="fixture_football_fixtures_probabilities"
                   on:click={() =>
-                    triggerGoggleEvents(
+                    googleEventLog(
                       'fixture_football_fixtures_probabilities'
                     )}
                   href={SPORTBOOK_INFO?.register_link}
@@ -631,7 +561,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     rel="nofollow"
                     aria-label="fixture_football_fixtures_probabilities"
                     on:click={() =>
-                      triggerGoggleEvents(
+                      googleEventLog(
                         'fixture_football_fixtures_probabilities'
                       )}
                     href={SPORTBOOK_INFO?.register_link}
@@ -732,7 +662,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   rel="nofollow"
                   aria-label="fixture_football_fixtures_probabilities"
                   on:click={() =>
-                    triggerGoggleEvents(
+                    googleEventLog(
                       'fixture_football_fixtures_probabilities'
                     )}
                   href={SPORTBOOK_INFO?.register_link}
@@ -765,7 +695,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     rel="nofollow"
                     aria-label="fixture_football_fixtures_probabilities"
                     on:click={() =>
-                      triggerGoggleEvents(
+                      googleEventLog(
                         'fixture_football_fixtures_probabilities'
                       )}
                     href={SPORTBOOK_INFO?.register_link}
@@ -938,7 +868,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       rel="nofollow"
                       aria-label="fixture_football_fixtures_probabilities"
                       on:click={() =>
-                        triggerGoggleEvents(
+                        googleEventLog(
                           'fixture_football_fixtures_probabilities'
                         )}
                       href={SPORTBOOK_INFO?.register_link}
@@ -971,7 +901,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         rel="nofollow"
                         aria-label="fixture_football_fixtures_probabilities"
                         on:click={() =>
-                          triggerGoggleEvents(
+                          googleEventLog(
                             'fixture_football_fixtures_probabilities'
                           )}
                         href={SPORTBOOK_INFO?.register_link}
@@ -1119,7 +1049,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                           rel="nofollow"
                           aria-label="fixture_football_fixtures_probabilities"
                           on:click={() =>
-                            triggerGoggleEvents(
+                            googleEventLog(
                               'fixture_football_fixtures_probabilities'
                             )}
                           href={SPORTBOOK_INFO?.register_link}
@@ -1152,7 +1082,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                             rel="nofollow"
                             aria-label="fixture_football_fixtures_probabilities"
                             on:click={() =>
-                              triggerGoggleEvents(
+                              googleEventLog(
                                 'fixture_football_fixtures_probabilities'
                               )}
                             href={SPORTBOOK_INFO?.register_link}
