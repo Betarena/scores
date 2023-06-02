@@ -15,20 +15,22 @@
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
 	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions';
 
+  import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
+  import Head2HeadStatsBox from './Head2Head-Stats-Box.svelte';
 
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
 	import type { Probabilities } from '@betarena/scores-lib/types/hasura.js';
-	import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+	import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
 	export let FIXTURE_INFO: B_SAP_FP_D;
-	export let FIXTURE_H2H: undefined;
+	export let FIXTURE_H2H: B_H2H_D;
 	export let FIXTURE_H2H_TRANSLATION: B_H2H_T;
 	export let FIXTURES_ODDS_T: B_FO_T;
 
@@ -36,7 +38,8 @@
 	const TABLET_VIEW = 1160;
 
 	let FIXTURE_PROB_DATA: Probabilities;
-  
+  let SPORTBOOK_INFO: B_SPT_D;
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
@@ -57,58 +60,39 @@
   (
   )
   {
-		if (SPORTBOOK_DETAILS_LIST == undefined) 
-    {
-			return;
-		}
-
 		let count = 0;
 
-		for (const main_sportbook of SPORTBOOK_DETAILS_LIST) 
+		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
     {
-			const main_sportbook_title =	main_sportbook?.title;
-			for (const firebase_sportbook of sportbook_list) 
+			const m_sportBookTitle =	m_sportBook?.title;
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || []) 
       {
-				const firebase_sportbook_title = firebase_sportbook?.sportbook;
+				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
-          main_sportbook_title.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
-          && firebase_sportbook.markets['1X2FT'] !=	null 
-          && firebase_sportbook.markets != null 
-          && firebase_sportbook.markets['1X2FT'].data[0].value != null 
-          && firebase_sportbook.markets['1X2FT'].data[1].value != null 
-          && firebase_sportbook.markets['1X2FT'].data[2].value != null 
+          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
+          && firebaseSportbook.markets != null 
+          && firebaseSportbook.markets['1X2FT'] !=	null 
+          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
           && count != 1
         ;
         if (if_M_0)
         {
-					// [ℹ] 1X2FT [ODDS]
-					FIXTURE_PROB_DATA.odds._1x2.home = firebase_sportbook.markets['1X2FT'].data[0].value.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.draw = firebase_sportbook.markets['1X2FT'].data[1].value.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.away = firebase_sportbook.markets['1X2FT'].data[2].value.toFixed(2);
+					FIXTURE_PROB_DATA.odds._1x2.home = firebaseSportbook?.markets['1X2FT']?.data[0]?.value?.toFixed(2);
+					FIXTURE_PROB_DATA.odds._1x2.draw = firebaseSportbook?.markets['1X2FT']?.data[1]?.value?.toFixed(2);
+					FIXTURE_PROB_DATA.odds._1x2.away = firebaseSportbook?.markets['1X2FT']?.data[2]?.value?.toFixed(2);
+          FIXTURE_PROB_DATA.odds.btts =	firebaseSportbook?.markets?.['BTSC']?.data?.[0]?.value?.toFixed(2);
+          FIXTURE_PROB_DATA.odds.over_2_5 = firebaseSportbook?.markets?.['HCTG3']?.data?.[0]?.value?.toFixed(2);
 
-					// [ℹ] BTSC [ODDS]
-					if (
-						firebase_sportbook.markets['BTSC'] !=	null 
-            && firebase_sportbook.markets['BTSC'].data[0].value != null 
-            && firebase_sportbook.markets['BTSC'].data[1].value != null
-					) {
-						FIXTURE_PROB_DATA.odds.btts =	firebase_sportbook.markets['BTSC'].data[0].value.toFixed(2);
-					}
+					SPORTBOOK_INFO = m_sportBook;
 
-					// [ℹ] HCTG3 [ODDS]
-					if (
-						firebase_sportbook.markets['HCTG3'] != null 
-            && firebase_sportbook.markets['HCTG3'].data[0].value != null 
-            && firebase_sportbook.markets['HCTG3'].data[1].value != null
-					) {
-						FIXTURE_PROB_DATA.odds.over_2_5 = firebase_sportbook.markets['HCTG3'].data[0].value.toFixed(2);
-					}
-
-					SPORTBOOK_INFO = main_sportbook;
-
-					// [ℹ] distorted "sportmonks" image color-thief application
 					const imageURL: string = SPORTBOOK_INFO?.image;
-					getImageBgColor(imageURL, imageVar);
+					getImageBgColor
+          (
+            imageURL, 
+            imageVar
+          );
 
 					count = 1;
 				}
@@ -232,9 +216,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
 	{#if no_widget_data && loaded && show_placeholder}
     <WidgetNoData 
-      WIDGET_TITLE={FXITURE_INCIDENTS_TRANSLATION?.title}
-      NO_DATA_TITLE={FXITURE_INCIDENTS_TRANSLATION?.no_info}
-      NO_DATA_DESC={FXITURE_INCIDENTS_TRANSLATION?.no_info_desc}
+      WIDGET_TITLE={FIXTURE_H2H_TRANSLATION?.widget_title}
+      NO_DATA_TITLE={FIXTURE_H2H_TRANSLATION?.no_info}
+      NO_DATA_DESC={FIXTURE_H2H_TRANSLATION?.no_info_desc}
     />
 	{/if}
 
@@ -244,7 +228,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
 
     <WidgetTitle
-      WIDGET_TITLE={FIXTURE_H2H_TRANSLATION?.title}
+      WIDGET_TITLE={FIXTURE_H2H_TRANSLATION?.widget_title}
     />
 
     <!-- 
@@ -510,7 +494,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         [ℹ] overs-data
         -->
         {#each Object.entries(FIXTURE_H2H?.data?.overs) as [key, value]}
-          <FixtureStatsBox
+          <Head2HeadStatsBox
             {FIXTURE_H2H_TRANSLATION}
             {key}
             {value}
@@ -524,7 +508,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- 
         [ℹ] yellow-cards-data
         -->
-        <FixtureStatsBox
+        <Head2HeadStatsBox
           {FIXTURE_H2H_TRANSLATION}
           key={FIXTURE_H2H_TRANSLATION?.yellow_cards}
           value={FIXTURE_H2H?.data?.yellow_cards_avg}
@@ -537,7 +521,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- 
         [ℹ] corners-data
         -->
-        <FixtureStatsBox
+        <Head2HeadStatsBox
           {FIXTURE_H2H_TRANSLATION}
           key={FIXTURE_H2H_TRANSLATION?.corners}
           value={FIXTURE_H2H?.corner_avg}
@@ -550,7 +534,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- 
         [ℹ] btts-data
         -->
-        <FixtureStatsBox
+        <Head2HeadStatsBox
           {FIXTURE_H2H_TRANSLATION}
           key={FIXTURE_H2H_TRANSLATION?.btts}
           value={FIXTURE_H2H?.data?.btts.btts_count}
@@ -567,7 +551,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div id="list-past-fixtures-box">
         {#each FIXTURE_H2H?.data?.last_5_data as item}
           <a
-            href={FIXTURE_H2H?.last_5_data_urls?.find(({ id }) => id == item?.id)?.urls[server_side_language]}
+            href={FIXTURE_H2H?.last_5_data_urls?.find(({ id }) => id == item?.id)?.urls[$sessionStore?.serverLang]}
           >
             <div
               class="
