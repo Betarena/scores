@@ -13,10 +13,12 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog, SC_W_F_STY, SC_W_F_TAG, SC_W_F_TOG } from '$lib/utils/debug';
+	import { googleActionsStr } from '$lib/utils/google.js';
 	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT, FIXTURE_NOT_START_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import close_icon from './assets/close.svg';
 	  
 	import type { B_CONT_D } from '@betarena/scores-lib/types/content.js';
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
@@ -42,19 +44,12 @@
 
 	let mobileExclusive = false;
   let tabletExclusive = false;
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
-	let tick_sec_show: boolean = false;
-	let enable_miniature: boolean = false;
-	let lazy_load_data_check: boolean = false;
-  let current_date: Date = new Date();
-	let dateDiff: number =
-		Date.parse(current_date.toString()) 
-		- Date.parse(new Date().toString())
-  ;
-	let showCountdown: boolean = false;
-	let initial_div_distance: number = undefined;
+	let noWidgetData: any = false;
+	let secTickShow: boolean = false;
+	let miniState: boolean = false;
+	let dateDiff: number = 0;
+	let showCountdown: boolean = true;
+	let initialDivDistance: number = undefined;
 	let count = 0;
 
   $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
@@ -76,7 +71,7 @@
   */
 	async function injectLiveData
   (
-	) 
+  ): Promise < void >
   {
 		const fixture_id = FIXTURE_SCOREBOARD?.id;
 
@@ -100,9 +95,10 @@
     FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD;
   }
 
+  // TODO:
   async function injectLiveOddsData
   (
-  )
+  ): Promise < void >
   {
 
 		let count = 0;
@@ -139,10 +135,9 @@
 		FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD;
   }
 
-	function scroll_listen
+	function customScrollListen
   (
-
-  ) 
+  ): void
   {
 		let target_div = document.getElementById
     (
@@ -153,45 +148,49 @@
       dlog(`${SC_W_F_TAG} ❗️ target_div is null!`, SC_W_F_TOG, SC_W_F_STY);
 			return;
 		}
+
 		if (count == 0) 
     {
-			initial_div_distance = target_div.getBoundingClientRect().bottom + window.scrollY;
+			initialDivDistance = target_div.getBoundingClientRect().bottom + window.scrollY;
 			count = 1;
 		}
+
 		let distance_top_from_div = target_div.getBoundingClientRect().bottom;
 		let distance_top_scroll = window.scrollY;
+
 		// [🐞]
 		/*
       if (dev) console.log(
        `
-        initial_div_distance: ${initial_div_distance}
+        initialDivDistance: ${initialDivDistance}
         distance_top_scroll: ${distance_top_scroll}
         distance_top_from_div: ${distance_top_from_div}
       `)
     */
-		// [ℹ] when [STANDARD VIEW]
-		if (
-			distance_top_from_div <= 0 &&
-			!enable_miniature
-		) {
-			enable_miniature = true;
-		}
+
+		// when in standard view;
+    const if_M_0 =
+      distance_top_from_div <= 0
+      && !miniState
+    ;
+		if (if_M_0) miniState = true;
+
 		// [ℹ] when [MINIATURE VIEW]
-		if (
-			initial_div_distance != undefined &&
-			count == 1 &&
-			distance_top_scroll <=
-				initial_div_distance &&
-			enable_miniature
-		) {
-			enable_miniature = false;
-		}
+    const if_M_1 =
+      initialDivDistance != undefined 
+      && count == 1 
+      && distance_top_scroll <= initialDivDistance 
+      && miniState
+    ;
+		if (if_M_1) miniState = false;
+
+    return;
 	}
 
-	function trigger_content_view
+	function toggleContentView
   (
 		view: 'overview' | 'news'
-	) 
+	): void
   {
 		$sessionStore.fixture_select_view = view;
 		window.scrollTo
@@ -201,28 +200,21 @@
         behavior: 'smooth'
 		  }
     );
-		setTimeout(async () => {
-			window.scrollTo({
-				top: 0,
-				behavior: 'smooth'
-			});
-		}, 150);
-	}
-
-  // VIEWPORT CHANGES | IMPORTANT
-  function resizeAction
-  (
-  )
-  {
-    [
-      tabletExclusive, 
-      mobileExclusive
-    ] =	viewport_change
+		setTimeout
     (
-      TABLET_VIEW,
-      MOBILE_VIEW
+      async () => 
+      {
+        window.scrollTo
+        (
+          {
+            top: 0,
+            behavior: 'smooth'
+          }
+        );
+		  }, 
+      150
     );
-  }
+	}
 
   /**
    * @summary
@@ -234,7 +226,7 @@
    */
   function addEventListeners
   (
-  )
+  ): void
   {
     // NOTE: (on-resize)
     window.addEventListener
@@ -249,8 +241,23 @@
     window.addEventListener
     (
 			'scroll',
-			scroll_listen
+			customScrollListen
 		);
+  }
+
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  ): void
+  {
+    [
+      tabletExclusive, 
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
   }
 
   //#endregion ➤ [METHODS]
@@ -266,7 +273,7 @@
    * [MAIN] 
    * [REACTIVE]
    * @description 
-   * listens to target "fixture" in "livescores_now" data;
+   * ➨ listens to target "fixture" in "livescores_now" data;
   */
   $: if ($sessionStore?.livescore_now_fixture_target)
   {
@@ -279,7 +286,7 @@
    * [MAIN] 
    * [REACTIVE]
    * @description 
-   * listens to target "fixture" in "odds" data;
+   * ➨ listens to target "fixture" in "odds" data;
   */
   $: if ($sessionStore?.live_odds_fixture_target)
   {
@@ -292,7 +299,7 @@
    * [MAIN] 
    * [REACTIVE]
    * @description
-   * -> sets timer (countdown) in motion;
+   * ➨ sets timer (countdown) in motion;
   */
   $: if (browser) 
   {
@@ -308,15 +315,31 @@
 	}
   
   /**
+   * @summary
+   * [MAIN] 
+   * [REACTIVE]
    * @description 
-   * checks for "hide" / "show" countdown bool state;
+   * ➨ checks for "hide" / "show" countdown bool state;
   */
   $: if_R_0 =
     countDownTestHour > 23 
     || dateDiff < 0
   ;
 	$: if (if_R_0) showCountdown = false;
-	$: if (!if_R_0) showCountdown = true;
+
+  /**
+   * @summary
+   * [MAIN] 
+   * [REACTIVE]
+   * @description 
+   * ➨ checks for "hide" / "show" odds+bet-site bool state;
+  */
+  $: if_R_1 = 
+    !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) 
+    && FIXTURE_SCOREBOARD?._1x2?.home 
+    && FIXTURE_SCOREBOARD?._1x2?.draw 
+    && FIXTURE_SCOREBOARD?._1x2?.away
+  ;
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -346,6 +369,9 @@
 <!-- ===============
 COMPONENT HTML 
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+TODO:
+  ➨ clean up 💻 TABLET + 🖥️ LAPTOP (SCOREBOARD) TOP ROW
+  ➨ clean up MINI-STATE section;
 =================-->
 
 <div
@@ -354,7 +380,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={"Scoreboard"}
       NO_DATA_TITLE={"NO DATA"}
@@ -365,40 +391,40 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData && browser}
 
     <!--
-    [ℹ] [STANDARD] widget-component [DESKTOP] [TABLET] [MOBILE]
+    STANDARD STATE
     -->
-    {#if !enable_miniature}
+    {#if !miniState}
       <div
         id="scoreboard-widget-container"
-        class:dark-background-1={$userBetarenaSettings.theme ==
-          'Dark'}
+        class:dark-background-1={$userBetarenaSettings?.theme == 'Dark'}
       >
+
         <!-- 
-        [ℹ] top-row data container
+        (SCOREBOARD) TOP ROW
         -->
         <div
           id="scoreboard-top-box"
           class="column-space-center"
-          class:full-time={FIXTURE_FULL_TIME_OPT.includes(
-            FIXTURE_SCOREBOARD?.status
-          )}
+          class:full-time={FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
         >
+
           <!-- 
-          [ℹ] [MOBILE]
+          📱 MOBILE
           -->
           {#if mobileExclusive}
+
             <!-- 
-            [ℹ] background-gradient
+            BACKGROUND GRADIENT
             -->
             <div
               id="background-gradient-box"
             />
 
             <!-- 
-            [ℹ] league info
+            LEAGUE INFO
             -->
             <div
               id="league-info-box"
@@ -409,11 +435,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               "
             >
               <a
-                href={FIXTURE_SCOREBOARD
-                  ?.league_urls[
-                  FIXTURE_SCOREBOARD_TRANSLATION
-                    ?.lang
-                ]}
+                href={FIXTURE_SCOREBOARD?.league_urls?.[$sessionStore?.serverLang]}
               >
                 <div
                   id="league-info-img-box"
@@ -426,9 +448,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     height="14"
                   />
                 </div>
-                <p class="color-white">
-                  {FIXTURE_INFO?.data
-                    ?.league_name}
+                <p 
+                  class="
+                    color-white
+                  "
+                >
+                  {FIXTURE_INFO?.data?.league_name}
                   - Round
                   {FIXTURE_SCOREBOARD?.round}
                 </p>
@@ -436,7 +461,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </div>
 
             <!-- 
-            [ℹ] teams / fixture info box
+            TEAMS & STATUS
             -->
             <div
               id="fixture-info-box"
@@ -445,6 +470,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 m-b-10
               "
             >
+
               <!-- 
               [ℹ] team #1
               -->
@@ -471,20 +497,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {FIXTURE_SCOREBOARD?.home_team_name}
                 </p>
               </div>
+
               <!-- 
-              [ℹ] fixture info
-              [ℹ] =?> not-started UI
-              [ℹ] =?> in-play UI
-              [ℹ] =?> done UI
+              FIXTURE (STATUS) UI
               -->
               {#if FIXTURE_NOT_START_OPT.includes(FIXTURE_SCOREBOARD?.status)}
+                
                 <div
                   style="align-self: center;"
                 >
                   <!-- 
-                  [ℹ] POSTPONED condition
+                  POSTPONED condition
                   -->
-                  {#if FIXTURE_SCOREBOARD?.status === 'POSTP' || FIXTURE_SCOREBOARD?.status === 'TBA'}
+                  {#if ['POSTP', 'TBA'].includes(FIXTURE_SCOREBOARD?.status)}
                     <p
                       class="
                         s-14
@@ -494,13 +519,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         text-center
                       "
                     >
-                      {FIXTURES_ODDS_T
-                        ?.status_abv[
-                        FIXTURE_SCOREBOARD
-                          ?.status
-                      ]}
+                      {FIXTURES_ODDS_T?.status_abv?.[FIXTURE_SCOREBOARD?.status]}
                     </p>
                   {/if}
+
+                  <!-- 
+                  FIXTURE COUNTDOWN
+                  -->
                   <p
                     class="
                       w-500 
@@ -508,10 +533,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       color-white
                       text-center
                     "
-                    class:visibility-none={!show_countdown}
+                    class:visibility-none={!showCountdown}
                   >
-                    {countD_h}:{countD_min}:{countD_sec}
+                    {countDownHour}:{countDownMin}:{countDownSec}
                   </p>
+
+                  <!-- 
+                  FIXTURE DATETIME
+                  -->
                   <p
                     class="
                       w-400 
@@ -519,52 +548,30 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       color-grey 
                       desktop-medium
                       text-center
+                      no-wrap
                     "
-                    style="white-space: nowrap;"
                   >
-                    {getOrdinalNum(
-                      new Date(
-                        FIXTURE_SCOREBOARD?.fixture_time +
-                          'Z'
-                      ).getDate()
-                    )}
-                    {MONTH_NAMES_ABBRV[
-                      new Date(
-                        FIXTURE_SCOREBOARD?.fixture_time +
-                          'Z'
-                      )
-                        .getMonth()
-                        .toString()
-                    ]}
-                    {new Date(
-                      FIXTURE_SCOREBOARD?.fixture_time +
-                        'Z'
-                    )
-                      .getFullYear()
-                      .toString()
-                      .substr(-2)},
-                    {new Date(
-                      FIXTURE_SCOREBOARD?.fixture_time +
-                        'Z'
-                    )
-                      .getHours()
-                      .toString()}:{(
-                      '0' +
-                      new Date(
-                        FIXTURE_SCOREBOARD?.fixture_time +
-                          'Z'
-                      )
-                        .getMinutes()
-                        .toString()
-                    ).slice(-2)}h
+                    {getOrdinalNum(toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time)?.getDate())}
+                    {MONTH_NAMES_ABBRV[toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time)?.getMonth()?.toString()]}
+                    {toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
+                    {toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}
+                    :
+                    {getOrdinalNum(toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getMinutes())}
+                    h
                   </p>
                 </div>
+
               {:else if FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
+
                 <div
                   class="
                     column-space-center
                   "
                 >
+
+                  <!-- 
+                  SCORE
+                  -->
                   <p
                     class="
                       color-white
@@ -572,101 +579,91 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       w-500
                     "
                   >
-                    {FIXTURE_SCOREBOARD?.teams
-                      ?.home?.score}
+                    {FIXTURE_SCOREBOARD?.teams?.home?.score}
                     :
-                    {FIXTURE_SCOREBOARD?.teams
-                      ?.away?.score}
+                    {FIXTURE_SCOREBOARD?.teams?.away?.score}
                   </p>
-                  <p
-                    class="
-                      color-grey
-                      s-16
-                      w-400
-                    "
-                  >
-                    {#if FIXTURE_SCOREBOARD.status == 'HT'}
-                      HT
-                    {:else}
-                      {FIXTURE_SCOREBOARD?.minute}
-                      <span
-                        class:visibility-none={tick_sec_show}
-                        >'
+
+                  <!-- 
+                  LIVE STATUS 
+                  (+) FIXTURE CHECKPOINTS
+                  -->
+                  {#if FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
+                    <p
+                      class="
+                        color-grey
+                        s-16
+                        w-400
+                      "
+                    >
+                      {#if FIXTURE_SCOREBOARD.status == 'HT'}
+                        HT
+                      {:else}
+                        {FIXTURE_SCOREBOARD?.minute}
+                        <span
+                          class:visibility-none={secTickShow}
+                        >
+                        '
+                        </span>
+                      {/if}
+
+                      <span 
+                        class="
+                          color-white
+                        "
+                      >
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
+                          (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
+                          (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
+                        {/if}
+                        {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
+                          (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
+                        {/if}
                       </span>
-                    {/if}
-                    <span class="color-white">
+                    </p>
+                  {/if}
+
+                  <!-- 
+                  FINAL FIXTURE STATUS
+                  (+) FIXTURE CHECKPOINTS
+                  -->
+                  {#if FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-grey
+                        ft-text
+                      "
+                    >
+                      {FIXTURE_SCOREBOARD?.status}
+                    </p>
+
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-grey
+                      "
+                    >
                       {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
-                        (HT {FIXTURE_SCOREBOARD
-                          ?.score_post
-                          ?.ht_score})
+                        (HT {FIXTURE_SCOREBOARD?.score_post?.ht_score})
                       {/if}
                       {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
-                        (ET {FIXTURE_SCOREBOARD
-                          ?.score_post
-                          ?.et_score})
+                        (ET {FIXTURE_SCOREBOARD?.score_post?.et_score})
                       {/if}
                       {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
-                        (PS {FIXTURE_SCOREBOARD
-                          ?.score_post
-                          ?.ps_score})
+                        (PS {FIXTURE_SCOREBOARD?.score_post?.ps_score})
                       {/if}
-                    </span>
-                  </p>
+                    </p>
+                  {/if}
+
                 </div>
-              {:else if FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
-                <div
-                  class="
-                    column-space-center
-                  "
-                >
-                  <p
-                    class="
-                      s-14
-                      w-500
-                      color-grey
-                      ft-text
-                    "
-                  >
-                    {FIXTURE_SCOREBOARD?.status}
-                  </p>
-                  <p
-                    class="
-                      color-white
-                      s-42
-                      w-500
-                    "
-                  >
-                    {FIXTURE_SCOREBOARD?.teams
-                      ?.home?.score}
-                    :
-                    {FIXTURE_SCOREBOARD?.teams
-                      ?.away?.score}
-                  </p>
-                  <p
-                    class="
-                      s-14
-                      w-500
-                      color-grey
-                    "
-                  >
-                    {#if FIXTURE_SCOREBOARD?.score_post?.ht_score}
-                      (HT {FIXTURE_SCOREBOARD
-                        ?.score_post
-                        ?.ht_score})
-                    {/if}
-                    {#if FIXTURE_SCOREBOARD?.score_post?.et_score}
-                      (ET {FIXTURE_SCOREBOARD
-                        ?.score_post
-                        ?.et_score})
-                    {/if}
-                    {#if FIXTURE_SCOREBOARD?.score_post?.ps_score}
-                      (PS {FIXTURE_SCOREBOARD
-                        ?.score_post
-                        ?.ps_score})
-                    {/if}
-                  </p>
-                </div>
+
               {/if}
+
               <!-- 
               [ℹ] team #2
               -->
@@ -693,16 +690,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {FIXTURE_SCOREBOARD?.away_team_name}
                 </p>
               </div>
+
             </div>
 
             <!-- 
-            [ℹ] odds
-            [ℹ] w/ betting site
-            [ℹ] non-"FT"
+            BET-SITE + ODDS
             -->
-            {#if !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) && FIXTURE_SCOREBOARD?._1x2?.home && FIXTURE_SCOREBOARD?._1x2?.draw && FIXTURE_SCOREBOARD?._1x2?.away}
+            {#if if_R_1}
+              
               <!-- 
-              [ℹ] bet-site
+              BET-SITE
               -->
               <div
                 class="
@@ -722,39 +719,36 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
                 <a
                   rel="nofollow"
-                  aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                  on:click={() =>
-                    triggerGoggleEvents(
-                      'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                    )}
                   href={SPORTBOOK_INFO?.register_link}
+                  aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                   target="_blank"
+                  on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                   style="width: fit-content;"
                 >
                   <img
                     id="sportbook-logo-img"
                     src={SPORTBOOK_INFO?.image}
                     alt={SPORTBOOK_INFO?.title}
+                    loading='lazy'
                   />
                 </a>
               </div>
+              
               <!-- 
-              [ℹ] odds
+              ODDS BOX
               -->
               <div
                 id="btn-vote-container"
                 class="row-space-center"
               >
+
                 <!-- 
                 [ℹ] ODDS #1 
                 -->
                 <a
                   rel="nofollow"
-                  aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                  on:click={() =>
-                    triggerGoggleEvents(
-                      'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                    )}
+                  aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
+                  on:click={() => googleEventLog('betting_site_logo_football_fixtures_scoreboard_fixtures')}
                   href={SPORTBOOK_INFO?.register_link}
                   target="_blank"
                   style="width: fit-content;"
@@ -795,11 +789,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -->
                 <a
                   rel="nofollow"
-                  aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                  on:click={() =>
-                    triggerGoggleEvents(
-                      'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                    )}
+                  aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
+                  on:click={() => googleEventLog('betting_site_logo_football_fixtures_scoreboard_fixtures')}
                   href={SPORTBOOK_INFO?.register_link}
                   target="_blank"
                   style="width: fit-content;"
@@ -826,8 +817,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         w-500
                       "
                     >
-                      {FIXTURE_SCOREBOARD
-                        ?._1x2?.draw}
+                      {FIXTURE_SCOREBOARD?._1x2?.draw}
                     </p>
                   </div>
                 </a>
@@ -837,11 +827,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -->
                 <a
                   rel="nofollow"
-                  aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
-                  on:click={() =>
-                    triggerGoggleEvents(
-                      'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                    )}
+                  aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
+                  on:click={() => googleEventLog('betting_site_logo_football_fixtures_scoreboard_fixtures')}
                   href={SPORTBOOK_INFO?.register_link}
                   target="_blank"
                   style="width: fit-content;"
@@ -871,16 +858,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         w-500
                       "
                     >
-                      {FIXTURE_SCOREBOARD
-                        ?._1x2?.away}
+                      {FIXTURE_SCOREBOARD?._1x2?.away}
                     </p>
                   </div>
                 </a>
+
               </div>
+
             {/if}
 
-            <!-- 
-          [ℹ] [TABLET]
+          <!-- 
+          💻 TABLET
           -->
           {:else if !mobileExclusive && tabletExclusive}
             <!-- 
@@ -1004,9 +992,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       color-white
                       text-center
                     "
-                    class:visibility-none={!show_countdown}
+                    class:visibility-none={!showCountdown}
                   >
-                    {countD_h}:{countD_min}:{countD_sec}
+                    {countDownHour}:{countDownMin}:{countDownSec}
                   </p>
                   <p
                     class="
@@ -1084,7 +1072,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     {:else}
                       {FIXTURE_SCOREBOARD?.minute}
                       <span
-                        class:visibility-none={tick_sec_show}
+                        class:visibility-none={secTickShow}
                         >'
                       </span>
                     {/if}
@@ -1219,9 +1207,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                   <a
                     rel="nofollow"
-                    aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                    aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                     on:click={() =>
-                      triggerGoggleEvents(
+                      googleEventLog(
                         'betting_site_logo_football_fixtures_scoreboard_fixtures'
                       )}
                     href={SPORTBOOK_INFO?.register_link}
@@ -1250,9 +1238,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   [ℹ] ODDS #1 -->
                   <a
                     rel="nofollow"
-                    aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                    aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                     on:click={() =>
-                      triggerGoggleEvents(
+                      googleEventLog(
                         'betting_site_logo_football_fixtures_scoreboard_fixtures'
                       )}
                     href={SPORTBOOK_INFO?.register_link}
@@ -1291,9 +1279,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   [ℹ] ODDS #X -->
                   <a
                     rel="nofollow"
-                    aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                    aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                     on:click={() =>
-                      triggerGoggleEvents(
+                      googleEventLog(
                         'betting_site_logo_football_fixtures_scoreboard_fixtures'
                       )}
                     href={SPORTBOOK_INFO?.register_link}
@@ -1332,9 +1320,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   [ℹ] ODDS #2 -->
                   <a
                     rel="nofollow"
-                    aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                    aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                     on:click={() =>
-                      triggerGoggleEvents(
+                      googleEventLog(
                         'betting_site_logo_football_fixtures_scoreboard_fixtures'
                       )}
                     href={SPORTBOOK_INFO?.register_link}
@@ -1372,8 +1360,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             {/if}
 
-            <!-- 
-          [ℹ] [DESKTOP]
+          <!--
+          🖥️ LAPTOP
           -->
           {:else}
             <div
@@ -1491,9 +1479,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         color-white
                         text-center
                       "
-                      class:visibility-none={!show_countdown}
+                      class:visibility-none={!showCountdown}
                     >
-                      {countD_h}:{countD_min}:{countD_sec}
+                      {countDownHour}:{countDownMin}:{countDownSec}
                     </p>
                     <p
                       class="
@@ -1573,7 +1561,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       {:else}
                         {FIXTURE_SCOREBOARD?.minute}
                         <span
-                          class:visibility-none={tick_sec_show}
+                          class:visibility-none={secTickShow}
                           >'
                         </span>
                       {/if}
@@ -1684,9 +1672,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       </p>
                       <a
                         rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                        aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                         on:click={() =>
-                          triggerGoggleEvents(
+                          googleEventLog(
                             'betting_site_logo_football_fixtures_scoreboard_fixtures'
                           )}
                         href={SPORTBOOK_INFO?.register_link}
@@ -1716,9 +1704,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       -->
                       <a
                         rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                        aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                         on:click={() =>
-                          triggerGoggleEvents(
+                          googleEventLog(
                             'betting_site_logo_football_fixtures_scoreboard_fixtures'
                           )}
                         href={SPORTBOOK_INFO?.register_link}
@@ -1758,9 +1746,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       -->
                       <a
                         rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                        aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                         on:click={() =>
-                          triggerGoggleEvents(
+                          googleEventLog(
                             'betting_site_logo_football_fixtures_scoreboard_fixtures'
                           )}
                         href={SPORTBOOK_INFO?.register_link}
@@ -1800,9 +1788,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       -->
                       <a
                         rel="nofollow"
-                        aria-label="betting_site_logo_football_fixtures_scoreboard_fixtures"
+                        aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
                         on:click={() =>
-                          triggerGoggleEvents(
+                          googleEventLog(
                             'betting_site_logo_football_fixtures_scoreboard_fixtures'
                           )}
                         href={SPORTBOOK_INFO?.register_link}
@@ -1871,57 +1859,74 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </div>
           {/if}
+
         </div>
 
         <!-- 
-        [ℹ] bottom-navigation
+        (SCOREBOARD) BOTTOM ROW
         -->
         <div
           id="scoreboard-bottom-nav-box"
           class="row-space-even"
         >
+
+          <!-- 
+          OVERVIEW TAB
+          -->
           <div
             class="
               opt-container 
               cursor-pointer
             "
-            on:click={() =>
-              trigger_content_view(
-                'overview'
-              )}
-            class:activeOpt={$sessionStore.fixture_select_view ==
-              'overview'}
+            on:click={() => toggleContentView('overview')}
+            class:activeOpt={$sessionStore?.fixture_select_view == 'overview'}
           >
             <p
-              class="s-14 color-grey w-500 no-wrap"
+              class="
+                s-14 
+                color-grey 
+                w-500 
+                no-wrap
+              "
             >
               {FIXTURE_SCOREBOARD_TRANSLATION?.overview}
             </p>
           </div>
-          {#if FIXTURE_CONTENT != undefined && FIXTURE_CONTENT.length != 0}
+
+          <!-- 
+          CONTENT-NEWS TAB
+          -->
+          {#if FIXTURE_CONTENT?.length > 0}
             <div
               class="
                 opt-container
                 cursor-pointer
               "
-              on:click={() =>
-                trigger_content_view('news')}
-              class:activeOpt={$sessionStore.fixture_select_view ==
-                'news'}
+              on:click={() => toggleContentView('news')}
+              class:activeOpt={$sessionStore?.fixture_select_view == 'news'}
             >
               <p
-                class="s-14 color-grey w-500 no-wrap"
+                class="
+                  s-14 
+                  color-grey
+                  w-500 
+                  no-wrap
+                "
               >
                 {FIXTURE_SCOREBOARD_TRANSLATION?.news_views}
               </p>
             </div>
           {/if}
+
         </div>
+
       </div>
+
     <!--
-    [ℹ] [MINIATURE] widget-component [DESKTOP] [TABLET] [MOBILE]
+    MINI-STATE
     -->
     {:else}
+
       <div
         id="empty-widget-placeholder"
         class:full-time={FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
@@ -1931,7 +1936,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         id="scoreboard-widget-container"
         class="miniature"
         class:tablet-miniature={!mobileExclusive}
-        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+        class:dark-background-1={$userBetarenaSettings?.theme == 'Dark'}
       >
 
         <!-- 
@@ -2104,7 +2109,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {:else}
                     {FIXTURE_SCOREBOARD?.minute}
                     <span
-                      class:visibility-none={tick_sec_show}
+                      class:visibility-none={secTickShow}
                       >'
                     </span>
                   {/if}
@@ -2218,7 +2223,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 opt-container 
                 cursor-pointer
               "
-              on:click={() => trigger_content_view('overview')}
+              on:click={() => toggleContentView('overview')}
               class:activeOpt={$sessionStore.fixture_select_view == 'overview'}
             >
               <p
@@ -2239,7 +2244,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   opt-container
                   cursor-pointer
                 "
-                on:click={() => trigger_content_view('news')}
+                on:click={() => toggleContentView('news')}
                 class:activeOpt={$sessionStore.fixture_select_view == 'news'}
               >
                 <p
@@ -2433,7 +2438,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {:else}
                     {FIXTURE_SCOREBOARD?.minute}
                     <span
-                      class:visibility-none={tick_sec_show}
+                      class:visibility-none={secTickShow}
                       >'
                     </span>
                   {/if}
@@ -2557,7 +2562,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 opt-container 
                 cursor-pointer
               "
-              on:click={() => trigger_content_view('overview')}
+              on:click={() => toggleContentView('overview')}
               class:activeOpt={$sessionStore.fixture_select_view == 'overview'}
             >
               <p
@@ -2578,7 +2583,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   opt-container
                   cursor-pointer
                 "
-                on:click={() => trigger_content_view('news')}
+                on:click={() => toggleContentView('news')}
                 class:activeOpt={$sessionStore.fixture_select_view == 'news'}
               >
                 <p
@@ -2598,6 +2603,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
 
       </div>
+
     {/if}
 
 	{/if}
