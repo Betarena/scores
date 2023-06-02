@@ -9,7 +9,7 @@ import type { B_ABT_D, B_ABT_T } from '@betarena/scores-lib/types/about.js';
 import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
 import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
-import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
 import type { B_LIN_D, B_LIN_T } from '@betarena/scores-lib/types/lineups.js';
 import type { B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
@@ -103,11 +103,12 @@ export async function load
 	const league_id = FIXTURE_INFO?.league_id;
 	const league_name = FIXTURE_INFO?.data?.league_name;
 	const country_id = FIXTURE_INFO?.data?.country_id;
-	const home_team_name = FIXTURE_INFO?.data?.home_team_name;
-	const away_team_name = FIXTURE_INFO?.data?.away_team_name;
+	const homeTeamName = FIXTURE_INFO?.data?.home_team_name;
+	const awayTeamName = FIXTURE_INFO?.data?.away_team_name;
 	const fixture_day = FIXTURE_INFO?.data?.fixture_day == undefined ? undefined : FIXTURE_INFO?.data?.fixture_day.replace('T00:00:00', '');
 	const venue_name = FIXTURE_INFO?.data?.venue_name;
 	const venue_city = FIXTURE_INFO?.data?.venue_city;
+  const teamIds: string = FIXTURE_INFO?.data?.team_ids;
 
   // [2] FIXTURE (CRITICAL) page data;
 
@@ -158,7 +159,7 @@ export async function load
     B_VOT_T | undefined,
     B_PR_T | undefined,
     B_FO_T | undefined,
-    undefined, // B_H2H_D
+    B_H2H_D | undefined,
     B_H2H_T | undefined,
     B_STA_T | undefined,
     B_STA_D | undefined
@@ -183,8 +184,8 @@ export async function load
     `/api/cache/fixtures/votes?lang=${urlLang}`,
     `/api/cache/fixtures/probabilities?lang=${urlLang}`,
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
-    `/api/hasura/fixture/head-2-head?fixture_id=${fixture_id}`,
-    `/api/cache/fixtures/head-2-head?lang=${urlLang}`,
+    `/api/data/fixture/h2h?teamIds=${teamIds}`,
+    `/api/data/fixture/h2h?lang=${urlLang}`,
     `/api/cache/tournaments/standings?lang=${urlLang}`,
     `/api/cache/tournaments/standings?league_id=${league_id}`
   ];
@@ -231,8 +232,8 @@ export async function load
 			.replace(/{sport}/g, sport)
 			.replace(/{country}/g, country)
 			.replace(/{name}/g, league_name)
-			.replace(/{home_team_name}/g, home_team_name)
-			.replace(/{away_team_name}/g, away_team_name)
+			.replace(/{home_team_name}/g, homeTeamName)
+			.replace(/{away_team_name}/g, awayTeamName)
 			.replace(/{fixtures_day}/g, fixture_day)
 			.replace(/{data.venue.data.name}/g, venue_name)
 			.replace(/{data.venue.data.city}/g, venue_city)
@@ -245,8 +246,8 @@ export async function load
 			.replace(/{sport}/g, sport)
 			.replace(/{country}/g, country)
 			.replace(/{name}/g, league_name)
-			.replace(/{home_team_name}/g, home_team_name)
-			.replace(/{away_team_name}/g, away_team_name)
+			.replace(/{home_team_name}/g, homeTeamName)
+			.replace(/{away_team_name}/g, awayTeamName)
 			.replace(/{fixtures_day}/g, fixture_day)
 			.replace(/{data.venue.data.name}/g, venue_name)
 			.replace(/{data.venue.data.city}/g, venue_city)
@@ -259,8 +260,8 @@ export async function load
 			.replace(/{sport}/g, sport)
 			.replace(/{country}/g, country)
 			.replace(/{name}/g, league_name)
-			.replace(/{home_team_name}/g, home_team_name)
-			.replace(/{away_team_name}/g, away_team_name)
+			.replace(/{home_team_name}/g, homeTeamName)
+			.replace(/{away_team_name}/g, awayTeamName)
 			.replace(/{fixtures_day}/g, fixture_day)
 			.replace(/{data.venue.data.name}/g, venue_name)
 			.replace(/{data.venue.data.city}/g, venue_city)
