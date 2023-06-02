@@ -129,6 +129,22 @@ export function googleEventLog
     );
   }
 
+  if (action === 'betting_site_logo_football_fixtures_scoreboard_fixtures')
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'fixtures_scoreboard_odds',
+      {
+        event_category:
+          'widget_fixture_scoreboard_info',
+        event_label: 'click_betting_site_logo',
+        value: 'click'
+      }
+    );
+  }
+
   return;
 }
 
