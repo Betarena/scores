@@ -11,17 +11,18 @@
 
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { getOrdinalNum, MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
+	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog, SC_W_F_STY, SC_W_F_TAG, SC_W_F_TOG } from '$lib/utils/debug';
+	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT, FIXTURE_NOT_START_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
-	import close_icon from './assets/close.svg';
-  
+	  
 	import type { B_CONT_D } from '@betarena/scores-lib/types/content.js';
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
 	import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	
   //#endregion ➤ [MAIN] Package Imports
 
@@ -31,15 +32,16 @@
 	export let FIXTURE_SCOREBOARD_TRANSLATION: B_FS_T;
   // (+) additional;
 	export let FIXTURE_INFO: B_SAP_FP_D;
-	export let FIXTURE_CONTENT: B_CONT_D;
+	export let FIXTURE_CONTENT: B_CONT_D[];
 	export let FIXTURES_ODDS_T: B_FO_T;
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
   
+  let SPORTBOOK_INFO: B_SPT_D;
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
-
 	let loaded: boolean = false;
 	let refresh: boolean = false;
 	let no_widget_data: any = false;
@@ -47,13 +49,18 @@
 	let enable_miniature: boolean = false;
 	let lazy_load_data_check: boolean = false;
   let current_date: Date = new Date();
-	let date_obj_diff: number =
+	let dateDiff: number =
 		Date.parse(current_date.toString()) 
 		- Date.parse(new Date().toString())
   ;
-	let show_countdown: boolean = false;
+	let showCountdown: boolean = false;
 	let initial_div_distance: number = undefined;
 	let count = 0;
+
+  $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
+	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
+	$: countDownHour = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
+	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
   //#endregion ➤ [VARIABLES]
 
@@ -98,70 +105,32 @@
   )
   {
 
-		// [ℹ] match "data.key" (fixture_id)
-		// [ℹ] with available (fixture_id's)
-		// [ℹ] and populate the SPORTBOOK_DETAILS
-		// [ℹ] based on the "top-1" OR avaialble ODDS
-		// [ℹ] for the selected GEO-POSITION
-		// [ℹ] and inject to LIVE_ODDS for TARGET FIXTURE
-
-		if (SPORTBOOK_DETAILS_LIST == undefined) {
-			// [🐞]
-			logs.push(
-				`SPORTBOOK_DETAILS_LIST is undefined`
-			);
-			lazy_load_data_check = true;
-			return;
-		}
-
 		let count = 0;
 
-		for (const main_sportbook of SPORTBOOK_DETAILS_LIST) {
-			const main_sportbook_title =
-				main_sportbook?.title;
-			for (const firebase_sportbook of sportbook_list) {
-				const firebase_sportbook_title =
-					firebase_sportbook?.sportbook;
-				if (
-					main_sportbook_title.toLowerCase() ==
-						firebase_sportbook_title.toLowerCase() &&
-					firebase_sportbook.markets['1X2FT'] !=
-						null &&
-					firebase_sportbook.markets != null &&
-					firebase_sportbook.markets['1X2FT']
-						.data[0].value != null &&
-					firebase_sportbook.markets['1X2FT']
-						.data[1].value != null &&
-					firebase_sportbook.markets['1X2FT']
-						.data[2].value != null &&
-					count != 1
-				) {
-					// [🐞]
-					logs.push(
-						`main_sportbook_title: ${main_sportbook_title}`
-					);
-					logs.push(
-						`firebase_sportbook: ${firebase_sportbook}`
-					);
-					FIXTURE_SCOREBOARD._1x2 = undefined;
-					FIXTURE_SCOREBOARD._1x2 = {
-						home: undefined,
-						away: undefined,
-						draw: undefined
+		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
+    {
+			const m_sportBookTitle =	m_sportBook?.title;
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || []) 
+      {
+				const firebase_sportbook_title = firebaseSportbook?.sportbook;
+        const if_M_0 =
+          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
+          && firebaseSportbook.markets != null 
+          && firebaseSportbook.markets['1X2FT'] !=	null 
+          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          && count != 1
+        ;
+        if (if_M_0)
+        {
+					FIXTURE_SCOREBOARD._1x2 = 
+          {
+						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2),
+						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2),
+						draw: firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value?.toFixed(2)
 					};
-					FIXTURE_SCOREBOARD._1x2.home =
-						firebase_sportbook.markets[
-							'1X2FT'
-						].data[0].value.toFixed(2);
-					FIXTURE_SCOREBOARD._1x2.draw =
-						firebase_sportbook.markets[
-							'1X2FT'
-						].data[1].value.toFixed(2);
-					FIXTURE_SCOREBOARD._1x2.away =
-						firebase_sportbook.markets[
-							'1X2FT'
-						].data[2].value.toFixed(2);
-					SPORTBOOK_INFO = main_sportbook;
+					SPORTBOOK_INFO = m_sportBook;
 					count = 1;
 				}
 			}
@@ -169,48 +138,27 @@
 
 		FIXTURE_SCOREBOARD = FIXTURE_SCOREBOARD;
   }
-  
-	function triggerGoggleEvents
-  (
-    action: string
-  ) 
-  {
-		if (
-			action ===
-			'betting_site_logo_football_fixtures_scoreboard_fixtures'
-		) {
-			window.gtag(
-				'event',
-				'fixtures_scoreboard_odds',
-				{
-					event_category:
-						'widget_fixture_scoreboard_info',
-					event_label: 'click_betting_site_logo',
-					value: 'click'
-				}
-			);
-			return;
-		}
-	}
 
-	function scroll_listen() 
+	function scroll_listen
+  (
+
+  ) 
   {
 		let target_div = document.getElementById
     (
 			'scoreboard-widget-container'
 		);
-		if (target_div == undefined) {
+		if (target_div == undefined) 
+    {
       dlog(`${SC_W_F_TAG} ❗️ target_div is null!`, SC_W_F_TOG, SC_W_F_STY);
 			return;
 		}
-		if (count == 0) {
-			initial_div_distance =
-				target_div.getBoundingClientRect()
-					.bottom + window.scrollY;
+		if (count == 0) 
+    {
+			initial_div_distance = target_div.getBoundingClientRect().bottom + window.scrollY;
 			count = 1;
 		}
-		let distance_top_from_div =
-			target_div.getBoundingClientRect().bottom;
+		let distance_top_from_div = target_div.getBoundingClientRect().bottom;
 		let distance_top_scroll = window.scrollY;
 		// [🐞]
 		/*
@@ -246,10 +194,13 @@
 	) 
   {
 		$sessionStore.fixture_select_view = view;
-		window.scrollTo({
-			top: 0,
-			behavior: 'smooth'
-		});
+		window.scrollTo
+    (
+      {
+        top: 0,
+        behavior: 'smooth'
+		  }
+    );
 		setTimeout(async () => {
 			window.scrollTo({
 				top: 0,
@@ -294,6 +245,12 @@
 				resizeAction();
 			}
 		);
+    // NOTE: (on-scroll)
+    window.addEventListener
+    (
+			'scroll',
+			scroll_listen
+		);
   }
 
   //#endregion ➤ [METHODS]
@@ -313,6 +270,7 @@
   */
   $: if ($sessionStore?.livescore_now_fixture_target)
   {
+    console.log("🔥", "UPDATED LIVE SCORE TARGET")
     injectLiveData()
   }
 
@@ -325,64 +283,40 @@
   */
   $: if ($sessionStore?.live_odds_fixture_target)
   {
+    console.log("🔥", "UPDATED LIVE ODDS")
     injectLiveOddsData()
   }
 
-  $: if (browser && lazy_load_data_check) 
+  /**
+   * @summary
+   * [MAIN] 
+   * [REACTIVE]
+   * @description
+   * -> sets timer (countdown) in motion;
+  */
+  $: if (browser) 
   {
-		window.addEventListener
+		dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();		
+    setInterval
     (
-			'scroll',
-			scroll_listen
-		);
+      () => 
+      {
+        dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
+      }, 
+      1000
+    );
 	}
-
-  $: if (loaded) {
-		date_obj_diff =
-			Date.parse(
-				FIXTURE_SCOREBOARD?.fixture_time.toString() +
-					'Z'
-			) - Date.parse(new Date().toString());
-		setInterval(() => {
-			date_obj_diff =
-				Date.parse(
-					FIXTURE_SCOREBOARD?.fixture_time.toString() +
-						'Z'
-				) - Date.parse(new Date().toString());
-		}, 1000);
-	}
-
-  $: countD_sec = Math.floor
-  (
-		(date_obj_diff / 1000) % 60
-	).toString();
-	$: if (parseInt(countD_sec) < 10) {
-		countD_sec = '0' + countD_sec;
-	}
-	$: countD_min = Math.floor(
-		(date_obj_diff / 1000 / 60) % 60
-	).toString();
-	$: if (parseInt(countD_min) < 10) {
-		countD_min = '0' + countD_min;
-	}
-	$: countD_h = Math.floor(
-		(date_obj_diff / (1000 * 60 * 60)) % 24
-	).toString();
-	$: if (parseInt(countD_h) < 10) {
-		countD_h = '0' + countD_h;
-	}
-
-	$: countD_t_h = Math.floor(
-		date_obj_diff / (1000 * 60 * 60)
-	);
-	$: if (
-		countD_t_h > 23 ||
-		countD_sec.includes('-')
-	) {
-		show_countdown = false;
-	} else {
-		show_countdown = true;
-	}
+  
+  /**
+   * @description 
+   * checks for "hide" / "show" countdown bool state;
+  */
+  $: if_R_0 =
+    countDownTestHour > 23 
+    || dateDiff < 0
+  ;
+	$: if (if_R_0) showCountdown = false;
+	$: if (!if_R_0) showCountdown = true;
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -390,7 +324,8 @@
 
   /**
    * @summary
-   * [MAIN] [LIFECYCLE]
+   * [MAIN] 
+   * [LIFECYCLE]
    * @description
    * ➨ kickstart resize-action;
    * ➨ kickstart (bundle) event-listeners;
@@ -413,7 +348,7 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<div 
+<div
   id="widget-outer">
 
 	<!-- 
@@ -421,9 +356,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
 	{#if no_widget_data && loaded}
     <WidgetNoData 
-      WIDGET_TITLE={FIXTURE_SCOREBOARD_TRANSLATION?.title}
-      NO_DATA_TITLE={FIXTURE_SCOREBOARD_TRANSLATION?.no_info}
-      NO_DATA_DESC={FIXTURE_SCOREBOARD_TRANSLATION?.no_info_desc}
+      WIDGET_TITLE={"Scoreboard"}
+      NO_DATA_TITLE={"NO DATA"}
+      NO_DATA_DESC={"NO DESCRIPTION"}
     />
 	{/if}
 
@@ -2078,9 +2013,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     color-white
                     text-center
                   "
-                  class:visibility-none={!show_countdown}
+                  class:visibility-none={!showCountdown}
                 >
-                  {countD_h}:{countD_min}:{countD_sec}
+                  {countDownHour}:{countDownMin}:{countDownSec}
                 </p>
                 
                 <p
@@ -2409,9 +2344,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     color-white
                     text-center
                   "
-                  class:visibility-none={!show_countdown}
+                  class:visibility-none={!showCountdown}
                 >
-                  {countD_h}:{countD_min}:{countD_sec}
+                  {countDownHour}:{countDownMin}:{countDownSec}
                 </p>
                 <p
                   class="
