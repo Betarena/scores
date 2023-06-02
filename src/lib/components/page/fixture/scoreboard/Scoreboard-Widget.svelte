@@ -21,27 +21,23 @@ COMPONENT JS (w/ TS)
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
 	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 	import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
-	import type { B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_ST_D } from '@betarena/scores-lib/types/statistics.js';
+	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
-  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA;
+  let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO;
   let WIDGET_S_DATA: B_FS_D = $page.data?.FIXTURE_SCOREBOARD;
   let WIDGET_T_DATA: B_FS_T = $page.data?.FIXTURE_SCOREBOARD_TRANSLATION;
   let WIDGET_DATA: B_FS_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
-  
-  let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO;
-	let FIXTURE_CONTENT: B_CONT_D = $page.data?.FIXTURE_CONTENT;
+	let FIXTURE_CONTENT: B_CONT_D[] = $page.data?.FIXTURE_CONTENT;
 	let FIXTURES_ODDS_T: B_FO_T = $page.data?.FIXTURES_ODDS_T;
 
-  $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_S_DATA = $page.data?.FIXTURE_SCOREBOARD
-  $: WIDGET_T_DATA = $page.data?.FIXTURE_STATISTICS_TRANSLATION
   $: FIXTURE_INFO = $page.data?.FIXTURE_INFO
+  $: WIDGET_S_DATA = $page.data?.FIXTURE_SCOREBOARD
+  $: WIDGET_T_DATA = $page.data?.FIXTURE_SCOREBOARD_TRANSLATION
   $: FIXTURE_CONTENT = $page.data?.FIXTURE_CONTENT
   $: FIXTURES_ODDS_T = $page.data?.FIXTURES_ODDS_T
 
