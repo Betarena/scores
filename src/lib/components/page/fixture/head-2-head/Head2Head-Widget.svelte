@@ -18,17 +18,17 @@ COMPONENT JS (w/ TS)
 	import Head2HeadMain from './Head2Head-Main.svelte';
 
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
+	import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 	import type { B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_ST_T } from '@betarena/scores-lib/types/statistics.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.FIXTURE_INFO;
-  let WIDGET_S_DATA: any = $page.data?.FIXTURE_H2H;
-  let WIDGET_T_DATA: B_ST_T = $page.data?.FIXTURE_STATISTICS_TRANSLATION;
+  let WIDGET_S_DATA: B_H2H_D = $page.data?.FIXTURE_H2H;
+  let WIDGET_T_DATA: B_H2H_T = $page.data?.FIXTURE_H2H_TRANSLATION;
   let WIDGET_DATA: any;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
@@ -37,7 +37,7 @@ COMPONENT JS (w/ TS)
 
   $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
-  $: WIDGET_T_DATA = $page.data?.FIXTURE_STATISTICS_TRANSLATION
+  $: WIDGET_T_DATA = $page.data?.FIXTURE_H2H_TRANSLATION
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Statistics' : 'Statistics'
 
   $: FIXTURE_INFO = $page.data?.FIXTURE_INFO
@@ -126,7 +126,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   [ℹ] team-names
   -->
-  {#each WIDGET_S_DATA?.teams_data as item}
+  {#each WIDGET_S_DATA?.teams_data || [] as item}
     <p>{item?.team_name}</p>
   {/each}
   <!-- 
