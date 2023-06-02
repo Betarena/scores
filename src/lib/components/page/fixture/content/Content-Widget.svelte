@@ -10,31 +10,29 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	
   import { sessionStore } from '$lib/store/session.js';
-  import { STS_W_F_STY, STS_W_F_TAG, STS_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { CO_W_F_STY, CO_W_F_TAG, CO_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	  
-	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
 	import ContentLoader from './Content-Loader.svelte';
 	import ContentMain from './Content-Main.svelte';
+
+	import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  let WIDGET_S_DATA: B_ST_D = $page.data?.FIXTURE_STATISTICS
-  let WIDGET_T_DATA: B_ST_T = $page.data?.FIXTURE_STATISTICS_TRANSLATION
-  let WIDGET_DATA: B_ST_D;
+  let WIDGET_S_DATA: B_CONT_D[] = $page.data?.FIXTURE_CONTENT
+  let WIDGET_T_DATA: B_CONT_T = $page.data?.FIXTURE_CONTENT_TRANSLATION
+  let WIDGET_DATA: B_CONT_D[];
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
   $: WIDGET_T_DATA = $page.data?.FIXTURE_STATISTICS_TRANSLATION
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Statistics' : 'Statistics'
 
   //#endregion ➤ [VARIABLES]
 
@@ -50,7 +48,7 @@ COMPONENT JS (w/ TS)
    */
   async function widgetInit
   (
-  ): Promise < B_INC_D > 
+  ): Promise < B_CONT_D[] > 
   {
 		await sleep(3000);
     
@@ -116,13 +114,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <SeoBox>
   <!-- 
-  [ℹ] widget-title -->
+  [ℹ] widget-title 
+  -->
   <h2>
-    {FIXTURE_CONTENT_TRANSLATION?.news_and_views}
+    {WIDGET_T_DATA?.news_and_views}
   </h2>
   <!-- 
-    [ℹ] widget-contents list -->
-  {#each FIXTURE_CONTENT as item}
+  [ℹ] widget-contents list
+  -->
+  {#each WIDGET_S_DATA as item}
     <a href={item.link}>{item.link}</a>
     <h3>{item.title}</h3>
     <p>{item.excerpt}</p>
@@ -146,8 +146,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
   {#if !NO_WIDGET_DATA}
     <ContentMain 
-      FIXTURE_STATISTICS={WIDGET_DATA}
-      FIXTURE_STATISTICS_TRANSLATION={WIDGET_T_DATA}
+      FIXTURE_CONTENT={WIDGET_DATA}
+      FIXTURE_CONTENT_TRANSLATION={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}
