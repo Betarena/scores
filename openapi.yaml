@@ -21,7 +21,7 @@ servers:
 
 paths:
 
-  # FEATURED MATCH (H) Widget
+  # [HP] - FEAT MATCH Widget
   # TODO: move to /api/data/[...]
   /api/cache/home/featured_match:
     get:
@@ -57,7 +57,7 @@ paths:
           description: 
             Target fixture FEAT-MATCH widget data
 
-  # SEO-PAGES (L) Main:
+  # [L] - SEO-PAGES Main
   /api/data/main/seo-pages:
     get:
       parameters:
@@ -79,14 +79,21 @@ paths:
               player_id:
                 type: number
                 example: 205881
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18804442
               # ?page=[...]
               page:
                 type: string
                 enum:
+                  - fixtures
                   - player
                 example: player
             additionalProperties: false
             oneOf:
+              # data (main) [fixture]
+              - required: [fixture_id, page]
               # data (main) [player]
               - required: [player_id, page]
               # data (translations) terms
@@ -102,7 +109,7 @@ paths:
           description: 
             Target player SEO widget data
 
-  # LINEUP (FP) Widget
+  # [FP] - LINEUP Widget
   /api/data/fixture/lineups:
     get:
       parameters:
@@ -143,7 +150,42 @@ paths:
           description: 
             Target fixture LINEUP widget data
   
-  # STATS (PP) Widget
+  # [FP] - H2H Widget
+  /api/data/fixture/h2h:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) H2H widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?teamIds=[...]
+              teamIds:
+                type: string
+                example: 37,57
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [lineup]
+              - required: [teamIds]
+      summary: 
+        Returns a targets' H2H (team-ids) main H2H widget (data).      
+      responses:
+        200:
+          description: 
+            Target fixture H2H widget data
+
+  # [PP] - STATS Widget
   /api/data/players/statistics:
     get:
       parameters:
@@ -199,7 +241,7 @@ paths:
           description: 
             Target player STATS widget data
 
-  # SEO (PP) Widget
+  # [PP] - SEO Widget
   /api/data/players/seo:
     get:
       parameters:
