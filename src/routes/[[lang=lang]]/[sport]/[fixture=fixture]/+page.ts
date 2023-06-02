@@ -181,7 +181,7 @@ export async function load
     `/api/cache/fixtures/content?lang=${urlLang}`,
     `/api/hasura/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`,
     `/api/cache/fixtures/about?lang=${urlLang}`,
-    `/api/cache/fixtures/votes?lang=${urlLang}`,
+    `/api/data/fixtures/votes?lang=${urlLang}`,
     `/api/cache/fixtures/probabilities?lang=${urlLang}`,
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
     `/api/data/fixture/h2h?teamIds=${teamIds}`,
