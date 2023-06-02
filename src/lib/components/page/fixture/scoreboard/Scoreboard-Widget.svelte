@@ -31,7 +31,7 @@ COMPONENT JS (w/ TS)
   let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA;
   let WIDGET_S_DATA: B_FS_D = $page.data?.FIXTURE_SCOREBOARD;
   let WIDGET_T_DATA: B_FS_T = $page.data?.FIXTURE_SCOREBOARD_TRANSLATION;
-  let WIDGET_DATA: B_ST_D;
+  let WIDGET_DATA: B_FS_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
   
   let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO;
@@ -150,8 +150,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <ScoreboardMain 
       FIXTURE_SCOREBOARD={WIDGET_DATA}
       FIXTURE_SCOREBOARD_TRANSLATION={WIDGET_T_DATA}
-      {FIXTURE_INFO}
       {FIXTURE_CONTENT}
+      {FIXTURE_INFO}
       {FIXTURES_ODDS_T}
     />
   {/if}
