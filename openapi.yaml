@@ -115,6 +115,48 @@ paths:
           description: 
             Target player SEO widget data
 
+  # [FP] - SCOREBOARD Widget
+  /api/data/fixture/scoreboard:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) SCOREBOARD widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [scoreboard]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Scoreboard widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture SCOREBOARD widget data
+
+
   # [FP] - CONTENT Widget
   /api/data/fixture/content:
     get:
