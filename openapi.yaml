@@ -115,6 +115,47 @@ paths:
           description: 
             Target player SEO widget data
 
+  # [FP] - PROBABILITY Widget
+  /api/data/fixture/probability:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) PROBABILITY widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [about]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Probability widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture PROBABILITY widget data
+
   # [FP] - ABOUT Widget
   /api/data/fixture/about:
     get:
