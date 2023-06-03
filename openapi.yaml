@@ -115,6 +115,46 @@ paths:
           description: 
             Target player SEO widget data
 
+  # [FP] - CONTENT Widget
+  /api/data/fixture/content:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) CONTENT widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [content]
+              - required: [fixture_id, lang]
+              - required: [fixture_id, lang, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Content widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture CONTENT widget data
+
   # [FP] - VOTES Widget
   /api/data/fixture/votes:
     get:
