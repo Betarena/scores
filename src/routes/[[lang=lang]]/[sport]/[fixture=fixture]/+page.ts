@@ -168,8 +168,8 @@ export async function load
 	const urls: string[] = 
   [
     `/api/data/main/seo-pages?lang=${urlLang}&page=fixtures`,
-    `/api/hasura/fixture/scoreboard?fixture_id=${fixture_id}`,
-    `/api/cache/fixtures/scoreboard?lang=${urlLang}`,
+    `/api/data/fixture/scoreboard?fixture_id=${fixture_id}`,
+    `/api/data/fixture/scoreboard?lang=${urlLang}`,
     `/api/data/fixture/lineups?fixture_id=${fixture_id}`,
     `/api/data/fixture/lineups?lang=${urlLang}`,
     `/api/hasura/fixture/incidents?fixture_id=${fixture_id}`,
