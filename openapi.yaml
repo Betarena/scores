@@ -115,6 +115,47 @@ paths:
           description: 
             Target player SEO widget data
 
+  # [FP] - STATISTICS Widget
+  /api/data/fixture/statistics:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) STATISTICS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [scoreboard]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Statistics widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture STATISTICS widget data
+
   # [FP] - SCOREBOARD Widget
   /api/data/fixture/scoreboard:
     get:
@@ -155,7 +196,6 @@ paths:
         200:
           description: 
             Target fixture SCOREBOARD widget data
-
 
   # [FP] - CONTENT Widget
   /api/data/fixture/content:
