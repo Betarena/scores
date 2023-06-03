@@ -19,7 +19,7 @@ COMPONENT JS (w/ TS)
   
 	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 	import type { B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
-	import type { B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_ST_D } from '@betarena/scores-lib/types/statistics.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -27,13 +27,13 @@ COMPONENT JS (w/ TS)
   //#region ➤ [VARIABLES]
 
   let FIXTURE_INFO: B_SAP_PP_D = $page.data?.FIXTURE_INFO
-  // let WIDGET_S_DATA: B_ST_D = $page.data?.FIXTURE_STATISTICS
+  let WIDGET_S_DATA: B_ST_D;
   let WIDGET_T_DATA: B_PR_T = $page.data?.FIXTURE_PROBS_TRANSLATION
   let WIDGET_DATA: B_ST_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   $: FIXTURE_INFO = $page.data?.FIXTURE_INFO
-  $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
+  $: WIDGET_S_DATA;
   $: WIDGET_T_DATA = $page.data?.FIXTURE_PROBS_TRANSLATION;
 
   //#endregion ➤ [VARIABLES]

@@ -6,13 +6,13 @@
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief';
+	import { googleActionsStr } from '$lib/utils/google.js';
 	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
   
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
@@ -37,14 +37,11 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
+	let noWidgetData: any = false;
 	let showMore: boolean = false;
 	let limitViewRow: number = 8;
 	let toggleCTA: boolean = false;
 	let toggleCTA_Key: string = undefined;
-	let show_placeholder: boolean = false;
 	let imageVar: string = '--probabilities-info-bookmaker-bg-';
   let SPORTBOOK_INFO: B_SPT_D;
 
@@ -56,7 +53,7 @@
 		'correct_score'
 	];
 
-	let probabilities_order = 
+	let probabilityOrder = 
   [
 		'btts',
 		'over_2_5',
@@ -111,18 +108,6 @@
   (
   )
   {
-		FIXTURE_PROB_DATA.odds = undefined;
-		FIXTURE_PROB_DATA.odds = 
-    {
-			_1x2: {
-				home: undefined,
-				away: undefined,
-				draw: undefined
-			},
-			btts: undefined,
-			over_2_5: undefined
-		};
-
 		let count = 0;
 
 		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
@@ -253,7 +238,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <!-- 
-[ℹ] area-outside-for-close 
+OUTER CLOSE AREA
 -->
 {#if toggleCTA}
 	<div
@@ -264,13 +249,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div
 	id="widget-outer"
-	class:display-none={no_widget_data && !show_placeholder}
+	class:display-none={noWidgetData}
 >
 
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FIXTURE_PROBS_TRANSLATION?.probabilities}
       NO_DATA_TITLE={FIXTURE_PROBS_TRANSLATION?.no_info}
@@ -281,15 +266,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FIXTURE_PROBS_TRANSLATION?.probabilities}
     />
 
     <!-- 
-    [ℹ] [MOBILE] [TABLET] [DESKTOP]
-    [ℹ] (minimal) cross-platform design change
+    📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
 
     <div
@@ -298,7 +282,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     >
 
       <!-- 
-      [ℹ] Top Bet Site Box
+      TOP BET SITE ROW
       -->
       <div
         class="
@@ -318,8 +302,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </p>
         <a
           rel="nofollow"
-          aria-label="fixture_football_fixtures_probabilities"
-          on:click={() => googleEventLog('fixture_football_fixtures_probabilities')}
+          aria-label="{googleActionsStr.FP_PROB}"
+          on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
           href={SPORTBOOK_INFO?.register_link}
           target="_blank"
           style="width: fit-content;"
@@ -333,7 +317,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
 
       <!-- 
-      [ℹ] Team Row (Prob + Odds)
+      TEAM ROW + ODDS
       -->
       <div
         id="team-row-probabilities"
@@ -359,6 +343,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           >
             {FIXTURE_PROBS_TRANSLATION?.home_team_win}
           </p>
+
           <!-- 
           Probabilities BUTTON
           + Bet-Site PopUp
@@ -377,9 +362,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                 "
               >
-                {FIXTURE_PROB_DATA?.probabilites?.home.toFixed(
-                  0
-                )}%
+                {FIXTURE_PROB_DATA?.probabilites?.home.toFixed(0)}%
               </p>
             </button>
 
@@ -393,10 +376,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -->
                 <a
                   rel="nofollow"
-                  aria-label="fixture_football_fixtures_probabilities"
-                  on:click={() => googleEventLog(
-                      'fixture_football_fixtures_probabilities'
-                    )}
+                  aria-label="{googleActionsStr.FP_PROB}"
+                  on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                   href={SPORTBOOK_INFO?.register_link}
                   style="width: inherit;"
                 >
@@ -425,11 +406,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   -->
                   <a
                     rel="nofollow"
-                    aria-label="fixture_football_fixtures_probabilities"
-                    on:click={() =>
-                      googleEventLog(
-                        'fixture_football_fixtures_probabilities'
-                      )}
+                    aria-label="{googleActionsStr.FP_PROB}"
+                    on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                     href={SPORTBOOK_INFO?.register_link}
                     target="_blank"
                   >
@@ -492,6 +470,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           >
             {FIXTURE_PROBS_TRANSLATION?.draw}
           </p>
+
           <!-- 
           Probabilities BUTTON
           + Bet-Site PopUp
@@ -510,9 +489,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                 "
               >
-                {FIXTURE_PROB_DATA?.probabilites?.draw.toFixed(
-                  0
-                )}%
+                {FIXTURE_PROB_DATA?.probabilites?.draw.toFixed(0)}%
               </p>
             </button>
 
@@ -526,11 +503,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -->
                 <a
                   rel="nofollow"
-                  aria-label="fixture_football_fixtures_probabilities"
-                  on:click={() =>
-                    googleEventLog(
-                      'fixture_football_fixtures_probabilities'
-                    )}
+                  aria-label="{googleActionsStr.FP_PROB}"
+                  on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                   href={SPORTBOOK_INFO?.register_link}
                   style="width: inherit;"
                 >
@@ -559,11 +533,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   -->
                   <a
                     rel="nofollow"
-                    aria-label="fixture_football_fixtures_probabilities"
-                    on:click={() =>
-                      googleEventLog(
-                        'fixture_football_fixtures_probabilities'
-                      )}
+                    aria-label="{googleActionsStr.FP_PROB}"
+                    on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                     href={SPORTBOOK_INFO?.register_link}
                     target="_blank"
                   >
@@ -626,6 +597,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           >
             {FIXTURE_PROBS_TRANSLATION?.away_team_win}
           </p>
+
           <!-- 
           Probabilities BUTTON
           + Bet-Site PopUp
@@ -644,9 +616,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                 "
               >
-                {FIXTURE_PROB_DATA?.probabilites?.away.toFixed(
-                  0
-                )}%
+                {FIXTURE_PROB_DATA?.probabilites?.away.toFixed(0)}%
               </p>
             </button>
 
@@ -660,11 +630,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -->
                 <a
                   rel="nofollow"
-                  aria-label="fixture_football_fixtures_probabilities"
-                  on:click={() =>
-                    googleEventLog(
-                      'fixture_football_fixtures_probabilities'
-                    )}
+                  aria-label="{googleActionsStr.FP_PROB}"
+                  on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                   href={SPORTBOOK_INFO?.register_link}
                   style="width: inherit;"
                 >
@@ -693,11 +660,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   -->
                   <a
                     rel="nofollow"
-                    aria-label="fixture_football_fixtures_probabilities"
-                    on:click={() =>
-                      googleEventLog(
-                        'fixture_football_fixtures_probabilities'
-                      )}
+                    aria-label="{googleActionsStr.FP_PROB}"
+                    on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                     href={SPORTBOOK_INFO?.register_link}
                     target="_blank"
                   >
@@ -741,10 +705,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {/if}
           </p>
         </div>
+
       </div>
 
       <!-- 
-      [ℹ] Other Probabilities + Odds Box [TOP]
+      OTHER PROBABILITIES + ODDS
       -->
       <div
         id="probabilites-head-box"
@@ -752,6 +717,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           row-space-out
         "
       >
+
+        <!-- 
+        MARKET TYPE
+        -->
         <div
           class="
             prob-head-box
@@ -766,6 +735,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {FIXTURE_PROBS_TRANSLATION?.market}
           </p>
         </div>
+        
+        <!-- 
+        PROBABILITY BOX
+        -->
         <div
           class="
             prob-head-box
@@ -781,6 +754,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {FIXTURE_PROBS_TRANSLATION?.probabilities}
           </p>
         </div>
+
+        <!-- 
+        ODDS BOX
+        -->
         <div
           class="
             prob-head-box
@@ -796,18 +773,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {FIXTURE_PROBS_TRANSLATION?.odds}
           </p>
         </div>
+        
       </div>
 
       <!-- 
-      [ℹ] Other Probabilities + Odds Box [Section Main]
+      OTHER PROBABILITIES + ODDS SECTION [MAIN]
       -->
-      {#each probabilities_order as prob_item_order}
-        {#each Object.entries(FIXTURE_PROB_DATA.probabilites).slice(0, limitViewRow) as [key, value]}
-          {#if prob_item_order == key}
+      {#each probabilityOrder || [] as probItem}
+        {#each Object.entries(FIXTURE_PROB_DATA?.probabilites)?.slice(0, limitViewRow) as [key, value]}
+          {#if probItem == key}
+
+            <!-- 
+            PROBABILITIES ROW
+            -->
             {#if !exclude_prob_list.includes(key)}
-              <!-- 
-              Probabilites ROW
-              -->
+              
               <div
                 class="
                   row-space-out
@@ -815,7 +795,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
               >
                 <!-- 
-                Probabilities Title
+                PROBABILITY TITLE
                 -->
                 <p
                   class="
@@ -824,10 +804,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     prob-title
                   "
                 >
-                  {FIXTURE_PROBS_TRANSLATION[
-                    key
-                  ]}:
+                  {FIXTURE_PROBS_TRANSLATION?.[key]}:
                 </p>
+
                 <!-- 
                 Probabilities BUTTON
                 + Bet-Site PopUp
@@ -840,8 +819,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       place-bet-btn 
                       btn-primary
                     "
-                    on:click={() =>
-                      toggleCTAFunc(key)}
+                    on:click={() => toggleCTAFunc(key)}
                   >
                     <p
                       class="
@@ -857,8 +835,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   -->
                   <div
                     class="extra-info fade-in"
-                    class:display-none={!toggleCTA ||
-                      toggleCTA_Key != key}
+                    class:display-none={!toggleCTA || toggleCTA_Key != key}
                     in:fade
                   >
                     <!--  
@@ -866,11 +843,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     -->
                     <a
                       rel="nofollow"
-                      aria-label="fixture_football_fixtures_probabilities"
-                      on:click={() =>
-                        googleEventLog(
-                          'fixture_football_fixtures_probabilities'
-                        )}
+                      aria-label="{googleActionsStr.FP_PROB}"
+                      on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                       href={SPORTBOOK_INFO?.register_link}
                       style="width: inherit;"
                     >
@@ -899,11 +873,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       -->
                       <a
                         rel="nofollow"
-                        aria-label="fixture_football_fixtures_probabilities"
-                        on:click={() =>
-                          googleEventLog(
-                            'fixture_football_fixtures_probabilities'
-                          )}
+                        aria-label="{googleActionsStr.FP_PROB}"
+                        on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                         href={SPORTBOOK_INFO?.register_link}
                         target="_blank"
                       >
@@ -960,23 +931,23 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     "
                   >
                     {#if key == 'btts' && FIXTURE_PROB_DATA?.odds?.btts != undefined}
-                      {FIXTURE_PROB_DATA?.odds
-                        ?.btts}
+                      {FIXTURE_PROB_DATA?.odds?.btts}
                     {:else if key == 'over_2_5' && FIXTURE_PROB_DATA?.odds?.over_2_5 != undefined}
-                      {FIXTURE_PROB_DATA?.odds
-                        ?.over_2_5}
+                      {FIXTURE_PROB_DATA?.odds?.over_2_5}
                     {:else}
                       -
                     {/if}
                   </p>
                 </button>
               </div>
-            {/if}
 
+            {/if}
+            
+            <!--
+            CORRECT SCORE TITLE
+            -->
             {#if key == 'correct_score'}
-              <!--
-              [ℹ] Correct Socre Title (txt)
-              -->
+
               <p
                 id="correct-score-text"
                 class="
@@ -989,18 +960,23 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
 
               <!--
-              [ℹ] Correct Socre Grid-Box (box)
+              CORRECT SCORE GRID BOX
               -->
-              <div id="correct-score-box">
-                {#each Object.entries(FIXTURE_PROB_DATA.probabilites.correct_score) as [key, value]}
+              <div 
+                id="correct-score-box"
+              >
+
+                {#each Object.entries(FIXTURE_PROB_DATA.probabilites.correct_score) || [] as [key, value]}
+                  
                   <!-- 
-                  Probabilities Title
+                  PROBABILITITY TITLE
                   -->
                   <div
                     class="
                       column-space-center
                     "
                   >
+
                     <p
                       class="
                         w-500
@@ -1009,20 +985,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     >
                       {key}
                     </p>
+
                     <!-- 
-                    Probabilities BUTTON
-                    + Bet-Site PopUp
+                    PROBABILITY BUTTON
+                    (+) Bet-Site PopUp
                     -->
                     <div
                       id="button-extra-info-container"
                     >
+
                       <button
                         class="
                           place-bet-btn 
                           btn-primary
                         "
-                        on:click={() =>
-                          toggleCTAFunc(key)}
+                        on:click={() => toggleCTAFunc(key)}
                       >
                         <p
                           class="
@@ -1034,24 +1011,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       </button>
 
                       <!-- 
-                      [ℹ] extra-info pop-up container
+                      EXTRA INFO POP-UP
                       -->
                       <div
-                        class="extra-info fade-in"
-                        class:display-none={!toggleCTA ||
-                          toggleCTA_Key != key}
+                        class="
+                          extra-info 
+                          fade-in
+                        "
+                        class:display-none={!toggleCTA || toggleCTA_Key != key}
                         in:fade
                       >
+
                         <!--  
-                        [ℹ] site-image 
+                        BET-SITE IMAGE
                         -->
                         <a
                           rel="nofollow"
-                          aria-label="fixture_football_fixtures_probabilities"
-                          on:click={() =>
-                            googleEventLog(
-                              'fixture_football_fixtures_probabilities'
-                            )}
+                          aria-label="{googleActionsStr.FP_PROB}"
+                          on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                           href={SPORTBOOK_INFO?.register_link}
                           style="width: inherit;"
                         >
@@ -1064,27 +1041,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         </a>
 
                         <!--  
-                        [ℹ] extra-site info 
+                        EXTRA INFO
                         -->
                         <div
                           class="extra-info-container"
                         >
                           <!--  
-                          [ℹ] text 
+                          EXTRA TEXT 
                           -->
-                          <p class="large">
+                          <p
+                            class="large"
+                          >
                             {SPORTBOOK_INFO?.bonus_description}
                           </p>
+
                           <!--  
-                          [ℹ] button_cta 
+                          BUTTON CTA
                           -->
                           <a
                             rel="nofollow"
-                            aria-label="fixture_football_fixtures_probabilities"
-                            on:click={() =>
-                              googleEventLog(
-                                'fixture_football_fixtures_probabilities'
-                              )}
+                            aria-label="{googleActionsStr.FP_PROB}"
+                            on:click={() => googleEventLog(googleActionsStr.FP_PROB)}
                             href={SPORTBOOK_INFO?.register_link}
                             target="_blank"
                           >
@@ -1099,8 +1076,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                               </p>
                             </button>
                           </a>
+
                           <!--  
-                          [ℹ] extra-site info text 
+                          EXTRA SITE INFO TEXT
                           -->
                           <p
                             class="small"
@@ -1108,9 +1086,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                           >
                             {SPORTBOOK_INFO?.information}
                           </p>
+
                         </div>
                       </div>
                     </div>
+
                     <p
                       class="
                         w-400
@@ -1120,27 +1100,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       {FIXTURE_PROBS_TRANSLATION?.odds}
                       -
                     </p>
+
                   </div>
+
                 {/each}
+
               </div>
+
             {/if}
           {/if}
         {/each}
       {/each}
 
       <!--
-      [ℹ] Show more / show less (box)
+      SHOW MORE/LESS
       -->
       <div>
         <p
           id="show-more-box"
           on:click={() => toggleFullList()}
         >
-          {#if !showMore}
-            {FIXTURE_PROBS_TRANSLATION?.show_more_options}
-          {:else}
-            {FIXTURE_PROBS_TRANSLATION?.show_less}
-          {/if}
+          {!showMore ? FIXTURE_PROBS_TRANSLATION?.show_more_options : FIXTURE_PROBS_TRANSLATION?.show_less}
         </p>
       </div>
     </div>
@@ -1274,8 +1254,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 48px;
 		width: 100%;
 		background-color: #f5620f;
-		box-shadow: 0px 3px 8px
-			rgba(212, 84, 12, 0.32);
+		box-shadow: 0px 3px 8px	rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
 		margin-top: 0;
 		padding: 0;
@@ -1325,8 +1304,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 48px;
 		width: 100%;
 		background-color: #f5620f;
-		box-shadow: 0px 3px 8px
-			rgba(212, 84, 12, 0.32);
+		box-shadow: 0px 3px 8px	rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
 		margin-top: 8px;
 		margin-bottom: 12px;

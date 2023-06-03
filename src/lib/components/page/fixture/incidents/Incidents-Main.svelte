@@ -32,10 +32,7 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
-	let show_placeholder: boolean = false;
+	let noWidgetData: any = false;
 
   //#endregion ➤ [VARIABLES]
 
@@ -173,12 +170,11 @@
   ;
   $: if (if_R_1) 
   {
-		no_widget_data = true;
-		loaded = true;
+		noWidgetData = true;
 	} 
   else 
   {
-		no_widget_data = false;
+		noWidgetData = false;
 	}
 
   //#endregion ➤ [REACTIVIY] [METHODS]
@@ -212,13 +208,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div
 	id="widget-outer"
-	class:display-none={no_widget_data && !show_placeholder}
+	class:display-none={noWidgetData}
 >
 
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FXITURE_INCIDENTS_TRANSLATION?.title}
       NO_DATA_TITLE={FXITURE_INCIDENTS_TRANSLATION?.no_info}
@@ -229,23 +225,23 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FXITURE_INCIDENTS_TRANSLATION?.title}
     />
 
+    <!-- 
+    📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
+    -->
     <div
       class="widget-component"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
-      <!-- 
-      [ℹ] [MOBILE] [TABLET] [DESKTOP]
-      [ℹ] no cross-platform design change
-      -->
 
       <!-- 
-      [ℹ] team info -->
+      TEAM INFO
+      -->
       <div
         id="team-info-box"
         class="row-space-out"
@@ -296,12 +292,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
       </div>
 
+      
       <!-- 
-      [ℹ] events table 
+      EVENTS DATA
       -->
-      <div id="incidents-events-box">
+      <div 
+        id="incidents-events-box"
+      >
+
         <!-- 
-        [ℹ] PEN SCORE [SECTION]
+        PEN SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.ps_score != undefined}
           <p
@@ -344,7 +344,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
 
         <!-- 
-        [ℹ] ET SCORE [SECTION]
+        ET SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.et_score != undefined}
           <p
@@ -361,8 +361,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {#if FIXTURE_INCIDENTS?.events}
           {#each FIXTURE_INCIDENTS?.events as event}
             {#if event?.minute > 90}
+              
               <!-- 
-              [ℹ] home team
+              HOME TEAM
               -->
               {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
                 <IncidentRow
@@ -371,8 +372,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   STATUS={FIXTURE_INCIDENTS?.status}
                   TYPE="L"
                 />
-                <!-- 
-              [ℹ] away team
+              <!-- 
+              AWAY TEAM
               -->
               {:else}
                 <IncidentRow
@@ -382,12 +383,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   TYPE="R"
                 />
               {/if}
+
             {/if}
           {/each}
         {/if}
 
         <!-- 
-        [ℹ] FT SCORE [SECTION]
+        FT SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.ft_score != undefined}
           <p
@@ -430,7 +432,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
 
         <!-- 
-        [ℹ] HT SCORE [SECTION]
+        HT SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.ht_score != undefined}
           <p
@@ -472,6 +474,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/each}
         {/if}
       </div>
+
     </div>
 
 	{/if}

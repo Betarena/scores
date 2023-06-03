@@ -193,7 +193,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <!-- 
-[ℹ] area-outside-for-close 
+OUTER CLOSE AREA
 -->
 {#if toggleCTA}
 	<div

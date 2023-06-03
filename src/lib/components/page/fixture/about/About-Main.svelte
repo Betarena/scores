@@ -5,7 +5,6 @@
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -29,10 +28,7 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
-	let show_placeholder: boolean = true;
+	let noWidgetData: any = false;
 
   //#endregion ➤ [VARIABLES]
 
@@ -119,7 +115,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FIXTURE_ABOUT_TRANSLATION?.title}
       NO_DATA_TITLE={FIXTURE_ABOUT_TRANSLATION?.no_info}
@@ -130,15 +126,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FIXTURE_ABOUT_TRANSLATION?.title}
     />
 
     <!-- 
-    [ℹ] [MOBILE] [TABLET] [DESKTOP]
-    [ℹ] (minimal) cross-platform design change
+    📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
 
     <div
@@ -147,7 +142,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     >
 
       <!--
-      [ℹ] render SEO-DATA 
+      RENDER SEO DATA 
       -->
       {@html FIXTURE_ABOUT?.seo_data}
     </div>

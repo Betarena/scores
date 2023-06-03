@@ -748,7 +748,7 @@ TODO:
                 <a
                   rel="nofollow"
                   aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                  on:click={() => googleEventLog('betting_site_logo_football_fixtures_scoreboard_fixtures')}
+                  on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                   href={SPORTBOOK_INFO?.register_link}
                   target="_blank"
                   style="width: fit-content;"
@@ -790,7 +790,7 @@ TODO:
                 <a
                   rel="nofollow"
                   aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                  on:click={() => googleEventLog('betting_site_logo_football_fixtures_scoreboard_fixtures')}
+                  on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                   href={SPORTBOOK_INFO?.register_link}
                   target="_blank"
                   style="width: fit-content;"
@@ -828,7 +828,7 @@ TODO:
                 <a
                   rel="nofollow"
                   aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                  on:click={() => googleEventLog('betting_site_logo_football_fixtures_scoreboard_fixtures')}
+                  on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                   href={SPORTBOOK_INFO?.register_link}
                   target="_blank"
                   style="width: fit-content;"
@@ -1208,10 +1208,7 @@ TODO:
                   <a
                     rel="nofollow"
                     aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                    on:click={() =>
-                      googleEventLog(
-                        'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                      )}
+                    on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                     href={SPORTBOOK_INFO?.register_link}
                     target="_blank"
                     style="width: fit-content;"
@@ -1239,10 +1236,7 @@ TODO:
                   <a
                     rel="nofollow"
                     aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                    on:click={() =>
-                      googleEventLog(
-                        'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                      )}
+                    on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                     href={SPORTBOOK_INFO?.register_link}
                     target="_blank"
                     style="width: fit-content;"
@@ -1280,10 +1274,7 @@ TODO:
                   <a
                     rel="nofollow"
                     aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                    on:click={() =>
-                      googleEventLog(
-                        'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                      )}
+                    on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                     href={SPORTBOOK_INFO?.register_link}
                     target="_blank"
                     style="width: fit-content;"
@@ -1321,10 +1312,7 @@ TODO:
                   <a
                     rel="nofollow"
                     aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                    on:click={() =>
-                      googleEventLog(
-                        'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                      )}
+                    on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                     href={SPORTBOOK_INFO?.register_link}
                     target="_blank"
                     style="width: fit-content;"
@@ -1673,10 +1661,7 @@ TODO:
                       <a
                         rel="nofollow"
                         aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                        on:click={() =>
-                          googleEventLog(
-                            'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                          )}
+                        on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                         href={SPORTBOOK_INFO?.register_link}
                         target="_blank"
                         style="width: fit-content;"
@@ -1705,10 +1690,7 @@ TODO:
                       <a
                         rel="nofollow"
                         aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                        on:click={() =>
-                          googleEventLog(
-                            'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                          )}
+                        on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                         href={SPORTBOOK_INFO?.register_link}
                         target="_blank"
                         style="width: fit-content;"
@@ -1747,10 +1729,7 @@ TODO:
                       <a
                         rel="nofollow"
                         aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                        on:click={() =>
-                          googleEventLog(
-                            'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                          )}
+                        on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                         href={SPORTBOOK_INFO?.register_link}
                         target="_blank"
                         style="width: fit-content;"
@@ -1789,10 +1768,7 @@ TODO:
                       <a
                         rel="nofollow"
                         aria-label="{googleActionsStr.FP_SCRB_BET_SITE}"
-                        on:click={() =>
-                          googleEventLog(
-                            'betting_site_logo_football_fixtures_scoreboard_fixtures'
-                          )}
+                        on:click={() => googleEventLog(googleActionsStr.FP_SCRB_BET_SITE)}
                         href={SPORTBOOK_INFO?.register_link}
                         target="_blank"
                         style="width: fit-content;"
