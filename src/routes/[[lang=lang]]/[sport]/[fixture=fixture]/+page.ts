@@ -90,7 +90,7 @@ export async function load
 
   const data_0 = await promiseUrlsPreload
   (
-    [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures`],
+    [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures&hasura=true`],
     fetch
   ) as PP_PROMISE_0;
 
@@ -177,8 +177,8 @@ export async function load
     `/api/cache/home/featured_betting_sites?lang=${urlLang}`,
     `/api/hasura/fixture/statistics?fixture_id=${fixture_id}`,
     `/api/cache/fixtures/statistics?lang=${urlLang}`,
-    `/api/hasura/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`,
-    `/api/cache/fixtures/content?lang=${urlLang}`,
+    `/api/data/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`,
+    `/api/data/fixture/content?lang=${urlLang}`,
     `/api/hasura/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`,
     `/api/cache/fixtures/about?lang=${urlLang}`,
     `/api/data/fixture/votes?lang=${urlLang}`,
@@ -188,7 +188,7 @@ export async function load
     `/api/data/fixture/h2h?lang=${urlLang}`,
     `/api/cache/tournaments/standings?lang=${urlLang}`,
     `/api/cache/tournaments/standings?league_id=${league_id}`
-  ];
+  ]; 
 
   const data = await promiseUrlsPreload
   (
