@@ -29,7 +29,7 @@ COMPONENT JS (w/ TS)
   let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO;
   let WIDGET_S_DATA: B_H2H_D = $page.data?.FIXTURE_H2H;
   let WIDGET_T_DATA: B_H2H_T = $page.data?.FIXTURE_H2H_TRANSLATION;
-  let WIDGET_DATA: any;
+  let WIDGET_DATA: B_H2H_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
 	let FIXTURES_ODDS_T: B_FO_T = $page.data?.FIXTURES_ODDS_T;
@@ -63,7 +63,7 @@ COMPONENT JS (w/ TS)
 
     const if_0 =
       WIDGET_DATA == undefined 
-      || WIDGET_DATA?.teams_data == undefined 
+      || WIDGET_DATA?.teams_map == undefined 
     ;
 		if (if_0) 
     {

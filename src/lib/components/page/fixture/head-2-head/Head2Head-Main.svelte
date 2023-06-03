@@ -6,13 +6,13 @@
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
+	import { googleActionsStr } from '$lib/utils/google.js';
 	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions';
 
   import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
@@ -20,7 +20,7 @@
   import Head2HeadStatsBox from './Head2Head-Stats-Box.svelte';
 
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
-	import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+	import type { B_H2H_D, B_H2H_T, H2H_D_Teams } from '@betarena/scores-lib/types/head-2-head.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
@@ -33,6 +33,8 @@
 	export let FIXTURE_H2H_TRANSLATION: B_H2H_T;
 	export let FIXTURES_ODDS_T: B_FO_T;
 
+  const teamsMap = new Map<number, H2H_D_Teams>(FIXTURE_H2H?.teams_map);
+
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1160;
 
@@ -41,13 +43,10 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
+	let noWidgetData: any = false;
 	let toggleCTA: boolean = false;
-	let team1Percent: number = 0;
-	let team2Percent: number = 0;
-	let show_placeholder: boolean = false;
+	let team1Percent: number = teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_wl_per || 0;
+	let team2Percent: number = teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_wl_per || 0;
 	let imageVar: string = '--h2h-widget-bookmaker-bg-';
 
   //#endregion ➤ [VARIABLES]
@@ -205,13 +204,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div
 	id="widget-outer"
-	class:display-none={no_widget_data && !show_placeholder}
+	class:display-none={noWidgetData}
 >
 
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FIXTURE_H2H_TRANSLATION?.widget_title}
       NO_DATA_TITLE={FIXTURE_H2H_TRANSLATION?.no_info}
@@ -222,15 +221,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FIXTURE_H2H_TRANSLATION?.widget_title}
     />
 
     <!-- 
-    [ℹ] [MOBILE] [TABLET] [DESKTOP]
-    [ℹ] (minimal) cross-platform design change
+    📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
 
     <div
@@ -260,7 +258,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         "
       >
         <!-- 
-        [ℹ] TEAM 1 INFO [LOCAL-TEAM]
+        TEAM [1] FIXTURE LOCAL
         -->
         <div
           class="
@@ -268,21 +266,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             team-box
           "
         >
+
           <img
-            src={FIXTURE_H2H?.teams_data.find(
-              ({ team_name }) =>
-                team_name ==
-                FIXTURE_INFO?.data
-                  ?.home_team_name
-            ).team_logo}
-            alt="{FIXTURE_H2H?.teams_data.find(
-              ({ team_name }) =>
-                team_name ==
-                FIXTURE_INFO?.data
-                  ?.home_team_name
-            ).team_name} Logo"
+            src={teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_logo}
+            alt="{teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_name} logo"
             class="team-logo"
           />
+
           {#if !mobileExclusive}
             <p
               class="
@@ -291,18 +281,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 color-black-2
               "
             >
-              {FIXTURE_H2H?.teams_data.find(
-                ({ team_name }) =>
-                  team_name ==
-                  FIXTURE_INFO?.data
-                    ?.home_team_name
-              ).team_name}
+              {teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_name}
             </p>
           {/if}
+
         </div>
 
         <!-- 
-        [ℹ] WIN - DRAW - WIN INFO
+        WIN-DRAW-WIN BOX
         -->
         <div
           class="
@@ -310,10 +296,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             stat-box-out
           "
         >
+
           <!-- 
-          [ℹ] TEAM 1 WIN
+          TEAM [1] LOCAL WINS
           -->
-          <div class="stat-win-box">
+          <div 
+            class="
+              stat-win-box
+            "
+          >
+
             <p
               class="
                 w-500
@@ -321,22 +313,32 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 main-txt
               "
             >
-              {#if FIXTURE_H2H?.teams_data.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_id > FIXTURE_H2H?.teams_data.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_id}
-                {FIXTURE_H2H?.data?.wins_draws
-                  ?.team_2}
+              {#if (teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_id 
+                  > teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_id)}
+                {FIXTURE_H2H?.data?.wins_draws?.team_2}
               {:else}
-                {FIXTURE_H2H?.data?.wins_draws
-                  ?.team_1}
+                {FIXTURE_H2H?.data?.wins_draws?.team_1}
               {/if}
             </p>
-            <p class="color-grey">
+
+            <p
+              class="
+                color-grey
+              "
+            >
               {FIXTURE_H2H_TRANSLATION?.wins}
             </p>
+
           </div>
+
           <!-- 
-          [ℹ] DRAW(s)
+          TOTAL DRAW(s)
           -->
-          <div class="stat-win-box">
+          <div 
+            class="
+              stat-win-box
+            "
+          >
             <p
               class="
                 w-500
@@ -344,17 +346,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 main-txt
               "
             >
-              {FIXTURE_H2H?.data?.wins_draws
-                ?.draws}
+              {FIXTURE_H2H?.data?.wins_draws?.draws}
             </p>
-            <p class="color-grey">
+            <p 
+              class="
+                color-grey
+              "
+            >
               {FIXTURE_H2H_TRANSLATION?.draws}
             </p>
           </div>
+
           <!-- 
-          [ℹ] TEAM 2 WIN
+          TEAM [2] VISITOR WINS
           -->
-          <div class="stat-win-box">
+          <div 
+            class="
+              stat-win-box
+            "
+          >
+          
             <p
               class="
                 w-500
@@ -362,22 +373,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 main-txt
               "
             >
-              {#if FIXTURE_H2H?.teams_data.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.away_team_name).team_id > FIXTURE_H2H?.teams_data.find(({ team_name }) => team_name == FIXTURE_INFO?.data?.home_team_name).team_id}
-                {FIXTURE_H2H?.data?.wins_draws
-                  ?.team_2}
+              {#if (teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_id 
+                  < teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_id)}
+                {FIXTURE_H2H?.data?.wins_draws?.team_2}
               {:else}
-                {FIXTURE_H2H?.data?.wins_draws
-                  ?.team_1}
+                {FIXTURE_H2H?.data?.wins_draws?.team_1}
               {/if}
             </p>
-            <p class="color-grey">
+
+            <p
+              class="
+                color-grey
+              "
+            >
               {FIXTURE_H2H_TRANSLATION?.wins}
             </p>
           </div>
+
         </div>
 
         <!-- 
-        [ℹ] TEAM 2 INFO [VISITOR-TEAM]
+        TEAM [2] FIXTURE VISITOR
         -->
         <div
           class="
@@ -385,6 +401,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             team-box
           "
         >
+
           {#if !mobileExclusive}
             <p
               class="
@@ -393,34 +410,22 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 color-black-2
               "
             >
-              {FIXTURE_H2H?.teams_data.find(
-                ({ team_name }) =>
-                  team_name ==
-                  FIXTURE_INFO?.data
-                    ?.away_team_name
-              ).team_name}
+              {teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_name}
             </p>
           {/if}
+
           <img
-            src={FIXTURE_H2H?.teams_data.find(
-              ({ team_name }) =>
-                team_name ==
-                FIXTURE_INFO?.data
-                  ?.away_team_name
-            ).team_logo}
-            alt="{FIXTURE_H2H?.teams_data.find(
-              ({ team_name }) =>
-                team_name ==
-                FIXTURE_INFO?.data
-                  ?.away_team_name
-            ).team_name} Logo"
+            src={teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_logo}
+            alt="{teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_name} logo"
             class="team-logo"
           />
+
         </div>
+
       </div>
 
       <!-- 
-      [ℹ] widget progress-bar for win-draws-wins info
+      WIN-DRAW-WIN PROGRESS BAR
       -->
       <div
         id="competition-progress-box"
@@ -433,7 +438,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         [ℹ] TEAM 1 PROGRESS BAR
         [ℹ] (+mobile) team-name
         -->
-        <div class="progress-box-out">
+        <div 
+          class="
+            progress-box-out
+          "
+        >
+
           {#if mobileExclusive}
             <p
               class="
@@ -442,24 +452,33 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 color-black-2
               "
             >
-              {FIXTURE_H2H?.teams_data.find(({ team_name }) => team_name ==	FIXTURE_INFO?.data?.home_team_name).team_name}
+              {teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_name}
             </p>
           {/if}
-          <div class="team-progress-bar">
+
+          <div 
+            class="
+              team-progress-bar
+            "
+          >
             <div
               class:greater_win_ration={team1Percent > team2Percent}
-              style="
-                width: {team1Percent}%;
-              "
+              style="width: {team1Percent}%;"
             />
           </div>
+
         </div>
         
         <!-- 
         [ℹ] TEAM 2 PROGRESS BAR
         [ℹ] (+mobile) team-name
         -->
-        <div class="progress-box-out">
+        <div 
+          class="
+            progress-box-out
+          "
+        >
+
           {#if mobileExclusive}
             <p
               class="
@@ -468,10 +487,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 color-black-2
               "
             >
-              {FIXTURE_H2H?.teams_data.find(({ team_name }) => team_name ==	FIXTURE_INFO?.data?.away_team_name).team_name}
+              {teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_name}
             </p>
           {/if}
-          <div class="team-progress-bar">
+
+          <div 
+            class="
+              team-progress-bar
+            "
+          >
             <div
               class:greater_win_ration={team2Percent > team1Percent}
               style="
@@ -479,16 +503,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               "
             />
           </div>
+
         </div>
 
       </div>
 
       <!-- 
-      [ℹ] main widget info stats - bets row
+      INFO STATS GRID
       -->
-      <div id="grid-bet-stats">
+      <div
+        id="grid-bet-stats"
+      >
+
         <!-- 
-        [ℹ] overs-data
+        OVERS DATA GRID
         -->
         {#each Object.entries(FIXTURE_H2H?.data?.overs) as [key, value]}
           <Head2HeadStatsBox
@@ -496,59 +524,61 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {key}
             {value}
             {SPORTBOOK_INFO}
-            on:google_click={() => googleEventLog('fixtures_football_fixtures_h2h')}
+            on:google_click={() => googleEventLog(googleActionsStr.FP_H2H)}
             type={'overs'}
             {imageVar}
           />
         {/each}
 
         <!-- 
-        [ℹ] yellow-cards-data
+        YELLOW CARDS
         -->
         <Head2HeadStatsBox
           {FIXTURE_H2H_TRANSLATION}
           key={FIXTURE_H2H_TRANSLATION?.yellow_cards}
           value={FIXTURE_H2H?.data?.yellow_cards_avg}
           {SPORTBOOK_INFO}
-          on:google_click={() => googleEventLog('fixtures_football_fixtures_h2h')}
+          on:google_click={() => googleEventLog(googleActionsStr.FP_H2H)}
           type={'ycavg'}
           {imageVar}
         />
 
         <!-- 
-        [ℹ] corners-data
+        CORNERS
         -->
         <Head2HeadStatsBox
           {FIXTURE_H2H_TRANSLATION}
           key={FIXTURE_H2H_TRANSLATION?.corners}
           value={FIXTURE_H2H?.corner_avg}
           {SPORTBOOK_INFO}
-          on:google_click={() => googleEventLog('fixtures_football_fixtures_h2h')}
+          on:google_click={() => googleEventLog(googleActionsStr.FP_H2H)}
           type={'corners'}
           {imageVar}
         />
 
         <!-- 
-        [ℹ] btts-data
+        BTTS
         -->
         <Head2HeadStatsBox
           {FIXTURE_H2H_TRANSLATION}
           key={FIXTURE_H2H_TRANSLATION?.btts}
           value={FIXTURE_H2H?.data?.btts.btts_count}
           {SPORTBOOK_INFO}
-          on:google_click={() => googleEventLog('fixtures_football_fixtures_h2h')}
+          on:google_click={() => googleEventLog(googleActionsStr.FP_H2H)}
           type={'btts'}
           {imageVar}
         />
       </div>
 
       <!-- 
-      [ℹ] main widget last 5 fixtures data
+      LAST 5 FIXTURES
       -->
-      <div id="list-past-fixtures-box">
-        {#each FIXTURE_H2H?.data?.last_5_data as item}
+      <div
+        id="list-past-fixtures-box"
+      >
+        {#each FIXTURE_H2H?.data?.last_5_data || [] as item}
           <a
-            href={FIXTURE_H2H?.last_5_data_urls?.find(({ id }) => id == item?.id)?.urls[$sessionStore?.serverLang]}
+            href={FIXTURE_H2H?.last_5_data_urls?.find(({ id }) => id == item?.id)?.urls?.[$sessionStore?.serverLang]}
           >
             <div
               class="
@@ -558,8 +588,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               class:row-space-out={!mobileExclusive}
               class:column-space-center={mobileExclusive}
             >
+
               <!-- 
-              [ℹ] info on fixture league-round
+              LEAGUE-ROUND INFO
               -->
               <p
                 class="
@@ -569,22 +600,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
               >
                 <!--
-                [ℹ] league text info
+                LEAGUE INFO
                 -->
-                {#if item?.league != undefined && item?.league?.data?.name != undefined}
+                {#if item?.league?.data?.name != undefined}
                   {item?.league?.data?.name}
                 {/if}
+
                 <!--
-                [ℹ] round text info
+                ROUND INFO
                 -->
-                {#if item?.round != undefined && item?.round?.data?.name != undefined}
-                  - {FIXTURE_H2H_TRANSLATION?.round}
+                {#if item?.round?.data?.name != undefined}
+                  - 
+                  {FIXTURE_H2H_TRANSLATION?.round}
                   {item?.round?.data?.name}
                 {/if}
               </p>
 
               <!-- 
-              [ℹ] info on fixture main teams/score
+              FIXTURE INFO
               -->
               <div
                 class="
@@ -594,7 +627,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               >
 
                 <!-- 
-                [ℹ] fixture-team_1 text
+                FIXTURE TEAM 1
                 -->
                 <p
                   class="
@@ -602,21 +635,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     team-text
                     no-wrap
                   "
-                class:color-grey={item?.winner_team_id != undefined && item?.winner_team_id != item?.localteam_id}>
+                  class:color-grey={item?.winner_team_id != undefined && item?.winner_team_id != item?.localteam_id}
+                >
                   {#if mobileExclusive}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) =>	team_id == item?.localteam_id)?.team_short}
+                    {teamsMap?.get(item?.localteam_id)?.team_short}
                   {:else}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) =>	team_id == item?.localteam_id)?.team_name}
+                    {teamsMap?.get(item?.localteam_id)?.team_name}
                   {/if}
                 </p>
+
                 <img
-                  src={FIXTURE_H2H?.teams_data?.find(({ team_id }) =>	team_id == item?.localteam_id)?.team_logo}
-                  alt="{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id ==	item?.localteam_id)?.team_logo} Logo"
+                  loading="lazy"
+                  src={teamsMap?.get(item?.localteam_id)?.team_logo}
+                  alt="{teamsMap?.get(item?.localteam_id)?.team_name} logo"
                   width="24"
                 />
 
                 <!-- 
-                [ℹ] fixture-score text
+                FIXTURE TEAMS SCORE
                 -->
                 <p
                   class="
@@ -629,31 +665,36 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   -
                   {item?.scores?.visitorteam_score}
                 </p>
+
                 <!-- 
-                [ℹ] fixture-team_2 text
+                FIXTURE TEAM 2
                 -->
                 <img
-                  src={FIXTURE_H2H?.teams_data?.find(({ team_id }) =>	team_id == item?.visitorteam_id)?.team_logo}
-                  alt="{FIXTURE_H2H?.teams_data?.find(({ team_id }) => team_id ==	item?.visitorteam_id)?.team_logo} Logo"
+                  loading="lazy"
+                  src={teamsMap?.get(item?.visitorteam_id)?.team_logo}
+                  alt="{teamsMap?.get(item?.visitorteam_id)?.team_name} logo"
                   width="24"
                 />
+
                 <p
                   class="
                     color-black-2
                     team-text
                     no-wrap
                   "
-                class:color-grey={item?.winner_team_id != undefined && item?.winner_team_id != item?.visitorteam_id}>
+                  class:color-grey={item?.winner_team_id != undefined && item?.winner_team_id != item?.visitorteam_id}
+                >
                   {#if mobileExclusive}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) =>	team_id == item?.visitorteam_id)?.team_short}
+                    {teamsMap?.get(item?.visitorteam_id)?.team_short}
                   {:else}
-                    {FIXTURE_H2H?.teams_data?.find(({ team_id }) =>	team_id == item?.visitorteam_id)?.team_name}
+                    {teamsMap?.get(item?.visitorteam_id)?.team_name}
                   {/if}
                 </p>
+
               </div>
 
               <!-- 
-              [ℹ] starting date for fixture
+              FIXTURE DATETIME
               -->
               <p
                 class="
@@ -661,14 +702,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   no-wrap
                 "
               >
-                {FIXTURES_ODDS_T?.months_abbreviation[MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.timestamp * 1000).getMonth().toString()]]}
+                {FIXTURES_ODDS_T?.months_abbreviation?.[MONTH_NAMES_ABBRV[new Date(item?.time?.starting_at?.timestamp * 1000).getMonth().toString()]]}
                 {new Date(item?.time?.starting_at?.timestamp * 1000).getDate()},
                 {new Date(item?.time?.starting_at?.timestamp * 1000).getFullYear()}
               </p>
+
             </div>
           </a>
         {/each}
       </div>
+
     </div>
 
 	{/if}
@@ -694,7 +737,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		z-index: 998;
 	}
 
-	/* widget-main */
+	/* 
+  widget-main 
+  */
 	div#h2h-widget-container 
   {
 		background: #ffffff;
