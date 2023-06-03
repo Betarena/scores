@@ -26,17 +26,15 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [VARIABLES]
 
-  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
+  let FIXTURE_INFO: B_SAP_PP_D = $page.data?.FIXTURE_INFO
   // let WIDGET_S_DATA: B_ST_D = $page.data?.FIXTURE_STATISTICS
   let WIDGET_T_DATA: B_PR_T = $page.data?.FIXTURE_PROBS_TRANSLATION
   let WIDGET_DATA: B_ST_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
-  let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO;
 
-  $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
-  $: WIDGET_T_DATA = $page.data?.FIXTURE_STATISTICS_TRANSLATION
   $: FIXTURE_INFO = $page.data?.FIXTURE_INFO
+  $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
+  $: WIDGET_T_DATA = $page.data?.FIXTURE_PROBS_TRANSLATION;
 
   //#endregion ➤ [VARIABLES]
 
