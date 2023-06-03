@@ -6,10 +6,11 @@
 
   //#region ➤ [MAIN] Package Imports
 
-  import { browser } from '$app/environment';
   import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 	
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -29,13 +30,9 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let refresh_data: any = undefined;
-	let no_widget_data: any = false;
+	let noWidgetData: any = false;
 	let limitViewRow: number = 10;
 	let showMore: boolean = false;
-	let show_placeholder: boolean = false;
 
   //#region ➤ [METHODS]
 
@@ -136,7 +133,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FIXTURE_CONTENT_TRANSLATION?.news_and_views}
       NO_DATA_TITLE={FIXTURE_CONTENT_TRANSLATION?.no_info}
@@ -147,15 +144,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FIXTURE_CONTENT_TRANSLATION?.news_and_views}
     />
 
     <!-- 
-    [ℹ] [MOBILE] [TABLET] [DESKTOP]
-    [ℹ] (minimal) cross-platform design change
+    📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
 
     <div
@@ -164,7 +160,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     >
 
       <!-- 
-      [ℹ] option [default NEW] 
+      OPTION
       -->
       <div
         class="
@@ -183,10 +179,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
 
       <!-- 
-      [ℹ] content list container 
+      CONTENT LIST
       -->
-      <div id="content-box">
-        {#each FIXTURE_CONTENT.slice(0, limitViewRow) as item}
+      <div 
+        id="content-box"
+      >
+        {#each FIXTURE_CONTENT?.slice(0, limitViewRow) || [] as item}
           <a
             aria-label="fixture-post-link"
             href={item?.link}
@@ -199,16 +197,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               "
             >
               <!-- 
-              [ℹ] featured-media -->
+              FEATURED MEDIA
+              -->
               <img
+                loading="lazy"
                 src={item?.featured_media}
                 alt="Featured Media"
                 width="80"
                 height="80"
               />
+
               <!-- 
-              [ℹ] media-title + post-info -->
-              <div class="media-box">
+              MEDIA TITLE + POST INFO 
+              -->
+              <div
+                class="media-box">
                 <h3
                   class="
                     w-500
@@ -218,8 +221,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   {@html item?.title}
                 </h3>
+                
                 <!-- 
-                [ℹ] show time on tablet/desktop -->
+                DATETIME 📱 MOBILE
+                -->
                 {#if !mobileExclusive}
                   <p
                     class="
@@ -228,13 +233,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     "
                   >
                     {item?.excerpt
-                      .replace('<p>', '')
-                      .replace('</p>', '')}
+                      ?.replace('<p>', '')
+                      ?.replace('</p>', '')}
                   </p>
                 {/if}
+
                 <!-- 
-                [ℹ] author
-                [ℹ] date -->
+                AUTHOR + DATE
+                -->
                 <div
                   class="
                     row-space-start
@@ -248,57 +254,56 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   >
                     {item?.author}
                   </p>
-                  <div class="divider" />
+
+                  <div 
+                    class="divider" 
+                  />
+
                   <p
                     class="
                       color-grey
                     "
                   >
-                    {FIXTURE_CONTENT_TRANSLATION
-                      ?.months[
-                      monthNames[
-                        new Date(
-                          item?.date
-                        ).getMonth()
-                      ]
-                    ]}
-                    {new Date(
-                      item?.date.toString()
-                    ).getDate()},
-                    {new Date(
-                      item?.date.toString()
-                    ).getFullYear()}
+                    {FIXTURE_CONTENT_TRANSLATION?.months[MONTH_NAMES_ABBRV[new Date(item?.date).getMonth()]]}
+                    {new Date(item?.date.toString()).getDate()},
+                    {new Date(item?.date.toString()).getFullYear()}
                   </p>
+                  
+                  <!-- 
+                  💻 TABLET 🖥️ LAPTOP
+                   -->
                   {#if !mobileExclusive}
-                    <div class="divider" />
+
+                    <div 
+                      class="divider" 
+                    />
+
                     <p
                       class="
                         color-grey
                       "
                     >
-                      {(new Date(
-                        item?.date.toString()
-                      ).getHours() % 12 || 12) +
-                        ':' +
-                        new Date(
-                          item?.date.toString()
-                        ).getMinutes()}
+                      {(new Date(item?.date.toString()).getHours() % 12 || 12) + ':' + new Date(item?.date.toString()).getMinutes()}
                       {#if new Date(item?.date.toString()).getHours() > 12}
                         pm
                       {:else}
                         am
                       {/if}
                     </p>
+
                   {/if}
+
                 </div>
+
               </div>
+              
             </div>
           </a>
         {/each}
       </div>
 
       <!-- 
-      [ℹ] show more 
+      SHOW MORE / LESS
       -->
       {#if FIXTURE_CONTENT && FIXTURE_CONTENT.length > 10}
         <div

@@ -24,15 +24,13 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [VARIABLES]
 
-  let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
   let WIDGET_S_DATA: B_CONT_D[] = $page.data?.FIXTURE_CONTENT
   let WIDGET_T_DATA: B_CONT_T = $page.data?.FIXTURE_CONTENT_TRANSLATION
   let WIDGET_DATA: B_CONT_D[];
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
-  $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
-  $: WIDGET_T_DATA = $page.data?.FIXTURE_STATISTICS_TRANSLATION
+  $: WIDGET_S_DATA = $page.data?.FIXTURE_CONTENT
+  $: WIDGET_T_DATA = $page.data?.FIXTURE_CONTENT_TRANSLATION
 
   //#endregion ➤ [VARIABLES]
 
