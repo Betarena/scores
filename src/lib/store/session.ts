@@ -1,9 +1,10 @@
 import type { Platform_Session } from '$lib/types/types.scores.js';
-import { clientTimezoneDate } from '$lib/utils/dates.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+
+import { clientTimezoneDate } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
-const seassion_store: Platform_Session = 
+const sessionStoreObj: Platform_Session = 
 {
 	newsletterPopUpShow: false,
 	selectedSeasonID: undefined,
@@ -36,7 +37,7 @@ function createLocalStore
     update 
   } = writable
   (
-		seassion_store
+		sessionStoreObj
 	);
 
 	return {
@@ -44,57 +45,89 @@ function createLocalStore
 		set,
 		update,
 
-		toggleNewsletter: () => {
-			seassion_store.newsletterPopUpShow =
-				!seassion_store.newsletterPopUpShow;
-		},
-
-    updateServerLang: (lang: string) => {
-      seassion_store.serverLang = lang;
-      set(seassion_store);
-    },
-
-    updateLiveOdds: (data: FIREBASE_odds[]) => {
-      seassion_store.live_odds_fixture_target = data;
-      set(seassion_store);
+    /**
+     * @summary
+     * [HELPER]
+     * @description
+     * updates + stores global "session" language in session object;
+     * @param 
+     * {string} lang 
+     */
+    updateServerLang: 
+    (
+      lang: string
+    ) => 
+    {
+      sessionStoreObj.serverLang = lang;
+      set(sessionStoreObj);
     },
 
     /**
-     * @summary [METHOD] update stores
-     * @description updates storesJs on Livescores Data;
-     * @param {Map<number, FIREBASE_livescores_now>} data 
+     * @summary
+     * [HELPER]
+     * @description
+     * stores "LIVE" target fixture odds data in session object;
+     * @param 
+     * {FIREBASE_odds[]} data 
+     */
+    updateLiveOdds: 
+    (
+      data: FIREBASE_odds[]
+    ) => 
+    {
+      sessionStoreObj.live_odds_fixture_target = data;
+      set(sessionStoreObj);
+    },
+
+    /**
+     * @summary
+     * [HELPER]
+     * @description 
+     * stores "LIVE" all fixtures data in session object;
+     * @param 
+     * {Map<number, FIREBASE_livescores_now>} data in session object;
      */
     updateLivescores: 
     (
       data: Map<number, FIREBASE_livescores_now>
     ) => 
     {
-      seassion_store.livescore_now = data
-      set(seassion_store)
+      sessionStoreObj.livescore_now = data
+      set(sessionStoreObj)
     },
 
     /**
-     * @summary [METHOD] update stores
-     * @description updates storesJs on Livescores Data;
-     * @param {Map<number, FIREBASE_livescores_now>} data 
+     * @summary
+     * [HELPER]
+     * @description 
+     * stores "LIVE" target fixture scores data in session object;
+     * @param 
+     * {Map<number, FIREBASE_livescores_now>} data 
      */
-    updateLivescoresTarget: (data: FIREBASE_livescores_now) => {
-      seassion_store.livescore_now_fixture_target = data
-      set(seassion_store)
+    updateLivescoresTarget: 
+    (
+      data: FIREBASE_livescores_now
+    ) => 
+    {
+      sessionStoreObj.livescore_now_fixture_target = data
+      set(sessionStoreObj)
     },
 
     /**
-     * @summary [METHOD] [MAIN] method
-     * @description updates storesJs on Livescores (scoreboard) data;
-     * @param {Map<number, FIREBASE_livescores_now>} data 
+     * @summary
+     * [HELPER]
+     * @description 
+     * stores "LIVE" target fixture scoreboard (V2) data in session object;
+     * @param 
+     * {Map<number, FIREBASE_livescores_now>} data 
      */
     updateLivescoreScoreboard: 
     (
       data: Map<number, FIRE_LNNS>
     ) => 
     {
-      seassion_store.livescore_now_scoreboard = data
-      set(seassion_store)
+      sessionStoreObj.livescore_now_scoreboard = data
+      set(sessionStoreObj)
     }
 
 	};
