@@ -2,17 +2,17 @@
   COMPONENT SCRIPT 
 =================== -->
 <script lang="ts">
+  
 	import { browser, dev } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { fixtureVote } from '$lib/store/vote_fixture';
 	import { dlog } from '$lib/utils/debug';
+	import { platfrom_lang_ssr } from '$lib/utils/platform-functions.js';
 	import * as Sentry from '@sentry/browser';
 	import { BrowserTracing } from '@sentry/tracing';
-	import { sessionStore } from '$lib/store/session.js';
-	import { platfrom_lang_ssr } from '$lib/utils/platform-functions.js';
 
 	import EmailSubscribe from '$lib/components/_Email_subscribe.svelte';
 	import OfflineAlert from '$lib/components/_Offline_alert.svelte';
@@ -25,6 +25,7 @@
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
 
+  // NOTE: moved to static/
 	// import '../app.css';
 	
 	const VALID_PROFILE_PAGE_URL: string[] = [
@@ -68,16 +69,16 @@
 	});
 
 	// [ℹ] on client-side-rendering;
-	if (browser) {
-		// [ℹ] kickstart the .localStorage();
-		fixtureVote.useLocalStorage();
+	if (browser) 
+  {
 		userBetarenaSettings.useLocalStorage();
-		// [ℹ] kickstart offline-badge on info;
-		window.addEventListener(
+		window.addEventListener
+    (
 			'offline',
 			toggleOfflineAlert
 		);
-		window.addEventListener(
+		window.addEventListener
+    (
 			'online',
 			toggleOfflineAlert
 		);
@@ -143,7 +144,9 @@
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
+
 <style>
+
 	main {
 		/* 
     so nothing exceeds the main-page-boundries */
