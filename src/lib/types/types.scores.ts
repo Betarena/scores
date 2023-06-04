@@ -1,5 +1,5 @@
 import type { GeoJsResponse } from '$lib/types/types.geojs';
-import type { FIREBASE_livescores_now, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
 
@@ -44,10 +44,12 @@ export interface Platform_Session
 	selectedSeasonID: number;
   /** NOTE:IMPORTANT - used for inter-component events of selected view on fixtures page */
 	fixture_select_view: 'overview' | 'news';
-  /** [ℹ] used to show/hide auth pop-up modal */
+  /** show/hide auth pop-up modal */
 	auth_show: boolean;
   /** NOTE: used for detecting and pre-loading the data for a TARGET page translation of the current one, programatically */
   lang_intent: string | undefined;
+  /** NOTE: instant page lang */
+  serverLang: string | undefined;
   /** session data on the Firebase Livescore [V1] */
   livescore_now: Map<number, FIREBASE_livescores_now>
   /** session data on the Firebase Livescore (Scoreboard) [V2] */
@@ -68,9 +70,14 @@ export interface Platform_Session
   livescoreShowCalendar: boolean
   /** session data on the LivescoreNow Show/Hide Fixture NUmber */
   fixturesTodayNum: number
-  /** session data on users current date 
+  /** 
+   * session data on users current date 
    * IMPORTANT
    * Must be in user adjusted (TZ) timezone;
   */
-  userDate: Date
+  userDate: Date,
+  /** holds "LIVE" data for a target fixture scores */
+  livescore_now_fixture_target: FIREBASE_livescores_now;
+  /** holds "LIVE" data for a target fixture odds */
+  live_odds_fixture_target: FIREBASE_odds[];
 }
