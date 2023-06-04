@@ -223,7 +223,7 @@ export async function load
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA
 
-  //#region [2] IMPORTANT REGEX
+  //#region [2] IMPORTANT REGEX + DATA INJECT
       
 	PAGE_SEO.main_data = JSON.parse(
 		JSON.stringify(PAGE_SEO.main_data)
@@ -267,12 +267,11 @@ export async function load
 			.replace(/{data.venue.data.city}/g, venue_city)
 	);
 
-  //#endregion [2] IMPORTANT REGEX
-
-	// [ℹ] canonical exclusive SET - [EN];
 	const enItemAlt = FIXTURE_INFO?.alternate_data?.[lang];
 	PAGE_SEO.main_data.canonical = enItemAlt;
   FIXTURE_INFO.data.fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
+
+  //#endregion [2] IMPORTANT REGEX + DATA INJECT
 
   //#region [3] IMPORTANT RETURN
 
