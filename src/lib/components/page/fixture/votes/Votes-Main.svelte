@@ -12,7 +12,6 @@
   import { get } from '$lib/api/utils.js';
   import { sessionStore } from '$lib/store/session.js';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { fixtureVote, type fixture } from '$lib/store/vote_fixture';
   import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog } from '$lib/utils/debug';
   import { googleActionsStr } from '$lib/utils/google.js';
   import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
@@ -21,6 +20,7 @@
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
   
+	import type { Voted_Fixture } from '$lib/types/types.scores.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	import type { B_H_VOT_M, B_VOT_T, VOT_Fixture } from '@betarena/scores-lib/types/votes.js';
@@ -48,26 +48,23 @@
 	let isVoteCasted: boolean = false;
 	let imageVar: string = '--fixture-votes-bookmaker-bg-';
 
-	let fixtureVoteObj: fixture = 
+	let fixtureVoteObj: Voted_Fixture = 
   {
 		fixture_id: undefined,
 		fixture_vote: undefined,
 		fixture_vote_val: undefined,
-		_X_vote: undefined,
-		_1_vote: undefined,
-		_2_vote: undefined
 	};
 
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [METHODS]
 
-	function init_vote
+	function checkVote
   (
   ): void 
   {
-		// [ℹ] get target fixture by ID from USER localStorage()
-		const result = $fixtureVote?.fixtureVotes_Array
+		// locate "exist" voted fixture;
+		const result = $userBetarenaSettings?.voted_fixtures
     ?.find
     (
       (
@@ -79,8 +76,6 @@
       }
     );
 
-		// [ℹ] if target ID exists, assign to "fixtureVoteObj"
-		// [ℹ] with show appropiate match-betting site info;
 		if (result != undefined) 
     {
 			fixtureVoteObj = result;
@@ -89,13 +84,11 @@
 			return;
 		}
 
-    fixtureVoteObj = {
+    fixtureVoteObj = 
+    {
       fixture_id: undefined,
       fixture_vote: undefined,
-      fixture_vote_val: undefined,
-      _X_vote: undefined,
-      _1_vote: undefined,
-      _2_vote: undefined
+      fixture_vote_val: undefined
     };
     showBetSite = false;
     isVoteCasted = false;
@@ -121,20 +114,16 @@
 
     showBetSite = true;
 
-    fixtureVoteObj = {
+    fixtureVoteObj = 
+    {
       fixture_id: FIXTURE_INFO?.data?.id,
       fixture_vote: voteType,
-      fixture_vote_val: voteVal as string,
-      _X_vote: 0,
-      _1_vote: 0,
-      _2_vote: 0
+      fixture_vote_val: voteVal as string
     };
-
-    fixtureVoteObj['_' + fixtureVoteObj.fixture_vote + '_vote'] = 1;
 
     const response = await get
     (
-      `/api/data/fixture/votes/?vote='${[fixtureVoteObj.fixture_id,fixtureVoteObj._1_vote,fixtureVoteObj._2_vote,fixtureVoteObj._X_vote]}'`
+      `/api/data/fixture/votes/?fixture_id=${FIXTURE_INFO?.data?.id}&vote=${voteType}'`
     ) as B_H_VOT_M;
 
     dlog
@@ -151,7 +140,7 @@
       + FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor
     ;
 
-    fixtureVote.addToVotes
+    userBetarenaSettings.addToVotes
     (
       fixtureVoteObj
     );
@@ -265,9 +254,9 @@
    * @description 
    * ➨ listens to available "fixtureVotes" data;
   */
-  $: if ($fixtureVote?.fixtureVotes_Array) 
+  $: if ($userBetarenaSettings?.voted_fixtures) 
   {
-		init_vote();
+		checkVote();
 	}
 
   /**

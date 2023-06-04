@@ -37,10 +37,11 @@ export async function GET
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
     // NOTE: fixture (H2H) data; (MAIN)
-    const if_0 =
+    const if_M_0 =
       fixture_id != undefined
+      && vote == undefined
     ;
-    if (if_0) 
+    if (if_M_0) 
     {
       const _fixture_id = parseInt(fixture_id)
       let data;
@@ -84,13 +85,18 @@ export async function GET
     }
 
     // NOTE: fixture (vote) persist vote; [HASURA]
-    if (vote)
+    const if_M_1 =
+      fixture_id != undefined
+      && vote != undefined
+    ;
+    if (if_M_1)
     {
-      console.log('vote', JSON.parse(vote))
-      const voteParams = JSON.parse(vote) as number[];
+      const _fixture_id = parseInt(fixture_id)
+      console.log('vote', vote)
       const response =await helperMainAction
       (
-        voteParams
+        _fixture_id,
+        vote
       )
       return json(response);
     }
@@ -183,15 +189,16 @@ async function fallbackMainData_1
 
 async function helperMainAction
 (
-  paramArray: number[]
+  fixtureId: number,
+  voteType: string
 )
 {
   const VARIABLES = 
   {
-    match_id: paramArray?.[0],
-    _1_vote: paramArray?.[1],
-    _2_vote: paramArray?.[2],
-    _X_vote: paramArray?.[3]
+    match_id: fixtureId,
+    _1_vote: voteType == '1' ? 1 : 0,
+    _2_vote: voteType == '2' ? 1 : 0,
+    _X_vote: voteType == 'X' ? 1 : 0
   }
 
   const data: B_H_VOT_M = await graphQlInstance.request
