@@ -6,18 +6,17 @@
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser, dev } from '$app/environment';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-  import { initGrapQLClient } from '$lib/graphql/init';
+  import { get } from '$lib/api/utils.js';
   import { sessionStore } from '$lib/store/session.js';
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { fixtureVote, type fixture } from '$lib/store/vote_fixture';
-  import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog, logErrorGroup } from '$lib/utils/debug';
+  import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog } from '$lib/utils/debug';
+  import { googleActionsStr } from '$lib/utils/google.js';
   import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
   import { FIXTURE_NO_VOTES_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
-  import { B_C_VOT_F_M_D1 } from '@betarena/scores-lib/dist/graphql/query.votes.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -42,17 +41,14 @@
   let FIXTURE_VOTES_DATA: VOT_Fixture;
   let SPORTBOOK_INFO: B_SPT_D;
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
-	let show_placeholder: boolean = false;
+	let noWidgetData: any = false;
 	let user_stake_amount: number = 50.0;
-	let total_votes: number = undefined;
-	let show_bet_site: boolean = false;
-	let vote_casted: boolean = false;
+	let totalVoteCount: number = undefined;
+	let showBetSite: boolean = false;
+	let isVoteCasted: boolean = false;
 	let imageVar: string = '--fixture-votes-bookmaker-bg-';
 
-	let fixture_data_vote_obj: fixture = 
+	let fixtureVoteObj: fixture = 
   {
 		fixture_id: undefined,
 		fixture_vote: undefined,
@@ -66,134 +62,108 @@
 
   //#region ➤ [METHODS]
 
-  // MOVE TO SERVER-SIDE
 	function init_vote
   (
-  ) 
+  ): void 
   {
 		// [ℹ] get target fixture by ID from USER localStorage()
-		const result =
-			$fixtureVote.fixtureVotes_Array.find(
-				(fixture) => {
-					return (
-						fixture.fixture_id ===
-						FIXTURE_INFO?.data?.id
-					);
-				}
-			);
-		// [ℹ] if target ID exists, assign to "fixture_data_vote_obj"
+		const result = $fixtureVote?.fixtureVotes_Array
+    ?.find
+    (
+      (
+        fixture
+      ) => {
+        return (
+          fixture.fixture_id === FIXTURE_INFO?.data?.id
+        );
+      }
+    );
+
+		// [ℹ] if target ID exists, assign to "fixtureVoteObj"
 		// [ℹ] with show appropiate match-betting site info;
-		if (result != undefined) {
-			fixture_data_vote_obj = result;
-			show_bet_site = true;
-			vote_casted = true;
+		if (result != undefined) 
+    {
+			fixtureVoteObj = result;
+			showBetSite = true;
+			isVoteCasted = true;
 			return;
 		}
-		// [ℹ] else,
-		// [ℹ] declare vote as not been casted
-		else {
-			fixture_data_vote_obj = {
-				fixture_id: undefined,
-				fixture_vote: undefined,
-				fixture_vote_val: undefined,
-				_X_vote: undefined,
-				_1_vote: undefined,
-				_2_vote: undefined
-			};
-			show_bet_site = false;
-			vote_casted = false;
-		}
+
+    fixtureVoteObj = {
+      fixture_id: undefined,
+      fixture_vote: undefined,
+      fixture_vote_val: undefined,
+      _X_vote: undefined,
+      _1_vote: undefined,
+      _2_vote: undefined
+    };
+    showBetSite = false;
+    isVoteCasted = false;
 	}
 
-  // MOVE TO SERVER-SIDE
-	function cast_vote
+	async function castVote
   (
-		vote_type: string,
-		vote_val: string | number
-	): void 
-  {
-    dlog(`${VO_W_F_TAG} vote_val: ${vote_val}`, VO_W_F_TOG, VO_W_F_STY);
-
-		if (vote_val == undefined) {
-			vote_val = '1.5';
-		}
-
-		// [ℹ] check vote already casted
-		if (!vote_casted) {
-			// [ℹ] update the show_bet_site Frame;
-			show_bet_site = true;
-			// [ℹ] update the VoteMatch on DB;
-			fixture_data_vote_obj = {
-				fixture_id: FIXTURE_INFO?.data?.id,
-				fixture_vote: vote_type,
-				fixture_vote_val: vote_val as string,
-				_X_vote: 0,
-				_1_vote: 0,
-				_2_vote: 0
-			};
-			fixture_data_vote_obj[
-				'_' +
-					fixture_data_vote_obj.fixture_vote +
-					'_vote'
-			] = 1;
-			execute_vote_submit(fixture_data_vote_obj);
-			// [ℹ] update USER localStorage()
-			fixtureVote.addToVotes(
-				fixture_data_vote_obj
-			);
-			// [ℹ] set "casted" BOOLEAN
-			vote_casted = true;
-		}
-	}
-
-  // MOVE TO SERVER-SIDE
-	async function execute_vote_submit
-  (
-		fixtureData: fixture
+		voteType: string,
+		voteVal: string | number
 	): Promise < void > 
   {
-		const VARIABLES = {
-			match_id: fixtureData.fixture_id,
-			_1_vote: fixtureData._1_vote,
-			_2_vote: fixtureData._2_vote,
-			_X_vote: fixtureData._X_vote
-		};
+    // [🐞]
+    dlog
+    (
+      `${VO_W_F_TAG} voteVal: ${voteVal}`, 
+      VO_W_F_TOG, 
+      VO_W_F_STY
+    );
 
-    dlog(`${VO_W_F_TAG} variables: ${VARIABLES}`, VO_W_F_TOG, VO_W_F_STY);
+    if (isVoteCasted) return;
 
-		// FIXME: need a try..catch ?
-		try {
-			// [ℹ] execute GRAPH-QL request;
-			const update_fixture_data: B_H_VOT_M =
-				await initGrapQLClient().request(
-					B_C_VOT_F_M_D1,
-					VARIABLES
-				);
+		if (voteVal == undefined) voteVal = '1.5';
 
-      dlog(`${VO_W_F_TAG} update_fixture_data: ${update_fixture_data}`, VO_W_F_TOG, VO_W_F_STY);
+    showBetSite = true;
 
-			// [ℹ] update existing data with CASTED-VOTES;
-			FIXTURE_VOTES_DATA.match_votes =
-				update_fixture_data.update_widget_featured_match_votes_by_pk;
-			total_votes =
-				FIXTURE_VOTES_DATA?.match_votes
-					.vote_draw_x +
-				FIXTURE_VOTES_DATA?.match_votes
-					.vote_win_local +
-				FIXTURE_VOTES_DATA?.match_votes
-					.vote_win_visitor;
-		} catch (error) {
-			if (dev)
-				logErrorGroup(
-					'featured match',
-					`error: ${error}`
-				);
-		}
-	}
+    fixtureVoteObj = {
+      fixture_id: FIXTURE_INFO?.data?.id,
+      fixture_vote: voteType,
+      fixture_vote_val: voteVal as string,
+      _X_vote: 0,
+      _1_vote: 0,
+      _2_vote: 0
+    };
 
+    fixtureVoteObj['_' + fixtureVoteObj.fixture_vote + '_vote'] = 1;
+
+    const response = await get
+    (
+      `/api/data/fixture/votes/?vote='${[fixtureVoteObj.fixture_id,fixtureVoteObj._1_vote,fixtureVoteObj._2_vote,fixtureVoteObj._X_vote]}'`
+    ) as B_H_VOT_M;
+
+    dlog
+    (
+      `${VO_W_F_TAG} update_fixture_data: ${response}`, 
+      VO_W_F_TOG, 
+      VO_W_F_STY
+    );
+
+    FIXTURE_VOTES_DATA.match_votes = response?.update_widget_featured_match_votes_by_pk;
+    totalVoteCount =
+      FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x 
+      +	FIXTURE_VOTES_DATA?.match_votes?.vote_win_local 
+      + FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor
+    ;
+
+    fixtureVote.addToVotes
+    (
+      fixtureVoteObj
+    );
+
+    isVoteCasted = true;
+    return;
+  }
+
+  // TODO:
   async function injectLiveOddsData
   (
-  )
+  ): Promise < void > 
   {
 		let count = 0;
 
@@ -235,7 +205,7 @@
   // VIEWPORT CHANGES | IMPORTANT
   function resizeAction
   (
-  )
+  ): void
   {
     [
       tabletExclusive, 
@@ -257,7 +227,7 @@
    */
   function addEventListeners
   (
-  )
+  ): void
   {
     // NOTE: (on-resize)
     window.addEventListener
@@ -280,30 +250,40 @@
 
   /**
    * @summary
-   * [MAIN] 
-   * [REACTIVE]
+   * [MAIN] [REACTIVE]
    * @description 
-   * listens to target "fixture" in "odds" data;
+   * ➨ listens to target "fixture" in "odds" data;
   */
   $: if ($sessionStore?.live_odds_fixture_target)
   {
     injectLiveOddsData()
   }
 
-  $: if 
-  (
-    (FIXTURE_VOTES_DATA?.match_votes != undefined && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status))
-    && (FIXTURE_VOTES_DATA?.match_votes.vote_win_local == 0 && FIXTURE_VOTES_DATA?.match_votes.vote_draw_x == 0 && FIXTURE_VOTES_DATA?.match_votes.vote_win_visitor == 0)
-  ) 
-  {
-    no_widget_data = true;
-  }
-
-  $: condition = $fixtureVote.fixtureVotes_Array !=	undefined && loaded;
-	$: if (condition) 
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description 
+   * ➨ listens to available "fixtureVotes" data;
+  */
+  $: if ($fixtureVote?.fixtureVotes_Array) 
   {
 		init_vote();
 	}
+
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description
+   * ➨ listens to "noWidgetData" state
+  */
+  $: if_R_0 =
+    FIXTURE_VOTES_DATA?.match_votes != undefined
+    && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)
+    && FIXTURE_VOTES_DATA?.match_votes.vote_win_local == 0 
+    && FIXTURE_VOTES_DATA?.match_votes.vote_draw_x == 0 
+    && FIXTURE_VOTES_DATA?.match_votes.vote_win_visitor == 0
+  ;
+  $: if (if_R_0) noWidgetData = true;
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -336,12 +316,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div 
   id="widget-outer" 
-  class:display-none={no_widget_data && !show_placeholder}>
+  class:display-none={noWidgetData}>
 
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FIXTURE_VOTES_TRANSLATION?.widget_title}
       NO_DATA_TITLE={FIXTURE_VOTES_TRANSLATION?.no_info}
@@ -352,15 +332,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FIXTURE_VOTES_TRANSLATION?.widget_title}
     />
 
     <!-- 
-    [ℹ] [MOBILE] [TABLET] [DESKTOP]
-    [ℹ] (minimal) cross-platform design change
+    📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
 
     <div
@@ -369,9 +348,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     >
     
       <!-- 
-      [ℹ] voting hint text 
+      VOTE TEXT HINT
       -->
-      {#if !vote_casted && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+      {#if !isVoteCasted && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
         <p
           class="
             w-500 
@@ -386,7 +365,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       <!-- 
-      [ℹ] voting results btn 
+      VOTE RESULT BTN
       -->
       <div
         id="btn-vote-container" 
@@ -394,7 +373,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       >
       
         <!-- 
-        [ℹ] ODDS #1 
+        ODDS #1 
         -->
         <div
           class="
@@ -409,9 +388,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               cast-vote-btn 
               m-b-12
             "
-            class:active={fixture_data_vote_obj?.fixture_vote == '1'}
-            disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
-            on:click={() => cast_vote('1', FIXTURE_VOTES_DATA?._1x2?.home)}
+            class:active={fixtureVoteObj?.fixture_vote == '1'}
+            disabled={isVoteCasted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+            on:click={() => castVote('1', FIXTURE_VOTES_DATA?._1x2?.home)}
           >
             <p
               class="
@@ -421,23 +400,31 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
             >
               {#if mobileExclusive}
-                <span class="color-grey"> 1 </span>
+                <span 
+                  class="color-grey"> 
+                  1 
+                </span>
               {:else}
-                <img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="default alt text" width="28px" height="28px" />
+                <img 
+                  loading="lazy"
+                  src={FIXTURE_VOTES_DATA?.home_team_logo} 
+                  alt="default alt text" 
+                  width="28"
+                  height="28" 
+                />
               {/if}
-              <span class:active_p={fixture_data_vote_obj?.fixture_vote == '1'}>
-                {#if FIXTURE_VOTES_DATA?._1x2?.home}
-                  {FIXTURE_VOTES_DATA?._1x2?.home.toString()}
-                {:else}
-                  -
-                {/if}
+              <span 
+                class:active_p={fixtureVoteObj?.fixture_vote == '1'}
+              >
+                {FIXTURE_VOTES_DATA?._1x2?.home || '-'}
               </span>
             </p>
           </button>
+
           <!-- 
-          [ℹ] fixture-probability 
+          PROBABILITY (WIN)
           -->
-          {#if !show_bet_site && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+          {#if !showBetSite && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
             <p
               class="
                 w-400 
@@ -455,7 +442,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -
               {/if}
             </p>
-          {:else if FIXTURE_VOTES_DATA?.match_votes != undefined || (FIXTURE_VOTES_DATA?.match_votes != undefined && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status))}
+          {:else if FIXTURE_VOTES_DATA?.match_votes != undefined && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
             <p
               class="
                 large
@@ -467,7 +454,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                 "
               >
-                {FIXTURE_VOTES_DATA?.match_votes.vote_win_local == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes.vote_win_local / total_votes) * 100).toFixed(0)}%
+                {FIXTURE_VOTES_DATA?.match_votes?.vote_win_local == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes.vote_win_local / totalVoteCount) * 100).toFixed(0)}%
               </span>
               <span
                 class="
@@ -482,7 +469,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
 
         <!--
-        [ℹ] ODDS #X
+        ODDS X (DRAW)
         -->
         <div
           class="
@@ -497,9 +484,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               cast-vote-btn 
               m-b-12
             "
-            class:active={fixture_data_vote_obj?.fixture_vote == 'X'}
-            disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
-            on:click={() => cast_vote('X', FIXTURE_VOTES_DATA._1x2.draw)}
+            class:active={fixtureVoteObj?.fixture_vote == 'X'}
+            disabled={isVoteCasted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+            on:click={() => castVote('X', FIXTURE_VOTES_DATA._1x2.draw)}
           >
             <p
               class="
@@ -509,14 +496,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
             >
               {#if mobileExclusive}
-                <span class="color-grey"> X </span>
+                <span 
+                  class="color-grey"
+                > 
+                  X 
+                </span>
               {:else}
-                <!-- 
-                  src="./static/icon/icon-close.svg"
-                  -->
-                <img src="/assets/svg/icon/icon-close.svg" alt="default alt text" width="28px" height="28px" />
+                <img 
+                  src="/assets/svg/icon/icon-close.svg" 
+                  alt="default alt text" 
+                  width="28" 
+                  height="28" 
+                />
               {/if}
-              <span class:active_p={fixture_data_vote_obj?.fixture_vote == 'X'}>
+              <span class:active_p={fixtureVoteObj?.fixture_vote == 'X'}>
                 {#if FIXTURE_VOTES_DATA?._1x2?.draw}
                   {FIXTURE_VOTES_DATA?._1x2?.draw?.toString()}
                 {:else}
@@ -528,7 +521,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <!-- 
           [ℹ] fixture-probability 
           -->
-          {#if !show_bet_site && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+          {#if !showBetSite && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
             <p
               class="
                 w-400 
@@ -558,7 +551,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   color-dark
                 "
               >
-                {FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x / total_votes) * 100).toFixed(0)}%
+                {FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x / totalVoteCount) * 100).toFixed(0)}%
               </span>
               <span
                 class="
@@ -588,9 +581,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               cast-vote-btn 
               m-b-12
             "
-            class:active={fixture_data_vote_obj.fixture_vote == '2'}
-            disabled={vote_casted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
-            on:click={() => cast_vote('2', FIXTURE_VOTES_DATA?._1x2?.away)}
+            class:active={fixtureVoteObj.fixture_vote == '2'}
+            disabled={isVoteCasted || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+            on:click={() => castVote('2', FIXTURE_VOTES_DATA?._1x2?.away)}
           >
             <p
               class="
@@ -604,7 +597,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               {:else}
                 <img src={FIXTURE_VOTES_DATA?.away_team_logo} alt="default alt text" width="28px" height="28px" />
               {/if}
-              <span class:active_p={fixture_data_vote_obj?.fixture_vote == '2'}>
+              <span class:active_p={fixtureVoteObj?.fixture_vote == '2'}>
                 {#if FIXTURE_VOTES_DATA?._1x2?.away}
                   {FIXTURE_VOTES_DATA?._1x2?.away.toString()}
                 {:else}
@@ -617,7 +610,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <!-- 
           [ℹ] fixture-probability 
           -->
-          {#if !show_bet_site && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+          {#if !showBetSite && !FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
             <p
               class="
                 w-400 
@@ -647,7 +640,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                 "
               >
-                {FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor / total_votes) * 100).toFixed(0)}%
+                {FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor / totalVoteCount) * 100).toFixed(0)}%
               </span>
               <span
                 class="
@@ -665,45 +658,51 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
 
       <!-- 
-      [ℹ] stakes-site-info-pop-up 
+      STAKE POP-UP DATA
       -->
-      {#if show_bet_site}
+      {#if showBetSite}
+
         <div 
           id="site-bet-box" 
           in:fade
         >
 
           <img
+            loading="lazy"
             src="/assets/svg/icon/white-close.svg"
             alt="default alt text"
             width="16"
             height="16"
             style="position: absolute; top: 12px; right: 20px;"
-            on:click={() => (show_bet_site = false)}
+            on:click={() => (showBetSite = false)}
           />
           <a
             rel="nofollow"
-            aria-label="football_fixtures_voting"
-            on:click={() => googleEventLog('football_fixtures_voting')}
+            aria-label="{googleActionsStr.FP_VOTE}"
+            on:click={() => googleEventLog(googleActionsStr.FP_VOTE)}
             target="_blank"
             href={SPORTBOOK_INFO.register_link}
           >
             <img
+              loading="lazy"
               id="stakesSiteImg"
               src={SPORTBOOK_INFO.image}
               alt="default alt text"
               style="background-color: var({imageVar});"
               width="100%"
-              height="40px"
+              height="40"
             />
           </a>
 
           <!-- 
-          [ℹ] bottom container info
+          BOTTOM DATA
           -->
-          <div id="inner-site-container">
+          <div 
+            id="inner-site-container"
+          >
+
             <!-- 
-            [ℹ] STAKES DATA 
+            STAKES
             -->
             <div
               id="box-row"
@@ -712,8 +711,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 row-space-out
               "
             >
+
               <!-- 
-              [ℹ] Win Type 
+              WIN TYPE 
               -->
               <div
                 class="
@@ -721,8 +721,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   stakes-info-box
                 "
               >
+
                 <!-- 
-                [ℹ] type of vote select - text
+                TYPE OF VOTE
                 -->
                 <p
                   class="
@@ -732,9 +733,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     color-grey
                   "
                 >
-                  {#if fixture_data_vote_obj?.fixture_vote == '1'}
+                  {#if fixtureVoteObj?.fixture_vote == '1'}
                     Home win
-                  {:else if fixture_data_vote_obj?.fixture_vote == 'X'}
+                  {:else if fixtureVoteObj?.fixture_vote == 'X'}
                     Draw
                   {:else}
                     Away win
@@ -742,7 +743,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
 
                 <!-- 
-                [ℹ] box stakes show
+                BOX STAKES SHOW
                 -->
                 <div
                   class="
@@ -753,9 +754,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   "
                 >
                   {#if !mobileExclusive}
-                    {#if fixture_data_vote_obj?.fixture_vote == '1'}
+                    {#if fixtureVoteObj?.fixture_vote == '1'}
                       <img src={FIXTURE_VOTES_DATA?.home_team_logo} alt="default alt text" width="28px" height="28px" />
-                    {:else if fixture_data_vote_obj?.fixture_vote == 'X'}
+                    {:else if fixtureVoteObj?.fixture_vote == 'X'}
                       <p
                         class="
                           w-500 
@@ -779,25 +780,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       desktop-view-winnings
                     "
                     type="number"
-                    bind:value={fixture_data_vote_obj.fixture_vote_val}
+                    bind:value={fixtureVoteObj.fixture_vote_val}
                     disabled
                   />
+
                 </div>
               </div>
 
               <!-- 
-              [ℹ] MULTIPLY SIGN 
+              MULTIPLY SIGN 
               -->
               <img
                 src="/assets/svg/icon/icon-close.svg"
                 alt="multiply-icon"
-                width="16px"
-                height="16px"
+                width="16"
+                height="16"
                 style="margin-top: 25px;"
               />
 
               <!-- 
-              [ℹ] Stake 
+              STAKE VALUE
               -->
               <div
                 class="
@@ -828,18 +830,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
 
               <!-- 
-              [ℹ] EQUALS SIGN 
+              EQUAL SIGN
               -->
               <img
+                loading="lazy"
                 src="/assets/svg/icon/icon-equally.svg"
                 alt="icon-equlaity"
-                width="16px"
-                height="16px"
+                width="16"
+                height="16"
                 style="margin-top: 25px;"
               />
 
               <!-- 
-              [ℹ] Winnings 
+              WINNINGS
               -->
               <div
                 class="
@@ -865,20 +868,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     text-center
                   "
                   type="number"
-                  value={(parseFloat(fixture_data_vote_obj?.fixture_vote_val) * user_stake_amount).toFixed(2)}
+                  value={(parseFloat(fixtureVoteObj?.fixture_vote_val) * user_stake_amount).toFixed(2)}
                   disabled
                 />
               </div>
 
               <!-- 
-              [ℹ] PLACE BET BUTTON 
-              [ℹ] [DESKTOP]
+              PLACE BET BUTTON 🖥️ LAPTOP
               -->
               {#if !mobileExclusive && !tabletExclusive}
                 <a
                   rel="nofollow"
-                  aria-label="football_fixtures_voting"
-                  on:click={() => googleEventLog('football_fixtures_voting')}
+                  aria-label="{googleActionsStr.FP_VOTE}"
+                  on:click={() => googleEventLog(googleActionsStr.FP_VOTE)}
                   target="_blank"
                   href={SPORTBOOK_INFO?.register_link}
                   class="anchor-bet-box"
@@ -895,17 +897,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </button>
                 </a>
               {/if}
+
             </div>
 
             <!-- 
-            [ℹ] PLACE BET BUTTON 
-            [ℹ] [MOBILE] OR [TABLET]
+            PLACE BET BUTTON 💻 TABLET + 🖥️ LAPTOP
             -->
             {#if mobileExclusive || tabletExclusive}
               <a
                 rel="nofollow"
-                aria-label="football_fixtures_voting"
-                on:click={() => googleEventLog('football_fixtures_voting')}
+                aria-label="{googleActionsStr.FP_VOTE}"
+                on:click={() => googleEventLog(googleActionsStr.FP_VOTE)}
                 target="_blank"
                 href={SPORTBOOK_INFO?.register_link}
                 class="anchor-bet-box"
@@ -917,7 +919,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     m-b-12
                   "
                 >
-                  <p class="small">
+                  <p 
+                    class="small">
                     {FIXTURE_VOTES_TRANSLATION?.bet}
                   </p>
                 </button>
@@ -925,7 +928,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {/if}
 
             <!-- 
-            [ℹ] BETTING SITE INFO 
+            BETTING SITE INFO 
             -->
             <p
               class="
@@ -936,13 +939,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             >
               {SPORTBOOK_INFO?.information}
             </p>
+
           </div>
+
         </div>
+        
       {/if}
 
     </div>
 
 	{/if}
+
 </div>
 
 <!-- ===============

@@ -5,8 +5,9 @@ import { json } from '@sveltejs/kit';
 import { initGrapQLClient } from '$lib/graphql/init';
 import { FVOT_FP_ENTRY, FVOT_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.votes.js';
 
+import { B_C_VOT_F_M_D1 } from '@betarena/scores-lib/dist/graphql/query.votes.js';
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
-import type { B_VOT_D } from '@betarena/scores-lib/types/votes.js';
+import type { B_H_VOT_M, B_VOT_D } from '@betarena/scores-lib/types/votes.js';
 
 //#endregion ➤ Package Imports
 
@@ -32,6 +33,7 @@ export async function GET
     // query (url) data
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
+    const vote: string = req?.url?.searchParams?.get('vote');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
     // NOTE: fixture (H2H) data; (MAIN)
@@ -79,6 +81,18 @@ export async function GET
       {
         return json(response);
       }
+    }
+
+    // NOTE: fixture (vote) persist vote; [HASURA]
+    if (vote)
+    {
+      console.log('vote', JSON.parse(vote))
+      const voteParams = JSON.parse(vote) as number[];
+      const response =await helperMainAction
+      (
+        voteParams
+      )
+      return json(response);
     }
 
     // fallback to NULL
@@ -165,6 +179,28 @@ async function fallbackMainData_1
   }
   
 	return map.get(lang);
+}
+
+async function helperMainAction
+(
+  paramArray: number[]
+)
+{
+  const VARIABLES = 
+  {
+    match_id: paramArray?.[0],
+    _1_vote: paramArray?.[1],
+    _2_vote: paramArray?.[2],
+    _X_vote: paramArray?.[3]
+  }
+
+  const data: B_H_VOT_M = await graphQlInstance.request
+  (
+    B_C_VOT_F_M_D1,
+    VARIABLES
+  );
+
+  return data;
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
