@@ -1,22 +1,25 @@
 import { writable } from 'svelte/store';
 
 import type { GeoJsResponse } from '$lib/types/types.geojs.js';
-import type { Scores_User, User_Setting } from '$lib/types/types.scores.js';
+import type { Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
 
 const user_settings: User_Setting = 
 {
-	lang: undefined,
-	theme: undefined,
-	country_bookmaker: undefined,
-	geoJs: undefined,
-	user: undefined
+	lang:               undefined,
+	theme:              undefined,
+	country_bookmaker:  undefined,
+	geoJs:              undefined,
+	user:               undefined,
+  voted_fixtures:     []
 };
 
 /**
- * @description initializer of svelte-stores
- * method, with localStorage persistance for
- * browser-refresh resitant data;
- * @param {string} key
+ * @summary
+ * [MAIN]
+ * @description 
+ * initializer of svelte-stores method, (+) w/ localStorage persistance;
+ * @param 
+ * {string} key
  * @returns
  */
 function createLocalStore
@@ -59,7 +62,8 @@ function createLocalStore
 						theme: 'Light',
 						country_bookmaker: undefined,
 						geoJs: undefined,
-						user: undefined
+						user: undefined,
+            voted_fixtures: []
 				  }
       ;
 			localStorage.setItem
@@ -270,6 +274,25 @@ function createLocalStore
 			const existing: string = localStorage.getItem(key);
 			const existing_data: User_Setting = JSON.parse(existing);
 			existing_data.user = undefined;
+			localStorage.setItem
+      (
+				key,
+				JSON.stringify(existing_data)
+			);
+			set(existing_data);
+		},
+
+		addToVotes: 
+    (
+      vote: Voted_Fixture
+    ) => 
+    {
+			const existing: string = localStorage.getItem(key);
+			const existing_data: User_Setting = JSON.parse(existing);
+      existing_data.voted_fixtures.push
+      (
+        vote
+      );
 			localStorage.setItem
       (
 				key,
