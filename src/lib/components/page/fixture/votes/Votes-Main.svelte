@@ -23,14 +23,15 @@
 	import type { Voted_Fixture } from '$lib/types/types.scores.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
-	import type { B_H_VOT_M, B_VOT_T, VOT_Fixture } from '@betarena/scores-lib/types/votes.js';
+	import type { B_H_VOT_M, B_VOT_D, B_VOT_T } from '@betarena/scores-lib/types/votes.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
 	export let FIXTURE_INFO: B_SAP_FP_D;
-	export let FIXTURE_VOTES_TRANSLATION: B_VOT_T;
+  export let FIXTURE_VOTES_DATA: B_VOT_D;
+	export let B_VOT_T: B_VOT_T;
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1160;
@@ -38,7 +39,6 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-  let FIXTURE_VOTES_DATA: VOT_Fixture;
   let SPORTBOOK_INFO: B_SPT_D;
 
 	let noWidgetData: any = false;
@@ -268,9 +268,9 @@
   $: if_R_0 =
     FIXTURE_VOTES_DATA?.match_votes != undefined
     && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)
-    && FIXTURE_VOTES_DATA?.match_votes.vote_win_local == 0 
-    && FIXTURE_VOTES_DATA?.match_votes.vote_draw_x == 0 
-    && FIXTURE_VOTES_DATA?.match_votes.vote_win_visitor == 0
+    && FIXTURE_VOTES_DATA?.match_votes?.vote_win_local == 0 
+    && FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x == 0 
+    && FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor == 0
   ;
   $: if (if_R_0) noWidgetData = true;
 
@@ -312,9 +312,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
 	{#if noWidgetData}
     <WidgetNoData 
-      WIDGET_TITLE={FIXTURE_VOTES_TRANSLATION?.widget_title}
-      NO_DATA_TITLE={FIXTURE_VOTES_TRANSLATION?.no_info}
-      NO_DATA_DESC={FIXTURE_VOTES_TRANSLATION?.no_info_desc}
+      WIDGET_TITLE={B_VOT_T?.widget_title}
+      NO_DATA_TITLE={B_VOT_T?.no_info}
+      NO_DATA_DESC={B_VOT_T?.no_info_desc}
     />
 	{/if}
 
@@ -324,7 +324,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	{#if !noWidgetData}
 
     <WidgetTitle
-      WIDGET_TITLE={FIXTURE_VOTES_TRANSLATION?.widget_title}
+      WIDGET_TITLE={B_VOT_T?.widget_title}
     />
 
     <!-- 
@@ -349,7 +349,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             text-center
           "
         >
-          {FIXTURE_VOTES_TRANSLATION?.vote}
+          {B_VOT_T?.vote}
         </p>
       {/if}
 
@@ -421,7 +421,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 medium
               "
             >
-              {FIXTURE_VOTES_TRANSLATION?.probability}
+              {B_VOT_T?.probability}
               {#if mobileExclusive}
                 <br />
               {/if}
@@ -518,7 +518,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 medium
               "
             >
-              {FIXTURE_VOTES_TRANSLATION?.probability}
+              {B_VOT_T?.probability}
               {#if mobileExclusive}
                 <br />
               {/if}
@@ -607,7 +607,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 medium
               "
             >
-              {FIXTURE_VOTES_TRANSLATION?.probability}
+              {B_VOT_T?.probability}
               {#if mobileExclusive}
                 <br />
               {/if}
@@ -804,7 +804,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     color-grey
                   "
                 >
-                  {FIXTURE_VOTES_TRANSLATION?.stake}
+                  {B_VOT_T?.stake}
                 </p>
                 <input
                   class="
@@ -847,7 +847,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     color-grey
                   "
                 >
-                  {FIXTURE_VOTES_TRANSLATION?.winnings}
+                  {B_VOT_T?.winnings}
                 </p>
                 <input
                   class="
@@ -881,7 +881,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     "
                   >
                     <p class="small">
-                      {FIXTURE_VOTES_TRANSLATION?.bet}
+                      {B_VOT_T?.bet}
                     </p>
                   </button>
                 </a>
@@ -910,7 +910,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   <p 
                     class="small">
-                    {FIXTURE_VOTES_TRANSLATION?.bet}
+                    {B_VOT_T?.bet}
                   </p>
                 </button>
               </a>

@@ -19,23 +19,22 @@ COMPONENT JS (w/ TS)
   
 	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_ST_D } from '@betarena/scores-lib/types/statistics.js';
-	import type { B_VOT_T } from '@betarena/scores-lib/types/votes.js';
+	import type { B_VOT_D, B_VOT_T } from '@betarena/scores-lib/types/votes.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
-  let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO
-  let WIDGET_S_DATA: B_ST_D = $page.data?.FIXTURE_STATISTICS
-  let WIDGET_T_DATA: B_VOT_T = $page.data?.FIXTURE_VOTES_TRANSLATION
-  let WIDGET_DATA: B_ST_D;
+  let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO;
+  let WIDGET_S_DATA: B_VOT_D = $page.data?.B_VOT_D;
+  let WIDGET_T_DATA: B_VOT_T = $page.data?.B_VOT_T;
+  let WIDGET_DATA: B_VOT_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
-  $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
-  $: WIDGET_T_DATA = $page.data?.FIXTURE_VOTES_TRANSLATION
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Statistics' : 'Statistics'
-  $: FIXTURE_INFO = $page.data?.FIXTURE_INFO
+  $: FIXTURE_INFO = $page.data?.FIXTURE_INFO;
+  $: WIDGET_S_DATA = $page.data?.B_VOT_D;
+  $: WIDGET_T_DATA = $page.data?.B_VOT_T;
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.widget_title || 'Statistics' : 'Statistics';
 
   //#endregion ➤ [VARIABLES]
 
@@ -142,7 +141,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   {#if !NO_WIDGET_DATA}
     <VotesMain 
       {FIXTURE_INFO}
-      FIXTURE_VOTES_TRANSLATION={WIDGET_T_DATA}
+      FIXTURE_VOTES_DATA={WIDGET_DATA}
+      B_VOT_T={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}
