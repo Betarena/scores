@@ -385,7 +385,11 @@ paths:
               # ?vote=[...]
               vote:
                 type: string
-                example: "[18807082,0,0,1]"
+                enum:
+                  - '1'
+                  - '2'
+                  - 'X'
+                example: "X"
               # ?lang=[...]
               lang:
                 type: string
@@ -398,7 +402,7 @@ paths:
               - required: [fixture_id]
               - required: [fixture_id, hasura]
               # mutate target [votes]
-              - required: [vote]
+              - required: [fixture_id, vote]
 
       summary: 
         Returns a targets' fixture (id) main Votes widget (data).
