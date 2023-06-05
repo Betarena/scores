@@ -16,6 +16,7 @@
   import { googleActionsStr } from '$lib/utils/google.js';
   import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
   import { FIXTURE_NO_VOTES_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
+	import { getImageBgColor } from '$lib/utils/color_thief.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -43,7 +44,11 @@
 
 	let noWidgetData: any = false;
 	let user_stake_amount: number = 50.0;
-	let totalVoteCount: number = undefined;
+	let totalVoteCount: number =
+    FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x 
+    +	FIXTURE_VOTES_DATA?.match_votes?.vote_win_local 
+    + FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor
+  ;
 	let showBetSite: boolean = false;
 	let isVoteCasted: boolean = false;
 	let imageVar: string = '--fixture-votes-bookmaker-bg-';
@@ -123,7 +128,7 @@
 
     const response = await get
     (
-      `/api/data/fixture/votes/?fixture_id=${FIXTURE_INFO?.data?.id}&vote=${voteType}'`
+      `/api/data/fixture/votes/?fixture_id=${FIXTURE_INFO?.data?.id}&vote=${voteType}`
     ) as B_H_VOT_M;
 
     dlog
@@ -173,15 +178,12 @@
         ;
         if (if_M_0)
         {
-					FIXTURE_VOTES_DATA._1x2 = undefined;
-					FIXTURE_VOTES_DATA._1x2 = {
-						home: undefined,
-						away: undefined,
-						draw: undefined
+					FIXTURE_VOTES_DATA._1x2 = 
+          {
+						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2);,
+						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2);,
+						draw: firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value?.toFixed(2);
 					};
-					FIXTURE_VOTES_DATA._1x2.home = firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2);
-					FIXTURE_VOTES_DATA._1x2.draw = firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value?.toFixed(2);
-					FIXTURE_VOTES_DATA._1x2.away = firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2);
 					SPORTBOOK_INFO = m_sportBook;
 					count = 1;
 				}
@@ -273,6 +275,24 @@
     && FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor == 0
   ;
   $: if (if_R_0) noWidgetData = true;
+
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description
+   * ➨ listens to change state in sportbook image value;
+  */
+  $: if_R_1 =
+    SPORTBOOK_INFO?.image != undefined
+  ;
+  $: if (if_R_1) 
+  {
+    getImageBgColor
+    (
+      SPORTBOOK_INFO?.image,
+      imageVar
+    );
+  }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -431,7 +451,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -
               {/if}
             </p>
-          {:else if FIXTURE_VOTES_DATA?.match_votes != undefined && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
+          {:else if FIXTURE_VOTES_DATA?.match_votes != undefined || FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)}
             <p
               class="
                 large
@@ -649,7 +669,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <!-- 
       STAKE POP-UP DATA
       -->
-      {#if showBetSite}
+      {#if showBetSite && SPORTBOOK_INFO}
 
         <div 
           id="site-bet-box" 
@@ -670,12 +690,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             aria-label="{googleActionsStr.FP_VOTE}"
             on:click={() => googleEventLog(googleActionsStr.FP_VOTE)}
             target="_blank"
-            href={SPORTBOOK_INFO.register_link}
+            href={SPORTBOOK_INFO?.register_link}
           >
             <img
               loading="lazy"
               id="stakesSiteImg"
-              src={SPORTBOOK_INFO.image}
+              src={SPORTBOOK_INFO?.image}
               alt="default alt text"
               style="background-color: var({imageVar});"
               width="100%"
@@ -880,7 +900,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       btn-primary
                     "
                   >
-                    <p class="small">
+                    <p 
+                      class="small">
                       {B_VOT_T?.bet}
                     </p>
                   </button>
