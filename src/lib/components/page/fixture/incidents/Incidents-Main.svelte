@@ -235,6 +235,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
     <div
+      id="incidents-widget-container"
       class="widget-component"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
@@ -508,7 +509,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	/* 
   events table box 
   */
-	div#incidents-widget-container div#incidents-events-box	p.event-milestone-text 
+	div#incidents-widget-container div#incidents-events-box	p.event-milestone-text
   {
 		padding: 14px 0 6px 0;
 		text-align: center;

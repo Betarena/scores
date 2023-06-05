@@ -18,8 +18,7 @@ COMPONENT JS (w/ TS)
 	import ContentMain from './Content-Main.svelte';
 
 	import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
-
+	
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
@@ -112,16 +111,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <SeoBox>
   <!-- 
-  [ℹ] widget-title 
+  widget-title 
   -->
   <h2>
     {WIDGET_T_DATA?.news_and_views}
   </h2>
   <!-- 
-  [ℹ] widget-contents list
+  widget-contents list
   -->
-  {#each WIDGET_S_DATA as item}
-    <a href={item.link}>{item.link}</a>
+  {#each WIDGET_S_DATA || [] as item}
+    <a href={item.link}>
+      {item.link}
+    </a>
     <h3>{item.title}</h3>
     <p>{item.excerpt}</p>
   {/each}

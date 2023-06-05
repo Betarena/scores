@@ -33,8 +33,8 @@
 	export let FIXTURE_LINEUPS: B_LIN_D;
 	export let FIXTURE_LINEUPS_TRANSLATION: B_LIN_T;
 
-  console.log('⭐️ FIXTURE_LINEUPS', FIXTURE_LINEUPS)
-  console.log('⭐️ FIXTURE_LINEUPS_TRANSLATION', FIXTURE_LINEUPS_TRANSLATION)
+  // console.log('⭐️ FIXTURE_LINEUPS', FIXTURE_LINEUPS)
+  // console.log('⭐️ FIXTURE_LINEUPS_TRANSLATION', FIXTURE_LINEUPS_TRANSLATION)
 
   // NOTE: [Sportmonks]
 	// NOTE: Formation Number | Outcome
@@ -58,12 +58,10 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-	let loaded: boolean = false;
-	let no_widget_data: any = false;
+	let noWidgetData: any = false;
 	let selected_view: 'home' | 'away' = 'home';
 	let homeTeamFormMap = new Map< string, LIN_Player[] >();
 	let awayTeamFormMap = new Map< string, LIN_Player[]	>();
-	let show_placeholder: boolean = false;
   let playerMap = new Map <number, B_H_SFPV2>();
 
   // #endregion ➤ [VARIABLES]
@@ -92,7 +90,7 @@
 
     const liveFixtureData = $sessionStore?.livescore_now_fixture_target;
 
-    // [ℹ] update fixture data;
+    // Update data with that of "LIVE";
     FIXTURE_LINEUPS.status = liveFixtureData?.time?.status;
     FIXTURE_LINEUPS.home.formation = liveFixtureData?.formations?.localteam_formation;
     FIXTURE_LINEUPS.away.formation = liveFixtureData?.formations?.visitorteam_formation;
@@ -102,21 +100,30 @@
     const FIREBASE_LINEUPS_DATA = liveFixtureData?.lineup?.data;
     const FIREBASE_BENCH_DATA = liveFixtureData?.bench?.data;
 
+    // EXIT;
+    const if_M_0 = 
+      FIREBASE_LINEUPS_DATA == undefined
+      || FIREBASE_BENCH_DATA == undefined
+    ;
+    if (if_M_0) return;
+
     // reset, to prevent first-time data generation re-trigger;
     playerMap = new Map();
 
-    // NOTE: check if the "cache/hasura" data is "invalid"
-    // NOTE: requiring an "auto-lineup" live-data generation
-    // NOTE: on the spot, by the widget, using "livescores" data;
-    const if_M_0 =
+    // NOTE: check if the "current" data is "invalid"
+    // NOTE: require an "auto-lineup" live-data generation update
+    // NOTE: on the spot, from "livescores-now" real-time DB;
+    const if_M_1 =
       FIXTURE_LINEUPS?.home?.lineup?.length == 0 
       && FIXTURE_LINEUPS?.away?.lineup?.length == 0 
       && FIXTURE_LINEUPS?.home?.bench?.length == 0 
       && FIXTURE_LINEUPS?.away?.bench?.length == 0 
       && FIREBASE_LINEUPS_DATA != undefined 
+      && FIREBASE_LINEUPS_DATA?.length > 0 
       && FIREBASE_BENCH_DATA != undefined
+      && FIREBASE_BENCH_DATA?.length > 0
     ;
-    if (if_M_0) 
+    if (if_M_1) 
     {
 
       console.log('⭐️ injectLiveData() if_M_0')
@@ -153,7 +160,7 @@
     ] = await LIN_F_dataInject
     (
       home_team_id,
-      FIXTURE_LINEUPS.events,
+      FIXTURE_LINEUPS?.events,
       { 
         lineupList: FIREBASE_LINEUPS_DATA,
         benchList: FIREBASE_BENCH_DATA,
@@ -171,7 +178,7 @@
     ] = await LIN_F_dataInject
     (
       away_team_id,
-      FIXTURE_LINEUPS.events,
+      FIXTURE_LINEUPS?.events,
       { 
         lineupList: FIREBASE_LINEUPS_DATA,
         benchList: FIREBASE_BENCH_DATA,
@@ -495,7 +502,7 @@
     (
       '⭐️ if_R_1'
     );
-		no_widget_data = false;
+		noWidgetData = false;
     generateTeamFormMap()
 	}
   else if (if_R_2 && FIXTURE_LINEUPS) 
@@ -505,7 +512,7 @@
     (
       '⭐️ if_R_2'
     );
-		no_widget_data = false;
+		noWidgetData = false;
 		generateTeamFormMap_2()
 	}
 	else 
@@ -514,8 +521,7 @@
     (
       '⭐️ NO WIDGET DATA [TRUE]'
     );
-		no_widget_data = true;
-		loaded = true;
+		noWidgetData = true;
 	}
 
   // [🐞]
@@ -554,16 +560,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div
-	class:display-none={no_widget_data &&	!show_placeholder}
+	class:display-none={noWidgetData}
 >
 
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if
-    no_widget_data 
-    && loaded 
-    && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FIXTURE_LINEUPS_TRANSLATION?.title}
       NO_DATA_TITLE={FIXTURE_LINEUPS_TRANSLATION?.no_info}
@@ -574,14 +577,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FIXTURE_LINEUPS_TRANSLATION?.title}
     />
 
     <div
-      id='lineup-widget-container'
+      id="lineup-widget-container"
       class="widget-component"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >

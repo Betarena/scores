@@ -14,9 +14,9 @@
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 	
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
+	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import StatisticsRow from './Statistics-Row.svelte';
 
-  import WidgetTitle from '$lib/components/Widget-Title.svelte';
   import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -123,13 +123,12 @@
 		}
 	];
 
-	let loaded: boolean = false;
-	let refresh: boolean = false;
-	let no_widget_data: any = false;
-	let show_placeholder: boolean = false;
+	let noWidgetData: any = false;
   let null_groups: string[] = [];
 
   //#endregion ➤ [VARIABLES]
+
+  //#region ➤ [METHODS]
 
   /**
    * @summary
@@ -219,54 +218,57 @@
     injectLiveData()
   }
 
-  // TODO:
-  $: if (
-		FIXTURE_STATISTICS &&
-		browser &&
-		['NS', 'TBA', 'POSTP'].includes(
-			FIXTURE_STATISTICS?.status
-		) &&
-		(FIXTURE_STATISTICS?.stats == undefined ||
-			FIXTURE_STATISTICS?.stats.length == 0)
-	) {
-		no_widget_data = true;
-		loaded = true;
-	} else {
-		no_widget_data = false;
-	}
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description 
+   * listens to target "noWidgetData" change;
+  */
+  $: if_R_0 =
+    browser 
+    && FIXTURE_STATISTICS
+    && ['NS', 'TBA', 'POSTP'].includes(FIXTURE_STATISTICS?.status)
+    && (FIXTURE_STATISTICS?.stats == undefined ||	FIXTURE_STATISTICS?.stats?.length == 0)
+  ;
+  $: if (if_R_0)
+  {
+		noWidgetData = true;
+  }
 
-  // TODO:
-  $: if (FIXTURE_STATISTICS && browser) 
+  /**
+   * @summary
+   * [MAIN] [REACTIVE]
+   * @description 
+   * listens to target "title" data change;
+  */
+  $: if_R_1 =
+    browser 
+    && FIXTURE_STATISTICS
+  ;
+  $: if (if_R_1)
   {
 		null_groups = [];
 
-		// [ℹ] check for "stats.shots" EMPTY
-		if (
-			FIXTURE_STATISTICS?.stats[0]?.shots ==
-				null &&
-			FIXTURE_STATISTICS?.stats[1]?.shots == null
-		) {
-			null_groups.push('shots_title');
-		}
+		// check for "stats.shots" EMPTY
+    const if_M_0 = 
+      FIXTURE_STATISTICS?.stats?.[0]?.shots == null 
+			&& FIXTURE_STATISTICS?.stats?.[1]?.shots == null
+    ;
+		if (if_M_0) null_groups.push('shots_title');
 
-		// [ℹ] check for "stats.passes" EMPTY
-		if (
-			FIXTURE_STATISTICS?.stats[0]?.passes ==
-				null &&
-			FIXTURE_STATISTICS?.stats[1]?.passes == null
-		) {
-			null_groups.push('passes_title');
-		}
+		// check for "stats.passes" EMPTY
+    const if_M_1 = 
+      FIXTURE_STATISTICS?.stats?.[0]?.passes == null 
+			&& FIXTURE_STATISTICS?.stats?.[1]?.passes == null
+    ;
+		if (if_M_1) null_groups.push('passes_title');
 
-		// [ℹ] check for "stats.passes" EMPTY
-		if (
-			FIXTURE_STATISTICS?.stats[0]?.attacks ==
-				null &&
-			FIXTURE_STATISTICS?.stats[1]?.attacks ==
-				null
-		) {
-			null_groups.push('attacks_title');
-		}
+		// check for "stats.attacks" EMPTY
+    const if_M_2 = 
+      FIXTURE_STATISTICS?.stats?.[0]?.attacks == null 
+			&& FIXTURE_STATISTICS?.stats?.[1]?.attacks == null
+    ;
+		if (if_M_2) null_groups.push('attacks_title');
 	}
 
   //#endregion ➤ [REACTIVIY] [METHODS]
@@ -300,13 +302,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div
 	id="widget-outer"
-	class:display-none={no_widget_data && !show_placeholder}
+	class:display-none={noWidgetData}
 >
 
 	<!-- 
   NO WIDGET DATA PLACEHOLDER
   -->
-	{#if no_widget_data && loaded && show_placeholder}
+	{#if noWidgetData}
     <WidgetNoData 
       WIDGET_TITLE={FIXTURE_STATISTICS_TRANSLATION?.title}
       NO_DATA_TITLE={FIXTURE_STATISTICS_TRANSLATION?.no_info}
@@ -317,27 +319,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	<!-- 
   MAIN WIDGET COMPONENT
   -->
-	{#if !no_widget_data && !refresh && browser && $userBetarenaSettings.country_bookmaker}
+	{#if !noWidgetData}
 
     <WidgetTitle
       WIDGET_TITLE={FIXTURE_STATISTICS_TRANSLATION?.title}
     />
 
     <div
-      id="statistics-widget-container"
+      id="fp-stat-main"
       class="widget-component"
       class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
     >
 
       <!-- 
-      [ℹ] team info 
+      TEAMS INFO
       -->
       <div
-        id="team-info-box"
+        id="fp-stat-team-box"
         class="row-space-out"
       >
         <!-- 
-        [ℹ] home team 
+        HOME TEAM
         -->
         <img
           src={FIXTURE_STATISTICS?.home?.team_logo}
@@ -347,7 +349,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         />
 
         <!-- 
-        [ℹ] away team 
+        AWAY TEAM
         -->
         <img
           src={FIXTURE_STATISTICS?.away?.team_logo}
@@ -358,12 +360,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
 
       <!-- 
-      [ℹ] statistics table 
+      STATISTICS TABLE
       -->
-      <div 
-        id="statistics-box"
+      <div
+        id="fp-stat-box-info"
       >
-        {#if FIXTURE_STATISTICS?.stats && FIXTURE_STATISTICS?.stats.length == 2}
+        {#if FIXTURE_STATISTICS?.stats && FIXTURE_STATISTICS?.stats?.length == 2}
+
           <!-- 
           [ℹ] shots-section 
           [ℹ] passes-section
@@ -371,8 +374,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           [ℹ] other-stats-section 
           -->
           {#each stats_menu as item}
+
             <!-- 
-            [ℹ] group-statistics-name 
+            GROUP STATISTIC NAME
             -->
             {#if !null_groups.includes(item.key)}
               <p
@@ -387,10 +391,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {/if}
 
             <!-- 
-            [ℹ] group-statistics-data 
+            GROUP STATISTIC DATA
             -->
             {#each item.loc_arr as sub_nav, i}
-              {#if item.key == 'shots_title' && FIXTURE_STATISTICS?.stats[0]?.shots && FIXTURE_STATISTICS?.stats[1]?.shots}
+              {#if item.key == 'shots_title' && FIXTURE_STATISTICS?.stats?.[0]?.shots && FIXTURE_STATISTICS?.stats?.[1]?.shots}
                 <StatisticsRow
                   TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.shots?.[sub_nav]}
                   TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.shots?.[sub_nav]}
@@ -399,7 +403,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
 
-              {#if item.key == 'passes_title' && FIXTURE_STATISTICS?.stats[0]?.passes && FIXTURE_STATISTICS?.stats[1]?.passes}
+              {#if item.key == 'passes_title' && FIXTURE_STATISTICS?.stats?.[0]?.passes && FIXTURE_STATISTICS?.stats?.[1]?.passes}
                 <StatisticsRow
                   TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.passes?.[sub_nav]}
                   TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.passes?.[sub_nav]}
@@ -408,7 +412,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
 
-              {#if item.key == 'attacks_title' && FIXTURE_STATISTICS?.stats[0]?.attacks && FIXTURE_STATISTICS?.stats[1]?.attacks}
+              {#if item.key == 'attacks_title' && FIXTURE_STATISTICS?.stats?.[0]?.attacks && FIXTURE_STATISTICS?.stats?.[1]?.attacks}
                 <StatisticsRow
                   TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.attacks?.[sub_nav]}
                   TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.attacks?.[sub_nav]}
@@ -417,7 +421,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/if}
 
-              {#if item.key == 'other' && FIXTURE_STATISTICS?.stats[0][sub_nav] && FIXTURE_STATISTICS?.stats[1][sub_nav]}
+              {#if item.key == 'other' && FIXTURE_STATISTICS?.stats?.[0]?.[sub_nav] && FIXTURE_STATISTICS?.stats?.[1]?.[sub_nav]}
                 <StatisticsRow
                   TEAM_HOME_STAT={FIXTURE_STATISTICS?.stats?.[0]?.[sub_nav]}
                   TEAM_AWAY_STAT={FIXTURE_STATISTICS?.stats?.[1]?.[sub_nav]}
@@ -443,10 +447,21 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
+	div#fp-stat-main
+  {
+		background: #ffffff;
+		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+		border-radius: 12px;
+		overflow: hidden;
+		width: 100%;
+		position: relative;
+		padding: 0 0 20px 0;
+	}
+
 	/* 
   team info box 
   */
-	div#statistics-widget-container	div#team-info-box 
+	div#fp-stat-main div#fp-stat-team-box 
   {
 		padding: 20px 20px 0 20px;
 		position: absolute;
@@ -455,13 +470,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	/* 
   statistics table box 
   */
-	div#statistics-widget-container	div#statistics-box p.text-group-stats 
+	div#fp-stat-main div#fp-stat-box-info p.text-group-stats 
   {
 		text-align: center;
 		font-size: 16px;
 		padding: 20px 0 0 0;
 	}
-	:global(div#statistics-widget-container	div#statistics-box div.stats-row:last-child) 
+	:global(div#fp-stat-main div#fp-stat-box-info div.stats-row:last-child) 
   {
 		border-bottom: 0 !important;
 	}
@@ -476,7 +491,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   and (min-width: 726px) 
   and (max-width: 1000px) 
   {
-		#statistics-widget-container 
+		#fp-stat-main
     {
 			min-width: 100%;
 		}
@@ -491,7 +506,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	@media only screen 
   and (min-width: 1000px) 
   {
-		#statistics-widget-container 
+		#fp-stat-main
     {
 			min-width: 100%;
 		}
@@ -512,7 +527,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	/* 
   events table box 
   */
-	:global(div#statistics-widget-container.dark-background-1 div#statistics-box div.stats-row) 
+	:global(div#fp-stat-main.dark-background-1 div#fp-stat-box-info div.stats-row) 
   {
 		border-bottom: 1px solid #616161;
 	}
