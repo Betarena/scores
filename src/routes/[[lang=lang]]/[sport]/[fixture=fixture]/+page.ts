@@ -301,7 +301,7 @@ export async function load
   // [🐞]
   dlog
   (
-    `⏳ ${PAGE_LOG} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    `${PAGE_LOG} ${((t1 - t0) / 1000).toFixed(2)} sec`,
     true
   );
 

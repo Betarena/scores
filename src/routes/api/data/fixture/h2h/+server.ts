@@ -61,7 +61,7 @@ export async function GET
         )
         loadType = 'HASURA'
       }
-      console.log(`📌 loaded [FLIN] with: ${loadType}`)
+      console.log(`📌 loaded [FH2H] with: ${loadType}`)
       return json(data);
     }
 
