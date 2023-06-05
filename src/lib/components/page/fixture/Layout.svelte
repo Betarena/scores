@@ -11,11 +11,13 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { get } from '$lib/api/utils.js';
 	import { createFixtureOddsPath, onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import { FIXTURE_FULL_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
 
 	import AboutWidget from '$lib/components/page/fixture/about/About-Widget.svelte';
 	import ContentWidget from '$lib/components/page/fixture/content/Content-Widget.svelte';
@@ -23,15 +25,16 @@
 	import IncidentsWidget from '$lib/components/page/fixture/incidents/Incidents-Widget.svelte';
 	import ProbabilityWidget from '$lib/components/page/fixture/probabilities/Probability-Widget.svelte';
 	import ScoreboardWidget from '$lib/components/page/fixture/scoreboard/Scoreboard-Widget.svelte';
-	import StandingsWidget from '$lib/components/page/fixture/standings/Standings-Widget.svelte';
 	import StatisticsWidget from '$lib/components/page/fixture/statistics/Statistics-Widget.svelte';
 	import VoteWidget from '$lib/components/page/fixture/votes/Votes-Widget.svelte';
-	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
 	import SvelteSeo from 'svelte-seo';
+	import FeatBetSiteWidget from '../home/feat-bet-site/FeatBetSite-Widget.svelte';
 	import Breadcrumb from './Breadcrumb.svelte';
 	import LineupsWidget from './lineups/Lineups-Widget.svelte';
-
+	import StandingsWidget from './standings/Standings-Widget.svelte';
+  
   import type { B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
+  import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -43,7 +46,7 @@
   const fixtureId = FIXTURE_INFO?.data?.id;
   const fixtureTime =	FIXTURE_INFO?.data?.fixture_time + 'Z';
 
-  const livescorePath = `livescores_now/${$page.data?.FIXTURE_INFO?.id}`
+  const livescorePath = `livescores_now/${FIXTURE_INFO?.data?.id}`
   const livesOddsPath = createFixtureOddsPath
   (
     fixtureId,
@@ -102,7 +105,7 @@
   )
   {
     const if_M_0 = 
-      ['FT', 'FT_PEN'].includes($page.data?.FIXTURE_INFO?.status)
+      FIXTURE_FULL_TIME_OPT.includes(FIXTURE_INFO?.data?.status)
     ;
     if (if_M_0) return;
     await onceTargetLivescoreNowFixtureGet
@@ -128,9 +131,8 @@
   (
   ): Promise < void > 
   {
-
     const if_M_0 = 
-      ['FT', 'FT_PEN'].includes($page.data?.FIXTURE_INFO?.status)
+      FIXTURE_FULL_TIME_OPT.includes(FIXTURE_INFO?.data?.status)
     ;
     if (if_M_0) return;
     let connectionRef = targetLivescoreNowFixtureOddsListen
@@ -226,6 +228,36 @@
     return newURL;
   }
 
+  /**
+   * @description obtains the target sportbook data 
+   * information based on users geo-location;
+   * data gathered at page-level and set to svelte-stores
+   * to be used by (this) page components;
+   * NOTE: (*) best approach
+   * TODO: can be moved to a layout-level [?]
+   * TODO: can be moved to a header-level [?]
+   * TODO: can be moved to a +server-level [⚠️]
+   * @returns {Promise<void>} void
+   */
+  async function sportbookIdentify
+  (
+  ): Promise < void > 
+  {
+    if (!$userBetarenaSettings.country_bookmaker) return;
+    const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
+    $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as B_SPT_D;
+    $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
+    $sessionStore.sportbook_list = $sessionStore.sportbook_list
+    .sort
+    (
+			(
+        a, 
+        b
+      ) =>
+      parseInt(a.position) - parseInt(b.position)
+		);
+  }
+
   //#endregion ➤ [METHODS]
 
   //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
@@ -234,6 +266,7 @@
 
   //#region ➤ [REACTIVIY] [METHODS]
 
+  // TODO: clean up
   // [ℹ] validate LANG change
 	$: if (current_lang != refresh_lang && browser) 
   {
@@ -248,11 +281,24 @@
 		goto(newURL, { replaceState: true });
 	}
 
+  // TODO: clean up
   $: if (lang_intent && browser) 
   {
     let newURL = translatedURL(lang_intent)
     dlog(`newURL (lang_intent): ${newURL}`, true)
     navigateToTranslation(newURL)
+  }
+
+  /**
+   * @summary
+   * [MAIN] 
+   * [REACTIVE]
+   * @description 
+   * ➨ listens to change in "country_bookmaker";
+  */
+  $: if ($userBetarenaSettings?.country_bookmaker) 
+  {
+    sportbookIdentify()
   }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
@@ -351,9 +397,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <section
   id="fixture-page">
 
-	<!-- 
-  [ℹ] breadcrumbs URL 
-  -->
 	<Breadcrumb 
     {FIXTURE_INFO}
     {country_link}
@@ -381,16 +424,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 			>
 				<VoteWidget />
 				<IncidentsWidget />
-				<FeaturedBettingSitesWidget
-					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-				/>
+				<FeatBetSiteWidget />
 				<LineupsWidget />
 				<Head_2HeadWidget />
-				<StandingsWidget
-					{STANDINGS_T}
-					{STANDINGS_DATA}
-					{FIXTURE_INFO}
-				/>
+				<StandingsWidget />
 				<StatisticsWidget	/>
 				<ProbabilityWidget />
 				<AboutWidget />
@@ -422,18 +459,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				<VoteWidget />
 				<LineupsWidget />
 				<Head_2HeadWidget	/>
-				<StandingsWidget
-					{STANDINGS_T}
-					{STANDINGS_DATA}
-					{FIXTURE_INFO}
-				/>
+				<StandingsWidget />
 				<AboutWidget />
 			</div>
 			<div 
         class="grid-display-column">
-				<FeaturedBettingSitesWidget
-					{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-				/>
+				<FeatBetSiteWidget />
 				<IncidentsWidget />
 				<StatisticsWidget	/>
 				<ProbabilityWidget />
