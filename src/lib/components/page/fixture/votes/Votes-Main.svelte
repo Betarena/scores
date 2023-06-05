@@ -12,11 +12,11 @@
   import { get } from '$lib/api/utils.js';
   import { sessionStore } from '$lib/store/session.js';
   import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { getImageBgColor } from '$lib/utils/color_thief.js';
   import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog } from '$lib/utils/debug';
   import { googleActionsStr } from '$lib/utils/google.js';
   import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
   import { FIXTURE_NO_VOTES_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
-	import { getImageBgColor } from '$lib/utils/color_thief.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -169,20 +169,20 @@
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
           m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
-          && firebaseSportbook.markets['1X2FT'] !=	null 
-          && firebaseSportbook.markets != null 
-          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          && firebaseSportbook?.markets?.['1X2FT'] !=	null 
+          && firebaseSportbook?.markets != null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[0]?.value != null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[1]?.value != null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[2]?.value != null 
           && count != 1
         ;
         if (if_M_0)
         {
 					FIXTURE_VOTES_DATA._1x2 = 
           {
-						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2);,
-						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2);,
-						draw: firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value?.toFixed(2);
+						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2),
+						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2),
+						draw: firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value?.toFixed(2)
 					};
 					SPORTBOOK_INFO = m_sportBook;
 					count = 1;

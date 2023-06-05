@@ -56,7 +56,7 @@
   // TODO:
   async function injectLiveOddsData
   (
-  )
+  ): Promise < void >
   {
 		let count = 0;
 
@@ -67,12 +67,12 @@
       {
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
-          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
-          && firebaseSportbook.markets != null 
-          && firebaseSportbook.markets['1X2FT'] !=	null 
-          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          m_sportBookTitle?.toLowerCase() ==	firebase_sportbook_title?.toLowerCase() 
+          && firebaseSportbook?.markets != null 
+          && firebaseSportbook?.markets?.['1X2FT'] !=	null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[0]?.value != null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[1]?.value != null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[2]?.value != null 
           && count != 1
         ;
         if (if_M_0)
@@ -89,6 +89,17 @@
 					count = 1;
 				}
 			}
+		}
+
+    // no sportbook found;
+		if (count == 0) 
+    {
+      SPORTBOOK_INFO = $sessionStore?.sportbook_main;
+			getImageBgColor
+      (
+        SPORTBOOK_INFO?.image, 
+        imageVar
+      );
 		}
   }
 
