@@ -127,6 +127,7 @@
       fixture_vote: undefined,
       fixture_vote_val: undefined
     };
+    
     showBetSite = false;
     isVoteCasted = false;
 	}
@@ -175,11 +176,11 @@
    * @summary
    * [MAIN]
    * @description
-   * ➨ document (visibility-change) event listener;
+   * ➨ document (resize-change) event listener;
    * @returns
    * void
    */
-   function addEventListeners
+  function addEventListeners
   (
   ): void
   {
@@ -320,7 +321,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	{#if !noWidgetData}
 
     <WidgetTitle
-      WIDGET_TITLE={B_FEATB_T.widget_title}
+      WIDGET_TITLE={B_FEATB_T?.widget_title}
       OVERRIDE_COLOR={tabletExclusive ? true : false}
     />
 
@@ -531,9 +532,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   cast-vote-btn 
                   m-b-12
                 "
-                class:active={fixtureVoteObj.fixture_vote == '1'}
+                class:active={fixtureVoteObj?.fixture_vote == '1'}
                 disabled={isVoteCasted}
-                on:click={() => castVote('1', parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[0].value.toString()).toFixed(2))}
+                on:click={() => castVote('1', parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[0]?.value?.toString()).toFixed(2))}
               >
                 <p
                   class="
@@ -557,9 +558,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     />
                   {/if}
                   <span
-                    class:active_p={fixtureVoteObj.fixture_vote == '1'}
+                    class:active_p={fixtureVoteObj?.fixture_vote == '1'}
                   >
-                    {parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[0].value.toString()).toFixed(2)}
+                    {parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[0]?.value?.toString()).toFixed(2)}
                   </span>
                 </p>
               </button>
@@ -624,7 +625,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
                 class:active={fixtureVoteObj.fixture_vote == 'X'}
                 disabled={isVoteCasted}
-                on:click={() => castVote('X', parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[0].value.toString()).toFixed(2))}
+                on:click={() => castVote('X', parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[0]?.value?.toString()).toFixed(2))}
               >
                 <p
                   class="
@@ -649,9 +650,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {/if}
 
                   <span
-                    class:active_p={fixtureVoteObj.fixture_vote == 'X'}
+                    class:active_p={fixtureVoteObj?.fixture_vote == 'X'}
                   >
-                    {parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[1].value.toString()).toFixed(2)}
+                    {parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[1]?.value?.toString()).toFixed(2)}
                   </span>
                 </p>
               </button>
@@ -701,19 +702,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             >
 
               <button
-                class="row-space-out cast-vote-btn m-b-12"
-                class:active={fixtureVoteObj.fixture_vote ==
-                  '2'}
+                class="
+                  row-space-out
+                  cast-vote-btn 
+                  m-b-12
+                "
+                class:active={fixtureVoteObj?.fixture_vote == '2'}
                 disabled={isVoteCasted}
-                on:click={() =>
-                  castVote(
-                    '2',
-                    parseFloat(
-                      B_FEATM_D.live_odds.fixture_odds.markets[
-                        '1X2FT'
-                      ].data[2].value.toString()
-                    ).toFixed(2)
-                  )}
+                on:click={() => castVote('2', parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[2]?.value?.toString()).toFixed(2))}
               >
                 <p
                   class="
@@ -737,9 +733,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {/if}
 
                   <span
-                    class:active_p={fixtureVoteObj.fixture_vote == '2'}
+                    class:active_p={fixtureVoteObj?.fixture_vote == '2'}
                   >
-                    {parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[2].value.toString()).toFixed(2)}
+                    {parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[2]?.value?.toString()).toFixed(2)}
                   </span>
 
                 </p>
@@ -789,7 +785,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           {#if showBetSite}
 
-            <div 
+            <div
               id="site-bet-box" 
               in:fade>
 
@@ -802,6 +798,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 style="position: absolute; top: 12px; right: 20px;"
                 on:click={() => (showBetSite = false)}
               />
+
               <a
                 href={B_FEATM_D?.live_odds?.fixture_odds_info?.register_link}
               >
@@ -815,7 +812,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               </a>
 
-              <div 
+              <div
                 id="inner-site-container">
 
                 <!-- 
@@ -827,43 +824,55 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     row-space-out
                   "
                 >
-                  <!-- [ℹ] Win Type 
+                  <!-- 
+                  WIN TYPE 
                   -->
-                  <div class="text-center">
-                    {#if fixtureVoteObj.fixture_vote == '1'}
-                      <p
-                        class="w-400 medium m-b-8 color-grey"
-                      >
+                  <div
+                    class="text-center"
+                  >
+
+                    <p
+                      class="
+                        w-400 
+                        medium 
+                        m-b-8 
+                        color-grey
+                      "
+                    >
+                      {#if fixtureVoteObj?.fixture_vote == '1'}
                         Home win
-                      </p>
-                    {:else if fixtureVoteObj.fixture_vote == 'X'}
-                      <p
-                        class="w-400 medium m-b-8 color-grey"
-                      >
+                      {:else if fixtureVoteObj?.fixture_vote == 'X'}
                         Draw
-                      </p>
-                    {:else}
-                      <p
-                        class="w-400 medium m-b-8 color-grey"
-                      >
+                      {:else}
                         Away win
-                      </p>
-                    {/if}
+                      {/if}
+                    </p>
+                    
                     <div
-                      class="input-value row-space-out medium text-center"
+                      class="
+                        input-value 
+                        row-space-out 
+                        medium 
+                        text-center
+                      "
                     >
                       {#if tabletExclusive}
-                        {#if fixtureVoteObj.fixture_vote == '1'}
+
+                        {#if fixtureVoteObj?.fixture_vote == '1'}
                           <img
                             loading="lazy"
-                            src={B_FEATM_D.home_team_logo}
+                            src={B_FEATM_D?.home_team_logo}
                             alt="default alt text"
                             width="28px"
                             height="28px"
                           />
-                        {:else if fixtureVoteObj.fixture_vote == 'X'}
+                        {:else if fixtureVoteObj?.fixture_vote == 'X'}
                           <p
-                            class="w-500 medium row-space-out"
+                            class="
+                              w-500 
+                              medium 
+                              row-space-out
+                            "
                           >
                             <span
                               class="color-grey"
@@ -874,108 +883,154 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         {:else}
                           <img
                             loading="lazy"
-                            src={B_FEATM_D.away_team_logo}
+                            src={B_FEATM_D?.away_team_logo}
                             alt="default alt text"
-                            width="28px"
-                            height="28px"
+                            width="28"
+                            height="28"
                           />
                         {/if}
+
                       {/if}
+
                       <input
                         id="win-type"
-                        class="w-500 medium text-center desktop-view-winnings"
+                        class="
+                          w-500 
+                          medium 
+                          text-center 
+                          desktop-view-winnings
+                        "
                         type="number"
                         bind:value={fixtureVoteObj.fixture_vote_val}
                         disabled
                       />
+
                     </div>
+
                   </div>
 
-                  <!-- [ℹ] MULTIPLY SIGN 
+                  <!--
+                  MULTIPLY SIGN
                   -->
                   <img
                     loading="lazy"
                     src="/assets/svg/icon/icon-close.svg"
                     alt="multiply-icon"
-                    width="16px"
-                    height="16px"
+                    width="16"
+                    height="16"
                     style="margin-top: 25px;"
                   />
 
-                  <!-- [ℹ] Stake 
+                  <!--
+                  STAKE INFO
                   -->
-                  <div class="text-center">
+                  <div
+                    class="text-center">
                     <p
-                      class="w-400 medium m-b-8 color-grey"
+                      class="
+                        w-400 
+                        medium
+                        m-b-8 
+                        color-grey
+                      "
                     >
-                      {B_FEATB_T.stake}
+                      {B_FEATB_T?.stake}
                     </p>
                     <input
-                      class="w-500 input-value medium text-center"
+                      class="
+                        w-500 
+                        input-value 
+                        medium 
+                        text-center
+                      "
                       type="text"
                       bind:value={user_Stake_amount}
                     />
                   </div>
 
-                  <!-- [ℹ]  EQUALS SIGN 
+                  <!-- 
+                  EQUALS SIGN 
                   -->
                   <img
                     loading="lazy"
                     src="/assets/svg/icon/icon-equally.svg"
                     alt="icon-equlaity"
-                    width="16px"
-                    height="16px"
+                    width="16"
+                    height="16"
                     style="margin-top: 25px;"
                   />
 
-                  <!-- [ℹ] Winnings 
+                  <!--
+                  WINNINGS
                   -->
-                  <div class="text-center">
+                  <div 
+                    class="text-center"
+                  >
+
                     <p
-                      class="w-400 medium m-b-8 color-grey"
+                      class="
+                        w-400 
+                        medium 
+                        m-b-8 
+                        color-grey
+                      "
                     >
-                      {B_FEATB_T.winnings}
+                      {B_FEATB_T?.winnings}
                     </p>
+
                     <input
-                      class="w-500 input-value medium text-center"
+                      class="
+                        w-500 
+                        input-value 
+                        medium 
+                        text-center
+                      "
                       type="number"
-                      value={(
-                        parseFloat(
-                          fixtureVoteObj.fixture_vote_val
-                        ) * user_Stake_amount
-                      ).toFixed(2)}
+                      value={(parseFloat(fixtureVoteObj?.fixture_vote_val) * user_Stake_amount).toFixed(2)}
                       disabled
                     />
+
                   </div>
+
                 </div>
 
-                <!-- [ℹ] PLACE BET BUTTON 
+                <!--
+                PLACE BET BUTTON
                 -->
                 <a
-                  href={B_FEATM_D
-                    .live_odds.fixture_odds_info
-                    .register_link}
+                  href={B_FEATM_D?.live_odds?.fixture_odds_info?.register_link}
                 >
                   <button
-                    class="place-bet-btn btn-primary m-b-12"
+                    class="
+                      place-bet-btn 
+                      btn-primary 
+                      m-b-12
+                    "
                   >
-                    <p class="small">
-                      {B_FEATB_T.place_bet}
+                    <p 
+                      class="small">
+                      {B_FEATB_T?.place_bet}
                     </p>
                   </button>
                 </a>
 
-                <!-- [ℹ] BETTING SITE INFO 
+                <!--
+                BETTING SITE INFO
                 -->
                 <p
-                  class="small text-center color-grey"
+                  class="
+                    small 
+                    text-center 
+                    color-grey
+                  "
                 >
-                  {B_FEATM_D
-                    .live_odds.fixture_odds_info
-                    .information}
+                  {B_FEATM_D?.live_odds?.fixture_odds_info?.information}
                 </p>
+
               </div>
+
             </div>
+
           {/if}
 
         </div>
