@@ -1621,14 +1621,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  button#watch-match-btn {
+  button#watch-match-btn
+  {
     padding: 10px 16px;
     font-size: 14px;
     box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
     border-radius: 8px;
   }
 
-	#live-score-container {
+	#live-score-container
+  {
 		display: grid;
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -1640,17 +1642,20 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		overflow: hidden;
 	}
 
-	#fixture-league-title {
+	#fixture-league-title
+  {
 		padding: 10px 20px;
 		box-shadow: inset 0px -1px 0px #ebebeb;
 	}
 
-	#fixture-visual-box {
+	#fixture-visual-box
+  {
 		padding: 25px 20px 20px 20px;
 		box-shadow: inset 0px -1px 0px #ebebeb;
 	}
 
-	#fixture-data {
+	#fixture-data
+  {
 		display: grid;
 		grid-auto-flow: column;
 		justify-items: center;
@@ -1662,13 +1667,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/* Chrome, Safari, Edge, Opera */
 	input::-webkit-outer-spin-button,
-	input::-webkit-inner-spin-button {
+	input::-webkit-inner-spin-button
+  {
 		-webkit-appearance: none;
 		margin: 0;
 	}
 
 	/* Firefox */
-	input[type='number'] {
+	input[type='number']
+  {
 		-moz-appearance: textfield;
 		border: none;
 	}
@@ -1677,7 +1684,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     vote-button-container 
   ==================== */
 
-	#btn-vote-container {
+	#btn-vote-container
+  {
 		display: grid;
 		grid-auto-flow: column;
 		align-items: center;
@@ -1685,9 +1693,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		justify-content: space-between;
 		width: -webkit-fill-available;
 	}
-	.odds-vote-box {
+	.odds-vote-box
+  {
 	}
-	.cast-vote-btn {
+	.cast-vote-btn
+  {
 		background: #f2f2f2;
 		border: 1px solid #cccccc !important;
 		box-sizing: border-box;
@@ -1698,43 +1708,51 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 96px;
 		height: 48px;
 	}
-	.cast-vote-btn.active {
+	.cast-vote-btn.active
+  {
 		background: #ffffff !important;
 		border: 1px solid #f5620f !important;
 		box-sizing: border-box;
 		border-radius: 8px;
 		opacity: 1 !important;
 	}
-	.cast-vote-btn:disabled {
+	.cast-vote-btn:disabled
+  {
 		opacity: 0.5;
 	}
-	.probablitiy-text {
+	.probablitiy-text
+  {
 		text-align: center;
 		color: #8c8c8c;
 		width: min-content;
 	}
 
-	.active_p {
+	.active_p
+  {
 		color: #f5620f !important;
 	}
 
-	.active_p_btn:hover {
+	.active_p_btn:hover
+  {
 		color: #f5620f !important;
 	}
 
-	#site-bet-box {
+	#site-bet-box
+  {
 		margin-top: 35px;
 		background: #f2f2f2;
 		border-radius: 8px;
 		position: relative;
 		overflow: hidden;
 	}
-	#inner-site-container {
+	#inner-site-container
+  {
 		padding: 20px 12px;
 		background: #f2f2f2;
 		border-radius: 8px;
 	}
-	#inner-site-container button.place-bet-btn {
+	#inner-site-container button.place-bet-btn
+  {
 		height: 46px;
 		width: 100%;
 		background-color: #f5620f;
@@ -1742,7 +1760,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
 	}
-	.input-value {
+	.input-value
+  {
 		-moz-appearance: textfield;
 		background: #ffffff;
 		border-radius: 8px;
@@ -1750,19 +1769,22 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 76px;
 		border: none;
 	}
-	#inner-site-container input {
+	#inner-site-container input
+  {
 		background: rgb(255, 255, 255);
 		color: black !important;
 		opacity: 1 !important;
 	}
-	input#win-type {
+	input#win-type
+  {
 		width: 100%;
 		border-radius: 5px;
 		border: 0;
 		outline: none;
 	}
 
-	.img-flag {
+	.img-flag
+  {
 		width: 24px;
 		height: 18px;
 		margin-right: 16px;
@@ -1773,7 +1795,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		vertical-align: middle !important;
 	}
 
-	#stakesSiteImg {
+	#stakesSiteImg
+  {
 		background-color: var(
 			--featured-match-bookmaker-bg-
 		);
@@ -1781,13 +1804,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 40px;
 	}
 
-	#live-stream-box {
+	#live-stream-box
+  {
 		padding: 20px 0;
 		box-shadow: inset 0px -1px 0px #ebebeb;
 		overflow: hidden;
 		width: inherit;
 	}
-	#livestream-grid {
+	#livestream-grid
+  {
 		display: grid;
 		grid-auto-flow: column;
 		gap: 8px 13px;
@@ -1799,15 +1824,18 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		);
 	}
 	/* Hide scrollbar for Chrome, Safari and Opera */
-	#livestream-grid::-webkit-scrollbar {
+	#livestream-grid::-webkit-scrollbar
+  {
 		display: none;
 	}
 	/* Hide scrollbar for IE, Edge and Firefox */
-	#livestream-grid {
+	#livestream-grid
+  {
 		-ms-overflow-style: none; /* IE and Edge */
 		scrollbar-width: none; /* Firefox */
 	}
-	.live-stream-btn {
+	.live-stream-btn
+  {
 		border: 1px solid #cccccc !important;
 		box-sizing: border-box;
 		border-radius: 4px;
@@ -1818,7 +1846,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 68px;
 		height: 40px;
 	}
-	.live-stream-btn img {
+	.live-stream-btn img
+  {
 		object-fit: contain;
 		width: 100%;
 	}
@@ -1827,74 +1856,92 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     best-players-container 
   ==================== */
 
-	#best-players-box-out {
+	#best-players-box-out 
+  {
+    /* NaN */
 	}
-	.best-players-box {
+	.best-players-box 
+  {
 		padding: 20px;
 		box-shadow: inset 0px -1px 0px #ebebeb;
 	}
 
 	table.table-best-player,
-	table.value_bets {
+	table.value_bets 
+  {
 		text-align: left;
 		border-collapse: collapse;
 		width: 100%;
 	}
 	table.table-best-player .row-head,
-	table.value_bets .row-head {
+	table.value_bets .row-head 
+  {
 		background: #f2f2f2;
 		border-radius: 2px;
 	}
 	table td,
-	table th {
+	table th 
+  {
 		padding: 7px 12px;
 		/* padding: 7px 0; */
 		vertical-align: middle;
 		border: none !important;
 	}
-	table.table-best-player tr td:first-child {
+	table.table-best-player tr td:first-child 
+  {
 		padding-left: 0;
 	}
 
-	table tr td:last-child {
+	table tr td:last-child 
+  {
 		padding-right: 0;
 	}
 
-	table tr td {
+	table tr td 
+  {
 		padding-top: 16px !important;
 		padding-bottom: 0px;
 	}
 
-	.rating-head {
+	.rating-head 
+  {
 		width: 59px;
 	}
-	.rating-box {
+	.rating-box 
+  {
 		width: fit-content;
 		border-radius: 30px;
 		padding: 1.5px 8px;
 		color: white;
 	}
-	.rating-box p {
+	.rating-box p 
+  {
 		color: white;
 	}
-	.golden {
+	.golden 
+  {
 		background: #ffb904;
 	}
-	.silver {
+	.silver 
+  {
 		background: #a1a1a1;
 	}
-	.bronze {
+	.bronze 
+  {
 		background: #dbb884;
 	}
 
-	.tooltip {
+	.tooltip 
+  {
 		border-bottom: none !important;
 	}
-	.tooltip .tooltiptext {
+	.tooltip .tooltiptext 
+  {
 		display: none;
 	}
 
-	.player-img {
+	.player-img 
+  {
 		border: 1px solid #cccccc;
 		border-radius: 50%;
 		margin-right: 8px;
@@ -1904,15 +1951,18 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     value-bets-container 
   ==================== */
 
-	#value-bets {
+	#value-bets 
+  {
 		padding: 20px;
 	}
-	#value-bets-container {
+	#value-bets-container 
+  {
 		background: #f2f2f2;
 		border-radius: 2px;
 		width: 100%;
 	}
-	#value-bets-inner-info {
+	#value-bets-inner-info 
+  {
 		padding: 12px;
 		display: grid;
 		grid-auto-rows: 1fr;
@@ -1920,24 +1970,29 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		align-items: center;
 		gap: 4px;
 	}
-	#value-bets-inner-info img {
+	#value-bets-inner-info img 
+  {
 		border-radius: 4px;
 		width: 56px;
 		object-fit: cover;
 	}
 
-	/* ====================
-    responsivness
-  ==================== */
+	/*
+  =============
+  RESPONSIVNESS 
+  =============
+  */
 
-	/* 
-  MOBILE RESPONSIVNESS */
-	@media only screen and (min-width: 700px) {
-		#inner-site-container button {
+	@media only screen 
+  and (min-width: 700px) 
+  {
+		#inner-site-container button 
+    {
 			height: 44px;
 		}
 
-		.boxed-rating-matches {
+		.boxed-rating-matches 
+    {
 			background: #ffffff;
 			border: 1px solid #e6e6e6;
 			box-sizing: border-box;
@@ -1948,7 +2003,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			width: 64px;
 		}
 		.boxed-rating-assits,
-		.boxed-rating-value-bets {
+		.boxed-rating-value-bets 
+    {
 			background: #f2f2f2;
 			border-radius: 4px;
 			text-align: center;
@@ -1956,7 +2012,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			max-height: 30px;
 			width: 64px;
 		}
-		.boxed-rating-goals {
+		.boxed-rating-goals 
+    {
 			background: #e6e6e6;
 			border-radius: 4px;
 			text-align: center;
@@ -1965,28 +2022,34 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			width: 64px;
 		}
 
-		table.table-best-player tr th:first-child p {
+		table.table-best-player tr th:first-child p 
+    {
 			left: 10%;
 			position: relative;
 		}
-		table.table-best-player tr th:last-child p {
+		table.table-best-player tr th:last-child p 
+    {
 			left: 10%;
 			position: relative;
 		}
 
-		table tr td:first-child {
+		table tr td:first-child 
+    {
 			padding-left: 10px;
 		}
 		table td,
-		table th {
+		table th 
+    {
 			padding: 7px 10px;
 		}
 
-		#live-score-container {
+		#live-score-container 
+    {
 			width: 100%;
 			max-width: 700px;
 		}
-		#livestream-grid {
+		#livestream-grid 
+    {
 			grid-auto-flow: unset;
 			overflow-y: visible;
 			grid-template-columns: repeat(
@@ -1994,82 +2057,101 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 				65px
 			);
 		}
-		.input-value {
+		.input-value 
+    {
 			width: 100%;
 			max-width: 164px;
 			padding: 14px;
 		}
-		.cast-vote-btn {
+		.cast-vote-btn 
+    {
 			min-width: 206px;
 			width: 100%;
 			height: 48px;
 		}
-		.desktop-view-winnings {
+		.desktop-view-winnings 
+    {
 			padding: 0;
 			text-align: end;
 		}
-		.desktop-small {
+		.desktop-small 
+    {
 			font-size: 14px !important;
 		}
-		.desktop-medium {
+		.desktop-medium 
+    {
 			font-size: 16px !important;
 		}
-		.desktop-x-large {
+		.desktop-x-large 
+    {
 			font-size: 20px !important;
 		}
-		.live-stream-btn {
+		.live-stream-btn 
+    {
 			padding: 0 5px;
 		}
-		.player-col {
+		.player-col 
+    {
 			width: 357px;
 		}
-		.rating-head {
+		.rating-head 
+    {
 			width: 44px;
 		}
 		table.value_bets tr th:nth-child(-n + 3),
-		table.value_bets tr td:nth-child(-n + 3) {
+		table.value_bets tr td:nth-child(-n + 3) 
+    {
 			max-width: 72px !important;
 			padding-right: 24px;
 		}
 		table.value_bets tr th:nth-child(3),
-		table.value_bets tr td:nth-child(3) {
+		table.value_bets tr td:nth-child(3) 
+    {
 			padding-right: 190px !important;
 		}
 		table.value_bets tr th:nth-last-child(-n + 3),
 		table.value_bets tr td:nth-last-child(-n + 3),
-		table.value_bets tr td button {
+		table.value_bets tr td button 
+    {
 			width: 64px !important;
 		}
-		.player-img {
+		.player-img 
+    {
 			margin-right: 16px;
 		}
-		table tr:nth-child(2) td {
+		table tr:nth-child(2) td 
+    {
 			padding-top: 20px !important;
 		}
 	}
 
-	/* 
-  DESKTOP RESPONSIVNESS */
-	@media only screen and (min-width: 1024px) {
-		#live-score-container {
+	@media only screen 
+  and (min-width: 1024px) 
+  {
+		#live-score-container 
+    {
 			width: 100%;
 			max-width: 560px;
 		}
-		.input-value {
+		.input-value 
+    {
 			width: 100%;
 			max-width: 110px;
 		}
 
-		.tooltip .tooltiptext {
+		.tooltip .tooltiptext 
+    {
 			display: unset !important;
 		}
 
-		.tooltip {
+		.tooltip 
+    {
 			position: relative;
 			display: inline-block;
 			border-bottom: none !important;
 		}
-		.tooltip .tooltiptext {
+		.tooltip .tooltiptext 
+    {
 			visibility: hidden;
 			width: 120px;
 			color: #fff;
@@ -2085,111 +2167,124 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			border-radius: 4px;
 			transition: all 0.15s ease-in;
 		}
-		.tooltip:hover .tooltiptext {
+		.tooltip:hover .tooltiptext 
+    {
 			visibility: visible !important;
 		}
-		.cast-vote-btn {
+		.cast-vote-btn 
+    {
 			min-width: 140px;
 			width: 100%;
 			height: 48px;
 		}
 
 		table.value_bets tr th:nth-child(-n + 3),
-		table.value_bets tr td:nth-child(-n + 3) {
+		table.value_bets tr td:nth-child(-n + 3) 
+    {
 			max-width: 72px !important;
 			padding-right: 24px;
 		}
 		table.value_bets tr th:nth-last-child(-n + 3),
 		table.value_bets tr td:nth-last-child(-n + 3),
-		table.value_bets tr td button {
+		table.value_bets tr td button 
+    {
 			width: 64px !important;
 		}
 
 		table.value_bets tr th:nth-child(3),
-		table.value_bets tr td:nth-child(3) {
+		table.value_bets tr td:nth-child(3) 
+    {
 			padding-right: 24px !important;
 		}
 
-		table.table-best-player th:first-child {
+		table.table-best-player th:first-child 
+    {
 			width: 44px !important;
 		}
 		table.table-best-player tr th:first-child,
-		table.table-best-player tr td:first-child {
+		table.table-best-player tr td:first-child 
+    {
 			/* padding-right: 0px; */
 		}
-		table.table-best-player th.player-col {
+		table.table-best-player th.player-col 
+    {
 			/* min-width: 226px !important;
       max-width: 226px !important; */
 			width: 100%;
 		}
-		.player-img {
+		.player-img 
+    {
 			margin-right: 16px;
 		}
 	}
 
-	/* .............. 
-  WIDGET DARK THEME 
-  ................. */
+	/*
+  =============
+  DARK-THEME
+  =============
+  */
+
 	.dark-background-1 #fixture-league-title,
 	.dark-background-1 #fixture-visual-box,
 	.dark-background-1 .best-players-box,
-	.dark-background-1 #live-stream-box {
+	.dark-background-1 #live-stream-box 
+  {
 		box-shadow: inset 0px -1px 0px #616161 !important;
 	}
 
-	.dark-background-1 .cast-vote-btn {
+	.dark-background-1 .cast-vote-btn 
+  {
 		background-color: #616161 !important;
 		border: 1px solid #999999 !important;
 	}
-	.dark-background-1 .cast-vote-btn.active {
+	.dark-background-1 .cast-vote-btn.active 
+  {
 		border: 1px solid #f5620f !important;
 	}
 
-	.dark-background-1
-		table.table-best-player
-		.row-head,
-	.dark-background-1 table.value_bets .row-head {
+	.dark-background-1 table.table-best-player .row-head,
+	.dark-background-1 table.value_bets .row-head 
+  {
 		background-color: #616161 !important;
 	}
 
-	.dark-background-1 p {
+	.dark-background-1 p 
+  {
 		color: #ffffff;
 	}
 
-	.dark-background-1 .live-stream-btn {
+	.dark-background-1 .live-stream-btn 
+  {
 		background-color: #ffffff !important;
 		border: 1px solid #616161 !important;
 	}
 
-	.dark-background-1
-		table.table-best-player
-		.row-head
-		th
-		p,
-	.dark-background-1
-		table.value_bets
-		.row-head
-		th
-		p,
-	.dark-background-1 .probablitiy-text {
+	.dark-background-1 table.table-best-player .row-head th p,
+	.dark-background-1 table.value_bets .row-head	th p,
+	.dark-background-1 .probablitiy-text 
+  {
 		color: #a8a8a8 !important;
 	}
 
 	.dark-background-1 #site-bet-box,
-	.dark-background-1 #inner-site-container {
+	.dark-background-1 #inner-site-container 
+  {
 		background-color: #616161 !important;
 	}
 	.dark-background-1
 		#inner-site-container
-		.input-value {
+		.input-value 
+    {
 		background-color: #4b4b4b !important;
 		color: #ffffff !important;
 	}
 
-	.dark-background-1 #inner-site-container input {
+	.dark-background-1 #inner-site-container input 
+  {
 		color: #ffffff !important;
 	}
-	.dark-background-1 input#win-type {
+	.dark-background-1 input#win-type 
+  {
 		background-color: #4b4b4b !important;
 	}
 
@@ -2222,4 +2317,5 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			box-shadow: inset 0px -1px 0px #3c3c3c;
 		}
 	}
+
 </style>
