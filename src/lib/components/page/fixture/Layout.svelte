@@ -63,6 +63,7 @@
   $: PAGE_SEO = $page.data.PAGE_SEO;
   $: FIXTURE_INFO = $page.data.FIXTURE_INFO;
 
+  // TODO: clean up;
 	$: country_link =
 		FIXTURE_INFO?.data?.country == undefined
 			? undefined
@@ -72,6 +73,7 @@
 					.replace(/\./g, '')
   ;
   
+  // TODO: clean up;
 	$: league_name_link =
 		FIXTURE_INFO?.data?.league_name == undefined
 			? undefined
@@ -243,7 +245,7 @@
   (
   ): Promise < void > 
   {
-    if (!$userBetarenaSettings.country_bookmaker) return;
+    if (!$userBetarenaSettings?.country_bookmaker) return;
     const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
     $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as B_SPT_D;
     $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
@@ -333,7 +335,7 @@
 =================== -->
 
 <!-- 
-[ℹ] adding SEO-META-TAGS for (this) PAGE 
+IMPORTANT SEO META
 -->
 {#if PAGE_SEO}
 	<SvelteSeo
@@ -349,7 +351,7 @@
 {/if}
 
 <!-- 
-[ℹ] adding HREF-LANG-META-TAGS for (this) PAGE 
+IMPORTANT HREF-LANG
 -->
 <svelte:head>
 	{#if PAGE_SEO}
@@ -370,19 +372,11 @@
 					/>
 				{/if}
 				{#if item.link == null && lang == 'en'}
-					<!-- 
-          [ℹ] EN here
-          -->
 					<link
 						rel="alternate"
 						hreflang={item.hreflang}
 						href={link}
 					/>
-					<!-- <link
-						rel="alternate"
-						hreflang="en"
-						href={link}
-					/> -->
 				{/if}
 			{/each}
 		{/each}

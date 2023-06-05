@@ -185,6 +185,7 @@ export async function load
     `/api/data/fixture/votes?fixture_id=${fixture_id}`,
     `/api/data/fixture/votes?lang=${urlLang}`,
     `/api/data/fixture/probability?lang=${urlLang}`,
+    // TODO: clean up;
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
     `/api/data/fixture/h2h?teamIds=${teamIds}`,
     `/api/data/fixture/h2h?lang=${urlLang}`,
