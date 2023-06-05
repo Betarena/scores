@@ -16,7 +16,6 @@ COMPONENT JS (w/ TS)
 	import FeatBetSiteLoader from './FeatBetSite-Loader.svelte';
 	import FeatBetSiteMain from './FeatBetSite-Main.svelte';
 
-	
 	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -124,11 +123,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise was fulfilled 
   -->
-  {#if !NO_WIDGET_DATA}
-    <FeatBetSiteMain 
-      B_FEATB_T={WIDGET_T_DATA}
-    />
-  {/if}
+  <FeatBetSiteMain 
+    B_FEATB_T={WIDGET_T_DATA}
+  />
 {:catch error}
   <!-- 
   promise was rejected 

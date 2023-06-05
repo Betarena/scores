@@ -16,8 +16,8 @@
 	import FeaturedSiteRow from './FeatBetSite-Row.svelte';
 
 	import { sessionStore } from '$lib/store/session.js';
-	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -32,7 +32,7 @@
   let tabletExclusive = false;
 
 	let staticViewRow: number;
-	let limitViewRow: number;
+	let limitViewRow: number = 5;
 	let showMore: boolean = false;
 	let displayShowMore: boolean = false;
 	let trueLengthOfArray: number;
@@ -105,7 +105,8 @@
   // TODO:
 	$: if (tabletExclusive) 
   {
-		if (trueLengthOfArray > 10) {
+		if (trueLengthOfArray > 10) 
+    {
 			displayShowMore = true;
 			staticViewRow = 10;
 			limitViewRow = 10;
@@ -113,7 +114,8 @@
 	} 
   else 
   {
-		if (trueLengthOfArray > 5) {
+		if (trueLengthOfArray > 5) 
+    {
 			displayShowMore = true;
 			staticViewRow = 5;
 			limitViewRow = 5;
@@ -166,7 +168,7 @@ FEATURED BETTING SITES WIDGET
     <!-- 
     TOP 3 BETSITES 
     -->
-    {#if tabletExclusive}
+    {#if !tabletExclusive}
 
       <div 
         id="feature-rank-display" 
@@ -179,14 +181,14 @@ FEATURED BETTING SITES WIDGET
         <a
           target="_blank"
           rel="noreferrer"
-          href={$sessionStore?.sportbook_list?.[1].register_link}
+          href={$sessionStore?.sportbook_list?.[1]?.register_link}
         >
           <div
             id="featured-rank"
             style="margin-top: 20px;"
           >
             <SilverCup
-              imageURL={$sessionStore?.sportbook_list?.[1].image}
+              imageURL={$sessionStore?.sportbook_list?.[1]?.image}
             />
 
             <!-- [ℹ] Featured Image Details 
@@ -195,10 +197,10 @@ FEATURED BETTING SITES WIDGET
               class="x-large color-black site-name"
               class:color-white={$userBetarenaSettings.theme == 'Dark'}
             >
-              {$sessionStore?.sportbook_list?.[1].title}
+              {$sessionStore?.sportbook_list?.[1]?.title}
             </p>
             <p class="large color-grey">
-              Rank {$sessionStore?.sportbook_list?.[1].position}
+              Rank {$sessionStore?.sportbook_list?.[1]?.position}
             </p>
           </div>
         </a>
@@ -304,7 +306,7 @@ FEATURED BETTING SITES WIDGET
     <!-- 
     BETSITES ROW LIST
     -->
-    {#each $sessionStore?.sportbook_list?.slice(0, limitViewRow) as item}
+    {#each $sessionStore?.sportbook_list?.slice(0, limitViewRow) || [] as item}
       <FeaturedSiteRow
         data={item}
         {B_FEATB_T}
