@@ -56,6 +56,7 @@ COMPONENT JS (w/ TS)
 
     const if_0 =
       WIDGET_DATA == undefined
+      || WIDGET_DATA?.probabilites == undefined
     ;
 		if (if_0) 
     {
@@ -131,11 +132,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   promise was fulfilled 
   -->
-  <ProbabilityMain 
-    {FIXTURE_INFO}
-    FIXTURE_PROB_DATA={WIDGET_DATA}
-    FIXTURE_PROBS_TRANSLATION={WIDGET_T_DATA}
-  />
+  {#if !NO_WIDGET_DATA}
+    <ProbabilityMain 
+      {FIXTURE_INFO}
+      FIXTURE_PROB_DATA={WIDGET_DATA}
+      FIXTURE_PROBS_TRANSLATION={WIDGET_T_DATA}
+    />
+  {/if}
 {:catch error}
   <!-- 
   promise was rejected 
