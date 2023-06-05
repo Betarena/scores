@@ -11,12 +11,10 @@
   import { fade } from 'svelte/transition';
 	
 	import { get } from '$lib/api/utils';
-	import { targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
 	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
@@ -31,9 +29,8 @@
 
   //#region ➤ [VARIABLES]
 
+  export let B_FEATM_D: B_FEATM_D;
 	export let B_FEATB_T: B_FEATM_T;
-
-	let B_FEATM_D: B_FEATM_D;
 
   const MOBILE_VIEW = 700;
 	const TABLET_VIEW = 700;
@@ -87,14 +84,14 @@
   (
   ): Promise < void > 
   {
-    const if_M_0 = 
-      FIXTURE_FULL_TIME_OPT.includes(FIXTURE_INFO?.data?.status)
-    ;
-    if (if_M_0) return;
-    let connectionRef = targetLivescoreNowFixtureOddsListen
-    (
-      livesOddsPath
-    );
+    // const if_M_0 = 
+    //   FIXTURE_FULL_TIME_OPT.includes(FIXTURE_INFO?.data?.status)
+    // ;
+    // if (if_M_0) return;
+    // let connectionRef = targetLivescoreNowFixtureOddsListen
+    // (
+    //   livesOddsPath
+    // );
 	}
 
   // B_FEATM_D.live_odds = FIREBASE_getTargetFixtureOdds
@@ -111,7 +108,7 @@
         fixture
       ) => {
         return (
-          fixture.fixture_id === FIXTURE_INFO?.data?.id
+          fixture.fixture_id === B_FEATM_D?.id
         );
       }
     );
@@ -140,14 +137,6 @@
     voteVal: string | number
   ): Promise < void > 
   {
-    // [🐞]
-    dlog
-    (
-      `${VO_W_F_TAG} voteVal: ${voteVal}`, 
-      VO_W_F_TOG, 
-      VO_W_F_STY
-    );
-
     if (isVoteCasted) return;
 
 		if (voteVal == undefined) voteVal = '1.5';
@@ -156,22 +145,15 @@
 
     fixtureVoteObj = 
     {
-      fixture_id: FIXTURE_INFO?.data?.id,
+      fixture_id: B_FEATM_D?.id,
       fixture_vote: voteType,
       fixture_vote_val: voteVal as string
     };
 
     const response = await get
     (
-      `/api/data/fixture/votes/?fixture_id=${FIXTURE_INFO?.data?.id}&vote=${voteType}'`
+      `/api/data/fixture/votes/?fixture_id=${B_FEATM_D?.id}&vote=${voteType}'`
     ) as B_H_VOT_M;
-
-    dlog
-    (
-      `${VO_W_F_TAG} update_fixture_data: ${response}`, 
-      VO_W_F_TOG, 
-      VO_W_F_STY
-    );
 
     B_FEATM_D.match_votes = response?.update_widget_featured_match_votes_by_pk;
     totalVoteCount =
@@ -560,7 +542,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     row-space-out
                   "
                 >
-                  {#if !tabletExclusive}
+                  {#if tabletExclusive}
                     <span 
                       class="color-grey">
                       1
@@ -595,7 +577,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   {B_FEATB_T?.probability}
 
-                  {#if !tabletExclusive}
+                  {#if tabletExclusive}
                     <br />
                   {/if}
 
@@ -652,7 +634,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   "
                 >
 
-                  {#if !tabletExclusive}
+                  {#if tabletExclusive}
                     <span class="color-grey">
                       X
                     </span>
@@ -688,7 +670,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   {B_FEATB_T?.probability}
                   
-                  {#if !tabletExclusive}
+                  {#if tabletExclusive}
                     <br />
                   {/if}
                   
@@ -740,7 +722,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   "
                 >
 
-                  {#if !tabletExclusive}
+                  {#if tabletExclusive}
                     <span class="color-grey">
                       2
                     </span>
@@ -1125,7 +1107,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                 </th>
 
-                {#if tabletExclusive}
+                {#if !tabletExclusive}
                   <th class="text-center">
                     <p
                       class="w-400 small color-grey"
@@ -1160,7 +1142,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 appear={B_FEATM_D?.best_players?.local_team_player_1_appearances}
                 assists={B_FEATM_D?.best_players?.local_team_player_1_assists}
                 goals={B_FEATM_D?.best_players?.local_team_player_1_goals}
-                viewportDesktop={tabletExclusive}
+                viewportDesktop={!tabletExclusive}
               />
 
               <!--
@@ -1173,7 +1155,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 appear={B_FEATM_D?.best_players?.local_team_player_2_appearances}
                 assists={B_FEATM_D?.best_players?.local_team_player_2_assists}
                 goals={B_FEATM_D?.best_players?.local_team_player_2_goals}
-                viewportDesktop={tabletExclusive}
+                viewportDesktop={!tabletExclusive}
               />
 
             </table>
@@ -1228,7 +1210,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                 </th>
 
-                {#if tabletExclusive}
+                {#if !tabletExclusive}
                   <th class="text-center">
                     <p
                       class="w-400 small color-grey"
@@ -1263,7 +1245,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 appear={B_FEATM_D?.best_players?.visitor_team_player_1_appearances}
                 assists={B_FEATM_D?.best_players?.visitor_team_player_1_assists}
                 goals={B_FEATM_D?.best_players?.visitor_team_player_1_goals}
-                viewportDesktop={tabletExclusive}
+                viewportDesktop={!tabletExclusive}
               />
 
               <!-- 
@@ -1276,7 +1258,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 appear={B_FEATM_D?.best_players?.visitor_team_player_2_appearances}
                 assists={B_FEATM_D?.best_players?.visitor_team_player_2_assists}
                 goals={B_FEATM_D?.best_players?.visitor_team_player_2_goals}
-                viewportDesktop={tabletExclusive}
+                viewportDesktop={!tabletExclusive}
               />
              
             </table>
@@ -1311,7 +1293,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <!--
           VALUE BET GRID
           -->
-          {#if !tabletExclusive}
+          {#if tabletExclusive}
             <div 
               id="value-bets-container">
               <div 
@@ -1756,8 +1738,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 46px;
 		width: 100%;
 		background-color: #f5620f;
-		box-shadow: 0px 3px 8px
-			rgba(212, 84, 12, 0.32);
+		box-shadow: 0px 3px 8px	rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
 	}
 	.input-value
@@ -1788,18 +1769,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 24px;
 		height: 18px;
 		margin-right: 16px;
-		filter: drop-shadow(
-			0px 2px 3px rgba(0, 0, 0, 0.1)
-		);
+		filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.1));
 		border-radius: 2px !important;
 		vertical-align: middle !important;
 	}
 
 	#stakesSiteImg
   {
-		background-color: var(
-			--featured-match-bookmaker-bg-
-		);
+		background-color: var(--featured-match-bookmaker-bg-);
 		object-fit: none;
 		height: 40px;
 	}
@@ -1818,17 +1795,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		gap: 8px 13px;
 		overflow-y: scroll;
 		padding: 0 20px;
-		grid-template-columns: repeat(
-			auto-fill,
-			71px
-		);
+		grid-template-columns: repeat(auto-fill, 71px);
 	}
-	/* Hide scrollbar for Chrome, Safari and Opera */
 	#livestream-grid::-webkit-scrollbar
   {
 		display: none;
 	}
-	/* Hide scrollbar for IE, Edge and Firefox */
 	#livestream-grid
   {
 		-ms-overflow-style: none; /* IE and Edge */
@@ -1866,14 +1838,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		box-shadow: inset 0px -1px 0px #ebebeb;
 	}
 
-	table.table-best-player,
+	:global(table.table-best-player),
 	table.value_bets 
   {
 		text-align: left;
 		border-collapse: collapse;
 		width: 100%;
 	}
-	table.table-best-player .row-head,
+	:global(table.table-best-player .row-head),
 	table.value_bets .row-head 
   {
 		background: #f2f2f2;
@@ -1887,7 +1859,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		vertical-align: middle;
 		border: none !important;
 	}
-	table.table-best-player tr td:first-child 
+	:global(table.table-best-player tr td:first-child)
   {
 		padding-left: 0;
 	}
@@ -1907,29 +1879,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		width: 59px;
 	}
-	.rating-box 
-  {
-		width: fit-content;
-		border-radius: 30px;
-		padding: 1.5px 8px;
-		color: white;
-	}
-	.rating-box p 
-  {
-		color: white;
-	}
-	.golden 
-  {
-		background: #ffb904;
-	}
-	.silver 
-  {
-		background: #a1a1a1;
-	}
-	.bronze 
-  {
-		background: #dbb884;
-	}
 
 	.tooltip 
   {
@@ -1938,13 +1887,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	.tooltip .tooltiptext 
   {
 		display: none;
-	}
-
-	.player-img 
-  {
-		border: 1px solid #cccccc;
-		border-radius: 50%;
-		margin-right: 8px;
 	}
 
 	/* ====================
@@ -1991,49 +1933,28 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			height: 44px;
 		}
 
-		.boxed-rating-matches 
+    .boxed-rating-value-bets 
     {
-			background: #ffffff;
-			border: 1px solid #e6e6e6;
-			box-sizing: border-box;
-			border-radius: 4px;
-			text-align: center;
-			padding: 5px 0;
-			max-height: 30px;
-			width: 64px;
-		}
-		.boxed-rating-assits,
-		.boxed-rating-value-bets 
-    {
-			background: #f2f2f2;
-			border-radius: 4px;
-			text-align: center;
-			padding: 5px 0;
-			max-height: 30px;
-			width: 64px;
-		}
-		.boxed-rating-goals 
-    {
-			background: #e6e6e6;
-			border-radius: 4px;
-			text-align: center;
-			padding: 5px 0;
-			max-height: 30px;
-			width: 64px;
-		}
+      background: #f2f2f2;
+      border-radius: 4px;
+      text-align: center;
+      padding: 5px 0;
+      max-height: 30px;
+      width: 64px;
+    }
 
-		table.table-best-player tr th:first-child p 
+		:global(table.table-best-player tr th:first-child p)
     {
 			left: 10%;
 			position: relative;
 		}
-		table.table-best-player tr th:last-child p 
+		:global(table.table-best-player tr th:last-child p)
     {
 			left: 10%;
 			position: relative;
 		}
 
-		table tr td:first-child 
+		:global(table tr td:first-child)
     {
 			padding-left: 10px;
 		}
@@ -2197,19 +2118,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			padding-right: 24px !important;
 		}
 
-		table.table-best-player th:first-child 
+		:global(table.table-best-player th:first-child)
     {
 			width: 44px !important;
 		}
-		table.table-best-player tr th:first-child,
-		table.table-best-player tr td:first-child 
+		:global(table.table-best-player th.player-col)
     {
-			/* padding-right: 0px; */
-		}
-		table.table-best-player th.player-col 
-    {
-			/* min-width: 226px !important;
-      max-width: 226px !important; */
 			width: 100%;
 		}
 		.player-img 

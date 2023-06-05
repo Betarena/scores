@@ -9,19 +9,18 @@ COMPONENT JS (w/ TS)
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	
+  import { get } from '$lib/api/utils.js';
   import { sessionStore } from '$lib/store/session.js';
+  import { userBetarenaSettings } from '$lib/store/user-settings.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
-	import { get } from '$lib/api/utils.js';
   import { sleep } from '$lib/utils/platform-functions';
-	import { userBetarenaSettings } from '$lib/store/user-settings.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
-	import FeatMatchLoader from './FeatMatch-Loader.svelte';
-	import FeatMatchMain from './FeatMatch-Main.svelte';
+  import FeatMatchLoader from './FeatMatch-Loader.svelte';
+  import FeatMatchMain from './FeatMatch-Main.svelte';
   
-	import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -153,6 +152,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   -->
   {#if !NO_WIDGET_DATA}
     <FeatMatchMain 
+      B_FEATM_D={WIDGET_DATA}
       B_FEATB_T={WIDGET_T_DATA}
     />
   {/if}

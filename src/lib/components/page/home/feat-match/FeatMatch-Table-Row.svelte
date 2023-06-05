@@ -150,4 +150,65 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
   
+  .rating-box 
+  {
+		width: fit-content;
+		border-radius: 30px;
+		padding: 1.5px 8px;
+		color: white;
+	}
+	.rating-box p 
+  {
+		color: white;
+	}
+	.golden 
+  {
+		background: #ffb904;
+	}
+	.silver 
+  {
+		background: #a1a1a1;
+	}
+	.bronze 
+  {
+		background: #dbb884;
+	}
+
+  .player-img 
+  {
+		border: 1px solid #cccccc;
+		border-radius: 50%;
+		margin-right: 8px;
+	}
+
+  .boxed-rating-matches 
+  {
+    background: #ffffff;
+    border: 1px solid #e6e6e6;
+    box-sizing: border-box;
+    border-radius: 4px;
+    text-align: center;
+    padding: 5px 0;
+    max-height: 30px;
+    width: 64px;
+  }
+  .boxed-rating-assits
+  {
+    background: #f2f2f2;
+    border-radius: 4px;
+    text-align: center;
+    padding: 5px 0;
+    max-height: 30px;
+    width: 64px;
+  }
+  .boxed-rating-goals 
+  {
+    background: #e6e6e6;
+    border-radius: 4px;
+    text-align: center;
+    padding: 5px 0;
+    max-height: 30px;
+    width: 64px;
+  }
+
 </style>
