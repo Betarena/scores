@@ -44,7 +44,7 @@ export interface User_Setting
   /** User selected lang (overrides serverLang) */
 	lang:               string;
   /** User selected theme */
-	theme:              string;
+	theme:              'Dark' | 'Light';
   /** User selected country bookmaker ISO2 */
 	country_bookmaker:  string;
   /** GeoJs object response data */
