@@ -17,7 +17,7 @@ import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
 import type { B_SAP_D1, B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings.js';
 import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
-import type { B_VOT_T } from '@betarena/scores-lib/types/votes.js';
+import type { B_VOT_D, B_VOT_T } from '@betarena/scores-lib/types/votes.js';
 import type { PageLoad } from './$types';
 
 // #endregion ➤ [MAIN] Package Imports
@@ -156,6 +156,7 @@ export async function load
     B_CONT_T | undefined,
     B_ABT_D | undefined,
     B_ABT_T | undefined,
+    B_VOT_D | undefined,
     B_VOT_T | undefined,
     B_PR_T | undefined,
     B_FO_T | undefined,
@@ -181,6 +182,7 @@ export async function load
     `/api/data/fixture/content?lang=${urlLang}`,
     `/api/data/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`,
     `/api/data/fixture/about?lang=${urlLang}`,
+    `/api/data/fixture/votes?fixture_id=${fixture_id}`,
     `/api/data/fixture/votes?lang=${urlLang}`,
     `/api/data/fixture/probability?lang=${urlLang}`,
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
@@ -212,7 +214,8 @@ export async function load
     FIXTURE_CONTENT_TRANSLATION,
     FIXTURE_ABOUT,
     FIXTURE_ABOUT_TRANSLATION,
-    FIXTURE_VOTES_TRANSLATION,
+    B_VOT_D,
+    B_VOT_T,
     FIXTURE_PROBS_TRANSLATION,
     FIXTURES_ODDS_T,
     FIXTURE_H2H,
@@ -322,7 +325,8 @@ export async function load
     FIXTURE_CONTENT_TRANSLATION,
     FIXTURE_ABOUT,
     FIXTURE_ABOUT_TRANSLATION,
-    FIXTURE_VOTES_TRANSLATION,
+    B_VOT_D,
+    B_VOT_T,
     FIXTURE_PROBS_TRANSLATION,
     FIXTURE_H2H,
     FIXTURE_H2H_TRANSLATION,
