@@ -298,26 +298,6 @@
    * @summary
    * [MAIN] 
    * [REACTIVE]
-   * @description
-   * ➨ sets timer (countdown) in motion;
-  */
-  $: if (browser) 
-  {
-		dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();		
-    setInterval
-    (
-      () => 
-      {
-        dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
-      }, 
-      1000
-    );
-	}
-  
-  /**
-   * @summary
-   * [MAIN] 
-   * [REACTIVE]
    * @description 
    * ➨ checks for "hide" / "show" countdown bool state;
   */
@@ -359,6 +339,25 @@
     {
       resizeAction();
       addEventListeners();
+
+      // (+) other
+      dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();		
+      setInterval
+      (
+        () => 
+        {
+          dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
+        }, 
+        1000
+      );
+      setInterval
+      (
+        () => 
+        {
+          secTickShow = !secTickShow;
+        }, 
+        500
+      );
     }
   );
 
