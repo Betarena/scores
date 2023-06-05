@@ -289,6 +289,7 @@ function createLocalStore
     {
 			const existing: string = localStorage.getItem(key);
 			const existing_data: User_Setting = JSON.parse(existing);
+      if (existing_data.voted_fixtures == undefined) existing_data.voted_fixtures = [];
       existing_data.voted_fixtures.push
       (
         vote
