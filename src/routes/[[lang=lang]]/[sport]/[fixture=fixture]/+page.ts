@@ -12,7 +12,7 @@ import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
 import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
 import type { B_LIN_D, B_LIN_T } from '@betarena/scores-lib/types/lineups.js';
-import type { B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
+import type { B_PR_D, B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
 import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
 import type { B_SAP_D1, B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings.js';
@@ -158,6 +158,7 @@ export async function load
     B_ABT_T | undefined,
     B_VOT_D | undefined,
     B_VOT_T | undefined,
+    B_PR_D | undefined,
     B_PR_T | undefined,
     B_FO_T | undefined,
     B_H2H_D | undefined,
@@ -184,6 +185,7 @@ export async function load
     `/api/data/fixture/about?lang=${urlLang}`,
     `/api/data/fixture/votes?fixture_id=${fixture_id}`,
     `/api/data/fixture/votes?lang=${urlLang}`,
+    `/api/data/fixture/probability?fixture_id=${fixture_id}`,
     `/api/data/fixture/probability?lang=${urlLang}`,
     // TODO: clean up;
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
@@ -217,6 +219,7 @@ export async function load
     FIXTURE_ABOUT_TRANSLATION,
     B_VOT_D,
     B_VOT_T,
+    FIXTURE_PROB_DATA,
     FIXTURE_PROBS_TRANSLATION,
     FIXTURES_ODDS_T,
     FIXTURE_H2H,
@@ -328,6 +331,7 @@ export async function load
     FIXTURE_ABOUT_TRANSLATION,
     B_VOT_D,
     B_VOT_T,
+    FIXTURE_PROB_DATA,
     FIXTURE_PROBS_TRANSLATION,
     FIXTURE_H2H,
     FIXTURE_H2H_TRANSLATION,

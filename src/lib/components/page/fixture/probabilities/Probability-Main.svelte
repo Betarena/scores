@@ -18,7 +18,7 @@
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
   
-	import type { B_PR_T, PR_Fixture } from '@betarena/scores-lib/types/probabilities.js';
+	import type { B_PR_D, B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	
@@ -27,9 +27,8 @@
   //#region ➤ [VARIABLES]
 
 	export let FIXTURE_INFO: B_SAP_FP_D;
+  export let FIXTURE_PROB_DATA: B_PR_D;
 	export let FIXTURE_PROBS_TRANSLATION: B_PR_T;
-
-  let FIXTURE_PROB_DATA: PR_Fixture;
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1160;
@@ -118,20 +117,27 @@
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
           m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
-          && firebaseSportbook.markets != null 
-          && firebaseSportbook.markets['1X2FT'] !=	null 
-          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          && firebaseSportbook?.markets != null 
+          && firebaseSportbook?.markets?.['1X2FT'] !=	null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value != null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value != null 
+          && firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value != null 
           && count != 1
         ;
         if (if_M_0)
         {
-					FIXTURE_PROB_DATA.odds._1x2.home = firebaseSportbook?.markets['1X2FT']?.data[0]?.value?.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.draw = firebaseSportbook?.markets['1X2FT']?.data[1]?.value?.toFixed(2);
-					FIXTURE_PROB_DATA.odds._1x2.away = firebaseSportbook?.markets['1X2FT']?.data[2]?.value?.toFixed(2);
-          FIXTURE_PROB_DATA.odds.btts =	firebaseSportbook?.markets?.['BTSC']?.data?.[0]?.value?.toFixed(2);
-          FIXTURE_PROB_DATA.odds.over_2_5 = firebaseSportbook?.markets?.['HCTG3']?.data?.[0]?.value?.toFixed(2);
+          
+          FIXTURE_PROB_DATA.odds =
+          {
+            _1x2: 
+            {
+              home: firebaseSportbook?.markets?.['1X2FT']?.data?.[0]?.value?.toFixed(2),
+              draw: firebaseSportbook?.markets?.['1X2FT']?.data?.[1]?.value?.toFixed(2),
+              away: firebaseSportbook?.markets?.['1X2FT']?.data?.[3]?.value?.toFixed(2)
+            },
+            btts: firebaseSportbook?.markets?.['BTSC']?.data?.[0]?.value?.toFixed(2),
+            over_2_5: firebaseSportbook?.markets?.['HCTG3']?.data?.[0]?.value?.toFixed(2)
+          }
 
 					SPORTBOOK_INFO = m_sportBook;
 
