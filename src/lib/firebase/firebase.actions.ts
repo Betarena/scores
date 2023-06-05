@@ -151,7 +151,7 @@ export async function getOdds_2
 export async function getTargetRealDbData
 (
   path: string
-) 
+): Promise < unknown > 
 {
   const connectRef = ref
   (

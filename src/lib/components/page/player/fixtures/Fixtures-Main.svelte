@@ -5,15 +5,16 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 	
   import { page } from '$app/stores';
-  import { get } from '$lib/api/utils';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-  import type { B_H_HF } from '@betarena/scores-lib/types/hasura';
-  import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League, PFIX_Player } from '@betarena/scores-lib/types/player-fixtures';
   import { onMount } from 'svelte';
+
+  import { get } from '$lib/api/utils';
+  import { sessionStore } from '$lib/store/session.js';
+  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { viewport_change } from '$lib/utils/platform-functions';
+  import { PFIX_PP_dataInject, PFIX_PP_genLeagueFixMap } from '@betarena/scores-lib/dist/functions/func.player-fixtures.js';
+  
   import arrow_left_dark from './assets/arrow-left-dark.svg';
   import arrow_left_hover from './assets/arrow-left-hover.svg';
   import arrow_left from './assets/arrow-left.svg';
@@ -22,18 +23,16 @@ COMPONENT JS (w/ TS)
   import arrow_right from './assets/arrow-right.svg';
   
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
-	import { sessionStore } from '$lib/store/session.js';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import FixturesRow from './Fixtures-Row.svelte';
 	import LoaderMain from './loaders/shared/Loader-Main.svelte';
+
+	import type { B_H_HF } from '@betarena/scores-lib/types/hasura';
+	import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
 
   export let WIDGET_DATA: B_PFIX_D
 
@@ -44,175 +43,151 @@ COMPONENT JS (w/ TS)
   $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
 
-  let pageFixtureMap: Map <number, Map <string, PFIX_C_Fixture[]>> = new Map();
-  const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
-  let leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
-
-  pageFixtureMap.set(0, fixtureMap)
-
   let view_page: number = 0;
   let limit: number = 10;
   let offset: number = 0;
   let loadingPrev: boolean = false;
-  let liveFixtureId: number;
-  let liveTriggerMade: boolean = false;
-
   let hoverBtn1: boolean = false;
   let hoverBtn2: boolean = false;
+  let targetFixture: B_H_HF;
 
-  console.log(fixtureMap)
-  console.log(leagueMap)
+  const fixtureMap: Map <string, PFIX_C_Fixture[]> = new Map(Object.entries(WIDGET_DATA?.data?.past_fixtures)) as Map <string, PFIX_C_Fixture[]>;
+  let pageFixtureMap: Map <number, Map <string, PFIX_C_Fixture[]>> = new Map();
+  let leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(WIDGET_DATA?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
+
+  pageFixtureMap.set(0, fixtureMap)
 
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
-
-  async function getPastFixtures() {
+  async function getPastFixtures
+  (
+  ): Promise < void > 
+  {
     view_page = view_page + 1;
     if (pageFixtureMap.has(view_page)) return;
     offset = offset + 10;
     loadingPrev = true;
+
     const response = await get
     (
       `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${limit}&offset=${offset}&hasura=true`
     ) as B_PFIX_D;
+
     // validate: end of fixtures;
-    const validation_0 =
+    const if_M_0 =
       response == undefined
     ;
-    if (validation_0) {
+    if (if_M_0) 
+    {
       view_page = view_page - 1;
       loadingPrev = false;
       return;
     }
+
     const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
     const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
+
     loadingPrev = false;
-    pageFixtureMap.set(view_page, _fixtureMap)
-    pageFixtureMap = pageFixtureMap
+
+    pageFixtureMap.set
+    (
+      view_page, 
+      _fixtureMap
+    );
+    pageFixtureMap = pageFixtureMap;
+
     leagueMap = new Map([...leagueMap, ..._leagueMap])
     leagueMap = leagueMap
   }
 
-  async function resetFixturesData
-  (
-  ) 
-  {
-    pageFixtureMap = new Map();
-    loadingPrev = true;
-    const response = await get
+  // [STASH]
+  // -> useful RESET wigdet method data;
+  /*
+    async function resetFixturesData
     (
-      `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${10}&offset=${0}&hasura=true`
-    ) as B_PFIX_D;
-    const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
-    const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
-    loadingPrev = false;
-    pageFixtureMap.set(0, _fixtureMap)
-    pageFixtureMap = pageFixtureMap
-    leagueMap = new Map([...leagueMap, ..._leagueMap])
-    leagueMap = leagueMap
-  }
+    ): Promise < void > 
+    {
+      pageFixtureMap = new Map();
+      loadingPrev = true;
+
+      const response = await get
+      (
+        `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${10}&offset=${0}&hasura=true`
+      ) as B_PFIX_D;
+
+      const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
+      const _leagueMap: Map <string, PFIX_C_League> = new Map(Object.entries(response?.data?.leagues)) as unknown as Map <string, PFIX_C_League>;
+
+      loadingPrev = false;
+
+      pageFixtureMap.set
+      (
+        0, 
+        _fixtureMap
+      );
+      pageFixtureMap = pageFixtureMap
+
+      leagueMap = new Map([...leagueMap, ..._leagueMap])
+      leagueMap = leagueMap
+    }
+  */
 
   /**
-   * @summary [HELPER] method
-   * @description checks wether player is currently
-   * playing in any of the live fixtures;
-   * @returns NaN
+   * @summary
+   * IMPORTANT 
+   * [MAIN]
+   * @description 
+   * injects new "LIVE" fixture data, in which player is playing;
+   * @returns 
+   * void
    */
-  function validatePlayerInLineupLive 
+  async function validatePlayerInLineupLive 
   (
-  ) 
+  ): Promise < void > 
   {
+    const liveFixture = $sessionStore?.livescore_now_fixture_target;
 
-    const liveFixturesMap = $sessionStore?.livescore_now
+    if (liveFixture == undefined) return;
 
-    if (liveFixturesMap == undefined) return
+    const if_M_0 =
+      ((liveFixture?.lineup?.data == undefined || liveFixture?.lineup?.data?.length == 0)
+      && (liveFixture?.bench?.data == undefined || liveFixture?.bench?.data?.length == 0))
+      || pageFixtureMap == undefined
+      || !pageFixtureMap?.has(0)
+    ;
+    if (if_M_0) return;
 
-    // iterate over livescores map fixtures
-    // looking for one where target player is playing;
-    for (const [liveId, fixtureData] of liveFixturesMap) 
+    const if_M_1 = 
+      targetFixture == undefined
+    ;
+    if (if_M_1)
     {
-      // validate player in lineup (exist)
-      const validation_00 =
-        (fixtureData?.lineup?.data == undefined
-        || fixtureData?.lineup?.data.length == 0)
-        && (fixtureData?.bench?.data == undefined
-        || fixtureData?.bench?.data.length == 0)
-      ;
-      if (validation_00) continue;
-      // get lineup ids of players in lineup
-      const mergeLineupBench = [
-        ...fixtureData?.lineup?.data || [],
-        ...fixtureData?.bench?.data || []
-      ]
-      const lineupBenchIdsList = mergeLineupBench
-        ?.map(x => x?.player_id)
-      ;
-      const validation_0 =
-        lineupBenchIdsList.includes(PAGE_DATA?.data?.player_id)
-        && pageFixtureMap != undefined
-        && pageFixtureMap.get(0) != undefined
-      ;
-      if (validation_0) {
-
-        console.log('🔵 Player is Playing!');
-        liveFixtureId = liveId;
-        let fixtureNotExists: boolean = true;
-
-        // iterate over 1st page (map) (latest) fixtures
-        for (const [leagueId, fixtureList] of pageFixtureMap.get(0)) {
-          // obtain target fixture in
-          const targetFixture = fixtureList
-            ?.find(
-                x => 
-                x?.id == liveId
-              )
-          ;
-          const validation_1 =
-            targetFixture != undefined
-          ;
-          if (validation_1) {
-            console.log("🔴 Fixture is present")
-            fixtureNotExists = false;
-          }
-        }
-        
-        // -> if fixture is not found inside the Map-Object, inject it (somehow);
-        // -> to prevent constant infinite requests, have a single onMount toggle to stop more reuests and nullification;
-        // -> best to just call the PAGE1 fixtures endpoint again and nullify all previous MapData;
-        const validation_2 =
-          !fixtureNotExists
-          && !liveTriggerMade
-        ;
-        if (validation_2) {
-          console.log("🔴 Re-populating Fixtures for Player from Hasura")
-          // TODO:
-          resetFixturesData()
-          // Re-populate data;
-          liveTriggerMade = true;
-        }
-
-        // otherwise, inject livescores data
-        const validation_3 =
-          !fixtureNotExists
-          && liveTriggerMade
-        ;
-        if (validation_3) {
-          console.log("🔵 Injecting data!");
-          injectLivescoreData()
-        }
-
-      }
+      // get target fixture, and asssing to variable;
+      const response = await get
+      (
+        `/api/data/players/fixtures/?fixture_id=${liveFixture?.id}`
+      ) as B_H_HF;
+      targetFixture = response;
     }
 
+    const if_M_2 =
+      !leagueMap?.has(liveFixture?.league_id?.toString())
+    ;
+    if (if_M_2)
+    {
+      // TODO:
+      // get target league, and inject into MAP
+    }
+
+    // NEXT STEP;
+    injectLivescoreData();
   }
 
   /**
-   * @summary [MAIN] method
+   * @summary 
+   * [MAIN] method
    * @description updates the information
    * for the fixtures of current-player with
    * real-time information in those he 
@@ -221,132 +196,50 @@ COMPONENT JS (w/ TS)
    */
   function injectLivescoreData
   (
-  ) 
+  ): void 
   {
+    const liveFixture = $sessionStore?.livescore_now_fixture_target;
 
-    const liveFixture = $sessionStore?.livescore_now.get(liveFixtureId)
     const pageViewMap = pageFixtureMap.get(0)
 
-    const validation_0 =
+    const if_M_0 =
       liveFixture == undefined
       || pageViewMap == undefined
     ;
-    if (validation_0) return;
+    if (if_M_0) return;
+    
+    const playerFixList: PFIX_C_Fixture[] = []
 
-    // iterate over 1st page (map) (latest) fixtures
-    for (let [leagueId, fixtureList] of pageViewMap) 
+    for (let [, fixtureList] of pageViewMap) 
     {
-      // -> update target fixture data periodically with target player ID data events and what not;
-
-      fixtureList = fixtureList.map(
-        (fixture) => {
-        if (fixture?.id == liveFixtureId) {
-
-          const mergeLineupBench = [
-            ...liveFixture?.lineup?.data,
-            ...liveFixture?.bench?.data
-          ]
-
-          const player_data: PFIX_Player =
-            mergeLineupBench == null 
-            || mergeLineupBench.length == 0
-              ? null
-              : mergeLineupBench
-                /* find target PLAYER_ID [lineups] */
-                ?.filter(x => x.player_id == PAGE_DATA?.data?.player_id)
-                /* extract target player, with target data */
-                ?.map(p => ({
-                  player_id: p.player_id,
-                  player_name: p.player_name || null,
-                  rating: p?.stats?.rating || null,
-                  captain: p?.captain || false,
-                  events: undefined
-                })
-              )[0]
-          ;
-          // reset default player.events;
-          player_data.events = {
-            injured: false,
-            yeallow_card: null,
-            red_card: null,
-            goals: null,
-            penalty: null,
-            substitution: null
-          }
-          // loop through player events;
-          for (const event of liveFixture?.events?.data) {
-            if (player_data.player_id == event.player_id) {
-              if (event.type == 'yellowcard') {
-                player_data.events.yeallow_card =
-                  player_data.events.yeallow_card == null
-                    ? 1
-                    : player_data.events.yeallow_card + 1
-                ;
-              }
-              if (event.type == 'redcard') {
-                player_data.events.red_card = 1;
-              }
-              if (event.type == 'goal') {
-                player_data.events.goals =
-                  player_data.events.goals == null
-                    ? 1
-                    : player_data.events.goals + 1
-                ;
-              }
-              if (event.type == 'penalty') {
-                player_data.events.penalty =
-                  player_data.events.penalty == null
-                    ? 1
-                    : player_data.events.penalty + 1
-                ;
-              }
-            }
-            if (player_data.player_id == event.related_player_id) {
-              if (event.injuried) {
-                player_data.events.injured = true;
-              }
-              if (event.type == 'substitution') {
-                player_data.events.substitution = event;
-              }
-            }
-          }
-
-          return {
-            // id
-            // league_id
-            // time
-            // fixture_day
-            // urls
-            // tips
-            ...fixture,
-            minute: liveFixture?.time?.minute,
-            status: liveFixture?.time?.status,
-            teams: {
-              away: {
-                name: fixture?.teams?.away?.name,
-                score: liveFixture?.scores?.visitorteam_score
-              },
-              home: {
-                name: fixture?.teams?.home?.name,
-                score: liveFixture?.scores?.localteam_score
-              }
-            },
-            player: player_data
-          };
-        }
-        return fixture
-      })
-      pageViewMap.set(
-        leagueId, 
-        fixtureList
-      )
+      playerFixList.push
+      (
+        ...fixtureList
+      );
     }
-    pageFixtureMap.set(0, pageViewMap)
+
+    const dataObj = PFIX_PP_dataInject
+    (
+      PAGE_DATA?.data?.player_id,
+      targetFixture,
+      liveFixture?.events?.data,
+      liveFixture?.lineup?.data,
+      liveFixture?.bench?.data
+    );
+
+    playerFixList.push
+    (
+      dataObj
+    );
+
+    const newMap = PFIX_PP_genLeagueFixMap
+    (
+      playerFixList
+    ); 
+
+    pageFixtureMap.set(0, newMap)
     pageFixtureMap = pageFixtureMap;
   }
-
-  $: console.log(pageFixtureMap)
-  $: console.log(leagueMap)
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -381,11 +274,10 @@ COMPONENT JS (w/ TS)
   //#region ➤ [REACTIVIY] [METHODS]
 
   /**
-   * @description listens to changes in 
-   * livescores_now data session-store;
-   * Proceeds to update data accordingly;
+   * @description 
+   * listens to changes in livescores_now data session-store; Proceeds to update data accordingly;
   */
-  $: if ($sessionStore?.livescore_now) 
+  $: if ($sessionStore?.livescore_now_fixture_target) 
   {
     validatePlayerInLineupLive()
   }

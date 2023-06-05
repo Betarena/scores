@@ -3,15 +3,60 @@ import { onValue, ref, type Unsubscribe } from "firebase/database";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_real } from "./init";
 
-import type { FIRE_LNNS, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+
+// #region PLAYER_IDS
+
+/**
+ * @summary 
+ * [MAIN]
+ * @description
+ * ➨ one-off request "X" target path (real-db) data;
+ * ➨ kickstarts liveMap (player-ids) generation;
+ * @returns 
+ * {Promise < void >}
+*/
+export async function onceTargetPlayerIds
+(
+  path: string
+): Promise < void > 
+{
+  const firebaseData = await getTargetRealDbData
+  (
+    path
+  ) as FIRE_LNPI;
+
+  console.log
+  (
+    'firebaseData',
+    firebaseData
+  );
+
+  sessionStore.updateLivescorePlayerId
+  (
+    firebaseData?.id
+  );
+}
+
+// #endregion PLAYER_IDS
 
 // #region ODDS
 
+/**
+ * @summary 
+ * [HELPER]
+ * @param 
+ * {number} fixtureId 
+ * @param 
+ * {string} fixtureTime 
+ * @returns
+ * a target directory/url to listen to "odds" data to a target fixture;
+ */
 export function createFixtureOddsPath
 (
   fixtureId: number,
   fixtureTime: string
-)
+): string
 {
 
   const year_: string = new Date(fixtureTime).getFullYear().toString();
@@ -20,7 +65,6 @@ export function createFixtureOddsPath
   new_month_ = `0${new_month_}`.slice(-2);
   let day = new Date(fixtureTime).getDate().toString();
   day = `0${day}`.slice(-2);
-
   return `odds/${year_}/${new_month_}/${day}/${fixtureId}`;
 }
 
