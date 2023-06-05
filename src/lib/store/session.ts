@@ -2,27 +2,36 @@ import type { Platform_Session } from '$lib/types/types.scores.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 
 import { clientTimezoneDate } from '$lib/utils/dates.js';
+import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import { writable } from 'svelte/store';
 
 const sessionStoreObj: Platform_Session = 
 {
+  // (+) show/hide;
 	newsletterPopUpShow: false,
-	selectedSeasonID: undefined,
-	fixture_select_view: 'overview',
 	auth_show: false,
+  livescoreShowCalendar: false,
+	selectedSeasonID: undefined,
+  livescoreFixtureView: 'all',
+	fixture_select_view: 'overview',
+  // (+) lang handle;
   lang_intent: undefined,
   serverLang: undefined,
-  livescore_now: undefined,
-  livescore_now_scoreboard: new Map(),
+  // (+) misc;
+  fixturesTodayNum: 0,
+  // (+) date handle;
+  userDate: clientTimezoneDate(),
+  livescoreNowSelectedDate: clientTimezoneDate(),
+  // (+) sportbook;
   sportbook_main: undefined,
   sportbook_list: undefined,
-  livescoreNowSelectedDate: clientTimezoneDate(),
-  livescoreFixtureView: 'all',
-  livescoreShowCalendar: false,
-  fixturesTodayNum: 0,
-  userDate: clientTimezoneDate(),
+  // (+) real-time/live;
+  livescore_now: undefined,
+  livescore_now_scoreboard: new Map(),
   livescore_now_fixture_target: undefined,
-  live_odds_fixture_target: []
+  live_odds_fixture_target: [],
+  livescore_now_player_fixture: undefined,
+  livescore_now_fixtures: []
 };
 
 function createLocalStore
@@ -128,6 +137,76 @@ function createLocalStore
     {
       sessionStoreObj.livescore_now_scoreboard = data
       set(sessionStoreObj)
+    },
+
+    /**
+     * @summary
+     * [HELPER]
+     * @description 
+     * stores "LIVE" target fixture scoreboard (V2) data in session object;
+     * @param 
+     * {Map<number, FIREBASE_livescores_now>} data 
+     */
+    updateLivescorePlayerId: 
+    (
+      data: number
+    ) => 
+    {
+      sessionStoreObj.livescore_now_player_fixture = data
+      set(sessionStoreObj)
+    },
+
+    /**
+     * @summary
+     * [HELPER]
+     * @description 
+     * stores "LIVE" target fixture scoreboard (V2) data in session object;
+     * @param 
+     * {Map<number, FIREBASE_livescores_now>} data 
+     */
+    updateLivescoreFixtureIds: 
+    (
+      data: number[]
+    ) => 
+    {
+      sessionStoreObj.livescore_now_fixtures = data
+      set(sessionStoreObj)
+    },
+
+    updateSportbookMain:
+    (
+      data: B_SPT_D
+    ) =>
+    {
+      sessionStoreObj.sportbook_main = data;
+      set
+      (
+        sessionStoreObj
+      );
+    },
+
+    updateSportbookList:
+    (
+      data: B_SPT_D[]
+    ) =>
+    {
+      // ACTION: sort data;
+      data
+      ?.sort
+      (
+        (
+          a, 
+          b
+        ) =>
+        parseInt(a.position) - parseInt(b.position)
+      );
+
+      sessionStoreObj.sportbook_list = data;
+
+      set
+      (
+        sessionStoreObj
+      );
     }
 
 	};

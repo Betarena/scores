@@ -1,5 +1,5 @@
 import type { GeoJsResponse } from '$lib/types/types.geojs';
-import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS, FIRE_LNPI } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
 
@@ -107,12 +107,16 @@ export interface Platform_Session
   // NOTE: LIVESCORE DATA;
   // -----
 
-  /** session data on the Firebase Livescore [V1] */
+  /** holds "LIVE" data on the Firebase Livescore [V1] @deprecated */
   livescore_now: Map<number, FIREBASE_livescores_now>
-  /** session data on the Firebase Livescore (Scoreboard) [V2] */
+  /** holds "LIVE" data on the Firebase Livescore (Scoreboard) [V2] */
   livescore_now_scoreboard: Map<number, FIRE_LNNS>
   /** holds "LIVE" data for a target fixture scores */
   livescore_now_fixture_target: FIREBASE_livescores_now;
   /** holds "LIVE" data for a target fixture odds */
   live_odds_fixture_target: FIREBASE_odds[];
+  /** holds "LIVE" data for ALL players in a game */
+  livescore_now_player_fixture: number | null;
+  /** holds "LIVE" data for ALL fixtures */
+  livescore_now_fixtures: number[];
 }
