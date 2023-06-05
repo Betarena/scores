@@ -32,7 +32,6 @@
 	 * Description:
 	 * ~~~~~~~~~~~~~~~~~~~
 	 * ... Intializer of the Widget Function
-	 * ... Returns PROMISE - [INTERFACE - `FinalFeaturedSiteResponseDB`]
 	 */
 	let trueLengthOfArray: number;
 	// [ℹ]
