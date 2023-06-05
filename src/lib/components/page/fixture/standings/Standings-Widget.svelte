@@ -57,6 +57,7 @@ COMPONENT JS (w/ TS)
 
     const if_0 =
       WIDGET_DATA == undefined
+      || WIDGET_DATA?.comp_typ != 'domestic'
     ;
 		if (if_0) 
     {
