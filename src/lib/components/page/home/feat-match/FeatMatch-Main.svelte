@@ -1852,7 +1852,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-radius: 2px;
 	}
 	table td,
-	table th 
+	table th,
+  :global(table.table-best-player tr td)
+  :global(table.table-best-player tr th)
   {
 		padding: 7px 12px;
 		/* padding: 7px 0; */
@@ -1865,11 +1867,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	table tr td:last-child 
+  :global(table.table-best-player tr td:last-child)
   {
 		padding-right: 0;
 	}
 
-	table tr td 
+	table tr td,
+  :global(table.table-best-player tr td)
   {
 		padding-top: 16px !important;
 		padding-bottom: 0px;
@@ -2140,7 +2144,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	.dark-background-1 #fixture-league-title,
 	.dark-background-1 #fixture-visual-box,
-	.dark-background-1 .best-players-box,
+	:global(.dark-background-1 .best-players-box),
 	.dark-background-1 #live-stream-box 
   {
 		box-shadow: inset 0px -1px 0px #616161 !important;
@@ -2156,7 +2160,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border: 1px solid #f5620f !important;
 	}
 
-	.dark-background-1 table.table-best-player .row-head,
+	:global(.dark-background-1 table.table-best-player .row-head),
 	.dark-background-1 table.value_bets .row-head 
   {
 		background-color: #616161 !important;
@@ -2206,17 +2210,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   and (min-width: 700px) 
   {
 
-		.dark-background-1 .boxed-rating-matches 
+		:global(.dark-background-1 .boxed-rating-matches)
     {
 			background-color: #4b4b4b !important;
 			border: 1px solid #616161 !important;
 		}
-		.dark-background-1 .boxed-rating-assits,
+		:global(.dark-background-1 .boxed-rating-assits),
 		.dark-background-1 .boxed-rating-value-bets 
     {
 			background-color: #616161 !important;
 		}
-		.dark-background-1 .boxed-rating-goals 
+		:global(.dark-background-1 .boxed-rating-goals)
     {
 			background-color: #737373 !important;
 		}

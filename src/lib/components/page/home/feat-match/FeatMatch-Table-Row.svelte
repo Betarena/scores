@@ -95,7 +95,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         w-500 
         small 
         desktop-small
-      "
+        color-black-2
+        "
     >
       {name}
     </p>
@@ -109,6 +110,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           w-500 
           medium 
           boxed-rating-matches
+          color-black-2
         "
       >
         {appear}
@@ -121,6 +123,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           w-500 
           medium 
           boxed-rating-assits
+          color-black-2
         "
       >
         {assists}
@@ -133,6 +136,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           w-500 
           medium 
           boxed-rating-goals
+          color-black-2
         "
       >
         {goals}
