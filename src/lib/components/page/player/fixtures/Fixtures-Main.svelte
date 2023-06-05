@@ -76,7 +76,8 @@ COMPONENT JS (w/ TS)
     if (pageFixtureMap.has(view_page)) return;
     offset = offset + 10;
     loadingPrev = true;
-    const response = await get(
+    const response = await get
+    (
       `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${limit}&offset=${offset}&hasura=true`
     ) as B_PFIX_D;
     // validate: end of fixtures;
@@ -97,10 +98,14 @@ COMPONENT JS (w/ TS)
     leagueMap = leagueMap
   }
 
-  async function resetFixturesData() {
+  async function resetFixturesData
+  (
+  ) 
+  {
     pageFixtureMap = new Map();
     loadingPrev = true;
-    const response = await get(
+    const response = await get
+    (
       `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=${10}&offset=${0}&hasura=true`
     ) as B_PFIX_D;
     const _fixtureMap: Map <string, B_H_HF[]> = new Map(Object.entries(response?.data?.past_fixtures)) as Map <string, B_H_HF[]>;
@@ -118,7 +123,10 @@ COMPONENT JS (w/ TS)
    * playing in any of the live fixtures;
    * @returns NaN
    */
-  function validatePlayerInLineupLive () {
+  function validatePlayerInLineupLive 
+  (
+  ) 
+  {
 
     const liveFixturesMap = $sessionStore?.livescore_now
 
@@ -126,7 +134,8 @@ COMPONENT JS (w/ TS)
 
     // iterate over livescores map fixtures
     // looking for one where target player is playing;
-    for (const [liveId, fixtureData] of liveFixturesMap) {
+    for (const [liveId, fixtureData] of liveFixturesMap) 
+    {
       // validate player in lineup (exist)
       const validation_00 =
         (fixtureData?.lineup?.data == undefined
@@ -210,8 +219,10 @@ COMPONENT JS (w/ TS)
    * is active/playing;
    * @returns Promise < void >
    */
-  function injectLivescoreData(
-  ) {
+  function injectLivescoreData
+  (
+  ) 
+  {
 
     const liveFixture = $sessionStore?.livescore_now.get(liveFixtureId)
     const pageViewMap = pageFixtureMap.get(0)
@@ -223,7 +234,8 @@ COMPONENT JS (w/ TS)
     if (validation_0) return;
 
     // iterate over 1st page (map) (latest) fixtures
-    for (let [leagueId, fixtureList] of pageViewMap) {
+    for (let [leagueId, fixtureList] of pageViewMap) 
+    {
       // -> update target fixture data periodically with target player ID data events and what not;
 
       fixtureList = fixtureList.map(
@@ -368,23 +380,13 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [REACTIVIY] [METHODS]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: server_side_language = platfrom_lang_ssr(
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-
   /**
    * @description listens to changes in 
    * livescores_now data session-store;
    * Proceeds to update data accordingly;
   */
-  $: if ($sessionStore?.livescore_now) {
-    // dlog($sessionStore?.livescore_now, LV2_W_H_TAG[1])
+  $: if ($sessionStore?.livescore_now) 
+  {
     validatePlayerInLineupLive()
   }
 
@@ -512,7 +514,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               League (group)
               -->
               <a 
-                href={`/${leagueMap.get(key.split('_')[0])?.urls[server_side_language]}`}>
+                href={`/${leagueMap.get(key.split('_')[0])?.urls[$sessionStore?.serverLang]}`}>
                 <div
                   class="
                     row-space-start
