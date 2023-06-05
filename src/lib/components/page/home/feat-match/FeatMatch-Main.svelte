@@ -11,14 +11,13 @@
   import { fade } from 'svelte/transition';
 	
 	import { get } from '$lib/api/utils';
-	import { db_real } from '$lib/firebase/init';
+	import { targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
 	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-	import { FIREBASE_getTargetFixtureOdds } from '@betarena/scores-lib/dist/firebase/firebase.common.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -42,7 +41,7 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-	let totalVotes: number = undefined;
+	let totalVoteCount: number = undefined;
 	let imageURL: string = undefined;
 	let fixtureVoteObj: Voted_Fixture;
 	let noWidgetData: boolean = false;
@@ -60,7 +59,7 @@
 	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
   // [ℹ] intercept data, and decalre further;
-	$: totalVotes =
+	$: totalVoteCount =
     B_FEATM_D?.match_votes?.vote_draw_x 
     +	B_FEATM_D?.match_votes?.vote_win_local 
     +	B_FEATM_D?.match_votes?.vote_win_visitor
@@ -98,20 +97,7 @@
     );
 	}
 
-  // TODO:
-  async function get_TargetFixtureOddsAndInfo
-  (
-		selectedFixutreData: SelectedFixutre
-	): Promise<void> {
-		// [ℹ] get the list of the odds for the;
-		const response = await FIREBASE_getTargetFixtureOdds(
-      db_real,
-			selectedFixutreData
-		);
-		// [ℹ] assign real-time-odds,
-		B_FEATM_D.live_odds =
-			response;
-	}
+  // B_FEATM_D.live_odds = FIREBASE_getTargetFixtureOdds
 
 	function checkVote
   (
@@ -188,7 +174,7 @@
     );
 
     B_FEATM_D.match_votes = response?.update_widget_featured_match_votes_by_pk;
-    totalVotes =
+    totalVoteCount =
       B_FEATM_D?.match_votes?.vote_draw_x 
       +	B_FEATM_D?.match_votes?.vote_win_local 
       + B_FEATM_D?.match_votes?.vote_win_visitor
@@ -258,12 +244,12 @@
   */
   $: if (browser) 
   {
-		dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();		
+		dateDiff = toCorrectDate(B_FEATM_D?.time).getTime() - new Date().getTime();		
     setInterval
     (
       () => 
       {
-        dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
+        dateDiff = toCorrectDate(B_FEATM_D?.time).getTime() - new Date().getTime();
       }, 
       1000
     );
@@ -547,8 +533,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             class="row-space-out"
           >
 
-            <!--
-            ODDS 1
+            <!-- 
+            ODDS #1 
             -->
             <div
               class="
@@ -596,136 +582,142 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </button>
 
-              <!-- [ℹ] fixture-probability 
+              <!-- 
+              PROBABILITY (WIN)
               -->
               {#if !showBetSite}
+
                 <p
-                  class="w-400 probablitiy-text medium"
+                  class="
+                    w-400 
+                    probablitiy-text 
+                    medium"
                 >
-                  {B_FEATB_T.probability}
+                  {B_FEATB_T?.probability}
+
                   {#if !tabletExclusive}
                     <br />
                   {/if}
-                  {Math.round(
-                    parseInt(
-                      B_FEATM_D
-                        .probabilities.home
-                    )
-                  ).toFixed(2)}%
+
+                  {Math.round(parseFloat(B_FEATM_D?.probabilities?.home.toString())).toFixed(2)}%
                 </p>
+
               {:else if B_FEATM_D.match_votes != undefined}
-                <p class="w-500 large">
-                  <span class="color-dark">
-                    {(
-                      (B_FEATM_D
-                        .match_votes
-                        .vote_win_local /
-                        totalVotes) *
-                      100
-                    ).toFixed(0)}%
+
+                <p
+                  class="
+                    w-500 
+                    large
+                  "
+                >
+                  <span 
+                    class="color-dark"
+                  >
+                    {B_FEATM_D?.match_votes?.vote_win_local == 0 ? 0 : ((B_FEATM_D?.match_votes.vote_win_local / totalVoteCount) * 100).toFixed(0)}%
                   </span>
                   <span class="color-grey">
-                    ({B_FEATM_D
-                      .match_votes
-                      .vote_win_local})
+                    ({B_FEATM_D?.match_votes?.vote_win_local})
                   </span>
                 </p>
+
               {/if}
             </div>
 
-            <!-- [ℹ] ℹODDS #X
+            <!-- 
+            ODDS #X 
             -->
             <div
-              class="odds-vote-box text-center column"
+              class="
+                odds-vote-box 
+                text-center 
+                column
+              "
             >
+
               <button
-                class="row-space-out cast-vote-btn m-b-12"
-                class:active={fixtureVoteObj.fixture_vote ==
-                  'X'}
+                class="
+                  row-space-out 
+                  cast-vote-btn 
+                  m-b-12
+                "
+                class:active={fixtureVoteObj.fixture_vote == 'X'}
                 disabled={isVoteCasted}
-                on:click={() =>
-                  castVote(
-                    'X',
-                    parseFloat(
-                      B_FEATM_D.live_odds.fixture_odds.markets[
-                        '1X2FT'
-                      ].data[1].value.toString()
-                    ).toFixed(2)
-                  )}
+                on:click={() => castVote('X', parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[0].value.toString()).toFixed(2))}
               >
                 <p
-                  class="w-500 medium row-space-out"
+                  class="
+                    w-500 
+                    medium 
+                    row-space-out
+                  "
                 >
+
                   {#if !tabletExclusive}
                     <span class="color-grey">
                       X
                     </span>
                   {:else}
-                    <!-- 
-                      src="./static/icon/icon-close.svg"
-                      -->
                     <img
                       loading="lazy"
                       src="https://www.betarena.com/widgets/featured_match/static/icon/icon-close.svg"
                       alt="default alt text"
-                      width="28px"
-                      height="28px"
+                      width="28"
+                      height="28"
                     />
                   {/if}
+
                   <span
-                    class:active_p={fixtureVoteObj.fixture_vote ==
-                      'X'}
+                    class:active_p={fixtureVoteObj.fixture_vote == 'X'}
                   >
-                    {parseFloat(
-                      B_FEATM_D.live_odds.fixture_odds.markets[
-                        '1X2FT'
-                      ].data[1].value.toString()
-                    ).toFixed(2)}
+                    {parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[1].value.toString()).toFixed(2)}
                   </span>
                 </p>
               </button>
 
-              <!-- [ℹ] fixture-probability 
+              <!-- 
+              PROBABILITY (WIN)
               -->
               {#if !showBetSite}
+
                 <p
-                  class="w-400 probablitiy-text medium"
+                  class="
+                    w-400 
+                    probablitiy-text 
+                    medium
+                  "
                 >
-                  {B_FEATB_T.probability}
+                  {B_FEATB_T?.probability}
+                  
                   {#if !tabletExclusive}
                     <br />
                   {/if}
-                  {Math.round(
-                    parseInt(
-                      B_FEATM_D
-                        .probabilities.draw
-                    )
-                  ).toFixed(2)}%
+                  
+                  {Math.round(parseFloat(B_FEATM_D?.probabilities?.draw.toString())).toFixed(2)}%
+                  
                 </p>
+
               {:else if B_FEATM_D.match_votes != undefined}
+
                 <p class="w-500 large">
                   <span class="color-dark">
-                    {(
-                      (B_FEATM_D
-                        .match_votes
-                        .vote_draw_x /
-                        totalVotes) *
-                      100
-                    ).toFixed(0)}%
+                    {B_FEATM_D?.match_votes?.vote_draw_x == 0 ? 0 : ((B_FEATM_D?.match_votes.vote_draw_x / totalVoteCount) * 100).toFixed(0)}%
                   </span>
                   <span class="color-grey">
-                    ({B_FEATM_D
-                      .match_votes.vote_draw_x})
+                    ({B_FEATM_D?.match_votes?.vote_draw_x})
                   </span>
                 </p>
+                
               {/if}
+
             </div>
 
-            <!-- [ℹ] ODDS #2 
+            <!-- 
+            ODDS #2
             -->
             <div
               class="odds-vote-box column text-center"
             >
+
               <button
                 class="row-space-out cast-vote-btn m-b-12"
                 class:active={fixtureVoteObj.fixture_vote ==
@@ -742,8 +734,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   )}
               >
                 <p
-                  class="w-500 medium row-space-out"
+                  class="
+                    w-500 medium 
+                    row-space-out
+                  "
                 >
+
                   {#if !tabletExclusive}
                     <span class="color-grey">
                       2
@@ -753,98 +749,101 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       loading="lazy"
                       src={B_FEATM_D.away_team_logo}
                       alt="default alt text"
-                      width="28px"
-                      height="28px"
+                      width="28"
+                      height="28"
                     />
                   {/if}
+
                   <span
-                    class:active_p={fixtureVoteObj.fixture_vote ==
-                      '2'}
+                    class:active_p={fixtureVoteObj.fixture_vote == '2'}
                   >
-                    {parseFloat(
-                      B_FEATM_D.live_odds.fixture_odds.markets[
-                        '1X2FT'
-                      ].data[2].value.toString()
-                    ).toFixed(2)}
+                    {parseFloat(B_FEATM_D.live_odds.fixture_odds.markets['1X2FT'].data[2].value.toString()).toFixed(2)}
                   </span>
+
                 </p>
               </button>
 
-              <!-- [ℹ] fixture-probability 
-                -->
+              <!-- 
+              PROBABILITY (WIN)
+              -->
               {#if !showBetSite}
                 <p
-                  class="w-400 probablitiy-text medium"
+                  class="
+                    w-400 
+                    probablitiy-text 
+                    medium
+                  "
                 >
-                  {B_FEATB_T.probability}
+                  {B_FEATB_T?.probability}
+                  
                   {#if !tabletExclusive}
                     <br />
                   {/if}
-                  {Math.round(
-                    parseInt(
-                      data.probabilities.away
-                    )
-                  ).toFixed(2)}%
+
+                  {Math.round(parseFloat(B_FEATM_D?.probabilities?.away.toString())).toFixed(2)}%
+                  
                 </p>
               {:else if B_FEATM_D.match_votes != undefined}
-                <p class="w-500 large">
+                <p 
+                  class="
+                    w-500 
+                    large
+                  "
+                >
                   <span class="color-dark">
-                    {(
-                      (B_FEATM_D
-                        .match_votes
-                        .vote_win_visitor /
-                        totalVotes) *
-                      100
-                    ).toFixed(0)}%
+                    {B_FEATM_D?.match_votes?.vote_win_visitor == 0 ? 0 : ((B_FEATM_D?.match_votes.vote_win_visitor / totalVoteCount) * 100).toFixed(0)}%
                   </span>
                   <span class="color-grey">
-                    ({B_FEATM_D
-                      .match_votes
-                      .vote_win_visitor})
+                    ({B_FEATM_D?.match_votes?.vote_win_visitor})
                   </span>
                 </p>
               {/if}
             </div>
+
           </div>
 
-          <!-- [ℹ] stakes-site-info-pop-up
+          <!-- 
+          EXTRA INFO STAKES POP-UP
           -->
           {#if showBetSite}
-            <div id="site-bet-box" in:fade>
-              <!-- close-btn src="./static/icon/white-close.svg" -->
+
+            <div 
+              id="site-bet-box" 
+              in:fade>
 
               <img
                 loading="lazy"
                 src="https://www.betarena.com/widgets/featured_match/static/icon/white-close.svg"
                 alt="default alt text"
-                width="16px"
-                height="16px"
+                width="16"
+                height="16"
                 style="position: absolute; top: 12px; right: 20px;"
-                on:click={() =>
-                  (showBetSite = false)}
+                on:click={() => (showBetSite = false)}
               />
               <a
-                href={B_FEATM_D
-                  .live_odds.fixture_odds_info
-                  .register_link}
+                href={B_FEATM_D?.live_odds?.fixture_odds_info?.register_link}
               >
                 <img
                   loading="lazy"
                   id="stakesSiteImg"
-                  src={B_FEATM_D
-                    .live_odds.fixture_odds_info
-                    .image}
+                  src={B_FEATM_D?.live_odds.fixture_odds_info?.image}
                   alt="default alt text"
                   width="100%"
                   height="40px"
                 />
               </a>
 
-              <div id="inner-site-container">
-                <!-- [ℹ] STAKES DATA 
+              <div 
+                id="inner-site-container">
+
+                <!-- 
+                STAKES DATA 
                 -->
                 <div
-                  class="m-b-20 row-space-out"
+                  class="
+                    m-b-20 
+                    row-space-out
+                  "
                 >
                   <!-- [ℹ] Win Type 
                   -->
@@ -996,6 +995,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </div>
           {/if}
+
         </div>
       {/if}
 
@@ -2193,22 +2193,31 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #4b4b4b !important;
 	}
 
-	@media only screen and (min-width: 700px) {
-		.dark-background-1 .boxed-rating-matches {
+	@media only screen 
+  and (min-width: 700px) 
+  {
+
+		.dark-background-1 .boxed-rating-matches 
+    {
 			background-color: #4b4b4b !important;
 			border: 1px solid #616161 !important;
 		}
 		.dark-background-1 .boxed-rating-assits,
-		.dark-background-1 .boxed-rating-value-bets {
+		.dark-background-1 .boxed-rating-value-bets 
+    {
 			background-color: #616161 !important;
 		}
-		.dark-background-1 .boxed-rating-goals {
+		.dark-background-1 .boxed-rating-goals 
+    {
 			background-color: #737373 !important;
 		}
 	}
 
-	@media only screen and (min-width: 1024px) {
-		.dark-background-1 .tooltip .tooltiptext {
+	@media only screen
+  and (min-width: 1024px) 
+  {
+		.dark-background-1 .tooltip .tooltiptext 
+    {
 			background: #616161;
 			box-shadow: inset 0px -1px 0px #3c3c3c;
 		}
