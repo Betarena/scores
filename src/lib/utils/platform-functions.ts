@@ -1,3 +1,6 @@
+import { get } from "$lib/api/utils.js";
+import { sessionStore } from "$lib/store/session.js";
+import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
 import { dlog, dlogv2, NB_W_TAG, NB_W_TOG } from "./debug";
 
 /**
@@ -318,4 +321,41 @@ export async function promiseValidUrlCheck
   ;
 
   return response;
+}
+
+/**
+ * @description obtains the target sportbook data 
+ * information based on users geo-location;
+ * data gathered at page-level and set to svelte-stores
+ * to be used by (this) page components;
+ * NOTE: (*) best approach
+ * TODO: can be moved to a layout-level [?]
+ * TODO: can be moved to a header-level [?]
+ * TODO: can be moved to a +server-level [⚠️]
+ * @returns {Promise<void>} void
+ */
+export async function initSportbookData
+(
+  geoPos: string
+): Promise < void > 
+{
+  const dataRes0 = await get
+  (
+    `/api/cache/tournaments/sportbook?geoPos=${geoPos}`
+  ) as B_SPT_D;
+
+  sessionStore.updateSportbookMain
+  (
+    dataRes0
+  );
+
+  const dataRes1 = await get
+  (
+    `/api/cache/tournaments/sportbook?all=true&geoPos=${geoPos}`
+  ) as B_SPT_D[];
+
+  sessionStore.updateSportbookList
+  (
+    dataRes1
+  );
 }

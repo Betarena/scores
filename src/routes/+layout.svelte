@@ -10,7 +10,7 @@
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog } from '$lib/utils/debug';
-	import { platfrom_lang_ssr } from '$lib/utils/platform-functions.js';
+	import { initSportbookData, platfrom_lang_ssr } from '$lib/utils/platform-functions.js';
 	import * as Sentry from '@sentry/browser';
 	import { BrowserTracing } from '@sentry/tracing';
 
@@ -94,10 +94,14 @@
 		offlineMode = !offlineMode;
 	}
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
+  /**
+   * @summary
+   * IMPORTANT
+   * [MAIN] 
+   * [REACTIVE]
+   * @description 
+   * ➨ listens to change in "server" language;
+  */
 	$: serverSideLang = platfrom_lang_ssr
   (
 		$page?.route?.id,
@@ -109,6 +113,22 @@
     sessionStore.updateServerLang
     (
       serverSideLang
+    );
+  }
+
+  /**
+   * @summary
+   * IMPORTANT
+   * [MAIN] 
+   * [REACTIVE]
+   * @description 
+   * ➨ listens to change in "country_bookmaker";
+  */
+  $: if ($userBetarenaSettings?.country_bookmaker) 
+  {
+    initSportbookData
+    (
+      $userBetarenaSettings?.country_bookmaker
     )
   }
   

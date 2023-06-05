@@ -230,36 +230,6 @@
     return newURL;
   }
 
-  /**
-   * @description obtains the target sportbook data 
-   * information based on users geo-location;
-   * data gathered at page-level and set to svelte-stores
-   * to be used by (this) page components;
-   * NOTE: (*) best approach
-   * TODO: can be moved to a layout-level [?]
-   * TODO: can be moved to a header-level [?]
-   * TODO: can be moved to a +server-level [⚠️]
-   * @returns {Promise<void>} void
-   */
-  async function sportbookIdentify
-  (
-  ): Promise < void > 
-  {
-    if (!$userBetarenaSettings?.country_bookmaker) return;
-    const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
-    $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as B_SPT_D;
-    $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
-    $sessionStore.sportbook_list = $sessionStore.sportbook_list
-    .sort
-    (
-			(
-        a, 
-        b
-      ) =>
-      parseInt(a.position) - parseInt(b.position)
-		);
-  }
-
   //#endregion ➤ [METHODS]
 
   //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
@@ -289,18 +259,6 @@
     let newURL = translatedURL(lang_intent)
     dlog(`newURL (lang_intent): ${newURL}`, true)
     navigateToTranslation(newURL)
-  }
-
-  /**
-   * @summary
-   * [MAIN] 
-   * [REACTIVE]
-   * @description 
-   * ➨ listens to change in "country_bookmaker";
-  */
-  $: if ($userBetarenaSettings?.country_bookmaker) 
-  {
-    sportbookIdentify()
   }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
