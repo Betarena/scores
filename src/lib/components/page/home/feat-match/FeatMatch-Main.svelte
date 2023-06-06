@@ -40,7 +40,7 @@
 
 	let totalVoteCount: number = undefined;
 	let imageURL: string = undefined;
-	let fixtureVoteObj: Voted_Fixture;
+	let fixtureVoteObj: Voted_Fixture = { }
 	let noWidgetData: boolean = false;
 	let imageVar: string = '--featured-match-bookmaker-bg-';
 	let user_Stake_amount: number = 50.0;

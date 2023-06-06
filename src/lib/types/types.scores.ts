@@ -1,13 +1,13 @@
 import type { GeoJsResponse } from '$lib/types/types.geojs';
-import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS, FIRE_LNPI } from '@betarena/scores-lib/types/firebase.js';
+import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
 
 export interface Voted_Fixture 
 {
-	fixture_id:       number;
-	fixture_vote:     string;
-	fixture_vote_val: string;
+	fixture_id?:       number;
+	fixture_vote?:     string;
+	fixture_vote_val?: string;
 }
 
 export type Auth_Type =
