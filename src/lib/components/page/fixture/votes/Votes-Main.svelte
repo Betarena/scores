@@ -268,11 +268,11 @@
    * ➨ listens to "noWidgetData" state
   */
   $: if_R_0 =
-    FIXTURE_VOTES_DATA?.match_votes != undefined
+    FIXTURE_VOTES_DATA?.match_votes == undefined
     && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)
-    && FIXTURE_VOTES_DATA?.match_votes?.vote_win_local == 0 
-    && FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x == 0 
-    && FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor == 0
+    || ([0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_win_local)
+    && [0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x)
+    && [0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor))
   ;
   $: if (if_R_0) noWidgetData = true;
 
@@ -463,7 +463,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                 "
               >
-                {FIXTURE_VOTES_DATA?.match_votes?.vote_win_local == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes.vote_win_local / totalVoteCount) * 100).toFixed(0)}%
+                {[0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_win_local) ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_win_local / totalVoteCount) * 100).toFixed(0)}%
               </span>
               <span
                 class="
@@ -471,7 +471,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-400
                 "
               >
-                ({FIXTURE_VOTES_DATA.match_votes.vote_win_local})
+                ({FIXTURE_VOTES_DATA?.match_votes?.vote_win_local || '-'})
               </span>
             </p>
           {/if}
@@ -560,7 +560,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   color-dark
                 "
               >
-                {FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x / totalVoteCount) * 100).toFixed(0)}%
+                {[0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x) ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x / totalVoteCount) * 100).toFixed(0)}%
               </span>
               <span
                 class="
@@ -649,7 +649,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   w-500
                 "
               >
-                {FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor == 0 ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor / totalVoteCount) * 100).toFixed(0)}%
+                {[0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor) ? 0 : ((FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor / totalVoteCount) * 100).toFixed(0)}%
               </span>
               <span
                 class="
