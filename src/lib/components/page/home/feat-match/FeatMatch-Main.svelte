@@ -21,8 +21,10 @@
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import FeatMatchTableRow from './FeatMatch-Table-Row.svelte';
 
+	import { createFixtureOddsPath, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
 	import type { Voted_Fixture } from '$lib/types/types.scores.js';
 	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	import type { B_H_VOT_M } from '@betarena/scores-lib/types/votes.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -38,17 +40,18 @@
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
+  let SPORTBOOK_INFO: B_SPT_D;
+
 	let totalVoteCount: number = undefined;
-	let imageURL: string = undefined;
 	let fixtureVoteObj: Voted_Fixture = { }
 	let noWidgetData: boolean = false;
 	let imageVar: string = '--featured-match-bookmaker-bg-';
-	let user_Stake_amount: number = 50.0;
-	let currentDate: Date = new Date();
-	let dateDiff: number = Date.parse(currentDate.toString()) - Date.parse(new Date().toString());
+	let stakeAmount: number = 50.0;
+	let dateDiff: number;
 	let showBetSite: boolean = false;
 	let isVoteCasted: boolean = false;
   let showCountdown: boolean = true;
+  let placeholderData: any | object = { }
 
   $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
 	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
@@ -61,12 +64,12 @@
     +	B_FEATM_D?.match_votes?.vote_win_local 
     +	B_FEATM_D?.match_votes?.vote_win_visitor
   ;
-  
-  // $: imageURL = B_FEATM_D?.live_odds?.fixture_odds_info.image;
 
-  B_FEATM_D.time = new Date(B_FEATM_D.time.toString());
-
-  // $: fixtureVoteObj = B_FEATM_D?.selected_data;
+  const livesOddsPath = createFixtureOddsPath
+  (
+    B_FEATM_D?.id,
+    B_FEATM_D?.time?.toString()
+  );
 
   //#endregion ➤ [VARIABLES]
 
@@ -84,15 +87,58 @@
   (
   ): Promise < void > 
   {
-    // const if_M_0 = 
-    //   FIXTURE_FULL_TIME_OPT.includes(FIXTURE_INFO?.data?.status)
-    // ;
-    // if (if_M_0) return;
-    // let connectionRef = targetLivescoreNowFixtureOddsListen
-    // (
-    //   livesOddsPath
-    // );
+    let connectionRef = targetLivescoreNowFixtureOddsListen
+    (
+      livesOddsPath
+    );
 	}
+
+  // TODO:
+  async function injectLiveOddsData
+  (
+  ): Promise < void >
+  {
+
+		let count = 0;
+
+		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
+    {
+			const m_sportBookTitle =	m_sportBook?.title;
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || []) 
+      {
+				const firebase_sportbook_title = firebaseSportbook?.sportbook;
+        const if_M_0 =
+          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
+          && firebaseSportbook.markets != null 
+          && firebaseSportbook.markets['1X2FT'] !=	null 
+          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
+          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          && count != 1
+        ;
+        if (if_M_0)
+        {
+					placeholderData = 
+          {
+						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2),
+						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2),
+						draw: firebaseSportbook?.markets?.['1X2FT']?.data[1]?.value?.toFixed(2)
+					};
+					SPORTBOOK_INFO = m_sportBook;
+					count = 1;
+				}
+			}
+		}
+
+    getImageBgColor
+    (
+      SPORTBOOK_INFO?.image, 
+      imageVar
+    );
+
+    SPORTBOOK_INFO = SPORTBOOK_INFO
+		placeholderData = placeholderData;
+  }
 
   // B_FEATM_D.live_odds = FIREBASE_getTargetFixtureOdds
 
@@ -262,15 +308,17 @@
 		checkVote();
 	}
 
-  // TODO:
-  $: if (browser && imageURL) 
+  /**
+   * @summary
+   * [MAIN] 
+   * [REACTIVE]
+   * @description 
+   * ➨ listens to target "fixture" in "odds" data;
+  */
+  $: if ($sessionStore?.live_odds_fixture_target)
   {
-		getImageBgColor
-    (
-      imageURL, 
-      imageVar
-    );
-	}
+    injectLiveOddsData()
+  }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -288,6 +336,7 @@
   (
     async() => 
     {
+      await kickstartLiveOdds()
       resizeAction();
       addEventListeners();
     }
@@ -445,12 +494,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   "
                   style="white-space: nowrap;"
                 >
-                  {getOrdinalNum(B_FEATM_D.time.getDate())}
-                  {MONTH_NAMES_ABBRV?.[B_FEATM_D?.time?.getMonth()?.toString()]}
-                  {B_FEATM_D.time.getFullYear().toString().substr(-2)},
-                  {B_FEATM_D.time.getHours().toString()}
+                  {getOrdinalNum(toCorrectDate(B_FEATM_D?.time).getDate())}
+                  {MONTH_NAMES_ABBRV?.[toCorrectDate(B_FEATM_D?.time).getMonth()?.toString()]}
+                  {toCorrectDate(B_FEATM_D?.time).getFullYear().toString().substr(-2)},
+                  {toCorrectDate(B_FEATM_D?.time).getHours().toString()}
                   :
-                  {('0' + B_FEATM_D.time.getMinutes().toString()).slice(-2)}
+                  {toZeroPrefixDateStr(toCorrectDate(B_FEATM_D?.time).getMinutes().toString())}
                   h
                 </p>
               {:else}
@@ -534,7 +583,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
                 class:active={fixtureVoteObj?.fixture_vote == '1'}
                 disabled={isVoteCasted}
-                on:click={() => castVote('1', parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[0]?.value?.toString()).toFixed(2))}
+                on:click={() => castVote('1', placeholderData?.home)}
               >
                 <p
                   class="
@@ -560,7 +609,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   <span
                     class:active_p={fixtureVoteObj?.fixture_vote == '1'}
                   >
-                    {parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[0]?.value?.toString()).toFixed(2)}
+                    {placeholderData?.home}
                   </span>
                 </p>
               </button>
@@ -582,7 +631,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     <br />
                   {/if}
 
-                  {Math.round(parseFloat(B_FEATM_D?.probabilities?.home.toString())).toFixed(2)}%
+                  {placeholderData?.home}%
                 </p>
 
               {:else if B_FEATM_D.match_votes != undefined}
@@ -625,7 +674,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
                 class:active={fixtureVoteObj.fixture_vote == 'X'}
                 disabled={isVoteCasted}
-                on:click={() => castVote('X', parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[0]?.value?.toString()).toFixed(2))}
+                on:click={() => castVote('X', placeholderData?.draw)}
               >
                 <p
                   class="
@@ -652,7 +701,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   <span
                     class:active_p={fixtureVoteObj?.fixture_vote == 'X'}
                   >
-                    {parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[1]?.value?.toString()).toFixed(2)}
+                    {placeholderData?.draw}
                   </span>
                 </p>
               </button>
@@ -675,7 +724,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     <br />
                   {/if}
                   
-                  {Math.round(parseFloat(B_FEATM_D?.probabilities?.draw.toString())).toFixed(2)}%
+                  {placeholderData?.draw}%
                   
                 </p>
 
@@ -709,7 +758,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
                 class:active={fixtureVoteObj?.fixture_vote == '2'}
                 disabled={isVoteCasted}
-                on:click={() => castVote('2', parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[2]?.value?.toString()).toFixed(2))}
+                on:click={() => castVote('2', placeholderData?.away)}
               >
                 <p
                   class="
@@ -735,7 +784,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   <span
                     class:active_p={fixtureVoteObj?.fixture_vote == '2'}
                   >
-                    {parseFloat(B_FEATM_D?.live_odds?.fixture_odds?.markets?.['1X2FT']?.data?.[2]?.value?.toString()).toFixed(2)}
+                    {placeholderData?.away}
                   </span>
 
                 </p>
@@ -758,7 +807,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     <br />
                   {/if}
 
-                  {Math.round(parseFloat(B_FEATM_D?.probabilities?.away.toString())).toFixed(2)}%
+                  {placeholderData?.away}%
                   
                 </p>
               {:else if B_FEATM_D.match_votes != undefined}
@@ -800,12 +849,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
 
               <a
-                href={B_FEATM_D?.live_odds?.fixture_odds_info?.register_link}
+                href={SPORTBOOK_INFO?.register_link}
               >
                 <img
                   loading="lazy"
                   id="stakesSiteImg"
-                  src={B_FEATM_D?.live_odds.fixture_odds_info?.image}
+                  src={SPORTBOOK_INFO?.image}
                   alt="default alt text"
                   width="100%"
                   height="40px"
@@ -944,7 +993,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         text-center
                       "
                       type="text"
-                      bind:value={user_Stake_amount}
+                      bind:value={stakeAmount}
                     />
                   </div>
 
@@ -986,7 +1035,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         text-center
                       "
                       type="number"
-                      value={(parseFloat(fixtureVoteObj?.fixture_vote_val) * user_Stake_amount).toFixed(2)}
+                      value={(parseFloat(fixtureVoteObj?.fixture_vote_val) * stakeAmount).toFixed(2)}
                       disabled
                     />
 
@@ -998,7 +1047,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 PLACE BET BUTTON
                 -->
                 <a
-                  href={B_FEATM_D?.live_odds?.fixture_odds_info?.register_link}
+                  href={SPORTBOOK_INFO?.register_link}
                 >
                   <button
                     class="
@@ -1024,7 +1073,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     color-grey
                   "
                 >
-                  {B_FEATM_D?.live_odds?.fixture_odds_info?.information}
+                  {SPORTBOOK_INFO?.information}
                 </p>
 
               </div>
@@ -1908,7 +1957,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 	table td,
 	table th,
-  :global(table.table-best-player tr td)
+  :global(table.table-best-player tr td),
   :global(table.table-best-player tr th)
   {
 		padding: 7px 12px;
@@ -1921,7 +1970,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding-left: 0;
 	}
 
-	table tr td:last-child 
+	table tr td:last-child,
   :global(table.table-best-player tr td:last-child)
   {
 		padding-right: 0;
@@ -1934,7 +1983,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding-bottom: 0px;
 	}
 
-	.rating-head 
+	.rating-head,
+  :global(table.table-best-player .rating-head )
   {
 		width: 59px;
 	}
@@ -2095,7 +2145,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     {
 			width: 64px !important;
 		}
-		.player-img 
+    :global(table.table-best-player .player-img)
     {
 			margin-right: 16px;
 		}
@@ -2185,7 +2235,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     {
 			width: 100%;
 		}
-		.player-img 
+		:global(table.table-best-player .player-img)
     {
 			margin-right: 16px;
 		}
@@ -2232,7 +2282,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border: 1px solid #616161 !important;
 	}
 
-	.dark-background-1 table.table-best-player .row-head th p,
+	:global(.dark-background-1 table.table-best-player .row-head th p),
 	.dark-background-1 table.value_bets .row-head	th p,
 	.dark-background-1 .probablitiy-text 
   {
@@ -2244,9 +2294,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		background-color: #616161 !important;
 	}
-	.dark-background-1
-		#inner-site-container
-		.input-value 
+	.dark-background-1 #inner-site-container .input-value 
     {
 		background-color: #4b4b4b !important;
 		color: #ffffff !important;
