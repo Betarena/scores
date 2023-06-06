@@ -471,7 +471,7 @@ TODO:
             >
 
               <!-- 
-              [ℹ] team #1
+              TEAM 1
               -->
               <div
                 class="
@@ -560,7 +560,7 @@ TODO:
                   </p>
                 </div>
 
-              {:else if FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
+              {:else}
 
                 <div
                   class="
@@ -664,7 +664,7 @@ TODO:
               {/if}
 
               <!-- 
-              [ℹ] team #2
+              TEAM 2
               -->
               <div
                 class="
