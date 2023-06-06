@@ -569,6 +569,23 @@ TODO:
                 >
 
                   <!-- 
+                  FINAL FIXTURE STATUS
+                  (+) FIXTURE CHECKPOINTS
+                  -->
+                  {#if FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
+                    <p
+                      class="
+                        s-14
+                        w-500
+                        color-grey
+                        ft-text
+                      "
+                    >
+                      {FIXTURE_SCOREBOARD?.status}
+                    </p>
+                  {/if}
+
+                  <!-- 
                   SCORE
                   -->
                   <p
@@ -625,21 +642,9 @@ TODO:
                   {/if}
 
                   <!-- 
-                  FINAL FIXTURE STATUS
-                  (+) FIXTURE CHECKPOINTS
+                  FINAL FIXTURE CHECKPOINTS
                   -->
                   {#if FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
-                    <p
-                      class="
-                        s-14
-                        w-500
-                        color-grey
-                        ft-text
-                      "
-                    >
-                      {FIXTURE_SCOREBOARD?.status}
-                    </p>
-
                     <p
                       class="
                         s-14
