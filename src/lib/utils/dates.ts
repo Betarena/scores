@@ -206,7 +206,7 @@ export function toISOMod
  * @example 
  * [1] "2023-12-12", locale: ja-JP => 2023-12-12
  * @example 
- * [2] "2023-12-12", locale: ja-JP => 2023-12-12
+ * [2] "2023-06-05T23:00:00+00:00" (string), => 2023-06-05 (Date)
  * @param 
  * {Date | string} date
  * @param 
@@ -214,7 +214,7 @@ export function toISOMod
  * @param 
  * {boolean} showConversion
  * @returns 
- * a date string
+ * a date object
  */
 export function toCorrectDate
 (
@@ -225,14 +225,17 @@ export function toCorrectDate
 {
   if (showConversion) console.log("CONVERSION toCorrectDate [FROM]: ", date)
 
-  if (typeof(date) == 'string') {
+  if (typeof(date) == 'string') 
+  {
     // check for 'TXX:YY:SS'
-    const validation_0 =
+    const if_M0 =
       date.includes('T') 
       && !date.includes('Z')
+      && !date.includes('+')
     ;
     // add, if necessary the Z
-    if (validation_0) {
+    if (if_M0) 
+    {
       date = `${date}Z`
     }
     date = new Date(date)
