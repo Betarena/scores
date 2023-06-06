@@ -44,8 +44,8 @@ COMPONENT JS (w/ TS)
   const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 475;
 
-  const realDbPath1 = `livescores_now_scoreboard_ids_test/${data?.data?.player_id}`
-  const realDbPath2 = `livescores_now_scoreboard_test/`
+  const realDbPath1 = `livescores_now_player_ids/${data?.data?.player_id}`
+  const realDbPath2 = `livescores_now/`
 
   let mobileExclusive = false;
   let tabletExclusive = false;
