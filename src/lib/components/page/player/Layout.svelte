@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { onceTargetLivescoreNowFixtureGet, onceTargetPlayerIds, targetLivescoreNowFixtureListen } from '$lib/firebase/common';
+	import { onceTargetLivescoreNowFixtureGet, onceTargetPlayerIds, targetLivescoreNowFixtureListen, targetPlayerIdsListen } from '$lib/firebase/common';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog } from '$lib/utils/debug';
@@ -44,8 +44,8 @@ COMPONENT JS (w/ TS)
   const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 475;
 
-  const realDbPath1 = `livescores_now_player_ids/${data?.data?.player_id}`
-  const realDbPath2 = `livescore_now_scoreboard/`
+  const realDbPath1 = `livescores_now_scoreboard_ids_test/${data?.data?.player_id}`
+  const realDbPath2 = `livescores_now_scoreboard_test/`
 
   let mobileExclusive = false;
   let tabletExclusive = false;
@@ -56,6 +56,7 @@ COMPONENT JS (w/ TS)
 
 	$: refresh_lang = $userBetarenaSettings.lang;
 	$: lang_intent = $sessionStore.lang_intent;
+  $: liveFixtureId = $sessionStore?.livescore_now_player_fixture;
 
   //#endregion ➤ [VARIABLES]
 
@@ -70,18 +71,18 @@ COMPONENT JS (w/ TS)
    * @returns
    * void
    */
-   async function kickstartPlayerFixtureCheck
+  async function kickstartPlayerFixtureCheck
   (
-  )
+  ): Promise < void >
   {
     await onceTargetPlayerIds
     (
       realDbPath1
     );
-    // let connectionRef = targetLivescoreNowFixtureListen
-    // (
-    //   realDbPath1
-    // );
+    let connectionRef = targetPlayerIdsListen
+    (
+      realDbPath1
+    );
     // FIREBASE_CONNECTIONS_SET.add(connectionRef)
   }
 
@@ -96,13 +97,28 @@ COMPONENT JS (w/ TS)
    */
   async function kickstartLivescore
   (
-  )
+  ): Promise < void >
   {
-    const fixtureRealDbTarget = `${realDbPath2}${$sessionStore?.livescore_now_player_fixture}`
+    // CHECK: Exit;
+    const if_M_0 =
+      $sessionStore?.livescore_now_player_fixture == undefined
+    ;
+    if (if_M_0) return;
+
+    const fixtureRealDbTarget = `${realDbPath2}${liveFixtureId}`;
+
+    console.debug
+    (
+      '🔥',
+      'PLAYER FOUND LIVE',
+      fixtureRealDbTarget
+    );
+
     await onceTargetLivescoreNowFixtureGet
     (
       fixtureRealDbTarget
     );
+
     let connectionRef = targetLivescoreNowFixtureListen
     (
       fixtureRealDbTarget
@@ -170,6 +186,7 @@ COMPONENT JS (w/ TS)
    * [MAIN]
    * @description
    * ➨ document (visibility-change) event listener;
+   * ➨ document (on-resize) event listener;
    * @returns
    * void
    */
@@ -187,7 +204,13 @@ COMPONENT JS (w/ TS)
       {
         if (!document.hidden) 
         {
-          dlog('🔵 user is active', true)
+          // [🐞]
+          dlog
+          (
+            '🔵 user is active',
+            true
+          );
+          await kickstartPlayerFixtureCheck();
           await kickstartLivescore();
         }
       }
@@ -213,7 +236,11 @@ COMPONENT JS (w/ TS)
 
   // [ℹ] (event-listen)
   // [ℹ] lang (intent) change;
-  $: if (browser && lang_intent) 
+  $: if 
+  (
+    browser 
+    && lang_intent
+  ) 
   {
     let newURL = translated_url(lang_intent)
     dlog(`newURL (lang_intent): ${newURL}`, true)
@@ -225,25 +252,31 @@ COMPONENT JS (w/ TS)
 	$: if 
   (
     browser
-    && current_lang != refresh_lang 
-	) 
+    && current_lang != refresh_lang
+  ) 
   {
 		current_lang = refresh_lang;
-		let new_url = translated_url(current_lang)
-		goto(new_url, { replaceState: true });
+		goto
+    (
+      translated_url
+      (
+        current_lang
+      ), 
+      { 
+        replaceState: true 
+      }
+    );
 	}
 
-  // listens to changes in "this" player-id <=> fixture-id;
-  $: if ($sessionStore?.livescore_now_player_fixture)
+  $: if (liveFixtureId)
   {
-    console.debug
+    console.log
     (
-      '🔥',
-      'PLAYER FOUND LIVE'
-    );
+      'JELLO!'
+    )
     kickstartLivescore()
   }
-
+  
   //#endregion ➤ [REACTIVIY] [METHODS]
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
@@ -261,6 +294,7 @@ COMPONENT JS (w/ TS)
     async() => 
     {
       await kickstartPlayerFixtureCheck();
+      await kickstartLivescore();
       resizeAction();
       addEventListeners();
     }

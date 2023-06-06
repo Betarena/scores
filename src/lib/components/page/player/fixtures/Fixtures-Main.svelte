@@ -43,6 +43,12 @@ COMPONENT JS (w/ TS)
   $: PAGE_DATA = $page.data?.PAGE_DATA
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.fixtures || 'Fixtures' : 'Fixtures'
 
+  const MOBILE_VIEW = 475;
+	const TABLET_VIEW = 1024;
+
+	let mobileExclusive = false;
+  let tabletExclusive = false;
+
   let view_page: number = 0;
   let limit: number = 10;
   let offset: number = 0;
@@ -61,6 +67,14 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN-METHODS]
 
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ fetch past fixtures for "this" player, pagination based;
+   * @returns
+   * void
+   */
   async function getPastFixtures
   (
   ): Promise < void > 
@@ -169,6 +183,13 @@ COMPONENT JS (w/ TS)
       (
         `/api/data/players/fixtures/?fixture_id=${liveFixture?.id}`
       ) as B_H_HF;
+
+      console.log
+      (
+        '🟢 fetching fixture',
+        response
+      );
+
       targetFixture = response;
     }
 
@@ -187,12 +208,12 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary 
-   * [MAIN] method
-   * @description updates the information
-   * for the fixtures of current-player with
-   * real-time information in those he 
-   * is active/playing;
-   * @returns Promise < void >
+   * IMPORTANT 
+   * [MAIN]
+   * @description 
+   * injects new "livescores" real-time data for "this" player;
+   * @returns
+   * void
    */
   function injectLivescoreData
   (
@@ -210,11 +231,17 @@ COMPONENT JS (w/ TS)
     
     const playerFixList: PFIX_C_Fixture[] = []
 
-    for (let [, fixtureList] of pageViewMap) 
+    for (let [leagueId, fixtureList] of pageViewMap) 
     {
+      const filteredFixList = fixtureList
+      ?.filter
+      (
+        x => 
+        x?.id != liveFixture?.id
+      );
       playerFixList.push
       (
-        ...fixtureList
+        ...filteredFixList
       );
     }
 
@@ -224,7 +251,8 @@ COMPONENT JS (w/ TS)
       targetFixture,
       liveFixture?.events?.data,
       liveFixture?.lineup?.data,
-      liveFixture?.bench?.data
+      liveFixture?.bench?.data,
+      liveFixture
     );
 
     playerFixList.push
@@ -235,35 +263,53 @@ COMPONENT JS (w/ TS)
     const newMap = PFIX_PP_genLeagueFixMap
     (
       playerFixList
-    ); 
+    );
 
-    pageFixtureMap.set(0, newMap)
+    pageFixtureMap.set
+    (
+      0, 
+      newMap
+    );
     pageFixtureMap = pageFixtureMap;
   }
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	const TABLET_VIEW = 1024;
-	const MOBILE_VIEW = 475;
-	let mobileExclusive: boolean = false;
-  let tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ document (visibility-change) event listener;
+   * @returns
+   * void
+   */
+   function addEventListeners
+  (
+  ): void
+  {
+    // NOTE: (on-resize)
+    window.addEventListener
+    (
 			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
+			function () 
+      {
+				resizeAction();
 			}
 		);
-	});
+  }
+
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  ): void
+  {
+    [
+      tabletExclusive, 
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+  }
 
   //#endregion ➤ [METHODS]
 
@@ -279,12 +325,33 @@ COMPONENT JS (w/ TS)
   */
   $: if ($sessionStore?.livescore_now_fixture_target) 
   {
+    console.log
+    (
+      '🔥',
+      'UPDATING'
+    )
     validatePlayerInLineupLive()
   }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  /**
+   * @summary
+   * [MAIN] [LIFECYCLE]
+   * @description
+   * ➨ kickstart resize-action;
+   * ➨ kickstart (bundle) event-listeners;
+  */
+  onMount
+  (
+    async() => 
+    {
+      resizeAction();
+      addEventListeners();
+    }
+  );
 
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
@@ -303,9 +370,6 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
-[ℹ] example comment
--->
 <div>
 
   <WidgetTitle
@@ -326,6 +390,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         row-space-out
         m-b-15
       ">
+
       <!-- 
       Previous
       -->
@@ -350,6 +415,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         />
         {WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.previous || 'Previous' : 'Previous'}
       </button>
+
       <!-- 
       Next
       -->
@@ -376,6 +442,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           />
         </button>
       {/if}
+
     </div>
     
     <!-- 
@@ -458,41 +525,50 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-  div#top-row {
+  div#top-row
+  {
     padding: 0 20px;
   }
 
-  div.league-group-box {
+  div.league-group-box
+  {
     padding-left: 28px;
   }
 
   /* o */
-  button.btn-hollow:hover {
+  button.btn-hollow:hover
+  {
     border: 1px solid var(--primary) !important;
   }
 
   /* o */
-  button.btn-hollow.left {
+  button.btn-hollow.left
+  {
     padding: 12px 16px 12px 10px ;
   }
   /* o */
-  button.btn-hollow.right {
+  button.btn-hollow.right
+  {
     padding: 12px 10px 12px 16px ;
   }
 
-  img.league-img {
+  img.league-img
+  {
     width: auto;
     max-height: 100%;
     object-fit: fill;
   }
 
-  div#fixtures-list-box {
+  div#fixtures-list-box
+  {
 
-  } div#fixtures-list-box a:first-child div.league-group-box {
+  } div#fixtures-list-box a:first-child div.league-group-box
+  {
     border: none;
     padding-top: 0;
     margin-top: 0;
-  } div#fixtures-list-box a div.league-group-box {
+  } div#fixtures-list-box a div.league-group-box
+  {
     border-top: 1px solid var(--grey-color);
     padding-top: 18px;
   } 
@@ -505,8 +581,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   @media only screen 
-    and (min-width: 726px) 
-    and (max-width: 1000px) {
+  and (min-width: 726px) 
+  and (max-width: 1000px)
+  {
   }
 
   /*
@@ -515,17 +592,21 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-  div.dark-background-1 div#fixtures-list-box a:first-child div.league-group-box {
+  div.dark-background-1 div#fixtures-list-box a:first-child div.league-group-box
+  {
     border: none;
-  } div.dark-background-1 div#fixtures-list-box a div.league-group-box {
+  } div.dark-background-1 div#fixtures-list-box a div.league-group-box
+  {
     border-top: 1px solid var(--dark-theme-1-shade);
   }
 
-  div.dark-background-1 button.btn-hollow {
+  div.dark-background-1 button.btn-hollow
+  {
     border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
   /* o */
-  div.dark-background-1 button.btn-hollow:hover {
+  div.dark-background-1 button.btn-hollow:hover
+  {
     border: 1px solid var(--primary) !important;
     color: var(--primary) !important;
   }

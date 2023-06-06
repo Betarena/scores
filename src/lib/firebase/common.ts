@@ -38,6 +38,43 @@ export async function onceTargetPlayerIds
   );
 }
 
+/**
+ * @summary 
+ * [MAIN]
+ * @description 
+ * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
+ * @returns 
+ * {Unsubscribe} Unsubscribe
+ */
+export function targetPlayerIdsListen
+(
+  path: string
+): Unsubscribe 
+{
+  const dbRef = ref
+  (
+    db_real,
+    path
+  );
+
+  const listenEventRef = onValue
+  (
+    dbRef, 
+    (
+      snapshot
+    ) => 
+    {
+      const firebaseData: FIRE_LNPI = snapshot.val();
+      sessionStore.updateLivescorePlayerId
+      (
+        firebaseData?.id
+      );
+    }
+  );
+
+  return listenEventRef 
+}
+
 // #endregion PLAYER_IDS
 
 // #region ODDS
