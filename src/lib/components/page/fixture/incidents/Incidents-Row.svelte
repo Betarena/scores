@@ -35,6 +35,7 @@
   export let playerMap: Map <number, B_H_SFPV2>;
 
 	let icon: string;
+  let url: string;
 
   //#endregion ➤ [VARIABLES]
 
@@ -71,6 +72,9 @@
 		if (INCIDENT_INFO?.type == 'var') icon = var_red;
 		if (['penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)) icon = penalty;
 		if (['missed_penalty','pen_shootout_miss'].includes(INCIDENT_INFO?.type)) icon = penalty_miss;
+    // player URL;
+    if (playerMap?.has(INCIDENT_INFO?.player_id))
+      url = `/${playerMap?.get(INCIDENT_INFO?.player_id)?.urls?.[$sessionStore?.serverLang]}`
 	}
 
   //#endregion ➤ [REACTIVIY] [METHODS]
@@ -88,10 +92,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 {#if INCIDENT_INFO != undefined}
   <a
-    href="/{playerMap?.get(INCIDENT_INFO?.player_id)?.urls?.[$sessionStore?.serverLang]}"
+    href="{url}"
     class="
       cursor-pointer
     "
+    class:disable-anchor={url == undefined}
   >
     <div
       class="
