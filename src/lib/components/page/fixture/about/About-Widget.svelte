@@ -6,7 +6,6 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	
   import { sessionStore } from '$lib/store/session.js';
@@ -84,9 +83,8 @@ COMPONENT JS (w/ TS)
    * @description 
    * listens to target "language" change;
   */
-  $: if_R_0 =
-    browser 
-    && $sessionStore?.serverLang != undefined
+  $: if_R_0 = 
+    $sessionStore?.serverLang
   ;
   $: if (if_R_0)
   {
@@ -116,13 +114,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <SeoBox>
   <!-- 
-  [ℹ] widget-title 
+  WIDGET TITLE
   -->
   <h2>{WIDGET_T_DATA?.title}</h2>
   <!-- 
-  [ℹ] & complete text block 
+  SEO
   -->
-  <p>{WIDGET_DATA?.seo_data}</p>
+  {@html WIDGET_DATA?.seo_data}
 </SeoBox>
 
 <!-- [🐞] -->
