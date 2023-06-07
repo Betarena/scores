@@ -3,7 +3,159 @@ import { onValue, ref, type Unsubscribe } from "firebase/database";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_real } from "./init";
 
-import type { FIRE_LNNS, FIREBASE_livescores_now } from "@betarena/scores-lib/types/firebase.js";
+import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+
+// #region PLAYER_IDS
+
+/**
+ * @summary 
+ * [MAIN]
+ * @description
+ * ➨ one-off request "X" target path (real-db) data;
+ * ➨ kickstarts liveMap (player-ids) generation;
+ * @returns 
+ * {Promise < void >}
+*/
+export async function onceTargetPlayerIds
+(
+  path: string
+): Promise < void > 
+{
+  const firebaseData = await getTargetRealDbData
+  (
+    path
+  ) as FIRE_LNPI;
+
+  console.log
+  (
+    'firebaseData',
+    firebaseData
+  );
+
+  sessionStore.updateLivescorePlayerId
+  (
+    firebaseData?.id
+  );
+}
+
+/**
+ * @summary 
+ * [MAIN]
+ * @description 
+ * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
+ * @returns 
+ * {Unsubscribe} Unsubscribe
+ */
+export function targetPlayerIdsListen
+(
+  path: string
+): Unsubscribe 
+{
+  const dbRef = ref
+  (
+    db_real,
+    path
+  );
+
+  const listenEventRef = onValue
+  (
+    dbRef, 
+    (
+      snapshot
+    ) => 
+    {
+      const firebaseData: FIRE_LNPI = snapshot.val();
+      sessionStore.updateLivescorePlayerId
+      (
+        firebaseData?.id
+      );
+    }
+  );
+
+  return listenEventRef 
+}
+
+// #endregion PLAYER_IDS
+
+// #region ODDS
+
+/**
+ * @summary 
+ * [HELPER]
+ * @param 
+ * {number} fixtureId 
+ * @param 
+ * {string} fixtureTime 
+ * @returns
+ * a target directory/url to listen to "odds" data to a target fixture;
+ */
+export function createFixtureOddsPath
+(
+  fixtureId: number,
+  fixtureTime: string
+): string
+{
+
+  const year_: string = new Date(fixtureTime).getFullYear().toString();
+  const month_: number = new Date(fixtureTime).getMonth();
+  let new_month_ = (month_ + 1).toString();
+  new_month_ = `0${new_month_}`.slice(-2);
+  let day = new Date(fixtureTime).getDate().toString();
+  day = `0${day}`.slice(-2);
+  return `odds/${year_}/${new_month_}/${day}/${fixtureId}`;
+}
+
+/**
+ * @summary 
+ * [MAIN]
+ * @description 
+ * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
+ * @returns 
+ * {Unsubscribe} Unsubscribe
+ */
+export function targetLivescoreNowFixtureOddsListen
+(
+  path: string
+): Unsubscribe 
+{
+  const dbRef = ref
+  (
+    db_real,
+    path
+  );
+
+  const listenEventRef = onValue
+  (
+    dbRef, 
+    (
+      snapshot
+    ) => 
+    {
+      const sportbookArray: FIREBASE_odds[] = []
+
+      const data: [string, FIREBASE_odds][] = 
+        snapshot.exists()
+          ? Object.entries(snapshot.val())
+          : []
+      ;
+
+      for (const sportbook of data) 
+      {
+        sportbook[1].sportbook = sportbook[0].toString();
+        sportbookArray.push(sportbook[1]);
+      }
+
+      sessionStore.updateLiveOdds
+      (
+        sportbookArray
+      );
+    }
+  );
+
+  return listenEventRef 
+}
+
+// #endregion ODDS
 
 // #region LIVESCORES_NOW
 
@@ -49,10 +201,10 @@ export function listenRealTimeLivescoresNowChange
 /**
  * @summary 
  * [MAIN]
- * @description common method that will listen to 
- * real-time changes in "livescores_now_scoreboard" 
- * Firebase (REAL-DB);
- * @returns {Unsubscribe} Unsubscribe
+ * @description 
+ * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
+ * @returns 
+ * {Unsubscribe} Unsubscribe
  */
 export function targetLivescoreNowFixtureListen
 (

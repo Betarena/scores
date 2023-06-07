@@ -9,15 +9,15 @@ import type { B_ABT_D, B_ABT_T } from '@betarena/scores-lib/types/about.js';
 import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
 import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
-import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
 import type { B_LIN_D, B_LIN_T } from '@betarena/scores-lib/types/lineups.js';
-import type { B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
+import type { B_PR_D, B_PR_T } from '@betarena/scores-lib/types/probabilities.js';
 import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
 import type { B_SAP_D1, B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings.js';
 import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
-import type { B_VOT_T } from '@betarena/scores-lib/types/votes.js';
+import type { B_VOT_D, B_VOT_T } from '@betarena/scores-lib/types/votes.js';
 import type { PageLoad } from './$types';
 
 // #endregion ➤ [MAIN] Package Imports
@@ -90,7 +90,7 @@ export async function load
 
   const data_0 = await promiseUrlsPreload
   (
-    [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures`],
+    [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures&hasura=true`],
     fetch
   ) as PP_PROMISE_0;
 
@@ -103,11 +103,12 @@ export async function load
 	const league_id = FIXTURE_INFO?.league_id;
 	const league_name = FIXTURE_INFO?.data?.league_name;
 	const country_id = FIXTURE_INFO?.data?.country_id;
-	const home_team_name = FIXTURE_INFO?.data?.home_team_name;
-	const away_team_name = FIXTURE_INFO?.data?.away_team_name;
+	const homeTeamName = FIXTURE_INFO?.data?.home_team_name;
+	const awayTeamName = FIXTURE_INFO?.data?.away_team_name;
 	const fixture_day = FIXTURE_INFO?.data?.fixture_day == undefined ? undefined : FIXTURE_INFO?.data?.fixture_day.replace('T00:00:00', '');
 	const venue_name = FIXTURE_INFO?.data?.venue_name;
 	const venue_city = FIXTURE_INFO?.data?.venue_city;
+  const teamIds: string = FIXTURE_INFO?.data?.team_ids;
 
   // [2] FIXTURE (CRITICAL) page data;
 
@@ -155,10 +156,12 @@ export async function load
     B_CONT_T | undefined,
     B_ABT_D | undefined,
     B_ABT_T | undefined,
+    B_VOT_D | undefined,
     B_VOT_T | undefined,
+    B_PR_D | undefined,
     B_PR_T | undefined,
     B_FO_T | undefined,
-    undefined, // B_H2H_D
+    B_H2H_D | undefined,
     B_H2H_T | undefined,
     B_STA_T | undefined,
     B_STA_D | undefined
@@ -167,27 +170,30 @@ export async function load
 	const urls: string[] = 
   [
     `/api/data/main/seo-pages?lang=${urlLang}&page=fixtures`,
-    `/api/hasura/fixture/scoreboard?fixture_id=${fixture_id}`,
-    `/api/cache/fixtures/scoreboard?lang=${urlLang}`,
+    `/api/data/fixture/scoreboard?fixture_id=${fixture_id}`,
+    `/api/data/fixture/scoreboard?lang=${urlLang}`,
     `/api/data/fixture/lineups?fixture_id=${fixture_id}`,
     `/api/data/fixture/lineups?lang=${urlLang}`,
-    `/api/hasura/fixture/incidents?fixture_id=${fixture_id}`,
-    `/api/cache/fixtures/incidents?lang=${urlLang}`,
+    `/api/data/fixture/incidents?fixture_id=${fixture_id}`,
+    `/api/data/fixture/incidents?lang=${urlLang}`,
     `/api/cache/home/featured_betting_sites?lang=${urlLang}`,
-    `/api/hasura/fixture/statistics?fixture_id=${fixture_id}`,
-    `/api/cache/fixtures/statistics?lang=${urlLang}`,
-    `/api/hasura/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`,
-    `/api/cache/fixtures/content?lang=${urlLang}`,
-    `/api/hasura/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`,
-    `/api/cache/fixtures/about?lang=${urlLang}`,
-    `/api/cache/fixtures/votes?lang=${urlLang}`,
-    `/api/cache/fixtures/probabilities?lang=${urlLang}`,
+    `/api/data/fixture/statistics?fixture_id=${fixture_id}`,
+    `/api/data/fixture/statistics?lang=${urlLang}`,
+    `/api/data/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`,
+    `/api/data/fixture/content?lang=${urlLang}`,
+    `/api/data/fixture/about?fixture_id=${fixture_id}&lang=${urlLang}`,
+    `/api/data/fixture/about?lang=${urlLang}`,
+    `/api/data/fixture/votes?fixture_id=${fixture_id}`,
+    `/api/data/fixture/votes?lang=${urlLang}`,
+    `/api/data/fixture/probability?fixture_id=${fixture_id}`,
+    `/api/data/fixture/probability?lang=${urlLang}`,
+    // TODO: clean up;
     `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
-    `/api/hasura/fixture/head-2-head?fixture_id=${fixture_id}`,
-    `/api/cache/fixtures/head-2-head?lang=${urlLang}`,
+    `/api/data/fixture/h2h?teamIds=${teamIds}`,
+    `/api/data/fixture/h2h?lang=${urlLang}`,
     `/api/cache/tournaments/standings?lang=${urlLang}`,
     `/api/cache/tournaments/standings?league_id=${league_id}`
-  ];
+  ]; 
 
   const data = await promiseUrlsPreload
   (
@@ -211,7 +217,9 @@ export async function load
     FIXTURE_CONTENT_TRANSLATION,
     FIXTURE_ABOUT,
     FIXTURE_ABOUT_TRANSLATION,
-    FIXTURE_VOTES_TRANSLATION,
+    B_VOT_D,
+    B_VOT_T,
+    FIXTURE_PROB_DATA,
     FIXTURE_PROBS_TRANSLATION,
     FIXTURES_ODDS_T,
     FIXTURE_H2H,
@@ -222,7 +230,7 @@ export async function load
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA
 
-  //#region [2] IMPORTANT REGEX
+  //#region [2] IMPORTANT REGEX + DATA INJECT
       
 	PAGE_SEO.main_data = JSON.parse(
 		JSON.stringify(PAGE_SEO.main_data)
@@ -231,8 +239,8 @@ export async function load
 			.replace(/{sport}/g, sport)
 			.replace(/{country}/g, country)
 			.replace(/{name}/g, league_name)
-			.replace(/{home_team_name}/g, home_team_name)
-			.replace(/{away_team_name}/g, away_team_name)
+			.replace(/{home_team_name}/g, homeTeamName)
+			.replace(/{away_team_name}/g, awayTeamName)
 			.replace(/{fixtures_day}/g, fixture_day)
 			.replace(/{data.venue.data.name}/g, venue_name)
 			.replace(/{data.venue.data.city}/g, venue_city)
@@ -245,8 +253,8 @@ export async function load
 			.replace(/{sport}/g, sport)
 			.replace(/{country}/g, country)
 			.replace(/{name}/g, league_name)
-			.replace(/{home_team_name}/g, home_team_name)
-			.replace(/{away_team_name}/g, away_team_name)
+			.replace(/{home_team_name}/g, homeTeamName)
+			.replace(/{away_team_name}/g, awayTeamName)
 			.replace(/{fixtures_day}/g, fixture_day)
 			.replace(/{data.venue.data.name}/g, venue_name)
 			.replace(/{data.venue.data.city}/g, venue_city)
@@ -259,19 +267,18 @@ export async function load
 			.replace(/{sport}/g, sport)
 			.replace(/{country}/g, country)
 			.replace(/{name}/g, league_name)
-			.replace(/{home_team_name}/g, home_team_name)
-			.replace(/{away_team_name}/g, away_team_name)
+			.replace(/{home_team_name}/g, homeTeamName)
+			.replace(/{away_team_name}/g, awayTeamName)
 			.replace(/{fixtures_day}/g, fixture_day)
 			.replace(/{data.venue.data.name}/g, venue_name)
 			.replace(/{data.venue.data.city}/g, venue_city)
 	);
 
-  //#endregion [2] IMPORTANT REGEX
-
-	// [ℹ] canonical exclusive SET - [EN];
 	const enItemAlt = FIXTURE_INFO?.alternate_data?.[lang];
 	PAGE_SEO.main_data.canonical = enItemAlt;
   FIXTURE_INFO.data.fixture_time = FIXTURE_SCOREBOARD?.fixture_time;
+
+  //#endregion [2] IMPORTANT REGEX + DATA INJECT
 
   //#region [3] IMPORTANT RETURN
 
@@ -297,7 +304,7 @@ export async function load
   // [🐞]
   dlog
   (
-    `⏳ ${PAGE_LOG} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    `${PAGE_LOG} ${((t1 - t0) / 1000).toFixed(2)} sec`,
     true
   );
 
@@ -322,7 +329,9 @@ export async function load
     FIXTURE_CONTENT_TRANSLATION,
     FIXTURE_ABOUT,
     FIXTURE_ABOUT_TRANSLATION,
-    FIXTURE_VOTES_TRANSLATION,
+    B_VOT_D,
+    B_VOT_T,
+    FIXTURE_PROB_DATA,
     FIXTURE_PROBS_TRANSLATION,
     FIXTURE_H2H,
     FIXTURE_H2H_TRANSLATION,
