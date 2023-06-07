@@ -12,13 +12,14 @@
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
 		
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import IncidentRow from './Incidents-Row.svelte';
 	
   import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
-	import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
+	import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -34,6 +35,7 @@
   let tabletExclusive = false;
 
 	let noWidgetData: any = false;
+  let playerMap = new Map <number, B_H_SFPV2>();
 
   //#endregion ➤ [VARIABLES]
 
@@ -50,7 +52,7 @@
   */
 	async function injectLiveData
   (
-	) 
+  ): Promise < void > 
   {
 		const fixture_id = FIXTURE_INCIDENTS?.id;
 
@@ -98,7 +100,7 @@
   // VIEWPORT CHANGES | IMPORTANT
   function resizeAction
   (
-  )
+  ): void
   {
     [
       tabletExclusive, 
@@ -120,7 +122,7 @@
    */
   function addEventListeners
   (
-  )
+  ): void
   {
     // NOTE: (on-resize)
     window.addEventListener

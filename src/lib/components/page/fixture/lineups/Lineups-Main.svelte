@@ -79,14 +79,14 @@
   */
 	async function injectLiveData
   (
-	) 
+  ): Promise < void > 
   {
 		const fixture_id = FIXTURE_LINEUPS?.id;
 
-    const if_M_00 =
+    const if_M_0 =
       $sessionStore?.livescore_now_fixture_target?.id != fixture_id
     ;
-    if (if_M_00) return;
+    if (if_M_0) return;
 
     const liveFixtureData = $sessionStore?.livescore_now_fixture_target;
 
@@ -101,11 +101,11 @@
     const FIREBASE_BENCH_DATA = liveFixtureData?.bench?.data;
 
     // EXIT;
-    const if_M_0 = 
+    const if_M_1 = 
       FIREBASE_LINEUPS_DATA == undefined
       || FIREBASE_BENCH_DATA == undefined
     ;
-    if (if_M_0) return;
+    if (if_M_1) return;
 
     // reset, to prevent first-time data generation re-trigger;
     playerMap = new Map();
@@ -113,7 +113,7 @@
     // NOTE: check if the "current" data is "invalid"
     // NOTE: require an "auto-lineup" live-data generation update
     // NOTE: on the spot, from "livescores-now" real-time DB;
-    const if_M_1 =
+    const if_M_2 =
       FIXTURE_LINEUPS?.home?.lineup?.length == 0 
       && FIXTURE_LINEUPS?.away?.lineup?.length == 0 
       && FIXTURE_LINEUPS?.home?.bench?.length == 0 
@@ -123,7 +123,7 @@
       && FIREBASE_BENCH_DATA != undefined
       && FIREBASE_BENCH_DATA?.length > 0
     ;
-    if (if_M_1) 
+    if (if_M_2) 
     {
 
       console.log('⭐️ injectLiveData() if_M_0')
@@ -154,7 +154,8 @@
     const home_team_id = liveFixtureData?.localteam_id;
     const away_team_id =	liveFixtureData?.visitorteam_id;
 
-    const [
+    const 
+    [
       homeTeamLineup,
       homeTeamBench
     ] = await LIN_F_dataInject
@@ -172,7 +173,8 @@
       }
     );
 
-    const [
+    const 
+    [
       awayTeamLineup,
       awayTeamBench
     ] = await LIN_F_dataInject
@@ -203,7 +205,7 @@
   // VIEWPORT CHANGES | IMPORTANT
   function resizeAction
   (
-  )
+  ): void
   {
     [
       tabletExclusive, 
@@ -225,7 +227,7 @@
    */
   function addEventListeners
   (
-  )
+  ): void
   {
     // NOTE: (on-resize)
     window.addEventListener
