@@ -94,7 +94,6 @@
     FIXTURE_LINEUPS.status = liveFixtureData?.time?.status;
     FIXTURE_LINEUPS.home.formation = liveFixtureData?.formations?.localteam_formation;
     FIXTURE_LINEUPS.away.formation = liveFixtureData?.formations?.visitorteam_formation;
-    // FIXME: make compatible TYPES for hasura/events && firebase/events
     FIXTURE_LINEUPS.events =	liveFixtureData?.events?.data;
 
     const FIREBASE_LINEUPS_DATA = liveFixtureData?.lineup?.data;
