@@ -3,8 +3,9 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { FINC_FP_ENTRY, FINC_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.incidents.js';
+import { FINC_FP_ENTRY, FINC_FP_ENTRY_1, FINC_FP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.incidents.js';
 
+import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
 import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
 
 //#endregion ➤ Package Imports
@@ -31,6 +32,7 @@ export async function GET
     // query (url) data
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
+	  const player_ids: string = req?.url?.searchParams?.get('player_ids');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
     // NOTE: fixture (H2H) data; (MAIN)
@@ -78,6 +80,33 @@ export async function GET
       {
         return json(response);
       }
+    }
+
+    // NOTE: fixture (lineup) data; (PLAYERS) [w/fallback]
+    const if_1 =
+      player_ids != undefined
+    ;
+    if (if_1)
+    {
+      const _playerIds: number[] = 
+        player_ids == undefined
+          ? []
+          : player_ids
+            ?.split
+            (
+              ','
+            )
+            ?.map
+            (
+              x => 
+              parseInt(x)
+            )
+      ;
+      const data = await fallbackMainData_2
+      (
+        _playerIds
+      )
+      return json(data);
     }
 
     // fallback to NULL
@@ -164,6 +193,25 @@ async function fallbackMainData_1
   }
   
 	return map.get(lang);
+}
+
+async function fallbackMainData_2
+(
+  playerIds: number[]
+): Promise < [number, B_H_SFPV2][] >
+{
+  const map = await FINC_FP_ENTRY_2
+  (
+    graphQlInstance,
+    playerIds
+  );
+
+  if (map.size == 0) 
+  {
+    return null
+  }
+  
+	return [...map.entries()];
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

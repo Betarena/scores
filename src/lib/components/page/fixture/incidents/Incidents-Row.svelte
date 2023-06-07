@@ -23,17 +23,16 @@
 	import yellow_card from './assets/yellow-card.svg';
 	import yellowred_card from './assets/yellowred.svg';
 
-	import type { EventsDatum } from '@betarena/scores-lib/types/hasura.js';
-	import type { B_INC_T } from '@betarena/scores-lib/types/incidents.js';
+	import { sessionStore } from '$lib/store/session.js';
+	import type { B_H_SFPV2, EventsDatum } from '@betarena/scores-lib/types/hasura.js';
 
     //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
 	export let INCIDENT_INFO: EventsDatum;
-	export let FXITURE_INCIDENTS_TRANSLATION: B_INC_T;
-	export let STATUS: string;
 	export let TYPE: 'R' | 'L';
+  export let playerMap: Map <number, B_H_SFPV2>;
 
 	let icon: string;
 
@@ -87,349 +86,360 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-{#if INCIDENT_INFO != undefined && FXITURE_INCIDENTS_TRANSLATION != undefined}
-	<div
-		class="
-      incident-row
+{#if INCIDENT_INFO != undefined}
+  <a
+    href="/{playerMap?.get(INCIDENT_INFO?.player_id)?.urls?.[$sessionStore?.serverLang]}"
+    class="
+      cursor-pointer
     "
-		class:type-L={TYPE == 'L'}
-		class:row-space-start={TYPE == 'L'}
-		class:type-R={TYPE == 'R'}
-		class:row-space-end={TYPE == 'R'}
-		class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-		in:fade
-	>
-		{#if TYPE == 'L'}
-			<!-- 
-      [ℹ] default
-      [ℹ] img-icon
-      [ℹ] event minute -->
-			<img
-				src={icon}
-				alt="Incident Icon"
-				class="event-icon"
-				width="18"
-				height="18"
-			/>
-			<p
-				class="
-          w-400
-          color-grey
-          minute-text
-        "
-				class:single-min={INCIDENT_INFO?.minute <	10}
-			>
-				{INCIDENT_INFO?.minute}'
-			</p>
+  >
+    <div
+      class="
+        incident-row
+      "
+      class:type-L={TYPE == 'L'}
+      class:row-space-start={TYPE == 'L'}
+      class:type-R={TYPE == 'R'}
+      class:row-space-end={TYPE == 'R'}
+      class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+      in:fade
+    >
+      {#if TYPE == 'L'}
 
-			{#if INCIDENT_INFO?.type == 'goal'}
-				<!--
-        [ℹ] result 
+        <!-- 
+        [ℹ] default
+        [ℹ] img-icon
+        [ℹ] event minute 
         -->
-				<p
-					class="
-            w-500
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.result == undefined}
-				>
-					{INCIDENT_INFO?.result}
-				</p>
-				<!--
-        [ℹ] goal-scorer 
-        -->
-				<p
-					class="
+        <img
+          src={icon}
+          alt="Incident Icon"
+          class="event-icon"
+          width="18"
+          height="18"
+        />
+        
+        <p
+          class="
             w-400
-            color-black-2
-            result-text
+            color-grey
+            minute-text
           "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-				<!--
-        [ℹ] player-assist
-        -->
-				{#if INCIDENT_INFO?.related_player_name}
-					<p
-						class="
+          class:single-min={INCIDENT_INFO?.minute <	10}
+        >
+          {INCIDENT_INFO?.minute}'
+        </p>
+
+        {#if INCIDENT_INFO?.type == 'goal'}
+          <!--
+          RESULT
+          -->
+          <p
+            class="
+              w-500
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.result == undefined}
+          >
+            {INCIDENT_INFO?.result}
+          </p>
+          <!--
+          PLAYER GOALSCORER
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+          <!--
+          PLAYER ASSIST
+          -->
+          {#if INCIDENT_INFO?.related_player_name}
+            <p
+              class="
+                w-400
+                color-grey
+              "
+            >
+              Assits: {INCIDENT_INFO?.related_player_name}
+            </p>
+          {/if}
+        {/if}
+
+        {#if INCIDENT_INFO?.type == 'own-goal'}
+          <!--
+          RESULT
+          -->
+          <p
+            class="
+              w-500
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.result == undefined}
+          >
+            {INCIDENT_INFO?.result}
+          </p>
+          <!--
+          PLAYER GOALSCORER
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+            "
+            class:display-none={INCIDENT_INFO?.player_name ==	undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+        {/if}
+
+        {#if ['var', 'penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)}
+          <!--
+          RESULT 
+          -->
+          <p
+            class="
+              w-500
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.result == undefined}
+          >
+            {INCIDENT_INFO?.result}
+          </p>
+          <!--
+          PLAYER GOALSCORER
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+        {/if}
+
+        {#if ['yellowcard', 'redcard', 'yellowred', 'missed_penalty', 'pen_shootout_miss'].includes(INCIDENT_INFO?.type)}
+          <!--
+          YELLOW CARD PLAYER
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+        {/if}
+
+        {#if INCIDENT_INFO?.type == 'substitution'}
+          <!--
+          [ℹ] in player 
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+          <!--
+          [ℹ] out player 
+          -->
+          <p
+            class="
               w-400
               color-grey
             "
-					>
-						Assits: {INCIDENT_INFO?.related_player_name}
-					</p>
-				{/if}
-			{/if}
+          >
+            Out: {INCIDENT_INFO?.related_player_name}
+          </p>
+        {/if}
 
-			{#if INCIDENT_INFO?.type == 'own-goal'}
-				<!--
-        [ℹ] result 
-        -->
-				<p
-					class="
-            w-500
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.result == undefined}
-				>
-					{INCIDENT_INFO?.result}
-				</p>
-				<!--
-        [ℹ] goal-scorer
-         -->
-				<p
-					class="
-            w-400
-            color-black-2
-          "
-					class:display-none={INCIDENT_INFO?.player_name ==	undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-			{/if}
+      {:else}
+        {#if INCIDENT_INFO?.type == 'goal'}
+          <!--
+          [ℹ] player-assist 
+          -->
+          {#if INCIDENT_INFO?.related_player_name}
+            <p
+              class="
+                w-400
+                color-grey
+              "
+            >
+              Assits: {INCIDENT_INFO?.related_player_name}
+            </p>
+          {/if}
+          <!--
+          [ℹ] goal-scorer 
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+          <!--
+          [ℹ] result
+          -->
+          <p
+            class="
+              w-500
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.result == undefined}
+          >
+            {INCIDENT_INFO?.result}
+          </p>
+        {/if}
 
-			{#if ['var', 'penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)}
-				<!--
-        [ℹ] result 
-        -->
-				<p
-					class="
-            w-500
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.result == undefined}
-				>
-					{INCIDENT_INFO?.result}
-				</p>
-				<!--
-        [ℹ] goal-scorer 
-        -->
-				<p
-					class="
-            w-400
-            color-black-2
-          "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-			{/if}
+        {#if INCIDENT_INFO?.type == 'own-goal'}
+          <!--
+          [ℹ] goal-scorer 
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+            "
+            class:display-none={INCIDENT_INFO?.player_name ==	undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+          <!--
+          [ℹ] result 
+          -->
+          <p
+            class="
+              w-500
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.result == undefined}
+          >
+            {INCIDENT_INFO?.result}
+          </p>
+        {/if}
 
-			{#if ['yellowcard', 'redcard', 'yellowred', 'missed_penalty', 'pen_shootout_miss'].includes(INCIDENT_INFO?.type)}
-				<!--
-        [ℹ] yewllow / red card-player 
-        -->
-				<p
-					class="
-            w-400
-            color-black-2
-          "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-			{/if}
+        {#if ['var', 'penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)}
+          <!--
+          [ℹ] goal-scorer 
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+          <!--
+          [ℹ] result 
+          -->
+          <p
+            class="
+              w-500
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.result == undefined}
+          >
+            {INCIDENT_INFO?.result}
+          </p>
+        {/if}
 
-			{#if INCIDENT_INFO?.type == 'substitution'}
-				<!--
-        [ℹ] in player 
-        -->
-				<p
-					class="
-            w-400
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-				<!--
-        [ℹ] out player 
-        -->
-				<p
-					class="
-            w-400
-            color-grey
-          "
-				>
-					Out: {INCIDENT_INFO?.related_player_name}
-				</p>
-			{/if}
-		{:else}
-			{#if INCIDENT_INFO?.type == 'goal'}
-				<!--
-        [ℹ] player-assist 
-        -->
-				{#if INCIDENT_INFO?.related_player_name}
-					<p
-						class="
+        {#if ['yellowcard', 'redcard', 'yellowred', 'missed_penalty', 'pen_shootout_miss'].includes(INCIDENT_INFO?.type)}
+          <!--
+          [ℹ] yewllow / red card-player 
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+        {/if}
+
+        {#if INCIDENT_INFO?.type == 'substitution'}
+          <!--
+          [ℹ] out player
+          -->
+          <p
+            class="
               w-400
               color-grey
             "
-					>
-						Assits: {INCIDENT_INFO?.related_player_name}
-					</p>
-				{/if}
-				<!--
-        [ℹ] goal-scorer 
-        -->
-				<p
-					class="
-            w-400
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-				<!--
-        [ℹ] result
-        -->
-				<p
-					class="
-            w-500
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.result == undefined}
-				>
-					{INCIDENT_INFO?.result}
-				</p>
-			{/if}
+          >
+            Out: {INCIDENT_INFO?.related_player_name}
+          </p>
+          <!--
+          [ℹ] in player 
+          -->
+          <p
+            class="
+              w-400
+              color-black-2
+              result-text
+            "
+            class:display-none={INCIDENT_INFO?.player_name == undefined}
+          >
+            {INCIDENT_INFO?.player_name}
+          </p>
+        {/if}
 
-			{#if INCIDENT_INFO?.type == 'own-goal'}
-				<!--
-        [ℹ] goal-scorer 
+        <!-- 
+        [ℹ] default
+        [ℹ] img-icon
+        [ℹ] event minute 
         -->
-				<p
-					class="
-            w-400
-            color-black-2
-          "
-					class:display-none={INCIDENT_INFO?.player_name ==	undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-				<!--
-        [ℹ] result 
-        -->
-				<p
-					class="
-            w-500
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.result == undefined}
-				>
-					{INCIDENT_INFO?.result}
-				</p>
-			{/if}
-
-			{#if ['var', 'penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)}
-				<!--
-        [ℹ] goal-scorer 
-        -->
-				<p
-					class="
-            w-400
-            color-black-2
-          "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-				<!--
-        [ℹ] result 
-        -->
-				<p
-					class="
-            w-500
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.result == undefined}
-				>
-					{INCIDENT_INFO?.result}
-				</p>
-			{/if}
-
-			{#if ['yellowcard', 'redcard', 'yellowred', 'missed_penalty', 'pen_shootout_miss'].includes(INCIDENT_INFO?.type)}
-				<!--
-        [ℹ] yewllow / red card-player 
-        -->
-				<p
-					class="
-            w-400
-            color-black-2
-          "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-			{/if}
-
-			{#if INCIDENT_INFO?.type == 'substitution'}
-				<!--
-        [ℹ] out player
-        -->
-				<p
-					class="
+        <p
+          class="
             w-400
             color-grey
+            minute-text
           "
-				>
-					Out: {INCIDENT_INFO?.related_player_name}
-				</p>
-				<!--
-        [ℹ] in player 
+          class:single-min={INCIDENT_INFO?.minute <	10}
+        >
+          {INCIDENT_INFO?.minute}'
+        </p>
+
+        <!--
+        [ℹ] goal-icon 
         -->
-				<p
-					class="
-            w-400
-            color-black-2
-            result-text
-          "
-					class:display-none={INCIDENT_INFO?.player_name == undefined}
-				>
-					{INCIDENT_INFO?.player_name}
-				</p>
-			{/if}
-
-			<!-- 
-      [ℹ] default
-      [ℹ] img-icon
-      [ℹ] event minute 
-      -->
-			<p
-				class="
-          w-400
-          color-grey
-          minute-text
-        "
-				class:single-min={INCIDENT_INFO?.minute <	10}
-			>
-				{INCIDENT_INFO?.minute}'
-			</p>
-
-			<!--
-      [ℹ] goal-icon 
-      -->
-			<img
-				src={icon}
-				alt="Incident Icon"
-				class="event-icon"
-				width="18"
-				height="18"
-			/>
-		{/if}
-	</div>
+        <img
+          src={icon}
+          alt="Incident Icon"
+          class="event-icon"
+          width="18"
+          height="18"
+        />
+      {/if}
+    </div>
+  </a>
 {/if}
 
 <!-- ===============
