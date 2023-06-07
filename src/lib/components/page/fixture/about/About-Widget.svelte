@@ -120,7 +120,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!-- 
   SEO
   -->
-  {@html WIDGET_DATA?.seo_data}
+  {@html WIDGET_S_DATA?.seo_data}
 </SeoBox>
 
 <!-- [🐞] -->
