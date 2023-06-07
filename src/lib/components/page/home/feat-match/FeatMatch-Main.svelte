@@ -905,15 +905,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         text-center
                       "
                     >
-                      {#if tabletExclusive}
+                      {#if !tabletExclusive}
 
                         {#if fixtureVoteObj?.fixture_vote == '1'}
                           <img
                             loading="lazy"
                             src={B_FEATM_D?.home_team_logo}
                             alt="default alt text"
-                            width="28px"
-                            height="28px"
+                            width="28"
+                            height="28"
                           />
                         {:else if fixtureVoteObj?.fixture_vote == 'X'}
                           <p
