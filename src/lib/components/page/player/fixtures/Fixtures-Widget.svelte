@@ -65,18 +65,20 @@ COMPONENT JS (w/ TS)
     // empty
   ): Promise < B_PFIX_D > 
   {
-    WIDGET_DATA = await get
-    (
-      `/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=10&offset=0&hasura=true`
-    ) as B_PFIX_D;
+    
+    WIDGET_DATA = WIDGET_S_DATA
+
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;
-		if (VALID_RESPONSE) {
+
+		if (VALID_RESPONSE) 
+    {
       // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			NO_WIDGET_DATA = true;
 			return;
 		}
+
     NO_WIDGET_DATA = false;
     return WIDGET_DATA
   }
@@ -138,10 +140,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     {WIDGET_TITLE}
   </h2>
   <!-- 
-  [] Fixture Links
+  FIXTURE LINKS
   -->
   {#if fixtureMap.size != 0}
-    {#each [...fixtureMap.entries()] as [, fixtures]}
+    {#each [...fixtureMap.entries()] || [] as [, fixtures]}
       {#each fixtures as item}
         <a href={item?.urls[$sessionStore?.serverLang]}>
           {item?.urls[$sessionStore?.serverLang]}
@@ -150,10 +152,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     {/each}
   {/if}
   <!-- 
-  [] League Links
+  LEAGUE LINKS
   -->
   {#if leagueMap.size != 0}
-    {#each [...leagueMap.entries()] as [key, league]}
+    {#each [...leagueMap.entries()] || [] as [key, league]}
       <a href='https://scores.betarena.com/{league?.urls[$sessionStore?.serverLang]}'>
         {`https://scores.betarena.com/${league?.urls[$sessionStore?.serverLang]}`}
       </a>
