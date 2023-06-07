@@ -24,7 +24,6 @@
 	 * Description:
 	 * ~~~~~~~~~~~~~~~~~~~
 	 * ... Intializer of the Widget Function
-	 * ... Returns PROMISE - [INTERFACE - `FinalFeaturedSiteResponseDB`]
 	 */
 	async function widgetInit(): Promise<Cache_Single_Homepage_SEO_Block_Translation_Response> {
 		const response: Cache_Single_Homepage_SEO_Block_Translation_Response =

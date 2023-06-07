@@ -21,7 +21,7 @@ servers:
 
 paths:
 
-  # FEATURED MATCH (H) Widget
+  # [HP] - FEAT MATCH Widget
   # TODO: move to /api/data/[...]
   /api/cache/home/featured_match:
     get:
@@ -57,7 +57,7 @@ paths:
           description: 
             Target fixture FEAT-MATCH widget data
 
-  # SEO-PAGES (L) Main:
+  # [L] - SEO-PAGES Main
   /api/data/main/seo-pages:
     get:
       parameters:
@@ -79,16 +79,29 @@ paths:
               player_id:
                 type: number
                 example: 205881
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18548156
               # ?page=[...]
               page:
                 type: string
                 enum:
+                  - fixtures
                   - player
                 example: player
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
             additionalProperties: false
             oneOf:
+              # data (main) [fixture]
+              - required: [fixture_id, page]
+              - required: [fixture_id, page, hasura]
               # data (main) [player]
               - required: [player_id, page]
+              - required: [player_id, page, hasura]
               # data (translations) terms
               - required: [term]
       summary:
@@ -102,7 +115,303 @@ paths:
           description: 
             Target player SEO widget data
 
-  # LINEUP (FP) Widget
+  # [FP] - INCIDENTS Widget
+  /api/data/fixture/incidents:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) INCIDENTS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [about]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Incidents widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture INCIDENTS widget data
+
+  # [FP] - PROBABILITY Widget
+  /api/data/fixture/probability:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) PROBABILITY widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [about]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Probability widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture PROBABILITY widget data
+
+  # [FP] - ABOUT Widget
+  /api/data/fixture/about:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) ABOUT widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [about]
+              - required: [fixture_id, lang]
+              - required: [fixture_id, lang, hasura]
+      summary: 
+        Returns a targets' fixture (id) main About widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture ABOUT widget data
+
+  # [FP] - STATISTICS Widget
+  /api/data/fixture/statistics:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) STATISTICS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [scoreboard]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Statistics widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture STATISTICS widget data
+
+  # [FP] - SCOREBOARD Widget
+  /api/data/fixture/scoreboard:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) SCOREBOARD widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main) [scoreboard]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Scoreboard widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture SCOREBOARD widget data
+
+  # [FP] - CONTENT Widget
+  /api/data/fixture/content:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) CONTENT widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [content]
+              - required: [fixture_id, lang]
+              - required: [fixture_id, lang, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Content widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture CONTENT widget data
+
+  # [FP] - VOTES Widget
+  /api/data/fixture/votes:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) VOTES widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18807082
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?vote=[...]
+              vote:
+                type: string
+                enum:
+                  - '1'
+                  - '2'
+                  - 'X'
+                example: "X"
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data [votes]
+              - required: [fixture_id]
+              - required: [fixture_id, hasura]
+              # mutate target [votes]
+              - required: [fixture_id, vote]
+
+      summary: 
+        Returns a targets' fixture (id) main Votes widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture VOTES widget data
+  
+  # [FP] - LINEUP Widget
   /api/data/fixture/lineups:
     get:
       parameters:
@@ -143,7 +452,97 @@ paths:
           description: 
             Target fixture LINEUP widget data
   
-  # STATS (PP) Widget
+  # [FP] - H2H Widget
+  /api/data/fixture/h2h:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target fixture (main) H2H widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?teamIds=[...]
+              teamIds:
+                type: string
+                example: 37,57
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [lineup]
+              - required: [teamIds]
+      summary: 
+        Returns a targets' H2H (team-ids) main H2H widget (data).      
+      responses:
+        200:
+          description: 
+            Target fixture H2H widget data
+
+  # [PP] - FIXTURES Widget
+  /api/data/players/fixtures:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target player (main) FIXTURES widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?player_id=[...]
+              player_id:
+                type: number
+                example: 580
+              # ?league_id=[...]
+              league_id:
+                type: number
+                example: 2
+              # ?fixture_id=[...]
+              fixture_id:
+                type: number
+                example: 18838496
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main)
+              - required: [player_id]
+              - required: [player_id, hasura]
+              # data (main) (complement)
+              - required: [fixture_id]
+
+      summary:
+        Returns a targets' player main STATS widget (data).
+      description: 
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - Player Page
+      responses:
+        200:
+          description: 
+            Target player FIXTURES widget data
+
+  # [PP] - STATS Widget
   /api/data/players/statistics:
     get:
       parameters:
@@ -199,7 +598,7 @@ paths:
           description: 
             Target player STATS widget data
 
-  # SEO (PP) Widget
+  # [PP] - SEO Widget
   /api/data/players/seo:
     get:
       parameters:

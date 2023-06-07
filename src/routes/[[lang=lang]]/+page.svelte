@@ -5,7 +5,6 @@
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -19,32 +18,27 @@
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
-	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	import FeaturedMatchWidget from '$lib/components/page/home/featured_match/_FeaturedMatch_Widget.svelte';
+	import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
+	import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
 	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
 	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
 	import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
-// TODO:
-  // -> update to @scores-lib package types;
-	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
-	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
-	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
-	import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/home/featured_match/interface-fixture';
-	import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
-	import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
-	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
-	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import type { Unsubscribe } from 'firebase/database';
+
+  import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
+  import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
+  import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
+  import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
+  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
+  import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+  import type { Unsubscribe } from 'firebase/database';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
 	let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
-	let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
-	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
 	let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
 	let LEAGUE_LIST_WIDGET_DATA_SEO: REDIS_CACHE_SINGLE_league_list_seo_t_response;
 	let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
@@ -53,8 +47,6 @@
   let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
 
 	$: PAGE_DATA_SEO = $page.data?.PAGE_DATA_SEO;
-	$: FEATURED_MATCH_WIDGET_DATA_SEO =	$page.data?.FEATURED_MATCH_WIDGET_DATA_SEO;
-	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	$: BEST_GOAL_SCORERS_DATA_SEO =	$page.data?.BEST_GOAL_SCORERS_DATA_SEO;
 	$: LEAGUE_LIST_WIDGET_DATA_SEO = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
 	$: LEAGUES_TABLE_SCORES_SEO_DATA = $page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
@@ -281,12 +273,8 @@
     [ℹ] 3rd COLUMN 
     -->
 		<div class="grid-display-column">
-			<FeaturedMatchWidget
-				{FEATURED_MATCH_WIDGET_DATA_SEO}
-			/>
-			<FeaturedBettingSitesWidget
-				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-			/>
+			<FeatMatchWidget />
+			<FeatBetSiteWidget />
 			<BestGoalscorersWidget
 				{BEST_GOAL_SCORERS_DATA_SEO}
 			/>
@@ -302,12 +290,8 @@
       class="grid-display-column"
     >
       <LivescoresWidget />
-			<FeaturedBettingSitesWidget
-				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-			/>
-			<FeaturedMatchWidget
-				{FEATURED_MATCH_WIDGET_DATA_SEO}
-			/>
+			<FeatBetSiteWidget />
+			<FeatMatchWidget />
 			<BestGoalscorersWidget
 				{BEST_GOAL_SCORERS_DATA_SEO}
 			/>

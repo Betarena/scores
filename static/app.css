@@ -270,6 +270,9 @@ FONT EXTRA STYLES
 .display-none {
 	display: none !important;
 }
+.visibility-none {
+  visibility: hidden;
+}
 
 /* 
 ~~~~~~~~~~~~

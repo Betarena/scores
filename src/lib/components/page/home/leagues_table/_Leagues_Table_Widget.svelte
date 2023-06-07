@@ -34,7 +34,6 @@
 	 * Description:
 	 * ~~~~~~~~~~~~~~~~~~~
 	 * ... ℹ Intializer of the Widget Function
-	 * ... ℹ Returns PROMISE - [INTERFACE - `FinalFeaturedSiteResponseDB`]
 	 */
 	async function widgetInit(): Promise<Cache_Single_Geo_Leagues_Table_Translation_Response> {
 		// [ℹ] get the USER-GEO-LOCATION;

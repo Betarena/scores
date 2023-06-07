@@ -1,3 +1,6 @@
+import { get } from "$lib/api/utils.js";
+import { sessionStore } from "$lib/store/session.js";
+import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
 import { dlog, dlogv2, NB_W_TAG, NB_W_TOG } from "./debug";
 
 /**
@@ -105,6 +108,47 @@ export async function sleep
       ms
     )
   );
+}
+
+export function googleEventLog
+(
+  action: string
+)
+{
+
+  if ( action === 'fixture_football_fixtures_probabilities') 
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'fixture_football_fixtures_probabilities',
+      {
+        event_category:
+          'fixture_football_fixtures_probabilities',
+        event_label: 'click_betting_site_logo',
+        value: 'click'
+      }
+    );
+  }
+
+  if (action === 'betting_site_logo_football_fixtures_scoreboard_fixtures')
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'fixtures_scoreboard_odds',
+      {
+        event_category:
+          'widget_fixture_scoreboard_info',
+        event_label: 'click_betting_site_logo',
+        value: 'click'
+      }
+    );
+  }
+
+  return;
 }
 
 /**
@@ -277,4 +321,41 @@ export async function promiseValidUrlCheck
   ;
 
   return response;
+}
+
+/**
+ * @description obtains the target sportbook data 
+ * information based on users geo-location;
+ * data gathered at page-level and set to svelte-stores
+ * to be used by (this) page components;
+ * NOTE: (*) best approach
+ * TODO: can be moved to a layout-level [?]
+ * TODO: can be moved to a header-level [?]
+ * TODO: can be moved to a +server-level [⚠️]
+ * @returns {Promise<void>} void
+ */
+export async function initSportbookData
+(
+  geoPos: string
+): Promise < void > 
+{
+  const dataRes0 = await get
+  (
+    `/api/cache/tournaments/sportbook?geoPos=${geoPos}`
+  ) as B_SPT_D;
+
+  sessionStore.updateSportbookMain
+  (
+    dataRes0
+  );
+
+  const dataRes1 = await get
+  (
+    `/api/cache/tournaments/sportbook?all=true&geoPos=${geoPos}`
+  ) as B_SPT_D[];
+
+  sessionStore.updateSportbookList
+  (
+    dataRes1
+  );
 }

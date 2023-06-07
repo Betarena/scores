@@ -5,21 +5,17 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
 	import { browser } from '$app/environment';
 	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
-	import { onDestroy, onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-	import { listenRealTimeLivescoresNowChange, one_off_livescore_call } from '$lib/firebase/common';
+	import { onceTargetLivescoreNowFixtureGet, onceTargetPlayerIds, targetLivescoreNowFixtureListen, targetPlayerIdsListen } from '$lib/firebase/common';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlog, dlogv2 } from '$lib/utils/debug';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-
-	import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
-	import type { Unsubscribe } from 'firebase/database';
+	import { dlog } from '$lib/utils/debug';
+	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
@@ -29,60 +25,121 @@ COMPONENT JS (w/ TS)
 	import StatisticsWidget from './statistics/Statistics-Widget.svelte';
 	import TeamWidget from './team/Team-Widget.svelte';
 
+  import type { B_SAP_PP_D, B_SAP_PP_T } from '@betarena/scores-lib/types/seo-pages';
+
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
-
   // IMPORTANT
-  // (this) widget has access to the following PAGE data:
+  // (this) widget/component has access to the following PAGE data:
   // [...]
   // $page.data.PAGE_DATA: B_SAP_PP_D
   // $page.data.B_SAP_D1: B_SAP_D1
   // FIXME: remove cosnt data = [...] and fix the types issue with $page.data[...]
 
-  let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
+  let data: B_SAP_PP_D = $page.data.PAGE_DATA;
+  let data_0: B_SAP_PP_T = $page.data.PAGE_SEO;
 
-  let data: B_SAP_PP_D = $page.data.PAGE_DATA
-  let data_0: B_SAP_PP_T = $page.data.PAGE_SEO
+  const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 475;
+
+  const realDbPath1 = `livescores_now_player_ids/${data?.data?.player_id}`
+  const realDbPath2 = `livescores_now/`
+
+  let mobileExclusive = false;
+  let tabletExclusive = false;
+  let current_lang: string = $sessionStore?.serverLang;
 
   $: data = $page.data.PAGE_DATA
   $: data_0 = $page.data.PAGE_SEO
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: server_side_language = platfrom_lang_ssr(
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-
-  let current_lang: string = server_side_language;
 	$: refresh_lang = $userBetarenaSettings.lang;
 	$: lang_intent = $sessionStore.lang_intent;
+  $: liveFixtureId = $sessionStore?.livescore_now_player_fixture;
 
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ get target livescore fixture (data)
+   * ➨ instantiate livescore fixture (data) listener
+   * @returns
+   * void
+   */
+  async function kickstartPlayerFixtureCheck
+  (
+  ): Promise < void >
+  {
+    await onceTargetPlayerIds
+    (
+      realDbPath1
+    );
+    let connectionRef = targetPlayerIdsListen
+    (
+      realDbPath1
+    );
+    // FIREBASE_CONNECTIONS_SET.add(connectionRef)
+  }
 
   /**
-   * @description [HELPER] method
-   * identifies the target translated URL;
-   * @param {string} lang
-   * @returns string
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ get target livescore fixture (data)
+   * ➨ instantiate livescore fixture (data) listener
+   * @returns
+   * void
    */
-  function translated_url (
+  async function kickstartLivescore
+  (
+  ): Promise < void >
+  {
+    // CHECK: Exit;
+    const if_M_0 =
+      $sessionStore?.livescore_now_player_fixture == undefined
+    ;
+    if (if_M_0) return;
+
+    const fixtureRealDbTarget = `${realDbPath2}${liveFixtureId}`;
+
+    console.debug
+    (
+      '🔥',
+      'PLAYER FOUND LIVE',
+      fixtureRealDbTarget
+    );
+
+    await onceTargetLivescoreNowFixtureGet
+    (
+      fixtureRealDbTarget
+    );
+
+    let connectionRef = targetLivescoreNowFixtureListen
+    (
+      fixtureRealDbTarget
+    );
+  }
+
+  /**
+   * @summary
+   * [HELPER]
+   * @description
+   * identifies the target translated URL;
+   * @param 
+   * {string} lang
+   * @returns 
+   * a modified string
+   */
+  function translated_url 
+  (
     lang: string
-  ): string {
+  ): string 
+  {
     let new_url: string = data.alternate_data[lang];
     // new_url = new_url.replace('https://scores.betarena.com','');
     dlog(data.alternate_data, true)
@@ -92,39 +149,82 @@ COMPONENT JS (w/ TS)
   }
 
   /**
-   * @description [HELPER] method
+   * @summary
+   * [HELPER]
+   * @description
    * preload target URL;
-   * @param {string} new_url
-   * @returns void
+   * @param
+   * {string} new_url
+   * @returns
+   * void
    */
-  async function preload_target_url (
+  async function preload_target_url 
+  (
     new_url: string
-  ): Promise < void > {
+  ): Promise < void > 
+  {
     await preloadData(new_url)
   }
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  )
+  {
+    [
+      tabletExclusive, 
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+  }
 
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 475;
-	let mobileExclusive, tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ document (visibility-change) event listener;
+   * ➨ document (on-resize) event listener;
+   * @returns
+   * void
+   */
+  function addEventListeners
+  (
+  )
+  {
+    // NOTE: (on-visibility-change)
+    document.addEventListener
+    (
+      'visibilitychange',
+      async function
+      (
+      ) 
+      {
+        if (!document.hidden) 
+        {
+          // [🐞]
+          dlog
+          (
+            '🔵 user is active',
+            true
+          );
+          await kickstartPlayerFixtureCheck();
+          await kickstartLivescore();
+        }
+      }
+    );
+    // NOTE: (on-resize)
+    window.addEventListener
+    (
 			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
+			function () 
+      {
+				resizeAction();
 			}
 		);
-	});
+  }
 
   //#endregion ➤ [METHODS]
 
@@ -136,7 +236,12 @@ COMPONENT JS (w/ TS)
 
   // [ℹ] (event-listen)
   // [ℹ] lang (intent) change;
-  $: if (browser && lang_intent) {
+  $: if 
+  (
+    browser 
+    && lang_intent
+  ) 
+  {
     let newURL = translated_url(lang_intent)
     dlog(`newURL (lang_intent): ${newURL}`, true)
     preload_target_url(newURL)
@@ -144,54 +249,56 @@ COMPONENT JS (w/ TS)
 
   // [ℹ] (event-listen)
   // [ℹ] lang change;
-	$: if (
+	$: if 
+  (
     browser
-    && current_lang != refresh_lang 
-	) {
+    && current_lang != refresh_lang
+  ) 
+  {
 		current_lang = refresh_lang;
-		let new_url = translated_url(current_lang)
-		goto(new_url, { replaceState: true });
+		goto
+    (
+      translated_url
+      (
+        current_lang
+      ), 
+      { 
+        replaceState: true 
+      }
+    );
 	}
 
+  $: if (liveFixtureId)
+  {
+    console.log
+    (
+      'JELLO!'
+    )
+    kickstartLivescore()
+  }
+  
   //#endregion ➤ [REACTIVIY] [METHODS]
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
-  onMount(
-    async() => {
-    
-    await one_off_livescore_call()
-
-    let connectionRef = listenRealTimeLivescoresNowChange()
-    FIREBASE_CONNECTIONS_SET.add(connectionRef)
-
-    document.addEventListener(
-			'visibilitychange',
-			async function () {
-				if (!document.hidden) {
-          dlog('🔵 user is active', true)
-          await one_off_livescore_call()
-					let connectionRef = listenRealTimeLivescoresNowChange()
-          FIREBASE_CONNECTIONS_SET.add(connectionRef)
-				}
-			}
-		);
-  })
-
-  // CRITICAL
-	onDestroy(async () => {
-		const logsMsg: string[] = []
-		for (const connection of [...FIREBASE_CONNECTIONS_SET]) {
-      logsMsg.push('🔥 closing connection')
-			connection();
-		}
-    dlogv2(
-      `closing firebase connections`,
-      logsMsg,
-      true, 
-      'background: red; color: black;'
-    )
-	});
+  /**
+   * @summary
+   * [MAIN] [LIFECYCLE]
+   * @description
+   * ➨ kickstart livescore (player-ids) data GET + LISTEN;
+   * ➨ kickstart resize-action;
+   * ➨ kickstart (bundle) event-listeners;
+  */
+  onMount
+  (
+    async() => 
+    {
+      await kickstartPlayerFixtureCheck();
+      await kickstartLivescore();
+      resizeAction();
+      addEventListeners();
+    }
+  );
 
   //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 

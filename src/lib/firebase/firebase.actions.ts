@@ -151,10 +151,8 @@ export async function getOdds_2
 export async function getTargetRealDbData
 (
   path: string
-) 
+): Promise < unknown > 
 {
-  console.log('getTargetRealDbData | START')
-
   const connectRef = ref
   (
     db_real
@@ -168,8 +166,7 @@ export async function getTargetRealDbData
       path
     )
 	);
-  
-  console.log('DATA OBTAINED!');
+
   if (snapshot.exists()) return snapshot.val();
   return null;
 }

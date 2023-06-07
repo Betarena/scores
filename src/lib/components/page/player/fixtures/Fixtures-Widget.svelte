@@ -17,19 +17,19 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
-  //#region ➤ Svelte/SvelteKit Imports
-  // <-imports-go-here->
-	import { page } from '$app/stores';
-	import { get } from '$lib/api/utils';
+  import { page } from '$app/stores';
+  import { get } from '$lib/api/utils';
+  import { sessionStore } from '$lib/store/session.js';
+  import { viewport_change } from '$lib/utils/platform-functions';
+  import { onMount } from 'svelte';
+
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-	import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
-	import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import { onMount } from 'svelte';
 	import FixturesLoader from './Fixtures-Loader.svelte';
 	import FixturesMain from './Fixtures-Main.svelte';
+
+  import type { B_PFIX_D, B_PFIX_T, PFIX_C_Fixture, PFIX_C_League } from '@betarena/scores-lib/types/player-fixtures';
+  import type { B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -59,37 +59,29 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN-METHODS]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
 
-  async function widgetInit(
+  async function widgetInit
+  (
     // empty
-  ): Promise < B_PFIX_D > {
-    // [ℹ] get widget data (from cache)
-    WIDGET_DATA = await get(`/api/data/players/fixtures/?player_id=${PAGE_DATA?.data?.player_id}&limit=10&offset=0&hasura=true`) as B_PFIX_D;
+  ): Promise < B_PFIX_D > 
+  {
+    
+    WIDGET_DATA = WIDGET_S_DATA
+
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;
-		// [ℹ] validation [#1]
-		if (VALID_RESPONSE) {
+
+		if (VALID_RESPONSE) 
+    {
       // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			NO_WIDGET_DATA = true;
 			return;
 		}
+
     NO_WIDGET_DATA = false;
     return WIDGET_DATA
   }
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: server_side_language = platfrom_lang_ssr(
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -148,22 +140,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     {WIDGET_TITLE}
   </h2>
   <!-- 
-  [] Fixture Links
+  FIXTURE LINKS
   -->
   {#if fixtureMap.size != 0}
-    {#each [...fixtureMap.entries()] as [, fixtures]}
+    {#each [...fixtureMap.entries()] || [] as [, fixtures]}
       {#each fixtures as item}
-        <a href={item?.urls[server_side_language]}>{item?.urls[server_side_language]}</a>
+        <a href={item?.urls[$sessionStore?.serverLang]}>
+          {item?.urls[$sessionStore?.serverLang]}
+        </a>
       {/each}
     {/each}
   {/if}
   <!-- 
-  [] League Links
+  LEAGUE LINKS
   -->
   {#if leagueMap.size != 0}
-    {#each [...leagueMap.entries()] as [key, league]}
-      <a href='https://scores.betarena.com/{league?.urls[server_side_language]}'>
-        {`https://scores.betarena.com/${league?.urls[server_side_language]}`}
+    {#each [...leagueMap.entries()] || [] as [key, league]}
+      <a href='https://scores.betarena.com/{league?.urls[$sessionStore?.serverLang]}'>
+        {`https://scores.betarena.com/${league?.urls[$sessionStore?.serverLang]}`}
       </a>
     {/each}
   {/if}
