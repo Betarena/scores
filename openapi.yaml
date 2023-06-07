@@ -57,6 +57,42 @@ paths:
           description: 
             Target fixture FEAT-MATCH widget data
 
+  # [LP] - STANDINGS Widget
+  /api/cache/tournaments/standings:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target league/tournament (main) STANDINGS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?league_id=[...]
+              league_id:
+                type: number
+                example: 2
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main) [players]
+              - required: [league_id]
+      summary: 
+        Returns a targets' fixture (id) main Standings widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture STANDINGS widget data
+
+
   # [L] - SEO-PAGES Main
   /api/data/main/seo-pages:
     get:
@@ -133,6 +169,10 @@ paths:
               fixture_id:
                 type: number
                 example: 18807082
+              # ?player_ids=[...]
+              player_ids:
+                type: string
+                example: '580'
               # ?hasura=[...]
               hasura:
                 type: boolean
@@ -149,6 +189,8 @@ paths:
               # data (main) [about]
               - required: [fixture_id]
               - required: [fixture_id, hasura]
+              # data (main) [players]
+              - required: [player_ids]
       summary: 
         Returns a targets' fixture (id) main Incidents widget (data).
       responses:
