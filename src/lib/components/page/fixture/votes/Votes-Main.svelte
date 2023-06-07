@@ -270,7 +270,8 @@
   $: if_R_0 =
     FIXTURE_VOTES_DATA?.match_votes == undefined
     && FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)
-    || ([0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_win_local)
+    || (FIXTURE_NO_VOTES_OPT.includes(FIXTURE_VOTES_DATA?.status)
+    && [0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_win_local)
     && [0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_draw_x)
     && [0, undefined].includes(FIXTURE_VOTES_DATA?.match_votes?.vote_win_visitor))
   ;
