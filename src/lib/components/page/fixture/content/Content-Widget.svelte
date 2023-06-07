@@ -111,7 +111,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <SeoBox>
   <!-- 
-  widget-title 
+  WIDGET TITLE
   -->
   <h2>
     {WIDGET_T_DATA?.news_and_views}
