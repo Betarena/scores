@@ -18,6 +18,7 @@
 	import IncidentRow from './Incidents-Row.svelte';
 	
   import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
+	import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -161,21 +162,10 @@
    * version 1;
   */
   $: if_R_1 =
-    FIXTURE_INCIDENTS 
-		&& browser
-		&& (FIXTURE_INCIDENTS?.status == 'NS' 
-      || FIXTURE_INCIDENTS?.status == 'POST') 
-    && (FIXTURE_INCIDENTS?.events == undefined 
-      || FIXTURE_INCIDENTS?.events.length == 0)
+    FIXTURE_NOT_START_OPT.includes(FIXTURE_INCIDENTS?.status)
+    || FIXTURE_INCIDENTS?.events?.length == 0
   ;
-  $: if (if_R_1) 
-  {
-		noWidgetData = true;
-	} 
-  else 
-  {
-		noWidgetData = false;
-	}
+  $: if_R_1 == true ? noWidgetData = true : noWidgetData = false;
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 

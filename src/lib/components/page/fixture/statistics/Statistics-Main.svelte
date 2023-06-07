@@ -17,6 +17,7 @@
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import StatisticsRow from './Statistics-Row.svelte';
 
+  import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
   import type { B_ST_D, B_ST_T } from '@betarena/scores-lib/types/statistics.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -225,15 +226,10 @@
    * listens to target "noWidgetData" change;
   */
   $: if_R_0 =
-    browser 
-    && FIXTURE_STATISTICS
-    && ['NS', 'TBA', 'POSTP'].includes(FIXTURE_STATISTICS?.status)
-    && (FIXTURE_STATISTICS?.stats == undefined ||	FIXTURE_STATISTICS?.stats?.length == 0)
+    FIXTURE_NOT_START_OPT.includes(FIXTURE_STATISTICS?.status)
+    || FIXTURE_STATISTICS?.stats?.length == 0
   ;
-  $: if (if_R_0)
-  {
-		noWidgetData = true;
-  }
+  $: if_R_0 == true ? noWidgetData = true : noWidgetData = false;
 
   /**
    * @summary
