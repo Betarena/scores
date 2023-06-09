@@ -8,12 +8,10 @@
 
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
-	import { INC_F_obtainPlayerIdList } from '@betarena/scores-lib/dist/functions/func.fixture.incidents.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -79,34 +77,25 @@
     };
     FIXTURE_INCIDENTS.events =  liveFixtureData?.events?.data;
     
-    const FIREBASE_LINEUPS_DATA = liveFixtureData?.lineup?.data;
-    const FIREBASE_BENCH_DATA = liveFixtureData?.bench?.data;
+    const FIREBASE_PLAYERS_DATA = liveFixtureData?.custom_mod?.players_v3;
 
     const if_M_1 = 
-      FIREBASE_LINEUPS_DATA != undefined
-      && FIREBASE_BENCH_DATA != undefined
-      && FIREBASE_LINEUPS_DATA?.length > 0
-      && FIREBASE_BENCH_DATA?.length > 0
-      && playerMap.size == 0
+      FIREBASE_PLAYERS_DATA != undefined
     ;
     if (if_M_1)
     {
-      console.log('↔ FETCH: Fixture INCIDENT players');
-      
-      const playerIds = INC_F_obtainPlayerIdList
-      (
-        FIREBASE_LINEUPS_DATA,
-        FIREBASE_BENCH_DATA
-      );
-
-      const response = await get
-      (
-        `/api/data/fixture/incidents/?player_ids=${playerIds}`
-      ) as [number, B_H_SFPV2][];
+      let dataKeyValList: [number, B_H_SFPV2][] = [];
+      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA)) 
+      {
+        dataKeyValList.push
+        (
+          [parseInt(key), value]
+        )
+      }
 
       playerMap = new Map
       (
-        response
+        dataKeyValList
       ) as Map <number, B_H_SFPV2>;
     }
 
