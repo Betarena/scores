@@ -9,11 +9,10 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { viewport_change } from '$lib/utils/platform-functions';
-	import { LIN_F_dataInject, LIN_F_obtainPlayerIdList } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
+	import { LIN_F_dataInject } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 	
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -98,6 +97,7 @@
 
     const FIREBASE_LINEUPS_DATA = liveFixtureData?.lineup?.data;
     const FIREBASE_BENCH_DATA = liveFixtureData?.bench?.data;
+    const FIREBASE_PLAYERS_DATA = liveFixtureData?.custom_mod?.players_v3;
 
     // EXIT;
     const if_M_1 = 
@@ -124,28 +124,18 @@
     ;
     if (if_M_2) 
     {
-
-      console.log('⭐️ injectLiveData() if_M_0')
-
-      const _playerIds = await LIN_F_obtainPlayerIdList
-      (
-        FIREBASE_LINEUPS_DATA,
-        FIREBASE_BENCH_DATA
-      );
-
-      const playerIds = 
-      [
-        ...new Set(_playerIds)
-      ];
-
-      const response = await get
-      (
-        `/api/data/fixture/lineups/?player_ids=${playerIds}`
-      ) as [number, B_H_SFPV2][];
+      let dataKeyValList: [number, B_H_SFPV2][] = [];
+      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA)) 
+      {
+        dataKeyValList.push
+        (
+          [parseInt(key), value]
+        )
+      }
 
       playerMap = new Map
       (
-        response
+        dataKeyValList
       ) as Map <number, B_H_SFPV2>;
     }
 
