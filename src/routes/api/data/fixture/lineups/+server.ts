@@ -34,7 +34,6 @@ export async function GET
     // query (url) data
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
-	  const player_ids: string = req?.url?.searchParams?.get('player_ids');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
     // NOTE: fixture (lineup) data; (MAIN) [w/fallback]
@@ -67,33 +66,6 @@ export async function GET
         loadType = 'HASURA'
       }
       console.log(`📌 loaded [FLIN] with: ${loadType}`)
-      return json(data);
-    }
-
-    // NOTE: fixture (lineup) data; (PLAYERS) [w/fallback]
-    const if_1 =
-      player_ids != undefined
-    ;
-    if (if_1)
-    {
-      const _playerIds: number[] = 
-        player_ids == undefined
-          ? []
-          : player_ids
-            ?.split
-            (
-              ','
-            )
-            ?.map
-            (
-              x => 
-              parseInt(x)
-            )
-      ;
-      const data = await fallbackMainData_2
-      (
-        _playerIds
-      )
       return json(data);
     }
 
@@ -195,25 +167,6 @@ async function fallbackMainData_1
   }
   
 	return map.get(lang);
-}
-
-async function fallbackMainData_2
-(
-  playerIds: number[]
-): Promise < [number, B_H_SFPV2][] >
-{
-  const map = await FLIN_FP_ENTRY_1
-  (
-    graphQlInstance,
-    playerIds
-  );
-
-  if (map.size == 0) 
-  {
-    return null
-  }
-  
-	return [...map.entries()];
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
