@@ -58,6 +58,7 @@ paths:
             Target fixture FEAT-MATCH widget data
 
   # [LP] - STANDINGS Widget
+  # TODO: move to /api/data/[...]
   /api/cache/tournaments/standings:
     get:
       parameters:
@@ -91,7 +92,6 @@ paths:
         200:
           description: 
             Target fixture STANDINGS widget data
-
 
   # [L] - SEO-PAGES Main
   /api/data/main/seo-pages:
@@ -169,10 +169,6 @@ paths:
               fixture_id:
                 type: number
                 example: 18807082
-              # ?player_ids=[...]
-              player_ids:
-                type: string
-                example: '580'
               # ?hasura=[...]
               hasura:
                 type: boolean
@@ -189,8 +185,6 @@ paths:
               # data (main) [about]
               - required: [fixture_id]
               - required: [fixture_id, hasura]
-              # data (main) [players]
-              - required: [player_ids]
       summary: 
         Returns a targets' fixture (id) main Incidents widget (data).
       responses:
@@ -475,18 +469,12 @@ paths:
               lang:
                 type: string
                 example: es
-              # ?player_ids=[...]
-              player_ids:
-                type: string
-                example: 580
             additionalProperties: false
             oneOf:
               # translation
               - required: [lang]
               # data (main) [lineup]
               - required: [fixture_id]
-              # data (main) [players]
-              - required: [player_ids]
       summary: 
         Returns a targets' fixture (id) main Lineup widget (data).
       responses:
