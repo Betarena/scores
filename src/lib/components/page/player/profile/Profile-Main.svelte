@@ -8,14 +8,18 @@ COMPONENT JS (w/ TS)
   // <-imports-go-here->
 
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
+  
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
+
+	import ProfileStat from './Profile-Stat.svelte';
+
+	import { sessionStore } from '$lib/store/session.js';
 	import type { FPPT_Data } from '@betarena/scores-lib/types/hasura';
 	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
-	import type { B_SAP_D2 } from "@betarena/scores-lib/types/seo-pages";
-	import { onMount } from 'svelte';
-	import ProfileStat from './Profile-Stat.svelte';
+	import type { B_SAP_D1, B_SAP_D2 } from "@betarena/scores-lib/types/seo-pages";
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -27,11 +31,15 @@ COMPONENT JS (w/ TS)
 
   export let WIDGET_DATA: B_PPRO_D
 
-  let WIDGET_T_DATA: FPPT_Data = $page.data?.B_PPRO_T
-  let B_SAP_D2: B_SAP_D2 = $page.data?.B_SAP_D2
+  let WIDGET_T_DATA: FPPT_Data = $page.data?.B_PPRO_T;
+  let B_SAP_D1: B_SAP_D1 = $page.data.B_SAP_D1;
+  let B_SAP_D2: B_SAP_D2 = $page.data?.B_SAP_D2;
 
-  $: WIDGET_T_DATA = $page.data?.B_PPRO_T
-  $: B_SAP_D2 = $page.data?.B_SAP_D2
+  $: WIDGET_T_DATA = $page.data?.B_PPRO_T;
+  $: B_SAP_D1 = $page.data.B_SAP_D1;
+  $: B_SAP_D2 = $page.data?.B_SAP_D2;
+
+  console.log('B_SAP_D1?.translations', B_SAP_D1?.translations)
 
   let birthdayStr = ""
   
@@ -308,7 +316,7 @@ IMPORTANT Mobile First
 
         <ProfileStat 
           profileStatTitle={`${WIDGET_T_DATA?.national_team}:` || 'National Team:'}
-          statVal={WIDGET_DATA?.data?.country_name}
+          statVal={B_SAP_D1?.translations?.[$sessionStore?.serverLang]}
         />
 
       </div>
