@@ -39,8 +39,6 @@ COMPONENT JS (w/ TS)
   $: B_SAP_D1 = $page.data.B_SAP_D1;
   $: B_SAP_D2 = $page.data?.B_SAP_D2;
 
-  console.log('B_SAP_D1?.translations', B_SAP_D1?.translations)
-
   let birthdayStr = ""
   
   //#endregion ➤ [VARIABLES]
@@ -233,7 +231,7 @@ IMPORTANT Mobile First
                     no-wrap
                     w-500
                   ">
-                  {WIDGET_DATA?.data?.country_name}
+                  {B_SAP_D1?.translations?.[$sessionStore?.serverLang]}
                 </p>
               </div>
             </div>
