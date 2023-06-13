@@ -3,11 +3,10 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { FLIN_FP_ENTRY, FLIN_FP_ENTRY_1, FLIN_FP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
+import { FLIN_FP_ENTRY, FLIN_FP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../cache/std_main';
 
-import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
 import type { B_LIN_T, LIN_Fixture } from '@betarena/scores-lib/types/lineups.js';
 
 //#endregion ➤ Package Imports
@@ -31,21 +30,22 @@ export async function GET
 {
   try 
   {
-    // query (url) data
+    // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
-	  const player_ids: string = req?.url?.searchParams?.get('player_ids');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // NOTE: fixture (lineup) data; (MAIN) [w/fallback]
-    const if_0 =
+    // ACTION: Get Fixture Lineups (WIDGET) MAIN data; 
+    // NOTE: With [HASURA] Fallback;
+    const if_M_0: boolean =
       fixture_id != undefined
     ;
-    if (if_0) 
+    if (if_M_0) 
     {
       const _fixture_id: number = parseInt(fixture_id)
       let data;
       let loadType = "cache";
+
       // NOTE: check CACHE;
       if (!hasura) 
       {
@@ -57,6 +57,7 @@ export async function GET
           )
         ;
       }
+
       // NOTE: (default) HASURA fallback;
       if (!data || hasura) 
       {
@@ -66,52 +67,28 @@ export async function GET
         )
         loadType = 'HASURA'
       }
+
       console.log(`📌 loaded [FLIN] with: ${loadType}`)
-      return json(data);
+
+      if (data != undefined) return json(data);
     }
 
-    // NOTE: fixture (lineup) data; (PLAYERS) [w/fallback]
-    const if_1 =
-      player_ids != undefined
+    // ACTION: Get Fixture Lineups (WIDGET) TRANSLATION data;
+    // NOTE: With [HASURA] Fallback;
+    const if_M_1: boolean =
+      lang != undefined
     ;
-    if (if_1)
-    {
-      const _playerIds: number[] = 
-        player_ids == undefined
-          ? []
-          : player_ids
-            ?.split
-            (
-              ','
-            )
-            ?.map
-            (
-              x => 
-              parseInt(x)
-            )
-      ;
-      const data = await fallbackMainData_2
-      (
-        _playerIds
-      )
-      return json(data);
-    }
-
-    // NOTE: fixture (lineup) data; (TRANSLATION) [w/fallback]
-    if (lang) 
+    if (if_M_1) 
     {
       // TODO: LIN_C_T_A
-      const response =	await fallbackMainData_1
+      const data =	await fallbackMainData_1
       (
         lang
       );
-      if (response) 
-      {
-        return json(response);
-      }
+      if (data != undefined) return json(data);
     }
 
-    // fallback to NULL
+    // IMPORTANT - fallback to NULL
     return json
     (
       null
@@ -195,25 +172,6 @@ async function fallbackMainData_1
   }
   
 	return map.get(lang);
-}
-
-async function fallbackMainData_2
-(
-  playerIds: number[]
-): Promise < [number, B_H_SFPV2][] >
-{
-  const map = await FLIN_FP_ENTRY_1
-  (
-    graphQlInstance,
-    playerIds
-  );
-
-  if (map.size == 0) 
-  {
-    return null
-  }
-  
-	return [...map.entries()];
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

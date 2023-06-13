@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { PSTAT_PP_ENTRY, PSTAT_PP_ENTRY_1, PSTAT_PP_generateTranslationMain, PSTAT_PP_getPlayerStatTranslations } from "@betarena/scores-lib/dist/functions/func.player-statistics.js";
+import { PSTAT_PP_ENTRY, PSTAT_PP_ENTRY_1, PSTAT_PP_ENTRY_2 } from "@betarena/scores-lib/dist/functions/func.player-statistics.js";
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture } from '@betarena/scores-lib/types/player-statistics.js';
 import { get_target_hset_cache_data } from '../../../cache/std_main';
@@ -38,13 +38,13 @@ export async function GET
   const hasura: string = req?.url?.searchParams?.get('hasura');
 
   // NOTE: player (statistics) data; [fallback]
-  const validation_0 =
+  const if_M_0 =
     player_id
     && !league_id
     && !season_id
     && !lang
   ;
-  if (validation_0) 
+  if (if_M_0) 
   {
     const _player_id: number = parseInt(player_id)
     let data;
@@ -74,13 +74,13 @@ export async function GET
   }
 
   // NOTE: player (statistics) target season fixtures; [fallback]
-  const validation_1 = 
+  const if_M_1 = 
     player_id
     && league_id
     && season_id
     && !lang
   ;
-  if (validation_1)
+  if (if_M_1)
   {
     const _player_id: number = parseInt(player_id)
     const _league_id: number = parseInt(league_id)
@@ -103,12 +103,10 @@ export async function GET
   }
 
   // [ℹ] target widget [translation]
-	if (lang) {
-		const response_hasura =
-			await fallbackMainData_1(lang);
-		if (response_hasura) {
-			return json(response_hasura);
-		}
+	if (lang) 
+  {
+		const response_hasura =	await fallbackMainData_1(lang);
+    return json(response_hasura);
 	}
 
   // IMPORTANT - fallback to NULL
@@ -135,8 +133,7 @@ async function fallbackMainData
   const map = await PSTAT_PP_ENTRY
   (
     graphQlInstance,
-    [_player_id],
-    false
+    [_player_id]
   )
 
   if (map.size == 0) 
@@ -150,28 +147,26 @@ async function fallbackMainData
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} LANG 
+ * @param {string} lang 
  * @returns Promise < B_PSTAT_T > 
  */
 async function fallbackMainData_1
 (
-  LANG: string
+  lang: string
 ): Promise < B_PSTAT_T > 
 {
-
-  const res = await PSTAT_PP_getPlayerStatTranslations
+  const map = await PSTAT_PP_ENTRY_2
   (
     graphQlInstance,
-    [LANG]
-  )
+    [lang]
+  );
 
-  const translationMap = await PSTAT_PP_generateTranslationMain
-  (
-    res,
-    [LANG]
-  )
-
-	return translationMap.get(LANG);
+  if (map.size == 0) 
+  {
+    return null
+  }
+  
+	return map.get(lang);
 }
 
 /**

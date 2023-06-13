@@ -6,19 +6,19 @@
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-		
+	import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
+
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import IncidentRow from './Incidents-Row.svelte';
 	
+  import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
   import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
-	import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -34,6 +34,11 @@
   let tabletExclusive = false;
 
 	let noWidgetData: any = false;
+  let playerMap: Map < number, B_H_SFPV2 > = 
+    FIXTURE_INCIDENTS?.players == undefined
+      ? new Map < number, B_H_SFPV2 >()
+      : new Map(FIXTURE_INCIDENTS?.players)
+  ;
 
   //#endregion ➤ [VARIABLES]
 
@@ -43,14 +48,14 @@
    * @summary
    * [MAIN]
    * @description
-   * ➨ handles data generation (first-time)
+   * ➨ handles player data generation (first-time)
    * ➨ updating against "live" firebase data;
    * @returns
    * void
   */
 	async function injectLiveData
   (
-	) 
+  ): Promise < void > 
   {
 		const fixture_id = FIXTURE_INCIDENTS?.id;
 
@@ -70,14 +75,35 @@
       et_score: liveFixtureData?.scores?.et_score,
       ps_score: liveFixtureData?.scores?.ps_score
     };
-    // FIXME: make compatible TYPES for hasura/events && firebase/events
     FIXTURE_INCIDENTS.events =  liveFixtureData?.events?.data;
+    
+    const FIREBASE_PLAYERS_DATA = liveFixtureData?.custom_mod?.players_v3;
 
     const if_M_1 = 
+      FIREBASE_PLAYERS_DATA != undefined
+    ;
+    if (if_M_1)
+    {
+      let dataKeyValList: [number, B_H_SFPV2][] = [];
+      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA)) 
+      {
+        dataKeyValList.push
+        (
+          [parseInt(key), value]
+        )
+      }
+
+      playerMap = new Map
+      (
+        dataKeyValList
+      ) as Map <number, B_H_SFPV2>;
+    }
+
+    const if_M_2 = 
       FIXTURE_INCIDENTS.events != undefined
       && FIXTURE_INCIDENTS.events.length > 0
     ;
-    if (if_M_1) 
+    if (if_M_2) 
     {
       FIXTURE_INCIDENTS.events
       ?.sort
@@ -98,7 +124,7 @@
   // VIEWPORT CHANGES | IMPORTANT
   function resizeAction
   (
-  )
+  ): void
   {
     [
       tabletExclusive, 
@@ -120,7 +146,7 @@
    */
   function addEventListeners
   (
-  )
+  ): void
   {
     // NOTE: (on-resize)
     window.addEventListener
@@ -238,11 +264,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         class="row-space-out"
       >
         <!-- 
-        [ℹ] home team -->
+        HOME TEAM
+        -->
         <div class="row-space-start">
           <img
-            src={FIXTURE_INCIDENTS?.home
-              ?.team_logo}
+            src={FIXTURE_INCIDENTS?.home?.team_logo}
             alt="Team image"
             width="24"
             height="24"
@@ -258,7 +284,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
 
         <!-- 
-        [ℹ] away team -->
+        AWAY TEAM
+        -->
         <div
           class="
             row-space-end
@@ -274,8 +301,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {FIXTURE_INCIDENTS?.away?.team_name}
           </p>
           <img
-            src={FIXTURE_INCIDENTS?.away
-              ?.team_logo}
+            src={FIXTURE_INCIDENTS?.away?.team_logo}
             alt="Team image"
             width="24"
             height="24"
@@ -306,33 +332,29 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               ?.ps_score}
           </p>
         {/if}
-        {#if FIXTURE_INCIDENTS?.events}
-          {#each FIXTURE_INCIDENTS?.events as event}
-            {#if ['pen_shootout_miss', 'pen_shootout_goal'].includes(event?.type)}
-              <!-- 
-              [ℹ] home team
-              -->
-              {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="L"
-                />
-                <!-- 
-              [ℹ] away team
-              -->
-              {:else}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="R"
-                />
-              {/if}
+        {#each FIXTURE_INCIDENTS?.events || [] as event}
+          {#if ['pen_shootout_miss', 'pen_shootout_goal'].includes(event?.type)}
+            <!-- 
+            HOME TEAM
+            -->
+            {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="L"
+                {playerMap}
+              />
+            <!-- 
+            AWAY TEAM
+            -->
+            {:else}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="R"
+                {playerMap}
+              />
             {/if}
-          {/each}
-        {/if}
+          {/if}
+        {/each}
 
         <!-- 
         ET SCORE [SECTION]
@@ -345,39 +367,32 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               event-milestone-text
             "
           >
-            ET {FIXTURE_INCIDENTS?.score_post
-              ?.et_score}
+            ET {FIXTURE_INCIDENTS?.score_post?.et_score}
           </p>
         {/if}
-        {#if FIXTURE_INCIDENTS?.events}
-          {#each FIXTURE_INCIDENTS?.events as event}
-            {#if event?.minute > 90}
-              
-              <!-- 
-              HOME TEAM
-              -->
-              {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="L"
-                />
-              <!-- 
-              AWAY TEAM
-              -->
-              {:else}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="R"
-                />
-              {/if}
-
+        {#each FIXTURE_INCIDENTS?.events || [] as event}
+          {#if event?.minute > 90}
+            <!-- 
+            HOME TEAM
+            -->
+            {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="L"
+                {playerMap}
+              />
+            <!-- 
+            AWAY TEAM
+            -->
+            {:else}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="R"
+                {playerMap}
+              />
             {/if}
-          {/each}
-        {/if}
+          {/if}
+        {/each}
 
         <!-- 
         FT SCORE [SECTION]
@@ -390,37 +405,32 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               event-milestone-text
             "
           >
-            FT {FIXTURE_INCIDENTS?.score_post
-              ?.ft_score}
+            FT {FIXTURE_INCIDENTS?.score_post?.ft_score}
           </p>
         {/if}
-        {#if FIXTURE_INCIDENTS?.events}
-          {#each FIXTURE_INCIDENTS?.events as event}
-            {#if event?.minute > 45 && event?.minute <= 90}
-              <!-- 
-              [ℹ] home team
-              -->
-              {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="L"
-                />
-                <!-- 
-              [ℹ] away team
-              -->
-              {:else}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="R"
-                />
-              {/if}
+        {#each FIXTURE_INCIDENTS?.events || [] as event}
+          {#if event?.minute > 45 && event?.minute <= 90}
+            <!-- 
+            HOME TEAM
+            -->
+            {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="L"
+                {playerMap}
+              />
+            <!-- 
+            AWAY TEAM
+            -->
+            {:else}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="R"
+                {playerMap}
+              />
             {/if}
-          {/each}
-        {/if}
+          {/if}
+        {/each}
 
         <!-- 
         HT SCORE [SECTION]
@@ -433,37 +443,32 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               event-milestone-text
             "
           >
-            HT {FIXTURE_INCIDENTS?.score_post
-              ?.ht_score}
+            HT {FIXTURE_INCIDENTS?.score_post?.ht_score}
           </p>
         {/if}
-        {#if FIXTURE_INCIDENTS?.events}
-          {#each FIXTURE_INCIDENTS?.events as event}
-            {#if event?.minute <= 45 && !['pen_shootout_miss', 'pen_shootout_goal'].includes(event?.type)}
-              <!-- 
-              [ℹ] home team
-              -->
-              {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="L"
-                />
-                <!-- 
-              [ℹ] away team
-              -->
-              {:else}
-                <IncidentRow
-                  INCIDENT_INFO={event}
-                  {FXITURE_INCIDENTS_TRANSLATION}
-                  STATUS={FIXTURE_INCIDENTS?.status}
-                  TYPE="R"
-                />
-              {/if}
+        {#each FIXTURE_INCIDENTS?.events || [] as event}
+          {#if event?.minute <= 45 && !['pen_shootout_miss', 'pen_shootout_goal'].includes(event?.type)}
+            <!-- 
+            HOME TEAM
+            -->
+            {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="L"
+                {playerMap}
+              />
+            <!-- 
+            AWAY TEAM
+            -->
+            {:else}
+              <IncidentRow
+                INCIDENT_INFO={event}
+                TYPE="R"
+                {playerMap}
+              />
             {/if}
-          {/each}
-        {/if}
+          {/if}
+        {/each}
       </div>
 
     </div>

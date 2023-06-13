@@ -115,16 +115,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <SeoBox>
   <!-- 
-  widget-title 
+  WIDGET TITLE
   -->
   <h2>
     {WIDGET_TITLE}
   </h2>
   <!-- 
-  team-names 
+  TEAM NAMES 
   -->
   <p>{WIDGET_S_DATA?.home?.team_name}</p>
   <p>{WIDGET_S_DATA?.away?.team_name}</p>
+  <!-- 
+  PLAYER URLs
+  -->
+  {#each WIDGET_S_DATA?.players || [] as [p_id, p_d]}
+    <a href="/{p_d?.urls?.[$sessionStore?.serverLang]}">
+      <p>{p_d?.common_name}</p>
+    </a>
+  {/each}
 </SeoBox>
 
 <!-- [🐞] -->

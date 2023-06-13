@@ -29,21 +29,23 @@ export async function GET
 {
   try 
   {
-    // query (url) data
+    // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // NOTE: fixture (H2H) data; (MAIN)
-    const if_0 =
+    // ACTION: Get Fixture Content (WIDGET) MAIN data; 
+    // NOTE: With [HASURA] Fallback;
+    const if_M_0: boolean =
       fixture_id != undefined
       && lang != undefined
     ;
-    if (if_0) 
+    if (if_M_0) 
     {
       const _fixture_id = parseInt(fixture_id)
-      let data;
+      let data = null;
       let loadType = "cache";
+
       // NOTE: check CACHE;
       // if (!hasura) 
       // {
@@ -55,6 +57,7 @@ export async function GET
       //     )
       //   ;
       // }
+
       // NOTE: (default) HASURA fallback;
       if (!data || hasura) 
       {
@@ -65,25 +68,28 @@ export async function GET
         )
         loadType = 'HASURA'
       }
+      
       console.log(`📌 loaded [FCONT] with: ${loadType}`)
-      return json(data);
+      
+      if (data != undefined) return json(data);
     }
 
-    // NOTE: fixture (lineup) data; (TRANSLATION) [w/fallback]
-    if (lang) 
+    // ACTION: Get Fixture Content (WIDGET) TRANSLATION data;
+    // NOTE: With [HASURA] Fallback;
+    const if_M_1: boolean =
+      lang != undefined
+    ;
+    if (if_M_1) 
     {
       // TODO: LIN_C_T_A
-      const response =	await fallbackMainData_1
+      const data =	await fallbackMainData_1
       (
         lang
       );
-      if (response) 
-      {
-        return json(response);
-      }
+      if (data != undefined) return json(data);
     }
 
-    // fallback to NULL
+    // IMPORTANT - fallback to NULL
     return json
     (
       null
