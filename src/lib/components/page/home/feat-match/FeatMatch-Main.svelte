@@ -427,7 +427,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <!--
       FIXTURE VOTES
       -->
-      {#if B_FEATM_D?.live_odds != undefined}
+      {#if placeholderData != undefined}
         
         <div 
           id="fixture-visual-box"
