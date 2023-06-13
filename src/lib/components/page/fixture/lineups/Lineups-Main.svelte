@@ -9,11 +9,10 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { viewport_change } from '$lib/utils/platform-functions';
-	import { LIN_F_dataInject, LIN_F_obtainPlayerIdList } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
+	import { LIN_F_dataInject } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 	
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -79,14 +78,14 @@
   */
 	async function injectLiveData
   (
-	) 
+  ): Promise < void > 
   {
 		const fixture_id = FIXTURE_LINEUPS?.id;
 
-    const if_M_00 =
+    const if_M_0 =
       $sessionStore?.livescore_now_fixture_target?.id != fixture_id
     ;
-    if (if_M_00) return;
+    if (if_M_0) return;
 
     const liveFixtureData = $sessionStore?.livescore_now_fixture_target;
 
@@ -94,18 +93,18 @@
     FIXTURE_LINEUPS.status = liveFixtureData?.time?.status;
     FIXTURE_LINEUPS.home.formation = liveFixtureData?.formations?.localteam_formation;
     FIXTURE_LINEUPS.away.formation = liveFixtureData?.formations?.visitorteam_formation;
-    // FIXME: make compatible TYPES for hasura/events && firebase/events
     FIXTURE_LINEUPS.events =	liveFixtureData?.events?.data;
 
     const FIREBASE_LINEUPS_DATA = liveFixtureData?.lineup?.data;
     const FIREBASE_BENCH_DATA = liveFixtureData?.bench?.data;
+    const FIREBASE_PLAYERS_DATA = liveFixtureData?.custom_mod?.players_v3;
 
     // EXIT;
-    const if_M_0 = 
+    const if_M_1 = 
       FIREBASE_LINEUPS_DATA == undefined
       || FIREBASE_BENCH_DATA == undefined
     ;
-    if (if_M_0) return;
+    if (if_M_1) return;
 
     // reset, to prevent first-time data generation re-trigger;
     playerMap = new Map();
@@ -113,7 +112,7 @@
     // NOTE: check if the "current" data is "invalid"
     // NOTE: require an "auto-lineup" live-data generation update
     // NOTE: on the spot, from "livescores-now" real-time DB;
-    const if_M_1 =
+    const if_M_2 =
       FIXTURE_LINEUPS?.home?.lineup?.length == 0 
       && FIXTURE_LINEUPS?.away?.lineup?.length == 0 
       && FIXTURE_LINEUPS?.home?.bench?.length == 0 
@@ -123,30 +122,20 @@
       && FIREBASE_BENCH_DATA != undefined
       && FIREBASE_BENCH_DATA?.length > 0
     ;
-    if (if_M_1) 
+    if (if_M_2) 
     {
-
-      console.log('⭐️ injectLiveData() if_M_0')
-
-      const _playerIds = await LIN_F_obtainPlayerIdList
-      (
-        FIREBASE_LINEUPS_DATA,
-        FIREBASE_BENCH_DATA
-      );
-
-      const playerIds = 
-      [
-        ...new Set(_playerIds)
-      ];
-
-      const response = await get
-      (
-        `/api/data/fixture/lineups/?player_ids=${playerIds}`
-      ) as [number, B_H_SFPV2][];
+      let dataKeyValList: [number, B_H_SFPV2][] = [];
+      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA)) 
+      {
+        dataKeyValList.push
+        (
+          [parseInt(key), value]
+        )
+      }
 
       playerMap = new Map
       (
-        response
+        dataKeyValList
       ) as Map <number, B_H_SFPV2>;
     }
 
@@ -154,7 +143,8 @@
     const home_team_id = liveFixtureData?.localteam_id;
     const away_team_id =	liveFixtureData?.visitorteam_id;
 
-    const [
+    const 
+    [
       homeTeamLineup,
       homeTeamBench
     ] = await LIN_F_dataInject
@@ -172,7 +162,8 @@
       }
     );
 
-    const [
+    const 
+    [
       awayTeamLineup,
       awayTeamBench
     ] = await LIN_F_dataInject
@@ -203,7 +194,7 @@
   // VIEWPORT CHANGES | IMPORTANT
   function resizeAction
   (
-  )
+  ): void
   {
     [
       tabletExclusive, 
@@ -225,7 +216,7 @@
    */
   function addEventListeners
   (
-  )
+  ): void
   {
     // NOTE: (on-resize)
     window.addEventListener

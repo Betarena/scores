@@ -3,8 +3,8 @@
 import { initGrapQLClient } from '$lib/graphql/init';
 import { json } from '@sveltejs/kit';
 
-import { PFIX_PP_ENTRY, PFIX_PP_translations_main } from "@betarena/scores-lib/dist/functions/func.player-fixtures.js";
-import { PFIX_PP_getTargetFixture, PFIX_PP_get_widget_translations } from '@betarena/scores-lib/dist/graphql/query.player-fixtures.js';
+import { PFIX_PP_ENTRY, PFIX_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player-fixtures.js";
+import { PFIX_PP_getTargetFixture } from '@betarena/scores-lib/dist/graphql/query.player-fixtures.js';
 import { PFIX_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../cache/std_main';
 
@@ -36,7 +36,7 @@ export async function GET
 	const lang: string = req?.url?.searchParams?.get('lang');
 	const player_id: string = req?.url?.searchParams?.get('player_id');
   const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
-  const league_id: string = req?.url?.searchParams?.get('league_id');
+  // const league_id: string = req?.url?.searchParams?.get('league_id');
 	const offset: string = req?.url?.searchParams?.get('offset');
   const hasura: string = req?.url?.searchParams?.get('hasura');
 	// const limit: string = req?.url?.searchParams?.get('limit');
@@ -132,8 +132,7 @@ async function fallbackMainData
   (
     graphQlInstance,
     _offset,
-    [_player_id],
-    false
+    [_player_id]
   );
 
   if (map.size == 0) 
@@ -147,28 +146,26 @@ async function fallbackMainData
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} LANG 
+ * @param {string} lang 
  * @returns Promise < B_PPRO_T > 
  */
 async function fallbackMainData_1
 (
-  LANG: string
+  lang: string
 ): Promise < B_PFIX_T > 
 {
-
-  const res = await PFIX_PP_get_widget_translations
+  const map = await PFIX_PP_ENTRY_1
   (
     graphQlInstance,
-    [LANG]
+    [lang]
   );
 
-  const fix_odds_translation_map = await PFIX_PP_translations_main
-  (
-    res,
-    [LANG]
-  );
-
-	return fix_odds_translation_map.get(LANG);
+  if (map.size == 0) 
+  {
+    return null
+  }
+  
+	return map.get(lang);
 }
 
 async function helperMainAction

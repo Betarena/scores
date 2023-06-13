@@ -117,14 +117,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <SeoBox>
   <h2>{WIDGET_TITLE}</h2>
   <!-- 
-  stage standings (regular)
+  STAGE STANDINGS (regular)
   -->
   {#if !WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.group_based}
-    {#each WIDGET_S_DATA.seasons[0].standings[0].total || [] as team}
+    {#each WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.total || [] as team}
       <p>{team?.team_name}</p>
     {/each}
   <!-- 
-  stage standings (groups)
+  STAGE STANDINGS (groups)
   -->
   {:else}
     {#each WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.group_standings || [] as group}

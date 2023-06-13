@@ -30,14 +30,15 @@ export async function GET
 {
   try 
   {
-    // query (url) data
+    // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
     const vote: string = req?.url?.searchParams?.get('vote');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // NOTE: fixture (H2H) data; (MAIN)
-    const if_M_0 =
+    // ACTION: Get Fixture Votes (WIDGET) MAIN data; 
+    // NOTE: With [HASURA] Fallback;
+    const if_M_0: boolean =
       fixture_id != undefined
       && vote == undefined
     ;
@@ -46,6 +47,7 @@ export async function GET
       const _fixture_id = parseInt(fixture_id)
       let data;
       let loadType = "cache";
+
       // NOTE: check CACHE;
       // if (!hasura) 
       // {
@@ -57,6 +59,7 @@ export async function GET
       //     )
       //   ;
       // }
+
       // NOTE: (default) HASURA fallback;
       if (!data || hasura) 
       {
@@ -66,42 +69,45 @@ export async function GET
         )
         loadType = 'HASURA'
       }
+
       console.log(`📌 loaded [FVOT] with: ${loadType}`)
-      return json(data);
+
+      if (data != undefined) return json(data);
     }
 
-    // NOTE: fixture (lineup) data; (TRANSLATION) [w/fallback]
-    if (lang) 
-    {
-      // TODO: LIN_C_T_A
-      const response =	await fallbackMainData_1
-      (
-        lang
-      );
-      if (response) 
-      {
-        return json(response);
-      }
-    }
-
-    // NOTE: fixture (vote) persist vote; [HASURA]
-    const if_M_1 =
-      fixture_id != undefined
-      && vote != undefined
+    // ACTION: Get Fixture Votes (WIDGET) TRANSLATION data;
+    // NOTE: With [HASURA] Fallback;
+    const if_M_1: boolean =
+      lang != undefined
     ;
     if (if_M_1)
     {
+      // TODO: LIN_C_T_A
+      const data =	await fallbackMainData_1
+      (
+        lang
+      );
+      if (data != undefined) return json(data);
+    }
+
+    // ACTION: Cast Fixture Target Vote data;
+    // NOTE: Only [HASURA];
+    const if_M_2: boolean =
+      fixture_id != undefined
+      && vote != undefined
+    ;
+    if (if_M_2)
+    {
       const _fixture_id = parseInt(fixture_id)
-      console.log('vote', vote)
-      const response =await helperMainAction
+      const data = await helperMainAction
       (
         _fixture_id,
         vote
       )
-      return json(response);
+      if (data != undefined) return json(data);
     }
 
-    // fallback to NULL
+    // IMPORTANT - fallback to NULL
     return json
     (
       null

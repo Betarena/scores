@@ -56,6 +56,10 @@ a {
 	color: inherit;
 	display: flex;
 }
+a.disable-anchor 
+{
+  pointer-events: none;
+}
 
 p {
 	font-style: normal;

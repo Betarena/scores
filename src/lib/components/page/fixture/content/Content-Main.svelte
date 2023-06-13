@@ -184,7 +184,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       <div 
         id="content-box"
       >
-        {#each FIXTURE_CONTENT?.slice(0, limitViewRow) || [] as item}
+        {#each FIXTURE_CONTENT?.length > 0 ? FIXTURE_CONTENT?.slice(0, limitViewRow) : [] as item}
           <a
             aria-label="fixture-post-link"
             href={item?.link}
