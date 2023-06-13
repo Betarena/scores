@@ -51,12 +51,19 @@ COMPONENT JS (w/ TS)
     
     WIDGET_DATA = WIDGET_S_DATA
 
-    const if_0 =
+    const if_M_0: boolean =
       WIDGET_DATA == undefined
+      || WIDGET_DATA?.length == 0
     ;
-		if (if_0) 
+		if (if_M_0) 
     {
-      dlog(`${CO_W_F_TAG} ❌ no data available!`, CO_W_F_TOG, CO_W_F_STY);
+      // [🐞]
+      dlog
+      (
+        `${CO_W_F_TAG} ❌ no data available!`,
+        CO_W_F_TOG, 
+        CO_W_F_STY
+      );
 			NO_WIDGET_DATA = true;
 			return;
 		}
