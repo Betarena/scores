@@ -12,7 +12,7 @@ COPY package.json package-lock.json ./
 # [ℹ] example-use: https://superuser.com/questions/1055060/how-to-install-a-specific-package-version-in-alpine
 # [ℹ] example-use: https://superuser.com/questions/1198215/fixate-version-alpine-linux-apk-package-in-container
 RUN apk add --no-cache \
-  python3=3.11.4-r0 \
+  python3=3.10.12-r0 \
   make=4.3-r0 \
   g++=11.2.1_git20220219-r2 \
   && npm install -g npm@8.19.1 \
