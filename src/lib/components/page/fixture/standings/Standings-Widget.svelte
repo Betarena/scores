@@ -55,16 +55,19 @@ COMPONENT JS (w/ TS)
     
     WIDGET_DATA = WIDGET_S_DATA
 
-    const if_0 =
+    const if_M_0 =
       WIDGET_DATA == undefined
       || WIDGET_DATA?.comp_typ != 'domestic'
+      || WIDGET_DATA?.seasons?.[0]?.standings?.length > 1
     ;
-		if (if_0) 
+		if (if_M_0) 
     {
       dlog(`${ST_W_F_TAG} ❌ no data available!`, ST_W_F_TOG, ST_W_F_STY);
 			NO_WIDGET_DATA = true;
 			return;
 		}
+
+    console.log(WIDGET_DATA)
 
     NO_WIDGET_DATA = false;
     return WIDGET_DATA
