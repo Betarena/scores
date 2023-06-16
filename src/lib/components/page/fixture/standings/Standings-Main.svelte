@@ -51,7 +51,7 @@
   [
 		732 // World Cup
 	];
-  let target_stages_with_teams: string[] = []
+  let stagesWithFixtureTeams: string[] = []
   let targetGroupsNamesArray: string[] = []
 
   //#endregion ➤ [VARIABLES]
@@ -62,7 +62,7 @@
 	function selectTableView
   (
 		opt: 'total' | 'home' | 'away'
-	) : void
+	): void
   {
 		selectedOpt = opt;
 	}
@@ -70,7 +70,7 @@
   // HELPER
 	function closeAllDropdowns
   (
-	) : void
+	): void
   {
 		toggleCTA = false;
     select_stage_dropdown = false;
@@ -79,7 +79,7 @@
   // HELPER
 	function toggleFullList
   (
-  )
+  ): void
   {
 		showMore = !showMore;
 	}
@@ -87,7 +87,7 @@
   // HELPER
 	function toggleMobileForm
   (
-  ) 
+  ): void 
   {
 		selectedOptTableMobile =
 			selectedOptTableMobile == 1 
@@ -105,37 +105,46 @@
    * do not contain target teams from UI
    * @returns void
   */
-  function identify_stages_with_target_teams
+  function checkStagesWithTargetFixtureTeams
   (
   ): void 
   {
-    const target_teams: string[] = [
+    const target_teams: string[] = 
+    [
       FIXTURE_INFO?.data?.away_team_name,
       FIXTURE_INFO?.data?.home_team_name
     ]
-    for (const standing of season?.standings) {
-      // [ℹ] (validation) group-standings;
-      if (standing.group_based) {
-        for (const g_standing of standing?.group_standings) {
-          for (const g_total of g_standing?.total) {
-            if (target_teams.includes(g_total?.team_name)) {
-              target_stages_with_teams.push(standing?.stage_name)
+    for (const standing of season?.standings) 
+    {
+      // (validation) group-standings;
+      if (standing?.group_based) 
+      {
+        for (const g_standing of standing?.group_standings) 
+        {
+          for (const g_total of g_standing?.total) 
+          {
+            if (target_teams.includes(g_total?.team_name)) 
+            {
+              stagesWithFixtureTeams.push(standing?.stage_name)
             }
           }
         }
       }
       // [ℹ] else, regular-standing;
-      else {
-        for (const r_total of standing?.total) {
-          if (target_teams.includes(r_total?.team_name)) {
-            target_stages_with_teams.push(standing?.stage_name)
+      else 
+      {
+        for (const r_total of standing?.total) 
+        {
+          if (target_teams.includes(r_total?.team_name)) 
+          {
+            stagesWithFixtureTeams.push(standing?.stage_name)
           }
         }
       }
     }
-    target_stages_with_teams = [...new Set(target_stages_with_teams)]
+    stagesWithFixtureTeams = [...new Set(stagesWithFixtureTeams)]
+    console.log(stagesWithFixtureTeams)
   }
-  // $: console.log('target_stages_with_teams', target_stages_with_teams)
 
   // VIEWPORT CHANGES | IMPORTANT
   function resizeAction
@@ -184,55 +193,101 @@
   //#region ➤ [REACTIVIY] [METHODS]
 
 
-	$: if (STANDINGS_DATA != undefined) {
-		// [ℹ] sort seasons by season-id (desc)
-    // [ℹ] using the largest (id), as the latest === current season
-		STANDINGS_DATA?.seasons.sort(
-			(a, b) => b?.season_id - a?.season_id
+	$: if (STANDINGS_DATA != undefined) 
+  {
+		// sort seasons by season-id (desc)
+    // using the largest (id), as the latest === current season
+		STANDINGS_DATA?.seasons
+    ?.sort
+    (
+			(
+        a,
+        b
+      ) => 
+        b?.season_id - a?.season_id
 		);
-		season = STANDINGS_DATA?.seasons[0];
-		// [ℹ] check season exists / contains data
-		let seasonCheckLength = 0;
+		season = STANDINGS_DATA?.seasons?.[0];
+
+		// check season exists / contains data
+		let seasonCheckLength: number = 0;
     stage_opt = []
-		if (season != undefined) {
-			seasonCheckLength = season.standings.length
-      identify_stages_with_target_teams()
-      let number_stages = target_stages_with_teams?.length
-      dlog(`number_stages: ${number_stages}`, true)
-      if (number_stages > 1) {
+
+		if (season != undefined) 
+    {
+			seasonCheckLength = season?.standings?.length
+
+      checkStagesWithTargetFixtureTeams()
+
+      let number_stages: number = stagesWithFixtureTeams?.length
+      
+      // [🐞]
+      dlog
+      (
+        `number_stages: ${number_stages}`,
+        true
+      );
+
+      if (number_stages > 1) 
+      {
         stage_opt = season?.standings
-          .map(a => a?.stage_name);
-        dlog(`stage_opt ${stage_opt}`, true)
-        // [ℹ] select first on list;
+        ?.map
+        (
+          a => 
+          a?.stage_name
+        );
+
+        // [🐞]
+        dlog
+        (
+          `stage_opt ${stage_opt}`, 
+          true
+        );
+
+        // select first on list;
         select_stage_opt = stage_opt[0];
       }
-      else {
-        select_stage_opt = target_stages_with_teams[0]
+      else 
+      {
+        select_stage_opt = stagesWithFixtureTeams[0]
       }
 		}
+
 		noWidgetData =
-			seasonCheckLength == 0 ||
-			seasonCheckLength == undefined
+			seasonCheckLength == 0 
+      || seasonCheckLength == undefined
 				? true
-				: false;
+				: false
+    ;
+
 		seasonCheck = true;
-	} else {
+	} 
+  else 
+  {
 		seasonCheck = true;
 	}
 
   // [ℹ] identify target groups, target teams part of
   // [ℹ] on selct_stage view change;
-  $: if (select_stage_opt) {
+  $: if (select_stage_opt) 
+  {
     // console.log('Stage/Phase Changed!')
-    for (const standing of season?.standings) {
-      if (standing.group_based) {
-        for (const g_standing of standing?.group_standings) {
-          for (const g_total of g_standing?.total) {
-            const target_teams: string[] = [
-              FIXTURE_INFO?.data?.away_team_name,
-              FIXTURE_INFO?.data?.home_team_name
-            ]
-            if (target_teams.includes(g_total?.team_name)) {
+    const target_teams: string[] =
+    [
+      FIXTURE_INFO?.data?.away_team_name,
+      FIXTURE_INFO?.data?.home_team_name
+    ];
+
+    for (const standing of season?.standings) 
+    {
+      if (standing?.group_based) 
+      {
+        for (const g_standing of standing?.group_standings) 
+        {
+          for (const g_total of g_standing?.total) 
+          {
+            if (target_teams.includes(g_total?.team_name)) 
+            {
+              console.log('🔥', g_total?.team_name)
               targetGroupsNamesArray.push(g_standing?.group_name)
             }
           }
@@ -534,29 +589,46 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       STANDINGS TABLE
       -->
       <table 
-        class="standings_table">
+        class="standings_table"
+      >
+
         <!-- 
-        [ℹ] widget-top-row-table-standings [DESKTOP]
+        TABLE TOP ROW
         -->
-        <tr class="row-head">
-          <!-- 
-          [ℹ] team position [head]
-          [ℹ] team name [head]
+        <tr 
+          class="row-head"
+        >
+
+          <!--
+          TEAM NAME + POSITION
           -->
-          <th style="width: 100%;">
-            <p class="s-12 m-r-20 color-grey">
+          <th
+            style="width: 100%;">
+
+            <p
+              class="
+                s-12
+                m-r-20 
+                color-grey
+              ">
               #
-              <span class="m-r-20" />
+              <span
+                class="
+                  m-r-20
+                " 
+              />
               {STANDINGS_T.translations.team}
             </p>
+
           </th>
+
           <!-- 
-          [ℹ] table view 
-          [headers]
+          TABLE <TH> 1st BATCH 
           -->
           {#if (mobileExclusive && selectedOptTableMobile == 1) || !mobileExclusive}
+
             <!-- 
-            [ℹ] team points [head]
+            TEAM POINTS
             -->
             <th>
               <p class="s-12 color-grey">
@@ -575,8 +647,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </div>
             </th>
+
             <!-- 
-            [ℹ] team games played [head]
+            TEAM GAMES-PLAYED
             -->
             <th>
               <p class="s-12 color-grey">
@@ -595,8 +668,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </div>
             </th>
+
             <!-- 
-            [ℹ] team games win [head]
+            TEAM GAMES-WINS
             -->
             <th class="">
               <p
@@ -618,8 +692,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </div>
             </th>
+
             <!-- 
-            [ℹ] team games draw [head]
+            TEAM GAMES-DRAW
             -->
             <th class="">
               <p
@@ -641,8 +716,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </div>
             </th>
+
             <!-- 
-            [ℹ] team games lost [head]
+            TEAM GAMES-LOST
             -->
             <th>
               <p
@@ -664,8 +740,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </div>
             </th>
+
             <!-- 
-            [ℹ] team goals-for [head]
+            TEAM GOALS-FOR
             -->
             <th class="">
               <p
@@ -687,8 +764,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </div>
             </th>
+
             <!-- 
-            [ℹ] team goals-against [head]
+            TEAM GOALS-AGAINST
             -->
             <th class="">
               <p
@@ -710,14 +788,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </div>
             </th>
+
           {/if}
+
           <!-- 
-          [ℹ] table view 2
-          [headers]
+          TABLE <TH> 2nd BATCH 
           -->
           {#if (mobileExclusive && selectedOptTableMobile == 2) || !mobileExclusive}
+
             <!-- 
-            [ℹ] team recent form [head]
+            TEAM RECENT FORM
             -->
             <th>
               <p
@@ -727,27 +807,23 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
                 style="width: 70px;"
               >
-                {STANDINGS_T.translations.recent_form}
+                {STANDINGS_T?.translations?.recent_form}
               </p>
             </th>
           {/if}
+
         </tr>
 
         <!-- 
-        [ℹ] widget-team-standing-row-table-standings 
-        [DESKTOP]
+        STANDINGS TEAM ROW
         -->
-        <!-- 
-        [ℹ] STANDINGS 
-        [REGUALR-TYPE]
-        -->
-        {#each season.standings as standing}
+        {#each season?.standings || [] as standing}
           {#if standing?.stage_name == select_stage_opt}
             <!-- 
-            [ℹ] STANDINGS IS A REGUALR-TYPE
+            STANDINGS IS OF REGUALR-TYPE
             -->
-            {#if !standing.group_based}
-              {#each standing[selectedOpt] as team}
+            {#if !standing?.group_based}
+              {#each standing?.[selectedOpt] || [] as team}
                 {#if !showMore 
                   && (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
                     || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
@@ -765,12 +841,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {/if}
               {/each}
             <!-- 
-            [ℹ] STANDINGS
-            [GROUP-STAGE-TYPE]
+            STANDINGS IS OF GROUP TYPE
             -->
             {:else}
               {#if !showMore}
-                {#each standing.group_standings as group}
+                {#each standing?.group_standings || [] as group}
                   {#if targetGroupsNamesArray.includes(group?.group_name)}
                     <tr class="group-row-head">
                       <td colspan="20">
@@ -788,7 +863,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         </p>
                       </td>
                     </tr>
-                    {#each group[selectedOpt] as team}
+                    {#each group?.[selectedOpt] as team}
                       {#if (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
                           || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
                         <StandingsTeamRow
@@ -800,7 +875,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {/if}
                 {/each}
               {:else}
-                {#each standing.group_standings as group}
+                {#each standing?.group_standings || [] as group}
                   <tr class="group-row-head">
                     <td colspan="20">
                       <div class="table-divider" />
@@ -817,7 +892,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       </p>
                     </td>
                   </tr>
-                  {#each group[selectedOpt] as team}
+                  {#each group?.[selectedOpt] as team}
                     <StandingsTeamRow
                       TEAM_DATA={team}
                       {currentSeason}
@@ -833,6 +908,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {/if}
           {/if}
         {/each}
+
       </table>
 
       <!-- 

@@ -58,7 +58,7 @@ COMPONENT JS (w/ TS)
     const if_M_0 =
       WIDGET_DATA == undefined
       || WIDGET_DATA?.comp_typ != 'domestic'
-      || WIDGET_DATA?.seasons?.[0]?.standings?.length > 1
+      // || WIDGET_DATA?.seasons?.[0]?.standings?.length > 1
     ;
 		if (if_M_0) 
     {
