@@ -102,7 +102,7 @@ function createLocalStore
 		 */
 		setTheme: 
     (
-      theme: string
+      theme: 'Dark' | 'Light'
     ) => 
     {
 			const existing: string = localStorage.getItem(key);

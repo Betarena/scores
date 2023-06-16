@@ -1,4 +1,6 @@
 import { dev } from '$app/environment';
+import * as Sentry from '@sentry/browser';
+import { BrowserTracing } from '@sentry/tracing';
 
 // NOTE: page error messages & error codes
 export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
@@ -135,10 +137,12 @@ export const PR_P_STY = 'background: yellow; color: #000000'
  * @param groupName
  * @param msg
  */
-export function logErrorGroup(
+export function logErrorGroup
+(
 	groupName: string,
 	msg: string
-) {
+) 
+{
 	console.groupCollapsed(groupName);
 	msg = msg.replace(/\t/g, '');
 	console.error(`${msg}`);
@@ -150,10 +154,12 @@ export function logErrorGroup(
  * @param groupName
  * @param msgs
  */
-export function log_info_group(
+export function log_info_group
+(
 	groupName: string,
 	msgs: string[]
-) {
+)
+{
 	console.groupCollapsed(
 		`%c${groupName}`,
 		'background: blue; color: #fffff'
@@ -175,11 +181,13 @@ export function log_info_group(
  * @param {string} style
  * @returns {void}
  */
-export function dlog(
+export function dlog
+(
 	msg: string | object,
 	show?: boolean,
 	style?: string
-): void {
+): void 
+{
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0])) style = LV2_W_H_TAG[2]
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0])) show = LV2_W_H_TAG[1]
 	// [🐞]
@@ -194,17 +202,19 @@ export function dlog(
  * information based on supplied arguments, 
  * and styling.
  * @param {string} groupName
- * @param {unknown[]} msg 
+ * @param {unknown[]} msgs 
  * @param {boolean} show 
  * @param {string} style
  * @returns {void}
  */
-export function dlogv2(
+export function dlogv2
+(
 	groupName: string,
 	msgs: unknown[],
 	show?: boolean,
 	style?: string
-): void {
+): void 
+{
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE && show) {
 		console.groupCollapsed(
@@ -228,17 +238,19 @@ export function dlogv2(
  * information based on supplied arguments, 
  * and styling.
  * @param {string} groupName
- * @param {unknown[]} msg 
+ * @param {unknown[]} msgs 
  * @param {boolean} show 
  * @param {string} style
  * @returns {void}
  */
-export function dlogv2open(
+export function dlogv2open
+(
 	groupName: string,
 	msgs: unknown[],
 	show?: boolean,
 	style?: string
-): void {
+): void 
+{
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE && show) {
 		console.group(
@@ -261,9 +273,50 @@ export function dlogv2open(
  * the platform to easily identify errors;
  * @param {string} msg
  */
-export function errlog(
+export function errlog
+(
   msg: string
-) {
+) 
+{
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE) console.error(`❌ Error: ${msg}`);
+}
+
+/**
+ * @summary [HELPER]
+ * @description initialized Sentry Debug/Logging
+ * in PRODUCTION environment;
+ */
+export function initSentry
+(
+)
+{
+  if (!dev) 
+  {
+    Sentry.init
+    (
+      {
+      dsn: 'https://847e94f5884c4185809a4cee44769d8b@o1009217.ingest.sentry.io/6275655',
+      integrations: [
+        new BrowserTracing(),
+        new Sentry.Replay()
+      ],
+
+      // NOTE: browser-tracing;
+
+      // Set tracesSampleRate to 1.0 to capture 100%
+      // of transactions for performance monitoring.
+      // We recommend adjusting this value in production
+      tracesSampleRate: 1.0,
+      
+      // NOTE: replay-session;
+      
+      // This sets the sample rate to be 10%. You may want this to be 100% while
+      // in development and sample at a lower rate in production
+      replaysSessionSampleRate: 0.1,
+      // If the entire session is not sampled, use the below sample rate to sample
+      // sessions when an error occurs.
+      replaysOnErrorSampleRate: 1.0,
+    });
+  }
 }

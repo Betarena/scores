@@ -1,7 +1,11 @@
 import { get } from "$lib/api/utils.js";
 import { sessionStore } from "$lib/store/session.js";
+import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
+import { userBetarenaSettings } from '$lib/store/user-settings';
+import { NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from "./debug";
+
 import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
-import { dlog, dlogv2, NB_W_TAG, NB_W_TOG } from "./debug";
+import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 
 /**
  * @description Simple function
@@ -152,16 +156,79 @@ export function googleEventLog
 }
 
 /**
- * @summary 
- * [HELPER]
- * @description 
- * ➨ identified "NULL" data points, in data array;
- * @example 
- * [[object Object], [object Object], undefined, null] => [2,3]:
- * @param 
- * {unknown[]} data 
- * @returns 
- * ➨ NaN
+ * @summary [MAIN]
+ * @description gets and sets user target geo-country
+ * location using geoJs;
+ * @returns NaN
+ */
+export async function setUserGeoLocation
+(
+  HEADER_TRANSLATION_DATA: any
+): Promise < void > 
+{
+
+  const if_0 =
+    userBetarenaSettings.getCountryBookmaker() !== undefined
+  ;
+  if (if_0) return;
+
+  let geoRes: GeoJsResponse = await getUserLocation();
+
+  let userGeo =
+    geoRes?.country_code === undefined
+      ? null
+      : geoRes.country_code.toLowerCase()
+  ;
+
+  const if_1 =
+    userGeo == null
+  ;
+  if (if_1) 
+  {
+    geoRes = await getUserLocationFromIP
+    (
+      '107.189.0.0'
+    );
+    userGeo = geoRes.country_code.toLowerCase();
+  }
+    
+  userBetarenaSettings.setGeoJs
+  (
+    geoRes
+  );
+
+  // [V] check for existance of GEO in available translations/country list;
+  const data_0 =	HEADER_TRANSLATION_DATA?.scores_header_translations?.bookmakers_countries
+  ?.find
+  (
+    function 
+    (
+      item
+    ) 
+    {
+      return (
+        item[0].toString().toLowerCase() === userGeo.toString().toLowerCase()
+      );
+    }
+  );
+
+  if (data_0 == undefined) userGeo = 'en'
+    
+  userBetarenaSettings.setCountryBookmaker
+  (
+    userGeo.toLocaleLowerCase()
+  );
+
+}
+
+/**
+ * @summary [HELPER] method
+ * @description validates for number of
+ * null || undefined data points in target
+ * data Array[];
+ * @example [[object Object], [object Object], undefined] => null:
+ * @param {unknown[]} data 
+ * @returns NaN
  */
 export function PRELOAD_invalid_data 
 (

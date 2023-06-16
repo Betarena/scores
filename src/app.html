@@ -4,14 +4,16 @@
 		<meta charset="utf-8" />
 		<meta
 			name="viewport"
-			content="width=device-width,initial-scale=1.0,user-scalable=yes"
+			content="width=device-width, initial-scale=1.0, user-scalable=yes"
 		/>
 		<meta name="theme-color" content="#292929" />
+
     <link 
       rel="stylesheet" 
       type="text/css"
       href="/app.css"
     />
+
     <!-- 
     IMPORTANT 
     [GOOGLEBOT] mobile usability override/hack
@@ -53,6 +55,7 @@
         grid-template-columns: 1fr !important;
       }
     </style>
+
 		<!-- 
     [ℹ] Website Icons & Favicons 
     -->
@@ -80,6 +83,7 @@
 			href="/assets/img/pwa/180x180 (iOS).png"
 			sizes="180x180"
 		/>
+
 		<!-- 
     [ℹ] PWA - MANIFEST 
     -->
@@ -88,6 +92,7 @@
 			crossorigin="use-credentials"
 			href="/manifest.json"
 		/>
+
 		<!-- 
     [ℹ] Website Fonts
     -->
@@ -107,11 +112,9 @@
 			href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap"
 			rel="stylesheet"
 		/>
+
 		<!-- 
-    [ℹ] ANALYTICS TAGS
-    <-contents->
-    [ℹ] 1. SMARTLOOK
-    [ℹ] 2. GOOGLE ANALYTICS
+    [ℹ] SMARTLOOK (3rd-PARTY)
     -->
 		<script 
       type="text/javascript"
@@ -174,6 +177,7 @@
 
 		%sveltekit.head%
 	</head>
+
 	<body
     data-sveltekit-preload-data="hover" 
     class="
@@ -184,4 +188,5 @@
       %sveltekit.body%
     </div>
 	</body>
+
 </html>
