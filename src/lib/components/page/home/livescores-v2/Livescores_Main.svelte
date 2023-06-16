@@ -666,7 +666,7 @@ COMPONENT JS (w/ TS)
     || $userBetarenaSettings?.country_bookmaker
   ) 
   {
-    isShowMore = false
+    // isShowMore = false
     targetFixtureDateData()
     updateLiveInfo()
   }

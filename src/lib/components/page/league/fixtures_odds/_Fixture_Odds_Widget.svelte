@@ -1417,7 +1417,7 @@
 			'visibilitychange',
 			function () {
 				if (!document.hidden) {
-					select_fixtures_odds();
+					// select_fixtures_odds();
 					listenRealTimeLivescoresNowChange();
 					listenRealTimeOddsChange();
 				}
