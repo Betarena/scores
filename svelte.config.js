@@ -52,8 +52,9 @@ const config = {
           'unsafe-inline',
           // 'strict-dynamic',
           // head/script;
-          'sha256-A0taZ9Co+tPBq31X8eVCofVvkCzuGw42/YS33C0hXps=', // -> smartlook [#1]
-          'sha256-B7gB23m9e7SQIsiYTKcvqLZrER3W1JqURnaN8Jn3Zx0=', // -> google [#2]
+          'sha256-A0taZ9Co+tPBq31X8eVCofVvkCzuGw42/YS33C0hXps=', // -> smartlook [1]
+          // 'sha256-B7gB23m9e7SQIsiYTKcvqLZrER3W1JqURnaN8Jn3Zx0=', // -> google [2]
+          'sha256-OkVAK6ZT0QIUkm8vRwIRMD1vGOnlhB1RxyNMdGXLFwY=', // -> google [3]
           // [ℹ] google/firebase;
           'https://www.googletagmanager.com',
           'https://*.google-analytics.com', // NOTE: (catch-all)
@@ -181,6 +182,7 @@ const config = {
           'https://securetoken.googleapis.com',
           'https://firebasestorage.googleapis.com',
           'https://lh3.googleusercontent.com/',
+          'https://region1.google-analytics.com',
           // SMARTLOOK;
           'https://manager.eu.smartlook.cloud', 
           'https://web-writer.eu.smartlook.cloud',
