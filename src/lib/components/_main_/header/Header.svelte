@@ -1534,7 +1534,7 @@ NAVBAR MAIN
             -->
             <div
               id="currency-box"
-              class="m-r-16"
+              class="m-r-10"
             >
 
               <!--
@@ -1596,7 +1596,7 @@ NAVBAR MAIN
             -->
             <div
               id="lang-container"
-              class="m-r-16"
+              class="m-r-10"
             >
 
               <!--
@@ -1673,7 +1673,6 @@ NAVBAR MAIN
               id="theme-opt-container"
               class="
                 row-space-start
-                m-r-30
               "
               on:click={() => selectedTheme()}
               class:m-r-10={PROFILE_URL == $page.route.id}
@@ -1733,8 +1732,6 @@ NAVBAR MAIN
                 {WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES' }
               </p>
             </a>
-
-            <div class="nav-triangle" />
 
           </div>
 
