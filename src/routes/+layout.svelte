@@ -3,15 +3,17 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
+
+  // #region ➤ [MAIN] Package Imports
+
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { initSportbookData, platfrom_lang_ssr } from '$lib/utils/platform-functions.js';
 	import { dlog, initSentry } from '$lib/utils/debug';
-	import { setUserGeoLocation } from '$lib/utils/platform-functions.js';
+	import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
 
 	import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
 	import OfflineAlert from '$lib/components/Offline-Alert.svelte';
@@ -21,10 +23,14 @@ COMPONENT JS (w/ TS)
 	import Header from '$lib/components/_main_/header/Header.svelte';
 	import Navbar from '$lib/components/page/profile/Navbar.svelte';
 
+  // #endregion ➤ [MAIN] Package Imports
+
+  // #region ➤ [VARIABLES]
+
   // NOTE: moved to static/
 	// import '../app.css';
-	
-	const VALID_PROFILE_PAGE_URL: string[] = 
+
+	const VALID_PROFILE_PAGE_URL: string[] =
   [
 		'/u/dashboard',
 		'/u/settings'
@@ -38,14 +44,19 @@ COMPONENT JS (w/ TS)
 	$: HEADER_TRANSLATION_DATA = $page.data.HEADER_TRANSLATION_DATA;
 	$: FOOTER_TRANSLATION_DATA = $page.data.FOOTER_TRANSLATION_DATA;
 
+  // #endregion ➤ [VARIABLES]
+
+  // #region ➤ [METHODS]
+
   /**
-   * @summary [HELPER]
-   * @description simple "offline" event
-   * listener function declaration;
+   * @summary
+   * [HELPER]
+   * @description
+   * ➨ simple "offline" event listener function declaration;
    */
 	function toggleOfflineAlert
   (
-  ) 
+  ): void
   {
 		offlineMode = !offlineMode;
     // [🐞]
@@ -56,15 +67,11 @@ COMPONENT JS (w/ TS)
 		);
 	}
 
-  onMount
-  (
-    async () => 
-    {
-      initSentry()
-	  }
-  );
+  // #endregion ➤ [METHODS]
 
-	$: if (browser) 
+  // #region ➤ [REACTIVIY] [METHODS]
+
+	$: if (browser)
   {
 		userBetarenaSettings.useLocalStorage();
 
@@ -88,9 +95,9 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * IMPORTANT
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ listens to change in "server" language;
   */
 	$: serverSideLang = platfrom_lang_ssr
@@ -110,23 +117,37 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * IMPORTANT
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ listens to change in "country_bookmaker";
   */
-  $: if ($userBetarenaSettings?.country_bookmaker) 
+  $: if ($userBetarenaSettings?.country_bookmaker)
   {
     initSportbookData
     (
       $userBetarenaSettings?.country_bookmaker
     )
   }
-  
+
+  // #endregion ➤ [REACTIVIY] [METHODS]
+
+  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  onMount
+  (
+    async () =>
+    {
+      initSentry()
+	  }
+  );
+
+  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -140,7 +161,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <EmailSubscribe />
 
 {#if !VALID_PROFILE_PAGE_URL.includes($page?.url?.pathname)}
-	<Header {HEADER_TRANSLATION_DATA} />
+	<Header WIDGET_T_DATA={HEADER_TRANSLATION_DATA} />
 {/if}
 
 <main
@@ -160,14 +181,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	main 
+	main
   {
 		position: relative;
 		z-index: 0;
 		margin: 0 auto;
 		width: 100%;
 	}
-	main::before 
+	main::before
   {
 		content: '';
 		display: inline-block;
@@ -185,23 +206,23 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media screen 
-    and (min-width: 768px) 
+	@media screen
+    and (min-width: 768px)
   {
-		main::before 
+		main::before
     {
 			height: 495px;
 		}
 	}
 
 	@media screen
-    and (min-width: 1024px) 
+    and (min-width: 1024px)
   {
-		main::before 
+		main::before
     {
 			height: 100%;
 			background-size: contain !important;
