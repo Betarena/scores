@@ -41,6 +41,7 @@ COMPONENT JS - BASIC
   import HeaderSportsBtn from './Header-Sports-Btn.svelte';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+  import HeaderNavBtn from './Header-Nav-Btn.svelte';
 
   // #endregion ➤ [MAIN] Package Imports
 
@@ -583,7 +584,7 @@ COMPONENT JS - BASIC
       [
         tabletExclusive,
         mobileExclusive
-      ] =viewport_change
+      ] = viewport_change
       (
         TABLET_VIEW,
         MOBILE_VIEW
@@ -752,105 +753,38 @@ NAVBAR MAIN
         <!--
         SCORES PLATFORM
         -->
-        <div
-          class="
-            nav-box
-            cursor-pointer
-            active
-          "
-        >
-
-          <a
-            href={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
-          >
-            <p
-              class="
-                color-grey
-                s-14
-                w-500
-                m-r-32
-                uppercase
-                no-wrap
-              "
-            >
-              {WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES' }
-            </p>
-          </a>
-
-          <div class="nav-triangle" />
-
-        </div>
+        <HeaderNavBtn
+          navKey={'scores'}
+          navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
+          navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
+          {tabletExclusive}
+          {mobileExclusive}
+        />
 
         <!--
         SCORES CONTENT
         -->
-        <div
-          class="
-            nav-box
-            cursor-pointer
-          "
-        >
-
-          <a
-            href={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
-            target="_blank"
-          >
-            <p
-              class="
-                color-grey
-                s-14
-                w-500
-                m-r-32
-                uppercase
-                no-wrap
-              "
-            >
-              {WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT' }
-            </p>
-          </a>
-
-        </div>
+        <HeaderNavBtn
+          navKey={'content'}
+          navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
+          navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
+          {tabletExclusive}
+          {mobileExclusive}
+        />
 
         <!--
         COMPETITIONS
         -->
-        <div
-          class="
-            nav-box
-          "
-        >
-
-          <a
-            href={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
-            target="_blank"
-            class="disable-anchor"
-          >
-            <p
-              class="
-                color-grey
-                s-14
-                w-500
-                uppercase
-                no-wrap
-              "
-            >
-              {WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS' }
-              <span
-                class=
-                "
-                  color-white
-                  s-12
-                  m-l-10
-                  pill
-                  lowercase
-                "
-              >
-                {WIDGET_T_DATA?.scores_header_translations?.soon || 'soon' }
-              </span>
-            </p>
-          </a>
-
-        </div>
+        <HeaderNavBtn
+          navKey={'competitions'}
+          navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
+          navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+          soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
+          isSoon={true}
+          disableAnchor={true}
+          {tabletExclusive}
+          {mobileExclusive}
+        />
 
       {/if}
 
@@ -873,54 +807,54 @@ NAVBAR MAIN
         CURRENCY SELECTION
         NOTE: -> HIDDEN TEMPORARILY
         -->
-        {#if false}
+        <div
+          id="currency-box"
+          class="m-r-16"
+        >
+
+          <!--
+          SELECTED CURRENCY
+          -->
           <div
-            id="currency-box"
-            class="m-r-16"
+            class="
+              selected-language-btn
+              row-space-start
+            "
+            class:active-lang-select={isCurrencyDropdown == true}
+            on:click={() =>	(isCurrencyDropdown = !isCurrencyDropdown)}
           >
 
             <!--
-            SELECTED CURRENCY
+            CURRENCY ICON
             -->
-            <div
+            <img
+              loading="lazy"
+              src='./assets/svg/currency/usd.svg'
+              alt='usd-icon'
+              width="16"
+              height="16"
               class="
-                selected-language-btn
-                row-space-start
+                m-r-6
               "
-              class:active-lang-select={isCurrencyDropdown == true}
-              on:click={() =>	(isCurrencyDropdown = !isCurrencyDropdown)}
+            />
+
+            <!--
+            CURRENCY TEXT
+            -->
+            <p
+              class="
+                color-white
+                s-14
+              "
             >
+              USD
+            </p>
 
-              <!--
-              CURRENCY ICON
-              -->
-              <img
-                loading="lazy"
-                src='./assets/svg/currency/usd.svg'
-                alt='usd-icon'
-                width="16"
-                height="16"
-                class="
-                  m-r-6
-                "
-              />
-
-              <!--
-              CURRENCY TEXT
-              -->
-              <p
-                class="
-                  color-white
-                  s-14
-                  m-r-10
-                "
-              >
-                USD
-              </p>
-
-              <!--
-              ARROW DOWN
-              -->
+            <!--
+            ARROW DOWN
+            NOTE: -> HIDDEN TEMPORARILY
+            -->
+            {#if false}
               <img
                 loading="lazy"
                 src={!isCurrencyDropdown ? arrow_down : arrow_up}
@@ -928,11 +862,11 @@ NAVBAR MAIN
                 width="16"
                 height="16"
               />
-
-            </div>
+            {/if}
 
           </div>
-        {/if}
+
+        </div>
 
         <!--
         LANGUAGE SELECTION
@@ -949,6 +883,7 @@ NAVBAR MAIN
             class="
               selected-language-btn
               row-space-out
+              cursor-pointer
             "
             class:active-lang-select={isLangDropdown == true}
             on:click={() =>	(isLangDropdown = !isLangDropdown)}
@@ -1046,8 +981,7 @@ NAVBAR MAIN
           class="
             cursor-pointer
           "
-          on:click={() =>
-            ($sessionStore.auth_show = !$sessionStore.auth_show)}
+          on:click={() => ($sessionStore.auth_show = !$sessionStore.auth_show)}
         >
           <p
             class="
@@ -1442,40 +1376,43 @@ NAVBAR MAIN
           <div
             class=
             "
-              m-r-10
               dropdown-opt-box
+              m-r-10
+              row-space-start
             "
           >
 
-            <p
-              class="
-                color-grey
-                s-12
-                no-wrap
-              "
-            >
-              {translationObject?.balance}
-            </p>
-
-            <p
-              class="
-                color-white
-                s-14
-                no-wrap
-              "
-            >
-              <span
-                class=
-                "
-                  color-primary
-                  w-500
-                  m-r-5
+            <div>
+              <p
+                class="
+                  color-grey
+                  s-12
+                  no-wrap
                 "
               >
-                0.00 BTA
-              </span>
-              ($0.00)
-            </p>
+                {translationObject?.balance}
+              </p>
+
+              <p
+                class="
+                  color-white
+                  s-14
+                  no-wrap
+                "
+              >
+                <span
+                  class=
+                  "
+                    color-primary
+                    w-500
+                    m-r-5
+                  "
+                >
+                  0.00 BTA
+                </span>
+                ($0.00)
+              </p>
+            </div>
 
           </div>
 
@@ -1553,10 +1490,11 @@ NAVBAR MAIN
 
             <!--
             CURRENCY SELECTION
+            NOTE: -> HIDDEN TEMPORARILY
             -->
             <div
-              id="currency-box"
-              class="m-r-10"
+            id="currency-box"
+            class="m-r-16"
             >
 
               <!--
@@ -1592,7 +1530,6 @@ NAVBAR MAIN
                   class="
                     color-white
                     s-14
-                    m-r-10
                   "
                 >
                   USD
@@ -1600,14 +1537,17 @@ NAVBAR MAIN
 
                 <!--
                 ARROW DOWN
+                NOTE: -> HIDDEN TEMPORARILY
                 -->
-                <img
-                  loading="lazy"
-                  src={!isCurrencyDropdown ? arrow_down : arrow_up}
-                  alt={!isCurrencyDropdown	? 'arrow_down' : 'arrow_up'}
-                  width="16"
-                  height="16"
-                />
+                {#if false}
+                  <img
+                    loading="lazy"
+                    src={!isCurrencyDropdown ? arrow_down : arrow_up}
+                    alt={!isCurrencyDropdown	? 'arrow_down' : 'arrow_up'}
+                    width="16"
+                    height="16"
+                  />
+                {/if}
 
               </div>
 
@@ -1618,7 +1558,7 @@ NAVBAR MAIN
             -->
             <div
               id="lang-container"
-              class="m-r-10"
+              class="m-r-16"
             >
 
               <!--
@@ -1628,6 +1568,7 @@ NAVBAR MAIN
                 class="
                   selected-language-btn
                   row-space-out
+                  cursor-pointer
                 "
                 class:active-lang-select={isLangDropdown == true}
                 on:click={() =>	(isLangDropdown = !isLangDropdown)}
@@ -1689,12 +1630,14 @@ NAVBAR MAIN
             </div>
 
             <!--
-            THEME CONTAINER
+            THEME SELECTION
             -->
             <div
               id="theme-opt-container"
               class="
                 row-space-start
+                m-r-30
+                cursor-pointer
               "
               on:click={() => selectedTheme()}
               class:m-r-10={PROFILE_URL == $page.route.id}
@@ -1731,98 +1674,38 @@ NAVBAR MAIN
           <!--
           SCORES PLATFORM
           -->
-          <div
-            class="
-              nav-box
-              active
-              m-b-30
-            "
-          >
-
-            <a
-              href={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
-            >
-              <p
-                class="
-                  color-grey
-                  s-14
-                  w-500
-                  m-r-32
-                  uppercase
-                "
-              >
-                {WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES' }
-              </p>
-            </a>
-
-          </div>
+          <HeaderNavBtn
+            navKey={'scores'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
 
           <!--
           SCORES CONTENT
           -->
-          <div
-            class="
-              nav-box
-              m-b-30
-            "
-          >
-
-            <a
-              href={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
-            >
-              <p
-                class="
-                  color-grey
-                  s-14
-                  w-500
-                  m-r-32
-                  uppercase
-                "
-              >
-                {WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT' }
-              </p>
-            </a>
-
-          </div>
+          <HeaderNavBtn
+            navKey={'content'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
 
           <!--
           COMPETITIONS
           -->
-          <div
-            class="
-              nav-box
-              m-b-30
-            "
-          >
-
-            <a
-              href={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
-            >
-              <p
-                class="
-                  color-grey
-                  s-14
-                  w-500
-                  uppercase
-                "
-              >
-                {WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS' }
-                <span
-                  class=
-                  "
-                    color-white
-                    s-12
-                    m-l-10
-                    pill
-                    lowercase
-                  "
-                >
-                  {WIDGET_T_DATA?.scores_header_translations?.soon || 'soon' }
-                </span>
-              </p>
-            </a>
-
-          </div>
+          <HeaderNavBtn
+            navKey={'competitions'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+            soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
+            isSoon={true}
+            disableAnchor={true}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
 
           {#if PROFILE_URL != $page.route.id}
 
@@ -2080,6 +1963,7 @@ NAVBAR MAIN
         </div>
 
       </div>
+
     </nav>
   {/if}
 
@@ -2182,7 +2066,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     bottom: 64px;
     /* s */
     width: 100vw;
-    border: 1px solid var(--dark-theme-1);
+    border: 0.5px solid var(--dark-theme-1);
   }
   header div#bottom-border
   {
@@ -2191,35 +2075,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     bottom: 0;
     /* s */
     width: 100vw;
-    border: 1px solid var(--dark-theme-1);
-  }
-
-  div.nav-box
-  {
-    position: relative;
-  }
-  div.nav-box div.nav-triangle
-  {
-    /* p */
-    position: absolute;
-    bottom: -21px;
-    right: 55%;
-    /* s */
-    width: 0;
-    height: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 12px solid var(--dark-theme-1);
-  }
-  div.nav-box.active p
-  {
-    /* s */
-    color: var(--primary) !important;
-  }
-  div.nav-box:hover a p
-  {
-    /* s */
-    color: var(--primary) !important;
+    border: 0.5px solid var(--dark-theme-1);
   }
 
 	#burger-menu
@@ -2273,15 +2129,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		font-weight: 400;
 	}
 
-  .pill
-  {
-    /* s */
-    background-color: var(--dark-theme-1);
-		padding: 3px 8px;
-		border-radius: 20px;
-    height: 24px;
-  }
-
   /*
   => LANG / CURRENCY SHARED
   */
@@ -2298,12 +2145,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		color: #ffffff;
 		outline: none;
 		border: none;
-		cursor: pointer;
 		padding: 5px 12px;
 		background-color: transparent;
 	}
-	div.selected-language-btn:hover,
-	div.selected-language-btn.active-lang-select
+	div#lang-container div.selected-language-btn:hover,
+	div#lang-container div.selected-language-btn.active-lang-select
   {
     /* s */
 		background-color: rgba(255, 255, 255, 0.1);
