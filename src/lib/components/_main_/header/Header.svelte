@@ -77,6 +77,7 @@ COMPONENT JS - BASIC
   let setUserLang: boolean = false;
   let intent_intent_lang: string | undefined = undefined;
   let timeout_intent: NodeJS.Timeout = undefined;
+  let width: number = 0;
 
   //#endregion ➤ [VARIABLES]
 
@@ -214,6 +215,30 @@ COMPONENT JS - BASIC
 			window.location.reload();
 		}
 	}
+
+  function calcNavTrianglePos
+  (
+    mainActive?: string
+  ): void
+  {
+    const parentPos: DOMRect = document.getElementById('navBox').getBoundingClientRect();
+
+    const if_M_0: boolean =
+      document.getElementById($sessionStore.navBtnHover || mainActive) == undefined
+    ;
+    if (if_M_0) return;
+
+    const childPos: DOMRect  = document.getElementById($sessionStore.navBtnHover || mainActive).getBoundingClientRect();
+    const relativePos =
+    {
+      top: (childPos.top - parentPos.top),
+      right: (childPos.right - parentPos.right),
+      bottom: (childPos.bottom - parentPos.bottom),
+      left: (childPos.left - parentPos.left)
+    };
+
+    width = relativePos.left + (childPos.width/2) - 32;
+  }
 
   /**
    * @summary
@@ -561,6 +586,15 @@ COMPONENT JS - BASIC
       : $page.url.origin
   ;
 
+  $: if (browser && $sessionStore.navBtnHover)
+  {
+    calcNavTrianglePos();
+  }
+  $: if (browser && $sessionStore.navBtnHover == undefined)
+  {
+    calcNavTrianglePos('scores');
+  }
+
   $: dlogv2
   (
     NB_W_TAG,
@@ -607,34 +641,6 @@ COMPONENT JS - BASIC
       );
 	  }
   );
-
-  let width: number = 0;
-  $: if (browser && $sessionStore.navBtnHover)
-  {
-    const parentPos: DOMRect = document.getElementById('navBox').getBoundingClientRect();
-    const childPos: DOMRect  = document.getElementById($sessionStore.navBtnHover).getBoundingClientRect();
-    const relativePos = {};
-
-    relativePos.top    = childPos.top - parentPos.top,
-    relativePos.right  = childPos.right - parentPos.right,
-    relativePos.bottom = childPos.bottom - parentPos.bottom,
-    relativePos.left   = childPos.left - parentPos.left;
-
-    width = relativePos.left + (childPos.width/2) - 32;
-  }
-  $: if (browser && $sessionStore.navBtnHover == undefined)
-  {
-    const parentPos: DOMRect = document.getElementById('navBox').getBoundingClientRect();
-    const childPos: DOMRect  = document.getElementById('scores').getBoundingClientRect();
-    const relativePos = {};
-
-    relativePos.top    = childPos.top - parentPos.top,
-    relativePos.right  = childPos.right - parentPos.right,
-    relativePos.bottom = childPos.bottom - parentPos.bottom,
-    relativePos.left   = childPos.left - parentPos.left;
-
-    width = relativePos.left + (childPos.width/2) - 32;
-  }
 
   // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
@@ -776,7 +782,7 @@ NAVBAR MAIN
       💻 TABLET 🖥️ LAPTOP
       EXTERNAL BUTTONS
       -->
-      {#if !mobileExclusive && PROFILE_URL != $page.route.id}
+      {#if !mobileExclusive}
 
         <div
           id='navBox'
@@ -2058,11 +2064,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #292929;
 		height: 128px;
 	}
-  header.user-active
-  {
-    /* s */
-		height: 72px !important;
-  }
 	header #top-header,
 	header #bottom-header
   {
