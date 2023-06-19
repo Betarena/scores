@@ -608,6 +608,34 @@ COMPONENT JS - BASIC
 	  }
   );
 
+  let width: number = 0;
+  $: if (browser && $sessionStore.navBtnHover)
+  {
+    const parentPos: DOMRect = document.getElementById('navBox').getBoundingClientRect();
+    const childPos: DOMRect  = document.getElementById($sessionStore.navBtnHover).getBoundingClientRect();
+    const relativePos = {};
+
+    relativePos.top    = childPos.top - parentPos.top,
+    relativePos.right  = childPos.right - parentPos.right,
+    relativePos.bottom = childPos.bottom - parentPos.bottom,
+    relativePos.left   = childPos.left - parentPos.left;
+
+    width = relativePos.left + (childPos.width/2) - 32;
+  }
+  $: if (browser && $sessionStore.navBtnHover == undefined)
+  {
+    const parentPos: DOMRect = document.getElementById('navBox').getBoundingClientRect();
+    const childPos: DOMRect  = document.getElementById('scores').getBoundingClientRect();
+    const relativePos = {};
+
+    relativePos.top    = childPos.top - parentPos.top,
+    relativePos.right  = childPos.right - parentPos.right,
+    relativePos.bottom = childPos.bottom - parentPos.bottom,
+    relativePos.left   = childPos.left - parentPos.left;
+
+    width = relativePos.left + (childPos.width/2) - 32;
+  }
+
   // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
@@ -750,41 +778,54 @@ NAVBAR MAIN
       -->
       {#if !mobileExclusive && PROFILE_URL != $page.route.id}
 
-        <!--
-        SCORES PLATFORM
-        -->
-        <HeaderNavBtn
-          navKey={'scores'}
-          navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
-          navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
-          {tabletExclusive}
-          {mobileExclusive}
-        />
+        <div
+          id='navBox'
+          class=
+          "
+            row-space-start
+          "
+        >
+          <!--
+          SCORES PLATFORM
+          -->
+          <HeaderNavBtn
+            navKey={'scores'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
 
-        <!--
-        SCORES CONTENT
-        -->
-        <HeaderNavBtn
-          navKey={'content'}
-          navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
-          navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
-          {tabletExclusive}
-          {mobileExclusive}
-        />
+          <!--
+          SCORES CONTENT
+          -->
+          <HeaderNavBtn
+            navKey={'content'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
 
-        <!--
-        COMPETITIONS
-        -->
-        <HeaderNavBtn
-          navKey={'competitions'}
-          navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
-          navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
-          soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
-          isSoon={true}
-          disableAnchor={true}
-          {tabletExclusive}
-          {mobileExclusive}
-        />
+          <!--
+          COMPETITIONS
+          -->
+          <HeaderNavBtn
+            navKey={'competitions'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+            soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
+            isSoon={true}
+            disableAnchor={true}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
+
+          <div
+            id="nav-triangle"
+            style="left: {width}px;"
+          />
+        </div>
 
       {/if}
 
@@ -2128,6 +2169,25 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		font-weight: 400;
 	}
+
+  div#navBox
+  {
+    /* s */
+    position: relative;
+  }
+  div#nav-triangle
+  {
+    /* p */
+    position: absolute;
+    bottom: -21px;
+    /* s */
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid var(--dark-theme-1);
+    transition: all 0.25s ease-out;
+  }
 
   /*
   => LANG / CURRENCY SHARED

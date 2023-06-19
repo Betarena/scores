@@ -56,6 +56,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div
+  id={navKey}
   class="
     nav-box
     cursor-pointer
@@ -65,7 +66,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   class:disable-anchor={disableAnchor}
   on:mouseover={() => $sessionStore.navBtnHover = navKey}
   on:mouseout={() => $sessionStore.navBtnHover = undefined}
-  class:activeInactive={![undefined, navKey].includes($sessionStore.navBtnHover)}
 >
 
   <a
@@ -102,10 +102,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     </p>
   </a>
 
-  {#if !tabletExclusive}
-    <div class="nav-triangle" />
-  {/if}
-
 </div>
 
 <!-- ===============
@@ -120,45 +116,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* p */
     position: relative;
   }
-  div.nav-box div.nav-triangle
-  {
-    /* p */
-    position: absolute;
-    bottom: -21px;
-    right: 55%;
-    /* s */
-    width: 0;
-    height: 0;
-    opacity: 0;
-    border-left: 12px solid transparent;
-    border-right: 12px solid transparent;
-    border-bottom: 12px solid var(--dark-theme-1);
-  }
   div.nav-box.active p
   {
     /* s */
     color: var(--primary) !important;
   }
-  div.nav-box.active div.nav-triangle
-  {
-    /* s */
-    opacity: 1;
-  }
-  div.nav-box.active.activeInactive div.nav-triangle
-  {
-    /* s */
-    opacity: 0;
-  }
   div.nav-box:hover a p
   {
     /* s */
     color: var(--white) !important;
-  }
-  div.nav-box:hover div.nav-triangle
-  {
-    /* s */
-    opacity: 1;
-    transition: all 0.3s ease-out;
   }
 
   .pill
