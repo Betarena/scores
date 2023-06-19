@@ -755,6 +755,7 @@ NAVBAR MAIN
         <div
           class="
             nav-box
+            cursor-pointer
             active
           "
         >
@@ -786,6 +787,7 @@ NAVBAR MAIN
         <div
           class="
             nav-box
+            cursor-pointer
           "
         >
 
@@ -2210,6 +2212,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-bottom: 12px solid var(--dark-theme-1);
   }
   div.nav-box.active p
+  {
+    /* s */
+    color: var(--primary) !important;
+  }
+  div.nav-box:hover a p
   {
     /* s */
     color: var(--primary) !important;
