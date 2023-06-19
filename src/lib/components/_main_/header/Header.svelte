@@ -1166,6 +1166,9 @@ NAVBAR MAIN
 
   </div>
 
+  <div id='top-border' />
+  <div id='bottom-border' />
+
   <!--
   BOTTOM NAVBAR
   -->
@@ -1173,9 +1176,6 @@ NAVBAR MAIN
     id="bottom-header"
     class="row-space-out"
   >
-
-    <div id='top-border' />
-    <div id='bottom-border' />
 
     <!--
     1st COLUMN
@@ -2173,26 +2173,22 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 	}
-  header #bottom-header div#top-border
+  header div#top-border
   {
     /* p */
     position: absolute;
-    top: 0;
-    left: -100%;
-    right: 0;
+    bottom: 64px;
     /* s */
-    width: 10000%;
+    width: 100vw;
     border: 1px solid var(--dark-theme-1);
   }
-  header #bottom-header div#bottom-border
+  header div#bottom-border
   {
     /* p */
     position: absolute;
     bottom: 0;
-    left: -100%;
-    right: 0;
     /* s */
-    width: 10000%;
+    width: 100vw;
     border: 1px solid var(--dark-theme-1);
   }
 
