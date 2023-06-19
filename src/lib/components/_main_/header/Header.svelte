@@ -769,6 +769,7 @@ NAVBAR MAIN
                 w-500
                 m-r-32
                 uppercase
+                no-wrap
               "
             >
               {WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES' }
@@ -790,6 +791,7 @@ NAVBAR MAIN
 
           <a
             href={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
+            target="_blank"
           >
             <p
               class="
@@ -798,6 +800,7 @@ NAVBAR MAIN
                 w-500
                 m-r-32
                 uppercase
+                no-wrap
               "
             >
               {WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT' }
@@ -817,6 +820,8 @@ NAVBAR MAIN
 
           <a
             href={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
+            target="_blank"
+            class="disable-anchor"
           >
             <p
               class="
@@ -824,6 +829,7 @@ NAVBAR MAIN
                 s-14
                 w-500
                 uppercase
+                no-wrap
               "
             >
               {WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS' }
@@ -837,7 +843,7 @@ NAVBAR MAIN
                   lowercase
                 "
               >
-                soon
+                {WIDGET_T_DATA?.scores_header_translations?.soon || 'soon' }
               </span>
             </p>
           </a>
@@ -863,65 +869,68 @@ NAVBAR MAIN
 
         <!--
         CURRENCY SELECTION
+        NOTE: -> HIDDEN TEMPORARILY
         -->
-        <div
-          id="currency-box"
-          class="m-r-16"
-        >
-
-          <!--
-          SELECTED CURRENCY
-          -->
+        {#if false}
           <div
-            class="
-              selected-language-btn
-              row-space-start
-            "
-            class:active-lang-select={isCurrencyDropdown == true}
-            on:click={() =>	(isCurrencyDropdown = !isCurrencyDropdown)}
+            id="currency-box"
+            class="m-r-16"
           >
 
             <!--
-            CURRENCY ICON
+            SELECTED CURRENCY
             -->
-            <img
-              loading="lazy"
-              src='./assets/svg/currency/usd.svg'
-              alt='usd-icon'
-              width="16"
-              height="16"
+            <div
               class="
-                m-r-6
+                selected-language-btn
+                row-space-start
               "
-            />
-
-            <!--
-            CURRENCY TEXT
-            -->
-            <p
-              class="
-                color-white
-                s-14
-                m-r-10
-              "
+              class:active-lang-select={isCurrencyDropdown == true}
+              on:click={() =>	(isCurrencyDropdown = !isCurrencyDropdown)}
             >
-              USD
-            </p>
 
-            <!--
-            ARROW DOWN
-            -->
-            <img
-              loading="lazy"
-              src={!isCurrencyDropdown ? arrow_down : arrow_up}
-              alt={!isCurrencyDropdown	? 'arrow_down' : 'arrow_up'}
-              width="16"
-              height="16"
-            />
+              <!--
+              CURRENCY ICON
+              -->
+              <img
+                loading="lazy"
+                src='./assets/svg/currency/usd.svg'
+                alt='usd-icon'
+                width="16"
+                height="16"
+                class="
+                  m-r-6
+                "
+              />
+
+              <!--
+              CURRENCY TEXT
+              -->
+              <p
+                class="
+                  color-white
+                  s-14
+                  m-r-10
+                "
+              >
+                USD
+              </p>
+
+              <!--
+              ARROW DOWN
+              -->
+              <img
+                loading="lazy"
+                src={!isCurrencyDropdown ? arrow_down : arrow_up}
+                alt={!isCurrencyDropdown	? 'arrow_down' : 'arrow_up'}
+                width="16"
+                height="16"
+              />
+
+            </div>
 
           </div>
-
-        </div>
+        {/if}
 
         <!--
         LANGUAGE SELECTION
@@ -999,13 +1008,14 @@ NAVBAR MAIN
         </div>
 
         <!--
-        THEME CONTAINER
+        THEME SELECTION
         -->
         <div
           id="theme-opt-container"
           class="
             row-space-start
             m-r-30
+            cursor-pointer
           "
           on:click={() => selectedTheme()}
           class:m-r-10={PROFILE_URL == $page.route.id}
@@ -1164,6 +1174,9 @@ NAVBAR MAIN
     class="row-space-out"
   >
 
+    <div id='top-border' />
+    <div id='bottom-border' />
+
     <!--
     1st COLUMN
     -->
@@ -1194,7 +1207,7 @@ NAVBAR MAIN
           -->
           <HeaderSportsBtn
             sportNameDefault={'Football'}
-            sportTranslation={'Football'}
+            sportTranslation={WIDGET_T_DATA?.scores_header_translations?.sports_v2?.['football']}
             sportValue={WIDGET_T_DATA?.scores_header_fixtures_information?.['football']}
             selectedSport={selectedSport}
             on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
@@ -1220,84 +1233,87 @@ NAVBAR MAIN
 
         <!--
         ODDS-TYPE CONTAINER
+        NOTE: -> HIDDEN TEMPORARILY
         -->
-        <div
-          id="odds-box"
-          class="
-            cursor-not-allowed
-            dropdown-opt-box
-            row-space-start
-          "
-          on:click={() => (isOddsDropdown = !isOddsDropdown)}
-        >
-
-          <!--
-          SELECTED ODDS-TYPE BOX
-          -->
+        {#if false}
           <div
-            class="m-r-10"
+            id="odds-box"
+            class="
+              cursor-not-allowed
+              dropdown-opt-box
+              row-space-start
+            "
+            on:click={() => (isOddsDropdown = !isOddsDropdown)}
           >
 
-            <p
-              class="
-                color-grey
-                s-12
-                no-wrap
-              "
+            <!--
+            SELECTED ODDS-TYPE BOX
+            -->
+            <div
+              class="m-r-10"
             >
-              {WIDGET_T_DATA?.scores_header_translations?.odds || translationObject?.odds_type}
-            </p>
 
-            <p
-              class="
-                color-white
-                s-14
-                no-wrap
-              "
-            >
-              {WIDGET_T_DATA?.scores_header_translations?.odds_type?.[0]}
-            </p>
+              <p
+                class="
+                  color-grey
+                  s-12
+                  no-wrap
+                "
+              >
+                {WIDGET_T_DATA?.scores_header_translations?.odds || translationObject?.odds_type}
+              </p>
+
+              <p
+                class="
+                  color-white
+                  s-14
+                  no-wrap
+                "
+              >
+                {WIDGET_T_DATA?.scores_header_translations?.odds_type?.[0]}
+              </p>
+
+            </div>
+
+            <!--
+            ARROW DOWN
+            -->
+            <img
+              loading="lazy"
+              src={!isOddsDropdown ? arrow_down_fade : arrow_up}
+              alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
+              width=16
+              height=16
+            />
+
+            <!--
+            DROPDOWN MENU (ODDS-TYPE)
+            -->
+            {#if isOddsDropdown}
+              <div
+                id="odds-type-dropdown-menu"
+                transition:fly
+              >
+                {#each WIDGET_T_DATA?.scores_header_translations?.odds_type || [] as odd}
+                  <div
+                    class="theme-opt-box"
+                    on:click={() => (isOddsDropdown = false)}
+                  >
+                    <p
+                      class="
+                        color-white
+                        s-14
+                      "
+                    >
+                      {odd}
+                    </p>
+                  </div>
+                {/each}
+              </div>
+            {/if}
 
           </div>
-
-          <!--
-          ARROW DOWN
-          -->
-          <img
-            loading="lazy"
-            src={!isOddsDropdown ? arrow_down_fade : arrow_up}
-            alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
-            width=16
-            height=16
-          />
-
-          <!--
-          DROPDOWN MENU (ODDS-TYPE)
-          -->
-          {#if isOddsDropdown}
-            <div
-              id="odds-type-dropdown-menu"
-              transition:fly
-            >
-              {#each WIDGET_T_DATA?.scores_header_translations?.odds_type || [] as odd}
-                <div
-                  class="theme-opt-box"
-                  on:click={() => (isOddsDropdown = false)}
-                >
-                  <p
-                    class="
-                      color-white
-                      s-14
-                    "
-                  >
-                    {odd}
-                  </p>
-                </div>
-              {/each}
-            </div>
-          {/if}
-
-        </div>
+        {/if}
 
         <!--
         BOOKMAKERS CONTAINER
@@ -1323,6 +1339,7 @@ NAVBAR MAIN
               class="
                 color-grey
                 s-12
+                no-wrap
               "
             >
               {WIDGET_T_DATA?.scores_header_translations?.bookmakers}
@@ -1462,16 +1479,19 @@ NAVBAR MAIN
 
           <!--
           BUY BETARENA TOKEN
+          NOTE: -> HIDDEN TEMPORARILY
           -->
-          <button
-            class=
-            "
-              btn-primary-v2
-              m-l-50
-            "
-          >
-            Buy BTA
-          </button>
+          {#if false}
+            <button
+              class=
+              "
+                btn-primary-v2
+                m-l-50
+              "
+            >
+              Buy BTA
+            </button>
+          {/if}
 
         {/if}
 
@@ -1795,7 +1815,7 @@ NAVBAR MAIN
                     lowercase
                   "
                 >
-                  soon
+                  {WIDGET_T_DATA?.scores_header_translations?.soon || 'soon' }
                 </span>
               </p>
             </a>
@@ -2121,6 +2141,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     /* p */
 		position: absolute;
+    position: relative;
     /* s */
 		max-width: 1430px;
 		width: inherit;
@@ -2140,8 +2161,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* s */
 		padding: 10px 16px;
 		height: 64px !important;
-    border: 1px solid var(--dark-theme-1);
-    border-width: 1px 0px;
 	}
 	header #bottom-header-inner::-webkit-scrollbar
   {
@@ -2154,6 +2173,28 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 	}
+  header #bottom-header div#top-border
+  {
+    /* p */
+    position: absolute;
+    top: 0;
+    left: -100%;
+    right: 0;
+    /* s */
+    width: 10000%;
+    border: 1px solid var(--dark-theme-1);
+  }
+  header #bottom-header div#bottom-border
+  {
+    /* p */
+    position: absolute;
+    bottom: 0;
+    left: -100%;
+    right: 0;
+    /* s */
+    width: 10000%;
+    border: 1px solid var(--dark-theme-1);
+  }
 
   div.nav-box
   {

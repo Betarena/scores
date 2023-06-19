@@ -255,6 +255,10 @@ FONT EXTRA STYLES
 .uppercase {
 	text-transform: uppercase;
 }
+.capitalize
+{
+  text-transform: capitalize;
+}
 .text-center {
 	text-align: center;
 	text-align: -webkit-center;

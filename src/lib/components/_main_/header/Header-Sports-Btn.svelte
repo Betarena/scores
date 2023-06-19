@@ -78,7 +78,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   class="
     sports-box
     row-space-out
-    cursor-not-allowed
   "
   on:click={() => clickAction()}
   class:selected-sports={selectedSport == sportNameDefault}
@@ -106,6 +105,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         color-white
         s-14
         m-r-10
+        capitalize
       "
     >
       {sportTranslation}
