@@ -221,14 +221,18 @@ COMPONENT JS - BASIC
     mainActive?: string
   ): void
   {
-    const parentPos: DOMRect = document.getElementById('navBox').getBoundingClientRect();
+    const parentElem: HTMLElement = document.getElementById('navBox')
+    const childElem: HTMLElement = document.getElementById($sessionStore.navBtnHover || mainActive);
 
     const if_M_0: boolean =
-      document.getElementById($sessionStore.navBtnHover || mainActive) == undefined
+      parentElem == undefined
+      || childElem == undefined
     ;
     if (if_M_0) return;
 
-    const childPos: DOMRect  = document.getElementById($sessionStore.navBtnHover || mainActive).getBoundingClientRect();
+    const parentPos: DOMRect = parentElem?.getBoundingClientRect();
+    const childPos: DOMRect = childElem?.getBoundingClientRect();
+
     const relativePos =
     {
       top: (childPos.top - parentPos.top),
