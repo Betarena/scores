@@ -7,6 +7,8 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
+	import { sessionStore } from "$lib/store/session.js";
+
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
@@ -61,6 +63,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   class:m-b-30={tabletExclusive || mobileExclusive}
   class:active={navKey == 'scores'}
   class:disable-anchor={disableAnchor}
+  on:mouseover={() => $sessionStore.navBtnHover = navKey}
+  on:mouseout={() => $sessionStore.navBtnHover = undefined}
+  class:activeInactive={![undefined, navKey].includes($sessionStore.navBtnHover)}
 >
 
   <a
@@ -139,6 +144,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* s */
     opacity: 1;
   }
+  div.nav-box.active.activeInactive div.nav-triangle
+  {
+    /* s */
+    opacity: 0;
+  }
   div.nav-box:hover a p
   {
     /* s */
@@ -147,8 +157,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   div.nav-box:hover div.nav-triangle
   {
     /* s */
-    transition: all 0.3s ease-out;
     opacity: 1;
+    transition: all 0.3s ease-out;
   }
 
   .pill

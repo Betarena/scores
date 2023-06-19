@@ -3,7 +3,7 @@ import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betaren
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
 
-export interface Voted_Fixture 
+export interface Voted_Fixture
 {
 	fixture_id?:       number;
 	fixture_vote?:     string;
@@ -19,7 +19,7 @@ export type Auth_Type =
 ;
 
 // Used with authenticated users;
-export interface Betarena_User 
+export interface Betarena_User
 {
 	lang: string;
 	username: string;
@@ -30,7 +30,7 @@ export interface Betarena_User
 }
 
 // Used with authenticated users;
-export interface Scores_User 
+export interface Scores_User
 {
   /** Authenticated user firestore DB data object */
 	firebase_user_data: User;
@@ -39,7 +39,7 @@ export interface Scores_User
 }
 
 // Used with localStorage data;
-export interface User_Setting 
+export interface User_Setting
 {
   /** User selected lang (overrides serverLang) */
 	lang:               string;
@@ -56,7 +56,7 @@ export interface User_Setting
 }
 
 // Used with session data;
-export interface Platform_Session 
+export interface Platform_Session
 {
   /** NOTE:IMPORTANT - used for inter-component events of selected season changed (reactivity)  */
 	selectedSeasonID: number;
@@ -64,16 +64,16 @@ export interface Platform_Session
   lang_intent: string | undefined;
   /** NOTE: instant page lang */
   serverLang: string | undefined;
-  /** 
-   * session data | Livescore Now Selected Date (View). 
+  /**
+   * session data | Livescore Now Selected Date (View).
    * IMPORTANT
    * Must be in ISO/UTC timezone;
   */
   livescoreNowSelectedDate: Date
   /** session data on the LivescoreNow Show/Hide Fixture NUmber */
   fixturesTodayNum: number
-  /** 
-   * session data on users current date 
+  /**
+   * session data on users current date
    * IMPORTANT
    * Must be in user adjusted (TZ) timezone;
   */
@@ -93,6 +93,8 @@ export interface Platform_Session
 	newsletterPopUpShow: boolean;
   /** show/hide authentication pop-up modal */
 	auth_show: boolean;
+  /** follows user's intent for "hover" action */
+  navBtnHover: string;
 
   // -----
   // NOTE: SPORTBOOK DATA;

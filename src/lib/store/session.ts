@@ -5,7 +5,7 @@ import { clientTimezoneDate } from '$lib/utils/dates.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import { writable } from 'svelte/store';
 
-const sessionStoreObj: Platform_Session = 
+const sessionStoreObj: Platform_Session =
 {
   // (+) show/hide;
 	newsletterPopUpShow: false,
@@ -14,6 +14,7 @@ const sessionStoreObj: Platform_Session =
 	selectedSeasonID: undefined,
   livescoreFixtureView: 'all',
 	fixture_select_view: 'overview',
+  navBtnHover: undefined,
   // (+) lang handle;
   lang_intent: undefined,
   serverLang: undefined,
@@ -36,14 +37,14 @@ const sessionStoreObj: Platform_Session =
 
 function createLocalStore
 (
-) 
+)
 {
 
-	const 
-  { 
-    subscribe, 
-    set, 
-    update 
+	const
+  {
+    subscribe,
+    set,
+    update
   } = writable
   (
 		sessionStoreObj
@@ -59,13 +60,13 @@ function createLocalStore
      * [HELPER]
      * @description
      * updates + stores global "session" language in session object;
-     * @param 
-     * {string} lang 
+     * @param
+     * {string} lang
      */
-    updateServerLang: 
+    updateServerLang:
     (
       lang: string
-    ) => 
+    ) =>
     {
       sessionStoreObj.serverLang = lang;
       set(sessionStoreObj);
@@ -76,13 +77,13 @@ function createLocalStore
      * [HELPER]
      * @description
      * stores "LIVE" target fixture odds data in session object;
-     * @param 
-     * {FIREBASE_odds[]} data 
+     * @param
+     * {FIREBASE_odds[]} data
      */
-    updateLiveOdds: 
+    updateLiveOdds:
     (
       data: FIREBASE_odds[]
-    ) => 
+    ) =>
     {
       sessionStoreObj.live_odds_fixture_target = data;
       set(sessionStoreObj);
@@ -91,15 +92,15 @@ function createLocalStore
     /**
      * @summary
      * [HELPER]
-     * @description 
+     * @description
      * stores "LIVE" all fixtures data in session object;
-     * @param 
+     * @param
      * {Map<number, FIREBASE_livescores_now>} data in session object;
      */
-    updateLivescores: 
+    updateLivescores:
     (
       data: Map<number, FIREBASE_livescores_now>
-    ) => 
+    ) =>
     {
       sessionStoreObj.livescore_now = data
       set(sessionStoreObj)
@@ -108,15 +109,15 @@ function createLocalStore
     /**
      * @summary
      * [HELPER]
-     * @description 
+     * @description
      * stores "LIVE" target fixture scores data in session object;
-     * @param 
-     * {Map<number, FIREBASE_livescores_now>} data 
+     * @param
+     * {Map<number, FIREBASE_livescores_now>} data
      */
-    updateLivescoresTarget: 
+    updateLivescoresTarget:
     (
       data: FIREBASE_livescores_now
-    ) => 
+    ) =>
     {
       sessionStoreObj.livescore_now_fixture_target = data
       set(sessionStoreObj)
@@ -125,15 +126,15 @@ function createLocalStore
     /**
      * @summary
      * [HELPER]
-     * @description 
+     * @description
      * stores "LIVE" target fixture scoreboard (V2) data in session object;
-     * @param 
-     * {Map<number, FIREBASE_livescores_now>} data 
+     * @param
+     * {Map<number, FIREBASE_livescores_now>} data
      */
-    updateLivescoreScoreboard: 
+    updateLivescoreScoreboard:
     (
       data: Map<number, FIRE_LNNS>
-    ) => 
+    ) =>
     {
       sessionStoreObj.livescore_now_scoreboard = data
       set(sessionStoreObj)
@@ -142,15 +143,15 @@ function createLocalStore
     /**
      * @summary
      * [HELPER]
-     * @description 
+     * @description
      * stores "LIVE" target fixture scoreboard (V2) data in session object;
-     * @param 
-     * {Map<number, FIREBASE_livescores_now>} data 
+     * @param
+     * {Map<number, FIREBASE_livescores_now>} data
      */
-    updateLivescorePlayerId: 
+    updateLivescorePlayerId:
     (
       data: number
-    ) => 
+    ) =>
     {
       sessionStoreObj.livescore_now_player_fixture = data
       set(sessionStoreObj)
@@ -159,15 +160,15 @@ function createLocalStore
     /**
      * @summary
      * [HELPER]
-     * @description 
+     * @description
      * stores "LIVE" target fixture scoreboard (V2) data in session object;
-     * @param 
-     * {Map<number, FIREBASE_livescores_now>} data 
+     * @param
+     * {Map<number, FIREBASE_livescores_now>} data
      */
-    updateLivescoreFixtureIds: 
+    updateLivescoreFixtureIds:
     (
       data: number[]
-    ) => 
+    ) =>
     {
       sessionStoreObj.livescore_now_fixtures = data
       set(sessionStoreObj)
@@ -195,7 +196,7 @@ function createLocalStore
       ?.sort
       (
         (
-          a, 
+          a,
           b
         ) =>
         parseInt(a.position) - parseInt(b.position)
