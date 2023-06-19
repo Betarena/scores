@@ -3,10 +3,12 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
+	import { sessionStore } from '$lib/store/session.js';
 
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
+  import { removeDiacritics } from '$lib/utils/languages.js';
   import { createEventDispatcher } from 'svelte';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -74,58 +76,62 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<div
-  class="
-    sports-box
-    row-space-out
-  "
-  on:click={() => clickAction()}
-  class:selected-sports={selectedSport == sportNameDefault}
+<a
+  href={`${$sessionStore?.serverLang == 'en' ? '/' : `/${$sessionStore?.serverLang}`}/${removeDiacritics(sportTranslation?.toLowerCase())}`}
 >
-
-  <!--
-  SPORT IMG + NAME
-  -->
   <div
-    class="row-space-out"
-    style="width: fit-content;"
+    class="
+      sports-box
+      row-space-out
+    "
+    on:click={() => clickAction()}
+    class:selected-sports={selectedSport == sportNameDefault}
   >
-    <img
-      loading="lazy"
-      class="
-        m-r-10
-      "
-      src={sportIcon}
-      alt="{sportNameDefault}-img"
-      width=20
-      height=20
-    />
+
+    <!--
+    SPORT IMG + NAME
+    -->
+    <div
+      class="row-space-out"
+      style="width: fit-content;"
+    >
+      <img
+        loading="lazy"
+        class="
+          m-r-10
+        "
+        src={sportIcon}
+        alt="{sportNameDefault}-img"
+        width=20
+        height=20
+      />
+      <p
+        class="
+          color-white
+          s-14
+          m-r-10
+          capitalize
+        "
+      >
+        {sportTranslation}
+      </p>
+    </div>
+
+    <!--
+    SPORT VALUE (NUM/SOON)
+    -->
     <p
       class="
         color-white
         s-14
-        m-r-10
-        capitalize
+        sport-counter-dark
       "
     >
-      {sportTranslation}
+      {sportValue}
     </p>
+
   </div>
-
-  <!--
-  SPORT VALUE (NUM/SOON)
-  -->
-  <p
-    class="
-      color-white
-      s-14
-      sport-counter-dark
-    "
-  >
-    {sportValue}
-  </p>
-
-</div>
+</a>
 
 <!-- ===============
 COMPONENT STYLE
@@ -139,6 +145,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* s */
 		height: 44px;
 	}
+  div.sports-box:hover p.capitalize
+  {
+    /* s */
+    color: var(--primary) !important;
+  }
   div.sports-box .sport-counter-dark
   {
     /* s */

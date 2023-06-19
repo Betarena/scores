@@ -124,10 +124,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* s */
     width: 0;
     height: 0;
+    opacity: 0;
     border-left: 12px solid transparent;
     border-right: 12px solid transparent;
     border-bottom: 12px solid var(--dark-theme-1);
-    opacity: 0;
   }
   div.nav-box.active p
   {
@@ -142,20 +142,22 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   div.nav-box:hover a p
   {
     /* s */
-    color: var(--primary) !important;
+    color: var(--white) !important;
   }
   div.nav-box:hover div.nav-triangle
   {
+    /* s */
+    transition: all 0.3s ease-out;
     opacity: 1;
   }
 
   .pill
   {
     /* s */
-    background-color: var(--dark-theme-1);
-		padding: 3px 8px;
-		border-radius: 20px;
     height: 24px;
+		padding: 3px 8px;
+    background-color: var(--dark-theme-1);
+		border-radius: 20px;
   }
 
   /*
