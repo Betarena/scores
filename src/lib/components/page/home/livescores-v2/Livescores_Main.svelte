@@ -51,7 +51,7 @@ COMPONENT JS (w/ TS)
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA;
   $: WIDGET_TITLE = WIDGET_T_DATA?.title || 'Livescores';
   $: yesterday = yesterday;
-  let lNSC = JSON.stringify([...$sessionStore?.livescore_now_scoreboard.entries()]);
+  // IMPORTANT Reactivity Deep-Value Listen(s);
   $: livescoreNowScoreboardChng = JSON.stringify([...$sessionStore?.livescore_now_scoreboard.entries()]);
   $: livescoreNowSelectedDateChng = $sessionStore?.livescoreNowSelectedDate?.toString();
   $: bookmakerChng = $userBetarenaSettings?.country_bookmaker?.toString();
@@ -295,6 +295,7 @@ COMPONENT JS (w/ TS)
 
     // IMPORTANT
     updateLiveInfo()
+    generateLeagueFixtures()
 
     // ???
     // WIDGET_DATA = WIDGET_DATA;
@@ -505,7 +506,7 @@ COMPONENT JS (w/ TS)
    */
   function toggleShowMore
   (
-  )
+  ): void
   {
     isShowMore = !isShowMore
     generateLeagueFixtures()
@@ -520,7 +521,7 @@ COMPONENT JS (w/ TS)
    */
   function generateLeagueFixtures
   (
-  )
+  ): void
   {
     fixturesGroupByDateLeagueMap = new Map();
     // generate "target" date fixtures;
@@ -659,10 +660,9 @@ COMPONENT JS (w/ TS)
   //#region ➤ [REACTIVIY] [METHODS]
 
   /**
-   * @description listens to changes in
-   * selected date (and/or country-bookmaker)
-   * of fixture display;
-   * Proceeds to update data accordingly;
+   * @description
+   * ➨ listens to change in "selected-date" for calendar;
+   * ➨ listens to change in country-bookmaker;
   */
   $: if
   (
@@ -676,9 +676,8 @@ COMPONENT JS (w/ TS)
   }
 
   /**
-   * @description listens to changes in
-   * livescore_now_scoreboard data session-store;
-   * Proceeds to update data accordingly;
+   * @description
+   * ➨ listens to change in "livescore_now_scoreboard" data session-store;
   */
   $: if (livescoreNowScoreboardChng)
   {
@@ -686,12 +685,13 @@ COMPONENT JS (w/ TS)
   }
 
   // [🐞] [DEV-ONLY]
-  $: {
+  $:
+  {
     // dlog(`${LV2_W_H_TAG[0]} nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`)
     // dlog(`${LV2_W_H_TAG[0]} numOfFixtures: ${nonEmptyLeaguesIds}`)
     // dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive: ${numOfFixturesLive}`)
     // dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds: ${liveLeaguesIds}`)
-    console.log('UPDATED! fixturesGroupByDateMap', fixturesGroupByDateMap)
+    // console.log('UPDATED! fixturesGroupByDateMap', fixturesGroupByDateMap)
   }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
@@ -708,6 +708,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div>
+
   <WidgetTitle
     {WIDGET_TITLE}
     OVERRIDE_COLOR={true}
