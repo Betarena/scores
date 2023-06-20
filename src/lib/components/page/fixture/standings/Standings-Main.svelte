@@ -10,6 +10,7 @@
 	import { onMount } from 'svelte';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
+  import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -18,10 +19,9 @@
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
 
-  import { viewport_change } from '$lib/utils/platform-functions.js';
   import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
   import type { B_STA_D, B_STA_T, STA_Season } from '@betarena/scores-lib/types/standings';
-  
+
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
@@ -32,7 +32,7 @@
 
   const MOBILE_VIEW = 820;
 	const TABLET_VIEW = 1000;
-  
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
@@ -47,7 +47,7 @@
   let stage_opt: string[] = []
   let select_stage_opt: string = ''
   let select_stage_dropdown: boolean = false;
-	let only_total_view_league_ids = 
+	let only_total_view_league_ids =
   [
 		732 // World Cup
 	];
@@ -87,11 +87,11 @@
   // HELPER
 	function toggleMobileForm
   (
-  ): void 
+  ): void
   {
 		selectedOptTableMobile =
-			selectedOptTableMobile == 1 
-        ? 2 
+			selectedOptTableMobile == 1
+        ? 2
         : 1
     ;
 	}
@@ -107,23 +107,23 @@
   */
   function checkStagesWithTargetFixtureTeams
   (
-  ): void 
+  ): void
   {
-    const target_teams: string[] = 
+    const target_teams: string[] =
     [
       FIXTURE_INFO?.data?.away_team_name,
       FIXTURE_INFO?.data?.home_team_name
     ]
-    for (const standing of season?.standings) 
+    for (const standing of season?.standings)
     {
       // (validation) group-standings;
-      if (standing?.group_based) 
+      if (standing?.group_based)
       {
-        for (const g_standing of standing?.group_standings) 
+        for (const g_standing of standing?.group_standings)
         {
-          for (const g_total of g_standing?.total) 
+          for (const g_total of g_standing?.total)
           {
-            if (target_teams.includes(g_total?.team_name)) 
+            if (target_teams.includes(g_total?.team_name))
             {
               stagesWithFixtureTeams.push(standing?.stage_name)
             }
@@ -131,11 +131,11 @@
         }
       }
       // [ℹ] else, regular-standing;
-      else 
+      else
       {
-        for (const r_total of standing?.total) 
+        for (const r_total of standing?.total)
         {
-          if (target_teams.includes(r_total?.team_name)) 
+          if (target_teams.includes(r_total?.team_name))
           {
             stagesWithFixtureTeams.push(standing?.stage_name)
           }
@@ -152,7 +152,7 @@
   )
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -177,7 +177,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -193,7 +193,7 @@
   //#region ➤ [REACTIVIY] [METHODS]
 
 
-	$: if (STANDINGS_DATA != undefined) 
+	$: if (STANDINGS_DATA != undefined)
   {
 		// sort seasons by season-id (desc)
     // using the largest (id), as the latest === current season
@@ -203,7 +203,7 @@
 			(
         a,
         b
-      ) => 
+      ) =>
         b?.season_id - a?.season_id
 		);
 		season = STANDINGS_DATA?.seasons?.[0];
@@ -212,14 +212,14 @@
 		let seasonCheckLength: number = 0;
     stage_opt = []
 
-		if (season != undefined) 
+		if (season != undefined)
     {
 			seasonCheckLength = season?.standings?.length
 
       checkStagesWithTargetFixtureTeams()
 
       let number_stages: number = stagesWithFixtureTeams?.length
-      
+
       // [🐞]
       dlog
       (
@@ -227,48 +227,48 @@
         true
       );
 
-      if (number_stages > 1) 
+      if (number_stages > 1)
       {
         stage_opt = season?.standings
         ?.map
         (
-          a => 
+          a =>
           a?.stage_name
         );
 
         // [🐞]
         dlog
         (
-          `stage_opt ${stage_opt}`, 
+          `stage_opt ${stage_opt}`,
           true
         );
 
         // select first on list;
         select_stage_opt = stage_opt[0];
       }
-      else 
+      else
       {
         select_stage_opt = stagesWithFixtureTeams[0]
       }
 		}
 
 		noWidgetData =
-			seasonCheckLength == 0 
+			seasonCheckLength == 0
       || seasonCheckLength == undefined
 				? true
 				: false
     ;
 
 		seasonCheck = true;
-	} 
-  else 
+	}
+  else
   {
 		seasonCheck = true;
 	}
 
   // [ℹ] identify target groups, target teams part of
   // [ℹ] on selct_stage view change;
-  $: if (select_stage_opt) 
+  $: if (select_stage_opt)
   {
     // console.log('Stage/Phase Changed!')
     const target_teams: string[] =
@@ -277,15 +277,15 @@
       FIXTURE_INFO?.data?.home_team_name
     ];
 
-    for (const standing of season?.standings) 
+    for (const standing of season?.standings)
     {
-      if (standing?.group_based) 
+      if (standing?.group_based)
       {
-        for (const g_standing of standing?.group_standings) 
+        for (const g_standing of standing?.group_standings)
         {
-          for (const g_total of g_standing?.total) 
+          for (const g_total of g_standing?.total)
           {
-            if (target_teams.includes(g_total?.team_name)) 
+            if (target_teams.includes(g_total?.team_name))
             {
               console.log('🔥', g_total?.team_name)
               targetGroupsNamesArray.push(g_standing?.group_name)
@@ -309,7 +309,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -321,12 +321,12 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
-[ℹ] area-outside-for-close 
+<!--
+[ℹ] area-outside-for-close
 -->
 {#if toggleCTA || select_stage_dropdown}
 	<div
@@ -339,22 +339,22 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	class:display-none={noWidgetData}
 >
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData && seasonCheck}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={STANDINGS_T?.translations?.standings}
       NO_DATA_TITLE={STANDINGS_T?.no_data_t?.no_info}
       NO_DATA_DESC={STANDINGS_T?.no_data_t?.no_info_desc}
     />
 	{/if}
 
-  <!-- 
+  <!--
   📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
   -->
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData && seasonCheck}
@@ -362,18 +362,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <WidgetTitle
       WIDGET_TITLE={STANDINGS_T.translations.standings}
     />
-    
+
     <div
       id="standings-table-container"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
-      <!-- 
+      <!--
       TOP ROW - STANDINGS SELECT
       -->
-      <div 
+      <div
         class="row-space-out"
       >
-        <!-- 
+        <!--
         [ℹ] main standings opt view box
         -->
         <div
@@ -390,7 +390,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           >
             <div
               class="
-                stand-view-opt-box 
+                stand-view-opt-box
                 cursor-pointer
               "
               on:click={() => selectTableView('total')}
@@ -398,22 +398,22 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               class:total_view_only={only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
             >
               <p
-                class=" 
-                  s-14 
-                  w-500 
+                class="
+                  s-14
+                  w-500
                   color-grey
                 "
               >
                 {STANDINGS_T?.translations?.total}
               </p>
             </div>
-            <!-- 
+            <!--
             [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
             -->
             {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)}
               <div
                 class="
-                  stand-view-opt-box 
+                  stand-view-opt-box
                   cursor-pointer
                 "
                 on:click={() => selectTableView('home')}
@@ -421,8 +421,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               >
                 <p
                   class="
-                    s-14 
-                    w-500 
+                    s-14
+                    w-500
                     color-grey
                   "
                 >
@@ -432,7 +432,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
               <div
                 class="
-                  stand-view-opt-box 
+                  stand-view-opt-box
                   cursor-pointer
                 "
                 on:click={() => selectTableView('away')}
@@ -440,8 +440,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               >
                 <p
                   class="
-                    s-14 
-                    w-500 
+                    s-14
+                    w-500
                     color-grey
                   "
                 >
@@ -451,7 +451,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {/if}
           </div>
 
-          <!-- 
+          <!--
           [ℹ] standings (stage/phase) select view
           -->
           {#if stage_opt.length > 1 && !mobileExclusive}
@@ -506,7 +506,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         </div>
 
-        <!-- 
+        <!--
         [ℹ] recent form button box
         -->
         {#if mobileExclusive}
@@ -520,8 +520,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           >
             <p
               class="
-                s-14 
-                w-500 
+                s-14
+                w-500
                 color-grey
               "
             >
@@ -531,7 +531,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
       </div>
 
-      <!-- 
+      <!--
       STANDINGS PHASE SELECT
       -->
       {#if stage_opt?.length > 1 && mobileExclusive}
@@ -585,17 +585,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
       {/if}
 
-      <!-- 
+      <!--
       STANDINGS TABLE
       -->
-      <table 
+      <table
         class="standings_table"
       >
 
-        <!-- 
+        <!--
         TABLE TOP ROW
         -->
-        <tr 
+        <tr
           class="row-head"
         >
 
@@ -608,26 +608,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             <p
               class="
                 s-12
-                m-r-20 
+                m-r-20
                 color-grey
               ">
               #
               <span
                 class="
                   m-r-20
-                " 
+                "
               />
               {STANDINGS_T.translations.team}
             </p>
 
           </th>
 
-          <!-- 
-          TABLE <TH> 1st BATCH 
+          <!--
+          TABLE <TH> 1st BATCH
           -->
           {#if (mobileExclusive && selectedOptTableMobile == 1) || !mobileExclusive}
 
-            <!-- 
+            <!--
             TEAM POINTS
             -->
             <th>
@@ -648,7 +648,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </th>
 
-            <!-- 
+            <!--
             TEAM GAMES-PLAYED
             -->
             <th>
@@ -669,7 +669,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </th>
 
-            <!-- 
+            <!--
             TEAM GAMES-WINS
             -->
             <th class="">
@@ -693,7 +693,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </th>
 
-            <!-- 
+            <!--
             TEAM GAMES-DRAW
             -->
             <th class="">
@@ -717,7 +717,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </th>
 
-            <!-- 
+            <!--
             TEAM GAMES-LOST
             -->
             <th>
@@ -741,7 +741,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </th>
 
-            <!-- 
+            <!--
             TEAM GOALS-FOR
             -->
             <th class="">
@@ -765,7 +765,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
             </th>
 
-            <!-- 
+            <!--
             TEAM GOALS-AGAINST
             -->
             <th class="">
@@ -791,18 +791,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
           {/if}
 
-          <!-- 
-          TABLE <TH> 2nd BATCH 
+          <!--
+          TABLE <TH> 2nd BATCH
           -->
           {#if (mobileExclusive && selectedOptTableMobile == 2) || !mobileExclusive}
 
-            <!-- 
+            <!--
             TEAM RECENT FORM
             -->
             <th>
               <p
                 class="
-                  s-12 
+                  s-12
                   color-grey
                 "
                 style="width: 70px;"
@@ -814,18 +814,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
         </tr>
 
-        <!-- 
+        <!--
         STANDINGS TEAM ROW
         -->
         {#each season?.standings || [] as standing}
           {#if standing?.stage_name == select_stage_opt}
-            <!-- 
+            <!--
             STANDINGS IS OF REGUALR-TYPE
             -->
             {#if !standing?.group_based}
               {#each standing?.[selectedOpt] || [] as team}
-                {#if !showMore 
-                  && (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
+                {#if !showMore
+                  && (team?.team_name == FIXTURE_INFO?.data?.away_team_name
                     || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
                   <StandingsTeamRow
                     TEAM_DATA={team}
@@ -840,7 +840,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   />
                 {/if}
               {/each}
-            <!-- 
+            <!--
             STANDINGS IS OF GROUP TYPE
             -->
             {:else}
@@ -864,7 +864,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       </td>
                     </tr>
                     {#each group?.[selectedOpt] as team}
-                      {#if (team?.team_name == FIXTURE_INFO?.data?.away_team_name 
+                      {#if (team?.team_name == FIXTURE_INFO?.data?.away_team_name
                           || team?.team_name == FIXTURE_INFO?.data?.home_team_name)}
                         <StandingsTeamRow
                           TEAM_DATA={team}
@@ -911,7 +911,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
       </table>
 
-      <!-- 
+      <!--
       (TOGGLE) FULL STANDINGS VIEW
       -->
       <div>
@@ -940,7 +940,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	#background-area-close 
+	#background-area-close
   {
 		position: absolute;
 		top: 0;
@@ -952,7 +952,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		z-index: 1000;
 	}
 
-  div#ss-box 
+  div#ss-box
   {
     /* p */
 		position: relative;
@@ -964,7 +964,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     padding: 10px 20px;
 		cursor: pointer;
     margin: 0 20px 20px 20px;
-  } div#ss-box div#ssdb-main 
+  } div#ss-box div#ssdb-main
   {
     /* p */
     position: absolute;
@@ -979,17 +979,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-height: 308px;
 		overflow-y: scroll;
 		padding-right: 6px;
-  } div#ss-box div#ssdb-main::-webkit-scrollbar 
+  } div#ss-box div#ssdb-main::-webkit-scrollbar
   {
 		/* Hide scrollbar for Chrome, Safari and Opera */
 		display: none;
-	} div#ss-box div#ssdb-main::-webkit-scrollbar 
+	} div#ss-box div#ssdb-main::-webkit-scrollbar
   {
 		/* Hide scrollbar for IE, Edge and Firefox */
 		-ms-overflow-style: none; /* IE and Edge */
 		scrollbar-width: none; /* Firefox */
 	}
-  
+
   div#ss-box div#ssdb-main div#ssdb-inner
   {
     max-height: 308px;
@@ -1152,8 +1152,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		visibility: visible !important;
 	}
 
-	/* 
-  show-more / show-less style 
+	/*
+  show-more / show-less style
   */
 	#show-more-box
   {
@@ -1168,7 +1168,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/*
-  group-text head 
+  group-text head
   */
 	tr.group-row-head td
   {
@@ -1210,12 +1210,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 821px) 
+	@media only screen
+  and (min-width: 821px)
   and (max-width: 1000px)
   {
 		#standings-table-container
@@ -1225,7 +1225,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
+	@media only screen
   and (min-width: 821px)
   {
 		table.standings_table
@@ -1276,7 +1276,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     }
 	}
 
-	@media only screen 
+	@media only screen
   and (min-width: 1000px)
   {
 		#standings-table-container
@@ -1335,14 +1335,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar
   {
 		width: 4px;
-	} 
+	}
   .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-track
   {
 		background: var(--dark-theme-1) !important;
-	} 
+	}
   .dark-background-1 div#ss-box div#ssdb-main div#ssdb-inner::-webkit-scrollbar-thumb
   {
 		background: var(--dark-theme-1-3-shade) !important;
 	}
-  
+
 </style>
