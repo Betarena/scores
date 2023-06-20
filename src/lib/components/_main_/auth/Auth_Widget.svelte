@@ -1,83 +1,36 @@
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
+
 <script lang="ts">
 
-  //#region Package Imports
+  // #region Package Imports
 
-  //#region ➤ Svelte/SvelteKit Imports
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-//#endregion ➤ Svelte/SvelteKit Imports
 
-  //#region ➤ Project Custom Imports
-	import {
-		get
-	} from '$lib/api/utils';
-	import {
-		sessionStore
-	} from '$lib/store/session';
-	import {
-		userBetarenaSettings,
-	} from '$lib/store/user-settings';
-	import {
-		AU_W_STY, AU_W_TAG, AU_W_TOG, dlog,
-		dlogv2,
-		errlog
-	} from '$lib/utils/debug';
-	import {
-		platfrom_lang_ssr,
-		viewport_change
-	} from '$lib/utils/platform-functions';
-//#endregion ➤ Project Custom Imports
-	
-  //#region ➤ Firebase Imports
-  import {
-  	app,
-  	auth,
-  	db_firestore
-  } from '$lib/firebase/init';
-  import {
-  	GithubAuthProvider,
-  	GoogleAuthProvider,
-  	fetchSignInMethodsForEmail,
-  	isSignInWithEmailLink,
-  	sendSignInLinkToEmail,
-  	signInWithCustomToken,
-  	signInWithEmailLink,
-  	signInWithPopup,
-  	type User
-  } from 'firebase/auth';
-  import {
-  	doc,
-  	getDoc,
-  	setDoc
-  } from 'firebase/firestore';
-//#endregion ➤ Firebase Imports
+	import { get } from '$lib/api/utils';
+	import { app, auth, db_firestore } from '$lib/firebase/init';
+	import { sessionStore } from '$lib/store/session';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { AU_W_STY, AU_W_TAG, AU_W_TOG, dlog, dlogv2, errlog } from '$lib/utils/debug';
+	import { viewport_change } from '$lib/utils/platform-functions';
+	import { getMoralisAuth, type MoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
+	import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from 'firebase/auth';
+	import { doc, getDoc, setDoc } from 'firebase/firestore';
+	import { generateUsername } from 'unique-username-generator';
 
-	import {
-		generateUsername
-	} from 'unique-username-generator';
-  //#region ➤ Types Imports
-	import type {
-		REDIS_CACHE_SINGLE_auth_translation
-	} from '$lib/models/_main_/auth/types';
-  //#endregion ➤ Types Imports
-
-  //#region ➤ Moralis / WalletConnect Imports
-  import { getMoralisAuth } from '@moralisweb3/client-firebase-auth-utils'; // NOTE: pacakge firebase should be same as project global
-  import { signInWithMoralis } from "@moralisweb3/client-firebase-evm-auth"; // NOTE: pacakge firebase should be same as project global
+    // NOTE: pacakge firebase should be same as project global
+  // NOTE: pacakge firebase should be same as project global
   // ✅ works
   // '@metamask/sdk/dist/browser/es/metamask-sdk'; // ✅ works
   // '@metamask/sdk/dist/browser/umd/metamask-sdk'; // ❌ not working
-  //#endregion ➤ MetaMask SDK Imports (Official)
 
-  //#endregion Package Imports
+  import { signInWithMoralis, type SignInWithMoralisResponse } from "@moralisweb3/client-firebase-evm-auth";
 
-  //#region Assets Imports
 	import discord_icon from './assets/discord.svg';
 	import email_verify from './assets/email-verify.svg';
 	import error_icon from './assets/error-alert.svg';
@@ -89,15 +42,17 @@ COMPONENT JS (w/ TS)
 	import logo_dark from './assets/logo-dark.svg';
 	import metamask_icon from './assets/metamask.svg';
 	import success_icon from './assets/success-alert.svg';
+
+	import type { REDIS_CACHE_SINGLE_auth_translation } from '$lib/models/_main_/auth/types';
 	import type { Auth_Type, Betarena_User, Scores_User } from '$lib/types/types.scores.js';
-  //#endregion Assets Imports
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  //#endregion Package Imports
 
-	// NOTE: NO WIDGET SPECIFIC SEO or
-	// NOTE: PRE-LOAD DATA REQUIRED
+  // #region ➤ [VARIABLES]
+
+  const TABLET_VIEW = 1160;
+	const MOBILE_VIEW = 725;
+	let mobileExclusive, tabletExclusive: boolean = false;
 
 	let email_input: string;
 	let processing: boolean = false;
@@ -114,9 +69,9 @@ COMPONENT JS (w/ TS)
 	let email_error_format: boolean = false;
 	let email_already_in_use: boolean = false;
 
-	$: actionCodeSettings.url = `${$page.url?.origin}${$page.url?.pathname}?auth_type=${auth_type}`;
-
-	let actionCodeSettings = {
+  // IMPORTANT
+  let actionCodeSettings =
+  {
 		// [ℹ] URL / DOMAIN you want to redirect back to.
 		// [ℹ] URL must be in the authorized domains list in the Firebase Console.
 		url: `${$page.url?.origin}${$page.url?.pathname}?auth_type=${auth_type}`,
@@ -132,161 +87,435 @@ COMPONENT JS (w/ TS)
 		// },
 	};
 
+	$: actionCodeSettings.url = `${$page.url?.origin}${$page.url?.pathname}?auth_type=${auth_type}`;
+
+  // [🐞]
 	if (dev) email_input = 'migbashdev@gmail.com';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [VARIABLES]
 
-	$: server_side_language = platfrom_lang_ssr(
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-  dlog(`${AU_W_TAG} server_side_language: ${server_side_language}`, AU_W_TOG, AU_W_STY)
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ [MAIN-METHODS]
 
   /**
-   * @description TODO:
+   * @description
+   * TODO: move to -Widget, -Main V6 structure;
   */
-	async function widget_init(): Promise<REDIS_CACHE_SINGLE_auth_translation> {
-		const response_auth: REDIS_CACHE_SINGLE_auth_translation =
-			await get(`/api/hasura/_main_/auth?lang=${server_side_language}`);
-		return response_auth;
+	async function widget_init
+  (
+  ): Promise< REDIS_CACHE_SINGLE_auth_translation >
+  {
+		const dataRes0: REDIS_CACHE_SINGLE_auth_translation = await get
+    (
+      `/api/hasura/_main_/auth?lang=${$sessionStore?.serverLang}`
+    );
+		return dataRes0;
 	}
 
   /**
-   * @description allows user to sign-in/up
-   * through the 3rd-party OAuth2 provider
-   * Google
-   * DOC: https://firebase.google.com/docs/auth/web/google-signin
-   * DOC: read (^) for access to more Google API access upon Auth
-   * @returns void
+   * @summary
+   * [HELPER]
+   * @description
+   * ➨ singal an email (login) attempt UI/UX change;
+   * @returns
+   * void (NaN)
   */
-	async function login_with_google() {
-		try {
-      dlog(`${AU_W_TAG} 🔵 Google Auth Init`, AU_W_TOG, AU_W_STY)
+  function wrongEmailFormatToggle
+  (
+  ): void
+  {
+		email_error_format = true;
+		error_auth = true;
+		setTimeout
+    (
+      () =>
+      {
+			error_auth = false;
+		  },
+      1500
+    );
+	}
+
+	/**
+   * @summary
+   * [HELPER]
+   * @description
+   * ➨ validates Web3 wallet extension being used by client/user;
+   * @see https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
+   * @see https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
+   * @see https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
+   * @see https://github.com/MetaMask/metamask-extension/issues/13622
+   * [FIREFOX ISSUE]
+   * @see https://github.com/Betarena/scores/issues/1021
+   * @see https://github.com/MetaMask/metamask-extension/issues/3133
+   * @see https://github.com/MetaMask/metamask-extension/issues/10023
+   * @see https://community.metamask.io/t/metamask-cannot-be-detected-on-firefox/24705/8
+	 * @param
+   * a tuple of [isSuccess, walletType | null]
+	 */
+	function providerDetect
+  (
+		walletType:
+			| 'isMetaMask'
+			| 'isCoinbaseWallet'
+			| 'isBraveWallet'
+	): [ boolean, any ]
+  {
+
+		// CHECK: No Ethereum wallet detected;
+		if (!window?.ethereum)
+    {
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} 🛑 - window.ethereum is ${window?.ethereum}`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
+			return [
+        false,
+        null
+      ];
+      // or,
+			// throw new Error("No injected ethereum object.");
+		}
+
+		let targetSelectWallet = undefined;
+
+    // CHECK: Multiple wallets owned/opened by client/user;
+    const if_M_0: boolean =
+      Array.isArray(window?.ethereum?.providers)
+    ;
+		if (if_M_0)
+    {
+			if (walletType == 'isMetaMask')
+      {
+				targetSelectWallet =	window?.ethereum?.providers
+        ?.find
+        (
+          (
+            provider
+          ) =>
+          provider?.[walletType]
+          && provider?.isBraveWallet == undefined
+        );
+			}
+
+      // [🐞]
+      dlogv2
+      (
+        `${AU_W_TAG}`,
+        [
+          `🔵 More than 1 provider identified! ${window.ethereum.providers.length}`,
+          `targetSelectWallet ${targetSelectWallet}`,
+          `window.ethereum.providers ${window.ethereum.providers}`
+        ],
+        AU_W_TOG,
+        AU_W_STY
+      );
+
+		}
+    if (!if_M_0)
+    {
+
+      const if_M_0: boolean =
+        walletType == 'isMetaMask'
+        && window?.ethereum?.isBraveWallet == undefined
+        && window?.ethereum?.isMetaMask != undefined
+        && window?.ethereum?.isMetaMask
+      ;
+			if (if_M_0) targetSelectWallet =	window?.ethereum?.[walletType];
+
+      // [🐞]
+      dlogv2
+      (
+        `${AU_W_TAG}`,
+        [
+          `🔵 1 provider identified! ${window.ethereum}`,
+          `targetSelectWallet ${targetSelectWallet}`,
+          `window.ethereum ${window.ethereum}`
+        ],
+        AU_W_TOG,
+        AU_W_STY
+      );
+
+		}
+
+    // EXIT;
+		if (targetSelectWallet == undefined)
+    {
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} 🔴 no target wallet (${walletType}) identified`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+      return [
+        false,
+        null
+      ];
+    }
+
+    // [🐞]
+    dlog
+    (
+      `${AU_W_TAG} 🟢 ${walletType} identified`,
+      AU_W_TOG,
+      AU_W_STY
+    );
+
+    // NOTE: IMPORTANT
+    // Conflicting use of CoinBaseWallet and MetaMask on client/users browser.
+    // -> Setting MetaMask as main wallet!
+    // WARNING: Causes issues with FireFox!
+    // targetSelectWallet.request({ method: 'eth_requestAccounts' });
+    // NOTE: Not working
+    // window.ethereum.setSelectedProvider(targetSelectWallet);
+    // window.ethereum.request
+    // ({
+    //   method: 'wallet_requestPermissions',
+    //   params: [{ eth_accounts: {}}]
+    // });
+
+    return [
+      true,
+      targetSelectWallet
+    ];
+	}
+
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ sign-in/up user using Google OAuth2
+   * @see https://firebase.google.com/docs/auth/web/google-signin
+   * @returns
+   * Promise < void >
+  */
+	async function loginGoogle
+  (
+  ): Promise < void >
+  {
+		try
+    {
+
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} 🔵 Google Auth Init`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
 			processing = true;
 			auth_service = 'google';
 			const provider = new GoogleAuthProvider();
 			await signInWithPopup(auth, provider)
-				.then((result) => {
-					// [ℹ] user info
-          dlog(`${AU_W_TAG} 🟢 Google Auth Success`, AU_W_TOG, AU_W_STY)
+			?.then
+      (
+        (
+          result
+        ) =>
+        {
+          // [🐞]
+          dlog
+          (
+            `${AU_W_TAG} 🟢 Google Auth Success`,
+            AU_W_TOG,
+            AU_W_STY
+          );
+
 					const user = result?.user;
-					success_auth_wrap(
+					successAuthComplete
+          (
 						user,
 						null,
 						auth_service
 					);
-				})
-				.catch((error) => {
-					processing = false;
-					// TODO: Error Authetication Handle
-					// [ℹ] handle errors
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					const email = error.customData.email; // The email of the user's account used.
-					// [ℹ] AuthCredential used
-					// const credential = GoogleAuthProvider.credentialFromError(error);
-					errlog(errorCode);
-					errlog(errorMessage);
-				});
-		} catch (error) {
+				}
+      )
+      .catch
+      (
+        (
+          error
+        ) =>
+        {
+          processing = false;
+          // TODO: Error Authetication Handle
+          // [ℹ] handle errors
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          const email = error.customData.email; // The email of the user's account used.
+          // [ℹ] AuthCredential used
+          // const credential = GoogleAuthProvider.credentialFromError(error);
+          errlog(errorCode);
+          errlog(errorMessage);
+        }
+      );
+
+		}
+    catch (error)
+    {
       errlog(`❌ Google auth error: ${error}`)
 			processing = false;
 		}
 	}
 
   /**
-   * @description allows user to sign-in/up
-   * through the 3rd-party OAuth2 provider
-   * GitHub
-   * DOC: https://firebase.google.com/docs/auth/web/github-auth
-   * DOC: read (^) for access to more Google API access upon Auth
-   * @returns void
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ sign-in/up user using GitHub OAuth2
+   * @see https://firebase.google.com/docs/auth/web/github-auth
+   * @returns
   */
-	async function login_with_github() {
-		try {
-      dlog(`${AU_W_TAG} 🔵 GitHub Auth Init`, AU_W_TOG, AU_W_STY)
+	async function loginGitHub
+  (
+  ): Promise < void >
+  {
+		try
+    {
+
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} 🔵 GitHub Auth Init`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
 			auth_service = 'github';
 			processing = true;
 			const provider = new GithubAuthProvider();
+
 			await signInWithPopup(auth, provider)
-				.then((result) => {
-					// [ℹ] user info
-          dlog(`${AU_W_TAG} 🟢 GitHub Auth Success`, AU_W_TOG, AU_W_STY)
+      ?.then
+      (
+        (
+          result
+        ) =>
+        {
+          // [🐞]
+          dlog
+          (
+            `${AU_W_TAG} 🟢 GitHub Auth Success`,
+            AU_W_TOG,
+            AU_W_STY
+          );
+
 					const user = result.user;
-					success_auth_wrap(
+					successAuthComplete
+          (
 						user,
 						null,
 						auth_service
 					);
-				})
-				.catch((error) => {
-					processing = false;
-					// [ℹ] handle errors
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					errlog(errorCode);
-					errlog(errorMessage);
-					// [ℹ] the email used
-					const email = error.customData.email;
-					// [ℹ] AuthCredential used
-					const credential =
-						GithubAuthProvider.credentialFromError(
-							error
-						);
-					// [🐞]
+
+				}
+      )
+      .catch
+      (
+        (
+          error
+        ) =>
+        {
+          processing = false;
+          // [ℹ] handle errors
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          errlog(errorCode);
+          errlog(errorMessage);
+          // [ℹ] the email used
+          const email = error.customData.email;
+          // [ℹ] AuthCredential used
+          const credential =
+            GithubAuthProvider.credentialFromError(
+              error
+            );
+          // [🐞]
           dlog(`${AU_W_TAG} credential: ${credential}; email: ${email}`, AU_W_TOG, AU_W_STY)
-					// TODO: error user-sign in
-					// signInWithCredential(auth, credential)
-					// .then(user => {
-					//   // You can now link the pending credential from the first
-					//   // error.
-					//   linkWithCredential(error.credential)
-					// })
-					// .catch(error => log(error))
-				});
-		} catch (e) {
+          // TODO: error user-sign in
+          // signInWithCredential(auth, credential)
+          // .then(user => {
+          //   // You can now link the pending credential from the first
+          //   // error.
+          //   linkWithCredential(error.credential)
+          // })
+          // .catch(error => log(error))
+        }
+      );
+
+		}
+    catch (e)
+    {
       errlog(`❌ GitHub Auth error: ${e}`)
 		}
 	}
 
   /**
-   * @description allows user to sign-in/up
-   * using their email (magic-link).
-   * Sends email and reactivity method (below)
-   * completes login/signup through a DeepLink Listen
-   * DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
-   * @returns void
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ sign-in/up user using Email Magic Link.
+   * ➨ initiates a "deep-link" listen for user.
+   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns
+   *Promise < void >
   */
-	async function login_with_email_link() {
-		try {
+	async function loginEmailLink
+  (
+  ): Promise < void >
+  {
+		try
+    {
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} email_input: ${email_input}`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
 			email_error_format = false;
 			processing = true;
-      dlog(`${AU_W_TAG} email_input: ${email_input}`, AU_W_TOG, AU_W_STY)
-			await fetchSignInMethodsForEmail(
+
+			await fetchSignInMethodsForEmail
+      (
 				auth,
 				email_input
 			)
-				.then((signInMethods) => {
-					if (signInMethods.length) {
-						// [ℹ] The email already exists in the Auth database. You can check the
-						// [ℹ] sign-in methods associated with it by checking signInMethods array.
-						// [ℹ] Show the option to sign in with that sign-in method.
-						email_already_in_use = true;
-					} else {
-						// [ℹ] User does not exist. Ask user to sign up.
-						email_already_in_use = false;
-					}
-				})
-				.catch((error) => {
-					// Some error occurred.
-				});
+      ?.then
+      (
+        (
+          signInMethods
+        ) =>
+        {
+          if (signInMethods.length)
+          {
+            // [ℹ] The email already exists in the Auth database. You can check the
+            // [ℹ] sign-in methods associated with it by checking signInMethods array.
+            // [ℹ] Show the option to sign in with that sign-in method.
+            email_already_in_use = true;
+          }
+          else
+          {
+            // [ℹ] User does not exist. Ask user to sign up.
+            email_already_in_use = false;
+          }
+        }
+      )
+      .catch
+      (
+        (
+          error
+        ) =>
+        {
+          // FIXME:
+          // Some error occurred.
+        }
+      );
+
 			// [ℹ] validation
 			// if (email_already_in_use) {
 			//   if (dev) console.log('🟠 Exit MagicLink')
@@ -297,13 +526,18 @@ COMPONENT JS (w/ TS)
 			//   }, 1500)
 			//   return
 			// }
+
 			// [ℹ] cont. send email
-			await sendSignInLinkToEmail(
+			await sendSignInLinkToEmail
+      (
 				auth,
 				email_input,
 				actionCodeSettings
 			)
-				.then(() => {
+      ?.then
+      (
+        () =>
+        {
 					// [ℹ] The link was successfully sent - (custom) UI update
 					processing = false;
 					auth_view = false;
@@ -322,161 +556,313 @@ COMPONENT JS (w/ TS)
 						email_input
 					);
 					// NOTE: listen for email deep link continued
-				})
-				.catch((error) => {
-					// TODO: Error Authetication Handle
-					const errorCode = error.code;
-					const errorMessage = error.message;
-				});
-		} catch (e) {
+				}
+      )
+      ?.catch
+      (
+        (
+          error
+        ) =>
+        {
+          // TODO: Error Authetication Handle
+          const errorCode = error.code;
+          const errorMessage = error.message;
+        }
+      );
+
+		}
+    catch (e)
+    {
 			errlog(`❌ Email (MagicLink) Auth error: ${e}`)
 		}
 	}
-	// [ℹ] DeepLink (reactivity) listener EmailLink Cont. [END]
-	$: if (browser) {
-		if (
-			isSignInWithEmailLink(
+
+  // TODO: DOC:
+  async function checkEmailDeepLink
+  (
+  ): Promise < void >
+  {
+
+    const if_M_0: boolean =
+      isSignInWithEmailLink
+      (
 				auth,
 				window.location.href
 			)
-		) {
-			auth_service = 'email';
-      dlog(`${AU_W_TAG} 🔵 EmailLink OAuth2`, AU_W_TOG, AU_W_STY)
-			// NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
-			// NOTE: Additional state parameters can also be passed via URL.
-			// NOTE: This can be used to continue the user's intended action before triggering
-			// NOTE: the sign-in operation.
-			// NOTE: Get the email if available. This should be available if the user completes
-			// NOTE: the flow on the same device where they started it.
-			let email = window.localStorage.getItem(
-				'emailForSignIn'
-			);
-      dlog(`${AU_W_TAG} email: ${email}`, AU_W_TOG, AU_W_STY)
-			if (!email) {
-				// User opened the link on a different device. To prevent session fixation
-				// attacks, ask the user to provide the associated email again. For example:
-				email = window.prompt(
-					'Please provide your email for confirmation'
-				);
-			}
-			// [ℹ] Client SDK to parse the code from the link for you.
-			signInWithEmailLink(
-				auth,
-				email,
-				window.location.href
-			)
-				.then((result) => {
-					auth_type = $page?.url?.searchParams
-						?.get('auth_type')
-						?.toString() as 'login' | 'register';
-					const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
-          dlog(`${AU_W_TAG} 🟢 EmailLink Auth`, AU_W_TOG, AU_W_STY)
-					window.localStorage.removeItem(
-						'emailForSignIn'
-					);
-					// NOTE: You can access the new user via result.user
-					// NOTE: Additional user info profile not available via:
-					// result.additionalUserInfo.profile == null
-					// NOTE: You can check if the user is new or existing:
-					// result.additionalUserInfo.isNewUser
-          dlog(`${AU_W_TAG} result?.user?.displayName: ${result?.user?.displayName}`, AU_W_TOG, AU_W_STY)
-          dlog(`${AU_W_TAG} result?.user?.email: ${result?.user?.email}`, AU_W_TOG, AU_W_STY)
-					success_auth_wrap(
-						result?.user,
-						null,
-						auth_service
-					);
-					goto(revert_url, {
-						replaceState: true
-					});
-				})
-				.catch((error) => {
-					// Some error occurred, you can inspect the code: error.code
-					// Common errors could be invalid email and invalid or expired OTPs.
-          errlog(`❌ Email (MagicLink) Auth error: ${e}`)
-				});
-		}
-	}
+    ;
+    if (!if_M_0) return;
+
+    auth_service = 'email';
+
+    // [🐞]
+    dlog
+    (
+      `${AU_W_TAG} 🔵 EmailLink OAuth2`,
+      AU_W_TOG,
+      AU_W_STY
+    );
+
+    // NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
+    // NOTE: Additional state parameters can also be passed via URL.
+    // NOTE: This can be used to continue the user's intended action before triggering
+    // NOTE: the sign-in operation.
+    // NOTE: Get the email if available. This should be available if the user completes
+    // NOTE: the flow on the same device where they started it.
+
+    let email: string = window?.localStorage?.getItem
+    (
+      'emailForSignIn'
+    );
+
+    // [🐞]
+    dlog
+    (
+      `${AU_W_TAG} email: ${email}`,
+      AU_W_TOG,
+      AU_W_STY
+    );
+
+    // CHECK: User opened deep-link on different device, from the created on-intent;
+    if (!email)
+    {
+      email = window.prompt
+      (
+        'Please provide your email for confirmation'
+      );
+    }
+
+    // [ℹ] Client SDK to parse the code from the link for you.
+    signInWithEmailLink
+    (
+      auth,
+      email,
+      window.location.href
+    )
+		?.then
+    (
+      (
+        result
+      ) =>
+      {
+
+        auth_type = $page?.url?.searchParams
+        ?.get
+        (
+          'auth_type'
+        )
+        ?.toString() as 'login' | 'register';
+
+        const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
+
+        // [🐞]
+        dlog
+        (
+          `${AU_W_TAG} 🟢 EmailLink Auth`,
+          AU_W_TOG,
+          AU_W_STY
+        );
+
+        window.localStorage.removeItem
+        (
+          'emailForSignIn'
+        );
+
+        // NOTE: You can access the new user via result.user
+        // NOTE: Additional user info profile not available via:
+        // result.additionalUserInfo.profile == null
+        // NOTE: You can check if the user is new or existing:
+        // result.additionalUserInfo.isNewUser
+
+        dlog(`${AU_W_TAG} result?.user?.displayName: ${result?.user?.displayName}`, AU_W_TOG, AU_W_STY)
+        dlog(`${AU_W_TAG} result?.user?.email: ${result?.user?.email}`, AU_W_TOG, AU_W_STY)
+
+        successAuthComplete
+        (
+          result?.user,
+          null,
+          auth_service
+        );
+
+        goto
+        (
+          revert_url,
+          {
+            replaceState: true
+          }
+        );
+
+      }
+    )
+    .catch
+    (
+      (
+        error
+
+      ) =>
+      {
+        // Some error occurred, you can inspect the code: error.code
+        // Common errors could be invalid email and invalid or expired OTPs.
+        errlog(`❌ Email (MagicLink) Auth error: ${e}`)
+      }
+    );
+  }
 
   /**
-   * @description allows user to sign-in/up
-   * using their Discrod (deep-link).
-   * Sends user over to Discord to complete auth
-   * completes login/signup through a DeepLink Listen
-   * DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
-   * @returns void
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ sign-in/up user using Discrod Link.
+   * ➨ initiates a "deep-link" listen for user.
+   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns
+   * Promise < void >
   */
-	async function login_with_discord() {
+	async function loginDiscord
+  (
+  ): Promise < void >
+  {
     // DOC: REF: [4]
-		try {
+		try
+    {
 			processing = true;
-			const callback_auth_url =
-				$page?.url?.origin;
-      dlog(`${AU_W_TAG} callback_auth_url: ${callback_auth_url}`, AU_W_TOG, AU_W_STY)
+			const callback_auth_url = $page?.url?.origin;
+
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} callback_auth_url: ${callback_auth_url}`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
 			const discord_outh_url = import.meta.env?.VITE_DISCORD_OAUTH_URL;
 			const final_url_nav = `${discord_outh_url}?redirect_url=${callback_auth_url}`;
+
 			// [ℹ] initiate discord OAuth2
 			goto(final_url_nav);
-		} catch (error) {
+
+		}
+    catch (error)
+    {
 			errlog(error);
 			processing = false;
 		}
 	}
-	// [ℹ] DeepLink (reactivity) listener Discord Cont. [END]
-	$: if (browser) {
-		dlog('🟠 Looking for Discord DeepLink!');
-		const f_uid =
-			$page.url.searchParams.get('f_uid');
-		const oauth2 =
-			$page.url.searchParams.get('oauth2');
+
+  // TODO: DOC:
+  async function checkDiscordDeepLink
+  (
+  ): Promise < void >
+  {
+    // [🐞]
+    dlog
+    (
+      '🟠 Looking for Discord DeepLink!'
+    );
+
+		const f_uid: string = $page.url.searchParams.get('f_uid');
+		const oauth2: string = $page.url.searchParams.get('oauth2');
 		const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
+
 		// [ℹ] validate user is attempting Discord OAuth2
-		if (oauth2 == 'discord' && f_uid != null) {
-			// [ℹ] success;
-      dlog(`${AU_W_TAG} 🔵 Discord OAuth2`, AU_W_TOG, AU_W_STY)
-			// [ℹ] clean up url from query
-			goto(revert_url, { replaceState: true });
+		if (oauth2 == 'discord' && f_uid != null)
+    {
+
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} 🔵 Discord OAuth2`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
+			// ACTION: Clean up url from queries/auth-bloat;
+			goto
+      (
+        revert_url,
+        {
+          replaceState: true
+        }
+      );
+
 			// [ℹ] firebase sign-in
-			signInWithCustomToken(auth, f_uid)
-				.then((userCredential) => {
-					// [ℹ] successful sign-in / login
+			signInWithCustomToken
+      (
+        auth,
+        f_uid
+      )
+      ?.then
+      (
+        (
+          userCredential
+        ) =>
+        {
 					auth_service = 'discord';
-          dlog(`${AU_W_TAG} 🟢 Success! Discord OAuth2'`, AU_W_TOG, AU_W_STY)
+
+          // [🐞]
+          dlog
+          (
+            `${AU_W_TAG} 🟢 Success! Discord OAuth2'`,
+            AU_W_TOG,
+            AU_W_STY
+          );
+
 					const user = userCredential?.user;
-					success_auth_wrap(
+
+					successAuthComplete
+          (
 						user,
 						null,
 						auth_service
 					);
-				})
-				.catch((error) => {
-					// TODO: complete authetication error handle
-					const errorCode = error.code;
-					const errorMessage = error.message;
-					errlog(errorCode);
-					errlog(errorMessage);
-				});
+
+				}
+      )
+      .catch
+      (
+        (
+          error
+        ) =>
+        {
+          // TODO: complete authetication error handle
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          errlog(errorCode);
+          errlog(errorMessage);
+        }
+      );
 		}
-	}
+  }
 
   /**
-   * @description allows user to sign-in/up
-   * using their Web3 MetaMask wallet.
-   * Using MoralisAPI.
+   * @summary
+   * IMPORTANT
+   * [MAIN]
+   * @description
+   * ➨ sign-in/up user using Web3 MetaMask (using MoralisAPI).
    * NOTE: only MetaMask extension exlcusive.
-   * DOC: https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
-   * @returns void
+   * @see https://firebase.google.com/docs/auth/web/email-link-auth?hl=en&authuser=0
+   * @returns
+   * Promise < void >
   */
-	async function login_with_metamask() {
+	async function loginMetamask
+  (
+  ): Promise < void >
+  {
     // DOC: REF: [1]
-		try {
+		try
+    {
 			processing = true;
 			auth_service = 'wallet';
 
-      // NOTE: detect mobile device
-      // if (typeof screen.orientation !== 'undefined') {
-      // if (navigator?.userAgentData?.mobile) {
-      if (/Mobi/i.test(window.navigator.userAgent)) {
+      // CHECK: Mobile Device;
+      const if_M_0: boolean =
+        // typeof screen.orientation !== 'undefined' // ureliable;
+        // navigator?.userAgentData?.mobile // ureliable;
+        /Mobi/i.test(window?.navigator?.userAgent)
+      ;
+      if (if_M_0)
+      {
         // [ℹ] navigate to MetaMask in-app browser
         // await goto('https://metamask.app.link/dapp/scores.betarena.com/?dappLogin=true') // ✅ works
         // await goto('https://metamask.app.link/dapp/http://192.168.0.28:3050/') // does not work
@@ -488,18 +874,32 @@ COMPONENT JS (w/ TS)
         return;
       }
 
-			// [ℹ] restrict only to MetaMask (original)
-			if (!providerDetect('isMetaMask')[0]) {
-			  dlog("🔴 Moralis Auth not found!")
-			  alert('Please install the MetaMask Wallet Extension!')
+      // CHECK: MetaMask is present; EXIT;
+      const if_M_1: boolean =
+        !providerDetect('isMetaMask')?.[0]
+      ;
+			if (if_M_1)
+      {
+        // [🐞]
+			  dlog
+        (
+          "🔴 Moralis Auth not found!",
+          AU_W_TOG,
+          AU_W_STY
+        );
+
+			  alert
+        (
+          'Please install the MetaMask Wallet Extension!'
+        );
+
 			  processing = false
-			  return
+			  return;
 			}
 
-			// [ℹ] create Moralis instance
-			const moralisAuth = getMoralisAuth(app);
+			const moralisAuth: MoralisAuth = getMoralisAuth(app);
 
-      //#region ❌ [V2] - Moralis Auth [TEST]
+      // #region ❌ [V2] - Moralis Auth [TEST]
       // FIXME: Create WalletConnect Provider
 			// FIXME: ❌ Not Working
       // FIXME: WalletConnectProvider error DOC: REF: [10]
@@ -510,9 +910,9 @@ COMPONENT JS (w/ TS)
 			// const moralis_auth = await signInWithMoralis(moralisAuth, {
 			//   provider: new Web3Provider(provider)
 			// });
-      //#endregion ❌ [V2] - Moralis Auth [TEST]
-      
-      //#region MetaMask SDK - working [DISABLED]
+      // #endregion ❌ [V2] - Moralis Auth [TEST]
+
+      // #region MetaMask SDK - working [DISABLED]
       // const MMSDK = new MetaMaskSDK({
       //   // useDeeplink: false,
       //   // communicationLayerPreference: "socket",
@@ -525,65 +925,120 @@ COMPONENT JS (w/ TS)
       // // .then(r => console.log(r));
       // .then(r => alert(r));
       // - needs to be redirected back to the APP for 2nd SIGN MESSAGE...
-      //#endregion MetaMask SDK - working [DISABLED]
+      // #endregion MetaMask SDK - working [DISABLED]
 
-			// NOTE: default sign-in opt. is Metamask
-			const moralis_auth = await signInWithMoralis(moralisAuth);
-			dlog('🟢 Moralis Auth', true);
-			success_auth_wrap(
+			const moralis_auth: SignInWithMoralisResponse = await signInWithMoralis(moralisAuth);
+
+      // [🐞]
+			dlog
+      (
+        '🟢 Moralis Auth',
+        true
+      );
+
+			successAuthComplete
+      (
 			  moralis_auth?.credentials?.user,
 			  moralis_auth?.credentials?.user?.displayName,
 			  auth_service
-			)
-		} catch (error) {
+			);
+
+		}
+    catch (error)
+    {
 			errlog(`Moralis Auth error: ${error}`);
 			processing = false;
 		}
 	}
-  // [ℹ] DeepLink (reactivity) listener Discord Cont. [END]
-	$: if (browser) {
-		dlog('🟠 Looking for MetaMask In-App Browser DeepLink!');
-		const metmaskAuth =	$page.url.searchParams.get('metmaskAuth');
+
+  // TODO: DOC:
+  async function checkMetaMaskDeepLink
+  (
+  ): Promise < void >
+  {
+    // [🐞]
+    dlog
+    (
+      '🟠 Looking for MetaMask In-App Browser DeepLink!'
+    );
+
+		const metmaskAuth: string =	$page.url.searchParams.get('metmaskAuth');
 		const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
-		// [ℹ] validate user is attempting Discord OAuth2
-		if (metmaskAuth == 'true') {
-			// [ℹ] success;
-      dlog(`${AU_W_TAG} 🔵 MetaMask OAuth2`, AU_W_TOG, AU_W_STY)
-			// [ℹ] clean up url from query
-			goto(revert_url, { replaceState: true });
-			moralis_auth()
+
+		if (metmaskAuth == 'true')
+    {
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} 🔵 MetaMask OAuth2`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
+			// ACTION: Clean up url from queries/auth-bloat;
+			goto
+      (
+        revert_url,
+        {
+          replaceState: true
+        }
+      );
+
+			moralis_auth();
 		}
-	}
-  async function moralis_auth() {
-    // [ℹ] create Moralis instance
-    const moralisAuth = getMoralisAuth(app);
-    // NOTE: default sign-in opt. is Metamask
-    const moralis_auth = await signInWithMoralis(moralisAuth);
-    dlog('🟢 Moralis Auth', true);
-    success_auth_wrap(
+  }
+
+  // TODO: DOC:
+  async function moralis_auth
+  (
+  ): Promise < void >
+  {
+
+    const moralisAuth: MoralisAuth = getMoralisAuth(app);
+    const moralis_auth: SignInWithMoralisResponse = await signInWithMoralis(moralisAuth);
+
+    // [🐞]
+    dlog
+    (
+      '🟢 Moralis Auth',
+      true
+    );
+
+    successAuthComplete
+    (
       moralis_auth?.credentials?.user,
       moralis_auth?.credentials?.user?.displayName,
       auth_service
-    )
+    );
+
   }
 
   /**
-   * @description main method that bring all
-   * log-in/up's together for completion of
-   * Auth. Stores inside stores + localStoreage().
-   * Updates UI to signal logged in user
-   * @param {User} firebase_user
-   * @param {string} web3_wallet_addr
-   * @param {Auth_Type} auth_provider_type
-   * @returns void
+   * @summary
+   * IMPORTANT
+   * [MAIN]
+   * @description
+   * ➨ final auth stop, updating stores + localStoreage() + UI/UX;
+   * @param
+   * {User} firebase_user
+   * @param
+   * {string} web3_wallet_addr
+   * @param
+   * {Auth_Type} auth_provider_type
+   * @returns
+   * Promise < void >
   */
-	async function success_auth_wrap(
+	async function successAuthComplete
+  (
 		firebase_user?: User,
 		web3_wallet_addr?: string,
 		auth_provider_type?: Auth_Type
-  ): Promise<void> {
-    dlogv2(
-      `${AU_W_TAG} success_auth_wrap()`,
+  ): Promise < void >
+  {
+    // [🐞]
+    dlogv2
+    (
+      `${AU_W_TAG} successAuthComplete()`,
       [
         firebase_user,
         web3_wallet_addr,
@@ -591,47 +1046,71 @@ COMPONENT JS (w/ TS)
       ],
       AU_W_TOG,
       AU_W_STY
-    )
-    // [ℹ] create / retrieve target Betarena_User
-    const [BETARENA_USER, EXISTS] = await user_firestore(
+    );
+
+    // ACTION: Create / retrieve target Betarena_User
+    const
+    [
+      BETARENA_USER,
+      EXISTS
+    ] = await userFirestore
+    (
       firebase_user?.uid,
       firebase_user,
       web3_wallet_addr,
       auth_provider_type
     );
-		let user_obj: Scores_User = {
+
+		let user_obj: Scores_User =
+    {
 			firebase_user_data: firebase_user,
 			scores_user_data: BETARENA_USER
 		};
-		// [ℹ] populate user data to firestore (DB)
-    if (!EXISTS) {
-      await create_firestore(user_obj)
+
+		// ACTION: Populate user data to firestore (DB)
+    if (!EXISTS)
+    {
+      await createFirestoreUser(user_obj)
     }
-		// [ℹ] continue; default UI/UX triggers
+
+    // ACTION: Update UI/UX;
 		userBetarenaSettings.signInUser(user_obj);
 		$sessionStore.auth_show = false;
 		processing = false;
 		email_input = undefined;
 		success_auth = true;
-		setTimeout(() => {
+
+		setTimeout
+    (
+      () =>
+      {
 			success_auth = false;
 			auth_type = 'login';
-		}, 1500);
+		  },
+      1500
+    );
+
     return;
 	}
 
   /**
-   * @description get user info from firestore
-   * if exists - return target user. Otherwise,
-   * create a new instance of user for Firestore.
-   * @returns {Promise<[Betarena_User, boolean]>} [Betarena_User, boolean]
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ get user info (firestore);
+   * ➨ if exists - return target user.
+   * ➨ else, create a new instance of user for Firestore.
+   * @returns
+   * {Promise<[Betarena_User, boolean]>} [Betarena_User, boolean]
   */
-  async function user_firestore(
-    uid: string, 
+  async function userFirestore
+  (
+    uid: string,
     firebase_user: User,
     web3_wallet_addr: string,
     auth_provider_type: Auth_Type
-  ): Promise<[Betarena_User, boolean]> {
+  ): Promise< [ Betarena_User, boolean ]>
+  {
     try {
       const docRef = doc(db_firestore, "betarena_users", uid);
       const docSnap = await getDoc(docRef);
@@ -645,7 +1124,7 @@ COMPONENT JS (w/ TS)
         dlog(`${AU_W_TAG} 🔴 Target UID does not exists`, AU_W_TOG, AU_W_STY)
         dlog(`${AU_W_TAG} 🔵 Creating new Betarena_User instance`, AU_W_TOG, AU_W_STY)
         const scores_user_data: Betarena_User = {
-          lang: server_side_language,
+          lang: $sessionStore?.serverLang,
           registration_type: [auth_provider_type],
           // NOTE: max. length - no separator - no random digits
           username: generateUsername('', 0, 10),
@@ -661,41 +1140,73 @@ COMPONENT JS (w/ TS)
   }
 
   /**
-   * @description stores target user (new) in
-   * firestore DB
-   * @returns {Promise<void>}
+   * @summary
+   * [MAIN]
+   * [HELPER]
+   * @description
+   * ➨ stores target (NEW) user in firestore DB;
+   * @returns
+   * Promise<void>
   */
-  async function create_firestore(
+  async function createFirestoreUser
+  (
     user: Scores_User
-  ): Promise<void> {
-    try {
-      dlog(`${AU_W_TAG} 🔵 Persisting new user ${user?.firebase_user_data?.uid} to firestore...`, AU_W_TOG, AU_W_STY)
-      await setDoc(
-        doc(
+  ): Promise < void >
+  {
+    try
+    {
+
+      // [🐞]
+      dlog
+      (
+        `${AU_W_TAG} 🔵 Persisting new user ${user?.firebase_user_data?.uid} to firestore...`,
+        AU_W_TOG,
+        AU_W_STY
+      );
+
+      await setDoc
+      (
+        doc
+        (
           db_firestore,
           'betarena_users',
           user?.firebase_user_data?.uid
         ),
-        JSON.parse(
-          JSON.stringify(
-            user.scores_user_data
-          )
-        )
+        JSON.parse(JSON.stringify(user.scores_user_data))
       );
-    } catch (e) {
+
+    }
+    catch (e)
+    {
       errlog(`❌ Error adding document: ${e}`)
     }
   }
 
-	function wrong_email_format() {
-		email_error_format = true;
-		error_auth = true;
-		setTimeout(() => {
-			error_auth = false;
-		}, 1500);
+  // #endregion ➤ [METHODS]
+
+  // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+
+  // #endregion ➤ [ONE-OFF] [METHODS] [IF]
+
+  // #region ➤ [REACTIVIY] [METHODS]
+
+  /**
+   * @description
+   * ➨ listens to incoming auth. deep-links;
+  */
+	$: if (browser)
+  {
+    checkEmailDeepLink();
+    checkDiscordDeepLink();
+    checkMetaMaskDeepLink();
 	}
 
-	$: if (!$sessionStore.auth_show) {
+  /**
+   * @description
+   * ➨ listens to changes in auth. show/hide modal;
+  */
+  $: if (!$sessionStore.auth_show)
+  {
 		auth_view = true;
 		email_input = undefined;
 		email_verify_process = false;
@@ -704,96 +1215,8 @@ COMPONENT JS (w/ TS)
 		email_error_format = false;
 	}
 
-	// [🐞]
-	// $: if (browser) {
-	//   console.log(provider('isCoinbaseWallet'))
-	// }
-
-	/**
-	 * Validates what Web3 wallet extension
-	 * is being used for the platform
-	 * @param walletType
-	 */
-	function providerDetect(
-		walletType:
-			| 'isMetaMask'
-			| 'isCoinbaseWallet'
-			| 'isBraveWallet'
-	): [boolean, any] {
-		// [ℹ] no ethereum wallet present
-		if (!window.ethereum) {
-			return [false, null];
-			// throw new Error("No injected ethereum object.");
-		}
-
-		// [ℹ] default provider (single) assign
-		let target_wallet = undefined;
-
-		// [ℹ] multiple provider(s) check true
-		if (
-			Array.isArray(window.ethereum.providers)
-		) {
-			if (walletType == 'isMetaMask') {
-				target_wallet =
-					window.ethereum.providers.find(
-						(provider) =>
-							provider[walletType] &&
-							provider?.isBraveWallet == undefined
-					);
-			}
-			// [ℹ] alternative
-			// else {
-			//   target_wallet = window.ethereum.providers.find((provider) => provider[walletType])
-			// }
-      dlog(`${AU_W_TAG} 🔵 More than 1 provider identified! ${window.ethereum.providers.length}`, AU_W_TOG, AU_W_STY)
-      dlog(`${AU_W_TAG} target_wallet ${target_wallet}`, AU_W_TOG, AU_W_STY)
-      dlog(`${AU_W_TAG} window.ethereum.providers ${window.ethereum.providers}`, AU_W_TOG, AU_W_STY)
-		} else {
-			if (
-				walletType == 'isMetaMask' &&
-				window.ethereum?.isBraveWallet ==
-					undefined &&
-				window.ethereum?.isMetaMask !=
-					undefined &&
-				window.ethereum?.isMetaMask
-			) {
-				target_wallet =
-					window.ethereum[walletType];
-			}
-			// [ℹ] alternative
-			// else {
-			//   target_wallet = window.ethereum[walletType]
-			// }
-      dlog(`${AU_W_TAG} 🔵 1 provider identified! ${window.ethereum}`, AU_W_TOG, AU_W_STY)
-      dlog(`${AU_W_TAG} target_wallet ${target_wallet}`, AU_W_TOG, AU_W_STY)
-      dlog(`${AU_W_TAG} window.ethereum ${window.ethereum}`, AU_W_TOG, AU_W_STY)
-		}
-
-		// [ℹ] TARGET (THIS) single provider check true
-		if (target_wallet != undefined) {
-      dlog(`${AU_W_TAG} 🟢 ${walletType} identified`, AU_W_TOG, AU_W_STY)
-			// DOC: https://stackoverflow.com/questions/69377437/metamask-conflicting-with-coinbase-wallet
-			// DOC: https://stackoverflow.com/questions/72613011/whenever-i-click-on-connect-metamask-button-why-it-connects-the-coinbase-wallet
-			// DOC: https://stackoverflow.com/questions/68023651/how-to-connect-to-either-metamask-or-coinbase-wallet
-			// DOC: https://github.com/MetaMask/metamask-extension/issues/13622
-			// NOTE: conflicting use of CoinBaseWallet & MetaMask
-			// NOTE: setting MetaMask as main wallet
-			// NOTE: IMPORTANT causes issues with FireFox
-			// target_wallet.request({ method: 'eth_requestAccounts' });
-			// NOTE: Not working
-			// window.ethereum.setSelectedProvider(target_wallet);
-			// window.ethereum.request({
-			//   method: 'wallet_requestPermissions',
-			//   params: [{ eth_accounts: {}}]
-			// });
-			return [true, target_wallet];
-		} else {
-      dlog(`${AU_W_TAG} 🔴 no target wallet (${walletType}) identified`, AU_W_TOG, AU_W_STY)
-			return [false, null];
-		}
-	}
-
-	////// CLOCKDOWN TIMER EMAIL CHECk
+  // TODO: DOC:
+  ////// CLOCKDOWN TIMER EMAIL CHECk
 
 	$: if (sent_email_date != undefined) {
 		dateObjDif =
@@ -824,40 +1247,54 @@ COMPONENT JS (w/ TS)
 		allow_resend = false;
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [REACTIVIY] [METHODS]
 
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 725;
-	let mobileExclusive,
-		tabletExclusive: boolean = false;
+  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+	onMount
+  (
+    async () =>
+    {
+      [
+        tabletExclusive,
+        mobileExclusive
+      ] = viewport_change
+      (
+        TABLET_VIEW,
+        MOBILE_VIEW
+      );
+      window.addEventListener
+      (
+        'resize',
+        function ()
+        {
+          [
+            tabletExclusive,
+            mobileExclusive
+          ] =
+          viewport_change
+          (
+            TABLET_VIEW,
+            MOBILE_VIEW
+          );
+        }
+      );
+	  }
+  );
+
+  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 {#await widget_init()}
 	<!-- promise is pending -->
 {:then WIDGET_LAZY_LOAD_DATA}
-	<!-- 
+	<!--
   [ℹ] background backdrop fade
   -->
 	{#if $sessionStore.auth_show}
@@ -869,7 +1306,7 @@ COMPONENT HTML
 		/>
 	{/if}
 
-	<!-- 
+	<!--
   [ℹ] auth message show box [success]
   -->
 	{#if success_auth}
@@ -893,7 +1330,7 @@ COMPONENT HTML
 		</div>
 	{/if}
 
-	<!-- 
+	<!--
   [ℹ] auth message show box [error]
   -->
 	{#if error_auth}
@@ -913,7 +1350,7 @@ COMPONENT HTML
 		</div>
 	{/if}
 
-	<!-- 
+	<!--
   [ℹ] main auth widget component
   -->
 	{#if $sessionStore.auth_show}
@@ -923,7 +1360,7 @@ COMPONENT HTML
 				'Dark'}
 			in:fade
 		>
-			<!-- 
+			<!--
       [ℹ] processing view box
       [ℹ] HIDDEN by DEFAULT
       -->
@@ -946,13 +1383,13 @@ COMPONENT HTML
 				</div>
 			{/if}
 
-			<!-- 
+			<!--
       [ℹ] email verification view box
       [ℹ] HIDDEN by DEFAULT
       -->
 			{#if email_verify_process}
 				<div id="email-auth-verify-box">
-					<!-- 
+					<!--
           [ℹ] close icon logo
           -->
 					<img
@@ -964,7 +1401,7 @@ COMPONENT HTML
 							($sessionStore.auth_show = false)}
 					/>
 
-					<!-- 
+					<!--
           [ℹ] verify text
           -->
 					<p
@@ -976,13 +1413,13 @@ COMPONENT HTML
 					>
 						{WIDGET_LAZY_LOAD_DATA?.verification}
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify email
           -->
 					<p class="color-grey">
 						{WIDGET_LAZY_LOAD_DATA?.verify_email}
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify email icon
           -->
 					<img
@@ -991,7 +1428,7 @@ COMPONENT HTML
 						alt="Email Vector"
 						title="Email Vector"
 					/>
-					<!-- 
+					<!--
           [ℹ] verify email text
           -->
 					<p class="color-grey">
@@ -1005,7 +1442,7 @@ COMPONENT HTML
 						{WIDGET_LAZY_LOAD_DATA
 							?.email_verify_sent[1]}
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify email to my inbox
           -->
 					<p
@@ -1019,7 +1456,7 @@ COMPONENT HTML
 					>
 						{WIDGET_LAZY_LOAD_DATA?.inbox}
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify no email text
           -->
 					<p
@@ -1034,7 +1471,7 @@ COMPONENT HTML
                 cursor-pointer
               "
 							on:click={() =>
-								login_with_email_link()}
+								loginEmailLink()}
 						>
 							{WIDGET_LAZY_LOAD_DATA
 								?.no_email_verify[1]}
@@ -1043,13 +1480,13 @@ COMPONENT HTML
 				</div>
 			{/if}
 
-			<!-- 
+			<!--
       [ℹ] email sent view box
       [ℹ] HIDDEN by DEFAULT
       -->
 			{#if email_sent_process}
 				<div id="email-auth-verify-box">
-					<!-- 
+					<!--
           [ℹ] close icon logo
           -->
 					<img
@@ -1061,7 +1498,7 @@ COMPONENT HTML
 							($sessionStore.auth_show = false)}
 					/>
 
-					<!-- 
+					<!--
           [ℹ] verify text
           -->
 					<p
@@ -1073,13 +1510,13 @@ COMPONENT HTML
 					>
 						Check your email
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify email
           -->
 					<p class="color-grey">
 						Please follow the link in your email
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify email icon
           -->
 					<img
@@ -1088,7 +1525,7 @@ COMPONENT HTML
 						alt="Email Vector"
 						title="Email Vector"
 					/>
-					<!-- 
+					<!--
           [ℹ] verify email text
           -->
 					<p class="color-grey">
@@ -1101,7 +1538,7 @@ COMPONENT HTML
 						Please follow the link in your email to
 						login.
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify email to my inbox
           -->
 					<p
@@ -1115,7 +1552,7 @@ COMPONENT HTML
 					>
 						Go to my inbox
 					</p>
-					<!-- 
+					<!--
           [ℹ] verify no email text
           -->
 					{#if allow_resend}
@@ -1130,7 +1567,7 @@ COMPONENT HTML
                   cursor-pointer
                 "
 								on:click={() =>
-									login_with_email_link()}
+									loginEmailLink()}
 							>
 								Resend email
 							</span>
@@ -1146,12 +1583,12 @@ COMPONENT HTML
 				</div>
 			{/if}
 
-			<!-- 
+			<!--
       [ℹ] authetication view
       [ℹ] SHOWN by DEFAULT
       -->
 			{#if auth_view}
-				<!-- 
+				<!--
         [ℹ] close icon logo
         -->
 				<img
@@ -1163,7 +1600,7 @@ COMPONENT HTML
 						($sessionStore.auth_show = false)}
 				/>
 
-				<!-- 
+				<!--
         [ℹ] auth logo betarena
         -->
 				<img
@@ -1177,7 +1614,7 @@ COMPONENT HTML
 					aria-label="Betarena Logo"
 				/>
 
-				<!-- 
+				<!--
         [ℹ] auth login/sign-up text
         -->
 				<p
@@ -1194,7 +1631,7 @@ COMPONENT HTML
 					{/if}
 				</p>
 
-				<!-- 
+				<!--
         [ℹ] auth login/sign-up w/email-opt
         -->
 				<p
@@ -1210,9 +1647,9 @@ COMPONENT HTML
 				</p>
 				<form
 					on:submit|preventDefault={() =>
-						login_with_email_link()}
+						loginEmailLink()}
 				>
-					<!-- 
+					<!--
           [ℹ] input email
           class:error-email={email_error_format || email_already_in_use}
           -->
@@ -1222,12 +1659,12 @@ COMPONENT HTML
 						placeholder="email@gmail.com"
 						bind:value={email_input}
 						on:invalid={() =>
-							wrong_email_format()}
+							wrongEmailFormatToggle()}
 						autocomplete="off"
 						class:error-email={email_error_format}
 						required
 					/>
-					<!-- 
+					<!--
           [ℹ] error email validation format
           -->
 					{#if email_error_format}
@@ -1238,7 +1675,7 @@ COMPONENT HTML
 							{WIDGET_LAZY_LOAD_DATA?.err_msg[1]}
 						</p>
 					{/if}
-					<!-- 
+					<!--
           [ℹ] error email validation exists
           {#if email_already_in_use}
             <p
@@ -1248,13 +1685,13 @@ COMPONENT HTML
             </p>
           {/if}
           -->
-					<!-- 
+					<!--
           [ℹ] submit email button
           -->
 					<button
 						id="email-btn"
 						class="
-              btn-primary 
+              btn-primary
             "
 						type="submit"
 					>
@@ -1268,7 +1705,7 @@ COMPONENT HTML
 					</button>
 				</form>
 
-				<!-- 
+				<!--
         [ℹ] auth login/sign-up w/alt. OAuth2 options
         -->
 				<div
@@ -1286,12 +1723,12 @@ COMPONENT HTML
 					<div class="hr-box" />
 				</div>
 				<div id="oauth-box" class="row-space-out">
-					<!-- 
-          [ℹ] GOOGLE 
+					<!--
+          [ℹ] GOOGLE
           -->
 					<button
 						class="btn-auth-opt"
-						on:click={() => login_with_google()}
+						on:click={() => loginGoogle()}
 					>
 						<img
 							src={google_icon}
@@ -1299,12 +1736,12 @@ COMPONENT HTML
 							title="Google Icon"
 						/>
 					</button>
-					<!-- 
-          [ℹ] DISCROD 
+					<!--
+          [ℹ] DISCROD
           -->
 					<button
 						class="btn-auth-opt"
-						on:click={() => login_with_discord()}
+						on:click={() => loginDiscord()}
 					>
 						<img
 							src={discord_icon}
@@ -1312,12 +1749,12 @@ COMPONENT HTML
 							title="Discord Icon"
 						/>
 					</button>
-					<!-- 
-          [ℹ] GITHUB 
+					<!--
+          [ℹ] GITHUB
           -->
 					<button
 						class="btn-auth-opt"
-						on:click={() => login_with_github()}
+						on:click={() => loginGitHub()}
 					>
 						<img
 							src={$userBetarenaSettings.theme ==
@@ -1330,7 +1767,7 @@ COMPONENT HTML
 					</button>
 				</div>
 
-				<!-- 
+				<!--
         [ℹ] auth login/sign-up w/alt. Web3
         -->
 				<div
@@ -1357,7 +1794,7 @@ COMPONENT HTML
             row-space-center
             btn-auth-opt
           "
-					on:click={() => login_with_metamask()}
+					on:click={() => loginMetamask()}
 				>
 					<img
 						src={metamask_icon}
@@ -1374,7 +1811,7 @@ COMPONENT HTML
 					</p>
 				</button>
 
-				<!-- 
+				<!--
         [ℹ] auth login/sign-up w/alt. text prompt for account
         -->
 				<p
@@ -1420,13 +1857,17 @@ COMPONENT HTML
 
 <!-- ===============
 COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
-	/* 
-  [ℹ] OTHER STYLE / CSS 
+
+	/*
+  other styles
   */
 
-	div#background-modal-blur {
+	div#background-modal-blur
+  {
 		position: fixed;
 		top: 0;
 		right: 0;
@@ -1437,7 +1878,8 @@ COMPONENT STYLE
 		background: rgba(0, 0, 0, 0.5);
 	}
 
-	div#auth-alert-box {
+	div#auth-alert-box
+  {
 		position: fixed;
 		bottom: 20px;
 		width: fit-content;
@@ -1451,25 +1893,17 @@ COMPONENT STYLE
 		padding: 14px 18px;
 		border-radius: 6px;
 	}
-	div#auth-alert-box p {
+	div#auth-alert-box p
+  {
 		color: #ffffff;
 		margin-left: 10px;
 	}
 
-	/* [ℹ] SEO WIDGET DATA */
-
-	/* [ℹ] NO DATA WIDGET STYLE / CSS */
-
 	/*
-  [ℹ] WIDGET MAIN STYLE / CSS 
-  [ℹ] NOTE: [MOBILE-FIRST]
-  [ℹ] NOTE: Media Queires Followed
+  widget-outer-box
   */
-
-	/* 
-  widget-outer-box 
-  */
-	#widget-outer {
+	#widget-outer
+  {
 		/* position */
 		position: fixed;
 		z-index: 10000;
@@ -1490,10 +1924,11 @@ COMPONENT STYLE
 		overflow: hidden;
 	}
 
-	/* 
+	/*
   widget processing loading style
   */
-	div#processing-auth-box {
+	div#processing-auth-box
+  {
 		position: absolute;
 		backdrop-filter: blur(6px);
 		-webkit-backdrop-filter: blur(6px);
@@ -1506,8 +1941,8 @@ COMPONENT STYLE
 		margin: auto;
 		background: rgba(255, 255, 255, 0.8);
 	}
-	div#processing-auth-box
-		div#inner-processing-box {
+	div#processing-auth-box	div#inner-processing-box
+  {
 		position: absolute;
 		right: 0;
 		left: 0;
@@ -1517,40 +1952,44 @@ COMPONENT STYLE
 		top: 0;
 		bottom: 0;
 	}
-	div#processing-auth-box
-		div#inner-processing-box
-		img {
+	div#processing-auth-box	div#inner-processing-box img
+  {
 		width: 48px;
 		height: 48px;
 	}
 
-	div#email-auth-verify-box {
-	}
 	div#email-auth-verify-box
-		img#email-verify-icon {
+  {
+	}
+	div#email-auth-verify-box img#email-verify-icon
+  {
 		margin: 30px 0;
 	}
 
-	img#auth-logo {
+	img#auth-logo
+  {
 		margin-bottom: 12px;
 	}
 
-	img#close-vector {
+	img#close-vector
+  {
 		position: absolute;
 		top: 20px;
 		right: 20px;
 		z-index: 400000002;
 	}
 
-	p#auth-head {
+	p#auth-head
+  {
 		font-size: 20px;
 		margin-bottom: 5px;
 	}
 
-	/* 
+	/*
   main email auth style box
   */
-	input#email {
+	input#email
+  {
 		/* white theme/white */
 		background: #ffffff;
 		/* white theme/gray */
@@ -1566,24 +2005,30 @@ COMPONENT STYLE
 		margin-top: 12px;
 		color: #000000;
 	}
-	input#email:hover {
+	input#email:hover
+  {
 		border: 1px solid #8c8c8c;
 	}
-	input#email:focus {
+	input#email:focus
+  {
 		border: 1px solid #4b4b4b;
 	}
-	input#email[placeholder] {
+	input#email[placeholder]
+  {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 	}
-	input#email::placeholder {
+	input#email::placeholder
+  {
 		color: #cccccc;
 	}
-	input#email.error-email {
+	input#email.error-email
+  {
 		border: 1px solid #ff3c3c !important;
 	}
-	button#email-btn {
+	button#email-btn
+  {
 		height: 40px;
 		width: 100%;
 		background-color: #f5620f;
@@ -1593,162 +2038,182 @@ COMPONENT STYLE
 		padding: 10px 24px;
 		margin-top: 12px;
 	}
-	button#email-btn p {
+	button#email-btn p
+  {
 		color: #ffffff;
 		font-size: 14px;
 	}
-	button#email-btn:hover {
+	button#email-btn:hover
+  {
 		background: #f77c42;
 	}
 
-	/* 
+	/*
   alternative OAuth2 style box
   */
-	div#other-oauth-divider-box {
+	div#other-oauth-divider-box
+  {
 		margin: 16px 0;
 	}
-	div#other-oauth-divider-box div.hr-box {
+	div#other-oauth-divider-box div.hr-box
+  {
 		height: 1px;
 		width: 100%;
 		background: #cccccc;
 	}
-	div#other-oauth-divider-box p {
+	div#other-oauth-divider-box p
+  {
 		margin: 0 12px;
 	}
-	div#oauth-box button.btn-auth-opt {
+	div#oauth-box button.btn-auth-opt
+  {
 		padding: 12px 32px;
 		background: #ffffff;
 		border: 1px solid #e6e6e6 !important;
 		border-radius: 60px;
 		margin-right: 12px;
 	}
-	div#oauth-box button.btn-auth-opt:hover {
+	div#oauth-box button.btn-auth-opt:hover
+  {
 		border: 1px solid #f5620f !important;
 	}
-	div#oauth-box button.btn-auth-opt:last-child {
+	div#oauth-box button.btn-auth-opt:last-child
+  {
 		margin-right: unset;
 	}
 
-	/* 
+	/*
   alternative Web3 style box
   */
-	div#web3-divider-box {
+	div#web3-divider-box
+  {
 		margin: 16px 0;
 	}
-	div#web3-divider-box div.hr-box {
+	div#web3-divider-box div.hr-box
+  {
 		height: 1px;
 		width: 100%;
 		background: #cccccc;
 	}
-	div#web3-divider-box p {
+	div#web3-divider-box p
+  {
 		margin: 0 12px;
 		white-space: nowrap;
 	}
-	button#metamask.btn-auth-opt {
+	button#metamask.btn-auth-opt
+  {
 		padding: 12px 32px;
 		background: #ffffff;
 		border: 1px solid #e6e6e6 !important;
 		border-radius: 60px;
 		margin-right: 12px;
 	}
-	button#metamask.btn-auth-opt:hover {
+	button#metamask.btn-auth-opt:hover
+  {
 		border: 1px solid #f5620f !important;
 	}
-	button#metamask p {
+	button#metamask p
+  {
 		margin-left: 12px;
 		font-size: 14px;
 	}
 
-	/* 
+	/*
   switch login/sign-up options style text
   */
-	p#account-onboard-text {
+	p#account-onboard-text
+  {
 		margin-top: 16px;
 	}
 
-	/* ====================
-    [MAIN] RESPONSIVNESS 
-    [TABLET] [DESKTOP]
-  ==================== */
+	/*
+  =============
+  RESPONSIVNESS
+  =============
+  */
 
-	/* 
-  NOTE: TABLET [EXCLUSIVE] RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) and (max-width: 1160px) {
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1160px)
+  {
 		/* empty */
 	}
 
-	/* 
-  NOTE: TABLET && DESKTOP [SHARED] RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) {
-		#widget-outer {
+	@media only screen
+  and (min-width: 726px)
+  {
+		#widget-outer
+    {
 			width: 340px;
 		}
 	}
 
-	@media only screen and (min-width: 726px) and (max-width: 865px) {
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 865px)
+  {
 		/* empty */
 	}
 
-	/* 
-  NOTE: DESKTOP [M-L] RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 1160px) {
-		#widget-outer {
+	@media only screen
+  and (min-width: 1160px)
+  {
+		#widget-outer
+    {
 			width: 328px;
 		}
 	}
 
-	/* ====================
-    [MAIN] WIDGET DARK THEME
-  ==================== */
+	/*
+  =============
+  DARK-THEME
+  =============
+  */
 
-	div#widget-outer.dark-background-1 {
+	div#widget-outer.dark-background-1
+  {
 		background: #4b4b4b;
 	}
 
-	div#widget-outer.dark-background-1
-		div#processing-auth-box {
+	div#widget-outer.dark-background-1 div#processing-auth-box
+  {
 		background: rgba(41, 41, 41, 0.8);
 	}
 
-	div#widget-outer.dark-background-1 input#email {
+	div#widget-outer.dark-background-1 input#email
+  {
 		background: #4b4b4b;
 		border: 1px solid #737373;
 	}
-	div#widget-outer.dark-background-1 input#email {
+	div#widget-outer.dark-background-1 input#email
+  {
 		color: #ffffff;
 	}
-	div#widget-outer.dark-background-1
-		input#email::placeholder {
+	div#widget-outer.dark-background-1 input#email::placeholder
+  {
 		color: #737373;
 	}
-	div#widget-outer.dark-background-1
-		input#email:hover {
+	div#widget-outer.dark-background-1 input#email:hover
+  {
 		border: 1px solid #8c8c8c;
 	}
 
-	div#widget-outer.dark-background-1
-		div#other-oauth-divider-box
-		div.hr-box,
-	div#widget-outer.dark-background-1
-		div#web3-divider-box
-		div.hr-box {
+	div#widget-outer.dark-background-1 div#other-oauth-divider-box div.hr-box,
+	div#widget-outer.dark-background-1 div#web3-divider-box	div.hr-box
+  {
 		background: #737373;
 	}
 
-	div#widget-outer.dark-background-1
-		div#oauth-box
-		button.btn-auth-opt,
-	div#widget-outer.dark-background-1
-		button#metamask.btn-auth-opt {
+	div#widget-outer.dark-background-1 div#oauth-box button.btn-auth-opt,
+	div#widget-outer.dark-background-1 button#metamask.btn-auth-opt
+  {
 		border: 1px solid #737373 !important;
 		background: #4b4b4b;
 	}
 
-	div#widget-outer.dark-background-1
-		div#oauth-box
-		button.btn-auth-opt:hover,
-	div#widget-outer.dark-background-1
-		button#metamask.btn-auth-opt:hover {
+	div#widget-outer.dark-background-1 div#oauth-box button.btn-auth-opt:hover,
+	div#widget-outer.dark-background-1 button#metamask.btn-auth-opt:hover
+  {
 		border: 1px solid #f5620f !important;
 	}
 </style>

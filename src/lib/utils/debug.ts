@@ -18,9 +18,9 @@ const MASTER_DEBUG_TOGGLE = undefined
 // NOTE: (values) true/false | dev
 // NOTE:IMPORTANT for PROD should always be FALSE on PR -> (main)
 // NOTE:IMPORTANT using custom ENV for this
-const LOGS_SHOW_OVERRIDE = 
-  import.meta.env?.VITE_PROD_LOGS == undefined 
-  ? dev 
+const LOGS_SHOW_OVERRIDE =
+  import.meta.env?.VITE_PROD_LOGS == undefined
+  ? dev
   : import.meta.env?.VITE_PROD_LOGS == 'false'
     ? false
     : true
@@ -141,7 +141,7 @@ export function logErrorGroup
 (
 	groupName: string,
 	msg: string
-) 
+)
 {
 	console.groupCollapsed(groupName);
 	msg = msg.replace(/\t/g, '');
@@ -172,38 +172,49 @@ export function log_info_group
 }
 
 /**
- * @description Advanced single string / object 
- * debug logging function for displaying target 
- * information based on supplied arguments, 
+ * @summary
+ * [HELPER]
+ * @description
+ * Advanced single string / object
+ * debug logging function for displaying target
+ * information based on supplied arguments,
  * and styling.
- * @param {string | object} msg 
- * @param {boolean} show 
- * @param {string} style
- * @returns {void}
+ * @param
+ * {string | object} msg
+ * @param
+ * {boolean} show
+ * @param
+ * {string} style
+ * @returns
+ * {void}
  */
 export function dlog
 (
 	msg: string | object,
 	show?: boolean,
 	style?: string
-): void 
+): void
 {
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0])) style = LV2_W_H_TAG[2]
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0])) show = LV2_W_H_TAG[1]
 	// [🐞]
-  show = MASTER_DEBUG_TOGGLE != undefined ? MASTER_DEBUG_TOGGLE : show
+  show =
+    MASTER_DEBUG_TOGGLE != undefined
+      ? MASTER_DEBUG_TOGGLE
+      : show
+  ;
 	if (LOGS_SHOW_OVERRIDE && show && !style) console.debug(msg);
 	if (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style) console.debug(`%c${msg}`, style);
 }
 
 /**
- * @description Advanced multi- string / object 
- * debug logging function for displaying target 
- * information based on supplied arguments, 
+ * @description Advanced multi- string / object
+ * debug logging function for displaying target
+ * information based on supplied arguments,
  * and styling.
  * @param {string} groupName
- * @param {unknown[]} msgs 
- * @param {boolean} show 
+ * @param {unknown[]} msgs
+ * @param {boolean} show
  * @param {string} style
  * @returns {void}
  */
@@ -213,7 +224,7 @@ export function dlogv2
 	msgs: unknown[],
 	show?: boolean,
 	style?: string
-): void 
+): void
 {
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE && show) {
@@ -233,13 +244,13 @@ export function dlogv2
 }
 
 /**
- * @description Advanced multi- string / object 
- * debug logging function for displaying target 
- * information based on supplied arguments, 
+ * @description Advanced multi- string / object
+ * debug logging function for displaying target
+ * information based on supplied arguments,
  * and styling.
  * @param {string} groupName
- * @param {unknown[]} msgs 
- * @param {boolean} show 
+ * @param {unknown[]} msgs
+ * @param {boolean} show
  * @param {string} style
  * @returns {void}
  */
@@ -249,7 +260,7 @@ export function dlogv2open
 	msgs: unknown[],
 	show?: boolean,
 	style?: string
-): void 
+): void
 {
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE && show) {
@@ -276,7 +287,7 @@ export function dlogv2open
 export function errlog
 (
   msg: string
-) 
+)
 {
 	// [🐞]
 	if (LOGS_SHOW_OVERRIDE) console.error(`❌ Error: ${msg}`);
@@ -291,7 +302,7 @@ export function initSentry
 (
 )
 {
-  if (!dev) 
+  if (!dev)
   {
     Sentry.init
     (
@@ -308,9 +319,9 @@ export function initSentry
       // of transactions for performance monitoring.
       // We recommend adjusting this value in production
       tracesSampleRate: 1.0,
-      
+
       // NOTE: replay-session;
-      
+
       // This sets the sample rate to be 10%. You may want this to be 100% while
       // in development and sample at a lower rate in production
       replaysSessionSampleRate: 0.1,
