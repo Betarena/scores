@@ -241,7 +241,7 @@ COMPONENT JS - BASIC
       left: (childPos.left - parentPos.left)
     };
 
-    width = relativePos.left + (childPos.width/2) - 32;
+    width = relativePos.left + (childPos.width/2) - 32 + 6;
   }
 
   /**
@@ -759,7 +759,7 @@ NAVBAR MAIN
       {/if}
 
       <!--
-      📱 MOBILE 💻 TABLET
+      📱 MOBILE 💻 TABLET 🖥️ LAPTOP
       BETARENA BRAND LOGO
       -->
       <div
@@ -783,10 +783,10 @@ NAVBAR MAIN
       </div>
 
       <!--
-      💻 TABLET 🖥️ LAPTOP
-      EXTERNAL BUTTONS
+      🖥️ LAPTOP
+      EXTERNAL BUTTONS / NAVIGATION
       -->
-      {#if !mobileExclusive}
+      {#if !tabletExclusive}
 
         <div
           id='navBox'
@@ -995,33 +995,33 @@ NAVBAR MAIN
 
         </div>
 
-        <!--
-        THEME SELECTION
-        -->
-        <div
-          id="theme-opt-container"
-          class="
-            row-space-start
-            m-r-30
-            cursor-pointer
-          "
-          on:click={() => selectedTheme()}
-          class:m-r-10={PROFILE_URL == $page.route.id}
-          class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
-        >
-
-          <img
-            loading="lazy"
-            src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
-            alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
-            width=16
-            height=16
-            class:light={$userBetarenaSettings.theme == 'Dark'}
-          />
-
-        </div>
-
       {/if}
+
+      <!--
+      THEME SELECTION
+      -->
+      <div
+        id="theme-opt-container"
+        class="
+          row-space-start
+          m-r-30
+          cursor-pointer
+        "
+        on:click={() => selectedTheme()}
+        class:m-r-10={PROFILE_URL == $page.route.id}
+        class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
+      >
+
+        <img
+          loading="lazy"
+          src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
+          alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
+          width=16
+          height=16
+          class:light={$userBetarenaSettings.theme == 'Dark'}
+        />
+
+      </div>
 
       <!--
       SIGN IN BUTTON
@@ -1176,32 +1176,34 @@ NAVBAR MAIN
       <!--
       SPORTS HORIZONTAL LIST
       -->
-      <div
-        id="bottom-header-inner"
-        class="
-          row-space-out
-          m-r-10
-        "
-        style="width: fit-content;"
-      >
+      {#if PROFILE_URL != $page.route.id}
         <div
-          class="row-space-out"
+          id="bottom-header-inner"
+          class="
+            row-space-out
+            m-r-10
+          "
           style="width: fit-content;"
         >
+          <div
+            class="row-space-out"
+            style="width: fit-content;"
+          >
 
-          <!--
-          FOOTBALL
-          -->
-          <HeaderSportsBtn
-            sportNameDefault={'Football'}
-            sportTranslation={WIDGET_T_DATA?.scores_header_translations?.sports_v2?.['football']}
-            sportValue={WIDGET_T_DATA?.scores_header_fixtures_information?.['football']}
-            selectedSport={selectedSport}
-            on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
-          />
+            <!--
+            FOOTBALL
+            -->
+            <HeaderSportsBtn
+              sportNameDefault={'Football'}
+              sportTranslation={WIDGET_T_DATA?.scores_header_translations?.sports_v2?.['football']}
+              sportValue={WIDGET_T_DATA?.scores_header_fixtures_information?.['football']}
+              selectedSport={selectedSport}
+              on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
+            />
 
+          </div>
         </div>
-      </div>
+      {/if}
 
     </div>
 
@@ -1214,9 +1216,9 @@ NAVBAR MAIN
     >
 
       <!--
-      💻 TABLET
+      💻 TABLET 🖥️ LAPTOP
       -->
-      {#if !tabletExclusive}
+      {#if !mobileExclusive}
 
         <!--
         ODDS-TYPE CONTAINER
@@ -1305,116 +1307,118 @@ NAVBAR MAIN
         <!--
         BOOKMAKERS CONTAINER
         -->
-        <div
-          id="bookmaker-box"
-          class=
-          "
-            dropdown-opt-box
-            row-space-start
-          "
-          on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
-          class:not-last={$userBetarenaSettings?.user != undefined}
-        >
-
-          <!--
-          SELECTED BOOKMAKERS BOX
-          -->
+        {#if PROFILE_URL != $page.route.id}
           <div
-            class="m-r-10"
+            id="bookmaker-box"
+            class=
+            "
+              dropdown-opt-box
+              row-space-start
+            "
+            on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
+            class:not-last={$userBetarenaSettings?.user != undefined}
           >
-            <p
-              class="
-                color-grey
-                s-12
-                no-wrap
-              "
-            >
-              {WIDGET_T_DATA?.scores_header_translations?.bookmakers}
-            </p>
-            <div class="row-space-start">
-              {#if $userBetarenaSettings.country_bookmaker != undefined}
-                {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
-                  {#if country.includes($userBetarenaSettings?.country_bookmaker?.toUpperCase())}
-                    <img
-                      loading="lazy"
-                      class="
-                        country-flag
-                        m-r-5
-                      "
-                      src="https://betarena.com/images/flags/{country[0]}.svg"
-                      alt={country[1]}
-                      width=20
-                      height=14
-                    />
-                    <p
-                      class="
-                        color-white
-                        s-14
-                      "
-                    >
-                      {country[1]}
-                    </p>
-                  {/if}
-                {/each}
-              {/if}
-            </div>
-          </div>
 
-          <!--
-          ARROW DOWN
-          -->
-          <img
-            loading="lazy"
-            src={!isBookmakersDropdown ? arrow_down_fade : arrow_up}
-            alt={!isBookmakersDropdown ? 'arrow_down_fade' : 'arrow_up'}
-            width=16
-            height=16
-          />
-
-          <!--
-          DROPDOWN MENU (THEME)
-          -->
-          {#if isBookmakersDropdown}
+            <!--
+            SELECTED BOOKMAKERS BOX
+            -->
             <div
-              id="bookmakers-type-dropdown-menu"
-              transition:fly
+              class="m-r-10"
             >
-              {#if $userBetarenaSettings.country_bookmaker != undefined}
-                {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
-                  <div
-                    class="
-                      theme-opt-box
-                      row-space-start
-                    "
-                    class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
-                    on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
-                  >
-                    <img
-                      loading="lazy"
-                      class="
-                        country-flag
-                        m-r-10
-                      "
-                      src="https://betarena.com/images/flags/{country[0]}.svg"
-                      alt={country[1]}
-                      width=20
-                      height=14
-                    />
-                    <p
-                      class="
-                        color-white
-                        s-14
-                      "
-                    >
-                      {country[1]}
-                    </p>
-                  </div>
-                {/each}
-              {/if}
+              <p
+                class="
+                  color-grey
+                  s-12
+                  no-wrap
+                "
+              >
+                {WIDGET_T_DATA?.scores_header_translations?.bookmakers}
+              </p>
+              <div class="row-space-start">
+                {#if $userBetarenaSettings.country_bookmaker != undefined}
+                  {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                    {#if country.includes($userBetarenaSettings?.country_bookmaker?.toUpperCase())}
+                      <img
+                        loading="lazy"
+                        class="
+                          country-flag
+                          m-r-5
+                        "
+                        src="https://betarena.com/images/flags/{country[0]}.svg"
+                        alt={country[1]}
+                        width=20
+                        height=14
+                      />
+                      <p
+                        class="
+                          color-white
+                          s-14
+                        "
+                      >
+                        {country[1]}
+                      </p>
+                    {/if}
+                  {/each}
+                {/if}
+              </div>
             </div>
-          {/if}
 
-        </div>
+            <!--
+            ARROW DOWN
+            -->
+            <img
+              loading="lazy"
+              src={!isBookmakersDropdown ? arrow_down_fade : arrow_up}
+              alt={!isBookmakersDropdown ? 'arrow_down_fade' : 'arrow_up'}
+              width=16
+              height=16
+            />
+
+            <!--
+            DROPDOWN MENU (THEME)
+            -->
+            {#if isBookmakersDropdown}
+              <div
+                id="bookmakers-type-dropdown-menu"
+                transition:fly
+              >
+                {#if $userBetarenaSettings.country_bookmaker != undefined}
+                  {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                    <div
+                      class="
+                        theme-opt-box
+                        row-space-start
+                      "
+                      class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
+                      on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
+                    >
+                      <img
+                        loading="lazy"
+                        class="
+                          country-flag
+                          m-r-10
+                        "
+                        src="https://betarena.com/images/flags/{country[0]}.svg"
+                        alt={country[1]}
+                        width=20
+                        height=14
+                      />
+                      <p
+                        class="
+                          color-white
+                          s-14
+                        "
+                      >
+                        {country[1]}
+                      </p>
+                    </div>
+                  {/each}
+                {/if}
+              </div>
+            {/if}
+
+          </div>
+        {/if}
 
         <!--
         BETARENA TOKEN
@@ -1494,7 +1498,7 @@ NAVBAR MAIN
   <!--
   📱 MOBILE 💻 TABLET
   NAVBAR SIDE/SLIDE
-  FIXME: very large chunk 400+ lines of repeating code;
+  FIXME: very large chunk 500+ lines of repeating code;
   -->
   {#if (tabletExclusive || mobileExclusive) && mobileNavToggleMenu}
     <nav
@@ -1544,8 +1548,8 @@ NAVBAR MAIN
             NOTE: -> HIDDEN TEMPORARILY
             -->
             <div
-            id="currency-box"
-            class="m-r-16"
+              id="currency-box"
+              class="m-r-16"
             >
 
               <!--
@@ -1683,28 +1687,30 @@ NAVBAR MAIN
             <!--
             THEME SELECTION
             -->
-            <div
-              id="theme-opt-container"
-              class="
-                row-space-start
-                m-r-30
-                cursor-pointer
-              "
-              on:click={() => selectedTheme()}
-              class:m-r-10={PROFILE_URL == $page.route.id}
-              class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
-            >
+            {#if mobileExclusive}
+              <div
+                id="theme-opt-container"
+                class="
+                  row-space-start
+                  m-r-30
+                  cursor-pointer
+                "
+                on:click={() => selectedTheme()}
+                class:m-r-10={PROFILE_URL == $page.route.id}
+                class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
+              >
 
-              <img
-                loading="lazy"
-                src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
-                alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
-                width=16
-                height=16
-                class:light={$userBetarenaSettings.theme == 'Dark'}
-              />
+                <img
+                  loading="lazy"
+                  src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
+                  alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
+                  width=16
+                  height=16
+                  class:light={$userBetarenaSettings.theme == 'Dark'}
+                />
 
-            </div>
+              </div>
+            {/if}
 
           </div>
 
@@ -1758,228 +1764,87 @@ NAVBAR MAIN
             {mobileExclusive}
           />
 
-          {#if PROFILE_URL != $page.route.id}
+          {#if mobileExclusive && PROFILE_URL != $page.route.id}
 
             <!--
             ODDS SECTION
+            NOTE: -> HIDDEN TEMPORARILY
             -->
-            <div
-              class="side-nav-dropdown m-b-25"
-              on:click={() =>
-                (isOddsDropdown =
-                  !isOddsDropdown)}
-            >
-
-              <!--
-              SELECTED / TOGGLE BOX
-              -->
+            {#if false}
               <div
-                class=
-                "
-                  m-b-15
-                "
+                class="side-nav-dropdown m-b-25"
+                on:click={() =>
+                  (isOddsDropdown =
+                    !isOddsDropdown)}
               >
 
-                <p
-                  class=
-                  "
-                    color-grey
-                    s-12
-                    m-b-5
-                  "
-                >
-                  {WIDGET_T_DATA?.scores_header_translations?.odds || translationObject?.odds_type}
-                </p>
-
+                <!--
+                SELECTED / TOGGLE BOX
+                -->
                 <div
                   class=
                   "
-                    row-space-out
+                    m-b-15
                   "
                 >
 
                   <p
                     class=
                     "
-                      color-white
-                      s-14
+                      color-grey
+                      s-12
+                      m-b-5
                     "
                   >
-                    {WIDGET_T_DATA?.scores_header_translations?.odds_type?.[0]}
+                    {WIDGET_T_DATA?.scores_header_translations?.odds || translationObject?.odds_type}
                   </p>
-
-                  <!--
-                  ARROW DOWN
-                  -->
-                  <img
-                    loading="lazy"
-                    src={!isOddsDropdown ? arrow_down_fade : arrow_up_fade}
-                    alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up_fade'}
-                    width=16
-                    height=16
-                  />
-                </div>
-              </div>
-
-              <!--
-              DROWDOWN
-              -->
-              {#if isOddsDropdown}
-                <div
-                  transition:fly
-                >
-                  {#each WIDGET_T_DATA?.scores_header_translations?.odds_type || [] as odd}
-
-                    <div
-                      class=
-                      "
-                        side-nav-dropdown-opt
-                      "
-                      on:click={() => (isOddsDropdown = false)}
-                    >
-
-                      <p
-                        class=
-                        "
-                          color-white
-                          s-14
-                        "
-                      >
-                        {odd}
-                      </p>
-
-                    </div>
-
-                  {/each}
-                </div>
-              {/if}
-
-            </div>
-
-            <!--
-            BOOKMAKERS SECTION
-            -->
-            <div
-              class=
-              "
-                side-nav-dropdown
-                m-b-25
-              "
-              on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
-            >
-
-              <div
-                class=
-                "
-                  m-b-15
-                "
-              >
-
-                <p
-                  class=
-                  "
-                    color-grey
-                    s-12
-                    m-b-5
-                  "
-                >
-                  {WIDGET_T_DATA?.scores_header_translations?.bookmakers || translationObject?.bookmakers}
-                </p>
-
-                <div
-                  class=
-                  "
-                    row-space-out
-                  "
-                >
 
                   <div
                     class=
                     "
-                      row-space-start
+                      row-space-out
                     "
                   >
-                    {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
-                      {#if country?.includes($userBetarenaSettings?.country_bookmaker?.toUpperCase())}
 
-                        <img
-                          loading="lazy"
-                          class=
-                          "
-                            country-flag
-                            m-r-5
-                          "
-                          src="https://betarena.com/images/flags/{country?.[0]}.svg"
-                          alt={country?.[1]}
-                          width=20
-                          height=14
-                        />
-
-                        <p
-                          class=
-                          "
-                            color-white
-                            s-14
-                          "
-                        >
-                          {country?.[1]}
-                        </p>
-
-                      {/if}
-                    {/each}
-                  </div>
-
-                  <!--
-                  ARROW DOWN
-                  -->
-                  <img
-                    loading="lazy"
-                    src={!isBookmakersDropdown ? arrow_down_fade : arrow_up_fade}
-                    alt={!isBookmakersDropdown ? arrow_down_fade : arrow_up_fade}
-                    width=16
-                    height=16
-                  />
-
-                </div>
-
-              </div>
-
-              <!--
-              DROPDOWN
-              -->
-              {#if isBookmakersDropdown}
-                <div
-                  transition:fly
-                >
-                  {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
-                    <div
+                    <p
                       class=
                       "
-                        side-nav-dropdown-opt
-                        row-space-start
+                        color-white
+                        s-14
                       "
-                      on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
                     >
+                      {WIDGET_T_DATA?.scores_header_translations?.odds_type?.[0]}
+                    </p>
+
+                    <!--
+                    ARROW DOWN
+                    -->
+                    <img
+                      loading="lazy"
+                      src={!isOddsDropdown ? arrow_down_fade : arrow_up_fade}
+                      alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up_fade'}
+                      width=16
+                      height=16
+                    />
+                  </div>
+                </div>
+
+                <!--
+                DROWDOWN
+                -->
+                {#if isOddsDropdown}
+                  <div
+                    transition:fly
+                  >
+                    {#each WIDGET_T_DATA?.scores_header_translations?.odds_type || [] as odd}
 
                       <div
                         class=
                         "
-                          row-space-start
+                          side-nav-dropdown-opt
                         "
+                        on:click={() => (isOddsDropdown = false)}
                       >
-
-                        <img
-                          loading="lazy"
-                          class=
-                          "
-                            country-flag
-                            m-r-10
-                          "
-                          src="https://betarena.com/images/flags/${country?.[0]}.svg"
-                          alt="${country?.[1]}"
-                          width=20
-                          height=14
-                        />
 
                         <p
                           class=
@@ -1988,26 +1853,172 @@ NAVBAR MAIN
                             s-14
                           "
                         >
-                          {country?.[1]}
+                          {odd}
                         </p>
 
                       </div>
 
-                      {#if country?.includes($userBetarenaSettings?.country_bookmaker)}
-                        <img
-                          loading="lazy"
-                          src={icon_check}
-                          alt={country?.[0]}
-                          width=16
-                          height=16
-                        />
-                      {/if}
-                    </div>
-                  {/each}
-                </div>
-              {/if}
+                    {/each}
+                  </div>
+                {/if}
 
-            </div>
+              </div>
+            {/if}
+
+            <!--
+            BOOKMAKERS SECTION
+            -->
+            {#if PROFILE_URL != $page.route.id}
+              <div
+                class=
+                "
+                  side-nav-dropdown
+                  m-b-25
+                "
+                on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
+              >
+
+                <div
+                  class=
+                  "
+                    m-b-15
+                  "
+                >
+
+                  <p
+                    class=
+                    "
+                      color-grey
+                      s-12
+                      m-b-5
+                    "
+                  >
+                    {WIDGET_T_DATA?.scores_header_translations?.bookmakers || translationObject?.bookmakers}
+                  </p>
+
+                  <div
+                    class=
+                    "
+                      row-space-out
+                    "
+                  >
+
+                    <div
+                      class=
+                      "
+                        row-space-start
+                      "
+                    >
+                      {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                        {#if country?.includes($userBetarenaSettings?.country_bookmaker?.toUpperCase())}
+
+                          <img
+                            loading="lazy"
+                            class=
+                            "
+                              country-flag
+                              m-r-5
+                            "
+                            src="https://betarena.com/images/flags/{country?.[0]}.svg"
+                            alt={country?.[1]}
+                            width=20
+                            height=14
+                          />
+
+                          <p
+                            class=
+                            "
+                              color-white
+                              s-14
+                            "
+                          >
+                            {country?.[1]}
+                          </p>
+
+                        {/if}
+                      {/each}
+                    </div>
+
+                    <!--
+                    ARROW DOWN
+                    -->
+                    <img
+                      loading="lazy"
+                      src={!isBookmakersDropdown ? arrow_down_fade : arrow_up_fade}
+                      alt={!isBookmakersDropdown ? arrow_down_fade : arrow_up_fade}
+                      width=16
+                      height=16
+                    />
+
+                  </div>
+
+                </div>
+
+                <!--
+                DROPDOWN
+                -->
+                {#if isBookmakersDropdown}
+                  <div
+                    transition:fly
+                  >
+                    {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                      <div
+                        class=
+                        "
+                          side-nav-dropdown-opt
+                          row-space-start
+                        "
+                        on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
+                      >
+
+                        <div
+                          class=
+                          "
+                            row-space-start
+                          "
+                        >
+
+                          <img
+                            loading="lazy"
+                            class=
+                            "
+                              country-flag
+                              m-r-10
+                            "
+                            src="https://betarena.com/images/flags/${country?.[0]}.svg"
+                            alt="${country?.[1]}"
+                            width=20
+                            height=14
+                          />
+
+                          <p
+                            class=
+                            "
+                              color-white
+                              s-14
+                            "
+                          >
+                            {country?.[1]}
+                          </p>
+
+                        </div>
+
+                        {#if country?.includes($userBetarenaSettings?.country_bookmaker)}
+                          <img
+                            loading="lazy"
+                            src={icon_check}
+                            alt={country?.[0]}
+                            width=16
+                            height=16
+                          />
+                        {/if}
+                      </div>
+                    {/each}
+                  </div>
+                {/if}
+
+              </div>
+            {/if}
 
           {/if}
 
