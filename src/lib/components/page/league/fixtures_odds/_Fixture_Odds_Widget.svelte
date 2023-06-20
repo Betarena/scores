@@ -13,37 +13,44 @@
 //#endregion ➤ Svelte/SvelteKit Imports
 
   //#region ➤ Project Custom Imports
-	import {
-		get
-	} from '$lib/api/utils';
-	import {
-		sessionStore
-	} from '$lib/store/session';
-	import {
-		userBetarenaSettings
-	} from '$lib/store/user-settings';
-	import {
-		dlog,
-		dlogv2,
-		FIX_W_T_STY,
-		FIX_W_T_TAG,
-		FIX_W_T_TOG
-	} from '$lib/utils/debug';
-	import {
-		platfrom_lang_ssr,
-		viewport_change
-	} from '$lib/utils/platform-functions';
+	import
+		{
+			get
+		} from '$lib/api/utils';
+	import
+		{
+			sessionStore
+		} from '$lib/store/session';
+	import
+		{
+			userBetarenaSettings
+		} from '$lib/store/user-settings';
+	import
+		{
+			dlog,
+			dlogv2,
+			FIX_W_T_STY,
+			FIX_W_T_TAG,
+			FIX_W_T_TOG
+		} from '$lib/utils/debug';
+	import
+		{
+			platfrom_lang_ssr,
+			viewport_change
+		} from '$lib/utils/platform-functions';
 //#endregion ➤ Project Custom Imports
 
   //#region ➤ Firebase Imports
-  import {
-  	db_real
-  } from '$lib/firebase/init';
-  import {
-  	onValue,
-  	ref,
-  	type Unsubscribe
-  } from 'firebase/database';
+  import
+  	{
+  		db_real
+  	} from '$lib/firebase/init';
+  import
+  	{
+  		onValue,
+  		ref,
+  		type Unsubscribe
+  	} from 'firebase/database';
 //#endregion ➤ Firebase Imports
 
   //#region ➤ Types Imports
@@ -77,9 +84,9 @@
   import play from './assets/play.svg';
 //#endregion ➤ Assets Imports
 
+	import { getOdds_1, getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 	import type { B_FO_D } from '@betarena/scores-lib/types/fixture-odds';
 	import FixtureOddsWidgetContentLoader from './_Fixture_Odds_Widget_ContentLoader.svelte';
-	import { getOdds_1, getTargetRealDbData } from '$lib/firebase/firebase.actions.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -93,7 +100,7 @@
 
   export let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
 	export let FIXTURES_ODDS_DATA: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
-  
+
 	let SPORTBOOK_DETAILS_LIST: Cache_Single_SportbookDetails_Data_Response[];
   let loaded: boolean = false; // [ℹ] (boolean) signal for widget has gone through "loading" phase
 	let refresh: boolean = false; // [ℹ] (boolean) signal for widget refresh
@@ -599,7 +606,7 @@
 		// [ℹ] break-down-values
 		// [ℹ] kickstart Fireabse calls
 		if (loaded) {
-      
+
 			const firebase_real_time = await getTargetRealDbData
       (
         `livescores_now`
@@ -848,7 +855,7 @@
 		data: [string, FIREBASE_livescores_now][]
 	) {
     dlog(`${FIX_W_T_TAG} checkForLiveFixtures()`, FIX_W_T_TOG, FIX_W_T_STY);
-    
+
 		// [ℹ] generate map
 		for (const live_fixture of data) {
 			const fixture_id = parseInt(
@@ -1435,7 +1442,7 @@
     dlogv2(
       `${FIX_W_T_TAG} closing firebase connections`,
       logsMsg,
-      FIX_W_T_TOG, 
+      FIX_W_T_TOG,
       FIX_W_T_STY
     )
 	});
@@ -1504,9 +1511,11 @@
 		loadedCurrentSeason = true;
 	}
 
+  $: selectedSeasonId = $sessionStore.selectedSeasonID
+
 	$: if (
 		browser &&
-		$sessionStore.selectedSeasonID != undefined
+		selectedSeasonId
 	) {
 		dlog(
 			`selected season: ${$sessionStore.selectedSeasonID}`,
@@ -1571,11 +1580,11 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 =================-->
 
-<!-- 
-[ℹ] area-outside-for-close 
+<!--
+[ℹ] area-outside-for-close
 -->
 {#if toggleDropdown}
 	<div
@@ -1585,21 +1594,21 @@
 {/if}
 
 <div id="widget-outer">
-	<!-- 
+	<!--
   [ℹ] SEO DATA
   -->
 	<!-- {#if !loaded && !noWidgetData} -->
 	<div id="seo-widget-box">
 		<h2>{FIXTURES_ODDS_T?.matches}</h2>
 		{#if FIXTURES_ODDS_DATA != undefined && FIXTURES_ODDS_DATA?.seasons?.length != 0}
-			<!-- 
+			<!--
         [ℹ] fixtures text loop
         -->
 			{#each FIXTURES_ODDS_DATA?.seasons[0].fixtures as item}
 				<p>{item?.teams?.away?.name}</p>
 				<p>{item?.teams?.home?.name}</p>
 			{/each}
-			<!-- 
+			<!--
         [ℹ] fixtures FIXTURE LINK loop
         [ℹ] fixtures TIP LINK loop
         -->
@@ -1623,10 +1632,10 @@
 						{item?.tip_link[server_side_language]}
 					</a>
 				{/if}
-				<!-- {#if 
-            item?.media_link && 
+				<!-- {#if
+            item?.media_link &&
             item?.media_link.length != 0}
-            <a 
+            <a
               href="item?.tip_link[server_side_language]">
               {item?.media_link[0].video_link}
             </a>
@@ -1636,13 +1645,13 @@
 	</div>
 	<!-- {/if} -->
 
-	<!-- 
+	<!--
   [ℹ] NO WIDGET DATA
   [ℹ] PLACEHOLDER
   -->
 	{#if noWidgetData && loaded}
-		<!-- 
-    [ℹ] title of the widget 
+		<!--
+    [ℹ] title of the widget
     -->
 		<h2
 			class="s-20 m-b-10 w-500 color-black-2"
@@ -1653,8 +1662,8 @@
 			{FIXTURES_ODDS_T?.matches}
 		</h2>
 
-		<!-- 
-    [ℹ] no-widget-data-avaiable-placeholder container 
+		<!--
+    [ℹ] no-widget-data-avaiable-placeholder container
     -->
 		<div
 			id="no-widget-box"
@@ -1682,8 +1691,8 @@
 				/>
 			{/if}
 
-			<!-- 
-      [ℹ] container w/ text 
+			<!--
+      [ℹ] container w/ text
       -->
 			<div>
 				<p
@@ -1700,34 +1709,34 @@
 		</div>
 	{/if}
 
-	<!-- 
+	<!--
   [ℹ] MAIN WIDGET COMPONENT
   [ℹ] -> loading animation
   [ℹ] -> data propagation
   [ℹ] -> error handling
   -->
 	{#if browser && !noWidgetData && !refresh && $userBetarenaSettings.country_bookmaker && ready && showWidget}
-		<!-- 
-    [ℹ] promise is pending 
+		<!--
+    [ℹ] promise is pending
     -->
 		{#await widget_init()}
 			<FixtureOddsWidgetContentLoader />
-			<!-- 
+			<!--
     [ℹ] promise was fulfilled
     -->
 		{:then data}
 			{#if lazyLoadingSeasonFixture}
 				<FixtureOddsWidgetContentLoader />
 			{:else}
-				<!-- 
+				<!--
         [ℹ] widget-component
-        [ℹ] [DESKTOP / TABLET / MOBILE] 
+        [ℹ] [DESKTOP / TABLET / MOBILE]
         -->
 				<h2
 					class="
-            s-20 
-            m-b-10 
-            w-500 
+            s-20
+            m-b-10
+            w-500
             color-black-2
           "
 					style="margin-top: 0px;"
@@ -1744,36 +1753,36 @@
 					class:dark-background-1={$userBetarenaSettings.theme ==
 						'Dark'}
 				>
-					<!-- 
+					<!--
           [ℹ] widget main top controls
           [DESKTOP]
           [TABLET]
           -->
 					{#if !mobileExclusive}
 						<!--
-            [ℹ] widget main top controls 
+            [ℹ] widget main top controls
             -->
 						<div
 							id="fixtures-odds-top-container"
 							class="
-                row-space-out 
+                row-space-out
                 m-b-15
               "
 						>
 							<div class="row-space-start">
-								<!-- 
+								<!--
                 [ℹ] widget top selection fixtures odds views [DESKTOP]
                 -->
 								<div
 									id="fix-odds-view-box"
 									class="
-                    row-space-start 
+                    row-space-start
                     m-r-20
                   "
 								>
 									<div
 										class="
-                      fix-odds-view-opt-box 
+                      fix-odds-view-opt-box
                       cursor-pointer
                     "
 										on:click={() =>
@@ -1785,8 +1794,8 @@
 									>
 										<p
 											class="
-                        s-14 
-                        w-500 
+                        s-14
+                        w-500
                         color-grey
                       "
 										>
@@ -1806,8 +1815,8 @@
 									>
 										<p
 											class="
-                        s-14 
-                        w-500 
+                        s-14
+                        w-500
                         color-grey
                       "
 										>
@@ -1816,7 +1825,7 @@
 									</div>
 								</div>
 
-								<!-- 
+								<!--
                 [ℹ] dropdown season select
                 -->
 								<div
@@ -1829,36 +1838,36 @@
 											(toggleDropdown =
 												!toggleDropdown)}
 									>
-										<!-- 
+										<!--
                     [ℹ] display selected week / round
                     -->
 										<p
 											class="
-                        s-14 
-                        m-r-5 
-                        w-500 
+                        s-14
+                        m-r-5
+                        w-500
                         color-grey
                       "
 											style="white-space: nowrap;"
 										>
-											<!-- 
+											<!--
                       [ℹ] week [default] [translation] -->
 											{#if optView === 'week'}
 												{FIXTURES_ODDS_T?.week}
 												{week_name}
-												<!-- 
+												<!--
                       [ℹ] round [default] [translation] -->
 											{:else if optView === 'round' && current_round_select.type == 'round'}
 												{FIXTURES_ODDS_T?.round}
 												{week_name}
-												<!-- 
+												<!--
                       [ℹ] round [stage] -->
 											{:else if optView === 'round' && current_round_select.type == 'advanced'}
 												{current_round_select.name}
 											{/if}
 										</p>
-										<!-- 
-                    [ℹ] arrow down [hidden-menu] 
+										<!--
+                    [ℹ] arrow down [hidden-menu]
                     -->
 										{#if !toggleDropdown}
 											<img
@@ -1877,7 +1886,7 @@
 										{/if}
 									</div>
 
-									<!-- 
+									<!--
                   [ℹ] show-dropdown
                   -->
 									{#if toggleDropdown}
@@ -1891,8 +1900,8 @@
 													{#each { length: weeks_total } as _, i}
 														<p
 															class="
-                                s-14 
-                                w-500 
+                                s-14
+                                w-500
                                 row-season
                               "
 															class:color-primary={i +
@@ -1907,15 +1916,15 @@
 															{i + 1}
 														</p>
 													{/each}
-													<!-- 
+													<!--
                         [ℹ] round data show
                         -->
 												{:else}
 													{#each current_rounds_all as _, i}
 														<p
 															class="
-                                s-14 
-                                w-500 
+                                s-14
+                                w-500
                                 row-season
                               "
 															class:color-primary={i +
@@ -1931,7 +1940,7 @@
 															{#if current_rounds_all[i].type == 'round'}
 																{FIXTURES_ODDS_T?.round}
 																{i + 1}
-																<!-- 
+																<!--
                               [ℹ] round [stage] -->
 															{:else if current_rounds_all[i].type == 'advanced'}
 																{current_rounds_all[
@@ -1947,8 +1956,8 @@
 								</div>
 							</div>
 
-							<!-- 
-              [ℹ] widget rounds / weeks selection 
+							<!--
+              [ℹ] widget rounds / weeks selection
               -->
 							<div
 								id="widget-round-week-select"
@@ -2010,24 +2019,24 @@
 								</div>
 							</div>
 						</div>
-						<!-- 
+						<!--
           [ℹ] widget main top controls
           [MOBILE]
           -->
 					{:else}
-						<!-- 
+						<!--
             [ℹ] widget top selection fixtures odds views [MOBILE]
             -->
 						<div
 							id="fix-odds-view-box"
 							class="
-                row-space-start 
+                row-space-start
                 m-b-16
               "
 						>
 							<div
 								class="
-                  fix-odds-view-opt-box 
+                  fix-odds-view-opt-box
                   cursor-pointer
                 "
 								on:click={() =>
@@ -2037,8 +2046,8 @@
 							>
 								<p
 									class="
-                    s-14 
-                    w-500 
+                    s-14
+                    w-500
                     color-grey
                   "
 								>
@@ -2048,7 +2057,7 @@
 
 							<div
 								class="
-                  fix-odds-view-opt-box 
+                  fix-odds-view-opt-box
                   cursor-pointer
                 "
 								on:click={() =>
@@ -2058,8 +2067,8 @@
 							>
 								<p
 									class="
-                    s-14 
-                    w-500 
+                    s-14
+                    w-500
                     color-grey
                   "
 								>
@@ -2070,11 +2079,11 @@
 						<div
 							id="mobile-middle-control-row"
 							class="
-                row-space-out 
+                row-space-out
                 m-b-20
               "
 						>
-							<!-- 
+							<!--
               [ℹ] dropdown season select
               -->
 							<div
@@ -2087,36 +2096,36 @@
 										(toggleDropdown =
 											!toggleDropdown)}
 								>
-									<!-- 
+									<!--
                   [ℹ] display selected week / round
                   -->
 									<p
 										class="
-                      s-14 
-                      m-r-5 
-                      w-500 
+                      s-14
+                      m-r-5
+                      w-500
                       color-grey
                     "
 										style="white-space: nowrap;"
 									>
-										<!-- 
+										<!--
                     [ℹ] week [default] [translation] -->
 										{#if optView === 'week'}
 											{FIXTURES_ODDS_T?.week}
 											{week_name}
-											<!-- 
+											<!--
                     [ℹ] round [default] [translation] -->
 										{:else if optView === 'round' && current_round_select.type == 'round'}
 											{FIXTURES_ODDS_T?.round}
 											{week_name}
-											<!-- 
+											<!--
                     [ℹ] round [stage] -->
 										{:else if optView === 'round' && current_round_select.type == 'advanced'}
 											{current_round_select.name}
 										{/if}
 									</p>
-									<!-- 
-                  [ℹ] arrow down [hidden-menu] 
+									<!--
+                  [ℹ] arrow down [hidden-menu]
                   -->
 									{#if !toggleDropdown}
 										<img
@@ -2135,7 +2144,7 @@
 									{/if}
 								</div>
 
-								<!-- 
+								<!--
                 [ℹ] show-dropdown
                 -->
 								{#if toggleDropdown}
@@ -2165,8 +2174,8 @@
 												{#each current_rounds_all as _, i}
 													<p
 														class="
-                              s-14 
-                              w-500 
+                              s-14
+                              w-500
                               row-season
                             "
 														class:color-primary={i +
@@ -2182,7 +2191,7 @@
 														{#if current_rounds_all[i].type == 'round'}
 															{FIXTURES_ODDS_T?.round}
 															{i + 1}
-															<!-- 
+															<!--
                             [ℹ] round [stage] -->
 														{:else if current_rounds_all[i].type == 'advanced'}
 															{current_rounds_all[
@@ -2197,7 +2206,7 @@
 								{/if}
 							</div>
 							<!--
-              [ℹ] widget rounds / weeks selection 
+              [ℹ] widget rounds / weeks selection
               -->
 							<div
 								id="widget-round-week-select"
@@ -2261,14 +2270,14 @@
 						</div>
 					{/if}
 
-					<!-- 
+					<!--
           [ℹ] widget round / week
           [ℹ] week toggle decrement/increment data
           -->
 					<div
 						id="mobile-table-box"
 						class="
-              row-space-out 
+              row-space-out
               m-b-12
             "
 					>
@@ -2291,22 +2300,22 @@
 						<div class="text-center">
 							<p
 								class="
-                  s-16 
-                  w-500 
+                  s-16
+                  w-500
                   color-black
                 "
 							>
-								<!-- 
+								<!--
                 [ℹ] week [default] [translation] -->
 								{#if optView === 'week'}
 									{FIXTURES_ODDS_T?.week}
 									{week_name}
-									<!-- 
+									<!--
                 [ℹ] round [default] [translation] -->
 								{:else if optView === 'round' && current_round_select.type == 'round'}
 									{FIXTURES_ODDS_T?.round}
 									{week_name}
-									<!-- 
+									<!--
                 [ℹ] round [stage] -->
 								{:else if optView === 'round' && current_round_select.type == 'advanced'}
 									{current_round_select.name}
@@ -2314,7 +2323,7 @@
 							</p>
 							<p
 								class="
-                  s-12 
+                  s-12
                   color-grey
                 "
 							>
@@ -2350,28 +2359,28 @@
 					</div>
 
 					<!--
-          [ℹ] widget MATCHES / ODDS view  
+          [ℹ] widget MATCHES / ODDS view
           -->
 					{#if selectedOpt == 'matches'}
-						<!-- 
+						<!--
             [ℹ] generated data fixtures
             -->
 						{#each fixtures_arr_filter as item}
 							<div>
-								<!-- 
+								<!--
                 [ℹ] grouping date fixtures
                 -->
 								<div
 									class="
-                    group-fixture-date 
-                    m-t-10 
+                    group-fixture-date
+                    m-t-10
                     m-b-8
                   "
 								>
 									<p
 										class="
                       color-grey
-                      w-500 
+                      w-500
                       s-12
                     "
 									>
@@ -2398,27 +2407,27 @@
 										]}
 									</p>
 								</div>
-								<!-- 
-                [ℹ] matches loop population 
+								<!--
+                [ℹ] matches loop population
                 -->
 								{#each item?.fixtures as fixture}
 									<div
 										class="
-                      fixture-row 
+                      fixture-row
                       row-space-out
                     "
 									>
-										<!-- 
-                    [ℹ] fixture left-side container 
+										<!--
+                    [ℹ] fixture left-side container
                     -->
 										<div class="row-space-start">
-											<!-- 
+											<!--
                       [ℹ] fixture-time
                       -->
 											<div
 												class="
-                          m-r-16 
-                          fixture-time-box 
+                          m-r-16
+                          fixture-time-box
                           text-center
                         "
 											>
@@ -2437,23 +2446,23 @@
 												{:else if fixture?.status === 'HT'}
 													<p
 														class="
-                              no-wrap 
-                              s-14 
+                              no-wrap
+                              s-14
                               color-black
                             "
 													>
 														{FIXTURES_ODDS_T
 															?.status_abv?.HT}
 													</p>
-													<!-- 
+													<!--
                         [ℹ] fixture-time +
                         [ℹ] status [translation] abbreviations SHOW
                         -->
 												{:else}
 													<p
 														class="
-                              no-wrap 
-                              s-14 
+                              no-wrap
+                              s-14
                               color-black
                             "
 														class:color-grey={[
@@ -2484,23 +2493,23 @@
 															.split(' ')
 															.join('')}
 													</p>
-													<!-- 
+													<!--
                           [ℹ] show status-abv of the match translations
                           [ℹ] NOTE: status_abv trnasltions on hasura must
                           [ℹ] NOTE: must match that of the SPORTMONKS data
                           -->
 													<p
 														class="
-                              no-wrap 
-                              s-14 
+                              no-wrap
+                              s-14
                               color-grey
                             "
 													>
 														{#if fixture?.status != 'NS'}
 															<p
 																class="
-                                  no-wrap 
-                                  s-14 
+                                  no-wrap
+                                  s-14
                                   color-grey
                                 "
 															>
@@ -2514,7 +2523,7 @@
 												{/if}
 											</div>
 
-											<!-- 
+											<!--
                       [ℹ] fixture-teams with FIXTURE-LINK
                       FIXME:  syntax error
                       -->
@@ -2526,7 +2535,7 @@
 															server_side_language
 													  ]}
 												style="width: inherit;"
-												
+
 												class:disable-anchor={fixture?.fixture_link ==
 													undefined ||
 													fixture?.fixture_link[
@@ -2535,24 +2544,24 @@
 											>
 												<div
 													class="
-                            column-start-grid-start 
+                            column-start-grid-start
                             fixture-teams-box
                           "
 												>
-													<!-- 
+													<!--
                           [ℹ] fixture home team box
                           -->
 													<div
 														class="row-space-start"
 													>
-														<!-- 
+														<!--
                             [ℹ] fixture home team name
                             -->
 														<p
 															class="
-                                s-14 
-                                color-black 
-                                w-500 
+                                s-14
+                                color-black
+                                w-500
                                 m-r-8
                               "
 															class:color-grey={fixture
@@ -2564,7 +2573,7 @@
 															{fixture?.teams
 																?.home?.name}
 														</p>
-														<!-- 
+														<!--
                             [ℹ] fixture-red-cards show/hide
                             -->
 														{#if fixture?.teams?.home?.red_cards}
@@ -2617,20 +2626,20 @@
 															{/if}
 														{/if}
 													</div>
-													<!-- 
+													<!--
                           [ℹ] fixture away team box
                           -->
 													<div
 														class="row-space-start"
 													>
-														<!-- 
+														<!--
                             [ℹ] fixture away team name
                             -->
 														<p
 															class="
-                                s-14 
-                                color-black 
-                                w-500 
+                                s-14
+                                color-black
+                                w-500
                                 m-r-8
                               "
 															class:color-grey={fixture
@@ -2642,7 +2651,7 @@
 															{fixture?.teams
 																?.away?.name}
 														</p>
-														<!-- 
+														<!--
                             [ℹ] fixture-red-cards show/hide
                             -->
 														{#if fixture?.teams?.away?.red_cards}
@@ -2698,20 +2707,20 @@
 												</div>
 											</a>
 										</div>
-										<!-- 
-                    [ℹ] fixture right-side container 
+										<!--
+                    [ℹ] fixture right-side container
                     -->
 										<div
 											class="row-space-end"
 											style="width: auto;"
 										>
-											<!-- 
+											<!--
                       [ℹ] fixture-link / media-link
                       [ℹ] show under conditions
                       -->
 											{#if fixture?.media_link && fixture?.media_link.length != 0 && fixture?.fixture_link && fixture?.fixture_link[server_side_language]}
 												<a
-													
+
 													href={fixture
 														?.fixture_link[
 														server_side_language
@@ -2721,7 +2730,7 @@
 												>
 													<div
 														class="
-                              media-play-btn 
+                              media-play-btn
                               m-r-16
                             "
 													>
@@ -2744,7 +2753,7 @@
 												</a>
 											{/if}
 
-											<!-- 
+											<!--
                       [ℹ] tip-link box SHOW/HIDE
                       -->
 											{#if fixture?.tip_link && fixture?.tip_link[server_side_language]}
@@ -2769,7 +2778,7 @@
 												</a>
 											{/if}
 
-											<!-- 
+											<!--
                       [ℹ] bet-site SHOW/HIDE
                       -->
 											{#if data}
@@ -2792,24 +2801,24 @@
 												</a>
 											{/if}
 
-											<!-- 
+											<!--
                       [ℹ] fixture scores BOX SHOW/HIDE
                       -->
 											{#if (fixture?.teams?.away?.score && fixture?.teams?.home?.score) || ['FT', 'FT_PEN', 'AET', 'LIVE', 'HT'].includes(fixture?.status)}
 												<div
 													class="
-                            column-space-center 
-                            m-l-24 
+                            column-space-center
+                            m-l-24
                             fixtures-scores-box
                           "
 												>
-													<!-- 
+													<!--
                           [ℹ] home score
                           -->
 													<p
 														class="
-                              s-14 
-                              w-500 
+                              s-14
+                              w-500
                               color-black
                             "
 														class:color-grey={fixture
@@ -2825,13 +2834,13 @@
 														{fixture?.teams?.home
 															?.score}
 													</p>
-													<!-- 
+													<!--
                           [ℹ] away score
                           -->
 													<p
 														class="
-                              s-14 
-                              w-500 
+                              s-14
+                              w-500
                               color-black
                             "
 														class:color-grey={fixture
@@ -2855,7 +2864,7 @@
 							</div>
 						{/each}
 					{:else}
-						<!-- 
+						<!--
             [ℹ] generated data fixtures
             -->
 						{#each fixtures_arr_filter as item}
@@ -2863,7 +2872,7 @@
 								<div
 									class="group-fixture-date row-space-out m-t-10 m-b-8"
 								>
-									<!-- 
+									<!--
                   [ℹ] grouping date fixtures
                   -->
 									<p
@@ -2888,7 +2897,7 @@
 											]
 										]}
 									</p>
-									<!-- 
+									<!--
                   [ℹ] home | away | draw
                   -->
 									<div
@@ -2913,35 +2922,35 @@
 									</div>
 								</div>
 
-								<!-- 
-                [ℹ] matches loop population 
+								<!--
+                [ℹ] matches loop population
                 -->
 								{#each item?.fixtures as fixture}
 									<div
 										class="fixture-row row-space-out"
 									>
-										<!-- 
-                    [ℹ] fixture left-side container 
+										<!--
+                    [ℹ] fixture left-side container
                     -->
 										<div class="row-space-start">
-											<!-- 
+											<!--
                       [ℹ] fixture LIVE minute box
                       -->
 											<div
 												class="
-                          m-r-16 
-                          fixture-time-box 
+                          m-r-16
+                          fixture-time-box
                           text-center
                         "
 											>
-												<!-- 
+												<!--
                         [ℹ] fixture LIVE minute show
                         -->
 												{#if fixture?.status === 'LIVE'}
 													<p
 														style="color: #FF3C3C;"
 														class="
-                              s-14 
+                              s-14
                               no-wrap
                             "
 													>
@@ -2951,29 +2960,29 @@
 															>'
 														</span>
 													</p>
-													<!-- 
+													<!--
                         [ℹ] fixture HT abbrv show
                         -->
 												{:else if fixture?.status === 'HT'}
 													<p
 														class="
-                              no-wrap 
-                              s-14 
+                              no-wrap
+                              s-14
                               color-black
                             "
 													>
 														{FIXTURES_ODDS_T
 															?.status_abv?.HT}
 													</p>
-													<!-- 
+													<!--
                         [ℹ] fixture show TIME
                         [ℹ] plus appropiate abbreviations
                         -->
 												{:else}
 													<p
 														class="
-                              no-wrap 
-                              s-14 
+                              no-wrap
+                              s-14
                               color-black
                             "
 														class:color-grey={[
@@ -3007,8 +3016,8 @@
 													{#if fixture?.status === 'FT_PEN'}
 														<p
 															class="
-                                no-wrap 
-                                s-14 
+                                no-wrap
+                                s-14
                                 color-grey
                               "
 														>
@@ -3020,8 +3029,8 @@
 													{#if fixture?.status === 'FT'}
 														<p
 															class="
-                                no-wrap 
-                                s-14 
+                                no-wrap
+                                s-14
                                 color-grey
                               "
 														>
@@ -3032,7 +3041,7 @@
 												{/if}
 											</div>
 
-											<!-- 
+											<!--
                       [ℹ] fixture-teams with FIXTURE-LINK
                       FIXME:  syntax error
                       -->
@@ -3044,7 +3053,7 @@
 															server_side_language
 													  ]}
 												style="width: inherit;"
-												
+
 												class:disable-anchor={fixture?.fixture_link ==
 													undefined ||
 													fixture?.fixture_link[
@@ -3053,25 +3062,25 @@
 											>
 												<div
 													class="
-                            column-start-grid-start 
+                            column-start-grid-start
                             fixture-teams-box
                           "
 												>
-													<!-- 
+													<!--
                           [ℹ] fixture home team box
                           -->
 													<div
 														class="row-space-start"
 													>
-														<!-- 
+														<!--
                             [ℹ] fixture home team name
                             -->
 														<p
 															class="
-                                s-14 
-                                color-black 
-                                w-500 
-                                m-r-8 
+                                s-14
+                                color-black
+                                w-500
+                                m-r-8
                                 odds-view
                               "
 															class:color-grey={fixture
@@ -3083,7 +3092,7 @@
 															{fixture?.teams
 																?.home?.name}
 														</p>
-														<!-- 
+														<!--
                             [ℹ] fixture-red-cards show/hide
                             -->
 														{#if fixture?.teams?.home?.red_cards}
@@ -3136,21 +3145,21 @@
 															{/if}
 														{/if}
 													</div>
-													<!-- 
+													<!--
                           [ℹ] fixture away team box
                           -->
 													<div
 														class="row-space-start"
 													>
-														<!-- 
+														<!--
                             [ℹ] fixture away team name
                             -->
 														<p
 															class="
-                                s-14 
-                                color-black 
-                                w-500 
-                                m-r-8 
+                                s-14
+                                color-black
+                                w-500
+                                m-r-8
                                 odds-view
                               "
 															class:color-grey={fixture
@@ -3162,7 +3171,7 @@
 															{fixture?.teams
 																?.away?.name}
 														</p>
-														<!-- 
+														<!--
                             [ℹ] fixture-red-cards show/hide
                             -->
 														{#if fixture?.teams?.away?.red_cards}
@@ -3219,14 +3228,14 @@
 											</a>
 										</div>
 
-										<!-- [ℹ] fixture right-side container 
+										<!-- [ℹ] fixture right-side container
                     -->
 										<div
 											class="row-space-end"
 											style="width: auto;"
 										>
-											<!-- 
-                      [ℹ] scores 
+											<!--
+                      [ℹ] scores
                       -->
 											{#if (fixture?.teams?.away?.score && fixture?.teams?.home?.score) || ['FT', 'FT_PEN', 'AET', 'LIVE', 'HT'].includes(fixture?.status)}
 												<div
@@ -3265,15 +3274,15 @@
 												</div>
 											{/if}
 
-											<!-- 
-                      [ℹ] live-odds 
+											<!--
+                      [ℹ] live-odds
                       -->
 											{#if fixture?.live_odds != undefined && !['FT', 'FT_PEN', 'AET'].includes(fixture?.status)}
 												<div
 													class="main-bet-box row-space-out"
 													style="width: auto;"
 												>
-													<!-- 
+													<!--
                           [ℹ] home
                           -->
 													<a
@@ -3309,7 +3318,7 @@
 														</div>
 													</a>
 
-													<!-- 
+													<!--
                           [ℹ] draw
                           -->
 													<a
@@ -3345,7 +3354,7 @@
 														</div>
 													</a>
 
-													<!-- 
+													<!--
                           [ℹ] away
                           -->
 													<a
@@ -3401,7 +3410,7 @@
 				</div>
 			{/if}
 
-			<!-- 
+			<!--
     [ℹ] promise was rejected
     -->
 		{:catch error}
@@ -3414,9 +3423,9 @@
   COMPONENT STYLE
 =================-->
 <style>
-  
-	/* 
-    [ℹ] OTHER STYLE / CSS 
+
+	/*
+    [ℹ] OTHER STYLE / CSS
   */
 	#background-area-close {
 		position: absolute;
@@ -3432,8 +3441,8 @@
 		pointer-events: none;
 	}
 
-	/* 
-    [ℹ] SEO WIDGET DATA 
+	/*
+    [ℹ] SEO WIDGET DATA
   */
 
 	#seo-widget-box {
@@ -3443,8 +3452,8 @@
 		left: -999999px;
 	}
 
-	/* 
-    [ℹ] NO DATA WIDGET STYLE / CSS 
+	/*
+    [ℹ] NO DATA WIDGET STYLE / CSS
   */
 
 	#no-widget-box {
@@ -3456,7 +3465,7 @@
 	}
 
 	/*
-    [ℹ] WIDGET MAIN STYLE / CSS 
+    [ℹ] WIDGET MAIN STYLE / CSS
     [ℹ] MOBILE FIRST
   */
 	div#fix-odds-view-box {
@@ -3768,7 +3777,7 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 400px) {
 		div.fixture-teams-box p.odds-view {
@@ -3779,7 +3788,7 @@
 		}
 	}
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		#fixtures-odds-widget-container {
@@ -3788,7 +3797,7 @@
 		}
 	}
 
-	/* 
+	/*
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) {
 		div#fixtures-odds-top-container {
@@ -3883,7 +3892,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1160px) {
 		#fixtures-odds-widget-container {
