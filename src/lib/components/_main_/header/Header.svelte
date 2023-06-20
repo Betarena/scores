@@ -38,10 +38,10 @@ COMPONENT JS - BASIC
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import AuthWidget from '../auth/Auth_Widget.svelte';
+  import HeaderNavBtn from './Header-Nav-Btn.svelte';
   import HeaderSportsBtn from './Header-Sports-Btn.svelte';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
-  import HeaderNavBtn from './Header-Nav-Btn.svelte';
 
   // #endregion ➤ [MAIN] Package Imports
 
@@ -1204,7 +1204,7 @@ NAVBAR MAIN
             FOOTBALL
             -->
             <HeaderSportsBtn
-              sportNameDefault={'Football'}
+              sportNameDefault={'football'}
               sportTranslation={WIDGET_T_DATA?.scores_header_translations?.sports_v2?.['football']}
               sportValue={WIDGET_T_DATA?.scores_header_fixtures_information?.['football']}
               selectedSport={selectedSport}

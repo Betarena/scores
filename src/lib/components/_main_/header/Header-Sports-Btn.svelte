@@ -52,8 +52,8 @@ COMPONENT JS (w/ TS)
   $: if_R_0 =
     selectedSport == sportNameDefault
   ;
-  $: if (if_R_0) sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`
-  $: if (!if_R_0) sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`
+  $: if (!if_R_0) sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`
+  $: if (if_R_0) sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
