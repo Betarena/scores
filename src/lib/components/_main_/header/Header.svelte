@@ -1000,28 +1000,30 @@ NAVBAR MAIN
       <!--
       THEME SELECTION
       -->
-      <div
-        id="theme-opt-container"
-        class="
-          row-space-start
-          m-r-30
-          cursor-pointer
-        "
-        on:click={() => selectedTheme()}
-        class:m-r-10={PROFILE_URL == $page.route.id}
-        class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
-      >
+      {#if !mobileExclusive}
+        <div
+          id="theme-opt-container"
+          class="
+            row-space-start
+            m-r-30
+            cursor-pointer
+          "
+          on:click={() => selectedTheme()}
+          class:m-r-10={PROFILE_URL == $page.route.id}
+          class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
+        >
 
-        <img
-          loading="lazy"
-          src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
-          alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
-          width=16
-          height=16
-          class:light={$userBetarenaSettings.theme == 'Dark'}
-        />
+          <img
+            loading="lazy"
+            src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
+            alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
+            width=16
+            height=16
+            class:light={$userBetarenaSettings.theme == 'Dark'}
+          />
 
-      </div>
+        </div>
+      {/if}
 
       <!--
       SIGN IN BUTTON
