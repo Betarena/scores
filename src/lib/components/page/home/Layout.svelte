@@ -1,11 +1,9 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
+	COMPONENT JS - BASIC
 =================== -->
-
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -19,32 +17,27 @@
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
-	import FeaturedBettingSitesWidget from '$lib/components/page/home/featured_betting_sites/_FeaturedBettingSitesWidget.svelte';
-	import FeaturedMatchWidget from '$lib/components/page/home/featured_match/_FeaturedMatch_Widget.svelte';
+	import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
+	import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
 	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
 	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
+	import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
 	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
 	import SvelteSeo from 'svelte-seo';
-	import LivescoresWidget from './livescores-v2/Livescores_Widget.svelte';
-// TODO:
-  // -> update to @scores-lib package types;
-	import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
-	import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
-	import type { Cache_Single_Lang_Featured_Betting_Site_Translation_Response } from '$lib/models/home/featured_betting_sites/firebase-real-db-interface';
-	import type { Cache_Single_Lang_Featured_Match_Translation_Response } from '$lib/models/home/featured_match/interface-fixture';
-	import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
-	import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
-	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
-	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
-	import type { Unsubscribe } from 'firebase/database';
+
+  import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
+  import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
+  import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
+  import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
+  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
+  import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+  import type { Unsubscribe } from 'firebase/database';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
 	let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
-	let FEATURED_MATCH_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Match_Translation_Response;
-	let FEATURED_BETTING_SITES_WIDGET_DATA_SEO: Cache_Single_Lang_Featured_Betting_Site_Translation_Response;
 	let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
 	let LEAGUE_LIST_WIDGET_DATA_SEO: REDIS_CACHE_SINGLE_league_list_seo_t_response;
 	let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
@@ -53,19 +46,17 @@
   let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
 
 	$: PAGE_DATA_SEO = $page.data?.PAGE_DATA_SEO;
-	$: FEATURED_MATCH_WIDGET_DATA_SEO =	$page.data?.FEATURED_MATCH_WIDGET_DATA_SEO;
-	$: FEATURED_BETTING_SITES_WIDGET_DATA_SEO =	$page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
 	$: BEST_GOAL_SCORERS_DATA_SEO =	$page.data?.BEST_GOAL_SCORERS_DATA_SEO;
 	$: LEAGUE_LIST_WIDGET_DATA_SEO = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
 	$: LEAGUES_TABLE_SCORES_SEO_DATA = $page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
 	$: SEO_BLOCK_DATA = $page.data?.SEO_BLOCK_DATA;
 
   //#endregion ➤ [VARIABLES]
-  
+
   //#region ➤ [MAIN-METHODS]
 
   /**
-   * @description obtains the target sportbook data 
+   * @description obtains the target sportbook data
    * information based on users geo-location;
    * data gathered at page-level and set to svelte-stores
    * to be used by (this) page components;
@@ -77,7 +68,7 @@
    */
   async function sportbookIdentify
   (
-  ): Promise < void > 
+  ): Promise < void >
   {
     if (!$userBetarenaSettings.country_bookmaker) return;
     const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
@@ -87,7 +78,7 @@
     .sort
     (
 			(
-        a, 
+        a,
         b
       ) =>
       parseInt(a.position) - parseInt(b.position)
@@ -101,7 +92,7 @@
   if (browser) {
     onceRealTimeLiveScoreboard()
   }
-  
+
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
@@ -116,12 +107,12 @@
 
   onMount
   (
-    async() => 
+    async() =>
     {
-    
+
       // NOTE: causes a potential delay in data retrieval,
       // as waits for onMount of Page & components;
-      // await onceRealTimeLiveScoreboard()
+      await onceRealTimeLiveScoreboard()
 
       let connectionRef = listenRealTimeScoreboardAll()
       FIREBASE_CONNECTIONS_SET.add(connectionRef)
@@ -132,11 +123,10 @@
         'visibilitychange',
         async function
         (
-        ) 
+        )
         {
           if (!document.hidden) {
             dlog('🔵 user is active', true)
-            alert('🔵 user is active')
             await onceRealTimeLiveScoreboard()
             let connectionRef = listenRealTimeScoreboardAll()
             FIREBASE_CONNECTIONS_SET.add(connectionRef)
@@ -149,10 +139,10 @@
   // CRITICAL
 	// onDestroy
   // (
-  //   async () => 
+  //   async () =>
   //   {
   //     const logsMsg: string[] = []
-  //     for (const connection of [...FIREBASE_CONNECTIONS_SET]) 
+  //     for (const connection of [...FIREBASE_CONNECTIONS_SET])
   //     {
   //       logsMsg.push('🔥 closing connection')
   //       connection();
@@ -161,7 +151,7 @@
   //     (
   //       `closing firebase connections`,
   //       logsMsg,
-  //       true, 
+  //       true,
   //       'background: red; color: black;'
   //     )
   //   }
@@ -178,14 +168,14 @@
 
 	onMount
   (
-    async () => 
+    async () =>
     {
       [
         tabletExclusive,
         mobileExclusive
       ] = viewport_change
       (
-        TABLET_VIEW, 
+        TABLET_VIEW,
         MOBILE_VIEW
       );
       window.addEventListener
@@ -213,8 +203,8 @@
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- 
-[ℹ] adding SEO-META-TAGS for (this) PAGE 
+<!--
+[ℹ] adding SEO-META-TAGS for (this) PAGE
 -->
 {#if PAGE_DATA_SEO}
 	<SvelteSeo
@@ -229,7 +219,7 @@
 	/>
 {/if}
 
-<!-- 
+<!--
 [ℹ] adding HREFLANG-TAGS for (this) PAGE
 -->
 <svelte:head>
@@ -259,12 +249,12 @@
 <section
   id="home-page"
 >
-	<!-- 
-  🖥️ LAPTOP 💻 TABLET 
+	<!--
+  🖥️ LAPTOP 💻 TABLET
   -->
 	{#if !tabletExclusive && !mobileExclusive}
-		<!-- 
-    [ℹ] 1st COLUMN 
+		<!--
+    [ℹ] 1st COLUMN
     -->
 		<div>
 			<LeagueListWidget
@@ -272,22 +262,18 @@
 			/>
 		</div>
 		<!--
-    [ℹ] 2nd COLUMN 
+    [ℹ] 2nd COLUMN
     -->
 		<div class="grid-display-column">
       <LivescoresWidget />
 			<SeoBlock {SEO_BLOCK_DATA} />
 		</div>
-		<!-- 
-    [ℹ] 3rd COLUMN 
+		<!--
+    [ℹ] 3rd COLUMN
     -->
 		<div class="grid-display-column">
-			<FeaturedMatchWidget
-				{FEATURED_MATCH_WIDGET_DATA_SEO}
-			/>
-			<FeaturedBettingSitesWidget
-				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-			/>
+			<FeatMatchWidget />
+			<FeatBetSiteWidget />
 			<BestGoalscorersWidget
 				{BEST_GOAL_SCORERS_DATA_SEO}
 			/>
@@ -295,20 +281,16 @@
 				{LEAGUES_TABLE_SCORES_SEO_DATA}
 			/>
 		</div>
-  <!-- 
+  <!--
   📱 MOBILE
   -->
 	{:else}
-		<div 
+		<div
       class="grid-display-column"
     >
       <LivescoresWidget />
-			<FeaturedBettingSitesWidget
-				{FEATURED_BETTING_SITES_WIDGET_DATA_SEO}
-			/>
-			<FeaturedMatchWidget
-				{FEATURED_MATCH_WIDGET_DATA_SEO}
-			/>
+			<FeatBetSiteWidget />
+			<FeatMatchWidget />
 			<BestGoalscorersWidget
 				{BEST_GOAL_SCORERS_DATA_SEO}
 			/>
@@ -328,7 +310,7 @@
 
 <style>
 
-	section#home-page 
+	section#home-page
   {
 		display: grid;
 		max-width: 1430px;
@@ -336,7 +318,7 @@
 		align-items: start;
 	}
 
-	div.grid-display-column 
+	div.grid-display-column
   {
 		display: grid;
 		grid-template-columns: 1fr;
@@ -347,8 +329,8 @@
     RESPONSIVNESS
   ==================== */
 
-	@media only screen 
-    and (min-width: 768px) 
+	@media only screen
+    and (min-width: 768px)
   {
 		section#home-page
     {
@@ -356,8 +338,8 @@
 		}
 	}
 
-	@media only screen 
-    and (min-width: 1160px) 
+	@media only screen
+    and (min-width: 1160px)
   {
 		section#home-page
     {
@@ -368,10 +350,10 @@
 		}
 	}
 
-	@media only screen 
-    and (min-width: 1320px) 
+	@media only screen
+    and (min-width: 1320px)
   {
-		section#home-page 
+		section#home-page
     {
 			gap: 20px;
 			grid-template-columns:

@@ -77,7 +77,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <a
-  href={`${$sessionStore?.serverLang == 'en' ? '/' : `/${$sessionStore?.serverLang}`}/${removeDiacritics(sportTranslation?.toLowerCase())}`}
+  href={$sessionStore?.serverLang == 'en' ? `/${removeDiacritics(sportTranslation?.toLowerCase())}` : `/${$sessionStore?.serverLang}/${removeDiacritics(sportTranslation?.toLowerCase())}` }
 >
   <div
     class="

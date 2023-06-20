@@ -299,7 +299,6 @@ COMPONENT JS - BASIC
     lang: string
   ): Promise < void >
   {
-
     if ($sessionStore?.serverLang == lang) return;
 
 		// past instance of LANG;
@@ -354,8 +353,8 @@ COMPONENT JS - BASIC
       dlog
       (
         `${NB_W_TAG} -> ${lang}`,
-         true,
-          NB_W_STY
+        true,
+        NB_W_STY
       );
 
       await goto
@@ -368,7 +367,7 @@ COMPONENT JS - BASIC
 
 		// on (special) routes, omit (this method) intervention;
     // these routes manage their own transaltions (complex);
-    const if_1 =
+    const if_1: boolean =
       OMIT_URLS.includes($page.route.id)
     ;
     if (if_1)
@@ -802,6 +801,7 @@ NAVBAR MAIN
             navKey={'scores'}
             navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
             navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
+            isProfilePage={PROFILE_URL == $page.route.id}
             {tabletExclusive}
             {mobileExclusive}
           />
@@ -813,6 +813,7 @@ NAVBAR MAIN
             navKey={'content'}
             navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
             navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
+            isProfilePage={PROFILE_URL == $page.route.id}
             {tabletExclusive}
             {mobileExclusive}
           />
@@ -824,6 +825,7 @@ NAVBAR MAIN
             navKey={'competitions'}
             navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
             navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+            isProfilePage={PROFILE_URL == $page.route.id}
             soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
             isSoon={true}
             disableAnchor={true}
@@ -831,10 +833,16 @@ NAVBAR MAIN
             {mobileExclusive}
           />
 
-          <div
-            id="nav-triangle"
-            style="left: {width}px;"
-          />
+          <!--
+          NAV TRIANGLE
+          -->
+          {#if PROFILE_URL != $page.route.id}
+            <div
+              id="nav-triangle"
+              style="left: {width}px;"
+            />
+          {/if}
+
         </div>
 
       {/if}
@@ -880,7 +888,7 @@ NAVBAR MAIN
             -->
             <img
               loading="lazy"
-              src='./assets/svg/currency/usd.svg'
+              src='/assets/svg/currency/usd.svg'
               alt='usd-icon'
               width="16"
               height="16"
@@ -1571,7 +1579,7 @@ NAVBAR MAIN
                 -->
                 <img
                   loading="lazy"
-                  src='./assets/svg/currency/usd.svg'
+                  src='/assets/svg/currency/usd.svg'
                   alt='usd-icon'
                   width="16"
                   height="16"
@@ -1615,7 +1623,7 @@ NAVBAR MAIN
             -->
             <div
               id="lang-container"
-              class="m-r-16"
+              class:m-r-16={mobileExclusive}
             >
 
               <!--
@@ -1694,11 +1702,10 @@ NAVBAR MAIN
                 id="theme-opt-container"
                 class="
                   row-space-start
-                  m-r-30
                   cursor-pointer
                 "
                 on:click={() => selectedTheme()}
-                class:m-r-10={PROFILE_URL == $page.route.id}
+                class:m-r-10={!mobileExclusive && PROFILE_URL == $page.route.id}
                 class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
               >
 
@@ -1737,6 +1744,7 @@ NAVBAR MAIN
             navKey={'scores'}
             navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
             navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
+            isProfilePage={PROFILE_URL == $page.route.id}
             {tabletExclusive}
             {mobileExclusive}
           />
@@ -1748,6 +1756,7 @@ NAVBAR MAIN
             navKey={'content'}
             navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
             navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
+            isProfilePage={PROFILE_URL == $page.route.id}
             {tabletExclusive}
             {mobileExclusive}
           />
@@ -1759,6 +1768,7 @@ NAVBAR MAIN
             navKey={'competitions'}
             navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
             navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+            isProfilePage={PROFILE_URL == $page.route.id}
             soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
             isSoon={true}
             disableAnchor={true}

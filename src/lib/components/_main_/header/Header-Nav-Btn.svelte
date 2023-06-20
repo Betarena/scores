@@ -16,6 +16,7 @@ COMPONENT JS (w/ TS)
   export let navKey: string;
   export let navUrl: string;
   export let navTxt: string;
+  export let isProfilePage: boolean;
   export let soonTxt: string = '';
   export let isSoon: boolean = false;
   export let disableAnchor: boolean = false;
@@ -62,7 +63,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     cursor-pointer
   "
   class:m-b-30={tabletExclusive || mobileExclusive}
-  class:active={navKey == 'scores'}
+  class:active={navKey == 'scores' && !isProfilePage}
   class:disable-anchor={disableAnchor}
   on:mouseover={() => $sessionStore.navBtnHover = navKey}
   on:mouseout={() => $sessionStore.navBtnHover = undefined}
