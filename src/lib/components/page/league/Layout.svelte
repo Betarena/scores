@@ -1,45 +1,37 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
+	COMPONENT JS - BASIC
     [TypeScript Written]
 =================== -->
+
 <script lang="ts">
+
+  // #region ➤ [MAIN] Package Imports
+
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { get } from '$lib/api/utils.js';
+	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common.js';
+	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import { dlog } from '$lib/utils/debug.js';
 	import { removeDiacritics } from '$lib/utils/languages';
+	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import AboutBlock from '$lib/components/page/league/about_block/_About_Block.svelte';
-	import FixtureOddsWidget from '$lib/components/page/league/fixtures_odds/_Fixture_Odds_Widget.svelte';
-	import LeagueInfoWidget from '$lib/components/page/league/league_info/_LeagueInfo_Widget.svelte';
+	import LeagueInfoWidget from '$lib/components/page/league/league-info/LeagueInfo-Widget.svelte';
 	import LeagueInfoWidget2 from '$lib/components/page/league/league_info_2/_LeagueInfo_Widget_2.svelte';
 	import StandingsWidget from '$lib/components/page/league/standings/_Standings_Widget.svelte';
 	import TopPlayersWidget from '$lib/components/page/league/top_players/_Top_Players_Widget.svelte';
 	import SvelteSeo from 'svelte-seo';
+	import Breadcrumb from './Breadcrumb.svelte';
+	import FixtureOddsWidget from './fixture-odds/FixtureOdds-Widget.svelte';
 
-	import type { Cache_Single_Tournaments_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
+  // #endregion ➤ [MAIN] Package Imports
 
-	import type { Cache_Single_Tournaments_League_Info_Data_Response } from '$lib/models/tournaments/league-info/types';
-
-	import type {
-		REDIS_CACHE_SINGLE_tournament_standings_data,
-		REDIS_CACHE_SINGLE_tournament_standings_translation
-	} from '$lib/models/tournaments/standings/types';
-
-	import type {
-		REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response,
-		REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
-	} from '$lib/models/tournaments/top_players/types';
-
-	import type {
-		REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response,
-		REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
-	} from '$lib/models/tournaments/fixtures_odds/types';
-
-	import type { BETARENA_HASURA_scores_tournaments } from '$lib/models/hasura';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
+  // #region ➤ [VARIABLES]
 
 	let PAGE_DATA_SEO: Cache_Single_Tournaments_SEO_Translation_Response;
 	let TOURNAMENT_DATA_TRANSLATED_COPIES: BETARENA_HASURA_scores_tournaments[];
@@ -49,8 +41,6 @@
 	let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
 	let TOP_PLAYERS_T: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
 	let TOP_PLAYERS_DATA: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
-	let FIXTURES_ODDS_T: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response;
-	let FIXTURES_ODDS_DATA: REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response;
 
 	$: PAGE_DATA_SEO = $page.data.PAGE_DATA_SEO;
 	$: TOURNAMENT_DATA_TRANSLATED_COPIES = $page.data.TOURNAMENT_DATA_TRANSLATED_COPIES;
@@ -60,24 +50,51 @@
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
 	$: TOP_PLAYERS_T = $page.data.TOP_PLAYERS_T;
 	$: TOP_PLAYERS_DATA =	$page.data.TOP_PLAYERS_DATA;
-	$: FIXTURES_ODDS_T = $page.data.FIXTURES_ODDS_T;
-	$: FIXTURES_ODDS_DATA =	$page.data.FIXTURES_ODDS_DATA;
 
 	// TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: server_side_language = platfrom_lang_ssr(
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
-
 	// [ℹ] listen to change in LANG SELECT of `$userBetarenaSettings.lang`
-	let current_lang: string = server_side_language;
+	let current_lang: string = $sessionStore?.serverLang;
 	$: refresh_lang = $userBetarenaSettings.lang;
+
+  /**
+   * @description obtains the target sportbook data
+   * information based on users geo-location;
+   * data gathered at page-level and set to svelte-stores
+   * to be used by (this) page components;
+   * NOTE: (*) best approach
+   * TODO: can be moved to a layout-level [?]
+   * TODO: can be moved to a header-level [?]
+   * TODO: can be moved to a +server-level [⚠️]
+   * @returns {Promise<void>} void
+   */
+  async function sportbookIdentify
+  (
+  ): Promise < void >
+  {
+    if (!$userBetarenaSettings.country_bookmaker) return;
+    const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
+    $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response;
+    $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response[];
+    $sessionStore.sportbook_list = $sessionStore.sportbook_list
+    .sort
+    (
+			(
+        a,
+        b
+      ) =>
+      parseInt(a.position) - parseInt(b.position)
+		);
+  }
+
+  $: if ($userBetarenaSettings.country_bookmaker)
+  {
+    sportbookIdentify()
+  }
+
+  // #endregion ➤ [VARIABLES]
+
+  //#region ➤ [REACTIVIY] [METHODS]
 
 	// [ℹ] validate LANG change
 	$: if (
@@ -95,6 +112,10 @@
 		// prefetch(newURL);
 		goto(newURL, { replaceState: true });
 	}
+
+  // #endregion ➤ [REACTIVIY] [METHODS]
+
+  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
   // ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -119,14 +140,45 @@
 		);
 	});
 
+  onMount
+  (
+    async() =>
+    {
+
+      // NOTE: causes a potential delay in data retrieval,
+      // as waits for onMount of Page & components;
+      await onceRealTimeLiveScoreboard()
+
+      let connectionRef = listenRealTimeScoreboardAll()
+      // FIREBASE_CONNECTIONS_SET.add(connectionRef)
+      sportbookIdentify()
+
+      document.addEventListener
+      (
+        'visibilitychange',
+        async function
+        (
+        )
+        {
+          if (!document.hidden) {
+            dlog('🔵 user is active', true)
+            await onceRealTimeLiveScoreboard()
+            let connectionRef = listenRealTimeScoreboardAll()
+            // FIREBASE_CONNECTIONS_SET.add(connectionRef)
+          }
+        }
+      );
+    }
+  );
+
 </script>
 
 <!-- ===================
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- 
-[ℹ] adding SEO-META-TAGS for (this) PAGE 
+<!--
+[ℹ] adding SEO-META-TAGS for (this) PAGE
 -->
 {#if PAGE_DATA_SEO}
 	<SvelteSeo
@@ -141,15 +193,15 @@
 	/>
 {/if}
 
-<!-- 
-[ℹ] adding HREF-LANG-META-TAGS for (this) PAGE 
+<!--
+[ℹ] adding HREF-LANG-META-TAGS for (this) PAGE
 -->
 <svelte:head>
 	{#if PAGE_DATA_SEO}
 		{#each PAGE_DATA_SEO?.hreflang || [] as item}
 			{#each TOURNAMENT_DATA_TRANSLATED_COPIES as item_}
 				{#if item.link == item_.lang}
-					<!-- [ℹ] content here 
+					<!-- [ℹ] content here
             <link rel="alternate" hrefLang="it" href="https://scores.betarena.com/it/calcio/inghilterra/premier-league/>
             <link rel="alternate" hrefLang="es" href="https://scores.betarena.com/es/futbol/inglaterra/premier-league/>
             <link rel="alternate" hrefLang="pt" href="https://scores.betarena.com/pt/futebol/inglaterra/premier-league/>
@@ -225,66 +277,20 @@
     -> missing use of the WIDGET-LIST to HIDE/SHOW widgets
 =================== -->
 
-<section id="tournaments-page">
-	<!-- 
-  [ℹ] breadcrumbs URL 
-  -->
-	<div
-		id="tournaments-page-breadcrumbs"
-		class="row-space-start m-b-20"
-	>
-		<a
-			
-			href={$page.params.lang != undefined
-				? `/${$page.params.lang}/${$page.params.sport}`
-				: `/${$page.params.sport}`}
-		>
-			<p
-				class="s-14 color-white m-r-10 capitalize cursor-pointer"
-			>
-				{TOURNAMENT_DATA.sport}
-			</p>
-		</a>
+<section
+  id="tournaments-page"
+>
 
-		<img
-			src="/assets/svg/tournaments/arrow-right.svg"
-			alt="default alt text"
-			class="m-r-10"
-			width="14px"
-			height="14px"
-		/>
-
-		<a
-			
-			href={$page.params.lang != undefined
-				? `/${$page.params.lang}/${$page.params.sport}/${$page.params.country}`
-				: `/${$page.params.sport}/${$page.params.country}`}
-		>
-			<p
-				class="s-14 color-white m-r-10 capitalize cursor-pointer"
-			>
-				{TOURNAMENT_DATA.country}
-			</p>
-		</a>
-
-		<img
-			src="/assets/svg/tournaments/arrow-right.svg"
-			alt="default alt text"
-			class="m-r-10"
-			width="14px"
-			height="14px"
-		/>
-
-		<p class="s-14 color-white m-r-10 capitalize">
-			{TOURNAMENT_DATA.name}
-		</p>
-	</div>
+  <Breadcrumb
+    sportT={TOURNAMENT_DATA.sport}
+    countryT={TOURNAMENT_DATA.country}
+    leagueNameT={TOURNAMENT_DATA.name}
+  />
 
 	{#if !tabletExclusive && !mobileExclusive}
 		<!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
 		<svelte:component
 			this={LeagueInfoWidget}
-			LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA}
 		/>
 
 		<div id="widget-grid-display">
@@ -296,8 +302,6 @@
 				/>
 				<svelte:component
 					this={FixtureOddsWidget}
-					{FIXTURES_ODDS_T}
-					{FIXTURES_ODDS_DATA}
 				/>
 				<svelte:component
 					this={AboutBlock}
@@ -321,7 +325,6 @@
 		<!-- <LeagueInfoWidget LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA} /> -->
 		<svelte:component
 			this={LeagueInfoWidget}
-			LEAGUE_INFO_SEO_DATA={LEAGUE_INFO_DATA}
 		/>
 
 		<div id="widget-grid-display">
@@ -333,8 +336,6 @@
 				/>
 				<svelte:component
 					this={FixtureOddsWidget}
-					{FIXTURES_ODDS_T}
-					{FIXTURES_ODDS_DATA}
 				/>
 				<svelte:component
 					this={TopPlayersWidget}
@@ -352,13 +353,17 @@
 			</div>
 		</div>
 	{/if}
+
 </section>
 
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
+
 <style>
-	section#tournaments-page {
+
+	section#tournaments-page
+  {
 		/* display: grid; */
 		max-width: 1430px;
 		grid-template-columns: 1fr;
@@ -366,29 +371,21 @@
 		align-items: start;
 	}
 
-	div#widget-grid-display {
+	div#widget-grid-display
+  {
 		display: grid;
 		margin-top: 24px;
 		align-items: start;
 	}
 
-	div.grid-display-column {
+	div.grid-display-column
+  {
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 24px;
 	}
 
-	div#tournaments-page-breadcrumbs p.capitalize {
-		text-transform: capitalize;
-	}
-	div#tournaments-page-breadcrumbs > p {
-		color: #8c8c8c !important;
-	}
-	div#tournaments-page-breadcrumbs a > p:hover {
-		color: #f5620f !important;
-	}
-
-	/* 
+	/*
   RESPONSIVE FOR TABLET (&+) [768px] */
 	@media only screen and (min-width: 768px) {
 		div#widget-grid-display {
@@ -396,7 +393,7 @@
 		}
 	}
 
-	/* 
+	/*
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
 	@media only screen and (min-width: 1160px) {
 		div#widget-grid-display {
@@ -408,7 +405,7 @@
 		}
 	}
 
-	/* 
+	/*
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
 	@media only screen and (min-width: 1320px) {
 		div#widget-grid-display {
