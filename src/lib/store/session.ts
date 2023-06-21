@@ -31,6 +31,7 @@ const sessionStoreObj: Platform_Session =
   livescore_now_scoreboard: new Map(),
   livescore_now_fixture_target: undefined,
   live_odds_fixture_target: [],
+  live_odds_fixture_map: new Map(),
   livescore_now_player_fixture: undefined,
   livescore_now_fixtures: []
 };
@@ -86,6 +87,30 @@ function createLocalStore
     ) =>
     {
       sessionStoreObj.live_odds_fixture_target = data;
+      set(sessionStoreObj);
+    },
+
+    /**
+     * @summary
+     * [HELPER]
+     * @description
+     * stores "target" fixture odds data in session object;
+     * @param
+     * {number} key | fixture id
+     * @param
+     * {FIREBASE_odds[]} data  | target fixture sportbook-data
+     */
+    updateLiveOddsMap:
+    (
+      key: number,
+      data: FIREBASE_odds[]
+    ) =>
+    {
+      sessionStoreObj.live_odds_fixture_map.set
+      (
+        key,
+        data
+      );
       set(sessionStoreObj);
     },
 

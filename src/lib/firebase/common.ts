@@ -8,18 +8,18 @@ import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } fro
 // #region PLAYER_IDS
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
  * @description
  * ➨ one-off request "X" target path (real-db) data;
  * ➨ kickstarts liveMap (player-ids) generation;
- * @returns 
+ * @returns
  * {Promise < void >}
 */
 export async function onceTargetPlayerIds
 (
   path: string
-): Promise < void > 
+): Promise < void >
 {
   const firebaseData = await getTargetRealDbData
   (
@@ -39,17 +39,17 @@ export async function onceTargetPlayerIds
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
- * @description 
+ * @description
  * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
- * @returns 
+ * @returns
  * {Unsubscribe} Unsubscribe
  */
 export function targetPlayerIdsListen
 (
   path: string
-): Unsubscribe 
+): Unsubscribe
 {
   const dbRef = ref
   (
@@ -59,10 +59,10 @@ export function targetPlayerIdsListen
 
   const listenEventRef = onValue
   (
-    dbRef, 
+    dbRef,
     (
       snapshot
-    ) => 
+    ) =>
     {
       const firebaseData: FIRE_LNPI = snapshot.val();
       sessionStore.updateLivescorePlayerId
@@ -72,7 +72,7 @@ export function targetPlayerIdsListen
     }
   );
 
-  return listenEventRef 
+  return listenEventRef
 }
 
 // #endregion PLAYER_IDS
@@ -80,12 +80,12 @@ export function targetPlayerIdsListen
 // #region ODDS
 
 /**
- * @summary 
+ * @summary
  * [HELPER]
- * @param 
- * {number} fixtureId 
- * @param 
- * {string} fixtureTime 
+ * @param
+ * {number} fixtureId
+ * @param
+ * {string} fixtureTime
  * @returns
  * a target directory/url to listen to "odds" data to a target fixture;
  */
@@ -106,17 +106,17 @@ export function createFixtureOddsPath
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
- * @description 
+ * @description
  * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
- * @returns 
+ * @returns
  * {Unsubscribe} Unsubscribe
  */
 export function targetLivescoreNowFixtureOddsListen
 (
   path: string
-): Unsubscribe 
+): Unsubscribe
 {
   const dbRef = ref
   (
@@ -126,20 +126,20 @@ export function targetLivescoreNowFixtureOddsListen
 
   const listenEventRef = onValue
   (
-    dbRef, 
+    dbRef,
     (
       snapshot
-    ) => 
+    ) =>
     {
       const sportbookArray: FIREBASE_odds[] = []
 
-      const data: [string, FIREBASE_odds][] = 
+      const data: [string, FIREBASE_odds][] =
         snapshot.exists()
           ? Object.entries(snapshot.val())
           : []
       ;
 
-      for (const sportbook of data) 
+      for (const sportbook of data)
       {
         sportbook[1].sportbook = sportbook[0].toString();
         sportbookArray.push(sportbook[1]);
@@ -152,7 +152,124 @@ export function targetLivescoreNowFixtureOddsListen
     }
   );
 
-  return listenEventRef 
+  return listenEventRef
+}
+
+/**
+ * @summary
+ * [MAIN]
+ * @description
+ * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
+ * @returns
+ * {Unsubscribe} Unsubscribe
+ */
+export function targetLivescoreNowFixtureOddsListenMulti
+(
+  paths: string[]
+): Unsubscribe[]
+{
+  const listenEventRefsList: Unsubscribe[] = [];
+
+  for (const path of paths)
+  {
+    const dbRef = ref
+    (
+      db_real,
+      path
+    );
+
+    const listenEventRef = onValue
+    (
+      dbRef,
+      (
+        snapshot
+      ) =>
+      {
+        const data: [string, FIREBASE_odds][] =
+          snapshot.exists()
+            ? Object.entries(snapshot.val())
+            : []
+        ;
+
+        const sportbookArray: FIREBASE_odds[] = []
+
+        for (const sportbook of data)
+        {
+          sportbook[1].sportbook = sportbook[0].toString();
+          sportbookArray.push(sportbook[1]);
+        }
+
+        sessionStore.updateLiveOddsMap
+        (
+          parseInt(snapshot?.key),
+          sportbookArray
+        );
+      }
+    );
+
+    listenEventRefsList.push
+    (
+      listenEventRef
+    );
+  }
+
+  return listenEventRefsList
+}
+
+/**
+ * @summary
+ * [MAIN]
+ * @description
+ * ➨ one-off request "odds" (db) data;
+ * ➨ kickstarts liveOddsMap generation;
+ * @returns
+ * {Promise < void >}
+*/
+export async function oneOffOddsDataGet
+(
+  paths: string[]
+): Promise < void >
+{
+
+  for (const path of paths)
+  {
+
+    console.log('path', path)
+
+    const firebaseData = await getTargetRealDbData
+    (
+      path
+    );
+
+    const data: [string, FIREBASE_odds][] =
+      firebaseData != null
+        ? Object.entries(firebaseData)
+        : []
+    ;
+
+    const sportbookArray: FIREBASE_odds[] = [];
+
+    const fixtureId = path.split
+    (
+      '/'
+    )
+    ?.[path.split('/').length - 1];
+
+    for (const sportbook of data)
+    {
+      sportbook[1].sportbook = sportbook?.[0]?.toString();
+      sportbookArray.push(sportbook?.[1]);
+    }
+
+    sessionStore.updateLiveOddsMap
+    (
+      parseInt(fixtureId),
+      sportbookArray
+    );
+
+  }
+
+  return;
 }
 
 // #endregion ODDS
@@ -160,16 +277,16 @@ export function targetLivescoreNowFixtureOddsListen
 // #region LIVESCORES_NOW
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
- * @description 
+ * @description
  * ➨ listens to events changes in "livescores_now"
- * @returns 
+ * @returns
  * {Unsubscribe}
  */
 export function listenRealTimeLivescoresNowChange
 (
-): Unsubscribe 
+): Unsubscribe
 {
   const dataRef = ref
   (
@@ -179,12 +296,12 @@ export function listenRealTimeLivescoresNowChange
 
   const listenEventRef = onValue
   (
-    dataRef, 
+    dataRef,
     (
       snapshot
-    ) => 
+    ) =>
     {
-      if (snapshot.val() != null) 
+      if (snapshot.val() != null)
       {
         const data: [
           string,
@@ -199,17 +316,17 @@ export function listenRealTimeLivescoresNowChange
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
- * @description 
+ * @description
  * ➨ common method that will listen to real-time changes in "livescores_now_scoreboard" Firebase (REAL-DB);
- * @returns 
+ * @returns
  * {Unsubscribe} Unsubscribe
  */
 export function targetLivescoreNowFixtureListen
 (
   path: string
-): Unsubscribe 
+): Unsubscribe
 {
   const dbRef = ref
   (
@@ -219,10 +336,10 @@ export function targetLivescoreNowFixtureListen
 
   const listenEventRef = onValue
   (
-    dbRef, 
+    dbRef,
     (
       snapshot
-    ) => 
+    ) =>
     {
       const firebaseData: FIREBASE_livescores_now = snapshot.val();
       sessionStore.updateLivescoresTarget
@@ -232,28 +349,28 @@ export function targetLivescoreNowFixtureListen
     }
   );
 
-  return listenEventRef 
+  return listenEventRef
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
  * @description
  * ➨ one-off request "livescores_now" (db) data;
  * ➨ kickstarts liveMap generation;
- * @returns 
+ * @returns
  * {Promise < void >}
 */
 export async function one_off_livescore_call
 (
-): Promise < void > 
+): Promise < void >
 {
   const firebaseData = await getTargetRealDbData
   (
     `livescores_now`
   );
 
-  const data: [string, FIREBASE_livescores_now][] = 
+  const data: [string, FIREBASE_livescores_now][] =
     firebaseData != null
       ? Object.entries(firebaseData)
       : []
@@ -263,18 +380,18 @@ export async function one_off_livescore_call
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
  * @description
  * ➨ one-off request "X" target path (real-db) data;
  * ➨ kickstarts liveMap generation;
- * @returns 
+ * @returns
  * {Promise < void >}
 */
 export async function onceTargetLivescoreNowFixtureGet
 (
   path: string
-): Promise < void > 
+): Promise < void >
 {
   const firebaseData: FIREBASE_livescores_now = await getTargetRealDbData
   (
@@ -287,23 +404,23 @@ export async function onceTargetLivescoreNowFixtureGet
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
  * @description
  * ➨ generates a liveMap and stores in svelte-store (session);
- * @param 
+ * @param
  * {[string, FIREBASE_livescores_now][]} data
- * @returns 
+ * @returns
  * {Promise < void >}
  */
 export async function genLiveFixMap
 (
   data: [string, FIREBASE_livescores_now][]
-): Promise < void > 
+): Promise < void >
 {
   const liveFixturesMap = new Map<number, FIREBASE_livescores_now>();
 
-  for await (const live_fixture of data) 
+  for await (const live_fixture of data)
   {
     const fixture_id = parseInt
     (
@@ -330,16 +447,16 @@ export async function genLiveFixMap
 // #region LIVESCORES_NOW_SCOREBOARD
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
- * @description common method that will listen to 
- * real-time changes in "livescores_now_scoreboard" 
+ * @description common method that will listen to
+ * real-time changes in "livescores_now_scoreboard"
  * Firebase (REAL-DB);
  * @returns {Unsubscribe} Unsubscribe
  */
 export function listenRealTimeScoreboardAll
 (
-): Unsubscribe 
+): Unsubscribe
 {
   const dbRef = ref
   (
@@ -349,14 +466,14 @@ export function listenRealTimeScoreboardAll
 
   const listenEventRef = onValue
   (
-    dbRef, 
+    dbRef,
     (
       snapshot
-    ) => 
+    ) =>
     {
-      if (snapshot.val() != null) 
+      if (snapshot.val() != null)
       {
-        const data: 
+        const data:
         [
           string,
           FIRE_LNNS
@@ -366,29 +483,29 @@ export function listenRealTimeScoreboardAll
     }
   );
 
-  return listenEventRef 
+  return listenEventRef
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN]
- * @description 
+ * @description
  * ➨ one-off request "livescores_now_scoreboard" (db) data;
- * @version 
+ * @version
  * 1.0 - init [19/04/2023]
- * @returns 
+ * @returns
  * {Promise < void >}
 */
-export async function onceRealTimeLiveScoreboard 
+export async function onceRealTimeLiveScoreboard
 (
-): Promise < void > 
+): Promise < void >
 {
   const firebaseData = await getTargetRealDbData
   (
     `livescores_now_scoreboard`
   );
 
-  const data: [string, FIRE_LNNS][] = 
+  const data: [string, FIRE_LNNS][] =
     firebaseData != null
       ? Object.entries(firebaseData)
       : []
@@ -397,11 +514,11 @@ export async function onceRealTimeLiveScoreboard
 }
 
 /**
- * @summary 
+ * @summary
  * [HELPER]
  * @description generates a MAP of livescores-now
  * (scoreboard) data structure;
- * @param {[string, FIRE_LNNS][]} data 
+ * @param {[string, FIRE_LNNS][]} data
  */
 function generateLiveScoreboardList
 (
@@ -410,7 +527,7 @@ function generateLiveScoreboardList
 {
   const liveFixturesMap = new Map<number, FIRE_LNNS>();
 
-  for (const liveFixture of data) 
+  for (const liveFixture of data)
   {
     const fixtureId = parseInt
     (

@@ -110,13 +110,15 @@ export interface Platform_Session
   // -----
 
   /** holds "LIVE" data on the Firebase Livescore [V1] @deprecated */
-  livescore_now: Map<number, FIREBASE_livescores_now>
+  livescore_now: Map < number, FIREBASE_livescores_now >;
   /** holds "LIVE" data on the Firebase Livescore (Scoreboard) [V2] */
-  livescore_now_scoreboard: Map<number, FIRE_LNNS>
-  /** holds "LIVE" data for a target fixture scores */
+  livescore_now_scoreboard: Map < number, FIRE_LNNS >;
+  /** holds "LIVE" data for a target (single) fixture scores */
   livescore_now_fixture_target: FIREBASE_livescores_now;
-  /** holds "LIVE" data for a target fixture odds */
+  /** holds "LIVE" data for a target (single) fixture odds */
   live_odds_fixture_target: FIREBASE_odds[];
+  /** holds "LIVE" data on the Firebase Odds target (multiple) fixture */
+  live_odds_fixture_map: Map < number, FIREBASE_odds[] >;
   /** holds "LIVE" data for ALL players in a game */
   livescore_now_player_fixture: number | null;
   /** holds "LIVE" data for ALL fixtures */
