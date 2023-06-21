@@ -1,4 +1,4 @@
-<!-- 
+<!--
 ====================
 This is an example .svelte
 component file, to give guidance on
@@ -16,33 +16,27 @@ COMPONENT JS (w/ TS)
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
 	import { userBetarenaSettings } from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
+
 	import WidgetTitle from './Widget-Title.svelte';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ [MAIN] Package Imports
 
-  //#region ➤ [VARIABLES]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ [VARIABLES]
 
   export let WIDGET_TITLE: string
   export let NO_DATA_TITLE: string
   export let NO_DATA_DESC: string
+  export let version: 1 | 2 = 1;
 
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ [VARIABLES]
 
-  //#region ➤ [MAIN-METHODS]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ [MAIN-METHODS]
 
   function do_something() {}
 
@@ -94,66 +88,140 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
-[ℹ] title of the widget 
+<!--
+WIDGET TITLE
+TODO: Deal with "OVERRIDE_COLOR={...}" option;
 -->
 <WidgetTitle
   {WIDGET_TITLE}
   OVERRIDE_COLOR={true}
 />
 
-<!-- 
-[ℹ] no-matches-avaiable-placeholder container 
+<!--
+NO WIDGET DATA - PLACEHOLDER (Version.1)
 -->
-<div
-  class="
-    no-widget-box
-    row-space-start
-  "
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
->
-  <!-- 
-  [ℹ] no-matches-visual 
-  -->
-  <img
-    src={
-      $userBetarenaSettings.theme == 'Dark'
-        ? '/assets/svg/noWidgetDataDark.svg'
-        : '/assets/svg/noWidgetData.svg'
-    }
-    alt="No widget visual icon"
-    width="80"
-    height="80"
-    class="m-r-20"
-  />
-  <!-- 
-  [ℹ] container w/ text 
-  -->
-  <div>
-    <p
-      class="
-        s-16 
-        m-b-8 
-        w-500
-      "
-    >
-      {NO_DATA_TITLE}
-    </p>
-    <p
-      class="
-        s-16 
-        color-grey 
-        w-400
-      "
-    >
-      {NO_DATA_DESC}
-    </p>
+{#if version == 1}
+  <div
+    class="
+      no-widget-box
+      row-space-start
+    "
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  >
+
+    <!--
+    NO DATA - ICON
+    -->
+    <img
+      src=
+      {
+        $userBetarenaSettings.theme == 'Dark'
+          ? '/assets/svg/noWidgetDataDark.svg'
+          : '/assets/svg/noWidgetData.svg'
+      }
+      alt="No widget visual icon"
+      width=80
+      height=80
+      class="m-r-20"
+    />
+
+    <!--
+    TEXT
+    -->
+    <div>
+      <p
+        class="
+          color-black-2
+          s-16
+          m-b-8
+          w-500
+        "
+      >
+        {NO_DATA_TITLE}
+      </p>
+      <p
+        class="
+          s-16
+          color-grey
+          w-400
+        "
+      >
+        {NO_DATA_DESC}
+      </p>
+    </div>
+
   </div>
-</div>
+{/if}
+
+<!--
+NO WIDGET DATA - PLACEHOLDER (Version.2)
+-->
+{#if version == 2}
+
+  <div
+    class=
+    "
+      no-widget-box
+      column-space-center
+    "
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  >
+
+    <!--
+    NO DATA - ICON
+    -->
+    <img
+      src=
+      {
+        $userBetarenaSettings.theme == 'Dark'
+          ? '/assets/svg/noWidgetData-2-Dark.svg'
+          : '/assets/svg/noWidgetData-2.svg'
+      }
+      alt="No widget visual icon"
+      width="32"
+      height="32"
+      class="m-b-16"
+    />
+
+    <!--
+    TEXT
+    -->
+    <div
+      class="text-center"
+    >
+
+      <p
+        class=
+        "
+          s-14
+          m-b-8
+          w-500
+        "
+        class:color-white={$userBetarenaSettings.theme == 'Dark'}
+      >
+        {NO_DATA_TITLE}
+      </p>
+
+      <p
+        class=
+        "
+          s-14
+          color-grey
+          w-400
+        "
+      >
+        {NO_DATA_DESC}
+      </p>
+
+    </div>
+
+  </div>
+
+{/if}
 
 <!-- ===============
 COMPONENT STYLE
@@ -179,12 +247,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 
