@@ -1102,7 +1102,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             class=
             "
               row-space-start
-              m-r-20
             "
             class:m-r-20={!tabletExclusive}
           >
@@ -2435,12 +2434,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	@media only screen
   and (min-width: 726px)
   {
-
-		div#fix-odds-view-box
-    {
-      /* s */
-			padding: 0;
-		}
 		div.fix-odds-view-opt-box
     {
       /* s */
@@ -2541,6 +2534,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			min-width: 154px;
 			max-height: 48px;
 			margin-left: 24px;
+		}
+	}
+
+  @media only screen
+  and (min-width: 1000px)
+  {
+    div#fix-odds-view-box
+    {
+      /* s */
+      width: auto;
+			padding: 0;
 		}
 	}
 
