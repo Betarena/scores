@@ -71,7 +71,7 @@
   let realTimeOddsListenMap: Map < number, Unsubscribe > = new Map<number, Unsubscribe>();
 
   // IMPORTANT DeepValue (change) Listen
-  $: selectedSeasonId = $sessionStore.selectedSeasonID
+  $: selectedSeasonId = JSON.stringify($sessionStore?.selectedSeasonID)
   $: livescoreNowScoreboardChng = JSON.stringify([...$sessionStore?.livescore_now_scoreboard?.entries()]);
   $: livescoreOddsChng = JSON.stringify([...$sessionStore?.live_odds_fixture_map?.entries()]);
 
@@ -937,12 +937,14 @@
   */
 	$: if (selectedSeasonId)
   {
+
     // [🐞]
 		dlog
     (
-			`selected season: ${$sessionStore.selectedSeasonID}`,
+			`INFO: SeasonId changed (new) ${selectedSeasonId}`,
 			true
 		);
+
 		select_fixtures_odds();
 	}
 
