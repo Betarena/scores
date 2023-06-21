@@ -67,11 +67,14 @@
         a,
         b
       ) =>
-				parseFloat(b.name.toString().slice(-2))
-        - parseFloat(a.name.toString().slice(-2))
+      {
+        const _b = b.name.replace(/\D/g, "");
+        const _a = a.name.replace(/\D/g, "");
+        return parseFloat(_b.toString().slice(-2)) - parseFloat(_a.toString().slice(-2))
+      }
 		);
 
-		// [ℹ] 2021/2022 => 21/22 (date) conversion
+		// ACTION: Convert season-names from "2021/2022" => "21/22"
 		for (const season of LEAGUE_INFO_SEO_DATA?.data?.seasons)
     {
 			// [ℹ] check if already processed
