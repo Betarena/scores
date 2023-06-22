@@ -71,7 +71,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <a
     href={navUrl}
-    target={navKey == 'scores' ? '_self' : '_blank'}
+    target={navKey == 'content' ? '_blank' : '_self'}
   >
     <p
       class="
