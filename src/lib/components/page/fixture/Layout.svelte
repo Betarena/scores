@@ -1,5 +1,5 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
+	COMPONENT JS - BASIC
 =================== -->
 
 <script lang="ts">
@@ -32,7 +32,7 @@
 	import Breadcrumb from './Breadcrumb.svelte';
 	import LineupsWidget from './lineups/Lineups-Widget.svelte';
 	import StandingsWidget from './standings/Standings-Widget.svelte';
-  
+
   import type { B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
   import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
@@ -72,7 +72,7 @@
 					.replace(/\s/g, '-')
 					.replace(/\./g, '')
   ;
-  
+
   // TODO: clean up;
 	$: league_name_link =
 		FIXTURE_INFO?.data?.league_name == undefined
@@ -104,9 +104,9 @@
    */
   async function kickstartLivescore
   (
-  )
+  ): Promise < void >
   {
-    const if_M_0 = 
+    const if_M_0 =
       FIXTURE_FULL_TIME_OPT.includes(FIXTURE_INFO?.data?.status)
     ;
     if (if_M_0) return;
@@ -131,9 +131,9 @@
    */
   async function kickstartLiveOdds
   (
-  ): Promise < void > 
+  ): Promise < void >
   {
-    const if_M_0 = 
+    const if_M_0 =
       FIXTURE_FULL_TIME_OPT.includes(FIXTURE_INFO?.data?.status)
     ;
     if (if_M_0) return;
@@ -146,13 +146,13 @@
   /**
    * @summary
    * [HELPER]
-   * @param 
+   * @param
    * {string} newURL
    */
   async function navigateToTranslation
   (
     newURL: string
-  ): Promise < void > 
+  ): Promise < void >
   {
     await preloadData(newURL)
   }
@@ -163,7 +163,7 @@
   )
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -190,9 +190,9 @@
       'visibilitychange',
       async function
       (
-      ) 
+      )
       {
-        if (!document.hidden) 
+        if (!document.hidden)
         {
           dlog('🔵 user is active', true)
           await kickstartLivescore();
@@ -204,7 +204,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -214,13 +214,13 @@
   /**
    * @summary
    * [MAIN]
-   * @param 
+   * @param
    * {string} lang
    */
   function translatedURL
   (
     lang: string
-  ): string 
+  ): string
   {
     let newURL: string = FIXTURE_INFO.alternate_data[lang];
     newURL = newURL.replace('https://scores.betarena.com','');
@@ -240,7 +240,7 @@
 
   // TODO: clean up
   // [ℹ] validate LANG change
-	$: if (current_lang != refresh_lang && browser) 
+	$: if (current_lang != refresh_lang && browser)
   {
 		current_lang = refresh_lang;
 		let newURL = translatedURL(current_lang)
@@ -254,7 +254,7 @@
 	}
 
   // TODO: clean up
-  $: if (lang_intent && browser) 
+  $: if (lang_intent && browser)
   {
     let newURL = translatedURL(lang_intent)
     dlog(`newURL (lang_intent): ${newURL}`, true)
@@ -275,7 +275,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       await kickstartLivescore();
       await kickstartLiveOdds();
@@ -292,7 +292,7 @@
 	SVELTE INJECTION TAGS
 =================== -->
 
-<!-- 
+<!--
 IMPORTANT SEO META
 -->
 {#if PAGE_SEO}
@@ -308,7 +308,7 @@ IMPORTANT SEO META
 	/>
 {/if}
 
-<!-- 
+<!--
 IMPORTANT HREF-LANG
 -->
 <svelte:head>
@@ -316,7 +316,7 @@ IMPORTANT HREF-LANG
 		{#each PAGE_SEO?.hreflang || [] as item}
 			{#each Object.entries(FIXTURE_INFO?.alternate_data) as [lang, link]}
 				{#if item.link == lang}
-					<!-- 
+					<!--
           [ℹ] expected alternate example
           <link rel="canonical" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
           <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
@@ -342,24 +342,24 @@ IMPORTANT HREF-LANG
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <section
   id="fixture-page">
 
-	<Breadcrumb 
+	<Breadcrumb
     {FIXTURE_INFO}
     {country_link}
     {league_name_link}
   />
 
-  <!-- 
+  <!--
   FIXME: TODO: update to have a single dynamic layout
   -->
 
-	<!-- 
+	<!--
   📱 MOBILE
   -->
 	{#if mobileExclusive || tabletExclusive}
@@ -367,8 +367,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 		<div
       id="widget-grid-display"
     >
-			<!-- 
-      [ℹ] "Overview" view selection 
+			<!--
+      [ℹ] "Overview" view selection
       -->
 			<div
 				class="grid-display-column"
@@ -384,8 +384,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				<ProbabilityWidget />
 				<AboutWidget />
 			</div>
-			<!-- 
-      [ℹ] "News" view selection 
+			<!--
+      [ℹ] "News" view selection
       -->
 			<div
 				id="grid-display-column"
@@ -394,19 +394,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				<ContentWidget />
 			</div>
 		</div>
-  <!-- 
-  💻 TABLET 🖥️ LAPTOP 
+  <!--
+  💻 TABLET 🖥️ LAPTOP
   -->
 	{:else}
 		<ScoreboardWidget />
-		<!-- 
-    [ℹ] "Overview" view selection 
+		<!--
+    [ℹ] "Overview" view selection
     -->
 		<div
 			id="widget-grid-display"
 			class:display-none={$sessionStore.fixture_select_view == 'news'}
 		>
-			<div 
+			<div
         class="grid-display-column">
 				<VoteWidget />
 				<LineupsWidget />
@@ -414,7 +414,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				<StandingsWidget />
 				<AboutWidget />
 			</div>
-			<div 
+			<div
         class="grid-display-column">
 				<FeatBetSiteWidget />
 				<IncidentsWidget />
@@ -422,8 +422,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				<ProbabilityWidget />
 			</div>
 		</div>
-		<!-- 
-    [ℹ] "News" view selection 
+		<!--
+    [ℹ] "News" view selection
     -->
 		<div
 			id="widget-grid-display-news"
@@ -442,7 +442,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	section#fixture-page 
+	section#fixture-page
   {
 		max-width: 1430px;
 		grid-template-columns: 1fr;
@@ -451,16 +451,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* page breadcrumbs */
-	:global(div#fixture-page-breadcrumbs p.capitalize) 
+	:global(div#fixture-page-breadcrumbs p.capitalize)
   {
 		text-transform: capitalize;
 		overflow: hidden;
 	}
-	:global(div#fixture-page-breadcrumbs > p) 
+	:global(div#fixture-page-breadcrumbs > p)
   {
 		color: #8c8c8c !important;
 	}
-	:global(div#fixture-page-breadcrumbs a > p:hover) 
+	:global(div#fixture-page-breadcrumbs a > p:hover)
   {
 		color: #f5620f !important;
 	}
@@ -474,14 +474,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* widget layout-inner */
-	div.grid-display-column 
+	div.grid-display-column
   {
 		display: grid;
 		grid-template-columns: 1fr;
 		gap: 24px;
 	}
 
-	div#widget-grid-display-news 
+	div#widget-grid-display-news
   {
 		display: grid;
 		margin-top: 24px;
@@ -490,12 +490,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-  and (max-width: 450px) 
+  @media only screen
+  and (max-width: 450px)
   {
 		/* page breadcrumbs */
 		:global(div#fixture-page-breadcrumbs p.fixture-name) {
@@ -506,8 +506,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
-  and (min-width: 768px) 
+	@media only screen
+  and (min-width: 768px)
   {
 		/* widget layout */
 		div#widget-grid-display {
@@ -515,8 +515,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1160px) 
+	@media only screen
+  and (min-width: 1160px)
   {
 		/* widget layout */
 		div#widget-grid-display {
@@ -528,8 +528,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1320px) 
+	@media only screen
+  and (min-width: 1320px)
   {
 		/* widget layout */
 		div#widget-grid-display {
