@@ -1,7 +1,11 @@
 import { get } from "$lib/api/utils.js";
+import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import { sessionStore } from "$lib/store/session.js";
+import { userBetarenaSettings } from '$lib/store/user-settings';
+import { NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from "./debug";
+
+import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
-import { dlog, dlogv2, NB_W_TAG, NB_W_TOG } from "./debug";
 
 /**
  * @description Simple function
@@ -16,7 +20,7 @@ export function platfrom_lang_ssr
 	page_route_id?: string | undefined,
 	page_error?: unknown | undefined,
 	page_params_lang?: string | undefined
-): string 
+): string
 {
   dlogv2(
     NB_W_TAG,
@@ -32,12 +36,12 @@ export function platfrom_lang_ssr
 	// [ℹ] validation (#1)
   // [ℹ] errorPage
 	const validation_1 =
-		page_route_id == null 
+		page_route_id == null
     && page_error;
 	if (validation_1) return server_side_language;
 	// [ℹ] validation (#2)
   // [ℹ] if [[lang=lang]] page
-	server_side_language = 
+	server_side_language =
     (page_route_id.includes('[[lang=lang]]') || page_route_id.includes('[lang=lang]'))
     && page_params_lang != undefined
       ? page_params_lang
@@ -60,26 +64,26 @@ export function viewport_change
 	TABLET_VIEW: number,
 	MOBILE_VIEW: number,
   OTHER_VIEW?: number
-) 
+)
 {
 	const width = document.documentElement.clientWidth;
 	const tabletExclusive =
-    width >= TABLET_VIEW 
-      ? false 
+    width >= TABLET_VIEW
+      ? false
       : true
   ;
 	const mobileExclusive =
-    width <= MOBILE_VIEW 
-      ? true 
+    width <= MOBILE_VIEW
+      ? true
       : false
   ;
   const otherExclusive =
-    width <= OTHER_VIEW 
-      ? true 
+    width <= OTHER_VIEW
+      ? true
       : false
   ;
 	return [
-    tabletExclusive, 
+    tabletExclusive,
     mobileExclusive,
     otherExclusive
   ];
@@ -92,7 +96,7 @@ export function viewport_change
  * @param {number} ms
  * @returns void
  */
-export async function sleep 
+export async function sleep
 (
   ms: number
 )
@@ -101,10 +105,10 @@ export async function sleep
   (
     (
       r
-    ) => 
+    ) =>
     setTimeout
     (
-      r, 
+      r,
       ms
     )
   );
@@ -116,7 +120,7 @@ export function googleEventLog
 )
 {
 
-  if ( action === 'fixture_football_fixtures_probabilities') 
+  if (action === 'fixture_football_fixtures_probabilities')
   {
     // @ts-expect-error - Add gtag to global types;
     window.gtag
@@ -140,39 +144,160 @@ export function googleEventLog
       'event',
       'fixtures_scoreboard_odds',
       {
-        event_category:
-          'widget_fixture_scoreboard_info',
+        event_category: 'widget_fixture_scoreboard_info',
         event_label: 'click_betting_site_logo',
         value: 'click'
       }
     );
   }
 
-  return;
+  if (action === 'betting_site_logo_football_fixtures_odds_tournament')
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'betting_site_logo_football_fixtures_odds_tournament',
+      {
+        event_category: 'widget_fixture_odds_info',
+        event_label: 'click_betting_site_logo',
+        value: 'click'
+      }
+    );
+  }
+
+  if (action === 'tournaments_football_fixtures_odds')
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'tournaments_football_fixtures_odds',
+      {
+        event_category: 'widget_fixture_odds_info',
+        event_label: 'click_betting_site_logo',
+        value: 'click'
+      }
+    );
+  }
+
+  if (action === 'betting_site_logo_widget_league_info')
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'betting_site_logo_widget_league_info',
+      {
+        event_category: 'widget_league_info',
+        event_label: 'click_betting_site_logo',
+        value: 'click'
+      }
+    );
+  }
+
+  if (action === 'beting_cta_link_widget_league_info')
+  {
+    // @ts-expect-error - Add gtag to global types;
+    window.gtag
+    (
+      'event',
+      'beting_cta_link_widget_league_info',
+      {
+        event_category: 'widget_league_info',
+        event_label: 'beting_cta_link_logo',
+        value: 'click'
+      }
+    );
+  }
+
 }
 
 /**
- * @summary 
- * [HELPER]
- * @description 
- * ➨ identified "NULL" data points, in data array;
- * @example 
- * [[object Object], [object Object], undefined, null] => [2,3]:
- * @param 
- * {unknown[]} data 
- * @returns 
- * ➨ NaN
+ * @summary [MAIN]
+ * @description gets and sets user target geo-country
+ * location using geoJs;
+ * @returns NaN
  */
-export function PRELOAD_invalid_data 
+export async function setUserGeoLocation
+(
+  HEADER_TRANSLATION_DATA: any
+): Promise < void >
+{
+
+  const if_0 =
+    userBetarenaSettings.getCountryBookmaker() !== undefined
+  ;
+  if (if_0) return;
+
+  let geoRes: GeoJsResponse = await getUserLocation();
+
+  let userGeo =
+    geoRes?.country_code === undefined
+      ? null
+      : geoRes.country_code.toLowerCase()
+  ;
+
+  const if_1 =
+    userGeo == null
+  ;
+  if (if_1)
+  {
+    geoRes = await getUserLocationFromIP
+    (
+      '107.189.0.0'
+    );
+    userGeo = geoRes.country_code.toLowerCase();
+  }
+
+  userBetarenaSettings.setGeoJs
+  (
+    geoRes
+  );
+
+  // [V] check for existance of GEO in available translations/country list;
+  const data_0 =	HEADER_TRANSLATION_DATA?.scores_header_translations?.bookmakers_countries
+  ?.find
+  (
+    function
+    (
+      item
+    )
+    {
+      return (
+        item[0].toString().toLowerCase() === userGeo.toString().toLowerCase()
+      );
+    }
+  );
+
+  if (data_0 == undefined) userGeo = 'en'
+
+  userBetarenaSettings.setCountryBookmaker
+  (
+    userGeo.toLocaleLowerCase()
+  );
+
+}
+
+/**
+ * @summary [HELPER] method
+ * @description validates for number of
+ * null || undefined data points in target
+ * data Array[];
+ * @example [[object Object], [object Object], undefined] => null:
+ * @param {unknown[]} data
+ * @returns NaN
+ */
+export function PRELOAD_invalid_data
 (
   data: unknown[],
   urls: string[]
-) 
+)
 {
   try {
-    const indexesOf: (arr: any[], item: unknown) => number[] = 
+    const indexesOf: (arr: any[], item: unknown) => number[] =
     (
-      arr: any[], 
+      arr: any[],
       item: unknown
     ) =>
       arr.reduce
@@ -181,10 +306,10 @@ export function PRELOAD_invalid_data
           accumulator,
           currentVal,
           currentIndex
-        ) => 
+        ) =>
         (
-          currentVal === item 
-          && accumulator.push(currentIndex), 
+          currentVal === item
+          && accumulator.push(currentIndex),
           accumulator
         ),
         []
@@ -193,25 +318,25 @@ export function PRELOAD_invalid_data
 
     const nullList = indexesOf
     (
-      data, 
+      data,
       null
     );
 
-    if (nullList?.length == 0) 
+    if (nullList?.length == 0)
       dlog
       (
         '🟩 Preload Successfull!',
         true
       );
     ;
-    if (nullList?.length > 0) 
+    if (nullList?.length > 0)
       dlog
       (
         `🟥 Preload has null (position): ${nullList}`,
         true
       );
       // list URLs responsible for NULL data points;
-      for (const i of nullList) 
+      for (const i of nullList)
       {
         console.log
         (
@@ -221,8 +346,8 @@ export function PRELOAD_invalid_data
     ;
 
     return;
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.debug
     (
@@ -236,8 +361,8 @@ export function PRELOAD_invalid_data
  * @summary [HELPER] method
  * @description gethers data from target
  * url list, and returns;
- * @param {string[]} endpoints 
- * @param {fetch} fetch 
+ * @param {string[]} endpoints
+ * @param {fetch} fetch
  * @returns Promise<any[]>
  */
 export async function promiseUrlsPreload
@@ -261,13 +386,13 @@ export async function promiseUrlsPreload
  * url properties for its validity in
  * the +page.ts/+page.server.ts (preload);
  * IMPORTANT used by PRE-LOAD ONLY;
- * @param {fetch} fetch 
- * @param {string} langUrl 
- * @param {string} sportUrl 
- * @param {string} countryUrl 
- * @param {string} leagueUrl 
- * @param {string} fixtureUrl 
- * @param {string} playerUrl 
+ * @param {fetch} fetch
+ * @param {string} langUrl
+ * @param {string} sportUrl
+ * @param {string} countryUrl
+ * @param {string} leagueUrl
+ * @param {string} fixtureUrl
+ * @param {string} playerUrl
  * @returns NaN
  */
 export async function promiseValidUrlCheck
@@ -324,7 +449,7 @@ export async function promiseValidUrlCheck
 }
 
 /**
- * @description obtains the target sportbook data 
+ * @description obtains the target sportbook data
  * information based on users geo-location;
  * data gathered at page-level and set to svelte-stores
  * to be used by (this) page components;
@@ -337,7 +462,7 @@ export async function promiseValidUrlCheck
 export async function initSportbookData
 (
   geoPos: string
-): Promise < void > 
+): Promise < void >
 {
   const dataRes0 = await get
   (
