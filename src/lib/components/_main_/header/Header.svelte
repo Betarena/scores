@@ -1,21 +1,28 @@
 <!-- ===================
-COMPONENT JS - BASIC 
+COMPONENT JS - BASIC
 [TypeScript]
 =================== -->
+
 <script lang="ts">
+
+  // #region ➤ [MAIN] Package Imports
+  // <-imports-go-here->
+
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 	import { fly } from 'svelte/transition';
 
+	import { db_firestore } from '$lib/firebase/init';
+	import { setCookie } from '$lib/store/cookie.js';
+	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-
-	import {
-		getUserLocation,
-		getUserLocationFromIP
-	} from '$lib/geo-js/init';
 	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
+	import { viewport_change } from '$lib/utils/platform-functions';
+	import { translationObject } from '$lib/utils/translation.js';
+	import { doc, updateDoc } from 'firebase/firestore';
+
 	import arrow_down_fade from './assets/arrow-down-fade.svg';
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up_fade from './assets/arrow-up-fade.svg';
@@ -25,442 +32,232 @@ COMPONENT JS - BASIC
 	import close from './assets/close.svg';
 	import icon_check from './assets/icon-check.svg';
 	import menu_burger_bar from './assets/menu-burger.svg';
-	import menu_sports_icon from './assets/menu_sports_icon.svg';
+	import darkModeVector from './assets/moon-fill.svg';
 	import profile_avatar from './assets/profile-avatar.svg';
-	import light_icon_theme from './assets/theme-light-icon.svg';
+	import lightModeVector from './assets/sun-fill.svg';
 
-	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/_main_/navbar/types';
-	import type { GeoJsResponse } from '$lib/types/geojs-types';
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import AuthWidget from '../auth/Auth_Widget.svelte';
+  import HeaderNavBtn from './Header-Nav-Btn.svelte';
+  import HeaderSportsBtn from './Header-Sports-Btn.svelte';
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import { db_firestore } from '$lib/firebase/init';
-	import { sessionStore } from '$lib/store/session';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
-	import { doc, updateDoc } from 'firebase/firestore';
-	import AuthWidget from '../auth/Auth_Widget.svelte';
+  import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ [MAIN] Package Imports
 
-	export let HEADER_TRANSLATION_DATA: Cache_Single_Lang_Header_Translation_Response;
+  // #region ➤ [VARIABLES]
 
-	let mobileNavToggleMenu: boolean = false;
-	let mobileExclusiveMoreSports: boolean = false;
-	let dropdown_lang_visible: boolean = false;
-	let dropdown_theme_visible: boolean = false;
-	let dropdown_odds_type_visible: boolean = false;
-	let dropdown_bookmakers_visible: boolean = false;
-	let dropdown_more_sports_menu: boolean = false;
-	let dropdown_user_auth: boolean = false;
-	let selected_sports: string = 'football';
-	let server_side_language: string = 'en';
-	let homepageURL: string;
-	let logoLink: string;
-	let hideSEO: boolean = false;
-	let langSelected: boolean = false;
+	export let WIDGET_T_DATA: B_NAV_T;
 
-  const OMIT_URLS: string[] = [
+  const OMIT_URLS: string[] =
+  [
     '/[[lang=lang]]/[sport]/[country]/[league_name]',
     '/[[lang=lang]]/[sport]/[fixture=fixture]',
     '/[[lang=lang]]/[player=player]/[...player_fill]'
   ]
-
   const PROFILE_URL: string = '/u/[view]/[lang=lang]'
+  const HOVER_TIMEOUT = 250;
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
+  const MOBILE_VIEW = 560;
 	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 560;
-	let mobileExclusive, tabletExclusive: boolean = false;
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+	let mobileExclusive: boolean = false;
+  let tabletExclusive: boolean = false;
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-
-  // Set a Cookie
-  function setCookie(cName, cValue, expDays) {
-    let date = new Date();
-    date.setTime(date.getTime() + (expDays * 24 * 60 * 60 * 1000));
-    const expires = "expires=" + date.toUTCString();
-    document.cookie = cName + "=" + cValue + "; " + expires + "; path=/";
-  }
-
-  $: if (browser && $userBetarenaSettings?.user != undefined) {
-    let username = 'true';
-    setCookie('betarenaCookieLoggedIn', username, 30);
-  }
-
-  $: server_side_language = platfrom_lang_ssr(
-    $page.route.id,
-    $page.error,
-    $page.params.lang
-  )
-  $: homepageURL = 
-    server_side_language != 'en'
-      ? `/${$page.params.lang}`
-      : `/`
-  ;
-  $: logoLink =
-    server_side_language != 'en'
-      ? `${$page.url.origin}/${server_side_language}`
-      : $page.url.origin
-  ;
-  $: dlogv2(
-    NB_W_TAG,
-    [
-      `server_side_language: ${server_side_language}`,
-      `homepageURL: ${homepageURL}`,
-      `logoLink: ${logoLink}`
-    ],
-    NB_W_TOG,
-    NB_W_STY
-  )
-
-	$: if (browser) {
-		hideSEO = true;
-		if (!langSelected && $userBetarenaSettings.user == undefined) {
-      dlog(`${NB_W_TAG} 🔵 Setting (initial) language!`, NB_W_TOG, NB_W_STY)
-			langSelected = true;
-			userBetarenaSettings.setLang(
-				server_side_language
-			);
-			// selectLanguage(server_side_language);
-		}
-		setUserCountryBookmakerLocation();
-	}
-
+	let mobileNavToggleMenu: boolean = false;
+	let isLangDropdown: boolean = false;
+	let isCurrencyDropdown: boolean = false;
+	let isOddsDropdown: boolean = false;
+	let isBookmakersDropdown: boolean = false;
+	let isUserAuthDropdown: boolean = false;
+  let selectedSport: string = 'football';
+	let homepageURL: string;
+	let logoLink: string;
+	let langSelected: boolean = false;
+  let setUserLang: boolean = false;
   let intent_intent_lang: string | undefined = undefined;
   let timeout_intent: NodeJS.Timeout = undefined;
-  const HOVER_TIMEOUT = 250;
-  function detectIntentBuffer(lang: string): void {
-    // [ℹ] detect a change in hover-over lang
-    if (timeout_intent != undefined 
-    && lang != intent_intent_lang) {
-      // [ℹ] clear timer
-      dlog(`${NB_W_TAG} clearning timer!`, true, NB_W_STY)
-      clearTimeout(timeout_intent)
+  let width: number = 0;
+
+  //#endregion ➤ [VARIABLES]
+
+  // #region ➤ [MAIN-METHODS]
+
+  /**
+   * @summary
+   * [HELPER]
+   * @description
+   * ➨ advanced intent (desktop only) function,
+   * with the aim of pre-loading target page language
+   * switch/navigations from the available list
+   * of platform languages, upon hovers;
+  */
+  function detectIntentBuffer
+  (
+    lang: string
+  ): void
+  {
+    // CHECK: detect a change in hover-over lang
+    const if_M_0: boolean =
+      timeout_intent != undefined
+      && lang != intent_intent_lang
+    ;
+    const if_M_E_0: boolean =
+      lang != undefined
+      && timeout_intent == undefined
+    ;
+    if (if_M_0)
+    {
+      // [🐞]
+      dlog
+      (
+        `${NB_W_TAG} clearning timer!`,
+        true,
+        NB_W_STY
+      );
+
+      // clear timer
+      clearTimeout(timeout_intent);
       intent_intent_lang = lang;
-      // start new timer - if lang (target) not undefined
-      if (lang == undefined) return
-      dlog(`${NB_W_TAG} setting new timer!`, true, NB_W_STY)
-      timeout_intent = setTimeout(() => {
-        dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
-        $sessionStore.lang_intent = intent_intent_lang;
-      }, HOVER_TIMEOUT)
+
+      if (lang == undefined) return;
+
+      // start new timer;
+      // [🐞]
+      dlog
+      (
+        `${NB_W_TAG} setting new timer!`,
+        true,
+        NB_W_STY
+      );
+
+      timeout_intent = setTimeout
+      (
+        () =>
+        {
+          dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
+          $sessionStore.lang_intent = intent_intent_lang;
+        },
+        HOVER_TIMEOUT
+      );
     }
-    // otherwise, first time set lang and timer
-    else if (lang != undefined 
-    && timeout_intent == undefined) {
+    // CHECK: First time set lang and timer
+    else if (if_M_E_0)
+    {
       intent_intent_lang = lang
-      timeout_intent = setTimeout(() => {
-        dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
-        $sessionStore.lang_intent = intent_intent_lang;
-      }, HOVER_TIMEOUT)
+      timeout_intent = setTimeout
+      (
+        () =>
+        {
+          dlog(`${NB_W_TAG} intent triggered!`, true, NB_W_STY)
+          $sessionStore.lang_intent = intent_intent_lang;
+        },
+        HOVER_TIMEOUT
+      )
     }
   }
 
 	/**
-	 * @description update user selected lang on
-	 * localStorage; including complex naviational structure;
-	 * holds main platform navigation entry
-   * @param {string} lang
+   * @summary
+   * [HELPER]
+	 * @description
+   * ➨ updates user selected platfrom theme, on localStorage;
+   * @returns
+   * void
 	 */
-	async function selectLanguage(
-    lang: string
-  ): Promise<void> {
-
-    // [ℹ] validation (exit);
-    if (server_side_language == lang) {
-      return;
-    }
-
-		// [ℹ] get past instance of LANG;
-		const pastLang: string =
-      server_side_language == 'en'
-				? '/'
-				: `/${server_side_language}`
+	function selectedTheme
+  (
+  ): void
+  {
+    const newTheme: string =
+      $userBetarenaSettings.theme == 'Dark'
+        ? 'Ligth'
+        : 'Dark'
     ;
-		// [ℹ] set the user-lang to corresponding value;
-		userBetarenaSettings.setLang(lang);
-
-    dlogv2(
-      `${NB_W_TAG} selectLanguage()`,
-      [
-        `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
-        `server_side_language: ${server_side_language}`,
-        `lang: ${lang}`,
-        `pastLang: ${pastLang}`,
-        `$page.route.id: ${$page.route.id}`
-      ],
-      true,
-      NB_W_STY
-    )
-
-		// [ℹ] hide lang select dropdown box;
-		dropdown_lang_visible = false;
-
-		// [ℹ] update <html {lang} >
-		if (lang === 'br') {
-			document.documentElement.setAttribute(
-				'lang',
-				'pt-BR'
-			);
-		} else {
-			document.documentElement.setAttribute(
-				'lang',
-				lang
-			);
-		}
-
-		// [ℹ] onError, navigate back to homepage
-		if ($page.error && !dev) {
-			if (lang == 'en') {
-        dlog(`${NB_W_TAG} -> EN`, true, NB_W_STY)
-				await goto('/');
-			} else {
-        dlog(`${NB_W_TAG} -> ${lang}`, true, NB_W_STY)
-				await goto(`/${lang}`);
-			}
-			return;
-		}
-
-		// [ℹ] on (special) routes, omit header-intervention;
-    // [ℹ] these routes manage their own transaltions (complex);
-		else if (OMIT_URLS.includes($page.route.id)) {
-      dlog(`${NB_W_TAG} omitting route: ${$page.route.id}`, true, NB_W_STY)
-			return;
-		}
-
-    // [ℹ] on profile page route, handle;
-    else if (PROFILE_URL == $page.route.id) {
-      const pastLangV2: string = pastLang == `/` ? `/en` : pastLang
-      let tempUrl: string = $page.url.pathname+'/';
-			const newURL: string = tempUrl.replace(`${pastLangV2}/`, `/${lang}`);
-      dlog(`${NB_W_TAG} inside (PROFILE) ${lang}, pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`, true, NB_W_STY)
-			await goto(newURL, { replaceState: true });
-    }
-
-		// [ℹ] otherwise,
-		// [ℹ] switch navigation for appropiate /<lang>
-
-		// [ℹ] check for EN TRANSLATION;
-		else if (lang == 'en' && pastLang != '/') {
-
-			// prefetch(`/`); [? - maybe ?] // NOTE:
-
-			// [ℹ] count number of slashes URL;
-			var count =	$page.url.pathname.split('/').length - 1;
-			// [ℹ] replace path-name accordingly for "EN" - first occurance;
-			const newURL: string =
-				count == 1
-					? $page.url.pathname.replace(pastLang, '/')
-					: $page.url.pathname.replace(pastLang, '')
-      ;
-      dlog(`${NB_W_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
-
-			// [ℹ] update URL breadcrumb;
-			// window.history.replaceState({}, "NewPage", newURL);
-			await goto(newURL, { replaceState: true });
-		}
-		// [ℹ] otherwise, check for coming from "EN" (/)
-		// [ℹ] & update page URL with CORRECT TRANSLATION;
-		else if (lang != 'en' && pastLang == '/') {
-			// [ℹ] count number of slashes URL;
-			var countSlash = $page.url.pathname.split('/').length - 1;
-			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-			const newURL: string =
-				countSlash > 1
-					? $page.url.pathname.replace(pastLang, `/${lang}/`)
-					: $page.url.pathname.replace(pastLang, `/${lang}`)
-      ;
-      dlog(`${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
-
-			// [ℹ] update URL breadcrumb;
-			// window.history.replaceState({}, "NewPage", newURL);
-			await goto(newURL, { replaceState: true });
-		}
-		// [ℹ] otherwise, check for coming from "[lang]" (/)
-		// [ℹ] & update page URL with CORRECT TRANSLATION;
-		else if (lang != 'en' && pastLang != '/') {
-			// [ℹ] count number of slashes URL;
-			var countSlash = $page.url.pathname.split('/').length - 1;
-			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-			const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
-      dlog(`${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
-
-			// [ℹ] update URL breadcrumb;
-			// window.history.replaceState({}, "NewPage", newURL);
-			await goto(newURL, { replaceState: true });
-		}
+		userBetarenaSettings.setTheme
+    (
+      newTheme
+    );
 	}
 
 	/**
-	 * @description updates user selected 
-   * platfrom theme, on localStorage;
-   * @param {string} theme
+   * @summary
+   * [HELPER]
+	 * @description
+   * ➨ simply closes all possible dropdowns open on the widget;
+   * @returns
+   * void
 	 */
-	function selectedTheme(
-    theme: string
-  ): void {
-		// dropdown_theme_visible = false // FIXME: [OPTIONAL]
-		userBetarenaSettings.setTheme(theme);
+	function closeAllDropdowns
+  (
+  ): void
+  {
+		isLangDropdown = false;
+		isOddsDropdown = false;
+		isBookmakersDropdown = false;
+		isUserAuthDropdown = false;
 	}
 
 	/**
-	 * @description updates user selected 
-   * country-bookmaker, on localStorage;
-   * @param {string} theme
+   * @summary
+   * [HELPER]
+	 * @description
+   * ➨ simply reloads the current page;
+   * @returns
+   * void
 	 */
-	function selectedCountryBookmakers(
-		countryBookemaker: string
-	): void {
-		// dropdown_bookmakers_visible = false // FIXME: [OPTIONAL]
-		// [ℹ] update the userCountryBookmakerSelection settings;
-		userBetarenaSettings.setCountryBookmaker(
-			countryBookemaker.toLocaleLowerCase()
-		);
-	}
-
-	/**
-	 * @description get & set user country location;
-	 */
-	async function setUserCountryBookmakerLocation(): Promise<void> {
-		// [ℹ] assign pre-set country-code
-		if ($userBetarenaSettings.country_bookmaker !== undefined) {
-			return;
-		}
-		const userGeoResponse: GeoJsResponse = await getUserLocation();
-    dlog(`${NB_W_TAG} ${userGeoResponse}`, true);
-
-		let userGeo =
-			userGeoResponse.country_code === undefined
-				? null
-				: userGeoResponse.country_code.toLowerCase(); // [?] maybe for dynamic-importing purposes ?
-
-		if (userGeo !== null) {
-			// [ℹ] store as session;
-			userBetarenaSettings.setGeoJs(userGeoResponse);
-			// [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
-			const result =
-				HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries.find(
-					function (item) {
-						return (
-							item[0].toString().toLowerCase() ===
-							userGeo.toString().toLowerCase()
-						);
-					}
-				);
-
-			// [ℹ] declare;
-			if (result) {
-				selectedCountryBookmakers(userGeo);
-			} else {
-				selectedCountryBookmakers('en');
-			}
-		}
-		// [ℹ] use default IP europe
-		else {
-			let userGeoResponse_V2: GeoJsResponse =
-				await getUserLocationFromIP(
-					'107.189.0.0'
-				);
-			let userGeo_v2 =
-				userGeoResponse_V2.country_code.toLowerCase();
-
-			userBetarenaSettings.setGeoJs(
-				userGeoResponse_V2
-			);
-
-			// [ℹ] VALIDATION: check that the `country-GEO` is available on the list;
-			const result =
-				HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries.find(
-					function (item) {
-						return (
-							item[0].toString().toLowerCase() ===
-							userGeo_v2.toString().toLowerCase()
-						);
-					}
-				);
-
-			// [ℹ] declare;
-			if (result) {
-				selectedCountryBookmakers(userGeo_v2);
-			} else {
-				selectedCountryBookmakers('en');
-			}
-		}
-	}
-
-	/**
-	 * @description simply closes all possible 
-   * dropdowns open on the widget
-   * @return void
-	 */
-	function closeAllDropdowns(): void {
-		dropdown_lang_visible = false;
-		dropdown_theme_visible = false;
-		dropdown_odds_type_visible = false;
-		dropdown_bookmakers_visible = false;
-		dropdown_more_sports_menu = false;
-		dropdown_user_auth = false;
-	}
-
-	/**
-	 * @description simply reloads the current page
-	 */
-	function reloadPage(): void {
-		if ($page.url.pathname.split('/').length - 1 == 1) {
+	function reloadPage
+  (
+  ): void
+  {
+		if ($page.url.pathname.split('/').length - 1 == 1)
+    {
 			window.location.reload();
 		}
 	}
 
-  let setUserLang = false;
-  $: if ($userBetarenaSettings?.user != undefined 
-    && !setUserLang 
-    && PROFILE_URL != $page.route.id
-  ) {
-    setUserLang = true
-    let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
-    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language! ${userlang}`, NB_W_TOG, NB_W_STY)
-    selectLanguage(userlang)
-  }
+  function calcNavTrianglePos
+  (
+    mainActive?: string
+  ): void
+  {
+    const parentElem: HTMLElement = document.getElementById('navBox')
+    const childElem: HTMLElement = document.getElementById($sessionStore.navBtnHover || mainActive);
 
-  // [ℹ] (archive) -> && PROFILE_URL == $page.route.id
-  $: if ($userBetarenaSettings?.lang 
-    && !$page.error
-    && $page.route.id
-    && $userBetarenaSettings?.user != undefined
-    && setUserLang) {
-    update_select_lang()
+    const if_M_0: boolean =
+      parentElem == undefined
+      || childElem == undefined
+    ;
+    if (if_M_0) return;
+
+    const parentPos: DOMRect = parentElem?.getBoundingClientRect();
+    const childPos: DOMRect = childElem?.getBoundingClientRect();
+
+    const relativePos =
+    {
+      top: (childPos.top - parentPos.top),
+      right: (childPos.right - parentPos.right),
+      bottom: (childPos.bottom - parentPos.bottom),
+      left: (childPos.left - parentPos.left)
+    };
+
+    width = relativePos.left + (childPos.width/2) - 32 + 6;
   }
 
   /**
-	 * @description updates user's platform language preferrences
-	 * firebase services;
-   * @returns {Promise<void>}
+   * @summary
+   * [HELPER]
+	 * @description
+   * ➨ updates user's platform language preferrences, firebase services;
+   * @returns
+   * {Promise<void>}
 	 */
-  async function update_select_lang(): Promise<void> {
+  async function update_select_lang
+  (
+  ): Promise < void >
+  {
 
-    if (!$userBetarenaSettings?.lang 
+    if (!$userBetarenaSettings?.lang
       || $page.error
       || !$page.route.id
       || $userBetarenaSettings?.user == undefined
@@ -488,40 +285,379 @@ COMPONENT JS - BASIC
   }
 
   /**
-	 * @description logout user; and additional ui changes
+   * @summary
+   * IMPORTANT
+   * [MAIN]
+	 * @description
+   * ➨ update user selected lang on localStorage; including complex naviational structure;
+	 * ➨ holds main platform navigation entry
+   * @param
+   * {string} lang
 	 */
-	async function logout(): Promise<void> {
+	async function selectLanguage
+  (
+    lang: string
+  ): Promise < void >
+  {
+    if ($sessionStore?.serverLang == lang) return;
+
+		// past instance of LANG;
+		const pastLang: string =
+      $sessionStore?.serverLang == 'en'
+				? '/'
+				: `/${$sessionStore?.serverLang}`
+    ;
+
+    userBetarenaSettings.setLang(lang);
+
+    // [🐞]
+    dlogv2
+    (
+      `${NB_W_TAG} selectLanguage()`,
+      [
+        `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
+        `$sessionStore?.serverLang: ${$sessionStore?.serverLang}`,
+        `lang: ${lang}`,
+        `pastLang: ${pastLang}`,
+        `$page.route.id: ${$page.route.id}`
+      ],
+      true,
+      NB_W_STY
+    );
+
+		isLangDropdown = false;
+
+		// update <html {lang}>
+    let tempLang: string = lang;
+    if (lang === 'br') tempLang = 'pt-BR';
+    document.documentElement.setAttribute
+    (
+      'lang',
+      tempLang
+    );
+
+    // (exit) on-error, navigate back to homepage;
+    const if_M_0: boolean =
+      $page.error
+      && !dev
+    ;
+		if (if_M_0)
+    {
+      const targetUrl =
+        lang == 'en'
+          ? `/`
+          : `/${lang}`
+      ;
+
+      // [🐞]
+      dlog
+      (
+        `${NB_W_TAG} -> ${lang}`,
+        true,
+        NB_W_STY
+      );
+
+      await goto
+      (
+        targetUrl
+      );
+
+      return;
+		}
+
+		// on (special) routes, omit (this method) intervention;
+    // these routes manage their own transaltions (complex);
+    const if_1: boolean =
+      OMIT_URLS.includes($page.route.id)
+    ;
+    if (if_1)
+    {
+      // [🐞]
+      dlog
+      (
+        `${NB_W_TAG} omitting route: ${$page.route.id}`,
+        true,
+        NB_W_STY
+      );
+			return;
+		}
+
+    // [ℹ] on profile page route, handle;
+    else if (PROFILE_URL == $page.route.id)
+    {
+      const pastLangV2: string = pastLang == `/` ? `/en` : pastLang
+      let tempUrl: string = $page.url.pathname+'/';
+			const newURL: string = tempUrl.replace(`${pastLangV2}/`, `/${lang}`);
+      dlog(`${NB_W_TAG} inside (PROFILE) ${lang}, pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`, true, NB_W_STY)
+			await goto(newURL, { replaceState: true });
+    }
+
+		// [ℹ] otherwise,
+		// [ℹ] switch navigation for appropiate /<lang>
+
+		// [ℹ] check for EN TRANSLATION;
+		else if (lang == 'en' && pastLang != '/')
+    {
+
+			// prefetch(`/`); [? - maybe ?] // NOTE:
+
+			// [ℹ] count number of slashes URL;
+			var count =	$page.url.pathname.split('/').length - 1;
+			// [ℹ] replace path-name accordingly for "EN" - first occurance;
+			const newURL: string =
+				count == 1
+					? $page.url.pathname.replace(pastLang, '/')
+					: $page.url.pathname.replace(pastLang, '')
+      ;
+      dlog(`${NB_W_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
+
+			// [ℹ] update URL breadcrumb;
+			// window.history.replaceState({}, "NewPage", newURL);
+			await goto(newURL, { replaceState: true });
+		}
+		// [ℹ] otherwise, check for coming from "EN" (/)
+		// [ℹ] & update page URL with CORRECT TRANSLATION;
+		else if (lang != 'en' && pastLang == '/')
+    {
+			// [ℹ] count number of slashes URL;
+			var countSlash = $page.url.pathname.split('/').length - 1;
+			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+			const newURL: string =
+				countSlash > 1
+					? $page.url.pathname.replace(pastLang, `/${lang}/`)
+					: $page.url.pathname.replace(pastLang, `/${lang}`)
+      ;
+      dlog(`${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
+
+			// [ℹ] update URL breadcrumb;
+			// window.history.replaceState({}, "NewPage", newURL);
+			await goto(newURL, { replaceState: true });
+		}
+		// [ℹ] otherwise, check for coming from "[lang]" (/)
+		// [ℹ] & update page URL with CORRECT TRANSLATION;
+		else if (lang != 'en' && pastLang != '/')
+    {
+			// [ℹ] count number of slashes URL;
+			var countSlash = $page.url.pathname.split('/').length - 1;
+			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+			const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
+      dlog(`${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
+
+			// [ℹ] update URL breadcrumb;
+			// window.history.replaceState({}, "NewPage", newURL);
+			await goto(newURL, { replaceState: true });
+		}
+	}
+
+  /**
+   * @summary
+   * [MAIN]
+	 * @description
+   * ➨ logout user;
+   * ➨ respective ui changes;
+   * ➨ delete cookies;
+   * @returns
+   * void
+	 */
+	async function logout
+  (
+  ): Promise < void >
+  {
     document.cookie = 'betarenaCookieLoggedIn' + '=; Max-Age=0'
     document.cookie = "betarenaCookieLoggedIn=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-		dropdown_user_auth = false;
+		isUserAuthDropdown = false;
     await goto(`/${$userBetarenaSettings.lang == 'en' ? '' : $userBetarenaSettings.lang}`, { replaceState: true })
 		userBetarenaSettings.signOutUser();
     setUserLang = false
 	}
 
-  // NOTE: ?
-	// afterNavigate(async() => {
-	//   await invalidateAll()
-	// })
+  // #endregion ➤ [METHODS]
 
-  // TODO:
-	// function selectedSport(sport: string) {}
+  // #region ➤ [REACTIVIY] [METHODS]
 
-  $: if (HEADER_TRANSLATION_DATA?.scores_header_fixtures_information) {
-    $sessionStore.fixturesTodayNum = parseInt(HEADER_TRANSLATION_DATA?.scores_header_fixtures_information?.football)
+  /**
+   * @summary [REACTIVE]
+   * @description
+   * listens to when user (localStorage) not-exists, and initial language has not been set;
+  */
+  $: if
+  (
+    browser
+    && !langSelected
+    && $userBetarenaSettings.user == undefined
+  )
+  {
+    dlog
+    (
+      `${NB_W_TAG} 🔵 Setting (initial) language!`,
+      NB_W_TOG,
+      NB_W_STY
+    );
+    langSelected = true;
+    userBetarenaSettings.setLang
+    (
+      $sessionStore?.serverLang
+    );
+	}
+
+  /**
+   * @summary [REACTIVE]
+   * @description listens to when
+   * user (localStorage) exists,
+   * and initial language for (logged-in)
+   * user set account has not been set yet;
+  */
+  $: if
+  (
+    $userBetarenaSettings?.user != undefined
+    && !setUserLang
+    && PROFILE_URL != $page.route.id
+  )
+  {
+    setUserLang = true
+    let userlang = $userBetarenaSettings.user?.scores_user_data?.lang
+    dlog(`${NB_W_TAG} 🔵 User Detected! Setting Auth language! ${userlang}`, NB_W_TOG, NB_W_STY)
+    selectLanguage
+    (
+      userlang
+    )
   }
+
+  /**
+   * @summary [REACTIVE]
+   * @description (browser) listens to when
+   * user (localStorage) exists, sets cookie;
+  */
+  $: if
+  (
+    browser
+    && $userBetarenaSettings?.user != undefined
+  )
+  {
+    let username = 'true';
+    setCookie
+    (
+      'betarenaCookieLoggedIn',
+      username,
+      30
+    );
+  }
+
+  // [ℹ] (archive) -> && PROFILE_URL == $page.route.id
+  $: if
+  (
+    $userBetarenaSettings?.lang
+    && !$page.error
+    && $page.route.id
+    && $userBetarenaSettings?.user != undefined
+    && setUserLang
+  )
+  {
+    update_select_lang()
+  }
+
+  /**
+   * @summary [REACTIVE]
+   * @description sets (number) of
+   * fixtrues today, as MAIN default
+   * data point;
+  */
+  $: if
+  (
+    WIDGET_T_DATA?.scores_header_fixtures_information
+  )
+  {
+    $sessionStore.fixturesTodayNum = parseInt(WIDGET_T_DATA?.scores_header_fixtures_information?.football)
+  }
+
+  $: dropDownArea =
+    isLangDropdown
+    || isOddsDropdown
+    || isBookmakersDropdown
+    || isUserAuthDropdown
+  ;
+
+  $: homepageURL =
+    $sessionStore?.serverLang != 'en'
+      ? `/${$page.params.lang}`
+      : `/`
+  ;
+
+  $: logoLink =
+    $sessionStore?.serverLang != 'en'
+      ? `${$page.url.origin}/${$sessionStore?.serverLang}`
+      : $page.url.origin
+  ;
+
+  $: if (browser && $sessionStore.navBtnHover)
+  {
+    calcNavTrianglePos();
+  }
+  $: if (browser && $sessionStore.navBtnHover == undefined)
+  {
+    calcNavTrianglePos('scores');
+  }
+
+  $: dlogv2
+  (
+    NB_W_TAG,
+    [
+      `$sessionStore?.serverLang: ${$sessionStore?.serverLang}`,
+      `homepageURL: ${homepageURL}`,
+      `logoLink: ${logoLink}`
+    ],
+    NB_W_TOG,
+    NB_W_STY
+  )
+
+  // #endregion ➤ [REACTIVIY] [METHODS]
+
+  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+	onMount
+  (
+    async () =>
+    {
+      [
+        tabletExclusive,
+        mobileExclusive
+      ] = viewport_change
+      (
+        TABLET_VIEW,
+        MOBILE_VIEW
+      );
+      window.addEventListener
+      (
+        'resize',
+        function ()
+        {
+          [
+            tabletExclusive,
+            mobileExclusive
+          ] =
+          viewport_change
+          (
+            TABLET_VIEW,
+            MOBILE_VIEW
+          );
+        }
+      );
+	  }
+  );
+
+  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
 
-<!-- ===================
-	COMPONENT HTML
-=================== -->
+<!-- ===============
+COMPONENT HTML
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
 
-<!-- 
-[ℹ] area outside to close action (outer header)
+<!--
+HEADER (OUTER) CLOSE DROPDOWNS AREA
 -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-{#if dropdown_lang_visible || dropdown_more_sports_menu || dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible || dropdown_user_auth}
+{#if dropDownArea}
 	<div
 		id="background-area-close"
 		on:click={() => closeAllDropdowns()}
@@ -529,1742 +665,1393 @@ COMPONENT JS - BASIC
 {/if}
 
 <!--
-[ℹ] extra-header-SEO-info
-TODO:FIXME: not generating for each LANG
+SEO DATA
+TODO: FIXME:
+=> not generating for each LANG
 -->
-{#if HEADER_TRANSLATION_DATA != undefined && !hideSEO}
-  <SeoBox>
-    <!-- 
-    [ℹ] main-homepage-link-in-all-avaialble-languages
-    -->
-    {#each HEADER_TRANSLATION_DATA.langArray as item}
-      {#if item != 'en'}
-        <!-- 
-        [ℹ] content here
-        -->
-        <a
-          
-          href={$page.url.origin + '/' + item}
-        >
-          <p>{$page.url.origin + '/' + item}</p>
-        </a>
-      {:else}
-        <!-- [ℹ] content here 
-        -->
-        <a
-          
-          href={$page.url.origin}
-        >
-          <p>{$page.url.origin}</p>
-        </a>
-      {/if}
-    {/each}
-  </SeoBox>
-{/if}
+<SeoBox>
+  <!--
+  HOMEPAGE LINKS
+  -->
+  {#each WIDGET_T_DATA?.langArray || [] as item}
+    {#if item != 'en'}
+      <a href={$page.url.origin + '/' + item}>
+        {$page.url.origin + '/' + item}
+      </a>
+    {:else}
+      <a href={$page.url.origin}>
+        {$page.url.origin}
+      </a>
+    {/if}
+  {/each}
+  <!--
+  OTHER URLS
+  -->
+  <a
+    href={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}>
+    {WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title}
+  </a>
+  <a
+    href={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}>
+    {WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title}
+  </a>
+  <a
+    href={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}>
+    {WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title}
+  </a>
+</SeoBox>
 
-<!-- 
-[ℹ] show/hide auth widget
--->
 <AuthWidget />
 
-<!-- 
-[ℹ] main header INIT
+<!--
+NAVBAR MAIN
 -->
-<!-- svelte-ignore a11y-click-events-have-key-events -->
-<header 
-  class="column-space-center"
+<header
+  class=
+  "
+    column-space-center
+  "
   class:user-active={PROFILE_URL == $page.route.id}
-  class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}>
-	<!-- 
-  [ℹ] area outside to close action (inner header)
+  class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}
+>
+
+	<!--
+  HEADER (INNER) CLOSE DROPDOWNS AREA
   -->
-	{#if dropdown_lang_visible || dropdown_more_sports_menu || dropdown_theme_visible || dropdown_odds_type_visible || dropdown_bookmakers_visible || dropdown_user_auth}
+	{#if dropDownArea}
 		<div
 			id="background-area-close-inner"
 			on:click={() => closeAllDropdowns()}
 		/>
 	{/if}
 
-	{#if HEADER_TRANSLATION_DATA != undefined}
-		<!-- 
-    [ℹ] header TOP NAVBAR section 
+  <!--
+  TOP NAVBAR
+  -->
+  <div
+    id="top-header"
+    class="row-space-out"
+  >
+
+    <!--
+    1st COLUMN
     -->
-		<div 
-      id="top-header" 
-      class="row-space-out"
+    <div
+      class="row-space-start"
+      style="width: fit-content;"
     >
-			<!-- 
-      [ℹ] 1st half of the header nav 
+      <!--
+      📱 MOBILE 💻 TABLET
+      MENU BURGER
       -->
-			<div
-				class="row-space-start"
-				style="width: fit-content;"
-			>
-				<!-- 
-        [ℹ] menu-burger-bar 
-        [ℹ] [TABLET] [MOBILE] 
-        -->
-				{#if tabletExclusive}
-					<img
+      {#if tabletExclusive}
+        <img
+          loading="lazy"
+          id="burger-menu"
+          src={menu_burger_bar}
+          alt="betarena-logo"
+          width=24
+          height=24
+          on:click={() =>
+            (mobileNavToggleMenu = true)}
+        />
+      {/if}
+
+      <!--
+      📱 MOBILE 💻 TABLET 🖥️ LAPTOP
+      BETARENA BRAND LOGO
+      -->
+      <div
+        id="brand"
+        class="cursor-pointer"
+        on:click={() => reloadPage()}
+      >
+        <a
+          href={homepageURL}
+          title={logoLink}
+        >
+          <img
             loading="lazy"
-						id="burger-menu"
-						src={menu_burger_bar}
-						alt="betarena-logo"
-						width="24px"
-						height="24px"
-						on:click={() =>
-							(mobileNavToggleMenu = true)}
-					/>
-				{/if}
+            src={mobileExclusive == true ? logo_mini : logo_full}
+            alt="betarena-logo"
+            width={mobileExclusive == true ? 103 : 142}
+            height=30
+            class:m-r-40={!mobileExclusive}
+          />
+        </a>
+      </div>
 
-				<!-- 
-        [ℹ] BETARENA LOGO [MOBILE ONLY]
-        -->
-				{#if mobileExclusive}
-					<div
-						id="brand"
-						class="cursor-pointer"
-						on:click={() => reloadPage()}
-					>
-						<a
-							
-							href={homepageURL}
-							title={logoLink}
-						>
-							<img
-                loading="lazy"
-								src={logo_mini}
-								alt="betarena-logo"
-								width="103px"
-								height="30px"
-							/>
-						</a>
-					</div>
-					<!-- 
-        [ℹ] BETARENA LOGO [DESKTOP ONLY] 
-        -->
-				{:else}
-					<div
-						id="brand"
-						class="cursor-pointer"
-						on:click={() => reloadPage()}
-					>
-						<a
-							
-							href={homepageURL}
-							title={logoLink}
-						>
-							<img
-                loading="lazy"
-								class="m-r-30"
-								src={logo_full}
-								alt="betarena-logo"
-								width="142px"
-								height="30px"
-							/>
-						</a>
-					</div>
-				{/if}
-
-				<!-- 
-        [ℹ] LANGUAGE SELECTION [DESKTOP]
-        -->
-				{#if !tabletExclusive}
-					<!-- 
-          [ℹ] language-change-dropdown-select 
-          -->
-					<div id="lang-container" class="m-r-30">
-						<!-- 
-            [ℹ] INIT-selected-lang 
-            -->
-						<div
-							id="selected-language-btn"
-							class:active-lang-select={dropdown_lang_visible ==
-								true}
-							class="row-space-out"
-							on:click={() =>
-								(dropdown_lang_visible =
-									!dropdown_lang_visible)}
-						>
-							<p
-								class="
-                  color-white 
-                  s-14 
-                  mr-5
-                "
-							>
-								{server_side_language.toUpperCase()}
-							</p>
-							<!-- 
-              [ℹ] arrow down [hidden-menu] 
-              -->
-							<img
-                loading="lazy"
-								src={!dropdown_lang_visible
-									? arrow_down
-									: arrow_up}
-								alt={!dropdown_lang_visible
-									? 'arrow_down'
-									: 'arrow_up'}
-								width="16"
-								height="16"
-							/>
-						</div>
-						<!-- 
-            [ℹ] INITIALLY-HIDDEN drop-down menu 
-            -->
-						{#if dropdown_lang_visible}
-							<div
-								id="dropdown-menu"
-								transition:fly
-							>
-								{#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
-									{#if lang.toUpperCase() != server_side_language.toUpperCase()}
-										<div
-											id="lang-select"
-											on:click={() =>
-												selectLanguage(lang)}
-                      on:keydown={() =>
-                        selectLanguage(lang)}
-                      on:mouseout={() => 
-                        detectIntentBuffer(undefined)}
-                      on:mouseover={() =>
-                         detectIntentBuffer(lang)}
-                      on:focus={() => 
-                        detectIntentBuffer(lang)}
-										>
-											<p
-												class="
-                          color-white 
-                          s-14
-                        "
-											>
-												{lang.toUpperCase()}
-											</p>
-										</div>
-									{/if}
-								{/each}
-							</div>
-						{/if}
-					</div>
-				{/if}
-
-				<!-- 
-        [ℹ] NAV BUTTONS [TABLET] [DESKTOP]
-        <-contents->
-        [ℹ] latest news 
-        [ℹ] betting-tips 
-        <-conditional->
-        -->
-        {#if PROFILE_URL != $page.route.id}
-          {#if !mobileExclusive}
-            <!-- 
-            [ℹ] latest news 
-            -->
-            <a
-              rel="external"
-              href={HEADER_TRANSLATION_DATA
-                .scores_header_links.latest_news}
-            >
-              <button class="btn-main">
-                <p
-                  class="
-                    color-white 
-                    s-14
-                  "
-                >
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .content_platform_link}
-                </p>
-              </button>
-            </a>
-
-            <!-- 
-            [ℹ] betting-tips 
-            -->
-            <a
-              rel="external"
-              href={HEADER_TRANSLATION_DATA
-                .scores_header_links.betting_tips}
-            >
-              <button class="btn-main">
-                <p
-                  class="
-                    color-white 
-                    s-14
-                  "
-                >
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .betting_tips_link}
-                </p>
-              </button>
-            </a>
-          {/if}
-        {/if}
-			</div>
-
-			<!-- 
-      [ℹ] 2nd half of the header nav
-      <-contents->
-      [ℹ] theme-options box
-      [ℹ] odds-type box
-      [ℹ] bookmakers-type
-      [ℹ] sign-in-btn 
-      <-conditional->
+      <!--
+      🖥️ LAPTOP
+      EXTERNAL BUTTONS / NAVIGATION
       -->
-			<div
-				class="row-space-start"
-				style="width: fit-content;"
-			>
-				{#if !tabletExclusive}
-          <!-- 
-          [ℹ] theme-options box
-          -->
-					<div
-						id="theme-opt-container"
-						class="
-              dropdown-opt-box 
-              row-space-start
-              
-            "
-            class:m-r-10={PROFILE_URL == $page.route.id}
-					>
-						<!-- 
-            [ℹ] name of the container-opt 
-            -->
-						<div
-							class="m-r-10"
-							on:click={() =>
-								(dropdown_theme_visible =
-									!dropdown_theme_visible)}
-						>
-							<p
-								class="
-                  color-grey 
-                  s-12 
-                  m-b-5
-                "
-							>
-								{HEADER_TRANSLATION_DATA
-									.scores_header_translations
-									.theme}
-							</p>
-							<div class="row-space-start">
-								<img
-                  loading="lazy"
-									class="m-r-5"
-									src={light_icon_theme}
-									alt="${HEADER_TRANSLATION_DATA
-										.scores_header_translations
-										.bookmakers_countries[0][1]}"
-									width="16px"
-									height="16px"
-								/>
-								{#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
-									{#if theme.includes($userBetarenaSettings.theme)}
-										<p
-											class="
-                        color-white 
-                        s-14
-                      "
-										>
-											{theme[1]}
-										</p>
-									{/if}
-								{/each}
-							</div>
-						</div>
-						<!-- 
-            [ℹ] arrow down [hidden-menu] 
-            -->
-						<img
-              loading="lazy"
-							src={!dropdown_theme_visible
-								? arrow_down_fade
-								: arrow_up}
-							alt={!dropdown_theme_visible
-								? 'arrow_down_fade'
-								: 'arrow_up'}
-							width="16"
-							height="16"
-							on:click={() =>
-								(dropdown_theme_visible =
-									!dropdown_theme_visible)}
-						/>
-						<!-- 
-            [ℹ] INIT-HIDDEN-dropdown-theme-select 
-            -->
-						{#if dropdown_theme_visible}
-							<div
-								id="theme-dropdown-menu"
-								transition:fly
-							>
-								{#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
-									<div
-										class="
-                      theme-opt-box 
-                      row-space-out
-                    "
-										on:click={() =>
-											selectedTheme(theme[0])}
-									>
-										<p
-											class="
-                        color-white 
-                        s-14
-                      "
-										>
-											{theme[1]}
-										</p>
-										{#if theme.includes($userBetarenaSettings.theme)}
-											<img
-                        loading="lazy"
-												src={icon_check}
-												alt={theme[0]}
-												width="16px"
-												height="16px"
-											/>
-										{/if}
-									</div>
-								{/each}
-							</div>
-						{/if}
-					</div>
+      {#if !tabletExclusive}
 
-					<!-- 
-          [ℹ] odds-type box
+        <div
+          id='navBox'
+          class=
+          "
+            row-space-start
+          "
+        >
+          <!--
+          SCORES PLATFORM
+          -->
+          <HeaderNavBtn
+            navKey={'scores'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
+            isProfilePage={PROFILE_URL == $page.route.id}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
+
+          <!--
+          SCORES CONTENT
+          -->
+          <HeaderNavBtn
+            navKey={'content'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
+            isProfilePage={PROFILE_URL == $page.route.id}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
+
+          <!--
+          COMPETITIONS
+          -->
+          <HeaderNavBtn
+            navKey={'competitions'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+            isProfilePage={PROFILE_URL == $page.route.id}
+            soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
+            isSoon={true}
+            disableAnchor={true}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
+
+          <!--
+          NAV TRIANGLE
           -->
           {#if PROFILE_URL != $page.route.id}
             <div
-              id="odds-type-container"
-              class="
-                cursor-not-allowed 
-                dropdown-opt-box 
-                row-space-start
-              "
-              on:click={() =>
-                (dropdown_odds_type_visible =
-                  !dropdown_odds_type_visible)}
-            >
-              <!-- 
-              [ℹ] name of the container-opt 
-              -->
-              <div class="m-r-10">
-                <p
-                  class="
-                    color-grey 
-                    s-12 
-                    m-b-5
-                  "
-                >
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .odds}
-                </p>
-                <p
-                  class="
-                    color-white 
-                    s-14
-                  "
-                >
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .odds_type[0]}
-                </p>
-              </div>
-              <!-- 
-              [ℹ] arrow down [hidden-menu] 
-              -->
-              <img
-                loading="lazy"
-                src={!dropdown_odds_type_visible
-                  ? arrow_down_fade
-                  : arrow_up}
-                alt={!dropdown_odds_type_visible
-                  ? 'arrow_down_fade'
-                  : 'arrow_up'}
-                width="16"
-                height="16"
-              />
-              <!-- 
-              [ℹ] INIT-HIDDEN-dropdown-odds-type 
-              -->
-              {#if dropdown_odds_type_visible}
-                <!-- 
-                [ℹ] dropdown-menu 
-                -->
-                <div
-                  id="odds-type-dropdown-menu"
-                  transition:fly
-                >
-                  {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
-                    <div
-                      class="theme-opt-box"
-                      on:click={() =>
-                        (dropdown_odds_type_visible = false)}
-                    >
-                      <p
-                        class="
-                          color-white 
-                          s-14
-                        "
-                      >
-                        {odd}
-                      </p>
-                    </div>
-                  {/each}
-                </div>
-              {/if}
-            </div>
+              id="nav-triangle"
+              style="left: {width}px;"
+            />
           {/if}
 
-					<!-- 
-          [ℹ] bookmakers-type 
-          -->
-          {#if PROFILE_URL != $page.route.id}
-            <div
-              id="bookmakers-type-container"
-              class="
-                dropdown-opt-box 
-                row-space-start 
-                m-r-30
-              "
-              on:click={() =>
-                (dropdown_bookmakers_visible =
-                  !dropdown_bookmakers_visible)}
-            >
-              <!-- 
-              [ℹ] name of the container-opt 
-              -->
-              <div class="m-r-10">
-                <p
-                  class="
-                    color-grey 
-                    s-12 
-                    m-b-5
-                  "
-                >
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .bookmakers}
-                </p>
-                <div class="row-space-start">
-                  {#if $userBetarenaSettings.country_bookmaker != undefined}
-                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-                      {#if country.includes($userBetarenaSettings.country_bookmaker
-                          .toString()
-                          .toUpperCase())}
-                        <img
-                          loading="lazy"
-                          class="
-                            country-flag 
-                            m-r-5
-                          "
-                          src="https://betarena.com/images/flags/{country[0]}.svg"
-                          alt={country[1]}
-                          width="20px"
-                          height="14px"
-                        />
-                        <p
-                          class="
-                            color-white 
-                            s-14
-                          "
-                        >
-                          {country[1]}
-                        </p>
-                      {/if}
-                    {/each}
-                  {/if}
-                </div>
-              </div>
-              <!-- 
-              [ℹ] arrow down [hidden-menu]
-              -->
-              <img
-                loading="lazy"
-                src={!dropdown_bookmakers_visible
-                  ? arrow_down_fade
-                  : arrow_up}
-                alt={!dropdown_bookmakers_visible
-                  ? 'arrow_down_fade'
-                  : 'arrow_up'}
-                width="16"
-                height="16"
-              />
-              <!-- 
-              [ℹ] INIT-HIDDEN-dropdown-bookmakers-type 
-              -->
-              {#if dropdown_bookmakers_visible}
-                <div
-                  id="bookmakers-type-dropdown-menu"
-                  transition:fly
-                >
-                  {#if $userBetarenaSettings.country_bookmaker != undefined}
-                    {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-                      <div
-                        class="
-                          theme-opt-box 
-                          row-space-start
-                        "
-                        class:country-selected={country[0] ===
-                          $userBetarenaSettings.country_bookmaker
-                            .toString()
-                            .toUpperCase()}
-                        on:click={() =>
-                          selectedCountryBookmakers(
-                            country[0]
-                          )}
-                      >
-                        <img
-                          loading="lazy"
-                          class="
-                            country-flag
-                            m-r-10
-                          "
-                          src="https://betarena.com/images/flags/{country[0]}.svg"
-                          alt={country[1]}
-                          width="20px"
-                          height="14px"
-                        />
-                        <p
-                          class="
-                            color-white 
-                            s-14
-                          "
-                        >
-                          {country[1]}
-                        </p>
-                      </div>
-                    {/each}
-                  {/if}
-                </div>
-              {/if}
-            </div>
-          {/if}
-				{/if}
+        </div>
 
-				<!--
-        [ℹ] sign-in-btn 
-        [ℹ] <conditional>
+      {/if}
+
+    </div>
+
+    <!--
+    2nd COLUMN
+    -->
+    <div
+      class="row-space-start"
+      style="width: fit-content;"
+    >
+
+      <!--
+      🖥️ LAPTOP
+      -->
+      {#if !tabletExclusive}
+
+        <!--
+        CURRENCY SELECTION
+        NOTE: -> HIDDEN TEMPORARILY
         -->
-				{#if $userBetarenaSettings?.user == undefined}
-					<button
-						id="sign-in-btn"
-						class="cursor-pointer"
-						on:click={() =>
-							($sessionStore.auth_show =
-								!$sessionStore.auth_show)}
-					>
-						<p
-							class="
+        <div
+          id="currency-box"
+          class="m-r-16"
+        >
+
+          <!--
+          SELECTED CURRENCY
+          -->
+          <div
+            class="
+              selected-language-btn
+              row-space-start
+            "
+            class:active-lang-select={isCurrencyDropdown == true}
+            on:click={() =>	(isCurrencyDropdown = !isCurrencyDropdown)}
+          >
+
+            <!--
+            CURRENCY ICON
+            -->
+            <img
+              loading="lazy"
+              src='/assets/svg/currency/usd.svg'
+              alt='usd-icon'
+              width="16"
+              height="16"
+              class="
+                m-r-6
+              "
+            />
+
+            <!--
+            CURRENCY TEXT
+            -->
+            <p
+              class="
+                color-white
+                s-14
+              "
+            >
+              USD
+            </p>
+
+            <!--
+            ARROW DOWN
+            NOTE: -> HIDDEN TEMPORARILY
+            -->
+            {#if false}
+              <img
+                loading="lazy"
+                src={!isCurrencyDropdown ? arrow_down : arrow_up}
+                alt={!isCurrencyDropdown	? 'arrow_down' : 'arrow_up'}
+                width="16"
+                height="16"
+              />
+            {/if}
+
+          </div>
+
+        </div>
+
+        <!--
+        LANGUAGE SELECTION
+        -->
+        <div
+          id="lang-container"
+          class="m-r-16"
+        >
+
+          <!--
+          SELECTED LANG
+          -->
+          <div
+            class="
+              selected-language-btn
+              row-space-out
+              cursor-pointer
+            "
+            class:active-lang-select={isLangDropdown == true}
+            on:click={() =>	(isLangDropdown = !isLangDropdown)}
+          >
+            <p
+              class="
+                color-white
+                s-14
+                m-r-5
+              "
+            >
+              {$sessionStore?.serverLang?.toUpperCase()}
+            </p>
+
+            <!--
+            ARROW DOWN
+            -->
+            <img
+              loading="lazy"
+              src={!isLangDropdown ? arrow_down : arrow_up}
+              alt={!isLangDropdown	? 'arrow_down' : 'arrow_up'}
+              width="16"
+              height="16"
+            />
+          </div>
+
+          <!--
+          DROPDOWN (LANG)
+          -->
+          {#if isLangDropdown}
+            <div
+              id="dropdown-menu"
+              transition:fly
+            >
+              {#each WIDGET_T_DATA.langArray.sort() as lang}
+                {#if lang.toUpperCase() != $sessionStore?.serverLang?.toUpperCase()}
+                  <div
+                    id="lang-select"
+                    on:click={() =>	selectLanguage(lang)}
+                    on:keydown={() => selectLanguage(lang)}
+                    on:mouseout={() => detectIntentBuffer(undefined)}
+                    on:mouseover={() => detectIntentBuffer(lang)}
+                    on:focus={() => detectIntentBuffer(lang)}
+                  >
+                    <p
+                      class="
+                        color-white
+                        s-14
+                      "
+                    >
+                      {lang.toUpperCase()}
+                    </p>
+                  </div>
+                {/if}
+              {/each}
+            </div>
+          {/if}
+
+        </div>
+
+      {/if}
+
+      <!--
+      THEME SELECTION
+      -->
+      {#if !mobileExclusive}
+        <div
+          id="theme-opt-container"
+          class="
+            row-space-start
+            m-r-30
+            cursor-pointer
+          "
+          on:click={() => selectedTheme()}
+          class:m-r-10={PROFILE_URL == $page.route.id}
+          class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
+        >
+
+          <img
+            loading="lazy"
+            src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
+            alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
+            width=16
+            height=16
+            class:light={$userBetarenaSettings.theme == 'Dark'}
+          />
+
+        </div>
+      {/if}
+
+      <!--
+      SIGN IN BUTTON
+      -->
+      {#if $userBetarenaSettings?.user == undefined}
+        <button
+          id="sign-in-btn"
+          class="
+            cursor-pointer
+          "
+          on:click={() => ($sessionStore.auth_show = !$sessionStore.auth_show)}
+        >
+          <p
+            class="
               color-white
               s-14
             "
-						>
-							{HEADER_TRANSLATION_DATA
-								.scores_header_translations
-								.sign_in}
-						</p>
-					</button>
-				{:else if $userBetarenaSettings?.user != undefined}
-					<div
-						id="user-profile-box"
-						class="row-space-start"
-					>
-						<!--
-            [ℹ] user wallet address
-            [ℹ] <conditional>
-            -->
-						{#if $userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr != undefined}
-							<p
-								id="wallet-text"
-								class="
-                  color-white
-                  w-500
-                "
-							>
-								{$userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr.slice(
-									0,
-									5
-								)}
-								...
-								{$userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr.slice(
-									-5
-								)}
-							</p>
-						{/if}
-						<!--
-            [ℹ] user avatar img
-            -->
-						<img
-              loading="lazy"
-              id="user-profile-picture"
-							src={$userBetarenaSettings?.user
-                ?.scores_user_data?.profile_photo ||
-                profile_avatar}
-							alt="Profile Icon"
-							title="Profile Avatar"
-							on:click={() =>
-								(dropdown_user_auth =
-									!dropdown_user_auth)}
-							class="cursor-pointer"
-              width=44
-              height=44
-						/>
-						<!-- 
-            [ℹ] dropdown profile
-            -->
-						{#if dropdown_user_auth}
-							<div id="user-profile-dropdown">
-								<!--
-                [ℹ] profile page button
-                -->
-								<a href="/u/dashboard/{$userBetarenaSettings.lang}">
-									<div
-										class="
-                      theme-opt-box
-                      cursor-pointer
-                    "
-                    style="width: 100%;"
-										on:click={() =>
-											(dropdown_odds_type_visible = false)}
-									>
-										<p
-											class="
-                        color-white 
-                        s-14
-                      "
-										>
-                      {HEADER_TRANSLATION_DATA?.scores_header_translations?.data?.profile || 'Profile'}
-										</p>
-									</div>
-								</a>
-								<!--
-                [ℹ] logout page button
-                -->
+          >
+            {WIDGET_T_DATA?.scores_header_translations?.sign_in || translationObject?.sign_in}
+          </p>
+        </button>
+      {:else}
+
+        <div
+          id="user-profile-box"
+          class="row-space-start"
+        >
+
+          <!--
+          USER WALLET
+          -->
+          {#if $userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr != undefined}
+            <p
+              id="wallet-text"
+              class="
+                color-white
+                w-500
+              "
+            >
+              {$userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr.slice(
+                0,
+                5
+              )}
+              ...
+              {$userBetarenaSettings?.user?.scores_user_data?.web3_wallet_addr.slice(
+                -5
+              )}
+            </p>
+          {/if}
+
+          <!--
+          USER AVATAR
+          -->
+          <img
+            loading="lazy"
+            id="user-profile-picture"
+            src={$userBetarenaSettings?.user?.scores_user_data?.profile_photo || profile_avatar}
+            alt="Profile Icon"
+            title="Profile Avatar"
+            on:click={() => (isUserAuthDropdown = !isUserAuthDropdown)}
+            class="cursor-pointer"
+            width=44
+            height=44
+          />
+
+          <!--
+          PROFILE DROPDOWN
+          -->
+          {#if isUserAuthDropdown}
+
+            <div
+              id="user-profile-dropdown"
+            >
+
+              <!--
+              PROFILE BUTTON
+              -->
+              <a
+                href="/u/dashboard/{$userBetarenaSettings.lang}"
+              >
                 <div
                   class="
                     theme-opt-box
                     cursor-pointer
                   "
-                  on:click={() => logout()}
+                  style="width: 100%;"
+                  on:click={() => (isOddsDropdown = false)}
                 >
                   <p
                     class="
-                      color-white 
+                      color-white
                       s-14
                     "
                   >
-                    {HEADER_TRANSLATION_DATA?.scores_header_translations?.data?.logout || 'Logout'}
+                    {WIDGET_T_DATA?.scores_header_translations?.data?.profile || 'Profile'}
                   </p>
                 </div>
-							</div>
-						{/if}
-					</div>
-				{/if}
-			</div>
-		</div>
+              </a>
 
-		<!--
-    [ℹ] bottom NAV SPORTS navbar values
-    <-conditional->
+              <!--
+              LOGOUT
+              -->
+              <div
+                class="
+                  theme-opt-box
+                  cursor-pointer
+                "
+                on:click={() => logout()}
+              >
+                <p
+                  class="
+                    color-white
+                    s-14
+                  "
+                >
+                  {WIDGET_T_DATA?.scores_header_translations?.data?.logout || 'Logout'}
+                </p>
+              </div>
+
+            </div>
+
+          {/if}
+
+        </div>
+
+      {/if}
+
+    </div>
+
+  </div>
+
+  <div id='top-border' />
+  <div id='bottom-border' />
+
+  <!--
+  BOTTOM NAVBAR
+  -->
+  <div
+    id="bottom-header"
+    class="row-space-out"
+  >
+
+    <!--
+    1st COLUMN
     -->
-    {#if PROFILE_URL != $page.route.id}
-      <div id="bottom-header" class="row-space-out">
-        <!-- 
-        [ℹ] sliding-container 
-        FIXME: avoid using in-line styles
-        -->
+    <div
+      class="
+        row-space-out
+      "
+    >
+
+      <!--
+      SPORTS HORIZONTAL LIST
+      -->
+      {#if PROFILE_URL != $page.route.id}
         <div
           id="bottom-header-inner"
           class="
-            row-space-out 
+            row-space-out
             m-r-10
           "
           style="width: fit-content;"
         >
-          <!-- 
-          [ℹ] sports-btn values 
-          FIXME: avoid using in-line styles
-          -->
           <div
             class="row-space-out"
             style="width: fit-content;"
           >
-            <!-- 
-            [ℹ] show only first 7 sports
+
+            <!--
+            FOOTBALL
             -->
-            {#each { length: 7 } as _, i}
-              <!-- 
-              [ℹ] check - if "sport" column exists
-              [ℹ] meaning "data" exists
-              -->
-              {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]
-                  .toString()
-                  .toLowerCase()] != null}
-                <!-- 
-                [ℹ] check if "sport" == "Football"
-                -->
-                {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0] == 'football'}
-                  <a
-                    
-                    href={homepageURL}
-                    title={logoLink}
-                  >
-                    <button
-                      class="
-                        sports-btn 
-                        m-r-10
-                      "
-                      on:click={() =>
-                        (selected_sports =
-                          HEADER_TRANSLATION_DATA
-                            .scores_header_translations
-                            .sports[i][0])}
-                      class:selected-sports={selected_sports ==
-                        HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .sports[i][0]}
-                    >
-                      <img
-                        loading="lazy"
-                        class="m-r-10"
-                        src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-                          i
-                        ][0].toLocaleLowerCase()}.svg`}
-                        alt="${HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .sports[i][0]}-img"
-                        width="20px"
-                        height="20px"
-                      />
-                      <p
-                        class="
-                          color-white 
-                          s-14 
-                          m-r-10
-                        "
-                      >
-                        {HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .sports[i][1]}
-                      </p>
-                      <p
-                        class="
-                          color-white 
-                          s-14 
-                          sport-counter
-                        "
-                      >
-                        {HEADER_TRANSLATION_DATA
-                          .scores_header_fixtures_information[
-                          HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-                            i
-                          ][0]
-                            .toString()
-                            .toLowerCase()
-                        ]}
-                      </p>
-                    </button>
-                  </a>
-                  <!-- 
-                [ℹ] otherwise, standard sport display
-                -->
-                {:else}
-                  <button
-                    class="
-                      sports-btn 
-                      m-r-10
-                    "
-                    on:click={() =>
-                      (selected_sports =
-                        HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .sports[i][0])}
-                    class:selected-sports={selected_sports ==
-                      HEADER_TRANSLATION_DATA
-                        .scores_header_translations
-                        .sports[i][0]}
-                  >
-                    <img
-                      loading="lazy"
-                      class="m-r-10"
-                      src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-                        i
-                      ][0].toLocaleLowerCase()}.svg`}
-                      alt="${HEADER_TRANSLATION_DATA
-                        .scores_header_translations
-                        .sports[i][0]}-img"
-                      width="20px"
-                      height="20px"
-                    />
-                    <p
-                      class="
-                        color-white 
-                        s-14 
-                        m-r-10
-                      "
-                    >
-                      {HEADER_TRANSLATION_DATA
-                        .scores_header_translations
-                        .sports[i][1]}
-                    </p>
-                    <p
-                      class="
-                        color-white 
-                        s-14 
-                        sport-counter
-                      "
-                    >
-                      {HEADER_TRANSLATION_DATA
-                        .scores_header_fixtures_information[
-                        HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-                          i
-                        ][0]
-                          .toString()
-                          .toLowerCase()
-                      ]}
-                    </p>
-                  </button>
-                {/if}
-                <!-- 
-              [ℹ] otherwise, no-data exists
-              [ℹ] and sport should show "soon"
-              -->
-              {:else}
-                {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as sport}
-                  {#if HEADER_TRANSLATION_DATA.scores_header_translations.sports[i][0]
-                    .toString()
-                    .toLowerCase() === sport[0]
-                      .toString()
-                      .toLowerCase()}
-                    <button
-                      class="
-                        sports-btn 
-                        m-r-10 
-                        cursor-not-allowed
-                      "
-                      on:click={() =>
-                        (selected_sports =
-                          HEADER_TRANSLATION_DATA
-                            .scores_header_translations
-                            .sports[i][0])}
-                      class:selected-sports={selected_sports ==
-                        HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .sports[i][0]}
-                    >
-                      <img
-                        loading="lazy"
-                        class="
-                          m-r-10 
-                          soon-opacitiy
-                        "
-                        src={`/assets/svg/sport-icon/${HEADER_TRANSLATION_DATA.scores_header_translations.sports[
-                          i
-                        ][0].toLocaleLowerCase()}.svg`}
-                        alt="${HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .sports[i][0]}-img"
-                        width="20px"
-                        height="20px"
-                      />
-                      <p
-                        class="
-                          color-white 
-                          s-14 
-                          m-r-10 
-                          soon-opacitiy
-                        "
-                      >
-                        {HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .sports[i][1]}
-                      </p>
-                      <p
-                        class="
-                          color-white 
-                          s-14 
-                          sport-counter
-                        "
-                      >
-                        {sport[1]
-                          .toString()
-                          .toLowerCase()}
-                      </p>
-                    </button>
-                  {/if}
-                {/each}
-              {/if}
-            {/each}
+            <HeaderSportsBtn
+              sportNameDefault={'football'}
+              sportTranslation={WIDGET_T_DATA?.scores_header_translations?.sports_v2?.['football']}
+              sportValue={WIDGET_T_DATA?.scores_header_fixtures_information?.['football']}
+              selectedSport={selectedSport}
+              on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
+            />
+
           </div>
         </div>
+      {/if}
 
-        <!-- 
-        [ℹ] "more sports" button box -->
-        <div id="more-sports-menu-container">
-          <!-- 
-          [ℹ] menu-more-sports-btn-DESKTOP + TABLET -->
-          {#if !mobileExclusive}
-            <!-- 
-            [ℹ] menu-sports-btn -->
-            <button
-              id="more-sports-menu"
-              on:click={() =>
-                (dropdown_more_sports_menu =
-                  !dropdown_more_sports_menu)}
-            >
-              <img
-                loading="lazy"
-                class="m-r-10"
-                src={menu_sports_icon}
-                alt="menu_btn"
-                width="20px"
-                height="20px"
-              />
-              <p
-                class="
-                  color-white 
-                  s-14 
-                  m-r-10
-                "
-              >
-                {HEADER_TRANSLATION_DATA
-                  .scores_header_translations
-                  .more_sports}
-              </p>
-              <!-- 
-              [ℹ] arrow down [hidden-menu] 
-              -->
-              <img
-                loading="lazy"
-                src={!dropdown_more_sports_menu
-                  ? arrow_down_fade
-                  : arrow_up}
-                alt={!dropdown_more_sports_menu
-                  ? 'arrow_down_fade'
-                  : 'arrow_up'}
-                width="20"
-                height="20"
-              />
-            </button>
-            <!-- 
-            [ℹ] menu-more-sports-btn-mobile -->
-          {:else}
-            <button
-              id="more-sports-menu"
-              on:click={() =>
-                (mobileExclusiveMoreSports =
-                  !mobileExclusiveMoreSports)}
-            >
-              <p
-                class="
-                  color-white 
-                  s-14
-                "
-              >
-                {HEADER_TRANSLATION_DATA
-                  .scores_header_translations
-                  .more_sports}
-              </p>
-            </button>
-          {/if}
+    </div>
 
-          <!-- 
-          [ℹ] INIT-HIDDEN-dropdown-more-sports-menu -->
-          {#if dropdown_more_sports_menu && !mobileExclusive}
+    <!--
+    2nd COLUMN
+    -->
+    <div
+      class="row-space-start"
+      style="width: fit-content;"
+    >
+
+      <!--
+      💻 TABLET 🖥️ LAPTOP
+      -->
+      {#if !mobileExclusive}
+
+        <!--
+        ODDS-TYPE CONTAINER
+        NOTE: -> HIDDEN TEMPORARILY
+        -->
+        {#if false}
+          <div
+            id="odds-box"
+            class="
+              cursor-not-allowed
+              dropdown-opt-box
+              row-space-start
+            "
+            on:click={() => (isOddsDropdown = !isOddsDropdown)}
+          >
+
+            <!--
+            SELECTED ODDS-TYPE BOX
+            -->
             <div
-              id="more-sports-dropdown-menu"
-              transition:fly
+              class="m-r-10"
             >
-              {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
-                <!-- 
-                [ℹ] check - if sport is column -->
-                {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0]
-                    .toString()
-                    .toLowerCase()] != null}
-                  <button
-                    class="
-                      sports-btn 
-                      row-space-out
-                    "
-                    on:click={() =>
-                      (dropdown_more_sports_menu = false)}
+
+              <p
+                class="
+                  color-grey
+                  s-12
+                  no-wrap
+                "
+              >
+                {WIDGET_T_DATA?.scores_header_translations?.odds || translationObject?.odds_type}
+              </p>
+
+              <p
+                class="
+                  color-white
+                  s-14
+                  no-wrap
+                "
+              >
+                {WIDGET_T_DATA?.scores_header_translations?.odds_type?.[0]}
+              </p>
+
+            </div>
+
+            <!--
+            ARROW DOWN
+            -->
+            <img
+              loading="lazy"
+              src={!isOddsDropdown ? arrow_down_fade : arrow_up}
+              alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
+              width=16
+              height=16
+            />
+
+            <!--
+            DROPDOWN MENU (ODDS-TYPE)
+            -->
+            {#if isOddsDropdown}
+              <div
+                id="odds-type-dropdown-menu"
+                transition:fly
+              >
+                {#each WIDGET_T_DATA?.scores_header_translations?.odds_type || [] as odd}
+                  <div
+                    class="theme-opt-box"
+                    on:click={() => (isOddsDropdown = false)}
                   >
-                    <div
-                      class="row-space-out"
-                      style="width: fit-content;"
+                    <p
+                      class="
+                        color-white
+                        s-14
+                      "
                     >
+                      {odd}
+                    </p>
+                  </div>
+                {/each}
+              </div>
+            {/if}
+
+          </div>
+        {/if}
+
+        <!--
+        BOOKMAKERS CONTAINER
+        -->
+        {#if PROFILE_URL != $page.route.id}
+          <div
+            id="bookmaker-box"
+            class=
+            "
+              dropdown-opt-box
+              row-space-start
+            "
+            on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
+            class:not-last={$userBetarenaSettings?.user != undefined}
+          >
+
+            <!--
+            SELECTED BOOKMAKERS BOX
+            -->
+            <div
+              class="m-r-10"
+            >
+              <p
+                class="
+                  color-grey
+                  s-12
+                  no-wrap
+                "
+              >
+                {WIDGET_T_DATA?.scores_header_translations?.bookmakers}
+              </p>
+              <div class="row-space-start">
+                {#if $userBetarenaSettings.country_bookmaker != undefined}
+                  {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                    {#if country.includes($userBetarenaSettings?.country_bookmaker?.toUpperCase())}
                       <img
                         loading="lazy"
-                        class="m-r-5"
-                        src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-                        alt="${sport[0]}-img"
-                        width="20px"
-                        height="20px"
+                        class="
+                          country-flag
+                          m-r-5
+                        "
+                        src="https://betarena.com/images/flags/{country[0]}.svg"
+                        alt={country[1]}
+                        width=20
+                        height=14
                       />
                       <p
                         class="
-                          color-white 
-                          s-14 
-                          m-r-10
+                          color-white
+                          s-14
                         "
                       >
-                        {sport[1]}
+                        {country[1]}
                       </p>
-                    </div>
-                    <p
-                      class="
-                        color-white 
-                        s-14 
-                        sport-counter-dark
-                      "
-                    >
-                      {HEADER_TRANSLATION_DATA
-                        .scores_header_fixtures_information[
-                        sport[0].toString()
-                      ]}
-                    </p>
-                  </button>
-                {:else}
-                  {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
-                    {#if sport[0]
-                      .toString()
-                      .toLowerCase() === _sport[0]
-                        .toString()
-                        .toLowerCase()}
-                      <button
-                        class="
-                          sports-btn 
-                          row-space-out 
-                          cursor-not-allowed
-                        "
-                        on:click={() =>
-                          (dropdown_more_sports_menu = false)}
-                      >
-                        <div
-                          class="row-space-out"
-                          style="width: fit-content;"
-                        >
-                          <img
-                            loading="lazy"
-                            class="m-r-5 soon-opacitiy"
-                            src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-                            alt="${sport[0]}-img"
-                            width="20px"
-                            height="20px"
-                          />
-                          <p
-                            class="
-                              color-white 
-                              s-14 
-                              m-r-10 
-                              soon-opacitiy
-                            "
-                          >
-                            {sport[1]}
-                          </p>
-                        </div>
-                        <p
-                          class="
-                            color-white 
-                            s-14 
-                            sport-counter-dark
-                          "
-                        >
-                          {_sport[1]
-                            .toString()
-                            .toLowerCase()}
-                        </p>
-                      </button>
                     {/if}
                   {/each}
                 {/if}
-              {/each}
+              </div>
             </div>
-          {/if}
-        </div>
-      </div>
-    {/if}
 
-		<!--
-    [ℹ] navbar (side) 
-    [ℹ] [MOBILE + TABLET]
-    [ℹ] <conditional>
-    -->
-		{#if tabletExclusive || mobileExclusive}
-			{#if mobileNavToggleMenu}
-				<nav
-					class:tablet-exclusive={mobileExclusive ==
-						false}
-					in:fly={{ x: -200, duration: 500 }}
-					out:fly={{ x: -200, duration: 500 }}
-				>
-					<div>
-						<!-- 
-            [ℹ] top-action-row 
+            <!--
+            ARROW DOWN
             -->
-						<div class="row-space-out">
-							<!-- 
-              [ℹ] close-side-nav 
-              -->
-							<img
-                loading="lazy"
-								src={close}
-								alt="close-icon"
-								width="24px"
-								height="24px"
-								on:click={() =>
-									(mobileNavToggleMenu = false)}
-							/>
+            <img
+              loading="lazy"
+              src={!isBookmakersDropdown ? arrow_down_fade : arrow_up}
+              alt={!isBookmakersDropdown ? 'arrow_down_fade' : 'arrow_up'}
+              width=16
+              height=16
+            />
 
-							<div
-								class="row-space-start"
-								style="width: fit-content;"
-							>
-								<!-- 
-                [ℹ] language-change-dropdown-select 
-                -->
-								<div
-									id="lang-container"
-									class:m-r-24={mobileExclusive}
-								>
-									<!-- 
-                  [ℹ] INIT-selected-lang 
-                  -->
-									<div
-										id="selected-language-btn"
-										class:active-lang-select={dropdown_lang_visible ==
-											true}
-										class="row-space-out"
-										on:click={() =>
-											(dropdown_lang_visible =
-												!dropdown_lang_visible)}
-									>
-										<p
-											class="
-                        color-white 
-                        s-14 
-                        mr-5
+            <!--
+            DROPDOWN MENU (THEME)
+            -->
+            {#if isBookmakersDropdown}
+              <div
+                id="bookmakers-type-dropdown-menu"
+                transition:fly
+              >
+                {#if $userBetarenaSettings.country_bookmaker != undefined}
+                  {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                    <div
+                      class="
+                        theme-opt-box
+                        row-space-start
                       "
-										>
-											{server_side_language.toUpperCase()}
-										</p>
-										<!-- 
-                    [ℹ] arrow down [hidden-menu] 
-                    -->
-										<img
-                      loading="lazy"
-											src={!dropdown_lang_visible
-												? arrow_down
-												: arrow_up}
-											alt={!dropdown_lang_visible
-												? 'arrow_down'
-												: 'arrow_up'}
-											width="16"
-											height="16"
-										/>
-									</div>
-									<!-- 
-                  [ℹ] INIT-HIDDEN drop-down menu 
-                  -->
-									{#if dropdown_lang_visible}
-										<div
-											id="dropdown-menu"
-											transition:fly
-										>
-											{#each HEADER_TRANSLATION_DATA.langArray.sort() as lang}
-												{#if lang.toUpperCase() != server_side_language.toUpperCase()}
-													<div
-														id="lang-select"
-														on:click={() =>
-															selectLanguage(
-																lang
-															)}
-													>
-														<p
-															class="color-white s-14"
-														>
-															{lang.toUpperCase()}
-														</p>
-													</div>
-												{/if}
-											{/each}
-										</div>
-									{/if}
-								</div>
-
-								<!-- 
-                [ℹ] sign-in-btn 
-                -->
-								{#if mobileExclusive && PROFILE_URL != $page.route.id}
-									<a
-										rel="external"
-										href={HEADER_TRANSLATION_DATA
-											.scores_header_links
-											.betting_tips}
-									>
-										<p
-											class="
-                        color-white 
-                        s-14
-                      "
-										>
-											{HEADER_TRANSLATION_DATA
-												.scores_header_translations
-												.betting_tips_link}
-										</p>
-									</a>
-								{/if}
-							</div>
-						</div>
-
-						<!-- [ℹ] menu-nav-action-row-START -->
-						<div
-							class="column-start-grid-start"
-							class:m-t-25={tabletExclusive}
-							class:m-t-15={mobileExclusive}
-						>
-							<!-- [ℹ] homepage -->
-							<div class="side-nav-row">
-								<a
-									
-									href="/"
-								>
-									<p class="color-white s-14">
-										{HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.homepage}
-									</p>
-								</a>
-							</div>
-
-              {#if PROFILE_URL != $page.route.id}
-                <!-- [ℹ] link-based-redirects -->
-                <!-- [ℹ] latest-news -->
-                <div class="side-nav-row">
-                  <a
-                    rel="external"
-                    href={HEADER_TRANSLATION_DATA
-                      .scores_header_links
-                      .latest_news}
-                  >
-                    <p class="color-white s-14">
-                      {HEADER_TRANSLATION_DATA
-                        .scores_header_translations
-                        .content_platform_link}
-                    </p>
-                  </a>
-                </div>
-
-                <!-- [ℹ] betting-tips -->
-                <div class="side-nav-row">
-                  <a
-                    rel="external"
-                    href={HEADER_TRANSLATION_DATA
-                      .scores_header_links
-                      .betting_tips}
-                  >
-                    <p class="color-white s-14">
-                      {HEADER_TRANSLATION_DATA
-                        .scores_header_translations
-                        .betting_tips_link}
-                    </p>
-                  </a>
-                </div>
-              {/if}
-
-							<!-- [ℹ] theme-options -->
-							<div
-								class="side-nav-dropdown m-t-30 m-b-25"
-							>
-								<!-- [ℹ] name of the container-opt -->
-								<div
-									class="m-b-15"
-									on:click={() =>
-										(dropdown_theme_visible =
-											!dropdown_theme_visible)}
-								>
-									<p
-										class="color-grey s-12 m-b-5"
-									>
-										{HEADER_TRANSLATION_DATA
-											.scores_header_translations
-											.theme}
-									</p>
-									<div class="row-space-out">
-										<div class="row-space-start">
-											<img
-                        loading="lazy"
-												class="m-r-5"
-												src={light_icon_theme}
-												alt={HEADER_TRANSLATION_DATA
-													.scores_header_translations
-													.bookmakers_countries[0][1]}
-												width="16px"
-												height="16px"
-											/>
-											{#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
-												{#if theme.includes($userBetarenaSettings.theme)}
-													<p
-														class="color-white s-14"
-													>
-														{theme[1]}
-													</p>
-												{/if}
-											{/each}
-										</div>
-										<!-- 
-                    [ℹ] arrow down [hidden-menu] 
-                    -->
-										<img
-                      loading="lazy"
-											src={!dropdown_theme_visible
-												? arrow_down_fade
-												: arrow_up_fade}
-											alt={!dropdown_theme_visible
-												? 'arrow_down_fade'
-												: 'arrow_up_fade'}
-											width="16"
-											height="16"
-										/>
-									</div>
-								</div>
-								<!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
-								{#if dropdown_theme_visible}
-									<div transition:fly>
-										{#each HEADER_TRANSLATION_DATA.scores_header_translations.theme_options as theme}
-											<div
-												class="side-nav-dropdown-opt row-space-out"
-												on:click={() =>
-													selectedTheme(theme[0])}
-											>
-												<p
-													class="color-white s-14"
-												>
-													{theme[1]}
-												</p>
-												{#if theme.includes($userBetarenaSettings.theme)}
-													<img
-                            loading="lazy"
-														src={icon_check}
-														alt={theme[0]}
-														width="16px"
-														height="16px"
-													/>
-												{/if}
-											</div>
-										{/each}
-									</div>
-								{/if}
-							</div>
-
-							<!-- [ℹ] odds-type -->
-              {#if PROFILE_URL != $page.route.id}
-                <div
-                  class="side-nav-dropdown m-b-25"
-                  on:click={() =>
-                    (dropdown_odds_type_visible =
-                      !dropdown_odds_type_visible)}
-                >
-                  <!-- [ℹ] name of the container-opt -->
-                  <div class="m-b-15">
-                    <p
-                      class="color-grey s-12 m-b-5"
+                      class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
+                      on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
                     >
-                      {HEADER_TRANSLATION_DATA
-                        .scores_header_translations
-                        .odds}
-                    </p>
-                    <div class="row-space-out">
-                      <p class="color-white s-14">
-                        {HEADER_TRANSLATION_DATA
-                          .scores_header_translations
-                          .odds_type[0]}
+                      <img
+                        loading="lazy"
+                        class="
+                          country-flag
+                          m-r-10
+                        "
+                        src="https://betarena.com/images/flags/{country[0]}.svg"
+                        alt={country[1]}
+                        width=20
+                        height=14
+                      />
+                      <p
+                        class="
+                          color-white
+                          s-14
+                        "
+                      >
+                        {country[1]}
                       </p>
-                      <!-- 
-                      [ℹ] arrow down [hidden-menu] 
-                      -->
-                      <img
-                        loading="lazy"
-                        src={!dropdown_odds_type_visible
-                          ? arrow_down_fade
-                          : arrow_up_fade}
-                        alt={!dropdown_odds_type_visible
-                          ? 'arrow_down_fade'
-                          : 'arrow_up_fade'}
-                        width="16"
-                        height="16"
-                      />
                     </div>
-                  </div>
-                  <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
-                  {#if dropdown_odds_type_visible}
-                    <div transition:fly>
-                      {#each HEADER_TRANSLATION_DATA.scores_header_translations.odds_type as odd}
-                        <div
-                          class="side-nav-dropdown-opt"
-                          on:click={() =>
-                            (dropdown_odds_type_visible = false)}
-                        >
-                          <p
-                            class="color-white s-14"
-                          >
-                            {odd}
-                          </p>
-                        </div>
-                      {/each}
-                    </div>
-                  {/if}
-                </div>
+                  {/each}
+                {/if}
+              </div>
+            {/if}
 
-                <!-- [ℹ] bookmakers-type -->
-                <div
-                  class="side-nav-dropdown m-b-25"
-                  on:click={() =>
-                    (dropdown_bookmakers_visible =
-                      !dropdown_bookmakers_visible)}
-                >
-                  <!-- [ℹ] name of the container-opt -->
-                  <div class="m-b-15">
-                    <p
-                      class="color-grey s-12 m-b-5"
-                    >
-                      {HEADER_TRANSLATION_DATA
-                        .scores_header_translations
-                        .bookmakers}
-                    </p>
-                    <div class="row-space-out">
-                      <div class="row-space-start">
-                        {#if $userBetarenaSettings.country_bookmaker != undefined}
-                          {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-                            {#if country.includes($userBetarenaSettings.country_bookmaker
-                                .toString()
-                                .toUpperCase())}
-                              <img
-                                loading="lazy"
-                                class="country-flag m-r-5"
-                                src="https://betarena.com/images/flags/{country[0]}.svg"
-                                alt={country[1]}
-                                width="20px"
-                                height="14px"
-                              />
-                              <p
-                                class="color-white s-14"
-                              >
-                                {country[1]}
-                              </p>
-                            {/if}
-                          {/each}
-                        {/if}
-                      </div>
-                      <!-- 
-                      [ℹ] arrow down [hidden-menu] 
-                      -->
-                      <img
-                        loading="lazy"
-                        src={!dropdown_bookmakers_visible
-                          ? arrow_down_fade
-                          : arrow_up_fade}
-                        alt={!dropdown_bookmakers_visible
-                          ? arrow_down_fade
-                          : arrow_up_fade}
-                        width="16"
-                        height="16"
-                      />
-                    </div>
-                  </div>
-                  <!-- [ℹ] INIT-HIDDEN-dropdown-theme-select -->
-                  {#if dropdown_bookmakers_visible}
-                    <div transition:fly>
-                      {#if $userBetarenaSettings.country_bookmaker != undefined}
-                        {#each HEADER_TRANSLATION_DATA.scores_header_translations.bookmakers_countries as country}
-                          <div
-                            class="side-nav-dropdown-opt row-space-start"
-                            on:click={() =>
-                              selectedCountryBookmakers(
-                                country[0]
-                              )}
-                          >
-                            <div
-                              class="row-space-start"
-                            >
-                              <img
-                                loading="lazy"
-                                class="country-flag m-r-10"
-                                src="https://betarena.com/images/flags/${country[0]}.svg"
-                                alt="${country[1]}"
-                                width="20px"
-                                height="14px"
-                              />
-                              <p
-                                class="color-white s-14"
-                              >
-                                {country[1]}
-                              </p>
-                            </div>
-                            {#if country.includes($userBetarenaSettings.country_bookmaker
-                                .toString()
-                                .toUpperCase())}
-                              <img
-                                loading="lazy"
-                                src={icon_check}
-                                alt={country[0]}
-                                width="16px"
-                                height="16px"
-                              />
-                            {/if}
-                          </div>
-                        {/each}
-                      {/if}
-                    </div>
-                  {/if}
-                </div>
-              {/if}
-							<!-- [ℹ] END OF SIDE-NAV-MENU -->
-						</div>
-					</div>
-				</nav>
-			{/if}
-		{/if}
+          </div>
+        {/if}
 
-		<!-- 
-    [ℹ] side-bar-[BOTTOM-SPORT-BAR] [MOBILE] 
-    -->
-    {#if PROFILE_URL != $page.route.id}
-      {#if mobileExclusive}
-        {#if mobileExclusiveMoreSports}
-          <nav
-            id="mobile-exclusive-sports-menu"
-            in:fly={{ x: 200, duration: 500 }}
-            out:fly={{ x: 200, duration: 500 }}
+        <!--
+        BETARENA TOKEN
+        -->
+        {#if $userBetarenaSettings?.user != undefined}
+
+          <!--
+          BETARENA TOKEN AMOUNT
+          -->
+          <div
+            class=
+            "
+              dropdown-opt-box
+              m-r-10
+              row-space-start
+            "
           >
-            <div>
-              <!-- [ℹ] top-action-row -->
-              <div class="row-space-out">
-                <!-- .. title -->
-                <p class="s-20 color-white">
-                  {HEADER_TRANSLATION_DATA
-                    .scores_header_translations
-                    .sports_list}
-                </p>
 
-                <!-- [ℹ] close-side-nav -->
+            <div>
+              <p
+                class="
+                  color-grey
+                  s-12
+                  no-wrap
+                "
+              >
+                {translationObject?.balance}
+              </p>
+
+              <p
+                class="
+                  color-white
+                  s-14
+                  no-wrap
+                "
+              >
+                <span
+                  class=
+                  "
+                    color-primary
+                    w-500
+                    m-r-5
+                  "
+                >
+                  0.00 BTA
+                </span>
+                ($0.00)
+              </p>
+            </div>
+
+          </div>
+
+          <!--
+          BUY BETARENA TOKEN
+          NOTE: -> HIDDEN TEMPORARILY
+          -->
+          {#if false}
+            <button
+              class=
+              "
+                btn-primary-v2
+                m-l-50
+              "
+            >
+              Buy BTA
+            </button>
+          {/if}
+
+        {/if}
+
+      {/if}
+
+    </div>
+
+  </div>
+
+  <!--
+  📱 MOBILE 💻 TABLET
+  NAVBAR SIDE/SLIDE
+  FIXME: very large chunk 500+ lines of repeating code;
+  -->
+  {#if (tabletExclusive || mobileExclusive) && mobileNavToggleMenu}
+    <nav
+      class:tablet-exclusive={mobileExclusive == false}
+      in:fly={{ x: -200, duration: 500 }}
+      out:fly={{ x: -200, duration: 500 }}
+    >
+
+      <div>
+
+        <!--
+        TOP ROW
+        -->
+        <div
+          class=
+          "
+            row-space-out
+          "
+        >
+
+          <!--
+          CLOSE SIDE-NAV
+          -->
+          <img
+            loading="lazy"
+            src={close}
+            alt="close-icon"
+            width=24
+            height=24
+            on:click={() => (mobileNavToggleMenu = false)}
+          />
+
+          <!--
+          MAIN PLATFORM OPTIONS
+          TODO: add the currency, lang, theme box-options as component [?]
+          -->
+          <div
+            class=
+            "
+              row-space-end
+              width-auto
+            "
+          >
+
+            <!--
+            CURRENCY SELECTION
+            NOTE: -> HIDDEN TEMPORARILY
+            -->
+            <div
+              id="currency-box"
+              class="m-r-16"
+            >
+
+              <!--
+              SELECTED CURRENCY
+              -->
+              <div
+                class="
+                  selected-language-btn
+                  row-space-start
+                "
+                class:active-lang-select={isCurrencyDropdown == true}
+                on:click={() =>	(isCurrencyDropdown = !isCurrencyDropdown)}
+              >
+
+                <!--
+                CURRENCY ICON
+                -->
                 <img
                   loading="lazy"
-                  src={close}
-                  alt="close-icon"
-                  width="24px"
-                  height="24px"
-                  on:click={() =>
-                    (mobileExclusiveMoreSports = false)}
+                  src='/assets/svg/currency/usd.svg'
+                  alt='usd-icon'
+                  width="16"
+                  height="16"
+                  class="
+                    m-r-6
+                  "
+                />
+
+                <!--
+                CURRENCY TEXT
+                -->
+                <p
+                  class="
+                    color-white
+                    s-14
+                  "
+                >
+                  USD
+                </p>
+
+                <!--
+                ARROW DOWN
+                NOTE: -> HIDDEN TEMPORARILY
+                -->
+                {#if false}
+                  <img
+                    loading="lazy"
+                    src={!isCurrencyDropdown ? arrow_down : arrow_up}
+                    alt={!isCurrencyDropdown	? 'arrow_down' : 'arrow_up'}
+                    width="16"
+                    height="16"
+                  />
+                {/if}
+
+              </div>
+
+            </div>
+
+            <!--
+            LANGUAGE SELECTION
+            -->
+            <div
+              id="lang-container"
+              class:m-r-16={mobileExclusive}
+            >
+
+              <!--
+              SELECTED LANG
+              -->
+              <div
+                class="
+                  selected-language-btn
+                  row-space-out
+                  cursor-pointer
+                "
+                class:active-lang-select={isLangDropdown == true}
+                on:click={() =>	(isLangDropdown = !isLangDropdown)}
+              >
+                <p
+                  class="
+                    color-white
+                    s-14
+                    m-r-5
+                  "
+                >
+                  {$sessionStore?.serverLang?.toUpperCase()}
+                </p>
+
+                <!--
+                ARROW DOWN
+                -->
+                <img
+                  loading="lazy"
+                  src={!isLangDropdown ? arrow_down : arrow_up}
+                  alt={!isLangDropdown	? 'arrow_down' : 'arrow_up'}
+                  width="16"
+                  height="16"
                 />
               </div>
 
-              <!-- [ℹ] sports-list-grid -->
-              <div
-                id="mobile-sports-grid"
-                class="column-start-grid-start m-t-25"
-              >
-                {#each HEADER_TRANSLATION_DATA.scores_header_translations.sports as sport}
-                  <!-- [ℹ] check - if sport is column -->
-                  {#if HEADER_TRANSLATION_DATA.scores_header_fixtures_information[sport[0]
-                      .toString()
-                      .toLowerCase()] != null}
-                    <button
-                      class="sports-btn row-space-out"
-                    >
+              <!--
+              DROPDOWN (LANG)
+              -->
+              {#if isLangDropdown}
+                <div
+                  id="dropdown-menu"
+                  transition:fly
+                >
+                  {#each WIDGET_T_DATA.langArray.sort() as lang}
+                    {#if lang.toUpperCase() != $sessionStore?.serverLang?.toUpperCase()}
                       <div
-                        class="row-space-out"
-                        style="width: fit-content;"
+                        id="lang-select"
+                        on:click={() =>	selectLanguage(lang)}
+                        on:keydown={() => selectLanguage(lang)}
+                        on:mouseout={() => detectIntentBuffer(undefined)}
+                        on:mouseover={() => detectIntentBuffer(lang)}
+                        on:focus={() => detectIntentBuffer(lang)}
                       >
-                        <img
-                          loading="lazy"
-                          class="m-r-10"
-                          src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-                          alt="${sport[0]}-img"
-                          width="20px"
-                          height="20px"
-                        />
                         <p
-                          class="color-white s-14 m-r-10"
+                          class="
+                            color-white
+                            s-14
+                          "
                         >
-                          {sport[1]}
+                          {lang.toUpperCase()}
                         </p>
                       </div>
-                      <p
-                        class="color-white s-14 sport-counter"
-                      >
-                        {HEADER_TRANSLATION_DATA
-                          .scores_header_fixtures_information[
-                          sport[0]
-                            .toString()
-                            .toLowerCase()
-                        ]}
-                      </p>
-                    </button>
-                  {:else}
-                    <!-- else content here -->
-                    {#each HEADER_TRANSLATION_DATA.scores_header_fixtures_information.other_sports as _sport}
-                      <!-- -->
-                      {#if sport[0]
-                        .toString()
-                        .toLowerCase() === _sport[0]
-                          .toString()
-                          .toLowerCase()}
-                        <button
-                          class="sports-btn row-space-out"
-                        >
-                          <div
-                            class="row-space-out"
-                            style="width: fit-content;"
-                          >
-                            <img
-                              loading="lazy"
-                              class="m-r-10 soon-opacitiy"
-                              src={`/assets/svg/sport-icon/${sport[0].toLocaleLowerCase()}.svg`}
-                              alt="${sport[0]}-img"
-                              width="20px"
-                              height="20px"
-                            />
-                            <p
-                              class="color-white s-14 m-r-10 soon-opacitiy"
-                            >
-                              {sport[1]}
-                            </p>
-                          </div>
-                          <p
-                            class="color-white s-14 sport-counter"
-                          >
-                            {_sport[1]
-                              .toString()
-                              .toLowerCase()}
-                          </p>
-                        </button>
-                      {/if}
-                    {/each}
-                  {/if}
-                {/each}
-              </div>
+                    {/if}
+                  {/each}
+                </div>
+              {/if}
+
             </div>
-          </nav>
-        {/if}
-      {/if}
-	  {/if}
-	{/if}
+
+            <!--
+            THEME SELECTION
+            -->
+            {#if mobileExclusive}
+              <div
+                id="theme-opt-container"
+                class="
+                  row-space-start
+                  cursor-pointer
+                "
+                on:click={() => selectedTheme()}
+                class:m-r-10={!mobileExclusive && PROFILE_URL == $page.route.id}
+                class:row-space-end={$userBetarenaSettings.theme == 'Dark'}
+              >
+
+                <img
+                  loading="lazy"
+                  src={$userBetarenaSettings.theme == 'Dark' ? lightModeVector : darkModeVector}
+                  alt={$userBetarenaSettings.theme == 'Dark' ? 'Toggle Light Mode' : 'Toggle Dark Mode'}
+                  width=16
+                  height=16
+                  class:light={$userBetarenaSettings.theme == 'Dark'}
+                />
+
+              </div>
+            {/if}
+
+          </div>
+
+        </div>
+
+        <!--
+        MENU OPTIONS BOX
+        -->
+        <div
+          class=
+          "
+            column-start-grid-start
+          "
+          class:m-t-25={tabletExclusive}
+          class:m-t-45={mobileExclusive}
+        >
+
+          <!--
+          SCORES PLATFORM
+          -->
+          <HeaderNavBtn
+            navKey={'scores'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
+            isProfilePage={PROFILE_URL == $page.route.id}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
+
+          <!--
+          SCORES CONTENT
+          -->
+          <HeaderNavBtn
+            navKey={'content'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
+            isProfilePage={PROFILE_URL == $page.route.id}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
+
+          <!--
+          COMPETITIONS
+          -->
+          <HeaderNavBtn
+            navKey={'competitions'}
+            navUrl={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_url}
+            navTxt={WIDGET_T_DATA?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+            isProfilePage={PROFILE_URL == $page.route.id}
+            soonTxt={WIDGET_T_DATA?.scores_header_translations?.soon || 'soon'}
+            isSoon={true}
+            disableAnchor={true}
+            {tabletExclusive}
+            {mobileExclusive}
+          />
+
+          {#if mobileExclusive && PROFILE_URL != $page.route.id}
+
+            <!--
+            ODDS SECTION
+            NOTE: -> HIDDEN TEMPORARILY
+            -->
+            {#if false}
+              <div
+                class="side-nav-dropdown m-b-25"
+                on:click={() =>
+                  (isOddsDropdown =
+                    !isOddsDropdown)}
+              >
+
+                <!--
+                SELECTED / TOGGLE BOX
+                -->
+                <div
+                  class=
+                  "
+                    m-b-15
+                  "
+                >
+
+                  <p
+                    class=
+                    "
+                      color-grey
+                      s-12
+                      m-b-5
+                    "
+                  >
+                    {WIDGET_T_DATA?.scores_header_translations?.odds || translationObject?.odds_type}
+                  </p>
+
+                  <div
+                    class=
+                    "
+                      row-space-out
+                    "
+                  >
+
+                    <p
+                      class=
+                      "
+                        color-white
+                        s-14
+                      "
+                    >
+                      {WIDGET_T_DATA?.scores_header_translations?.odds_type?.[0]}
+                    </p>
+
+                    <!--
+                    ARROW DOWN
+                    -->
+                    <img
+                      loading="lazy"
+                      src={!isOddsDropdown ? arrow_down_fade : arrow_up_fade}
+                      alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up_fade'}
+                      width=16
+                      height=16
+                    />
+                  </div>
+                </div>
+
+                <!--
+                DROWDOWN
+                -->
+                {#if isOddsDropdown}
+                  <div
+                    transition:fly
+                  >
+                    {#each WIDGET_T_DATA?.scores_header_translations?.odds_type || [] as odd}
+
+                      <div
+                        class=
+                        "
+                          side-nav-dropdown-opt
+                        "
+                        on:click={() => (isOddsDropdown = false)}
+                      >
+
+                        <p
+                          class=
+                          "
+                            color-white
+                            s-14
+                          "
+                        >
+                          {odd}
+                        </p>
+
+                      </div>
+
+                    {/each}
+                  </div>
+                {/if}
+
+              </div>
+            {/if}
+
+            <!--
+            BOOKMAKERS SECTION
+            -->
+            {#if PROFILE_URL != $page.route.id}
+              <div
+                class=
+                "
+                  side-nav-dropdown
+                  m-b-25
+                "
+                on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
+              >
+
+                <div
+                  class=
+                  "
+                    m-b-15
+                  "
+                >
+
+                  <p
+                    class=
+                    "
+                      color-grey
+                      s-12
+                      m-b-5
+                    "
+                  >
+                    {WIDGET_T_DATA?.scores_header_translations?.bookmakers || translationObject?.bookmakers}
+                  </p>
+
+                  <div
+                    class=
+                    "
+                      row-space-out
+                    "
+                  >
+
+                    <div
+                      class=
+                      "
+                        row-space-start
+                      "
+                    >
+                      {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                        {#if country?.includes($userBetarenaSettings?.country_bookmaker?.toUpperCase())}
+
+                          <img
+                            loading="lazy"
+                            class=
+                            "
+                              country-flag
+                              m-r-5
+                            "
+                            src="https://betarena.com/images/flags/{country?.[0]}.svg"
+                            alt={country?.[1]}
+                            width=20
+                            height=14
+                          />
+
+                          <p
+                            class=
+                            "
+                              color-white
+                              s-14
+                            "
+                          >
+                            {country?.[1]}
+                          </p>
+
+                        {/if}
+                      {/each}
+                    </div>
+
+                    <!--
+                    ARROW DOWN
+                    -->
+                    <img
+                      loading="lazy"
+                      src={!isBookmakersDropdown ? arrow_down_fade : arrow_up_fade}
+                      alt={!isBookmakersDropdown ? arrow_down_fade : arrow_up_fade}
+                      width=16
+                      height=16
+                    />
+
+                  </div>
+
+                </div>
+
+                <!--
+                DROPDOWN
+                -->
+                {#if isBookmakersDropdown}
+                  <div
+                    transition:fly
+                  >
+                    {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
+                      <div
+                        class=
+                        "
+                          side-nav-dropdown-opt
+                          row-space-start
+                        "
+                        on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
+                      >
+
+                        <div
+                          class=
+                          "
+                            row-space-start
+                          "
+                        >
+
+                          <img
+                            loading="lazy"
+                            class=
+                            "
+                              country-flag
+                              m-r-10
+                            "
+                            src="https://betarena.com/images/flags/${country?.[0]}.svg"
+                            alt="${country?.[1]}"
+                            width=20
+                            height=14
+                          />
+
+                          <p
+                            class=
+                            "
+                              color-white
+                              s-14
+                            "
+                          >
+                            {country?.[1]}
+                          </p>
+
+                        </div>
+
+                        {#if country?.includes($userBetarenaSettings?.country_bookmaker)}
+                          <img
+                            loading="lazy"
+                            src={icon_check}
+                            alt={country?.[0]}
+                            width=16
+                            height=16
+                          />
+                        {/if}
+                      </div>
+                    {/each}
+                  </div>
+                {/if}
+
+              </div>
+            {/if}
+
+          {/if}
+
+        </div>
+
+      </div>
+
+    </nav>
+  {/if}
+
 </header>
 
-<!-- ===================
+<!-- ===============
 COMPONENT STYLE
-=================== -->
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
+
 <style>
 
-  /* #region */
-
-  #background-area-close {
+  #background-area-close
+  {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -2275,7 +2062,8 @@ COMPONENT STYLE
     z-index: 1000;
   }
 
-  #background-area-close-inner {
+  #background-area-close-inner
+  {
     position: absolute;
     top: 0;
     bottom: 0;
@@ -2286,234 +2074,214 @@ COMPONENT STYLE
     z-index: 1000;
   }
 
-  .update-z-index {
+  .update-z-index
+  {
 		z-index: unset;
   }
 
-	header {
+  /*
+  => NAVBAR (MAIN)
+  */
+	header
+  {
+    /* p */
+		z-index: 1000;
+		position: relative;
+    /* s */
 		background-color: #292929;
 		height: 128px;
-		position: relative;
-		z-index: 1000;
-	} header.user-active {
-		height: 72px !important;
-  }
-
-	/* 
-	top-header-betarena-brand & bottom-header 
-  */
+	}
 	header #top-header,
-	header #bottom-header {
-		max-width: 1430px;
+	header #bottom-header
+  {
+    /* p */
 		position: absolute;
+    position: relative;
+    /* s */
+		max-width: 1430px;
 		width: inherit;
 	}
-
-	header #top-header {
-		padding: 23px 16px;
-		height: 72px !important;
+	header #top-header
+  {
+    /* p */
 		top: 0;
+    /* s */
+		padding: 23px 16px;
+		height: 64px !important;
 	}
-
-	/* 
-	bottom-header-sports-nav 
-  */
-	header #bottom-header {
-		padding: 6px 16px;
-		height: 56px !important;
+	header #bottom-header
+  {
+    /* p */
 		bottom: 0;
+    /* s */
+		padding: 10px 16px;
+		height: 64px !important;
 	}
-	header #bottom-header-inner::-webkit-scrollbar {
-		/* Hide scrollbar for Chrome, Safari and Opera */
+	header #bottom-header-inner::-webkit-scrollbar
+  {
 		display: none;
 	}
-	header #bottom-header-inner {
-		/* width: 100%; */
+	header #bottom-header-inner
+  {
 		overflow-x: scroll;
 		overflow-y: hidden;
-		/* Hide scrollbar for IE, Edge and Firefox */
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 	}
+  header div#top-border
+  {
+    /* p */
+    position: absolute;
+    bottom: 64px;
+    /* s */
+    width: 100vw;
+    border: 0.5px solid var(--dark-theme-1);
+  }
+  header div#bottom-border
+  {
+    /* p */
+    position: absolute;
+    bottom: 0;
+    /* s */
+    width: 100vw;
+    border: 0.5px solid var(--dark-theme-1);
+  }
 
-	/* 
-	[MOBILE-ONLY] 
-  */
-	#burger-menu {
+	#burger-menu
+  {
 		margin-right: 16.15px;
 	}
 
-	/* [ℹ] 
-	[MOBILE + TABLET] @ < 768px
-	SIDE-NAV-BAR-navigational-link [ℹ] 
+  /*
+  => 📱 MOBILE | 💻 TABLET
+  => Sliding-side Navigation;
   */
-	nav {
-		background-color: #292929;
-		height: 100vh;
-		width: 100%;
-		padding: 14px 16px;
-		position: absolute;
+	nav
+  {
+    /* p */
+    position: absolute;
 		z-index: 1000000000;
 		top: 0;
 		bottom: 0;
 		right: 0;
 		left: 0;
+    /* s */
+		background-color: #292929;
+		height: 100vh;
+		width: 100%;
+		padding: 14px 16px;
 		overflow-y: scroll;
-		/* Hide scrollbar for IE, Edge and Firefox */
 		-ms-overflow-style: none;
 		scrollbar-width: none;
 	}
-	nav::-webkit-scrollbar {
-		/* Hide scrollbar for Chrome, Safari and Opera */
+	nav::-webkit-scrollbar
+  {
 		display: none;
 	}
-	nav.tablet-exclusive {
+	nav.tablet-exclusive
+  {
 		padding: 24px 34px;
 		max-width: 374px !important;
 	}
-	nav .side-nav-row {
-		width: 100%;
-		padding: 12px 0;
-	}
-	nav .side-nav-row:hover p {
-		color: #f5620f;
-	}
-	nav .side-nav-dropdown {
+	nav .side-nav-dropdown
+  {
 		width: 100%;
 		box-shadow: inset 0px -1px 0px #616161;
 	}
-	nav .side-nav-dropdown-opt {
+	nav .side-nav-dropdown-opt
+  {
 		width: 100%;
 		padding: 9.5px 0;
 	}
-	nav .side-nav-dropdown-opt p {
+	nav .side-nav-dropdown-opt p
+  {
 		font-weight: 400;
 	}
 
-	/* [ℹ]
-	[MOBILE ONLY] @ < 425px
-	SIDE-NAV-BAR-more-menu-sports-navigational-container [ℹ] 
-  */
-	nav#mobile-exclusive-sports-menu {
-		padding: 21px 16px;
-	}
-	nav#mobile-exclusive-sports-menu
-		#mobile-sports-grid {
-		gap: 12px;
-	}
-	nav#mobile-exclusive-sports-menu
-		#mobile-sports-grid
-		.sports-btn:hover {
-		border: 1px solid #f5620f !important;
-	}
+  div#navBox
+  {
+    /* s */
+    position: relative;
+  }
+  div#nav-triangle
+  {
+    /* p */
+    position: absolute;
+    bottom: -21px;
+    /* s */
+    width: 0;
+    height: 0;
+    border-left: 12px solid transparent;
+    border-right: 12px solid transparent;
+    border-bottom: 12px solid var(--dark-theme-1);
+    transition: all 0.25s ease-out;
+  }
 
-	/*
-	LANG SELECT CONTAINER 
+  /*
+  => LANG / CURRENCY SHARED
   */
-	#lang-container {
+
+  div#currency-box,
+	div#lang-container
+  {
 		position: relative;
 	}
-	#selected-language-btn {
+
+	div.selected-language-btn
+  {
+    /* s */
 		color: #ffffff;
 		outline: none;
-		width: 62px;
 		border: none;
-		cursor: pointer;
 		padding: 5px 12px;
 		background-color: transparent;
 	}
-	#selected-language-btn:hover,
-	#selected-language-btn.active-lang-select {
+	div#lang-container div.selected-language-btn:hover,
+	div#lang-container div.selected-language-btn.active-lang-select
+  {
+    /* s */
 		background-color: rgba(255, 255, 255, 0.1);
 		border-radius: 4px;
 	}
-	#dropdown-menu {
+
+	#dropdown-menu
+  {
+    /* p */
 		position: absolute;
+		z-index: 1000;
 		top: 100%;
-		width: 88px;
 		left: -20%;
+    /* s */
+		width: 88px;
 		margin-top: 5px;
 		border-radius: 4px;
 		background: #292929;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		overflow: hidden;
-		z-index: 1000;
 	}
-	#lang-select {
+	#lang-select
+  {
 		padding: 10px 0;
 		text-align: center;
 		background: #4b4b4b;
 		cursor: pointer;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 	}
-	#lang-select:hover {
+	#lang-select:hover
+  {
 		background: #292929;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 	}
 
 	/*
-	more-sports-container-menu 
-  */
-	#more-sports-menu-container {
-		position: relative;
-	}
-	#more-sports-dropdown-menu {
-		position: absolute;
-		top: 100%;
-		right: 0%;
-		margin-top: 5px;
-		background: #4b4b4b;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 8px;
-		overflow: hidden;
-		z-index: 2000;
-		/* height: 244px; */
-		width: 656px;
-		display: grid;
-		grid-template-columns: 1fr 1fr 1fr;
-		gap: 12px;
-		padding: 16px;
-		justify-items: start;
-	}
-	#more-sports-dropdown-menu .sports-btn {
-		background: #4b4b4b;
-		border: 1px solid #8c8c8c !important;
-		box-sizing: border-box;
-		border-radius: 29px;
-		width: 200px;
-		height: 44px;
-		padding: 8.5px 10px 8.5px 12.5px;
-	}
-	#more-sports-dropdown-menu .sport-counter-dark {
-		background-color: #292929;
-		padding: 3px 8px;
-		border-radius: 20px;
-	}
-	#more-sports-dropdown-menu .sports-btn:hover {
-		background: #292929;
-	}
-	#more-sports-dropdown-menu
-		.sports-btn:hover
-		.sport-counter-dark {
-		background: #4b4b4b;
-	}
-
-	/*
 	=============
-	BUTTONS 
+	BUTTONS
 	=============
 	*/
-	button.btn-main {
-		padding: 11px 20px;
-		background: transparent;
-		border-radius: 29px;
-	}
-	button.btn-main:hover {
-		background: #4b4b4b;
-		border-radius: 29px;
-	}
 
-	button#sign-in-btn {
+	button#sign-in-btn
+  {
+    /* s */
 		width: 95px;
 		height: 44px;
 		padding: 12px 26px;
@@ -2522,68 +2290,29 @@ COMPONENT STYLE
 		box-sizing: border-box;
 		border-radius: 8px;
 	}
-	button#sign-in-btn:hover {
+	button#sign-in-btn:hover
+  {
+    /* s */
 		border: 1px solid #f5620f !important;
 	}
-	button#sign-in-btn:hover p {
+	button#sign-in-btn:hover p
+  {
+    /* s */
 		color: #f5620f;
 	}
-  
-	img#user-profile-picture {
+
+	img#user-profile-picture
+  {
+    /* s */
 		border-radius: 50%;
 	}
 
-	button.sports-btn {
-		padding: 10.5px 10px 9.5px 16px;
-		background: #292929;
-		border: 1px solid #4b4b4b !important;
-		box-sizing: border-box;
-		border-radius: 29px;
-		height: 44px;
-	}
-	button.sports-btn.selected-sports {
-		border: 1px solid #f5620f !important;
-	}
-	button.sports-btn .sport-counter {
-		padding: 3px 8px;
-		background: #4b4b4b;
-		border-radius: 20px;
-	}
-
-	.soon-opacitiy {
-		opacity: 0.5;
-	}
-
-	button#more-sports-menu {
-		padding: 12.5px 16px;
-		background: transparent;
-		border: 1px solid #4b4b4b !important;
-		box-sizing: border-box;
-		border-radius: 29px;
-		height: 44px;
-		position: relative;
-	}
-	button#more-sports-menu:hover {
-		border: 1px solid #ffffff !important;
-	}
-	button#more-sports-menu::after {
-		content: '';
-		position: absolute;
-		right: 108%;
-		height: 44px;
-		width: 120px;
-		background: linear-gradient(
-			90deg,
-			rgba(41, 41, 41, 0) 0%,
-			#292929 100%
-		);
-		pointer-events: none;
-	}
-
-	/* 
-	OPT-BOX 
+	/*
+	=> OPT-BOX
   */
-	.dropdown-opt-box {
+	.dropdown-opt-box
+  {
+    /* s */
 		border-left: 1px solid #4b4b4b;
 		height: 44px;
 		padding: 0 16px;
@@ -2591,8 +2320,10 @@ COMPONENT STYLE
 		cursor: pointer;
 	}
 
-	img.country-flag {
-		background: linear-gradient(
+	img.country-flag
+  {
+		background: linear-gradient
+    (
 			180deg,
 			rgba(255, 255, 255, 0.7) 0%,
 			rgba(0, 0, 0, 0.3) 100%
@@ -2601,86 +2332,110 @@ COMPONENT STYLE
 		border-radius: 2px;
 	}
 
-	/* 
-  AUTH BOX 
+	/*
+  => AUTH BOX
   */
-	div#user-profile-box {
+	div#user-profile-box
+  {
 		width: auto;
 		position: relative;
 	}
-	div#user-profile-box div#user-profile-dropdown {
+	div#user-profile-box div#user-profile-dropdown
+  {
+    /* p */
 		position: absolute;
 		top: 100%;
 		right: 0;
 		left: unset;
+		z-index: 2000;
+    /* s */
 		margin-top: 5px;
 		background: #292929;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 4px;
 		overflow: hidden;
-		z-index: 2000;
-		/* height: 80px; */
 		width: 168px;
 	}
-	div#user-profile-box
-		div#user-profile-dropdown
-		div.theme-opt-box {
+	div#user-profile-box div#user-profile-dropdown div.theme-opt-box
+  {
 		padding: 9.5px 16px;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 		background: #4b4b4b;
 		height: 40px;
 	}
-	div#user-profile-box
-		div#user-profile-dropdown
-		div.theme-opt-box:hover
-		p {
+	div#user-profile-box div#user-profile-dropdown div.theme-opt-box:hover p
+  {
 		color: #f5620f;
 	}
-	div#user-profile-box p#wallet-text {
+	div#user-profile-box p#wallet-text
+  {
 		margin-right: 14px;
 	}
 
-	/* 
-  RESPONSIVE FOR TABLET (&+) [768px] 
+  /*
+  => THEME BOX
   */
-	@media screen and (min-width: 768px) {
-		header #top-header {
+  div#theme-opt-container
+  {
+    /* s */
+    width: 44px;
+    height: 24px;
+    background: var(--dark-theme-1);
+    border-radius: 24px;
+  }
+  div#theme-opt-container > img
+  {
+    /* s */
+    margin: 2px;
+    padding: 4.5px;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    background-color: var(--dark-theme);
+  }
+  div#theme-opt-container > img.light
+  {
+    /* s */
+    background-color: var(--white);
+  }
+
+	/*
+  =============
+  RESPONSIVNESS
+  =============
+  */
+
+	@media screen
+  and (min-width: 768px)
+  {
+		header #top-header
+    {
 			padding: 23px 34px;
 		}
-		header #bottom-header {
+		header #bottom-header
+    {
 			padding: 6px 34px;
 		}
 
-		#burger-menu {
+		#burger-menu
+    {
 			margin-right: 24px;
-		}
-
-		button.sports-btn > div > p {
-			overflow: hidden;
-			white-space: nowrap;
-			text-overflow: ellipsis;
-			max-width: 85px;
 		}
 	}
 
-	/* 
-  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] 
-  */
-	@media screen and (min-width: 1024px) {
-		/* 
-		desktop hover effects */
-		button.sports-btn:hover {
-			border: 1px solid #ffffff !important;
-		}
+	@media screen
+  and (min-width: 1024px)
+  {
 
-		/*
-		theme-options-container */
 		#theme-opt-container,
-		#odds-type-container {
+		#odds-box
+    {
 			position: relative;
 		}
+
 		#theme-dropdown-menu,
-		#odds-type-dropdown-menu {
+		#odds-type-dropdown-menu
+    {
 			position: absolute;
 			top: 100%;
 			left: 0%;
@@ -2693,26 +2448,36 @@ COMPONENT STYLE
 			/* height: 80px; */
 			width: 168px;
 		}
+
 		#theme-dropdown-menu .theme-opt-box,
-		#odds-type-dropdown-menu .theme-opt-box {
+		#odds-type-dropdown-menu .theme-opt-box
+    {
 			padding: 9.5px 16px;
 			box-shadow: inset 0px -1px 0px #3c3c3c;
 			background: #4b4b4b;
 			height: 40px;
 		}
+
 		#theme-dropdown-menu .theme-opt-box:hover p,
-		#odds-type-dropdown-menu
-			.theme-opt-box:hover
-			p {
+		#odds-type-dropdown-menu .theme-opt-box:hover	p
+    {
 			color: #f5620f;
 		}
 
-		/* 
-		bookmakers-options-container */
-		#bookmakers-type-container {
+		div#bookmaker-box
+    {
+      /* p */
 			position: relative;
+      /* s */
+      padding: 0 0 0 16px;
 		}
-		#bookmakers-type-dropdown-menu {
+    div#bookmaker-box.not-last
+    {
+      padding: 0 16px 0 16px;
+    }
+
+		#bookmakers-type-dropdown-menu
+    {
 			position: absolute;
 			top: 100%;
 			right: 0%;
@@ -2729,20 +2494,23 @@ COMPONENT STYLE
 			gap: 5px 20px;
 			padding: 8px 12px;
 		}
-		#bookmakers-type-dropdown-menu
-			.theme-opt-box {
+
+		#bookmakers-type-dropdown-menu .theme-opt-box
+    {
 			height: 40px;
 			padding: 13px 8px;
 			box-shadow: inset 0px -1px 0px #3c3c3c;
 			background: #4b4b4b;
 			position: relative;
 		}
-		#bookmakers-type-dropdown-menu
-			.theme-opt-box:hover,
-		#bookmakers-type-dropdown-menu
-			.country-selected {
+
+		#bookmakers-type-dropdown-menu .theme-opt-box:hover,
+		#bookmakers-type-dropdown-menu .country-selected
+    {
 			background: #292929;
 			border-radius: 4px;
 		}
+
 	}
+
 </style>

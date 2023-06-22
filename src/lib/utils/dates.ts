@@ -1,4 +1,4 @@
-export const MONTH_NAMES_ABBRV = 
+export const MONTH_NAMES_ABBRV =
 [
 	'Jan',
 	'Feb',
@@ -14,7 +14,7 @@ export const MONTH_NAMES_ABBRV =
 	'Dec'
 ];
 
-export const WEEK_DAYS_ABBRV = 
+export const WEEK_DAYS_ABBRV =
 [
   'Sun',
   'Mon',
@@ -25,7 +25,7 @@ export const WEEK_DAYS_ABBRV =
   'Sat'
 ];
 
-export const WEEK_DAYS_ABBRV_1 = 
+export const WEEK_DAYS_ABBRV_1 =
 [
   'Sun',
   'Mon',
@@ -36,7 +36,7 @@ export const WEEK_DAYS_ABBRV_1 =
   'Sat'
 ];
 
-export const WEEK_DAYS_ABBRV_2 = 
+export const WEEK_DAYS_ABBRV_2 =
 [
   'Mon',
   'Tue',
@@ -47,7 +47,7 @@ export const WEEK_DAYS_ABBRV_2 =
   'Sun'
 ];
 
-export const monthNames = 
+export const monthNames =
 [
   'January',
   'February',
@@ -63,22 +63,32 @@ export const monthNames =
   'December'
 ];
 
+export const weekDays = [
+  'sunday',
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday'
+];
+
 /**
  * @summary
  * [HELPER]
- * @param 
- * {number} num 
- * @returns 
+ * @param
+ * {number} num
+ * @returns
  * a date string with an ordinal suffix value;
  */
-export const getOrdinalNum = 
+export const getOrdinalNum =
 (
   num: number
-) => 
+) =>
 {
   let selector: number;
   const ordinalStr: string[] = ['th', 'st', 'nd', 'rd', '']
-  
+
   selector = num % 10;
   if (num <= 0) selector = 4;
   if ((num > 3 && num < 21) || num % 10 > 3) selector = 0;
@@ -89,16 +99,16 @@ export const getOrdinalNum =
 };
 
 /**
- * @summary 
+ * @summary
  * [HELPER]
- * @description 
+ * @description
  * instantiates target date for the current client, applying correct target user timezone;
- * @returns 
+ * @returns
  * a JavaScript Date object;
  */
 export function clientTimezoneDate
 (
-) 
+)
 {
   const date = new Date();
   // [STASH]
@@ -111,23 +121,23 @@ export function clientTimezoneDate
 }
 
 /**
- * @summary 
+ * @summary
  * [HELPER]
- * @description 
+ * @description
  * converts target date to an ISO_string of yyyy-MM-dd format;
  * (+) handles target date to ISO conversion,
  * (+) identifies dates of "T00:00:00" Dates and Adds Z;
- * @overload 
+ * @overload
  * adjustClientTZ = false (default) -> converts Date to userClient Timezone;
- * @overload 
+ * @overload
  * showConversion = false (default)
- * @param 
+ * @param
  * {Date | string} date
- * @param 
+ * @param
  * {boolean} adjustClientTZ
- * @param 
+ * @param
  * {boolean} showConversion
- * @returns 
+ * @returns
  * an ISO Date string;
  */
 export function toISOMod
@@ -135,21 +145,21 @@ export function toISOMod
   date: Date | string,
   adjustClientTZ = false,
   showConversion = false
-): string 
+): string
 {
 
   if (showConversion) console.log("CONVERSION [FROM]: ", date)
 
   // check for 'string'
-  if (typeof(date) == 'string') 
+  if (typeof(date) == 'string')
   {
     // check for 'T00:00:00'
     const validation_0 =
-      date.includes('T') 
+      date.includes('T')
       && !date.includes('Z')
     ;
     // add, if necessary
-    if (validation_0) 
+    if (validation_0)
     {
       date = `${date}Z`
     }
@@ -193,27 +203,27 @@ export function toISOMod
 }
 
 /**
- * @summary 
+ * @summary
  * [HELPER]
- * @description 
+ * @description
  * converts target Date/string to JS Date Object;
  * (+) adjusting for missing "Z" string, if necessary;
  * (+) offsetting for user's current timezone, generating a UTC Date object;
- * @overload 
+ * @overload
  * offset = true (default) -> converts Date to userClient Timezone;
- * @overload 
+ * @overload
  * showConversion = false (default)
- * @example 
+ * @example
  * [1] "2023-12-12", locale: ja-JP => 2023-12-12
- * @example 
+ * @example
  * [2] "2023-06-05T23:00:00+00:00" (string), => 2023-06-05 (Date)
- * @param 
+ * @param
  * {Date | string} date
- * @param 
+ * @param
  * {boolean} offset
- * @param 
+ * @param
  * {boolean} showConversion
- * @returns 
+ * @returns
  * a date object
  */
 export function toCorrectDate
@@ -221,20 +231,20 @@ export function toCorrectDate
   date: Date | string,
   offset = true,
   showConversion = false
-): Date 
+): Date
 {
   if (showConversion) console.log("CONVERSION toCorrectDate [FROM]: ", date)
 
-  if (typeof(date) == 'string') 
+  if (typeof(date) == 'string')
   {
     // check for 'TXX:YY:SS'
     const if_M0 =
-      date.includes('T') 
+      date.includes('T')
       && !date.includes('Z')
       && !date.includes('+')
     ;
     // add, if necessary the Z
-    if (if_M0) 
+    if (if_M0)
     {
       date = `${date}Z`
     }
@@ -256,11 +266,11 @@ export function toCorrectDate
 }
 
 /**
- * @summary 
+ * @summary
  * [HELPER]
  * @description
  *  converts a target date string/number to a leading/prefix based "0[...]" string
- * @param 
+ * @param
  * {string | number} dateStr
  * @returns
  * a zero-prefixed date string
@@ -268,7 +278,7 @@ export function toCorrectDate
 export function toZeroPrefixDateStr
 (
   dateStr: string | number
-): string 
+): string
 {
   dateStr = `0${dateStr}`
   return dateStr

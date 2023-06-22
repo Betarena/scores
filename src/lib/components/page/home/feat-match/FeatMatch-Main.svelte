@@ -199,7 +199,7 @@
 
     const response = await get
     (
-      `/api/data/fixture/votes/?fixture_id=${B_FEATM_D?.id}&vote=${voteType}'`
+      `/api/data/fixture/votes/?fixture_id=${B_FEATM_D?.id}&vote=${voteType}`
     ) as B_H_VOT_M;
 
     B_FEATM_D.match_votes = response?.update_widget_featured_match_votes_by_pk;

@@ -8,32 +8,28 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	
+
   import { sessionStore } from '$lib/store/session.js';
-  import { ST_W_F_STY, ST_W_F_TAG, ST_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import StandingsLoader from './Standings-Loader.svelte';
-	import StandingsMain from './Standings-Main.svelte';
+	import LeagueInfoMain from './LeagueInfo-Main.svelte';
 
-	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
-	import type { B_STA_D, B_STA_T } from '@betarena/scores-lib/types/standings.js';
+	import type { B_LEG_D } from '@betarena/scores-lib/types/league-info.js';
+	import LeagueInfoLoader from './LeagueInfo-Loader.svelte';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
-  let FIXTURE_INFO: B_SAP_FP_D = $page.data?.FIXTURE_INFO;
-  let WIDGET_S_DATA: B_STA_D = $page.data?.STANDINGS_DATA;
-  let WIDGET_T_DATA: B_STA_T = $page.data?.STANDINGS_T;
-  let WIDGET_DATA: B_STA_D;
+  let WIDGET_S_DATA: B_LEG_D = $page.data.LEAGUE_INFO_DATA;
+  // let WIDGET_T_DATA: B_FO_T = $page.data?.FIXTURES_ODDS_T;
+  let WIDGET_DATA: B_LEG_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
-  $: FIXTURE_INFO = $page.data?.FIXTURE_INFO;
-  $: WIDGET_S_DATA = $page.data?.STANDINGS_DATA;
-  $: WIDGET_T_DATA = $page.data?.STANDINGS_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.translations?.standings || 'Standings' : 'Standings';
+  $: WIDGET_T_DATA = $page.data?.FIXTURES_ODDS_T;
+  // $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.matches || 'Matches' : 'Matches';
 
   //#endregion ➤ [VARIABLES]
 
@@ -43,31 +39,27 @@ COMPONENT JS (w/ TS)
    * @summary
    * [MAIN] [INIT]
    * @description
-   * main widget data loader, 
+   * main widget data loader,
    * (and) try..catch (error) handler
    * (and) placeholder handler
    */
   async function widgetInit
   (
-  ): Promise < B_STA_D > 
+  ): Promise < B_LEG_D >
   {
 		await sleep(3000);
-    
+
     WIDGET_DATA = WIDGET_S_DATA
 
-    const if_M_0 =
+    const if_0 =
       WIDGET_DATA == undefined
-      || WIDGET_DATA?.comp_typ != 'domestic'
-      // || WIDGET_DATA?.seasons?.[0]?.standings?.length > 1
     ;
-		if (if_M_0) 
+		if (if_0)
     {
-      dlog(`${ST_W_F_TAG} ❌ no data available!`, ST_W_F_TOG, ST_W_F_STY);
+      dlog(`${VO_W_F_TAG} ❌ no data available!`, VO_W_F_TOG, VO_W_F_STY);
 			NO_WIDGET_DATA = true;
 			return;
 		}
-
-    console.log(WIDGET_DATA)
 
     NO_WIDGET_DATA = false;
     return WIDGET_DATA
@@ -84,11 +76,11 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "language" change;
   */
   $: if_R_0 =
-    browser 
+    browser
     && $sessionStore?.serverLang != undefined
   ;
   $: if (if_R_0)
@@ -113,57 +105,38 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <h2>{WIDGET_TITLE}</h2>
-  <!-- 
-  STAGE STANDINGS (regular)
-  -->
-  {#if !WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.group_based}
-    {#each WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.total || [] as team}
-      <p>{team?.team_name}</p>
-    {/each}
-  <!-- 
-  STAGE STANDINGS (groups)
-  -->
-  {:else}
-    {#each WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.group_standings || [] as group}
-      <p>{group?.group_name}</p>
-      {#each group?.total || [] as team}
-        <p>{team?.team_name}</p>
-      {/each}
-    {/each}
-  {/if}
+  <h1>{WIDGET_S_DATA.data.name}</h1>
+  <p>{WIDGET_S_DATA.data.country}</p>
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <StandingsLoader /> -->
+<!-- <VotesLoader /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
-  <StandingsLoader />
+  <LeagueInfoLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <StandingsMain 
-      {FIXTURE_INFO}
-      STANDINGS_DATA={WIDGET_DATA}
-      STANDINGS_T={WIDGET_T_DATA}
+    <LeagueInfoMain
+      LEAGUE_INFO_SEO_DATA={WIDGET_DATA}
     />
   {/if}
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -176,12 +149,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 
