@@ -1430,73 +1430,73 @@ NAVBAR MAIN
           </div>
         {/if}
 
+      {/if}
+
+      <!--
+      BETARENA TOKEN
+      -->
+      {#if $userBetarenaSettings?.user != undefined}
+
         <!--
-        BETARENA TOKEN
+        BETARENA TOKEN AMOUNT
         -->
-        {#if $userBetarenaSettings?.user != undefined}
+        <div
+          class=
+          "
+            dropdown-opt-box
+            m-r-10
+            row-space-start
+          "
+        >
 
-          <!--
-          BETARENA TOKEN AMOUNT
-          -->
-          <div
-            class=
-            "
-              dropdown-opt-box
-              m-r-10
-              row-space-start
-            "
-          >
-
-            <div>
-              <p
-                class="
-                  color-grey
-                  s-12
-                  no-wrap
-                "
-              >
-                {translationObject?.balance}
-              </p>
-
-              <p
-                class="
-                  color-white
-                  s-14
-                  no-wrap
-                "
-              >
-                <span
-                  class=
-                  "
-                    color-primary
-                    w-500
-                    m-r-5
-                  "
-                >
-                  0.00 BTA
-                </span>
-                ($0.00)
-              </p>
-            </div>
-
-          </div>
-
-          <!--
-          BUY BETARENA TOKEN
-          NOTE: -> HIDDEN TEMPORARILY
-          -->
-          {#if false}
-            <button
-              class=
-              "
-                btn-primary-v2
-                m-l-50
+          <div>
+            <p
+              class="
+                color-grey
+                s-12
+                no-wrap
               "
             >
-              Buy BTA
-            </button>
-          {/if}
+              {translationObject?.balance}
+            </p>
 
+            <p
+              class="
+                color-white
+                s-14
+                no-wrap
+              "
+            >
+              <span
+                class=
+                "
+                  color-primary
+                  w-500
+                  m-r-5
+                "
+              >
+                0.00 BTA
+              </span>
+              ($0.00)
+            </p>
+          </div>
+
+        </div>
+
+        <!--
+        BUY BETARENA TOKEN
+        NOTE: -> HIDDEN TEMPORARILY
+        -->
+        {#if false}
+          <button
+            class=
+            "
+              btn-primary-v2
+              m-l-50
+            "
+          >
+            Buy BTA
+          </button>
         {/if}
 
       {/if}
