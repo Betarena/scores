@@ -1441,10 +1441,10 @@ NAVBAR MAIN
         BETARENA TOKEN AMOUNT
         -->
         <div
+          id="balance-box"
           class=
           "
             dropdown-opt-box
-            m-r-10
             row-space-start
           "
         >
@@ -2319,6 +2319,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: fit-content;
 		cursor: pointer;
 	}
+  div#balance-box.dropdown-opt-box
+  {
+    padding-right: 0;
+  }
 
 	img.country-flag
   {
