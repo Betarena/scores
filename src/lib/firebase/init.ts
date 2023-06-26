@@ -5,7 +5,7 @@ import { getFirestore } from 'firebase/firestore';
 import { getStorage } from 'firebase/storage';
 
 // NOTE: firebase config with non-auth properties skipped;
-const firebaseConfig: FirebaseOptions = 
+const firebaseConfig: FirebaseOptions =
 {
 	apiKey:	import.meta.env?.VITE_FIREBASE_DB_API_KEY as string,
 	authDomain:	import.meta.env?.VITE_FIREBASE_DB_AUTH_DOMAIN as string,
@@ -18,7 +18,7 @@ const firebaseConfig: FirebaseOptions =
 
 // DOC: https://stackoverflow.com/questions/37652328/how-to-check-if-a-firebase-app-is-already-initialized-on-android/41005100#41005100
 // NOTE: initialize the Firebase APP;
-export const app = 
+export const app =
 	getApps().length === 0
 		? initializeApp(firebaseConfig)
 		: getApp()
@@ -41,7 +41,6 @@ export async function firebaseAppDelete
 (
 )
 {
-  console.log("🔥 APP DELETED")
   await deleteApp
   (
     app
@@ -52,13 +51,10 @@ export async function firebaseAppInit
 (
 )
 {
-  console.log('(check) initialized Apps', getApps())
   if (getApps().length === 0)
   {
-    console.log("🔥 INITIALIZING APP")
     initializeApp(firebaseConfig)
   }
-  console.log('(post) initialized Apps', getApps())
 }
 
 // => REAL-TIME DB

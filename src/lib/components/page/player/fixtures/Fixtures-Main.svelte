@@ -5,7 +5,7 @@ COMPONENT JS (w/ TS)
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
-	
+
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
 
@@ -14,14 +14,14 @@ COMPONENT JS (w/ TS)
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { viewport_change } from '$lib/utils/platform-functions';
   import { PFIX_PP_dataInject, PFIX_PP_genLeagueFixMap } from '@betarena/scores-lib/dist/functions/func.player-fixtures.js';
-  
+
   import arrow_left_dark from './assets/arrow-left-dark.svg';
   import arrow_left_hover from './assets/arrow-left-hover.svg';
   import arrow_left from './assets/arrow-left.svg';
   import arrow_right_dark from './assets/arrow-right-dark.svg';
   import arrow_right_hover from './assets/arrow-right-hover.svg';
   import arrow_right from './assets/arrow-right.svg';
-  
+
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import FixturesRow from './Fixtures-Row.svelte';
 	import LoaderMain from './loaders/shared/Loader-Main.svelte';
@@ -77,7 +77,7 @@ COMPONENT JS (w/ TS)
    */
   async function getPastFixtures
   (
-  ): Promise < void > 
+  ): Promise < void >
   {
     view_page = view_page + 1;
     if (pageFixtureMap.has(view_page)) return;
@@ -93,7 +93,7 @@ COMPONENT JS (w/ TS)
     const if_M_0 =
       response == undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       view_page = view_page - 1;
       loadingPrev = false;
@@ -107,7 +107,7 @@ COMPONENT JS (w/ TS)
 
     pageFixtureMap.set
     (
-      view_page, 
+      view_page,
       _fixtureMap
     );
     pageFixtureMap = pageFixtureMap;
@@ -121,7 +121,7 @@ COMPONENT JS (w/ TS)
   /*
     async function resetFixturesData
     (
-    ): Promise < void > 
+    ): Promise < void >
     {
       pageFixtureMap = new Map();
       loadingPrev = true;
@@ -138,7 +138,7 @@ COMPONENT JS (w/ TS)
 
       pageFixtureMap.set
       (
-        0, 
+        0,
         _fixtureMap
       );
       pageFixtureMap = pageFixtureMap
@@ -150,16 +150,16 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * IMPORTANT 
+   * IMPORTANT
    * [MAIN]
-   * @description 
+   * @description
    * injects new "LIVE" fixture data, in which player is playing;
-   * @returns 
+   * @returns
    * void
    */
-  async function validatePlayerInLineupLive 
+  async function validatePlayerInLineupLive
   (
-  ): Promise < void > 
+  ): Promise < void >
   {
     const liveFixture = $sessionStore?.livescore_now_fixture_target;
 
@@ -173,7 +173,7 @@ COMPONENT JS (w/ TS)
     ;
     if (if_M_0) return;
 
-    const if_M_1 = 
+    const if_M_1 =
       targetFixture == undefined
     ;
     if (if_M_1)
@@ -183,12 +183,6 @@ COMPONENT JS (w/ TS)
       (
         `/api/data/players/fixtures/?fixture_id=${liveFixture?.id}`
       ) as B_H_HF;
-
-      console.log
-      (
-        '🟢 fetching fixture',
-        response
-      );
 
       targetFixture = response;
     }
@@ -207,17 +201,17 @@ COMPONENT JS (w/ TS)
   }
 
   /**
-   * @summary 
-   * IMPORTANT 
+   * @summary
+   * IMPORTANT
    * [MAIN]
-   * @description 
+   * @description
    * injects new "livescores" real-time data for "this" player;
    * @returns
    * void
    */
   function injectLivescoreData
   (
-  ): void 
+  ): void
   {
     const liveFixture = $sessionStore?.livescore_now_fixture_target;
 
@@ -228,15 +222,15 @@ COMPONENT JS (w/ TS)
       || pageViewMap == undefined
     ;
     if (if_M_0) return;
-    
+
     const playerFixList: PFIX_C_Fixture[] = []
 
-    for (let [leagueId, fixtureList] of pageViewMap) 
+    for (let [leagueId, fixtureList] of pageViewMap)
     {
       const filteredFixList = fixtureList
       ?.filter
       (
-        x => 
+        x =>
         x?.id != liveFixture?.id
       );
       playerFixList.push
@@ -267,7 +261,7 @@ COMPONENT JS (w/ TS)
 
     pageFixtureMap.set
     (
-      0, 
+      0,
       newMap
     );
     pageFixtureMap = pageFixtureMap;
@@ -289,7 +283,7 @@ COMPONENT JS (w/ TS)
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -302,7 +296,7 @@ COMPONENT JS (w/ TS)
   ): void
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -320,16 +314,11 @@ COMPONENT JS (w/ TS)
   //#region ➤ [REACTIVIY] [METHODS]
 
   /**
-   * @description 
+   * @description
    * listens to changes in livescores_now data session-store; Proceeds to update data accordingly;
   */
-  $: if ($sessionStore?.livescore_now_fixture_target) 
+  $: if ($sessionStore?.livescore_now_fixture_target)
   {
-    console.log
-    (
-      '🔥',
-      'UPDATING'
-    )
     validatePlayerInLineupLive()
   }
 
@@ -346,7 +335,7 @@ COMPONENT JS (w/ TS)
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -366,7 +355,7 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -375,13 +364,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <WidgetTitle
     {WIDGET_TITLE}
   />
-  
+
   <div
     class="widget-component"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
-    <!-- 
+    <!--
     Previous / Next Buttons
     -->
     <div
@@ -391,7 +380,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         m-b-15
       ">
 
-      <!-- 
+      <!--
       Previous
       -->
       <button
@@ -405,7 +394,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         on:mouseout={() => hoverBtn1 = false}
         disabled={loadingPrev}
       >
-        <img 
+        <img
           src={hoverBtn1 == true ? arrow_left_hover : $userBetarenaSettings?.theme == "Dark" ? arrow_left_dark : arrow_left}
           width="20"
           height="20"
@@ -416,7 +405,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.previous || 'Previous' : 'Previous'}
       </button>
 
-      <!-- 
+      <!--
       Next
       -->
       {#if !(view_page == 0)}
@@ -432,7 +421,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           disabled={view_page == 0}
         >
           {WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.next || 'Next' : 'Next'}
-          <img 
+          <img
             src={hoverBtn2 == true ? arrow_right_hover : $userBetarenaSettings?.theme == "Dark" ? arrow_right_dark : arrow_right}
             width="20"
             height="20"
@@ -444,8 +433,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
     </div>
-    
-    <!-- 
+
+    <!--
     Loader (inner)
     -->
     {#if loadingPrev}
@@ -454,8 +443,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <LoaderMain />
       </div>
     {/if}
-    
-    <!-- 
+
+    <!--
     Fixtures List
     -->
     {#if !loadingPrev}
@@ -463,16 +452,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         id="fixtures-list-box">
         {#each [...pageFixtureMap.entries()] as [key, page_data]}
           {#if key == view_page}
-            <!-- [🐞] 
+            <!-- [🐞]
             <p>
               Page {key}
             </p>
             -->
             {#each [...page_data.entries()].reverse() as [key, fixtures]}
-              <!-- 
+              <!--
               League (group)
               -->
-              <a 
+              <a
                 href={`/${leagueMap.get(key.split('_')[0])?.urls[$sessionStore?.serverLang]}`}>
                 <div
                   class="
@@ -481,7 +470,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     m-b-15
                     league-group-box
                   ">
-                  <img 
+                  <img
                     src={leagueMap.get(key.split('_')[0])?.icon}
                     alt=""
                     width="24"
@@ -501,12 +490,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                 </div>
               </a>
-              <!-- 
+              <!--
               Fixtures List
               -->
               {#each fixtures as item}
-                <FixturesRow 
-                  fixture={item} 
+                <FixturesRow
+                  fixture={item}
                 />
               {/each}
             {/each}
@@ -571,17 +560,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     border-top: 1px solid var(--grey-color);
     padding-top: 18px;
-  } 
+  }
 
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-  and (min-width: 726px) 
+  @media only screen
+  and (min-width: 726px)
   and (max-width: 1000px)
   {
   }

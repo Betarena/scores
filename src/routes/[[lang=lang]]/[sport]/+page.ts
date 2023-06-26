@@ -11,24 +11,22 @@ export async function load
     params,
     fetch
   }: PageLoadEvent
-): Promise < PageLoad > 
+): Promise < PageLoad >
 {
 
   const t0 = performance.now();
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
-  const { 
+  const {
     lang,
     // @ts-expect-error unknown RouteParam, that exists
     sport
   } = params
 
-  console.log("SPORT", sport)
-
 	const urlLang: string =
-    params?.lang == undefined 
-      ? 'en' 
+    params?.lang == undefined
+      ? 'en'
       : params?.lang
   ;
 
@@ -57,8 +55,8 @@ export async function load
   //#endregion IMPORTANT URL (validation)
 
   const URL: string =
-    lang == undefined 
-      ? '/' 
+    lang == undefined
+      ? '/'
       : `/${lang}`
   ;
 

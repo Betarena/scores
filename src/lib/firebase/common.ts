@@ -26,12 +26,6 @@ export async function onceTargetPlayerIds
     path
   ) as FIRE_LNPI;
 
-  console.log
-  (
-    'firebaseData',
-    firebaseData
-  );
-
   sessionStore.updateLivescorePlayerId
   (
     firebaseData?.id
@@ -233,8 +227,6 @@ export async function oneOffOddsDataGet
 
   for (const path of paths)
   {
-
-    console.log('path', path)
 
     const firebaseData = await getTargetRealDbData
     (

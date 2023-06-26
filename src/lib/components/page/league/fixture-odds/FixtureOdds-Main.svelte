@@ -706,7 +706,6 @@
         ;
 				if (if_M_1)
         {
-					if (dev) console.log('No Matching Sportbook Details');
 					fixture.live_odds = undefined;
 					continue;
 				}

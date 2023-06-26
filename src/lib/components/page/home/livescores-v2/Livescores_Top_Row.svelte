@@ -62,7 +62,7 @@ COMPONENT JS (w/ TS)
    */
   function generateThisWeekDates
   (
-  ): void 
+  ): void
   {
 
     // NOTE: clone-copy user date correctly, without deepcopy;
@@ -91,8 +91,6 @@ COMPONENT JS (w/ TS)
       days_2_future,
       days_3_future
     ]
-
-    // console.log(fixture_dates)
   }
 
   generateThisWeekDates()
@@ -124,11 +122,11 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
+<!--
 [ℹ] +3/0/-3 days select (box)
 -->
 <div
@@ -147,7 +145,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class:activeDate={
         item == toISOMod($sessionStore.livescoreNowSelectedDate, true)
       }
-      on:click={() => 
+      on:click={() =>
         // IMPORTANT
         // -> yyyy/mm/DD to date object (adjust TZ offset)
         // -> because, date-string already in TZ applied format
@@ -174,7 +172,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </p>
     </div>
   {/each}
-  <!-- 
+  <!--
   [ℹ] calendar (feature)
   <-contents->
   [ℹ] calendar (icon)
@@ -187,18 +185,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       column-space-center
     "
     class:activeDate={!fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate))}>
-    <!-- 
+    <!--
     [ℹ] calendar (vector)
     -->
-    <img 
+    <img
       src={
-        $sessionStore.livescoreShowCalendar 
-        && fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate)) 
-        ? vec_calendar_sel 
-        : !fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate)) 
+        $sessionStore.livescoreShowCalendar
+        && fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate))
+        ? vec_calendar_sel
+        : !fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate))
           ? vec_calendar_sel_date
           : defaultCalendarIcon
-      } 
+      }
       alt="default alt text"
       on:mouseover={(e) => {if (fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate))) e.currentTarget.src = vec_calendar_sel}}
       on:mouseleave={(e) => {if (!$sessionStore.livescoreShowCalendar && fixture_dates.includes(toISOMod($sessionStore.livescoreNowSelectedDate)) ) e.currentTarget.src = defaultCalendarIcon}}
@@ -207,7 +205,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       width="24"
       height="24"
     />
-    <!-- 
+    <!--
     [ℹ] calendar (pop-up)
     -->
     {#if $sessionStore.livescoreShowCalendar}
@@ -216,7 +214,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   </div>
 </div>
 
-<!-- 
+<!--
 [ℹ] filter by (all/live) fixtures
 -->
 <div
@@ -247,7 +245,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
     </p>
   </div>
-  <div 
+  <div
     class="
       fixture-filter-box
       text-center
@@ -267,7 +265,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {WIDGET_T_DATA?.live || 'Live'} ({numOfFixturesLive || 0})
       </p>
       {#if numOfFixturesLive != 0}
-        <img 
+        <img
           src={vec_pulse_dot}
           alt='pulsating-dot'
           width="16"
@@ -287,7 +285,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#livescores-dates-box {
     padding: 0 7px 0 16px;
-  } 
+  }
   div#livescores-dates-box > div.livescore-date-box,
   div#calendar-out-box {
     /* padding: 7px 13px; */
@@ -333,11 +331,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
+  @media only screen
     and (max-width: 388px) {
     div#livescores-dates-box > div.livescore-date-box,
     div#calendar-out-box {
@@ -345,7 +343,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     }
   }
 
-  @media only screen 
+  @media only screen
     and (min-width: 475px) {
     div#livescores-dates-box {
       padding: 0 9px 0 20px;

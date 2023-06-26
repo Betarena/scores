@@ -8,7 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	
+
   import { sessionStore } from '$lib/store/session.js';
   import { ST_W_F_STY, ST_W_F_TAG, ST_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
@@ -43,16 +43,16 @@ COMPONENT JS (w/ TS)
    * @summary
    * [MAIN] [INIT]
    * @description
-   * main widget data loader, 
+   * main widget data loader,
    * (and) try..catch (error) handler
    * (and) placeholder handler
    */
   async function widgetInit
   (
-  ): Promise < B_STA_D > 
+  ): Promise < B_STA_D >
   {
 		await sleep(3000);
-    
+
     WIDGET_DATA = WIDGET_S_DATA
 
     const if_M_0 =
@@ -60,14 +60,12 @@ COMPONENT JS (w/ TS)
       || WIDGET_DATA?.comp_typ != 'domestic'
       // || WIDGET_DATA?.seasons?.[0]?.standings?.length > 1
     ;
-		if (if_M_0) 
+		if (if_M_0)
     {
       dlog(`${ST_W_F_TAG} ❌ no data available!`, ST_W_F_TOG, ST_W_F_STY);
 			NO_WIDGET_DATA = true;
 			return;
 		}
-
-    console.log(WIDGET_DATA)
 
     NO_WIDGET_DATA = false;
     return WIDGET_DATA
@@ -84,11 +82,11 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "language" change;
   */
   $: if_R_0 =
-    browser 
+    browser
     && $sessionStore?.serverLang != undefined
   ;
   $: if (if_R_0)
@@ -113,20 +111,20 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
   <h2>{WIDGET_TITLE}</h2>
-  <!-- 
+  <!--
   STAGE STANDINGS (regular)
   -->
   {#if !WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.group_based}
     {#each WIDGET_S_DATA?.seasons?.[0]?.standings?.[0]?.total || [] as team}
       <p>{team?.team_name}</p>
     {/each}
-  <!-- 
+  <!--
   STAGE STANDINGS (groups)
   -->
   {:else}
@@ -142,28 +140,28 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!-- [🐞] -->
 <!-- <StandingsLoader /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
   <StandingsLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <StandingsMain 
+    <StandingsMain
       {FIXTURE_INFO}
       STANDINGS_DATA={WIDGET_DATA}
       STANDINGS_T={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -176,12 +174,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 

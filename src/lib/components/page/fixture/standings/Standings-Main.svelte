@@ -143,7 +143,6 @@
       }
     }
     stagesWithFixtureTeams = [...new Set(stagesWithFixtureTeams)]
-    console.log(stagesWithFixtureTeams)
   }
 
   // VIEWPORT CHANGES | IMPORTANT
@@ -269,7 +268,6 @@
   // [ℹ] on selct_stage view change;
   $: if (select_stage_opt)
   {
-    // console.log('Stage/Phase Changed!')
     const target_teams: string[] =
     [
       FIXTURE_INFO?.data?.away_team_name,
@@ -286,7 +284,6 @@
           {
             if (target_teams.includes(g_total?.team_name))
             {
-              console.log('🔥', g_total?.team_name)
               targetGroupsNamesArray.push(g_standing?.group_name)
             }
           }

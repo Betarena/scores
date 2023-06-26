@@ -19,13 +19,13 @@
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import close_icon from './assets/close.svg';
-	  
+
 	import type { B_CONT_D } from '@betarena/scores-lib/types/content.js';
 	import type { B_FO_T } from '@betarena/scores-lib/types/fixture-odds.js';
 	import type { B_FS_D, B_FS_T } from '@betarena/scores-lib/types/scoreboard.js';
 	import type { B_SAP_FP_D } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
-	
+
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
@@ -39,7 +39,7 @@
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
-  
+
   let SPORTBOOK_INFO: B_SPT_D;
 
 	let mobileExclusive = false;
@@ -103,24 +103,24 @@
 
 		let count = 0;
 
-		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
+		for (const m_sportBook of $sessionStore?.sportbook_list || [])
     {
 			const m_sportBookTitle =	m_sportBook?.title;
-			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || []) 
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || [])
       {
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
-          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
-          && firebaseSportbook.markets != null 
-          && firebaseSportbook.markets['1X2FT'] !=	null 
-          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase()
+          && firebaseSportbook.markets != null
+          && firebaseSportbook.markets['1X2FT'] !=	null
+          && firebaseSportbook.markets['1X2FT'].data[0].value != null
+          && firebaseSportbook.markets['1X2FT'].data[1].value != null
+          && firebaseSportbook.markets['1X2FT'].data[2].value != null
           && count != 1
         ;
         if (if_M_0)
         {
-					FIXTURE_SCOREBOARD._1x2 = 
+					FIXTURE_SCOREBOARD._1x2 =
           {
 						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2),
 						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2),
@@ -143,13 +143,13 @@
     (
 			'scoreboard-widget-container'
 		);
-		if (target_div == undefined) 
+		if (target_div == undefined)
     {
       dlog(`${SC_W_F_TAG} ❗️ target_div is null!`, SC_W_F_TOG, SC_W_F_STY);
 			return;
 		}
 
-		if (count == 0) 
+		if (count == 0)
     {
 			initialDivDistance = target_div.getBoundingClientRect().bottom + window.scrollY;
 			count = 1;
@@ -157,16 +157,6 @@
 
 		let distance_top_from_div = target_div.getBoundingClientRect().bottom;
 		let distance_top_scroll = window.scrollY;
-
-		// [🐞]
-		/*
-      if (dev) console.log(
-       `
-        initialDivDistance: ${initialDivDistance}
-        distance_top_scroll: ${distance_top_scroll}
-        distance_top_from_div: ${distance_top_from_div}
-      `)
-    */
 
 		// when in standard view;
     const if_M_0 =
@@ -177,9 +167,9 @@
 
 		// [ℹ] when [MINIATURE VIEW]
     const if_M_1 =
-      initialDivDistance != undefined 
-      && count == 1 
-      && distance_top_scroll <= initialDivDistance 
+      initialDivDistance != undefined
+      && count == 1
+      && distance_top_scroll <= initialDivDistance
       && miniState
     ;
 		if (if_M_1) miniState = false;
@@ -202,7 +192,7 @@
     );
 		setTimeout
     (
-      async () => 
+      async () =>
       {
         window.scrollTo
         (
@@ -211,7 +201,7 @@
             behavior: 'smooth'
           }
         );
-		  }, 
+		  },
       150
     );
 	}
@@ -232,7 +222,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -251,7 +241,7 @@
   ): void
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -270,54 +260,52 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ listens to target "fixture" in "livescores_now" data;
   */
   $: if ($sessionStore?.livescore_now_fixture_target)
   {
-    console.log("🔥", "UPDATED LIVE SCORE TARGET")
     injectLiveData()
   }
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ listens to target "fixture" in "odds" data;
   */
   $: if ($sessionStore?.live_odds_fixture_target)
   {
-    console.log("🔥", "UPDATED LIVE ODDS")
     injectLiveOddsData()
   }
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ checks for "hide" / "show" countdown bool state;
   */
   $: if_R_0 =
-    countDownTestHour > 23 
+    countDownTestHour > 23
     || dateDiff < 0
   ;
 	$: if (if_R_0) showCountdown = false;
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ checks for "hide" / "show" odds+bet-site bool state;
   */
-  $: if_R_1 = 
-    !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) 
-    && FIXTURE_SCOREBOARD?._1x2?.home 
-    && FIXTURE_SCOREBOARD?._1x2?.draw 
+  $: if_R_1 =
+    !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)
+    && FIXTURE_SCOREBOARD?._1x2?.home
+    && FIXTURE_SCOREBOARD?._1x2?.draw
     && FIXTURE_SCOREBOARD?._1x2?.away
   ;
 
@@ -327,7 +315,7 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [LIFECYCLE]
    * @description
    * ➨ kickstart resize-action;
@@ -335,27 +323,27 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
 
       // (+) other
-      dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();		
+      dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
       setInterval
       (
-        () => 
+        () =>
         {
           dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
-        }, 
+        },
         1000
       );
       setInterval
       (
-        () => 
+        () =>
         {
           secTickShow = !secTickShow;
-        }, 
+        },
         500
       );
     }
@@ -366,7 +354,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 TODO:
   ➨ clean up 💻 TABLET + 🖥️ LAPTOP (SCOREBOARD) TOP ROW
@@ -376,18 +364,18 @@ TODO:
 <div
   id="widget-outer">
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={"Scoreboard"}
       NO_DATA_TITLE={"NO DATA"}
       NO_DATA_DESC={"NO DESCRIPTION"}
     />
 	{/if}
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData && browser}
@@ -401,7 +389,7 @@ TODO:
         class:dark-background-1={$userBetarenaSettings?.theme == 'Dark'}
       >
 
-        <!-- 
+        <!--
         (SCOREBOARD) TOP ROW
         -->
         <div
@@ -410,25 +398,25 @@ TODO:
           class:full-time={FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
         >
 
-          <!-- 
+          <!--
           📱 MOBILE
           -->
           {#if mobileExclusive}
 
-            <!-- 
+            <!--
             BACKGROUND GRADIENT
             -->
             <div
               id="background-gradient-box"
             />
 
-            <!-- 
+            <!--
             LEAGUE INFO
             -->
             <div
               id="league-info-box"
               class="
-                row-space-center 
+                row-space-center
                 m-b-15
                 cursor-pointer
               "
@@ -447,7 +435,7 @@ TODO:
                     height="14"
                   />
                 </div>
-                <p 
+                <p
                   class="
                     color-white
                   "
@@ -459,7 +447,7 @@ TODO:
               </a>
             </div>
 
-            <!-- 
+            <!--
             TEAMS & STATUS
             -->
             <div
@@ -470,12 +458,12 @@ TODO:
               "
             >
 
-              <!-- 
+              <!--
               TEAM 1
               -->
               <div
                 class="
-                  column-space-center 
+                  column-space-center
                   team-box
                 "
               >
@@ -497,15 +485,15 @@ TODO:
                 </p>
               </div>
 
-              <!-- 
+              <!--
               FIXTURE (STATUS) UI
               -->
               {#if FIXTURE_NOT_START_OPT.includes(FIXTURE_SCOREBOARD?.status)}
-                
+
                 <div
                   style="align-self: center;"
                 >
-                  <!-- 
+                  <!--
                   POSTPONED condition
                   -->
                   {#if ['POSTP', 'TBA'].includes(FIXTURE_SCOREBOARD?.status)}
@@ -522,12 +510,12 @@ TODO:
                     </p>
                   {/if}
 
-                  <!-- 
+                  <!--
                   FIXTURE COUNTDOWN
                   -->
                   <p
                     class="
-                      w-500 
+                      w-500
                       x-large
                       color-white
                       text-center
@@ -537,14 +525,14 @@ TODO:
                     {countDownHour}:{countDownMin}:{countDownSec}
                   </p>
 
-                  <!-- 
+                  <!--
                   FIXTURE DATETIME
                   -->
                   <p
                     class="
-                      w-400 
-                      small 
-                      color-grey 
+                      w-400
+                      small
+                      color-grey
                       desktop-medium
                       text-center
                       no-wrap
@@ -568,7 +556,7 @@ TODO:
                   "
                 >
 
-                  <!-- 
+                  <!--
                   FINAL FIXTURE STATUS
                   (+) FIXTURE CHECKPOINTS
                   -->
@@ -585,7 +573,7 @@ TODO:
                     </p>
                   {/if}
 
-                  <!-- 
+                  <!--
                   SCORE
                   -->
                   <p
@@ -600,8 +588,8 @@ TODO:
                     {FIXTURE_SCOREBOARD?.teams?.away?.score}
                   </p>
 
-                  <!-- 
-                  LIVE STATUS 
+                  <!--
+                  LIVE STATUS
                   (+) FIXTURE CHECKPOINTS
                   -->
                   {#if FIXTURE_LIVE_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
@@ -623,7 +611,7 @@ TODO:
                         </span>
                       {/if}
 
-                      <span 
+                      <span
                         class="
                           color-white
                         "
@@ -641,7 +629,7 @@ TODO:
                     </p>
                   {/if}
 
-                  <!-- 
+                  <!--
                   FINAL FIXTURE CHECKPOINTS
                   -->
                   {#if FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
@@ -668,12 +656,12 @@ TODO:
 
               {/if}
 
-              <!-- 
+              <!--
               TEAM 2
               -->
               <div
                 class="
-                  column-space-center 
+                  column-space-center
                   team-box
                 "
               >
@@ -697,12 +685,12 @@ TODO:
 
             </div>
 
-            <!-- 
+            <!--
             BET-SITE + ODDS
             -->
             {#if if_R_1}
-              
-              <!-- 
+
+              <!--
               BET-SITE
               -->
               <div
@@ -737,8 +725,8 @@ TODO:
                   />
                 </a>
               </div>
-              
-              <!-- 
+
+              <!--
               ODDS BOX
               -->
               <div
@@ -746,8 +734,8 @@ TODO:
                 class="row-space-center"
               >
 
-                <!-- 
-                [ℹ] ODDS #1 
+                <!--
+                [ℹ] ODDS #1
                 -->
                 <a
                   rel="nofollow"
@@ -763,8 +751,8 @@ TODO:
                       row-space-out
                     "
                   >
-                    <!-- 
-                    [ℹ] team-img / odds-type 
+                    <!--
+                    [ℹ] team-img / odds-type
                     -->
                     <p
                       class="
@@ -788,8 +776,8 @@ TODO:
                   </div>
                 </a>
 
-                <!-- 
-                [ℹ] ODDS #X 
+                <!--
+                [ℹ] ODDS #X
                 -->
                 <a
                   rel="nofollow"
@@ -826,8 +814,8 @@ TODO:
                   </div>
                 </a>
 
-                <!-- 
-                [ℹ] ODDS #2 
+                <!--
+                [ℹ] ODDS #2
                 -->
                 <a
                   rel="nofollow"
@@ -843,8 +831,8 @@ TODO:
                       row-space-out
                     "
                   >
-                    <!-- 
-                    [ℹ] team-img / odds-type 
+                    <!--
+                    [ℹ] team-img / odds-type
                     -->
                     <p
                       class="
@@ -871,11 +859,11 @@ TODO:
 
             {/if}
 
-          <!-- 
+          <!--
           💻 TABLET
           -->
           {:else if !mobileExclusive && tabletExclusive}
-            <!-- 
+            <!--
             [ℹ] background-gradient
             [ℹ] non-"FT"
             -->
@@ -885,13 +873,13 @@ TODO:
               />
             {/if}
 
-            <!-- 
+            <!--
             [ℹ] league info
             -->
             <div
               id="league-info-box"
               class="
-                row-space-center 
+                row-space-center
                 cursor-pointer
               "
             >
@@ -922,7 +910,7 @@ TODO:
               </a>
             </div>
 
-            <!-- 
+            <!--
             [ℹ] teams / fixture info box
             -->
             <div
@@ -932,12 +920,12 @@ TODO:
                 m-b-20
               "
             >
-              <!-- 
+              <!--
               [ℹ] team #1
               -->
               <div
                 class="
-                  column-space-center 
+                  column-space-center
                   team-box
                 "
               >
@@ -958,7 +946,7 @@ TODO:
                   {FIXTURE_SCOREBOARD.home_team_name}
                 </p>
               </div>
-              <!-- 
+              <!--
               [ℹ] fixture info
               [ℹ] =?> not-started UI
               [ℹ] =?> in-play UI
@@ -969,7 +957,7 @@ TODO:
                   class="m-b-30"
                   style="align-self: center;"
                 >
-                  <!-- 
+                  <!--
                   [ℹ] POSTPONED condition
                   -->
                   {#if FIXTURE_SCOREBOARD?.status === 'POSTP' || FIXTURE_SCOREBOARD?.status === 'TBA'}
@@ -991,7 +979,7 @@ TODO:
                   {/if}
                   <p
                     class="
-                      w-500 
+                      w-500
                       s-20
                       color-white
                       text-center
@@ -1002,9 +990,9 @@ TODO:
                   </p>
                   <p
                     class="
-                      w-400 
-                      s-16 
-                      color-grey 
+                      w-400
+                      s-16
+                      color-grey
                       text-center
                     "
                     style="white-space: nowrap;"
@@ -1154,12 +1142,12 @@ TODO:
                   </p>
                 </div>
               {/if}
-              <!-- 
+              <!--
               [ℹ] team #2
               -->
               <div
                 class="
-                  column-space-center 
+                  column-space-center
                   team-box
                 "
               >
@@ -1182,14 +1170,14 @@ TODO:
               </div>
             </div>
 
-            <!-- 
+            <!--
             [ℹ] odds
             [ℹ] w/ betting site
             [ℹ] non-"FT"
             -->
             {#if !FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status) && FIXTURE_SCOREBOARD?._1x2?.home && FIXTURE_SCOREBOARD?._1x2?.draw && FIXTURE_SCOREBOARD?._1x2?.away}
               <div id="tablet-bet-odds-box">
-                <!-- 
+                <!--
                 [ℹ] betting site
                 [ℹ] non-"FT"
                 -->
@@ -1227,7 +1215,7 @@ TODO:
                   </a>
                 </div>
 
-                <!-- 
+                <!--
                 [ℹ] odds
                 [ℹ] non-"FT"
                 -->
@@ -1235,7 +1223,7 @@ TODO:
                   id="btn-vote-container"
                   class="row-space-center"
                 >
-                  <!-- 
+                  <!--
                   [ℹ] ODDS #1 -->
                   <a
                     rel="nofollow"
@@ -1251,8 +1239,8 @@ TODO:
                         row-space-out
                       "
                     >
-                      <!-- 
-                      [ℹ] team-img / odds-type 
+                      <!--
+                      [ℹ] team-img / odds-type
                       -->
                       <img
                         src={FIXTURE_SCOREBOARD.home_team_logo}
@@ -1273,7 +1261,7 @@ TODO:
                     </div>
                   </a>
 
-                  <!-- 
+                  <!--
                   [ℹ] ODDS #X -->
                   <a
                     rel="nofollow"
@@ -1289,8 +1277,8 @@ TODO:
                         row-space-out
                       "
                     >
-                      <!-- 
-                      [ℹ] team-img / odds-type 
+                      <!--
+                      [ℹ] team-img / odds-type
                       -->
                       <img
                         src={close_icon}
@@ -1311,7 +1299,7 @@ TODO:
                     </div>
                   </a>
 
-                  <!-- 
+                  <!--
                   [ℹ] ODDS #2 -->
                   <a
                     rel="nofollow"
@@ -1327,8 +1315,8 @@ TODO:
                         row-space-out
                       "
                     >
-                      <!-- 
-                      [ℹ] team-img / odds-type 
+                      <!--
+                      [ℹ] team-img / odds-type
                       -->
                       <img
                         src={FIXTURE_SCOREBOARD.away_team_logo}
@@ -1361,12 +1349,12 @@ TODO:
                 row-space-out
               "
             >
-              <!-- 
+              <!--
               [ℹ] team #1
               -->
               <div
                 class="
-                  column-space-center 
+                  column-space-center
                   team-box
                 "
               >
@@ -1390,7 +1378,7 @@ TODO:
                 </div>
               </div>
 
-              <!-- 
+              <!--
               [ℹ] league info
               [ℹ] fixture info box
               [ℹ] bet-site + odds
@@ -1401,7 +1389,7 @@ TODO:
                 <div
                   id="league-info-box"
                   class="
-                    row-space-center 
+                    row-space-center
                     cursor-pointer
                     m-b-20
                   "
@@ -1433,7 +1421,7 @@ TODO:
                   </a>
                 </div>
 
-                <!-- 
+                <!--
                 [ℹ] fixture info
                 [ℹ] =?> not-started UI
                 [ℹ] =?> in-play UI
@@ -1444,7 +1432,7 @@ TODO:
                     class="m-b-20"
                     style="align-self: center;"
                   >
-                    <!-- 
+                    <!--
                     [ℹ] POSTPONED condition
                     -->
                     {#if FIXTURE_SCOREBOARD?.status === 'POSTP' || FIXTURE_SCOREBOARD?.status === 'TBA'}
@@ -1466,7 +1454,7 @@ TODO:
                     {/if}
                     <p
                       class="
-                        w-500 
+                        w-500
                         s-20
                         color-white
                         text-center
@@ -1479,7 +1467,7 @@ TODO:
                       class="
                         w-400
                         s-16
-                        color-grey 
+                        color-grey
                         text-center
                       "
                       style="white-space: nowrap;"
@@ -1633,7 +1621,7 @@ TODO:
                   </div>
                 {/if}
 
-                <!-- 
+                <!--
                 [ℹ] odds
                 [ℹ] w/ betting site
                 [ℹ] non-"FT"
@@ -1642,7 +1630,7 @@ TODO:
                   <div
                     id="tablet-bet-odds-box"
                   >
-                    <!-- 
+                    <!--
                     [ℹ] betting site
                     [ℹ] non-"FT"
                     -->
@@ -1680,7 +1668,7 @@ TODO:
                       </a>
                     </div>
 
-                    <!-- 
+                    <!--
                     [ℹ] odds
                     [ℹ] non-"FT"
                     -->
@@ -1688,8 +1676,8 @@ TODO:
                       id="btn-vote-container"
                       class="row-space-center"
                     >
-                      <!-- 
-                      [ℹ] ODDS #1 
+                      <!--
+                      [ℹ] ODDS #1
                       -->
                       <a
                         rel="nofollow"
@@ -1705,8 +1693,8 @@ TODO:
                             row-space-out
                           "
                         >
-                          <!-- 
-                          [ℹ] team-img / odds-type 
+                          <!--
+                          [ℹ] team-img / odds-type
                           -->
                           <img
                             src={FIXTURE_SCOREBOARD.home_team_logo}
@@ -1727,8 +1715,8 @@ TODO:
                         </div>
                       </a>
 
-                      <!-- 
-                      [ℹ] ODDS #X 
+                      <!--
+                      [ℹ] ODDS #X
                       -->
                       <a
                         rel="nofollow"
@@ -1744,8 +1732,8 @@ TODO:
                             row-space-out
                           "
                         >
-                          <!-- 
-                          [ℹ] team-img / odds-type 
+                          <!--
+                          [ℹ] team-img / odds-type
                           -->
                           <img
                             src={close_icon}
@@ -1766,8 +1754,8 @@ TODO:
                         </div>
                       </a>
 
-                      <!-- 
-                      [ℹ] ODDS #2 
+                      <!--
+                      [ℹ] ODDS #2
                       -->
                       <a
                         rel="nofollow"
@@ -1783,8 +1771,8 @@ TODO:
                             row-space-out
                           "
                         >
-                          <!-- 
-                          [ℹ] team-img / odds-type 
+                          <!--
+                          [ℹ] team-img / odds-type
                           -->
                           <img
                             src={FIXTURE_SCOREBOARD.away_team_logo}
@@ -1809,12 +1797,12 @@ TODO:
                 {/if}
               </div>
 
-              <!-- 
+              <!--
               [ℹ] team #2
               -->
               <div
                 class="
-                  column-space-center 
+                  column-space-center
                   team-box
                 "
               >
@@ -1842,7 +1830,7 @@ TODO:
 
         </div>
 
-        <!-- 
+        <!--
         (SCOREBOARD) BOTTOM ROW
         -->
         <div
@@ -1850,12 +1838,12 @@ TODO:
           class="row-space-even"
         >
 
-          <!-- 
+          <!--
           OVERVIEW TAB
           -->
           <div
             class="
-              opt-container 
+              opt-container
               cursor-pointer
             "
             on:click={() => toggleContentView('overview')}
@@ -1863,9 +1851,9 @@ TODO:
           >
             <p
               class="
-                s-14 
-                color-grey 
-                w-500 
+                s-14
+                color-grey
+                w-500
                 no-wrap
               "
             >
@@ -1873,7 +1861,7 @@ TODO:
             </p>
           </div>
 
-          <!-- 
+          <!--
           CONTENT-NEWS TAB
           -->
           {#if FIXTURE_CONTENT?.length > 0}
@@ -1887,9 +1875,9 @@ TODO:
             >
               <p
                 class="
-                  s-14 
+                  s-14
                   color-grey
-                  w-500 
+                  w-500
                   no-wrap
                 "
               >
@@ -1919,12 +1907,12 @@ TODO:
         class:dark-background-1={$userBetarenaSettings?.theme == 'Dark'}
       >
 
-        <!-- 
+        <!--
         📱 MOBILE
         -->
         {#if mobileExclusive}
 
-          <!-- 
+          <!--
           [ℹ] teams / fixture info box
           -->
           <div
@@ -1934,12 +1922,12 @@ TODO:
             "
           >
 
-            <!-- 
+            <!--
             [ℹ] team #1
             -->
             <div
               class="
-                row-space-out 
+                row-space-out
                 team-box
                 one
               "
@@ -1961,7 +1949,7 @@ TODO:
               />
             </div>
 
-            <!-- 
+            <!--
             [ℹ] fixture info
             [ℹ] =?> not-started UI
             [ℹ] =?> in-play UI
@@ -1973,7 +1961,7 @@ TODO:
                 style="align-self: center;"
               >
 
-                <!-- 
+                <!--
                 [ℹ] POSTPONED condition
                 -->
                 {#if FIXTURE_SCOREBOARD?.status === 'POSTP' || FIXTURE_SCOREBOARD?.status === 'TBA'}
@@ -1992,8 +1980,8 @@ TODO:
 
                 <p
                   class="
-                    w-500 
-                    x-large 
+                    w-500
+                    x-large
                     desktop-x-large
                     color-white
                     text-center
@@ -2002,12 +1990,12 @@ TODO:
                 >
                   {countDownHour}:{countDownMin}:{countDownSec}
                 </p>
-                
+
                 <p
                   class="
-                    w-400 
-                    small 
-                    color-grey 
+                    w-400
+                    small
+                    color-grey
                     desktop-medium
                     text-center
                   "
@@ -2057,7 +2045,7 @@ TODO:
                   middle-info
                 "
               >
-                <!-- 
+                <!--
                 [ℹ] LIVE score
                 -->
                 <p
@@ -2073,7 +2061,7 @@ TODO:
                   {FIXTURE_SCOREBOARD?.teams
                     ?.away?.score}
                 </p>
-                <!-- 
+                <!--
                 [ℹ] LIVE minutes
                 -->
                 <p
@@ -2119,7 +2107,7 @@ TODO:
                   middle-info
                 "
               >
-                <!-- 
+                <!--
                 [ℹ] FT score
                 -->
                 <p
@@ -2135,7 +2123,7 @@ TODO:
                   {FIXTURE_SCOREBOARD?.teams
                     ?.away?.score}
                 </p>
-                <!-- 
+                <!--
                 [ℹ] FT scores
                 -->
                 <p
@@ -2161,12 +2149,12 @@ TODO:
               </div>
             {/if}
 
-            <!-- 
+            <!--
             [ℹ] team #2
             -->
             <div
               class="
-                row-space-out  
+                row-space-out
                 team-box
                 two
               "
@@ -2190,7 +2178,7 @@ TODO:
 
           </div>
 
-          <!-- 
+          <!--
           [ℹ] bottom-navigation
           -->
           <div
@@ -2200,7 +2188,7 @@ TODO:
 
             <div
               class="
-                opt-container 
+                opt-container
                 cursor-pointer
               "
               on:click={() => toggleContentView('overview')}
@@ -2208,9 +2196,9 @@ TODO:
             >
               <p
                 class="
-                  s-14 
-                  color-grey 
-                  w-500 
+                  s-14
+                  color-grey
+                  w-500
                   no-wrap
                 "
               >
@@ -2229,9 +2217,9 @@ TODO:
               >
                 <p
                   class="
-                    s-14 
-                    color-grey 
-                    w-500 
+                    s-14
+                    color-grey
+                    w-500
                     no-wrap
                   "
                 >
@@ -2242,12 +2230,12 @@ TODO:
 
           </div>
 
-        <!-- 
+        <!--
         💻 TABLET && 🖥️ LAPTOP
         -->
         {:else}
 
-          <!-- 
+          <!--
           [ℹ] teams / fixture info box
           -->
           <div
@@ -2256,7 +2244,7 @@ TODO:
               row-space-center
             "
           >
-            <!-- 
+            <!--
             [ℹ] team #1
             -->
             <div
@@ -2268,7 +2256,7 @@ TODO:
             >
               <div
                 class="
-                  row-space-out 
+                  row-space-out
                   inner-team-box-1
                 "
                 class:full-time={FIXTURE_FULL_TIME_OPT.includes(FIXTURE_SCOREBOARD?.status)}
@@ -2291,7 +2279,7 @@ TODO:
               </div>
             </div>
 
-            <!-- 
+            <!--
             [ℹ] fixture info
             [ℹ] =?> not-started UI
             [ℹ] =?> in-play UI
@@ -2302,7 +2290,7 @@ TODO:
                 class="middle-info"
                 style="align-self: center;"
               >
-                <!-- 
+                <!--
                 [ℹ] POSTPONED condition
                 -->
                 {#if FIXTURE_SCOREBOARD?.status === 'POSTP' || FIXTURE_SCOREBOARD?.status === 'TBA'}
@@ -2324,7 +2312,7 @@ TODO:
                 {/if}
                 <p
                   class="
-                    w-500 
+                    w-500
                     s-20
                     color-white
                     text-center
@@ -2335,9 +2323,9 @@ TODO:
                 </p>
                 <p
                   class="
-                    w-400 
+                    w-400
                     s-16
-                    color-grey 
+                    color-grey
                     desktop-medium
                     text-center
                   "
@@ -2387,7 +2375,7 @@ TODO:
                   middle-info
                 "
               >
-                <!-- 
+                <!--
                 [ℹ] LIVE score
                 -->
                 <p
@@ -2403,7 +2391,7 @@ TODO:
                   {FIXTURE_SCOREBOARD?.teams
                     ?.away?.score}
                 </p>
-                <!-- 
+                <!--
                 [ℹ] LIVE minutes
                 -->
                 <p
@@ -2448,7 +2436,7 @@ TODO:
                   middle-info
                 "
               >
-                <!-- 
+                <!--
                 [ℹ] FT score
                 -->
                 <p
@@ -2465,7 +2453,7 @@ TODO:
                   {FIXTURE_SCOREBOARD?.teams
                     ?.away?.score}
                 </p>
-                <!-- 
+                <!--
                 [ℹ] FT scores
                 -->
                 <p
@@ -2491,19 +2479,19 @@ TODO:
               </div>
             {/if}
 
-            <!-- 
+            <!--
             [ℹ] team #2
             -->
             <div
               class="
-                column-space-center  
+                column-space-center
                 team-box
                 two
               "
             >
               <div
                 class="
-                  row-space-out   
+                  row-space-out
                   inner-team-box-2
                 "
                 class:full-time={FIXTURE_FULL_TIME_OPT.includes(
@@ -2530,7 +2518,7 @@ TODO:
 
           </div>
 
-          <!-- 
+          <!--
           [ℹ] bottom-navigation
           -->
           <div
@@ -2539,7 +2527,7 @@ TODO:
           >
             <div
               class="
-                opt-container 
+                opt-container
                 cursor-pointer
               "
               on:click={() => toggleContentView('overview')}
@@ -2547,9 +2535,9 @@ TODO:
             >
               <p
                 class="
-                  s-14 
-                  color-grey 
-                  w-500 
+                  s-14
+                  color-grey
+                  w-500
                   no-wrap
                 "
               >
@@ -2568,9 +2556,9 @@ TODO:
               >
                 <p
                   class="
-                    s-14 
-                    color-grey 
-                    w-500 
+                    s-14
+                    color-grey
+                    w-500
                     no-wrap
                   "
                 >
@@ -2598,7 +2586,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
 	/* scorebaord-main */
-	#scoreboard-widget-container 
+	#scoreboard-widget-container
   {
 		background-color: #4b4b4b;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -2609,10 +2597,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding: none;
 	}
 
-	/* 
-  scorebaord-top 
+	/*
+  scorebaord-top
   */
-	div#scoreboard-widget-container div#scoreboard-top-box 
+	div#scoreboard-widget-container div#scoreboard-top-box
   {
 		position: relative;
 		padding: 20px 12px;
@@ -2623,16 +2611,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-repeat: no-repeat;
 		background-size: cover;
 	}
-	div#scoreboard-widget-container	div#scoreboard-top-box.full-time 
+	div#scoreboard-widget-container	div#scoreboard-top-box.full-time
   {
 		min-height: 215px;
 		max-height: 215px;
 	}
 
-	/* 
+	/*
   league-info
   */
-	div#scoreboard-widget-container	div#scoreboard-top-box div#league-info-box div#league-info-img-box 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#league-info-box div#league-info-img-box
   {
 		background-color: #ffffff;
 		border-radius: 50%;
@@ -2640,16 +2628,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 20px;
 		height: 20px;
 	}
-	div#scoreboard-widget-container	div#scoreboard-top-box div#league-info-box div#league-info-img-box img 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#league-info-box div#league-info-img-box img
   {
 		width: 14px;
 		height: 14px;
 	}
 
-	/* 
-  team-info style 
+	/*
+  team-info style
   */
-	div#scoreboard-widget-container	div#scoreboard-top-box div#fixture-info-box 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#fixture-info-box
   {
 		display: grid;
 		grid-auto-flow: column;
@@ -2660,20 +2648,20 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		text-align: center;
 		z-index: 1;
 	}
-	div#scoreboard-widget-container	div#scoreboard-top-box div#fixture-info-box	div.team-box img 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#fixture-info-box	div.team-box img
   {
 		width: 72px;
 		height: 72px;
 	}
-	div#scoreboard-widget-container	span.visibility-none 
+	div#scoreboard-widget-container	span.visibility-none
   {
 		visibility: hidden;
 	}
 
-	/* 
-  bet-site 
+	/*
+  bet-site
   */
-	div#scoreboard-widget-container	div#scoreboard-top-box div.bet-site-box	img 
+	div#scoreboard-widget-container	div#scoreboard-top-box div.bet-site-box	img
   {
 		width: 67px;
 		height: 28px;
@@ -2682,14 +2670,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		z-index: 1;
 	}
 
-	/* 
+	/*
   odds style
   */
-	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container a 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container a
   {
 		width: 100% !important;
 	}
-	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container a	div.odds-box 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container a	div.odds-box
   {
 		background: rgba(0, 0, 0, 0.3);
 		border: 1px solid #4b4b4b;
@@ -2699,15 +2687,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 48px;
 		z-index: 1;
 	}
-	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a div.odds-box 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a div.odds-box
   {
 		margin-right: 8px;
 	}
-	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container a:last-child div.odds-box 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container a:last-child div.odds-box
   {
 		margin-right: 0px;
 	}
-	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a	div.odds-box img 
+	div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a	div.odds-box img
   {
 		width: 28px;
 		height: 28px;
@@ -2721,22 +2709,22 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* bottom nav */
-	div#scoreboard-widget-container	div#scoreboard-bottom-nav-box 
+	div#scoreboard-widget-container	div#scoreboard-bottom-nav-box
   {
 		background-color: #ffffff;
 		padding: 20px 10px 0 10px;
 	}
-	div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container 
+	div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container
   {
 		border-bottom: solid 2.5px transparent;
 		width: 100%;
 		text-align: center;
 	}
-	div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container p 
+	div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container p
   {
 		padding-bottom: 12px;
 	}
-	div#scoreboard-widget-container div#scoreboard-bottom-nav-box	div.opt-container.activeOpt 
+	div#scoreboard-widget-container div#scoreboard-bottom-nav-box	div.opt-container.activeOpt
   {
 		border-color: #f5620f;
 	}
@@ -2745,7 +2733,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* background-gradient */
-	div#background-gradient-box 
+	div#background-gradient-box
   {
 		position: absolute;
 		bottom: 0;
@@ -2760,17 +2748,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* miniature [ONLY] [MOBILE] */
-	div#empty-widget-placeholder 
+	div#empty-widget-placeholder
   {
 		min-height: 334px;
 		max-height: 334px;
 	}
-	div#empty-widget-placeholder.full-time 
+	div#empty-widget-placeholder.full-time
   {
 		min-height: 267px;
 		max-height: 267px;
 	}
-	div#scoreboard-widget-container.miniature 
+	div#scoreboard-widget-container.miniature
   {
 		position: fixed;
 		top: 0;
@@ -2780,45 +2768,45 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background: #292929 !important;
 		z-index: 1000;
 	}
-	div#scoreboard-widget-container.miniature	div#fixture-info-box 
+	div#scoreboard-widget-container.miniature	div#fixture-info-box
   {
 		padding: 20px 10px;
 		min-height: 80px;
 		max-height: 80px;
 	}
-	div#scoreboard-widget-container.miniature	div#fixture-info-box div.team-box 
+	div#scoreboard-widget-container.miniature	div#fixture-info-box div.team-box
   {
 		width: auto;
 	}
-	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.one 
+	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.one
   {
 		margin-right: 20px;
 	}
-	div#scoreboard-widget-container.miniature	div#fixture-info-box div.team-box.one	p 
+	div#scoreboard-widget-container.miniature	div#fixture-info-box div.team-box.one	p
   {
 		margin-right: 15px;
 	}
-	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.two 
+	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.two
   {
 		margin-left: 20px;
 	}
-	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.two p 
+	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box.two p
   {
 		margin-left: 15px;
 	}
-	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box	img 
+	div#scoreboard-widget-container.miniature div#fixture-info-box div.team-box	img
   {
 		width: 40px;
 		height: 40px;
 	}
-	div#scoreboard-widget-container.miniature	div#fixture-info-box div.team-box p 
+	div#scoreboard-widget-container.miniature	div#fixture-info-box div.team-box p
   {
 		overflow: hidden;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		max-width: 35px;
 	}
-	div#scoreboard-widget-container.miniature	div#fixture-info-box div.middle-info p.minute-text 
+	div#scoreboard-widget-container.miniature	div#fixture-info-box div.middle-info p.minute-text
   {
 		margin-top: -5px;
 	}
@@ -2826,18 +2814,18 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		width: auto;
 	}
-	div#scoreboard-widget-container.miniature	div#scoreboard-bottom-nav-box 
+	div#scoreboard-widget-container.miniature	div#scoreboard-bottom-nav-box
   {
 		background-color: #ffffff;
 		padding: 10px 15px 0 15px;
 	}
-	div#scoreboard-widget-container.miniature	div#scoreboard-bottom-nav-box	div.opt-container	p 
+	div#scoreboard-widget-container.miniature	div#scoreboard-bottom-nav-box	div.opt-container	p
   {
 		padding-bottom: 8px;
 	}
 
 	/* miniature [ONLY] [TABLET] && [DESKTOP] */
-	div#scoreboard-widget-container.miniature.tablet-miniature 
+	div#scoreboard-widget-container.miniature.tablet-miniature
   {
 		position: fixed;
 		top: 10px;
@@ -2852,47 +2840,47 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: calc(100vw - 68px);
 		z-index: 1000;
 	}
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box
   {
 		padding: 20px 10px;
 		min-height: 98px;
 		max-height: 98px;
 	}
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box p 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box p
   {
 		overflow: visible;
 		white-space: nowrap;
 		text-overflow: ellipsis;
 		max-width: 200px;
 	}
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box
   {
 		position: relative;
 		width: -webkit-fill-available;
 	}
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box img 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box img
   {
 		width: 56px;
 		height: 56px;
 	}
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box div.inner-team-box-1 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box div.inner-team-box-1
   {
 		position: absolute;
 		right: 5px;
 		width: auto;
 	}
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2
   {
 		position: absolute;
 		left: 5px;
 		width: auto;
 	}
 	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box div.inner-team-box-1	p,
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2	p 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.team-box div.inner-team-box-2	p
   {
 		font-size: 16px;
 	}
-	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.middle-info 
+	div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box div.middle-info
   {
 		min-width: 134px;
 		max-width: 134px;
@@ -2901,24 +2889,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 726px) 
-  and (max-width: 1000px) 
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1000px)
   {
 
-		#scoreboard-widget-container 
+		#scoreboard-widget-container
     {
 			min-width: 100%;
 		}
 
 		/*
-    scorebaord-top 
+    scorebaord-top
     */
-		div#scoreboard-widget-container	div#scoreboard-top-box 
+		div#scoreboard-widget-container	div#scoreboard-top-box
     {
 			min-height: 254px;
 			max-height: 254px;
@@ -2933,113 +2921,113 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			max-height: 200px;
 		}
 
-		/* 
-    placeholder during miniature 
+		/*
+    placeholder during miniature
     */
-		div#empty-widget-placeholder 
+		div#empty-widget-placeholder
     {
 			min-height: 306px;
 			max-height: 306px;
 		}
-		div#empty-widget-placeholder.full-time 
+		div#empty-widget-placeholder.full-time
     {
 			min-height: 252px;
 			max-height: 252px;
 		}
 
-		/* 
-    odds-bet style 
+		/*
+    odds-bet style
     */
-		div#tablet-bet-odds-box 
+		div#tablet-bet-odds-box
     {
 			position: relative;
 			width: -webkit-fill-available;
 		}
-		div#tablet-bet-odds-box div.bet-site-box 
+		div#tablet-bet-odds-box div.bet-site-box
     {
 			position: absolute;
 			bottom: 100%;
 		}
 
-		/* 
-    background-gradient 
+		/*
+    background-gradient
     */
-		div#background-gradient-box 
+		div#background-gradient-box
     {
 			height: 60px;
 			width: 100%;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 726px) 
+	@media only screen
+  and (min-width: 726px)
   {
 
-		/* 
-    bottom nav 
+		/*
+    bottom nav
     */
-		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box 
+		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box
     {
 			justify-content: center !important;
 		}
-		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container 
+		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container
     {
 			width: fit-content;
 			margin-right: 32px;
 		}
-		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container:last-child 
+		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container:last-child
     {
 			margin-right: 0;
 		}
 
-		/* 
-    team-info style 
+		/*
+    team-info style
     */
-		div#scoreboard-widget-container	div#scoreboard-top-box div#fixture-info-box	div.team-box img 
+		div#scoreboard-widget-container	div#scoreboard-top-box div#fixture-info-box	div.team-box img
     {
 			width: 88px;
 			height: 88px;
 		}
 
-		/* 
-    odds style 
+		/*
+    odds style
     */
-		div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a	div.odds-box 
+		div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a	div.odds-box
     {
 			margin-right: 20px;
 			width: 100%;
 		}
-		div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a:last-child div.odds-box 
+		div#scoreboard-widget-container	div#scoreboard-top-box div#btn-vote-container	a:last-child div.odds-box
     {
 			margin-right: 0px;
 		}
 
-		div#scoreboard-widget-container.miniature.tablet-miniature 
+		div#scoreboard-widget-container.miniature.tablet-miniature
     {
 			min-width: auto;
 		}
 
-		p.ft-text 
+		p.ft-text
     {
 			font-size: 16px !important;
 			margin-bottom: -10px;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1000px) 
+	@media only screen
+  and (min-width: 1000px)
   {
 
-		#scoreboard-widget-container 
+		#scoreboard-widget-container
     {
 			min-width: 100%;
 		}
 
-		/* 
-    scorebaord-top 
+		/*
+    scorebaord-top
     */
 		div#scoreboard-widget-container	div#scoreboard-top-box,
-    div#scoreboard-widget-container	div#scoreboard-top-box.full-time 
+    div#scoreboard-widget-container	div#scoreboard-top-box.full-time
     {
 			min-height: 207px;
 			max-height: 207px;
@@ -3049,19 +3037,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			background-size: cover;
 		}
 
-		/* 
-    placeholder during miniature 
+		/*
+    placeholder during miniature
     */
-		div#empty-widget-placeholder 
+		div#empty-widget-placeholder
     {
 			min-height: 259px;
 			max-height: 259px;
 		}
 
-		/* 
+		/*
     league-info
     */
-		div#scoreboard-widget-container	div#scoreboard-top-box div#league-info-box p:hover 
+		div#scoreboard-widget-container	div#scoreboard-top-box div#league-info-box p:hover
     {
 			color: #f5620f !important;
 		}
@@ -3069,51 +3057,51 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		/*
     team-info style
     */
-		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box 
+		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box
     {
 			position: relative;
 		}
-		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box p 
+		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box p
     {
 			font-size: 16px;
 		}
-		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box	div.inner-team-box-1 
+		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box	div.inner-team-box-1
     {
 			position: absolute;
 			left: 25%;
 			text-align: center;
 		}
-		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box	div.inner-team-box-2 
+		div#scoreboard-widget-container	div#scoreboard-top-box div.team-box	div.inner-team-box-2
     {
 			position: absolute;
 			right: 25%;
 			text-align: center;
 		}
-		p.ft-text 
+		p.ft-text
     {
 			font-size: 16px !important;
 			margin-bottom: -10px;
 		}
 
-		/* 
-    odds style 
+		/*
+    odds style
     */
-		div#scoreboard-widget-container div#scoreboard-top-box div.odds-box 
+		div#scoreboard-widget-container div#scoreboard-top-box div.odds-box
     {
 			height: 48px;
 			max-width: 200px;
 			min-width: 150px;
 		}
 
-		/* 
-    odds-bet style 
+		/*
+    odds-bet style
     */
-		div#tablet-bet-odds-box 
+		div#tablet-bet-odds-box
     {
 			position: relative;
 			width: -webkit-fill-available;
 		}
-		div#tablet-bet-odds-box div.bet-site-box 
+		div#tablet-bet-odds-box div.bet-site-box
     {
 			position: absolute;
 			bottom: 100%;
@@ -3121,43 +3109,43 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			width: auto;
 		}
 
-		div#scoreboard-widget-container.miniature.tablet-miniature 
+		div#scoreboard-widget-container.miniature.tablet-miniature
     {
 			min-width: auto;
 		}
-		div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box div.inner-team-box-1 
+		div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box div.inner-team-box-1
     {
 			position: absolute;
 			right: 0;
 			width: auto;
 		}
-		div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box div.inner-team-box-2 
+		div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.team-box div.inner-team-box-2
     {
 			position: absolute;
 			left: 0;
 			width: auto;
 		}
-		div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.middle-info 
+		div#scoreboard-widget-container.miniature.tablet-miniature div#fixture-info-box	div.middle-info
     {
 			min-width: 217px;
 			max-width: 217px;
 			white-space: nowrap;
 		}
 
-		/* 
-    bottom nav 
+		/*
+    bottom nav
     */
-		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container	p:hover 
+		div#scoreboard-widget-container	div#scoreboard-bottom-nav-box	div.opt-container	p:hover
     {
 			color: #292929 !important;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1160px) 
+	@media only screen
+  and (min-width: 1160px)
   {
-		/* 
-    odds style 
+		/*
+    odds style
     */
 		div#scoreboard-widget-container
 			div#scoreboard-top-box
@@ -3174,15 +3162,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-	div#scoreboard-widget-container.dark-background-1	div#scoreboard-bottom-nav-box 
+	div#scoreboard-widget-container.dark-background-1	div#scoreboard-bottom-nav-box
   {
 		background-color: #4b4b4b;
 	}
 
-	/* 
-  bottom nav 
+	/*
+  bottom nav
   */
-	div#scoreboard-widget-container.dark-background-1	div#scoreboard-bottom-nav-box	div.opt-container	p:hover 
+	div#scoreboard-widget-container.dark-background-1	div#scoreboard-bottom-nav-box	div.opt-container	p:hover
   {
 		color: #ffffff !important;
 	}
