@@ -22,8 +22,7 @@ COMPONENT JS (w/ TS)
 	import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from 'firebase/auth';
 	import { doc, getDoc, setDoc } from 'firebase/firestore';
 	import { generateUsername } from 'unique-username-generator';
-
-    // NOTE: pacakge firebase should be same as project global
+// NOTE: pacakge firebase should be same as project global
   // NOTE: pacakge firebase should be same as project global
   // ✅ works
   // '@metamask/sdk/dist/browser/es/metamask-sdk'; // ✅ works
@@ -860,6 +859,7 @@ COMPONENT JS (w/ TS)
         // typeof screen.orientation !== 'undefined' // ureliable;
         // navigator?.userAgentData?.mobile // ureliable;
         /Mobi/i.test(window?.navigator?.userAgent)
+        && window?.ethereum == null
       ;
       if (if_M_0)
       {
