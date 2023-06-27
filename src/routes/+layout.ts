@@ -28,7 +28,7 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
   // ==================
 
   /*
-  
+
     try {
       // [ℹ] V1 | ❌ does not appear to work - breaks platform
       // const response_IP = await fetch(`/getClientIP`, {
@@ -71,7 +71,7 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 	// 		method: 'GET'
 	// 	}
 	// ).then((r) => r.json());
-  
+
 	const urlLang: string =
 		params.lang == undefined
     // FIXME: interferes with [player=player] route;
@@ -87,8 +87,8 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 	// --------------
 
 	const urls = [
-		`/api/cache/_main_/navbar?lang=${urlLang}`,
-		`/api/cache/_main_/footer?lang=${urlLang}`
+		`/api/data/main/navbar?lang=${urlLang}`,
+		`/api/data/main/footer?lang=${urlLang}`
 	];
 
 	const promises = urls.map((url) =>
@@ -135,7 +135,7 @@ export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
 	return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    // NOTE: issues with setting correct <PageLoad> types, 
+    // NOTE: issues with setting correct <PageLoad> types,
     // NOTE: not being applied to return;
     // NOTE: not critical - can be silenced;
 		HEADER_TRANSLATION_DATA,

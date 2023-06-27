@@ -313,7 +313,7 @@
 
 				const dataRes0: B_FO_D = await get
         (
-          `/api/hasura/league/fixtures-odds?season_id=${$sessionStore.selectedSeasonID}`
+          `/api/data/league/fix-odds?season_id=${$sessionStore.selectedSeasonID}`
         );
 				if (dataRes0 == undefined)
         {

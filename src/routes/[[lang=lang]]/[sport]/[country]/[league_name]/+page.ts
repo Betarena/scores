@@ -34,19 +34,19 @@ function exitPage
  */
 export async function load
 (
-  { 
-    url, 
-    params, 
-    fetch 
+  {
+    url,
+    params,
+    fetch
   }
-): Promise < PageLoad > 
+): Promise < PageLoad >
 {
 
   const t0 = performance.now();
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
-	const 
+	const
   {
 		// lang,
 		sport,
@@ -55,10 +55,10 @@ export async function load
 	} = params;
 
 	const _lang = params?.lang;
-  
-	const urlLang: string = 
-    params.lang == undefined 
-      ? 'en' 
+
+	const urlLang: string =
+    params.lang == undefined
+      ? 'en'
       : params.lang
   ;
 
@@ -76,14 +76,14 @@ export async function load
   );
 
   // EXIT;
-	if (!validUrlCheck) 
+	if (!validUrlCheck)
   {
     exitPage
     (
       t0
     );
 	}
-  
+
   //#endregion [0] IMPORTANT VALID URL CHECK
 
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
@@ -106,7 +106,7 @@ export async function load
   const if_1 =
     PAGE_DATA == null
   ;
-  if (if_1) 
+  if (if_1)
   {
     exitPage
     (
@@ -120,19 +120,16 @@ export async function load
 
   //#region [1] IMPORTANT PRE-LOAD DATA DOC: REF: [2]
 
-  const urls = 
+  const urls =
   [
     `/api/data/main/seo-pages?lang=${urlLang}&page=tournaments`,
-    `/api/cache/tournaments/league_info?url=${url.pathname}`,
-    `/api/cache/tournaments/standings?lang=${urlLang}`,
-    // [ℹ] NOTE: can be "null"
-    `/api/cache/tournaments/standings?league_id=${league_id}`,
-    `/api/cache/tournaments/top_players?lang=${urlLang}`,
-    `/api/cache/tournaments/top_players?league_id=${league_id}`,
-    `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
-    // [ℹ] NOTE: can be "null"
-    // `/api/cache/tournaments/fixtures_odds?league_id=${league_id}` // [?] alt.1
-    `/api/hasura/league/fixtures-odds?league_id=${league_id}` // [?] alt.2
+    `/api/data/league/info?url=${url.pathname}`,
+    `/api/data/league/standings?lang=${urlLang}`,
+    `/api/data/league/standings?league_id=${league_id}`,
+    `/api/data/league/top-players?lang=${urlLang}`,
+    `/api/data/league/top-players?league_id=${league_id}`,
+    `/api/data/league/fix-odds?lang=${urlLang}`,
+    `/api/data/league/fix-odds?league_id=${league_id}` // [?] alt.2
   ];
 
   type HP_PROMISE = [
@@ -160,7 +157,7 @@ export async function load
     fetch
   ) as HP_PROMISE;
 
-	const 
+	const
   [
     PAGE_DATA_SEO,
     LEAGUE_INFO_DATA,
@@ -244,7 +241,7 @@ export async function load
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    // NOTE: issues with setting correct <PageLoad> types, 
+    // NOTE: issues with setting correct <PageLoad> types,
     // NOTE: not being applied to return;
     // NOTE: not critical - can be silenced;
     PAGE_DATA_SEO,

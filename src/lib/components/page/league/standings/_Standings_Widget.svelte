@@ -76,7 +76,7 @@
 		// [ℹ] [GET] response sportbook [geo]
 		const response: Cache_Single_SportbookDetails_Data_Response =
 			await get(
-				'/api/cache/tournaments/sportbook?geoPos=' +
+				'/api/data/main/sportbook?geoPos=' +
 					userGeo
 			);
 
@@ -279,7 +279,7 @@
     if (number_stages > 1) {
       dlog(`number_stages: ${number_stages}`, true)
       stage_opt = target_stage?.standings
-        .map(a => a?.stage_name); 
+        .map(a => a?.stage_name);
       dlog(`stage_opt ${stage_opt}`, true)
       select_stage_opt = stage_opt[0];
     }
@@ -291,11 +291,11 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 =================-->
 
-<!-- 
-[ℹ] area-outside-for-close 
+<!--
+[ℹ] area-outside-for-close
 -->
 {#if toggleCTA || select_stage_dropdown}
 	<div
@@ -306,16 +306,16 @@
 
 <SeoBox>
   <h2>{STANDINGS_T?.translations?.standings}</h2>
-  {#if STANDINGS_DATA != undefined 
+  {#if STANDINGS_DATA != undefined
     && STANDINGS_DATA?.seasons.length != 0}
-    <!-- 
+    <!--
     [ℹ] stage standings (regular)
     -->
     {#if !STANDINGS_DATA.seasons[0].standings[0].group_based}
       {#each STANDINGS_DATA.seasons[0].standings[0].total as team}
         <p>{team.team_name}</p>
       {/each}
-    <!-- 
+    <!--
     [ℹ] stage standings (groups)
     -->
     {:else}
@@ -330,12 +330,12 @@
 </SeoBox>
 
 <div>
-	<!-- 
+	<!--
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
 	{#if noStandingsBool && seasonCheck && !loaded}
-		<!-- 
-    [ℹ] title of the widget 
+		<!--
+    [ℹ] title of the widget
     -->
 		<h2
 			class="s-20 m-b-10 w-500 color-black-2"
@@ -346,8 +346,8 @@
 			{STANDINGS_T?.translations.standings}
 		</h2>
 
-		<!-- 
-    [ℹ] no-widget-data-avaiable-placeholder container 
+		<!--
+    [ℹ] no-widget-data-avaiable-placeholder container
     -->
 		<div
 			id="no-widget-box"
@@ -355,7 +355,7 @@
 			class:dark-background-1={$userBetarenaSettings.theme ==
 				'Dark'}
 		>
-			<!-- 
+			<!--
       [ℹ] no-visual-asset
       -->
 			{#if $userBetarenaSettings.theme == 'Dark'}
@@ -376,14 +376,14 @@
 				/>
 			{/if}
 
-			<!-- 
-      [ℹ] container w/ text 
+			<!--
+      [ℹ] container w/ text
       -->
 			<div>
 				<p
 					class="
-            s-14 
-            m-b-8 
+            s-14
+            m-b-8
             w-500
           "
 					class:color-white={$userBetarenaSettings.theme ==
@@ -393,8 +393,8 @@
 				</p>
 				<p
 					class="
-            s-14 
-            color-grey 
+            s-14
+            color-grey
             w-400
           "
 				>
@@ -404,31 +404,31 @@
 		</div>
 	{/if}
 
-	<!-- 
+	<!--
   [ℹ] MAIN WIDGET COMPONENT
   -->
 	{#if !noStandingsBool && !refresh && browser && $userBetarenaSettings.country_bookmaker && seasonCheck && !diasbleDev}
-		<!-- 
-    [ℹ] promise is pending 
+		<!--
+    [ℹ] promise is pending
     -->
 		{#await widgetInit()}
 			<StandingsWidgetContentLoader />
-			<!-- 
+			<!--
     [ℹ] promise was fulfilled
     -->
 		{:then data}
-			<!-- 
+			<!--
         [ℹ] widget-component [DESKTOP] [TABLET]
         -->
 			{#if !mobileExclusive}
-				<!-- 
-          [ℹ] promise was fulfilled 
+				<!--
+          [ℹ] promise was fulfilled
           -->
 				<h2
 					class="
-              s-20 
-              m-b-10 
-              w-500 
+              s-20
+              m-b-10
+              w-500
               color-black-2
             "
 					style="margin-top: 0px;"
@@ -459,7 +459,7 @@
             >
               <div
                 class="
-                    stand-view-opt-box 
+                    stand-view-opt-box
                     cursor-pointer
                   "
                 on:click={() =>
@@ -471,9 +471,9 @@
                 )}
               >
                 <p
-                  class=" 
-                      s-14 
-                      w-500 
+                  class="
+                      s-14
+                      w-500
                       color-grey
                     "
                 >
@@ -481,14 +481,14 @@
                 </p>
               </div>
 
-              <!-- 
+              <!--
               [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
               -->
               {#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)
                 && STANDINGS_DATA?.comp_typ == 'domestic'}
                 <div
                   class="
-                      stand-view-opt-box 
+                      stand-view-opt-box
                       cursor-pointer
                     "
                   on:click={() =>
@@ -498,8 +498,8 @@
                 >
                   <p
                     class="
-                        s-14 
-                        w-500 
+                        s-14
+                        w-500
                         color-grey
                       "
                   >
@@ -509,7 +509,7 @@
 
                 <div
                   class="
-                      stand-view-opt-box 
+                      stand-view-opt-box
                       cursor-pointer
                     "
                   on:click={() =>
@@ -519,8 +519,8 @@
                 >
                   <p
                     class="
-                        s-14 
-                        w-500 
+                        s-14
+                        w-500
                         color-grey
                       "
                   >
@@ -530,7 +530,7 @@
               {/if}
             </div>
 
-            <!-- 
+            <!--
             [ℹ] standings (stage/phase) select view
             -->
             {#if stage_opt.length > 1}
@@ -585,7 +585,7 @@
             {/if}
           </div>
 
-					<!-- 
+					<!--
             [ℹ] [STASHED] [V1] [ALTERNATIVE TABLE]
 
               <!-- [ℹ] widget-top-row-table-standings [DESKTOP]
@@ -594,7 +594,7 @@
                 id="top-row-standings-head"
                 class="row-space-out">
 
-                <!-- [ℹ] widget table heade [first-left] 
+                <!-- [ℹ] widget table heade [first-left]
                 - ->
                 <div
                   class="row-space-start">
@@ -609,7 +609,7 @@
                   </p>
                 </div>
 
-                <!-- [ℹ] widget table heade [second-right] 
+                <!-- [ℹ] widget table heade [second-right]
                 - ->
                 <div
                   class="row-space-end">
@@ -696,11 +696,11 @@
                   {/each}
                 {/if}
               {/each}
-            
+
             -->
 
 					<table class="standings_table">
-						<!-- 
+						<!--
               [ℹ] widget-top-row-table-standings [DESKTOP]
               -->
 						<tr class="row-head">
@@ -1025,17 +1025,17 @@
 							</th>
 						</tr>
 
-						<!-- 
+						<!--
             [ℹ] widget-team-standing-row-table-standings [DESKTOP]
             -->
 						{#each STANDINGS_DATA.seasons as season}
 							{#if season.season_id === $sessionStore.selectedSeasonID}
-                <!-- 
-                [ℹ] iterate over each stage (phase) available 
+                <!--
+                [ℹ] iterate over each stage (phase) available
                 -->
                 {#each season.standings as standing}
                   {#if standing?.stage_name == select_stage_opt}
-                    <!-- 
+                    <!--
                     [ℹ] STANDINGS IS A REGUALR-TYPE
                     -->
                     {#if !standing.group_based}
@@ -1045,7 +1045,7 @@
                           {currentSeason}
                         />
                       {/each}
-                    <!-- 
+                    <!--
                     [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
                     -->
                     {:else}
@@ -1092,7 +1092,7 @@
 						{/each}
 					</table>
 
-					<!-- 
+					<!--
             [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
 					<div
@@ -1106,8 +1106,8 @@
 								<div
 									id="betting-site-container"
 									class="
-                      row-space-start 
-                      m-r-16 
+                      row-space-start
+                      m-r-16
                       cursor-pointer
                     "
 								>
@@ -1131,7 +1131,7 @@
 
 									<button
 										class="
-                        place-bet-btn 
+                        place-bet-btn
                         btn-primary
                       "
 										aria-label="toggleCTA"
@@ -1146,7 +1146,7 @@
                   -->
 								{#if toggleCTA}
 									<div class="extra-info" in:fade>
-										<!--  [ℹ] site-image 
+										<!--  [ℹ] site-image
                       -->
 										<a
 											rel="nofollow"
@@ -1166,20 +1166,20 @@
 											/>
 										</a>
 
-										<!--  
-                      [ℹ] extra-site info 
+										<!--
+                      [ℹ] extra-site info
                       -->
 										<div
 											class="extra-info-container"
 										>
-											<!--  
-                        [ℹ] text 
+											<!--
+                        [ℹ] text
                         -->
 											<p class="large">
 												{data.bonus_description}
 											</p>
-											<!--  
-                        [ℹ] button_cta 
+											<!--
+                        [ℹ] button_cta
                         -->
 											<a
 												rel="nofollow"
@@ -1193,7 +1193,7 @@
 											>
 												<button
 													class="
-                              btn-primary 
+                              btn-primary
                               btn-cta
                             "
 													aria-label="registerCTA"
@@ -1206,8 +1206,8 @@
 													</p>
 												</button>
 											</a>
-											<!--  
-                        [ℹ] extra-site info text 
+											<!--
+                        [ℹ] extra-site info text
                         -->
 											<p
 												class="small"
@@ -1223,12 +1223,12 @@
 					</div>
 				</div>
 
-				<!-- 
+				<!--
         [ℹ] widget-component [MOBILE]
         -->
 			{:else}
-				<!-- 
-        [ℹ] promise was fulfilled 
+				<!--
+        [ℹ] promise was fulfilled
         -->
 				<h1
 					class="s-20 m-b-10 w-500 color-black-2"
@@ -1249,13 +1249,13 @@
 					<div
 						id="standings-view-box"
 						class="
-                row-space-start 
+                row-space-start
                 m-b-20
               "
 					>
 						<div
 							class="
-                  stand-view-opt-box 
+                  stand-view-opt-box
                   cursor-pointer
                 "
 							on:click={() =>
@@ -1268,8 +1268,8 @@
 						>
 							<p
 								class="
-                    s-14 
-                    w-500 
+                    s-14
+                    w-500
                     color-grey
                   "
 							>
@@ -1277,7 +1277,7 @@
 							</p>
 						</div>
 
-						<!-- 
+						<!--
               [ℹ] hide EXCLUSIVE leagues from HOME + AWAY VIEWS
               -->
 						{#if !only_total_view_league_ids.includes(STANDINGS_DATA?.league_id)
@@ -1308,7 +1308,7 @@
 						{/if}
 					</div>
 
-          <!-- 
+          <!--
           [ℹ] standings (stage/phase) select view
           -->
           {#if stage_opt.length > 1}
@@ -1412,7 +1412,7 @@
 						</button>
 					</div>
 
-					<!-- 
+					<!--
           [ℹ] STANDINGS TABLE
           -->
 					<table class="standings_table">
@@ -1427,7 +1427,7 @@
 								</p>
 							</th>
 
-							<!-- [ℹ] table view 1 
+							<!-- [ℹ] table view 1
                 -->
 							{#if selectedOptTableMobile == 1}
 								<th>
@@ -1539,17 +1539,17 @@
 							{/if}
 						</tr>
 
-						<!-- 
+						<!--
               [ℹ] widget-team-standing-row-table-standings [DESKTOP]
               -->
             {#each STANDINGS_DATA.seasons as season}
 							{#if season.season_id === $sessionStore.selectedSeasonID}
-                <!-- 
-                [ℹ] iterate over each stage (phase) available 
+                <!--
+                [ℹ] iterate over each stage (phase) available
                 -->
                 {#each season.standings as standing}
                   {#if standing?.stage_name == select_stage_opt}
-                    <!-- 
+                    <!--
                     [ℹ] STANDINGS IS A REGUALR-TYPE
                     -->
                     {#if !standing.group_based}
@@ -1560,7 +1560,7 @@
                           {currentSeason}
                         />
                       {/each}
-                    <!-- 
+                    <!--
                     [ℹ] STANDINGS IS A GROUP-STAGE-TYPE
                     -->
                     {:else}
@@ -1608,7 +1608,7 @@
 						{/each}
 					</table>
 
-					<!-- 
+					<!--
             [ℹ] widget-sportbook-details-table-standings [DESKTOP]
             -->
 					<div
@@ -1655,7 +1655,7 @@
                   -->
 								{#if toggleCTA}
 									<div class="extra-info" in:fade>
-										<!--  [ℹ] site-image 
+										<!--  [ℹ] site-image
                       -->
 										<a
 											rel="nofollow"
@@ -1675,17 +1675,17 @@
 											/>
 										</a>
 
-										<!--  [ℹ] extra-site info 
+										<!--  [ℹ] extra-site info
                       -->
 										<div
 											class="extra-info-container"
 										>
-											<!--  [ℹ] text 
+											<!--  [ℹ] text
                         -->
 											<p class="large">
 												{data.bonus_description}
 											</p>
-											<!--  [ℹ] button_cta 
+											<!--  [ℹ] button_cta
                         -->
 											<a
 												rel="nofollow"
@@ -1709,7 +1709,7 @@
 													</p>
 												</button>
 											</a>
-											<!--  [ℹ] extra-site info text 
+											<!--  [ℹ] extra-site info text
                         -->
 											<p
 												class="small"
@@ -1726,7 +1726,7 @@
 				</div>
 			{/if}
 
-			<!-- 
+			<!--
     [ℹ] promise was rejected
     -->
 		{:catch error}
@@ -1794,7 +1794,7 @@
 		-ms-overflow-style: none; /* IE and Edge */
 		scrollbar-width: none; /* Firefox */
 	}
-  
+
   div#ss-box div#ssdb-main div#ssdb-inner {
     max-height: 308px;
 		overflow-y: scroll;
@@ -2061,7 +2061,7 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 821px) and (max-width: 1000px) {
 		#standings-table-container {
@@ -2070,7 +2070,7 @@
 		}
 	}
 
-	/* 
+	/*
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 821px) {
 		table.standings_table {
@@ -2109,7 +2109,7 @@
     }
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1000px) {
 		#standings-table-container {

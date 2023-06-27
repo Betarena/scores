@@ -8,7 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	
+
   import { get } from '$lib/api/utils.js';
   import { sessionStore } from '$lib/store/session.js';
   import { userBetarenaSettings } from '$lib/store/user-settings.js';
@@ -18,10 +18,9 @@ COMPONENT JS (w/ TS)
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import FeatMatchLoader from './FeatMatch-Loader.svelte';
   import FeatMatchMain from './FeatMatch-Main.svelte';
-  
-	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
-	import type { B_INC_D } from '@betarena/scores-lib/types/incidents.js';
 
+	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+	
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
@@ -29,7 +28,7 @@ COMPONENT JS (w/ TS)
   // let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
   // let WIDGET_S_DATA: B_INC_D = $page.data?.FIXTURE_INCIDENTS
   let WIDGET_T_DATA: B_FEATM_T = $page.data?.FEATURED_MATCH_WIDGET_DATA_SEO
-  let WIDGET_DATA: B_INC_D;
+  let WIDGET_DATA: B_FEATM_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   // $: PAGE_DATA = $page.data?.PAGE_DATA
@@ -45,28 +44,28 @@ COMPONENT JS (w/ TS)
    * @summary
    * [MAIN] [INIT]
    * @description
-   * main widget data loader, 
+   * main widget data loader,
    * (and) try..catch (error) handler
    * (and) placeholder handler
    */
   async function widgetInit
   (
-  ): Promise < B_INC_D > 
+  ): Promise < B_FEATM_D >
   {
 		await sleep(3000);
 
     const response: B_FEATM_D = await get
     (
-			'api/cache/home/featured_match?geoPos=' +
+			'api/data/home/feat-match?geoPos=' +
       $userBetarenaSettings.country_bookmaker
 		);
-    
+
     WIDGET_DATA = response
 
     const if_0 =
       WIDGET_DATA == undefined
     ;
-		if (if_0) 
+		if (if_0)
     {
       dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
 			NO_WIDGET_DATA = true;
@@ -88,11 +87,11 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "language" change;
   */
   $: if_R_0 =
-    browser 
+    browser
     && $sessionStore?.serverLang != undefined
   ;
   $: if (if_R_0)
@@ -117,19 +116,19 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <!-- 
-  widget-title 
+  <!--
+  widget-title
   -->
   <h2>
     {WIDGET_TITLE}
   </h2>
-  <!-- 
-  team-names 
+  <!--
+  team-names
   -->
   <p>{WIDGET_T_DATA?.home?.team_name}</p>
   <p>{WIDGET_T_DATA?.away?.team_name}</p>
@@ -138,27 +137,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!-- [🐞] -->
 <!-- <FeaturedMatchContentLoading /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
   <FeatMatchLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <FeatMatchMain 
+    <FeatMatchMain
       B_FEATM_D={WIDGET_DATA}
       B_FEATB_T={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -171,12 +170,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 

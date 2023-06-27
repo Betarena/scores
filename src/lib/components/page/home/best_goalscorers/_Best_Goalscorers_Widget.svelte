@@ -45,7 +45,7 @@
 		// [ℹ] GET RESPONSE;
 		const response: Cache_Single_Geo_GoalScorers_Translation_Response =
 			await get(
-				'api/cache/home/best_goalscorer?geoPos=' +
+				'api/data/home/top-goalscorers?geoPos=' +
 					userGeo
 			);
 
@@ -137,11 +137,11 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <SeoBox>
-  <!-- used, 
+  <!-- used,
 	{#if !loaded}
   -->
   <div>
@@ -165,7 +165,7 @@
       {BEST_GOAL_SCORERS_DATA_SEO.translations
         .widget_translations.show_more_players}
     </p>
-    <!-- [ℹ] list all of the players in the DB 
+    <!-- [ℹ] list all of the players in the DB
     -->
     {#each BEST_GOAL_SCORERS_DATA_SEO.top_geo_goalscorer_players as WIDGET_BEST_PLAYER}
       <p>{WIDGET_BEST_PLAYER.common_name}</p>
@@ -174,29 +174,29 @@
 </SeoBox>
 
 <div>
-	<!-- 
+	<!--
   [ℹ] NO BEST PLAYERS AVAILABLE PLACEHOLDER
   -->
 	{#if noBestPlayers && !loaded}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={BEST_GOAL_SCORERS_DATA_SEO?.translations?.widget_translations?.best_goal_scorers}}
       NO_DATA_TITLE={"No Best Players Available"}
       NO_DATA_DESC={"Sorry, at this time there is no best players available!"}
     />
 	{/if}
 
-	<!-- 
-  [ℹ] BEST GOALSCORERS WIDGET DATA 
+	<!--
+  [ℹ] BEST GOALSCORERS WIDGET DATA
   -->
 	{#if !noBestPlayers && !refresh}
-		<!-- 
-    [ℹ] promise is pending 
+		<!--
+    [ℹ] promise is pending
     -->
 		{#await widgetInit()}
 			<BestGoalscorersWidgetContentLoader />
 
-    <!-- 
-    [ℹ] promise was fulfilled 
+    <!--
+    [ℹ] promise was fulfilled
     -->
 		{:then data}
 
@@ -204,18 +204,18 @@
         WIDGET_TITLE={BEST_GOAL_SCORERS_DATA_SEO?.translations?.widget_translations?.best_goal_scorers}
       />
 
-			<!-- 
-      [ℹ] widget-component 
+			<!--
+      [ℹ] widget-component
       -->
 			<div
 				id="featured-list-container"
 				class:dark-background-1={$userBetarenaSettings.theme ==
 					'Dark'}
 			>
-				<!-- [ℹ] DESKTOP ONLY 
+				<!-- [ℹ] DESKTOP ONLY
         -->
 				{#if viewportDesktop}
-					<!-- [ℹ] widget-brakdown-columns-section 
+					<!-- [ℹ] widget-brakdown-columns-section
           -->
 					<div
 						id="widget-title-row"
@@ -285,7 +285,7 @@
 				{/if}
 			</div>
 
-			<!-- [ℹ] promise was rejected 
+			<!-- [ℹ] promise was rejected
     -->
 		{:catch error}
 			{error}
@@ -328,7 +328,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#featured-list-container {
@@ -337,7 +337,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#featured-list-container {
@@ -346,8 +346,8 @@
 		}
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	.dark-background-1 p#show-more-box {

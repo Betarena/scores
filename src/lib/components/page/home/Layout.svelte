@@ -32,6 +32,7 @@
   import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
   import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
   import type { Unsubscribe } from 'firebase/database';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -72,8 +73,8 @@
   {
     if (!$userBetarenaSettings.country_bookmaker) return;
     const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
-    $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response;
-    $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response[];
+    $sessionStore.sportbook_main = await get(`/api/data/main/sportbook?geoPos=${userGeo}`) as B_SPT_D;
+    $sessionStore.sportbook_list = await get(`/api/data/main/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
     $sessionStore.sportbook_list = $sessionStore.sportbook_list
     .sort
     (

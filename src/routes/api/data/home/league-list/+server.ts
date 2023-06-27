@@ -4,7 +4,7 @@ import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
 import { HLL_HP_ENTRY, HLL_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.league-list.js';
-import { FEATM_C_D_A, LEGL_C_D_A, LEGL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
+import { LEGL_C_D_A, LEGL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_LEGL_D, B_LEGL_T } from '@betarena/scores-lib/types/league-list.js';
@@ -26,32 +26,32 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
     const geoPos: string = req?.url?.searchParams?.get('geoPos');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: 
-    // ➨ Get Featured Match (WIDGET) MAIN data; 
+    // ACTION:
+    // ➨ Get Featured Match (WIDGET) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_0: boolean =
       geoPos != undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       let data: unknown;
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
-          FEATM_C_D_A,
+          LEGL_C_D_A,
           geoPos
         );
         if (data == undefined)
@@ -65,7 +65,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -79,8 +79,8 @@ export async function GET
       if (data != undefined) return json(data);
     }
 
-    // ACTION: 
-    // ➨ Get Featured Match (TRANSLATION) MAIN data; 
+    // ACTION:
+    // ➨ Get Featured Match (TRANSLATION) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_1: boolean =
       lang != undefined
@@ -91,7 +91,7 @@ export async function GET
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -101,7 +101,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData_1
         (
@@ -120,8 +120,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -144,20 +144,20 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ league list (widget) hasura DATA fetch;
- * @param 
+ * @param
  * {string} geoPos
- * @returns 
+ * @returns
  * Promise < B_LEGL_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   geoPos: string
-): Promise < B_LEGL_D > 
+): Promise < B_LEGL_D >
 {
   const dataRes0 = await HLL_HP_ENTRY
   (
@@ -166,29 +166,29 @@ async function fallbackMainData
 
   // console.log(dataRes0?.[1]);
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(geoPos);
 }
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ league list (widget) hasura TRANSLATION fetch;
- * @param 
+ * @param
  * {string} lang
- * @returns 
+ * @returns
  * Promise < B_FEATM_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_LEGL_T > 
+): Promise < B_LEGL_T >
 {
   const dataRes0 = await HLL_HP_ENTRY_1
   (
@@ -196,11 +196,11 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(lang);
 }
 

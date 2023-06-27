@@ -65,7 +65,7 @@
 		// [ℹ] GET RESPONSE;
 		const response: REDIS_CACHE_SINGLE_league_list_geo_data_response =
 			await get(
-				'api/cache/home/league_list?geoPos=' +
+				'api/data/home/league-list?geoPos=' +
 					userGeo
 			);
 		// [ℹ] if response is null;
@@ -205,16 +205,16 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
 <SeoBox>
-  <!-- used, 
+  <!-- used,
 	{#if !loaded}
   -->
   <div>
-		<!-- 
-    [ℹ] translation-expressions 
+		<!--
+    [ℹ] translation-expressions
     -->
 		<h2>
 			{LEAGUE_LIST_WIDGET_DATA_SEO?.translations?.widget_title}
@@ -225,7 +225,7 @@
 		<p>
 			{LEAGUE_LIST_WIDGET_DATA_SEO?.translations?.leagues_by_country}
 		</p>
-		<!-- 
+		<!--
     [ℹ] all platform leagues
     <-list->
     [ℹ] links to target leagues/tournaments
@@ -237,8 +237,8 @@
 				{league?.league_name}
 			</a>
 		{/each}
-		<!-- 
-    [ℹ] all-unique-country-expressions 
+		<!--
+    [ℹ] all-unique-country-expressions
     -->
 		{#each LEAGUE_LIST_WIDGET_DATA_SEO?.unique_county_list || [] as country}
 			<p>{country?.country_name}</p>
@@ -246,25 +246,25 @@
 	</div>
 </SeoBox>
 
-<!-- 
+<!--
 [ℹ] LEAGUE LIST WIDGET [DESKTOP-ONLY]
 -->
 {#if viewportDesktop}
-	<!-- 
-  [ℹ] refresh status 
+	<!--
+  [ℹ] refresh status
   -->
 	{#if !refresh}
-		<!-- 
-    [ℹ] promise is pending 
+		<!--
+    [ℹ] promise is pending
     -->
 		{#await widgetInit()}
 			<LeagueListLoader />
-    <!-- 
-    [ℹ] promise was fulfilled 
+    <!--
+    [ℹ] promise was fulfilled
     -->
 		{:then data}
 			<div>
-				<!-- 
+				<!--
         [ℹ] wiget-title
         -->
 				<p
@@ -274,16 +274,16 @@
 					{LEAGUE_LIST_WIDGET_DATA_SEO
 						.translations.widget_title}
 				</p>
-				<!-- 
-        [ℹ] league-list-container 
+				<!--
+        [ℹ] league-list-container
         -->
 				<div
 					id="league-list"
 					class:dark-background-1={$userBetarenaSettings.theme ==
 						'Dark'}
 				>
-					<!-- 
-          [ℹ] search-box 
+					<!--
+          [ℹ] search-box
           -->
 					<div id="search-container">
 						<input
@@ -296,8 +296,8 @@
 							style="margin: 0 20px 20px 20px;"
 							autocomplete="off"
 						/>
-						<!-- 
-            [ℹ] erase-search-input 
+						<!--
+            [ℹ] erase-search-input
             -->
 						{#if leagueSearch != undefined}
 							<img
@@ -315,20 +315,20 @@
 							/>
 						{/if}
 					</div>
-					<!-- 
-          [ℹ] no-search-input-is-made 
+					<!--
+          [ℹ] no-search-input-is-made
           -->
 					<div
 						id="defualt-league-list"
 						class:league-list-hide={leagueSearch !=
 							undefined}
 					>
-						<!-- 
-            [ℹ] list-TOP-7-popular-rating-leagues [GEO-BASED] 
+						<!--
+            [ℹ] list-TOP-7-popular-rating-leagues [GEO-BASED]
             -->
 						<p
 							class="
-                color-grey 
+                color-grey
                 s-14
                 m-b-5
               "
@@ -337,19 +337,19 @@
 							{LEAGUE_LIST_WIDGET_DATA_SEO
 								.translations.top_leagues}
 						</p>
-						<!-- 
-            [ℹ] list-grid 
+						<!--
+            [ℹ] list-grid
             -->
 						<div
 							id="popular-list-container"
 							class="m-b-20"
 						>
-							<!-- 
-              [ℹ] for-loop-each-population 
+							<!--
+              [ℹ] for-loop-each-population
               -->
 							{#each data.top_geo_leagues as item}
 								<a
-									
+
 									href={item.urls[
 										LEAGUE_LIST_WIDGET_DATA_SEO
 											.lang
@@ -357,7 +357,7 @@
 								>
 									<div
 										class="
-                      top-league-container 
+                      top-league-container
                       row-space-start
                     "
 									>
@@ -372,8 +372,8 @@
 										/>
 										<p
 											class="
-                        s-14 
-                        w-500 
+                        s-14
+                        w-500
                         color-black
                       "
 										>
@@ -383,13 +383,13 @@
 								</a>
 							{/each}
 						</div>
-						<!-- 
-            [ℹ] list-all-countries-based-leagues 
+						<!--
+            [ℹ] list-all-countries-based-leagues
             -->
 						<p
 							class="
-                color-grey 
-                s-14 
+                color-grey
+                s-14
                 m-b-5
               "
 							style="padding: 0 20px;"
@@ -397,12 +397,12 @@
 							{LEAGUE_LIST_WIDGET_DATA_SEO
 								.translations.leagues_by_country}
 						</p>
-						<!-- 
-            [ℹ] list-grid 
+						<!--
+            [ℹ] list-grid
             -->
 						<div id="countires-list-container">
-							<!-- 
-              [ℹ] for-loop-each-population 
+							<!--
+              [ℹ] for-loop-each-population
               -->
 							{#each LEAGUE_LIST_WIDGET_DATA_SEO.unique_county_list as item}
 								<div
@@ -410,13 +410,13 @@
 									class:selectedCountry={selectedCountryLeagueId ===
 										item.country_id}
 								>
-									<!-- 
-                  [ℹ] parent-country 
-                  [SHOWN] 
+									<!--
+                  [ℹ] parent-country
+                  [SHOWN]
                   -->
 									<div
 										class="
-                      country-league-container 
+                      country-league-container
                       row-space-start
                     "
 										on:click={() =>
@@ -424,7 +424,7 @@
 												item.country_id
 											)}
 									>
-										<!-- 
+										<!--
                     [ℹ] check for custom icons (continents)
                     <-conditional->
                     [ℹ] show custom icon
@@ -433,7 +433,7 @@
 										{#if LEAGUES_CUSTOM_ICON_IDS.includes(item.country_id.toString())}
 											<div
 												class="
-                          row-space-start 
+                          row-space-start
                           m-r-15
                         "
 												style="width: auto;"
@@ -462,22 +462,22 @@
 												class="m-r-15"
 											/>
 										{/if}
-										<!-- 
+										<!--
                     [ℹ] target continent / country name
                     -->
 										<p
 											class="
-                        s-14 
-                        w-500 
+                        s-14
+                        w-500
                         color-black
                       "
 										>
 											{item.country_name}
 										</p>
 									</div>
-									<!-- 
-                  [ℹ] sub-category 
-                  [DEFAULT HIDDEN] 
+									<!--
+                  [ℹ] sub-category
+                  [DEFAULT HIDDEN]
                   -->
 									{#each data.all_leagues_list as league}
 										{#if league.country_id
@@ -486,7 +486,7 @@
 												.toString()
 												.toLowerCase() && selectedCountryLeagueId === item.country_id}
 											<a
-												
+
 												href={league.urls[
 													LEAGUE_LIST_WIDGET_DATA_SEO
 														.lang
@@ -494,14 +494,14 @@
 											>
 												<div
 													class="
-                            country-league-sub-container 
+                            country-league-sub-container
                             row-space-start
                           "
 												>
 													<p
 														class="
-                              s-14 
-                              w-500 
+                              s-14
+                              w-500
                               color-black
                             "
 													>
@@ -515,7 +515,7 @@
 							{/each}
 						</div>
 					</div>
-					<!-- 
+					<!--
           [ℹ] no-results-to-show
           <-conditional->
           [ℹ] show search results
@@ -528,8 +528,8 @@
 							<NoResults />
 							<p
 								class="
-                  s-16 
-                  m-t-15 
+                  s-16
+                  m-t-15
                   color-grey
                 "
 							>
@@ -538,8 +538,8 @@
 							</p>
 						</div>
 					{:else if leagueSearch != undefined && (leagueSearchData.length !== 0 || countrySearchData.length !== 0)}
-						<!-- 
-            [ℹ] list-leagues-matching-search 
+						<!--
+            [ℹ] list-leagues-matching-search
             -->
 						<p
 							class="search-title w-500 color-black s-14 m-b-5"
@@ -549,19 +549,19 @@
 								.translations
 								.competitions_results}
 						</p>
-						<!-- 
-            [ℹ] list-grid 
+						<!--
+            [ℹ] list-grid
             -->
 						<div
 							id="search-list-container"
 							class="m-b-12"
 						>
-							<!-- 
-              [ℹ] for-loop-each-population 
+							<!--
+              [ℹ] for-loop-each-population
               -->
 							{#each leagueSearchData.slice(0, fullLeagueListDisplayNum) as item}
 								<a
-									
+
 									href={item.urls[
 										LEAGUE_LIST_WIDGET_DATA_SEO
 											.lang
@@ -569,7 +569,7 @@
 								>
 									<div
 										class="
-                      top-league-container-search 
+                      top-league-container-search
                       row-space-start
                     "
 									>
@@ -585,7 +585,7 @@
 										<div>
 											<p
 												class="
-                          s-14 
+                          s-14
                           color-grey
                         "
 											>
@@ -593,8 +593,8 @@
 											</p>
 											<p
 												class="
-                          s-14 
-                          w-500 
+                          s-14
+                          w-500
                           color-black
                         "
 											>
@@ -605,16 +605,16 @@
 								</a>
 							{/each}
 						</div>
-						<!-- 
-            [ℹ] show-full-list 
+						<!--
+            [ℹ] show-full-list
             -->
 						{#if leagueSearchData.length > 4}
 							<p
 								class="
-                  s-14 
-                  w-500 
-                  color-primary 
-                  cursor-pointer 
+                  s-14
+                  w-500
+                  color-primary
+                  cursor-pointer
                   m-b-20
                 "
 								on:click={() =>
@@ -629,15 +629,15 @@
 							</p>
 						{/if}
 
-						<!-- 
-            [ℹ] list-countries-matching-search 
+						<!--
+            [ℹ] list-countries-matching-search
             -->
 						<p
 							class="
-                search-title 
-                w-500 
-                color-black 
-                s-14 
+                search-title
+                w-500
+                color-black
+                s-14
                 m-b-5
               "
 							style="padding: 0 20px;"
@@ -646,12 +646,12 @@
 								.translations.countries_results}
 						</p>
 
-						<!-- 
-            [ℹ] list-grid 
+						<!--
+            [ℹ] list-grid
             -->
 						<div id="countires-list-container">
-							<!-- 
-              [ℹ] for-loop-each-population 
+							<!--
+              [ℹ] for-loop-each-population
               -->
 							{#each countrySearchData.slice(0, fullCountryListDisplayNum) as item}
 								<div
@@ -659,12 +659,12 @@
 									class:selectedCountry={selectedCountryLeagueId ===
 										item.country_id}
 								>
-									<!-- 
-                  [ℹ] parent-country [SHOWN] 
+									<!--
+                  [ℹ] parent-country [SHOWN]
                   -->
 									<div
 										class="
-                      country-league-container 
+                      country-league-container
                       row-space-start
                     "
 										on:click={() =>
@@ -684,16 +684,16 @@
 										/>
 										<p
 											class="
-                        s-14 
-                        w-500 
+                        s-14
+                        w-500
                         color-black
                       "
 										>
 											{item.country_name}
 										</p>
 									</div>
-									<!-- 
-                  [ℹ] sub-category [DEFAULT HIDDEN] 
+									<!--
+                  [ℹ] sub-category [DEFAULT HIDDEN]
                   -->
 									{#each data.all_leagues_list as league}
 										{#if league.country_id
@@ -702,7 +702,7 @@
 												.toString()
 												.toLowerCase() && selectedCountryLeagueId === item.country_id}
 											<a
-												
+
 												href={league.urls[
 													LEAGUE_LIST_WIDGET_DATA_SEO
 														.lang
@@ -710,14 +710,14 @@
 											>
 												<div
 													class="
-                            country-league-sub-container 
+                            country-league-sub-container
                             row-space-start
                           "
 												>
 													<p
 														class="
-                              s-14 
-                              w-500 
+                              s-14
+                              w-500
                               color-black
                             "
 													>
@@ -731,16 +731,16 @@
 							{/each}
 						</div>
 
-						<!-- 
-            [ℹ] show-full-list 
+						<!--
+            [ℹ] show-full-list
             -->
 						{#if countrySearchData.length > 4}
 							<p
 								class="
                   s-14
-                  w-500 
-                  color-primary 
-                  cursor-pointer 
+                  w-500
+                  color-primary
+                  cursor-pointer
                   m-b-20
                 "
 								on:click={() =>
@@ -757,8 +757,8 @@
 					{/if}
 				</div>
 			</div>
-			<!-- 
-    [ℹ] promise was rejected 
+			<!--
+    [ℹ] promise was rejected
     -->
 		{:catch error}
 			{error}
@@ -934,8 +934,8 @@
 		}
 	}
 
-	/* .............. 
-    WIDGET DARK THEME 
+	/* ..............
+    WIDGET DARK THEME
     ................. */
 
 	.dark-background-1 input#league-list-search {

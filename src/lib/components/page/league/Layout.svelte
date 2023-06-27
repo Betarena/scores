@@ -25,6 +25,7 @@
 	import LeagueInfoWidget2 from '$lib/components/page/league/league_info_2/_LeagueInfo_Widget_2.svelte';
 	import StandingsWidget from '$lib/components/page/league/standings/_Standings_Widget.svelte';
 	import TopPlayersWidget from '$lib/components/page/league/top_players/_Top_Players_Widget.svelte';
+	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixtureOddsWidget from './fixture-odds/FixtureOdds-Widget.svelte';
@@ -74,8 +75,8 @@
   {
     if (!$userBetarenaSettings.country_bookmaker) return;
     const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
-    $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response;
-    $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response[];
+    $sessionStore.sportbook_main = await get(`/api/data/main/sportbook?geoPos=${userGeo}`) as B_SPT_D;
+    $sessionStore.sportbook_list = await get(`/api/data/main/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
     $sessionStore.sportbook_list = $sessionStore.sportbook_list
     .sort
     (

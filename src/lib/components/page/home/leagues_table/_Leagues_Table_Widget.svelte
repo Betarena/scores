@@ -45,7 +45,7 @@
 		// [ℹ] GET RESPONSE;
 		const response: Cache_Single_Geo_Leagues_Table_Translation_Response =
 			await get(
-				'api/cache/home/leagues_table?geoPos=' +
+				'api/data/home/league-table?geoPos=' +
 					userGeo
 			);
 
@@ -114,24 +114,24 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 =================-->
 
 <SeoBox>
-  <!-- used, 
+  <!-- used,
 	{#if !loaded}
   -->
   <div>
     <h2>
       {LEAGUES_TABLE_SCORES_SEO_DATA?.translations?.title}
     </h2>
-    <!-- [ℹ] list all of the seasons & leagues in the DB 
+    <!-- [ℹ] list all of the seasons & leagues in the DB
     -->
     {#each LEAGUES_TABLE_SCORES_SEO_DATA?.top_leagues_table_data || [] as item}
       <p>
         {item?.season_league_name}
       </p>
-      <!-- [ℹ] list all of the seasons & leagues -> TEAMS in the DB 
+      <!-- [ℹ] list all of the seasons & leagues -> TEAMS in the DB
       -->
       {#each item?.season_league_teams || [] as itemL}
         <p>{itemL?.team_name}</p>
@@ -142,22 +142,22 @@
 
 <div>
 
-	<!-- 
+	<!--
   [ℹ] NO BEST PLAYERS AVAILABLE PLACEHOLDER
   -->
 	{#if noLeaguesTable && !loaded}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={LEAGUES_TABLE_SCORES_SEO_DATA?.translations?.title}
       NO_DATA_TITLE={"No Best Players Available"}
       NO_DATA_DESC={"Sorry, at this time there is no best players available!"}
     />
 	{/if}
 
-	<!-- 
+	<!--
   [ℹ] WIDGET COMPONENT
   -->
 	{#if !noLeaguesTable && !refresh}
-		<!-- [ℹ] promise is pending 
+		<!-- [ℹ] promise is pending
     -->
 		{#await widgetInit()}
 			<LeagueTableWidgetContentLoader />
@@ -170,22 +170,22 @@
         WIDGET_TITLE={LEAGUES_TABLE_SCORES_SEO_DATA.translations.title}
       />
 
-			<!-- 
-      [ℹ] widget-component 
+			<!--
+      [ℹ] widget-component
       -->
 			<div
 				id="leagues-table-container"
 				class:dark-background-1={$userBetarenaSettings.theme ==
 					'Dark'}
 			>
-				<!-- [ℹ] dropdown leagues select box 
+				<!-- [ℹ] dropdown leagues select box
         -->
 				<div
 					id="dropdown-leagues-container"
 					on:click={() =>
 						(toggleDropdown = !toggleDropdown)}
 				>
-					<!-- [ℹ] main seleced 
+					<!-- [ℹ] main seleced
           -->
 					{#each data.top_leagues_table_data as season_league_data_obj}
 						{#if dropdownSelect === season_league_data_obj.season_league_id}
@@ -217,14 +217,14 @@
 						{/if}
 					{/each}
 
-					<!-- [ℹ] show main TOP 8 LEAGUES / SEASONS 
+					<!-- [ℹ] show main TOP 8 LEAGUES / SEASONS
           -->
 					{#if toggleDropdown}
 						<div id="more-top-leagues-outer">
 							<div
 								id="more-top-leagues-list-container"
 							>
-								<!-- [ℹ] for-loop-each-population 
+								<!-- [ℹ] for-loop-each-population
                 -->
 								{#each data.top_leagues_table_data as item}
 									<div
@@ -272,14 +272,14 @@
 					{/if}
 				</div>
 
-				<!-- [ℹ] display the TEAMS of THIS TARGET LEAGUE & SEASONS on DESKTOP & TABLET; 
+				<!-- [ℹ] display the TEAMS of THIS TARGET LEAGUE & SEASONS on DESKTOP & TABLET;
         -->
 				{#each data.top_leagues_table_data as season_league_data_obj}
 					{#if dropdownSelect === season_league_data_obj.season_league_id}
-						<!-- [ℹ] DESKTOP ONLY ... 
+						<!-- [ℹ] DESKTOP ONLY ...
             -->
 						{#if viewportDesktop}
-							<!-- [ℹ] widget-brakdown-columns-section 
+							<!-- [ℹ] widget-brakdown-columns-section
               -->
 							<div
 								id="widget-title-row"
@@ -436,7 +436,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#leagues-table-container {
@@ -445,7 +445,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#leagues-table-container {
@@ -454,8 +454,8 @@
 		}
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	.dark-background-1
