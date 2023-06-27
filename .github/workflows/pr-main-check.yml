@@ -22,7 +22,7 @@ env:
 jobs:
 
   npm-build-check:
-    name: NPM Build Check
+    name: 🪀 NPM Build Check
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
@@ -35,14 +35,14 @@ jobs:
         run: |
           npm install -g npm@8.19.1
       - name: '🟩 Build npm'
-        run: | 
+        run: |
           npm ci
           npm install
           npm run build
 
   docker-image-build:
     needs: npm-build-check
-    name: Docker Image Build
+    name: 🐳 Docker Image Build
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v3
