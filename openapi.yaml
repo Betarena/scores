@@ -9,91 +9,23 @@ info:
   version: 0.1.0
 
 servers:
-  # LOCAL (ENV)
+  # LOCAL NETWORK
   - url: http://localhost:3050
     description: Server [LOCAL] environment
-  # DEV (ENV)
+  # DEVELOPMENT
   - url: https://betarena-scores-platform.herokuapp.com/
     description: Server [DEV] environment
-  # PROD (ENV)
+  # PRODUCTION
   - url: https://scores.betarena.com/
     description: Server [PROD] environment
 
 paths:
 
-  # [HP] - FEAT MATCH Widget
-  # TODO: move to /api/data/[...]
-  /api/cache/home/featured_match:
-    get:
-      parameters:
-        - name: filter
-          in: query
-          description: 
-            Target home (main) FEAT-MATCH widget data parameters
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: object
-            properties:
-              # ?geoPos=[...]
-              geoPos:
-                type: string
-                example: es
-              # ?lang=[...]
-              lang:
-                type: string
-                example: es
-            additionalProperties: false
-            oneOf:
-              # translation
-              - required: [lang]
-              # data (main) [geo]
-              - required: [geoPos]
-      summary: 
-        Returns a targets' homa (id) main Featured Match widget (data).
-      responses:
-        200:
-          description: 
-            Target fixture FEAT-MATCH widget data
+  # ===================
+  # LAYOUT
+  # ===================
 
-  # [LP] - STANDINGS Widget
-  # TODO: move to /api/data/[...]
-  /api/cache/tournaments/standings:
-    get:
-      parameters:
-        - name: filter
-          in: query
-          description: 
-            Target league/tournament (main) STANDINGS widget data parameters
-          required: true
-          style: form
-          explode: true
-          schema:
-            type: object
-            properties:
-              # ?league_id=[...]
-              league_id:
-                type: number
-                example: 2
-              # ?lang=[...]
-              lang:
-                type: string
-                example: es
-            additionalProperties: false
-            oneOf:
-              # translation
-              - required: [lang]
-              # data (main) [players]
-              - required: [league_id]
-      summary: 
-        Returns a targets' fixture (id) main Standings widget (data).
-      responses:
-        200:
-          description: 
-            Target fixture STANDINGS widget data
-
-  # [L] - SEO-PAGES Main
+  # [L] - SEO-PAGES
   /api/data/main/seo-pages:
     get:
       parameters:
@@ -150,6 +82,478 @@ paths:
         200:
           description: 
             Target player SEO widget data
+
+  # [L] - NAVBAR Widget
+  /api/data/main/navbar:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target footer (main) FOOTER widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation
+              - required: [lang]
+              - required: [lang, hasura]
+      summary: 
+        Navbar [C][H]
+      responses:
+        200:
+          description: 
+            Successful NAVBAR data fetch
+
+  # [L] - FOOTER Widget
+  /api/data/main/footer:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target footer (main) FOOTER widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation
+              - required: [lang]
+              - required: [lang, hasura]
+      summary: 
+        Footer [C][H]
+      responses:
+        200:
+          description: 
+            Successful FOOTER data fetch
+
+  # [L] - SPORTBOOK Widget
+  /api/data/main/sportbook:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target footer (main) FOOTER widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?all=[...]
+              all:
+                type: boolean
+                example: true
+              # ?geoPos=[...]
+              geoPos:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # [MAIN] Data 1
+              - required: [all, geoPos]
+              - required: [all, geoPos, hasura]
+              # [MAIN] Data 2
+              - required: [geoPos]
+              - required: [geoPos, hasura]
+      summary: 
+        Footer [C][H]
+      responses:
+        200:
+          description: 
+            Successful FOOTER data fetch
+
+  # ===================
+  # HOMEPAGE
+  # ===================
+
+  # [HP] - FEAT MATCH Widget
+  /api/data/home/feat-match:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-MATCH widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?geoPos=[...]
+              geoPos:
+                type: string
+                example: es
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation Data
+              - required: [lang]
+              - required: [lang, hasura]
+              # [MAIN] Geo-Positional Data
+              - required: [geoPos]
+              - required: [geoPos, hasura]
+      summary: 
+        Featured Match [C][H]
+      responses:
+        200:
+          description: 
+            Target fixture FEAT-MATCH widget data
+
+  # [HP] - FEAT BETSITE Widget
+  /api/data/home/feat-betsite:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-BETSITE widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation
+              - required: [lang]
+              - required: [lang, hasura]
+      summary: 
+        Featured Betsite [C][H]
+      responses:
+        200:
+          description: 
+            Target fixture FEAT-BETSITE widget data
+
+  # [HP] - LEAGUE-LSIT Widget
+  /api/data/home/league-list:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-MATCH widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?geoPos=[...]
+              geoPos:
+                type: string
+                example: es
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation Data
+              - required: [lang]
+              - required: [lang, hasura]
+              # [MAIN] Geo-Positional Data
+              - required: [geoPos]
+              - required: [geoPos, hasura]
+      summary: 
+        League List [C][H]
+      responses:
+        200:
+          description: 
+            Target fixture FEAT-MATCH widget data
+
+  # [HP] - LEAGUE-TABLE Widget
+  /api/data/home/league-table:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-MATCH widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?geoPos=[...]
+              geoPos:
+                type: string
+                example: es
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation Data
+              - required: [lang]
+              - required: [lang, hasura]
+              # [MAIN] Geo-Positional Data
+              - required: [geoPos]
+              - required: [geoPos, hasura]
+      summary: 
+        League Table [C][H]
+      responses:
+        200:
+          description: 
+            Target LEAGUE-TABLE widget data
+
+  # [HP] - SEO-BLOCK Widget
+  /api/data/home/seo-block:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-MATCH widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation Data
+              - required: [lang]
+              - required: [lang, hasura]
+      summary: 
+        Seo-Block [C][H]
+      responses:
+        200:
+          description: 
+            Target SEO-BLOCK widget data
+
+  # [HP] - TOP-GOALSCORER Widget
+  /api/data/home/top-goalscorers:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-MATCH widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?geoPos=[...]
+              geoPos:
+                type: string
+                example: es
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation Data
+              - required: [lang]
+              - required: [lang, hasura]
+              # [MAIN] Geo-Positional Data
+              - required: [geoPos]
+              - required: [geoPos, hasura]
+      summary: 
+        Top Goalscorers [C][H]
+      responses:
+        200:
+          description: 
+            Target LEAGUE-TABLE widget data
+
+  # ===================
+  # LEAGUE PAGE
+  # ===================
+
+  # [LP] - LEAGUE-INFO Widget
+  /api/data/league/info:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target home (main) FEAT-MATCH widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?lang=[...]
+              url:
+                type: string
+                example: "/football/spain/la-liga"
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation Data
+              - required: [lang]
+              - required: [lang, hasura]
+      summary: 
+        Info [C][H]
+      responses:
+        200:
+          description: 
+            Target INFO widget data
+
+  # [LP] - STANDINGS Widget
+  /api/data/league/standings:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target league/tournament (main) STANDINGS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?league_id=[...]
+              league_id:
+                type: number
+                example: 2
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation;
+              - required: [lang]
+              - required: [lang, hasura]
+              # [MAIN] Widget Data;
+              - required: [league_id]
+              - required: [league_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Standings widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture STANDINGS widget data
+  
+  # [LP] - FIXTURE-ODDS Widget
+  /api/data/league/fix-odds:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description: 
+            Target league/tournament (main) STANDINGS widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?league_id=[...]
+              league_id:
+                type: number
+                example: 2
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Translation;
+              - required: [lang]
+              - required: [lang, hasura]
+              # [MAIN] Widget Data;
+              - required: [league_id]
+              - required: [league_id, hasura]
+      summary: 
+        Returns a targets' fixture (id) main Standings widget (data).
+      responses:
+        200:
+          description: 
+            Target fixture STANDINGS widget data
+
+  # ===================
+  # FIXTURE PAGE
+  # ===================
 
   # [FP] - INCIDENTS Widget
   /api/data/fixture/incidents:
@@ -516,6 +920,10 @@ paths:
         200:
           description: 
             Target fixture H2H widget data
+
+  # ===================
+  # PLAYER PAGE
+  # ===================
 
   # [PP] - FIXTURES Widget
   /api/data/players/fixtures:

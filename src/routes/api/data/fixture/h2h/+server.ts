@@ -129,18 +129,18 @@ async function fallbackMainData
   teamIdsTuple: string
 ): Promise < B_H2H_D > 
 {
-  const map = await FH2H_FP_ENTRY
+  const dataRes0 = await FH2H_FP_ENTRY
   (
     graphQlInstance,
     [teamIdsTuple]
   )
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(teamIdsTuple);
+	return dataRes0?.[0]?.get(teamIdsTuple);
 }
 
 /**
@@ -158,18 +158,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_H2H_T > 
 {
-  const map = await FH2H_FP_ENTRY_1
+  const dataRes0 = await FH2H_FP_ENTRY_1
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

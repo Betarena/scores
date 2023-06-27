@@ -6,7 +6,7 @@ import { initGrapQLClient } from '$lib/graphql/init';
 import { PSTAT_PP_ENTRY, PSTAT_PP_ENTRY_1, PSTAT_PP_ENTRY_2 } from "@betarena/scores-lib/dist/functions/func.player-statistics.js";
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_PSTAT_D, B_PSTAT_T, PSTAT_C_Fixture } from '@betarena/scores-lib/types/player-statistics.js';
-import { get_target_hset_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
 
@@ -130,18 +130,18 @@ async function fallbackMainData
 ): Promise < B_PSTAT_D > 
 {
 
-  const map = await PSTAT_PP_ENTRY
+  const dataRes0 = await PSTAT_PP_ENTRY
   (
     graphQlInstance,
     [_player_id]
   )
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(_player_id);
+	return dataRes0?.[0]?.get(_player_id);
 }
 
 /**
@@ -155,18 +155,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_PSTAT_T > 
 {
-  const map = await PSTAT_PP_ENTRY_2
+  const dataRes0 = await PSTAT_PP_ENTRY_2
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 /**

@@ -6,7 +6,7 @@ import { json } from '@sveltejs/kit';
 import { PPRO_PP_ENTRY, PPRO_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player-profile.js";
 import { PP_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_PPRO_D, B_PPRO_T } from "@betarena/scores-lib/types/player-profile";
-import { get_target_hset_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
 
@@ -94,18 +94,18 @@ async function fallbackMainData
 ): Promise < B_PPRO_D > 
 {
 
-  const map = await PPRO_PP_ENTRY
+  const dataRes0 = await PPRO_PP_ENTRY
   (
     graphQlInstance,
     [_player_id]
   )
   
-  if (map.size == 0) 
+  if (dataRes0?.[0].size == 0) 
   {
     return null
   }
   
-	return map.get(_player_id);
+	return dataRes0?.[0].get(_player_id);
 }
 
 /**
@@ -119,18 +119,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_PPRO_T > 
 {
-  const map = await PPRO_PP_ENTRY_1
+  const dataRes0 = await PPRO_PP_ENTRY_1
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0) 
+  if (dataRes0?.[0].size == 0) 
   {
     return null
   }
   
-	return map.get(lang);
+	return dataRes0?.[0].get(lang);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

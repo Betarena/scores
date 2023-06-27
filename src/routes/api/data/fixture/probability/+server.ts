@@ -131,18 +131,18 @@ async function fallbackMainData
   fixtureId: number
 ): Promise < B_VOT_D > 
 {
-  const map = await FPROB_FP_ENTRY
+  const dataRes0 = await FPROB_FP_ENTRY
   (
     graphQlInstance,
     [fixtureId]
   )
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(fixtureId);
+	return dataRes0?.[0]?.get(fixtureId);
 }
 
 /**
@@ -160,18 +160,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_H2H_T > 
 {
-  const map = await FPROB_FP_ENTRY_1
+  const dataRes0 = await FPROB_FP_ENTRY_1
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

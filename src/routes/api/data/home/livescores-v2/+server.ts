@@ -6,7 +6,7 @@ import { initGrapQLClient } from '$lib/graphql/init';
 import { HLV2_HP_ENTRY, HLV2_HP_ENTRY_2, HLV2_HP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.livescores-v2.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_LS2_D, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
-import { get_target_hset_cache_data, get_target_string_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data, get_target_string_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
 
@@ -28,7 +28,7 @@ export async function GET
 ): Promise < unknown > 
 {
 
-  // query (url) data
+  // NOTE: Handle url-query data;
 	const lang: string = req?.url?.searchParams?.get('lang');
   const seo: string =	req?.url?.searchParams?.get('seo');
 	const date: string = req?.url?.searchParams?.get('date');
@@ -191,16 +191,16 @@ async function fallbackMainData
 ): Promise < B_LS2_D > 
 {
 
-  const data = await HLV2_HP_ENTRY
+  const dataRes = await HLV2_HP_ENTRY
   (
     graphQlInstance,
     targetDateIso
   )
 
-  delete data.leagues_feat_list;
-  delete data.leagues_geo_list;
+  delete dataRes?.[0]?.leagues_feat_list;
+  delete dataRes?.[0]?.leagues_geo_list;
 
-	return data;
+	return dataRes?.[0];
 }
 
 /**
@@ -211,17 +211,18 @@ async function fallbackMainData
  */
 async function fallbackMainData_1
 (
-  LANG: string
+  lang: string
 ): Promise < B_LS2_T > 
 {
 
-  const map_0 = await HLV2_HP_ENTRY_2
+  const dataRes0 = await HLV2_HP_ENTRY_2
   (
     graphQlInstance,
-    [LANG]
-  )
+    [lang]
+  );
 
-	return map_0.get(LANG);
+
+	return dataRes0?.[0].get(lang);
 }
 
 /**
@@ -252,13 +253,13 @@ async function fallbackMainData_2
   
   console.log('fixtureIdsList', fixtureIdsList)
 
-  const map_0 = await HLV2_HP_ENTRY_3
+  const dataRes0 = await HLV2_HP_ENTRY_3
   (
     graphQlInstance,
     fixtureIdsList
   );
 
-	return Object.fromEntries(map_0);
+	return Object.fromEntries(dataRes0?.[0]);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

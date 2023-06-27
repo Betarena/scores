@@ -7,7 +7,7 @@ import { PTEAM_PP_ENTRY, PTEAM_PP_ENTRY_1 } from "@betarena/scores-lib/dist/func
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
 import type { B_PTEAM_D } from '@betarena/scores-lib/types/player-team.js';
-import { get_target_hset_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
 
@@ -98,18 +98,18 @@ async function fallbackMainData
 ): Promise < B_PTEAM_D > 
 {
 
-  const map = await PTEAM_PP_ENTRY
+  const dataRes0 = await PTEAM_PP_ENTRY
   (
     graphQlInstance,
     [_player_id]
   )
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(_player_id);
+	return dataRes0?.[0]?.get(_player_id);
 }
 
 /**
@@ -123,18 +123,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_PSTAT_T > 
 {
-  const map = await PTEAM_PP_ENTRY_1
+  const dataRes0 = await PTEAM_PP_ENTRY_1
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

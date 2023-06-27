@@ -4,7 +4,7 @@ import { initGrapQLClient } from '$lib/graphql/init';
 import { SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.seo-pages.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { json } from '@sveltejs/kit';
-import { get_target_hset_cache_data, get_target_set_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data, get_target_set_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
 

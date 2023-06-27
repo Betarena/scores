@@ -5,7 +5,7 @@ import { json } from '@sveltejs/kit';
 import { initGrapQLClient } from '$lib/graphql/init';
 import { FLIN_FP_ENTRY, FLIN_FP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
-import { get_target_hset_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_LIN_T, LIN_Fixture } from '@betarena/scores-lib/types/lineups.js';
 
@@ -131,18 +131,18 @@ async function fallbackMainData
   _fixture_id: number
 ): Promise < LIN_Fixture > 
 {
-  const map = await FLIN_FP_ENTRY
+  const dataRes0 = await FLIN_FP_ENTRY
   (
     graphQlInstance,
     _fixture_id
   )
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(_fixture_id);
+	return dataRes0?.[0]?.get(_fixture_id);
 }
 
 /**
@@ -160,18 +160,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_LIN_T > 
 {
-  const map = await FLIN_FP_ENTRY_2
+  const dataRes0 = await FLIN_FP_ENTRY_2
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

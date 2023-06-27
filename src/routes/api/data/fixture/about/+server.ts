@@ -133,21 +133,21 @@ async function fallbackMainData
   lang: string
 ): Promise < B_ABT_D >
 {
-  const map = await FABT_FP_ENTRY
+  const dataRes0 = await FABT_FP_ENTRY
   (
     graphQlInstance,
     [fixtureId],
     [lang]
   )
 
-  if (map.size == 0)
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
 
   const key = `${fixtureId}_${lang}`
 
-	return map.get(key);
+	return dataRes0?.[0]?.get(key);
 }
 
 /**
@@ -165,18 +165,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_ABT_T >
 {
-  const map = await FABT_FP_ENTRY_1
+  const dataRes0 = await FABT_FP_ENTRY_1
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0)
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
 
-	return map.get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
