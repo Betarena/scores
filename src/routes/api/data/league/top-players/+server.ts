@@ -26,9 +26,9 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
@@ -36,21 +36,21 @@ export async function GET
     const season_id: string = req?.url?.searchParams?.get('season_id');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: 
-    // ➨ Get Fixture Odds (WIDGET) MAIN data; 
+    // ACTION:
+    // ➨ Get Fixture Odds (WIDGET) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     // ➨ NOTE: Contains OVERRIDE [x1]
     const if_M_0: boolean =
       league_id != undefined
-      && season_id != undefined
+      || (league_id != undefined && season_id != undefined)
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       let data: unknown;
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -60,7 +60,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -75,8 +75,8 @@ export async function GET
       if (data != undefined) return json(data);
     }
 
-    // ACTION: 
-    // ➨ Get Fixture Odds (TRANSLATION) MAIN data; 
+    // ACTION:
+    // ➨ Get Fixture Odds (TRANSLATION) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_1: boolean =
       lang != undefined
@@ -87,7 +87,7 @@ export async function GET
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -97,7 +97,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData_1
         (
@@ -116,8 +116,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -140,21 +140,21 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ standings (widget) hasura DATA fetch;
- * @param 
+ * @param
  * {string} leagueId
- * @returns 
+ * @returns
  * Promise < B_FO_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   leagueId: string,
   seasonId: string
-): Promise < B_TP_D > 
+): Promise < B_TP_D >
 {
   const _leagueId = parseInt(leagueId);
   const _seasonId = parseInt(seasonId);
@@ -163,38 +163,39 @@ async function fallbackMainData
   (
     graphQlInstance,
     false,
+    _leagueId,
     _seasonId || null
   );
 
   // console.log(dataRes0?.[1]);
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
 
   // NOTE:
-  // or, get rid of _leagueId for map.keys().next().value, 
+  // or, get rid of _leagueId for map.keys().next().value,
   // as single league expected;
-  
+
 	return dataRes0?.[0].get(_leagueId);
 }
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ standings (widget) hasura TRANSLATION fetch;
- * @param 
+ * @param
  * {string} lang
- * @returns 
+ * @returns
  * Promise < B_TP_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_TP_T > 
+): Promise < B_TP_T >
 {
   const dataRes0 = await LTPL_LP_ENTRY_1
   (
@@ -202,11 +203,11 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(lang);
 }
 
