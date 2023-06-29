@@ -76,7 +76,7 @@
   $: selectedSeasonId = JSON.stringify($sessionStore?.selectedSeasonID)
   $: livescoreNowScoreboardChng = JSON.stringify([...$sessionStore?.livescore_now_scoreboard?.entries()]);
   $: livescoreOddsChng = JSON.stringify([...$sessionStore?.live_odds_fixture_map?.entries()]);
-  $: bookmakerChange = JSON.stringify($userBetarenaSettings?.country_bookmaker);
+  $: sportbookChange = JSON.stringify($sessionStore?.sportbook_list);
 
   // #endregion ➤ [VARIABLES]
 
@@ -1004,7 +1004,7 @@
    * @description
    * ➨ listens to change in "odds" data session-store;
   */
-  $: if (livescoreOddsChng || bookmakerChange)
+  $: if (livescoreOddsChng || sportbookChange)
   {
     injectFixtureOddsData()
   }
