@@ -217,6 +217,10 @@ paths:
               geoPos:
                 type: string
                 example: es
+              # ?seo=[...]
+              seo:
+                type: boolean
+                example: true
               # ?lang=[...]
               lang:
                 type: string
@@ -233,6 +237,9 @@ paths:
               # [MAIN] Geo-Positional Data
               - required: [geoPos]
               - required: [geoPos, hasura]
+              # [MAIN] SEO Data
+              - required: [lang, seo]
+              - required: [lang, seo, hasura]
       summary:
         Featured Match [C][H]
       responses:
@@ -274,7 +281,7 @@ paths:
           description:
             Target fixture FEAT-BETSITE widget data
 
-  # [HP] - LEAGUE-LSIT Widget
+  # [HP] - LEAGUE-LIST Widget
   /api/data/home/league-list:
     get:
       parameters:
@@ -412,6 +419,10 @@ paths:
               lang:
                 type: string
                 example: es
+              # ?seo=[...]
+              seo:
+                type: boolean
+                example: true
               # ?hasura=[...]
               hasura:
                 type: boolean
@@ -424,6 +435,9 @@ paths:
               # [MAIN] Geo-Positional Data
               - required: [geoPos]
               - required: [geoPos, hasura]
+              # [MAIN] SEO Data
+              - required: [lang, seo]
+              - required: [lang, seo, hasura]
       summary:
         Top Goalscorers [C][H]
       responses:
