@@ -21,11 +21,14 @@
   export let urls: Urls;
   export let viewportDesktop: boolean;
 
-  let url: string =
+  let url: string;
+
+  $: url =
     urls?.[$sessionStore?.serverLang] == undefined
       ? undefined
       : `/${urls?.[$sessionStore?.serverLang]}`
   ;
+
 	let ratingColorCode: string;
 
   //#endregion ➤ [VARIABLES]
@@ -219,7 +222,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin-right: 8px;
 	}
 
-  a:hover p#featm-player-name
+  a.enabeld-anchor:hover p#featm-player-name
   {
     color: var(--primary) !important;
   }
