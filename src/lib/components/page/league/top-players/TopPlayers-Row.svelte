@@ -9,6 +9,7 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import { sessionStore } from '$lib/store/session.js';
+
 	import type { B_TP_T, TP_Main } from '@betarena/scores-lib/types/top-players.js';
 
 	export let pos: number;
@@ -16,8 +17,14 @@
 	export let data: TP_Main;
 	export let translations: B_TP_T;
 
-  let url: string = `/${data?.urls?.[$sessionStore?.serverLang]}`;
 	let ratingColorCode: string;
+  let url: string;
+
+  $: url =
+    data?.urls?.[$sessionStore?.serverLang] == undefined
+      ? undefined
+      : `/${data?.urls?.[$sessionStore?.serverLang]}`
+  ;
 
 	$: if (optView === 'rating')
   {
@@ -43,6 +50,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     cursor-pointer
   "
   class:disable-anchor={url == undefined}
+  class:enabeld-anchor={url != undefined}
   style="display: block;"
 >
   <div
@@ -152,9 +160,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	.best-player-row #image-contaier {
 		position: relative;
 	}
-	.best-player-row
-		#image-contaier
-		img#player-img {
+	.best-player-row #image-contaier img#player-img {
 		width: 40px;
 		height: 40px;
 		object-fit: contain;
@@ -183,6 +189,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin: auto;
 		height: 21px;
 	}
+
+  a.enabeld-anchor:hover p.player-name
+  {
+    color: var(--primary) !important;
+  }
 
 	.best-player-row p#box-goals {
 		background-color: #ffffff;
