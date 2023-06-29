@@ -929,8 +929,12 @@
 
 		for (const fixture of flatFixturesList)
     {
+      const _time = new Date(fixture?.fixture_time);
+      _time.setHours(_time.getHours() + 2);
+
       const if_M_0: boolean =
         FIXTURE_FULL_TIME_OPT.includes(fixture?.status)
+        || (_time.getTime() - new Date().getTime()) < 0
       ;
       if (if_M_0) continue;
 
