@@ -1,119 +1,127 @@
 <!-- ===============
 	COMPONENT JS (w/ TS)
 ==================== -->
+
 <script lang="ts">
+
 	import { fade } from 'svelte/transition';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import type {
-		REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response,
-		Top_player_ratings
-	} from '$lib/models/tournaments/top_players/types';
+	import { sessionStore } from '$lib/store/session.js';
+	import type { B_TP_T, TP_Main } from '@betarena/scores-lib/types/top-players.js';
 
 	export let pos: number;
 	export let optView: string;
-	export let data: Top_player_ratings;
-	export let translations: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
+	export let data: TP_Main;
+	export let translations: B_TP_T;
 
 	let ratingColorCode: string;
 
-	$: if (optView === 'rating') {
-		if (data[optView] > 7.99) {
-			ratingColorCode = 'G';
-		} else if (data[optView] > 6.99) {
-			ratingColorCode = 'Y';
-		} else {
-			ratingColorCode = 'T';
-		}
-	} else {
+	$: if (optView === 'rating')
+  {
+    ratingColorCode = 'T';
+		if (data[optView] > 6.99)	ratingColorCode = 'Y';
+		if (data[optView] > 7.99) ratingColorCode = 'G';
+	} else
+  {
 		ratingColorCode = undefined;
 	}
 
 	let showExtraInfo: boolean;
+
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
-==================== -->
+COMPONENT HTML
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
 
-<div
-	class="best-player-row"
-	class:dark-background-1={$userBetarenaSettings.theme ==
-		'Dark'}
-	in:fade
+<a
+  href="/{data?.urls?.[$sessionStore?.serverLang]}"
+  class=
+  "
+    cursor-pointer
+  "
 >
-	<!-- first container of the row site 
-  -->
-	<div class="row-space-out">
-		<!-- [ℹ] first container 
+  <div
+    class="best-player-row"
+    class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
+    in:fade
+  >
+    <!-- first container of the row site
     -->
-		<div class="row-space-start">
-			<div class="pos-number-player-box">
-				<p class="medium w-500">
-					{pos}
-				</p>
-			</div>
-
-			<!-- [ℹ] player logo-img & team logo 
+    <div class="row-space-out">
+      <!-- [ℹ] first container
       -->
-			<div id="image-contaier">
-				<img
-					id="player-img"
-					src={data.avatar}
-					alt="default alt text"
-				/>
-				{#if data.team_logo !== null}
-					<img
-						id="team-img"
-						src={data.team_logo}
-						alt="default alt text"
-					/>
-				{/if}
-			</div>
+      <div class="row-space-start">
+        <div class="pos-number-player-box">
+          <p class="medium w-500">
+            {pos}
+          </p>
+        </div>
 
-			<!-- [ℹ] player name  & player position
+        <!-- [ℹ] player logo-img & team logo
+        -->
+        <div id="image-contaier">
+          <img
+            id="player-img"
+            src={data.avatar}
+            alt="default alt text"
+          />
+          {#if data.team_logo !== null}
+            <img
+              id="team-img"
+              src={data.team_logo}
+              alt="default alt text"
+            />
+          {/if}
+        </div>
+
+        <!-- [ℹ] player name  & player position
+        -->
+        <div style="margin-left: 16px;">
+          <p
+            class="medium w-500 no-wrap player-name"
+          >
+            {data.player_name}
+          </p>
+          <p
+            class="medium w-400 color-grey no-wrap"
+          >
+            {translations.pos_t[data.position]}
+          </p>
+        </div>
+      </div>
+
+      <!--
+      second container
       -->
-			<div style="margin-left: 16px;">
-				<p
-					class="medium w-500 no-wrap player-name"
-				>
-					{data.player_name}
-				</p>
-				<p
-					class="medium w-400 color-grey no-wrap"
-				>
-					{translations.pos_t[data.position]}
-				</p>
-			</div>
-		</div>
-
-		<!-- [ℹ] second container 
-    -->
-		<div
-			class="row-space-end"
-			style="width: auto;"
-		>
-			<p
-				id="box-goals"
-				class="medium w-500"
-				class:rating_green={ratingColorCode ===
-					'G'}
-				class:rating_yellow={ratingColorCode ===
-					'Y'}
-				class:rating_grey={ratingColorCode ===
-					'T'}
-			>
-				{data[optView]}
-			</p>
-		</div>
-	</div>
-</div>
+      <div
+        class="row-space-end"
+        style="width: auto;"
+      >
+        <p
+          id="box-goals"
+          class="medium w-500"
+          class:rating_green={ratingColorCode ===	'G'}
+          class:rating_yellow={ratingColorCode === 'Y'}
+          class:rating_grey={ratingColorCode === 'T'}
+        >
+          {data[optView]}
+        </p>
+      </div>
+    </div>
+  </div>
+</a>
 
 <!-- ===============
-  COMPONENT STYLE
-==================== -->
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
+
 <style>
+
 	.best-player-row {
 		padding: 12.5px 20px;
 		background-color: #ffffff;
@@ -184,7 +192,7 @@
 		border: 1px solid transparent;
 	}
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS (&+) */
 	@media only screen and (max-width: 375px) {
 		p.player-name {
@@ -208,7 +216,7 @@
 		}
 	}
 
-	/* 
+	/*
   RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
 	@media only screen and (min-width: 1160px) and (max-width: 1240px) {
 		p.player-name {
@@ -226,8 +234,8 @@
 		}
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	div.dark-background-1.best-player-row {
