@@ -1,9 +1,12 @@
 <script lang="ts">
-	import { sessionStore } from "$lib/store/session.js";
-	import type { Urls } from "@betarena/scores-lib/types/hasura.js";
-
 
   //#region ➤ [MAIN] Package Imports
+
+	import { sessionStore } from "$lib/store/session.js";
+
+	import type { Urls } from "@betarena/scores-lib/types/hasura.js";
+
+  //#endregion ➤ [MAIN] Package Imports
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -18,6 +21,7 @@
   export let urls: Urls;
   export let viewportDesktop: boolean;
 
+  let url: string = `/${urls?.[$sessionStore?.serverLang]}`;
 	let ratingColorCode: string;
 
   //#endregion ➤ [VARIABLES]
@@ -87,10 +91,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <td
     class="row-space-start">
     <a
-      href="/{urls?.[$sessionStore?.serverLang]}"
-      class="
+      href={url}
+      class=
+      "
         cursor-pointer
       "
+      class:disable-anchor={url == undefined}
+      style="display: block;"
     >
       <img
         loading="lazy"

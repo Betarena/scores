@@ -80,7 +80,7 @@ COMPONENT JS (w/ TS)
 
 			const response: TP_Season_Top_Player = await get
       (
-        `/api/hasura/league/top-players?seasonId=${$sessionStore.selectedSeasonID}`
+        `/api/data/league/top-players?league_id=${B_TP_D?.league_id}&season_id=${$sessionStore.selectedSeasonID}`
       );
 			if (response == undefined)
       {
@@ -235,6 +235,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       WIDGET_TITLE={B_TP_T?.top_players}
       NO_DATA_TITLE={B_TP_T?.no_data_t?.no_info}
       NO_DATA_DESC={B_TP_T?.no_data_t?.no_info_desc}
+      version={2}
     />
 	{/if}
 

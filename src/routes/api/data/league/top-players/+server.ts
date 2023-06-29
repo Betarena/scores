@@ -70,7 +70,7 @@ export async function GET
         loadType = 'HASURA'
       }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
+      console.log(`📌 loaded [TOPPL] with: ${loadType}`)
 
       if (data != undefined) return json(data);
     }
@@ -106,7 +106,7 @@ export async function GET
         loadType = 'HASURA'
       }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
+      console.log(`📌 loaded [TOPPL] with: ${loadType}`)
 
       if (data != undefined) return json(data);
     }

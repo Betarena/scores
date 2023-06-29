@@ -10,13 +10,14 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
 	import { sessionStore } from '$lib/store/session.js';
+
 	import type { B_TGOL_T, TGOL_Goalscorer } from '@betarena/scores-lib/types/top-goalscorers.js';
 
 	export let pos: number;
 	export let data: TGOL_Goalscorer;
 	export let WIDGET_TRANSLATION: B_TGOL_T;
 
-	let showExtraInfo: boolean;
+  let url: string = `/${data?.urls?.[$sessionStore?.serverLang]}`;
 
 	let viewportDesktop: boolean;
 
@@ -50,11 +51,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <a
-  href="/{data?.urls?.[$sessionStore?.serverLang]}"
+  href={url}
   class=
   "
     cursor-pointer
   "
+  class:disable-anchor={url == undefined}
+  style="display: block;"
 >
   <div
     class="best-player-row"

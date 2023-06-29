@@ -23,12 +23,12 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [VARIABLES]
 
-  let WIDGET_S_DATA: B_TP_D = $page.data.LEAGUE_INFO_DATA;
-  let WIDGET_T_DATA: B_TP_T = $page.data?.FIXTURES_ODDS_T;
+  let WIDGET_S_DATA: B_TP_D = $page.data.B_TP_D;
+  let WIDGET_T_DATA: B_TP_T = $page.data?.B_TP_T;
   let WIDGET_DATA: B_TP_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
-  $: WIDGET_T_DATA = $page.data?.FIXTURES_ODDS_T;
+  $: WIDGET_T_DATA = $page.data?.B_TP_T;
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.top_players || 'Top Players' : 'Top Players';
 
   //#endregion ➤ [VARIABLES]
@@ -111,13 +111,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <SeoBox>
   <h2>{WIDGET_T_DATA?.top_players}</h2>
-  {#if WIDGET_S_DATA?.seasons.length != 0}
-    {#each WIDGET_S_DATA?.seasons?.[0]?.top_players_rating || [] as player}
-      <a href={player?.urls?.[$sessionStore?.serverLang]}>
-        <p>{player.player_name}</p>
-      </a>
-    {/each}
-  {/if}
+  {#each WIDGET_S_DATA?.seasons?.[0]?.top_players_rating || [] as player}
+    <a href={player?.urls?.[$sessionStore?.serverLang]}>
+      <p>{player.player_name}</p>
+    </a>
+  {/each}
 </SeoBox>
 
 <!-- [🐞] -->

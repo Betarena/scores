@@ -16,6 +16,7 @@
 	export let data: TP_Main;
 	export let translations: B_TP_T;
 
+  let url: string = `/${data?.urls?.[$sessionStore?.serverLang]}`;
 	let ratingColorCode: string;
 
 	$: if (optView === 'rating')
@@ -28,8 +29,6 @@
 		ratingColorCode = undefined;
 	}
 
-	let showExtraInfo: boolean;
-
 </script>
 
 <!-- ===============
@@ -38,21 +37,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <a
-  href="/{data?.urls?.[$sessionStore?.serverLang]}"
+  href={url}
   class=
   "
     cursor-pointer
   "
+  class:disable-anchor={url == undefined}
+  style="display: block;"
 >
   <div
     class="best-player-row"
     class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
     in:fade
   >
-    <!-- first container of the row site
+    <!--
+    first container of the row site
     -->
     <div class="row-space-out">
-      <!-- [ℹ] first container
+
+      <!--
+      [ℹ] first container
       -->
       <div class="row-space-start">
         <div class="pos-number-player-box">
@@ -61,7 +65,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </p>
         </div>
 
-        <!-- [ℹ] player logo-img & team logo
+        <!--
+        [ℹ] player logo-img & team logo
         -->
         <div id="image-contaier">
           <img
@@ -78,18 +83,31 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         </div>
 
-        <!-- [ℹ] player name  & player position
+        <!--
+        [ℹ] player name  & player position
         -->
         <div style="margin-left: 16px;">
           <p
-            class="medium w-500 no-wrap player-name"
+            class=
+            "
+              medium
+              w-500
+              no-wrap
+              player-name
+            "
           >
-            {data.player_name}
+            {data?.player_name}
           </p>
           <p
-            class="medium w-400 color-grey no-wrap"
+            class=
+            "
+              medium
+              w-400
+              color-grey
+              no-wrap
+            "
           >
-            {translations.pos_t[data.position]}
+            {translations.pos_t[`${data?.position}`] || " "}
           </p>
         </div>
       </div>
@@ -108,7 +126,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           class:rating_yellow={ratingColorCode === 'Y'}
           class:rating_grey={ratingColorCode === 'T'}
         >
-          {data[optView]}
+          {data?.[optView]}
         </p>
       </div>
     </div>
