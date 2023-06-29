@@ -17,7 +17,13 @@
 	export let data: TGOL_Goalscorer;
 	export let WIDGET_TRANSLATION: B_TGOL_T;
 
-  let url: string = `/${data?.urls?.[$sessionStore?.serverLang]}`;
+  let url: string;
+
+  $: url =
+    data?.urls?.[$sessionStore?.serverLang] == undefined
+      ? undefined
+      : `/${data?.urls?.[$sessionStore?.serverLang]}`
+  ;
 
 	let viewportDesktop: boolean;
 
@@ -57,6 +63,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     cursor-pointer
   "
   class:disable-anchor={url == undefined}
+  class:enabeld-anchor={url != undefined}
   style="display: block;"
 >
   <div
@@ -64,22 +71,41 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     in:fade
   >
-    <!-- ... DESKTOP VERSION ... -->
+    <!--
+    🖥️ LAPTOP
+    -->
     {#if viewportDesktop}
-      <!-- ... first container of the row site -->
-      <div class="row-space-out">
-        <!-- ... ℹ first container ... -->
-        <div class="row-space-start">
-          <!-- ... Position Number ONLY ON DESKTOP VERSION ... -->
-          <div class="pos-number-player-box">
-            <p class="medium w-500">
-              <!-- {data.pos_num} -->
+
+      <div
+        class="row-space-out">
+        <div
+          class="row-space-start">
+
+          <!--
+          POSITION NUMBER
+          -->
+          <div
+            class=
+            "
+              pos-number-player-box
+            "
+          >
+            <p
+              class=
+              "
+                medium
+                w-500
+              "
+            >
               {pos}
             </p>
           </div>
 
-          <!-- ... ℹ player logo-img & team logo ... -->
-          <div id="image-contaier">
+          <!--
+          PLAYER LOGO + TEAM LOGO
+          -->
+          <div
+            id="image-contaier">
             <img
               loading="lazy"
               id="player-img"
@@ -94,24 +120,48 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             />
           </div>
 
-          <!-- ... ℹ player name  & player position... -->
-          <div style="margin-left: 16px;">
-            <p class="medium w-500">
-              {data.common_name}
+          <!--
+          PLAYER NAME + PLAYER POSITION
+          -->
+          <div
+            style="margin-left: 16px;">
+            <p
+              id="featm-player-name"
+              class=
+              "
+                medium
+                w-500
+              "
+            >
+              {data?.common_name}
             </p>
-            <p class="medium w-400 color-grey">
-              {WIDGET_TRANSLATION
-                .positions_translations[
-                data.position
-              ]}
+            <p
+              class=
+              "
+                medium
+                w-400
+                color-grey
+              "
+            >
+              {WIDGET_TRANSLATION?.positions_translations?.[data?.position]}
             </p>
           </div>
+
         </div>
 
-        <!-- ... ℹ second container ... -->
-        <!-- ... ℹ goals & odds ... -->
-        <div class="row-space-end">
-          <p id="box-goals" class="medium w-500">
+        <!--
+        GOALS + ODDS
+        -->
+        <div
+          class="row-space-end">
+          <p
+            id="box-goals"
+            class=
+            "
+              medium
+              w-500
+            "
+          >
             {data.goals}
           </p>
           <p
@@ -122,13 +172,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             -
           </p>
         </div>
+
       </div>
-      <!-- ... MOBILE VERSION ... -->
+
     {:else}
-      <div class="column-space-center">
-        <!-- ... ℹ first container ... -->
-        <div class="row-space-start m-b-12">
-          <!-- ... Position Number ONLY ON DESKTOP VERSION ... -->
+
+      <div
+        class=
+        "
+          column-space-center
+        "
+      >
+        <!--
+        FIRST COLUMN
+        -->
+        <div
+          class=
+          "
+            row-space-start
+            m-b-12
+          "
+        >
           <p
             class="medium w-500"
             style="margin-right: 20px;"
@@ -136,7 +200,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {pos}
           </p>
 
-          <!-- ... ℹ player logo-img & team logo ... -->
+          <!--
+          PLAYER LOGO + TEAM LOGO
+          -->
           <div id="image-contaier">
             <img
               loading="lazy"
@@ -152,46 +218,88 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             />
           </div>
 
-          <!-- ... ℹ player name  & player position... -->
-          <div style="margin-left: 16px;">
-            <p class="medium w-500">
-              {data.common_name}
+          <!--
+          PLAYER NAME + PLAYER POSITION
+          -->
+          <div
+            style="margin-left: 16px;">
+            <p
+              class=
+              "
+                medium
+                w-500
+              "
+            >
+              {data?.common_name}
             </p>
-            <p class="medium w-400 color-grey">
-              {WIDGET_TRANSLATION
-                .positions_translations[
-                data.position
-              ]}
+            <p
+              class=
+              "
+                medium
+                w-400
+                color-grey
+              "
+            >
+              {WIDGET_TRANSLATION?.positions_translations?.[data?.position]}
             </p>
           </div>
+
         </div>
 
-        <!-- ... ℹ second container ... -->
-        <!-- ... ℹ goals & odds ... -->
-        <div class="row-space-out">
-          <!-- ... ℹ goals ... -->
+        <!--
+        GOALS + ODDS
+        -->
+        <div
+          class="row-space-out">
           <div
-            class="row-space-out goals-mobile m-r-8"
+            class=
+            "
+              row-space-out
+              goals-mobile
+              m-r-8
+            "
           >
             <p
-              class="medium w-500 w-normal color-grey"
+              class=
+              "
+                medium
+                w-500
+                w-normal
+                color-grey
+              "
             >
-              {WIDGET_TRANSLATION
-                .widget_translations.goals}
+              {WIDGET_TRANSLATION?.widget_translations?.goals}
             </p>
-            <p class="medium w-500 w-normal">
+            <p
+              class=
+              "
+                medium
+                w-500
+                w-normal
+              "
+            >
               {data.goals}
             </p>
           </div>
 
-          <!-- ... ℹ odds [disabled] ... -->
-          <div class="row-space-out odds-mobile">
+          <div
+            class=
+            "
+              row-space-out
+              odds-mobile
+            "
+          >
             <p
               style="color: #CCCCCC"
-              class="medium w-500 w-normal color-grey"
+              class=
+              "
+                medium
+                w-500
+                w-normal
+                color-grey
+              "
             >
-              {WIDGET_TRANSLATION
-                .widget_translations.odds}
+              {WIDGET_TRANSLATION?.widget_translations?.odds}
             </p>
             <p
               style="color: #CCCCCC"
@@ -201,7 +309,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </p>
           </div>
         </div>
+
       </div>
+
     {/if}
   </div>
 </a>
@@ -225,9 +335,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	.best-player-row #image-contaier {
 		position: relative;
 	}
-	.best-player-row
-		#image-contaier
-		img#player-img {
+	.best-player-row #image-contaier img#player-img {
 		width: 40px;
 		height: 40px;
 		object-fit: contain;
@@ -274,6 +382,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-height: 30px;
 		width: 64px;
 	}
+
+  a.enabeld-anchor:hover p#featm-player-name
+  {
+    color: var(--primary) !important;
+  }
 
 	div.goals-mobile {
 		border: 1px solid #e6e6e6;
