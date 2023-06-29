@@ -1,8 +1,10 @@
 <!-- ===============
-	COMPONENT JS (w/ TS)
-==================== -->
+COMPONENT JS (w/ TS)
+=================-->
 
 <script lang="ts">
+
+  //#region ➤ [MAIN] Package Imports
 
 	import { fade } from 'svelte/transition';
 
@@ -11,6 +13,10 @@
 	import { sessionStore } from '$lib/store/session.js';
 
 	import type { B_TP_T, TP_Main } from '@betarena/scores-lib/types/top-players.js';
+
+  //#endregion ➤ [MAIN] Package Imports
+
+  //#region ➤ [VARIABLES]
 
 	export let pos: number;
 	export let optView: string;
@@ -26,6 +32,18 @@
       : `/${data?.urls?.[$sessionStore?.serverLang]}`
   ;
 
+    //#endregion ➤ [VARIABLES]
+
+  //#region ➤ [MAIN-METHODS]
+
+  //#endregion ➤ [MAIN-METHODS]
+
+  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+
+  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
+
+  //#region ➤ [REACTIVIY] [METHODS]
+
 	$: if (optView === 'rating')
   {
     ratingColorCode = 'T';
@@ -35,6 +53,12 @@
   {
 		ratingColorCode = undefined;
 	}
+
+  //#endregion ➤ [REACTIVIY] [METHODS]
+
+  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+
+  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
 
@@ -64,11 +88,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <div class="row-space-out">
 
       <!--
-      [ℹ] first container
+      first container
       -->
-      <div class="row-space-start">
-        <div class="pos-number-player-box">
-          <p class="medium w-500">
+      <div
+        class="row-space-start">
+        <div
+          class="pos-number-player-box">
+          <p
+            class=
+            "
+              medium
+              w-500
+            "
+          >
             {pos}
           </p>
         </div>
@@ -76,13 +108,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!--
         [ℹ] player logo-img & team logo
         -->
-        <div id="image-contaier">
+        <div
+          id="image-contaier">
           <img
             id="player-img"
-            src={data.avatar}
+            src={data?.avatar}
             alt="default alt text"
           />
-          {#if data.team_logo !== null}
+          {#if data?.team_logo != undefined}
             <img
               id="team-img"
               src={data.team_logo}
@@ -115,7 +148,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               no-wrap
             "
           >
-            {translations.pos_t[`${data?.position}`] || " "}
+            {translations?.pos_t?.[`${data?.position}`] || " "}
           </p>
         </div>
       </div>
@@ -137,6 +170,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {data?.[optView]}
         </p>
       </div>
+
     </div>
   </div>
 </a>
@@ -148,7 +182,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	.best-player-row {
+	.best-player-row
+  {
 		padding: 12.5px 20px;
 		background-color: #ffffff;
 		/* box-shadow: inset 0px 1px 0px #ebebeb; */
@@ -157,17 +192,20 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		justify-content: space-between;
 		position: relative;
 	}
-	.best-player-row #image-contaier {
+	.best-player-row #image-contaier
+  {
 		position: relative;
 	}
-	.best-player-row #image-contaier img#player-img {
+	.best-player-row #image-contaier img#player-img
+  {
 		width: 40px;
 		height: 40px;
 		object-fit: contain;
 		border-radius: 50%;
 		border: 1px solid #cccccc;
 	}
-	.best-player-row #image-contaier img#team-img {
+	.best-player-row #image-contaier img#team-img
+  {
 		width: 20px;
 		height: 20px;
 		object-fit: contain;
@@ -175,12 +213,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		right: -5px;
 		bottom: 0;
 	}
-	.best-player-row div.pos-number-player-box {
+	.best-player-row div.pos-number-player-box
+  {
 		width: 8px;
 		margin-right: 24px;
 		position: relative;
 	}
-	.best-player-row div.pos-number-player-box p {
+	.best-player-row div.pos-number-player-box p
+  {
 		position: absolute;
 		top: 0;
 		bottom: 0;
@@ -195,7 +235,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--primary) !important;
   }
 
-	.best-player-row p#box-goals {
+	.best-player-row p#box-goals
+  {
 		background-color: #ffffff;
 		border: 1px solid #e6e6e6;
 		box-sizing: border-box;
@@ -205,26 +246,36 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-height: 30px;
 		width: 64px;
 	}
-	.best-player-row p#box-goals.rating_green {
+	.best-player-row p#box-goals.rating_green
+  {
 		background-color: #59c65d !important;
 		color: #ffffff;
 		border: 1px solid transparent;
 	}
-	.best-player-row p#box-goals.rating_yellow {
+	.best-player-row p#box-goals.rating_yellow
+  {
 		background-color: #ffb904 !important;
 		color: #ffffff;
 		border: 1px solid transparent;
 	}
-	.best-player-row p#box-goals.rating_grey {
+	.best-player-row p#box-goals.rating_grey
+  {
 		background-color: #f2f2f2 !important;
 		color: #8c8c8c;
 		border: 1px solid transparent;
 	}
 
-	/*
-  MOBILE RESPONSIVNESS (&+) */
-	@media only screen and (max-width: 375px) {
-		p.player-name {
+  /*
+  =============
+  RESPONSIVNESS
+  =============
+  */
+
+	@media only screen
+  and (max-width: 375px)
+  {
+		p.player-name
+    {
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
@@ -233,22 +284,30 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen and (max-width: 425px) {
-		p.player-name {
+	@media only screen
+  and (max-width: 425px)
+  {
+		p.player-name
+    {
 			width: 150px;
 		}
 	}
 
-	@media only screen and (max-width: 475px) {
-		.best-player-row:first-child {
+	@media only screen
+  and (max-width: 475px)
+  {
+		.best-player-row:first-child
+    {
 			padding-top: 24px;
 		}
 	}
 
-	/*
-  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] */
-	@media only screen and (min-width: 1160px) and (max-width: 1240px) {
-		p.player-name {
+	@media only screen
+  and (min-width: 1160px)
+  and (max-width: 1240px)
+  {
+		p.player-name
+    {
 			overflow: hidden;
 			white-space: nowrap;
 			text-overflow: ellipsis;
@@ -257,39 +316,47 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen and (min-width: 1240px) {
-		p.player-name {
+	@media only screen
+  and (min-width: 1240px)
+  {
+		p.player-name
+    {
 			width: 200px;
 		}
 	}
 
-	/* ..............
-	WIDGET DARK THEME
-	................. */
+	/*
+  =============
+  DARK-THEME
+  =============
+  */
 
-	div.dark-background-1.best-player-row {
+	div.dark-background-1.best-player-row
+  {
 		box-shadow: inset 0px 0px 0px #616161 !important;
 		background-color: #4b4b4b !important;
 	}
 
-	.dark-background-1.best-player-row
-		#image-contaier
-		img#player-img {
+	.dark-background-1.best-player-row #image-contaier img#player-img
+  {
 		border: 1px solid #999999 !important;
 	}
 
-	.dark-background-1.best-player-row p#box-goals {
+	.dark-background-1.best-player-row p#box-goals
+  {
 		background: #4b4b4b;
 		border: 1px solid #616161;
 	}
-	.dark-background-1.best-player-row
-		p#box-goals.rating_grey {
+	.dark-background-1.best-player-row p#box-goals.rating_grey
+  {
 		background-color: #616161 !important;
 		color: #a8a8a8;
 		border: 1px solid transparent;
 	}
 
-	.dark-background-1 p {
+	.dark-background-1 p
+  {
 		color: #ffffff;
 	}
+
 </style>

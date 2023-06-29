@@ -1,3 +1,7 @@
+<!-- ===============
+COMPONENT JS (w/ TS)
+=================-->
+
 <script lang="ts">
 
   //#region ➤ [MAIN] Package Imports
@@ -21,6 +25,7 @@
   export let urls: Urls;
   export let viewportDesktop: boolean;
 
+	let ratingColorCode: string;
   let url: string;
 
   $: url =
@@ -28,8 +33,6 @@
       ? undefined
       : `/${urls?.[$sessionStore?.serverLang]}`
   ;
-
-	let ratingColorCode: string;
 
   //#endregion ➤ [VARIABLES]
 

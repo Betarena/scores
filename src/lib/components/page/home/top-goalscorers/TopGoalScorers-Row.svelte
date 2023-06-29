@@ -4,20 +4,26 @@
 
 <script lang="ts">
 
+  //#region ➤ [MAIN] Package Imports
+
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 
-	import { sessionStore } from '$lib/store/session.js';
-
 	import type { B_TGOL_T, TGOL_Goalscorer } from '@betarena/scores-lib/types/top-goalscorers.js';
+
+  //#endregion ➤ [MAIN] Package Imports
+
+  //#region ➤ [VARIABLES]
 
 	export let pos: number;
 	export let data: TGOL_Goalscorer;
 	export let WIDGET_TRANSLATION: B_TGOL_T;
 
   let url: string;
+	let viewportDesktop: boolean;
 
   $: url =
     data?.urls?.[$sessionStore?.serverLang] == undefined
@@ -25,7 +31,21 @@
       : `/${data?.urls?.[$sessionStore?.serverLang]}`
   ;
 
-	let viewportDesktop: boolean;
+  //#endregion ➤ [VARIABLES]
+
+  //#region ➤ [METHODS]
+
+  //#endregion ➤ [METHODS]
+
+  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+
+  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
+
+  //#region ➤ [REACTIVIY] [METHODS]
+
+  //#endregion ➤ [REACTIVIY] [METHODS]
+
+  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 	onMount(async () => {
 		var wInit =
@@ -48,6 +68,8 @@
 			}
 		);
 	});
+
+  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
 
@@ -323,7 +345,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	.best-player-row {
+	.best-player-row
+  {
 		padding: 12.5px 20px;
 		background-color: #ffffff;
 		/* box-shadow: inset 0px 1px 0px #ebebeb; */
@@ -332,17 +355,20 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		justify-content: space-between;
 		position: relative;
 	}
-	.best-player-row #image-contaier {
+	.best-player-row #image-contaier
+  {
 		position: relative;
 	}
-	.best-player-row #image-contaier img#player-img {
+	.best-player-row #image-contaier img#player-img
+  {
 		width: 40px;
 		height: 40px;
 		object-fit: contain;
 		border-radius: 50%;
 		border: 1px solid #cccccc;
 	}
-	.best-player-row #image-contaier img#team-img {
+	.best-player-row #image-contaier img#team-img
+  {
 		width: 20px;
 		height: 20px;
 		object-fit: contain;
@@ -350,12 +376,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		right: -5px;
 		bottom: 0;
 	}
-	.best-player-row div.pos-number-player-box {
+	.best-player-row div.pos-number-player-box
+  {
 		width: 8px;
 		margin-right: 32px;
 		position: relative;
 	}
-	.best-player-row div.pos-number-player-box p {
+	.best-player-row div.pos-number-player-box p
+  {
 		position: absolute;
 		top: 0;
 		bottom: 0;
@@ -364,7 +392,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin: auto;
 		height: 21px;
 	}
-	.best-player-row p#box-goals {
+	.best-player-row p#box-goals
+  {
 		background-color: #ffffff;
 		border: 1px solid #e6e6e6;
 		box-sizing: border-box;
@@ -374,7 +403,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		max-height: 30px;
 		width: 64px;
 	}
-	.best-player-row p#box-odds {
+	.best-player-row p#box-odds
+  {
 		background-color: #f2f2f2;
 		border-radius: 4px;
 		text-align: center;
@@ -388,58 +418,74 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--primary) !important;
   }
 
-	div.goals-mobile {
+	div.goals-mobile
+  {
 		border: 1px solid #e6e6e6;
 		box-sizing: border-box;
 		border-radius: 4px;
 		padding: 10px 12px 10px 12px;
 	}
-	div.odds-mobile {
+	div.odds-mobile
+  {
 		background: #f2f2f2;
 		border-radius: 4px;
 		box-sizing: border-box;
 		padding: 10px 12px 10px 12px;
 	}
 
-	/*
-  MOBILE RESPONSIVNESS */
-	@media only screen and (max-width: 475px) {
-		.best-player-row:first-child {
+  /*
+  =============
+  RESPONSIVNESS
+  =============
+  */
+
+	@media only screen
+  and (max-width: 475px)
+  {
+		.best-player-row:first-child
+    {
 			padding-top: 24px;
 		}
 	}
 
-	/* ..............
-	WIDGET DARK THEME
-	................. */
+	/*
+  =============
+  DARK-THEME
+  =============
+  */
 
-	div.dark-background-1.best-player-row {
+	div.dark-background-1.best-player-row
+  {
 		box-shadow: inset 0px 1px 0px #616161 !important;
 		background-color: #4b4b4b !important;
 	}
 
-	.dark-background-1.best-player-row
-		#image-contaier
-		img#player-img {
+	.dark-background-1.best-player-row #image-contaier img#player-img
+  {
 		border: 1px solid #999999 !important;
 	}
 
-	.dark-background-1.best-player-row p#box-odds {
+	.dark-background-1.best-player-row p#box-odds
+  {
 		background-color: #616161 !important;
 	}
 
-	.dark-background-1.best-player-row p#box-goals {
+	.dark-background-1.best-player-row p#box-goals
+  {
 		background: #4b4b4b;
 		border: 1px solid #616161;
 	}
 
 	.dark-background-1 div.goals-mobile,
-	.dark-background-1 div.odds-mobile {
+	.dark-background-1 div.odds-mobile
+  {
 		background-color: #616161 !important;
 		border: 1px solid #616161;
 	}
 
-	.dark-background-1 p {
+	.dark-background-1 p
+  {
 		color: #ffffff;
 	}
+
 </style>
