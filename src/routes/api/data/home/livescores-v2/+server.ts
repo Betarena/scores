@@ -25,7 +25,7 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
 
   // NOTE: Handle url-query data;
@@ -41,17 +41,17 @@ export async function GET
    * livescores (v2) main widget data;
    * NOTE: with Hasura (source) fallback
    */
-  const if_0 =
-    !lang 
+  const if_M_0: boolean =
+    !lang
     && !seo
     && !fixtureIds
   ;
-  if (if_0) 
+  if (if_M_0)
   {
     let data: unknown;
     let loadType = "cache";
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_string_cache_data
@@ -61,7 +61,7 @@ export async function GET
       ;
     }
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData
       (
@@ -79,12 +79,12 @@ export async function GET
    * livescores (v2) TARGET widget data;
    * NOTE: ONLY Hasura (source)
    */
-  const if_1 =
-    !lang 
+  const if_M_1 =
+    !lang
     && !seo
     && fixtureIds
   ;
-  if (if_1)
+  if (if_M_1)
   {
     const res =	await fallbackMainData_2
     (
@@ -100,16 +100,16 @@ export async function GET
    * livescores (v2) translation/SEO data;
    * NOTE: with Hasura (source) fallback
    */
-  const if_2 =
+  const if_M_2: boolean =
     lang
     && !seo
   ;
-  if (if_2) 
+  if (if_M_2)
   {
     let data: unknown;
     let loadType = "cache";
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_hset_cache_data
@@ -120,7 +120,7 @@ export async function GET
       ;
     }
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData_1
       (
@@ -138,16 +138,16 @@ export async function GET
    * livescores (v2) exclusive SEO widget data;
    * NOTE: with Hasura (source) fallback
    */
-  const if_3 =
+  const if_M_3: boolean =
     lang != undefined
     && seo != undefined
   ;
-  if (if_3) 
+  if (if_M_3)
   {
     let data: unknown;
     let loadType = "cache";
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_hset_cache_data
@@ -158,7 +158,7 @@ export async function GET
       ;
     }
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       // data = await fallbackMainData
       // (
@@ -185,10 +185,10 @@ export async function GET
  * @param {number} _player_id
  * @returns Promise < B_PSTAT_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   targetDateIso: string
-): Promise < B_LS2_D > 
+): Promise < B_LS2_D >
 {
 
   const dataRes = await HLV2_HP_ENTRY
@@ -206,13 +206,13 @@ async function fallbackMainData
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} LANG 
- * @returns Promise < B_PSTAT_T > 
+ * @param {string} LANG
+ * @returns Promise < B_PSTAT_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_LS2_T > 
+): Promise < B_LS2_T >
 {
 
   const dataRes0 = await HLV2_HP_ENTRY_2
@@ -228,15 +228,15 @@ async function fallbackMainData_1
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} fixtureIds 
- * @returns Promise < B_PSTAT_T > 
+ * @param {string} fixtureIds
+ * @returns Promise < B_PSTAT_T >
  */
 async function fallbackMainData_2
 (
   fixtureIds: string
 )
 {
-  
+
   const fixtureIdsList = fixtureIds
   ?.split
   (
@@ -244,13 +244,13 @@ async function fallbackMainData_2
   )
   ?.map
   (
-    x => 
+    x =>
     parseInt
     (
       x
     )
   );
-  
+
   console.log('fixtureIdsList', fixtureIdsList)
 
   const dataRes0 = await HLV2_HP_ENTRY_3
