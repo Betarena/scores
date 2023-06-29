@@ -24,11 +24,12 @@
 	import LeagueInfoWidget from '$lib/components/page/league/league-info/LeagueInfo-Widget.svelte';
 	import LeagueInfoWidget2 from '$lib/components/page/league/league_info_2/_LeagueInfo_Widget_2.svelte';
 	import StandingsWidget from '$lib/components/page/league/standings/_Standings_Widget.svelte';
-	import TopPlayersWidget from '$lib/components/page/league/top_players/_Top_Players_Widget.svelte';
-	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
+	import TopPlayersWidget from '$lib/components/page/league/top-players/TopPlayers-Widget.svelte';
 	import SvelteSeo from 'svelte-seo';
 	import Breadcrumb from './Breadcrumb.svelte';
 	import FixtureOddsWidget from './fixture-odds/FixtureOdds-Widget.svelte';
+
+  import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
   // #endregion ➤ [MAIN] Package Imports
 
@@ -40,8 +41,6 @@
 	let LEAGUE_INFO_DATA: Cache_Single_Tournaments_League_Info_Data_Response;
 	let STANDINGS_T: REDIS_CACHE_SINGLE_tournament_standings_translation;
 	let STANDINGS_DATA: REDIS_CACHE_SINGLE_tournament_standings_data;
-	let TOP_PLAYERS_T: REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response;
-	let TOP_PLAYERS_DATA: REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response;
 
 	$: PAGE_DATA_SEO = $page.data.PAGE_DATA_SEO;
 	$: TOURNAMENT_DATA_TRANSLATED_COPIES = $page.data.TOURNAMENT_DATA_TRANSLATED_COPIES;
@@ -49,8 +48,6 @@
 	$: LEAGUE_INFO_DATA =	$page.data.LEAGUE_INFO_DATA;
 	$: STANDINGS_T = $page.data.STANDINGS_T;
 	$: STANDINGS_DATA = $page.data.STANDINGS_DATA;
-	$: TOP_PLAYERS_T = $page.data.TOP_PLAYERS_T;
-	$: TOP_PLAYERS_DATA =	$page.data.TOP_PLAYERS_DATA;
 
 	// TODO: FIXME: replace into a single __layout.svelte method [?] using page-stores [?]
 
@@ -313,8 +310,6 @@
 			<div class="grid-display-column">
 				<svelte:component
 					this={TopPlayersWidget}
-					{TOP_PLAYERS_T}
-					{TOP_PLAYERS_DATA}
 				/>
 				<svelte:component
 					this={LeagueInfoWidget2}
@@ -340,8 +335,6 @@
 				/>
 				<svelte:component
 					this={TopPlayersWidget}
-					{TOP_PLAYERS_T}
-					{TOP_PLAYERS_DATA}
 				/>
 				<svelte:component
 					this={LeagueInfoWidget2}

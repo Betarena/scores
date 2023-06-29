@@ -10,6 +10,14 @@ import { error } from '@sveltejs/kit';
 
 import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 import type { PageLoad } from './$types';
+import type { B_SAP_HP_T } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_FEATM_D, B_FEATM_S, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+import type { B_FEATB_D, B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
+import type { B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
+import type { B_LEGL_T } from '@betarena/scores-lib/types/league-list.js';
+import type { B_LEGT_T } from '@betarena/scores-lib/types/leagues-table.js';
+import type { B_SEB_DT } from '@betarena/scores-lib/types/seo-block.js';
+import type { B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
 
 /** @type {import('./$types').PageLoad} */
 export async function load
@@ -60,8 +68,10 @@ export async function load
 		`/api/data/main/seo-pages?lang=${urlLang}&page=homepage`,
 		// [ℹ] home (widgets)
 		`/api/data/home/feat-match?lang=${urlLang}`,
+		`/api/data/home/feat-match?lang=${urlLang}&seo=true`,
 		`/api/data/home/feat-betsite?lang=${urlLang}`,
 		`/api/data/home/top-goalscorers?lang=${urlLang}`,
+		`/api/data/home/top-goalscorers?lang=${urlLang}&seo=true`,
 		`/api/data/home/league-list?lang=${urlLang}`,
 		`/api/data/home/league-table?lang=${urlLang}`,
 		`/api/data/home/seo-block?lang=${urlLang}`,
@@ -69,18 +79,34 @@ export async function load
 		`/api/data/home/livescores-v2?seo=true&lang=${urlLang}`,
 	];
 
+  type HP_PROMISE = [
+    B_SAP_HP_T | undefined,
+    B_FEATM_T | undefined,
+    B_FEATM_S | undefined,
+    B_FEATB_T | undefined,
+    B_TGOL_T | undefined,
+    B_TGOL_S | undefined,
+    B_LEGL_T | undefined,
+    B_LEGT_T | undefined,
+    B_SEB_DT | undefined,
+    B_LS2_T | undefined,
+    B_LS2_S | undefined
+  ];
+
   const data = await promiseUrlsPreload
   (
     urls,
     fetch
-  );
+  ) as HP_PROMISE;
 
 	const
   [
 		PAGE_DATA_SEO,
-		FEATURED_MATCH_WIDGET_DATA_SEO,
+		B_FEATM_T,
+    B_FEATM_S,
 		FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
-		BEST_GOAL_SCORERS_DATA_SEO,
+		B_TGOL_T,
+		B_TGOL_S,
 		LEAGUE_LIST_WIDGET_DATA_SEO,
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,
@@ -126,9 +152,11 @@ export async function load
     // NOTE: not being applied to return;
     // NOTE: not critical - can be silenced;
 		PAGE_DATA_SEO,
-		FEATURED_MATCH_WIDGET_DATA_SEO,
+		B_FEATM_T,
+    B_FEATM_S,
 		FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
-		BEST_GOAL_SCORERS_DATA_SEO,
+		B_TGOL_T,
+    B_TGOL_S,
 		LEAGUE_LIST_WIDGET_DATA_SEO,
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,
