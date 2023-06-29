@@ -19,21 +19,21 @@ COMPONENT JS (w/ TS)
   import FeatMatchLoader from './FeatMatch-Loader.svelte';
   import FeatMatchMain from './FeatMatch-Main.svelte';
 
-	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
-	
+	import type { B_FEATM_D, B_FEATM_S, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
   // let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  // let WIDGET_S_DATA: B_INC_D = $page.data?.FIXTURE_INCIDENTS
-  let WIDGET_T_DATA: B_FEATM_T = $page.data?.FEATURED_MATCH_WIDGET_DATA_SEO
+  let WIDGET_S_DATA: B_FEATM_S = $page.data?.B_FEATM_S;
+  let WIDGET_T_DATA: B_FEATM_T = $page.data?.B_FEATM_T;
   let WIDGET_DATA: B_FEATM_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   // $: PAGE_DATA = $page.data?.PAGE_DATA
-  // $: WIDGET_S_DATA = $page.data?.FIXTURE_INCIDENTS
-  $: WIDGET_T_DATA = $page.data?.FEATURED_MATCH_WIDGET_DATA_SEO
+  $: WIDGET_S_DATA = $page.data?.B_FEATM_S;
+  $: WIDGET_T_DATA = $page.data?.B_FEATM_T;
   $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Incidents' : 'Incidents'
 
   //#endregion ➤ [VARIABLES]
@@ -130,8 +130,33 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!--
   team-names
   -->
-  <p>{WIDGET_T_DATA?.home?.team_name}</p>
-  <p>{WIDGET_T_DATA?.away?.team_name}</p>
+  <p>{WIDGET_S_DATA?.home_team_name}</p>
+  <p>{WIDGET_S_DATA?.away_team_name}</p>
+  <!--
+  LINKS
+  -->
+  <a
+    href={WIDGET_S_DATA?.league_url}>
+    <p>
+      {WIDGET_S_DATA?.league_name}
+    </p>
+  </a>
+  <a
+    href={WIDGET_S_DATA?.fixture_url}>
+    <p>
+      {WIDGET_S_DATA?.home_team_name}
+      vs.
+      {WIDGET_S_DATA?.away_team_name}
+    </p>
+  </a>
+  {#each WIDGET_S_DATA?.player_urls || [] as player}
+    <a
+      href={player?.url}>
+      <p>
+        {player?.common_name}
+      </p>
+    </a>
+  {/each}
 </SeoBox>
 
 <!-- [🐞] -->

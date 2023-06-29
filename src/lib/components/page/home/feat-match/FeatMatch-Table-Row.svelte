@@ -1,9 +1,12 @@
 <script lang="ts">
-  
+	import { sessionStore } from "$lib/store/session.js";
+	import type { Urls } from "@betarena/scores-lib/types/hasura.js";
+
+
   //#region ➤ [MAIN] Package Imports
-	
+
   //#endregion ➤ [MAIN] Package Imports
-  
+
   //#region ➤ [VARIABLES]
 
   export let rating: number;
@@ -12,6 +15,7 @@
   export let appear: number;
   export let assists: number;
   export let goals: number;
+  export let urls: Urls;
   export let viewportDesktop: boolean;
 
 	let ratingColorCode: string;
@@ -31,19 +35,19 @@
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "player.rating" change, assigns color-code;
   */
-  $: if_R_0 = 
+  $: if_R_0 =
     rating != undefined
   ;
-	$: if (if_R_0) 
+	$: if (if_R_0)
   {
     ratingColorCode = 'T';
     if (rating >= 7) ratingColorCode = 'Y';
 		if (rating >= 9) ratingColorCode = 'G';
-	} 
-  else 
+	}
+  else
   {
 		ratingColorCode = undefined;
 	}
@@ -57,7 +61,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -70,9 +74,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class:silver={ratingColorCode === 'Y'}
       class:golden={ratingColorCode === 'G'}
     >
-      <p 
+      <p
         class="
-          w-500 
+          w-500
           medium
         ">
         {rating || ''}
@@ -82,24 +86,31 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   <td
     class="row-space-start">
-    <img
-      loading="lazy"
-      src={img}
-      alt="default alt text"
-      width="32"
-      height="32"
-      class="player-img"
-    />
-    <p
+    <a
+      href="/{urls?.[$sessionStore?.serverLang]}"
       class="
-        w-500 
-        small 
-        desktop-small
-        color-black-2
-        "
+        cursor-pointer
+      "
     >
-      {name}
-    </p>
+      <img
+        loading="lazy"
+        src={img}
+        alt="default alt text"
+        width="32"
+        height="32"
+        class="player-img"
+      />
+      <p
+        class="
+          w-500
+          small
+          desktop-small
+          color-black-2
+          "
+      >
+        {name}
+      </p>
+    </a>
   </td>
 
   {#if viewportDesktop}
@@ -107,8 +118,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <td>
       <p
         class="
-          w-500 
-          medium 
+          w-500
+          medium
           boxed-rating-matches
           color-black-2
         "
@@ -120,8 +131,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <td>
       <p
         class="
-          w-500 
-          medium 
+          w-500
+          medium
           boxed-rating-assits
           color-black-2
         "
@@ -133,8 +144,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     <td>
       <p
         class="
-          w-500 
-          medium 
+          w-500
+          medium
           boxed-rating-goals
           color-black-2
         "
@@ -153,39 +164,39 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 =================-->
 
 <style>
-  
-  .rating-box 
+
+  .rating-box
   {
 		width: fit-content;
 		border-radius: 30px;
 		padding: 1.5px 8px;
 		color: white;
 	}
-	.rating-box p 
+	.rating-box p
   {
 		color: white;
 	}
-	.golden 
+	.golden
   {
 		background: #ffb904;
 	}
-	.silver 
+	.silver
   {
 		background: #a1a1a1;
 	}
-	.bronze 
+	.bronze
   {
 		background: #dbb884;
 	}
 
-  .player-img 
+  .player-img
   {
 		border: 1px solid #cccccc;
 		border-radius: 50%;
 		margin-right: 8px;
 	}
 
-  .boxed-rating-matches 
+  .boxed-rating-matches
   {
     background: #ffffff;
     border: 1px solid #e6e6e6;
@@ -205,7 +216,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     max-height: 30px;
     width: 64px;
   }
-  .boxed-rating-goals 
+  .boxed-rating-goals
   {
     background: #e6e6e6;
     border-radius: 4px;
