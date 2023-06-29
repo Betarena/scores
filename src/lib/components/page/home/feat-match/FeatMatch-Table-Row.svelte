@@ -21,7 +21,11 @@
   export let urls: Urls;
   export let viewportDesktop: boolean;
 
-  let url: string = `/${urls?.[$sessionStore?.serverLang]}`;
+  let url: string =
+    urls?.[$sessionStore?.serverLang] == undefined
+      ? undefined
+      : `/${urls?.[$sessionStore?.serverLang]}`
+  ;
 	let ratingColorCode: string;
 
   //#endregion ➤ [VARIABLES]
@@ -88,8 +92,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     </div>
   </td>
 
-  <td
-    class="row-space-start">
+  <td>
     <a
       href={url}
       class=
@@ -97,34 +100,45 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         cursor-pointer
       "
       class:disable-anchor={url == undefined}
+      class:enabeld-anchor={url != undefined}
       style="display: block;"
     >
-      <img
-        loading="lazy"
-        src={img}
-        alt="default alt text"
-        width="32"
-        height="32"
-        class="player-img"
-      />
-      <p
-        class="
-          w-500
-          small
-          desktop-small
-          color-black-2
-          "
+      <div
+        class="row-space-start"
       >
-        {name}
-      </p>
+        <img
+          loading="lazy"
+          src={img}
+          alt="default alt text"
+          width=32
+          height=32
+          class="player-img"
+        />
+        <p
+          id="featm-player-name"
+          class=
+          "
+            w-500
+            small
+            desktop-small
+            color-black-2
+          "
+        >
+          {name}
+        </p>
+      </div>
     </a>
   </td>
 
+  <!--
+  🖥️ LAPTOP
+  -->
   {#if viewportDesktop}
 
     <td>
       <p
-        class="
+        class=
+        "
           w-500
           medium
           boxed-rating-matches
@@ -137,7 +151,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
     <td>
       <p
-        class="
+        class=
+        "
           w-500
           medium
           boxed-rating-assits
@@ -150,7 +165,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
     <td>
       <p
-        class="
+        class=
+        "
           w-500
           medium
           boxed-rating-goals
@@ -202,6 +218,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-radius: 50%;
 		margin-right: 8px;
 	}
+
+  a:hover p#featm-player-name
+  {
+    color: var(--primary) !important;
+  }
 
   .boxed-rating-matches
   {
