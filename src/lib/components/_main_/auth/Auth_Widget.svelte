@@ -16,17 +16,17 @@ COMPONENT JS (w/ TS)
 	import { app, auth, db_firestore } from '$lib/firebase/init';
 	import { sessionStore } from '$lib/store/session';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { AU_W_STY, AU_W_TAG, AU_W_TOG, dlog, dlogv2, errlog } from '$lib/utils/debug';
+	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { getMoralisAuth, type MoralisAuth } from '@moralisweb3/client-firebase-auth-utils';
 	import { fetchSignInMethodsForEmail, GithubAuthProvider, GoogleAuthProvider, isSignInWithEmailLink, sendSignInLinkToEmail, signInWithCustomToken, signInWithEmailLink, signInWithPopup, type User } from 'firebase/auth';
 	import { doc, getDoc, setDoc } from 'firebase/firestore';
 	import { generateUsername } from 'unique-username-generator';
-// NOTE: pacakge firebase should be same as project global
-  // NOTE: pacakge firebase should be same as project global
-  // ✅ works
-  // '@metamask/sdk/dist/browser/es/metamask-sdk'; // ✅ works
-  // '@metamask/sdk/dist/browser/umd/metamask-sdk'; // ❌ not working
+/**
+   * NOTE: pacakge firebase should be same as project global
+   * @metamask/sdk/dist/browser/es/metamask-sdk; // ✅ works
+   * @metamask/sdk/dist/browser/umd/metamask-sdk'; // ❌ not working
+  */
 
   import { signInWithMoralis, type SignInWithMoralisResponse } from "@moralisweb3/client-firebase-evm-auth";
 
@@ -42,8 +42,8 @@ COMPONENT JS (w/ TS)
 	import metamask_icon from './assets/metamask.svg';
 	import success_icon from './assets/success-alert.svg';
 
-	import type { REDIS_CACHE_SINGLE_auth_translation } from '$lib/models/_main_/auth/types';
 	import type { Auth_Type, Betarena_User, Scores_User } from '$lib/types/types.scores.js';
+	import type { REDIS_CACHE_SINGLE_auth_translation } from '@betarena/scores-lib/types/auth.js';
 
   //#endregion Package Imports
 
@@ -51,7 +51,7 @@ COMPONENT JS (w/ TS)
 
   const TABLET_VIEW = 1160;
 	const MOBILE_VIEW = 725;
-	let mobileExclusive, tabletExclusive: boolean = false;
+	let mobileExclusive: boolean = false, tabletExclusive: boolean = false;
 
 	let email_input: string;
 	let processing: boolean = false;
@@ -101,7 +101,7 @@ COMPONENT JS (w/ TS)
   */
 	async function widget_init
   (
-  ): Promise< REDIS_CACHE_SINGLE_auth_translation >
+  ): Promise < REDIS_CACHE_SINGLE_auth_translation >
   {
 		const dataRes0: REDIS_CACHE_SINGLE_auth_translation = await get
     (
@@ -128,7 +128,7 @@ COMPONENT JS (w/ TS)
     (
       () =>
       {
-			error_auth = false;
+			  error_auth = false;
 		  },
       1500
     );
@@ -166,9 +166,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} 🛑 - window.ethereum is ${window?.ethereum}`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} 🛑 - window.ethereum is ${window?.ethereum}`
       );
 
 			return [
@@ -203,14 +201,12 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlogv2
       (
-        `${AU_W_TAG}`,
+        AU_W_TAG[0],
         [
-          `🔵 More than 1 provider identified! ${window.ethereum.providers.length}`,
-          `targetSelectWallet ${targetSelectWallet}`,
-          `window.ethereum.providers ${window.ethereum.providers}`
-        ],
-        AU_W_TOG,
-        AU_W_STY
+          `🟦 Multiple wallet providers identified: ${window?.ethereum?.providers?.length}`,
+          `🟦 var: targetSelectWallet ${targetSelectWallet}`,
+          `🟦 var: window.ethereum.providers ${window?.ethereum?.providers}`
+        ]
       );
 
 		}
@@ -228,14 +224,12 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlogv2
       (
-        `${AU_W_TAG}`,
+        `${AU_W_TAG[0]}`,
         [
-          `🔵 1 provider identified! ${window.ethereum}`,
-          `targetSelectWallet ${targetSelectWallet}`,
-          `window.ethereum ${window.ethereum}`
-        ],
-        AU_W_TOG,
-        AU_W_STY
+          `🟦 Single provider identified! ${window?.ethereum}`,
+          `🟦 var: targetSelectWallet ${targetSelectWallet}`,
+          `🟦 var: window.ethereum ${window?.ethereum}`
+        ]
       );
 
 		}
@@ -243,25 +237,24 @@ COMPONENT JS (w/ TS)
     // EXIT;
 		if (targetSelectWallet == undefined)
     {
+
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} 🔴 no target wallet (${walletType}) identified`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} 🔴 no target wallet (${walletType}) identified`
       );
+
       return [
         false,
         null
       ];
+
     }
 
     // [🐞]
     dlog
     (
-      `${AU_W_TAG} 🟢 ${walletType} identified`,
-      AU_W_TOG,
-      AU_W_STY
+      `${AU_W_TAG[0]} 🟢 ${walletType} identified`
     );
 
     // NOTE: IMPORTANT
@@ -302,9 +295,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} 🔵 Google Auth Init`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} 🔵 Google Auth Init`
       );
 
 			processing = true;
@@ -320,9 +311,7 @@ COMPONENT JS (w/ TS)
           // [🐞]
           dlog
           (
-            `${AU_W_TAG} 🟢 Google Auth Success`,
-            AU_W_TOG,
-            AU_W_STY
+            `${AU_W_TAG[0]} 🟢 Google Auth Success`
           );
 
 					const user = result?.user;
@@ -356,8 +345,8 @@ COMPONENT JS (w/ TS)
 		}
     catch (error)
     {
-      errlog(`❌ Google auth error: ${error}`)
 			processing = false;
+      errlog(`❌ Google auth error: ${error}`)
 		}
 	}
 
@@ -379,9 +368,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} 🔵 GitHub Auth Init`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} 🔵 GitHub Auth Init`
       );
 
 			auth_service = 'github';
@@ -398,9 +385,7 @@ COMPONENT JS (w/ TS)
           // [🐞]
           dlog
           (
-            `${AU_W_TAG} 🟢 GitHub Auth Success`,
-            AU_W_TOG,
-            AU_W_STY
+            `${AU_W_TAG[0]} 🟢 GitHub Auth Success`
           );
 
 					const user = result.user;
@@ -428,12 +413,17 @@ COMPONENT JS (w/ TS)
           // [ℹ] the email used
           const email = error.customData.email;
           // [ℹ] AuthCredential used
-          const credential =
-            GithubAuthProvider.credentialFromError(
-              error
-            );
+          const credential = GithubAuthProvider.credentialFromError
+          (
+            error
+          );
+
           // [🐞]
-          dlog(`${AU_W_TAG} credential: ${credential}; email: ${email}`, AU_W_TOG, AU_W_STY)
+          dlog
+          (
+            `${AU_W_TAG[0]} credential: ${credential}; email: ${email}`
+          );
+
           // TODO: error user-sign in
           // signInWithCredential(auth, credential)
           // .then(user => {
@@ -471,9 +461,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} email_input: ${email_input}`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} email_input: ${email_input}`
       );
 
 			email_error_format = false;
@@ -526,7 +514,7 @@ COMPONENT JS (w/ TS)
 			//   return
 			// }
 
-			// [ℹ] cont. send email
+			// cont. send email
 			await sendSignInLinkToEmail
       (
 				auth,
@@ -540,17 +528,22 @@ COMPONENT JS (w/ TS)
 					// [ℹ] The link was successfully sent - (custom) UI update
 					processing = false;
 					auth_view = false;
-					if (email_already_in_use) {
+					if (email_already_in_use)
+          {
 						email_sent_process = true;
 						sent_email_date = new Date();
-						sent_email_date.setMinutes(
+						sent_email_date.setMinutes
+            (
 							sent_email_date.getMinutes() + 5
 						); // [ℹ] add 5 min.
-					} else {
+					}
+          else
+          {
 						email_verify_process = true;
 					}
 					// [ℹ] store target email in localStroage() for retrival on same device
-					window.localStorage.setItem(
+					window.localStorage.setItem
+          (
 						'emailForSignIn',
 						email_input
 					);
@@ -586,7 +579,7 @@ COMPONENT JS (w/ TS)
       isSignInWithEmailLink
       (
 				auth,
-				window.location.href
+				window?.location?.href
 			)
     ;
     if (!if_M_0) return;
@@ -596,9 +589,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `${AU_W_TAG} 🔵 EmailLink OAuth2`,
-      AU_W_TOG,
-      AU_W_STY
+      `${AU_W_TAG[0]} 🔵 EmailLink OAuth2`
     );
 
     // NOTE: apiKey, oobCode, mode, lang query param(s) passed in URL query params
@@ -616,9 +607,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `${AU_W_TAG} email: ${email}`,
-      AU_W_TOG,
-      AU_W_STY
+      `${AU_W_TAG[0]} email: ${email}`
     );
 
     // CHECK: User opened deep-link on different device, from the created on-intent;
@@ -654,11 +643,14 @@ COMPONENT JS (w/ TS)
         const revert_url = `${$page?.url?.origin}${$page?.url?.pathname}`;
 
         // [🐞]
-        dlog
+        dlogv2
         (
-          `${AU_W_TAG} 🟢 EmailLink Auth`,
-          AU_W_TOG,
-          AU_W_STY
+          AU_W_TAG[0],
+          [
+            `🟢 EmailLink Auth`,
+            `🟦 var: result?.user?.displayName ${result?.user?.displayName}`,
+            `🟦 var: result?.user?.email ${result?.user?.email}`
+          ]
         );
 
         window.localStorage.removeItem
@@ -668,12 +660,9 @@ COMPONENT JS (w/ TS)
 
         // NOTE: You can access the new user via result.user
         // NOTE: Additional user info profile not available via:
-        // result.additionalUserInfo.profile == null
+        // => result.additionalUserInfo.profile == null
         // NOTE: You can check if the user is new or existing:
-        // result.additionalUserInfo.isNewUser
-
-        dlog(`${AU_W_TAG} result?.user?.displayName: ${result?.user?.displayName}`, AU_W_TOG, AU_W_STY)
-        dlog(`${AU_W_TAG} result?.user?.email: ${result?.user?.email}`, AU_W_TOG, AU_W_STY)
+        // => result.additionalUserInfo.isNewUser
 
         successAuthComplete
         (
@@ -701,7 +690,7 @@ COMPONENT JS (w/ TS)
       {
         // Some error occurred, you can inspect the code: error.code
         // Common errors could be invalid email and invalid or expired OTPs.
-        errlog(`❌ Email (MagicLink) Auth error: ${e}`)
+        errlog(`❌ Email (MagicLink) Auth error: ${error}`)
       }
     );
   }
@@ -729,9 +718,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} callback_auth_url: ${callback_auth_url}`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} callback_auth_url: ${callback_auth_url}`
       );
 
 			const discord_outh_url = import.meta.env?.VITE_DISCORD_OAUTH_URL;
@@ -756,7 +743,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      '🟠 Looking for Discord DeepLink!'
+      `${AU_W_TAG[0]} 🟠 Looking for Discord DeepLink!`
     );
 
 		const f_uid: string = $page.url.searchParams.get('f_uid');
@@ -770,9 +757,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} 🔵 Discord OAuth2`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} 🔵 Discord OAuth2`
       );
 
 			// ACTION: Clean up url from queries/auth-bloat;
@@ -801,9 +786,7 @@ COMPONENT JS (w/ TS)
           // [🐞]
           dlog
           (
-            `${AU_W_TAG} 🟢 Success! Discord OAuth2'`,
-            AU_W_TOG,
-            AU_W_STY
+            `${AU_W_TAG[0]} 🟢 Success! Discord OAuth2'`
           );
 
 					const user = userCredential?.user;
@@ -880,12 +863,11 @@ COMPONENT JS (w/ TS)
       ;
 			if (if_M_1)
       {
+
         // [🐞]
 			  dlog
         (
-          "🔴 Moralis Auth not found!",
-          AU_W_TOG,
-          AU_W_STY
+          `${AU_W_TAG[0]} 🔴 Moralis Auth not found!`
         );
 
 			  alert
@@ -932,8 +914,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
 			dlog
       (
-        '🟢 Moralis Auth',
-        true
+        `${AU_W_TAG[0]} 🟢 Moralis Auth`
       );
 
 			successAuthComplete
@@ -959,7 +940,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      '🟠 Looking for MetaMask In-App Browser DeepLink!'
+      `${AU_W_TAG[0]} 🟠 Looking for MetaMask In-App Browser DeepLink!`
     );
 
 		const metmaskAuth: string =	$page.url.searchParams.get('metmaskAuth');
@@ -970,9 +951,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} 🔵 MetaMask OAuth2`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} 🔵 MetaMask OAuth2`
       );
 
 			// ACTION: Clean up url from queries/auth-bloat;
@@ -1000,8 +979,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      '🟢 Moralis Auth',
-      true
+      `${AU_W_TAG[0]} 🟢 Moralis Auth`
     );
 
     successAuthComplete
@@ -1035,17 +1013,17 @@ COMPONENT JS (w/ TS)
 		auth_provider_type?: Auth_Type
   ): Promise < void >
   {
+
     // [🐞]
     dlogv2
     (
-      `${AU_W_TAG} successAuthComplete()`,
+      AU_W_TAG[0],
       [
+        `🟦 Executing successAuthComplete`,
         firebase_user,
         web3_wallet_addr,
         auth_provider_type
-      ],
-      AU_W_TOG,
-      AU_W_STY
+      ]
     );
 
     // ACTION: Create / retrieve target Betarena_User
@@ -1084,8 +1062,8 @@ COMPONENT JS (w/ TS)
     (
       () =>
       {
-			success_auth = false;
-			auth_type = 'login';
+        success_auth = false;
+        auth_type = 'login';
 		  },
       1500
     );
@@ -1111,30 +1089,63 @@ COMPONENT JS (w/ TS)
     auth_provider_type: Auth_Type
   ): Promise< [ Betarena_User, boolean ]>
   {
-    try {
-      const docRef = doc(db_firestore, "betarena_users", uid);
+    try
+    {
+      const docRef = doc
+      (
+        db_firestore,
+        "betarena_users",
+        uid
+      );
       const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        // [ℹ] return existing firestore user-instance;
-        dlog(`${AU_W_TAG} 🟢 Target UID exists`, AU_W_TOG, AU_W_STY)
-        dlog(`${AU_W_TAG} User Data ${docSnap.data()}`, AU_W_TOG, AU_W_STY)
+
+      if (docSnap.exists())
+      {
+        // [🐞]
+        dlogv2
+        (
+          AU_W_TAG[0],
+          [
+            `🟢 Target UID exists`,
+            `🟦 var: docSnap ${docSnap.data()}`
+          ]
+        );
+
+        // return existing firestore user-instance;
         return [docSnap.data() as Betarena_User, true]
-      } else {
-        // [ℹ] create new user-instance;
-        dlog(`${AU_W_TAG} 🔴 Target UID does not exists`, AU_W_TOG, AU_W_STY)
-        dlog(`${AU_W_TAG} 🔵 Creating new Betarena_User instance`, AU_W_TOG, AU_W_STY)
-        const scores_user_data: Betarena_User = {
+      }
+      else
+      {
+
+        // [🐞]
+        dlogv2
+        (
+          AU_W_TAG[0],
+          [
+            `🔴 Target UID does not exists`,
+            `🔵 Creating new Betarena_User instance`
+          ]
+        );
+
+        // create new user-instance;
+        const scores_user_data: Betarena_User =
+        {
           lang: $sessionStore?.serverLang,
           registration_type: [auth_provider_type],
           // NOTE: max. length - no separator - no random digits
           username: generateUsername('', 0, 10),
-          register_date: firebase_user?.metadata?.creationTime, // [ℹ] can be null (wehn using web3)
-          profile_photo: firebase_user?.photoURL, // [ℹ] can be null (wehn using web3)
+          // [ℹ] can be null (when using web3)
+          register_date: firebase_user?.metadata?.creationTime,
+           // [ℹ] can be null (when using web3)
+          profile_photo: firebase_user?.photoURL,
           web3_wallet_addr: web3_wallet_addr || undefined
         }
+
         return [scores_user_data, false]
       }
-    } catch (e) {
+    }
+    catch (e)
+    {
       errlog(`❌ Error adding document: ${e}`)
     }
   }
@@ -1159,9 +1170,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${AU_W_TAG} 🔵 Persisting new user ${user?.firebase_user_data?.uid} to firestore...`,
-        AU_W_TOG,
-        AU_W_STY
+        `${AU_W_TAG[0]} 🔵 Persisting New User ${user?.firebase_user_data?.uid} to Firestore`
       );
 
       await setDoc
@@ -1294,84 +1303,104 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 {#await widget_init()}
 	<!-- promise is pending -->
 {:then WIDGET_LAZY_LOAD_DATA}
+
 	<!--
-  [ℹ] background backdrop fade
+  BACKGROUND BACKDROP FADE
   -->
-	{#if $sessionStore.auth_show}
+	{#if $sessionStore?.auth_show}
 		<div
 			id="background-modal-blur"
-			on:click={() =>
-				($sessionStore.auth_show = false)}
+			on:click={() =>	($sessionStore.auth_show = false)}
 			in:fade
 		/>
 	{/if}
 
 	<!--
-  [ℹ] auth message show box [success]
+  AUTH MESSAGE [SUCCESS]
   -->
 	{#if success_auth}
+
 		<div
 			id="auth-alert-box"
 			class="row-space-start"
 			transition:fade
 		>
+
 			<img
 				src={success_icon}
 				alt="Success Icon"
 				title="Success Icon"
 			/>
-			<p class="w-500">
+
+			<p
+        class="w-500">
 				{#if auth_type == 'login'}
-					{WIDGET_LAZY_LOAD_DATA?.success_msg[0]}
+					{WIDGET_LAZY_LOAD_DATA?.success_msg?.[0]}
 				{:else}
-					{WIDGET_LAZY_LOAD_DATA?.success_msg[1]}
+					{WIDGET_LAZY_LOAD_DATA?.success_msg?.[1]}
 				{/if}
 			</p>
+
 		</div>
+
 	{/if}
 
 	<!--
-  [ℹ] auth message show box [error]
+  AUTH MESSAGE [ERROR]
   -->
 	{#if error_auth}
+
 		<div
 			id="auth-alert-box"
 			class="row-space-start"
 			transition:fade
 		>
+
 			<img
 				src={error_icon}
 				alt="Error Icon"
 				title="Error Icon"
 			/>
-			<p class="w-500">
+
+			<p
+        class="w-500"
+      >
 				{WIDGET_LAZY_LOAD_DATA?.err_msg[0]}
 			</p>
+
 		</div>
+
 	{/if}
 
 	<!--
-  [ℹ] main auth widget component
+  AUTH WIDGET
   -->
-	{#if $sessionStore.auth_show}
+	{#if $sessionStore?.auth_show}
+
 		<div
 			id="widget-outer"
-			class:dark-background-1={$userBetarenaSettings.theme ==
-				'Dark'}
+			class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 			in:fade
 		>
+
 			<!--
-      [ℹ] processing view box
-      [ℹ] HIDDEN by DEFAULT
+      PROCESSING STATE
       -->
 			{#if processing}
-				<div id="processing-auth-box">
-					<div id="inner-processing-box">
+
+				<div
+          id="processing-auth-box"
+        >
+					<div
+            id="inner-processing-box"
+          >
+
 						<img
 							src={loader_animation}
 							alt="Loader Vector"
 							title="Processing..."
 						/>
+
 						<p
 							class="
                 color-grey
@@ -1379,33 +1408,38 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 						>
 							Processing
 						</p>
+
 					</div>
 				</div>
+
 			{/if}
 
 			<!--
-      [ℹ] email verification view box
-      [ℹ] HIDDEN by DEFAULT
+      EMAIL VERIFICATION STATE
       -->
 			{#if email_verify_process}
-				<div id="email-auth-verify-box">
+
+        <div
+          id="email-auth-verify-box"
+        >
+
 					<!--
-          [ℹ] close icon logo
+          CLOSE ICON
           -->
 					<img
 						id="close-vector"
 						class="cursor-pointer"
 						src="/assets/svg/close.svg"
 						alt="close-svg"
-						on:click={() =>
-							($sessionStore.auth_show = false)}
+						on:click={() => ($sessionStore.auth_show = false)}
 					/>
 
 					<!--
-          [ℹ] verify text
+          VERIFY TEXT
           -->
 					<p
-						class="
+						class=
+            "
               w-500
               color-black-2
             "
@@ -1413,14 +1447,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					>
 						{WIDGET_LAZY_LOAD_DATA?.verification}
 					</p>
+
 					<!--
-          [ℹ] verify email
+          VERIFY EMAIL
           -->
-					<p class="color-grey">
+					<p
+            class="color-grey"
+          >
 						{WIDGET_LAZY_LOAD_DATA?.verify_email}
 					</p>
+
 					<!--
-          [ℹ] verify email icon
+          VERIFY EMAIL ICON
           -->
 					<img
 						id="email-verify-icon"
@@ -1428,81 +1466,92 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 						alt="Email Vector"
 						title="Email Vector"
 					/>
+
 					<!--
-          [ℹ] verify email text
-          -->
-					<p class="color-grey">
-						{WIDGET_LAZY_LOAD_DATA
-							?.email_verify_sent[0]}
-						<br />
-						<span class="color-black-2">
-							{email_input}
-						</span>
-						<br />
-						{WIDGET_LAZY_LOAD_DATA
-							?.email_verify_sent[1]}
-					</p>
-					<!--
-          [ℹ] verify email to my inbox
+          VERIFY EMAIL TEXT
           -->
 					<p
-						class="
+            class="color-grey"
+          >
+						{WIDGET_LAZY_LOAD_DATA?.email_verify_sent?.[0]}
+						<br />
+
+						<span
+              class="color-black-2"
+            >
+							{email_input}
+						</span>
+
+						<br />
+
+						{WIDGET_LAZY_LOAD_DATA?.email_verify_sent?.[1]}
+					</p>
+
+					<!--
+          VERIFY EMAIL BOX
+          -->
+					<p
+						class=
+            "
               color-primary
               cursor-pointer
             "
 						style="margin-top: 8px;"
-						on:click={() =>
-							window.open('mailto:')}
+						on:click={() => window.open('mailto:')}
 					>
 						{WIDGET_LAZY_LOAD_DATA?.inbox}
 					</p>
+
 					<!--
-          [ℹ] verify no email text
+          VEIRFY NO EMAIL
           -->
 					<p
 						class="color-grey"
 						style="margin-top: 24px;"
 					>
-						{WIDGET_LAZY_LOAD_DATA
-							?.no_email_verify[0]}
+						{WIDGET_LAZY_LOAD_DATA?.no_email_verify?.[0]}
 						<span
-							class="
+							class=
+              "
                 color-primary
                 cursor-pointer
               "
-							on:click={() =>
-								loginEmailLink()}
+							on:click={() => loginEmailLink()}
 						>
-							{WIDGET_LAZY_LOAD_DATA
-								?.no_email_verify[1]}
+							{WIDGET_LAZY_LOAD_DATA?.no_email_verify?.[1]}
 						</span>
 					</p>
+
 				</div>
+
 			{/if}
 
 			<!--
-      [ℹ] email sent view box
-      [ℹ] HIDDEN by DEFAULT
+      EMAIL SENT STATE
       -->
 			{#if email_sent_process}
-				<div id="email-auth-verify-box">
+
+				<div
+          id="email-auth-verify-box"
+        >
+
 					<!--
-          [ℹ] close icon logo
+          CLOSE ICON LOGO
           -->
 					<img
 						id="close-vector"
 						class="cursor-pointer"
 						src="/assets/svg/close.svg"
 						alt="close-svg"
-						on:click={() =>
-							($sessionStore.auth_show = false)}
+						on:click={() =>	($sessionStore.auth_show = false)}
 					/>
 
 					<!--
-          [ℹ] verify text
+          VERIFY TEXT
           -->
 					<p
-						class="
+						class=
+            "
               w-500
               color-black-2
             "
@@ -1510,14 +1559,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 					>
 						Check your email
 					</p>
+
 					<!--
-          [ℹ] verify email
+          VERIFY EMAIL
           -->
-					<p class="color-grey">
+					<p
+            class="color-grey"
+          >
 						Please follow the link in your email
 					</p>
+
 					<!--
-          [ℹ] verify email icon
+          VERIFY EMAIL ICON
           -->
 					<img
 						id="email-verify-icon"
@@ -1525,101 +1578,114 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 						alt="Email Vector"
 						title="Email Vector"
 					/>
+
 					<!--
-          [ℹ] verify email text
-          -->
-					<p class="color-grey">
-						An email has been sent to
-						<br />
-						<span class="color-black-2">
-							{email_input}
-						</span>
-						<br />
-						Please follow the link in your email to
-						login.
-					</p>
-					<!--
-          [ℹ] verify email to my inbox
+          VERIFY EMAIL TEXT
           -->
 					<p
-						class="
+            class="color-grey"
+          >
+						An email has been sent to
+
+						<br />
+
+						<span
+              class="color-black-2"
+            >
+							{email_input}
+						</span>
+
+						<br />
+
+						Please follow the link in your email to	login.
+					</p>
+
+					<!--
+          VERIFY EMAIL INBOX
+          -->
+					<p
+						class=
+            "
               color-primary
               cursor-pointer
             "
 						style="margin-top: 8px;"
-						on:click={() =>
-							window.open('mailto:')}
+						on:click={() => window.open('mailto:')}
 					>
 						Go to my inbox
 					</p>
+
 					<!--
-          [ℹ] verify no email text
+          VERIFY EMAIL TEXT
           -->
 					{#if allow_resend}
+
 						<p
 							class="color-grey"
 							style="margin-top: 24px;"
 						>
 							Did not get the email?
 							<span
-								class="
+								class=
+                "
                   color-primary
                   cursor-pointer
                 "
-								on:click={() =>
-									loginEmailLink()}
+								on:click={() => loginEmailLink()}
 							>
 								Resend email
 							</span>
 						</p>
+
 					{:else}
+
 						<p
 							class="color-grey"
 							style="margin-top: 24px;"
 						>
 							{countD_min}:{countD_sec} to resend option
 						</p>
+
 					{/if}
+
 				</div>
+
 			{/if}
 
 			<!--
-      [ℹ] authetication view
-      [ℹ] SHOWN by DEFAULT
+      AUTHETICATION VIEW
       -->
 			{#if auth_view}
+
 				<!--
-        [ℹ] close icon logo
+        CLOSE ICON
         -->
 				<img
 					id="close-vector"
 					class="cursor-pointer"
 					src="/assets/svg/close.svg"
 					alt="close-svg"
-					on:click={() =>
-						($sessionStore.auth_show = false)}
+					on:click={() => ($sessionStore.auth_show = false)}
 				/>
 
 				<!--
-        [ℹ] auth logo betarena
+        AUTH LOGO BETARENA
         -->
 				<img
 					id="auth-logo"
-					src={$userBetarenaSettings.theme ==
-					'Dark'
-						? logo_dark
-						: logo}
+					src={$userBetarenaSettings.theme == 'Dark' ? logo_dark : logo}
 					alt="Betarena Logo"
 					title="Betarena Logo"
 					aria-label="Betarena Logo"
 				/>
 
 				<!--
-        [ℹ] auth login/sign-up text
+        LOGIN/SIGN-UP TEXT
         -->
 				<p
 					id="auth-head"
-					class="
+					class=
+          "
             color-black-2
             w-500
           "
@@ -1632,49 +1698,52 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				</p>
 
 				<!--
-        [ℹ] auth login/sign-up w/email-opt
+        LOGIN/SIGN-UP TEXT WITH EMAIL
         -->
 				<p
-					class="
+					class=
+          "
             color-grey
           "
 				>
 					{#if auth_type == 'login'}
-						{WIDGET_LAZY_LOAD_DATA?.email_msg[0]}
+						{WIDGET_LAZY_LOAD_DATA?.email_msg?.[0]}
 					{:else}
-						{WIDGET_LAZY_LOAD_DATA?.email_msg[1]}
+						{WIDGET_LAZY_LOAD_DATA?.email_msg?.[1]}
 					{/if}
 				</p>
+
 				<form
-					on:submit|preventDefault={() =>
-						loginEmailLink()}
+					on:submit|preventDefault={() => loginEmailLink()}
 				>
 					<!--
           [ℹ] input email
           class:error-email={email_error_format || email_already_in_use}
           -->
+
 					<input
 						id="email"
 						type="email"
 						placeholder="email@gmail.com"
 						bind:value={email_input}
-						on:invalid={() =>
-							wrongEmailFormatToggle()}
+						on:invalid={() => wrongEmailFormatToggle()}
 						autocomplete="off"
 						class:error-email={email_error_format}
 						required
 					/>
+
 					<!--
-          [ℹ] error email validation format
+          ERROR EMAIL VALIDATION
           -->
 					{#if email_error_format}
 						<p
 							class="color-error"
 							style="margin-top: 10px;"
 						>
-							{WIDGET_LAZY_LOAD_DATA?.err_msg[1]}
+							{WIDGET_LAZY_LOAD_DATA?.err_msg?.[1]}
 						</p>
 					{/if}
+
 					<!--
           [ℹ] error email validation exists
           {#if email_already_in_use}
@@ -1685,46 +1754,60 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </p>
           {/if}
           -->
+
 					<!--
-          [ℹ] submit email button
+          SUBMIT EMAIL BUTTON
           -->
 					<button
 						id="email-btn"
-						class="
+						class=
+            "
               btn-primary
             "
 						type="submit"
 					>
 						<p
-							class="
+							class=
+              "
                 w-500
               "
 						>
 							{WIDGET_LAZY_LOAD_DATA?.email_continue}
 						</p>
 					</button>
+
 				</form>
 
 				<!--
-        [ℹ] auth login/sign-up w/alt. OAuth2 options
+        AUTH LOGIN/SIGN-UP 0Auth2
         -->
 				<div
 					id="other-oauth-divider-box"
 					class="row-space-out"
 				>
+
 					<div class="hr-box" />
+
 					<p
-						class="
+						class=
+            "
               color-grey
             "
 					>
 						{WIDGET_LAZY_LOAD_DATA?.or}
 					</p>
+
 					<div class="hr-box" />
+
 				</div>
-				<div id="oauth-box" class="row-space-out">
+
+				<div
+          id="oauth-box"
+          class="row-space-out"
+        >
+
 					<!--
-          [ℹ] GOOGLE
+          GOOGLE
           -->
 					<button
 						class="btn-auth-opt"
@@ -1736,8 +1819,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 							title="Google Icon"
 						/>
 					</button>
+
 					<!--
-          [ℹ] DISCROD
+          DISCROD
           -->
 					<button
 						class="btn-auth-opt"
@@ -1749,32 +1833,33 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 							title="Discord Icon"
 						/>
 					</button>
+
 					<!--
-          [ℹ] GITHUB
+          GITHUB
           -->
 					<button
 						class="btn-auth-opt"
 						on:click={() => loginGitHub()}
 					>
 						<img
-							src={$userBetarenaSettings.theme ==
-							'Dark'
-								? github_dark_icon
-								: github_icon}
+							src={$userBetarenaSettings.theme ==	'Dark' ? github_dark_icon : github_icon}
 							alt="Github Icon"
 							title="Github Icon"
 						/>
 					</button>
+
 				</div>
 
 				<!--
-        [ℹ] auth login/sign-up w/alt. Web3
+        AUTH LOGIN/SIGN-UP WEB-3
         -->
 				<div
 					id="web3-divider-box"
 					class="row-space-out"
 				>
+
 					<div class="hr-box" />
+
 					<p
 						class="
               color-grey
@@ -1786,11 +1871,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 							{WIDGET_LAZY_LOAD_DATA?.or_web3_signup}
 						{/if}
 					</p>
+
 					<div class="hr-box" />
+
 				</div>
+
 				<button
 					id="metamask"
-					class="
+					class=
+          "
             row-space-center
             btn-auth-opt
           "
@@ -1802,7 +1891,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 						title="Metamask Icon"
 					/>
 					<p
-						class="
+						class=
+            "
               w-500
               color-black-2
             "
@@ -1812,42 +1902,52 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 				</button>
 
 				<!--
-        [ℹ] auth login/sign-up w/alt. text prompt for account
+        AUTH LOGIN/SIGN-UP TEXT-PROMPT ACCOUNT
         -->
 				<p
 					id="account-onboard-text"
-					class="
+					class=
+          "
             color-grey
           "
 				>
+
 					{#if auth_type == 'login'}
+
 						{WIDGET_LAZY_LOAD_DATA?.no_account}
 						<span
-							class="
+							class=
+              "
                 color-primary
                 cursor-pointer
               "
-							on:click={() =>
-								(auth_type = 'register')}
+							on:click={() => (auth_type = 'register')}
 						>
 							{WIDGET_LAZY_LOAD_DATA?.register}
 						</span>
+
 					{:else}
+
 						{WIDGET_LAZY_LOAD_DATA?.account_exists}
 						<span
-							class="
+							class=
+              "
                 color-primary
                 cursor-pointer
               "
-							on:click={() =>
-								(auth_type = 'login')}
+							on:click={() => (auth_type = 'login')}
 						>
 							{WIDGET_LAZY_LOAD_DATA?.login}
 						</span>
+
 					{/if}
+
 				</p>
+
 			{/if}
+
 		</div>
+
 	{/if}
 
 	<!-- promise was fulfilled -->
@@ -1958,9 +2058,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 48px;
 	}
 
-	div#email-auth-verify-box
+	/*
+  div#email-auth-verify-box
   {
 	}
+  */
 	div#email-auth-verify-box img#email-verify-icon
   {
 		margin: 30px 0;
@@ -2216,4 +2318,5 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		border: 1px solid #f5620f !important;
 	}
+
 </style>
