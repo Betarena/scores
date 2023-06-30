@@ -266,7 +266,7 @@ COMPONENT JS - BASIC
     }
 
 		const lang = $userBetarenaSettings?.lang;
-		dlog(`${NB_W_TAG} 🔵 Updating platform user lang ${lang}`, true);
+		dlog(`${NB_W_TAG} 🔵 Updating platform user lang ${lang}`, NB_W_TOG);
     // [ℹ] (update)from localStorage()
 		userBetarenaSettings.updateLang(
 			lang
@@ -281,7 +281,7 @@ COMPONENT JS - BASIC
 		await updateDoc(userRef, {
 			lang: lang
 		});
-		dlog(`${NB_W_TAG} 🟢 User language has been updated`, true);
+		dlog(`${NB_W_TAG} 🟢 User language has been updated`, NB_W_TOG);
   }
 
   /**

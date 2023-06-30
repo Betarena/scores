@@ -9,32 +9,27 @@ COMPONENT JS (w/ TS)
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
-  import { get } from '$lib/api/utils.js';
   import { sessionStore } from '$lib/store/session.js';
-  import { userBetarenaSettings } from '$lib/store/user-settings.js';
-  import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { VO_W_F_STY, VO_W_F_TAG, VO_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 
-  import SeoBox from '$lib/components/SEO-Box.svelte';
-  import FeatMatchLoader from './FeatMatch-Loader.svelte';
-  import FeatMatchMain from './FeatMatch-Main.svelte';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import TopPlayersLoader from './TopPlayers-Loader.svelte';
+	import TopPlayersMain from './TopPlayers-Main.svelte';
 
-	import type { B_FEATM_D, B_FEATM_S, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+	import type { B_TP_D, B_TP_T } from '@betarena/scores-lib/types/top-players.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
-  // let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  let WIDGET_S_DATA: B_FEATM_S = $page.data?.B_FEATM_S;
-  let WIDGET_T_DATA: B_FEATM_T = $page.data?.B_FEATM_T;
-  let WIDGET_DATA: B_FEATM_D;
+  let WIDGET_S_DATA: B_TP_D = $page.data.B_TP_D;
+  let WIDGET_T_DATA: B_TP_T = $page.data?.B_TP_T;
+  let WIDGET_DATA: B_TP_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
-  // $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_S_DATA = $page.data?.B_FEATM_S;
-  $: WIDGET_T_DATA = $page.data?.B_FEATM_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Incidents' : 'Incidents'
+  $: WIDGET_T_DATA = $page.data?.B_TP_T;
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.top_players || 'Top Players' : 'Top Players';
 
   //#endregion ➤ [VARIABLES]
 
@@ -50,24 +45,18 @@ COMPONENT JS (w/ TS)
    */
   async function widgetInit
   (
-  ): Promise < B_FEATM_D >
+  ): Promise < B_TP_D >
   {
 		await sleep(3000);
 
-    const response: B_FEATM_D = await get
-    (
-			'api/data/home/feat-match?geoPos=' +
-      $userBetarenaSettings.country_bookmaker
-		);
-
-    WIDGET_DATA = response
+    WIDGET_DATA = WIDGET_S_DATA
 
     const if_0 =
       WIDGET_DATA == undefined
     ;
 		if (if_0)
     {
-      dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
+      dlog(`${VO_W_F_TAG} ❌ no data available!`, VO_W_F_TOG, VO_W_F_STY);
 			NO_WIDGET_DATA = true;
 			return;
 		}
@@ -121,46 +110,16 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <!--
-  widget-title
-  -->
-  <h2>
-    {WIDGET_TITLE}
-  </h2>
-  <!--
-  team-names
-  -->
-  <p>{WIDGET_S_DATA?.home_team_name}</p>
-  <p>{WIDGET_S_DATA?.away_team_name}</p>
-  <!--
-  LINKS
-  -->
-  <a
-    href={WIDGET_S_DATA?.league_url}>
-    <p>
-      {WIDGET_S_DATA?.league_name}
-    </p>
-  </a>
-  <a
-    href={WIDGET_S_DATA?.fixture_url}>
-    <p>
-      {WIDGET_S_DATA?.home_team_name}
-      vs.
-      {WIDGET_S_DATA?.away_team_name}
-    </p>
-  </a>
-  {#each WIDGET_S_DATA?.player_urls || [] as player}
-    <a
-      href={player?.url}>
-      <p>
-        {player?.common_name}
-      </p>
+  <h2>{WIDGET_T_DATA?.top_players}</h2>
+  {#each WIDGET_S_DATA?.seasons?.[0]?.top_players_rating || [] as player}
+    <a href={player?.urls?.[$sessionStore?.serverLang]}>
+      <p>{player.player_name}</p>
     </a>
   {/each}
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <FeaturedMatchContentLoading /> -->
+<!-- <VotesLoader /> -->
 
 <!--
 [ℹ] main widget
@@ -169,15 +128,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!--
   promise is pending
   -->
-  <FeatMatchLoader />
+  <TopPlayersLoader />
 {:then data}
   <!--
   promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <FeatMatchMain
-      B_FEATM_D={WIDGET_DATA}
-      B_FEATB_T={WIDGET_T_DATA}
+    <TopPlayersMain
+      B_TP_D={WIDGET_DATA}
+      B_TP_T={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}

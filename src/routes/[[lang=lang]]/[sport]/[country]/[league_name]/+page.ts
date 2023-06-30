@@ -126,28 +126,20 @@ export async function load
     `/api/data/league/info?url=${url.pathname}`,
     `/api/data/league/standings?lang=${urlLang}`,
     `/api/data/league/standings?league_id=${league_id}`,
-    `/api/data/league/top-players?lang=${urlLang}`,
-    `/api/data/league/top-players?league_id=${league_id}`,
+    `/api/data/league/top-players?lang=${urlLang}&hasura=true`,
+    `/api/data/league/top-players?league_id=${league_id}&hasura=true`,
     `/api/data/league/fix-odds?lang=${urlLang}`,
     `/api/data/league/fix-odds?league_id=${league_id}` // [?] alt.2
   ];
 
   type HP_PROMISE = [
-    // (archive) Cache_Single_Tournaments_SEO_Translation_Response
     B_SAP_TP_T | undefined,
-    // (archive) Cache_Single_Tournaments_League_Info_Data_Response
     B_LEG_D | undefined,
-    // (archive) REDIS_CACHE_SINGLE_tournament_standings_translation
     B_STA_T | undefined,
-    // (archive) REDIS_CACHE_SINGLE_tournament_standings_data
     B_STA_D | undefined,
-    // (archive) REDIS_CACHE_SINGLE_tournaments_top_player_widget_t_data_response
     B_TP_T | undefined,
-    // (archive) REDIS_CACHE_SINGLE_tournaments_top_player_widget_data_response
     B_TP_D | undefined,
-    // (archive) REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_t_data_response
     B_FO_T | undefined,
-    // (archive) REDIS_CACHE_SINGLE_tournaments_fixtures_odds_widget_data_response
     B_FO_D | undefined
   ]
 
@@ -163,8 +155,8 @@ export async function load
     LEAGUE_INFO_DATA,
     STANDINGS_T,
     STANDINGS_DATA,
-    TOP_PLAYERS_T,
-    TOP_PLAYERS_DATA,
+    B_TP_T,
+    B_TP_D,
     FIXTURES_ODDS_T,
     FIXTURES_ODDS_DATA
 	] = data;
@@ -250,8 +242,8 @@ export async function load
     LEAGUE_INFO_DATA,
     STANDINGS_T,
     STANDINGS_DATA,
-    TOP_PLAYERS_T,
-    TOP_PLAYERS_DATA,
+    B_TP_T,
+    B_TP_D,
     FIXTURES_ODDS_T,
     FIXTURES_ODDS_DATA
   };

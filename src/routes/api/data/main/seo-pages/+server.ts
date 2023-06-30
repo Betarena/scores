@@ -24,7 +24,7 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
   // IMPORTANT
   // valid url check;
@@ -58,7 +58,7 @@ export async function GET
     || fixtureUrl
     || playerUrl
   ;
-	if (if_M_0) 
+	if (if_M_0)
   {
 		return validUrlCheck
     (
@@ -76,7 +76,7 @@ export async function GET
     lang
     && page === 'homepage'
   ;
-	if (if_M_1) 
+	if (if_M_1)
   {
 		const data = await get_target_hset_cache_data
     (
@@ -88,10 +88,10 @@ export async function GET
 
   // [3] page (tournament) DATA
   const if_M_2 =
-    url 
+    url
     && page === 'tournaments'
   ;
-	if (if_M_2) 
+	if (if_M_2)
   {
 		const data = await get_target_hset_cache_data
     (
@@ -103,10 +103,10 @@ export async function GET
 
   // [4] page (tournament) SEO
   const if_M_3 =
-    lang 
+    lang
     && page === 'tournaments'
   ;
-	if (if_M_3) 
+	if (if_M_3)
   {
 		const data = await get_target_hset_cache_data
     (
@@ -116,21 +116,21 @@ export async function GET
 		if (data) return json(data);
 	}
 
-  // [5] page (fixture) DATA 
+  // [5] page (fixture) DATA
   // NOTE: (w/fallback)
   const if_M_4 =
-    fixture_id 
+    fixture_id
     && page === 'fixtures'
   ;
-	if (if_M_4) 
+	if (if_M_4)
   {
-    
+
     const _fixture_id: number = parseInt(fixture_id)
     let data;
     let loadType = "cache";
 
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data = await get_target_hset_cache_data
       (
@@ -140,7 +140,7 @@ export async function GET
     }
 
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData_2
       (
@@ -157,10 +157,10 @@ export async function GET
 
   // [6] page (fixture) SEO
   const if_M_5 =
-    lang 
+    lang
     && page === 'fixtures'
   ;
-	if (if_M_5) 
+	if (if_M_5)
   {
 		const data = await get_target_hset_cache_data
     (
@@ -170,13 +170,13 @@ export async function GET
 		if (data)	return json(data);
 	}
 
-  // [7] page (player) DATA 
+  // [7] page (player) DATA
   // NOTE: (w/fallback)
   const if_M_6 =
-    player_id 
+    player_id
     && page === 'player'
   ;
-  if (if_M_6) 
+  if (if_M_6)
   {
 
     const _player_id: number = parseInt(player_id)
@@ -184,7 +184,7 @@ export async function GET
     let loadType = "cache";
 
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data = await get_target_hset_cache_data
       (
@@ -194,7 +194,7 @@ export async function GET
     }
 
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData_0
       (
@@ -210,10 +210,10 @@ export async function GET
 
   // [8] page (player) SEO
   const if_M_7 =
-    lang 
+    lang
     && page === 'player'
   ;
-  if (if_M_7) 
+  if (if_M_7)
   {
     const data = await get_target_hset_cache_data
     (
@@ -224,7 +224,7 @@ export async function GET
   }
 
   // [9] page (country) TRANSLATION(s)
-	if (country_id) 
+	if (country_id)
   {
 		const data = await get_target_hset_cache_data
     (
@@ -235,7 +235,7 @@ export async function GET
 	}
 
   // [10] page (term) TRANSLATION(s)
-	if (term) 
+	if (term)
   {
 		const data = await get_target_hset_cache_data
     (
@@ -246,7 +246,7 @@ export async function GET
 	}
 
   // [11] page (months) TRANSLATION(s)
-	if (months && lang) 
+	if (months && lang)
   {
 		const data = await get_target_hset_cache_data
     (
@@ -293,23 +293,23 @@ async function validUrlCheck
 
 // TODO: fallback for league/tournament page DATA (critical)
 
-async function fallbackMainData_0 
+async function fallbackMainData_0
 (
   player_id: number
-): Promise < B_SAP_PP_D > 
+): Promise < B_SAP_PP_D >
 {
 
-  const map = await SEO_PS_ENTRY
+  const dataRes0 = await SEO_PS_ENTRY
   (
     graphQlInstance,
     [player_id]
   )
 
-  if (map.size == 0) {
+  if (dataRes0?.[0].size == 0) {
     return null
   }
-  
-	return map.get(player_id);
+
+	return dataRes0?.[0].get(player_id);
 }
 
 async function fallbackMainData_2
@@ -317,18 +317,18 @@ async function fallbackMainData_2
   fixtureId: number
 ) : Promise < B_SAP_FP_D >
 {
-  const map = await SEO_FS_ENTRY 
+  const dataRes0 = await SEO_FS_ENTRY
   (
     graphQlInstance,
     [fixtureId]
   )
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null;
   }
 
-  return map.get(fixtureId)
+  return dataRes0?.[0].get(fixtureId)
 }
 
   //#endregion ➤ [METHODS]

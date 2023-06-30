@@ -3,11 +3,11 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { HTGOL_HP_ENTRY, HTGOL_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.top-goalscorers.js';
-import { TGOL_C_D_A, TGOL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
+import { HTGOL_HP_ENTRY, HTGOL_HP_ENTRY_1, HTGOL_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.top-goalscorers.js';
+import { TGOL_C_D_A, TGOL_C_D_S, TGOL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
-import type { B_TGOL_D, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
+import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 
 // #endregion ➤ Package Imports
 
@@ -26,28 +26,29 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
+    const seo: string =	req?.url?.searchParams?.get('seo');
     const geoPos: string = req?.url?.searchParams?.get('geoPos');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: 
-    // ➨ Get Featured Match (WIDGET) MAIN data; 
+    // ACTION:
+    // ➨ Get Featured Match (WIDGET) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_0: boolean =
       geoPos != undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       let data: unknown;
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -65,7 +66,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -73,17 +74,16 @@ export async function GET
         );
         loadType = 'HASURA'
       }
-
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
-
-      if (data != undefined) return json(data);
+      console.log(`📌 loaded [HTOPG] with: ${loadType}`)
+      if (data != undefined) if (data != undefined) return json(data);
     }
 
-    // ACTION: 
-    // ➨ Get Featured Match (TRANSLATION) MAIN data; 
+    // ACTION:
+    // ➨ Get Featured Match (TRANSLATION) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_1: boolean =
       lang != undefined
+      && seo == undefined
     ;
     if (if_M_1)
     {
@@ -91,7 +91,7 @@ export async function GET
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -101,7 +101,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData_1
         (
@@ -109,9 +109,45 @@ export async function GET
         );
         loadType = 'HASURA'
       }
+      console.log(`📌 loaded [HTOPG] with: ${loadType}`)
+      if (data != undefined) if (data != undefined) return json(data);
+    }
 
-      console.log(`📌 loaded [FPROB] with: ${loadType}`)
-
+    /**
+     * @summary [MAIN] [DATA]
+     * @description get target
+     * livescores (v2) exclusive SEO widget data;
+     * NOTE: with Hasura (source) fallback
+     */
+    const if_M_2: boolean =
+      lang != undefined
+      && seo != undefined
+    ;
+    if (if_M_2)
+    {
+      let data: unknown;
+      let loadType = "cache";
+      // NOTE: check in cache;
+      if (!hasura)
+      {
+        data =
+          await get_target_hset_cache_data
+          (
+            TGOL_C_D_S,
+            lang
+          )
+        ;
+      }
+      // NOTE: (default) fallback;
+      if (!data || hasura)
+      {
+        data = await fallbackMainData_2
+        (
+          lang
+        )
+        loadType = 'HASURA'
+      }
+      console.log(`📌 loaded [HTOPG] [S] with: ${loadType}`)
       if (data != undefined) return json(data);
     }
 
@@ -120,8 +156,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -144,20 +180,20 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ top-goalscorers (widget) hasura DATA fetch;
- * @param 
+ * @param
  * {string} geoPos
- * @returns 
+ * @returns
  * Promise < B_TGOL_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   geoPos: string
-): Promise < B_TGOL_D > 
+): Promise < B_TGOL_D >
 {
   const dataRes0 = await HTGOL_HP_ENTRY
   (
@@ -166,29 +202,29 @@ async function fallbackMainData
 
   // console.log(dataRes0?.[1]);
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(geoPos);
 }
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ top-goalscorers (widget) hasura TRANSLATION fetch;
- * @param 
+ * @param
  * {string} lang
- * @returns 
+ * @returns
  * Promise < B_TGOL_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_TGOL_T > 
+): Promise < B_TGOL_T >
 {
   const dataRes0 = await HTGOL_HP_ENTRY_1
   (
@@ -196,11 +232,42 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
+	return dataRes0?.[0].get(lang);
+}
+
+/**
+ * @summary
+ * [MAIN]
+ * [FALLBACK]
+ * @description
+ * ➨ top-goalscorers (widget) hasura TRANSLATION fetch;
+ * @param
+ * {string} lang
+ * @returns
+ * Promise < B_TGOL_S >
+ */
+async function fallbackMainData_2
+(
+  lang: string
+): Promise < B_TGOL_S >
+{
+  const dataRes0 = await HTGOL_HP_ENTRY_2
+  (
+    graphQlInstance,
+    [lang],
+    null
+  );
+
+  if (dataRes0?.[0].size == 0)
+  {
+    return null
+  }
+
 	return dataRes0?.[0].get(lang);
 }
 

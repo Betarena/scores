@@ -9,32 +9,31 @@ COMPONENT JS (w/ TS)
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
-  import { get } from '$lib/api/utils.js';
-  import { sessionStore } from '$lib/store/session.js';
-  import { userBetarenaSettings } from '$lib/store/user-settings.js';
-  import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
-  import { sleep } from '$lib/utils/platform-functions';
+	import { get } from '$lib/api/utils.js';
+	import { sessionStore } from '$lib/store/session.js';
+	import { userBetarenaSettings } from '$lib/store/user-settings.js';
+	import { sleep } from '$lib/utils/platform-functions';
 
-  import SeoBox from '$lib/components/SEO-Box.svelte';
-  import FeatMatchLoader from './FeatMatch-Loader.svelte';
-  import FeatMatchMain from './FeatMatch-Main.svelte';
+	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import TopGoalScorersLoader from './TopGoalScorers-Loader.svelte';
+	import TopGoalScorersMain from './TopGoalScorers-Main.svelte';
 
-	import type { B_FEATM_D, B_FEATM_S, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+	import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
 
   // let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  let WIDGET_S_DATA: B_FEATM_S = $page.data?.B_FEATM_S;
-  let WIDGET_T_DATA: B_FEATM_T = $page.data?.B_FEATM_T;
-  let WIDGET_DATA: B_FEATM_D;
+  let WIDGET_S_DATA: B_TGOL_S = $page.data?.B_TGOL_S;
+  let WIDGET_T_DATA: B_TGOL_T = $page.data?.B_TGOL_T;
+  let WIDGET_DATA: B_TGOL_D;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
 
   // $: PAGE_DATA = $page.data?.PAGE_DATA
-  $: WIDGET_S_DATA = $page.data?.B_FEATM_S;
-  $: WIDGET_T_DATA = $page.data?.B_FEATM_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Incidents' : 'Incidents'
+  $: WIDGET_S_DATA = $page.data?.B_TGOL_S;
+  $: WIDGET_T_DATA = $page.data?.B_TGOL_T;
+  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.widget_translations?.best_goal_scorers || 'Best Goalscorers' : 'Best Goalscorers'
 
   //#endregion ➤ [VARIABLES]
 
@@ -50,30 +49,30 @@ COMPONENT JS (w/ TS)
    */
   async function widgetInit
   (
-  ): Promise < B_FEATM_D >
+  ): Promise < void >
   {
 		await sleep(3000);
 
-    const response: B_FEATM_D = await get
+    const response: B_TGOL_D = await get
     (
-			'api/data/home/feat-match?geoPos=' +
+			'api/data/home/top-goalscorers?geoPos=' +
       $userBetarenaSettings.country_bookmaker
 		);
 
     WIDGET_DATA = response
 
-    const if_0 =
+    const if_M_0: boolean =
       WIDGET_DATA == undefined
     ;
-		if (if_0)
+		if (if_M_0)
     {
-      dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
+      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
 			NO_WIDGET_DATA = true;
 			return;
 		}
 
     NO_WIDGET_DATA = false;
-    return WIDGET_DATA
+    return;
   }
 
   //#endregion ➤ [METHODS]
@@ -121,46 +120,49 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <!--
-  widget-title
-  -->
   <h2>
     {WIDGET_TITLE}
   </h2>
+  <p>
+    {
+      WIDGET_T_DATA
+      ?.widget_translations
+      ?.goals
+    }
+  </p>
+  <p>
+    {
+      WIDGET_T_DATA
+      ?.widget_translations
+      ?.odds
+    }
+  </p>
+  <p>
+    {
+      WIDGET_T_DATA
+      ?.widget_translations
+      ?.player
+    }
+  </p>
+  <p>
+    {
+      WIDGET_T_DATA
+      ?.widget_translations
+      ?.show_more_players
+    }
+  </p>
   <!--
-  team-names
+  LIST PLAYERS
   -->
-  <p>{WIDGET_S_DATA?.home_team_name}</p>
-  <p>{WIDGET_S_DATA?.away_team_name}</p>
-  <!--
-  LINKS
-  -->
-  <a
-    href={WIDGET_S_DATA?.league_url}>
-    <p>
-      {WIDGET_S_DATA?.league_name}
-    </p>
-  </a>
-  <a
-    href={WIDGET_S_DATA?.fixture_url}>
-    <p>
-      {WIDGET_S_DATA?.home_team_name}
-      vs.
-      {WIDGET_S_DATA?.away_team_name}
-    </p>
-  </a>
-  {#each WIDGET_S_DATA?.player_urls || [] as player}
-    <a
-      href={player?.url}>
-      <p>
-        {player?.common_name}
-      </p>
+  {#each WIDGET_S_DATA?.players || [] as player}
+    <a href={player?.url}>
+      <p>{player?.common_name}</p>
     </a>
   {/each}
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <FeaturedMatchContentLoading /> -->
+<!-- <FeatBetSiteLoader /> -->
 
 <!--
 [ℹ] main widget
@@ -169,17 +171,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <!--
   promise is pending
   -->
-  <FeatMatchLoader />
+  <TopGoalScorersLoader />
 {:then data}
   <!--
   promise was fulfilled
   -->
-  {#if !NO_WIDGET_DATA}
-    <FeatMatchMain
-      B_FEATM_D={WIDGET_DATA}
-      B_FEATB_T={WIDGET_T_DATA}
-    />
-  {/if}
+  <TopGoalScorersMain
+    B_TGOL_D={WIDGET_DATA}
+    B_TGOL_T={WIDGET_T_DATA}
+  />
 {:catch error}
   <!--
   promise was rejected
