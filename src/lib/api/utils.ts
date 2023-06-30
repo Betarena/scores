@@ -17,7 +17,7 @@ export async function get
 	// endpoint = 'https://cors-anywhere.herokuapp.com/' + endpoint // comment this out before subemission,
   try
   {
-    const res = await fetch
+    const res: Response = await fetch
     (
       endpoint,
       {
@@ -25,14 +25,16 @@ export async function get
       }
     );
 
-    if (!res.ok)
+    const resJson: unknown = await res.json();
+
+    if (!res?.ok)
       throw new Error
       (
         'Network response was not ok'
       );
     ;
 
-		return res.json();
+		return resJson;
   }
   catch (e)
   {
@@ -78,14 +80,16 @@ export async function post
       }
     );
 
-    if (!res.ok)
+    const resJson: unknown = await res.json();
+
+    if (!res?.ok)
       throw new Error
       (
         'Network response was not ok'
       );
     ;
 
-		return res.json();
+		return resJson;
   }
   catch (e)
   {
