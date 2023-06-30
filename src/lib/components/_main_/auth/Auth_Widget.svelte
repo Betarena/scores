@@ -575,6 +575,12 @@ COMPONENT JS (w/ TS)
   ): Promise < void >
   {
 
+    // [🐞]
+    dlog
+    (
+      `${AU_W_TAG[0]} 🟠 Checking for EmailLink DeepLink`
+    );
+
     const if_M_0: boolean =
       isSignInWithEmailLink
       (
@@ -743,7 +749,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `${AU_W_TAG[0]} 🟠 Looking for Discord DeepLink!`
+      `${AU_W_TAG[0]} 🟠 Checking for Discord DeepLink`
     );
 
 		const f_uid: string = $page.url.searchParams.get('f_uid');
@@ -940,7 +946,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `${AU_W_TAG[0]} 🟠 Looking for MetaMask In-App Browser DeepLink!`
+      `${AU_W_TAG[0]} 🟠 Checking for MetaMask DeepLink!`
     );
 
 		const metmaskAuth: string =	$page.url.searchParams.get('metmaskAuth');
