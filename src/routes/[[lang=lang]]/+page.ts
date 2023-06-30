@@ -1,13 +1,15 @@
-import {
-  dlog,
-  ERROR_CODE_INVALID,
-  ERROR_CODE_PRELOAD,
-  HOME_LANG_PAGE_ERROR_MSG,
-  PAGE_INVALID_MSG
-} from '$lib/utils/debug';
+import { dlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, HOME_LANG_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
+import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 import { error } from '@sveltejs/kit';
 
-import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
+import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
+import type { B_FEATM_S, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+import type { B_LEGL_T } from '@betarena/scores-lib/types/league-list.js';
+import type { B_LEGT_T } from '@betarena/scores-lib/types/leagues-table.js';
+import type { B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
+import type { B_SEB_DT } from '@betarena/scores-lib/types/seo-block.js';
+import type { B_SAP_HP_T } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 import type { PageLoad } from './$types';
 
 /** @type {import('./$types').PageLoad} */
@@ -18,7 +20,7 @@ export async function load
 	  params,
 	  fetch
   }
-): Promise < PageLoad > 
+): Promise < PageLoad >
 {
 
   const t0 = performance.now();
@@ -26,8 +28,8 @@ export async function load
   //#region [0] IMPORTANT EXTRACT URL DATA
 
 	const urlLang: string =
-		params?.lang == undefined 
-      ? 'en' 
+		params?.lang == undefined
+      ? 'en'
       : params?.lang
   ;
 
@@ -39,11 +41,13 @@ export async function load
   (
     fetch,
     urlLang
-  )
+  );
 
   // [ℹ] exit;
-	if (!validUrlCheck) {
-		throw error(
+	if (!validUrlCheck)
+  {
+		throw error
+    (
 			ERROR_CODE_INVALID,
 			PAGE_INVALID_MSG
 		);
@@ -53,33 +57,52 @@ export async function load
 
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA DOC: REF: [2]
 
-	const urls = 
+	const urls: string[] =
   [
 		// [ℹ] home (page)
 		`/api/data/main/seo-pages?lang=${urlLang}&page=homepage`,
 		// [ℹ] home (widgets)
-		`/api/cache/home/featured_match?lang=${urlLang}`,
-		`/api/cache/home/featured_betting_sites?lang=${urlLang}`,
-		`/api/cache/home/best_goalscorer?lang=${urlLang}`,
-		`/api/cache/home/league_list?lang=${urlLang}`,
-		`/api/cache/home/leagues_table?lang=${urlLang}`,
-		`/api/cache/home/seo_block?lang=${urlLang}`,
+		`/api/data/home/feat-match?lang=${urlLang}`,
+		`/api/data/home/feat-match?lang=${urlLang}&seo=true`,
+		`/api/data/home/feat-betsite?lang=${urlLang}`,
+		`/api/data/home/top-goalscorers?lang=${urlLang}`,
+		`/api/data/home/top-goalscorers?lang=${urlLang}&seo=true`,
+		`/api/data/home/league-list?lang=${urlLang}`,
+		`/api/data/home/league-table?lang=${urlLang}`,
+		`/api/data/home/seo-block?lang=${urlLang}`,
 		`/api/data/home/livescores-v2?lang=${urlLang}`,
 		`/api/data/home/livescores-v2?seo=true&lang=${urlLang}`,
 	];
+
+  type HP_PROMISE =
+  [
+    B_SAP_HP_T | undefined,
+    B_FEATM_T | undefined,
+    B_FEATM_S | undefined,
+    B_FEATB_T | undefined,
+    B_TGOL_T | undefined,
+    B_TGOL_S | undefined,
+    B_LEGL_T | undefined,
+    B_LEGT_T | undefined,
+    B_SEB_DT | undefined,
+    B_LS2_T | undefined,
+    B_LS2_S | undefined
+  ];
 
   const data = await promiseUrlsPreload
   (
     urls,
     fetch
-  );
+  ) as HP_PROMISE;
 
-	const 
+	const
   [
 		PAGE_DATA_SEO,
-		FEATURED_MATCH_WIDGET_DATA_SEO,
+		B_FEATM_T,
+    B_FEATM_S,
 		FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
-		BEST_GOAL_SCORERS_DATA_SEO,
+		B_TGOL_T,
+		B_TGOL_S,
 		LEAGUE_LIST_WIDGET_DATA_SEO,
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,
@@ -87,21 +110,20 @@ export async function load
     LIVESCORES_V2_SEO
 	] = data;
 
-	dlog(data, false);
-
   //#endregion [0] IMPORTANT (PRE) PRE-LOAD DATA DOC: REF: [2]
-  
+
   //#region [3] IMPORTANT RETURN
 
-	// [ℹ] FIXME: valid-page does not count data[7] - already checked
 	const INVALID_PAGE_DATA_POINTS: boolean = data.includes(undefined);
 
 	// FIXME: currently based on checking for any NULL/UNDEFINED data points
 	// FIXME: should still allow for page access if page is VALID but widget data or
 	// FIXME: otherwise page component is simply missing
 	// [ℹ] exit;
-	if (INVALID_PAGE_DATA_POINTS) {
-		throw error(
+	if (INVALID_PAGE_DATA_POINTS)
+  {
+		throw error
+    (
 			ERROR_CODE_PRELOAD,
 			HOME_LANG_PAGE_ERROR_MSG
 		);
@@ -111,7 +133,7 @@ export async function load
   (
     data,
     urls
-  )
+  );
 
   // [🐞]
   const t1 = performance.now();
@@ -121,13 +143,15 @@ export async function load
 	return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    // NOTE: issues with setting correct <PageLoad> types, 
+    // NOTE: issues with setting correct <PageLoad> types,
     // NOTE: not being applied to return;
     // NOTE: not critical - can be silenced;
 		PAGE_DATA_SEO,
-		FEATURED_MATCH_WIDGET_DATA_SEO,
+		B_FEATM_T,
+    B_FEATM_S,
 		FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
-		BEST_GOAL_SCORERS_DATA_SEO,
+		B_TGOL_T,
+    B_TGOL_S,
 		LEAGUE_LIST_WIDGET_DATA_SEO,
 		LEAGUES_TABLE_SCORES_SEO_DATA,
 		SEO_BLOCK_DATA,

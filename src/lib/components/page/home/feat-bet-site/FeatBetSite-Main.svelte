@@ -4,6 +4,8 @@
 
 <script lang="ts">
 
+  //#region ➤ [MAIN] Package Imports
+
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
@@ -27,7 +29,7 @@
 
   const MOBILE_VIEW = 767;
 	const TABLET_VIEW = 767;
-  
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
@@ -45,10 +47,10 @@
 
 	function toggleFullList
   (
-  ) 
+  )
   {
 		showMore = !showMore;
-		if (limitViewRow == trueLengthOfArray) 
+		if (limitViewRow == trueLengthOfArray)
     {
 			limitViewRow = staticViewRow;
 			return;
@@ -62,7 +64,7 @@
   ): void
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -87,7 +89,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -101,20 +103,20 @@
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
   //#region ➤ [REACTIVIY] [METHODS]
-  
+
   // TODO:
-	$: if (tabletExclusive) 
+	$: if (tabletExclusive)
   {
-		if (trueLengthOfArray > 10) 
+		if (trueLengthOfArray > 10)
     {
 			displayShowMore = true;
 			staticViewRow = 10;
 			limitViewRow = 10;
 		}
-	} 
-  else 
+	}
+  else
   {
-		if (trueLengthOfArray > 5) 
+		if (trueLengthOfArray > 5)
     {
 			displayShowMore = true;
 			staticViewRow = 5;
@@ -135,7 +137,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -147,11 +149,11 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
+<!--
 FEATURED BETTING SITES WIDGET
 -->
 <div>
@@ -165,18 +167,18 @@ FEATURED BETTING SITES WIDGET
     class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
   >
 
-    <!-- 
-    TOP 3 BETSITES 
+    <!--
+    TOP 3 BETSITES
     -->
     {#if !tabletExclusive}
 
-      <div 
-        id="feature-rank-display" 
+      <div
+        id="feature-rank-display"
         in:fade
       >
 
-        <!-- 
-        RANK 2 
+        <!--
+        RANK 2
         -->
         <a
           target="_blank"
@@ -191,7 +193,7 @@ FEATURED BETTING SITES WIDGET
               imageURL={$sessionStore?.sportbook_list?.[1]?.image}
             />
 
-            <!-- [ℹ] Featured Image Details 
+            <!-- [ℹ] Featured Image Details
             -->
             <p
               class="x-large color-black site-name"
@@ -205,8 +207,8 @@ FEATURED BETTING SITES WIDGET
           </div>
         </a>
 
-        <!-- 
-        RANK 1 
+        <!--
+        RANK 1
         -->
         <a
           target="_blank"
@@ -221,22 +223,22 @@ FEATURED BETTING SITES WIDGET
               imageURL={$sessionStore?.sportbook_list?.[0]?.image}
             />
 
-            <!-- 
-            Featured Image Details 
+            <!--
+            Featured Image Details
             -->
             <p
               class="
-                x-large 
-                color-black 
+                x-large
+                color-black
                 site-name
               "
               class:color-white={$userBetarenaSettings.theme == 'Dark'}
             >
               {$sessionStore?.sportbook_list?.[0]?.title}
             </p>
-            <p 
+            <p
               class="
-                large 
+                large
                 color-grey
               ">
               Rank {$sessionStore?.sportbook_list?.[0]?.position}
@@ -244,8 +246,8 @@ FEATURED BETTING SITES WIDGET
           </div>
         </a>
 
-        <!-- 
-        RANK 3 
+        <!--
+        RANK 3
         -->
         <a
           target="_blank"
@@ -260,13 +262,13 @@ FEATURED BETTING SITES WIDGET
               imageURL={$sessionStore?.sportbook_list?.[2]?.image}
             />
 
-            <!-- 
-            Featured Image Details 
+            <!--
+            Featured Image Details
             -->
             <p
               class="
-                x-large 
-                color-black 
+                x-large
+                color-black
                 site-name
               "
               class:color-white={$userBetarenaSettings.theme ==	'Dark'}
@@ -276,7 +278,7 @@ FEATURED BETTING SITES WIDGET
 
             <p
               class="
-                large 
+                large
                 color-grey
               ">
               Rank {$sessionStore?.sportbook_list?.[2].position}
@@ -286,24 +288,24 @@ FEATURED BETTING SITES WIDGET
         </a>
 
       </div>
-      
+
     {/if}
-    
-    <!-- 
+
+    <!--
     TITLE BOX
     -->
     <p
       id="title-box"
       class="
-        w-500 
-        w-normal 
+        w-500
+        w-normal
         large
       "
     >
       {B_FEATB_T?.translations?.title}
     </p>
 
-    <!-- 
+    <!--
     BETSITES ROW LIST
     -->
     {#each $sessionStore?.sportbook_list?.slice(0, limitViewRow) || [] as item}
@@ -313,7 +315,7 @@ FEATURED BETTING SITES WIDGET
       />
     {/each}
 
-    <!-- 
+    <!--
     SHOW MORE / LESS
     -->
     {#if displayShowMore}
@@ -337,7 +339,7 @@ FEATURED BETTING SITES WIDGET
         style="padding: 5px; box-shadow: none;"
       />
     {/if}
-    
+
   </div>
 
 </div>
@@ -349,7 +351,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	#featured-list-container 
+	#featured-list-container
   {
 		display: grid;
 		background: #ffffff;
@@ -358,7 +360,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 100%;
 	}
 
-	#title-box 
+	#title-box
   {
 		padding: 24px 60px 20px 60px;
 		text-align: center;
@@ -366,7 +368,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		font-weight: 500;
 	}
 
-	#show-more-box 
+	#show-more-box
   {
 		padding: 25px 130px;
 		text-align: center;
@@ -378,14 +380,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 767px) 
+	@media only screen
+  and (min-width: 767px)
   {
-		#featured-rank 
+		#featured-rank
     {
 			height: 257px;
 			padding: 16px 39px;
@@ -396,7 +398,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			text-align: center;
 		}
 
-		#feature-rank-display 
+		#feature-rank-display
     {
 			display: grid;
 			gap: 20px;
@@ -406,31 +408,31 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			padding: 20px 20px 0 20px;
 		}
 
-		#featured-list-container 
+		#featured-list-container
     {
 			min-width: 100%;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1024px) 
+	@media only screen
+  and (min-width: 1024px)
   {
-		#featured-rank 
+		#featured-rank
     {
 			padding: 16px 8px;
 		}
 
-		#feature-rank-display 
+		#feature-rank-display
     {
 			gap: 15px;
 		}
 
-		#featured-list-container 
+		#featured-list-container
     {
 			min-width: 100%;
 		}
 
-		p.site-name:hover 
+		p.site-name:hover
     {
 			color: #f5620f;
 		}
@@ -442,17 +444,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-	.dark-background-1 p#show-more-box 
+	.dark-background-1 p#show-more-box
   {
 		box-shadow: inset 0px 1px 0px #616161 !important;
 	}
 
-	.dark-background-1 div#featured-rank 
+	.dark-background-1 div#featured-rank
   {
 		background-color: #616161;
 	}
 
-	.dark-background-1 p#title-box 
+	.dark-background-1 p#title-box
   {
 		color: #ffffff;
 	}

@@ -13,7 +13,7 @@
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { LIN_F_dataInject } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
-	
+
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import LineupPlayerRow from './Lineups-Player-Row.svelte';
@@ -31,9 +31,6 @@
 
 	export let FIXTURE_LINEUPS: B_LIN_D;
 	export let FIXTURE_LINEUPS_TRANSLATION: B_LIN_T;
-
-  // console.log('⭐️ FIXTURE_LINEUPS', FIXTURE_LINEUPS)
-  // console.log('⭐️ FIXTURE_LINEUPS_TRANSLATION', FIXTURE_LINEUPS_TRANSLATION)
 
   // NOTE: [Sportmonks]
 	// NOTE: Formation Number | Outcome
@@ -53,7 +50,7 @@
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
-  
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
@@ -78,7 +75,7 @@
   */
 	async function injectLiveData
   (
-  ): Promise < void > 
+  ): Promise < void >
   {
 		const fixture_id = FIXTURE_LINEUPS?.id;
 
@@ -100,7 +97,7 @@
     const FIREBASE_PLAYERS_DATA = liveFixtureData?.custom_mod?.players_v3;
 
     // EXIT;
-    const if_M_1 = 
+    const if_M_1 =
       FIREBASE_LINEUPS_DATA == undefined
       || FIREBASE_BENCH_DATA == undefined
     ;
@@ -113,19 +110,19 @@
     // NOTE: require an "auto-lineup" live-data generation update
     // NOTE: on the spot, from "livescores-now" real-time DB;
     const if_M_2 =
-      FIXTURE_LINEUPS?.home?.lineup?.length == 0 
-      && FIXTURE_LINEUPS?.away?.lineup?.length == 0 
-      && FIXTURE_LINEUPS?.home?.bench?.length == 0 
-      && FIXTURE_LINEUPS?.away?.bench?.length == 0 
-      && FIREBASE_LINEUPS_DATA != undefined 
-      && FIREBASE_LINEUPS_DATA?.length > 0 
+      FIXTURE_LINEUPS?.home?.lineup?.length == 0
+      && FIXTURE_LINEUPS?.away?.lineup?.length == 0
+      && FIXTURE_LINEUPS?.home?.bench?.length == 0
+      && FIXTURE_LINEUPS?.away?.bench?.length == 0
+      && FIREBASE_LINEUPS_DATA != undefined
+      && FIREBASE_LINEUPS_DATA?.length > 0
       && FIREBASE_BENCH_DATA != undefined
       && FIREBASE_BENCH_DATA?.length > 0
     ;
-    if (if_M_2) 
+    if (if_M_2)
     {
       let dataKeyValList: [number, B_H_SFPV2][] = [];
-      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA)) 
+      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA))
       {
         dataKeyValList.push
         (
@@ -143,7 +140,7 @@
     const home_team_id = liveFixtureData?.localteam_id;
     const away_team_id =	liveFixtureData?.visitorteam_id;
 
-    const 
+    const
     [
       homeTeamLineup,
       homeTeamBench
@@ -151,7 +148,7 @@
     (
       home_team_id,
       FIXTURE_LINEUPS?.events,
-      { 
+      {
         lineupList: FIREBASE_LINEUPS_DATA,
         benchList: FIREBASE_BENCH_DATA,
         playerMap
@@ -162,7 +159,7 @@
       }
     );
 
-    const 
+    const
     [
       awayTeamLineup,
       awayTeamBench
@@ -170,7 +167,7 @@
     (
       away_team_id,
       FIXTURE_LINEUPS?.events,
-      { 
+      {
         lineupList: FIREBASE_LINEUPS_DATA,
         benchList: FIREBASE_BENCH_DATA,
         playerMap
@@ -197,7 +194,7 @@
   ): void
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -222,7 +219,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -243,14 +240,14 @@
   {
     const teamTypes: ['home', 'away'] = ['home', 'away'];
 
-    for (const teamT of teamTypes) 
+    for (const teamT of teamTypes)
     {
-      const teamFormation = 
+      const teamFormation =
         teamT == 'home'
           ? FIXTURE_LINEUPS?.home?.formation
           : FIXTURE_LINEUPS?.away?.formation
       ;
-      
+
       let runTotalCount = 0;
       let countPosDiff = 0;
 
@@ -273,7 +270,7 @@
       if (teamT == 'home') homeTeamFormMap = new Map < string, LIN_Player[]	>();
       if (teamT == 'away') awayTeamFormMap = new Map < string, LIN_Player[]	>();
 
-      // NOTE: sometimes formation_position can been "null" 
+      // NOTE: sometimes formation_position can been "null"
       // applied to "AWAY" only;
       // ISSUE: #905
       if (teamT == 'away')
@@ -282,20 +279,20 @@
         .filter
         (
           (
-            { 
-              formation_position 
+            {
+              formation_position
             }
           ) =>
             formation_position == undefined
         ).length == 0;
 
-        if (if_M_0) 
+        if (if_M_0)
         {
           FIXTURE_LINEUPS?.away?.lineup
           .sort
           (
             (
-              a, 
+              a,
               b
             ) =>
               parseFloat
@@ -313,7 +310,7 @@
       const teamFormMap = new Map < string, LIN_Player[]	>();
 
       // loop over each, position digit-string;
-      for (const f_pos of _teamFormList) 
+      for (const f_pos of _teamFormList)
       {
         let formPosNum = parseInt
         (
@@ -327,15 +324,15 @@
           const player =
             teamT == 'home'
               ? FIXTURE_LINEUPS?.home?.lineup[i]
-              : FIXTURE_LINEUPS?.away?.lineup[i]    
+              : FIXTURE_LINEUPS?.away?.lineup[i]
           ;
 
-          const if_M_0 = 
+          const if_M_0 =
             teamFormMap.has(formationPosCode)
           ;
 
           // CHECK: Already has target position;
-          if (if_M_0) 
+          if (if_M_0)
           {
             let exist_lineup_list = teamFormMap.get(formationPosCode);
             exist_lineup_list.unshift(player);
@@ -345,8 +342,8 @@
               exist_lineup_list
             );
             continue;
-          } 
-          
+          }
+
           const lineup_list = [];
           lineup_list.push(player);
           teamFormMap.set
@@ -379,13 +376,13 @@
   {
     const teamTypes: ['home', 'away'] = ['home', 'away'];
 
-    for (const teamT of teamTypes) 
+    for (const teamT of teamTypes)
     {
 
       const lineupList =
         teamT == 'home'
           ? FIXTURE_LINEUPS?.home?.lineup
-          : FIXTURE_LINEUPS?.away?.lineup 
+          : FIXTURE_LINEUPS?.away?.lineup
       ;
 
       // reset player-list
@@ -398,11 +395,11 @@
 
       const teamFormMap = new Map < string, LIN_Player[]	>();
 
-      for (const form_pos of formationArr || []) 
+      for (const form_pos of formationArr || [])
       {
-        for (const player of lineupList || []) 
+        for (const player of lineupList || [])
         {
-          if (form_pos == player?.position) 
+          if (form_pos == player?.position)
           {
             // CHECK: Already has target position;
             if (teamFormMap.has(form_pos))
@@ -432,7 +429,7 @@
       if (teamT == 'away') awayTeamFormMap = teamFormMap;
     }
   }
-  
+
   // #endregion ➤ [METHODS]
 
   // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
@@ -444,7 +441,7 @@
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "fixture" in "livescores_now" data;
   */
   $: if ($sessionStore?.livescore_now_fixture_target)
@@ -486,40 +483,20 @@
     && FIXTURE_LINEUPS?.home?.lineup?.length > 0
   ;
 
-	$: if (if_R_1 && FIXTURE_LINEUPS) 
+	$: if (if_R_1 && FIXTURE_LINEUPS)
   {
-    // [🐞]
-    console.log
-    (
-      '⭐️ if_R_1'
-    );
 		noWidgetData = false;
     generateTeamFormMap()
 	}
-  else if (if_R_2 && FIXTURE_LINEUPS) 
+  else if (if_R_2 && FIXTURE_LINEUPS)
   {
-    // [🐞]
-    console.log
-    (
-      '⭐️ if_R_2'
-    );
 		noWidgetData = false;
 		generateTeamFormMap_2()
 	}
-	else 
+	else
   {
-    console.log
-    (
-      '⭐️ NO WIDGET DATA [TRUE]'
-    );
 		noWidgetData = true;
 	}
-
-  // [🐞]
-  // $: if (FIXTURE_LINEUPS)
-  // {
-  //   console.log('⭐️ FIXTURE_LINEUPS', FIXTURE_LINEUPS)
-  // }
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
@@ -534,7 +511,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -546,7 +523,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -554,18 +531,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	class:display-none={noWidgetData}
 >
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={FIXTURE_LINEUPS_TRANSLATION?.title}
       NO_DATA_TITLE={FIXTURE_LINEUPS_TRANSLATION?.no_info}
       NO_DATA_DESC={FIXTURE_LINEUPS_TRANSLATION?.no_info_desc}
     />
 	{/if}
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData}
@@ -579,12 +556,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class="widget-component"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
-      <!-- 
+      <!--
       📱 MOBILE
       -->
       {#if mobileExclusive}
 
-        <!-- 
+        <!--
         [ℹ] toggle lineup team
         -->
         <div
@@ -594,7 +571,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           "
         >
           <!--
-          [ℹ] home team btn. 
+          [ℹ] home team btn.
           -->
           <button
             class="
@@ -625,7 +602,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </p>
           </button>
           <!--
-          [ℹ] away team btn. 
+          [ℹ] away team btn.
           -->
           <button
             class="
@@ -657,8 +634,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </button>
         </div>
 
-        <!-- 
-        [ℹ] team visiualization 
+        <!--
+        [ℹ] team visiualization
         -->
         <div id="lineup-vector-box">
           <div id="lineup-vector">
@@ -668,12 +645,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <LineupVectorMobileAway />
             {/if}
           </div>
-          <!-- 
-          [ℹ] lineup - absolute box 
+          <!--
+          [ℹ] lineup - absolute box
           -->
           <div id="overlay-player-pos-box">
-            <!-- 
-            [ℹ] home 
+            <!--
+            [ℹ] home
             -->
             {#if selected_view == 'home' && homeTeamFormMap.size != 0}
               {#each Array.from(homeTeamFormMap.values()) || [] as players_list}
@@ -686,8 +663,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   {/each}
                 </div>
               {/each}
-              <!-- 
-            [ℹ] away 
+              <!--
+            [ℹ] away
             -->
             {:else}
               {#each Array.from(awayTeamFormMap.values()) || [] as players_list}
@@ -704,8 +681,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </div>
         </div>
 
-        <!-- 
-        [ℹ] selected lineup - home / away (logo) 
+        <!--
+        [ℹ] selected lineup - home / away (logo)
         -->
         <div
           class="
@@ -718,8 +695,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               row-space-start
             "
           >
-            <!-- 
-            [ℹ] team icon 
+            <!--
+            [ℹ] team icon
             -->
             <img
               src={FIXTURE_LINEUPS[
@@ -730,8 +707,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               height="40"
               class="main-team-img"
             />
-            <!-- 
-            [ℹ] team name 
+            <!--
+            [ℹ] team name
             -->
             <p
               class="
@@ -753,8 +730,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </span>
             </p>
           </div>
-          <!-- 
-          [ℹ] team-rating 
+          <!--
+          [ℹ] team-rating
           -->
           {#if ['FT', 'FT_PEN'].includes(FIXTURE_LINEUPS?.status) && FIXTURE_LINEUPS[selected_view]?.team_rating != undefined}
             <p
@@ -792,12 +769,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         </div>
 
-        <!-- 
-        [ℹ] selected lineup - home / away 
+        <!--
+        [ℹ] selected lineup - home / away
         -->
         <div class="lineup-box">
-          <!-- 
-          [ℹ] coach single - home / away 
+          <!--
+          [ℹ] coach single - home / away
           -->
           <div
             class="
@@ -805,7 +782,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               player-row
             "
           >
-            <!-- 
+            <!--
             [ℹ] player avatar
             -->
             <img
@@ -820,8 +797,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 (e.target.src =
                   'https://cdn.sportmonks.com/images/soccer/placeholder.png')}
             />
-            <!-- 
-            [ℹ] player name 
+            <!--
+            [ℹ] player name
             -->
             <p
               class="
@@ -845,8 +822,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </span>
             </p>
           </div>
-          <!-- 
-          [ℹ] rest of lineup-team 
+          <!--
+          [ℹ] rest of lineup-team
           -->
           {#each FIXTURE_LINEUPS?.[selected_view]?.bench || [] as player}
             <LineupPlayerRow
@@ -858,13 +835,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/each}
         </div>
 
-      <!-- 
+      <!--
       💻 TABLET 🖥️ LAPTOP
       -->
       {:else}
 
-        <!-- 
-        [ℹ] team visiualization 
+        <!--
+        [ℹ] team visiualization
         -->
         <div
           id="lineup-vector-box">
@@ -874,8 +851,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             <LineupVectorTablet />
           </div>
 
-          <!-- 
-          [ℹ] lineup - absolute box 
+          <!--
+          [ℹ] lineup - absolute box
           -->
           <div
             id="overlay-player-pos-box"
@@ -889,7 +866,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               style="width: 100%;"
             >
               {#each Array.from(homeTeamFormMap.values()) || [] as players_list}
-                <div 
+                <div
                   id="overlay-column">
                   {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
@@ -901,15 +878,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               {/each}
             </div>
 
-            <!-- 
-            AWAY TEAM 
+            <!--
+            AWAY TEAM
             -->
             <div
               class="overlay-grid"
               style="width: 100%;"
             >
               {#each Array.from(awayTeamFormMap.values()) || [] as players_list}
-                <div 
+                <div
                   id="overlay-column">
                   {#each Array.from(players_list) || [] as player}
                     <LineupPlayerVisual
@@ -925,15 +902,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
         </div>
 
-        <!-- 
-        [ℹ] team info ROW 
+        <!--
+        [ℹ] team info ROW
         -->
         <div
           id="team-info-box"
           class="row-space-out"
         >
-          <!-- 
-          home team info 
+          <!--
+          home team info
           -->
           <div
             class="
@@ -941,8 +918,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               team-main-select
             "
           >
-            <!-- 
-            [ℹ] team-info 
+            <!--
+            [ℹ] team-info
             -->
             <div
               class="
@@ -950,8 +927,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               "
               style="width: auto;"
             >
-              <!-- 
-              [ℹ] team icon 
+              <!--
+              [ℹ] team icon
               -->
               <img
                 src={FIXTURE_LINEUPS?.home?.team_logo}
@@ -960,8 +937,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 height="40"
                 class="main-team-img"
               />
-              <!-- 
-              [ℹ] team name 
+              <!--
+              [ℹ] team name
               -->
               <p
                 class="
@@ -982,9 +959,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </span>
               </p>
             </div>
-            
-            <!-- 
-            [ℹ] team-rating 
+
+            <!--
+            [ℹ] team-rating
             -->
             {#if ['FT', 'FT_PEN'].includes(FIXTURE_LINEUPS?.status) && FIXTURE_LINEUPS?.home?.team_rating != undefined}
               <p
@@ -1012,8 +989,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {/if}
           </div>
 
-          <!-- 
-          [ℹ] away team info 
+          <!--
+          [ℹ] away team info
           -->
           <div
             class="
@@ -1021,8 +998,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               team-main-select
             "
           >
-            <!-- 
-            [ℹ] team-rating 
+            <!--
+            [ℹ] team-rating
             -->
             {#if ['FT', 'FT_PEN'].includes(FIXTURE_LINEUPS?.status) && FIXTURE_LINEUPS?.away?.team_rating != undefined}
               <p
@@ -1048,8 +1025,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   ?.team_rating}
               </p>
             {/if}
-            <!-- 
-            [ℹ] team-info 
+            <!--
+            [ℹ] team-info
             -->
             <div
               class="
@@ -1057,8 +1034,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               "
               style="width: auto;"
             >
-              <!-- 
-              [ℹ] team name 
+              <!--
+              [ℹ] team name
               -->
               <p
                 class="
@@ -1080,8 +1057,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     ?.formation || ''}
                 </span>
               </p>
-              <!-- 
-              [ℹ] team icon 
+              <!--
+              [ℹ] team icon
               -->
               <img
                 src={FIXTURE_LINEUPS?.away
@@ -1095,17 +1072,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </div>
         </div>
 
-        <!-- 
-        [ℹ] team lineup ROW 
+        <!--
+        [ℹ] team lineup ROW
         -->
         <div
           id="team-lineup-box"
           class="row-space-out"
         >
-          <!-- 
+          <!--
           [ℹ] home lineup -->
           <div class="lineup-box">
-            <!-- 
+            <!--
             [ℹ] coach single - home / away -->
             <div
               class="
@@ -1113,7 +1090,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 player-row
               "
             >
-              <!-- 
+              <!--
               [ℹ] coach avatar -->
               <img
                 src={FIXTURE_LINEUPS.home
@@ -1126,7 +1103,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   (e.target.src =
                     'https://cdn.sportmonks.com/images/soccer/placeholder.png')}
               />
-              <!-- 
+              <!--
               [ℹ] coach name -->
               <p
                 class="
@@ -1149,7 +1126,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </span>
               </p>
             </div>
-            <!-- 
+            <!--
             [ℹ] rest of lineup-team -->
             {#each FIXTURE_LINEUPS?.home?.bench || [] as player}
               <LineupPlayerRow
@@ -1165,10 +1142,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           [ℹ] divider -->
           <div id="divider" />
 
-          <!-- 
+          <!--
           [ℹ] away lineup -->
           <div class="lineup-box">
-            <!-- 
+            <!--
             [ℹ] coach single - home / away -->
             <div
               class="
@@ -1176,7 +1153,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 player-row
               "
             >
-              <!-- 
+              <!--
               [ℹ] coach name -->
               <p
                 class="
@@ -1199,7 +1176,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   ]}
                 </span>
               </p>
-              <!-- 
+              <!--
               [ℹ] player avatar -->
               <img
                 src={FIXTURE_LINEUPS?.away
@@ -1213,7 +1190,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     'https://cdn.sportmonks.com/images/soccer/placeholder.png')}
               />
             </div>
-            <!-- 
+            <!--
             [ℹ] rest of lineup-team -->
             {#each FIXTURE_LINEUPS?.away?.bench || [] as player}
               <LineupPlayerRow
@@ -1225,10 +1202,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {/each}
           </div>
         </div>
-        
+
       {/if}
     </div>
-    
+
 	{/if}
 </div>
 
@@ -1239,16 +1216,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	/* 
-  top-box btn view select 
+	/*
+  top-box btn view select
   */
-	div#lineup-top-view-box-select 
+	div#lineup-top-view-box-select
   {
 		margin: 20px 20px 0 20px;
 		/* o */
 		width: auto;
 	}
-	div#lineup-top-view-box-select button.team-select-btn 
+	div#lineup-top-view-box-select button.team-select-btn
   {
 		background-color: transparent;
 		border: 1px solid #cccccc !important;
@@ -1256,41 +1233,41 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding: 10px;
 		max-height: 40px;
 	}
-	div#lineup-top-view-box-select button.team-select-btn	p 
+	div#lineup-top-view-box-select button.team-select-btn	p
   {
 		font-size: 14px;
 	}
 	div#lineup-top-view-box-select button.team-select-btn:hover:active,
-	div#lineup-top-view-box-select button.team-select-btn.activeOpt 
+	div#lineup-top-view-box-select button.team-select-btn.activeOpt
   {
 		border: 1px solid #f5620f !important;
 	}
-	div#lineup-top-view-box-select button.team-select-btn:first-child 
+	div#lineup-top-view-box-select button.team-select-btn:first-child
   {
 		border-radius: 8px 0px 0px 8px;
 	}
-	div#lineup-top-view-box-select button.team-select-btn:first-child	img.sel-team-img 
+	div#lineup-top-view-box-select button.team-select-btn:first-child	img.sel-team-img
   {
 		margin-right: 8px;
 	}
-	div#lineup-top-view-box-select button.team-select-btn:last-child 
+	div#lineup-top-view-box-select button.team-select-btn:last-child
   {
 		border-radius: 0px 8px 8px 0px;
 	}
-	div#lineup-top-view-box-select button.team-select-btn:last-child img.sel-team-img 
+	div#lineup-top-view-box-select button.team-select-btn:last-child img.sel-team-img
   {
 		margin-left: 8px;
 	}
 
-	/* 
-  lineup-vector box 
+	/*
+  lineup-vector box
   */
-	div#lineup-vector-box 
+	div#lineup-vector-box
   {
 		position: relative;
 		padding: 8px 20px;
 	}
-	div#lineup-vector-box div#lineup-vector 
+	div#lineup-vector-box div#lineup-vector
   {
     /* p */
 		position: absolute;
@@ -1301,7 +1278,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		left: 0;
 		margin: 8px 20px;
 	}
-	div#lineup-vector-box	div#overlay-player-pos-box 
+	div#lineup-vector-box	div#overlay-player-pos-box
   {
 		display: grid;
 		grid-template-columns: repeat(auto-fill, 1fr);
@@ -1317,7 +1294,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 400px;
 		max-height: 400px;
 	}
-	div#lineup-vector-box	div#overlay-player-pos-box div#overlay-column 
+	div#lineup-vector-box	div#overlay-player-pos-box div#overlay-column
   {
 		display: grid;
 		gap: 8px;
@@ -1325,27 +1302,27 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: -moz-available;
 	}
 
-	/* 
-  main team select 
+	/*
+  main team select
   */
-	div.team-main-select 
+	div.team-main-select
   {
 		padding: 15px 0;
 		margin: 0 20px 8px 20px;
 		border-bottom: 1px solid #e6e6e6;
 		width: auto;
 	}
-	div.team-main-select img.main-team-img 
+	div.team-main-select img.main-team-img
   {
 		/* dynamic */
 		margin-right: 16px;
 	}
-	div.team-main-select p 
+	div.team-main-select p
   {
 		/* dynamic */
 		font-size: 14px;
 	}
-	div.team-main-select p#box-goals 
+	div.team-main-select p#box-goals
   {
 		box-sizing: border-box;
 		text-align: center;
@@ -1355,80 +1332,80 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: auto;
 		color: white;
 	}
-	div.team-main-select p#box-goals.rating_bronze 
+	div.team-main-select p#box-goals.rating_bronze
   {
 		background-color: #dbb884 !important;
 	}
-	div.team-main-select p#box-goals.rating_silver 
+	div.team-main-select p#box-goals.rating_silver
   {
 		background-color: #8c8c8c !important;
 	}
-	div.team-main-select p#box-goals.rating_golden 
+	div.team-main-select p#box-goals.rating_golden
   {
 		background-color: #ffb904 !important;
 	}
 
-	/* 
-  lineup-box - coach-only 
+	/*
+  lineup-box - coach-only
   */
-	div.lineup-box div.player-row 
+	div.lineup-box div.player-row
   {
 		padding: 8px 20px;
 	}
-	div.lineup-box div.player-row img.lineup-img 
+	div.lineup-box div.player-row img.lineup-img
   {
 		object-fit: contain;
 		border-radius: 50%;
 		border: 1px solid #e6e6e6;
 		margin-right: 16px;
 	}
-	div.lineup-box div.player-row	p.lineup-player-name 
+	div.lineup-box div.player-row	p.lineup-player-name
   {
 		font-size: 14px;
 	}
-	div.lineup-box:last-child	div.player-row img.lineup-img 
+	div.lineup-box:last-child	div.player-row img.lineup-img
   {
 		margin-right: 16px;
 	}
-	div.lineup-box:last-child	div.player-row p.lineup-player-name 
+	div.lineup-box:last-child	div.player-row p.lineup-player-name
   {
 		text-align: start;
 	}
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 726px) 
-  and (max-width: 1000px) 
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1000px)
   {
     /* NaN */
   }
 
-	@media only screen 
-  and (min-width: 726px) 
+	@media only screen
+  and (min-width: 726px)
   {
-		/* 
-    lineup-vector box 
+		/*
+    lineup-vector box
     */
-		div#lineup-vector-box 
+		div#lineup-vector-box
     {
 			padding: 20px 20px 8px 20px;
 		}
-		div#lineup-vector-box div#lineup-vector 
+		div#lineup-vector-box div#lineup-vector
     {
         margin: 20px 20px 8px 20px;
 		}
-		div#lineup-vector-box	div#overlay-player-pos-box 
+		div#lineup-vector-box	div#overlay-player-pos-box
     {
 			display: flex !important;
 			/* min-height: unset; */
 			/* max-height: unset; */
 		}
-		div#lineup-vector-box	div#overlay-player-pos-box div.overlay-grid 
+		div#lineup-vector-box	div#overlay-player-pos-box div.overlay-grid
     {
 			display: grid;
 			grid-template-columns: repeat(
@@ -1443,47 +1420,47 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			/* height: -moz-available; */
 			height: inherit;
 		}
-		div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid	div#overlay-column 
+		div#lineup-vector-box div#overlay-player-pos-box div.overlay-grid	div#overlay-column
     {
 			height: -webkit-fill-available;
 			/* height: -moz-available; */
 			height: inherit;
 		}
 
-		/* 
-    main team select 
+		/*
+    main team select
     */
-		div#team-info-box div.team-main-select 
+		div#team-info-box div.team-main-select
     {
 			padding: 15px 0;
 			border-bottom: 1px solid #e6e6e6;
 			width: 100%;
 		}
-		div#team-info-box	div.team-main-select:first-child 
+		div#team-info-box	div.team-main-select:first-child
     {
 			margin: 0 0 8px 20px;
 		}
-		div#team-info-box	div.team-main-select:last-child 
+		div#team-info-box	div.team-main-select:last-child
     {
 			margin: 0 20px 8px 0;
 		}
-		div#team-info-box	div.team-main-select:first-child img.main-team-img 
+		div#team-info-box	div.team-main-select:first-child img.main-team-img
     {
 			margin-right: 16px;
 		}
-		div#team-info-box	div.team-main-select:last-child	img.main-team-img 
+		div#team-info-box	div.team-main-select:last-child	img.main-team-img
     {
 			margin-left: 16px;
 		}
-		div#team-info-box	div.team-main-select:first-child p.team-name 
+		div#team-info-box	div.team-main-select:first-child p.team-name
     {
 			margin-right: 16px;
 		}
-		div#team-info-box div.team-main-select:last-child	p.team-name 
+		div#team-info-box div.team-main-select:last-child	p.team-name
     {
 			margin-left: 16px;
 		}
-		div#team-info-box	div.team-main-select p#box-goals 
+		div#team-info-box	div.team-main-select p#box-goals
     {
 			box-sizing: border-box;
 			text-align: center;
@@ -1493,44 +1470,44 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			width: auto;
 			color: white;
 		}
-		div#team-info-box	div.team-main-select p#box-goals.rating_golden 
+		div#team-info-box	div.team-main-select p#box-goals.rating_golden
     {
 			background-color: #ffb904 !important;
 		}
-		div#team-info-box div.team-main-select p#box-goals.rating_silver 
+		div#team-info-box div.team-main-select p#box-goals.rating_silver
     {
 			background-color: #8c8c8c !important;
 		}
-		div#team-info-box	div.team-main-select p#box-goals.rating_bronze 
+		div#team-info-box	div.team-main-select p#box-goals.rating_bronze
     {
 			background-color: #dbb884 !important;
 		}
 
-		/* 
-    main team lineup 
+		/*
+    main team lineup
     */
-		div#team-lineup-box 
+		div#team-lineup-box
     {
 			align-items: flex-start;
 			position: relative;
 		}
-		div#team-lineup-box div.lineup-box 
+		div#team-lineup-box div.lineup-box
     {
 			width: 100%;
 		}
-		div#team-lineup-box	div.lineup-box:last-child	div.player-row img.lineup-img 
+		div#team-lineup-box	div.lineup-box:last-child	div.player-row img.lineup-img
     {
 			margin-left: 16px;
 		}
-		div#team-lineup-box	div.lineup-box:last-child div.player-row p.lineup-player-name 
+		div#team-lineup-box	div.lineup-box:last-child div.player-row p.lineup-player-name
     {
 			text-align: end;
 		}
 
-		/* 
-    lineup divider 
+		/*
+    lineup divider
     */
-		div#divider 
+		div#divider
     {
 			background-color: #e6e6e6;
 			width: 1px;
@@ -1543,14 +1520,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1000px) 
+	@media only screen
+  and (min-width: 1000px)
   {
     /* NaN */
 	}
 
-	@media only screen 
-  and (min-width: 1160px) 
+	@media only screen
+  and (min-width: 1160px)
   {
     /* NaN */
 	}
@@ -1561,17 +1538,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-	:global(div#lineup-widget-container.dark-background-1	div#team-info-box	div.team-main-select) 
+	:global(div#lineup-widget-container.dark-background-1	div#team-info-box	div.team-main-select)
   {
 		border-bottom: 1px solid #616161;
 	}
-	div#lineup-widget-container.dark-background-1	div#divider 
+	div#lineup-widget-container.dark-background-1	div#divider
   {
 		background-color: #616161;
 	}
-	div#lineup-widget-container.dark-background-1	div.team-main-select 
+	div#lineup-widget-container.dark-background-1	div.team-main-select
   {
 		border-bottom: 1px solid #616161;
 	}
-  
+
 </style>

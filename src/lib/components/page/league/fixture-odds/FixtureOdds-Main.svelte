@@ -21,7 +21,6 @@
 	import type { FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 	import type { B_FO_D, B_FO_T, FO_Main, FO_Rounds_Data, FO_Season, FO_Weeks_Data } from '@betarena/scores-lib/types/fixture-odds';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
-	import type { Unsubscribe } from 'firebase/database';
 
   import one_red_card from './assets/1_red_card.svg';
   import one_red_card_dark from './assets/1_red_card_dark.svg';
@@ -45,6 +44,10 @@
   export let FIXTURES_ODDS_T: B_FO_T;
 	export let FIXTURES_ODDS_DATA: B_FO_D;
 
+  const TABLET_VIEW = 1000;
+	const MOBILE_VIEW = 725;
+	let mobileExclusive: boolean = false, tabletExclusive: boolean = false;
+
 	let noWidgetData: boolean = false;
 	let toggleDropdown: boolean = false;
 	let trueLengthOfArray: number;
@@ -65,15 +68,15 @@
 	let current_round_select: FO_Rounds_Data;
 	let current_rounds_all: FO_Rounds_Data[];
 	let lazyLoadingSeasonFixture: boolean = false;
-  let loadedCurrentSeason: boolean = false;
   let currentSeason = $sessionStore.selectedSeasonID;
 
-  let realTimeOddsListenMap: Map < number, Unsubscribe > = new Map<number, Unsubscribe>();
+  // let realTimeOddsListenMap: Map < number, Unsubscribe > = new Map<number, Unsubscribe>();
 
   // IMPORTANT DeepValue (change) Listen
   $: selectedSeasonId = JSON.stringify($sessionStore?.selectedSeasonID)
   $: livescoreNowScoreboardChng = JSON.stringify([...$sessionStore?.livescore_now_scoreboard?.entries()]);
   $: livescoreOddsChng = JSON.stringify([...$sessionStore?.live_odds_fixture_map?.entries()]);
+  $: sportbookChange = JSON.stringify($sessionStore?.sportbook_list);
 
   // #endregion ➤ [VARIABLES]
 
@@ -87,7 +90,7 @@
    * @param
    * {'odds' | 'matches'} opt
   */
-	function select_table_view
+	function selectTableView
   (
 		opt: 'odds' | 'matches'
 	): void
@@ -102,13 +105,13 @@
    * @returns
    * void (NaN)
   */
-	function selected_rounds_weeks_view
+	function selectRoundsWeeksViewOpt
   (
 		opt_view: 'round' | 'week'
 	): void
   {
 		optView = opt_view;
-		select_fixtures_odds();
+		selectFixtureOdds();
 	}
 
   /**
@@ -117,7 +120,7 @@
    * @returns
    * void (NaN)
   */
-	function close_all_dropdowns
+	function closeAllDropdown
   (
   ): void
   {
@@ -247,8 +250,46 @@
     return;
   }
 
+  // VIEWPORT CHANGES | IMPORTANT
+  function resizeAction
+  (
+  ): void
+  {
+    [
+      tabletExclusive,
+      mobileExclusive
+    ] =	viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+  }
+
+  /**
+   * @summary
+   * [MAIN]
+   * @description
+   * ➨ document (visibility-change) event listener;
+   * @returns
+   * void
+   */
+  function addEventListeners
+  (
+  ): void
+  {
+    // NOTE: (on-resize)
+    window.addEventListener
+    (
+			'resize',
+			function ()
+      {
+				resizeAction();
+			}
+		);
+  }
+
   // TODO: DOC:
-  async function select_fixtures_odds
+  async function selectFixtureOdds
   (
   ): Promise < void >
   {
@@ -258,7 +299,7 @@
     // [🐞]
     dlog
     (
-      `${FIX_W_T_TAG} select_fixtures_odds() cont.`,
+      `${FIX_W_T_TAG} selectFixtureOdds() cont.`,
       FIX_W_T_TOG,
       FIX_W_T_STY
     );
@@ -313,7 +354,7 @@
 
 				const dataRes0: B_FO_D = await get
         (
-          `/api/hasura/league/fixtures-odds?season_id=${$sessionStore.selectedSeasonID}`
+          `/api/data/league/fix-odds?season_id=${$sessionStore.selectedSeasonID}`
         );
 				if (dataRes0 == undefined)
         {
@@ -515,7 +556,7 @@
 	}
 
   // TODO: DOC:
-	async function carusel_fixture_odds_data
+	async function carouselFixtureOdds
   (
 		opt_view: number
   ): Promise < void >
@@ -524,7 +565,7 @@
     // [🐞]
     dlog
     (
-      `${FIX_W_T_TAG} carusel_fixture_odds_data()`,
+      `${FIX_W_T_TAG} carouselFixtureOdds()`,
       FIX_W_T_TOG,
       FIX_W_T_STY
     );
@@ -706,7 +747,6 @@
         ;
 				if (if_M_1)
         {
-					if (dev) console.log('No Matching Sportbook Details');
 					fixture.live_odds = undefined;
 					continue;
 				}
@@ -889,12 +929,16 @@
 
 		for (const fixture of flatFixturesList)
     {
+      const _time = new Date(fixture?.fixture_time);
+      _time.setHours(_time.getHours() + 2);
+
       const if_M_0: boolean =
         FIXTURE_FULL_TIME_OPT.includes(fixture?.status)
+        || (_time.getTime() - new Date().getTime()) < 0
       ;
-      if (if_M_0) return;
+      if (if_M_0) continue;
 
-      const livesOddsPath = createFixtureOddsPath
+      const livesOddsPath: string = createFixtureOddsPath
       (
         fixture?.id,
         fixture?.fixture_time
@@ -905,13 +949,13 @@
       );
     }
 
-    await oneOffOddsDataGet
+    // TODO: deal with Unsubscribe[]
+    let connectionRefs = targetLivescoreNowFixtureOddsListenMulti
     (
       liveOddsPathsList
     );
 
-    // TODO: deal with Unsubscribe[]
-    let connectionRefs = targetLivescoreNowFixtureOddsListenMulti
+    oneOffOddsDataGet
     (
       liveOddsPathsList
     );
@@ -945,7 +989,7 @@
 			true
 		);
 
-		select_fixtures_odds();
+		selectFixtureOdds();
 	}
 
 	$: if (optView == 'round') total_nav_num = rounds_total;
@@ -964,7 +1008,7 @@
    * @description
    * ➨ listens to change in "odds" data session-store;
   */
-  $: if (livescoreOddsChng)
+  $: if (livescoreOddsChng || sportbookChange)
   {
     injectFixtureOddsData()
   }
@@ -988,25 +1032,6 @@
 
   // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
-	const TABLET_VIEW = 1000;
-	const MOBILE_VIEW = 725;
-	let mobileExclusive, tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
-
   /**
    * @summary
    * [MAIN] [LIFECYCLE]
@@ -1020,6 +1045,8 @@
     async() =>
     {
       await kickstartLiveOdds();
+      resizeAction();
+      addEventListeners();
     }
   );
 
@@ -1038,7 +1065,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 {#if toggleDropdown}
 	<div
 		id="background-area-close"
-		on:click={() => close_all_dropdowns()}
+		on:click={() => closeAllDropdown()}
 	/>
 {/if}
 
@@ -1112,7 +1139,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 fix-odds-view-opt-box
                 cursor-pointer
               "
-              on:click={() => select_table_view('matches')}
+              on:click={() => selectTableView('matches')}
               class:activeOpt={selectedOpt == 'matches'}
             >
 
@@ -1135,7 +1162,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 fix-odds-view-opt-box
                 cursor-pointer
               "
-              on:click={() => select_table_view('odds')}
+              on:click={() => selectTableView('odds')}
               class:activeOpt={selectedOpt == 'odds'}
             >
               <p
@@ -1244,7 +1271,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                             row-season
                           "
                           class:color-primary={i + 1 === week_name}
-                          on:click={() => carusel_fixture_odds_data(i + 1)}
+                          on:click={() => carouselFixtureOdds(i + 1)}
                         >
                           {FIXTURES_ODDS_T?.week}
                           {i + 1}
@@ -1264,7 +1291,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                             row-season
                           "
                           class:color-primary={i + 1 === week_name}
-                          on:click={() => carusel_fixture_odds_data(i + 1)}
+                          on:click={() => carouselFixtureOdds(i + 1)}
                         >
                           <!--
                           ROUND OPT
@@ -1298,7 +1325,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             >
 
               <div
-                on:click={() => selected_rounds_weeks_view('round')}
+                on:click={() => selectRoundsWeeksViewOpt('round')}
                 class=
                 "
                   row-space-start
@@ -1335,7 +1362,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </div>
 
               <div
-                on:click={() => selected_rounds_weeks_view('week')}
+                on:click={() => selectRoundsWeeksViewOpt('week')}
                 class="row-space-start"
               >
 
@@ -1391,7 +1418,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             class="table-nav-btn"
             aria-label="selectedOptionTableMobile"
             disabled={week_name == 1}
-            on:click={() => carusel_fixture_odds_data(week_name - 1)}
+            on:click={() => carouselFixtureOdds(week_name - 1)}
           />
 
           <!--
@@ -1454,7 +1481,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             class="table-nav-btn"
             aria-label="selectedOptionTableMobile"
             disabled={week_name == total_nav_num}
-            on:click={() => carusel_fixture_odds_data(week_name + 1)}
+            on:click={() => carouselFixtureOdds(week_name + 1)}
           />
         </div>
 

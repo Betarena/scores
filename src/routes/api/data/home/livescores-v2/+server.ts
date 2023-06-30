@@ -6,7 +6,7 @@ import { initGrapQLClient } from '$lib/graphql/init';
 import { HLV2_HP_ENTRY, HLV2_HP_ENTRY_2, HLV2_HP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.livescores-v2.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_LS2_D, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
-import { get_target_hset_cache_data, get_target_string_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data, get_target_string_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
 
@@ -25,10 +25,10 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
 
-  // query (url) data
+  // NOTE: Handle url-query data;
 	const lang: string = req?.url?.searchParams?.get('lang');
   const seo: string =	req?.url?.searchParams?.get('seo');
 	const date: string = req?.url?.searchParams?.get('date');
@@ -41,17 +41,17 @@ export async function GET
    * livescores (v2) main widget data;
    * NOTE: with Hasura (source) fallback
    */
-  const if_0 =
-    !lang 
+  const if_M_0: boolean =
+    !lang
     && !seo
     && !fixtureIds
   ;
-  if (if_0) 
+  if (if_M_0)
   {
     let data: unknown;
     let loadType = "cache";
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_string_cache_data
@@ -61,7 +61,7 @@ export async function GET
       ;
     }
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData
       (
@@ -79,12 +79,12 @@ export async function GET
    * livescores (v2) TARGET widget data;
    * NOTE: ONLY Hasura (source)
    */
-  const if_1 =
-    !lang 
+  const if_M_1 =
+    !lang
     && !seo
     && fixtureIds
   ;
-  if (if_1)
+  if (if_M_1)
   {
     const res =	await fallbackMainData_2
     (
@@ -100,16 +100,16 @@ export async function GET
    * livescores (v2) translation/SEO data;
    * NOTE: with Hasura (source) fallback
    */
-  const if_2 =
+  const if_M_2: boolean =
     lang
     && !seo
   ;
-  if (if_2) 
+  if (if_M_2)
   {
     let data: unknown;
     let loadType = "cache";
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_hset_cache_data
@@ -120,7 +120,7 @@ export async function GET
       ;
     }
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData_1
       (
@@ -138,16 +138,16 @@ export async function GET
    * livescores (v2) exclusive SEO widget data;
    * NOTE: with Hasura (source) fallback
    */
-  const if_3 =
+  const if_M_3: boolean =
     lang != undefined
     && seo != undefined
   ;
-  if (if_3) 
+  if (if_M_3)
   {
     let data: unknown;
     let loadType = "cache";
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_hset_cache_data
@@ -158,7 +158,7 @@ export async function GET
       ;
     }
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       // data = await fallbackMainData
       // (
@@ -185,57 +185,58 @@ export async function GET
  * @param {number} _player_id
  * @returns Promise < B_PSTAT_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   targetDateIso: string
-): Promise < B_LS2_D > 
+): Promise < B_LS2_D >
 {
 
-  const data = await HLV2_HP_ENTRY
+  const dataRes = await HLV2_HP_ENTRY
   (
     graphQlInstance,
     targetDateIso
   )
 
-  delete data.leagues_feat_list;
-  delete data.leagues_geo_list;
+  delete dataRes?.[0]?.leagues_feat_list;
+  delete dataRes?.[0]?.leagues_geo_list;
 
-	return data;
+	return dataRes?.[0];
 }
 
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} LANG 
- * @returns Promise < B_PSTAT_T > 
+ * @param {string} LANG
+ * @returns Promise < B_PSTAT_T >
  */
 async function fallbackMainData_1
 (
-  LANG: string
-): Promise < B_LS2_T > 
+  lang: string
+): Promise < B_LS2_T >
 {
 
-  const map_0 = await HLV2_HP_ENTRY_2
+  const dataRes0 = await HLV2_HP_ENTRY_2
   (
     graphQlInstance,
-    [LANG]
-  )
+    [lang]
+  );
 
-	return map_0.get(LANG);
+
+	return dataRes0?.[0].get(lang);
 }
 
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} fixtureIds 
- * @returns Promise < B_PSTAT_T > 
+ * @param {string} fixtureIds
+ * @returns Promise < B_PSTAT_T >
  */
 async function fallbackMainData_2
 (
   fixtureIds: string
 )
 {
-  
+
   const fixtureIdsList = fixtureIds
   ?.split
   (
@@ -243,22 +244,22 @@ async function fallbackMainData_2
   )
   ?.map
   (
-    x => 
+    x =>
     parseInt
     (
       x
     )
   );
-  
+
   console.log('fixtureIdsList', fixtureIdsList)
 
-  const map_0 = await HLV2_HP_ENTRY_3
+  const dataRes0 = await HLV2_HP_ENTRY_3
   (
     graphQlInstance,
     fixtureIdsList
   );
 
-	return Object.fromEntries(map_0);
+	return Object.fromEntries(dataRes0?.[0]);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

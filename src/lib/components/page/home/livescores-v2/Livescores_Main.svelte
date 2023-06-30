@@ -71,7 +71,6 @@ COMPONENT JS (w/ TS)
     data: B_LS2_D
   )
   {
-    console.log('setData')
     for (const fixtureDateObj of data?.fixtures_by_date)
     {
       // NOTE: key => ISO/UTC date
@@ -110,9 +109,6 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < void >
   {
-
-    console.log('injectLivescoreData')
-
     const liveFixturesMap = $sessionStore?.livescore_now_scoreboard
 
     const if_0 =
@@ -135,10 +131,6 @@ COMPONENT JS (w/ TS)
       toISOMod(yesterday)
     ];
     let fixtureOrphanId: number[] = []
-
-    console.log('fixtureDates', fixtureDates)
-    console.log('fixturesGroupByDateLiveLeagueMap', fixturesGroupByDateLiveLeagueMap)
-    console.log('liveFixturesMap', liveFixturesMap)
 
     // for each "target-date" expected to have,
     // LIVE fixtures, loop;
@@ -210,16 +202,12 @@ COMPONENT JS (w/ TS)
       );
     }
 
-    console.log('fixtureOrphanId', fixtureOrphanId)
-
     // handle ORPHAN (past-LIVE) fixtures;
     const if_2 =
       fixtureOrphanId.length != 0
     ;
     if (if_2)
     {
-      console.log('Dealing with orphans!');
-
       const data_0 = await get
       (
         `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId.toString()}`
@@ -229,8 +217,6 @@ COMPONENT JS (w/ TS)
       (
         Object.entries(data_0)
       ) as unknown as Map <string, LS2_C_Fixture>;
-
-      console.log('_fixtureMap', _fixtureMap);
 
       // loop each ORPHAN fixture and modify new data;
       for (const targetDate of fixtureDates)
@@ -254,9 +240,7 @@ COMPONENT JS (w/ TS)
             // update properties/fields;
             if (fixtureOrphanId.includes(fixture.id))
             {
-              console.log('orphan', fixture?.id)
               const newOrphanData = _fixtureMap.get(fixture?.id?.toString())
-              console.log('newOrphanData', newOrphanData)
 
               return {
                 ...fixture,
@@ -402,7 +386,6 @@ COMPONENT JS (w/ TS)
       `${LV2_W_H_TAG[0]} (in) updateLiveInfo`,
       LV2_W_H_TAG[1]
     );
-    console.log("(in) updateLiveInfo")
 
     numOfFixturesLive = 0
     fixturesGroupByDateLiveLeagueMap = new Map()
@@ -682,16 +665,6 @@ COMPONENT JS (w/ TS)
   $: if (livescoreNowScoreboardChng)
   {
     injectLivescoreData()
-  }
-
-  // [🐞] [DEV-ONLY]
-  $:
-  {
-    // dlog(`${LV2_W_H_TAG[0]} nonEmptyLeaguesIds: ${nonEmptyLeaguesIds}`)
-    // dlog(`${LV2_W_H_TAG[0]} numOfFixtures: ${nonEmptyLeaguesIds}`)
-    // dlog(`${LV2_W_H_TAG[0]} numOfFixturesLive: ${numOfFixturesLive}`)
-    // dlog(`${LV2_W_H_TAG[0]} liveLeaguesIds: ${liveLeaguesIds}`)
-    // console.log('UPDATED! fixturesGroupByDateMap', fixturesGroupByDateMap)
   }
 
   //#endregion ➤ [REACTIVIY] [METHODS]

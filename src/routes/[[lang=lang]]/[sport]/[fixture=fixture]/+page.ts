@@ -27,10 +27,10 @@ const PAGE_LOG = '⏳ [FIXTURE] PRELOAD';
 /** @type {import('./$types').PageLoad} */
 export async function load
 (
-  { 
-    url, 
-    params, 
-    fetch 
+  {
+    url,
+    params,
+    fetch
   }
 ): Promise < PageLoad >
 {
@@ -39,16 +39,16 @@ export async function load
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
-	const 
-  { 
-    lang, 
+	const
+  {
+    lang,
     sport,
     fixture
   } = params;
 
   const urlLang: string =
-    params?.lang == undefined 
-      ? 'en' 
+    params?.lang == undefined
+      ? 'en'
       : params?.lang
   ;
 
@@ -69,7 +69,7 @@ export async function load
   )
 
   // EXIT;
-  if (!validUrlCheck) 
+  if (!validUrlCheck)
   {
     exitPage
     (
@@ -83,7 +83,7 @@ export async function load
 
   // [1] FIXTURE (CRITICAL) page data;
 
-  type PP_PROMISE_0 = 
+  type PP_PROMISE_0 =
   [
     B_SAP_FP_D | undefined
   ]
@@ -94,7 +94,7 @@ export async function load
     fetch
   ) as PP_PROMISE_0;
 
-	const 
+	const
   [
 		FIXTURE_INFO
 	] = data_0;
@@ -112,7 +112,7 @@ export async function load
 
   // [2] FIXTURE (CRITICAL) page data;
 
-  type PP_PROMISE_1 = 
+  type PP_PROMISE_1 =
   [
     B_SAP_D1 | undefined
   ]
@@ -123,7 +123,7 @@ export async function load
     fetch
   ) as PP_PROMISE_1;
 
-	const 
+	const
   [
 		COUNTRY_TRANSLATION
 	] = data_1;
@@ -140,7 +140,7 @@ export async function load
 
   //#region [1] IMPORTANT PRE-LOAD DATA
 
-  type PP_PROMISE_2 = 
+  type PP_PROMISE_2 =
   [
     B_SAP_FP_T | undefined,
     B_FS_D | undefined,
@@ -167,7 +167,7 @@ export async function load
     B_STA_D | undefined
   ]
 
-	const urls: string[] = 
+	const urls: string[] =
   [
     `/api/data/main/seo-pages?lang=${urlLang}&page=fixtures`,
     `/api/data/fixture/scoreboard?fixture_id=${fixture_id}`,
@@ -176,7 +176,7 @@ export async function load
     `/api/data/fixture/lineups?lang=${urlLang}`,
     `/api/data/fixture/incidents?fixture_id=${fixture_id}`,
     `/api/data/fixture/incidents?lang=${urlLang}`,
-    `/api/cache/home/featured_betting_sites?lang=${urlLang}`,
+    `/api/data/home/feat-betsite?lang=${urlLang}`,
     `/api/data/fixture/statistics?fixture_id=${fixture_id}`,
     `/api/data/fixture/statistics?lang=${urlLang}`,
     `/api/data/fixture/content?fixture_id=${fixture_id}&lang=${urlLang}`,
@@ -188,12 +188,12 @@ export async function load
     `/api/data/fixture/probability?fixture_id=${fixture_id}`,
     `/api/data/fixture/probability?lang=${urlLang}`,
     // TODO: clean up;
-    `/api/cache/tournaments/fixtures_odds?lang=${urlLang}`,
+    `/api/data/league/fix-odds?lang=${urlLang}`,
     `/api/data/fixture/h2h?teamIds=${teamIds}`,
     `/api/data/fixture/h2h?lang=${urlLang}`,
-    `/api/cache/tournaments/standings?lang=${urlLang}`,
-    `/api/cache/tournaments/standings?league_id=${league_id}`
-  ]; 
+    `/api/data/league/standings?lang=${urlLang}`,
+    `/api/data/league/standings?league_id=${league_id}`
+  ];
 
   const data = await promiseUrlsPreload
   (
@@ -201,7 +201,7 @@ export async function load
     fetch
   ) as PP_PROMISE_2;
 
-	const 
+	const
   [
     PAGE_SEO,
 		FIXTURE_SCOREBOARD,
@@ -231,7 +231,7 @@ export async function load
   //#endregion [1] IMPORTANT PRE-LOAD DATA
 
   //#region [2] IMPORTANT REGEX + DATA INJECT
-      
+
 	PAGE_SEO.main_data = JSON.parse(
 		JSON.stringify(PAGE_SEO.main_data)
 			.replace(/{id}/g, id)
@@ -285,7 +285,7 @@ export async function load
 	const INVALID_PAGE_DATA_POINTS: boolean =	data.includes(undefined);
 
   // EXIT;
-  if (INVALID_PAGE_DATA_POINTS) 
+  if (INVALID_PAGE_DATA_POINTS)
   {
     exitPage
     (
@@ -311,7 +311,7 @@ export async function load
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
-    // NOTE: issues with setting correct <PageLoad> types, 
+    // NOTE: issues with setting correct <PageLoad> types,
     // NOTE: not being applied to return;
     // NOTE: not critical - can be silenced;
     PAGE_SEO,

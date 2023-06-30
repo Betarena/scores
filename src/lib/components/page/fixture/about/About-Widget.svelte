@@ -7,7 +7,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
 
 	import { page } from '$app/stores';
-	
+
   import { sessionStore } from '$lib/store/session.js';
   import { AB_W_F_STY, AB_W_F_TAG, AB_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
@@ -43,22 +43,23 @@ COMPONENT JS (w/ TS)
    * @summary
    * [MAIN] [INIT]
    * @description
-   * main widget data loader, 
+   * main widget data loader,
    * (and) try..catch (error) handler
    * (and) placeholder handler
    */
   async function widgetInit
   (
-  ): Promise < B_INC_D > 
+  ): Promise < B_INC_D >
   {
 		await sleep(3000);
-    
+
     WIDGET_DATA = WIDGET_S_DATA
 
-    const if_0 =
+    const if_M_0: boolean =
       WIDGET_DATA == undefined
+      || WIDGET_DATA?.seo_data == undefined
     ;
-		if (if_0) 
+		if (if_M_0)
     {
       dlog(`${AB_W_F_TAG} ❌ no data available!`, AB_W_F_TOG, AB_W_F_STY);
 			NO_WIDGET_DATA = true;
@@ -80,10 +81,10 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "language" change;
   */
-  $: if_R_0 = 
+  $: if_R_0 =
     $sessionStore?.serverLang
   ;
   $: if (if_R_0)
@@ -108,16 +109,16 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <!-- 
+  <!--
   WIDGET TITLE
   -->
   <h2>{WIDGET_T_DATA?.title}</h2>
-  <!-- 
+  <!--
   SEO
   -->
   {@html WIDGET_S_DATA?.seo_data}
@@ -126,27 +127,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!-- [🐞] -->
 <!-- <AboutLoader /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
   <AboutLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <AboutMain 
+    <AboutMain
       FIXTURE_ABOUT={WIDGET_DATA}
       FIXTURE_ABOUT_TRANSLATION={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -159,12 +160,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 

@@ -8,7 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	
+
   import { sessionStore } from '$lib/store/session.js';
   import { H2H_W_F_STY, H2H_W_F_TAG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
@@ -49,26 +49,25 @@ COMPONENT JS (w/ TS)
    * @summary
    * [MAIN] [INIT]
    * @description
-   * main widget data loader, 
+   * main widget data loader,
    * (and) try..catch (error) handler
    * (and) placeholder handler
    */
   async function widgetInit
   (
-  ): Promise < B_INC_D > 
+  ): Promise < B_INC_D >
   {
 		await sleep(3000);
-    
+
     WIDGET_DATA = WIDGET_S_DATA
 
     const if_0 =
-      WIDGET_DATA == undefined 
-      || WIDGET_DATA?.teams_map == undefined 
+      WIDGET_DATA == undefined
+      || WIDGET_DATA?.teams_map == undefined
     ;
-		if (if_0) 
+		if (if_0)
     {
       dlog(`${H2H_W_F_TAG} ❌ no data available!`, true, H2H_W_F_STY);
-      console.log("WIDGET_DATA", WIDGET_DATA)
 			NO_WIDGET_DATA = true;
 			return;
 		}
@@ -88,11 +87,11 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "language" change;
   */
   $: if_R_0 =
-    browser 
+    browser
     && $sessionStore?.serverLang != undefined
   ;
   $: if (if_R_0)
@@ -117,18 +116,18 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <!-- 
+  <!--
   [ℹ] team-names
   -->
   {#each WIDGET_S_DATA?.teams_data || [] as item}
     <p>{item?.team_name}</p>
   {/each}
-  <!-- 
+  <!--
   [ℹ] league-names [from-fixtures]
   -->
   {#each WIDGET_S_DATA?.data?.last_5_data || [] as item}
@@ -139,20 +138,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!-- [🐞] -->
 <!-- <Head2HeadLoader /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
   <Head2HeadLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <Head2HeadMain 
+    <Head2HeadMain
       FIXTURE_H2H={WIDGET_DATA}
       FIXTURE_H2H_TRANSLATION={WIDGET_T_DATA}
       {FIXTURE_INFO}
@@ -160,8 +159,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     />
   {/if}
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -174,12 +173,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 

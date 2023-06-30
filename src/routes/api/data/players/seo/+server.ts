@@ -6,7 +6,7 @@ import { initGrapQLClient } from '$lib/graphql/init';
 import { PSEO_PP_ENTRY, PSEO_PP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.player-seo.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_PSEO_D, B_PSEO_T } from '@betarena/scores-lib/types/player-seo.js';
-import { get_target_hset_cache_data } from '../../../cache/std_main';
+import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 //#endregion ➤ Package Imports
 
@@ -126,19 +126,19 @@ async function fallbackMainData
   _lang: string
 ): Promise < B_PSEO_D > 
 {
-  const map = await PSEO_PP_ENTRY
+  const dataRes0 = await PSEO_PP_ENTRY
   (
     graphQlInstance,
     [_player_id],
     [_lang]
   )
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(_player_id);
+	return dataRes0?.[0]?.get(_player_id);
 }
 
 /**
@@ -152,18 +152,18 @@ async function fallbackMainData_1
   lang: string
 ): Promise < B_PSEO_T > 
 {
-  const map = await PSEO_PP_ENTRY_1
+  const dataRes0 = await PSEO_PP_ENTRY_1
   (
     graphQlInstance,
     [lang]
   );
 
-  if (map.size == 0) 
+  if (dataRes0?.[0]?.size == 0) 
   {
     return null
   }
   
-	return map.get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~

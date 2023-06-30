@@ -9,8 +9,9 @@
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
-	
+
 	import { get } from '$lib/api/utils';
+	import { createFixtureOddsPath, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
@@ -21,9 +22,9 @@
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import FeatMatchTableRow from './FeatMatch-Table-Row.svelte';
 
-	import { createFixtureOddsPath, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
 	import type { Voted_Fixture } from '$lib/types/types.scores.js';
 	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
+	import type { Urls } from '@betarena/scores-lib/types/hasura.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	import type { B_H_VOT_M } from '@betarena/scores-lib/types/votes.js';
 
@@ -36,7 +37,7 @@
 
   const MOBILE_VIEW = 700;
 	const TABLET_VIEW = 700;
-  
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
@@ -53,6 +54,8 @@
   let showCountdown: boolean = true;
   let placeholderData: any | object = { }
 
+  const playerMap = new Map<number, Urls>(B_FEATM_D?.player_urls);
+
   $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
 	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
 	$: countDownHour = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
@@ -60,8 +63,8 @@
 
   // [ℹ] intercept data, and decalre further;
 	$: totalVoteCount =
-    B_FEATM_D?.match_votes?.vote_draw_x 
-    +	B_FEATM_D?.match_votes?.vote_win_local 
+    B_FEATM_D?.match_votes?.vote_draw_x
+    +	B_FEATM_D?.match_votes?.vote_win_local
     +	B_FEATM_D?.match_votes?.vote_win_visitor
   ;
 
@@ -85,7 +88,7 @@
    */
   async function kickstartLiveOdds
   (
-  ): Promise < void > 
+  ): Promise < void >
   {
     let connectionRef = targetLivescoreNowFixtureOddsListen
     (
@@ -101,24 +104,24 @@
 
 		let count = 0;
 
-		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
+		for (const m_sportBook of $sessionStore?.sportbook_list || [])
     {
 			const m_sportBookTitle =	m_sportBook?.title;
-			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || []) 
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || [])
       {
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
-          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase() 
-          && firebaseSportbook.markets != null 
-          && firebaseSportbook.markets['1X2FT'] !=	null 
-          && firebaseSportbook.markets['1X2FT'].data[0].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[1].value != null 
-          && firebaseSportbook.markets['1X2FT'].data[2].value != null 
+          m_sportBookTitle.toLowerCase() ==	firebase_sportbook_title.toLowerCase()
+          && firebaseSportbook.markets != null
+          && firebaseSportbook.markets['1X2FT'] !=	null
+          && firebaseSportbook.markets['1X2FT'].data[0].value != null
+          && firebaseSportbook.markets['1X2FT'].data[1].value != null
+          && firebaseSportbook.markets['1X2FT'].data[2].value != null
           && count != 1
         ;
         if (if_M_0)
         {
-					placeholderData = 
+					placeholderData =
           {
 						home: firebaseSportbook?.markets?.['1X2FT']?.data[0]?.value?.toFixed(2),
 						away: firebaseSportbook?.markets?.['1X2FT']?.data[2]?.value?.toFixed(2),
@@ -132,7 +135,7 @@
 
     getImageBgColor
     (
-      SPORTBOOK_INFO?.image, 
+      SPORTBOOK_INFO?.image,
       imageVar
     );
 
@@ -159,7 +162,7 @@
       }
     );
 
-		if (result != undefined) 
+		if (result != undefined)
     {
 			fixtureVoteObj = result;
 			showBetSite = true;
@@ -167,22 +170,22 @@
 			return;
 		}
 
-    fixtureVoteObj = 
+    fixtureVoteObj =
     {
       fixture_id: undefined,
       fixture_vote: undefined,
       fixture_vote_val: undefined
     };
-    
+
     showBetSite = false;
     isVoteCasted = false;
 	}
 
-	async function castVote  
+	async function castVote
   (
     voteType: string,
     voteVal: string | number
-  ): Promise < void > 
+  ): Promise < void >
   {
     if (isVoteCasted) return;
 
@@ -190,7 +193,7 @@
 
     showBetSite = true;
 
-    fixtureVoteObj = 
+    fixtureVoteObj =
     {
       fixture_id: B_FEATM_D?.id,
       fixture_vote: voteType,
@@ -204,8 +207,8 @@
 
     B_FEATM_D.match_votes = response?.update_widget_featured_match_votes_by_pk;
     totalVoteCount =
-      B_FEATM_D?.match_votes?.vote_draw_x 
-      +	B_FEATM_D?.match_votes?.vote_win_local 
+      B_FEATM_D?.match_votes?.vote_draw_x
+      +	B_FEATM_D?.match_votes?.vote_win_local
       + B_FEATM_D?.match_votes?.vote_win_visitor
     ;
 
@@ -234,7 +237,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -247,7 +250,7 @@
   ): void
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -266,33 +269,33 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
    * @description
    * ➨ sets timer (countdown) in motion;
   */
-  $: if (browser) 
+  $: if (browser)
   {
-		dateDiff = toCorrectDate(B_FEATM_D?.time).getTime() - new Date().getTime();		
+		dateDiff = toCorrectDate(B_FEATM_D?.time).getTime() - new Date().getTime();
     setInterval
     (
-      () => 
+      () =>
       {
         dateDiff = toCorrectDate(B_FEATM_D?.time).getTime() - new Date().getTime();
-      }, 
+      },
       1000
     );
 	}
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ checks for "hide" / "show" countdown bool state;
   */
   $: if_R_0 =
-    countDownTestHour > 23 
+    countDownTestHour > 23
     || dateDiff < 0
   ;
 	$: if (if_R_0) showCountdown = false;
@@ -300,19 +303,19 @@
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * ➨ listens to available "fixtureVotes" data;
   */
-  $: if ($userBetarenaSettings?.voted_fixtures) 
+  $: if ($userBetarenaSettings?.voted_fixtures)
   {
 		checkVote();
 	}
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ listens to target "fixture" in "odds" data;
   */
   $: if ($sessionStore?.live_odds_fixture_target)
@@ -326,7 +329,7 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [LIFECYCLE]
    * @description
    * ➨ kickstart resize-action;
@@ -334,7 +337,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       await kickstartLiveOdds()
       resizeAction();
@@ -347,24 +350,24 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <div>
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
-		<WidgetNoData 
+		<WidgetNoData
       WIDGET_TITLE={B_FEATB_T?.widget_title}
       NO_DATA_TITLE={B_FEATB_T?.place_holder?.info}
       NO_DATA_DESC={B_FEATB_T?.place_holder?.no_matches}
     />
 	{/if}
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData}
@@ -378,7 +381,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       id="live-score-container"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
-      <!-- 
+      <!--
       LEAGUE TITLE
       -->
       <a
@@ -404,17 +407,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           <p
             class="
-              w-500 
-              large 
-              color-dark 
+              w-500
+              large
+              color-dark
               m-r-8
             "
           >
             {B_FEATM_D?.league_name}
             {#if B_FEATM_D?.round_name != undefined}
-              <span 
+              <span
                 class="
-                  w-400 
+                  w-400
                   color-grey
                 ">
                 (Round {B_FEATM_D?.round_name})
@@ -428,8 +431,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       FIXTURE VOTES
       -->
       {#if placeholderData != undefined}
-        
-        <div 
+
+        <div
           id="fixture-visual-box"
         >
           <!--
@@ -438,12 +441,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <div
             id="fixture-data"
             class="
-              row-space-out 
+              row-space-out
               m-b-20
             "
           >
-            
-            <!-- 
+
+            <!--
             TEAM 1
             -->
             <div
@@ -458,8 +461,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
               <p
                 class="
-                  w-500 
-                  medium 
+                  w-500
+                  medium
                   desktop-medium
                 "
               >
@@ -467,7 +470,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
             </div>
 
-            <!-- 
+            <!--
             FIXTURE COUNTDOWN
             -->
             <div
@@ -477,8 +480,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               {#if showCountdown}
                 <p
                   class="
-                    w-500 
-                    x-large 
+                    w-500
+                    x-large
                     desktop-x-large
                   "
                 >
@@ -487,9 +490,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
                 <p
                   class="
-                    w-400 
-                    small 
-                    color-grey 
+                    w-400
+                    small
+                    color-grey
                     desktop-medium
                   "
                   style="white-space: nowrap;"
@@ -514,7 +517,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </button>
                 </a>
               {/if}
-              
+
             </div>
 
             <!--
@@ -532,8 +535,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               />
               <p
                 class="
-                  w-500 
-                  medium 
+                  w-500
+                  medium
                   desktop-medium
                   "
               >
@@ -546,10 +549,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {#if !isVoteCasted}
             <p
               class="
-                w-500 
-                large 
-                color-primary 
-                m-b-12 
+                w-500
+                large
+                color-primary
+                m-b-12
                 text-center
               "
             >
@@ -565,20 +568,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             class="row-space-out"
           >
 
-            <!-- 
-            ODDS #1 
+            <!--
+            ODDS #1
             -->
             <div
               class="
-                odds-vote-box 
-                text-center 
+                odds-vote-box
+                text-center
                 column
                 "
             >
               <button
                 class="
-                  row-space-out 
-                  cast-vote-btn 
+                  row-space-out
+                  cast-vote-btn
                   m-b-12
                 "
                 class:active={fixtureVoteObj?.fixture_vote == '1'}
@@ -587,13 +590,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               >
                 <p
                   class="
-                    w-500 
-                    medium 
+                    w-500
+                    medium
                     row-space-out
                   "
                 >
                   {#if tabletExclusive}
-                    <span 
+                    <span
                       class="color-grey">
                       1
                     </span>
@@ -614,15 +617,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </button>
 
-              <!-- 
+              <!--
               PROBABILITY (WIN)
               -->
               {#if !showBetSite}
 
                 <p
                   class="
-                    w-400 
-                    probablitiy-text 
+                    w-400
+                    probablitiy-text
                     medium"
                 >
                   {B_FEATB_T?.probability}
@@ -638,11 +641,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
                 <p
                   class="
-                    w-500 
+                    w-500
                     large
                   "
                 >
-                  <span 
+                  <span
                     class="color-dark"
                   >
                     {B_FEATM_D?.match_votes?.vote_win_local == 0 ? 0 : ((B_FEATM_D?.match_votes.vote_win_local / totalVoteCount) * 100).toFixed(0)}%
@@ -655,21 +658,21 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               {/if}
             </div>
 
-            <!-- 
-            ODDS #X 
+            <!--
+            ODDS #X
             -->
             <div
               class="
-                odds-vote-box 
-                text-center 
+                odds-vote-box
+                text-center
                 column
               "
             >
 
               <button
                 class="
-                  row-space-out 
-                  cast-vote-btn 
+                  row-space-out
+                  cast-vote-btn
                   m-b-12
                 "
                 class:active={fixtureVoteObj.fixture_vote == 'X'}
@@ -678,8 +681,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               >
                 <p
                   class="
-                    w-500 
-                    medium 
+                    w-500
+                    medium
                     row-space-out
                   "
                 >
@@ -706,26 +709,26 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </button>
 
-              <!-- 
+              <!--
               PROBABILITY (WIN)
               -->
               {#if !showBetSite}
 
                 <p
                   class="
-                    w-400 
-                    probablitiy-text 
+                    w-400
+                    probablitiy-text
                     medium
                   "
                 >
                   {B_FEATB_T?.probability}
-                  
+
                   {#if tabletExclusive}
                     <br />
                   {/if}
-                  
+
                   {placeholderData?.draw}%
-                  
+
                 </p>
 
               {:else if B_FEATM_D.match_votes != undefined}
@@ -738,12 +741,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     ({B_FEATM_D?.match_votes?.vote_draw_x})
                   </span>
                 </p>
-                
+
               {/if}
 
             </div>
 
-            <!-- 
+            <!--
             ODDS #2
             -->
             <div
@@ -753,7 +756,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <button
                 class="
                   row-space-out
-                  cast-vote-btn 
+                  cast-vote-btn
                   m-b-12
                 "
                 class:active={fixtureVoteObj?.fixture_vote == '2'}
@@ -762,7 +765,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               >
                 <p
                   class="
-                    w-500 medium 
+                    w-500 medium
                     row-space-out
                   "
                 >
@@ -790,30 +793,30 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </p>
               </button>
 
-              <!-- 
+              <!--
               PROBABILITY (WIN)
               -->
               {#if !showBetSite}
                 <p
                   class="
-                    w-400 
-                    probablitiy-text 
+                    w-400
+                    probablitiy-text
                     medium
                   "
                 >
                   {B_FEATB_T?.probability}
-                  
+
                   {#if !tabletExclusive}
                     <br />
                   {/if}
 
                   {placeholderData?.away}%
-                  
+
                 </p>
               {:else if B_FEATM_D.match_votes != undefined}
-                <p 
+                <p
                   class="
-                    w-500 
+                    w-500
                     large
                   "
                 >
@@ -829,13 +832,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
           </div>
 
-          <!-- 
+          <!--
           EXTRA INFO STAKES POP-UP
           -->
           {#if showBetSite}
 
             <div
-              id="site-bet-box" 
+              id="site-bet-box"
               in:fade>
 
               <img
@@ -864,17 +867,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <div
                 id="inner-site-container">
 
-                <!-- 
-                STAKES DATA 
+                <!--
+                STAKES DATA
                 -->
                 <div
                   class="
-                    m-b-20 
+                    m-b-20
                     row-space-out
                   "
                 >
-                  <!-- 
-                  WIN TYPE 
+                  <!--
+                  WIN TYPE
                   -->
                   <div
                     class="text-center"
@@ -882,9 +885,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
                     <p
                       class="
-                        w-400 
-                        medium 
-                        m-b-8 
+                        w-400
+                        medium
+                        m-b-8
                         color-grey
                       "
                     >
@@ -896,12 +899,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         Away win
                       {/if}
                     </p>
-                    
+
                     <div
                       class="
-                        input-value 
-                        row-space-out 
-                        medium 
+                        input-value
+                        row-space-out
+                        medium
                         text-center
                       "
                     >
@@ -918,8 +921,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         {:else if fixtureVoteObj?.fixture_vote == 'X'}
                           <p
                             class="
-                              w-500 
-                              medium 
+                              w-500
+                              medium
                               row-space-out
                             "
                           >
@@ -944,9 +947,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                       <input
                         id="win-type"
                         class="
-                          w-500 
-                          medium 
-                          text-center 
+                          w-500
+                          medium
+                          text-center
                           desktop-view-winnings
                         "
                         type="number"
@@ -977,9 +980,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     class="text-center">
                     <p
                       class="
-                        w-400 
+                        w-400
                         medium
-                        m-b-8 
+                        m-b-8
                         color-grey
                       "
                     >
@@ -987,9 +990,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     </p>
                     <input
                       class="
-                        w-500 
-                        input-value 
-                        medium 
+                        w-500
+                        input-value
+                        medium
                         text-center
                       "
                       type="text"
@@ -997,8 +1000,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     />
                   </div>
 
-                  <!-- 
-                  EQUALS SIGN 
+                  <!--
+                  EQUALS SIGN
                   -->
                   <img
                     loading="lazy"
@@ -1012,15 +1015,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   <!--
                   WINNINGS
                   -->
-                  <div 
+                  <div
                     class="text-center"
                   >
 
                     <p
                       class="
-                        w-400 
-                        medium 
-                        m-b-8 
+                        w-400
+                        medium
+                        m-b-8
                         color-grey
                       "
                     >
@@ -1029,9 +1032,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
                     <input
                       class="
-                        w-500 
-                        input-value 
-                        medium 
+                        w-500
+                        input-value
+                        medium
                         text-center
                       "
                       type="number"
@@ -1051,12 +1054,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   <button
                     class="
-                      place-bet-btn 
-                      btn-primary 
+                      place-bet-btn
+                      btn-primary
                       m-b-12
                     "
                   >
-                    <p 
+                    <p
                       class="small">
                       {B_FEATB_T?.place_bet}
                     </p>
@@ -1068,8 +1071,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 -->
                 <p
                   class="
-                    small 
-                    text-center 
+                    small
+                    text-center
                     color-grey
                   "
                 >
@@ -1089,17 +1092,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       LIVE STREAMS
       -->
       {#if B_FEATM_D?.tvstations?.length > 0}
-        
-        <div 
+
+        <div
           id="live-stream-box">
 
-          <!-- 
+          <!--
           TITLE
           -->
           <p
             class="
-              w-500 
-              large 
+              w-500
+              large
               m-b-8
             "
             style="padding-left: 20px;"
@@ -1107,7 +1110,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             {B_FEATB_T.streams}
           </p>
 
-          <!-- 
+          <!--
           LIVE STREAM GRID
           -->
           <div
@@ -1117,7 +1120,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 rel="external"
                 href={tv_item.link}
               >
-                <div 
+                <div
                   class="tooltip">
                   <button
                     class="live-stream-btn"
@@ -1133,7 +1136,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </button>
                   <p
                     class="
-                      s_small 
+                      s_small
                       tooltiptext
                     "
                   >
@@ -1148,15 +1151,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
       {/if}
 
-      <!-- 
+      <!--
       BEST PLAYERS
       -->
       {#if B_FEATM_D?.best_players != null}
-        
+
         <div
           id="best-players-box-out">
-          
-          <!-- 
+
+          <!--
           HOME TEAM
           -->
           <div
@@ -1164,7 +1167,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
             <div
               class="
-                row-space-start 
+                row-space-start
                 m-b-16
               ">
               <img
@@ -1175,9 +1178,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 width="32"
                 height="32"
               />
-              <p 
+              <p
                 class="
-                  w-500 
+                  w-500
                   large
                 ">
                 {B_FEATM_D?.home_team_name}
@@ -1185,15 +1188,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
             </div>
 
-            <table 
+            <table
               class="table-best-player">
-              
+
               <tr
                 class="
-                  row-head 
+                  row-head
                   m-b-16
                 ">
-                <th 
+                <th
                   class="rating-head">
                   <p
                     class="w-400 small color-grey"
@@ -1202,7 +1205,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                 </th>
 
-                <th 
+                <th
                   class="player-col">
                   <p
                     class="w-400 small color-grey"
@@ -1236,29 +1239,31 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {/if}
               </tr>
 
-              <!-- 
+              <!--
               HOME TEAM - PLAYER 1
               -->
-              <FeatMatchTableRow 
+              <FeatMatchTableRow
                 rating={B_FEATM_D?.best_players?.local_team_rating_player_1}
                 name={B_FEATM_D?.best_players?.local_team_player_1}
                 img={B_FEATM_D?.best_players?.local_team_player_1_image_path}
                 appear={B_FEATM_D?.best_players?.local_team_player_1_appearances}
                 assists={B_FEATM_D?.best_players?.local_team_player_1_assists}
                 goals={B_FEATM_D?.best_players?.local_team_player_1_goals}
+                urls={playerMap.get(B_FEATM_D?.best_players?.player_ids?.local_1)}
                 viewportDesktop={!tabletExclusive}
               />
 
               <!--
               HOME TEAM - PLAYER 2
               -->
-              <FeatMatchTableRow 
+              <FeatMatchTableRow
                 rating={B_FEATM_D?.best_players?.local_team_rating_player_2}
                 name={B_FEATM_D?.best_players?.local_team_player_2}
                 img={B_FEATM_D?.best_players?.local_team_player_2_image_path}
                 appear={B_FEATM_D?.best_players?.local_team_player_2_appearances}
                 assists={B_FEATM_D?.best_players?.local_team_player_2_assists}
                 goals={B_FEATM_D?.best_players?.local_team_player_2_goals}
+                urls={playerMap.get(B_FEATM_D?.best_players?.player_ids?.local_2)}
                 viewportDesktop={!tabletExclusive}
               />
 
@@ -1266,7 +1271,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
           </div>
 
-          <!-- 
+          <!--
           TEAM AWAY
           -->
           <div
@@ -1274,7 +1279,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
             <div
               class="
-                row-space-start 
+                row-space-start
                 m-b-16">
               <img
                 loading="lazy"
@@ -1284,9 +1289,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 width="32"
                 height="32"
               />
-              <p 
+              <p
                 class="
-                  w-500 
+                  w-500
                   large
                 ">
                 {B_FEATM_D?.away_team_name}
@@ -1294,7 +1299,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
             </div>
 
-            <table 
+            <table
               class="table-best-player">
 
               <tr class="row-head m-b-16">
@@ -1339,32 +1344,34 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {/if}
               </tr>
 
-              <!-- 
+              <!--
               AWAY TEAM - PLAYER 1
               -->
-              <FeatMatchTableRow 
+              <FeatMatchTableRow
                 rating={B_FEATM_D?.best_players?.visitor_team_rating_player_1}
                 name={B_FEATM_D?.best_players?.visitor_team_player_1}
                 img={B_FEATM_D?.best_players?.visitor_team_player_1_image_path}
                 appear={B_FEATM_D?.best_players?.visitor_team_player_1_appearances}
                 assists={B_FEATM_D?.best_players?.visitor_team_player_1_assists}
                 goals={B_FEATM_D?.best_players?.visitor_team_player_1_goals}
+                urls={playerMap.get(B_FEATM_D?.best_players?.player_ids?.visitor_1)}
                 viewportDesktop={!tabletExclusive}
               />
 
-              <!-- 
+              <!--
               AWAY TEAM - PLAYER 2
               -->
-              <FeatMatchTableRow 
+              <FeatMatchTableRow
                 rating={B_FEATM_D?.best_players?.visitor_team_rating_player_2}
                 name={B_FEATM_D?.best_players?.visitor_team_player_2}
                 img={B_FEATM_D?.best_players?.visitor_team_player_2_image_path}
                 appear={B_FEATM_D?.best_players?.visitor_team_player_2_appearances}
                 assists={B_FEATM_D?.best_players?.visitor_team_player_2_assists}
                 goals={B_FEATM_D?.best_players?.visitor_team_player_2_goals}
+                urls={playerMap.get(B_FEATM_D?.best_players?.player_ids?.visitor_2)}
                 viewportDesktop={!tabletExclusive}
               />
-             
+
             </table>
 
           </div>
@@ -1377,17 +1384,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       VALUE BETS
       -->
       {#if B_FEATM_D?.valuebets != null}
-        
-        <div 
+
+        <div
           id="value-bets">
 
-          <!-- 
+          <!--
           TITLE
           -->
           <p
             class="
-              w-500 
-              large 
+              w-500
+              large
               m-b-16
             "
           >
@@ -1398,17 +1405,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           VALUE BET GRID
           -->
           {#if tabletExclusive}
-            <div 
+            <div
               id="value-bets-container">
-              <div 
+              <div
                 id="value-bets-inner-info">
 
                 <div
                   class="row-space-out">
                   <p
                     class="
-                      w-400 
-                      medium 
+                      w-400
+                      medium
                       color-grey
                     "
                   >
@@ -1429,12 +1436,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </a>
                 </div>
 
-                <div 
+                <div
                   class="row-space-out">
                   <p
                     class="
-                      w-400 
-                      medium 
+                      w-400
+                      medium
                       color-grey
                     "
                   >
@@ -1442,8 +1449,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                   <p
                     class="
-                      w-500 
-                      medium 
+                      w-500
+                      medium
                       color-dark
                     "
                   >
@@ -1451,12 +1458,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                 </div>
 
-                <div 
+                <div
                   class="row-space-out">
                   <p
                     class="
-                      w-400 
-                      medium 
+                      w-400
+                      medium
                       color-grey
                     "
                   >
@@ -1464,8 +1471,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                   <p
                     class="
-                      w-500 
-                      medium 
+                      w-500
+                      medium
                       color-dark
                     "
                   >
@@ -1473,12 +1480,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                 </div>
 
-                <div 
+                <div
                   class="row-space-out">
                   <p
                     class="
-                      w-400 
-                      medium 
+                      w-400
+                      medium
                       color-grey
                     "
                   >
@@ -1501,12 +1508,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
                 </div>
 
-                <div 
+                <div
                   class="row-space-out">
                   <p
                     class="
-                      w-400 
-                      medium 
+                      w-400
+                      medium
                       color-grey
                     "
                   >
@@ -1529,7 +1536,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </div>
               </div>
 
-              <!-- 
+              <!--
               VALUE BET BTN
               -->
               <a
@@ -1595,7 +1602,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 <th class="text-center" />
               </tr>
 
-              <!-- [ℹ] VALUE-BET - ROW SINGLE 
+              <!-- [ℹ] VALUE-BET - ROW SINGLE
               -->
 
               <tr>
@@ -1695,7 +1702,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
     </div>
-    
+
 	{/if}
 
 </div>
@@ -1767,7 +1774,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* ====================
-    vote-button-container 
+    vote-button-container
   ==================== */
 
 	#btn-vote-container
@@ -1929,28 +1936,28 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/* ====================
-    best-players-container 
+    best-players-container
   ==================== */
 
-	#best-players-box-out 
+	#best-players-box-out
   {
     /* NaN */
 	}
-	.best-players-box 
+	.best-players-box
   {
 		padding: 20px;
 		box-shadow: inset 0px -1px 0px #ebebeb;
 	}
 
 	:global(table.table-best-player),
-	table.value_bets 
+	table.value_bets
   {
 		text-align: left;
 		border-collapse: collapse;
 		width: 100%;
 	}
 	:global(table.table-best-player .row-head),
-	table.value_bets .row-head 
+	table.value_bets .row-head
   {
 		background: #f2f2f2;
 		border-radius: 2px;
@@ -1989,30 +1996,30 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 59px;
 	}
 
-	.tooltip 
+	.tooltip
   {
 		border-bottom: none !important;
 	}
-	.tooltip .tooltiptext 
+	.tooltip .tooltiptext
   {
 		display: none;
 	}
 
 	/* ====================
-    value-bets-container 
+    value-bets-container
   ==================== */
 
-	#value-bets 
+	#value-bets
   {
 		padding: 20px;
 	}
-	#value-bets-container 
+	#value-bets-container
   {
 		background: #f2f2f2;
 		border-radius: 2px;
 		width: 100%;
 	}
-	#value-bets-inner-info 
+	#value-bets-inner-info
   {
 		padding: 12px;
 		display: grid;
@@ -2021,7 +2028,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		align-items: center;
 		gap: 4px;
 	}
-	#value-bets-inner-info img 
+	#value-bets-inner-info img
   {
 		border-radius: 4px;
 		width: 56px;
@@ -2030,19 +2037,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 700px) 
+	@media only screen
+  and (min-width: 700px)
   {
-		#inner-site-container button 
+		#inner-site-container button
     {
 			height: 44px;
 		}
 
-    .boxed-rating-value-bets 
+    .boxed-rating-value-bets
     {
       background: #f2f2f2;
       border-radius: 4px;
@@ -2068,17 +2075,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			padding-left: 10px;
 		}
 		table td,
-		table th 
+		table th
     {
 			padding: 7px 10px;
 		}
 
-		#live-score-container 
+		#live-score-container
     {
 			width: 100%;
 			max-width: 700px;
 		}
-		#livestream-grid 
+		#livestream-grid
     {
 			grid-auto-flow: unset;
 			overflow-y: visible;
@@ -2087,61 +2094,61 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 				65px
 			);
 		}
-		.input-value 
+		.input-value
     {
 			width: 100%;
 			max-width: 164px;
 			padding: 14px;
 		}
-		.cast-vote-btn 
+		.cast-vote-btn
     {
 			min-width: 206px;
 			width: 100%;
 			height: 48px;
 		}
-		.desktop-view-winnings 
+		.desktop-view-winnings
     {
 			padding: 0;
 			text-align: end;
 		}
-		.desktop-small 
+		.desktop-small
     {
 			font-size: 14px !important;
 		}
-		.desktop-medium 
+		.desktop-medium
     {
 			font-size: 16px !important;
 		}
-		.desktop-x-large 
+		.desktop-x-large
     {
 			font-size: 20px !important;
 		}
-		.live-stream-btn 
+		.live-stream-btn
     {
 			padding: 0 5px;
 		}
-		.player-col 
+		.player-col
     {
 			width: 357px;
 		}
-		.rating-head 
+		.rating-head
     {
 			width: 44px;
 		}
 		table.value_bets tr th:nth-child(-n + 3),
-		table.value_bets tr td:nth-child(-n + 3) 
+		table.value_bets tr td:nth-child(-n + 3)
     {
 			max-width: 72px !important;
 			padding-right: 24px;
 		}
 		table.value_bets tr th:nth-child(3),
-		table.value_bets tr td:nth-child(3) 
+		table.value_bets tr td:nth-child(3)
     {
 			padding-right: 190px !important;
 		}
 		table.value_bets tr th:nth-last-child(-n + 3),
 		table.value_bets tr td:nth-last-child(-n + 3),
-		table.value_bets tr td button 
+		table.value_bets tr td button
     {
 			width: 64px !important;
 		}
@@ -2149,38 +2156,38 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     {
 			margin-right: 16px;
 		}
-		table tr:nth-child(2) td 
+		table tr:nth-child(2) td
     {
 			padding-top: 20px !important;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1024px) 
+	@media only screen
+  and (min-width: 1024px)
   {
-		#live-score-container 
+		#live-score-container
     {
 			width: 100%;
 			max-width: 560px;
 		}
-		.input-value 
+		.input-value
     {
 			width: 100%;
 			max-width: 110px;
 		}
 
-		.tooltip .tooltiptext 
+		.tooltip .tooltiptext
     {
 			display: unset !important;
 		}
 
-		.tooltip 
+		.tooltip
     {
 			position: relative;
 			display: inline-block;
 			border-bottom: none !important;
 		}
-		.tooltip .tooltiptext 
+		.tooltip .tooltiptext
     {
 			visibility: hidden;
 			width: 120px;
@@ -2197,11 +2204,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			border-radius: 4px;
 			transition: all 0.15s ease-in;
 		}
-		.tooltip:hover .tooltiptext 
+		.tooltip:hover .tooltiptext
     {
 			visibility: visible !important;
 		}
-		.cast-vote-btn 
+		.cast-vote-btn
     {
 			min-width: 140px;
 			width: 100%;
@@ -2209,20 +2216,20 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 
 		table.value_bets tr th:nth-child(-n + 3),
-		table.value_bets tr td:nth-child(-n + 3) 
+		table.value_bets tr td:nth-child(-n + 3)
     {
 			max-width: 72px !important;
 			padding-right: 24px;
 		}
 		table.value_bets tr th:nth-last-child(-n + 3),
 		table.value_bets tr td:nth-last-child(-n + 3),
-		table.value_bets tr td button 
+		table.value_bets tr td button
     {
 			width: 64px !important;
 		}
 
 		table.value_bets tr th:nth-child(3),
-		table.value_bets tr td:nth-child(3) 
+		table.value_bets tr td:nth-child(3)
     {
 			padding-right: 24px !important;
 		}
@@ -2250,33 +2257,33 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	.dark-background-1 #fixture-league-title,
 	.dark-background-1 #fixture-visual-box,
 	:global(.dark-background-1 .best-players-box),
-	.dark-background-1 #live-stream-box 
+	.dark-background-1 #live-stream-box
   {
 		box-shadow: inset 0px -1px 0px #616161 !important;
 	}
 
-	.dark-background-1 .cast-vote-btn 
+	.dark-background-1 .cast-vote-btn
   {
 		background-color: #616161 !important;
 		border: 1px solid #999999 !important;
 	}
-	.dark-background-1 .cast-vote-btn.active 
+	.dark-background-1 .cast-vote-btn.active
   {
 		border: 1px solid #f5620f !important;
 	}
 
 	:global(.dark-background-1 table.table-best-player .row-head),
-	.dark-background-1 table.value_bets .row-head 
+	.dark-background-1 table.value_bets .row-head
   {
 		background-color: #616161 !important;
 	}
 
-	.dark-background-1 p 
+	.dark-background-1 p
   {
 		color: #ffffff;
 	}
 
-	.dark-background-1 .live-stream-btn 
+	.dark-background-1 .live-stream-btn
   {
 		background-color: #ffffff !important;
 		border: 1px solid #616161 !important;
@@ -2284,33 +2291,33 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	:global(.dark-background-1 table.table-best-player .row-head th p),
 	.dark-background-1 table.value_bets .row-head	th p,
-	.dark-background-1 .probablitiy-text 
+	.dark-background-1 .probablitiy-text
   {
 		color: #a8a8a8 !important;
 	}
 
 	.dark-background-1 #site-bet-box,
-	.dark-background-1 #inner-site-container 
+	.dark-background-1 #inner-site-container
   {
 		background-color: #616161 !important;
 	}
-	.dark-background-1 #inner-site-container .input-value 
+	.dark-background-1 #inner-site-container .input-value
     {
 		background-color: #4b4b4b !important;
 		color: #ffffff !important;
 	}
 
-	.dark-background-1 #inner-site-container input 
+	.dark-background-1 #inner-site-container input
   {
 		color: #ffffff !important;
 	}
-	.dark-background-1 input#win-type 
+	.dark-background-1 input#win-type
   {
 		background-color: #4b4b4b !important;
 	}
 
-	@media only screen 
-  and (min-width: 700px) 
+	@media only screen
+  and (min-width: 700px)
   {
 
 		:global(.dark-background-1 .boxed-rating-matches)
@@ -2319,7 +2326,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			border: 1px solid #616161 !important;
 		}
 		:global(.dark-background-1 .boxed-rating-assits),
-		.dark-background-1 .boxed-rating-value-bets 
+		.dark-background-1 .boxed-rating-value-bets
     {
 			background-color: #616161 !important;
 		}
@@ -2330,9 +2337,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	@media only screen
-  and (min-width: 1024px) 
+  and (min-width: 1024px)
   {
-		.dark-background-1 .tooltip .tooltiptext 
+		.dark-background-1 .tooltip .tooltiptext
     {
 			background: #616161;
 			box-shadow: inset 0px -1px 0px #3c3c3c;

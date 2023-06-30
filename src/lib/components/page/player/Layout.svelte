@@ -107,13 +107,6 @@ COMPONENT JS (w/ TS)
 
     const fixtureRealDbTarget = `${realDbPath2}${liveFixtureId}`;
 
-    console.debug
-    (
-      '🔥',
-      'PLAYER FOUND LIVE',
-      fixtureRealDbTarget
-    );
-
     await onceTargetLivescoreNowFixtureGet
     (
       fixtureRealDbTarget
@@ -130,15 +123,15 @@ COMPONENT JS (w/ TS)
    * [HELPER]
    * @description
    * identifies the target translated URL;
-   * @param 
+   * @param
    * {string} lang
-   * @returns 
+   * @returns
    * a modified string
    */
-  function translated_url 
+  function translated_url
   (
     lang: string
-  ): string 
+  ): string
   {
     let new_url: string = data.alternate_data[lang];
     // new_url = new_url.replace('https://scores.betarena.com','');
@@ -158,10 +151,10 @@ COMPONENT JS (w/ TS)
    * @returns
    * void
    */
-  async function preload_target_url 
+  async function preload_target_url
   (
     new_url: string
-  ): Promise < void > 
+  ): Promise < void >
   {
     await preloadData(new_url)
   }
@@ -172,7 +165,7 @@ COMPONENT JS (w/ TS)
   )
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -200,9 +193,9 @@ COMPONENT JS (w/ TS)
       'visibilitychange',
       async function
       (
-      ) 
+      )
       {
-        if (!document.hidden) 
+        if (!document.hidden)
         {
           // [🐞]
           dlog
@@ -219,7 +212,7 @@ COMPONENT JS (w/ TS)
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -236,11 +229,11 @@ COMPONENT JS (w/ TS)
 
   // [ℹ] (event-listen)
   // [ℹ] lang (intent) change;
-  $: if 
+  $: if
   (
-    browser 
+    browser
     && lang_intent
-  ) 
+  )
   {
     let newURL = translated_url(lang_intent)
     dlog(`newURL (lang_intent): ${newURL}`, true)
@@ -249,11 +242,11 @@ COMPONENT JS (w/ TS)
 
   // [ℹ] (event-listen)
   // [ℹ] lang change;
-	$: if 
+	$: if
   (
     browser
     && current_lang != refresh_lang
-  ) 
+  )
   {
 		current_lang = refresh_lang;
 		goto
@@ -261,22 +254,18 @@ COMPONENT JS (w/ TS)
       translated_url
       (
         current_lang
-      ), 
-      { 
-        replaceState: true 
+      ),
+      {
+        replaceState: true
       }
     );
 	}
 
   $: if (liveFixtureId)
   {
-    console.log
-    (
-      'JELLO!'
-    )
     kickstartLivescore()
   }
-  
+
   //#endregion ➤ [REACTIVIY] [METHODS]
 
   //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
@@ -291,7 +280,7 @@ COMPONENT JS (w/ TS)
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       await kickstartPlayerFixtureCheck();
       await kickstartLivescore();
@@ -308,7 +297,7 @@ COMPONENT JS (w/ TS)
 SVELTE INJECTION TAGS
 =================== -->
 
-<!-- 
+<!--
 [ℹ] Meta (SEO)
 -->
 {#if data_0}
@@ -330,7 +319,7 @@ SVELTE INJECTION TAGS
     {#each data_0?.hreflang as item}
       {#each Object.entries(data?.alternate_data) as [lang, link]}
         {#if item.link == lang}
-          <!-- 
+          <!--
           [ℹ] Meta <link hreflang={...}>
           [ℹ] example:
           [ℹ] <link rel="alternate" hrefLang="en" href="https://scores.betarena.com/football/aston-villa-southampton-50977>
@@ -345,7 +334,7 @@ SVELTE INJECTION TAGS
           />
         {/if}
         {#if item.link == null && lang == 'en'}
-          <!-- 
+          <!--
           [ℹ] EN (unique)
           -->
           <link
@@ -365,27 +354,27 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<section 
+<section
   id="section-player-page">
 
   <Breadcrumb />
   <ProfileWidget/>
 
-  <!-- 
-  [ℹ] widgets 
+  <!--
+  [ℹ] widgets
   [ℹ] MOBILE
   FIXME: update to have a single dynamic layout
   -->
 	{#if mobileExclusive || tabletExclusive}
 
-    <div 
+    <div
       id="widget-grid-display"
     >
-      <!-- 
+      <!--
       Column Num.1
       -->
       <div
@@ -400,10 +389,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
   {:else}
 
-    <div 
+    <div
       id="widget-grid-display"
     >
-      <!-- 
+      <!--
       Column Num.1
       -->
       <div
@@ -412,8 +401,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <FixturesWidget />
         <SeoWidget />
       </div>
-      <!-- 
-      Column Num.2 
+      <!--
+      Column Num.2
       -->
       <div
         class="grid-display-column"
@@ -422,7 +411,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <StatisticsWidget />
       </div>
     </div>
-    
+
   {/if}
 
 </section>
@@ -457,12 +446,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 
@@ -477,8 +466,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		/* widget layout */
 		div#widget-grid-display {
 			gap: 20px;
-			grid-template-columns: 
-        minmax(auto, 850px) 
+			grid-template-columns:
+        minmax(auto, 850px)
         minmax(auto, 502px)
       ;
 		}
@@ -490,8 +479,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			display: grid;
 			align-items: start;
 			gap: 20px;
-			grid-template-columns: 
-        minmax(auto, 850px) 
+			grid-template-columns:
+        minmax(auto, 850px)
         minmax(auto, 502px)
       ;
 		}

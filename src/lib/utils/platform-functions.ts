@@ -466,7 +466,7 @@ export async function initSportbookData
 {
   const dataRes0 = await get
   (
-    `/api/cache/tournaments/sportbook?geoPos=${geoPos}`
+    `/api/data/main/sportbook?geoPos=${geoPos}`
   ) as B_SPT_D;
 
   sessionStore.updateSportbookMain
@@ -476,7 +476,7 @@ export async function initSportbookData
 
   const dataRes1 = await get
   (
-    `/api/cache/tournaments/sportbook?all=true&geoPos=${geoPos}`
+    `/api/data/main/sportbook?all=true&geoPos=${geoPos}`
   ) as B_SPT_D[];
 
   sessionStore.updateSportbookList

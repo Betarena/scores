@@ -6,7 +6,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
-	
+
   import { page } from '$app/stores';
   import { get } from '$lib/api/utils.js';
   import { userBetarenaSettings } from '$lib/store/user-settings';
@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
   import { shortenSeasonName } from '$lib/utils/languages.js';
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
   import { onMount } from 'svelte';
-  
+
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import StatisticsRow from './Statistics-Row.svelte';
 	import PstatBLoaderRatingGrid from './loaders/PSTAT-BLoader-RatingGrid.svelte';
@@ -55,12 +55,7 @@ COMPONENT JS (w/ TS)
   let loadingPrev: boolean = false;
   let noFixturesData: boolean = true;
 
-  // $: console.log('selectedLeague: ', selectedLeague)
-  // $: console.log('selectedSeason: ', selectedSeason)
-  // $: console.log('playerSeasonStatMap.get(selectedSeason)?.player_stats: ', playerSeasonStatMap.get(selectedSeason)?.player_stats)
-  // $: console.log('selectedStatsOpt: ', selectedStatsOpt)
-
-  const statsMenu: 
+  const statsMenu:
   {
 		key:
 			| 'matches'
@@ -72,9 +67,9 @@ COMPONENT JS (w/ TS)
     ;
 		loc_arr: string[];
 		loc_trans: string[];
-	}[] = 
+	}[] =
   [
-    // (stats) matches 
+    // (stats) matches
 		{
 			key: 'matches',
 			loc_arr: [
@@ -207,7 +202,7 @@ COMPONENT JS (w/ TS)
       leagueMap.get(selectedLeague)?.seasons?.length == 0
     ;
     if (valiation_0) return;
-    selectedSeason = 
+    selectedSeason =
       leagueMap.get(selectedLeague)?.seasons?.[0]?.seasond_id.toString()
     ;
   }
@@ -238,9 +233,9 @@ COMPONENT JS (w/ TS)
 
   async function getLast5SeasonFixtures
   (
-  ) 
+  )
   {
-    const if_M_0 = 
+    const if_M_0 =
       !playerSeasonStatMap.has(selectedSeason)
     ;
     if (if_M_0)
@@ -266,7 +261,7 @@ COMPONENT JS (w/ TS)
       response == undefined
       || (response[0]?.length == 0 && response[1] == undefined)
     ;
-    if (if_M_2) 
+    if (if_M_2)
     {
       noFixturesData = true;
       loadingPrev = false;
@@ -293,14 +288,14 @@ COMPONENT JS (w/ TS)
 
 	onMount
   (
-    async () => 
+    async () =>
     {
       [
-        tabletExclusive, 
+        tabletExclusive,
         mobileExclusive
       ] = viewport_change
       (
-        TABLET_VIEW, 
+        TABLET_VIEW,
         MOBILE_VIEW
       );
       window.addEventListener
@@ -308,7 +303,7 @@ COMPONENT JS (w/ TS)
         'resize',
         function () {
           [
-            tabletExclusive, 
+            tabletExclusive,
             mobileExclusive
           ] =
           viewport_change
@@ -330,17 +325,17 @@ COMPONENT JS (w/ TS)
   //#region ➤ [REACTIVIY] [METHODS]
 
    /**
-   * @description listens to when 
+   * @description listens to when
    * selected-league has changed;
   */
-  $: if (selectedLeague) 
+  $: if (selectedLeague)
   {
     selectFirstAvailableSeason()
     obtainTargetSelectedSeaconName()
   }
 
   /**
-   * @description listens to when 
+   * @description listens to when
    * selected-season has changed;
   */
   $: if (selectedSeason)
@@ -378,12 +373,12 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
-[ℹ] area-outside-for-close 
+<!--
+[ℹ] area-outside-for-close
 -->
 {#if toggleDropdownLeague || toggleDropdownSeason}
 	<div
@@ -392,7 +387,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	/>
 {/if}
 
-<!-- 
+<!--
 [ℹ] example comment
 -->
 <div>
@@ -400,13 +395,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <WidgetTitle
     {WIDGET_TITLE}
   />
-  
+
   <div
     class="widget-component"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
-    <!-- 
+    <!--
     League -< Season (Many)
     -->
     <div
@@ -417,7 +412,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       "
     >
 
-      <!-- 
+      <!--
       League dropdown select
       -->
       <div
@@ -427,14 +422,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       >
         <div
           class="
-            row-space-out 
+            row-space-out
             cursor-pointer
             pstat-drop-btn
           "
         >
           <p
             class="
-              s-14 
+              s-14
               color-black-2
             "
           >
@@ -448,7 +443,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           />
         </div>
         {#if toggleDropdownLeague}
-          <div 
+          <div
             id="more-top-leagues-outer"
           >
             <div
@@ -463,8 +458,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   <p
                     class="
-                      s-14 
-                      w-500 
+                      s-14
+                      w-500
                       color-black-2
                     "
                     class:activeLeague={selectedLeague == l_id?.toString()}
@@ -478,7 +473,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
       </div>
 
-      <!-- 
+      <!--
       Season dropdown select
       -->
       <div
@@ -489,14 +484,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
         <div
           class="
-            row-space-out 
+            row-space-out
             cursor-pointer
             pstat-drop-btn
           "
         >
           <p
             class="
-              s-14 
+              s-14
               color-black-2
             "
           >
@@ -511,7 +506,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
 
         {#if toggleDropdownSeason}
-          <div 
+          <div
             id="more-top-leagues-outer"
           >
             <div
@@ -526,8 +521,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   <p
                     class="
-                      s-14 
-                      w-500 
+                      s-14
+                      w-500
                       color-black-2
                     "
                     class:activeSeason={selectedSeason == season?.seasond_id?.toString()}
@@ -544,12 +539,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </div>
           </div>
         {/if}
-        
+
       </div>
 
     </div>
 
-    <!-- 
+    <!--
     Average Rating
     -->
     {#if !loadingPrev && !noFixturesData}
@@ -570,7 +565,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <p
           id="pstat-average-rating-main"
           class="
-            s-14 
+            s-14
             w-500
           "
           class:rating_nan={activeAverageRating == undefined}
@@ -583,7 +578,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
     {/if}
 
-    <!-- 
+    <!--
     Last 5 (by season) fixtures
     -->
     {#if !loadingPrev && !noFixturesData}
@@ -593,15 +588,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           m-b-25
         ">
 
-        <!-- 
+        <!--
         overlay grid box
         -->
         <div
           id="pstat-overlay-rating-box">
-          <!-- 
+          <!--
           average hr line (dotted)
           -->
-          <hr 
+          <hr
             id="pstat-average"
             style="bottom: {((activeAverageRating || 0) * 10)}px"
           />
@@ -613,7 +608,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           <hr class="pstat-grid-line" />
         </div>
 
-        <!-- 
+        <!--
         main data
         -->
         {#each playerSeasonStatMap.get(selectedSeason)?.last_5_fixtures || [] as fixture}
@@ -622,17 +617,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               column-space-center
               width-auto
             ">
-            <!-- 
+            <!--
             Rival Team Icon
             -->
-            <img 
+            <img
               src="{fixture?.rival_team?.icon}"
               alt="{fixture?.rival_team?.name}"
               title="{fixture?.rival_team?.name}"
               width="32"
               height="32"
             />
-            <!-- 
+            <!--
             Fixture Date
             -->
             <p
@@ -645,7 +640,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               {toCorrectDate(fixture?.fixture_day).getDate()}
               {B_SAP_D2.months_abbreviation[MONTH_NAMES_ABBRV[toCorrectDate(fixture?.fixture_day).getMonth()]]}
             </p>
-            <!-- 
+            <!--
             Rating
             -->
             <div
@@ -656,7 +651,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <p
                 id="pstat-average-rating-main"
                 class="
-                  s-14 
+                  s-14
                   w-500
                   pstat-fixture-rating
                 "
@@ -681,7 +676,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
     {/if}
 
-    <!-- 
+    <!--
     Season Stats
     -->
     <div
@@ -702,7 +697,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <p
                 class="
                   s-16
-                  w-500 
+                  w-500
                   color-black-2
                 "
               >
@@ -715,7 +710,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 height="20"
               />
             </div>
-            
+
             {#if !selectedStatsOpt.includes(item?.key)}
               {#each item?.loc_arr || [] as sub_nav, i}
                 <StatisticsRow
@@ -725,12 +720,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 />
               {/each}
             {/if}
-          
+
           {/if}
         {/each}
       {/if}
     </div>
-    
+
   </div>
 </div>
 
@@ -764,7 +759,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   }
 
   /* average rating row */
-  p#pstat-average-rating-main 
+  p#pstat-average-rating-main
   {
 		box-sizing: border-box;
     text-align: center;
@@ -776,19 +771,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     width: auto;
     color: var(--white);
 	}
-	p#pstat-average-rating-main.rating_golden 
+	p#pstat-average-rating-main.rating_golden
   {
 		background-color: #ffb904 !important;
 	}
-	p#pstat-average-rating-main.rating_silver 
+	p#pstat-average-rating-main.rating_silver
   {
 		background-color: #8c8c8c !important;
 	}
-	p#pstat-average-rating-main.rating_bronze 
+	p#pstat-average-rating-main.rating_bronze
   {
 		background-color: #dbb884 !important;
 	}
-  p#pstat-average-rating-main.rating_nan 
+  p#pstat-average-rating-main.rating_nan
   {
 		background-color: var(--whitev2);
     color: var(--grey);
@@ -886,12 +881,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     width: 100%;
     margin-right: 16px;
 	}
-  div#pstat-drop-main div#pstat-drop-season-main 
+  div#pstat-drop-main div#pstat-drop-season-main
   {
 		position: relative;
   }
   div#pstat-drop-main div#pstat-drop-league-main div.pstat-drop-btn,
-  div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn 
+  div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn
   {
 		padding: 9px 16px 9px 20px;
 		border: 1px solid #cccccc;
@@ -901,13 +896,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: 44px;
 	}
   div#pstat-drop-main div#pstat-drop-league-main div.pstat-drop-btn:hover
-  div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn:hover 
+  div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn:hover
   {
 		border: 1px solid #8c8c8c !important;
 	}
   /* dropdpwn (level) */
   div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-outer,
-  div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-outer 
+  div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-outer
   {
 		position: absolute;
 		top: 115%;
@@ -921,7 +916,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding-right: 6px;
 	}
 	div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-outer::-webkit-scrollbar,
-	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-outer::-webkit-scrollbar 
+	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-outer::-webkit-scrollbar
   {
 		/* Hide scrollbar for Chrome, Safari and Opera */
 		display: none;
@@ -933,29 +928,29 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		-ms-overflow-style: none; /* IE and Edge */
 		scrollbar-width: none; /* Firefox */
 	}
-	div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container, 
-	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container 
+	div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container,
+	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container
   {
 		max-height: 302px;
 		overflow-y: scroll;
 	}
   /* width */
 	div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar,
-	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar 
+	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar
   {
 		width: 4px;
-	} 
+	}
   /* track */
 	div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-track,
-	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-track 
+	div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-track
   {
 		background: #f2f2f2;
 		border-radius: 12px;
 		margin: 8px;
-	} 
+	}
   /* handle */
 	div#pstat-drop-main	div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb,
-	div#pstat-drop-main	div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb 
+	div#pstat-drop-main	div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb
   {
 		background: #cccccc;
 		border-radius: 12px;
@@ -987,7 +982,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     border: unset !important;
   }
-  
+
   div#pstat-season-box
   div.pstat-group-opt
   {
@@ -998,11 +993,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
+  @media only screen
     and (min-width: 425px) {
     div#pstat-last-fixtures-box
     {
@@ -1010,8 +1005,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     }
   }
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 
@@ -1022,7 +1017,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   .dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-outer,
-  .dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-outer 
+  .dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-outer
   {
 		/* dark theme/dark-gray */
 		background: #616161;
@@ -1033,13 +1028,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/* handle */
   .dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb,
-	.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb  
+	.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-thumb
   {
 		background: #999999 !important;
 	}
 	/* track */
 	.dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div#more-top-leagues-list-container::-webkit-scrollbar-track,
-	.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-track  
+	.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div#more-top-leagues-list-container::-webkit-scrollbar-track
   {
 		background: #4b4b4b !important;
 	}
@@ -1052,7 +1047,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-color: #A8A8A8 !important;
   }
 
-  div.dark-background-1 
+  div.dark-background-1
   div#pstat-last-fixtures-box
   div#pstat-overlay-rating-box
   hr
@@ -1061,20 +1056,20 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     background-color: var(--dark-theme-1-shade) !important;
   }
 
-  div.dark-background-1 
+  div.dark-background-1
   div.pstat-group-opt
   {
     border-top: 1px solid var(--dark-theme-1-shade) !important;
   }
 
   div.dark-background-1 div#pstat-drop-main div#pstat-drop-league-main div.pstat-drop-btn,
-  div.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn 
+  div.dark-background-1 div#pstat-drop-main div#pstat-drop-season-main div.pstat-drop-btn
   {
 		border: 1px solid var(--dark-theme-1-2-shade);
 	}
 
   div.dark-background-1
-  p#pstat-average-rating-main 
+  p#pstat-average-rating-main
   {
     color: var(--dark-theme-1) !important;
   }

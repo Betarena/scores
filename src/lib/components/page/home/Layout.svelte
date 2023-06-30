@@ -16,7 +16,7 @@
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
-	import BestGoalscorersWidget from '$lib/components/page/home/best_goalscorers/_Best_Goalscorers_Widget.svelte';
+  import TopGoalScorersWidget from './top-goalscorers/TopGoalScorers-Widget.svelte';
 	import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
 	import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
 	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
@@ -26,11 +26,10 @@
 	import SvelteSeo from 'svelte-seo';
 
   import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
-  import type { Cache_Single_Lang_GoalScorers_Translation_Response } from '$lib/models/home/best_goalscorer/types';
   import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
   import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
   import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
-  import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';
+  import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
   import type { Unsubscribe } from 'firebase/database';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -38,7 +37,6 @@
   //#region ➤ [VARIABLES]
 
 	let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
-	let BEST_GOAL_SCORERS_DATA_SEO: Cache_Single_Lang_GoalScorers_Translation_Response;
 	let LEAGUE_LIST_WIDGET_DATA_SEO: REDIS_CACHE_SINGLE_league_list_seo_t_response;
 	let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
 	let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
@@ -46,7 +44,6 @@
   let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
 
 	$: PAGE_DATA_SEO = $page.data?.PAGE_DATA_SEO;
-	$: BEST_GOAL_SCORERS_DATA_SEO =	$page.data?.BEST_GOAL_SCORERS_DATA_SEO;
 	$: LEAGUE_LIST_WIDGET_DATA_SEO = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
 	$: LEAGUES_TABLE_SCORES_SEO_DATA = $page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
 	$: SEO_BLOCK_DATA = $page.data?.SEO_BLOCK_DATA;
@@ -72,8 +69,8 @@
   {
     if (!$userBetarenaSettings.country_bookmaker) return;
     const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
-    $sessionStore.sportbook_main = await get(`/api/cache/tournaments/sportbook?geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response;
-    $sessionStore.sportbook_list = await get(`/api/cache/tournaments/sportbook?all=true&geoPos=${userGeo}`) as Cache_Single_SportbookDetails_Data_Response[];
+    $sessionStore.sportbook_main = await get(`/api/data/main/sportbook?geoPos=${userGeo}`) as B_SPT_D;
+    $sessionStore.sportbook_list = await get(`/api/data/main/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
     $sessionStore.sportbook_list = $sessionStore.sportbook_list
     .sort
     (
@@ -274,9 +271,7 @@
 		<div class="grid-display-column">
 			<FeatMatchWidget />
 			<FeatBetSiteWidget />
-			<BestGoalscorersWidget
-				{BEST_GOAL_SCORERS_DATA_SEO}
-			/>
+			<TopGoalScorersWidget />
 			<LeaguesTableWidget
 				{LEAGUES_TABLE_SCORES_SEO_DATA}
 			/>
@@ -291,9 +286,7 @@
       <LivescoresWidget />
 			<FeatBetSiteWidget />
 			<FeatMatchWidget />
-			<BestGoalscorersWidget
-				{BEST_GOAL_SCORERS_DATA_SEO}
-			/>
+			<TopGoalScorersWidget />
 			{#if tabletExclusive && !mobileExclusive}
 				<LeaguesTableWidget
 					{LEAGUES_TABLE_SCORES_SEO_DATA}
