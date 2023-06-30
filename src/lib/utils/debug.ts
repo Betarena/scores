@@ -14,7 +14,7 @@ export const FIXTURE_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/
 // NOTE: overrides all individual toggles for show/hide ALL logs;
 // NOTE: (values) true/false | undefined
 // *****************************************
-const MASTER_DEBUG_TOGGLE = true
+const MASTER_DEBUG_TOGGLE = undefined
 
 // *****************************************
 // NOTE: overrides "dev" state and forces logs even in PROD where dev == false;
@@ -165,6 +165,8 @@ export function dlog
 	style?: string
 ): void
 {
+  let targetLog: string = undefined;
+
   // NOTE: New (v2) debug logs approach
   if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
     style = LV2_W_H_TAG[2]
@@ -172,9 +174,11 @@ export function dlog
     show = LV2_W_H_TAG[1]
 
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
-    style = AU_W_TAG[2]
+    targetLog = AU_W_TAG[0];
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
-    show = AU_W_TAG[1]
+    style = AU_W_TAG[2];
+  if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
+    show = AU_W_TAG[1];
 
 	// [🐞]
   show =
@@ -186,12 +190,12 @@ export function dlog
   const if_M_0: boolean =
     (LOGS_SHOW_OVERRIDE && show && style == undefined)
     // NOTE: FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION;
-    || (AU_W_TAG[1] && style == undefined)
+    || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && style == undefined)
   ;
   const if_M_1: boolean =
     (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style != undefined)
     // NOTE: FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION;
-    || (AU_W_TAG[1] && typeof(msg) == 'string' && show && style != undefined)
+    || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && typeof(msg) == 'string' && show && style != undefined)
   ;
 
 	if (if_M_0)
@@ -228,7 +232,10 @@ export function dlogv2
 	style?: string
 ): void
 {
+  let targetLog: string = undefined;
 
+  if (groupName.includes(AU_W_TAG[0]))
+    targetLog = AU_W_TAG[0];
   if (groupName.includes(AU_W_TAG[0]))
     style = AU_W_TAG[2]
   if (groupName.includes(AU_W_TAG[0]))
@@ -237,7 +244,7 @@ export function dlogv2
   const if_M_0: boolean =
     (LOGS_SHOW_OVERRIDE && show)
     // FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION;
-    || AU_W_TAG[1]
+    || (targetLog == AU_W_TAG[0] && AU_W_TAG[1])
   ;
 	if (if_M_0)
   {
