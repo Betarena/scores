@@ -13,7 +13,7 @@ COMPONENT JS (w/ TS)
   import { sessionStore } from '$lib/store/session.js';
   import { userBetarenaSettings } from '$lib/store/user-settings';
   import { viewport_change } from '$lib/utils/platform-functions';
-  import { PFIX_PP_dataInject, PFIX_PP_genLeagueFixMap } from '@betarena/scores-lib/dist/functions/func.player-fixtures.js';
+  import { PFIX_PP_dataInject, PFIX_PP_genLeagueFixMap } from '@betarena/scores-lib/dist/functions/func.player.fixtures.js';
 
   import arrow_left_dark from './assets/arrow-left-dark.svg';
   import arrow_left_hover from './assets/arrow-left-hover.svg';
