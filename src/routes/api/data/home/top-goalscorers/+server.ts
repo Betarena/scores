@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { HTGOL_HP_ENTRY, HTGOL_HP_ENTRY_1, HTGOL_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.top-goalscorers.js';
+import { HTGOL_HP_ENTRY, HTGOL_HP_ENTRY_1, HTGOL_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.home.top-goalscorers.js';
 import { TGOL_C_D_A, TGOL_C_D_S, TGOL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
