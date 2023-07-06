@@ -345,8 +345,8 @@
     {
 
       const if_M_0: boolean =
-        currentSeason != $sessionStore.selectedSeasonID
-        || FIXTURES_ODDS_DATA?.seasons.length == 0
+        currentSeason != $sessionStore?.selectedSeasonID
+        || FIXTURES_ODDS_DATA?.seasons?.length == 0
       ;
 			if (if_M_0)
       {
@@ -354,7 +354,7 @@
 
 				const dataRes0: B_FO_D = await get
         (
-          `/api/data/league/fix-odds?season_id=${$sessionStore.selectedSeasonID}`
+          `/api/data/league/fix-odds?league_id=${FIXTURES_ODDS_DATA?.league_id}&season_id=${$sessionStore.selectedSeasonID}&hasura=true`
         );
 				if (dataRes0 == undefined)
         {
