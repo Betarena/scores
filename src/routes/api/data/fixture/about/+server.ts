@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { FABT_FP_ENTRY, FABT_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.about.js';
+import { FABT_FP_ENTRY, FABT_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.fixture.about.js';
 
 import type { B_ABT_D, B_ABT_T } from '@betarena/scores-lib/types/about.js';
 

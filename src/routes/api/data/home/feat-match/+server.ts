@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { HFEATM_HP_ENTRY, HFEATM_HP_ENTRY_1, HFEATM_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.feat-match.js';
+import { HFEATM_HP_ENTRY, HFEATM_HP_ENTRY_1, HFEATM_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.home.feat-match.js';
 import { FEATM_C_D_A, FEATM_C_D_S, FEATM_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 

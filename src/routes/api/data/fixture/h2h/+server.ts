@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { FH2H_FP_ENTRY, FH2H_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.head-2-head.js';
+import { FH2H_FP_ENTRY, FH2H_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.fixture.head-2-head.js';
 
 import type { B_H2H_D, B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 
@@ -24,28 +24,28 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const teamIds: string = req?.url?.searchParams?.get('teamIds');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: Get Fixture Head-2-Head (WIDGET) MAIN data; 
+    // ACTION: Get Fixture Head-2-Head (WIDGET) MAIN data;
     // NOTE: With [HASURA] Fallback;
     const if_M_0 =
       teamIds != undefined
-    ; 
-    if (if_M_0) 
+    ;
+    if (if_M_0)
     {
-      
+
       let data;
       let loadType = "cache";
 
       // NOTE: check CACHE;
-      // if (!hasura) 
+      // if (!hasura)
       // {
       //   data =
       //     await get_target_hset_cache_data
@@ -57,7 +57,7 @@ export async function GET
       // }
 
       // NOTE: (default) HASURA fallback;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -91,8 +91,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -115,19 +115,19 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
+ * @summary
  * [MAIN] [FALLBACK] [#0]
  * @description
  * ➨ fixture (lineup) widget main data (hasura) fallback;
- * @param 
+ * @param
  * {number} fixId
- * @returns 
+ * @returns
  * Promise < B_PSTAT_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   teamIdsTuple: string
-): Promise < B_H2H_D > 
+): Promise < B_H2H_D >
 {
   const dataRes0 = await FH2H_FP_ENTRY
   (
@@ -135,28 +135,28 @@ async function fallbackMainData
     [teamIdsTuple]
   )
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(teamIdsTuple);
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN] [FALLBACK] [#1] method
- * @version 
+ * @version
  * 1.0 - past versions: []
- * @param 
- * {string} lang 
- * @returns 
- * Promise < B_PSEO_T > 
+ * @param
+ * {string} lang
+ * @returns
+ * Promise < B_PSEO_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_H2H_T > 
+): Promise < B_H2H_T >
 {
   const dataRes0 = await FH2H_FP_ENTRY_1
   (
@@ -164,11 +164,11 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(lang);
 }
 

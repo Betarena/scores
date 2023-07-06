@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { FCONT_FP_ENTRY, FCONT_FP_ENTRY_0 } from '@betarena/scores-lib/dist/functions/func.content.js';
+import { FCONT_FP_ENTRY, FCONT_FP_ENTRY_0 } from '@betarena/scores-lib/dist/functions/func.fixture.content.js';
 
 import type { B_H_EC } from '@betarena/scores-lib/types/hasura.js';
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
@@ -25,29 +25,29 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: Get Fixture Content (WIDGET) MAIN data; 
+    // ACTION: Get Fixture Content (WIDGET) MAIN data;
     // NOTE: With [HASURA] Fallback;
     const if_M_0: boolean =
       fixture_id != undefined
       && lang != undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       const _fixture_id = parseInt(fixture_id)
       let data = null;
       let loadType = "cache";
 
       // NOTE: check CACHE;
-      // if (!hasura) 
+      // if (!hasura)
       // {
       //   data =
       //     await get_target_hset_cache_data
@@ -59,7 +59,7 @@ export async function GET
       // }
 
       // NOTE: (default) HASURA fallback;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -68,9 +68,9 @@ export async function GET
         )
         loadType = 'HASURA'
       }
-      
+
       console.log(`📌 loaded [FCONT] with: ${loadType}`)
-      
+
       if (data != undefined) return json(data);
     }
 
@@ -79,7 +79,7 @@ export async function GET
     const if_M_1: boolean =
       lang != undefined
     ;
-    if (if_M_1) 
+    if (if_M_1)
     {
       // TODO: LIN_C_T_A
       const data =	await fallbackMainData_1
@@ -94,8 +94,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -118,51 +118,51 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
+ * @summary
  * [MAIN] [FALLBACK] [#0]
  * @description
  * ➨ fixture (lineup) widget main data (hasura) fallback;
- * @param 
+ * @param
  * {number} fixId
- * @returns 
+ * @returns
  * Promise < B_PSTAT_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   fixtureId: number,
   lang: string
-): Promise < B_H_EC[] > 
-{ 
+): Promise < B_H_EC[] >
+{
   const dataRes0 = await FCONT_FP_ENTRY
   (
     graphQlInstance,
     [fixtureId]
   );
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
 
   const key = `${fixtureId}_${lang}`
-  
+
 	return dataRes0?.[0]?.get(key);
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN] [FALLBACK] [#1] method
- * @version 
+ * @version
  * 1.0 - past versions: []
- * @param 
- * {string} lang 
- * @returns 
- * Promise < B_PSEO_T > 
+ * @param
+ * {string} lang
+ * @returns
+ * Promise < B_PSEO_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_H2H_T > 
+): Promise < B_H2H_T >
 {
   const dataRes0 = await FCONT_FP_ENTRY_0
   (
@@ -170,11 +170,11 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(lang);
 }
 

@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { HLL_HP_ENTRY, HLL_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.league-list.js';
+import { HLL_HP_ENTRY, HLL_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.league-list.js';
 import { LEGL_C_D_A, LEGL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 

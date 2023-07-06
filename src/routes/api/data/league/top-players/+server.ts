@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { LTPL_LP_ENTRY, LTPL_LP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.top-players.js';
+import { LTPL_LP_ENTRY, LTPL_LP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.league.top-players.js';
 import { TP_C_D_A, TP_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 

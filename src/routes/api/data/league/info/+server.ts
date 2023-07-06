@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { LINFO_LP_ENTRY } from '@betarena/scores-lib/dist/functions/func.league-info.js';
+import { LINFO_LP_ENTRY } from '@betarena/scores-lib/dist/functions/func.league.info.js';
 import { LEG_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
@@ -26,27 +26,27 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const url: string = req?.url?.searchParams?.get('url');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: 
-    // ➨ Get Featured Match (WIDGET) MAIN data; 
+    // ACTION:
+    // ➨ Get Featured Match (WIDGET) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_0: boolean =
       url != undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       let data: unknown;
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -56,7 +56,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -75,8 +75,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -99,20 +99,20 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ league info (widget) hasura DATA fetch;
- * @param 
+ * @param
  * {string} url
- * @returns 
+ * @returns
  * Promise < B_LEG_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   url: string
-): Promise < B_LEG_D > 
+): Promise < B_LEG_D >
 {
   const dataRes0 = await LINFO_LP_ENTRY
   (
@@ -121,11 +121,11 @@ async function fallbackMainData
 
   // console.log(dataRes0?.[1]);
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(url);
 }
 

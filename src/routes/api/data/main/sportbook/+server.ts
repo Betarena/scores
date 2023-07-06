@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { LSPT_L_ENTRY } from '@betarena/scores-lib/dist/functions/func.sportbook.js';
+import { LSPT_L_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.sportbook.js';
 import { SPD_C_D_A, SPD_C_D_A1 } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
@@ -26,29 +26,29 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const geoPos: string = req?.url?.searchParams?.get('geoPos');
     const all: string =	req?.url?.searchParams?.get('all');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: 
-    // ➨ Get Sportbook ALL (WIDGET) MAIN data; 
+    // ACTION:
+    // ➨ Get Sportbook ALL (WIDGET) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_0: boolean =
       all != undefined
       && geoPos != undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       let data: unknown;
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -66,7 +66,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -80,20 +80,20 @@ export async function GET
       if (data != undefined) return json(data);
     }
 
-    // ACTION: 
-    // ➨ Get Sportbook ALL (WIDGET) MAIN data; 
+    // ACTION:
+    // ➨ Get Sportbook ALL (WIDGET) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_1: boolean =
       all == undefined
       && geoPos != undefined
     ;
-    if (if_M_1) 
+    if (if_M_1)
     {
       let data: unknown;
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -111,7 +111,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData_1
         (
@@ -130,8 +130,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -154,60 +154,60 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ sportbook (data) hasura TRANSLATION fetch;
- * @param 
+ * @param
  * {string} geoPos
- * @returns 
+ * @returns
  * Promise < B_SPT_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   geoPos: string
-): Promise < B_SPT_D[] > 
+): Promise < B_SPT_D[] >
 {
   const dataRes0 = await LSPT_L_ENTRY
   (
     graphQlInstance
   );
 
-  if (dataRes0?.[1].size == 0) 
+  if (dataRes0?.[1].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[1].get(geoPos);
 }
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ sportbook (data) hasura TRANSLATION fetch;
- * @param 
+ * @param
  * {string} geoPos
- * @returns 
+ * @returns
  * Promise < B_SPT_D >
  */
 async function fallbackMainData_1
 (
   geoPos: string
-): Promise < B_SPT_D > 
+): Promise < B_SPT_D >
 {
   const dataRes0 = await LSPT_L_ENTRY
   (
     graphQlInstance
   );
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(geoPos);
 }
 

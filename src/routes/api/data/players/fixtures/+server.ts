@@ -3,7 +3,7 @@
 import { initGrapQLClient } from '$lib/graphql/init';
 import { json } from '@sveltejs/kit';
 
-import { PFIX_PP_ENTRY, PFIX_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player-fixtures.js";
+import { PFIX_PP_ENTRY, PFIX_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player.fixtures.js";
 import { PFIX_PP_getTargetFixture } from '@betarena/scores-lib/dist/graphql/query.player-fixtures.js';
 import { PFIX_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
@@ -30,7 +30,7 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise <unknown> 
+): Promise <unknown>
 {
 
   // query (url) data
@@ -44,7 +44,7 @@ export async function GET
 
   // NOTE: player (page) data;
   // IMPORTANT CACHE + FALLBACK (HASURA)
-  if (player_id) 
+  if (player_id)
   {
 
     const _player_id: number = parseInt(player_id)
@@ -53,7 +53,7 @@ export async function GET
     let loadType = "cache";
 
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_hset_cache_data
@@ -65,7 +65,7 @@ export async function GET
     }
 
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData
       (
@@ -98,7 +98,7 @@ export async function GET
   // league-id
 
   // NOTE: target widget [translation]
-	if (lang) 
+	if (lang)
   {
 		const response_hasura =
 			await fallbackMainData_1(lang);
@@ -122,11 +122,11 @@ export async function GET
  * @param {number} _player_id
  * @returns Promise < B_PFIX_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   _player_id: number,
   _offset: number
-): Promise < B_PFIX_D > 
+): Promise < B_PFIX_D >
 {
 
   const dataRes0 = await PFIX_PP_ENTRY
@@ -136,24 +136,24 @@ async function fallbackMainData
     [_player_id]
   );
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(_player_id);
 }
 
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} lang 
- * @returns Promise < B_PPRO_T > 
+ * @param {string} lang
+ * @returns Promise < B_PPRO_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_PFIX_T > 
+): Promise < B_PFIX_T >
 {
   const dataRes0 = await PFIX_PP_ENTRY_1
   (
@@ -161,11 +161,11 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(lang);
 }
 
@@ -179,7 +179,7 @@ async function helperMainAction
     graphQlInstance,
     fixtureId
   );
-  
+
   return dataRes0?.[0];
 }
 
