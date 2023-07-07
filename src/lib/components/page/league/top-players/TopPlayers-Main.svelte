@@ -26,7 +26,7 @@ COMPONENT JS (w/ TS)
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
-	import type { B_TP_D, B_TP_T, TP_Season_Top_Player } from '@betarena/scores-lib/types/top-players.js';
+	import type { B_TP_D, B_TP_T } from '@betarena/scores-lib/types/top-players.js';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -78,9 +78,9 @@ COMPONENT JS (w/ TS)
     {
 			lazyLoadingSeasonFixture = true;
 
-			const response: TP_Season_Top_Player = await get
+			const response: B_TP_D = await get
       (
-        `/api/data/league/top-players?league_id=${B_TP_D?.league_id}&season_id=${$sessionStore.selectedSeasonID}`
+        `/api/data/league/top-players?league_id=${B_TP_D?.league_id}&season_id=${$sessionStore.selectedSeasonID}&hasura=true`
       );
 			if (response == undefined)
       {
@@ -90,15 +90,23 @@ COMPONENT JS (w/ TS)
 				return;
 			}
 
-      B_TP_D.seasons.push(response);
+      B_TP_D.seasons.push(...response?.seasons);
       B_TP_D = B_TP_D;
-      checkPlayerViewOptLength = response;
+      checkPlayerViewOptLength = response?.seasons?.[0];
+      console.log('response', response);
       lazyLoadingSeasonFixture = false;
 		}
 
+    console.log('checkPlayerViewOptLength', checkPlayerViewOptLength);
+
+    // const if_M_0: boolean =
+    //   checkPlayerViewOptLength == undefined
+    //   ||
+
 		// [ℹ] validation of NO-WIDGET-DATA
 		if (
-			checkPlayerViewOptLength == undefined ||
+			checkPlayerViewOptLength == undefined
+      ||
 			(checkPlayerViewOptLength
 				.top_players_assists.length == 0 &&
 				checkPlayerViewOptLength.top_players_goals
