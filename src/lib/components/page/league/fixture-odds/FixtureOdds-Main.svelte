@@ -16,7 +16,7 @@
 	import { MONTH_NAMES_ABBRV, toISOMod, weekDays } from '$lib/utils/dates.js';
 	import { FIX_W_T_STY, FIX_W_T_TAG, FIX_W_T_TOG, dlog, dlogv2 } from '$lib/utils/debug';
 	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions';
-	import { FIXTURE_FULL_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
+	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
 
 	import type { FIREBASE_odds } from '@betarena/scores-lib/types/firebase.js';
 	import type { B_FO_D, B_FO_T, FO_Main, FO_Rounds_Data, FO_Season, FO_Weeks_Data } from '@betarena/scores-lib/types/fixture-odds';
@@ -643,16 +643,16 @@
 
     const liveFixturesMap = $sessionStore?.livescore_now_scoreboard;
 
+
     for (const dateFixObj of fixtures_arr_filter)
     {
-      dateFixObj?.fixtures
+      dateFixObj.fixtures = dateFixObj?.fixtures
       ?.map
       (
         (
           fixture
         ) =>
         {
-
           if (liveFixturesMap.has(fixture.id))
           {
             return {
@@ -679,9 +679,11 @@
 
           return fixture
         }
-      )
+      );
     }
 
+    // IMPORTANT
+    fixtures_arr_filter = fixtures_arr_filter ;
   }
 
   // TODO: DOC:
@@ -1047,6 +1049,13 @@
       await kickstartLiveOdds();
       resizeAction();
       addEventListeners();
+      setInterval
+      (
+        async () =>
+        {
+          tickSecShow = !tickSecShow;
+        }, 500
+      );
     }
   );
 
@@ -1595,7 +1604,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     "
                   >
 
-                    {#if fixture?.status === 'LIVE'}
+                    {#if FIXTURE_LIVE_TIME_OPT.includes(fixture?.status) && fixture?.status != "HT"}
 
                       <p
                         style="color: #FF3C3C;"
