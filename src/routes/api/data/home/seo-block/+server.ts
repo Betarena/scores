@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { HSEOB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.seo-block.js';
+import { HSEOB_HP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.home.seo-block.js';
 import { SEB_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
@@ -26,27 +26,27 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
     // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: 
-    // ➨ Get Footer (WIDGET) MAIN data; 
+    // ACTION:
+    // ➨ Get Footer (WIDGET) MAIN data;
     // ➨ NOTE: Contains [HASURA] Fallback;
     const if_M_0: boolean =
       lang != undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       let data: unknown;
       let loadType = "cache";
 
       // IMPORTANT Check in cache;
-      if (!hasura) 
+      if (!hasura)
       {
         data = await get_target_hset_cache_data
         (
@@ -56,7 +56,7 @@ export async function GET
       }
 
       // IMPORTANT Default to Hasura;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -75,8 +75,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -99,20 +99,20 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
- * [MAIN] 
+ * @summary
+ * [MAIN]
  * [FALLBACK]
  * @description
  * ➨ seo-block (widget) hasura TRANSLATION fetch;
- * @param 
+ * @param
  * {string} lang
- * @returns 
+ * @returns
  * Promise < B_SEB_DT >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   lang: string
-): Promise < B_SEB_DT > 
+): Promise < B_SEB_DT >
 {
   const dataRes0 = await HSEOB_HP_ENTRY_1
   (
@@ -120,11 +120,11 @@ async function fallbackMainData
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0) 
+  if (dataRes0?.[0].size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0].get(lang);
 }
 

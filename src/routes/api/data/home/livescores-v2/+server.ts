@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { HLV2_HP_ENTRY, HLV2_HP_ENTRY_2, HLV2_HP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.livescores-v2.js';
+import { HLV2_HP_ENTRY, HLV2_HP_ENTRY_2, HLV2_HP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.home.livescores-v2.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_LS2_D, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
 import { get_target_hset_cache_data, get_target_string_cache_data } from '../../../../../lib/redis/std_main';

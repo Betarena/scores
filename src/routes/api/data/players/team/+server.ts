@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { PTEAM_PP_ENTRY, PTEAM_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player-team.js";
+import { PTEAM_PP_ENTRY, PTEAM_PP_ENTRY_1 } from "@betarena/scores-lib/dist/functions/func.player.team.js";
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import type { B_PSTAT_T } from '@betarena/scores-lib/types/player-statistics.js';
 import type { B_PTEAM_D } from '@betarena/scores-lib/types/player-team.js';
@@ -28,7 +28,7 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise <unknown> 
+): Promise <unknown>
 {
 
   // query (url) data
@@ -41,13 +41,13 @@ export async function GET
     player_id
     && !lang
   ;
-  if (if_M_0) 
+  if (if_M_0)
   {
     const _player_id: number = parseInt(player_id)
     let data;
     let loadType = "cache";
     // NOTE: check in cache;
-    if (!hasura) 
+    if (!hasura)
     {
       data =
         await get_target_hset_cache_data
@@ -58,7 +58,7 @@ export async function GET
       ;
     }
     // NOTE: (default) fallback;
-		if (!data || hasura) 
+		if (!data || hasura)
     {
       data = await fallbackMainData
       (
@@ -71,7 +71,7 @@ export async function GET
   }
 
   // [ℹ] target widget [translation]
-	if (lang) 
+	if (lang)
   {
 		const response_hasura =	await fallbackMainData_1(lang);
     return json(response_hasura);
@@ -92,10 +92,10 @@ export async function GET
  * @param {number} _player_id
  * @returns Promise < B_PSTAT_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   _player_id: number
-): Promise < B_PTEAM_D > 
+): Promise < B_PTEAM_D >
 {
 
   const dataRes0 = await PTEAM_PP_ENTRY
@@ -104,24 +104,24 @@ async function fallbackMainData
     [_player_id]
   )
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(_player_id);
 }
 
 /**
  * @summary [MAIN] [FALLBACK] [#1] method
  * @version 1.0 - past versions: []
- * @param {string} lang 
- * @returns Promise < B_PSTAT_T > 
+ * @param {string} lang
+ * @returns Promise < B_PSTAT_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_PSTAT_T > 
+): Promise < B_PSTAT_T >
 {
   const dataRes0 = await PTEAM_PP_ENTRY_1
   (
@@ -129,11 +129,11 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(lang);
 }
 

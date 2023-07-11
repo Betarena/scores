@@ -3,7 +3,7 @@
 import { json } from '@sveltejs/kit';
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { FPROB_FP_ENTRY, FPROB_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.probabilities.js';
+import { FPROB_FP_ENTRY, FPROB_FP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.fixture.probabilities.js';
 
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 import type { B_VOT_D } from '@betarena/scores-lib/types/votes.js';
@@ -25,9 +25,9 @@ const graphQlInstance = initGrapQLClient()
 export async function GET
 (
   req
-): Promise < unknown > 
+): Promise < unknown >
 {
-  try 
+  try
   {
 
     // NOTE: Handle url-query data;
@@ -35,19 +35,19 @@ export async function GET
 	  const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: Get Fixture Probability (WIDGET) MAIN data; 
+    // ACTION: Get Fixture Probability (WIDGET) MAIN data;
     // NOTE: With [HASURA] Fallback;
     const if_M_0 =
       fixture_id != undefined
     ;
-    if (if_M_0) 
+    if (if_M_0)
     {
       const _fixture_id = parseInt(fixture_id)
       let data;
       let loadType = "cache";
 
       // NOTE: check CACHE;
-      // if (!hasura) 
+      // if (!hasura)
       // {
       //   data =
       //     await get_target_hset_cache_data
@@ -59,7 +59,7 @@ export async function GET
       // }
 
       // NOTE: (default) HASURA fallback;
-      if (!data || hasura) 
+      if (!data || hasura)
       {
         data = await fallbackMainData
         (
@@ -78,7 +78,7 @@ export async function GET
     const if_M_1: boolean =
       lang != undefined
     ;
-    if (if_M_1)  
+    if (if_M_1)
     {
       // TODO: LIN_C_T_A
       const data =	await fallbackMainData_1
@@ -93,8 +93,8 @@ export async function GET
     (
       null
     );
-  } 
-  catch (ex) 
+  }
+  catch (ex)
   {
     console.error
     (
@@ -117,19 +117,19 @@ export async function GET
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
 /**
- * @summary 
+ * @summary
  * [MAIN] [FALLBACK] [#0]
  * @description
  * ➨ fixture (lineup) widget main data (hasura) fallback;
- * @param 
+ * @param
  * {number} fixId
- * @returns 
+ * @returns
  * Promise < B_PSTAT_D >
  */
-async function fallbackMainData 
+async function fallbackMainData
 (
   fixtureId: number
-): Promise < B_VOT_D > 
+): Promise < B_VOT_D >
 {
   const dataRes0 = await FPROB_FP_ENTRY
   (
@@ -137,28 +137,28 @@ async function fallbackMainData
     [fixtureId]
   )
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(fixtureId);
 }
 
 /**
- * @summary 
+ * @summary
  * [MAIN] [FALLBACK] [#1] method
- * @version 
+ * @version
  * 1.0 - past versions: []
- * @param 
- * {string} lang 
- * @returns 
- * Promise < B_PSEO_T > 
+ * @param
+ * {string} lang
+ * @returns
+ * Promise < B_PSEO_T >
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_H2H_T > 
+): Promise < B_H2H_T >
 {
   const dataRes0 = await FPROB_FP_ENTRY_1
   (
@@ -166,11 +166,11 @@ async function fallbackMainData_1
     [lang]
   );
 
-  if (dataRes0?.[0]?.size == 0) 
+  if (dataRes0?.[0]?.size == 0)
   {
     return null
   }
-  
+
 	return dataRes0?.[0]?.get(lang);
 }
 

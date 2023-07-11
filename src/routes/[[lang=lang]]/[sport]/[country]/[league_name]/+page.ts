@@ -120,7 +120,7 @@ export async function load
 
   //#region [1] IMPORTANT PRE-LOAD DATA DOC: REF: [2]
 
-  const urls =
+  const urls: string[] =
   [
     `/api/data/main/seo-pages?lang=${urlLang}&page=tournaments`,
     `/api/data/league/info?url=${url.pathname}`,
@@ -129,10 +129,11 @@ export async function load
     `/api/data/league/top-players?lang=${urlLang}&hasura=true`,
     `/api/data/league/top-players?league_id=${league_id}&hasura=true`,
     `/api/data/league/fix-odds?lang=${urlLang}`,
-    `/api/data/league/fix-odds?league_id=${league_id}` // [?] alt.2
+    `/api/data/league/fix-odds?league_id=${league_id}`
   ];
 
-  type HP_PROMISE = [
+  type HP_PROMISE =
+  [
     B_SAP_TP_T | undefined,
     B_LEG_D | undefined,
     B_STA_T | undefined,
@@ -160,8 +161,6 @@ export async function load
     FIXTURES_ODDS_T,
     FIXTURES_ODDS_DATA
 	] = data;
-
-	dlog(data, true);
 
   //#endregion [1] IMPORTANT PRE-LOAD DATA DOC: REF: [2]
 
