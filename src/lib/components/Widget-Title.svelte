@@ -12,10 +12,6 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [VARIABLES]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
-
   export let WIDGET_TITLE: string
   export let OVERRIDE_COLOR: boolean = false;
 
@@ -23,17 +19,9 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [METHODS]
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
-
   // -Methods Go Here
 
   function do_something() {}
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
-  // ~~~~~~~~~~~~~~~~~~~~~
 
   //#endregion ➤ [METHODS]
 
@@ -52,15 +40,15 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <h2
   class="
-    s-20 
-    m-b-10 
-    w-500 
+    s-20
+    m-b-10
+    w-500
     color-black-2
   "
   style="margin-top: 0px;"
