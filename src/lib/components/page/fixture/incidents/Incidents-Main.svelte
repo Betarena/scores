@@ -16,8 +16,8 @@
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import IncidentRow from './Incidents-Row.svelte';
-	
-  import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
+
+  import type { B_H_SFPV2 } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { B_INC_D, B_INC_T } from '@betarena/scores-lib/types/incidents.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -29,12 +29,12 @@
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
-  
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
 	let noWidgetData: any = false;
-  let playerMap: Map < number, B_H_SFPV2 > = 
+  let playerMap: Map < number, B_H_SFPV2 > =
     FIXTURE_INCIDENTS?.players == undefined
       ? new Map < number, B_H_SFPV2 >()
       : new Map(FIXTURE_INCIDENTS?.players)
@@ -55,7 +55,7 @@
   */
 	async function injectLiveData
   (
-  ): Promise < void > 
+  ): Promise < void >
   {
 		const fixture_id = FIXTURE_INCIDENTS?.id;
 
@@ -68,7 +68,7 @@
 
     // update fixture data w/live;
     FIXTURE_INCIDENTS.status = liveFixtureData?.time?.status;
-    FIXTURE_INCIDENTS.score_post = 
+    FIXTURE_INCIDENTS.score_post =
     {
       ht_score: liveFixtureData?.scores?.ht_score,
       ft_score: liveFixtureData?.scores?.ft_score,
@@ -76,16 +76,16 @@
       ps_score: liveFixtureData?.scores?.ps_score
     };
     FIXTURE_INCIDENTS.events =  liveFixtureData?.events?.data;
-    
+
     const FIREBASE_PLAYERS_DATA = liveFixtureData?.custom_mod?.players_v3;
 
-    const if_M_1 = 
+    const if_M_1 =
       FIREBASE_PLAYERS_DATA != undefined
     ;
     if (if_M_1)
     {
       let dataKeyValList: [number, B_H_SFPV2][] = [];
-      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA)) 
+      for (const [key, value] of Object.entries(FIREBASE_PLAYERS_DATA))
       {
         dataKeyValList.push
         (
@@ -99,11 +99,11 @@
       ) as Map <number, B_H_SFPV2>;
     }
 
-    const if_M_2 = 
+    const if_M_2 =
       FIXTURE_INCIDENTS.events != undefined
       && FIXTURE_INCIDENTS.events.length > 0
     ;
-    if (if_M_2) 
+    if (if_M_2)
     {
       FIXTURE_INCIDENTS.events
       ?.sort
@@ -127,7 +127,7 @@
   ): void
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -152,7 +152,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -169,9 +169,9 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * listens to target "fixture" in "livescores_now" data;
   */
   $: if ($sessionStore?.livescore_now_fixture_target)
@@ -206,7 +206,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -218,7 +218,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -227,18 +227,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	class:display-none={noWidgetData}
 >
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={FXITURE_INCIDENTS_TRANSLATION?.title}
       NO_DATA_TITLE={FXITURE_INCIDENTS_TRANSLATION?.no_info}
       NO_DATA_DESC={FXITURE_INCIDENTS_TRANSLATION?.no_info_desc}
     />
 	{/if}
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData}
@@ -247,7 +247,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       WIDGET_TITLE={FXITURE_INCIDENTS_TRANSLATION?.title}
     />
 
-    <!-- 
+    <!--
     📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
     <div
@@ -256,14 +256,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
 
-      <!-- 
+      <!--
       TEAM INFO
       -->
       <div
         id="team-info-box"
         class="row-space-out"
       >
-        <!-- 
+        <!--
         HOME TEAM
         -->
         <div class="row-space-start">
@@ -283,13 +283,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </p>
         </div>
 
-        <!-- 
+        <!--
         AWAY TEAM
         -->
         <div
           class="
             row-space-end
-            away-team  
+            away-team
           "
         >
           <p
@@ -309,15 +309,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </div>
       </div>
 
-      
-      <!-- 
+
+      <!--
       EVENTS DATA
       -->
-      <div 
+      <div
         id="incidents-events-box"
       >
 
-        <!-- 
+        <!--
         PEN SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.ps_score != undefined}
@@ -334,7 +334,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
         {#each FIXTURE_INCIDENTS?.events || [] as event}
           {#if ['pen_shootout_miss', 'pen_shootout_goal'].includes(event?.type)}
-            <!-- 
+            <!--
             HOME TEAM
             -->
             {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
@@ -343,7 +343,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 TYPE="L"
                 {playerMap}
               />
-            <!-- 
+            <!--
             AWAY TEAM
             -->
             {:else}
@@ -356,7 +356,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         {/each}
 
-        <!-- 
+        <!--
         ET SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.et_score != undefined}
@@ -372,7 +372,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
         {#each FIXTURE_INCIDENTS?.events || [] as event}
           {#if event?.minute > 90}
-            <!-- 
+            <!--
             HOME TEAM
             -->
             {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
@@ -381,7 +381,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 TYPE="L"
                 {playerMap}
               />
-            <!-- 
+            <!--
             AWAY TEAM
             -->
             {:else}
@@ -394,7 +394,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         {/each}
 
-        <!-- 
+        <!--
         FT SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.ft_score != undefined}
@@ -410,7 +410,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
         {#each FIXTURE_INCIDENTS?.events || [] as event}
           {#if event?.minute > 45 && event?.minute <= 90}
-            <!-- 
+            <!--
             HOME TEAM
             -->
             {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
@@ -419,7 +419,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 TYPE="L"
                 {playerMap}
               />
-            <!-- 
+            <!--
             AWAY TEAM
             -->
             {:else}
@@ -432,7 +432,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         {/each}
 
-        <!-- 
+        <!--
         HT SCORE [SECTION]
         -->
         {#if FIXTURE_INCIDENTS?.score_post?.ht_score != undefined}
@@ -448,7 +448,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
         {#each FIXTURE_INCIDENTS?.events || [] as event}
           {#if event?.minute <= 45 && !['pen_shootout_miss', 'pen_shootout_goal'].includes(event?.type)}
-            <!-- 
+            <!--
             HOME TEAM
             -->
             {#if parseInt(event.team_id) == FIXTURE_INCIDENTS?.home?.team_id}
@@ -457,7 +457,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 TYPE="L"
                 {playerMap}
               />
-            <!-- 
+            <!--
             AWAY TEAM
             -->
             {:else}
@@ -483,67 +483,67 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	/* 
-  team info box 
+	/*
+  team info box
   */
-	div#team-info-box 
+	div#team-info-box
   {
 		padding: 20px 20px 0 20px;
 	}
-	div#team-info-box p 
+	div#team-info-box p
   {
 		font-size: 16px;
 		margin-left: 12px;
 	}
-	div#team-info-box div.away-team p 
+	div#team-info-box div.away-team p
   {
 		margin-right: 12px;
 		margin-left: 0;
 	}
 
-	/* 
-  events table box 
+	/*
+  events table box
   */
 	div#incidents-widget-container div#incidents-events-box	p.event-milestone-text
   {
 		padding: 14px 0 6px 0;
 		text-align: center;
 	}
-	:global(div#incidents-widget-container div#incidents-events-box	div.incident-row:last-child) 
+	:global(div#incidents-widget-container div#incidents-events-box	div.incident-row:last-child)
   {
 		border-bottom: 0 !important;
 	}
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 726px) 
-  and (max-width: 1000px) 
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1000px)
   {
-		#incidents-widget-container 
+		#incidents-widget-container
     {
 			min-width: 100%;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 726px) 
+	@media only screen
+  and (min-width: 726px)
   {
 		/* EMPTY */
 	}
 
-	@media only screen 
-  and (min-width: 1000px) 
+	@media only screen
+  and (min-width: 1000px)
   {
 		/* EMPTY */
 	}
 
-	@media only screen 
-  and (min-width: 1160px) 
+	@media only screen
+  and (min-width: 1160px)
   {
 		/* EMPTY */
 	}
@@ -554,7 +554,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-	:global(div#incidents-widget-container.dark-background-1 div#incidents-events-box	div.incident-row) 
+	:global(div#incidents-widget-container.dark-background-1 div#incidents-events-box	div.incident-row)
   {
 		border-bottom: 1px solid #616161;
 	}

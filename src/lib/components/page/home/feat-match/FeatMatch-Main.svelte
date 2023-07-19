@@ -15,7 +15,7 @@
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
-	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { MONTH_NAMES_ABBRV, getOrdinalNum, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
@@ -23,8 +23,8 @@
 	import FeatMatchTableRow from './FeatMatch-Table-Row.svelte';
 
 	import type { Voted_Fixture } from '$lib/types/types.scores.js';
+	import type { Urls } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
-	import type { Urls } from '@betarena/scores-lib/types/hasura.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 	import type { B_H_VOT_M } from '@betarena/scores-lib/types/votes.js';
 

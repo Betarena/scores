@@ -8,8 +8,8 @@ import { PFIX_PP_getTargetFixture } from '@betarena/scores-lib/dist/graphql/quer
 import { PFIX_C_D_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
+import type { B_H_HF } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { B_PFIX_D, B_PFIX_T } from '@betarena/scores-lib/types/player-fixtures';
-import type { B_H_HF } from '@betarena/scores-lib/types/hasura.js';
 
 //#endregion ➤ Package Imports
 

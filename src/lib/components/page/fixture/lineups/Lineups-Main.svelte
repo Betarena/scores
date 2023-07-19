@@ -22,7 +22,7 @@
 	import LineupVectorMobile from './Lineups-Vector-Mobile.svelte';
 	import LineupVectorTablet from './Lineups-Vector-Tablet.svelte';
 
-  import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
+  import type { B_H_SFPV2 } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { B_LIN_D, B_LIN_T, LIN_Player } from '@betarena/scores-lib/types/lineups.js';
 
   // #endregion ➤ [MAIN] Package Imports
