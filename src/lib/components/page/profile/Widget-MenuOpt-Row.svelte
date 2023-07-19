@@ -1,125 +1,184 @@
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
+
 <script lang="ts">
+
+  // #region ➤ 📦 Package Imports
+
 	import { page } from '$app/stores';
-	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
+	import { createEventDispatcher, type EventDispatcher } from 'svelte';
+
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { createEventDispatcher } from 'svelte';
 
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';
-	import calendar from './assets/calendar.svg';
-	import edit from './assets/edit.svg';
-	import home_select from './assets/home-select.svg';
-	import home from './assets/home.svg';
 	import check from './assets/icon-check.svg';
-	import settings_select from './assets/settings-select.svg';
-	import settings from './assets/settings.svg';
+	import icon_calendar from './assets/menu-opt/calendar.svg';
+	import icon_competition_select from './assets/menu-opt/competition-selected.svg';
+	import icon_competition from './assets/menu-opt/competition.svg';
+	import icon_deposit_select from './assets/menu-opt/deposit-selected.svg';
+	import icon_deposit from './assets/menu-opt/deposit.svg';
+	import icon_edit from './assets/menu-opt/edit.svg';
+	import icon_home_select from './assets/menu-opt/home-select.svg';
+	import icon_home from './assets/menu-opt/home.svg';
+	import icon_settings_select from './assets/menu-opt/settings-select.svg';
+	import icon_settings from './assets/menu-opt/settings.svg';
+	import icon_tx_hist_select from './assets/menu-opt/tx-hist-selected.svg';
+	import icon_tx_hist from './assets/menu-opt/tx-hist.svg';
+	import icon_withdraw_select from './assets/menu-opt/withdraw-selected.svg';
+	import icon_withdraw from './assets/menu-opt/withdraw.svg';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
 
-  let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
+	import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
 
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+	const dispatch: EventDispatcher < any > = createEventDispatcher();
+
+  export let
+    VIEW_OPT: 1 | 2,
+    MENU_OPT: PROFILE_OPT,
+    SELECTED_OPT: PROFILE_OPT,
+    mobileExclusive: boolean,
+    tabletExclusive: boolean,
+    showDropdown: boolean = false
+  ;
+
+  let
+    RESPONSE_PROFILE_DATA: B_PROF_T,
+    selectedMenuOptIcon: string = undefined,
+    isHoverMenuOptItem: boolean = false,
+    hoverMenuOptIconAlt: string = undefined
+  ;
+
+  $: tabletExclusive = tabletExclusive;
+	$: mobileExclusive = mobileExclusive;
   $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
-	type PROFILE_OPT =
-		| 'Dashboard'
-		| 'Account Settings'
-		| 'Scores'
-		| 'Author';
+  // #endregion ➤ 📌 VARIABLES
 
-	const dispatch = createEventDispatcher();
-
-	export let VIEW_OPT: 1 | 2;
-	export let MENU_OPT: PROFILE_OPT;
-	export let SELECTED_OPT: PROFILE_OPT;
-	export let mobileExclusive: boolean;
-	export let tabletExclusive: boolean;
-	export let showDropdown: boolean = false;
-
-	let selectedMenuOptIcon: string = undefined;
-	let isHoverMenuOptItem: boolean = false;
-	let hoverMenuOptIconAlt: string = undefined;
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ 🛠️ METHODS
 
 	/**
-	 * @description updates the selected option
-	 * trigger. Omits for non-valid menu-opt
+	 * @description
+   * Updates the selected option trigger.
+   * Omits for non-valid menu-opt
 	 */
-	function update_selected_opt() {
-		if (['Scores', 'Author'].includes(MENU_OPT))
-			return;
-		dispatch('select_opt_trigger', {
-			opt: MENU_OPT
-		});
+	function update_selected_opt
+  (
+  ): void
+  {
+    const if_M_0: boolean =
+      ['Scores', 'Author'].includes(MENU_OPT)
+    ;
+		if (if_M_0) return;
+
+		dispatch
+    (
+      'select_opt_trigger',
+      {
+        opt: MENU_OPT
+      }
+    );
 	}
 
 	/**
-	 * @description bubbles up to parent event
-	 * to show dropdown
+	 * @description
+   * bubbles up to parent event to show dropdown.
 	 */
-	function toggle_dropdown() {
+	function toggle_dropdown
+  (
+  ): void
+  {
 		dispatch('toggle_dropdown');
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS [REACTIVE]
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ 🛠️ METHODS
 
-	$: if (
-		MENU_OPT == 'Dashboard' &&
-		SELECTED_OPT != MENU_OPT
-	)
-		selectedMenuOptIcon = home;
-	$: if (MENU_OPT == 'Dashboard')
-		hoverMenuOptIconAlt = home_select;
-	$: if (
-		MENU_OPT == 'Dashboard' &&
-		SELECTED_OPT == MENU_OPT
-	)
-		selectedMenuOptIcon = home_select;
-	$: if (
-		MENU_OPT == 'Account Settings' &&
-		SELECTED_OPT != MENU_OPT
-	)
-		selectedMenuOptIcon = settings;
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  $: if (MENU_OPT == 'Dashboard')
+  {
+    hoverMenuOptIconAlt = icon_home_select;
+    selectedMenuOptIcon =
+      SELECTED_OPT == MENU_OPT
+        ? icon_home_select
+        : icon_home
+    ;
+  }
+
 	$: if (MENU_OPT == 'Account Settings')
-		hoverMenuOptIconAlt = settings_select;
-	$: if (
-		MENU_OPT == 'Account Settings' &&
-		SELECTED_OPT == MENU_OPT
-	)
-		selectedMenuOptIcon = settings_select;
-	$: if (MENU_OPT == 'Scores')
-		selectedMenuOptIcon = calendar;
-	$: if (MENU_OPT == 'Author')
-		selectedMenuOptIcon = edit;
+  {
+    hoverMenuOptIconAlt = icon_settings_select;
+    selectedMenuOptIcon =
+      SELECTED_OPT == MENU_OPT
+        ? icon_settings_select
+        : icon_settings
+    ;
+  }
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  $: if (MENU_OPT == 'Deposit')
+  {
+    hoverMenuOptIconAlt = icon_deposit_select;
+    selectedMenuOptIcon =
+      SELECTED_OPT == MENU_OPT
+        ? icon_deposit_select
+        : icon_deposit
+    ;
+  }
 
-	$: tabletExclusive = tabletExclusive;
-	$: mobileExclusive = mobileExclusive;
+  $: if (MENU_OPT == 'Withdraw')
+  {
+    hoverMenuOptIconAlt = icon_withdraw_select;
+    selectedMenuOptIcon =
+      SELECTED_OPT == MENU_OPT
+        ? icon_withdraw_select
+        : icon_withdraw
+    ;
+  }
+
+  $: if (MENU_OPT == 'Transaction History')
+  {
+    hoverMenuOptIconAlt = icon_tx_hist_select;
+    selectedMenuOptIcon =
+      SELECTED_OPT == MENU_OPT
+        ? icon_tx_hist_select
+        : icon_tx_hist
+    ;
+  }
+
+  $: if (MENU_OPT == 'Competitions History')
+  {
+    hoverMenuOptIconAlt = icon_competition_select;
+    selectedMenuOptIcon =
+      SELECTED_OPT == MENU_OPT
+        ? icon_competition_select
+        : icon_competition
+    ;
+  }
+
+	$: if (MENU_OPT == 'Scores') selectedMenuOptIcon = icon_calendar;
+	$: if (MENU_OPT == 'Author') selectedMenuOptIcon = icon_edit;
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+### COMPONENT HTML
+### NOTE:
+### HINT: use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
-[ℹ] option view (#1)
-<-conditional->
-[ℹ] used by MOBILE & TABLET
-[ℹ] simple icon + text + dropdown icon
+<!--
+VIEW DESIGN - 1
 -->
 {#if VIEW_OPT == 1}
+
 	<div
 		class="
       row-space-out
@@ -128,19 +187,25 @@ COMPONENT HTML
     "
 		on:click={() => toggle_dropdown()}
 	>
+
 		<div
 			class="
         row-space-start
         m-r-32
       "
 		>
+
 			<img
 				src={selectedMenuOptIcon}
 				alt="default alt text"
-				width="20"
-				height="20"
+				width=20
+				height=20
 				class="m-r-12"
 			/>
+
+      <!--
+      MENU OPTION TEXT
+      -->
 			<p
 				class="
           w-500
@@ -149,58 +214,75 @@ COMPONENT HTML
           no-wrap
         "
 			>
-				<!-- {MENU_OPT} -->
         {#if MENU_OPT == 'Account Settings'}
-          {RESPONSE_PROFILE_DATA?.acc_settings}
-        {:else if MENU_OPT == 'Dashboard'}
-          {RESPONSE_PROFILE_DATA?.dashboard}
+          {RESPONSE_PROFILE_DATA?.profile?.acc_settings ?? 'Account Settings'}
+        {:else if MENU_OPT == 'Dashboard' ?? 'Dashboard'}
+          {RESPONSE_PROFILE_DATA?.profile?.dashboard}
         {:else if MENU_OPT == 'Author'}
-          {RESPONSE_PROFILE_DATA?.author}
+          {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Scores'}
-          {RESPONSE_PROFILE_DATA?.scores}
+          {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
+        {:else if MENU_OPT == 'Withdraw'}
+          {'Withdraw'}
+        {:else if MENU_OPT == 'Deposit'}
+          {'Deposit'}
+        {:else if MENU_OPT == 'Transaction History'}
+          {'Transaction History'}
+        {:else if MENU_OPT == 'Competitions History'}
+          {'Competitions History'}
         {/if}
 			</p>
+
 		</div>
+
 		<img
 			src={showDropdown ? arrow_up : arrow_down}
-			alt={showDropdown
-				? 'arrow_up'
-				: 'arrow_down'}
-			width="20"
-			height="20"
+			alt={showDropdown	? 'arrow_up' : 'arrow_down'}
+			width=20
+			height=20
 		/>
+
 	</div>
+
 {/if}
 
-<!-- 
-[ℹ] option view (#2)
-<-conditional->
-[ℹ] used by MOBILE & TABLET & DESKTOP
+<!--
+VIEW DESIGN - 2
 -->
 {#if VIEW_OPT == 2}
+
 	<div
-		class="
+    data-testid="profile/menu-widget/inner/main-row/ui-2"
+		class=
+    "
       row-space-out
       profile-menu-opt
     "
 		on:click={() => update_selected_opt()}
-		class:selected-opt-active={SELECTED_OPT ==
-			MENU_OPT && !tabletExclusive}
-		class:cursor-pointer={![
-			'Scores',
-			'Author'
-		].includes(MENU_OPT)}
-		class:cursor-not-allowed={[
-			'Scores',
-			'Author'
-		].includes(MENU_OPT)}
-		on:mouseenter={() =>
-			(isHoverMenuOptItem = true)}
-		on:mouseleave={() =>
-			(isHoverMenuOptItem = false)}
+		class:selected-opt-active={SELECTED_OPT == MENU_OPT && !tabletExclusive}
+		class:cursor-pointer=
+    {
+      !
+      [
+        'Scores',
+        'Author'
+      ]
+      .includes(MENU_OPT)
+    }
+		class:cursor-not-allowed=
+    {
+      [
+        'Scores',
+        'Author'
+      ]
+      .includes(MENU_OPT)
+    }
+		on:mouseenter={() => (isHoverMenuOptItem = true)}
+		on:mouseleave={() => (isHoverMenuOptItem = false)}
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
-		<!-- 
+
+		<!--
     [ℹ] menu opt row
     <-contents->
     [ℹ] menu option icon
@@ -208,137 +290,180 @@ COMPONENT HTML
     <-conditional-txt->
     [ℹ] menu option (not yet avaialble)
     -->
-		<div class="row-space-start">
-			<!-- 
-      [ℹ] menu option icon
+		<div
+      class="row-space-start">
+
+			<!--
+      MENU OPTION ICON
       -->
 			<img
-				src={!isHoverMenuOptItem ||
-				['Scores', 'Author'].includes(MENU_OPT)
-					? selectedMenuOptIcon
-					: hoverMenuOptIconAlt}
+				src=
+        {
+          (!isHoverMenuOptItem || ['Scores', 'Author'].includes(MENU_OPT))
+            ? selectedMenuOptIcon
+            : hoverMenuOptIconAlt
+        }
 				alt="{MENU_OPT} Icon"
 				aria-label="{MENU_OPT} Icon"
-				height="20"
-				width="20"
-				class="
+				height=20
+				width=20
+				class=
+        "
           m-r-12
           menu-opt-icon
         "
 			/>
-			<!-- 
-      [ℹ] menu option text
+
+			<!--
+      MENU OPTION TEXT
       -->
 			<p
-				class="
+				class=
+        "
           w-500
           s-16
         "
-				class:color-grey={SELECTED_OPT !=
-					MENU_OPT}
-				class:color-black-2={SELECTED_OPT ==
-					MENU_OPT}
-				class:color-grey-shade={[
-					'Scores',
-					'Author'
-				].includes(MENU_OPT)}
-				class:menu-opt-text={![
-					'Scores',
-					'Author'
-				].includes(MENU_OPT)}
+				class:color-grey={SELECTED_OPT != MENU_OPT}
+				class:color-black-2={SELECTED_OPT == MENU_OPT}
+				class:color-grey-shade=
+        {
+          [
+            'Scores',
+            'Author'
+				  ].includes(MENU_OPT)
+        }
+				class:menu-opt-text=
+        {
+          !
+          [
+            'Scores',
+            'Author'
+          ].includes(MENU_OPT)
+        }
 			>
         {#if MENU_OPT == 'Account Settings'}
-          {RESPONSE_PROFILE_DATA?.acc_settings}
+          {RESPONSE_PROFILE_DATA?.profile?.acc_settings ?? 'Account Settings'}
         {:else if MENU_OPT == 'Dashboard'}
-          {RESPONSE_PROFILE_DATA?.dashboard}
+          {RESPONSE_PROFILE_DATA?.profile?.dashboard ?? 'Dashboard'}
         {:else if MENU_OPT == 'Author'}
-          {RESPONSE_PROFILE_DATA?.author}
+          {RESPONSE_PROFILE_DATA?.profile?.author ?? 'Author'}
         {:else if MENU_OPT == 'Scores'}
-          {RESPONSE_PROFILE_DATA?.scores}
+          {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
+        {:else if MENU_OPT == 'Withdraw'}
+          {'Withdraw'}
+        {:else if MENU_OPT == 'Deposit'}
+          {'Deposit'}
+        {:else if MENU_OPT == 'Transaction History'}
+          {'Transaction History'}
+        {:else if MENU_OPT == 'Competitions History'}
+          {'Competitions History'}
         {/if}
 			</p>
+
 		</div>
-		<!-- 
-    [ℹ] menu option (selected) icon
+
+		<!--
+    MENU OPTION (selected) ICON
     -->
 		{#if SELECTED_OPT == MENU_OPT && tabletExclusive}
 			<img
 				src={check}
 				alt="default alt text"
-				width="20"
-				height="20"
-				class:display-none={SELECTED_OPT !=
-					MENU_OPT}
+				width=20
+				height=20
+				class:display-none={SELECTED_OPT !=	MENU_OPT}
 			/>
 		{/if}
-		<!-- 
-    [ℹ] menu option (not yet avaialble)
-    <-conditional->
+
+		<!--
+    MENU OPTION (not yet avaialble)
     -->
 		{#if ['Scores', 'Author'].includes(MENU_OPT)}
 			<p
-				class="
+				class=
+        "
           menu-opt-not-available
           no-wrap
           color-grey
           s-12
         "
 			>
-				{RESPONSE_PROFILE_DATA?.soon}
+				{RESPONSE_PROFILE_DATA?.profile?.soon ?? 'Soon'}
 			</p>
 		{/if}
+
 	</div>
+
 {/if}
 
 <!-- ===============
-COMPONENT STYLE
+### COMPONENT STYLE
+### NOTE:
+### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
-	/* view (#1) */
-	div.mobile-select-menu-opt-box {
+
+	/*
+  view (#1)
+  */
+	div.mobile-select-menu-opt-box
+  {
 		padding: 0 12px 16px 12px;
 	}
 
-	/* view (#2); profile menu option row */
-	div.profile-menu-opt {
+	/*
+  view (#2); profile menu option row
+  */
+	div.profile-menu-opt
+  {
 		padding: 12px 24px;
 	}
-	div.profile-menu-opt img.menu-opt-icon {
-		/* in-line defined [global] class */
-	}
-	div.profile-menu-opt.selected-opt-active {
+	div.profile-menu-opt.selected-opt-active
+  {
 		border-right: 4px solid var(--primary);
 		background: rgba(245, 98, 15, 0.1);
 	}
-	div.profile-menu-opt p.menu-opt-not-available {
+	div.profile-menu-opt p.menu-opt-not-available
+  {
 		padding: 3px 8px;
 		background-color: var(--whitev2);
 		border-radius: 20px;
 	}
-	div.profile-menu-opt:hover p.menu-opt-text {
+	div.profile-menu-opt:hover p.menu-opt-text
+  {
 		color: var(--dark-theme);
 	}
 
-	/* -----------------
-    RESPONSIVNESS
-  ----------------- */
+	/*
+  =============
+  RESPONSIVNESS
+  =============
+  */
 
-	@media only screen and (min-width: 725px) {
-		div.mobile-select-menu-opt-box {
+	@media only screen
+  and (min-width: 725px)
+  {
+		div.mobile-select-menu-opt-box
+    {
 			padding: 0 20px 0 0;
 		}
 	}
 
-  /* -----------------
-    WIDGET DARK THEME 
-  ----------------- */
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
 
-  div.profile-menu-opt.dark-background-1.selected-opt-active {
+  div.profile-menu-opt.dark-background-1.selected-opt-active
+  {
     background: unset;
 		background: rgba(245, 98, 15, 0.1) !important;
   }
 
-  div.profile-menu-opt.dark-background-1 p.menu-opt-not-available {
+  div.profile-menu-opt.dark-background-1 p.menu-opt-not-available
+  {
 		background-color: var(--dark-theme-1-shade) !important;
 	}
 
