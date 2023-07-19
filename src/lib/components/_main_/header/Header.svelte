@@ -6,7 +6,6 @@ COMPONENT JS - BASIC
 <script lang="ts">
 
   // #region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
 
 	import { browser, dev } from '$app/environment';
 	import { goto } from '$app/navigation';
@@ -476,9 +475,10 @@ COMPONENT JS - BASIC
   // #region ➤ [REACTIVIY] [METHODS]
 
   /**
-   * @summary [REACTIVE]
+   * @summary
+   * 🔥 REACTIVE
    * @description
-   * listens to when user (localStorage) not-exists, and initial language has not been set;
+   * ➨ listens to when user (localStorage) not-exists, and initial language has not been set;
   */
   $: if
   (
@@ -501,8 +501,10 @@ COMPONENT JS - BASIC
 	}
 
   /**
-   * @summary [REACTIVE]
-   * @description listens to when
+   * @summary
+   * 🔥 REACTIVE
+   * @description
+   * ➨ listens to when
    * user (localStorage) exists,
    * and initial language for (logged-in)
    * user set account has not been set yet;
@@ -524,9 +526,10 @@ COMPONENT JS - BASIC
   }
 
   /**
-   * @summary [REACTIVE]
-   * @description (browser) listens to when
-   * user (localStorage) exists, sets cookie;
+   * @summary
+   * 🔥 REACTIVE
+   * @description
+   * ➨ (browser) listens to when user (localStorage) exists, sets cookie;
   */
   $: if
   (
@@ -557,10 +560,10 @@ COMPONENT JS - BASIC
   }
 
   /**
-   * @summary [REACTIVE]
-   * @description sets (number) of
-   * fixtrues today, as MAIN default
-   * data point;
+   * @summary
+   * 🔥 REACTIVE
+   * @description
+   * ➨ sets (number) of fixtrues today, as MAIN default data point;
   */
   $: if
   (
@@ -598,6 +601,7 @@ COMPONENT JS - BASIC
     calcNavTrianglePos('scores');
   }
 
+  // [🐞]
   $: dlogv2
   (
     NB_W_TAG,
@@ -707,6 +711,7 @@ TODO: FIXME:
 NAVBAR MAIN
 -->
 <header
+  data-testid="header"
   class=
   "
     column-space-center
@@ -730,6 +735,7 @@ NAVBAR MAIN
   -->
   <div
     id="top-header"
+    data-testid="header-top"
     class="row-space-out"
   >
 
@@ -737,6 +743,7 @@ NAVBAR MAIN
     1st COLUMN
     -->
     <div
+      data-testid="header-top-1st-col"
       class="row-space-start"
       style="width: fit-content;"
     >
@@ -746,8 +753,9 @@ NAVBAR MAIN
       -->
       {#if tabletExclusive}
         <img
-          loading="lazy"
           id="burger-menu"
+          data-testid="header-burger-menu"
+          loading="lazy"
           src={menu_burger_bar}
           alt="betarena-logo"
           width=24
@@ -763,6 +771,8 @@ NAVBAR MAIN
       -->
       <div
         id="brand"
+        data-testid="header-brand-img"
+        aria-label="brand-img"
         class="cursor-pointer"
         on:click={() => reloadPage()}
       >
@@ -789,6 +799,7 @@ NAVBAR MAIN
 
         <div
           id='navBox'
+
           class=
           "
             row-space-start
@@ -853,6 +864,7 @@ NAVBAR MAIN
     2nd COLUMN
     -->
     <div
+      data-testid="header-top-2nd-col"
       class="row-space-start"
       style="width: fit-content;"
     >
@@ -1475,9 +1487,9 @@ NAVBAR MAIN
                   m-r-5
                 "
               >
-                0.00 BTA
+                {$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'} BTA
               </span>
-              ($0.00)
+              $({$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'})
             </p>
           </div>
 
@@ -1512,6 +1524,7 @@ NAVBAR MAIN
   -->
   {#if (tabletExclusive || mobileExclusive) && mobileNavToggleMenu}
     <nav
+      data-testid="header-side-menu"
       class:tablet-exclusive={mobileExclusive == false}
       in:fly={{ x: -200, duration: 500 }}
       out:fly={{ x: -200, duration: 500 }}
@@ -1533,6 +1546,7 @@ NAVBAR MAIN
           CLOSE SIDE-NAV
           -->
           <img
+            data-testid="header-side-menu-close"
             loading="lazy"
             src={close}
             alt="close-icon"
@@ -1630,6 +1644,7 @@ NAVBAR MAIN
               SELECTED LANG
               -->
               <div
+                data-testid="header-side-menu-lang"
                 class="
                   selected-language-btn
                   row-space-out
@@ -1666,6 +1681,7 @@ NAVBAR MAIN
               {#if isLangDropdown}
                 <div
                   id="dropdown-menu"
+                  data-testid="header-side-menu-lang-dropdown"
                   transition:fly
                 >
                   {#each WIDGET_T_DATA.langArray.sort() as lang}
@@ -1882,6 +1898,7 @@ NAVBAR MAIN
             -->
             {#if PROFILE_URL != $page.route.id}
               <div
+                data-testid="header-side-menu-bookmakers"
                 class=
                 "
                   side-nav-dropdown
@@ -1970,7 +1987,9 @@ NAVBAR MAIN
                 DROPDOWN
                 -->
                 {#if isBookmakersDropdown}
+
                   <div
+                    data-testid="header-side-menu-bookmakers-dropdown"
                     transition:fly
                   >
                     {#each WIDGET_T_DATA?.scores_header_translations?.bookmakers_countries || [] as country}
@@ -2027,6 +2046,7 @@ NAVBAR MAIN
                       </div>
                     {/each}
                   </div>
+
                 {/if}
 
               </div>
