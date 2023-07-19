@@ -2,6 +2,7 @@ import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import { sessionStore } from "$lib/store/session.js";
 import { userBetarenaSettings } from '$lib/store/user-settings';
+import { error, redirect } from "@sveltejs/kit";
 import { NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from "./debug";
 
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
@@ -355,6 +356,60 @@ export function PRELOAD_invalid_data
       ex
     )
   }
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ * @param t0
+ * @param page_tag
+ * @param exit_code
+ * @param exit_reason
+ */
+export function PRELOAD_exitPage
+(
+  /** **[required] timer for 'debug' */
+  t0: number,
+  /** **[required] Target page tag name to 'exit' */
+  page_tag: string,
+  /** **[required] Target page exit code to 'exit' */
+  exit_code: number,
+  /** [optional] Message for reason on page 'exit'/'error' */
+  exit_reason?: string
+): void
+{
+  // [🐞]
+  const t1: number = performance.now();
+  // [🐞]
+  dlog
+  (
+    `${page_tag} ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
+
+  throw error
+  (
+    exit_code,
+    exit_reason
+  );
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ * @param redirect_url
+ */
+export function PRELOAD_redirectPage
+(
+  /** **[required] Target redirect url 'to' */
+  redirect_url: string
+): void
+{
+  throw redirect
+  (
+    302,
+    redirect_url
+  );
 }
 
 /**
