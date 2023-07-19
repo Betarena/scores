@@ -1,45 +1,60 @@
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
+
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { createEventDispatcher } from 'svelte';
+
+  // #region ➤ 📦 Package Imports
+
+	import { page } from '$app/stores';
+	import { createEventDispatcher, type EventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import wallet from './assets/wallet.svg';
-	import metamask_icon from './assets/metamask.svg';
+	import { userBetarenaSettings } from '$lib/store/user-settings';
 	import { dlog, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
-	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
-	import { page } from '$app/stores';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+	import metamask_icon from './assets/metamask.svg';
+	import wallet from './assets/wallet.svg';
 
-  export let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation;
+  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+	const dispatch: EventDispatcher < any > = createEventDispatcher();
+
+  let RESPONSE_PROFILE_DATA: B_PROF_T;
+
   $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
-	const dispatch = createEventDispatcher();
+  // #endregion ➤ 📌 VARIABLES
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ 🛠️ METHODS
 
 	/**
-	 * @description bubbles up to parent event
+	 * @description
+   * bubbles up to parent event
 	 * to close (this) modal widget
 	 */
-	function toggle_modal(): void {
+	function toggle_modal
+  (
+  ): void
+  {
 		dispatch('toggle_delete_modal');
 	}
 
 	/**
-	 * @description connects the user to the platform using their
+	 * @description
+   * connects the user to the platform using their
    * MetaMask wallet; Dispatches event to parent to bubble up
 	 * to trigger target method;
-   * @returns {Promise<void>}
+   * @returns { Promise<void> }
 	 */
-	async function connect_wallet_action(): Promise<void> {
+	async function connect_wallet_action
+  (
+  ): Promise < void >
+  {
     // NOTE: detect mobile device
     // if (typeof screen.orientation !== 'undefined') {
     // if (navigator?.userAgentData?.mobile) {
@@ -73,12 +88,14 @@ COMPONENT JS (w/ TS)
 	 * is being used for the platform
 	 * @param walletType
 	 */
-	function providerDetect(
+	function providerDetect
+  (
 		walletType:
 			| 'isMetaMask'
 			| 'isCoinbaseWallet'
 			| 'isBraveWallet'
-	): [boolean, any] {
+	): [boolean, any]
+  {
 		// [ℹ] no ethereum wallet present
 		if (!window.ethereum) {
 			return [false, null];
@@ -152,16 +169,17 @@ COMPONENT JS (w/ TS)
 		}
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ 🛠️ METHODS
+
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+### COMPONENT HTML
+### NOTE:
+### HINT: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
+<!--
 [ℹ] main modal widget (background blur)
 -->
 <div
@@ -173,11 +191,11 @@ COMPONENT HTML
 <!--
 [ℹ] main modal widget
 -->
-<div 
+<div
   id="modal-delete-box"
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] close modal icon (cross)
   -->
 	<img
@@ -187,7 +205,7 @@ COMPONENT HTML
 		alt="close-svg"
 		on:click={() => toggle_modal()}
 	/>
-	<!-- 
+	<!--
   [ℹ] delete account icon (danger)
   -->
 	<img
@@ -195,7 +213,7 @@ COMPONENT HTML
 		alt="wallet icon"
 		class="m-b-24"
 	/>
-	<!-- 
+	<!--
   [ℹ] delete account main text
   -->
 	<p
@@ -208,7 +226,7 @@ COMPONENT HTML
 	>
   {RESPONSE_PROFILE_DATA?.crypto_title}
 	</p>
-	<!-- 
+	<!--
   [ℹ] delete account desc. info
   -->
 	<p
@@ -220,7 +238,7 @@ COMPONENT HTML
 	>
     {RESPONSE_PROFILE_DATA?.crypto_desc}
 	</p>
-	<!-- 
+	<!--
   [ℹ] connect wallet action (btn)
   -->
 	<button
@@ -233,8 +251,8 @@ COMPONENT HTML
     "
 		on:click={() => connect_wallet_action()}
 	>
-    <img 
-      src="{metamask_icon}" 
+    <img
+      src="{metamask_icon}"
       alt="metamask icon"
       class="m-r-16"
     />
@@ -243,10 +261,15 @@ COMPONENT HTML
 </div>
 
 <!-- ===============
-COMPONENT STYLE
+### COMPONENT STYLE
+### NOTE:
+### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
-	div#background-modal-blur {
+
+	div#background-modal-blur
+  {
 		/* position */
 		position: fixed;
 		top: 0;
@@ -259,7 +282,8 @@ COMPONENT STYLE
 		background: rgba(0, 0, 0, 0.5);
 	}
 
-	div#modal-delete-box {
+	div#modal-delete-box
+  {
 		/* position */
 		position: fixed;
 		z-index: 10000;
@@ -281,38 +305,49 @@ COMPONENT STYLE
 		text-align: -moz-center;
 		overflow: hidden;
 	}
-	div#modal-delete-box > img#close-vector {
+	div#modal-delete-box > img#close-vector
+  {
 		/* position */
 		position: absolute;
 		top: 20px;
 		right: 20px;
 		z-index: 400000002;
 	}
-  button#sign-in-metamask-btn {
-    width: -webkit-fill-available; 
-    width: -moz-available; 
+  button#sign-in-metamask-btn
+  {
+    width: -webkit-fill-available;
+    width: -moz-available;
     border-radius: 60px;
   }
 
-  /* -----------------
-    RESPONSIVNESS
-  ----------------- */
+  /*
+  =============
+  RESPONSIVNESS
+  =============
+  */
 
-	@media only screen and (min-width: 575px) {
-		div#modal-delete-box  {
+	@media only screen
+  and (min-width: 575px)
+  {
+		div#modal-delete-box
+    {
 			width: 328px;
 		}
 	}
 
-  /* -----------------
-    WIDGET DARK THEME 
-  ----------------- */
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
 
-  div#modal-delete-box.dark-background-1 {
+  div#modal-delete-box.dark-background-1
+  {
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
 		background-color: var(--dark-theme-1) !important;
 	}
-  div#modal-delete-box.dark-background-1 button#sign-in-metamask-btn {
+  div#modal-delete-box.dark-background-1 button#sign-in-metamask-btn
+  {
 		border: 1px solid var(--dark-theme-1-2-shade) !important;
   }
 </style>

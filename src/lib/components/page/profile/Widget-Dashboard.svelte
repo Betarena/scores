@@ -1,50 +1,72 @@
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
+
 <script lang="ts">
+
+  // #region ➤ 📦 Package Imports
+
 	import { page } from '$app/stores';
-	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
+
 	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import home from './assets/home-select.svg';
-	import metamask_percent_ration_dark from './assets/metamask-percent-ration-dark.png';
-	import metamask_percent_ration from './assets/metamask-percent-ration.png';
-	import metamask_volume_dark from './assets/metamask-volume-dark.png';
-	import metamask_volume from './assets/metamask-volume.png';
-	import nft_marketshare_img_dark from './assets/nft-marketshare-dark.png';
-	import nft_marketshare_img from './assets/nft-marketshare.png';
-	import stats_row_img_dark from './assets/total-volume-dark.png';
-	import stats_row_img from './assets/total-volume.png';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+	import metamask_percent_ration_dark from './assets/dashboard/metamask-percent-ration-dark.png';
+	import metamask_percent_ration from './assets/dashboard/metamask-percent-ration.png';
+	import metamask_volume_dark from './assets/dashboard/metamask-volume-dark.png';
+	import metamask_volume from './assets/dashboard/metamask-volume.png';
+	import nft_marketshare_img_dark from './assets/dashboard/nft-marketshare-dark.png';
+	import nft_marketshare_img from './assets/dashboard/nft-marketshare.png';
+	import stats_row_img_dark from './assets/dashboard/total-volume-dark.png';
+	import stats_row_img from './assets/dashboard/total-volume.png';
+	import home from './assets/menu-opt/home-select.svg';
 
-  let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+  import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  let RESPONSE_PROFILE_DATA: B_PROF_T
 
   $: RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ 📌 VARIABLES
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ 🛠️ METHODS
+
+  // NaN
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // NaN
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // NaN
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+### COMPONENT HTML
+### NOTE:
+### HINT: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<div 
+<div
   id="dashboard-widget-container"
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] widget not available
   <-contents->
-  [ℹ] icon 
-  [ℹ] text 
+  [ℹ] icon
+  [ℹ] text
   -->
 	<div id="background-modal-blur">
 		<div
@@ -64,11 +86,11 @@ COMPONENT HTML
           s-14
         "
 			>
-				{RESPONSE_PROFILE_DATA?.dashboard_title || 'Dashboard content will be available soon'} 
+				{RESPONSE_PROFILE_DATA?.dashboard_title || 'Dashboard content will be available soon'}
 			</p>
 		</div>
 	</div>
-	<!-- 
+	<!--
   [ℹ] widget title
   -->
 	<h2
@@ -78,20 +100,20 @@ COMPONENT HTML
       s-20
     "
 	>
-    {RESPONSE_PROFILE_DATA?.dashboard || 'Dashboard content will be available soon'} 
+    {RESPONSE_PROFILE_DATA?.dashboard || 'Dashboard content will be available soon'}
 	</h2>
-	<!-- 
+	<!--
   [ℹ] dashboard stats info
   -->
-	<div 
-    id="stats-box" 
+	<div
+    id="stats-box"
     class="dashboard-row-info">
-		<img 
+		<img
 			src={$userBetarenaSettings.theme == 'Dark' ? stats_row_img_dark : stats_row_img}
-      alt="Stats Row" 
+      alt="Stats Row"
     />
 	</div>
-	<!-- 
+	<!--
   [ℹ] dashboard metamask info (#1)
   -->
 	<div
@@ -103,7 +125,7 @@ COMPONENT HTML
 			alt="Metamask Volume"
 		/>
 	</div>
-	<!-- 
+	<!--
   [ℹ] dashboard metamask info (#1)
   -->
 	<div
@@ -115,7 +137,7 @@ COMPONENT HTML
 			alt="Metamask Volume"
 		/>
 	</div>
-	<!-- 
+	<!--
   [ℹ] dashboard metamask info (#2)
   -->
 	<div
@@ -130,11 +152,19 @@ COMPONENT HTML
 </div>
 
 <!-- ===============
-COMPONENT STYLE
+### COMPONENT STYLE
+### NOTE:
+### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
-	/* layer (top) box */
-	div#background-modal-blur {
+
+	/*
+  layer (top) box
+  */
+
+	div#background-modal-blur
+  {
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -146,7 +176,8 @@ COMPONENT STYLE
 		backdrop-filter: blur(4px);
 		-webkit-backdrop-filter: blur(4px);
 	}
-	div#dashboard-not-available-container {
+	div#dashboard-not-available-container
+  {
 		position: absolute;
 		right: 0;
 		left: 0;
@@ -157,8 +188,11 @@ COMPONENT STYLE
 		bottom: 0;
 	}
 
-	/* (main) account widget */
-	div#dashboard-widget-container {
+	/*
+  (main) account widget
+  */
+	div#dashboard-widget-container
+  {
 		position: relative;
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -172,94 +206,106 @@ COMPONENT STYLE
 		overflow: hidden;
 	}
 
-	h2 {
+	h2
+  {
 		margin: 0;
 	}
 
-	/* grid control */
-	div#dashboard-widget-container
-		> h2#widget-title {
+	/*
+  grid control
+  */
+	div#dashboard-widget-container > h2#widget-title
+  {
 		grid-row: 1;
 		grid-column: 1/2;
 	}
-	div#dashboard-widget-container > div#stats-box {
+	div#dashboard-widget-container > div#stats-box
+  {
 		grid-row: 2;
 		grid-column: 1/2;
 	}
-	div#dashboard-widget-container
-		> div#nft-volume-box {
+	div#dashboard-widget-container > div#nft-volume-box
+  {
 		grid-row: 3;
 		grid-column: 1/2;
 	}
-	div#dashboard-widget-container
-		> div#nft-marketshare-box {
+	div#dashboard-widget-container > div#nft-marketshare-box
+  {
 		grid-row: 4;
 		grid-column: 1/2;
 	}
-	div#dashboard-widget-container
-		> div#metamask-percent-ratio {
+	div#dashboard-widget-container > div#metamask-percent-ratio
+  {
 		grid-row: 5;
 		grid-column: 1/2;
 	}
 
-	/* grid (items) control */
-	div#dashboard-widget-container
-		div.dashboard-row-info {
-	}
-	div#dashboard-widget-container
-		div.dashboard-row-info
-		img {
+	/*
+  grid (items) control
+  */
+	div#dashboard-widget-container div.dashboard-row-info	img
+  {
 		width: 100%;
 	}
 
-	/* ====================
-    RESPONSIVNESS
-  ==================== */
+	/*
+  =============
+  RESPONSIVNESS
+  =============
+  */
 
-	@media only screen and (min-width: 575px) {
+	@media only screen
+  and (min-width: 575px)
+  {
 		/* grid control */
-		div#dashboard-widget-container {
+		div#dashboard-widget-container
+    {
 			grid-template-columns: 1fr 1fr;
 			max-height: unset;
 		}
-		div#dashboard-widget-container
-			> h2#widget-title {
+		div#dashboard-widget-container > h2#widget-title
+    {
 			grid-row: unset;
 			grid-column: 1/4;
 		}
-		div#dashboard-widget-container
-			> div#stats-box {
+		div#dashboard-widget-container > div#stats-box
+    {
 			grid-row: unset;
 			grid-column: 1/4;
 		}
-		div#dashboard-widget-container
-			> div#nft-volume-box {
+		div#dashboard-widget-container > div#nft-volume-box
+    {
 			grid-column: 1/2;
 			grid-row: unset;
 		}
-		div#dashboard-widget-container
-			> div#nft-marketshare-box {
+		div#dashboard-widget-container > div#nft-marketshare-box
+    {
 			grid-row: unset;
 			grid-column: 2/4;
 		}
-		div#dashboard-widget-container
-			> div#metamask-percent-ratio {
+		div#dashboard-widget-container > div#metamask-percent-ratio
+    {
 			grid-row: unset;
 			grid-column: 1/4;
 		}
 	}
 
-  /* -----------------
-    WIDGET DARK THEME 
-  ----------------- */
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
 
-  div#dashboard-widget-container.dark-background-1 {
+  div#dashboard-widget-container.dark-background-1
+  {
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
 		background-color: var(--dark-theme-1) !important;
 	}
 
-  div#dashboard-widget-container.dark-background-1 div#background-modal-blur {
+  div#dashboard-widget-container.dark-background-1 div#background-modal-blur
+  {
     background: rgba(75, 75, 75, 0.7);
     backdrop-filter: blur(4px);
   }
+
 </style>
