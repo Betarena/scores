@@ -109,7 +109,7 @@ MAIN MODAL - WIDGET
       color-red-bright
     "
 	>
-    {RESPONSE_PROFILE_DATA?.delete_account_title} ?
+    {RESPONSE_PROFILE_DATA?.profile?.delete_account_title} ?
 	</p>
 	<!--
   [ℹ] delete account desc. info
@@ -121,7 +121,7 @@ MAIN MODAL - WIDGET
       m-b-24
     "
 	>
-		{RESPONSE_PROFILE_DATA?.delete_account_desc}
+		{RESPONSE_PROFILE_DATA?.profile?.delete_account_desc}
 	</p>
 	<!--
   [ℹ] main widget action
@@ -144,7 +144,7 @@ MAIN MODAL - WIDGET
       style="width: 100%"
 			on:click={() => continue_delete_account()}
 		>
-      {RESPONSE_PROFILE_DATA?.delete_button}
+      {RESPONSE_PROFILE_DATA?.profile?.delete_button}
 		</button>
 		<!--
     [ℹ] cancel action (btn)
@@ -157,7 +157,7 @@ MAIN MODAL - WIDGET
       style="width: 100%"
 			on:click={() => toggle_modal()}
 		>
-      {RESPONSE_PROFILE_DATA?.cancel_expression}
+      {RESPONSE_PROFILE_DATA?.profile?.cancel_expression}
 		</button>
 	</div>
 </div>

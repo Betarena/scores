@@ -885,7 +885,7 @@ MAIN WIDGET - MODAL
         color-black-2
       "
 		>
-			{RESPONSE_PROFILE_DATA?.profile_photo}
+			{RESPONSE_PROFILE_DATA?.profile?.profile_photo}
 		</p>
 
 		<!--
@@ -949,7 +949,7 @@ MAIN WIDGET - MODAL
       "
 			on:click={() => toggle_modal()}
 		>
-			{RESPONSE_PROFILE_DATA?.cancel_expression}
+			{RESPONSE_PROFILE_DATA?.profile?.cancel_expression}
 		</button>
 
 		<!--
@@ -963,7 +963,7 @@ MAIN WIDGET - MODAL
       "
 			on:click={() => upload_selected_img()}
 		>
-			{RESPONSE_PROFILE_DATA?.save_photo}
+			{RESPONSE_PROFILE_DATA?.profile?.save_photo}
 		</button>
 
 	</div>

@@ -224,7 +224,7 @@ COMPONENT JS (w/ TS)
       color-black-2
     "
 	>
-  {RESPONSE_PROFILE_DATA?.crypto_title}
+  {RESPONSE_PROFILE_DATA?.profile?.crypto_title}
 	</p>
 	<!--
   [ℹ] delete account desc. info
@@ -236,7 +236,7 @@ COMPONENT JS (w/ TS)
       color-grey
     "
 	>
-    {RESPONSE_PROFILE_DATA?.crypto_desc}
+    {RESPONSE_PROFILE_DATA?.profile?.crypto_desc}
 	</p>
 	<!--
   [ℹ] connect wallet action (btn)
@@ -256,7 +256,7 @@ COMPONENT JS (w/ TS)
       alt="metamask icon"
       class="m-r-16"
     />
-		{RESPONSE_PROFILE_DATA?.connect_wallet_title} Metamask
+		{RESPONSE_PROFILE_DATA?.profile?.connect_wallet_title} Metamask
 	</button>
 </div>
 

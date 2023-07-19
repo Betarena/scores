@@ -342,13 +342,13 @@ COMPONENT JS (w/ TS)
     if (querySnapshot.docs.length > 0)
     {
       valid = false
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg?.[0] ?? 'Username is already in use';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[0] ?? 'Username is already in use';
     }
     // [ℹ] validation [2] - length (min)
     if (usernameInput.length < 3)
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg?.[1] ?? 'Username must be greater than 3 characters';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[1] ?? 'Username must be greater than 3 characters';
     }
     // [ℹ] validation [3] - length (min)
     if (usernameInput.length > 15)
@@ -360,20 +360,20 @@ COMPONENT JS (w/ TS)
     if (/^\d+$/.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg?.[2] ?? 'Username must not contain only numbers';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[2] ?? 'Username must not contain only numbers';
     };
     // [ℹ] validation [5] - has a space
     if (/\s/g.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg?.[3] ?? 'Username must not contain spaces';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[3] ?? 'Username must not contain spaces';
     }
     // [ℹ] validation [6] - has special char
     let format = /[ `!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
     if (format.test(usernameInput))
     {
       valid = false;
-      usernameErrorMsg = RESPONSE_PROFILE_DATA?.userame_update_error_msg?.[4] ?? 'Username cant have spaces or special characters';
+      usernameErrorMsg = RESPONSE_PROFILE_DATA?.profile?.userame_update_error_msg?.[4] ?? 'Username cant have spaces or special characters';
     }
 
     return valid;
@@ -677,7 +677,7 @@ MAIN SETTINGS WIDGET
       "
       style="margin-top: 0px;"
     >
-      {RESPONSE_PROFILE_DATA?.acc_settings}
+      {RESPONSE_PROFILE_DATA?.profile?.acc_settings}
     </h2>
 
     <!--
@@ -712,7 +712,7 @@ MAIN SETTINGS WIDGET
           "
           class:m-b-6={mobileExclusive}
         >
-          {RESPONSE_PROFILE_DATA?.profile_photo}
+          {RESPONSE_PROFILE_DATA?.profile?.profile_photo}
         </p>
         <span
           class=
@@ -722,7 +722,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {RESPONSE_PROFILE_DATA?.profile_photo_desc}
+          {RESPONSE_PROFILE_DATA?.profile?.profile_photo_desc}
         </span>
       </div>
 
@@ -739,8 +739,8 @@ MAIN SETTINGS WIDGET
         on:click={() => remove_picture()}
       >
         {!profilePicExists
-          ? RESPONSE_PROFILE_DATA?.upload
-          : RESPONSE_PROFILE_DATA?.remove}
+          ? RESPONSE_PROFILE_DATA?.profile?.upload
+          : RESPONSE_PROFILE_DATA?.profile?.remove}
       </button>
 
       <!--
@@ -813,7 +813,7 @@ MAIN SETTINGS WIDGET
               color-black-2
             "
             >
-              {RESPONSE_PROFILE_DATA?.username}
+              {RESPONSE_PROFILE_DATA?.profile?.username}
             </p>
             <!--
             [ℹ] name "required" text
@@ -824,7 +824,7 @@ MAIN SETTINGS WIDGET
                 s-12
               "
             >
-              {RESPONSE_PROFILE_DATA?.required_field}
+              {RESPONSE_PROFILE_DATA?.profile?.required_field}
             </p>
           </div>
           <!--
@@ -836,7 +836,7 @@ MAIN SETTINGS WIDGET
               color-grey
             "
           >
-            {RESPONSE_PROFILE_DATA?.name_desc}
+            {RESPONSE_PROFILE_DATA?.profile?.name_desc}
           </span>
         </div>
       </div>
@@ -846,7 +846,7 @@ MAIN SETTINGS WIDGET
       -->
       <input
         type="text"
-        placeholder={RESPONSE_PROFILE_DATA?.username}
+        placeholder={RESPONSE_PROFILE_DATA?.profile?.username}
         aria-placeholder="Username input here"
         aria-label="Username input"
         bind:value={usernameInput}
@@ -896,7 +896,7 @@ MAIN SETTINGS WIDGET
           "
           class:m-b-6={mobileExclusive}
         >
-          {RESPONSE_PROFILE_DATA?.crypto_title}
+          {RESPONSE_PROFILE_DATA?.profile?.crypto_title}
         </p>
         <span
           class="
@@ -904,7 +904,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {RESPONSE_PROFILE_DATA?.crypto_desc}
+          {RESPONSE_PROFILE_DATA?.profile?.crypto_desc}
         </span>
       </div>
       <!--
@@ -921,8 +921,8 @@ MAIN SETTINGS WIDGET
         on:click={() => connect_wallet()}
       >
         {!profile_wallet_connected
-          ? RESPONSE_PROFILE_DATA?.connect_wallet_title
-          : RESPONSE_PROFILE_DATA?.disconnect_wallet_title}
+          ? RESPONSE_PROFILE_DATA?.profile?.connect_wallet_title
+          : RESPONSE_PROFILE_DATA?.profile?.disconnect_wallet_title}
       </button>
     </div>
 
@@ -938,7 +938,7 @@ MAIN SETTINGS WIDGET
       "
       on:click={() => save_settings()}
     >
-      {RESPONSE_PROFILE_DATA?.save}
+      {RESPONSE_PROFILE_DATA?.profile?.save}
     </button>
 
     <!--
@@ -985,7 +985,7 @@ MAIN SETTINGS WIDGET
           "
           class:m-b-6={mobileExclusive}
         >
-          {RESPONSE_PROFILE_DATA?.delete_account_title}
+          {RESPONSE_PROFILE_DATA?.profile?.delete_account_title}
         </p>
 
         <span
@@ -995,7 +995,7 @@ MAIN SETTINGS WIDGET
             color-grey
           "
         >
-          {RESPONSE_PROFILE_DATA?.delete_desc}
+          {RESPONSE_PROFILE_DATA?.profile?.delete_desc}
         </span>
 
       </div>
@@ -1014,7 +1014,7 @@ MAIN SETTINGS WIDGET
         "
         on:click={() => (showAccountDelModal = true)}
       >
-        {RESPONSE_PROFILE_DATA?.delete_account_title}
+        {RESPONSE_PROFILE_DATA?.profile?.delete_account_title}
       </button>
 
     </div>
