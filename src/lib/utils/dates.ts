@@ -1,4 +1,4 @@
-export const MONTH_NAMES_ABBRV =
+export const MONTH_NAMES_ABBRV: string[] =
 [
 	'Jan',
 	'Feb',
@@ -14,7 +14,7 @@ export const MONTH_NAMES_ABBRV =
 	'Dec'
 ];
 
-export const WEEK_DAYS_ABBRV =
+export const WEEK_DAYS_ABBRV: string[] =
 [
   'Sun',
   'Mon',
@@ -25,7 +25,7 @@ export const WEEK_DAYS_ABBRV =
   'Sat'
 ];
 
-export const WEEK_DAYS_ABBRV_1 =
+export const WEEK_DAYS_ABBRV_1: string[] =
 [
   'Sun',
   'Mon',
@@ -36,7 +36,7 @@ export const WEEK_DAYS_ABBRV_1 =
   'Sat'
 ];
 
-export const WEEK_DAYS_ABBRV_2 =
+export const WEEK_DAYS_ABBRV_2: string[] =
 [
   'Mon',
   'Tue',
@@ -47,7 +47,7 @@ export const WEEK_DAYS_ABBRV_2 =
   'Sun'
 ];
 
-export const monthNames =
+export const monthNames: string[] =
 [
   'January',
   'February',
@@ -63,7 +63,8 @@ export const monthNames =
   'December'
 ];
 
-export const weekDays = [
+export const weekDays: string[] =
+[
   'sunday',
   'monday',
   'tuesday',
@@ -100,15 +101,18 @@ export const getOrdinalNum =
 
 /**
  * @summary
- * [HELPER]
+ * 🔹 HELPER
+
  * @description
- * instantiates target date for the current client, applying correct target user timezone;
+ * 📌 Instantiates target `date` for the current client,
+ * applying correct target user timezone;
+ *
  * @returns
  * a JavaScript Date object;
  */
 export function clientTimezoneDate
 (
-)
+): Date
 {
   const date = new Date();
   // [STASH]
@@ -117,57 +121,74 @@ export function clientTimezoneDate
   // [STASH] [2]
   // date.setTime( date.getTime() - new Date().getTimezoneOffset()*60*1000 );
   console.log('Client Date', date)
-  return date
+  return date;
 }
 
 /**
  * @summary
- * [HELPER]
+ * 🔹 HELPER
+ *
  * @description
- * converts target date to an ISO_string of yyyy-MM-dd format;
- * (+) handles target date to ISO conversion,
- * (+) identifies dates of "T00:00:00" Dates and Adds Z;
- * @overload
- * adjustClientTZ = false (default) -> converts Date to userClient Timezone;
- * @overload
- * showConversion = false (default)
+ *
+ * 📌 Converts target date to an ISO_string of `yyyy-MM-dd` format.
+ *
+ * ⚡️ Handles dates of `T00:00:00` format and adds in (timezone) `Z`.
+ *
+ * ⚡️ Handles dates of `T00:00:00+` format and removes the `+` and adds `Z`.
+ *
  * @param
- * {Date | string} date
+ * { Date | string } date - Target date to 'process'.
+ *
  * @param
- * {boolean} adjustClientTZ
+ * { boolean } [adjustClientTZ=false] - Wether to 'adjust' date to that of the 'user' timezone.
+ *
  * @param
- * {boolean} showConversion
+ * { boolean } [showConversion=false] - [🐞] Wether to show date conversion process, for debug.
+ *
  * @returns
- * an ISO Date string;
+ * an ISO Date string of `yyyy-MM-dd` format.
  */
 export function toISOMod
 (
   date: Date | string,
-  adjustClientTZ = false,
-  showConversion = false
+  adjustClientTZ: boolean = false,
+  showConversion: boolean = false
 ): string
 {
 
-  if (showConversion) console.log("CONVERSION [FROM]: ", date)
+  // [🐞]
+  if (showConversion)
+    console.log("CONVERSION [FROM]: ", date)
+  ;
 
-  // check for 'string'
+  // ### NOTE: CHECK
+  // ### Check for date of typeof 'string'
   if (typeof(date) == 'string')
   {
-    // check for 'T00:00:00'
-    const validation_0 =
+    // ### NOTE: CHECK
+    // ### Check for 'T00:00:00'
+    // ### without the 'Z'
+    // ### without the '+'
+    const if_M_0 =
       date.includes('T')
       && !date.includes('Z')
+      && !date.includes('+')
     ;
-    // add, if necessary
-    if (validation_0)
-    {
-      date = `${date}Z`
-    }
-    if (showConversion) console.log("CONVERSION [STR]: ", date)
+    // ### Add, if necessary.
+    if (if_M_0) date = `${date}Z`;
+
+    // [🐞]
+    if (showConversion)
+      console.log("CONVERSION [STR]: ", date)
+    ;
+
     date = new Date(date)
   }
 
-  if (showConversion) console.log("CONVERSION [TO]: ", date)
+  // [🐞]
+  if (showConversion)
+    console.log("CONVERSION [TO]: ", date)
+  ;
 
   let formattedDate: string;
 
@@ -190,13 +211,16 @@ export function toISOMod
   // NOTE:WARNING: when converting a T00:00:00Z string to BRAZIL new Date()
   if (adjustClientTZ)
   {
-    const year = date.getFullYear();
-    const month = toZeroPrefixDateStr(date.getMonth() + 1);
-    const day = toZeroPrefixDateStr(date.getDate());
+    const year: number = date.getFullYear();
+    const month: string = toZeroPrefixDateStr(date.getMonth() + 1);
+    const day: string = toZeroPrefixDateStr(date.getDate());
     formattedDate = `${year}-${month}-${day}`;
   }
 
-  if (showConversion) console.log("CONVERSION [ISO]: ", formattedDate)
+  // [🐞]
+  if (showConversion)
+    console.log("CONVERSION [ISO]: ", formattedDate)
+  ;
 
   // IMPORTANT yyyy-MM-dd
   return formattedDate;
@@ -204,7 +228,8 @@ export function toISOMod
 
 /**
  * @summary
- * [HELPER]
+ * 🔹 HELPER
+ *
  * @description
  * converts target Date/string to JS Date Object;
  * (+) adjusting for missing "Z" string, if necessary;
@@ -267,13 +292,18 @@ export function toCorrectDate
 
 /**
  * @summary
- * [HELPER]
+ * 🔹 HELPER
+ *
  * @description
- *  converts a target date string/number to a leading/prefix based "0[...]" string
+ *
+ * 📌 Converts Target Date of type 'string/number' to a
+ * leading/prefix based `0[..]` string.
+ *
  * @param
- * {string | number} dateStr
+ * {string | number} dateStr - Target Date
+ *
  * @returns
- * a zero-prefixed date string
+ * a `zero-prefixed` date string.
  */
 export function toZeroPrefixDateStr
 (
@@ -286,4 +316,60 @@ export function toZeroPrefixDateStr
     .split(' ')
     .join('')
   ;
+}
+
+/**
+ * @summary
+ * 🔹 HELPER
+ *
+ * @description
+ *
+ * 📌 Simple method to generate a `new Date()`
+ * using offsets in `hour`, `days`, `months`, years.
+ *
+ * @param
+ * { number } [offsetDays] - Wether to offset date by `(+/-)X` days.
+ *
+ * @param
+ * { number } [offsetMonths] - Wether to offset date by `(+/-)X` months.
+ *
+ * @returns
+ * A target `Date`.
+ */
+export function targetDate
+(
+  offsetDays: number = 0,
+  offsetMonths: number = 0
+): Date
+{
+  const newDate: Date = new Date();
+
+  if (offsetDays != 0)
+    newDate.setDate(newDate.getDate() + offsetDays);
+  ;
+
+  return newDate;
+}
+
+/**
+ * @summary
+ * 🔹 HELPER
+ *
+ * @description
+ *
+ * 📌 Calculates number of days in a target month, of a target year values.
+ *
+ * @param
+ * { number } month - Target month `number` i.e. `0 - 11`
+ *
+ * @param
+ * { number } year - Target year `number`
+ */
+export function daysInMonth
+(
+  month: number,
+  year: number
+): number
+{
+  return new Date(year, month, 0).getDate();
 }
