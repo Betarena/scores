@@ -5,10 +5,12 @@
 start:
 	echo 'Starting PROD container'
 	docker-compose -f docker-compose.yml up -d
+#
 
 log-listen:
 	echo 'Starting PROD container'
 	docker-compose -f docker-compose.yml up
+#
 
 update-scores-web:
 	echo 'Updating PROD Scores Web container...'
@@ -18,6 +20,7 @@ update-scores-web:
 	# -docker rmi $$(docker images --filter "dangling=true" -q --no-trunc)
 	# docker-compose -f docker-compose.yml up -d
 	docker-compose -f docker-compose.yml up -d --build
+#
 
 # ===========
 # DEVELOPMENT
@@ -29,6 +32,7 @@ dev-start:
 	echo 'Removing Old DEV Logs'
 	-rm -r ./datalog/*
 	echo 'DEV Ready!'
+#
 
 dev-docker-start:
 	echo 'Starting DEV - Docker Environment'
@@ -36,10 +40,12 @@ dev-docker-start:
 	-rm -r ./datalog/*
 	docker-compose -f docker-compose.dev.yml up
 	echo 'DEV Ready!'
+#
 
 dev-clean:
 	echo 'Removing Old DEV Logs'
 	rm -r ./datalog/
+#
 
 git-post-main-pr:
 	# After PR -> (main) - run (this) to get local/dev in pair with (main)
@@ -51,9 +57,11 @@ git-post-main-pr:
 	git checkout dev
 	echo 'Resetting to MAIN'
 	git reset --hard main
-	
+#
+
 git-del-branches-w-origin:
 	echo 'Deleting branches not present in origin + /dev'
 	# Original command (below) is without \(...\) syntax
 	# git fetch -p ; git branch -r | awk '{print $$1}' | egrep -v -f /dev/fd/0 <\(git branch -vv | grep origin\) | awk '{print $$1}' | xargs git branch -D
 	# git branch --merged | grep -v "*" | grep -v "main" | xargs git branch -d
+#
