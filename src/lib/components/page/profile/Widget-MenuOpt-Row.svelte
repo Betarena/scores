@@ -29,7 +29,6 @@ COMPONENT JS (w/ TS)
 	import icon_withdraw_select from './assets/menu-opt/withdraw-selected.svg';
 	import icon_withdraw from './assets/menu-opt/withdraw.svg';
 
-
 	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 	import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
 

@@ -32,24 +32,6 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ 📌 VARIABLES
 
-  // #region ➤ 🛠️ METHODS
-
-  // NaN
-
-  // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
-  // NaN
-
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
-
-  // #region ➤ 🔄 LIFECYCLE [SVELTE]
-
-  // NaN
-
-  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
-
 </script>
 
 <!-- ===============
