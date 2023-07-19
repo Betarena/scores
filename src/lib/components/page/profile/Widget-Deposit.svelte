@@ -259,9 +259,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* 🛝 layout */
     display: grid;
     gap: 12px;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr;
   }
-  div#profile\/widget\/deposit\/inner\/deposit-opts-box a
+  div#profile\/widget\/deposit\/inner\/deposit-opts-box a.deposit\/option\/box
   {
     /* 📌 position */
     position: relative;
@@ -272,7 +272,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border: 1px solid var(--grey-color);
     background: var(--white);
   }
-  div#profile\/widget\/deposit\/inner\/deposit-opts-box a .deposit\/option\/box
+  div#profile\/widget\/deposit\/inner\/deposit-opts-box a.deposit\/option\/box div
   {
     /* 📌 position */
     position: absolute;
@@ -294,9 +294,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   @media only screen
   and (min-width: 726px)
-  and (max-width: 1000px)
   {
-    /* NaN */
+    div#profile\/widget\/deposit\/inner\/deposit-opts-box
+    {
+      /* 🛝 layout */
+      grid-template-columns: 1fr 1fr 1fr;
+    }
   }
 
   /*
