@@ -172,6 +172,7 @@ MAIN DEPOST WIDGET
           class=
           "
           deposit/option/box
+          hover/transition/v-1
           "
         >
           <div
@@ -292,6 +293,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border: 1px solid var(--grey-color);
     background: var(--white);
   }
+  div#profile\/widget\/deposit\/inner\/deposit-opts-box a.deposit\/option\/box:hover
+  {
+    /* 🎨 style */
+    border: 1px solid var(--primary) !important;
+  }
   div#profile\/widget\/deposit\/inner\/deposit-opts-box a.deposit\/option\/box div
   {
     /* 📌 position */
@@ -304,11 +310,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin: auto;
 		width: fit-content;
 		height: fit-content;
-  }
-  div#profile\/widget\/deposit\/inner\/deposit-opts-box a.deposit\/option\/box:hover
-  {
-    /* 🎨 style */
-    border: 1px solid var(--primary) !important;
   }
 
   /*

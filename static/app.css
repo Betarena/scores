@@ -910,6 +910,12 @@ input:focus {
   width: auto;
 }
 
+.hover\/transition\/v-1
+{
+  /* 🎨 style */
+  transition: all 0.15s ease;
+}
+
 /* #endregion ➤ [MAIN] [OTHER STYLES] Website Layout */
 
 /* #region ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */
