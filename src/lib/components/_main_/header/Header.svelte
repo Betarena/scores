@@ -1499,7 +1499,7 @@ NAVBAR MAIN
         BUY BETARENA TOKEN
         NOTE: -> HIDDEN TEMPORARILY
         -->
-        {#if false}
+        {#if true}
           <button
             class=
             "
