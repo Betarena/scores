@@ -1501,7 +1501,7 @@ NAVBAR MAIN
         -->
         {#if true}
           <a
-            href="/u/dashboard/${$userBetarenaSettings.lang}"
+            href="/u/dashboard/{$userBetarenaSettings.lang}"
             title='Go to Deposit Page'
           >
             <button
