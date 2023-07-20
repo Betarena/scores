@@ -8,10 +8,10 @@ COMPONENT JS (w/ TS)
 
 	import { toISOMod } from '$lib/utils/dates.js';
 
-	import icon_arrow_down from './assets/arrow-down.svg';
-	import icon_arrow_up from './assets/arrow-up.svg';
-	import icon_deposit from './assets/tx-hist/deposit.svg';
-	import icon_withdraw from './assets/tx-hist/withdraw.svg';
+	import icon_arrow_down from '../assets/arrow-down.svg';
+	import icon_arrow_up from '../assets/arrow-up.svg';
+	import icon_deposit from '../assets/tx-hist/deposit.svg';
+	import icon_withdraw from '../assets/tx-hist/withdraw.svg';
 
 	import type { B_H_TH, B_H_TT_Field } from "@betarena/scores-lib/types/_HASURA_.js";
 

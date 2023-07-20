@@ -14,9 +14,9 @@ COMPONENT JS (w/ TS)
 
 	import AccountSettingsBoard from '$lib/components/page/profile/Widget-AccountSettings.svelte';
 	import DashboardWidget from '$lib/components/page/profile/Widget-Dashboard.svelte';
-	import WidgetDeposit from '$lib/components/page/profile/Widget-Deposit.svelte';
 	import UserMenu from '$lib/components/page/profile/Widget-MenuOpt.svelte';
-	import WidgetTxHist from '$lib/components/page/profile/Widget-Tx-Hist.svelte';
+	import WidgetDeposit from '$lib/components/page/profile/deposit/Widget-Deposit.svelte';
+	import WidgetTxHist from '$lib/components/page/profile/tx-history/Widget-Tx-Hist.svelte';
 
   import type { PageData } from '../$types';
 

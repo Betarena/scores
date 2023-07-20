@@ -14,10 +14,10 @@ COMPONENT JS (w/ TS)
   import { MONTH_NAMES_ABBRV, WEEK_DAYS_ABBRV_2, toISOMod } from '$lib/utils/dates';
   import { LV2_W_H_TAG, dlog, dlogv2 } from '$lib/utils/debug';
 
-  import vec_arrow_left_dark from './assets/calendar/arrow-left-dark.svg';
-  import vec_arrow_left from './assets/calendar/arrow-left.svg';
-  import vec_arrow_right_dark from './assets/calendar/arrow-right-dark.svg';
-  import vec_arrow_right from './assets/calendar/arrow-right.svg';
+  import vec_arrow_left_dark from '../assets/calendar/arrow-left-dark.svg';
+  import vec_arrow_left from '../assets/calendar/arrow-left.svg';
+  import vec_arrow_right_dark from '../assets/calendar/arrow-right-dark.svg';
+  import vec_arrow_right from '../assets/calendar/arrow-right.svg';
 
   import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
 

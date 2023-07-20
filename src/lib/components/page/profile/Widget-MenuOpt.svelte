@@ -24,28 +24,30 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
-	const TABLET_VIEW = 1160,
-	      MOBILE_VIEW = 725
+	const
+    TABLET_VIEW = 1160,
+    MOBILE_VIEW = 725,
+    PROFILE_MENU_OPT: PROFILE_OPT[] =
+    [
+      'Dashboard',
+      'Account Settings',
+      'Deposit',
+      'Withdraw',
+      'Transaction History',
+      'Competitions History',
+      'Scores',
+      'Author'
+    ]
   ;
 
-  const PROFILE_MENU_OPT: PROFILE_OPT[] =
-  [
-		'Dashboard',
-		'Account Settings',
-    'Deposit',
-    'Withdraw',
-    'Transaction History',
-    'Competitions History',
-		'Scores',
-		'Author'
-	];
-
-  let mobileExclusive: boolean,
-      tabletExclusive: boolean = false
+  let
+    mobileExclusive: boolean,
+    tabletExclusive: boolean = false
   ;
 
-	let selectedMenuOpt: PROFILE_OPT = 'Dashboard',
-	    showDropdown: boolean = false
+	let
+    selectedMenuOpt: PROFILE_OPT = 'Dashboard',
+    showDropdown: boolean = false
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -114,6 +116,12 @@ COMPONENT JS (w/ TS)
     ;
 		if ($page?.url?.pathname.includes('settings'))
 			selectedMenuOpt = 'Account Settings';
+    ;
+    if ($page?.url?.pathname.includes('deposit'))
+			selectedMenuOpt = 'Deposit';
+    ;
+    if ($page?.url?.pathname.includes('transaction-history'))
+			selectedMenuOpt = 'Transaction History';
     ;
 	}
 

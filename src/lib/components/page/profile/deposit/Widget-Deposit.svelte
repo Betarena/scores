@@ -218,7 +218,7 @@ MAIN DEPOST WIDGET
           color-grey
         "
       >
-        {RESPONSE_PROFILE_DATA?.deposit?.information}
+        {@html RESPONSE_PROFILE_DATA?.deposit?.information}
       </p>
     </div>
 
@@ -304,6 +304,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin: auto;
 		width: fit-content;
 		height: fit-content;
+  }
+  div#profile\/widget\/deposit\/inner\/deposit-opts-box a.deposit\/option\/box:hover
+  {
+    /* 🎨 style */
+    border: 1px solid var(--primary) !important;
   }
 
   /*

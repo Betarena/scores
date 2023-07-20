@@ -13,15 +13,15 @@ COMPONENT JS (w/ TS)
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings.js';
 	import { daysInMonth, targetDate } from '$lib/utils/dates.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { onMount } from 'svelte';
 
 	import WidgetCalendar from './Widget-Calendar.svelte';
 	import WidgetTxHistRow from './Widget-Tx-Hist-Row.svelte';
 
-	import calendar from './assets/menu-opt/calendar.svg';
-	import icon_tx_hist from './assets/menu-opt/tx-hist-selected.svg';
+	import calendar from '../assets/menu-opt/calendar.svg';
+	import icon_tx_hist from '../assets/menu-opt/tx-hist-selected.svg';
 
-	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
 
