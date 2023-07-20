@@ -1500,15 +1500,20 @@ NAVBAR MAIN
         NOTE: -> HIDDEN TEMPORARILY
         -->
         {#if true}
-          <button
-            class=
-            "
+          <a
+            href="/u/dashboard/${$userBetarenaSettings.lang}"
+            title='Go to Deposit Page'
+          >
+            <button
+              class=
+              "
               btn-primary-v2
               m-l-50
-            "
-          >
-            Buy BTA
-          </button>
+              "
+            >
+              Buy BTA
+            </button>
+          </a>
         {/if}
 
       {/if}
