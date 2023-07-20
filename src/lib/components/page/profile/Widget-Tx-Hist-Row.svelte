@@ -21,7 +21,8 @@ COMPONENT JS (w/ TS)
 
   export let
     tx_data: B_H_TH,
-    mobileExclusive: boolean = false,
+    isViewMobile: boolean = false,
+    isViewTablet: boolean = false,
     txTranslation: B_H_TT_Field
   ;
 
@@ -48,6 +49,10 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
   $: if (tx_data?.status)
   {
 		if (tx_data?.status?.toLowerCase() == 'completed') txStatus = 'C';
@@ -55,12 +60,20 @@ COMPONENT JS (w/ TS)
 		if (tx_data?.status?.toLowerCase() == 'denied')	txStatus = 'D';
 	}
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
   $: if (tx_data?.type)
   {
 		if (tx_data?.type?.toLowerCase() == 'deposit') txTypeIcon = icon_deposit;
 		if (tx_data?.type?.toLowerCase() == 'withdraw') txTypeIcon = icon_withdraw;
   }
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
   $: if (tx_data?.wallet_address_erc20)
   {
     const f3char: string = tx_data?.wallet_address_erc20
@@ -90,7 +103,7 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <tr
-  class:extra-info={isTxExtraInfo && mobileExclusive}
+  class:extra-info={isTxExtraInfo && isViewMobile}
   on:click={() => isTxExtraInfo = !isTxExtraInfo}
 >
 
@@ -124,7 +137,7 @@ COMPONENT JS (w/ TS)
     <!--
     📱 MOBILE
     -->
-    {#if mobileExclusive}
+    {#if isViewMobile || isViewTablet}
       <p
         class=
         "
@@ -140,7 +153,7 @@ COMPONENT JS (w/ TS)
   <!--
   🖥️ LAPTOP
   -->
-  {#if !mobileExclusive}
+  {#if !isViewMobile && !isViewTablet}
 
     <!--
     TX TYPE
@@ -216,7 +229,65 @@ COMPONENT JS (w/ TS)
     -->
     <td>
       <p>
-        {tx_data?.wallet_address_erc20 ?? '-'}
+        {walletAddrTrunc ?? '-'}
+      </p>
+    </td>
+
+  {/if}
+
+  <!--
+  💻 TABLET
+  -->
+  {#if !isViewMobile && isViewTablet}
+
+    <!--
+    TX TYPE
+    -->
+    <td>
+      <div
+        class=
+        "
+        row-space-start
+        "
+      >
+        <img
+          src={txTypeIcon}
+          alt="{tx_data?.type}_icon"
+          class=
+          "
+          m-r-6
+          "
+        />
+        <p>
+          {tx_data?.type ?? '-'}
+        </p>
+      </div>
+    </td>
+
+    <!--
+    TX ASSET USED
+    -->
+    <td>
+      <p>
+        {tx_data?.asset ?? '-'}
+      </p>
+    </td>
+
+    <!--
+    TX QUANTITY (BTA)
+    -->
+    <td>
+      <p>
+        ${tx_data?.quantity}
+      </p>
+    </td>
+
+    <!--
+    TX FEE
+    -->
+    <td>
+      <p>
+        {tx_data?.payment_processor_fee ?? '-'}
       </p>
     </td>
 
@@ -247,7 +318,7 @@ COMPONENT JS (w/ TS)
       <!--
       📱 MOBILE
       -->
-      {#if mobileExclusive}
+      {#if isViewMobile}
         <img
           src={isTxExtraInfo ? icon_arrow_up : icon_arrow_down}
           alt={isTxExtraInfo ? 'icon_arrow_up' : 'icon_arrow_down'}
@@ -265,7 +336,7 @@ COMPONENT JS (w/ TS)
   📱 MOBILE
   EXTRA TX INFO
   -->
-  {#if isTxExtraInfo && mobileExclusive}
+  {#if isTxExtraInfo && isViewMobile}
 
     <div
       class=
@@ -326,60 +397,73 @@ COMPONENT JS (w/ TS)
   }
   tr td
   {
+    /* 🎨 style */
     padding: 8px 0 8px 0;
     padding-right: 12px;
   }
   tr td:first-child
   {
+    /* 🎨 style */
     padding-left: 20px !important;
     border-radius: 4px 0 0 4px;
   }
   tr td:last-of-type
   {
+    /* 🎨 style */
     padding-right: 20px !important;
     border-radius: 0 4px 4px 0;
   }
 
   tr.extra-info
   {
+    /* 🎨 style */
     height: unset;
   }
   tr.extra-info td
   {
-    padding-top: 12px;
-    padding-bottom: 180px;
+    /* 🎨 style */
+    padding-top: 8px;
+    padding-bottom: 250px;
   }
 
   tr td p
   {
-    color: var(--black-night, #FFF);
-    white-space: nowrap;
+    /* 🛝 layout */
     width: fit-content;
+    white-space: nowrap;
+    /* 🎨 style */
+    color: var(--dark-theme);
   }
   tr td p.tx-status-pill
   {
+    /* 🛝 layout */
     width: fit-content;
+    /* 🎨 style */
     padding: 4px 12px;
     border-radius: 32px;
   }
   tr td p.tx-status-pill.completed
   {
+    /* 🎨 style */
     color: var(--status-green, #59C65D);
     background: rgba(89, 198, 93, 0.10);
   }
   tr td p.tx-status-pill.pending
   {
+    /* 🎨 style */
     color: var(--status-yellow, #FFB904);
     background: rgba(255, 185, 4, 0.10);
   }
   tr td p.tx-status-pill.denied
   {
+    /* 🎨 style */
     color: var(--status-red-night, #FF5959);
     background: rgba(255, 89, 89, 0.10);
   }
 
   tr div.tx-extra-info
   {
+    /* 🎨 style */
     padding: 0 20px;
     position: absolute;
     top: 56px;

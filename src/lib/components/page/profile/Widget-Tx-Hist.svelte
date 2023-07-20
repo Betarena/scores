@@ -30,13 +30,13 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📌 VARIABLES
 
   const
-    TABLET_VIEW = 768,
-    MOBILE_VIEW = 767
+    VIEWPORT_TABLET_INIT = 768,
+    VIEWPORT_MOBILE_INIT = 580
   ;
 
 	let
-    mobileExclusive: boolean = false,
-    tabletExclusive: boolean = false;
+    isViewMobile: boolean = false,
+    isViewTablet: boolean = false;
   ;
 
   let
@@ -219,18 +219,22 @@ COMPONENT JS (w/ TS)
 
   }
 
-  // VIEWPORT CHANGES | IMPORTANT
+  /**
+   * IMPORTANT
+   * @description
+   * TODO: DOC:
+   */
   function resizeAction
   (
   ): void
   {
     [
-      tabletExclusive,
-      mobileExclusive
+      isViewTablet,
+      isViewMobile
     ] =	viewport_change
     (
-      TABLET_VIEW,
-      MOBILE_VIEW
+      VIEWPORT_TABLET_INIT,
+      VIEWPORT_MOBILE_INIT
     );
   }
 
@@ -336,6 +340,8 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
+<!-- <WidgetTxHistLoader /> -->
+
 <!--
 MAIN DEPOST WIDGET
 -->
@@ -419,15 +425,15 @@ MAIN DEPOST WIDGET
       TOP WIGET ROW
       -->
       <div
-        class:row-space-out-top={!mobileExclusive}
-        class:column-space-start={mobileExclusive}
+        class:row-space-out-top={!isViewMobile}
+        class:column-space-start={isViewMobile}
       >
 
         <!--
         1st COLUMN
         -->
         <div
-          class:m-b-16={mobileExclusive}
+          class:m-b-16={isViewMobile}
         >
 
           <!--
@@ -477,8 +483,8 @@ MAIN DEPOST WIDGET
           "
           row-space-end
           "
-          class:width-auto={!mobileExclusive}
-          class:m-b-16={mobileExclusive}
+          class:width-auto={!isViewMobile}
+          class:m-b-16={isViewMobile}
         >
 
           <!--
@@ -515,7 +521,7 @@ MAIN DEPOST WIDGET
                 "
                 class:color-black-2={selectedDateFilterOpt1 == 'Last 7 Days'}
               >
-                {#if mobileExclusive}
+                {#if isViewMobile}
                   {'7 Days'}
                 {:else}
                   {RESPONSE_PROFILE_DATA?.tx?.date ?? 'Last 7 Days'}
@@ -545,7 +551,7 @@ MAIN DEPOST WIDGET
                 "
                 class:color-black-2={selectedDateFilterOpt1 == 'Last Month'}
               >
-                {#if mobileExclusive}
+                {#if isViewMobile}
                   {'Month'}
                 {:else}
                   {RESPONSE_PROFILE_DATA?.tx?.date1 ?? 'Last Month'}
@@ -575,7 +581,7 @@ MAIN DEPOST WIDGET
                 "
                 class:color-black-2={selectedDateFilterOpt1 == 'Last 6 Months'}
               >
-                {#if mobileExclusive}
+                {#if isViewMobile}
                   {'Year'}
                 {:else}
                   {RESPONSE_PROFILE_DATA?.tx?.date2 ?? 'Last 6 Months'}
@@ -660,7 +666,7 @@ MAIN DEPOST WIDGET
               📱 MOBILE
               DATE + WALLET ADRRESS
               -->
-              {#if mobileExclusive}
+              {#if isViewMobile || isViewTablet}
                 <th
                   style=
                   "
@@ -676,7 +682,7 @@ MAIN DEPOST WIDGET
               <!--
               🖥️ LAPTOP
               -->
-              {#if !mobileExclusive}
+              {#if !isViewMobile && !isViewTablet}
 
                 <!--
                 DATE
@@ -758,6 +764,54 @@ MAIN DEPOST WIDGET
               {/if}
 
               <!--
+              💻 TABLET
+              -->
+              {#if !isViewMobile && isViewTablet}
+
+                <!--
+                TYPE
+                -->
+                <th
+                  style=
+                  "
+                  width: 100%;
+                  "
+                >
+                  <p>
+                    {RESPONSE_PROFILE_DATA?.tx?.fields?.type ?? 'Type:'}
+                  </p>
+                </th>
+
+                <!--
+                ASSET
+                -->
+                <th>
+                  <p>
+                    {RESPONSE_PROFILE_DATA?.tx?.fields?.asset ?? 'Asset:'}
+                  </p>
+                </th>
+
+                <!--
+                QUANTITY
+                -->
+                <th>
+                  <p>
+                    {RESPONSE_PROFILE_DATA?.tx?.fields?.quantity ?? 'Quantity:'}
+                  </p>
+                </th>
+
+                <!--
+                FEE
+                -->
+                <th>
+                  <p>
+                    {RESPONSE_PROFILE_DATA?.tx?.fields?.fee ?? 'Fee:'}
+                  </p>
+                </th>
+
+              {/if}
+
+              <!--
               STATUS
               -->
               <th
@@ -775,22 +829,23 @@ MAIN DEPOST WIDGET
 
             <!-- [🐞] -->
 
-            {#each { length: 5 } as _}
+            <!-- {#each { length: 5 } as _}
               <WidgetTxHistRow
                 tx_data={WIDGET_DATA?.tx_hist[0]}
-                {mobileExclusive}
-                txTranslation={RESPONSE_PROFILE_DATA?.tx?.fields}
-              />
-            {/each}
-
-
-            <!-- {#each txHistList as item}
-              <WidgetTxHistRow
-                tx_data={item}
-                {mobileExclusive}
+                {isViewMobile}
+                {isViewTablet}
                 txTranslation={RESPONSE_PROFILE_DATA?.tx?.fields}
               />
             {/each} -->
+
+            {#each txHistList as item}
+              <WidgetTxHistRow
+                tx_data={item}
+                {isViewMobile}
+                {isViewTablet}
+                txTranslation={RESPONSE_PROFILE_DATA?.tx?.fields}
+              />
+            {/each}
 
           </tbody>
         </table>
@@ -868,15 +923,18 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	div#profile\/widget\/tx-history-outer
   {
+    /* 🎨 style */
+		padding: 20px;
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
-		padding: 20px;
 	}
 
   div#profile\/widget\/tx-history\/inner\/no-tx-hist-data-box
   {
+    /* 📌 position */
     position: relative;
+    /* 🛝 layout */
     height: 362px;
   }
   div#profile\/widget\/tx-history\/inner\/no-tx-hist-data-box div#no-tx-hist-data\/content
@@ -895,23 +953,27 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#profile\/widget\/tx-history\/inner\/date-filter-1
   {
+    /* 🎨 style */
     padding: 4px;
     border-radius: 4px;
-    background: var(--light-gray-night, #616161);
+    background: var(--whitev2);
   }
   div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box
   {
+    /* 🎨 style */
     height: 32px;
     padding: 6px 12px;
     border-radius: 4px;
   }
   div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date
   {
-    background: var(--white-night, #4B4B4B);
+    /* 🎨 style */
+    background: var(--white);
     backdrop-filter: blur(10px);
   }
   div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box p:hover
   {
+    /* 🎨 style */
     color: var(--white) !important;
   }
 
@@ -928,62 +990,71 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* 🎨 style */
     padding: 6px 12px;
     border-radius: 4px;
-    background: var(--light-gray-night, #616161);
+    background: var(--whitev2);
     backdrop-filter: blur(10px);
   }
 
   table#profile\/widget\/tx-history\/inner\/table
   {
+    /* 🎨 style */
     text-align: left;
 		border-collapse: collapse;
     width: -webkit-fill-available;
   }
   table#profile\/widget\/tx-history\/inner\/table thead tr#row-head
   {
+    /* 🎨 style */
     border-radius: 2px;
-    background: var(--dark-theme-1-shade);
+    background: var(--whitev2);
   }
   table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th
   {
+    /* 🛝 layout */
     width: fit-content;
+    /* 🎨 style */
     white-space: nowrap;
     padding-right: 12px;
   }
   table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:first-child
   {
+    /* 🎨 style */
     padding-left: 20px;
     border-radius: 2px 0 0 2px;
   }
   table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:last-child
   {
+    /* 🎨 style */
     padding-right: 20px;
     border-radius: 0 2px 2px 0;
   }
   table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th p
   {
+    /* 🛝 layout */
+    width: fit-content;
+    /* 🎨 style */
     color: var(--semi-black-night, #A8A8A8);
-    /* body/12px */
     font-family: Roboto;
     font-size: 12px;
     font-style: normal;
     font-weight: 400;
-    line-height: 150%; /* 18px */
+    line-height: 150%;
     padding: 3px 0 3px 0;
-    width: fit-content;
   }
   :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(odd))
   {
-    background-color: var(--dark-theme-1);
+    /* 🎨 style */
+    background-color: var(--white);
   }
   :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(even))
   {
-    background-color: var(--dark-theme-1-shade)
+    /* 🎨 style */
+    background-color: var(--whitev2)
   }
 
   div#profile\/widget\/tx-history\/inner\/table-show-more
   {
+    /* 🎨 style */
     padding: 18px 0 18px 0;
-    border-bottom: 1px solid var(--light-gray-night, #616161);
   }
 
   /*
@@ -993,16 +1064,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   @media only screen
-  and (min-width: 726px)
+  and (min-width: 1345px)
   {
+    table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th,
     :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td)
     {
       padding-right: 40px;
     }
+    table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:first-child,
     :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td:first-child)
     {
       padding-left: 12px;
     }
+    table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:last-child,
     :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td:last-child)
     {
       padding-right: 12px;
@@ -1014,5 +1088,45 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   🌒 DARK-THEME
   =============
   */
+
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1-shade);
+  }
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1);
+  }
+
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1-shade);
+  }
+
+  div#profile\/widget\/tx-history-outer.dark-background-1 table#profile\/widget\/tx-history\/inner\/table thead tr#row-head
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1-shade);
+  }
+
+  div#profile\/widget\/tx-history-outer.dark-background-1 :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(odd))
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
+  }
+  div#profile\/widget\/tx-history-outer.dark-background-1 :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(even))
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-shade)
+  }
+
+  div#profile\/widget\/tx-history-outer.dark-background-1 :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td p)
+  {
+    /* style */
+    color: var(--white);
+  }
 
 </style>
