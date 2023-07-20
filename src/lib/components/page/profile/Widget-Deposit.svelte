@@ -58,6 +58,26 @@ COMPONENT JS (w/ TS)
     return WIDGET_DATA
   }
 
+  /**
+   * @description
+   * TODO: DOC:
+   * @see https://stripe.com/docs/api/checkout/sessions/create#create_checkout_session-client_reference_id
+   */
+  function modStripeLink
+  (
+    link: string
+  ): string
+  {
+    const if_M_0: boolean =
+      link.includes('buy.stripe.com')
+    ;
+    if (if_M_0)
+      link = `${link}?client_reference_id=${$userBetarenaSettings?.user?.firebase_user_data?.uid}`;
+    ;
+
+    return link;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
 </script>
@@ -146,7 +166,7 @@ MAIN DEPOST WIDGET
 
       {#each WIDGET_DATA?.deposit_opts ?? [] as item}
         <a
-          href={item?.link}
+          href={modStripeLink(item?.link)}
           target="_blank"
           title={item?.type ?? 'Deposit Provider Link'}
           class=
