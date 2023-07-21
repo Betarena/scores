@@ -1,10 +1,19 @@
-import { deleteApp, getApp, getApps, initializeApp, type FirebaseOptions } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { enableLogging, getDatabase } from 'firebase/database';
-import { getFirestore } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+// #region ➤ 📦 Package Imports
 
-// NOTE: firebase config with non-auth properties skipped;
+import { deleteApp, getApp, getApps, initializeApp, type FirebaseApp, type FirebaseOptions } from 'firebase/app';
+import { getAuth, type Auth } from 'firebase/auth';
+import { Database, enableLogging, getDatabase } from 'firebase/database';
+import { Firestore, getFirestore } from 'firebase/firestore';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
+
+// #endregion ➤ 📦 Package Imports
+
+// #region ➤ 📌 VARIABLES
+
+/**
+ * @description
+ * 📌 Firebase Config Object
+ */
 const firebaseConfig: FirebaseOptions =
 {
 	apiKey:	import.meta.env?.VITE_FIREBASE_DB_API_KEY as string,
@@ -16,24 +25,41 @@ const firebaseConfig: FirebaseOptions =
 
 // #region version-1 (init)
 
-// DOC: https://stackoverflow.com/questions/37652328/how-to-check-if-a-firebase-app-is-already-initialized-on-android/41005100#41005100
-// NOTE: initialize the Firebase APP;
-export const app =
+/**
+ * @description
+ * 📌 Initialize Firebase App.
+ * @see https://stackoverflow.com/questions/37652328/how-to-check-if-a-firebase-app-is-already-initialized-on-android/41005100#41005100
+ */
+export const app: FirebaseApp =
 	getApps().length === 0
 		? initializeApp(firebaseConfig)
 		: getApp()
 ;
 
-// NOTE: Initialize Real-Time-DB and get a reference to the service;
-export const db_real = getDatabase(app);
-// NOTE: Initialize Firebase Authentication and get a reference to the service;
-export const auth = getAuth(app);
-// NOTE: Initialize Cloud Storage and get a reference to the service
-export const storage = getStorage(app);
-// NOTE: Initialize Cloud Firestore and get a reference to the service
-export const db_firestore = getFirestore(app);
+/**
+ * @description
+ * 📌 Initialize RealTime DB Service.
+ */
+export const db_real: Database = getDatabase(app);
+/**
+ * @description
+ * 📌 Initialize Firebase Authentication.
+ */
+export const auth: Auth = getAuth(app);
+/**
+ * @description
+ * 📌 Initialize Firebase Cloud Storage.
+ */
+export const storage: FirebaseStorage = getStorage(app);
+/**
+ * @description
+ * 📌 Initialize Firebase Cloud Firestore.
+ */
+export const db_firestore: Firestore = getFirestore(app);
 
 // #endregion version-1 (init)
+
+// #endregion ➤ 📌 VARIABLES
 
 // #region version-2 (init)
 
