@@ -12,8 +12,8 @@ COMPONENT JS (w/ TS)
 
 	import { sessionStore } from '$lib/store/session.js';
 	import { userBetarenaSettings } from '$lib/store/user-settings.js';
-	import { daysInMonth, targetDate } from '$lib/utils/dates.js';
-	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import { daysInMonth, targetDate, toISOMod } from '$lib/utils/dates.js';
+	import { sleep, viewport_change } from '$lib/utils/platform-functions.js';
 	import { onMount } from 'svelte';
 
 	import WidgetCalendar from './Widget-Calendar.svelte';
@@ -24,6 +24,7 @@ COMPONENT JS (w/ TS)
 
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+	import WidgetTxHistLoader from './Widget-Tx-Hist-Loader.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -66,7 +67,7 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < B_PROF_D >
   {
-		// await sleep(3000);
+		await sleep(3000);
 
     const response: B_PROF_D = await get
     (
@@ -103,12 +104,20 @@ COMPONENT JS (w/ TS)
     // console.log('🔥 fromDate', fromDate);
     // console.log('🔥 toDate', toDate);
 
+    // txHistList = WIDGET_DATA?.tx_hist
+    // ?.filter
+    // (
+    //   x =>
+    //     new Date(x?.date).getTime() >= fromDate.getTime()
+    //     && new Date(x?.date).getTime() <= toDate.getTime()
+    // );
+
     txHistList = WIDGET_DATA?.tx_hist
     ?.filter
     (
       x =>
-        new Date(x?.date).getTime() >= fromDate.getTime()
-        && new Date(x?.date).getTime() <= toDate.getTime()
+        new Date(toISOMod(x?.date)).getTime() >= fromDate.getTime()
+        && new Date(toISOMod(x?.date)).getTime() <= toDate.getTime()
     );
 
     txHistListLimit = LIST_LIMIT_DEFAULT;
@@ -348,7 +357,7 @@ COMPONENT JS (w/ TS)
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
-\
+
 <!-- ===================
 SVELTE INJECTION TAGS
 =================== -->
@@ -367,7 +376,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!--
 MAIN DEPOST WIDGET
 -->
-{#await widgetInit() then value}
+{#await widgetInit()}
+  <WidgetTxHistLoader />
+{:then value}
 
   <div
     id="profile/widget/tx-history-outer"
@@ -937,6 +948,8 @@ MAIN DEPOST WIDGET
 
   </div>
 
+{:catch error}
+  <!-- NaN -->
 {/await}
 
 <!-- ===============

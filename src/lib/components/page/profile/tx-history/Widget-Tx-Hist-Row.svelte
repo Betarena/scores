@@ -65,7 +65,15 @@ COMPONENT JS (w/ TS)
 
     // NOTE:
     // Identify Tx-Translation.
-    txStatusTranslation = txStatusTrans?.[tx_data?.status?.toLowerCase()];
+		if (tx_data?.status?.toLowerCase() == 'completed')
+      txStatusTranslation = txStatusTrans.complete;
+    ;
+    if (['processing', 'pending'].includes(tx_data?.status?.toLowerCase()))
+      txStatusTranslation = txStatusTrans.pending;
+    ;
+		if (tx_data?.status?.toLowerCase() == 'failed')
+      txStatusTranslation = txStatusTrans.failed;
+    ;
 	}
 
   /**
