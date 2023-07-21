@@ -162,19 +162,35 @@ COMPONENT JS (w/ TS)
       <div
         class=
         "
-        row-space-start
+        column-start-grid-start
         "
       >
-        <img
-          src={txTypeIcon}
-          alt="{tx_data?.type}_icon"
+        <div
           class=
           "
-          m-r-6
+          row-space-start
           "
-        />
-        <p>
-          {tx_data?.type ?? '-'}
+        >
+          <img
+            src={txTypeIcon}
+            alt="{tx_data?.type}_icon"
+            class=
+            "
+            m-r-6
+            "
+          />
+          <p>
+            {tx_data?.type ?? '-'}
+          </p>
+        </div>
+        <p
+          class=
+          "
+          s-12
+          color-grey
+          "
+        >
+          {tx_data?.description ?? '-'}
         </p>
       </div>
     </td>
@@ -247,19 +263,35 @@ COMPONENT JS (w/ TS)
       <div
         class=
         "
-        row-space-start
+        column-space-center
         "
       >
-        <img
-          src={txTypeIcon}
-          alt="{tx_data?.type}_icon"
+        <div
           class=
           "
-          m-r-6
+          row-space-start
           "
-        />
-        <p>
-          {tx_data?.type ?? '-'}
+        >
+          <img
+            src={txTypeIcon}
+            alt="{tx_data?.type}_icon"
+            class=
+            "
+            m-r-6
+            "
+          />
+          <p>
+            {tx_data?.type ?? '-'}
+          </p>
+        </div>
+        <p
+          class=
+          "
+          s-12
+          color-grey
+          "
+        >
+          {tx_data?.description ?? '-'}
         </p>
       </div>
     </td>
@@ -268,18 +300,50 @@ COMPONENT JS (w/ TS)
     TX ASSET USED
     -->
     <td>
-      <p>
-        {tx_data?.asset ?? '-'}
-      </p>
+      <div
+        class=
+        "
+        column-space-center
+        "
+      >
+        <p>
+          {tx_data?.asset ?? '-'}
+        </p>
+        <p
+          class=
+          "
+          s-12
+          color-grey
+          "
+        >
+          {tx_data?.Gateway ?? '-'}
+        </p>
+      </div>
     </td>
 
     <!--
     TX QUANTITY (BTA)
     -->
     <td>
-      <p>
-        ${tx_data?.quantity}
-      </p>
+      <div
+        class=
+        "
+        column-space-center
+        "
+      >
+        <p>
+          {tx_data?.quantity ?? '-'}
+        </p>
+        <p
+          class=
+          "
+          s-12
+          color-grey
+          "
+        >
+          {tx_data?.amount ?? '-'} BTA
+        </p>
+      </div>
     </td>
 
     <!--

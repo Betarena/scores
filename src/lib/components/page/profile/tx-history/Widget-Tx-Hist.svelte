@@ -46,7 +46,9 @@ COMPONENT JS (w/ TS)
     selectedDateFilterOpt1: 'Last 7 Days' | 'Last Month' | 'Last 6 Months' = 'Last 7 Days',
     isShowMore: boolean = false,
     // isShowCalendar: boolean = false,
-    txHistList: B_H_TH[] = []
+    txHistList: B_H_TH[] = [],
+    LIST_LIMIT_DEFAULT: number = 10,
+    txHistListLimit: number = 10
   ;
 
   $: RESPONSE_PROFILE_DATA = $page.data?.RESPONSE_PROFILE_DATA ?? { }
@@ -98,8 +100,8 @@ COMPONENT JS (w/ TS)
     const fromDate: Date = $sessionStore.userTxHistFilterDateRange.from;
     const toDate: Date = $sessionStore.userTxHistFilterDateRange.to;
 
-    console.log('🔥 fromDate', fromDate);
-    console.log('🔥 toDate', toDate);
+    // console.log('🔥 fromDate', fromDate);
+    // console.log('🔥 toDate', toDate);
 
     txHistList = WIDGET_DATA?.tx_hist
     ?.filter
@@ -108,6 +110,8 @@ COMPONENT JS (w/ TS)
         new Date(x?.date).getTime() >= fromDate.getTime()
         && new Date(x?.date).getTime() <= toDate.getTime()
     );
+
+    txHistListLimit = LIST_LIMIT_DEFAULT;
 
     txHistList = txHistList;
   }
@@ -220,6 +224,24 @@ COMPONENT JS (w/ TS)
   }
 
   /**
+   * @description
+   * TODO: DOC:
+   */
+  function showMoreToggle
+  (
+  ): void
+  {
+    if (isShowMore)
+    {
+      txHistListLimit = WIDGET_DATA?.tx_hist?.length;
+      isShowMore = !isShowMore;
+      return;
+    }
+    txHistListLimit = LIST_LIMIT_DEFAULT;
+    isShowMore = !isShowMore;
+  }
+
+  /**
    * IMPORTANT
    * @description
    * TODO: DOC:
@@ -326,7 +348,7 @@ COMPONENT JS (w/ TS)
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
-
+\
 <!-- ===================
 SVELTE INJECTION TAGS
 =================== -->
@@ -838,7 +860,7 @@ MAIN DEPOST WIDGET
               />
             {/each} -->
 
-            {#each txHistList as item}
+            {#each txHistList.splice(0, txHistListLimit) as item}
               <WidgetTxHistRow
                 tx_data={item}
                 {isViewMobile}
@@ -853,26 +875,28 @@ MAIN DEPOST WIDGET
         <!--
         SHOW MORE OPT
         -->
-        <div
-          id="profile/widget/tx-history/inner/table-show-more"
-          class=
-          "
-          text-center
-          cursor-pointer
-          "
-          on:click={() => isShowMore = !isShowMore}
-        >
-          <p
+        {#if WIDGET_DATA?.tx_hist?.length > 10}
+          <div
+            id="profile/widget/tx-history/inner/table-show-more"
             class=
             "
-            s-14
-            w-500
-            color-primary
+            text-center
+            cursor-pointer
             "
+            on:click={() => showMoreToggle()}
           >
-            {RESPONSE_PROFILE_DATA?.tx?.show_more ?? 'Show more'}
-          </p>
-        </div>
+            <p
+              class=
+              "
+              s-14
+              w-500
+              color-primary
+              "
+            >
+              {RESPONSE_PROFILE_DATA?.tx?.show_more ?? 'Show more'}
+            </p>
+          </div>
+        {/if}
 
       </div>
 
@@ -971,10 +995,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     background: var(--white);
     backdrop-filter: blur(10px);
   }
+  div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date p,
   div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box p:hover
   {
     /* 🎨 style */
-    color: var(--white) !important;
+    color: var(--dark-theme) !important;
   }
 
   div#profile\/widget\/tx-history\/inner\/date-filter-2
@@ -1055,6 +1080,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     /* 🎨 style */
     padding: 18px 0 18px 0;
+    border-bottom: 1px solid var(--grey-color);
   }
 
   /*
@@ -1099,6 +1125,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     /* 🎨 style */
     background: var(--dark-theme-1);
   }
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date p,
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box p:hover
+  {
+    /* 🎨 style */
+    color: var(--white) !important;
+  }
 
   div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar
   {
@@ -1127,6 +1159,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     /* style */
     color: var(--white);
+  }
+
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/table-show-more
+  {
+    /* 🎨 style */
+    border-bottom: 1px solid var(--dark-theme-1);
   }
 
 </style>
