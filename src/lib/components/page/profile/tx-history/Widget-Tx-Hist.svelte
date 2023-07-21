@@ -17,6 +17,7 @@ COMPONENT JS (w/ TS)
 	import { onMount } from 'svelte';
 
 	import WidgetCalendar from './Widget-Calendar.svelte';
+	import WidgetTxHistLoader from './Widget-Tx-Hist-Loader.svelte';
 	import WidgetTxHistRow from './Widget-Tx-Hist-Row.svelte';
 
 	import calendar from '../assets/menu-opt/calendar.svg';
@@ -24,7 +25,6 @@ COMPONENT JS (w/ TS)
 
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
-	import WidgetTxHistLoader from './Widget-Tx-Hist-Loader.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -102,24 +102,21 @@ COMPONENT JS (w/ TS)
     const toDate: Date = $sessionStore.userTxHistFilterDateRange.to;
 
     // [🐞]
-    console.log('🔥 fromDate', fromDate);
-    console.log('🔥 toDate', toDate);
-
-    // txHistList = WIDGET_DATA?.tx_hist
-    // ?.filter
-    // (
-    //   x =>
-    //     new Date(x?.date).getTime() >= fromDate.getTime()
-    //     && new Date(x?.date).getTime() <= toDate.getTime()
-    // );
+    // console.log('🔹 [var] fromDate', fromDate);
+    // console.log('🔹 [var] toDate', toDate);
 
     txHistList = WIDGET_DATA?.tx_hist
     ?.filter
     (
       x =>
-        new Date(toISOMod(x?.date)).getTime() >= fromDate.getTime()
-        && new Date(toISOMod(x?.date)).getTime() <= toDate.getTime()
+      {
+        return new Date(toISOMod(x?.date)).getTime() >= new Date(toISOMod(fromDate)).getTime()
+          && new Date(toISOMod(x?.date)).getTime() <= new Date(toISOMod(toDate)).getTime()
+      }
     );
+
+    // [🐞]
+    // console.log('🔹 [var] txHistList', txHistList)
 
     txHistListLimit = LIST_LIMIT_DEFAULT;
 
@@ -309,7 +306,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     console.debug
     (
-      `🚏 checkpoint ➤ if_R_1`,
+      `🚏 checkpoint ➤ TxHist if_R_1`,
     );
 
     applyDateRangeFilter1();
@@ -329,7 +326,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     console.debug
     (
-      `🚏 checkpoint ➤ if_R_0`,
+      `🚏 checkpoint ➤ TxHist if_R_0`,
     );
 
     filterTxListDateRange();
