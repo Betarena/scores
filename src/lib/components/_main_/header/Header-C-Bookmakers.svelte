@@ -175,51 +175,58 @@ COMPONENT JS (w/ TS)
     >
       {#if $userBetarenaSettings.country_bookmaker != undefined}
         {#each B_NAV_T?.scores_header_translations?.bookmakers_countries || [] as country}
-          <div
-            class=
-            "
-            row-space-start
-            "
-            class:side-nav-dropdown-opt={isViewMobile}
-            class:theme-opt-box={!isViewMobile}
-            class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
-            on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
-          >
-            <img
-              loading="lazy"
-              class=
-              "
-              country-flag
-              m-r-10
-              "
-              src="https://betarena.com/images/flags/{country?.[0]}.svg"
-              alt={country?.[1]}
-              width=20
-              height=14
-            />
-            <p
-              class=
-              "
-              color-white
-              s-14
-              "
-            >
-              {country?.[1]}
-            </p>
-          </div>
 
-          <!--
-          CURRENTLY SELECTED BOOKMAKER
-           -->
-          {#if isViewMobile && country?.includes($userBetarenaSettings?.country_bookmaker)}
-            <img
-              loading="lazy"
-              src={icon_check}
-              alt="{country?.[0]}_icon"
-              width=16
-              height=16
-            />
-          {/if}
+          <div
+            class:row-space-start={isViewMobile}
+            class:side-nav-dropdown-opt={isViewMobile}
+          >
+
+            <div
+              class=
+              "
+              row-space-start
+              "
+              class:theme-opt-box={!isViewMobile}
+              class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
+              on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
+            >
+              <img
+                loading="lazy"
+                class=
+                "
+                country-flag
+                m-r-10
+                "
+                src="https://betarena.com/images/flags/{country?.[0]}.svg"
+                alt={country?.[1]}
+                width=20
+                height=14
+              />
+              <p
+                class=
+                "
+                color-white
+                s-14
+                "
+              >
+                {country?.[1]}
+              </p>
+            </div>
+
+            <!--
+            CURRENTLY SELECTED BOOKMAKER
+            -->
+            {#if isViewMobile && country?.includes($userBetarenaSettings?.country_bookmaker?.toUpperCase())}
+              <img
+                loading="lazy"
+                src={icon_check}
+                alt="{country?.[0]}_icon"
+                width=16
+                height=16
+              />
+            {/if}
+
+          </div>
 
         {/each}
       {/if}
@@ -301,13 +308,13 @@ COMPONENT JS (w/ TS)
     background: #292929;
     border-radius: 4px;
   }
-  div#component\/bookmaker\/main div.bookmaker-dropdown div.side-nav-dropdown-opt
+  div#component\/bookmaker\/main div.side-nav-dropdown-opt
   {
     /* 🎨 style */
 		width: 100%;
 		padding: 9.5px 0;
 	}
-	div#component\/bookmaker\/main div.bookmaker-dropdown div.side-nav-dropdown-opt p
+	div#component\/bookmaker\/main div.side-nav-dropdown-opt p
   {
     /* 🎨 style */
 		font-weight: 400;
