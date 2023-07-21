@@ -372,11 +372,23 @@ function createLocalStore
      */
     getCountryBookmaker:
     (
-    ): void =>
+    ): string =>
     {
       const existing: string = localStorage.getItem(key);
 			const existing_data: User_Setting =	JSON.parse(existing);
       return existing_data?.country_bookmaker;
+    },
+
+    /**
+     * @description
+     * TODO: DOC:
+     */
+    getUserLang:
+    (
+    ): string =>
+    {
+      const localStore: User_Setting = userBetarenaSettings.parseLocalStorage();
+      return localStore?.lang;
     },
 
     /**
