@@ -357,6 +357,12 @@ COMPONENT JS (w/ TS)
   ;
   $: if (if_R_0)
   {
+    // [🐞]
+    console.debug
+    (
+      `🚏 checkpoint ➤ TxHistCalendar if_R_0`,
+    );
+
     calcThisMonth
     (
       $sessionStore.userTxHistDateSelect
@@ -366,7 +372,6 @@ COMPONENT JS (w/ TS)
       $sessionStore.userTxHistFilterDateRange.to,
       $sessionStore.userTxHistFilterDateRange.from
     ]
-    console.debug(selectedDays)
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
