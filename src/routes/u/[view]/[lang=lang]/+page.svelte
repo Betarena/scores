@@ -157,7 +157,11 @@ SVELTE INJECT TAGS
 		div#widget-grid-display
     {
 			gap: 20px;
-			grid-template-columns: minmax(auto, 328px) minmax(auto,	1024px);
+			/* grid-template-columns: minmax(auto, 328px) minmax(auto,	1024px); */
+			grid-template-columns:
+        minmax(328px, 328px)
+        minmax(auto,	1024px)
+      ;
 		}
 
 	}
