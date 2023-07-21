@@ -1,9 +1,49 @@
 import { sessionStore } from "$lib/store/session";
 import { onValue, ref, type Unsubscribe } from "firebase/database";
+import { doc, onSnapshot } from "firebase/firestore";
 import { getTargetRealDbData } from "./firebase.actions.js";
-import { db_real } from "./init";
+import { db_firestore, db_real } from "./init";
 
+import { userBetarenaSettings } from "$lib/store/user-settings.js";
+import type { Betarena_User } from "$lib/types/types.scores.js";
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+
+/**
+ * @description
+ * TODO: DOC:
+ * @see https://firebase.google.com/docs/firestore/query-data/listen#web-modular-api_3
+ * @param
+ * { string } uid - Target user UID.
+ */
+export function userBalanceListen
+(
+  uid: string
+): void
+{
+  // [🐞]
+  // console.log('🔥 HERE')
+
+  const _unsubscribe: Unsubscribe = onSnapshot
+  (
+    doc
+    (
+      db_firestore,
+      'betarena_users',
+      uid
+    ),
+    (
+      doc
+    ): void =>
+    {
+      const data: Betarena_User = doc.data();
+      userBetarenaSettings.userUpdateBTABalance
+      (
+        data.main_balance
+      );
+    }
+  );
+
+}
 
 // #region PLAYER_IDS
 
