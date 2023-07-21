@@ -179,18 +179,20 @@ VIEW DESIGN - 1
 {#if VIEW_OPT == 1}
 
 	<div
-		class="
-      row-space-out
-      mobile-select-menu-opt-box
-      cursor-pointer
+		class=
+    "
+    row-space-out
+    mobile-select-menu-opt-box
+    cursor-pointer
     "
 		on:click={() => toggle_dropdown()}
 	>
 
 		<div
-			class="
-        row-space-start
-        m-r-32
+			class=
+      "
+      row-space-start
+      m-r-32
       "
 		>
 
@@ -206,11 +208,12 @@ VIEW DESIGN - 1
       MENU OPTION TEXT
       -->
 			<p
-				class="
-          w-500
-          s-16
-          color-black-2
-          no-wrap
+				class=
+        "
+        w-500
+        s-16
+        color-black-2
+        no-wrap
         "
 			>
         {#if MENU_OPT == 'Account Settings'}
@@ -254,8 +257,8 @@ VIEW DESIGN - 2
     data-testid="profile/menu-widget/inner/main-row/ui-2"
 		class=
     "
-      row-space-out
-      profile-menu-opt
+    row-space-out
+    profile-menu-opt
     "
 		on:click={() => update_selected_opt()}
 		class:selected-opt-active={SELECTED_OPT == MENU_OPT && !tabletExclusive}
@@ -290,7 +293,11 @@ VIEW DESIGN - 2
     [ℹ] menu option (not yet avaialble)
     -->
 		<div
-      class="row-space-start">
+      class=
+      "
+      row-space-start
+      "
+    >
 
 			<!--
       MENU OPTION ICON
@@ -319,8 +326,8 @@ VIEW DESIGN - 2
 			<p
 				class=
         "
-          w-500
-          s-16
+        w-500
+        s-16
         "
 				class:color-grey={SELECTED_OPT != MENU_OPT}
 				class:color-black-2={SELECTED_OPT == MENU_OPT}
@@ -381,10 +388,10 @@ VIEW DESIGN - 2
 			<p
 				class=
         "
-          menu-opt-not-available
-          no-wrap
-          color-grey
-          s-12
+        menu-opt-not-available
+        no-wrap
+        color-grey
+        s-12
         "
 			>
 				{RESPONSE_PROFILE_DATA?.profile?.soon ?? 'Soon'}
@@ -418,6 +425,7 @@ VIEW DESIGN - 2
   {
 		padding: 12px 24px;
 	}
+
 	div.profile-menu-opt.selected-opt-active
   {
 		border-right: 4px solid var(--primary);
@@ -431,12 +439,12 @@ VIEW DESIGN - 2
 	}
 	div.profile-menu-opt:hover p.menu-opt-text
   {
-		color: var(--dark-theme);
+		color: var(--dark-theme) !important;
 	}
 
 	/*
   =============
-  RESPONSIVNESS
+  ⚡️ RESPONSIVNESS
   =============
   */
 
@@ -451,7 +459,7 @@ VIEW DESIGN - 2
 
   /*
   =============
-  DARK-THEME
+  🌒 DARK-THEME
   =============
   */
 
@@ -464,6 +472,11 @@ VIEW DESIGN - 2
   div.profile-menu-opt.dark-background-1 p.menu-opt-not-available
   {
 		background-color: var(--dark-theme-1-shade) !important;
+	}
+
+  div.profile-menu-opt.dark-background-1:hover p.menu-opt-text
+  {
+    color: var(--white) !important;
 	}
 
 </style>
