@@ -35,13 +35,13 @@ export interface Betarena_User
   /**
    * @description
    */
-	lang: string;
-	username: string;
-	registration_type: Auth_Type[];
-	register_date: string;
-	profile_photo: string | undefined;
-	web3_wallet_addr: string | undefined; // [ℹ] Authenticated User [WEB3]
-  main_balance: number;
+	lang?: string;
+	username?: string;
+	registration_type?: Auth_Type[];
+	register_date?: string;
+	profile_photo?: string | undefined;
+	web3_wallet_addr?: string | undefined; // [ℹ] Authenticated User [WEB3]
+  main_balance?: number;
 }
 
 /**
