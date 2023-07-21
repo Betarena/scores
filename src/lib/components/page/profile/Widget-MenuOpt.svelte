@@ -169,20 +169,19 @@ COMPONENT JS (w/ TS)
 >
 
 	<!--
-  <-contents->
-  [ℹ] profile picture
-  [ℹ] username
+  MAIN PROFILE ROW
   -->
 	<div
 		id="profile-main-row"
     data-testid="profile/menu-widget/inner/main-row"
-		class="
-      m-b-20
-      row-space-start
+		class=
+    "
+    m-b-20
+    row-space-start
     "
 	>
 		<!--
-    [ℹ] profile picture
+    PROFILE PICTURE
     -->
 		<img
 			id="menu-summary-profile-picture"
@@ -192,20 +191,26 @@ COMPONENT JS (w/ TS)
 			aria-label="Profile Icon"
 			width=64
 			height=64
-			class="m-r-16"
+			class=
+      "
+      m-r-16
+      "
 		/>
+
 		<!--
-    [ℹ] username
+    USERNAME
     -->
 		<p
-			class="
-        s-20
-        w-500
-        color-black-2
+			class=
+      "
+      s-20
+      w-500
+      color-black-2
       "
 		>
 			{$userBetarenaSettings?.user?.scores_user_data?.username}
 		</p>
+
 	</div>
 
 	<!--
@@ -214,7 +219,7 @@ COMPONENT JS (w/ TS)
 	{#if mobileExclusive}
 
 		<!--
-    [ℹ] dropdown menu select
+    DROPDOWN MENU SELECT
     -->
 		<MenuOptRow
 			VIEW_OPT={1}
@@ -225,15 +230,18 @@ COMPONENT JS (w/ TS)
 			{showDropdown}
 			on:toggle_dropdown={() => (showDropdown = !showDropdown)}
 		/>
+
 		<!--
-    [ℹ] dropdown menu select
+    DROPDOWN MENU SELECT
     -->
 		{#if showDropdown}
 			<div
 				id="background-modal-blur"
 				on:click={() =>	(showDropdown = !showDropdown)}
 			/>
-			<div id="dropdown-menu-opt-mobile">
+			<div
+        id="dropdown-menu-opt-mobile"
+      >
 				{#each PROFILE_MENU_OPT as item}
 					<MenuOptRow
 						VIEW_OPT={2}
@@ -269,8 +277,7 @@ COMPONENT JS (w/ TS)
 				{mobileExclusive}
 				{tabletExclusive}
 				{showDropdown}
-				on:toggle_dropdown={() =>
-					(showDropdown = !showDropdown)}
+				on:toggle_dropdown={() => (showDropdown = !showDropdown)}
 			/>
 			<!--
       [ℹ] dropdown menu select
@@ -284,8 +291,7 @@ COMPONENT JS (w/ TS)
 							SELECTED_OPT={selectedMenuOpt}
 							{mobileExclusive}
 							{tabletExclusive}
-							on:select_opt_trigger={(e) =>
-								update_selected_opt(e)}
+							on:select_opt_trigger={(e) =>	update_selected_opt(e)}
 						/>
 					{/each}
 				</div>
@@ -339,9 +345,6 @@ COMPONENT JS (w/ TS)
 		z-index: 1000;
 	}
 
-	/*
-  profile widget
-  */
 	div#profile-menu-widget-container
   {
 		background: #ffffff;
@@ -358,9 +361,6 @@ COMPONENT JS (w/ TS)
 		border-radius: 50%;
 	}
 
-	/*
-  mobile styles dropdown
-  */
 	div#background-modal-blur
   {
 		position: fixed;
@@ -387,7 +387,7 @@ COMPONENT JS (w/ TS)
 
   /*
   =============
-  RESPONSIVNESS
+  ⚡️ RESPONSIVNESS
   =============
   */
 
@@ -426,7 +426,7 @@ COMPONENT JS (w/ TS)
 
 	/*
   =============
-  DARK-THEME
+  🌒 DARK-THEME
   =============
   */
 
