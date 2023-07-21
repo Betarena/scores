@@ -66,13 +66,13 @@ COMPONENT JS (w/ TS)
     // NOTE:
     // Identify Tx-Translation.
 		if (tx_data?.status?.toLowerCase() == 'completed')
-      txStatusTranslation = txStatusTrans.complete;
+      txStatusTranslation = txStatusTrans?.complete;
     ;
     if (['processing', 'pending'].includes(tx_data?.status?.toLowerCase()))
-      txStatusTranslation = txStatusTrans.pending;
+      txStatusTranslation = txStatusTrans?.pending;
     ;
 		if (tx_data?.status?.toLowerCase() == 'failed')
-      txStatusTranslation = txStatusTrans.failed;
+      txStatusTranslation = txStatusTrans?.failed;
     ;
 	}
 
