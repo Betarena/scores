@@ -255,7 +255,7 @@ MAIN DEPOST WIDGET
           color-grey
         "
       >
-        {RESPONSE_PROFILE_DATA?.deposit?.information1}
+        {@html RESPONSE_PROFILE_DATA?.deposit?.information1}
       </p>
     </div>
 
