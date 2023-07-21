@@ -125,6 +125,7 @@ SVELTE INJECT TAGS
 		display: grid;
 		gap: 20px;
 		align-items: start;
+    margin-top: 24px;
 	}
 
 	/*
