@@ -27,7 +27,7 @@ COMPONENT JS (w/ TS)
   ;
 
   let
-    txStatus: 'C' | 'P' | 'D',
+    txStatus: 'C' | 'P' | 'F',
     txTypeIcon: string,
     isTxExtraInfo: boolean,
     txExtraInfoStruct =
@@ -57,7 +57,7 @@ COMPONENT JS (w/ TS)
   {
 		if (tx_data?.status?.toLowerCase() == 'completed') txStatus = 'C';
 		if (['processing', 'pending'].includes(tx_data?.status?.toLowerCase())) txStatus = 'P';
-		if (tx_data?.status?.toLowerCase() == 'denied')	txStatus = 'D';
+		if (tx_data?.status?.toLowerCase() == 'failed')	txStatus = 'F';
 	}
 
   /**
@@ -374,7 +374,7 @@ COMPONENT JS (w/ TS)
         "
         class:completed={txStatus == 'C'}
         class:pending={txStatus == 'P'}
-        class:denied={txStatus == 'D'}
+        class:failed={txStatus == 'F'}
       >
         {tx_data?.status ?? '-'}
       </p>
@@ -509,19 +509,19 @@ COMPONENT JS (w/ TS)
   tr td p.tx-status-pill.completed
   {
     /* 🎨 style */
-    color: var(--status-green, #59C65D);
+    color: var(--status-green, #59C65D) !important;
     background: rgba(89, 198, 93, 0.10);
   }
   tr td p.tx-status-pill.pending
   {
     /* 🎨 style */
-    color: var(--status-yellow, #FFB904);
+    color: var(--status-yellow, #FFB904) !important;
     background: rgba(255, 185, 4, 0.10);
   }
-  tr td p.tx-status-pill.denied
+  tr td p.tx-status-pill.failed
   {
     /* 🎨 style */
-    color: var(--status-red-night, #FF5959);
+    color: var(--status-red-night, #FF5959) !important;
     background: rgba(255, 89, 89, 0.10);
   }
 
