@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 
   import { sessionStore } from '$lib/store/session';
   import { userBetarenaSettings } from '$lib/store/user-settings';
-  import { MONTH_NAMES_ABBRV, WEEK_DAYS_ABBRV_2, toISOMod } from '$lib/utils/dates';
+  import { MONTH_NAMES_ABBRV, WEEK_DAYS_ABBRV_2, daysDiffNum, toISOMod } from '$lib/utils/dates';
   import { LV2_W_H_TAG, dlog, dlogv2 } from '$lib/utils/debug';
 
   import vec_arrow_left_dark from '../assets/calendar/arrow-left-dark.svg';
@@ -36,7 +36,7 @@ COMPONENT JS (w/ TS)
     numberOfMonthWeeks: number,
     monthWeeksArray: monthWeekObject[] = [],
     tempDate: Date = $sessionStore?.userTxHistDateSelect,
-    last7Days: string[] = [],
+    selectedDays: [Date?, Date?] = [],
     B_SAP_D2: B_SAP_D2 = $page.data?.B_SAP_D2
   ;
 
@@ -62,6 +62,7 @@ COMPONENT JS (w/ TS)
     tDate: Date
   ): void
   {
+
     let month: number = tDate.getMonth();
     let year: number = tDate.getFullYear();
 
@@ -186,9 +187,11 @@ COMPONENT JS (w/ TS)
    * updates month of temp-calendar
    * date for browsing for the user;
    * Triggers new calendar calculation of dates;
-   * Without persisting to session-store;
+   * Without persisting to session-store.
+   *
    * @param
    * { number } change
+   *
    * @returns
    * { void } void
    */
@@ -214,11 +217,15 @@ COMPONENT JS (w/ TS)
 
   /**
    * @description
-   * Selected date function.
-   * Triggers recalculation of month and updates
-   * session-store to signal new selected date;
+   *
+   * 📌 Selected date function.
+   *
+   * ⚡️ Triggers recalculation of month and updates
+   * session-store to signal new selected date.
+   *
    * @param
    * { Date } newDate
+   *
    * @returns
    * { void } void
    */
@@ -230,44 +237,51 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `${LV2_W_H_TAG[0]} (in) dateChange`
+      `${LV2_W_H_TAG[0]} dateChange`
     );
 
-    $sessionStore.userTxHistDateSelect = new Date(newDate);
-    tempDate = $sessionStore.userTxHistDateSelect;
-    identifyLastWeekDays();
-    calcThisMonth
+    // CHECK
+    // for existance of 2 dates, reset if true.
+    const if_M_0: boolean =
+      selectedDays?.length == 2
+    ;
+    if (if_M_0) selectedDays = [];
+
+    // NOTE:
+    // Push new Date to Array;
+    selectedDays.push(newDate);
+
+    // CHECK
+    // for 2 valid dates in list, proceed.
+    const if_M_1: boolean =
+      selectedDays?.length != 2
+    ;
+    if (if_M_1) return;
+
+    const dateDiff: number = daysDiffNum
     (
-      newDate
+      selectedDays[0],
+      selectedDays[1]
     );
-  }
 
-  /**
-   * @description
-   * TODO: DOC:
-   */
-  function identifyLastWeekDays
-  (
-  ): void
-  {
-    last7Days = [];
-
-    for (let i = 0; i < 7; i++)
+    // CHECK
+    // for dates to be <= 90 range, maximum.
+    const if_M_2: boolean =
+      dateDiff > 90
+    ;
+    if (if_M_2)
     {
-      const _tempDate = new Date();
-      _tempDate.setDate
+      alert
       (
-        $sessionStore.userTxHistDateSelect.getDate() - i
+        'Maximum 90 Day range allowed. Please, select another date.'
       );
-      last7Days.push
-      (
-        toISOMod(_tempDate)
-      );
+      selectedDays.pop();
+      return;
     }
 
-    // ### NOTE:
-    // ### Sort in descending order.
-    last7Days
+    // NOTE:
+    // Sort dates in descending order.
+    selectedDays
     .sort
     (
       (
@@ -278,17 +292,54 @@ COMPONENT JS (w/ TS)
         -	new Date(a).getTime()
     );
 
+    $sessionStore.userTxHistDateSelect = new Date(newDate);
+    tempDate = $sessionStore.userTxHistDateSelect;
+
     $sessionStore.userTxHistFilterDateRange =
     {
-      from: new Date(last7Days[last7Days?.length - 1]),
-      to: new Date(last7Days[0])
+      from: new Date(selectedDays[1]),
+      to: new Date(selectedDays[0])
     };
+  }
 
-    // [🐞]
-    // console.debug
-    // (
-    //   last7Days
-    // );
+  /**
+   * @description
+   * TODO: DOC:
+   */
+  function checkDateStyle
+  (
+    date: Date,
+    type: 'start' | 'middle' | 'end'
+  ): boolean
+  {
+    // CHECK
+    // for 'empty' date list.
+    if (selectedDays.length != 2) return;
+
+    // CHECK
+    // for 'start' date type.
+    const if_M_0: boolean =
+      type == 'start'
+      && toISOMod(date) == toISOMod(selectedDays[0])
+    ;
+    if (if_M_0) return true;
+
+    // CHECK
+    // for 'end' date type.
+    const if_M_1: boolean =
+      type == 'end'
+      && toISOMod(date) == toISOMod(selectedDays[1])
+    ;
+    if (if_M_1) return true;
+
+    // CHECK
+    // for 'middle' date type.
+    const if_M_2: boolean =
+      type == 'middle'
+      && new Date(toISOMod(date)).getTime() >= selectedDays[1].getTime()
+      && new Date(toISOMod(date)).getTime() <= selectedDays[0].getTime()
+    ;
+    if (if_M_2) return true;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -299,13 +350,23 @@ COMPONENT JS (w/ TS)
    * @description
    * TODO: DOC:
    */
-  $: if (browser && $sessionStore.userTxHistDateSelect)
+  $: if_R_0 =
+    browser
+    && $sessionStore.userTxHistDateSelect != undefined
+    && $sessionStore.userTxHistFilterDateRange != undefined
+  ;
+  $: if (if_R_0)
   {
-    identifyLastWeekDays();
     calcThisMonth
     (
       $sessionStore.userTxHistDateSelect
     );
+    selectedDays =
+    [
+      $sessionStore.userTxHistFilterDateRange.to,
+      $sessionStore.userTxHistFilterDateRange.from
+    ]
+    console.debug(selectedDays)
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -413,9 +474,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   "
                   class:currentDate={toISOMod(item) == toISOMod($sessionStore.userDate)}
                   class:notViewMonth={item.getMonth() != tempDate.getMonth()}
-                  class:startSnake={toISOMod(item) == toISOMod($sessionStore.userTxHistDateSelect)}
-                  class:middleSnake={last7Days.includes(toISOMod(item))}
-                  class:endSnake={last7Days?.[last7Days?.length - 1] == toISOMod(item)}
+                  class:startSnake={checkDateStyle(item, 'start')}
+                  class:middleSnake={checkDateStyle(item, 'middle')}
+                  class:endSnake={checkDateStyle(item, 'end')}
                   on:click={() => dateChange(item)}
                 >
                   {item?.getDate()}

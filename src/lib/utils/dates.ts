@@ -151,8 +151,8 @@ export function clientTimezoneDate
 export function toISOMod
 (
   date: Date | string,
-  adjustClientTZ: boolean = false,
-  showConversion: boolean = false
+  adjustClientTZ = false,
+  showConversion = false
 ): string
 {
 
@@ -338,8 +338,8 @@ export function toZeroPrefixDateStr
  */
 export function targetDate
 (
-  offsetDays: number = 0,
-  offsetMonths: number = 0
+  offsetDays = 0,
+  offsetMonths = 0
 ): Date
 {
   const newDate: Date = new Date();
@@ -372,4 +372,19 @@ export function daysInMonth
 ): number
 {
   return new Date(year, month, 0).getDate();
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ */
+export function daysDiffNum
+(
+  date1: Date,
+  date2: Date
+): number
+{
+  const _timeDiff: number = date2.getTime() - date1.getTime();
+  const dateDiff: number = (_timeDiff / (1000 * 3600 * 24));
+  return dateDiff < 0 ? -dateDiff : dateDiff;
 }

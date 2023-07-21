@@ -101,8 +101,9 @@ COMPONENT JS (w/ TS)
     const fromDate: Date = $sessionStore.userTxHistFilterDateRange.from;
     const toDate: Date = $sessionStore.userTxHistFilterDateRange.to;
 
-    // console.log('🔥 fromDate', fromDate);
-    // console.log('🔥 toDate', toDate);
+    // [🐞]
+    console.log('🔥 fromDate', fromDate);
+    console.log('🔥 toDate', toDate);
 
     // txHistList = WIDGET_DATA?.tx_hist
     // ?.filter
@@ -181,14 +182,14 @@ COMPONENT JS (w/ TS)
         _lastMonthDate.getFullYear()
       );
 
-      const sMonthDate = new Date(_lastMonthDate);
-      const eMonthDate = new Date(_lastMonthDate);
+      const fromDate = new Date(_lastMonthDate);
+      const toDate = new Date(_lastMonthDate);
 
-      sMonthDate.setDate(1);
-      eMonthDate.setDate(_daysInPastMonth);
+      fromDate.setDate(1);
+      toDate.setDate(_daysInPastMonth);
 
-      const _from: Date = sMonthDate;
-      const _to: Date = eMonthDate;
+      const _from: Date = fromDate;
+      const _to: Date = toDate;
 
       $sessionStore.userTxHistFilterDateRange =
       {
@@ -214,14 +215,14 @@ COMPONENT JS (w/ TS)
         _last6MonthDate.getFullYear()
       );
 
-      const sMonthDate = new Date();
-      const eMonthDate = new Date(_last6MonthDate);
+      const fromDate = new Date(_last6MonthDate);
+      const toDate = new Date();
 
-      sMonthDate.setDate(1);
-      eMonthDate.setDate(_daysInPastMonth);
+      fromDate.setDate(1);
+      toDate.setDate(1);
 
-      const _from: Date = sMonthDate;
-      const _to: Date = eMonthDate;
+      const _from: Date = fromDate;
+      const _to: Date = toDate;
 
       $sessionStore.userTxHistFilterDateRange =
       {
