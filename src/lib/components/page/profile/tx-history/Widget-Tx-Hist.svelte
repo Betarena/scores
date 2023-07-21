@@ -1214,10 +1214,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--white) !important;
   }
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-2
   {
     /* 🎨 style */
     background: var(--dark-theme-1-shade);
+  }
+  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar.selected
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1);
   }
 
   div#profile\/widget\/tx-history-outer.dark-background-1 table#profile\/widget\/tx-history\/inner\/table thead tr

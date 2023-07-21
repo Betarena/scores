@@ -40,8 +40,8 @@ COMPONENT JS (w/ TS)
       'asset': 'asset',
       'Gateway': 'gateway',
       // FIXME: missing 'amount' from 'translation'
-      'amount': '',
       'quantity': 'quantity',
+      'amount': 'bta',
       'payment_processor_fee': 'fee'
     },
     walletAddrTrunc: string
@@ -439,7 +439,7 @@ COMPONENT JS (w/ TS)
             color-grey
             "
           >
-            {txTranslation?.[item[1]] ?? '-'}
+            {txTranslation?.[item[1]] ?? item[0]}
           </p>
           <p
             class=
@@ -448,7 +448,7 @@ COMPONENT JS (w/ TS)
             color-black-2
             "
           >
-            {['payment_processor_fee', 'amount'].includes(item[1]) ? '$' : ''}
+            {['payment_processor_fee', 'amount'].includes(item[0]) ? '$' : ''}
             {tx_data?.[item[0]] ?? '-'}
           </p>
         </div>
