@@ -3,14 +3,20 @@ import cookie from 'cookie';
 /**
  * @summary
  * 🔹 HELPER
+ *
  * @author
  * @migbash
+ *
  * @description
- * ➫ Sets target `cookie` on Scores Platform with specified values.
+ *
+ * 📌 Sets target `cookie` on Scores Platform with specified values.
+ *
  * @param
  * { string } cName **[required]** target cookie name.
+ *
  * @param
  * { string } cValue **[required]** target cookie associated value.
+ *
  * @param
  * { number } expDays **[required]** target cookie days active (TTL).
  */
@@ -34,12 +40,17 @@ export function setCookie
 /**
  * @summary
  * 🔹 HELPER
+ *
  * @author
  * @migbash
+ *
  * @description
- * ➫ Retrives 'all' cookies present in given 'request' Header.
+ *
+ * 📌 Retrives 'all' cookies present in given 'request' Header.
+ *
  * @param
  * { string } cookiesInHeader
+ *
  * @returns
  * a `Record < string, string >` of `cookie` values.
  */
@@ -53,4 +64,17 @@ export function getCookie
     cookiesInHeader ?? ''
   );
   return cookies;
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ */
+export function delCookie
+(
+  cName: string
+): void
+{
+  document.cookie = `${cName}=; Max-Age=0`;
+  document.cookie = `${cName}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
 }
