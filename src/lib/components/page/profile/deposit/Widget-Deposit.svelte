@@ -10,8 +10,10 @@ COMPONENT JS (w/ TS)
 	import { get } from '$lib/api/utils.js';
 
 	import { userBetarenaSettings } from '$lib/store/user-settings.js';
+	import { sleep } from '$lib/utils/platform-functions.js';
 
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+	import WidgetTxHistLoader from '../tx-history/Widget-Tx-Hist-Loader.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -35,7 +37,7 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < B_PROF_D >
   {
-		// await sleep(3000);
+		await sleep(3000);
 
     const response: B_PROF_D = await get
     (
@@ -98,7 +100,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!--
 MAIN DEPOST WIDGET
 -->
-{#await widgetInit() then value}
+{#await widgetInit()}
+  <WidgetTxHistLoader />
+{:then value}
 
   <div
     id="profile/widget/deposit-outer"
@@ -257,6 +261,8 @@ MAIN DEPOST WIDGET
 
   </div>
 
+{:catch error}
+  <!-- Error -->
 {/await}
 
 <!-- ===============
