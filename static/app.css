@@ -514,22 +514,32 @@ bottom-margins
 left-margins
 ~~~~~~~~~~
 */
-.m-l-5 {
+.m-l-5
+{
 	margin-left: 5px;
 }
-.m-l-8 {
+.m-l-8
+{
 	margin-left: 8px;
 }
-.m-l-10 {
+.m-l-10
+{
 	margin-left: 10px;
 }
-.m-l-24 {
+.m-l-20
+{
+	margin-left: 20px;
+}
+.m-l-24
+{
 	margin-left: 24px;
 }
-.m-l-50 {
+.m-l-50
+{
   margin-left: 50px;
 }
-.m-l-70 {
+.m-l-70
+{
   margin-left: 70px;
 }
 

@@ -1080,16 +1080,23 @@ NAVBAR MAIN
           >
 
             <div>
-              <p
-                class=
-                "
-                color-grey
-                s-12
-                no-wrap
-                "
-              >
-                {B_NAV_T?.scores_header_translations?.data?.balance ?? translationObject?.balance}
-              </p>
+
+              <!--
+              📱 MOBILE
+              Balance Title
+              -->
+              {#if !isViewMobile}
+                <p
+                  class=
+                  "
+                  color-grey
+                  s-12
+                  no-wrap
+                  "
+                >
+                  {B_NAV_T?.scores_header_translations?.data?.balance ?? translationObject?.balance}
+                </p>
+              {/if}
 
               <p
                 class=
@@ -1109,7 +1116,10 @@ NAVBAR MAIN
                 >
                   {$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'} BTA
                 </span>
-                $({$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'})
+                {#if isViewMobile}
+                  <br/>
+                {/if}
+                (${$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'})
               </p>
             </div>
 
@@ -1129,8 +1139,9 @@ NAVBAR MAIN
               class=
               "
               btn-primary-v2
-              m-l-50
               "
+              class:m-l-50={!isViewMobile}
+              class:m-l-20={isViewMobile}
             >
               {B_NAV_T?.scores_header_translations?.data?.cta_buy ?? 'Buy BTA'}
             </button>
