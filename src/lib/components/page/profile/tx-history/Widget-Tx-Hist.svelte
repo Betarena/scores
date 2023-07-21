@@ -20,7 +20,8 @@ COMPONENT JS (w/ TS)
 	import WidgetTxHistLoader from './Widget-Tx-Hist-Loader.svelte';
 	import WidgetTxHistRow from './Widget-Tx-Hist-Row.svelte';
 
-	import calendar from '../assets/menu-opt/calendar.svg';
+	import icon_calendar_selected from '../assets/menu-opt/calendar-selected.svg';
+	import icon_calendar from '../assets/menu-opt/calendar.svg';
 	import icon_tx_hist from '../assets/menu-opt/tx-hist-selected.svg';
 
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
@@ -31,8 +32,8 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📌 VARIABLES
 
   const
-    VIEWPORT_TABLET_INIT = 768,
-    VIEWPORT_MOBILE_INIT = 580
+    VIEWPORT_TABLET_INIT = 769,
+    VIEWPORT_MOBILE_INIT = 581
   ;
 
 	let
@@ -49,11 +50,12 @@ COMPONENT JS (w/ TS)
     // isShowCalendar: boolean = false,
     txHistList: B_H_TH[] = [],
     LIST_LIMIT_DEFAULT: number = 10,
-    txHistListLimit: number = 10
+    txHistListLimit: number = 10,
+    calendarIcon: string = icon_calendar
   ;
 
-  $: RESPONSE_PROFILE_DATA = $page.data?.RESPONSE_PROFILE_DATA ?? { }
-  ;
+  $: RESPONSE_PROFILE_DATA = $page.data?.RESPONSE_PROFILE_DATA ?? { };
+
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -102,8 +104,8 @@ COMPONENT JS (w/ TS)
     const toDate: Date = $sessionStore.userTxHistFilterDateRange.to;
 
     // [🐞]
-    // console.log('🔹 [var] fromDate', fromDate);
-    // console.log('🔹 [var] toDate', toDate);
+    console.log('🔹 [var] fromDate', fromDate);
+    console.log('🔹 [var] toDate', toDate);
 
     txHistList = WIDGET_DATA?.tx_hist
     ?.filter
@@ -129,10 +131,19 @@ COMPONENT JS (w/ TS)
    */
   function applyDateRangeFilter1
   (
+    opt: "Last 7 Days" | "Last Month" | "Last 6 Months"
   ): void
   {
 
-    if (selectedDateFilterOpt1 == 'Last 7 Days')
+    // NOTE:
+    // Reset 'store' param. used by 'calendar' widget,
+    // indicating 'custom date selection' is no longer
+    // predominant filter.
+    $sessionStore.userTxHistDateSelect = undefined;
+
+    selectedDateFilterOpt1 = opt;
+
+    if (opt == 'Last 7 Days')
     {
       // [🐞]
       console.debug
@@ -150,7 +161,7 @@ COMPONENT JS (w/ TS)
       }
     }
 
-    if (selectedDateFilterOpt1 == 'Last Month')
+    if (opt == 'Last Month')
     {
       // [🐞]
       console.debug
@@ -195,7 +206,7 @@ COMPONENT JS (w/ TS)
       };
     }
 
-    if (selectedDateFilterOpt1 == 'Last 6 Months')
+    if (opt == 'Last 6 Months')
     {
       // [🐞]
       console.debug
@@ -300,8 +311,9 @@ COMPONENT JS (w/ TS)
    */
   $: if_R_1 =
     browser
+    && selectedDateFilterOpt1 != undefined
   ;
-  $: if (if_R_1 && selectedDateFilterOpt1)
+  $: if (if_R_1)
   {
     // [🐞]
     console.debug
@@ -309,7 +321,10 @@ COMPONENT JS (w/ TS)
       `🚏 checkpoint ➤ TxHist if_R_1`,
     );
 
-    applyDateRangeFilter1();
+    applyDateRangeFilter1
+    (
+      selectedDateFilterOpt1
+    );
   }
 
   /**
@@ -540,8 +555,8 @@ MAIN DEPOST WIDGET
               common-date-box
               cursor-pointer
               "
-              class:selected_date={selectedDateFilterOpt1 == 'Last 7 Days'}
-              on:click={() => selectedDateFilterOpt1 = 'Last 7 Days'}
+              class:selected_date={selectedDateFilterOpt1 == 'Last 7 Days' && $sessionStore.userTxHistDateSelect == undefined}
+              on:click={() => applyDateRangeFilter1('Last 7 Days')}
             >
               <p
                 class=
@@ -550,7 +565,7 @@ MAIN DEPOST WIDGET
                 color-grey
                 no-wrap
                 "
-                class:color-black-2={selectedDateFilterOpt1 == 'Last 7 Days'}
+                class:color-black-2={selectedDateFilterOpt1 == 'Last 7 Days' && $sessionStore.userTxHistDateSelect == undefined}
               >
                 {#if isViewMobile}
                   {'7 Days'}
@@ -570,8 +585,8 @@ MAIN DEPOST WIDGET
               common-date-box
               cursor-pointer
               "
-              class:selected_date={selectedDateFilterOpt1 == 'Last Month'}
-              on:click={() => selectedDateFilterOpt1 = 'Last Month'}
+              class:selected_date={selectedDateFilterOpt1 == 'Last Month' && $sessionStore.userTxHistDateSelect == undefined}
+              on:click={() => applyDateRangeFilter1('Last Month')}
             >
               <p
                 class=
@@ -580,7 +595,7 @@ MAIN DEPOST WIDGET
                 color-grey
                 no-wrap
                 "
-                class:color-black-2={selectedDateFilterOpt1 == 'Last Month'}
+                class:color-black-2={selectedDateFilterOpt1 == 'Last Month' && $sessionStore.userTxHistDateSelect == undefined}
               >
                 {#if isViewMobile}
                   {'Month'}
@@ -600,8 +615,8 @@ MAIN DEPOST WIDGET
               common-date-box
               cursor-pointer
               "
-              class:selected_date={selectedDateFilterOpt1 == 'Last 6 Months'}
-              on:click={() => selectedDateFilterOpt1 = 'Last 6 Months'}
+              class:selected_date={selectedDateFilterOpt1 == 'Last 6 Months' && $sessionStore.userTxHistDateSelect == undefined}
+              on:click={() => applyDateRangeFilter1('Last 6 Months')}
             >
               <p
                 class=
@@ -610,7 +625,7 @@ MAIN DEPOST WIDGET
                 color-grey
                 no-wrap
                 "
-                class:color-black-2={selectedDateFilterOpt1 == 'Last 6 Months'}
+                class:color-black-2={selectedDateFilterOpt1 == 'Last 6 Months' && $sessionStore.userTxHistDateSelect == undefined}
               >
                 {#if isViewMobile}
                   {'Year'}
@@ -644,10 +659,13 @@ MAIN DEPOST WIDGET
               column-space-center
               cursor-pointer
               "
+              class:selected={$sessionStore.userTxHistDateSelect != undefined}
+              on:mouseover={(e) => e.currentTarget.children[0].src = icon_calendar_selected}
+              on:mouseleave={(e) => { if ($sessionStore.userTxHistDateSelect == undefined) e.currentTarget.children[0].src = icon_calendar }}
               on:click={() => $sessionStore.userTxShowCalendar = !$sessionStore.userTxShowCalendar}
             >
               <img
-                src={calendar}
+                src={$sessionStore.userTxHistDateSelect != undefined ? icon_calendar_selected : icon_calendar}
                 alt='Calendar Icon'
                 title='Select specific date'
               />
@@ -682,12 +700,13 @@ MAIN DEPOST WIDGET
         >
           <thead>
             <tr
-              id="row-head"
             >
               <!--
               ID
               -->
-              <th>
+              <th
+                id="tx-id"
+              >
                 <p>
                   {RESPONSE_PROFILE_DATA?.tx?.fields?.id ?? 'ID'}
                 </p>
@@ -699,10 +718,7 @@ MAIN DEPOST WIDGET
               -->
               {#if isViewMobile || isViewTablet}
                 <th
-                  style=
-                  "
-                  width: 100%;
-                  "
+                  id="tx-date-address"
                 >
                   <p>
                     {'Date, Address:'}
@@ -718,7 +734,9 @@ MAIN DEPOST WIDGET
                 <!--
                 DATE
                 -->
-                <th>
+                <th
+                  id="tx-date"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.date ?? 'Date:'}
                   </p>
@@ -741,7 +759,9 @@ MAIN DEPOST WIDGET
                 <!--
                 ASSET
                 -->
-                <th>
+                <th
+                  id="tx-asset"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.asset ?? 'Asset:'}
                   </p>
@@ -750,7 +770,9 @@ MAIN DEPOST WIDGET
                 <!--
                 GATEWAY
                 -->
-                <th>
+                <th
+                  id="tx-gateway"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.gateway ?? 'Gateway:'}
                   </p>
@@ -759,7 +781,9 @@ MAIN DEPOST WIDGET
                 <!--
                 QUANTITY
                 -->
-                <th>
+                <th
+                  id="tx-quantity"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.quantity ?? 'Quantity:'}
                   </p>
@@ -768,7 +792,9 @@ MAIN DEPOST WIDGET
                 <!--
                 BTA
                 -->
-                <th>
+                <th
+                  id="tx-bta"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.bta ?? 'BTA:'}
                   </p>
@@ -777,7 +803,9 @@ MAIN DEPOST WIDGET
                 <!--
                 FEE
                 -->
-                <th>
+                <th
+                  id="tx-fee"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.fee ?? 'Fee:'}
                   </p>
@@ -786,7 +814,9 @@ MAIN DEPOST WIDGET
                 <!--
                 WALLET ADDR
                 -->
-                <th>
+                <th
+                  id="tx-wallet"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.wallet ?? 'Wallet Address:'}
                   </p>
@@ -816,7 +846,9 @@ MAIN DEPOST WIDGET
                 <!--
                 ASSET
                 -->
-                <th>
+                <th
+                  id="tx-asset"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.asset ?? 'Asset:'}
                   </p>
@@ -825,7 +857,9 @@ MAIN DEPOST WIDGET
                 <!--
                 QUANTITY
                 -->
-                <th>
+                <th
+                  id="tx-quantity"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.quantity ?? 'Quantity:'}
                   </p>
@@ -834,7 +868,9 @@ MAIN DEPOST WIDGET
                 <!--
                 FEE
                 -->
-                <th>
+                <th
+                  id="tx-fee"
+                >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.fee ?? 'Fee:'}
                   </p>
@@ -846,6 +882,7 @@ MAIN DEPOST WIDGET
               STATUS
               -->
               <th
+                id="tx-status"
                 style="text-align: -webkit-right;"
               >
                 <p>
@@ -866,10 +903,11 @@ MAIN DEPOST WIDGET
                 {isViewMobile}
                 {isViewTablet}
                 txTranslation={RESPONSE_PROFILE_DATA?.tx?.fields}
+                txStatusTrans={RESPONSE_PROFILE_DATA?.tx?.status}
               />
             {/each} -->
 
-            {#each txHistList.splice(0, txHistListLimit) as item}
+            {#each txHistList.slice(0, txHistListLimit) as item}
               <WidgetTxHistRow
                 tx_data={item}
                 {isViewMobile}
@@ -1018,16 +1056,26 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     /* 📌 position */
     position: relative;
+    /* 🛝 layout */
+    max-width: 40px;
+    min-width: 40px;
+    min-height: 40px;
+    max-height: 40px;
+    /* 🎨 style */
+    border-radius: 4px;
+    background: var(--whitev2);
   }
   div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar
   {
-    /* 🛝 layout */
-    width: 40px;
-    height: 40px;
     /* 🎨 style */
-    padding: 6px 12px;
+    width: auto;
     border-radius: 4px;
-    background: var(--whitev2);
+    padding: 6px 6px;
+  }
+  div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar.selected
+  {
+    /* 🎨 style */
+    background: var(--white);
     backdrop-filter: blur(10px);
   }
 
@@ -1038,13 +1086,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-collapse: collapse;
     width: -webkit-fill-available;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr#row-head
+  table#profile\/widget\/tx-history\/inner\/table thead tr
   {
     /* 🎨 style */
     border-radius: 2px;
     background: var(--whitev2);
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th
+  table#profile\/widget\/tx-history\/inner\/table thead tr th
   {
     /* 🛝 layout */
     width: fit-content;
@@ -1052,19 +1100,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     white-space: nowrap;
     padding-right: 12px;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:first-child
+  table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-status
+  {
+    /* 🎨 style */
+    min-width: 105px;
+  }
+  table#profile\/widget\/tx-history\/inner\/table thead tr th:first-child
   {
     /* 🎨 style */
     padding-left: 20px;
     border-radius: 2px 0 0 2px;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:last-child
+  table#profile\/widget\/tx-history\/inner\/table thead tr th:last-child
   {
     /* 🎨 style */
     padding-right: 20px;
     border-radius: 0 2px 2px 0;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th p
+  table#profile\/widget\/tx-history\/inner\/table thead tr th p
   {
     /* 🛝 layout */
     width: fit-content;
@@ -1097,27 +1150,44 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  📱 RESPONSIVNESS
+  ⚡️ RESPONSIVNESS
   =============
   */
 
   @media only screen
-  and (min-width: 1345px)
+  and (min-width: 769px)
   {
-    table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th,
-    :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td)
+    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-id
     {
-      padding-right: 40px;
+      /* 🎨 style */
+      padding-right: 20px;
+      min-width: 12px;
     }
-    table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:first-child,
-    :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td:first-child)
+    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-date
     {
-      padding-left: 12px;
+      /* 🎨 style */
+      padding-right: 20px;
+      min-width: 90px;
     }
-    table#profile\/widget\/tx-history\/inner\/table thead tr#row-head th:last-child,
-    :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td:last-child)
+    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-wallet
     {
-      padding-right: 12px;
+      /* 🎨 style */
+      min-width: 130px;
+    }
+    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-status
+    {
+      /* 🎨 style */
+      min-width: 105px;
+    }
+    table#profile\/widget\/tx-history\/inner\/table thead tr th:first-child
+    {
+      /* 🎨 style */
+      padding-left: 12px !important;
+    }
+    table#profile\/widget\/tx-history\/inner\/table thead tr th:last-child
+    {
+      /* 🎨 style */
+      padding-right: 12px !important;
     }
   }
 
@@ -1150,7 +1220,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     background: var(--dark-theme-1-shade);
   }
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 table#profile\/widget\/tx-history\/inner\/table thead tr#row-head
+  div#profile\/widget\/tx-history-outer.dark-background-1 table#profile\/widget\/tx-history\/inner\/table thead tr
   {
     /* 🎨 style */
     background: var(--dark-theme-1-shade);

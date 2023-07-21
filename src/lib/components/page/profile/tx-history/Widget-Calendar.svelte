@@ -35,7 +35,7 @@ COMPONENT JS (w/ TS)
   let
     numberOfMonthWeeks: number,
     monthWeeksArray: monthWeekObject[] = [],
-    tempDate: Date = $sessionStore?.userTxHistDateSelect,
+    tempDate: Date = $sessionStore?.userTxHistDateSelect ?? $sessionStore.userTxHistFilterDateRange.to ?? new Date(),
     selectedDays: [Date?, Date?] = [],
     B_SAP_D2: B_SAP_D2 = $page.data?.B_SAP_D2
   ;
@@ -352,7 +352,6 @@ COMPONENT JS (w/ TS)
    */
   $: if_R_0 =
     browser
-    && $sessionStore.userTxHistDateSelect != undefined
     && $sessionStore.userTxHistFilterDateRange != undefined
   ;
   $: if (if_R_0)
@@ -360,13 +359,24 @@ COMPONENT JS (w/ TS)
     // [🐞]
     console.debug
     (
-      `🚏 checkpoint ➤ TxHistCalendar if_R_0`,
+      `🚏 checkpoint ➤ TxHistCalendar if_R_1`,
     );
 
-    calcThisMonth
-    (
-      $sessionStore.userTxHistDateSelect
-    );
+    if ($sessionStore.userTxHistDateSelect != undefined)
+    {
+      calcThisMonth
+      (
+        $sessionStore.userTxHistDateSelect
+      );
+    }
+    else
+    {
+      calcThisMonth
+      (
+        $sessionStore.userTxHistFilterDateRange.to
+      );
+    }
+
     selectedDays =
     [
       $sessionStore.userTxHistFilterDateRange.to,
@@ -563,16 +573,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   div#profile\/widget\/calendar-pop-up\/inner table tr td:hover
   {
     /* 🎨 style */
-    background-color: var(--whitev2);
+    background-color: var(--whitev2) !important;
     border-radius: 60px;
-    color: var(--dark-theme);
+    color: var(--dark-theme) !important;
   }
   div#profile\/widget\/calendar-pop-up\/inner table tr td.startSnake
   {
     /* 🎨 style */
     background-color: var(--primary);
-    border-radius: 0 60px 60px 0;
     color: var(--white);
+    border-radius: 0 60px 60px 0;
   }
   div#profile\/widget\/calendar-pop-up\/inner table tr td.middleSnake
   {
@@ -587,7 +597,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--white);
     border-radius: 60px 0 0 60px;
   }
-  div#profile\/widget\/calendar-pop-up\/inner table tr td.currentDate
+  div#profile\/widget\/calendar-pop-up\/inner table tr td.currentDate:not(.startSnake):not(.middleSnake):not(.endSnake)
   {
     color: var(--primary);
   }
