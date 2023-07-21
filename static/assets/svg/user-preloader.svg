@@ -1,5 +1,119 @@
-<svg cache-id="af2f08a491c14e269eb7b767dcf59e2d" id="eMfHpOsdr5P1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 604 750" shape-rendering="geometricPrecision" text-rendering="geometricPrecision">
-<style><![CDATA[
-#eMfHpOsdr5P2_to {animation: eMfHpOsdr5P2_to__to 700ms linear infinite normal forwards}@keyframes eMfHpOsdr5P2_to__to { 0% {offset-distance: 0%} 42.857143% {offset-distance: 50.239366%} 85.714286% {offset-distance: 100%} 100% {offset-distance: 100%}} #eMfHpOsdr5P3_to {animation: eMfHpOsdr5P3_to__to 700ms linear infinite normal forwards}@keyframes eMfHpOsdr5P3_to__to { 0% {offset-distance: 0%} 28.571429% {offset-distance: 0%} 57.142857% {offset-distance: 50.245603%} 85.714286% {offset-distance: 100%} 100% {offset-distance: 100%}} #eMfHpOsdr5P4_to {animation: eMfHpOsdr5P4_to__to 700ms linear infinite normal forwards}@keyframes eMfHpOsdr5P4_to__to { 0% {offset-distance: 0%} 28.571429% {offset-distance: 0%} 57.142857% {offset-distance: 50.009933%} 85.714286% {offset-distance: 100%} 100% {offset-distance: 100%}} #eMfHpOsdr5P5_to {animation: eMfHpOsdr5P5_to__to 700ms linear infinite normal forwards}@keyframes eMfHpOsdr5P5_to__to { 0% {offset-distance: 0%} 44.285714% {offset-distance: 49.950017%} 85.714286% {offset-distance: 100%} 100% {offset-distance: 100%}}
-]]></style>
-<g id="eMfHpOsdr5P2_to" style="offset-path:path('M50,375C50,138.569714,128.560398,44.614484,302,44.614484C448.199192,44.614484,554,126.49078,554,375');offset-rotate:0deg"><circle r="50" transform="translate(0,0)" fill="#3d86f6"/></g><g id="eMfHpOsdr5P3_to" style="offset-path:path('M214.455617,375C214.455617,325,246.447878,285.443865,302,285.443865C361.035274,285.443865,386,325,386,375');offset-rotate:0deg"><circle r="50" transform="translate(0,0)" fill="#3d86f6"/></g><g id="eMfHpOsdr5P4_to" style="offset-path:path('M386,375C386,425,381.256579,477.171795,302,477.171795C229.222321,477.171795,214.455617,425,214.455617,375');offset-rotate:0deg"><circle r="50" transform="translate(0,0)" fill="#3d86f6"/></g><g id="eMfHpOsdr5P5_to" style="offset-path:path('M554,375C554,622.465617,454.306939,699.606152,302,699.606152C142.811809,699.606152,50,618.720931,50,375');offset-rotate:0deg"><circle r="50" transform="translate(0,0)" fill="#3d86f6"/></g></svg>
+<svg cache-id="af2f08a491c14e269eb7b767dcf59e2d" id="eMfHpOsdr5P1" xmlns="http://www.w3.org/2000/svg"
+  xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 604 750" shape-rendering="geometricPrecision"
+  text-rendering="geometricPrecision">
+  <style>
+    <![CDATA[
+    #eMfHpOsdr5P2_to {
+      animation: eMfHpOsdr5P2_to__to 700ms linear infinite normal forwards
+    }
+
+    @keyframes eMfHpOsdr5P2_to__to {
+      0% {
+        offset-distance: 0%
+      }
+
+      42.857143% {
+        offset-distance: 50.239366%
+      }
+
+      85.714286% {
+        offset-distance: 100%
+      }
+
+      100% {
+        offset-distance: 100%
+      }
+    }
+
+    #eMfHpOsdr5P3_to {
+      animation: eMfHpOsdr5P3_to__to 700ms linear infinite normal forwards
+    }
+
+    @keyframes eMfHpOsdr5P3_to__to {
+      0% {
+        offset-distance: 0%
+      }
+
+      28.571429% {
+        offset-distance: 0%
+      }
+
+      57.142857% {
+        offset-distance: 50.245603%
+      }
+
+      85.714286% {
+        offset-distance: 100%
+      }
+
+      100% {
+        offset-distance: 100%
+      }
+    }
+
+    #eMfHpOsdr5P4_to {
+      animation: eMfHpOsdr5P4_to__to 700ms linear infinite normal forwards
+    }
+
+    @keyframes eMfHpOsdr5P4_to__to {
+      0% {
+        offset-distance: 0%
+      }
+
+      28.571429% {
+        offset-distance: 0%
+      }
+
+      57.142857% {
+        offset-distance: 50.009933%
+      }
+
+      85.714286% {
+        offset-distance: 100%
+      }
+
+      100% {
+        offset-distance: 100%
+      }
+    }
+
+    #eMfHpOsdr5P5_to {
+      animation: eMfHpOsdr5P5_to__to 700ms linear infinite normal forwards
+    }
+
+    @keyframes eMfHpOsdr5P5_to__to {
+      0% {
+        offset-distance: 0%
+      }
+
+      44.285714% {
+        offset-distance: 49.950017%
+      }
+
+      85.714286% {
+        offset-distance: 100%
+      }
+
+      100% {
+        offset-distance: 100%
+      }
+    }
+    ]]>
+  </style>
+  <g id="eMfHpOsdr5P2_to"
+    style="offset-path:path('M50,375C50,138.569714,128.560398,44.614484,302,44.614484C448.199192,44.614484,554,126.49078,554,375');offset-rotate:0deg">
+    <circle r="50" transform="translate(0,0)" fill="#F5620F" />
+  </g>
+  <g id="eMfHpOsdr5P3_to"
+    style="offset-path:path('M214.455617,375C214.455617,325,246.447878,285.443865,302,285.443865C361.035274,285.443865,386,325,386,375');offset-rotate:0deg">
+    <circle r="50" transform="translate(0,0)" fill="#F5620F" />
+  </g>
+  <g id="eMfHpOsdr5P4_to"
+    style="offset-path:path('M386,375C386,425,381.256579,477.171795,302,477.171795C229.222321,477.171795,214.455617,425,214.455617,375');offset-rotate:0deg">
+    <circle r="50" transform="translate(0,0)" fill="#F5620F" />
+  </g>
+  <g id="eMfHpOsdr5P5_to"
+    style="offset-path:path('M554,375C554,622.465617,454.306939,699.606152,302,699.606152C142.811809,699.606152,50,618.720931,50,375');offset-rotate:0deg">
+    <circle r="50" transform="translate(0,0)" fill="#F5620F" />
+  </g>
+</svg>
