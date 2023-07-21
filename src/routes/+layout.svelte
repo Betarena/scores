@@ -21,7 +21,6 @@ COMPONENT JS (w/ TS)
 	import SplashScreen from '$lib/components/Splash-Screen.svelte';
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
-	import Navbar from '$lib/components/page/profile/Navbar.svelte';
 
   // #endregion ➤ [MAIN] Package Imports
 
@@ -29,12 +28,6 @@ COMPONENT JS (w/ TS)
 
   // NOTE: moved to static/
 	// import '../app.css';
-
-	const VALID_PROFILE_PAGE_URL: string[] =
-  [
-		'/u/dashboard',
-		'/u/settings'
-	];
 
 	let HEADER_TRANSLATION_DATA: any;
 	let FOOTER_TRANSLATION_DATA: any;
@@ -69,8 +62,12 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ [METHODS]
 
-  // #region ➤ [REACTIVIY] [METHODS]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
 	$: if (browser)
   {
 		userBetarenaSettings.useLocalStorage();
@@ -127,12 +124,12 @@ COMPONENT JS (w/ TS)
     initSportbookData
     (
       $userBetarenaSettings?.country_bookmaker
-    )
+    );
   }
 
-  // #endregion ➤ [REACTIVIY] [METHODS]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  // #region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
   onMount
   (
@@ -142,7 +139,7 @@ COMPONENT JS (w/ TS)
 	  }
   );
 
-  // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -160,16 +157,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <PlatformAlert {HEADER_TRANSLATION_DATA} />
 <EmailSubscribe />
 
-{#if !VALID_PROFILE_PAGE_URL.includes($page?.url?.pathname)}
-	<Header WIDGET_T_DATA={HEADER_TRANSLATION_DATA} />
-{/if}
+<Header />
 
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
 >
-	{#if VALID_PROFILE_PAGE_URL.includes($page?.url?.pathname)}
-		<Navbar />
-	{/if}
 	<slot />
 	<Footer {FOOTER_TRANSLATION_DATA} />
 </main>
@@ -206,12 +198,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	/*
   =============
-  RESPONSIVNESS
+  ⚡️ RESPONSIVNESS
   =============
   */
 
 	@media screen
-    and (min-width: 768px)
+  and (min-width: 768px)
   {
 		main::before
     {
@@ -220,7 +212,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	@media screen
-    and (min-width: 1024px)
+  and (min-width: 1024px)
   {
 		main::before
     {
