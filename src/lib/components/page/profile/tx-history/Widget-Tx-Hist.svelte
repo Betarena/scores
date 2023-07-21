@@ -866,6 +866,7 @@ MAIN DEPOST WIDGET
                 {isViewMobile}
                 {isViewTablet}
                 txTranslation={RESPONSE_PROFILE_DATA?.tx?.fields}
+                txStatusTrans={RESPONSE_PROFILE_DATA?.tx?.status}
               />
             {/each}
 

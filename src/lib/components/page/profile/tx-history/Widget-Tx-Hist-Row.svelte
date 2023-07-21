@@ -13,7 +13,7 @@ COMPONENT JS (w/ TS)
 	import icon_deposit from '../assets/tx-hist/deposit.svg';
 	import icon_withdraw from '../assets/tx-hist/withdraw.svg';
 
-	import type { B_H_TH, B_H_TT_Field } from "@betarena/scores-lib/types/_HASURA_.js";
+	import type { B_H_TH, B_H_TT_Field, B_H_TT_Status } from "@betarena/scores-lib/types/_HASURA_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -23,11 +23,13 @@ COMPONENT JS (w/ TS)
     tx_data: B_H_TH,
     isViewMobile: boolean = false,
     isViewTablet: boolean = false,
-    txTranslation: B_H_TT_Field
+    txTranslation: B_H_TT_Field,
+    txStatusTrans: B_H_TT_Status
   ;
 
   let
     txStatus: 'C' | 'P' | 'F',
+    txStatusTranslation: string,
     txTypeIcon: string,
     isTxExtraInfo: boolean,
     txExtraInfoStruct =
@@ -55,9 +57,15 @@ COMPONENT JS (w/ TS)
    */
   $: if (tx_data?.status)
   {
+    // NOTE:
+    // Identify Tx-Type.
 		if (tx_data?.status?.toLowerCase() == 'completed') txStatus = 'C';
 		if (['processing', 'pending'].includes(tx_data?.status?.toLowerCase())) txStatus = 'P';
 		if (tx_data?.status?.toLowerCase() == 'failed')	txStatus = 'F';
+
+    // NOTE:
+    // Identify Tx-Translation.
+    txStatusTranslation = txStatusTrans?.[tx_data?.status?.toLowerCase()];
 	}
 
   /**
@@ -376,7 +384,7 @@ COMPONENT JS (w/ TS)
         class:pending={txStatus == 'P'}
         class:failed={txStatus == 'F'}
       >
-        {tx_data?.status ?? '-'}
+        {txStatusTranslation ?? '-'}
       </p>
 
       <!--
