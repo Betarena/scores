@@ -1597,23 +1597,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding: 24px 34px;
 		max-width: 374px !important;
 	}
-	nav .side-nav-dropdown
-  {
-    /* 🎨 style */
-		width: 100%;
-		box-shadow: inset 0px -1px 0px #616161;
-	}
-	nav .side-nav-dropdown-opt
-  {
-    /* 🎨 style */
-		width: 100%;
-		padding: 9.5px 0;
-	}
-	nav .side-nav-dropdown-opt p
-  {
-    /* 🎨 style */
-		font-weight: 400;
-	}
 
   div#navBox
   {
@@ -1729,13 +1712,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   and (min-width: 1024px)
   {
 
-		#theme-opt-container,
 		#odds-box
     {
 			position: relative;
 		}
 
-		#theme-dropdown-menu,
 		#odds-type-dropdown-menu
     {
 			position: absolute;
@@ -1751,7 +1732,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			width: 168px;
 		}
 
-		#theme-dropdown-menu .theme-opt-box,
 		#odds-type-dropdown-menu .theme-opt-box
     {
 			padding: 9.5px 16px;
@@ -1760,7 +1740,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			height: 40px;
 		}
 
-		#theme-dropdown-menu .theme-opt-box:hover p,
 		#odds-type-dropdown-menu .theme-opt-box:hover	p
     {
 			color: #f5620f;

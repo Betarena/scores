@@ -48,13 +48,22 @@ COMPONENT JS (w/ TS)
 📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
 -->
 <div
-  id="bookmaker-box"
+  id="component/bookmaker/main"
   data-testid="header/component/bookmakers"
   class=
-  "
-  dropdown-opt-box
-  row-space-start
-  "
+  {
+    !isViewMobile
+      ?
+      `
+      dropdown-opt-box
+      row-space-start
+      `
+      :
+      `
+      side-nav-dropdown
+      m-b-25
+      `
+  }
   on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
   class:not-last={$userBetarenaSettings?.user != undefined}
 >
@@ -63,8 +72,8 @@ COMPONENT JS (w/ TS)
   SELECTED BOOKMAKERS BOX
   -->
   <div
-    class:m-r-10={!isViewTablet}
-    class:m-b-15={isViewTablet}
+    class:m-r-10={!isViewMobile}
+    class:m-b-15={isViewMobile}
   >
 
     <!--
@@ -77,7 +86,7 @@ COMPONENT JS (w/ TS)
       s-12
       no-wrap
       "
-      class:m-b-5={isViewTablet}
+      class:m-b-5={isViewMobile}
     >
       {B_NAV_T?.scores_header_translations?.bookmakers ?? translationObject?.bookmakers}
     </p>
@@ -86,7 +95,7 @@ COMPONENT JS (w/ TS)
     CURRENT BOOKMAKER SELECTED
     -->
     <div
-      class:row-space-out={!isViewMobile}
+      class:row-space-out={isViewMobile}
     >
 
       <div
@@ -161,7 +170,7 @@ COMPONENT JS (w/ TS)
   -->
   {#if isBookmakersDropdown}
     <div
-      id="bookmakers-type-dropdown-menu"
+      class:bookmaker-dropdown={!isViewMobile}
       transition:fly
     >
       {#if $userBetarenaSettings.country_bookmaker != undefined}
@@ -169,9 +178,10 @@ COMPONENT JS (w/ TS)
           <div
             class=
             "
-            theme-opt-box
             row-space-start
             "
+            class:side-nav-dropdown-opt={isViewMobile}
+            class:theme-opt-box={!isViewMobile}
             class:country-selected={country[0] === $userBetarenaSettings.country_bookmaker.toUpperCase()}
             on:click={() => userBetarenaSettings.setCountryBookmaker(country?.[0].toLocaleLowerCase())}
           >
@@ -205,7 +215,7 @@ COMPONENT JS (w/ TS)
             <img
               loading="lazy"
               src={icon_check}
-              alt={country?.[0]}
+              alt="{country?.[0]}_icon"
               width=16
               height=16
             />
@@ -226,8 +236,86 @@ COMPONENT JS (w/ TS)
 
 <style>
 
+  div#component\/bookmaker\/main
+  {
+    /* 📌 position */
+    position: relative;
+    /* 🎨 style */
+    padding: 0 0 0 16px;
+  }
+  div#component\/bookmaker\/main.not-last
+  {
+    /* 🎨 style */
+    padding: 0 16px 0 16px;
+  }
+  div#component\/bookmaker\/main.dropdown-opt-box
+  {
+    /* 🎨 style */
+		border-left: 1px solid #4b4b4b;
+		height: 44px;
+		padding: 0 16px;
+		width: fit-content;
+		cursor: pointer;
+	}
+  div#component\/bookmaker\/main.side-nav-dropdown
+  {
+    /* 🎨 style */
+		width: 100%;
+		box-shadow: inset 0px -1px 0px #616161;
+	}
+
+  div#component\/bookmaker\/main div.bookmaker-dropdown
+  {
+    /* 📌 position */
+    position: absolute;
+    top: 100%;
+    right: 0%;
+    z-index: 2000;
+    /* 🎨 style */
+    height: 320px;
+    width: 620px;
+    margin-top: 5px;
+    background: #4b4b4b;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    border-radius: 8px;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 5px 20px;
+    padding: 8px 12px;
+  }
+  div#component\/bookmaker\/main div.bookmaker-dropdown div.theme-opt-box
+  {
+    /* 📌 position */
+    position: relative;
+    /* 🎨 style */
+    height: 40px;
+    padding: 13px 8px;
+    box-shadow: inset 0px -1px 0px #3c3c3c;
+    background: #4b4b4b;
+  }
+  div#component\/bookmaker\/main div.bookmaker-dropdown div.theme-opt-box:hover,
+  div#component\/bookmaker\/main div.bookmaker-dropdown div.country-selected
+  {
+    /* 🎨 style */
+    background: #292929;
+    border-radius: 4px;
+  }
+  div#component\/bookmaker\/main div.bookmaker-dropdown div.side-nav-dropdown-opt
+  {
+    /* 🎨 style */
+		width: 100%;
+		padding: 9.5px 0;
+	}
+	div#component\/bookmaker\/main div.bookmaker-dropdown div.side-nav-dropdown-opt p
+  {
+    /* 🎨 style */
+		font-weight: 400;
+	}
+
   img.country-flag
   {
+    /* 🎨 style */
 		background: linear-gradient
     (
 			180deg,
@@ -238,51 +326,10 @@ COMPONENT JS (w/ TS)
 		border-radius: 2px;
 	}
 
-  div#bookmaker-box
-  {
-    /* p */
-    position: relative;
-    /* s */
-    padding: 0 0 0 16px;
-  }
-  div#bookmaker-box.not-last
-  {
-    padding: 0 16px 0 16px;
-  }
-
-  #bookmakers-type-dropdown-menu
-  {
-    position: absolute;
-    top: 100%;
-    right: 0%;
-    margin-top: 5px;
-    background: #4b4b4b;
-    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-    border-radius: 8px;
-    overflow: hidden;
-    z-index: 2000;
-    height: 320px;
-    width: 620px;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 5px 20px;
-    padding: 8px 12px;
-  }
-
-  #bookmakers-type-dropdown-menu .theme-opt-box
-  {
-    height: 40px;
-    padding: 13px 8px;
-    box-shadow: inset 0px -1px 0px #3c3c3c;
-    background: #4b4b4b;
-    position: relative;
-  }
-
-  #bookmakers-type-dropdown-menu .theme-opt-box:hover,
-  #bookmakers-type-dropdown-menu .country-selected
-  {
-    background: #292929;
-    border-radius: 4px;
-  }
+  /*
+  =============
+  ⚡️ RESPONSIVNESS
+  =============
+  */
 
 </style>
