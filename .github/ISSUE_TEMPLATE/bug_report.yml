@@ -15,8 +15,8 @@ body:
     description:
       Please search to see if an issue already exists for the bug you encountered ([scores/issues](https://github.com/Betarena/scores/issues)).
     options:
-    - label: I have searched the existing issues
-      required: true
+      - label: I have searched the existing issues
+        required: true
 
 - type: textarea
   attributes:
@@ -37,34 +37,39 @@ body:
     label: What `environment` is the bug/issue detected in.
     description: Please specify the target Scores Platform issue can be found. Note, `DEV` is reserved for internal testers.
     options:
-    - label: Production
-      required: false
-    - label: Development
-      required: false
+      - label: Production
+        required: false
+      - label: Development
+        required: false
 
 - type: checkboxes
   id: browsers
   attributes:
     label: What browsers are you seeing the problem on?
     options:
-      - Firefox
-      - Chrome
-      - Safari
-      - Microsoft Edge
-      - Brave
-      - Opera
+      - label: Firefox
+        required: false
+      - label: Chrome
+        required: false
+      - label: Safari
+        required: false
+      - label: Microsoft Edge
+        required: false
+      - label: Brave
+        required: false
+      - label: Opera
 
 - type: checkboxes
   id: devices
   attributes:
     label: What device are you seeing the problem on?
     options:
-    - label: 📱 Mobile
-      required: false
-    - label: 💻 Tablet
-      required: false
-    - label: 🖥️ Laptop/Desktop
-      required: false
+      - label: Mobile
+        required: false
+      - label: Tablet
+        required: false
+      - label: Laptop/Desktop
+        required: false
 
 - type: textarea
   attributes:
