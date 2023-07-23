@@ -354,7 +354,20 @@ function createLocalStore
       //     }
       //   )
       // );
+    },
+
+    /**
+     * @description
+     * TODO: DOC:
+     */
+    getServerLang:
+    (
+    ): string =>
+    {
+      return sessionStoreObj.serverLang;
     }
+
+  }
 
 	return {
 		subscribe,

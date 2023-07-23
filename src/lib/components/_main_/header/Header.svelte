@@ -236,7 +236,7 @@ COMPONENT JS - BASIC
     // as '$:' reactive element is used in 'block'.
     userBetarenaSettings.setLang
     (
-      $sessionStore?.serverLang
+      sessionStore.getServerLang()
     );
 	}
 
