@@ -221,9 +221,8 @@ COMPONENT JS - BASIC
   */
   $: if_R_0 =
     browser
-    && $userBetarenaSettings.user == undefined
   ;
-  $: if (if_R_0)
+  $: if (if_R_0 && $userBetarenaSettings.user == undefined)
   {
     // [🐞]
     console.debug
@@ -231,9 +230,6 @@ COMPONENT JS - BASIC
       `🚏 checkpoint ➤ NAVBAR if_R_0`,
     );
 
-    // WARNING:
-    // Can cause 'infinite loop' reactivity error,
-    // as '$:' reactive element is used in 'block'.
     userBetarenaSettings.setLang
     (
       sessionStore.getServerLang()
@@ -251,10 +247,9 @@ COMPONENT JS - BASIC
   */
   $: if_R_1 =
     browser
-    && $userBetarenaSettings?.user != undefined
     && PROFILE_URL != $page.route.id
   ;
-  $: if (if_R_1)
+  $: if (if_R_1 && $userBetarenaSettings?.user != undefined)
   {
     let userlang: string = $userBetarenaSettings.user?.scores_user_data?.lang;
 
