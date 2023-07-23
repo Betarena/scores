@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { createEventDispatcher, type EventDispatcher } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import arrow_down from './assets/arrow-down.svg';
 	import arrow_up from './assets/arrow-up.svg';

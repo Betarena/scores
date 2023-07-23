@@ -1,5 +1,5 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
+	COMPONENT JS - BASIC
     [TypeScript Written]
 =================== -->
 <script lang="ts">
@@ -7,7 +7,7 @@
 	import { page } from '$app/stores';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
-	import { sessionStore } from '$lib/store/session';
+	import sessionStore from '$lib/store/session.js';
 	import { dlog, FT_W_STY, FT_W_TAG, FT_W_TOG } from '$lib/utils/debug';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
@@ -59,7 +59,7 @@
     $page.error,
     $page.params.lang
   )
-  $: homepageURL = 
+  $: homepageURL =
     server_side_language != 'en'
       ? `/${$page.params.lang}`
       : `/`
@@ -101,15 +101,15 @@
 	COMPONENT HTML
 =================== -->
 
-<!-- 
-[ℹ] FOOTER SEO 
+<!--
+[ℹ] FOOTER SEO
 -->
 {#if FOOTER_TRANSLATION_DATA != undefined && !hideSEO}
   <SeoBox>
-    <!-- [ℹ] betarena-logo-homepage-correct-url 
+    <!-- [ℹ] betarena-logo-homepage-correct-url
     -->
     <p>{logoLink}</p>
-    <!-- [ℹ] nav-links-SEO 
+    <!-- [ℹ] nav-links-SEO
     -->
     <p>
       {FOOTER_TRANSLATION_DATA.scores_footer_links
@@ -145,18 +145,18 @@
   </SeoBox>
 {/if}
 
-<!-- 
-[ℹ] FOOTER CLIENT COMPONENT 
+<!--
+[ℹ] FOOTER CLIENT COMPONENT
 -->
 <footer>
 	{#if FOOTER_TRANSLATION_DATA != undefined}
-		<!-- 
-    [ℹ] mobile - version only 
+		<!--
+    [ℹ] mobile - version only
     -->
 		{#if mobileExclusive && tabletExclusive}
 			<div id="inner-footer">
-				<!-- 
-        [ℹ] brand-logo-betarena 
+				<!--
+        [ℹ] brand-logo-betarena
         -->
 				<div
 					id="brand"
@@ -165,7 +165,7 @@
           on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
 				>
 					<a
-						
+
 						href={homepageURL}
 						title={logoLink}
 					>
@@ -177,8 +177,8 @@
 						/>
 					</a>
 				</div>
-				<!-- 
-        [ℹ] follow-us-and-social-media 
+				<!--
+        [ℹ] follow-us-and-social-media
         -->
 				<div class="m-b-40">
 					<p
@@ -187,17 +187,17 @@
 						{FOOTER_TRANSLATION_DATA
 							.scores_footer_translations.follow}
 					</p>
-					<!-- 
-          [ℹ] social media follows 
+					<!--
+          [ℹ] social media follows
           -->
 					<div
 						id="social-media-box"
 						class="column-start-grid"
 					>
-						<!-- [ℹ] identify the list of social media icons 
+						<!-- [ℹ] identify the list of social media icons
             -->
 						{#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
-							<!-- [ℹ] social-network-component 
+							<!-- [ℹ] social-network-component
               -->
 							<a
 								rel="external"
@@ -222,15 +222,15 @@
 					</div>
 				</div>
 
-				<!-- 
-        [ℹ] subscribe-to-newletter 
+				<!--
+        [ℹ] subscribe-to-newletter
         -->
 				<div
 					id="newsletter-container"
 					class="m-b-30"
 				>
-					<!-- 
-          [ℹ] title-section 
+					<!--
+          [ℹ] title-section
           -->
 					<p
 						class="color-white s-14 w-normal m-b-8 text-left"
@@ -240,15 +240,15 @@
 							.subscribe_newsletter}
 					</p>
 
-					<!-- 
-          [ℹ] form-start 
+					<!--
+          [ℹ] form-start
           -->
 					<form
 						on:submit|preventDefault={() =>
 							submitEmail()}
 					>
-						<!-- 
-            [ℹ] input-email-field 
+						<!--
+            [ℹ] input-email-field
             -->
 						<input
 							type="email"
@@ -259,8 +259,8 @@
 								.type_email}
 							class="m-b-12 s-14 w-400 color-grey"
 						/>
-						<!-- 
-            [ℹ] button-subscribe-action 
+						<!--
+            [ℹ] button-subscribe-action
             -->
 						<button
 							type="submit"
@@ -276,17 +276,17 @@
 					</form>
 				</div>
 
-				<!-- 
-        [ℹ] menu-list num.1 
+				<!--
+        [ℹ] menu-list num.1
         -->
 
-				<!-- 
-        [ℹ] generate-translations-for-footer 
+				<!--
+        [ℹ] generate-translations-for-footer
         -->
 				<div id="menu-list" class="m-b-40">
 					<ul>
-						<!-- 
-            [ℹ] latest-news 
+						<!--
+            [ℹ] latest-news
             -->
 						<li class="m-r-10">
 							<a
@@ -305,14 +305,14 @@
 								</p>
 							</a>
 						</li>
-						<!-- [ℹ] sep 
+						<!-- [ℹ] sep
             -->
 						<li
 							class="place-center m-r-10 m-b-16"
 						>
 							<div class="menu-separator" />
 						</li>
-						<!-- [ℹ] betting-tips 
+						<!-- [ℹ] betting-tips
             -->
 						<li class="m-r-10">
 							<a
@@ -331,14 +331,14 @@
 								</p>
 							</a>
 						</li>
-						<!-- [ℹ] sep 
+						<!-- [ℹ] sep
             -->
 						<li
 							class="place-center m-r-10 m-b-16"
 						>
 							<div class="menu-separator" />
 						</li>
-						<!-- [ℹ] about us link 
+						<!-- [ℹ] about us link
             -->
 						<li class="m-r-10">
 							<a
@@ -347,7 +347,7 @@
 									.scores_footer_links.about_us}
 								class="m-b-16"
 							>
-								<!-- [ℹ] about us 
+								<!-- [ℹ] about us
                 -->
 								<p
 									class="color-white s-14 w-normal"
@@ -399,8 +399,8 @@
 					</ul>
 				</div>
 
-				<!-- 
-        [ℹ] legal-begambleawareorg 
+				<!--
+        [ℹ] legal-begambleawareorg
         -->
 				<div
 					class="row-space-start m-b-30 place-center"
@@ -441,8 +441,8 @@
 			</div>
 		{/if}
 
-		<!-- 
-    [ℹ] tablet - version only 
+		<!--
+    [ℹ] tablet - version only
     -->
 		{#if !mobileExclusive && tabletExclusive}
 			<div
@@ -463,7 +463,7 @@
               on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
 						>
 							<a
-								
+
 								href={homepageURL}
 								title={logoLink}
 							>
@@ -713,8 +713,8 @@
 			</div>
 		{/if}
 
-		<!-- 
-    [ℹ] desktop - version only 
+		<!--
+    [ℹ] desktop - version only
     -->
 		{#if !mobileExclusive && !tabletExclusive}
 			<div id="inner-footer">
@@ -727,7 +727,7 @@
 						on:click={() => reloadPage()}
 					>
 						<a
-							
+
 							href={homepageURL}
 							title={logoLink}
 						>
@@ -984,7 +984,7 @@
 	COMPONENT STYLE
 =================== -->
 <style>
-	/* 
+	/*
     RESPONSIVE FOR MOBILE-FIRST (&+) [375px] */
 	footer {
 		background: #292929;
@@ -1045,7 +1045,7 @@
 		border-radius: 8px;
 	}
 
-	/* 
+	/*
     RESPONSIVE FOR TABLET (&+) [768px] */
 	@media screen and (min-width: 768px) {
 		footer {
@@ -1073,7 +1073,7 @@
 		}
 	}
 
-	/* 
+	/*
     RESPONSIVE FOR TABLET (&+) [1440px] */
 	@media screen and (min-width: 1440px) {
 		footer {

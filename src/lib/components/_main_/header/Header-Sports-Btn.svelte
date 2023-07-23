@@ -6,7 +6,7 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📦 Package Imports
 
-	import { sessionStore } from '$lib/store/session.js';
+	import sessionStore from '$lib/store/session.js';
 
   import { removeDiacritics } from '$lib/utils/languages.js';
   import { createEventDispatcher } from 'svelte';

@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { onMount } from 'svelte';
 
 	import { auth, db_firestore, storage } from '$lib/firebase/init';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, errlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { deleteUser } from 'firebase/auth';

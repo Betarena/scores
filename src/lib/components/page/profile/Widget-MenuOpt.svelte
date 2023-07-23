@@ -11,7 +11,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import MenuOptRow from './Widget-MenuOpt-Row.svelte';

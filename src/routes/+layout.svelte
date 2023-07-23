@@ -10,8 +10,8 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, initSentry } from '$lib/utils/debug';
 	import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
 

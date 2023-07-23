@@ -2,13 +2,13 @@
 	  COMPONENT JS (w/ TS)
 ==================== -->
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import LoaderRow from './loaders/Loader_Row.svelte';
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div
@@ -16,7 +16,7 @@
 	class:dark-background-1={$userBetarenaSettings.theme ==
 		'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] [DESKTOP ONLY]
   -->
 	<p
@@ -84,13 +84,13 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		/* EMPTY */
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1001px) {
 		/* EMPTY */

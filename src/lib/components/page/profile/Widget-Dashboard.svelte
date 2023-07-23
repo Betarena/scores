@@ -8,7 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { page } from '$app/stores';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import metamask_percent_ration_dark from './assets/dashboard/metamask-percent-ration-dark.png';
 	import metamask_percent_ration from './assets/dashboard/metamask-percent-ration.png';

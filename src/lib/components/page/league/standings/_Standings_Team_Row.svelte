@@ -5,8 +5,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import type { Standing_Team_Total_Away_Home } from '$lib/models/tournaments/standings/types';
 
@@ -121,16 +121,16 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
-<!-- [STASHED] 
+<!-- [STASHED]
 <div
   class="league-table-team-row"
-  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'} 
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   in:fade>
 
-  <!-- [ℹ] DESKTOP VERSION 
+  <!-- [ℹ] DESKTOP VERSION
   - ->
   {#if viewportDesktop}
 
@@ -144,11 +144,11 @@
       <div
         class="row-space-start">
 
-        <!-- [ℹ] team number position 
+        <!-- [ℹ] team number position
         - ->
         <div
           class="team-pos">
-          <p 
+          <p
             class="team-pos medium w-500"
             style="background-color: black">
             {TEAM_DATA.position}
@@ -170,12 +170,12 @@
         - ->
         <div
           style="margin-left: 16px;">
-          <p 
+          <p
             class="medium w-500 no-wrap">
             {TEAM_DATA.team_name}
           </p>
         </div>
-      
+
       </div>
 
 
@@ -184,66 +184,66 @@
       <div
         class="row-space-out">
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.points}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.games_played}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.won}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.draw}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.lost}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.gs}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.ga}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.gavg}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.cavg}
         </p>
-        
-        <p 
+
+        <p
           class="medium w-500">
           {TEAM_DATA.ov15}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.ov25}
         </p>
 
-        <p 
+        <p
           class="medium w-500">
           {TEAM_DATA.winP}
         </p>
-        
+
         <div
           class="row-space-end"
           style="width: auto;">
@@ -266,7 +266,7 @@
 </div>
 -->
 
-<!-- 
+<!--
 [ℹ] ALTERNAITVE ROW APPROACH [V.2]
 -->
 
@@ -281,7 +281,7 @@
     -->
 		<td>
 			<div class="row-space-start">
-				<!-- [ℹ] team number position 
+				<!-- [ℹ] team number position
         -->
 				<div class="team-pos">
 					<p
@@ -430,12 +430,12 @@
 			'Dark'}
 		in:fade
 	>
-		<!-- 
+		<!--
       [ℹ] team main details box left
       -->
 		<td>
 			<div class="row-space-start">
-				<!-- [ℹ] team number position 
+				<!-- [ℹ] team number position
           -->
 				<div class="team-pos">
 					<p
@@ -458,11 +458,11 @@
 			</div>
 		</td>
 
-		<!-- 
+		<!--
       [ℹ] team main further info box right
       -->
 
-		<!-- 
+		<!--
       [ℹ] tabler view 1
       -->
 		{#if TABLEMOBILEVIEW == 1}
@@ -515,7 +515,7 @@
 			</td>
 		{/if}
 
-		<!-- 
+		<!--
       [ℹ] tabler view 2
       -->
 		{#if TABLEMOBILEVIEW == 2}
@@ -544,7 +544,7 @@
 			</td>
 		{/if}
 
-		<!-- 
+		<!--
       [ℹ] tabler view 3
       -->
 		{#if TABLEMOBILEVIEW == 3}
@@ -671,7 +671,7 @@
 		margin-right: 0;
 	}
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		.league-table-team-row div.team-pos {
@@ -709,8 +709,8 @@
 		}
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	.dark-background-1 div.recent-form-dot.lost {

@@ -1,7 +1,7 @@
 import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
-import { sessionStore } from "$lib/store/session.js";
-import { userBetarenaSettings } from '$lib/store/user-settings';
+import sessionStore from "$lib/store/session.js";
+import userBetarenaSettings from '$lib/store/user-settings.js';
 import { error, redirect } from "@sveltejs/kit";
 import { NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from "./debug";
 

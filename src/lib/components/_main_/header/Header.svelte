@@ -13,8 +13,8 @@ COMPONENT JS - BASIC
 	import { fly } from 'svelte/transition';
 
 	import { db_firestore } from '$lib/firebase/init';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';

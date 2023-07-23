@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import MobileLoaderMainStd from './loaders/mobile/Loader_Main_Std.svelte';
 	import MobileLoaderProbBtn from './loaders/mobile/Loader_Prob_Btn.svelte';
@@ -57,18 +57,18 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
-	<!-- 
+	<!--
   [ℹ] widget-component -->
 	<div
 		id="fixture-prob-loader"
 		class:dark-background-1={$userBetarenaSettings.theme ==
 			'Dark'}
 	>
-		<!-- 
+		<!--
     [ℹ] [MOBILE]
     -->
 		{#if mobileExclusive}
@@ -79,7 +79,7 @@
 				<LoaderBetSite />
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] team-box head
       -->
 			<div
@@ -97,7 +97,7 @@
 				{/each}
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] probability head
       -->
 			<div
@@ -113,7 +113,7 @@
 				{/each}
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] probability row
       -->
 			{#each { length: 5 } as _, i}
@@ -136,7 +136,7 @@
 			{/each}
 		{/if}
 
-		<!-- 
+		<!--
     [ℹ] [DESKTOP] [TABLET]
     -->
 		{#if !mobileExclusive}
@@ -147,7 +147,7 @@
 				<LoaderBetSite />
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] team-box head
       -->
 			<div
@@ -163,7 +163,7 @@
 				{/each}
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] probability head
       -->
 			<div
@@ -179,7 +179,7 @@
 				{/each}
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] probability row
       -->
 			{#each { length: 5 } as _, i}
@@ -269,7 +269,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#fixture-prob-loader {
@@ -324,7 +324,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#fixture-prob-loader {

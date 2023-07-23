@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-</script>
+	</script>
 
 <svg
 	class="animation-target"

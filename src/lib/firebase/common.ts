@@ -1,10 +1,10 @@
-import { sessionStore } from "$lib/store/session";
+import sessionStore from '$lib/store/session.js';
 import { onValue, ref, type Unsubscribe } from "firebase/database";
 import { doc, onSnapshot } from "firebase/firestore";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_firestore, db_real } from "./init";
 
-import { userBetarenaSettings } from "$lib/store/user-settings.js";
+import userBetarenaSettings from '$lib/store/user-settings.js';
 import type { Betarena_User } from "$lib/types/types.scores.js";
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
 

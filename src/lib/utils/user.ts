@@ -1,7 +1,7 @@
 import { goto } from "$app/navigation";
 import { userBalanceListen } from "$lib/firebase/common.js";
 import { delCookie, setCookie } from "$lib/store/cookie.js";
-import { userBetarenaSettings } from "$lib/store/user-settings.js";
+import userBetarenaSettings from '$lib/store/user-settings.js';
 
 export const ROUTE_ID_PROFILE = '/u/[view]/[lang=lang]';
 

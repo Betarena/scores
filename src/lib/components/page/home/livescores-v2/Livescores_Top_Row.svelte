@@ -7,8 +7,8 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
 	import { page } from '$app/stores';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { WEEK_DAYS_ABBRV_1, toCorrectDate, toISOMod } from '$lib/utils/dates';
 	import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
 	import LivescoresCalendarTable from './Livescores_Calendar_Table.svelte';

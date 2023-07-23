@@ -1,13 +1,13 @@
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 </script>
 
-<svg 
+<svg
   class="animation-target"
-  width="32" 
-  height="60" 
-  viewBox="0 0 32 60" 
-  fill="none" 
+  width="32"
+  height="60"
+  viewBox="0 0 32 60"
+  fill="none"
   xmlns="http://www.w3.org/2000/svg"
   preserveAspectRatio="none"
 >

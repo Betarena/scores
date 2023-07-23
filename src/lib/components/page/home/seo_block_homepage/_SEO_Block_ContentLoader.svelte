@@ -5,7 +5,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 	// ...
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import Placehoder_Row_Desktop from './loaders/desktop/_Placeholder_Row.svelte';
 	import Placehoder_Row_Mobile from './loaders/mobile/_Placeholder_Row.svelte';
 	import Placehoder_Row_Tablet from './loaders/tablet/_Placeholder_Row.svelte';
@@ -55,7 +55,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
@@ -100,7 +100,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#seo-block-widget-container {
@@ -109,7 +109,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#seo-block-widget-container {

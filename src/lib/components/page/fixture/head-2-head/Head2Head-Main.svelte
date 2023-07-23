@@ -8,8 +8,8 @@
 
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
 	import { googleActionsStr } from '$lib/utils/google.js';
@@ -60,19 +60,19 @@
   {
 		let count = 0;
 
-		for (const m_sportBook of $sessionStore?.sportbook_list || []) 
+		for (const m_sportBook of $sessionStore?.sportbook_list || [])
     {
 			const m_sportBookTitle =	m_sportBook?.title;
-			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || []) 
+			for (const firebaseSportbook of $sessionStore?.live_odds_fixture_target || [])
       {
 				const firebase_sportbook_title = firebaseSportbook?.sportbook;
         const if_M_0 =
-          m_sportBookTitle?.toLowerCase() ==	firebase_sportbook_title?.toLowerCase() 
-          && firebaseSportbook?.markets != null 
-          && firebaseSportbook?.markets?.['1X2FT'] !=	null 
-          && firebaseSportbook?.markets?.['1X2FT']?.data?.[0]?.value != null 
-          && firebaseSportbook?.markets?.['1X2FT']?.data?.[1]?.value != null 
-          && firebaseSportbook?.markets?.['1X2FT']?.data?.[2]?.value != null 
+          m_sportBookTitle?.toLowerCase() ==	firebase_sportbook_title?.toLowerCase()
+          && firebaseSportbook?.markets != null
+          && firebaseSportbook?.markets?.['1X2FT'] !=	null
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[0]?.value != null
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[1]?.value != null
+          && firebaseSportbook?.markets?.['1X2FT']?.data?.[2]?.value != null
           && count != 1
         ;
         if (if_M_0)
@@ -82,7 +82,7 @@
 					const imageURL: string = SPORTBOOK_INFO?.image;
 					getImageBgColor
           (
-            imageURL, 
+            imageURL,
             imageVar
           );
 
@@ -92,12 +92,12 @@
 		}
 
     // no sportbook found;
-		if (count == 0) 
+		if (count == 0)
     {
       SPORTBOOK_INFO = $sessionStore?.sportbook_main;
 			getImageBgColor
       (
-        SPORTBOOK_INFO?.image, 
+        SPORTBOOK_INFO?.image,
         imageVar
       );
 		}
@@ -132,7 +132,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -145,7 +145,7 @@
   ): void
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -164,9 +164,9 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * ➨ listens to target "fixture" in "odds" data;
   */
   $: if ($sessionStore?.live_odds_fixture_target)
@@ -187,7 +187,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -199,11 +199,11 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
+<!--
 OUTER CLOSE AREA
 -->
 {#if toggleCTA}
@@ -218,18 +218,18 @@ OUTER CLOSE AREA
 	class:display-none={noWidgetData}
 >
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={FIXTURE_H2H_TRANSLATION?.widget_title}
       NO_DATA_TITLE={FIXTURE_H2H_TRANSLATION?.no_info}
       NO_DATA_DESC={FIXTURE_H2H_TRANSLATION?.no_info_desc}
     />
 	{/if}
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData}
@@ -238,7 +238,7 @@ OUTER CLOSE AREA
       WIDGET_TITLE={FIXTURE_H2H_TRANSLATION?.widget_title}
     />
 
-    <!-- 
+    <!--
     📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
 
@@ -246,7 +246,7 @@ OUTER CLOSE AREA
       id="h2h-widget-container"
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
-      <!-- 
+      <!--
       [ℹ] last 5 data 'text'
       -->
       <p
@@ -259,7 +259,7 @@ OUTER CLOSE AREA
         {FIXTURE_H2H_TRANSLATION?.last_5}
       </p>
 
-      <!-- 
+      <!--
       [ℹ] main widget info start row
       -->
       <div
@@ -268,7 +268,7 @@ OUTER CLOSE AREA
           row-space-out
         "
       >
-        <!-- 
+        <!--
         TEAM [1] FIXTURE LOCAL
         -->
         <div
@@ -298,7 +298,7 @@ OUTER CLOSE AREA
 
         </div>
 
-        <!-- 
+        <!--
         WIN-DRAW-WIN BOX
         -->
         <div
@@ -308,10 +308,10 @@ OUTER CLOSE AREA
           "
         >
 
-          <!-- 
+          <!--
           TEAM [1] LOCAL WINS
           -->
-          <div 
+          <div
             class="
               stat-win-box
             "
@@ -324,7 +324,7 @@ OUTER CLOSE AREA
                 main-txt
               "
             >
-              {#if (teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_id 
+              {#if (teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_id
                   > teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_id)}
                 {FIXTURE_H2H?.data?.wins_draws?.team_2}
               {:else}
@@ -342,10 +342,10 @@ OUTER CLOSE AREA
 
           </div>
 
-          <!-- 
+          <!--
           TOTAL DRAW(s)
           -->
-          <div 
+          <div
             class="
               stat-win-box
             "
@@ -359,7 +359,7 @@ OUTER CLOSE AREA
             >
               {FIXTURE_H2H?.data?.wins_draws?.draws}
             </p>
-            <p 
+            <p
               class="
                 color-grey
               "
@@ -368,15 +368,15 @@ OUTER CLOSE AREA
             </p>
           </div>
 
-          <!-- 
+          <!--
           TEAM [2] VISITOR WINS
           -->
-          <div 
+          <div
             class="
               stat-win-box
             "
           >
-          
+
             <p
               class="
                 w-500
@@ -384,7 +384,7 @@ OUTER CLOSE AREA
                 main-txt
               "
             >
-              {#if (teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_id 
+              {#if (teamsMap?.get(FIXTURE_INFO?.data?.home_team_id)?.team_id
                   < teamsMap?.get(FIXTURE_INFO?.data?.away_team_id)?.team_id)}
                 {FIXTURE_H2H?.data?.wins_draws?.team_2}
               {:else}
@@ -403,7 +403,7 @@ OUTER CLOSE AREA
 
         </div>
 
-        <!-- 
+        <!--
         TEAM [2] FIXTURE VISITOR
         -->
         <div
@@ -435,7 +435,7 @@ OUTER CLOSE AREA
 
       </div>
 
-      <!-- 
+      <!--
       WIN-DRAW-WIN PROGRESS BAR
       -->
       <div
@@ -445,11 +445,11 @@ OUTER CLOSE AREA
         "
       >
 
-        <!-- 
+        <!--
         [ℹ] TEAM 1 PROGRESS BAR
         [ℹ] (+mobile) team-name
         -->
-        <div 
+        <div
           class="
             progress-box-out
           "
@@ -467,7 +467,7 @@ OUTER CLOSE AREA
             </p>
           {/if}
 
-          <div 
+          <div
             class="
               team-progress-bar
             "
@@ -479,12 +479,12 @@ OUTER CLOSE AREA
           </div>
 
         </div>
-        
-        <!-- 
+
+        <!--
         [ℹ] TEAM 2 PROGRESS BAR
         [ℹ] (+mobile) team-name
         -->
-        <div 
+        <div
           class="
             progress-box-out
           "
@@ -502,7 +502,7 @@ OUTER CLOSE AREA
             </p>
           {/if}
 
-          <div 
+          <div
             class="
               team-progress-bar
             "
@@ -519,14 +519,14 @@ OUTER CLOSE AREA
 
       </div>
 
-      <!-- 
+      <!--
       INFO STATS GRID
       -->
       <div
         id="grid-bet-stats"
       >
 
-        <!-- 
+        <!--
         OVERS DATA GRID
         -->
         {#each Object.entries(FIXTURE_H2H?.data?.overs) as [key, value]}
@@ -541,7 +541,7 @@ OUTER CLOSE AREA
           />
         {/each}
 
-        <!-- 
+        <!--
         YELLOW CARDS
         -->
         <Head2HeadStatsBox
@@ -554,7 +554,7 @@ OUTER CLOSE AREA
           {imageVar}
         />
 
-        <!-- 
+        <!--
         CORNERS
         -->
         <Head2HeadStatsBox
@@ -567,7 +567,7 @@ OUTER CLOSE AREA
           {imageVar}
         />
 
-        <!-- 
+        <!--
         BTTS
         -->
         <Head2HeadStatsBox
@@ -581,7 +581,7 @@ OUTER CLOSE AREA
         />
       </div>
 
-      <!-- 
+      <!--
       LAST 5 FIXTURES
       -->
       <div
@@ -600,7 +600,7 @@ OUTER CLOSE AREA
               class:column-space-center={mobileExclusive}
             >
 
-              <!-- 
+              <!--
               LEAGUE-ROUND INFO
               -->
               <p
@@ -621,13 +621,13 @@ OUTER CLOSE AREA
                 ROUND INFO
                 -->
                 {#if item?.round?.data?.name != undefined}
-                  - 
+                  -
                   {FIXTURE_H2H_TRANSLATION?.round}
                   {item?.round?.data?.name}
                 {/if}
               </p>
 
-              <!-- 
+              <!--
               FIXTURE INFO
               -->
               <div
@@ -637,7 +637,7 @@ OUTER CLOSE AREA
                 "
               >
 
-                <!-- 
+                <!--
                 FIXTURE TEAM 1
                 -->
                 <p
@@ -662,7 +662,7 @@ OUTER CLOSE AREA
                   width="24"
                 />
 
-                <!-- 
+                <!--
                 FIXTURE TEAMS SCORE
                 -->
                 <p
@@ -677,7 +677,7 @@ OUTER CLOSE AREA
                   {item?.scores?.visitorteam_score}
                 </p>
 
-                <!-- 
+                <!--
                 FIXTURE TEAM 2
                 -->
                 <img
@@ -704,7 +704,7 @@ OUTER CLOSE AREA
 
               </div>
 
-              <!-- 
+              <!--
               FIXTURE DATETIME
               -->
               <p
@@ -726,7 +726,7 @@ OUTER CLOSE AREA
     </div>
 
 	{/if}
-  
+
 </div>
 
 <!-- ===============
@@ -736,7 +736,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	#background-area-close 
+	#background-area-close
   {
 		position: absolute;
 		top: 0;
@@ -748,10 +748,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		z-index: 998;
 	}
 
-	/* 
-  widget-main 
+	/*
+  widget-main
   */
-	div#h2h-widget-container 
+	div#h2h-widget-container
   {
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -762,70 +762,70 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding: 20px;
 	}
 
-	/* 
+	/*
   first row info
    */
-	div#main-widget-info-row 
+	div#main-widget-info-row
   {
 		margin-top: 16px;
 	}
-	div#main-widget-info-row img.team-logo 
+	div#main-widget-info-row img.team-logo
   {
 		width: 44px;
 		height: 44px;
 	}
-	div#main-widget-info-row div.team-box:first-child img.team-logo 
+	div#main-widget-info-row div.team-box:first-child img.team-logo
   {
 		margin-right: 16px;
 	}
-	div#main-widget-info-row div.team-box:last-child img.team-logo 
+	div#main-widget-info-row div.team-box:last-child img.team-logo
   {
 		margin-left: 16px;
 	}
-	div#main-widget-info-row div.stat-box-out 
+	div#main-widget-info-row div.stat-box-out
   {
 		/* empty */
 	}
-	div#main-widget-info-row div.stat-box-out	div.stat-win-box 
+	div#main-widget-info-row div.stat-box-out	div.stat-win-box
   {
 		text-align: center;
 	}
-	div#main-widget-info-row div.stat-box-out	div.stat-win-box:nth-of-type(2) 
+	div#main-widget-info-row div.stat-box-out	div.stat-win-box:nth-of-type(2)
   {
 		margin: 0 6px;
 	}
-	div#main-widget-info-row div.stat-box-out div.stat-win-box p.main-txt 
+	div#main-widget-info-row div.stat-box-out div.stat-win-box p.main-txt
   {
 		font-size: 24px;
 	}
 
-	/* 
-  competition box 
+	/*
+  competition box
   */
-	div#competition-progress-box 
+	div#competition-progress-box
   {
 		margin: 16px -20px 0 -20px;
 		width: -webkit-fill-available;
 		padding: 0 20px 20px 20px;
 		border-bottom: 1px solid #e6e6e6;
 	}
-	div#competition-progress-box div.progress-box-out 
+	div#competition-progress-box div.progress-box-out
   {
 		width: 100%;
 	}
-	div#competition-progress-box div.progress-box-out:first-child 
+	div#competition-progress-box div.progress-box-out:first-child
   {
 		margin-right: 15px;
 	}
-	div#competition-progress-box div.progress-box-out	p 
+	div#competition-progress-box div.progress-box-out	p
   {
 		margin-bottom: 8px;
 	}
-	div#competition-progress-box div.progress-box-out:last-child p 
+	div#competition-progress-box div.progress-box-out:last-child p
   {
 		text-align: end;
 	}
-	div#competition-progress-box div.progress-box-out:first-child div.team-progress-bar 
+	div#competition-progress-box div.progress-box-out:first-child div.team-progress-bar
   {
 		margin-right: 12px;
 		text-align: -webkit-right;
@@ -837,7 +837,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-radius: 10px;
 		width: 100%;
 	}
-	div#competition-progress-box div.progress-box-out div.team-progress-bar > div 
+	div#competition-progress-box div.progress-box-out div.team-progress-bar > div
   {
 		background-color: #ffb904;
 		height: 12px;
@@ -848,18 +848,18 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #f5620f !important;
 	}
 
-	/* 
-  fixture bet info 
+	/*
+  fixture bet info
   */
-	div#grid-bet-stats 
+	div#grid-bet-stats
   {
 		display: grid;
 	}
 
-	/* 
+	/*
   past-fixture-data
   */
-	div#list-past-fixtures-box div.past-fixture-row 
+	div#list-past-fixtures-box div.past-fixture-row
   {
 		border-bottom: 1px solid #e6e6e6;
 		position: relative;
@@ -867,45 +867,45 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		margin: 0 -20px;
 		padding: 16px 20px 16px 20px;
 	}
-	div#list-past-fixtures-box a:last-child	div.past-fixture-row 
+	div#list-past-fixtures-box a:last-child	div.past-fixture-row
   {
 		border: none !important;
 		padding-bottom: 0;
 	}
-	div#list-past-fixtures-box div.past-fixture-row	div.score-info-box 
+	div#list-past-fixtures-box div.past-fixture-row	div.score-info-box
   {
 		margin: 8px 0;
 	}
-	div#list-past-fixtures-box div.past-fixture-row	div.score-info-box p.score-txt 
+	div#list-past-fixtures-box div.past-fixture-row	div.score-info-box p.score-txt
   {
 		margin: 0 24px;
 		font-size: 16px;
 	}
-	div#list-past-fixtures-box div.past-fixture-row	p.team-text 
+	div#list-past-fixtures-box div.past-fixture-row	p.team-text
   {
 		font-size: 16px;
 	}
-	div#list-past-fixtures-box div.past-fixture-row	p.team-text:first-child 
+	div#list-past-fixtures-box div.past-fixture-row	p.team-text:first-child
   {
 		margin-right: 12px;
 	}
-	div#list-past-fixtures-box div.past-fixture-row	p.team-text:last-child 
+	div#list-past-fixtures-box div.past-fixture-row	p.team-text:last-child
   {
 		margin-left: 12px;
 	}
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 726px) 
-  and (max-width: 1160px) 
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1160px)
   {
-		
-    #h2h-widget-container 
+
+    #h2h-widget-container
     {
 			min-width: 100%;
 			/* max-width: 700px; */
@@ -913,38 +913,38 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	}
 
-	@media only screen 
-  and (min-width: 726px) 
+	@media only screen
+  and (min-width: 726px)
   {
 
-		/* 
-    first row info 
+		/*
+    first row info
     */
-		div#main-widget-info-row img.team-logo 
+		div#main-widget-info-row img.team-logo
     {
 			width: 64px;
 			height: 64px;
 		}
-		div#main-widget-info-row div.stat-box-out	div.stat-win-box:nth-of-type(2) 
+		div#main-widget-info-row div.stat-box-out	div.stat-win-box:nth-of-type(2)
     {
 			margin: 0 44px;
 		}
-		div#main-widget-info-row div.stat-box-out div.stat-win-box p.main-txt 
+		div#main-widget-info-row div.stat-box-out div.stat-win-box p.main-txt
     {
 			font-size: 32px;
 		}
 
-		/* 
-    fixture bet info 
+		/*
+    fixture bet info
     */
-		div#grid-bet-stats 
+		div#grid-bet-stats
     {
 			grid-auto-flow: row;
 			grid-gap: 15px;
 			margin-top: 20px;
 			grid-template-columns: 1fr 1fr;
 		}
-		div#grid-bet-stats :global(div.bet-info-box) 
+		div#grid-bet-stats :global(div.bet-info-box)
     {
 			border: 1px solid #e6e6e6;
 			border-radius: 8px;
@@ -952,15 +952,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			margin: unset;
 		}
 
-		/* 
-    past-fixture-data 
+		/*
+    past-fixture-data
     */
 		div#list-past-fixtures-box div.past-fixture-row
     {
 			padding: 24px 0;
 			margin: 0;
 		}
-		div#list-past-fixtures-box div.past-fixture-row div.score-info-box 
+		div#list-past-fixtures-box div.past-fixture-row div.score-info-box
     {
 			position: absolute;
 			left: 50%;
@@ -968,41 +968,41 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			width: fit-content;
 			margin: unset;
 		}
-		div#list-past-fixtures-box div.past-fixture-row	p.team-text 
+		div#list-past-fixtures-box div.past-fixture-row	p.team-text
     {
 			position: absolute;
 			font-size: 16px;
 		}
-		div#list-past-fixtures-box div.past-fixture-row p.team-text:first-child 
+		div#list-past-fixtures-box div.past-fixture-row p.team-text:first-child
     {
 			right: 100%;
 			margin-right: 12px;
 		}
-		div#list-past-fixtures-box div.past-fixture-row	p.team-text:last-child 
+		div#list-past-fixtures-box div.past-fixture-row	p.team-text:last-child
     {
 			left: 100%;
 			margin-left: 12px;
 		}
 
-		div#h2h-widget-container.dark-background-1 div#grid-bet-stats	:global(div.bet-info-box) 
+		div#h2h-widget-container.dark-background-1 div#grid-bet-stats	:global(div.bet-info-box)
     {
 			border: 1px solid #616161 !important;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 726px) 
-  and (max-width: 865px) 
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 865px)
   {
 
-		/* 
-    past-fixture-data 
+		/*
+    past-fixture-data
     */
-		div#list-past-fixtures-box div.past-fixture-row 
+		div#list-past-fixtures-box div.past-fixture-row
     {
 			padding: 15px 0;
 		}
-		div#list-past-fixtures-box div.past-fixture-row p.league-text 
+		div#list-past-fixtures-box div.past-fixture-row p.league-text
     {
 			max-width: 100px;
 			white-space: pre-wrap !important;
@@ -1010,19 +1010,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 	}
 
-	@media only screen 
+	@media only screen
   and (min-width: 1160px)
   {
 
-		#h2h-widget-container 
+		#h2h-widget-container
     {
 			min-width: 100%;
 		}
 
-		/* 
-    past-fixture-data 
+		/*
+    past-fixture-data
     */
-		div#list-past-fixtures-box div.past-fixture-row div.score-info-box:hover p 
+		div#list-past-fixtures-box div.past-fixture-row div.score-info-box:hover p
     {
 			color: #f5620f !important;
 		}
@@ -1034,21 +1034,21 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-	div#h2h-widget-container.dark-background-1 div#grid-bet-stats	:global(div.bet-info-box) 
+	div#h2h-widget-container.dark-background-1 div#grid-bet-stats	:global(div.bet-info-box)
   {
 		border-bottom: 1px solid #616161 !important;
 	}
-	div#h2h-widget-container.dark-background-1 div#list-past-fixtures-box	div.past-fixture-row 
+	div#h2h-widget-container.dark-background-1 div#list-past-fixtures-box	div.past-fixture-row
   {
 		border-bottom: 1px solid #616161;
 	}
-	div#h2h-widget-container.dark-background-1 div#competition-progress-box 
+	div#h2h-widget-container.dark-background-1 div#competition-progress-box
   {
 		border-bottom: 1px solid #616161;
 	}
-	div#h2h-widget-container.dark-background-1 div#competition-progress-box div.progress-box-out div.team-progress-bar 
+	div#h2h-widget-container.dark-background-1 div#competition-progress-box div.progress-box-out div.team-progress-bar
   {
 		background-color: #616161;
 	}
-  
+
 </style>

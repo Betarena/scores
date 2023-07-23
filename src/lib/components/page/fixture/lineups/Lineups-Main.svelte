@@ -9,8 +9,8 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { LIN_F_dataInject } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 

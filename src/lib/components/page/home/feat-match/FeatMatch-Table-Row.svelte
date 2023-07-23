@@ -6,7 +6,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
 
-	import { sessionStore } from "$lib/store/session.js";
+	import sessionStore from "$lib/store/session.js";
 
 	import type { Urls } from "@betarena/scores-lib/types/hasura.js";
 

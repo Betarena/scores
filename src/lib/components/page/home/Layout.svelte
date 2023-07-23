@@ -11,19 +11,19 @@
 
 	import { get } from '$lib/api/utils';
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
+  import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
+  import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
+  import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
+  import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
+  import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
+  import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
+  import SvelteSeo from 'svelte-seo';
   import TopGoalScorersWidget from './top-goalscorers/TopGoalScorers-Widget.svelte';
-	import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
-	import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
-	import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
-	import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
-	import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
-	import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
-	import SvelteSeo from 'svelte-seo';
 
   import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
   import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';

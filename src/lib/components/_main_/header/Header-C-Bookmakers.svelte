@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 	import { page } from "$app/stores";
 	import { fly } from "svelte/transition";
 
-	import { userBetarenaSettings } from "$lib/store/user-settings.js";
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { translationObject } from "$lib/utils/translation.js";
 
   import icon_arrow_down_fade from './assets/arrow-down-fade.svg';

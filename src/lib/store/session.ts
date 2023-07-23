@@ -1,10 +1,15 @@
-import type { Platform_Session } from '$lib/types/types.scores.js';
-import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+// #region ➤ 📦 Package Imports
 
 import { clientTimezoneDate, targetDate } from '$lib/utils/dates.js';
 import { writable } from 'svelte/store';
 
+import type { Platform_Session } from '$lib/types/types.scores.js';
+import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
+
+// #endregion ➤ 📦 Package Imports
+
+// #region ➤ 📌 VARIABLES
 
 const sessionStoreObj: Platform_Session =
 {
@@ -47,11 +52,21 @@ const sessionStoreObj: Platform_Session =
   livescore_now_fixtures: []
 };
 
+// #endregion ➤ 📌 VARIABLES
+
+// #region ➤ 🛠️ METHODS
+
+/**
+ * @description
+ * TODO: DOC:
+ */
 function createLocalStore
 (
 )
 {
 
+  // ◼️ NOTE:
+  // ◼️ Default 'svelte/store' exports.
 	const
   {
     subscribe,
@@ -62,10 +77,10 @@ function createLocalStore
 		sessionStoreObj
 	);
 
-	return {
-		subscribe,
-		set,
-		update,
+  // ◼️ NOTE:
+  // ◼️ Complementary 'store' added methods.
+  const methods =
+  {
 
     /**
      * @summary
@@ -341,7 +356,14 @@ function createLocalStore
       // );
     }
 
+	return {
+		subscribe,
+		set,
+		update,
+    ...methods
 	};
 }
 
-export const sessionStore = createLocalStore();
+// #endregion ➤ 🛠️ METHODS
+
+export default createLocalStore();

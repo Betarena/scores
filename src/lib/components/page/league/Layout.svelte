@@ -14,8 +14,8 @@
 
 	import { get } from '$lib/api/utils.js';
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common.js';
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { removeDiacritics } from '$lib/utils/languages';
 	import { viewport_change } from '$lib/utils/platform-functions';

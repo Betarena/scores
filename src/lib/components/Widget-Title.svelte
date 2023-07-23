@@ -6,7 +6,7 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
   //#endregion ➤ [MAIN] Package Imports
 

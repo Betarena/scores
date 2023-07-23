@@ -9,10 +9,10 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-	
+
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import StatisticsRow from './Statistics-Row.svelte';
@@ -29,11 +29,11 @@
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
-  
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
-  const stats_menu: 
+  const stats_menu:
   {
 		key:
 			| 'shots_title'
@@ -42,7 +42,7 @@
 			| 'other';
 		loc_arr: string[];
 		loc_trans: string[];
-	}[] = 
+	}[] =
   [
 		{
 			key: 'shots_title',
@@ -142,7 +142,7 @@
   */
 	async function injectLiveData
   (
-	) 
+	)
   {
 		const fixture_id = FIXTURE_STATISTICS?.id;
 
@@ -167,7 +167,7 @@
   )
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -192,7 +192,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -209,9 +209,9 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * listens to target "fixture" in "livescores_now" data;
   */
   $: if ($sessionStore?.livescore_now_fixture_target)
@@ -222,7 +222,7 @@
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "noWidgetData" change;
   */
   $: if_R_0 =
@@ -234,11 +234,11 @@
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "title" data change;
   */
   $: if_R_1 =
-    browser 
+    browser
     && FIXTURE_STATISTICS
   ;
   $: if (if_R_1)
@@ -246,22 +246,22 @@
 		null_groups = [];
 
 		// check for "stats.shots" EMPTY
-    const if_M_0 = 
-      FIXTURE_STATISTICS?.stats?.[0]?.shots == null 
+    const if_M_0 =
+      FIXTURE_STATISTICS?.stats?.[0]?.shots == null
 			&& FIXTURE_STATISTICS?.stats?.[1]?.shots == null
     ;
 		if (if_M_0) null_groups.push('shots_title');
 
 		// check for "stats.passes" EMPTY
-    const if_M_1 = 
-      FIXTURE_STATISTICS?.stats?.[0]?.passes == null 
+    const if_M_1 =
+      FIXTURE_STATISTICS?.stats?.[0]?.passes == null
 			&& FIXTURE_STATISTICS?.stats?.[1]?.passes == null
     ;
 		if (if_M_1) null_groups.push('passes_title');
 
 		// check for "stats.attacks" EMPTY
-    const if_M_2 = 
-      FIXTURE_STATISTICS?.stats?.[0]?.attacks == null 
+    const if_M_2 =
+      FIXTURE_STATISTICS?.stats?.[0]?.attacks == null
 			&& FIXTURE_STATISTICS?.stats?.[1]?.attacks == null
     ;
 		if (if_M_2) null_groups.push('attacks_title');
@@ -280,7 +280,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -292,7 +292,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -301,18 +301,18 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	class:display-none={noWidgetData}
 >
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={FIXTURE_STATISTICS_TRANSLATION?.title}
       NO_DATA_TITLE={FIXTURE_STATISTICS_TRANSLATION?.no_info}
       NO_DATA_DESC={FIXTURE_STATISTICS_TRANSLATION?.no_info_desc}
     />
 	{/if}
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData}
@@ -327,14 +327,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
     >
 
-      <!-- 
+      <!--
       TEAMS INFO
       -->
       <div
         id="fp-stat-team-box"
         class="row-space-out"
       >
-        <!-- 
+        <!--
         HOME TEAM
         -->
         <img
@@ -344,7 +344,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           height="24"
         />
 
-        <!-- 
+        <!--
         AWAY TEAM
         -->
         <img
@@ -355,7 +355,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         />
       </div>
 
-      <!-- 
+      <!--
       STATISTICS TABLE
       -->
       <div
@@ -363,15 +363,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       >
         {#if FIXTURE_STATISTICS?.stats && FIXTURE_STATISTICS?.stats?.length == 2}
 
-          <!-- 
-          [ℹ] shots-section 
+          <!--
+          [ℹ] shots-section
           [ℹ] passes-section
-          [ℹ] attacks-section 
-          [ℹ] other-stats-section 
+          [ℹ] attacks-section
+          [ℹ] other-stats-section
           -->
           {#each stats_menu as item}
 
-            <!-- 
+            <!--
             GROUP STATISTIC NAME
             -->
             {#if !null_groups.includes(item.key)}
@@ -386,7 +386,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
             {/if}
 
-            <!-- 
+            <!--
             GROUP STATISTIC DATA
             -->
             {#each item.loc_arr as sub_nav, i}
@@ -433,7 +433,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     </div>
 
 	{/if}
-  
+
 </div>
 
 <!-- ===============
@@ -454,38 +454,38 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding: 0 0 20px 0;
 	}
 
-	/* 
-  team info box 
+	/*
+  team info box
   */
-	div#fp-stat-main div#fp-stat-team-box 
+	div#fp-stat-main div#fp-stat-team-box
   {
 		padding: 20px 20px 0 20px;
 		position: absolute;
 	}
 
-	/* 
-  statistics table box 
+	/*
+  statistics table box
   */
-	div#fp-stat-main div#fp-stat-box-info p.text-group-stats 
+	div#fp-stat-main div#fp-stat-box-info p.text-group-stats
   {
 		text-align: center;
 		font-size: 16px;
 		padding: 20px 0 0 0;
 	}
-	:global(div#fp-stat-main div#fp-stat-box-info div.stats-row:last-child) 
+	:global(div#fp-stat-main div#fp-stat-box-info div.stats-row:last-child)
   {
 		border-bottom: 0 !important;
 	}
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 726px) 
-  and (max-width: 1000px) 
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1000px)
   {
 		#fp-stat-main
     {
@@ -493,14 +493,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
-  and (min-width: 726px) 
+	@media only screen
+  and (min-width: 726px)
   {
 		/* EMPTY */
 	}
 
-	@media only screen 
-  and (min-width: 1000px) 
+	@media only screen
+  and (min-width: 1000px)
   {
 		#fp-stat-main
     {
@@ -508,8 +508,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1160px) 
+	@media only screen
+  and (min-width: 1160px)
   {
 		/* EMPTY */
 	}
@@ -520,12 +520,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-	/* 
-  events table box 
+	/*
+  events table box
   */
-	:global(div#fp-stat-main.dark-background-1 div#fp-stat-box-info div.stats-row) 
+	:global(div#fp-stat-main.dark-background-1 div#fp-stat-box-info div.stats-row)
   {
 		border-bottom: 1px solid #616161;
 	}
-  
+
 </style>

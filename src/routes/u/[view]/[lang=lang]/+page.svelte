@@ -10,7 +10,7 @@ COMPONENT JS (w/ TS)
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import AccountSettingsBoard from '$lib/components/page/profile/Widget-AccountSettings.svelte';
 	import DashboardWidget from '$lib/components/page/profile/Widget-Dashboard.svelte';

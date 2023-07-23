@@ -19,7 +19,7 @@ COMPONENT JS (w/ TS)
   // #region ➤ [MAIN] Package Imports
   // <-imports-go-here->
 
-	import { userBetarenaSettings } from '$lib/store/user-settings.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
 

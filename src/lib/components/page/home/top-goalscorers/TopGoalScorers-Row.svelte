@@ -9,8 +9,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import type { B_TGOL_T, TGOL_Goalscorer } from '@betarena/scores-lib/types/top-goalscorers.js';
 

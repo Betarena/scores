@@ -10,7 +10,7 @@ COMPONENT JS (w/ TS)
 	import { createEventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, dlogv2, dlogv2open, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
 
   import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';

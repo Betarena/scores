@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { sleep } from '$lib/utils/platform-functions.js';
 
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';

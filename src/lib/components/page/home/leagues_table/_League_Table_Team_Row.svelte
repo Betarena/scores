@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 // ... external modules imports;
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import type { Single_Team_Object_Data } from '$lib/models/leagues_table/types';
 
@@ -44,7 +44,7 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
 <div
@@ -60,7 +60,7 @@
 			<!-- ... ℹ first container
         -->
 			<div class="row-space-start">
-				<!-- ... ℹ team number position 
+				<!-- ... ℹ team number position
             ONLY ON DESKTOP VERSION
           -->
 				<div class="team-pos">
@@ -92,7 +92,7 @@
 				</div>
 			</div>
 
-			<!-- ... ℹ second container 
+			<!-- ... ℹ second container
         -->
 			<!-- ... ℹ games & points
         -->
@@ -172,7 +172,7 @@
 		width: 64px;
 	}
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		.league-table-team-row:first-child {
@@ -180,8 +180,8 @@
 		}
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	div.dark-background-1.league-table-team-row {

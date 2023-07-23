@@ -8,7 +8,7 @@
 	import { AB_W_T_STY, AB_W_T_TAG, AB_W_T_TOG, dlog } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import type { Cache_Single_Tournaments_League_Info_Data_Response } from '$lib/models/tournaments/league-info/types';
 
@@ -132,11 +132,11 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 =================-->
 
 <div id="widget-outer">
-	<!-- [ℹ] SEO-DATA-LOADED 
+	<!-- [ℹ] SEO-DATA-LOADED
   -->
 	<!-- {#if !loaded} -->
 	<div id="seo-widget-box">
@@ -152,7 +152,7 @@
 	<!-- [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
 	{#if noWidgetData && loaded}
-		<!-- [ℹ] title of the widget 
+		<!-- [ℹ] title of the widget
     -->
 		<h2
 			class="s-20 m-b-10 w-500 color-black-2"
@@ -164,7 +164,7 @@
 				?.league_info}
 		</h2>
 
-		<!-- [ℹ] no-widget-data-avaiable-placeholder container 
+		<!-- [ℹ] no-widget-data-avaiable-placeholder container
     -->
 		<div
 			id="no-widget-box"
@@ -192,7 +192,7 @@
 				/>
 			{/if}
 
-			<!-- [ℹ] container w/ text 
+			<!-- [ℹ] container w/ text
       -->
 			<div>
 				<p
@@ -214,7 +214,7 @@
 	<!-- [ℹ] MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData && !refresh && browser && $userBetarenaSettings.country_bookmaker && !diasbleDev}
-		<!-- [ℹ] promise is pending 
+		<!-- [ℹ] promise is pending
     -->
 		{#await widgetInit()}
 			<AboutBlockContentLoader />
@@ -224,7 +224,7 @@
 			<!-- [ℹ] widget-component [DESKTOP] [TABLET] [MOBILE]
       -->
 
-			<!-- [ℹ] promise was fulfilled 
+			<!-- [ℹ] promise was fulfilled
       -->
 			<h2
 				class="s-20 m-b-10 w-500 color-black-2"
@@ -243,7 +243,7 @@
 				class:dark-background-1={$userBetarenaSettings.theme ==
 					'Dark'}
 			>
-				<!-- 
+				<!--
         [ℹ] render SEO-DATA -->
 				{@html LEAGUE_INFO_SEO_DATA.data
 					.seo_content}
@@ -285,7 +285,7 @@
 	}
 
 	/*
-    [ℹ] WIDGET MAIN STYLE / CSS 
+    [ℹ] WIDGET MAIN STYLE / CSS
     [ℹ] MOBILE FIRST
   */
 
@@ -416,7 +416,7 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		#about-tour-widget-container {
@@ -425,13 +425,13 @@
 		}
 	}
 
-	/* 
+	/*
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) {
 		/* EMPTY */
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1160px) {
 		#about-tour-widget-container {

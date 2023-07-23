@@ -11,8 +11,8 @@
 
 	import { get } from '$lib/api/utils';
 	import { createFixtureOddsPath, oneOffOddsDataGet, targetLivescoreNowFixtureOddsListenMulti } from '$lib/firebase/common.js';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { MONTH_NAMES_ABBRV, toISOMod, weekDays } from '$lib/utils/dates.js';
 	import { FIX_W_T_STY, FIX_W_T_TAG, FIX_W_T_TOG, dlog, dlogv2 } from '$lib/utils/debug';
 	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions';

@@ -8,7 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { page } from "$app/stores";
 
-	import { userBetarenaSettings } from "$lib/store/user-settings.js";
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { ROUTE_ID_PROFILE } from "$lib/utils/user.js";
 
 	import icon_dark_mode from './assets/moon-fill.svg';

@@ -3,14 +3,14 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
-	
+
   //#region ➤ [MAIN] Package Imports
   // IMPORTS GO HERE
-  
+
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
-  import { sessionStore } from '$lib/store/session';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { WEEK_DAYS_ABBRV_2, monthNames, toISOMod } from '$lib/utils/dates';
   import { LV2_W_H_TAG, dlog, dlogv2 } from '$lib/utils/debug';
   import { viewport_change } from '$lib/utils/platform-functions';
@@ -89,12 +89,12 @@ COMPONENT JS (w/ TS)
       if (count >= numberOfMonthWeeks) {
         break;
       }
-      const startWeekCalc = 
+      const startWeekCalc =
         s_date.getDay() == 0
         && e_date.getDay() == 0
           ? (s_date.getDate() - 6)
           : (s_date.getDate() - s_date.getDay() + 1)
-      const endWeekCalc = 
+      const endWeekCalc =
         s_date.getDay() == 0
         && e_date.getDay() == 0
           ? (s_date.getDate() - 0)
@@ -158,7 +158,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [METHODS]
 
   //#region ➤ [ONE-OFF] [METHODS] [IF]
-  
+
   /**
    * @description calculates number of days in a target
    * month, using the 0-11 month index & target year;
@@ -166,12 +166,12 @@ COMPONENT JS (w/ TS)
    * @param {number} year
    */
   function daysInMonth (
-    month: number, 
+    month: number,
     year: number
   ): number {
     return new Date(year, month, 0).getDate();
   }
-  
+
   /**
    * @description updates month of temp-calendar
    * date for browsing for the user;
@@ -191,7 +191,7 @@ COMPONENT JS (w/ TS)
 
   /**
    * @description selected date function;
-   * Triggers recalculation of month and updates 
+   * Triggers recalculation of month and updates
    * session-store to signal new selected date;
    * @param {Date} newDate
    * @returns {void} void
@@ -222,7 +222,7 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -242,8 +242,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     class="
       row-space-out
     ">
-    <img 
-      src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_left_dark : vec_arrow_left}" 
+    <img
+      src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_left_dark : vec_arrow_left}"
       alt="default alt text"
       on:click={() => monthChange(-1)}
       class="cursor-pointer"
@@ -257,20 +257,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {WIDGET_T_DATA?.months?.months[monthNames[tempDate.getMonth()]]}
       {tempDate.getFullYear()}
     </p>
-    <img 
-      src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_right_dark : vec_arrow_right}" 
+    <img
+      src="{$userBetarenaSettings.theme == 'Dark' ? vec_arrow_right_dark : vec_arrow_right}"
       alt="default alt text"
       on:click={() => monthChange(1)}
       class="cursor-pointer"
     />
   </div>
-  <!-- 
+  <!--
   [ℹ] calendar view of (select) month
   -->
   <div
     id="calendar-inner">
     <table>
-      <!-- 
+      <!--
       [ℹ] week days abbrev
       -->
       <tr>
@@ -286,7 +286,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </th>
         {/each}
       </tr>
-      <!-- 
+      <!--
       [ℹ] weeks rows
       -->
       {#if numberOfMonthWeeks != undefined || numberOfMonthWeeks != 0 || monthWeeksArray.length != 0}
@@ -352,14 +352,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   div#calendar-inner table {
     padding: 16px 0;
-  } 
-  div#calendar-inner table tr th, 
+  }
+  div#calendar-inner table tr th,
   div#calendar-inner table tr td {
     padding: 7px 11px;
     max-width: 48px;
     height: 32px;
     text-align: center;
-  } 
+  }
 
   div#calendar-inner table tr td:hover {
     background-color: var(--whitev2);
@@ -380,11 +380,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
+  @media only screen
     and (min-width: 475px) {
     div#calendar-popup {
       position: absolute;
@@ -408,7 +408,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     }
     div#calendar-inner table {
       padding: 16px;
-    } 
+    }
   }
 
   /*

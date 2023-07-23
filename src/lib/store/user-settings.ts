@@ -11,22 +11,27 @@ import type { Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.
 
 const user_settings: User_Setting =
 {
-	lang:               undefined,
-	theme:              undefined,
-	country_bookmaker:  undefined,
-	geoJs:              undefined,
-	user:               undefined,
-  voted_fixtures:     []
+	lang: undefined,
+	theme: undefined,
+	country_bookmaker: undefined,
+	geoJs: undefined,
+	user: undefined,
+  voted_fixtures: []
 };
 
 // #endregion ➤ 📌 VARIABLES
+
+// #region ➤ 🛠️ METHODS
 
 /**
  * @summary
  * [MAIN]
  *
  * @description
- * initializer of svelte-stores method, (+) w/ localStorage persistance;
+ *
+ * 📌 Initializer of `svelte/stores` method.
+ *
+ * ⚡️ Uses `localStorage` persistance.
  *
  * @param
  * { string } key
@@ -39,6 +44,8 @@ function createLocalStore
 )
 {
 
+  // ◼️ NOTE:
+  // ◼️ Default 'svelte/store' exports.
 	const
   {
     subscribe,
@@ -49,10 +56,10 @@ function createLocalStore
 		user_settings
 	);
 
-	return {
-		subscribe,
-		set,
-		update,
+  // ◼️ NOTE:
+  // ◼️ Complementary 'store' added methods.
+  const methods =
+  {
 
 		/**
 		 * @description sets platform localstroage;
@@ -387,7 +394,7 @@ function createLocalStore
     (
     ): string =>
     {
-      const localStore: User_Setting = userBetarenaSettings.parseLocalStorage();
+      const localStore: User_Setting = methods.parseLocalStorage();
       return localStore?.lang;
     },
 
@@ -400,7 +407,7 @@ function createLocalStore
       newBalance: number
     ): void =>
     {
-      const localStore: User_Setting = userBetarenaSettings.parseLocalStorage();
+      const localStore: User_Setting = methods.parseLocalStorage();
 
 			localStore.user.scores_user_data.main_balance = newBalance;
 
@@ -427,16 +434,21 @@ function createLocalStore
 
       // NOTE:
       // Approach Num.2
-      userBetarenaSettings.setLocalStorage
+      methods.setLocalStorage
       (
         localStore
       );
     }
+  }
 
+	return {
+		subscribe,
+		set,
+		update,
+    ...methods
 	};
 }
 
-export const userBetarenaSettings = createLocalStore
-(
-  'betarena-scores-platform-settings'
-);
+// #endregion ➤ 🛠️ METHODS
+
+export default createLocalStore('betarena-scores-platform-settings');

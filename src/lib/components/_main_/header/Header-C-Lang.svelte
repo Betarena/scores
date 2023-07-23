@@ -6,15 +6,15 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📦 Package Imports
 
+	import { dev } from "$app/environment";
+	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
 	import { fly } from "svelte/transition";
-  import { dev } from "$app/environment";
-  import { goto } from "$app/navigation";
 
-	import { sessionStore } from "$lib/store/session.js";
+	import sessionStore from "$lib/store/session.js";
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_STY, NB_W_TAG, dlog, dlogv2 } from "$lib/utils/debug.js";
-  import { userBetarenaSettings } from "$lib/store/user-settings.js";
-  import { ROUTE_ID_PROFILE } from "$lib/utils/user.js";
+	import { ROUTE_ID_PROFILE } from "$lib/utils/user.js";
 
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';

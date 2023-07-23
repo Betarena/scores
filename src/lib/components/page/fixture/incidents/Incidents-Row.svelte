@@ -8,8 +8,8 @@
 
 	import { fade } from 'svelte/transition';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import football_red from './assets/football-red.svg';
 	import football from './assets/football.svg';

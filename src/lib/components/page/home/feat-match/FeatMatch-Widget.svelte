@@ -10,8 +10,8 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 
   import { get } from '$lib/api/utils.js';
-  import { sessionStore } from '$lib/store/session.js';
-  import { userBetarenaSettings } from '$lib/store/user-settings.js';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 

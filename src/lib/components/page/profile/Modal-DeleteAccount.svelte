@@ -10,7 +10,7 @@ COMPONENT JS (w/ TS)
 	import { createEventDispatcher, type EventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import danger from './assets/alert.svg';
 

@@ -9,8 +9,8 @@ COMPONENT JS (w/ TS)
   import { browser } from '$app/environment';
   import { page } from '$app/stores';
 
-  import { sessionStore } from '$lib/store/session';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { MONTH_NAMES_ABBRV, WEEK_DAYS_ABBRV_2, daysDiffNum, toISOMod } from '$lib/utils/dates';
   import { LV2_W_H_TAG, dlog, dlogv2 } from '$lib/utils/debug';
 

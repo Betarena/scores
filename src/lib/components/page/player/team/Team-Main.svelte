@@ -6,12 +6,12 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
   // <-imports-go-here->
-	
+
   import { page } from '$app/stores';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
   import { onMount } from 'svelte';
-  
+
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import TeamPitchVector from './Team-Pitch-Vector.svelte';
 
@@ -59,15 +59,15 @@ COMPONENT JS (w/ TS)
 
 	onMount
   (
-    async () => 
+    async () =>
     {
       [
-        tabletExclusive, 
+        tabletExclusive,
         mobileExclusive,
         largeDesktop
       ] = viewport_change
       (
-        TABLET_VIEW, 
+        TABLET_VIEW,
         MOBILE_VIEW,
         OTHER_VIEW
       );
@@ -76,7 +76,7 @@ COMPONENT JS (w/ TS)
         'resize',
         function () {
           [
-            tabletExclusive, 
+            tabletExclusive,
             mobileExclusive,
             largeDesktop
           ] =
@@ -127,11 +127,11 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
+<!--
 [ℹ] example comment
 -->
 <div>
@@ -140,28 +140,28 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     {WIDGET_TITLE}
     OVERRIDE_COLOR={!tabletExclusive && largeDesktop ? false : true}
   />
-  
+
   <div
     class="widget-component"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
-    <!-- 
+    <!--
     PITCH VIEW POSITION
     -->
     <div
       id="lineup-vector-box"
     >
-      <!-- 
-      [ℹ] PITCH VECTOR 
+      <!--
+      [ℹ] PITCH VECTOR
       -->
       <div
         id="lineup-vector"
       >
         <TeamPitchVector />
       </div>
-      <!-- 
-      [ℹ] lineup positions - absolute box 
+      <!--
+      [ℹ] lineup positions - absolute box
       -->
       <div
         id="overlay-player-pos-box"
@@ -187,7 +187,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
     </div>
 
-    <!-- 
+    <!--
     💻 TABLET + 📱 MOBILE BOTTOM DATA ROW
     -->
     <div
@@ -198,7 +198,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class:column-start-grid-start={mobileExclusive}
     >
 
-      <!-- 
+      <!--
       CURRENT TEAM BOX
       -->
       <div
@@ -209,7 +209,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         "
         class:m-b-20={mobileExclusive}
       >
-        <img 
+        <img
           loading="lazy"
           src={WIDGET_DATA?.data?.team_icon}
           alt={WIDGET_DATA?.data?.team_name}
@@ -239,8 +239,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </p>
         </div>
       </div>
-      
-      <!-- 
+
+      <!--
       📱 MOBILE BOTTOM BOX
       -->
       <div
@@ -249,7 +249,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         "
       >
 
-        <!-- 
+        <!--
         JERSEY NUMBER
         -->
         <div
@@ -276,7 +276,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </p>
         </div>
 
-        <!-- 
+        <!--
         POSITION
         -->
         <div
@@ -303,7 +303,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </div>
 
     </div>
-    
+
   </div>
 </div>
 
@@ -315,23 +315,23 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
   /* o */
-  div.widget-component 
+  div.widget-component
   {
     overflow: unset;
     padding-bottom: unset;
   }
 
   /* lineup-vector box */
-	div#lineup-vector-box 
+	div#lineup-vector-box
   {
 		position: relative;
 		padding: 0 20px;
 	}
-	div#lineup-vector-box div#lineup-vector 
+	div#lineup-vector-box div#lineup-vector
   {
-		
+
 	}
-	div#lineup-vector-box div#overlay-player-pos-box 
+	div#lineup-vector-box div#overlay-player-pos-box
   {
     /* p */
     position: absolute;
@@ -448,23 +448,23 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 475px) 
+  @media only screen
+    and (min-width: 475px)
   {
   }
 
-  @media only screen 
-    and (min-width: 768px) 
+  @media only screen
+    and (min-width: 768px)
   {
   }
 
-  @media only screen 
-    and (min-width: 726px) 
-    and (max-width: 1000px) 
+  @media only screen
+    and (min-width: 726px)
+    and (max-width: 1000px)
   {
   }
 

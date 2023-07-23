@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 
   import { page } from '$app/stores';
   import { get } from '$lib/api/utils.js';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { MONTH_NAMES_ABBRV, toCorrectDate } from '$lib/utils/dates.js';
   import { shortenSeasonName } from '$lib/utils/languages.js';
   import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';

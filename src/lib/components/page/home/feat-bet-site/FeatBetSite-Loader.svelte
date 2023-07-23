@@ -5,15 +5,15 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	// ...
-	import Placeholder_Desktop_Row from './loaders/desktop/_Placeholder_Row.svelte';
-	import Placeholder_Mobile_Row from './loaders/mobile/_Placeholder_Row.svelte';
-	import Placeholder_Tablet_Row from './loaders/tablet/_Placeholder_Row.svelte';
 	import BronzeCup_Loader from './loaders/_BronzeCup.svelte';
 	import GoldCup_Loader from './loaders/_GoldCup.svelte';
 	import SilverCup_Loader from './loaders/_SilverCup.svelte';
+	import Placeholder_Desktop_Row from './loaders/desktop/_Placeholder_Row.svelte';
+	import Placeholder_Mobile_Row from './loaders/mobile/_Placeholder_Row.svelte';
+	import Placeholder_Tablet_Row from './loaders/tablet/_Placeholder_Row.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES
@@ -60,7 +60,7 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
 <div
@@ -230,8 +230,8 @@
 		} */
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	.dark-background-1 div.featured-row,
@@ -243,7 +243,7 @@
 		background-color: #616161;
 	}
 
-	/* 
+	/*
     MOBILE-EXCLUSIVE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */

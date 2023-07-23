@@ -11,7 +11,7 @@
 		Cache_Single_Geo_Leagues_Table_Translation_Response,
 		Cache_Single_Lang_Leagues_Table_Translation_Response
 	} from '$lib/models/leagues_table/types';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { LT_W_H_STY, LT_W_H_TAG, LT_W_H_TOG, dlog } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 	import LeagueTableTeamRow from './_League_Table_Team_Row.svelte';

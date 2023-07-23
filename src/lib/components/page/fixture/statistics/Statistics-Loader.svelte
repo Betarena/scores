@@ -2,7 +2,7 @@
 	  COMPONENT JS (w/ TS)
 ==================== -->
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import LoaderCenterBlock from './loaders/Loader_Center_Block.svelte';
 	import LoaderTeam from './loaders/Loader_Team.svelte';
@@ -10,7 +10,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div
@@ -18,7 +18,7 @@
 	class:dark-background-1={$userBetarenaSettings.theme ==
 		'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] [MOBILE] [DESKTOP] [TABLET]
   -->
 
@@ -82,13 +82,13 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		/* EMPTY */
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1001px) {
 		/* plyaer row box */

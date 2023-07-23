@@ -5,14 +5,14 @@
 
 	import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, SEO_W_H_STY, SEO_W_H_TAG, SEO_W_H_TOG } from '$lib/utils/debug';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import SeoBlockContentLoader from './_SEO_Block_ContentLoader.svelte';
-  
+
 	export let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
 
 	let loaded: boolean = false; // [ℹ] holds boolean for data loaded;
@@ -55,11 +55,11 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
 <SeoBox>
-  <!-- used, 
+  <!-- used,
 	{#if !loaded}
   -->
   <div>
@@ -70,25 +70,25 @@
 
 <div>
 
-	<!-- 
-  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER 
+	<!--
+  [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
 	{#if noSEOBlockData && !loaded}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={SEO_BLOCK_DATA.title}
       NO_DATA_TITLE={"No SEO Block Available"}
       NO_DATA_DESC={"Sorry, at this time there is no SEO data available!"}
     />
 	{/if}
 
-	<!-- [ℹ] promise is pending 
+	<!-- [ℹ] promise is pending
   -->
 	{#if !noSEOBlockData && !refresh}
 		{#await widgetInit()}
 			<SeoBlockContentLoader />
 
-    <!-- 
-    [ℹ] promise was fulfilled 
+    <!--
+    [ℹ] promise was fulfilled
     -->
 		{:then data}
 
@@ -96,8 +96,8 @@
         WIDGET_TITLE={SEO_BLOCK_DATA?.title}
       />
 
-			<!-- 
-      [ℹ] widget-component 
+			<!--
+      [ℹ] widget-component
       -->
 			<div
 				id="seo-block-widget-container"
@@ -108,8 +108,8 @@
 				{@html SEO_BLOCK_DATA.html}
 			</div>
 
-			<!-- 
-      [ℹ] promise was rejected 
+			<!--
+      [ℹ] promise was rejected
       -->
 		{:catch error}
 			{error}
@@ -152,7 +152,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#seo-block-widget-container {
@@ -161,7 +161,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#seo-block-widget-container {
@@ -170,8 +170,8 @@
 		}
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	:global(#seo-block-widget-container.dark-background-1

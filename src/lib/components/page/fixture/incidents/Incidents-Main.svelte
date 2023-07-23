@@ -8,8 +8,8 @@
 
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { FIXTURE_NOT_START_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
 

@@ -5,11 +5,11 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 	// ...
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import PlaceholderTableRow from './loaders/_Placeholder_Table_Row.svelte';
 	import Placehoder_Row_Desktop from './loaders/desktop/_Placeholder_Row.svelte';
 	import Placehoder_Row_Mobile from './loaders/mobile/_Placeholder_Row.svelte';
 	import Placehoder_Row_Tablet from './loaders/tablet/_Placeholder_Row.svelte';
-	import PlaceholderTableRow from './loaders/_Placeholder_Table_Row.svelte';
 
 	let showNum: number = 10;
 
@@ -64,7 +64,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
@@ -133,7 +133,7 @@
 		position: relative;
 	}
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		.best-player-row:first-child {
@@ -141,7 +141,7 @@
 		}
 	}
 
-	/* 
+	/*
   MOBILE-EXCLUSIVE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */
@@ -160,7 +160,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#best-goalscorer-container {
@@ -170,7 +170,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#best-goalscorer-container {

@@ -12,8 +12,8 @@
 
 	import { get } from '$lib/api/utils';
 	import { createFixtureOddsPath, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
 	import { MONTH_NAMES_ABBRV, getOrdinalNum, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
