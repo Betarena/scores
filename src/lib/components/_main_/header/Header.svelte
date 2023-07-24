@@ -46,18 +46,23 @@ COMPONENT JS - BASIC
   // #region ➤ 📌 VARIABLES
 
   const
-    // IMPORTANT
+    // ◼️ IMPORTANT
     VIEWPORT_MOBILE_INIT = 560,
     VIEWPORT_TABLET_INIT = 1160,
-    // IMPORTANT
+    /**
+     * @description
+     * 📌 `this` component **main** `id` and `data-testid` prefix.
+    */
+    CNAME = 'global/w/navbar/main',
+    // ◼️ IMPORTANT
     PROFILE_URL: string = '/u/[view]/[lang=lang]'
   ;
 
 	let
-    // IMPORTANT
+    // ◼️ IMPORTANT
     isViewMobile: boolean = false,
     isViewTablet: boolean = false,
-    // IMPORTANT
+    // ◼️ IMPORTANT
     B_NAV_T: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA,
     mobileNavToggleMenu: boolean = false,
 	  isLangDropdown: boolean = false,
@@ -215,9 +220,9 @@ COMPONENT JS - BASIC
    * 🔥 REACTIVE
    *
    * @description
-   * 📌 Listens to cases in which the `initial platform language`
+   * 📌 Listens to cases when `initial platform language`
    * has not been set, and the user is not
-   * authenticated and/or is anonymous.
+   * `authenticated` and/or is `anonymous`.
   */
   $: if_R_0 =
     browser
@@ -749,7 +754,8 @@ NAVBAR MAIN
       {#if $userBetarenaSettings?.user == undefined}
 
         <button
-          data-testid="sign-in-btn"
+          id="{CNAME}/sign-in-btn"
+          data-testid="{CNAME}/sign-in-btn"
           class=
           "
           btn-hollow
@@ -800,13 +806,17 @@ NAVBAR MAIN
           USER AVATAR
           -->
           <img
-            loading="lazy"
             id="user-profile-picture"
+            data-testid="{CNAME}/user-avatar"
+            loading="lazy"
             src={$userBetarenaSettings?.user?.scores_user_data?.profile_photo || profile_avatar}
-            alt="Profile Icon"
-            title="Profile Avatar"
+            alt="profile_avatar"
+            title="Profile Picture"
             on:click={() => (isUserAuthDropdown = !isUserAuthDropdown)}
-            class="cursor-pointer"
+            class=
+            "
+            cursor-pointer
+            "
             width=44
             height=44
           />
