@@ -23,6 +23,7 @@
 		"build": "vite build",
 		"preview": "vite preview --host --port 4173",
 		"quick:preview:local:spin": "vite build && npm run preview",
+    "start": "node build/index.js",
 		"start:docker": "node server-docker.js",
 		"start:heroku": "node server-heroku.js",
 		"@betarena/scores-lib:pull:next": "npm i @betarena/scores-lib@latest",
