@@ -1,15 +1,15 @@
-import {
-  ERROR_CODE_PRELOAD,
-  LAYOUT_1_LANG_PAGE_ERROR_MSG,
-  dlog
-} from '$lib/utils/debug';
+import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
+import { PRELOAD_invalid_data } from '$lib/utils/platform-functions.js';
 import { error } from '@sveltejs/kit';
 
 import type { LayoutLoad, PageLoadEvent } from './$types';
-import { PRELOAD_invalid_data } from '$lib/utils/platform-functions.js';
 
 /** @type {import('./$types').LayoutLoad} */
-export async function load(event: PageLoadEvent): Promise<LayoutLoad> {
+export async function load
+(
+  event: PageLoadEvent
+): Promise < LayoutLoad >
+{
 
   const t0 = performance.now();
 
