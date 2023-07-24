@@ -186,7 +186,7 @@ MAIN DEPOST WIDGET
             "
           >
             <img
-              src={item?.provider_logo}
+              src={$userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo}
               alt={item?.type}
             />
           </div>

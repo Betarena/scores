@@ -25,8 +25,8 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📌 VARIABLES
 
 	const
-    TABLET_VIEW = 1160,
-    MOBILE_VIEW = 725,
+    VIEWPORT_TABLET_INIT = 1160,
+    VIEWPORT_MOBILE_INIT = 725,
     PROFILE_MENU_OPT: PROFILE_OPT[] =
     [
       'Dashboard',
@@ -131,14 +131,14 @@ COMPONENT JS (w/ TS)
 
 	onMount(async () => {
 		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
+			viewport_change(VIEWPORT_TABLET_INIT, VIEWPORT_MOBILE_INIT);
 		window.addEventListener(
 			'resize',
 			function () {
 				[tabletExclusive, mobileExclusive] =
 					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
+						VIEWPORT_TABLET_INIT,
+						VIEWPORT_MOBILE_INIT
 					);
 			}
 		);
@@ -392,7 +392,7 @@ COMPONENT JS (w/ TS)
   */
 
 	@media screen
-  and (min-width: 768px)
+  and (min-width: 725px)
   {
 		/* tablet styles dropdown */
 		div#dropdown-menu-opt-tablet-box
@@ -409,7 +409,6 @@ COMPONENT JS (w/ TS)
 			background-color: var(--white);
 			box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
 			border-radius: 16px;
-			max-height: 209px;
 			overflow: hidden;
 		}
 	}

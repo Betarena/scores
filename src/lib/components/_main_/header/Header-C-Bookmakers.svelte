@@ -54,18 +54,19 @@ COMPONENT JS (w/ TS)
   {
     !isViewMobile
       ?
-      `
-      dropdown-opt-box
-      row-space-start
-      `
+        `
+        dropdown-opt-box
+        row-space-start
+        `
       :
-      `
-      side-nav-dropdown
-      m-b-25
-      `
+        `
+        side-nav-dropdown
+        m-b-25
+        `
   }
   on:click={() => (isBookmakersDropdown = !isBookmakersDropdown)}
-  class:not-last={$userBetarenaSettings?.user != undefined}
+  class:not-last={!isViewMobile && $userBetarenaSettings?.user != undefined}
+  class:mobile={isViewMobile}
 >
 
   <!--
@@ -249,6 +250,11 @@ COMPONENT JS (w/ TS)
     position: relative;
     /* 🎨 style */
     padding: 0 0 0 16px;
+  }
+  div#component\/bookmaker\/main.mobile
+  {
+    /* 🎨 style */
+    padding: 0;
   }
   div#component\/bookmaker\/main.not-last
   {

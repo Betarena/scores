@@ -6,7 +6,6 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📦 Package Imports
 
-  import { browser } from '$app/environment';
   import { page } from '$app/stores';
 
   import sessionStore from '$lib/store/session.js';
@@ -31,6 +30,14 @@ COMPONENT JS (w/ TS)
     weekEnd: number,
     weekDates: Date[]
   }
+
+  const
+    /**
+     * @description
+     * 📌 `this` component **main** `id` and `data-testid` prefix.
+    */
+    CNAME = 'profile/w/txhist/c/calendar'
+  ;
 
   let
     numberOfMonthWeeks: number,
@@ -73,8 +80,8 @@ COMPONENT JS (w/ TS)
 
     let count: number = 0;
 
-    // ### NOTE:
-    // ### Start counting from 1st of (selected) month.
+    // ◾️ NOTE:
+    // ◾️ Start counting from 1st of (selected) month.
     s_date.setDate(1);
     e_date.setDate(1);
 
@@ -220,8 +227,8 @@ COMPONENT JS (w/ TS)
    *
    * 📌 Selected date function.
    *
-   * ⚡️ Triggers recalculation of month and updates
-   * session-store to signal new selected date.
+   * ⚡️ Triggers `re-calculation` of month and updates
+   * `session-store` to signal new selected date.
    *
    * @param
    * { Date } newDate
@@ -240,19 +247,22 @@ COMPONENT JS (w/ TS)
       `${LV2_W_H_TAG[0]} dateChange`
     );
 
-    // CHECK
-    // for existance of 2 dates, reset if true.
+    // ◾️ CHECK
+    // ◾️ for existance of 2 dates, reset if true.
     const if_M_0: boolean =
       selectedDays?.length == 2
     ;
     if (if_M_0) selectedDays = [];
 
-    // NOTE:
-    // Push new Date to Array;
+    // ◾️ NOTE:
+    // ◾️ Push new Date to Array.
     selectedDays.push(newDate);
+    // ◾️ IMPORTANT
+    // ◾️ To kickstart reactive lifecycle.
+    selectedDays = selectedDays;
 
-    // CHECK
-    // for 2 valid dates in list, proceed.
+    // ◾️ CHECK
+    // ◾️ for 2 valid dates in list, proceed.
     const if_M_1: boolean =
       selectedDays?.length != 2
     ;
@@ -264,8 +274,8 @@ COMPONENT JS (w/ TS)
       selectedDays[1]
     );
 
-    // CHECK
-    // for dates to be <= 90 range, maximum.
+    // ◾️ CHECK
+    // ◾️ for dates to be <= 90 range, maximum.
     const if_M_2: boolean =
       dateDiff > 90
     ;
@@ -279,8 +289,8 @@ COMPONENT JS (w/ TS)
       return;
     }
 
-    // NOTE:
-    // Sort dates in descending order.
+    // ◾️ NOTE:
+    // ◾️ Sort dates in descending order.
     selectedDays
     .sort
     (
@@ -292,6 +302,9 @@ COMPONENT JS (w/ TS)
         -	new Date(a).getTime()
     );
 
+    // ◾️ NOTE:
+    // ◾️ Set 'dates' for: last selected custom date,
+    // ◾️ and the overall 'custom' range.
     $sessionStore.userTxHistDateSelect = new Date(newDate);
     tempDate = $sessionStore.userTxHistDateSelect;
 
@@ -309,73 +322,66 @@ COMPONENT JS (w/ TS)
   function checkDateStyle
   (
     date: Date,
-    type: 'start' | 'middle' | 'end'
+    type: 'start' | 'middle' | 'end',
+    _selectedDays?: [ Date?, Date? ]
   ): boolean
   {
-    // CHECK
-    // for 'empty' date list.
-    if (selectedDays.length != 2) return;
 
-    // CHECK
-    // for 'start' date type.
+    // ◾️ CHECK
+    // ◾️ for 'start' date type.
     const if_M_0: boolean =
       type == 'start'
-      && toISOMod(date) == toISOMod(selectedDays[0])
+      && _selectedDays?.length == 2
+      && toISOMod(date) == toISOMod(_selectedDays?.[0])
     ;
     if (if_M_0) return true;
 
-    // CHECK
-    // for 'end' date type.
+    // ◾️ CHECK
+    // ◾️ for 'end' date type.
     const if_M_1: boolean =
       type == 'end'
-      && toISOMod(date) == toISOMod(selectedDays[1])
+      && _selectedDays?.length == 2
+      && toISOMod(date) == toISOMod(_selectedDays?.[1])
     ;
     if (if_M_1) return true;
 
-    // CHECK
-    // for 'middle' date type.
+    // ◾️ CHECK
+    // ◾️ for 'middle' date type.
     const if_M_2: boolean =
       type == 'middle'
-      && new Date(toISOMod(date)).getTime() >= selectedDays[1].getTime()
-      && new Date(toISOMod(date)).getTime() <= selectedDays[0].getTime()
+      &&
+      (
+        (
+          _selectedDays?.length == 2
+          && new Date(toISOMod(date)).getTime() >= _selectedDays?.[1].getTime()
+          && new Date(toISOMod(date)).getTime() <= _selectedDays?.[0].getTime()
+        )
+        ||
+        (
+          _selectedDays?.length == 1
+          && toISOMod(date) == toISOMod(_selectedDays?.[0])
+        )
+      )
     ;
     if (if_M_2) return true;
+
+    // ◾️ NOTE:
+    // ◾️ Default return.
+    return false;
   }
-
-  // #endregion ➤ 🛠️ METHODS
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   /**
    * @description
    * TODO: DOC:
    */
-  $: if_R_0 =
-    browser
-    && $sessionStore.userTxHistFilterDateRange != undefined
-  ;
-  $: if (if_R_0)
+  function initCalendar
+  (
+  ): void
   {
-    // [🐞]
-    console.debug
+    calcThisMonth
     (
-      `🚏 checkpoint ➤ TxHistCalendar if_R_1`,
+      tempDate
     );
-
-    if ($sessionStore.userTxHistDateSelect != undefined)
-    {
-      calcThisMonth
-      (
-        $sessionStore.userTxHistDateSelect
-      );
-    }
-    else
-    {
-      calcThisMonth
-      (
-        $sessionStore.userTxHistFilterDateRange.to
-      );
-    }
 
     selectedDays =
     [
@@ -384,7 +390,25 @@ COMPONENT JS (w/ TS)
     ]
   }
 
-  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🚏 ONE-OFF CONDITIONS
+
+  const if_O_0: boolean =
+    $sessionStore.userTxHistFilterDateRange != undefined
+  ;
+  if (if_O_0)
+  {
+    // [🐞]
+    console.debug
+    (
+      `🚏 checkpoint ➤ TxHistCalendar if_O_0`,
+    );
+
+    initCalendar();
+  }
+
+  // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 
 </script>
 
@@ -399,7 +423,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 />
 
 <div
-  id="profile/widget/calendar-pop-up/outer"
+  id="{CNAME}/main"
+  data-testid="{CNAME}/main"
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}>
 
   <!--
@@ -409,23 +434,28 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     id="calendar-date-select"
     class=
     "
-      row-space-out
+    row-space-out
     "
   >
 
     <img
+      data-testid="{CNAME}/prev-month"
+      title="Previous Month"
       src={$userBetarenaSettings.theme == 'Dark' ? vec_arrow_left_dark : vec_arrow_left}
-      alt="default alt text"
+      alt="vec_arrow_left"
       on:click={() => monthChange(-1)}
-      class="cursor-pointer"
+      class=
+      "
+      cursor-pointer
+      "
     />
 
     <p
       class=
       "
-        s-14
-        w-500
-        color-black-2
+      s-14
+      w-500
+      color-black-2
       "
     >
       {B_SAP_D2.months_abbreviation?.[MONTH_NAMES_ABBRV?.[tempDate?.getMonth()]]}
@@ -433,10 +463,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     </p>
 
     <img
+      data-testid="{CNAME}/next-month"
+      title="Next Month"
       src={$userBetarenaSettings.theme == 'Dark' ? vec_arrow_right_dark : vec_arrow_right}
-      alt="default alt text"
+      alt="vec_arrow_right"
       on:click={() => monthChange(1)}
-      class="cursor-pointer"
+      class=
+      "
+      cursor-pointer
+      "
     />
 
   </div>
@@ -475,7 +510,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       -->
       <tbody>
         {#if ![undefined, 0].includes(numberOfMonthWeeks) || monthWeeksArray.length != 0}
-          {#each {length: numberOfMonthWeeks} as _,i}
+          {#each { length: numberOfMonthWeeks } as _,i}
             <tr>
               {#each monthWeeksArray[i].weekDates as item}
                 <!-- [🐞] -->
@@ -489,9 +524,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   "
                   class:currentDate={toISOMod(item) == toISOMod($sessionStore.userDate)}
                   class:notViewMonth={item.getMonth() != tempDate.getMonth()}
-                  class:startSnake={checkDateStyle(item, 'start')}
-                  class:middleSnake={checkDateStyle(item, 'middle')}
-                  class:endSnake={checkDateStyle(item, 'end')}
+                  class:startSnake={checkDateStyle(item, 'start', selectedDays)}
+                  class:middleSnake={checkDateStyle(item, 'middle', selectedDays)}
+                  class:endSnake={checkDateStyle(item, 'end', selectedDays)}
                   on:click={() => dateChange(item)}
                 >
                   {item?.getDate()}
@@ -529,7 +564,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background: rgba(0, 0, 0, 0.5);
   }
 
-  div#profile\/widget\/calendar-pop-up\/outer
+  div#profile\/w\/txhist\/c\/calendar\/main
   {
     /* 📌 position */
     position: fixed;
@@ -545,7 +580,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
     border-radius: 8px;
   }
-  div#profile\/widget\/calendar-pop-up\/outer div#calendar-date-select
+  div#profile\/w\/txhist\/c\/calendar\/main div#calendar-date-select
   {
     /* 🎨 style */
     padding: 16px;
@@ -615,7 +650,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   @media only screen
   and (min-width: 475px)
   {
-    div#profile\/widget\/calendar-pop-up\/outer
+    div#profile\/w\/txhist\/c\/calendar\/main
     {
       position: absolute;
       top: 105%;
@@ -654,24 +689,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-  div#profile\/widget\/calendar-pop-up\/outer.dark-background-1
+  div#profile\/w\/txhist\/c\/calendar\/main.dark-background-1
   {
     background-color: var(--dark-theme-1-shade) !important;
   }
 
-  div#profile\/widget\/calendar-pop-up\/outer.dark-background-1 div#profile\/widget\/calendar-pop-up\/inner table tr td:hover
+  div#profile\/w\/txhist\/c\/calendar\/main.dark-background-1 div#profile\/widget\/calendar-pop-up\/inner table tr td:hover
   {
     background-color: var(--dark-theme-1);
     border-radius: 60px;
     color: var(--white);
   }
 
-  div#profile\/widget\/calendar-pop-up\/outer.dark-background-1 div#profile\/widget\/calendar-pop-up\/inner table tr td.notViewMonth
+  div#profile\/w\/txhist\/c\/calendar\/main.dark-background-1 div#profile\/widget\/calendar-pop-up\/inner table tr td.notViewMonth
   {
     color: var(--dark-theme-1-2-shade) !important;
   }
 
-  div#profile\/widget\/calendar-pop-up\/outer.dark-background-1 div#calendar-date-select
+  div#profile\/w\/txhist\/c\/calendar\/main.dark-background-1 div#calendar-date-select
   {
     border-bottom: 1px solid var(--dark-theme);
   }

@@ -252,7 +252,7 @@ COMPONENT JS (w/ TS)
     -->
     <td>
       <p>
-        {tx_data?.payment_processor_fee ?? '-'}
+        ${tx_data?.payment_processor_fee ?? '-'}
       </p>
     </td>
 
@@ -279,7 +279,7 @@ COMPONENT JS (w/ TS)
       <div
         class=
         "
-        column-space-center
+        column-space-start-grid
         "
       >
         <div
@@ -319,7 +319,7 @@ COMPONENT JS (w/ TS)
       <div
         class=
         "
-        column-space-center
+        column-space-start-grid
         "
       >
         <p>
@@ -344,7 +344,7 @@ COMPONENT JS (w/ TS)
       <div
         class=
         "
-        column-space-center
+        column-space-start-grid
         "
       >
         <p>
@@ -357,7 +357,7 @@ COMPONENT JS (w/ TS)
           color-grey
           "
         >
-          {tx_data?.amount ?? '-'} BTA
+          ${tx_data?.amount ?? '-'} BTA
         </p>
       </div>
     </td>
@@ -367,7 +367,7 @@ COMPONENT JS (w/ TS)
     -->
     <td>
       <p>
-        {tx_data?.payment_processor_fee ?? '-'}
+        ${tx_data?.payment_processor_fee ?? '-'}
       </p>
     </td>
 

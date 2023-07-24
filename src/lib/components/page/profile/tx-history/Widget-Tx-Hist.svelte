@@ -32,8 +32,13 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📌 VARIABLES
 
   const
-    VIEWPORT_TABLET_INIT = 769,
-    VIEWPORT_MOBILE_INIT = 581
+    VIEWPORT_TABLET_INIT = 912,
+    VIEWPORT_MOBILE_INIT = 581,
+    /**
+     * @description
+     * 📌 `this` component **main** `id` and `data-testid` prefix.
+    */
+    CNAME = 'profile⮕w⮕txhist'
   ;
 
 	let
@@ -394,10 +399,14 @@ MAIN DEPOST WIDGET
 {:then value}
 
   <div
-    id="profile/widget/tx-history-outer"
+    id="{CNAME}⮕main"
+    data-testid="{CNAME}⮕main"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
+    <!--
+    NO WIDGET DATA
+    -->
     {#if WIDGET_DATA?.tx_hist?.length == 0}
 
       <!--
@@ -419,10 +428,12 @@ MAIN DEPOST WIDGET
       NO TRANSACTIONS FOUND
       -->
       <div
-        id="profile/widget/tx-history/inner/no-tx-hist-data-box"
+        id="{CNAME}⮕main⮕no-widget-data⮕content-box"
+        data-testid="{CNAME}⮕main⮕no-widget-data⮕content-box"
       >
         <div
-          id="no-tx-hist-data/content"
+          id="{CNAME}⮕main⮕no-widget-data⮕content"
+          data-testid="{CNAME}⮕main⮕no-widget-data⮕content"
           class=
           "
           text-center
@@ -465,6 +476,9 @@ MAIN DEPOST WIDGET
 
     {/if}
 
+    <!--
+    MAIN WIDGET DATA
+    -->
     {#if WIDGET_DATA?.tx_hist?.length > 0}
 
       <!--
@@ -486,11 +500,12 @@ MAIN DEPOST WIDGET
           WIDGET TITLE
           -->
           <h2
-            class="
-              w-500
-              s-20
-              m-b-24
-              color-black-2
+            class=
+            "
+            w-500
+            s-20
+            m-b-24
+            color-black-2
             "
             style="margin-top: 0px;"
           >
@@ -501,18 +516,19 @@ MAIN DEPOST WIDGET
           WIDGET DESCRIPTION
           -->
           <div
-            id="profile/widget/deposit/inner/description-box"
+            id="{CNAME}⮕main⮕desc-box"
+            data-testid="{CNAME}⮕main⮕desc-box"
             class=
             "
-              m-b-16
+            m-b-16
             "
           >
             <p
               class=
               "
-                m-t-5
-                s-14
-                color-grey
+              m-t-5
+              s-14
+              color-grey
               "
             >
               {RESPONSE_PROFILE_DATA?.tx?.description ?? ''}
@@ -537,7 +553,8 @@ MAIN DEPOST WIDGET
           COMMON DATES FILTER
           -->
           <div
-            id="profile/widget/tx-history/inner/date-filter-1"
+            id="{CNAME}⮕main⮕date-filter-1"
+            data-testid="{CNAME}⮕main⮕date-filter-1"
             class=
             "
             row-space-start
@@ -549,6 +566,8 @@ MAIN DEPOST WIDGET
             LAST 7 DAYS
             -->
             <div
+              id="{CNAME}⮕main⮕date-filter-1⮕opt-1"
+              data-testid="{CNAME}⮕main⮕date-filter-1⮕opt-1"
               title='Show last 7 Days'
               class=
               "
@@ -579,6 +598,8 @@ MAIN DEPOST WIDGET
             LAST MONTH
             -->
             <div
+              id="{CNAME}⮕main⮕date-filter-1⮕opt-2"
+              data-testid="{CNAME}⮕main⮕date-filter-1⮕opt-2"
               title='Show last month'
               class=
               "
@@ -609,6 +630,8 @@ MAIN DEPOST WIDGET
             LAST 6 MONTHS
             -->
             <div
+              id="{CNAME}⮕main⮕date-filter-1⮕opt-3"
+              data-testid="{CNAME}⮕main⮕date-filter-1⮕opt-3"
               title='Show last 6 months'
               class=
               "
@@ -641,7 +664,8 @@ MAIN DEPOST WIDGET
           CALENDAR FILTER
           -->
           <div
-            id="profile/widget/tx-history/inner/date-filter-2"
+            id="{CNAME}⮕main⮕date-filter-2"
+            data-testid="{CNAME}⮕main⮕date-filter-2"
             class=
             "
             column-space-center
@@ -653,7 +677,8 @@ MAIN DEPOST WIDGET
             CALENDAR ACTIVATE BOX
             -->
             <div
-              id="activate-calendar"
+              id="{CNAME}⮕main⮕date-filter-2⮕calendar-box"
+              data-testid="{CNAME}⮕main⮕date-filter-2⮕calendar-box"
               class=
               "
               column-space-center
@@ -686,17 +711,20 @@ MAIN DEPOST WIDGET
 
       <!--
       USER TRANSACTION HISTORY TABLE
+      [+] PLAYWRIGHT TESTED
       -->
       <div
-        id="profile/widget/tx-history/inner/table-box"
+        id="{CNAME}⮕main⮕table-outline"
+        data-testid="{CNAME}⮕main⮕table-outline"
         class=
         "
-          m-b-16
+        m-b-16
         "
       >
 
         <table
-          id="profile/widget/tx-history/inner/table"
+          id="{CNAME}⮕main⮕table"
+          data-testid="{CNAME}⮕main⮕table"
         >
           <thead>
             <tr
@@ -705,7 +733,8 @@ MAIN DEPOST WIDGET
               ID
               -->
               <th
-                id="tx-id"
+                id="col-tx-id"
+                data-testid="col-tx-id"
               >
                 <p>
                   {RESPONSE_PROFILE_DATA?.tx?.fields?.id ?? 'ID'}
@@ -718,7 +747,8 @@ MAIN DEPOST WIDGET
               -->
               {#if isViewMobile || isViewTablet}
                 <th
-                  id="tx-date-address"
+                  id="col-tx-date-address"
+                  data-testid="col-tx-date-address"
                 >
                   <p>
                     {'Date, Address:'}
@@ -735,7 +765,8 @@ MAIN DEPOST WIDGET
                 DATE
                 -->
                 <th
-                  id="tx-date"
+                  id="col-tx-date"
+                  data-testid="col-tx-date"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.date ?? 'Date:'}
@@ -746,6 +777,8 @@ MAIN DEPOST WIDGET
                 TYPE
                 -->
                 <th
+                  id="col-tx-type"
+                  data-testid="col-tx-type"
                   style=
                   "
                   width: 100%;
@@ -760,7 +793,8 @@ MAIN DEPOST WIDGET
                 ASSET
                 -->
                 <th
-                  id="tx-asset"
+                  id="col-tx-asset"
+                  data-testid="col-tx-asset"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.asset ?? 'Asset:'}
@@ -771,7 +805,8 @@ MAIN DEPOST WIDGET
                 GATEWAY
                 -->
                 <th
-                  id="tx-gateway"
+                  id="col-tx-gateway"
+                  data-testid="col-tx-gateway"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.gateway ?? 'Gateway:'}
@@ -782,7 +817,8 @@ MAIN DEPOST WIDGET
                 QUANTITY
                 -->
                 <th
-                  id="tx-quantity"
+                  id="col-tx-quantity"
+                  data-testid="col-tx-quantity"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.quantity ?? 'Quantity:'}
@@ -793,7 +829,8 @@ MAIN DEPOST WIDGET
                 BTA
                 -->
                 <th
-                  id="tx-bta"
+                  id="col-tx-bta"
+                  data-testid="col-tx-bta"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.bta ?? 'BTA:'}
@@ -804,7 +841,8 @@ MAIN DEPOST WIDGET
                 FEE
                 -->
                 <th
-                  id="tx-fee"
+                  id="col-tx-fee"
+                  data-testid="col-tx-fee"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.fee ?? 'Fee:'}
@@ -815,7 +853,8 @@ MAIN DEPOST WIDGET
                 WALLET ADDR
                 -->
                 <th
-                  id="tx-wallet"
+                  id="col-tx-wallet"
+                  data-testid="col-tx-wallet"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.wallet ?? 'Wallet Address:'}
@@ -833,6 +872,8 @@ MAIN DEPOST WIDGET
                 TYPE
                 -->
                 <th
+                  id="col-tx-type"
+                  data-testid="col-tx-type"
                   style=
                   "
                   width: 100%;
@@ -847,7 +888,8 @@ MAIN DEPOST WIDGET
                 ASSET
                 -->
                 <th
-                  id="tx-asset"
+                  id="col-tx-asset"
+                  data-testid="col-tx-asset"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.asset ?? 'Asset:'}
@@ -858,7 +900,8 @@ MAIN DEPOST WIDGET
                 QUANTITY
                 -->
                 <th
-                  id="tx-quantity"
+                  id="col-tx-quantity"
+                  data-testid="col-tx-quantity"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.quantity ?? 'Quantity:'}
@@ -869,7 +912,8 @@ MAIN DEPOST WIDGET
                 FEE
                 -->
                 <th
-                  id="tx-fee"
+                  id="col-tx-fee"
+                  data-testid="col-tx-fee"
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.tx?.fields?.fee ?? 'Fee:'}
@@ -882,9 +926,10 @@ MAIN DEPOST WIDGET
               STATUS
               -->
               <th
-                id="tx-status"
+                id="col-tx-status"
+                data-testid="col-tx-status"
                 style="text-align: -webkit-right;"
-              >
+                >
                 <p>
                   {RESPONSE_PROFILE_DATA?.tx?.fields?.status ?? 'Status:'}
                 </p>
@@ -897,7 +942,7 @@ MAIN DEPOST WIDGET
 
             <!-- [🐞] -->
 
-            <!-- {#each { length: 5 } as _}
+            <!-- {#each { length: 1 } as _}
               <WidgetTxHistRow
                 tx_data={WIDGET_DATA?.tx_hist[0]}
                 {isViewMobile}
@@ -925,7 +970,8 @@ MAIN DEPOST WIDGET
         -->
         {#if WIDGET_DATA?.tx_hist?.length > 10}
           <div
-            id="profile/widget/tx-history/inner/table-show-more"
+            id="{CNAME}⮕main⮕table-show-more"
+            data-testid="{CNAME}⮕main⮕table-show-more"
             class=
             "
             text-center
@@ -946,25 +992,35 @@ MAIN DEPOST WIDGET
           </div>
         {/if}
 
+        <!--
+        CONTENT DIVIDER
+        -->
+        <div
+          id="{CNAME}⮕divider"
+          data-testid="{CNAME}⮕main⮕divider"
+          class:isMoreTx={WIDGET_DATA?.tx_hist?.length <= 10}
+        />
+
       </div>
 
       <!--
       ADDITIONAL NOTE
       -->
       <div
-        id="profile/widget/tx-history/inner/additional-info-box"
+        id="{CNAME}⮕add-info"
+        data-testid="{CNAME}⮕add-info"
         class=
         "
-          m-b-12
+        m-b-12
         "
       >
         <p
           class=
           "
-            s-12
-            w-500
-            color-black-2
-            m-b-5
+          s-12
+          w-500
+          color-black-2
+          m-b-5
           "
         >
           {RESPONSE_PROFILE_DATA?.tx?.subtitle ?? 'Please review:'}
@@ -972,8 +1028,8 @@ MAIN DEPOST WIDGET
         <p
           class=
           "
-            s-12
-            color-grey
+          s-12
+          color-grey
           "
         >
           {RESPONSE_PROFILE_DATA?.tx?.information}
@@ -995,7 +1051,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	div#profile\/widget\/tx-history-outer
+	div#profile⮕w⮕txhist⮕main
   {
     /* 🎨 style */
 		padding: 20px;
@@ -1004,14 +1060,14 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border-radius: 12px;
 	}
 
-  div#profile\/widget\/tx-history\/inner\/no-tx-hist-data-box
+  div#profile⮕w⮕txhist⮕main⮕no-widget-data⮕content-box
   {
     /* 📌 position */
     position: relative;
     /* 🛝 layout */
     height: 362px;
   }
-  div#profile\/widget\/tx-history\/inner\/no-tx-hist-data-box div#no-tx-hist-data\/content
+  div#profile⮕w⮕txhist⮕main⮕no-widget-data⮕content
   {
     /* 📌 position */
     position: absolute;
@@ -1025,34 +1081,34 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		height: fit-content;
   }
 
-  div#profile\/widget\/tx-history\/inner\/date-filter-1
+  div#profile⮕w⮕txhist⮕main⮕date-filter-1
   {
     /* 🎨 style */
     padding: 4px;
     border-radius: 4px;
     background: var(--whitev2);
   }
-  div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box
+  div#profile⮕w⮕txhist⮕main⮕date-filter-1 div.common-date-box
   {
     /* 🎨 style */
     height: 32px;
     padding: 6px 12px;
     border-radius: 4px;
   }
-  div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date
+  div#profile⮕w⮕txhist⮕main⮕date-filter-1 div.common-date-box.selected_date
   {
     /* 🎨 style */
     background: var(--white);
     backdrop-filter: blur(10px);
   }
-  div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date p,
-  div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box p:hover
+  div#profile⮕w⮕txhist⮕main⮕date-filter-1 div.common-date-box.selected_date p,
+  div#profile⮕w⮕txhist⮕main⮕date-filter-1 div.common-date-box p:hover
   {
     /* 🎨 style */
     color: var(--dark-theme) !important;
   }
 
-  div#profile\/widget\/tx-history\/inner\/date-filter-2
+  div#profile⮕w⮕txhist⮕main⮕date-filter-2
   {
     /* 📌 position */
     position: relative;
@@ -1065,34 +1121,34 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     border-radius: 4px;
     background: var(--whitev2);
   }
-  div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar
+  div#profile⮕w⮕txhist⮕main⮕date-filter-2⮕calendar-box
   {
     /* 🎨 style */
     width: auto;
     border-radius: 4px;
     padding: 6px 6px;
   }
-  div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar.selected
+  div#profile⮕w⮕txhist⮕main⮕date-filter-2⮕calendar-box.selected
   {
     /* 🎨 style */
     background: var(--white);
     backdrop-filter: blur(10px);
   }
 
-  table#profile\/widget\/tx-history\/inner\/table
+  table#profile⮕w⮕txhist⮕main⮕table
   {
     /* 🎨 style */
     text-align: left;
 		border-collapse: collapse;
     width: -webkit-fill-available;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr
+  table#profile⮕w⮕txhist⮕main⮕table thead tr
   {
     /* 🎨 style */
     border-radius: 2px;
     background: var(--whitev2);
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr th
+  table#profile⮕w⮕txhist⮕main⮕table thead tr th
   {
     /* 🛝 layout */
     width: fit-content;
@@ -1100,24 +1156,29 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     white-space: nowrap;
     padding-right: 12px;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-status
+  table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-id
   {
     /* 🎨 style */
-    min-width: 105px;
+    min-width: 50px;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr th:first-child
+  table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-status
+  {
+    /* 🎨 style */
+    min-width: 150px;
+  }
+  table#profile⮕w⮕txhist⮕main⮕table thead tr th:first-child
   {
     /* 🎨 style */
     padding-left: 20px;
     border-radius: 2px 0 0 2px;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr th:last-child
+  table#profile⮕w⮕txhist⮕main⮕table thead tr th:last-child
   {
     /* 🎨 style */
     padding-right: 20px;
     border-radius: 0 2px 2px 0;
   }
-  table#profile\/widget\/tx-history\/inner\/table thead tr th p
+  table#profile⮕w⮕txhist⮕main⮕table thead tr th p
   {
     /* 🛝 layout */
     width: fit-content;
@@ -1130,22 +1191,32 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     line-height: 150%;
     padding: 3px 0 3px 0;
   }
-  :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(odd))
+  :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(odd))
   {
     /* 🎨 style */
     background-color: var(--white);
   }
-  :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(even))
+  :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(even))
   {
     /* 🎨 style */
     background-color: var(--whitev2)
   }
 
-  div#profile\/widget\/tx-history\/inner\/table-show-more
+  div#profile⮕w⮕txhist⮕main⮕table-show-more
   {
     /* 🎨 style */
     padding: 18px 0 18px 0;
+  }
+
+  div#profile⮕w⮕txhist⮕divider
+  {
+    /* 🎨 style */
     border-bottom: 1px solid var(--grey-color);
+  }
+  div#profile⮕w⮕txhist⮕divider.isMoreTx
+  {
+    /* 🎨 style */
+    padding: 18px 0 18px 0;
   }
 
   /*
@@ -1155,39 +1226,66 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   */
 
   @media only screen
-  and (min-width: 769px)
+  and (min-width: 581px)
   {
-    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-id
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-quantity
+    {
+      /* 🎨 style */
+      min-width: 70px;
+    }
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-fee
+    {
+      /* 🎨 style */
+      min-width: 50px;
+    }
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th:first-child,
+    :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr td:first-child)
+    {
+      /* 🎨 style */
+      padding-left: 12px !important;
+    }
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th:last-child,
+    :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr td:last-child)
+    {
+      /* 🎨 style */
+      padding-right: 12px !important;
+    }
+  }
+
+  @media only screen
+  and (min-width: 912px)
+  {
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-id
     {
       /* 🎨 style */
       padding-right: 20px;
       min-width: 12px;
     }
-    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-date
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-date
     {
       /* 🎨 style */
       padding-right: 20px;
       min-width: 90px;
     }
-    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-wallet
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-wallet
     {
       /* 🎨 style */
       min-width: 130px;
     }
-    table#profile\/widget\/tx-history\/inner\/table thead tr th#tx-status
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-status
     {
       /* 🎨 style */
       min-width: 105px;
     }
-    table#profile\/widget\/tx-history\/inner\/table thead tr th:first-child
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-quantity
     {
       /* 🎨 style */
-      padding-left: 12px !important;
+      min-width: 60px;
     }
-    table#profile\/widget\/tx-history\/inner\/table thead tr th:last-child
+    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-bta
     {
       /* 🎨 style */
-      padding-right: 12px !important;
+      min-width: 50px;
     }
   }
 
@@ -1197,61 +1295,61 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕main⮕date-filter-1
   {
     /* 🎨 style */
     background: var(--dark-theme-1-shade);
   }
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕main⮕date-filter-1 div.common-date-box.selected_date
   {
     /* 🎨 style */
     background: var(--dark-theme-1);
   }
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box.selected_date p,
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-1 div.common-date-box p:hover
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕main⮕date-filter-1 div.common-date-box.selected_date p,
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕main⮕date-filter-1 div.common-date-box p:hover
   {
     /* 🎨 style */
     color: var(--white) !important;
   }
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-2
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕main⮕date-filter-2
   {
     /* 🎨 style */
     background: var(--dark-theme-1-shade);
   }
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/date-filter-2 div#activate-calendar.selected
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕main⮕date-filter-2⮕calendar-box.selected
   {
     /* 🎨 style */
     background: var(--dark-theme-1);
   }
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 table#profile\/widget\/tx-history\/inner\/table thead tr
+  div#profile⮕w⮕txhist⮕main.dark-background-1 table#profile⮕w⮕txhist⮕main⮕table thead tr
   {
     /* 🎨 style */
     background: var(--dark-theme-1-shade);
   }
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(odd))
+  div#profile⮕w⮕txhist⮕main.dark-background-1 :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(odd))
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1);
   }
-  div#profile\/widget\/tx-history-outer.dark-background-1 :global(table#profile\/widget\/tx-history\/inner\/table tbody tr:nth-child(even))
+  div#profile⮕w⮕txhist⮕main.dark-background-1 :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(even))
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1-shade)
   }
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 :global(table#profile\/widget\/tx-history\/inner\/table tbody tr td p)
+  div#profile⮕w⮕txhist⮕main.dark-background-1 :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr td p)
   {
     /* style */
     color: var(--white);
   }
 
-  div#profile\/widget\/tx-history-outer.dark-background-1 div#profile\/widget\/tx-history\/inner\/table-show-more
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#tx-history\/divider
   {
     /* 🎨 style */
-    border-bottom: 1px solid var(--dark-theme-1);
+    border-bottom: 1px solid var(--dark-theme-1-shade);
   }
 
 </style>
