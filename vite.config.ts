@@ -1,5 +1,7 @@
 import { sveltekit } from '@sveltejs/kit/vite';
 import viteCompression from 'vite-plugin-compression';
+import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+// import preload from "vite-plugin-preload";
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig
@@ -16,6 +18,28 @@ export default defineConfig
       // ### DOC: vite-plugin-progress
       // c.compress()
       viteCompression(),
+      cssInjectedByJsPlugin
+      (
+        {
+
+          relativeCSSInjection: true
+
+          // topExecutionPriority: true,
+
+          // jsAssetsFilterFunction: function customJsAssetsfilterFunction
+          // (
+          //   outputChunk
+          // )
+          // {
+          //   return outputChunk.fileName == 'index.js';
+          // }
+
+          // injectCode: (cssCode, options) => {
+          //   return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
+          // }
+        }
+      ),
+      // preload(),
       sveltekit()
     ],
     // DOC: REF: [6]
