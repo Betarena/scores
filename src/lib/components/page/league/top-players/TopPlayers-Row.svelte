@@ -8,9 +8,9 @@ COMPONENT JS (w/ TS)
 
 	import { fade } from 'svelte/transition';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
-	import { sessionStore } from '$lib/store/session.js';
+	import sessionStore from '$lib/store/session.js';
 
 	import type { B_TP_T, TP_Main } from '@betarena/scores-lib/types/top-players.js';
 

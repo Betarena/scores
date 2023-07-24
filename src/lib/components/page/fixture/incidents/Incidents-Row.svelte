@@ -8,8 +8,8 @@
 
 	import { fade } from 'svelte/transition';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import football_red from './assets/football-red.svg';
 	import football from './assets/football.svg';
@@ -24,7 +24,7 @@
 	import yellow_card from './assets/yellow-card.svg';
 	import yellowred_card from './assets/yellowred.svg';
 
-	import type { B_H_SFPV2, EventsDatum } from '@betarena/scores-lib/types/hasura.js';
+	import type { B_H_SFPV2, EventsDatum } from '@betarena/scores-lib/types/_HASURA_.js';
 
     //#endregion ➤ [MAIN] Package Imports
 
@@ -52,20 +52,20 @@
 
   /**
    * @summary
-   * [MAIN] 
+   * [MAIN]
    * [REACTIVE]
-   * @description 
+   * @description
    * reactive assignment of ICON asset;
   */
-  $: if (INCIDENT_INFO != undefined) 
+  $: if (INCIDENT_INFO != undefined)
   {
     // icon(s) declare;
 		if (INCIDENT_INFO?.type == 'goal') icon = football;
 		if (INCIDENT_INFO?.type == 'own-goal') icon = football_red;
-    if (INCIDENT_INFO?.type == 'substitution' && INCIDENT_INFO?.injuried) 
+    if (INCIDENT_INFO?.type == 'substitution' && INCIDENT_INFO?.injuried)
       icon = $userBetarenaSettings.theme == 'Dark' ? w_inj_substitution : inj_substitution;
     ;
-    if (INCIDENT_INFO?.type == 'substitution') 
+    if (INCIDENT_INFO?.type == 'substitution')
       icon = $userBetarenaSettings.theme == 'Dark' ? w_substitution : substitution;
     ;
 		if (INCIDENT_INFO?.type == 'yellowcard') icon = yellow_card;
@@ -74,7 +74,7 @@
 		if (INCIDENT_INFO?.type == 'var') icon = var_red;
 		if (['penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)) icon = penalty;
 		if (['missed_penalty','pen_shootout_miss'].includes(INCIDENT_INFO?.type)) icon = penalty_miss;
-    
+
     // player(s) URL declare;
     if (playerMap?.has(INCIDENT_INFO?.player_id))
       urlMain = `/${playerMap?.get(INCIDENT_INFO?.player_id)?.urls?.[$sessionStore?.serverLang]}`
@@ -93,7 +93,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -116,7 +116,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         width="18"
         height="18"
       />
-      
+
       <p
         class="
           w-400
@@ -186,7 +186,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 color-grey
               "
             >
-              Assits: 
+              Assits:
               <span>
                 {INCIDENT_INFO?.related_player_name}
               </span>
@@ -241,7 +241,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {#if ['var', 'penalty', 'pen_shootout_goal'].includes(INCIDENT_INFO?.type)}
 
         <!--
-        EVENT RESULT 
+        EVENT RESULT
         -->
         <p
           class="
@@ -280,7 +280,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       {#if ['yellowcard', 'redcard', 'yellowred', 'missed_penalty', 'pen_shootout_miss'].includes(INCIDENT_INFO?.type)}
-        
+
         <!--
         CARD / PENALTY PLAYER
         -->
@@ -348,7 +348,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               color-grey
             "
           >
-            Out: 
+            Out:
             <span>
               {INCIDENT_INFO?.related_player_name}
             </span>
@@ -356,7 +356,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </a>
 
       {/if}
-    
+
   </div>
 {/if}
 
@@ -372,10 +372,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--primary) !important;
   }
 
-	/* 
-  events row 
+	/*
+  events row
   */
-	div.incident-row 
+	div.incident-row
   {
 		padding: 14px 0 4px 0;
 		margin: 0 20px;
@@ -383,19 +383,19 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: -moz-available;
 		border-bottom: 1px solid #e6e6e6;
 	}
-	div.incident-row p 
+	div.incident-row p
   {
 		font-size: 14px;
 	}
-	div.incident-row img.event-icon 
+	div.incident-row img.event-icon
   {
 		margin-right: 8px;
 	}
-	div.incident-row p.minute-text 
+	div.incident-row p.minute-text
   {
 		margin-right: 12px;
 	}
-	div.incident-row p.result-text 
+	div.incident-row p.result-text
   {
 		margin-right: 8px;
 	}
@@ -403,28 +403,28 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
     flex-direction: row-reverse !important;
   }
-	div.incident-row.type-R img.event-icon 
+	div.incident-row.type-R img.event-icon
   {
 		margin-left: 8px;
 		margin-right: 0;
 	}
-	div.incident-row.type-R p.minute-text 
+	div.incident-row.type-R p.minute-text
   {
 		margin-left: 12px;
 		margin-right: 0;
 	}
-	div.incident-row.type-R p.result-text 
+	div.incident-row.type-R p.result-text
   {
 		margin-left: 8px;
 		margin-right: 0;
 	}
 
-	div.incident-row .single-min 
+	div.incident-row .single-min
   {
 		margin-left: 4px;
 		margin-right: 16px !important;
 	}
-	div.incident-row.type-R .single-min 
+	div.incident-row.type-R .single-min
   {
 		margin-left: 16px !important;
 		margin-right: 4px;
@@ -432,31 +432,31 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (max-width: 425px) 
-  {
-		/* EMPTY */
-	}
-
-	@media only screen 
-  and (max-width: 475px) 
-  {
-		/* EMPTY */
-	}
-
-	@media only screen 
-  and (min-width: 1160px)
-  and (max-width: 1240px) 
+	@media only screen
+  and (max-width: 425px)
   {
 		/* EMPTY */
 	}
 
 	@media only screen
-  and (min-width: 1240px) 
+  and (max-width: 475px)
+  {
+		/* EMPTY */
+	}
+
+	@media only screen
+  and (min-width: 1160px)
+  and (max-width: 1240px)
+  {
+		/* EMPTY */
+	}
+
+	@media only screen
+  and (min-width: 1240px)
   {
 		/* EMPTY */
 	}
@@ -466,5 +466,5 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   DARK-THEME
   =============
   */
-  
+
 </style>

@@ -5,7 +5,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import DesktopPlaceholderBodyMain from './loaders/desktop/_Placeholder_Body_Main.svelte';
 	import DesktopPlaceholderHead from './loaders/desktop/_Placeholder_Head.svelte';
@@ -62,7 +62,7 @@
 </script>
 
 <!-- ============
-  COMPONENT HTML 
+  COMPONENT HTML
 =================-->
 
 <div

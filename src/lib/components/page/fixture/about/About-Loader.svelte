@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import LoaderBottomBtn from './loaders/Loader_Bottom_Btn.svelte';
 	import Placehoder_FAQ_Row_Desktop from './loaders/Loader_FAQ_Row.svelte';
@@ -55,11 +55,11 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
-	<!-- 
+	<!--
   [ℹ] widget-component -->
 	<div
 		id="about-tour-widget-container-load"
@@ -91,7 +91,7 @@
 			{/each}
 		</div>
 
-		<!-- 
+		<!--
       [ℹ] [DESKTOP] [TABLET]
       -->
 		{#if !mobileExclusive}
@@ -162,7 +162,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#about-tour-widget-container-load {
@@ -171,7 +171,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#about-tour-widget-container-load {

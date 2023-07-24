@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import DesktopLoaderBottom from './loaders/desktop/Loader_Bottom.svelte';
 	import DesktopLoaderMiddle from './loaders/desktop/Loader_Middle.svelte';
@@ -61,7 +61,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div
@@ -70,7 +70,7 @@
 	class:dark-background-1={$userBetarenaSettings.theme ==
 		'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] [DESKTOP] [TABLET]
   -->
 	{#if !mobileExclusive}
@@ -98,7 +98,7 @@
 		<div id="fixture-scoreboard-bottom-box">
 			<DesktopLoaderBottom />
 		</div>
-		<!-- 
+		<!--
   [ℹ] [MOBILE]
   -->
 	{:else}
@@ -156,7 +156,7 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		div#fixture-scoreboard-top-box {
@@ -164,7 +164,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1001px) {
 		div#fixture-scoreboard-top-box {

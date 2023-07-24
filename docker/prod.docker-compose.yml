@@ -26,10 +26,10 @@ services:
       VITE_REDIS_CACHE_DB: ${VITE_REDIS_CACHE_DB}
       VITE_REDIS_BULL_DB: ${VITE_REDIS_BULL_DB}
     build:
-      context: .
-      dockerfile: ./Dockerfile
+      context: ../
+      dockerfile: ./docker/prod.Dockerfile
     volumes:
-      - ./certs:/certs # IMPORTANT
+      - ../certs:/app/certs # IMPORTANT
     ports:
       - 5055:5055
       - 443:443 # IMPORTANT

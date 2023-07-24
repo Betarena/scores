@@ -1,10 +1,10 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
+	COMPONENT JS - BASIC
     [TypeScript Written]
 =================== -->
 <script lang="ts">
 	import { page } from '$app/stores';
-	import { sessionStore } from '$lib/store/session';
+	import sessionStore from '$lib/store/session.js';
 	import { fade } from 'svelte/transition';
 
 	// ... immediately update the data with the lang;
@@ -134,7 +134,7 @@
 		overflow: hidden;
 	}
 
-	/* 
+	/*
     RESPONSIVE FOR TABLET (&+) [475px] */
 	@media screen and (min-width: 475px) {
 		div#outer-iframe-cotnainer {

@@ -5,25 +5,25 @@
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, LL_W_H_STY, LL_W_H_TAG, LL_W_H_TOG } from '$lib/utils/debug';
-	import close_white from './assets/close-white.svg';
-	import close from './assets/close.svg';
 	import Africa from './assets/_Africa.svelte';
 	import Asia from './assets/_Asia.svelte';
 	import NorthCentralAmerica from './assets/_North_Central_America.svelte';
 	import SouthAmerica from './assets/_South_America.svelte';
 	import World from './assets/_World.svelte';
+	import close_white from './assets/close-white.svg';
+	import close from './assets/close.svg';
 
 	import type {
 		REDIS_CACHE_SINGLE_league_list_geo_data_response,
 		REDIS_CACHE_SINGLE_league_list_seo_t_response
 	} from '$lib/models/home/league_list/types';
 
-	import { viewport_change } from '$lib/utils/platform-functions';
-	import LeagueListLoader from './LeagueList_Loader.svelte';
-	import NoResults from './_NoResults.svelte';
 	import SeoBox from '$lib/components/SEO-Box.svelte';
+	import { viewport_change } from '$lib/utils/platform-functions';
+	import NoResults from './_NoResults.svelte';
+	import LeagueListLoader from './LeagueList_Loader.svelte';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES

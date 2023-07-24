@@ -9,7 +9,7 @@
   import { onMount } from 'svelte';
   import { fade } from 'svelte/transition';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
 	import BronzeCup from './assets/_BronzeCup.svelte';
@@ -17,7 +17,7 @@
 	import SilverCup from './assets/_SilverCup.svelte';
 	import FeaturedSiteRow from './FeatBetSite-Row.svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
+	import sessionStore from '$lib/store/session.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 

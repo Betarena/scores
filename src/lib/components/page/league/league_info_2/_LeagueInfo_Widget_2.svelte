@@ -8,8 +8,8 @@
 	import { dlog, LI2_W_T_STY, LI2_W_T_TAG, LI2_W_T_TOG } from '$lib/utils/debug';
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import type { Cache_Single_Tournaments_League_Info_Data_Response } from '$lib/models/tournaments/league-info/types';
 
@@ -156,12 +156,12 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 =================-->
 
 <div id="widget-outer">
-	<!-- 
-  [ℹ] SEO-DATA-LOADED 
+	<!--
+  [ℹ] SEO-DATA-LOADED
   -->
 	<!-- {#if !loaded} -->
 	<div id="seo-widget-box">
@@ -174,11 +174,11 @@
 	</div>
 	<!-- {/if} -->
 
-	<!-- 
+	<!--
   [ℹ] NO WIDGET DATA AVAILABLE PLACEHOLDER
   -->
 	{#if noWidgetData && !loaded}
-		<!-- [ℹ] title of the widget 
+		<!-- [ℹ] title of the widget
     -->
 		<h2
 			class="s-20 m-b-10 w-500 color-black-2"
@@ -190,7 +190,7 @@
 				?.league_info}
 		</h2>
 
-		<!-- [ℹ] no-widget-data-avaiable-placeholder container 
+		<!-- [ℹ] no-widget-data-avaiable-placeholder container
     -->
 		<div
 			id="no-widget-box"
@@ -218,7 +218,7 @@
 				/>
 			{/if}
 
-			<!-- [ℹ] container w/ text 
+			<!-- [ℹ] container w/ text
       -->
 			<div>
 				<p
@@ -237,18 +237,18 @@
 		</div>
 	{/if}
 
-	<!-- 
+	<!--
   [ℹ] MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData && !refresh && browser && $userBetarenaSettings.country_bookmaker && !diasbleDev}
-		<!-- [ℹ] promise is pending 
+		<!-- [ℹ] promise is pending
     -->
 		{#await widgetInit()}
 			<LeagueInfoWidget_2ContentLoader />
 			<!-- [ℹ] promise was fulfilled
     -->
 		{:then data}
-			<!-- [ℹ] promise was fulfilled 
+			<!-- [ℹ] promise was fulfilled
       -->
 			<h2
 				class="s-20 m-b-10 w-500 color-black-2"
@@ -405,7 +405,7 @@
 	}
 
 	/*
-    [ℹ] WIDGET MAIN STYLE / CSS 
+    [ℹ] WIDGET MAIN STYLE / CSS
     [ℹ] MOBILE FIRST
   */
 
@@ -438,7 +438,7 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		#top-players-widget-container {
@@ -447,13 +447,13 @@
 		}
 	}
 
-	/* 
+	/*
   TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) {
 		/* EMPTY */
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1160px) {
 		#top-players-widget-container {

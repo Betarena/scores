@@ -11,10 +11,9 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
 	import { createFixtureOddsPath, onceTargetLivescoreNowFixtureGet, targetLivescoreNowFixtureListen, targetLivescoreNowFixtureOddsListen } from '$lib/firebase/common.js';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { FIXTURE_FULL_TIME_OPT } from '@betarena/scores-lib/dist/api/sportmonks.js';
@@ -34,7 +33,6 @@
 	import StandingsWidget from './standings/Standings-Widget.svelte';
 
   import type { B_SAP_FP_D, B_SAP_FP_T } from '@betarena/scores-lib/types/seo-pages.js';
-  import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
   //#endregion ➤ [MAIN] Package Imports
 

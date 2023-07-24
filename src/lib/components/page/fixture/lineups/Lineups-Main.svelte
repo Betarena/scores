@@ -9,8 +9,8 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { LIN_F_dataInject } from '@betarena/scores-lib/dist/functions/func.fixture.lineups.js';
 
@@ -22,7 +22,7 @@
 	import LineupVectorMobile from './Lineups-Vector-Mobile.svelte';
 	import LineupVectorTablet from './Lineups-Vector-Tablet.svelte';
 
-  import type { B_H_SFPV2 } from '@betarena/scores-lib/types/hasura.js';
+  import type { B_H_SFPV2 } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { B_LIN_D, B_LIN_T, LIN_Player } from '@betarena/scores-lib/types/lineups.js';
 
   // #endregion ➤ [MAIN] Package Imports

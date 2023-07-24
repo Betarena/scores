@@ -5,7 +5,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import PlaceholderLeftRow from './loaders/_Placeholder_Left_Row.svelte';
 	import PlaceholderRightRow from './loaders/_Placeholder_Right_Row.svelte';
@@ -65,7 +65,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
@@ -112,7 +112,7 @@
 		padding: 10px 0px;
 	}
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		.best-player-row:first-child {

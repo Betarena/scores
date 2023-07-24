@@ -10,8 +10,8 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
 	import { LI_W_T_STY, LI_W_T_TAG, LI_W_T_TOG, dlog } from '$lib/utils/debug';

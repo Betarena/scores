@@ -14,8 +14,8 @@ COMPONENT JS (w/ TS)
 
 	import { get } from '$lib/api/utils';
 	import { app, auth, db_firestore } from '$lib/firebase/init';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { AU_W_TAG, dlog, dlogv2, errlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { getMoralisAuth, type MoralisAuth } from '@moralisweb3/client-firebase-auth-utils';

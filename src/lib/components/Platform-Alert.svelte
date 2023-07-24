@@ -1,10 +1,10 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
+	COMPONENT JS - BASIC
     [TypeScript Written]
 =================== -->
 <script lang="ts">
 	import type { Cache_Single_Lang_Header_Translation_Response } from '$lib/models/navbar/types';
-	import { sessionStore } from '$lib/store/session';
+	import sessionStore from '$lib/store/session.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
 
@@ -34,7 +34,7 @@
 			}
 		);
 	});
-  
+
 </script>
 
 <!-- ===================
@@ -42,22 +42,22 @@
 =================== -->
 
 {#if HEADER_TRANSLATION_DATA != undefined}
-	<!-- 
-  [ℹ] identify the correct translation via IF 
+	<!--
+  [ℹ] identify the correct translation via IF
   -->
 	{#if HEADER_TRANSLATION_DATA.scores_top_bar_messages.status && show}
-		<div 
+		<div
       id="platform-alert-container"
       class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}>
-			<p 
+			<p
         class="
-          s-12 
+          s-12
           color-white
         ">
 				{HEADER_TRANSLATION_DATA
 					.scores_top_bar_messages.message}
 			</p>
-			<!-- 
+			<!--
       [ℹ] close-cross
       -->
 			<img

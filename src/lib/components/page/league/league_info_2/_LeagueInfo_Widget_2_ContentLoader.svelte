@@ -3,16 +3,15 @@
 =================-->
 <script lang="ts">
 	// ... svelte-imports;
-	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import DesktopPlaceholderBodyMain from './loaders/_Placeholder_Body_Main.svelte';
 	import DesktopPlaceholderHead from './loaders/_Placeholder_Head.svelte';
 </script>
 
 <!-- ============
-  COMPONENT HTML 
+  COMPONENT HTML
 =================-->
 
 <div

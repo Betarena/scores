@@ -9,8 +9,8 @@
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
 
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog, SC_W_F_STY, SC_W_F_TAG, SC_W_F_TOG } from '$lib/utils/debug';
 	import { googleActionsStr } from '$lib/utils/google.js';

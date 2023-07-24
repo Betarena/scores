@@ -2,18 +2,15 @@
 	  COMPONENT JS (w/ TS)
 ==================== -->
 <script lang="ts">
-	import { fade } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { page } from '$app/stores';
-	import { dev } from '$app/environment';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
-	import LoaderTabNews from './loaders/Loader_Tab_News.svelte';
 	import LoaderBottomBtn from './loaders/Loader_Bottom_Btn.svelte';
+	import LoaderTabNews from './loaders/Loader_Tab_News.svelte';
 
-	import MobileLoaderMedia from './loaders/mobile/Loader_Media.svelte';
 	import MobileLoaderInfoRow from './loaders/mobile/Loader_Info_Row.svelte';
+	import MobileLoaderMedia from './loaders/mobile/Loader_Media.svelte';
 
 	import LoaderInfoRow from './loaders/tablet/Loader_Info_Row.svelte';
 	import LoaderMedia from './loaders/tablet/Loader_Media.svelte';
@@ -63,7 +60,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div
@@ -71,7 +68,7 @@
 	class:dark-background-1={$userBetarenaSettings.theme ==
 		'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] [MOBILE]
   -->
 	{#if mobileExclusive}
@@ -106,7 +103,7 @@
 				<LoaderBottomBtn />
 			</div>
 		</div>
-		<!-- 
+		<!--
   [ℹ] [DESKTOP] [TABLET]
   -->
 	{:else}
@@ -203,13 +200,13 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		/* EMPTY */
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1001px) {
 		/* row box */

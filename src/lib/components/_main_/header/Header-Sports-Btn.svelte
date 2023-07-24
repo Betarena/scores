@@ -3,31 +3,43 @@ COMPONENT JS (w/ TS)
 =================-->
 
 <script lang="ts">
-	import { sessionStore } from '$lib/store/session.js';
 
-  //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
+  // #region ➤ 📦 Package Imports
+
+	import sessionStore from '$lib/store/session.js';
 
   import { removeDiacritics } from '$lib/utils/languages.js';
   import { createEventDispatcher } from 'svelte';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
   const dispatch = createEventDispatcher();
 
-  export let sportNameDefault: string;
-  export let sportTranslation: string;
-  export let sportValue: string;
-  export let selectedSport: string;
+  export let
+    sportNameDefault: string,
+    sportTranslation: string,
+    sportValue: string,
+    selectedSport: string
+  ;
 
-  let sportIcon: string;
+  let
+    sportIcon: string,
+    sportLink: string =
+      $sessionStore?.serverLang == 'en'
+        ? `/${removeDiacritics(sportTranslation?.toLowerCase())}`
+        : `/${$sessionStore?.serverLang}/${removeDiacritics(sportTranslation?.toLowerCase())}`
+  ;
 
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ 📌 VARIABLES
 
-  //#region ➤ [MAIN-METHODS]
+  // #region ➤ 🛠️ METHODS
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
 	function clickAction
   (
   ): void
@@ -41,25 +53,25 @@ COMPONENT JS (w/ TS)
     );
 	}
 
-  //#endregion ➤ [METHODS]
+  // #endregion ➤ 🛠️ METHODS
 
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  //#region ➤ [REACTIVIY] [METHODS]
-
+  /**
+   * @description
+   * TODO: DOC:
+   */
   $: if_R_0 =
     selectedSport == sportNameDefault
   ;
-  $: if (!if_R_0) sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`
-  $: if (if_R_0) sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`
+  $: if (!if_R_0)
+    sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}.svg`;
+  ;
+  $: if (if_R_0)
+    sportIcon = `/assets/svg/sport-icon/${sportNameDefault.toLocaleLowerCase()}-select.svg`
+  ;
 
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -77,12 +89,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <a
-  href={$sessionStore?.serverLang == 'en' ? `/${removeDiacritics(sportTranslation?.toLowerCase())}` : `/${$sessionStore?.serverLang}/${removeDiacritics(sportTranslation?.toLowerCase())}` }
+  href={sportLink}
 >
   <div
-    class="
-      sports-box
-      row-space-out
+    class=
+    "
+    sports-box
+    row-space-out
     "
     on:click={() => clickAction()}
     class:selected-sports={selectedSport == sportNameDefault}
@@ -92,13 +105,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     SPORT IMG + NAME
     -->
     <div
-      class="row-space-out"
+      class=
+      "
+      row-space-out
+      "
       style="width: fit-content;"
     >
       <img
         loading="lazy"
-        class="
-          m-r-10
+        class=
+        "
+        m-r-10
         "
         src={sportIcon}
         alt="{sportNameDefault}-img"
@@ -106,11 +123,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         height=20
       />
       <p
-        class="
-          color-white
-          s-14
-          m-r-10
-          capitalize
+        class=
+        "
+        color-white
+        s-14
+        m-r-10
+        capitalize
         "
       >
         {sportTranslation}
@@ -121,10 +139,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     SPORT VALUE (NUM/SOON)
     -->
     <p
-      class="
-        color-white
-        s-14
-        sport-counter-dark
+      class=
+      "
+      color-white
+      s-14
+      sport-counter-dark
       "
     >
       {sportValue}

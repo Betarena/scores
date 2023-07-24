@@ -5,7 +5,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import type { Standing_Team_Total_Away_Home } from '$lib/models/tournaments/standings/types';
 
@@ -71,10 +71,10 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
-<!-- 
+<!--
 [ℹ] ALTERNAITVE ROW APPROACH [V.2]
 -->
 
@@ -84,19 +84,19 @@
 		'Dark'}
 	in:fade
 >
-	<!-- 
+	<!--
   [ℹ] team main details box left
   -->
 	<td>
 		<div class="row-space-start">
 			<!--
-      [ℹ] team number position 
+      [ℹ] team number position
       -->
 			<div class="team-pos">
 				<p
 					class="
-            team-pos 
-            s-12 
+            team-pos
+            s-12
             w-500
           "
 					style="background-color: {TEAM_DATA.color_code}"
@@ -106,7 +106,7 @@
 					{position}
 				</p>
 			</div>
-			<!-- 
+			<!--
       [ℹ] team logo
       <conditional>
       -->
@@ -119,14 +119,14 @@
 					/>
 				</div>
 			{/if}
-			<!-- 
+			<!--
       [ℹ] team name
       -->
 			<div class="team-name">
 				<p
 					class="
-            s-12 
-            w-500 
+            s-12
+            w-500
             no-wrap
           "
 				>
@@ -135,17 +135,17 @@
 			</div>
 		</div>
 	</td>
-	<!-- 
+	<!--
   [ℹ] team main further info box right
   -->
-	<!-- 
+	<!--
   [ℹ] tabler view 1
   -->
 	{#if (TABLEMOBILEVIEW == 1 && !viewportDesktop) || viewportDesktop}
 		<td>
 			<p
 				class="
-          s-12 
+          s-12
           w-500
         "
 			>
@@ -156,8 +156,8 @@
 		<td>
 			<p
 				class="
-          s-12 
-          w-500 
+          s-12
+          w-500
           color-grey
         "
 			>
@@ -168,7 +168,7 @@
 		<td>
 			<p
 				class="
-          s-12 
+          s-12
           w-500
         "
 				style="color: #59C65D;"
@@ -180,8 +180,8 @@
 		<td>
 			<p
 				class="
-          s-12 
-          w-500 
+          s-12
+          w-500
           color-grey
         "
 			>
@@ -192,7 +192,7 @@
 		<td>
 			<p
 				class="
-          s-12 
+          s-12
           w-500
         "
 				style="color: #FF3C3C;"
@@ -204,8 +204,8 @@
 		<td>
 			<p
 				class="
-          s-12 
-          w-500 
+          s-12
+          w-500
           color-grey
         "
 			>
@@ -216,8 +216,8 @@
 		<td>
 			<p
 				class="
-          s-12 
-          w-500 
+          s-12
+          w-500
           color-grey
         "
 			>
@@ -225,7 +225,7 @@
 			</p>
 		</td>
 	{/if}
-	<!-- 
+	<!--
   [ℹ] tabler view 2
   -->
 	{#if (TABLEMOBILEVIEW == 2 && !viewportDesktop) || viewportDesktop}
@@ -238,7 +238,7 @@
           {#each recent_form.reverse() as form}
             <div
               class="
-                recent-form-dot 
+                recent-form-dot
                 m-r-5
               "
               class:win={form == 'W'}
@@ -344,8 +344,8 @@
 		margin-right: 0;
 	}
 
-	/* 
-  MOBILE RESPONSIVNESS 
+	/*
+  MOBILE RESPONSIVNESS
   */
 	@media only screen and (max-width: 475px) {
 		.league-table-team-row div.team-pos {
@@ -387,8 +387,8 @@
 		}
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
 	.dark-background-1 div.recent-form-dot.lost {
