@@ -1,8 +1,10 @@
 <!-- ===================
-	COMPONENT JS - BASIC 
+	COMPONENT JS - BASIC
     [TypeScript Written]
 =================== -->
+
 <script lang="ts">
+
   import { onMount } from 'svelte';
 
   let show: boolean = true;
@@ -12,25 +14,35 @@
    * @description triggers events onLoad of the
    * page/component;
   */
-  onMount(async () => {
-    setTimeout(async () => {
-      document.documentElement.classList.remove(
-          'googlebot-override'
+  onMount
+  (
+    async () =>
+    {
+
+      setTimeout
+      (
+        async () =>
+        {
+          // document.documentElement.classList.remove(
+          //     'googlebot-override'
+          // );
+          // document.body.classList.remove(
+          //   'googlebot-override'
+          // );
+          document.documentElement.classList.remove(
+            'no-scrollbar'
+          );
+          document.body.classList.remove(
+            'no-scrollbar'
+          );
+          show = false;
+        },
+        500
       );
-      document.body.classList.remove(
-        'googlebot-override'
-      );
-      document.documentElement.classList.remove(
-        'no-scrollbar'
-      );
-      document.body.classList.remove(
-        'no-scrollbar'
-      );
-    }, 500);
-    setTimeout(async () => {
-      show = false;
-    }, 850);
-  });
+
+    }
+  );
+
 </script>
 
 <!-- ===================
@@ -39,8 +51,8 @@
 
 {#if show}
 	<div
-    id="splash-screen">
-    <!-- FIXME: need width & height -->
+    id="splash-screen"
+  >
 		<img
 			id="brand-svg"
 			src="/assets/svg/logo-main.svg"
@@ -53,21 +65,25 @@
 <!-- ===================
 	COMPONENT STYLE
 =================== -->
+
 <style>
-	/* 
+	/*
     Hide scrollbar for Chrome, Safari and Opera */
-	:global(body.no-scrollbar::-webkit-scrollbar) {
+	:global(body.no-scrollbar::-webkit-scrollbar)
+  {
 		display: none !important;
 	}
-	/* 
+	/*
     Hide scrollbar for IE, Edge and Firefox */
-	:global(body.no-scrollbar) {
+	:global(body.no-scrollbar)
+  {
 		-ms-overflow-style: none !important; /* IE and Edge */
 		scrollbar-width: none !important; /* Firefox */
 	}
-	/* 
+	/*
     Container for the Displaying of the Splash-Screen */
-	div {
+	div
+  {
 		position: fixed;
 		background-color: #292929;
 		top: 0;
@@ -81,12 +97,14 @@
 		justify-items: center;
 		grid-gap: 30px;
 	}
-	/* 
+	/*
     ===================
     RESPONSIVNESS - DESKTOP COMPATABILITY
     ===================
     */
-	@media only screen and (min-width: 1024px) {
+	@media only screen
+  and (min-width: 1024px)
+  {
 		/* empty */
 	}
 </style>
