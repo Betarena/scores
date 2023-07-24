@@ -48,4 +48,4 @@ jobs:
       - uses: actions/checkout@v3
       - name: Build docker image
         run: |
-          docker build . --file Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)
+          docker build . --file ./docker/prod.Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)
