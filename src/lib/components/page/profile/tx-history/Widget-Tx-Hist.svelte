@@ -1346,7 +1346,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     color: var(--white);
   }
 
-  div#profile⮕w⮕txhist⮕main.dark-background-1 div#tx-history\/divider
+  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕divider
   {
     /* 🎨 style */
     border-bottom: 1px solid var(--dark-theme-1-shade);

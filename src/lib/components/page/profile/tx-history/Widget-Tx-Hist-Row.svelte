@@ -348,7 +348,7 @@ COMPONENT JS (w/ TS)
         "
       >
         <p>
-          {tx_data?.quantity ?? '-'}
+          ${tx_data?.quantity ?? '-'}
         </p>
         <p
           class=
@@ -357,7 +357,7 @@ COMPONENT JS (w/ TS)
           color-grey
           "
         >
-          ${tx_data?.amount ?? '-'} BTA
+          {tx_data?.amount ?? '-'} BTA
         </p>
       </div>
     </td>
@@ -448,7 +448,7 @@ COMPONENT JS (w/ TS)
             color-black-2
             "
           >
-            {['payment_processor_fee', 'amount'].includes(item[0]) ? '$' : ''}
+            {['payment_processor_fee', 'quantity'].includes(item[0]) ? '$' : ''}
             {tx_data?.[item[0]] ?? '-'}
           </p>
         </div>
