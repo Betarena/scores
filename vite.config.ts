@@ -17,12 +17,12 @@ export default defineConfig
       // progress(),
       // ### DOC: vite-plugin-progress
       // c.compress()
-      viteCompression(),
-      cssInjectedByJsPlugin
-      (
-        {
+      // viteCompression(),
+      // cssInjectedByJsPlugin
+      // (
+      //   {
 
-          relativeCSSInjection: true
+      //     relativeCSSInjection: true
 
           // topExecutionPriority: true,
 
@@ -37,27 +37,27 @@ export default defineConfig
           // injectCode: (cssCode, options) => {
           //   return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
           // }
-        }
-      ),
+      //   }
+      // ),
       // preload(),
       sveltekit()
     ],
     // DOC: REF: [6]
-    build: {
-      rollupOptions:
-      {
-        output:
-        {
-          manualChunks: undefined
-        }
-      }
-    },
-    test:
-    {
-      include: ['src/**/*.{test,spec}.{js,ts}'],
-      globals: true,
-      environment: 'jsdom',
-      // setupFiles: ["src/setuptest.js"],
-    }
+    // build: {
+    //   rollupOptions:
+    //   {
+    //     output:
+    //     {
+    //       manualChunks: undefined
+    //     }
+    //   }
+    // },
+    // test:
+    // {
+    //   include: ['src/**/*.{test,spec}.{js,ts}'],
+    //   globals: true,
+    //   environment: 'jsdom',
+    //   // setupFiles: ["src/setuptest.js"],
+    // }
   }
 );
