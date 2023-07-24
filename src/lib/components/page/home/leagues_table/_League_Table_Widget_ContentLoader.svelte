@@ -5,7 +5,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 	// ...
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import PlaceholderTableRow from './loaders/_Placeholder_Row.svelte';
 
 	let showNum: number = 10;
@@ -55,7 +55,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
@@ -99,7 +99,7 @@
 		position: relative;
 	}
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		.leagues-table-row:first-child {
@@ -107,7 +107,7 @@
 		}
 	}
 
-	/* 
+	/*
   MOBILE-EXCLUSIVE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */
@@ -126,7 +126,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#leagues-table-container {
@@ -136,7 +136,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#leagues-table-container {

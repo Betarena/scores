@@ -10,8 +10,8 @@ COMPONENT JS (w/ TS)
 
   import { page } from '$app/stores';
   import { get } from '$lib/api/utils';
-  import { sessionStore } from '$lib/store/session';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { toCorrectDate, toISOMod } from '$lib/utils/dates.js';
   import { LV2_W_H_TAG, dlog } from '$lib/utils/debug';
   import { platfrom_lang_ssr } from '$lib/utils/platform-functions';

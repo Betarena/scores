@@ -8,7 +8,7 @@ COMPONENT JS (w/ TS)
   // <-imports-go-here->
 
 	import { page } from "$app/stores";
-	import { sessionStore } from "$lib/store/session.js";
+	import sessionStore from "$lib/store/session.js";
 
 	import type {
 		B_SAP_D1,
@@ -46,7 +46,7 @@ COMPONENT JS (w/ TS)
   $: data_0 = $page.data.B_SAP_D1
   $: data_1 = $page.data.PAGE_SEO
 
-  $: breadcrumb_lang_prefix = 
+  $: breadcrumb_lang_prefix =
     $sessionStore?.serverLang == 'en'
       ? `/`
       : `/${$sessionStore?.serverLang}/`
@@ -78,46 +78,46 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<!-- 
+<!--
 [ℹ] breadcrumbs component URL
 -->
 <div
   id="fpp-breadcrumb"
   class="
-    row-space-start 
+    row-space-start
     m-b-20
   "
 >
-  <!-- 
+  <!--
   [ℹ] sport
   -->
   <!-- TODO: correct transaltion -->
-  <BreadcrumbSingle 
+  <BreadcrumbSingle
     href={`${breadcrumb_lang_prefix}${league_url_split[0]}`}
     name={data_1?.football}
   />
-  <!-- 
-  [ℹ] country 
+  <!--
+  [ℹ] country
   -->
-  <BreadcrumbSingle 
+  <BreadcrumbSingle
     href={`${breadcrumb_lang_prefix}${league_url_split[0]}/${league_url_split[1]}`}
     name={country}
   />
-  <!-- 
-  [ℹ] league_name 
+  <!--
+  [ℹ] league_name
   -->
-  <BreadcrumbSingle 
+  <BreadcrumbSingle
     href={`${breadcrumb_lang_prefix}${league_url_split[0]}/${league_url_split[1]}/${league_url_split[2]}`}
     name={data?.data?.league_name}
   />
-  <!-- 
-  [ℹ] player_name && team_name 
+  <!--
+  [ℹ] player_name && team_name
   -->
-  <BreadcrumbSingle 
+  <BreadcrumbSingle
     name={`${player_breadcrumb}`}
     end={true}
     disable={true}

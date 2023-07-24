@@ -8,8 +8,8 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	
-  import { sessionStore } from '$lib/store/session.js';
+
+  import sessionStore from '$lib/store/session.js';
   import { CO_W_F_STY, CO_W_F_TAG, CO_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 
@@ -18,7 +18,7 @@ COMPONENT JS (w/ TS)
 	import ContentMain from './Content-Main.svelte';
 
 	import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
-	
+
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
@@ -39,29 +39,29 @@ COMPONENT JS (w/ TS)
    * @summary
    * [MAIN] [INIT]
    * @description
-   * main widget data loader, 
+   * main widget data loader,
    * (and) try..catch (error) handler
    * (and) placeholder handler
    */
   async function widgetInit
   (
-  ): Promise < B_CONT_D[] > 
+  ): Promise < B_CONT_D[] >
   {
 		await sleep(3000);
-    
+
     WIDGET_DATA = WIDGET_S_DATA
 
     const if_M_0: boolean =
       WIDGET_DATA == undefined
       || WIDGET_DATA?.length == 0
     ;
-		if (if_M_0) 
+		if (if_M_0)
     {
       // [🐞]
       dlog
       (
         `${CO_W_F_TAG} ❌ no data available!`,
-        CO_W_F_TOG, 
+        CO_W_F_TOG,
         CO_W_F_STY
       );
 			NO_WIDGET_DATA = true;
@@ -83,11 +83,11 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "language" change;
   */
   $: if_R_0 =
-    browser 
+    browser
     && $sessionStore?.serverLang != undefined
   ;
   $: if (if_R_0)
@@ -112,18 +112,18 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <!-- 
+  <!--
   WIDGET TITLE
   -->
   <h2>
     {WIDGET_T_DATA?.news_and_views}
   </h2>
-  <!-- 
+  <!--
   widget-contents list
   -->
   {#each WIDGET_S_DATA || [] as item}
@@ -138,27 +138,27 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!-- [🐞] -->
 <!-- <ContentLoader /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
   <ContentLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <ContentMain 
+    <ContentMain
       FIXTURE_CONTENT={WIDGET_DATA}
       FIXTURE_CONTENT_TRANSLATION={WIDGET_T_DATA}
     />
   {/if}
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -171,12 +171,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 

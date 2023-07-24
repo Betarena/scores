@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import LoaderOddsBoxL from './loaders/tablet/Loader_Odds_Box_L.svelte';
 	import LoaderOddsBoxR from './loaders/tablet/Loader_Odds_Box_R.svelte';
@@ -61,19 +61,19 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
-	<!-- 
-  [ℹ] widget-component 
+	<!--
+  [ℹ] widget-component
   -->
 	<div
 		id="h2h-fixture-loader"
 		class:dark-background-1={$userBetarenaSettings.theme ==
 			'Dark'}
 	>
-		<!-- 
+		<!--
     [ℹ] [MOBILE]
     -->
 		{#if mobileExclusive}
@@ -97,7 +97,7 @@
 				<MobileLoaderProgressBarBox_R />
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] fixture bet-stats info
       -->
 			<div id="grid-bet-stats">
@@ -114,7 +114,7 @@
 				{/each}
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] fixture past-fixtures
       -->
 			{#each { length: 5 } as item}
@@ -129,7 +129,7 @@
 			{/each}
 		{/if}
 
-		<!-- 
+		<!--
     [ℹ] [DESKTOP] [TABLET]
     -->
 		{#if !mobileExclusive}
@@ -151,7 +151,7 @@
 				<LoaderTopProgressBar />
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] fixture bet-stats info
       -->
 			<div id="grid-bet-stats">
@@ -168,7 +168,7 @@
 				{/each}
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] fixture past-fixtures
       -->
 			{#each { length: 5 } as item}
@@ -240,7 +240,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   [TABLET] && [DESKTOP] RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#h2h-fixture-loader {
@@ -279,7 +279,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#h2h-fixture-loader {

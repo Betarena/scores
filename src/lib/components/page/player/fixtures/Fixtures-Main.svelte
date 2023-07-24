@@ -10,8 +10,8 @@ COMPONENT JS (w/ TS)
   import { onMount } from 'svelte';
 
   import { get } from '$lib/api/utils';
-  import { sessionStore } from '$lib/store/session.js';
-  import { userBetarenaSettings } from '$lib/store/user-settings';
+  import sessionStore from '$lib/store/session.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
   import { viewport_change } from '$lib/utils/platform-functions';
   import { PFIX_PP_dataInject, PFIX_PP_genLeagueFixMap } from '@betarena/scores-lib/dist/functions/func.player.fixtures.js';
 

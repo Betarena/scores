@@ -1,9 +1,12 @@
 
 /**
  * @summary
- * [HELPER]
+ * 🔹 HELPER
+ *
  * @description
- * -> default translations in English, as a translation fallback;
+ *
+ * 📌 Default `fallback` translations `object` in English, for
+ * terms and words on platform (website).
  */
 export const translationObject:
 {

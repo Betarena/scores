@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import MobileLoaderPitchVector from './loaders/mobile/Loader_Pitch_Vector.svelte';
 	import MobileLoaderTeamRow from './loaders/mobile/Loader_Team_Row.svelte';
@@ -59,7 +59,7 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div
@@ -67,7 +67,7 @@
 	class:dark-background-1={$userBetarenaSettings.theme ==
 		'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] [MOBILE]
   -->
 	{#if mobileExclusive}
@@ -85,14 +85,14 @@
 			{/each}
 		</div>
 
-		<!-- 
+		<!--
   [ℹ] [DESKTOP] [TABLET]
   -->
 	{:else}
 		<TabletLoaderPitchVector />
 
 		<div class="row-space-out">
-			<!-- 
+			<!--
       [ℹ] left box -->
 			<div id="loader-player-box">
 				<div
@@ -115,7 +115,7 @@
 				{/each}
 			</div>
 
-			<!-- 
+			<!--
       [ℹ] right box -->
 			<div id="loader-player-box">
 				<div
@@ -180,13 +180,13 @@
     RESPONSIVNESS
   ==================== */
 
-	/* 
+	/*
   TABLET RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 726px) and (max-width: 1000px) {
 		/* EMPTY */
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS (&+) */
 	@media only screen and (min-width: 1001px) {
 		/* plyaer row box */

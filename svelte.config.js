@@ -1,11 +1,13 @@
 import node from '@sveltejs/adapter-node';
 import preprocess from 'svelte-preprocess';
 
-/** @type {import('@sveltejs/kit').Config} */
+/**
+ * @type {import('@sveltejs/kit').Config}
+ */
 const config =
 {
-	// [ℹ] consult https://github.com/sveltejs/svelte-preprocess
-	// [ℹ] for more information about preprocessors
+	// ### SEE:
+  // ### https://github.com/sveltejs/svelte-preprocess
 	preprocess: preprocess(),
 	kit:
   {
@@ -227,6 +229,22 @@ const config =
     // }
 
     //#endregion => CSP (CONFIG) (DISABLED)
-	}
+
+  },
+  // ### SEE:
+  // ### https://github.com/sveltejs/language-tools/issues/650
+  // ### https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check
+  onwarn:
+  (
+    warning,
+    handler
+  ) =>
+  {
+    if (warning.code.startsWith('a11y-')) return;
+    if (warning.code.startsWith('css-unused-selector')) return;
+    if (warning.code.startsWith('unused-export-let')) return;
+    handler(warning);
+  }
 };
+
 export default config;

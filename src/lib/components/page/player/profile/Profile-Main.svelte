@@ -9,14 +9,14 @@ COMPONENT JS (w/ TS)
 
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-  
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import ProfileStat from './Profile-Stat.svelte';
 
-	import { sessionStore } from '$lib/store/session.js';
+	import sessionStore from '$lib/store/session.js';
 	import type { FPPT_Data } from '@betarena/scores-lib/types/hasura';
 	import type { B_PPRO_D } from '@betarena/scores-lib/types/player-profile';
 	import type { B_SAP_D1, B_SAP_D2 } from "@betarena/scores-lib/types/seo-pages";
@@ -40,7 +40,7 @@ COMPONENT JS (w/ TS)
   $: B_SAP_D2 = $page.data?.B_SAP_D2;
 
   let birthdayStr = ""
-  
+
   //#endregion ➤ [VARIABLES]
 
   //#region ➤ [MAIN-METHODS]
@@ -77,7 +77,7 @@ COMPONENT JS (w/ TS)
   //#endregion ➤ [METHODS]
 
   //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
- 
+
 
   //#endregion ➤ [ONE-OFF] [METHODS] [IF]
 
@@ -97,7 +97,7 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 IMPORTANT Mobile First
 =================-->
@@ -108,7 +108,7 @@ IMPORTANT Mobile First
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   >
 
-    <!-- 
+    <!--
     player avatar / name
     -->
     <div
@@ -117,7 +117,7 @@ IMPORTANT Mobile First
       "
       class:m-b-16={tabletExclusive}
     >
-      <!-- 
+      <!--
       player profile (col) [#1]
       -->
       <div
@@ -127,7 +127,7 @@ IMPORTANT Mobile First
         "
         class:m-r-20={!mobileExclusive}
       >
-        <!-- 
+        <!--
         player img
         -->
         <img
@@ -142,7 +142,7 @@ IMPORTANT Mobile First
               (e.target.src = 'https://cdn.sportmonks.com/images/soccer/placeholder.png')
           }
         />
-        <!-- 
+        <!--
         player data
         -->
         <div
@@ -158,8 +158,8 @@ IMPORTANT Mobile First
             ">
             {WIDGET_DATA?.data?.player_name}
           </p>
-          <!-- 
-          📱 MOBILE 
+          <!--
+          📱 MOBILE
           -->
           {#if !mobileExclusive}
             <div
@@ -167,7 +167,7 @@ IMPORTANT Mobile First
                 row-space-start
                 m-t-10
               ">
-              <!-- 
+              <!--
               nationality
               -->
               <div
@@ -207,7 +207,7 @@ IMPORTANT Mobile First
                   {WIDGET_DATA?.data?.country_iso3}
                 </p>
               </div>
-              <!-- 
+              <!--
               national team
               -->
               <div
@@ -238,7 +238,7 @@ IMPORTANT Mobile First
           {/if}
         </div>
       </div>
-      <!-- 
+      <!--
       player profile (col) [#2]
       -->
       <div
@@ -246,7 +246,7 @@ IMPORTANT Mobile First
           row-space-end
           width-auto
         ">
-        <!-- 
+        <!--
         [💻 TABLET]
         -->
         {#if !tabletExclusive}
@@ -257,26 +257,26 @@ IMPORTANT Mobile First
             "
           >
 
-            <ProfileStat 
+            <ProfileStat
               profileStatTitle={birthdayStr}
               statVal={`${WIDGET_DATA?.data?.age} yrs`}
               widthFirst={true}
             />
 
-            <ProfileStat 
+            <ProfileStat
               profileStatTitle={`${WIDGET_T_DATA?.height}:` || 'Height:'}
               statVal={`${WIDGET_DATA?.data?.height} cm`}
             />
 
-            <ProfileStat 
+            <ProfileStat
               profileStatTitle={`${WIDGET_T_DATA?.weight}:` || 'Weight:'}
               statVal={`${WIDGET_DATA?.data?.weight} kg`}
             />
 
           </div>
         {/if}
-        <!-- 
-        📱 MOBILE 
+        <!--
+        📱 MOBILE
         -->
         <!-- {#if !mobileExclusive} -->
         {#if false}
@@ -292,8 +292,8 @@ IMPORTANT Mobile First
         {/if}
       </div>
     </div>
-    
-    <!-- 
+
+    <!--
     [📱 MOBILE] info stats row [#1]
     -->
     {#if mobileExclusive}
@@ -304,7 +304,7 @@ IMPORTANT Mobile First
         "
       >
 
-        <ProfileStat 
+        <ProfileStat
           profileStatTitle={`${WIDGET_T_DATA?.nationality}:` || 'Nationality:'}
           statVal={WIDGET_DATA?.data?.country_id}
           countryImg={WIDGET_DATA?.data?.country_img}
@@ -312,15 +312,15 @@ IMPORTANT Mobile First
           widthFirst={true}
         />
 
-        <ProfileStat 
+        <ProfileStat
           profileStatTitle={`${WIDGET_T_DATA?.national_team}:` || 'National Team:'}
           statVal={B_SAP_D1?.translations?.[$sessionStore?.serverLang]}
         />
 
       </div>
     {/if}
-    
-    <!-- 
+
+    <!--
     [💻 TABLET] info stats row [#2]
     -->
     {#if tabletExclusive}
@@ -330,26 +330,26 @@ IMPORTANT Mobile First
         "
       >
 
-        <ProfileStat 
+        <ProfileStat
           profileStatTitle={birthdayStr}
           statVal={`${WIDGET_DATA?.data?.age} yrs`}
           widthFirst={true}
         />
 
-        <ProfileStat 
+        <ProfileStat
           profileStatTitle={`${WIDGET_T_DATA?.height}:` || 'Height:'}
           statVal={`${WIDGET_DATA?.data?.height} cm`}
         />
 
-        <ProfileStat 
+        <ProfileStat
           profileStatTitle={`${WIDGET_T_DATA?.weight}:` || 'Weight:'}
           statVal={`${WIDGET_DATA?.data?.weight} kg`}
         />
 
       </div>
     {/if}
-    
-    <!-- 
+
+    <!--
     [📱 MOBILE] Follow Btn
     -->
     <!-- {#if mobileExclusive} -->
@@ -414,11 +414,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
+  @media only screen
     and (min-width: 767px) {
 
     div#country-icon-box {

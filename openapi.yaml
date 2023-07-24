@@ -983,7 +983,7 @@ paths:
             Target fixture H2H widget data
 
   # ===================
-  # PLAYER PAGE
+  # 🤾 PLAYER PAGE
   # ===================
 
   # [PP] - FIXTURES Widget
@@ -1125,6 +1125,49 @@ paths:
               - required: [lang]
               # data (main)
               - required: [player_id, lang]
+      summary:
+        Returns a targets' player main SEO widget (data).
+      description:
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - Player Page
+      responses:
+        200:
+          description:
+            Target player SEO widget data
+
+  # ===================
+  # 🤾 USER / PROFILE PAGE
+  # ===================
+
+  # [UP] - User Profile
+  /api/data/profile:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description:
+            Target player (main) SEO widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?uid=[...]
+              uid:
+                type: string
+                example: n65vqAoIH3b7lsU4zroxjHk0SSp2
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              # data (main)
+              - required: [uid]
       summary:
         Returns a targets' player main SEO widget (data).
       description:

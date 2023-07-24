@@ -9,7 +9,7 @@ COMPONENT JS (w/ TS)
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
-  import { sessionStore } from '$lib/store/session.js';
+  import sessionStore from '$lib/store/session.js';
   import { H2H_W_F_STY, H2H_W_F_TAG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 

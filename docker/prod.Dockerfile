@@ -22,10 +22,17 @@ RUN apk add --no-cache \
 COPY . .
 RUN npm run build
 
-# ==== Final Image
+# ********************************************************************
+# STEP 2 | Build And Publish                                         *
+# ********************************************************************
+
 FROM node:16.17.0-alpine as final
 USER node:node
 WORKDIR /app
+
+# ********************************************************************
+# STEP 3 | TARGET Code Deployment                                    *
+# ********************************************************************
 
 COPY --from=build /app .
 COPY . .

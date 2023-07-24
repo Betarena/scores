@@ -5,7 +5,7 @@ import { json } from '@sveltejs/kit';
 import { initGrapQLClient } from '$lib/graphql/init';
 import { FCONT_FP_ENTRY, FCONT_FP_ENTRY_0 } from '@betarena/scores-lib/dist/functions/func.fixture.content.js';
 
-import type { B_H_EC } from '@betarena/scores-lib/types/hasura.js';
+import type { B_H_EC } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
 
 //#endregion ➤ Package Imports

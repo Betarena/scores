@@ -1,89 +1,157 @@
 <!-- ===============
 COMPONENT JS (w/ TS)
 =================-->
+
 <script lang="ts">
+
+  // #region ➤ 📦 Package Imports
+
+	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions';
-	import profile_avatar from './assets/profile-avatar.svg';
+
 	import MenuOptRow from './Widget-MenuOpt-Row.svelte';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+	import profile_avatar from './assets/profile-avatar.svg';
 
-	type PROFILE_OPT =
-		| 'Dashboard'
-		| 'Account Settings'
-		| 'Scores'
-		| 'Author';
+	import type { PROFILE_OPT } from '$lib/types/types.scores.js';
 
-	const PROFILE_MENU_OPT: PROFILE_OPT[] = [
-		'Dashboard',
-		'Account Settings',
-		'Scores',
-		'Author'
-	];
+  // #endregion ➤ 📦 Package Imports
 
-	let selectedMenuOpt: PROFILE_OPT = 'Dashboard';
-	let showDropdown: boolean = false;
+  // #region ➤ 📌 VARIABLES
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+	const
+    VIEWPORT_TABLET_INIT = 1160,
+    VIEWPORT_MOBILE_INIT = 725,
+    PROFILE_MENU_OPT: PROFILE_OPT[] =
+    [
+      'Dashboard',
+      'Account Settings',
+      'Deposit',
+      'Withdraw',
+      'Transaction History',
+      'Competitions History',
+      'Scores',
+      'Author'
+    ]
+  ;
 
-	function update_selected_opt(event) {
+  let
+    mobileExclusive: boolean,
+    tabletExclusive: boolean = false
+  ;
+
+	let
+    selectedMenuOpt: PROFILE_OPT = 'Dashboard',
+    showDropdown: boolean = false
+  ;
+
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  /**
+   * @description
+   * TODO: DOC:
+  */
+	function update_selected_opt
+  (
+    event: any
+  ): void
+  {
 		selectedMenuOpt = event?.detail?.opt || event;
 		showDropdown = false;
+
+    let targetUrl: string;
+
 		if (selectedMenuOpt == 'Dashboard')
-			goto(`/u/dashboard/${$userBetarenaSettings.lang}`, {
-				replaceState: true
-			});
+      targetUrl = `/u/dashboard/${$userBetarenaSettings.lang}`
+    ;
 		if (selectedMenuOpt == 'Account Settings')
-			goto(`/u/settings/${$userBetarenaSettings.lang}`, { replaceState: true });
+      targetUrl = `/u/settings/${$userBetarenaSettings.lang}`
+    ;
+    if (selectedMenuOpt == 'Deposit')
+      targetUrl = `/u/deposit/${$userBetarenaSettings.lang}`
+    ;
+    if (selectedMenuOpt == 'Transaction History')
+      targetUrl = `/u/transaction-history/${$userBetarenaSettings.lang}`
+    ;
+
+    goto
+    (
+      targetUrl,
+      {
+        replaceState: true
+      }
+    );
 	}
 
-	function closeAllDropdowns(): void {
+  /**
+   * @description
+   * TODO: DOC:
+  */
+	function closeAllDropdowns
+  (
+  ): void
+  {
 		showDropdown = false;
 	}
 
-	$: {
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  /**
+   * @description
+   * TODO: DOC:
+  */
+	$: if (browser)
+  {
 		if ($page?.url?.pathname.includes('dashboard'))
 			selectedMenuOpt = 'Dashboard';
+    ;
 		if ($page?.url?.pathname.includes('settings'))
 			selectedMenuOpt = 'Account Settings';
+    ;
+    if ($page?.url?.pathname.includes('deposit'))
+			selectedMenuOpt = 'Deposit';
+    ;
+    if ($page?.url?.pathname.includes('transaction-history'))
+			selectedMenuOpt = 'Transaction History';
+    ;
 	}
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 725;
-	let mobileExclusive,
-		tabletExclusive: boolean = false;
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
 	onMount(async () => {
 		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
+			viewport_change(VIEWPORT_TABLET_INIT, VIEWPORT_MOBILE_INIT);
 		window.addEventListener(
 			'resize',
 			function () {
 				[tabletExclusive, mobileExclusive] =
 					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
+						VIEWPORT_TABLET_INIT,
+						VIEWPORT_MOBILE_INIT
 					);
 			}
 		);
 	});
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+### COMPONENT HTML
+### NOTE:
+### HINT: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 {#if !mobileExclusive && showDropdown}
@@ -95,58 +163,63 @@ COMPONENT HTML
 
 <div
 	id="profile-menu-widget-container"
-	class:row-space-out={tabletExclusive &&
-		!mobileExclusive}
+  data-testid="profile/menu-widget/outer"
+	class:row-space-out={tabletExclusive && !mobileExclusive}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
-	<!-- 
-  <-contents->
-  [ℹ] profile picture
-  [ℹ] username
+
+	<!--
+  MAIN PROFILE ROW
   -->
 	<div
 		id="profile-main-row"
-		class="
-      m-b-20
-      row-space-start
+    data-testid="profile/menu-widget/inner/main-row"
+		class=
+    "
+    m-b-20
+    row-space-start
     "
 	>
-		<!-- 
-    [ℹ] profile picture
+		<!--
+    PROFILE PICTURE
     -->
 		<img
 			id="menu-summary-profile-picture"
-			src={$userBetarenaSettings?.user
-				?.scores_user_data?.profile_photo ||
-				profile_avatar}
+			src={$userBetarenaSettings?.user?.scores_user_data?.profile_photo || profile_avatar}
 			alt="Profile Icon"
 			title="Profile Icon"
 			aria-label="Profile Icon"
-			width="64"
-			height="64"
-			class="m-r-16"
+			width=64
+			height=64
+			class=
+      "
+      m-r-16
+      "
 		/>
-		<!-- 
-    [ℹ] username
+
+		<!--
+    USERNAME
     -->
 		<p
-			class="
-        s-20
-        w-500
-        color-black-2
+			class=
+      "
+      s-20
+      w-500
+      color-black-2
       "
 		>
-			{$userBetarenaSettings?.user
-				?.scores_user_data?.username}
+			{$userBetarenaSettings?.user?.scores_user_data?.username}
 		</p>
+
 	</div>
 
 	<!--
-  [ℹ] MOBILE
+  📱 MOBILE
   -->
 	{#if mobileExclusive}
-		<!-- 
-    [ℹ] dropdown menu select
+
+		<!--
+    DROPDOWN MENU SELECT
     -->
 		<MenuOptRow
 			VIEW_OPT={1}
@@ -155,19 +228,20 @@ COMPONENT HTML
 			{mobileExclusive}
 			{tabletExclusive}
 			{showDropdown}
-			on:toggle_dropdown={() =>
-				(showDropdown = !showDropdown)}
+			on:toggle_dropdown={() => (showDropdown = !showDropdown)}
 		/>
-		<!-- 
-    [ℹ] dropdown menu select
+
+		<!--
+    DROPDOWN MENU SELECT
     -->
 		{#if showDropdown}
 			<div
 				id="background-modal-blur"
-				on:click={() =>
-					(showDropdown = !showDropdown)}
+				on:click={() =>	(showDropdown = !showDropdown)}
 			/>
-			<div id="dropdown-menu-opt-mobile">
+			<div
+        id="dropdown-menu-opt-mobile"
+      >
 				{#each PROFILE_MENU_OPT as item}
 					<MenuOptRow
 						VIEW_OPT={2}
@@ -175,25 +249,25 @@ COMPONENT HTML
 						SELECTED_OPT={selectedMenuOpt}
 						{mobileExclusive}
 						{tabletExclusive}
-						on:select_opt_trigger={(e) =>
-							update_selected_opt(e)}
+						on:select_opt_trigger={(e) =>	update_selected_opt(e)}
 					/>
 				{/each}
 			</div>
 		{/if}
+
 	{/if}
 
-	<!-- 
-  [ℹ] TABLET
-  [ℹ] MOBILE (CSS adjusted)
+	<!--
+  💻 TABLET + 📱 MOBILE CSS adjusted)
   -->
 	{#if tabletExclusive && !mobileExclusive}
-		<!-- 
+
+		<!--
     <-contents->
     [ℹ] profile menu options
     -->
 		<div id="dropdown-menu-opt-tablet-box">
-			<!-- 
+			<!--
       [ℹ] selected menu show
       -->
 			<MenuOptRow
@@ -203,10 +277,9 @@ COMPONENT HTML
 				{mobileExclusive}
 				{tabletExclusive}
 				{showDropdown}
-				on:toggle_dropdown={() =>
-					(showDropdown = !showDropdown)}
+				on:toggle_dropdown={() => (showDropdown = !showDropdown)}
 			/>
-			<!-- 
+			<!--
       [ℹ] dropdown menu select
       -->
 			{#if showDropdown}
@@ -218,22 +291,22 @@ COMPONENT HTML
 							SELECTED_OPT={selectedMenuOpt}
 							{mobileExclusive}
 							{tabletExclusive}
-							on:select_opt_trigger={(e) =>
-								update_selected_opt(e)}
+							on:select_opt_trigger={(e) =>	update_selected_opt(e)}
 						/>
 					{/each}
 				</div>
 			{/if}
 		</div>
+
 	{/if}
 
-	<!-- 
-  [ℹ] DESKTOP
+	<!--
+  🖥️ LAPTOP
   -->
 	{#if !tabletExclusive}
-		<!-- 
-    <-contents->
-    [ℹ] profile menu options
+
+		<!--
+    PROFILE MENU OPTIONS
     -->
 		<div>
 			{#each PROFILE_MENU_OPT as item}
@@ -243,19 +316,25 @@ COMPONENT HTML
 					SELECTED_OPT={selectedMenuOpt}
 					{mobileExclusive}
 					{tabletExclusive}
-					on:select_opt_trigger={(e) =>
-						update_selected_opt(e)}
+					on:select_opt_trigger={(e) =>	update_selected_opt(e)}
 				/>
 			{/each}
 		</div>
+
 	{/if}
+
 </div>
 
 <!-- ===============
-COMPONENT STYLE
+### COMPONENT STYLE
+### NOTE:
+### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
-	div#background-area-close {
+
+	div#background-area-close
+  {
 		position: absolute;
 		top: 0;
 		bottom: 0;
@@ -266,25 +345,24 @@ COMPONENT STYLE
 		z-index: 1000;
 	}
 
-	/* profile widget */
-	div#profile-menu-widget-container {
+	div#profile-menu-widget-container
+  {
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
 	}
 
-	div#profile-menu-widget-container
-		> div#profile-main-row {
+	div#profile-menu-widget-container	> div#profile-main-row
+  {
 		padding: 20px 20px 0 20px;
 	}
-	div#profile-menu-widget-container
-		> div#profile-main-row
-		> img#menu-summary-profile-picture {
+	div#profile-menu-widget-container	> div#profile-main-row > img#menu-summary-profile-picture
+  {
 		border-radius: 50%;
 	}
 
-	/* mobile styles dropdown */
-	div#background-modal-blur {
+	div#background-modal-blur
+  {
 		position: fixed;
 		top: 0;
 		right: 0;
@@ -294,7 +372,8 @@ COMPONENT STYLE
 		width: 100%;
 		background: rgba(0, 0, 0, 0.5);
 	}
-	div#dropdown-menu-opt-mobile {
+	div#dropdown-menu-opt-mobile
+  {
 		position: fixed;
 		z-index: 999999;
 		bottom: 0;
@@ -306,16 +385,22 @@ COMPONENT STYLE
 		padding: 12px 0 5px 0;
 	}
 
-	/* -----------------
-    RESPONSIVNESS
-  ----------------- */
+  /*
+  =============
+  ⚡️ RESPONSIVNESS
+  =============
+  */
 
-	@media screen and (min-width: 768px) {
+	@media screen
+  and (min-width: 725px)
+  {
 		/* tablet styles dropdown */
-		div#dropdown-menu-opt-tablet-box {
+		div#dropdown-menu-opt-tablet-box
+    {
 			position: relative;
 		}
-		div#dropdown-menu-opt-tablet {
+		div#dropdown-menu-opt-tablet
+    {
 			position: absolute;
 			top: 115%;
 			right: 12.5%;
@@ -324,28 +409,34 @@ COMPONENT STYLE
 			background-color: var(--white);
 			box-shadow: 0px 4px 16px rgb(0 0 0 / 8%);
 			border-radius: 16px;
-			max-height: 209px;
 			overflow: hidden;
 		}
 	}
 
-  @media screen and (min-width: 1159px) {
+  @media screen
+  and (min-width: 1159px)
+  {
 		/* desktop styles dropdown */
-		div#profile-menu-widget-container {
+		div#profile-menu-widget-container
+    {
       overflow: hidden;
     }
   }
 
-	/* -----------------
-    WIDGET DARK THEME 
-  ----------------- */
+	/*
+  =============
+  🌒 DARK-THEME
+  =============
+  */
 
-  div#profile-menu-widget-container.dark-background-1 {
+  div#profile-menu-widget-container.dark-background-1
+  {
 		box-shadow: inset 0px 1px 0px var(--dark-theme-1-shade) !important;
 		background-color: var(--dark-theme-1) !important;
 	}
 
-  div#profile-menu-widget-container.dark-background-1 div#dropdown-menu-opt-mobile {
+  div#profile-menu-widget-container.dark-background-1 div#dropdown-menu-opt-mobile
+  {
     background-color: var(--dark-theme-1);
   }
 

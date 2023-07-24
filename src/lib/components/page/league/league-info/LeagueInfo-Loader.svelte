@@ -5,7 +5,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import PlaceholderLeft from './loaders/desktop/_Placeholder_Left.svelte';
 	import PlaceholderRight from './loaders/desktop/_Placeholder_Right.svelte';
@@ -63,7 +63,7 @@
 </script>
 
 <!-- ============
-  COMPONENT HTML 
+  COMPONENT HTML
 =================-->
 
 <div
@@ -79,7 +79,7 @@
 			<PlaceholderRight />
 		</div>
 
-		<!-- [ℹ] TABLET CONTENT-LOADER 
+		<!-- [ℹ] TABLET CONTENT-LOADER
   -->
 	{:else if tabletExclusive && !mobileExclusive}
 		<!-- <div
@@ -106,7 +106,7 @@
 			<PlaceholderLeftBottomRow />
 		</div>
 
-		<!-- [ℹ] MOBILE EXCLUSIVE CONTENT-LOADER 
+		<!-- [ℹ] MOBILE EXCLUSIVE CONTENT-LOADER
   -->
 	{:else if tabletExclusive && mobileExclusive}
 		<PlaceholderWholeM />

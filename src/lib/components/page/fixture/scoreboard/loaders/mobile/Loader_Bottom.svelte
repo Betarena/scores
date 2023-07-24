@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 </script>
 
 <svg
@@ -38,7 +38,7 @@
 </svg>
 
 <!-- [v2] Alternative -->
-<!-- 
+<!--
 <svg width="343" height="52" viewBox="0 0 343 52" fill="none" xmlns="http://www.w3.org/2000/svg">
   <g filter="url(#filter0_b_5647_356352)">
   <path d="M0 0H343V40C343 46.6274 337.627 52 331 52H12C5.37258 52 0 46.6274 0 40V0Z" fill="white"/>
@@ -54,5 +54,5 @@
   <feBlend mode="normal" in="SourceGraphic" in2="effect1_backgroundBlur_5647_356352" result="shape"/>
   </filter>
   </defs>
-</svg> 
+</svg>
 -->

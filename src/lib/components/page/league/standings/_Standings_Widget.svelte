@@ -9,8 +9,8 @@
 	import { fade } from 'svelte/transition';
 
 	import { get } from '$lib/api/utils';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief';
 
 	import type { Cache_Single_SportbookDetails_Data_Response } from '$lib/models/tournaments/league-info/types';

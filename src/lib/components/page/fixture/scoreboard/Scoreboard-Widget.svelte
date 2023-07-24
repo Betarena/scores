@@ -8,8 +8,8 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
-	
-  import { sessionStore } from '$lib/store/session.js';
+
+  import sessionStore from '$lib/store/session.js';
   import { STS_W_F_STY, STS_W_F_TAG, STS_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 
@@ -49,22 +49,22 @@ COMPONENT JS (w/ TS)
    * @summary
    * [MAIN] [INIT]
    * @description
-   * main widget data loader, 
+   * main widget data loader,
    * (and) try..catch (error) handler
    * (and) placeholder handler
    */
   async function widgetInit
   (
-  ): Promise < B_INC_D > 
+  ): Promise < B_INC_D >
   {
 		await sleep(3000);
-    
+
     WIDGET_DATA = WIDGET_S_DATA
 
     const if_0 =
       WIDGET_DATA == undefined
     ;
-		if (if_0) 
+		if (if_0)
     {
       dlog(`${STS_W_F_TAG} ❌ no data available!`, STS_W_F_TOG, STS_W_F_STY);
 			NO_WIDGET_DATA = true;
@@ -86,11 +86,11 @@ COMPONENT JS (w/ TS)
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "language" change;
   */
   $: if_R_0 =
-    browser 
+    browser
     && $sessionStore?.serverLang != undefined
   ;
   $: if (if_R_0)
@@ -115,7 +115,7 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -130,20 +130,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!-- [🐞] -->
 <!-- <ScoreboardLoader /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
   <ScoreboardLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
   {#if !NO_WIDGET_DATA}
-    <ScoreboardMain 
+    <ScoreboardMain
       FIXTURE_SCOREBOARD={WIDGET_DATA}
       FIXTURE_SCOREBOARD_TRANSLATION={WIDGET_T_DATA}
       {FIXTURE_CONTENT}
@@ -152,8 +152,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     />
   {/if}
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -166,12 +166,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 

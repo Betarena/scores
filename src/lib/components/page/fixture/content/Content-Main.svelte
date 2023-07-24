@@ -8,13 +8,13 @@
 
   import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
-	
+
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
-  
+
 	import type { B_CONT_D, B_CONT_T } from '@betarena/scores-lib/types/content.js';
 
   //#endregion ➤ [MAIN] Package Imports
@@ -26,7 +26,7 @@
 
   const MOBILE_VIEW = 725;
 	const TABLET_VIEW = 1000;
-  
+
 	let mobileExclusive = false;
   let tabletExclusive = false;
 
@@ -38,11 +38,11 @@
 
 	function toggle_full_list
   (
-  ) 
+  )
   {
 		showMore = !showMore;
 		// [ℹ] check if "limitViewRow" matches "trueLengthOfArray",
-		if (limitViewRow == FIXTURE_CONTENT.length) 
+		if (limitViewRow == FIXTURE_CONTENT.length)
     {
 			// [ℹ] if so, revert back original rows,
 			limitViewRow = 10;
@@ -58,7 +58,7 @@
   )
   {
     [
-      tabletExclusive, 
+      tabletExclusive,
       mobileExclusive
     ] =	viewport_change
     (
@@ -83,7 +83,7 @@
     window.addEventListener
     (
 			'resize',
-			function () 
+			function ()
       {
 				resizeAction();
 			}
@@ -111,7 +111,7 @@
   */
   onMount
   (
-    async() => 
+    async() =>
     {
       resizeAction();
       addEventListeners();
@@ -123,25 +123,25 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<div 
+<div
   id="widget-outer">
 
-	<!-- 
+	<!--
   NO WIDGET DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
-    <WidgetNoData 
+    <WidgetNoData
       WIDGET_TITLE={FIXTURE_CONTENT_TRANSLATION?.news_and_views}
       NO_DATA_TITLE={FIXTURE_CONTENT_TRANSLATION?.no_info}
       NO_DATA_DESC={FIXTURE_CONTENT_TRANSLATION?.no_info_desc}
     />
 	{/if}
 
-	<!-- 
+	<!--
   MAIN WIDGET COMPONENT
   -->
 	{#if !noWidgetData}
@@ -150,7 +150,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       WIDGET_TITLE={FIXTURE_CONTENT_TRANSLATION?.news_and_views}
     />
 
-    <!-- 
+    <!--
     📱 MOBILE + 💻 TABLET + 🖥️ LAPTOP
     -->
 
@@ -159,7 +159,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
 
-      <!-- 
+      <!--
       OPTION
       -->
       <div
@@ -178,10 +178,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         </p>
       </div>
 
-      <!-- 
+      <!--
       CONTENT LIST
       -->
-      <div 
+      <div
         id="content-box"
       >
         {#each FIXTURE_CONTENT?.length > 0 ? FIXTURE_CONTENT?.slice(0, limitViewRow) : [] as item}
@@ -196,7 +196,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 content-row
               "
             >
-              <!-- 
+              <!--
               FEATURED MEDIA
               -->
               <img
@@ -207,8 +207,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 height="80"
               />
 
-              <!-- 
-              MEDIA TITLE + POST INFO 
+              <!--
+              MEDIA TITLE + POST INFO
               -->
               <div
                 class="media-box">
@@ -221,8 +221,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 >
                   {@html item?.title}
                 </h3>
-                
-                <!-- 
+
+                <!--
                 DATETIME 📱 MOBILE
                 -->
                 {#if !mobileExclusive}
@@ -238,7 +238,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   </p>
                 {/if}
 
-                <!-- 
+                <!--
                 AUTHOR + DATE
                 -->
                 <div
@@ -255,8 +255,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     {item?.author}
                   </p>
 
-                  <div 
-                    class="divider" 
+                  <div
+                    class="divider"
                   />
 
                   <p
@@ -268,14 +268,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                     {new Date(item?.date.toString()).getDate()},
                     {new Date(item?.date.toString()).getFullYear()}
                   </p>
-                  
-                  <!-- 
+
+                  <!--
                   💻 TABLET 🖥️ LAPTOP
                    -->
                   {#if !mobileExclusive}
 
-                    <div 
-                      class="divider" 
+                    <div
+                      class="divider"
                     />
 
                     <p
@@ -296,13 +296,13 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 </div>
 
               </div>
-              
+
             </div>
           </a>
         {/each}
       </div>
 
-      <!-- 
+      <!--
       SHOW MORE / LESS
       -->
       {#if FIXTURE_CONTENT && FIXTURE_CONTENT.length > 10}
@@ -341,7 +341,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 <style>
 
 	/* lineups-main */
-	div#content-widget-container 
+	div#content-widget-container
   {
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -355,9 +355,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/*
-  top tab box 
+  top tab box
   */
-	div#content-widget-container div.top-tab-box 
+	div#content-widget-container div.top-tab-box
   {
 		padding: 20px 0 0 0;
 		border-bottom: 1px solid #e6e6e6;
@@ -366,36 +366,36 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: -webkit-fill-available;
 		margin-bottom: 20px;
 	}
-	div#content-widget-container div.top-tab-box p 
+	div#content-widget-container div.top-tab-box p
   {
 		font-size: 14px;
 		padding-bottom: 12px;
 	}
-	div#content-widget-container div.top-tab-box p.activeOpt 
+	div#content-widget-container div.top-tab-box p.activeOpt
   {
 		color: #f5620f;
 		border-bottom: 4px solid #f5620f;
 	}
 
-	/* 
+	/*
   content-row
   */
-	div#content-widget-container div#content-box a div.content-row 
+	div#content-widget-container div#content-box a div.content-row
   {
 		padding: 20px 0;
 		border-bottom: 1px solid #e6e6e6;
 		width: -webkit-fill-available;
 		margin: 0 20px;
 	}
-	div#content-widget-container div#content-box a:first-child div.content-row 
+	div#content-widget-container div#content-box a:first-child div.content-row
   {
 		border-top: 1px solid #e6e6e6;
 	}
-	div#content-widget-container div#content-box a:last-child div.content-row 
+	div#content-widget-container div#content-box a:last-child div.content-row
   {
 		border-top: none;
 	}
-	div#content-widget-container div#content-box div.content-row img 
+	div#content-widget-container div#content-box div.content-row img
   {
 		object-fit: cover;
 		width: 80px;
@@ -404,7 +404,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		/* dynamic */
 		margin-right: 20px;
 	}
-	div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title 
+	div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title
   {
 		margin-top: 0;
 		font-size: 14px;
@@ -415,11 +415,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		line-clamp: 3;
 		-webkit-box-orient: vertical;
 	}
-	div#content-widget-container div#content-box a div.content-row div.media-box div.author-date-info p 
+	div#content-widget-container div#content-box a div.content-row div.media-box div.author-date-info p
   {
 		padding-right: 12px;
 	}
-	div#content-widget-container div#content-box a div.content-row div.media-box div.author-date-info div.divider 
+	div#content-widget-container div#content-box a div.content-row div.media-box div.author-date-info div.divider
   {
 		height: 14px;
 		margin-right: 12px;
@@ -427,43 +427,43 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #cccccc;
 	}
 
-	/* 
-  display more box 
+	/*
+  display more box
   */
-	div#display-all-btn 
+	div#display-all-btn
   {
 		padding: 26px 0;
 	}
 
 	/*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (min-width: 726px) 
-  and (max-width: 1000px) 
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1000px)
   {
-		#content-widget-container 
+		#content-widget-container
     {
 			min-width: 100%;
 		}
 	}
 
-	@media only screen 
-  and (min-width: 726px) 
+	@media only screen
+  and (min-width: 726px)
   {
-		/* 
-    content-row 
+		/*
+    content-row
     */
-		div#content-widget-container div#content-box a div.content-row img 
+		div#content-widget-container div#content-box a div.content-row img
     {
 			width: 144px;
 			height: 96px;
 			margin-right: 20px;
 		}
-		div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title 
+		div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title
     {
 			font-size: 18px;
 			overflow: hidden;
@@ -473,7 +473,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 			-webkit-box-orient: vertical;
 			margin-bottom: 6px;
 		}
-		div#content-widget-container div#content-box a div.content-row div.media-box p.post-desc 
+		div#content-widget-container div#content-box a div.content-row div.media-box p.post-desc
     {
 			font-size: 16px;
 			overflow: hidden;
@@ -486,24 +486,24 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 	}
 
-	@media only screen 
-  and (min-width: 1000px) 
+	@media only screen
+  and (min-width: 1000px)
   {
 		#content-widget-container {
 			min-width: 100%;
 		}
 
-		/* 
-    content-row 
+		/*
+    content-row
     */
-		div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title:hover 
+		div#content-widget-container div#content-box a div.content-row div.media-box h3.post-title:hover
     {
 			color: #f5620f !important;
 		}
 	}
 
 	@media only screen
-  and (min-width: 1160px) 
+  and (min-width: 1160px)
   {
 		/* EMPTY */
 	}
@@ -514,15 +514,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   =============
   */
 
-	/* 
-  events table box 
+	/*
+  events table box
   */
 	div#content-widget-container.dark-background-1 div.top-tab-box,
-	div#content-widget-container.dark-background-1 div#content-box a div.content-row 
+	div#content-widget-container.dark-background-1 div#content-box a div.content-row
   {
 		border-bottom: 1px solid #616161;
 	}
-	div#content-widget-container.dark-background-1 div#content-box a:first-child div.content-row 
+	div#content-widget-container.dark-background-1 div#content-box a:first-child div.content-row
   {
 		border-top: 1px solid #616161;
 	}

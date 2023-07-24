@@ -1,7 +1,7 @@
 <script lang="ts">
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	
+	import userBetarenaSettings from '$lib/store/user-settings.js';
+
   import one_red_card from './assets/1_red_card.svg';
   import one_red_card_dark from './assets/1_red_card_dark.svg';
   import captain from './assets/captain.svg';
@@ -11,7 +11,7 @@
   import penalty from './assets/penalty.svg';
   import yellow_card from './assets/yellow-card.svg';
   import yellowred_card from './assets/yellowred.svg';
-  
+
   export let event: string;
   export let eventNum: number;
 
@@ -65,7 +65,7 @@
 			icon = penalty_miss;
 		}
 	}
-  
+
 </script>
 
 <div
@@ -99,7 +99,7 @@
   .event-box {
     direction: ltr;
   }
-  
+
   @media only screen
     and (min-width: 475px) {
 

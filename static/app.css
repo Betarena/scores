@@ -514,22 +514,32 @@ bottom-margins
 left-margins
 ~~~~~~~~~~
 */
-.m-l-5 {
+.m-l-5
+{
 	margin-left: 5px;
 }
-.m-l-8 {
+.m-l-8
+{
 	margin-left: 8px;
 }
-.m-l-10 {
+.m-l-10
+{
 	margin-left: 10px;
 }
-.m-l-24 {
+.m-l-20
+{
+	margin-left: 20px;
+}
+.m-l-24
+{
 	margin-left: 24px;
 }
-.m-l-50 {
+.m-l-50
+{
   margin-left: 50px;
 }
-.m-l-70 {
+.m-l-70
+{
   margin-left: 70px;
 }
 
@@ -676,17 +686,22 @@ GRID / COLUMN DISPLAY
 
 /* #region ➤ [MAIN] [BUTTONS] Website Layout */
 
-/* ==========================
-BUTTON STYLES
-========================== */
+/*
+*****************************************************
+📌 BUTTON STYLES                                    *
+*****************************************************
+*/
 
-button {
+button
+{
 	/*
-  removing pre-set CSS, */
+  removing pre-set CSS,
+  */
 	outline: none !important;
 	border: none !important;
 	/*
-  general button design, */
+  general button design,
+  */
 	/* box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.25); */
 	/* padding: 5px 10px !important; */
 	/* border-radius: 3.5px; */
@@ -695,104 +710,143 @@ button {
 	transition: all 0.3s ease;
 	align-items: center;
 	/*
-  fonts */
+  fonts
+  */
 	white-space: nowrap;
 	/*
-  for the icons separation */
+  for the icons separation
+  */
 	display: flex;
 	justify-content: center;
-} button p {
+}
+button p
+{
 	/* font-weight: 400; */
-} button:disabled {
+}
+button:disabled
+{
 	cursor: default;
 }
 
-/*
-~~~~~~~~~~~~~
-BUTTON STYLES
-~~~~~~~~~~~~~
-*/
-.btn-primary {
+.btn-primary
+{
+  /* 🎨 style */
 	background: var(--primary);
 }
-.btn-primary p {
+.btn-primary p
+{
+  /* 🎨 style */
 	color: var(--white);
 }
 
-.btn-secondary {
+.btn-secondary
+{
+  /* 🎨 style */
 	background: var(--secondary);
 }
-.btn-secondary p {
+.btn-secondary p
+{
+  /* 🎨 style */
 	color: var(--white);
 }
 
-.btn-blue {
+.btn-blue
+{
+  /* 🎨 style */
 	background-color: var(--blue);
 }
-.btn-blue p {
+.btn-blue p
+{
+  /* 🎨 style */
 	color: var(--white);
 }
-.btn-blue:hover {
+.btn-blue:hover
+{
+  /* 🎨 style */
 	background-color: var(--white);
 }
-.btn-blue:hover p {
+.btn-blue:hover p
+{
+  /* 🎨 style */
 	color: var(--secondary);
 }
 
-.btn-white {
+.btn-white
+{
+  /* 🎨 style */
 	background-color: var(--white);
 }
-.btn-white p {
+.btn-white p
+{
+  /* 🎨 style */
 	color: var(--black);
 }
 
-.btn-primary-v2 {
+.btn-primary-v2
+{
+  /* 🎨 style */
+	height: 44px;
+	padding: 11.5px 24px;
 	background: var(--primary);
 	border-radius: 8px;
-	padding: 11.5px 24px;
-	height: 44px;
 	color: var(--white);
 }
-.btn-primary-v2:hover {
+.btn-primary-v2:hover
+{
+  /* 🎨 style */
 	background-color: var(--primary-fade);
 }
 
-.btn-hollow {
+.btn-hollow
+{
+  /* 🎨 style */
+	height: 44px;
+	padding: 11.5px 20px;
 	background: transparent;
 	border: 1px solid var(--grey-color) !important;
 	border-radius: 8px;
-	padding: 11.5px 20px;
-	height: 44px;
 	color: var(--dark-theme);
 }
-.btn-hollow:hover {
+.btn-hollow:hover
+{
+  /* 🎨 style */
 	border: 1px solid var(--primary) !important;
 	color: var(--primary);
 }
-/* variant (2) */
-.btn-hollow.danger {
+/*
+  Variant (2)
+*/
+.btn-hollow.danger
+{
+  /* 🎨 style */
 	border: 1px solid var(--red) !important;
 }
-/* variant (3) */
-.btn-hollow.cta {
+/*
+  Variant (3)
+*/
+.btn-hollow.cta
+{
+  /* 🎨 style */
 	border: 1px solid var(--primary) !important;
-} .btn-hollow.cta:hover {
+}
+.btn-hollow.cta:hover
+{
+  /* 🎨 style */
   background-color: var(--primary);
 	color: var(--white) !important;
 }
 
-/*
-~~~~~~~~~~~~~
-BUTTON ICON IMG
-~~~~~~~~~~~~~
-*/
-.btn-right-icon {
+.btn-right-icon
+{
+  /* 🎨 style */
 	padding: 5px 45px 5px 6px !important;
 	background-position: right 11px top 50%;
 	background-size: 16.17px 16.17px;
 	background-repeat: no-repeat;
 }
-.btn-left-icon {
+.btn-left-icon
+{
+  /* 🎨 style */
 	padding: 5px 6px 5px 37px !important;
 	background-position: left 11px top 50%;
 	background-size: 16.17px 16.17px;
@@ -865,7 +919,8 @@ page dividers
 =============
 */
 
-hr {
+hr
+{
 	width: 100%;
 	margin: 16.17px 0;
 	opacity: 0.25;
@@ -879,14 +934,16 @@ INPUT FORM CSS STYLE
 =============
 */
 
-form fieldset {
+form fieldset
+{
 	outline: none;
 	border: none;
 	padding: 0;
 	margin: 0;
 }
 form input,
-form select {
+form select
+{
 	outline: none;
 	border: none;
 	opacity: 1;
@@ -901,13 +958,21 @@ form select {
 	border-radius: 7.34914px;
 	padding: 7px;
 }
-input:focus {
+input:focus
+{
 	/* padding: 5px; */
 	/* border: 2.5px solid #ff5555; */
 }
 
-.width-auto {
+.width-auto
+{
   width: auto;
+}
+
+.hover\/transition\/v-1
+{
+  /* 🎨 style */
+  transition: all 0.15s ease;
 }
 
 /* #endregion ➤ [MAIN] [OTHER STYLES] Website Layout */

@@ -4,42 +4,27 @@ COMPONENT JS (w/ TS)
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
-  // <-imports-go-here->
+  // #region ➤ 📦 Package Imports
 
-	import { sessionStore } from "$lib/store/session.js";
+	import sessionStore from "$lib/store/session.js";
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-  export let navKey: string;
-  export let navUrl: string;
-  export let navTxt: string;
-  export let isProfilePage: boolean;
-  export let soonTxt: string = '';
-  export let isSoon: boolean = false;
-  export let disableAnchor: boolean = false;
-  export let tabletExclusive: boolean;
-  export let mobileExclusive: boolean;
+  export let
+    navKey: string,
+    navUrl: string,
+    navTxt: string,
+    isProfilePage: boolean,
+    soonTxt: string = '',
+    isSoon: boolean = false,
+    disableAnchor: boolean = false,
+    isViewTablet: boolean,
+    isViewMobile: boolean
+  ;
 
-  //#endregion ➤ [VARIABLES]
-
-  //#region ➤ [MAIN-METHODS]
-
-  //#endregion ➤ [METHODS]
-
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 📌 VARIABLES
 
 </script>
 
@@ -58,11 +43,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <div
   id={navKey}
-  class="
-    nav-box
-    cursor-pointer
+  class=
   "
-  class:m-b-30={tabletExclusive || mobileExclusive}
+  nav-box
+  cursor-pointer
+  "
+  class:m-b-30={isViewTablet || isViewMobile}
   class:active={navKey == 'scores' && !isProfilePage}
   class:disable-anchor={disableAnchor}
   on:mouseover={() => $sessionStore.navBtnHover = navKey}
@@ -74,13 +60,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
     target={navKey == 'content' ? '_blank' : '_self'}
   >
     <p
-      class="
-        color-grey
-        s-14
-        w-500
-        m-r-32
-        uppercase
-        no-wrap
+      class=
+      "
+      color-grey
+      s-14
+      w-500
+      m-r-32
+      uppercase
+      no-wrap
       "
     >
       {navTxt}
@@ -89,11 +76,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <span
           class=
           "
-            color-white
-            s-12
-            m-l-10
-            pill
-            lowercase
+          color-white
+          s-12
+          m-l-10
+          pill
+          lowercase
           "
         >
           {soonTxt}

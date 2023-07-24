@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 </script>
 
 <div

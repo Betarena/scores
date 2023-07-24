@@ -5,11 +5,12 @@
 	// ... external components import;
 	// ... external `exports` imports;
 	import { db_real } from '$lib/firebase/init';
-	import {
-		onValue,
-		ref
-	} from 'firebase/database';
-	// ... DECLARING TYPESCRIPT-TYPES imports;
+	import
+		{
+			onValue,
+			ref
+		} from 'firebase/database';
+// ... DECLARING TYPESCRIPT-TYPES imports;
 	import { page } from '$app/stores';
 	import type {
 		DayName,
@@ -19,10 +20,10 @@
 		LiveScoreLeague,
 		LiveScoreLeagueGame
 	} from '$lib/models/featured_match/response_models';
-	// ... key component assets;
+// ... key component assets;
 	import type { LiveScore_SEO_Game_Scoped_Lang } from '$lib/models/featured_betting_sites/firebase-real-db-interface';
 	import type { LiveScores_Football_Translation } from '$lib/models/live_scores_football/types';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import redcard from './assets/card.svg';
 	import play from './assets/play.svg';
 	import play_dark from './assets/play_dark.svg';
@@ -383,7 +384,7 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
 <!-- SEO DATA -->

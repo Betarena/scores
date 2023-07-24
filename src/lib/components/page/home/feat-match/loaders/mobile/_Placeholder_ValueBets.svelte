@@ -1,9 +1,9 @@
 <script lang="ts">
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
 <svg

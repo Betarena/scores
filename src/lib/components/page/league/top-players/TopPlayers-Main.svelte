@@ -10,8 +10,8 @@ COMPONENT JS (w/ TS)
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils';
-	import { sessionStore } from '$lib/store/session';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, TP_W_STY, TP_W_TAG, TP_W_TOG } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 

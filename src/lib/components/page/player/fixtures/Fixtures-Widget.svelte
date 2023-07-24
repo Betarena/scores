@@ -1,4 +1,4 @@
-<!-- 
+<!--
 ====================
 This is an example .svelte
 component file, to give guidance on
@@ -19,8 +19,7 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
 
   import { page } from '$app/stores';
-  import { get } from '$lib/api/utils';
-  import { sessionStore } from '$lib/store/session.js';
+  import sessionStore from '$lib/store/session.js';
   import { viewport_change } from '$lib/utils/platform-functions';
   import { onMount } from 'svelte';
 
@@ -63,16 +62,16 @@ COMPONENT JS (w/ TS)
   async function widgetInit
   (
     // empty
-  ): Promise < B_PFIX_D > 
+  ): Promise < B_PFIX_D >
   {
-    
+
     WIDGET_DATA = WIDGET_S_DATA
 
     const VALID_RESPONSE =
       WIDGET_DATA == undefined
     ;
 
-		if (VALID_RESPONSE) 
+		if (VALID_RESPONSE)
     {
       // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			NO_WIDGET_DATA = true;
@@ -131,7 +130,7 @@ SVELTE INJECTION TAGS
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -139,7 +138,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   <h2>
     {WIDGET_TITLE}
   </h2>
-  <!-- 
+  <!--
   FIXTURE LINKS
   -->
   {#if fixtureMap.size != 0}
@@ -151,7 +150,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/each}
     {/each}
   {/if}
-  <!-- 
+  <!--
   LEAGUE LINKS
   -->
   {#if leagueMap.size != 0}
@@ -165,24 +164,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 <!-- <FixturesLoader /> -->
 
-<!-- 
+<!--
 [ℹ] main widget
 -->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  promise is pending
   -->
   <FixturesLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  promise was fulfilled
   -->
-  <FixturesMain 
+  <FixturesMain
     {WIDGET_DATA}
   />
 {:catch error}
-  <!-- 
-  promise was rejected 
+  <!--
+  promise was rejected
   -->
 {/await}
 
@@ -195,12 +194,12 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-  @media only screen 
-    and (min-width: 726px) 
+  @media only screen
+    and (min-width: 726px)
     and (max-width: 1000px) {
   }
 

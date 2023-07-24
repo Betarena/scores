@@ -5,7 +5,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import Desktop_PlaceholderBestPlayers from './loaders/desktop/_Placeholder_BestPlayers.svelte';
 	import Desktop_PlaceholderLeagueInfo from './loaders/desktop/_Placeholder_LeagueInfo.svelte';
@@ -70,7 +70,7 @@
 </script>
 
 <!-- ===============
-  COMPONENT HTML 
+  COMPONENT HTML
 ==================== -->
 
 <div
@@ -229,7 +229,7 @@
 		height: 215px;
 	}
 
-	/* 
+	/*
     MOBILE-EXCLUSIVE RESPONSIVNESS */
 	@media only screen and (max-width: 475px) {
 		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */

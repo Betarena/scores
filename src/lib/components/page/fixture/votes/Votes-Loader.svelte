@@ -4,7 +4,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import MobileLoaderVote from './loaders/mobile/Loader_Vote.svelte';
 	import TabletLoaderVote from './loaders/tablet/Loader_Vote.svelte';
@@ -54,18 +54,18 @@
 </script>
 
 <!-- ===============
-    COMPONENT HTML 
+    COMPONENT HTML
 ==================== -->
 
 <div>
-	<!-- 
+	<!--
   [ℹ] widget-component -->
 	<div
 		id="fixture-votes-loader"
 		class:dark-background-1={$userBetarenaSettings.theme ==
 			'Dark'}
 	>
-		<!-- 
+		<!--
     [ℹ] [MOBILE]
     -->
 		{#if mobileExclusive}
@@ -82,7 +82,7 @@
 			</div>
 		{/if}
 
-		<!-- 
+		<!--
     [ℹ] [DESKTOP] [TABLET]
     -->
 		{#if !mobileExclusive}
@@ -124,7 +124,7 @@
     responsivness
   ==================== */
 
-	/* 
+	/*
   MOBILE RESPONSIVNESS */
 	@media only screen and (min-width: 767px) {
 		#fixture-votes-loader {
@@ -133,7 +133,7 @@
 		}
 	}
 
-	/* 
+	/*
   DESKTOP RESPONSIVNESS */
 	@media only screen and (min-width: 1024px) {
 		#fixture-votes-loader {

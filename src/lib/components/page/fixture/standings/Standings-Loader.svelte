@@ -5,7 +5,7 @@
 	// ... svelte-imports;
 	import { onMount } from 'svelte';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import PlaceholderBottom from './loaders/desktop/Loader-Bottom.svelte';
 	import PlaceholderHead from './loaders/desktop/Loader-Head.svelte';
@@ -51,7 +51,7 @@
 </script>
 
 <!-- ============
-  COMPONENT HTML 
+  COMPONENT HTML
 =================-->
 
 <div
@@ -59,7 +59,7 @@
 	class:dark-background-1={$userBetarenaSettings.theme ==
 		'Dark'}
 >
-	<!-- 
+	<!--
   [ℹ] DESKTOP CONTENT-LOADER
   -->
 	{#if !tabletExclusive}
@@ -84,8 +84,8 @@
 
 		<PlaceholderBottom />
 
-		<!-- 
-  [ℹ] TABLET CONTENT-LOADER 
+		<!--
+  [ℹ] TABLET CONTENT-LOADER
   -->
 	{:else if tabletExclusive && !mobileExclusive}
 		<div class="m-b-15">
@@ -109,8 +109,8 @@
 
 		<PlaceholderBottom />
 
-		<!-- 
-  [ℹ] MOBILE EXCLUSIVE CONTENT-LOADER 
+		<!--
+  [ℹ] MOBILE EXCLUSIVE CONTENT-LOADER
   -->
 	{:else if tabletExclusive && mobileExclusive}
 		<div
@@ -173,8 +173,8 @@
 		padding: 10px 0;
 	}
 
-	/* 
-  MOBILE-EXCLUSIVE RESPONSIVNESS 
+	/*
+  MOBILE-EXCLUSIVE RESPONSIVNESS
   */
 	@media only screen and (max-width: 725px) {
 		/* ... REUIRED FOR SVELTE-CONTENT-LOADER ... */

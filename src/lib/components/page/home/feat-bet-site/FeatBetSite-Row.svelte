@@ -7,9 +7,9 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
-	
+
 	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 
@@ -60,7 +60,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -77,14 +77,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 	in:fade
 >
-	<!-- 
+	<!--
   1st COLUMN DATA
   -->
 	<div
 		class="row-space-out"
 		style="width: fit-content;"
 	>
-		<!-- 
+		<!--
     RANK POSITION NUMBER
     -->
 		{#if viewportDesktop}
@@ -96,7 +96,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 			</p>
 		{/if}
 
-    <!-- 
+    <!--
     BET SITE LOGO
     -->
 		<a
@@ -113,7 +113,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 			/>
 		</a>
 
-		<!-- 
+		<!--
     SITE NAME
     -->
 		<a
@@ -130,36 +130,36 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 		</a>
 	</div>
 
-	<!-- 
+	<!--
   2nd COLUMN DATA
   -->
 	<div
 		class="row-space-out "
 		style="width: fit-content;"
 	>
-		
-    <!-- 
+
+    <!--
     RATING VAL
     -->
 		<p
 			class="
         large
-        w-500 
+        w-500
         w-normal
       "
 			style="margin-right: 16px;"
 		>
 			{data?.stars}
-			<span 
-        class="medium"> 
-        /5 
+			<span
+        class="medium">
+        /5
       </span>
 		</p>
 
-		
-    <!-- 
+
+    <!--
     🖥️ LAPTOP
-    RATING 
+    RATING
     -->
 		{#if viewportDesktop}
       <img
@@ -170,40 +170,40 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       />
 		{/if}
 
-		<!-- 
+		<!--
     EXTRA INFO POP-UP
     -->
-		<div 
+		<div
       class="button-extra-info-container"
     >
 
-      <!-- 
+      <!--
       EXTRA INFO TOGGLE
       -->
 			<button
         class="btn-primary"
 				on:click={() => (showExtraInfo = !showExtraInfo)}
       >
-				<p 
+				<p
           class="
-            w-500 
-            s-14 
+            w-500
+            s-14
             w-normal
           ">
 					{data?.bonus}
 				</p>
 			</button>
 
-			<!-- 
+			<!--
       EXTRA INFO POP-UP
        -->
 			{#if showExtraInfo}
 
-				<div 
-          class="extra-info" 
+				<div
+          class="extra-info"
           in:fade
         >
-          <!-- 
+          <!--
           SITE IMAGE
           -->
 					<img
@@ -214,12 +214,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 						alt="default alt text"
 					/>
 
-          <!-- 
+          <!--
           EXTRA SITE INFO
           -->
 					<div
             class="extra-info-container">
-						<p 
+						<p
               class="large">
 							{data?.bonus_description}
 						</p>
@@ -235,10 +235,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 "
 								style="width: 100% !important;"
 							>
-								<p 
+								<p
                   class="
-                    w-500 
-                    s-14 
+                    w-500
+                    s-14
                     w-normal
                   ">
 									{B_FEATB_T?.translations?.register_cta}
@@ -269,7 +269,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	#background-modal-blur 
+	#background-modal-blur
   {
 		position: fixed;
 		top: 0;
@@ -280,7 +280,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: 100%;
 	}
 
-	.featured-row 
+	.featured-row
   {
 		padding: 13px 20px;
 		background-color: #ffffff;
@@ -290,13 +290,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		justify-content: space-between;
 		position: relative;
 	}
-	.featured-row img 
+	.featured-row img
   {
 		width: 44px;
 		height: 44px;
 		object-fit: contain;
 	}
-	.featured-row button 
+	.featured-row button
   {
 		background: #f5620f;
 		box-shadow: 0px 3px 8px
@@ -305,16 +305,16 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		padding: 4.5px 12px;
 		width: 68px !important;
 	}
-	.featured-row .button-extra-info-container 
+	.featured-row .button-extra-info-container
   {
 		position: relative;
 	}
 	.featured-row	.button-extra-info-container button:hover,
-	.featured-row .button-extra-info-container button.btn-cta:hover 
+	.featured-row .button-extra-info-container button.btn-cta:hover
   {
 		background-color: #f77c42;
 	}
-	.extra-info-container 
+	.extra-info-container
   {
 		padding: 20px;
 		display: grid;
@@ -324,11 +324,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		align-content: center;
 		text-align: center;
 	}
-	.extra-info-container p 
+	.extra-info-container p
   {
 		color: white;
 	}
-	.featured-row .extra-info 
+	.featured-row .extra-info
   {
 		background: #4b4b4b;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
@@ -342,18 +342,18 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		justify-items: center;
 		overflow: hidden;
 	}
-	.featured-row .extra-info-img 
+	.featured-row .extra-info-img
   {
 		width: 100%;
 	}
 
-	.rating-img 
+	.rating-img
   {
 		margin-right: 20px;
 		width: 77px !important;
 		height: 14px !important;
 	}
-	.btn-cta 
+	.btn-cta
   {
 		border-radius: 8px !important;
 		margin-top: 32px;
@@ -362,17 +362,17 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: -webkit-fill-available;
 	}
 
-	/* .............. 
-	WIDGET DARK THEME 
+	/* ..............
+	WIDGET DARK THEME
 	................. */
 
-	div.dark-background-1.featured-row 
+	div.dark-background-1.featured-row
   {
 		box-shadow: inset 0px 1px 0px #616161 !important;
 		background-color: #4b4b4b !important;
 	}
 
-	.dark-background-1 p 
+	.dark-background-1 p
   {
 		color: #ffffff;
 	}

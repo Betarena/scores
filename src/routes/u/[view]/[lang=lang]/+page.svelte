@@ -1,53 +1,46 @@
 <!--===============
 COMPONENT JS (w/ TS)
 =================-->
+
 <script lang="ts">
+
+  // #region ➤ 📦 Package Imports
+
 	import { browser } from '$app/environment';
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+
+	import userBetarenaSettings from '$lib/store/user-settings.js';
+
 	import AccountSettingsBoard from '$lib/components/page/profile/Widget-AccountSettings.svelte';
 	import DashboardWidget from '$lib/components/page/profile/Widget-Dashboard.svelte';
 	import UserMenu from '$lib/components/page/profile/Widget-MenuOpt.svelte';
-	import type { REDIS_CACHE_SINGLE_profile_translation } from '$lib/models/profile/account-setting/types';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
-	import { dlogv2, PR_P_STY, PR_P_TAG, PR_P_TOG } from '$lib/utils/debug';
-	import type { PageData } from '../$types';
+	import WidgetDeposit from '$lib/components/page/profile/deposit/Widget-Deposit.svelte';
+	import WidgetTxHist from '$lib/components/page/profile/tx-history/Widget-Tx-Hist.svelte';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  import type { PageData } from '../$types';
+
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
 
 	export let data: PageData;
 
-  let RESPONSE_PROFILE_DATA: REDIS_CACHE_SINGLE_profile_translation
+  // #endregion ➤ 📌 VARIABLES
 
-  RESPONSE_PROFILE_DATA = $page.data.RESPONSE_PROFILE_DATA;
-
-	dlogv2(
-		PR_P_TAG,
-		[data],
-		PR_P_TOG,
-		PR_P_STY
-	);
-
-	const VALID_PAGE_URL: string[] = [
-		'dashboard',
-		'settings'
-	];
-	// VALID_PAGE_URL.includes($page?.url?.pathname.split('/')[1])
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   // TODO: have this check on the navbar directly
-  $: if (browser && $userBetarenaSettings != undefined && $userBetarenaSettings?.user == undefined) {
-    goto('/', {replaceState: true})
+  $: if (browser && $userBetarenaSettings != undefined && $userBetarenaSettings?.user == undefined)
+  {
+    goto
+    (
+      '/',
+      { replaceState: true }
+    )
   }
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES
-	// ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -59,37 +52,63 @@ SVELTE INJECT TAGS
   <title>Betarena User Profile</title>
 </svelte:head>
 
-<!--===============
-COMPONENT HTML
+<!-- ===============
+### COMPONENT HTML
+### NOTE:
+### HINT: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<section id="profile-page">
-	<div id="widget-grid-display">
-		<div id="usermenu-widget">
+<section
+  id="profile-page"
+>
+
+  <!--
+  MAIN USER / PROFILE CONTAIER
+  -->
+	<div
+    id="widget-grid-display"
+  >
+
+    <!--
+    USER / PROFILE MENU
+    -->
+		<div
+      id="usermenu-widget"
+    >
 			<UserMenu />
 		</div>
-		<!-- 
-    [ℹ] account settings widget
-    <-conditional->
+
+    <!--
+    PROFILE UI/UX SWITCHER
     -->
-		<div id="main-profile-page-widget">
+		<div
+      id="main-profile-page-widget"
+    >
 			{#if $page?.url?.pathname.includes('settings')}
-				<AccountSettingsBoard
-					RESPONSE_PROFILE_DATA={RESPONSE_PROFILE_DATA}
-				/>
+				<AccountSettingsBoard	/>
 			{:else if $page?.url?.pathname.includes('dashboard')}
 				<DashboardWidget />
+      {:else if $page?.url?.pathname.includes('deposit')}
+        <WidgetDeposit />
+      {:else if $page?.url?.pathname.includes('transaction-history')}
+        <WidgetTxHist />
 			{/if}
 		</div>
+
 	</div>
+
 </section>
 
-<!--===============
-COMPONENT STYLE
+<!-- ===============
+### COMPONENT STYLE
+### NOTE:
+### HINT: auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
 =================-->
+
 <style>
 
-  section#profile-page {
+  section#profile-page
+  {
     display: grid;
     max-width: 1430px;
     grid-template-columns: 1fr;
@@ -98,41 +117,60 @@ COMPONENT STYLE
     align-items: start;
   }
 
-	/* page widget layout */
-	div#widget-grid-display {
+	/*
+  page widget layout
+  */
+	div#widget-grid-display
+  {
 		display: grid;
 		gap: 20px;
 		align-items: start;
+    margin-top: 24px;
 	}
 
-	/* ====================
-    RESPONSIVNESS
-  ==================== */
-
-  /* 
-  RESPONSIVE FOR TABLET ONLY (&+) [768px] 
+	/*
+  =============
+  RESPONSIVNESS
+  =============
   */
-	@media only screen and (min-width: 768px) {
-    section#profile-page {
+
+	@media only screen
+  and (min-width: 768px)
+  {
+
+    section#profile-page
+    {
       padding-top: unset !important;
     }
 		/* page widget layout */
-		div#widget-grid-display {
+		div#widget-grid-display
+    {
 		  margin-top: 24px;
 		}
+
 	}
 
-	/* 
-  RESPONSIVE FOR DESKTOP ONLY (&+) [1440px] 
-  */
-	@media only screen and (min-width: 1160px) {
+	@media only screen
+  and (min-width: 1160px)
+  {
+
 		/* page widget layout */
-		div#widget-grid-display {
+		div#widget-grid-display
+    {
 			gap: 20px;
-			grid-template-columns: minmax(auto, 328px) minmax(
-					auto,
-					1024px
-				);
+			/* grid-template-columns: minmax(auto, 328px) minmax(auto,	1024px); */
+			grid-template-columns:
+        minmax(328px, 328px)
+        minmax(auto,	1024px)
+      ;
 		}
+
 	}
+
+  /*
+  =============
+  DARK-THEME
+  =============
+  */
+
 </style>

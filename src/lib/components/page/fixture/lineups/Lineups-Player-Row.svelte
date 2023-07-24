@@ -7,10 +7,10 @@
 
 	import { fade } from 'svelte/transition';
 
-	import { sessionStore } from '$lib/store/session.js';
-	import { userBetarenaSettings } from '$lib/store/user-settings';
+	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { FIXTURE_LIVE_TIME_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
-  
+
 	import substitution from './assets/corner-up-right.svg';
 	import football from './assets/football.svg';
 	import injured from './assets/injured.svg';
@@ -46,20 +46,20 @@
   /**
    * @summary
    * [MAIN] [REACTIVE]
-   * @description 
+   * @description
    * listens to target "player.rating" change, assigns color-code;
   */
-  $: if_R_0 = 
+  $: if_R_0 =
     PLAYER_INFO != undefined
 		&& PLAYER_INFO?.rating != undefined
   ;
-	$: if (if_R_0) 
+	$: if (if_R_0)
   {
     ratingColorCode = 'T';
     if (parseFloat(PLAYER_INFO.rating) >= 7) ratingColorCode = 'Y';
 		if (parseFloat(PLAYER_INFO.rating) >= 9) ratingColorCode = 'G';
-	} 
-  else 
+	}
+  else
   {
 		ratingColorCode = undefined;
 	}
@@ -73,7 +73,7 @@
 </script>
 
 <!-- ===============
-COMPONENT HTML 
+COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
@@ -94,19 +94,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       in:fade
     >
       {#if TYPE == 'R'}
-        <!-- 
+        <!--
         [ℹ] right-container
         [ℹ] player avatar
         [ℹ] player name
-        [ℹ] player visual icons 
+        [ℹ] player visual icons
         -->
         <div
           class="
             row-space-start
           "
         >
-          <!-- 
-          [ℹ] player avatar 
+          <!--
+          [ℹ] player avatar
           -->
           <img
             src={PLAYER_INFO?.player_avatar || 'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
@@ -119,8 +119,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 (e.target.src = 'https://cdn.sportmonks.com/images/soccer/placeholder.png')
             }
           />
-          <!-- 
-          [ℹ] player main box 
+          <!--
+          [ℹ] player main box
           -->
           <div>
             <div
@@ -140,42 +140,42 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {PLAYER_INFO?.player_name}
               </p>
               <!--
-              [ℹ] injured-player 
+              [ℹ] injured-player
               -->
               {#if PLAYER_INFO?.events?.injured}
-                <img 
-                  src={injured} 
-                  alt="injured icon" 
+                <img
+                  src={injured}
+                  alt="injured icon"
                 />
               {/if}
               <!--
-              [ℹ] yellowcard-player 
+              [ℹ] yellowcard-player
               -->
               {#if PLAYER_INFO?.events?.yeallow_card}
-                <img 
-                  src={yellow_card} 
-                  alt="yellow card" 
+                <img
+                  src={yellow_card}
+                  alt="yellow card"
                 />
                 {#if PLAYER_INFO?.events?.yeallow_card > 1}
                   <p>2</p>
                 {/if}
               {/if}
               <!--
-              [ℹ] goals-player (inc. own-goals) 
+              [ℹ] goals-player (inc. own-goals)
               -->
               {#if PLAYER_INFO?.events?.goals}
-                <img 
-                  src={football} 
-                  alt="football icon" 
+                <img
+                  src={football}
+                  alt="football icon"
                 />
               {/if}
               <!--
-              [ℹ] red-card-player 
+              [ℹ] red-card-player
               -->
               {#if PLAYER_INFO?.events?.red_card}
-                <img 
-                  src={red_card} 
-                  alt="red_card icon" 
+                <img
+                  src={red_card}
+                  alt="red_card icon"
                 />
                 {#if PLAYER_INFO?.events?.red_card > 1}
                   <p>2</p>
@@ -225,7 +225,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           </div>
         </div>
 
-        <!-- 
+        <!--
         [ℹ] left-container
         [ℹ] player rating
         -->
@@ -246,7 +246,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         </div>
       {:else}
-        <!-- 
+        <!--
         [ℹ] right-container
         [ℹ] player rating
         -->
@@ -267,19 +267,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           {/if}
         </div>
 
-        <!-- 
+        <!--
         [ℹ] left-container
         [ℹ] player avatar
         [ℹ] player name
-        [ℹ] player visual icons 
+        [ℹ] player visual icons
         -->
         <div
           class="
             row-space-end
           "
         >
-          <!-- 
-          [ℹ] player main box 
+          <!--
+          [ℹ] player main box
           -->
           <div>
             <div
@@ -289,49 +289,49 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               "
             >
               <!--
-              [ℹ] injured-player 
+              [ℹ] injured-player
               -->
               {#if PLAYER_INFO?.events?.injured}
-                <img 
-                  src={injured} 
-                  alt="injured icon" 
+                <img
+                  src={injured}
+                  alt="injured icon"
                 />
               {/if}
               <!--
-              [ℹ] yellowcard-player 
+              [ℹ] yellowcard-player
               -->
               {#if PLAYER_INFO?.events?.yeallow_card}
-                <img 
-                  src={yellow_card} 
-                  alt="yellow card" 
+                <img
+                  src={yellow_card}
+                  alt="yellow card"
                 />
                 {#if PLAYER_INFO?.events?.yeallow_card > 1}
                   <p>2</p>
                 {/if}
               {/if}
               <!--
-              [ℹ] goals-player (inc. own-goals) 
+              [ℹ] goals-player (inc. own-goals)
               -->
               {#if PLAYER_INFO?.events?.goals}
-                <img 
-                  src={football} 
-                  alt="football icon" 
+                <img
+                  src={football}
+                  alt="football icon"
                 />
               {/if}
               <!--
-              [ℹ] red-card-player 
+              [ℹ] red-card-player
               -->
               {#if PLAYER_INFO?.events?.red_card}
-                <img 
+                <img
                   src={red_card}
-                  alt="red_card icon" 
+                  alt="red_card icon"
                 />
                 {#if PLAYER_INFO?.events?.red_card > 1}
                   <p>2</p>
                 {/if}
               {/if}
-              <!-- 
-              [ℹ] player name 
+              <!--
+              [ℹ] player name
               -->
               <p
                 class="
@@ -345,7 +345,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
             </div>
             <!--
-            [ℹ] player positon 
+            [ℹ] player positon
             -->
             {#if PLAYER_INFO?.events?.substitution}
               <div
@@ -385,8 +385,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               </p>
             {/if}
           </div>
-          <!-- 
-          [ℹ] player avatar 
+          <!--
+          [ℹ] player avatar
           -->
           <img
             src={PLAYER_INFO?.player_avatar || 'https://cdn.sportmonks.com/images/soccer/placeholder.png'}
@@ -413,11 +413,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
 <style>
 
-	div.player-row 
+	div.player-row
   {
 		padding: 8px 20px;
 	}
-	div.player-row img.lineup-img 
+	div.player-row img.lineup-img
   {
 		object-fit: contain;
 		border-radius: 50%;
@@ -425,15 +425,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-color: #ffffff;
 		margin-right: 16px;
 	}
-	div.player-row div.player-info-row p.lineup-player-name 
+	div.player-row div.player-info-row p.lineup-player-name
   {
 		font-size: 14px;
 	}
-	div.player-row div.player-info-row img 
+	div.player-row div.player-info-row img
   {
 		margin-left: 8px;
 	}
-	div.player-row p#box-goals 
+	div.player-row p#box-goals
   {
 		box-sizing: border-box;
 		text-align: center;
@@ -443,65 +443,65 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		width: auto;
 		color: white;
 	}
-	div.player-row p#box-goals.rating_golden 
+	div.player-row p#box-goals.rating_golden
   {
 		background-color: #ffb904 !important;
 	}
-	div.player-row p#box-goals.rating_silver 
+	div.player-row p#box-goals.rating_silver
   {
 		background-color: #8c8c8c !important;
 	}
-	div.player-row p#box-goals.rating_bronze 
+	div.player-row p#box-goals.rating_bronze
   {
 		background-color: #dbb884 !important;
 	}
 
 	/* TYPE "LEFT" (L) */
-	div.player-row.type-L img.lineup-img 
+	div.player-row.type-L img.lineup-img
   {
 		margin-left: 16px;
 	}
-	div.player-row.type-L p.lineup-player-name 
+	div.player-row.type-L p.lineup-player-name
   {
 		text-align: end;
 	}
-	div.player-row div.player-info-row img 
+	div.player-row div.player-info-row img
   {
 		margin-right: 8px;
 	}
 
-  div.player-row:hover div.player-info-row p.lineup-player-name 
+  div.player-row:hover div.player-info-row p.lineup-player-name
   {
     color: var(--primary) !important;
 	}
 
   /*
   =============
-  RESPONSIVNESS 
+  RESPONSIVNESS
   =============
   */
 
-	@media only screen 
-  and (max-width: 425px) 
-  {
-		/* EMPTY */
-	}
-
-	@media only screen 
-  and (max-width: 475px) 
+	@media only screen
+  and (max-width: 425px)
   {
 		/* EMPTY */
 	}
 
 	@media only screen
-  and (min-width: 1160px) 
-  and (max-width: 1240px) 
+  and (max-width: 475px)
   {
 		/* EMPTY */
 	}
 
 	@media only screen
-  and (min-width: 1240px) 
+  and (min-width: 1160px)
+  and (max-width: 1240px)
+  {
+		/* EMPTY */
+	}
+
+	@media only screen
+  and (min-width: 1240px)
   {
 		/* EMPTY */
 	}
@@ -511,5 +511,5 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   DARK-THEME
   =============
   */
-  
+
 </style>
