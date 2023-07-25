@@ -2,6 +2,7 @@ name: 🐛 Bug Report
 description: Create a report about something that is not working
 title: "[Bug]: "
 labels: ["🐞 [A] bug", "🎨 Frontend"]
+projects: ["Betarena Scores"]
 body:
 
 - type: markdown
