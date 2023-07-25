@@ -22,7 +22,6 @@ body:
   attributes:
     label: 📝 Description
     description: |
-      <br/>
       NOTE: Frontend (feature requests) should add the information not only about the design, but also the endpoints and all information that will be consumed by the frontend.
   validations:
     required: true
@@ -43,16 +42,14 @@ body:
   attributes:
     label: 📸 Feature Request Image
     description: |
-      <br/>
       Add further `context` or `screenshots` about the feature request here, such as: Widget Screenshots, Placeholders, Components, etc.
   validations:
     required: false
 
 - type: textarea
   attributes:
-    label: 🎬 INITIAL STATE
+    label: 🎬 Initial State
     description: |
-      <br/>
       How the widget or feature behaves on the default state.
   validations:
     required: false
@@ -61,7 +58,6 @@ body:
   attributes:
     label: 💠 Feature required data
     description: |
-      <br/>
       Necessary data to get new `feature` working as intended.
     placeholder: |
       ➤ Hasura
@@ -83,8 +79,7 @@ body:
   attributes:
     label: ⚡️ Cache
     description: |
-      <br/>
-      Specify `data` should be cached with `REDIS`, for fastest access and loading speeds.
+      Specify `data` should be cached with `⚡️ Redis`, for fastest access and loading speeds.
   validations:
     required: false
 
@@ -92,7 +87,6 @@ body:
   attributes:
     label: 🔎 SEO
     description: |
-      <br/>
       Specific data that should be `crawled`/`visible` by Search Engines.
   validations:
     required: false
@@ -101,8 +95,7 @@ body:
   attributes:
     label: 📈 Analytics
     description: |
-      <br/>
-      Explain in detail whether Target Feature should make use analytics, such as: Google Analytics.
+      Explain in detail whether target `feature` should make use `analytics`, such as: `Google Analytics`.
     placeholder: |
       🔶 Google Analytics
         - <event-click-name>: Should trigger when [...]
@@ -113,8 +106,7 @@ body:
   attributes:
     label: Anything else?
     description: |
-      <br/>
-      You can inlcude information, such as:
+      You can include here `information`, such as:
       - Target Feature Geo Location.
       - Figma design links.
       - Additional references.
