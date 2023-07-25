@@ -13,7 +13,7 @@
 
 ----
 
-**🎟️ Issues** 
+### 🎟️ Issues
 
 - #`<issue-number>`
 
