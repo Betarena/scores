@@ -9,6 +9,7 @@ body:
   attributes:
     value: |
       ![Static Badge](https://img.shields.io/badge/issue-%E2%9A%A1%EF%B8%8F_feature_internal-black?logo=github&color=%2300FFFF&cacheSeconds=0)
+      
       Please, fill out this form to submit a new `Feature Request` for the Betarena - Scores Platform as an Internal Betarena Team member.
 
 - type: checkboxes
