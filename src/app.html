@@ -20,11 +20,21 @@
       href="/app.css"
       as="style"
     />
-
     <link
       rel="stylesheet"
       type="text/css"
       href="/app.css"
+    />
+
+    <link
+      rel="preload"
+      href="/all-css-chunk.css"
+      as="style"
+    />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/all-css-chunk.css"
     />
 
     <!--
@@ -197,18 +207,30 @@
       gtag('config', 'G-LDMRQC7B7Z');
     </script>
 
+    <!--
+    IMPORTANT
+    -->
 		%sveltekit.head%
 	</head>
 
 	<body
     data-sveltekit-preload-data="hover"
-    class="
-      no-scrollbar
-      googlebot-override
-    ">
-		<div id="svelte">
+    class=
+    "
+    no-scrollbar
+    googlebot-override
+    "
+    >
+
+		<div
+      id=
+      "
+      svelte
+      "
+    >
       %sveltekit.body%
     </div>
+
 	</body>
 
 </html>
