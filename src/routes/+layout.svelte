@@ -148,7 +148,7 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<SplashScreen />
+<!-- <SplashScreen /> -->
 
 {#if offlineMode}
 	<OfflineAlert />
