@@ -1,5 +1,5 @@
 blank_issues_enabled: false
-contact_links:
-  - name: Issue with Frontend
-    url:  https://github.com/Betarena/scores/issues/new/choose
-    about: Please open issues relating to Frontend - Scores Platform.
+# contact_links:
+#   - name: Issue with Frontend
+#     url:  https://github.com/Betarena/scores/issues/new/choose
+#     about: Please open issues relating to Frontend - Scores Platform.
