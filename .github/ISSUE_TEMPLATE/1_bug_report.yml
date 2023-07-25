@@ -64,11 +64,11 @@ body:
   attributes:
     label: What device are you seeing the problem on?
     options:
-      - label: Mobile
+      - label: 📱 Mobile
         required: false
-      - label: Tablet
+      - label: 💻 Tablet
         required: false
-      - label: Laptop/Desktop
+      - label: 🖥️ Laptop/Desktop
         required: false
 
 - type: textarea
