@@ -2,6 +2,7 @@ name: ⚡️ Feature Request Internal
 description: New Feature Request by Internal Betarena Team
 title: "[FEATURE-I]: "
 labels: ["🌟 [A] enhancement", "🎨 Frontend"]
+projects: ["Betarena Scores"]
 body:
 
 - type: markdown
@@ -22,7 +23,7 @@ body:
   attributes:
     label: 📝 Description
     description: |
-      NOTE: Frontend (feature requests) should add the information not only about the design, but also the endpoints and all information that will be consumed by the frontend.
+      NOTE: Frontend `feature requests` should add the information not only about the design, but also the `endpoints` and all information that will be consumed by the frontend.
   validations:
     required: true
 
