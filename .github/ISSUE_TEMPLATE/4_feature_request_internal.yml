@@ -7,28 +7,30 @@ body:
 - type: markdown
   attributes:
     value: |
-      Please, fill out this form to submit a new `Feature Request` for the Betarena - Scores Platform.
+      Please, fill out this form to submit a new `Feature Request` for the Betarena - Scores Platform as an Internal Betarena Team member.
 
 - type: checkboxes
   attributes:
     label: Is there an existing issue for this?
-    description: Please search to see if an issue already exists for the feature you are requesting. ([scores/issues](https://github.com/Betarena/scores/issues)).
+    description: |
+      Please search to see if an issue already exists for the feature you are requesting. ([scores/issues](https://github.com/Betarena/scores/issues)).
     options:
     - label: I have searched the existing issues
       required: true
 
 - type: textarea
   attributes:
-    label: Is your feature request related to a problem? Please describe the problem.
-    description: A clear and concise description of what the problem is.
-    placeholder: I am trying to do [...] but [...]
+    label: 📝 Description
+    description: |
+      <br/>
+      NOTE: Frontend (feature requests) should add the information not only about the design, but also the endpoints and all information that will be consumed by the frontend.
   validations:
-    required: false
+    required: true
 
 - type: checkboxes
   id: devices
   attributes:
-    label: Feature request target platform
+    label: Feature target platform availability
     options:
       - label: 📱 Mobile
         required: false
@@ -39,17 +41,10 @@ body:
 
 - type: textarea
   attributes:
-    label: 📝 DESCRIPTION
+    label: 📸 Feature Request Image
     description: |
-      For frontend requests, we should add the information not only about the design but also the endpoints and all information that will be consumed by the frontend.
-  validations:
-    required: true
-
-- type: textarea
-  attributes:
-    label: 📸 WIDGET IMAGE
-    description: |
-      Add any other context or screenshots about the feature request here.
+      <br/>
+      Add further `context` or `screenshots` about the feature request here, such as: Widget Screenshots, Placeholders, Components, etc.
   validations:
     required: false
 
@@ -57,23 +52,30 @@ body:
   attributes:
     label: 🎬 INITIAL STATE
     description: |
+      <br/>
       How the widget or feature behaves on the default state.
   validations:
-    required: true
+    required: false
 
 - type: textarea
   attributes:
-    label: 💠 WIDGET DATA
+    label: 💠 Feature required data
     description: |
-      How the widget or feature behaves on the default state.
+      <br/>
+      Necessary data to get new `feature` working as intended.
     placeholder: |
       ➤ Hasura
-        [...]
-        🎏 TRANSLATIONS
-        - [...]
-        
+        - <target-table-name-1>
+          - <column1>
+          - <column2>
+          - [..]
+        - <target-table-name-2>
+          - <column1>
+          - <column2>
+          - [..]e
       ➤ Firebase
-        [...]
+        - <target-service>
+          - further information on firebase/service data use.
   validations:
     required: false
 
@@ -81,7 +83,8 @@ body:
   attributes:
     label: ⚡️ Cache
     description: |
-      Which data should be cached with `REDIS`.
+      <br/>
+      Specify `data` should be cached with `REDIS`, for fastest access and loading speeds.
   validations:
     required: false
 
@@ -89,7 +92,8 @@ body:
   attributes:
     label: 🔎 SEO
     description: |
-      Spcific data that should be crawled/visible by Search Engines.
+      <br/>
+      Specific data that should be `crawled`/`visible` by Search Engines.
   validations:
     required: false
 
@@ -97,10 +101,11 @@ body:
   attributes:
     label: 📈 Analytics
     description: |
+      <br/>
       Explain in detail whether Target Feature should make use analytics, such as: Google Analytics.
     placeholder: |
-      **🔶 Google Analytics**
-        - `<event-click-name>`: Should trigger when [...]
+      🔶 Google Analytics
+        - <event-click-name>: Should trigger when [...]
   validations:
     required: false
 
@@ -109,11 +114,10 @@ body:
     label: Anything else?
     description: |
       <br/>
-      - First detected on:
-      - Platform language:
-      - Geo Location:
-
-      Links? References? Anything that will give us more context about the issue you are encountering!
+      You can inlcude information, such as:
+      - Target Feature Geo Location.
+      - Figma design links.
+      - Additional references.
 
       Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
   validations:
