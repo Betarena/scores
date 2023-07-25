@@ -9,7 +9,7 @@
 > For example:
 > @migbash Updated documentation.
 
-- `@<github-user-name>` `<what-has-been-done>`
+- `@ <github-user-name>` `<what-has-been-done>`
 
 ----
 
