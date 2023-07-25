@@ -45,9 +45,9 @@ body:
   validations:
     required: true
 
-- type: 📸 WIDGET IMAGE
+- type: textarea
   attributes:
-    label: Additional context
+    label: 📸 WIDGET IMAGE
     description: |
       Add any other context or screenshots about the feature request here.
   validations:
