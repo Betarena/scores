@@ -1,3 +1,5 @@
+![Static Badge](https://img.shields.io/badge/pull--request-%E2%9E%A8_branch%3Amain-black?logo=github&color=%23FF7518%09&cacheSeconds=0)
+
 # 📃 Squash Description
 
 **PRs**
@@ -33,13 +35,6 @@
 - [ ] `localhost`
 - [ ] `heroku` | `DEV`
 
-> 🔽 (Optional)
-**Test Configuration**:
-* Firmware version:
-* Hardware:
-* Toolchain:
-* SDK:
-
 # ✔ Self-checklist:
 
 - [ ] `This code` follows the style guidelines of this project
@@ -51,9 +46,14 @@
 - [ ] `This code` new and existing unit tests pass locally with my changes
 - [ ] Any dependent changes have been merged and published in downstream modules
 
-# ⚠ Warning:
+----
 
-Please ensure that your code does not contain `console` without the `if (dev) console...`
-to avoid memory overflows on the server. Or remove the `console` if no longer needed.
+### ⚠ Warning(s)
 
-Please ensure that any `GraphQL` query used starts with the `prefix` - `REDIS_CACHE_` or `FRONTEND_`. 
+- `console.(..)`
+
+> (^) Please ensure that your code does not contain `console` without the `if (dev) console...`
+> to avoid memory overflows on the server. Use the internal `debug.ts` project methods to gurantee no `poroduction`
+> leaks of `console` errors. Or remove the `console` if no longer needed.
+
+----
