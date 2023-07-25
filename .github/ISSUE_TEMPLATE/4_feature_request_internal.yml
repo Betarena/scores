@@ -1,6 +1,6 @@
 name: ⚡️ Feature Request Internal
 description: New Feature Request by Internal Betarena Team
-title: "[FEATURE]: "
+title: "[FEATURE-I]: "
 labels: ["🌟 [A] enhancement", "🎨 Frontend"]
 body:
 
@@ -30,11 +30,11 @@ body:
   attributes:
     label: Feature request target platform
     options:
-      - label: Mobile
+      - label: 📱 Mobile
         required: false
-      - label: Tablet
+      - label: 💻 Tablet
         required: false
-      - label: Laptop/Desktop
+      - label: 🖥️ Laptop/Desktop
         required: false
 
 - type: textarea
@@ -71,39 +71,44 @@ body:
         [...]
         🎏 TRANSLATIONS
         - [...]
+        
       ➤ Firebase
         [...]
   validations:
-    required: true
+    required: false
 
 - type: textarea
   attributes:
-    label: ⚡️ CACHE
+    label: ⚡️ Cache
     description: |
-      How the widget or feature behaves on the default state.
+      Which data should be cached with `REDIS`.
   validations:
-    required: true
+    required: false
 
 - type: textarea
   attributes:
     label: 🔎 SEO
     description: |
-      How the widget or feature behaves on the default state.
+      Spcific data that should be crawled/visible by Search Engines.
   validations:
-    required: true
+    required: false
 
 - type: textarea
   attributes:
-    label: 📈 GOOGLE ANALYTICS EVENTS
+    label: 📈 Analytics
     description: |
-      How the widget or feature behaves on the default state.
+      Explain in detail whether Target Feature should make use analytics, such as: Google Analytics.
+    placeholder: |
+      **🔶 Google Analytics**
+        - `<event-click-name>`: Should trigger when [...]
   validations:
-    required: true
+    required: false
 
 - type: textarea
   attributes:
     label: Anything else?
     description: |
+      <br/>
       - First detected on:
       - Platform language:
       - Geo Location:
