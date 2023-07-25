@@ -7,6 +7,8 @@ body:
 - type: markdown
   attributes:
     value: |
+      ![Static Badge](https://img.shields.io/badge/issue-%F0%9F%90%9E_bug-black?logo=github&color=%23EE4B2B&cacheSeconds=0)
+      
       Please keep in mind that the GitHub issue tracker is not intended as a general support forum, but for reporting **non-security** bugs and feature requests.
 
 - type: checkboxes
