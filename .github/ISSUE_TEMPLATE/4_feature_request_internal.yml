@@ -69,7 +69,7 @@ body:
         - <target-table-name-2>
           - <column1>
           - <column2>
-          - [..]e
+          - [..]
       ➤ Firebase
         - <target-service>
           - further information on firebase/service data use.
@@ -105,7 +105,7 @@ body:
 
 - type: textarea
   attributes:
-    label: Anything else?
+    label: Anything else? Remarks
     description: |
       You can include here `information`, such as:
       - Target Feature Geo Location.
