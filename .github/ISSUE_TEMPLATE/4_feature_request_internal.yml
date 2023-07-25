@@ -65,12 +65,12 @@ body:
     placeholder: |
       ➤ Hasura
         - <target-table-name-1>
-          - <column1>
-          - <column2>
+          - <column1> => <column-description>
+          - <column2> => <column-description>
           - [..]
         - <target-table-name-2>
-          - <column1>
-          - <column2>
+          - <column1> => <column-description>
+          - <column2> => <column-description>
           - [..]
       ➤ Firebase
         - <target-service>
