@@ -7,6 +7,7 @@ body:
 - type: markdown
   attributes:
     value: |
+      ![Static Badge](https://img.shields.io/badge/issue-%E2%9E%95_feature_general-black?logo=github&color=%230096FF%09&cacheSeconds=0)
       Please, fill out this form to submit a new `Feature Request` for the Betarena - Scores Platform.
 
 - type: checkboxes
