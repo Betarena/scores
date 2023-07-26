@@ -28,59 +28,59 @@ export default defineConfig
 
       viteCompression(),
 
-      cssInjectedByJsPlugin
-      (
-        {
+      // cssInjectedByJsPlugin
+      // (
+      //   {
 
-          // relativeCSSInjection: true
+      //     relativeCSSInjection: true,
 
-          // topExecutionPriority: true,
+      //     // topExecutionPriority: true,
 
-          // jsAssetsFilterFunction: function customJsAssetsfilterFunction
-          // (
-          //   outputChunk
-          // )
-          // {
+      //     // jsAssetsFilterFunction: function customJsAssetsfilterFunction
+      //     // (
+      //     //   outputChunk
+      //     // )
+      //     // {
 
-          //   // [🐞]
-          //   // ### NOTE:
-          //   // ### It appears, the 'outputChunk.filename' is of type:
-          //   // ### - _app/immutable/chunks/index.088b98a6.js
-          //   // ### - _app/immutable/chunks/index.8e8ca4ce.js
-          //   // ### etc.
-          //   // console.log(outputChunk.fileName);
+      //     //   // [🐞]
+      //     //   // ### NOTE:
+      //     //   // ### It appears, the 'outputChunk.filename' is of type:
+      //     //   // ### - _app/immutable/chunks/index.088b98a6.js
+      //     //   // ### - _app/immutable/chunks/index.8e8ca4ce.js
+      //     //   // ### etc.
+      //     //   // console.log(outputChunk.fileName);
 
-          //   return outputChunk.fileName == 'index.js';
-          // }
+      //     //   return outputChunk.fileName == 'index.js';
+      //     // }
 
-          // ### NOTE:
-          // ### definitive 'hack' solution for 'single CSS file' output chunk.
-          injectCode:
-          (
-            cssCode,
-            options
-          ) =>
-          {
+      //     // ### NOTE:
+      //     // ### definitive 'hack' solution for 'single CSS file' output chunk.
+      //     injectCode:
+      //     (
+      //       cssCode,
+      //       options
+      //     ) =>
+      //     {
 
-            const cssCodeMod = cssCode.slice(1, -1);
+      //       const cssCodeMod: string = cssCode.slice(1, -1);
 
-            fs.writeFile
-            (
-              './static/all-css-chunk.css',
-              cssCodeMod,
-              err =>
-              {
-                if (err) console.error(err);
-              }
-            );
+      //       fs.writeFile
+      //       (
+      //         './static/all-css-chunk.css',
+      //         cssCodeMod,
+      //         err =>
+      //         {
+      //           if (err) console.error(err);
+      //         }
+      //       );
 
-            return '';
+      //       return '';
 
-            // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
-          }
+      //       // return `try{if(typeof document != 'undefined'){var elementStyle = document.createElement('style');elementStyle.appendChild(document.createTextNode(${cssCode}));document.head.appendChild(elementStyle);}}catch(e){console.error('vite-plugin-css-injected-by-js', e);}`
+      //     }
 
-        }
-      ),
+      //   }
+      // ),
     ],
     // DOC: REF: [6]
     build: {
