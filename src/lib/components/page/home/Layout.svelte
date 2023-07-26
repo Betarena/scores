@@ -325,7 +325,7 @@
 				/> -->
 			{/if}
       <svelte:component this={SeoBlock} {SEO_BLOCK_DATA}></svelte:component>
-      <SeoBlock {SEO_BLOCK_DATA} />
+      <!-- <SeoBlock {SEO_BLOCK_DATA} /> -->
 		</div>
 	{/if}
 </section>
