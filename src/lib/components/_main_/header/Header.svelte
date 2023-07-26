@@ -21,16 +21,6 @@ COMPONENT JS - BASIC
 	import { initUser, logoutUser } from '$lib/utils/user.js';
 	import { doc, updateDoc } from 'firebase/firestore';
 
-	import arrow_down_fade from './assets/arrow-down-fade.svg';
-	import arrow_down from './assets/arrow-down.svg';
-	import arrow_up_fade from './assets/arrow-up-fade.svg';
-	import arrow_up from './assets/arrow-up.svg';
-	import logo_full from './assets/betarena-logo-full.svg';
-	import logo_mini from './assets/betarena-logo-mobile.svg';
-	import close from './assets/close.svg';
-	import menu_burger_bar from './assets/menu-burger.svg';
-	import profile_avatar from './assets/profile-avatar.svg';
-
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import AuthWidget from '../auth/Auth_Widget.svelte';
   import HeaderCBookmakers from './Header-C-Bookmakers.svelte';
@@ -64,6 +54,17 @@ COMPONENT JS - BASIC
     isViewTablet: boolean = false,
     // ◼️ IMPORTANT
     B_NAV_T: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA,
+    // ◼️ IMPORTANT
+    arrow_down_fade: string,
+    arrow_down: string,
+    arrow_up_fade: string,
+    arrow_up: string,
+    logo_full: string,
+    logo_mini: string,
+    close: string,
+    menu_burger_bar: string,
+    profile_avatar: string,
+    // ◼️ IMPORTANT
     mobileNavToggleMenu: boolean = false,
 	  isLangDropdown: boolean = false,
 	  isCurrencyDropdown: boolean = false,
@@ -411,6 +412,17 @@ COMPONENT JS - BASIC
   (
     async () =>
     {
+
+      arrow_down_fade = (await import('./assets/arrow-down-fade.svg')).default;
+      arrow_down = (await import('./assets/arrow-down.svg')).default;
+      arrow_up_fade = (await import('./assets/arrow-up-fade.svg')).default;
+      arrow_up = (await import('./assets/arrow-up.svg')).default;
+      logo_full = (await import('./assets/betarena-logo-full.svg')).default;
+      logo_mini = (await import('./assets/betarena-logo-mobile.svg')).default;
+      close = (await import('./assets/close.svg')).default;
+      menu_burger_bar = (await import('./assets/menu-burger.svg')).default;
+      profile_avatar = (await import('./assets/profile-avatar.svg')).default;
+
       [
         isViewTablet,
         isViewMobile
@@ -435,6 +447,7 @@ COMPONENT JS - BASIC
           );
         }
       );
+
 	  }
   );
 

@@ -11,9 +11,6 @@
 	import { dlog, FT_W_STY, FT_W_TAG, FT_W_TOG } from '$lib/utils/debug';
 	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
-	import begambleawareorg from './assets/begambleawareorg_black.png';
-	import logo_full from './assets/betarena-logo-full.svg';
-	import legal18icon from './assets/legal-18-action-bet.png';
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	//  COMPONENT VARIABLES
@@ -26,6 +23,12 @@
 	let server_side_language: string = 'en';
 	let homepageURL: string;
 	let logoLink: string;
+
+  let
+    begambleawareorg: string,
+    logo_full: string,
+    legal18icon: string
+  ;
 
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
@@ -95,6 +98,21 @@
 			window.location.reload();
 		}
 	}
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      begambleawareorg = (await import('./assets/begambleawareorg_black.png')).default;
+      logo_full = (await import('./assets/betarena-logo-full.svg')).default;
+      legal18icon = (await import('./assets/legal-18-action-bet.png')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===================

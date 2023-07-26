@@ -17,11 +17,6 @@ COMPONENT JS (w/ TS)
   import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
   import { onMount } from 'svelte';
 
-  import vec_arrow_left_dark from './assets/arrow-left-dark.svg';
-  import vec_arrow_left from './assets/arrow-left.svg';
-  import vec_arrow_right_dark from './assets/arrow-right-dark.svg';
-  import vec_arrow_right from './assets/arrow-right.svg';
-
   //#endregion ➤ [MAIN] Package Imports
 
   //#region ➤ [VARIABLES]
@@ -38,6 +33,12 @@ COMPONENT JS (w/ TS)
   }
   let monthWeeksArray: monthWeekObject[] = []
   let tempDate = $sessionStore.livescoreNowSelectedDate;
+  let
+    vec_arrow_left_dark: string,
+    vec_arrow_left: string,
+    vec_arrow_right_dark: string,
+    vec_arrow_right: string
+  ;
 
   let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
@@ -215,9 +216,20 @@ COMPONENT JS (w/ TS)
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  onMount
+  (
+    async () =>
+    {
+      vec_arrow_left_dark = (await import('./assets/arrow-left-dark.svg')).default;
+      vec_arrow_left = (await import('./assets/arrow-left.svg')).default;
+      vec_arrow_right_dark = (await import('./assets/arrow-right-dark.svg')).default;
+      vec_arrow_right = (await import('./assets/arrow-right.svg')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 

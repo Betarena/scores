@@ -30,18 +30,7 @@ COMPONENT JS (w/ TS)
 
   import { signInWithMoralis, type SignInWithMoralisResponse } from "@moralisweb3/client-firebase-evm-auth";
 
-	import discord_icon from './assets/discord.svg';
-	import email_verify from './assets/email-verify.svg';
-	import error_icon from './assets/error-alert.svg';
-	import github_dark_icon from './assets/github-dark.svg';
-	import github_icon from './assets/github.svg';
-	import google_icon from './assets/google.svg';
-	import loader_animation from './assets/lodaer-anim-2.svg';
-	import logo from './assets/logo-auth.svg';
-	import logo_dark from './assets/logo-dark.svg';
-	import metamask_icon from './assets/metamask.svg';
-	import success_icon from './assets/success-alert.svg';
-
+	
 	import type { Auth_Type, Betarena_User, Scores_User } from '$lib/types/types.scores.js';
 	import type { REDIS_CACHE_SINGLE_auth_translation } from '@betarena/scores-lib/types/auth.js';
 
@@ -67,6 +56,20 @@ COMPONENT JS (w/ TS)
 	let error_auth: boolean = false;
 	let email_error_format: boolean = false;
 	let email_already_in_use: boolean = false;
+
+  let
+    discord_icon: string,
+    email_verify: string,
+    error_icon: string,
+    github_dark_icon: string,
+    github_icon: string,
+    google_icon: string,
+    loader_animation: string,
+    logo: string,
+    logo_dark: string,
+    metamask_icon: string,
+    success_icon: string
+  ;
 
   // IMPORTANT
   let actionCodeSettings =
@@ -1295,6 +1298,24 @@ COMPONENT JS (w/ TS)
         }
       );
 	  }
+  );
+
+  onMount
+  (
+    async () =>
+    {
+      discord_icon = (await import('./assets/discord.svg')).default;
+      email_verify = (await import('./assets/email-verify.svg')).default;
+      error_icon = (await import('./assets/error-alert.svg')).default;
+      github_dark_icon = (await import('./assets/github-dark.svg')).default;
+      github_icon = (await import('./assets/github.svg')).default;
+      google_icon = (await import('./assets/google.svg')).default;
+      loader_animation = (await import('./assets/lodaer-anim-2.svg')).default;
+      logo = (await import('./assets/logo-auth.svg')).default;
+      logo_dark = (await import('./assets/logo-dark.svg')).default;
+      metamask_icon = (await import('./assets/metamask.svg')).default;
+      success_icon = (await import('./assets/success-alert.svg')).default;
+    }
   );
 
   // #endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
