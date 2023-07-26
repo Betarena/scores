@@ -951,7 +951,7 @@
 									href={social_network[1]}
 								>
 									<img
-                    loading="lazy"
+                    loading='lazy'
 										src="/assets/svg/footer/icon/{social_network[0]
 											.toString()
 											.toLocaleLowerCase()}.svg"
