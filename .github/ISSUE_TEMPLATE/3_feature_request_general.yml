@@ -1,5 +1,5 @@
 name: ➕ Feature Request
-description: Suggest an idea for this project
+description: Suggest an idea, feature and/or solution for Betarena - Scores Platform.
 title: "[FEATURE]: "
 labels: ["🌟 [A] enhancement", "🎨 Frontend"]
 body:
@@ -13,23 +13,29 @@ body:
 
 - type: checkboxes
   attributes:
-    label: Is there an existing issue for this?
-    description: Please search to see if an issue already exists for the feature you are requesting. ([scores/issues](https://github.com/Betarena/scores/issues)).
+    label: Does a duplicate issue exist?
+    description: |
+      Please search to see if an issue already exists for the feature you are requesting. 
+      ([scores/issues](https://github.com/Betarena/scores/issues)).
     options:
     - label: I have searched the existing issues
       required: true
 
 - type: textarea
   attributes:
-    label: Is your feature request related to a problem? Please describe the problem.
-    description: A clear and concise description of what the problem is.
-    placeholder: I am trying to do [...] but [...]
+    label: 🤔 Is feature request related to a problem? Please describe the problem.
+    description: |
+      A clear and concise description of what the problem is. 
+    placeholder: |
+      Example:
+      - I am trying to do [...] but [...]
+      - This is not working, due to external factors, and needs to be fixed by adding <example>.
   validations:
     required: false
 
 - type: textarea
   attributes:
-    label: Feature Request description goes here.
+    label: 📝 Feature Request Description
     description: |
       A clear and concise description of what you want to happen. Include any alternative solutions you've considered.
   validations:
@@ -37,8 +43,13 @@ body:
 
 - type: textarea
   attributes:
-    label: Additional context
+    label: ➕ Further context and resources (cummulative)
     description: |
-      Add any other context or screenshots about the feature request here.
+      Add any other `context`, `screenshots` or `resources` about the `feature request` goes here.
+    placeholder: |
+      ---
+      [dd/MM/yyyy]
+      - New resource found: <link>.
+      - New solution alternative example.
   validations:
     required: false
