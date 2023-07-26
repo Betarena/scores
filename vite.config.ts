@@ -27,6 +27,10 @@ export default defineConfig
       sveltekit(),
       viteCompression(),
 
+      // ### WARNING:
+      // ### 'this' plugin removes all 'CSS' from standard
+      // ### importing by 'svelte/svelteki' and styles will be missing
+      // ### if not imported as a '<link ... >' in the 'src/app.html'
       cssInjectedByJsPlugin
       (
         {
@@ -61,19 +65,26 @@ export default defineConfig
           ) =>
           {
 
-            // let cssCodeMod: string = cssCode.slice(1, -1);
-            // cssCodeMod = cssCodeMod.replace(/\\n/g, "");
-            // cssCodeMod = cssCodeMod.replace(/\\\\/g,"\\")
+            // ### NOTE:
+            // ### the 'cssCode' generated contains some 'formatting' issues.
+            // ### remove 1st and last speech marks.
+            // ### remove cases of `\n` chars.
+            // ### correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
+            let cssCodeMod: string = cssCode.slice(1, -1);
+            cssCodeMod = cssCodeMod.replace(/\\n/g, "");
+            cssCodeMod = cssCodeMod.replace(/\\\\/g,"\\")
 
-            // fs.writeFile
-            // (
-            //   './static/all-css-chunk.css',
-            //   cssCodeMod,
-            //   err =>
-            //   {
-            //     if (err) console.error(err);
-            //   }
-            // );
+            // ### WARNING:
+            // ### 'all-css-chunk.css' must exist inside '/static'
+            fs.writeFile
+            (
+              './static/all-css-chunk.css',
+              cssCodeMod,
+              err =>
+              {
+                if (err) console.error(err);
+              }
+            );
 
             return '';
 
