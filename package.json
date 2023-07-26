@@ -22,7 +22,7 @@
 		"staging": "npm run dev -- --mode staging",
 		"build": "vite build",
 		"preview": "vite preview --host --port 4173",
-		"preview:1-click:spin": "npm run build && npm run preview",
+		"preview:1-click:spin": "make preview-1-click-spin",
     "start": "node build/index.js",
 		"start:docker": "node server-docker.js",
 		"start:heroku": "node server-heroku.js",
