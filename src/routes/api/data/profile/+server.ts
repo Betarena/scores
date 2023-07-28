@@ -147,7 +147,7 @@ export const POST =
         jsonBody
       );
 
-      return json({ "msg": "HELLO!" });
+      return json(null);
     }
     catch (error)
     {
