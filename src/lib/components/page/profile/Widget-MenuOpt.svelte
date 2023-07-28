@@ -80,6 +80,9 @@ COMPONENT JS (w/ TS)
     if (selectedMenuOpt == 'Transaction History')
       targetUrl = `/u/transaction-history/${$userBetarenaSettings.lang}`
     ;
+    if (selectedMenuOpt == 'Withdraw')
+      targetUrl = `/u/withdraw/${$userBetarenaSettings.lang}`
+    ;
 
     goto
     (
@@ -122,6 +125,9 @@ COMPONENT JS (w/ TS)
     ;
     if ($page?.url?.pathname.includes('transaction-history'))
 			selectedMenuOpt = 'Transaction History';
+    ;
+    if ($page?.url?.pathname.includes('withdraw'))
+			selectedMenuOpt = 'Withdraw';
     ;
 	}
 
