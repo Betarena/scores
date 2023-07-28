@@ -1178,3 +1178,70 @@ paths:
         200:
           description:
             Target player SEO widget data
+    post:
+      description:
+        Optional extended description in CommonMark or HTML.
+      tags:
+        - User
+      requestBody:
+        description:
+          ⚠️❗️ IMPORTANT
+          Please read carefully
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/USER-WITHDRAW-REQUEST'
+      summary:
+        Endpoint dealing with User Updates.
+      responses:
+        200:
+          description:
+            User Updated!
+
+components:
+
+  schemas:
+
+    USER-WITHDRAW-REQUEST:
+      type: object
+      properties:
+        asset:
+          type: string
+          example: USD
+        quantity:
+          type: integer
+          example: 53
+        amount:
+          type: integer
+          example: 10
+        type:
+          type: string
+          example: Withdraw
+        status:
+          type: string
+          example: Pending
+        Gateway:
+          type: string
+          example: Stripe
+        first_name:
+          type: string
+          example: M
+        last_name:
+          type: string
+          example: B
+        payment_email:
+          type: string
+          example: '@newEmail'
+        iban:
+          type: string
+          example: 12124123asd12
+        bic_swift:
+          type: string
+          example: asdqwe123123
+        wallet_address_erc20:
+          type: string
+          example: 0xqwe123dasd
+        uid:
+          type: string
+          example: 213210412321sad
