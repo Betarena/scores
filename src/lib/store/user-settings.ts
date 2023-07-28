@@ -411,8 +411,8 @@ function createLocalStore
 
 			localStore.user.scores_user_data.main_balance = newBalance;
 
-      // NOTE:
-      // Approach Num.1
+      // ◾️ NOTE:
+      // ◾️ Approach Num.1
       // localStorage.setItem
       // (
       //   key,
@@ -432,8 +432,8 @@ function createLocalStore
       //   )
       // );
 
-      // NOTE:
-      // Approach Num.2
+      // ◾️ NOTE:
+      // ◾️ Approach Num.2
       methods.setLocalStorage
       (
         localStore
