@@ -1,0 +1,119 @@
+name: ⚡️ Feature Request Internal (Widget)
+description: New Feature Request (Widget) by Internal Betarena Team
+title: "[FEATURE-I-W]: "
+labels: ["🌟 [A] enhancement", "🎨 Frontend"]
+projects: ["Betarena Scores"]
+body:
+
+- type: markdown
+  attributes:
+    value: |
+      ![Static Badge](https://img.shields.io/badge/issue-%E2%9A%A1%EF%B8%8F_feature_internal-black?logo=github&color=%2300FFFF&cacheSeconds=0)
+      
+      Please, fill out this form to submit a new `Feature Request` of type `Widget` for the Betarena - Scores Platform as an Internal Betarena Team member.
+
+- type: checkboxes
+  attributes:
+    label: Is there an existing issue for this?
+    description: |
+      Please search to see if an issue already exists for the feature you are requesting. ([scores/issues](https://github.com/Betarena/scores/issues)).
+    options:
+    - label: I have searched the existing issues
+      required: true
+
+- type: textarea
+  attributes:
+    label: 📝 Description
+    description: |
+      NOTE: Frontend `feature requests` should add the information not only about the design, but also the `endpoints` and all information that will be consumed by the frontend.
+  validations:
+    required: true
+
+- type: checkboxes
+  id: devices
+  attributes:
+    label: Feature target platform availability
+    options:
+      - label: 📱 Mobile
+        required: false
+      - label: 💻 Tablet
+        required: false
+      - label: 🖥️ Laptop/Desktop
+        required: false
+
+- type: textarea
+  attributes:
+    label: 📸 Feature Request Image
+    description: |
+      Add further `context` or `screenshots` about the feature request here, such as: Widget Screenshots, Placeholders, Components, etc.
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: 🎬 Initial State
+    description: |
+      How the widget or feature behaves on the default state.
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: 💠 Feature required data
+    description: |
+      Necessary data to get new `feature` working as intended.
+    placeholder: |
+      ➤ Hasura
+        - <target-table-name-1>
+          - <column1> => <column-description>
+          - <column2> => <column-description>
+          - [..]
+        - <target-table-name-2>
+          - <column1> => <column-description>
+          - <column2> => <column-description>
+          - [..]
+      ➤ Firebase
+        - <target-service>
+          - further information on firebase/service data use.
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: ⚡️ Cache
+    description: |
+      Specify `data` should be cached with `⚡️ Redis`, for fastest access and loading speeds.
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: 🔎 SEO
+    description: |
+      Specific data that should be `crawled`/`visible` by Search Engines.
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: 📈 Analytics
+    description: |
+      Explain in detail whether target `feature` should make use `analytics`, such as: `Google Analytics`.
+    placeholder: |
+      🔶 Google Analytics
+        - <event-click-name>: Should trigger when [...]
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Anything else? Remarks
+    description: |
+      You can include here `information`, such as:
+      - Target Feature Geo Location.
+      - Figma design links.
+      - Additional references.
+
+      Tip: You can attach images or log files by clicking this area to highlight it and then dragging files in.
+  validations:
+    required: false
