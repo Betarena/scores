@@ -62,29 +62,34 @@ export default defineConfig
           (
             cssCode,
             options
-          ) =>
+          ): string =>
           {
 
-            // ### NOTE:
-            // ### the 'cssCode' generated contains some 'formatting' issues.
-            // ### remove 1st and last speech marks.
-            // ### remove cases of `\n` chars.
-            // ### correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
-            let cssCodeMod: string = cssCode.slice(1, -1);
-            cssCodeMod = cssCodeMod.replace(/\\n/g, "");
-            cssCodeMod = cssCodeMod.replace(/\\\\/g,"\\")
+            const generateOneCssFile: boolean = false;
 
-            // ### WARNING:
-            // ### 'all-css-chunk.css' must exist inside '/static'
-            fs.writeFile
-            (
-              './static/all-css-chunk.css',
-              cssCodeMod,
-              err =>
-              {
-                if (err) console.error(err);
-              }
-            );
+            if (generateOneCssFile)
+            {
+              // ### NOTE:
+              // ### the 'cssCode' generated contains some 'formatting' issues.
+              // ### remove 1st and last speech marks.
+              // ### remove cases of `\n` chars.
+              // ### correct custom case of 'ids'/'classes' using the 'forward-slash' in the declaration.
+              let cssCodeMod: string = cssCode.slice(1, -1);
+              cssCodeMod = cssCodeMod.replace(/\\n/g, "");
+              cssCodeMod = cssCodeMod.replace(/\\\\/g,"\\")
+
+              // ### WARNING:
+              // ### 'all-css-chunk.css' must exist inside '/static'
+              fs.writeFile
+              (
+                './static/all-css-chunk.css',
+                cssCodeMod,
+                err =>
+                {
+                  if (err) console.error(err);
+                }
+              );
+            }
 
             return '';
 
