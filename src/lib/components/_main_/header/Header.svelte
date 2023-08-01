@@ -1,7 +1,6 @@
-<!-- ===================
-COMPONENT JS - BASIC
-[TypeScript]
-=================== -->
+<!-- ===============
+COMPONENT JS (w/ TS)
+=================-->
 
 <script lang="ts">
 
@@ -39,6 +38,7 @@ COMPONENT JS - BASIC
     // ◼️ IMPORTANT
     VIEWPORT_MOBILE_INIT = 560,
     VIEWPORT_TABLET_INIT = 1160,
+    // ◼️ IMPORTANT
     /**
      * @description
      * 📌 `this` component **main** `id` and `data-testid` prefix.
@@ -50,8 +50,8 @@ COMPONENT JS - BASIC
 
 	let
     // ◼️ IMPORTANT
-    isViewMobile: boolean = false,
-    isViewTablet: boolean = false,
+    isViewMobile: boolean = true,
+    isViewTablet: boolean = true,
     // ◼️ IMPORTANT
     B_NAV_T: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA,
     // ◼️ IMPORTANT
@@ -422,6 +422,8 @@ COMPONENT JS - BASIC
       close = (await import('./assets/close.svg')).default;
       menu_burger_bar = (await import('./assets/menu-burger.svg')).default;
       profile_avatar = (await import('./assets/profile-avatar.svg')).default;
+
+      // cssVarChange();
 
       [
         isViewTablet,
@@ -1704,6 +1706,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   ⚡️ RESPONSIVNESS
   =============
   */
+
+  @media screen
+  and (max-width: 560px)
+  {
+    :root
+    {
+      --header-is-mobile: true;
+    }
+  }
 
 	@media screen
   and (min-width: 768px)
