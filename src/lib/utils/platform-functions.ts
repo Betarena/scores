@@ -56,37 +56,28 @@ export function platfrom_lang_ssr
  * @description Simple function to return
  * the TABLET and MOBILE viewport changes
  * as a array/tuple of both states
- * @param {number} TABLET_VIEW
- * @param {number}MOBILE_VIEW
- * @returns boolean (true/false)
+ * @param {number} TABLET_VIEW_INIT
+ * @param {number} MOBILE_VIEW_INIT
+ * @returns
+ * boolean (true/false)
  */
 export function viewport_change
 (
-	TABLET_VIEW: number,
-	MOBILE_VIEW: number,
+	TABLET_VIEW_INIT: number,
+	MOBILE_VIEW_INIT: number,
   OTHER_VIEW?: number
-)
+): boolean[]
 {
-	const width = document.documentElement.clientWidth;
-	const tabletExclusive =
-    width >= TABLET_VIEW
-      ? false
-      : true
-  ;
-	const mobileExclusive =
-    width <= MOBILE_VIEW
-      ? true
-      : false
-  ;
-  const otherExclusive =
-    width <= OTHER_VIEW
-      ? true
-      : false
-  ;
+	const width: number = document.documentElement.clientWidth;
+
+	const isTabletView: boolean = width <= TABLET_VIEW_INIT;
+	const isMobileView: boolean = width <= MOBILE_VIEW_INIT;
+  const isOtherView: boolean = width <= OTHER_VIEW;
+
 	return [
-    tabletExclusive,
-    mobileExclusive,
-    otherExclusive
+    isTabletView,
+    isMobileView,
+    isOtherView
   ];
 }
 
@@ -537,5 +528,34 @@ export async function initSportbookData
   sessionStore.updateSportbookList
   (
     dataRes1
+  );
+}
+
+export function cssVarChange
+(
+)
+{
+  let value = 'false';
+
+  setInterval
+  (
+    () =>
+    {
+      const currentValue = getComputedStyle(document.documentElement).getPropertyValue('--header-is-mobile');
+
+      // console.log(`🔹 [var] --header-is-mobile: ${currentValue}`)
+      // console.log(`🔹 [var] value: ${value}`)
+
+      if (currentValue != value)
+      {
+        // ### NOTE:
+        // ### The css-variable has changed
+        value = currentValue;
+        console.log('🔥 Header Is now Mobile!');
+      }
+
+      // console.log('📌 Checking')
+    },
+    500
   );
 }
