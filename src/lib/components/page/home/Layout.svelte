@@ -16,7 +16,14 @@
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
+  import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
+  import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
+  import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
+  import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
+  import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
+  import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
   import SvelteSeo from 'svelte-seo';
+  import TopGoalScorersWidget from './top-goalscorers/TopGoalScorers-Widget.svelte';
 
   import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
   import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
@@ -35,16 +42,6 @@
 	let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
 
   let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
-
-  let
-    FeatBetSiteWidget: any,
-    FeatMatchWidget: any,
-    LeagueListWidget: any,
-    LeaguesTableWidget: any,
-    LivescoresWidget: any,
-    SeoBlock: any,
-    TopGoalScorersWidget: any
-  ;
 
 	$: PAGE_DATA_SEO = $page.data?.PAGE_DATA_SEO;
 	$: LEAGUE_LIST_WIDGET_DATA_SEO = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
@@ -157,20 +154,6 @@
   //   }
   // );
 
-  onMount
-  (
-    async () =>
-    {
-      FeatBetSiteWidget = (await import('$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte')).default;
-      FeatMatchWidget = (await import('$lib/components/page/home/feat-match/FeatMatch-Widget.svelte')).default;
-      LeagueListWidget = (await import('$lib/components/page/home/league_list/_LeagueList_Widget.svelte')).default;
-      LeaguesTableWidget = (await import('$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte')).default;
-      LivescoresWidget = (await import('$lib/components/page/home/livescores-v2/Livescores_Widget.svelte')).default;
-      SeoBlock = (await import('$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte')).default;
-      TopGoalScorersWidget = (await import('./top-goalscorers/TopGoalScorers-Widget.svelte')).default;
-    }
-  );
-
 	// ~~~~~~~~~~~~~~~~~~~~~
 	// VIEWPORT CHANGES | IMPORTANT
 	// ~~~~~~~~~~~~~~~~~~~~~
@@ -271,35 +254,27 @@
     [ℹ] 1st COLUMN
     -->
 		<div>
-      <svelte:component this={LeagueListWidget} {LEAGUE_LIST_WIDGET_DATA_SEO}></svelte:component>
-			<!-- <LeagueListWidget
+			<LeagueListWidget
 				{LEAGUE_LIST_WIDGET_DATA_SEO}
-			/> -->
+			/>
 		</div>
 		<!--
     [ℹ] 2nd COLUMN
     -->
 		<div class="grid-display-column">
-      <svelte:component this={LivescoresWidget}></svelte:component>
-      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA}></svelte:component>
-      <!-- <LivescoresWidget /> -->
-			<!-- <SeoBlock {SEO_BLOCK_DATA} /> -->
+      <LivescoresWidget />
+			<SeoBlock {SEO_BLOCK_DATA} />
 		</div>
 		<!--
     [ℹ] 3rd COLUMN
     -->
 		<div class="grid-display-column">
-      <svelte:component this={FeatMatchWidget}></svelte:component>
-      <svelte:component this={FeatBetSiteWidget}></svelte:component>
-      <svelte:component this={TopGoalScorersWidget}></svelte:component>
-      <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA}></svelte:component>
-      <svelte:component this={FeatMatchWidget}></svelte:component>
-			<!-- <FeatMatchWidget /> -->
-			<!-- <FeatBetSiteWidget />
+			<FeatMatchWidget />
+			<FeatBetSiteWidget />
 			<TopGoalScorersWidget />
 			<LeaguesTableWidget
 				{LEAGUES_TABLE_SCORES_SEO_DATA}
-			/> -->
+			/>
 		</div>
   <!--
   📱 MOBILE
@@ -308,24 +283,16 @@
 		<div
       class="grid-display-column"
     >
-      <svelte:component this={LivescoresWidget}></svelte:component>
-      <svelte:component this={FeatBetSiteWidget}></svelte:component>
-      <svelte:component this={FeatMatchWidget}></svelte:component>
-      <svelte:component this={TopGoalScorersWidget}></svelte:component>
-      <svelte:component this={FeatMatchWidget}></svelte:component>
-
-      <!-- <LivescoresWidget />
+      <LivescoresWidget />
 			<FeatBetSiteWidget />
 			<FeatMatchWidget />
-			<TopGoalScorersWidget /> -->
+			<TopGoalScorersWidget />
 			{#if tabletExclusive && !mobileExclusive}
-        <svelte:component this={LeaguesTableWidget} {LEAGUES_TABLE_SCORES_SEO_DATA}></svelte:component>
-				<!-- <LeaguesTableWidget
+				<LeaguesTableWidget
 					{LEAGUES_TABLE_SCORES_SEO_DATA}
-				/> -->
+				/>
 			{/if}
-      <svelte:component this={SeoBlock} {SEO_BLOCK_DATA}></svelte:component>
-      <!-- <SeoBlock {SEO_BLOCK_DATA} /> -->
+			<SeoBlock {SEO_BLOCK_DATA} />
 		</div>
 	{/if}
 </section>
