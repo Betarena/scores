@@ -121,11 +121,16 @@ export default defineConfig
 
             // ### NOTE:
             // ### testing for 'per-page' component build split.
-            if (id.includes('components/page/home'))
-            {
-              // return id.toString().split('/components/page/home/')[1].split('/')[0].toString();
-              return 'all-homepage';
-            }
+            if (id.includes('src/lib/components/_main_'))
+              return 'M-main-single-chunk';
+            if (id.includes('src/lib/components/page/home'))
+              return 'M-homepage-single-chunk';
+            if (id.includes('src/lib/store/'))
+              return 'M-stores-single-chunk';
+            // if (id.includes('src/lib/utils/'))
+            //   return 'M-utils-single-chunk';
+            if (id.includes('src/lib/firebase/'))
+              return 'M-firebase-single-chunk';
 
             // ### SEE:
             // ### 1st comment - https://stackoverflow.com/a/71578633/8421215
@@ -133,17 +138,13 @@ export default defineConfig
 
             // ### SEE:
             // ### https://github.com/sveltejs/kit/issues/7257#issuecomment-1528962348
-            // if (id.includes('sentry'))
-            // {
-            //   return 'vendor_sentry'
-            // }
+            if (id.includes('@sentry') && !id.includes('@sentry/browser') && !id.includes('@sentry/tracing'))
+              return 'vendor_sentry'
 
             // ### NOTE:
             // ### original
-            // if (id.includes('node_modules'))
-            // {
-            //   return id.toString().split('node_modules/')[1].split('/')[0].toString();
-            // }
+            if (id.includes('node_modules'))
+              return id.toString().split('node_modules/')[1].split('/')[0].toString();
           }
 
         }
