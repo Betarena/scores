@@ -124,19 +124,18 @@ export default defineConfig
             // if (id.includes('src/lib/components/_main_'))
             //   return 'M-main-single-chunk';
             // ;
-            // if (id.includes('src/lib/components/page/home'))
-            //   return 'M-homepage-single-chunk';
-            // ;
+            if (id.includes('src/lib/components/page/home'))
+              return 'M-homepage-single-chunk';
+            ;
             // if (id.includes('src/lib/store/'))
             //   return 'M-stores-single-chunk';
             // ;
             // if (id.includes('src/lib/firebase/'))
             //   return 'M-firebase-single-chunk';
             // ;
-
-            if (id.includes('src/'))
-              return 'M-single-chunk';
-            ;
+            // if (id.includes('src/'))
+            //   return 'M-single-chunk';
+            // ;
 
             // ### NOTE:
             // ### gives error of 'dev' issue [?]
