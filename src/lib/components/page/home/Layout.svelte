@@ -1,106 +1,61 @@
 <!-- ===================
-	COMPONENT JS - BASIC
+COMPONENT JS - BASIC
 =================== -->
+
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils';
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
-	import sessionStore from '$lib/store/session.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
   import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
   import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
-  import LeagueListWidget from '$lib/components/page/home/league_list/_LeagueList_Widget.svelte';
-  import LeaguesTableWidget from '$lib/components/page/home/leagues_table/_Leagues_Table_Widget.svelte';
+  import LeagueListWidget from '$lib/components/page/home/league-list/LeagueList-Widget.svelte';
+  import LeaguesTableWidget from '$lib/components/page/home/leagues-table/Leagues-Table-Widget.svelte';
   import LivescoresWidget from '$lib/components/page/home/livescores-v2/Livescores_Widget.svelte';
-  import SeoBlock from '$lib/components/page/home/seo_block_homepage/_SEO_Block.svelte';
+  import SeoBlock from '$lib/components/page/home/seo-block/SEO-Block-Widget.svelte';
   import SvelteSeo from 'svelte-seo';
   import TopGoalScorersWidget from './top-goalscorers/TopGoalScorers-Widget.svelte';
 
-  import type { Cache_Single_Homepage_SEO_Translation_Response } from '$lib/models/_main_/pages_and_seo/types';
-  import type { REDIS_CACHE_SINGLE_league_list_seo_t_response } from '$lib/models/home/league_list/types';
-  import type { Cache_Single_Lang_Leagues_Table_Translation_Response } from '$lib/models/home/leagues_table/types';
-  import type { Cache_Single_Homepage_SEO_Block_Translation_Response } from '$lib/models/home/seo_block/types';
-  import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
+  import type { B_SAP_HP_T } from '@betarena/scores-lib/types/seo-pages.js';
   import type { Unsubscribe } from 'firebase/database';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-	let PAGE_DATA_SEO: Cache_Single_Homepage_SEO_Translation_Response;
-	let LEAGUE_LIST_WIDGET_DATA_SEO: REDIS_CACHE_SINGLE_league_list_seo_t_response;
-	let LEAGUES_TABLE_SCORES_SEO_DATA: Cache_Single_Lang_Leagues_Table_Translation_Response;
-	let SEO_BLOCK_DATA: Cache_Single_Homepage_SEO_Block_Translation_Response;
+  const
+    MOBILE_VIEW = 475,
+    TABLET_VIEW = 1160
+  ;
 
-  let FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set()
+	let
+    PAGE_DATA_SEO: B_SAP_HP_T,
+    FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set(),
+    mobileExclusive: boolean = true,
+    tabletExclusive: boolean = true
+  ;
 
 	$: PAGE_DATA_SEO = $page.data?.PAGE_DATA_SEO;
-	$: LEAGUE_LIST_WIDGET_DATA_SEO = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
-	$: LEAGUES_TABLE_SCORES_SEO_DATA = $page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
-	$: SEO_BLOCK_DATA = $page.data?.SEO_BLOCK_DATA;
 
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ 📌 VARIABLES
 
-  //#region ➤ [MAIN-METHODS]
+  // #region ➤ 🚏 ONE-OFF CONDITIONS
 
-  /**
-   * @description obtains the target sportbook data
-   * information based on users geo-location;
-   * data gathered at page-level and set to svelte-stores
-   * to be used by (this) page components;
-   * NOTE: (*) best approach
-   * TODO: can be moved to a layout-level [?]
-   * TODO: can be moved to a header-level [?]
-   * TODO: can be moved to a +server-level [⚠️]
-   * @returns {Promise<void>} void
-   */
-  async function sportbookIdentify
-  (
-  ): Promise < void >
+  if (browser)
   {
-    if (!$userBetarenaSettings.country_bookmaker) return;
-    const userGeo = $userBetarenaSettings?.country_bookmaker.toLowerCase()
-    $sessionStore.sportbook_main = await get(`/api/data/main/sportbook?geoPos=${userGeo}`) as B_SPT_D;
-    $sessionStore.sportbook_list = await get(`/api/data/main/sportbook?all=true&geoPos=${userGeo}`) as B_SPT_D[];
-    $sessionStore.sportbook_list = $sessionStore.sportbook_list
-    .sort
-    (
-			(
-        a,
-        b
-      ) =>
-      parseInt(a.position) - parseInt(b.position)
-		);
-  }
-
-  //#endregion ➤ [MAIN-METHODS]
-
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  if (browser) {
     onceRealTimeLiveScoreboard()
   }
 
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
+  // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  $: if ($userBetarenaSettings.country_bookmaker) {
-    sportbookIdentify()
-  }
-
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
   onMount
   (
@@ -111,9 +66,8 @@
       // as waits for onMount of Page & components;
       await onceRealTimeLiveScoreboard()
 
-      let connectionRef = listenRealTimeScoreboardAll()
-      FIREBASE_CONNECTIONS_SET.add(connectionRef)
-      sportbookIdentify()
+      let connectionRef = listenRealTimeScoreboardAll();
+      FIREBASE_CONNECTIONS_SET.add(connectionRef);
 
       document.addEventListener
       (
@@ -130,43 +84,7 @@
           }
         }
       );
-    }
-  );
 
-  // CRITICAL
-	// onDestroy
-  // (
-  //   async () =>
-  //   {
-  //     const logsMsg: string[] = []
-  //     for (const connection of [...FIREBASE_CONNECTIONS_SET])
-  //     {
-  //       logsMsg.push('🔥 closing connection')
-  //       connection();
-  //     }
-  //     dlogv2
-  //     (
-  //       `closing firebase connections`,
-  //       logsMsg,
-  //       true,
-  //       'background: red; color: black;'
-  //     )
-  //   }
-  // );
-
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	const MOBILE_VIEW = 475;
-	const TABLET_VIEW = 1160;
-	let mobileExclusive: boolean = false;
-  let tabletExclusive: boolean = false;
-
-	onMount
-  (
-    async () =>
-    {
       [
         tabletExclusive,
         mobileExclusive
@@ -192,16 +110,16 @@
     }
   );
 
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
 <!-- ===================
-	SVELTE INJECTION TAGS
+SVELTE INJECTION TAGS
 =================== -->
 
 <!--
-[ℹ] adding SEO-META-TAGS for (this) PAGE
+SEO META TAGS
 -->
 {#if PAGE_DATA_SEO}
 	<SvelteSeo
@@ -217,7 +135,7 @@
 {/if}
 
 <!--
-[ℹ] adding HREFLANG-TAGS for (this) PAGE
+HREFLANG TAGS
 -->
 <svelte:head>
 	{#if PAGE_DATA_SEO}
@@ -239,67 +157,86 @@
 	{/if}
 </svelte:head>
 
-<!-- ===================
-	COMPONENT HTML
-=================== -->
+<!-- ===============
+COMPONENT HTML
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
 
 <section
   id="home-page"
 >
+
 	<!--
   🖥️ LAPTOP 💻 TABLET
   -->
 	{#if !tabletExclusive && !mobileExclusive}
+
 		<!--
-    [ℹ] 1st COLUMN
+    1st COLUMN
     -->
 		<div>
-			<LeagueListWidget
-				{LEAGUE_LIST_WIDGET_DATA_SEO}
-			/>
+			<LeagueListWidget />
 		</div>
+
 		<!--
-    [ℹ] 2nd COLUMN
+    2nd COLUMN
     -->
-		<div class="grid-display-column">
+		<div
+      class=
+      "
+      grid-display-column
+      "
+    >
       <LivescoresWidget />
-			<SeoBlock {SEO_BLOCK_DATA} />
+			<SeoBlock />
 		</div>
+
 		<!--
-    [ℹ] 3rd COLUMN
+    3rd COLUMN
     -->
-		<div class="grid-display-column">
+		<div
+      class=
+      "
+      grid-display-column
+      "
+    >
 			<FeatMatchWidget />
 			<FeatBetSiteWidget />
 			<TopGoalScorersWidget />
-			<LeaguesTableWidget
-				{LEAGUES_TABLE_SCORES_SEO_DATA}
-			/>
+			<LeaguesTableWidget />
 		</div>
+
   <!--
   📱 MOBILE
   -->
 	{:else}
+
 		<div
-      class="grid-display-column"
+      class=
+      "
+      grid-display-column
+      "
     >
       <LivescoresWidget />
 			<FeatBetSiteWidget />
 			<FeatMatchWidget />
 			<TopGoalScorersWidget />
+
 			{#if tabletExclusive && !mobileExclusive}
-				<LeaguesTableWidget
-					{LEAGUES_TABLE_SCORES_SEO_DATA}
-				/>
+				<LeaguesTableWidget />
 			{/if}
-			<SeoBlock {SEO_BLOCK_DATA} />
+
+			<SeoBlock />
 		</div>
+
 	{/if}
+
 </section>
 
-<!-- ===================
-	COMPONENT STYLE
-=================== -->
+<!-- ===============
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
 
 <style>
 
@@ -318,40 +255,51 @@
 		gap: 24px;
 	}
 
-	/* ====================
-    RESPONSIVNESS
-  ==================== */
+	/*
+  =============
+  ⚡️ RESPONSIVNESS
+  =============
+  */
 
 	@media only screen
-    and (min-width: 768px)
+  and (min-width: 768px)
   {
+
 		section#home-page
     {
 			grid-template-columns: 1fr;
 		}
+
 	}
 
 	@media only screen
-    and (min-width: 1160px)
+  and (min-width: 1160px)
+  {
+
+		section#home-page
+    {
+			gap: 20px;
+			grid-template-columns:
+				minmax(auto, 275px)
+        minmax(auto, 502px)
+				minmax(auto, 502px)
+      ;
+		}
+
+	}
+
+	@media only screen
+  and (min-width: 1320px)
   {
 		section#home-page
     {
 			gap: 20px;
 			grid-template-columns:
-				minmax(auto, 275px) minmax(auto, 502px)
-				minmax(auto, 502px);
+				minmax(auto, 328px)
+        minmax(502px, 502px)
+				minmax(auto, 502px)
+      ;
 		}
 	}
 
-	@media only screen
-    and (min-width: 1320px)
-  {
-		section#home-page
-    {
-			gap: 20px;
-			grid-template-columns:
-				minmax(auto, 328px) minmax(502px, 502px)
-				minmax(auto, 502px);
-		}
-	}
 </style>
