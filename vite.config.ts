@@ -99,16 +99,56 @@ export default defineConfig
       // ),
     ],
 
-    // DOC: REF: [6]
-    // build: {
-    //   rollupOptions:
-    //   {
-    //     output:
-    //     {
-    //       manualChunks: undefined
-    //     }
-    //   }
-    // },
+    // ### DOC:
+    // ### look for reference [6]
+    build:
+    {
+      rollupOptions:
+      {
+        output:
+        {
+          // manualChunks: undefined
+
+          // ### SEE:
+          // ### https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
+          manualChunks
+          (
+            id
+          )
+          {
+            // [🐞]
+            // console.log(id);
+
+            // ### NOTE:
+            // ### testing for 'per-page' component build split.
+            if (id.includes('components/page/home'))
+            {
+              // return id.toString().split('/components/page/home/')[1].split('/')[0].toString();
+              return 'all-homepage';
+            }
+
+            // ### SEE:
+            // ### 1st comment - https://stackoverflow.com/a/71578633/8421215
+            // if (id.indexOf("react") !== -1) { return; }
+
+            // ### SEE:
+            // ### https://github.com/sveltejs/kit/issues/7257#issuecomment-1528962348
+            // if (id.includes('sentry'))
+            // {
+            //   return 'vendor_sentry'
+            // }
+
+            // ### NOTE:
+            // ### original
+            // if (id.includes('node_modules'))
+            // {
+            //   return id.toString().split('node_modules/')[1].split('/')[0].toString();
+            // }
+          }
+
+        }
+      }
+    },
 
     // ### NOTE:
     // ### 'vitest' integration
