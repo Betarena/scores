@@ -13,7 +13,7 @@ const config =
   {
     output:
     {
-      preloadStrategy: 'preload-js'
+      preloadStrategy: 'preload-mjs'
     },
 
 		adapter: node(),
