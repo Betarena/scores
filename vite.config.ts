@@ -119,16 +119,29 @@ export default defineConfig
 
             // ### NOTE:
             // ### testing for 'per-page' component build split.
-            if (id.includes('src/lib/components/_main_'))
-              return 'M-main-single-chunk';
-            if (id.includes('src/lib/components/page/home'))
-              return 'M-homepage-single-chunk';
-            if (id.includes('src/lib/store/'))
-              return 'M-stores-single-chunk';
+            // ### NOTE:
+            // ### works well, but at times incosistent.
+            // if (id.includes('src/lib/components/_main_'))
+            //   return 'M-main-single-chunk';
+            // ;
+            // if (id.includes('src/lib/components/page/home'))
+            //   return 'M-homepage-single-chunk';
+            // ;
+            // if (id.includes('src/lib/store/'))
+            //   return 'M-stores-single-chunk';
+            // ;
+            // if (id.includes('src/lib/firebase/'))
+            //   return 'M-firebase-single-chunk';
+            // ;
+
+            if (id.includes('src/'))
+              return 'M-single-chunk';
+            ;
+
+            // ### NOTE:
+            // ### gives error of 'dev' issue [?]
             // if (id.includes('src/lib/utils/'))
             //   return 'M-utils-single-chunk';
-            if (id.includes('src/lib/firebase/'))
-              return 'M-firebase-single-chunk';
 
             // ### SEE:
             // ### 1st comment - https://stackoverflow.com/a/71578633/8421215
