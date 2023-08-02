@@ -21,7 +21,6 @@ export default defineConfig
       // ◾️ DOC: vite-plugin-compress
       // c.compress()
 
-
       // preload(),
 
       sveltekit(),
@@ -99,6 +98,7 @@ export default defineConfig
         }
       ),
     ],
+
     // DOC: REF: [6]
     build: {
       rollupOptions:
@@ -109,6 +109,9 @@ export default defineConfig
         }
       }
     },
+
+    // ### NOTE:
+    // ### 'vitest' integration
     // test:
     // {
     //   include: ['src/**/*.{test,spec}.{js,ts}'],

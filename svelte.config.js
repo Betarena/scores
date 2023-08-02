@@ -11,12 +11,12 @@ const config =
 	preprocess: preprocess(),
 	kit:
   {
-		adapter: node(),
-
     output:
     {
       preloadStrategy: 'preload-js'
-    }
+    },
+
+		adapter: node(),
 
     //#region => CSP (CONFIG) (DISABLED) DOC: REF:[7]
 
