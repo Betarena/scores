@@ -33,9 +33,61 @@
     "description": "Betarena - Scores Platform image tag"
   },
 
+  "scores-svelte-html-each-block":
+  {
+    "scope": "svelte",
+    "prefix": "each",
+    "body":
+    [
+      "{#each $0 ?? [] as $1:item}",
+      "\t",
+      "{/each}"
+    ],
+    "description": "Betarena - Scores Platform Each-Loop HTML Block tag"
+  },
+
   // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
   // SVELTE-FILE STRUCTURE SNIPPETS & COMMENTS
   // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+
+  "scores-region-import-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptimport",
+    "body":
+    [
+      "// #region ➤ 📦 Package Imports",
+      "\n$0\n",
+      "// #endregion ➤ 📦 Package Imports"
+    ],
+    "description": "Betarena - Scores Platform Pacakge Imports init."
+  },
+
+  "scores-region-variables-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptvar",
+    "body":
+    [
+      "// #region ➤ 📌 VARIABLES",
+      "\n$0\n",
+      "// #endregion ➤ 📌 VARIABLES"
+    ],
+    "description": "Betarena - Scores Platform Variables init."
+  },
+
+  "scores-region-methods-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptmethods",
+    "body":
+    [
+      "// #region ➤ 🛠️ METHODS",
+      "\n$0\n",
+      "// #endregion ➤ 🛠️ METHODS"
+    ],
+    "description": "Betarena - Scores Platform Variables init."
+  },
 
   "scores-region-one-off-comment":
   {
