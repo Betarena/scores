@@ -15,7 +15,7 @@ const config =
 
     output:
     {
-      preloadStrategy: ''
+      preloadStrategy: 'preload-js'
     }
 
     //#region => CSP (CONFIG) (DISABLED) DOC: REF:[7]
