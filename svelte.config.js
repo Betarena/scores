@@ -13,6 +13,11 @@ const config =
   {
 		adapter: node(),
 
+    output:
+    {
+      preloadStrategy: ''
+    }
+
     //#region => CSP (CONFIG) (DISABLED) DOC: REF:[7]
 
     // NOTE: 'none'	No URLs match.
