@@ -972,6 +972,7 @@ input
   /* 🎨 style */
   height: 44px;
   width: -webkit-fill-available;
+  width: -moz-available;
   border: 1px solid var(--grey-shade);
   box-sizing: border-box;
   border-radius: 8px;

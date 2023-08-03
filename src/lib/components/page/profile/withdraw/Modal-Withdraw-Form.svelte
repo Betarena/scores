@@ -9,16 +9,16 @@ COMPONENT JS (w/ TS)
 	import { createEventDispatcher, onMount, type EventDispatcher } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	import { post } from '$lib/api/utils.js';
+	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import * as ibantools from 'ibantools';
 
 	import icon_arrow_left from '../assets/arrow-left.svg';
 	import icon_arrow_right from '../assets/arrow-right.svg';
 	import icon_check from '../assets/check.svg';
 	import icon_withdraw from '../assets/withdraw.svg';
-
-  import { post } from '$lib/api/utils.js';
-  import { userUpdateBalance } from '$lib/firebase/common.js';
-  import { viewport_change } from '$lib/utils/platform-functions.js';
 
   import type { B_H_TH, B_H_TRS_WF, B_H_TRS_WF_FormField_Type, B_H_TRS_WF_FormOptFlow, B_H_TRS_WF_WithdrawFormStep } from '@betarena/scores-lib/types/_HASURA_.js';
 
@@ -162,9 +162,26 @@ COMPONENT JS (w/ TS)
 
       if (keyTyped == 'withdraw-amount')
       {
+
+        // ◾️ CHECK
+        // ◾️ for 'quantity' to be a valid input number.
+        const if_M_0: boolean =
+          !Number.isInteger(parseInt(value as string))
+        ;
+        if (if_M_0)
+        {
+          withdrawTargetInputIdError = 'withdraw-amount';
+          withdrawTargetInputErrorMsg =
+            `Value must be a valid integer`
+          ;
+          return;
+        }
         // ◾️ CHECK
         // ◾️ for 'balance' to be of a valid input.
-        if ($userBetarenaSettings?.user?.scores_user_data?.main_balance <= 0)
+        const if_M_1: boolean =
+          $userBetarenaSettings?.user?.scores_user_data?.main_balance <= 0
+        ;
+        if (if_M_1)
         {
           withdrawTargetInputIdError = 'withdraw-amount';
           withdrawTargetInputErrorMsg =
@@ -174,7 +191,10 @@ COMPONENT JS (w/ TS)
         }
         // ◾️ CHECK
         // ◾️ for 'quantity' to be of a valid input.
-        if (parseInt(value as string) > $userBetarenaSettings?.user?.scores_user_data?.main_balance)
+        const if_M_2: boolean =
+          parseInt(value as string) > $userBetarenaSettings?.user?.scores_user_data?.main_balance
+        ;
+        if (if_M_2)
         {
           withdrawTargetInputIdError = 'withdraw-amount';
           withdrawTargetInputErrorMsg =
@@ -182,9 +202,23 @@ COMPONENT JS (w/ TS)
           ;
           return;
         }
+        // ◾️ CHECK
+        // ◾️ for 'quantity' to be above a minimum threshold input.
+        const if_M_3: boolean =
+          parseInt(value as string) < 5
+        ;
+        if (if_M_3)
+        {
+          withdrawTargetInputIdError = 'withdraw-amount';
+          withdrawTargetInputErrorMsg =
+            `A minimum of 5 BTA is required to withdraw`
+          ;
+          return;
+        }
 
         withdrawObj.quantity = value as unknown as number;
       };
+
       if (keyTyped == 'withdraw-email')
         withdrawObj.payment_email = value as unknown as string;
       ;
@@ -194,12 +228,47 @@ COMPONENT JS (w/ TS)
       if (keyTyped == 'withdraw-last-name')
         withdrawObj.last_name = value as unknown as string;
       ;
+
       if (keyTyped == 'withdraw-bic-swift')
+      {
+
+        // ◾️ CHECK
+        // ◾️ for 'IBAN' to be of valid type.
+        const if_M_3: boolean =
+          !ibantools.isValidBIC(value as string)
+        ;
+        if (if_M_3)
+        {
+          withdrawTargetInputIdError = 'withdraw-bic-swift';
+          withdrawTargetInputErrorMsg =
+            `Invalid BIC/SWIFT input`
+          ;
+          return;
+        }
+
         withdrawObj.bic_swift = value as unknown as string;
-      ;
+      };
+
       if (keyTyped == 'withdraw-iban')
+      {
+
+        // ◾️ CHECK
+        // ◾️ for 'IBAN' to be of valid type.
+        const if_M_3: boolean =
+          !ibantools.isValidIBAN(ibantools.electronicFormatIBAN(value as string))
+        ;
+        if (if_M_3)
+        {
+          withdrawTargetInputIdError = 'withdraw-iban';
+          withdrawTargetInputErrorMsg =
+            `Invalid IBAN input`
+          ;
+          return;
+        }
+
         withdrawObj.iban = value as unknown as string;
-      ;
+      };
+
       if (keyTyped == 'withdraw-crypto-address-erc20')
         withdrawObj.wallet_address_erc20 = value as unknown as string;
       ;
@@ -413,6 +482,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
     WITHDRAW OPTION ASSET
     -->
     <img
+      id="{CNAME}⮕withdraw-provider"
       src={withdrawFormSelectLogo}
       alt={targetFormData?.gateway ?? 'withdraw_gateway_logo'}
       title={targetFormData?.gateway ?? 'Withdraw Selected Provider'}
@@ -600,7 +670,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
         m-b-5
         "
       >
-        {$userBetarenaSettings?.user?.scores_user_data?.main_balance}
+        {$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? 0} BTA
       </p>
 
       <!--
@@ -836,6 +906,8 @@ MAIN WITHDRAW FORM FLOW WIDGET
                         for={crypto_opt?.coin_name}
                         class=
                         "
+                        cursor-pointer
+                        hover-transition-v-1
                         row-space-center
                         "
                       >
@@ -918,6 +990,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
                     color-grey
                     underline
                     m-t-5
+                    cursor-pointer
                     "
                     on:click={() => selectFullBalance()}
                   >
@@ -988,6 +1061,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
         style=
         "
         width: -webkit-fill-available;
+        width: -moz-available;
         "
       >
         {targetFormStep?.cta_title}
@@ -1155,14 +1229,15 @@ MAIN WITHDRAW FORM FLOW WIDGET
 		/* 📌 position */
 		position: fixed;
 		z-index: 10000;
-		width: 92%;
 		right: 0;
 		left: 0;
 		bottom: 0;
 		top: 0;
 		/* 🎨 style */
 		margin: auto;
+		width: 92%;
 		height: fit-content;
+    max-height: 50%;
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
@@ -1170,7 +1245,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
     padding-top: 45px;
 		text-align: -webkit-center;
 		text-align: -moz-center;
-		overflow: hidden;
+    overflow-y: scroll;
 	}
 
 	img#profile⮕w⮕withdraw⮕modal⮕form⮕close-btn
@@ -1181,6 +1256,12 @@ MAIN WITHDRAW FORM FLOW WIDGET
 		right: 20px;
 		z-index: 400000002;
 	}
+
+  img#profile⮕w⮕withdraw⮕modal⮕form⮕withdraw-provider
+  {
+		/* 🎨 style */
+    scale: 1.35;
+  }
 
   div#profile⮕w⮕withdraw⮕modal⮕form⮕withdraw-back-step
   {
@@ -1273,6 +1354,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
     opacity: 0;
     width: 0;
   }
+  div.crypto-coin-box label:hover,
   div.crypto-coin-box input[type="radio"]:checked + label
   {
     /* 🎨 style */

@@ -183,6 +183,7 @@ MAIN DEPOST WIDGET
           deposit-option-box
           hover-transition-v-1
           text-center
+          cursor-pointer
           "
           on:click={() => withdrawModalToggle(item?.form_id, ($userBetarenaSettings.theme == "Dark" ? item?.provider_logo_dark : item?.provider_logo))}
         >
