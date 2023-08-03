@@ -56,6 +56,12 @@ dev-clean:
 	rm -r ./datalog/
 #
 
+preview-1-click-spin:
+	-rm -r ./build
+	npm run build
+	npm run preview
+#
+
 git-post-main-pr:
 	# After PR -> (main) - run (this) to get local/dev in pair with (main)
 	echo 'Checking out to MAIN'
