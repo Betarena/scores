@@ -1,9 +1,6 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import fs from 'fs';
 import viteCompression from 'vite-plugin-compression';
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
-// import preload from "vite-plugin-preload";
-import fs from 'fs';
+// import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig
@@ -11,23 +8,42 @@ export default defineConfig
   {
     plugins:
     [
-      // ◾️ DOC: vite-plugin-chunk-split
-      // ◾️ NOTE: IMPORTANT
-      // ◾️ does not work - does not compile correctly.
+
+      // ### NOTE:
+      // ### comes from 'vite-plugin-chunk-split'
+      // ### WARNING:
+      // ### does not work, breaks build
       // chunkSplitPlugin({ strategy: 'all-in-one' }),
 
-      // ◾️ DOC: vite-plugin-progress
+      // ### NOTE:
+      // ### comes from 'vite-plugin-progress'
+      // ### WARNING:
+      // ### does not work as expected/advertised [?]
       // progress(),
 
-      // ◾️ DOC: vite-plugin-compress
-      // c.compress()
+      // ### NOTE:
+      // ### comes from 'vite-plugin-compress'
+      // ### WARNING:
+      // ### does not work, breaks build
+      // c.compress(),
 
+      // ### NOTE:
+      // ### comes from 'vite-plugin-preload'
+      // ### WARNING:
+      // ### does not work as expected/advertised [?]
       // preload(),
 
+      // ### IMPORTANT
       sveltekit(),
       viteCompression(),
+      // ### IMPORTANT
 
+      // ### NOTE:
+      // ### comes from 'vite-plugin-css-injected-by-js'
       // ### WARNING:
+      // ### overrides 'CSS' imported by 'svelte/+kit'
+      // ### requires to be imported a '<link ... >' in the 'src/app.html'
+      /*
       cssInjectedByJsPlugin
       (
         {
@@ -95,12 +111,17 @@ export default defineConfig
 
         }
       ),
+      */
     ],
 
     // ### DOC:
     // ### look for reference [6]
     build:
     {
+      // ### NOTE:
+      // ### gets overridden by SvelteKit.
+      // cssCodeSplit: false,
+
       rollupOptions:
       {
         output:
@@ -109,18 +130,42 @@ export default defineConfig
 
           // ### SEE:
           // ### https://github.com/vitejs/vite/discussions/9440#discussioncomment-5913798
+          // ### https://stackoverflow.com/questions/68643743/separating-material-ui-in-vite-rollup-as-a-manual-chunk-to-reduce-chunk-size
           manualChunks
           (
-            id
+            id,
+            opt
           )
           {
             // [🐞]
             // console.log(id);
 
+            /*
+            fs.appendFile
+            (
+              './chunks-full.json',
+              id,
+              err =>
+              {
+                if (err) console.error(err);
+              }
+            );
+
+            fs.appendFile
+            (
+              './chunks-full.json',
+              JSON.stringify(opt, null, 4),
+              err =>
+              {
+                if (err) console.error(err);
+              }
+            );
+            */
+
             // ### NOTE:
             // ### testing for 'per-page' component build split.
             // ### NOTE:
-            // ### works well, but at times incosistent.
+            // ### works well, but at times incosistent, due to CSS.
             // if (id.includes('src/lib/components/_main_'))
             //   return 'M-main-single-chunk';
             // ;
@@ -133,6 +178,9 @@ export default defineConfig
             // if (id.includes('src/lib/firebase/'))
             //   return 'M-firebase-single-chunk';
             // ;
+            // ### NOTE:
+            // ### works well, but at times incosistent
+            // ### supercharged with hardcoded CSS.
             // if (id.includes('src/'))
             //   return 'M-single-chunk';
             // ;
@@ -162,7 +210,7 @@ export default defineConfig
     },
 
     // ### NOTE:
-    // ### 'vitest' integration
+    // ### 'vitest' integration (disabled)
     // test:
     // {
     //   include: ['src/**/*.{test,spec}.{js,ts}'],

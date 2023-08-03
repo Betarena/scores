@@ -9,6 +9,8 @@ const config =
 	// ### SEE:
   // ### https://github.com/sveltejs/svelte-preprocess
 	preprocess: preprocess(),
+  // ### SEE:
+  // ### https://kit.svelte.dev/docs/configuration
 	kit:
   {
     output:
