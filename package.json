@@ -22,7 +22,7 @@
 		"staging": "npm run dev -- --mode staging",
 		"build": "vite build",
 		"preview": "vite preview --host --port 4173",
-		"quick:preview:local:spin": "vite build && npm run preview",
+		"preview:1-click:spin": "make preview-1-click-spin",
 		"start:docker": "node server-docker.js",
 		"start:heroku": "node server-heroku.js",
 		"@betarena/scores-lib:pull:next": "npm i @betarena/scores-lib@latest",
