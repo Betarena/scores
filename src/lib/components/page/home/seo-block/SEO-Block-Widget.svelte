@@ -7,13 +7,12 @@ COMPONENT JS (w/ TS)
   //#region ➤ [MAIN] Package Imports
 
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
-  import { sleep } from '$lib/utils/platform-functions';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import SeoBlockLoader from './SEO-Block-Loader.svelte';
-  import SeoBlockMain from './SEO-Block-Main.svelte';
 
 	import type { B_SEB_DT } from '@betarena/scores-lib/types/seo-block.js';
 
@@ -26,6 +25,7 @@ COMPONENT JS (w/ TS)
   let WIDGET_T_DATA: B_SEB_DT = $page.data?.SEO_BLOCK_DATA;
   let WIDGET_DATA: B_SEB_DT;
   let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+  let SeoBlockMain: any;
 
   // $: PAGE_DATA = $page.data?.PAGE_DATA
   // $: WIDGET_S_DATA = $page.data?.B_FEATM_S;
@@ -74,6 +74,18 @@ COMPONENT JS (w/ TS)
 
   //#endregion ➤ [METHODS]
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      SeoBlockMain = (await import('./SEO-Block-Main.svelte')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===================
@@ -109,10 +121,11 @@ MAIN WIDGET LOGIC
 {:then data}
 
   {#if !NO_WIDGET_DATA}
+    <svelte:component this={SeoBlockMain} B_SEB_DT={WIDGET_DATA} />
 
-    <SeoBlockMain
+    <!-- <SeoBlockMain
       B_SEB_DT={WIDGET_DATA}
-    />
+    /> -->
 
   {/if}
 

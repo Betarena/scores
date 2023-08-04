@@ -8,15 +8,14 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
   import { get } from '$lib/api/utils.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
-  import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import LeaguesTableLoader from './Leagues-Table-Loader.svelte';
-	import LeaguesTableMain from './Leagues-Table-Main.svelte';
 
 	import type { B_LEGT_D, B_LEGT_T } from '@betarena/scores-lib/types/leagues-table.js';
 
@@ -27,7 +26,8 @@ COMPONENT JS (w/ TS)
   let
     WIDGET_T_DATA: B_LEGT_T = $page.data?.LEAGUES_TABLE_SCORES_SEO_DATA,
     WIDGET_DATA: B_LEGT_D,
-    NO_WIDGET_DATA: boolean = true
+    NO_WIDGET_DATA: boolean = true,
+    LeaguesTableMain: any
   ;
 
   $: WIDGET_T_DATA = $page.data?.LEAGUES_TABLE_SCORES_SEO_DATA;
@@ -89,6 +89,18 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ 🛠️ METHODS
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      LeaguesTableMain = (await import('./Leagues-Table-Main.svelte')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===============
@@ -119,10 +131,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 {:then data}
 
   {#if !NO_WIDGET_DATA}
-    <LeaguesTableMain
+    <svelte:component this={LeaguesTableMain} B_LEGT_T={WIDGET_T_DATA} B_LEGT_D={WIDGET_DATA}/>
+    <!-- <LeaguesTableMain
       B_LEGT_T={WIDGET_T_DATA}
       B_LEGT_D={WIDGET_DATA}
-    />
+    /> -->
   {/if}
 
 {:catch error}
