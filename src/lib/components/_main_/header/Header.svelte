@@ -390,6 +390,11 @@ COMPONENT JS - BASIC
     calcNavTrianglePos('scores');
   }
 
+  $: if_R_4 =
+    ($sessionStore.livescoreShowCalendar && isViewMobile)
+    || $sessionStore.withdrawModal
+  ;
+
   // [🐞]
   $: dlogv2
   (
@@ -506,7 +511,7 @@ NAVBAR MAIN
   column-space-center
   "
   class:user-active={PROFILE_URL == $page.route.id}
-  class:update-z-index={$sessionStore.livescoreShowCalendar && isViewMobile}
+  class:update-z-index={if_R_4}
 >
 
 	<!--

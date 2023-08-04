@@ -21,6 +21,7 @@ const sessionStoreObj: Platform_Session =
   livescoreFixtureView: 'all',
 	fixture_select_view: 'overview',
   navBtnHover: undefined,
+  withdrawModal: false,
   // (+) lang handle;
   lang_intent: undefined,
   serverLang: undefined,

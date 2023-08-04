@@ -11,6 +11,7 @@ COMPONENT JS (w/ TS)
 
 	import { post } from '$lib/api/utils.js';
 	import { userUpdateBalance } from '$lib/firebase/common.js';
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import * as ibantools from 'ibantools';
@@ -89,6 +90,8 @@ COMPONENT JS (w/ TS)
   (
   ): void
   {
+    $sessionStore.withdrawModal = false;
+
 		dispatch
     (
       'toggleModal'
@@ -690,7 +693,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
           color-grey
           "
         >
-          (${$userBetarenaSettings?.user?.scores_user_data?.main_balance})
+          (${$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? 0})
         </p>
 
         <!--
@@ -1237,7 +1240,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
 		margin: auto;
 		width: 92%;
 		height: fit-content;
-    max-height: 50%;
+    max-height: 80vh;
 		background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;

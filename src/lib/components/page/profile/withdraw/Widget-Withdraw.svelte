@@ -9,6 +9,7 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils.js';
 
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { sleep } from '$lib/utils/platform-functions.js';
 
@@ -83,6 +84,7 @@ COMPONENT JS (w/ TS)
     withdrawFormSelectId = formId;
     withdrawFormSelectLogo = providerLogo;
     showWithdrawModalForm = true;
+    $sessionStore.withdrawModal = true;
   }
 
   // #endregion ➤ 🛠️ METHODS
