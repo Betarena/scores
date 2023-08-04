@@ -28,11 +28,10 @@ update-scores-web:
 
 heroku-dev-deploy-current:
 	@echo \
-		"\n$\
-		**************************************\n$\
-		🚀 Pushing current branch to Heroku-Dev\n$\
-		**************************************\n"
-	@git push heroku-dev $$(git branch --show-current):main -f
+		"\n**************************************\
+		\n🚀 Pushing current branch to Heroku-Dev\
+		\n**************************************\
+		\n"
 #
 
 dev-start:
