@@ -26,6 +26,15 @@ update-scores-web:
 # DEVELOPMENT
 # ===========
 
+heroku-dev-deploy-current:
+	@echo \
+		"\n$\
+		**************************************\n$\
+		🚀 Pushing current branch to Heroku-Dev\n$\
+		**************************************\n"
+	@git push heroku-dev $$(git branch --show-current):main -f
+#
+
 dev-start:
 	echo 'Starting DEV Environment'
 	npm run dev
