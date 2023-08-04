@@ -123,6 +123,9 @@ export default defineConfig
       // ### gets overridden by SvelteKit.
       // cssCodeSplit: false,
 
+      minify: 'esbuild',
+      cssMinify: 'lightningcss',
+
       // ### NOTE:
       // ### rollup config.
       rollupOptions:
