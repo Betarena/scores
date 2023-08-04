@@ -1,3 +1,5 @@
+// #region ➤ 📦 Package Imports
+
 import { dlog, ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, HOME_LANG_PAGE_ERROR_MSG, PAGE_INVALID_MSG } from '$lib/utils/debug';
 import { PRELOAD_invalid_data, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 import { error } from '@sveltejs/kit';
@@ -12,7 +14,13 @@ import type { B_SAP_HP_T } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 import type { PageLoad } from './$types';
 
-/** @type {import('./$types').PageLoad} */
+// #endregion ➤ 📦 Package Imports
+
+// #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+/**
+ * @type {import('./$types').PageLoad}
+ */
 export async function load
 (
   {
@@ -23,7 +31,7 @@ export async function load
 ): Promise < PageLoad >
 {
 
-  const t0 = performance.now();
+  const t0: number = performance.now();
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
@@ -37,7 +45,7 @@ export async function load
 
   //#region [0] IMPORTANT VALID URL CHECK
 
-  const validUrlCheck = await promiseValidUrlCheck
+  const validUrlCheck: boolean = await promiseValidUrlCheck
   (
     fetch,
     urlLang
@@ -162,3 +170,5 @@ export async function load
   //#endregion [3] IMPORTANT RETURN
 
 }
+
+// #endregion ➤ 🔄 LIFECYCLE [SVELTE]
