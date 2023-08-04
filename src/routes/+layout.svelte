@@ -18,7 +18,7 @@ COMPONENT JS (w/ TS)
 	import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
 	import OfflineAlert from '$lib/components/Offline-Alert.svelte';
 	import PlatformAlert from '$lib/components/Platform-Alert.svelte';
-	import SplashScreen from '$lib/components/Splash-Screen.svelte';
+// import SplashScreen from '$lib/components/Splash-Screen.svelte';
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
 
@@ -183,7 +183,7 @@ COMPONENT HTML
 NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
-<SplashScreen />
+<!-- <SplashScreen /> -->
 
 {#if offlineMode}
 	<OfflineAlert />
