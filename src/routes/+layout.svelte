@@ -4,7 +4,7 @@ COMPONENT JS (w/ TS)
 
 <script lang="ts">
 
-  // #region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -18,26 +18,36 @@ COMPONENT JS (w/ TS)
 	import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
 	import OfflineAlert from '$lib/components/Offline-Alert.svelte';
 	import PlatformAlert from '$lib/components/Platform-Alert.svelte';
-	import SplashScreen from '$lib/components/Splash-Screen.svelte';
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
 
-  // #endregion ➤ [MAIN] Package Imports
+	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
-  // #region ➤ [VARIABLES]
+  // #endregion ➤ 📦 Package Imports
 
-  // NOTE: moved to static/
+  // #region ➤ 📌 VARIABLES
+
+  // ### NOTE:
+  // ### moved to static/
 	// import '../app.css';
 
-	let HEADER_TRANSLATION_DATA: any;
+	let
+    HEADER_TRANSLATION_DATA: B_NAV_T,
+	  offlineMode: boolean = false
+  ;
 
-	let offlineMode: boolean = false;
+	$: HEADER_TRANSLATION_DATA = $page.data?.HEADER_TRANSLATION_DATA ?? { };
+  $: serverSideLang = platfrom_lang_ssr
+  (
+		$page?.route?.id,
+		$page?.error,
+		$page?.params?.lang
+	);
+  $sessionStore.deviceType = $page.data?.deviceType;
 
-	$: HEADER_TRANSLATION_DATA = $page.data.HEADER_TRANSLATION_DATA;
+  // #endregion ➤ 📌 VARIABLES
 
-  // #endregion ➤ [VARIABLES]
-
-  // #region ➤ [METHODS]
+  // #region ➤ 🛠️ METHODS
 
   /**
    * @summary
@@ -58,24 +68,15 @@ COMPONENT JS (w/ TS)
 		);
 	}
 
-  // #endregion ➤ [METHODS]
-
-  // #region ➤ 🔥 REACTIVIY [SVELTE]
-
   /**
    * @description
    * TODO: DOC:
    */
-	$: if (browser)
+  function kickstartEventListen
+  (
+  ): void
   {
-		userBetarenaSettings.useLocalStorage();
-
-    setUserGeoLocation
-    (
-      HEADER_TRANSLATION_DATA
-    );
-
-		window.addEventListener
+    window.addEventListener
     (
 			'offline',
 			toggleOfflineAlert
@@ -85,6 +86,33 @@ COMPONENT JS (w/ TS)
 			'online',
 			toggleOfflineAlert
 		);
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  /**
+   * @description
+   * TODO: DOC:
+   */
+	$: if (browser)
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ layout.svelte if_COD_1`,
+      true
+    );
+
+		userBetarenaSettings.useLocalStorage();
+
+    setUserGeoLocation
+    (
+      HEADER_TRANSLATION_DATA
+    );
+
+    kickstartEventListen();
 	}
 
   /**
@@ -95,14 +123,15 @@ COMPONENT JS (w/ TS)
    * @description
    * ➨ listens to change in "server" language;
   */
-	$: serverSideLang = platfrom_lang_ssr
-  (
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
   $: if (serverSideLang)
   {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ layout.svelte if_COD_2`,
+      true
+    );
+
     sessionStore.updateServerLang
     (
       serverSideLang
@@ -119,6 +148,13 @@ COMPONENT JS (w/ TS)
   */
   $: if ($userBetarenaSettings?.country_bookmaker)
   {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ layout.svelte if_COD_3`,
+      true
+    );
+
     initSportbookData
     (
       $userBetarenaSettings?.country_bookmaker
