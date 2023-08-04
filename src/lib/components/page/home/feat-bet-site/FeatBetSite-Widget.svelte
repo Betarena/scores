@@ -4,38 +4,36 @@ COMPONENT JS (w/ TS)
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
 
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
-  import sessionStore from '$lib/store/session.js';
-  import { sleep } from '$lib/utils/platform-functions';
-
+  
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import FeatBetSiteLoader from './FeatBetSite-Loader.svelte';
 	import FeatBetSiteMain from './FeatBetSite-Main.svelte';
 
 	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-  // let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  // let WIDGET_S_DATA: B_ST_D = $page.data?.FIXTURE_STATISTICS
-  let WIDGET_T_DATA: B_FEATB_T = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO
-  // let WIDGET_DATA: B_ST_D;
-  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
+  let
+    WIDGET_T_DATA: B_FEATB_T = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
+    NO_WIDGET_DATA: boolean = true
+  ;
 
-  // $: PAGE_DATA = $page.data?.PAGE_DATA
-  // $: WIDGET_S_DATA = $page.data?.FIXTURE_STATISTICS
-  $: WIDGET_T_DATA = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.translations?.widget_title || 'Featured Betting Site' : 'Featured Betting Site'
+  $: WIDGET_T_DATA = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
+  $: WIDGET_TITLE =
+    WIDGET_T_DATA != undefined
+      ? WIDGET_T_DATA?.translations?.widget_title || 'Featured Betting Site'
+      : 'Featured Betting Site'
+  ;
 
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ 📌 VARIABLES
 
-  //#region ➤ [MAIN-METHODS]
+  // #region ➤ 🛠️ METHODS
 
   /**
    * @summary
@@ -49,48 +47,14 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < void >
   {
-		await sleep(3000);
+		// await sleep(3000);
+
     return;
   }
 
-  //#endregion ➤ [METHODS]
-
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  /**
-   * @summary
-   * [MAIN] [REACTIVE]
-   * @description
-   * listens to target "language" change;
-  */
-  $: if_R_0 =
-    browser
-    && $sessionStore?.serverLang != undefined
-  ;
-  $: if (if_R_0)
-  {
-    widgetInit()
-  }
-
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🛠️ METHODS
 
 </script>
-
-<!-- ===================
-SVELTE INJECTION TAGS
-=================== -->
-
-<svelte:head>
-  <!-- <add> -->
-</svelte:head>
 
 <!-- ===============
 COMPONENT HTML
@@ -98,37 +62,31 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 =================-->
 
 <SeoBox>
-  <div>
-		<h2>
-			{WIDGET_T_DATA?.translations?.widget_title}
-		</h2>
-		<p>
-			{WIDGET_T_DATA?.translations?.title}
-		</p>
-	</div>
+  <h2> {WIDGET_T_DATA?.translations?.widget_title} </h2>
+  <p>	{WIDGET_T_DATA?.translations?.title}</p>
 </SeoBox>
 
 <!-- [🐞] -->
 <!-- <FeatBetSiteLoader /> -->
 
-<!--
-[ℹ] main widget
--->
 {#await widgetInit()}
   <!--
-  promise is pending
+  ### NOTE:
+  ### promise is pending
   -->
   <FeatBetSiteLoader />
 {:then data}
   <!--
-  promise was fulfilled
+  ### NOTE:
+  ### promise was fulfilled
   -->
   <FeatBetSiteMain
     B_FEATB_T={WIDGET_T_DATA}
   />
 {:catch error}
   <!--
-  promise was rejected
+  ### NOTE:
+  ### promise was rejected
   -->
 {/await}
 
@@ -138,22 +96,5 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 =================-->
 
 <style>
-
-  /*
-  =============
-  RESPONSIVNESS
-  =============
-  */
-
-  @media only screen
-    and (min-width: 726px)
-    and (max-width: 1000px) {
-  }
-
-  /*
-  =============
-  DARK-THEME
-  =============
-  */
 
 </style>

@@ -6,10 +6,8 @@ COMPONENT JS (w/ TS)
 
   //#region ➤ [MAIN] Package Imports
 
-	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 
-  import sessionStore from '$lib/store/session.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
   import { sleep } from '$lib/utils/platform-functions';
 
@@ -50,7 +48,7 @@ COMPONENT JS (w/ TS)
   (
   ): Promise < B_SEB_DT >
   {
-		await sleep(3000);
+		// await sleep(3000);
 
     WIDGET_DATA = WIDGET_T_DATA
 
@@ -75,25 +73,6 @@ COMPONENT JS (w/ TS)
   }
 
   //#endregion ➤ [METHODS]
-
-  //#region ➤ [REACTIVIY] [METHODS]
-
-  /**
-   * @summary
-   * [MAIN] [REACTIVE]
-   * @description
-   * listens to target "language" change;
-  */
-  $: if_R_0 =
-    browser
-    && $sessionStore?.serverLang != undefined
-  ;
-  $: if (if_R_0)
-  {
-    widgetInit()
-  }
-
-  //#endregion ➤ [REACTIVIY] [METHODS]
 
 </script>
 
