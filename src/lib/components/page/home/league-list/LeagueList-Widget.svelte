@@ -8,6 +8,7 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
   import { get } from '$lib/api/utils.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -15,7 +16,7 @@ COMPONENT JS (w/ TS)
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import LeagueListLoader from './LeagueList-Loader.svelte';
-  import LeagueListMain from './LeagueList-Main.svelte';
+// import LeagueListMain from './LeagueList-Main.svelte';
 
 	import type { B_LEGL_D, B_LEGL_T } from '@betarena/scores-lib/types/league-list.js';
 
@@ -26,7 +27,8 @@ COMPONENT JS (w/ TS)
   let
     WIDGET_T_DATA: B_LEGL_T = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO,
     WIDGET_DATA: B_LEGL_D,
-    NO_WIDGET_DATA: boolean = true
+    NO_WIDGET_DATA: boolean = true,
+    LeagueListMain: any
   ;
 
   $: WIDGET_T_DATA = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
@@ -94,6 +96,18 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ 🛠️ METHODS
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      LeagueListMain = (await import('./LeagueList-Main.svelte')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===============
@@ -146,10 +160,11 @@ MAIN WIDGET LOGIC
   -->
   {#if !NO_WIDGET_DATA}
 
-    <LeagueListMain
+    <svelte:component this={LeagueListMain} B_LEGL_D={WIDGET_DATA} B_LEGL_T={WIDGET_T_DATA} />
+    <!-- <LeagueListMain
       B_LEGL_D={WIDGET_DATA}
       B_LEGL_T={WIDGET_T_DATA}
-    />
+    /> -->
 
   {/if}
 

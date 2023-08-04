@@ -8,21 +8,17 @@ COMPONENT JS (w/ TS)
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
-	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { sleep } from '$lib/utils/platform-functions';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import TopGoalScorersLoader from './TopGoalScorers-Loader.svelte';
-	import TopGoalScorersMain from './TopGoalScorers-Main.svelte';
 
 	import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 
   // #endregion ➤ 📦 Package Imports
-
-  //#region ➤ [VARIABLES]
 
   // #region ➤ 📌 VARIABLES
 
@@ -34,7 +30,8 @@ COMPONENT JS (w/ TS)
     /** Main widget data */
     WIDGET_DATA: B_TGOL_D,
     /** Wether widget has or no data */
-    NO_WIDGET_DATA: boolean = true
+    NO_WIDGET_DATA: boolean = true,
+    TopGoalScorersMain: any
   ;
 
   $: WIDGET_S_DATA = $page.data?.B_TGOL_S;
@@ -87,6 +84,18 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ 🛠️ METHODS
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      TopGoalScorersMain = (await import('./TopGoalScorers-Main.svelte')).default;
+	  }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===============
@@ -124,10 +133,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   ### NOTE:
   ### promise was fulfilled
   -->
-  <TopGoalScorersMain
+  <svelte:component this={TopGoalScorersMain} B_TGOL_D={WIDGET_DATA} B_TGOL_T={WIDGET_T_DATA}/>
+  <!-- <TopGoalScorersMain
     B_TGOL_D={WIDGET_DATA}
     B_TGOL_T={WIDGET_T_DATA}
-  />
+  /> -->
 {:catch error}
   <!--
   ### NOTE:

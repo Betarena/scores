@@ -7,11 +7,10 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { page } from '$app/stores';
+	import { onMount } from 'svelte';
 
-  
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import FeatBetSiteLoader from './FeatBetSite-Loader.svelte';
-	import FeatBetSiteMain from './FeatBetSite-Main.svelte';
 
 	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 
@@ -21,7 +20,8 @@ COMPONENT JS (w/ TS)
 
   let
     WIDGET_T_DATA: B_FEATB_T = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
-    NO_WIDGET_DATA: boolean = true
+    NO_WIDGET_DATA: boolean = true,
+    FeatBetSiteMain: any
   ;
 
   $: WIDGET_T_DATA = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
@@ -54,6 +54,18 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ 🛠️ METHODS
 
+ // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      FeatBetSiteMain = (await import('./FeatBetSite-Main.svelte')).default;
+	  }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!-- ===============
@@ -80,9 +92,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   ### NOTE:
   ### promise was fulfilled
   -->
-  <FeatBetSiteMain
+  <svelte:component this={FeatBetSiteMain} B_FEATB_T={WIDGET_T_DATA} />
+  <!-- <FeatBetSiteMain
     B_FEATB_T={WIDGET_T_DATA}
-  />
+  /> -->
 {:catch error}
   <!--
   ### NOTE:

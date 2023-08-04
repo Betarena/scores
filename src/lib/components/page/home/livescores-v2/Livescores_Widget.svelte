@@ -9,12 +9,13 @@ COMPONENT JS (w/ TS)
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils';
+	import { onMount } from 'svelte';
 
 	import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import LivescoresLoader from './Livescores_Loader.svelte';
-  import LivescoresMain from './Livescores_Main.svelte';
+// import LivescoresMain from './Livescores_Main.svelte';
 
 	import type { B_LS2_D, B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
 
@@ -30,7 +31,8 @@ COMPONENT JS (w/ TS)
     /** Main widget data */
     WIDGET_DATA: B_LS2_D,
     /** Wether widget has or no data */
-    NO_WIDGET_DATA: boolean = true
+    NO_WIDGET_DATA: boolean = true,
+    LivescoresMain: any
   ;
 
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA;
@@ -77,6 +79,18 @@ COMPONENT JS (w/ TS)
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+ // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      LivescoresMain = (await import('./Livescores_Main.svelte')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -129,9 +143,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   ### NOTE:
   ### promise was fulfilled
   -->
-  <LivescoresMain
+  <svelte:component this={LivescoresMain} {WIDGET_DATA}/>
+  <!-- <LivescoresMain
     {WIDGET_DATA}
-  />
+  /> -->
 {:catch error}
   <!--
   ### NOTE:
