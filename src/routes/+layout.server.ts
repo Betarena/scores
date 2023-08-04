@@ -146,14 +146,12 @@ export async function load
   // ### NOTE:
   // ### commented out due to interferences
   // ### with error logs and code-traces.
-  /*
 	setHeaders
   (
     {
 		  'cache-control': 'public, max-age=3600'
 	  }
   );
-  */
 
 	return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
