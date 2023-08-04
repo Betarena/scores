@@ -11,8 +11,8 @@ COMPONENT JS - BASIC
 	import { onMount } from 'svelte';
 
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
+	import sessionStore from '$lib/store/session.js';
 	import { dlog } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
 
   import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
   import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
@@ -23,6 +23,7 @@ COMPONENT JS - BASIC
   import SvelteSeo from 'svelte-seo';
   import TopGoalScorersWidget from './top-goalscorers/TopGoalScorers-Widget.svelte';
 
+  import { viewport_change } from '$lib/utils/platform-functions.js';
   import type { B_SAP_HP_T } from '@betarena/scores-lib/types/seo-pages.js';
   import type { Unsubscribe } from 'firebase/database';
 
@@ -46,11 +47,63 @@ COMPONENT JS - BASIC
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+
+  /**
+   * @description
+   * TODO: DOC:
+   */
+  function resizeInit
+  (
+  )
+  {
+    [
+      tabletExclusive,
+      mobileExclusive
+    ] = viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+    window.addEventListener
+    (
+      'resize',
+      function () {
+        [
+          tabletExclusive,
+          mobileExclusive
+        ] = viewport_change
+        (
+          TABLET_VIEW,
+          MOBILE_VIEW
+        );
+      }
+    );
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
   // #region ➤ 🚏 ONE-OFF CONDITIONS
 
   if (browser)
   {
     onceRealTimeLiveScoreboard()
+  }
+
+  if ($sessionStore.deviceType == 'mobile')
+  {
+    mobileExclusive = true;
+    tabletExclusive = false;
+  }
+  if ($sessionStore.deviceType == 'tablet')
+  {
+    mobileExclusive = true;
+    tabletExclusive = true;
+  }
+  if ($sessionStore.deviceType == 'desktop')
+  {
+    mobileExclusive = false;
+    tabletExclusive = false;
   }
 
   // #endregion ➤ 🚏 ONE-OFF CONDITIONS
@@ -85,28 +138,7 @@ COMPONENT JS - BASIC
         }
       );
 
-      [
-        tabletExclusive,
-        mobileExclusive
-      ] = viewport_change
-      (
-        TABLET_VIEW,
-        MOBILE_VIEW
-      );
-      window.addEventListener
-      (
-        'resize',
-        function () {
-          [
-            tabletExclusive,
-            mobileExclusive
-          ] = viewport_change
-          (
-            TABLET_VIEW,
-            MOBILE_VIEW
-          );
-        }
-      );
+      resizeInit();
     }
   );
 
@@ -138,23 +170,21 @@ SEO META TAGS
 HREFLANG TAGS
 -->
 <svelte:head>
-	{#if PAGE_DATA_SEO}
-		{#each PAGE_DATA_SEO?.hreflang || [] as item}
-			{#if item.link == null}
-				<link
-					rel="alternate"
-					hreflang={item.hreflang}
-					href="https://scores.betarena.com/"
-				/>
-			{:else}
-				<link
-					rel="alternate"
-					hreflang={item.hreflang}
-					href="https://scores.betarena.com/{item.link}"
-				/>
-			{/if}
-		{/each}
-	{/if}
+  {#each PAGE_DATA_SEO?.hreflang ?? [] as item}
+    {#if item.link == null}
+      <link
+        rel="alternate"
+        hreflang={item.hreflang}
+        href="https://scores.betarena.com/"
+      />
+    {:else}
+      <link
+        rel="alternate"
+        hreflang={item.hreflang}
+        href="https://scores.betarena.com/{item.link}"
+      />
+    {/if}
+  {/each}
 </svelte:head>
 
 <!-- ===============
@@ -287,6 +317,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 
 	}
+
+  @media screen
+  and (min-width: 560px)
+  {
+    :root
+    {
+      --homepage-layout-is-mobile: true;
+    }
+  }
 
 	@media only screen
   and (min-width: 1320px)
