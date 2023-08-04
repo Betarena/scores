@@ -32,6 +32,7 @@ heroku-dev-deploy-current:
 		\n🚀 Pushing current branch to Heroku-Dev\
 		\n**************************************\
 		\n"
+	@git push heroku-dev $$(git branch --show-current):main -f
 #
 
 dev-start:
