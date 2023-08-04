@@ -20,7 +20,12 @@ const config =
       preloadStrategy: 'modulepreload'
     },
 
-		adapter: node(),
+		adapter: node
+    (
+      {
+        precompress: true
+      }
+    ),
 
     // #region => CSP (CONFIG) (DISABLED) DOC: REF:[7]
 
