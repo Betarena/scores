@@ -26,6 +26,15 @@ update-scores-web:
 # DEVELOPMENT
 # ===========
 
+heroku-prod-deploy-current:
+	@echo \
+		"\n**************************************\
+		\n🚀 Pushing current branch to Heroku-Dev\
+		\n**************************************\
+		\n"
+	@git push heroku-prod $$(git branch --show-current):main -f
+#
+
 heroku-dev-deploy-current:
 	@echo \
 		"\n**************************************\
