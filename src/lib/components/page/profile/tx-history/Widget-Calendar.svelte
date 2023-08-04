@@ -400,9 +400,10 @@ COMPONENT JS (w/ TS)
   if (if_O_0)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ TxHistCalendar if_O_0`,
+      true
     );
 
     initCalendar();

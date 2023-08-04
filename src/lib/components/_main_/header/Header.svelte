@@ -14,7 +14,7 @@ COMPONENT JS (w/ TS)
 	import { db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
+	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser } from '$lib/utils/user.js';
@@ -194,7 +194,13 @@ COMPONENT JS (w/ TS)
     }
 
 		const lang = $userBetarenaSettings?.lang;
-		dlog(`${NB_W_TAG} 🔵 Updating platform user lang ${lang}`, NB_W_TOG);
+
+    // [🐞]
+		dlog
+    (
+      `${NB_W_TAG[0]} 🔵 Updating platform user lang ${lang}`
+    );
+
     // [ℹ] (update)from localStorage()
 		userBetarenaSettings.updateLang(
 			lang
@@ -209,7 +215,12 @@ COMPONENT JS (w/ TS)
 		await updateDoc(userRef, {
 			lang: lang
 		});
-		dlog(`${NB_W_TAG} 🟢 User language has been updated`, NB_W_TOG);
+
+    // [🐞]
+		dlog
+    (
+      `${NB_W_TAG[0]} 🟢 User language has been updated`,
+    );
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -231,9 +242,10 @@ COMPONENT JS (w/ TS)
   $: if (if_R_0 && $userBetarenaSettings.user == undefined)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_0`,
+      true
     );
 
     userBetarenaSettings.setLang
@@ -260,17 +272,16 @@ COMPONENT JS (w/ TS)
     let userlang: string = $userBetarenaSettings.user?.scores_user_data?.lang;
 
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_1`,
+      true
     );
 
     // [🐞]
     dlog
     (
-      `${NB_W_TAG} 🔵 User Detected! Setting Auth language! ${userlang}`,
-      NB_W_TOG,
-      NB_W_STY
+      `${NB_W_TAG[0]} 🔵 User Detected! Setting Auth language! ${userlang}`
     );
 
     // selectLanguage
@@ -302,9 +313,10 @@ COMPONENT JS (w/ TS)
   $: if (if_R_2)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_2`,
+      true
     );
 
     initUser
@@ -326,9 +338,10 @@ COMPONENT JS (w/ TS)
   $: if (if_R_3)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_3`,
+      true
     );
 
     // update_select_lang()
@@ -354,9 +367,10 @@ COMPONENT JS (w/ TS)
   $: if (B_NAV_T?.scores_header_fixtures_information)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_4`,
+      true
     );
 
     // @ts-expect-error <...>
@@ -373,9 +387,10 @@ COMPONENT JS (w/ TS)
   $: if (browser && $sessionStore.navBtnHover)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_5`,
+      true
     );
 
     calcNavTrianglePos();
@@ -383,9 +398,10 @@ COMPONENT JS (w/ TS)
   $: if (browser && $sessionStore.navBtnHover == undefined)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_6`,
+      true
     );
 
     calcNavTrianglePos('scores');
@@ -394,14 +410,14 @@ COMPONENT JS (w/ TS)
   // [🐞]
   $: dlogv2
   (
-    NB_W_TAG,
+    NB_W_TAG[0],
     [
       `$sessionStore?.serverLang: ${$sessionStore?.serverLang}`,
       `homepageURL: ${homepageURL}`,
       `logoLink: ${logoLink}`
     ],
-    NB_W_TOG,
-    NB_W_STY
+    NB_W_TAG[1],
+    NB_W_TAG[2]
   )
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
