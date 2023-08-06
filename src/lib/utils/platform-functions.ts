@@ -539,3 +539,18 @@ export async function initSportbookData
     dataRes1
   );
 }
+
+/**
+ * @description
+ * TODO: DOC:
+ * @param
+ * { number } d_places - Target number of decimal places.
+ */
+export function toDecimalFix
+(
+  value: number,
+  d_places: number = 2
+): string
+{
+  return parseFloat(value.toString()).toFixed(d_places);
+}

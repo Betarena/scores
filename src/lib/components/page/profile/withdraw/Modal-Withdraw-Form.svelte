@@ -13,7 +13,7 @@ COMPONENT JS (w/ TS)
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import * as ibantools from 'ibantools';
 
 	import icon_arrow_left from '../assets/arrow-left.svg';
@@ -362,7 +362,7 @@ COMPONENT JS (w/ TS)
   ): void
   {
     const inputAmount = document.getElementById('withdraw-amount') as HTMLInputElement;
-    inputAmount.value = $userBetarenaSettings?.user?.scores_user_data?.main_balance?.toString();
+    inputAmount.value = toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance);
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -680,7 +680,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
         m-b-5
         "
       >
-        {$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? 0} BTA
+        {toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance) ?? 0} BTA
       </p>
 
       <!--
@@ -700,7 +700,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
           color-grey
           "
         >
-          (${$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? 0})
+          (${toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance) ?? 0})
         </p>
 
         <!--
