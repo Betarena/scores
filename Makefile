@@ -26,6 +26,15 @@ update-scores-web:
 # DEVELOPMENT
 # ===========
 
+heroku-dev-deploy-current:
+	@echo \
+		"\n$\
+		**************************************\n$\
+		🚀 Pushing current branch to Heroku-Dev\n$\
+		**************************************\n"
+	@git push heroku-dev $$(git branch --show-current):main -f
+#
+
 dev-start:
 	echo 'Starting DEV Environment'
 	npm run dev
@@ -45,6 +54,12 @@ dev-docker-start:
 dev-clean:
 	echo 'Removing Old DEV Logs'
 	rm -r ./datalog/
+#
+
+preview-1-click-spin:
+	-rm -r ./build
+	npm run build
+	npm run preview
 #
 
 git-post-main-pr:

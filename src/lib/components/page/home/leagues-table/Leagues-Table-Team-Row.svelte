@@ -1,25 +1,28 @@
 <!-- ===============
 	COMPONENT JS (w/ TS)
 ==================== -->
+
 <script lang="ts">
+
+  // #region ➤ 📦 Package Imports
+
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
-// ... external modules imports;
+
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 
 	import type { Single_Team_Object_Data } from '$lib/models/leagues_table/types';
 
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
 	export let data: Single_Team_Object_Data;
 
-	/**
-	 * Description:
-	 * ~~~~~~~~~~~~~~~~~~~
-	 * ... ℹ onMount() function that verifies that
-	 * ... ℹ the `viewport` width is of tablet size
-	 * ... ℹ or greater;
-	 */
 	let viewportDesktop: boolean;
-	// ...
+
+  // #endregion ➤ 📌 VARIABLES
+
 	onMount(async () => {
 		var wInit =
 			document.documentElement.clientWidth;
@@ -41,41 +44,62 @@
 			}
 		);
 	});
+
 </script>
 
 <!-- ===============
-  COMPONENT HTML
-==================== -->
+COMPONENT HTML
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
 
 <div
-	class="league-table-team-row"
-	class:dark-background-1={$userBetarenaSettings.theme ==
-		'Dark'}
 	in:fade
+	class=
+  "
+  league-table-team-row
+  "
+	class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
-	<!-- ... DESKTOP VERSION ... -->
+
 	{#if viewportDesktop}
-		<!-- ... first container of the row site -->
-		<div class="row-space-out">
-			<!-- ... ℹ first container
-        -->
-			<div class="row-space-start">
-				<!-- ... ℹ team number position
-            ONLY ON DESKTOP VERSION
-          -->
-				<div class="team-pos">
+
+		<div
+      class=
+      "
+      row-space-out
+      "
+    >
+
+			<div
+        class=
+        "
+        row-space-start
+        "
+      >
+				<div
+          class=
+          "
+          team-pos
+          "
+        >
 					<p
-						class="team-pos medium w-500"
+						class=
+            "
+            team-pos
+            medium
+            w-500
+            "
+						class:border-pos={data.color_code === 'transparent'}
 						style="background-color: {data.color_code}"
-						class:border-pos={data.color_code ===
-							'transparent'}
 					>
 						{data.position}
 					</p>
+
 				</div>
-				<!-- ... ℹ team logo
-          -->
-				<div id="image-contaier">
+
+				<div
+          id="image-contaier"
+        >
 					<img
             loading="lazy"
 						class="team-img"
@@ -83,40 +107,80 @@
 						alt="default alt text"
 					/>
 				</div>
-				<!-- ... ℹ team name
-          -->
-				<div style="margin-left: 16px;">
-					<p class="medium w-500">
+
+				<!--
+        TEAM NAME
+        -->
+				<div
+          style="margin-left: 16px;"
+        >
+					<p
+            class=
+            "
+            medium
+            w-500
+            "
+          >
 						{data.team_name}
 					</p>
 				</div>
+
 			</div>
 
-			<!-- ... ℹ second container
-        -->
-			<!-- ... ℹ games & points
-        -->
-			<div class="row-space-end">
-				<p id="box-goals" class="medium w-500">
+			<!--
+      SECOND CONTAINER
+      -->
+
+			<!--
+      GAMES & POINTS
+      -->
+			<div
+        class=
+        "
+        row-space-end
+        "
+      >
+
+				<p
+          id="box-goals"
+          class=
+          "
+          medium
+          w-500
+          "
+        >
 					{data.games_played}
 				</p>
+
 				<p
 					id="box-goals"
-					class="medium w-500"
+					class=
+          "
+          medium
+          w-500
+          "
 					style="margin-left: 8px;"
 				>
 					{data.points}
 				</p>
+
 			</div>
+
 		</div>
+
 	{/if}
+
 </div>
 
 <!-- ===============
-  COMPONENT STYLE
-==================== -->
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
+
 <style>
-	.league-table-team-row {
+
+	.league-table-team-row
+  {
 		padding: 6px 20px;
 		background-color: #ffffff;
 		/* box-shadow: inset 0px 1px 0px #ebebeb; */
@@ -125,43 +189,45 @@
 		justify-content: space-between;
 		position: relative;
 	}
-	.league-table-team-row #image-contaier {
+	.league-table-team-row #image-contaier
+  {
 		width: 32px;
 		height: 32px;
 		position: relative;
 	}
-	.league-table-team-row
-		#image-contaier
-		img.team-img {
+	.league-table-team-row #image-contaier img.team-img
+  {
 		width: 32px;
 		height: 32px;
 		object-fit: contain;
 	}
-	.league-table-team-row div.team-pos {
+	.league-table-team-row div.team-pos
+  {
 		width: 24px;
 		height: 24px;
 		margin-right: 24px;
 		position: relative;
 		border-radius: 50%;
-		/* background-color: dodgerblue; */
 	}
-	.league-table-team-row div.team-pos p {
+	.league-table-team-row div.team-pos p
+  {
 		position: absolute;
 		margin: auto;
 		min-width: 24px;
 		text-align: center;
 		border-radius: 50%;
 		height: 24px;
-		/* padding: 4px 8px; */
 		border-radius: 30px;
 		padding: 1.5px 8px;
 		color: white;
 	}
-	.border-pos {
+	.border-pos
+  {
 		color: black !important;
 		border: 1px solid #e6e6e6;
 	}
-	.league-table-team-row p#box-goals {
+	.league-table-team-row p#box-goals
+  {
 		background-color: #ffffff;
 		border: 1px solid #e6e6e6;
 		box-sizing: border-box;
@@ -172,35 +238,49 @@
 		width: 64px;
 	}
 
-	/*
-  MOBILE RESPONSIVNESS */
-	@media only screen and (max-width: 475px) {
-		.league-table-team-row:first-child {
+  /*
+  =============
+  ⚡️ RESPONSIVNESS
+  =============
+  */
+
+	@media only screen
+  and (max-width: 475px)
+  {
+
+		.league-table-team-row:first-child
+    {
 			padding-top: 24px;
 		}
+
 	}
 
-	/* ..............
-	WIDGET DARK THEME
-	................. */
+	/*
+  =============
+  🌒 DARK-THEME
+  =============
+  */
 
-	div.dark-background-1.league-table-team-row {
-		/* box-shadow: inset 0px 1px 0px #616161 !important; */
+	div.dark-background-1.league-table-team-row
+  {
 		background-color: #4b4b4b !important;
 	}
 
-	.dark-background-1.league-table-team-row
-		p#box-goals {
+	.dark-background-1.league-table-team-row p#box-goals
+  {
 		background: #4b4b4b;
 		border: 1px solid #616161;
 	}
 
-	.dark-background-1 .border-pos {
+	.dark-background-1 .border-pos
+  {
 		color: white !important;
 		border: 1px solid #616161 !important;
 	}
 
-	.dark-background-1 p {
+	.dark-background-1 p
+  {
 		color: #ffffff;
 	}
+
 </style>

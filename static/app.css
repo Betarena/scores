@@ -93,11 +93,11 @@ p {
 :root
 {
 	/*
-  dimensions
+  DIMENSIONS
   */
 	--app-height: 100%;
 	/*
-	main app colors
+	MAIN / LIGHT THEME COLORS
   */
 	--white: #ffffff;
 	--whitev2: #f2f2f2;
@@ -112,7 +112,7 @@ p {
 	--grey-shade: #cccccc;
   --yellow-gold: #FFB904;
 	/*
-	dark theme colors
+	DARK THEME COLORS
   */
 	--black: #000000;
 	--dark: #121212;
@@ -131,9 +131,11 @@ p {
 	--tablet: 767;
 	--desktop: 1440;
 	/*
-  other [fades]
+  OTHER FADE COLORS
   */
 	--oragne-pale-bg: rgba(247, 124, 66, 0.2);
+
+  --header-is-mobile: false;
 }
 
 /* #endregion ➤ [MAIN] [ROOT] Layout */
@@ -720,10 +722,6 @@ button
 	display: flex;
 	justify-content: center;
 }
-button p
-{
-	/* font-weight: 400; */
-}
 button:disabled
 {
 	cursor: default;
@@ -960,11 +958,6 @@ form select
 	padding: 7px;
   background-color: transparent;
   border: 1px solid var(--gray-day, #CCC);
-}
-input:focus
-{
-	/* padding: 5px; */
-	/* border: 2.5px solid #ff5555; */
 }
 
 input

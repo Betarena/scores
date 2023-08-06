@@ -30,12 +30,10 @@ COMPONENT JS (w/ TS)
 	// import '../app.css';
 
 	let HEADER_TRANSLATION_DATA: any;
-	let FOOTER_TRANSLATION_DATA: any;
 
 	let offlineMode: boolean = false;
 
 	$: HEADER_TRANSLATION_DATA = $page.data.HEADER_TRANSLATION_DATA;
-	$: FOOTER_TRANSLATION_DATA = $page.data.FOOTER_TRANSLATION_DATA;
 
   // #endregion ➤ [VARIABLES]
 
@@ -163,7 +161,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
 >
 	<slot />
-	<Footer {FOOTER_TRANSLATION_DATA} />
+	<Footer />
 </main>
 
 <!-- ===============
