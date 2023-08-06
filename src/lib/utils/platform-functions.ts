@@ -552,5 +552,6 @@ export function toDecimalFix
   d_places: number = 2
 ): string
 {
+  if (value == null) return;
   return parseFloat(value.toString()).toFixed(d_places);
 }
