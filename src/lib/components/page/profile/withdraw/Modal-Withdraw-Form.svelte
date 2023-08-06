@@ -302,6 +302,13 @@ COMPONENT JS (w/ TS)
       return;
     }
 
+    withdrawObj.uid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
+    withdrawObj.Gateway = targetFormData?.gateway;
+    withdrawObj.type = 'Withdraw';
+    withdrawObj.description = 'BTA Withdraw Request'
+    withdrawObj.amount = withdrawObj.quantity;
+    if (withdrawObj.asset == undefined) withdrawObj.asset = 'USD';
+
     withdrawSuccess = true;
 
     // [🐞]
