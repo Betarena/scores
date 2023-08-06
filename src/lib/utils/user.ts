@@ -1,5 +1,5 @@
 import { goto } from "$app/navigation";
-import { userBalanceListen } from "$lib/firebase/common.js";
+import { userBalanceListen, userDataFetch } from "$lib/firebase/common.js";
 import { delCookie, setCookie } from "$lib/store/cookie.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
 
@@ -30,6 +30,11 @@ export function initUser
     'betarenaCookieLoggedIn',
     username,
     30
+  );
+
+  userDataFetch
+  (
+    uid
   );
 
   userBalanceListen

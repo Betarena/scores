@@ -3,7 +3,7 @@
 import { writable } from 'svelte/store';
 
 import type { GeoJsResponse } from '$lib/types/types.geojs.js';
-import type { Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
+import type { Betarena_User, Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -438,6 +438,39 @@ function createLocalStore
       (
         localStore
       );
+    },
+
+    /**
+     * @description
+     * TODO: DOC:
+     */
+    updateUserData:
+    (
+      data: Betarena_User
+    ): void =>
+    {
+      const localStore: User_Setting = methods.parseLocalStorage();
+
+			localStore.user.scores_user_data = data;
+
+      // ◾️ NOTE:
+      // ◾️ Approach Num.2
+      methods.setLocalStorage
+      (
+        localStore
+      );
+    },
+
+    /**
+     * @description
+     * TODO: DOC:
+     */
+    getUserUid:
+    (
+    ): string =>
+    {
+      const localStore: User_Setting = methods.parseLocalStorage();
+      return localStore?.user?.firebase_user_data?.uid;
     }
   }
 
