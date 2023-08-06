@@ -23,6 +23,8 @@ const config =
 		adapter: node
     (
       {
+        // ### SEE:
+        // ### https://discord.com/channels/457912077277855764/1049973005675143219
         precompress: true
       }
     ),
