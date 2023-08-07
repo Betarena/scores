@@ -1,6 +1,8 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
@@ -13,30 +15,39 @@ COMPONENT JS (w/ TS)
   import { get } from '$lib/api/utils.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
+	import { translationObject } from '$lib/utils/translation.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import LeagueListLoader from './LeagueList-Loader.svelte';
-// import LeagueListMain from './LeagueList-Main.svelte';
 
 	import type { B_LEGL_D, B_LEGL_T } from '@betarena/scores-lib/types/league-list.js';
+
+  // ### WARNING:
+  // ### Disable, if Dynamic Import is Enabled.
+  // import LeagueListMain from './LeagueList-Main.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
+  const
+    /** Dynamic import variable condition */
+    useDynamicImport: boolean = true
+  ;
+
   let
+    /** Main widget Translations data */
     WIDGET_T_DATA: B_LEGL_T = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO,
+    /** Main widget data */
     WIDGET_DATA: B_LEGL_D,
+    /** Wether widget has or no data */
     NO_WIDGET_DATA: boolean = true,
-    LeagueListMain: any
+    /** Dynamic import variable for svelte component */
+    LeagueListMainDynamic: any
   ;
 
   $: WIDGET_T_DATA = $page.data?.LEAGUE_LIST_WIDGET_DATA_SEO;
-  $: WIDGET_TITLE =
-    WIDGET_T_DATA != undefined
-      ? WIDGET_T_DATA?.translations?.widget_title || 'League List'
-      : 'League List'
-  ;
+  $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.widget_title ?? translationObject?.league_list_title;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -98,11 +109,22 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   onMount
   (
-    async () =>
+    async (
+
+    ): Promise < void > =>
     {
-      LeagueListMain = (await import('./LeagueList-Main.svelte')).default;
+
+      if (useDynamicImport)
+      {
+        LeagueListMainDynamic = (await import('./LeagueList-Main.svelte')).default;
+      }
+
     }
   );
 
@@ -111,9 +133,12 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <SeoBox>
 
@@ -144,9 +169,6 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 <!-- [🐞] -->
 <!-- <LeagueListLoader /> -->
 
-<!--
-MAIN WIDGET LOGIC
--->
 {#await widgetInit()}
   <!--
   ### NOTE:
@@ -158,13 +180,33 @@ MAIN WIDGET LOGIC
   ### NOTE:
   ### promise was fulfilled
   -->
+
   {#if !NO_WIDGET_DATA}
 
-    <svelte:component this={LeagueListMain} B_LEGL_D={WIDGET_DATA} B_LEGL_T={WIDGET_T_DATA} />
-    <!-- <LeagueListMain
+    <!--
+    ### NOTE:
+    ### Dynamic Svelte Component Import
+    ### WARNING:
+    ### Disable, if Standard Import is Enabled.
+    -->
+    <svelte:component
+      this={LeagueListMainDynamic}
       B_LEGL_D={WIDGET_DATA}
       B_LEGL_T={WIDGET_T_DATA}
-    /> -->
+    />
+
+    <!--
+    ### NOTE:
+    ### Standard Svelte Component Import
+    ### WARNING:
+    ### Disable, if Dynamic Import is Enabled.
+    -->
+    <!--
+      <LeagueListMain
+        B_LEGL_D={WIDGET_DATA}
+        B_LEGL_T={WIDGET_T_DATA}
+      />
+    -->
 
   {/if}
 
@@ -174,12 +216,3 @@ MAIN WIDGET LOGIC
   ### promise was rejected
   -->
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
-
-<style>
-
-</style>

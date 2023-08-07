@@ -1,6 +1,8 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
@@ -9,27 +11,37 @@ COMPONENT JS (w/ TS)
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { translationObject } from '$lib/utils/translation.js';
+
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import FeatBetSiteLoader from './FeatBetSite-Loader.svelte';
 
 	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
 
+  // ### WARNING:
+  // ### Disable, if Dynamic Import is Enabled.
+  // import FeatBetSiteMain from './FeatBetSite-Main.svelte';
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  let
-    WIDGET_T_DATA: B_FEATB_T = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO,
-    NO_WIDGET_DATA: boolean = true,
-    FeatBetSiteMain: any
+  const
+    /** Dynamic import variable condition */
+    useDynamicImport: boolean = true
   ;
 
-  $: WIDGET_T_DATA = $page.data?.FEATURED_BETTING_SITES_WIDGET_DATA_SEO;
-  $: WIDGET_TITLE =
-    WIDGET_T_DATA != undefined
-      ? WIDGET_T_DATA?.translations?.widget_title || 'Featured Betting Site'
-      : 'Featured Betting Site'
+  let
+    /** Main widget Translations data */
+    WIDGET_T_DATA: B_FEATB_T = $page.data?.B_FEATB_T,
+    /** Wether widget has or no data */
+    NO_WIDGET_DATA: boolean = true,
+    /** Dynamic import variable for svelte component */
+    FeatBetSiteMainDynamic: any
   ;
+
+  $: WIDGET_T_DATA = $page.data?.B_FEATB_T;
+  $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.widget_title ?? translationObject?.featured_bet_site;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -37,11 +49,17 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * [MAIN] [INIT]
+   * 🟩 MAIN
+   *
    * @description
-   * main widget data loader,
-   * (and) try..catch (error) handler
-   * (and) placeholder handler
+   * 📌 main widget data loader
+   *
+   * ⚡️ (and) try..catch (error) handler
+   *
+   * ⚡️ (and) placeholder handler
+   *
+   * @returns
+   * Target `widget` data for client, but at times not used.
    */
   async function widgetInit
   (
@@ -54,13 +72,23 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ 🛠️ METHODS
 
- // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   onMount
   (
-    async () =>
+    async (
+    ): Promise < void > =>
     {
-      FeatBetSiteMain = (await import('./FeatBetSite-Main.svelte')).default;
+
+      if (useDynamicImport)
+      {
+        FeatBetSiteMainDynamic = (await import('./FeatBetSite-Main.svelte')).default;
+      }
+
 	  }
   );
 
@@ -69,13 +97,16 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <SeoBox>
   <h2> {WIDGET_T_DATA?.translations?.widget_title} </h2>
-  <p>	{WIDGET_T_DATA?.translations?.title}</p>
+  <p>	{WIDGET_T_DATA?.translations?.title} </p>
 </SeoBox>
 
 <!-- [🐞] -->
@@ -92,22 +123,33 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   ### NOTE:
   ### promise was fulfilled
   -->
-  <svelte:component this={FeatBetSiteMain} B_FEATB_T={WIDGET_T_DATA} />
-  <!-- <FeatBetSiteMain
+
+  <!--
+  ### NOTE:
+  ### Dynamic Svelte Component Import
+  ### WARNING:
+  ### Disable, if Standard Import is Enabled.
+  -->
+  <svelte:component
+    this={FeatBetSiteMainDynamic}
     B_FEATB_T={WIDGET_T_DATA}
-  /> -->
+  />
+
+  <!--
+  ### NOTE:
+  ### Standard Svelte Component Import
+  ### WARNING:
+  ### Disable, if Dynamic Import is Enabled.
+  -->
+  <!--
+    <FeatBetSiteMain
+      B_FEATB_T={WIDGET_T_DATA}
+    />
+  -->
+
 {:catch error}
   <!--
   ### NOTE:
   ### promise was rejected
   -->
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
-
-<style>
-
-</style>

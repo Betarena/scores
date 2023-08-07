@@ -1,6 +1,8 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
@@ -15,13 +17,21 @@ COMPONENT JS (w/ TS)
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import LivescoresLoader from './Livescores_Loader.svelte';
-// import LivescoresMain from './Livescores_Main.svelte';
 
 	import type { B_LS2_D, B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
+
+  // ### WARNING:
+  // ### Disable, if Dynamic Import is Enabled.
+  // import LivescoresMain from './Livescores_Main.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
+
+  const
+    /** Dynamic import variable condition */
+    useDynamicImport: boolean = true
+  ;
 
   let
     /** Main widget Translations data */
@@ -32,7 +42,8 @@ COMPONENT JS (w/ TS)
     WIDGET_DATA: B_LS2_D,
     /** Wether widget has or no data */
     NO_WIDGET_DATA: boolean = true,
-    LivescoresMain: any
+    /** Dynamic import variable for svelte component */
+    LivescoresMainDynamic: any
   ;
 
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA;
@@ -43,8 +54,18 @@ COMPONENT JS (w/ TS)
   // #region ➤ 🛠️ METHODS
 
   /**
+   * @summary
+   * 🟩 MAIN
+   *
    * @description
-   * TODO: DOC:
+   * 📌 main widget data loader
+   *
+   * ⚡️ (and) try..catch (error) handler
+   *
+   * ⚡️ (and) placeholder handler
+   *
+   * @returns
+   * Target `widget` data for client, but at times not used.
    */
   async function widgetInit
   (
@@ -80,13 +101,23 @@ COMPONENT JS (w/ TS)
 
   // #endregion ➤ 🛠️ METHODS
 
- // #region ➤ 🔄 LIFECYCLE [SVELTE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   onMount
   (
-    async () =>
+    async (
+    ): Promise < void > =>
     {
-      LivescoresMain = (await import('./Livescores_Main.svelte')).default;
+
+      if (useDynamicImport)
+      {
+        LivescoresMainDynamic = (await import('./Livescores_Main.svelte')).default;
+      }
+
     }
   );
 
@@ -95,15 +126,19 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (app.css)
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <SeoBox>
   <!--
   WIDGET TITLE
   -->
   <h2>{WIDGET_T_DATA?.title}</h2>
+
   <!--
   [ℹ] fixtures & betting-tip (links)
   -->
@@ -117,6 +152,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
       {/if}
     {/each}
   </div>
+
   <!--
   [ℹ] leagues (links)
   -->
@@ -127,6 +163,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
       {/if}
     {/each}
   </div>
+
 </SeoBox>
 
 <!-- [🐞] -->
@@ -143,22 +180,33 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
   ### NOTE:
   ### promise was fulfilled
   -->
-  <svelte:component this={LivescoresMain} {WIDGET_DATA}/>
-  <!-- <LivescoresMain
+
+  <!--
+  ### NOTE:
+  ### Dynamic Svelte Component Import
+  ### WARNING:
+  ### Disable, if Standard Import is Enabled.
+  -->
+  <svelte:component
+    this={LivescoresMainDynamic}
     {WIDGET_DATA}
-  /> -->
+  />
+
+  <!--
+  ### NOTE:
+  ### Standard Svelte Component Import
+  ### WARNING:
+  ### Disable, if Dynamic Import is Enabled.
+  -->
+  <!--
+    <LivescoresMain
+      {WIDGET_DATA}
+    />
+  -->
+
 {:catch error}
   <!--
   ### NOTE:
   ### promise was rejected
   -->
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE) from the global (app.css)
-=================-->
-
-<style>
-
-</style>

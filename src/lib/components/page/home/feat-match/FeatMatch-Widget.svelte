@@ -1,6 +1,8 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
@@ -13,15 +15,25 @@ COMPONENT JS (w/ TS)
   import { get } from '$lib/api/utils.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { translationObject } from '$lib/utils/translation.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import FeatMatchLoader from './FeatMatch-Loader.svelte';
 
 	import type { B_FEATM_D, B_FEATM_S, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
 
+  // ### WARNING:
+  // ### Disable, if Dynamic Import is Enabled.
+	// import FeatMatchMain from './FeatMatch-Main.svelte';
+
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
+
+  const
+    /** Dynamic import variable condition */
+    useDynamicImport: boolean = true
+  ;
 
   let
     /** Main widget Translations data */
@@ -32,12 +44,13 @@ COMPONENT JS (w/ TS)
     WIDGET_DATA: B_FEATM_D,
     /** Wether widget has or no data */
     NO_WIDGET_DATA: boolean = true,
-    FeatMatchMain: any
+    /** Dynamic import variable for svelte component */
+    FeatMatchMainDynamic: any
   ;
 
   $: WIDGET_S_DATA = $page.data?.B_FEATM_S;
   $: WIDGET_T_DATA = $page.data?.B_FEATM_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.matches || 'Featured Match' : 'Featured Match';
+  $: WIDGET_TITLE =  WIDGET_T_DATA?.matches ?? translationObject?.featured_match_title;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -45,11 +58,17 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * [MAIN] [INIT]
+   * 🟩 MAIN
+   *
    * @description
-   * main widget data loader,
-   * (and) try..catch (error) handler
-   * (and) placeholder handler
+   * 📌 main widget data loader
+   *
+   * ⚡️ (and) try..catch (error) handler
+   *
+   * ⚡️ (and) placeholder handler
+   *
+   * @returns
+   * Target `widget` data for client, but at times not used.
    */
   async function widgetInit
   (
@@ -94,12 +113,22 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   onMount
   (
-    async () =>
+    async (
+    ): Promise < void > =>
     {
-      FeatMatchMain = (await import('./FeatMatch-Main.svelte')).default;
-	  }
+
+      if (useDynamicImport)
+      {
+        FeatMatchMainDynamic = (await import('./FeatMatch-Main.svelte')).default;
+      }
+
+    }
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -107,9 +136,12 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <SeoBox>
   <!--
@@ -160,25 +192,39 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   ### NOTE:
   ### promise was fulfilled
   -->
+
   {#if !NO_WIDGET_DATA}
-    <svelte:component this={FeatMatchMain} B_FEATM_D={WIDGET_DATA} B_FEATB_T={WIDGET_T_DATA}/>
-    <!-- <FeatMatchMain
+
+    <!--
+    ### NOTE:
+    ### Dynamic Svelte Component Import
+    ### WARNING:
+    ### Disable, if Standard Import is Enabled.
+    -->
+    <svelte:component
+      this={FeatMatchMainDynamic}
       B_FEATM_D={WIDGET_DATA}
       B_FEATB_T={WIDGET_T_DATA}
-    /> -->
+    />
+
+    <!--
+    ### NOTE:
+    ### Standard Svelte Component Import
+    ### WARNING:
+    ### Disable, if Dynamic Import is Enabled.
+    -->
+    <!--
+      <FeatMatchMain
+        B_FEATM_D={WIDGET_DATA}
+        B_FEATB_T={WIDGET_T_DATA}
+      />
+    -->
+
   {/if}
+
 {:catch error}
   <!--
   ### NOTE:
   ### promise was rejected
   -->
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
-
-<style>
-
-</style>

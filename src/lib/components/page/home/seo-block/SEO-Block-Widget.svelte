@@ -1,14 +1,17 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
 
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { translationObject } from '$lib/utils/translation.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
@@ -16,33 +19,50 @@ COMPONENT JS (w/ TS)
 
 	import type { B_SEB_DT } from '@betarena/scores-lib/types/seo-block.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // ### WARNING:
+  // ### Disable, if Dynamic Import is Enabled.
+	// import SeoBlockMain from './SEO-Block-Main.svelte';
 
-  //#region ➤ [VARIABLES]
+  // #endregion ➤ 📦 Package Imports
 
-  // let PAGE_DATA: B_SAP_PP_D = $page.data?.PAGE_DATA
-  // let WIDGET_S_DATA: B_FEATM_S = $page.data?.B_FEATM_S;
-  let WIDGET_T_DATA: B_SEB_DT = $page.data?.SEO_BLOCK_DATA;
-  let WIDGET_DATA: B_SEB_DT;
-  let NO_WIDGET_DATA: boolean = true // [ℹ] default (true)
-  let SeoBlockMain: any;
+  // #region ➤ 📌 VARIABLES
 
-  // $: PAGE_DATA = $page.data?.PAGE_DATA
-  // $: WIDGET_S_DATA = $page.data?.B_FEATM_S;
+  const
+    /** Dynamic import variable condition */
+    useDynamicImport: boolean = true
+  ;
+
+  let
+    /** Main widget Translations data */
+    WIDGET_T_DATA: B_SEB_DT = $page.data?.SEO_BLOCK_DATA,
+    /** Main widget data */
+    WIDGET_DATA: B_SEB_DT,
+    /** Wether widget has or no data */
+    NO_WIDGET_DATA: boolean = true,
+    /** Dynamic import variable for svelte component */
+    SeoBlockMainDynamic: any
+  ;
+
   $: WIDGET_T_DATA = $page.data?.SEO_BLOCK_DATA;
-  $: WIDGET_TITLE = WIDGET_T_DATA != undefined ? WIDGET_T_DATA?.title || 'Seo Block' : 'Seo Block';
+  $: WIDGET_TITLE = WIDGET_T_DATA?.title ?? translationObject?.seo_block_title;
 
-  //#endregion ➤ [VARIABLES]
+  // #endregion ➤ 📌 VARIABLES
 
-  //#region ➤ [MAIN-METHODS]
+  // #region ➤ 🛠️ METHODS
 
   /**
    * @summary
-   * [MAIN] [INIT]
+   * 🟩 MAIN
+   *
    * @description
-   * main widget data loader,
-   * (and) try..catch (error) handler
-   * (and) placeholder handler
+   * 📌 main widget data loader
+   *
+   * ⚡️ (and) try..catch (error) handler
+   *
+   * ⚡️ (and) placeholder handler
+   *
+   * @returns
+   * Target `widget` data for client, but at times not used.
    */
   async function widgetInit
   (
@@ -69,18 +89,29 @@ COMPONENT JS (w/ TS)
 		}
 
     NO_WIDGET_DATA = false;
-    return WIDGET_DATA
+
+    return WIDGET_DATA;
   }
 
-  //#endregion ➤ [METHODS]
+  // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   onMount
   (
-    async () =>
+    async (
+    ): Promise < void > =>
     {
-      SeoBlockMain = (await import('./SEO-Block-Main.svelte')).default;
+
+      if (useDynamicImport)
+      {
+        SeoBlockMainDynamic = (await import('./SEO-Block-Main.svelte')).default;
+      }
+
     }
   );
 
@@ -88,18 +119,13 @@ COMPONENT JS (w/ TS)
 
 </script>
 
-<!-- ===================
-SVELTE INJECTION TAGS
-=================== -->
-
-<svelte:head>
-  <!-- <add> -->
-</svelte:head>
-
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <SeoBox>
 
@@ -110,33 +136,46 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <LeagueListLoader /> -->
+<!-- <SeoBlockLoader /> -->
 
-<!--
-MAIN WIDGET LOGIC
--->
 {#await widgetInit()}
-
+  <!--
+  ### NOTE:
+  ### promise is pending
+  -->
   <SeoBlockLoader />
 {:then data}
 
   {#if !NO_WIDGET_DATA}
-    <svelte:component this={SeoBlockMain} B_SEB_DT={WIDGET_DATA} />
 
-    <!-- <SeoBlockMain
+    <!--
+    ### NOTE:
+    ### Dynamic Svelte Component Import
+    ### WARNING:
+    ### Disable, if Standard Import is Enabled.
+    -->
+    <svelte:component
+      this={SeoBlockMainDynamic}
       B_SEB_DT={WIDGET_DATA}
-    /> -->
+    />
+
+    <!--
+    ### NOTE:
+    ### Standard Svelte Component Import
+    ### WARNING:
+    ### Disable, if Dynamic Import is Enabled.
+    -->
+    <!--
+      <SeoBlockMain
+        B_SEB_DT={WIDGET_DATA}
+      />
+    -->
 
   {/if}
 
 {:catch error}
+  <!--
+  ### NOTE:
+  ### promise was rejected
+  -->
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
-
-<style>
-
-</style>
