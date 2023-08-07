@@ -44,14 +44,6 @@ heroku-dev-deploy-current:
 	@git push heroku-dev $$(git branch --show-current):main -f
 #
 
-dev-start:
-	echo 'Starting DEV Environment'
-	npm run dev
-	echo 'Removing Old DEV Logs'
-	-rm -r ./datalog/*
-	echo 'DEV Ready!'
-#
-
 dev-docker-start:
 	echo 'Starting DEV - Docker Environment'
 	echo 'Removing Old DEV Logs'
@@ -60,9 +52,9 @@ dev-docker-start:
 	echo 'DEV Ready!'
 #
 
-dev-clean:
-	echo 'Removing Old DEV Logs'
-	rm -r ./datalog/
+dev-1-click-spin:
+	-rm -r ./.svelte-kit/
+	npm run dev
 #
 
 preview-1-click-spin:
