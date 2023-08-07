@@ -1,6 +1,8 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
@@ -15,26 +17,43 @@ COMPONENT JS (w/ TS)
 	import { dlog, initSentry } from '$lib/utils/debug';
 	import { initSportbookData, platfrom_lang_ssr, setUserGeoLocation } from '$lib/utils/platform-functions.js';
 
-	import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
-	import OfflineAlert from '$lib/components/Offline-Alert.svelte';
-	import PlatformAlert from '$lib/components/Platform-Alert.svelte';
-// import SplashScreen from '$lib/components/Splash-Screen.svelte';
 	import Footer from '$lib/components/_main_/footer/Footer.svelte';
 	import Header from '$lib/components/_main_/header/Header.svelte';
 
 	import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
-  // #endregion ➤ 📦 Package Imports
+  // import SplashScreen from '$lib/components/Splash-Screen.svelte';
 
-  // #region ➤ 📌 VARIABLES
+  // ### WARNING:
+  // ### Disable, if Dynamic Import is Enabled.
+	// import OfflineAlert from '$lib/components/Offline-Alert.svelte';
+	// import PlatformAlert from '$lib/components/Platform-Alert.svelte';
+	// import EmailSubscribe from '$lib/components/Email-Subscribe.svelte';
 
   // ### NOTE:
   // ### moved to static/
 	// import '../app.css';
 
+  // #endregion ➤ 📦 Package Imports
+
+  // #region ➤ 📌 VARIABLES
+
+  const
+    /** Dynamic import variable condition */
+    useDynamicImport: boolean = true
+  ;
+
 	let
+    /** */
     HEADER_TRANSLATION_DATA: B_NAV_T,
-	  offlineMode: boolean = false
+    /** */
+	  offlineMode: boolean = false,
+    /** */
+    OfflineAlertDynamic: any,
+    /** */
+    PlatformAlertDynamic: any,
+    /** */
+    EmailSubscribeDynamic: any
   ;
 
 	$: HEADER_TRANSLATION_DATA = $page.data?.HEADER_TRANSLATION_DATA ?? { };
@@ -52,9 +71,10 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * [HELPER]
+   * 🔹 HELPER
+   *
    * @description
-   * ➨ simple "offline" event listener function declaration;
+   * 📌 method to `toggle` internet connection state.
    */
 	function toggleOfflineAlert
   (
@@ -77,11 +97,16 @@ COMPONENT JS (w/ TS)
   (
   ): void
   {
+    // ### NOTE:
+    // ### listen to changes in 'window.offline'.
     window.addEventListener
     (
 			'offline',
 			toggleOfflineAlert
 		);
+
+    // ### NOTE:
+    // ### listen to changes in 'window.online'.
 		window.addEventListener
     (
 			'online',
@@ -94,6 +119,9 @@ COMPONENT JS (w/ TS)
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
   /**
+   * @summary
+   * 🔥 REACTIVE
+   *
    * @description
    * TODO: DOC:
    */
@@ -118,11 +146,10 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * IMPORTANT
-   * [MAIN]
-   * [REACTIVE]
+   * 🔥 REACTIVE
+   *
    * @description
-   * ➨ listens to change in "server" language;
+   * 📌 listens to changes in platform language.
   */
   $: if (serverSideLang)
   {
@@ -141,11 +168,10 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * IMPORTANT
-   * [MAIN]
-   * [REACTIVE]
+   * 🔥 REACTIVE
+   *
    * @description
-   * ➨ listens to change in "country_bookmaker";
+   * 📌 listens to change in platform `bookmaker geo-country`.
   */
   $: if ($userBetarenaSettings?.country_bookmaker)
   {
@@ -166,11 +192,23 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   onMount
   (
-    async () =>
+    async (
+    ): Promise < void > =>
     {
-      initSentry()
+      initSentry();
+
+      if (useDynamicImport)
+      {
+        OfflineAlertDynamic = (await import('$lib/components/Offline-Alert.svelte')).default;
+        PlatformAlertDynamic = (await import('$lib/components/Platform-Alert.svelte')).default;
+        EmailSubscribeDynamic = (await import('$lib/components/Email-Subscribe.svelte')).default;
+      }
 	  }
   );
 
@@ -179,44 +217,111 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <!-- <SplashScreen /> -->
 
 {#if offlineMode}
-	<OfflineAlert />
+
+  <!--
+  ### NOTE:
+  ### Dynamic Svelte Component Import
+  ### WARNING:
+  ### Disable, if Standard Import is Enabled.
+  -->
+  <svelte:component
+    this={OfflineAlertDynamic}
+  />
+
+  <!--
+  ### NOTE:
+  ### Standard Svelte Component Import
+  ### WARNING:
+  ### Disable, if Dynamic Import is Enabled.
+  -->
+	<!-- <OfflineAlert /> -->
+
 {/if}
 
-<PlatformAlert {HEADER_TRANSLATION_DATA} />
-<EmailSubscribe />
+<!--
+### NOTE:
+### Dynamic Svelte Component Import
+### WARNING:
+### Disable, if Standard Import is Enabled.
+-->
+<svelte:component
+  this={PlatformAlertDynamic}
+/>
+
+<!--
+### NOTE:
+### Standard Svelte Component Import
+### WARNING:
+### Disable, if Dynamic Import is Enabled.
+-->
+<!-- <PlatformAlert /> -->
+
+<!--
+### NOTE:
+### Dynamic Svelte Component Import
+### WARNING:
+### Disable, if Standard Import is Enabled.
+-->
+<svelte:component
+  this={EmailSubscribeDynamic}
+/>
+
+<!--
+### NOTE:
+### Standard Svelte Component Import
+### WARNING:
+### Disable, if Dynamic Import is Enabled.
+-->
+<!-- <EmailSubscribe /> -->
 
 <Header />
 
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
 >
+
 	<slot />
+
 	<Footer />
+
 </main>
 
 <!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+### COMPONENT STYLE
+### NOTE:
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE
+### NOTE:
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'
+================= -->
 
 <style>
 
 	main
   {
+    /* 📌 position */
 		position: relative;
 		z-index: 0;
 		margin: 0 auto;
+    /* 🎨 style */
 		width: 100%;
 	}
 	main::before
   {
+    /* 📌 position */
+		position: absolute;
+		z-index: -1;
+		top: -5px;
+    /* 🎨 style */
 		content: '';
 		display: inline-block;
 		width: 100%;
@@ -226,9 +331,6 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		background-size: cover;
 		background-origin: border-box;
 		background-position: top;
-		position: absolute;
-		top: -5px;
-		z-index: -1;
 	}
 
 	/*
@@ -242,6 +344,7 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		main::before
     {
+      /* 🎨 style */
 			height: 495px;
 		}
 	}
@@ -251,9 +354,11 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   {
 		main::before
     {
+      /* 📌 position */
+			top: calc(100vw / -5.5) !important;
+      /* 🎨 style */
 			height: 100%;
 			background-size: contain !important;
-			top: calc(100vw / -5.5) !important;
 		}
 	}
 
