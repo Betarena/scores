@@ -35,6 +35,11 @@
 		);
 	});
 
+  $: if_R_1 =
+    ($sessionStore.livescoreShowCalendar && mobileExclusive)
+    || $sessionStore.withdrawModal
+  ;
+
 </script>
 
 <!-- ===================
@@ -48,7 +53,7 @@
 	{#if HEADER_TRANSLATION_DATA.scores_top_bar_messages.status && show}
 		<div
       id="platform-alert-container"
-      class:update-z-index={$sessionStore.livescoreShowCalendar && mobileExclusive}>
+      class:update-z-index={if_R_1}>
 			<p
         class="
           s-12

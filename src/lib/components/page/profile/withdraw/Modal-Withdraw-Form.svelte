@@ -14,11 +14,13 @@ COMPONENT JS (w/ TS)
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import * as EmailValidator from 'email-validator';
 	import * as ibantools from 'ibantools';
 
 	import icon_arrow_left from '../assets/arrow-left.svg';
 	import icon_arrow_right from '../assets/arrow-right.svg';
 	import icon_check from '../assets/check.svg';
+	import icon_withdraw_white_mobile from '../assets/withdraw-white-mobile.svg';
 	import icon_withdraw from '../assets/withdraw.svg';
 
   import type { B_H_TH, B_H_TRS_WF, B_H_TRS_WF_FormField_Type, B_H_TRS_WF_FormOptFlow, B_H_TRS_WF_WithdrawFormStep } from '@betarena/scores-lib/types/_HASURA_.js';
@@ -38,7 +40,7 @@ COMPONENT JS (w/ TS)
 
   const
     // ◼️ IMPORTANT
-    VIEWPORT_MOBILE_INIT = 560,
+    VIEWPORT_MOBILE_INIT = 575,
     VIEWPORT_TABLET_INIT = 1160,
     // ◼️ IMPORTANT
     /**
@@ -223,8 +225,24 @@ COMPONENT JS (w/ TS)
       };
 
       if (keyTyped == 'withdraw-email')
+      {
+        // ◾️ CHECK
+        // ◾️ for 'quantity' to be a valid input number.
+        const if_M_0: boolean =
+          !EmailValidator.validate(value as string)
+        ;
+        if (if_M_0)
+        {
+          withdrawTargetInputIdError = 'withdraw-email';
+          withdrawTargetInputErrorMsg =
+            `Invalid email`
+          ;
+          return;
+        }
+
         withdrawObj.payment_email = value as unknown as string;
-      ;
+      };
+
       if (keyTyped == 'withdraw-first-name')
         withdrawObj.first_name = value as unknown as string;
       ;
@@ -453,11 +471,36 @@ COMPONENT JS (w/ TS)
 <!--
 MAIN MODAL BACKGROUND BLUR
 -->
-<div
-	id="{CNAME}⮕modal-bg-blur"
-	on:click={() => toggleModal()}
-	in:fade
-/>
+{#if !isViewMobile}
+  <div
+    id="{CNAME}⮕modal-bg-blur"
+    on:click={() => toggleModal()}
+    in:fade
+  />
+{/if}
+
+<!--
+WITHDRAW SUCCESS ICON
+-->
+{#if withdrawSuccess && isViewMobile}
+  <div
+    id="{CNAME}⮕success-box"
+  >
+    <img
+      id=''
+      src={isViewMobile ? icon_withdraw_white_mobile : icon_withdraw}
+      alt='success_icon'
+      title='Withdraw Successful'
+      loading='lazy'
+      class=
+      "
+      m-b-24
+      "
+      width={isViewMobile ? 88 : 48}
+      height={isViewMobile ? 88 : 48}
+    />
+  </div>
+{/if}
 
 <!--
 MAIN WITHDRAW FORM FLOW WIDGET
@@ -465,23 +508,28 @@ MAIN WITHDRAW FORM FLOW WIDGET
 <div
   id="{CNAME}⮕main"
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
+  class:success-state={withdrawSuccess && isViewMobile}
 >
 
   <!--
   CLOSE MODAL ICON
   -->
-  <img
-    id="{CNAME}⮕close-btn"
-    src="/assets/svg/close.svg"
-    alt="close_icon"
-    title="Close Withdraw Modal"
-    loading="lazy"
-    class=
-    "
-    cursor-pointer
-    "
-    on:click={() => toggleModal()}
-  />
+  {#if !(isViewMobile && withdrawSuccess)}
+
+    <img
+      id="{CNAME}⮕close-btn"
+      src="/assets/svg/close.svg"
+      alt="close_icon"
+      title="Close Withdraw Modal"
+      loading="lazy"
+      class=
+      "
+      cursor-pointer
+      "
+      on:click={() => toggleModal()}
+    />
+
+  {/if}
 
   <!--
   MAIN STEP BASED FLOW UI
@@ -489,61 +537,73 @@ MAIN WITHDRAW FORM FLOW WIDGET
   {#if !withdrawSuccess}
 
     <!--
-    WITHDRAW OPTION ASSET
+    TOP FORM SECTION
     -->
-    <img
-      id="{CNAME}⮕withdraw-provider"
-      src={withdrawFormSelectLogo}
-      alt={targetFormData?.gateway ?? 'withdraw_gateway_logo'}
-      title={targetFormData?.gateway ?? 'Withdraw Selected Provider'}
-      loading='lazy'
-      class=
-      "
-      m-b-24
-      "
-    />
+    <div
+      id="{CNAME}⮕top-nav"
+    >
 
-    <!--
-    WITHDRAW PREVIOUS STEP NAV
-    -->
-    {#if numWithdrawSteps > 1 && currentWithdrawStep > 1}
+      <!--
+      WITHDRAW PREVIOUS STEP NAV
+      -->
+      {#if numWithdrawSteps > 1 && currentWithdrawStep > 1}
 
-      <div
-        id="{CNAME}⮕withdraw-back-step"
-        class=
-        "
-        row-space-center
-        width-auto
-        "
-        on:click={() => previousWithdrawStep()}
-      >
-
-        <img
-          id=''
-          src={icon_arrow_left}
-          alt='arrow_left'
-          title='Previous Withdraw Step'
-          loading='lazy'
-        />
-
-        <p
+        <div
+          id="{CNAME}⮕withdraw-back-step"
           class=
           "
-          s-14
-          color-grey
+          row-space-center
+          width-auto
+          cursor-pointer
           "
+          on:click={() => previousWithdrawStep()}
         >
-          Back
-        </p>
 
-      </div>
+          <img
+            id=''
+            src={icon_arrow_left}
+            alt='arrow_left'
+            title='Previous Withdraw Step'
+            loading='lazy'
+          />
 
-    {/if}
+          {#if !isViewMobile}
+
+            <p
+              class=
+              "
+              s-14
+              color-grey
+              "
+            >
+              Back
+            </p>
+
+          {/if}
+
+        </div>
+
+      {/if}
+
+      <!--
+      WITHDRAW OPTION ASSET
+      -->
+      <img
+        id="{CNAME}⮕withdraw-provider"
+        src={withdrawFormSelectLogo}
+        alt={targetFormData?.gateway ?? 'withdraw_gateway_logo'}
+        title={targetFormData?.gateway ?? 'Withdraw Selected Provider'}
+        loading='lazy'
+        class:m-b-24={!isViewMobile}
+      />
+
+    </div>
 
     <!--
     WITHDRAW WELCOME TEXT
     -->
     <div
+      id="{CNAME}⮕withdraw-welcome-text"
       class=
       "
       m-b-24
@@ -558,6 +618,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
         m-b-8
         color-black-2
         "
+        class:s-20={isViewMobile}
       >
         {targetFormData?.title ?? 'Withdrawal Request'}
       </p>
@@ -580,6 +641,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
     {#if numWithdrawSteps > 1}
 
       <div
+        id="{CNAME}⮕withdraw-steps"
         class=
         "
         m-b-24
@@ -665,7 +727,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
         color-black-2
         "
       >
-        {'Your Balance'}
+        {targetFormStep?.balance ?? 'Your Balance:'}
       </p>
 
       <!--
@@ -766,6 +828,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
     WITHDRAW FORM INIT.
     -->
     <form
+      id="{CNAME}⮕form"
       bind:this={htmlElemForm}
       on:submit|preventDefault={() => submitWithdrawl()}
     >
@@ -865,9 +928,10 @@ MAIN WITHDRAW FORM FLOW WIDGET
               {#if form_item?.id == 'withdraw-crypto-opts'}
 
                 <div
+                  id="{CNAME}⮕withdraw-crypto-box"
                   class=
                   "
-                  row-space-out
+                  column-start-grid
                   "
                 >
 
@@ -1018,50 +1082,60 @@ MAIN WITHDRAW FORM FLOW WIDGET
 
       </div>
 
-      <!--
-      WITHDRAW FOOTNOTES
-      -->
-      <div
-        class=
-        "
-        text-left
-        m-b-24
-        "
-      >
+    </form>
 
-        {#each targetFormStep?.footnotes ?? [] as form_footnote}
+    <!--
+    WITHDRAW FOOTNOTES
+    -->
+    <div
+      class=
+      "
+      text-left
+      m-b-24
+      "
+    >
 
-          <p
-            class=
-            "
-            s-12
-            w-500
-            color-black-2
-            m-b-5
-            "
-          >
-            {form_footnote?.information_subtitle}
-          </p>
+      {#each targetFormStep?.footnotes ?? [] as form_footnote}
 
-          <p
-            class=
-            "
-            s-12
-            color-grey
-            m-b-12
-            "
-          >
-            {form_footnote?.information_description}
-          </p>
+        <p
+          class=
+          "
+          s-12
+          w-500
+          color-black-2
+          m-b-5
+          "
+        >
+          {form_footnote?.information_subtitle}
+        </p>
 
-        {/each}
+        <p
+          class=
+          "
+          s-12
+          color-grey
+          m-b-12
+          "
+        >
+          {form_footnote?.information_description}
+        </p>
 
-      </div>
+      {/each}
+
+    </div>
+
+    <!--
+    BOTTOM FORM SECTION
+    -->
+    <div
+      id="{CNAME}⮕bottom-nav"
+    >
 
       <!--
       WITHDRAW STEP COMPLETE BTN
       -->
       <button
+        form="{CNAME}⮕form"
         type="submit"
         class=
         "
@@ -1077,25 +1151,25 @@ MAIN WITHDRAW FORM FLOW WIDGET
         {targetFormStep?.cta_title}
       </button>
 
-    </form>
+      <!--
+      WITHDRAW STEP EXTRA NOTE
+      -->
+      {#if targetFormStep?.cta_info}
 
-    <!--
-    WITHDRAW STEP EXTRA NOTE
-    -->
-    {#if targetFormStep?.cta_info}
+        <p
+          class=
+          "
+          s-12
+          color-grey
+          text-left
+          "
+        >
+          {targetFormStep?.cta_info}
+        </p>
 
-      <p
-        class=
-        "
-        s-12
-        color-grey
-        text-left
-        "
-      >
-        {targetFormStep?.cta_info}
-      </p>
+      {/if}
 
-    {/if}
+    </div>
 
   {/if}
 
@@ -1107,26 +1181,27 @@ MAIN WITHDRAW FORM FLOW WIDGET
     <!--
     WITHDRAW SUCCESS ICON
     -->
-    <img
-      id=''
-      src={icon_withdraw}
-      alt='success_icon'
-      title='Withdraw Successful'
-      loading='lazy'
-      class=
-      "
-      m-b-24
-      "
-    />
+    {#if !isViewMobile}
+      <img
+        id=''
+        src={icon_withdraw}
+        alt='success_icon'
+        title='Withdraw Successful'
+        loading='lazy'
+        class=
+        "
+        m-b-24
+        "
+        width=48
+        height=48
+      />
+    {/if}
 
     <!--
     WITHDRAW SUCCESS TEXT
     -->
     <div
-      class=
-      "
-      m-b-40
-      "
+      class:m-b-40={!isViewMobile}
     >
       <p
         class=
@@ -1157,9 +1232,9 @@ MAIN WITHDRAW FORM FLOW WIDGET
     <div
       class=
       "
-      m-b-20
       success-divider
       "
+      class:m-b-20={!isViewMobile}
     />
 
     <!--
@@ -1208,6 +1283,38 @@ MAIN WITHDRAW FORM FLOW WIDGET
 
     </div>
 
+    <!--
+    WITHDRAW STEP COMPLETE BTN
+    📱 MOBILE
+    -->
+    {#if isViewMobile}
+
+      <!--
+      BOTTOM FORM SECTION
+      -->
+      <div
+        id="{CNAME}⮕bottom-nav"
+      >
+
+        <button
+          class=
+          "
+          btn-primary-v2
+          "
+          style=
+          "
+          width: -webkit-fill-available;
+          width: -moz-available;
+          "
+          on:click={() => toggleModal()}
+        >
+          Continue
+        </button>
+
+      </div>
+
+    {/if}
+
   {/if}
 
 </div>
@@ -1236,36 +1343,58 @@ MAIN WITHDRAW FORM FLOW WIDGET
 
 	div#profile⮕w⮕withdraw⮕modal⮕form⮕main
   {
-		/* 📌 position */
+    /* 📌 position */
 		position: fixed;
-		z-index: 10000;
-		right: 0;
-		left: 0;
-		bottom: 0;
-		top: 0;
-		/* 🎨 style */
-		margin: auto;
-		width: 92%;
-		height: fit-content;
-    max-height: 80vh;
-		background: #ffffff;
-		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-		padding: 20px;
+    z-index: 10000;
+    right: 0;
+    left: 0;
+    bottom: 0;
+    top: 0;
+    /* 🎨 style */
+    display: grid;
+    grid-auto-rows: min-content;
+    align-items: start;
+    width: 100vw;
+    height: 100vh;
+    background: #ffffff;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
+    padding: 20px;
     padding-top: 45px;
-		text-align: -webkit-center;
-		text-align: -moz-center;
+    text-align: -webkit-center;
+    text-align: -moz-center;
     overflow-y: scroll;
+    padding-top: 85px;
+    padding-bottom: 150px;
 	}
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕main.success-state
+  {
+    /* 📌 position */
+    top: 233px;
+    /* 🎨 style */
+    height: auto;
+    padding-top: 20px;
+    border-radius: 16px;
+  }
 
 	img#profile⮕w⮕withdraw⮕modal⮕form⮕close-btn
   {
 		/* 📌 position */
-		position: absolute;
+		position: fixed;
 		top: 20px;
 		right: 20px;
 		z-index: 400000002;
 	}
+
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕top-nav
+  {
+    /* 📌 position */
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    /* 🎨 style */
+    padding: 20px;
+  }
 
   img#profile⮕w⮕withdraw⮕modal⮕form⮕withdraw-provider
   {
@@ -1280,6 +1409,17 @@ MAIN WITHDRAW FORM FLOW WIDGET
 		top: 20px;
 		left: 20px;
 		z-index: 400000002;
+  }
+
+  /* div#profile⮕w⮕withdraw⮕modal⮕form⮕withdraw-welcome-text
+  {
+  } */
+
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕withdraw-steps
+  {
+    /* 🎨 style */
+    grid-column: 1;
+    grid-row: 1;
   }
 
   div.withdraw-step-bar
@@ -1317,6 +1457,30 @@ MAIN WITHDRAW FORM FLOW WIDGET
     margin-right: 0;
   }
 
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕success-box
+  {
+    /* 📌 position */
+    position: fixed;
+    right: 0;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    /* 🎨 style */
+    height: 250px;
+    width: 100vw;
+    background-color: #59C65D;
+  }
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕success-box img
+  {
+    /* 📌 position */
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: 0;
+    margin: auto;
+  }
+
   div#profile⮕w⮕withdraw⮕modal⮕form⮕success-footnotes div:last-child
   {
     /* 🎨 style */
@@ -1329,6 +1493,12 @@ MAIN WITHDRAW FORM FLOW WIDGET
     background-color: var(--grey-color);
   }
 
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕withdraw-crypto-box
+  {
+    /* 🎨 style */
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+  }
   div.crypto-coin-box
   {
     /* 📌 position */
@@ -1351,7 +1521,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
   div.crypto-coin-box label
   {
     /* 🎨 style */
-    width: 148px;
+    width: 100%;
     padding: 16px 20px;
     border: 1px solid var(--dark-gray-day, #8C8C8C);
     border-radius: 8px;
@@ -1371,6 +1541,17 @@ MAIN WITHDRAW FORM FLOW WIDGET
     border: 1px solid var(--accent-normal, #F5620F);
   }
 
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕bottom-nav
+  {
+    /* 📌 position */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    /* 🎨 style */
+    padding: 20px;
+  }
+
   /*
   =============
   ⚡️ RESPONSIVNESS
@@ -1380,11 +1561,36 @@ MAIN WITHDRAW FORM FLOW WIDGET
 	@media only screen
   and (min-width: 575px)
   {
+
 		div#profile⮕w⮕withdraw⮕modal⮕form⮕main
     {
       /* 🎨 style */
+      display: block;
       max-width: 502px;
+      margin: auto;
+      height: fit-content;
+      max-height: 80vh;
+      border-radius: 12px;
+      padding-top: 20px;
+      padding-bottom: 20px;
 		}
+
+    div#profile⮕w⮕withdraw⮕modal⮕form⮕top-nav
+    {
+      all: unset;
+    }
+
+    img#profile⮕w⮕withdraw⮕modal⮕form⮕close-btn
+    {
+      /* 📌 position */
+      position: absolute;
+    }
+
+    div#profile⮕w⮕withdraw⮕modal⮕form⮕bottom-nav
+    {
+      all: unset;
+    }
+
 	}
 
   /*
@@ -1410,6 +1616,20 @@ MAIN WITHDRAW FORM FLOW WIDGET
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1-shade);
+  }
+
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕main.dark-background-1 div#profile⮕w⮕withdraw⮕modal⮕form⮕top-nav
+  {
+    /* 🎨 style */
+    border-bottom: 1px solid var(--dark-theme-1-shade);
+    background-color: var(--dark-theme-1);
+  }
+
+  div#profile⮕w⮕withdraw⮕modal⮕form⮕main.dark-background-1 div#profile⮕w⮕withdraw⮕modal⮕form⮕bottom-nav
+  {
+    /* 🎨 style */
+    border-top: 1px solid var(--dark-theme-1-shade);
+    background-color: var(--dark-theme-1);
   }
 
 </style>
