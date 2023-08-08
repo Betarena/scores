@@ -132,6 +132,8 @@ COMPONENT JS (w/ TS)
 
     txHistListLimit = LIST_LIMIT_DEFAULT;
 
+    isShowMore = false;
+
     txHistList = txHistList;
   }
 
@@ -169,6 +171,8 @@ COMPONENT JS (w/ TS)
         ),
         to: targetDate()
       }
+
+      isShowMore = false;
     }
 
     if (opt == 'Last Month')
@@ -214,6 +218,8 @@ COMPONENT JS (w/ TS)
         from: _from,
         to: _to
       };
+
+      isShowMore = false;
     }
 
     if (opt == 'Last 6 Months')
@@ -247,6 +253,8 @@ COMPONENT JS (w/ TS)
         from: _from,
         to: _to
       };
+
+      isShowMore = false;
     }
 
   }
@@ -266,16 +274,8 @@ COMPONENT JS (w/ TS)
       true
     );
 
-    isShowMore = !isShowMore;
-
-    if (isShowMore)
-    {
-      txHistListLimit = WIDGET_DATA?.tx_hist?.length;
-
-      return;
-    }
-
-    txHistListLimit = LIST_LIMIT_DEFAULT;
+    txHistListLimit = WIDGET_DATA?.tx_hist?.length;
+    isShowMore = true;
   }
 
   /**
@@ -982,7 +982,7 @@ MAIN DEPOST WIDGET
         <!--
         SHOW MORE OPT
         -->
-        {#if txHistList?.length > 10}
+        {#if txHistList?.length > 10 && isShowMore}
           <div
             id="{CNAME}⮕main⮕table-show-more"
             data-testid="{CNAME}⮕main⮕table-show-more"
