@@ -176,9 +176,7 @@ COMPONENT JS (w/ TS)
         if (if_M_0)
         {
           withdrawTargetInputIdError = 'withdraw-amount';
-          withdrawTargetInputErrorMsg =
-            `Value must be a valid integer`
-          ;
+          withdrawTargetInputErrorMsg = data?.form_error?.value_integer;
           return;
         }
         // ◾️ CHECK
@@ -189,9 +187,7 @@ COMPONENT JS (w/ TS)
         if (if_M_1)
         {
           withdrawTargetInputIdError = 'withdraw-amount';
-          withdrawTargetInputErrorMsg =
-            `You don't have an sufficient balance`
-          ;
+          withdrawTargetInputErrorMsg = data?.form_error?.no_balance;
           return;
         }
         // ◾️ CHECK
@@ -202,9 +198,12 @@ COMPONENT JS (w/ TS)
         if (if_M_2)
         {
           withdrawTargetInputIdError = 'withdraw-amount';
-          withdrawTargetInputErrorMsg =
-            `You only have $${$userBetarenaSettings?.user?.scores_user_data?.main_balance} available in your balance`
-          ;
+          withdrawTargetInputErrorMsg = data?.form_error?.enough_balance;
+          withdrawTargetInputErrorMsg.replace
+          (
+            "X",
+            `${$userBetarenaSettings?.user?.scores_user_data?.main_balance}`
+          );
           return;
         }
         // ◾️ CHECK
@@ -215,9 +214,7 @@ COMPONENT JS (w/ TS)
         if (if_M_3)
         {
           withdrawTargetInputIdError = 'withdraw-amount';
-          withdrawTargetInputErrorMsg =
-            `A minimum of 5 BTA is required to withdraw`
-          ;
+          withdrawTargetInputErrorMsg = data?.form_error?.min_balance;
           return;
         }
 
@@ -234,9 +231,7 @@ COMPONENT JS (w/ TS)
         if (if_M_0)
         {
           withdrawTargetInputIdError = 'withdraw-email';
-          withdrawTargetInputErrorMsg =
-            `Invalid email`
-          ;
+          withdrawTargetInputErrorMsg = data?.form_error?.invalid_email;
           return;
         }
 
@@ -261,9 +256,7 @@ COMPONENT JS (w/ TS)
         if (if_M_3)
         {
           withdrawTargetInputIdError = 'withdraw-bic-swift';
-          withdrawTargetInputErrorMsg =
-            `Invalid BIC/SWIFT input`
-          ;
+          withdrawTargetInputErrorMsg = data?.form_error?.invalid_bic;
           return;
         }
 
@@ -281,9 +274,7 @@ COMPONENT JS (w/ TS)
         if (if_M_3)
         {
           withdrawTargetInputIdError = 'withdraw-iban';
-          withdrawTargetInputErrorMsg =
-            `Invalid IBAN input`
-          ;
+          withdrawTargetInputErrorMsg = data?.form_error?.invalid_iban;
           return;
         }
 
