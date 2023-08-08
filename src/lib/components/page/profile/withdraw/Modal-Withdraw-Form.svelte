@@ -171,7 +171,7 @@ COMPONENT JS (w/ TS)
         // ◾️ CHECK
         // ◾️ for 'quantity' to be a valid input number.
         const if_M_0: boolean =
-          !Number.isInteger(parseInt(value as string))
+          !Number.isInteger(parseFloat(value as string))
         ;
         if (if_M_0)
         {
@@ -218,7 +218,7 @@ COMPONENT JS (w/ TS)
           return;
         }
 
-        withdrawObj.quantity = value as unknown as number;
+        withdrawObj.quantity = parseFloat(value as unknown as string);
       };
 
       if (keyTyped == 'withdraw-email')
@@ -320,6 +320,9 @@ COMPONENT JS (w/ TS)
 
     withdrawSuccess = true;
 
+    let newBalance: number = ($userBetarenaSettings?.user?.scores_user_data?.main_balance - withdrawObj.quantity) ?? 0;
+    if (newBalance < 0) newBalance = 0;
+
     // [🐞]
     console.debug
     (
@@ -335,7 +338,7 @@ COMPONENT JS (w/ TS)
     await userUpdateBalance
     (
       $userBetarenaSettings?.user?.firebase_user_data?.uid,
-      ($userBetarenaSettings?.user?.scores_user_data?.main_balance - withdrawObj.quantity)
+      newBalance
     );
 
     return;
