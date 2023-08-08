@@ -1366,6 +1366,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
     top: 233px;
     /* 🎨 style */
     height: auto;
+    gap: 20px;
     padding-top: 20px;
     border-radius: 16px;
   }
