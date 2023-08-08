@@ -171,7 +171,7 @@ COMPONENT JS (w/ TS)
         // ◾️ CHECK
         // ◾️ for 'quantity' to be a valid input number.
         const if_M_0: boolean =
-          !Number.isInteger(parseFloat(value as string))
+          !Number.isInteger(parseInt(value as string))
         ;
         if (if_M_0)
         {
