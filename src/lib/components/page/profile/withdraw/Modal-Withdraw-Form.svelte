@@ -199,9 +199,9 @@ COMPONENT JS (w/ TS)
         {
           withdrawTargetInputIdError = 'withdraw-amount';
           withdrawTargetInputErrorMsg = data?.form_error?.enough_balance;
-          withdrawTargetInputErrorMsg.replace
+          withdrawTargetInputErrorMsg = withdrawTargetInputErrorMsg.replace
           (
-            "X",
+            'X',
             `${$userBetarenaSettings?.user?.scores_user_data?.main_balance}`
           );
           return;
