@@ -555,3 +555,33 @@ export function toDecimalFix
   if (value == null) return;
   return parseFloat(value.toString()).toFixed(d_places);
 }
+
+/**
+ * @description
+ * TODO: DOC:
+ *
+ * @param
+ * { string } value - Target string balace for trimming
+ *
+ * @returns
+ */
+export function spliceBalanceDoubleZero
+(
+  value: string
+): string
+{
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ value ${value}`,
+    true
+  );
+
+  if (value == null) return;
+
+  if (value.includes('.00'))
+    return value?.split('.')?.[0]
+  ;
+
+  return value;
+}

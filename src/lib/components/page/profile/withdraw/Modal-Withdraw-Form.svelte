@@ -13,7 +13,7 @@ COMPONENT JS (w/ TS)
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import * as EmailValidator from 'email-validator';
 	import * as ibantools from 'ibantools';
 
@@ -736,7 +736,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
         m-b-5
         "
       >
-        {toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance) ?? 0} BTA
+        {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? 0} BTA
       </p>
 
       <!--
@@ -756,7 +756,7 @@ MAIN WITHDRAW FORM FLOW WIDGET
           color-grey
           "
         >
-          (${toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance) ?? 0})
+          (${spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? 0})
         </p>
 
         <!--

@@ -16,7 +16,7 @@ COMPONENT JS - BASIC
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
+	import { spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser } from '$lib/utils/user.js';
 	import { doc, updateDoc } from 'firebase/firestore';
@@ -1124,12 +1124,12 @@ NAVBAR MAIN
                   m-r-5
                   "
                 >
-                  {toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance) ?? '0.00'} BTA
+                  {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'} BTA
                 </span>
                 {#if isViewMobile}
                   <br/>
                 {/if}
-                (${toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance) ?? '0.00'})
+                (${spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'})
               </p>
             </div>
 
