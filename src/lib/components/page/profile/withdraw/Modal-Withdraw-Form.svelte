@@ -1394,6 +1394,8 @@ MAIN WITHDRAW FORM FLOW WIDGET
     right: 0;
     /* 🎨 style */
     padding: 20px;
+    background-color: var(--white);
+    border-bottom: 1px solid var(--grey-color);
   }
 
   img#profile⮕w⮕withdraw⮕modal⮕form⮕withdraw-provider
@@ -1550,6 +1552,8 @@ MAIN WITHDRAW FORM FLOW WIDGET
     right: 0;
     /* 🎨 style */
     padding: 20px;
+    background-color: var(--white);
+    border-top: 1px solid var(--grey-color);
   }
 
   /*
