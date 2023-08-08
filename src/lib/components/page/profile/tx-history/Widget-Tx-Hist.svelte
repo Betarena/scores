@@ -982,7 +982,7 @@ MAIN DEPOST WIDGET
         <!--
         SHOW MORE OPT
         -->
-        {#if txHistList?.length > 10 && isShowMore}
+        {#if txHistList?.length > 10 && !isShowMore}
           <div
             id="{CNAME}⮕main⮕table-show-more"
             data-testid="{CNAME}⮕main⮕table-show-more"
