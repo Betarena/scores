@@ -16,7 +16,7 @@ COMPONENT JS - BASIC
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
+	import { selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser } from '$lib/utils/user.js';
 	import { doc, updateDoc } from 'firebase/firestore';
@@ -79,6 +79,7 @@ COMPONENT JS - BASIC
 
   $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
+  $: userLang = $userBetarenaSettings?.lang;
 
   $: dropDownArea =
     isLangDropdown
@@ -187,8 +188,8 @@ COMPONENT JS - BASIC
     if (!$userBetarenaSettings?.lang
       || $page.error
       || !$page.route.id
-      || $userBetarenaSettings?.user == undefined
-      || !setUserLang) {
+      || $userBetarenaSettings?.user == undefined)
+    {
       return
     }
 
@@ -272,10 +273,11 @@ COMPONENT JS - BASIC
       NB_W_STY
     );
 
-    // selectLanguage
-    // (
-    //   userlang
-    // )
+    selectLanguage
+    (
+      userlang,
+      $page
+    );
   }
 
   /**
@@ -317,12 +319,11 @@ COMPONENT JS - BASIC
    * TODO: DOC:
    */
   $: if_R_3 =
-    $userBetarenaSettings?.lang
-    && !$page.error
+    !$page.error
     && $page.route.id
     && $userBetarenaSettings?.user != undefined
   ;
-  $: if (if_R_3)
+  $: if (if_R_3 && userLang != undefined)
   {
     // [🐞]
     console.debug
@@ -330,7 +331,7 @@ COMPONENT JS - BASIC
       `🚏 checkpoint ➤ NAVBAR if_R_3`,
     );
 
-    // update_select_lang()
+    update_select_lang();
   }
 
   /**
