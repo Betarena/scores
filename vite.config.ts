@@ -1,8 +1,8 @@
 import { sveltekit } from '@sveltejs/kit/vite';
-import viteCompression from 'vite-plugin-compression';
-import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
+// import viteCompression from 'vite-plugin-compression';
+// import cssInjectedByJsPlugin from "vite-plugin-css-injected-by-js";
 import { defineConfig } from 'vitest/config';
-import fs from 'fs';
+// import fs from 'fs';
 
 export default defineConfig
 (
@@ -44,6 +44,7 @@ export default defineConfig
       // ### WARNING:
       // ### overrides 'CSS' imported by 'svelte/+kit'
       // ### requires to be imported a '<link ... >' in the 'src/app.html'
+      /*
       cssInjectedByJsPlugin
       (
         {
@@ -111,6 +112,7 @@ export default defineConfig
 
         }
       ),
+      */
 
     ],
 
