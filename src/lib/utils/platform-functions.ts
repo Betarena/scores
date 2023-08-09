@@ -4,8 +4,8 @@ import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import sessionStore from "$lib/store/session.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { NB_W_TAG, dlog, dlogv2 } from "./debug";
 import { error, redirect, type Page } from "@sveltejs/kit";
+import { NB_W_TAG, dlog, dlogv2 } from "./debug";
 
 import { dev } from "$app/environment";
 import { goto } from "$app/navigation";
@@ -682,7 +682,9 @@ export function cssVarChange
   );
 }
 
-// #endregion ➤ 🛠️ METHODS
+/**
+ * @description
+ * TODO: DOC:
  *
  * @param
  * { number } d_places - Target number of decimal places.
@@ -946,3 +948,5 @@ export async function selectLanguage
     await goto(newURL, { replaceState: true });
   }
 }
+
+// #endregion ➤ 🛠️ METHODS

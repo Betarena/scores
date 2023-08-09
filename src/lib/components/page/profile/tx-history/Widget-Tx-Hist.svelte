@@ -27,7 +27,6 @@ COMPONENT JS (w/ TS)
 
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
-	import { dlog } from '$lib/utils/debug.js';
 
   // #endregion ➤ 📦 Package Imports
 
