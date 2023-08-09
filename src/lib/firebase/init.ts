@@ -17,9 +17,9 @@ import { getStorage, type FirebaseStorage } from 'firebase/storage';
 const firebaseConfig: FirebaseOptions =
 {
 	apiKey:	import.meta.env?.VITE_FIREBASE_DB_API_KEY as string ?? "",
-	authDomain:	import.meta.env?.VITE_FIREBASE_DB_AUTH_DOMAIN as string ?? "",
-	projectId: import.meta.env?.VITE_FIREBASE_DB_PROJECT_ID as string ?? "",
-	databaseURL: import.meta.env?.VITE_FIREBASE_DB_DATABASE_URL as string ?? "",
+	authDomain:	import.meta.env?.VITE_FIREBASE_DB_AUTH_DOMAIN as string ?? "example.firebaseapp.com",
+	projectId: import.meta.env?.VITE_FIREBASE_DB_PROJECT_ID as string ?? "example",
+	databaseURL: import.meta.env?.VITE_FIREBASE_DB_DATABASE_URL as string ?? "https://example.firebaseio.com/",
 	storageBucket: import.meta.env?.VITE_FIREBASE_DB_STORAGE_BUCKET as string ?? ""
 };
 
