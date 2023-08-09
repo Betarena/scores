@@ -56,12 +56,12 @@ jobs:
           npm install
           npm run build
 
-  docker-image-build:
-    needs: npm-build-check
-    name: 🐳 Docker Image Build
-    runs-on: ubuntu-22.04
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build docker image
-        run: |
-          docker build . --file ./docker/prod.Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)
+  # docker-image-build:
+  #   needs: npm-build-check
+  #   name: 🐳 Docker Image Build
+  #   runs-on: ubuntu-22.04
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Build docker image
+  #       run: |
+  #         docker build . --file ./docker/prod.Dockerfile --tag ${{ env.DOCKER_IMAGE }}:$(date +%s)
