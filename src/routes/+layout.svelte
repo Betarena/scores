@@ -352,6 +352,10 @@
 	@media screen
   and (min-width: 1024px)
   {
+    main
+    {
+      overflow: hidden;
+    }
 		main::before
     {
       /* 📌 position */

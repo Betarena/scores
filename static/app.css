@@ -77,10 +77,17 @@ p {
 	}
 }
 
-/* ... zoom-out-mobiles-input-form ... */
-/* https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone */
-@supports (-webkit-overflow-scrolling: touch) {
-	input:active {
+/*
+### NOTE:
+### zoom-out-mobiles-input-form
+### SEE:
+### https://stackoverflow.com/questions/2989263/disable-auto-zoom-in-input-text-tag-safari-on-iphone
+*/
+@supports (-webkit-overflow-scrolling: touch)
+{
+  form input:active,
+	input:active
+  {
 		font-size: 16px !important;
 	}
 }
@@ -124,8 +131,8 @@ p {
   --dark-theme-1-2-shade: #737373;
   --dark-theme-1-3-shade: #999999;
 	/*
-  BREAKPOINTS
-  NOTE: don't work with @media...
+  ### breakpoints
+  ### NOTE: don't work with @media... queries
   */
 	--mobile: 375;
 	--tablet: 767;
@@ -956,14 +963,53 @@ form select
 	box-sizing: border-box;
 	border-radius: 7.34914px;
 	padding: 7px;
+  background-color: transparent;
+  border: 1px solid var(--gray-day, #CCC);
+}
+
+input
+{
+  /* 🎨 style */
+  height: 44px;
+  width: -webkit-fill-available;
+  width: -moz-available;
+  border: 1px solid var(--grey-shade);
+  box-sizing: border-box;
+  border-radius: 8px;
+  padding: 20px 12px;
+  outline: none;
+  font-size: 14px;
+  background-color: transparent;
+}
+input:hover
+{
+  /* 🎨 style */
+  border: 1px solid var(--grey);
+}
+input:focus
+{
+  /* 🎨 style */
+  border: 1px solid var(--dark-theme-1);
+}
+input[placeholder]
+{
+  /* 🎨 style */
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .width-auto
 {
   width: auto;
 }
+.width-100
+{
+  width: 100%;
+}
 
-.hover\/transition\/v-1
+.hover\/transition\/v-1,
+.hover-transition-v-1
 {
   /* 🎨 style */
   transition: all 0.15s ease;
@@ -975,36 +1021,61 @@ form select
 
 /*
 =========================
-DARK-MODE FORM CSS STYLE
+🌒 DARK-MODE
 =========================
 */
 
-.dark-background {
+.dark-background
+{
+  /* 🎨 style */
 	background-color: var(--dark-theme) !important;
 }
-.dark-background-1 {
-	background-color: var(
-		--dark-theme-1
-	) !important;
+.dark-background-1
+{
+  /* 🎨 style */
+	background-color: var(--dark-theme-1) !important;
 }
 
 .dark-background .color-grey,
-.dark-background-1 .color-grey {
+.dark-background-1 .color-grey
+{
+  /* 🎨 style */
 	color: #a8a8a8 !important;
 }
 
 .dark-background .color-black-2,
-.dark-background-1 .color-black-2 {
+.dark-background-1 .color-black-2
+{
+  /* 🎨 style */
 	color: #ffffff !important;
 }
 
 .dark-background .color-primary,
-.dark-background-1 .color-primary {
+.dark-background-1 .color-primary
+{
+  /* 🎨 style */
 	color: var(--primary) !important;
 }
 
-.dark-background .widget-component {
+.dark-background .widget-component
+{
+  /* 🎨 style */
 	background-color: var(--dark-theme-1) !important;
+}
+
+.dark-background-1 input
+{
+  border: 1px solid var(--dark-theme-1-2-shade);
+}
+.dark-background-1 input:hover
+{
+  /* 🎨 style */
+  border: 1px solid var(--dark-theme-1-3-shade);
+}
+.dark-background-1 input:focus
+{
+  /* 🎨 style */
+  border: 1px solid var(--dark-theme-1-3-shade);
 }
 
 /* #endregion ➤ [MAIN] [DARK MODE (OVERRIDES) STYLES] Website Layout */

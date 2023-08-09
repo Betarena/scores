@@ -149,6 +149,9 @@ export interface Platform_Session
    */
   navBtnHover: string;
 
+  // TODO: DOC:
+  withdrawModal: boolean,
+
   // -----
   // NOTE: SPORTBOOK DATA;
   // -----

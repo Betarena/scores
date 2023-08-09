@@ -4,11 +4,14 @@ import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import sessionStore from "$lib/store/session.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { error, redirect } from "@sveltejs/kit";
-import { dlog, dlogv2 } from "./debug";
+import { NB_W_TAG, dlog, dlogv2 } from "./debug";
+import { error, redirect, type Page } from "@sveltejs/kit";
 
+import { dev } from "$app/environment";
+import { goto } from "$app/navigation";
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
+import { ROUTE_ID_PROFILE } from "./user.js";
 
 // #endregion ➤ 📦 Package Imports
 
@@ -680,3 +683,266 @@ export function cssVarChange
 }
 
 // #endregion ➤ 🛠️ METHODS
+ *
+ * @param
+ * { number } d_places - Target number of decimal places.
+ *
+ * @returns
+ */
+export function toDecimalFix
+(
+  value: number,
+  d_places: number = 2
+): string
+{
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ value ${value}`,
+    true
+  );
+
+  if (value == null) return;
+
+  return parseFloat(value.toString()).toFixed(d_places);
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ *
+ * @param
+ * { string } value - Target string balace for trimming
+ *
+ * @returns
+ */
+export function spliceBalanceDoubleZero
+(
+  value: string
+): string
+{
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ value ${value}`,
+    true
+  );
+
+  if (value == null) return;
+
+  if (value.includes('.00'))
+    return value?.split('.')?.[0]
+  ;
+
+  return value;
+}
+
+/**
+ * @summary
+ * 📌 MAIN | IMPORTANT
+ *
+ * @description
+ * 📌 Updates `user` language platform selection.
+ *
+ * ⚡️ Manages platform main navigation,
+ * for some of the section routes.
+ *
+ * @param
+ * { string } lang - Target new `selected` language.
+ */
+export async function selectLanguage
+(
+  lang: string,
+  page: Page<Record<string, string>, string>
+): Promise < void >
+{
+
+  if (sessionStore?.getServerLang() == lang) return;
+
+  // ➫ NOTE:
+  // ➫ Past/previous lang option.
+  const pastLang: string =
+    sessionStore?.getServerLang() == 'en'
+      ? '/'
+      : `/${sessionStore?.getServerLang()}`
+  ;
+
+  userBetarenaSettings.setLang
+  (
+    lang
+  );
+
+  // [🐞]
+  dlogv2
+  (
+    `${NB_W_TAG} selectLanguage()`,
+    [
+      `$userBetarenaSettings.lang: ${userBetarenaSettings.getUserLang()}`,
+      `$sessionStore?.serverLang: ${sessionStore?.getServerLang()}`,
+      `lang: ${lang}`,
+      `pastLang: ${pastLang}`,
+      `$page.route.id: ${page.route.id}`
+    ],
+    true
+  );
+
+  // TODO:
+  // isLangDropdown = false;
+
+  // ➫ NOTE:
+  // ➫ Update <html {lang}> in DOCTYPE.
+  let tempLang: string = lang;
+  if (lang === 'br') tempLang = 'pt-BR';
+  document.documentElement.setAttribute
+  (
+    'lang',
+    tempLang
+  );
+
+  // ➫ CHECK
+  // ➫ on error', navigate back to homepage;
+  const if_M_0: boolean =
+    page.error
+    && !dev
+  ;
+  if (if_M_0)
+  {
+    const targetUrl: string =
+      lang == 'en'
+        ? `/`
+        : `/${lang}`
+    ;
+
+    // [🐞]
+    dlog
+    (
+      `${NB_W_TAG} -> ${lang}`,
+      true,
+    );
+
+    await goto
+    (
+      targetUrl
+    );
+
+    return;
+  }
+
+  // ➫ CHECK
+  // ➫ Omit 'special' routes cases, as these routes
+  // ➫ manage their own navigation/translation switch.
+  const if_M_1: boolean =
+    [
+      '/[[lang=lang]]/[sport]/[country]/[league_name]',
+      '/[[lang=lang]]/[sport]/[fixture=fixture]',
+      '/[[lang=lang]]/[player=player]/[...player_fill]'
+    ]
+    .includes(page.route.id)
+  ;
+  if (if_M_1)
+  {
+    // [🐞]
+    dlog
+    (
+      `${NB_W_TAG} omitting route: ${page.route.id}`,
+      true
+    );
+    return;
+  }
+
+  // ➫ CHECK
+  // ➫ On profile page route, handle.
+  else if (ROUTE_ID_PROFILE == page.route.id)
+  {
+
+    const pastLangV2: string =
+      pastLang == `/`
+        ? `/en`
+        : pastLang
+    ;
+
+    let tempUrl: string = `${page.url.pathname}/`;
+
+    const newURL: string = tempUrl
+    ?.replace
+    (
+      `${pastLangV2}/`,
+      `/${lang}`
+    );
+
+    // [🐞]
+    dlog
+    (
+      `${NB_W_TAG} inside (PROFILE) ${lang},
+      pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`,
+      true
+    );
+
+    await goto
+    (
+      newURL,
+      {
+        replaceState: true
+      }
+    );
+
+  }
+
+  // ➫ NOTE:
+  // ➫ Otherwise, continue navigation switch.
+  // ➫ NOTE:
+
+  // ➫ CHECK
+  // ➫ for 'EN' naviagtion.
+  else if (lang == 'en' && pastLang != '/')
+  {
+
+    // prefetch(`/`); [? - maybe ?] // NOTE:
+
+    // [ℹ] count number of slashes URL;
+    var count =	page.url.pathname.split('/').length - 1;
+    // [ℹ] replace path-name accordingly for "EN" - first occurance;
+    const newURL: string =
+      count == 1
+        ? page.url.pathname.replace(pastLang, '/')
+        : page.url.pathname.replace(pastLang, '')
+    ;
+    dlog(`${NB_W_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
+
+    // [ℹ] update URL breadcrumb;
+    // window.history.replaceState({}, "NewPage", newURL);
+    await goto(newURL, { replaceState: true });
+  }
+  // ➫ CHECK
+  // ➫ for 'incoming (past)' from an 'EN (/)' route.
+  else if (lang != 'en' && pastLang == '/')
+  {
+    // [ℹ] count number of slashes URL;
+    var countSlash = page.url.pathname.split('/').length - 1;
+    // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+    const newURL: string =
+      countSlash > 1
+        ? page.url.pathname.replace(pastLang, `/${lang}/`)
+        : page.url.pathname.replace(pastLang, `/${lang}`)
+    ;
+    dlog(`${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
+
+    // [ℹ] update URL breadcrumb;
+    // window.history.replaceState({}, "NewPage", newURL);
+    await goto(newURL, { replaceState: true });
+  }
+  // ➫ CHECK
+  // ➫ for 'incoming (past)' from an 'non-EN (/)' route.
+  else if (lang != 'en' && pastLang != '/')
+  {
+    // [ℹ] count number of slashes URL;
+    var countSlash = page.url.pathname.split('/').length - 1;
+    // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+    const newURL: string = page.url.pathname.replace(pastLang, `/${lang}`);
+    dlog(`${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
+
+    // [ℹ] update URL breadcrumb;
+    // window.history.replaceState({}, "NewPage", newURL);
+    await goto(newURL, { replaceState: true });
+  }
+}

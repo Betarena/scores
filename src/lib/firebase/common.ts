@@ -1,12 +1,15 @@
 import sessionStore from '$lib/store/session.js';
 import { onValue, ref, type Unsubscribe } from "firebase/database";
-import { doc, onSnapshot } from "firebase/firestore";
+import { doc, onSnapshot, updateDoc, type DocumentData, DocumentReference, getDoc, DocumentSnapshot } from "firebase/firestore";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_firestore, db_real } from "./init";
-
+import { dlog } from '$lib/utils/debug.js';
 import userBetarenaSettings from '$lib/store/user-settings.js';
+
 import type { Betarena_User } from "$lib/types/types.scores.js";
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+
+// #region 🔥 USER
 
 /**
  * @description
@@ -43,7 +46,78 @@ export function userBalanceListen
 
 }
 
-// #region PLAYER_IDS
+/**
+ * @description
+ * TODO: DOC:
+ */
+export async function userUpdateBalance
+(
+  uid: string,
+  balanceChng: number
+): Promise < void >
+{
+
+  const userRef: DocumentReference < DocumentData > = doc
+  (
+    db_firestore,
+    'betarena_users',
+    uid
+  );
+
+  await updateDoc
+  (
+    userRef,
+    {
+      main_balance: balanceChng
+    }
+  );
+
+  return;
+
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ */
+export async function userDataFetch
+(
+  uid: string
+): Promise < void >
+{
+
+  // [🐞]
+  dlog
+  (
+    `🚏 checkpoint ➤ userDataFetch`,
+    true
+  );
+
+  const docRef: DocumentReference < DocumentData > = doc
+  (
+    db_firestore,
+    "betarena_users",
+    uid
+  );
+
+  const docSnap: DocumentSnapshot < DocumentData > = await getDoc
+  (
+    docRef
+  );
+
+  if (!docSnap.exists()) return;
+
+  const userData: Betarena_User = docSnap.data();
+
+  userBetarenaSettings.updateUserData
+  (
+    userData
+  );
+}
+
+// #endregion 🔥 USER
+
+// #region 🔥 PLAYER_IDS
 
 /**
  * @summary
@@ -107,9 +181,9 @@ export function targetPlayerIdsListen
   return listenEventRef
 }
 
-// #endregion PLAYER_IDS
+// #endregion 🔥 PLAYER_IDS
 
-// #region ODDS
+// #region 🔥 ODDS
 
 /**
  * @summary
@@ -302,9 +376,9 @@ export async function oneOffOddsDataGet
   return;
 }
 
-// #endregion ODDS
+// #endregion 🔥 ODDS
 
-// #region LIVESCORES_NOW
+// #region 🔥 LIVESCORES_NOW
 
 /**
  * @summary
@@ -472,9 +546,9 @@ export async function genLiveFixMap
   );
 }
 
-// #endregion LIVESCORES_NOW
+// #endregion 🔥 LIVESCORES_NOW
 
-// #region LIVESCORES_NOW_SCOREBOARD
+// #region 🔥 LIVESCORES_NOW_SCOREBOARD
 
 /**
  * @summary
@@ -579,4 +653,4 @@ function generateLiveScoreboardList
   )
 }
 
-// #endregion LIVESCORES_NOW_SCOREBOARD
+// #endregion 🔥 LIVESCORES_NOW_SCOREBOARD

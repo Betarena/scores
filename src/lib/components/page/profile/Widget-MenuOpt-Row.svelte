@@ -225,13 +225,13 @@ VIEW DESIGN - 1
         {:else if MENU_OPT == 'Scores'}
           {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
-          {'Withdraw'}
+          {RESPONSE_PROFILE_DATA?.profile?.withdraw ?? 'Withdraw'}
         {:else if MENU_OPT == 'Deposit'}
-          {'Deposit'}
+          {RESPONSE_PROFILE_DATA?.profile?.deposit ?? 'Deposit'}
         {:else if MENU_OPT == 'Transaction History'}
-          {'Transaction History'}
+          {RESPONSE_PROFILE_DATA?.profile?.transact_history ?? 'Transaction History'}
         {:else if MENU_OPT == 'Competitions History'}
-          {'Competitions History'}
+          {RESPONSE_PROFILE_DATA?.profile?.competitions_history ?? 'Competitions History'}
         {/if}
 			</p>
 
@@ -356,13 +356,13 @@ VIEW DESIGN - 2
         {:else if MENU_OPT == 'Scores'}
           {RESPONSE_PROFILE_DATA?.profile?.scores ?? 'Scores'}
         {:else if MENU_OPT == 'Withdraw'}
-          {'Withdraw'}
+          {RESPONSE_PROFILE_DATA?.profile?.withdraw ?? 'Withdraw'}
         {:else if MENU_OPT == 'Deposit'}
-          {'Deposit'}
+          {RESPONSE_PROFILE_DATA?.profile?.deposit ?? 'Deposit'}
         {:else if MENU_OPT == 'Transaction History'}
-          {'Transaction History'}
+          {RESPONSE_PROFILE_DATA?.profile?.transact_history ?? 'Transaction History'}
         {:else if MENU_OPT == 'Competitions History'}
-          {'Competitions History'}
+          {RESPONSE_PROFILE_DATA?.profile?.competitions_history ?? 'Competitions History'}
         {/if}
 			</p>
 

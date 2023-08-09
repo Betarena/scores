@@ -51,6 +51,11 @@
 		);
 	});
 
+  $: if_R_1 =
+    ($sessionStore.livescoreShowCalendar && mobileExclusive)
+    || $sessionStore.withdrawModal
+  ;
+
 </script>
 
 <!-- ===============

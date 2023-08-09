@@ -15,7 +15,7 @@ COMPONENT JS (w/ TS)
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser } from '$lib/utils/user.js';
 	import { doc, updateDoc } from 'firebase/firestore';
@@ -80,6 +80,7 @@ COMPONENT JS (w/ TS)
 
   $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
+  $: userLang = $userBetarenaSettings?.lang;
 
   $: dropDownArea =
     isLangDropdown
@@ -188,8 +189,8 @@ COMPONENT JS (w/ TS)
     if (!$userBetarenaSettings?.lang
       || $page.error
       || !$page.route.id
-      || $userBetarenaSettings?.user == undefined
-      || !setUserLang) {
+      || $userBetarenaSettings?.user == undefined)
+    {
       return
     }
 
@@ -284,10 +285,11 @@ COMPONENT JS (w/ TS)
       `${NB_W_TAG[0]} 🔵 User Detected! Setting Auth language! ${userlang}`
     );
 
-    // selectLanguage
-    // (
-    //   userlang
-    // )
+    selectLanguage
+    (
+      userlang,
+      $page
+    );
   }
 
   /**
@@ -330,12 +332,11 @@ COMPONENT JS (w/ TS)
    * TODO: DOC:
    */
   $: if_R_3 =
-    $userBetarenaSettings?.lang
-    && !$page.error
+    !$page.error
     && $page.route.id
     && $userBetarenaSettings?.user != undefined
   ;
-  $: if (if_R_3)
+  $: if (if_R_3 && userLang != undefined)
   {
     // [🐞]
     dlog
@@ -344,7 +345,7 @@ COMPONENT JS (w/ TS)
       true
     );
 
-    // update_select_lang()
+    update_select_lang();
   }
 
   /**
@@ -406,6 +407,11 @@ COMPONENT JS (w/ TS)
 
     calcNavTrianglePos('scores');
   }
+
+  $: if_R_4 =
+    ($sessionStore.livescoreShowCalendar && isViewMobile)
+    || $sessionStore.withdrawModal
+  ;
 
   // [🐞]
   $: dlogv2
@@ -537,7 +543,7 @@ NAVBAR MAIN
   column-space-center
   "
   class:user-active={PROFILE_URL == $page.route.id}
-  class:update-z-index={$sessionStore.livescoreShowCalendar && isViewMobile}
+  class:update-z-index={if_R_4}
 >
 
 	<!--
@@ -1150,12 +1156,12 @@ NAVBAR MAIN
                   m-r-5
                   "
                 >
-                  {$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'} BTA
+                  {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'} BTA
                 </span>
                 {#if isViewMobile}
                   <br/>
                 {/if}
-                (${$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'})
+                (${spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'})
               </p>
             </div>
 
