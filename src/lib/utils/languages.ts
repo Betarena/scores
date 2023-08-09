@@ -1,7 +1,12 @@
+/**
+ * @summary [HELPER]
+ * @param {string} str
+ * @returns
+ */
 export function removeDiacritics
 (
 	str: string
-): string 
+): string
 {
 	const defaultDiacriticsRemovalMap = [
 		{
@@ -316,27 +321,27 @@ export function removeDiacritics
  * @description method for shortening
  * common league names;
  * @example "2021/2022" => "21/22"
- * @param {string} name 
+ * @param {string} name
  * @returns a string
  */
 export function shortenSeasonName
 (
   name: string
-)
+): string
 {
-  const validation_0 =
+  const if_M_0 =
     name.length < 5
     || name == '2024 Germany'
   ;
-  if (validation_0) return name;
-  if (!name.includes('2020')) 
+  if (if_M_0) return name;
+  if (!name.includes('2020'))
   {
     name = name.replace(
       /20/g,
       ''
     );
   }
-  else 
+  else
   {
     name = name.replace(
       '2020',

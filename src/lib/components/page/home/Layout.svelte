@@ -1,6 +1,8 @@
-<!-- ===================
-COMPONENT JS - BASIC
-=================== -->
+<!-- ===============
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
@@ -11,8 +13,9 @@ COMPONENT JS - BASIC
 	import { onMount } from 'svelte';
 
 	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common';
+	import sessionStore from '$lib/store/session.js';
 	import { dlog } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 
   import FeatBetSiteWidget from '$lib/components/page/home/feat-bet-site/FeatBetSite-Widget.svelte';
   import FeatMatchWidget from '$lib/components/page/home/feat-match/FeatMatch-Widget.svelte';
@@ -31,14 +34,20 @@ COMPONENT JS - BASIC
   // #region ➤ 📌 VARIABLES
 
   const
+    /** */
     MOBILE_VIEW = 475,
+    /** */
     TABLET_VIEW = 1160
   ;
 
 	let
+    /** Page data availabe for `this` layout */
     PAGE_DATA_SEO: B_SAP_HP_T,
+    /** */
     FIREBASE_CONNECTIONS_SET: Set<Unsubscribe> = new Set(),
+    /** */
     mobileExclusive: boolean = true,
+    /** */
     tabletExclusive: boolean = true
   ;
 
@@ -46,67 +55,164 @@ COMPONENT JS - BASIC
 
   // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+
+  /**
+   * @summary
+   * 🔹 HELPER
+   *
+   * @description
+   * TODO: DOC:
+   */
+  function resizeAction
+  (
+  ): void
+  {
+
+    [
+      tabletExclusive,
+      mobileExclusive
+    ] = viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+
+  }
+
+  /**
+   * @summary
+   * 🔹 HELPER
+   *
+   * @description
+   * TODO: DOC:
+   */
+  function initEventListeners
+  (
+  ): void
+  {
+    // ### NOTE:
+    // ### listen to changes in 'window.resize'.
+    window.addEventListener
+    (
+      'resize',
+      function
+      (
+      ): void
+      {
+
+        resizeAction();
+
+      }
+    );
+
+    // ### NOTE:
+    // ### listen to changes in 'document.visibility'.
+    document.addEventListener
+    (
+      'visibilitychange',
+      async function
+      (
+      ): Promise < void >
+      {
+
+        if (!document.hidden)
+        {
+          // [🐞]
+          dlog
+          (
+            `🚏 checkpoint ➤ home/Layout.svelte visibilitychange`,
+            true
+          );
+
+          await onceRealTimeLiveScoreboard();
+          let connectionRef = listenRealTimeScoreboardAll()
+          FIREBASE_CONNECTIONS_SET.add(connectionRef)
+        }
+
+      }
+    );
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
   // #region ➤ 🚏 ONE-OFF CONDITIONS
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   if (browser)
   {
     onceRealTimeLiveScoreboard()
+  }
+
+  /**
+   * @description
+   * TODO: DOC:
+  */
+  if ($sessionStore.deviceType == 'mobile')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 📱`,
+      true
+    );
+
+    mobileExclusive = true;
+    tabletExclusive = false;
+  }
+  else if ($sessionStore.deviceType == 'tablet')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 💻`,
+      true
+    );
+
+    mobileExclusive = true;
+    tabletExclusive = true;
+  }
+  else if ($sessionStore.deviceType == 'desktop')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 🖥️`,
+      true
+    );
+
+    mobileExclusive = false;
+    tabletExclusive = false;
   }
 
   // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  /**
+   * @description
+   * TODO: DOC:
+  */
   onMount
   (
-    async() =>
+    async (
+    ): Promise < void > =>
     {
 
-      // NOTE: causes a potential delay in data retrieval,
-      // as waits for onMount of Page & components;
+      // ### NOTE:
+      // ### causes a potential delay in data retrieval,
+      // ### as waits for onMount of Page & components;
       await onceRealTimeLiveScoreboard()
 
-      let connectionRef = listenRealTimeScoreboardAll();
+      let connectionRef: Unsubscribe = listenRealTimeScoreboardAll();
       FIREBASE_CONNECTIONS_SET.add(connectionRef);
 
-      document.addEventListener
-      (
-        'visibilitychange',
-        async function
-        (
-        )
-        {
-          if (!document.hidden) {
-            dlog('🔵 user is active', true)
-            await onceRealTimeLiveScoreboard()
-            let connectionRef = listenRealTimeScoreboardAll()
-            FIREBASE_CONNECTIONS_SET.add(connectionRef)
-          }
-        }
-      );
+      resizeAction();
+      initEventListeners();
 
-      [
-        tabletExclusive,
-        mobileExclusive
-      ] = viewport_change
-      (
-        TABLET_VIEW,
-        MOBILE_VIEW
-      );
-      window.addEventListener
-      (
-        'resize',
-        function () {
-          [
-            tabletExclusive,
-            mobileExclusive
-          ] = viewport_change
-          (
-            TABLET_VIEW,
-            MOBILE_VIEW
-          );
-        }
-      );
     }
   );
 
@@ -115,52 +221,55 @@ COMPONENT JS - BASIC
 </script>
 
 <!-- ===================
-SVELTE INJECTION TAGS
+### SVELTE INJECTION TAGS
 =================== -->
 
 <!--
-SEO META TAGS
+### NOTE:
+### SEO META TAGS
 -->
 {#if PAGE_DATA_SEO}
 	<SvelteSeo
-		title={PAGE_DATA_SEO.main_data.title}
-		description={PAGE_DATA_SEO.main_data.description}
-		keywords={PAGE_DATA_SEO.main_data.keywords}
-		noindex={JSON.parse(PAGE_DATA_SEO.main_data.noindex.toString())}
-		nofollow={JSON.parse(PAGE_DATA_SEO.main_data.nofollow.toString())}
-		canonical={PAGE_DATA_SEO.main_data.canonical}
-		twitter={PAGE_DATA_SEO.twitter_card}
-		openGraph={PAGE_DATA_SEO.opengraph}
+		title={PAGE_DATA_SEO?.main_data?.title}
+		description={PAGE_DATA_SEO?.main_data?.description}
+		keywords={PAGE_DATA_SEO?.main_data?.keywords}
+		noindex={JSON.parse(PAGE_DATA_SEO?.main_data?.noindex?.toString())}
+		nofollow={JSON.parse(PAGE_DATA_SEO?.main_data?.nofollow?.toString())}
+		canonical={PAGE_DATA_SEO?.main_data?.canonical}
+		twitter={PAGE_DATA_SEO?.twitter_card}
+		openGraph={PAGE_DATA_SEO?.opengraph}
 	/>
 {/if}
 
 <!--
-HREFLANG TAGS
+### NOTE:
+### HREFLANG TAGS
 -->
 <svelte:head>
-	{#if PAGE_DATA_SEO}
-		{#each PAGE_DATA_SEO?.hreflang || [] as item}
-			{#if item.link == null}
-				<link
-					rel="alternate"
-					hreflang={item.hreflang}
-					href="https://scores.betarena.com/"
-				/>
-			{:else}
-				<link
-					rel="alternate"
-					hreflang={item.hreflang}
-					href="https://scores.betarena.com/{item.link}"
-				/>
-			{/if}
-		{/each}
-	{/if}
+  {#each PAGE_DATA_SEO?.hreflang ?? [] as item}
+    {#if item?.link == null}
+      <link
+        rel="alternate"
+        hreflang={item?.hreflang}
+        href="https://scores.betarena.com/"
+      />
+    {:else}
+      <link
+        rel="alternate"
+        hreflang={item?.hreflang}
+        href="https://scores.betarena.com/{item?.link}"
+      />
+    {/if}
+  {/each}
 </svelte:head>
 
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <section
   id="home-page"
@@ -234,9 +343,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 </section>
 
 <!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+### COMPONENT STYLE
+### NOTE:
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE
+### NOTE:
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'
+================= -->
 
 <style>
 
@@ -287,6 +399,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		}
 
 	}
+
+  @media screen
+  and (min-width: 560px)
+  {
+    :root
+    {
+      --homepage-layout-is-mobile: true;
+    }
+  }
 
 	@media only screen
   and (min-width: 1320px)

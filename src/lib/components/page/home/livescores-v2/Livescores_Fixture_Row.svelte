@@ -15,12 +15,6 @@ COMPONENT JS (w/ TS)
 	import { viewport_change } from "$lib/utils/platform-functions";
 	import type { B_LS2_T, LS2_C_Fixture } from "@betarena/scores-lib/types/livescores-v2";
 	import { onMount } from "svelte";
-	import one_red_card from './assets/1_red_card.svg';
-	import one_red_card_dark from './assets/1_red_card_dark.svg';
-	import two_red_card from './assets/2_red_cards.svg';
-	import two_red_card_dark from './assets/2_red_cards_dark.svg';
-	import three_red_card from './assets/3_red_cards.svg';
-	import three_red_card_dark from './assets/3_red_cards_dark.svg';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -37,6 +31,15 @@ COMPONENT JS (w/ TS)
   $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
 
 	let tickSecShow: boolean = false;
+
+  let
+    one_red_card: string,
+    one_red_card_dark: string,
+    two_red_card: string,
+    two_red_card_dark: string,
+    three_red_card: string,
+    three_red_card_dark: string
+  ;
 
   //#endregion ➤ [VARIABLES]
 
@@ -124,7 +127,7 @@ COMPONENT JS (w/ TS)
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
   onMount(() => {
     setInterval(async () => {
@@ -132,7 +135,20 @@ COMPONENT JS (w/ TS)
     }, 500);
   })
 
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  onMount
+  (
+    async () =>
+    {
+      one_red_card = (await import('./assets/1_red_card.svg')).default;
+      one_red_card_dark = (await import('./assets/1_red_card_dark.svg')).default;
+      two_red_card = (await import('./assets/2_red_cards.svg')).default;
+      two_red_card_dark = (await import('./assets/2_red_cards_dark.svg')).default;
+      three_red_card = (await import('./assets/3_red_cards.svg')).default;
+      three_red_card_dark = (await import('./assets/3_red_cards_dark.svg')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 

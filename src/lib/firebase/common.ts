@@ -23,8 +23,6 @@ export function userBalanceListen
   uid: string
 ): void
 {
-  // [🐞]
-  // console.log('🔥 HERE')
 
   const _unsubscribe: Unsubscribe = onSnapshot
   (

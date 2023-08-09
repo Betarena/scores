@@ -27,6 +27,7 @@ const sessionStoreObj: Platform_Session =
   serverLang: undefined,
   // (+) misc;
   fixturesTodayNum: 0,
+  deviceType: undefined,
   // (+) date handle;
   userDate: clientTimezoneDate(),
   livescoreNowSelectedDate: clientTimezoneDate(),
@@ -337,8 +338,6 @@ function createLocalStore
         from: _from,
         to: _to
       };
-
-      console.debug('🔥')
 
       // set(sessionStoreObj);
       // update

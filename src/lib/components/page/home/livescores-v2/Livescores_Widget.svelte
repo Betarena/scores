@@ -1,118 +1,145 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
-  // IMPORTS GO HERE
+  // #region ➤ 📦 Package Imports
 
+	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
 	import { get } from '$lib/api/utils';
+	import { onMount } from 'svelte';
+
 	import { dlog, LV2_W_H_TAG } from '$lib/utils/debug';
-	import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
+
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import LivescoresLoader from './Livescores_Loader.svelte';
 
 	import type { B_LS2_D, B_LS2_S, B_LS2_T } from '@betarena/scores-lib/types/livescores-v2.js';
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import LivescoresLoader from './Livescores_Loader.svelte';
-	import LivescoresMain from './Livescores_Main.svelte';
+  // ### WARNING:
+  // ### Disable, if Dynamic Import is Enabled.
+  // import LivescoresMain from './Livescores_Main.svelte';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT VARIABLES
-  // ~~~~~~~~~~~~~~~~~~~~~
+  const
+    /** Dynamic import variable condition */
+    useDynamicImport: boolean = true
+  ;
 
-  let WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA
-  let WIDGET_S_DATA: B_LS2_S = $page.data?.LIVESCORES_V2_SEO
+  let
+    /** Main widget Translations data */
+    WIDGET_T_DATA: B_LS2_T = $page.data?.LIVESCORES_V2_T_DATA,
+    /** Main widget SEO data */
+    WIDGET_S_DATA: B_LS2_S = $page.data?.LIVESCORES_V2_SEO,
+    /** Main widget data */
+    WIDGET_DATA: B_LS2_D,
+    /** Wether widget has or no data */
+    NO_WIDGET_DATA: boolean = true,
+    /** Dynamic import variable for svelte component */
+    LivescoresMainDynamic: any
+  ;
 
-  let WIDGET_DATA: B_LS2_D
-  let NO_WIDGET_DATA: boolean = true
+  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA;
+  $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO;
 
-  $: WIDGET_T_DATA = $page.data?.LIVESCORES_V2_T_DATA
-  $: WIDGET_S_DATA = $page.data?.LIVESCORES_V2_SEO
+  // #endregion ➤ 📌 VARIABLES
 
-  //#endregion ➤ [VARIABLES]
+  // #region ➤ 🛠️ METHODS
 
-  //#region ➤ [METHODS]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-  //  COMPONENT METHODS
-  // ~~~~~~~~~~~~~~~~~~~~~
-
+  /**
+   * @summary
+   * 🟩 MAIN
+   *
+   * @description
+   * 📌 main widget data loader
+   *
+   * ⚡️ (and) try..catch (error) handler
+   *
+   * ⚡️ (and) placeholder handler
+   *
+   * @returns
+   * Target `widget` data for client, but at times not used.
+   */
   async function widgetInit
   (
-  ): Promise < B_LS2_D > 
+  ): Promise < B_LS2_D >
   {
+
+    if (!browser) return;
+
     WIDGET_DATA = await get
     (
       `/api/data/home/livescores-v2`
     ) as B_LS2_D;
 
-    const if_0 =
+    const if_M_0: boolean =
       WIDGET_DATA == undefined
     ;
-		if (if_0) 
+		if (if_M_0)
     {
+      // [🐞]
       dlog
       (
         `${LV2_W_H_TAG[0]} ❌ no data available!`
       );
+
 			NO_WIDGET_DATA = true;
       throw new Error();
 		}
 
     NO_WIDGET_DATA = false;
+
     return WIDGET_DATA
   }
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-  // VIEWPORT CHANGES
-  // ~~~~~~~~~~~~~~~~~~~~~
+  // #endregion ➤ 🛠️ METHODS
 
-  //#endregion ➤ [METHODS]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  //#region ➤ [ONE-OFF] [METHODS] [IF]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// (SSR) LANG SVELTE | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	$: server_side_language = platfrom_lang_ssr
+  /**
+   * @description
+   * TODO: DOC:
+  */
+  onMount
   (
-		$page?.route?.id,
-		$page?.error,
-		$page?.params?.lang
-	);
+    async (
+    ): Promise < void > =>
+    {
 
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
+      if (useDynamicImport)
+      {
+        LivescoresMainDynamic = (await import('./Livescores_Main.svelte')).default;
+      }
 
-  //#region ➤ [REACTIVIY] [METHODS]
+    }
+  );
 
-  //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
 <!-- ===============
-COMPONENT HTML 
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (app.css)
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <SeoBox>
-  <!-- 
-  [ℹ] widget title
+  <!--
+  WIDGET TITLE
   -->
-  <h2>
-    {WIDGET_T_DATA?.title}
-  </h2>
-  <!-- 
+  <h2>{WIDGET_T_DATA?.title}</h2>
+
+  <!--
   [ℹ] fixtures & betting-tip (links)
   -->
   <div>
@@ -125,7 +152,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
       {/if}
     {/each}
   </div>
-  <!-- 
+
+  <!--
   [ℹ] leagues (links)
   -->
   <div>
@@ -135,40 +163,50 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style from the global (ap
       {/if}
     {/each}
   </div>
+
 </SeoBox>
 
+<!-- [🐞] -->
 <!-- <LivescoresLoader /> -->
 
-<!-- 
-[ℹ] main widget
--->
 {#await widgetInit()}
-  <!-- 
-  promise is pending 
+  <!--
+  ### NOTE:
+  ### promise is pending
   -->
   <LivescoresLoader />
 {:then data}
-  <!-- 
-  promise was fulfilled 
+  <!--
+  ### NOTE:
+  ### promise was fulfilled
   -->
-  <LivescoresMain 
+
+  <!--
+  ### NOTE:
+  ### Dynamic Svelte Component Import
+  ### WARNING:
+  ### Disable, if Standard Import is Enabled.
+  -->
+  <svelte:component
+    this={LivescoresMainDynamic}
     {WIDGET_DATA}
   />
+
+  <!--
+  ### NOTE:
+  ### Standard Svelte Component Import
+  ### WARNING:
+  ### Disable, if Dynamic Import is Enabled.
+  -->
+  <!--
+    <LivescoresMain
+      {WIDGET_DATA}
+    />
+  -->
+
 {:catch error}
-  <!-- 
-  promise was rejected 
-  TODO:
+  <!--
+  ### NOTE:
+  ### promise was rejected
   -->
 {/await}
-
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE) from the global (app.css)
-=================-->
-
-<style>
-
-  @media only screen and (min-width: 726px) and (max-width: 1000px) {
-  }
-
-</style>

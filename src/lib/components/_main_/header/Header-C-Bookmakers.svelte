@@ -7,14 +7,11 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { page } from "$app/stores";
+	import { onMount } from "svelte";
 	import { fly } from "svelte/transition";
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { translationObject } from "$lib/utils/translation.js";
-
-  import icon_arrow_down_fade from './assets/arrow-down-fade.svg';
-  import icon_arrow_up from './assets/arrow-up.svg';
-  import icon_check from './assets/icon-check.svg';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
@@ -28,6 +25,10 @@ COMPONENT JS (w/ TS)
   ;
 
   let
+    // IMPORTANT
+    icon_arrow_down_fade: string,
+    icon_arrow_up: string,
+    icon_check: string,
     B_NAV_T: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA,
 	  isBookmakersDropdown: boolean = false
   ;
@@ -35,6 +36,20 @@ COMPONENT JS (w/ TS)
   $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      icon_arrow_down_fade = (await import('./assets/arrow-down-fade.svg')).default;
+      icon_arrow_up = (await import('./assets/arrow-up.svg')).default;
+      icon_check = (await import('./assets/icon-check.svg')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 

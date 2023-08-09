@@ -46,13 +46,10 @@ const LOGS_SHOW_OVERRIDE: boolean =
 
 type DEBUG = [string, boolean, string]
 
-// MAIN PAGE - DEBUG
-export const NB_W_TAG = 'navbar [DEBUG] |';
-export const NB_W_STY = 'background: purple; color: #FFFFFF';
-export const NB_W_TOG = false;
-export const FT_W_TAG = 'footer [DEBUG] |';
-export const FT_W_STY = 'background: blue; color: #FFFFFF';
-export const FT_W_TOG = false;
+// ### NOTE:
+// ### MAIN PAGE - DEBUG
+export const NB_W_TAG: DEBUG = ['Navbar |', false, 'background: purple; color: #FFFFFF; border-radius: 1.5px;'];
+export const FT_W_TAG: DEBUG = ['Footer |', false, 'background: blue; color: #FFFFFF; border-radius: 1.5px;'];
 export const AU_W_TAG: DEBUG = ['Auth |', true, 'background: black; color: yellow; border-radius: 1.5px;'];
 
 // HOME PAGE - DEBUG
@@ -143,25 +140,22 @@ export const PR_P_TOG =  false;
 
 /**
  * @summary
- * ◆ HELPER
+ * 🔹 HELPER
  * @description
- * ➨ debug logging function for displaying target
+ * 📌 debug logging function for displaying target.
  * @param
- * {string | object} msg
+ * { string | object } msg - Target `message` to log in `console`.
  * @param
- * {boolean} show
+ * { boolean } show - Wether to `show/hide` log message.
  * @param
- * {string} style
+ * { string } style - Target `style` to apply to console.
  * @returns
- * {void}
+ * void
  */
 export function dlog
 (
-  /** debug messages to show */
 	msg: string | object,
-  /** wether to show or not the debug log */
 	show?: boolean,
-  /** css style applied to logs */
 	style?: string
 ): void
 {

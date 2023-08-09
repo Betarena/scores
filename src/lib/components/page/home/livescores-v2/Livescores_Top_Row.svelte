@@ -11,12 +11,8 @@ COMPONENT JS (w/ TS)
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { WEEK_DAYS_ABBRV_1, toCorrectDate, toISOMod } from '$lib/utils/dates';
 	import type { B_LS2_T } from '@betarena/scores-lib/types/livescores-v2';
+	import { onMount } from 'svelte';
 	import LivescoresCalendarTable from './Livescores_Calendar_Table.svelte';
-	import vec_calendar_dark from './assets/calendar-dark.svg';
-	import vec_calendar_sel_date from './assets/calendar-date-sel.svg';
-	import vec_calendar_sel from './assets/calendar-select.svg';
-	import vec_calendar from './assets/calendar.svg';
-	import vec_pulse_dot from './assets/live-dot-vector.svg';
 
   //#endregion ➤ [MAIN] Package Imports
 
@@ -42,7 +38,15 @@ COMPONENT JS (w/ TS)
     string
   ]
 
-  let defaultCalendarIcon: string
+  let defaultCalendarIcon: string;
+
+  let
+    vec_calendar_dark: string,
+    vec_calendar_sel_date: string,
+    vec_calendar_sel: string,
+    vec_calendar: string,
+    vec_pulse_dot: string
+  ;
 
   //#endregion ➤ [VARIABLES]
 
@@ -115,9 +119,21 @@ COMPONENT JS (w/ TS)
 
   //#endregion ➤ [REACTIVIY] [METHODS]
 
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  onMount
+  (
+    async () =>
+    {
+      vec_calendar_dark = (await import('./assets/calendar-dark.svg')).default;
+      vec_calendar_sel_date = (await import('./assets/calendar-date-sel.svg')).default;
+      vec_calendar_sel = (await import('./assets/calendar-select.svg')).default;
+      vec_calendar = (await import('./assets/calendar.svg')).default;
+      vec_pulse_dot = (await import('./assets/live-dot-vector.svg')).default;
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 

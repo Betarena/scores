@@ -27,6 +27,7 @@ COMPONENT JS (w/ TS)
 
 	import type { B_H_TH } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_PROF_D, B_PROF_T } from '@betarena/scores-lib/types/profile.js';
+	import { dlog } from '$lib/utils/debug.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -110,8 +111,14 @@ COMPONENT JS (w/ TS)
     const toDate: Date = $sessionStore.userTxHistFilterDateRange.to;
 
     // [🐞]
-    console.log('🔹 [var] fromDate', fromDate);
-    console.log('🔹 [var] toDate', toDate);
+    dlog
+    (
+      `🔹 [var] fromDate ${fromDate}`
+    );
+    dlog
+    (
+      `🔹 [var] toDate ${toDate}`
+    );
 
     txHistList = WIDGET_DATA?.tx_hist
     ?.filter
@@ -158,9 +165,10 @@ COMPONENT JS (w/ TS)
     if (opt == 'Last 7 Days')
     {
       // [🐞]
-      console.debug
+      dlog
       (
         `🚏 checkpoint - applyDateRangeFilter1 - Last 7 Days`,
+        true
       );
 
       $sessionStore.userTxHistFilterDateRange =
@@ -178,9 +186,10 @@ COMPONENT JS (w/ TS)
     if (opt == 'Last Month')
     {
       // [🐞]
-      console.debug
+      dlog
       (
         `🚏 checkpoint - applyDateRangeFilter1 - Last Month`,
+        true
       );
 
       // ### STASHED:
@@ -225,9 +234,10 @@ COMPONENT JS (w/ TS)
     if (opt == 'Last 6 Months')
     {
       // [🐞]
-      console.debug
+      dlog
       (
         `🚏 checkpoint - applyDateRangeFilter1 - Last 6 Months`,
+        true
       );
 
       const _last6MonthDate: Date = new Date();
@@ -335,9 +345,10 @@ COMPONENT JS (w/ TS)
   $: if (if_R_1)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ TxHist if_R_1`,
+      true
     );
 
     applyDateRangeFilter1
@@ -358,9 +369,10 @@ COMPONENT JS (w/ TS)
   $: if (if_R_0 && $sessionStore?.userTxHistFilterDateRange)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ TxHist if_R_0`,
+      true
     );
 
     filterTxListDateRange();

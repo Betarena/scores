@@ -13,7 +13,7 @@ COMPONENT JS (w/ TS)
 
 	import sessionStore from '$lib/store/session.js';
 
-	import { dlog, FT_W_STY, FT_W_TAG, FT_W_TOG } from '$lib/utils/debug';
+	import { dlog, FT_W_TAG } from '$lib/utils/debug';
 	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import type { B_FOT_T } from '@betarena/scores-lib/types/footer.js';
@@ -64,10 +64,14 @@ COMPONENT JS (w/ TS)
   */
 	async function submitEmail
   (
-  )
+  ): Promise < void >
   {
-    dlog(`${FT_W_TAG} subscribing to email newsletter!`, FT_W_TOG, FT_W_STY);
-		// [ℹ] showEmailForm = true; // FIXME: ?
+    // [🐞]
+    dlog
+    (
+      `${FT_W_TAG[0]} subscribing to email newsletter!`
+    );
+
 		$sessionStore.newsletterPopUpShow = true;
 	}
 

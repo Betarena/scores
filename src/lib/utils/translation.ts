@@ -10,12 +10,22 @@
  */
 export const translationObject:
 {
+  featured_match_title: string,
+  featured_bet_site: string,
+  league_list_title: string,
+  leagues_table_title: string,
+  seo_block_title: string,
   sign_in:    string;
   odds_type:  string;
   bookmakers: string;
   balance:    string;
 } =
 {
+  featured_match_title: 'Featured Match',
+  featured_bet_site: 'Featured Betting Site',
+  league_list_title: 'League List',
+  leagues_table_title: 'Leagues Table',
+  seo_block_title: 'Seo Block',
   sign_in: 'Sign In',
   odds_type: 'Odds Type',
   bookmakers: 'Bookmakers',
