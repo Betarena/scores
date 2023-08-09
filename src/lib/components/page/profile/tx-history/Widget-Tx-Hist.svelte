@@ -13,6 +13,7 @@ COMPONENT JS (w/ TS)
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { daysInMonth, targetDate, toISOMod } from '$lib/utils/dates.js';
+	import { dlog } from '$lib/utils/debug.js';
 	import { sleep, viewport_change } from '$lib/utils/platform-functions.js';
 	import { onMount } from 'svelte';
 
@@ -123,9 +124,15 @@ COMPONENT JS (w/ TS)
     );
 
     // [🐞]
-    // console.log('🔹 [var] txHistList', txHistList)
+    dlog
+    (
+      `🔹 [var] ➤ txHistList?.length ${txHistList?.length}`,
+      true
+    );
 
     txHistListLimit = LIST_LIMIT_DEFAULT;
+
+    isShowMore = false;
 
     txHistList = txHistList;
   }
@@ -164,6 +171,8 @@ COMPONENT JS (w/ TS)
         ),
         to: targetDate()
       }
+
+      isShowMore = false;
     }
 
     if (opt == 'Last Month')
@@ -209,6 +218,8 @@ COMPONENT JS (w/ TS)
         from: _from,
         to: _to
       };
+
+      isShowMore = false;
     }
 
     if (opt == 'Last 6 Months')
@@ -242,6 +253,8 @@ COMPONENT JS (w/ TS)
         from: _from,
         to: _to
       };
+
+      isShowMore = false;
     }
 
   }
@@ -254,14 +267,15 @@ COMPONENT JS (w/ TS)
   (
   ): void
   {
-    if (isShowMore)
-    {
-      txHistListLimit = WIDGET_DATA?.tx_hist?.length;
-      isShowMore = !isShowMore;
-      return;
-    }
-    txHistListLimit = LIST_LIMIT_DEFAULT;
-    isShowMore = !isShowMore;
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ showMoreToggle`,
+      true
+    );
+
+    txHistListLimit = WIDGET_DATA?.tx_hist?.length;
+    isShowMore = true;
   }
 
   /**
@@ -968,7 +982,7 @@ MAIN DEPOST WIDGET
         <!--
         SHOW MORE OPT
         -->
-        {#if WIDGET_DATA?.tx_hist?.length > 10}
+        {#if txHistList?.length > 10 && !isShowMore}
           <div
             id="{CNAME}⮕main⮕table-show-more"
             data-testid="{CNAME}⮕main⮕table-show-more"
@@ -998,7 +1012,7 @@ MAIN DEPOST WIDGET
         <div
           id="{CNAME}⮕divider"
           data-testid="{CNAME}⮕main⮕divider"
-          class:isMoreTx={WIDGET_DATA?.tx_hist?.length <= 10}
+          class:isMoreTx={txHistList?.length <= 10}
         />
 
       </div>

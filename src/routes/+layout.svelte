@@ -212,6 +212,10 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	@media screen
   and (min-width: 1024px)
   {
+    main
+    {
+      overflow: hidden;
+    }
 		main::before
     {
 			height: 100%;
