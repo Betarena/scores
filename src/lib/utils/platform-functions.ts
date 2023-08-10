@@ -1,20 +1,36 @@
+// #region ➤ 📦 Package Imports
+
 import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import sessionStore from "$lib/store/session.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { error, redirect } from "@sveltejs/kit";
-import { NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from "./debug";
+import { error, redirect, type Page } from "@sveltejs/kit";
+import { NB_W_TAG, dlog, dlogv2 } from "./debug";
 
+import { dev } from "$app/environment";
+import { goto } from "$app/navigation";
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
+import { ROUTE_ID_PROFILE } from "./user.js";
+
+// #endregion ➤ 📦 Package Imports
+
+// #region ➤ 🛠️ METHODS
+
 
 /**
- * @description Simple function
- * to determine language (SSR) of platform
- * @param {string | undefined} page_route_id
- * @param {unknown | undefined} page_error
- * @param {string | undefined} page_params_lang
- * @returns string (language)
+ * @summary
+ * 🔹 HELPER
+ * @description
+ * 📌 Determines language (SSR) of platform.
+ * @param
+ * { string | undefined } page_route_id - Target page `routeId`.
+ * @param
+ * { unknown | undefined } page_error - Target page `error` object.
+ * @param
+ * { string | undefined } page_params_lang - Target page `params` for `lang`.
+ * @returns
+ * A string of target language.
  */
 export function platfrom_lang_ssr
 (
@@ -23,84 +39,99 @@ export function platfrom_lang_ssr
 	page_params_lang?: string | undefined
 ): string
 {
-  dlogv2(
-    NB_W_TAG,
+
+  // [🐞]
+  dlogv2
+  (
+    'Platfrom-Functions',
     [
-      `page_route_id: ${page_route_id}`,
-      `page_error: ${JSON.stringify(page_error, null, 2)}`,
-      `page_params_lang: ${page_params_lang}`
-    ],
-    NB_W_TOG
-  )
-	// NOTE: default (EN)
-	let server_side_language = 'en';
-	// [ℹ] validation (#1)
-  // [ℹ] errorPage
-	const validation_1 =
+      `🔹 [var] page_route_id: ${page_route_id}`,
+      `🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`,
+      `🔹 [var] page_params_lang: ${page_params_lang}`
+    ]
+  );
+
+	// ### NOTE:
+  // ### default to 'EN'.
+	let server_side_language: string = 'en';
+
+  // ### CHECK
+  // ### for cases of 'EN' default.
+	const if_M_0: boolean =
 		page_route_id == null
-    && page_error;
-	if (validation_1) return server_side_language;
-	// [ℹ] validation (#2)
-  // [ℹ] if [[lang=lang]] page
+    && page_error != null
+  ;
+	if (if_M_0) return server_side_language;
+
+  // ### CHECK
+  // ### for cases of [[lang=lang]] page.
 	server_side_language =
     (page_route_id.includes('[[lang=lang]]') || page_route_id.includes('[lang=lang]'))
     && page_params_lang != undefined
       ? page_params_lang
       : 'en'
   ;
-  dlog(`${NB_W_TAG} server_side_language ➡️ ${server_side_language}`, NB_W_TOG)
+
+  // [🐞]
+  dlog
+  (
+    `Platfrom-Functions server_side_language ➡️ ${server_side_language}`
+  );
+
 	return server_side_language;
 }
 
 /**
+ * @summary
+ * 🔹 HELPER
  * @description Simple function to return
  * the TABLET and MOBILE viewport changes
  * as a array/tuple of both states
- * @param {number} TABLET_VIEW
- * @param {number}MOBILE_VIEW
- * @returns boolean (true/false)
+ * @param
+ * { number } TABLET_VIEW_INIT - Target viewport/width at
+ * which `tablet` is expected to start.
+ * @param
+ * { number } MOBILE_VIEW_INIT - Target viewport/width at
+ * which `mobile` is expected to start.
+ * @param
+ * { number } OTHER_VIEW - Custom target viewport/width.
+ * @returns
+ * An array of boolean's (true/false)
  */
 export function viewport_change
 (
-	TABLET_VIEW: number,
-	MOBILE_VIEW: number,
+	TABLET_VIEW_INIT: number,
+	MOBILE_VIEW_INIT: number,
   OTHER_VIEW?: number
-)
+): boolean[]
 {
-	const width = document.documentElement.clientWidth;
-	const tabletExclusive =
-    width >= TABLET_VIEW
-      ? false
-      : true
-  ;
-	const mobileExclusive =
-    width <= MOBILE_VIEW
-      ? true
-      : false
-  ;
-  const otherExclusive =
-    width <= OTHER_VIEW
-      ? true
-      : false
-  ;
+	const width: number = document.documentElement.clientWidth;
+
+	const isTabletView: boolean = width <= TABLET_VIEW_INIT;
+	const isMobileView: boolean = width <= MOBILE_VIEW_INIT;
+  const isOtherView: boolean = width <= OTHER_VIEW;
+
 	return [
-    tabletExclusive,
-    mobileExclusive,
-    otherExclusive
+    isTabletView,
+    isMobileView,
+    isOtherView
   ];
 }
 
 /**
- * @summary [HELPER]
- * @description simple method to "pause"
- * JavaScript execution for X milliseconds;
- * @param {number} ms
- * @returns void
+ * @summary
+ * 🔹 HELPER
+ * @description
+ * 📌 "pause" JavaScript execution for X milliseconds.
+ * @param
+ * { number } ms - Number of Milliseconds.
+ * @returns
+ * void
  */
 export async function sleep
 (
   ms: number
-)
+): Promise < void >
 {
   new Promise
   (
@@ -115,10 +146,20 @@ export async function sleep
   );
 }
 
+/**
+ * @summary
+ * 🔹 HELPER
+ * @description
+ * TODO: DOC:
+ * @param
+ * { string } action
+ * @returns
+ * void
+ */
 export function googleEventLog
 (
   action: string
-)
+): void
 {
 
   if (action === 'fixture_football_fixtures_probabilities')
@@ -215,10 +256,12 @@ export function googleEventLog
 }
 
 /**
- * @summary [MAIN]
- * @description gets and sets user target geo-country
- * location using geoJs;
- * @returns NaN
+ * @summary
+ * 🔹 HELPER
+ * @description
+ * 📌 gets and sets user target Geo. Country location using GeoJs.
+ * @returns
+ * void
  */
 export async function setUserGeoLocation
 (
@@ -226,23 +269,23 @@ export async function setUserGeoLocation
 ): Promise < void >
 {
 
-  const if_0 =
+  const if_M_0: boolean =
     userBetarenaSettings.getCountryBookmaker() !== undefined
   ;
-  if (if_0) return;
+  if (if_M_0) return;
 
   let geoRes: GeoJsResponse = await getUserLocation();
 
-  let userGeo =
+  let userGeo: string =
     geoRes?.country_code === undefined
       ? null
       : geoRes.country_code.toLowerCase()
   ;
 
-  const if_1 =
+  const if_M_1: boolean =
     userGeo == null
   ;
-  if (if_1)
+  if (if_M_1)
   {
     geoRes = await getUserLocationFromIP
     (
@@ -256,7 +299,9 @@ export async function setUserGeoLocation
     geoRes
   );
 
-  // [V] check for existance of GEO in available translations/country list;
+  // ### CHECK
+  // ### for existance of GEO available from
+  // ### translations/country list.
   const data_0 =	HEADER_TRANSLATION_DATA?.scores_header_translations?.bookmakers_countries
   ?.find
   (
@@ -278,29 +323,34 @@ export async function setUserGeoLocation
     userGeo.toLocaleLowerCase()
   );
 
+  return;
 }
 
 /**
- * @summary [HELPER] method
- * @description validates for number of
- * null || undefined data points in target
- * data Array[];
+ * @summary
+ * 🔹 HELPER / 🐞 DEBUG
+ * @description
+ * 📌 validates number of `null | undefined` data points in target
+ * data Array[].
  * @example [[object Object], [object Object], undefined] => null:
- * @param {unknown[]} data
- * @returns NaN
+ * @param
+ * { unknown[] } data
+ * @returns
+ * NaN
  */
 export function PRELOAD_invalid_data
 (
   data: unknown[],
   urls: string[]
-)
+): void
 {
-  try {
+  try
+  {
     const indexesOf: (arr: any[], item: unknown) => number[] =
-    (
-      arr: any[],
-      item: unknown
-    ) =>
+      (
+        arr: any[],
+        item: unknown
+      ) =>
       arr.reduce
       (
         (
@@ -317,26 +367,34 @@ export function PRELOAD_invalid_data
       )
     ;
 
-    const nullList = indexesOf
+    const nullList: number[] = indexesOf
     (
       data,
       null
     );
 
     if (nullList?.length == 0)
+    {
+      // [🐞]
       dlog
       (
-        '🟩 Preload Successfull!',
+        `🚏 checkpoint ➤ PRELOAD_invalid_data 🟩`,
         true
       );
-    ;
+    };
+
+    // ### CHECK
+    // ### for `null` data fetched.
     if (nullList?.length > 0)
+    {
+      // [🐞]
       dlog
       (
-        `🟥 Preload has null (position): ${nullList}`,
+        `🚏 checkpoint ➤ PRELOAD_invalid_data 🟥 (position): ${nullList}`,
         true
       );
-      // list URLs responsible for NULL data points;
+      // ### NOTE:
+      // ### list URLs responsible for `null` data points.
       for (const i of nullList)
       {
         console.log
@@ -344,7 +402,7 @@ export function PRELOAD_invalid_data
           `\t🚩 ${urls[i]}`
         );
       }
-    ;
+    };
 
     return;
   }
@@ -359,27 +417,30 @@ export function PRELOAD_invalid_data
 }
 
 /**
+ * @summary
+ * 🔹 HELPER
  * @description
- * TODO: DOC:
- * @param t0
- * @param page_tag
- * @param exit_code
- * @param exit_reason
+ * 📌 Handle of `load` for `.server.ts/.ts` files `exit`.
+ * @param
+ * { number } t0 - **[required]** timer for 'debug'.
+ * @param
+ * { stirng } page_tag - **[required]** Target page tag name to 'exit'.
+ * @param
+ * { number } exit_code - **[required]** Target page exit code to 'exit'.
+ * @param
+ * { string } exit_reason - [optional] Message for reason on page 'exit'/'error'
  */
 export function PRELOAD_exitPage
 (
-  /** **[required] timer for 'debug' */
   t0: number,
-  /** **[required] Target page tag name to 'exit' */
   page_tag: string,
-  /** **[required] Target page exit code to 'exit' */
   exit_code: number,
-  /** [optional] Message for reason on page 'exit'/'error' */
   exit_reason?: string
 ): void
 {
   // [🐞]
   const t1: number = performance.now();
+
   // [🐞]
   dlog
   (
@@ -395,13 +456,15 @@ export function PRELOAD_exitPage
 }
 
 /**
+ * @summary
+ * 🔹 HELPER
  * @description
- * TODO: DOC:
- * @param redirect_url
+ * 📌 Handle of `load` for `.server.ts/.ts` files `redirect`.
+ * @param
+ * { string } redirect_url - **[required]** Target redirect url 'to'
  */
 export function PRELOAD_redirectPage
 (
-  /** **[required] Target redirect url 'to' */
   redirect_url: string
 ): void
 {
@@ -413,34 +476,57 @@ export function PRELOAD_redirectPage
 }
 
 /**
- * @summary [HELPER] method
- * @description gethers data from target
- * url list, and returns;
- * @param {string[]} endpoints
- * @param {fetch} fetch
- * @returns Promise<any[]>
+ * @summary
+ * 🔹 HELPER
+ * @description
+ * 📌 `fetch` data from target list of `urls`, and returns results.
+ * @param
+ * { string[] } endpoints - List of target urls to fetch.
+ * @param
+ * { fetch } fetch - Target `fetch` object to use.
+ * @returns
+ * A listof type `Promise<any[]>`.
  */
 export async function promiseUrlsPreload
 (
   endpoints: string[],
   fetch: any
-)
+): Promise < any[] >
 {
-  const promises = endpoints.map((_url) =>
-		fetch(_url).then((response) =>
+
+  const promises: any[] = endpoints
+  ?.map
+  (
+    (
+      _url
+    ) =>
+		fetch(_url)
+    .then
+    (
+      (
+        response
+      ) =>
 			response.json()
 		)
 	);
-	const data = await Promise.all(promises);
+
+	const data: any[] = await Promise.all(promises);
+
+  // [🐞]
+  PRELOAD_invalid_data
+  (
+    data,
+    endpoints
+  );
+
   return data;
 }
 
 /**
- * @summary [HELPER] method
- * @description validates the target
- * url properties for its validity in
- * the +page.ts/+page.server.ts (preload);
- * IMPORTANT used by PRE-LOAD ONLY;
+ * @summary
+ * 🔹 HELPER
+ * @description
+ * 📌 checks for target `url` to be a `valid` or not.
  * @param {fetch} fetch
  * @param {string} langUrl
  * @param {string} sportUrl
@@ -448,7 +534,8 @@ export async function promiseUrlsPreload
  * @param {string} leagueUrl
  * @param {string} fixtureUrl
  * @param {string} playerUrl
- * @returns NaN
+ * @returns
+ * A `boolean`.
  */
 export async function promiseValidUrlCheck
 (
@@ -461,6 +548,7 @@ export async function promiseValidUrlCheck
   playerUrl: string = null
 ): Promise < boolean >
 {
+
   const validation_0 =
     // lang
     (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
@@ -476,19 +564,36 @@ export async function promiseValidUrlCheck
     || (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && playerUrl)
   ;
 
-  console.log('validation_0', validation_0)
+  // [🐞]
+  dlog
+  (
+    `🚏 checkpoint ➤ promiseValidUrlCheck`,
+    true
+  );
+
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ validation_0 ${validation_0}`,
+    true
+  );
 
   if (!validation_0) return false;
 
-  let queryStr = "";
-  if (langUrl) queryStr += `?langUrl=${langUrl}`
-  if (sportUrl) queryStr += `&sportUrl=${sportUrl}`
-  if (countryUrl) queryStr += `&countryUrl=${countryUrl}`
-  if (leagueUrl) queryStr += `&leagueUrl=${leagueUrl}`
-  if (fixtureUrl) queryStr += `&fixtureUrl=${fixtureUrl}`
-  if (playerUrl) queryStr += `&playerUrl=${playerUrl}`
+  let queryStr: string = "";
+  if (langUrl) queryStr += `?langUrl=${langUrl}`;
+  if (sportUrl) queryStr += `&sportUrl=${sportUrl}`;
+  if (countryUrl) queryStr += `&countryUrl=${countryUrl}`;
+  if (leagueUrl) queryStr += `&leagueUrl=${leagueUrl}`;
+  if (fixtureUrl) queryStr += `&fixtureUrl=${fixtureUrl}`;
+  if (playerUrl) queryStr += `&playerUrl=${playerUrl}`;
 
-  console.log('queryStr', queryStr)
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ queryStr ${queryStr}`,
+    true
+  );
 
   const response = await fetch
   (
@@ -504,14 +609,18 @@ export async function promiseValidUrlCheck
 }
 
 /**
- * @description obtains the target sportbook data
- * information based on users geo-location;
- * data gathered at page-level and set to svelte-stores
- * to be used by (this) page components;
+ * @summary
+ * 🔹 HELPER
+ * @description
+ * 📌 `fetch` target sportbook data,
+ * based on `client` geo-location.
+ *
+ * ⚡️ Data gathered at page-level and set to svelte-stores.
+ *
  * NOTE: (*) best approach
- * TODO: can be moved to a layout-level [?]
- * TODO: can be moved to a header-level [?]
- * TODO: can be moved to a +server-level [⚠️]
+ * TODO: (alt) can be moved to a layout-level [?]
+ * TODO: (alt) can be moved to a header-level [?]
+ * TODO: (alt) can be moved to a +server-level [⚠️]
  * @returns {Promise<void>} void
  */
 export async function initSportbookData
@@ -539,3 +648,305 @@ export async function initSportbookData
     dataRes1
   );
 }
+
+/**
+ * @description
+ * TODO: DOC:
+ */
+export function cssVarChange
+(
+): void
+{
+  let value = 'false';
+
+  setInterval
+  (
+    () =>
+    {
+      const currentValue = getComputedStyle(document.documentElement).getPropertyValue('--header-is-mobile');
+
+      // console.log(`🔹 [var] --header-is-mobile: ${currentValue}`)
+      // console.log(`🔹 [var] value: ${value}`)
+
+      if (currentValue != value)
+      {
+        // ### NOTE:
+        // ### The css-variable has changed
+        value = currentValue;
+        console.log('🔥 Header Is now Mobile!');
+      }
+
+      // console.log('📌 Checking')
+    },
+    500
+  );
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ *
+ * @param
+ * { number } d_places - Target number of decimal places.
+ *
+ * @returns
+ */
+export function toDecimalFix
+(
+  value: number,
+  d_places: number = 2
+): string
+{
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ value ${value}`,
+    true
+  );
+
+  if (value == null) return;
+
+  return parseFloat(value.toString()).toFixed(d_places);
+}
+
+/**
+ * @description
+ * TODO: DOC:
+ *
+ * @param
+ * { string } value - Target string balace for trimming
+ *
+ * @returns
+ */
+export function spliceBalanceDoubleZero
+(
+  value: string
+): string
+{
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ value ${value}`,
+    true
+  );
+
+  if (value == null) return;
+
+  if (value.includes('.00'))
+    return value?.split('.')?.[0]
+  ;
+
+  return value;
+}
+
+/**
+ * @summary
+ * 📌 MAIN | IMPORTANT
+ *
+ * @description
+ * 📌 Updates `user` language platform selection.
+ *
+ * ⚡️ Manages platform main navigation,
+ * for some of the section routes.
+ *
+ * @param
+ * { string } lang - Target new `selected` language.
+ */
+export async function selectLanguage
+(
+  lang: string,
+  page: Page<Record<string, string>, string>
+): Promise < void >
+{
+
+  if (sessionStore?.getServerLang() == lang) return;
+
+  // ➫ NOTE:
+  // ➫ Past/previous lang option.
+  const pastLang: string =
+    sessionStore?.getServerLang() == 'en'
+      ? '/'
+      : `/${sessionStore?.getServerLang()}`
+  ;
+
+  userBetarenaSettings.setLang
+  (
+    lang
+  );
+
+  // [🐞]
+  dlogv2
+  (
+    `${NB_W_TAG} selectLanguage()`,
+    [
+      `$userBetarenaSettings.lang: ${userBetarenaSettings.getUserLang()}`,
+      `$sessionStore?.serverLang: ${sessionStore?.getServerLang()}`,
+      `lang: ${lang}`,
+      `pastLang: ${pastLang}`,
+      `$page.route.id: ${page.route.id}`
+    ],
+    true
+  );
+
+  // TODO:
+  // isLangDropdown = false;
+
+  // ➫ NOTE:
+  // ➫ Update <html {lang}> in DOCTYPE.
+  let tempLang: string = lang;
+  if (lang === 'br') tempLang = 'pt-BR';
+  document.documentElement.setAttribute
+  (
+    'lang',
+    tempLang
+  );
+
+  // ➫ CHECK
+  // ➫ on error', navigate back to homepage;
+  const if_M_0: boolean =
+    page.error
+    && !dev
+  ;
+  if (if_M_0)
+  {
+    const targetUrl: string =
+      lang == 'en'
+        ? `/`
+        : `/${lang}`
+    ;
+
+    // [🐞]
+    dlog
+    (
+      `${NB_W_TAG} -> ${lang}`,
+      true,
+    );
+
+    await goto
+    (
+      targetUrl
+    );
+
+    return;
+  }
+
+  // ➫ CHECK
+  // ➫ Omit 'special' routes cases, as these routes
+  // ➫ manage their own navigation/translation switch.
+  const if_M_1: boolean =
+    [
+      '/[[lang=lang]]/[sport]/[country]/[league_name]',
+      '/[[lang=lang]]/[sport]/[fixture=fixture]',
+      '/[[lang=lang]]/[player=player]/[...player_fill]'
+    ]
+    .includes(page.route.id)
+  ;
+  if (if_M_1)
+  {
+    // [🐞]
+    dlog
+    (
+      `${NB_W_TAG} omitting route: ${page.route.id}`,
+      true
+    );
+    return;
+  }
+
+  // ➫ CHECK
+  // ➫ On profile page route, handle.
+  else if (ROUTE_ID_PROFILE == page.route.id)
+  {
+
+    const pastLangV2: string =
+      pastLang == `/`
+        ? `/en`
+        : pastLang
+    ;
+
+    let tempUrl: string = `${page.url.pathname}/`;
+
+    const newURL: string = tempUrl
+    ?.replace
+    (
+      `${pastLangV2}/`,
+      `/${lang}`
+    );
+
+    // [🐞]
+    dlog
+    (
+      `${NB_W_TAG} inside (PROFILE) ${lang},
+      pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`,
+      true
+    );
+
+    await goto
+    (
+      newURL,
+      {
+        replaceState: true
+      }
+    );
+
+  }
+
+  // ➫ NOTE:
+  // ➫ Otherwise, continue navigation switch.
+  // ➫ NOTE:
+
+  // ➫ CHECK
+  // ➫ for 'EN' naviagtion.
+  else if (lang == 'en' && pastLang != '/')
+  {
+
+    // prefetch(`/`); [? - maybe ?] // NOTE:
+
+    // [ℹ] count number of slashes URL;
+    var count =	page.url.pathname.split('/').length - 1;
+    // [ℹ] replace path-name accordingly for "EN" - first occurance;
+    const newURL: string =
+      count == 1
+        ? page.url.pathname.replace(pastLang, '/')
+        : page.url.pathname.replace(pastLang, '')
+    ;
+    dlog(`${NB_W_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
+
+    // [ℹ] update URL breadcrumb;
+    // window.history.replaceState({}, "NewPage", newURL);
+    await goto(newURL, { replaceState: true });
+  }
+  // ➫ CHECK
+  // ➫ for 'incoming (past)' from an 'EN (/)' route.
+  else if (lang != 'en' && pastLang == '/')
+  {
+    // [ℹ] count number of slashes URL;
+    var countSlash = page.url.pathname.split('/').length - 1;
+    // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+    const newURL: string =
+      countSlash > 1
+        ? page.url.pathname.replace(pastLang, `/${lang}/`)
+        : page.url.pathname.replace(pastLang, `/${lang}`)
+    ;
+    dlog(`${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
+
+    // [ℹ] update URL breadcrumb;
+    // window.history.replaceState({}, "NewPage", newURL);
+    await goto(newURL, { replaceState: true });
+  }
+  // ➫ CHECK
+  // ➫ for 'incoming (past)' from an 'non-EN (/)' route.
+  else if (lang != 'en' && pastLang != '/')
+  {
+    // [ℹ] count number of slashes URL;
+    var countSlash = page.url.pathname.split('/').length - 1;
+    // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+    const newURL: string = page.url.pathname.replace(pastLang, `/${lang}`);
+    dlog(`${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
+
+    // [ℹ] update URL breadcrumb;
+    // window.history.replaceState({}, "NewPage", newURL);
+    await goto(newURL, { replaceState: true });
+  }
+}
+
+// #endregion ➤ 🛠️ METHODS

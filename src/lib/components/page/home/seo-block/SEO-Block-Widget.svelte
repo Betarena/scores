@@ -12,15 +12,16 @@
 	import { onMount } from 'svelte';
 
 	import { translationObject } from '$lib/utils/translation.js';
+  import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import FeatBetSiteLoader from './FeatBetSite-Loader.svelte';
+  import SeoBox from '$lib/components/SEO-Box.svelte';
+  import SeoBlockLoader from './SEO-Block-Loader.svelte';
 
-	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
+	import type { B_SEB_DT } from '@betarena/scores-lib/types/seo-block.js';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.
-  // import FeatBetSiteMain from './FeatBetSite-Main.svelte';
+	// import SeoBlockMain from './SEO-Block-Main.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -33,15 +34,17 @@
 
   let
     /** Main widget Translations data */
-    WIDGET_T_DATA: B_FEATB_T = $page.data?.B_FEATB_T,
+    WIDGET_T_DATA: B_SEB_DT = $page.data?.SEO_BLOCK_DATA,
+    /** Main widget data */
+    WIDGET_DATA: B_SEB_DT,
     /** Wether widget has or no data */
     NO_WIDGET_DATA: boolean = true,
     /** Dynamic import variable for svelte component */
-    FeatBetSiteMainDynamic: any
+    SeoBlockMainDynamic: any
   ;
 
-  $: WIDGET_T_DATA = $page.data?.B_FEATB_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.widget_title ?? translationObject?.featured_bet_site;
+  $: WIDGET_T_DATA = $page.data?.SEO_BLOCK_DATA;
+  $: WIDGET_TITLE = WIDGET_T_DATA?.title ?? translationObject?.seo_block_title;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -63,11 +66,31 @@
    */
   async function widgetInit
   (
-  ): Promise < void >
+  ): Promise < B_SEB_DT >
   {
 		// await sleep(3000);
 
-    return;
+    WIDGET_DATA = WIDGET_T_DATA
+
+    const if_M_0: boolean =
+      WIDGET_DATA == undefined
+    ;
+		if (if_M_0)
+    {
+      // [🐞]
+      dlog
+      (
+        `${IN_W_F_TAG} ❌ no data available!`,
+        IN_W_F_TOG,
+        IN_W_F_STY
+      );
+			NO_WIDGET_DATA = true;
+			return;
+		}
+
+    NO_WIDGET_DATA = false;
+
+    return WIDGET_DATA;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -86,10 +109,10 @@
 
       if (useDynamicImport)
       {
-        FeatBetSiteMainDynamic = (await import('./FeatBetSite-Main.svelte')).default;
+        SeoBlockMainDynamic = (await import('./SEO-Block-Main.svelte')).default;
       }
 
-	  }
+    }
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -105,47 +128,50 @@
 ================= -->
 
 <SeoBox>
-  <h2> {WIDGET_T_DATA?.translations?.widget_title} </h2>
-  <p>	{WIDGET_T_DATA?.translations?.title} </p>
+
+  <h2>{WIDGET_T_DATA?.title}</h2>
+
+  {@html WIDGET_T_DATA?.html}
+
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <FeatBetSiteLoader /> -->
+<!-- <SeoBlockLoader /> -->
 
 {#await widgetInit()}
   <!--
   ### NOTE:
   ### promise is pending
   -->
-  <FeatBetSiteLoader />
+  <SeoBlockLoader />
 {:then data}
-  <!--
-  ### NOTE:
-  ### promise was fulfilled
-  -->
 
-  <!--
-  ### NOTE:
-  ### Dynamic Svelte Component Import
-  ### WARNING:
-  ### Disable, if Standard Import is Enabled.
-  -->
-  <svelte:component
-    this={FeatBetSiteMainDynamic}
-    B_FEATB_T={WIDGET_T_DATA}
-  />
+  {#if !NO_WIDGET_DATA}
 
-  <!--
-  ### NOTE:
-  ### Standard Svelte Component Import
-  ### WARNING:
-  ### Disable, if Dynamic Import is Enabled.
-  -->
-  <!--
-    <FeatBetSiteMain
-      B_FEATB_T={WIDGET_T_DATA}
+    <!--
+    ### NOTE:
+    ### Dynamic Svelte Component Import
+    ### WARNING:
+    ### Disable, if Standard Import is Enabled.
+    -->
+    <svelte:component
+      this={SeoBlockMainDynamic}
+      B_SEB_DT={WIDGET_DATA}
     />
-  -->
+
+    <!--
+    ### NOTE:
+    ### Standard Svelte Component Import
+    ### WARNING:
+    ### Disable, if Dynamic Import is Enabled.
+    -->
+    <!--
+      <SeoBlockMain
+        B_SEB_DT={WIDGET_DATA}
+      />
+    -->
+
+  {/if}
 
 {:catch error}
   <!--

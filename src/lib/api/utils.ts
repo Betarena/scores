@@ -1,10 +1,13 @@
 /**
  * @summary
  * ◆ HELPER
+ *
  * @description
  * ➨ PROXY Fetch type GET
+ *
  * @param
  * {string} endpoint
+ *
  * @returns
  * an unknown Promise
  */

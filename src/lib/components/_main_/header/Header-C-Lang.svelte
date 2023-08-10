@@ -13,7 +13,7 @@ COMPONENT JS (w/ TS)
 
 	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { NB_W_STY, NB_W_TAG, dlog, dlogv2 } from "$lib/utils/debug.js";
+	import { NB_W_TAG, dlog, dlogv2 } from "$lib/utils/debug.js";
 	import { ROUTE_ID_PROFILE } from "$lib/utils/user.js";
 
   import arrow_down from './assets/arrow-down.svg';
@@ -84,9 +84,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${NB_W_TAG} clearning timer!`,
-        true,
-        NB_W_STY
+        `${NB_W_TAG[0]} clearning timer!`,
       );
 
       // ➫ NOTE:
@@ -100,9 +98,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${NB_W_TAG} setting new timer!`,
-        true,
-        NB_W_STY
+        `${NB_W_TAG[0]} setting new timer!`
       );
 
       // ➫ NOTE:
@@ -114,9 +110,7 @@ COMPONENT JS (w/ TS)
           // [🐞]
           dlog
           (
-            `${NB_W_TAG} intent triggered!`,
-            true,
-            NB_W_STY
+            `${NB_W_TAG[0]} intent triggered!`
           );
           $sessionStore.lang_intent = intent_intent_lang;
         },
@@ -133,9 +127,7 @@ COMPONENT JS (w/ TS)
           // [🐞]
           dlog
           (
-            `${NB_W_TAG} intent triggered!`,
-            true,
-            NB_W_STY
+            `${NB_W_TAG[0]} intent triggered!`
           );
           $sessionStore.lang_intent = intent_intent_lang;
         },
@@ -180,7 +172,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlogv2
     (
-      `${NB_W_TAG} selectLanguage()`,
+      `${NB_W_TAG[0]} selectLanguage()`,
       [
         `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
         `$sessionStore?.serverLang: ${$sessionStore?.serverLang}`,
@@ -189,7 +181,7 @@ COMPONENT JS (w/ TS)
         `$page.route.id: ${$page.route.id}`
       ],
       true,
-      NB_W_STY
+      NB_W_TAG[2]
     );
 
 		isLangDropdown = false;
@@ -221,9 +213,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${NB_W_TAG} -> ${lang}`,
-        true,
-        NB_W_STY
+        `${NB_W_TAG[0]} -> ${lang}`
       );
 
       await goto
@@ -245,9 +235,7 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${NB_W_TAG} omitting route: ${$page.route.id}`,
-        true,
-        NB_W_STY
+        `${NB_W_TAG[0]} omitting route: ${$page.route.id}`
       );
 			return;
 		}
@@ -275,10 +263,8 @@ COMPONENT JS (w/ TS)
       // [🐞]
       dlog
       (
-        `${NB_W_TAG} inside (PROFILE) ${lang},
-        pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`,
-        true,
-        NB_W_STY
+        `${NB_W_TAG[0]} inside (PROFILE) ${lang},
+        pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`
       );
 
 			await goto
@@ -310,7 +296,12 @@ COMPONENT JS (w/ TS)
 					? $page.url.pathname.replace(pastLang, '/')
 					: $page.url.pathname.replace(pastLang, '')
       ;
-      dlog(`${NB_W_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
+
+      // [🐞]
+      dlog
+      (
+        `${NB_W_TAG[0]} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`
+      );
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -328,7 +319,12 @@ COMPONENT JS (w/ TS)
 					? $page.url.pathname.replace(pastLang, `/${lang}/`)
 					: $page.url.pathname.replace(pastLang, `/${lang}`)
       ;
-      dlog(`${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
+
+      // [🐞]
+      dlog
+      (
+        `${NB_W_TAG[0]} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`
+      );
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);
@@ -342,7 +338,12 @@ COMPONENT JS (w/ TS)
 			var countSlash = $page.url.pathname.split('/').length - 1;
 			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
 			const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
-      dlog(`${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true, NB_W_STY)
+
+      // [🐞]
+      dlog
+      (
+        `${NB_W_TAG[0]} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`
+      );
 
 			// [ℹ] update URL breadcrumb;
 			// window.history.replaceState({}, "NewPage", newURL);

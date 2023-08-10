@@ -12,17 +12,15 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import { get } from '$lib/api/utils.js';
-	import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { get } from '$lib/api/utils.js';
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { translationObject } from '$lib/utils/translation.js';
+  import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import TopGoalScorersLoader from './TopGoalScorers-Loader.svelte';
+	import LeaguesTableLoader from './Leagues-Table-Loader.svelte';
 
-	import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
-
-  // ### WARNING:
-  // ### Disable, if Dynamic Import is Enabled.
-  // import TopGoalScorersMain from './TopGoalScorers-Main.svelte';
+	import type { B_LEGT_D, B_LEGT_T } from '@betarena/scores-lib/types/leagues-table.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -35,20 +33,17 @@
 
   let
     /** Main widget Translations data */
-    WIDGET_T_DATA: B_TGOL_T = $page.data?.B_TGOL_T,
-    /** Main widget SEO data */
-    WIDGET_S_DATA: B_TGOL_S = $page.data?.B_TGOL_S,
+    WIDGET_T_DATA: B_LEGT_T = $page.data?.B_LEGT_T,
     /** Main widget data */
-    WIDGET_DATA: B_TGOL_D,
+    WIDGET_DATA: B_LEGT_D,
     /** Wether widget has or no data */
     NO_WIDGET_DATA: boolean = true,
     /** Dynamic import variable for svelte component */
-    TopGoalScorersMainDynamic: any
+    LeaguesTableMainDynamic: any
   ;
 
-  $: WIDGET_S_DATA = $page.data?.B_TGOL_S;
-  $: WIDGET_T_DATA = $page.data?.B_TGOL_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA?.widget_translations?.best_goal_scorers ?? 'Best Goalscorers';
+  $: WIDGET_T_DATA = $page.data?.B_LEGT_T;
+  $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.title ?? translationObject?.leagues_table_title;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -70,15 +65,15 @@
    */
   async function widgetInit
   (
-  ): Promise < void >
+  ): Promise < B_LEGT_D >
   {
     if (!browser) return;
 
 		// await sleep(3000);
 
-    const response: B_TGOL_D = await get
+    const response: B_LEGT_D = await get
     (
-			`/api/data/home/top-goalscorers?geoPos=${$userBetarenaSettings.country_bookmaker}`
+			`api/data/home/league-table?geoPos=${$userBetarenaSettings.country_bookmaker}`
 		);
 
     WIDGET_DATA = response;
@@ -88,7 +83,14 @@
     ;
 		if (if_M_0)
     {
-      // dlog(`${IN_W_F_TAG} ❌ no data available!`, IN_W_F_TOG, IN_W_F_STY);
+      // [🐞]
+      dlog
+      (
+        `${IN_W_F_TAG} ❌ no data available!`,
+        IN_W_F_TOG,
+        IN_W_F_STY
+      );
+
 			NO_WIDGET_DATA = true;
 
 			return;
@@ -96,8 +98,7 @@
 
     NO_WIDGET_DATA = false;
 
-    return;
-
+    return WIDGET_DATA
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -111,15 +112,16 @@
   onMount
   (
     async (
+
     ): Promise < void > =>
     {
 
       if (useDynamicImport)
       {
-        TopGoalScorersMainDynamic = (await import('./TopGoalScorers-Main.svelte')).default;
+        LeaguesTableMainDynamic = (await import('./Leagues-Table-Main.svelte')).default;
       }
 
-	  }
+    }
   );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
@@ -135,60 +137,61 @@
 ================= -->
 
 <SeoBox>
-  <h2>{WIDGET_TITLE}</h2>
-  <p>{WIDGET_T_DATA?.widget_translations?.goals}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.odds}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.player}</p>
-  <p>{WIDGET_T_DATA?.widget_translations?.show_more_players}</p>
-  <!--
-  LIST PLAYERS
-  -->
-  {#each WIDGET_S_DATA?.players ?? [] as player}
-    <a href={player?.url}>
-      <p>{player?.common_name}</p>
-    </a>
+  <h2>{WIDGET_T_DATA?.translations?.title}</h2>
+
+  {#each WIDGET_T_DATA?.top_leagues_table_data ?? [] as item}
+    <p>{item?.season_league_name}</p>
+
+    {#each item?.season_league_teams ?? [] as itemL}
+      <p>{itemL?.team_name}</p>
+    {/each}
+
   {/each}
 </SeoBox>
 
 <!-- [🐞] -->
-<!-- <TopGoalScorersLoader /> -->
+<!-- <LeaguesTableLoader /> -->
 
 {#await widgetInit()}
   <!--
   ### NOTE:
   ### promise is pending
   -->
-  <TopGoalScorersLoader />
+  <LeaguesTableLoader />
 {:then data}
   <!--
   ### NOTE:
   ### promise was fulfilled
   -->
 
-  <!--
-  ### NOTE:
-  ### Dynamic Svelte Component Import
-  ### WARNING:
-  ### Disable, if Standard Import is Enabled.
-  -->
-  <svelte:component
-    this={TopGoalScorersMainDynamic}
-    B_TGOL_D={WIDGET_DATA}
-    B_TGOL_T={WIDGET_T_DATA}
-  />
+  {#if !NO_WIDGET_DATA}
 
-  <!--
-  ### NOTE:
-  ### Standard Svelte Component Import
-  ### WARNING:
-  ### Disable, if Dynamic Import is Enabled.
-  -->
-  <!--
-    <TopGoalScorersMain
-      B_TGOL_D={WIDGET_DATA}
-      B_TGOL_T={WIDGET_T_DATA}
+    <!--
+    ### NOTE:
+    ### Dynamic Svelte Component Import
+    ### WARNING:
+    ### Disable, if Standard Import is Enabled.
+    -->
+    <svelte:component
+      this={LeaguesTableMainDynamic}
+      B_LEGT_T={WIDGET_T_DATA}
+      B_LEGT_D={WIDGET_DATA}
     />
-  -->
+
+    <!--
+    ### NOTE:
+    ### Standard Svelte Component Import
+    ### WARNING:
+    ### Disable, if Dynamic Import is Enabled.
+    -->
+    <!--
+      <LeaguesTableMain
+        B_LEGT_T={WIDGET_T_DATA}
+        B_LEGT_D={WIDGET_DATA}
+      />
+    -->
+
+  {/if}
 
 {:catch error}
   <!--

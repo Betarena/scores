@@ -1,0 +1,195 @@
+{
+	// Place your scores workspace snippets here. Each snippet is defined under a snippet name and has a scope, prefix, body and
+	// description. Add comma separated ids of the languages where the snippet is applicable in the scope field. If scope
+	// is left empty or omitted, the snippet gets applied to all languages. The prefix is what is
+	// used to trigger the snippet and the body will be expanded and inserted. Possible variables are:
+	// $1, $2 for tab stops, $0 for the final cursor position, and ${1:label}, ${2:another} for placeholders.
+	// Placeholders with the same ids are connected.
+	// Example:
+	// "Print to console": {
+	// 	"scope": "javascript,typescript",
+	// 	"prefix": "log",
+	// 	"body": [
+	// 		"console.log('$1');",
+	// 		"$2"
+	// 	],
+	// 	"description": "Log output to console"
+	// }
+
+  // ### SEE:
+  // ### https://code.visualstudio.com/docs/editor/userdefinedsnippets
+
+  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+  // BETARENA DEBUG OVERRIDE LOGS
+  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+
+  "scores-debug":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "debug",
+    "body":
+    [
+      "// [🐞]",
+      "dlog",
+      "(",
+      "\t`${1|🚏,🔹|} ${2|checkpoint,[var]|} ➤ ${3:debugTagOrVarName} ${$4}`,",
+      "\t${5|true,false|}",
+      ");",
+    ],
+    "description": "Betarena - Scores Platform Debug Override"
+  },
+
+  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+  // SVELTE-FILE SVELTE / HTML SNIPPETS
+  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+
+  "scores-html-img-tag":
+  {
+    "scope": "svelte",
+    "prefix": "img",
+    "body":
+    [
+      "<img",
+      "\tid=''",
+      "\tsrc='$0'",
+      "\talt='$1'",
+      "\ttitle='$2'",
+      "\tloading='lazy'",
+      "/>"
+    ],
+    "description": "Betarena - Scores Platform image tag"
+  },
+
+  "scores-svelte-html-each-block":
+  {
+    "scope": "svelte",
+    "prefix": "each",
+    "body":
+    [
+      "{#each $0 ?? [] as ${1:item}",
+      "\t",
+      "{/each}"
+    ],
+    "description": "Betarena - Scores Platform Each-Loop HTML Block tag"
+  },
+
+  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+  // SVELTE-FILE STRUCTURE SNIPPETS & COMMENTS
+  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+
+  "scores-region-import-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptimport",
+    "body":
+    [
+      "// #region ➤ 📦 Package Imports",
+      "\n$0\n",
+      "// #endregion ➤ 📦 Package Imports"
+    ],
+    "description": "Betarena - Scores Platform Pacakge Imports init."
+  },
+
+  "scores-region-variables-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptvar",
+    "body":
+    [
+      "// #region ➤ 📌 VARIABLES",
+      "\n$0\n",
+      "// #endregion ➤ 📌 VARIABLES"
+    ],
+    "description": "Betarena - Scores Platform Variables init."
+  },
+
+  "scores-region-methods-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptmethods",
+    "body":
+    [
+      "// #region ➤ 🛠️ METHODS",
+      "\n$0\n",
+      "// #endregion ➤ 🛠️ METHODS"
+    ],
+    "description": "Betarena - Scores Platform Variables init."
+  },
+
+  "scores-region-one-off-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptoneoff",
+    "body":
+    [
+      "// #region ➤ 🚏 ONE-OFF CONDITIONS",
+      "\n$0\n",
+      "// #endregion ➤ 🚏 ONE-OFF CONDITIONS"
+    ],
+    "description": "Betarena - Scores Platform Region One-Off init."
+  },
+
+  "scores-region-reactive-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptreactive",
+    "body":
+    [
+      "// #region ➤ 🔥 REACTIVIY [SVELTE]",
+      "\n$0\n",
+      "// #endregion ➤ 🔥 REACTIVIY [SVELTE]"
+    ],
+    "description": "Betarena - Scores Platform Region One-Off init."
+  },
+
+  "scores-region-lifecycle-comment":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": "scriptlifecycle",
+    "body":
+    [
+      "// #region ➤ 🔄 LIFECYCLE [SVELTE]",
+      "\n$0\n",
+      "// #endregion ➤ 🔄 LIFECYCLE [SVELTE]"
+    ],
+    "description": "Betarena - Scores Platform Region Lifecycle init."
+  },
+
+  "scores-style-responsive-comment":
+  {
+    "scope": "svelte,html,css",
+    "prefix": "stylerescom",
+    "body":
+    [
+      "/*",
+      "=============",
+      "⚡️ RESPONSIVNESS",
+      "=============",
+      "*/"
+    ],
+    "description": "Betarena - Scores Platform Style Responsive Comment"
+  },
+
+  "scores-style-type-style-comment":
+  {
+    "scope": "svelte,html,css",
+    "prefix": "stylestylecom",
+    "body":
+    [
+      "/* 🎨 style */"
+    ],
+    "description": "Betarena - Scores Platform Style Style Comment"
+  },
+
+  "scores-style-type-position-comment":
+  {
+    "scope": "svelte,html,css",
+    "prefix": "styleposcom",
+    "body":
+    [
+      "/* 📌 position */"
+    ],
+    "description": "Betarena - Scores Platform Style Position Comment"
+  }
+
+}

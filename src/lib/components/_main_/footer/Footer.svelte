@@ -1,1082 +1,869 @@
-<!-- ===================
-	COMPONENT JS - BASIC
-    [TypeScript Written]
-=================== -->
+<!-- ===============
+COMPONENT JS (w/ TS)
+=================-->
+
 <script lang="ts">
-	import { browser } from '$app/environment';
+
+  // #region ➤ 📦 Package Imports
+
 	import { page } from '$app/stores';
-	import SeoBox from '$lib/components/SEO-Box.svelte';
-	import type { Cache_Single_Lang_Footer_Translation_Response } from '$lib/models/_main_/footer/types';
-	import sessionStore from '$lib/store/session.js';
-	import { dlog, FT_W_STY, FT_W_TAG, FT_W_TOG } from '$lib/utils/debug';
-	import { platfrom_lang_ssr, viewport_change } from '$lib/utils/platform-functions';
 	import { onMount } from 'svelte';
-	import begambleawareorg from './assets/begambleawareorg_black.png';
-	import logo_full from './assets/betarena-logo-full.svg';
-	import legal18icon from './assets/legal-18-action-bet.png';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT VARIABLES
-	// ~~~~~~~~~~~~~~~~~~~~~
-	export let FOOTER_TRANSLATION_DATA: Cache_Single_Lang_Footer_Translation_Response;
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 
-	let hideSEO: boolean = false;
-	let showEmailForm: boolean = false;
+	import sessionStore from '$lib/store/session.js';
 
-	let server_side_language: string = 'en';
-	let homepageURL: string;
-	let logoLink: string;
+	import { dlog, FT_W_TAG } from '$lib/utils/debug';
+	import { viewport_change } from '$lib/utils/platform-functions';
 
-	// ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-	// ~~~~~~~~~~~~~~~~~~~~~
+	import type { B_FOT_T } from '@betarena/scores-lib/types/footer.js';
 
-	const TABLET_VIEW = 1160;
-	const MOBILE_VIEW = 560;
-	let mobileExclusive, tabletExclusive: boolean = false;
+  // #endregion ➤ 📦 Package Imports
 
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
+  // #region ➤ 📌 VARIABLES
 
-  // ~~~~~~~~~~~~~~~~~~~~~
-	//  COMPONENT METHODS
-	// ~~~~~~~~~~~~~~~~~~~~~
+  const
+    // ◼️ IMPORTANT
+    VIEWPORT_MOBILE_INIT = 710,
+    VIEWPORT_TABLET_INIT = 1160
+  ;
 
-	$: server_side_language = platfrom_lang_ssr(
-    $page.route.id,
-    $page.error,
-    $page.params.lang
-  )
+  let
+    // ◼️ IMPORTANT
+    isViewMobile: boolean = true,
+    isViewTablet: boolean = true,
+    // ◼️ IMPORTANT
+    B_FOT_T: B_FOT_T = $page.data?.FOOTER_TRANSLATION_DATA,
+    // ◼️ IMPORTANT
+    homepageURL: string,
+    logoLink: string,
+    begambleawareorg: string,
+    logo_full: string,
+    legal18icon: string
+  ;
+
   $: homepageURL =
-    server_side_language != 'en'
+    $sessionStore?.serverLang != 'en'
       ? `/${$page.params.lang}`
       : `/`
   ;
+
   $: logoLink =
-    server_side_language != 'en'
-      ? `${$page.url.origin}/${server_side_language}`
+    $sessionStore?.serverLang != 'en'
+      ? `${$page.url.origin}/${$sessionStore?.serverLang}`
       : $page.url.origin
   ;
-  $: dlog(`${FT_W_TAG} server_side_language: ${server_side_language}`, FT_W_TOG, FT_W_STY);
-  $: dlog(`${FT_W_TAG} homepageURL: ${homepageURL}`, FT_W_TOG, FT_W_STY);
-  $: dlog(`${FT_W_TAG} logoLink: ${logoLink}`, FT_W_TOG, FT_W_STY);
 
-	$: if (browser) {
-		hideSEO = true;
-	}
+  // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
 
   /**
    * @description form SUBMIT method to
    * register user on the BETARENA EMAIL LIST
   */
-	async function submitEmail() {
-    dlog(`${FT_W_TAG} subscribing to email newsletter!`, FT_W_TOG, FT_W_STY);
-		// [ℹ] showEmailForm = true; // FIXME: ?
+	async function submitEmail
+  (
+  ): Promise < void >
+  {
+    // [🐞]
+    dlog
+    (
+      `${FT_W_TAG[0]} subscribing to email newsletter!`
+    );
+
 		$sessionStore.newsletterPopUpShow = true;
 	}
 
 	/**
 	 * @description reload current page;
 	 */
-	function reloadPage() {
-		if ($page.url.pathname.split('/').length - 1 ==	1) {
+	function reloadPage
+  (
+  )
+  {
+		if ($page.url.pathname.split('/').length - 1 ==	1)
+    {
 			window.location.reload();
 		}
 	}
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  onMount
+  (
+    async () =>
+    {
+      begambleawareorg = (await import('./assets/begambleawareorg_black.png')).default;
+      logo_full = (await import('./assets/betarena-logo-full.svg')).default;
+      legal18icon = (await import('./assets/legal-18-action-bet.png')).default;
+
+      [
+        isViewTablet,
+        isViewMobile
+      ] = viewport_change
+      (
+        VIEWPORT_TABLET_INIT,
+        VIEWPORT_MOBILE_INIT
+      );
+      window.addEventListener
+      (
+        'resize',
+        function ()
+        {
+          [
+            isViewTablet,
+            isViewMobile
+          ] =
+          viewport_change
+          (
+            VIEWPORT_TABLET_INIT,
+            VIEWPORT_MOBILE_INIT
+          );
+        }
+      );
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
-<!-- ===================
-	COMPONENT HTML
-=================== -->
+<!-- ===============
+COMPONENT HTML
+NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
+=================-->
 
 <!--
-[ℹ] FOOTER SEO
+FOOTER SEO
 -->
-{#if FOOTER_TRANSLATION_DATA != undefined && !hideSEO}
-  <SeoBox>
-    <!-- [ℹ] betarena-logo-homepage-correct-url
-    -->
-    <p>{logoLink}</p>
-    <!-- [ℹ] nav-links-SEO
-    -->
+<SeoBox>
+
+  <p>{logoLink}</p>
+
+  <!--
+  SOCIAL LINKS
+  -->
+  <p>
+    {B_FOT_T?.scores_footer_links?.latest_news}
+  </p>
+  <p>
+    {B_FOT_T?.scores_footer_links?.about_us}
+  </p>
+  <p>
+    {B_FOT_T?.scores_footer_links?.betting_tips}
+  </p>
+  <p>
+    {B_FOT_T?.scores_footer_links?.privacy}
+  </p>
+  <p>
+    {B_FOT_T?.scores_footer_links?.social_networks}
+  </p>
+  <p>
+    {B_FOT_T?.scores_footer_links?.terms}
+  </p>
+
+  <!--
+  SOCIAL LINKS - 2
+  -->
+  {#each B_FOT_T?.scores_footer_links?.social_networks ?? [] as social_network}
     <p>
-      {FOOTER_TRANSLATION_DATA.scores_footer_links
-        .latest_news}
+      {social_network[1]}
     </p>
-    <p>
-      {FOOTER_TRANSLATION_DATA.scores_footer_links
-        .about_us}
-    </p>
-    <p>
-      {FOOTER_TRANSLATION_DATA.scores_footer_links
-        .betting_tips}
-    </p>
-    <p>
-      {FOOTER_TRANSLATION_DATA.scores_footer_links
-        .privacy}
-    </p>
-    <p>
-      {FOOTER_TRANSLATION_DATA.scores_footer_links
-        .social_networks}
-    </p>
-    <p>
-      {FOOTER_TRANSLATION_DATA.scores_footer_links
-        .terms}
-    </p>
-    <!-- [ℹ] nav-links-social-links
-    -->
-    {#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
-      <p>
-        {social_network[1]}
-      </p>
-    {/each}
-  </SeoBox>
-{/if}
+  {/each}
+
+</SeoBox>
 
 <!--
-[ℹ] FOOTER CLIENT COMPONENT
+FOOTER COMPONENT
 -->
 <footer>
-	{#if FOOTER_TRANSLATION_DATA != undefined}
-		<!--
-    [ℹ] mobile - version only
+
+  <div
+    id="inner-footer"
+  >
+
+    <!--
+    BETARENA BRAND
     -->
-		{#if mobileExclusive && tabletExclusive}
-			<div id="inner-footer">
-				<!--
-        [ℹ] brand-logo-betarena
-        -->
-				<div
-					id="brand"
-					class="m-b-16"
-					on:click={() => reloadPage()}
-          on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
-				>
-					<a
+    <div
+      id="brand"
+      on:click={() => reloadPage()}
+      on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
+    >
 
-						href={homepageURL}
-						title={logoLink}
-					>
-						<img
-              loading="lazy"
-							src={logo_full}
-							alt="betarena-logo"
-							title={logoLink}
-						/>
-					</a>
-				</div>
-				<!--
-        [ℹ] follow-us-and-social-media
-        -->
-				<div class="m-b-40">
-					<p
-						class="color-white s-14 w-normal m-b-20"
-					>
-						{FOOTER_TRANSLATION_DATA
-							.scores_footer_translations.follow}
-					</p>
-					<!--
-          [ℹ] social media follows
-          -->
-					<div
-						id="social-media-box"
-						class="column-start-grid"
-					>
-						<!-- [ℹ] identify the list of social media icons
-            -->
-						{#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
-							<!-- [ℹ] social-network-component
-              -->
-							<a
-								rel="external"
-								href={social_network[1]}
-							>
-								<img
-                  loading="lazy"
-									src="/assets/svg/footer/icon/{social_network[0]
-										.toString()
-										.toLocaleLowerCase()}.svg"
-									alt="{social_network[0]
-										.toString()
-										.toLocaleLowerCase()}-icon"
-									title="{social_network[0]
-										.toString()
-										.toLocaleLowerCase()}-icon"
-									width="32px"
-									height="32px"
-								/>
-							</a>
-						{/each}
-					</div>
-				</div>
+      <a
+        href={homepageURL}
+        title={logoLink}
+        class:m-b-12={!isViewTablet}
+      >
+        <img
+          loading="lazy"
+          src={logo_full}
+          alt="betarena-logo"
+          title={logoLink}
+        />
+      </a>
 
-				<!--
-        [ℹ] subscribe-to-newletter
-        -->
-				<div
-					id="newsletter-container"
-					class="m-b-30"
-				>
-					<!--
-          [ℹ] title-section
-          -->
-					<p
-						class="color-white s-14 w-normal m-b-8 text-left"
-					>
-						{FOOTER_TRANSLATION_DATA
-							.scores_footer_translations
-							.subscribe_newsletter}
-					</p>
+      <!--
+      🖥️ LAPTOP
+      -->
+      {#if !isViewTablet}
+        <p
+          class=
+          "
+          s-14
+          w-400
+          color-grey
+          "
+        >
+          © 2021 Betarena All rights reserved
+        </p>
+      {/if}
 
-					<!--
-          [ℹ] form-start
-          -->
-					<form
-						on:submit|preventDefault={() =>
-							submitEmail()}
-					>
-						<!--
-            [ℹ] input-email-field
-            -->
-						<input
-							type="email"
-							name="type_email"
-							id=""
-							placeholder={FOOTER_TRANSLATION_DATA
-								.scores_footer_translations
-								.type_email}
-							class="m-b-12 s-14 w-400 color-grey"
-						/>
-						<!--
-            [ℹ] button-subscribe-action
-            -->
-						<button
-							type="submit"
-							id="newsletter-subscribe-btn"
-							class="btn-primary"
-						>
-							<p class="color-white s-14 w-500">
-								{FOOTER_TRANSLATION_DATA
-									.scores_footer_translations
-									.subscribe_cta}
-							</p>
-						</button>
-					</form>
-				</div>
+    </div>
 
-				<!--
-        [ℹ] menu-list num.1
-        -->
-
-				<!--
-        [ℹ] generate-translations-for-footer
-        -->
-				<div id="menu-list" class="m-b-40">
-					<ul>
-						<!--
-            [ℹ] latest-news
-            -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links
-									.latest_news}
-								class="m-b-16"
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.latest_news}
-								</p>
-							</a>
-						</li>
-						<!-- [ℹ] sep
-            -->
-						<li
-							class="place-center m-r-10 m-b-16"
-						>
-							<div class="menu-separator" />
-						</li>
-						<!-- [ℹ] betting-tips
-            -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links
-									.betting_tips}
-								class="m-b-16"
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.betting_tips}
-								</p>
-							</a>
-						</li>
-						<!-- [ℹ] sep
-            -->
-						<li
-							class="place-center m-r-10 m-b-16"
-						>
-							<div class="menu-separator" />
-						</li>
-						<!-- [ℹ] about us link
-            -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links.about_us}
-								class="m-b-16"
-							>
-								<!-- [ℹ] about us
-                -->
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.about_us}
-								</p>
-							</a>
-						</li>
-					</ul>
-					<ul>
-						<!-- [ℹ] terms and conditions -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links.terms}
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.terms}
-								</p>
-							</a>
-						</li>
-						<!-- [ℹ] sep .. -->
-						<li class="place-center m-r-10">
-							<div class="menu-separator" />
-						</li>
-						<!-- [ℹ] privacy and conditions -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links.privacy}
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.privacy}
-								</p>
-							</a>
-						</li>
-					</ul>
-				</div>
-
-				<!--
-        [ℹ] legal-begambleawareorg
-        -->
-				<div
-					class="row-space-start m-b-30 place-center"
-					style="width: auto;"
-				>
-					<img
-            loading="lazy"
-						src={legal18icon}
-						alt="legal18icon"
-						title="legal18icon"
-						width="48px"
-						height="24px"
-						class="m-r-24"
-					/>
-					<img
-            loading="lazy"
-						src={begambleawareorg}
-						alt="begambleawareorg"
-						title="begambleawareorg"
-						width="130px"
-						height="16px"
-					/>
-				</div>
-
-				<!-- [ℹ] company-details -->
-				<div class="m-b-16">
-					<p class="s-14 w-500 color-grey">
-						Second Act
-					</p>
-					<p class="s-14 w-400 color-grey">
-						18 Boulevard Montmartre Paris 75009
-					</p>
-				</div>
-
-				<p class="s-14 w-400 color-grey">
-					© 2021 Betarena All rights reserved
-				</p>
-			</div>
-		{/if}
-
-		<!--
-    [ℹ] tablet - version only
+    <!--
+    FOLLOW SOCIAL MEDIA LINKS
     -->
-		{#if !mobileExclusive && tabletExclusive}
-			<div
-				id="inner-footer"
-				class="column-start-grid"
-			>
-				<!-- [ℹ] top-row-footer-data -->
-				<div class="row-space-out m-b-50">
-					<!-- [ℹ] brand-logo-betarena -->
-					<div
-						class="column-space-start"
-						style="width: auto;"
-					>
-						<div
-							id="brand"
-							class="m-b-25"
-							on:click={() => reloadPage()}
-              on:keypress={(e) => { if (e.key === 'Enter') reloadPage() }}
-						>
-							<a
+    <div
+      id="social-box"
+    >
 
-								href={homepageURL}
-								title={logoLink}
-							>
-								<img
-                  loading="lazy"
-									src={logo_full}
-									alt="betarena-logo"
-									title={logoLink}
-								/>
-							</a>
-						</div>
+      <p
+        class=
+        "
+        color-white
+        s-14
+        w-normal
+        m-b-20
+        "
+      >
+        {B_FOT_T?.scores_footer_translations?.follow}
+      </p>
 
-						<!-- [ℹ] follow-us-and-social-media -->
-						<div>
-							<p
-								class="color-white s-14 w-normal m-b-12"
-							>
-								{FOOTER_TRANSLATION_DATA
-									.scores_footer_translations
-									.follow}
-							</p>
-							<!-- [ℹ] social media follows -->
-							<div
-								id="social-media-box"
-								class="column-start-grid"
-							>
-								<!-- [ℹ] identify the list of social media icons -->
-								<!-- [ℹ] render the correct items -->
-								{#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
-									<!-- [ℹ] social-network-component -->
-									<a
-										rel="external"
-										href={social_network[1]}
-									>
-										<img
-                      loading="lazy"
-											src="/assets/svg/footer/icon/{social_network[0]
-												.toString()
-												.toLocaleLowerCase()}.svg"
-											alt="{social_network[0]
-												.toString()
-												.toLocaleLowerCase()}-icon"
-											title="{social_network[0]
-												.toString()
-												.toLocaleLowerCase()}-icon"
-											width="32px"
-											height="32px"
-										/>
-									</a>
-								{/each}
-							</div>
-						</div>
-					</div>
+      <!--
+      SOCIAL MEDIA FOLLOWS
+      -->
+      <div
+        id="social-media-box"
+        class=
+        "
+        column-start-grid
+        "
+      >
 
-					<!-- [ℹ] subscribe-to-newletter -->
-					<div id="newsletter-container">
-						<!-- [ℹ] title-section -->
-						<p
-							class="color-white s-14 w-normal m-b-8 text-left"
-						>
-							{FOOTER_TRANSLATION_DATA
-								.scores_footer_translations
-								.subscribe_newsletter}
-						</p>
-						<!-- [ℹ] form-start -->
-						<form
-							on:submit|preventDefault={() =>
-								submitEmail()}
-						>
-							<!-- [ℹ] input-email-field -->
-							<input
-								type="email"
-								name="type_email"
-								id=""
-								placeholder={FOOTER_TRANSLATION_DATA
-									.scores_footer_translations
-									.type_email}
-								class="m-b-12 s-14 w-400 color-grey"
-							/>
-							<!-- [ℹ] button-subscribe-action -->
-							<button
-								type="submit"
-								id="newsletter-subscribe-btn"
-								class="btn-primary"
-							>
-								<p class="color-white s-14 w-500">
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.subscribe_cta}
-								</p>
-							</button>
-						</form>
-					</div>
-				</div>
+        <!--
+        LIST OF SOCIAL MEDIA ICONS
+        -->
+        {#each B_FOT_T?.scores_footer_links?.social_networks ?? [] as social_network}
 
-				<!-- [ℹ] menu-list num.1 -->
-
-				<!-- [ℹ] generate-translations-for-footer -->
-
-				<div id="menu-list" class="m-b-40">
-					<ul class="m-b-16">
-						<!-- [ℹ] latest-news -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links
-									.latest_news}
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.latest_news}
-								</p>
-							</a>
-						</li>
-						<!-- [ℹ] sep .. -->
-						<li class="place-center m-r-10">
-							<div class="menu-separator" />
-						</li>
-						<!-- [ℹ] betting-tips -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links
-									.betting_tips}
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.betting_tips}
-								</p>
-							</a>
-						</li>
-						<!-- [ℹ] sep .. -->
-						<li class="place-center m-r-10">
-							<div class="menu-separator" />
-						</li>
-
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links.about_us}
-							>
-								<!-- [ℹ] about us -->
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.about_us}
-								</p>
-							</a>
-						</li>
-						<!-- [ℹ] sep .. -->
-						<li class="place-center m-r-10">
-							<div class="menu-separator" />
-						</li>
-						<!-- [ℹ] terms and conditions -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links.terms}
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.terms}
-								</p>
-							</a>
-						</li>
-						<!-- [ℹ] sep .. -->
-						<li class="place-center m-r-10">
-							<div class="menu-separator" />
-						</li>
-						<!-- [ℹ] privacy and conditions -->
-						<li class="m-r-10">
-							<a
-								rel="external"
-								href={FOOTER_TRANSLATION_DATA
-									.scores_footer_links.privacy}
-							>
-								<p
-									class="color-white s-14 w-normal"
-								>
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.privacy}
-								</p>
-							</a>
-						</li>
-					</ul>
-				</div>
-
-				<div class="row-space-out">
-					<!-- [ℹ] company-details -->
-					<div class="m-b-8">
-						<!-- [ℹ] company name and details -->
-						<p
-							class="s-14 w-500 color-grey m-b-8"
-						>
-							Second Act
-							<span class="w-400">
-								18 Boulevard Montmartre Paris
-								75009
-							</span>
-						</p>
-						<!-- [ℹ] copytright data -->
-						<p class="s-14 w-400 color-grey">
-							© 2021 Betarena All rights reserved
-						</p>
-					</div>
-
-					<!-- [ℹ] legal-begambleawareorg -->
-					<div
-						class="row-space-start m-b-30 place-center"
-						style="width: auto;"
-					>
-						<img
+          <!--
+          SOCIAL LINK
+          -->
+          <a
+            rel="external"
+            href={social_network[1]}
+          >
+            <img
               loading="lazy"
-							src={legal18icon}
-							alt="legal18icon"
-							title="legal18icon"
-							width="48px"
-							height="24px"
-							class="m-r-24"
-						/>
-						<img
-              loading="lazy"
-							src={begambleawareorg}
-							alt="begambleawareorg"
-							title="begambleawareorg"
-							width="130px"
-							height="16px"
-						/>
-					</div>
-				</div>
-			</div>
-		{/if}
+              src="/assets/svg/footer/icon/{social_network[0].toString().toLocaleLowerCase()}.svg"
+              alt="{social_network[0].toString().toLocaleLowerCase()}-icon"
+              title="{social_network[0].toString().toLocaleLowerCase()}-icon"
+              width=32
+              height=32
+            />
+          </a>
 
-		<!--
-    [ℹ] desktop - version only
+        {/each}
+
+      </div>
+
+    </div>
+
+    <!--
+    SUBSCRIBE TO NEWSLETTER
     -->
-		{#if !mobileExclusive && !tabletExclusive}
-			<div id="inner-footer">
-				<!-- [ℹ] 1st-column-footer-data -->
-				<div class="column-start-grid">
-					<!-- [ℹ] brand-logo-betarena -->
-					<div
-						id="brand"
-						class="m-b-12"
-						on:click={() => reloadPage()}
-					>
-						<a
+    <div
+      id="newsletter-box"
+    >
 
-							href={homepageURL}
-							title={logoLink}
-						>
-							<img
-                loading="lazy"
-								src={logo_full}
-								alt="betarena-logo"
-								title={logoLink}
-							/>
-						</a>
-					</div>
+      <!--
+      SECTION TITLE
+      -->
+      <p
+        class=
+        "
+        color-white
+        s-14
+        w-normal
+        m-b-8
+        text-left
+        "
+      >
+        {B_FOT_T?.scores_footer_translations?.subscribe_newsletter}
+      </p>
 
-					<!-- [ℹ] copytright data -->
-					<p class="s-14 m-b-16 w-400 color-grey">
-						© 2021 Betarena All rights reserved
-					</p>
+      <!--
+      FORM START
+      -->
+      <form
+        on:submit|preventDefault={() =>	submitEmail()}
+        class:row-space-out={!isViewTablet}
+      >
 
-					<!-- [ℹ] company-details -->
-					<p class="s-14 w-500 color-grey">
-						Second Act
-						<br />
-						<span class="w-400">
-							18 Boulevard Montmartre Paris 75009
-						</span>
-					</p>
-				</div>
+        <!--
+        INPUT FIELD EMAIL
+        -->
+        <input
+          id=""
+          type="email"
+          name="type_email"
+          placeholder={B_FOT_T?.scores_footer_translations?.type_email}
+          class=
+          "
+          s-14
+          w-400
+          color-grey
+          "
+          class:m-b-12={isViewTablet}
+          class:m-r-20={!isViewTablet}
+        />
 
-				<!-- [ℹ] 2nd-column-footer-data -->
-				<div class="column-start-grid">
-					<!-- [ℹ] subscribe-to-newletter -->
-					<div
-						id="newsletter-container"
-						class="m-b-40"
-					>
-						<!-- [ℹ] title-section -->
-						<p
-							class="color-white s-14 w-normal m-b-8 text-left"
-						>
-							{FOOTER_TRANSLATION_DATA
-								.scores_footer_translations
-								.subscribe_newsletter}
-						</p>
-						<!-- [ℹ] form-start -->
-						<form
-							on:submit|preventDefault={() =>
-								submitEmail()}
-							class="row-space-out"
-						>
-							<!-- [ℹ] input-email-field -->
-							<input
-								type="email"
-								name="type_email"
-								id=""
-								placeholder={FOOTER_TRANSLATION_DATA
-									.scores_footer_translations
-									.type_email}
-								class="m-r-20 s-14 w-400 color-grey"
-							/>
-							<!-- [ℹ] button-subscribe-action -->
-							<button
-								type="submit"
-								id="newsletter-subscribe-btn"
-								class="btn-primary"
-							>
-								<p class="color-white s-14 w-500">
-									{FOOTER_TRANSLATION_DATA
-										.scores_footer_translations
-										.subscribe_cta}
-								</p>
-							</button>
-						</form>
-					</div>
+        <!--
+        SUMIT BUTTON
+        -->
+        <button
+          id="newsletter-subscribe-btn"
+          class=
+          "
+          btn-primary
+          "
+          type="submit"
+        >
+          <p
+            class=
+            "
+            color-white
+            s-14
+            w-500
+            "
+          >
+            {B_FOT_T?.scores_footer_translations?.subscribe_cta}
+          </p>
+        </button>
 
-					<!-- [ℹ] menu-list num.1 -->
-					<!-- [ℹ] generate-translations-for-footer -->
+      </form>
 
-					<div id="menu-list">
-						<ul>
-							<!-- [ℹ] latest-news -->
-							<li class="m-r-10">
-								<a
-									rel="external"
-									href={FOOTER_TRANSLATION_DATA
-										.scores_footer_links
-										.latest_news}
-								>
-									<p
-										class="color-white s-14 w-normal"
-									>
-										{FOOTER_TRANSLATION_DATA
-											.scores_footer_translations
-											.latest_news}
-									</p>
-								</a>
-							</li>
-							<!-- [ℹ] sep .. -->
-							<li class="place-center m-r-10">
-								<div class="menu-separator" />
-							</li>
-							<!-- [ℹ] betting-tips -->
-							<li class="m-r-10">
-								<a
-									rel="external"
-									href={FOOTER_TRANSLATION_DATA
-										.scores_footer_links
-										.betting_tips}
-								>
-									<p
-										class="color-white s-14 w-normal"
-									>
-										{FOOTER_TRANSLATION_DATA
-											.scores_footer_translations
-											.betting_tips}
-									</p>
-								</a>
-							</li>
-							<!-- [ℹ] sep .. -->
-							<li class="place-center m-r-10">
-								<div class="menu-separator" />
-							</li>
-							<!-- [ℹ] about_us -->
-							<li class="m-r-10">
-								<a
-									rel="external"
-									href={FOOTER_TRANSLATION_DATA
-										.scores_footer_links.about_us}
-								>
-									<!-- [ℹ] about us -->
-									<p
-										class="color-white s-14 w-normal"
-									>
-										{FOOTER_TRANSLATION_DATA
-											.scores_footer_translations
-											.about_us}
-									</p>
-								</a>
-							</li>
-							<!-- [ℹ] sep .. -->
-							<li class="place-center m-r-10">
-								<div class="menu-separator" />
-							</li>
-							<!-- [ℹ] terms and conditions -->
-							<li class="m-r-10">
-								<a
-									rel="external"
-									href={FOOTER_TRANSLATION_DATA
-										.scores_footer_links.terms}
-								>
-									<p
-										class="color-white s-14 w-normal"
-									>
-										{FOOTER_TRANSLATION_DATA
-											.scores_footer_translations
-											.terms}
-									</p>
-								</a>
-							</li>
-							<!-- [ℹ] sep .. -->
-							<li class="place-center m-r-10">
-								<div class="menu-separator" />
-							</li>
-							<!-- [ℹ] privacy and conditions -->
-							<li class="m-r-10">
-								<a
-									rel="external"
-									href={FOOTER_TRANSLATION_DATA
-										.scores_footer_links.privacy}
-								>
-									<p
-										class="color-white s-14 w-normal"
-									>
-										{FOOTER_TRANSLATION_DATA
-											.scores_footer_translations
-											.privacy}
-									</p>
-								</a>
-							</li>
-						</ul>
-					</div>
-				</div>
+    </div>
 
-				<!-- [ℹ] 3rd-column-footer-data -->
-				<div class="column-start-grid">
-					<!-- [ℹ] follow-us-and-social-media -->
-					<div class="m-b-40">
-						<p
-							class="color-white s-14 w-normal m-b-20"
-						>
-							{FOOTER_TRANSLATION_DATA
-								.scores_footer_translations
-								.follow}
-						</p>
-						<!-- [ℹ] social media follows -->
-						<div
-							id="social-media-box"
-							class="column-start-grid"
-						>
-							<!-- [ℹ] identify the list of social media icons -->
-							{#each FOOTER_TRANSLATION_DATA.scores_footer_links.social_networks as social_network}
-								<!-- [ℹ] social-network-component -->
-								<a
-									rel="external"
-									href={social_network[1]}
-								>
-									<img
-                    loading="lazy"
-										src="/assets/svg/footer/icon/{social_network[0]
-											.toString()
-											.toLocaleLowerCase()}.svg"
-										alt="{social_network[0]
-											.toString()
-											.toLocaleLowerCase()}-icon"
-										title="{social_network[0]
-											.toString()
-											.toLocaleLowerCase()}-icon"
-										width="32px"
-										height="32px"
-									/>
-								</a>
-							{/each}
-						</div>
-					</div>
+    <!--
+    MENU LIST
+    -->
+    <div
+      id="menu-list"
+      class:row-space-start={!isViewMobile}
+      class:m-t-45={!isViewMobile && isViewTablet}
+    >
 
-					<!-- [ℹ] legal-begambleawareorg -->
-					<div
-						class="row-space-start"
-						style="width: auto;"
-					>
-						<img
-              loading="lazy"
-							src={legal18icon}
-							alt="legal18icon"
-							title="legal18icon"
-							width="48px"
-							height="24px"
-							class="m-r-24"
-						/>
-						<img
-              loading="lazy"
-							src={begambleawareorg}
-							alt="begambleawareorg"
-							title="begambleawareorg"
-							width="130px"
-							height="16px"
-						/>
-					</div>
-				</div>
-			</div>
-		{/if}
-	{/if}
+      <ul>
+
+        <!--
+        LATEST NEWS
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <a
+            rel="external"
+            href={B_FOT_T?.scores_footer_links?.latest_news}
+          >
+            <p
+              class=
+              "
+              color-white
+              s-14
+              w-normal
+              "
+            >
+              {B_FOT_T?.scores_footer_translations?.latest_news}
+            </p>
+          </a>
+        </li>
+
+        <!--
+        SEPARATOR
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <div
+            class="menu-separator"
+          />
+        </li>
+
+        <!--
+        BETTING TIPS
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <a
+            rel="external"
+            href={B_FOT_T?.scores_footer_links?.betting_tips}
+          >
+            <p
+              class=
+              "
+              color-white
+              s-14
+              w-normal
+              "
+            >
+              {B_FOT_T?.scores_footer_translations?.betting_tips}
+            </p>
+          </a>
+        </li>
+
+        <!--
+        SEPARATOR
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <div
+            class="menu-separator"
+          />
+        </li>
+
+        <!--
+        ABOUT US LINK
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <a
+            rel="external"
+            href={B_FOT_T?.scores_footer_links?.about_us}
+          >
+            <p
+              class=
+              "
+              color-white
+              s-14
+              w-normal
+              "
+            >
+              {B_FOT_T?.scores_footer_translations?.about_us}
+            </p>
+          </a>
+        </li>
+
+      </ul>
+
+      <ul>
+
+        <!--
+        SEPARATOR
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <div
+            class="menu-separator"
+          />
+        </li>
+
+        <!--
+        TERMS AND CONDITIONS
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <a
+            rel="external"
+            href={B_FOT_T?.scores_footer_links?.terms}
+          >
+            <p
+              class=
+              "
+              color-white
+              s-14
+              w-normal
+              "
+            >
+              {B_FOT_T?.scores_footer_translations?.terms}
+            </p>
+          </a>
+        </li>
+
+        <!--
+        SEPARATOR
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <div
+            class="menu-separator"
+          />
+        </li>
+
+        <!--
+        PRIVACY AND CONDITIONS
+        -->
+        <li
+          class=
+          "
+          m-r-10
+          "
+          class:m-b-16={isViewMobile}
+        >
+          <a
+            rel="external"
+            href={B_FOT_T?.scores_footer_links?.privacy}
+          >
+            <p
+              class=
+              "
+              color-white
+              s-14
+              w-normal
+              "
+            >
+              {B_FOT_T?.scores_footer_translations?.privacy}
+            </p>
+          </a>
+        </li>
+
+      </ul>
+
+    </div>
+
+    <!--
+    LEGAL BETTING ICON
+    -->
+    <div
+      id="legal-bet-box"
+      class=
+      "
+      row-space-start
+      "
+      style="width: auto;"
+    >
+      <img
+        loading="lazy"
+        src={legal18icon}
+        alt="legal18icon"
+        title="legal18icon"
+        width="48px"
+        height="24px"
+        class="m-r-24"
+      />
+      <img
+        loading="lazy"
+        src={begambleawareorg}
+        alt="begambleawareorg"
+        title="begambleawareorg"
+        width="130px"
+        height="16px"
+      />
+    </div>
+
+    <!--
+    COMPANY DETAILS
+    -->
+    <div
+      id="company-box"
+    >
+
+      <p
+        class=
+        "
+        s-14
+        w-500
+        color-grey
+        "
+      >
+        Second Act
+      </p>
+
+      <p
+        class=
+        "
+        s-14
+        w-400
+        color-grey
+        "
+      >
+        18 Boulevard Montmartre Paris 75009
+      </p>
+
+      <!--
+      📱 MOBILE
+      -->
+      {#if isViewTablet}
+        <p
+          class=
+          "
+          s-14
+          w-400
+          color-grey
+          "
+        >
+          © 2021 Betarena All rights reserved
+        </p>
+      {/if}
+
+    </div>
+
+  </div>
+
 </footer>
 
-<!-- ===================
-	COMPONENT STYLE
-=================== -->
+<!-- ===============
+COMPONENT STYLE
+NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
+=================-->
+
 <style>
-	/*
-    RESPONSIVE FOR MOBILE-FIRST (&+) [375px] */
-	footer {
+
+	footer
+  {
+    /* 🎨 style */
 		background: #292929;
 		height: 645px;
 		width: -webkit-fill-available;
 		padding: 48px 18px;
 		box-shadow: inset 0px 1px 0px #616161;
 	}
-	footer #inner-footer {
-		max-width: 1378px;
-		/* [ℹ] */
+
+	footer #inner-footer
+  {
+    /* 📌 position */
 		display: grid;
+    gap: 17px 85px;
+    grid-template-columns: 1fr;
+    align-items: start;
 		justify-items: stretch;
-		align-items: center;
+    /* 🎨 style */
+		max-width: 1378px;
 		text-align: center;
 	}
-	#brand {
-		place-self: center;
-	}
-	#brand img {
+
+  div#brand
+  {
+    /* 📌 position */
+    grid-column: 1;
+    grid-row: 1;
+    /* 🎨 style */
+    justify-self: center;
+  }
+	div#brand img
+  {
+    /* 🎨 style */
 		height: 32px;
 		width: 151px;
 	}
-	footer #social-media-box {
+
+  div#social-box
+  {
+    /* 📌 position */
+    grid-column: 1;
+    grid-row: 2;
+  }
+  div#social-media-box
+  {
+    /* 🎨 style */
 		gap: 16px;
 		grid-auto-flow: column;
-		/* max-width: 322px; */
 		width: 100%;
 	}
 
-	footer div#menu-list ul {
-		list-style-type: none;
-		display: flex;
-		flex-wrap: wrap;
-		padding: 0;
-		margin: 0;
-		place-content: center;
-	}
-	footer div#menu-list div.menu-separator {
-		width: 1px;
-		background-color: #4b4b4b;
-		height: 16px;
-	}
-
-	div#newsletter-container input {
+  div#newsletter-box
+  {
+    /* 📌 position */
+    grid-column: 1;
+    grid-row: 3;
+  }
+	div#newsletter-box input
+  {
+    /* 🎨 style */
 		background: #4b4b4b;
 		border-radius: 8px;
 		padding: 12px 20px;
 		width: 100%;
 	}
-	div#newsletter-container
-		button#newsletter-subscribe-btn {
+	div#newsletter-box button#newsletter-subscribe-btn
+  {
+    /* 🎨 style */
 		height: 44px;
 		width: 100%;
 		background: #f5620f;
-		box-shadow: 0px 3px 8px
-			rgba(212, 84, 12, 0.32);
+		box-shadow: 0px 3px 8px rgba(212, 84, 12, 0.32);
 		border-radius: 8px;
 	}
 
-	/*
-    RESPONSIVE FOR TABLET (&+) [768px] */
-	@media screen and (min-width: 768px) {
-		footer {
+  div#menu-list
+  {
+    /* 📌 position */
+    grid-column: 1;
+    grid-row: 4;
+  }
+  div#menu-list ul
+  {
+    /* 📌 position */
+		display: flex;
+    /* 🎨 style */
+		list-style-type: none;
+		/* flex-wrap: wrap; */
+		padding: 0;
+		margin: 0;
+		place-content: center;
+	}
+	div#menu-list div.menu-separator
+  {
+    /* 🎨 style */
+		width: 1px;
+		height: 16px;
+		background-color: #4b4b4b;
+	}
+
+  div#legal-bet-box
+  {
+    /* 📌 position */
+    grid-column: 1;
+    grid-row: 5;
+    /* 🎨 style */
+    justify-content: center;
+  }
+
+  div#company-box
+  {
+    /* 📌 position */
+    grid-column: 1;
+    grid-row: 6;
+  }
+
+  /*
+  =============
+  ⚡️ RESPONSIVNESS
+  =============
+  */
+
+	@media screen
+  and (min-width: 710px)
+  {
+
+		footer
+    {
 			height: 416px;
 			padding: 68px 34px;
 		}
 
-		#brand {
-			place-self: normal;
+    footer #inner-footer
+    {
+      /* 📌 position */
+      display: grid;
+      grid-template-columns: repeat(2, auto);
+      grid-template-rows: repeat(4, auto);
+      justify-items: start;
+      align-items: initial;
+      text-align: initial;
+      justify-content: space-between;
 		}
 
-		div#newsletter-container {
+    div#brand
+    {
+      /* 🎨 style */
+      justify-self: unset;
+    }
+
+    div#social-box
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+		div#newsletter-box
+    {
+      /* 📌 position */
+      grid-column: 2;
+      grid-row: 1 / 3;
+      /* 🎨 style */
 			width: 340px;
 		}
 
-		footer div#menu-list ul {
+    div#menu-list
+    {
+      /* 📌 position */
+      grid-column: 1 / 3;
+      grid-row: 3;
+    }
+		div#menu-list ul
+    {
 			place-content: unset;
 		}
 
-		footer #inner-footer {
-			justify-items: initial;
-			align-items: initial;
-			text-align: initial;
-			justify-content: initial;
-		}
+    div#company-box
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 4;
+    }
+
+    div#legal-bet-box
+    {
+      /* 📌 position */
+      grid-column: 2;
+      grid-row: 4;
+      /* 🎨 style */
+      justify-self: right;
+    }
+
 	}
 
-	/*
-    RESPONSIVE FOR TABLET (&+) [1440px] */
-	@media screen and (min-width: 1440px) {
-		footer {
+	@media screen
+  and (min-width: 1160px)
+  {
+
+		footer
+    {
+      /* 🎨 style */
 			height: 246px;
 			padding: 56px 34px;
 			text-align: center;
@@ -1084,29 +871,74 @@
 			text-align: -moz-center;
 		}
 
-		footer #inner-footer {
-			display: flex;
+		footer #inner-footer
+    {
+      /* 📌 position */
+			display: grid;
+      grid-template-columns: repeat(3, auto);
+      grid-template-rows: repeat(2, auto);
 			justify-content: space-between;
 			justify-items: stretch;
-			align-items: center;
+      align-items: end;
 		}
 
-		div#newsletter-container {
+    div#menu-list
+    {
+      /* 📌 position */
+      grid-column: 2;
+      grid-row: 2;
+    }
+
+    div#newsletter-box
+    {
+      /* 📌 position */
+      grid-column: 2;
+      grid-row: 1;
+      /* 🎨 style */
 			width: 100%;
 		}
-		div#newsletter-container input {
+		div#newsletter-box input
+    {
+      /* 🎨 style */
 			width: 100%;
 			min-width: 430px;
 		}
-
-		div#newsletter-container
-			button#newsletter-subscribe-btn {
+		div#newsletter-box button#newsletter-subscribe-btn
+    {
+      /* 🎨 style */
 			padding: 11.5px 23.5px;
 			width: fit-content;
 		}
 
-		footer #social-media-box {
+    div#social-box
+    {
+      /* 📌 position */
+      grid-column: 3;
+      grid-row: 1;
+    }
+    div#social-media-box
+    {
+      /* 🎨 style */
 			justify-content: left;
-		}
+      gap: 16px;
+      grid-auto-flow: column;
+      width: 100%;
+    }
+
+    div#company-box
+    {
+      /* 📌 position */
+      grid-column: 1;
+      grid-row: 2;
+    }
+
+    div#legal-bet-box
+    {
+      /* 📌 position */
+      grid-column: 3;
+      grid-row: 2;
+    }
+
 	}
+
 </style>

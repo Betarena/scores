@@ -26,12 +26,22 @@ update-scores-web:
 # DEVELOPMENT
 # ===========
 
-dev-start:
-	echo 'Starting DEV Environment'
-	npm run dev
-	echo 'Removing Old DEV Logs'
-	-rm -r ./datalog/*
-	echo 'DEV Ready!'
+heroku-prod-deploy-current:
+	@echo \
+		"\n**************************************\
+		\n🚀 Pushing current branch to Heroku-Dev\
+		\n**************************************\
+		\n"
+	@git push heroku-prod $$(git branch --show-current):main -f
+#
+
+heroku-dev-deploy-current:
+	@echo \
+		"\n**************************************\
+		\n🚀 Pushing current branch to Heroku-Dev\
+		\n**************************************\
+		\n"
+	@git push heroku-dev $$(git branch --show-current):main -f
 #
 
 dev-docker-start:
@@ -42,9 +52,15 @@ dev-docker-start:
 	echo 'DEV Ready!'
 #
 
-dev-clean:
-	echo 'Removing Old DEV Logs'
-	rm -r ./datalog/
+dev-1-click-spin:
+	-rm -r ./.svelte-kit/
+	npm run dev
+#
+
+preview-1-click-spin:
+	-rm -r ./build
+	npm run build
+	npm run preview
 #
 
 git-post-main-pr:

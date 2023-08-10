@@ -17,7 +17,8 @@ COMPONENT JS (w/ TS)
 	import UserMenu from '$lib/components/page/profile/Widget-MenuOpt.svelte';
 	import WidgetDeposit from '$lib/components/page/profile/deposit/Widget-Deposit.svelte';
 	import WidgetTxHist from '$lib/components/page/profile/tx-history/Widget-Tx-Hist.svelte';
-
+  import WidgetWithdraw from '$lib/components/page/profile/withdraw/Widget-Withdraw.svelte';
+  
   import type { PageData } from '../$types';
 
   // #endregion ➤ 📦 Package Imports
@@ -92,6 +93,8 @@ SVELTE INJECT TAGS
         <WidgetDeposit />
       {:else if $page?.url?.pathname.includes('transaction-history')}
         <WidgetTxHist />
+      {:else if $page?.url?.pathname.includes('withdraw')}
+        <WidgetWithdraw />
 			{/if}
 		</div>
 

@@ -1,3 +1,5 @@
+import { dlog } from "./debug.js";
+
 export const MONTH_NAMES_ABBRV: string[] =
 [
 	'Jan',
@@ -115,12 +117,21 @@ export function clientTimezoneDate
 ): Date
 {
   const date = new Date();
-  // [STASH]
+
+  // ### [STASH] [1]
   // const timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
   // date.setHours(date.getHours() + timeOffsetInHours)
-  // [STASH] [2]
+
+  // ### [STASH] [2]
   // date.setTime( date.getTime() - new Date().getTimezoneOffset()*60*1000 );
-  console.log('Client Date', date)
+
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ date ${date}`,
+    true
+  );
+
   return date;
 }
 

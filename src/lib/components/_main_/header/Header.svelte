@@ -1,7 +1,6 @@
-<!-- ===================
-COMPONENT JS - BASIC
-[TypeScript]
-=================== -->
+<!-- ===============
+COMPONENT JS (w/ TS)
+=================-->
 
 <script lang="ts">
 
@@ -15,21 +14,11 @@ COMPONENT JS - BASIC
 	import { db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { NB_W_STY, NB_W_TAG, NB_W_TOG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
+	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
+	import { selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser } from '$lib/utils/user.js';
 	import { doc, updateDoc } from 'firebase/firestore';
-
-	import arrow_down_fade from './assets/arrow-down-fade.svg';
-	import arrow_down from './assets/arrow-down.svg';
-	import arrow_up_fade from './assets/arrow-up-fade.svg';
-	import arrow_up from './assets/arrow-up.svg';
-	import logo_full from './assets/betarena-logo-full.svg';
-	import logo_mini from './assets/betarena-logo-mobile.svg';
-	import close from './assets/close.svg';
-	import menu_burger_bar from './assets/menu-burger.svg';
-	import profile_avatar from './assets/profile-avatar.svg';
 
   import SeoBox from '$lib/components/SEO-Box.svelte';
   import AuthWidget from '../auth/Auth_Widget.svelte';
@@ -49,6 +38,7 @@ COMPONENT JS - BASIC
     // ◼️ IMPORTANT
     VIEWPORT_MOBILE_INIT = 560,
     VIEWPORT_TABLET_INIT = 1160,
+    // ◼️ IMPORTANT
     /**
      * @description
      * 📌 `this` component **main** `id` and `data-testid` prefix.
@@ -60,10 +50,21 @@ COMPONENT JS - BASIC
 
 	let
     // ◼️ IMPORTANT
-    isViewMobile: boolean = false,
-    isViewTablet: boolean = false,
+    isViewMobile: boolean = true,
+    isViewTablet: boolean = true,
     // ◼️ IMPORTANT
     B_NAV_T: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA,
+    // ◼️ IMPORTANT
+    arrow_down_fade: string,
+    arrow_down: string,
+    arrow_up_fade: string,
+    arrow_up: string,
+    logo_full: string,
+    logo_mini: string,
+    close: string,
+    menu_burger_bar: string,
+    profile_avatar: string,
+    // ◼️ IMPORTANT
     mobileNavToggleMenu: boolean = false,
 	  isLangDropdown: boolean = false,
 	  isCurrencyDropdown: boolean = false,
@@ -79,6 +80,7 @@ COMPONENT JS - BASIC
 
   $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
+  $: userLang = $userBetarenaSettings?.lang;
 
   $: dropDownArea =
     isLangDropdown
@@ -187,13 +189,19 @@ COMPONENT JS - BASIC
     if (!$userBetarenaSettings?.lang
       || $page.error
       || !$page.route.id
-      || $userBetarenaSettings?.user == undefined
-      || !setUserLang) {
+      || $userBetarenaSettings?.user == undefined)
+    {
       return
     }
 
 		const lang = $userBetarenaSettings?.lang;
-		dlog(`${NB_W_TAG} 🔵 Updating platform user lang ${lang}`, NB_W_TOG);
+
+    // [🐞]
+		dlog
+    (
+      `${NB_W_TAG[0]} 🔵 Updating platform user lang ${lang}`
+    );
+
     // [ℹ] (update)from localStorage()
 		userBetarenaSettings.updateLang(
 			lang
@@ -208,7 +216,12 @@ COMPONENT JS - BASIC
 		await updateDoc(userRef, {
 			lang: lang
 		});
-		dlog(`${NB_W_TAG} 🟢 User language has been updated`, NB_W_TOG);
+
+    // [🐞]
+		dlog
+    (
+      `${NB_W_TAG[0]} 🟢 User language has been updated`,
+    );
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -230,9 +243,10 @@ COMPONENT JS - BASIC
   $: if (if_R_0 && $userBetarenaSettings.user == undefined)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_0`,
+      true
     );
 
     userBetarenaSettings.setLang
@@ -259,23 +273,23 @@ COMPONENT JS - BASIC
     let userlang: string = $userBetarenaSettings.user?.scores_user_data?.lang;
 
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_1`,
+      true
     );
 
     // [🐞]
     dlog
     (
-      `${NB_W_TAG} 🔵 User Detected! Setting Auth language! ${userlang}`,
-      NB_W_TOG,
-      NB_W_STY
+      `${NB_W_TAG[0]} 🔵 User Detected! Setting Auth language! ${userlang}`
     );
 
-    // selectLanguage
-    // (
-    //   userlang
-    // )
+    selectLanguage
+    (
+      userlang,
+      $page
+    );
   }
 
   /**
@@ -301,9 +315,10 @@ COMPONENT JS - BASIC
   $: if (if_R_2)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_2`,
+      true
     );
 
     initUser
@@ -317,20 +332,20 @@ COMPONENT JS - BASIC
    * TODO: DOC:
    */
   $: if_R_3 =
-    $userBetarenaSettings?.lang
-    && !$page.error
+    !$page.error
     && $page.route.id
     && $userBetarenaSettings?.user != undefined
   ;
-  $: if (if_R_3)
+  $: if (if_R_3 && userLang != undefined)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_3`,
+      true
     );
 
-    // update_select_lang()
+    update_select_lang();
   }
 
   /**
@@ -353,9 +368,10 @@ COMPONENT JS - BASIC
   $: if (B_NAV_T?.scores_header_fixtures_information)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_4`,
+      true
     );
 
     // @ts-expect-error <...>
@@ -372,9 +388,10 @@ COMPONENT JS - BASIC
   $: if (browser && $sessionStore.navBtnHover)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_5`,
+      true
     );
 
     calcNavTrianglePos();
@@ -382,25 +399,31 @@ COMPONENT JS - BASIC
   $: if (browser && $sessionStore.navBtnHover == undefined)
   {
     // [🐞]
-    console.debug
+    dlog
     (
       `🚏 checkpoint ➤ NAVBAR if_R_6`,
+      true
     );
 
     calcNavTrianglePos('scores');
   }
 
+  $: if_R_4 =
+    ($sessionStore.livescoreShowCalendar && isViewMobile)
+    || $sessionStore.withdrawModal
+  ;
+
   // [🐞]
   $: dlogv2
   (
-    NB_W_TAG,
+    NB_W_TAG[0],
     [
       `$sessionStore?.serverLang: ${$sessionStore?.serverLang}`,
       `homepageURL: ${homepageURL}`,
       `logoLink: ${logoLink}`
     ],
-    NB_W_TOG,
-    NB_W_STY
+    NB_W_TAG[1],
+    NB_W_TAG[2]
   )
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
@@ -411,6 +434,19 @@ COMPONENT JS - BASIC
   (
     async () =>
     {
+
+      arrow_down_fade = (await import('./assets/arrow-down-fade.svg')).default;
+      arrow_down = (await import('./assets/arrow-down.svg')).default;
+      arrow_up_fade = (await import('./assets/arrow-up-fade.svg')).default;
+      arrow_up = (await import('./assets/arrow-up.svg')).default;
+      logo_full = (await import('./assets/betarena-logo-full.svg')).default;
+      logo_mini = (await import('./assets/betarena-logo-mobile.svg')).default;
+      close = (await import('./assets/close.svg')).default;
+      menu_burger_bar = (await import('./assets/menu-burger.svg')).default;
+      profile_avatar = (await import('./assets/profile-avatar.svg')).default;
+
+      // cssVarChange();
+
       [
         isViewTablet,
         isViewMobile
@@ -435,6 +471,7 @@ COMPONENT JS - BASIC
           );
         }
       );
+
 	  }
   );
 
@@ -506,7 +543,7 @@ NAVBAR MAIN
   column-space-center
   "
   class:user-active={PROFILE_URL == $page.route.id}
-  class:update-z-index={$sessionStore.livescoreShowCalendar && isViewMobile}
+  class:update-z-index={if_R_4}
 >
 
 	<!--
@@ -1119,12 +1156,12 @@ NAVBAR MAIN
                   m-r-5
                   "
                 >
-                  {$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'} BTA
+                  {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'} BTA
                 </span>
                 {#if isViewMobile}
                   <br/>
                 {/if}
-                (${$userBetarenaSettings?.user?.scores_user_data?.main_balance ?? '0.00'})
+                (${spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'})
               </p>
             </div>
 
@@ -1691,6 +1728,15 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
   ⚡️ RESPONSIVNESS
   =============
   */
+
+  @media screen
+  and (max-width: 560px)
+  {
+    :root
+    {
+      --header-is-mobile: true;
+    }
+  }
 
 	@media screen
   and (min-width: 768px)

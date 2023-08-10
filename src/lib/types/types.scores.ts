@@ -104,7 +104,9 @@ export interface Platform_Session
   /**
    * session data on the LivescoreNow Show/Hide Fixture NUmber
    */
-  fixturesTodayNum: number
+  fixturesTodayNum: number,
+  /** TODO: DOC: */
+  deviceType: 'mobile' | 'tablet' | 'desktop'
   /**
    * session data on users current date
    * IMPORTANT
@@ -146,6 +148,9 @@ export interface Platform_Session
    * Follows 'user' intent for 'hover' language select action.
    */
   navBtnHover: string;
+
+  // TODO: DOC:
+  withdrawModal: boolean,
 
   // -----
   // NOTE: SPORTBOOK DATA;

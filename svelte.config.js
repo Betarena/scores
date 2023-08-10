@@ -6,14 +6,30 @@ import preprocess from 'svelte-preprocess';
  */
 const config =
 {
+
 	// ### SEE:
   // ### https://github.com/sveltejs/svelte-preprocess
 	preprocess: preprocess(),
+
+  // ### SEE:
+  // ### https://kit.svelte.dev/docs/configuration
 	kit:
   {
-		adapter: node(),
+    output:
+    {
+      preloadStrategy: 'modulepreload'
+    },
 
-    //#region => CSP (CONFIG) (DISABLED) DOC: REF:[7]
+		adapter: node
+    (
+      {
+        // ### SEE:
+        // ### https://discord.com/channels/457912077277855764/1049973005675143219
+        precompress: true
+      }
+    ),
+
+    // #region => CSP (CONFIG) (DISABLED) DOC: REF:[7]
 
     // NOTE: 'none'	No URLs match.
     // NOTE: 'self'	Refers to the origin site with the same scheme and port number.
@@ -228,9 +244,10 @@ const config =
     //   }
     // }
 
-    //#endregion => CSP (CONFIG) (DISABLED)
+    // #endregion => CSP (CONFIG) (DISABLED)
 
   },
+
   // ### SEE:
   // ### https://github.com/sveltejs/language-tools/issues/650
   // ### https://github.com/sveltejs/language-tools/tree/master/packages/svelte-check
@@ -245,6 +262,7 @@ const config =
     if (warning.code.startsWith('unused-export-let')) return;
     handler(warning);
   }
+
 };
 
 export default config;

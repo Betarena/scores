@@ -21,11 +21,13 @@ const sessionStoreObj: Platform_Session =
   livescoreFixtureView: 'all',
 	fixture_select_view: 'overview',
   navBtnHover: undefined,
+  withdrawModal: false,
   // (+) lang handle;
   lang_intent: undefined,
   serverLang: undefined,
   // (+) misc;
   fixturesTodayNum: 0,
+  deviceType: undefined,
   // (+) date handle;
   userDate: clientTimezoneDate(),
   livescoreNowSelectedDate: clientTimezoneDate(),
@@ -336,8 +338,6 @@ function createLocalStore
         from: _from,
         to: _to
       };
-
-      console.debug('🔥')
 
       // set(sessionStoreObj);
       // update

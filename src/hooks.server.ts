@@ -1,86 +1,195 @@
+// #region ➤ 📦 Package Imports
+
 import { v4 as uuid } from '@lukeed/uuid';
 import cookie from 'cookie';
 
 import { dlog } from '$lib/utils/debug';
 import { platfrom_lang_ssr } from '$lib/utils/platform-functions';
-import type {
-  Handle,
-  RequestEvent
-} from '@sveltejs/kit';
+
+import type { Handle, RequestEvent } from '@sveltejs/kit';
+
+// #endregion ➤ 📦 Package Imports
+
+// #region ➤ 🛠️ METHODS
 
 /**
+ * @summary
+ * 🔹 HELPER
+ *
  * @description
- * DOC: REF: [3]
- * @param param0
+ * 📌 obtains the current translation as a `hook.server.ts` method/function.
+ *
+ * @param
+ * { RequestEvent < Partial < Record < string, string > > > } event
+ *
  * @returns
+ * { string } language
  */
-export const handle: Handle = async ({
-	event,
-	resolve
-}) => {
-	// https://github.com/sveltejs/kit/issues/4873
+function getLang
+(
+	event: RequestEvent < Partial < Record < string, string > > >
+): string
+{
+
+	const lang: string = platfrom_lang_ssr
+  (
+		event?.route.id,
+		event?.error, // FIXME: event.error does not exist in a hook
+		event?.params?.lang
+	);
+
+  // [🐞]
+	dlog
+  (
+    `HOOKS | getLang: ${lang}`,
+    true
+  );
+
+	return lang;
+}
+
+// #endregion ➤ 🛠️ METHODS
+
+// #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+export const handle: Handle = async (
+  {
+    event,
+    resolve
+  }
+): Promise < Response > =>
+{
+
+  // [🐞]
+  dlog
+  (
+    `🚏 checkpoint ➤ src/hooks.server.ts handle`,
+    true
+  );
+
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ event.url ${event?.url}`,
+    true
+  );
+
+  // ### NOTE:
+  // ### attempt to identify user IP from 'request',
+  // ### to preload data from 'server'.
+	// ### SEE:
+  // ### https://github.com/sveltejs/kit/issues/4873
 	// const clientAddress = !prerendering ? await event.clientAddress : ''; // incorrect-IP
 	// const clientAddressv2 = !prerendering ? event : '' // no-working
 
-	// -----------------
-	// [ℹ] before endpoint call
-	// -----------------
+  // ### IMPORTANT
+  // ### before 'endpoint' call/execute.
+  // ### IMPORTANT
 
-	// [ℹ] getting cookies from request headers
-	// [ℹ] all requests have cookies on them
-	const cookies = cookie.parse(
-		event.request.headers.get('cookie') || ''
+	// ### NOTE:
+  // ### getting cookies from request headers.
+	const cookies: Record < string, string > = cookie.parse
+  (
+		event.request.headers.get('cookie') ?? ''
 	);
 
-	// [ℹ] assign "locals" context from "cookie"
-	// [ℹ] or, load defaults
-	event.locals.user = cookies.betarenaCOOKIE || {
+	// ### NOTE:
+	// ### assign 'locals' context from 'cookie'
+	// ### or, load defaults.
+  const defaultLocals =
+  {
 		userid: uuid(),
-		// originIP: event.request.headers['x-forwarded-for'] ||
-		//   event.request.socket.remoteAddress ||
-		//   null
-		// originIP: clientAddress,
-		// geoPos: !prerendering ? (await getUserLocationFromIP(clientAddress)) : '',
 		lang: 'en',
-		theme: 'Light'
+		theme: 'Light',
+    // ### NOTE:
+    // ### attempt to identify user IP from 'request',
+    // ### to preload data from 'server'.
+    /*
+    originIP:
+      event.request.headers['x-forwarded-for']
+		  || event.request.socket.remoteAddress
+		  || null
+		originIP: clientAddress,
+		geoPos:
+      !prerendering
+        ? (await getUserLocationFromIP(clientAddress))
+        : '',
+    */
 	};
-	dlog(event?.locals?.user);
+	event.locals.user = cookies?.betarenaCOOKIE ?? defaultLocals;
 
-  // [ℹ] assign "locals" context from "cookie"
-	// [ℹ] or, load defaults
-	event.locals.betarenaUser = cookies.betarenaCookieLoggedIn || null;
-	dlog(event?.locals?.betarenaUser);
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ event?.locals?.user ${event?.locals?.user}`,
+    true
+  );
 
-	// TODO: https://github.com/sveltejs/kit/issues/1046
+	// ### NOTE:
+	// ### assign 'locals' context from 'cookie'
+	// ### or, load defaults.
+	event.locals.betarenaUser = cookies?.betarenaCookieLoggedIn ?? null;
+
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ event?.locals?.betarenaUser ${event?.locals?.betarenaUser}`,
+    true
+  );
+
+	// ### TODO:
+  // ### [?]
+  // ### SEE:
+  // ### https://github.com/sveltejs/kit/issues/1046
 	// if (event.url.searchParams.has('_method')) {
 	// 	event.method = event.url.searchParams.get('_method').toUpperCase();
 	// }
 
-	// -----------------
-	// [ℹ] endpoint call
-	// -----------------
+  // ### IMPORTANT
+  // ### actual 'endpoint' call/execute.
+  // ### IMPORTANT
 
-	// [ℹ] past use with cookies-template
+	// ### NOTE:
+	// ### past use with cookies-template
 	// const response = await resolve(event);
-	// [ℹ] new with response of <html lang...>
-	// DOC: https://github.com/sveltejs/kit/issues/3091
-	const response = await resolve(event, {
-		transformPageChunk: ({ html }) =>
-			html.replace('%lang%', get_lang(event))
-	});
 
-	// -----------------
-	// [ℹ] after endpoint call
-	// -----------------
+	// ### NOTE:
+	// ### new with response of <html lang...>
+  // ### SEE:
+	// ### https://github.com/sveltejs/kit/issues/3091
+	const response = await resolve
+  (
+    event,
+    {
+      transformPageChunk:
+      (
+        {
+          html
+        }
+      ): string =>
+        html.replace
+        (
+          '%lang%',
+          getLang(event)
+        )
+	  }
+  );
 
-	// [ℹ] if this is the first time the user has visited this app,
-	if (!cookies.betarenaCOOKIE) {
-		// [ℹ] set a cookie so that we recognise them when they return
-		response.headers.set(
+  // ### IMPORTANT
+	// ### after 'endpoint' call
+  // ### IMPORTANT
+
+  // ### CHECK
+  // ### first time user visit app, set a cookie.
+	if (!cookies.betarenaCOOKIE)
+  {
+		response.headers.set
+    (
 			'Set-Cookie',
-			cookie.serialize(
-				'betarenaCOOKIE', // 'name'
-				JSON.stringify(event.locals.user), // 'value'
+			cookie.serialize
+      (
+				'betarenaCOOKIE',
+				JSON.stringify(event.locals.user),
 				{
 					path: '/',
 					httpOnly: true,
@@ -93,46 +202,4 @@ export const handle: Handle = async ({
 	return response;
 };
 
-/** @type {import('@sveltejs/kit').GetSession} */
-export function getSession(event) {
-	return event?.locals?.user
-		? {
-				user: {
-					// [ℹ] only include properties needed client-side —
-					// [ℹ] exclude anything else attached to the user
-					// [ℹ] like access tokens etc
-					userid: event.locals.user.userid,
-					originIP: event.locals.user.originIP,
-					geoPos: event.locals.user.geoPos,
-					lang: event.locals.user.lang,
-					theme: event.locals.user.theme
-				}
-		  }
-		: {};
-}
-
-/** @type {import('@sveltejs/kit').GetSession} */
-export function getSignedInUser(event) {
-	return event?.locals?.betarenaUser
-		? true
-		: false
-  ;
-}
-
-/**
- * @description obtains the current platform translation
- * as a hook.server.ts method/function
- * @param {RequestEvent<Partial<Record<string, string>>>} event
- * @returns {string} language
- */
-function get_lang(
-	event: RequestEvent<Partial<Record<string, string>>>
-): string {
-	const lang = platfrom_lang_ssr(
-		event?.route.id,
-		event?.error, // FIXME: event.error does not exist in a hook
-		event?.params?.lang
-	);
-	dlog(`HOOKS | get_lang: ${lang}`, true);
-	return lang;
-}
+// #endregion ➤ 🔄 LIFECYCLE [SVELTE]
