@@ -39,38 +39,63 @@ paths:
           schema:
             type: object
             properties:
-              # ?term=[...]
+              ### NOTE:
+              ### ?lang=[...]
+              lang:
+                type: string
+                example: en
+              ### NOTE:
+              ### ?term=[...]
               term:
                 type: string
                 example: football
-              # ?player_id=[...]
+                enum:
+                  - football
+                  - competitions
+                  - player
+                  - team
+              ### NOTE:
+              ### ?player_id=[...]
               player_id:
                 type: number
                 example: 205881
-              # ?fixture_id=[...]
+              ### NOTE:
+              ### ?fixture_id=[...]
               fixture_id:
                 type: number
                 example: 18548156
-              # ?page=[...]
+              ### NOTE:
+              ### ?page=[...]
               page:
                 type: string
                 enum:
                   - fixtures
                   - player
+                  - competitions
                 example: player
-              # ?hasura=[...]
+              ### NOTE:
+              ### ?hasura=[...]
               hasura:
                 type: boolean
                 example: true
+                enum:
+                  - true
+                  - false
             additionalProperties: false
             oneOf:
-              # data (main) [fixture]
+              # ### NOTE:
+              # ### Data for Competitions.
+              - required: [lang, page]
+              # ### NOTE:
+              # ### Data for Fixture.
               - required: [fixture_id, page]
               - required: [fixture_id, page, hasura]
-              # data (main) [player]
+              # ### NOTE:
+              # ### Data for Player.
               - required: [player_id, page]
               - required: [player_id, page, hasura]
-              # data (translations) terms
+              # ### NOTE:
+              # ### Data for Translations (terms).
               - required: [term]
       summary:
         Returns a targets' player main SEO widget (data).
