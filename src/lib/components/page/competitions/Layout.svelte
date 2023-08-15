@@ -9,9 +9,9 @@
   // #region ➤ 📦 Package Imports
 
 	import { browser } from '$app/environment';
+	import { goto, preloadData } from '$app/navigation';
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
-  import { goto, preloadData } from '$app/navigation';
 
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -21,6 +21,7 @@
   import SvelteSeo from 'svelte-seo';
 
   import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+  import NoCompetitionsWidget from './no-competitions/No-Competitions-Widget.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -383,6 +384,8 @@
 
   <h1>Competitions</h1>
 
+  <NoCompetitionsWidget />
+
 </section>
 
 <!-- ===============
@@ -397,6 +400,9 @@
 
 	section#page-competitions
   {
+    /* 📌 position */
+    position: relative;
+    /* 🎨 style */
 		display: grid;
 		max-width: 1430px;
 		grid-template-columns: 1fr;
