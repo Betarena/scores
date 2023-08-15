@@ -1,23 +1,16 @@
-// #region ➤ Package Imports
+// #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { LNAV_L_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.main.navbar.js';
 import { NAV_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
-// #endregion ➤ Package Imports
+// #endregion ➤ 📦 Package Imports
 
-// #region ➤ [VARIABLES] Imports
-
-const graphQlInstance = initGrapQLClient()
-
-// #endregion ➤ [VARIABLES] Imports
-
-// #region ➤ [METHODS]
+// #region ➤ 🛠️ METHODS
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 //  [MAIN] ENDPOINT METHOD
@@ -116,8 +109,7 @@ async function fallbackMainData
 {
   const dataRes0 = await LNAV_L_ENTRY_1
   (
-    graphQlInstance,
-    [lang]
+    [ lang ]
   );
 
   if (dataRes0?.[0].size == 0)
@@ -132,4 +124,4 @@ async function fallbackMainData
 //  [HELPER] OTHER METHODS
 // ~~~~~~~~~~~~~~~~~~~~~~~~
 
-// #endregion ➤ [METHODS]
+// #endregion ➤ 🛠️ METHODS
