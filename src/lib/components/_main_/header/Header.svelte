@@ -1,6 +1,8 @@
 <!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+### COMPONENT JS (w/ TS)
+### NOTE:
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'
+================= -->
 
 <script lang="ts">
 
@@ -29,6 +31,7 @@ COMPONENT JS (w/ TS)
   import HeaderSportsBtn from './Header-Sports-Btn.svelte';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+  import HeaderCompetitionBtn from './Header-Competition-Btn.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -71,6 +74,7 @@ COMPONENT JS (w/ TS)
 	  isOddsDropdown: boolean = false,
 	  isBookmakersDropdown: boolean = false,
 	  isUserAuthDropdown: boolean = false,
+    isRouteCompetitions: boolean,
     selectedSport: string = 'football',
 	  homepageURL: string,
 	  logoLink: string,
@@ -81,6 +85,7 @@ COMPONENT JS (w/ TS)
   $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
   $: userLang = $userBetarenaSettings?.lang;
+  $: isRouteCompetitions = $page?.route?.id == '/[[lang=lang]]/[competitions=competitions]';
 
   $: dropDownArea =
     isLangDropdown
@@ -107,11 +112,13 @@ COMPONENT JS (w/ TS)
 
 	/**
    * @summary
-   * [HELPER]
+   * 🔹 HELPER
+   *
 	 * @description
-   * ➨ simply closes all possible dropdowns open on the widget;
+   * 📌 Closes all possible dropdowns open on the widget.
+   *
    * @returns
-   * void
+   * A Void
 	 */
 	function closeAllDropdowns
   (
@@ -125,11 +132,13 @@ COMPONENT JS (w/ TS)
 
 	/**
    * @summary
-   * [HELPER]
+   * 🔹 HELPER
+   *
 	 * @description
-   * ➨ simply reloads the current page;
+   * 📌 Reloads current page.
+   *
    * @returns
-   * void
+   * A Void
 	 */
 	function reloadPage
   (
@@ -245,7 +254,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_0`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_0`,
       true
     );
 
@@ -275,7 +284,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_1`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_1`,
       true
     );
 
@@ -317,7 +326,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_2`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_2`,
       true
     );
 
@@ -341,7 +350,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_3`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_3`,
       true
     );
 
@@ -370,7 +379,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_4`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_4`,
       true
     );
 
@@ -390,7 +399,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_5`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_5`,
       true
     );
 
@@ -401,7 +410,7 @@ COMPONENT JS (w/ TS)
     // [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_6`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_6`,
       true
     );
 
@@ -480,9 +489,12 @@ COMPONENT JS (w/ TS)
 </script>
 
 <!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+### COMPONENT HTML
+### NOTE:
+### use 'CTRL+SPACE' to autocomplete global class="" styles
+### NOTE:
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
+================= -->
 
 <!--
 HEADER (OUTER) CLOSE DROPDOWNS AREA
@@ -939,7 +951,7 @@ NAVBAR MAIN
   >
 
     <!--
-    1st COLUMN
+    1st COLUMN - SCORES / COMPETITIONS
     -->
     <div
       class="
@@ -948,7 +960,9 @@ NAVBAR MAIN
     >
 
       <!--
-      SPORTS HORIZONTAL LIST
+      SPORTS HORIZONTAL LIST - SCORES ONLY
+      ----
+      COMPETITIONS HORIZONTAL LIST - SCORES ONLY
       -->
       {#if PROFILE_URL != $page.route.id}
 
@@ -972,13 +986,25 @@ NAVBAR MAIN
             <!--
             FOOTBALL
             -->
-            <HeaderSportsBtn
-              sportNameDefault={'football'}
-              sportTranslation={B_NAV_T?.scores_header_translations?.sports_v2?.['football']}
-              sportValue={B_NAV_T?.scores_header_fixtures_information?.['football']}
-              selectedSport={selectedSport}
-              on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
-            />
+            {#if !isRouteCompetitions}
+              <HeaderSportsBtn
+                sportNameDefault={'football'}
+                sportTranslation={B_NAV_T?.scores_header_translations?.sports_v2?.['football']}
+                sportValue={B_NAV_T?.scores_header_fixtures_information?.['football']}
+                selectedSport={selectedSport}
+                on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
+              />
+            {/if}
+
+            <!--
+            PREDICTOR
+            -->
+            {#if isRouteCompetitions}
+              <HeaderCompetitionBtn
+                competitionNameDefault={'predictor'}
+                competitionTranslation={B_NAV_T?.competitions_category?.data?.predictor}
+              />
+            {/if}
 
           </div>
         </div>
@@ -988,211 +1014,215 @@ NAVBAR MAIN
     </div>
 
     <!--
-    2nd COLUMN
+    2nd COLUMN - SCORES ONLY
     -->
-    <div
-      class=
-      "
-      row-space-start
-      "
-      style="width: fit-content;"
-    >
+    {#if !isRouteCompetitions}
 
-      <!--
-      💻 TABLET 🖥️ LAPTOP
-      -->
-      {#if !isViewMobile}
+      <div
+        class=
+        "
+        row-space-start
+        "
+        style="width: fit-content;"
+      >
 
         <!--
-        ODDS-TYPE CONTAINER
-        NOTE: -> HIDDEN TEMPORARILY
+        💻 TABLET 🖥️ LAPTOP
         -->
-        {#if false}
-          <div
-            id="odds-box"
-            class=
-            "
-            cursor-not-allowed
-            dropdown-opt-box
-            row-space-start
-            "
-            on:click={() => (isOddsDropdown = !isOddsDropdown)}
-          >
+        {#if !isViewMobile}
 
-            <!--
-            SELECTED ODDS-TYPE BOX
-            -->
+          <!--
+          ODDS-TYPE CONTAINER
+          NOTE: -> HIDDEN TEMPORARILY
+          -->
+          {#if false}
             <div
-              class="m-r-10"
+              id="odds-box"
+              class=
+              "
+              cursor-not-allowed
+              dropdown-opt-box
+              row-space-start
+              "
+              on:click={() => (isOddsDropdown = !isOddsDropdown)}
             >
 
-              <p
-                class="
-                  color-grey
-                  s-12
-                  no-wrap
-                "
-              >
-                {B_NAV_T?.scores_header_translations?.odds || translationObject?.odds_type}
-              </p>
-
-              <p
-                class="
-                  color-white
-                  s-14
-                  no-wrap
-                "
-              >
-                {B_NAV_T?.scores_header_translations?.odds_type?.[0]}
-              </p>
-
-            </div>
-
-            <!--
-            ARROW DOWN
-            -->
-            <img
-              loading="lazy"
-              src={!isOddsDropdown ? arrow_down_fade : arrow_up}
-              alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
-              width=16
-              height=16
-            />
-
-            <!--
-            DROPDOWN MENU (ODDS-TYPE)
-            -->
-            {#if isOddsDropdown}
+              <!--
+              SELECTED ODDS-TYPE BOX
+              -->
               <div
-                id="odds-type-dropdown-menu"
-                transition:fly
+                class="m-r-10"
               >
-                {#each B_NAV_T?.scores_header_translations?.odds_type || [] as odd}
-                  <div
-                    class="theme-opt-box"
-                    on:click={() => (isOddsDropdown = false)}
-                  >
-                    <p
-                      class="
-                        color-white
-                        s-14
-                      "
-                    >
-                      {odd}
-                    </p>
-                  </div>
-                {/each}
+
+                <p
+                  class="
+                    color-grey
+                    s-12
+                    no-wrap
+                  "
+                >
+                  {B_NAV_T?.scores_header_translations?.odds || translationObject?.odds_type}
+                </p>
+
+                <p
+                  class="
+                    color-white
+                    s-14
+                    no-wrap
+                  "
+                >
+                  {B_NAV_T?.scores_header_translations?.odds_type?.[0]}
+                </p>
+
               </div>
-            {/if}
-
-          </div>
-        {/if}
-
-        <!--
-        BOOKMAKERS CONTAINER
-        -->
-        {#if PROFILE_URL != $page.route.id}
-          <HeaderCBookmakers
-            {isViewMobile}
-            {isViewTablet}
-          />
-        {/if}
-
-      {/if}
-
-      <!--
-      BETARENA TOKEN
-      -->
-      {#if $userBetarenaSettings?.user != undefined}
-
-        <!--
-        BETARENA TOKEN AMOUNT
-        -->
-        <a
-          href="/u/transaction-history/{$userBetarenaSettings.lang}"
-          title='View Transactions History'
-        >
-          <div
-            id="balance-box"
-            class=
-            "
-            dropdown-opt-box
-            row-space-start
-            "
-          >
-
-            <div>
 
               <!--
-              📱 MOBILE
-              Balance Title
+              ARROW DOWN
               -->
-              {#if !isViewMobile}
+              <img
+                loading="lazy"
+                src={!isOddsDropdown ? arrow_down_fade : arrow_up}
+                alt={!isOddsDropdown ? 'arrow_down_fade' : 'arrow_up'}
+                width=16
+                height=16
+              />
+
+              <!--
+              DROPDOWN MENU (ODDS-TYPE)
+              -->
+              {#if isOddsDropdown}
+                <div
+                  id="odds-type-dropdown-menu"
+                  transition:fly
+                >
+                  {#each B_NAV_T?.scores_header_translations?.odds_type || [] as odd}
+                    <div
+                      class="theme-opt-box"
+                      on:click={() => (isOddsDropdown = false)}
+                    >
+                      <p
+                        class="
+                          color-white
+                          s-14
+                        "
+                      >
+                        {odd}
+                      </p>
+                    </div>
+                  {/each}
+                </div>
+              {/if}
+
+            </div>
+          {/if}
+
+          <!--
+          BOOKMAKERS CONTAINER
+          -->
+          {#if PROFILE_URL != $page.route.id}
+            <HeaderCBookmakers
+              {isViewMobile}
+              {isViewTablet}
+            />
+          {/if}
+
+        {/if}
+
+        <!--
+        BETARENA TOKEN
+        -->
+        {#if $userBetarenaSettings?.user != undefined}
+
+          <!--
+          BETARENA TOKEN AMOUNT
+          -->
+          <a
+            href="/u/transaction-history/{$userBetarenaSettings.lang}"
+            title='View Transactions History'
+          >
+            <div
+              id="balance-box"
+              class=
+              "
+              dropdown-opt-box
+              row-space-start
+              "
+            >
+
+              <div>
+
+                <!--
+                📱 MOBILE
+                Balance Title
+                -->
+                {#if !isViewMobile}
+                  <p
+                    class=
+                    "
+                    color-grey
+                    s-12
+                    no-wrap
+                    "
+                  >
+                    {B_NAV_T?.scores_header_translations?.data?.balance ?? translationObject?.balance}
+                  </p>
+                {/if}
+
                 <p
                   class=
                   "
-                  color-grey
-                  s-12
+                  color-white
+                  s-14
                   no-wrap
                   "
                 >
-                  {B_NAV_T?.scores_header_translations?.data?.balance ?? translationObject?.balance}
+                  <span
+                    class=
+                    "
+                    color-primary
+                    w-500
+                    m-r-5
+                    "
+                  >
+                    {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'} BTA
+                  </span>
+                  {#if isViewMobile}
+                    <br/>
+                  {/if}
+                  (${spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'})
                 </p>
-              {/if}
+              </div>
 
-              <p
+            </div>
+          </a>
+
+          <!--
+          BUY BETARENA TOKEN
+          NOTE: -> HIDDEN TEMPORARILY
+          -->
+          {#if true}
+            <a
+              href="/u/deposit/{$userBetarenaSettings.lang}"
+              title='Go to Deposit Page'
+            >
+              <button
                 class=
                 "
-                color-white
-                s-14
-                no-wrap
+                btn-primary-v2
                 "
+                class:m-l-50={!isViewMobile}
+                class:m-l-20={isViewMobile}
               >
-                <span
-                  class=
-                  "
-                  color-primary
-                  w-500
-                  m-r-5
-                  "
-                >
-                  {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'} BTA
-                </span>
-                {#if isViewMobile}
-                  <br/>
-                {/if}
-                (${spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)) ?? '0.00'})
-              </p>
-            </div>
+                {B_NAV_T?.scores_header_translations?.data?.cta_buy ?? 'Buy BTA'}
+              </button>
+            </a>
+          {/if}
 
-          </div>
-        </a>
-
-        <!--
-        BUY BETARENA TOKEN
-        NOTE: -> HIDDEN TEMPORARILY
-        -->
-        {#if true}
-          <a
-            href="/u/deposit/{$userBetarenaSettings.lang}"
-            title='Go to Deposit Page'
-          >
-            <button
-              class=
-              "
-              btn-primary-v2
-              "
-              class:m-l-50={!isViewMobile}
-              class:m-l-20={isViewMobile}
-            >
-              {B_NAV_T?.scores_header_translations?.data?.cta_buy ?? 'Buy BTA'}
-            </button>
-          </a>
         {/if}
 
-      {/if}
+      </div>
 
-    </div>
+    {/if}
 
   </div>
 
@@ -1378,7 +1408,7 @@ NAVBAR MAIN
             {isViewMobile}
           />
 
-          {#if isViewMobile && PROFILE_URL != $page.route.id}
+          {#if isViewMobile && PROFILE_URL != $page.route.id && !isRouteCompetitions}
 
             <!--
             ODDS SECTION
@@ -1502,9 +1532,12 @@ NAVBAR MAIN
 </header>
 
 <!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+### COMPONENT STYLE
+### NOTE:
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE
+### NOTE:
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'
+================= -->
 
 <style>
 
