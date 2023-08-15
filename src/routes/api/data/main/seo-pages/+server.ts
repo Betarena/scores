@@ -1,4 +1,4 @@
-  //#region ➤ Package Imports
+// #region ➤ 📦 Package Imports
 
 import { initGrapQLClient } from '$lib/graphql/init';
 import { SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.seo-pages.js';
@@ -8,34 +8,44 @@ import { get_target_hset_cache_data, get_target_set_cache_data } from '../../../
 
 import type { B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
 
-  //#endregion ➤ Package Imports
+// #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES] Imports
+// #region ➤ 📌 VARIABLES
 
-type PAGE_TYPE = 'homepage' | 'tournaments' | 'fixtures' | 'player';
+type PAGE_TYPE =
+  | 'homepage'
+  | 'tournaments'
+  | 'fixtures'
+  | 'player'
+  | 'competitions'
+;
 
 const graphQlInstance = initGrapQLClient()
 
-  //#endregion ➤ [VARIABLES] Imports
+// #endregion ➤ 📌 VARIABLES
 
-  //#region ➤ [METHODS]
+// #region ➤ 🛠️ METHODS
 
-/** @type {import('./$types').RequestHandler} */
+/**
+ * @type {import('./$types').RequestHandler}
+ */
 export async function GET
 (
   req
 ): Promise < unknown >
 {
-  // IMPORTANT
-  // valid url check;
+  // ### IMPORTANT
+  // ### required for target URL validity check.
 	const langUrl: string =	req?.url?.searchParams?.get('langUrl');
 	const sportUrl: string = req?.url?.searchParams?.get('sportUrl');
 	const countryUrl: string = req?.url?.searchParams?.get('countryUrl');
 	const leagueUrl: string =	req?.url?.searchParams?.get('leagueUrl');
 	const fixtureUrl: string = req?.url?.searchParams?.get('fixtureUrl');
 	const playerUrl: string =	req?.url?.searchParams?.get('playerUrl');
+  const competitionMainUrl: string = req?.url?.searchParams?.get('competitionMainUrl');
 
-  // SEO & page data;
+  // ### IMPORTANT
+  // ### required for target SEO & Page data.
 	const url: string = req?.url?.searchParams?.get('url');
 	const lang: string = req?.url?.searchParams?.get('lang');
 	const page: PAGE_TYPE =	req?.url?.searchParams?.get('page') as PAGE_TYPE;
@@ -49,14 +59,18 @@ export async function GET
   // TODO: add (hasura/postgresql) fallback for all METHODS below;
   // TODO: add player (page) sections into the mix of METHODS below;
 
-  // [1] valid url;
-  const if_M_0 =
-    langUrl
-    || sportUrl
-    || countryUrl
-    || leagueUrl
-    || fixtureUrl
-    || playerUrl
+  // ### CHECK
+  // ### for target URL validity.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_0: boolean =
+    langUrl != undefined
+    || sportUrl != undefined
+    || countryUrl != undefined
+    || leagueUrl != undefined
+    || fixtureUrl != undefined
+    || playerUrl != undefined
+    || competitionMainUrl != undefined
   ;
 	if (if_M_0)
   {
@@ -67,18 +81,22 @@ export async function GET
       countryUrl,
       leagueUrl,
       fixtureUrl,
-      playerUrl
+      playerUrl,
+      competitionMainUrl
     )
 	}
 
-  // [2] page (home) SEO
-  const if_M_1 =
+  // ### CHECK
+  // ### for target data retrieve of page (home) MAIN SEO.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_1: boolean =
     lang
     && page === 'homepage'
   ;
 	if (if_M_1)
   {
-		const data = await get_target_hset_cache_data
+		const data: unknown = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A1,
       lang
@@ -86,14 +104,17 @@ export async function GET
 		if (data) return json(data);
 	}
 
-  // [3] page (tournament) DATA
-  const if_M_2 =
+  // ### CHECK
+  // ### for target data retrieve of page (tournament) MAIN DATA.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_2: boolean =
     url
     && page === 'tournaments'
   ;
 	if (if_M_2)
   {
-		const data = await get_target_hset_cache_data
+		const data: unknown = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A3,
       url
@@ -101,14 +122,17 @@ export async function GET
 		if (data)	return json(data);
 	}
 
-  // [4] page (tournament) SEO
-  const if_M_3 =
+  // ### CHECK
+  // ### for target data retrieve of page (tournament) MAIN SEO.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_3: boolean =
     lang
     && page === 'tournaments'
   ;
 	if (if_M_3)
   {
-		const data = await get_target_hset_cache_data
+		const data: unknown = await get_target_hset_cache_data
     (
 			RedisKeys.SAP_C_D_A2,
       lang
@@ -116,9 +140,11 @@ export async function GET
 		if (data) return json(data);
 	}
 
-  // [5] page (fixture) DATA
-  // NOTE: (w/fallback)
-  const if_M_4 =
+  // ### CHECK
+  // ### for target data retrieve of page (fixture) MAIN DATA.
+  // ### NOTE:
+  // ### cache & hasura (fallback) solution.
+  const if_M_4: boolean =
     fixture_id
     && page === 'fixtures'
   ;
@@ -127,9 +153,10 @@ export async function GET
 
     const _fixture_id: number = parseInt(fixture_id)
     let data;
-    let loadType = "cache";
+    let loadType: string = "cache";
 
-    // NOTE: check in cache;
+    // ### CHECK
+    // ### for cache.
     if (!hasura)
     {
       data = await get_target_hset_cache_data
@@ -139,7 +166,8 @@ export async function GET
       );
     }
 
-    // NOTE: (default) fallback;
+    // ### CHECK
+    // ### for default hasura fallback.
 		if (!data || hasura)
     {
       data = await fallbackMainData_2
@@ -149,20 +177,23 @@ export async function GET
       loadType = 'HASURA'
 		}
 
+    // ### [🐞]
     console.log(`📌 loaded [PFIX] with: ${loadType}`)
 
     return json(data);
-
 	}
 
-  // [6] page (fixture) SEO
-  const if_M_5 =
+  // ### CHECK
+  // ### for target data retrieve of page (fixture) MAIN SEO.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_5: boolean =
     lang
     && page === 'fixtures'
   ;
 	if (if_M_5)
   {
-		const data = await get_target_hset_cache_data
+		const data: unknown = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A4,
       lang
@@ -170,9 +201,11 @@ export async function GET
 		if (data)	return json(data);
 	}
 
-  // [7] page (player) DATA
-  // NOTE: (w/fallback)
-  const if_M_6 =
+  // ### CHECK
+  // ### for target data retrieve of page (player) MAIN DATA.
+  // ### NOTE:
+  // ### cache & hasura (fallback) solution.
+  const if_M_6: boolean =
     player_id
     && page === 'player'
   ;
@@ -181,7 +214,7 @@ export async function GET
 
     const _player_id: number = parseInt(player_id)
     let data;
-    let loadType = "cache";
+    let loadType: string = "cache";
 
     // NOTE: check in cache;
     if (!hasura)
@@ -208,14 +241,17 @@ export async function GET
     return json(data);
   }
 
-  // [8] page (player) SEO
-  const if_M_7 =
+  // ### CHECK
+  // ### for target data retrieve of page (player) MAIN SEO.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_7: boolean =
     lang
     && page === 'player'
   ;
   if (if_M_7)
   {
-    const data = await get_target_hset_cache_data
+    const data: unknown = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A15,
       lang
@@ -223,7 +259,28 @@ export async function GET
     return json(data);
   }
 
-  // [9] page (country) TRANSLATION(s)
+  // ### CHECK
+  // ### for target data retrieve of page (competitions) MAIN SEO.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_8: boolean =
+    lang
+    && page === 'competitions'
+  ;
+  if (if_M_8)
+  {
+    const data: unknown = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A18,
+      lang
+    );
+    return json(data);
+  }
+
+  // ### CHECK
+  // ### for target data retrieve of page (country) TRANSLATION(s).
+  // ### NOTE:
+  // ### cache only.
 	if (country_id)
   {
 		const data = await get_target_hset_cache_data
@@ -234,7 +291,10 @@ export async function GET
 		if (data) return json(data);
 	}
 
-  // [10] page (term) TRANSLATION(s)
+  // ### CHECK
+  // ### for target data retrieve of page (terms) TRANSLATION(s).
+  // ### NOTE:
+  // ### cache only.
 	if (term)
   {
 		const data = await get_target_hset_cache_data
@@ -245,7 +305,10 @@ export async function GET
 		if (data) return json(data);
 	}
 
-  // [11] page (months) TRANSLATION(s)
+  // ### CHECK
+  // ### for target data retrieve of page (months) TRANSLATION(s).
+  // ### NOTE:
+  // ### cache only.
 	if (months && lang)
   {
 		const data = await get_target_hset_cache_data
@@ -259,9 +322,9 @@ export async function GET
 	return json(null);
 }
 
-// ============
-// HELPER METHODS
-// ============
+// ****************************************************
+// 📌 HELPER METHODS                                  *
+// ****************************************************
 
 async function validUrlCheck
 (
@@ -270,26 +333,44 @@ async function validUrlCheck
   countryUrl: string,
   leagueUrl: string,
   fixtureUrl: string,
-  playerUrl: string
+  playerUrl: string,
+  competitionMainUrl: string
 ): Promise < Response >
 {
-  const validUrl: number[] = []
-  if (langUrl) validUrl.push(await get_target_set_cache_data(RedisKeys.SAP_C_D_A9, langUrl) as number)
-  if (sportUrl) validUrl.push(await get_target_set_cache_data(RedisKeys.SAP_C_D_A10, `${langUrl}_${sportUrl}`) as number)
-  if (countryUrl) validUrl.push(await get_target_set_cache_data(RedisKeys.SAP_C_D_A11, `${langUrl}_${countryUrl}`) as number)
-  if (leagueUrl) validUrl.push(await get_target_set_cache_data(RedisKeys.SAP_C_D_A12, leagueUrl) as number)
-  if (fixtureUrl) validUrl.push(await get_target_set_cache_data(RedisKeys.SAP_C_D_A13, fixtureUrl) as number)
-  if (playerUrl) validUrl.push(await get_target_set_cache_data(RedisKeys.SAP_C_D_A14, playerUrl) as number)
-  const validation_0 =
+  const validUrl: number[] = [];
+
+  if (langUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A9, langUrl) as number);
+  ;
+  if (sportUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A10, `${langUrl}_${sportUrl}`) as number);
+  ;
+  if (countryUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A11, `${langUrl}_${countryUrl}`) as number);
+  ;
+  if (leagueUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A12, leagueUrl) as number);
+  ;
+  if (fixtureUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A13, fixtureUrl) as number);
+  ;
+  if (playerUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A14, playerUrl) as number);
+  ;
+  if (competitionMainUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A17, `${langUrl}_${competitionMainUrl}`) as number);
+  ;
+
+  const if_M_0: boolean =
     validUrl.includes(0)
   ;
-  if (validation_0) return json(false);
+  if (if_M_0) return json(false);
   return json(true);
 }
 
-// ============
-//  [MAIN] METHOD
-// ============
+// ****************************************************
+// 📌 MAIN METHOD                                     *
+// ****************************************************
 
 // TODO: fallback for league/tournament page DATA (critical)
 
@@ -331,4 +412,4 @@ async function fallbackMainData_2
   return dataRes0?.[0].get(fixtureId)
 }
 
-  //#endregion ➤ [METHODS]
+// #endregion ➤ 🛠️ METHODS
