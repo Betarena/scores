@@ -165,7 +165,7 @@
       m-b-16
       "
     >
-      {'Come back later'}
+      {B_SAP_CP_T?.general?.data?.no_competition ?? 'Come back later'}
     </p>
 
     <p
@@ -176,9 +176,9 @@
       color-black-2
       "
     >
-      {'No competitions available'}
-      <br />
-      {'at the moment'}
+      {B_SAP_CP_T?.general?.data?.no_competition_title ?? 'No competitions available at the moment'}
+      <!-- <br /> -->
+      <!-- {''} -->
     </p>
 
   </div>
