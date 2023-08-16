@@ -45,7 +45,7 @@ import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
  * { string | undefined } page_params_lang - Target page `params` for `lang`.
  *
  * @returns
- * A string of target language.
+ * A string of target current `platform` language.
  */
 export function platfrom_lang_ssr
 (
@@ -55,10 +55,10 @@ export function platfrom_lang_ssr
 ): string
 {
 
-  // [🐞]
+  // ### [🐞]
   dlogv2
   (
-    'Platfrom-Functions',
+    'platfrom_lang_ssr(..)',
     [
       `🔹 [var] page_route_id: ${page_route_id}`,
       `🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`,
@@ -87,10 +87,10 @@ export function platfrom_lang_ssr
       : 'en'
   ;
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
-    `Platfrom-Functions server_side_language ➡️ ${server_side_language}`
+    `🔹 [var] ➤ platfrom_lang_ssr(..) server_side_language ➡️ ${server_side_language}`
   );
 
 	return server_side_language;
@@ -695,6 +695,9 @@ export async function initSportbookData
 }
 
 /**
+ * @summary
+ * 🔹 HELPER | TESTING | STASH
+ *
  * @description
  * TODO: DOC:
  */
@@ -745,7 +748,7 @@ export function toDecimalFix
   // [🐞]
   dlog
   (
-    `🔹 [var] ➤ value ${value}`,
+    `🔹 [var] ➤ toDecimalFix(..) value : ${value}`,
     true
   );
 
@@ -771,7 +774,7 @@ export function spliceBalanceDoubleZero
   // [🐞]
   dlog
   (
-    `🔹 [var] ➤ value ${value}`,
+    `🔹 [var] ➤ spliceBalanceDoubleZero(..) value : ${value}`,
     true
   );
 
