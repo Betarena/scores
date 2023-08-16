@@ -73,6 +73,8 @@
 	  isBookmakersDropdown: boolean = false,
 	  isUserAuthDropdown: boolean = false,
     isRouteCompetitions: boolean,
+    /** @description A `reactive` based `boolean` variable, indicating wether **current** route is of `profile` section.  */
+    isRouteProfile: boolean,
     selectedSport: string = 'football',
 	  homepageURL: string,
 	  logoLink: string,
@@ -84,6 +86,7 @@
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
   $: userLang = $userBetarenaSettings?.lang;
   $: isRouteCompetitions = $page?.route?.id == '/[[lang=lang]]/[competitions=competitions]';
+  $: isRouteProfile = $page?.route?.id == '/u/[view]/[lang=lang]';
 
   $: dropDownArea =
     isLangDropdown
@@ -552,7 +555,7 @@ NAVBAR MAIN
   "
   column-space-center
   "
-  class:user-active={PROFILE_URL == $page.route.id}
+  class:user-active={isRouteProfile}
   class:update-z-index={if_R_4}
 >
 
@@ -689,7 +692,7 @@ NAVBAR MAIN
           <!--
           NAV TRIANGLE
           -->
-          {#if PROFILE_URL != $page.route.id}
+          {#if !isRouteProfile}
             <div
               id="nav-triangle"
               style="left: {width}px;"
@@ -962,7 +965,7 @@ NAVBAR MAIN
       ----
       COMPETITIONS HORIZONTAL LIST - SCORES ONLY
       -->
-      {#if PROFILE_URL != $page.route.id}
+      {#if !isRouteProfile}
 
         <div
           id="header/bottom/inner"
@@ -1117,7 +1120,7 @@ NAVBAR MAIN
           <!--
           BOOKMAKERS CONTAINER
           -->
-          {#if PROFILE_URL != $page.route.id}
+          {#if !isRouteProfile}
             <HeaderCBookmakers
               {isViewMobile}
               {isViewTablet}
@@ -1406,7 +1409,7 @@ NAVBAR MAIN
             {isViewMobile}
           />
 
-          {#if isViewMobile && PROFILE_URL != $page.route.id && !isRouteCompetitions}
+          {#if isViewMobile && !isRouteProfile && !isRouteCompetitions}
 
             <!--
             ODDS SECTION
