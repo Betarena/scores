@@ -53,7 +53,9 @@
     /** */
     PlatformAlertDynamic: any,
     /** */
-    EmailSubscribeDynamic: any
+    EmailSubscribeDynamic: any,
+    /** */
+    isRouteCompetitions: boolean
   ;
 
 	$: B_NAV_T = $page.data?.B_NAV_T ?? { };
@@ -63,7 +65,11 @@
 		$page?.error,
 		$page?.params?.lang
 	);
+  $: isRouteCompetitions = $page?.route?.id == '/[[lang=lang]]/[competitions=competitions]';
+
   $sessionStore.deviceType = $page.data?.deviceType;
+  // @ts-ignore
+  $sessionStore.fixturesTodayNum = parseInt(B_NAV_T?.scores_header_fixtures_information?.football)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -288,6 +294,7 @@
 
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
+  class:before-display-none={isRouteCompetitions}
 >
 
 	<slot />
@@ -332,6 +339,11 @@
 		background-origin: border-box;
 		background-position: top;
 	}
+  main.before-display-none::before
+  {
+    /* 🎨 style */
+    display: none;
+  }
 
 	/*
   =============
