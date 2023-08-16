@@ -8,13 +8,26 @@
 
   // #region ➤ 📦 Package Imports
 
+	import { page } from '$app/stores';
+
+  import userBetarenaSettings from '$lib/store/user-settings.js';
+  import { viewport_change } from '$lib/utils/platform-functions.js';
+  import { onMount } from 'svelte';
+
+  import img_no_competitions_light from './assets/no-competitions-lobby-light.png';
   import img_no_competitions from './assets/no-competitions-lobby.png';
+
+	import type { B_SAP_CP_T } from '@betarena/scores-lib/types/seo-pages.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
   const
+    /** */
+    MOBILE_VIEW = 475,
+    /** */
+    TABLET_VIEW = 1160,
     /**
      * @description
      * 📌 `this` component **main** `id` and `data-testid` prefix.
@@ -22,7 +35,88 @@
     CNAME = 'competitions⮕w⮕no-comp'
   ;
 
+	let
+    /** Page data availabe for `this` layout */
+    B_SAP_CP_T: B_SAP_CP_T,
+    /** */
+    mobileExclusive: boolean = true,
+    /** */
+    tabletExclusive: boolean = true
+  ;
+
+	$: B_SAP_CP_T = $page.data?.B_SAP_CP_T;
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🛠️ METHODS
+
+  /**
+   * @summary
+   * 🟥 MAIN | 🔹 HELPER
+   *
+   * @description
+   * TODO: DOC:
+   */
+   function resizeAction
+  (
+  ): void
+  {
+
+    [
+      tabletExclusive,
+      mobileExclusive
+    ] = viewport_change
+    (
+      TABLET_VIEW,
+      MOBILE_VIEW
+    );
+
+  }
+
+  /**
+   * @summary
+   * 🟥 MAIN | 🔹 HELPER
+   *
+   * @description
+   * TODO: DOC:
+   */
+  function initEventListeners
+  (
+  ): void
+  {
+    // ### NOTE:
+    // ### listen to changes in 'window.resize'.
+    window.addEventListener
+    (
+      'resize',
+      function
+      (
+      ): void
+      {
+        resizeAction();
+      }
+    );
+  }
+
+  // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  /**
+   * @description
+   * TODO: DOC:
+  */
+  onMount
+  (
+    async (
+    ): Promise < void > =>
+    {
+      resizeAction();
+      initEventListeners();
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -36,10 +130,8 @@
 
 <div
   id="{CNAME}⮕main"
-  class=
-  "
-  row-space-out
-  "
+  class:column-space-center={mobileExclusive}
+  class:row-space-out={!mobileExclusive}
 >
 
   <!--
@@ -47,22 +139,22 @@
   -->
   <img
     id=''
-    src={img_no_competitions}
+    src={$userBetarenaSettings?.theme == 'Dark' ? img_no_competitions : img_no_competitions_light}
     alt='no-competitions-img'
     title='No Competitions'
     loading='lazy'
     width=186
     height=186
-    class=
-    "
-    m-r-64
-    "
+    class:m-b-35={mobileExclusive}
+    class:m-r-64={!mobileExclusive}
   />
 
   <!--
   NO COMPETITION TEXT
   -->
-  <div>
+  <div
+    class:text-center={mobileExclusive}
+  >
 
     <p
       class=
@@ -73,7 +165,7 @@
       m-b-16
       "
     >
-      Come back later
+      {'Come back later'}
     </p>
 
     <p
@@ -84,9 +176,9 @@
       color-black-2
       "
     >
-      No competitions available
+      {'No competitions available'}
       <br />
-      at the moment
+      {'at the moment'}
     </p>
 
   </div>
