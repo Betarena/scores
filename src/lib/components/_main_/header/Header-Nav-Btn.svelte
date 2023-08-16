@@ -6,6 +6,8 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📦 Package Imports
 
+	import { page } from "$app/stores";
+
 	import sessionStore from "$lib/store/session.js";
 
   // #endregion ➤ 📦 Package Imports
@@ -13,18 +15,48 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📌 VARIABLES
 
   export let
+    /** @description TODO: DOC: */
     navKey: string,
+    /** @description TODO: DOC: */
     navUrl: string,
+    /** @description TODO: DOC: */
     navTxt: string,
-    isProfilePage: boolean,
+    /** @description Translation of target 'soon' text */
     soonTxt: string = '',
+    /** @description Wether target navigation is not yet available and should contain a warning `soon` */
     isSoon: boolean = false,
+    /** @description TODO: DOC: */
     disableAnchor: boolean = false,
+    /** @description TODO: DOC: */
     isViewTablet: boolean,
+    /** @description TODO: DOC: */
     isViewMobile: boolean
   ;
 
+  let
+    /** @description TODO: DOC: */
+    isProfilePage: boolean,
+    /** @description TODO: DOC: */
+    isRouteCompetitions: boolean
+  ;
+
+  $: isRouteCompetitions = $page?.route?.id == '/[[lang=lang]]/[competitions=competitions]';
+  $: isProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
+
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  /**
+   * @description
+   * TODO: DOC:
+  */
+  $: if_R_0 =
+    navKey == 'scores' && !isRouteCompetitions && !isProfilePage
+    || navKey == 'competitions' && isRouteCompetitions && !isProfilePage
+  ;
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -49,7 +81,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
   cursor-pointer
   "
   class:m-b-30={isViewTablet || isViewMobile}
-  class:active={navKey == 'scores' && !isProfilePage}
+  class:active={if_R_0}
   class:disable-anchor={disableAnchor}
   on:mouseover={() => $sessionStore.navBtnHover = navKey}
   on:mouseout={() => $sessionStore.navBtnHover = undefined}

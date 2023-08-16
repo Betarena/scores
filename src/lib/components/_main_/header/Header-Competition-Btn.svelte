@@ -45,10 +45,10 @@
     selectedCompetition == competitionNameDefault
   ;
   $: if (!if_R_0)
-    sportIcon = `/assets/svg/sport-icon/${competitionNameDefault.toLocaleLowerCase()}.svg`;
+    sportIcon = `https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fcompetitions%2FTarget.svg?alt=media&token=13570fcf-ec34-48dc-b612-06e97102a3c6`;
   ;
   $: if (if_R_0)
-    sportIcon = `/assets/svg/sport-icon/${competitionNameDefault.toLocaleLowerCase()}-select.svg`
+    sportIcon = `https://firebasestorage.googleapis.com/v0/b/betarena-ios.appspot.com/o/Betarena_Media%2Fcompetitions%2FTarget.svg?alt=media&token=13570fcf-ec34-48dc-b612-06e97102a3c6`;
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
