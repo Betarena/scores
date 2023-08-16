@@ -16,12 +16,12 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
-	import { checkNull, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
+	import { generateUrlCompetitions, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
 
   import SvelteSeo from 'svelte-seo';
+  import NoCompetitionsWidget from './no-competitions/No-Competitions-Widget.svelte';
 
   import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
-  import NoCompetitionsWidget from './no-competitions/No-Competitions-Widget.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -38,7 +38,7 @@
     /** Page data availabe for `this` layout */
     B_SAP_CP_T: B_SAP_CP_T,
     /** */
-    B_SAP_D3: B_SAP_D3,
+    B_SAP_D3_CP_M: B_SAP_D3,
     /** */
 	  current_lang: string = $sessionStore?.serverLang,
     /** */
@@ -48,7 +48,7 @@
   ;
 
 	$: B_SAP_CP_T = $page.data?.B_SAP_CP_T;
-	$: B_SAP_D3 = $page.data?.B_SAP_D3;
+	$: B_SAP_D3_CP_M = $page.data?.B_SAP_D3_CP_M;
   $: refresh_lang = $userBetarenaSettings?.lang;
 	$: lang_intent = $sessionStore?.lang_intent;
 
@@ -108,55 +108,6 @@
    * @summary
    * 🟥 MAIN | 🔹 HELPER
    *
-   * @description
-   * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
-   *
-   * @param
-   * { string } lang
-   *
-   * @returns
-   * A target string, of the new `URL`.
-   */
-  function translateUrlCompetitions
-  (
-    lang: string
-  ): string
-  {
-    // [🐞]
-    dlog
-    (
-      `🔹 [var] ➤ B_SAP_D3 ${JSON.stringify(B_SAP_D3)}`,
-      true
-    );
-
-    let newUrl: string =
-      lang == 'en'
-        ? `/${B_SAP_D3?.[lang]}`
-        : `/${lang}/${B_SAP_D3?.[lang]}`
-    ;
-
-    newUrl = newUrl.replace
-    (
-      'https://scores.betarena.com',
-      ''
-    );
-
-    // ### [🐞]
-    dlog
-    (
-      `🔹 [var] ➤ newUrl : ${newUrl}`,
-      true
-    );
-
-    if (checkNull(newUrl)) return '/';
-
-    return newUrl;
-  }
-
-  /**
-   * @summary
-   * 🟥 MAIN | 🔹 HELPER
-   *
    * @param
    * { string } newURL - Target new `URL` that is to be navigated to.
    */
@@ -202,12 +153,13 @@
 
 		current_lang = refresh_lang;
 
-		let newURL: string = translateUrlCompetitions
+		let newURL: string = generateUrlCompetitions
     (
-      current_lang
+      current_lang,
+      B_SAP_D3_CP_M
     );
 
-    // ### NOTE: STASH:
+    // ### NOTE: | STASH:
     // ### Alternative navigational options, testing.
     /*
       invalidate('/api/cache/tournaments/cache-data.json');
@@ -252,9 +204,10 @@
       true
     );
 
-    let newURL: string = translateUrlCompetitions
+    let newURL: string = generateUrlCompetitions
     (
-      lang_intent
+      lang_intent,
+      B_SAP_D3_CP_M
     );
 
     navigateToTranslation(newURL)
@@ -358,13 +311,13 @@
       <link
         rel="alternate"
         hreflang={item?.hreflang}
-        href="https://scores.betarena.com/{B_SAP_D3?.['en']}"
+        href="https://scores.betarena.com/{B_SAP_D3_CP_M?.['en']}"
       />
     {:else}
       <link
         rel="alternate"
         hreflang={item?.hreflang}
-        href="https://scores.betarena.com/{item?.link}/{B_SAP_D3?.[item?.link]}"
+        href="https://scores.betarena.com/{item?.link}/{B_SAP_D3_CP_M?.[item?.link]}"
       />
     {/if}
   {/each}
@@ -382,7 +335,19 @@
   id="page-competitions"
 >
 
-  <h1>Competitions</h1>
+  <!--
+  ### TODO:
+  ### temporary title / breadcrumb
+  -->
+  <p
+    class=
+    "
+    s-14
+    color-black-2
+    "
+  >
+    {B_SAP_CP_T?.general?.data?.title ?? 'Competitions'}
+  </p>
 
   <NoCompetitionsWidget />
 
@@ -407,6 +372,7 @@
 		max-width: 1430px;
 		grid-template-columns: 1fr;
 		align-items: start;
+    padding-top: 12px;
 	}
 
 	div.grid-display-column

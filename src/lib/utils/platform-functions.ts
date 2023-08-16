@@ -21,6 +21,7 @@ import { ROUTE_ID_PROFILE } from "./user.js";
 
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
+import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
 
 // #endregion ➤ 📦 Package Imports
 
@@ -1062,6 +1063,59 @@ export async function selectLanguage
     // ### Solution 2.
     await goto(newURL, { replaceState: true });
   }
+}
+
+/**
+ * @summary
+ * 🟥 MAIN | 🔹 HELPER
+ *
+ * @description
+ * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
+ *
+ * @param
+ * { string } lang - Target **current** platform language.
+ *
+ * @param
+ * { B_SAP_D3 } data - Target **translations** for the term "_competitions_".
+ *
+ * @returns
+ * A target string, of the new `URL`.
+ */
+export function generateUrlCompetitions
+(
+  lang: string,
+  data: B_SAP_D3
+): string
+{
+  // ### [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ translateUrlCompetitions(..) data : ${JSON.stringify(data)}`,
+    true
+  );
+
+  let newUrl: string =
+    lang == 'en'
+      ? `/${data?.[lang]}`
+      : `/${lang}/${data?.[lang]}`
+  ;
+
+  newUrl = newUrl.replace
+  (
+    'https://scores.betarena.com',
+    ''
+  );
+
+  // ### [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ translateUrlCompetitions(..) newUrl : ${newUrl}`,
+    true
+  );
+
+  if (checkNull(newUrl)) return '/';
+
+  return newUrl;
 }
 
 /**
