@@ -7,6 +7,7 @@ import parser from 'ua-parser-js';
 
 import type { B_FOT_T } from '@betarena/scores-lib/types/footer.js';
 import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 import type { LayoutServerLoad } from './$types.js';
 
@@ -40,7 +41,7 @@ export async function load
     // route
   } = event;
 
-  // ### NOTE: TEST
+  // ### NOTE: | TEST: | STASH:
   // ### testing to identify USERS IP, from within load
   // ### only works with deployment using '<node-server>.js'
   /*
@@ -89,7 +90,7 @@ export async function load
 
   */
 
-  // ### NOTE: TEST
+  // ### NOTE: | TEST:
   // ### identify 'user-agent' object data, for device type.
   const deviceType: string = detectDeviceWithUA
   (
@@ -110,6 +111,7 @@ export async function load
   [
     B_NAV_T,
     B_FOT_T,
+    B_SAP_D3_CP_H
   ] = await fetchData
   (
     fetch,
@@ -161,6 +163,7 @@ export async function load
 		B_NAV_T,
 		B_FOT_T,
     deviceType,
+    B_SAP_D3_CP_H
 	};
 
 }
@@ -177,6 +180,7 @@ type PP_PROMISE_0 =
 [
   B_NAV_T | undefined,
   B_FOT_T | undefined,
+  B_SAP_D3 | undefined
 ];
 
 /**
@@ -193,13 +197,14 @@ async function fetchData
   // [🐞]
   dlog
   (
-    `🚏 checkpoint ➤ src/routes/+layout.ts fecthData`
+    `🚏 checkpoint ➤ src/routes/+layout.ts fecthData(..)`
   );
 
   const urls_0: string[] =
   [
     `/api/data/main/navbar?lang=${_lang}`,
-    `/api/data/main/footer?lang=${_lang}`
+    `/api/data/main/footer?lang=${_lang}`,
+    `/api/data/main/seo-pages?term=competitions`,
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
@@ -241,7 +246,7 @@ function detectDeviceWithUA
   // [🐞]
   dlog
   (
-    `🔹 [var] ➤ parsedUA ${JSON.stringify(parsedUA, null, 4)}`,
+    `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA ${JSON.stringify(parsedUA, null, 4)}`,
     false
   );
 
@@ -257,7 +262,7 @@ function detectDeviceWithUA
   // [🐞]
   dlog
   (
-    `🔹 [var] ➤ parsedUA_2 ${JSON.stringify(parsedUA_2, null, 4)}`,
+    `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA_2 ${JSON.stringify(parsedUA_2, null, 4)}`,
     false
   );
 
@@ -266,7 +271,7 @@ function detectDeviceWithUA
   // [🐞]
   dlog
   (
-    `🔹 [var] ➤ deviceType ${deviceType}`,
+    `🔹 [var] ➤ detectDeviceWithUA(..) deviceType ${deviceType}`,
     true
   );
 
