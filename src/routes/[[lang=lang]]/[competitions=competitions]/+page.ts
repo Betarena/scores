@@ -67,7 +67,7 @@ export async function load
   const
   [
     B_SAP_CP_T,
-    B_SAP_D3
+    B_SAP_D3_CP_M
   ] = await fetchData
   (
     fetch,
@@ -106,7 +106,7 @@ export async function load
     // ### NOTE: FIXME:
     // ### issues with setting correct <PageLoad> types.
 		B_SAP_CP_T,
-    B_SAP_D3
+    B_SAP_D3_CP_M
 	};
 
 }
