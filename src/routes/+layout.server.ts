@@ -108,8 +108,8 @@ export async function load
 
   const
   [
-    HEADER_TRANSLATION_DATA,
-    FOOTER_TRANSLATION_DATA
+    B_NAV_T,
+    B_FOT_T,
   ] = await fetchData
   (
     fetch,
@@ -119,8 +119,8 @@ export async function load
   // ### IMPORTANT
   // ### exit condition.
   const if_M_0: boolean =
-    HEADER_TRANSLATION_DATA == undefined
-    || FOOTER_TRANSLATION_DATA == undefined
+    B_NAV_T == undefined
+    || B_FOT_T == undefined
   ;
 	if (if_M_0)
   {
@@ -158,9 +158,9 @@ export async function load
     // @ts-expect-error <whatever>
     // ### NOTE: FIXME:
     // ### issues with setting correct <PageLoad> types.
-		HEADER_TRANSLATION_DATA,
-		FOOTER_TRANSLATION_DATA,
-    deviceType
+		B_NAV_T,
+		B_FOT_T,
+    deviceType,
 	};
 
 }

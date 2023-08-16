@@ -55,9 +55,7 @@
     // ◼️ IMPORTANT
     isViewMobile: boolean = true,
     isViewTablet: boolean = true,
-    // ◼️ IMPORTANT
-    B_NAV_T: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA,
-    // ◼️ IMPORTANT
+    B_NAV_T: B_NAV_T = $page.data?.B_NAV_T,
     arrow_down_fade: string,
     arrow_down: string,
     arrow_up_fade: string,
@@ -82,7 +80,7 @@
     userUid: string = $userBetarenaSettings?.user?.firebase_user_data?.uid ?? undefined;
   ;
 
-  $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
+  $: B_NAV_T = $page.data.B_NAV_T;
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
   $: userLang = $userBetarenaSettings?.lang;
   $: isRouteCompetitions = $page?.route?.id == '/[[lang=lang]]/[competitions=competitions]';

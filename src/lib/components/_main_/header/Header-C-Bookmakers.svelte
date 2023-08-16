@@ -29,11 +29,11 @@ COMPONENT JS (w/ TS)
     icon_arrow_down_fade: string,
     icon_arrow_up: string,
     icon_check: string,
-    B_NAV_T: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA,
+    B_NAV_T: B_NAV_T = $page.data.B_NAV_T,
 	  isBookmakersDropdown: boolean = false
   ;
 
-  $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
+  $: B_NAV_T = $page.data.B_NAV_T;
 
   // #endregion ➤ 📌 VARIABLES
 

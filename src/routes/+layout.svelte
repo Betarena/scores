@@ -45,7 +45,7 @@
 
 	let
     /** */
-    HEADER_TRANSLATION_DATA: B_NAV_T,
+    B_NAV_T: B_NAV_T,
     /** */
 	  offlineMode: boolean = false,
     /** */
@@ -56,7 +56,7 @@
     EmailSubscribeDynamic: any
   ;
 
-	$: HEADER_TRANSLATION_DATA = $page.data?.HEADER_TRANSLATION_DATA ?? { };
+	$: B_NAV_T = $page.data?.B_NAV_T ?? { };
   $: serverSideLang = platfrom_lang_ssr
   (
 		$page?.route?.id,
@@ -138,7 +138,7 @@
 
     setUserGeoLocation
     (
-      HEADER_TRANSLATION_DATA
+      B_NAV_T
     );
 
     kickstartEventListen();

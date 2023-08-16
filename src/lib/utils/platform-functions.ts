@@ -21,6 +21,7 @@ import { ROUTE_ID_PROFILE } from "./user.js";
 
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
+import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
 
 // #endregion ➤ 📦 Package Imports
@@ -268,7 +269,7 @@ export function googleEventLog
  */
 export async function setUserGeoLocation
 (
-  HEADER_TRANSLATION_DATA: any
+  data: B_NAV_T
 ): Promise < void >
 {
 
@@ -305,7 +306,7 @@ export async function setUserGeoLocation
   // ### CHECK
   // ### for existance of GEO available from
   // ### translations/country list.
-  const data_0 =	HEADER_TRANSLATION_DATA?.scores_header_translations?.bookmakers_countries
+  const data_0 =	data?.scores_header_translations?.bookmakers_countries
   ?.find
   (
     function
