@@ -19,9 +19,11 @@
 	import { generateUrlCompetitions, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
 
   import SvelteSeo from 'svelte-seo';
-  import NoCompetitionsWidget from './no-competitions/No-Competitions-Widget.svelte';
 
+  import { subscribeCompetitionsAllListen } from '$lib/graphql/graphql.common.js';
   import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+  import HighlightsWidget from './highlights/Highlights-Widget.svelte';
+
 
   // #endregion ➤ 📦 Package Imports
 
@@ -273,6 +275,8 @@
     {
       resizeAction();
       initEventListeners();
+
+      subscribeCompetitionsAllListen();
     }
   );
 
@@ -349,7 +353,11 @@
     {B_SAP_CP_T?.general?.data?.title ?? 'Competitions'}
   </p>
 
-  <NoCompetitionsWidget />
+  <!-- <NoCompetitionsWidget /> -->
+
+  <div>
+    <HighlightsWidget />
+  </div>
 
 </section>
 
@@ -387,55 +395,5 @@
   ⚡️ RESPONSIVNESS
   =============
   */
-
-	@media only screen
-  and (min-width: 768px)
-  {
-
-		section#page-competitions
-    {
-			grid-template-columns: 1fr;
-		}
-
-	}
-
-	@media only screen
-  and (min-width: 1160px)
-  {
-
-		section#page-competitions
-    {
-			gap: 20px;
-			grid-template-columns:
-				minmax(auto, 275px)
-        minmax(auto, 502px)
-				minmax(auto, 502px)
-      ;
-		}
-
-	}
-
-  @media screen
-  and (min-width: 560px)
-  {
-    :root
-    {
-      --homepage-layout-is-mobile: true;
-    }
-  }
-
-	@media only screen
-  and (min-width: 1320px)
-  {
-		section#page-competitions
-    {
-			gap: 20px;
-			grid-template-columns:
-				minmax(auto, 328px)
-        minmax(502px, 502px)
-				minmax(auto, 502px)
-      ;
-		}
-	}
 
 </style>
