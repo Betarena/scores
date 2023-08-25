@@ -8,7 +8,7 @@
 
   // #region ➤ 📦 Package Imports
 
-	import Layout from "$lib/components/page/competitions/Layout.svelte";
+	import Layout from "$lib/components/page/lobby/Layout.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
