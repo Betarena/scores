@@ -1183,4 +1183,20 @@ export const checkNull = (value: any): boolean =>
   return if_M_0;
 }
 
+/**
+ * @description
+ *
+ * @param
+ * { string } value
+ *
+ * @returns
+ */
+export const iso2CountryLogo = (value: string): string =>
+{
+  return value != undefined
+    ? `https://betarena.com/images/flags/${value}.svg`
+    : `https://www.betarena.com/images/flags/EN.svg`
+  ;
+}
+
 // #endregion ➤ 🛠️ METHODS
