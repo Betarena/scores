@@ -4,6 +4,7 @@ import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/uti
 import { PRELOAD_exitPage, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 import type { PageLoad } from '../$types.js';
 
@@ -37,7 +38,7 @@ export async function load
   ;
 
   // **************************************
-  // VALIDATE URL                         *
+  //  📌 VALIDATE URL                     *
   // **************************************
 
   const validUrlCheck: boolean = await promiseValidUrlCheck
@@ -52,8 +53,8 @@ export async function load
     params?.competitions
   );
 
-  // ### CHECK
-  // ### for exit.
+  // ### CHECK | IMPORTANT
+  // ### for page exit.
   if (!validUrlCheck)
   {
     PRELOAD_exitPage
@@ -64,17 +65,23 @@ export async function load
     );
   }
 
+  // **************************************
+  //  📌 PREFETCH DATA                    *
+  // **************************************
+
   const
   [
     B_SAP_CP_T,
-    B_SAP_D3_CP_M
+    B_SAP_D3_CP_M,
+    B_COMP_HIGH_S,
+    B_COMP_HIGH_T
   ] = await fetchData
   (
     fetch,
     _langUrl
   );
 
-  // ### IMPORTANT
+  // ### CHECK | IMPORTANT
   // ### exit condition.
   const if_M_0: boolean =
     B_SAP_CP_T == undefined
@@ -106,7 +113,9 @@ export async function load
     // ### NOTE: FIXME:
     // ### issues with setting correct <PageLoad> types.
 		B_SAP_CP_T,
-    B_SAP_D3_CP_M
+    B_SAP_D3_CP_M,
+    B_COMP_HIGH_S,
+    B_COMP_HIGH_T
 	};
 
 }
@@ -122,7 +131,9 @@ export async function load
 type PP_PROMISE_0 =
 [
   B_SAP_CP_T | undefined,
-  B_SAP_D3 | undefined
+  B_SAP_D3 | undefined,
+  B_COMP_HIGH_S | undefined,
+  B_COMP_HIGH_T | undefined
 ];
 
 /**
@@ -139,7 +150,7 @@ async function fetchData
 ): Promise < PP_PROMISE_0 >
 {
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🚏 checkpoint ➤ src/routes/[[lang=lang]]/[competitions] fecthData`
@@ -149,6 +160,8 @@ async function fetchData
   [
     `/api/data/main/seo-pages?lang=${_lang}&page=competitions`,
     `/api/data/main/seo-pages?term=competitions`,
+    `/api/data/lobby/highlights?seo=true&lang=${_lang}`,
+    `/api/data/lobby/highlights?lang=${_lang}`,
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
