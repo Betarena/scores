@@ -13,13 +13,14 @@
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
+	import sessionStore from '$lib/store/session.js';
+	import { initialDevice } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import HighlightsLoader from './Highlights-Loader.svelte';
 
-	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
-	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
+	import type { B_COMP_HIGH_D, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.
@@ -30,22 +31,28 @@
   // #region ➤ 📌 VARIABLES
 
   const
-    /** Dynamic import variable condition */
+    /** @description dynamic import variable condition */
     useDynamicImport: boolean = true
   ;
 
   let
-    /** Main widget Translations data */
-    WIDGET_T_DATA: B_FEATB_T = $page.data?.B_FEATB_T,
-    /** Main widget data */
+    /** @description TODO: DOC: */
+    isViewMobile: boolean = false,
+    /** @description TODO: DOC: */
+    isViewTablet: boolean = false,
+    /** @description main widget translations data */
+    WIDGET_T_DATA: B_COMP_HIGH_T = $page.data?.B_COMP_HIGH_T,
+    /** @description main widget SEO data */
+    WIDGET_S_DATA: B_COMP_HIGH_S = $page.data?.B_COMP_HIGH_S,
+    /** @description main widget data */
     WIDGET_DATA: [number, B_COMP_HIGH_D][],
-    /** Wether widget has or no data */
+    /** @description wether widget has or no data */
     NO_WIDGET_DATA: boolean = true,
-    /** Dynamic import variable for svelte component */
+    /** @description dynamic import variable for svelte component */
     HighlightsGridDynamic: any
   ;
 
-  $: WIDGET_T_DATA = $page.data?.B_FEATB_T;
+  $: WIDGET_T_DATA = $page.data?.B_COMP_HIGH_T;
   $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.widget_title ?? translationObject?.featured_bet_site;
 
   // #endregion ➤ 📌 VARIABLES
@@ -76,7 +83,7 @@
 
     const response = await get
     (
-      `/api/data/competition/highlights`
+      `/api/data/lobby/highlights`
     ) as [number, B_COMP_HIGH_D][];
 
     WIDGET_DATA = response;
@@ -98,6 +105,22 @@
   }
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🚏 ONE-OFF CONDITIONS
+
+  /**
+   * @description
+   * TODO: DOC:
+  */
+  [
+    isViewMobile,
+    isViewTablet
+  ] = initialDevice
+  (
+    $sessionStore.deviceType
+  );
+
+  // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -132,28 +155,41 @@
 ================= -->
 
 <SeoBox>
-  <!-- TODO: -->
+
+  {#each WIDGET_S_DATA?.data ?? [] as item}
+
+    <p>{item?.country_name}</p>
+
+    <a href={item?.league_url}>
+      {item?.league_name}
+    </a>
+
+    <p>{item?.home_team_name}</p>
+    <p>{item?.away_team_name}</p>
+
+    <a href={item?.competition_url}>
+      {item?.competition_url}
+    </a>
+
+    <a href={item?.fixture_url}>
+      {item?.fixture_url}
+    </a>
+
+  {/each}
+
 </SeoBox>
 
 <!-- [🐞] -->
-<div
-  id="loader-grid"
->
-  {#each { length: 4 } ?? [] as item}
-    <HighlightsLoader />
-  {/each}
-</div>
+<!-- <h2>Open</h2>
+<HighlightsLoader /> -->
 
 {#await widgetInit()}
   <!--
   ### NOTE:
   ### promise is pending
   -->
-  <!-- <div>
-    {#each { length: 4 } ?? [] as item}
-      <HighlightsLoader />
-    {/each}
-  </div> -->
+  <h2>Open</h2>
+  <HighlightsLoader />
 {:then data}
   <!--
   ### NOTE:
@@ -189,43 +225,3 @@
   ### promise was rejected
   -->
 {/await}
-
-<!-- ===============
-### COMPONENT STYLE
-### NOTE:
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE
-### NOTE:
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'
-================= -->
-
-<style>
-
-  div#loader-grid
-  {
-    display: grid;
-    height: 550px;
-    gap: 20px;
-    grid-template-columns: auto;
-    overflow-y: hidden;
-    overflow-x: scroll;
-  }
-
-  /*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
-  */
-
-  @media only screen
-  and (min-width: 1160px)
-  {
-
-    div#loader-grid
-    {
-			gap: 20px;
-			grid-template-columns: 1fr 1fr 1fr 1fr;
-		}
-
-	}
-
-</style>

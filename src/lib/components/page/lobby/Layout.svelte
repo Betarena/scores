@@ -13,17 +13,18 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { listenRealTimeScoreboardAll, onceRealTimeLiveScoreboard } from '$lib/firebase/common.js';
+	import { subscribeCompetitionsAllListen } from '$lib/graphql/graphql.common.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug';
-	import { generateUrlCompetitions, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
+	import { generateUrlCompetitions, initialDevice, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
+	import HighlightsWidget from './highlights/Highlights-Widget.svelte';
 
   import SvelteSeo from 'svelte-seo';
 
-  import { subscribeCompetitionsAllListen } from '$lib/graphql/graphql.common.js';
   import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
-  import HighlightsWidget from './highlights/Highlights-Widget.svelte';
-
+  import type { Unsubscribe } from 'firebase/database';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -223,42 +224,13 @@
    * @description
    * TODO: DOC:
   */
-  if ($sessionStore.deviceType == 'mobile')
-  {
-    // [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ home/Layout.svelte 📱`,
-      true
-    );
-
-    mobileExclusive = true;
-    tabletExclusive = false;
-  }
-  else if ($sessionStore.deviceType == 'tablet')
-  {
-    // [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ home/Layout.svelte 💻`,
-      true
-    );
-
-    mobileExclusive = true;
-    tabletExclusive = true;
-  }
-  else if ($sessionStore.deviceType == 'desktop')
-  {
-    // [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ home/Layout.svelte 🖥️`,
-      true
-    );
-
-    mobileExclusive = false;
-    tabletExclusive = false;
-  }
+  [
+    mobileExclusive,
+    tabletExclusive
+  ] = initialDevice
+  (
+    $sessionStore.deviceType
+  );
 
   // #endregion ➤ 🚏 ONE-OFF CONDITIONS
 
@@ -277,6 +249,13 @@
       initEventListeners();
 
       subscribeCompetitionsAllListen();
+
+      // ### NOTE:
+      // ### causes a potential delay in data retrieval,
+      // ### as waits for onMount of Page & components;
+      await onceRealTimeLiveScoreboard()
+
+      let connectionRef: Unsubscribe = listenRealTimeScoreboardAll();
     }
   );
 
@@ -376,18 +355,11 @@
     /* 📌 position */
     position: relative;
     /* 🎨 style */
-		display: grid;
+		/* display: grid; */
 		max-width: 1430px;
 		grid-template-columns: 1fr;
 		align-items: start;
     padding-top: 12px;
-	}
-
-	div.grid-display-column
-  {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: 24px;
 	}
 
 	/*

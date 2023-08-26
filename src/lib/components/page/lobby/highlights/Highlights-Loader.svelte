@@ -44,122 +44,138 @@
 ================= -->
 
 <div
-  id="{CNAME}⮕main"
-  class=
-  "
-  widget-component
-  "
+  id="loader-grid"
 >
 
-  <!--
-  TOP ROW LOADER
-  -->
   <div
-    id="{CNAME}⮕top-row"
-    class=
-    "
-    row-space-out
-    m-b-20
-    "
-  >
-    <ChighLoaderTopLeft />
-    <ChighLoaderTopRight />
-  </div>
-
-  <!--
-  COMPETITION MID-SECTION
-  -->
-  <div
-    id="{CNAME}⮕middle-section"
+    id="loader-grid-inner"
   >
 
-    <!--
-    TOURNAMENT INFO - LOADER
-    -->
-    <div
-      class=
-      "
-      m-b-25
-      row-space-start
-      "
-    >
+    {#each { length: 4 } ?? [] as item}
+
       <div
+        id="{CNAME}⮕main"
         class=
         "
-        m-r-15
+        widget-component
         "
       >
-        <ChighLoaderTournamentBox />
+
+        <!--
+        TOP ROW LOADER
+        -->
+        <div
+          id="{CNAME}⮕top-row"
+          class=
+          "
+          row-space-out
+          m-b-20
+          "
+        >
+          <ChighLoaderTopLeft />
+          <ChighLoaderTopRight />
+        </div>
+
+        <!--
+        COMPETITION MID-SECTION
+        -->
+        <div
+          id="{CNAME}⮕middle-section"
+        >
+
+          <!--
+          TOURNAMENT INFO - LOADER
+          -->
+          <div
+            class=
+            "
+            m-b-25
+            row-space-start
+            "
+          >
+            <div
+              class=
+              "
+              m-r-15
+              "
+            >
+              <ChighLoaderTournamentBox />
+            </div>
+            <ChighLoaderTournamentInfo />
+          </div>
+
+          <!--
+          FIXTURE TEAMS - LOADER
+          -->
+          <div
+            id="{CNAME}⮕competition-teams"
+            class=
+            "
+            m-b-16
+            row-space-even
+            "
+          >
+
+            <ChighLoaderTeamBox />
+            <ChighLoaderTeamBox />
+
+          </div>
+
+          <!--
+          FIXTURE / COMPETITION COUNTDOWN LOADER
+          -->
+          <div
+            id="{CNAME}⮕countdown"
+            class=
+            "
+            m-b-24
+            row-space-out
+            "
+          >
+
+            <ChighLoaderTimerStart />
+
+            <div>
+              {#each { length: 3 } ?? [] as _}
+                <ChighLoaderTimerBox />
+              {/each}
+            </div>
+
+          </div>
+
+          <!--
+          COMPETITION DETAILS - LOADER
+          -->
+          <div
+            id="{CNAME}⮕grid-details"
+          >
+
+            {#each { length: 4 } ?? [] as _}
+              <ChighLoaderExtraInfo />
+            {/each}
+
+          </div>
+
+        </div>
+
+        <!--
+        FIXTURE / COMPETITION BOTTOM ROW - LOADER
+        -->
+        <div
+          id="{CNAME}⮕bottom-row"
+          class=
+          "
+          row-space-out
+          "
+        >
+          <ChighLoaderParticipants />
+          <ChighLoaderJoinNowBtn />
+        </div>
+
       </div>
-      <ChighLoaderTournamentInfo />
-    </div>
 
-    <!--
-    FIXTURE TEAMS - LOADER
-    -->
-    <div
-      id="{CNAME}⮕competition-teams"
-      class=
-      "
-      m-b-16
-      row-space-even
-      "
-    >
+    {/each}
 
-      <ChighLoaderTeamBox />
-      <ChighLoaderTeamBox />
-
-    </div>
-
-    <!--
-    FIXTURE / COMPETITION COUNTDOWN LOADER
-    -->
-    <div
-      id="{CNAME}⮕countdown"
-      class=
-      "
-      m-b-24
-      row-space-out
-      "
-    >
-
-      <ChighLoaderTimerStart />
-
-      <div>
-        {#each { length: 3 } ?? [] as _}
-          <ChighLoaderTimerBox />
-        {/each}
-      </div>
-
-    </div>
-
-    <!--
-    COMPETITION DETAILS - LOADER
-    -->
-    <div
-      id="{CNAME}⮕grid-details"
-    >
-
-      {#each { length: 4 } ?? [] as _}
-        <ChighLoaderExtraInfo />
-      {/each}
-
-    </div>
-
-  </div>
-
-  <!--
-  FIXTURE / COMPETITION BOTTOM ROW - LOADER
-  -->
-  <div
-    id="{CNAME}⮕bottom-row"
-    class=
-    "
-    row-space-out
-    "
-  >
-    <ChighLoaderParticipants />
-    <ChighLoaderJoinNowBtn />
   </div>
 
 </div>
@@ -173,6 +189,35 @@
 ================= -->
 
 <style>
+
+  div#loader-grid
+  {
+    /* 📌 position */
+    position: relative;
+    /* 🎨 style */
+    display: grid;
+    /* NOTE: only necessary if child 'grid' is position 'absolute' */
+    /* height: 483px; */
+    max-width: calc(100vw - 32px);
+    overflow: hidden;
+  }
+
+  div#loader-grid-inner
+  {
+    /* 📌 position */
+    /* NOTE: not wanting to use 'absolute' because then height cannot be 'dynamic' in parent */
+    /* position: absolute; */
+    /* 🎨 style */
+    width: 100%;
+    display: grid;
+    gap: 20px;
+    grid-auto-flow: column dense;
+    grid-template-rows: 1fr;
+    /* NOTE: does not work with the last highlights on the list */
+    /* grid-template-columns: repeat(auto-fill, calc(100vw - 32px)); */
+    grid-auto-columns: calc(100vw - 32px);
+    transition: all 0.5s;
+  }
 
   .widget-component
   {
@@ -229,6 +274,59 @@
 		padding: 16px 24px;
     background-color: var(--whitev2);
   }
+
+  /*
+  =============
+  ⚡️ RESPONSIVNESS
+  =============
+  */
+
+  @media only screen
+  and (min-width: 726px)
+  {
+
+    div#loader-grid
+    {
+      /* 🎨 style */
+      max-width: calc(100vw - 64px);
+    }
+
+    div#loader-grid-inner
+    {
+      /* 🎨 style */
+      /* IMPORTANT */
+      grid-auto-columns: calc((100vw - 64px - 20px) / 2);
+      /* grid-auto-columns: 328px; */
+    }
+
+  }
+
+  @media only screen
+  and (min-width: 1160px)
+  {
+
+    div#loader-grid-inner
+    {
+      /* 🎨 style */
+      /* IMPORTANT */
+      grid-auto-columns: calc((100vw - 64px - (20px * 2)) / 3);
+      /* grid-auto-columns: 328px; */
+    }
+
+  }
+
+  @media only screen
+  and (min-width: 1430px)
+  {
+
+    div#loader-grid-inner
+    {
+      /* 🎨 style */
+      /* IMPORTANT */
+      grid-auto-columns: 328px;
+    }
+
+	}
 
   /*
   =============
