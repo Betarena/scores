@@ -1,17 +1,19 @@
 // #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
-
-import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.competition.highlights.js';
 import dotenv from 'dotenv';
 
 import { checkNull } from '$lib/utils/platform-functions.js';
-import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
+import { CHIGH_CP_ENTRY, CHIGH_CP_ENTRY_1, CHIGH_CP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
+
+import type { B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
+// ### IMPORTANT
+// ### allows for 'NodeJs' to access secrets for '@scores/lib'.
 dotenv.config();
 
 // #endregion ➤ 📌 VARIABLES
@@ -29,21 +31,26 @@ export async function GET
 {
   try
   {
-    // NOTE: Handle url-query data;
+    // ### IMPORTANT
+    // ### Handle url-query data.
     const lang: string = req?.url?.searchParams?.get('lang');
+    const seo: string = req?.url?.searchParams?.get('seo');
 	  const competition_id: string = req?.url?.searchParams?.get('competition_id');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION: Get Fixture Scoreboard (WIDGET) MAIN data;
-    // NOTE: With [HASURA] Fallback;
+    // ### CHECK
+    // for target data competition - highlights (widget) MAIN DATA.
+    // ### NOTE:
+    // ### cache & hasura (fallback) solution.
     const if_M_0: boolean =
       checkNull(lang)
+      && checkNull(seo)
     ;
     if (if_M_0)
     {
       const _competition_id = parseInt(competition_id)
-      let data;
-      let loadType = "cache";
+      let data: unknown;
+      let loadType: string = '⚡️ CACHE';
 
       // NOTE: check CACHE;
       // if (!hasura)
@@ -57,14 +64,15 @@ export async function GET
       //   ;
       // }
 
-      // NOTE: (default) HASURA fallback;
+      // ### NOTE:
+      // ### (default) HASURA fallback.
       if (!data || hasura)
       {
         data = await fallbackMainData
         (
           _competition_id
-        )
-        loadType = 'HASURA'
+        );
+        loadType = '💿 HASURA';
       }
 
       console.log(`📌 loaded [FSCR] with: ${loadType}`)
@@ -72,10 +80,13 @@ export async function GET
       if (data != undefined) return json(data);
     }
 
-    // ACTION: Get Fixture Scoreboard (WIDGET) TRANSLATION data;
-    // NOTE: With [HASURA] Fallback;
+    // ### CHECK
+    // ### for target data competition - highlights (widget) TRANSLATIONS DATA.
+    // ### NOTE:
+    // ### cache & hasura (fallback) solution.
     const if_M_1: boolean =
       !checkNull(lang)
+      && checkNull(seo)
     ;
     if (if_M_1)
     {
@@ -87,7 +98,26 @@ export async function GET
       if (data != undefined) return json(data);
     }
 
-    // IMPORTANT - fallback to NULL
+    // ### CHECK
+    // ### for target data competition - highlights (widget) SEO DATA.
+    // ### NOTE:
+    // ### cache & hasura (fallback) solution.
+    const if_M_2: boolean =
+      !checkNull(lang)
+      && !checkNull(seo)
+    ;
+    if (if_M_2)
+    {
+      // TODO: LIN_C_T_A
+      const data =	await fallbackMainData_2
+      (
+        lang
+      );
+      if (data != undefined) return json(data);
+    }
+
+    // ### IMPORTANT
+    // ### fallback to NULL.
     return json
     (
       null
@@ -142,28 +172,56 @@ async function fallbackMainData
 
 /**
  * @summary
- * [MAIN] [FALLBACK] [#1] method
+ * 🔹 HELPER | IMPORTANT
+ *
  * @version
  * 1.0 - past versions: []
+ *
  * @param
- * {string} lang
+ * { string } lang - Target language to retrieve data for.
+ *
  * @returns
- * Promise < B_PSEO_T >
+ * Target language TRANSLATIONS for competitions highligths (widget).
  */
 async function fallbackMainData_1
 (
   lang: string
-): Promise < B_H2H_T >
+): Promise < B_COMP_HIGH_T >
 {
-  const dataRes0 = await CHIGH_CP_ENTRY_1
+  const dataRes0: [ Map < string, B_COMP_HIGH_T >, string[] ] = await CHIGH_CP_ENTRY_1
   (
     [lang]
   );
 
-  if (dataRes0?.[0]?.size == 0)
-  {
-    return null
-  }
+  if (dataRes0?.[0]?.size == 0) return null;
+
+	return dataRes0?.[0]?.get(lang);
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * TODO: DOC:
+ *
+ * @param
+ * { string } lang - Target SEO language to retrieve data for.
+ *
+ * @returns
+ * Target language SEO for competitions highligths (widget).
+ */
+async function fallbackMainData_2
+(
+  lang: string
+): Promise < B_COMP_HIGH_S[] >
+{
+  const dataRes0: [ Map < string, B_COMP_HIGH_S[] >, string[] ] = await CHIGH_CP_ENTRY_2
+  (
+    [lang]
+  );
+
+  if (dataRes0?.[0]?.size == 0) return null;
 
 	return dataRes0?.[0]?.get(lang);
 }
