@@ -20,9 +20,9 @@ import { NB_W_TAG, dlog, dlogv2 } from "./debug";
 import { ROUTE_ID_PROFILE } from "./user.js";
 
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
-import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
 import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
 import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
+import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
 
 // #endregion ➤ 📦 Package Imports
 
@@ -101,7 +101,8 @@ export function platfrom_lang_ssr
  * 🔹 HELPER | IMPORTANT
  *
  * @description
- * 📌 function to return the TABLET and MOBILE viewport changes as a array/tuple of both states
+ * 📌 Determines `tablet`, `mobile` and `other` viewport
+ * changes as a array/tuple of the `x` states
  *
  * @param
  * { number } TABLET_VIEW_INIT - Target viewport/width at
@@ -135,6 +136,73 @@ export function viewport_change
     isMobileView,
     isOtherView
   ];
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Determines target initial device type, by the assigned
+ * `user-agent` data.
+ *
+ * @param
+ * { string } deviceType - Target `user-agent` detected device.
+ *
+ * @returns
+ * An array of boolean's (true/false), corresponding to `mobile` and `tablet`.
+ */
+export function initialDevice
+(
+  deviceType: string
+): boolean[]
+{
+  let
+    isMobileView: boolean,
+    isTabletView: boolean
+  ;
+
+  if (deviceType == 'mobile')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 📱`,
+      true
+    );
+
+    isMobileView = true;
+    isTabletView = false;
+  }
+  else if (deviceType == 'tablet')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 💻`,
+      true
+    );
+
+    isMobileView = true;
+    isTabletView = true;
+  }
+  else if (deviceType == 'desktop')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 🖥️`,
+      true
+    );
+
+    isMobileView = false;
+    isTabletView = false;
+  }
+
+  return [
+    isMobileView,
+    isTabletView
+  ]
 }
 
 /**
