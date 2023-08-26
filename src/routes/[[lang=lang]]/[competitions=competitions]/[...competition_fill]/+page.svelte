@@ -8,7 +8,7 @@
 
   // #region ➤ 📦 Package Imports
 
-	import Layout from "$lib/components/page/competition/Layout.svelte";
+	// import Layout from "$lib/components/page/competition/Layout.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -22,4 +22,4 @@
 ### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
 ================= -->
 
-<Layout />
+<!-- <Layout /> -->
