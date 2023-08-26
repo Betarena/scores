@@ -1,4 +1,5 @@
 import type { GeoJsResponse } from '$lib/types/types.geojs';
+import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
 import type { User } from 'firebase/auth';
@@ -205,9 +206,14 @@ export interface Platform_Session
   livescore_now_player_fixture: number | null;
   /**
    * @description
-   * Store 'LIVE' data for ALL fixtures
+   * 📌 Store 'LIVE' data for ALL fixtures
    */
   livescore_now_fixtures: number[];
+  /**
+   * @description
+   * 📌 Store data for new 'real-time' (a.k.a) latest competitions data.
+   */
+  competitions_map: Map < number, B_H_COMP_DATA >;
 
   // -----
   // NOTE: USER SESSION;
