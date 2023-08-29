@@ -45,6 +45,8 @@
     WIDGET_DATA: Map < number, B_COMP_HIGH_D >
   ;
 
+  console.log('🟢', JSON.stringify(WIDGET_DATA?.get(32)?.competition?.urls))
+
   const
     /** @description TODO: DOC: */
     VIEWPORT_TABLET_INIT = 912,

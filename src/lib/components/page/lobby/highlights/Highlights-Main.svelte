@@ -30,6 +30,8 @@
   /** @description TODO: DOC: */
 	export let B_COMP_HIGH_D: B_COMP_HIGH_D;
 
+  console.log('🔥', JSON.stringify(B_COMP_HIGH_D?.competition?.urls))
+
   const
     /** @description TODO: DOC: */
     VIEWPORT_TABLET_INIT = 912,
@@ -1041,6 +1043,7 @@
     <!--
     JOIN COMPETITION
     -->
+    {console.log('🟥', B_COMP_HIGH_D)}
     <a
       href={B_COMP_HIGH_D?.competition?.urls?.['en']}>
       <button
