@@ -83,7 +83,7 @@
   $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H;
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
   $: userLang = $userBetarenaSettings?.lang;
-  $: isRouteCompetitions = $page?.route?.id == '/[[lang=lang]]/[competitions=competitions]';
+  $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
   $: isRouteProfile = $page?.route?.id == '/u/[view]/[lang=lang]';
 
   $: dropDownArea =
