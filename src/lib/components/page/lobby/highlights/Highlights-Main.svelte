@@ -58,8 +58,6 @@
     /** @description competition highlights - target widget date difference with `competition start` */
     dateDiff: number = 0,
     /** @description TODO: DOC: */
-    random3ParticipantAvatars: string[] = [],
-    /** @description TODO: DOC: */
     showCountdown: boolean = true,
     /** @description TODO: DOC: */
     counterTotalPrize: number = 0,
@@ -1043,16 +1041,19 @@
     <!--
     JOIN COMPETITION
     -->
-    <button
-      class=
-      "
-      s-14
-      w-500
-      btn-primary-v2
-      "
-    >
-      {'Join now'}
-    </button>
+    <a
+      href={B_COMP_HIGH_D?.competition?.urls?.['en']}>
+      <button
+        class=
+        "
+        s-14
+        w-500
+        btn-primary-v2
+        "
+      >
+        {'Join now'}
+      </button>
+    </a>
 
   </div>
 
