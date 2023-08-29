@@ -136,14 +136,14 @@
 </SeoBox>
 
 <!-- [🐞] -->
-<MainLoader />
+<!-- <MainLoader /> -->
 
 {#await widgetInit()}
   <!--
   ### NOTE:
   ### promise is pending
   -->
-  <!-- <MainLoader /> -->
+  <MainLoader />
 {:then data}
   <!--
   ### NOTE:

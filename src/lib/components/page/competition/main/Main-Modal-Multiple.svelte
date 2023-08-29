@@ -260,6 +260,59 @@ MODAL | COMPETITION NOT GEO AVAILABLE
   <div
     id="auth-alert-box"
   >
+    <!--
+    MODAL TEXT
+    -->
+    <p
+      class=
+      "
+      s-16
+      w-500
+      text-left
+      "
+    >
+      The competitions are not yet available at your Geo location.
+    </p>
+
+    <!--
+    MODAL ACTION BUTTONS
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+
+      <!--
+      EXTRA TEXT
+      -->
+      <p
+        class=
+        "
+        s-12
+        color-grey
+        "
+      >
+        We will be launching new competitions
+        that will be available at your country. Be patient, thanks.
+      </p>
+
+      <!--
+      MODAL ACTION BUTTONS
+      -->
+      <button
+        on:click={() => closeModal()}
+        class=
+        "
+        btn-hollow
+        m-r-8
+        "
+      >
+        Close
+      </button>
+
+    </div>
 
   </div>
 

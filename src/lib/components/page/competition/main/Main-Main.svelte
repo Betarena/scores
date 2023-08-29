@@ -28,11 +28,14 @@
   import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { iso2CountryLogo, viewport_change } from '$lib/utils/platform-functions.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
+	import CompCountdown from '$lib/components/shared/COMP-Countdown.svelte';
+	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 	import MainParticipantsList from './Main-Participants-List.svelte';
 
@@ -42,9 +45,6 @@
   import icon_loose from './assets/icon-red-thumbs-down.svg';
   import icon_twitter from './assets/icon-twitter.svg';
   import vector_green_dot from './assets/live-green-dot.svg';
-
-	import CompCountdown from '$lib/components/shared/COMP-Countdown.svelte';
-	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
@@ -437,6 +437,7 @@ COMPETITION MAIN
 -->
 <div
   id="{CNAME}⮕box"
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
   <!--
@@ -598,6 +599,7 @@ COMPETITION MAIN
     {#if !isViewTablet}
 
       <div
+        id="{CNAME}⮕status-social"
         class=
         "
         row-space-out
@@ -608,7 +610,6 @@ COMPETITION MAIN
         COMPETTION COUNTDOWN / NATIVE STATUS
         -->
         <div
-          id="{CNAME}⮕status-social"
         >
 
           <!--
@@ -911,7 +912,7 @@ COMPETITION MAIN
       COMPETTION COUNTDOWN / NATIVE STATUS
       -->
       <div
-        id="{CNAME}⮕status-social"
+        id="{CNAME}⮕status"
       >
 
         <!--
@@ -1203,6 +1204,7 @@ COMPETITION MAIN
   {
     /* 🎨 style */
     background: var(--white);
+    padding: 16px 32px;
   }
   div#competition⮕w⮕main⮕status-is-active
   {
@@ -1311,7 +1313,7 @@ COMPETITION MAIN
     {
       /* 🎨 style */
       background-color: white;
-      margin-top: -8px;
+      margin-top: unset;
       padding: 24px;
       /* 🛝 layout */
       display: grid;
@@ -1391,9 +1393,10 @@ COMPETITION MAIN
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
-	.dark-background-1 p#show-more-box
+  .dark-background-1 div#competition⮕w⮕main⮕profile
   {
-		box-shadow: inset 0px 1px 0px #616161 !important;
-	}
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
+  }
 
 </style>
