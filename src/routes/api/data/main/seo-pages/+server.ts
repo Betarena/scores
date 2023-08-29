@@ -1,12 +1,14 @@
 // #region ➤ 📦 Package Imports
 
 import { initGrapQLClient } from '$lib/graphql/init';
-import { SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.seo-pages.js';
+import { checkNull } from '$lib/utils/platform-functions.js';
+import { SEO_CS_ENTRY, SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/dist/functions/func.main.seo-pages.js';
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { json } from '@sveltejs/kit';
+import dotenv from 'dotenv';
 import { get_target_hset_cache_data, get_target_set_cache_data } from '../../../../../lib/redis/std_main';
 
-import type { B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
+import type { B_SAP_CTP_D, B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -18,9 +20,11 @@ type PAGE_TYPE =
   | 'fixtures'
   | 'player'
   | 'competitions'
+  | 'competition'
 ;
 
-const graphQlInstance = initGrapQLClient()
+const graphQlInstance = initGrapQLClient();
+dotenv.config();
 
 // #endregion ➤ 📌 VARIABLES
 
@@ -43,6 +47,7 @@ export async function GET
 	const fixtureUrl: string = req?.url?.searchParams?.get('fixtureUrl');
 	const playerUrl: string =	req?.url?.searchParams?.get('playerUrl');
   const competitionMainUrl: string = req?.url?.searchParams?.get('competitionMainUrl');
+  const competitionUrl: string = req?.url?.searchParams?.get('competitionUrl');
 
   // ### IMPORTANT
   // ### required for target SEO & Page data.
@@ -52,25 +57,29 @@ export async function GET
 	const country_id: string = req?.url?.searchParams?.get('country_id');
 	const fixture_id: string = req?.url?.searchParams?.get('fixture_id');
 	const player_id: string = req?.url?.searchParams?.get('player_id');
+	const competition_id: string = req?.url?.searchParams?.get('competition_id');
 	const term: string = req?.url?.searchParams?.get('term');
   const months: string = req?.url?.searchParams?.get('months');
   const hasura: string = req?.url?.searchParams?.get('hasura');
 
-  // TODO: add (hasura/postgresql) fallback for all METHODS below;
-  // TODO: add player (page) sections into the mix of METHODS below;
+  // ### TODO:
+  // ### add (hasura/postgresql) fallback for all METHODS below;
+  // ### TODO:
+  // ### add player (page) sections into the mix of METHODS below;
 
   // ### CHECK
   // ### for target URL validity.
   // ### NOTE:
   // ### cache solution only.
   const if_M_0: boolean =
-    langUrl != undefined
-    || sportUrl != undefined
-    || countryUrl != undefined
-    || leagueUrl != undefined
-    || fixtureUrl != undefined
-    || playerUrl != undefined
-    || competitionMainUrl != undefined
+    !checkNull(langUrl)
+    || !checkNull(sportUrl)
+    || !checkNull(countryUrl)
+    || !checkNull(leagueUrl)
+    || !checkNull(fixtureUrl)
+    || !checkNull(playerUrl)
+    || !checkNull(competitionMainUrl)
+    || !checkNull(competitionUrl)
   ;
 	if (if_M_0)
   {
@@ -82,7 +91,8 @@ export async function GET
       leagueUrl,
       fixtureUrl,
       playerUrl,
-      competitionMainUrl
+      competitionMainUrl,
+      competitionUrl
     )
 	}
 
@@ -260,7 +270,7 @@ export async function GET
   }
 
   // ### CHECK
-  // ### for target data retrieve of page (competitions) MAIN SEO.
+  // ### for target page retrieve of competitions (lobby) - MAIN SEO.
   // ### NOTE:
   // ### cache solution only.
   const if_M_8: boolean =
@@ -278,12 +288,74 @@ export async function GET
   }
 
   // ### CHECK
+  // ### for target page retrieve of target competition (single) - MAIN DATA.
+  // ### NOTE:
+  // ### cache & hasura (fallback) solution.
+  const if_M_9: boolean =
+    competition_id
+    && page === 'competition'
+  ;
+  if (if_M_9)
+  {
+
+    const _competition_id: number = parseInt(competition_id)
+    let data: unknown;
+    let loadType: string = '⚡️ CACHE';
+    let logTag: string = 'P-COMP';
+
+    // ### NOTE:
+    // ### retrieve from cache.
+    // if (!hasura)
+    // {
+    //   data = await get_target_hset_cache_data
+    //   (
+    //     RedisKeys.SAP_C_D_A16,
+    //     player_id
+    //   );
+    // }
+
+    // ### NOTE:
+    // ### fallback to hasura.
+		if (!data || hasura)
+    {
+      data = await fallbackMainData_3
+      (
+        _competition_id
+      );
+      loadType = '💿 HASURA';
+		}
+
+    // ### [🐞]
+    console.log(`📌 ${logTag} w/ ${loadType}`)
+
+    if (data) return json(data);
+  }
+
+  // ### CHECK
+  // ### for target page retrieve of target competitions (single) - MAIN SEO.
+  // ### NOTE:
+  // ### cache solution only.
+  const if_M_10: boolean =
+    lang
+    && page === 'competition'
+  ;
+  if (if_M_10)
+  {
+    const data: unknown = await get_target_hset_cache_data
+    (
+      RedisKeys.SAP_C_D_A20,
+      lang
+    );
+    return json(data);
+  }
+
+  // ### CHECK
   // ### for target data retrieve of page (country) TRANSLATION(s).
   // ### NOTE:
   // ### cache only.
 	if (country_id)
   {
-		const data = await get_target_hset_cache_data
+		const data: unknown  = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A7,
       country_id
@@ -297,7 +369,7 @@ export async function GET
   // ### cache only.
 	if (term)
   {
-		const data = await get_target_hset_cache_data
+		const data: unknown = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A6,
       term
@@ -311,7 +383,7 @@ export async function GET
   // ### cache only.
 	if (months && lang)
   {
-		const data = await get_target_hset_cache_data
+		const data: unknown  = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A8,
       lang
@@ -334,7 +406,8 @@ async function validUrlCheck
   leagueUrl: string,
   fixtureUrl: string,
   playerUrl: string,
-  competitionMainUrl: string
+  competitionMainUrl: string,
+  competitionUrl: string
 ): Promise < Response >
 {
   const validUrl: number[] = [];
@@ -360,11 +433,17 @@ async function validUrlCheck
   if (competitionMainUrl)
     validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A17, `${langUrl}_${competitionMainUrl}`) as number);
   ;
+  if (competitionUrl)
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A19, `${langUrl}_${competitionUrl}`) as number);
+  ;
 
+  // ### CHECK
+  // ### for an invalid `url` segment.
   const if_M_0: boolean =
     validUrl.includes(0)
   ;
   if (if_M_0) return json(false);
+
   return json(true);
 }
 
@@ -372,44 +451,87 @@ async function validUrlCheck
 // 📌 MAIN METHOD                                     *
 // ****************************************************
 
-// TODO: fallback for league/tournament page DATA (critical)
+// ### TODO:
+// ### fallback for league/tournament page DATA (critical)
 
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * TODO: DOC:
+ *
+ * @param player_id
+ * @returns
+ */
 async function fallbackMainData_0
 (
   player_id: number
 ): Promise < B_SAP_PP_D >
 {
 
-  const dataRes0 = await SEO_PS_ENTRY
+  const dataRes0: [ Map<  number, B_SAP_PP_D >, string[] ] = await SEO_PS_ENTRY
   (
     graphQlInstance,
     [player_id]
   )
 
-  if (dataRes0?.[0].size == 0) {
-    return null
-  }
+  if (dataRes0?.[0]?.size == 0) return null;
 
-	return dataRes0?.[0].get(player_id);
+	return dataRes0?.[0]?.get(player_id);
 }
 
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * TODO: DOC:
+ *
+ * @param fixtureId
+ * @returns
+ */
 async function fallbackMainData_2
 (
   fixtureId: number
 ) : Promise < B_SAP_FP_D >
 {
-  const dataRes0 = await SEO_FS_ENTRY
+  const dataRes0: [ Map < number, B_SAP_FP_D >, string[] ] = await SEO_FS_ENTRY
   (
     graphQlInstance,
     [fixtureId]
   )
 
-  if (dataRes0?.[0]?.size == 0)
-  {
-    return null;
-  }
+  if (dataRes0?.[0]?.size == 0) return null;
 
-  return dataRes0?.[0].get(fixtureId)
+  return dataRes0?.[0]?.get(fixtureId)
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Hasura fallback to target competition page critical (SEO/preload) data.
+ *
+ * @param
+ * { number } competitionId - Target competition Id.
+ *
+ * @returns
+ */
+async function fallbackMainData_3
+(
+  competitionId: number
+) : Promise < B_SAP_CTP_D >
+{
+  const dataRes0: [ Map < number, B_SAP_CTP_D >, string[] ] = await SEO_CS_ENTRY
+  (
+    [competitionId]
+  );
+
+  if (dataRes0?.[0]?.size == 0) return null;
+
+  return dataRes0?.[0]?.get(competitionId)
 }
 
 // #endregion ➤ 🛠️ METHODS
