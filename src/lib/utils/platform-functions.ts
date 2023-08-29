@@ -21,7 +21,7 @@ import { ROUTE_ID_PROFILE } from "./user.js";
 
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
 import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
-import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
+import type { B_SAP_CTP_D, B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
 import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
 
 // #endregion ➤ 📦 Package Imports
@@ -640,14 +640,18 @@ export async function promiseUrlsPreload
 export async function promiseValidUrlCheck
 (
   fetch: any,
-  langUrl: string = null,
-  sportUrl: string = null,
-  countryUrl: string = null,
-  leagueUrl: string = null,
-  fixtureUrl: string = null,
-  playerUrl: string = null,
-  competitionMainUrl: string = null
-): Promise < boolean >
+  opts:
+  {
+    langUrl?: string,
+    sportUrl?: string,
+    countryUrl?: string,
+    leagueUrl?: string,
+    fixtureUrl?: string,
+    playerUrl?: string,
+    competitionMainUrl?: string,
+    competitionUrl?: string
+  }
+  ): Promise < boolean >
 {
 
   // ### CHECK
@@ -655,25 +659,28 @@ export async function promiseValidUrlCheck
   const if_M_0 =
     // ### CHECK
     // ### for `lang`.
-    (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl && !competitionMainUrl)
+    (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
     // ### CHECK
     // ### for `sport`.
-    || (langUrl && sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl && !competitionMainUrl)
+    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
     // ### CHECK
     // ### for `country`.
-    || (langUrl && sportUrl && countryUrl && !leagueUrl && !fixtureUrl && !playerUrl && !competitionMainUrl)
+    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
     // ### CHECK
     // ### for `tournament/league`.
-    || (langUrl && sportUrl && countryUrl && leagueUrl && !fixtureUrl && !playerUrl && !competitionMainUrl)
+    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
     // ### CHECK
     // ### for `fixture`.
-    || (langUrl && sportUrl && !countryUrl && !leagueUrl && fixtureUrl && !playerUrl && !competitionMainUrl)
+    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
     // ### CHECK
     // ### for `player`.
-    || (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && playerUrl && !competitionMainUrl)
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && opts?.playerUrl && !opts?.competitionMainUrl)
     // ### CHECK
-    // ### for `competitions`.
-    || (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl && competitionMainUrl)
+    // ### for `competitions` (lobby).
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl)
+    // ### CHECK
+    // ### for `competition`.
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl && opts?.competitionUrl)
   ;
 
   // ### [🐞]
@@ -696,13 +703,14 @@ export async function promiseValidUrlCheck
   // ### append to target string, the parts of url we wish to validate.
 
   let queryStr: string = "";
-  if (langUrl) queryStr += `?langUrl=${langUrl}`;
-  if (sportUrl) queryStr += `&sportUrl=${sportUrl}`;
-  if (countryUrl) queryStr += `&countryUrl=${countryUrl}`;
-  if (leagueUrl) queryStr += `&leagueUrl=${leagueUrl}`;
-  if (fixtureUrl) queryStr += `&fixtureUrl=${fixtureUrl}`;
-  if (playerUrl) queryStr += `&playerUrl=${playerUrl}`;
-  if (competitionMainUrl) queryStr += `&competitionMainUrl=${competitionMainUrl}`;
+  if (opts?.langUrl) queryStr += `?langUrl=${opts?.langUrl}`;
+  if (opts?.sportUrl) queryStr += `&sportUrl=${opts?.sportUrl}`;
+  if (opts?.countryUrl) queryStr += `&countryUrl=${opts?.countryUrl}`;
+  if (opts?.leagueUrl) queryStr += `&leagueUrl=${opts?.leagueUrl}`;
+  if (opts?.fixtureUrl) queryStr += `&fixtureUrl=${opts?.fixtureUrl}`;
+  if (opts?.playerUrl) queryStr += `&playerUrl=${opts?.playerUrl}`;
+  if (opts?.competitionMainUrl) queryStr += `&competitionMainUrl=${opts?.competitionMainUrl}`;
+  if (opts?.competitionUrl) queryStr += `&competitionUrl=${opts?.competitionUrl}`;
 
   // ### [🐞]
   dlog
@@ -967,7 +975,8 @@ export async function selectLanguage
       '/[[lang=lang]]/[sport]/[country]/[league_name]',
       '/[[lang=lang]]/[sport]/[fixture=fixture]',
       '/[[lang=lang]]/[player=player]/[...player_fill]',
-      '/[[lang=lang]]/[competitions=competitions]'
+      '/[[lang=lang]]/[competitions=competitions]',
+      '/[[lang=lang]]/[competitions=competitions]/[...competition_fill]',
     ]
     .includes(page?.route?.id)
   ;
@@ -1182,6 +1191,63 @@ export function generateUrlCompetitions
   dlog
   (
     `🔹 [var] ➤ translateUrlCompetitions(..) newUrl : ${newUrl}`,
+    true
+  );
+
+  if (checkNull(newUrl)) return '/';
+
+  return newUrl;
+}
+
+/**
+ * @summary
+ * 🟥 MAIN | 🔹 HELPER
+ *
+ * @description
+ * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
+ *
+ * @param
+ * { string } lang - Target **current** platform language.
+ *
+ * @param
+ * { B_SAP_D3 } competitionTerm - Target **translations** for the term "_competitions_".
+ *
+ * @param
+ * { B_SAP_CTP_D } competitionData - Target **competition data**.
+ *
+ * @returns
+ * A target string, of the new `URL`.
+ */
+export function generateUrlCompetition
+(
+  lang: string,
+  competitionTerm: B_SAP_D3,
+  competitionData: B_SAP_CTP_D
+): string
+{
+  // ### [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ generateUrlCompetition(..) data : ${JSON.stringify(competitionTerm)}`,
+    true
+  );
+
+  let newUrl: string =
+    lang == 'en'
+      ? `/${competitionTerm?.[lang]}${competitionData?.alternate_data?.[lang]}`
+      : `/${lang}/${competitionTerm?.[lang]}${competitionData?.alternate_data?.[lang]}`
+  ;
+
+  newUrl = newUrl.replace
+  (
+    'https://scores.betarena.com',
+    ''
+  );
+
+  // ### [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ generateUrlCompetition(..) newUrl : ${newUrl}`,
     true
   );
 
