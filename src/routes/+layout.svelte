@@ -65,7 +65,7 @@
 		$page?.error,
 		$page?.params?.lang
 	);
-  $: isRouteCompetitions = $page?.route?.id == '/[[lang=lang]]/[competitions=competitions]';
+  $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
 
   $sessionStore.deviceType = $page.data?.deviceType;
   // @ts-ignore
