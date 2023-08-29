@@ -27,7 +27,7 @@ export async function load
     fetch,
     params,
     request,
-    setHeaders,
+    // setHeaders,
     // route
   } = event;
 
@@ -44,13 +44,10 @@ export async function load
   const validUrlCheck: boolean = await promiseValidUrlCheck
   (
     fetch,
-    _langUrl,
-    null,
-    null,
-    null,
-    null,
-    null,
-    params?.competitions
+    {
+      langUrl: _langUrl,
+      competitionMainUrl: params?.competitions
+    }
   );
 
   // ### CHECK | IMPORTANT
