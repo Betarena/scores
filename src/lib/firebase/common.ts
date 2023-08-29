@@ -1,13 +1,19 @@
+// #region ➤ 📦 Package Imports
+
 import sessionStore from '$lib/store/session.js';
+import userBetarenaSettings from '$lib/store/user-settings.js';
+import { dlog } from '$lib/utils/debug.js';
 import { onValue, ref, type Unsubscribe } from "firebase/database";
-import { doc, onSnapshot, updateDoc, type DocumentData, DocumentReference, getDoc, DocumentSnapshot } from "firebase/firestore";
+import { doc, DocumentReference, DocumentSnapshot, getDoc, onSnapshot, updateDoc, type DocumentData } from "firebase/firestore";
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_firestore, db_real } from "./init";
-import { dlog } from '$lib/utils/debug.js';
-import userBetarenaSettings from '$lib/store/user-settings.js';
 
 import type { Betarena_User } from "$lib/types/types.scores.js";
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
+
+// #endregion ➤ 📦 Package Imports
+
+// #region ➤ 🛠️ METHODS
 
 // #region 🔥 USER
 
@@ -654,3 +660,5 @@ function generateLiveScoreboardList
 }
 
 // #endregion 🔥 LIVESCORES_NOW_SCOREBOARD
+
+// #endregion ➤ 🛠️ METHODS
