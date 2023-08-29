@@ -12,6 +12,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
@@ -1045,7 +1046,7 @@
     -->
     {console.log('🟥', B_COMP_HIGH_D)}
     <a
-      href={B_COMP_HIGH_D?.competition?.urls?.['en']}>
+      href={B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}>
       <button
         class=
         "
