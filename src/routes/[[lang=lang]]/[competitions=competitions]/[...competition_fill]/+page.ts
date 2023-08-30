@@ -1,6 +1,6 @@
 // #region ➤ 📦 Package Imports
 
-import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
+import { ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
 import { PRELOAD_exitPage, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
@@ -79,7 +79,7 @@ export async function load
     (
       t0,
       '[competitions=competitions]',
-      500
+      ERROR_CODE_INVALID
     );
   }
 

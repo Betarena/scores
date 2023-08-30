@@ -16,7 +16,7 @@ import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import sessionStore from "$lib/store/session.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { NB_W_TAG, dlog, dlogv2 } from "./debug";
+import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from "./debug";
 import { ROUTE_ID_PROFILE } from "./user.js";
 
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
@@ -529,7 +529,7 @@ export function PRELOAD_exitPage
   throw error
   (
     exit_code,
-    exit_reason ?? ''
+    exit_reason ?? PAGE_INVALID_MSG
   );
 }
 
