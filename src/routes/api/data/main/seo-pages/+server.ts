@@ -434,8 +434,14 @@ async function validUrlCheck
     validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A17, `${langUrl}_${competitionMainUrl}`) as number);
   ;
   if (competitionUrl)
-    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A19, `${langUrl}_${competitionUrl}`) as number);
+    validUrl.push(await get_target_set_cache_data(RedisKeys?.SAP_C_D_A19, `${competitionUrl}`) as number);
   ;
+
+  // ### [🐞]
+  console.debug
+  (
+    `🔹 [var] ➤ validUrl ${validUrl}`
+  );
 
   // ### CHECK
   // ### for an invalid `url` segment.
