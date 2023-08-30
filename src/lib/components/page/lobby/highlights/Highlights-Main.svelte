@@ -1046,7 +1046,7 @@
     -->
     {console.log('🟥', B_COMP_HIGH_D)}
     <a
-      href={B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}>
+      href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}">
       <button
         class=
         "

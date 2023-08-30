@@ -1,7 +1,7 @@
 // #region ➤ 📦 Package Imports
 
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
-import { PRELOAD_exitPage, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
+import { PRELOAD_exitPage, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
 import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
@@ -59,29 +59,31 @@ export async function load
   // 📌 VALIDATE URL                      *
   // **************************************
 
-  // const validUrlCheck: boolean = await promiseValidUrlCheck
-  // (
-  //   fetch,
-  //   _langUrl,
-  //   null,
-  //   null,
-  //   null,
-  //   null,
-  //   null,
-  //   params?.competitions
-  // );
+  const validUrlCheck: boolean = await promiseValidUrlCheck
+  (
+    fetch,
+    {
+      langUrl: _langUrl,
+      competitionMainUrl: params?.competitions,
+      competitionUrl: params?.competition_fill
+    }
+  );
 
-  // // ### CHECK
-  // // ### for exit.
-  // if (!validUrlCheck)
-  // {
-  //   PRELOAD_exitPage
-  //   (
-  //     t0,
-  //     '[competitions=competitions]',
-  //     500
-  //   );
-  // }
+  console.log('🟩', validUrlCheck);
+
+  // ### CHECK
+  // ### for exit.
+  if (!validUrlCheck)
+  {
+    PRELOAD_exitPage
+    (
+      t0,
+      '[competitions=competitions]',
+      500
+    );
+  }
+
+  console.log('🟥');
 
   let
   [
@@ -222,6 +224,10 @@ function mutateSeoData
   pathname: string
 ): B_SAP_CTP_T
 {
+  console.log('data', data)
+  console.log('data2', data2)
+  console.log('pathname', pathname)
+
   let pageTitle: string = data?.general?.data?.title
     .replace(/{ID}/g, data2?.data?.team_name)
   ;

@@ -529,7 +529,7 @@ export function PRELOAD_exitPage
   throw error
   (
     exit_code,
-    exit_reason
+    exit_reason ?? ''
   );
 }
 
@@ -665,19 +665,19 @@ export async function promiseValidUrlCheck
     || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
     // ### CHECK
     // ### for `country`.
-    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
+    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
     // ### CHECK
     // ### for `tournament/league`.
-    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
+    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
     // ### CHECK
     // ### for `fixture`.
-    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
+    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
     // ### CHECK
     // ### for `player`.
-    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && opts?.playerUrl && !opts?.competitionMainUrl)
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
     // ### CHECK
     // ### for `competitions` (lobby).
-    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl)
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl && !opts?.competitionUrl)
     // ### CHECK
     // ### for `competition`.
     || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl && opts?.competitionUrl)
