@@ -37,6 +37,7 @@
   import icon_loose from './assets/icon-grey-thumbs-down.svg';
   import icon_loose_active from './assets/icon-orange-thumbs-down.svg';
   import icon_win_active from './assets/icon-orange-thumbs-up.svg';
+  import icon_profile_avatar from './assets/icon-profile-avatar.svg';
   import icon_trophy from './assets/icon-trophy.svg';
 
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
@@ -482,7 +483,7 @@ PARTICIPANTS VOTE LIST
             m-r-12
             participant-img
             "
-            src={participantsMap?.get(uid)?.profile_photo}
+            src={participantsMap?.get(uid)?.profile_photo ?? icon_profile_avatar}
             alt='participant-image'
             title='Participant Icon'
             loading='lazy'
