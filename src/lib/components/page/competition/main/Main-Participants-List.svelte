@@ -40,6 +40,7 @@
   import icon_profile_avatar from './assets/icon-profile-avatar.svg';
   import icon_trophy from './assets/icon-trophy.svg';
 
+	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
 
@@ -109,6 +110,17 @@
     (
       `/api/data/competition/main?competition_id=${$page.data?.COMPETITION_ID}&participantUid=${$userBetarenaSettings?.user?.firebase_user_data?.uid}&predictionChoice=${viewType}`
     );
+
+    let newBalance: number = ($userBetarenaSettings?.user?.scores_user_data?.main_balance - entryFee) ?? 0;
+    if (newBalance < 0) newBalance = 0;
+
+    await userUpdateBalance
+    (
+      $userBetarenaSettings?.user?.firebase_user_data?.uid,
+      newBalance
+    );
+
+    return;
   }
 
   // #endregion ➤ 🛠️ METHODS
