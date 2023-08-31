@@ -358,19 +358,19 @@ PARTICIPANTS VOTE LIST
           Join {viewType == 'yes' ? 'Yes' : 'No'}
         </button>
 
-      {/if}
-
       <!--
       STATUS (MANY) PILL
       -->
-      {#if isJoinedThis}
+      {:else}
 
         <div
           class=
           "
           row-space-center
+          status-pill
           "
-          class:joined={isJoinedThis}
+          class:joined={isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)}
+          class:disabled={competitionStatus == 'canceled'}
         >
 
           <!--
@@ -404,7 +404,7 @@ PARTICIPANTS VOTE LIST
             "
             class:color-grey={competitionStatus == 'canceled'}
           >
-            {#if isJoinedThis}
+            {#if isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)}
               Joined
             {:else if competitionStatus == 'canceled'}
               Canceled
@@ -662,20 +662,23 @@ PARTICIPANTS VOTE LIST
     border-radius: 32px;
     border: 2px solid var(--whitev2);
   }
-  button.disabled
+  .disabled
   {
     /* 🎨 style */
     background-color: var(--whitev2);
     opacity: 0.5;
   }
-  div.joined
+  div.status-pill
   {
     /* 🎨 style */
     border-radius: 8px;
-    background: #4DA025;
-    box-shadow: 0px 3px 8px 0px rgba(77, 160, 37, 0.32);
     height: 44px;
     padding: 10px 20px;
+  }
+  div.joined
+  {
+    /* 🎨 style */
+    background: #4DA025;
   }
   div.participants-preview
   {
