@@ -238,8 +238,8 @@ function mutateSeoData
 		JSON.stringify(data?.main_data)
       .replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
 			.replace(/{title}/g, pageTitle)
-      .replace(/{prediction}/g, data2?.data?.creator_name)
-      .replace(/{creator}/g, data2?.data?.creator_name)
+      .replace(/{prediction}/g, '')
+      .replace(/{creator}/g, '')
 	);
 
 	data.twitter_card = JSON.parse
@@ -247,8 +247,8 @@ function mutateSeoData
 		JSON.stringify(data?.twitter_card)
     .replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
     .replace(/{title}/g, pageTitle)
-    .replace(/{prediction}/g, data2?.data?.creator_name)
-    .replace(/{creator}/g, data2?.data?.creator_name)
+    .replace(/{prediction}/g, '')
+    .replace(/{creator}/g, '')
 	);
 
 	data.opengraph = JSON.parse
@@ -256,8 +256,8 @@ function mutateSeoData
 		JSON.stringify(data?.opengraph)
     .replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
     .replace(/{title}/g, pageTitle)
-    .replace(/{prediction}/g, data2?.data?.creator_name)
-    .replace(/{creator}/g, data2?.data?.creator_name)
+    .replace(/{prediction}/g, '')
+    .replace(/{creator}/g, '')
 	);
 
   return data;
