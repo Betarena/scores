@@ -268,6 +268,9 @@
     ;
     if (if_M_1) return;
 
+    // ### IMPORTANT
+    (WIDGET_DATA.fixture_detailed ??= { })
+
     WIDGET_DATA.fixture_detailed.teams =
     {
       away:
