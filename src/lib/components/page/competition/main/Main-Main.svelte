@@ -468,7 +468,7 @@ COMPETITION MAIN
           <p
             class=
             "
-            w-700
+            w-600
             color-grey
             m-r-12
             "
@@ -495,7 +495,7 @@ COMPETITION MAIN
           <p
             class=
             "
-            w-700
+            w-600
             color-black-2
             "
             class:s-16={isViewTablet}
