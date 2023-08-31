@@ -1118,7 +1118,7 @@ NAVBAR MAIN
         <!--
         BOOKMAKERS CONTAINER
         -->
-        {#if !isRouteProfile}
+        {#if !isRouteProfile || !isRouteCompetitions}
           <HeaderCBookmakers
             {isViewMobile}
             {isViewTablet}
