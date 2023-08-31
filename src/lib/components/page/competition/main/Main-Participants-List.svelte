@@ -30,6 +30,7 @@
 	import { get } from '$lib/api/utils.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { checkNull } from '$lib/utils/platform-functions.js';
+	import { userUpdateBalance } from '$lib/firebase/common.js';
 
 	import MainModalMultiple from './Main-Modal-Multiple.svelte';
 
@@ -40,7 +41,6 @@
   import icon_profile_avatar from './assets/icon-profile-avatar.svg';
   import icon_trophy from './assets/icon-trophy.svg';
 
-	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
 
