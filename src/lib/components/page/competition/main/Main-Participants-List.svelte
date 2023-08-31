@@ -28,9 +28,9 @@
 	import { onDestroy, onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
+	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { checkNull } from '$lib/utils/platform-functions.js';
-	import { userUpdateBalance } from '$lib/firebase/common.js';
 
 	import MainModalMultiple from './Main-Modal-Multiple.svelte';
 
@@ -42,7 +42,7 @@
   import icon_trophy from './assets/icon-trophy.svg';
 
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
-	import type { B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { B_C_COMP_DATA_Prediction_Group, B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,6 +69,8 @@
     totalPrize: number,
     /** @description competition (main) - competition entry fee amount */
     entryFee: number,
+    /** @description competition (main) - competition winner group */
+    winnerGroup: B_C_COMP_DATA_Prediction_Group,
     /** @description competition (main) - competition geo-location restriction */
     geoLocationRestrictions: string[],
     /** @description competition (main) - competition `native` status */
@@ -339,7 +341,7 @@ PARTICIPANTS VOTE LIST
       <!--
       JOIN COMPETITION
       -->
-      {#if !participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid) || isJoinedNotThis}
+      {#if !participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid) || (isJoinedNotThis && !['canceled', 'finished'].includes(competitionStatus))}
 
         <button
           class=
@@ -361,7 +363,7 @@ PARTICIPANTS VOTE LIST
       <!--
       STATUS (MANY) PILL
       -->
-      {#if isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)}
+      {#if isJoinedThis}
 
         <div
           class=
@@ -374,7 +376,7 @@ PARTICIPANTS VOTE LIST
           <!--
           WON TROPHY ICON
           -->
-          {#if competitionStatus == 'finished'}
+          {#if competitionStatus == 'finished' && winnerGroup == viewType}
             <img
               id=''
               class=
@@ -407,7 +409,7 @@ PARTICIPANTS VOTE LIST
             {:else if competitionStatus == 'canceled'}
               Canceled
             {:else if competitionStatus == 'finished'}
-              WON | LOST
+              {winnerGroup == viewType ? 'WON' : 'LOST'}
             {/if}
           </p>
 
