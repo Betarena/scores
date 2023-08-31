@@ -45,8 +45,6 @@
     WIDGET_DATA: Map < number, B_COMP_HIGH_D >
   ;
 
-  console.log('🟢', JSON.stringify(WIDGET_DATA?.get(32)?.competition?.urls))
-
   const
     /** @description TODO: DOC: */
     VIEWPORT_TABLET_INIT = 912,
@@ -184,7 +182,8 @@
       // ### obtain top 3 participants.
       const slicedArray: string[] = participantUid.slice(0, 3);
 
-      slicedArray.push('1aoarz3Gs3V63hc0rte007ZNRki1', '0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81')
+      // ### [🐞]
+      // slicedArray.push('1aoarz3Gs3V63hc0rte007ZNRki1', '0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81')
 
       const participantPublicData = await new Betarena_User_Class().obtainPublicInformationTargetUsers
       (
