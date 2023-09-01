@@ -224,40 +224,37 @@ function mutateSeoData
   pathname: string
 ): B_SAP_CTP_T
 {
-  console.log('data', data)
-  console.log('data2', data2)
-  console.log('pathname', pathname)
-
   let pageTitle: string = data?.general?.data?.title
-    .replace(/{ID}/g, data2?.data?.team_name)
+    ?.replace(/{ID}/g, data2?.data?.team_name)
+    ?.replace(':', ' ')
   ;
   pageTitle += data2?.data?.target_competition_prediction;
 
   data.main_data = JSON.parse
   (
 		JSON.stringify(data?.main_data)
-      .replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
-			.replace(/{title}/g, pageTitle)
-      .replace(/{prediction}/g, '')
-      .replace(/{creator}/g, '')
+      ?.replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
+			?.replace(/{title}/g, pageTitle)
+      ?.replace(/{prediction}/g, '')
+      ?.replace(/{creator}/g, '')
 	);
 
 	data.twitter_card = JSON.parse
   (
 		JSON.stringify(data?.twitter_card)
-    .replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
-    .replace(/{title}/g, pageTitle)
-    .replace(/{prediction}/g, '')
-    .replace(/{creator}/g, '')
+    ?.replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
+    ?.replace(/{title}/g, pageTitle)
+    ?.replace(/{prediction}/g, '')
+    ?.replace(/{creator}/g, '')
 	);
 
 	data.opengraph = JSON.parse
   (
 		JSON.stringify(data?.opengraph)
-    .replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
-    .replace(/{title}/g, pageTitle)
-    .replace(/{prediction}/g, '')
-    .replace(/{creator}/g, '')
+    ?.replace('/{type}/{type_name}/{sport}/{title}-{prediction}/{id}', pathname)
+    ?.replace(/{title}/g, pageTitle)
+    ?.replace(/{prediction}/g, '')
+    ?.replace(/{creator}/g, '')
 	);
 
   return data;
