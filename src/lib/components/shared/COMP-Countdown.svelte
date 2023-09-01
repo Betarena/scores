@@ -58,9 +58,9 @@
     showCountdown: boolean = true
   ;
 
-  $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60)?.toString());
-	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60)?.toString());
-	$: countDownHour = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24)?.toString());
+  $: countDownSec = Math.floor((dateDiff / 1000) % 60);
+	$: countDownMin = Math.floor((dateDiff / 1000 / 60) % 60);
+	$: countDownHour = Math.floor((dateDiff / (1000 * 60 * 60)) % 24);
 	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
   // #endregion ➤ 📌 VARIABLES
@@ -203,7 +203,7 @@ COMPETITION COUNTDOWN / STATUS
           w-500
           "
         >
-          {parseInt(countDownHour) < 0 ? '00' : countDownHour}h
+          {countDownHour < 0 ? '00' : toZeroPrefixDateStr(countDownHour?.toString())}h
         </p>
       </div>
 
@@ -224,7 +224,7 @@ COMPETITION COUNTDOWN / STATUS
           w-500
           "
         >
-          {parseInt(countDownMin) < 0 ? '00' : countDownMin}min
+          {countDownMin < 0 ? '00' : toZeroPrefixDateStr(countDownMin?.toString())}min
         </p>
       </div>
 
@@ -245,7 +245,7 @@ COMPETITION COUNTDOWN / STATUS
           w-500
           "
         >
-          {parseInt(countDownSec) < 0 ? '00' : countDownSec}s
+          {countDownSec < 0 ? '00' : toZeroPrefixDateStr(countDownSec?.toString())}s
         </p>
       </div>
 
