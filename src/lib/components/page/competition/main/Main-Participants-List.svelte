@@ -344,7 +344,11 @@ PARTICIPANTS VOTE LIST
       <!--
       JOIN COMPETITION
       -->
-      {#if !participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid) || (isJoinedNotThis && !['canceled', 'finished'].includes(competitionStatus))}
+      {#if
+        !participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
+        && isJoinedNotThis
+        && !['canceled', 'finished'].includes(competitionStatus)
+      }
 
         <button
           class=
@@ -372,8 +376,16 @@ PARTICIPANTS VOTE LIST
           row-space-center
           status-pill
           "
-          class:joined={isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)}
-          class:disabled={competitionStatus == 'canceled'}
+          class:green=
+          {
+            isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)
+            || competitionStatus == 'finished' && winnerGroup == viewType
+          }
+          class:disabled=
+          {
+            competitionStatus == 'canceled'
+            || competitionStatus == 'finished' && winnerGroup != viewType
+          }
         >
 
           <!--
@@ -405,9 +417,16 @@ PARTICIPANTS VOTE LIST
             w-500
             color-white
             "
-            class:color-grey={competitionStatus == 'canceled'}
+            class:color-grey=
+            {
+              competitionStatus == 'canceled'
+              || competitionStatus == 'finished' && winnerGroup != viewType
+            }
           >
-            {#if isJoinedThis && !['canceled', 'finished'].includes(competitionStatus)}
+            {#if
+              isJoinedThis
+              && !['canceled', 'finished'].includes(competitionStatus)
+            }
               Joined
             {:else if competitionStatus == 'canceled'}
               Canceled
@@ -678,7 +697,7 @@ PARTICIPANTS VOTE LIST
     height: 44px;
     padding: 10px 20px;
   }
-  div.joined
+  div.green
   {
     /* 🎨 style */
     background: #4DA025;
