@@ -23,8 +23,10 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	import { createEventDispatcher, type EventDispatcher } from 'svelte';
-	import { fade } from 'svelte/transition';
+  import { createEventDispatcher, type EventDispatcher } from 'svelte';
+  import { fade } from 'svelte/transition';
+
+	import sessionStore from '$lib/store/session.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -38,7 +40,7 @@
 
   export let
     /** @description competition (main) - view type */
-    viewType: 'confirm' | 'insufficient' | 'geo-restriction',
+    viewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated',
     /** @description competition (main) - amount entry fee */
     balanceDeductAmount: number
   ;
@@ -311,6 +313,93 @@ MODAL | COMPETITION NOT GEO AVAILABLE
       >
         Close
       </button>
+
+    </div>
+
+  </div>
+
+{/if}
+
+<!--
+MODAL | NOT AUTHENTICATED / SIGNED IN
+-->
+{#if viewType == 'not-authenticated'}
+
+  <div
+    id="auth-alert-box"
+  >
+
+    <!--
+    MODAL TEXT
+    -->
+    <p
+      class=
+      "
+      s-16
+      w-500
+      text-left
+      "
+    >
+      Uh-oh! It looks like you are not a signed in.
+    </p>
+
+    <!--
+    MODAL ACTION BUTTONS
+    -->
+    <div
+      class=
+      "
+      row-space-out
+      "
+    >
+
+      <!--
+      EXTRA TEXT
+      -->
+      <p
+        class=
+        "
+        s-12
+        color-grey
+        "
+      >
+        Please sign in to your Betarena Account and/or register to participate in competitions.
+      </p>
+
+      <!--
+      MODAL ACTION BUTTONS
+      -->
+      <div
+        class=
+        "
+        row-space-end
+        width-auto
+        "
+      >
+
+        <button
+          on:click={() => closeModal()}
+          class=
+          "
+          btn-hollow
+          m-r-8
+          "
+        >
+          Close
+        </button>
+
+        <button
+          on:click={() => $sessionStore.auth_show = true}
+          on:click={() => closeModal()}
+          class=
+          "
+          btn-primary-v2
+          "
+        >
+          Register
+        </button>
+
+      </div>
 
     </div>
 

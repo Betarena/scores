@@ -86,7 +86,7 @@
     /** @description competition (main) - show / hide main modal information */
     showModal: boolean = false,
     /** @description competition (main) - view type */
-    modalViewType: 'confirm' | 'insufficient' | 'geo-restriction' = 'confirm'
+    modalViewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated' = 'confirm'
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -152,8 +152,11 @@
   $: if ($userBetarenaSettings?.user?.scores_user_data?.main_balance < entryFee)
     modalViewType = 'insufficient';
   ;
-  $: if (geoLocationRestrictions.includes($userBetarenaSettings?.country_bookmaker))
+  $: if (geoLocationRestrictions?.includes($userBetarenaSettings?.country_bookmaker))
     modalViewType = 'geo-restriction';
+  ;
+  $: if ($userBetarenaSettings?.user == undefined)
+    modalViewType = 'not-authenticated';
   ;
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
