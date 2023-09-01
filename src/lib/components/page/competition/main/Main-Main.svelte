@@ -1143,7 +1143,8 @@ COMPETITION MAIN
       competitionStatus={WIDGET_DATA?.competition?.data?.status}
       geoLocationRestrictions={WIDGET_DATA?.competition?.data?.blacklist}
       entryFee={WIDGET_DATA?.competition?.data?.entry_fee}
-      totalPrize={WIDGET_DATA?.competition?.data?.total_prize}
+      totalPrize={WIDGET_DATA?.competition?.data?.potential_win?.yes ?? 0}
+      winnerGroup={WIDGET_DATA?.competition?.data?.winner_group}
       viewType={'yes'}
       participantList={WIDGET_DATA?.competition?.data?.participants?.yes}
       {participantsMap}
@@ -1158,7 +1159,8 @@ COMPETITION MAIN
       competitionStatus={WIDGET_DATA?.competition?.data?.status}
       geoLocationRestrictions={WIDGET_DATA?.competition?.data?.blacklist}
       entryFee={WIDGET_DATA?.competition?.data?.entry_fee}
-      totalPrize={WIDGET_DATA?.competition?.data?.total_prize}
+      totalPrize={WIDGET_DATA?.competition?.data?.potential_win?.no ?? 0}
+      winnerGroup={WIDGET_DATA?.competition?.data?.winner_group}
       viewType={'no'}
       participantList={WIDGET_DATA?.competition?.data?.participants?.no}
       {participantsMap}
