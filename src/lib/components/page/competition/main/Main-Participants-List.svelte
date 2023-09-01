@@ -324,7 +324,7 @@ PARTICIPANTS VOTE LIST
           color-grey
           "
         >
-          BTA ($300)
+          BTA (${totalPrize})
         </span>
       </p>
 
