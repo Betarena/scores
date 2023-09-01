@@ -26,6 +26,7 @@
 	import { onMount } from 'svelte';
 
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
+
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -57,9 +58,9 @@
     showCountdown: boolean = true
   ;
 
-  $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
-	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
-	$: countDownHour = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
+  $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60)?.toString());
+	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60)?.toString());
+	$: countDownHour = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24)?.toString());
 	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
   // #endregion ➤ 📌 VARIABLES
@@ -202,7 +203,7 @@ COMPETITION COUNTDOWN / STATUS
           w-500
           "
         >
-          {countDownHour}h
+          {parseInt(countDownHour) < 0 ? '00' : countDownHour}h
         </p>
       </div>
 
@@ -223,7 +224,7 @@ COMPETITION COUNTDOWN / STATUS
           w-500
           "
         >
-          {countDownMin}min
+          {parseInt(countDownMin) < 0 ? '00' : countDownMin}min
         </p>
       </div>
 
@@ -244,7 +245,7 @@ COMPETITION COUNTDOWN / STATUS
           w-500
           "
         >
-          {countDownSec}s
+          {parseInt(countDownSec) < 0 ? '00' : countDownSec}s
         </p>
       </div>
 
