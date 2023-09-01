@@ -466,7 +466,7 @@ PARTICIPANTS VOTE LIST
         "
         s-12
         w-600
-        color-grey
+        color-grey-shade
         "
       >
         NAME
@@ -480,7 +480,7 @@ PARTICIPANTS VOTE LIST
         "
         s-12
         w-600
-        color-grey
+        color-grey-shade
         "
       >
         VOTE
