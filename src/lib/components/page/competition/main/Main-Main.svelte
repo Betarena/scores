@@ -39,10 +39,12 @@
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 	import MainParticipantsList from './Main-Participants-List.svelte';
 
+  import icon_facebook_hover from './assets/icon-facebook-hover.svg';
   import icon_facebook from './assets/icon-facebook.svg';
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
   import icon_loose from './assets/icon-red-thumbs-down.svg';
+  import icon_twitter_hover from './assets/icon-twitter-hover.svg';
   import icon_twitter from './assets/icon-twitter.svg';
   import vector_green_dot from './assets/live-green-dot.svg';
 
@@ -776,6 +778,8 @@ COMPETITION MAIN
                 loading='lazy'
                 height=16
                 width=16
+                on:mouseover={(e) => e.target.src = icon_facebook_hover}
+                on:mouseleave={(e) => e.target.src = icon_facebook}
               />
             </div>
 
@@ -797,6 +801,8 @@ COMPETITION MAIN
                 loading='lazy'
                 width=16
                 height=16
+                on:mouseover={(e) => e.target.src = icon_twitter_hover}
+                on:mouseleave={(e) => e.target.src = icon_twitter}
               />
             </div>
 
