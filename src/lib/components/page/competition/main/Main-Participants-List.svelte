@@ -257,7 +257,7 @@ PARTICIPANTS VOTE LIST
             "
             participant-main-img
             "
-            src={participantsMap?.get(uid)?.profile_photo}
+            src={participantsMap?.get(uid)?.profile_photo ?? icon_profile_avatar}
             alt='participant_1'
             title='Partitipant_1'
             loading='lazy'
@@ -538,7 +538,7 @@ PARTICIPANTS VOTE LIST
             "
             class:color-primary={uid == $userBetarenaSettings?.user?.firebase_user_data?.uid}
           >
-            {participantsMap?.get(uid)?.username}
+            {participantsMap?.get(uid)?.username ?? ''}
           </p>
 
         </div>
