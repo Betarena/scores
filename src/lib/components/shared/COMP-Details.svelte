@@ -68,7 +68,7 @@
   ): void
   {
     let counts: NodeJS.Timer = setInterval(updated);
-    let totalCount: number = B_COMP_HIGH_D?.competition?.data?.total_prize;
+    let totalCount: number = B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission;
 
     function updated(): void
     {
@@ -248,7 +248,7 @@ COMPETITION DETAILS
     >
 
       {#if !counterTotalAnimated}
-        {B_COMP_HIGH_D?.competition?.data?.total_prize ?? ''} BTA
+        {B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission ?? ''} BTA
       {:else}
         {counterTotalPrize} BTA
       {/if}
@@ -260,7 +260,7 @@ COMPETITION DETAILS
         "
       >
         {#if !counterTotalAnimated}
-          (${B_COMP_HIGH_D?.competition?.data?.total_prize ?? ''})
+          (${B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission ?? ''})
         {:else}
           (${counterTotalPrize})
         {/if}
