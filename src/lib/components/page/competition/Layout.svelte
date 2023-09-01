@@ -184,7 +184,6 @@
 		let newURL: string = generateUrlCompetition
     (
       current_lang,
-      B_SAP_D3_CP_M,
       B_SAP_CTP_D
     );
 
@@ -236,7 +235,6 @@
     let newURL: string = generateUrlCompetition
     (
       lang_intent,
-      B_SAP_D3_CP_M,
       B_SAP_CTP_D
     );
 

@@ -1221,22 +1221,10 @@ export function generateUrlCompetitions
 export function generateUrlCompetition
 (
   lang: string,
-  competitionTerm: B_SAP_D3,
   competitionData: B_SAP_CTP_D
 ): string
 {
-  // ### [🐞]
-  dlog
-  (
-    `🔹 [var] ➤ generateUrlCompetition(..) data : ${JSON.stringify(competitionTerm)}`,
-    true
-  );
-
-  let newUrl: string =
-    lang == 'en'
-      ? `/${competitionTerm?.[lang]}${competitionData?.alternate_data?.[lang]}`
-      : `/${lang}/${competitionTerm?.[lang]}${competitionData?.alternate_data?.[lang]}`
-  ;
+  let newUrl: string = `/${competitionData?.alternate_data?.[lang]}`;
 
   newUrl = newUrl.replace
   (
