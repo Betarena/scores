@@ -769,6 +769,8 @@ COMPETITION MAIN
               cursor-pointer
               social
               "
+              on:mouseover={(e) =>  e.currentTarget.children[0].src = icon_facebook_hover}
+              on:mouseleave={(e) =>  e.currentTarget.children[0].src = icon_facebook}
             >
               <img
                 id=''
@@ -778,8 +780,6 @@ COMPETITION MAIN
                 loading='lazy'
                 height=16
                 width=16
-                on:mouseover={(e) => e.target.src = icon_facebook_hover}
-                on:mouseleave={(e) => e.target.src = icon_facebook}
               />
             </div>
 
@@ -792,6 +792,8 @@ COMPETITION MAIN
               cursor-pointer
               social
               "
+              on:mouseover={(e) => e.currentTarget.children[0].src = icon_twitter_hover}
+              on:mouseleave={(e) => e.currentTarget.children[0].src = icon_twitter}
             >
               <img
                 id=''
@@ -801,8 +803,6 @@ COMPETITION MAIN
                 loading='lazy'
                 width=16
                 height=16
-                on:mouseover={(e) => e.target.src = icon_twitter_hover}
-                on:mouseleave={(e) => e.target.src = icon_twitter}
               />
             </div>
 
