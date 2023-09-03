@@ -159,6 +159,15 @@
     modalViewType = 'not-authenticated';
   ;
 
+  $: if_R_0 =
+    $userBetarenaSettings?.user?.scores_user_data?.main_balance >= entryFee
+    && !geoLocationRestrictions?.includes($userBetarenaSettings?.country_bookmaker)
+    && $userBetarenaSettings?.user != undefined
+  ;
+  $: if (if_R_0)
+    modalViewType = 'confirm';
+  ;
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -345,8 +354,7 @@ PARTICIPANTS VOTE LIST
       JOIN COMPETITION
       -->
       {#if
-        !participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
-        && isJoinedNotThis
+        (!isJoinedThis || isJoinedNotThis)
         && !['canceled', 'finished'].includes(competitionStatus)
       }
 
