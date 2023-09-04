@@ -46,7 +46,9 @@ export function match
     // IT
     /competizioni/,
     // SE
-    /tavlingar/
+    /tavlingar/,
+    // RO
+    /competitii/
   ];
 
   const isMatch: boolean = regexList
