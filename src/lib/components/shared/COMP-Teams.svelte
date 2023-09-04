@@ -68,7 +68,7 @@ FIXTURE TEAMS
   "
   row-space-out
   "
-  class:bump-height={['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+  class:bump-height={['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
 >
 
   <!--
@@ -114,7 +114,7 @@ FIXTURE TEAMS
     <!--
     FINAL FIXTURE SCORE
     -->
-    {#if ['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+    {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
       <p
         class=
         "
@@ -200,7 +200,7 @@ FIXTURE TEAMS
     <!--
     FINAL FIXTURE SCORE
     -->
-    {#if ['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+    {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
       <p
         class=
         "
