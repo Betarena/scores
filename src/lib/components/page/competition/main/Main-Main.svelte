@@ -1152,8 +1152,9 @@ COMPETITION MAIN
       totalPrize=
       {
         (
-          (WIDGET_DATA?.competition?.data?.participants?.no?.length * WIDGET_DATA?.competition?.data?.entry_fee)
-          - (WIDGET_DATA?.competition?.data?.betarena_commission)
+          WIDGET_DATA?.competition?.data?.participants?.no?.length > 0
+          ? ((WIDGET_DATA?.competition?.data?.participants?.no?.length * WIDGET_DATA?.competition?.data?.entry_fee) - (WIDGET_DATA?.competition?.data?.betarena_commission))
+          : 0
         ) ?? 0
       }
       winnerGroup={WIDGET_DATA?.competition?.data?.winner_group}
@@ -1174,8 +1175,9 @@ COMPETITION MAIN
       totalPrize=
       {
         (
-          (WIDGET_DATA?.competition?.data?.participants?.yes?.length * WIDGET_DATA?.competition?.data?.entry_fee)
-          - (WIDGET_DATA?.competition?.data?.betarena_commission)
+          WIDGET_DATA?.competition?.data?.participants?.yes?.length > 0
+          ? ((WIDGET_DATA?.competition?.data?.participants?.yes?.length * WIDGET_DATA?.competition?.data?.entry_fee) - (WIDGET_DATA?.competition?.data?.betarena_commission))
+          : 0
         ) ?? 0
       }
       winnerGroup={WIDGET_DATA?.competition?.data?.winner_group}
