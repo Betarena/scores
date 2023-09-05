@@ -632,6 +632,7 @@ PARTICIPANTS VOTE LIST
           s-14
           color-black-2
           inter-font
+          text-center
           "
         >
           {#if competitionStatus == 'pending'}
