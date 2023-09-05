@@ -763,48 +763,56 @@ COMPETITION MAIN
             <!--
             FACEBOOK
             -->
-            <div
-              class=
-              "
-              cursor-pointer
-              social
-              "
-              on:mouseover={(e) =>  e.currentTarget.children[0].src = icon_facebook_hover}
-              on:mouseleave={(e) =>  e.currentTarget.children[0].src = icon_facebook}
+            <a
+              href="https://www.facebook.com/sharer/sharer.php?u={$page?.url?.href}"
             >
-              <img
-                id=''
-                src={icon_facebook}
-                alt=''
-                title=''
-                loading='lazy'
-                height=16
-                width=16
-              />
-            </div>
+              <div
+                class=
+                "
+                cursor-pointer
+                social
+                "
+                on:mouseover={(e) =>  e.currentTarget.children[0].src = icon_facebook_hover}
+                on:mouseleave={(e) =>  e.currentTarget.children[0].src = icon_facebook}
+              >
+                <img
+                  id=''
+                  src={icon_facebook}
+                  alt=''
+                  title=''
+                  loading='lazy'
+                  height=16
+                  width=16
+                />
+              </div>
+            </a>
 
             <!--
             TWITTER
             -->
-            <div
-              class=
-              "
-              cursor-pointer
-              social
-              "
-              on:mouseover={(e) => e.currentTarget.children[0].src = icon_twitter_hover}
-              on:mouseleave={(e) => e.currentTarget.children[0].src = icon_twitter}
+            <a
+              href="https://twitter.com/intent/tweet?url={$page?.url?.href}&text="
             >
-              <img
-                id=''
-                src={icon_twitter}
-                alt=''
-                title=''
-                loading='lazy'
-                width=16
-                height=16
-              />
-            </div>
+              <div
+                class=
+                "
+                cursor-pointer
+                social
+                "
+                on:mouseover={(e) => e.currentTarget.children[0].src = icon_twitter_hover}
+                on:mouseleave={(e) => e.currentTarget.children[0].src = icon_twitter}
+              >
+                <img
+                  id=''
+                  src={icon_twitter}
+                  alt=''
+                  title=''
+                  loading='lazy'
+                  width=16
+                  height=16
+                />
+              </div>
+            </a>
 
           </div>
 
@@ -1070,44 +1078,52 @@ COMPETITION MAIN
           <!--
           FACEBOOK
           -->
-          <div
-            class=
-            "
-            cursor-pointer
-            social
-            "
+          <a
+            href="https://www.facebook.com/sharer/sharer.php?u={$page?.url?.href}"
           >
-            <img
-              id=''
-              src={icon_facebook}
-              alt=''
-              title=''
-              loading='lazy'
-              height=16
-              width=16
-            />
-          </div>
+            <div
+              class=
+              "
+              cursor-pointer
+              social
+              "
+            >
+              <img
+                id=''
+                src={icon_facebook}
+                alt=''
+                title=''
+                loading='lazy'
+                height=16
+                width=16
+              />
+            </div>
+          </a>
 
           <!--
           TWITTER
           -->
-          <div
-            class=
-            "
-            cursor-pointer
-            social
-            "
+          <a
+            href="https://twitter.com/intent/tweet?url={$page?.url?.href}&text="
           >
-            <img
-              id=''
-              src={icon_twitter}
-              alt=''
-              title=''
-              loading='lazy'
-              width=16
-              height=16
-            />
-          </div>
+            <div
+              class=
+              "
+              cursor-pointer
+              social
+              "
+            >
+              <img
+                id=''
+                src={icon_twitter}
+                alt=''
+                title=''
+                loading='lazy'
+                width=16
+                height=16
+              />
+            </div>
+          </a>
 
         </div>
 
