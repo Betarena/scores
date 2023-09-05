@@ -119,7 +119,7 @@ FIXTURE TEAMS
       <!--
       FINAL FIXTURE SCORE
       -->
-      {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+      {#if ['active','finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
         <p
           class=
           "
@@ -129,7 +129,7 @@ FIXTURE TEAMS
           m-t-10
           "
         >
-          {B_COMP_HIGH_D?.fixture_detailed?.teams?.home?.score ?? ''}
+          {B_COMP_HIGH_D?.fixture_detailed?.teams?.home?.score ?? 0}
         </p>
       {/if}
 
@@ -205,7 +205,7 @@ FIXTURE TEAMS
       <!--
       FINAL FIXTURE SCORE
       -->
-      {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+      {#if ['active','finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
         <p
           class=
           "
@@ -215,7 +215,7 @@ FIXTURE TEAMS
           m-t-10
           "
         >
-          {B_COMP_HIGH_D?.fixture_detailed?.teams?.away?.score ?? ''}
+          {B_COMP_HIGH_D?.fixture_detailed?.teams?.away?.score ?? 0}
         </p>
       {/if}
 
