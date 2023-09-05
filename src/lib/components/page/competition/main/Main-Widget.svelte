@@ -13,13 +13,13 @@
 	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils.js';
-	import { translationObject } from '$lib/utils/translation.js';
+	// import { translationObject } from '$lib/utils/translation.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
-
-	import type { B_FEATB_T } from '@betarena/scores-lib/types/feat-betsite.js';
-	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 	import MainLoader from './Main-Loader.svelte';
+
+	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
+	import type { B_COMP_MAIN_S, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 
   // ### WARNING:
   // ### Disable, if Dynamic Import is Enabled.
@@ -35,18 +35,21 @@
   ;
 
   let
-    /** @description main widget Translations data */
-    WIDGET_T_DATA: B_FEATB_T = $page.data?.B_FEATB_T,
-    /** @description wether widget has or no data */
-    NO_WIDGET_DATA: boolean = true,
-    /** @description main widget data */
+    /** @description competition main (widget) - translations data */
+    WIDGET_T_DATA: B_COMP_MAIN_T,
+    /** @description competition main (widget) - translations data */
+    WIDGET_S_DATA: B_COMP_MAIN_S,
+    /** @description competition main (widget) - main widget data */
     WIDGET_DATA: B_COMP_HIGH_D,
+    /** @description competition main (widget) - wether widget has or no data */
+    NO_WIDGET_DATA: boolean = true,
     /** @description dynamic import variable for svelte component */
     MainMainAsDynamic: any
   ;
 
-  $: WIDGET_T_DATA = $page.data?.B_FEATB_T;
-  $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.widget_title ?? translationObject?.featured_bet_site;
+  $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
+  $: WIDGET_S_DATA = $page.data?.B_COMP_MAIN_S;
+  // $: WIDGET_TITLE = WIDGET_T_DATA?.translations?.widget_title ?? translationObject?.featured_bet_site;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -132,7 +135,19 @@
 ================= -->
 
 <SeoBox>
-  <!-- TODO: -->
+
+  <a
+    href={WIDGET_S_DATA?.data?.fixture_url}>
+    {WIDGET_S_DATA?.data?.fixture_url}
+  </a>
+
+  <a
+    href={WIDGET_S_DATA?.data?.league_url}>
+    {WIDGET_S_DATA?.data?.league_url}
+  </a>
+
+  <p>{WIDGET_S_DATA?.data?.league_name}</p>
+
 </SeoBox>
 
 <!-- [🐞] -->

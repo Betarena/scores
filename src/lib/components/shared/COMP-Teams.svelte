@@ -37,7 +37,9 @@
     /** @description competition highlights - target widget prediction type */
     prediction_type: 'win' | 'loose' | 'draw',
     /** @description TODO: DOC: */
-    prediction_side: 'home' | 'away'
+    prediction_side: 'home' | 'away',
+    /** @description TODO: DOC: */
+    fixtureUrl: string
   ;
 
   const
@@ -62,161 +64,165 @@
 <!--
 FIXTURE TEAMS
 -->
-<div
-  id="{CNAME}⮕main"
-  class=
-  "
-  row-space-out
-  "
-  class:bump-height={['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+<a
+  href={fixtureUrl}
 >
-
-  <!--
-  TEAM 1 (HOME)
-  -->
   <div
+    id="{CNAME}⮕main"
     class=
     "
-    team-box
-    column-space-center
+    row-space-out
     "
-    class:predict-win-border={prediction_side == 'home' && prediction_type == 'win'}
-    class:predict-loose-border={prediction_side == 'home' && prediction_type == 'loose'}
-    class:left-predict-win={prediction_side == 'home' && prediction_type == 'win'}
-    class:left-predict-loose={prediction_side == 'home' && prediction_type == 'loose'}
+    class:bump-height={['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
   >
 
-    <img
-      id=''
-      src={B_COMP_HIGH_D?.fixture?.home_team_logo}
-      alt='team-1'
-      title='team-name-1'
-      loading='lazy'
-      width=32
-      height=32
+    <!--
+    TEAM 1 (HOME)
+    -->
+    <div
       class=
       "
-      m-b-8
+      team-box
+      column-space-center
       "
-    />
-
-    <p
-      class=
-      "
-      s-12
-      color-black-2
-      w-600
-      "
+      class:predict-win-border={prediction_side == 'home' && prediction_type == 'win'}
+      class:predict-loose-border={prediction_side == 'home' && prediction_type == 'loose'}
+      class:left-predict-win={prediction_side == 'home' && prediction_type == 'win'}
+      class:left-predict-loose={prediction_side == 'home' && prediction_type == 'loose'}
     >
-      {B_COMP_HIGH_D?.fixture?.home_team_name ?? ''}
-    </p>
+
+      <img
+        id=''
+        src={B_COMP_HIGH_D?.fixture?.home_team_logo}
+        alt='team-1'
+        title='team-name-1'
+        loading='lazy'
+        width=32
+        height=32
+        class=
+        "
+        m-b-8
+        "
+      />
+
+      <p
+        class=
+        "
+        s-12
+        color-black-2
+        w-600
+        "
+      >
+        {B_COMP_HIGH_D?.fixture?.home_team_name ?? ''}
+      </p>
+
+      <!--
+      FINAL FIXTURE SCORE
+      -->
+      {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+        <p
+          class=
+          "
+          s-16
+          color-black-2
+          w-600
+          m-t-10
+          "
+        >
+          {B_COMP_HIGH_D?.fixture_detailed?.teams?.home?.score ?? ''}
+        </p>
+      {/if}
+
+    </div>
 
     <!--
-    FINAL FIXTURE SCORE
+    DIVIDER
     -->
-    {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+    <div
+      id="{CNAME}⮕team-divider"
+      class=
+      "
+      column-space-stretch
+      "
+    >
+
+      <div id="vertical-top-divider" />
+
       <p
         class=
         "
         s-16
-        color-black-2
-        w-600
-        m-t-10
+        w-500
         "
       >
-        {B_COMP_HIGH_D?.fixture_detailed?.teams?.home?.score ?? ''}
+        vs
       </p>
-    {/if}
 
-  </div>
+      <div id="vertical-bottom-divider" />
 
-  <!--
-  DIVIDER
-  -->
-  <div
-    id="{CNAME}⮕team-divider"
-    class=
-    "
-    column-space-stretch
-    "
-  >
-
-    <div id="vertical-top-divider" />
-
-    <p
-      class=
-      "
-      s-16
-      w-500
-      "
-    >
-      vs
-    </p>
-
-    <div id="vertical-bottom-divider" />
-
-  </div>
-
-  <!--
-  TEAM 2 (AWAY)
-  -->
-  <div
-    class=
-    "
-    team-box
-    column-space-center
-    "
-    class:predict-win-border={prediction_side == 'away' && prediction_type == 'win'}
-    class:predict-loose-border={prediction_side == 'away' && prediction_type == 'loose'}
-    class:right-predict-win={prediction_side == 'away' && prediction_type == 'win'}
-    class:right-predict-loose={prediction_side == 'away' && prediction_type == 'loose'}
-  >
-
-    <img
-      id=''
-      src={B_COMP_HIGH_D?.fixture?.away_team_logo}
-      alt='team-away'
-      title={B_COMP_HIGH_D?.fixture?.away_team_name}
-      loading='lazy'
-      width=32
-      height=32
-      class=
-      "
-      m-b-8
-      "
-    />
-
-    <p
-      class=
-      "
-      s-12
-      color-black-2
-      w-600
-      "
-    >
-      {B_COMP_HIGH_D?.fixture?.away_team_name ?? ''}
-    </p>
+    </div>
 
     <!--
-    FINAL FIXTURE SCORE
+    TEAM 2 (AWAY)
     -->
-    {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+    <div
+      class=
+      "
+      team-box
+      column-space-center
+      "
+      class:predict-win-border={prediction_side == 'away' && prediction_type == 'win'}
+      class:predict-loose-border={prediction_side == 'away' && prediction_type == 'loose'}
+      class:right-predict-win={prediction_side == 'away' && prediction_type == 'win'}
+      class:right-predict-loose={prediction_side == 'away' && prediction_type == 'loose'}
+    >
+
+      <img
+        id=''
+        src={B_COMP_HIGH_D?.fixture?.away_team_logo}
+        alt='team-away'
+        title={B_COMP_HIGH_D?.fixture?.away_team_name}
+        loading='lazy'
+        width=32
+        height=32
+        class=
+        "
+        m-b-8
+        "
+      />
+
       <p
         class=
         "
-        s-16
+        s-12
         color-black-2
         w-600
-        m-t-10
         "
       >
-        {B_COMP_HIGH_D?.fixture_detailed?.teams?.away?.score ?? ''}
+        {B_COMP_HIGH_D?.fixture?.away_team_name ?? ''}
       </p>
-    {/if}
+
+      <!--
+      FINAL FIXTURE SCORE
+      -->
+      {#if ['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+        <p
+          class=
+          "
+          s-16
+          color-black-2
+          w-600
+          m-t-10
+          "
+        >
+          {B_COMP_HIGH_D?.fixture_detailed?.teams?.away?.score ?? ''}
+        </p>
+      {/if}
+
+    </div>
 
   </div>
-
-</div>
+</a>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️

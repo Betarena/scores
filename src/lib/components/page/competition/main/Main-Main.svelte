@@ -867,7 +867,10 @@ COMPETITION MAIN
       <!--
       TOURNAMENT + COUNTRY INFO
       -->
-      <div>
+      <a
+        href={WIDGET_DATA?.league_urls?.[$sessionStore?.serverLang]}
+      >
+
 
         <p
           class=
@@ -915,6 +918,8 @@ COMPETITION MAIN
 
       </div>
 
+      </a>
+
     </div>
 
     <!--
@@ -925,6 +930,7 @@ COMPETITION MAIN
         B_COMP_HIGH_D={WIDGET_DATA}
         {prediction_side}
         {prediction_type}
+        fixtureUrl={WIDGET_DATA?.fixture?.urls?.[$sessionStore?.serverLang]}
       />
     </div>
 
