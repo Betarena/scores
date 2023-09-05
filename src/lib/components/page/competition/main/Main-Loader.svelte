@@ -24,6 +24,7 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import { onMount } from 'svelte';
 
 	import CmainLoaderMain from './loaders/CMAIN-Loader-Main.svelte';
 
@@ -48,12 +49,38 @@
 
   let
     /** @description TODO: DOC: */
-    isViewMobile: boolean = true,
+    isViewMobile: boolean = false,
     /** @description TODO: DOC: */
-    isViewTablet: boolean = true
+    isViewTablet: boolean = false
   ;
 
   // #endregion ➤ 📌 VARIABLES
+
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
+  // ### as soon as 'this' .svelte file is ran.                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  /**
+   * @summary
+   * [MAIN] [LIFECYCLE]
+   * @description
+   * ➨ kickstart resize-action;
+   * ➨ kickstart (bundle) event-listeners;
+  */
+  onMount
+  (
+    async() =>
+    {
+      [ isViewTablet, isViewMobile ] =	viewport_change ( VIEWPORT_TABLET_INIT, VIEWPORT_MOBILE_INIT )
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
@@ -132,26 +159,40 @@
   -->
   <div
     id="{CNAME}⮕grid-section"
-    class=
-    "
-    row-space-out
-    "
+    class:m-t-5={!isViewTablet}
   >
 
     <div
       id="league-box"
+      class=
+      "
+      row-space-start
+      "
     >
-      <CmainLoaderMain
-        competitionLeagueBox={true}
-      />
-      <CmainLoaderMain
-        competitionLeagueTextBox={true}
-      />
+      <div
+        class=
+        "
+        m-r-15
+        "
+      >
+        <CmainLoaderMain
+          competitionLeagueBox={true}
+        />
+      </div>
+      <div>
+        <CmainLoaderMain
+          competitionLeagueTextBox={true}
+        />
+      </div>
     </div>
 
-    <CmainLoaderMain
-      competitionTeamBox={true}
-    />
+    <div
+      id="fixture-team-box"
+    >
+      <CmainLoaderMain
+        competitionTeamBox={true}
+      />
+    </div>
 
     <!--
     💻 TABLET
@@ -167,10 +208,6 @@
 
     <div
       id="competition-extra-box"
-      class=
-      "
-      row-space-out
-      "
     >
       <CmainLoaderMain
         competitionDetail={true}
@@ -545,6 +582,53 @@
     }
 
   }
+
+  @media only screen
+  /* ◼️◼️◼️ NOTE: 🖥️ LAPTOP */
+  /* ◼️◼️◼️ NOTE: independent media query widget */
+  and (min-width: 1024px)
+  {
+
+    div#competition⮕w⮕main-loader⮕profile
+    {
+      /* 🎨 style */
+      min-height: 112px;
+      max-height: 112px;
+      padding: 24px 32px;
+    }
+
+    div#competition⮕w⮕main-loader⮕grid-section
+    {
+      /* 🎨 style */
+      margin-top: unset;
+      /* 🛝 layout */
+      align-items: center;
+      gap: unset;
+      grid-template-rows: 1fr;
+      /* grid-template-columns: 1fr 1fr 1fr; */
+      grid-auto-flow: column;
+      grid-template-columns: repeat(3, auto);
+    }
+    div#competition⮕w⮕main-loader⮕grid-section div#league-box
+    {
+      /* 🛝 layout */
+      grid-column: 1;
+      grid-row: 1;
+    }
+    div#competition⮕w⮕main-loader⮕grid-section div#competition-extra-box
+    {
+      /* 🛝 layout */
+      grid-column: 2;
+      grid-row: 1;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+    }
+    div#competition⮕w⮕main-loader⮕grid-section div#fixture-team-box
+    {
+      /* 🛝 layout */
+      justify-self: right;
+    }
+
+	}
 
   /*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
