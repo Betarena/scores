@@ -51,6 +51,7 @@
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+	import type { B_SAP_D1 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_MAIN_D, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -81,6 +82,8 @@
     /** @description TODO: DOC: */
     WIDGET_T_DATA: B_COMP_MAIN_T,
     /** @description TODO: DOC: */
+    B_SAP_D1: B_SAP_D1,
+    /** @description TODO: DOC: */
     isViewMobile: boolean = true,
     /** @description TODO: DOC: */
     isViewTablet: boolean = true,
@@ -95,6 +98,7 @@
   ;
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
+  $: B_SAP_D1 = $page.data?.B_SAP_D1;
 
   // ### IMPORTANT
   // ### Reactivity deep-value listen(s).
@@ -871,52 +875,54 @@ COMPETITION MAIN
         href={WIDGET_DATA?.league_urls?.[$sessionStore?.serverLang]}
       >
 
-
-        <p
-          class=
-          "
-          s-20
-          w-500
-          m-b-5
-          "
-        >
-          {WIDGET_DATA?.league?.name ?? ''}
-        </p>
-
-        <div
-          class=
-          "
-          row-space-start
-          "
-        >
-
-          <img
-            id=''
-            src={iso2CountryLogo(WIDGET_DATA?.league?.country_iso2_j)}
-            alt='countryIcon'
-            title='CountryNameGoesHere'
-            loading='lazy'
-            width=16
-            height=16
-            class=
-            "
-            m-r-6
-            country-img
-            "
-          />
+        <div>
 
           <p
             class=
             "
-            s-12
+            s-16
+            w-500
+            m-b-5
             "
+            class:s-19={!isViewTablet}
           >
-            {WIDGET_DATA?.league?.country_iso2_j}
+            {WIDGET_DATA?.league?.name ?? ''}
           </p>
 
-        </div>
+          <div
+            class=
+            "
+            row-space-start
+            "
+          >
 
-      </div>
+            <img
+              id=''
+              src={iso2CountryLogo(WIDGET_DATA?.league?.country_iso2_j)}
+              alt='countryIcon'
+              title='CountryNameGoesHere'
+              loading='lazy'
+              width=16
+              height=16
+              class=
+              "
+              m-r-6
+              country-img
+              "
+            />
+
+            <p
+              class=
+              "
+              s-12
+              "
+            >
+              {B_SAP_D1?.translations?.[$sessionStore?.serverLang]}
+            </p>
+
+          </div>
+
+        </div>
 
       </a>
 
@@ -1158,6 +1164,8 @@ COMPETITION MAIN
       <CompDetails
         B_COMP_HIGH_D={WIDGET_DATA}
         WIDGET_T_DATA={WIDGET_T_DATA}
+        {isViewMobile}
+        {isViewTablet}
       />
     </div>
 
@@ -1306,6 +1314,13 @@ COMPETITION MAIN
   {
     /* 🎨 style */
     background-color: var(--grey-color);
+  }
+
+  img.country-img
+  {
+    /* 🎨 style */
+    border-radius: 16px;
+    object-fit: cover;
   }
 
   div#competition⮕w⮕main⮕grid-section

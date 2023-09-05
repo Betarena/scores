@@ -4,11 +4,11 @@ import { json } from '@sveltejs/kit';
 
 import { checkNull } from '$lib/utils/platform-functions.js';
 import { CHIGH_CP_ENTRY_1 } from '@betarena/scores-lib/dist/functions/func.competition.lobby.highlights.js';
-import { CMAIN_CP_ENTRY, CMAIN_CP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.competition.target.main.js';
+import { CMAIN_CP_ENTRY, CMAIN_CP_ENTRY_2, CMAIN_CP_ENTRY_3 } from '@betarena/scores-lib/dist/functions/func.competition.target.main.js';
 import dotenv from 'dotenv';
 
 import type { B_H2H_T } from '@betarena/scores-lib/types/head-2-head.js';
-import type { B_COMP_MAIN_D } from '@betarena/scores-lib/types/types.competition.main.js';
+import type { B_COMP_MAIN_D, B_COMP_MAIN_S } from '@betarena/scores-lib/types/types.competition.main.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -33,6 +33,7 @@ export async function GET
   {
     // NOTE: Handle url-query data;
     const lang: string = req?.url?.searchParams?.get('lang');
+    const seo: string = req?.url?.searchParams?.get('seo');
 	  const competition_id: string = req?.url?.searchParams?.get('competition_id');
     const participantUid: string = req?.url?.searchParams?.get('participantUid');
     const predictionChoice: string = req?.url?.searchParams?.get('predictionChoice');
@@ -83,6 +84,7 @@ export async function GET
     // NOTE: With [HASURA] Fallback;
     const if_M_1: boolean =
       !checkNull(lang)
+      && checkNull(seo)
     ;
     if (if_M_1)
     {
@@ -90,6 +92,28 @@ export async function GET
       const data =	await fallbackMainData_1
       (
         lang
+      );
+      if (data != undefined) return json(data);
+    }
+
+    // ### CHECK
+    // ### for target data competition - highlights (widget) SEO DATA.
+    // ### NOTE:
+    // ### cache & hasura (fallback) solution.
+    const if_M_3: boolean =
+      !checkNull(lang)
+      && !checkNull(seo)
+      && !checkNull(competition_id)
+    ;
+    if (if_M_3)
+    {
+      const _competition_id = parseInt(competition_id)
+
+      // TODO: LIN_C_T_A
+      const data =	await fallbackMainData_3
+      (
+        lang
+        , _competition_id
       );
       if (data != undefined) return json(data);
     }
@@ -204,6 +228,39 @@ async function fallbackMainData_1
  * @description
  * TODO: DOC:
  *
+ * @param
+ * { string } lang - Target SEO language to retrieve data for.
+ *
+ * @returns
+ * Target language SEO for competitions highligths (widget).
+ */
+async function fallbackMainData_3
+(
+  lang: string
+  , competitionId: number
+): Promise < B_COMP_MAIN_S >
+{
+  const dataRes0: [ Map < string, B_COMP_MAIN_S >, string[] ] = await CMAIN_CP_ENTRY_2
+  (
+    [lang]
+    , null
+    , [competitionId]
+  );
+
+  if (dataRes0?.[0]?.size == 0) return null;
+
+  const key = `${lang}_${competitionId}`;
+
+	return dataRes0?.[0]?.get(key);
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * TODO: DOC:
+ *
  * @returns
  * `void`.
  */
@@ -219,7 +276,7 @@ async function fallbackMainData_2
   console.debug(participantUid);
   console.debug(predictionChoice);
 
-  const dataRes0: [ Map < number, B_COMP_MAIN_D >, string[] ] = await CMAIN_CP_ENTRY_3
+  await CMAIN_CP_ENTRY_3
   (
     competition_id,
     participantUid,

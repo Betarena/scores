@@ -3,8 +3,8 @@
 import { ERROR_CODE_INVALID, ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
 import { PRELOAD_exitPage, promiseUrlsPreload, promiseValidUrlCheck } from '$lib/utils/platform-functions.js';
 
-import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
-import type { B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
+import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D1, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_COMP_MAIN_S, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 import type { PageLoad } from '../$types.js';
 
@@ -91,7 +91,9 @@ export async function load
     B_SAP_CTP_D,
     B_SAP_D3_CP_M,
     B_SAP_D3_SP_M,
-    B_COMP_MAIN_T
+    B_COMP_MAIN_T,
+    B_COMP_MAIN_S,
+    B_SAP_D1
   ] = await fetchData
   (
     fetch,
@@ -142,7 +144,9 @@ export async function load
     B_SAP_CTP_D,
     B_SAP_D3_CP_M,
     B_SAP_D3_SP_M,
-    B_COMP_MAIN_T
+    B_COMP_MAIN_T,
+    B_COMP_MAIN_S,
+    B_SAP_D1
 	};
 
 }
@@ -162,8 +166,32 @@ type PP_PROMISE_0 =
   B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_COMP_MAIN_T | undefined,
-  // B_COMP_MAIN_S | undefined
+  B_COMP_MAIN_S | undefined
 ];
+
+/**
+ * @description
+ * TODO: DOC:
+ */
+type PP_PROMISE_1 =
+[
+  B_SAP_D1 | undefined
+];
+
+/**
+ * @description
+ * TODO: DOC:
+ */
+type PP_PROMISE_F =
+[
+  B_SAP_CTP_T | undefined,
+  B_SAP_CTP_D | undefined,
+  B_SAP_D3 | undefined,
+  B_SAP_D3 | undefined,
+  B_COMP_MAIN_T | undefined,
+  B_COMP_MAIN_S | undefined,
+  B_SAP_D1 | undefined
+]
 
 /**
  * @summary
@@ -177,7 +205,7 @@ async function fetchData
   fetch: any,
   _lang: string,
   _competitionId: string
-): Promise < PP_PROMISE_0 >
+): Promise < PP_PROMISE_F >
 {
 
   // ### [🐞]
@@ -193,7 +221,7 @@ async function fetchData
     `/api/data/main/seo-pages?term=competitions`,
     `/api/data/main/seo-pages?term=football`,
     `/api/data/competition/main?lang=${_lang}`,
-    // `/api/data/competition?seo=true&lang=${_lang}`,
+    `/api/data/competition/main?seo=true&lang=${_lang}&competition_id=${_competitionId}`,
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
@@ -202,7 +230,24 @@ async function fetchData
     fetch
   ) as PP_PROMISE_0;
 
-  return data_0;
+  const urls_1: string[] =
+  [
+    `/api/data/main/seo-pages?country_id=${data_0?.[5]?.data?.country_id}`
+  ];
+
+  const data_1: PP_PROMISE_1 = await promiseUrlsPreload
+  (
+    urls_1,
+    fetch
+  ) as PP_PROMISE_1;
+
+  const finalData: PP_PROMISE_F =
+  [
+    ...data_0,
+    ...data_1
+  ];
+
+  return finalData;
 }
 
 /**
