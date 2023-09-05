@@ -846,34 +846,34 @@ COMPETITION MAIN
     <!--
     LEAGUE / TOURNAMENT INFO
     -->
-    <div
+    <a
       id="league-box"
-      class=
-      "
-      row-space-start
-      "
+      href={WIDGET_DATA?.league_urls?.[$sessionStore?.serverLang]}
     >
-
-      <img
-        id=''
-        src={WIDGET_DATA?.league?.image_path_j}
-        alt='competition-league-logo'
-        title={WIDGET_DATA?.league?.name}
-        loading='lazy'
-        width=45
-        height=45
+      <div
         class=
         "
-        m-r-16
+        row-space-start
         "
-      />
-
-      <!--
-      TOURNAMENT + COUNTRY INFO
-      -->
-      <a
-        href={WIDGET_DATA?.league_urls?.[$sessionStore?.serverLang]}
       >
+
+        <img
+          id=''
+          src={WIDGET_DATA?.league?.image_path_j}
+          alt='competition-league-logo'
+          title={WIDGET_DATA?.league?.name}
+          loading='lazy'
+          width=45
+          height=45
+          class=
+          "
+          m-r-16
+          "
+        />
+
+        <!--
+        TOURNAMENT + COUNTRY INFO
+        -->
 
         <div>
 
@@ -924,9 +924,8 @@ COMPETITION MAIN
 
         </div>
 
-      </a>
-
-    </div>
+      </div>
+    </a>
 
     <!--
     FIXTURE TEAMS
@@ -971,7 +970,7 @@ COMPETITION MAIN
             id="{CNAME}⮕status-is-active"
             class=
             "
-            row-space-start
+            row-space-center
             "
           >
 
@@ -1011,7 +1010,7 @@ COMPETITION MAIN
             id="{CNAME}⮕status-is-finished"
             class=
             "
-            row-space-start
+            row-space-center
             "
           >
 
@@ -1037,7 +1036,7 @@ COMPETITION MAIN
             id="{CNAME}⮕status-is-canceled"
             class=
             "
-            row-space-start
+            row-space-center
             "
           >
 
@@ -1336,7 +1335,7 @@ COMPETITION MAIN
     /* grid-template-rows: 1fr 1fr 1fr; */
     gap: 24px;
   }
-  div#competition⮕w⮕main⮕grid-section div#league-box
+  div#competition⮕w⮕main⮕grid-section a#league-box
   {
     /* 🛝 layout */
     grid-column: 1;
@@ -1391,7 +1390,7 @@ COMPETITION MAIN
       /* grid-template-rows: 1fr 1fr 1fr; */
       gap: 24px;
     }
-    div#competition⮕w⮕main⮕grid-section div#league-box
+    div#competition⮕w⮕main⮕grid-section a#league-box
     {
       /* 🎨 style */
       grid-column: 1;
@@ -1442,7 +1441,7 @@ COMPETITION MAIN
       grid-template-rows: 1fr;
       grid-template-columns: 1fr 1fr 1fr;
     }
-    div#competition⮕w⮕main⮕grid-section div#league-box
+    div#competition⮕w⮕main⮕grid-section a#league-box
     {
       /* 🛝 layout */
       grid-column: 1;
