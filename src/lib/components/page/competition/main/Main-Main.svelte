@@ -30,7 +30,7 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { iso2CountryLogo, viewport_change } from '$lib/utils/platform-functions.js';
+	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
@@ -51,7 +51,7 @@
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
-	import type { B_COMP_MAIN_D } from '@betarena/scores-lib/types/types.competition.main.js';
+	import type { B_COMP_MAIN_D, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -78,6 +78,8 @@
   ;
 
   let
+    /** @description TODO: DOC: */
+    WIDGET_T_DATA: B_COMP_MAIN_T,
     /** @description TODO: DOC: */
     isViewMobile: boolean = true,
     /** @description TODO: DOC: */
@@ -571,11 +573,11 @@ COMPETITION MAIN
             class:color-grey={prediction_type == 'draw'}
           >
             {#if prediction_type == 'win'}
-              {WIDGET_T_DATA?.prediction?.[WIDGET_DATA?.competition?.data?.prediction] ?? 'Win'}
+              {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
             {:else if prediction_type == 'loose'}
-              {WIDGET_T_DATA?.prediction?.[WIDGET_DATA?.competition?.data?.prediction] ?? 'Lose'}
+              {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
             {:else}
-              {WIDGET_T_DATA?.prediction?.[WIDGET_DATA?.competition?.data?.prediction] ?? 'Draw'}
+              {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
             {/if}
           </p>
 
@@ -590,7 +592,13 @@ COMPETITION MAIN
           "
           class:s-16={!isViewTablet}
         >
-          58%
+          {#if WIDGET_DATA?.competition?.data?.target_team_prediction == '1'}
+            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.home)}%
+          {:else if WIDGET_DATA?.competition?.data?.target_team_prediction == '2'}
+            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.away)}%
+          {:else}
+            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.draw)}%
+          {/if}
           {WIDGET_T_DATA?.title_prob ?? 'probability'}
         </p>
 
