@@ -26,6 +26,7 @@
 	import { page } from "$app/stores";
 
 	import sessionStore from "$lib/store/session.js";
+	import { removeDiacritics } from "$lib/utils/languages.js";
 
 	import BreadcrumbSingle from "./Breadcrumb-Single.svelte";
 
@@ -48,6 +49,8 @@
     B_SAP_CTP_D: B_SAP_CTP_D,
     /** @description general page - `competition` term(s) data translations */
     B_SAP_D3_CP_M: B_SAP_D3,
+    /** @description general page - `football` term(s) data translations */
+    B_SAP_D3_SP_M: B_SAP_D3,
     /** @description TODO: DOC: */
     langUrlPrefix: string
   ;
@@ -55,6 +58,7 @@
 	$: B_SAP_CTP_T = $page.data?.B_SAP_CTP_T;
 	$: B_SAP_CTP_D = $page.data?.B_SAP_CTP_D;
 	$: B_SAP_D3_CP_M = $page.data?.B_SAP_D3_CP_M;
+	$: B_SAP_D3_SP_M = $page.data?.B_SAP_D3_SP_M;
 
   $: langUrlPrefix =
     $sessionStore?.serverLang == 'en'
@@ -100,7 +104,8 @@ COMPETITION (PAGE) BREADCRUMBS
   COMPETITION ⮕ SPORT
   -->
   <BreadcrumbSingle
-    name={'football'}
+    name={B_SAP_D3_SP_M?.[$sessionStore?.serverLang]}
+    href={`${langUrlPrefix}${removeDiacritics(B_SAP_D3_SP_M?.[$sessionStore?.serverLang])}`}
   />
 
   <!--

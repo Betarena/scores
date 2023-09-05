@@ -90,6 +90,7 @@ export async function load
     B_SAP_CTP_T,
     B_SAP_CTP_D,
     B_SAP_D3_CP_M,
+    B_SAP_D3_SP_M,
     B_COMP_MAIN_T
   ] = await fetchData
   (
@@ -140,6 +141,7 @@ export async function load
 		B_SAP_CTP_T,
     B_SAP_CTP_D,
     B_SAP_D3_CP_M,
+    B_SAP_D3_SP_M,
     B_COMP_MAIN_T
 	};
 
@@ -157,6 +159,7 @@ type PP_PROMISE_0 =
 [
   B_SAP_CTP_T | undefined,
   B_SAP_CTP_D | undefined,
+  B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_COMP_MAIN_T | undefined,
   // B_COMP_MAIN_S | undefined
@@ -188,6 +191,7 @@ async function fetchData
     `/api/data/main/seo-pages?lang=${_lang}&page=competition`,
     `/api/data/main/seo-pages?competition_id=${_competitionId}&page=competition`,
     `/api/data/main/seo-pages?term=competitions`,
+    `/api/data/main/seo-pages?term=football`,
     `/api/data/competition/main?lang=${_lang}`,
     // `/api/data/competition?seo=true&lang=${_lang}`,
   ];
