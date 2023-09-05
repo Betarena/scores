@@ -58,6 +58,11 @@ a.disable-anchor
   pointer-events: none;
 }
 
+.inter-font
+{
+  font-family: Inter;
+}
+
 p {
 	font-style: normal;
 	font-weight: 400; /* 400 / 500 */
@@ -346,6 +351,9 @@ FONT SIZE
 }
 .s-22 {
 	font-size: 22px;
+}
+.s-24 {
+	font-size: 24px;
 }
 .s-32 {
 	font-size: 32px;

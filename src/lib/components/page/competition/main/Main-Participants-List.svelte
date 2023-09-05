@@ -610,9 +610,12 @@ PARTICIPANTS VOTE LIST
         <p
           class=
           "
-          s-22
+          s-24
           w-600
           color-black-2
+          text-center
+          inter-font
+          m-b-16
           "
         >
           No participants at
@@ -621,8 +624,26 @@ PARTICIPANTS VOTE LIST
         </p>
 
         <!--
-        CANCELED INFO
+        EXTRA INFO
         -->
+        <p
+          class=
+          "
+          s-14
+          color-black-2
+          inter-font
+          "
+        >
+          {#if competitionStatus == 'pending'}
+            This match has yet not started
+          {:else if competitionStatus == 'active'}
+            This match is now active
+          {:else if competitionStatus == 'canceled'}
+            This match was canceled
+          {:else if competitionStatus == 'finished'}
+            This match has now finished
+          {/if}
+        </p>
 
       </div>
 
@@ -846,7 +867,7 @@ PARTICIPANTS VOTE LIST
       padding: 24px 32px;
       /* 🛝 layout */
       gap: unset;
-      grid-template-columns: 1fr 1fr 1fr 1fr;
+      /* grid-template-columns: 1fr 1fr 1fr 1fr; */
       grid-template-rows: 1fr;
     }
     div#competition⮕w⮕participant-list⮕top-row div.participants-preview
