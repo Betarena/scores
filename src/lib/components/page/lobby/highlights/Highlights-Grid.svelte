@@ -122,9 +122,9 @@
       ;
 
       // ### CHECK
-      // ### for competition to be placed in 'group' of 'type: Finished'.
+      // ### for competition to be placed in 'group' of 'type: Finished || Canceled'.
       const if_M_2: boolean =
-        value?.competition?.data?.status == 'finished'
+        ['finished', 'canceled'].includes(value?.competition?.data?.status)
       ;
       if (if_M_2)
         finishedCompetitions.push(value)
