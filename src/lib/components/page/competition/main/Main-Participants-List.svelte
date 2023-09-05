@@ -368,7 +368,7 @@ PARTICIPANTS VOTE LIST
           on:click={() => showModal = true}
           class:disabled={isJoinedNotThis}
           class:color-grey={isJoinedNotThis}
-          disabled={isJoinedNotThis}
+          disabled={isJoinedNotThis || competitionStatus != 'pending'}
         >
           Join {viewType == 'yes' ? 'Yes' : 'No'}
         </button>
