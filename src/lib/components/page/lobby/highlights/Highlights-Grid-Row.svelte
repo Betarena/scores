@@ -66,7 +66,11 @@
     /** @description TODO: DOC: */
     currentSlidePositionNumber: number = 0,
     /** @description TODO: DOC: */
-    incrementBy: number
+    incrementBy: number,
+    /** @description TODO: DOC: */
+    gridElement: HTMLElement,
+    /** @description TODO: DOC: */
+    gridChildElement: HTMLElement
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -138,7 +142,7 @@
       }
     }
 
-    const element: HTMLElement = document?.getElementById('competition⮕w⮕highlights-grid⮕competitions');
+    const element: HTMLElement = gridElement;
 
     // ### NOTE:
     // ### on 'touchstart'.
@@ -184,9 +188,9 @@
 
     currentSlidePositionNumber += change;
 
-    const parentBox: HTMLElement = document?.getElementById('competition⮕w⮕highlights-grid⮕competitions');
+    const parentBox: HTMLElement = gridElement;
 
-    const element: HTMLElement = document?.getElementById('competition⮕w⮕highlights-grid⮕competitions-inner');
+    const element: HTMLElement = gridChildElement;
     element.style.transform = `translateX(${(-parentBox.offsetWidth * currentSlidePositionNumber) - (currentSlidePositionNumber * 20)}px)`;
   }
 
@@ -251,6 +255,7 @@ TARGET COMPETITIONS VIEW
 
 <div
   id="{CNAME}⮕competitions"
+  bind:this={gridElement}
 >
 
   <!--
@@ -280,6 +285,7 @@ TARGET COMPETITIONS VIEW
 
   <div
     id="{CNAME}⮕competitions-inner"
+    bind:this={gridChildElement}
   >
 
     {#each competitionList ?? [] as item}
