@@ -21,8 +21,13 @@
   // ### 4. assets import(s)
   // ### 5. type(s) imports(s)
 
+	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
+	import sessionStore from "$lib/store/session.js";
+	import { removeDiacritics } from '$lib/utils/languages.js';
+
+	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -34,6 +39,10 @@
   // ### and 'expected' to be used by 'this' .svelte file is ran.
 
   export let
+    /** @description TODO: DOC: */
+    isViewMobile: boolean,
+    /** @description TODO: DOC: */
+    isViewTablet: boolean,
     /** @description competition (shared) - target competition data */
     B_COMP_HIGH_D: B_COMP_HIGH_D,
     /** @description competition (shared) - target competition translations */
@@ -49,10 +58,20 @@
   ;
 
   let
+    /** @description general page - `football` term(s) data translations */
+    B_SAP_D3_SP_M: B_SAP_D3,
     /** @description TODO: DOC: */
     counterTotalPrize: number = 0,
     /** @description TODO: DOC: */
     counterTotalAnimated: boolean = true
+  ;
+
+  $: B_SAP_D3_SP_M = $page.data?.B_SAP_D3_SP_M;
+
+  $: langUrlPrefix =
+    $sessionStore?.serverLang == 'en'
+      ? `/`
+      : `/${$sessionStore?.serverLang}/`
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -125,10 +144,7 @@ COMPETITION DETAILS
 -->
 <div
   id="{CNAME}⮕grid-details"
-  class=
-  "
-  m-r-64
-  "
+  class:m-r-64={!isViewTablet}
   style="white-space: nowrap;"
 >
 
@@ -151,7 +167,7 @@ COMPETITION DETAILS
       class=
       "
       s-16
-      w-500
+      w-600
       "
     >
       {'Single predictor'}
@@ -163,30 +179,35 @@ COMPETITION DETAILS
   <!--
   COMPETITION - SPORT
   -->
-  <div>
+  <a
+    href={langUrlPrefix}{removeDiacritics(B_SAP_D3_SP_M?.[$sessionStore?.serverLang])}>
 
-    <p
-      class=
-      "
-      s-12
-      color-black-2
-      "
-    >
-      {WIDGET_T_DATA?.title_sport ?? 'Sport'}
-    </p>
+    <div>
 
-    <p
-      class=
-      "
-      s-16
-      w-500
-      "
-    >
-      {'Football'}
-      <!-- {B_COMP_HIGH_D?.competition?.data?.sport_id} -->
-    </p>
+      <p
+        class=
+        "
+        s-12
+        color-black-2
+        "
+      >
+        {WIDGET_T_DATA?.title_sport ?? 'Sport'}
+      </p>
 
-  </div>
+      <p
+        class=
+        "
+        s-16
+        w-600
+        "
+      >
+        {'Football'}
+        <!-- {B_COMP_HIGH_D?.competition?.data?.sport_id} -->
+      </p>
+
+    </div>
+
+  </a>
 
   <!--
   COMPETITION - ENTRY FEE
@@ -208,7 +229,7 @@ COMPETITION DETAILS
       class=
       "
       s-16
-      w-500
+      w-600
       "
     >
       {B_COMP_HIGH_D?.competition?.data?.entry_fee ?? ''} BTA
@@ -243,7 +264,7 @@ COMPETITION DETAILS
       class=
       "
       s-16
-      w-500
+      w-600
       "
     >
 
@@ -305,7 +326,11 @@ COMPETITION DETAILS
     div#shared⮕w⮕competition-details⮕grid-details
     {
       /* 🎨 style */
-      grid-template-columns: 1fr 1fr 1fr 1fr;
+      /* grid-template-columns: 1fr 1fr 1fr 1fr; */
+      justify-content: space-between;
+      grid-template-rows: 1fr;
+      grid-auto-flow: column;
+      gap: 24px 58px;
     }
 
   }
