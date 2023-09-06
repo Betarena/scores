@@ -1273,7 +1273,7 @@
   img.participant-img
   {
     /* 🎨 style */
-    margin: -5px;
+    margin: -7.5px;
     border-radius: 32px;
     border: 2px solid var(--whitev2);
   }
