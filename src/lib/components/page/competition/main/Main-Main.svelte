@@ -901,11 +901,11 @@ COMPETITION MAIN
             <img
               id=''
               src={iso2CountryLogo(WIDGET_DATA?.league?.country_iso2_j)}
-              alt='countryIcon'
-              title='CountryNameGoesHere'
+              alt='country-icon'
+              title={B_SAP_D1?.translations?.[$sessionStore?.serverLang]}
               loading='lazy'
-              width=16
-              height=16
+              width={isViewTablet ? 16 : 19}
+              height={isViewTablet ? 16 : 19}
               class=
               "
               m-r-6
