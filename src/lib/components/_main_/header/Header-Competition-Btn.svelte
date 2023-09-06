@@ -25,8 +25,6 @@
 
 	import sessionStore from '$lib/store/session.js';
 
-  import { removeDiacritics } from '$lib/utils/languages.js';
-
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
@@ -43,17 +41,14 @@
     /** @description translation competition name */
     competitionTranslation: string,
     /** @description target competition option */
-    selectedCompetition: string = 'predictor'
+    selectedCompetition: string = 'predictor',
+    /** @description translation competition lobby */
+    navUrl: string
   ;
 
   let
     /** @description TODO: DOC: */
-    sportIcon: string,
-    /** @description TODO: DOC: */
-    competitionLink: string =
-      $sessionStore?.serverLang == 'en'
-        ? `/${removeDiacritics(competitionTranslation?.toLowerCase())}`
-        : `/${$sessionStore?.serverLang}/${removeDiacritics(competitionTranslation?.toLowerCase())}`
+    sportIcon: string
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -95,7 +90,7 @@
 -->
 
 <a
-  href={competitionLink}
+  href={navUrl}
 >
   <div
     class=

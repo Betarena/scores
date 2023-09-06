@@ -1043,6 +1043,7 @@ NAVBAR MAIN
               <HeaderCompetitionBtn
                 competitionNameDefault={'predictor'}
                 competitionTranslation={B_NAV_T?.competitions_category?.data?.predictor}
+                navUrl={generateUrlCompetitions($sessionStore?.serverLang, B_SAP_D3_CP_H)}
               />
             {/if}
 
