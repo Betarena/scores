@@ -366,8 +366,8 @@ PARTICIPANTS VOTE LIST
           btn-primary-v2
           "
           on:click={() => showModal = true}
-          class:disabled={isJoinedNotThis}
-          class:color-grey={isJoinedNotThis}
+          class:disabled={isJoinedNotThis || competitionStatus != 'pending'}
+          class:color-grey={isJoinedNotThis || competitionStatus != 'pending'}
           disabled={isJoinedNotThis || competitionStatus != 'pending'}
         >
           Join {viewType == 'yes' ? 'Yes' : 'No'}
