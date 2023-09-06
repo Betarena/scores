@@ -476,7 +476,7 @@ COMPETITION MAIN
           "
         >
 
-          <p
+          <h1
             class=
             "
             w-600
@@ -487,7 +487,7 @@ COMPETITION MAIN
             class:s-32={!isViewTablet}
           >
             {'Team'}
-          </p>
+          </h1>
 
           <img
             id=''
@@ -503,7 +503,7 @@ COMPETITION MAIN
             "
           />
 
-          <p
+          <h1
             class=
             "
             w-600
@@ -513,11 +513,11 @@ COMPETITION MAIN
             class:s-32={!isViewTablet}
           >
             {WIDGET_DATA?.team_name ?? ''}
-          </p>
+          </h1>
 
         </div>
 
-        <p
+        <h1
           class=
           "
           color-grey
@@ -527,7 +527,7 @@ COMPETITION MAIN
           class:s-22={!isViewTablet}
         >
           {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
-        </p>
+        </h1>
 
       </div>
 
@@ -879,7 +879,7 @@ COMPETITION MAIN
 
         <div>
 
-          <p
+          <h2
             class=
             "
             s-16
@@ -889,7 +889,7 @@ COMPETITION MAIN
             class:s-19={!isViewTablet}
           >
             {WIDGET_DATA?.league?.name ?? ''}
-          </p>
+          </h2>
 
           <div
             class=
