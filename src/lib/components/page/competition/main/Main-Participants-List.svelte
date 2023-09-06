@@ -30,6 +30,7 @@
 	import { get } from '$lib/api/utils.js';
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { dlog } from '$lib/utils/debug.js';
 	import { checkNull } from '$lib/utils/platform-functions.js';
 
 	import MainModalMultiple from './Main-Modal-Multiple.svelte';
@@ -125,6 +126,30 @@
     return;
   }
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
+  function adjustParticipantListUser
+  (
+  ): void
+  {
+    participantList = participantList
+    ?.filter
+    (
+      item =>
+      {
+        return item != $userBetarenaSettings?.user?.firebase_user_data?.uid
+      }
+    );
+
+    participantList =
+    [
+      $userBetarenaSettings?.user?.firebase_user_data?.uid,
+      ...participantList
+    ];
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -135,12 +160,14 @@
   // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+  // ### TODO: DOC:
   $: isJoinedThis =
     !checkNull($userBetarenaSettings?.user)
     && participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
     && participantList?.includes($userBetarenaSettings?.user?.firebase_user_data?.uid)
   ;
 
+  // ### TODO: DOC:
   $: isJoinedNotThis =
     !checkNull($userBetarenaSettings?.user)
     && participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
@@ -159,6 +186,7 @@
     modalViewType = 'not-authenticated';
   ;
 
+  // ### TODO: DOC:
   $: if_R_0 =
     $userBetarenaSettings?.user?.scores_user_data?.main_balance >= entryFee
     && !geoLocationRestrictions?.includes($userBetarenaSettings?.country_bookmaker)
@@ -167,6 +195,33 @@
   $: if (if_R_0)
     modalViewType = 'confirm';
   ;
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * 📌 Listens to change in participants and user joined. Acts accordingly.
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `participantList` - **kicker**
+   * - `isJoinedThis` - **kicker**
+   */
+  $: if (participantList && isJoinedThis)
+  {
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint [R] ➤ (participantList && isJoinedThis)`,
+      true
+    );
+
+    adjustParticipantListUser();
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
