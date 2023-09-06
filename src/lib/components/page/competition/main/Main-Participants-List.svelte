@@ -87,7 +87,20 @@
     /** @description competition (main) - show / hide main modal information */
     showModal: boolean = false,
     /** @description competition (main) - view type */
-    modalViewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated' = 'confirm'
+    modalViewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated' = 'confirm',
+    /** @description competition (main) - disabled buttons */
+    disabledJoinBtn: boolean = true
+  ;
+
+  $: isJoinedThis =
+    !checkNull($userBetarenaSettings?.user)
+    && participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
+    && participantList?.includes($userBetarenaSettings?.user?.firebase_user_data?.uid)
+  ;
+  $: isJoinedNotThis =
+    !checkNull($userBetarenaSettings?.user)
+    && participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
+    && !participantList?.includes($userBetarenaSettings?.user?.firebase_user_data?.uid)
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -160,20 +173,6 @@
   // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  // ### TODO: DOC:
-  $: isJoinedThis =
-    !checkNull($userBetarenaSettings?.user)
-    && participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
-    && participantList?.includes($userBetarenaSettings?.user?.firebase_user_data?.uid)
-  ;
-
-  // ### TODO: DOC:
-  $: isJoinedNotThis =
-    !checkNull($userBetarenaSettings?.user)
-    && participantsMap?.has($userBetarenaSettings?.user?.firebase_user_data?.uid)
-    && !participantList?.includes($userBetarenaSettings?.user?.firebase_user_data?.uid)
-  ;
-
   // ### NOTE:
   // ### update / mutate `modalViewType` as necessary.
   $: if ($userBetarenaSettings?.user?.scores_user_data?.main_balance < entryFee)
@@ -238,9 +237,20 @@
   (
     () =>
     {
-      // do something
+
+      // ### NOTE:
+      // ### hacky solution (not ideal) for disabling action 'join' for X milliseconds.
+      setTimeout
+      (
+        () =>
+        {
+          disabledJoinBtn = false;
+        }
+        ,
+        1000
+      );
     }
-  )
+  );
 
   onDestroy
   (
@@ -248,7 +258,7 @@
     {
       // do something
     }
-  )
+  );
 
   // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
@@ -421,9 +431,9 @@ PARTICIPANTS VOTE LIST
           btn-primary-v2
           "
           on:click={() => showModal = true}
-          class:disabled={isJoinedNotThis || competitionStatus != 'pending'}
-          class:color-grey={isJoinedNotThis || competitionStatus != 'pending'}
-          disabled={isJoinedNotThis || competitionStatus != 'pending'}
+          class:disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
+          class:color-grey={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
+          disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
         >
           Join {viewType == 'yes' ? 'Yes' : 'No'}
         </button>
