@@ -479,7 +479,7 @@ COMPETITION MAIN
           <h1
             class=
             "
-            w-600
+            w-500
             color-grey
             m-r-12
             "
@@ -506,7 +506,7 @@ COMPETITION MAIN
           <h1
             class=
             "
-            w-600
+            w-500
             color-black-2
             "
             class:s-16={isViewTablet}
@@ -521,7 +521,7 @@ COMPETITION MAIN
           class=
           "
           color-grey
-          w-600
+          w-500
           "
           class:s-12={isViewTablet}
           class:s-22={!isViewTablet}
