@@ -277,7 +277,13 @@ function mutateSeoData
     ?.replace(/{ID}/g, data2?.data?.team_name)
     ?.replace(':', ' ')
   ;
-  pageTitle += data2?.data?.target_competition_prediction;
+  if (data2?.data?.target_competition_prediction == 'win')
+    pageTitle += data?.general?.data?.prediction?.[1];
+  else if (data2?.data?.target_competition_prediction == 'lose')
+    pageTitle += data?.general?.data?.prediction?.[2];
+  else
+    pageTitle += data?.general?.data?.prediction?.[3];
+  ;
 
   data.main_data = JSON.parse
   (
