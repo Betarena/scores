@@ -31,7 +31,7 @@
 	import { userUpdateBalance } from '$lib/firebase/common.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { checkNull } from '$lib/utils/platform-functions.js';
+	import { checkNull, toDecimalFix } from '$lib/utils/platform-functions.js';
 
 	import MainModalMultiple from './Main-Modal-Multiple.svelte';
 
@@ -391,14 +391,14 @@ PARTICIPANTS VOTE LIST
         m-t-5
         "
       >
-        {totalPrize}
+        {toDecimalFix(totalPrize, 2)}
         <span
           class=
           "
           color-grey
           "
         >
-          BTA (${totalPrize})
+          BTA (${toDecimalFix(totalPrize, 2)})
         </span>
       </p>
 

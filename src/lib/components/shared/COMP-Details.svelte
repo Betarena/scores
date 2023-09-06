@@ -10,16 +10,18 @@
 
   // #region ➤ 📦 Package Imports
 
-  // ### NOTE:
-  // ### Please add inside 'this' region the 'imports' that are required
-  // ### by 'this' .svelte file is ran.
-  // ### IMPORTANT
-  // ### Please, structure the imports as follows:
-  // ### 1. svelte/sveltekit imports
-  // ### 2. project-internal files and logic
-  // ### 3. component import(s)
-  // ### 4. assets import(s)
-  // ### 5. type(s) imports(s)
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
@@ -27,6 +29,7 @@
 	import sessionStore from "$lib/store/session.js";
 	import { removeDiacritics } from '$lib/utils/languages.js';
 
+	import { toDecimalFix } from '$lib/utils/platform-functions.js';
 	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
@@ -269,9 +272,9 @@ COMPETITION DETAILS
     >
 
       {#if !counterTotalAnimated}
-        {B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission ?? ''} BTA
+        {toDecimalFix((B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission), 2) ?? ''} BTA
       {:else}
-        {counterTotalPrize} BTA
+        {toDecimalFix(counterTotalPrize, 2)} BTA
       {/if}
 
       <span
@@ -281,9 +284,9 @@ COMPETITION DETAILS
         "
       >
         {#if !counterTotalAnimated}
-          (${B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission ?? ''})
+          (${toDecimalFix((B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission), 2) ?? ''})
         {:else}
-          (${counterTotalPrize})
+          (${toDecimalFix(counterTotalPrize, 2)})
         {/if}
       </span>
 
