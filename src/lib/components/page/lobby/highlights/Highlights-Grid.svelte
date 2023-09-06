@@ -1,23 +1,27 @@
-<!-- ===============
-### COMPONENT JS (w/ TS)
-### NOTE:
-### access custom Betarena Scores JS VScode Snippets by typing 'script...'
-================= -->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
 
-  // ### NOTE:
-  // ### Please add inside 'this' region the 'imports' that are required
-  // ### by 'this' .svelte file is ran.
-  // ### IMPORTANT
-  // ### Please, structure the imports as follows:
-  // ### 1. svelte/sveltekit imports
-  // ### 2. project-internal files and logic
-  // ### 3. component import(s)
-  // ### 4. assets import(s)
-  // ### 5. type(s) imports(s)
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
 	import { onMount } from 'svelte';
@@ -31,14 +35,17 @@
   import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
   import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
   import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
+  import HighlightsNoCompetitions from './Highlights-No-Competitions.svelte';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
-  // ### NOTE:
-  // ### Please add inside 'this' region the 'variables' that are 'to be'
-  // ### and 'expected' to be used by 'this' .svelte file is ran.
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   export let
     /** @description TODO: DOC: */
@@ -66,12 +73,14 @@
     useDynamicImport: boolean = true,
     /** @description dynamic import variable for svelte component */
     HighlightsGridRowAsDynamic: any,
-    /** @description TODO: DOC: */
+    /** @description competitions (lobby) highlights (widget) - active competitions list */
     activeCompetitions: B_COMP_HIGH_D[],
-    /** @description TODO: DOC: */
+    /** @description competitions (lobby) highlights (widget) - pending competitions list */
     openCompetitions: B_COMP_HIGH_D[],
-    /** @description TODO: DOC: */
-    finishedCompetitions: B_COMP_HIGH_D[]
+    /** @description competitions (lobby) highlights (widget) - finished / canceled competitions list */
+    finishedCompetitions: B_COMP_HIGH_D[],
+    /** @description competitions (lobby) highlights (widget) - no competitions available */
+    isNoCompetitions: boolean = false
   ;
 
   // ### IMPORTANT
@@ -131,6 +140,16 @@
       ;
 
     }
+
+    // ### CHECK
+    // ### for 'no competitions' view.
+    const if_M_0: boolean =
+      openCompetitions?.length == 0
+      && activeCompetitions?.length == 0
+      && finishedCompetitions?.length == 0
+    ;
+    if (if_M_0) isNoCompetitions = true;
+    else isNoCompetitions = false;
 
     openCompetitions = openCompetitions;
     activeCompetitions = activeCompetitions;
@@ -261,9 +280,11 @@
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  // ### NOTE:
-  // ### Please add inside 'this' region the 'logic' that should run
-  // ### immediately and reactively, as soon as 'this' .svelte file is ran.
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @summary
@@ -321,10 +342,12 @@
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  // ### NOTE:
-  // ### Please add inside 'this' region the 'logic' that should run
-  // ### immediately and as part of the 'lifecycle' of svelteJs,
-  // ### as soon as 'this' .svelte file is ran.
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
+  // ### as soon as 'this' .svelte file is ran.                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @description
@@ -348,105 +371,117 @@
 
 </script>
 
-<!-- ===============
-### COMPONENT HTML
-### NOTE:
-### use 'CTRL+SPACE' to autocomplete global class="" styles
-### NOTE:
-### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.
-================= -->
-
 <!--
-OPEN COMPETITIONS
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT HTML                                                                     ◼️
+### NOTE:                                                                              ◼️
+### use 'CTRL+SPACE' to autocomplete global class="" styles                            ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 -->
-<h2>Open</h2>
 
-<!--
-### NOTE:
-### Dynamic Svelte Component Import
-### WARNING:
-### Disable, if Standard Import is Enabled.
--->
-<svelte:component
-  this={HighlightsGridRowAsDynamic}
-  competitionList={openCompetitions}
-/>
+{#if true}
 
-<!--
-### NOTE:
-### Standard Svelte Component Import
-### WARNING:
-### Disable, if Dynamic Import is Enabled.
--->
-<!--
-  <FeatBetSiteMain
-    B_FEATB_T={WIDGET_T_DATA}
+  <HighlightsNoCompetitions />
+
+{:else}
+
+  <!--
+  OPEN COMPETITIONS
+  -->
+  <h2>Open</h2>
+
+  <!--
+  ### NOTE:
+  ### Dynamic Svelte Component Import
+  ### WARNING:
+  ### Disable, if Standard Import is Enabled.
+  -->
+  <svelte:component
+    this={HighlightsGridRowAsDynamic}
+    competitionList={openCompetitions}
   />
--->
 
-<!--
-ACTIVE COMPETITIONS
--->
-<h2>Active</h2>
+  <!--
+  ### NOTE:
+  ### Standard Svelte Component Import
+  ### WARNING:
+  ### Disable, if Dynamic Import is Enabled.
+  -->
+  <!--
+    <FeatBetSiteMain
+      B_FEATB_T={WIDGET_T_DATA}
+    />
+  -->
 
-<!--
-### NOTE:
-### Dynamic Svelte Component Import
-### WARNING:
-### Disable, if Standard Import is Enabled.
--->
-<svelte:component
-  this={HighlightsGridRowAsDynamic}
-  competitionList={activeCompetitions}
-/>
+  <!--
+  ACTIVE COMPETITIONS
+  -->
+  <h2>Active</h2>
 
-<!--
-### NOTE:
-### Standard Svelte Component Import
-### WARNING:
-### Disable, if Dynamic Import is Enabled.
--->
-<!--
-  <FeatBetSiteMain
-    B_FEATB_T={WIDGET_T_DATA}
+  <!--
+  ### NOTE:
+  ### Dynamic Svelte Component Import
+  ### WARNING:
+  ### Disable, if Standard Import is Enabled.
+  -->
+  <svelte:component
+    this={HighlightsGridRowAsDynamic}
+    competitionList={activeCompetitions}
   />
--->
 
-<!--
-FINISHED COMPETITIONS
--->
-<h2>Finished</h2>
+  <!--
+  ### NOTE:
+  ### Standard Svelte Component Import
+  ### WARNING:
+  ### Disable, if Dynamic Import is Enabled.
+  -->
+  <!--
+    <FeatBetSiteMain
+      B_FEATB_T={WIDGET_T_DATA}
+    />
+  -->
 
-<!--
-### NOTE:
-### Dynamic Svelte Component Import
-### WARNING:
-### Disable, if Standard Import is Enabled.
--->
-<svelte:component
-  this={HighlightsGridRowAsDynamic}
-  competitionList={finishedCompetitions}
-/>
+  <!--
+  FINISHED COMPETITIONS
+  -->
+  <h2>Finished</h2>
 
-<!--
-### NOTE:
-### Standard Svelte Component Import
-### WARNING:
-### Disable, if Dynamic Import is Enabled.
--->
-<!--
-  <FeatBetSiteMain
-    B_FEATB_T={WIDGET_T_DATA}
+  <!--
+  ### NOTE:
+  ### Dynamic Svelte Component Import
+  ### WARNING:
+  ### Disable, if Standard Import is Enabled.
+  -->
+  <svelte:component
+    this={HighlightsGridRowAsDynamic}
+    competitionList={finishedCompetitions}
   />
--->
 
-<!-- ===============
-### COMPONENT STYLE
-### NOTE:
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE
-### NOTE:
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'
-================= -->
+  <!--
+  ### NOTE:
+  ### Standard Svelte Component Import
+  ### WARNING:
+  ### Disable, if Dynamic Import is Enabled.
+  -->
+  <!--
+    <FeatBetSiteMain
+      B_FEATB_T={WIDGET_T_DATA}
+    />
+  -->
+
+{/if}
+
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT STYLE                                                                    ◼️
+### NOTE:                                                                              ◼️
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <style>
 
