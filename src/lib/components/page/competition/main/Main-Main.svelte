@@ -777,6 +777,7 @@ COMPETITION MAIN
             -->
             <a
               href="https://www.facebook.com/sharer/sharer.php?u={$page?.url?.href}"
+              target="_blank"
             >
               <div
                 class=
@@ -804,6 +805,7 @@ COMPETITION MAIN
             -->
             <a
               href="https://twitter.com/intent/tweet?url={$page?.url?.href}&text="
+              target="_blank"
             >
               <div
                 class=
@@ -1099,6 +1101,7 @@ COMPETITION MAIN
           -->
           <a
             href="https://www.facebook.com/sharer/sharer.php?u={$page?.url?.href}"
+            target="_blank"
           >
             <div
               class=
@@ -1124,6 +1127,7 @@ COMPETITION MAIN
           -->
           <a
             href="https://twitter.com/intent/tweet?url={$page?.url?.href}&text="
+            target="_blank"
           >
             <div
               class=
