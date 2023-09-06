@@ -597,11 +597,11 @@ COMPETITION MAIN
           class:s-16={!isViewTablet}
         >
           {#if WIDGET_DATA?.competition?.data?.target_team_prediction == '1'}
-            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.home)}%
+            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.home, 0)}%
           {:else if WIDGET_DATA?.competition?.data?.target_team_prediction == '2'}
-            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.away)}%
+            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.away, 0)}%
           {:else}
-            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.draw)}%
+            {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.draw, 0)}%
           {/if}
           {WIDGET_T_DATA?.title_prob ?? 'probability'}
         </p>
