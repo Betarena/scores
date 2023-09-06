@@ -17,6 +17,7 @@ import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import sessionStore from "$lib/store/session.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
 import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from "./debug";
+import { removeDiacritics } from "./languages.js";
 import { ROUTE_ID_PROFILE } from "./user.js";
 
 import type { GeoJsResponse } from "$lib/types/types.geojs.js";
@@ -1175,10 +1176,12 @@ export function generateUrlCompetitions
     true
   );
 
+  const competitionTerm: string = removeDiacritics(data?.[lang]);
+
   let newUrl: string =
     lang == 'en'
-      ? `/${data?.[lang]}`
-      : `/${lang}/${data?.[lang]}`
+      ? `/${competitionTerm}`
+      : `/${lang}/${competitionTerm}`
   ;
 
   newUrl = newUrl.replace
@@ -1209,8 +1212,6 @@ export function generateUrlCompetitions
  * @param
  * { string } lang - Target **current** platform language.
  *
- * @param
- * { B_SAP_D3 } competitionTerm - Target **translations** for the term "_competitions_".
  *
  * @param
  * { B_SAP_CTP_D } competitionData - Target **competition data**.

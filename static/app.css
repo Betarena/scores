@@ -1024,6 +1024,13 @@ input[placeholder]
   width: 100%;
 }
 
+img.google-aspect-ratio
+{
+  /* 🎨 style */
+  width: auto;
+  max-height: 100%;
+}
+
 .hover\/transition\/v-1,
 .hover-transition-v-1
 {

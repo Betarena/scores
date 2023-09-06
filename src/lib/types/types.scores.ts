@@ -85,31 +85,53 @@ export interface User_Setting
 export interface Platform_Session
 {
   /**
-   * NOTE:IMPORTANT - used for inter-component events of selected season changed (reactivity)
+   * @description
+   * 📌 scores platform (global) - used for inter-component events of selected season changed (reactivity).
    */
 	selectedSeasonID: number;
   /**
-   * NOTE: used for detecting and pre-loading the data for a TARGET page translation of the current one, programatically
+   * @description
+   * 📌 scores platform (global) - detecting and pre-loading the data for a TARGET page
+   *                               translation of the current one, programatically.
    */
   lang_intent: string | undefined;
   /**
-   * NOTE: instant page lang
+   * @description
+   * 📌 scores platform (global) - instant platform page language identification.
    */
   serverLang: string | undefined;
   /**
-   * session data | Livescore Now Selected Date (View).
+   * @description
+   * 📌 scores platform (global) - session data | Livescore Now Selected Date (View).
+   *
    * IMPORTANT
    * Must be in ISO/UTC timezone;
   */
   livescoreNowSelectedDate: Date
   /**
-   * session data on the LivescoreNow Show/Hide Fixture NUmber
+   * @description
+   * 📌 scores platform (global) - session data on the livescore-now today fixture number.
    */
   fixturesTodayNum: number,
-  /** TODO: DOC: */
+  /**
+   * @description
+   * 📌 scores platform (global) - session data on the competitions **total** number.
+   */
+  competitionsNum: number,
+  /**
+   * @description
+   * 📌 scores platform (global) - session data on the competitions `open` number.
+   */
+  competitionsOpenNum: number,
+  /**
+   * @description
+   * 📌 scores platform (global) - session data on the device type obtained from `user-agent`.
+   */
   deviceType: 'mobile' | 'tablet' | 'desktop'
   /**
-   * session data on users current date
+   * @description
+   * 📌 scores platform (global) - session data on users current date.
+   *
    * IMPORTANT
    * Must be in user adjusted (TZ) timezone;
   */

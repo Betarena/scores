@@ -12,9 +12,14 @@ import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 
 // #region ➤ 📌 VARIABLES
 
+/**
+ * @description
+ * TODO: DOC:
+ */
 const sessionStoreObj: Platform_Session =
 {
-  // (+) show/hide;
+  // ### NOTE:
+  // ### variables for show/hide.
 	newsletterPopUpShow: false,
 	auth_show: false,
   livescoreShowCalendar: false,
@@ -23,13 +28,18 @@ const sessionStoreObj: Platform_Session =
 	fixture_select_view: 'overview',
   navBtnHover: undefined,
   withdrawModal: false,
-  // (+) lang handle;
+  // ### NOTE:
+  // ### variables for language handle.
   lang_intent: undefined,
   serverLang: undefined,
-  // (+) misc;
+  // ### NOTE:
+  // ### variables for misc.
   fixturesTodayNum: 0,
+  competitionsNum: 0,
+  competitionsOpenNum: 0,
   deviceType: undefined,
-  // (+) date handle;
+  // ### NOTE:
+  // ### variables for date handle.
   userDate: clientTimezoneDate(),
   livescoreNowSelectedDate: clientTimezoneDate(),
   userTxShowCalendar: false,
@@ -42,10 +52,12 @@ const sessionStoreObj: Platform_Session =
     ),
     to: targetDate()
   },
-  // (+) sportbook;
+  // ### NOTE:
+  // ### variables for sportbook.
   sportbook_main: undefined,
   sportbook_list: undefined,
-  // (+) real-time/live;
+  // ### NOTE:
+  // ### variables for real-time/live;
   livescore_now: undefined,
   livescore_now_scoreboard: new Map(),
   livescore_now_fixture_target: undefined,
@@ -377,10 +389,7 @@ function createLocalStore
      * 📌 Update and store **latest competitions data** in user's session object.
      *
      * @param
-     * { number } key - Target **competition id**.
-     *
-     * @param
-     * { B_H_COMP_DATA } data - Target new latest **competition data**.
+     * { Map < number, B_H_COMP_DATA > } data - Target new latest **competition data**.
      *
      * @returns
      * `void`
@@ -396,6 +405,33 @@ function createLocalStore
         sessionStoreObj
       );
     },
+
+    /**
+     * @summary
+     * 🔹 HELPER | IMPORTANT
+     *
+     * @description
+     * 📌 Update and store **amount of competitions available** in user's session object.
+     *
+     * @param
+     * { number } data - Target amount of **competition data**.
+     *
+     * @returns
+     * `void`
+     */
+    updateCompetitionsAllNum:
+    (
+      amountTotal: number,
+      amountOpen: number
+    ): void =>
+    {
+      sessionStoreObj.competitionsNum = amountTotal;
+      sessionStoreObj.competitionsOpenNum = amountOpen;
+      set
+      (
+        sessionStoreObj
+      );
+    }
 
   }
 

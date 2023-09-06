@@ -99,17 +99,36 @@ export async function subscribeCompetitionsAllListen
         {
           console.log("We got something!", data);
 
+          const competitionMap = new Map < number, B_H_COMP_DATA >();
+          let openCompetitions: number = 0;
+
           // ### NOTE:
           // ### loop over competitions data.
-          const competitionMap = new Map < number, B_H_COMP_DATA >();
           for (const competition of data?.competitions_data ?? [])
           {
+
+            // ### CHECK
+            // ### for open competition.
+            if (competition?.data?.status == 'pending')
+              openCompetitions++;
+            ;
+
+            // ### NOTE:
+            // ### generate map.
+            // ### TODO:
+            // ### can be added to 'sessionStore.competition_map' data prop.
             competitionMap.set
             (
               competition?.id,
               competition
             );
           }
+
+          sessionStore.updateCompetitionsAllNum
+          (
+            (competitionMap?.size ?? 0),
+            openCompetitions
+          );
 
           sessionStore.updateCompetitionsLatestMap
           (
