@@ -152,7 +152,7 @@
       competition-count-dark
       "
     >
-      {$sessionStore?.competitionsNum ?? 0}
+      {$sessionStore?.competitionsOpenNum ?? 0}
     </p>
 
   </div>
