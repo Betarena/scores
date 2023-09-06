@@ -94,8 +94,8 @@ FIXTURE TEAMS
       <img
         id=''
         src={B_COMP_HIGH_D?.fixture?.home_team_logo}
-        alt='team-1'
-        title='team-name-1'
+        alt='team-home'
+        title={B_COMP_HIGH_D?.fixture?.home_team_name ?? ''}
         loading='lazy'
         width=32
         height=32
@@ -111,6 +111,7 @@ FIXTURE TEAMS
         s-12
         color-black-2
         w-600
+        team-name
         "
       >
         {B_COMP_HIGH_D?.fixture?.home_team_name ?? ''}
@@ -181,7 +182,7 @@ FIXTURE TEAMS
         id=''
         src={B_COMP_HIGH_D?.fixture?.away_team_logo}
         alt='team-away'
-        title={B_COMP_HIGH_D?.fixture?.away_team_name}
+        title={B_COMP_HIGH_D?.fixture?.away_team_name ?? ''}
         loading='lazy'
         width=32
         height=32
@@ -197,6 +198,7 @@ FIXTURE TEAMS
         s-12
         color-black-2
         w-600
+        team-name
         "
       >
         {B_COMP_HIGH_D?.fixture?.away_team_name ?? ''}
@@ -256,6 +258,13 @@ FIXTURE TEAMS
   {
     /* 🔥 overload */
     min-height: inherit;
+  }
+  p.team-name
+  {
+    /* 🎨 style */
+    max-width: 100px;
+		overflow: hidden;
+    text-overflow: ellipsis;
   }
   div.team-box.left-predict-win
   {
@@ -321,9 +330,9 @@ FIXTURE TEAMS
   }
 
   /*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS       ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
   @media only screen
@@ -333,9 +342,9 @@ FIXTURE TEAMS
   }
 
   /*
-  =============
-  🌒 DARK-THEME
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
 </style>
