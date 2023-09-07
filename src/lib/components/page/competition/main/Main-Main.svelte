@@ -799,8 +799,8 @@ COMPETITION MAIN
                 <img
                   id=''
                   src={$userBetarenaSettings?.theme == 'Dark' ? icon_facebook_white : icon_facebook}
-                  alt=''
-                  title=''
+                  alt='icon_facebook'
+                  title='Facebook'
                   loading='lazy'
                   height=16
                   width=16
@@ -827,8 +827,8 @@ COMPETITION MAIN
                 <img
                   id=''
                   src={$userBetarenaSettings?.theme == 'Dark' ? icon_twitter_white : icon_twitter}
-                  alt=''
-                  title=''
+                  alt='icon_twitter'
+                  title='Twitter'
                   loading='lazy'
                   width=16
                   height=16
@@ -1126,8 +1126,8 @@ COMPETITION MAIN
               <img
                 id=''
                 src={$userBetarenaSettings?.theme == 'Dark' ? icon_facebook_white : icon_facebook}
-                alt=''
-                title=''
+                alt='icon_facebook'
+                title='Facebook'
                 loading='lazy'
                 height=16
                 width=16
@@ -1152,8 +1152,8 @@ COMPETITION MAIN
               <img
                 id=''
                 src={$userBetarenaSettings?.theme == 'Dark' ? icon_twitter_white : icon_twitter}
-                alt=''
-                title=''
+                alt='icon_twitter'
+                title='Twitter'
                 loading='lazy'
                 width=16
                 height=16
