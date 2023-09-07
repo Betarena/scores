@@ -23,8 +23,10 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import { onMount } from 'svelte';
+
+	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import CmainLoaderMain from './loaders/CMAIN-Loader-Main.svelte';
 
@@ -106,6 +108,7 @@
 
 <div
   id="{CNAME}⮕main"
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
   <!--
@@ -635,5 +638,32 @@
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div#competition⮕w⮕main-loader⮕main.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: unset;
+  }
+
+  .dark-background-1 div#competition⮕w⮕main-loader⮕profile
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
+  }
+
+  .dark-background-1 div#competition⮕w⮕main-loader⮕status-social,
+  .dark-background-1 div#competition⮕w⮕main-loader⮕grid-section,
+  .dark-background-1 div#competition⮕w⮕main-loader⮕participants div.list-box,
+  .dark-background-1 div#competition⮕w⮕main-loader⮕participants div.list-top-row
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕main-loader⮕participants div.participant-row:nth-child(even)
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1) !important;
+  }
 
 </style>

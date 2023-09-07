@@ -40,11 +40,13 @@
 	import MainParticipantsList from './Main-Participants-List.svelte';
 
   import icon_facebook_hover from './assets/icon-facebook-hover.svg';
+  import icon_facebook_white from './assets/icon-facebook-white.svg';
   import icon_facebook from './assets/icon-facebook.svg';
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
   import icon_loose from './assets/icon-red-thumbs-down.svg';
   import icon_twitter_hover from './assets/icon-twitter-hover.svg';
+  import icon_twitter_white from './assets/icon-twitter-white.svg';
   import icon_twitter from './assets/icon-twitter.svg';
   import vector_green_dot from './assets/live-green-dot.svg';
 
@@ -482,6 +484,7 @@ COMPETITION MAIN
             w-500
             color-grey
             m-r-12
+            m-0
             "
             class:s-16={isViewTablet}
             class:s-32={!isViewTablet}
@@ -506,8 +509,9 @@ COMPETITION MAIN
           <h1
             class=
             "
-            w-500
             color-black-2
+            w-500
+            m-0
             "
             class:s-16={isViewTablet}
             class:s-32={!isViewTablet}
@@ -522,6 +526,7 @@ COMPETITION MAIN
           "
           color-grey
           w-500
+          m-0
           "
           class:s-12={isViewTablet}
           class:s-22={!isViewTablet}
@@ -754,6 +759,7 @@ COMPETITION MAIN
             class=
             "
             s-14
+            color-black-2
             w-500
             m-r-20
             "
@@ -786,11 +792,11 @@ COMPETITION MAIN
                 social
                 "
                 on:mouseover={(e) =>  e.currentTarget.children[0].src = icon_facebook_hover}
-                on:mouseleave={(e) =>  e.currentTarget.children[0].src = icon_facebook}
+                on:mouseleave={(e) =>  e.currentTarget.children[0].src = ($userBetarenaSettings?.theme == 'Dark' ? icon_facebook_white : icon_facebook)}
               >
                 <img
                   id=''
-                  src={icon_facebook}
+                  src={$userBetarenaSettings?.theme == 'Dark' ? icon_facebook_white : icon_facebook}
                   alt=''
                   title=''
                   loading='lazy'
@@ -814,11 +820,11 @@ COMPETITION MAIN
                 social
                 "
                 on:mouseover={(e) => e.currentTarget.children[0].src = icon_twitter_hover}
-                on:mouseleave={(e) => e.currentTarget.children[0].src = icon_twitter}
+                on:mouseleave={(e) => e.currentTarget.children[0].src = ($userBetarenaSettings?.theme == 'Dark' ? icon_twitter_white : icon_twitter)}
               >
                 <img
                   id=''
-                  src={icon_twitter}
+                  src={$userBetarenaSettings?.theme == 'Dark' ? icon_twitter_white : icon_twitter}
                   alt=''
                   title=''
                   loading='lazy'
@@ -885,6 +891,7 @@ COMPETITION MAIN
             s-16
             w-500
             m-b-5
+            color-black-2
             "
             class:s-19={!isViewTablet}
           >
@@ -917,6 +924,7 @@ COMPETITION MAIN
               class=
               "
               s-12
+              color-black-2
               "
             >
               {B_SAP_D1?.translations?.[$sessionStore?.serverLang]}
@@ -1112,7 +1120,7 @@ COMPETITION MAIN
             >
               <img
                 id=''
-                src={icon_facebook}
+                src={$userBetarenaSettings?.theme == 'Dark' ? icon_facebook_white : icon_facebook}
                 alt=''
                 title=''
                 loading='lazy'
@@ -1138,7 +1146,7 @@ COMPETITION MAIN
             >
               <img
                 id=''
-                src={icon_twitter}
+                src={$userBetarenaSettings?.theme == 'Dark' ? icon_twitter_white : icon_twitter}
                 alt=''
                 title=''
                 loading='lazy'
@@ -1466,10 +1474,24 @@ COMPETITION MAIN
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
-  .dark-background-1 div#competition⮕w⮕main⮕profile
+  div#competition⮕w⮕main⮕box.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: unset;
+  }
+
+  .dark-background-1 div#competition⮕w⮕main⮕profile,
+  .dark-background-1 div#competition⮕w⮕main⮕social-box
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1);
+  }
+
+  .dark-background-1 div#competition⮕w⮕main⮕status-social,
+  .dark-background-1 div#competition⮕w⮕main⮕grid-section
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade) !important;
   }
 
 </style>

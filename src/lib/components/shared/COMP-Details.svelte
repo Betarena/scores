@@ -170,6 +170,7 @@ COMPETITION DETAILS
       class=
       "
       s-16
+      color-black-2
       w-600
       "
     >
@@ -201,6 +202,7 @@ COMPETITION DETAILS
         class=
         "
         s-16
+        color-black-2
         w-600
         "
       >
@@ -232,6 +234,7 @@ COMPETITION DETAILS
       class=
       "
       s-16
+      color-black-2
       w-600
       "
     >
@@ -268,6 +271,7 @@ COMPETITION DETAILS
       "
       s-16
       w-600
+      color-black-2
       "
     >
 

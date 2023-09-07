@@ -25,6 +25,7 @@
 
 	import { onMount } from 'svelte';
 
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
@@ -128,6 +129,7 @@ COMPETITION COUNTDOWN / STATUS
   "
   width-auto
   "
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   class:row-space-out={showCountdown}
 >
 
@@ -201,6 +203,7 @@ COMPETITION COUNTDOWN / STATUS
           "
           s-12
           w-500
+          color-black-2
           "
         >
           {countDownHour < 0 ? '00' : toZeroPrefixDateStr(countDownHour?.toString())}h
@@ -222,6 +225,7 @@ COMPETITION COUNTDOWN / STATUS
           "
           s-12
           w-500
+          color-black-2
           "
         >
           {countDownMin < 0 ? '00' : toZeroPrefixDateStr(countDownMin?.toString())}min
@@ -243,6 +247,7 @@ COMPETITION COUNTDOWN / STATUS
           "
           s-12
           w-500
+          color-black-2
           "
         >
           {countDownSec < 0 ? '00' : toZeroPrefixDateStr(countDownSec?.toString())}s
@@ -301,9 +306,9 @@ COMPETITION COUNTDOWN / STATUS
   }
 
   /*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
   @media only screen
@@ -313,9 +318,21 @@ COMPETITION COUNTDOWN / STATUS
   }
 
   /*
-  =============
-  🌒 DARK-THEME
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div#shared⮕w⮕countdown-status⮕main.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
+  }
+
+  .dark-background-1 div.time-box
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade);
+  }
 
 </style>

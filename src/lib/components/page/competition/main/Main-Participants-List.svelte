@@ -291,6 +291,7 @@ PARTICIPANTS VOTE LIST
 -->
 <div
   id="{CNAME}⮕main"
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   class:left-list={viewType == 'yes'}
   class:right-list={viewType == 'no'}
 >
@@ -974,5 +975,47 @@ PARTICIPANTS VOTE LIST
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div#competition⮕w⮕participant-list⮕main.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕participant-list⮕top-row
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade) !important;
+  }
+  .dark-background-1 img.participant-main-img
+  {
+    /* 🎨 style */
+    border: 2px solid var(--dark-theme-1-4-shade);
+  }
+  .dark-background-1 .disabled
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
+  }
+
+  .dark-background-1 div#competition⮕w⮕participant-list⮕list div.participant-row:nth-child(even)
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1) !important;
+  }
+  .dark-background-1 div#competition⮕w⮕participant-list⮕list div.participant-row.target-user
+  {
+    /* 🎨 style */
+    background-color: rgba(245, 98, 15, 0.2) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕participant-list⮕bottom-fade
+  {
+    /* 🎨 style */
+    background: linear-gradient(180deg, #383838 -38.28%, rgba(56, 56, 56, 0.80) -38.26%, rgba(56, 56, 56, 0.00) 175%);
+  }
+
+
+
 
 </style>

@@ -21,6 +21,8 @@
   // ### 4. assets import(s)
   // ### 5. type(s) imports(s)
 
+	import userBetarenaSettings from '$lib/store/user-settings.js';
+
 	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -73,6 +75,7 @@ FIXTURE TEAMS
     "
     row-space-out
     "
+    class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     class:bump-height={['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
   >
 
@@ -154,6 +157,7 @@ FIXTURE TEAMS
         "
         s-16
         w-500
+        color-black-2
         "
       >
         vs
@@ -346,5 +350,18 @@ FIXTURE TEAMS
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div#shared⮕w⮕competition-teams⮕main.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1)
+  }
+
+  .dark-background-1 div#vertical-top-divider,
+  .dark-background-1 div#vertical-bottom-divider
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade)
+  }
 
 </style>
