@@ -167,13 +167,13 @@
 <SeoBox>
 
   <a
-    href={WIDGET_S_DATA?.data?.fixture_url}>
-    {WIDGET_S_DATA?.data?.fixture_url}
+    href={WIDGET_S_DATA?.data?.fixture_url ?? ''}>
+    {WIDGET_S_DATA?.data?.fixture_url ?? ''}
   </a>
 
   <a
-    href={WIDGET_S_DATA?.data?.league_url}>
-    {WIDGET_S_DATA?.data?.league_url}
+    href={WIDGET_S_DATA?.data?.league_url ?? ''}>
+    {WIDGET_S_DATA?.data?.league_url ?? ''}
   </a>
 
   <h2>{WIDGET_S_DATA?.data?.league_name ?? ''}</h2>
