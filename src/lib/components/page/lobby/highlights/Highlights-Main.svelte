@@ -449,11 +449,11 @@
           class:color-grey={prediction_type == 'draw'}
         >
           {#if prediction_type == 'win'}
-            {WIDGET_T_DATA?.prediction?.[B_COMP_HIGH_D?.competition?.data?.prediction] ?? 'Win'}
+            {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
           {:else if prediction_type == 'loose'}
-            {WIDGET_T_DATA?.prediction?.[B_COMP_HIGH_D?.competition?.data?.prediction] ?? 'Lose'}
+            {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
           {:else}
-            {WIDGET_T_DATA?.prediction?.[B_COMP_HIGH_D?.competition?.data?.prediction] ?? 'Draw'}
+            {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
           {/if}
         </p>
 
