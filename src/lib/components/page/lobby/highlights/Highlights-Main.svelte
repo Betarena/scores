@@ -337,141 +337,144 @@
   <!--
   TOP COMPETITION ROW
   -->
-  <div
-    id="{CNAME}⮕top-row"
-    class=
-    "
-    row-space-out
-    "
-  >
+  <a
+    href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}">
+    <div
+      id="{CNAME}⮕top-row"
+      class=
+      "
+      row-space-out
+      "
+    >
 
-    <!--
-    1st COLUMN - COMPETITION PREDICTION INFO
-    -->
-    <div>
+      <!--
+      1st COLUMN - COMPETITION PREDICTION INFO
+      -->
+      <div>
 
-      <div
-        class=
-        "
-        row-space-start
-        "
-      >
+        <div
+          class=
+          "
+          row-space-start
+          "
+        >
+
+          <p
+            class=
+            "
+            s-16
+            w-500
+            color-grey
+            m-r-6
+            "
+          >
+            {'Team'}
+          </p>
+
+          <img
+            id=''
+            src={B_COMP_HIGH_D?.team_logo}
+            alt='competition-team-logo'
+            title={B_COMP_HIGH_D?.team_name}
+            loading='lazy'
+            width=16
+            height=16
+            class=
+            "
+            m-r-6
+            team-logo
+            "
+          />
+
+          <p
+            class=
+            "
+            s-16
+            w-500
+            color-black-2
+            "
+          >
+            {B_COMP_HIGH_D?.team_name ?? ''}
+          </p>
+
+        </div>
 
         <p
           class=
           "
-          s-16
-          w-500
+          s-12
           color-grey
-          m-r-6
+          w-600
           "
         >
-          {'Team'}
-        </p>
-
-        <img
-          id=''
-          src={B_COMP_HIGH_D?.team_logo}
-          alt='competition-team-logo'
-          title={B_COMP_HIGH_D?.team_name}
-          loading='lazy'
-          width=16
-          height=16
-          class=
-          "
-          m-r-6
-          team-logo
-          "
-        />
-
-        <p
-          class=
-          "
-          s-16
-          w-500
-          color-black-2
-          "
-        >
-          {B_COMP_HIGH_D?.team_name ?? ''}
+          {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
         </p>
 
       </div>
 
-      <p
-        class=
-        "
-        s-12
-        color-grey
-        w-600
-        "
-      >
-        {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
-      </p>
+      <!--
+      2nd COLUMN - COMPETITION PREDICTION INFO
+      -->
+      <div>
 
-    </div>
-
-    <!--
-    2nd COLUMN - COMPETITION PREDICTION INFO
-    -->
-    <div>
-
-      <div
-        class=
-        "
-        row-space-end
-        "
-      >
-
-        <img
-          id=''
-          src={icon_prediction}
-          alt='prediction-icon'
-          title='CompetitionWin'
-          loading='lazy'
-          width=18
-          height=18
+        <div
           class=
           "
-          m-r-5
+          row-space-end
           "
-        />
+        >
+
+          <img
+            id=''
+            src={icon_prediction}
+            alt='prediction-icon'
+            title='CompetitionWin'
+            loading='lazy'
+            width=18
+            height=18
+            class=
+            "
+            m-r-5
+            "
+          />
+
+          <p
+            class=
+            "
+            s-16
+            w-700
+            color-grey
+            "
+            class:color-success={prediction_type == 'win'}
+            class:color-red-bright={prediction_type == 'loose'}
+            class:color-grey={prediction_type == 'draw'}
+          >
+            {#if prediction_type == 'win'}
+              {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
+            {:else if prediction_type == 'loose'}
+              {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
+            {:else}
+              {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
+            {/if}
+          </p>
+
+        </div>
 
         <p
           class=
           "
-          s-16
-          w-700
-          color-grey
+          s-12
+          no-wrap
           "
-          class:color-success={prediction_type == 'win'}
-          class:color-red-bright={prediction_type == 'loose'}
-          class:color-grey={prediction_type == 'draw'}
         >
-          {#if prediction_type == 'win'}
-            {WIDGET_T_DATA?.prediction?.[1] ?? 'Win'}
-          {:else if prediction_type == 'loose'}
-            {WIDGET_T_DATA?.prediction?.[2] ?? 'Lose'}
-          {:else}
-            {WIDGET_T_DATA?.prediction?.x ?? 'Draw'}
-          {/if}
+          58%
+          {WIDGET_T_DATA?.title_prob ?? 'probability'}
         </p>
 
       </div>
 
-      <p
-        class=
-        "
-        s-12
-        no-wrap
-        "
-      >
-        58%
-        {WIDGET_T_DATA?.title_prob ?? 'probability'}
-      </p>
-
     </div>
-
-  </div>
+  </a>
 
   <!--
   COMPETITION INFORMATION MAIN

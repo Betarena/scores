@@ -31,9 +31,9 @@
 	import sessionStore from '$lib/store/session.js';
 	import { initialDevice } from '$lib/utils/platform-functions.js';
 
-	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import HighlightsLoader from './Highlights-Loader.svelte';
 
+	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_S, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // ### WARNING:
@@ -193,21 +193,27 @@
 
   {#each WIDGET_S_DATA?.data ?? [] as item}
 
-    <p>{item?.country_name}</p>
+    <p>{item?.country_name ?? ''}</p>
 
-    <a href={item?.league_url}>
-      {item?.league_name}
+    <a
+      href={item?.league_url ?? ''}
+    >
+      {item?.league_name ?? ''}
     </a>
 
-    <p>{item?.home_team_name}</p>
-    <p>{item?.away_team_name}</p>
+    <p>{item?.home_team_name ?? ''}</p>
+    <p>{item?.away_team_name ?? ''}</p>
 
-    <a href={item?.competition_url}>
-      {item?.competition_url}
+    <a
+      href="/{item?.competition_url ?? ''}"
+    >
+      {item?.competition_url ?? ''}
     </a>
 
-    <a href={item?.fixture_url}>
-      {item?.fixture_url}
+    <a
+      href={item?.fixture_url ?? ''}
+    >
+      {item?.fixture_url ?? ''}
     </a>
 
   {/each}
