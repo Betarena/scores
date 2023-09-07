@@ -151,6 +151,42 @@
     if (if_M_0) isNoCompetitions = true;
     else isNoCompetitions = false;
 
+    // ### NOTE:
+    // ### sort (precautionary) by id's.
+    if (openCompetitions?.length > 0)
+      openCompetitions
+      .sort
+      (
+        (
+          a
+          ,b
+        ) =>
+          a?.competition?.id - b?.competition?.id
+      );
+    ;
+    if (activeCompetitions?.length > 0)
+      activeCompetitions
+      .sort
+      (
+        (
+          a
+          ,b
+        ) =>
+          a?.competition?.id - b?.competition?.id
+      );
+    ;
+    if (finishedCompetitions?.length > 0)
+      finishedCompetitions
+      .sort
+      (
+        (
+          a
+          ,b
+        ) =>
+          a?.competition?.id - b?.competition?.id
+      );
+    ;
+
     openCompetitions = openCompetitions;
     activeCompetitions = activeCompetitions;
     finishedCompetitions = finishedCompetitions;
