@@ -37,6 +37,8 @@
   import icon_draw from './assets/icon-grey-draw.svg';
   import icon_loose from './assets/icon-red-thumbs-down.svg';
 
+	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
+
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -561,159 +563,18 @@
     FIXTURE TEAMS
     -->
     <div
-      id="{CNAME}⮕competition-teams"
       class=
       "
       m-b-16
-      row-space-out
       "
-      class:bump-height={['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
     >
 
-      <!--
-      TEAM 1 (HOME)
-      -->
-      <div
-        class=
-        "
-        team-box
-        column-space-center
-        "
-        class:predict-win-border={prediction_side == 'home' && prediction_type == 'win'}
-        class:predict-loose-border={prediction_side == 'home' && prediction_type == 'loose'}
-        class:left-predict-win={prediction_side == 'home' && prediction_type == 'win'}
-        class:left-predict-loose={prediction_side == 'home' && prediction_type == 'loose'}
-      >
-
-        <img
-          id=''
-          src={B_COMP_HIGH_D?.fixture?.home_team_logo}
-          alt='team-1'
-          title='team-name-1'
-          loading='lazy'
-          width=32
-          height=32
-          class=
-          "
-          m-b-8
-          "
-        />
-
-        <p
-          class=
-          "
-          s-12
-          color-black-2
-          w-600
-          "
-        >
-          {B_COMP_HIGH_D?.fixture?.home_team_name ?? ''}
-        </p>
-
-        <!--
-        FINAL FIXTURE SCORE
-        -->
-        {#if ['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
-          <p
-            class=
-            "
-            s-16
-            color-black-2
-            w-600
-            m-t-10
-            "
-          >
-            {B_COMP_HIGH_D?.fixture_detailed?.teams?.home?.score ?? ''}
-          </p>
-        {/if}
-
-      </div>
-
-      <!--
-      DIVIDER
-      -->
-      <div
-        id="{CNAME}⮕team-divider"
-        class=
-        "
-        column-space-stretch
-        "
-      >
-
-        <div id="vertical-top-divider" />
-
-        <p
-          class=
-          "
-          s-16
-          w-500
-          "
-        >
-          vs
-        </p>
-
-        <div id="vertical-bottom-divider" />
-
-      </div>
-
-      <!--
-      TEAM 2 (AWAY)
-      -->
-      <div
-        class=
-        "
-        team-box
-        column-space-center
-        "
-        class:predict-win-border={prediction_side == 'away' && prediction_type == 'win'}
-        class:predict-loose-border={prediction_side == 'away' && prediction_type == 'loose'}
-        class:right-predict-win={prediction_side == 'away' && prediction_type == 'win'}
-        class:right-predict-loose={prediction_side == 'away' && prediction_type == 'loose'}
-      >
-
-        <img
-          id=''
-          src={B_COMP_HIGH_D?.fixture?.away_team_logo}
-          alt='team-away'
-          title={B_COMP_HIGH_D?.fixture?.away_team_name}
-          loading='lazy'
-          width=32
-          height=32
-          class=
-          "
-          m-b-8
-          "
-        />
-
-        <p
-          class=
-          "
-          s-12
-          color-black-2
-          w-600
-          "
-        >
-          {B_COMP_HIGH_D?.fixture?.away_team_name ?? ''}
-        </p>
-
-        <!--
-        FINAL FIXTURE SCORE
-        -->
-        {#if ['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
-          <p
-            class=
-            "
-            s-16
-            color-black-2
-            w-600
-            m-t-10
-            "
-          >
-            {B_COMP_HIGH_D?.fixture_detailed?.teams?.away?.score ?? ''}
-          </p>
-        {/if}
-
-      </div>
+      <CompTeams
+        B_COMP_HIGH_D={B_COMP_HIGH_D}
+        {prediction_side}
+        {prediction_type}
+        fixtureUrl={B_COMP_HIGH_D?.fixture?.urls?.[$sessionStore?.serverLang]}
+      />
 
     </div>
 
@@ -1016,88 +877,92 @@
   <!--
   COMPETITION BOTTOM ROW
   -->
-  <div
-    id="{CNAME}⮕bottom-row"
-    class=
-    "
-    row-space-out
-    "
-  >
+  {#if !['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
 
-    <!--
-    PARTICIPANTS
-    -->
     <div
+      id="{CNAME}⮕bottom-row"
       class=
       "
-      width-auto
-      row-space-start
+      row-space-out
       "
     >
 
+      <!--
+      PARTICIPANTS PREVIEW
+      -->
       <div
         class=
         "
-        m-r-12
+        width-auto
         row-space-start
         "
       >
 
-        {#each B_COMP_HIGH_D?.first_3_participants ?? [] as item}
+        <div
+          class=
+          "
+          m-r-12
+          row-space-start
+          "
+        >
 
-          <img
-            id=''
-            class=
-            "
-            participant-img
-            "
-            src={item}
-            alt='participant_1'
-            title='Partitipant_1'
-            loading='lazy'
-            width=32
-            height=32
-          />
+          {#each B_COMP_HIGH_D?.first_3_participants ?? [] as item}
 
-        {/each}
+            <img
+              id=''
+              class=
+              "
+              participant-img
+              "
+              src={item}
+              alt='participant_1'
+              title='Partitipant_1'
+              loading='lazy'
+              width=32
+              height=32
+            />
+
+          {/each}
+
+        </div>
+
+        <p
+          class=
+          "
+          s-12
+          color-black-2
+          no-wrap
+          "
+        >
+          {
+            B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
+            + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
+          }
+          {WIDGET_T_DATA?.title_participants ?? 'participants'}
+        </p>
 
       </div>
 
-      <p
-        class=
-        "
-        s-12
-        color-black-2
-        no-wrap
-        "
-      >
-        {
-          B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
-          + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
-        }
-        {WIDGET_T_DATA?.title_participants ?? 'participants'}
-      </p>
+      <!--
+      JOIN COMPETITION
+      -->
+      <a
+        href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}">
+        <button
+          class=
+          "
+          s-14
+          w-500
+          btn-primary-v2
+          "
+        >
+          {'Join now'}
+        </button>
+      </a>
 
     </div>
 
-    <!--
-    JOIN COMPETITION
-    -->
-    <a
-      href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}">
-      <button
-        class=
-        "
-        s-14
-        w-500
-        btn-primary-v2
-        "
-      >
-        {'Join now'}
-      </button>
-    </a>
-
-  </div>
+  {/if}
 
 </div>
 
@@ -1149,88 +1014,10 @@
     border-radius: 16px;
   }
 
-  div#competition⮕w⮕highlights⮕competition-teams
-  {
-    /* 📌 position */
-    position: relative;
-    /* 🎨 style */
-    overflow: hidden;
-    border-radius: 8px;
-    background-color: var(--whitev2);
-    min-height: 86px;
-  }
-  div#competition⮕w⮕highlights⮕competition-teams.bump-height
-  {
-    /* 🎨 style */
-    min-height: 113px;
-  }
-  div.team-box
-  {
-    /* 🔥 overload */
-    min-height: inherit;
-  }
-  .left-predict-win
-  {
-    /* 🎨 style */
-    background: linear-gradient(310deg, #F2F2F2 0%, #B5E5B7 100%);
-  }
-  .left-predict-loose
-  {
-    /* 🎨 style */
-    background: linear-gradient(311deg, #F2F2F2 0%, #EFC3C3 100%);
-  }
-  .right-predict-win
-  {
-    /* 🎨 style */
-    background: linear-gradient(43deg, #F2F2F2 0%, #B5E5B7 100%);
-  }
-  .right-predict-loose
-  {
-    /* 🎨 style */
-    background: linear-gradient(43deg, #F2F2F2 0%, #EFC3C3 100%);
-  }
-  .predict-win-border
-  {
-    /* 🎨 style */
-    border-bottom: 3px solid #4DA025;
-  }
-  .predict-loose-border
-  {
-    /* 🎨 style */
-    border-bottom: 3px solid #FF5959;
-  }
-
-  div#competition⮕w⮕highlights⮕team-divider
-  {
-    /* 📌 position */
-    position: absolute;
-    right: 0;
-    left: 0;
-    bottom: 0;
-    top: 0;
-    margin: auto;
-    /* 🎨 style */
-    height: 100%;
-    width: fit-content;
-    text-align: -webkit-center;
-    /* 🔥 overload */
-    align-items: center;
-    justify-content: space-between;
-  }
-  div#vertical-top-divider
-  {
-    /* 🎨 style */
-    background: var(--white);
-    width: 1px;
-    height: 25px;
-  }
-  div#vertical-bottom-divider
-  {
-    /* 🎨 style */
-    background: var(--white);
-    width: 1px;
-    height: 25px;
-  }
+  /*
+  NOTE:
+  TEAMS CONTENT MANAGED BY OFFSPRING WIDGET
+  */
 
   div#competition⮕w⮕highlights⮕countdown
   {
