@@ -503,6 +503,7 @@ COMPETITION MAIN
             class=
             "
             m-r-12
+            team-logo
             "
           />
 
@@ -1328,6 +1329,11 @@ COMPETITION MAIN
   {
     /* 🎨 style */
     background-color: var(--grey-color);
+  }
+  img.team-logo
+  {
+    /* 🎨 style */
+    object-fit: contain;
   }
 
   h2.league-name

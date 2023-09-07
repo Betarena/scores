@@ -382,6 +382,7 @@
           class=
           "
           m-r-6
+          team-logo
           "
         />
 
@@ -1006,6 +1007,12 @@
   {
     /* 🎨 style */
     padding: 20px 24px;
+  }
+
+  img.team-logo
+  {
+    /* 🎨 style */
+    object-fit: contain;
   }
 
   img.country-img
