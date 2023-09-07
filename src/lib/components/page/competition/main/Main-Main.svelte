@@ -1088,6 +1088,7 @@ COMPETITION MAIN
           s-14
           w-500
           m-r-20
+          color-black-2
           "
         >
           Compartilhar
