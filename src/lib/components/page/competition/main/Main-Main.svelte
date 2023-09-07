@@ -73,7 +73,7 @@
 
   const
     /** @description TODO: DOC: */
-    VIEWPORT_TABLET_INIT = 780,
+    VIEWPORT_TABLET_INIT = 1200,
     /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 581,
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
@@ -1444,7 +1444,7 @@ COMPETITION MAIN
 	@media only screen
   /* ◼️◼️◼️ NOTE: 🖥️ LAPTOP */
   /* ◼️◼️◼️ NOTE: independent media query widget */
-  and (min-width: 1024px)
+  and (min-width: 1200px)
   {
 
     div#competition⮕w⮕main⮕profile
