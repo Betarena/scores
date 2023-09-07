@@ -39,6 +39,10 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   export let
+    /** @description TODO: DOC: */
+    isViewMobile: boolean,
+    /** @description TODO: DOC: */
+    isViewTablet: boolean,
     /** @description competition (main) - view type */
     viewType: 'confirm' | 'insufficient' | 'geo-restriction' | 'not-authenticated',
     /** @description competition (main) - amount entry fee */
@@ -139,6 +143,7 @@ MODAL | COMPETITION CONFIRM
       "
       row-space-end
       "
+      class:m-t-40={isViewMobile}
     >
 
       <button
@@ -195,10 +200,7 @@ MODAL | COMPETITION NOT ENOUGH FUNDS
     MODAL ACTION BUTTONS
     -->
     <div
-      class=
-      "
-      row-space-out
-      "
+      class:row-space-out={!isViewMobile}
     >
 
       <!--
@@ -210,6 +212,7 @@ MODAL | COMPETITION NOT ENOUGH FUNDS
         s-12
         color-grey
         "
+        class:m-t-15={isViewMobile}
       >
         Please deposit to continue and be able to participate.
       </p>
@@ -223,6 +226,7 @@ MODAL | COMPETITION NOT ENOUGH FUNDS
         row-space-end
         width-auto
         "
+        class:m-t-40={isViewMobile}
       >
 
         <button
@@ -280,10 +284,7 @@ MODAL | COMPETITION NOT GEO AVAILABLE
     MODAL ACTION BUTTONS
     -->
     <div
-      class=
-      "
-      row-space-out
-      "
+      class:row-space-out={!isViewMobile}
     >
 
       <!--
@@ -295,6 +296,7 @@ MODAL | COMPETITION NOT GEO AVAILABLE
         s-12
         color-grey
         "
+        class:m-t-15={isViewMobile}
       >
         We will be launching new competitions
         that will be available at your country. Be patient, thanks.
@@ -303,16 +305,27 @@ MODAL | COMPETITION NOT GEO AVAILABLE
       <!--
       MODAL ACTION BUTTONS
       -->
-      <button
-        on:click={() => closeModal()}
+      <div
         class=
         "
-        btn-hollow
-        m-r-8
+        row-space-end
+        width-auto
         "
+        class:m-t-40={isViewMobile}
       >
-        Close
-      </button>
+
+        <button
+          on:click={() => closeModal()}
+          class=
+          "
+          btn-hollow
+          m-r-8
+          "
+        >
+          Close
+        </button>
+
+      </div>
 
     </div>
 
@@ -347,10 +360,7 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
     MODAL ACTION BUTTONS
     -->
     <div
-      class=
-      "
-      row-space-out
-      "
+      class:row-space-out={!isViewMobile}
     >
 
       <!--
@@ -362,6 +372,7 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
         s-12
         color-grey
         "
+        class:m-t-15={isViewMobile}
       >
         Please sign in to your Betarena Account and/or register to participate in competitions.
       </p>
@@ -375,6 +386,7 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
         row-space-end
         width-auto
         "
+        class:m-t-40={isViewMobile}
       >
 
         <button
@@ -438,18 +450,15 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
     /* 📌 position */
 		position: fixed;
 		z-index: 10000;
-		margin: auto;
 		right: 0;
 		left: 0;
 		bottom: 0;
-		top: 0;
     /* 🎨 style */
-		width: 92%;
-		width: fit-content;
+		width: 100%;
 		height: fit-content;
-		background: #ffffff;
+		background: var(--white);
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
+		border-radius: 12px 12px 0 0;
 		padding: 20px;
 		overflow: hidden;
     /* 🛝 layout */
@@ -469,11 +478,15 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
 
     div#auth-alert-box
     {
+      /* 📌 position */
+      top: 0;
+      margin: auto;
       /* 🎨 style */
       width: 480px;
       max-width: 480px;
       height: 188px;
       max-height: 188px;
+		  border-radius: 12px;
     }
 
   }

@@ -279,6 +279,8 @@ MORE INFORMATION / ALERT MODAL
 -->
 {#if showModal}
   <MainModalMultiple
+    {isViewMobile}
+    {isViewTablet}
     viewType={modalViewType}
     balanceDeductAmount={entryFee}
     on:closeModal={() => showModal = false}
