@@ -105,6 +105,7 @@ FIXTURE TEAMS
         class=
         "
         m-b-8
+        team-logo
         "
       />
 
@@ -193,6 +194,7 @@ FIXTURE TEAMS
         class=
         "
         m-b-8
+        team-logo
         "
       />
 
@@ -269,6 +271,11 @@ FIXTURE TEAMS
     max-width: 100px;
 		overflow: hidden;
     text-overflow: ellipsis;
+  }
+  img.team-logo
+  {
+    /* 🎨 style */
+    object-fit: contain;
   }
   div.team-box.left-predict-win
   {
