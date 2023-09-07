@@ -31,6 +31,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { translationObject } from '$lib/utils/translation.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
@@ -489,7 +490,7 @@ COMPETITION MAIN
             class:s-16={isViewTablet}
             class:s-32={!isViewTablet}
           >
-            {'Team'}
+            {translationObject?.team}
           </h1>
 
           <img

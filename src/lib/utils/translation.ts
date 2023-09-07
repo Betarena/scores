@@ -19,6 +19,7 @@ export const translationObject:
   odds_type:  string;
   bookmakers: string;
   balance:    string;
+  team: string;
 } =
 {
   featured_match_title: 'Featured Match',
@@ -29,5 +30,6 @@ export const translationObject:
   sign_in: 'Sign In',
   odds_type: 'Odds Type',
   bookmakers: 'Bookmakers',
-  balance: 'Balance'
+  balance: 'Balance',
+  team: 'Team',
 }
