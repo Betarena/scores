@@ -382,7 +382,7 @@ PARTICIPANTS VOTE LIST
         color-black-2
         "
       >
-        Total Prize
+        Pool prize
       </p>
 
       <p
