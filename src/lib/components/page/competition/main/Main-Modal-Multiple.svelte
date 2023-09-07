@@ -24,7 +24,7 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   import { createEventDispatcher, type EventDispatcher } from 'svelte';
-  import { fade } from 'svelte/transition';
+  import { fade, fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
 
@@ -88,6 +88,30 @@
     dispatch('confirmEntry');
   }
 
+  /**
+   * @summary
+   * 🔹 HELPER
+   *
+   * @description
+   * 📌 Logic for modal transition logic for mobile devices only.
+   *
+   * @param
+   * { any } node - Target node to apply transition to.
+   *
+   * @param
+   * { any } options - Target transition options.
+   */
+  function customFlyIn
+  (
+    node: any,
+    options: any
+  ): any
+  {
+		if (isViewMobile)
+			return options.fn(node, options);
+    ;
+	}
+
   // #endregion ➤ 🛠️ METHODS
 
 </script>
@@ -112,13 +136,21 @@ MODAL | BACKGROUND BLUR
 />
 
 <!--
-MODAL | COMPETITION CONFIRM
+MODAL - DYNAMIC
 -->
-{#if viewType == 'confirm'}
+<div
+  class=
+  "
+  competition-modal
+  "
+  in:customFlyIn={{ fn: fly, duration: 500, y: 200 }}
+  out:customFlyIn={{ fn: fly, duration: 500, y: 200 }}
+>
 
-  <div
-    id="auth-alert-box"
-  >
+  <!--
+  MODAL | COMPETITION CONFIRM
+  -->
+  {#if viewType == 'confirm'}
 
     <!--
     MODAL ENTRY TEXT
@@ -169,18 +201,12 @@ MODAL | COMPETITION CONFIRM
 
     </div>
 
-  </div>
+  {/if}
 
-{/if}
-
-<!--
-MODAL | COMPETITION NOT ENOUGH FUNDS
--->
-{#if viewType == 'insufficient'}
-
-  <div
-    id="auth-alert-box"
-  >
+  <!--
+  MODAL | COMPETITION NOT ENOUGH FUNDS
+  -->
+  {#if viewType == 'insufficient'}
 
     <!--
     MODAL TEXT
@@ -254,18 +280,13 @@ MODAL | COMPETITION NOT ENOUGH FUNDS
 
     </div>
 
-  </div>
+  {/if}
 
-{/if}
+  <!--
+  MODAL | COMPETITION NOT GEO AVAILABLE
+  -->
+  {#if viewType == 'geo-restriction'}
 
-<!--
-MODAL | COMPETITION NOT GEO AVAILABLE
--->
-{#if viewType == 'geo-restriction'}
-
-  <div
-    id="auth-alert-box"
-  >
     <!--
     MODAL TEXT
     -->
@@ -329,18 +350,12 @@ MODAL | COMPETITION NOT GEO AVAILABLE
 
     </div>
 
-  </div>
+  {/if}
 
-{/if}
-
-<!--
-MODAL | NOT AUTHENTICATED / SIGNED IN
--->
-{#if viewType == 'not-authenticated'}
-
-  <div
-    id="auth-alert-box"
-  >
+  <!--
+  MODAL | NOT AUTHENTICATED / SIGNED IN
+  -->
+  {#if viewType == 'not-authenticated'}
 
     <!--
     MODAL TEXT
@@ -415,9 +430,9 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
 
     </div>
 
-  </div>
+  {/if}
 
-{/if}
+</div>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -445,7 +460,7 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
     background: rgba(0, 0, 0, 0.5);
   }
 
-  div#auth-alert-box
+  div.competition-modal
   {
     /* 📌 position */
 		position: fixed;
@@ -455,7 +470,10 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
 		bottom: 0;
     /* 🎨 style */
 		width: 100%;
-		height: fit-content;
+    /* NOTE:
+    strangely, having 'fit-content' enabled, hides the rest of
+    modal content, except of first line. */
+		/* height: fit-content; */
 		background: var(--white);
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px 12px 0 0;
@@ -476,7 +494,7 @@ MODAL | NOT AUTHENTICATED / SIGNED IN
   and (min-width: 726px)
   {
 
-    div#auth-alert-box
+    div.competition-modal
     {
       /* 📌 position */
       top: 0;
