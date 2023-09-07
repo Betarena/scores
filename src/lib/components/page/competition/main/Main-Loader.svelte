@@ -642,7 +642,7 @@
   div#competition⮕w⮕main-loader⮕main.dark-background-1
   {
     /* 🎨 style */
-    background-color: unset;
+    background-color: unset !important;
   }
 
   .dark-background-1 div#competition⮕w⮕main-loader⮕profile
