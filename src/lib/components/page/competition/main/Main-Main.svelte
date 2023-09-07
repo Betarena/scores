@@ -892,6 +892,8 @@ COMPETITION MAIN
             w-500
             m-b-5
             color-black-2
+            no-wrap
+            league-name
             "
             class:s-19={!isViewTablet}
           >
@@ -1328,6 +1330,13 @@ COMPETITION MAIN
     background-color: var(--grey-color);
   }
 
+  h2.league-name
+  {
+    /* 🎨 style */
+    max-width: 185px;
+		overflow: hidden;
+    text-overflow: ellipsis;
+  }
   img.country-img
   {
     /* 🎨 style */
