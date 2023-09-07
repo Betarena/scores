@@ -39,6 +39,7 @@
 
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 
+	import CompCountdown from '$lib/components/shared/COMP-Countdown.svelte';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -91,9 +92,6 @@
     counterTotalAnimated: boolean = true
   ;
 
-  $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
-	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
-	$: countDownHour = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
 	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_HIGH_T;
@@ -589,9 +587,8 @@
         class=
         "
         m-b-24
+        row-space-center
         "
-        class:row-space-out={showCountdown}
-
       >
 
         <!--
@@ -607,14 +604,28 @@
             text-center
             "
           >
-            {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getDate()}/
-            {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMonth()}/
-            {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getFullYear()}
-            -
-            {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getHours()}
-            {toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMinutes())}
+            {
+              `
+              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getDate())}
+              /
+              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMonth() + 1)}
+              /
+              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getFullYear())}
+              -
+              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getHours())}
+              :
+              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMinutes())}
+              ${toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getHours() > 12 ? 'PM' : 'AM'}
+              `
+            }
           </p>
         {/if}
+
+        <!-- [🐞] -->
+        <!-- {showCountdown} -->
+        <!-- {B_COMP_HIGH_D?.fixture?.time} -->
+        <!-- {countDownTestHour} -->
+        <!-- {dateDiff} -->
 
         <!--
         COUNTDOWN
@@ -622,96 +633,12 @@
         {#if showCountdown}
 
           <!--
-          COUNTDOWN START TEXT
-          -->
-          <p
-            class=
-            "
-            s-14
-            color-black-2
-            w-500
-            no-wrap
-            "
-          >
-            {WIDGET_T_DATA?.timer ?? 'Starts in:'}
-          </p>
-
-          <!--
           COUNTDOWN TIMER
           -->
-          <div
-            id="{CNAME}⮕countdown-main-box"
-            class=
-            "
-            width-auto
-            row-space-out
-            "
-          >
-
-            <!--
-            HOURS
-            -->
-            <div
-              class=
-              "
-              time-box
-              text-center
-              "
-            >
-              <p
-                class=
-                "
-                s-12
-                w-500
-                "
-              >
-                {countDownHour}h
-              </p>
-            </div>
-
-            <!--
-            MINUTES
-            -->
-            <div
-              class=
-              "
-              time-box
-              text-center
-              "
-            >
-              <p
-                class=
-                "
-                s-12
-                w-500
-                "
-              >
-                {countDownMin}min
-              </p>
-            </div>
-
-            <!--
-            SECONDS
-            -->
-            <div
-              class=
-              "
-              time-box
-              text-center
-              "
-            >
-              <p
-                class=
-                "
-                s-12
-                w-500
-                "
-              >
-                {countDownSec}s
-              </p>
-            </div>
-
-          </div>
+          <CompCountdown
+            B_COMP_HIGH_D={B_COMP_HIGH_D}
+            WIDGET_T_DATA={WIDGET_T_DATA}
+          />
 
         {/if}
 
@@ -878,7 +805,7 @@
   <!--
   COMPETITION BOTTOM ROW
   -->
-  {#if !['active', 'finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+  {#if !['active','finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
 
     <div
       id="{CNAME}⮕bottom-row"
