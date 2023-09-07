@@ -146,7 +146,10 @@
     {WIDGET_S_DATA?.data?.league_url}
   </a>
 
-  <p>{WIDGET_S_DATA?.data?.league_name}</p>
+  <h2>{WIDGET_S_DATA?.data?.league_name ?? ''}</h2>
+
+  <p>{WIDGET_S_DATA?.data?.home_team_name ?? ''}</p>
+  <p>{WIDGET_S_DATA?.data?.away_team_name ?? ''}</p>
 
 </SeoBox>
 

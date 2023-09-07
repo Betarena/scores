@@ -35,6 +35,7 @@
 	import { dlog } from '$lib/utils/debug';
 	import { generateUrlCompetition, initialDevice, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
 
+  import SeoBox from '$lib/components/SEO-Box.svelte';
   import SvelteSeo from 'svelte-seo';
   import Breadcrumb from './Breadcrumb.svelte';
   import MainWidget from './main/Main-Widget.svelte';
@@ -288,9 +289,11 @@
 
 </script>
 
-<!-- ===================
-### SVELTE INJECTION TAGS
-=================== -->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### SVELTE INJECTION TAGS                                                              ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <!--
 ### NOTE:
@@ -330,6 +333,16 @@
     {/if}
   {/each}
 </svelte:head>
+
+<!--
+### NOTE:
+### PAGE CRITICAL SEO
+-->
+<SeoBox>
+
+  <h1>{B_SAP_CTP_D?.data?.team_name}</h1>
+
+</SeoBox>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
