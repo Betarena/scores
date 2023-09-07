@@ -460,7 +460,7 @@
       <p
         class=
         "
-        s-10
+        s-12
         no-wrap
         "
       >
