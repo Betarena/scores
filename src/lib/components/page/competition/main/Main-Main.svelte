@@ -534,6 +534,8 @@ COMPETITION MAIN
           "
           class:s-12={isViewTablet}
           class:s-22={!isViewTablet}
+          class:m-t-5={isViewMobile}
+          class:m-t-10={!isViewMobile}
         >
           {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
         </h1>
