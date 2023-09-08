@@ -30,7 +30,7 @@
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { checkNull, cleanUrl, iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
@@ -862,7 +862,8 @@ COMPETITION MAIN
     -->
     <a
       id="league-box"
-      href={WIDGET_DATA?.league_urls?.[$sessionStore?.serverLang]}
+      href={cleanUrl(WIDGET_DATA?.league_urls?.[$sessionStore?.serverLang])}
+      class:disable-anchor={checkNull(WIDGET_DATA?.league_urls?.[$sessionStore?.serverLang])}
     >
       <div
         class=

@@ -24,6 +24,7 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { checkNull, cleanUrl } from '$lib/utils/platform-functions.js';
 
 	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
@@ -71,7 +72,8 @@
 FIXTURE TEAMS
 -->
 <a
-  href={fixtureUrl}
+  href={cleanUrl(fixtureUrl)}
+  class:disable-anchor={checkNull(fixtureUrl)}
 >
   <div
     id="{CNAME}⮕main"

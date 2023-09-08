@@ -1152,6 +1152,35 @@ export async function selectLanguage
  * 🟥 MAIN | 🔹 HELPER
  *
  * @description
+ * 📌 Cleans a target `url` to be used for internal app routing.
+ *
+ * @param
+ * { string } url - Target **url** to clean for internal platform use.
+ *
+ * @returns
+ * A target string `URL`, ready for internal routing.
+ */
+export function cleanUrl
+(
+  url: string
+): string
+{
+  url = url.replace
+  (
+    'https://scores.betarena.com',
+    ''
+  );
+
+  if (url?.[0] != '/') url = '/'+url;
+
+  return url;
+}
+
+/**
+ * @summary
+ * 🟥 MAIN | 🔹 HELPER
+ *
+ * @description
  * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
  *
  * @param
