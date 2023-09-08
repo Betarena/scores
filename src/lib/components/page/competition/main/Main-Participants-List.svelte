@@ -672,8 +672,9 @@ PARTICIPANTS VOTE LIST
             class=
             "
             s-16
-            color-black-2
             "
+            class:color-grey={viewType == 'no'}
+            class:color-black-2={viewType == 'yes'}
           >
             {viewType == 'yes' ? (WIDGET_T_DATA?.title_votes?.yes ?? 'Yes') : (WIDGET_T_DATA?.title_votes?.no ?? 'No')}
           </p>
