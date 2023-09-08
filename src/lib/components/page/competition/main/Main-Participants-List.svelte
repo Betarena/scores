@@ -381,7 +381,6 @@ PARTICIPANTS VOTE LIST
       m-r-40
       total-prize
       "
-      style="align-items: flex-start;"
       class:column-space-start={!isViewTablet}
       class:row-space-out={isViewTablet}
     >
@@ -764,18 +763,8 @@ PARTICIPANTS VOTE LIST
     width: 100%;
     background: var(--white);
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
+		/* border-radius: 12px; */
     overflow: hidden;
-  }
-  div#competition⮕w⮕participant-list⮕main.left-list
-  {
-    /* 🎨 style */
-    border-radius: 0 0 0 12px;
-  }
-  div#competition⮕w⮕participant-list⮕main.right-list
-  {
-    /* 🎨 style */
-    border-radius: 0 0 12px 0;
   }
 
   div#competition⮕w⮕participant-list⮕top-row
@@ -888,7 +877,7 @@ PARTICIPANTS VOTE LIST
   div#competition⮕w⮕participant-list⮕list-head
   {
     /* 🎨 style */
-    padding: 16px 62px 16px 24px;
+    padding: 16px 47px 16px 24px;
   }
 
   div#competition⮕w⮕participant-list⮕list div.participant-row
@@ -935,6 +924,17 @@ PARTICIPANTS VOTE LIST
   and (min-width: 658px)
   {
 
+    div#competition⮕w⮕participant-list⮕main.left-list
+    {
+      /* 🎨 style */
+      border-radius: 0 0 0 12px;
+    }
+    div#competition⮕w⮕participant-list⮕main.right-list
+    {
+      /* 🎨 style */
+      border-radius: 0 0 12px 0;
+    }
+
     div#competition⮕w⮕participant-list⮕list
     {
       /* 🎨 style */
@@ -972,6 +972,8 @@ PARTICIPANTS VOTE LIST
       /* 🎨 style */
       grid-row: 1;
       grid-column: 3;
+      /* 🛝 layout */
+      align-items: flex-start;
     }
     div#competition⮕w⮕participant-list⮕top-row div.participant-action
     {
@@ -1038,8 +1040,5 @@ PARTICIPANTS VOTE LIST
     /* 🎨 style */
     background: linear-gradient(180deg, #383838 -38.28%, rgba(56, 56, 56, 0.80) -38.26%, rgba(56, 56, 56, 0.00) 175%);
   }
-
-
-
 
 </style>
