@@ -53,10 +53,7 @@
     VIEWPORT_TABLET_INIT = 912,
     /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 581,
-    /**
-     * @description
-     * 📌 `this` component **main** `id` and `data-testid` prefix.
-    */
+    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'competition⮕w⮕highlights-grid'
   ;
 
@@ -73,10 +70,12 @@
     currentSlidePositionNumber: number = 0,
     /** @description TODO: DOC: */
     incrementBy: number,
-    /** @description TODO: DOC: */
+    /** @description target `this` component grid element `HTMLElement` */
     gridElement: HTMLElement,
-    /** @description TODO: DOC: */
-    gridChildElement: HTMLElement
+    /** @description target `this` component gird inner element `HTMLElement` */
+    gridChildElement: HTMLElement,
+    /** @description show / hide on 🖥️ LAPTOP carousel buttons */
+    showPrevNextBtns: boolean = false
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -266,14 +265,14 @@ TARGET COMPETITIONS VIEW
 <!-- <h2>Open</h2> -->
 
 <div
-  id="{CNAME}⮕competitions"
-  bind:this={gridElement}
+  id="{CNAME}⮕competitions-outer"
 >
 
   <!--
   🖥️ LAPTOP
+  PREVIOUS SLIDE TOGGLE
   -->
-  {#if !isViewTablet}
+  {#if !isViewTablet && showPrevNextBtns}
 
     <div
       id="previous-open"
@@ -296,49 +295,59 @@ TARGET COMPETITIONS VIEW
   {/if}
 
   <div
-    id="{CNAME}⮕competitions-inner"
-    bind:this={gridChildElement}
+    id="{CNAME}⮕competitions"
+    bind:this={gridElement}
+    on:mouseover={() => showPrevNextBtns = true}
+    on:mouseout={() => showPrevNextBtns = false}
   >
 
-    {#each competitionList ?? [] as item}
+    <div
+      id="{CNAME}⮕competitions-inner"
+      bind:this={gridChildElement}
+    >
 
-      <div
-        transition:fade
-      >
+      {#each competitionList ?? [] as item}
 
-        <!--
-        ### NOTE:
-        ### Dynamic Svelte Component Import
-        ### WARNING:
-        ### Disable, if Standard Import is Enabled.
-        -->
-        <svelte:component
-          this={HighlightsMainDynamic}
-          B_COMP_HIGH_D={item}
-        />
+        <div
+          transition:fade
+        >
 
-        <!--
-        ### NOTE:
-        ### Standard Svelte Component Import
-        ### WARNING:
-        ### Disable, if Dynamic Import is Enabled.
-        -->
-        <!--
-          <FeatBetSiteMain
-            B_FEATB_T={WIDGET_T_DATA}
+          <!--
+          ### NOTE:
+          ### Dynamic Svelte Component Import
+          ### WARNING:
+          ### Disable, if Standard Import is Enabled.
+          -->
+          <svelte:component
+            this={HighlightsMainDynamic}
+            B_COMP_HIGH_D={item}
           />
-        -->
 
-      </div>
+          <!--
+          ### NOTE:
+          ### Standard Svelte Component Import
+          ### WARNING:
+          ### Disable, if Dynamic Import is Enabled.
+          -->
+          <!--
+            <FeatBetSiteMain
+              B_FEATB_T={WIDGET_T_DATA}
+            />
+          -->
 
-    {/each}
+        </div>
+
+      {/each}
+
+    </div>
 
   </div>
 
   <!--
   🖥️ LAPTOP
+  NEXT SLIDE TOGGLE
   -->
-  {#if !isViewTablet}
+  {#if !isViewTablet && showPrevNextBtns}
 
     <div
       id="next-open"
@@ -397,6 +406,12 @@ CAROUSEL DOTS
 
 <style>
 
+  div#competition⮕w⮕highlights-grid⮕competitions-outer
+  {
+    /* 📌 position */
+    position: relative;
+  }
+
   div#competition⮕w⮕highlights-grid⮕competitions
   {
     /* 📌 position */
@@ -444,12 +459,12 @@ CAROUSEL DOTS
   div#previous-open.carousel-btn
   {
     /* 📌 position */
-    left: 0;
+    left: -17px;
   }
   div#next-open.carousel-btn
   {
     /* 📌 position */
-    right: 0;
+    right: -17px;
   }
   div.carousel-btn img
   {
