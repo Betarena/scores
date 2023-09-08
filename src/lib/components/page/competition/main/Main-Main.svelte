@@ -668,8 +668,8 @@ COMPETITION MAIN
                 m-r-12
                 '
                 src={vector_green_dot}
-                alt=''
-                title=''
+                alt='green-pulsating-vector'
+                title='Event is live'
                 loading='lazy'
                 width=16
                 height=16
@@ -683,7 +683,7 @@ COMPETITION MAIN
                 color-success
                 "
               >
-                Event is active
+                {WIDGET_T_DATA?.status?.active ?? 'Event is active'}
               </p>
 
             </div>
@@ -709,7 +709,7 @@ COMPETITION MAIN
                 color-red-bright-v2
                 "
               >
-                Event is finished
+                {WIDGET_T_DATA?.status?.finished ?? 'Event is finished'}
               </p>
 
             </div>
@@ -735,7 +735,7 @@ COMPETITION MAIN
                 color-black-2
                 "
               >
-                Canceled
+                {WIDGET_T_DATA?.status?.canceled ?? 'Canceled'}
               </p>
 
             </div>
@@ -898,6 +898,7 @@ COMPETITION MAIN
             color-black-2
             no-wrap
             league-name
+            m-0
             "
             class:s-19={!isViewTablet}
           >
