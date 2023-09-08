@@ -1435,6 +1435,8 @@ NAVBAR MAIN
             navKey={'competitions'}
             navUrl={generateUrlCompetitions($sessionStore?.serverLang, B_SAP_D3_CP_H)}
             navTxt={B_NAV_T?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
+            isNew={true}
+            newTxt={'new'}
             {isViewTablet}
             {isViewMobile}
           />
