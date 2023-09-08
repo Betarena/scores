@@ -317,34 +317,39 @@ PARTICIPANTS VOTE LIST
       "
     >
 
-      <div
-        class=
-        "
-        m-r-12
-        width-auto
-        row-space-start
-        "
-      >
+      {#if participantList?.length > 0}
 
-        {#each participantList?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
+        <div
+          class=
+          "
+          m-r-12
+          width-auto
+          row-space-start
+          participant-list
+          "
+        >
 
-          <img
-            id=''
-            class=
-            "
-            participant-main-img
-            "
-            src={participantsMap?.get(uid)?.profile_photo ?? icon_profile_avatar}
-            alt='participant_1'
-            title='Partitipant_1'
-            loading='lazy'
-            width=32
-            height=32
-          />
+          {#each participantList?.slice(0, (isViewTablet ? 3 : 5)) ?? [] as uid}
 
-        {/each}
+            <img
+              id=''
+              class=
+              "
+              participant-main-img
+              "
+              src={participantsMap?.get(uid)?.profile_photo ?? icon_profile_avatar}
+              alt='participant_1'
+              title='Partitipant_1'
+              loading='lazy'
+              width=32
+              height=32
+            />
 
-      </div>
+          {/each}
+
+        </div>
+
+      {/if}
 
       <p
         class=
@@ -777,12 +782,23 @@ PARTICIPANTS VOTE LIST
     grid-template-columns: 1fr 1fr;
     grid-template-rows: 1fr 1fr;
   }
-  img.participant-main-img
+  div#competition⮕w⮕participant-list⮕top-row div.participants-preview
   {
     /* 🎨 style */
-    margin: -7.5px;
+    grid-row: 1;
+    grid-column: 1;
+  }
+  div#competition⮕w⮕participant-list⮕top-row div.participants-preview div.participant-list img.participant-main-img
+  {
+    /* 🎨 style */
+    margin-right: -15px;
     border-radius: 32px;
     border: 2px solid var(--whitev2);
+  }
+  div#competition⮕w⮕participant-list⮕top-row div.participants-preview div.participant-list img.participant-main-img:last-child
+  {
+    /* 🎨 style */
+    margin-right: 0;
   }
   .disabled
   {
@@ -801,12 +817,6 @@ PARTICIPANTS VOTE LIST
   {
     /* 🎨 style */
     background: #4DA025;
-  }
-  div.participants-preview
-  {
-    /* 🎨 style */
-    grid-row: 1;
-    grid-column: 1;
   }
   div.total-prize
   {
@@ -991,7 +1001,7 @@ PARTICIPANTS VOTE LIST
     /* 🎨 style */
     background-color: var(--dark-theme-1-4-shade) !important;
   }
-  .dark-background-1 img.participant-main-img
+  .dark-background-1 div#competition⮕w⮕participant-list⮕top-row div.participants-preview div.participant-list img.participant-main-img
   {
     /* 🎨 style */
     border: 2px solid var(--dark-theme-1-4-shade);
