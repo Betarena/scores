@@ -715,7 +715,7 @@ COMPETITION MAIN
             </div>
 
           <!--
-          EVENT FINISHED
+          EVENT CANCELED
           -->
           {:else if WIDGET_DATA?.competition?.data?.status == 'canceled'}
 
@@ -1013,7 +1013,7 @@ COMPETITION MAIN
               color-success
               "
             >
-              Event is active
+              {WIDGET_T_DATA?.status?.active ?? 'Event is active'}
             </p>
 
           </div>
@@ -1036,16 +1036,16 @@ COMPETITION MAIN
               "
               s-14
               w-500
-              color-red
+              color-red-bright-v2
               "
             >
-              Event is finished
+              {WIDGET_T_DATA?.status?.finished ?? 'Event is finished'}
             </p>
 
           </div>
 
         <!--
-        EVENT FINISHED
+        EVENT CANCELED
         -->
         {:else if WIDGET_DATA?.competition?.data?.status == 'canceled'}
 
@@ -1057,7 +1057,7 @@ COMPETITION MAIN
             "
           >
 
-            <p
+           <p
               class=
               "
               s-14
@@ -1065,7 +1065,7 @@ COMPETITION MAIN
               color-black-2
               "
             >
-              Canceled
+              {WIDGET_T_DATA?.status?.canceled ?? 'Canceled'}
             </p>
 
           </div>
