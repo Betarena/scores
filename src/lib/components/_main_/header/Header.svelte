@@ -60,43 +60,62 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   const
-    // ◼️ IMPORTANT
+    /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 560,
+    /** @description TODO: DOC: */
     VIEWPORT_TABLET_INIT = 1160,
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'global/w/navbar/main'
   ;
 
 	let
-    // ◼️ IMPORTANT
+    /** @description TODO: DOC: */
     isViewMobile: boolean = true,
+    /** @description TODO: DOC: */
     isViewTablet: boolean = true,
+    /** @description TODO: DOC: */
     B_NAV_T: B_NAV_T = $page.data?.B_NAV_T,
+    /** @description TODO: DOC: */
     B_SAP_D3_CP_H: B_SAP_D3 = $page.data?.B_SAP_D3_CP_H,
+    /** @description TODO: DOC: */
     arrow_down_fade: string,
+    /** @description TODO: DOC: */
     arrow_down: string,
+    /** @description TODO: DOC: */
     arrow_up_fade: string,
+    /** @description TODO: DOC: */
     arrow_up: string,
+    /** @description TODO: DOC: */
     logo_full: string,
+    /** @description TODO: DOC: */
     logo_mini: string,
+    /** @description TODO: DOC: */
     close: string,
+    /** @description TODO: DOC: */
     menu_burger_bar: string,
+    /** @description TODO: DOC: */
     profile_avatar: string,
-    // ◼️ IMPORTANT
+    /** @description TODO: DOC: */
     mobileNavToggleMenu: boolean = false,
-	  isLangDropdown: boolean = false,
+    /** @description TODO: DOC: */
 	  isCurrencyDropdown: boolean = false,
+    /** @description TODO: DOC: */
 	  isOddsDropdown: boolean = false,
-	  isBookmakersDropdown: boolean = false,
+    /** @description TODO: DOC: */
 	  isUserAuthDropdown: boolean = false,
     /** @description A `reactive` based `boolean` variable, indicating wether **current** route is of `competitions` section.  */
     isRouteCompetitions: boolean,
     /** @description A `reactive` based `boolean` variable, indicating wether **current** route is of `profile` section.  */
     isRouteProfile: boolean,
+    /** @description TODO: DOC: */
     selectedSport: string = 'football',
+    /** @description TODO: DOC: */
 	  homepageURL: string,
+    /** @description TODO: DOC: */
 	  logoLink: string,
+    /** @description TODO: DOC: */
     width: number = 0,
+    /** @description TODO: DOC: */
     userUid: string = $userBetarenaSettings?.user?.firebase_user_data?.uid ?? undefined;
   ;
 
@@ -108,9 +127,7 @@
   $: isRouteProfile = $page?.route?.id == '/u/[view]/[lang=lang]';
 
   $: dropDownArea =
-    isLangDropdown
-    || isOddsDropdown
-    || isBookmakersDropdown
+    isOddsDropdown
     || isUserAuthDropdown
   ;
 
@@ -144,10 +161,9 @@
   (
   ): void
   {
-		isLangDropdown = false;
 		isOddsDropdown = false;
-		isBookmakersDropdown = false;
 		isUserAuthDropdown = false;
+    dropDownArea = false;
 	}
 
 	/**
@@ -934,7 +950,7 @@ NAVBAR MAIN
                     cursor-pointer
                   "
                   style="width: 100%;"
-                  on:click={() => (isOddsDropdown = false)}
+                  on:click={() => (isUserAuthDropdown = false)}
                 >
                   <p
                     class="
