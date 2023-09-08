@@ -32,6 +32,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { checkNull, toDecimalFix } from '$lib/utils/platform-functions.js';
+	import { translationObject } from '$lib/utils/translation.js';
 
 	import MainModalMultiple from './Main-Modal-Multiple.svelte';
 
@@ -44,6 +45,7 @@
 
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_C_COMP_DATA_Prediction_Group, B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -84,6 +86,8 @@
   ;
 
   let
+    /** @description TODO: DOC: */
+    WIDGET_T_DATA: B_COMP_MAIN_T,
     /** @description competition (main) - show / hide main modal information */
     showModal: boolean = false,
     /** @description competition (main) - view type */
@@ -91,6 +95,8 @@
     /** @description competition (main) - disabled buttons */
     disabledJoinBtn: boolean = true
   ;
+
+  $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
 
   $: isJoinedThis =
     !checkNull($userBetarenaSettings?.user)
@@ -359,7 +365,7 @@ PARTICIPANTS VOTE LIST
         no-wrap
         "
       >
-        {participantList?.length}
+        {participantList?.length ?? 0}
         <br/>
         {'participants'}
       </p>
@@ -387,7 +393,7 @@ PARTICIPANTS VOTE LIST
         color-black-2
         "
       >
-        Pool prize
+        {WIDGET_T_DATA?.title_pool_prize ?? translationObject?.pool_prize}
       </p>
 
       <p
