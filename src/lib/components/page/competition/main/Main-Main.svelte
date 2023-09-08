@@ -546,9 +546,9 @@ COMPETITION MAIN
       <div
         class=
         "
-        row-space-end
         width-auto
         "
+        class:row-space-end={!isViewMobile}
       >
 
         <div
@@ -1295,7 +1295,8 @@ COMPETITION MAIN
     padding: 12px;
     border-radius: 8px;
     background-color: rgba(77, 160, 37, 0.2);
-    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    /* NOTE: '-shadow' exists according to design, but not really... */
+    /* box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08); */
   }
   div#competition⮕w⮕main⮕status-is-finished
   {
