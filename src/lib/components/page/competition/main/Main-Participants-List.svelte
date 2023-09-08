@@ -909,7 +909,7 @@ PARTICIPANTS VOTE LIST
     /* 🎨 style */
     width: 100%;
     height: 64px;
-    background: linear-gradient(180deg, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
+    background: linear-gradient(0, #FFF 0%, rgba(255, 255, 255, 0.00) 100%);
   }
 
   /*
@@ -1038,7 +1038,7 @@ PARTICIPANTS VOTE LIST
   .dark-background-1 div#competition⮕w⮕participant-list⮕bottom-fade
   {
     /* 🎨 style */
-    background: linear-gradient(180deg, #383838 -38.28%, rgba(56, 56, 56, 0.80) -38.26%, rgba(56, 56, 56, 0.00) 175%);
+    background: linear-gradient(0, #383838 -38.28%, rgba(56, 56, 56, 0.80) -38.26%, rgba(56, 56, 56, 0.00) 175%);
   }
 
 </style>
