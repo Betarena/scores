@@ -27,6 +27,7 @@
   import { fade, fly } from 'svelte/transition';
 
 	import sessionStore from '$lib/store/session.js';
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -143,6 +144,7 @@ MODAL - DYNAMIC
   "
   competition-modal
   "
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   in:customFlyIn={{ fn: fly, duration: 500, y: 200 }}
   out:customFlyIn={{ fn: fly, duration: 500, y: 200 }}
 >
@@ -161,6 +163,7 @@ MODAL - DYNAMIC
       s-16
       w-500
       text-left
+      color-black-2
       "
     >
       Confirm that you wish to Join Yes and be charged for
@@ -182,8 +185,9 @@ MODAL - DYNAMIC
         on:click={() => closeModal()}
         class=
         "
-        btn-hollow
+        btn-hollow v2
         m-r-8
+        color-grey dark-white-v1
         "
       >
         Cancel
@@ -217,6 +221,7 @@ MODAL - DYNAMIC
       s-16
       w-500
       text-left
+      color-black-2
       "
     >
       You do not have enough balance to participate on this competition.
@@ -236,7 +241,7 @@ MODAL - DYNAMIC
         class=
         "
         s-12
-        color-grey
+        color-grey-v2 grey-v1
         "
         class:m-t-15={isViewMobile}
       >
@@ -259,8 +264,9 @@ MODAL - DYNAMIC
           on:click={() => closeModal()}
           class=
           "
-          btn-hollow
+          btn-hollow v2
           m-r-8
+          color-grey dark-white-v1
           "
         >
           Cancel
@@ -296,6 +302,7 @@ MODAL - DYNAMIC
       s-16
       w-500
       text-left
+      color-black-2
       "
     >
       The competitions are not yet available at your Geo location.
@@ -315,7 +322,7 @@ MODAL - DYNAMIC
         class=
         "
         s-12
-        color-grey
+        color-grey-v2 grey-v1
         "
         class:m-t-15={isViewMobile}
       >
@@ -339,8 +346,9 @@ MODAL - DYNAMIC
           on:click={() => closeModal()}
           class=
           "
-          btn-hollow
+          btn-hollow v2
           m-r-8
+          color-grey dark-white-v1
           "
         >
           Close
@@ -366,6 +374,7 @@ MODAL - DYNAMIC
       s-16
       w-500
       text-left
+      color-black-2
       "
     >
       Uh-oh! It looks like you are not a signed in.
@@ -385,7 +394,7 @@ MODAL - DYNAMIC
         class=
         "
         s-12
-        color-grey
+        color-grey-v2 grey-v1
         "
         class:m-t-15={isViewMobile}
       >
@@ -408,8 +417,9 @@ MODAL - DYNAMIC
           on:click={() => closeModal()}
           class=
           "
-          btn-hollow
+          btn-hollow v2
           m-r-8
+          color-grey dark-white-v1
           "
         >
           Close
@@ -514,5 +524,11 @@ MODAL - DYNAMIC
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div.competition-modal.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme) !important;
+  }
 
 </style>
