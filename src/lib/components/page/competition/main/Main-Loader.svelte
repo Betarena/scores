@@ -663,7 +663,7 @@
   .dark-background-1 div#competition⮕w⮕main-loader⮕participants div.participant-row:nth-child(even)
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1) !important;
+    background-color: var(--dark-theme-1-5-shade-o-0-2) !important;
   }
 
 </style>

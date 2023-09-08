@@ -483,7 +483,8 @@ COMPETITION MAIN
             class=
             "
             w-500
-            color-grey
+            color-grey-v2
+            grey-v1
             m-r-12
             m-0
             "
@@ -526,7 +527,8 @@ COMPETITION MAIN
         <h1
           class=
           "
-          color-grey
+          color-grey-v2
+          grey-v1
           w-500
           m-0
           "
@@ -579,8 +581,8 @@ COMPETITION MAIN
             color-grey
             "
             class:s-22={!isViewTablet}
-            class:color-success={prediction_type == 'win'}
-            class:color-red-bright={prediction_type == 'loose'}
+            class:color-green={prediction_type == 'win'}
+            class:color-red-bright-v2={prediction_type == 'loose'}
             class:color-grey={prediction_type == 'draw'}
           >
             {#if prediction_type == 'win'}
@@ -704,7 +706,7 @@ COMPETITION MAIN
                 "
                 s-14
                 w-500
-                color-red
+                color-red-bright-v2
                 "
               >
                 Event is finished
@@ -1509,6 +1511,17 @@ COMPETITION MAIN
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1-4-shade) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕main⮕status-is-finished
+  {
+    /* 🎨 style */
+    background-color: #5D3333;
+  }
+  .dark-background-1 div#competition⮕w⮕main⮕status-is-canceled
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
   }
 
 </style>

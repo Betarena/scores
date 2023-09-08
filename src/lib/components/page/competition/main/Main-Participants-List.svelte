@@ -391,6 +391,7 @@ PARTICIPANTS VOTE LIST
         "
         s-12
         color-black-2
+        grey-v1
         "
       >
         {WIDGET_T_DATA?.title_pool_prize ?? translationObject?.pool_prize}
@@ -405,14 +406,15 @@ PARTICIPANTS VOTE LIST
         m-t-5
         "
       >
-        {toDecimalFix(totalPrize, 2)}
+        {toDecimalFix(totalPrize, 2)} BTA
         <span
           class=
           "
-          color-grey
+          color-grey-v2
+          grey-v1
           "
         >
-          BTA (${toDecimalFix(totalPrize, 2)})
+        (${toDecimalFix(totalPrize, 2)})
         </span>
       </p>
 
@@ -1023,7 +1025,7 @@ PARTICIPANTS VOTE LIST
   .dark-background-1 div#competition⮕w⮕participant-list⮕list div.participant-row:nth-child(even)
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1) !important;
+    background-color: var(--dark-theme-1-5-shade-o-0-2) !important;
   }
   .dark-background-1 div#competition⮕w⮕participant-list⮕list div.participant-row.target-user
   {

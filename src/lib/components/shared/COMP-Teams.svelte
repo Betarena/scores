@@ -380,22 +380,22 @@ FIXTURE TEAMS
   .dark-background-1 div.team-box.left-predict-win
   {
     /* 🎨 style */
-    background: linear-gradient(275deg, transparent 50%, #3F7B41 107.93%);
+    background: linear-gradient(275deg, transparent 0, #3F7B41 107.93%);
   }
   .dark-background-1 div.team-box.left-predict-loose
   {
     /* 🎨 style */
-    background: linear-gradient(276deg, transparent 50%, #9F4949 107.77%);
+    background: linear-gradient(276deg, transparent 0, #9F4949 107.77%);
   }
   .dark-background-1 div.team-box.right-predict-win
   {
     /* 🎨 style */
-    background: linear-gradient(83deg, transparent 50%, #3F7B41 107.93%);
+    background: linear-gradient(83deg, transparent 0, #3F7B41 107.93%);
   }
   .dark-background-1 div.team-box.right-predict-loose
   {
     /* 🎨 style */
-    background: linear-gradient(83deg, transparent 50%, #9F4949 107.77%);
+    background: linear-gradient(83deg, transparent 0, #9F4949 107.77%);
   }
 
 </style>

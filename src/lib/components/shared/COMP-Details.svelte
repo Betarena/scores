@@ -26,9 +26,9 @@
 	import { page } from '$app/stores';
 	import { onDestroy, onMount } from 'svelte';
 
-	import { toDecimalFix } from '$lib/utils/platform-functions.js';
 	import sessionStore from "$lib/store/session.js";
 	import { removeDiacritics } from '$lib/utils/languages.js';
+	import { toDecimalFix } from '$lib/utils/platform-functions.js';
 
 	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
@@ -165,6 +165,7 @@ COMPETITION DETAILS
       "
       s-12
       color-black-2
+      grey-v1
       "
     >
       {WIDGET_T_DATA?.title_type ?? 'Type'}
@@ -197,6 +198,7 @@ COMPETITION DETAILS
         "
         s-12
         color-black-2
+        grey-v1
         "
       >
         {WIDGET_T_DATA?.title_sport ?? 'Sport'}
@@ -229,6 +231,7 @@ COMPETITION DETAILS
       s-12
       color-black-2
       no-wrap
+      grey-v1
       "
     >
       {WIDGET_T_DATA?.title_entry_fee ?? 'Entry Fee'}
@@ -246,7 +249,8 @@ COMPETITION DETAILS
       <span
         class=
         "
-        color-grey
+        color-grey-v2
+        grey-v1
         "
       >
       (${B_COMP_HIGH_D?.competition?.data?.entry_fee ?? ''})
@@ -265,6 +269,7 @@ COMPETITION DETAILS
       "
       s-12
       color-black-2
+      grey-v1
       "
     >
       {WIDGET_T_DATA?.title_total_prize ?? 'Total prize'}
@@ -288,7 +293,8 @@ COMPETITION DETAILS
       <span
         class=
         "
-        color-grey
+        color-grey-v2
+        grey-v1
         "
       >
         {#if !counterTotalAnimated}
