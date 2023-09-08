@@ -509,7 +509,7 @@
   div#competition⮕w⮕main-loader⮕participants div.participant-row
   {
     /* 🎨 style */
-    padding: 8px 47px 8px 35px;
+    padding: 8px 42px 8px 32px;
   }
   div#competition⮕w⮕main-loader⮕participants div.participant-row:nth-child(even)
   {

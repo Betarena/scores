@@ -542,7 +542,8 @@ PARTICIPANTS VOTE LIST
         "
         s-12
         w-600
-        color-grey-shade
+        color-black-2
+        opacity-0-4
         "
       >
         NAME
@@ -556,7 +557,8 @@ PARTICIPANTS VOTE LIST
         "
         s-12
         w-600
-        color-grey-shade
+        color-black-2
+        opacity-0-4
         "
       >
         VOTE
@@ -967,7 +969,7 @@ PARTICIPANTS VOTE LIST
     div#competition⮕w⮕participant-list⮕list div.participant-row
     {
       /* 🎨 style */
-      padding: 8px 47px 8px 35px;
+      padding: 8px 42px 8px 32px;
     }
 
   }
