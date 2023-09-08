@@ -1417,14 +1417,11 @@ COMPETITION MAIN
     div#competition⮕w⮕main⮕grid-section
     {
       /* 🎨 style */
-      background-color: white;
       margin-top: unset;
-      padding: 24px;
+      padding: 22px 32px;
       /* 🛝 layout */
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+      /* ◼️◼️◼️ NOTE: disabled, but can be enabled with proper 'auto-fill' */
       /* grid-template-rows: 1fr 1fr 1fr; */
-      gap: 24px;
     }
     div#competition⮕w⮕main⮕grid-section a#league-box
     {
