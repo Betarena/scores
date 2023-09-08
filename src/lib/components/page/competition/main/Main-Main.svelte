@@ -766,7 +766,7 @@ COMPETITION MAIN
             m-r-20
             "
           >
-            Compartilhar
+            {WIDGET_T_DATA?.social_share ?? 'Share'}
           </p>
 
           <!--
@@ -1095,7 +1095,7 @@ COMPETITION MAIN
           color-black-2
           "
         >
-          Compartilhar
+          {WIDGET_T_DATA?.social_share ?? 'Share'}
         </p>
 
         <!--
