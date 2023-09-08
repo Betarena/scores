@@ -161,7 +161,7 @@
           a
           ,b
         ) =>
-          a?.competition?.id - b?.competition?.id
+          b?.competition?.id - a?.competition?.id
       );
     ;
     if (activeCompetitions?.length > 0)
@@ -172,7 +172,7 @@
           a
           ,b
         ) =>
-          a?.competition?.id - b?.competition?.id
+          b?.competition?.id - a?.competition?.id
       );
     ;
     if (finishedCompetitions?.length > 0)
@@ -183,7 +183,7 @@
           a
           ,b
         ) =>
-          a?.competition?.id - b?.competition?.id
+          b?.competition?.id - a?.competition?.id
       );
     ;
 
