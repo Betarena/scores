@@ -21,6 +21,7 @@ export const translationObject:
   balance:    string;
   team: string;
   pool_prize: string;
+  participants: string;
 } =
 {
   featured_match_title: 'Featured Match',
@@ -33,5 +34,6 @@ export const translationObject:
   bookmakers: 'Bookmakers',
   balance: 'Balance',
   team: 'Team',
-  pool_prize: 'Pool Prize'
+  pool_prize: 'Pool Prize',
+  participants: 'participants'
 }

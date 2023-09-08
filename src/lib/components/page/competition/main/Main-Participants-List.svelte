@@ -367,7 +367,7 @@ PARTICIPANTS VOTE LIST
       >
         {participantList?.length ?? 0}
         <br/>
-        {'participants'}
+        {WIDGET_T_DATA?.title_participants ?? translationObject?.participants}
       </p>
 
     </div>
@@ -449,7 +449,7 @@ PARTICIPANTS VOTE LIST
           class:color-grey={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
           disabled={isJoinedNotThis || competitionStatus != 'pending' || disabledJoinBtn}
         >
-          Join {viewType == 'yes' ? 'Yes' : 'No'}
+          {viewType == 'yes' ? (WIDGET_T_DATA?.title_join_yes ?? 'Yes') : (WIDGET_T_DATA?.title_join_no ?? 'No')}
         </button>
 
       <!--
@@ -509,16 +509,17 @@ PARTICIPANTS VOTE LIST
               competitionStatus == 'canceled'
               || competitionStatus == 'finished' && winnerGroup != viewType
             }
+            class:uppercase={competitionStatus == 'finished'}
           >
             {#if
               isJoinedThis
               && !['canceled', 'finished'].includes(competitionStatus)
             }
-              Joined
+              {WIDGET_T_DATA?.title_joined ?? 'Joined'}
             {:else if competitionStatus == 'canceled'}
-              Canceled
+              {WIDGET_T_DATA?.title_canceled ?? 'Canceled'}
             {:else if competitionStatus == 'finished'}
-              {winnerGroup == viewType ? 'WON' : 'LOST'}
+              {winnerGroup == viewType ? (WIDGET_T_DATA?.title_won ?? 'WON') : (WIDGET_T_DATA?.title_lost ?? 'LOST')}
             {/if}
           </p>
 
@@ -555,9 +556,10 @@ PARTICIPANTS VOTE LIST
         w-600
         color-black-2
         opacity-0-4
+        uppercase
         "
       >
-        NAME
+        {WIDGET_T_DATA?.title_name ?? 'NAME'}
       </p>
 
       <!--
@@ -570,9 +572,10 @@ PARTICIPANTS VOTE LIST
         w-600
         color-black-2
         opacity-0-4
+        uppercase
         "
       >
-        VOTE
+        {WIDGET_T_DATA?.title_vote ?? 'VOTE'}
       </p>
 
     </div>
@@ -672,7 +675,7 @@ PARTICIPANTS VOTE LIST
             color-black-2
             "
           >
-            {viewType == 'yes' ? 'Yes' : 'No'}
+            {viewType == 'yes' ? (WIDGET_T_DATA?.title_votes?.yes ?? 'Yes') : (WIDGET_T_DATA?.title_votes?.no ?? 'No')}
           </p>
 
         </div>
@@ -699,9 +702,7 @@ PARTICIPANTS VOTE LIST
           m-b-16
           "
         >
-          No participants at
-          <br/>
-          the moment
+          {WIDGET_T_DATA?.title_placeholder_1 ?? 'No participants at the moment'}
         </p>
 
         <!--
