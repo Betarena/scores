@@ -826,7 +826,10 @@ NAVBAR MAIN
         <!--
         LANGUAGE SELECTION
         -->
-        <HeaderCLang />
+        <HeaderCLang
+          {dropDownArea}
+          on:closeDropdown={() => dropDownArea = true}
+        />
 
       {/if}
 

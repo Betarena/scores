@@ -7,20 +7,26 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { page } from "$app/stores";
+	import { createEventDispatcher } from 'svelte';
 	import { fly } from "svelte/transition";
 
 	import sessionStore from "$lib/store/session.js";
 	import { NB_W_TAG, dlog } from "$lib/utils/debug.js";
+	import { selectLanguage } from "$lib/utils/platform-functions.js";
 
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
 
-  import { selectLanguage } from "$lib/utils/platform-functions.js";
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
+
+  export let
+    /** @description TODO: DOC: */
+    dropDownArea: boolean
+  ;
 
   const
     OMIT_URLS: string[] =
@@ -29,13 +35,20 @@ COMPONENT JS (w/ TS)
       '/[[lang=lang]]/[sport]/[fixture=fixture]',
       '/[[lang=lang]]/[player=player]/[...player_fill]'
     ],
-    HOVER_TIMEOUT = 250
+    /** @description TODO: DOC: */
+    HOVER_TIMEOUT = 250,
+    /** @description TODO: DOC: */
+    dispatch = createEventDispatcher()
   ;
 
   let
+    /** @description TODO: DOC: */
     B_NAV_T: B_NAV_T = $page.data.B_NAV_T,
+    /** @description TODO: DOC: */
     isLangDropdown: boolean = false,
+    /** @description TODO: DOC: */
     intent_intent_lang: string | undefined = undefined,
+    /** @description TODO: DOC: */
     timeout_intent: NodeJS.Timeout = undefined
   ;
 
@@ -133,7 +146,41 @@ COMPONENT JS (w/ TS)
     }
   }
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
+	function clickAction
+  (
+  ): void
+  {
+    isLangDropdown = !isLangDropdown;
+
+    // ### CHECK
+    // ### for language dropdown action.
+    if (!isLangDropdown) return;
+
+    dispatch
+    (
+      'closeDropdown'
+    );
+
+    return;
+	}
+
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  $: if (!dropDownArea) isLangDropdown = false;
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -161,8 +208,8 @@ COMPONENT JS (w/ TS)
     row-space-out
     cursor-pointer
     "
-    class:active-lang-select={isLangDropdown == true}
-    on:click={() =>	(isLangDropdown = !isLangDropdown)}
+    class:active-lang-select={isLangDropdown}
+    on:click={() =>	clickAction()}
   >
 
     <p
@@ -182,7 +229,7 @@ COMPONENT JS (w/ TS)
     <img
       loading="lazy"
       src={!isLangDropdown ? arrow_down : arrow_up}
-      alt={!isLangDropdown	? 'arrow_down' : 'arrow_up'}
+      alt={!isLangDropdown ? 'arrow_down' : 'arrow_up'}
       width=16
       height=16
     />
@@ -192,7 +239,7 @@ COMPONENT JS (w/ TS)
   <!--
   DROPDOWN (LANG)
   -->
-  {#if isLangDropdown}
+  {#if isLangDropdown && dropDownArea}
 
     <div
       id="dropdown-menu"
@@ -238,12 +285,13 @@ COMPONENT JS (w/ TS)
 
 	div#lang-container
   {
+    /* 📌 position */
 		position: relative;
 	}
 
 	div.selected-language-btn
   {
-    /* s */
+    /* 🎨 style */
 		color: #ffffff;
 		outline: none;
 		border: none;
@@ -253,19 +301,19 @@ COMPONENT JS (w/ TS)
 	div#lang-container div.selected-language-btn:hover,
 	div#lang-container div.selected-language-btn.active-lang-select
   {
-    /* s */
+    /* 🎨 style */
 		background-color: rgba(255, 255, 255, 0.1);
 		border-radius: 4px;
 	}
 
 	#dropdown-menu
   {
-    /* p */
+    /* 📌 position */
 		position: absolute;
-		z-index: 1000;
+		z-index: 5000;
 		top: 100%;
 		left: -20%;
-    /* s */
+    /* 🎨 style */
 		width: 88px;
 		margin-top: 5px;
 		border-radius: 4px;
@@ -275,6 +323,7 @@ COMPONENT JS (w/ TS)
 	}
 	#lang-select
   {
+    /* 🎨 style */
 		padding: 10px 0;
 		text-align: center;
 		background: #4b4b4b;
@@ -283,6 +332,7 @@ COMPONENT JS (w/ TS)
 	}
 	#lang-select:hover
   {
+    /* 🎨 style */
 		background: #292929;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 	}
