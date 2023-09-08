@@ -603,9 +603,9 @@ COMPETITION MAIN
           "
           class:s-16={!isViewTablet}
         >
-          {#if WIDGET_DATA?.competition?.data?.target_team_prediction == '1'}
+          {#if WIDGET_DATA?.competition?.data?.prediction == '1'}
             {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.home, 0)}%
-          {:else if WIDGET_DATA?.competition?.data?.target_team_prediction == '2'}
+          {:else if WIDGET_DATA?.competition?.data?.prediction == '2'}
             {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.away, 0)}%
           {:else}
             {toDecimalFix(WIDGET_DATA?.fixture?.probabilities?.draw, 0)}%
