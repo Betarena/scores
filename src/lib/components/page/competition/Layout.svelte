@@ -72,12 +72,15 @@
     /** @description TODO: DOC: */
     B_SAP_D3_CP_M: B_SAP_D3,
     /** @description TODO: DOC: */
+    B_SAP_D3_TEAM_M: B_SAP_D3,
+    /** @description TODO: DOC: */
 	  current_lang: string = $sessionStore?.serverLang
   ;
 
 	$: B_SAP_CTP_T = $page.data?.B_SAP_CTP_T;
 	$: B_SAP_CTP_D = $page.data?.B_SAP_CTP_D;
 	$: B_SAP_D3_CP_M = $page.data?.B_SAP_D3_CP_M;
+	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
   $: refresh_lang = $userBetarenaSettings?.lang;
 	$: lang_intent = $sessionStore?.lang_intent;
 
@@ -340,7 +343,7 @@
 -->
 <SeoBox>
 
-  <h1>{B_SAP_CTP_D?.data?.team_name}</h1>
+  <h1>{B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang]} {B_SAP_CTP_D?.data?.team_name}</h1>
 
 </SeoBox>
 

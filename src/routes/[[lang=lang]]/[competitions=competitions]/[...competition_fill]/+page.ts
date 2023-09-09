@@ -91,6 +91,7 @@ export async function load
     B_SAP_CTP_D,
     B_SAP_D3_CP_M,
     B_SAP_D3_SP_M,
+    B_SAP_D3_TEAM_M,
     B_COMP_MAIN_T,
     B_COMP_MAIN_S,
     B_SAP_D1
@@ -144,6 +145,7 @@ export async function load
     B_SAP_CTP_D,
     B_SAP_D3_CP_M,
     B_SAP_D3_SP_M,
+    B_SAP_D3_TEAM_M,
     B_COMP_MAIN_T,
     B_COMP_MAIN_S,
     B_SAP_D1
@@ -163,6 +165,7 @@ type PP_PROMISE_0 =
 [
   B_SAP_CTP_T | undefined,
   B_SAP_CTP_D | undefined,
+  B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_COMP_MAIN_T | undefined,
@@ -186,6 +189,7 @@ type PP_PROMISE_F =
 [
   B_SAP_CTP_T | undefined,
   B_SAP_CTP_D | undefined,
+  B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_COMP_MAIN_T | undefined,
@@ -220,6 +224,7 @@ async function fetchData
     `/api/data/main/seo-pages?competition_id=${_competitionId}&page=competition`,
     `/api/data/main/seo-pages?term=competitions`,
     `/api/data/main/seo-pages?term=football`,
+    `/api/data/main/seo-pages?term=team`,
     `/api/data/competition/main?lang=${_lang}`,
     `/api/data/competition/main?seo=true&lang=${_lang}&competition_id=${_competitionId}`,
   ];
@@ -232,7 +237,7 @@ async function fetchData
 
   const urls_1: string[] =
   [
-    `/api/data/main/seo-pages?country_id=${data_0?.[5]?.data?.country_id}`
+    `/api/data/main/seo-pages?country_id=${data_0?.[6]?.data?.country_id}`
   ];
 
   const data_1: PP_PROMISE_1 = await promiseUrlsPreload
