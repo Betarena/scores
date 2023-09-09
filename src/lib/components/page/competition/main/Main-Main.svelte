@@ -579,7 +579,7 @@ COMPETITION MAIN
             class=
             "
             s-16
-            w-600
+            w-500
             color-grey
             "
             class:s-22={!isViewTablet}

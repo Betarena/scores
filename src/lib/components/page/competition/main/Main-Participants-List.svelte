@@ -697,7 +697,7 @@ PARTICIPANTS VOTE LIST
           class=
           "
           s-24
-          w-600
+          w-500
           color-black-2
           text-center
           inter-font

@@ -176,7 +176,7 @@ COMPETITION DETAILS
       "
       s-16
       color-black-2
-      w-600
+      w-500
       "
     >
       {'Single predictor'}
@@ -209,7 +209,7 @@ COMPETITION DETAILS
         "
         s-16
         color-black-2
-        w-600
+        w-500
         "
       >
         {'Football'}
@@ -242,7 +242,7 @@ COMPETITION DETAILS
       "
       s-16
       color-black-2
-      w-600
+      w-500
       "
     >
       {B_COMP_HIGH_D?.competition?.data?.entry_fee ?? ''} BTA
@@ -279,7 +279,7 @@ COMPETITION DETAILS
       class=
       "
       s-16
-      w-600
+      w-500
       color-black-2
       "
     >

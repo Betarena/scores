@@ -120,7 +120,7 @@ FIXTURE TEAMS
         "
         s-12
         color-black-2
-        w-600
+        w-500
         no-wrap
         team-name
         "
@@ -137,7 +137,7 @@ FIXTURE TEAMS
           "
           s-16
           color-black-2
-          w-600
+          w-500
           m-t-10
           "
         >
@@ -210,7 +210,7 @@ FIXTURE TEAMS
         "
         s-12
         color-black-2
-        w-600
+        w-500
         no-wrap
         team-name
         "
@@ -227,7 +227,7 @@ FIXTURE TEAMS
           "
           s-16
           color-black-2
-          w-600
+          w-500
           m-t-10
           "
         >
