@@ -300,8 +300,6 @@ PARTICIPANTS VOTE LIST
 <div
   id="{CNAME}⮕main"
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:left-list={viewType == 'yes'}
-  class:right-list={viewType == 'no'}
 >
 
   <!--
@@ -923,17 +921,6 @@ PARTICIPANTS VOTE LIST
   /* ◼️◼️◼️ NOTE: independent media query widget */
   and (min-width: 658px)
   {
-
-    div#competition⮕w⮕participant-list⮕main.left-list
-    {
-      /* 🎨 style */
-      border-radius: 0 0 0 12px;
-    }
-    div#competition⮕w⮕participant-list⮕main.right-list
-    {
-      /* 🎨 style */
-      border-radius: 0 0 12px 0;
-    }
 
     div#competition⮕w⮕participant-list⮕list
     {

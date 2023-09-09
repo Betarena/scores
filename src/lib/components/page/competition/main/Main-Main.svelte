@@ -1264,6 +1264,9 @@ COMPETITION MAIN
 
   div#competition⮕w⮕main⮕box
   {
+    /* 🎨 style */
+    border-radius: 12px;
+    overflow: hidden;
     /* 🛝 layout */
     display: grid;
     gap: 8px;
@@ -1282,7 +1285,6 @@ COMPETITION MAIN
     max-height: 64px;
     background: var(--white);
 		box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
-		border-radius: 12px 12px 0 0;
     padding: 16px 24px;
   }
   div#competition⮕w⮕main⮕status-social
