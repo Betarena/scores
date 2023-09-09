@@ -382,7 +382,7 @@
             class=
             "
             m-r-6
-            team-logo
+            google-aspect-ratio
             "
           />
 
@@ -505,6 +505,7 @@
         class=
         "
         m-r-16
+        google-aspect-ratio
         "
       />
 
@@ -937,12 +938,6 @@
   {
     /* 🎨 style */
     padding: 20px 24px;
-  }
-
-  img.team-logo
-  {
-    /* 🎨 style */
-    object-fit: contain;
   }
 
   img.country-img

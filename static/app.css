@@ -1175,8 +1175,9 @@ input[placeholder]
 img.google-aspect-ratio
 {
   /* 🎨 style */
-  width: auto;
-  max-height: 100%;
+  /* width: auto; */
+  /* max-height: 100%; */
+  object-fit: contain;
 }
 
 .hover\/transition\/v-1,
