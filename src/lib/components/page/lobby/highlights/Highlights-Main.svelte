@@ -29,7 +29,6 @@
 
 	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { toCorrectDate } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
@@ -87,16 +86,8 @@
     /** @description competition highlights - target widget prediction type */
     prediction_type: 'win' | 'loose' | 'draw',
     /** @description TODO: DOC: */
-    prediction_side: 'home' | 'away',
-    /** @description competition highlights - target widget date difference with `competition start` */
-    dateDiff: number = 0,
-    /** @description TODO: DOC: */
-    counterTotalPrize: number = 0,
-    /** @description TODO: DOC: */
-    counterTotalAnimated: boolean = true
+    prediction_side: 'home' | 'away'
   ;
-
-	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_HIGH_T;
 	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
@@ -147,25 +138,6 @@
    * @description
    * TODO: DOC:
    */
-  function setCountdown
-  (
-  ): void
-  {
-    dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getTime() - new Date().getTime();
-    setInterval
-    (
-      () =>
-      {
-        dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getTime() - new Date().getTime();
-      },
-      1000
-    );
-  }
-
-  /**
-   * @description
-   * TODO: DOC:
-   */
   function determinePrediction
   (
   ): void
@@ -202,28 +174,6 @@
           : 'away'
       ;
     };
-  }
-
-  /**
-   * @description
-   * TODO: DOC:
-   */
-  function countAnimation
-  (
-  ): void
-  {
-    let counts: NodeJS.Timer = setInterval(updated);
-    let totalCount: number = (B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission);
-
-    function updated(): void
-    {
-      ++counterTotalPrize;
-      if (counterTotalPrize >= totalCount)
-      {
-        clearInterval(counts);
-        counterTotalAnimated = false;
-      }
-    }
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -290,9 +240,6 @@
     {
       resizeAction();
       addEventListeners();
-
-      setCountdown();
-      countAnimation();
     }
   );
 
