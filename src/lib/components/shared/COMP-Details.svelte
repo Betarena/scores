@@ -212,7 +212,7 @@ COMPETITION DETAILS
         w-500
         "
       >
-        {'Football'}
+        {B_SAP_D3_SP_M?.[$sessionStore?.serverLang]}
         <!-- {B_COMP_HIGH_D?.competition?.data?.sport_id} -->
       </p>
 
