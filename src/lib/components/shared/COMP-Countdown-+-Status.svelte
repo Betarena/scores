@@ -80,12 +80,12 @@
   (
   ): void
   {
-    dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getTime() - new Date().getTime();
+    dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false).getTime() - new Date().getTime();
     setInterval
     (
       () =>
       {
-        dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getTime() - new Date().getTime();
+        dateDiff = toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false).getTime() - new Date().getTime();
       },
       1000
     );
@@ -291,7 +291,7 @@ COMPETITION COUNTDOWN / STATUS
   <!--
   FUTURE START DATETIME
   -->
-  {:else if !showCountdown && B_COMP_HIGH_D?.competition?.data?.status == 'pending'}
+  {:else if true}
 
     <p
       class=
@@ -304,16 +304,16 @@ COMPETITION COUNTDOWN / STATUS
     >
       {
         `
-        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getDate())}
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false)?.getDate())}
         /
-        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMonth() + 1)}
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false)?.getMonth() + 1)}
         /
-        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getFullYear())}
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false)?.getFullYear())}
         -
-        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getHours())}
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false)?.getHours())}
         :
-        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMinutes())}
-        ${toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getHours() > 12 ? 'PM' : 'AM'}
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false)?.getMinutes())}
+        ${toCorrectDate(B_COMP_HIGH_D?.fixture?.time, false).getHours() > 12 ? 'PM' : 'AM'}
         `
       }
     </p>
