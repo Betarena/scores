@@ -392,6 +392,8 @@
             s-16
             w-500
             color-black-2
+            team-name
+            no-wrap
             "
           >
             {B_COMP_HIGH_D?.team_name ?? ''}
@@ -526,6 +528,8 @@
           s-16
           w-500
           m-b-5
+          league-name
+          no-wrap
           "
         >
           {B_COMP_HIGH_D?.league?.name ?? ''}
@@ -944,6 +948,22 @@
   {
     /* 🎨 style */
     padding: 20px 24px;
+  }
+
+  p.team-name
+  {
+    /* 🎨 style */
+    max-width: 100px;
+		overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  p.league-name
+  {
+    /* 🎨 style */
+    max-width: 185px;
+		overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   img.country-img
