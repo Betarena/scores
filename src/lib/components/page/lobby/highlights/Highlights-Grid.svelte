@@ -426,7 +426,17 @@
   <!--
   OPEN COMPETITIONS
   -->
-  <h2>Open</h2>
+  <h2
+    class=
+    "
+    color-black-2
+    s-24
+    w-600
+    inter-font
+    "
+  >
+    Open
+  </h2>
 
   <!--
   ### NOTE:
@@ -454,7 +464,17 @@
   <!--
   ACTIVE COMPETITIONS
   -->
-  <h2>Active</h2>
+  <h2
+    class=
+    "
+    color-black-2
+    s-24
+    w-600
+    inter-font
+    "
+  >
+    Active
+  </h2>
 
   <!--
   ### NOTE:
@@ -482,7 +502,17 @@
   <!--
   FINISHED COMPETITIONS
   -->
-  <h2>Finished</h2>
+  <h2
+    class=
+    "
+    color-black-2
+    s-24
+    w-600
+    inter-font
+    "
+  >
+    Finished
+  </h2>
 
   <!--
   ### NOTE:
