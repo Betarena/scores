@@ -138,7 +138,7 @@ FIXTURE TEAMS
           s-16
           color-black-2
           w-500
-          m-t-10
+          m-t-8
           "
         >
           {B_COMP_HIGH_D?.fixture_detailed?.teams?.home?.score ?? 0}
@@ -228,7 +228,7 @@ FIXTURE TEAMS
           s-16
           color-black-2
           w-500
-          m-t-10
+          m-t-8
           "
         >
           {B_COMP_HIGH_D?.fixture_detailed?.teams?.away?.score ?? 0}
@@ -288,22 +288,22 @@ FIXTURE TEAMS
   div.team-box.left-predict-win
   {
     /* 🎨 style */
-    background: linear-gradient(310deg, #F2F2F2 0%, #B5E5B7 100%);
+    background: linear-gradient(275deg, #F2F2F2 10%, #B5E5B7 100%);
   }
   div.team-box.left-predict-loose
   {
     /* 🎨 style */
-    background: linear-gradient(311deg, #F2F2F2 0%, #EFC3C3 100%);
+    background: linear-gradient(275deg, #F2F2F2 10%, #EFC3C3 100%);
   }
   div.team-box.right-predict-win
   {
     /* 🎨 style */
-    background: linear-gradient(43deg, #F2F2F2 0%, #B5E5B7 100%);
+    background: linear-gradient(90deg, #F2F2F2 10%, #B5E5B7 100%);
   }
   div.team-box.right-predict-loose
   {
     /* 🎨 style */
-    background: linear-gradient(43deg, #F2F2F2 0%, #EFC3C3 100%);
+    background: linear-gradient(90deg, #F2F2F2 10%, #EFC3C3 100%);
   }
   div.team-box.predict-win-border
   {
@@ -382,22 +382,22 @@ FIXTURE TEAMS
   .dark-background-1 div.team-box.left-predict-win
   {
     /* 🎨 style */
-    background: linear-gradient(275deg, transparent 0, #3F7B41 107.93%);
+    background: linear-gradient(275deg, transparent 10%, #3F7B41 107.93%);
   }
   .dark-background-1 div.team-box.left-predict-loose
   {
     /* 🎨 style */
-    background: linear-gradient(276deg, transparent 0, #9F4949 107.77%);
+    background: linear-gradient(275deg, transparent 10%, #9F4949 107.77%);
   }
   .dark-background-1 div.team-box.right-predict-win
   {
     /* 🎨 style */
-    background: linear-gradient(83deg, transparent 0, #3F7B41 107.93%);
+    background: linear-gradient(90deg, transparent 10%, #3F7B41 107.93%);
   }
   .dark-background-1 div.team-box.right-predict-loose
   {
     /* 🎨 style */
-    background: linear-gradient(83deg, transparent 0, #9F4949 107.77%);
+    background: linear-gradient(90deg, transparent 10%, #9F4949 107.77%);
   }
 
 </style>
