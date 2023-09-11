@@ -470,11 +470,11 @@
           "
         >
           {#if B_COMP_HIGH_D?.competition?.data?.prediction == '1'}
-            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.home, 0)}%
+            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.home, 0) ?? 0}%
           {:else if B_COMP_HIGH_D?.competition?.data?.prediction == '2'}
-            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.away, 0)}%
+            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.away, 0) ?? 0}%
           {:else}
-            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.draw, 0)}%
+            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.draw, 0) ?? 0}%
           {/if}
           {WIDGET_T_DATA?.title_prob ?? 'probability'}
         </p>
