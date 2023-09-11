@@ -53,7 +53,7 @@
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
-	import type { B_SAP_D1 } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_SAP_D1, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_MAIN_D, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -86,6 +86,8 @@
     /** @description TODO: DOC: */
     B_SAP_D1: B_SAP_D1,
     /** @description TODO: DOC: */
+    B_SAP_D3_TEAM_M: B_SAP_D3,
+    /** @description TODO: DOC: */
     isViewMobile: boolean = true,
     /** @description TODO: DOC: */
     isViewTablet: boolean = true,
@@ -101,6 +103,7 @@
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
   $: B_SAP_D1 = $page.data?.B_SAP_D1;
+	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
 
   // ### IMPORTANT
   // ### Reactivity deep-value listen(s).
@@ -488,11 +491,12 @@ COMPETITION MAIN
             grey-v1
             m-r-12
             m-0
+            capitalize
             "
             class:s-16={isViewTablet}
             class:s-32={!isViewTablet}
           >
-            {translationObject?.team}
+            {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang] ?? translationObject?.team}
           </h1>
 
           <img

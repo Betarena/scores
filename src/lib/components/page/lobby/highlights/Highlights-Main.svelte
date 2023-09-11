@@ -32,6 +32,7 @@
 	import { toCorrectDate } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
+	import { translationObject } from '$lib/utils/translation.js';
 
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
@@ -41,6 +42,7 @@
 	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 
+	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -77,6 +79,8 @@
     tabletExclusive: boolean = true,
     /** @description main widget translations data */
     WIDGET_T_DATA: B_COMP_HIGH_T = $page.data?.B_COMP_HIGH_T,
+    /** @description TODO: DOC: */
+    B_SAP_D3_TEAM_M: B_SAP_D3,
     /** @description competition highlights - target widget prediction type icon */
     icon_prediction: string,
     /** @description competition highlights - target widget prediction type */
@@ -94,6 +98,7 @@
 	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_HIGH_T;
+	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -344,9 +349,10 @@
             w-500
             color-grey
             m-r-6
+            capitalize
             "
           >
-            {'Team'}
+            {B_SAP_D3_TEAM_M?.[$sessionStore?.serverLang] ?? translationObject?.team}
           </p>
 
           <img
