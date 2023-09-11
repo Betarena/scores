@@ -400,6 +400,8 @@
         HighlightsGridRowAsDynamic = (await import('./Highlights-Grid-Row.svelte')).default;
       }
 
+      splitCompetitionsByStatus();
+
 	  }
   );
 
