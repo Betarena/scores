@@ -31,7 +31,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
-	import { iso2CountryLogo, viewport_change } from '$lib/utils/platform-functions.js';
+	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
@@ -467,7 +467,13 @@
           no-wrap
           "
         >
-          58%
+          {#if B_COMP_HIGH_D?.competition?.data?.prediction == '1'}
+            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.home, 0)}%
+          {:else if B_COMP_HIGH_D?.competition?.data?.prediction == '2'}
+            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.away, 0)}%
+          {:else}
+            {toDecimalFix(B_COMP_HIGH_D?.fixture?.probabilities?.draw, 0)}%
+          {/if}
           {WIDGET_T_DATA?.title_prob ?? 'probability'}
         </p>
 
