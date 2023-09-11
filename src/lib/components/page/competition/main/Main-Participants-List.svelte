@@ -181,7 +181,7 @@
 
   // ### NOTE:
   // ### update / mutate `modalViewType` as necessary.
-  $: if ($userBetarenaSettings?.user?.scores_user_data?.main_balance < entryFee)
+  $: if (($userBetarenaSettings?.user?.scores_user_data?.main_balance ?? 0) < entryFee)
     modalViewType = 'insufficient';
   ;
   $: if (geoLocationRestrictions?.includes($userBetarenaSettings?.country_bookmaker))
@@ -193,7 +193,7 @@
 
   // ### TODO: DOC:
   $: if_R_0 =
-    $userBetarenaSettings?.user?.scores_user_data?.main_balance >= entryFee
+    ($userBetarenaSettings?.user?.scores_user_data?.main_balance ?? 0) >= entryFee
     && !geoLocationRestrictions?.includes($userBetarenaSettings?.country_bookmaker)
     && $userBetarenaSettings?.user != undefined
   ;
