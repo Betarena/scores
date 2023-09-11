@@ -28,6 +28,8 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 
+  import vector_green_dot from './assets/live-green-dot.svg';
+
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -44,7 +46,9 @@
     /** @description competition (shared) - target competition data */
     B_COMP_HIGH_D: B_COMP_HIGH_D,
     /** @description competition (shared) - target competition translations */
-    WIDGET_T_DATA: B_COMP_HIGH_T
+    WIDGET_T_DATA: B_COMP_HIGH_T,
+    /** @description competition (shared) - target competition status view to show */
+    designView: '1' | '2' = '1'
   ;
 
   const
@@ -89,6 +93,37 @@
 
   // #endregion ➤ 🛠️ METHODS
 
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * 📌 Check for wether to show / hide competition countdown.
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `countDownTestHour` - **kicker**
+   * - `dateDiff` - **kicker**
+   */
+   $: if_R_0 =
+    countDownTestHour > 23
+    || dateDiff < 0
+  ;
+  $: if (if_R_0) showCountdown = false;
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
+
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -130,13 +165,134 @@ COMPETITION COUNTDOWN / STATUS
   width-auto
   "
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-  class:row-space-out={showCountdown}
+  class:row-space-center={!showCountdown}
 >
 
+  <!-- [🐞] -->
+  <!-- {showCountdown} -->
+  <!-- [🐞] -->
+  <!-- {B_COMP_HIGH_D?.fixture?.time} -->
+  <!-- [🐞] -->
+  <!-- {countDownTestHour} -->
+  <!-- [🐞] -->
+  <!-- {dateDiff} -->
+
   <!--
-  UPCOMING COMPETITION START
+  [1/2] COUNTDOWN
   -->
-  {#if !showCountdown && B_COMP_HIGH_D?.competition?.data?.status == 'pending'}
+  {#if showCountdown}
+
+    <div
+      id="{CNAME}⮕countdown"
+      class=
+      "
+      row-space-out
+      "
+    >
+
+      <!--
+      COUNTDOWN START TEXT
+      -->
+      <p
+        class=
+        "
+        s-14
+        color-black-2
+        w-500
+        no-wrap
+        m-r-24
+        "
+      >
+        {WIDGET_T_DATA?.timer ?? 'Starts in:'}
+      </p>
+
+      <!--
+      COUNTDOWN TIMER
+      -->
+      <div
+        id="{CNAME}⮕countdown-main-box"
+        class=
+        "
+        width-auto
+        row-space-out
+        "
+      >
+
+        <!--
+        HOURS
+        -->
+        <div
+          class=
+          "
+          time-box
+          text-center
+          "
+        >
+          <p
+            class=
+            "
+            s-12
+            w-500
+            color-black-2
+            "
+          >
+            {countDownHour < 0 ? '00' : toZeroPrefixDateStr(countDownHour?.toString())}h
+          </p>
+        </div>
+
+        <!--
+        MINUTES
+        -->
+        <div
+          class=
+          "
+          time-box
+          text-center
+          "
+        >
+          <p
+            class=
+            "
+            s-12
+            w-500
+            color-black-2
+            "
+          >
+            {countDownMin < 0 ? '00' : toZeroPrefixDateStr(countDownMin?.toString())}min
+          </p>
+        </div>
+
+        <!--
+        SECONDS
+        -->
+        <div
+          class=
+          "
+          time-box
+          text-center
+          "
+        >
+          <p
+            class=
+            "
+            s-12
+            w-500
+            color-black-2
+            "
+          >
+            {countDownSec < 0 ? '00' : toZeroPrefixDateStr(countDownSec?.toString())}s
+          </p>
+        </div>
+
+      </div>
+
+    </div>
+
+  <!--
+  FUTURE START DATETIME
+  -->
+  {:else if !showCountdown && B_COMP_HIGH_D?.competition?.data?.status == 'pending'}
+
     <p
       class=
       "
@@ -146,123 +302,98 @@ COMPETITION COUNTDOWN / STATUS
       text-center
       "
     >
-      {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getDate()}/
-      {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMonth()}/
-      {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getFullYear()}
-      -
-      {toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getHours()}
-      {toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMinutes())}
+      {
+        `
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getDate())}
+        /
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMonth() + 1)}
+        /
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getFullYear())}
+        -
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getHours())}
+        :
+        ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMinutes())}
+        ${toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getHours() > 12 ? 'PM' : 'AM'}
+        `
+      }
     </p>
-  {/if}
 
   <!--
-  COUNTDOWN
+  [1] ACTIVE EVENT
   -->
-  {#if showCountdown}
+  {:else if !showCountdown && designView == '1' && B_COMP_HIGH_D?.competition?.data?.status == 'active'}
 
-    <!--
-    COUNTDOWN START TEXT
-    -->
     <p
       class=
       "
       s-14
       color-black-2
       w-500
-      no-wrap
-      m-r-24
+      text-center
       "
     >
-      {WIDGET_T_DATA?.timer ?? 'Starts in:'}
+      {'Playing'}
     </p>
 
-    <!--
-    COUNTDOWN TIMER
-    -->
+  <!--
+  [2] OTHER STATUS EVENT
+  -->
+  {:else if !showCountdown && designView == '2'}
+
     <div
-      id="{CNAME}⮕countdown-main-box"
+      id="{CNAME}⮕status"
       class=
       "
-      width-auto
-      row-space-out
+      row-space-center
       "
+      class:active={B_COMP_HIGH_D?.competition?.data?.status == 'active'}
+      class:finished={B_COMP_HIGH_D?.competition?.data?.status == 'finished'}
+      class:canceled={B_COMP_HIGH_D?.competition?.data?.status == 'canceled'}
     >
 
       <!--
-      HOURS
+      VECTOR PULSATING
       -->
-      <div
-        class=
-        "
-        time-box
-        text-center
-        "
-      >
-        <p
+      {#if B_COMP_HIGH_D?.competition?.data?.status == 'active'}
+        <img
+          id=''
           class=
-          "
-          s-12
-          w-500
-          color-black-2
-          "
-        >
-          {countDownHour < 0 ? '00' : toZeroPrefixDateStr(countDownHour?.toString())}h
-        </p>
-      </div>
+          '
+          m-r-12
+          '
+          src={vector_green_dot}
+          alt=''
+          title=''
+          loading='lazy'
+          width=16
+          height=16
+        />
+      {/if}
 
       <!--
-      MINUTES
+      STATUS TEXT
       -->
-      <div
+      <p
         class=
         "
-        time-box
-        text-center
+        s-14
+        w-500
         "
-      >
-        <p
-          class=
-          "
-          s-12
-          w-500
-          color-black-2
-          "
+        class:color-success={B_COMP_HIGH_D?.competition?.data?.status == 'active'}
+        class:color-red-bright-v2={B_COMP_HIGH_D?.competition?.data?.status == 'finished'}
+        class:color-black-2={B_COMP_HIGH_D?.competition?.data?.status == 'canceled'}
         >
-          {countDownMin < 0 ? '00' : toZeroPrefixDateStr(countDownMin?.toString())}min
-        </p>
-      </div>
-
-      <!--
-      SECONDS
-      -->
-      <div
-        class=
-        "
-        time-box
-        text-center
-        "
-      >
-        <p
-          class=
-          "
-          s-12
-          w-500
-          color-black-2
-          "
-        >
-          {countDownSec < 0 ? '00' : toZeroPrefixDateStr(countDownSec?.toString())}s
-        </p>
-      </div>
+        {#if B_COMP_HIGH_D?.competition?.data?.status == 'active'}
+          {WIDGET_T_DATA?.status?.active ?? 'Event is active'}
+        {:else if B_COMP_HIGH_D?.competition?.data?.status == 'finished'}
+          {WIDGET_T_DATA?.status?.finished ?? 'Event is finished'}
+        {:else if B_COMP_HIGH_D?.competition?.data?.status == 'canceled'}
+          {WIDGET_T_DATA?.status?.canceled ?? 'Canceled'}
+        {/if}
+      </p>
 
     </div>
 
-  {/if}
-
-  <!--
-  ACTIVE STATE
-  -->
-  {#if !showCountdown && B_COMP_HIGH_D?.competition?.data?.status == 'active'}
-    {'Playing'}
   {/if}
 
 </div>
@@ -286,9 +417,15 @@ COMPETITION COUNTDOWN / STATUS
     max-height: 40px;
     border-radius: 8px;
     background: var(--whitev2);
+  }
+
+  div#shared⮕w⮕countdown-status⮕countdown
+  {
+    /* 🎨 style */
     padding: 4px 4px 4px 12px;
   }
-  div.time-box
+
+  div#shared⮕w⮕countdown-status⮕countdown-main-box div.time-box
   {
     /* 🎨 style */
     width: 60px;
@@ -303,6 +440,31 @@ COMPETITION COUNTDOWN / STATUS
     /* 🎨 style */
     margin: 0;
     border-radius: 0px 4px 4px 0px;
+  }
+
+  div#shared⮕w⮕countdown-status⮕status
+  {
+    /* 🎨 style */
+    height: 40px;
+    padding: 12px;
+    border-radius: 8px;
+  }
+  div#shared⮕w⮕countdown-status⮕status.active
+  {
+    /* 🎨 style */
+    background-color: rgba(77, 160, 37, 0.2);
+    /* NOTE: '-shadow' exists according to design, but not really... */
+    /* box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08); */
+  }
+  div#shared⮕w⮕countdown-status⮕status.finished
+  {
+    /* 🎨 style */
+    background-color: #FFEBEB;
+  }
+  div#shared⮕w⮕countdown-status⮕status.canceled
+  {
+    /* 🎨 style */
+    background-color: #F2F2F2;
   }
 
   /*
@@ -329,10 +491,21 @@ COMPETITION COUNTDOWN / STATUS
     background-color: var(--dark-theme-1);
   }
 
-  .dark-background-1 div.time-box
+  .dark-background-1 div#shared⮕w⮕countdown-status⮕countdown-main-box div.time-box
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1-4-shade);
+  }
+
+  .dark-background-1 div#shared⮕w⮕countdown-status⮕status.finished
+  {
+    /* 🎨 style */
+    background-color: #5D3333;
+  }
+  .dark-background-1 div#shared⮕w⮕countdown-status⮕status.canceled
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1);
   }
 
 </style>

@@ -29,7 +29,7 @@
 
 	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
+	import { toCorrectDate } from '$lib/utils/dates.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 
@@ -37,7 +37,7 @@
   import icon_draw from './assets/icon-grey-draw.svg';
   import icon_loose from './assets/icon-red-thumbs-down.svg';
 
-	import CompCountdown from '$lib/components/shared/COMP-Countdown.svelte';
+	import CompCountdownStatus from '$lib/components/shared/COMP-Countdown-+-Status.svelte';
 	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 
@@ -85,8 +85,6 @@
     prediction_side: 'home' | 'away',
     /** @description competition highlights - target widget date difference with `competition start` */
     dateDiff: number = 0,
-    /** @description TODO: DOC: */
-    showCountdown: boolean = true,
     /** @description TODO: DOC: */
     counterTotalPrize: number = 0,
     /** @description TODO: DOC: */
@@ -231,27 +229,6 @@
   // ### Please add inside 'this' region the 'logic' that should run      ◼️
   // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-
-  /**
-   * @summary
-   * 🔥 REACTIVITY
-   *
-   * WARNING:
-   * can go out of control
-   *
-   * @description
-   * 📌 Check for wether to show / hide competition countdown.
-   *
-   * WARNING:
-   * triggered by changes in:
-   * - `countDownTestHour` - **kicker**
-   * - `dateDiff` - **kicker**
-   */
-  $: if_R_0 =
-    countDownTestHour > 23
-    || dateDiff < 0
-  ;
-  $: if (if_R_0) showCountdown = false;
 
   /**
    * @summary
@@ -467,6 +444,7 @@
           class=
           "
           s-12
+          color-black-2
           no-wrap
           "
         >
@@ -528,6 +506,7 @@
           "
           s-16
           w-500
+          color-black-2
           m-b-3
           league-name
           no-wrap
@@ -561,6 +540,7 @@
           <p
             class=
             "
+            color-black-2
             s-10
             "
           >
@@ -602,67 +582,14 @@
         class=
         "
         m-b-24
-        row-space-center
         "
       >
 
-        <!--
-        UPCOMING COMPETITION START
-        -->
-        {#if !showCountdown && B_COMP_HIGH_D?.competition?.data?.status == 'pending'}
-          <p
-            class=
-            "
-            s-14
-            color-black-2
-            w-500
-            text-center
-            "
-          >
-            {
-              `
-              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getDate())}
-              /
-              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMonth() + 1)}
-              /
-              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getFullYear())}
-              -
-              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getHours())}
-              :
-              ${toZeroPrefixDateStr(toCorrectDate(B_COMP_HIGH_D?.fixture?.time)?.getMinutes())}
-              ${toCorrectDate(B_COMP_HIGH_D?.fixture?.time).getHours() > 12 ? 'PM' : 'AM'}
-              `
-            }
-          </p>
-        {/if}
-
-        <!-- [🐞] -->
-        <!-- {showCountdown} -->
-        <!-- {B_COMP_HIGH_D?.fixture?.time} -->
-        <!-- {countDownTestHour} -->
-        <!-- {dateDiff} -->
-
-        <!--
-        COUNTDOWN
-        -->
-        {#if showCountdown}
-
-          <!--
-          COUNTDOWN TIMER
-          -->
-          <CompCountdown
-            B_COMP_HIGH_D={B_COMP_HIGH_D}
-            WIDGET_T_DATA={WIDGET_T_DATA}
-          />
-
-        {/if}
-
-        <!--
-        ACTIVE STATE
-        -->
-        {#if !showCountdown && B_COMP_HIGH_D?.competition?.data?.status == 'active'}
-          {'Playing'}
-        {/if}
+        <CompCountdownStatus
+          B_COMP_HIGH_D={B_COMP_HIGH_D}
+          WIDGET_T_DATA={WIDGET_T_DATA}
+          designView={'1'}
+        />
 
       </div>
 
@@ -711,33 +638,42 @@
         "
       >
 
-        <div
-          class=
-          "
-          m-r-12
-          row-space-start
-          "
-        >
+        {#if
+          (
+            B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
+          + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
+          ) > 0
+        }
 
-          {#each B_COMP_HIGH_D?.first_3_participants ?? [] as item}
+          <div
+            class=
+            "
+            m-r-12
+            row-space-start
+            "
+          >
 
-            <img
-              id=''
-              class=
-              "
-              participant-img
-              "
-              src={item}
-              alt='participant_1'
-              title='Partitipant_1'
-              loading='lazy'
-              width=32
-              height=32
-            />
+            {#each B_COMP_HIGH_D?.first_3_participants ?? [] as item}
 
-          {/each}
+              <img
+                id=''
+                class=
+                "
+                participant-img
+                "
+                src={item}
+                alt='participant_1'
+                title='Partitipant_1'
+                loading='lazy'
+                width=32
+                height=32
+              />
 
-        </div>
+            {/each}
+
+          </div>
+
+        {/if}
 
         <p
           class=
@@ -751,6 +687,7 @@
             B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
             + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
           }
+          <br/>
           {WIDGET_T_DATA?.title_participants ?? 'participants'}
         </p>
 
@@ -802,9 +739,10 @@
     /* min-width: calc(100vw - 32px); */
     /* max-width: calc(100vw - 32px); */
     /* NOTE: highlights card width managed by parent 'grid' */
-		background: var(--white);
+		background-color: var(--white);
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
+    overflow: hidden;
 	}
 
   div#competition⮕w⮕highlights⮕top-row
@@ -849,31 +787,6 @@
   TEAMS CONTENT MANAGED BY OFFSPRING WIDGET
   */
 
-  div#competition⮕w⮕highlights⮕countdown
-  {
-    /* 🎨 style */
-    min-height: 40px;
-    border-radius: 8px;
-    background: var(--whitev2);
-    padding: 4px 4px 4px 12px;
-  }
-  div.time-box
-  {
-    /* 🎨 style */
-    width: 60px;
-    height: 32px;
-    padding: 6px 0px;
-    border-radius: 4px 0px 0px 4px;
-    background-color: var(--white);
-    margin-right: 2px;
-  }
-  div#competition⮕w⮕highlights⮕countdown-main-box div.time-box:last-child
-  {
-    /* 🎨 style */
-    margin: 0;
-    border-radius: 0px 4px 4px 0px;
-  }
-
   div#competition⮕w⮕highlights⮕grid-details
   {
     /* 🎨 style */
@@ -914,5 +827,23 @@
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  div#competition⮕w⮕highlights⮕main.dark-background-1
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1-4-shade) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕highlights⮕top-row
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕highlights⮕bottom-row
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1) !important;
+  }
 
 </style>

@@ -35,7 +35,7 @@
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
-	import CompCountdown from '$lib/components/shared/COMP-Countdown.svelte';
+	import CompCountdownStatus from '$lib/components/shared/COMP-Countdown-+-Status.svelte';
 	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 	import MainParticipantsList from './Main-Participants-List.svelte';
@@ -49,7 +49,6 @@
   import icon_twitter_hover from './assets/icon-twitter-hover.svg';
   import icon_twitter_white from './assets/icon-twitter-white.svg';
   import icon_twitter from './assets/icon-twitter.svg';
-  import vector_green_dot from './assets/live-green-dot.svg';
 
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
@@ -637,114 +636,11 @@ COMPETITION MAIN
         <!--
         COMPETTION COUNTDOWN / NATIVE STATUS
         -->
-        <div
-        >
-
-          <!--
-          COUNTDOWN
-          -->
-          {#if WIDGET_DATA?.competition?.data?.status == 'pending'}
-
-            <CompCountdown
-              B_COMP_HIGH_D={WIDGET_DATA}
-              WIDGET_T_DATA={WIDGET_T_DATA}
-            />
-
-          <!--
-          ACTIVE EVENT
-          -->
-          {:else if WIDGET_DATA?.competition?.data?.status == 'active'}
-
-            <div
-              id="{CNAME}⮕status-is-active"
-              class=
-              "
-              row-space-start
-              "
-            >
-
-              <img
-                id=''
-                class=
-                '
-                m-r-12
-                '
-                src={vector_green_dot}
-                alt='green-pulsating-vector'
-                title='Event is live'
-                loading='lazy'
-                width=16
-                height=16
-              />
-
-              <p
-                class=
-                "
-                s-14
-                w-500
-                color-success
-                "
-              >
-                {WIDGET_T_DATA?.status?.active ?? 'Event is active'}
-              </p>
-
-            </div>
-
-          <!--
-          EVENT FINISHED
-          -->
-          {:else if WIDGET_DATA?.competition?.data?.status == 'finished'}
-
-            <div
-              id="{CNAME}⮕status-is-finished"
-              class=
-              "
-              row-space-start
-              "
-            >
-
-              <p
-                class=
-                "
-                s-14
-                w-500
-                color-red-bright-v2
-                "
-              >
-                {WIDGET_T_DATA?.status?.finished ?? 'Event is finished'}
-              </p>
-
-            </div>
-
-          <!--
-          EVENT CANCELED
-          -->
-          {:else if WIDGET_DATA?.competition?.data?.status == 'canceled'}
-
-            <div
-              id="{CNAME}⮕status-is-canceled"
-              class=
-              "
-              row-space-start
-              "
-            >
-
-              <p
-                class=
-                "
-                s-14
-                w-500
-                color-black-2
-                "
-              >
-                {WIDGET_T_DATA?.status?.canceled ?? 'Canceled'}
-              </p>
-
-            </div>
-
-          {/if}
-
-        </div>
+        <CompCountdownStatus
+          B_COMP_HIGH_D={WIDGET_DATA}
+          WIDGET_T_DATA={WIDGET_T_DATA}
+          designView={'2'}
+        />
 
         <!--
         SOCIAL SHARE
@@ -972,109 +868,11 @@ COMPETITION MAIN
         id="{CNAME}⮕status"
       >
 
-        <!--
-        COUNTDOWN
-        -->
-        {#if WIDGET_DATA?.competition?.data?.status == 'pending'}
-
-          <CompCountdown
-            B_COMP_HIGH_D={WIDGET_DATA}
-            WIDGET_T_DATA={WIDGET_T_DATA}
-          />
-
-        <!--
-        ACTIVE EVENT
-        -->
-        {:else if WIDGET_DATA?.competition?.data?.status == 'active'}
-
-          <div
-            id="{CNAME}⮕status-is-active"
-            class=
-            "
-            row-space-center
-            "
-          >
-
-            <img
-              id=''
-              class=
-              '
-              m-r-12
-              '
-              src={vector_green_dot}
-              alt=''
-              title=''
-              loading='lazy'
-              width=16
-              height=16
-            />
-
-            <p
-              class=
-              "
-              s-14
-              w-500
-              color-success
-              "
-            >
-              {WIDGET_T_DATA?.status?.active ?? 'Event is active'}
-            </p>
-
-          </div>
-
-        <!--
-        EVENT FINISHED
-        -->
-        {:else if WIDGET_DATA?.competition?.data?.status == 'finished'}
-
-          <div
-            id="{CNAME}⮕status-is-finished"
-            class=
-            "
-            row-space-center
-            "
-          >
-
-            <p
-              class=
-              "
-              s-14
-              w-500
-              color-red-bright-v2
-              "
-            >
-              {WIDGET_T_DATA?.status?.finished ?? 'Event is finished'}
-            </p>
-
-          </div>
-
-        <!--
-        EVENT CANCELED
-        -->
-        {:else if WIDGET_DATA?.competition?.data?.status == 'canceled'}
-
-          <div
-            id="{CNAME}⮕status-is-canceled"
-            class=
-            "
-            row-space-center
-            "
-          >
-
-           <p
-              class=
-              "
-              s-14
-              w-500
-              color-black-2
-              "
-            >
-              {WIDGET_T_DATA?.status?.canceled ?? 'Canceled'}
-            </p>
-
-          </div>
-
-        {/if}
+        <CompCountdownStatus
+          B_COMP_HIGH_D={WIDGET_DATA}
+          WIDGET_T_DATA={WIDGET_T_DATA}
+          designView={'2'}
+        />
 
       </div>
 
@@ -1294,32 +1092,6 @@ COMPETITION MAIN
     background: var(--white);
     padding: 16px 32px;
   }
-  div#competition⮕w⮕main⮕status-is-active
-  {
-    /* 🎨 style */
-    height: 40px;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: rgba(77, 160, 37, 0.2);
-    /* NOTE: '-shadow' exists according to design, but not really... */
-    /* box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08); */
-  }
-  div#competition⮕w⮕main⮕status-is-finished
-  {
-    /* 🎨 style */
-    height: 40px;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: #FFEBEB;
-  }
-  div#competition⮕w⮕main⮕status-is-canceled
-  {
-    /* 🎨 style */
-    height: 40px;
-    padding: 12px;
-    border-radius: 8px;
-    background-color: #F2F2F2;
-  }
   div#competition⮕w⮕main⮕social-box
   {
     /* 🎨 style */
@@ -1511,17 +1283,6 @@ COMPETITION MAIN
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1-4-shade) !important;
-  }
-
-  .dark-background-1 div#competition⮕w⮕main⮕status-is-finished
-  {
-    /* 🎨 style */
-    background-color: #5D3333;
-  }
-  .dark-background-1 div#competition⮕w⮕main⮕status-is-canceled
-  {
-    /* 🎨 style */
-    background-color: var(--dark-theme-1);
   }
 
 </style>
