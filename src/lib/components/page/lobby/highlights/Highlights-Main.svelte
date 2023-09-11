@@ -527,7 +527,7 @@
           "
           s-16
           w-500
-          m-b-5
+          m-b-3
           league-name
           no-wrap
           "
@@ -970,6 +970,7 @@
   {
     /* 🎨 style */
     border-radius: 16px;
+    object-fit: cover;
   }
 
   /*
