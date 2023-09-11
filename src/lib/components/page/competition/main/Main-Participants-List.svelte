@@ -409,6 +409,7 @@ PARTICIPANTS VOTE LIST
           "
           color-grey-v2
           grey-v1
+          s-14
           "
         >
         (${toDecimalFix(totalPrize, 2, true)})
