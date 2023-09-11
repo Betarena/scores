@@ -36,6 +36,7 @@
 
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
+  import icon_profile_avatar from './assets/icon-profile-avatar.svg';
   import icon_loose from './assets/icon-red-thumbs-down.svg';
 
 	import CompCountdownStatus from '$lib/components/shared/COMP-Countdown-+-Status.svelte';
@@ -667,7 +668,7 @@
                 "
                 participant-img
                 "
-                src={item}
+                src={item ?? icon_profile_avatar}
                 alt='participant_1'
                 title='Partitipant_1'
                 loading='lazy'
