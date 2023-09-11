@@ -403,7 +403,7 @@ PARTICIPANTS VOTE LIST
         m-t-5
         "
       >
-        {toDecimalFix(totalPrize, 2)} BTA
+        {toDecimalFix(totalPrize, 2, true)} BTA
         <span
           class=
           "
@@ -411,7 +411,7 @@ PARTICIPANTS VOTE LIST
           grey-v1
           "
         >
-        (${toDecimalFix(totalPrize, 2)})
+        (${toDecimalFix(totalPrize, 2, true)})
         </span>
       </p>
 

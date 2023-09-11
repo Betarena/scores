@@ -808,8 +808,14 @@ export function cssVarChange
 }
 
 /**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
- * TODO: DOC:
+ * 📌 Converts target value to a float based value string.
+ *
+ * @param
+ * { number } value - Target value to mutate.
  *
  * @param
  * { number } d_places - Target number of decimal places.
@@ -818,11 +824,12 @@ export function cssVarChange
  */
 export function toDecimalFix
 (
-  value: number,
-  d_places: number = 2
+  value: number
+  , d_places: number = 2
+  , noRoundUp: boolean = false
 ): string
 {
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🔹 [var] ➤ toDecimalFix(..) value : ${value}`,
@@ -831,7 +838,15 @@ export function toDecimalFix
 
   if (value == null) return;
 
-  return parseFloat(value.toString()).toFixed(d_places);
+  let _value: string  = value?.toString();
+
+  if (noRoundUp)
+    _value = _value.slice(0, (_value.indexOf(".")) + (d_places + 1));
+  ;
+
+  return parseFloat(_value)
+    ?.toFixed(d_places)
+  ;
 }
 
 /**

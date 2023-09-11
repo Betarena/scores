@@ -285,9 +285,9 @@ COMPETITION DETAILS
     >
 
       {#if !counterTotalAnimated}
-        {toDecimalFix((B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission), 2) ?? ''} BTA
+        {toDecimalFix((B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission), 2, true) ?? ''} BTA
       {:else}
-        {toDecimalFix(counterTotalPrize, 2)} BTA
+        {toDecimalFix(counterTotalPrize, 2, true)} BTA
       {/if}
 
       <span
@@ -298,9 +298,9 @@ COMPETITION DETAILS
         "
       >
         {#if !counterTotalAnimated}
-          (${toDecimalFix((B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission), 2) ?? ''})
+          (${toDecimalFix((B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission), 2, true) ?? ''})
         {:else}
-          (${toDecimalFix(counterTotalPrize, 2)})
+          (${toDecimalFix(counterTotalPrize, 2, true)})
         {/if}
       </span>
 
