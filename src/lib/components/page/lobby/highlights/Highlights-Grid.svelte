@@ -80,7 +80,9 @@
     /** @description competitions (lobby) highlights (widget) - finished / canceled competitions list */
     finishedCompetitions: B_COMP_HIGH_D[],
     /** @description competitions (lobby) highlights (widget) - no competitions available */
-    isNoCompetitions: boolean = false
+    isNoCompetitions: boolean = false,
+    /** @description competitions (lobby) highlights (widget) - all participants map */
+    participantsMap: Map < string, Betarena_User > = new Map()
   ;
 
   // ### IMPORTANT
@@ -228,29 +230,8 @@
 
       value.competition = competitionMap?.get(key);
 
-      const participantUid: string[] = new Competition().extractParticipantUids
-      (
-        value.competition
-      );
-
       // ### NOTE:
-      // ### obtain top 3 participants.
-      const slicedArray: string[] = participantUid.slice(0, 3);
-
-      // ### [🐞]
-      // slicedArray.push('1aoarz3Gs3V63hc0rte007ZNRki1', '0x1510ea733e1e81f9bcfcc4eabb5a2226d1a9f9ea18da9aea119ba28b8ed6be81')
-
-      const participantPublicData = await new Betarena_User_Class().obtainPublicInformationTargetUsers
-      (
-        slicedArray
-      ) as (Betarena_User | undefined)[];
-
-      value.first_3_participants = participantPublicData
-      ?.map
-      (
-        x =>
-        x?.profile_photo
-      );
+      // ### participant data gathering is offset to its own logic.
 
       // ### IMPORTANT
       // ### inform of update in data.
@@ -258,7 +239,71 @@
 
     }
 
+    getParticipantData();
     splitCompetitionsByStatus();
+
+    return;
+  }
+
+  /**
+   * @summary
+   * 🔹 HELPER | IMPORTANT
+   *
+   * @description
+   * TODO: DOC:
+   */
+  async function getParticipantData
+  (
+  ): Promise < void >
+  {
+    // ### IMPORTANT
+    if (!browser) return;
+
+    const newUids: string[] = [];
+
+    // ### NOTE:
+    // ### aggregate all 'unique' participants
+
+    for (const [_, value] of WIDGET_DATA)
+    {
+
+      const participantUid: string[] = new Competition().extractParticipantUids
+      (
+        value?.competition
+      );
+
+      for (const uid of participantUid ?? [])
+      {
+        // ### CHECK
+        // ### for missing 'uid' from participant `map`.
+        const if_M_0: boolean =
+          participantsMap?.has(uid)
+        ;
+        if (if_M_0) continue;
+        newUids.push(uid);
+      }
+
+    }
+
+    // ### CHECK
+    // ### for wether necessary to make new request for participant data.
+    const if_M_0: boolean =
+      newUids?.length == 0
+    ;
+    if (if_M_0) return;
+
+    const participantPublicData = await new Betarena_User_Class().obtainPublicInformationTargetUsers
+    (
+      newUids
+    ) as (Betarena_User | undefined)[];
+
+    const newParticipantsMap: Map < string, Betarena_User > = new Betarena_User_Class().convertToMap
+    (
+      participantPublicData
+    );
+
+    // ### IMPORTANT
+    participantsMap = new Map([...participantsMap, ...newParticipantsMap]);
 
     return;
   }
@@ -310,6 +355,8 @@
       }
 
     }
+
+    return;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -400,6 +447,7 @@
         HighlightsGridRowAsDynamic = (await import('./Highlights-Grid-Row.svelte')).default;
       }
 
+      getParticipantData();
       splitCompetitionsByStatus();
 
 	  }
@@ -449,6 +497,7 @@
   <svelte:component
     this={HighlightsGridRowAsDynamic}
     competitionList={openCompetitions}
+    {participantsMap}
   />
 
   <!--
@@ -487,6 +536,7 @@
   <svelte:component
     this={HighlightsGridRowAsDynamic}
     competitionList={activeCompetitions}
+    {participantsMap}
   />
 
   <!--
@@ -525,6 +575,7 @@
   <svelte:component
     this={HighlightsGridRowAsDynamic}
     competitionList={finishedCompetitions}
+    {participantsMap}
   />
 
   <!--

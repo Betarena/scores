@@ -31,6 +31,7 @@
   import icon_slider_left from './assets/icon-slider-left.svg';
   import icon_slider_right from './assets/icon-slider-right.svg';
 
+	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -45,7 +46,9 @@
 
   export let
     /** @description TODO: DOC: */
-    competitionList: B_COMP_HIGH_D[] = []
+    competitionList: B_COMP_HIGH_D[] = [],
+    /** @description competition (main) - participants detailed data `Map` */
+    participantsMap: Map < string, Betarena_User >
   ;
 
   const
@@ -321,6 +324,7 @@ TARGET COMPETITIONS VIEW
           <svelte:component
             this={HighlightsMainDynamic}
             B_COMP_HIGH_D={item}
+            {participantsMap}
           />
 
           <!--
@@ -496,9 +500,9 @@ CAROUSEL DOTS
   }
 
   /*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
   @media only screen
@@ -543,15 +547,15 @@ CAROUSEL DOTS
     {
       /* 🎨 style */
       /* IMPORTANT */
-      grid-auto-columns: 328px;
+      grid-auto-columns: 325px;
     }
 
 	}
 
   /*
-  =============
-  🌒 DARK-THEME
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
 </style>

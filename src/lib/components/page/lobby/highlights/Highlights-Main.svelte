@@ -32,6 +32,7 @@
 	import { dlog } from '$lib/utils/debug.js';
 	import { iso2CountryLogo, toDecimalFix, viewport_change } from '$lib/utils/platform-functions.js';
 	import { translationObject } from '$lib/utils/translation.js';
+	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
   import icon_win from './assets/icon-green-thumbs-up.svg';
   import icon_draw from './assets/icon-grey-draw.svg';
@@ -42,6 +43,7 @@
 	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 
+	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
@@ -57,7 +59,9 @@
 
 	export let
     /** @description TODO: DOC: */
-    B_COMP_HIGH_D: B_COMP_HIGH_D
+    B_COMP_HIGH_D: B_COMP_HIGH_D,
+    /** @description competition (main) - participants detailed data `Map` */
+    participantsMap: Map < string, Betarena_User >
   ;
 
   const
@@ -176,6 +180,33 @@
     };
   }
 
+  /**
+   * @description
+   * TODO: DOC:
+   */
+  function identifyTop3Participants
+  (
+  ): void
+  {
+    const participantUid: string[] = new Competition().extractParticipantUids
+    (
+      B_COMP_HIGH_D?.competition
+    );
+
+    // ### NOTE:
+    // ### obtain top 3 participants.
+    const slicedArray: string[] = participantUid.slice(0, 3);
+
+    B_COMP_HIGH_D.first_3_participants = slicedArray
+    ?.map
+    (
+      x =>
+      participantsMap?.get(x)?.profile_photo
+    );
+
+    return;
+  }
+
   // #endregion ➤ 🛠️ METHODS
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
@@ -213,6 +244,36 @@
     );
 
     determinePrediction();
+  }
+
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
+   * @description
+   * Listens to changes in target data competition.
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `[..]?.competition` - **kicker**
+   * - `participantsMap` - **kicker**
+   */
+   $: if_R_2 =
+    browser
+  ;
+  $: if (if_R_2 && B_COMP_HIGH_D?.competition && participantsMap)
+  {
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint [R] ➤ debugTagOrVarName ${if_R_2}`,
+      true
+    );
+
+    identifyTop3Participants();
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
