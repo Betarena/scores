@@ -833,7 +833,7 @@ export function toDecimalFix
   dlog
   (
     `🔹 [var] ➤ toDecimalFix(..) value : ${value}`,
-    true
+    false
   );
 
   if (value == null) return;
@@ -841,12 +841,23 @@ export function toDecimalFix
   let _value: string  = value?.toString();
 
   if (noRoundUp)
-    _value = _value.slice(0, (_value.indexOf(".")) + (d_places + 1));
+    _value = _value
+    .slice
+    (
+      0,
+      (_value.indexOf(".")) + (d_places + 1)
+    );
   ;
 
-  return parseFloat(_value)
-    ?.toFixed(d_places)
-  ;
+  _value = parseFloat(_value)?.toFixed(d_places);
+
+  _value = _value.replace
+  (
+    '.00',
+    ''
+  );
+
+  return _value;
 }
 
 /**
