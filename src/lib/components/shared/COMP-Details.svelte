@@ -48,6 +48,8 @@
     isViewMobile: boolean,
     /** @description TODO: DOC: */
     isViewTablet: boolean,
+    /** @description TODO: DOC: */
+    forceView: boolean = false,
     /** @description competition (shared) - target competition data */
     B_COMP_HIGH_D: B_COMP_HIGH_D,
     /** @description competition (shared) - target competition translations */
@@ -55,10 +57,7 @@
   ;
 
   const
-    /**
-     * @description
-     * 📌 `this` component **main** `id` and `data-testid` prefix.
-    */
+    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'shared⮕w⮕competition-details'
   ;
 
@@ -153,6 +152,7 @@ COMPETITION DETAILS
   id="{CNAME}⮕grid-details"
   class:m-r-64={!isViewTablet}
   style="white-space: nowrap;"
+  class:force-mobile={forceView}
 >
 
   <!--
@@ -177,6 +177,7 @@ COMPETITION DETAILS
       s-16
       color-black-2
       w-500
+      capitalize
       "
     >
       {'Single predictor'}
@@ -189,7 +190,8 @@ COMPETITION DETAILS
   COMPETITION - SPORT
   -->
   <a
-    href={langUrlPrefix}{removeDiacritics(B_SAP_D3_SP_M?.[$sessionStore?.serverLang])}>
+    href={langUrlPrefix}{removeDiacritics(B_SAP_D3_SP_M?.[$sessionStore?.serverLang] ?? '')}
+  >
 
     <div>
 
@@ -210,9 +212,10 @@ COMPETITION DETAILS
         s-16
         color-black-2
         w-500
+        capitalize
         "
       >
-        {B_SAP_D3_SP_M?.[$sessionStore?.serverLang]}
+        {B_SAP_D3_SP_M?.[$sessionStore?.serverLang] ?? ''}
         <!-- {B_COMP_HIGH_D?.competition?.data?.sport_id} -->
       </p>
 
@@ -243,6 +246,7 @@ COMPETITION DETAILS
       s-16
       color-black-2
       w-500
+      capitalize
       "
     >
       {B_COMP_HIGH_D?.competition?.data?.entry_fee ?? ''} BTA
@@ -251,6 +255,7 @@ COMPETITION DETAILS
         "
         color-grey-v2
         grey-v1
+        s-14
         "
       >
       (${B_COMP_HIGH_D?.competition?.data?.entry_fee ?? ''})
@@ -281,6 +286,7 @@ COMPETITION DETAILS
       s-16
       w-500
       color-black-2
+      capitalize
       "
     >
 
@@ -295,6 +301,7 @@ COMPETITION DETAILS
         "
         color-grey-v2
         grey-v1
+        s-14
         "
       >
         {#if !counterTotalAnimated}
@@ -327,7 +334,7 @@ COMPETITION DETAILS
     /* 🎨 style */
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px 40px;
+    gap: 24px 27px;
   }
 
   /*
@@ -340,7 +347,7 @@ COMPETITION DETAILS
   and (min-width: 726px)
   {
 
-    div#shared⮕w⮕competition-details⮕grid-details
+    div#shared⮕w⮕competition-details⮕grid-details:not(.force-mobile)
     {
       /* 🎨 style */
       /* grid-template-columns: 1fr 1fr 1fr 1fr; */

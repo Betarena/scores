@@ -37,9 +37,10 @@
   import icon_draw from './assets/icon-grey-draw.svg';
   import icon_loose from './assets/icon-red-thumbs-down.svg';
 
+	import CompCountdown from '$lib/components/shared/COMP-Countdown.svelte';
+	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 
-	import CompCountdown from '$lib/components/shared/COMP-Countdown.svelte';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -674,143 +675,13 @@
       id="{CNAME}⮕grid-details"
     >
 
-      <!--
-      COMPETITION TYPE
-      -->
-      <div>
-
-        <p
-          class=
-          "
-          s-12
-          color-black-2
-          "
-        >
-          {WIDGET_T_DATA?.title_type ?? 'Type'}
-        </p>
-
-        <p
-          class=
-          "
-          s-16
-          w-500
-          "
-        >
-          {'Single predictor'}
-          <!-- {B_COMP_HIGH_D?.competition?.category_id} -->
-        </p>
-
-      </div>
-
-      <!--
-      COMPETITION SPORT
-      -->
-      <div>
-
-        <p
-          class=
-          "
-          s-12
-          color-black-2
-          "
-        >
-          {WIDGET_T_DATA?.title_sport ?? 'Sport'}
-        </p>
-
-        <p
-          class=
-          "
-          s-16
-          w-500
-          "
-        >
-          {'Football'}
-          <!-- {B_COMP_HIGH_D?.competition?.data?.sport_id} -->
-        </p>
-
-      </div>
-
-      <!--
-      COMPETITION ENTRY FEE
-      -->
-      <div>
-
-        <p
-          class=
-          "
-          s-12
-          color-black-2
-          no-wrap
-          "
-        >
-          {WIDGET_T_DATA?.title_entry_fee ?? 'Entry Fee'}
-        </p>
-
-        <p
-          class=
-          "
-          s-16
-          w-500
-          "
-        >
-          {B_COMP_HIGH_D?.competition?.data?.entry_fee ?? ''} BTA
-          <span
-            class=
-            "
-            color-grey
-            "
-          >
-          (${B_COMP_HIGH_D?.competition?.data?.entry_fee ?? ''})
-          </span>
-        </p>
-
-      </div>
-
-      <!--
-      COMPETITION TOTAL PRIZE
-      -->
-      <div>
-
-        <p
-          class=
-          "
-          s-12
-          color-black-2
-          "
-        >
-          {WIDGET_T_DATA?.title_total_prize ?? 'Total prize'}
-        </p>
-
-        <p
-          class=
-          "
-          s-16
-          w-500
-          "
-        >
-
-          {#if !counterTotalAnimated}
-            {B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission ?? ''} BTA
-          {:else}
-            {counterTotalPrize} BTA
-          {/if}
-
-          <span
-            class=
-            "
-            color-grey
-            "
-          >
-            {#if !counterTotalAnimated}
-              (${B_COMP_HIGH_D?.competition?.data?.total_prize - B_COMP_HIGH_D?.competition?.data?.betarena_commission ?? ''})
-            {:else}
-              (${counterTotalPrize})
-            {/if}
-          </span>
-
-        </p>
-
-      </div>
+      <CompDetails
+        B_COMP_HIGH_D={B_COMP_HIGH_D}
+        WIDGET_T_DATA={WIDGET_T_DATA}
+        isViewMobile={mobileExclusive}
+        isViewTablet={tabletExclusive}
+        forceView={true}
+      />
 
     </div>
 
