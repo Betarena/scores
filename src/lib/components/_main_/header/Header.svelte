@@ -1300,6 +1300,15 @@ NAVBAR MAIN
       in:fly={{ x: -200, duration: 500 }}
       out:fly={{ x: -200, duration: 500 }}
     >
+        <!--
+        HEADER (INNER) CLOSE DROPDOWNS AREA
+        -->
+        {#if dropDownArea}
+          <div
+            id="background-area-close-inner"
+            on:click={() => closeAllDropdowns()}
+          />
+        {/if}
 
       <div>
 
@@ -1406,7 +1415,10 @@ NAVBAR MAIN
             <!--
             LANGUAGE SELECTION
             -->
-            <HeaderCLang />
+            <HeaderCLang
+              {dropDownArea}
+              on:closeDropdown={() => dropDownArea = true}
+            />
 
             <!--
             THEME SELECTION
@@ -1601,11 +1613,13 @@ NAVBAR MAIN
 
   #background-area-close
   {
+    /* 📌 position */
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
+    /* 🎨 style */
     height: 100%;
     width: 100%;
     z-index: 1000;
@@ -1613,11 +1627,13 @@ NAVBAR MAIN
 
   #background-area-close-inner
   {
+    /* 📌 position */
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
+    /* 🎨 style */
     height: 100%;
     width: 100%;
     z-index: 1000;
