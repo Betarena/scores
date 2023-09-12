@@ -23,16 +23,9 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	import ChighLoaderExtraInfo from "./loaders/CHIGH-Loader-Extra-Info.svelte";
-	import ChighLoaderJoinNowBtn from "./loaders/CHIGH-Loader-JoinNow-Btn.svelte";
-	import ChighLoaderParticipants from "./loaders/CHIGH-Loader-Participants.svelte";
-	import ChighLoaderTeamBox from "./loaders/CHIGH-Loader-Team-Box.svelte";
-	import ChighLoaderTimerBox from "./loaders/CHIGH-Loader-Timer-Box.svelte";
-	import ChighLoaderTimerStart from "./loaders/CHIGH-Loader-Timer-Start.svelte";
-	import ChighLoaderTopLeft from "./loaders/CHIGH-Loader-Top-Left.svelte";
-	import ChighLoaderTopRight from "./loaders/CHIGH-Loader-Top-Right.svelte";
-	import ChighLoaderTournamentBox from "./loaders/CHIGH-Loader-Tournament-Box.svelte";
-	import ChighLoaderTournamentInfo from "./loaders/CHIGH-Loader-Tournament-Info.svelte";
+	import userBetarenaSettings from '$lib/store/user-settings.js';
+
+	import ChighLoaderEntry from "./loaders/CHIGH-Loader-Entry.svelte";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -82,6 +75,7 @@
         "
         widget-component
         "
+        class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
       >
 
         <!--
@@ -95,8 +89,12 @@
           m-b-20
           "
         >
-          <ChighLoaderTopLeft />
-          <ChighLoaderTopRight />
+          <ChighLoaderEntry
+            competitionTopRightBox={true}
+          />
+          <ChighLoaderEntry
+            competitionTopLeftBox={true}
+          />
         </div>
 
         <!--
@@ -113,57 +111,39 @@
             class=
             "
             m-b-25
-            row-space-start
             "
           >
-            <div
-              class=
-              "
-              m-r-15
-              "
-            >
-              <ChighLoaderTournamentBox />
-            </div>
-            <ChighLoaderTournamentInfo />
+            <ChighLoaderEntry
+              competitionTournamentBox={true}
+            />
           </div>
 
           <!--
           FIXTURE TEAMS - LOADER
           -->
           <div
-            id="{CNAME}⮕competition-teams"
             class=
             "
             m-b-16
-            row-space-even
             "
           >
-
-            <ChighLoaderTeamBox />
-            <ChighLoaderTeamBox />
-
+            <ChighLoaderEntry
+              competitionTeamBox={true}
+            />
           </div>
 
           <!--
           FIXTURE / COMPETITION COUNTDOWN LOADER
           -->
           <div
-            id="{CNAME}⮕countdown"
             class=
             "
             m-b-24
-            row-space-out
             "
           >
-
-            <ChighLoaderTimerStart />
-
-            <div>
-              {#each { length: 3 } ?? [] as _}
-                <ChighLoaderTimerBox />
-              {/each}
-            </div>
-
+            <ChighLoaderEntry
+              competitionCountdown={true}
+            />
           </div>
 
           <!--
@@ -174,7 +154,9 @@
           >
 
             {#each { length: 4 } ?? [] as _}
-              <ChighLoaderExtraInfo />
+              <ChighLoaderEntry
+                competitionExtraInfo={true}
+              />
             {/each}
 
           </div>
@@ -191,8 +173,12 @@
           row-space-out
           "
         >
-          <ChighLoaderParticipants />
-          <ChighLoaderJoinNowBtn />
+          <ChighLoaderEntry
+            competitionParticipants={true}
+          />
+          <ChighLoaderEntry
+            competitionJoinNowBox={true}
+          />
         </div>
 
       </div>
@@ -264,26 +250,6 @@
     padding: 20px 24px;
   }
 
-  div#competition⮕w⮕highlights-loader⮕competition-teams
-  {
-    /* 📌 position */
-    position: relative;
-    /* 🎨 style */
-    overflow: hidden;
-    border-radius: 8px;
-    background-color: var(--whitev2);
-    min-height: 86px;
-  }
-
-  div#competition⮕w⮕highlights-loader⮕countdown
-  {
-    /* 🎨 style */
-    min-height: 40px;
-    border-radius: 8px;
-    background: var(--whitev2);
-    padding: 4px 4px 4px 12px;
-  }
-
   div#competition⮕w⮕highlights-loader⮕grid-details
   {
     /* 🎨 style */
@@ -301,9 +267,9 @@
   }
 
   /*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
   @media only screen
@@ -354,15 +320,27 @@
 	}
 
   /*
-  =============
-  🌒 DARK-THEME
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
-  :global(.dark-background div#competition⮕w⮕highlights-loader⮕top-row)
+  div#competition⮕w⮕highlights-loader⮕main.dark-background-1
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1);
+    background-color: var(--dark-theme-1-4-shade) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕highlights-loader⮕top-row
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕highlights-loader⮕bottom-row
+  {
+    /* 🎨 style */
+    background-color: var(--dark-theme-1) !important;
   }
 
 </style>
