@@ -75,9 +75,9 @@
 
   let
     /** @description TODO: DOC: */
-    mobileExclusive: boolean = true,
+    isViewMobile: boolean = true,
     /** @description TODO: DOC: */
-    tabletExclusive: boolean = true,
+    isViewTablet: boolean = true,
     /** @description competition highlight (widget) - translations */
     WIDGET_T_DATA: B_COMP_HIGH_T = $page.data?.B_COMP_HIGH_T,
     /** @description global | page (data) - team translations */
@@ -110,8 +110,8 @@
   ): void
   {
     [
-      tabletExclusive,
-      mobileExclusive
+      isViewTablet,
+      isViewMobile
     ] =	viewport_change
     (
       VIEWPORT_TABLET_INIT,
@@ -610,6 +610,9 @@
       >
 
         <CompCountdownStatus
+          {isViewMobile}
+          {isViewTablet}
+          forceView={true}
           B_COMP_HIGH_D={B_COMP_HIGH_D}
           WIDGET_T_DATA={WIDGET_T_DATA}
           designView={'1'}
@@ -629,8 +632,8 @@
       <CompDetails
         B_COMP_HIGH_D={B_COMP_HIGH_D}
         WIDGET_T_DATA={WIDGET_T_DATA}
-        isViewMobile={mobileExclusive}
-        isViewTablet={tabletExclusive}
+        isViewMobile={isViewMobile}
+        isViewTablet={isViewTablet}
         forceView={true}
       />
 

@@ -1182,6 +1182,10 @@ input[placeholder]
 {
   width: auto;
 }
+.width-fit-content
+{
+  width: fit-content;
+}
 .width-100
 {
   width: 100%;

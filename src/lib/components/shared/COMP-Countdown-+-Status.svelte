@@ -43,6 +43,12 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   export let
+    /** @description TODO: DOC: */
+    isViewMobile: boolean,
+    /** @description TODO: DOC: */
+    isViewTablet: boolean,
+    /** @description TODO: DOC: */
+    forceView: boolean = false,
     /** @description competition (shared) - target competition data */
     B_COMP_HIGH_D: B_COMP_HIGH_D,
     /** @description competition (shared) - target competition translations */
@@ -184,10 +190,9 @@ COMPETITION COUNTDOWN / STATUS
 
     <div
       id="{CNAME}⮕countdown"
-      class=
-      "
-      row-space-out
-      "
+      class:row-space-out={isViewMobile}
+      class:row-space-start={!isViewMobile}
+      class:width-auto={!isViewMobile}
     >
 
       <!--
@@ -200,8 +205,8 @@ COMPETITION COUNTDOWN / STATUS
         color-black-2
         w-500
         no-wrap
-        m-r-24
         "
+        class:m-r-24={!isViewMobile && !forceView}
       >
         {WIDGET_T_DATA?.timer ?? 'Starts in:'}
       </p>

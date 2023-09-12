@@ -642,6 +642,9 @@ COMPETITION MAIN
         COMPETTION COUNTDOWN / NATIVE STATUS
         -->
         <CompCountdownStatus
+          {isViewMobile}
+          {isViewTablet}
+          forceView={false}
           B_COMP_HIGH_D={WIDGET_DATA}
           WIDGET_T_DATA={WIDGET_T_DATA}
           designView={'2'}
@@ -871,9 +874,13 @@ COMPETITION MAIN
       -->
       <div
         id="{CNAME}⮕status"
+        class:width-fit-content={isViewTablet && !isViewMobile}
       >
 
         <CompCountdownStatus
+          {isViewMobile}
+          {isViewTablet}
+          forceView={false}
           B_COMP_HIGH_D={WIDGET_DATA}
           WIDGET_T_DATA={WIDGET_T_DATA}
           designView={'2'}
