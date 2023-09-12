@@ -24,6 +24,7 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
+	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
@@ -31,11 +32,13 @@
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
-  import type { Betarena_User } from '$lib/types/types.scores.js';
-  import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
-  import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
-  import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
   import HighlightsNoCompetitions from './Highlights-No-Competitions.svelte';
+
+	import type { Betarena_User } from '$lib/types/types.scores.js';
+	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
+	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+	import type { B_SAP_CP_T } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -69,6 +72,8 @@
     isViewMobile: boolean = false,
     /** @description TODO: DOC: */
     isViewTablet: boolean = false,
+    /** Page data availabe for `this` layout */
+    B_SAP_CP_T: B_SAP_CP_T,
     /** @description dynamic import variable condition */
     useDynamicImport: boolean = true,
     /** @description dynamic import variable for svelte component */
@@ -84,6 +89,8 @@
     /** @description competitions (lobby) highlights (widget) - all participants map */
     participantsMap: Map < string, Betarena_User > = new Map()
   ;
+
+  $: B_SAP_CP_T = $page.data?.B_SAP_CP_T;
 
   // ### IMPORTANT
   // ### Reactivity deep-value listen(s).
@@ -485,7 +492,7 @@
     inter-font
     "
   >
-    Open
+    {B_SAP_CP_T?.general?.data?.open ?? 'Open'}
   </h2>
 
   <!--
@@ -524,7 +531,7 @@
     inter-font
     "
   >
-    Active
+    {B_SAP_CP_T?.general?.data?.active ?? 'Active'}
   </h2>
 
   <!--
@@ -563,7 +570,7 @@
     inter-font
     "
   >
-    Finished
+    {B_SAP_CP_T?.general?.data?.finished ?? 'Finished'}
   </h2>
 
   <!--

@@ -44,7 +44,7 @@
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
-	import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
+	import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -60,6 +60,8 @@
 	export let
     /** @description TODO: DOC: */
     B_COMP_HIGH_D: B_COMP_HIGH_D,
+    /** Page data availabe for `this` layout */
+    B_SAP_CP_T: B_SAP_CP_T,
     /** @description competition (main) - participants detailed data `Map` */
     participantsMap: Map < string, Betarena_User >
   ;
@@ -95,7 +97,8 @@
   ;
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_HIGH_T;
-	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
+  $: B_SAP_CP_T = $page.data?.B_SAP_CP_T;
+  $: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
 	$: B_SAP_D3_COUNTRIES_M_MAP = $page.data?.B_SAP_D3_COUNTRIES_M_MAP;
   // @ts-ignore
   $: countryMap = new Map(B_SAP_D3_COUNTRIES_M_MAP);
@@ -734,7 +737,7 @@
           btn-primary-v2
           "
         >
-          {'Join now'}
+          {B_SAP_CP_T?.general?.data?.join ?? 'Join now'}
         </button>
       </a>
 
