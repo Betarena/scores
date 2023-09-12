@@ -296,7 +296,7 @@ COMPETITION COUNTDOWN / STATUS
   <!--
   FUTURE START DATETIME
   -->
-  {:else if true}
+  {:else if !showCountdown && B_COMP_HIGH_D?.competition?.data?.status == 'pending'}
 
     <p
       class=
