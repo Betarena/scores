@@ -125,7 +125,7 @@
   -->
 
   <a
-    href={cleanUrl(navUrl)}
+    href={navKey == 'content' ? navUrl : cleanUrl(navUrl)}
     target={navKey == 'content' ? '_blank' : '_self'}
   >
     <p
