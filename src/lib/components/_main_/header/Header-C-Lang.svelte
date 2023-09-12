@@ -239,7 +239,7 @@ COMPONENT JS (w/ TS)
   <!--
   DROPDOWN (LANG)
   -->
-  {#if isLangDropdown && dropDownArea}
+  {#if isLangDropdown}
 
     <div
       id="dropdown-menu"
