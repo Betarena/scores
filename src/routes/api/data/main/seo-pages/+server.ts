@@ -6,7 +6,7 @@ import { SEO_CS_ENTRY, SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/d
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
-import { get_target_hset_cache_data, get_target_set_cache_data } from '../../../../../lib/redis/std_main';
+import { HSET_All, get_target_hset_cache_data, get_target_set_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_SAP_CTP_D, B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
 
@@ -60,6 +60,7 @@ export async function GET
 	const competition_id: string = req?.url?.searchParams?.get('competition_id');
 	const term: string = req?.url?.searchParams?.get('term');
   const months: string = req?.url?.searchParams?.get('months');
+  const countries: string = req?.url?.searchParams?.get('countries');
   const hasura: string = req?.url?.searchParams?.get('hasura');
 
   // ### TODO:
@@ -359,6 +360,19 @@ export async function GET
     (
       RedisKeys.SAP_C_D_A7,
       country_id
+    );
+		if (data) return json(data);
+	}
+
+  // ### CHECK
+  // ### for target data retrieve of page (country) TRANSLATION(s).
+  // ### NOTE:
+  // ### cache only.
+	if (countries)
+  {
+		const data: unknown = await HSET_All
+    (
+      RedisKeys.SAP_C_D_A7
     );
 		if (data) return json(data);
 	}

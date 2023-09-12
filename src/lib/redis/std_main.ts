@@ -3,6 +3,7 @@
  * NOTE: to Interact with REDIS CACHE [STD-MAIN]
  */
 import redis from '$lib/redis/init';
+import { recordToKeyValueArray } from '$lib/utils/platform-functions.js';
 
 // [🗃️] archive
 export const live_scores_leagues = 'live_scores_leagues';
@@ -20,9 +21,9 @@ export async function get_target_hset_cache_data
 (
 	key: string,
 	id: string
-): Promise < unknown > 
+): Promise < unknown >
 {
-	try 
+	try
   {
 		const cached: string = await redis.hget
     (
@@ -33,8 +34,41 @@ export async function get_target_hset_cache_data
 			const parsed: unknown = JSON.parse(cached);
 			return parsed;
 		}
-	} 
-  catch (e) 
+	}
+  catch (e)
+  {
+		console.error
+    (
+			`❌ uh-oh! ${key} cache error`,
+			e
+		);
+		return;
+	}
+}
+
+/**
+ * [HSET] [GET] Method
+ * @param key
+ * @param id
+ * @returns
+ */
+export async function HSET_All
+(
+	key: string
+): Promise < unknown >
+{
+	try
+  {
+		const cached: Record<string, string> = await redis.hgetall
+    (
+			key
+		);
+
+		if (cached)
+      return JSON.parse(JSON.stringify(recordToKeyValueArray(cached))) as unknown;
+    ;
+  }
+  catch (e)
   {
 		console.error
     (
@@ -55,9 +89,9 @@ export async function get_target_set_cache_data
 (
 	key: string,
 	id: string
-): Promise < unknown > 
+): Promise < unknown >
 {
-	try 
+	try
   {
 		const cached: number = await redis.sismember
     (
@@ -66,8 +100,8 @@ export async function get_target_set_cache_data
 		);
 		console.log(id, cached);
 		return cached;
-	} 
-  catch (e) 
+	}
+  catch (e)
   {
 		console.error(
 			`❌ uh-oh! ${key} cache error`,
@@ -83,9 +117,11 @@ export async function get_target_set_cache_data
  * @param id
  * @returns
  */
-export async function get_target_string_cache_data(
+export async function get_target_string_cache_data
+(
 	key: string
-): Promise<unknown> {
+): Promise<unknown>
+{
 	try {
 		const cached: string = await redis.get(key);
 		if (cached) {

@@ -1377,4 +1377,34 @@ export const iso2CountryLogo = (value: string): string =>
   ;
 }
 
+/**
+ * @summary
+ * 🔹 HELPER
+ *
+ * @description
+ * 📌 Generates an `object` from target `Map(..)`.
+ *
+ * @param
+ * { Map < any, any > } map
+ *
+ * @returns
+ * An `object`.
+ */
+export function recordToKeyValueArray
+(
+  record: Record < any, any > = null
+): any[][]
+{
+  const jsonObj = Object.keys(record)
+  ?.map
+  (
+    (
+      key
+    ) =>
+    [key, JSON.parse(record[key])]
+  );
+
+  return jsonObj;
+}
+
 // #endregion ➤ 🛠️ METHODS

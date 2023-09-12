@@ -69,10 +69,7 @@
     VIEWPORT_TABLET_INIT = 912,
     /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 581,
-    /**
-     * @description
-     * 📌 `this` component **main** `id` and `data-testid` prefix.
-    */
+    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'competition⮕w⮕highlights'
   ;
 
@@ -81,13 +78,17 @@
     mobileExclusive: boolean = true,
     /** @description TODO: DOC: */
     tabletExclusive: boolean = true,
-    /** @description main widget translations data */
+    /** @description competition highlight (widget) - translations */
     WIDGET_T_DATA: B_COMP_HIGH_T = $page.data?.B_COMP_HIGH_T,
-    /** @description TODO: DOC: */
+    /** @description global | page (data) - team translations */
     B_SAP_D3_TEAM_M: B_SAP_D3,
-    /** @description competition highlights - target widget prediction type icon */
+    /** @description global | page (data) - countries (all) translations */
+    B_SAP_D3_COUNTRIES_M_MAP: any[][],
+    /** @description competition highlight (widget) - country translations map */
+    countryMap: Map < string, { [key: string]: string } >,
+    /** @description competition highlight (widget) - target widget prediction type icon */
     icon_prediction: string,
-    /** @description competition highlights - target widget prediction type */
+    /** @description competition highlight (widget) - target widget prediction type */
     prediction_type: 'win' | 'loose' | 'draw',
     /** @description TODO: DOC: */
     prediction_side: 'home' | 'away'
@@ -95,6 +96,9 @@
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_HIGH_T;
 	$: B_SAP_D3_TEAM_M = $page.data?.B_SAP_D3_TEAM_M;
+	$: B_SAP_D3_COUNTRIES_M_MAP = $page.data?.B_SAP_D3_COUNTRIES_M_MAP;
+  // @ts-ignore
+  $: countryMap = new Map(B_SAP_D3_COUNTRIES_M_MAP);
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -559,7 +563,7 @@
             s-10
             "
           >
-            {B_COMP_HIGH_D?.league?.country_iso2_j}
+            {countryMap?.get(B_COMP_HIGH_D?.league?.country_id_j?.toString())?.translations?.[$sessionStore?.serverLang] ?? ''}
           </p>
 
         </div>

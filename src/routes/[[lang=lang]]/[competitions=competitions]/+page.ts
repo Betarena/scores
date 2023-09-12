@@ -72,6 +72,7 @@ export async function load
     B_SAP_D3_CP_M,
     B_SAP_D3_SP_M,
     B_SAP_D3_TEAM_M,
+    B_SAP_D3_COUNTRIES_M_MAP,
     B_COMP_HIGH_S,
     B_COMP_HIGH_T
   ] = await fetchData
@@ -115,6 +116,7 @@ export async function load
     B_SAP_D3_CP_M,
     B_SAP_D3_SP_M,
     B_SAP_D3_TEAM_M,
+    B_SAP_D3_COUNTRIES_M_MAP,
     B_COMP_HIGH_S,
     B_COMP_HIGH_T
 	};
@@ -132,6 +134,7 @@ export async function load
 type PP_PROMISE_0 =
 [
   B_SAP_CP_T | undefined,
+  B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
@@ -165,6 +168,7 @@ async function fetchData
     `/api/data/main/seo-pages?term=competitions`,
     `/api/data/main/seo-pages?term=football`,
     `/api/data/main/seo-pages?term=team`,
+    `/api/data/main/seo-pages?countries=true`,
     `/api/data/lobby/highlights?seo=true&lang=${_lang}`,
     `/api/data/lobby/highlights?lang=${_lang}`,
   ];
