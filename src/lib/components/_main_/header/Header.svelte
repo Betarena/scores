@@ -1234,6 +1234,12 @@ NAVBAR MAIN
                 no-wrap
                 "
               >
+                <!-- [🐞] -->
+                <!-- {$userBetarenaSettings?.user?.scores_user_data?.main_balance} -->
+                <!-- [🐞] -->
+                <!-- {toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)} -->
+                <!-- [🐞] -->
+                <!-- {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance))} -->
                 <span
                   class=
                   "
