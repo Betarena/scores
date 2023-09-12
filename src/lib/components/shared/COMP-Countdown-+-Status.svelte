@@ -190,9 +190,9 @@ COMPETITION COUNTDOWN / STATUS
 
     <div
       id="{CNAME}⮕countdown"
-      class:row-space-out={isViewMobile}
-      class:row-space-start={!isViewMobile}
-      class:width-auto={!isViewMobile}
+      class:row-space-out={isViewMobile && !forceView || forceView}
+      class:row-space-start={!isViewMobile && !forceView}
+      class:width-auto={!isViewMobile && !forceView}
     >
 
       <!--
@@ -221,6 +221,7 @@ COMPETITION COUNTDOWN / STATUS
         width-auto
         row-space-out
         "
+        class:lobby-view={designView == '1'}
       >
 
         <!--
@@ -433,12 +434,17 @@ COMPETITION COUNTDOWN / STATUS
   div#shared⮕w⮕countdown-status⮕countdown-main-box div.time-box
   {
     /* 🎨 style */
-    width: 60px;
+    width: 49px;
     height: 32px;
     padding: 6px 0px;
     border-radius: 4px 0px 0px 4px;
     background-color: var(--white);
     margin-right: 2px;
+  }
+  div#shared⮕w⮕countdown-status⮕countdown-main-box.lobby-view div.time-box
+  {
+    /* 🎨 style */
+    width: 49px !important;
   }
   div#shared⮕w⮕countdown-status⮕countdown-main-box div.time-box:last-child
   {
@@ -477,6 +483,18 @@ COMPETITION COUNTDOWN / STATUS
   ◼️ ⚡️ RESPONSIVNESS      ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  @media only screen
+  and (min-width: 374px)
+  {
+
+    div#shared⮕w⮕countdown-status⮕countdown-main-box:not(.lobby-view) div.time-box
+    {
+      /* 🎨 style */
+      width: 60px;
+    }
+
+  }
 
   @media only screen
   and (min-width: 726px)
