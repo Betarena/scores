@@ -150,7 +150,7 @@ COMPETITION DETAILS
 -->
 <div
   id="{CNAME}⮕grid-details"
-  class:m-r-64={!isViewTablet}
+  class:m-r-64={!isViewTablet && !forceView}
   style="white-space: nowrap;"
   class:force-mobile={forceView}
 >
