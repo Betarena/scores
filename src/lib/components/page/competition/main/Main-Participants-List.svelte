@@ -702,6 +702,8 @@ PARTICIPANTS VOTE LIST
           inter-font
           m-b-16
           "
+          class:s-20={isViewMobile}
+          class:s-24={!isViewMobile}
         >
           {WIDGET_T_DATA?.title_placeholder_1 ?? 'No participants at the moment'}
         </p>
@@ -870,6 +872,7 @@ PARTICIPANTS VOTE LIST
     right: 0;
     /* 🎨 style */
     width: fit-content;
+    max-width: 280px;
     height: fit-content;
   }
 
