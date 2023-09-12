@@ -26,6 +26,7 @@
 	import { page } from "$app/stores";
 
 	import sessionStore from "$lib/store/session.js";
+	import { cleanUrl } from "$lib/utils/platform-functions.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -116,9 +117,15 @@
   on:mouseover={() => $sessionStore.navBtnHover = navKey}
   on:mouseout={() => $sessionStore.navBtnHover = undefined}
 >
+  <!-- [🐞] -->
+  <!--
+  {#if dev}
+    {`[🔹 var] :: navUrl: ${navUrl}`}
+  {/if}
+  -->
 
   <a
-    href={navUrl}
+    href={cleanUrl(navUrl)}
     target={navKey == 'content' ? '_blank' : '_self'}
   >
     <p
