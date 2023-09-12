@@ -677,6 +677,7 @@
             "
             m-r-12
             row-space-start
+            participant-list
             "
           >
 
@@ -826,16 +827,21 @@
   {
     /* 🎨 style */
     min-height: 72px;
-		padding: 16px 24px;
+		padding: 14px 24px;
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
   }
 
-  img.participant-img
+  div#competition⮕w⮕highlights⮕bottom-row div.participant-list img.participant-img
   {
     /* 🎨 style */
-    margin: -7.5px;
+    margin-right: -15px;
     border-radius: 32px;
     border: 2px solid var(--whitev2);
+  }
+  div#competition⮕w⮕highlights⮕bottom-row div.participant-list img.participant-img:last-child
+  {
+    /* 🎨 style */
+    margin-right: 0;
   }
 
   /*
@@ -871,6 +877,12 @@
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1) !important;
+  }
+
+  .dark-background-1 div#competition⮕w⮕highlights⮕bottom-row div.participant-list img.participant-img
+  {
+    /* 🎨 style */
+    border: 2px solid var(--dark-theme-1);
   }
 
 </style>
