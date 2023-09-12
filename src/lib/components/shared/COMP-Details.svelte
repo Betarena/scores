@@ -334,7 +334,7 @@ COMPETITION DETAILS
     /* 🎨 style */
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 24px 27px;
+    gap: 24px 0;
   }
 
   /*
@@ -351,6 +351,7 @@ COMPETITION DETAILS
     {
       /* 🎨 style */
       /* grid-template-columns: 1fr 1fr 1fr 1fr; */
+      grid-template-columns: unset;
       justify-content: space-between;
       grid-template-rows: 1fr;
       grid-auto-flow: column;

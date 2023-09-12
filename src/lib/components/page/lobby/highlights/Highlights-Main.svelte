@@ -815,14 +815,6 @@
   TEAMS CONTENT MANAGED BY OFFSPRING WIDGET
   */
 
-  div#competition⮕w⮕highlights⮕grid-details
-  {
-    /* 🎨 style */
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px 40px;
-  }
-
   div#competition⮕w⮕highlights⮕bottom-row
   {
     /* 🎨 style */
