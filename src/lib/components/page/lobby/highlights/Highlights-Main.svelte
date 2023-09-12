@@ -403,7 +403,7 @@
           "
           s-12
           color-grey
-          w-600
+          w-500
           "
         >
           {WIDGET_T_DATA?.term_is_going_to_a ?? 'is going to'}
@@ -414,7 +414,12 @@
       <!--
       2nd COLUMN - COMPETITION PREDICTION INFO
       -->
-      <div>
+      <div
+        class=
+        "
+        text-right
+        "
+      >
 
         <div
           class=
@@ -441,8 +446,8 @@
             class=
             "
             s-16
-            w-700
-            color-grey
+            w-500
+            dark-white-v3
             "
             class:color-success={prediction_type == 'win'}
             class:color-red-bright={prediction_type == 'loose'}

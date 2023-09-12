@@ -552,6 +552,7 @@ COMPETITION MAIN
         class=
         "
         width-auto
+        text-right
         "
         class:row-space-end={!isViewMobile}
       >
@@ -583,7 +584,7 @@ COMPETITION MAIN
             "
             s-16
             w-500
-            color-grey
+            dark-white-v3
             "
             class:s-22={!isViewTablet}
             class:color-green={prediction_type == 'win'}
