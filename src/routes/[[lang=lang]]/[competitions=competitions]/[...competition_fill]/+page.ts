@@ -7,6 +7,7 @@ import type { B_SAP_CTP_D, B_SAP_CTP_T, B_SAP_D1, B_SAP_D3 } from '@betarena/sco
 import type { B_COMP_MAIN_S, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 import type { ServerLoadEvent } from '@sveltejs/kit';
 import type { PageLoad } from '../$types.js';
+import type { B_COMP_RULES_T } from '@betarena/scores-lib/types/types.competition.rules.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -94,6 +95,7 @@ export async function load
     B_SAP_D3_TEAM_M,
     B_COMP_MAIN_T,
     B_COMP_MAIN_S,
+    B_COMP_RULES_T,
     B_SAP_D1
   ] = await fetchData
   (
@@ -148,6 +150,7 @@ export async function load
     B_SAP_D3_TEAM_M,
     B_COMP_MAIN_T,
     B_COMP_MAIN_S,
+    B_COMP_RULES_T,
     B_SAP_D1
 	};
 
@@ -169,7 +172,8 @@ type PP_PROMISE_0 =
   B_SAP_D3 | undefined,
   B_SAP_D3 | undefined,
   B_COMP_MAIN_T | undefined,
-  B_COMP_MAIN_S | undefined
+  B_COMP_MAIN_S | undefined,
+  B_COMP_RULES_T | undefined
 ];
 
 /**
@@ -194,6 +198,7 @@ type PP_PROMISE_F =
   B_SAP_D3 | undefined,
   B_COMP_MAIN_T | undefined,
   B_COMP_MAIN_S | undefined,
+  B_COMP_RULES_T | undefined,
   B_SAP_D1 | undefined
 ]
 
@@ -227,6 +232,7 @@ async function fetchData
     `/api/data/main/seo-pages?term=team`,
     `/api/data/competition/main?lang=${_lang}`,
     `/api/data/competition/main?seo=true&lang=${_lang}&competition_id=${_competitionId}`,
+    `/api/data/competition/rules?lang=${_lang}`,
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
