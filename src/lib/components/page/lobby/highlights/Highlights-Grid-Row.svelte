@@ -26,6 +26,7 @@
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
+	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
   import icon_slider_left from './assets/icon-slider-left.svg';
@@ -61,22 +62,34 @@
   ;
 
   let
-    /** @description TODO: DOC: */
+    /** @description 📱 MOBILE viewport */
     isViewMobile: boolean = false,
-    /** @description TODO: DOC: */
+    /** @description 💻 TABLET viewport */
     isViewTablet: boolean = false,
     /** @description dynamic import variable condition */
     useDynamicImport: boolean = true,
     /** @description dynamic import variable for svelte component */
     HighlightsMainDynamic: any,
-    /** @description TODO: DOC: */
+    /** @description current slider position value */
     currentSlidePositionNumber: number = 0,
-    /** @description TODO: DOC: */
+    /** @description current position of slider dot */
+    slidePositionDotMirror: number = 1,
+    /** @description previous position of slider dot */
+    slideDirection: number = 0,
+    /** @description number of carousel slide dots to be shown on 📱 MOBILE */
+    sliderCount: number = 0,
+    /** @description wether exists more than 5 limit */
+    isOverLimitUI: boolean = false,
+    /** @description **/
+    triggerSlide2ndOppositesEffect: boolean = false,
+    /** @description number of increments grid elements should slide by */
     incrementBy: number,
     /** @description target `this` component grid element `HTMLElement` */
     gridElement: HTMLElement,
     /** @description target `this` component gird inner element `HTMLElement` */
     gridChildElement: HTMLElement,
+    /** @description target `this` component carousel element `HTMLElement` */
+    carouselDotsElement: HTMLElement,
     /** @description show / hide on 🖥️ LAPTOP carousel buttons */
     showPrevNextBtns: boolean = false
   ;
@@ -131,8 +144,8 @@
 			}
 		);
 
-    let touchstartX = 0
-    let touchendX = 0
+    let touchstartX: number = 0;
+    let touchendX: number = 0;
 
     function checkDirection
     (
@@ -150,6 +163,41 @@
       }
     }
 
+    let disableScroll: boolean = false;
+
+    function doScroll
+    (
+      e: WheelEvent
+    ): void
+    {
+
+      if (disableScroll) return;
+
+      if (e?.deltaX > 0)
+        toggleCarousel(-1);
+      else
+        toggleCarousel(1);
+      ;
+
+      disableScroll = true;
+
+      setTimeout
+      (
+        () =>
+        {
+          disableScroll = false;
+        },
+        1000
+      );
+
+      // ### [🐞]
+      console.log(`x:${e.deltaX} y:${e.deltaY}`);
+
+      // ### NOTE:
+      // ### disable the actual scrolling
+      e.preventDefault();
+    }
+
     const element: HTMLElement = gridElement;
 
     // ### NOTE:
@@ -161,7 +209,7 @@
       {
         touchstartX = e?.changedTouches?.[0]?.screenX;
       }
-    )
+    );
 
     // ### NOTE:
     // ### on 'touchend'.
@@ -173,7 +221,17 @@
         touchendX = e?.changedTouches?.[0]?.screenX;
         checkDirection();
       }
-    )
+    );
+
+    // ### NOTE:
+    // ### on 'wheel' (a.k.a scroll)
+    element.addEventListener
+    (
+      'wheel',
+      doScroll,
+      false
+    );
+
   }
 
   /**
@@ -194,12 +252,55 @@
     ;
     if (if_M_0) return;
 
+    // ### NOTE:
+    // ### initial position if 0, can only go between 0 - X, where X is positive integer.
     currentSlidePositionNumber += change;
+
+    slideDirection = change;
+
+    // ### NOTE:
+    // ### mirror slider (dot carousel) change
+    slidePositionDotMirror += change;
 
     const parentBox: HTMLElement = gridElement;
 
     const element: HTMLElement = gridChildElement;
     element.style.transform = `translateX(${(-parentBox.offsetWidth * currentSlidePositionNumber) - (currentSlidePositionNumber * 20)}px)`;
+
+    // ### CHECK
+    // ### for slider to be in a ±2 distance (middle)
+    const if_M_1: boolean =
+      isOverLimitUI
+      && ((currentSlidePositionNumber * incrementBy) - 2) > 0
+      && ((currentSlidePositionNumber * incrementBy) + 2) < competitionList?.length
+    ;
+    if (if_M_1)
+    {
+      // ### NOTE:
+      // ### carousel (dot-slider) control.
+      const carouselElement: HTMLElement = carouselDotsElement;
+
+      setTimeout
+      (
+        () =>
+        {
+          carouselElement.style.transform = `translateX(${-change * 35}px)`;
+          triggerSlide2ndOppositesEffect = true;
+        },
+        100
+      );
+      setTimeout
+      (
+        () =>
+        {
+          carouselElement.style.transform = `translateX(0px)`
+          triggerSlide2ndOppositesEffect = false;
+          slidePositionDotMirror = 3;
+        },
+        300
+      );
+    }
+
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -212,9 +313,29 @@
   // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  $: if (!isViewTablet) incrementBy = 4;
-  $: if (isViewTablet && !isViewMobile) incrementBy = 2;
-  $: if (isViewTablet && isViewMobile) incrementBy = 1;
+  $: if (!isViewTablet)
+    incrementBy = 4;
+  else if (isViewTablet && !isViewMobile)
+    incrementBy = 2;
+  else if (isViewTablet && isViewMobile)
+    incrementBy = 1;
+  ;
+
+  // ### NOTE:
+  // ### complex svelte-reactivity block.
+  $:
+  {
+    sliderCount = Math.ceil(competitionList?.length / incrementBy);
+    if (sliderCount > 5)
+    {
+      sliderCount = 5 + 2;
+      isOverLimitUI = true;
+    }
+    else
+    {
+      isOverLimitUI = false;
+    }
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -269,6 +390,7 @@ TARGET COMPETITIONS VIEW
 
 <div
   id="{CNAME}⮕competitions-outer"
+  class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
 >
 
   <!--
@@ -385,15 +507,72 @@ CAROUSEL DOTS
     class=
     "
     m-t-25
-    carousel-dots
+    text-center
     "
+    class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
   >
-    {#each { length: Math.ceil(competitionList?.length / incrementBy) } ?? [] as _,i}
-      <span
-        class="dot"
-        class:active-carousel={i == currentSlidePositionNumber}
-      />
-    {/each}
+
+    <div
+      class=
+      "
+      carousel-dots
+      "
+    >
+
+      <div
+        class=
+        "
+        carousel-dots-inner
+        row-space-center
+        "
+        bind:this={carouselDotsElement}
+      >
+        {#each { length: sliderCount } ?? [] as _,i}
+
+          <!--
+          NOTE:
+          USE CASE OF STANDARD AMOUNT
+          -->
+          {#if !isOverLimitUI}
+
+            <span
+              class=
+              "
+              dot
+              standard
+              "
+              class:active-carousel={i == slidePositionDotMirror - 1}
+            />
+
+          <!--
+          NOTE:
+          USE CASE OF OVER LIMIT AMOUNT
+          -->
+          {:else}
+
+            <span
+              class=
+              "
+              dot
+              "
+              class:visibility-none=
+              {
+                i == 0 && slidePositionDotMirror == 1
+                || i == (sliderCount - 1) && slidePositionDotMirror == 6
+              }
+              class:first-dot={i == 1 && slidePositionDotMirror == 1}
+              class:slideIllusionDots={triggerSlide2ndOppositesEffect}
+              class:active-carousel={i == slidePositionDotMirror}
+              class:last-dot={i == 5 && slidePositionDotMirror == 5}
+            />
+
+          {/if}
+
+        {/each}
+      </div>
+
+    </div>
+
   </div>
 
 {/if}
@@ -478,25 +657,57 @@ CAROUSEL DOTS
 
   div.carousel-dots
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
+    max-width: 62px;
+    height: 6px;
+    overflow: hidden;
+  }
+  div.carousel-dots-inner
+  {
+    /* 📌 position */
+    position: absolute;
+    /* 🛝 layout */
     display: grid;
+    /* 🎨 style */
+    /* width: fit-content; */
     grid-auto-flow: column;
     gap: 8px;
     justify-content: center;
+    transition: all 0.5s;
   }
   span.dot
   {
     /* 🎨 style */
     height: 6px;
     width: 6px;
-    background-color: #bbb;
+    background-color: var(--black);
+    opacity: 0.4;
     border-radius: 50%;
     display: inline-block;
+    transition: all 0.5s;
+  }
+  span.dot.first-dot,
+  span.dot.last-dot
+  {
+    /* 🎨 style */
+    height: 6px;
+    width: 6px;
+  }
+  div.carousel-dots-inner span.dot:nth-child(2):not(.standard):not(.slideIllusionDots):not(.first-dot),
+  div.carousel-dots-inner span.dot:nth-last-child(2):not(.standard):not(.slideIllusionDots):not(.last-dot),
+  div.carousel-dots-inner span.dot:first-child:not(.standard),
+  div.carousel-dots-inner span.dot:last-child:not(.standard)
+  {
+    /* 🎨 style */
+    height: 4px;
+    width: 4px;
   }
   span.dot.active-carousel
   {
     /* 🎨 style */
-    background: var(--black);
+    opacity: 1;
   }
 
   /*
@@ -557,5 +768,17 @@ CAROUSEL DOTS
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
+
+  .dark-background-1
+  {
+    /* 🔥 override */
+    background-color: unset !important;
+  }
+
+  .dark-background-1 span.dot
+  {
+    /* 🎨 style */
+    background-color: var(--white-4);
+  }
 
 </style>
