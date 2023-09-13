@@ -272,15 +272,20 @@ MODAL - DYNAMIC
           Cancel
         </button>
 
-        <button
-          on:click={() => closeModal()}
-          class=
-          "
-          btn-primary-v2
-          "
+        <a
+          href="/u/deposit/{$userBetarenaSettings.lang}"
+          title='Go to Deposit Page'
         >
-          Deposit
-        </button>
+          <button
+            on:click={() => closeModal()}
+            class=
+            "
+            btn-primary-v2
+            "
+          >
+            Deposit
+          </button>
+        </a>
 
       </div>
 
