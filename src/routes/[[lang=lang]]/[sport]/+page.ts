@@ -37,8 +37,10 @@ export async function load
   const validUrlCheck = await promiseValidUrlCheck
   (
     fetch,
-    urlLang,
-    sport
+    {
+      langUrl: urlLang,
+      sportUrl: sport
+    }
   )
 
   // [ℹ] exit;

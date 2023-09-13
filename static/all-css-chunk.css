@@ -1,63 +1,3 @@
-main
-  {
-    /* 📌 position */
-		position: relative;
-		z-index: 0;
-		margin: 0 auto;
-    /* 🎨 style */
-		width: 100%;
-	}
-	main::before
-  {
-    /* 📌 position */
-		position: absolute;
-		z-index: -1;
-		top: -5px;
-    /* 🎨 style */
-		content: '';
-		display: inline-block;
-		width: 100%;
-		height: 435px;
-		background-image: url('/assets/svg/header-background.svg');
-		background-repeat: no-repeat;
-		background-size: cover;
-		background-origin: border-box;
-		background-position: top;
-	}
-
-	/*
-  =============
-  ⚡️ RESPONSIVNESS
-  =============
-  */
-
-	@media screen
-  and (min-width: 768px)
-  {
-		main::before
-    {
-      /* 🎨 style */
-			height: 495px;
-		}
-	}
-
-	@media screen
-  and (min-width: 1024px)
-  {
-    main
-    {
-      overflow: hidden;
-    }
-		main::before
-    {
-      /* 📌 position */
-			top: calc(100vw / -5.5) !important;
-      /* 🎨 style */
-			height: 100%;
-			background-size: contain !important;
-		}
-	}
-
 div#seo-widget-box.svelte-tc24cj {
   position: fixed;
   z-index: -100000000;
@@ -681,6 +621,14 @@ div#component\/theme\/main.svelte-8g3vuz>img.light.svelte-8g3vuz {
   background-color: var(--white)
 }
 
+div.sports-box.svelte-ofe4gt.svelte-ofe4gt {
+  height: 44px
+}
+
+div.sports-box.svelte-ofe4gt:hover p.capitalize.svelte-ofe4gt {
+  color: var(--primary) !important
+}
+
 div.nav-box.svelte-ft2wdh.svelte-ft2wdh {
   position: relative
 }
@@ -928,14 +876,14 @@ div#user-profile-box.svelte-1sgjsm0 p#wallet-text.svelte-1sgjsm0.svelte-1sgjsm0 
   }
 }
 
-main.svelte-blvgqu {
+main.svelte-17k1fa1 {
   position: relative;
   z-index: 0;
   margin: 0 auto;
   width: 100%
 }
 
-main.svelte-blvgqu:before {
+main.svelte-17k1fa1:before {
   position: absolute;
   z-index: -1;
   top: -5px;
@@ -950,18 +898,22 @@ main.svelte-blvgqu:before {
   background-position: top
 }
 
+main.before-display-none.svelte-17k1fa1:before {
+  display: none
+}
+
 @media screen and (min-width: 768px) {
-  main.svelte-blvgqu:before {
+  main.svelte-17k1fa1:before {
     height: 495px
   }
 }
 
 @media screen and (min-width: 1024px) {
-  main.svelte-blvgqu {
+  main.svelte-17k1fa1 {
     overflow: hidden
   }
 
-  main.svelte-blvgqu:before {
+  main.svelte-17k1fa1:before {
     top: calc(100vw / -5.5) !important;
     height: 100%;
     background-size: contain !important
@@ -1470,6 +1422,46 @@ div.grid-display-column.svelte-1kz5lx8 {
   }
 }
 
+@media only screen and (min-width: 1320px) {
+  section#home-page.svelte-1kz5lx8 {
+    gap: 20px;
+    grid-template-columns: minmax(auto, 328px) minmax(502px, 502px) minmax(auto, 502px)
+  }
+}
+
+div#competitions⮕w⮕no-comp⮕main.svelte-5x3zun {
+  position: absolute;
+  right: 0;
+  left: 0;
+  margin: auto;
+  bottom: 0;
+  top: 0;
+  width: fit-content;
+  height: fit-content
+}
+
+section#page-competitions.svelte-1eny4p8 {
+  position: relative;
+  display: grid;
+  max-width: 1430px;
+  grid-template-columns: 1fr;
+  align-items: start;
+  padding-top: 12px
+}
+
+@media only screen and (min-width: 768px) {
+  section#page-competitions.svelte-1eny4p8 {
+    grid-template-columns: 1fr
+  }
+}
+
+@media only screen and (min-width: 1160px) {
+  section#page-competitions.svelte-1eny4p8 {
+    gap: 20px;
+    grid-template-columns: minmax(auto, 275px) minmax(auto, 502px) minmax(auto, 502px)
+  }
+}
+
 @media screen and (min-width: 560px) {
   :root {
     --homepage-layout-is-mobile: true
@@ -1477,7 +1469,7 @@ div.grid-display-column.svelte-1kz5lx8 {
 }
 
 @media only screen and (min-width: 1320px) {
-  section#home-page.svelte-1kz5lx8 {
+  section#page-competitions.svelte-1eny4p8 {
     gap: 20px;
     grid-template-columns: minmax(auto, 328px) minmax(502px, 502px) minmax(auto, 502px)
   }

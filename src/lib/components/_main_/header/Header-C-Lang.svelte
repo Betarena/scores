@@ -6,15 +6,13 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📦 Package Imports
 
-	import { dev } from "$app/environment";
-	import { goto } from "$app/navigation";
 	import { page } from "$app/stores";
+	import { createEventDispatcher } from 'svelte';
 	import { fly } from "svelte/transition";
 
 	import sessionStore from "$lib/store/session.js";
-	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { NB_W_TAG, dlog, dlogv2 } from "$lib/utils/debug.js";
-	import { ROUTE_ID_PROFILE } from "$lib/utils/user.js";
+	import { NB_W_TAG, dlog } from "$lib/utils/debug.js";
+	import { selectLanguage } from "$lib/utils/platform-functions.js";
 
   import arrow_down from './assets/arrow-down.svg';
   import arrow_up from './assets/arrow-up.svg';
@@ -25,6 +23,11 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 📌 VARIABLES
 
+  export let
+    /** @description TODO: DOC: */
+    dropDownArea: boolean
+  ;
+
   const
     OMIT_URLS: string[] =
     [
@@ -32,17 +35,24 @@ COMPONENT JS (w/ TS)
       '/[[lang=lang]]/[sport]/[fixture=fixture]',
       '/[[lang=lang]]/[player=player]/[...player_fill]'
     ],
-    HOVER_TIMEOUT = 250
+    /** @description TODO: DOC: */
+    HOVER_TIMEOUT = 250,
+    /** @description TODO: DOC: */
+    dispatch = createEventDispatcher()
   ;
 
   let
-    B_NAV_T: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA,
+    /** @description TODO: DOC: */
+    B_NAV_T: B_NAV_T = $page.data.B_NAV_T,
+    /** @description TODO: DOC: */
     isLangDropdown: boolean = false,
+    /** @description TODO: DOC: */
     intent_intent_lang: string | undefined = undefined,
+    /** @description TODO: DOC: */
     timeout_intent: NodeJS.Timeout = undefined
   ;
 
-  $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
+  $: B_NAV_T = $page.data.B_NAV_T;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -137,221 +147,40 @@ COMPONENT JS (w/ TS)
   }
 
   /**
-   * @summary
-   * 📌 MAIN | IMPORTANT
-   *
-	 * @description
-   * 📌 Updates `user` language platform selection.
-   *
-   * ⚡️ Manages platform main navigation,
-   * for some of the section routes.
-   *
-   * @param
-   * { string } lang - Target new `selected` language.
-	 */
-	async function selectLanguage
+   * @description
+   * TODO: DOC:
+   */
+	function clickAction
   (
-    lang: string
-  ): Promise < void >
+  ): void
   {
-    if ($sessionStore?.serverLang == lang) return;
+    isLangDropdown = !isLangDropdown;
 
-    // ➫ NOTE:
-		// ➫ Past/previous lang option.
-		const pastLang: string =
-      $sessionStore?.serverLang == 'en'
-				? '/'
-				: `/${$sessionStore?.serverLang}`
-    ;
+    // ### CHECK
+    // ### for language dropdown action.
+    if (!isLangDropdown) return;
 
-    userBetarenaSettings.setLang
+    dispatch
     (
-      lang
+      'closeDropdown'
     );
 
-    // [🐞]
-    dlogv2
-    (
-      `${NB_W_TAG[0]} selectLanguage()`,
-      [
-        `$userBetarenaSettings.lang: ${$userBetarenaSettings.lang}`,
-        `$sessionStore?.serverLang: ${$sessionStore?.serverLang}`,
-        `lang: ${lang}`,
-        `pastLang: ${pastLang}`,
-        `$page.route.id: ${$page.route.id}`
-      ],
-      true,
-      NB_W_TAG[2]
-    );
-
-		isLangDropdown = false;
-
-    // ➫ NOTE:
-		// ➫ Update <html {lang}> in DOCTYPE.
-    let tempLang: string = lang;
-    if (lang === 'br') tempLang = 'pt-BR';
-    document.documentElement.setAttribute
-    (
-      'lang',
-      tempLang
-    );
-
-    // ➫ CHECK
-    // ➫ on error', navigate back to homepage;
-    const if_M_0: boolean =
-      $page.error
-      && !dev
-    ;
-		if (if_M_0)
-    {
-      const targetUrl: string =
-        lang == 'en'
-          ? `/`
-          : `/${lang}`
-      ;
-
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} -> ${lang}`
-      );
-
-      await goto
-      (
-        targetUrl
-      );
-
-      return;
-		}
-
-    // ➫ CHECK
-		// ➫ Omit 'special' routes cases, as these routes
-    // ➫ manage their own navigation/translation switch.
-    const if_M_1: boolean =
-      OMIT_URLS.includes($page.route.id)
-    ;
-    if (if_M_1)
-    {
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} omitting route: ${$page.route.id}`
-      );
-			return;
-		}
-
-    // ➫ CHECK
-    // ➫ On profile page route, handle.
-    else if (ROUTE_ID_PROFILE == $page.route.id)
-    {
-
-      const pastLangV2: string =
-        pastLang == `/`
-          ? `/en`
-          : pastLang
-      ;
-
-      let tempUrl: string = `${$page.url.pathname}/`;
-
-			const newURL: string = tempUrl
-      ?.replace
-      (
-        `${pastLangV2}/`,
-        `/${lang}`
-      );
-
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} inside (PROFILE) ${lang},
-        pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`
-      );
-
-			await goto
-      (
-        newURL,
-        {
-          replaceState: true
-        }
-      );
-
-    }
-
-    // ➫ NOTE:
-    // ➫ Otherwise, continue navigation switch.
-    // ➫ NOTE:
-
-		// ➫ CHECK
-    // ➫ for 'EN' naviagtion.
-		else if (lang == 'en' && pastLang != '/')
-    {
-
-			// prefetch(`/`); [? - maybe ?] // NOTE:
-
-			// [ℹ] count number of slashes URL;
-			var count =	$page.url.pathname.split('/').length - 1;
-			// [ℹ] replace path-name accordingly for "EN" - first occurance;
-			const newURL: string =
-				count == 1
-					? $page.url.pathname.replace(pastLang, '/')
-					: $page.url.pathname.replace(pastLang, '')
-      ;
-
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`
-      );
-
-			// [ℹ] update URL breadcrumb;
-			// window.history.replaceState({}, "NewPage", newURL);
-			await goto(newURL, { replaceState: true });
-		}
-		// ➫ CHECK
-		// ➫ for 'incoming (past)' from an 'EN (/)' route.
-		else if (lang != 'en' && pastLang == '/')
-    {
-			// [ℹ] count number of slashes URL;
-			var countSlash = $page.url.pathname.split('/').length - 1;
-			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-			const newURL: string =
-				countSlash > 1
-					? $page.url.pathname.replace(pastLang, `/${lang}/`)
-					: $page.url.pathname.replace(pastLang, `/${lang}`)
-      ;
-
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`
-      );
-
-			// [ℹ] update URL breadcrumb;
-			// window.history.replaceState({}, "NewPage", newURL);
-			await goto(newURL, { replaceState: true });
-		}
-		// ➫ CHECK
-		// ➫ for 'incoming (past)' from an 'non-EN (/)' route.
-		else if (lang != 'en' && pastLang != '/')
-    {
-			// [ℹ] count number of slashes URL;
-			var countSlash = $page.url.pathname.split('/').length - 1;
-			// [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-			const newURL: string = $page.url.pathname.replace(pastLang, `/${lang}`);
-
-      // [🐞]
-      dlog
-      (
-        `${NB_W_TAG[0]} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`
-      );
-
-			// [ℹ] update URL breadcrumb;
-			// window.history.replaceState({}, "NewPage", newURL);
-			await goto(newURL, { replaceState: true });
-		}
+    return;
 	}
 
   // #endregion ➤ 🛠️ METHODS
+
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  $: if (!dropDownArea) isLangDropdown = false;
+
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
 </script>
 
@@ -379,8 +208,8 @@ COMPONENT JS (w/ TS)
     row-space-out
     cursor-pointer
     "
-    class:active-lang-select={isLangDropdown == true}
-    on:click={() =>	(isLangDropdown = !isLangDropdown)}
+    class:active-lang-select={isLangDropdown}
+    on:click={() =>	clickAction()}
   >
 
     <p
@@ -400,7 +229,7 @@ COMPONENT JS (w/ TS)
     <img
       loading="lazy"
       src={!isLangDropdown ? arrow_down : arrow_up}
-      alt={!isLangDropdown	? 'arrow_down' : 'arrow_up'}
+      alt={!isLangDropdown ? 'arrow_down' : 'arrow_up'}
       width=16
       height=16
     />
@@ -421,8 +250,8 @@ COMPONENT JS (w/ TS)
         {#if lang.toUpperCase() != $sessionStore?.serverLang?.toUpperCase()}
           <div
             id="lang-select"
-            on:click={() =>	selectLanguage(lang)}
-            on:keydown={() => selectLanguage(lang)}
+            on:click={() =>	selectLanguage(lang, $page)}
+            on:keydown={() => selectLanguage(lang, $page)}
             on:mouseout={() => detectIntentBuffer(undefined)}
             on:mouseover={() => detectIntentBuffer(lang)}
             on:focus={() => detectIntentBuffer(lang)}
@@ -456,12 +285,13 @@ COMPONENT JS (w/ TS)
 
 	div#lang-container
   {
+    /* 📌 position */
 		position: relative;
 	}
 
 	div.selected-language-btn
   {
-    /* s */
+    /* 🎨 style */
 		color: #ffffff;
 		outline: none;
 		border: none;
@@ -471,19 +301,19 @@ COMPONENT JS (w/ TS)
 	div#lang-container div.selected-language-btn:hover,
 	div#lang-container div.selected-language-btn.active-lang-select
   {
-    /* s */
+    /* 🎨 style */
 		background-color: rgba(255, 255, 255, 0.1);
 		border-radius: 4px;
 	}
 
 	#dropdown-menu
   {
-    /* p */
+    /* 📌 position */
 		position: absolute;
-		z-index: 1000;
+		z-index: 5000;
 		top: 100%;
 		left: -20%;
-    /* s */
+    /* 🎨 style */
 		width: 88px;
 		margin-top: 5px;
 		border-radius: 4px;
@@ -493,6 +323,7 @@ COMPONENT JS (w/ TS)
 	}
 	#lang-select
   {
+    /* 🎨 style */
 		padding: 10px 0;
 		text-align: center;
 		background: #4b4b4b;
@@ -501,6 +332,7 @@ COMPONENT JS (w/ TS)
 	}
 	#lang-select:hover
   {
+    /* 🎨 style */
 		background: #292929;
 		box-shadow: inset 0px -1px 0px #3c3c3c;
 	}

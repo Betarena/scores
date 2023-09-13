@@ -22,13 +22,13 @@
 
 	let
     // ◼️ IMPORTANT
-    B_NAV_T: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA,
+    B_NAV_T: B_NAV_T = $page.data?.B_NAV_T,
     // ◼️ IMPORTANT
     /** */
     show: boolean = true
   ;
 
-  $: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA;
+  $: B_NAV_T = $page.data?.B_NAV_T;
 
   // #endregion ➤ 📌 VARIABLES
 

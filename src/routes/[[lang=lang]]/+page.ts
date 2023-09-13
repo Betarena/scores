@@ -48,7 +48,9 @@ export async function load
   const validUrlCheck: boolean = await promiseValidUrlCheck
   (
     fetch,
-    urlLang
+    {
+      langUrl: urlLang
+    }
   );
 
   // [ℹ] exit;

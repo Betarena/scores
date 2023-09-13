@@ -1,26 +1,31 @@
 /**
  * @summary
- * ◆ HELPER
+ * 🔹 HELPER | IMPORTANT
  *
  * @description
- * ➨ PROXY Fetch type GET
+ * 📌 PROXY Fetch type GET
  *
  * @param
- * {string} endpoint
+ * { string } endpoint - Target endpoint / url to fetch data from.
  *
  * @returns
- * an unknown Promise
+ * An Asynchronous Promise of type `unknown`.
  */
 export async function get
 (
-	endpoint: string
+	endpoint: string,
+  _fetch: any = null
 ): Promise < unknown >
 {
-	// curcanavigate CORS issues
-	// endpoint = 'https://cors-anywhere.herokuapp.com/' + endpoint // comment this out before subemission,
+	// ### NOTE:
+  // ### curcanavigate CORS issues
+	// endpoint = 'https://cors-anywhere.herokuapp.com/' + endpoint
+
+  (_fetch ??= fetch)
+
   try
   {
-    const res: Response = await fetch
+    const res: Response = await _fetch
     (
       endpoint,
       {
@@ -48,15 +53,19 @@ export async function get
 
 /**
  * @summary
- * ◆ HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
- * ➨ PROXY Fetch type POST
+ * 📌 PROXY Fetch type POST
+ *
  * @param
- * {*} path
+ * { string } path - Target endpoint / url to fetch data from.
+ *
  * @param
- * {*} data
+ * { any } data - Target data to pass as `body`.
+ *
  * @returns
- * an unknown Promise
+ * An Asynchronous Promise of type `unknown`.
  */
 export async function post
 (
