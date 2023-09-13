@@ -272,7 +272,8 @@
     // ### CHECK
     // ### for slider to be in a ±2 distance (middle)
     const if_M_1: boolean =
-      isOverLimitUI
+      carouselDotsElement
+      && isOverLimitUI
       && ((currentSlidePositionNumber * incrementBy) - 2) > 0
       && ((currentSlidePositionNumber * incrementBy) + 2) < competitionList?.length
     ;
@@ -393,13 +394,15 @@ TARGET COMPETITIONS VIEW
 <div
   id="{CNAME}⮕competitions-outer"
   class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
+  on:mouseover={() => showPrevNextBtns = true}
+  on:mouseleave={() => showPrevNextBtns = false}
 >
 
   <!--
   🖥️ LAPTOP
   PREVIOUS SLIDE TOGGLE
   -->
-  {#if !isViewTablet && showPrevNextBtns}
+  {#if !isViewTablet && showPrevNextBtns && isOverLimitUI}
 
     <div
       id="previous-open"
@@ -424,8 +427,6 @@ TARGET COMPETITIONS VIEW
   <div
     id="{CNAME}⮕competitions"
     bind:this={gridElement}
-    on:mouseover={() => showPrevNextBtns = true}
-    on:mouseout={() => showPrevNextBtns = false}
   >
 
     <div
@@ -475,7 +476,7 @@ TARGET COMPETITIONS VIEW
   🖥️ LAPTOP
   NEXT SLIDE TOGGLE
   -->
-  {#if !isViewTablet && showPrevNextBtns}
+  {#if !isViewTablet && showPrevNextBtns && isOverLimitUI}
 
     <div
       id="next-open"

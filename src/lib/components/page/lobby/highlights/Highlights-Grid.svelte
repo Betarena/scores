@@ -483,17 +483,19 @@
   <!--
   OPEN COMPETITIONS
   -->
-  <h2
-    class=
-    "
-    color-black-2
-    s-24
-    w-600
-    inter-font
-    "
-  >
-    {B_SAP_CP_T?.general?.data?.open ?? 'Open'}
-  </h2>
+  {#if openCompetitions?.length > 0}
+    <h2
+      class=
+      "
+      color-black-2
+      s-24
+      w-600
+      inter-font
+      "
+    >
+      {B_SAP_CP_T?.general?.data?.open ?? 'Open'}
+    </h2>
+  {/if}
 
   <!--
   ### NOTE:
@@ -522,17 +524,19 @@
   <!--
   ACTIVE COMPETITIONS
   -->
-  <h2
-    class=
-    "
-    color-black-2
-    s-24
-    w-600
-    inter-font
-    "
-  >
-    {B_SAP_CP_T?.general?.data?.active ?? 'Active'}
-  </h2>
+  {#if activeCompetitions?.length > 0}
+    <h2
+      class=
+      "
+      color-black-2
+      s-24
+      w-600
+      inter-font
+      "
+    >
+      {B_SAP_CP_T?.general?.data?.active ?? 'Active'}
+    </h2>
+  {/if}
 
   <!--
   ### NOTE:
@@ -561,17 +565,19 @@
   <!--
   FINISHED COMPETITIONS
   -->
-  <h2
-    class=
-    "
-    color-black-2
-    s-24
-    w-600
-    inter-font
-    "
-  >
-    {B_SAP_CP_T?.general?.data?.finished ?? 'Finished'}
-  </h2>
+  {#if finishedCompetitions?.length > 0}
+    <h2
+      class=
+      "
+      color-black-2
+      s-24
+      w-600
+      inter-font
+      "
+    >
+      {B_SAP_CP_T?.general?.data?.finished ?? 'Finished'}
+    </h2>
+  {/if}
 
   <!--
   ### NOTE:
