@@ -1,8 +1,18 @@
+// #region ➤ 📦 Package Imports
+
 import { dev } from '$app/environment';
 import * as Sentry from '@sentry/browser';
 import { BrowserTracing } from '@sentry/tracing';
 
-// NOTE: page error messages & error codes
+// #endregion ➤ 📦 Package Imports
+
+// #region ➤ 📌 VARIABLES
+
+// *****************************************
+// ### NOTE:
+// ### page error messages & error codes
+// *****************************************
+
 export const PAGE_INVALID_MSG = `Uh-oh! This page does not exist!`;
 export const ERROR_CODE_INVALID = 404;
 export const ERROR_CODE_PRELOAD = 500;
@@ -14,6 +24,7 @@ export const FIXTURE_PAGE_ERROR_MSG = `Uh-oh! There has been a pre-load error (/
 // NOTE: overrides all individual toggles for show/hide ALL logs;
 // NOTE: (values) true/false | undefined
 // *****************************************
+
 const MASTER_DEBUG_TOGGLE = undefined
 
 // *****************************************
@@ -22,6 +33,7 @@ const MASTER_DEBUG_TOGGLE = undefined
 // NOTE:IMPORTANT for PROD should always be FALSE on PR -> (main)
 // NOTE:IMPORTANT using custom ENV for this
 // *****************************************
+
 const LOGS_SHOW_OVERRIDE: boolean =
   import.meta?.env?.VITE_PROD_LOGS == undefined
     ? dev
@@ -52,7 +64,8 @@ export const NB_W_TAG: DEBUG = ['Navbar |', false, 'background: purple; color: #
 export const FT_W_TAG: DEBUG = ['Footer |', false, 'background: blue; color: #FFFFFF; border-radius: 1.5px;'];
 export const AU_W_TAG: DEBUG = ['Auth |', true, 'background: black; color: yellow; border-radius: 1.5px;'];
 
-// HOME PAGE - DEBUG
+// ### NOTE:
+// ### HOME PAGE - DEBUG
 export const BG_W_H_TAG = 'BG [P/T][D] |';
 export const BG_W_H_STY = 'background: blue; color: #FFFFFF';
 export const BG_W_H_TOG = false;
@@ -73,7 +86,8 @@ export const SEO_W_H_STY = 'background: blue; color: #FFFFFF';
 export const SEO_W_H_TOG = false;
 export const LV2_W_H_TAG: DEBUG = ['LV2 [P/H][D] |', false, 'background: #292929; color: white; border-radius: 1.5px;'];
 
-// LEAGUE/TOURNAMENT PAGE - DEBUG
+// ### NOTE:
+// ### LEAGUE/TOURNAMENT PAGE - DEBUG
 export const AB_W_T_TAG = 'tournament (about) [DEBUG] |';
 export const AB_W_T_STY = 'background: blue; color: #FFFFFF';
 export const AB_W_T_TOG = false;
@@ -93,12 +107,14 @@ export const TP_W_TAG = 'tournament (top-players) [DEBUG] |';
 export const TP_W_STY = 'background: green; color: #000000';
 export const TP_W_TOG = false;
 
-// FIREBASE - DEBUG
+// ### NOTE:
+// ### FIREBASE - DEBUG
 export const FIREBASE_DEBUG_TAG = 'FB(E) [D] |';
 export const FIREBASE_DEBUG_TOGGLE = false;
 export const FIREBASE_DEBUG_STYLE = 'background: black; color: yellow; border-radius: 1.5px;';
 
-// FIXTURE PAGE - DEBUG
+// ### NOTE:
+// ### FIXTURE PAGE - DEBUG
 export const F_DEBUG_TAG = 'firebase [DEBUG] |';
 export const F_DEBUG_STYLE = 'background: blue; color: #FFFFFF';
 export const F_DEBUG_TOGGLE = false;
@@ -133,22 +149,32 @@ export const VO_W_F_TAG = 'fixtures (vote) [DEBUG] |';
 export const VO_W_F_STY = 'background: green; color: #000000';
 export const VO_W_F_TOG = false;
 
-// PROFILE PAGE - DEBUG;
+// ### NOTE:
+// ### PROFILE PAGE - DEBUG;
 export const PR_P_TAG = 'profile (page) [DEBUG] |';
 export const PR_P_STY = 'background: yellow; color: #000000';
 export const PR_P_TOG =  false;
 
+// #endregion ➤ 📌 VARIABLES
+
+// #region ➤ 🛠️ METHODS
+
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | [🐞]
+ *
  * @description
  * 📌 debug logging function for displaying target.
+ *
  * @param
  * { string | object } msg - Target `message` to log in `console`.
+ *
  * @param
  * { boolean } show - Wether to `show/hide` log message.
+ *
  * @param
  * { string } style - Target `style` to apply to console.
+ *
  * @returns
  * void
  */
@@ -161,20 +187,33 @@ export function dlog
 {
   let targetLog: string = undefined;
 
-  // NOTE: New (v2) debug logs approach
-  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
-    style = LV2_W_H_TAG[2]
-  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
-    show = LV2_W_H_TAG[1]
+  // ### NOTE:
+  // ### New (v2) debug logs approach.
 
+  // ### Livescores V2 Logs
+  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
+    style = LV2_W_H_TAG[2];
+  ;
+  if (typeof(msg) == 'string' && msg.includes(LV2_W_H_TAG[0]))
+    show = LV2_W_H_TAG[1];
+  ;
+
+  // ### Authentication Logs
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
     targetLog = AU_W_TAG[0];
+  ;
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
     style = AU_W_TAG[2];
+  ;
   if (typeof(msg) == 'string' && msg.includes(AU_W_TAG[0]))
     show = AU_W_TAG[1];
+  ;
 
-	// [🐞]
+  // ### Reactiviy Logs
+  if (typeof(msg) == 'string' && msg.includes('[R]'))
+    style = 'background: #ff7f50; color: black; border-radius: 1.5px;';
+  ;
+
   show =
     MASTER_DEBUG_TOGGLE != undefined
       ? MASTER_DEBUG_TOGGLE
@@ -183,19 +222,25 @@ export function dlog
 
   const if_M_0: boolean =
     (LOGS_SHOW_OVERRIDE && show && style == undefined)
-    // NOTE: FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION;
+    // ### NOTE:
+    // ### FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION.
     || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && style == undefined)
   ;
   const if_M_1: boolean =
     (LOGS_SHOW_OVERRIDE && typeof(msg) == 'string' && show && style != undefined)
-    // NOTE: FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION;
+    // ### NOTE:
+    // ### FORCE AUTHENTICATION LOGS TO SHOW IN PRODUCTION.
     || (targetLog == AU_W_TAG[0] && AU_W_TAG[1] && typeof(msg) == 'string' && show && style != undefined)
   ;
 
 	if (if_M_0)
     console.debug(msg);
+  ;
 	if (if_M_1)
     console.debug(`%c${msg}`, style);
+  ;
+
+  return;
 }
 
 /**
@@ -361,3 +406,5 @@ export function initSentry
     );
   }
 }
+
+// #endregion ➤ 🛠️ METHODS

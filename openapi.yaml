@@ -62,6 +62,17 @@ paths:
               hasura:
                 type: boolean
                 example: true
+                enum:
+                  - true
+                  - false
+              ### NOTE:
+              ### ?countires=[...]
+              countires:
+                type: boolean
+                example: true
+                enum:
+                  - true
+                  - false
             additionalProperties: false
             oneOf:
               # data (main) [fixture]
@@ -72,12 +83,8 @@ paths:
               - required: [player_id, page, hasura]
               # data (translations) terms
               - required: [term]
-      summary:
-        Returns a targets' player main SEO widget (data).
-      description:
-        Optional extended description in CommonMark or HTML.
-      tags:
-        - Player Page
+              - required: [countires]
+
       responses:
         200:
           description:
@@ -1198,6 +1205,150 @@ paths:
         200:
           description:
             User Updated!
+
+  # ===================
+  # COMPETITIONS PAGE
+  # ===================
+
+  # [CP] - Highlights (lobby)
+  /api/data/lobby/highlights:
+    get:
+      parameters:
+        - name: filter
+          in: query
+          description:
+            Target fixture (main) SCOREBOARD widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?fixture_id=[...]
+              competition_id:
+                type: number
+                example: 23
+              # ?seo=[...]
+              seo:
+                type: boolean
+                example: true
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main)
+              - required: [competition_id]
+              - required: [competition_id, hasura]
+              # data (seo)
+              - required: [seo, lang]
+              - required: [seo, lang, hasura]
+      summary:
+        Returns a targets' competition (id) main Scoreboard widget (data).
+      responses:
+        200:
+          description:
+            Target competition HIGHLIGHTS widget data
+
+  # [CP] - Main (lobby)
+  /api/data/competition/main:
+    get:
+      summary: Returns a targets' competition (id) main Scoreboard widget (data).
+
+      parameters:
+        - name: filter
+          in: query
+          description: Target fixture (main) SCOREBOARD widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?competition_id=[...]
+              competition_id:
+                type: number
+                example: 23
+              # ?seo=[...]
+              seo:
+                type: boolean
+                example: true
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: "es"
+              # ?participantUid=[...]
+              participantUid:
+                type: string
+                example: "h1231h23k124h123asd"
+              # ?predictionChoice=[...]
+              predictionChoice:
+                type: string
+                example: "yes"
+                enum:
+                  - "yes"
+                  - "no"
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+              # data (main)
+              - required: [competition_id]
+              - required: [competition_id, hasura]
+              # data (seo)
+              - required: [seo, lang]
+              - required: [seo, lang, hasura]
+
+      responses:
+        200:
+          description: Target competition HIGHLIGHTS widget data
+
+  # [CP] - Rules (widget)
+  /api/data/competition/rules:
+    get:
+      summary: Returns a targets' competition (id) main Scoreboard widget (data).
+
+      parameters:
+        - name: filter
+          in: query
+          description: Target fixture (main) SCOREBOARD widget data parameters
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+              # ?lang=[...]
+              lang:
+                type: string
+                example: "es"
+            additionalProperties: false
+            oneOf:
+              # translation
+              - required: [lang]
+              - required: [lang, hasura]
+
+      responses:
+        200:
+          description: Target competition HIGHLIGHTS widget data
+
 
 components:
 
