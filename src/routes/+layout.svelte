@@ -45,7 +45,7 @@
 
 	let
     /** */
-    HEADER_TRANSLATION_DATA: B_NAV_T,
+    B_NAV_T: B_NAV_T,
     /** */
 	  offlineMode: boolean = false,
     /** */
@@ -53,17 +53,23 @@
     /** */
     PlatformAlertDynamic: any,
     /** */
-    EmailSubscribeDynamic: any
+    EmailSubscribeDynamic: any,
+    /** */
+    isRouteCompetitions: boolean
   ;
 
-	$: HEADER_TRANSLATION_DATA = $page.data?.HEADER_TRANSLATION_DATA ?? { };
+	$: B_NAV_T = $page.data?.B_NAV_T ?? { };
   $: serverSideLang = platfrom_lang_ssr
   (
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
 	);
+  $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
+
   $sessionStore.deviceType = $page.data?.deviceType;
+  // @ts-ignore
+  $sessionStore.fixturesTodayNum = parseInt(B_NAV_T?.scores_header_fixtures_information?.football)
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -138,7 +144,7 @@
 
     setUserGeoLocation
     (
-      HEADER_TRANSLATION_DATA
+      B_NAV_T
     );
 
     kickstartEventListen();
@@ -288,6 +294,7 @@
 
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
+  class:before-display-none={isRouteCompetitions}
 >
 
 	<slot />
@@ -332,6 +339,11 @@
 		background-origin: border-box;
 		background-position: top;
 	}
+  main.before-display-none::before
+  {
+    /* 🎨 style */
+    display: none;
+  }
 
 	/*
   =============

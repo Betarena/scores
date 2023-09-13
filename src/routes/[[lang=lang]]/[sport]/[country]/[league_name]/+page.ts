@@ -69,10 +69,12 @@ export async function load
   const validUrlCheck = await promiseValidUrlCheck
   (
     fetch,
-    urlLang,
-    sport,
-    country,
-    league_name
+    {
+      langUrl: urlLang,
+      sportUrl: sport,
+      countryUrl: country,
+      leagueUrl: league_name
+    }
   );
 
   // EXIT;

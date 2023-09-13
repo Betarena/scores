@@ -276,12 +276,12 @@
   */
   $: if (browser)
   {
-		dateDiff = toCorrectDate(B_FEATM_D?.time).getTime() - new Date().getTime();
+		dateDiff = toCorrectDate(B_FEATM_D?.time, false).getTime() - new Date().getTime();
     setInterval
     (
       () =>
       {
-        dateDiff = toCorrectDate(B_FEATM_D?.time).getTime() - new Date().getTime();
+        dateDiff = toCorrectDate(B_FEATM_D?.time, false).getTime() - new Date().getTime();
       },
       1000
     );
@@ -497,12 +497,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   "
                   style="white-space: nowrap;"
                 >
-                  {getOrdinalNum(toCorrectDate(B_FEATM_D?.time).getDate())}
-                  {MONTH_NAMES_ABBRV?.[toCorrectDate(B_FEATM_D?.time).getMonth()?.toString()]}
-                  {toCorrectDate(B_FEATM_D?.time).getFullYear().toString().substr(-2)},
-                  {toCorrectDate(B_FEATM_D?.time).getHours().toString()}
+                  {getOrdinalNum(toCorrectDate(B_FEATM_D?.time, false).getDate())}
+                  {MONTH_NAMES_ABBRV?.[toCorrectDate(B_FEATM_D?.time, false).getMonth()?.toString()]}
+                  {toCorrectDate(B_FEATM_D?.time, false).getFullYear().toString().substr(-2)},
+                  {toCorrectDate(B_FEATM_D?.time, false).getHours().toString()}
                   :
-                  {toZeroPrefixDateStr(toCorrectDate(B_FEATM_D?.time).getMinutes().toString())}
+                  {toZeroPrefixDateStr(toCorrectDate(B_FEATM_D?.time, false).getMinutes().toString())}
                   h
                 </p>
               {:else}

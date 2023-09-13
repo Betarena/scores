@@ -19,9 +19,9 @@
   // ### SEE:
   // ### https://code.visualstudio.com/docs/editor/userdefinedsnippets
 
-  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
-  // BETARENA DEBUG OVERRIDE LOGS
-  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // 🟧 BETARENA DEBUG OVERRIDE LOGS                                  ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   "scores-debug":
   {
@@ -29,19 +29,24 @@
     "prefix": "debug",
     "body":
     [
-      "// [🐞]",
+      "// ### [🐞]",
       "dlog",
       "(",
-      "\t`${1|🚏,🔹|} ${2|checkpoint,[var]|} ➤ ${3:debugTagOrVarName} ${$4}`,",
+      "\t`${1|🚏,🔹|} ${2|checkpoint,[var],checkpoint [R]|} ➤ ${3:debugTagOrVarName} ${$4}`,",
       "\t${5|true,false|}",
       ");",
     ],
     "description": "Betarena - Scores Platform Debug Override"
   },
 
-  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
-  // SVELTE-FILE SVELTE / HTML SNIPPETS
-  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // 🟧 SVELTE-FILE SVELTE / JS-TS SNIPPETS                           ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // 🟧 SVELTE-FILE SVELTE / HTML SNIPPETS                            ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   "scores-html-img-tag":
   {
@@ -66,47 +71,66 @@
     "prefix": "each",
     "body":
     [
-      "{#each $0 ?? [] as ${1:item}",
+      "{#each $0 ?? [] as ${1:item}}",
       "\t",
       "{/each}"
     ],
     "description": "Betarena - Scores Platform Each-Loop HTML Block tag"
   },
 
-  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
-  // SVELTE-FILE STRUCTURE SNIPPETS & COMMENTS
-  // ◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️◾️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // 🟧 SVELTE-FILE STRUCTURE SNIPPETS & COMMENTS                     ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  "scores-region-import-comment":
+  "Betarena Scores | Script (Region) Imports":
   {
     "scope": "svelte,html,javascript,typescript",
-    "prefix": "scriptimport",
+    "prefix": [ "doc" ],
     "body":
     [
       "// #region ➤ 📦 Package Imports",
+      "",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "// ### NOTE:                                                            ◼️",
+      "// ### Please add inside 'this' region the 'imports' that are required  ◼️",
+      "// ### by 'this' .svelte file is ran.                                   ◼️",
+      "// ### IMPORTANT                                                        ◼️",
+      "// ### Please, structure the imports as follows:                        ◼️",
+      "// ### 1. svelte/sveltekit imports                                      ◼️",
+      "// ### 2. project-internal files and logic                              ◼️",
+      "// ### 3. component import(s)                                           ◼️",
+      "// ### 4. assets import(s)                                              ◼️",
+      "// ### 5. type(s) imports(s)                                            ◼️",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
       "\n$0\n",
       "// #endregion ➤ 📦 Package Imports"
     ],
     "description": "Betarena - Scores Platform Pacakge Imports init."
   },
 
-  "scores-region-variables-comment":
+  "Betarena Scores | Script (Region) Variables":
   {
     "scope": "svelte,html,javascript,typescript",
-    "prefix": "scriptvar",
+    "prefix": [ "doc" ],
     "body":
     [
       "// #region ➤ 📌 VARIABLES",
+      "",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "// ### NOTE:                                                            ◼️",
+      "// ### Please add inside 'this' region the 'variables' that are to be   ◼️",
+      "// ### and are expected to be used by 'this' .svelte file / component.  ◼️",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
       "\n$0\n",
       "// #endregion ➤ 📌 VARIABLES"
     ],
     "description": "Betarena - Scores Platform Variables init."
   },
 
-  "scores-region-methods-comment":
+  "Betarena Scores | Script (Region) Methods":
   {
     "scope": "svelte,html,javascript,typescript",
-    "prefix": "scriptmethods",
+    "prefix": [ "doc" ],
     "body":
     [
       "// #region ➤ 🛠️ METHODS",
@@ -116,64 +140,166 @@
     "description": "Betarena - Scores Platform Variables init."
   },
 
-  "scores-region-one-off-comment":
+  "Betarena Scores | Script (Region) One-off":
   {
     "scope": "svelte,html,javascript,typescript",
-    "prefix": "scriptoneoff",
+    "prefix": [ "doc" ],
     "body":
     [
       "// #region ➤ 🚏 ONE-OFF CONDITIONS",
+      "",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "// ### NOTE:                                                            ◼️",
+      "// ### Please add inside 'this' region the 'logic' that should run      ◼️",
+      "// ### immediately, as soon as 'this' .svelte file is ran, as a one-off ◼️",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
       "\n$0\n",
       "// #endregion ➤ 🚏 ONE-OFF CONDITIONS"
     ],
     "description": "Betarena - Scores Platform Region One-Off init."
   },
 
-  "scores-region-reactive-comment":
+  "Betarena Scores | Script (Region) Reactive":
   {
     "scope": "svelte,html,javascript,typescript",
-    "prefix": "scriptreactive",
+    "prefix": [ "doc" ],
     "body":
     [
       "// #region ➤ 🔥 REACTIVIY [SVELTE]",
+      "",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "// ### NOTE:                                                            ◼️",
+      "// ### Please add inside 'this' region the 'logic' that should run      ◼️",
+      "// ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
       "\n$0\n",
       "// #endregion ➤ 🔥 REACTIVIY [SVELTE]"
     ],
     "description": "Betarena - Scores Platform Region One-Off init."
   },
 
-  "scores-region-lifecycle-comment":
+  "Betarena Scores | Script (Region) Lifecycle":
   {
     "scope": "svelte,html,javascript,typescript",
-    "prefix": "scriptlifecycle",
+    "prefix": [ "doc" ],
     "body":
     [
       "// #region ➤ 🔄 LIFECYCLE [SVELTE]",
+      "",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "// ### NOTE:                                                            ◼️",
+      "// ### Please add inside 'this' region the 'logic' that should run      ◼️",
+      "// ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️",
+      "// ### as soon as 'this' .svelte file is ran.                           ◼️",
+      "// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
       "\n$0\n",
       "// #endregion ➤ 🔄 LIFECYCLE [SVELTE]"
     ],
     "description": "Betarena - Scores Platform Region Lifecycle init."
   },
 
-  "scores-style-responsive-comment":
+  "Betarena Scores | Script (Document) Reactivity":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": [ "doc" ],
+    "body":
+    [
+      "/**",
+      " * @summary",
+      " * 🔥 REACTIVITY",
+      " *",
+      " * WARNING:",
+      " * can go out of control",
+      " *",
+      " * @description",
+      " * $2.",
+      " *",
+      " * WARNING:",
+      " * triggered by changes in:",
+      " * - `$3` - **kicker**",
+      " */"
+    ],
+    "description": "Betarena | Scores Platform - Reactive Documentation Template"
+  },
+
+  "Betarena Scores | Template (Boilerplate) Script":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": [ "doc" ],
+    "body":
+    [
+      "<!--",
+			"◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+			"### COMPONENT JS (w/ TS)                                                               ◼️",
+			"### NOTE:                                                                              ◼️",
+			"### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️",
+			"◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+			"-->",
+			"",
+			"<script lang=\"ts\">",
+      "\n$0\n",
+			"</script>"
+    ],
+    "description": "Betarena - Scores Platform Region One-Off init."
+  },
+
+  "Betarena Scores | Template (Boilerplate) Style":
+  {
+    "scope": "svelte,html,javascript,typescript",
+    "prefix": [ "doc" ],
+    "body":
+    [
+      "<!--",
+			"◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+			"### COMPONENT STYLE                                                                    ◼️",
+			"### NOTE:                                                                              ◼️",
+			"### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️",
+			"### NOTE:                                                                              ◼️",
+			"### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️",
+			"◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+			"-->",
+			"",
+      "<style>",
+      "\n$0\n",
+      "</style>",
+    ],
+    "description": "Betarena - Scores Platform Region One-Off init."
+  },
+
+  "Betarena Scores | Style (Region) Responsive":
   {
     "scope": "svelte,html,css",
-    "prefix": "stylerescom",
+    "prefix": [ "doc" ],
     "body":
     [
       "/*",
-      "=============",
-      "⚡️ RESPONSIVNESS",
-      "=============",
+      "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "◼️ ⚡️ RESPONSIVNESS      ◼️",
+      "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
       "*/"
     ],
     "description": "Betarena - Scores Platform Style Responsive Comment"
   },
 
-  "scores-style-type-style-comment":
+  "Betarena Scores | Style (Region) Dark-Mode":
   {
     "scope": "svelte,html,css",
-    "prefix": "stylestylecom",
+    "prefix": [ "doc" ],
+    "body":
+    [
+      "/*",
+      "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "◼️ 🌒 DARK-THEME         ◼️",
+      "◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️",
+      "*/"
+    ],
+    "description": "Betarena - Scores Platform Style Responsive Comment"
+  },
+
+  "Betarena Scores | Style (Section) Style":
+  {
+    "scope": "svelte,html,css",
+    "prefix": [ "doc" ],
     "body":
     [
       "/* 🎨 style */"
@@ -181,15 +307,26 @@
     "description": "Betarena - Scores Platform Style Style Comment"
   },
 
-  "scores-style-type-position-comment":
+  "Betarena Scores | Style (Section) Position":
   {
     "scope": "svelte,html,css",
-    "prefix": "styleposcom",
+    "prefix": [ "doc" ],
     "body":
     [
       "/* 📌 position */"
     ],
     "description": "Betarena - Scores Platform Style Position Comment"
-  }
+  },
+
+  "Betarena Scores | Style (Section) Layout":
+  {
+    "scope": "svelte,html,css",
+    "prefix": [ "doc" ],
+    "body":
+    [
+      "/* 🛝 layout */"
+    ],
+    "description": "Betarena - Scores Platform Style Layout Comment"
+  },
 
 }

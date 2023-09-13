@@ -87,7 +87,7 @@ export const weekDays: string[] =
 export const getOrdinalNum =
 (
   num: number
-) =>
+): string =>
 {
   let selector: number;
   const ordinalStr: string[] = ['th', 'st', 'nd', 'rd', '']
@@ -162,8 +162,8 @@ export function clientTimezoneDate
 export function toISOMod
 (
   date: Date | string,
-  adjustClientTZ = false,
-  showConversion = false
+  adjustClientTZ: boolean = false,
+  showConversion: boolean = false
 ): string
 {
 
@@ -239,34 +239,42 @@ export function toISOMod
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
  *
  * @description
- * converts target Date/string to JS Date Object;
- * (+) adjusting for missing "Z" string, if necessary;
- * (+) offsetting for user's current timezone, generating a UTC Date object;
+ * 📌 converts target Date/string to JS Date Object.
+ * (⚡️) adjusting for missing "Z" string, if necessary.
+ * (⚡️) offsetting for user's current timezone, generating a UTC Date object.
+ *
  * @overload
  * offset = true (default) -> converts Date to userClient Timezone;
+ *
  * @overload
  * showConversion = false (default)
+ *
  * @example
  * [1] "2023-12-12", locale: ja-JP => 2023-12-12
+ *
  * @example
  * [2] "2023-06-05T23:00:00+00:00" (string), => 2023-06-05 (Date)
+ *
  * @param
- * {Date | string} date
+ * { Date | string } date - Target date to be handeled.
+ *
  * @param
- * {boolean} offset
+ * { boolean } offset - Wether to offset data or not, in according to client timezone.
+ *
  * @param
- * {boolean} showConversion
+ * { boolean } showConversion - [🐞] Wether to show conversion of dates or not.
+ *
  * @returns
- * a date object
+ * a date object.
  */
 export function toCorrectDate
 (
   date: Date | string,
-  offset = true,
-  showConversion = false
+  offset: boolean = true,
+  showConversion: boolean = false
 ): Date
 {
   if (showConversion) console.log("CONVERSION toCorrectDate [FROM]: ", date)
@@ -287,12 +295,13 @@ export function toCorrectDate
     date = new Date(date)
   }
 
-  // ignore user's local/machine Timezone;
-  // creating essentially a UTC Date object;
-  // by reverting the client timezone offset value;
+  // ### NOTE:
+  // ### ignore user's local/machine Timezone;
+  // ### creating essentially a UTC Date object;
+  // ### by reverting the client timezone offset value;
   if (offset)
   {
-    const timeOffsetInHours = -(new Date()).getTimezoneOffset()/60
+    const timeOffsetInHours: number = -(new Date()).getTimezoneOffset()/60
     date.setHours(date.getHours() - timeOffsetInHours)
   }
 
@@ -311,7 +320,7 @@ export function toCorrectDate
  * leading/prefix based `0[..]` string.
  *
  * @param
- * {string | number} dateStr - Target Date
+ * { string | number } dateStr - Target date.
  *
  * @returns
  * a `zero-prefixed` date string.
@@ -349,8 +358,8 @@ export function toZeroPrefixDateStr
  */
 export function targetDate
 (
-  offsetDays = 0,
-  offsetMonths = 0
+  offsetDays: number = 0,
+  offsetMonths: number = 0
 ): Date
 {
   const newDate: Date = new Date();
