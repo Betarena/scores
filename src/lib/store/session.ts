@@ -6,14 +6,20 @@ import { writable } from 'svelte/store';
 import type { Platform_Session } from '$lib/types/types.scores.js';
 import type { FIREBASE_livescores_now, FIREBASE_odds, FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
+import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 📌 VARIABLES
 
+/**
+ * @description
+ * TODO: DOC:
+ */
 const sessionStoreObj: Platform_Session =
 {
-  // (+) show/hide;
+  // ### NOTE:
+  // ### variables for show/hide.
 	newsletterPopUpShow: false,
 	auth_show: false,
   livescoreShowCalendar: false,
@@ -22,13 +28,18 @@ const sessionStoreObj: Platform_Session =
 	fixture_select_view: 'overview',
   navBtnHover: undefined,
   withdrawModal: false,
-  // (+) lang handle;
+  // ### NOTE:
+  // ### variables for language handle.
   lang_intent: undefined,
   serverLang: undefined,
-  // (+) misc;
+  // ### NOTE:
+  // ### variables for misc.
   fixturesTodayNum: 0,
+  competitionsNum: 0,
+  competitionsOpenNum: 0,
   deviceType: undefined,
-  // (+) date handle;
+  // ### NOTE:
+  // ### variables for date handle.
   userDate: clientTimezoneDate(),
   livescoreNowSelectedDate: clientTimezoneDate(),
   userTxShowCalendar: false,
@@ -41,17 +52,20 @@ const sessionStoreObj: Platform_Session =
     ),
     to: targetDate()
   },
-  // (+) sportbook;
+  // ### NOTE:
+  // ### variables for sportbook.
   sportbook_main: undefined,
   sportbook_list: undefined,
-  // (+) real-time/live;
+  // ### NOTE:
+  // ### variables for real-time/live;
   livescore_now: undefined,
   livescore_now_scoreboard: new Map(),
   livescore_now_fixture_target: undefined,
   live_odds_fixture_target: [],
   live_odds_fixture_map: new Map(),
   livescore_now_player_fixture: undefined,
-  livescore_now_fixtures: []
+  livescore_now_fixtures: [],
+  competitions_map: new Map()
 };
 
 // #endregion ➤ 📌 VARIABLES
@@ -365,6 +379,58 @@ function createLocalStore
     ): string =>
     {
       return sessionStoreObj.serverLang;
+    },
+
+    /**
+     * @summary
+     * 🔹 HELPER | IMPORTANT
+     *
+     * @description
+     * 📌 Update and store **latest competitions data** in user's session object.
+     *
+     * @param
+     * { Map < number, B_H_COMP_DATA > } data - Target new latest **competition data**.
+     *
+     * @returns
+     * `void`
+     */
+    updateCompetitionsLatestMap:
+    (
+      data: Map < number, B_H_COMP_DATA >
+    ): void =>
+    {
+      sessionStoreObj.competitions_map = data;
+      set
+      (
+        sessionStoreObj
+      );
+    },
+
+    /**
+     * @summary
+     * 🔹 HELPER | IMPORTANT
+     *
+     * @description
+     * 📌 Update and store **amount of competitions available** in user's session object.
+     *
+     * @param
+     * { number } data - Target amount of **competition data**.
+     *
+     * @returns
+     * `void`
+     */
+    updateCompetitionsAllNum:
+    (
+      amountTotal: number,
+      amountOpen: number
+    ): void =>
+    {
+      sessionStoreObj.competitionsNum = amountTotal;
+      sessionStoreObj.competitionsOpenNum = amountOpen;
+      set
+      (
+        sessionStoreObj
+      );
     }
 
   }

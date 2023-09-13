@@ -1,10 +1,27 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
   // #region ➤ 📦 Package Imports
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
 	import { page } from '$app/stores';
@@ -14,8 +31,8 @@ COMPONENT JS (w/ TS)
 	import { db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { NB_W_TAG, dlog, dlogv2 } from '$lib/utils/debug';
-	import { selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
+	import { NB_W_TAG, dlog } from '$lib/utils/debug';
+	import { generateUrlCompetitions, selectLanguage, spliceBalanceDoubleZero, toDecimalFix, viewport_change } from '$lib/utils/platform-functions';
 	import { translationObject } from '$lib/utils/translation.js';
 	import { initUser, logoutUser } from '$lib/utils/user.js';
 	import { doc, updateDoc } from 'firebase/firestore';
@@ -25,67 +42,92 @@ COMPONENT JS (w/ TS)
   import HeaderCBookmakers from './Header-C-Bookmakers.svelte';
   import HeaderCLang from './Header-C-Lang.svelte';
   import HeaderCTheme from './Header-C-Theme.svelte';
+  import HeaderCompetitionBtn from './Header-Competition-Btn.svelte';
   import HeaderNavBtn from './Header-Nav-Btn.svelte';
   import HeaderSportsBtn from './Header-Sports-Btn.svelte';
 
   import type { B_NAV_T } from '@betarena/scores-lib/types/navbar.js';
+  import type { B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 
   // #endregion ➤ 📦 Package Imports
 
   // #region ➤ 📌 VARIABLES
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   const
-    // ◼️ IMPORTANT
+    /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 560,
+    /** @description TODO: DOC: */
     VIEWPORT_TABLET_INIT = 1160,
-    // ◼️ IMPORTANT
-    /**
-     * @description
-     * 📌 `this` component **main** `id` and `data-testid` prefix.
-    */
-    CNAME = 'global/w/navbar/main',
-    // ◼️ IMPORTANT
-    PROFILE_URL: string = '/u/[view]/[lang=lang]'
+    /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
+    CNAME = 'global/w/navbar/main'
   ;
 
 	let
-    // ◼️ IMPORTANT
+    /** @description TODO: DOC: */
     isViewMobile: boolean = true,
+    /** @description TODO: DOC: */
     isViewTablet: boolean = true,
-    // ◼️ IMPORTANT
-    B_NAV_T: B_NAV_T = $page.data?.HEADER_TRANSLATION_DATA,
-    // ◼️ IMPORTANT
+    /** @description TODO: DOC: */
+    B_NAV_T: B_NAV_T = $page.data?.B_NAV_T,
+    /** @description TODO: DOC: */
+    B_SAP_D3_CP_H: B_SAP_D3 = $page.data?.B_SAP_D3_CP_H,
+    /** @description TODO: DOC: */
     arrow_down_fade: string,
+    /** @description TODO: DOC: */
     arrow_down: string,
+    /** @description TODO: DOC: */
     arrow_up_fade: string,
+    /** @description TODO: DOC: */
     arrow_up: string,
+    /** @description TODO: DOC: */
     logo_full: string,
+    /** @description TODO: DOC: */
     logo_mini: string,
+    /** @description TODO: DOC: */
     close: string,
+    /** @description TODO: DOC: */
     menu_burger_bar: string,
+    /** @description TODO: DOC: */
     profile_avatar: string,
-    // ◼️ IMPORTANT
+    /** @description TODO: DOC: */
     mobileNavToggleMenu: boolean = false,
-	  isLangDropdown: boolean = false,
+    /** @description TODO: DOC: */
 	  isCurrencyDropdown: boolean = false,
+    /** @description TODO: DOC: */
 	  isOddsDropdown: boolean = false,
-	  isBookmakersDropdown: boolean = false,
+    /** @description TODO: DOC: */
 	  isUserAuthDropdown: boolean = false,
+    /** @description A `reactive` based `boolean` variable, indicating wether **current** route is of `competitions` section.  */
+    isRouteCompetitions: boolean,
+    /** @description A `reactive` based `boolean` variable, indicating wether **current** route is of `profile` section.  */
+    isRouteProfile: boolean,
+    /** @description TODO: DOC: */
     selectedSport: string = 'football',
+    /** @description TODO: DOC: */
 	  homepageURL: string,
+    /** @description TODO: DOC: */
 	  logoLink: string,
+    /** @description TODO: DOC: */
     width: number = 0,
+    /** @description TODO: DOC: */
     userUid: string = $userBetarenaSettings?.user?.firebase_user_data?.uid ?? undefined;
   ;
 
-  $: B_NAV_T = $page.data.HEADER_TRANSLATION_DATA;
+  $: B_NAV_T = $page.data.B_NAV_T;
+  $: B_SAP_D3_CP_H = $page.data.B_SAP_D3_CP_H;
   $: userUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
   $: userLang = $userBetarenaSettings?.lang;
+  $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
+  $: isRouteProfile = $page?.route?.id == '/u/[view]/[lang=lang]';
 
   $: dropDownArea =
-    isLangDropdown
-    || isOddsDropdown
-    || isBookmakersDropdown
+    isOddsDropdown
     || isUserAuthDropdown
   ;
 
@@ -107,38 +149,42 @@ COMPONENT JS (w/ TS)
 
 	/**
    * @summary
-   * [HELPER]
+   * 🔹 HELPER
+   *
 	 * @description
-   * ➨ simply closes all possible dropdowns open on the widget;
+   * 📌 Closes all possible dropdowns open on the widget.
+   *
    * @returns
-   * void
+   * `void`
 	 */
 	function closeAllDropdowns
   (
   ): void
   {
-		isLangDropdown = false;
 		isOddsDropdown = false;
-		isBookmakersDropdown = false;
 		isUserAuthDropdown = false;
+    dropDownArea = false;
 	}
 
 	/**
    * @summary
-   * [HELPER]
+   * 🔹 HELPER
+   *
 	 * @description
-   * ➨ simply reloads the current page;
+   * 📌 Reloads current page.
+   *
    * @returns
-   * void
+   * A Void
 	 */
 	function reloadPage
   (
   ): void
   {
-		if ($page.url.pathname.split('/').length - 1 == 1)
-    {
+    // ### CHECK
+    // ### for page to be already 'homepage', and therefore reload().
+		if ($page.url.pathname == '/')
 			window.location.reload();
-		}
+    ;
 	}
 
   /**
@@ -175,11 +221,13 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * [HELPER]
+   * 🔹 HELPER
+   *
 	 * @description
-   * ➨ updates user's platform language preferrences, firebase services;
+   * 📌 updates user's platform language preferrences, firebase services.
+   *
    * @returns
-   * {Promise<void>}
+   * a Promise of type `void`.
 	 */
   async function update_select_lang
   (
@@ -228,24 +276,38 @@ COMPONENT JS (w/ TS)
 
   // #region ➤ 🔥 REACTIVIY [SVELTE]
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   /**
    * @summary
-   * 🔥 REACTIVE
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
    *
    * @description
-   * 📌 Listens to cases when `initial platform language`
-   * has not been set, and the user is not
-   * `authenticated` and/or is `anonymous`.
-  */
+   * 📌 Listens to cases when, the:
+   * - _initial platform language_ has not been set,
+   * - `user` is **not** authenticated and/or is `anonymous`.
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `$userBetarenaSettings`
+   * - `$userBetarenaSettings.user` - **kicker**
+   */
   $: if_R_0 =
     browser
   ;
-  $: if (if_R_0 && $userBetarenaSettings.user == undefined)
+  $: if (if_R_0 && $userBetarenaSettings?.user == undefined)
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_0`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_0`,
       true
     );
 
@@ -257,29 +319,40 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * 🔥 REACTIVE
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
    *
    * @description
-   * 📌 Listens to when user (localStorage) exists,
-   * and initial language for (logged-in)
-   * user set account has not been set yet;
-  */
+   * 📌 Listens to cases when, the:
+   * - _initial platform language_ has not been set,
+   * - `user` **is** authenticated.
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `$userBetarenaSettings`
+   * - `$userBetarenaSettings.user` - **kicker**
+   * - `$userBetarenaSettings.user.scores_user_data.lang`
+   * - `userlang`
+   * - `$page`
+   */
   $: if_R_1 =
     browser
-    && PROFILE_URL != $page.route.id
+    && !isRouteProfile
   ;
   $: if (if_R_1 && $userBetarenaSettings?.user != undefined)
   {
     let userlang: string = $userBetarenaSettings.user?.scores_user_data?.lang;
 
-    // [🐞]
+    // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_1`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_1`,
       true
     );
 
-    // [🐞]
+    // ### [🐞]
     dlog
     (
       `${NB_W_TAG[0]} 🔵 User Detected! Setting Auth language! ${userlang}`
@@ -294,19 +367,21 @@ COMPONENT JS (w/ TS)
 
   /**
    * @summary
-   * 🔥 REACTIVE
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
    *
    * @description
-   *
-   * 📌 Listens to when `user` is `authenticated`,
+   * 📌 Listens to **first** case when, the:
+   * - `user` **is** authenticated.
    * and kickstarts setup for user privileges.
    *
-   * ⚠️ WARNING:
-   * Make sure no reactive '$:' elements, are
-   * referenced inside the 'block', leads to
-   * infinite loop, if the reative element is
-   * updated. Use the provided '.debug(..)' to
-   * check accordingly.
+   * WARNING:
+   * triggered by changes in:
+   * - `$userBetarenaSettings`
+   * - `$userBetarenaSettings.user` - **kicker**
+   * - `userUid`
    */
   $: if_R_2 =
     browser
@@ -314,10 +389,10 @@ COMPONENT JS (w/ TS)
   ;
   $: if (if_R_2)
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_2`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_2`,
       true
     );
 
@@ -328,8 +403,20 @@ COMPONENT JS (w/ TS)
   }
 
   /**
+   * @summary
+   * 🔥 REACTIVITY
+   *
+   * WARNING:
+   * can go out of control
+   *
    * @description
-   * TODO: DOC:
+   * 📌 Listens to cases when, the:
+   * - `user` changes selected platform language,
+   * and updates preferences.
+   *
+   * WARNING:
+   * triggered by changes in:
+   * - `userLang` - **kicker**
    */
   $: if_R_3 =
     !$page.error
@@ -338,48 +425,21 @@ COMPONENT JS (w/ TS)
   ;
   $: if (if_R_3 && userLang != undefined)
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_3`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_3`,
       true
     );
 
     update_select_lang();
   }
 
-  /**
-   * @summary
-   * 🔥 REACTIVE
-   *
-   * @description
-   *
-   * 📌 Listens to when `data` is available,
-   * and sets (number) of fixtrues today,
-   * as MAIN default data point.
-   *
-   *⚠️ WARNING:
-   * Make sure no reactive '$:' elements, are
-   * referenced inside the 'block', leads to
-   * infinite loop, if the reative element is
-   * updated. Use the provided '.debug(..)' to
-   * check accordingly.
-  */
-  $: if (B_NAV_T?.scores_header_fixtures_information)
-  {
-    // [🐞]
-    dlog
-    (
-      `🚏 checkpoint ➤ NAVBAR if_R_4`,
-      true
-    );
-
-    // @ts-expect-error <...>
-    // WARNING:
-    // Can cause 'infinite loop' reactivity error,
-    // as '$:' reactive element is used in 'block'.
-    $sessionStore.fixturesTodayNum = parseInt(B_NAV_T?.scores_header_fixtures_information?.football)
-  }
+  // ### TODO: DOC:
+  $: if_R_4 =
+    ($sessionStore.livescoreShowCalendar && isViewMobile)
+    || $sessionStore.withdrawModal
+  ;
 
   /**
    * @description
@@ -387,52 +447,54 @@ COMPONENT JS (w/ TS)
    */
   $: if (browser && $sessionStore.navBtnHover)
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_5`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_5`,
       true
     );
 
     calcNavTrianglePos();
   }
-  $: if (browser && $sessionStore.navBtnHover == undefined)
+  else if (browser && $sessionStore.navBtnHover == undefined)
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
-      `🚏 checkpoint ➤ NAVBAR if_R_6`,
+      `🚏 checkpoint [R] ➤ NAVBAR if_R_6`,
       true
     );
 
-    calcNavTrianglePos('scores');
+    if (isRouteCompetitions)
+    {
+      calcNavTrianglePos('competitions');
+    }
+    else
+    {
+      calcNavTrianglePos('scores');
+    }
+
   }
-
-  $: if_R_4 =
-    ($sessionStore.livescoreShowCalendar && isViewMobile)
-    || $sessionStore.withdrawModal
-  ;
-
-  // [🐞]
-  $: dlogv2
-  (
-    NB_W_TAG[0],
-    [
-      `$sessionStore?.serverLang: ${$sessionStore?.serverLang}`,
-      `homepageURL: ${homepageURL}`,
-      `logoLink: ${logoLink}`
-    ],
-    NB_W_TAG[1],
-    NB_W_TAG[2]
-  )
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
+  // ### as soon as 'this' .svelte file is ran.                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  /**
+   * @description
+   * TODO: DOC:
+  */
 	onMount
   (
-    async () =>
+    async (
+    ): Promise < void > =>
     {
 
       arrow_down_fade = (await import('./assets/arrow-down-fade.svg')).default;
@@ -455,6 +517,7 @@ COMPONENT JS (w/ TS)
         VIEWPORT_TABLET_INIT,
         VIEWPORT_MOBILE_INIT
       );
+
       window.addEventListener
       (
         'resize',
@@ -479,10 +542,15 @@ COMPONENT JS (w/ TS)
 
 </script>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT HTML                                                                     ◼️
+### NOTE:                                                                              ◼️
+### use 'CTRL+SPACE' to autocomplete global class="" styles                            ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <!--
 HEADER (OUTER) CLOSE DROPDOWNS AREA
@@ -531,6 +599,9 @@ TODO: FIXME:
   </a>
 </SeoBox>
 
+<!--
+IMPORTANT
+-->
 <AuthWidget />
 
 <!--
@@ -542,7 +613,7 @@ NAVBAR MAIN
   "
   column-space-center
   "
-  class:user-active={PROFILE_URL == $page.route.id}
+  class:user-active={isRouteProfile}
   class:update-z-index={if_R_4}
 >
 
@@ -644,7 +715,6 @@ NAVBAR MAIN
             navKey={'scores'}
             navUrl={B_NAV_T?.scores_header_translations?.section_links?.scores_url}
             navTxt={B_NAV_T?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
-            isProfilePage={PROFILE_URL == $page.route.id}
             {isViewTablet}
             {isViewMobile}
           />
@@ -656,7 +726,6 @@ NAVBAR MAIN
             navKey={'content'}
             navUrl={B_NAV_T?.scores_header_translations?.section_links?.sports_content_url}
             navTxt={B_NAV_T?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
-            isProfilePage={PROFILE_URL == $page.route.id}
             {isViewTablet}
             {isViewMobile}
           />
@@ -666,20 +735,19 @@ NAVBAR MAIN
           -->
           <HeaderNavBtn
             navKey={'competitions'}
-            navUrl={B_NAV_T?.scores_header_translations?.section_links?.competitions_url}
+            navUrl={generateUrlCompetitions($sessionStore?.serverLang, B_SAP_D3_CP_H)}
             navTxt={B_NAV_T?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
-            isProfilePage={PROFILE_URL == $page.route.id}
-            soonTxt={B_NAV_T?.scores_header_translations?.soon || 'soon'}
-            isSoon={true}
-            disableAnchor={true}
+            isNew={true}
+            newTxt={'new'}
             {isViewTablet}
             {isViewMobile}
           />
+          <!-- soonTxt={B_NAV_T?.scores_header_translations?.soon || 'soon'} -->
 
           <!--
           NAV TRIANGLE
           -->
-          {#if PROFILE_URL != $page.route.id}
+          {#if !isRouteProfile}
             <div
               id="nav-triangle"
               style="left: {width}px;"
@@ -774,7 +842,10 @@ NAVBAR MAIN
         <!--
         LANGUAGE SELECTION
         -->
-        <HeaderCLang />
+        <HeaderCLang
+          {dropDownArea}
+          on:closeDropdown={() => dropDownArea = true}
+        />
 
       {/if}
 
@@ -879,7 +950,7 @@ NAVBAR MAIN
                     cursor-pointer
                   "
                   style="width: 100%;"
-                  on:click={() => (isOddsDropdown = false)}
+                  on:click={() => (isUserAuthDropdown = false)}
                 >
                   <p
                     class="
@@ -939,7 +1010,7 @@ NAVBAR MAIN
   >
 
     <!--
-    1st COLUMN
+    1st COLUMN - SCORES / COMPETITIONS
     -->
     <div
       class="
@@ -948,9 +1019,11 @@ NAVBAR MAIN
     >
 
       <!--
-      SPORTS HORIZONTAL LIST
+      SPORTS HORIZONTAL LIST - SCORES ONLY
+      ----
+      COMPETITIONS HORIZONTAL LIST - SCORES ONLY
       -->
-      {#if PROFILE_URL != $page.route.id}
+      {#if !isRouteProfile}
 
         <div
           id="header/bottom/inner"
@@ -972,13 +1045,26 @@ NAVBAR MAIN
             <!--
             FOOTBALL
             -->
-            <HeaderSportsBtn
-              sportNameDefault={'football'}
-              sportTranslation={B_NAV_T?.scores_header_translations?.sports_v2?.['football']}
-              sportValue={B_NAV_T?.scores_header_fixtures_information?.['football']}
-              selectedSport={selectedSport}
-              on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
-            />
+            {#if !isRouteCompetitions}
+              <HeaderSportsBtn
+                sportNameDefault={'football'}
+                sportTranslation={B_NAV_T?.scores_header_translations?.sports_v2?.['football']}
+                sportValue={B_NAV_T?.scores_header_fixtures_information?.['football']}
+                selectedSport={selectedSport}
+                on:closeDropdown={(event) => selectedSport = event?.detail?.selectedSport}
+              />
+            {/if}
+
+            <!--
+            PREDICTOR
+            -->
+            {#if isRouteCompetitions}
+              <HeaderCompetitionBtn
+                competitionNameDefault={'predictor'}
+                competitionTranslation={B_NAV_T?.competitions_category?.data?.predictor}
+                navUrl={generateUrlCompetitions($sessionStore?.serverLang, B_SAP_D3_CP_H)}
+              />
+            {/if}
 
           </div>
         </div>
@@ -988,7 +1074,7 @@ NAVBAR MAIN
     </div>
 
     <!--
-    2nd COLUMN
+    2nd COLUMN - SCORES ONLY
     -->
     <div
       class=
@@ -1091,7 +1177,7 @@ NAVBAR MAIN
         <!--
         BOOKMAKERS CONTAINER
         -->
-        {#if PROFILE_URL != $page.route.id}
+        {#if !isRouteProfile && !isRouteCompetitions}
           <HeaderCBookmakers
             {isViewMobile}
             {isViewTablet}
@@ -1148,6 +1234,12 @@ NAVBAR MAIN
                 no-wrap
                 "
               >
+                <!-- [🐞] -->
+                <!-- {$userBetarenaSettings?.user?.scores_user_data?.main_balance} -->
+                <!-- [🐞] -->
+                <!-- {toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance)} -->
+                <!-- [🐞] -->
+                <!-- {spliceBalanceDoubleZero(toDecimalFix($userBetarenaSettings?.user?.scores_user_data?.main_balance))} -->
                 <span
                   class=
                   "
@@ -1208,6 +1300,15 @@ NAVBAR MAIN
       in:fly={{ x: -200, duration: 500 }}
       out:fly={{ x: -200, duration: 500 }}
     >
+        <!--
+        HEADER (INNER) CLOSE DROPDOWNS AREA
+        -->
+        {#if dropDownArea}
+          <div
+            id="background-area-close-inner"
+            on:click={() => closeAllDropdowns()}
+          />
+        {/if}
 
       <div>
 
@@ -1314,7 +1415,10 @@ NAVBAR MAIN
             <!--
             LANGUAGE SELECTION
             -->
-            <HeaderCLang />
+            <HeaderCLang
+              {dropDownArea}
+              on:closeDropdown={() => dropDownArea = true}
+            />
 
             <!--
             THEME SELECTION
@@ -1346,7 +1450,6 @@ NAVBAR MAIN
             navKey={'scores'}
             navUrl={B_NAV_T?.scores_header_translations?.section_links?.scores_url}
             navTxt={B_NAV_T?.scores_header_translations?.section_links?.scores_title || 'SCORES'}
-            isProfilePage={PROFILE_URL == $page.route.id}
             {isViewTablet}
             {isViewMobile}
           />
@@ -1358,7 +1461,6 @@ NAVBAR MAIN
             navKey={'content'}
             navUrl={B_NAV_T?.scores_header_translations?.section_links?.sports_content_url}
             navTxt={B_NAV_T?.scores_header_translations?.section_links?.sports_content_title || 'SPORTS CONTENT'}
-            isProfilePage={PROFILE_URL == $page.route.id}
             {isViewTablet}
             {isViewMobile}
           />
@@ -1368,17 +1470,15 @@ NAVBAR MAIN
           -->
           <HeaderNavBtn
             navKey={'competitions'}
-            navUrl={B_NAV_T?.scores_header_translations?.section_links?.competitions_url}
+            navUrl={generateUrlCompetitions($sessionStore?.serverLang, B_SAP_D3_CP_H)}
             navTxt={B_NAV_T?.scores_header_translations?.section_links?.competitions_title || 'COMPETITIONS'}
-            isProfilePage={PROFILE_URL == $page.route.id}
-            soonTxt={B_NAV_T?.scores_header_translations?.soon || 'soon'}
-            isSoon={true}
-            disableAnchor={true}
+            isNew={true}
+            newTxt={'new'}
             {isViewTablet}
             {isViewMobile}
           />
 
-          {#if isViewMobile && PROFILE_URL != $page.route.id}
+          {#if isViewMobile && !isRouteProfile && !isRouteCompetitions}
 
             <!--
             ODDS SECTION
@@ -1482,12 +1582,10 @@ NAVBAR MAIN
             <!--
             BOOKMAKERS SECTION
             -->
-            {#if PROFILE_URL != $page.route.id}
-              <HeaderCBookmakers
-                {isViewMobile}
-                {isViewTablet}
-              />
-            {/if}
+            <HeaderCBookmakers
+              {isViewMobile}
+              {isViewTablet}
+            />
 
           {/if}
 
@@ -1501,20 +1599,27 @@ NAVBAR MAIN
 
 </header>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT STYLE                                                                    ◼️
+### NOTE:                                                                              ◼️
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <style>
 
   #background-area-close
   {
+    /* 📌 position */
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
+    /* 🎨 style */
     height: 100%;
     width: 100%;
     z-index: 1000;
@@ -1522,11 +1627,13 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 
   #background-area-close-inner
   {
+    /* 📌 position */
     position: absolute;
     top: 0;
     bottom: 0;
     right: 0;
     left: 0;
+    /* 🎨 style */
     height: 100%;
     width: 100%;
     z-index: 1000;

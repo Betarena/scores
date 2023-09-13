@@ -1,7 +1,7 @@
 // #region ➤ 📦 Package Imports
 
-import { writable } from 'svelte/store';
 import { dlog } from '$lib/utils/debug.js';
+import { writable } from 'svelte/store';
 
 import type { GeoJsResponse } from '$lib/types/types.geojs.js';
 import type { Betarena_User, Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
@@ -410,6 +410,14 @@ function createLocalStore
     {
       const localStore: User_Setting = methods.parseLocalStorage();
 
+      // ### CHECK
+      // ### for invalid balance type.
+      const if_M_0: boolean =
+        newBalance == undefined
+        || isNaN(newBalance)
+      ;
+      if (if_M_0) newBalance = 0;
+
 			localStore.user.scores_user_data.main_balance = newBalance;
 
       // ◾️ NOTE:
@@ -462,7 +470,7 @@ function createLocalStore
       ;
       if (if_M_0)
       {
-        // [🐞]
+        // ### [🐞]
         dlog
         (
           `🚏 checkpoint ➤ updateUserData if_M_0`,

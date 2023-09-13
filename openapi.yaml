@@ -28,6 +28,15 @@ paths:
   # [L] - SEO-PAGES
   /api/data/main/seo-pages:
     get:
+      tags:
+        - SEO + Sitemap
+
+      summary:
+        Returns a targets' player main SEO widget (data).
+
+      description:
+        Optional extended description in CommonMark or HTML.
+
       parameters:
         - name: filter
           in: query
@@ -39,26 +48,48 @@ paths:
           schema:
             type: object
             properties:
-              # ?term=[...]
+              ### NOTE:
+              ### ?lang=[...]
+              lang:
+                type: string
+                example: en
+              ### NOTE:
+              ### ?term=[...]
               term:
                 type: string
                 example: football
-              # ?player_id=[...]
+                enum:
+                  - football
+                  - competitions
+                  - player
+                  - team
+              ### NOTE:
+              ### ?player_id=[...]
               player_id:
                 type: number
                 example: 205881
-              # ?fixture_id=[...]
+              ### NOTE:
+              ### ?fixture_id=[...]
               fixture_id:
                 type: number
                 example: 18548156
-              # ?page=[...]
+              ### NOTE:
+              ### ?player_id=[...]
+              competition_id:
+                type: number
+                example: 31
+              ### NOTE:
+              ### ?page=[...]
               page:
                 type: string
                 enum:
                   - fixtures
                   - player
+                  - competitions
+                  - competition
                 example: player
-              # ?hasura=[...]
+              ### NOTE:
+              ### ?hasura=[...]
               hasura:
                 type: boolean
                 example: true
@@ -75,13 +106,23 @@ paths:
                   - false
             additionalProperties: false
             oneOf:
-              # data (main) [fixture]
+              # ### NOTE:
+              # ### Data for Competitions.
+              - required: [lang, page]
+              # ### NOTE:
+              # ### Data for Fixture.
               - required: [fixture_id, page]
               - required: [fixture_id, page, hasura]
-              # data (main) [player]
+              # ### NOTE:
+              # ### Data for Player.
               - required: [player_id, page]
               - required: [player_id, page, hasura]
-              # data (translations) terms
+              # ### NOTE:
+              # ### Data for Competition.
+              - required: [competition_id, page]
+              - required: [competition_id, page, hasura]
+              # ### NOTE:
+              # ### Data for Translations (terms).
               - required: [term]
               - required: [countires]
 

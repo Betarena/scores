@@ -11,14 +11,14 @@ export async function load
     params,
     fetch
   }: PageLoadEvent
-): Promise < PageLoad > 
+): Promise < PageLoad >
 {
 
   const t0 = performance.now();
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
-  const { 
+  const {
     lang,
     sport,
     // @ts-expect-error unknown RouteParam, that exists
@@ -26,8 +26,8 @@ export async function load
   } = params
 
   const urlLang: string =
-    params?.lang == undefined 
-      ? 'en' 
+    params?.lang == undefined
+      ? 'en'
       : params?.lang
   ;
 
@@ -38,11 +38,13 @@ export async function load
     const validUrlCheck = await promiseValidUrlCheck
     (
       fetch,
-      urlLang,
-      sport,
-      country
+      {
+        langUrl: urlLang,
+        sportUrl: sport,
+        countryUrl: country
+      }
     )
-  
+
     // [ℹ] exit;
     if (!validUrlCheck) {
       // [🐞]
@@ -53,12 +55,12 @@ export async function load
         PAGE_INVALID_MSG
       );
     }
-  
+
     //#endregion IMPORTANT URL (validation)
 
   const URL: string =
-    lang == undefined 
-      ? '/' 
+    lang == undefined
+      ? '/'
       : `/${lang}`
   ;
 

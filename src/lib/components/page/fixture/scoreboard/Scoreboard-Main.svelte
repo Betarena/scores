@@ -329,12 +329,12 @@
       addEventListeners();
 
       // (+) other
-      dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
+      dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time, false).getTime() - new Date().getTime();
       setInterval
       (
         () =>
         {
-          dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getTime() - new Date().getTime();
+          dateDiff = toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time, false).getTime() - new Date().getTime();
         },
         1000
       );
@@ -538,12 +538,12 @@ TODO:
                       no-wrap
                     "
                   >
-                    {getOrdinalNum(toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time)?.getDate())}
-                    {MONTH_NAMES_ABBRV[toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time)?.getMonth()?.toString()]}
-                    {toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getFullYear().toString().substr(-2)},
-                    {toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getHours().toString()}
+                    {getOrdinalNum(toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time, false)?.getDate())}
+                    {MONTH_NAMES_ABBRV[toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time, false)?.getMonth()?.toString()]}
+                    {toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time, false).getFullYear().toString().substr(-2)},
+                    {toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time, false).getHours().toString()}
                     :
-                    {getOrdinalNum(toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time).getMinutes())}
+                    {getOrdinalNum(toCorrectDate(FIXTURE_SCOREBOARD?.fixture_time, false).getMinutes())}
                     h
                   </p>
                 </div>

@@ -20,21 +20,21 @@ const PAGE_LOG = '⏳ [PLAYERS] PRELOAD';
 /** @type {import('./$types').PageLoad} */
 export async function load
 (
-  { 
-    url, 
-    params, 
-    fetch 
+  {
+    url,
+    params,
+    fetch
   }
-): Promise < PageLoad > 
+): Promise < PageLoad >
 {
 
   const t0 = performance.now();
 
   //#region [0] IMPORTANT EXTRACT URL DATA
 
-  const 
+  const
   {
-    lang, 
+    lang,
     // (example) -> player | jugador (translation)
     // player,
     // (example) -> teddy-teuma/829643 | harry-kane/997
@@ -42,8 +42,8 @@ export async function load
   } = params;
 
   const _lang =
-    lang == undefined 
-      ? 'en' 
+    lang == undefined
+      ? 'en'
       : lang
   ;
 
@@ -56,35 +56,33 @@ export async function load
     const validUrlCheck = await promiseValidUrlCheck
     (
       fetch,
-      _lang,
-      null,
-      null,
-      null,
-      null,
-      player_fill
+      {
+        langUrl: _lang,
+        playerUrl: player_fill
+      }
     );
 
     // EXIT;
-    if (!validUrlCheck) 
+    if (!validUrlCheck)
     {
       exitPage
       (
         t0
       );
     }
-  
+
   //#endregion [0] IMPORTANT VALID URL CHECK
 
   //#region [0] IMPORTANT (PRE) PRE-LOAD DATA
 
   // [1] CRITICAL, causes Error Page;
 
-  type PP_PROMISE_0 = 
+  type PP_PROMISE_0 =
   [
     B_SAP_PP_D | undefined
   ];
 
-  const urls_0 = 
+  const urls_0 =
   [
     `/api/data/main/seo-pages?player_id=${player_id}&page=player`
   ];
@@ -95,7 +93,7 @@ export async function load
     fetch
   ) as PP_PROMISE_0;
 
-	const 
+	const
   [
 		PAGE_DATA
 	] = data_0;
@@ -111,7 +109,7 @@ export async function load
     PAGE_DATA == null
     || PAGE_DATA?.error != undefined
   ;
-  if (if_M_0) 
+  if (if_M_0)
   {
     exitPage
     (
@@ -122,7 +120,7 @@ export async function load
 
   const country_id = PAGE_DATA?.data?.country_id;
 
-  const player_id_str = 
+  const player_id_str =
     PAGE_DATA?.data?.player_id == undefined
       ? PAGE_DATA?.data?.player_id.toString()
       : ''
@@ -133,7 +131,7 @@ export async function load
   //#region [1] IMPORTANT PRE-LOAD DATA
 
   // NOTE: WARNING: TODO: remove for a cache solution
-  const urls: string[] = 
+  const urls: string[] =
   [
     `/api/data/main/seo-pages?lang=${_lang}&page=player`,
     `/api/data/main/seo-pages?country_id=${country_id}`,
@@ -222,7 +220,7 @@ export async function load
 	);
 
   //#endregion [2] REGEX
- 
+
   //#region [3] IMPORTANT RETURN
 
   PRELOAD_invalid_data

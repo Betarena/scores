@@ -23,7 +23,6 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📌 VARIABLES
 
   const
-    // ◼️ IMPORTANT
     VIEWPORT_MOBILE_INIT = 710,
     VIEWPORT_TABLET_INIT = 1160
   ;
@@ -33,7 +32,7 @@ COMPONENT JS (w/ TS)
     isViewMobile: boolean = true,
     isViewTablet: boolean = true,
     // ◼️ IMPORTANT
-    B_FOT_T: B_FOT_T = $page.data?.FOOTER_TRANSLATION_DATA,
+    B_FOT_T: B_FOT_T = $page.data?.B_FOT_T,
     // ◼️ IMPORTANT
     homepageURL: string,
     logoLink: string,

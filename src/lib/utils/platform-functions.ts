@@ -1,36 +1,52 @@
+// *************************************************
+// IMPORTANT                                       *
+// *************************************************
+// The file 'utils/platform-functions.ts' contains *
+// functions that are used by many files and logic *
+// within the Betarena Scores (this) project.      *
+// *************************************************
+
 // #region ➤ 📦 Package Imports
+
+import { dev } from "$app/environment";
+import { goto } from "$app/navigation";
+import { error, redirect, type Page } from "@sveltejs/kit";
 
 import { get } from "$lib/api/utils.js";
 import { getUserLocation, getUserLocationFromIP } from "$lib/geo-js/init.js";
 import sessionStore from "$lib/store/session.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
-import { error, redirect, type Page } from "@sveltejs/kit";
-import { NB_W_TAG, dlog, dlogv2 } from "./debug";
-
-import { dev } from "$app/environment";
-import { goto } from "$app/navigation";
-import type { GeoJsResponse } from "$lib/types/types.geojs.js";
-import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
+import { NB_W_TAG, PAGE_INVALID_MSG, dlog, dlogv2 } from "./debug";
+import { removeDiacritics } from "./languages.js";
 import { ROUTE_ID_PROFILE } from "./user.js";
+
+import type { GeoJsResponse } from "$lib/types/types.geojs.js";
+import type { B_NAV_T } from "@betarena/scores-lib/types/navbar.js";
+import type { B_SAP_CTP_D, B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
+import type { B_SPT_D } from "@betarena/scores-lib/types/sportbook.js";
 
 // #endregion ➤ 📦 Package Imports
 
 // #region ➤ 🛠️ METHODS
 
-
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * 📌 Determines language (SSR) of platform.
+ *
  * @param
  * { string | undefined } page_route_id - Target page `routeId`.
+ *
  * @param
  * { unknown | undefined } page_error - Target page `error` object.
+ *
  * @param
  * { string | undefined } page_params_lang - Target page `params` for `lang`.
+ *
  * @returns
- * A string of target language.
+ * A string of target current `platform` language.
  */
 export function platfrom_lang_ssr
 (
@@ -40,10 +56,10 @@ export function platfrom_lang_ssr
 ): string
 {
 
-  // [🐞]
+  // ### [🐞]
   dlogv2
   (
-    'Platfrom-Functions',
+    'platfrom_lang_ssr(..)',
     [
       `🔹 [var] page_route_id: ${page_route_id}`,
       `🔹 [var] page_error: ${JSON.stringify(page_error, null, 2)}`,
@@ -72,10 +88,10 @@ export function platfrom_lang_ssr
       : 'en'
   ;
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
-    `Platfrom-Functions server_side_language ➡️ ${server_side_language}`
+    `🔹 [var] ➤ platfrom_lang_ssr(..) server_side_language ➡️ ${server_side_language}`
   );
 
 	return server_side_language;
@@ -83,18 +99,23 @@ export function platfrom_lang_ssr
 
 /**
  * @summary
- * 🔹 HELPER
- * @description Simple function to return
- * the TABLET and MOBILE viewport changes
- * as a array/tuple of both states
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Determines `tablet`, `mobile` and `other` viewport
+ * changes as a array/tuple of the `x` states
+ *
  * @param
  * { number } TABLET_VIEW_INIT - Target viewport/width at
  * which `tablet` is expected to start.
+ *
  * @param
  * { number } MOBILE_VIEW_INIT - Target viewport/width at
  * which `mobile` is expected to start.
+ *
  * @param
  * { number } OTHER_VIEW - Custom target viewport/width.
+ *
  * @returns
  * An array of boolean's (true/false)
  */
@@ -120,11 +141,81 @@ export function viewport_change
 
 /**
  * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Determines target initial device type, by the assigned
+ * `user-agent` data.
+ *
+ * @param
+ * { string } deviceType - Target `user-agent` detected device.
+ *
+ * @returns
+ * An array of boolean's (true/false), corresponding to `mobile` and `tablet`.
+ */
+export function initialDevice
+(
+  deviceType: string
+): boolean[]
+{
+  let
+    isMobileView: boolean,
+    isTabletView: boolean
+  ;
+
+  if (deviceType == 'mobile')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 📱`,
+      true
+    );
+
+    isMobileView = true;
+    isTabletView = false;
+  }
+  else if (deviceType == 'tablet')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 💻`,
+      true
+    );
+
+    isMobileView = true;
+    isTabletView = true;
+  }
+  else if (deviceType == 'desktop')
+  {
+    // [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ home/Layout.svelte 🖥️`,
+      true
+    );
+
+    isMobileView = false;
+    isTabletView = false;
+  }
+
+  return [
+    isMobileView,
+    isTabletView
+  ]
+}
+
+/**
+ * @summary
  * 🔹 HELPER
+ *
  * @description
  * 📌 "pause" JavaScript execution for X milliseconds.
+ *
  * @param
  * { number } ms - Number of Milliseconds.
+ *
  * @returns
  * void
  */
@@ -148,13 +239,16 @@ export async function sleep
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * TODO: DOC:
+ *
  * @param
- * { string } action
+ * { string } action - Target `googleEvent` action to execute.
+ *
  * @returns
- * void
+ * A Void.
  */
 export function googleEventLog
 (
@@ -162,110 +256,89 @@ export function googleEventLog
 ): void
 {
 
+  const gtagEventObj:
+  {
+    type: string,
+    tag_name?: string,
+    event_category?: string,
+    event_label?: string,
+    value?: string
+  } =
+  {
+    type: 'event',
+    value: 'click'
+  };
+
   if (action === 'fixture_football_fixtures_probabilities')
   {
-    // @ts-expect-error - Add gtag to global types;
-    window.gtag
-    (
-      'event',
-      'fixture_football_fixtures_probabilities',
-      {
-        event_category:
-          'fixture_football_fixtures_probabilities',
-        event_label: 'click_betting_site_logo',
-        value: 'click'
-      }
-    );
+    gtagEventObj.tag_name = 'fixture_football_fixtures_probabilities';
+    gtagEventObj.event_category = 'fixture_football_fixtures_probabilities';
+    gtagEventObj.event_label = 'click_betting_site_logo';
   }
 
   if (action === 'betting_site_logo_football_fixtures_scoreboard_fixtures')
   {
-    // @ts-expect-error - Add gtag to global types;
-    window.gtag
-    (
-      'event',
-      'fixtures_scoreboard_odds',
-      {
-        event_category: 'widget_fixture_scoreboard_info',
-        event_label: 'click_betting_site_logo',
-        value: 'click'
-      }
-    );
+    gtagEventObj.tag_name = 'fixtures_scoreboard_odds';
+    gtagEventObj.event_category = 'widget_fixture_scoreboard_info';
+    gtagEventObj.event_label = 'click_betting_site_logo';
   }
 
   if (action === 'betting_site_logo_football_fixtures_odds_tournament')
   {
-    // @ts-expect-error - Add gtag to global types;
-    window.gtag
-    (
-      'event',
-      'betting_site_logo_football_fixtures_odds_tournament',
-      {
-        event_category: 'widget_fixture_odds_info',
-        event_label: 'click_betting_site_logo',
-        value: 'click'
-      }
-    );
+    gtagEventObj.tag_name = 'betting_site_logo_football_fixtures_odds_tournament';
+    gtagEventObj.event_category = 'widget_fixture_odds_info';
+    gtagEventObj.event_label = 'click_betting_site_logo';
   }
 
   if (action === 'tournaments_football_fixtures_odds')
   {
-    // @ts-expect-error - Add gtag to global types;
-    window.gtag
-    (
-      'event',
-      'tournaments_football_fixtures_odds',
-      {
-        event_category: 'widget_fixture_odds_info',
-        event_label: 'click_betting_site_logo',
-        value: 'click'
-      }
-    );
+    gtagEventObj.tag_name = 'tournaments_football_fixtures_odds';
+    gtagEventObj.event_category = 'widget_fixture_odds_info';
+    gtagEventObj.event_label = 'click_betting_site_logo';
   }
 
   if (action === 'betting_site_logo_widget_league_info')
   {
-    // @ts-expect-error - Add gtag to global types;
-    window.gtag
-    (
-      'event',
-      'betting_site_logo_widget_league_info',
-      {
-        event_category: 'widget_league_info',
-        event_label: 'click_betting_site_logo',
-        value: 'click'
-      }
-    );
+    gtagEventObj.tag_name = 'betting_site_logo_widget_league_info';
+    gtagEventObj.event_category = 'widget_league_info';
+    gtagEventObj.event_label = 'click_betting_site_logo';
   }
 
   if (action === 'beting_cta_link_widget_league_info')
   {
-    // @ts-expect-error - Add gtag to global types;
-    window.gtag
-    (
-      'event',
-      'beting_cta_link_widget_league_info',
-      {
-        event_category: 'widget_league_info',
-        event_label: 'beting_cta_link_logo',
-        value: 'click'
-      }
-    );
+    gtagEventObj.tag_name = 'beting_cta_link_widget_league_info';
+    gtagEventObj.event_category = 'widget_league_info';
+    gtagEventObj.event_label = 'beting_cta_link_logo';
   }
+
+  // ### NOTE:
+  // ### run target `gtag` event.
+  window.gtag
+  (
+    gtagEventObj?.type,
+    gtagEventObj?.tag_name,
+    {
+      event_category: gtagEventObj?.tag_name,
+      event_label: gtagEventObj?.event_label,
+      value: gtagEventObj?.value
+    }
+  );
 
 }
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * 📌 gets and sets user target Geo. Country location using GeoJs.
+ *
  * @returns
  * void
  */
 export async function setUserGeoLocation
 (
-  HEADER_TRANSLATION_DATA: any
+  data: B_NAV_T
 ): Promise < void >
 {
 
@@ -302,7 +375,7 @@ export async function setUserGeoLocation
   // ### CHECK
   // ### for existance of GEO available from
   // ### translations/country list.
-  const data_0 =	HEADER_TRANSLATION_DATA?.scores_header_translations?.bookmakers_countries
+  const data_0 =	data?.scores_header_translations?.bookmakers_countries
   ?.find
   (
     function
@@ -328,15 +401,16 @@ export async function setUserGeoLocation
 
 /**
  * @summary
- * 🔹 HELPER / 🐞 DEBUG
+ * 🔹 HELPER | [🐞]
+ *
  * @description
  * 📌 validates number of `null | undefined` data points in target
  * data Array[].
+ *
  * @example [[object Object], [object Object], undefined] => null:
+ *
  * @param
  * { unknown[] } data
- * @returns
- * NaN
  */
 export function PRELOAD_invalid_data
 (
@@ -418,15 +492,20 @@ export function PRELOAD_invalid_data
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * 📌 Handle of `load` for `.server.ts/.ts` files `exit`.
+ *
  * @param
  * { number } t0 - **[required]** timer for 'debug'.
+ *
  * @param
  * { stirng } page_tag - **[required]** Target page tag name to 'exit'.
+ *
  * @param
  * { number } exit_code - **[required]** Target page exit code to 'exit'.
+ *
  * @param
  * { string } exit_reason - [optional] Message for reason on page 'exit'/'error'
  */
@@ -438,10 +517,10 @@ export function PRELOAD_exitPage
   exit_reason?: string
 ): void
 {
-  // [🐞]
+  // ### [🐞]
   const t1: number = performance.now();
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `${page_tag} ${((t1 - t0) / 1000).toFixed(2)} sec`,
@@ -451,15 +530,17 @@ export function PRELOAD_exitPage
   throw error
   (
     exit_code,
-    exit_reason
+    exit_reason ?? PAGE_INVALID_MSG
   );
 }
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * 📌 Handle of `load` for `.server.ts/.ts` files `redirect`.
+ *
  * @param
  * { string } redirect_url - **[required]** Target redirect url 'to'
  */
@@ -477,13 +558,17 @@ export function PRELOAD_redirectPage
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * 📌 `fetch` data from target list of `urls`, and returns results.
+ *
  * @param
  * { string[] } endpoints - List of target urls to fetch.
+ *
  * @param
  * { fetch } fetch - Target `fetch` object to use.
+ *
  * @returns
  * A listof type `Promise<any[]>`.
  */
@@ -512,7 +597,7 @@ export async function promiseUrlsPreload
 
 	const data: any[] = await Promise.all(promises);
 
-  // [🐞]
+  // ### [🐞]
   PRELOAD_invalid_data
   (
     data,
@@ -524,93 +609,130 @@ export async function promiseUrlsPreload
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * 📌 checks for target `url` to be a `valid` or not.
- * @param {fetch} fetch
- * @param {string} langUrl
- * @param {string} sportUrl
- * @param {string} countryUrl
- * @param {string} leagueUrl
- * @param {string} fixtureUrl
- * @param {string} playerUrl
+ *
+ * @param
+ * { fetch } fetch - Target `fetch(..)` method, supplied by `sveltekit`.
+ *
+ * @param
+ * { string } langUrl - Target `lang` part of `url`.
+ *
+ * @param
+ * { string } sportUrl - Target `sport` part of `url`.
+ *
+ * @param
+ * { string } countryUrl - Target `country` part of `url`.
+ *
+ * @param
+ * { string } leagueUrl - Target `league` part of `url`.
+ *
+ * @param
+ * { string } fixtureUrl - Target `fixture` part of `url`.
+ *
+ * @param
+ * { string } playerUrl - Target `player` part of `url`.
+ *
  * @returns
  * A `boolean`.
  */
 export async function promiseValidUrlCheck
 (
   fetch: any,
-  langUrl: string = null,
-  sportUrl: string = null,
-  countryUrl: string = null,
-  leagueUrl: string = null,
-  fixtureUrl: string = null,
-  playerUrl: string = null
-): Promise < boolean >
+  opts:
+  {
+    langUrl?: string,
+    sportUrl?: string,
+    countryUrl?: string,
+    leagueUrl?: string,
+    fixtureUrl?: string,
+    playerUrl?: string,
+    competitionMainUrl?: string,
+    competitionUrl?: string
+  }
+  ): Promise < boolean >
 {
 
-  const validation_0 =
-    // lang
-    (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
-    // sport
-    || (langUrl && sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
-    // country
-    || (langUrl && sportUrl && countryUrl && !leagueUrl && !fixtureUrl && !playerUrl)
-    // tournament/league
-    || (langUrl && sportUrl && countryUrl && leagueUrl && !fixtureUrl && !playerUrl)
-    // fixture
-    || (langUrl && sportUrl && !countryUrl && !leagueUrl && fixtureUrl && !playerUrl)
-    // player
-    || (langUrl && !sportUrl && !countryUrl && !leagueUrl && !fixtureUrl && playerUrl)
+  // ### CHECK
+  // ### wether supplied `URL` combination is valid.
+  const if_M_0 =
+    // ### CHECK
+    // ### for `lang`.
+    (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
+    // ### CHECK
+    // ### for `sport`.
+    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl)
+    // ### CHECK
+    // ### for `country`.
+    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    // ### CHECK
+    // ### for `tournament/league`.
+    || (opts?.langUrl && opts?.sportUrl && opts?.countryUrl && opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    // ### CHECK
+    // ### for `fixture`.
+    || (opts?.langUrl && opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && opts?.fixtureUrl && !opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    // ### CHECK
+    // ### for `player`.
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && opts?.playerUrl && !opts?.competitionMainUrl && !opts?.competitionUrl)
+    // ### CHECK
+    // ### for `competitions` (lobby).
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl && !opts?.competitionUrl)
+    // ### CHECK
+    // ### for `competition`.
+    || (opts?.langUrl && !opts?.sportUrl && !opts?.countryUrl && !opts?.leagueUrl && !opts?.fixtureUrl && !opts?.playerUrl && opts?.competitionMainUrl && opts?.competitionUrl)
   ;
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🚏 checkpoint ➤ promiseValidUrlCheck`,
     true
   );
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
-    `🔹 [var] ➤ validation_0 ${validation_0}`,
+    `🔹 [var] ➤ if_M_0 ${if_M_0}`,
     true
   );
 
-  if (!validation_0) return false;
+  if (!if_M_0) return false;
+
+  // ### NOTE:
+  // ### append to target string, the parts of url we wish to validate.
 
   let queryStr: string = "";
-  if (langUrl) queryStr += `?langUrl=${langUrl}`;
-  if (sportUrl) queryStr += `&sportUrl=${sportUrl}`;
-  if (countryUrl) queryStr += `&countryUrl=${countryUrl}`;
-  if (leagueUrl) queryStr += `&leagueUrl=${leagueUrl}`;
-  if (fixtureUrl) queryStr += `&fixtureUrl=${fixtureUrl}`;
-  if (playerUrl) queryStr += `&playerUrl=${playerUrl}`;
+  if (opts?.langUrl) queryStr += `?langUrl=${opts?.langUrl}`;
+  if (opts?.sportUrl) queryStr += `&sportUrl=${opts?.sportUrl}`;
+  if (opts?.countryUrl) queryStr += `&countryUrl=${opts?.countryUrl}`;
+  if (opts?.leagueUrl) queryStr += `&leagueUrl=${opts?.leagueUrl}`;
+  if (opts?.fixtureUrl) queryStr += `&fixtureUrl=${opts?.fixtureUrl}`;
+  if (opts?.playerUrl) queryStr += `&playerUrl=${opts?.playerUrl}`;
+  if (opts?.competitionMainUrl) queryStr += `&competitionMainUrl=${opts?.competitionMainUrl}`;
+  if (opts?.competitionUrl) queryStr += `&competitionUrl=${opts?.competitionUrl}`;
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🔹 [var] ➤ queryStr ${queryStr}`,
     true
   );
 
-  const response = await fetch
+  const response: any = await get
   (
     `/api/data/main/seo-pages${queryStr}`,
-    {
-      method: 'GET'
-    }
-  )
-  .then((r) => r.json())
-  ;
+    fetch
+  );
 
   return response;
 }
 
 /**
  * @summary
- * 🔹 HELPER
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
  * 📌 `fetch` target sportbook data,
  * based on `client` geo-location.
@@ -650,6 +772,9 @@ export async function initSportbookData
 }
 
 /**
+ * @summary
+ * 🔹 HELPER | TESTING | STASH
+ *
  * @description
  * TODO: DOC:
  */
@@ -683,8 +808,14 @@ export function cssVarChange
 }
 
 /**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
  * @description
- * TODO: DOC:
+ * 📌 Converts target value to a float based value string.
+ *
+ * @param
+ * { number } value - Target value to mutate.
  *
  * @param
  * { number } d_places - Target number of decimal places.
@@ -693,20 +824,40 @@ export function cssVarChange
  */
 export function toDecimalFix
 (
-  value: number,
-  d_places: number = 2
+  value: number
+  , d_places: number = 2
+  , noRoundUp: boolean = false
 ): string
 {
-  // [🐞]
+  // ### [🐞]
   dlog
   (
-    `🔹 [var] ➤ value ${value}`,
-    true
+    `🔹 [var] ➤ toDecimalFix(..) value : ${value}`,
+    false
   );
 
   if (value == null) return;
 
-  return parseFloat(value.toString()).toFixed(d_places);
+  let _value: string  = value?.toString();
+
+  if (noRoundUp)
+    _value = _value
+    .slice
+    (
+      0,
+      (_value.indexOf(".")) + (d_places + 1)
+    );
+  ;
+
+  _value = parseFloat(_value)?.toFixed(d_places);
+
+  _value = _value.replace
+  (
+    '.00',
+    ''
+  );
+
+  return _value;
 }
 
 /**
@@ -726,7 +877,7 @@ export function spliceBalanceDoubleZero
   // [🐞]
   dlog
   (
-    `🔹 [var] ➤ value ${value}`,
+    `🔹 [var] ➤ spliceBalanceDoubleZero(..) value : ${value}`,
     true
   );
 
@@ -751,18 +902,30 @@ export function spliceBalanceDoubleZero
  *
  * @param
  * { string } lang - Target new `selected` language.
+ *
+ * @param
+ * { Page<Record<string, string>, string> } page - Target page sveltekit object.
+ *
+ * @returns
+ * An Asynchronous Void.
  */
 export async function selectLanguage
 (
   lang: string,
-  page: Page<Record<string, string>, string>
+  page: Page < Record < string, string >, string >
 ): Promise < void >
 {
+  // [🐞]
+  dlog
+  (
+    `🚏 checkpoint ➤ selectLanguage`,
+    true
+  );
 
   if (sessionStore?.getServerLang() == lang) return;
 
-  // ➫ NOTE:
-  // ➫ Past/previous lang option.
+  // ### NOTE:
+  // ### Past/previous lang option.
   const pastLang: string =
     sessionStore?.getServerLang() == 'en'
       ? '/'
@@ -777,22 +940,23 @@ export async function selectLanguage
   // [🐞]
   dlogv2
   (
-    `${NB_W_TAG} selectLanguage()`,
+    `🚏 checkpoint ➤ selectLanguage (group)`,
     [
-      `$userBetarenaSettings.lang: ${userBetarenaSettings.getUserLang()}`,
-      `$sessionStore?.serverLang: ${sessionStore?.getServerLang()}`,
-      `lang: ${lang}`,
-      `pastLang: ${pastLang}`,
-      `$page.route.id: ${page.route.id}`
+      `🔹 [var] ➤ $userBetarenaSettings.lang: ${userBetarenaSettings.getUserLang()}`,
+      `🔹 [var] ➤ $sessionStore?.serverLang: ${sessionStore?.getServerLang()}`,
+      `🔹 [var] ➤ lang: ${lang}`,
+      `🔹 [var] ➤ pastLang: ${pastLang}`,
+      `🔹 [var] ➤ $page.route.id: ${page.route.id}`
     ],
     true
   );
 
-  // TODO:
+  // ### TODO:
+  // ### <->
   // isLangDropdown = false;
 
-  // ➫ NOTE:
-  // ➫ Update <html {lang}> in DOCTYPE.
+  // ### NOTE:
+  // ### Update <html {lang}> in DOCTYPE.
   let tempLang: string = lang;
   if (lang === 'br') tempLang = 'pt-BR';
   document.documentElement.setAttribute
@@ -801,8 +965,8 @@ export async function selectLanguage
     tempLang
   );
 
-  // ➫ CHECK
-  // ➫ on error', navigate back to homepage;
+  // ### CHECK
+  // ### on error', navigate back to homepage;
   const if_M_0: boolean =
     page.error
     && !dev
@@ -830,31 +994,34 @@ export async function selectLanguage
     return;
   }
 
-  // ➫ CHECK
-  // ➫ Omit 'special' routes cases, as these routes
-  // ➫ manage their own navigation/translation switch.
+  // ### CHECK
+  // ### Omit 'special' routes cases, as these routes
+  // ### manage their own navigation/translation switch.
   const if_M_1: boolean =
     [
       '/[[lang=lang]]/[sport]/[country]/[league_name]',
       '/[[lang=lang]]/[sport]/[fixture=fixture]',
-      '/[[lang=lang]]/[player=player]/[...player_fill]'
+      '/[[lang=lang]]/[player=player]/[...player_fill]',
+      '/[[lang=lang]]/[competitions=competitions]',
+      '/[[lang=lang]]/[competitions=competitions]/[...competition_fill]',
     ]
-    .includes(page.route.id)
+    .includes(page?.route?.id)
   ;
   if (if_M_1)
   {
     // [🐞]
     dlog
     (
-      `${NB_W_TAG} omitting route: ${page.route.id}`,
+      `🚏 checkpoint ➤ selectLanguage if_M_1 page?.route?.id: ${page?.route?.id}`,
       true
     );
+
     return;
   }
 
-  // ➫ CHECK
-  // ➫ On profile page route, handle.
-  else if (ROUTE_ID_PROFILE == page.route.id)
+  // ### CHECK
+  // ### On profile page route, handle.
+  else if (ROUTE_ID_PROFILE == page?.route?.id)
   {
 
     const pastLangV2: string =
@@ -875,7 +1042,7 @@ export async function selectLanguage
     // [🐞]
     dlog
     (
-      `${NB_W_TAG} inside (PROFILE) ${lang},
+      `inside (PROFILE) ${lang},
       pastLangV2: ${pastLangV2}; tempUrl: ${tempUrl}; newURL: ${newURL}`,
       true
     );
@@ -890,63 +1057,354 @@ export async function selectLanguage
 
   }
 
-  // ➫ NOTE:
-  // ➫ Otherwise, continue navigation switch.
-  // ➫ NOTE:
+  // ### NOTE:
+  // ### Otherwise, continue navigation switch.
+  // ### NOTE:
 
-  // ➫ CHECK
-  // ➫ for 'EN' naviagtion.
+  // ### CHECK
+  // ### for 'EN' naviagtion.
   else if (lang == 'en' && pastLang != '/')
   {
 
-    // prefetch(`/`); [? - maybe ?] // NOTE:
+    // ### NOTE:
+    // ### maybe [?]
+    // prefetch(`/`);
 
-    // [ℹ] count number of slashes URL;
-    var count =	page.url.pathname.split('/').length - 1;
-    // [ℹ] replace path-name accordingly for "EN" - first occurance;
+    // ### NOTE:
+    // ### count number of slashes URL.
+    var count: number =	page.url.pathname.split('/').length - 1;
+
+    // ### NOTE:
+    // ### replace path-name accordingly for 'EN', first occurance.
     const newURL: string =
       count == 1
         ? page.url.pathname.replace(pastLang, '/')
         : page.url.pathname.replace(pastLang, '')
     ;
-    dlog(`${NB_W_TAG} inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
 
-    // [ℹ] update URL breadcrumb;
+    // ### [🐞]
+    dlog
+    (
+      `inside (EN) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`,
+      true
+    );
+
+    // ### NOTE:
+    // ### update URL breadcrumb.
+
+    // ### Solution 1.
     // window.history.replaceState({}, "NewPage", newURL);
-    await goto(newURL, { replaceState: true });
+
+    // ### Solution 2.
+    await goto
+    (
+      newURL,
+      {
+        replaceState: true
+      }
+    );
   }
-  // ➫ CHECK
-  // ➫ for 'incoming (past)' from an 'EN (/)' route.
+  // ### CHECK
+  // ### for 'incoming (past)' from an 'EN (/)' route.
   else if (lang != 'en' && pastLang == '/')
   {
-    // [ℹ] count number of slashes URL;
+
+    // ### NOTE:
+    // ### count number of slashes URL.
     var countSlash = page.url.pathname.split('/').length - 1;
-    // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
+
+    // ### NOTE:
+    // ### replace path-name accordingly for "<lang>" - first occurance.
     const newURL: string =
       countSlash > 1
         ? page.url.pathname.replace(pastLang, `/${lang}/`)
         : page.url.pathname.replace(pastLang, `/${lang}`)
     ;
-    dlog(`${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
 
-    // [ℹ] update URL breadcrumb;
+    // ### [🐞]
+    dlog
+    (
+      `${NB_W_TAG} inside (V2) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`,
+      true
+    );
+
+    // ### NOTE:
+    // ### update URL breadcrumb.
+
+    // ### Solution 1.
     // window.history.replaceState({}, "NewPage", newURL);
-    await goto(newURL, { replaceState: true });
+
+    // ### Solution 2.
+    await goto
+    (
+      newURL,
+      {
+        replaceState: true
+      }
+    );
   }
-  // ➫ CHECK
-  // ➫ for 'incoming (past)' from an 'non-EN (/)' route.
+  // ### CHECK
+  // ### for 'incoming (past)' from an 'non-EN (/)' route.
   else if (lang != 'en' && pastLang != '/')
   {
-    // [ℹ] count number of slashes URL;
+    // ### NOTE:
+    // ### count number of slashes URL.
     var countSlash = page.url.pathname.split('/').length - 1;
-    // [ℹ] replace path-name accordingly for "<lang>" - first occurance;
-    const newURL: string = page.url.pathname.replace(pastLang, `/${lang}`);
-    dlog(`${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`, true)
 
-    // [ℹ] update URL breadcrumb;
+    // ### NOTE:
+    // ### replace path-name accordingly for "<lang>", first occurance.
+    const newURL: string = page.url.pathname.replace(pastLang, `/${lang}`);
+
+    // ### [🐞]
+    dlog
+    (
+      `${NB_W_TAG} inside (V3) ${lang}, pastLang: ${pastLang}, countSlash: ${countSlash}, newURL: ${newURL}`,
+      true
+    );
+
+    // ### NOTE:
+    // ### update URL breadcrumb.
+
+    // ### Solution 1.
     // window.history.replaceState({}, "NewPage", newURL);
+
+    // ### Solution 2.
     await goto(newURL, { replaceState: true });
   }
+}
+
+/**
+ * @summary
+ * 🟥 MAIN | 🔹 HELPER
+ *
+ * @description
+ * 📌 Cleans a target `url` to be used for internal app routing.
+ *
+ * @param
+ * { string } url - Target **url** to clean for internal platform use.
+ *
+ * @returns
+ * A target string `URL`, ready for internal routing.
+ */
+export function cleanUrl
+(
+  url: string
+): string
+{
+  url = url.replace
+  (
+    'https://scores.betarena.com',
+    ''
+  );
+
+  if (url?.[0] != '/') url = '/'+url;
+
+  return url;
+}
+
+/**
+ * @summary
+ * 🟥 MAIN | 🔹 HELPER
+ *
+ * @description
+ * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
+ *
+ * @param
+ * { string } lang - Target **current** platform language.
+ *
+ * @param
+ * { B_SAP_D3 } data - Target **translations** for the term "_competitions_".
+ *
+ * @returns
+ * A target string, of the new `URL`.
+ */
+export function generateUrlCompetitions
+(
+  lang: string,
+  data: B_SAP_D3
+): string
+{
+  // ### [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ translateUrlCompetitions(..) data : ${JSON.stringify(data)}`,
+    true
+  );
+
+  const competitionTerm: string = removeDiacritics(data?.[lang]);
+
+  let newUrl: string =
+    lang == 'en'
+      ? `/${competitionTerm}`
+      : `/${lang}/${competitionTerm}`
+  ;
+
+  newUrl = newUrl.replace
+  (
+    'https://scores.betarena.com',
+    ''
+  );
+
+  // ### [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ translateUrlCompetitions(..) newUrl : ${newUrl}`,
+    true
+  );
+
+  if (checkNull(newUrl)) return '/';
+
+  return newUrl;
+}
+
+/**
+ * @summary
+ * 🟥 MAIN | 🔹 HELPER
+ *
+ * @description
+ * 📌 Generates a target `newUrl` for when a `translation` switch occurs.
+ *
+ * @param
+ * { string } lang - Target **current** platform language.
+ *
+ *
+ * @param
+ * { B_SAP_CTP_D } competitionData - Target **competition data**.
+ *
+ * @returns
+ * A target string, of the new `URL`.
+ */
+export function generateUrlCompetition
+(
+  lang: string,
+  competitionData: B_SAP_CTP_D
+): string
+{
+  let newUrl: string = `/${competitionData?.alternate_data?.[lang]}`;
+
+  newUrl = newUrl.replace
+  (
+    'https://scores.betarena.com',
+    ''
+  );
+
+  // ### [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ generateUrlCompetition(..) newUrl : ${newUrl}`,
+    true
+  );
+
+  if (checkNull(newUrl)) return '/';
+
+  return newUrl;
+}
+
+/**
+ * @summary
+ * 🔹 HELPER | IMPORTANT
+ *
+ * @description
+ * 📌 Lambda `arrow-function` TryCatch` wrapper.
+ *
+ * @param
+ * { any } action - Target function / method execution.
+ *
+ * @returns
+ * An unknown return.
+ */
+export const tryCatch = (action: any): unknown =>
+{
+  try
+  {
+    return action();
+  }
+  catch (ex)
+  {
+    // ### [🐞]
+    console.debug
+    (
+      `🚏 checkpoint ➤ tryCatch error : ❌ ${ex}`
+    );
+
+    return null;
+  }
+}
+
+/**
+ * @summary
+ * 🔹 HELPER
+ *
+ * @description
+ * 📌 Determine wether target value is `empty` / `null`
+ *
+ * @param
+ * { any } value - Target value that requires testing.
+ *
+ * @returns
+ * A `boolean`
+ */
+export const checkNull = (value: any): boolean =>
+{
+  const if_M_0: boolean =
+    value == undefined
+    || value == null
+  ;
+
+  // [🐞]
+  dlog
+  (
+    `🔹 [var] ➤ checkNull(..) if_M_0 ${if_M_0}`,
+    true
+  );
+
+  return if_M_0;
+}
+
+/**
+ * @description
+ *
+ * @param
+ * { string } value
+ *
+ * @returns
+ */
+export const iso2CountryLogo = (value: string): string =>
+{
+  return value != undefined
+    ? `https://betarena.com/images/flags/${value}.svg`
+    : `https://www.betarena.com/images/flags/EN.svg`
+  ;
+}
+
+/**
+ * @summary
+ * 🔹 HELPER
+ *
+ * @description
+ * 📌 Generates an `object` from target `Map(..)`.
+ *
+ * @param
+ * { Map < any, any > } map
+ *
+ * @returns
+ * An `object`.
+ */
+export function recordToKeyValueArray
+(
+  record: Record < any, any > = null
+): any[][]
+{
+  const jsonObj = Object.keys(record)
+  ?.map
+  (
+    (
+      key
+    ) =>
+    [key, JSON.parse(record[key])]
+  );
+
+  return jsonObj;
 }
 
 // #endregion ➤ 🛠️ METHODS
