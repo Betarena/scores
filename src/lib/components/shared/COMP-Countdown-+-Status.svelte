@@ -172,6 +172,7 @@ COMPETITION COUNTDOWN / STATUS
   "
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
   class:row-space-center={!showCountdown}
+  class:future-start-date-2={!showCountdown && designView == '2' && B_COMP_HIGH_D?.competition?.data?.status == 'pending'}
 >
 
   <!-- [🐞] -->
@@ -423,6 +424,11 @@ COMPETITION COUNTDOWN / STATUS
     max-height: 40px;
     border-radius: 8px;
     background: var(--whitev2);
+  }
+  div#shared⮕w⮕countdown-status⮕main.future-start-date-2
+  {
+    /* 🎨 style */
+    min-width: 280px;
   }
 
   div#shared⮕w⮕countdown-status⮕countdown
