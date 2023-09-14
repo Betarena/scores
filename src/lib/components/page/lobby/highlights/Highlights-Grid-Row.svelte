@@ -151,6 +151,11 @@
     (
     ): void
     {
+      if (touchstartX - touchendX <= 50 && touchstartX - touchendX >= -50) return;
+
+      console.log('touchstartX:', touchstartX)
+      console.log('touchendX:', touchendX)
+
       if (touchendX < touchstartX)
       {
         // alert('swiped left!')
@@ -176,7 +181,7 @@
       if (disableScroll) return;
 
       // ### [🐞]
-      // console.log(`x:${e.deltaX} y:${e.deltaY}`);
+      console.log(`x:${e.deltaX} y:${e.deltaY}`);
 
       if (e?.deltaY != 0 || (e?.deltaX <= 5 && e?.deltaX >= -5)) return;
 
