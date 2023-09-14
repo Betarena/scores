@@ -153,8 +153,8 @@
     {
       if (touchstartX - touchendX <= 50 && touchstartX - touchendX >= -50) return;
 
-      console.log('touchstartX:', touchstartX)
-      console.log('touchendX:', touchendX)
+      // console.log('touchstartX:', touchstartX)
+      // console.log('touchendX:', touchendX)
 
       if (touchendX < touchstartX)
       {
