@@ -68,6 +68,9 @@
   $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
   $: isProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
 
+  $: console.log('🟥 isRouteCompetitions', isRouteCompetitions)
+  $: console.log('🟥 isProfilePage', isProfilePage)
+
   $sessionStore.deviceType = $page.data?.deviceType;
   // @ts-ignore
   $sessionStore.fixturesTodayNum = parseInt(B_NAV_T?.scores_header_fixtures_information?.football)
@@ -195,6 +198,24 @@
     );
   }
 
+  /**
+   * TODO: DOC:
+  */
+  $: if (browser && (isRouteCompetitions || isProfilePage))
+  {
+    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
+    if (helpdesk != undefined)
+      helpdesk.style.display = "unset";
+    ;
+  }
+  else if (browser && !isRouteCompetitions && !isProfilePage)
+  {
+    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
+    if (helpdesk != undefined)
+      helpdesk.style.display = "none";
+    ;
+  }
+
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
   // #region ➤ 🔄 LIFECYCLE [SVELTE]
@@ -231,8 +252,14 @@
     <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
-      (function(){d=document;s=d.createElement("script");
-        s.src="https://client.crisp.chat/l.js";s.async=1;d.getElementsByTagName("head")[0].appendChild(s);}
+      (function()
+      {
+        d=document;
+        s=d.createElement("script");
+        s.src="https://client.crisp.chat/l.js";
+        s.async=1;
+        d.getElementsByTagName("head")[0].appendChild(s);
+      }
       )();
     </script>
   {/if}
