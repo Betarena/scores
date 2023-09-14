@@ -336,7 +336,12 @@
   $:
   {
     sliderCount = Math.ceil(competitionList?.length / incrementBy);
-    if (sliderCount > 5)
+    if (!isViewTablet && sliderCount > 1)
+    {
+      sliderCount = 5 + 2;
+      isOverLimitUI = true;
+    }
+    else if (sliderCount > 5)
     {
       sliderCount = 5 + 2;
       isOverLimitUI = true;
