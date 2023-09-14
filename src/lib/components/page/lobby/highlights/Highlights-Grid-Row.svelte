@@ -174,11 +174,12 @@
     {
 
       if (disableScroll) return;
+      if (e?.deltaY > 0) return;
 
       if (e?.deltaX > 0)
-        toggleCarousel(-1);
-      else
         toggleCarousel(1);
+      else
+        toggleCarousel(-1);
       ;
 
       disableScroll = true;
