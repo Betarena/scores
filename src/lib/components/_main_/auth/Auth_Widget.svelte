@@ -1206,6 +1206,57 @@ COMPONENT JS (w/ TS)
     }
   }
 
+  /**
+   * @summary
+   * 🔹 HELPER | IMPORTANT
+   *
+   * @description
+   * 📌 Validates for an `opened` state of the `login/register` form upon page open.
+   *
+   * @returns
+   * An asynchronous void.
+  */
+  async function checkOpenAuth
+  (
+  ): Promise < void >
+  {
+    // ### [🐞]
+    dlog
+    (
+      `🚏 checkpoint ➤ checkOpenAuth`,
+      true
+    );
+
+		const isAuthForm: string =	$page.url.searchParams.get('authForm');
+		const revertUrl = `${$page?.url?.origin}${$page?.url?.pathname}`;
+
+    // ### CHECK
+    // ### for have authetication form (modal) open instantly for users.
+		if (isAuthForm == 'true')
+    {
+      // ### [🐞]
+      dlog
+      (
+        `🚏 checkpoint ➤ isAuthForm == 'true'`,
+        true
+      );
+
+			// ### NOTE:
+      // ### Clean up url from queries/auth-bloat;
+			goto
+      (
+        revertUrl,
+        {
+          replaceState: true
+        }
+      );
+
+      $sessionStore.auth_show = true;
+		}
+
+    return;
+  }
+
   // #endregion ➤ [METHODS]
 
   // #region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
@@ -1223,6 +1274,7 @@ COMPONENT JS (w/ TS)
     checkEmailDeepLink();
     checkDiscordDeepLink();
     checkMetaMaskDeepLink();
+    checkOpenAuth();
 	}
 
   /**
