@@ -345,7 +345,7 @@
     // ### for valid competitions map data.
     const if_M_0: boolean =
       competitionMap?.size == 0
-      && competitionMap?.has(WIDGET_DATA?.competition?.id)
+      && !competitionMap?.has(WIDGET_DATA?.competition?.id)
     ;
     if (if_M_0) return;
 
