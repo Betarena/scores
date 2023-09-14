@@ -151,6 +151,11 @@
     (
     ): void
     {
+      if (touchstartX - touchendX <= 50 && touchstartX - touchendX >= -50) return;
+
+      // console.log('touchstartX:', touchstartX)
+      // console.log('touchendX:', touchendX)
+
       if (touchendX < touchstartX)
       {
         // alert('swiped left!')
@@ -175,10 +180,15 @@
 
       if (disableScroll) return;
 
+      // ### [🐞]
+      console.log(`x:${e.deltaX} y:${e.deltaY}`);
+
+      if (e?.deltaY != 0 || (e?.deltaX <= 5 && e?.deltaX >= -5)) return;
+
       if (e?.deltaX > 0)
-        toggleCarousel(-1);
-      else
         toggleCarousel(1);
+      else
+        toggleCarousel(-1);
       ;
 
       disableScroll = true;
@@ -191,9 +201,6 @@
         },
         1000
       );
-
-      // ### [🐞]
-      console.log(`x:${e.deltaX} y:${e.deltaY}`);
 
       // ### NOTE:
       // ### disable the actual scrolling
@@ -272,7 +279,8 @@
     // ### CHECK
     // ### for slider to be in a ±2 distance (middle)
     const if_M_1: boolean =
-      isOverLimitUI
+      carouselDotsElement
+      && isOverLimitUI
       && ((currentSlidePositionNumber * incrementBy) - 2) > 0
       && ((currentSlidePositionNumber * incrementBy) + 2) < competitionList?.length
     ;
@@ -393,13 +401,15 @@ TARGET COMPETITIONS VIEW
 <div
   id="{CNAME}⮕competitions-outer"
   class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
+  on:mouseover={() => showPrevNextBtns = true}
+  on:mouseleave={() => showPrevNextBtns = false}
 >
 
   <!--
   🖥️ LAPTOP
   PREVIOUS SLIDE TOGGLE
   -->
-  {#if !isViewTablet && showPrevNextBtns}
+  {#if !isViewTablet && showPrevNextBtns && isOverLimitUI}
 
     <div
       id="previous-open"
@@ -424,8 +434,6 @@ TARGET COMPETITIONS VIEW
   <div
     id="{CNAME}⮕competitions"
     bind:this={gridElement}
-    on:mouseover={() => showPrevNextBtns = true}
-    on:mouseout={() => showPrevNextBtns = false}
   >
 
     <div
@@ -475,7 +483,7 @@ TARGET COMPETITIONS VIEW
   🖥️ LAPTOP
   NEXT SLIDE TOGGLE
   -->
-  {#if !isViewTablet && showPrevNextBtns}
+  {#if !isViewTablet && showPrevNextBtns && isOverLimitUI}
 
     <div
       id="next-open"

@@ -27,6 +27,7 @@
   import { page } from '$app/stores';
   import { onMount } from 'svelte';
 
+	import { get } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog } from '$lib/utils/debug.js';
@@ -53,6 +54,7 @@
 	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+	import type { LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
 	import type { B_SAP_D1, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_MAIN_D, B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 
@@ -98,7 +100,9 @@
     /** @description TODO: DOC: */
     prediction_side: 'home' | 'away',
     /** @description TODO: DOC: */
-    participantsMap: Map < string, Betarena_User > = new Map()
+    participantsMap: Map < string, Betarena_User > = new Map(),
+    /** @description TODO: DOC: */
+    competitionWasLive: boolean = false
   ;
 
   $: WIDGET_T_DATA = $page.data?.B_COMP_MAIN_T;
@@ -114,7 +118,16 @@
 
   // #region ➤ 🛠️ METHODS
 
-  // VIEWPORT CHANGES | IMPORTANT
+  /**
+   * @summary
+   * 🔹 HELPER | IMPORTANT
+   *
+   * @description
+   * 📌 Triggers viewport changes.
+   *
+   * @returns
+   * A void.
+   */
   function resizeAction
   (
   ): void
@@ -134,24 +147,27 @@
    * 🔹 HELPER | IMPORTANT
    *
    * @description
-   * ⚡️ document (visibility-change) event listener.
+   * 📌 Local component wrapper
+   *
+   * (⚡️) `window` (resize-change) listener.
    *
    * @returns
-   * void
+   * A void.
    */
   function addEventListeners
   (
   ): void
   {
-    // NOTE: (on-resize)
+    // ### NOTE:
+    // ### listen to 'resize'.
     window.addEventListener
     (
-			'resize',
-			function ()
+      'resize',
+      function ()
       {
-				resizeAction();
-			}
-		);
+        resizeAction();
+      }
+    );
   }
 
   /**
@@ -159,7 +175,10 @@
    * 🔹 HELPER | IMPORTANT
    *
    * @description
-   * TODO: DOC:
+   * 📌 Fetch / update participants data for `this` competition (fixture) data.
+   *
+   * @returns
+   * An asynchronous void.
    */
   async function getParticipantData
   (
@@ -205,46 +224,6 @@
 
     // ### IMPORTANT
     participantsMap = new Map([...participantsMap, ...newParticipantsMap]);
-  }
-
-  /**
-   * @summary
-   * 🔹 HELPER | IMPORTANT
-   *
-   * @description
-   * TODO: DOC:
-   */
-  async function injectLiveData
-  (
-  ): Promise < void >
-  {
-    if (!browser) return;
-
-    const competitionMap: Map < number, B_H_COMP_DATA > = $sessionStore?.competitions_map;
-
-    // ### CHECK
-    // ### for valid competitions map data.
-    const if_M_0: boolean =
-      competitionMap.size == 0
-    ;
-    if (if_M_0) return;
-
-    // ### NOTE:
-    // ### update 'this' competition data with new data.
-
-    // ### CHECK
-    // ### for valid competitions map data.
-    const if_M_1: boolean =
-      !competitionMap?.has(WIDGET_DATA?.competition?.id)
-    ;
-    if (if_M_1) return;
-
-    WIDGET_DATA.competition = competitionMap?.get(WIDGET_DATA?.competition?.id);
-
-    getParticipantData();
-
-    // ### IMPORTANT
-    WIDGET_DATA = WIDGET_DATA;
 
     return;
   }
@@ -254,25 +233,66 @@
    * 🔹 HELPER | IMPORTANT
    *
    * @description
-   * TODO: DOC:
+   * 📌 Injects / Hydrates target competition (fixture) data with 'LIVE' (fresh) livescores data.
+   *
+   * (⚡️) handles cases for 'no longer LIVE' orphan data.
+   *
+   * @returns
+   * An asynchronous void.
    */
-  function injectLivescoresData
+  async function injectLivescoresData
   (
   ): Promise < void >
   {
+
+    if (!browser) return;
+
     const liveFixturesMap: Map < number, FIRE_LNNS > = $sessionStore?.livescore_now_scoreboard;
 
-    // ### CHECK
-    // ### for valid competitions map data.
-    const if_M_0: boolean =
-      liveFixturesMap.size == 0
-    ;
-    if (if_M_0) return;
-
-    // ### NOTE:
-    // ### update 'this' competition data with new 'fixture/scores' data.
-
     const competitionFixtureId: number = WIDGET_DATA?.competition?.fixture_id;
+
+    // ### CHECK
+    // ### for 'orphan' (no longer live) fixture data, but present in local live-map instance.
+    // ### NOTE:
+    // ### cause for (exit).
+    const if_M_0: boolean =
+      competitionWasLive
+      && !liveFixturesMap.has(competitionFixtureId)
+    ;
+    if (if_M_0)
+    {
+
+      const data_0 = await get
+      (
+        `/api/data/home/livescores-v2?fixtureIds=${competitionFixtureId?.toString()}`
+      ) as unknown;
+
+      const _fixtureMap = new Map
+      (
+        Object.entries(data_0)
+      ) as unknown as Map <string, LS2_C_Fixture>;
+
+      const newOrphanData: LS2_C_Fixture = _fixtureMap.get(competitionFixtureId?.toString())
+
+      WIDGET_DATA.fixture_detailed.teams =
+      {
+        away:
+        {
+          score: newOrphanData?.teams?.away?.score,
+        },
+        home:
+        {
+          score: newOrphanData?.teams?.home?.score,
+        }
+      }
+
+      // ### IMPORTANT
+      WIDGET_DATA = WIDGET_DATA;
+
+      competitionWasLive = false;
+
+      return;
+    }
 
     // ### CHECK
     // ### for valid competitions map data.
@@ -280,6 +300,8 @@
       !liveFixturesMap?.has(competitionFixtureId)
     ;
     if (if_M_1) return;
+
+    competitionWasLive = true;
 
     // ### IMPORTANT
     (WIDGET_DATA.fixture_detailed ??= { })
@@ -296,14 +318,58 @@
       }
     }
 
+    // ### IMPORTANT
     WIDGET_DATA = WIDGET_DATA;
+
+    return;
+
   }
 
   /**
+   * @summary
+   * 🔹 HELPER | IMPORTANT
+   *
    * @description
-   * TODO: DOC:
+   * 📌 Injects / Hydrates `this` competition (fixture) data with `LIVE` (fresh) competitions data.
+   *
+   * @returns
+   * A void.
    */
-   function determinePrediction
+  function injectLiveData
+  (
+  ): void
+  {
+    const competitionMap: Map < number, B_H_COMP_DATA > = $sessionStore?.competitions_map;
+
+    // ### CHECK
+    // ### for valid competitions map data.
+    const if_M_0: boolean =
+      competitionMap?.size == 0
+      && !competitionMap?.has(WIDGET_DATA?.competition?.id)
+    ;
+    if (if_M_0) return;
+
+    WIDGET_DATA.competition = competitionMap?.get(WIDGET_DATA?.competition?.id);
+
+    getParticipantData();
+
+    // ### IMPORTANT
+    WIDGET_DATA = WIDGET_DATA;
+
+    return;
+  }
+
+  /**
+   * @summary
+   * 🔹 HELPER | IMPORTANT
+   *
+   * @description
+   * 📌 Correctly determine prediction for `this` competition (fixture).
+   *
+   * @returns
+   * A void.
+   */
+  function determinePrediction
   (
   ): void
   {
