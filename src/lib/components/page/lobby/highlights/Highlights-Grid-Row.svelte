@@ -174,7 +174,11 @@
     {
 
       if (disableScroll) return;
-      if (e?.deltaY > 0) return;
+
+      // ### [🐞]
+      // console.log(`x:${e.deltaX} y:${e.deltaY}`);
+
+      if (e?.deltaY != 0 || (e?.deltaX <= 5 && e?.deltaX >= -5)) return;
 
       if (e?.deltaX > 0)
         toggleCarousel(1);
@@ -192,9 +196,6 @@
         },
         1000
       );
-
-      // ### [🐞]
-      console.log(`x:${e.deltaX} y:${e.deltaY}`);
 
       // ### NOTE:
       // ### disable the actual scrolling
