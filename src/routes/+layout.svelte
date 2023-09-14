@@ -201,20 +201,20 @@
   /**
    * TODO: DOC:
   */
-  // $: if (browser && (isRouteCompetitions || isProfilePage))
-  // {
-  //   const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
-  //   if (helpdesk != undefined)
-  //     helpdesk.style.display = "unset";
-  //   ;
-  // }
-  // else if (browser && !isRouteCompetitions && !isProfilePage)
-  // {
-  //   const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
-  //   if (helpdesk != undefined)
-  //     helpdesk.style.display = "none";
-  //   ;
-  // }
+  $: if (browser && (isRouteCompetitions || isProfilePage))
+  {
+    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
+    if (helpdesk != undefined)
+      helpdesk.style.display = "unset";
+    ;
+  }
+  else if (browser && !isRouteCompetitions && !isProfilePage)
+  {
+    const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
+    if (helpdesk != undefined)
+      helpdesk.style.display = "none";
+    ;
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
