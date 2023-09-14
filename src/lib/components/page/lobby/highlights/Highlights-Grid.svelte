@@ -28,6 +28,7 @@
 	import { onMount } from 'svelte';
 
 	import sessionStore from '$lib/store/session.js';
+	import { get } from '$lib/api/utils.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
@@ -37,6 +38,7 @@
 	import type { Betarena_User } from '$lib/types/types.scores.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
+	import type { LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
 	import type { B_SAP_CP_T } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
@@ -84,6 +86,8 @@
     openCompetitions: B_COMP_HIGH_D[],
     /** @description competitions (lobby) highlights (widget) - finished / canceled competitions list */
     finishedCompetitions: B_COMP_HIGH_D[],
+    /** @description TODO: DOC: */
+    liveCompetitions: Set < number > = new Set(),
     /** @description competitions (lobby) highlights (widget) - no competitions available */
     isNoCompetitions: boolean = false,
     /** @description competitions (lobby) highlights (widget) - all participants map */
@@ -106,7 +110,10 @@
    * 🔹 HELPER | IMPORTANT
    *
    * @description
-   * TODO: DOC:
+   * 📌 Separates competitions by their respective status.
+   *
+   * @returns
+   * A void.
    */
   function splitCompetitionsByStatus
   (
@@ -206,7 +213,10 @@
    * 🔹 HELPER | IMPORTANT
    *
    * @description
-   * TODO: DOC:
+   * 📌 Injects / Hydrates competitions (fixtures) data with `LIVE` (fresh) competitions data.
+   *
+   * @returns
+   * An asynchronous void.
    */
   async function injectLiveData
   (
@@ -257,7 +267,10 @@
    * 🔹 HELPER | IMPORTANT
    *
    * @description
-   * TODO: DOC:
+   * 📌 Fetch / update participants data for competitions (fixtures) data.
+   *
+   * @returns
+   * An asynchronous void.
    */
   async function getParticipantData
   (
@@ -320,34 +333,51 @@
    * 🔹 HELPER | IMPORTANT
    *
    * @description
-   * TODO: DOC:
+   * 📌 Injects / Hydrates available competitions (fixtures) data with 'LIVE' (fresh) livescores data.
+   *
+   * (⚡️) handles cases for 'no longer LIVE' orphan data.
+   *
+   * @returns
+   * An asynchronous void.
    */
-  function injectLivescoresData
+  async function injectLivescoresData
   (
   ): Promise < void >
   {
+    if (!browser) return;
+
     const liveFixturesMap: Map < number, FIRE_LNNS > = $sessionStore?.livescore_now_scoreboard;
 
-    // ### CHECK
-    // ### for valid competitions map data.
-    const if_M_0: boolean =
-      liveFixturesMap.size == 0
-    ;
-    if (if_M_0) return;
+    let fixtureOrphanId: number[] = [];
 
     // ### NOTE:
-    // ### update 'this' competition data with new 'fixture/scores' data.
-
+    // ### loop over each available competition.
     for (const [, value] of WIDGET_DATA)
     {
       const competitionFixtureId: number = value?.competition?.fixture_id;
 
       // ### CHECK
-      // ### for valid competitions map data.
+      // ### for 'orphan' (no longer live) fixture data, but present in local live-map instance.
+      // ### NOTE:
+      // ### cause for (exit).
       const if_M_0: boolean =
+        liveCompetitions?.has(competitionFixtureId)
+        && !liveFixturesMap.has(competitionFixtureId)
+      ;
+      if (if_M_0)
+      {
+        fixtureOrphanId.push(competitionFixtureId);
+        continue;
+      }
+
+      // ### CHECK
+      // ### for valid competitions map data.
+      const if_M_1: boolean =
         !liveFixturesMap?.has(competitionFixtureId)
       ;
-      if (if_M_0) continue;
+      if (if_M_1) continue;
+
+      liveCompetitions.add(competitionFixtureId);
 
       value.fixture_detailed.teams =
       {
@@ -360,7 +390,53 @@
           score: liveFixturesMap?.get(competitionFixtureId)?.teams?.find(x => x?.type == "home")?.score,
         }
       }
+    }
 
+    // ### CHECK
+    // ### for 'orphan' (no longer live) fixture data, but present in local live-map instance.
+    // ### NOTE:
+    // ### cause for (exit).
+    const if_M_2: boolean =
+      fixtureOrphanId?.length > 0
+    ;
+    if (if_M_2)
+    {
+
+      const data_0 = await get
+      (
+        `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId?.toString()}`
+      ) as unknown;
+
+      const _fixtureMap = new Map
+      (
+        Object.entries(data_0)
+      ) as unknown as Map < string, LS2_C_Fixture >;
+
+      for (const [, value] of WIDGET_DATA)
+      {
+        const competitionFixtureId: number = value?.competition?.fixture_id;
+
+        const newOrphanData: LS2_C_Fixture = _fixtureMap.get(competitionFixtureId?.toString())
+
+        value.fixture_detailed.teams =
+        {
+          away:
+          {
+            score: newOrphanData?.teams?.away?.score,
+          },
+          home:
+          {
+            score: newOrphanData?.teams?.home?.score,
+          }
+        }
+
+        liveCompetitions.delete(competitionFixtureId);
+      }
+
+      // ### IMPORTANT
+      WIDGET_DATA = WIDGET_DATA;
+
+      return;
     }
 
     return;
@@ -604,17 +680,3 @@
   -->
 
 {/if}
-
-<!--
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-### COMPONENT STYLE                                                                    ◼️
-### NOTE:                                                                              ◼️
-### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
-### NOTE:                                                                              ◼️
-### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
-◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
--->
-
-<style>
-
-</style>
