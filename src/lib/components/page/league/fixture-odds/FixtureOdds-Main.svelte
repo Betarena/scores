@@ -2142,6 +2142,8 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		border: 1px solid #cccccc;
 		-webkit-appearance: none;
 		cursor: pointer;
+    /* 🔥 override */
+    padding: 0;
 	}
 	div#widget-round-week-select input[type='radio']:checked
   {

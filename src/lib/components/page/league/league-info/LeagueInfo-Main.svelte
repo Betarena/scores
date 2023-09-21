@@ -711,22 +711,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <!--
               FOLLOW BET - BUTTON
               -->
-              <button
-                id="following-btn"
-                class="cursor-not-allowed"
-              >
-                <p
-                  class=
-                  "
-                    s-14
-                    color-grey
-                    w-500
-                    no-wrap
-                  "
+              {#if false}
+                <button
+                  id="following-btn"
+                  class="cursor-not-allowed"
                 >
-                  {LEAGUE_INFO_SEO_DATA?.data?.translation?.following}
-                </p>
-              </button>
+                  <p
+                    class=
+                    "
+                      s-14
+                      color-grey
+                      w-500
+                      no-wrap
+                    "
+                  >
+                    {LEAGUE_INFO_SEO_DATA?.data?.translation?.following}
+                  </p>
+                </button>
+              {/if}
 
             </div>
 
@@ -813,51 +815,61 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </p>
           </div>
 
-          <div
-            class=
-            "
-              opt-container
-              cursor-not-allowed
-              m-r-32
-            "
-            on:click={() => (selectedOpt = 1)}
-            class:activeOpt={selectedOpt == 1}
-          >
-            <p
+          <!--
+          CONTENT VIEW BTN :: HIDDEN
+          -->
+          {#if false}
+            <div
               class=
               "
-                s-14
-                color-grey
-                w-500
-                no-wrap
+                opt-container
+                cursor-not-allowed
+                m-r-32
               "
+              on:click={() => (selectedOpt = 1)}
+              class:activeOpt={selectedOpt == 1}
             >
-              {LEAGUE_INFO_SEO_DATA?.data?.translation?.content}
-            </p>
-          </div>
+              <p
+                class=
+                "
+                  s-14
+                  color-grey
+                  w-500
+                  no-wrap
+                "
+              >
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.content}
+              </p>
+            </div>
+          {/if}
 
-          <div
-            class=
-            "
-              opt-container
-              cursor-not-allowed
-              m-r-32
-            "
-            on:click={() => (selectedOpt = 2)}
-            class:activeOpt={selectedOpt == 2}
-          >
-            <p
+          <!--
+          STATS VIEW BTN :: HIDDEN
+          -->
+          {#if false}
+            <div
               class=
               "
-                s-14
-                color-grey
-                w-500
-                no-wrap
+                opt-container
+                cursor-not-allowed
+                m-r-32
               "
+              on:click={() => (selectedOpt = 2)}
+              class:activeOpt={selectedOpt == 2}
             >
-              {LEAGUE_INFO_SEO_DATA?.data?.translation?.stats}
-            </p>
-          </div>
+              <p
+                class=
+                "
+                  s-14
+                  color-grey
+                  w-500
+                  no-wrap
+                "
+              >
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.stats}
+              </p>
+            </div>
+          {/if}
 
         </div>
 
@@ -1060,17 +1072,19 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
           <!-- [ℹ] sportsbook-logo & follow btn & container
           -->
-          <button
-            id="following-btn"
-            class="cursor-not-allowed"
-          >
-            <p
-              class="s-14 color-grey w-500 no-wrap"
+          {#if false}
+            <button
+              id="following-btn"
+              class="cursor-not-allowed"
             >
-              {LEAGUE_INFO_SEO_DATA.data
-                .translation.following}
-            </p>
-          </button>
+              <p
+                class="s-14 color-grey w-500 no-wrap"
+              >
+                {LEAGUE_INFO_SEO_DATA?.data?.translation?.following}
+              </p>
+            </button>
+          {/if}
+
         </div>
 
         <!-- [ℹ] extra tablet / mobile row
@@ -1226,7 +1240,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           id="view-tournaments-opt-container"
           class="row-space-start"
         >
-          <!-- [ℹ] options view buttons
+          <!--
+          OVERVIEW VIEW BTN
           -->
           <div
             class="opt-container cursor-pointer m-r-32"
@@ -1236,36 +1251,45 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             <p
               class="s-14 color-grey w-500 no-wrap"
             >
-              {LEAGUE_INFO_SEO_DATA.data
-                .translation.overview}
+              {LEAGUE_INFO_SEO_DATA.data.translation.overview}
             </p>
           </div>
 
-          <div
-            class="opt-container cursor-not-allowed m-r-32"
-            on:click={() => (selectedOpt = 1)}
-            class:activeOpt={selectedOpt == 1}
-          >
-            <p
-              class="s-14 color-grey w-500 no-wrap"
+          <!--
+          CONTENT VIEW BTN :: HIDDEN
+          -->
+          {#if false}
+            <div
+              class="opt-container cursor-not-allowed m-r-32"
+              on:click={() => (selectedOpt = 1)}
+              class:activeOpt={selectedOpt == 1}
             >
-              {LEAGUE_INFO_SEO_DATA.data
-                .translation.content}
-            </p>
-          </div>
+              <p
+                class="s-14 color-grey w-500 no-wrap"
+              >
+                {LEAGUE_INFO_SEO_DATA.data.translation.content}
+              </p>
+            </div>
+          {/if}
 
-          <div
-            class="opt-container cursor-not-allowed m-r-32"
-            on:click={() => (selectedOpt = 2)}
-            class:activeOpt={selectedOpt == 2}
-          >
-            <p
-              class="s-14 color-grey w-500 no-wrap"
+          <!--
+          STATS VIEW BTN :: HIDDEN
+          -->
+          {#if false}
+            <div
+              class="opt-container cursor-not-allowed m-r-32"
+              on:click={() => (selectedOpt = 2)}
+              class:activeOpt={selectedOpt == 2}
             >
-              {LEAGUE_INFO_SEO_DATA.data
-                .translation.stats}
-            </p>
-          </div>
+              <p
+                class="s-14 color-grey w-500 no-wrap"
+              >
+                {LEAGUE_INFO_SEO_DATA.data
+                  .translation.stats}
+              </p>
+            </div>
+          {/if}
+
         </div>
       </div>
 
@@ -1493,6 +1517,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         <!-- [ℹ] sportbook-logo + follow-btn
         -->
         <div class="m-b-20">
+
           <!-- [ℹ] sportsbook-logo
           -->
           {#if LEAGUE_INFO_SEO_DATA.data.sportbook_detail}
@@ -1611,17 +1636,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </div>
           {/if}
 
-          <button
-            id="following-btn"
-            class="cursor-not-allowed"
-          >
-            <p
-              class="s-14 color-grey w-500 no-wrap"
+          {#if false}
+            <button
+              id="following-btn"
+              class="cursor-not-allowed"
             >
-              {LEAGUE_INFO_SEO_DATA.data
-                .translation.following}
-            </p>
-          </button>
+              <p
+                class="s-14 color-grey w-500 no-wrap"
+              >
+                {LEAGUE_INFO_SEO_DATA.data
+                  .translation.following}
+              </p>
+            </button>
+          {/if}
+
         </div>
 
         <!-- [ℹ] bottom-row data container
@@ -1630,7 +1658,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           id="view-tournaments-opt-container"
           class="row-space-even"
         >
-          <!-- [ℹ] options view buttons
+          <!--
+          OVERVIEW VIEW BTN
           -->
           <div
             class="opt-container cursor-pointer"
@@ -1645,31 +1674,42 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             </p>
           </div>
 
-          <div
-            class="opt-container cursor-not-allowed"
-            on:click={() => (selectedOpt = 1)}
-            class:activeOpt={selectedOpt == 1}
-          >
-            <p
-              class="s-14 color-grey w-500 no-wrap"
+          <!--
+          CONTENT VIEW BTN :: HIDDEN
+          -->
+          {#if false}
+            <div
+              class="opt-container cursor-not-allowed"
+              on:click={() => (selectedOpt = 1)}
+              class:activeOpt={selectedOpt == 1}
             >
-              {LEAGUE_INFO_SEO_DATA.data
-                .translation.content}
-            </p>
-          </div>
+              <p
+                class="s-14 color-grey w-500 no-wrap"
+              >
+                {LEAGUE_INFO_SEO_DATA.data
+                  .translation.content}
+              </p>
+            </div>
+          {/if}
 
-          <div
-            class="opt-container cursor-not-allowed"
-            on:click={() => (selectedOpt = 2)}
-            class:activeOpt={selectedOpt == 2}
-          >
-            <p
-              class="s-14 color-grey w-500 no-wrap"
+          <!--
+          STATS VIEW BTN :: HIDDEN
+          -->
+          {#if false}
+            <div
+              class="opt-container cursor-not-allowed"
+              on:click={() => (selectedOpt = 2)}
+              class:activeOpt={selectedOpt == 2}
             >
-              {LEAGUE_INFO_SEO_DATA.data
-                .translation.stats}
-            </p>
-          </div>
+              <p
+                class="s-14 color-grey w-500 no-wrap"
+              >
+                {LEAGUE_INFO_SEO_DATA.data
+                  .translation.stats}
+              </p>
+            </div>
+          {/if}
+
         </div>
       </div>
 

@@ -1,19 +1,34 @@
-<!-- ===============
-COMPONENT JS (w/ TS)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 	import { browser } from '$app/environment';
-	import { onMount } from 'svelte';
 
 	import { get } from '$lib/api/utils';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, TP_W_STY, TP_W_TAG, TP_W_TOG } from '$lib/utils/debug';
-	import { viewport_change } from '$lib/utils/platform-functions';
 
 	import TopPlayersWidgetContentLoader from './TopPlayers-Loader.svelte';
 	import TopPlayerRow from './TopPlayers-Row.svelte';
@@ -26,56 +41,88 @@ COMPONENT JS (w/ TS)
 	import no_visual from './assets/no_visual.svg';
 	import no_visual_dark from './assets/no_visual_dark.svg';
 
-	import type { B_TP_D, B_TP_T } from '@betarena/scores-lib/types/top-players.js';
+	import type { B_TP_D, B_TP_T, TP_Season_Top_Player } from '@betarena/scores-lib/types/top-players.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+  // #endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-	export let B_TP_D: B_TP_D;
-  export let B_TP_T: B_TP_T;
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-	let noWidgetData: any = false;
-	let dropdownPlayerViewSelect: string = 'rating';
-	let playerArrayConst: string = 'top_players_';
-	let selectedPlayerArray: string = 'top_players_rating';
-	let toggleDropdown: boolean = false;
-	let showMore: boolean = false;
-	let displayShowMore: boolean = false;
-	let limitViewRow: number;
-	let staticViewRow: number;
-	let trueLengthOfArray: number;
-	let lazyLoadingSeasonFixture: boolean = false;
+  export let
+    B_TP_D: B_TP_D
+    , B_TP_T: B_TP_T
+  ;
 
-  //#endregion ➤ [VARIABLES]
+  let
+    /** @description TODO: DOC: */
+    noWidgetData: any = false
+    /** @description TODO: DOC: */
+    , dropdownPlayerViewSelect: string = 'rating'
+    /** @description TODO: DOC: */
+    , playerArrayConst: string = 'top_players_'
+    /** @description TODO: DOC: */
+    , selectedPlayerArray: string = 'top_players_rating'
+    /** @description TODO: DOC: */
+    , toggleDropdown: boolean = false
+    /** @description TODO: DOC: */
+    , showMore: boolean = false
+    /** @description TODO: DOC: */
+    , displayShowMore: boolean = false
+    /** @description TODO: DOC: */
+    , limitViewRow: number
+    /** @description TODO: DOC: */
+    , staticViewRow: number
+    /** @description TODO: DOC: */
+    , trueLengthOfArray: number
+    /** @description TODO: DOC: */
+    , lazyLoadingSeasonFixture: boolean = false
+    /** @description TODO: DOC: */
+    , optionsWithoutData: string[] = []
+    /** @description TODO: DOC: */
+    , wihtoutDataCheck: boolean = false
+  ;
 
-  //#region ➤ [METHODS]
+  // #endregion ➤ 📌 VARIABLES
 
+  // #region ➤ 🛠️ METHODS
+
+  /**
+   * @summary
+   * @migbash
+   *
+   * @description
+   *
+   * @param opt
+   */
 	async function selectPlayerView
   (
     opt: string
   ): Promise < void >
   {
+    // ### [🐞]
     dlog(`${TP_W_TAG} ➡️ selectPlayerView()`, TP_W_TOG, TP_W_STY);
 
-		dropdownPlayerViewSelect = opt
-			.toLowerCase()
-			.replace(/\s/g, '_');
-		selectedPlayerArray =
-			playerArrayConst + dropdownPlayerViewSelect;
-		showMore = false;
-		// limitViewRow = 10;
-
-		let checkPlayerViewOptLength = B_TP_D.seasons
+		let checkPlayerViewOptLength: TP_Season_Top_Player = B_TP_D?.seasons
     ?.find
     (
-      ({ season_id }) =>
-      season_id ===
-      $sessionStore.selectedSeasonID
+      (
+        {
+          season_id
+        }: TP_Season_Top_Player
+      ): boolean =>
+        season_id === $sessionStore?.selectedSeasonID
     );
 
+    // ### CHECK
+    // ### for 'no-target-season-id' exists.
 		if (checkPlayerViewOptLength == undefined)
     {
+      wihtoutDataCheck = false;
 			lazyLoadingSeasonFixture = true;
 
 			const response: B_TP_D = await get
@@ -90,67 +137,129 @@ COMPONENT JS (w/ TS)
 				return;
 			}
 
-      B_TP_D.seasons.push(...response?.seasons);
+      B_TP_D?.seasons?.push(...response?.seasons);
       B_TP_D = B_TP_D;
       checkPlayerViewOptLength = response?.seasons?.[0];
-      console.log('response', response);
       lazyLoadingSeasonFixture = false;
 		}
 
-    console.log('checkPlayerViewOptLength', checkPlayerViewOptLength);
-
-    // const if_M_0: boolean =
-    //   checkPlayerViewOptLength == undefined
-    //   ||
-
-		// [ℹ] validation of NO-WIDGET-DATA
-		if (
-			checkPlayerViewOptLength == undefined
+    // ### CHECK:
+    // ### for no widget data (exit).
+    const if_M_0: boolean =
+      checkPlayerViewOptLength == undefined
       ||
-			(checkPlayerViewOptLength
-				.top_players_assists.length == 0 &&
-				checkPlayerViewOptLength.top_players_goals
-					.length == 0 &&
-				checkPlayerViewOptLength
-					.top_players_rating.length == 0 &&
-				checkPlayerViewOptLength
-					.top_players_total_shots.length == 0)
-		) {
-			noWidgetData = true;
-			trueLengthOfArray = 0;
-			return;
-		}
-		// [ℹ] there is data to show
-		else {
-			noWidgetData = false;
-			trueLengthOfArray =
-				checkPlayerViewOptLength[
-					selectedPlayerArray
-				].length;
+      (
+        checkPlayerViewOptLength?.top_players_assists?.length == 0
+        && checkPlayerViewOptLength?.top_players_goals?.length == 0
+        && checkPlayerViewOptLength?.top_players_rating?.length == 0
+        && checkPlayerViewOptLength?.top_players_total_shots?.length == 0
+      )
+    ;
+    if (if_M_0)
+    {
+      noWidgetData = true;
+      trueLengthOfArray = 0;
+      return;
+    }
 
-			if (trueLengthOfArray > 10) {
-				displayShowMore = true;
-				staticViewRow = 10;
-				limitViewRow = 10;
-			} else {
-				displayShowMore = false;
-				staticViewRow = 10;
-				limitViewRow = 10;
-			}
+    dropdownPlayerViewSelect = opt
+			.toLowerCase()
+			.replace(/\s/g, '_')
+    ;
+		selectedPlayerArray =	playerArrayConst + dropdownPlayerViewSelect;
+		showMore = false;
+    optionsWithoutData = [];
 
-			return;
-		}
+    // ### CHECK:
+    // ### for options with no data (multi).
+
+    if (checkPlayerViewOptLength?.top_players_rating?.length == 0)
+      optionsWithoutData.push('rating');
+    ;
+    if (checkPlayerViewOptLength?.top_players_assists?.length == 0)
+      optionsWithoutData.push('assists');
+    ;
+    if (checkPlayerViewOptLength?.top_players_goals?.length == 0)
+      optionsWithoutData.push('goals');
+    ;
+    if (checkPlayerViewOptLength?.top_players_total_shots?.length == 0)
+      optionsWithoutData.push('total shots');
+    ;
+
+    optionsWithoutData = optionsWithoutData;
+
+    // ### CHECK:
+    // ### for 'no-options-data' check not yet been made.
+
+    if (!wihtoutDataCheck)
+    {
+      if (checkPlayerViewOptLength?.top_players_rating?.length > 0)
+      {
+        selectedPlayerArray = 'top_players_rating';
+        dropdownPlayerViewSelect = 'rating';
+      }
+      else if (checkPlayerViewOptLength?.top_players_assists?.length > 0)
+      {
+        selectedPlayerArray = 'top_players_assists';
+        dropdownPlayerViewSelect = 'assists';
+      }
+      else if (checkPlayerViewOptLength?.top_players_goals?.length > 0)
+      {
+        selectedPlayerArray = 'top_players_goals';
+        dropdownPlayerViewSelect = 'goals';
+      }
+      else if (checkPlayerViewOptLength?.top_players_total_shots?.length > 0)
+      {
+        selectedPlayerArray = 'top_players_total_shots';
+        dropdownPlayerViewSelect = 'total_shots';
+      }
+    }
+
+    wihtoutDataCheck = true;
+    noWidgetData = false;
+    trueLengthOfArray =	checkPlayerViewOptLength?.[selectedPlayerArray]?.length;
+
+    if (trueLengthOfArray > 10)
+    {
+      displayShowMore = true;
+      staticViewRow = 10;
+      limitViewRow = 10;
+    }
+    else
+    {
+      displayShowMore = false;
+      staticViewRow = 10;
+      limitViewRow = 10;
+    }
+
+    return;
 	}
 
   selectPlayerView(dropdownPlayerViewSelect);
 
-	function closeAllDropdowns
+  /**
+   * @author
+   * @migbash
+   *
+   * @summary
+   *
+   * @description
+   */
+  function closeAllDropdowns
   (
   ): void
   {
-		toggleDropdown = false;
-	}
+    toggleDropdown = false;
+  }
 
+  /**
+   * @author
+   * @migbash
+   *
+   * @summary
+   *
+   * @description
+  */
 	function toggleFullList
   (
   ): void
@@ -167,11 +276,7 @@ COMPONENT JS (w/ TS)
 		limitViewRow = trueLengthOfArray;
 	}
 
-  //#endregion ➤ [METHODS]
-
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
-
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
+  // #region ➤ 🛠️ METHODS
 
   //#region ➤ [REACTIVIY] [METHODS]
 
@@ -184,35 +289,6 @@ COMPONENT JS (w/ TS)
 	}
 
   //#endregion ➤ [REACTIVIY] [METHODS]
-
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
-
-  // ~~~~~~~~~~~~~~~~~~~~~
-	// VIEWPORT CHANGES | IMPORTANT
-  // [NOT USED]
-	// ~~~~~~~~~~~~~~~~~~~~~
-
-	const TABLET_VIEW = 1000;
-	const MOBILE_VIEW = 725; // 768 - Tablet (start)
-	let mobileExclusive,
-		tabletExclusive: boolean = false;
-
-	onMount(async () => {
-		[tabletExclusive, mobileExclusive] =
-			viewport_change(TABLET_VIEW, MOBILE_VIEW);
-		window.addEventListener(
-			'resize',
-			function () {
-				[tabletExclusive, mobileExclusive] =
-					viewport_change(
-						TABLET_VIEW,
-						MOBILE_VIEW
-					);
-			}
-		);
-	});
-
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
 
 </script>
 
@@ -236,7 +312,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 >
 
 	<!--
-  NO WIDGET DATA PLACEHOLDER
+  TOP-PLAYERS ➤ NO DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
     <WidgetNoData
@@ -248,12 +324,14 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	{/if}
 
 	<!--
-  MAIN WIDGET COMPONENT
+  TOP-PLAYERS ➤ MAIN
   -->
 	{#if !noWidgetData}
 
     {#if lazyLoadingSeasonFixture}
+
       <TopPlayersWidgetContentLoader />
+
     {:else}
 
       <WidgetTitle
@@ -267,7 +345,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       >
 
         <!--
-        DROPDOWN SELECT
+        TOP-PLAYERS ➤ DROPDOWN
         -->
         <div
           id="dropdown-top-players-container"
@@ -279,101 +357,137 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           <div
             id="dropdown-box-select"
-            class="row-space-out cursor-pointer"
+            class=
+            "
+            row-space-out
+            cursor-pointer
+            "
           >
+
             <p
               class=
               "
-                s-14
-                w-500
-                color-black-2
+              s-14
+              w-500
+              color-black-2
               "
             >
               {B_TP_T?.[dropdownPlayerViewSelect]}
             </p>
+
             <img
               src={!toggleDropdown ? arrow_down : arrow_up}
               alt={!toggleDropdown ? "arrow_down" : "arrow_up"}
               width=20
               height=20
             />
+
           </div>
 
           <!--
           TOP PLAYERS VIEWS
           -->
           {#if toggleDropdown}
+
             <div
-              id="more-top-leagues-outer">
+              id="more-top-leagues-outer"
+            >
+
               <div
                 id="more-top-leagues-list-container"
               >
-                {#each B_TP_T?.pl_view_opt || [] as optView}
-                  <div
-                    class=
-                    "
-                      row-space-out
-                      top-league-container
-                    "
-                    on:click={() => selectPlayerView(optView?.toLowerCase())}
-                  >
-                    <!--
-                    ROW DATA
-                    -->
+
+                <!-- [🐞] -->
+                <!-- {console.log('optionsWithoutData', optionsWithoutData)} -->
+                <!-- {console.log('B_TP_T?.pl_view_opt', B_TP_T?.pl_view_opt)} -->
+
+                {#each B_TP_T?.pl_view_opt ?? [] as optView}
+
+                  {#if !optionsWithoutData.includes(optView?.toLowerCase())}
+
                     <div
                       class=
                       "
-                        row-space-start
-                        cursor-pointer
+                      row-space-out
+                      top-league-container
                       "
+                      on:click={() => selectPlayerView(optView?.toLowerCase())}
                     >
                       <!--
-                      vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
+                      ROW DATA
                       -->
-                      <p
+                      <div
                         class=
                         "
+                        row-space-start
+                        cursor-pointer
+                        "
+                      >
+
+                        <p
+                          class=
+                          "
                           s-14
                           w-500
                           color-black-2
-                        "
-                        class:color-primary={
-                          dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}
-                      >
-                        {B_TP_T?.[optView.toLowerCase().replace(/\s/g, '_')]}
-                      </p>
+                          "
+                          class:color-primary=
+                          {
+                            dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')
+                          }
+                        >
+                          {B_TP_T?.[optView.toLowerCase().replace(/\s/g, '_')]}
+                        </p>
+
+                      </div>
+
+                      {#if dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}
+                        <img
+                          src={check_league}
+                          alt="default alt text"
+                          width=20
+                          height=20
+                        />
+                      {/if}
+
                     </div>
 
-                    <!--
-                    [ℹ] vlaidate that THIS SEASON - LEAGUE is PRE-SELECTED
-                    -->
-                    {#if dropdownPlayerViewSelect === optView.toLowerCase().replace(/\s/g, '_')}
-                      <img
-                        src={check_league}
-                        alt="default alt text"
-                        width=20
-                        height=20
-                      />
-                    {/if}
-                  </div>
+                  {/if}
+
                 {/each}
               </div>
+
             </div>
+
           {/if}
 
         </div>
 
         <!--
-        WIDGET COLUMN SELECTION
+        TOP-PLAYERS ➤ COLUMNS
         -->
         <div
           id="widget-title-row"
-          class="row-space-out"
+          class=
+          "
+          row-space-out
+          "
           style="width: auto;"
         >
-          <div
-            class="row-space-start">
 
+          <!--
+          1st RIGTH COLUMN
+          -->
+          <div
+            class=
+            "
+            row-space-start
+            "
+          >
+
+            <!--
+            COLUMN ➤ PLAYER RANKING
+            -->
             <p
               class=
               "
@@ -385,57 +499,83 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               #
             </p>
 
+            <!--
+            COLUMN ➤ PLAYER
+            -->
             <p
               class=
               "
-                w-400
-                small
-                color-grey
+              w-400
+              small
+              color-grey
               "
             >
-              {B_TP_T?.player}
+              {B_TP_T?.player ?? "Player"}
             </p>
 
           </div>
 
+          <!--
+          1st LEFT COLUMN
+          -->
           <div
-            class="row-space-end">
+            class=
+            "
+            row-space-end
+            "
+          >
             <p
               class=
               "
-                w-400
-                small
-                color-grey
+              w-400
+              small
+              color-grey
               "
             >
               {B_TP_T?.[dropdownPlayerViewSelect]}
             </p>
           </div>
+
         </div>
 
         <!--
-        NO SEASONS DATA CHECK
+        TOP-PLAYERS ➤ NO SEASONS DATA
         -->
         {#if trueLengthOfArray != 0}
-          {#each B_TP_D?.seasons || [] as season}
+
+          {#each B_TP_D?.seasons ?? [] as season}
+
             {#if season?.season_id === $sessionStore?.selectedSeasonID}
-              {#each season?.[selectedPlayerArray].slice(0, limitViewRow) as data, i}
+
+              {#each season?.[selectedPlayerArray]?.slice(0, limitViewRow) ?? [] as data, i}
+
                 <TopPlayerRow
                   pos={i + 1}
                   optView={dropdownPlayerViewSelect}
                   {data}
                   translations={B_TP_T}
                 />
+
               {/each}
+
             {/if}
+
           {/each}
+
         {:else}
+
           <!--
           PARTIAL PLACEHOLDER
           -->
           <div
-            class="column-space-center"
-            style="margin-top: 280px;"
+            class=
+            "
+            column-space-center
+            "
+            style=
+            "
+            margin-top: 280px;
+            "
           >
 
             <!--
@@ -446,7 +586,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               alt="no_visual_dark"
               width=32
               height=32
-              class="m-b-16"
+              class=
+              "
+              m-b-16
+              "
             />
 
             <!--
@@ -456,9 +599,9 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
               <p
                 class=
                 "
-                  s-14
-                  w-500
-                  color-black-2
+                s-14
+                w-500
+                color-black-2
                 "
               >
                 {B_TP_T?.no_data_t?.no_info}
@@ -469,10 +612,12 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
         {/if}
 
         <!--
-        SHOW MORE/LESS
+        TOP-PLAYERS ➤ SHOW MORE/LESS
         -->
         {#if displayShowMore && trueLengthOfArray != 0}
+
           <div>
+
             <p
               id="show-more-box"
               on:click={() => toggleFullList()}
@@ -483,12 +628,20 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                 {B_TP_T?.show_more_less?.[0]}
               {/if}
             </p>
+
           </div>
+
         {:else if trueLengthOfArray != 0}
+
           <p
             id="show-more-box"
-            style="padding: 5px; box-shadow: none;"
+            style=
+            "
+            padding: 5px;
+            box-shadow: none;
+            "
           />
+
         {/if}
 
       </div>
@@ -499,10 +652,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 </div>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT STYLE                                                                    ◼️
+### NOTE:                                                                              ◼️
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <style>
 
@@ -627,44 +785,47 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		cursor: pointer;
 	}
 
-	/* ====================
-    RESPONSIVNESS
-  ==================== */
-
 	/*
-  TABLET RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) and (max-width: 1000px) {
-		#top-players-widget-container {
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  */
+
+	@media only screen
+  and (min-width: 726px)
+  and (max-width: 1000px)
+  {
+		#top-players-widget-container
+    {
 			min-width: 100%;
 			/* max-width: 700px; */
 		}
 	}
 
-	/*
-  TABLET && DESKTOP SHARED RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 726px) {
-		/* EMPTY */
-	}
-
-	/*
-  DESKTOP RESPONSIVNESS (&+) */
-	@media only screen and (min-width: 1160px) {
-		#top-players-widget-container {
+	@media only screen
+  and (min-width: 1160px)
+  {
+		#top-players-widget-container
+    {
 			min-width: 100%;
 		}
 
-		div#widget-outer {
+		div#widget-outer
+    {
 			margin-top: 0;
 		}
 
-		div#widget-title-row {
+		div#widget-title-row
+    {
 			margin: 20px 20px 12.5px 20px;
 		}
 	}
 
-	/* ====================
-    WIDGET DARK THEME
-  ==================== */
+	/*
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  */
 
 	.dark-background-1 div#widget-title-row {
 		background-color: #616161 !important;
@@ -699,4 +860,5 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		div#more-top-leagues-list-container::-webkit-scrollbar-track {
 		background: #4b4b4b !important;
 	}
+
 </style>
