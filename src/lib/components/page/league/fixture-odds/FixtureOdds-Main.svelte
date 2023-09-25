@@ -1775,8 +1775,8 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                         <!--
                         TEAM RED CARDS
                         -->
-                        {#if fixture?.teams?.home?.red_cards}
-                          {#if fixture?.teams?.home?.red_cards == 1}
+                        {#if fixture?.teams?.away?.red_cards}
+                          {#if fixture?.teams?.away?.red_cards == 1}
                             <img
                               loading="lazy"
                               src={$userBetarenaSettings.theme == 'Dark' ? one_red_card_dark : one_red_card}
@@ -1784,7 +1784,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                               width="12"
                               height="16"
                             />
-                          {:else if fixture?.teams?.home?.red_cards == 2}
+                          {:else if fixture?.teams?.away?.red_cards == 2}
                             <img
                               loading="lazy"
                               src={$userBetarenaSettings.theme == 'Dark' ? two_red_card_dark : two_red_card}
