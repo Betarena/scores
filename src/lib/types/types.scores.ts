@@ -31,7 +31,7 @@ export type Auth_Type =
  * @description
  * Interface for 'authenticated' users.
  */
-export interface Betarena_User
+export interface BetarenaUser
 {
   /**
    * @description
@@ -54,7 +54,7 @@ export interface Scores_User
   /** Authenticated user firestore DB data object */
 	firebase_user_data: User;
   /** Authenticated user critical data */
-	scores_user_data: Betarena_User;
+	scores_user_data: BetarenaUser;
 }
 
 /**

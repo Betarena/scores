@@ -12,7 +12,7 @@ COMPONENT JS (w/ TS)
 	import { onMount } from 'svelte';
 	import { fade } from 'svelte/transition';
 
-	import { get } from '$lib/api/utils';
+	import { get, post } from '$lib/api/utils';
 	import { app, auth, db_firestore } from '$lib/firebase/init';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -30,7 +30,7 @@ COMPONENT JS (w/ TS)
 
   import { signInWithMoralis, type SignInWithMoralisResponse } from "@moralisweb3/client-firebase-evm-auth";
 
-	import type { Auth_Type, Betarena_User, Scores_User } from '$lib/types/types.scores.js';
+	import type { Auth_Type, BetarenaUser, Scores_User } from '$lib/types/types.scores.js';
 	import type { REDIS_CACHE_SINGLE_auth_translation } from '@betarena/scores-lib/types/auth.js';
 
   //#endregion Package Imports
@@ -1041,7 +1041,7 @@ COMPONENT JS (w/ TS)
       ]
     );
 
-    // ACTION: Create / retrieve target Betarena_User
+    // ACTION: Create / retrieve target BetarenaUser
     const
     [
       BETARENA_USER,
@@ -1094,7 +1094,7 @@ COMPONENT JS (w/ TS)
    * ➨ if exists - return target user.
    * ➨ else, create a new instance of user for Firestore.
    * @returns
-   * {Promise<[Betarena_User, boolean]>} [Betarena_User, boolean]
+   * {Promise<[BetarenaUser, boolean]>} [BetarenaUser, boolean]
   */
   async function userFirestore
   (
@@ -1102,7 +1102,7 @@ COMPONENT JS (w/ TS)
     firebase_user: User,
     web3_wallet_addr: string,
     auth_provider_type: Auth_Type
-  ): Promise< [ Betarena_User, boolean ]>
+  ): Promise< [ BetarenaUser, boolean ]>
   {
     try
     {
@@ -1127,7 +1127,7 @@ COMPONENT JS (w/ TS)
         );
 
         // return existing firestore user-instance;
-        return [docSnap.data() as Betarena_User, true]
+        return [docSnap.data() as BetarenaUser, true]
       }
       else
       {
@@ -1138,12 +1138,12 @@ COMPONENT JS (w/ TS)
           AU_W_TAG[0],
           [
             `🔴 Target UID does not exists`,
-            `🔵 Creating new Betarena_User instance`
+            `🔵 Creating new BetarenaUser instance`
           ]
         );
 
         // create new user-instance;
-        const scores_user_data: Betarena_User =
+        const scores_user_data: BetarenaUser =
         {
           lang: $sessionStore?.serverLang,
           registration_type: [auth_provider_type],
