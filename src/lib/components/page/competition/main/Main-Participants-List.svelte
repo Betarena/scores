@@ -43,7 +43,7 @@
   import icon_profile_avatar from './assets/icon-profile-avatar.svg';
   import icon_trophy from './assets/icon-trophy.svg';
 
-	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
+	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_C_COMP_DATA_Prediction_Group, B_C_COMP_DATA_Status } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { B_COMP_MAIN_T } from '@betarena/scores-lib/types/types.competition.main.js';
 
@@ -67,7 +67,7 @@
     /** @description competition (main) - participants target view list */
     participantList: string[],
     /** @description competition (main) - participants detailed data `Map` */
-    participantsMap: Map < string, Betarena_User >,
+    participantsMap: Map < string, BetarenaUser >,
     /** @description competition (main) - competition total prize amount */
     totalPrize: number,
     /** @description competition (main) - competition entry fee amount */

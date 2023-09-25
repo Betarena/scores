@@ -51,7 +51,7 @@
   import icon_twitter_white from './assets/icon-twitter-white.svg';
   import icon_twitter from './assets/icon-twitter.svg';
 
-	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
+	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 	import type { LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
@@ -100,7 +100,7 @@
     /** @description TODO: DOC: */
     prediction_side: 'home' | 'away',
     /** @description TODO: DOC: */
-    participantsMap: Map < string, Betarena_User > = new Map(),
+    participantsMap: Map < string, BetarenaUser > = new Map(),
     /** @description TODO: DOC: */
     competitionWasLive: boolean = false
   ;
@@ -215,9 +215,9 @@
     const participantPublicData = await new Betarena_User_Class().obtainPublicInformationTargetUsers
     (
       newUids
-    ) as (Betarena_User | undefined)[];
+    ) as (BetarenaUser | undefined)[];
 
-    const newParticipantsMap: Map < string, Betarena_User > = new Betarena_User_Class().convertToMap
+    const newParticipantsMap: Map < string, BetarenaUser > = new Betarena_User_Class().convertToMap
     (
       participantPublicData
     );

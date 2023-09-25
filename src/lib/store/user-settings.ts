@@ -4,7 +4,7 @@ import { dlog } from '$lib/utils/debug.js';
 import { writable } from 'svelte/store';
 
 import type { GeoJsResponse } from '$lib/types/types.geojs.js';
-import type { Betarena_User, Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
+import type { BetarenaUser, Scores_User, User_Setting, Voted_Fixture } from '$lib/types/types.scores.js';
 
 // #endregion ➤ 📦 Package Imports
 
@@ -455,7 +455,7 @@ function createLocalStore
      */
     updateUserData:
     (
-      data: Betarena_User
+      data: BetarenaUser
     ): void =>
     {
       const localStore: User_Setting = methods.parseLocalStorage();

@@ -43,7 +43,7 @@
 	import CompDetails from '$lib/components/shared/COMP-Details.svelte';
 	import CompTeams from '$lib/components/shared/COMP-Teams.svelte';
 
-	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
+	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_SAP_CP_T, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 	import type { B_COMP_HIGH_D, B_COMP_HIGH_T } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
@@ -63,7 +63,7 @@
     /** Page data availabe for `this` layout */
     B_SAP_CP_T: B_SAP_CP_T,
     /** @description competition (main) - participants detailed data `Map` */
-    participantsMap: Map < string, Betarena_User >
+    participantsMap: Map < string, BetarenaUser >
   ;
 
   const

@@ -27,15 +27,15 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
-	import sessionStore from '$lib/store/session.js';
 	import { get } from '$lib/api/utils.js';
+	import sessionStore from '$lib/store/session.js';
 	import { dlog } from '$lib/utils/debug.js';
 	import { Betarena_User_Class } from '@betarena/scores-lib/dist/classes/class.betarena-user.js';
 	import { Competition } from '@betarena/scores-lib/dist/classes/class.competition.js';
 
   import HighlightsNoCompetitions from './Highlights-No-Competitions.svelte';
 
-	import type { Betarena_User } from '$lib/types/types.scores.js';
+	import type { BetarenaUser } from '$lib/types/types.scores.js';
 	import type { B_H_COMP_DATA } from '@betarena/scores-lib/types/_HASURA_.js';
 	import type { FIRE_LNNS } from '@betarena/scores-lib/types/firebase.js';
 	import type { LS2_C_Fixture } from '@betarena/scores-lib/types/livescores-v2.js';
@@ -91,7 +91,7 @@
     /** @description competitions (lobby) highlights (widget) - no competitions available */
     isNoCompetitions: boolean = false,
     /** @description competitions (lobby) highlights (widget) - all participants map */
-    participantsMap: Map < string, Betarena_User > = new Map()
+    participantsMap: Map < string, BetarenaUser > = new Map()
   ;
 
   $: B_SAP_CP_T = $page.data?.B_SAP_CP_T;
@@ -315,9 +315,9 @@
     const participantPublicData = await new Betarena_User_Class().obtainPublicInformationTargetUsers
     (
       newUids
-    ) as (Betarena_User | undefined)[];
+    ) as (BetarenaUser | undefined)[];
 
-    const newParticipantsMap: Map < string, Betarena_User > = new Betarena_User_Class().convertToMap
+    const newParticipantsMap: Map < string, BetarenaUser > = new Betarena_User_Class().convertToMap
     (
       participantPublicData
     );

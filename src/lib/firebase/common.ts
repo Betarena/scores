@@ -8,7 +8,7 @@ import { doc, DocumentReference, DocumentSnapshot, getDoc, onSnapshot, updateDoc
 import { getTargetRealDbData } from "./firebase.actions.js";
 import { db_firestore, db_real } from "./init";
 
-import type { Betarena_User } from "$lib/types/types.scores.js";
+import type { BetarenaUser } from "$lib/types/types.scores.js";
 import type { FIRE_LNNS, FIRE_LNPI, FIREBASE_livescores_now, FIREBASE_odds } from "@betarena/scores-lib/types/firebase.js";
 
 // #endregion ➤ 📦 Package Imports
@@ -42,7 +42,7 @@ export function userBalanceListen
       doc
     ): void =>
     {
-      const data: Betarena_User = doc.data();
+      const data: BetarenaUser = doc.data();
       userBetarenaSettings.userUpdateBTABalance
       (
         data.main_balance
@@ -113,7 +113,7 @@ export async function userDataFetch
 
   if (!docSnap.exists()) return;
 
-  const userData: Betarena_User = docSnap.data();
+  const userData: BetarenaUser = docSnap.data();
 
   userBetarenaSettings.updateUserData
   (

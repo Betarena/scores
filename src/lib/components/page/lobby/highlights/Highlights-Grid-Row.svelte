@@ -32,7 +32,7 @@
   import icon_slider_left from './assets/icon-slider-left.svg';
   import icon_slider_right from './assets/icon-slider-right.svg';
 
-	import type { Betarena_User } from '@betarena/scores-lib/types/_FIREBASE_.js';
+	import type { BetarenaUser } from '@betarena/scores-lib/types/_FIREBASE_.js';
 	import type { B_COMP_HIGH_D } from '@betarena/scores-lib/types/types.competition.highlights.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -49,7 +49,7 @@
     /** @description TODO: DOC: */
     competitionList: B_COMP_HIGH_D[] = [],
     /** @description competition (main) - participants detailed data `Map` */
-    participantsMap: Map < string, Betarena_User >
+    participantsMap: Map < string, BetarenaUser >
   ;
 
   const
