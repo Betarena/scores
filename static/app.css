@@ -48,7 +48,8 @@ body {
 	box-sizing: border-box;
 }
 
-a {
+a
+{
 	text-decoration: none !important;
 	color: inherit;
 	display: flex;
@@ -382,6 +383,10 @@ h5 {
 .display-none
 {
 	display: none !important;
+}
+.display-unset
+{
+  display: unset !important;
 }
 .visibility-none
 {
