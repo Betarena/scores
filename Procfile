@@ -1,1 +1,1 @@
-web: npm run sveltekit::start::heroku
+web: npm run start
