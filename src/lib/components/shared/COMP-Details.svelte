@@ -53,7 +53,9 @@
     /** @description competition (shared) - target competition data */
     B_COMP_HIGH_D: B_COMP_HIGH_D,
     /** @description competition (shared) - target competition translations */
-    WIDGET_T_DATA: B_COMP_HIGH_T
+    WIDGET_T_DATA: B_COMP_HIGH_T,
+    /** @description competition (shared) - show/hide competition details */
+    hideLinks: boolean = false
   ;
 
   const
@@ -191,6 +193,7 @@ COMPETITION DETAILS
   -->
   <a
     href={langUrlPrefix}{removeDiacritics(B_SAP_D3_SP_M?.[$sessionStore?.serverLang] ?? '')}
+    class:disable-anchor={hideLinks}
   >
 
     <div>
