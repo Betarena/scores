@@ -46,7 +46,9 @@
     /** @description TODO: DOC: */
     prediction_side: 'home' | 'away',
     /** @description TODO: DOC: */
-    fixtureUrl: string
+    fixtureUrl: string,
+    /** @description TODO: DOC: */
+    disableUrl: boolean = false
   ;
 
   const
@@ -73,7 +75,7 @@ FIXTURE TEAMS
 -->
 <a
   href={cleanUrl(fixtureUrl)}
-  class:disable-anchor={checkNull(fixtureUrl)}
+  class:disable-anchor={checkNull(fixtureUrl) || disableUrl}
 >
   <div
     id="{CNAME}⮕main"

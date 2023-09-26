@@ -328,16 +328,22 @@
 <!-- [🐞] -->
 <!-- {B_COMP_HIGH_D?.competition?.id} -->
 
-<div
-  id="{CNAME}⮕main"
-  class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
+<a
+  href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}"
+  class=
+  "
+  display-unset
+  "
 >
 
-  <!--
-  TOP COMPETITION ROW
-  -->
-  <a
-    href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}">
+  <div
+    id="{CNAME}⮕main"
+    class:dark-background-1={$userBetarenaSettings.theme ==	'Dark'}
+  >
+
+    <!--
+    TOP COMPETITION ROW
+    -->
     <div
       id="{CNAME}⮕top-row"
       class=
@@ -488,264 +494,267 @@
       </div>
 
     </div>
-  </a>
-
-  <!--
-  COMPETITION INFORMATION MAIN
-  -->
-  <div
-    id="{CNAME}⮕middle-section"
-  >
 
     <!--
-    TOURNAMENT INFO
+    COMPETITION INFORMATION MAIN
     -->
     <div
-      class=
-      "
-      row-space-start
-      m-b-24
-      "
+      id="{CNAME}⮕middle-section"
     >
 
-      <img
-        id=''
-        src={B_COMP_HIGH_D?.league?.image_path_j}
-        alt='competition-league-logo'
-        title={B_COMP_HIGH_D?.league?.name}
-        loading='lazy'
-        width=38
-        height=38
+      <!--
+      TOURNAMENT INFO
+      -->
+      <div
         class=
         "
-        m-r-16
-        google-aspect-ratio
+        row-space-start
+        m-b-24
         "
-      />
+      >
 
-      <!--
-      FIXTURE TOURNAMENT / COUNTRY INFO
-      -->
-      <div>
-
-        <p
+        <img
+          id=''
+          src={B_COMP_HIGH_D?.league?.image_path_j}
+          alt='competition-league-logo'
+          title={B_COMP_HIGH_D?.league?.name}
+          loading='lazy'
+          width=38
+          height=38
           class=
           "
-          s-16
-          w-500
-          color-black-2
-          m-b-3
-          league-name
-          no-wrap
+          m-r-16
+          google-aspect-ratio
           "
-        >
-          {B_COMP_HIGH_D?.league?.name ?? ''}
-        </p>
+        />
 
-        <div
-          class=
-          "
-          row-space-start
-          "
-        >
-
-          <img
-            id=''
-            src={iso2CountryLogo(B_COMP_HIGH_D?.league?.country_iso2_j)}
-            alt='countryIcon'
-            title='CountryNameGoesHere'
-            loading='lazy'
-            width=16
-            height=16
-            class=
-            "
-            m-r-6
-            country-img
-            "
-          />
+        <!--
+        FIXTURE TOURNAMENT / COUNTRY INFO
+        -->
+        <div>
 
           <p
             class=
             "
+            s-16
+            w-500
             color-black-2
-            s-10
+            m-b-3
+            league-name
+            no-wrap
             "
           >
-            {countryMap?.get(B_COMP_HIGH_D?.league?.country_id_j?.toString())?.translations?.[$sessionStore?.serverLang] ?? ''}
+            {B_COMP_HIGH_D?.league?.name ?? ''}
           </p>
+
+          <div
+            class=
+            "
+            row-space-start
+            "
+          >
+
+            <img
+              id=''
+              src={iso2CountryLogo(B_COMP_HIGH_D?.league?.country_iso2_j)}
+              alt='countryIcon'
+              title='CountryNameGoesHere'
+              loading='lazy'
+              width=16
+              height=16
+              class=
+              "
+              m-r-6
+              country-img
+              "
+            />
+
+            <p
+              class=
+              "
+              color-black-2
+              s-10
+              "
+            >
+              {countryMap?.get(B_COMP_HIGH_D?.league?.country_id_j?.toString())?.translations?.[$sessionStore?.serverLang] ?? ''}
+            </p>
+
+          </div>
 
         </div>
 
       </div>
 
-    </div>
-
-    <!--
-    FIXTURE TEAMS
-    -->
-    <div
-      class=
-      "
-      m-b-16
-      "
-    >
-
-      <CompTeams
-        B_COMP_HIGH_D={B_COMP_HIGH_D}
-        {prediction_side}
-        {prediction_type}
-        fixtureUrl={B_COMP_HIGH_D?.fixture?.urls?.[$sessionStore?.serverLang]}
-      />
-
-    </div>
-
-    <!--
-    COMPETITION COUNTDOWN / STATUS
-    -->
-    {#if !['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
-
+      <!--
+      FIXTURE TEAMS
+      -->
       <div
-        id="{CNAME}⮕countdown"
         class=
         "
-        m-b-24
+        m-b-16
         "
       >
 
-        <CompCountdownStatus
-          {isViewMobile}
-          {isViewTablet}
-          forceView={true}
+        <CompTeams
+          B_COMP_HIGH_D={B_COMP_HIGH_D}
+          {prediction_side}
+          {prediction_type}
+          fixtureUrl={B_COMP_HIGH_D?.fixture?.urls?.[$sessionStore?.serverLang]}
+          disableUrl={true}
+        />
+
+      </div>
+
+      <!--
+      COMPETITION COUNTDOWN / STATUS
+      -->
+      {#if !['finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+
+        <div
+          id="{CNAME}⮕countdown"
+          class=
+          "
+          m-b-24
+          "
+        >
+
+          <CompCountdownStatus
+            {isViewMobile}
+            {isViewTablet}
+            forceView={true}
+            B_COMP_HIGH_D={B_COMP_HIGH_D}
+            WIDGET_T_DATA={WIDGET_T_DATA}
+            designView={'1'}
+          />
+
+        </div>
+
+      {/if}
+
+      <!--
+      COMPETITION DETAILS
+      -->
+      <div
+        id="{CNAME}⮕grid-details"
+      >
+
+        <CompDetails
           B_COMP_HIGH_D={B_COMP_HIGH_D}
           WIDGET_T_DATA={WIDGET_T_DATA}
-          designView={'1'}
+          isViewMobile={isViewMobile}
+          isViewTablet={isViewTablet}
+          forceView={true}
+          hideLinks={true}
         />
+
+      </div>
+
+    </div>
+
+    <!--
+    COMPETITION BOTTOM ROW
+    -->
+    {#if !['active','finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
+
+      <div
+        id="{CNAME}⮕bottom-row"
+        class=
+        "
+        row-space-out
+        "
+      >
+
+        <!--
+        PARTICIPANTS PREVIEW
+        -->
+        <div
+          class=
+          "
+          width-auto
+          row-space-start
+          "
+        >
+
+          {#if
+            (
+              B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
+            + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
+            ) > 0
+          }
+
+            <div
+              class=
+              "
+              m-r-12
+              row-space-start
+              participant-list
+              "
+            >
+
+              {#each B_COMP_HIGH_D?.first_3_participants ?? [] as item}
+
+                <img
+                  id=''
+                  class=
+                  "
+                  participant-img
+                  "
+                  src={item ?? icon_profile_avatar}
+                  alt='participant_1'
+                  title='Partitipant_1'
+                  loading='lazy'
+                  width=32
+                  height=32
+                />
+
+              {/each}
+
+            </div>
+
+          {/if}
+
+          <p
+            class=
+            "
+            s-12
+            color-black-2
+            no-wrap
+            "
+          >
+            {
+              B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
+              + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
+            }
+            <br/>
+            {WIDGET_T_DATA?.title_participants ?? 'participants'}
+          </p>
+
+        </div>
+
+        <!--
+        JOIN COMPETITION
+        -->
+        <a
+          href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}">
+          <button
+            class=
+            "
+            s-14
+            w-500
+            btn-primary-v2
+            "
+          >
+            {B_SAP_CP_T?.general?.data?.join ?? 'Join now'}
+          </button>
+        </a>
 
       </div>
 
     {/if}
 
-    <!--
-    COMPETITION DETAILS
-    -->
-    <div
-      id="{CNAME}⮕grid-details"
-    >
-
-      <CompDetails
-        B_COMP_HIGH_D={B_COMP_HIGH_D}
-        WIDGET_T_DATA={WIDGET_T_DATA}
-        isViewMobile={isViewMobile}
-        isViewTablet={isViewTablet}
-        forceView={true}
-      />
-
-    </div>
-
   </div>
 
-  <!--
-  COMPETITION BOTTOM ROW
-  -->
-  {#if !['active','finished','canceled'].includes(B_COMP_HIGH_D?.competition?.data?.status)}
-
-    <div
-      id="{CNAME}⮕bottom-row"
-      class=
-      "
-      row-space-out
-      "
-    >
-
-      <!--
-      PARTICIPANTS PREVIEW
-      -->
-      <div
-        class=
-        "
-        width-auto
-        row-space-start
-        "
-      >
-
-        {#if
-          (
-            B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
-          + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
-          ) > 0
-        }
-
-          <div
-            class=
-            "
-            m-r-12
-            row-space-start
-            participant-list
-            "
-          >
-
-            {#each B_COMP_HIGH_D?.first_3_participants ?? [] as item}
-
-              <img
-                id=''
-                class=
-                "
-                participant-img
-                "
-                src={item ?? icon_profile_avatar}
-                alt='participant_1'
-                title='Partitipant_1'
-                loading='lazy'
-                width=32
-                height=32
-              />
-
-            {/each}
-
-          </div>
-
-        {/if}
-
-        <p
-          class=
-          "
-          s-12
-          color-black-2
-          no-wrap
-          "
-        >
-          {
-            B_COMP_HIGH_D?.competition?.data?.participants?.yes?.length
-            + B_COMP_HIGH_D?.competition?.data?.participants?.no?.length
-          }
-          <br/>
-          {WIDGET_T_DATA?.title_participants ?? 'participants'}
-        </p>
-
-      </div>
-
-      <!--
-      JOIN COMPETITION
-      -->
-      <a
-        href="/{B_COMP_HIGH_D?.competition?.urls?.[$sessionStore?.serverLang]}">
-        <button
-          class=
-          "
-          s-14
-          w-500
-          btn-primary-v2
-          "
-        >
-          {B_SAP_CP_T?.general?.data?.join ?? 'Join now'}
-        </button>
-      </a>
-
-    </div>
-
-  {/if}
-
-</div>
+</a>
 
 <!--
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -774,6 +783,8 @@
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px;
     overflow: hidden;
+    /* 🎭 animation */
+    transition: all ease-in-out 0.25s;
 	}
 
   div#competition⮕w⮕highlights⮕top-row
@@ -846,8 +857,13 @@
   */
 
 	@media only screen
-  and (min-width: 767px)
+  and (min-width: 912px)
   {
+    div#competition⮕w⮕highlights⮕main:hover
+    {
+      /* 🎨 style */
+      transform: translateY(-15px);
+    }
 	}
 
 	/*
