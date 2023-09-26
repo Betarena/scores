@@ -619,7 +619,9 @@ CAROUSEL DOTS
     /* NOTE: only necessary if child 'grid' is position 'absolute' */
     /* height: 483px; */
     max-width: calc(100vw - 32px);
-    overflow: hidden;
+    /* overflow: hidden; */
+    padding-top: 15px;
+    overflow-x: hidden;
   }
 
   div#competition⮕w⮕highlights-grid⮕competitions-inner
