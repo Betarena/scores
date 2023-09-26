@@ -1,4 +1,5 @@
 import { goto } from "$app/navigation";
+import { post } from "$lib/api/utils.js";
 import { userBalanceListen, userDataFetch } from "$lib/firebase/common.js";
 import { delCookie, setCookie } from "$lib/store/cookie.js";
 import userBetarenaSettings from '$lib/store/user-settings.js';
@@ -17,10 +18,10 @@ export const ROUTE_ID_PROFILE = '/u/[view]/[lang=lang]';
  *
  * ⚡️ Sets `user` data listeners.
  */
-export function initUser
+export async function initUser
 (
   uid: string
-): void
+): Promise<void>
 {
 
   const username = 'true';
@@ -40,6 +41,14 @@ export function initUser
   userBalanceListen
   (
     uid
+  );
+
+  await post
+  (
+    `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
+    {
+      user_uids: [uid]
+    }
   );
 
 }
