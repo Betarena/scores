@@ -1073,14 +1073,6 @@ COMPONENT JS (w/ TS)
 		email_input = undefined;
 		success_auth = true;
 
-    await post
-    (
-      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
-      {
-        user_uids: [user_obj?.firebase_user_data?.uid]
-      }
-    );
-
 		setTimeout
     (
       () =>

@@ -12,6 +12,7 @@
 	import { page } from '$app/stores';
 	import { onMount } from 'svelte';
 
+	import { post } from '$lib/api/utils.js';
 	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlog, initSentry } from '$lib/utils/debug';
@@ -102,6 +103,25 @@
   /**
    * @description
    * TODO: DOC:
+  */
+  async function updateFirestoreAndCrisp
+  (
+  ): Promise < void >
+  {
+    if (!browser || $userBetarenaSettings?.user == undefined) return;
+
+    await post
+    (
+      `${import.meta.env.VITE_FIREBASE_FUNCTIONS_ORIGIN}${import.meta.env.VITE_FIREBASE_FUNCTIONS_F_1}`,
+      {
+        user_uids: [$userBetarenaSettings?.user?.firebase_user_data?.uid]
+      }
+    );
+  }
+
+  /**
+   * @description
+   * TODO: DOC:
    */
   function kickstartEventListen
   (
@@ -111,17 +131,34 @@
     // ### listen to changes in 'window.offline'.
     window.addEventListener
     (
-			'offline',
-			toggleOfflineAlert
-		);
+      'offline',
+      toggleOfflineAlert
+    );
 
     // ### NOTE:
     // ### listen to changes in 'window.online'.
-		window.addEventListener
+    window.addEventListener
     (
-			'online',
-			toggleOfflineAlert
-		);
+      'online',
+      toggleOfflineAlert
+    );
+
+    // ### NOTE:
+    // ### listen to changes in 'document.visibility'.
+    document.addEventListener
+    (
+      'visibilitychange',
+      async function
+      (
+      ): Promise < void >
+      {
+        if (!document.hidden)
+        {
+          dlog('🔵 user is active', true)
+          updateFirestoreAndCrisp();
+        }
+      }
+    );
   }
 
   // #endregion ➤ 🛠️ METHODS
