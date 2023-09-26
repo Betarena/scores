@@ -177,7 +177,8 @@
           a
           ,b
         ) =>
-          b?.competition?.id - a?.competition?.id
+          (b?.competition?.data?.participants?.no?.length + b?.competition?.data?.participants?.yes.length)
+          - (a?.competition?.data?.participants?.no.length + a?.competition?.data?.participants?.yes.length)
       );
     ;
     if (activeCompetitions?.length > 0)
