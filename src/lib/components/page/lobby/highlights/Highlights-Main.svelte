@@ -786,11 +786,6 @@
     /* 🎭 animation */
     transition: all ease-in-out 0.25s;
 	}
-  div#competition⮕w⮕highlights⮕main:hover
-  {
-    /* 🎨 style */
-    transform: translateY(-15px);
-  }
 
   div#competition⮕w⮕highlights⮕top-row
   {
@@ -862,8 +857,13 @@
   */
 
 	@media only screen
-  and (min-width: 767px)
+  and (min-width: 912px)
   {
+    div#competition⮕w⮕highlights⮕main:hover
+    {
+      /* 🎨 style */
+      transform: translateY(-15px);
+    }
 	}
 
 	/*
