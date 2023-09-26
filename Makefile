@@ -44,11 +44,11 @@ dev-local-clear-build-quick:
 #
 
 dev-local-deploy:
-	npm run dev
+	npm run sveltekit::dev
 #
 
 dev-local-scores-lib-link:
-	npm run @betarena/scores-lib:link
+	npm run pkg::@betarena/scores-lib::link
 #
 
 dev-local-dev-1-click-spin: ; ${MAKE} -j2 dev-local-clear-build-quick dev-local-deploy dev-local-scores-lib-link
