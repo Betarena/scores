@@ -307,7 +307,7 @@ h5 {
 .color-green
 {
   /* 🎨 style */
-	color: var(--green-color);
+	color: var(--green-color) !important;
 }
 .color-yellow
 {
