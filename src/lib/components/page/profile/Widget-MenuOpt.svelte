@@ -83,6 +83,9 @@ COMPONENT JS (w/ TS)
     if (selectedMenuOpt == 'Withdraw')
       targetUrl = `/u/withdraw/${$userBetarenaSettings.lang}`
     ;
+    if (selectedMenuOpt == 'Competitions History')
+      targetUrl = `/u/competition-history/${$userBetarenaSettings.lang}`
+    ;
 
     goto
     (
@@ -128,6 +131,9 @@ COMPONENT JS (w/ TS)
     ;
     if ($page?.url?.pathname.includes('withdraw'))
 			selectedMenuOpt = 'Withdraw';
+    ;
+    if ($page?.url?.pathname.includes('competition-history'))
+			selectedMenuOpt = 'Competitions History';
     ;
 	}
 
