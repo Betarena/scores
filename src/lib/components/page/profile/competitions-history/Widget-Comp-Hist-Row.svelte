@@ -170,8 +170,9 @@
 -->
 
 <tr
-  class:extra-info={isCompExtraInfo && (isViewMobile || isViewTablet)}
   on:click={() => isCompExtraInfo = !isCompExtraInfo}
+  class:extra-info={isCompExtraInfo && (isViewMobile || isViewTablet)}
+  class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
 
   <!--
@@ -304,13 +305,15 @@
           "
           class:completed={competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
           class:failed={competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+          class:menu-opt-not-available={competitionObject?.data?.status == 'canceled'}
+          class:color-grey={competitionObject?.data?.status == 'canceled'}
         >
           {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-            Won
-          {:else if competitionObject?.data?.status == 'finished'}
-            Lost
-          {:else}
-            -
+            {translationObject?.result?.won ?? 'Won'}
+          {:else if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+            {translationObject?.result?.lost ?? 'Lost'}
+          {:else if competitionObject?.data?.status == 'canceled'}
+            {translationObject?.result?.refund ?? 'Refunded'}
           {/if}
         </p>
       </div>
@@ -517,12 +520,15 @@
               "
               s-14
               color-black-2
+              no-wrap
               "
               class:capitalize={item == 'forecast'}
 
               class:comp-status-pill={item == 'result'}
               class:completed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
               class:failed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+              class:menu-opt-not-available={item == 'result' && competitionObject?.data?.status == 'canceled'}
+              class:color-grey={item == 'result' && competitionObject?.data?.status == 'canceled'}
 
               class:color-green={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
               class:color-red-bright-v2={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
@@ -545,11 +551,11 @@
                 {competitionUserForecast ?? '-'}
               {:else if item == 'result'}
                 {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-                  Won
-                {:else if competitionObject?.data?.status == 'finished'}
-                  Lost
-                {:else}
-                  -
+                  {translationObject?.result?.won ?? 'Won'}
+                {:else if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+                  {translationObject?.result?.lost ?? 'Lost'}
+                {:else if competitionObject?.data?.status == 'canceled'}
+                  {translationObject?.result?.refund ?? 'Refunded'}
                 {/if}
               {:else if item == 'prize_won'}
                 {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
@@ -680,7 +686,6 @@
     box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
   }
 
-
   tr div.tx-extra-info
   {
     /* 🎨 style */
@@ -692,5 +697,25 @@
     /*  */
     gap: 12px;
   }
+
+  p.menu-opt-not-available
+  {
+    /* 🎨 style */
+    padding: 3px 8px;
+    background-color: var(--whitev2);
+    border-radius: 20px;
+  }
+
+  /*
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  */
+
+  tr.dark-background-1 p.menu-opt-not-available
+  {
+    /* 🎨 style */
+		background-color: var(--dark-theme-1-shade) !important;
+	}
 
 </style>
