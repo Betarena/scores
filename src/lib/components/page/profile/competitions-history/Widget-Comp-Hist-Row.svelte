@@ -31,7 +31,7 @@
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
 
-	import type { B_H_COMP_DATA, B_H_PROF_TRS_COMP_Data } from "@betarena/scores-lib/types/_HASURA_.js";
+	import type { B_H_COMP_DATA, B_H_COMP_TRS_P_C_Data, B_H_PROF_TRS_COMP_Data } from "@betarena/scores-lib/types/_HASURA_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -48,6 +48,8 @@
     competitionObject: B_H_COMP_DATA,
     /** @description */
     translationObject: B_H_PROF_TRS_COMP_Data,
+    /** @description */
+    translationObject2: B_H_COMP_TRS_P_C_Data,
     /** @description */
     competitionTitle: string,
     /** @description */
@@ -235,7 +237,7 @@
           comp-title
           "
         >
-          {competitionTitle ?? ''}
+          {competitionTitle + " " + translationObject2?.categories?.["1"] ?? ''}
         </p>
       </a>
     </td>
@@ -526,7 +528,7 @@
               class:color-red-bright-v2={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
             >
               {#if item == 'title'}
-                {competitionTitle}
+                {competitionTitle + " " + translationObject2?.categories?.["1"]}
               {:else if item == 'style'}
                 {'Single Predictor'}
               {:else if item == 'entry_fee'}

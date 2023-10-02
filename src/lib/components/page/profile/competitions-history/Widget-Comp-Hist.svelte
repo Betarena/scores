@@ -605,6 +605,7 @@
                 {isViewMobile}
                 {isViewTablet}
                 translationObject={RESPONSE_PROFILE_DATA?.competition_hist}
+                translationObject2={RESPONSE_PROFILE_DATA?.competition_general}
               />
             {/each}
 
