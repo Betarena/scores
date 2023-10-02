@@ -601,7 +601,6 @@
                 {isViewMobile}
                 {isViewTablet}
                 translationObject={RESPONSE_PROFILE_DATA?.competition_hist}
-                txStatusTrans={RESPONSE_PROFILE_DATA?.tx?.status}
               />
             {/each}
 

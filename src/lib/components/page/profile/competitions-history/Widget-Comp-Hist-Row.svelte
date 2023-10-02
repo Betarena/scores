@@ -30,7 +30,7 @@
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
 
-	import type { B_H_COMP_DATA, B_H_PROF_TRS_COMP_Data, B_H_TT_Status } from "@betarena/scores-lib/types/_HASURA_.js";
+	import type { B_H_COMP_DATA, B_H_PROF_TRS_COMP_Data } from "@betarena/scores-lib/types/_HASURA_.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -52,9 +52,7 @@
     /** @description */
     isViewMobile: boolean = false,
     /** @description */
-    isViewTablet: boolean = false,
-    /** @description */
-    txStatusTrans: B_H_TT_Status
+    isViewTablet: boolean = false
   ;
 
   let
@@ -119,13 +117,13 @@
     // ### NOTE:
     // ### identify Tx-Translation.
 		if (competitionObject?.data?.status?.toLowerCase() == 'finished')
-      txStatusTranslation = txStatusTrans?.complete ?? 'Complete';
+      txStatusTranslation = translationObject?.status?.complete ?? 'Complete';
     ;
     if (['active', 'pending'].includes(competitionObject?.data?.status?.toLowerCase()))
-      txStatusTranslation = txStatusTrans?.pending ?? 'Pending';
+      txStatusTranslation = translationObject?.status?.pending ?? 'Pending';
     ;
 		if (competitionObject?.data?.status?.toLowerCase() == 'canceled')
-      txStatusTranslation = txStatusTrans?.failed ?? 'Canceled';
+      txStatusTranslation = translationObject?.status?.canceled ?? 'Canceled';
     ;
 	}
 
