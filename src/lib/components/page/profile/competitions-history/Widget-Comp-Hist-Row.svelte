@@ -140,8 +140,8 @@
     {
       competitionPotentialUserWin =
         competitionUserForecast == 'yes'
-          ? competitionObject?.data?.prize_group_win_individual?.yes
-          : competitionObject?.data?.prize_group_win_individual?.no
+          ? (competitionObject?.data?.prize_group_win_individual?.yes - (competitionObject?.data?.betarena_commission ?? 0))
+          : (competitionObject?.data?.prize_group_win_individual?.no - (competitionObject?.data?.betarena_commission ?? 0))
       ;
     }
     // ### otherwise,
@@ -261,7 +261,7 @@
     -->
     <td>
       <p>
-        ${competitionObject?.data?.total_prize ?? '-'}
+        ${toDecimalFix((competitionObject?.data?.total_prize - competitionObject?.data?.betarena_commission), 2, true) ?? ''}
       </p>
     </td>
 
@@ -270,11 +270,7 @@
     -->
     <td>
       <p>
-        {#if competitionUserForecast == 'yes'}
-          ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.yes ?? (competitionObject?.data?.participants?.yes?.length ?? 0) * competitionObject?.data?.entry_fee), 2, true) ?? '-'}
-        {:else}
-          ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.no ?? ((competitionObject?.data?.participants?.no?.length ?? 0) * competitionObject?.data?.entry_fee)), 2, true) ?? '-'}
-        {/if}
+        ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
       </p>
     </td>
 
@@ -330,7 +326,7 @@
         {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
           +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
         {:else if competitionObject?.data?.status == 'finished'}
-          -{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
+          -{toDecimalFix(competitionObject?.data?.entry_fee, 2, true)} BTA
         {:else}
           -
         {/if}
@@ -349,11 +345,7 @@
     -->
     <td>
       <p>
-        {#if competitionUserForecast == 'yes'}
-          ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.yes ?? (competitionObject?.data?.participants?.yes?.length ?? 0) * competitionObject?.data?.entry_fee), 2, true) ?? '-'}
-        {:else}
-          ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.no ?? ((competitionObject?.data?.participants?.no?.length ?? 0) * competitionObject?.data?.entry_fee)), 2, true) ?? '-'}
-        {/if}
+        ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
       </p>
       <p
         class=
@@ -366,7 +358,7 @@
         {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
           +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
         {:else if competitionObject?.data?.status == 'finished'}
-          -{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
+          -{toDecimalFix(competitionObject?.data?.entry_fee, 2, true)} BTA
         {:else}
           -
         {/if}
@@ -442,7 +434,7 @@
           {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
             +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
           {:else if competitionObject?.data?.status == 'finished'}
-            -{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
+            -{toDecimalFix(competitionObject?.data?.entry_fee, 2, true)} BTA
           {:else}
             -
           {/if}
@@ -561,7 +553,7 @@
                 {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
                   +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
                 {:else if competitionObject?.data?.status == 'finished'}
-                  -{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
+                  -{toDecimalFix(competitionObject?.data?.entry_fee, 2, true)} BTA
                 {:else}
                   -
                 {/if}
