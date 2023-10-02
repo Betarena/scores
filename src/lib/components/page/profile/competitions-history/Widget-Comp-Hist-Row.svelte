@@ -23,6 +23,7 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toISOMod } from '$lib/utils/dates.js';
 	import { toDecimalFix, tryCatch } from '$lib/utils/platform-functions.js';
@@ -220,14 +221,22 @@
     COMPETITION ➤ CONTEST TITLE / STYLE
     -->
     <td>
-      <p
+      <a
+        href="/{competitionObject?.urls?.[$sessionStore?.serverLang]}"
         class=
         "
-        comp-title
+        display-unset
         "
       >
-        {competitionTitle ?? '1'}
-      </p>
+        <p
+          class=
+          "
+          comp-title
+          "
+        >
+          {competitionTitle ?? ''}
+        </p>
+      </a>
     </td>
 
     <!--
@@ -495,55 +504,64 @@
             {/if}
           </p>
 
-          <p
+          <a
+            href="/{competitionObject?.urls?.[$sessionStore?.serverLang]}"
             class=
             "
-            s-14
-            color-black-2
+            display-unset
             "
-            class:capitalize={item == 'forecast'}
-
-            class:comp-status-pill={item == 'result'}
-            class:completed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-            class:failed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
-
-            class:color-green={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-            class:color-red-bright-v2={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+            class:disable-anchor={item != 'title'}
           >
-            {#if item == 'title'}
-              {competitionTitle}
-            {:else if item == 'style'}
-              {'Single Predictor'}
-            {:else if item == 'entry_fee'}
-              ${competitionObject?.data?.entry_fee ?? '-'}
-            {:else if item == 'total_prize'}
-              ${competitionObject?.data?.total_prize ?? '-'}
-            {:else if item == 'potential_win'}
-              {#if competitionUserForecast == 'yes'}
-                ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.yes ?? (competitionObject?.data?.participants?.yes?.length ?? 0) * competitionObject?.data?.entry_fee), 2, true) ?? '-'}
-              {:else}
-                ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.no ?? ((competitionObject?.data?.participants?.no?.length ?? 0) * competitionObject?.data?.entry_fee)), 2, true) ?? '-'}
+            <p
+              class=
+              "
+              s-14
+              color-black-2
+              "
+              class:capitalize={item == 'forecast'}
+
+              class:comp-status-pill={item == 'result'}
+              class:completed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
+              class:failed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+
+              class:color-green={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
+              class:color-red-bright-v2={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+            >
+              {#if item == 'title'}
+                {competitionTitle}
+              {:else if item == 'style'}
+                {'Single Predictor'}
+              {:else if item == 'entry_fee'}
+                ${competitionObject?.data?.entry_fee ?? '-'}
+              {:else if item == 'total_prize'}
+                ${competitionObject?.data?.total_prize ?? '-'}
+              {:else if item == 'potential_win'}
+                {#if competitionUserForecast == 'yes'}
+                  ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.yes ?? (competitionObject?.data?.participants?.yes?.length ?? 0) * competitionObject?.data?.entry_fee), 2, true) ?? '-'}
+                {:else}
+                  ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.no ?? ((competitionObject?.data?.participants?.no?.length ?? 0) * competitionObject?.data?.entry_fee)), 2, true) ?? '-'}
+                {/if}
+              {:else if item == 'forecast'}
+                {competitionUserForecast ?? '-'}
+              {:else if item == 'result'}
+                {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
+                  Won
+                {:else if competitionObject?.data?.status == 'finished'}
+                  Lost
+                {:else}
+                  -
+                {/if}
+              {:else if item == 'prize_won'}
+                {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
+                  +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
+                {:else if competitionObject?.data?.status == 'finished'}
+                  -{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
+                {:else}
+                  -
+                {/if}
               {/if}
-            {:else if item == 'forecast'}
-              {competitionUserForecast ?? '-'}
-            {:else if item == 'result'}
-              {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-                Won
-              {:else if competitionObject?.data?.status == 'finished'}
-                Lost
-              {:else}
-                -
-              {/if}
-            {:else if item == 'prize_won'}
-              {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-                +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
-              {:else if competitionObject?.data?.status == 'finished'}
-                -{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
-              {:else}
-                -
-              {/if}
-            {/if}
-          </p>
+            </p>
+          </a>
 
         </div>
       {/each}
