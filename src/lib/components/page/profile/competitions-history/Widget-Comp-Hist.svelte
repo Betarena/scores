@@ -536,7 +536,10 @@
                 <th
                   id="col-tx-status"
                   data-testid="col-tx-status"
-                  style="text-align: -webkit-right;"
+                  class=
+                  "
+                  text-right
+                  "
                   >
                   <p>
                     {RESPONSE_PROFILE_DATA?.competition_hist?.header?.status ?? 'Status'}
@@ -554,7 +557,10 @@
                 <th
                   id="col-tx-status"
                   data-testid="col-tx-status"
-                  style="text-align: -webkit-right;"
+                  class=
+                  "
+                  text-right
+                  "
                 >
                   <p>
                     {RESPONSE_PROFILE_DATA?.competition_hist?.header?.prize ?? 'Prize Won'}
@@ -718,6 +724,7 @@
     text-align: left;
 		border-collapse: collapse;
     width: -webkit-fill-available;
+    width: -moz-available;
   }
   table#profile⮕w⮕txhist⮕main⮕table thead tr
   {
