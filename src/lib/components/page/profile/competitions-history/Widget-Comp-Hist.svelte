@@ -128,7 +128,11 @@
       true
     );
 
-    txHistListLimit = WIDGET_DATA?.competitions?.length;
+    txHistListLimit =
+      txHistListLimit + 10 > WIDGET_DATA?.competitions?.length
+        ? WIDGET_DATA?.competitions?.length
+        : txHistListLimit + 10
+    ;
     isShowMore = true;
   }
 
