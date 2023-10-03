@@ -746,7 +746,7 @@
   }
 
   @media only screen
-  and (min-width: 912px)
+  and (min-width: 581px)
   {
 
     p.comp-title
@@ -757,6 +757,12 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+  }
+
+  @media only screen
+  and (min-width: 912px)
+  {
 
     tr td p.comp-title:hover
     {
