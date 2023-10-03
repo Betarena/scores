@@ -172,7 +172,6 @@
 -->
 
 <tr
-  on:click={() => isCompExtraInfo = !isCompExtraInfo}
   class:extra-info={isCompExtraInfo && (isViewMobile || isViewTablet)}
   class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
 >
@@ -234,12 +233,23 @@
         <p
           class=
           "
+          color-black-2
           comp-title
           "
         >
-          {competitionTitle + " " + translationObject2?.categories?.["1"] ?? ''}
+          {competitionTitle ?? ''}
         </p>
       </a>
+      <p
+        class=
+        "
+        s-12
+        color-grey
+        "
+      >
+        <!-- {competitionObject?.created_at} -->
+        {translationObject2?.categories?.["1"] ?? '-'}
+      </p>
     </td>
 
     <!--
@@ -408,6 +418,7 @@
             "
             m-l-8
             "
+            on:click={() => isCompExtraInfo = !isCompExtraInfo}
           />
         {/if}
 
@@ -449,6 +460,7 @@
           "
           m-l-8
           "
+          on:click={() => isCompExtraInfo = !isCompExtraInfo}
         />
       </div>
     </td>
@@ -480,6 +492,7 @@
             "
             s-14
             color-grey
+            no-wrap
             "
           >
             {#if item == 'title'}
@@ -516,33 +529,43 @@
               color-black-2
               no-wrap
               "
+              class:comp-title={item == 'title'}
+
               class:capitalize={item == 'forecast'}
 
-              class:comp-status-pill={item == 'result'}
-              class:completed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-              class:failed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
+              class:comp-status-pill={item == 'result' || item == 'prize_won'}
+              class:completed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast || (item == 'prize_won' && isViewMobile && compStatus == 'C')}
+              class:failed={item == 'result' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast || (item == 'prize_won' && isViewMobile && compStatus == 'F')}
               class:menu-opt-not-available={item == 'result' && competitionObject?.data?.status == 'canceled'}
               class:color-grey={item == 'result' && competitionObject?.data?.status == 'canceled'}
+
+              class:pending={(item == 'prize_won' && isViewMobile && compStatus == 'C')}
 
               class:color-green={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
               class:color-red-bright-v2={item == 'prize_won' && competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group != competitionUserForecast}
             >
               {#if item == 'title'}
-                {competitionTitle + " " + translationObject2?.categories?.["1"]}
+                {competitionTitle}
+
               {:else if item == 'style'}
-                {'Single Predictor'}
+                {translationObject2?.categories?.["1"] ?? '-'}
+
               {:else if item == 'entry_fee'}
                 ${competitionObject?.data?.entry_fee ?? '-'}
+
               {:else if item == 'total_prize'}
                 ${competitionObject?.data?.total_prize ?? '-'}
+
               {:else if item == 'potential_win'}
                 {#if competitionUserForecast == 'yes'}
                   ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.yes ?? (competitionObject?.data?.participants?.yes?.length ?? 0) * competitionObject?.data?.entry_fee), 2, true) ?? '-'}
                 {:else}
                   ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.no ?? ((competitionObject?.data?.participants?.no?.length ?? 0) * competitionObject?.data?.entry_fee)), 2, true) ?? '-'}
                 {/if}
+
               {:else if item == 'forecast'}
                 {competitionUserForecast ?? '-'}
+
               {:else if item == 'result'}
                 {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
                   {translationObject?.result?.won ?? 'Won'}
@@ -551,13 +574,19 @@
                 {:else if competitionObject?.data?.status == 'canceled'}
                   {translationObject?.result?.refund ?? 'Refunded'}
                 {/if}
+
               {:else if item == 'prize_won'}
-                {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
-                  +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
-                {:else if competitionObject?.data?.status == 'finished'}
-                  -{toDecimalFix(competitionObject?.data?.entry_fee, 2, true)} BTA
+                {#if isViewMobile}
+                  {txStatusTranslation ?? '-'}
                 {:else}
-                  -
+                  {#if competitionObject?.data?.status == 'finished' && competitionObject?.data?.winner_group == competitionUserForecast}
+                    +{toDecimalFix(competitionPotentialUserWin, 2, true)} BTA
+                  {:else if competitionObject?.data?.status == 'finished'}
+                    -{toDecimalFix(competitionObject?.data?.entry_fee, 2, true)} BTA
+                  {:else}
+                    -
+                  {/if}
+
                 {/if}
               {/if}
             </p>
@@ -656,28 +685,13 @@
     color: var(--status-red-night, #FF5959) !important;
     background: rgba(255, 89, 89, 0.10);
   }
-  tr td p.comp-title
+  p.comp-title
   {
     /* 🎨 style */
     max-width: 100px;
     margin-right: 10px;
 		overflow: hidden;
     text-overflow: ellipsis;
-  }
-  tr td p.comp-title:hover
-  {
-    /* 📌 position */
-    position: absolute;
-    top: 10px;
-    margin: auto;
-    /* 🎨 style */
-    height: fit-content;
-    max-width: unset;
-    text-overflow: unset;
-    padding: 4px 9px;
-    border-radius: 4px;
-    background: var(--white-day, #FFF);
-    box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
   }
 
   tr div.tx-extra-info
@@ -702,6 +716,58 @@
 
   /*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  */
+
+  @media only screen
+  and (min-width: 425px)
+  {
+
+    p.comp-title
+    {
+      /* 🎨 style */
+      max-width: unset;
+      margin-right: 10px;
+      overflow: hidden;
+      text-overflow: unset;
+    }
+
+  }
+
+  @media only screen
+  and (min-width: 912px)
+  {
+
+    p.comp-title
+    {
+      /* 🎨 style */
+      max-width: 100px;
+      margin-right: 10px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    tr td p.comp-title:hover
+    {
+      /* 📌 position */
+      position: absolute;
+      top: 10px;
+      margin: auto;
+      /* 🎨 style */
+      height: fit-content;
+      max-width: unset;
+      text-overflow: unset;
+      padding: 4px 9px;
+      border-radius: 4px;
+      background: var(--white);
+      box-shadow: 0px 4px 16px 0px rgba(0, 0, 0, 0.08);
+    }
+
+  }
+
+  /*
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   ◼️ 🌒 DARK-THEME         ◼️
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
@@ -711,5 +777,11 @@
     /* 🎨 style */
 		background-color: var(--dark-theme-1-shade) !important;
 	}
+
+  tr.dark-background-1 td p.comp-title:hover
+  {
+    /* 🎨 style */
+    background: var(--dark-theme-1);
+  }
 
 </style>
