@@ -564,14 +564,10 @@
                 ${competitionObject?.data?.entry_fee ?? '-'}
 
               {:else if item == 'total_prize'}
-                ${competitionObject?.data?.total_prize ?? '-'}
+                ${toDecimalFix((competitionObject?.data?.total_prize - competitionObject?.data?.betarena_commission), 2, true) ?? ''}
 
               {:else if item == 'potential_win'}
-                {#if competitionUserForecast == 'yes'}
-                  ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
-                {:else}
-                  ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
-                {/if}
+                ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
 
               {:else if item == 'forecast'}
                 {competitionUserForecast ?? '-'}
