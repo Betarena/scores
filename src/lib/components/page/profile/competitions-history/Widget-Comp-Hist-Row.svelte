@@ -7,7 +7,6 @@
 -->
 
 <script lang="ts">
-	import { page } from "$app/stores";
 
   // #region ➤ 📦 Package Imports
 
@@ -24,16 +23,18 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+  import { page } from "$app/stores";
+
 	import sessionStore from "$lib/store/session.js";
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toISOMod } from '$lib/utils/dates.js';
 	import { toDecimalFix, tryCatch } from '$lib/utils/platform-functions.js';
-	import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
 
 	import type { B_H_COMP_DATA, B_H_COMP_TRS_P_C_Data, B_H_PROF_TRS_COMP_Data } from "@betarena/scores-lib/types/_HASURA_.js";
+	import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
 
   // #endregion ➤ 📦 Package Imports
 
@@ -148,8 +149,8 @@
     {
       competitionPotentialUserWin =
         competitionUserForecast == 'yes'
-          ? (competitionObject?.data?.prize_group_win_individual?.yes - (competitionObject?.data?.betarena_commission ?? 0))
-          : (competitionObject?.data?.prize_group_win_individual?.no - (competitionObject?.data?.betarena_commission ?? 0))
+          ? (competitionObject?.data?.prize_group_win_individual?.yes - (competitionObject?.data?.prize_group_win_individual?.yes ?? 0) * (competitionObject?.data?.betarena_fee / 100 ?? 0))
+          : (competitionObject?.data?.prize_group_win_individual?.no - (competitionObject?.data?.prize_group_win_individual?.no ?? 0) * (competitionObject?.data?.betarena_fee / 100 ?? 0))
       ;
     }
     // ### otherwise,
@@ -158,8 +159,10 @@
     {
       if (competitionUserForecast == 'yes')
         competitionPotentialUserWin = ((competitionObject?.data?.total_prize ?? 0) - (competitionObject?.data?.betarena_commission ?? 0)) / (competitionObject?.data?.participants?.yes?.length ?? 0);
+      //
       if (competitionUserForecast == 'no')
         competitionPotentialUserWin = ((competitionObject?.data?.total_prize ?? 0) - (competitionObject?.data?.betarena_commission ?? 0)) / (competitionObject?.data?.participants?.no?.length ?? 0);
+      //
     }
   }
 
@@ -204,6 +207,7 @@
       class=
       "
       s-14
+      capitalize
       "
     >
       {B_SAP_D3_SP_M?.[$sessionStore?.serverLang] ?? '-'}

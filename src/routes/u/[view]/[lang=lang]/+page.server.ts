@@ -89,8 +89,8 @@ export async function load
 type PP_PROMISE_0 =
 [
   B_PROF_T | undefined,
-  B_SAP_D2 | undefined,
   B_SAP_D3 | undefined,
+  B_SAP_D2 | undefined,
 ];
 
 /**
@@ -107,8 +107,8 @@ async function fetchData
   const urls_0: string[] =
   [
     `/api/data/main/seo-pages?months=true&lang=${_lang}`,
-    `/api/data/profile?lang=${_lang}`,
-    `/api/data/main/seo-pages?term=football`
+    `/api/data/main/seo-pages?term=football`,
+    `/api/data/profile?lang=${_lang}`
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload
