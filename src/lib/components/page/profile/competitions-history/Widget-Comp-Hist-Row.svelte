@@ -568,9 +568,9 @@
 
               {:else if item == 'potential_win'}
                 {#if competitionUserForecast == 'yes'}
-                  ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.yes ?? (competitionObject?.data?.participants?.yes?.length ?? 0) * competitionObject?.data?.entry_fee), 2, true) ?? '-'}
+                  ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
                 {:else}
-                  ${toDecimalFix((competitionObject?.data?.prize_group_win_pool?.no ?? ((competitionObject?.data?.participants?.no?.length ?? 0) * competitionObject?.data?.entry_fee)), 2, true) ?? '-'}
+                  ${toDecimalFix(competitionPotentialUserWin, 2, true) ?? '-'}
                 {/if}
 
               {:else if item == 'forecast'}
