@@ -67,7 +67,7 @@
     RESPONSE_PROFILE_DATA: B_PROF_T,
     WIDGET_DATA: B_PROF_D,
     NO_WIDGET_DATA: boolean,
-    isShowMore: boolean = false,
+    isShowMore: boolean = true,
     // isShowCalendar: boolean = false,
     txHistList: B_H_COMP_DATA[] = [],
     txHistListLimit: number = 10
@@ -121,7 +121,7 @@
   (
   ): void
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
       `🚏 checkpoint ➤ showMoreToggle`,
@@ -133,7 +133,11 @@
         ? WIDGET_DATA?.competitions?.length
         : txHistListLimit + 10
     ;
-    isShowMore = true;
+    isShowMore =
+      txHistListLimit + 10 > WIDGET_DATA?.competitions?.length
+        ? false
+        : true
+    ;
   }
 
   /**
@@ -615,7 +619,7 @@
         <!--
         SHOW MORE OPT
         -->
-        {#if WIDGET_DATA?.competitions?.length > 10 && !isShowMore}
+        {#if WIDGET_DATA?.competitions?.length > 10 && isShowMore}
           <div
             id="{CNAME}⮕main⮕table-show-more"
             data-testid="{CNAME}⮕main⮕table-show-more"
