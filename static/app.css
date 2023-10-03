@@ -242,7 +242,8 @@ h5 {
   /* 🎨 style */
 	color: var(--secondary);
 }
-.color-grey
+.color-grey,
+.global.color-grey > p
 {
   /* 🎨 style */
 	color: var(--grey) !important;
@@ -307,7 +308,7 @@ h5 {
 .color-green
 {
   /* 🎨 style */
-	color: var(--green-color);
+	color: var(--green-color) !important;
 }
 .color-yellow
 {

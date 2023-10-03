@@ -18,7 +18,8 @@ COMPONENT JS (w/ TS)
 	import WidgetDeposit from '$lib/components/page/profile/deposit/Widget-Deposit.svelte';
 	import WidgetTxHist from '$lib/components/page/profile/tx-history/Widget-Tx-Hist.svelte';
   import WidgetWithdraw from '$lib/components/page/profile/withdraw/Widget-Withdraw.svelte';
-  
+  import WidgetCompHist from '$lib/components/page/profile/competitions-history/Widget-Comp-Hist.svelte';
+
   import type { PageData } from '../$types';
 
   // #endregion ➤ 📦 Package Imports
@@ -95,6 +96,8 @@ SVELTE INJECT TAGS
         <WidgetTxHist />
       {:else if $page?.url?.pathname.includes('withdraw')}
         <WidgetWithdraw />
+      {:else if $page?.url?.pathname.includes('competition-history')}
+        <WidgetCompHist />
 			{/if}
 		</div>
 

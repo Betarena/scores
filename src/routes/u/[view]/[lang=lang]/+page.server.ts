@@ -4,7 +4,7 @@ import { getCookie } from '$lib/store/cookie.js';
 import { PRELOAD_redirectPage, promiseUrlsPreload } from '$lib/utils/platform-functions.js';
 
 import type { B_PROF_T } from '@betarena/scores-lib/types/profile.js';
-import type { B_SAP_D2 } from '@betarena/scores-lib/types/seo-pages.js';
+import type { B_SAP_D2, B_SAP_D3 } from '@betarena/scores-lib/types/seo-pages.js';
 import type { PageServerLoadEvent } from './$types';
 
 // #endregion ➤ 📦 Package Imports
@@ -62,6 +62,7 @@ export async function load
   const
   [
     B_SAP_D2,
+    B_SAP_D3_SP_M,
     RESPONSE_PROFILE_DATA
   ] = await fetchData
   (
@@ -72,6 +73,7 @@ export async function load
   return {
     // @ts-expect-error <-error-desc->
     B_SAP_D2,
+    B_SAP_D3_SP_M,
     RESPONSE_PROFILE_DATA
   };
 }
@@ -87,6 +89,7 @@ export async function load
 type PP_PROMISE_0 =
 [
   B_PROF_T | undefined,
+  B_SAP_D3 | undefined,
   B_SAP_D2 | undefined,
 ];
 
@@ -104,6 +107,7 @@ async function fetchData
   const urls_0: string[] =
   [
     `/api/data/main/seo-pages?months=true&lang=${_lang}`,
+    `/api/data/main/seo-pages?term=football`,
     `/api/data/profile?lang=${_lang}`
   ];
 
