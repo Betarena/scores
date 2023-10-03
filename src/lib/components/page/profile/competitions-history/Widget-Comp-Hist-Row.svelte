@@ -539,7 +539,7 @@
               color-black-2
               no-wrap
               "
-              class:comp-title={item == 'title'}
+              class:comp-title-extra={item == 'title'}
 
               class:capitalize={item == 'forecast'}
 
@@ -695,7 +695,8 @@
     color: var(--status-red-night, #FF5959) !important;
     background: rgba(255, 89, 89, 0.10);
   }
-  p.comp-title
+  tr td p.comp-title,
+  div.tx-extra-info p.comp-title-extra
   {
     /* 🎨 style */
     max-width: 100px;
@@ -734,7 +735,7 @@
   and (min-width: 425px)
   {
 
-    p.comp-title
+    div.tx-extra-info p.comp-title-extra
     {
       /* 🎨 style */
       max-width: unset;
@@ -749,7 +750,7 @@
   and (min-width: 581px)
   {
 
-    p.comp-title
+    tr td p.comp-title
     {
       /* 🎨 style */
       max-width: 100px;
