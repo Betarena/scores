@@ -860,18 +860,18 @@
   div#profile⮕w⮕comp-hist⮕main.dark-background-1 table#profile⮕w⮕comp-hist⮕main⮕table thead tr
   {
     /* 🎨 style */
-    background: var(--dark-theme-1-shade);
+    background: var(--dark-theme-1-shade) !important;
   }
 
   div#profile⮕w⮕comp-hist⮕main.dark-background-1 :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr:nth-child(odd))
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1);
+    background-color: var(--dark-theme-1) !important;
   }
   div#profile⮕w⮕comp-hist⮕main.dark-background-1 :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr:nth-child(even))
   {
     /* 🎨 style */
-    background-color: var(--dark-theme-1-shade)
+    background-color: var(--dark-theme-1-shade) !important;
   }
 
   div#profile⮕w⮕comp-hist⮕main.dark-background-1 :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr td p)
