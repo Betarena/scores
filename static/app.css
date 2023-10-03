@@ -242,7 +242,8 @@ h5 {
   /* 🎨 style */
 	color: var(--secondary);
 }
-.color-grey
+.color-grey,
+.global.color-grey > p
 {
   /* 🎨 style */
 	color: var(--grey) !important;

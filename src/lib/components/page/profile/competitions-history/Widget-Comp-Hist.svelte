@@ -58,7 +58,7 @@
      * @description
      * 📌 `this` component **main** `id` and `data-testid` prefix.
     */
-    CNAME = 'profile⮕w⮕txhist'
+    CNAME = 'profile⮕w⮕comp-hist'
   ;
 
 	let
@@ -659,17 +659,12 @@
         class=
         "
         m-b-12
+        s-12
+        global
+        color-grey
         "
       >
-        <p
-          class=
-          "
-          s-12
-          color-grey
-          "
-        >
-          {@html RESPONSE_PROFILE_DATA?.competition_hist?.description_2 ?? ''}
-        </p>
+        {@html RESPONSE_PROFILE_DATA?.competition_hist?.description_2 ?? ''}
       </div>
 
     {/if}
@@ -692,7 +687,7 @@
 
 <style>
 
-	div#profile⮕w⮕txhist⮕main
+	div#profile⮕w⮕comp-hist⮕main
   {
     /* 🎨 style */
 		padding: 20px;
@@ -701,14 +696,14 @@
 		border-radius: 12px;
 	}
 
-  div#profile⮕w⮕txhist⮕main⮕no-widget-data⮕content-box
+  div#profile⮕w⮕comp-hist⮕main⮕no-widget-data⮕content-box
   {
     /* 📌 position */
     position: relative;
     /* 🛝 layout */
     height: 362px;
   }
-  div#profile⮕w⮕txhist⮕main⮕no-widget-data⮕content
+  div#profile⮕w⮕comp-hist⮕main⮕no-widget-data⮕content
   {
     /* 📌 position */
     position: absolute;
@@ -722,7 +717,7 @@
 		height: fit-content;
   }
 
-  table#profile⮕w⮕txhist⮕main⮕table
+  table#profile⮕w⮕comp-hist⮕main⮕table
   {
     /* 🎨 style */
     text-align: left;
@@ -730,13 +725,13 @@
     width: -webkit-fill-available;
     width: -moz-available;
   }
-  table#profile⮕w⮕txhist⮕main⮕table thead tr
+  table#profile⮕w⮕comp-hist⮕main⮕table thead tr
   {
     /* 🎨 style */
     border-radius: 2px;
     background: var(--whitev2);
   }
-  table#profile⮕w⮕txhist⮕main⮕table thead tr th
+  table#profile⮕w⮕comp-hist⮕main⮕table thead tr th
   {
     /* 🛝 layout */
     width: fit-content;
@@ -744,29 +739,29 @@
     white-space: nowrap;
     padding-right: 12px;
   }
-  table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-id
+  table#profile⮕w⮕comp-hist⮕main⮕table thead tr th#col-tx-id
   {
     /* 🎨 style */
     min-width: 50px;
   }
-  table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-status
+  table#profile⮕w⮕comp-hist⮕main⮕table thead tr th#col-tx-status
   {
     /* 🎨 style */
     min-width: 150px;
   }
-  table#profile⮕w⮕txhist⮕main⮕table thead tr th:first-child
+  table#profile⮕w⮕comp-hist⮕main⮕table thead tr th:first-child
   {
     /* 🎨 style */
     padding-left: 20px;
     border-radius: 2px 0 0 2px;
   }
-  table#profile⮕w⮕txhist⮕main⮕table thead tr th:last-child
+  table#profile⮕w⮕comp-hist⮕main⮕table thead tr th:last-child
   {
     /* 🎨 style */
     padding-right: 20px;
     border-radius: 0 2px 2px 0;
   }
-  table#profile⮕w⮕txhist⮕main⮕table thead tr th p
+  table#profile⮕w⮕comp-hist⮕main⮕table thead tr th p
   {
     /* 🛝 layout */
     width: fit-content;
@@ -779,29 +774,29 @@
     line-height: 150%;
     padding: 3px 0 3px 0;
   }
-  :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(odd))
+  :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr:nth-child(odd))
   {
     /* 🎨 style */
     background-color: var(--white);
   }
-  :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(even))
+  :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr:nth-child(even))
   {
     /* 🎨 style */
     background-color: var(--whitev2)
   }
 
-  div#profile⮕w⮕txhist⮕main⮕table-show-more
+  div#profile⮕w⮕comp-hist⮕main⮕table-show-more
   {
     /* 🎨 style */
     padding: 18px 0 18px 0;
   }
 
-  div#profile⮕w⮕txhist⮕divider
+  div#profile⮕w⮕comp-hist⮕divider
   {
     /* 🎨 style */
     border-bottom: 1px solid var(--grey-color);
   }
-  div#profile⮕w⮕txhist⮕divider.isMoreTx
+  div#profile⮕w⮕comp-hist⮕divider.isMoreTx
   {
     /* 🎨 style */
     padding: 18px 0 18px 0;
@@ -816,14 +811,14 @@
   @media only screen
   and (min-width: 581px)
   {
-    table#profile⮕w⮕txhist⮕main⮕table thead tr th:first-child,
-    :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr td:first-child)
+    table#profile⮕w⮕comp-hist⮕main⮕table thead tr th:first-child,
+    :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr td:first-child)
     {
       /* 🎨 style */
       padding-left: 12px !important;
     }
-    table#profile⮕w⮕txhist⮕main⮕table thead tr th:last-child,
-    :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr td:last-child)
+    table#profile⮕w⮕comp-hist⮕main⮕table thead tr th:last-child,
+    :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr td:last-child)
     {
       /* 🎨 style */
       padding-right: 12px !important;
@@ -833,19 +828,19 @@
   @media only screen
   and (min-width: 912px)
   {
-    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-id
+    table#profile⮕w⮕comp-hist⮕main⮕table thead tr th#col-tx-id
     {
       /* 🎨 style */
       padding-right: 20px;
       min-width: 12px;
     }
-    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-date
+    table#profile⮕w⮕comp-hist⮕main⮕table thead tr th#col-tx-date
     {
       /* 🎨 style */
       padding-right: 20px;
       min-width: 90px;
     }
-    table#profile⮕w⮕txhist⮕main⮕table thead tr th#col-tx-status
+    table#profile⮕w⮕comp-hist⮕main⮕table thead tr th#col-tx-status
     {
       /* 🎨 style */
       min-width: 105px;
@@ -858,30 +853,30 @@
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
-  div#profile⮕w⮕txhist⮕main.dark-background-1 table#profile⮕w⮕txhist⮕main⮕table thead tr
+  div#profile⮕w⮕comp-hist⮕main.dark-background-1 table#profile⮕w⮕comp-hist⮕main⮕table thead tr
   {
     /* 🎨 style */
     background: var(--dark-theme-1-shade);
   }
 
-  div#profile⮕w⮕txhist⮕main.dark-background-1 :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(odd))
+  div#profile⮕w⮕comp-hist⮕main.dark-background-1 :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr:nth-child(odd))
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1);
   }
-  div#profile⮕w⮕txhist⮕main.dark-background-1 :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr:nth-child(even))
+  div#profile⮕w⮕comp-hist⮕main.dark-background-1 :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr:nth-child(even))
   {
     /* 🎨 style */
     background-color: var(--dark-theme-1-shade)
   }
 
-  div#profile⮕w⮕txhist⮕main.dark-background-1 :global(table#profile⮕w⮕txhist⮕main⮕table tbody tr td p)
+  div#profile⮕w⮕comp-hist⮕main.dark-background-1 :global(table#profile⮕w⮕comp-hist⮕main⮕table tbody tr td p)
   {
     /* style */
     color: var(--white);
   }
 
-  div#profile⮕w⮕txhist⮕main.dark-background-1 div#profile⮕w⮕txhist⮕divider
+  div#profile⮕w⮕comp-hist⮕main.dark-background-1 div#profile⮕w⮕comp-hist⮕divider
   {
     /* 🎨 style */
     border-bottom: 1px solid var(--dark-theme-1-shade);
