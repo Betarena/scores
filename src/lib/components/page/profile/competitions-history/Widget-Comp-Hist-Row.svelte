@@ -7,6 +7,7 @@
 -->
 
 <script lang="ts">
+	import { page } from "$app/stores";
 
   // #region ➤ 📦 Package Imports
 
@@ -27,6 +28,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { toISOMod } from '$lib/utils/dates.js';
 	import { toDecimalFix, tryCatch } from '$lib/utils/platform-functions.js';
+	import type { B_SAP_D3 } from "@betarena/scores-lib/types/seo-pages.js";
 
   import icon_arrow_down from '../assets/arrow-down.svg';
   import icon_arrow_up from '../assets/arrow-up.svg';
@@ -92,8 +94,12 @@
       'forecast',
       'result',
       'prize_won'
-    ]
+    ],
+    /** @description general page - `football` term(s) data translations */
+    B_SAP_D3_SP_M: B_SAP_D3
   ;
+
+	$: B_SAP_D3_SP_M = $page.data?.B_SAP_D3_SP_M;
 
   // #endregion ➤ 📌 VARIABLES
 
@@ -200,7 +206,7 @@
       s-14
       "
     >
-      {'Football'}
+      {B_SAP_D3_SP_M?.[$sessionStore?.serverLang] ?? '-'}
     </p>
     <p
       class=
