@@ -143,16 +143,22 @@ type PP_PROMISE_0 =
 ];
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🔹 HELPER
  * @description
- * TODO: DOC:
+ *  📌 Fetches target data for `_this_` page.
+ * @param { any } fetch
+ *  Target instance of `fetch` object.
+ * @param { string } _lang
+ *  Target `language`.
+ * @returns { Promise < PP_PROMISE_0 > }
  */
 async function fetchData
 (
   fetch: any,
-  _lang: string
+  _lang: string,
 ): Promise < PP_PROMISE_0 >
 {
 
