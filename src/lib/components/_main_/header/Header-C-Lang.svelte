@@ -7,11 +7,11 @@ COMPONENT JS (w/ TS)
   // #region ➤ 📦 Package Imports
 
 	import { page } from "$app/stores";
-	import { createEventDispatcher } from 'svelte';
+	import { createEventDispatcher, type EventDispatcher } from 'svelte';
 	import { fly } from "svelte/transition";
 
 	import sessionStore from "$lib/store/session.js";
-	import { NB_W_TAG, dlog } from "$lib/utils/debug.js";
+	import { dlog, NB_W_TAG } from "$lib/utils/debug.js";
 	import { selectLanguage } from "$lib/utils/platform-functions.js";
 
   import arrow_down from './assets/arrow-down.svg';
@@ -29,16 +29,10 @@ COMPONENT JS (w/ TS)
   ;
 
   const
-    OMIT_URLS: string[] =
-    [
-      '/[[lang=lang]]/[sport]/[country]/[league_name]',
-      '/[[lang=lang]]/[sport]/[fixture=fixture]',
-      '/[[lang=lang]]/[player=player]/[...player_fill]'
-    ],
     /** @description TODO: DOC: */
     HOVER_TIMEOUT = 250,
     /** @description TODO: DOC: */
-    dispatch = createEventDispatcher()
+    dispatch: EventDispatcher<any> = createEventDispatcher()
   ;
 
   let
@@ -75,6 +69,7 @@ COMPONENT JS (w/ TS)
     lang: string
   ): void
   {
+
     // ➫ CHECK
     // ➫ Detect change in hover-over lang.
     const if_M_0: boolean =
@@ -120,7 +115,8 @@ COMPONENT JS (w/ TS)
           // [🐞]
           dlog
           (
-            `${NB_W_TAG[0]} intent triggered!`
+            `${NB_W_TAG[0]} intent triggered!`,
+            true
           );
           $sessionStore.lang_intent = intent_intent_lang;
         },
@@ -137,7 +133,8 @@ COMPONENT JS (w/ TS)
           // [🐞]
           dlog
           (
-            `${NB_W_TAG[0]} intent triggered!`
+            `${NB_W_TAG[0]} intent triggered!`,
+            true
           );
           $sessionStore.lang_intent = intent_intent_lang;
         },
