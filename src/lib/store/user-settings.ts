@@ -10,14 +10,15 @@ import type { BetarenaUser, Scores_User, User_Setting, Voted_Fixture } from '$li
 
 // #region ➤ 📌 VARIABLES
 
-const user_settings: User_Setting =
+const userSettings: User_Setting =
 {
 	lang: undefined,
 	theme: undefined,
 	country_bookmaker: undefined,
 	geoJs: undefined,
 	user: undefined,
-  voted_fixtures: []
+  voted_fixtures: [],
+  userguide_id_opt_out: []
 };
 
 // #endregion ➤ 📌 VARIABLES
@@ -54,18 +55,20 @@ function createLocalStore
     update
   } = writable
   (
-		user_settings
+		userSettings
 	);
 
-  // ◼️ NOTE:
-  // ◼️ Complementary 'store' added methods.
+  // ### NOTE:
+  // ### complementary `store` added methods.
   const methods =
   {
 
 		/**
-		 * @description sets platform localstroage;
-		 * check for its existance, otherwise initializes
-		 * a default new one
+     * @summary
+     *  🟥 MAIN | 🔹 HELPER
+		 * @description
+     *  📌 Sets platform `localStorage`.
+     * @returns { void }
 		 */
 		useLocalStorage:
     (
@@ -82,9 +85,15 @@ function createLocalStore
 						country_bookmaker: undefined,
 						geoJs: undefined,
 						user: undefined,
-            voted_fixtures: []
+            voted_fixtures: [],
+            userguide_id_opt_out: [],
 				  }
       ;
+
+      if (exisitng_data.userguide_id_opt_out == null)
+        exisitng_data.userguide_id_opt_out = [];
+      ;
+
 			localStorage.setItem
       (
 				key,
@@ -94,8 +103,11 @@ function createLocalStore
 		},
 
     /**
+     * @summary
+     *  🟥 MAIN | 🔹 HELPER | IMPORTANT
      * @description
-     * TODO: DOC:
+     *  📌 Retrieves target `localStorage`.
+     * @returns { User_Setting }
      */
     parseLocalStorage:
     (
@@ -112,8 +124,11 @@ function createLocalStore
     },
 
     /**
+     * @summary
+     *  🟥 MAIN | 🔹 HELPER | IMPORTANT
      * @description
-     * TODO: DOC:
+     *  📌 Persists to `localStorage` target data.
+     * @returns { void }
      */
     setLocalStorage:
     (
@@ -136,24 +151,24 @@ function createLocalStore
     },
 
 		/**
-		 * @description sets platform language;
-		 * and updates the svelte store;
-		 * @param {string} lang
+     * @summary
+     *  🟥 MAIN | 🔹 HELPER | IMPORTANT
+		 * @description
+     *  📌 Updates `svelte-stores` and `client's` data in
+     *  `localStorage` for platform `language`.
+		 * @param { string } lang
 		 */
 		setLang:
     (
       lang: string
     ): void =>
     {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.lang = lang;
-			localStorage.setItem
+			const localStore: User_Setting = methods.parseLocalStorage();
+			localStore.lang = lang;
+			methods.setLocalStorage
       (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
+        localStore
+      );
 		},
 
 		/**
@@ -186,18 +201,15 @@ function createLocalStore
 		 */
 		setCountryBookmaker:
     (
-			country_bookmaker: string
+			countryBookmaker: string
 		): void =>
     {
-			const existing: string = localStorage.getItem(key);
-			const existing_data: User_Setting =	JSON.parse(existing);
-			existing_data.country_bookmaker =	country_bookmaker;
-			localStorage.setItem
+			const localStore: User_Setting = methods.parseLocalStorage();
+			localStore.country_bookmaker = countryBookmaker;
+      methods.setLocalStorage
       (
-				key,
-				JSON.stringify(existing_data)
-			);
-			set(existing_data);
+        localStore
+      );
 		},
 
 		/**
@@ -306,6 +318,8 @@ function createLocalStore
 		},
 
     /**
+     * @summary
+     *  🔹 HELPER
 		 * @description updates localStorage for user's platform language;
 		 * and updates the svelte store;
 		 * @param {string | undefined} wallet
@@ -324,6 +338,27 @@ function createLocalStore
 				JSON.stringify(existing_data)
 			);
 			set(existing_data);
+		},
+
+    /**
+     * @summary
+     *  🔹 HELPER
+		 * @description
+     *  📌 Updates `svelte-stores` and `client's` data in
+     *  `localStorage` for `userguides-op-out`.
+		 * @param { number } id
+		 */
+		updateUserGuideOpt:
+    (
+			id: number
+		): void =>
+    {
+      const localStore: User_Setting = methods.parseLocalStorage();
+			localStore?.userguide_id_opt_out?.push(id);
+      methods.setLocalStorage
+      (
+        localStore
+      );
 		},
 
 		/**
@@ -499,13 +534,13 @@ function createLocalStore
       const localStore: User_Setting = methods.parseLocalStorage();
       return localStore?.user?.firebase_user_data?.uid;
     }
-  }
+  };
 
 	return {
 		subscribe,
 		set,
 		update,
-    ...methods
+    ...methods,
 	};
 }
 
