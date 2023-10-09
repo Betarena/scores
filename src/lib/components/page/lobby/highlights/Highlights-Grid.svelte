@@ -405,7 +405,10 @@
 
       const data_0 = await get
       (
-        `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId?.toString()}`
+        `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId?.toString()}`,
+        null,
+        true,
+        true
       ) as unknown;
 
       const _fixtureMap = new Map

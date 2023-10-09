@@ -76,7 +76,10 @@
 
     WIDGET_DATA = await get
     (
-      `/api/data/home/livescores-v2`
+      `/api/data/home/livescores-v2`,
+      null,
+      true,
+      true,
     ) as B_LS2_D;
 
     const if_M_0: boolean =

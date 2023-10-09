@@ -210,7 +210,10 @@ COMPONENT JS (w/ TS)
     {
       const data_0 = await get
       (
-        `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId.toString()}`
+        `/api/data/home/livescores-v2?fixtureIds=${fixtureOrphanId.toString()}`,
+        null,
+        true,
+        true
       ) as unknown;
 
       const _fixtureMap = new Map
@@ -322,7 +325,10 @@ COMPONENT JS (w/ TS)
 
       const hasuraFixturesDate: B_LS2_D = await get
       (
-        `/api/data/home/livescores-v2/?date=${targetDate}&hasura=true`
+        `/api/data/home/livescores-v2/?date=${targetDate}&hasura=true`,
+        null,
+        true,
+        true
       ) as B_LS2_D;
 
       setData(hasuraFixturesDate)
