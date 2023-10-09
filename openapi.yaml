@@ -236,16 +236,59 @@ paths:
               # [MAIN] Data 2
               - required: [geoPos]
               - required: [geoPos, hasura]
+
       summary:
         Footer [C][H]
+
       responses:
         200:
           description:
             Successful FOOTER data fetch
 
-  # ===================
-  # HOMEPAGE
-  # ===================
+  # [L] - USERGUIDE Widget
+  /api/data/main/userguide:
+    get:
+
+      summary:
+        (MISC) Userguide
+
+      parameters:
+        - name: filter
+          in: query
+          description:
+            Endpoint for **Userguide** data retrieval and handling.
+          required: true
+          style: form
+          explode: true
+          schema:
+            type: object
+            properties:
+              # ?userguideId=[...]
+              userguideId:
+                type: number
+                example: 1
+              # ?lang=[...]
+              lang:
+                type: string
+                example: es
+              # ?hasura=[...]
+              hasura:
+                type: boolean
+                example: true
+            additionalProperties: false
+            oneOf:
+              # [MAIN] Data
+              - required: [userguideId, lang]
+              - required: [userguideId, lang, hasura]
+
+      responses:
+        200:
+          description:
+            Successful data retrieval.
+
+  # ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  # HOMEPAGE                        ◼️
+  # ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   # [HP] - FEAT MATCH Widget
   /api/data/home/feat-match:
@@ -332,6 +375,7 @@ paths:
   # [HP] - LEAGUE-LIST Widget
   /api/data/home/league-list:
     get:
+
       parameters:
         - name: filter
           in: query
@@ -351,6 +395,10 @@ paths:
               lang:
                 type: string
                 example: es
+              # ?seo=[...]
+              seo:
+                type: boolean
+                example: true
               # ?hasura=[...]
               hasura:
                 type: boolean
@@ -363,8 +411,13 @@ paths:
               # [MAIN] Geo-Positional Data
               - required: [geoPos]
               - required: [geoPos, hasura]
+              # [MAIN] SEO Data
+              - required: [lang, seo]
+              - required: [lang, seo, hasura]
+
       summary:
         League List [C][H]
+
       responses:
         200:
           description:
@@ -1389,7 +1442,6 @@ paths:
       responses:
         200:
           description: Target competition HIGHLIGHTS widget data
-
 
 components:
 
