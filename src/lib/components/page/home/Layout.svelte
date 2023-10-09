@@ -328,7 +328,7 @@
 	<!--
   🖥️ LAPTOP 💻 TABLET
   -->
-	{#if true}
+	{#if !tabletExclusive && !mobileExclusive}
 
 		<!--
     1st COLUMN
