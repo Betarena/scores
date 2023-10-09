@@ -467,6 +467,7 @@
   $: if_R_4 =
     ($sessionStore.livescoreShowCalendar && isViewMobile)
     || $sessionStore.withdrawModal
+    || $sessionStore.showUseguide1
   ;
 
   /**
@@ -1731,7 +1732,7 @@ NAVBAR MAIN
     /* 📌 position */
     position: absolute;
     /* 🎨 style */
-    width: 100vw;
+    width: 100%;
     border: 0.5px solid var(--dark-theme-1);
   }
   header div#header\/border\/top-box

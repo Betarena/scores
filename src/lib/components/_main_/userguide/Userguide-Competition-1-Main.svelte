@@ -7,7 +7,6 @@
 -->
 
 <script lang="ts">
-	import { userUpdateUserguideOptOut } from '$lib/firebase/common.js';
 
   // #region ➤ 📦 Package Imports
 
@@ -24,10 +23,14 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+	import { fade, fly } from 'svelte/transition';
+
+	import { userUpdateUserguideOptOut } from '$lib/firebase/common.js';
+	import sessionStore from '$lib/store/session.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
+	import { dlogv2 } from '$lib/utils/debug.js';
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
-	import { fade, fly } from 'svelte/transition';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -73,9 +76,17 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
-   *
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📌 Toggle `user` opt-out.
+   * @returns { void }
    */
-  function toggleUserguideOptOut()
+  function toggleUserguideOptOut
+  (
+  ): void
   {
     if ($userBetarenaSettings.user != null)
     {
@@ -90,6 +101,8 @@
     (
       1
     );
+
+    $sessionStore.showUseguide1 = false;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -107,14 +120,36 @@
   // ### use them carefully.                                              ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  /**
-   *
-   */
   $: if_R_0_1 =
-    !noWidgetData
-    || $userBetarenaSettings?.userguide_id_opt_out.includes(B_USRG_D.id)
+    $userBetarenaSettings?.userguide_id_opt_out.includes(B_USRG_D.id)
     || $userBetarenaSettings?.user?.scores_user_data?.userguide_id_opt_out?.includes(B_USRG_D.id)
   ;
+  $: if (!if_R_0_1)
+  {
+    // ### [🐞]
+    dlogv2
+    (
+      `🚏 checkpoint [R] ➤ USRGUIDE if_R_0_1`,
+      [
+        '📝 INFO: Action click detected! Processing logic...',
+        '❗️ WARNING: Non re-occuring logic, (once per load), should not be seen again until action trigger taken.'
+      ],
+      true
+    );
+
+    setUserShowGuide1();
+
+    /**
+     * @description
+     *  TODO: DOC:
+     */
+    function setUserShowGuide1
+    (
+    ): void
+    {
+      $sessionStore.showUseguide1 = true;
+    }
+  }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -133,115 +168,169 @@
 <!--
 MAIN WIDGET COMPONENT
 -->
-{#if !if_R_0_1}
+{#if $sessionStore?.showUseguide1}
 
   <!--
   BACKGROUND BLUR
   -->
   <div
-    id="background-modal-blur"
+    id='background-modal-blur'
     in:fade
+    on:click={() => $sessionStore.showUseguide1 = false}
   />
 
   <div
     id="{CNAME}"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-    in:fly={{ x: -200, duration: 500 }}
-    out:fly={{ x: -200, duration: 500 }}
+    in:fly={{ x: 200, duration: 250 }}
+    out:fly={{ x: 200, duration: 250 }}
   >
 
-    <!--
-    CLOSE ICON
-    -->
-    <img
-      id="close-vector"
-      class="cursor-pointer"
-      src="/assets/svg/close.svg"
-      alt="close-svg"
-    />
+    <div
+      id="{CNAME}⮕inner"
+    >
 
-    <span>
-      {@html B_USRG_D.content.title1}
-      {@html B_USRG_D.content.title2}
-    </span>
+      <!--
+      USERGUIDE ➤ CLOSE ICON
+      -->
+      <img
+        id='close-vector'
+        class='cursor-pointer'
+        src='/assets/svg/close.svg'
+        alt='close-svg'
+        on:click={() => $sessionStore.showUseguide1 = false}
+      />
 
-    {@html B_USRG_D.content.description}
+      <!--
+      USERGUIDE ➤ TITLE
+      -->
+      <div
+        id="{CNAME}⮕title"
+        class=
+        "
+        m-b-35
+        "
+      >
+        {@html B_USRG_D.content.title1}
+        {@html B_USRG_D.content.title2}
+      </div>
 
-    <!--
-    USERGUIDE ➤ VIDEO
-    -->
-    <iframe
-      src="https://www.youtube.com/watch?v=lrmAAadPVQI"
-      frameborder="0"
-      class=
-      "
-      m-b-50
-      "
-    />
+      <!--
+      USERGUIDE ➤ DESCRIPTION
+      -->
+      <div
+        id="{CNAME}⮕description"
+        class=
+        "
+        global s-20
+        "
+      >
+        {@html B_USRG_D.content.description}
+      </div>
 
-    <!--
-    USERGUIDE ➤ STEP-BY-STEP
-    -->
-    <div>
-      {#each (B_USRG_D?.content?.tutorial_steps ?? []) as step}
+      <!--
+      USERGUIDE ➤ VIDEO
+      -->
+      <iframe
+        src="https://www.youtube.com/embed/watch?v=lrmAAadPVQI?enablejsapi=1"
+        frameborder="0"
+        class=
+        "
+        m-t-45
+        m-b-50
+        "
+      />
 
-        <div
-          class=
-          "
-          m-b-35
-          "
-        >
-          {@html step.title ?? ''}
-        </div>
-
-        {#each (step?.steps ?? []) as [stepId, stepTxt]}
+      <!--
+      USERGUIDE ➤ STEP-BY-STEP
+      -->
+      <div
+        id="{CNAME}⮕step-by-step-box"
+      >
+        {#each (B_USRG_D?.content?.tutorial_steps ?? []) as step}
 
           <div
             class=
             "
-            row-space-start
+            m-b-35
             "
           >
-            <p
-              class=
-              "
-              s-16
-              color-black-2
-              m-r-24
-              "
-              style=
-              "
-              padding: 4px 12px;
-              border-radius: 4px;
-              background: var(--colors-gray-6, #F7F7F7);
-              "
-            >
-              {stepId}
-            </p>
-
-            <p
-              class=
-              "
-              s-16
-              color-black-2
-              "
-            >
-              {stepTxt}
-            </p>
+            {@html step.title ?? ''}
           </div>
 
+          {#each (step?.steps ?? []) as [stepId, stepTxt]}
+
+            <div
+              class=
+              "
+              row-space-start
+              m-b-8
+              step-by-step-row
+              "
+            >
+
+              <div
+                class=
+                "
+                m-r-24
+                text-center
+                step-box
+                "
+              >
+                <p
+                  class=
+                  "
+                  s-16
+                  color-black-2
+                  "
+                >
+                  {stepId}
+                </p>
+              </div>
+
+              <p
+                class=
+                "
+                s-16
+                color-black-2
+                "
+              >
+                {stepTxt}
+              </p>
+            </div>
+
+          {/each}
+
         {/each}
+      </div>
 
-      {/each}
+      <!--
+      USERGUIDE ➤ DIVIDER
+      -->
+      <div
+        id="divider"
+        class=
+        "
+        m-t-45
+        m-b-50
+        "
+      />
+
+      <!--
+      USERGUIDE ➤ FOOTER DATA
+      -->
+      <div
+        id="{CNAME}⮕footer"
+        class=
+        "
+        global s-20
+        "
+      >
+        {@html B_USRG_D.content.footer1}
+        {@html B_USRG_D.content.footer2}
+      </div>
+
     </div>
-
-    <hr/>
-
-    <!--
-    USERGUIDE ➤ FOOTER DATA
-    -->
-    {@html B_USRG_D.content.footer1}
-    {@html B_USRG_D.content.footer2}
 
     <!--
     USERGUIDE ➤ DON'T SHOW ANYMORE
@@ -293,11 +382,13 @@ MAIN WIDGET COMPONENT
 
   div#background-modal-blur
   {
+    /* 📌 position */
 		position: fixed;
 		top: 0;
 		right: 0;
 		left: 0;
 		z-index: 4000;
+    /* 🎨 style */
 		height: 100%;
 		width: 100%;
 		background: rgba(0, 0, 0, 0.5);
@@ -309,17 +400,42 @@ MAIN WIDGET COMPONENT
     top: 0;
     bottom: 0;
     right: 0;
+    left: 0;
+    margin: auto;
     position: fixed;
     z-index: 100000;
     /* 🎨 style */
-		display: grid;
-		background: #ffffff;
+    background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
-		border-radius: 12px;
-		width: 50vw;
+		border-radius: 12px 12px 0 0;
+    width: 100vw;
     overflow: hidden;
-    padding: 48px;
+    padding: 24px;
+    padding-bottom: 150px;
 	}
+
+	div#global⮕w⮕userguide⮕comp-1⮕main⮕inner
+  {
+    /* 🎨 style */
+    display: grid;
+    overflow-x: hidden;
+    max-height: 100%;
+    overflow-y: scroll;
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕scroll-box
+  {
+    /* 🎨 style */
+    overflow-y: scroll;
+  }
+
+  :global(
+    div#global⮕w⮕userguide⮕comp-1⮕main⮕title > h1
+  )
+  {
+    /* 🎨 style */
+    display: inline;
+  }
 
 	:global(
     div#global⮕w⮕userguide⮕comp-1⮕main h1,
@@ -327,30 +443,53 @@ MAIN WIDGET COMPONENT
     div#global⮕w⮕userguide⮕comp-1⮕main h3
   )
   {
+    /* 🎨 style */
 		margin-top: 0;
 	}
+
 	:global(
     div#global⮕w⮕userguide⮕comp-1⮕main a
   )
   {
+    /* 🎨 style */
 		color: #f5620f !important;
 		width: fit-content !important;
 		margin: 0;
 		display: initial;
 	}
-	:global(
-    div#global⮕w⮕userguide⮕comp-1⮕main p
+
+  :global(
+    div#global⮕w⮕userguide⮕comp-1⮕main⮕footer > p
   )
   {
-		margin-bottom: 24px;
-		color: #8c8c8c;
-	}
+    /* 🎨 style */
+    display: inline;
+  }
 
   iframe
   {
     /* 🎨 style */
     width: 100%;
     height: 396px;
+  }
+
+  div#divider
+  {
+    /* 🎨 style */
+    height: 1px;
+    color: var(--grey-color);;
+    background-color: var(--grey-color);
+    border: none;
+  }
+
+  div.step-box
+  {
+    /* 🎨 style */
+    padding: 4px 0;
+    min-width: 32px;
+    min-height: 32px;
+    border-radius: 4px;
+    background: var(--colors-gray-6, #F7F7F7);
   }
 
   div#global⮕w⮕userguide⮕comp-1⮕main⮕bottom
@@ -386,8 +525,22 @@ MAIN WIDGET COMPONENT
 	@media only screen
   and (min-width: 767px)
   {
-
-	}
+    div#global⮕w⮕userguide⮕comp-1⮕main
+    {
+      /* 📌 position */
+      top: 0;
+      bottom: 0;
+      right: 0;
+      left: unset;
+      margin: unset;
+      /* 🎨 style */
+      width: 45vw;
+      overflow: hidden;
+      border-radius: 0;
+      padding: 48px;
+      padding-bottom: unset;
+    }
+  }
 
 	/*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
@@ -395,20 +548,50 @@ MAIN WIDGET COMPONENT
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1
+  {
+    /* 🎨 style */
+		background-color: var(--dark-theme) !important;
+  }
+
 	:global(
     div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 h1,
     div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 h2,
     div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 h3
   )
   {
-		color: #ffffff !important;
+    /* 🎨 style */
+		color: var(--white);
 	}
 
 	:global(
     div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 p
   )
   {
-		color: #a8a8a8 !important;
+    /* 🎨 style */
+		color: var(--white);
 	}
+
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 div.step-box
+  {
+    /* 🎨 style */
+    padding: 4px 0;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 div#divider
+  {
+    /* 🎨 style */
+    height: 1px;
+    border: 0;
+    background-color: var(--dark-theme-1) !important;
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main.dark-background-1 div#global⮕w⮕userguide⮕comp-1⮕main⮕bottom
+  {
+    /* 🎨 style */
+    background: #1F1F1F;
+    box-shadow: 0px -4px 12px 0px rgba(0, 0, 0, 0.12);
+  }
 
 </style>

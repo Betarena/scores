@@ -124,6 +124,7 @@ p {
   --white-4: #D9D9D9;
 	--primary: #f5620f;
 	--primary-fade: #f77c42;
+  --primary-fade-2: #D25E27;
 	--secondary: #37474f;
 	--blue: #0085ff;
 	--red: #c62828;
@@ -231,6 +232,11 @@ h5 {
 {
   /* 🎨 style */
 	color: var(--primary) !important;
+}
+.color-primary-fade-2
+{
+  /* 🎨 style */
+	color: var(--primary-fade-2) !important;
 }
 .color-black-2
 {
@@ -443,7 +449,8 @@ h5 {
 {
 	font-size: 14px;
 }
-.s-16
+.s-16,
+.global.s-16
 {
 	font-size: 16px;
 }
@@ -455,7 +462,8 @@ h5 {
 {
 	font-size: 19px;
 }
-.s-20
+.s-20,
+.global.s-20
 {
 	font-size: 20px;
 }
@@ -1249,6 +1257,14 @@ img.google-aspect-ratio
 ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 */
 
+.dark-background .color-primary-fade-2.dark-v0,
+.dark-background-1 .color-primary-fade-2.dark-v0
+{
+  /* 🔥 override */
+  /* 🎨 style */
+	color: var(--primary-fade-2) !important;
+}
+
 .dark-background .color-grey,
 .dark-background-1 .color-grey
 {
@@ -1300,6 +1316,14 @@ img.google-aspect-ratio
 {
   /* 🎨 style */
 	color: var(--primary) !important;
+}
+
+.dark-background .color-green.dark-v0,
+.dark-background-1 .color-green.dark-v0
+{
+  /* 🔥 override */
+  /* 🎨 style */
+	color: var(--green-color) !important;
 }
 
 /*

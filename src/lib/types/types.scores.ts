@@ -179,6 +179,8 @@ export interface Platform_Session
   // TODO: DOC:
   withdrawModal: boolean,
 
+  showUseguide1: boolean,
+
   // -----
   // NOTE: SPORTBOOK DATA;
   // -----

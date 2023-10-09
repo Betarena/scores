@@ -355,6 +355,7 @@ function createLocalStore
     {
       const localStore: User_Setting = methods.parseLocalStorage();
 			localStore?.userguide_id_opt_out?.push(id);
+      localStore.userguide_id_opt_out = [...new Set(localStore?.userguide_id_opt_out)] ?? [];
       methods.setLocalStorage
       (
         localStore
