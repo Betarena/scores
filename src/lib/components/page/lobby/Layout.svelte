@@ -35,6 +35,7 @@
 	import { dlog } from '$lib/utils/debug';
 	import { generateUrlCompetitions, initialDevice, tryCatch, viewport_change } from '$lib/utils/platform-functions.js';
 
+	import UserguideCompetition_1Widget from '$lib/components/_main_/userguide/Userguide-Competition-1-Widget.svelte';
 	import SvelteSeo from 'svelte-seo';
 	import HighlightsWidget from './highlights/Highlights-Widget.svelte';
 
@@ -174,7 +175,7 @@
   ;
 	$: if (if_R_0 && current_lang != refresh_lang)
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
       `🚏 checkpoint [R] ➤ competitions/Layout.svelte if_R_0`,
@@ -227,7 +228,7 @@
   ;
   $: if (if_R_1 && lang_intent)
   {
-    // [🐞]
+    // ### [🐞]
     dlog
     (
       `🚏 checkpoint [R] ➤ competitions/Layout.svelte if_R_1`,
@@ -240,8 +241,15 @@
       B_SAP_D3_CP_M
     );
 
-    navigateToTranslation(newURL)
+    navigateToTranslation
+    (
+      newURL
+    );
   }
+
+  // $: console.log('current_lang', current_lang);
+  // $: console.log('refresh_lang', refresh_lang);
+  // $: console.log('lang_intent', lang_intent);
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
@@ -377,6 +385,8 @@
     {B_SAP_CP_T?.general?.data?.title ?? 'Competitions'}
   </h1>
 
+  <UserguideCompetition_1Widget />
+
   <div>
     <HighlightsWidget />
   </div>
@@ -411,11 +421,5 @@
     /* 🎨 style */
     min-height: calc(100vh - 400px);
   }
-
-	/*
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  ◼️ ⚡️ RESPONSIVNESS       ◼️
-  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
-  */
 
 </style>
