@@ -52,30 +52,46 @@
   // ### NOTE:                                                            ◼️
   // ### Please add inside 'this' region the 'variables' that are to be   ◼️
   // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   export const
-    /** @description example variable description goes here */
+    /** @description <-example variable description goes here-> */
     EXAMPLE_IMPORT_CONST_1: B_H_AT = null,
-    /** @description example variable description goes here */
+    /** @description <-example variable description goes here-> */
     EXAMPLE_IMPORT_CONST_2: any = undefined
   ;
 
   const
-    /** @description example variable description goes here */
+    /** @description <-example variable description goes here-> */
     EXAMPLE_CONST_VALUE: any = undefined,
-    /** @description example variable description goes here */
+    /** @description <-example variable description goes here-> */
     exampleConstValue: any = null
   ;
 
   let
-    /** @description example variable description goes here */
+    /** @description <-example variable description goes here-> */
     exampleLetValue: any
   ;
 
   // #endregion ➤ 📌 VARIABLES
 
   // #region ➤ 🛠️ METHODS
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'methods' that are to be     ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. function (..)                                                 ◼️
+  // ### 2. async function (..)                                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   function do_something
   (
@@ -108,8 +124,25 @@
   // ### NOTE:                                                            ◼️
   // ### Please add inside 'this' region the 'logic' that should run      ◼️
   // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+  /**
+   * @summary
+   * 🔥 REACTIVITY
+   * @description
+   * 📌 Listens to cases when, the:
+   * - (1) <-description-condtion-1->,
+   * - (and) (2) <-description-condtion-1->.
+   * @abstract
+   * **WARNING:**
+   * **triggered by changes in:**
+   * - `<-target-value-kicker->`- **kicker** (via deepListen)
+   */
   $: if (browser)
   {
     // do something
