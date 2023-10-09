@@ -1,10 +1,27 @@
-<!-- ===============
-	COMPONENT JS (w/ TS)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT JS (w/ TS)                                                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores JS VScode Snippets by typing 'script...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <script lang="ts">
 
-  //#region ➤ [MAIN] Package Imports
+  // #region ➤ 📦 Package Imports
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'imports' that are required  ◼️
+  // ### by 'this' .svelte file is ran.                                   ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. svelte/sveltekit imports                                      ◼️
+  // ### 2. project-internal files and logic                              ◼️
+  // ### 3. component import(s)                                           ◼️
+  // ### 4. assets import(s)                                              ◼️
+  // ### 5. type(s) imports(s)                                            ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   import { browser } from '$app/environment';
   import { onMount } from 'svelte';
@@ -24,59 +41,84 @@
 
 	import type { Voted_Fixture } from '$lib/types/types.scores.js';
 	import type { Urls } from '@betarena/scores-lib/types/_HASURA_.js';
-	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/feat-match.js';
 	import type { B_SPT_D } from '@betarena/scores-lib/types/sportbook.js';
+	import type { B_FEATM_D, B_FEATM_T } from '@betarena/scores-lib/types/types.home.feat-match.js';
 	import type { B_H_VOT_M } from '@betarena/scores-lib/types/votes.js';
 
-  //#endregion ➤ [MAIN] Package Imports
+  //#endregion ➤ 📦 Package Imports
 
-  //#region ➤ [VARIABLES]
+  // #region ➤ 📌 VARIABLES
 
-  export let B_FEATM_D: B_FEATM_D;
-	export let B_FEATB_T: B_FEATM_T;
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'variables' that are to be   ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. export const / let [..]                                       ◼️
+  // ### 2. const [..]                                                    ◼️
+  // ### 3. let [..]                                                      ◼️
+  // ### 4. $: [..]                                                       ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
-  const MOBILE_VIEW = 700;
-	const TABLET_VIEW = 700;
+  export let
+    B_FEATM_D: B_FEATM_D,
+    B_FEATB_T: B_FEATM_T
+  ;
 
-	let mobileExclusive = false;
-  let tabletExclusive = false;
+  const
+    MOBILE_VIEW = 700,
+    TABLET_VIEW = 700,
+    playerMap = new Map<number, Urls>(B_FEATM_D?.player_urls),
+    livesOddsPath = createFixtureOddsPath
+      (
+        B_FEATM_D?.id,
+        B_FEATM_D?.time?.toString()
+      )
+  ;
 
-  let SPORTBOOK_INFO: B_SPT_D;
-
-	let totalVoteCount: number = undefined;
-	let fixtureVoteObj: Voted_Fixture = { }
-	let noWidgetData: boolean = false;
-	let imageVar: string = '--featured-match-bookmaker-bg-';
-	let stakeAmount: number = 50.0;
-	let dateDiff: number;
-	let showBetSite: boolean = false;
-	let isVoteCasted: boolean = false;
-  let showCountdown: boolean = true;
-  let placeholderData: any | object = { }
-
-  const playerMap = new Map<number, Urls>(B_FEATM_D?.player_urls);
+	let
+    mobileExclusive: boolean = false,
+    tabletExclusive: boolean = false,
+    SPORTBOOK_INFO: B_SPT_D,
+	  totalVoteCount: number = undefined,
+	  fixtureVoteObj: Voted_Fixture = { },
+	  noWidgetData: boolean = false,
+	  imageVar: string = '--featured-match-bookmaker-bg-',
+	  stakeAmount: number = 50.0,
+	  dateDiff: number,
+	  showBetSite: boolean = false,
+	  isVoteCasted: boolean = false,
+    showCountdown: boolean = true,
+    placeholderData: any | object = { }
+  ;
 
   $: countDownSec = toZeroPrefixDateStr(Math.floor((dateDiff / 1000) % 60).toString());
 	$: countDownMin = toZeroPrefixDateStr(Math.floor((dateDiff / 1000 / 60) % 60).toString());
 	$: countDownHour = toZeroPrefixDateStr(Math.floor((dateDiff / (1000 * 60 * 60)) % 24).toString());
 	$: countDownTestHour = Math.floor(dateDiff / (1000 * 60 * 60));
 
-  // [ℹ] intercept data, and decalre further;
+  // ### NOTE:
+  // ### intercepts data, and decalre further.
 	$: totalVoteCount =
     B_FEATM_D?.match_votes?.vote_draw_x
     +	B_FEATM_D?.match_votes?.vote_win_local
     +	B_FEATM_D?.match_votes?.vote_win_visitor
   ;
 
-  const livesOddsPath = createFixtureOddsPath
-  (
-    B_FEATM_D?.id,
-    B_FEATM_D?.time?.toString()
-  );
+  // #endregion ➤ 📌 VARIABLES
 
-  //#endregion ➤ [VARIABLES]
+  // #region ➤ 🛠️ METHODS
 
-  //#region ➤ [MAIN-METHODS]
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'methods' that are to be     ◼️
+  // ### and are expected to be used by 'this' .svelte file / component.  ◼️
+  // ### IMPORTANT                                                        ◼️
+  // ### Please, structure the imports as follows:                        ◼️
+  // ### 1. function (..)                                                 ◼️
+  // ### 2. async function (..)                                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @summary
@@ -145,6 +187,9 @@
 
   // B_FEATM_D.live_odds = FIREBASE_getTargetFixtureOdds
 
+  /**
+   *
+   */
 	function checkVote
   (
   ): void
@@ -181,6 +226,11 @@
     isVoteCasted = false;
 	}
 
+  /**
+   *
+   * @param voteType
+   * @param voteVal
+   */
 	async function castVote
   (
     voteType: string,
@@ -259,13 +309,20 @@
     );
   }
 
-  //#endregion ➤ [METHODS]
+  // #endregion ➤ 🛠️ METHODS
 
-  //#region ➤ [ONE-OFF] [METHODS] [HELPER] [IF]
+  // #region ➤ 🔥 REACTIVIY [SVELTE]
 
-  //#endregion ➤ [ONE-OFF] [METHODS] [IF]
-
-  //#region ➤ [REACTIVIY] [METHODS]
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and/or reactively for 'this' .svelte file is ran.    ◼️
+  // ### WARNING:                                                         ◼️
+  // ### ❗️ Can go out of control.                                        ◼️
+  // ### (a.k.a cause infinite loops and/or cause bottlenecks).           ◼️
+  // ### Please keep very close attention to these methods and            ◼️
+  // ### use them carefully.                                              ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
    * @summary
@@ -323,21 +380,21 @@
     injectLiveOddsData()
   }
 
-  //#endregion ➤ [REACTIVIY] [METHODS]
+  // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
-  //#region ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
 
-  /**
-   * @summary
-   * [MAIN]
-   * [LIFECYCLE]
-   * @description
-   * ➨ kickstart resize-action;
-   * ➨ kickstart (bundle) event-listeners;
-  */
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
+  // ### as soon as 'this' .svelte file is ran.                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   onMount
   (
-    async() =>
+    async (
+    ): Promise < void > =>
     {
       await kickstartLiveOdds()
       resizeAction();
@@ -345,19 +402,24 @@
     }
   );
 
-  //#endregion ➤ SvelteJS/SvelteKit [LIFECYCLE]
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
 
 </script>
 
-<!-- ===============
-COMPONENT HTML
-NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT HTML                                                                     ◼️
+### NOTE:                                                                              ◼️
+### use 'CTRL+SPACE' to autocomplete global class=styles                               ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores VScode Snippets by typing emmet-like abbrev.         ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <div>
 
 	<!--
-  NO WIDGET DATA PLACEHOLDER
+  FEATURED MATCH/FIXTURE ➤ NO DATA PLACEHOLDER
   -->
 	{#if noWidgetData}
 		<WidgetNoData
@@ -368,7 +430,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 	{/if}
 
 	<!--
-  MAIN WIDGET COMPONENT
+  FEATURED MATCH/FIXTURE ➤ MAIN COMPONENT
   -->
 	{#if !noWidgetData}
 
@@ -382,14 +444,17 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     >
       <!--
-      LEAGUE TITLE
+      FEATURED MATCH/FIXTURE ➤ LEAGUE TITLE
       -->
       <a
         href={B_FEATM_D?.urls == undefined ? '' : B_FEATM_D?.urls?.[B_FEATB_T?.lang]}
       >
         <div
           id="fixture-league-title"
-          class="row-space-start"
+          class=
+          "
+          row-space-start
+          "
         >
 
           <!--
@@ -397,20 +462,24 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           <img
             loading="lazy"
-            class="img-flag"
             src={B_FEATM_D?.country_flag}
             alt="default alt text"
+            class=
+            "
+            img-flag
+            "
           />
 
           <!--
           LEAGUE NAME
           -->
           <p
-            class="
-              w-500
-              large
-              color-dark
-              m-r-8
+            class=
+            "
+            w-500
+            large
+            color-dark
+            m-r-8
             "
           >
             {B_FEATM_D?.league_name}
@@ -428,7 +497,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       </a>
 
       <!--
-      FIXTURE VOTES
+      FEATURED MATCH/FIXTURE ➤ VOTES
       -->
       {#if placeholderData != undefined}
 
@@ -440,9 +509,10 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
           -->
           <div
             id="fixture-data"
-            class="
-              row-space-out
-              m-b-20
+            class=
+            "
+            row-space-out
+            m-b-20
             "
           >
 
@@ -450,20 +520,28 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             TEAM 1
             -->
             <div
-              class="fixture-team">
+              class=
+              "
+              fixture-team
+              "
+            >
               <img
                 loading="lazy"
-                class="m-b-12"
                 src={B_FEATM_D?.home_team_logo}
                 alt="default alt text"
                 width="72"
                 height="72"
+                class=
+                "
+                m-b-12
+                "
               />
               <p
-                class="
-                  w-500
-                  medium
-                  desktop-medium
+                class=
+                "
+                w-500
+                medium
+                desktop-medium
                 "
               >
                 {B_FEATM_D?.home_team_name}
@@ -474,28 +552,36 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             FIXTURE COUNTDOWN
             -->
             <div
-              style="align-self: center;"
+              style=
+              "
+              align-self: center;
+              "
             >
 
               {#if showCountdown}
                 <p
-                  class="
-                    w-500
-                    x-large
-                    desktop-x-large
+                  class=
+                  "
+                  w-500
+                  x-large
+                  desktop-x-large
                   "
                 >
                   {countDownHour}:{countDownMin}:{countDownSec}
                 </p>
 
                 <p
-                  class="
-                    w-400
-                    small
-                    color-grey
-                    desktop-medium
+                  class=
                   "
-                  style="white-space: nowrap;"
+                  w-400
+                  small
+                  color-grey
+                  desktop-medium
+                  "
+                  style=
+                  "
+                  white-space: nowrap;
+                  "
                 >
                   {getOrdinalNum(toCorrectDate(B_FEATM_D?.time, false).getDate())}
                   {MONTH_NAMES_ABBRV?.[toCorrectDate(B_FEATM_D?.time, false).getMonth()?.toString()]}
@@ -512,7 +598,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
                   ">
                   <button
                     id="watch-match-btn"
-                    class="btn-primary-v2">
+                    class=
+                    "
+                    btn-primary-v2
+                    "
+                  >
                     Watch the Match
                   </button>
                 </a>
@@ -524,7 +614,11 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
             TEAM 2
             -->
             <div
-              class="fixture-team">
+              class=
+              "
+              fixture-team
+              "
+            >
               <img
                 loading="lazy"
                 class="m-b-12"
@@ -1089,7 +1183,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       <!--
-      LIVE STREAMS
+      FEATURED MATCH/FIXTURE ➤ LIVE STREAMS
       -->
       {#if B_FEATM_D?.tvstations?.length > 0}
 
@@ -1152,7 +1246,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       <!--
-      BEST PLAYERS
+      FEATURED MATCH/FIXTURE ➤ BEST PLAYERS
       -->
       {#if B_FEATM_D?.best_players != null}
 
@@ -1381,7 +1475,7 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
       {/if}
 
       <!--
-      VALUE BETS
+      FEATURED MATCH/FIXTURE ➤ VALUE BETS
       -->
       {#if B_FEATM_D?.valuebets != null}
 
@@ -1707,10 +1801,15 @@ NOTE: [HINT] use (CTRL+SPACE) to select a (class) (id) style
 
 </div>
 
-<!-- ===============
-COMPONENT STYLE
-NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/(CTRL+SPACE)
-=================-->
+<!--
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+### COMPONENT STYLE                                                                    ◼️
+### NOTE:                                                                              ◼️
+### auto-fill/auto-complete iniside <style> for var() values by typing/CTRL+SPACE      ◼️
+### NOTE:                                                                              ◼️
+### access custom Betarena Scores CSS VScode Snippets by typing 'style...'             ◼️
+◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+-->
 
 <style>
 
@@ -1786,9 +1885,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 		justify-content: space-between;
 		width: -webkit-fill-available;
 	}
-	.odds-vote-box
+	/* .odds-vote-box
   {
-	}
+	} */
 	.cast-vote-btn
   {
 		background: #f2f2f2;
@@ -1939,10 +2038,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
     best-players-container
   ==================== */
 
-	#best-players-box-out
+	/* #best-players-box-out
   {
-    /* NaN */
-	}
+	} */
 	.best-players-box
   {
 		padding: 20px;
@@ -2036,9 +2134,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/*
-  =============
-  RESPONSIVNESS
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ ⚡️ RESPONSIVNESS      ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
 	@media only screen
@@ -2249,9 +2347,9 @@ NOTE: [HINT] auto-fill/auto-complete iniside <style> for var() values by typing/
 	}
 
 	/*
-  =============
-  DARK-THEME
-  =============
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  ◼️ 🌒 DARK-THEME         ◼️
+  ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
   */
 
 	.dark-background-1 #fixture-league-title,
