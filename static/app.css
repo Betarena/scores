@@ -1185,6 +1185,15 @@ input[placeholder]
   text-overflow: ellipsis;
 }
 
+input.v-1
+{
+  /* 🎨 style */
+  width: 20px;
+  height: 20px;
+  border: 1px solid #CCCCCC;
+  accent-color: var(--primary);
+}
+
 .width-auto
 {
   width: auto;
