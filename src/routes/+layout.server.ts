@@ -1,3 +1,8 @@
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Server Endpoint for Layouit Page (Prefetch) Data Load                  ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 // #region ➤ 📦 Package Imports
 
 import { ERROR_CODE_PRELOAD, LAYOUT_1_LANG_PAGE_ERROR_MSG, dlog } from '$lib/utils/debug';
@@ -21,7 +26,7 @@ export async function load
 ): Promise < LayoutServerLoad >
 {
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🔹 [var] ➤ request.headers.get('user-agent') ${JSON.stringify([...event.request.headers.entries()], null, 4)}`,
@@ -107,6 +112,10 @@ export async function load
       : params.lang
   ;
 
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  //  📌 PREFETCH DATA                    ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
   const
   [
     B_NAV_T,
@@ -173,8 +182,12 @@ export async function load
 // #region ➤ 🛠️ METHODS
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 INTERFACE
  * @description
- * TODO: DOC:
+ *  📌 Target `types` for `_this_` page required at preload.
  */
 type PP_PROMISE_0 =
 [
@@ -184,8 +197,17 @@ type PP_PROMISE_0 =
 ];
 
 /**
+ * @author
+ *  @migbash
+ * @summary
+ *  🔹 HELPER
  * @description
- * TODO: DOC:
+ *  📌 Fetches target data for `_this_` page.
+ * @param { any } fetch
+ *  Target instance of `fetch` object.
+ * @param { string } _lang
+ *  Target `language`.
+ * @returns { Promise < PP_PROMISE_0 > }
  */
 async function fetchData
 (
@@ -194,7 +216,7 @@ async function fetchData
 ): Promise < PP_PROMISE_0 >
 {
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🚏 checkpoint ➤ src/routes/+layout.ts fecthData(..)`
@@ -202,8 +224,8 @@ async function fetchData
 
   const urls_0: string[] =
   [
-    `/api/data/main/navbar?lang=${_lang}`,
-    `/api/data/main/footer?lang=${_lang}`,
+    `/api/data/main/navbar?lang=${_lang}&decompress`,
+    `/api/data/main/footer?lang=${_lang}&decompress`,
     `/api/data/main/seo-pages?term=competitions`,
   ];
 
@@ -217,19 +239,19 @@ async function fetchData
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER
- *
+ *  🔹 HELPER
  * @description
- * TODO: DOC:
- *
+ *  📌 Detect device used from target `User-Agent` data.
  * @see
- * https://discord.com/channels/457912077277855764/1067871458233159750
+ *  https://discord.com/channels/457912077277855764/1067871458233159750
  * @see
- * https://discord.com/channels/457912077277855764/1067529519294070885/1067827869004341319
- *
- * @param
- * { string } userAgent - Target `user-agent` string.
+ *  https://discord.com/channels/457912077277855764/1067529519294070885/1067827869004341319
+ * @param { string } userAgent
+ *  Target `user-agent` string.
+ * @returns { string }
  */
 function detectDeviceWithUA
 (
@@ -243,7 +265,7 @@ function detectDeviceWithUA
   // ### using 'ua-parser-js' module.
   const parsedUA: parser.IResult = parser(userAgent);
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA ${JSON.stringify(parsedUA, null, 4)}`,
@@ -259,7 +281,7 @@ function detectDeviceWithUA
     userAgent
   );
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🔹 [var] ➤ detectDeviceWithUA(..) parsedUA_2 ${JSON.stringify(parsedUA_2, null, 4)}`,
@@ -268,7 +290,7 @@ function detectDeviceWithUA
 
   deviceType = parsedUA_2?.device?.type ?? 'mobile';
 
-  // [🐞]
+  // ### [🐞]
   dlog
   (
     `🔹 [var] ➤ detectDeviceWithUA(..) deviceType ${deviceType}`,

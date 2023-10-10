@@ -1,3 +1,8 @@
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Server Endpoint for Home Page (Prefetch) Data Load                     ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 // #region ➤ 📦 Package Imports
 
 import { dlog, ERROR_CODE_INVALID, PAGE_INVALID_MSG } from '$lib/utils/debug';
@@ -31,9 +36,8 @@ export async function load
 ): Promise < PageLoad >
 {
 
+  // ### [🐞]
   const t0: number = performance.now();
-
-  //#region [0] IMPORTANT EXTRACT URL DATA
 
 	const urlLang: string =
 		params?.lang == undefined
@@ -41,9 +45,9 @@ export async function load
       : params?.lang
   ;
 
-  //#endregion [0] IMPORTANT EXTRACT URL DATA
-
-  //#region [0] IMPORTANT VALID URL CHECK
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  //  📌 VALIDATE URL                     ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   const validUrlCheck: boolean = await promiseValidUrlCheck
   (
@@ -53,7 +57,8 @@ export async function load
     }
   );
 
-  // [ℹ] exit;
+  // ### CHECK | IMPORTANT
+  // ### for page exit.
 	if (!validUrlCheck)
   {
 		throw error
@@ -63,11 +68,9 @@ export async function load
 		);
 	}
 
-  //#endregion [0] IMPORTANT EXTRACT URL DATA
-
-  // **************************************
-  //  📌 PREFETCH DATA                    *
-  // **************************************
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  //  📌 PREFETCH DATA                    ◼️
+  // ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   const
   [
@@ -90,8 +93,14 @@ export async function load
   );
 
   // ### [🐞]
-  const t1 = performance.now();
-  dlog(`⏳ [HOME] preload ${((t1 - t0) / 1000).toFixed(2)} sec`, true)
+  const t1: number = performance.now();
+
+  // ### [🐞]
+  dlog
+  (
+    `⏳ HOME preload ${((t1 - t0) / 1000).toFixed(2)} sec`,
+    true
+  );
 
 	return {
 	  // FIXME: types not working
@@ -125,7 +134,7 @@ export async function load
  * @summary
  *  🔹 INTERFACE
  * @description
- *  📌 Target `types` for `Home Page` required at preload.
+ *  📌 Target `types` for `_this_` page required at preload.
  */
 type PP_PROMISE_0 =
 [
@@ -175,13 +184,13 @@ async function fetchData
 		`/api/data/main/seo-pages?lang=${_lang}&page=homepage`,
 		`/api/data/home/feat-match?lang=${_lang}&decompress`,
 		`/api/data/home/feat-match?lang=${_lang}&seo=true&decompress`,
-		`/api/data/home/feat-betsite?lang=${_lang}`,
-		`/api/data/home/top-goalscorers?lang=${_lang}`,
+		`/api/data/home/feat-betsite?lang=${_lang}&decompress`,
+		`/api/data/home/top-goalscorers?lang=${_lang}&decompress`,
 		`/api/data/home/top-goalscorers?lang=${_lang}&seo=true`,
 		`/api/data/home/league-list?lang=${_lang}&decompress`,
 		`/api/data/home/league-list?lang=${_lang}&seo=true&decompress`,
-		`/api/data/home/league-table?lang=${_lang}`,
-		`/api/data/home/seo-block?lang=${_lang}`,
+		`/api/data/home/league-table?lang=${_lang}&decompress`,
+		`/api/data/home/seo-block?lang=${_lang}&decompress`,
 		`/api/data/home/livescores-v2?lang=${_lang}&decompress`,
 		`/api/data/home/livescores-v2?seo=true&lang=${_lang}&decompress`,
   ];

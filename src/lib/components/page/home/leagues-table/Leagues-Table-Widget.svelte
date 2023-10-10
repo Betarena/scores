@@ -14,8 +14,8 @@
 
   import { get } from '$lib/api/utils.js';
   import userBetarenaSettings from '$lib/store/user-settings.js';
-	import { translationObject } from '$lib/utils/translation.js';
   import { IN_W_F_STY, IN_W_F_TAG, IN_W_F_TOG, dlog } from '$lib/utils/debug.js';
+  import { translationObject } from '$lib/utils/translation.js';
 
 	import SeoBox from '$lib/components/SEO-Box.svelte';
 	import LeaguesTableLoader from './Leagues-Table-Loader.svelte';
@@ -73,7 +73,10 @@
 
     const response: B_LEGT_D = await get
     (
-			`api/data/home/league-table?geoPos=${$userBetarenaSettings.country_bookmaker}`
+			`api/data/home/league-table?geoPos=${$userBetarenaSettings.country_bookmaker}`,
+      null,
+      true,
+      true
 		);
 
     WIDGET_DATA = response;

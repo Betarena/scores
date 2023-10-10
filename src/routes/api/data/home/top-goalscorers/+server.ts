@@ -1,53 +1,62 @@
-// #region ➤ Package Imports
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Application Server Endpoint for Top Goalscorers Data Fetch + Handle    ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+// #region ➤ 📦 Package Imports
 
 import { json } from '@sveltejs/kit';
 
-import { initGrapQLClient } from '$lib/graphql/init';
 import { HTGOL_HP_ENTRY, HTGOL_HP_ENTRY_1, HTGOL_HP_ENTRY_2 } from '@betarena/scores-lib/dist/functions/func.home.top-goalscorers.js';
 import { TGOL_C_D_A, TGOL_C_D_S, TGOL_C_T_A } from '@betarena/scores-lib/dist/redis/config.js';
+import dotenv from 'dotenv';
+import LZString from 'lz-string';
 import { get_target_hset_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_TGOL_D, B_TGOL_S, B_TGOL_T } from '@betarena/scores-lib/types/top-goalscorers.js';
 
-// #endregion ➤ Package Imports
+// #endregion ➤ 📦 Package Imports
 
-// #region ➤ [VARIABLES] Imports
+// #region ➤ 📌 VARIABLES
 
-const graphQlInstance = initGrapQLClient()
+dotenv.config();
 
-// #endregion ➤ [VARIABLES] Imports
+// #endregion ➤ 📌 VARIABLES
 
-// #region ➤ [METHODS]
+// #region ➤ 🛠️ METHODS
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] ENDPOINT METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ENDPOINT ENTRY                               ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 export async function GET
 (
-  req
+  req: any
 ): Promise < unknown >
 {
   try
   {
-    // NOTE: Handle url-query data;
+    // ### NOTE:
+    // ### handle url-query data
     const lang: string = req?.url?.searchParams?.get('lang');
     const seo: string =	req?.url?.searchParams?.get('seo');
     const geoPos: string = req?.url?.searchParams?.get('geoPos');
     const hasura: string = req?.url?.searchParams?.get('hasura');
 
-    // ACTION:
-    // ➨ Get Featured Match (WIDGET) MAIN data;
-    // ➨ NOTE: Contains [HASURA] Fallback;
+    let data: unknown;
+    let loadType: string = "⚡️ Redis (cache)";
+
+    // ### NOTE:
+    // ### gathers Top Goalscorers widget main data.
+    // ### NOTE:
+    // ### contains 🟦 Hasura (PostgreSQL) fallback.
     const if_M_0: boolean =
       geoPos != undefined
     ;
     if (if_M_0)
     {
-      let data: unknown;
-      let loadType = "cache";
-
-      // IMPORTANT Check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data = await get_target_hset_cache_data
@@ -65,32 +74,49 @@ export async function GET
         }
       }
 
-      // IMPORTANT Default to Hasura;
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData
         (
           geoPos
         );
-        loadType = 'HASURA'
+        loadType = '🟦 Hasura (SQL)';
       }
-      console.log(`📌 loaded [HTOPG] with: ${loadType}`)
-      if (data != undefined) if (data != undefined) return json(data);
+
+      // ### [🐞]
+      // console.log(`📌 loaded [HTOPG] with: ${loadType}`);
+
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType: loadType
+          }
+        );
+      }
     }
 
-    // ACTION:
-    // ➨ Get Featured Match (TRANSLATION) MAIN data;
-    // ➨ NOTE: Contains [HASURA] Fallback;
+    // ### NOTE:
+    // ### gathers Top Goalscorers widget main data.
+    // ### NOTE:
+    // ### contains 🟦 Hasura (PostgreSQL) fallback.
     const if_M_1: boolean =
       lang != undefined
       && seo == undefined
     ;
     if (if_M_1)
     {
-      let data: unknown;
-      let loadType = "cache";
-
-      // IMPORTANT Check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data = await get_target_hset_cache_data
@@ -100,34 +126,49 @@ export async function GET
         );
       }
 
-      // IMPORTANT Default to Hasura;
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData_1
         (
           lang
         );
-        loadType = 'HASURA'
+        loadType = '🟦 Hasura (SQL)';
       }
-      console.log(`📌 loaded [HTOPG] with: ${loadType}`)
-      if (data != undefined) if (data != undefined) return json(data);
+
+      // ### [🐞]
+      // console.log(`📌 loaded [HTOPG] with: ${loadType}`);
+
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType: loadType
+          }
+        );
+      }
     }
 
-    /**
-     * @summary [MAIN] [DATA]
-     * @description get target
-     * livescores (v2) exclusive SEO widget data;
-     * NOTE: with Hasura (source) fallback
-     */
+    // ### NOTE:
+    // ### gathers Top Goalscorers Widget SEO data.
+    // ### NOTE:
+    // ### contains 🟦 Hasura (PostgreSQL) fallback.
     const if_M_2: boolean =
       lang != undefined
       && seo != undefined
     ;
     if (if_M_2)
     {
-      let data: unknown;
-      let loadType = "cache";
-      // NOTE: check in cache;
+      // ### CHECK | IMPORTANT
+      // ### for existance in cache.
       if (!hasura)
       {
         data =
@@ -138,20 +179,39 @@ export async function GET
           )
         ;
       }
-      // NOTE: (default) fallback;
+
+      // ### CHECK | IMPORTANT
+      // ### for default in Hasura.
       if (!data || hasura)
       {
         data = await fallbackMainData_2
         (
           lang
         )
-        loadType = 'HASURA'
+        loadType = '🟦 Hasura (SQL)';
       }
-      console.log(`📌 loaded [HTOPG] [S] with: ${loadType}`)
-      if (data != undefined) return json(data);
+
+      // ### [🐞]
+      // console.log(`📌 loaded [HTOPG] [S] with: ${loadType}`);
+
+      if (data != null)
+      {
+        const compressed: string = LZString.compress(JSON.stringify(data));
+
+        // ### [🐞]
+        // console.log(JSON.parse(LZString.decompress(compressed)));
+
+        return json
+        (
+          {
+            data: compressed,
+            loadType: loadType
+          }
+        );
+      }
     }
 
-    // IMPORTANT Fallback to NULL
+    // ### IMPORTANT
     return json
     (
       null
@@ -175,104 +235,95 @@ export async function GET
   }
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [MAIN] METHOD
-// ~~~~~~~~~~~~~~~~~~~~~~~~
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// METHOD(s)                                    ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ top-goalscorers (widget) hasura DATA fetch;
- * @param
- * {string} geoPos
- * @returns
- * Promise < B_TGOL_D >
+ *  📌 Fallback logic for **Top Goalscorers** Main Data.
+ * @param { string } geoPos
+ *  Target `geo-location`.
+ * @returns { Promise < B_TGOL_D > }
  */
 async function fallbackMainData
 (
   geoPos: string
 ): Promise < B_TGOL_D >
 {
-  const dataRes0 = await HTGOL_HP_ENTRY
+  const dataRes0: [ Map < string, B_TGOL_D >, string[] ] = await HTGOL_HP_ENTRY
   (
-    graphQlInstance
+    null
   );
 
-  // console.log(dataRes0?.[1]);
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
-  if (dataRes0?.[0].size == 0)
-  {
-    return null
-  }
-
-	return dataRes0?.[0].get(geoPos);
+	return dataRes0?.[0]?.get(geoPos);
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ top-goalscorers (widget) hasura TRANSLATION fetch;
- * @param
- * {string} lang
- * @returns
- * Promise < B_TGOL_T >
+ *  📌 Fallback logic for **Top Goalscorers** Translation Data.
+ * @param { string } lang
+ *  Target `language`.
+ * @returns { Promise < B_TGOL_T > }
  */
 async function fallbackMainData_1
 (
   lang: string
 ): Promise < B_TGOL_T >
 {
-  const dataRes0 = await HTGOL_HP_ENTRY_1
+  const dataRes0: [ Map < string, B_TGOL_T >, string[] ] = await HTGOL_HP_ENTRY_1
   (
-    graphQlInstance,
+    null,
     [lang]
   );
 
-  if (dataRes0?.[0].size == 0)
-  {
-    return null
-  }
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
-	return dataRes0?.[0].get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * [MAIN]
- * [FALLBACK]
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * ➨ top-goalscorers (widget) hasura TRANSLATION fetch;
- * @param
- * {string} lang
- * @returns
- * Promise < B_TGOL_S >
+ *  📌 Fallback logic for **Top Goalscorers** SEO Data.
+ * @param { string } lang
+ *  Target `language`.
+ * @returns { Promise < B_FEATM_T > }
  */
 async function fallbackMainData_2
 (
   lang: string
 ): Promise < B_TGOL_S >
 {
-  const dataRes0 = await HTGOL_HP_ENTRY_2
+  const dataRes0: [ Map < string, B_TGOL_S >, string[] ] = await HTGOL_HP_ENTRY_2
   (
-    graphQlInstance,
+    null,
     [lang],
     null
   );
 
   if (dataRes0?.[0].size == 0)
-  {
-    return null
-  }
+    return null;
+  ;
 
-	return dataRes0?.[0].get(lang);
+	return dataRes0?.[0]?.get(lang);
 }
 
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-//  [HELPER] OTHER METHODS
-// ~~~~~~~~~~~~~~~~~~~~~~~~
-
-// #endregion ➤ [METHODS]
+// #endregion ➤ 🛠️ METHODS

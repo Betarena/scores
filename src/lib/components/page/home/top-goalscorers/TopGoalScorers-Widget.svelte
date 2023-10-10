@@ -78,7 +78,10 @@
 
     const response: B_TGOL_D = await get
     (
-			`/api/data/home/top-goalscorers?geoPos=${$userBetarenaSettings.country_bookmaker}`
+			`/api/data/home/top-goalscorers?geoPos=${$userBetarenaSettings.country_bookmaker}`,
+      null,
+      true,
+      true
 		);
 
     WIDGET_DATA = response;
