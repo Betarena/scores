@@ -115,6 +115,7 @@
     // ### for conditions when 'this' widget should not be shown.
     const if_M_0: boolean =
       widgetDataMain == null
+      || Object.keys(widgetDataMain)?.length == 0
     ;
 		if (if_M_0)
     {
@@ -182,21 +183,25 @@
   ### promise was fulfilled
   -->
 
-  <!--
-  ### NOTE:
-  ### Dynamic Svelte Component Import [optional]
-  ### WARNING:
-  ### Disable (this), if Standard (below) Import is Enabled.
-  -->
-  <svelte:component
-    this={MainMainAsDynamic}
-    B_USRG_D={widgetDataMain}
-  />
-  <!--
-    <FeatBetSiteMain
-      B_FEATB_T={widgetDataTranslation}
+  {#if !widgetNoData}
+
+    <!--
+    ### NOTE:
+    ### Dynamic Svelte Component Import [optional]
+    ### WARNING:
+    ### Disable (this), if Standard (below) Import is Enabled.
+    -->
+    <svelte:component
+      this={MainMainAsDynamic}
+      B_USRG_D={widgetDataMain}
     />
-  -->
+    <!--
+      <FeatBetSiteMain
+        B_FEATB_T={widgetDataTranslation}
+      />
+    -->
+
+  {/if}
 
 {:catch error}
   <!--
