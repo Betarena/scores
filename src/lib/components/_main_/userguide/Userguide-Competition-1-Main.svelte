@@ -61,7 +61,7 @@
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'global⮕w⮕userguide⮕comp-1⮕main',
     /** @description TODO: DOC: */
-    VIEWPORT_TABLET_INIT = 1200,
+    VIEWPORT_TABLET_INIT = 767,
     /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 581
   ;
@@ -338,8 +338,8 @@ MAIN WIDGET COMPONENT
         id="{CNAME}⮕title"
         class=
         "
-        {isViewTablet ? 'm-b-35' : ''}
-        {isViewMobile ? 'global s-28 text-center m-b-24' : ''}
+        {!isViewTablet ? 'm-b-35' : ''}
+        {isViewTablet ? 'global s-28 text-center m-b-24' : ''}
         "
       >
         {@html B_USRG_D?.content?.title1}
@@ -354,9 +354,8 @@ MAIN WIDGET COMPONENT
         class=
         "
         s-20
-        {isViewMobile ? 'global s-16 text-center' : ''}
+        {isViewTablet ? 'global s-16 text-center' : ''}
         "
-        class:text-center={isViewMobile}
       >
         {@html B_USRG_D.content.description}
       </div>
@@ -369,8 +368,8 @@ MAIN WIDGET COMPONENT
         id="{CNAME}⮕video"
         class=
         "
-        {isViewTablet ? 'm-t-45 m-b-50' : ''}
-        {isViewMobile ? 'm-t-35 m-b-35' : ''}
+        {!isViewTablet ? 'm-t-45 m-b-50' : ''}
+        {isViewTablet ? 'm-t-35 m-b-35' : ''}
         "
       >
         <iframe
@@ -470,7 +469,7 @@ MAIN WIDGET COMPONENT
         class=
         "
         s-20
-        {isViewMobile ? 'global s-16' : ''}
+        {isViewTablet ? 'global s-16' : ''}
         "
       >
         {@html B_USRG_D.content.footer1}
