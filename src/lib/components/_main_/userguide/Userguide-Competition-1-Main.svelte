@@ -23,6 +23,7 @@
   // ### 5. type(s) imports(s)                                            ◼️
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 
 	import { userUpdateUserguideOptOut } from '$lib/firebase/common.js';
@@ -31,7 +32,6 @@
 	import { dlogv2 } from '$lib/utils/debug.js';
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
-	import { onMount } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -449,6 +449,13 @@ MAIN WIDGET COMPONENT
     overflow-x: hidden;
     max-height: 100%;
     overflow-y: scroll;
+    /* 💠 scrollbar */
+    /* IE and Edge */ -ms-overflow-style: none !important;
+		/* Firefox */ scrollbar-width: none !important;
+  }
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕inner::-webkit-scrollbar
+  {
+		display: none !important;
   }
 
   div#global⮕w⮕userguide⮕comp-1⮕main⮕scroll-box
