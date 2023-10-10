@@ -482,8 +482,9 @@
    *  **WARNING:**
    *  **triggered by changes in:**
    *  - `deepReactListenNavBtnHover` - **kicker** (via deepListen)
+   *  - `deepReactListenUserLang` - **kicker** (via deepListen)
    */
-  $: if (browser && deepReactListenNavBtnHover != undefined)
+  $: if (browser && deepReactListenNavBtnHover != undefined && deepReactListenUserLang)
   {
     // ### [🐞]
     dlog
@@ -494,7 +495,7 @@
 
     calcNavTrianglePos();
   }
-  else if (browser && deepReactListenNavBtnHover == undefined)
+  else if (browser && deepReactListenNavBtnHover == undefined && deepReactListenUserLang)
   {
     // ### [🐞]
     dlog
