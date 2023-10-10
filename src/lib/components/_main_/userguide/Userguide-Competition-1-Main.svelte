@@ -28,6 +28,7 @@
 
 	import { userUpdateUserguideOptOut } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlogv2 } from '$lib/utils/debug.js';
 
@@ -55,11 +56,21 @@
 
   const
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
-    CNAME = 'global⮕w⮕userguide⮕comp-1⮕main'
+    CNAME = 'global⮕w⮕userguide⮕comp-1⮕main',
+    /** @description TODO: DOC: */
+    VIEWPORT_TABLET_INIT = 1200,
+    /** @description TODO: DOC: */
+    VIEWPORT_MOBILE_INIT = 581
   ;
 
   let
+    /** @description TODO: DOC: */
+    isViewMobile: boolean = true,
+    /** @description TODO: DOC: */
+    isViewTablet: boolean = true,
+    /** @description TODO: DOC: */
     noWidgetData: unknown = false,
+    /** @description TODO: DOC: */
     showModal: boolean = false
   ;
 
@@ -105,6 +116,80 @@
     );
 
     $sessionStore.showUserguide1 = false;
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER
+   * @description
+   *  📌 Logic for modal transition logic for mobile devices only.
+   * @param { any } node
+   *  Target node to apply transition to.
+   * @param { any } options
+   *  Target transition options.
+   * @returns { any }
+   */
+  function customAnimation
+  (
+    node: any,
+    options: any
+  ): any
+  {
+		if (isViewMobile)
+			return options.fn(node, { y: 1500, duration: 250 });
+    else
+			return options.fn(node, { x: 1500, duration: 250 });
+	}
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER | IMPORTANT
+   * @description
+   *  📌 Triggers viewport changes.
+   * @returns { void }
+   */
+  function resizeAction
+  (
+  ): void
+  {
+    [
+      isViewTablet,
+      isViewMobile
+    ] =	viewport_change
+    (
+      VIEWPORT_TABLET_INIT,
+      VIEWPORT_MOBILE_INIT
+    );
+  }
+
+  /**
+   * @author
+   *  @migbash
+   * @summary
+   *  🔹 HELPER | IMPORTANT
+   * @description
+   *  📌 Local component wrapper
+   * (⚡️) `window` (resize-change) listener.
+   * @returns { void }
+   */
+  function addEventListeners
+  (
+  ): void
+  {
+    // ### NOTE:
+    // ### listen to 'resize'.
+    window.addEventListener
+    (
+      'resize',
+      function ()
+      {
+        resizeAction();
+      }
+    );
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -168,6 +253,10 @@
   (
     () =>
     {
+      // ### IMPORTANT
+      resizeAction();
+      addEventListeners();
+
       setTimeout
       (
         () =>
@@ -210,8 +299,7 @@ MAIN WIDGET COMPONENT
   <div
     id="{CNAME}"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
-    in:fly={{ x: 200, duration: 250 }}
-    out:fly={{ x: 200, duration: 250 }}
+    transition:customAnimation={{ fn: fly }}
   >
 
     <div
