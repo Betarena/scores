@@ -149,6 +149,7 @@
 
   $: deepReactListenUserUid = $userBetarenaSettings?.user?.firebase_user_data?.uid;
   $: deepReactListenUserLang = $userBetarenaSettings?.lang;
+  $: deepReactListenWebLang = $sessionStore?.serverLang;
   $: deepReactListenUser = JSON.stringify($userBetarenaSettings?.user);
   $: deepReactListenNavBtnHover = JSON.stringify($sessionStore?.navBtnHover);
 
@@ -482,33 +483,40 @@
    *  **WARNING:**
    *  **triggered by changes in:**
    *  - `deepReactListenNavBtnHover` - **kicker** (via deepListen)
-   *  - `deepReactListenUserLang` - **kicker** (via deepListen)
+   *  - `deepReactListenWebLang` - **kicker** (via deepListen)
    */
-  $: if (browser && deepReactListenNavBtnHover != undefined && deepReactListenUserLang)
+  $: if (browser && deepReactListenNavBtnHover != undefined && deepReactListenWebLang)
   {
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_5`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_5 ${deepReactListenWebLang}`,
       true
     );
 
     calcNavTrianglePos();
   }
-  else if (browser && deepReactListenNavBtnHover == undefined && deepReactListenUserLang)
+  else if (browser && deepReactListenNavBtnHover == undefined && deepReactListenWebLang)
   {
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_6`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_6 ${deepReactListenWebLang}`,
       true
     );
 
-    if (isRouteCompetitions)
-      calcNavTrianglePos('competitions');
-    else
-      calcNavTrianglePos('scores');
-    ;
+    setTimeout
+    (
+      () =>
+      {
+        if (isRouteCompetitions)
+          calcNavTrianglePos('competitions');
+        else
+          calcNavTrianglePos('scores');
+        ;
+      },
+      250
+    );
   }
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
