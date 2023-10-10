@@ -31,6 +31,7 @@
 	import { dlogv2 } from '$lib/utils/debug.js';
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
+	import { onMount } from 'svelte';
 
   // #endregion ➤ 📦 Package Imports
 
@@ -58,7 +59,8 @@
   ;
 
   let
-    noWidgetData: unknown = false
+    noWidgetData: unknown = false,
+    showModal: boolean = false
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -153,6 +155,32 @@
 
   // #endregion ➤ 🔥 REACTIVIY [SVELTE]
 
+  // #region ➤ 🔄 LIFECYCLE [SVELTE]
+
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+  // ### NOTE:                                                            ◼️
+  // ### Please add inside 'this' region the 'logic' that should run      ◼️
+  // ### immediately and as part of the 'lifecycle' of svelteJs,          ◼️
+  // ### as soon as 'this' .svelte file is ran.                           ◼️
+  // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
+  onMount
+  (
+    () =>
+    {
+      setTimeout
+      (
+        () =>
+        {
+          showModal = true;
+        },
+        1500
+      );
+    }
+  );
+
+  // #endregion ➤ 🔄 LIFECYCLE [SVELTE]
+
 </script>
 
 <!--
@@ -168,7 +196,7 @@
 <!--
 MAIN WIDGET COMPONENT
 -->
-{#if $sessionStore?.showUseguide1}
+{#if showModal && $sessionStore?.showUseguide1}
 
   <!--
   BACKGROUND BLUR
