@@ -32,6 +32,9 @@
 	import { dlogv2 } from '$lib/utils/debug.js';
 	import { viewport_change } from '$lib/utils/platform-functions.js';
 
+  import icon_close from './assets/icon-close-btn.svg';
+  import icon_close_dark from './assets/icon-close-dark-btn.svg';
+
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
   // #endregion ➤ 📦 Package Imports
@@ -71,7 +74,9 @@
     /** @description TODO: DOC: */
     noWidgetData: unknown = false,
     /** @description TODO: DOC: */
-    showModal: boolean = false
+    showModal: boolean = false,
+    /** @description TODO: DOC: */
+    showExpectedVideo: boolean = false
   ;
 
   // #endregion ➤ 📌 VARIABLES
@@ -297,12 +302,18 @@ MAIN WIDGET COMPONENT
     on:click={() => $sessionStore.showUserguide1 = false}
   />
 
+  <!--
+  USERGUIDE ➤ MAIN COMPONENT
+  -->
   <div
     id="{CNAME}"
     class:dark-background-1={$userBetarenaSettings.theme == 'Dark'}
     transition:customAnimation={{ fn: fly }}
   >
 
+    <!--
+    USERGUIDE ➤ MAIN SCROLLABLE BOX
+    -->
     <div
       id="{CNAME}⮕inner"
     >
@@ -313,9 +324,11 @@ MAIN WIDGET COMPONENT
       <img
         id='close-vector'
         class='cursor-pointer'
-        src='/assets/svg/close.svg'
+        src={$userBetarenaSettings.theme == 'Dark' ? icon_close : icon_close_dark}
         alt='close-svg'
         on:click={() => $sessionStore.showUserguide1 = false}
+        width=18
+        height=18
       />
 
       <!--
@@ -326,10 +339,11 @@ MAIN WIDGET COMPONENT
         class=
         "
         m-b-35
+        {isViewMobile ? 'global s-28 text-center m-b-24' : ''}
         "
       >
-        {@html B_USRG_D.content.title1}
-        {@html B_USRG_D.content.title2}
+        {@html B_USRG_D?.content?.title1}
+        {@html B_USRG_D?.content?.title2}
       </div>
 
       <!--
@@ -339,8 +353,10 @@ MAIN WIDGET COMPONENT
         id="{CNAME}⮕description"
         class=
         "
-        global s-20
+        s-20
+        {isViewMobile ? 'global s-16 text-center m-b-24' : ''}
         "
+        class:text-center={isViewMobile}
       >
         {@html B_USRG_D.content.description}
       </div>
@@ -349,15 +365,20 @@ MAIN WIDGET COMPONENT
       USERGUIDE ➤ VIDEO
       (alt) https://www.youtube.com/embed/watch?v=lrmAAadPVQI?enablejsapi=1
       -->
-      <iframe
-        src="https://www.youtube.com/watch?v=lrmAAadPVQI"
-        frameborder="0"
+      <div
+        id="{CNAME}⮕video"
         class=
         "
         m-t-45
         m-b-50
+        {isViewMobile ? 'm-b-35' : ''}
         "
-      />
+      >
+        <iframe
+          src="{B_USRG_D?.content?.video_link ?? 'https://www.youtube.com/watch?v=lrmAAadPVQI'}"
+          allow='autoplay'
+        />
+      </div>
 
       <!--
       USERGUIDE ➤ STEP-BY-STEP
@@ -371,6 +392,7 @@ MAIN WIDGET COMPONENT
             class=
             "
             m-b-35
+            {isViewMobile ? 'global s-16 m-b-24' : ''}
             "
           >
             {@html step.title ?? ''}
@@ -385,21 +407,27 @@ MAIN WIDGET COMPONENT
               m-b-8
               step-by-step-row
               "
+              style=
+              "
+              {isViewMobile ? "align-items: flex-start;" : ""}
+              "
             >
 
               <div
                 class=
                 "
-                m-r-24
                 text-center
                 step-box
                 "
+                class:m-r-20={isViewMobile}
+                class:m-r-24={!isViewTablet}
               >
                 <p
                   class=
                   "
                   s-16
                   color-black-2
+                  w-500
                   "
                 >
                   {stepId}
@@ -411,6 +439,7 @@ MAIN WIDGET COMPONENT
                 "
                 s-16
                 color-black-2
+                m-t-5
                 "
               >
                 {stepTxt}
@@ -429,8 +458,8 @@ MAIN WIDGET COMPONENT
         id="divider"
         class=
         "
-        m-t-45
-        m-b-50
+        {!isViewTablet ? 'm-t-45 m-b-50' : ''}
+        {isViewTablet ? 'm-t-35 m-b-35' : ''}
         "
       />
 
@@ -441,7 +470,8 @@ MAIN WIDGET COMPONENT
         id="{CNAME}⮕footer"
         class=
         "
-        global s-20
+        s-20
+        {isViewMobile ? 'global s-16' : ''}
         "
       >
         {@html B_USRG_D.content.footer1}
@@ -477,6 +507,7 @@ MAIN WIDGET COMPONENT
         "
         s-18
         color-black-2
+        {isViewMobile ? 'global s-16' : ''}
         "
       >
         {B_USRG_D?.content?.extra?.do_not_show}
@@ -516,7 +547,7 @@ MAIN WIDGET COMPONENT
 	div#global⮕w⮕userguide⮕comp-1⮕main
   {
     /* 📌 position */
-    top: 0;
+    top: 7.5%;
     bottom: 0;
     right: 0;
     left: 0;
@@ -527,10 +558,18 @@ MAIN WIDGET COMPONENT
     background: #ffffff;
 		box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.08);
 		border-radius: 12px 12px 0 0;
-    width: 100vw;
+    width: 100%;
     overflow: hidden;
-    padding: 24px;
-    padding-bottom: 150px;
+    padding: 48px 24px;
+	}
+
+  img#close-vector
+  {
+    /* 📌 position */
+		position: absolute;
+		top: 25px;
+		right: 25px;
+		z-index: 400000002;
 	}
 
 	div#global⮕w⮕userguide⮕comp-1⮕main⮕inner
@@ -554,6 +593,11 @@ MAIN WIDGET COMPONENT
   {
     /* 🎨 style */
     overflow-y: scroll;
+  }
+
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕description
+  {
+    /* 🎨 style */
   }
 
   :global(
@@ -593,11 +637,21 @@ MAIN WIDGET COMPONENT
     display: inline;
   }
 
-  iframe
+  div#global⮕w⮕userguide⮕comp-1⮕main⮕video
   {
+    /* 📌 position */
+    position: relative;
     /* 🎨 style */
     width: 100%;
     height: 396px;
+  }
+  iframe
+  {
+    /* 📌 position */
+    position: absolute;
+    /* 🎨 style */
+    width: inherit;
+    height: inherit;
   }
 
   div#divider
@@ -633,15 +687,6 @@ MAIN WIDGET COMPONENT
     background: var(--white);
     box-shadow: 0px -4px 12px 0px rgba(0, 0, 0, 0.08);
   }
-
-  img#close-vector
-  {
-    /* 📌 position */
-		position: absolute;
-		top: 20px;
-		right: 20px;
-		z-index: 400000002;
-	}
 
 	/*
   ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️

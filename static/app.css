@@ -460,11 +460,14 @@ ON HOVER COLORS
 	font-size: 14px;
 }
 .s-16,
-.global.s-16
+.global.s-16,
+.global.s-16 > *
 {
 	font-size: 16px;
 }
-.s-18
+.s-18,
+.global.s-18,
+.global.s-18 > *
 {
 	font-size: 18px;
 }
@@ -481,9 +484,17 @@ ON HOVER COLORS
 {
 	font-size: 22px;
 }
-.s-24
+.s-24,
+.global.s-24,
+.global.s-24 > *
 {
 	font-size: 24px;
+}
+.s-28,
+.global.s-28,
+.global.s-28 > *
+{
+	font-size: 28px;
 }
 .s-32
 {
