@@ -13,7 +13,7 @@
 	import { getImageBgColor } from '$lib/utils/color_thief';
 	import { MONTH_NAMES_ABBRV } from '$lib/utils/dates';
 	import { googleActionsStr } from '$lib/utils/google.js';
-	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions';
+	import { cleanUrl, googleEventLog, viewport_change } from '$lib/utils/platform-functions';
 
   import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
   import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -589,7 +589,7 @@ OUTER CLOSE AREA
       >
         {#each FIXTURE_H2H?.data?.last_5_data || [] as item}
           <a
-            href={FIXTURE_H2H?.last_5_data_urls?.find(({ id }) => id == item?.id)?.urls?.[$sessionStore?.serverLang]}
+            href={cleanUrl(FIXTURE_H2H?.last_5_data_urls?.find(({ id }) => id == item?.id)?.urls?.[$sessionStore?.serverLang])}
           >
             <div
               class="

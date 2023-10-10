@@ -33,7 +33,7 @@
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { getImageBgColor } from '$lib/utils/color_thief.js';
 	import { MONTH_NAMES_ABBRV, getOrdinalNum, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
-	import { viewport_change } from '$lib/utils/platform-functions.js';
+	import { cleanUrl, viewport_change } from '$lib/utils/platform-functions.js';
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
 	import WidgetTitle from '$lib/components/Widget-Title.svelte';
@@ -447,7 +447,7 @@
       FEATURED MATCH/FIXTURE ➤ LEAGUE TITLE
       -->
       <a
-        href={B_FEATM_D?.urls == undefined ? '' : B_FEATM_D?.urls?.[B_FEATB_T?.lang]}
+        href={B_FEATM_D?.urls == undefined ? '' : cleanUrl(B_FEATM_D?.urls?.[B_FEATB_T?.lang])}
       >
         <div
           id="fixture-league-title"
@@ -594,7 +594,7 @@
               {:else}
                 <a
                   href="{
-                    B_FEATM_D?.fix_urls != null ? B_FEATM_D?.fix_urls?.[$sessionStore?.serverLang] : ''}
+                    B_FEATM_D?.fix_urls != null ? cleanUrl(B_FEATM_D?.fix_urls?.[$sessionStore?.serverLang]) : ''}
                   ">
                   <button
                     id="watch-match-btn"

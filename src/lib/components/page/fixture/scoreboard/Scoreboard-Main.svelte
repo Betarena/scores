@@ -14,7 +14,7 @@
 	import { getOrdinalNum, MONTH_NAMES_ABBRV, toCorrectDate, toZeroPrefixDateStr } from '$lib/utils/dates.js';
 	import { dlog, SC_W_F_STY, SC_W_F_TAG, SC_W_F_TOG } from '$lib/utils/debug';
 	import { googleActionsStr } from '$lib/utils/google.js';
-	import { googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
+	import { cleanUrl, googleEventLog, viewport_change } from '$lib/utils/platform-functions.js';
 	import { FIXTURE_FULL_TIME_OPT, FIXTURE_LIVE_TIME_OPT, FIXTURE_NOT_START_OPT } from "@betarena/scores-lib/dist/api/sportmonks.js";
 
 	import WidgetNoData from '$lib/components/Widget-No-Data.svelte';
@@ -422,7 +422,7 @@ TODO:
               "
             >
               <a
-                href={FIXTURE_SCOREBOARD?.league_urls?.[$sessionStore?.serverLang]}
+                href={cleanUrl(FIXTURE_SCOREBOARD?.league_urls?.[$sessionStore?.serverLang])}
               >
                 <div
                   id="league-info-img-box"
@@ -884,11 +884,7 @@ TODO:
               "
             >
               <a
-                href={FIXTURE_SCOREBOARD
-                  ?.league_urls[
-                  FIXTURE_SCOREBOARD_TRANSLATION
-                    ?.lang
-                ]}
+                href={cleanUrl(FIXTURE_SCOREBOARD?.league_urls?.[$sessionStore?.serverLang])}
               >
                 <div
                   id="league-info-img-box"
@@ -1395,11 +1391,7 @@ TODO:
                   "
                 >
                   <a
-                    href={FIXTURE_SCOREBOARD
-                      ?.league_urls[
-                      FIXTURE_SCOREBOARD_TRANSLATION
-                        ?.lang
-                    ]}
+                    href={cleanUrl(FIXTURE_SCOREBOARD?.league_urls?.[$sessionStore?.serverLang])}
                   >
                     <div
                       id="league-info-img-box"
