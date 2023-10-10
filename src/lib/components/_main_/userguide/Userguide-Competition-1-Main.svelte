@@ -338,7 +338,7 @@ MAIN WIDGET COMPONENT
         id="{CNAME}⮕title"
         class=
         "
-        m-b-35
+        {isViewTablet ? 'm-b-35' : ''}
         {isViewMobile ? 'global s-28 text-center m-b-24' : ''}
         "
       >
@@ -354,7 +354,7 @@ MAIN WIDGET COMPONENT
         class=
         "
         s-20
-        {isViewMobile ? 'global s-16 text-center m-b-24' : ''}
+        {isViewMobile ? 'global s-16 text-center' : ''}
         "
         class:text-center={isViewMobile}
       >
@@ -369,9 +369,8 @@ MAIN WIDGET COMPONENT
         id="{CNAME}⮕video"
         class=
         "
-        m-t-45
-        m-b-50
-        {isViewMobile ? 'm-b-35' : ''}
+        {isViewTablet ? 'm-t-45 m-b-50' : ''}
+        {isViewMobile ? 'm-t-35 m-b-35' : ''}
         "
       >
         <iframe
