@@ -176,9 +176,9 @@ export default defineConfig
               // if (id.includes('src/lib/components/_main_'))
               //   return 'M-main-single-chunk';
               // ;
-              // if (id.includes('src/'))
-              //   return 'M-homepage-single-chunk';
-              // ;
+              if (id.includes('src/'))
+                return 'M-homepage-single-chunk';
+              ;
               // if (id.includes('src/lib/store/'))
               //   return 'M-stores-single-chunk';
               // ;
