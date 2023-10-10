@@ -104,7 +104,7 @@
       1
     );
 
-    $sessionStore.showUseguide1 = false;
+    $sessionStore.showUserguide1 = false;
   }
 
   // #endregion ➤ 🛠️ METHODS
@@ -149,7 +149,7 @@
     (
     ): void
     {
-      $sessionStore.showUseguide1 = true;
+      $sessionStore.showUserguide1 = true;
     }
   }
 
@@ -196,7 +196,7 @@
 <!--
 MAIN WIDGET COMPONENT
 -->
-{#if showModal && $sessionStore?.showUseguide1}
+{#if showModal && $sessionStore?.showUserguide1}
 
   <!--
   BACKGROUND BLUR
@@ -204,7 +204,7 @@ MAIN WIDGET COMPONENT
   <div
     id='background-modal-blur'
     in:fade
-    on:click={() => $sessionStore.showUseguide1 = false}
+    on:click={() => $sessionStore.showUserguide1 = false}
   />
 
   <div
@@ -226,7 +226,7 @@ MAIN WIDGET COMPONENT
         class='cursor-pointer'
         src='/assets/svg/close.svg'
         alt='close-svg'
-        on:click={() => $sessionStore.showUseguide1 = false}
+        on:click={() => $sessionStore.showUserguide1 = false}
       />
 
       <!--

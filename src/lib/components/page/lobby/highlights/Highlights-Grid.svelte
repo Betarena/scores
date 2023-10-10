@@ -588,39 +588,43 @@
       <!--
       HOW TO PLAY
       -->
-      <div
-        class=
-        "
-        row-space-start
-        width-auto
-        "
-        on:click={() => $sessionStore.showUseguide1 = true}
-      >
+      {#if $sessionStore?.showUserguide1Conf}
 
-        <p
+        <div
           class=
           "
-          s-14
-          w-500
-          underline
-          m-r-6
-          hover-color-primary
-          color-black-2
-          cursor-pointer
+          row-space-start
+          width-auto
           "
+          on:click={() => $sessionStore.showUserguide1 = true}
         >
-          {B_SAP_CP_T?.general?.data?.title_userguide ?? 'How to play'}
-        </p>
 
-        <img
-          id=''
-          src={icon_question_mark}
-          alt='question-mark'
-          title='How to play ?'
-          loading='lazy'
-        />
+          <p
+            class=
+            "
+            s-14
+            w-500
+            underline
+            m-r-6
+            hover-color-primary
+            color-black-2
+            cursor-pointer
+            "
+          >
+            {B_SAP_CP_T?.general?.data?.title_userguide ?? 'How to play'}
+          </p>
 
-      </div>
+          <img
+            id=''
+            src={icon_question_mark}
+            alt='question-mark'
+            title='How to play ?'
+            loading='lazy'
+          />
+
+        </div>
+
+      {/if}
 
     </div>
   {/if}

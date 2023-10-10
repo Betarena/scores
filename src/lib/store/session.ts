@@ -28,7 +28,8 @@ const sessionStoreObj: Platform_Session =
 	fixture_select_view: 'overview',
   navBtnHover: undefined,
   withdrawModal: false,
-  showUseguide1: false,
+  showUserguide1: false,
+  showUserguide1Conf: false,
   // ### NOTE:
   // ### variables for language handle.
   lang_intent: undefined,

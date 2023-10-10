@@ -28,7 +28,6 @@
 
 	import { get } from '$lib/api/utils.js';
 	import sessionStore from "$lib/store/session.js";
-// import <component> [..]
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
@@ -121,10 +120,12 @@
     {
       // dlog(`${LV2_W_H_TAG[0]} ❌ no data available!`);
 			widgetNoData = true;
+      $sessionStore.showUserguide1Conf = false;
 			return;
 		}
 
     widgetNoData = false;
+    $sessionStore.showUserguide1Conf = true;
 
     return;
   }

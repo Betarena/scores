@@ -467,7 +467,7 @@
   $: if_R_4 =
     ($sessionStore.livescoreShowCalendar && isViewMobile)
     || $sessionStore.withdrawModal
-    || $sessionStore.showUseguide1
+    || $sessionStore.showUserguide1
   ;
 
   /**
