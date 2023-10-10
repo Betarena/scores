@@ -609,7 +609,7 @@
           cursor-pointer
           "
         >
-          How to play ?
+          {B_SAP_CP_T?.general?.data?.title_userguide ?? 'How to play'}
         </p>
 
         <img
