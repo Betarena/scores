@@ -604,7 +604,9 @@
           w-500
           underline
           m-r-6
+          hover-color-primary
           color-black-2
+          cursor-pointer
           "
         >
           How to play ?
