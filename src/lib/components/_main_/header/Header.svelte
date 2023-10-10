@@ -490,7 +490,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_5`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_5 ${deepReactListenWebLang}`,
       true
     );
 
@@ -501,7 +501,7 @@
     // ### [🐞]
     dlog
     (
-      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_6`,
+      `🚏 checkpoint [R] ➤ ${NB_W_TAG[0]} if_R_6 ${deepReactListenWebLang}`,
       true
     );
 
