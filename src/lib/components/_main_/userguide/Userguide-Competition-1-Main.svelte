@@ -26,11 +26,11 @@
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 
-	import { userUpdateUserguideOptOut } from '$lib/firebase/common.js';
+	import { userToggleUserguideOptOut } from '$lib/firebase/common.js';
 	import sessionStore from '$lib/store/session.js';
-	import { viewport_change } from '$lib/utils/platform-functions.js';
 	import userBetarenaSettings from '$lib/store/user-settings.js';
 	import { dlogv2 } from '$lib/utils/debug.js';
+	import { viewport_change } from '$lib/utils/platform-functions.js';
 
 	import type { B_USRG_D } from '@betarena/scores-lib/types/types.misc.userguide.js';
 
@@ -103,14 +103,15 @@
   {
     if ($userBetarenaSettings.user != null)
     {
-      userUpdateUserguideOptOut
+      userToggleUserguideOptOut
       (
         $userBetarenaSettings.user.firebase_user_data.uid,
-        1
+        1,
+        $userBetarenaSettings?.userguide_id_opt_out
       );
     }
 
-    userBetarenaSettings.updateUserGuideOpt
+    userBetarenaSettings.updateToggleUserGuideOpt
     (
       1
     );
@@ -346,9 +347,10 @@ MAIN WIDGET COMPONENT
 
       <!--
       USERGUIDE ➤ VIDEO
+      (alt) https://www.youtube.com/embed/watch?v=lrmAAadPVQI?enablejsapi=1
       -->
       <iframe
-        src="https://www.youtube.com/embed/watch?v=lrmAAadPVQI?enablejsapi=1"
+        src="https://www.youtube.com/watch?v=lrmAAadPVQI"
         frameborder="0"
         class=
         "
@@ -467,6 +469,7 @@ MAIN WIDGET COMPONENT
         m-r-16
         v-1
         "
+        bind:checked={if_R_0_1}
         on:click={() => toggleUserguideOptOut()}
       >
       <p
@@ -537,6 +540,7 @@ MAIN WIDGET COMPONENT
     overflow-x: hidden;
     max-height: 100%;
     overflow-y: scroll;
+    padding-bottom: 85px;
     /* 💠 scrollbar */
     /* IE and Edge */ -ms-overflow-style: none !important;
 		/* Firefox */ scrollbar-width: none !important;
@@ -661,7 +665,6 @@ MAIN WIDGET COMPONENT
       overflow: hidden;
       border-radius: 0;
       padding: 48px;
-      padding-bottom: unset;
     }
   }
 

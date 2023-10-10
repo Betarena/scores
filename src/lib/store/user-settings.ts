@@ -341,20 +341,36 @@ function createLocalStore
 		},
 
     /**
+     * @author
+     *  @migbash
      * @summary
      *  🔹 HELPER
 		 * @description
-     *  📌 Updates `svelte-stores` and `client's` data in
+     *  📌 Updates (via toggle) `svelte-stores` and `client's` data in
      *  `localStorage` for `userguides-op-out`.
 		 * @param { number } id
+     *  Target **uiserguide** `id`.
+     * @returns { void }
 		 */
-		updateUserGuideOpt:
+		updateToggleUserGuideOpt:
     (
 			id: number
 		): void =>
     {
       const localStore: User_Setting = methods.parseLocalStorage();
-			localStore?.userguide_id_opt_out?.push(id);
+
+      if (localStore?.userguide_id_opt_out?.includes(id))
+      {
+        localStore.userguide_id_opt_out = localStore?.userguide_id_opt_out
+        ?.filter
+        (
+          x => x != id
+        );
+      }
+      else
+      {
+        localStore?.userguide_id_opt_out?.push(id);
+      }
       localStore.userguide_id_opt_out = [...new Set(localStore?.userguide_id_opt_out)] ?? [];
       methods.setLocalStorage
       (
@@ -514,7 +530,16 @@ function createLocalStore
         );
 
         localStore.user.scores_user_data.main_balance = 0
-      };
+      }
+
+      // ### CHECK
+      // ### for 'null' / non-empty value of `userguide_opt_out`.
+      const if_M_1: boolean =
+        localStore?.user?.scores_user_data?.userguide_id_opt_out != null
+      ;
+      if (if_M_1)
+        localStore.userguide_id_opt_out = localStore?.user?.scores_user_data?.userguide_id_opt_out;
+      ;
 
       // ◾️ NOTE:
       // ◾️ Approach Num.2
