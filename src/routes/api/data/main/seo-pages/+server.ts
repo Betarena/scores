@@ -1,3 +1,8 @@
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ### 📝 DESCRIPTION                                                         ◼️
+// ### Application Server Endpoint for Platform SEO / Valid Links             ◼️
+// ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 // #region ➤ 📦 Package Imports
 
 import { initGrapQLClient } from '$lib/graphql/init';
@@ -6,6 +11,7 @@ import { SEO_CS_ENTRY, SEO_FS_ENTRY, SEO_PS_ENTRY } from '@betarena/scores-lib/d
 import * as RedisKeys from '@betarena/scores-lib/dist/redis/config.js';
 import { json } from '@sveltejs/kit';
 import dotenv from 'dotenv';
+import LZString from 'lz-string';
 import { HSET_All, get_target_hset_cache_data, get_target_set_cache_data } from '../../../../../lib/redis/std_main';
 
 import type { B_SAP_CTP_D, B_SAP_FP_D, B_SAP_PP_D } from '@betarena/scores-lib/types/seo-pages';
@@ -30,12 +36,16 @@ dotenv.config();
 
 // #region ➤ 🛠️ METHODS
 
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// ENDPOINT ENTRY                               ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+
 /**
  * @type {import('./$types').RequestHandler}
  */
 export async function GET
 (
-  req
+  req: any
 ): Promise < unknown >
 {
   // ### IMPORTANT
@@ -63,6 +73,9 @@ export async function GET
   const countries: string = req?.url?.searchParams?.get('countries');
   const hasura: string = req?.url?.searchParams?.get('hasura');
 
+  let data: unknown;
+  let loadType: string = "⚡️ Redis (cache)";
+
   // ### TODO:
   // ### add (hasura/postgresql) fallback for all METHODS below;
   // ### TODO:
@@ -84,7 +97,7 @@ export async function GET
   ;
 	if (if_M_0)
   {
-		return validUrlCheck
+    data = validUrlCheck
     (
       langUrl,
       sportUrl,
@@ -94,7 +107,20 @@ export async function GET
       playerUrl,
       competitionMainUrl,
       competitionUrl
-    )
+    );
+
+    const compressed: string = LZString.compress(JSON.stringify(data));
+
+    // ### [🐞]
+    // console.log(JSON.parse(LZString.decompress(compressed)));
+
+    return json
+    (
+      {
+        data: compressed,
+        loadType: loadType
+      }
+    );
 	}
 
   // ### CHECK
@@ -107,12 +133,27 @@ export async function GET
   ;
 	if (if_M_1)
   {
-		const data: unknown = await get_target_hset_cache_data
+		data = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A1,
       lang
     );
-		if (data) return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -125,12 +166,27 @@ export async function GET
   ;
 	if (if_M_2)
   {
-		const data: unknown = await get_target_hset_cache_data
+		data = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A3,
       url
     );
-		if (data)	return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -143,12 +199,27 @@ export async function GET
   ;
 	if (if_M_3)
   {
-		const data: unknown = await get_target_hset_cache_data
+		data = await get_target_hset_cache_data
     (
 			RedisKeys.SAP_C_D_A2,
       lang
     );
-		if (data) return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -161,13 +232,10 @@ export async function GET
   ;
 	if (if_M_4)
   {
-
     const _fixture_id: number = parseInt(fixture_id)
-    let data;
-    let loadType: string = "cache";
 
-    // ### CHECK
-    // ### for cache.
+    // ### CHECK | IMPORTANT
+    // ### for existance in cache.
     if (!hasura)
     {
       data = await get_target_hset_cache_data
@@ -177,21 +245,35 @@ export async function GET
       );
     }
 
-    // ### CHECK
-    // ### for default hasura fallback.
+    // ### CHECK | IMPORTANT
+    // ### for default in Hasura.
 		if (!data || hasura)
     {
       data = await fallbackMainData_2
       (
         _fixture_id
       );
-      loadType = 'HASURA'
+      loadType = '🟦 Hasura (SQL)';
 		}
 
     // ### [🐞]
-    console.log(`📌 loaded [PFIX] with: ${loadType}`)
+    // console.log(`📌 loaded [PFIX] with: ${loadType}`);
 
-    return json(data);
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -204,12 +286,27 @@ export async function GET
   ;
 	if (if_M_5)
   {
-		const data: unknown = await get_target_hset_cache_data
+		data = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A4,
       lang
     );
-		if (data)	return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -222,12 +319,10 @@ export async function GET
   ;
   if (if_M_6)
   {
-
     const _player_id: number = parseInt(player_id)
-    let data;
-    let loadType: string = "cache";
 
-    // NOTE: check in cache;
+    // ### CHECK | IMPORTANT
+    // ### for existance in cache.
     if (!hasura)
     {
       data = await get_target_hset_cache_data
@@ -237,19 +332,35 @@ export async function GET
       );
     }
 
-    // NOTE: (default) fallback;
+    // ### CHECK | IMPORTANT
+    // ### for default in Hasura.
 		if (!data || hasura)
     {
       data = await fallbackMainData_0
       (
         _player_id
       );
-      loadType = 'HASURA'
+      loadType = '🟦 Hasura (SQL)';
 		}
 
-    console.log(`📌 loaded [PPLAY] with: ${loadType}`)
+    // ### [🐞]
+    // console.log(`📌 loaded [PPLAY] with: ${loadType}`)
 
-    return json(data);
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
   }
 
   // ### CHECK
@@ -262,12 +373,27 @@ export async function GET
   ;
   if (if_M_7)
   {
-    const data: unknown = await get_target_hset_cache_data
+    data = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A15,
       lang
     );
-    return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
   }
 
   // ### CHECK
@@ -280,12 +406,27 @@ export async function GET
   ;
   if (if_M_8)
   {
-    const data: unknown = await get_target_hset_cache_data
+    data = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A18,
       lang
     );
-    return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
   }
 
   // ### CHECK
@@ -298,14 +439,10 @@ export async function GET
   ;
   if (if_M_9)
   {
-
     const _competition_id: number = parseInt(competition_id)
-    let data: unknown;
-    let loadType: string = '⚡️ CACHE';
-    let logTag: string = 'P-COMP';
 
-    // ### NOTE:
-    // ### retrieve from cache.
+    // ### CHECK | IMPORTANT
+    // ### for existance in cache.
     // if (!hasura)
     // {
     //   data = await get_target_hset_cache_data
@@ -315,21 +452,35 @@ export async function GET
     //   );
     // }
 
-    // ### NOTE:
-    // ### fallback to hasura.
+    // ### CHECK | IMPORTANT
+    // ### for default in Hasura.
 		if (!data || hasura)
     {
       data = await fallbackMainData_3
       (
         _competition_id
       );
-      loadType = '💿 HASURA';
+      loadType = '🟦 Hasura (SQL)';
 		}
 
     // ### [🐞]
-    console.log(`📌 ${logTag} w/ ${loadType}`)
+    // console.log(`📌 ${logTag} w/ ${loadType}`)
 
-    if (data) return json(data);
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
   }
 
   // ### CHECK
@@ -347,7 +498,22 @@ export async function GET
       RedisKeys.SAP_C_D_A20,
       lang
     );
-    return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
   }
 
   // ### CHECK
@@ -361,7 +527,22 @@ export async function GET
       RedisKeys.SAP_C_D_A7,
       country_id
     );
-		if (data) return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -374,7 +555,22 @@ export async function GET
     (
       RedisKeys.SAP_C_D_A7
     );
-		if (data) return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -383,12 +579,27 @@ export async function GET
   // ### cache only.
 	if (term)
   {
-		const data: unknown = await get_target_hset_cache_data
+		data = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A6,
       term
     );
-		if (data) return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
   // ### CHECK
@@ -397,21 +608,53 @@ export async function GET
   // ### cache only.
 	if (months && lang)
   {
-		const data: unknown  = await get_target_hset_cache_data
+		data = await get_target_hset_cache_data
     (
       RedisKeys.SAP_C_D_A8,
       lang
     );
-		if (data) return json(data);
+
+    if (data != null)
+    {
+      const compressed: string = LZString.compress(JSON.stringify(data));
+
+      // ### [🐞]
+      // console.log(JSON.parse(LZString.decompress(compressed)));
+
+      return json
+      (
+        {
+          data: compressed,
+          loadType: loadType
+        }
+      );
+    }
 	}
 
-	return json(null);
+  // ### IMPORTANT
+	return json
+  (
+    null
+  );
 }
 
-// ****************************************************
-// 📌 HELPER METHODS                                  *
-// ****************************************************
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
+// METHOD(s)                                    ◼️
+// ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
+/**
+ * @description
+ *  📌
+ * @param { stiring } langUrl
+ * @param { stiring } sportUrl
+ * @param { stiring } countryUrl
+ * @param { stiring } leagueUrl
+ * @param { stiring } fixtureUrl
+ * @param { stiring } playerUrl
+ * @param { stiring } competitionMainUrl
+ * @param { stiring } competitionUrl
+ * @returns { Promise < Response > }
+ */
 async function validUrlCheck
 (
   langUrl: string,
@@ -467,22 +710,19 @@ async function validUrlCheck
   return json(true);
 }
 
-// ****************************************************
-// 📌 MAIN METHOD                                     *
-// ****************************************************
-
 // ### TODO:
 // ### fallback for league/tournament page DATA (critical)
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * TODO: DOC:
- *
- * @param player_id
- * @returns
+ *  📌 Fallback logic for **SEO Page**  Main Data.
+ * @param { number } player_id
+ *  Target `player id`.
+ * @returns { Promise < B_SAP_PP_D > }
  */
 async function fallbackMainData_0
 (
@@ -492,24 +732,27 @@ async function fallbackMainData_0
 
   const dataRes0: [ Map<  number, B_SAP_PP_D >, string[] ] = await SEO_PS_ENTRY
   (
-    graphQlInstance,
+    null,
     [player_id]
   )
 
-  if (dataRes0?.[0]?.size == 0) return null;
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
 	return dataRes0?.[0]?.get(player_id);
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🟥 MAIN | 🔹 HELPER
  * @description
- * TODO: DOC:
- *
- * @param fixtureId
- * @returns
+ *  📌 Fallback logic for **SEO Page** Main Data.
+ * @param { number } fixtureId
+ *  Target `fixture Id`.
+ * @returns { Promise < B_SAP_FP_D > }
  */
 async function fallbackMainData_2
 (
@@ -518,31 +761,30 @@ async function fallbackMainData_2
 {
   const dataRes0: [ Map < number, B_SAP_FP_D >, string[] ] = await SEO_FS_ENTRY
   (
-    graphQlInstance,
+    null,
     [fixtureId]
   )
 
-  if (dataRes0?.[0]?.size == 0) return null;
+  if (dataRes0?.[0]?.size == 0)
+    return null;
+  ;
 
   return dataRes0?.[0]?.get(fixtureId)
 }
 
 /**
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🔹 HELPER | IMPORTANT
  * @description
- * 📌 Hasura fallback to target competition page critical (SEO/preload) data.
- *
- * @param
- * { number } competitionId - Target competition Id.
- *
- * @returns
+ *  📌 Hasura fallback to target competition page critical (SEO/preload) data.
+ * @param { number } competitionId
+ *  Target competition Id.
+ * @returns { Promise < B_SAP_CTP_D > }
  */
 async function fallbackMainData_3
 (
   competitionId: number
-) : Promise < B_SAP_CTP_D >
+): Promise < B_SAP_CTP_D >
 {
   const dataRes0: [ Map < number, B_SAP_CTP_D >, string[] ] = await SEO_CS_ENTRY
   (

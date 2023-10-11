@@ -721,28 +721,33 @@ export async function promiseValidUrlCheck
 
   const response: any = await get
   (
-    `/api/data/main/seo-pages${queryStr}`,
-    fetch
+    `/api/data/main/seo-pages${queryStr}&decompress`,
+    fetch,
+    true,
+    true
   );
+
+  console.log('🎟️', response)
 
   return response;
 }
 
 /**
+ * @author
+ *  @migbash
  * @summary
- * 🔹 HELPER | IMPORTANT
- *
+ *  🔹 HELPER | IMPORTANT
  * @description
- * 📌 `fetch` target sportbook data,
- * based on `client` geo-location.
- *
- * ⚡️ Data gathered at page-level and set to svelte-stores.
+ *  📌 `fetch` target sportbook data, based on `client` geo-location.
+ *  (⚡️) Data gathered at page-level and set to svelte-stores.
  *
  * NOTE: (*) best approach
  * TODO: (alt) can be moved to a layout-level [?]
  * TODO: (alt) can be moved to a header-level [?]
  * TODO: (alt) can be moved to a +server-level [⚠️]
- * @returns {Promise<void>} void
+ * @param { string } geoPos
+ *  Target `geo-location`.
+ * @returns { Promise < void > }
  */
 export async function initSportbookData
 (
@@ -751,7 +756,10 @@ export async function initSportbookData
 {
   const dataRes0 = await get
   (
-    `/api/data/main/sportbook?geoPos=${geoPos}`
+    `/api/data/main/sportbook?geoPos=${geoPos}`,
+    null,
+    true,
+    true
   ) as B_SPT_D;
 
   sessionStore.updateSportbookMain
@@ -761,13 +769,18 @@ export async function initSportbookData
 
   const dataRes1 = await get
   (
-    `/api/data/main/sportbook?all=true&geoPos=${geoPos}`
+    `/api/data/main/sportbook?all=true&geoPos=${geoPos}`,
+    null,
+    true,
+    true
   ) as B_SPT_D[];
 
   sessionStore.updateSportbookList
   (
     dataRes1
   );
+
+  return;
 }
 
 /**

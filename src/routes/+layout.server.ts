@@ -226,7 +226,7 @@ async function fetchData
   [
     `/api/data/main/navbar?lang=${_lang}&decompress`,
     `/api/data/main/footer?lang=${_lang}&decompress`,
-    `/api/data/main/seo-pages?term=competitions`,
+    `/api/data/main/seo-pages?term=competitions&decompress`,
   ];
 
   const data_0: PP_PROMISE_0 = await promiseUrlsPreload

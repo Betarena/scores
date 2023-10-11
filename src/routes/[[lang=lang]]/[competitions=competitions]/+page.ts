@@ -179,11 +179,11 @@ async function fetchData
 
   const urls_0: string[] =
   [
-    `/api/data/main/seo-pages?lang=${_lang}&page=competitions`,
-    `/api/data/main/seo-pages?term=competitions`,
-    `/api/data/main/seo-pages?term=football`,
-    `/api/data/main/seo-pages?term=team`,
-    `/api/data/main/seo-pages?countries=true`,
+    `/api/data/main/seo-pages?lang=${_lang}&page=competitions&decompress`,
+    `/api/data/main/seo-pages?term=competitions&decompress`,
+    `/api/data/main/seo-pages?term=football&decompress`,
+    `/api/data/main/seo-pages?term=team&decompress`,
+    `/api/data/main/seo-pages?countries=true&decompress`,
     `/api/data/lobby/highlights?seo=true&lang=${_lang}`,
     `/api/data/lobby/highlights?lang=${_lang}`,
   ];

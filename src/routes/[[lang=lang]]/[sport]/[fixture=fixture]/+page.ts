@@ -90,7 +90,7 @@ export async function load
 
   const data_0 = await promiseUrlsPreload
   (
-    [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures&hasura=true`],
+    [`/api/data/main/seo-pages?fixture_id=${fixture_id}&page=fixtures&hasura=true&decompress`],
     fetch
   ) as PP_PROMISE_0;
 
@@ -119,7 +119,7 @@ export async function load
 
   const data_1 = await promiseUrlsPreload
   (
-    [`/api/data/main/seo-pages?country_id=${country_id}`],
+    [`/api/data/main/seo-pages?country_id=${country_id}&decompress`],
     fetch
   ) as PP_PROMISE_1;
 
@@ -169,7 +169,7 @@ export async function load
 
 	const urls: string[] =
   [
-    `/api/data/main/seo-pages?lang=${urlLang}&page=fixtures`,
+    `/api/data/main/seo-pages?lang=${urlLang}&page=fixtures&decompress`,
     `/api/data/fixture/scoreboard?fixture_id=${fixture_id}`,
     `/api/data/fixture/scoreboard?lang=${urlLang}`,
     `/api/data/fixture/lineups?fixture_id=${fixture_id}`,

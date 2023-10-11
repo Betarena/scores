@@ -106,8 +106,8 @@ async function fetchData
 
   const urls_0: string[] =
   [
-    `/api/data/main/seo-pages?months=true&lang=${_lang}`,
-    `/api/data/main/seo-pages?term=football`,
+    `/api/data/main/seo-pages?months=true&lang=${_lang}&decompress`,
+    `/api/data/main/seo-pages?term=football&decompress`,
     `/api/data/profile?lang=${_lang}`
   ];
 

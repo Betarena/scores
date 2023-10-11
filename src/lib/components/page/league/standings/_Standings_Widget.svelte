@@ -74,11 +74,13 @@
 				.toLowerCase();
 
 		// [ℹ] [GET] response sportbook [geo]
-		const response: Cache_Single_SportbookDetails_Data_Response =
-			await get(
-				'/api/data/main/sportbook?geoPos=' +
-					userGeo
-			);
+		const response: Cache_Single_SportbookDetails_Data_Response =	await get
+    (
+      `/api/data/main/sportbook?geoPos=${userGeo}`,
+      null,
+      true,
+      true
+    );
 
 		// [ℹ] data validation check
 		if (response == undefined ||
