@@ -98,7 +98,7 @@ export async function GET
         (
           {
             data: compressed,
-            loadType: loadType
+            loadType
           }
         );
       }
@@ -149,7 +149,7 @@ export async function GET
         (
           {
             data: compressed,
-            loadType: loadType
+            loadType
           }
         );
       }
