@@ -72,29 +72,32 @@
   ;
 
 	let
-    /** */
+    /** @description TODO: DOC: */
     B_NAV_T: B_NAV_T,
-    /** */
+    /** @description TODO: DOC: */
 	  offlineMode: boolean = false,
-    /** */
+    /** @description TODO: DOC: */
     OfflineAlertDynamic: any,
-    /** */
+    /** @description TODO: DOC: */
     PlatformAlertDynamic: any,
-    /** */
+    /** @description TODO: DOC: */
     EmailSubscribeDynamic: any,
-    /** */
-    isRouteCompetitions: boolean
+    /** @description TODO: DOC: */
+    deepReactListenIsRouteCompetitions: boolean,
+    /** @description (listen) value for change comparison of client bookmaker change */
+    currentBookmaker: string = $sessionStore?.serverLang
   ;
 
 	$: B_NAV_T = $page.data?.B_NAV_T ?? { };
-  $: serverSideLang = platfrom_lang_ssr
+  $: deepReactListenServerSideLang = platfrom_lang_ssr
   (
 		$page?.route?.id,
 		$page?.error,
 		$page?.params?.lang
 	);
-  $: isRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
-  $: isProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
+  $: deepReactListenIsRouteCompetitions = $page?.route?.id.includes('/[[lang=lang]]/[competitions=competitions]');
+  $: deepReactListenIsProfilePage = $page?.route?.id == '/u/[view]/[lang=lang]';
+  $: deepReactListenBookmakerChng = $userBetarenaSettings?.country_bookmaker;
 
   $sessionStore.deviceType = $page.data?.deviceType;
   // @ts-ignore
@@ -115,11 +118,12 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   * 🔹 HELPER
-   *
+   *  🔹 HELPER
    * @description
-   * 📌 method to `toggle` internet connection state.
+   *  📌 method to `toggle` internet connection state.
    */
 	function toggleOfflineAlert
   (
@@ -211,10 +215,17 @@
   // ### ◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️◼️
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   *  🔥 REACTIVE
+   *  🔥 REACTIVITY
    * @description
-   * TODO: DOC:
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform load_ has changed top `client`.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `browser`- **kicker**
    */
 	$: if (browser)
   {
@@ -236,12 +247,19 @@
 	}
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   *  🔥 REACTIVE
+   *  🔥 REACTIVITY
    * @description
-   *  📌 listens to changes in platform language.
-  */
-  $: if (serverSideLang)
+   *  📌 Listens to cases when, the:
+   *  - (1) _initial platform language_ has changed.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `deepReactListenServerSideLang`- **kicker** (via deepListen)
+   */
+  $: if (deepReactListenServerSideLang)
   {
     // ### [🐞]
     dlog
@@ -252,17 +270,27 @@
 
     sessionStore.updateServerLang
     (
-      serverSideLang
+      deepReactListenServerSideLang
     );
   }
 
   /**
+   * @author
+   *  @migbash
    * @summary
-   *  🔥 REACTIVE
+   *  🔥 REACTIVITY
    * @description
-   *  📌 listens to change in platform `bookmaker geo-country`.
-  */
-  $: if ($userBetarenaSettings?.country_bookmaker)
+   *  📌 Listens to cases when, the:
+   *  - (1) _platform bookmaker_ changes.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `deepReactListenServerSideLang`- **kicker** (via deepListen)
+   */
+  $: if_COD_3 =
+    browser
+  ;
+  $: if (if_COD_3 && deepReactListenBookmakerChng != currentBookmaker)
   {
     // ### [🐞]
     dlog
@@ -278,16 +306,28 @@
   }
 
   /**
-   * TODO: DOC:
-  */
-  $: if (browser && (isRouteCompetitions || isProfilePage))
+   * @author
+   *  @migbash
+   * @summary
+   *  🔥 REACTIVITY
+   * @description
+   *  📌 Listens to cases when, the:
+   *  - (1) _route / endpoint_ changes.
+   * @description
+   *  **WARNING:**
+   *  **triggered by changes in:**
+   *  - `browser`- **kicker**
+   *  - `deepReactListenIsRouteCompetitions`- **kicker** (via deepListen)
+   *  - `deepReactListenIsProfilePage`- **kicker** (via deepListen)
+   */
+  $: if (browser && (deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage))
   {
     const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
     if (helpdesk != undefined)
       helpdesk.style.display = "unset";
     ;
   }
-  else if (browser && !isRouteCompetitions && !isProfilePage)
+  else if (browser && !deepReactListenIsRouteCompetitions && !deepReactListenIsProfilePage)
   {
     const helpdesk: HTMLElement = document?.getElementsByClassName('crisp-client')?.[0] as unknown as HTMLElement;
     if (helpdesk != undefined)
@@ -336,7 +376,7 @@
   <!--
   HELPDESK PLUGIN
   -->
-  {#if isRouteCompetitions || isProfilePage}
+  {#if deepReactListenIsRouteCompetitions || deepReactListenIsProfilePage}
     <script type="text/javascript">
       window.$crisp=[];
       window.CRISP_WEBSITE_ID="cb59b31a-b48f-42d5-a24b-e4cf5bac0222";
@@ -406,7 +446,7 @@
 
 <main
 	class:dark-background={$userBetarenaSettings.theme == 'Dark'}
-  class:before-display-none={isRouteCompetitions}
+  class:before-display-none={deepReactListenIsRouteCompetitions}
 >
 
 	<slot />
