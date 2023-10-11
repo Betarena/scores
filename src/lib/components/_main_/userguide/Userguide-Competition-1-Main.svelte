@@ -62,7 +62,7 @@
     /** @description 📌 `this` component **main** `id` and `data-testid` prefix. */
     CNAME = 'global⮕w⮕userguide⮕comp-1⮕main',
     /** @description TODO: DOC: */
-    VIEWPORT_TABLET_INIT = 769,
+    VIEWPORT_TABLET_INIT = 821,
     /** @description TODO: DOC: */
     VIEWPORT_MOBILE_INIT = 581
   ;
@@ -740,7 +740,7 @@ MAIN WIDGET COMPONENT
   }
 
 	@media only screen
-  and (min-width: 769px)
+  and (min-width: 821px)
   {
     div#global⮕w⮕userguide⮕comp-1⮕main
     {
